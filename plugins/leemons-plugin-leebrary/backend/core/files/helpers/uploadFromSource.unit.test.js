@@ -27,14 +27,17 @@ it('should upload from URL when source is a string', async () => {
 });
 
 it('should upload from stream when source is a readable stream', async () => {
+  // Arrange
   const source = { readStream: {} };
   const name = 'test.jpg';
   const ctx = {};
 
   uploadFileFromStream.mockResolvedValue({});
 
+  // Act
   const result = await uploadFromSource({ source, name, ctx });
 
+  // Assert
   expect(uploadFileFromStream).toHaveBeenCalledWith({ file: source, name, ctx });
   expect(result).toEqual({});
 });
@@ -65,4 +68,20 @@ it('should upload file when source is a file object with non-image type', async 
 
   expect(uploadFile).toHaveBeenCalledWith({ file: { ...source }, name, ctx });
   expect(result).toEqual({});
+});
+
+it('Should return undefined if source is not a valid value without trying to upload the file', async () => {
+  // Arrange
+  const source = {};
+  const ctx = {};
+
+  // Act
+  const response = await uploadFromSource({ source, ctx });
+
+  // Assert
+  expect(response).not.toBeDefined();
+  expect(uploadFileFromUrl).not.toBeCalled();
+  expect(uploadFileFromStream).not.toBeCalled();
+  expect(prepareImage).not.toBeCalled();
+  expect(uploadFile).not.toBeCalled();
 });

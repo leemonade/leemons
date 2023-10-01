@@ -1,6 +1,7 @@
 const {
   it,
   expect,
+  beforeEach,
   jest: { spyOn },
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
@@ -12,6 +13,8 @@ const { metascraper } = require('../../shared');
 
 const { handleBookmarkData } = require('./handleBookmarkData');
 const getAssetAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
+
+beforeEach(() => jest.resetAllMocks());
 
 it('Should process bookmark data and cover correctly, only when data.url is passed and data.icon is missing', async () => {
   // Arrange
@@ -89,4 +92,40 @@ it('Logs an error message when an error is catched and handles unexpected values
     dataInputWithEmptyFields.url,
     expect.any(Error)
   );
+});
+
+it('Should correctly process data', async () => {
+  // Arrange
+  const data = { cover: ' dataCover', url: 'url', name: 'name' };
+  const ctx = generateCtx({});
+
+  const mockedMeta = {
+    title: 'Mock meta Title',
+    description: 'Mock meta Description',
+    logo: '',
+    image: 'Mock meta Image',
+  };
+  const mockHtml = '<html></html>';
+  got.mockResolvedValue({ body: mockHtml });
+  metascraper.mockResolvedValue(mockedMeta);
+
+  const expectedResult = [
+    {
+      ...data,
+      cover: mockedMeta.image,
+      name: data.name,
+      description: mockedMeta.description,
+    },
+    mockedMeta.image,
+  ];
+
+  // Act
+  const [dataOutput, coverOutput] = await handleBookmarkData({
+    data,
+    ctx,
+  });
+
+  // Assert
+  expect(dataOutput).toEqual(expectedResult[0]);
+  expect(coverOutput).toEqual(expectedResult[1]);
 });

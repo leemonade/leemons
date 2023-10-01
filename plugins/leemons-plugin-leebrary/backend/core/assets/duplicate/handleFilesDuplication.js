@@ -21,7 +21,7 @@ async function handleFilesDuplication({ filesToDuplicate, cover, newAsset, categ
   const isMediaFile = category.key === CATEGORIES.MEDIA_FILES;
 
   // EN: Duplicate all the files
-  if (filesToDuplicate.length) {
+  if (filesToDuplicate?.length) {
     const toDuplicatePromises = [];
 
     _.forEach(filesToDuplicate, (file) => {

@@ -1,9 +1,11 @@
 const {
   it,
   expect,
+  beforeEach,
   jest: { fn },
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
+const { omit } = require('lodash');
 
 const { add } = require('./add');
 const getAssets = require('../../../__fixtures__/getAssets');
@@ -37,6 +39,9 @@ const { createAssetInDB } = require('./createAssetInDb');
 const { handleSubjects } = require('./handleSubjects');
 const { handlePermissions } = require('./handlePermissions');
 const { handleFiles } = require('./handleFiles');
+const { CATEGORIES } = require('../../../config/constants');
+
+beforeEach(() => jest.resetAllMocks());
 
 const { dataInput: bookMarkDataInput, cover } = getAssetAddDataInput();
 const { bookmarkAsset } = getAssets();
@@ -58,13 +63,11 @@ it('Should correctly add a new bookmark', async () => {
     fromUserAgent: 'a1c917f3-8771-4f92-8e2d-18657b3ec709',
   };
   const assetAfterDB = {
-    ...bookmarkAsset,
+    ...omit(bookmarkAsset, ['subjects', 'file', 'tags']),
     id: mockNewId,
     cover: imageFile.id,
   };
-  delete assetAfterDB.subjects;
-  delete assetAfterDB.file;
-  delete assetAfterDB.tags;
+
   const newBookmarkExpectedResponse = { ...bookmarkAsset, id: mockNewId };
   const setTagsToValuesMock = fn();
 
@@ -203,4 +206,55 @@ it('Should handle bookmark data correctly', async () => {
     cover,
     ctx,
   });
+});
+
+it('Should not create a bookmark for media files', async () => {
+  // Arrange
+  const setTagsToValuesMock = fn();
+  const ctx = generateCtx({
+    actions: {
+      'common.tags.setTagsToValues': setTagsToValuesMock,
+    },
+  });
+  const assetData = { category: 'categoryId', name: 'assetOne' };
+
+  handleCategoryData.mockResolvedValue({
+    canUse: '*',
+    id: assetData.category,
+    key: CATEGORIES.MEDIA_FILES,
+  });
+  handleFileUpload.mockResolvedValue({ newFile: null, coverFile: null });
+  createAssetInDB.mockResolvedValue({ ...assetData, id: 'assetOne' });
+  // Act
+  await add({ assetData, ctx });
+
+  // Assert
+  expect(handleUserSessionData).not.toBeCalled();
+});
+
+it('Should set asset data corrctly', async () => {
+  // Arrange
+  const setTagsToValuesMock = fn();
+  const ctx = generateCtx({
+    actions: {
+      'common.tags.setTagsToValues': setTagsToValuesMock,
+    },
+  });
+  const assetData = { category: 'categoryId', name: 'assetOne', indexable: false };
+
+  handleCategoryData.mockResolvedValue({
+    canUse: '*',
+    id: assetData.category,
+    key: CATEGORIES.MEDIA_FILES,
+  });
+  handleFileUpload.mockResolvedValue({ newFile: null, coverFile: null });
+  createAssetInDB.mockResolvedValue({ ...assetData, id: 'assetOne' });
+  // Act
+  const response = await add({ assetData, ctx });
+
+  // Assert
+  expect(handleUserSessionData).not.toBeCalled();
+  expect(response.subjects).toBe(undefined);
+  expect(response.indexable).toBe(assetData.indexable);
+  expect(response).not.toHaveProperty(['fromUser', 'fromUserAgent']);
 });

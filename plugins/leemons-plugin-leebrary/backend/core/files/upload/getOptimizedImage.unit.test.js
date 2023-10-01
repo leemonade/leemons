@@ -49,9 +49,10 @@ it('should call resize and toFormat with the correct arguments', () => {
     toFormat: toFormatMock,
   });
 
-  const response = getOptimizedImage({ path, extension });
+  getOptimizedImage({ path, extension });
+  getOptimizedImage({ path });
 
   expect(resizeMock).toHaveBeenCalledWith(1024, 1024, { fit: 'inside', withoutEnlargement: true });
-  expect(toFormatMock).toHaveBeenCalledWith(extension, { quality: 70 });
-  expect(response).toBe('Expected Value');
+  expect(toFormatMock).nthCalledWith(1, extension, { quality: 70 });
+  expect(toFormatMock).nthCalledWith(2, 'jpeg', { quality: 70 });
 });

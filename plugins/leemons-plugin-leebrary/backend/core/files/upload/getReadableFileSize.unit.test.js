@@ -44,3 +44,11 @@ it('should return size in GB when size is more than 1073741824 bytes but less th
   // Assert
   expect(result).toBe('1.4 GB');
 });
+
+it('should return 0 bytes when size is 0', () => {
+  // Arrange & Act
+  const result = getReadableFileSize(0);
+
+  // Assert
+  expect(result).toBe('0 B');
+});

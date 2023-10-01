@@ -1,4 +1,4 @@
-const { it, expect, afterEach } = require('@jest/globals');
+const { it, expect, beforeEach } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
 const { handleFileUpload } = require('./handleFileUpload');
 
@@ -7,7 +7,7 @@ jest.mock('../../files/helpers/uploadFromSource');
 const { uploadFromSource } = require('../../files/helpers/uploadFromSource');
 const getMediaFileData = require('../../../__fixtures__/getMediaFileData');
 
-afterEach(() => jest.resetAllMocks());
+beforeEach(() => jest.resetAllMocks());
 
 const {
   handleFileUploadInputs: { imageFileInput, audioFileInput },
@@ -106,4 +106,16 @@ it('Should not throw if unexpected values are returned from the inner functions'
     });
 
   expect(testFn).not.toThrow();
+});
+
+it('Should return null values if no file or cover are passed without trying to upload them', async () => {
+  // Arrange
+  const ctx = generateCtx({});
+
+  // Act
+  const response = await handleFileUpload({ assetName: 'asset', ctx });
+
+  // Assert
+  expect(response).toEqual({ newFile: null, coverFile: null });
+  expect(uploadFromSource).not.toBeCalled();
 });

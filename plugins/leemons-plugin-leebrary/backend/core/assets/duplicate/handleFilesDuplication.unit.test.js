@@ -27,6 +27,7 @@ it('Should correctly duplicate media files', async () => {
       uri: 'leemons/leebrary/audioFileId.mpga',
     },
   ];
+  const duplicatedFile = { ...filesToDuplicate[0], id: 'dupAudioFileId' };
   const newAsset = {
     ...mediaFileAsset,
     name: `${mediaFileAsset.name} (1)`,
@@ -34,21 +35,16 @@ it('Should correctly duplicate media files', async () => {
     id: 'newAssetId',
     subjects: undefined,
   };
-  const cover = {
-    ...imageFile,
-    metadata: JSON.stringify(imageFile.metadata),
-  };
-  const ctx = generateCtx({});
-  const expectedResponse = { ...newAsset, file: cover };
 
-  // Mock the return values of the inner functions
-  duplicateFile.mockResolvedValue(cover);
+  const ctx = generateCtx({});
+  const expectedResponse = { ...newAsset, file: duplicatedFile };
+
+  duplicateFile.mockResolvedValue(duplicatedFile);
   addFiles.mockResolvedValue(true);
 
   // Act
   const response = await handleFilesDuplication({
     filesToDuplicate,
-    cover,
     newAsset,
     category: mediaFileCategoryObject,
     ctx,
@@ -58,20 +54,19 @@ it('Should correctly duplicate media files', async () => {
   expect(response).toEqual(expectedResponse);
   expect(duplicateFile).toHaveBeenCalledWith({ file: filesToDuplicate[0], ctx });
   expect(addFiles).toHaveBeenCalledWith({
-    fileId: cover.id,
+    fileId: duplicatedFile.id,
     assetId: newAsset.id,
     skipPermissions: true,
     ctx,
   });
 });
 
-it('Should correctly duplicate an image file for an image asset, where the cover is the file', async () => {
+it('Should correctly duplicate an image file for an image asset where the cover is the file', async () => {
   // Arrange
   const filesToDuplicate = [];
   const newAsset = {
     ...mediaFileAsset,
     name: `${mediaFileAsset.name} (1)`,
-    cover: null,
     id: 'newAssetId',
     subjects: undefined,
   };
@@ -80,10 +75,8 @@ it('Should correctly duplicate an image file for an image asset, where the cover
     metadata: JSON.stringify(imageFile.metadata),
   };
   const ctx = generateCtx({});
-  const expectedResponse = { ...newAsset, file: cover };
+  const expectedResponse = { ...newAsset };
 
-  // Mock the return values of the inner functions
-  duplicateFile.mockResolvedValue(cover);
   addFiles.mockResolvedValue(true);
 
   // Act
@@ -106,10 +99,9 @@ it('Should correctly duplicate an image file for an image asset, where the cover
   });
 });
 
-// Test scenario: cover arrives as null
-it('Should handle null cover correctly', async () => {
+it('Should try to add or duplicate files if no cover or files to duplicate are passed', async () => {
   // Arrange
-  const filesToDuplicate = [{ ...audioFile }];
+  const filesToDuplicate = undefined;
   const newAsset = {
     ...mediaFileAsset,
     name: `${mediaFileAsset.name} (1)`,
@@ -119,11 +111,7 @@ it('Should handle null cover correctly', async () => {
   };
   const cover = null;
   const ctx = generateCtx({});
-  const expectedResponse = { ...newAsset, file: { ...audioFile } };
-
-  // Mock the return values of the inner functions
-  duplicateFile.mockResolvedValue(filesToDuplicate[0]);
-  addFiles.mockResolvedValue(true);
+  const expectedResponse = { ...newAsset };
 
   // Act
   const response = await handleFilesDuplication({
@@ -136,11 +124,6 @@ it('Should handle null cover correctly', async () => {
 
   // Assert
   expect(response).toEqual(expectedResponse);
-  expect(duplicateFile).toHaveBeenCalledWith({ file: { ...audioFile }, ctx });
-  expect(addFiles).toHaveBeenCalledWith({
-    fileId: audioFile.id,
-    assetId: newAsset.id,
-    skipPermissions: true,
-    ctx,
-  });
+  expect(duplicateFile).not.toHaveBeenCalled();
+  expect(addFiles).not.toHaveBeenCalled();
 });

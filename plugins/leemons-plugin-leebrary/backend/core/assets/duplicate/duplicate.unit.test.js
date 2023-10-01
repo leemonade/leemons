@@ -1,5 +1,6 @@
 const { it, expect, beforeEach } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
+const { omit } = require('lodash');
 
 const { duplicate } = require('./duplicate');
 const getAssets = require('../../../__fixtures__/getAssets');
@@ -248,4 +249,53 @@ it('Should correctly duplicate a mediaFile asset', async () => {
     ctx,
   });
   expect(response).toEqual({ ...newAsset, cover: newCover });
+});
+
+it('Should not try to duplicate files if none are related to the asset', async () => {
+  // Arrange
+  const assetOne = { id: 'assetOne', name: 'assetOne' };
+  const bookmark = omit(getBookmarkFromDB(), ['icon', 'tags']);
+  const newAsset = {
+    ...bookmarkAsset,
+    name: `${assetOne.name} (1)`,
+    cover: null,
+    id: 'newAssetId',
+    subjects: undefined,
+    tags: null,
+  };
+  const expectedResponse = {
+    ...newAsset,
+    cover: null,
+    url: bookmark.url,
+    fileType: 'bookmark',
+    metadata: [],
+    icon: null,
+  };
+
+  const ctx = generateCtx({});
+  ctx.meta.userSession = getUserSession();
+
+  getAndCheckAsset.mockResolvedValue({ ...assetOne });
+  checkCategoryDuplicable.mockResolvedValue({ ...categoryObject });
+  getFileIds.mockResolvedValue([]);
+  getBookmark.mockResolvedValue({ ...bookmark });
+  getFilesToDuplicate.mockResolvedValue({
+    filesToDuplicate: [],
+    cover: undefined,
+  });
+  handleTags.mockResolvedValue([]);
+  handleAssetDuplication.mockResolvedValue({ ...newAsset });
+  handleBookmarkDuplication.mockResolvedValue(expectedResponse);
+
+  // Act
+  const response = await duplicate({ assetId: bookmarkAsset.id, ctx });
+
+  // Assert
+  expect(getFilesToDuplicate).toBeCalledWith({
+    filesIds: [],
+    coverId: undefined,
+    ctx,
+  });
+  expect(handleCoverDuplication).not.toBeCalled();
+  expect(response).toEqual(expectedResponse);
 });
