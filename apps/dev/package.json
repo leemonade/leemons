@@ -6,7 +6,7 @@
     "backend:dev": "PORT=8080 leemons-runner --env --hot services/**/*.service.js",
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
-    "front:dev": "PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
+    "front:dev": "NODE_OPTIONS=\"--max-old-space-size=4096\" PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
     "front:build:dev": "API_URL=https://api.leemons.dev NODE_OPTIONS=\"--max-old-space-size=8192\" leemonsFront build"
   },
   "leemons": {},
@@ -90,7 +90,7 @@
     "leemons-plugin-widgets-frontend-react": "1.0.0",
     "leemons-plugin-xapi": "1.0.0",
     "leemons-plugin-xapi-frontend-react": "1.0.0",
-    "@leemons/runner": "0.0.27",
+    "@leemons/runner": "0.0.32",
     "moment": "^2.29.4",
     "nats": "^2.16.0",
     "squirrelly": "^9.0.0"

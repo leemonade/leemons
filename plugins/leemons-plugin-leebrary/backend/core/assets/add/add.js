@@ -43,10 +43,14 @@ const { handleFiles } = require('./handleFiles');
  * @returns {Promise<Object>} A promise that resolves with the added asset object.
  */
 async function add({
-  assetData: { file, cover, category, canAccess, ...data },
-  options: { newId, published = true, permissions, duplicating = false } = {},
+  asset: _assetData,
+  newId,
+  published = true,
+  permissions,
+  duplicating = false,
   ctx,
 }) {
+  let { file, cover, category, canAccess, ...data } = _assetData;
   const pPermissions = normalizeItemsArray(permissions);
 
   // ··········································

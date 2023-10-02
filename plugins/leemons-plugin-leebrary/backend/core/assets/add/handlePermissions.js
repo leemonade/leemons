@@ -23,15 +23,17 @@ async function handlePermissions({ permissions, canAccess, asset, category, ctx 
 
   // ES: Primero, añadimos permisos al archivo
   // EN: First, add permission to the asset
-  const permissionsPromises = ctx.tx.call('users.permissions.addItem', {
-    item: asset.id,
-    type: ctx.prefixPN(category.id),
-    data: {
-      permissionName,
-      actionNames: assetRoles,
-    },
-    isCustomPermission: true,
-  });
+  const permissionsPromises = [
+    ctx.tx.call('users.permissions.addItem', {
+      item: asset.id,
+      type: ctx.prefixPN(category.id),
+      data: {
+        permissionName,
+        actionNames: assetRoles,
+      },
+      isCustomPermission: true,
+    }),
+  ];
 
   if (permissions && permissions.length) {
     forEach(permissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
@@ -79,7 +81,7 @@ async function handlePermissions({ permissions, canAccess, asset, category, ctx 
   if (!hasOwner) {
     permissionsToAdd.push(
       ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-        userAgentId: map(userSession.userAgents, 'id'),
+        userAgentId: map(userSession?.userAgents, 'id'),
         data: {
           permissionName,
           actionNames: ['owner'],

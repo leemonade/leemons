@@ -48,16 +48,16 @@ async function add({ data, ctx }) {
 
     // Add Menu item
 
-    const menuItem = {
-      removed: menu.removed,
-      item: { ...menu.item, key: categoryData.key, order: menu.order ?? categoryData.order },
-      permissions: menu.permissions,
-    };
-    await ctx.tx.call('menu-builder.menuItem.addItemsFromPlugin', {
-      itemsData: menuItem,
-      shouldWait: false,
-      menuKey: categoriesMenu.key,
-    });
+    // const menuItem = {
+    //   removed: menu.removed,
+    //   item: { ...menu.item, key: categoryData.key, order: menu.order ?? categoryData.order },
+    //   permissions: menu.permissions,
+    // };
+    // await ctx.tx.call('menu-builder.menuItem.addItemsFromPlugin', {
+    //   itemsData: menuItem,
+    //   shouldWait: false,
+    //   menuKey: categoriesMenu.key,
+    // });
 
     return newCategory;
   } catch (e) {

@@ -1,12 +1,8 @@
-async function deletePackage(id, { userSession, transacting } = {}) {
-  const { assignables } = leemons.getPlugin('assignables').services;
-
-  const { versions } = await assignables.removeAssignable(id, {
-    userSession,
-    transacting,
+async function deletePackage({ id, ctx }) {
+  const { versions } = await ctx.tx.call('assignables.assignables.removeAssignable', {
+    assignable: id,
     removeAll: 1,
   });
-
   return versions;
 }
 

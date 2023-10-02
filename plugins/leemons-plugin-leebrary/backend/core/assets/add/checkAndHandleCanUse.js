@@ -23,7 +23,7 @@ function checkAndHandleCanUse({ category, calledFrom, ctx }) {
 
   if (category?.canUse !== '*' && !canUse.includes(calledFrom)) {
     throw new LeemonsError(ctx, {
-      message: `Category "${category.key}" was not created by the "${calledFrom}" plugin. You can only add assets to categories created by the "${calledFrom}" plugin.`,
+      message: `Category "${category?.key}" was not created by the "${calledFrom}" plugin. You can only add assets to categories created by the "${calledFrom}" plugin.`,
       httpStatusCode: 403,
     });
   }

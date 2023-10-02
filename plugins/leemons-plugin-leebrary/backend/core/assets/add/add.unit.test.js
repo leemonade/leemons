@@ -88,7 +88,7 @@ it('Should correctly add a new bookmark', async () => {
 
   // Act
   const bookmarkResponse = await add({
-    assetData: { ...bookMarkDataInput, cover, categoryKey: undefined },
+    asset: { ...bookMarkDataInput, cover, categoryKey: undefined },
     ctx,
   });
 
@@ -190,7 +190,7 @@ it('Should handle bookmark data correctly', async () => {
   // Act
   const response = async () =>
     add({
-      assetData: { ...dataInput, cover },
+      asset: { ...dataInput, cover },
       ctx,
     });
 
@@ -226,7 +226,7 @@ it('Should not create a bookmark for media files', async () => {
   handleFileUpload.mockResolvedValue({ newFile: null, coverFile: null });
   createAssetInDB.mockResolvedValue({ ...assetData, id: 'assetOne' });
   // Act
-  await add({ assetData, ctx });
+  await add({ asset: assetData, ctx });
 
   // Assert
   expect(handleUserSessionData).not.toBeCalled();
@@ -250,7 +250,7 @@ it('Should set asset data corrctly', async () => {
   handleFileUpload.mockResolvedValue({ newFile: null, coverFile: null });
   createAssetInDB.mockResolvedValue({ ...assetData, id: 'assetOne' });
   // Act
-  const response = await add({ assetData, ctx });
+  const response = await add({ asset: assetData, ctx });
 
   // Assert
   expect(handleUserSessionData).not.toBeCalled();

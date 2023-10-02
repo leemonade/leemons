@@ -12,12 +12,38 @@ const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets
 const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
 const { addMenuItemsDeploy } = require('@leemons/menu-builder');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { widgets, permissions, menuItems } = require('../config/constants');
+const { find, isEmpty } = require('lodash');
+const {
+  permissions,
+  menuItems,
+  pluginName,
+  categories,
+  categoriesMenu,
+  widgets,
+  defaultCategory: defaultCategoryKey,
+} = require('../config/constants');
 const { getServiceModels } = require('../models');
+const { add } = require('../core/categories/add');
+const { setDefaultCategory } = require('../core/settings');
+
+async function addDefaultCategories({ ctx }) {
+  const initialCategories = await Promise.all(
+    categories.map((category) => add({ data: category, ctx: { ...ctx, callerPlugin: pluginName } }))
+  );
+  const defaultCategory = find(initialCategories, { key: defaultCategoryKey });
+  if (!isEmpty(defaultCategory)) {
+    await setDefaultCategory({
+      categoryId: defaultCategory.id,
+      ctx: { ...ctx, callerPlugin: ctx.prefixPN('') },
+    });
+  }
+  ctx.tx.emit(`${pluginName}.init-categories`);
+  ctx.tx.emit(`init-categories`);
+}
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'leebrary.deploy',
+  name: `${pluginName}.deploy`,
   version: 1,
   mixins: [
     LeemonsMultiEventsMixin(),
@@ -41,6 +67,7 @@ module.exports = () => ({
           item: menuItems,
           ctx,
         });
+        await addDefaultCategories({ ctx });
       },
     },
   ],

@@ -26,13 +26,13 @@ async function handleCategoryData({ category, categoryId, categoryKey, ctx }) {
     if (!isEmpty(categoryId)) {
       category = await getCategoryById({ id: categoryId, ctx });
     } else {
-      category = await getCategoryByKey({ id: categoryKey, ctx });
+      category = await getCategoryByKey({ key: categoryKey, ctx });
     }
   } else if (isString(category)) {
     if (isLRN(category)) {
       category = await getCategoryById({ id: category, ctx });
     } else {
-      category = await getCategoryByKey({ id: category, ctx });
+      category = await getCategoryByKey({ key: category, ctx });
     }
   }
   return category;

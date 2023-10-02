@@ -1,13 +1,8 @@
-async function duplicatePackage(id, { published, userSession, transacting } = {}) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
-
-  const newAssignable = await assignableService.duplicateAssignable(id, {
+async function duplicatePackage({ id, published, ctx }) {
+  return ctx.tx.call('assignables.assignables.duplicateAssignable', {
+    assignableId: id,
     published,
-    userSession,
-    transacting,
   });
-
-  return newAssignable;
 }
 
 module.exports = duplicatePackage;

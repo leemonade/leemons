@@ -53,7 +53,7 @@ it('Should return a category Object by correctly calling inner functions or retu
   expect(responseWithCategoryId).toEqual(expectedValue);
   expect(getCategoryById).nthCalledWith(1, expect.objectContaining({ id: categoryId, ctx }));
   expect(responseWithCategoryKey).toEqual(expectedValue);
-  expect(getCategoryByKey).nthCalledWith(1, expect.objectContaining({ id: bookmarkKey, ctx }));
+  expect(getCategoryByKey).nthCalledWith(1, expect.objectContaining({ key: bookmarkKey, ctx }));
   expect(responseWithIdString).toEqual(expectedValue);
   expect(getCategoryById).nthCalledWith(2, expect.objectContaining({ id: categoryId, ctx }));
 });
@@ -73,5 +73,5 @@ it('Should survive', async () => {
 
   // Assert
   expect(getCategoryById).not.toHaveBeenCalled();
-  expect(getCategoryByKey).toHaveBeenCalledWith({ id: notStandardUUID, ctx });
+  expect(getCategoryByKey).toHaveBeenCalledWith({ key: notStandardUUID, ctx });
 });

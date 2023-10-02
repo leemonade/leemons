@@ -1,6 +1,6 @@
 {
   "name": "@leemons/testing",
-  "version": "0.0.27",
+  "version": "0.0.32",
   "private": false,
   "main": "src/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@leemons/mongodb": "0.0.27",
+    "@leemons/mongodb": "0.0.32",
     "mongodb-memory-server-core": "^8.15.0",
     "mongoose": "^7.5.2"
   }

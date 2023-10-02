@@ -45,7 +45,7 @@ async function markEventCalledAndCallIfCan({
           randomStr
         );
 
-        await setTimeout(100);
+        await setTimeout(50);
 
         const savedRandomStr = await getKey(
           model,

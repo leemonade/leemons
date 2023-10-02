@@ -1,12 +1,12 @@
 const _ = require('lodash');
 
-const { LeemonsValidator } = global.utils;
 const {
   stringSchema,
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
 } = require('./types');
+const { LeemonsValidator } = require('@leemons/validator');
 
 const savePackageSchema = {
   type: 'object',

@@ -1,29 +1,26 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 
-async function getPackage(id, { userSession, transacting } = {}) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+async function getPackage({ id, ctx }) {
   const { assets: assetService } = leemons.getPlugin('leebrary').services;
 
   // Check is userSession is provided
-  if (!userSession) throw new Error('User session is required (getPackage)');
+  if (!ctx.meta.userSession)
+    throw new LeemonsError(ctx, { message: 'User session is required (getPackage)' });
 
   const ids = _.isArray(id) ? id : [id];
 
   const assignables = await Promise.all(
     _.map(ids, (_id) =>
-      assignableService.getAssignable(_id, {
-        userSession,
-        withFiles: true,
-        transacting,
-      })
+      ctx.tx.call('assignables.assignables.getAssignable', { id: _id, withFiles: true })
     )
   );
 
   // Get the Package Asset in metadata
-  const assets = await assetService.getByIds(
-    assignables.map((a) => a.metadata.packageAsset).filter(Boolean),
-    { withFiles: true }
-  );
+  const assets = await ctx.tx.call('leebrary.assets.getByIds', {
+    assetsIds: assignables.map((a) => a.metadata.packageAsset).filter(Boolean),
+    withFiles: true,
+  });
 
   const result = _.map(assignables, (assignable) => {
     const { asset, metadata, statement } = assignable;

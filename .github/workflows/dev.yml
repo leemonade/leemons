@@ -24,5 +24,6 @@ jobs:
       AWS_REGION: eu-west-1
       IMAGE_TAG: dev
       GIT_BRANCH: microservices/dev
+      NPM_TAG: dev
 
 

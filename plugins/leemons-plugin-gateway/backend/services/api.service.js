@@ -57,6 +57,18 @@ module.exports = {
             'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
 
+          // -- Scorm (Finish) --
+          'POST scorm/tags/list': 'v1.scorm.tags.listTagsRest',
+          'POST scorm/package': 'v1.scorm.package.savePackageRest',
+          'POST scorm/package/duplicate': 'v1.scorm.package.duplicatePackageRest',
+          'POST scorm/package/assign': 'v1.scorm.package.assignPackageRest',
+          'POST scorm/package/share': 'v1.scorm.package.sharePackageRest',
+          'GET scorm/package/supported-versions': 'v1.scorm.package.getSupportedVersionsRest',
+          'GET scorm/package/:id': 'v1.scorm.package.getPackageRest',
+          'DELETE scorm/package/:id': 'v1.scorm.package.deletePackageRest',
+          'PUT scorm/status/:instance/:user': 'v1.scorm.status.updateStatusRest',
+          'GET scorm/assignation/:instance/:user': 'v1.scorm.status.getScormAssignationRest',
+
           // -- Learning Paths (Finish) --
           'POST learning-paths/tags/list': 'v1.learning-paths.tags.listTagsRest',
           'POST learning-paths/modules': 'v1.learning-paths.modules.createRest',
@@ -504,29 +516,29 @@ module.exports = {
         },
 
         /**
-				 * Before call hook. You can check the request.
-				 * @param {Context} ctx
-				 * @param {Object} route
-				 * @param {IncomingRequest} req
-				 * @param {ServerResponse} res
-				 * @param {Object} data
-				 *
-				onBeforeCall(ctx, route, req, res) {
-					// Set request headers to context meta
-					ctx.meta.userAgent = req.headers["user-agent"];
-				}, */
+         * Before call hook. You can check the request.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         *
+         onBeforeCall(ctx, route, req, res) {
+         // Set request headers to context meta
+         ctx.meta.userAgent = req.headers["user-agent"];
+         }, */
 
         /**
-				 * After call hook. You can modify the data.
-				 * @param {Context} ctx
-				 * @param {Object} route
-				 * @param {IncomingRequest} req
-				 * @param {ServerResponse} res
-				 * @param {Object} data
-				onAfterCall(ctx, route, req, res, data) {
-					// Async function which return with Promise
-					return doSomething(ctx, res, data);
-				}, */
+         * After call hook. You can modify the data.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         onAfterCall(ctx, route, req, res, data) {
+         // Async function which return with Promise
+         return doSomething(ctx, res, data);
+         }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =

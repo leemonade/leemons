@@ -4,6 +4,9 @@ const { getPluginNameFromServiceName } = require('@leemons/service-name-parser')
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
+const actionCallCache = {};
+const actionCanCache = {};
+
 async function getDeploymentID(ctx) {
   try {
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
@@ -40,7 +43,7 @@ async function modifyCTX(
   ctx.logger = console;
 
   ctx.prefixPN = function (string) {
-    return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
+    return `${getPluginNameFromServiceName(ctx.service.name)}${string ? '.' : ''}${string}`;
   };
 
   ctx.emit = async function (event, params, opts) {
@@ -71,12 +74,21 @@ async function modifyCTX(
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
 
-    const manager = await ctx.__leemonsDeploymentManagerCall(
-      'deployment-manager.getGoodActionToCall',
-      {
+    if (!actionCallCache.hasOwnProperty(ctx.meta.deploymentID)) {
+      actionCallCache[ctx.meta.deploymentID] = {};
+    }
+
+    const cacheKey = ctx.service.fullName + '.' + actionName;
+
+    let manager = null;
+    if (actionCallCache[ctx.meta.deploymentID][cacheKey]) {
+      manager = actionCallCache[ctx.meta.deploymentID][cacheKey];
+    } else {
+      manager = await ctx.__leemonsDeploymentManagerCall('deployment-manager.getGoodActionToCall', {
         actionName,
-      }
-    );
+      });
+      actionCallCache[ctx.meta.deploymentID][cacheKey] = manager;
+    }
 
     if (process.env.DEBUG === 'true')
       console.log(
@@ -111,7 +123,6 @@ module.exports = function ({
           if (!ctx.params?.event) throw new LeemonsError(ctx, { message: 'event param required' });
           if (this.events && this.events[ctx.params.event]) {
             // Llamamos al evento el cual a sido machado por el nuestro en el created()
-            console.log('Nos llaman al evento:' + ctx.params.event);
             return this.events[ctx.params.event](ctx.params.params, { parentCtx: ctx });
           }
           return null;
@@ -134,11 +145,20 @@ module.exports = function ({
                 if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
                   if (!ctx.meta.relationshipID)
                     throw new LeemonsError(ctx, { message: 'relationshipID is required' });
-                  await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
-                    fromService: ctx.caller,
-                    toAction: ctx.action.name,
-                    relationshipID: ctx.meta.relationshipID,
-                  });
+
+                  if (!actionCanCache.hasOwnProperty(ctx.meta.deploymentID)) {
+                    actionCanCache[ctx.meta.deploymentID] = [];
+                  }
+
+                  const cacheKey = ctx.caller + ctx.action.name + ctx.meta.relationshipID;
+                  if (actionCanCache[ctx.meta.deploymentID].indexOf(cacheKey) === -1) {
+                    await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
+                      fromService: ctx.caller,
+                      toAction: ctx.action.name,
+                      relationshipID: ctx.meta.relationshipID,
+                    });
+                    actionCanCache[ctx.meta.deploymentID].push(cacheKey);
+                  }
                 }
               }
             }
