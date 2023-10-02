@@ -14,6 +14,22 @@ const { getDates } = require('../../dates');
 const {
   getUserPermissionMultiple,
 } = require('../../permissions/users/instances/getUserPermissionMultiple');
+/**
+ * Retrieves the status of multiple instances.
+ *
+ * @param {Object} options - The options object.
+ * @param {Array|string} options.assignableInstanceIds - The IDs of the assignable instances to retrieve the status for.
+ * @param {Object} options.ctx - The context object.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @return {Array} An array of objects containing the status of each instance.
+ * Each object in the array has the following properties:
+ * - instance {string} - The ID of the instance.
+ * - assignation {string|null} - The ID of the assignation. Null if it is a teacher.
+ * - status {string|null} - The status of the assignation. Null if it is a teacher or there are no assignations.
+ * - dates {Object} - An object containing the dates related to the instance.
+ * - alwaysAvailable {boolean} - Indicates if the instance is always available.
+ * - timestamps {Object} - An object containing the timestamps related to the assignation.
+ */
 
 async function getInstancesStatus({ assignableInstanceIds, ctx }) {
   const { userSession } = ctx.meta;

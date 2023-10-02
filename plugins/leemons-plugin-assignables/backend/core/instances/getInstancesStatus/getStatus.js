@@ -2,6 +2,19 @@ const dayjs = require('dayjs');
 
 const { hasGrades } = require('./hasGrades');
 
+/**
+ * Determines the status of a student based on their data and the instance data.
+ *
+ * @param {object} studentData - The student's data.
+ *   - The studentData object should have the following properties:
+ *     - timestamps: an object with start and end properties representing the start and end dates of the student's activity.
+ *     - grades: an array of grades associated with the student.
+ * @param {object} instanceData - The instance data.
+ *   - The instanceData object should have the following properties:
+ *     - dates: an object with start, deadline, and closed properties representing the important dates of the instance.
+ *     - alwaysAvailable: a boolean indicating whether the instance is always available.
+ * @return {'evaluated'|'late'|'submitted'|'closed'|'started'|'opened'|'assigned'} The status of the student.
+ */
 function getStatus(studentData, instanceData) {
   const startDate = dayjs(studentData?.timestamps?.start || null);
   const endDate = dayjs(studentData?.timestamps?.end || null);
