@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import React from 'react';
-import { Box, Badge, Text, TextClamp, ImageLoader, BulletSubject } from '@bubbles-ui/components';
+import { Box, Badge, Text, TextClamp, BulletSubject } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
@@ -22,16 +22,13 @@ const LibraryCardBody = ({
   truncated,
   fullHeight,
   role,
-  providerData,
   published,
   subject,
   subjects,
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
-  const isDraft =
-    (typeof providerData?.published === 'boolean' && providerData?.published === false) ||
-    (typeof published === 'boolean' && published === false);
+  const isDraft = typeof published === 'boolean' && published === false;
   const title = props.name ? props.name : null;
   const isMultipleSubjects = isArray(subjects) && subjects.length > 1;
 

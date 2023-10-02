@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Box, Spotlight } from '@bubbles-ui/components';
 import { BrowserRouter } from 'react-router-dom';
@@ -34,15 +36,20 @@ export default {
   // },
 };
 
-const Template = ({ ...props }) => (
-  <Box style={{ margin: '-1rem' }}>
-    <Spotlight>
-      <BrowserRouter>
-        <MainNavBar {...props} />
-      </BrowserRouter>
-    </Spotlight>
-  </Box>
-);
+const Template = ({ testAdminNavTitle, testUseAdminNavTitle, ...props }) => {
+  if (testUseAdminNavTitle) {
+    props.navTitle = testAdminNavTitle;
+  }
+  return (
+    <Box style={{ margin: '-1rem' }}>
+      <Spotlight>
+        <BrowserRouter>
+          <MainNavBar {...props} />
+        </BrowserRouter>
+      </Spotlight>
+    </Box>
+  );
+};
 
 export const Playground = Template.bind({});
 
@@ -52,4 +59,6 @@ Playground.args = {
   menuData,
   sessionMenu,
   session,
+  testUseAdminNavTitle: false,
+  testAdminNavTitle: '',
 };

@@ -84,17 +84,16 @@ const MainNavBar = ({
 
   const hasLogo = !isEmpty(logoUrl);
 
-  const navBarItems = menuData.map((item, index) => {
+  const navBarItems = menuData.map(({ children, ...item }, index) => {
     const isSubItemActive =
-      item.children.length > 0
-        ? item.children.find((child) => child?.id === activeSubItem?.id)
-        : false;
+      children.length > 0 ? children.find((child) => child?.id === activeSubItem?.id) : false;
     const isActive = isCollapsed
       ? activeItem?.id === item.id
       : item.id === activeItem?.id && !isSubItemActive;
     return (
       <NavItem
         {...item}
+        childrenCollection={children}
         key={`nav-item--${item.id}--${index}`}
         isCollapsed={isCollapsed}
         id={item.id}
@@ -192,8 +191,9 @@ const MainNavBar = ({
   );
 };
 
+export { MainNavBar };
+export default MainNavBar;
 MainNavBar.displayName = 'MainNavBar';
 
 MainNavBar.defaultProps = MAIN_NAV_BAR_DEFAULT_PROPS;
 MainNavBar.propTypes = MAIN_NAV_BAR_PROP_TYPES;
-export { MainNavBar };

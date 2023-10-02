@@ -14,12 +14,22 @@ export default {
   },
   argTypes: {
     onAction: { action: 'onAction' },
+    fileType: { options: ['audio', 'video', 'image', 'bookmark', 'noicon'], control: 'select' },
   },
 };
 
-const Template = ({ children, ...props }) => (
-  <Box style={{ width: 322, height: 100 }}>
-    <LibraryCardFooter {...props}>{children}</LibraryCardFooter>
+const Template = ({ ...props }) => (
+  <Box
+    style={{
+      width: 300,
+      height: 70,
+      border: '1px solid #DDE1E6',
+      borderTop: '1px solid transparent',
+      borderRadius: '0 0 4px 4px',
+      paddingTop: 12,
+    }}
+  >
+    <LibraryCardFooter {...props} />
   </Box>
 );
 

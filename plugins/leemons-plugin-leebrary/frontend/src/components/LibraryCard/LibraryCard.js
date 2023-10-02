@@ -1,14 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { isNil } from 'lodash';
 import { Box, FileIcon } from '@bubbles-ui/components';
-import {
-  AssetBookmarkIcon,
-  AssetPathIcon,
-  AssetTaskIcon,
-  PluginCurriculumIcon,
-} from '@bubbles-ui/icons/solid';
 import { LibraryCardCover } from '../LibraryCardCover';
-// import { LibraryCardContent } from '../LibraryCardContent';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
@@ -59,39 +52,6 @@ const LibraryCard = ({
     >
       <LibraryCardCover
         {...asset}
-        fileIcon={
-          {
-            bookmark: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <AssetBookmarkIcon />
-              </Box>
-            ),
-            path: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <AssetPathIcon />
-              </Box>
-            ),
-            task: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <AssetTaskIcon />
-              </Box>
-            ),
-            curriculum: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <PluginCurriculumIcon />
-              </Box>
-            ),
-          }[variant] ||
-          variantIconComponent || (
-            <FileIcon
-              size={64}
-              fileExtension={asset.fileExtension}
-              fileType={asset.fileType || variant}
-              color={'#B9BEC4'}
-              hideExtension
-            />
-          )
-        }
         deadlineProps={!isNil(deadlineProps) ? deadlineProps : null}
         locale={locale || deadlineProps?.locale}
         direction={variant === 'assigment' ? 'vertical' : null}
@@ -103,17 +63,6 @@ const LibraryCard = ({
         badge={badge}
         subject={subject}
       />
-      {/* <LibraryCardContent
-        {...asset}
-        metadata={(Array.isArray(asset.metadata) ? asset.metadata : []).filter(
-          (item) => !excludeMetadatas.map((e) => e.toLowerCase()).includes(item.label.toLowerCase())
-        )}
-        locale={locale}
-        variant={variant}
-        assigment={assigment}
-        fullHeight={fullHeight}
-        role={role}
-      /> */}
       <LibraryCardBody
         {...asset}
         metadata={(Array.isArray(asset.metadata) ? asset.metadata : []).filter(

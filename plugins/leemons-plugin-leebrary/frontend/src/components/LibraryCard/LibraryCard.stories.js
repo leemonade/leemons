@@ -37,6 +37,7 @@ const Template = ({
   variant,
   action,
   subject,
+  testIsDraft,
   ...props
 }) => {
   const isBookmark = variant === 'bookmark';
@@ -52,6 +53,11 @@ const Template = ({
     [`${isBookmark}`]: { ...URL_ASSET, ...assetToRender },
     [`${!isBookmark && !isCurriculum}`]: { ...asset, ...assetToRender },
   };
+  if (testIsDraft) {
+    asset.published = false;
+  } else {
+    asset.published = true;
+  }
 
   return (
     <Paper color="solid" style={{ width: 322, height: 600 }}>
@@ -82,11 +88,12 @@ Playground.args = {
   showAction: true,
   showAssigment: true,
   showSubject: true,
+  testIsDraft: true,
   variant: 'media',
   action: 'View feedback',
   badge: '',
   ...LIBRARY_CARD_DEFAULT_PROPS,
-  asset: { ...AUDIO_ASSET, providerData: { published: false } },
+  asset: { ...AUDIO_ASSET, published: true },
   assigment: {
     completed: 0.3,
     submission: 15,

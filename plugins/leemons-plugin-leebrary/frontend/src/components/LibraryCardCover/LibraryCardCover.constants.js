@@ -34,19 +34,19 @@ export const LIBRARY_CARD_COVER_PROP_TYPES = {
 
 export const overlayVariants = {
   hidden: {
-    display: 'none',
     opacity: 0,
     transition: {
-      duration: 0.2,
+      duration: 0.3,
       type: 'tween',
     },
   },
   visible: {
-    display: 'block',
     opacity: 1,
     transition: {
-      duration: 0.2,
+      duration: 0.3,
       type: 'tween',
     },
   },
 };
+
+

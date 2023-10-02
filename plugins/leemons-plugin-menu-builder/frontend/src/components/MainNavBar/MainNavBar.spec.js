@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 // import { axe } from 'jest-axe';
 // import { MainNavBar } from './MainNavBar';
 // import { Logo } from './components/Logo';
-import { TestComponent } from './components/TestComponent';
+// import { TestComponent } from './components/TestComponent';
 
 describe('MainNavBar', () => {
   // it('should have no axe violations', async () => {
@@ -32,7 +32,7 @@ describe('MainNavBar', () => {
     //     }}
     //   />
     // );
-    render(<TestComponent />);
+    // render(<TestComponent />);
     // render(<Logo isotype />);
   });
   it('testing jest', () => {

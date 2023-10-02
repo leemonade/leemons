@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable sonarjs/cognitive-complexity */
 import { createStyles } from '@bubbles-ui/components';
 
@@ -66,6 +67,22 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       color: lightMode
         ? leemonsStyles.menu.content.color.main.default
         : leemonsStyles.menu.content.color.main[defaultReverse],
+    },
+    badgeNew: {
+      '& > div': {
+        backgroundColor: '#307AE8 !important',
+        border: '1px solid #307AE8 !important',
+        padding: '0px 8px 2px 8px',
+        height: '18px',
+        marginRight: '6px',
+      },
+    },
+    newText: {
+      color: 'white',
+      fontSize: '8px',
+      fontWeight: 600,
+      padding: 0,
+      margin: 0,
     },
     openIcon: {
       width: '12px',
@@ -153,6 +170,7 @@ export const NavItemStyles = createStyles((theme, { lightMode }) => {
       width: 'auto',
       display: 'flex',
       justifyContent: 'flex-end',
+      alignItems: 'center',
     },
     icon: {
       width: '18px',

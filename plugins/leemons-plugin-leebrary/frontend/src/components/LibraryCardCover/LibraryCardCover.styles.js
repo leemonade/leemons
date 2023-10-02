@@ -63,9 +63,12 @@ export const LibraryCardCoverStyles = createStyles(
       },
       favButton: {
         zIndex: 3,
-
         paddingRight: pxToRem(4),
         visibility: isFav ? 'visible' : isParentHovered,
+      },
+      favActive: {
+        position: 'absolute',
+        right: 0,
       },
       deadline: {
         position: 'absolute',
