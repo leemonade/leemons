@@ -20,6 +20,7 @@ module.exports = {
     rest: {
       method: 'POST',
       path: '/multipart/new',
+      type: 'multipart',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -32,6 +33,7 @@ module.exports = {
     rest: {
       method: 'POST',
       path: '/multipart/abort',
+      type: 'multipart',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -44,6 +46,7 @@ module.exports = {
     rest: {
       method: 'POST',
       path: '/multipart/finish',
+      type: 'multipart',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -59,9 +62,10 @@ module.exports = {
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
+    // eslint-disable-next-line sonarjs/cognitive-complexity
     async handler(ctx) {
       const { id, download, onlyPublic } = ctx.params;
-      const { headers } = ctx.meta;
+      const { headers } = ctx.meta; // ! get the headers adding a line in gateway's setting.routes onBeforeCall() or find it in ctx.options.etc.etc.etc
 
       if (_.isEmpty(id)) {
         throw new LeemonsError(ctx, { message: 'Id is required', httpStatusCode: 400 });
@@ -97,23 +101,35 @@ module.exports = {
         ctx,
       });
 
+      // Redirect to external URL
       if (_.isString(readStream) && readStream.indexOf('http') === 0) {
-        // Redirect to external URL
-        ctx.status = 307;
-        ctx.set('Cache-Control', 'max-age=300');
-        ctx.redirect(readStream);
-        return;
+        // ctx.status = 307;
+        // ctx.set('Cache-Control', 'max-age=300');
+        // ctx.redirect(readStream);
+        ctx.meta.$responseHeaders = {
+          'Cache-Control': 'max-age=300',
+          Location: readStream,
+        };
+        return { status: 307 };
       }
 
       const mediaType = contentType.split('/')[0];
 
-      ctx.status = 200;
-      ctx.body = readStream;
-      ctx.set('Content-Type', contentType);
+      // ctx.status = 200;
+      // ctx.body = readStream;
+      // ctx.set('Content-Type', contentType);
+      ctx.meta.$responseType = 'stream';
+      ctx.meta.$responseHeaders = {
+        'Content-Type': contentType,
+      };
+      // * return { status: 200, readStream };
 
       if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
-        // if (download || !['image', 'video', 'audio'].includes(mediaType)) {
-        ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
+        // // if (download || !['image', 'video', 'audio'].includes(mediaType)) {
+        // ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
+        ctx.meta.$responseHeaders = {
+          'Content-Disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
+        };
       }
 
       if (!download && ['video', 'audio'].includes(mediaType)) {
@@ -126,9 +142,11 @@ module.exports = {
         }
 
         if (fileSize > 0) {
-          ctx.set('Content-Length', fileSize);
+          // ctx.set('Content-Length', fileSize);
+          ctx.meta.$responseHeaders = { 'Content-Length': fileSize };
           // TODO Check if Accept-Ranges header is needed and streaming implications
-          ctx.set('Accept-Ranges', 'bytes');
+          // ctx.set('Accept-Ranges', 'bytes');
+          ctx.meta.$responseHeaders = { 'Accept-Ranges': 'bytes' };
         }
 
         /*
