@@ -1,11 +1,11 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/mongodb-helpers": "0.0.31",
+    "@leemons/mongodb-helpers": "0.0.32",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/menu-builder",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
