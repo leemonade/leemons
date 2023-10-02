@@ -2,6 +2,9 @@ name: DEV Upload plugins dockers
 on:
   workflow_call:
     inputs:
+      NPM_TAG:
+        required: true
+        type: string
       IMAGE_TAG:
         required: true
         type: string
@@ -46,6 +49,9 @@ jobs:
       - name: 🔧 Set up docker caching layer
         uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
+
+      - name: 🔧 Change package versions
+        run: bash scripts/change_plugins_version.sh ./packages ${{ inputs.NPM_TAG }}
 
       - name: 🔧 Compile all dockers
         run: bash scripts/build_dockers_by_folder.sh ./plugins
