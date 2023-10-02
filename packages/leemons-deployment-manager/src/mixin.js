@@ -43,7 +43,7 @@ async function modifyCTX(
   ctx.logger = console;
 
   ctx.prefixPN = function (string) {
-    return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
+    return `${getPluginNameFromServiceName(ctx.service.name)}${string ? '.' : ''}${string}`;
   };
 
   ctx.emit = async function (event, params, opts) {

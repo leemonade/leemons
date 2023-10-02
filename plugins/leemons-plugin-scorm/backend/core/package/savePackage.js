@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { validateSavePackage, savePackageSchema } = require('../../validations/forms');
+const { LeemonsError } = require('@leemons/error');
 
 /**
  * Saves a package.
@@ -10,12 +11,12 @@ const { validateSavePackage, savePackageSchema } = require('../../validations/fo
  * @returns {Promise<Object>} - The saved package.
  * @throws {Error} - If the user session is not provided.
  */
-async function savePackage(scormData, { userSession, transacting } = {}) {
+async function savePackage({ scormData, ctx }) {
   const data = _.cloneDeep(scormData);
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
 
   // Check is userSession is provided
-  if (!userSession) throw new Error('User session is required (savePackage)');
+  if (!ctx.meta.userSession)
+    throw new LeemonsError(ctx, { message: 'User session is required (savePackage)' });
 
   // Clean data to allowed properties
   if (!savePackageSchema.additionalProperties) {
@@ -75,23 +76,20 @@ async function savePackage(scormData, { userSession, transacting } = {}) {
   // Check if it is an editing scenario and both file and packageAsset are present
   if (isEditing && data.file && data.packageAsset) {
     // Update the existing package asset
-    packageAsset = await leemons.getPlugin('leebrary').services.assets.update(
-      {
+    packageAsset = await ctx.tx.call('leebrary.assets.update', {
+      data: {
         ...packageAssetProps,
         id: data.packageAsset,
       },
-      {
-        published: data.published,
-        userSession,
-        transacting,
-      }
-    );
+      published: data.published,
+    });
   } else if (data.file) {
     // Create a new package asset
-    packageAsset = await leemons.getPlugin('leebrary').services.assets.add(packageAssetProps, {
-      published: data.published,
-      userSession,
-      transacting,
+    packageAsset = await ctx.tx.call('leebrary.assets.add', {
+      asset: packageAssetProps,
+      options: {
+        published: data.published,
+      },
     });
   }
 
@@ -106,18 +104,13 @@ async function savePackage(scormData, { userSession, transacting } = {}) {
   if (isEditing) {
     // In editing scenario, update the existing assignable
     delete toSave.role;
-    assignable = await assignableService.updateAssignable(
-      { id: data.id, ...toSave },
-      {
-        userSession,
-        transacting,
-        published: data.published,
-      }
-    );
+    assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+      assignable: { id: data.id, ...toSave },
+      published: data.published,
+    });
   } else {
-    assignable = await assignableService.createAssignable(toSave, {
-      userSession,
-      transacting,
+    assignable = await ctx.tx.call('assignables.assignables.createAssignable', {
+      assignable: toSave,
       published: data.published,
     });
   }

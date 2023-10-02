@@ -2463,6 +2463,19 @@
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
+"@leemons/error@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.12.tgz#96139b6d8630d97f0364a09dccfd32dfb818ba8c"
+  integrity sha512-Qz+5wVFvjA3AaOWVXwkauI8/b7N0OQQSJ/6pQ4v2igNj2TpkEUbI63fomxNfjC7PZtvPVG7KoZ2V5UIRHvxiCg==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.11"
+    lodash "^4.17.21"
+
+"@leemons/service-name-parser@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.11.tgz#e793095c1cf7e3a5b8d53b0a29ef3d8ab9e0c634"
+  integrity sha512-7T/slMi7PZFCURWI/hL2IZum++9fgTWNaiuxXvn2o+1Eqy53Pt71AoSeqRS0x5dG7osjtwPgpcTwSU9QwSTUpA==
+
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
   resolved "https://registry.npmjs.org/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz"
