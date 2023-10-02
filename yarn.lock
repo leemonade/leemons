@@ -1602,9 +1602,9 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@bubbles-ui/calendars@dev":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.7.tgz#a0d0d44a0af4577cdbbbabc712780e19e58c0cdf"
-  integrity sha512-dtUjg8cHhTzwmqWrK4uTxOU3iA2KkISUXdJU5cTMYYlX/YSug9rOmVAOqHPlCLv71HW8oaT/r3zBWS0lUquVQQ==
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.8.tgz#f63e8a711bff7a2b665bc892b19d7cfa7179ad20"
+  integrity sha512-3Oosvvxz4YTfBpNknPHo4c3trgnf1XfJVCeHYX47maI8tvKqN6DrHnhogUf57O7okPnsTRWGe3AKciGEOmw57Q==
   dependencies:
     colord "^2.9.2"
     dom-helpers "^5.2.1"
@@ -1616,11 +1616,11 @@
     rrule "^2.6.8"
 
 "@bubbles-ui/components@dev":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.7.tgz#6811f9788c10bdee9bc3d6943718b81b329edfdf"
-  integrity sha512-lItsivAdxwqUEYXA4Yy8POynPalZbkM/vzNjZXZ4U5vOnczyaHgV+SOaX9aJi/dt8+ZwkoDurZazSqu+A3AMhw==
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.8.tgz#380babdec1f8450591d240c72d6b63975d3d902e"
+  integrity sha512-qvpK59cR5XUhFNcdo4FRYZl5bkRfpbkXEYHKEeY/MTI16gSWNE92rRvSqerDuQ9A5Tcqf/Jc+Zre9083YScHOQ==
   dependencies:
-    "@bubbles-ui/icons" "^1.2.7"
+    "@bubbles-ui/icons" "^1.2.8"
     "@emotion/react" "^11.10.0"
     "@heroicons/react" "^1.0.5"
     "@leemonade/react-dnd-treeview" "^1.5.44"
@@ -1655,9 +1655,9 @@
     uuid "^8.3.2"
 
 "@bubbles-ui/editors@dev":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.7.tgz#1d289f0250cc2a09a37bda48134ecfc4de8514a7"
-  integrity sha512-VS7hOnbe1XVFwavXrOnGz6T6q7LpsIieYSCMW436vlG4m+KjGU7l3TC8qsuSCxlKbxbTXlMwiWYm/6pPoqBP0A==
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.8.tgz#11ee6dce302e4e9d76c2a806b80112ea7449ee76"
+  integrity sha512-UAqQk6d3dZSHcKg46wcCJfiGrnxO2bIdjaImdp1bersEk9jCYAHW3gtFXINf5o/TUV388IYBHc6vwozN3zqyNA==
   dependencies:
     "@tiptap/extension-character-count" "^2.0.0-beta.25"
     "@tiptap/extension-code-block-lowlight" "^2.0.0-beta.68"
@@ -1690,15 +1690,15 @@
     styled-components "^5.3.3"
     styled-icons "^10.45.0"
 
-"@bubbles-ui/icons@^1.2.7", "@bubbles-ui/icons@dev":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.7.tgz#a73ede4385aba15bb8c8bd780fedb77fbd40a8e7"
-  integrity sha512-yQHjrzPqP7FGOqPXlp/3o7gseZn+m+n1/p7Az7r3bBva1ipeaE5zzDcjddZIjIVa6BssbU8wn7LZJPxGyY7p4Q==
+"@bubbles-ui/icons@^1.2.8", "@bubbles-ui/icons@dev":
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.8.tgz#ad2da271335d515bdeb3f73b51810fd181a1830b"
+  integrity sha512-nUrkqt1/VPPqqpbl2v8kZ8jXnm8v2IqwXBWvI3YEIFM90GASwA9la4KPm8k8WiflyVq5XP+A2R8uGW2HYWM5/A==
 
 "@bubbles-ui/leemons@dev":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.7.tgz#4de23f24b003aa7e8582b266cf55c0287fb5a524"
-  integrity sha512-xU7aOp46RVBM6xw2lyqvf5qX3gwOcAr0jWiWTJlUDq0FBIj37iahTbNpC0mLMF8eAgI7L3j1oWEYRkVxODOTLw==
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.8.tgz#778a731da352060d6a0af3311b9345766597c60d"
+  integrity sha512-Lx9w6SihuUAaFMEAkn8PZMfJ05+Kq1z3kyzey8dFEl96MaV0AI4oiqbb6ok1xiZE9ygLp3CPz7jZ3wSE6eH5iA==
   dependencies:
     "@leemonade/rjsf-core" "^3.0.0"
     "@rjsf/core" "^3.2.1"
@@ -1720,9 +1720,9 @@
     uuid "^8.3.2"
 
 "@bubbles-ui/notifications@dev":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.7.tgz#e02de4c32c3628e1e75adf44d394274a70c5b8ab"
-  integrity sha512-9EFC/w0ICafC86QzSEBDotk8VwbfULQSGwOnAM2tdwdNoKZZCg00PLP5jPqKF0kKysdMNmW9/zES5JE/SoakWg==
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.8.tgz#9d336f3e1c82bcf6635c5e31702b2d21e0fe8a5e"
+  integrity sha512-o02aRTY03eO51Fm+zR8nXb2RqH8+oddELgfgX6wVJ4bs33igVwxxSopVQqDfV1csaGTPYVbKwAEByU8yY+dwTw==
   dependencies:
     "@mantine/notifications" "5.5.5"
     lodash "^4.17.21"
@@ -1981,9 +1981,9 @@
     eslint-visitor-keys "^3.3.0"
 
 "@eslint-community/regexpp@^4.6.1":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.9.0.tgz#7ccb5f58703fa61ffdcbf39e2c604a109e781162"
-  integrity sha512-zJmuCWj2VLBt4c25CfBIbMZLGLyhkvs7LznyVX5HfpzeocThgIj5XQK4L+g3U36mMcx8bPMhGyPpwCATamC4jQ==
+  version "4.9.1"
+  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.9.1.tgz#449dfa81a57a1d755b09aa58d826c1262e4283b4"
+  integrity sha512-Y27x+MBLjXa+0JWDhykM3+JE+il3kHKAEqabfEWq3SDhZjLYb6/BHL/JKFnH3fe207JaXkyDo685Oc2Glt6ifA==
 
 "@eslint/eslintrc@^2.1.2":
   version "2.1.2"
@@ -2674,14 +2674,6 @@
   integrity sha512-inxvLe/JbVk7J2Y1yyhNsfuog9MVI9THoFSwbOICbtr7hScM8gJQAe6TRBUWqx8QkeDwXn5PJ4NRSD5Hon1NGQ==
   dependencies:
     "@leemons/service-name-parser" "0.0.10"
-    lodash "^4.17.21"
-
-"@leemons/error@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.12.tgz#96139b6d8630d97f0364a09dccfd32dfb818ba8c"
-  integrity sha512-Qz+5wVFvjA3AaOWVXwkauI8/b7N0OQQSJ/6pQ4v2igNj2TpkEUbI63fomxNfjC7PZtvPVG7KoZ2V5UIRHvxiCg==
-  dependencies:
-    "@leemons/service-name-parser" "0.0.11"
     lodash "^4.17.21"
 
 "@leemons/lrn@0.0.10":
@@ -10261,9 +10253,9 @@ fast-xml-parser@4.2.5:
     strnum "^1.0.5"
 
 fast-xml-parser@^4.2.7:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.1.tgz#4f89c31e4c392d6e3d68b299733cad0c2d50d495"
-  integrity sha512-viVv3xb8D+SiS1W4cv4tva3bni08kAkx0gQnWrykMM8nXPc1FxqZPU00dCEVjkiCg4HoXd2jC4x29Nzg/l2DAA==
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-4.3.2.tgz#761e641260706d6e13251c4ef8e3f5694d4b0d79"
+  integrity sha512-rmrXUXwbJedoXkStenj1kkljNF7ugn5ZjR9FJcwmCfcCbtOMDghPajbc+Tck6vE6F5XsDmx+Pr2le9fw8+pXBg==
   dependencies:
     strnum "^1.0.5"
 
