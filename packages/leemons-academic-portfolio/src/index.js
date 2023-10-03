@@ -5,3 +5,5 @@ module.exports = {
   registerAssignableRolesDeploy,
   getCourseName,
 };
+
+// test
