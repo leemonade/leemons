@@ -83,7 +83,7 @@ async function sendEmail({
                   ...instance.assignable.asset,
                   color: instance.assignable.asset.color || '#D9DCE0',
                   url:
-                    (hostnameApi || hostname || ctx.request.header.origin) +
+                    (hostnameApi || hostname) +
                     (await ctx.tx.call('leebrary.assets.getCoverUrl', {
                       assetId: instance.assignable.asset.id,
                     })),
@@ -92,14 +92,12 @@ async function sendEmail({
             },
             classes,
             classColor,
-            btnUrl: `${hostname || ctx.request.header.origin}/private/assignables/ongoing`,
+            btnUrl: `${hostname}/private/assignables/ongoing`,
             subjectIconUrl: null,
             taskDate: date,
             userSession: {
               ...userSession,
-              avatarUrl: userSession.avatar
-                ? (hostnameApi || hostname || ctx.request.header.origin) + userSession.avatar
-                : null,
+              avatarUrl: userSession.avatar ? (hostnameApi || hostname) + userSession.avatar : null,
             },
           },
           centerId: userAgent.center.id,

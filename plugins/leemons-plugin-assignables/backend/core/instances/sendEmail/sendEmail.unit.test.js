@@ -137,7 +137,6 @@ describe('sendEmail function', () => {
       },
     });
 
-    set(ctx, 'request.header.origin', 'localhost');
     set(ctx, 'meta.userSession.avatar', '/url');
 
     getConfigHandle.mockResolvedValueOnce(true).mockResolvedValueOnce(1);
@@ -151,6 +150,7 @@ describe('sendEmail function', () => {
     const mockParams = {
       instance: { ...instance, dates: { ...instance.dates, deadline: undefined } },
       userAgent: { user: { id: 'userId' }, center: { id: 'centerId' } },
+      hostnameApi: 'localhost',
       classes: [{ color: '#67728E' }],
       ignoreUserConfig: false,
       isReminder: true,
