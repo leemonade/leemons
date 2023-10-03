@@ -1,0 +1,23 @@
+name: DEV Publish packages & publish dockers
+on:
+  push:
+    tags:
+      - '*.*.*-test'
+
+jobs:
+  publish_packages_to_npm:
+    name: Get packages and plugins modified
+    uses: ./.github/workflows/get-packages-and-plugin-modified.yml
+    with:
+      tag_pattern: '*.*.*-test'
+    secrets: inherit
+  job2:
+    runs-on: ubuntu-latest
+    needs: publish_packages_to_npm
+    steps:
+      - name: Display modified packages
+        run: 'echo "Modified packages: " ${{ needs.publish_packages_to_npm.outputs.packages }}'
+      - name: Display modified plugins
+        run: 'echo "Modified plugins: " ${{ needs.publish_packages_to_npm.outputs.plugins }}'
+
+
