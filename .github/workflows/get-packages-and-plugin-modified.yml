@@ -17,6 +17,9 @@ jobs:
   publish:
 
     runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.packages.outputs.packages }}
+      plugins: ${{ steps.plugins.outputs.plugins }}
     steps:
 
       - name: 🛎️ Checkout
@@ -24,14 +27,16 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: 📝 Get modified files
-        id: files
-        run: |
-          LAST_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1)
-          CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)
-          echo "::set-output name=packages::$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^packages/')"
-          echo "::set-output name=plugins::$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^plugins/')"
+      - name: 🔧 Get last tag
+        run: LAST_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1)
 
+      - name: 🔧 Get current tag
+        run: CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)
+        
+      - name: 🔧 Get packages files
+        id: packages
+        run:  echo "packages=$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^packages/')" >> $GITHUB_OUTPUT
 
-
-
+      - name: 🔧 Get plugins files
+        id: plugins
+        run:  echo "plugins=$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^plugins/')" >> $GITHUB_OUTPUT
