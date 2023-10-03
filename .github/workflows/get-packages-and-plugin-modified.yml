@@ -27,8 +27,8 @@ jobs:
       - name: 📝 Get modified files
         id: files
         run: |
-          LAST_TAG=$(git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1` | grep ${{ inputs.tag_pattern }})
-          CURRENT_TAG=$(git describe --abbrev=0 --tags | grep ${{ inputs.tag_pattern }})
+          LAST_TAG=git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1
+          CURRENT_TAG=git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1
           echo "::set-output name=packages::$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^packages/')"
           echo "::set-output name=plugins::$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^plugins/')"
 
