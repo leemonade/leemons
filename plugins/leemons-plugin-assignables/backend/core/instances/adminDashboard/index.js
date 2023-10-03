@@ -1,3 +1,3 @@
-const adminDashboard = require('./adminDashboard');
+const { adminDashboard } = require('./adminDashboard');
 
 module.exports = { adminDashboard };

@@ -1,3 +1,3 @@
-const getInstancesStatus = require('./getInstancesStatus');
+const { getInstancesStatus } = require('./getInstancesStatus');
 
 module.exports = { getInstancesStatus };

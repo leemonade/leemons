@@ -1,3 +1,3 @@
-const createInstance = require('./createInstance');
+const { createInstance } = require('./createInstance');
 
 module.exports = { createInstance };

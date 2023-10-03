@@ -2,16 +2,16 @@ const { diffHours } = require('leemons-utils');
 /**
  * Sends an email with the instance details.
  *
- * @param {Object} options - The options object.
- * @param {Object} options.instance - The instance to send.
- * @param {Object} options.userAgent - The user agent.
- * @param {Array} options.classes - The classes.
- * @param {string} options.hostname - The hostname.
- * @param {string} options.hostnameApi - The API hostname.
- * @param {boolean} options.ignoreUserConfig - Ignore user configuration.
- * @param {boolean} options.isReminder - If it is a reminder.
+ * @param {Object} params - The params object.
+ * @param {Object} params.instance - The instance to send.
+ * @param {Object} params.userAgent - The user agent.
+ * @param {Array} params.classes - The classes.
+ * @param {string} params.hostname - The hostname.
+ * @param {string} params.hostnameApi - The API hostname.
+ * @param {boolean} params.ignoreUserConfig - Ignore user configuration.
+ * @param {boolean} params.isReminder - If it is a reminder.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
- * @return {Promise} A promise that resolves when the email has been sent.
+ * @return {Promise<void>} A promise that resolves when the email has been sent.
  */
 
 async function sendEmail({
