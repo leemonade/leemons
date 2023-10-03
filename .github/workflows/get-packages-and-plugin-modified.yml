@@ -35,10 +35,10 @@ jobs:
         
       - name: 🔧 Get packages files
         id: packages
-        run:  echo "packages=$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^packages/' | cut -d/ -f2 | sort | uniq)" >> $GITHUB_OUTPUT
+        run:  echo "packages=$(git diff --name-only 0.0.50-mdev 0.0.1-mdev | grep '^packages/' | cut -d/ -f2 | sort | uniq)" >> $GITHUB_OUTPUT
 
       - name: 🔧 Get plugins files
         id: plugins
-        run:  echo "plugins=$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^plugins/' | cut -d/ -f2 | awk -F'/' '/backend/{print $2}' | sort | uniq)" >> $GITHUB_OUTPUT
+        run:  echo "plugins=$(git diff --name-only 0.0.50-mdev 0.0.1-mdev | grep '^plugins/.*/backend' | cut -d/ -f2 | sort | uniq)" >> $GITHUB_OUTPUT
 
 
