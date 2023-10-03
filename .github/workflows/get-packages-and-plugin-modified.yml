@@ -42,7 +42,14 @@ jobs:
         run:  echo "plugins=$(git diff --name-only $LAST_TAG $CURRENT_TAG | grep '^plugins/')" >> $GITHUB_OUTPUT
 
       - name: 🔧 Log
-        run:  echo ${{ steps.packages.outputs.packages }}
+        run:  echo $LAST_TAG
 
       - name: 🔧 Log
-        run:  echo ${{ steps.plugins.outputs.plugins }}
+        run:  echo $CURRENT_TAG
+
+      - name: 🔧 Log
+        run:  'echo "Modified packages: " "${{ steps.packages.outputs.packages }}"'
+
+      - name: 🔧 Log
+        run:  'echo "Modified plugins: " "${{ steps.plugins.outputs.plugins }}"'
+
