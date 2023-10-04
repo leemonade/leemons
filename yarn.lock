@@ -2388,8 +2388,8 @@
     "@leemons/service-name-parser" "0.0.33"
     lodash "^4.17.21"
 
-"@leemons/emails@0.0.33", "@leemons/emails@file:/home/runner/work/leemons/leemons/packages/leemons-emails":
-  version "0.0.33"
+"@leemons/emails@0.0.34", "@leemons/emails@file:/home/runner/work/leemons/leemons/packages/leemons-emails":
+  version "0.0.34"
   resolved "file:packages/leemons-emails"
 
 "@leemons/error@0.0.33", "@leemons/error@file:/home/runner/work/leemons/leemons/packages/leemons-error":
@@ -2550,12 +2550,7 @@
     "@leemons/mongodb-helpers" "0.0.33"
     lodash "^4.17.21"
 
-"@leemons/xapi@0.0.32":
-  version "0.0.32"
-  resolved "https://registry.npmjs.org/@leemons/xapi/-/xapi-0.0.32.tgz"
-  integrity sha512-NzWaDqhNzEYpE9VEQM9D7XQO86TEgQSd4FGhUgno/nZVt5q6a4xHATv302y/zgcU+A/nIxfiY5x8U5t1RQAiZw==
-
-"@leemons/xapi@file:/home/runner/work/leemons/leemons/packages/leemons-xapi":
+"@leemons/xapi@0.0.33", "@leemons/xapi@file:/home/runner/work/leemons/leemons/packages/leemons-xapi":
   version "0.0.33"
   resolved "file:packages/leemons-xapi"
 
@@ -12710,7 +12705,7 @@ leemons-plugin-academic-calendar-frontend-react@1.0.0, "leemons-plugin-academic-
     react-to-print "^2.14.13"
 
 leemons-plugin-academic-calendar@1.0.0, "leemons-plugin-academic-calendar@file:/home/runner/work/leemons/leemons/plugins/leemons-plugin-academic-calendar/backend":
-  version "1.0.0"
+  version "1.0.3"
   resolved "file:plugins/leemons-plugin-academic-calendar/backend"
   dependencies:
     "@leemons/cache" "0.0.33"
@@ -12764,7 +12759,7 @@ leemons-plugin-academic-portfolio@1.0.0, "leemons-plugin-academic-portfolio@file
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
     moleculer "^0.14.26"
@@ -12806,7 +12801,7 @@ leemons-plugin-admin@1.0.0, "leemons-plugin-admin@file:/home/runner/work/leemons
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     colord "^2.9.3"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
@@ -12846,7 +12841,7 @@ leemons-plugin-assignables@1.0.0, "leemons-plugin-assignables@file:/home/runner/
     "@leemons/permissions" "0.0.33"
     "@leemons/testing" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     jaeger-client "^3.19.0"
     jest "^29.6.2"
     lodash "^4.17.21"
@@ -12882,7 +12877,7 @@ leemons-plugin-attendance-control@1.0.0, "leemons-plugin-attendance-control@file
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
     moleculer "^0.14.26"
@@ -12918,7 +12913,7 @@ leemons-plugin-board-messages@1.0.0, "leemons-plugin-board-messages@file:/home/r
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
     moleculer "^0.14.26"
@@ -12983,7 +12978,7 @@ leemons-plugin-calendar@1.0.0, "leemons-plugin-calendar@file:/home/runner/work/l
     "@leemons/permissions" "0.0.33"
     "@leemons/users" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
     moleculer "^0.14.26"
@@ -13171,7 +13166,7 @@ leemons-plugin-dashboard@1.0.0, "leemons-plugin-dashboard@file:/home/runner/work
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
     moleculer "^0.14.26"
@@ -13298,7 +13293,7 @@ leemons-plugin-emails-smtp@1.0.0, "leemons-plugin-emails-smtp@file:/home/runner/
     nodemailer-plugin-inline-base64 "^2.1.1"
 
 leemons-plugin-emails@1.0.0, "leemons-plugin-emails@file:/home/runner/work/leemons/leemons/plugins/leemons-plugin-emails/backend":
-  version "1.0.0"
+  version "1.0.2"
   resolved "file:plugins/leemons-plugin-emails/backend"
   dependencies:
     "@leemons/cache" "0.0.33"
@@ -13375,7 +13370,7 @@ leemons-plugin-families@1.0.0, "leemons-plugin-families@file:/home/runner/work/l
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
     moleculer "^0.14.26"
@@ -13568,7 +13563,7 @@ leemons-plugin-learning-paths@1.0.0, "leemons-plugin-learning-paths@file:/home/r
     "@leemons/multi-events" "0.0.33"
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     ioredis "^5.3.2"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
@@ -13610,7 +13605,7 @@ leemons-plugin-leebrary@1.0.0, "leemons-plugin-leebrary@file:/home/runner/work/l
     "@leemons/multilanguage" "0.0.33"
     "@leemons/permissions" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     got "^13.0.0"
     jaeger-client "^3.19.0"
     lodash "^4.17.21"
@@ -13688,7 +13683,7 @@ leemons-plugin-mqtt-aws-iot@1.0.0, "leemons-plugin-mqtt-aws-iot@file:/home/runne
     "@leemons/permissions" "0.0.33"
     "@leemons/utils" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     aws-iot-device-sdk "^2.2.12"
     aws-sdk "^2.1463.0"
     jaeger-client "^3.19.0"
@@ -13979,7 +13974,7 @@ leemons-plugin-users-frontend-react@1.0.0, "leemons-plugin-users-frontend-react@
     swr "^0.5.6"
 
 leemons-plugin-users@1.0.0, "leemons-plugin-users@file:/home/runner/work/leemons/leemons/plugins/leemons-plugin-users/backend":
-  version "1.0.0"
+  version "1.0.2"
   resolved "file:plugins/leemons-plugin-users/backend"
   dependencies:
     "@leemons/cache" "0.0.33"
@@ -13997,7 +13992,7 @@ leemons-plugin-users@1.0.0, "leemons-plugin-users@file:/home/runner/work/leemons
     "@leemons/users" "0.0.33"
     "@leemons/utils" "0.0.33"
     "@leemons/validator" "0.0.33"
-    "@leemons/widgets" "0.0.32"
+    "@leemons/widgets" "0.0.33"
     bcrypt "^5.0.1"
     jaeger-client "^3.19.0"
     jsonwebtoken "^9.0.0"
