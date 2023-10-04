@@ -59,9 +59,6 @@ jobs:
         id: plugins_versions
         run:  echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
 
-      - name: 🔧 Log plugins versios
-        run:  echo "${{ steps.plugins_versions.outputs.plugins_versions }}"
-
       # Compila todos los dockers de los plugins modificados
       - name: 🔧 Compile all dockers
         run: bash scripts/build_dockers_by_names_versions.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
@@ -74,6 +71,12 @@ jobs:
       - name: 🔧 Check for modified files
         id: git-check
         run: echo 'modified=$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)' >> $GITHUB_OUTPUT
+
+      - name: 🔧 Log plugins versios
+        run:  git status
+
+      - name: 🔧 Log plugins versios
+        run:  echo "${{ steps.git-check.outputs.modified }}"
 
       - name: 🚀 Git push
         if: steps.git-check.outputs.modified == 'true'
