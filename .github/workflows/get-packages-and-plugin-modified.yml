@@ -41,4 +41,10 @@ jobs:
         id: plugins
         run:  echo "plugins=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^plugins/.*/backend' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
 
+      - name: 🔧 Log plugins
+        run:  echo "${{ steps.plugins.outputs.plugins }}"
+
+      - name: 🔧 Log packages
+        run:  echo "${{ steps.packages.outputs.packages }}"
+
 
