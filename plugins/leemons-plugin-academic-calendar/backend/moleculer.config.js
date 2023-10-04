@@ -198,6 +198,6 @@ module.exports = {
   // Called after broker started.
   // async started(broker) {},
 
-  // Called after broker stopped.ddd
+  // Called after broker stopped.ddddd
   // async stopped(broker) {},
 };
