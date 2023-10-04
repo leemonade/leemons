@@ -15,7 +15,7 @@ const {
 } = require('../../teachers/addTeachersToAssignableInstance');
 const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
 const { registerDates } = require('../../dates/registerDates');
-const { updateAssignableInstance } = require('../updateAssignableInstance');
+const { updateInstance } = require('../updateInstance');
 const { addPermissionToUser } = require('../../permissions/users/instances/addPermissionToUser');
 
 jest.mock('../../assignables/getAssignable');
@@ -25,7 +25,7 @@ jest.mock('./getTeachersOfGivenClasses');
 jest.mock('../../teachers/addTeachersToAssignableInstance');
 jest.mock('./createEventAndAddToUsers');
 jest.mock('../../dates/registerDates');
-jest.mock('../updateAssignableInstance');
+jest.mock('../updateInstance');
 jest.mock('../../permissions/users/instances/addPermissionToUser');
 jest.mock('../../assignations/createAssignation');
 
@@ -153,7 +153,7 @@ it('Should create an assignable instance correctly', async () => {
     ctx,
   });
 
-  expect(updateAssignableInstance).toBeCalledWith({
+  expect(updateInstance).toBeCalledWith({
     assignableInstance: {
       id: instance.id,
       relatedAssignableInstances: instance.relatedAssignableInstances,

@@ -2,7 +2,7 @@ const { LeemonsValidator } = require('leemons-validator');
 
 const _ = require('lodash');
 
-const assignableInstanceValidationObject = {
+const instanceValidationObject = {
   type: 'object',
   properties: {
     assignable: {
@@ -87,7 +87,7 @@ const assignableInstanceValidationObject = {
   },
 };
 
-const assignableInstanceRequiredProperties = [
+const instanceRequiredProperties = [
   'assignable',
   'alwaysAvailable',
   'dates',
@@ -96,11 +96,11 @@ const assignableInstanceRequiredProperties = [
   'allowFeedback',
 ];
 
-function validateAssignableInstance({ assignable, useRequired = false }) {
-  const obj = _.clone(assignableInstanceValidationObject);
+function validateInstance({ assignable, useRequired = false }) {
+  const obj = _.clone(instanceValidationObject);
 
   if (useRequired) {
-    obj.required = assignableInstanceRequiredProperties;
+    obj.required = instanceRequiredProperties;
   }
 
   const validator = new LeemonsValidator(obj);
@@ -111,7 +111,7 @@ function validateAssignableInstance({ assignable, useRequired = false }) {
 }
 
 module.exports = {
-  assignableInstanceValidationObject,
-  assignableInstanceRequiredProperties,
-  validateAssignableInstance,
+  instanceValidationObject,
+  instanceRequiredProperties,
+  validateInstance,
 };

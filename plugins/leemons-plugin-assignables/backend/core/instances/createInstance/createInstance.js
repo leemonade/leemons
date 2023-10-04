@@ -1,5 +1,5 @@
 const { registerDates } = require('../../dates');
-const { validateAssignableInstance } = require('../../helpers/validators/assignableInstance');
+const { validateInstance } = require('../../helpers/validators/instance');
 const { getAssignable } = require('../../assignables/getAssignable');
 const { registerClass } = require('../../classes');
 const { registerPermission } = require('../../permissions/instances/registerPermission');
@@ -9,7 +9,7 @@ const {
   addTeachersToAssignableInstance,
 } = require('../../teachers/addTeachersToAssignableInstance');
 
-const { updateAssignableInstance } = require('../updateAssignableInstance');
+const { updateInstance } = require('../updateInstance');
 
 const { getTeachersOfGivenClasses } = require('./getTeachersOfGivenClasses');
 const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
@@ -18,7 +18,7 @@ const { emitLeemonsEvent } = require('./emitLeemonsEvent');
 async function createInstance({ assignableInstance, createEvent = true, ctx }) {
   // EN: Validate the assignable instance properties
   // ES: Validar las propiedades del asignable instance
-  validateAssignableInstance({ assignable: assignableInstance, useRequired: true });
+  validateInstance({ assignable: assignableInstance, useRequired: true });
 
   const {
     dates,
@@ -95,7 +95,7 @@ async function createInstance({ assignableInstance, createEvent = true, ctx }) {
     relatedAssignableInstances?.after?.length ||
     relatedAssignableInstances?.blocking?.length
   ) {
-    await updateAssignableInstance({
+    await updateInstance({
       assignableInstance: {
         id,
         relatedAssignableInstances,

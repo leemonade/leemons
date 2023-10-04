@@ -85,8 +85,6 @@ describe('sendEmail function', () => {
       centerId: 'centerId',
     });
     expect(spyLogger).toHaveBeenCalled();
-    //   `Email enviado a ${mockParams.userAgent.user.email}`
-    // );
   });
 
   test('should not send email if canSend is false', async () => {
