@@ -12,9 +12,6 @@ on:
       PLUGINS:
         required: true
         type: string
-      NPM_TAG:
-        required: true
-        type: string
       AWS_REGION:
         required: true
         type: string
@@ -53,11 +50,17 @@ jobs:
         uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
 
+      - name: 🔧 Log plugins
+        run:  echo "${{ inputs.PLUGINS }}"
+
       # Actualiza los plugins con las nuevas versiones de los packages y tambien sube una version patch a todos los plugins implicados
       # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
       - name: 🔧 Change package versions in plugins and change plugins versions
         id: plugins_versions
         run:  echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Log plugins versios
+        run:  echo "${{ steps.plugins_versions.outputs.plugins_versions }}"
 
       # Compila todos los dockers de los plugins modificados
       - name: 🔧 Compile all dockers

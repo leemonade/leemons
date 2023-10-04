@@ -26,7 +26,9 @@ jobs:
 
   build_and_publish_dockers:
     name: Build and publish dockers
-    needs: publish_packages_to_npm
+    needs: 
+      - publish_packages_to_npm
+      - get_packages_and_plugins_modified
     uses: ./.github/workflows/upload-plugins-dockers-v2.yml
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
