@@ -191,6 +191,36 @@ const Template = ({
           </Box>
         }
       />
+      <LibraryCard
+        {...props}
+        // eslint-disable-next-line dot-notation
+        asset={assetChecker['true']}
+        deadlineProps={isCurriculum ? null : deadlineProps}
+        assigment={!isCurriculum && showAssigment ? assigment : null}
+        variant="document"
+        action={showAction ? action : undefined}
+        subject={showSubject ? subject : undefined}
+        variantIcon={
+          <Box style={{ position: 'relative', width: 14, height: 14 }}>
+            <ImageLoader src={`/img/library/tasks.svg`} width={14} height={14} />
+          </Box>
+        }
+      />
+      <LibraryCard
+        {...props}
+        // eslint-disable-next-line dot-notation
+        asset={assetChecker['true']}
+        deadlineProps={isCurriculum ? null : deadlineProps}
+        assigment={!isCurriculum && showAssigment ? assigment : null}
+        variant="document"
+        action={showAction ? action : undefined}
+        subject={showSubject ? subject : undefined}
+        variantIcon={
+          <Box style={{ position: 'relative', width: 14, height: 14 }}>
+            <ImageLoader src={`/img/library/tasks.svg`} width={14} height={14} />
+          </Box>
+        }
+      />
     </Box>
   );
 };

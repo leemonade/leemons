@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { isNil } from 'lodash';
 import { Box } from '@bubbles-ui/components';
+import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
 import { LibraryCardCover } from '../LibraryCardCover';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
@@ -26,11 +27,16 @@ const LibraryCard = ({
   subject,
   fullHeight,
   excludeMetadatas,
+  isLoading,
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
+
+  if (isLoading) {
+    return <LibraryCardSkeleton />;
+  }
 
   return (
     <Box

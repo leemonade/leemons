@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { Box, Skeleton } from '@bubbles-ui/components';
 import React from 'react';
 import { LibraryCardSkeletonStyles } from './LibraryCardSkeleton.styles';
@@ -8,7 +7,7 @@ const LibraryCardSkeleton = () => {
   return (
     <Box className={classes.root}>
       <Box className={classes.subjectCover} />
-      <Skeleton height={140} radius={0} />
+      <Skeleton height={144} radius={0} />
       <Box className={classes.cardContent}>
         <Skeleton height={16} width={61} radius={100} />
         <Skeleton height={12} width={186} radius={100} mt={8} />
@@ -33,5 +32,5 @@ const LibraryCardSkeleton = () => {
     </Box>
   );
 };
-
+export default LibraryCardSkeleton;
 export { LibraryCardSkeleton };

@@ -5,6 +5,7 @@ import { LibraryCard } from './LibraryCard';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARYCARD_VARIANTS } from './LibraryCard.constants';
 import { LIBRARYCARD_ASSIGMENT_ROLES } from '../Library.constants';
 import { AUDIO_ASSET, URL_ASSET, CURRICULUM_ASSET } from './mock/data';
+import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
 
 export default {
   title: 'leemons/Library/LibraryCard',
@@ -60,23 +61,28 @@ const Template = ({
   }
 
   return (
-    <Paper color="solid" style={{ width: 322, height: 600 }}>
-      <LibraryCard
-        {...props}
-        // eslint-disable-next-line dot-notation
-        asset={assetChecker['true']}
-        deadlineProps={isCurriculum ? null : deadlineProps}
-        assigment={!isCurriculum && showAssigment ? assigment : null}
-        variant="document"
-        action={showAction ? action : undefined}
-        subject={showSubject ? subject : undefined}
-        variantIcon={
-          <Box style={{ position: 'relative', width: 14, height: 14 }}>
-            <ImageLoader src={`/img/library/tasks.svg`} width={14} height={14} />
-          </Box>
-        }
-      />
-    </Paper>
+    <Box style={{ display: 'flex' }}>
+      <Paper color="solid" style={{ width: 322, height: 600 }}>
+        <LibraryCard
+          {...props}
+          // eslint-disable-next-line dot-notation
+          asset={assetChecker['true']}
+          deadlineProps={isCurriculum ? null : deadlineProps}
+          assigment={!isCurriculum && showAssigment ? assigment : null}
+          variant="document"
+          action={showAction ? action : undefined}
+          subject={showSubject ? subject : undefined}
+          variantIcon={
+            <Box style={{ position: 'relative', width: 14, height: 14 }}>
+              <ImageLoader src={`/img/library/tasks.svg`} width={14} height={14} />
+            </Box>
+          }
+        />
+      </Paper>
+      <Paper color="solid" style={{ width: 322, height: 600 }}>
+        <LibraryCardSkeleton />
+      </Paper>
+    </Box>
   );
 };
 
