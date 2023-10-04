@@ -1,13 +1,5 @@
 import pdf from './google-apps-for-work-datasheet-es.pdf';
 
-// const generateCanAccess = (num) => {
-//   const canAccess = [];
-//   for (let i = 0; i < num; i += 1) {
-//     canAccess.push({ fullName: `John Doe ${i}` });
-//   }
-//   return canAccess;
-// };
-
 export const AUDIO_ASSET = {
   color: '#DC5571',
   name: 'El ritmo de la guerra y título más largo para ver desbordamiento por ellipsis',
@@ -33,8 +25,6 @@ export const AUDIO_ASSET = {
     { fullName: 'Will Teacher' },
     { fullName: 'Tony Stark' },
   ],
-
-  // canAccess: generateCanAccess(106),
 };
 
 export const YOUTUBE_ASSET = {

@@ -16,20 +16,20 @@ export default {
     },
   },
   argTypes: {
-    showImage: { control: 'boolean' },
+    testShowImage: { control: 'boolean' },
     variant: { control: { type: 'select' }, options: LIBRARYCARD_VARIANTS },
     role: { control: { type: 'select' }, options: LIBRARYCARD_ASSIGMENT_ROLES },
     onAction: { action: 'onAction' },
-    isDraft: { control: 'boolean' },
+    testIsDraft: { control: 'boolean' },
   },
 };
 
 const Template = ({
-  showImage,
-  showDescription,
-  showAction,
-  showAssigment,
-  showSubject,
+  testShowImage,
+  testShowDescription,
+  testShowAction,
+  testShowAssigment,
+  testShowSubject,
   children,
   asset,
   assigment,
@@ -44,8 +44,8 @@ const Template = ({
   const isCurriculum = variant === 'curriculum';
 
   const assetToRender = {
-    cover: showImage ? (isBookmark ? URL_ASSET.cover : asset.cover) : undefined,
-    description: showDescription ? asset.description : undefined,
+    cover: testShowImage ? (isBookmark ? URL_ASSET.cover : asset.cover) : undefined,
+    description: testShowDescription ? asset.description : undefined,
   };
 
   const assetChecker = {
@@ -66,10 +66,10 @@ const Template = ({
         // eslint-disable-next-line dot-notation
         asset={assetChecker['true']}
         deadlineProps={isCurriculum ? null : deadlineProps}
-        assigment={!isCurriculum && showAssigment ? assigment : null}
+        assigment={!isCurriculum && testShowSubject ? assigment : null}
         variant="document"
-        action={showAction ? action : undefined}
-        subject={showSubject ? subject : undefined}
+        action={testShowAction ? action : undefined}
+        subject={testShowSubject ? subject : undefined}
         variantIcon={
           <Box style={{ position: 'relative', width: 14, height: 14 }}>
             <ImageLoader src={`/img/library/tasks.svg`} width={14} height={14} />
@@ -83,17 +83,17 @@ const Template = ({
 export const Playground = Template.bind({});
 
 Playground.args = {
-  showImage: true,
-  showDescription: true,
-  showAction: true,
-  showAssigment: true,
-  showSubject: true,
+  testShowImage: true,
+  testShowDescription: true,
+  testShowAction: true,
+  testShowAssigment: true,
+  testShowSubject: true,
   testIsDraft: true,
   variant: 'media',
   action: 'View feedback',
   badge: '',
   ...LIBRARY_CARD_DEFAULT_PROPS,
-  asset: { ...AUDIO_ASSET, published: true },
+  asset: { ...AUDIO_ASSET },
   assigment: {
     completed: 0.3,
     submission: 15,
