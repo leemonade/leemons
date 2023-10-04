@@ -11,7 +11,7 @@ export { LIBRARYCARD_COVER_DIRECTIONS };
 
 export const LIBRARY_CARD_COVER_DEFAULT_PROPS = {
   blur: 5,
-  height: 180,
+  height: 144,
   menuItems: [],
   dashboard: false,
 };
@@ -48,5 +48,3 @@ export const overlayVariants = {
     },
   },
 };
-
-

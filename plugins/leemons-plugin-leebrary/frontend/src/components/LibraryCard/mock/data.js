@@ -33,6 +33,7 @@ export const AUDIO_ASSET = {
     { fullName: 'Will Teacher' },
     { fullName: 'Tony Stark' },
   ],
+
   // canAccess: generateCanAccess(106),
 };
 
@@ -114,7 +115,7 @@ export const URL_ASSET = {
 export const TASK_ASSET = {
   color: '#c8d98c',
   name: 'Leemons (la plataforma de aprendizaje gratuita, potente, flexible y amigable), descubre para ti las nuevas fronteras del aprendizaje y la enseñanza, de la mano de expertos en pedagogía, profesores y neurocientíficos.',
-  fileType: 'task',
+  fileType: 'feedback',
   created: '2022-02-04T16:26:31.485Z',
   description:
     'Leemons (la plataforma de aprendizaje gratuita, potente, flexible y amigable), descubre para ti las nuevas fronteras del aprendizaje y la enseñanza, de la mano de expertos en pedagogía, profesores y neurocientíficos.',
@@ -132,6 +133,12 @@ export const TASK_ASSET = {
     { fullName: 'Will Teacher' },
     { fullName: 'Tony Stark' },
   ],
+  category: {
+    menuItem: {
+      iconSvg:
+        'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/plugin_test_0b058cf8b7.svg',
+    },
+  },
 };
 
 export const CURRICULUM_ASSET = {

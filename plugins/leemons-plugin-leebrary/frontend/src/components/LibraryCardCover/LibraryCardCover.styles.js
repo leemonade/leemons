@@ -4,7 +4,7 @@ import { createStyles, getFontExpressive, pxToRem } from '@bubbles-ui/components
 const spaceBetween = 'space-between';
 
 export const LibraryCardCoverStyles = createStyles(
-  (theme, { color, height, blur, parentHovered, subjectColor, isFav }) => {
+  (theme, { color, height, parentHovered, subjectColor, isFav }) => {
     const isParentHovered = parentHovered ? 'visible' : 'hidden';
     return {
       root: {

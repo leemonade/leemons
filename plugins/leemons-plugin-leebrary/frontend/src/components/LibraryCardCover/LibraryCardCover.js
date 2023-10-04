@@ -9,6 +9,7 @@ import {
   LIBRARY_CARD_COVER_PROP_TYPES,
   overlayVariants,
 } from './LibraryCardCover.constants';
+import { LibraryCardEmptyCover } from '../LibraryCardEmptyCover';
 
 const LibraryCardCover = ({
   height,
@@ -20,6 +21,7 @@ const LibraryCardCover = ({
   dashboard,
   subject,
   hideDashboardIcons,
+  fileType,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isFav, setIsFav] = useState(false);
@@ -27,7 +29,6 @@ const LibraryCardCover = ({
     { color, height, parentHovered, subjectColor: subject?.color, isFav },
     { name: 'LibraryCardCover' }
   );
-
   const handleIsFav = () => {
     setIsFav(!isFav);
   };
@@ -125,7 +126,7 @@ const LibraryCardCover = ({
         {cover ? (
           <ImageLoader src={cover} height={height} width={'100%'} forceImage />
         ) : (
-          <Box className={classes.fileIcon}>{icon}</Box>
+          <LibraryCardEmptyCover icon={icon} fileType={fileType} />
         )}
       </Box>
     </AnimatePresence>

@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { isNil } from 'lodash';
-import { Box, FileIcon } from '@bubbles-ui/components';
+import { Box } from '@bubbles-ui/components';
 import { LibraryCardCover } from '../LibraryCardCover';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
@@ -31,18 +31,6 @@ const LibraryCard = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
-  const variantIconComponent = useMemo(() => {
-    if (!variantIcon) return null;
-    return React.cloneElement(variantIcon, {
-      style: {
-        position: 'relative',
-        fontSize: 64,
-        width: 55,
-        height: 55,
-        color: '#B9BEC4',
-      },
-    });
-  }, [variantIcon]);
 
   return (
     <Box
@@ -90,5 +78,5 @@ const LibraryCard = ({
 
 LibraryCard.defaultProps = LIBRARY_CARD_DEFAULT_PROPS;
 LibraryCard.propTypes = LIBRARY_CARD_PROP_TYPES;
-
+export default LibraryCard;
 export { LibraryCard };
