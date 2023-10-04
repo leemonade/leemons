@@ -7,10 +7,10 @@ if [ -z "$NODE_AUTH_TOKEN" ]; then
 fi
 
 # Paso2. Verifica que se haya proporcionado al menos un string como argumento
-IFS=',' read -ra ADDR <<< "$1"
+IFS=',' read -ra ADDR <<< "${1:-}"
 if [ ${#ADDR[@]} -eq 0 ]; then
-  echo "Uso: $0 [string1,string2,string3,...]"
-  exit 1
+  echo ""
+  exit 0
 fi
 
 # Paso 3. Verifica si se proporcionó NPM_TAG como argumento
