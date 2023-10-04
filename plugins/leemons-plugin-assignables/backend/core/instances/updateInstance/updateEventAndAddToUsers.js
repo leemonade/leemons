@@ -1,7 +1,16 @@
 const { map } = require('lodash');
 const { updateEvent } = require('../calendar/updateEvent');
 const { listInstanceClasses } = require('../../classes');
-
+/**
+ * Update an event and add it to users.
+ *
+ * @param {Object} options - The options for updating the event and adding it to users.
+ * @param {boolean} options.assignable - Flag indicating if the event is assignable.
+ * @param {Object} options.event - The event object.
+ * @param {Array} options.dates - The array of dates.
+ * @param {string} options.id - The ID of the event.
+ * @param {MoleculerContext} options.ctx - The Moleculer context object.
+ */
 async function updateEventAndAddToUsers({ assignable, event, dates, id, ctx }) {
   const classes = map(await listInstanceClasses({ id, ctx }), 'class');
 

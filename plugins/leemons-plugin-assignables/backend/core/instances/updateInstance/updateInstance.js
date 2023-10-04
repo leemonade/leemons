@@ -28,7 +28,18 @@ const updatableFields = [
   'showCorrectAnsers',
   'relatedAssignableInstances',
 ];
-
+/**
+ * Update an assignable instance.
+ *
+ * @param {Object} options - The options for updating the assignable instance.
+ * @param {Object} options.assignableInstance - The assignable instance object.
+ * @param {boolean} options.propagateRelated - Flag indicating if related instances should be propagated.
+ * @param {MoleculerContext} options.ctx - The Moleculer context object.
+ * @throws {LeemonsError} Throws an error if some of the provided keys are not updatable.
+ * @throws {LeemonsError} Throws an error if the user does not have permission to update the assignable instance.
+ * @throws {LeemonsError} Throws an error if no changes are detected.
+ * @returns {Object} The updated assignable instance object.
+ */
 async function updateInstance({ assignableInstance, propagateRelated, ctx }) {
   const { id, relatedAssignables, ...assignableInstanceObj } = assignableInstance;
 
