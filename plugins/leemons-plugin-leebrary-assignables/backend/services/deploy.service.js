@@ -13,7 +13,7 @@ module.exports = () => ({
   events: {
     'deployment-manager.install': async (ctx) => {
       // Register as a library provider
-      await ctx.tx.call('leebrary.provider.register', {
+      await ctx.tx.call('leebrary.providers.register', {
         name: 'Library Assignables',
         supportedMethods: {
           getByIds: true,

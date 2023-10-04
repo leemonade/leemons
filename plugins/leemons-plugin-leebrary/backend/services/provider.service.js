@@ -11,11 +11,11 @@ const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getProvidersActions } = require('@leemons/providers');
 const { getServiceModels } = require('../models');
 const { pluginName } = require('../config/constants');
-const restActions = require('./rest/permissions.rest');
+const restActions = require('./rest/provider.rest');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: `${pluginName}.provider`,
+  name: `${pluginName}.providers`,
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

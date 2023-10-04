@@ -22,7 +22,7 @@ module.exports = () => ({
   events: {
     'deployment-manager.install': async (ctx) => {
       // Register as a library provider
-      await ctx.tx.call('leebrary.provider.register', {
+      await ctx.tx.call('leebrary.providers.register', {
         name: 'Amazon S3',
         image: 'https://cdn.worldvectorlogo.com/logos/aws-glacier.svg',
         supportedMethods: {

@@ -105,7 +105,7 @@ const AdminConfig = ({ onNextLabel, onNext = () => {} }) => {
   }, []);
 
   const Provider = React.useMemo(
-    () => (store.activeProvider ? dynamicImport(store.activeProvider.providerName) : () => null),
+    () => (store.activeProvider ? dynamicImport(store.activeProvider.pluginName) : () => null),
     [store.activeProvider]
   );
 
@@ -120,15 +120,15 @@ const AdminConfig = ({ onNextLabel, onNext = () => {} }) => {
             <Stack spacing={4}>
               {store.providers.map((provider) => (
                 <Box
-                  key={provider.providerName}
+                  key={provider.pluginName}
                   className={cx(
                     styles.providerButton,
-                    store.activeProvider?.providerName === provider.providerName
+                    store.activeProvider?.pluginName === provider.pluginName
                       ? styles.providerButtonActive
                       : null
                   )}
                   onClick={() => {
-                    if (store.activeProvider?.providerName === provider.providerName) {
+                    if (store.activeProvider?.pluginName === provider.pluginName) {
                       store.activeProvider = null;
                     } else {
                       store.activeProvider = provider;
@@ -136,8 +136,8 @@ const AdminConfig = ({ onNextLabel, onNext = () => {} }) => {
                     render();
                   }}
                 >
-                  <img src={provider.image} alt={provider.providerName} />
-                  <Text role="productive">{provider.name}</Text>
+                  <img src={provider.params.image} alt={provider.pluginName} />
+                  <Text role="productive">{provider.params.name}</Text>
                 </Box>
               ))}
             </Stack>

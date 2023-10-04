@@ -513,6 +513,20 @@ module.exports = {
           'GET grades/settings': 'v1.grades.settings.findOneRest',
           'POST grades/settings': 'v1.grades.settings.updateRest',
           'POST grades/settings/enable-menu-item': 'v1.grades.settings.enableMenuItemRest',
+
+          // -- Leebrary (NOT FINISHED) --
+          'GET leebrary/providers': 'v1.leebrary.providers.listRest',
+          'POST leebrary/providers/config': 'v1.leebrary.providers.setConfigRest',
+          'POST leebrary/assets': 'v1.leebrary.assets.addRest',
+          'POST leebrary/assets/:id': 'v1.leebrary.assets.duplicateRest',
+          'PUT leebrary/assets/:id': 'v1.leebrary.assets.updateRest',
+          'DELETE leebrary/assets/:id': 'v1.leebrary.assets.removeRest',
+
+          // -- mqtt AWS IOT (NOT FINISHED) --
+          'POST mqtt-aws-iot/config': 'v1.mqtt-aws-iot.socket.setConfigRest',
+
+          // -- Leebrary AWS S3 (NOT FINISHED) --
+          'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest'
         },
 
         /**

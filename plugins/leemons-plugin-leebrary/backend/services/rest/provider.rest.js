@@ -12,10 +12,10 @@ const { getByName: getProviderByName } = require('../../core/providers/getByName
 
 /** @type {ServiceSchema} */
 module.exports = {
-  list: {
+  listRest: {
     rest: {
+      path: '/',
       method: 'GET',
-      path: '/list',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
