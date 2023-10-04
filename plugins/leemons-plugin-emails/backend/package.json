@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-emails",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Leemons emails plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -22,7 +22,7 @@
   "dependencies": {
     "@leemons/cache": "0.0.33",
     "@leemons/deployment-manager": "0.0.33",
-    "@leemons/emails": "0.0.33",
+    "@leemons/emails": "0.0.34",
     "@leemons/error": "0.0.33",
     "@leemons/middlewares": "0.0.33",
     "@leemons/mongodb": "0.0.33",
