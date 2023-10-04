@@ -44,11 +44,11 @@ function process_package() {
     # Cambia al directorio
     cd "$package"
     # Ejecuta el comando npm version
-    npm version patch --legacy-peer-deps > /dev/null
+    npm version patch --legacy-peer-deps > /dev/null 2>&1
     # Configura la variable de entorno NODE_AUTH_TOKEN
     export NODE_AUTH_TOKEN="$NODE_AUTH_TOKEN"
     # Publica el paquete
-    npm publish --tag "$NPM_TAG" > /dev/null
+    npm publish --tag "$NPM_TAG" > /dev/null 2>&1
     # Obtiene el nombre y la versión del paquete
     pkg_name=$(cat package.json | grep '"name":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
     pkg_version=$(cat package.json | grep '"version":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
