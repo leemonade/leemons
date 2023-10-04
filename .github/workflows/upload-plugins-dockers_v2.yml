@@ -1,0 +1,85 @@
+name: DEV Upload plugins dockers
+on:
+  workflow_call:
+    outputs:
+      plugins_versions:
+        description: "leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1..."
+        value: ${{ jobs.upload.outputs.plugins_versions }}
+    inputs:
+      PACKAGES:
+        required: true
+        type: string
+      PLUGINS:
+        required: true
+        type: string
+      NPM_TAG:
+        required: true
+        type: string
+      AWS_REGION:
+        required: true
+        type: string
+      GIT_BRANCH:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCOUNT_ID:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    outputs:
+      plugins_versions: ${{ steps.plugins_versions.outputs.plugins_versions }}
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+
+      - name: 🔧 Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.AWS_REGION }}
+
+      - name: 🔧 Set up AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: 🔧 Set up docker caching layer
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+
+      # Actualiza los plugins con las nuevas versiones de los packages y tambien sube una version patch a todos los plugins implicados
+      # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
+      - name: 🔧 Change package versions in plugins and change plugins versions
+        id: plugins_versions
+        run:  echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
+
+      # Compila todos los dockers de los plugins modificados
+      - name: 🔧 Compile all dockers
+        run: bash scripts/build_dockers_by_names.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
+
+      # Tagea con la propia version del plugin todas las imagenes y las publica en ecr
+      - name: 🔧 Upload all dockers to ECR
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
+
+      # Subimos los cambios de las versiones de los plugins
+      - name: 🔧 Check for modified files
+        id: git-check
+        run: echo "modified=$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+
+      - name: 🚀 Git push
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git fetch origin ${{ inputs.GIT_BRANCH }}
+          git checkout ${{ inputs.GIT_BRANCH }}
+          git add .
+          git commit -m 'chore: version bump'
+          git push origin ${{ inputs.GIT_BRANCH }}
