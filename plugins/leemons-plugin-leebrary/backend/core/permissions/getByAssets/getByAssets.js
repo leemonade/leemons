@@ -6,6 +6,7 @@ const getAssetPermissionName = require('../helpers/getAssetPermissionName');
 const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
 const { handleOnlyShared } = require('./handleOnlyShared');
 const { handleItemPermissions } = require('./handleItemPermissions');
+const { escapeRegExp } = require('../../shared');
 
 /**
  * Retrieves permissions by assets.
@@ -32,9 +33,10 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
       permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent: userSession.userAgents,
         query: {
-          $or: assetsIds.map((id) => ({
-            permissionName: { $regex: getAssetPermissionName({ assetId: id, ctx }), $options: 'i' },
-          })),
+          $or: assetsIds.map((id) => {
+            const rx = escapeRegExp(getAssetPermissionName({ assetId: id, ctx }));
+            return { permissionName: { $regex: rx, $options: 'i' } };
+          }),
         },
       });
     }

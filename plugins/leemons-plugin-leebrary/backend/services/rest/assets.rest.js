@@ -247,6 +247,7 @@ module.exports = {
         indexable,
         showPublic,
         published, // not used within getByIds()
+        getByCategory: false,
         ctx,
       });
 

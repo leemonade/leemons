@@ -13,7 +13,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @returns {Promise<LibraryFile>} A promise that resolves with the handled file.
  */
 async function handleFileProvider({ file, filePaths, settings, ctx }) {
-  const provider = await getProviderByName(settings.providerName);
+  const provider = await getProviderByName({ name: settings.providerName, ctx });
   file.provider = settings.providerName;
 
   if (provider?.supportedMethods?.newMultipart) {

@@ -20,7 +20,7 @@ async function uploadMultipartChunk({ fileId, partNumber, chunk, path, ctx } = {
   // or appends the chunk data to the file or folder in the system.
   const buffer = await fsPromises.readFile(chunk.path);
   if (file.provider !== 'sys') {
-    const provider = await getProviderByName(file.provider);
+    const provider = await getProviderByName({ name: file.provider, ctx });
     if (provider?.supportedMethods?.uploadMultipartChunk) {
       await ctx.tx.call(`${file.provider}.files.uploadMultipartChunk`, {
         file,
@@ -32,6 +32,7 @@ async function uploadMultipartChunk({ fileId, partNumber, chunk, path, ctx } = {
   } else if (file.isFolder) {
     await fsPromises.appendFile(`${file.uri}/${path}`, buffer);
   } else {
+    console.log('file.uri', file.uri)
     await fsPromises.appendFile(file.uri, buffer);
   }
 

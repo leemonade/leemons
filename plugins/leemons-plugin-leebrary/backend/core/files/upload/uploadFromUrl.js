@@ -23,7 +23,7 @@ async function uploadFromUrl({ url, name, ctx }) {
       if (file.isFolder) {
         return file;
       }
-      const fileStream = await dataForReturnFile({ id: file.id });
+      const fileStream = await dataForReturnFile({ id: file.id, ctx });
       return uploadFromFileStream({ file: fileStream, name, ctx });
     }
 

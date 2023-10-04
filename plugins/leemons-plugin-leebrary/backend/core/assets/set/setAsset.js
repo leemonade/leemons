@@ -9,6 +9,21 @@ const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const { getUsersByAsset } = require('../../permissions/getUsersByAsset');
 const { CATEGORIES } = require('../../../config/constants');
 
+/**
+ * Set asset data
+ * @param {Object} params - Parameters
+ * @param {string} params.id - Asset ID
+ * @param {Object} params.filesData - Files data
+ * @param {string} params.categoryId - Category ID
+ * @param {Array} params.tags - Tags
+ * @param {Object} params.file - Asset file
+ * @param {Object} params.cover - Asset cover
+ * @param {MoleculerContext} params.ctx - Moleculer context
+ * @param {Object} params.assetData - Asset data
+ * @returns {Promise<Object>} Asset data
+ */
+
+
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function setAsset({
   id,
@@ -86,7 +101,7 @@ async function setAsset({
     });
   } else {
     asset = await add({
-      assetData: { ...assetData, category, categoryId, cover, file, tags: tagValues },
+      asset: { ...assetData, category, categoryId, cover, file, tags: tagValues },
       ctx: { ...ctx, callerPlugin: ctx.prefixPN('') },
     });
   }

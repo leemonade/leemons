@@ -10,7 +10,7 @@ const { addLocalesDeploy } = require('@leemons/multilanguage');
 const { addPermissionsDeploy } = require('@leemons/permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
 const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
-const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { addMenuItemsDeploy, addMenusDeploy } = require('@leemons/menu-builder');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { find, isEmpty } = require('lodash');
 const {
@@ -37,8 +37,6 @@ async function addDefaultCategories({ ctx }) {
       ctx: { ...ctx, callerPlugin: ctx.prefixPN('') },
     });
   }
-  ctx.tx.emit(`${pluginName}.init-categories`);
-  ctx.tx.emit(`init-categories`);
 }
 
 /** @type {ServiceSchema} */
@@ -56,18 +54,23 @@ module.exports = () => ({
   multiEvents: [
     {
       type: 'once-per-install',
-      events: [
-        'menu-builder.init-main-menu',
-        // 'leebrary.library.pluginDidLoadServices', // ? Es necesario este evento todavía?
-        'leebrary.init-permissions',
-      ],
+      events: ['menu-builder.init-main-menu', `${pluginName}.init-permissions`],
       handler: async (ctx) => {
+        // Adds item to Main menu
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: menuItems,
           ctx,
         });
+        // Create Categories Menu
+        await addMenusDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          menu: categoriesMenu,
+          ctx,
+        });
+        ctx.tx.emit('init-menu');
         await addDefaultCategories({ ctx });
+        ctx.tx.emit('init-categories');
       },
     },
   ],
@@ -104,6 +107,8 @@ module.exports = () => ({
         permissions: permissions.permissions,
         ctx,
       });
+
+      ctx.tx.emit('init-library-categories-menu');
     },
   },
   created() {

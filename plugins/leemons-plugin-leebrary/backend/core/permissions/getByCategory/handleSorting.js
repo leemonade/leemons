@@ -24,6 +24,8 @@ async function handleSorting({
   sortDirection,
   ctx,
 }) {
+  if (!assetIds?.length) return [];
+
   const [assets, assetsAccessibles] = await Promise.all([
     getByIds({
       ids: assetIds,

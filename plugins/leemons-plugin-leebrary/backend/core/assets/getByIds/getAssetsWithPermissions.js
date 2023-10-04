@@ -25,7 +25,7 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) 
   let permissions = [];
 
   if (ctx.meta.userSession || showPublic) {
-    permissions = await getPermissions({ assetsIds, showPublic, ctx });
+    permissions = await getPermissions({ assetIds: assetsIds, showPublic, ctx });
   }
 
   const privateAssets = permissions.map((item) => item.asset);

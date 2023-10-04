@@ -1,5 +1,5 @@
 const { LeemonsError } = require('@leemons/error');
-const { handleProviderMultipart } = require('./handleProviderMultipart');
+const { finishProviderMultipart: handleProviderMultipart } = require('./handleProviderMultipart');
 
 /**
  * Finishes multipart upload for a file.

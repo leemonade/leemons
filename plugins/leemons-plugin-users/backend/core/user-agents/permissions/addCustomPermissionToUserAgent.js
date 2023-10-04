@@ -9,7 +9,6 @@ const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCa
 
 async function _addCustomPermissionToUserAgent({ userAgentId, data, throwIfExists = true, ctx }) {
   await existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: false, ctx });
-
   const hasPermissions = _.uniq(
     await Promise.all(_.map(data, (d) => userAgentHasCustomPermission({ ...d, userAgentId, ctx })))
   );

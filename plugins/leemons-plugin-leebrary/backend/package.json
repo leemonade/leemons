@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.33",
+    "@leemons/common": "0.0.33",
     "@leemons/deployment-manager": "0.0.33",
     "@leemons/error": "0.0.33",
     "@leemons/menu-builder": "0.0.33",

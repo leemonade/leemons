@@ -30,7 +30,7 @@ async function handleReadStream({
     readStream = fs.createReadStream(file.uri + (path ? `/${path}` : ''), readParams);
   } else {
     // Other providers
-    const provider = await getProviderByName(file.provider);
+    const provider = await getProviderByName({ name: file.provider, ctx });
     if (provider?.supportedMethods?.getReadStream) {
       readStream = await ctx.tx.call(`${file.provider}.files.getReadStream`, {
         key: file.uri + (path ? `/${path}` : ''),

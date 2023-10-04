@@ -9,7 +9,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  */
 async function finishProviderMultipart({ file, path, ctx }) {
-  const provider = await getProviderByName(file.provider);
+  const provider = await getProviderByName({ name: file.provider, ctx });
   if (provider?.supportedMethods?.finishMultipart) {
     await ctx.tx.call(`${file.provider}.files.finishMultipart`, { file, path });
   }
