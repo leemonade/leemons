@@ -64,7 +64,7 @@ jobs:
 
       # Compila todos los dockers de los plugins modificados
       - name: 🔧 Compile all dockers
-        run: bash scripts/build_dockers_by_names.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
+        run: bash scripts/build_dockers_by_names_versions.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
 
       # Tagea con la propia version del plugin todas las imagenes y las publica en ecr
       - name: 🔧 Upload all dockers to ECR
