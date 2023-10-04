@@ -49,7 +49,7 @@ jobs:
       # Subimos los cambios al repositorio
       - name: 🔧 Check for modified files
         id: git-check
-        run: echo "modified=$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+        run: echo 'modified=$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)' >> $GITHUB_OUTPUT
 
       - name: 🚀 Git push
         if: steps.git-check.outputs.modified == 'true'
