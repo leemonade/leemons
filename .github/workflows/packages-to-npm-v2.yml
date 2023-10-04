@@ -49,10 +49,10 @@ jobs:
       # Subimos los cambios al repositorio
       - name: 🔧 Check for modified files
         id: git-check
-        run: echo 'modified=$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)' >> $GITHUB_OUTPUT
+        run: echo "modified=$(if git status | grep 'nothing to commit'; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
 
       - name: 🚀 Git push
-        if: steps.git-check.outputs.modified == true
+        if: steps.git-check.outputs.modified == 'true'
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
           git config user.name "GitHub Actions Bot"
