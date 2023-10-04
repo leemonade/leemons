@@ -39,7 +39,6 @@ jobs:
       PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.plugins }}
       AWS_REGION: eu-west-1
       GIT_BRANCH: microservices/dev
-      NPM_TAG: dev
     
   
 
