@@ -79,7 +79,7 @@ jobs:
         run:  echo "${{ steps.git-check.outputs.modified }}"
 
       - name: 🚀 Git push
-        if: steps.git-check.outputs.modified == 'true'
+        if: steps.git-check.outputs.modified == true
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
           git config user.name "GitHub Actions Bot"
