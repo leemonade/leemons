@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-users",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Leemons users plugins",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -23,7 +23,7 @@
     "@leemons/cache": "0.0.33",
     "@leemons/common": "0.0.33",
     "@leemons/deployment-manager": "0.0.33",
-    "@leemons/emails": "0.0.41",
+    "@leemons/emails": "0.0.42",
     "@leemons/error": "0.0.33",
     "@leemons/menu-builder": "0.0.33",
     "@leemons/middlewares": "0.0.33",
