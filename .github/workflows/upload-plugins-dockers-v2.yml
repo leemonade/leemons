@@ -85,7 +85,9 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git fetch origin ${{ inputs.GIT_BRANCH }}
+          git stash
           git checkout ${{ inputs.GIT_BRANCH }}
+          git stash apply
           git add .
           git commit -m 'chore: version bump'
           git push origin ${{ inputs.GIT_BRANCH }}
