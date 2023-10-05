@@ -132,7 +132,7 @@ it("Should update the date if it's changed", async () => {
     },
   });
 
-  ctx.db.Dates.insertMany(
+  await ctx.db.Dates.insertMany(
     Object.entries(dates).map(([name, date]) => ({
       type,
       instance,

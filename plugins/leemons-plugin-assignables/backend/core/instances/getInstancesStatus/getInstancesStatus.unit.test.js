@@ -131,7 +131,8 @@ it('Should return student instances status', async () => {
     ctx,
   });
 
-  expect(response).toEqual(expectedValue);
+  expect(response.length).toBe(3);
+  expect(response).toEqual(expect.arrayContaining(expectedValue));
 });
 
 it('Should return teatcher instances status', async () => {

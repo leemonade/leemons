@@ -1,4 +1,4 @@
-const { pick, isNull, pickBy, negate, difference, keys, without } = require('lodash');
+const { pick, difference, keys, without } = require('lodash');
 const { LeemonsError } = require('leemons-error');
 const { getDates } = require('./getDates');
 // const { unregisterDates } = require('./unregisterDates');

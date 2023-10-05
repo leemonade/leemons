@@ -62,7 +62,10 @@ it('Should save the subjects to the assignable', async () => {
 
   // Assert
   expect(response).toEqual(expectedValue);
-  expect(dbValues.sort()).toEqual(expectedValue.sort());
+
+  expect(dbValues.sort((a, b) => a.subject > b.subject)).toEqual(
+    expectedValue.sort((a, b) => a.subject > b.subject)
+  );
 });
 
 it('Should throw if no valid subject is provided', () => {
