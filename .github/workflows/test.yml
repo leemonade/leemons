@@ -51,7 +51,7 @@ jobs:
       #  id: parse_base64
       #  run: echo "images_map_base64=\"$(echo -n '{"environment":"dev","images_map":{${{ steps.parse.outputs.images_map }}}}' | base64)\"" >> $GITHUB_OUTPUT
       - name: Call AWS Lambda
-        run: aws lambda invoke --function-name ${{ secrets.DEV_LAMBDA_ARN }} --cli-binary-format raw-in-base64-out --payload ${echo -n '{"environment":"dev","images_map":{${{ steps.parse.outputs.images_map }}}}' | base64} outputfile.txt
+        run: aws lambda invoke --function-name ${{ secrets.DEV_LAMBDA_ARN }} --cli-binary-format raw-in-base64-out --payload "$(echo -n '{"environment":"dev","images_map":{${{ steps.parse.outputs.images_map }}}}' | base64)" outputfile.txt
       - name: Show Lambda Result
         run: cat outputfile.txt
   
