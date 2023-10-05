@@ -14,7 +14,7 @@
     "@bubbles-ui/components": "dev",
     "@bubbles-ui/icons": "dev",
     "framer-motion": "^10.16.4",
-    "leemons-hooks": "0.0.25",
+    "leemons-hooks": "0.0.26",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
