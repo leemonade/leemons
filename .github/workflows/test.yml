@@ -5,6 +5,20 @@ on:
       - '*.*.*-test'
 
 jobs:
+  call_lambda:
+    runs-on: ubuntu-latest
+    needs: build_and_publish_dockers
+    steps:
+      - name: Parse plugins_versions
+        id: parse
+        run: echo "images_map=$(echo "leemons-plugin-emails|1.0.6,leemons-plugin-users|1.0.5" | awk -F',' '{for(i=1;i<=NF;i++){split($i,a,"|"); printf "\"%s\":\"%s\",", a[1], a[2]}}' | sed 's/,$//')" >> $GITHUB_OUTPUT
+      - name: Call AWS Lambda
+        run: |
+          payload=$(echo -n '{"environment":"dev","images_map":{${{ steps.parse.outputs.images_map }}}}' | base64)
+          aws lambda invoke --function-name ${{ secrets.DEV_LAMBDA_ARN }} --cli-binary-format raw-in-base64-out --payload "$payload" outputfile.txt
+      - name: Show Lambda Result
+        run: cat outputfile.txt
+
   # Sacamos los plugins y packages modificados de un tag a otro
   get_packages_and_plugins_modified:
     name: Get packages and plugins modified
@@ -40,7 +54,7 @@ jobs:
       AWS_REGION: eu-west-1
       GIT_BRANCH: microservices/dev
 
-  call_lambda:
+  d:
     runs-on: ubuntu-latest
     needs: build_and_publish_dockers
     steps:
