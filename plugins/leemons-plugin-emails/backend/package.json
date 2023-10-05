@@ -22,7 +22,7 @@
   "dependencies": {
     "@leemons/cache": "0.0.33",
     "@leemons/deployment-manager": "0.0.33",
-    "@leemons/emails": "0.0.36",
+    "@leemons/emails": "0.0.37",
     "@leemons/error": "0.0.33",
     "@leemons/middlewares": "0.0.33",
     "@leemons/mongodb": "0.0.33",
