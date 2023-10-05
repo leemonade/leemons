@@ -41,7 +41,7 @@ describe('Finish Provider Multipart', () => {
     await finishProviderMultipart({ file, ctx });
 
     // Assert
-    expect(getByName).toHaveBeenCalledWith(file.provider);
+    expect(getByName).toHaveBeenCalledWith({ name: file.provider, ctx });
     expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.finishMultipart`, { file });
   });
 
@@ -73,7 +73,7 @@ describe('Finish Provider Multipart', () => {
     await finishProviderMultipart({ file, ctx });
 
     // Assert
-    expect(getByName).toHaveBeenCalledWith(file.provider);
+    expect(getByName).toHaveBeenCalledWith({ name: file.provider, ctx });
     expect(ctx.tx.call).not.toHaveBeenCalled();
   });
 });

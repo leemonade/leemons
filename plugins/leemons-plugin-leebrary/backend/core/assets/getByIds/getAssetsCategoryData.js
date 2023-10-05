@@ -12,7 +12,7 @@ const { getByNames: getProviderByNames } = require('../../providers/getByNames')
  */
 async function getAssetsCategoryData({ assets, ctx }) {
   const categoryIds = uniq(assets.map((item) => item.category));
-  const categories = await getCategories({ categoryIds, ctx });
+  const categories = await getCategories({ categoriesIds: categoryIds, ctx });
 
   // Extract unique provider names from the categories, excluding 'leebrary'
   const providersNames = uniq(categories.map((category) => category.provider)).filter(

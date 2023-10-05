@@ -4,11 +4,9 @@ const { newModel } = require('@leemons/mongodb');
 const { filesSchema } = require('../../../models');
 const { finishMultipart } = require('./finishMultipart');
 const getProviders = require('../../../__fixtures__/getProviders');
-const { handleProviderMultipart } = require('./handleProviderMultipart');
+const { finishProviderMultipart: handleProviderMultipart } = require('./handleProviderMultipart');
 
-jest.mock('./handleProviderMultipart', () => ({
-  handleProviderMultipart: jest.fn(),
-}));
+jest.mock('./handleProviderMultipart');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -70,7 +68,6 @@ describe('Finish Multipart Upload', () => {
         Files: newModel(mongooseConnection, 'Files', filesSchema),
       },
     });
-
     // Act and Assert
     await expect(
       finishMultipart({ fileId: 'non-existent-file', path: 'testPath', ctx })

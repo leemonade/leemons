@@ -194,7 +194,7 @@ it('Should correctly call external services', async () => {
     ctx,
   });
   expect(getPermissions).toBeCalledWith({
-    assetsIds,
+    assetIds: assetsIds,
     showPublic: undefined,
     ctx,
   });

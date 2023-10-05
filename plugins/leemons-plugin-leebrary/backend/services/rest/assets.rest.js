@@ -44,7 +44,8 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      return setAsset({ ...ctx.params, ctx });
+      const asset = await setAsset({ ...ctx.params, ctx });
+      return { status: 200, asset };
     },
   },
   removeRest: {
@@ -247,7 +248,6 @@ module.exports = {
         indexable,
         showPublic,
         published, // not used within getByIds()
-        getByCategory: false,
         ctx,
       });
 

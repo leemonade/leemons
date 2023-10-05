@@ -10,13 +10,11 @@ async function newAsset(assetData, categoryId, categoryKey) {
     if (isString(file)) {
       formData.file = file;
     } else {
-      const response = await uploadFileAsMultipart(file, { name: file.name });
-      formData.file = response.file;
+      formData.file = await uploadFileAsMultipart(file, { name: file.name });
     }
 
     if (cover && isString(cover)) formData.cover = cover;
     if (cover && cover.name) {
-      console.log('cover', cover);
       formData.cover = await uploadFileAsMultipart(cover, { name: cover.name });
     }
   }

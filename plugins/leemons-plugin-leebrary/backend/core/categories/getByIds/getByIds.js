@@ -10,7 +10,7 @@
  * @throws {LeemonsError} If the required fields are not provided, a LeemonsError is thrown.
  */
 function getByIds({ categoriesIds, ctx }) {
-  return ctx.tx.db.Categories.find({ id: categoriesIds });
+  return ctx.tx.db.Categories.find({ id: categoriesIds }).lean();
 }
 
 module.exports = { getByIds };

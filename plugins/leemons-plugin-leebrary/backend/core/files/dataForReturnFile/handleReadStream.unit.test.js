@@ -81,7 +81,7 @@ describe('Handle Read Stream', () => {
     await handleReadStream({ file, path, ctx });
 
     // Assert
-    expect(getByName).toHaveBeenCalledWith(file.provider);
+    expect(getByName).toHaveBeenCalledWith({ name: file.provider, ctx });
     expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.getReadStream`, {
       key: `${file.uri}/${path}`,
       start: undefined,
@@ -107,7 +107,7 @@ describe('Handle Read Stream', () => {
     const readStream = await handleReadStream({ file, path, ctx });
 
     // Assert
-    expect(getByName).toHaveBeenCalledWith(file.provider);
+    expect(getByName).toHaveBeenCalledWith({ name: file.provider, ctx });
     expect(readStream).toBeNull();
   });
 });

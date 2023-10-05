@@ -49,7 +49,7 @@ it('Should correctly fetch category data associated with each asset passed', asy
 
   // Assert
   expect(getCategories).toBeCalledWith({
-    categoryIds: assets.map((asset) => asset.category),
+    categoriesIds: assets.map((asset) => asset.category),
     ctx,
   });
   expect(getProviderByNames).toBeCalledWith({

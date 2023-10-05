@@ -94,7 +94,7 @@ it('Should add a media file asset correctly', async () => {
   expect(getCategory).toBeCalledWith({ id: params.categoryId, ctx });
   expect(update).not.toBeCalled();
   expect(add).toBeCalledWith({
-    assetData: {
+    asset: {
       ...assetData,
       category: categoryObject,
       categoryId: params.categoryId,
@@ -155,7 +155,7 @@ it('Should check that only one file at a time is uploaded', async () => {
 
   // Assert
   expect(add).toBeCalledWith({
-    assetData: {
+    asset: {
       ...assetData,
       category: categoryObject,
       categoryId: params.categoryId,

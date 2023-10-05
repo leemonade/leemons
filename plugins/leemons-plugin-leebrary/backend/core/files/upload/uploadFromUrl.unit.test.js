@@ -72,7 +72,7 @@ it('should identify when a file needs to be uploaded from a file stream and proc
   expect(result).toEqual(uploadedFile);
   expect(download).not.toHaveBeenCalled();
   expect(getById).toHaveBeenCalledWith({ id: url, ctx });
-  expect(dataForReturnFile).toHaveBeenCalledWith({ id: file.id });
+  expect(dataForReturnFile).toHaveBeenCalledWith({ id: file.id, ctx });
   expect(uploadFromFileStream).toHaveBeenCalledWith({ file: fileStream, name, ctx });
 });
 

@@ -14,6 +14,7 @@ const { getByAssets } = require('./getByAssets');
 const { assetsSchema } = require('../../../models/assets');
 const getUserSession = require('../../../__fixtures__/getUserSession');
 const { permissionSeparator, rolesPermissions } = require('../../../config/constants');
+const { escapeRegExp } = require('../../shared');
 
 // MOCKS
 jest.mock('./handleItemPermissions');
@@ -90,6 +91,7 @@ it('Should get permissions by assets correctly for private and public assets all
   const onlyPrivateSharedExpectedResult = expectedResult.filter(
     (item) => item.role !== 'owner' && item.asset !== 'publicAsset'
   );
+
   // Act
   const response = await getByAssets({
     assetIds: [...assetsIds, 'publicAsset'],
@@ -106,12 +108,15 @@ it('Should get permissions by assets correctly for private and public assets all
   expect(getUserAgentPermissions).toBeCalledWith({
     userAgent: userSession.userAgents,
     query: {
-      $or: [...assetsIds, 'publicAsset'].map((id) => ({
-        permissionName: {
-          $regex: ctx.prefixPN(permissionSeparator + id),
-          $options: 'i',
-        },
-      })),
+      $or: [...assetsIds, 'publicAsset'].map((id) => {
+        const rx = escapeRegExp(ctx.prefixPN(permissionSeparator + id));
+        return {
+          permissionName: {
+            $regex: rx,
+            $options: 'i',
+          },
+        };
+      }),
     },
   });
   expect(handleItemPermissions).toBeCalledWith({

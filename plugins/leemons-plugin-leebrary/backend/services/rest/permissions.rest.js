@@ -9,7 +9,7 @@ const { set } = require('../../core/permissions/set');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  set: {
+  setRest: {
     rest: {
       method: 'POST',
       path: '/asset/:asset', // antes: '/asset/:asset/permissions'

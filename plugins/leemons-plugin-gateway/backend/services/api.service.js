@@ -527,7 +527,7 @@ module.exports = {
           'POST leebrary/assets': 'v1.leebrary.assets.addRest',
           'POST leebrary/assets/:id': 'v1.leebrary.assets.duplicateRest',
           'POST leebrary/assets/list': 'v1.leebrary.assets.listByIdsRest',
-          'POST leebrary/asset/:asset/permissions': 'v1.leebrary.permissions.set', // ! El front debería apuntar a leebrary/permissions/asset/:asset
+          'POST leebrary/asset/:asset/permissions': 'v1.leebrary.permissions.setRest', // ! El front debería apuntar a leebrary/permissions/asset/:asset
           'POST leebrary/assets/pins': 'v1.leebrary.assets.addPinRest',
           'PUT leebrary/assets/:id': 'v1.leebrary.assets.updateRest',
           'DELETE leebrary/assets/:id': 'v1.leebrary.assets.removeRest',
