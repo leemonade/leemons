@@ -20,6 +20,10 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
+    "@leemons/common": "0.0.33",
+    "@leemons/validator": "0.0.33",
+    "@leemons/middlewares": "0.0.33",
+    "@leemons/cache": "0.0.33",
     "@leemons/error": "0.0.33",
     "@leemons/academic-portfolio": "0.0.33",
     "@leemons/deployment-manager": "0.0.33",

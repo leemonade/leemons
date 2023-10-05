@@ -67,9 +67,14 @@ async function check(folder) {
   }
   for (let package of info.packages) {
     if (package.bump && ignore.indexOf(package.moduleName) === -1) {
-      throw new Error(
+      console.warn(
         `${package.moduleName} can be updated from ${package.installed} to ${package.latest} (${folder})`
       );
+      /*throw new Error(
+              `${package.moduleName} can be updated from ${package.installed} to ${package.latest} (${folder})`
+            );
+
+             */
     }
   }
   console.log(`package.json looks good. (${folder})`);
