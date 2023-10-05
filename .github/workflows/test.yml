@@ -15,7 +15,7 @@ jobs:
         run: |
           payload=$(echo -n '{"environment":"dev","images_map":{${{ steps.parse.outputs.images_map }}}}' | base64)
           echo $payload
-          aws lambda invoke --function-name ${{ secrets.DEV_LAMBDA_ARN }} --payload "$payload" outputfile.txt
+          aws lambda invoke --function-name ${{ secrets.DEV_LAMBDA_ARN }} --region eu-west-1 --payload "$payload" outputfile.txt
       - name: Show Lambda Result
         run: cat outputfile.txt
 
