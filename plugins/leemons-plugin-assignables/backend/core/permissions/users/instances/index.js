@@ -3,6 +3,7 @@ const { getTeacherPermission } = require('./getTeacherPermission');
 const { getTeacherPermissions } = require('./getTeacherPermissions');
 const { getUserPermission } = require('./getUserPermission');
 const { getUserPermissionMultiple } = require('./getUserPermissionMultiple');
+const { getUserPermissions } = require('./getUserPermissions');
 const {
   listAssignableInstancesUserHasPermissionTo,
 } = require('./listAssignableInstancesUserHasPermissionTo');
@@ -13,5 +14,6 @@ module.exports = {
   getTeacherPermissions,
   getUserPermission,
   getUserPermissionMultiple,
+  getUserPermissions,
   listAssignableInstancesUserHasPermissionTo,
 };

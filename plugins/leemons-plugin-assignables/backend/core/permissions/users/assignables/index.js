@@ -1,5 +1,15 @@
 const { addPermissionToUser } = require('./addPermissionToUser');
+const { getTeacherPermission } = require('./getTeacherPermission');
+const { getTeacherPermissions } = require('./getTeacherPermissions');
+const { getUserPermission } = require('./getUserPermission');
+const { getUserPermissionMultiple } = require('./getUserPermissionMultiple');
+const { getUserPermissions } = require('./getUserPermissions');
 
 module.exports = {
-  addAssignablePermissionToUser: addPermissionToUser,
+  addPermissionToUser,
+  getTeacherPermission,
+  getTeacherPermissions,
+  getUserPermission,
+  getUserPermissionMultiple,
+  getUserPermissions,
 };
