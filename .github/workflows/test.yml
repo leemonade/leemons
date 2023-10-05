@@ -39,7 +39,19 @@ jobs:
       PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.plugins }}
       AWS_REGION: eu-west-1
       GIT_BRANCH: microservices/dev
-    
+
+  call_lambda:
+    runs-on: ubuntu-latest
+    needs: build_and_publish_dockers
+    steps:
+      - name: Parse plugins_versions
+        id: parse
+        run: echo "images_map=$(echo "${{ needs.build_and_publish_dockers.outputs.plugins_versions }}" | awk -F',' '{for(i=1;i<=NF;i++){split($i,a,"|"); printf "\"%s\":\"%s\",", a[1], a[2]}}' | sed 's/,$//')" >> $GITHUB_OUTPUT
+      - name: Parse to base64
+        id: parse_base64
+        run: echo "images_map_base64=$(echo -n '{"environment":"dev","images_map":{${{ steps.parse_base64.outputs.images_map_base64 }}}}' | base64)" >> $GITHUB_OUTPUT
+      - name: Call AWS Lambda
+        run: aws lambda invoke --function-name ${{ secrets.DEV_LAMBDA_ARN }} --payload ${{ steps.parse_base64.outputs.images_map_base64 }} outputfile.txt
+      - name: Show Lambda Result
+        run: cat outputfile.txt
   
-
-
