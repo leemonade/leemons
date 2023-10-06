@@ -250,6 +250,6 @@ module.exports = {
     },
   },
   async created() {
-    mongoose.connect(process.env.MONGO_URI);
+    mongoose.connect(process.env.MONGO_URI, { maxPoolSize: 200, minPoolSize: 20 });
   },
 };

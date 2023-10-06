@@ -1,12 +1,6 @@
 const ApiGateway = require('moleculer-web');
 const { parse } = require('url');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const {
-  LeemonsMiddlewareAuthenticated,
-  LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const { searchUsers } = require('leemons-plugin-families/core/users');
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -54,7 +48,7 @@ module.exports = {
         whitelist: ['**'],
         use: [],
         mergeParams: true,
-        uthentication: true,
+        uthentication: false,
         authorization: false,
         autoAliases: true,
         aliases: {
@@ -584,9 +578,13 @@ module.exports = {
           const parseResult = parse(
             req.headers.referer || req.headers.referrer || req.headers.host
           );
-          ctx.meta.hostname =
-            parseResult.hostname || parseResult.host || parseResult.pathname || parseResult.path;
-          console.log('ctx.meta.hostname', ctx.meta.hostname);
+          if (ctx.meta) {
+            ctx.meta.hostname =
+              parseResult?.hostname ||
+              parseResult?.host ||
+              parseResult?.pathname ||
+              parseResult?.path;
+          }
         },
 
         onError(req, res, err) {
