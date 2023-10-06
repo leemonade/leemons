@@ -1,55 +1,10 @@
-const { uniq, map, groupBy, uniqBy, pick, difference } = require('lodash');
+const { uniq, map, groupBy, difference } = require('lodash');
+
 const { getRoleMatchingActions } = require('../../../assignables/helpers/getRoleMatchingActions');
 const { getPermissionName } = require('../../../assignables/helpers/getPermissionName');
 const { getTeacherPermissions } = require('../getTeacherPermissions');
 
-async function getParentAssignables({ ids, ctx }) {
-  const parentAssignables = await ctx.tx.db
-    .find({
-      $or: ids.map((id) => ({
-        submission: { $regex: new RegExp(`"activity":"${id}"`, 'i') },
-      })),
-    })
-    .select({ asset: true, submission: true })
-    .lean();
-
-  return groupBy(
-    parentAssignables.flatMap((parent) => {
-      const submission = parent.submission ?? {};
-      const activities = uniq(map(submission.activities, 'activity'));
-
-      if (!activities.length) {
-        return null;
-      }
-
-      return activities.map((activity) => ({
-        asset: parent.asset,
-        activity,
-      }));
-    })
-  );
-}
-
-async function getParentPermissions({ ids, ctx }) {
-  const parents = await getParentAssignables({ ids, ctx });
-  const assetsIds = Object.keys(parents);
-  const itemPermissions = await ctx.tx.call(
-    'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType',
-    {
-      userAgentId: map(ctx.meta.userSession.userAgents, 'id'),
-      type: 'leebrary.asset.can-assign',
-      ignoreOriginalTarget: true,
-      item: assetsIds,
-    }
-  );
-
-  const activitiesWithPermissions = uniqBy(
-    Object.values(pick(parents, itemPermissions)).flat(),
-    'activity'
-  );
-
-  return activitiesWithPermissions.map(({ activity }) => [activity, ['view']]);
-}
+const { getParentPermissions } = require('./getParentPermissions');
 
 async function getUserPermissions({ assignables, ctx }) {
   const assignablesIds = uniq(map(assignables, 'id'));
@@ -58,7 +13,10 @@ async function getUserPermissions({ assignables, ctx }) {
 
   if (!ctx.meta.userSession.userAgents.length) {
     return Object.fromEntries(
-      assignablesIds.map((id) => [id, { role: getRoleMatchingActions([]), actions: [] }])
+      assignablesIds.map((id) => [
+        id,
+        { role: getRoleMatchingActions({ actions: [] }), actions: [] },
+      ])
     );
   }
 
@@ -103,14 +61,14 @@ async function getUserPermissions({ assignables, ctx }) {
       assignablesIds.map((id) => [
         id,
         {
-          role: getRoleMatchingActions(directPermissions[id] || []),
+          role: getRoleMatchingActions({ actions: directPermissions[id] || [] }),
           actions: directPermissions[id] || [],
         },
       ])
     );
   }
 
-  const teacherPermissions = await getTeacherPermissions({ assignablesIds, ctx });
+  const teacherPermissions = await getTeacherPermissions({ assignableIds: assignablesIds, ctx });
 
   return Object.fromEntries(
     assignablesIds.map((id) => {
@@ -125,7 +83,7 @@ async function getUserPermissions({ assignables, ctx }) {
       return [
         id,
         {
-          role: getRoleMatchingActions(actions),
+          role: getRoleMatchingActions({ actions }),
           actions,
         },
       ];

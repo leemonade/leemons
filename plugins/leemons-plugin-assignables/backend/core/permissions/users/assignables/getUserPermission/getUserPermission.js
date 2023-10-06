@@ -1,3 +1,5 @@
+const { escapeRegExp } = require('lodash');
+
 const { getPermissionName } = require('../../../assignables/helpers/getPermissionName');
 const { getRoleMatchingActions } = require('../../../assignables/helpers/getRoleMatchingActions');
 const { getTeacherPermission } = require('../getTeacherPermission');
@@ -5,7 +7,7 @@ const { getTeacherPermission } = require('../getTeacherPermission');
 async function getUserPermission({ assignableId, ctx }) {
   const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
     userAgent: ctx.meta.userSession.userAgents,
-    query: { permissionName_$contains: getPermissionName({ id: assignableId, ctx }) },
+    query: { permissionName: escapeRegExp(getPermissionName({ id: assignableId, ctx })) },
   });
 
   if (!permissions.length) {

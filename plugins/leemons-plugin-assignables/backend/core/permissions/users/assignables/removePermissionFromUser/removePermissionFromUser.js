@@ -20,7 +20,7 @@ async function removePermissionFromUser({ assignable, userAgent, ctx }) {
   await ctx.tx.call('users.permissions.removeCustomPermissionFromUserAgent', {
     userAgentId: userAgent.id,
     data: {
-      permissionName: getPermissionName(assignable.id, { prefix: true }),
+      permissionName: getPermissionName({ id: assignable.id, prefix: true, ctx }),
       actionNames: actions,
     },
   });

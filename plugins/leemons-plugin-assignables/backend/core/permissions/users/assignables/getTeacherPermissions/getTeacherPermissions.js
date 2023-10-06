@@ -1,5 +1,15 @@
+/**
+ * Retrieves teacher permissions for a given set of assignable IDs.
+ * @async
+ * @function getTeacherPermissions
+ * @param {Object} params - The parameters for the function.
+ * @param {Array} params.assignableIds - The IDs of the assignables.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @return {Promise<Object>} - A promise that resolves to an object mapping the assignable IDs to a boolean indicating whether the teacher has permissions for that assignable.
+ */
+
 async function getTeacherPermissions({ assignableIds, ctx }) {
-  const classes = ctx.tx.db.Classes.find({
+  const classes = await ctx.tx.db.Classes.find({
     assignable: { $in: assignableIds },
   })
     .select({ assignable: true, class: true })
