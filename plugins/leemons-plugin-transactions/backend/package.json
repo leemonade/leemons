@@ -20,8 +20,8 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/error": "0.0.35",
-    "@leemons/utils": "0.0.35",
+    "@leemons/error": "0.0.36",
+    "@leemons/utils": "0.0.36",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",

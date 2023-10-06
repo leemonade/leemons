@@ -19,7 +19,7 @@
     "dayjs": "^1.11.2",
     "dom-helpers": "^5.2.1",
     "invariant": "^2.2.4",
-    "leemons-hooks": "0.0.26",
+    "leemons-hooks": "0.0.27",
     "lodash": "^4.17.21",
     "memoize-one": "^5.2.1",
     "moment": "^2.29.4",
