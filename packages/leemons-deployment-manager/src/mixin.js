@@ -70,7 +70,7 @@ async function modifyCTX(
       await getDeploymentID(ctx);
     }
 
-    if (actionName.startsWith('deployment-manager.')) {
+    if (actionName.startsWith('deployment-manager.') || actionName.startsWith('gateway.')) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
 
@@ -138,9 +138,11 @@ module.exports = function ({
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
               // sin comprobar nada, ya que intenta lanzar un evento y los eventos tienen su propia seguridad
+              console.log(ctx.action.name);
               if (
                 !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
-                !ctx.action.name.includes('leemonsMongoDBRollback')
+                !ctx.action.name.includes('leemonsMongoDBRollback') &&
+                !ctx.action.name.startsWith('gateway.')
               ) {
                 if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
                   if (!ctx.meta.relationshipID)

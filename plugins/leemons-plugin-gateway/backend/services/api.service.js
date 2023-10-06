@@ -1,6 +1,12 @@
 const ApiGateway = require('moleculer-web');
 const { parse } = require('url');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const {
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
+const { searchUsers } = require('leemons-plugin-families/core/users');
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -15,6 +21,18 @@ module.exports = {
     ApiGateway,
     LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false, getDeploymentIdInCall: true }),
   ],
+
+  actions: {
+    status: {
+      rest: {
+        method: 'GET',
+        path: '/status',
+      },
+      async handler(ctx) {
+        return { status: 200, timestamp: new Date() };
+      },
+    },
+  },
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
@@ -31,6 +49,19 @@ module.exports = {
     use: [],
 
     routes: [
+      {
+        path: '/',
+        whitelist: ['**'],
+        use: [],
+        mergeParams: true,
+        uthentication: true,
+        authorization: false,
+        autoAliases: true,
+        aliases: {
+          // -- Gateway (Finish) --
+          'GET /': 'gateway.status',
+        },
+      },
       {
         path: '/api',
 
@@ -53,6 +84,10 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          // -- Gateway (Finish) --
+          'GET status': 'gateway.status',
+
+          // -- Deployment Manager (Finish) --
           'POST deployment-manager/add-manual-deployment':
             'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
@@ -516,29 +551,29 @@ module.exports = {
         },
 
         /**
-         * Before call hook. You can check the request.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         *
-         onBeforeCall(ctx, route, req, res) {
-         // Set request headers to context meta
-         ctx.meta.userAgent = req.headers["user-agent"];
-         }, */
+                 * Before call hook. You can check the request.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 *
+                 onBeforeCall(ctx, route, req, res) {
+                 // Set request headers to context meta
+                 ctx.meta.userAgent = req.headers["user-agent"];
+                 }, */
 
         /**
-         * After call hook. You can modify the data.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         onAfterCall(ctx, route, req, res, data) {
-         // Async function which return with Promise
-         return doSomething(ctx, res, data);
-         }, */
+                 * After call hook. You can modify the data.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 onAfterCall(ctx, route, req, res, data) {
+                 // Async function which return with Promise
+                 return doSomething(ctx, res, data);
+                 }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =

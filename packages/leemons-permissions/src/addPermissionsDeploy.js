@@ -1,19 +1,19 @@
 const { hasKey, setKey } = require('@leemons/mongodb-helpers');
 
 async function addPermissionsDeploy({ keyValueModel, permissions, ctx }) {
-  console.time('Create Permissions');
-  console.time('Has Key Permissions');
+  let startTime = new Date();
+  let hasKeyStartTime = new Date();
   if (!(await hasKey(keyValueModel, `permissions`))) {
-    console.timeEnd('Has Key Permissions');
-    console.time('users.permissions.addMany');
+    console.log('Has Key Permissions: ' + (new Date() - hasKeyStartTime) + 'ms');
+    let addManyStartTime = new Date();
     await ctx.tx.call('users.permissions.addMany', permissions);
-    console.timeEnd('users.permissions.addMany');
-    console.time('keyValueModel');
+    console.log('users.permissions.addMany: ' + (new Date() - addManyStartTime) + 'ms');
+    let keyValueModelStartTime = new Date();
     await setKey(keyValueModel, `permissions`);
-    console.timeEnd('keyValueModel');
+    console.log('keyValueModel: ' + (new Date() - keyValueModelStartTime) + 'ms');
   }
   ctx.tx.emit('init-permissions');
-  console.timeEnd('Create Permissions');
+  console.log('Create Permissions: ' + (new Date() - startTime) + 'ms');
 }
 
 module.exports = { addPermissionsDeploy };
