@@ -28,6 +28,6 @@ module.exports = {
     ...restActions,
   },
   async created() {
-    mongoose.connect(process.env.MONGO_URI, { maxPoolSize: 200, minPoolSize: 20 });
+    mongoose.connect(process.env.MONGO_URI);
   },
 };

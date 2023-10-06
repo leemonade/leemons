@@ -29,32 +29,30 @@ for carpeta in "$1"/*/
 do
   # Verifica si la carpeta es un directorio
   if [ -d "$carpeta" ]; then
-    (
-      # Cambia al directorio
-      cd "$carpeta"
+    # Cambia al directorio
+    cd "$carpeta"
 
-      # Ejecuta el comando npm version
-      npm version patch --legacy-peer-deps
 
-      # Configura la variable de entorno NODE_AUTH_TOKEN
-      export NODE_AUTH_TOKEN="$NODE_AUTH_TOKEN"
+    # Ejecuta el comando npm version
+    npm version patch --legacy-peer-deps
 
-      # Publica el paquete
-      npm publish --tag "$NPM_TAG"
+    # Configura la variable de entorno NODE_AUTH_TOKEN
+    export NODE_AUTH_TOKEN="$NODE_AUTH_TOKEN"
 
-      # Obtiene el nombre y la versión del paquete
-      pkg_name=$(cat package.json | grep '"name":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-      pkg_version=$(cat package.json | grep '"version":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+    # Publica el paquete
+    npm publish --tag "$NPM_TAG"
 
-      # Vuelve al directorio original
-      cd -
+    # Obtiene el nombre y la versión del paquete
+    pkg_name=$(cat package.json | grep '"name":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
+    pkg_version=$(cat package.json | grep '"version":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
 
-      # Busca y reemplaza la versión en todos los archivos package.json donde el nombre del paquete aparece como una dependencia
-      find . -name 'node_modules' -prune -o -name 'package.json' -exec sed -i "s|\"$pkg_name\": \"[^\"]*\"|\"$pkg_name\": \"$pkg_version\"|g" {} \;
-    ) &
+    # Vuelve al directorio original
+    cd -
+
+    # Busca y reemplaza la versión en todos los archivos package.json donde el nombre del paquete aparece como una dependencia
+    find . -name 'node_modules' -prune -o -name 'package.json' -exec sed -i "s|\"$pkg_name\": \"[^\"]*\"|\"$pkg_name\": \"$pkg_version\"|g" {} \;
   else
     echo "La carpeta '$carpeta' no es un directorio válido."
   fi
 done
-wait
 

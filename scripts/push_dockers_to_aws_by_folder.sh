@@ -31,14 +31,11 @@ do
       docker tag $image_and_ecr_name:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$image_and_ecr_name:$IMAGE_TAG
 
       # Publica la imagen en AWS ECR
-      docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$image_and_ecr_name:$IMAGE_TAG &
+      docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$image_and_ecr_name:$IMAGE_TAG
 
     else
       echo "La ruta '$carpeta' no es un directorio válido."
     fi
 done
-
-# Esperar a que todos los procesos en segundo plano terminen
-wait
 
 
