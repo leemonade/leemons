@@ -2,7 +2,7 @@
   "devDependencies": {},
   "dependencies": {},
   "name": "@leemons/emails",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
