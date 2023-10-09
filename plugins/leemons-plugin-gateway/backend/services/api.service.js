@@ -539,13 +539,16 @@ module.exports = {
           'POST leebrary/file/multipart/new': 'v1.leebrary.file.newMultipartRest',
           'POST leebrary/file/multipart/abort': 'v1.leebrary.file.abortMultipartRest',
           'POST leebrary/file/multipart/finish': 'v1.leebrary.file.finishMultipartRest',
-          'POST leebrary/file/multipart/chunk': 'multipart:v1.leebrary.file.uploadMultipartChunkRest',
-
-          // -- mqtt AWS IOT (NOT FINISHED) --
-          'POST mqtt-aws-iot/config': 'v1.mqtt-aws-iot.socket.setConfigRest',
+          'POST leebrary/file/multipart/chunk':
+            'multipart:v1.leebrary.file.uploadMultipartChunkRest',
+          'GET leebrary/img/:assetId': 'v1.leebrary.file.coverRest',
+          'GET leebrary/file/:id': 'v1.leebrary.file.fileRest',
+          'GET leebrary/file/:id/(.*)': 'v1.leebrary.file.folderRest',
+          'GET leebrary/file/public/:id': 'v1.leebrary.file.publicFileRest',
+          'GET leebrary/file/public/:id/(.*)': 'v1.leebrary.file.publicFolderRest',
 
           // -- Leebrary AWS S3 (NOT FINISHED) --
-          'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest'
+          'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
         },
 
         /**

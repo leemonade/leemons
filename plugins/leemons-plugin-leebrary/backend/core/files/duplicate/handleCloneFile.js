@@ -10,7 +10,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @returns {Promise<LibraryFile|null>} The updated file object.
  */
 async function handleCloneFile({ fromFile, providerName, ctx }) {
-  const provider = await getProviderByName(providerName);
+  const provider = await getProviderByName({ name: providerName, ctx });
   const urlData = {};
   let newFile = null;
   if (provider?.supportedMethods?.clone) {
@@ -22,8 +22,14 @@ async function handleCloneFile({ fromFile, providerName, ctx }) {
 
     newFile = await ctx.tx.db.Files.create(toCreate);
     urlData.provider = providerName;
-    urlData.uri = await ctx.tx.call(`${providerName}.files.clone`, { fromFile, newFile });
-    newFile = await ctx.tx.db.Files.updateOne({ id: newFile.id }, urlData);
+    urlData.uri = await ctx.tx.call(`${providerName}.files.clone`, {
+      itemFrom: fromFile,
+      itemTo: newFile,
+    });
+    newFile = await ctx.tx.db.Files.findOneAndUpdate({ id: newFile.id }, urlData, {
+      new: true,
+      lean: true,
+    });
   }
   return newFile;
 }

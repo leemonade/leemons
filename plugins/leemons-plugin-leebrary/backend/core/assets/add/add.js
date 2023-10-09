@@ -50,6 +50,7 @@ async function add({
   duplicating = false,
   ctx,
 }) {
+  // eslint-disable-next-line prefer-const
   let { file, cover, category, canAccess, ...data } = _assetData;
   const pPermissions = normalizeItemsArray(permissions);
 

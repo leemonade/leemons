@@ -42,7 +42,7 @@ async function handleAssetDuplication({
   const _isPublic = isPublic === undefined ? asset.public : isTruthy(isPublic);
 
   return add({
-    assetData: {
+    asset: {
       ...assetData,
       tags,
       name: isTruthy(preserveName) ? asset.name : `${asset.name} (1)`,
@@ -51,7 +51,8 @@ async function handleAssetDuplication({
       indexable: _isIndexable,
       public: _isPublic,
     },
-    options: { newId, duplicating: true },
+    newId,
+    duplicating: true,
     ctx,
   });
 }

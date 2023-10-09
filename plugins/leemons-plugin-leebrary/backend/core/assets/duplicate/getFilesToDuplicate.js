@@ -11,7 +11,7 @@ const { getByIds: getFiles } = require('../../files/getByIds/getByIds');
  * @returns {Promise<Object>} - Returns a promise with an object containing the files and the cover.
  */
 async function getFilesToDuplicate({ filesIds, coverId, ctx }) {
-  const filesToDuplicate = await getFiles({ filesIds, parsed: false, ctx });
+  const filesToDuplicate = await getFiles({ fileIds: filesIds, parsed: false, ctx });
   const cover = _.find(filesToDuplicate, { id: coverId });
 
   return { filesToDuplicate, cover };

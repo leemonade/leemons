@@ -1,3 +1,5 @@
+const { omit } = require('lodash');
+
 /**
  * This function creates a new asset in the database.
  *
@@ -11,8 +13,19 @@
  * @returns {Promise<LibraryAsset>} A promise that resolves with the created asset object.
  */
 async function createAssetInDB({ newId, categoryId, coverId, assetData, ctx }) {
+  const prepareNewAssetForDB = omit({ ...assetData }, [
+    '_id',
+    'id',
+    'deploymentID',
+    '__v',
+    'isDeleted',
+    'deletedAt',
+    'createdAt',
+    'updatedAt',
+  ]);
+
   const assetDoc = await ctx.tx.db.Assets.create({
-    ...assetData,
+    ...prepareNewAssetForDB,
     id: newId,
     category: categoryId,
     cover: coverId,

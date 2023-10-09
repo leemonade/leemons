@@ -58,7 +58,7 @@ async function add({ data, ctx }) {
       menuKey: categoriesMenu.key,
     });
 
-    return newCategory;
+    return newCategory?.toObject();
   } catch (e) {
     ctx.logger.error(e);
     throw new LeemonsError(ctx, {

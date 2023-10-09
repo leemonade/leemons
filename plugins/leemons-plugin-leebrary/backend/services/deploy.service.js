@@ -20,8 +20,8 @@ const {
   categories,
   categoriesMenu,
   widgets,
-  defaultCategory: defaultCategoryKey,
 } = require('../config/constants');
+const { defaultCategory: defaultCategoryKey } = require('../config/config');
 const { getServiceModels } = require('../models');
 const { add } = require('../core/categories/add');
 const { setDefaultCategory } = require('../core/settings');

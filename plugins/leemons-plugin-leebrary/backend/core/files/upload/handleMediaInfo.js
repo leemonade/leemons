@@ -21,6 +21,7 @@ let mediainfo;
  * @returns {Promise<Object>} The metadata of the file.
  */
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 async function handleMediaInfo({ metadata = {}, fileHandle, fileType, fileSize, ctx }) {
   if (['image', 'audio', 'video'].includes(fileType)) {
     const readChunk = async (size, offset) => {

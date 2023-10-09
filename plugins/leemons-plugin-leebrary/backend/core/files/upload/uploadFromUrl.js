@@ -1,7 +1,5 @@
 const { LeemonsError } = require('@leemons/error');
 const { getById } = require('../getById');
-const { dataForReturnFile } = require('../dataForReturnFile');
-const { uploadFromFileStream } = require('./uploadFromFileStream');
 const { download } = require('./download');
 const { upload } = require('./upload');
 /**
@@ -13,20 +11,14 @@ const { upload } = require('./upload');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} A promise that resolves with the uploaded file.
  */
+
 async function uploadFromUrl({ url, name, ctx }) {
-  // ES: Primero comprobamos que la URL no sea un FILE_ID
-  // EN: First check if the URL is a FILE_ID
+  // ES: Si la URL is un FILE_ID, no es necesario subir el archivo de nuevo.
+  // EN: If the URL is a FILE_ID, it's not necessary to upload the file, we just return it.
   const file = await getById({ id: url, ctx });
+  if (file?.id) return file;
 
   try {
-    if (file?.id) {
-      if (file.isFolder) {
-        return file;
-      }
-      const fileStream = await dataForReturnFile({ id: file.id, ctx });
-      return uploadFromFileStream({ file: fileStream, name, ctx });
-    }
-
     const { path, contentType } = await download({ url, compress: true });
     return upload({ file: { path, type: contentType }, name, ctx });
   } catch (err) {

@@ -39,7 +39,6 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const temp = await createTemp({ readStream: ctx.params });
-
       return {
         status: 200,
         body: await uploadMultipartChunk({
@@ -75,7 +74,6 @@ module.exports = {
       return { status: 200, ...data };
     },
   },
-  // TODO: TOOOO DOOOOOOO!!!
   fileRest: {
     rest: {
       path: '/:id',
@@ -85,7 +83,6 @@ module.exports = {
     // eslint-disable-next-line sonarjs/cognitive-complexity
     async handler(ctx) {
       const { id, download, onlyPublic } = ctx.params;
-      const { headers } = ctx.meta; // ! get the headers adding a line in gateway's setting.routes onBeforeCall() or find it in ctx.options.etc.etc.etc
 
       if (_.isEmpty(id)) {
         throw new LeemonsError(ctx, { message: 'Id is required', httpStatusCode: 400 });
@@ -104,7 +101,7 @@ module.exports = {
 
       let bytesStart = -1;
       let bytesEnd = -1;
-      const { range } = headers;
+      const range = ctx.meta.headers?.range || undefined;
 
       if (!download && range?.indexOf('bytes=') > -1) {
         const parts = range.replace(/bytes=/, '').split('-');
@@ -126,11 +123,12 @@ module.exports = {
         // ctx.status = 307;
         // ctx.set('Cache-Control', 'max-age=300');
         // ctx.redirect(readStream);
+        ctx.meta.$statusCode = 307;
         ctx.meta.$responseHeaders = {
           'Cache-Control': 'max-age=300',
-          'Location': readStream,
         };
-        return { status: 307 };
+        ctx.meta.$location = readStream;
+        return;
       }
 
       const mediaType = contentType.split('/')[0];
@@ -142,7 +140,6 @@ module.exports = {
       ctx.meta.$responseHeaders = {
         'Content-Type': contentType,
       };
-      // * return { status: 200, readStream };
 
       if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
         // // if (download || !['image', 'video', 'audio'].includes(mediaType)) {
@@ -180,11 +177,12 @@ module.exports = {
         }
         */
       }
+      return { status: 200, readStream };
     },
   },
   folderRest: {
     rest: {
-      path: '/file/:id/(.*)',
+      path: '/:id/(.*)',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -222,11 +220,11 @@ module.exports = {
       path: '/img/:assetId',
       method: 'GET',
     },
-    middlewares: [LeemonsMiddlewareAuthenticated()],
+    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
     async handler(ctx) {
       const { assetId } = ctx.params;
 
-      if (isEmpty(assetId)) {
+      if (_.isEmpty(assetId)) {
         throw new LeemonsError(ctx, { message: 'Asset ID is required', httpStatusCode: 400 });
       }
 
@@ -245,22 +243,24 @@ module.exports = {
           httpStatusCode: 403,
         });
       }
+
       if (asset.cover) {
         const { readStream, fileName, contentType } = await dataForReturnFile({
           id: asset.cover,
           forceStream: false,
         });
 
-        if (isString(readStream) && readStream.indexOf('http') === 0) {
+        if (_.isString(readStream) && readStream.indexOf('http') === 0) {
           // Redirect to external URL
           // ctx.status = 307;
           // ctx.set('Cache-Control', 'max-age=300');
           // ctx.redirect(readStream);
+          ctx.meta.$statusCode = 307;
           ctx.meta.$responseHeaders = {
             'Cache-Control': 'max-age=300',
-            'Location': readStream,
           };
-          return { status: 307 };
+          ctx.meta.$location = readStream;
+          return;
         }
 
         const mediaType = contentType.split('/')[0];
@@ -270,9 +270,7 @@ module.exports = {
         // ctx.set('Content-Type', contentType);
         ctx.meta.$responseHeaders = {
           'Contet-Type': contentType,
-          'Location': readStream,
         };
-        // * return { status: 200, readStream };
 
         if (['image', 'video', 'audio'].includes(mediaType)) {
           // TODO: handle content disposition for images, video and audio. Taking care of download param
@@ -282,12 +280,12 @@ module.exports = {
             'Content-disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
           };
         }
-      } else {
-        // ctx.status = 400;
-        return { status: 400 };
-        // ctx.body = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>';
-        // ctx.set('Content-Type', 'image/svg+xml');
+        return { status: 200, readStream };
       }
+      // ctx.status = 400;
+      return { status: 400 }; // The following two lines were commented in leemons legacy
+      // ctx.body = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>';
+      // ctx.set('Content-Type', 'image/svg+xml');
     },
   },
 };

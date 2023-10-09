@@ -1,6 +1,6 @@
 const aws = require('aws-sdk');
 const { getConfig } = require('./getConfig');
-
+aws.config.logger = console;
 /**
  * Retrieves the configuration for the AWS S3 service and initializes an S3 instance.
  *

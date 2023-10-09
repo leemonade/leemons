@@ -22,7 +22,7 @@ async function removeMissingUserAgents({
   ctx,
 }) {
   let toRemove = await ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
-    permissionName,
+    permissions: { permissionName },
   });
   toRemove = toRemove.filter((ua) => !toUpdate.includes(ua));
 

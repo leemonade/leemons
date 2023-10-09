@@ -1,11 +1,8 @@
 /* eslint-disable no-param-reassign */
 const mime = require('mime-types');
-const fsPromises = require('fs/promises');
 const { findOne: getSettings } = require('../../settings');
-const { handleMetadata } = require('./handleMetadata');
 const { handleFileProvider } = require('./handleFileProvider');
-const { handleDocumentInfo } = require('./handleDocumentInfo');
-const { handleMediaInfo } = require('./handleMediaInfo');
+const { getMetadataObject } = require('./getMetadataObject');
 
 /**
  * Uploads a file.
@@ -16,22 +13,12 @@ const { handleMediaInfo } = require('./handleMediaInfo');
  * @param {MoleculerContext} params.ctx - The Moleculer context object.
  * @returns {Promise<Object>} The uploaded file.
  */
+
 async function upload({ file, name, ctx }) {
+  // GET METADATA
   const { path, type } = file;
   const extension = mime.extension(type);
-  const fileHandle = await fsPromises.open(path, 'r');
-  const [fileType] = type.split('/');
-
-  // eslint-disable-next-line prefer-const
-  let { metadata, fileSize } = await handleMetadata({ fileHandle, path });
-
-  // ·········································································
-  // MEDIAINFO
-  metadata = await handleMediaInfo({ metadata, fileHandle, fileType, fileSize, ctx });
-
-  // ·········································································
-  // DOCUMENT INFO
-  metadata = await handleDocumentInfo({ metadata, path, extension });
+  const { metadata, fileSize } = getMetadataObject({ filePath: path, fileType: type, extension });
 
   // ·········································································
   // CREATE NEW FILE IN DB
