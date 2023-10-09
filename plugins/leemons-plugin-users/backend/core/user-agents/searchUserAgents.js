@@ -115,11 +115,15 @@ async function searchUserAgents({
   if (user && (user.name || user.surnames || user.email)) {
     const query = { $or: [] };
     if (queryWithContains) {
-      if (user.name) query.$or.push({ name: { $regex: user.name, $options: 'i' } });
-      if (user.surnames) query.$or.push({ surnames: { $regex: user.surnames, $options: 'i' } });
-      if (user.email) query.$or.push({ email: { $regex: user.email, $options: 'i' } });
+      if (user.name) query.$or.push({ name: { $regex: _.escapeRegExp(user.name), $options: 'i' } });
+      if (user.surnames)
+        query.$or.push({ surnames: { $regex: _.escapeRegExp(user.surnames), $options: 'i' } });
+      if (user.email)
+        query.$or.push({ email: { $regex: _.escapeRegExp(user.email), $options: 'i' } });
       if (user.secondSurname)
-        query.$or.push({ secondSurname: { $regex: user.secondSurname, $options: 'i' } });
+        query.$or.push({
+          secondSurname: { $regex: _.escapeRegExp(user.secondSurname), $options: 'i' },
+        });
     } else {
       if (user.name) query.$or.push({ name: user.name });
       if (user.surnames) query.$or.push({ surnames: user.surnames });

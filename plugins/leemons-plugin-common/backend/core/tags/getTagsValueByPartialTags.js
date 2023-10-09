@@ -1,4 +1,4 @@
-const { isArray, map, uniq } = require('lodash');
+const { escapeRegExp, isArray, map, uniq } = require('lodash');
 
 const LeemonsError = require('@leemons/error');
 
@@ -11,7 +11,7 @@ async function getTagsValueByPartialTags({ values, type, ctx }) {
     throw new LeemonsError(ctx, { message: 'Values cannot be empty.' });
   }
 
-  const query = { $or: _values.map((value) => ({ tag: { $regex: value } })) };
+  const query = { $or: _values.map((value) => ({ tag: { $regex: escapeRegExp(value) } })) };
 
   if (type) {
     query.type = type;
