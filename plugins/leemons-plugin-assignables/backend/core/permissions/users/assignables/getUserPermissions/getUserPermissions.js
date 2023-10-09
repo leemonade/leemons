@@ -1,4 +1,4 @@
-const { uniq, map, groupBy, difference } = require('lodash');
+const { escapeRegExp, uniq, map, groupBy, difference } = require('lodash');
 
 const { getRoleMatchingActions } = require('../../../assignables/helpers/getRoleMatchingActions');
 const { getPermissionName } = require('../../../assignables/helpers/getPermissionName');
@@ -22,7 +22,7 @@ async function getUserPermissions({ assignables, ctx }) {
 
   const query = {
     $or: assignablesIds.map((id) => ({
-      permissionName: { $regex: new RegExp(getPermissionName({ id, ctx }), 'i') },
+      permissionName: { $regex: escapeRegExp(new RegExp(getPermissionName({ id, ctx }), 'i')) },
     })),
   };
 

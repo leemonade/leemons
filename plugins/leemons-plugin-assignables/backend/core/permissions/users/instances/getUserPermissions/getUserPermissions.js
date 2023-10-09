@@ -1,4 +1,4 @@
-const { uniq, difference } = require('lodash');
+const { uniq, difference, escapeRegExp } = require('lodash');
 const { getRoleMatchingActions } = require('../../../instances/helpers/getRoleMatchingActions');
 const { getTeacherPermissions } = require('../getTeacherPermissions');
 const { getPermissionName } = require('../../../instances/helpers/getPermissionName');
@@ -22,7 +22,9 @@ async function getUserPermissions({ instancesIds, ctx }) {
 
   const ids = uniq(instancesIds);
   const query = {
-    $or: ids.map((id) => ({ permissionName: { $regex: getPermissionName(id), $options: 'i' } })),
+    $or: ids.map((id) => ({
+      permissionName: { $regex: escapeRegExp(getPermissionName(id)), $options: 'i' },
+    })),
   };
 
   const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {

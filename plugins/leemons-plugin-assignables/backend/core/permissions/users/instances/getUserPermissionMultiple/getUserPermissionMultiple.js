@@ -16,7 +16,7 @@ async function getUserPermissionMultiple({ assignableInstances: _assignableInsta
     query: {
       $or: _.map(assignableInstances, (assignableInstance) => ({
         permissionName: {
-          $regex: getPermissionName({ assignableId: assignableInstance, ctx }),
+          $regex: _.escapeRegExp(getPermissionName({ assignableId: assignableInstance, ctx })),
           $options: 'i',
         },
       })),
