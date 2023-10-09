@@ -1,4 +1,4 @@
-const { isEmpty } = require('lodash');
+const { isEmpty, escapeRegExp } = require('lodash');
 
 const { LeemonsError } = require('@leemons/error');
 
@@ -13,7 +13,7 @@ async function byDescription({
 }) {
   try {
     const query = {
-      description: { $regex: description, $options: 'i' },
+      description: { $regex: escapeRegExp(description), $options: 'i' },
       indexable,
     };
 

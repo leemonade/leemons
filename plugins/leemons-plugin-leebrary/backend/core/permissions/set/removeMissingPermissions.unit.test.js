@@ -6,6 +6,7 @@ const {
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
 const { LeemonsError } = require('@leemons/error');
+const { escapeRegExp } = require('lodash');
 
 const { removeMissingPermissions } = require('./removeMissingPermissions');
 const getPermissionsMocks = require('../../../__fixtures__/getPermissionsMocks');
@@ -72,7 +73,7 @@ it('Should call removeMissingPermissions correctly', async () => {
     params: {
       item: asset.id,
       permissionName: { $nin: [] },
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
   expect(canUnassignRole).nthCalledWith(1, {

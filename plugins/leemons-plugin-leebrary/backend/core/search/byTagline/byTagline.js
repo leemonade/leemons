@@ -1,4 +1,4 @@
-const { isEmpty } = require('lodash');
+const { isEmpty, escapeRegExp } = require('lodash');
 
 const { LeemonsError } = require('@leemons/error');
 
@@ -7,7 +7,7 @@ const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
 async function byTagline({ tagline, details = false, indexable = true, assets: assetsIds, ctx }) {
   try {
     const query = {
-      tagline: { $regex: tagline, $options: 'i' },
+      tagline: { $regex: escapeRegExp(tagline), $options: 'i' },
       indexable,
     };
 

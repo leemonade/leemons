@@ -1,4 +1,4 @@
-const { isArray, isEmpty } = require('lodash');
+const { isArray, isEmpty, escapeRegExp } = require('lodash');
 /**
  * Prepare the query object based on the provided parameters.
  *
@@ -15,7 +15,7 @@ function prepareQuery(type, files) {
   }
 
   if (type && !isEmpty(type)) {
-    const regexStr = type === 'document' ? 'application' : type;
+    const regexStr = type === 'document' ? 'application' : escapeRegExp(type);
     query.type = { $regex: regexStr, $options: 'i' };
   }
 

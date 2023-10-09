@@ -1,4 +1,4 @@
-const { flattenDeep, forEach, findIndex } = require('lodash');
+const { flattenDeep, forEach, findIndex, escapeRegExp } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 const getRolePermissions = require('../helpers/getRolePermissions');
@@ -6,7 +6,6 @@ const getAssetPermissionName = require('../helpers/getAssetPermissionName');
 const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
 const { handleOnlyShared } = require('./handleOnlyShared');
 const { handleItemPermissions } = require('./handleItemPermissions');
-const { escapeRegExp } = require('../../shared');
 
 /**
  * Retrieves permissions by assets.

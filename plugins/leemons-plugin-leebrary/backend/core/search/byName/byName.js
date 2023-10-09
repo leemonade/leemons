@@ -1,4 +1,4 @@
-const { isEmpty } = require('lodash');
+const { isEmpty, escapeRegExp } = require('lodash');
 
 const { LeemonsError } = require('@leemons/error');
 
@@ -7,7 +7,7 @@ const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
 async function byName({ name, details = false, indexable = true, assets: assetsIds, ctx }) {
   try {
     const query = {
-      name: { $regex: name, $options: 'i' },
+      name: { $regex: escapeRegExp(name), $options: 'i' },
       indexable,
     };
 

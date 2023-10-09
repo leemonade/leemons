@@ -1,4 +1,4 @@
-const { isEmpty, map, intersection, flattenDeep, compact, uniq } = require('lodash');
+const { isEmpty, map, intersection, flattenDeep, compact, uniq, escapeRegExp } = require('lodash');
 
 const { byProvider: getByProvider } = require('../byProvider');
 /**
@@ -68,9 +68,9 @@ async function getProviderAssets({
 
   if (criteria) {
     query.$or = [
-      { name: { $regex: criteria, $options: 'i' } },
-      { tagline: { $regex: criteria, $options: 'i' } },
-      { description: { $regex: criteria, $options: 'i' } },
+      { name: { $regex: escapeRegExp(criteria), $options: 'i' } },
+      { tagline: { $regex: escapeRegExp(criteria), $options: 'i' } },
+      { description: { $regex: escapeRegExp(criteria), $options: 'i' } },
     ];
   }
 

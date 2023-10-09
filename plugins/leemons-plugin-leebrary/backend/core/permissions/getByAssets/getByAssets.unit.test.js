@@ -9,12 +9,12 @@ const {
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 const { LeemonsError } = require('@leemons/error');
+const { escapeRegExp } = require('lodash');
 
 const { getByAssets } = require('./getByAssets');
 const { assetsSchema } = require('../../../models/assets');
 const getUserSession = require('../../../__fixtures__/getUserSession');
 const { permissionSeparator, rolesPermissions } = require('../../../config/constants');
-const { escapeRegExp } = require('../../shared');
 
 // MOCKS
 jest.mock('./handleItemPermissions');

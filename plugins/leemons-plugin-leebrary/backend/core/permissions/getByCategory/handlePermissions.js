@@ -1,3 +1,4 @@
+const { escapeRegExp } = require('lodash');
 /**
  * handlePermissions is an asynchronous function that fetches permissions for a specific category.
  * It makes three different calls to fetch permissions related to the user and the category.
@@ -12,7 +13,7 @@ async function handlePermissions({ userSession, categoryId, ctx }) {
     ctx.tx.call('users.permissions.getUserAgentPermissions', {
       userAgent: userSession.userAgents,
       query: {
-        permissionName: { $regex: `^${ctx.prefixPN('')}` },
+        permissionName: { $regex: `^${escapeRegExp(ctx.prefixPN(''))}` },
         target: categoryId,
       },
     }),

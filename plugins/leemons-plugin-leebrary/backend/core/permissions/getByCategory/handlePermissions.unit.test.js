@@ -4,6 +4,7 @@ const {
   jest: { fn },
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
+const { escapeRegExp } = require('lodash');
 
 const { handlePermissions } = require('./handlePermissions');
 const getUserSession = require('../../../__fixtures__/getUserSession');
@@ -38,7 +39,7 @@ it('Should call handlePermissions correctly', async () => {
   expect(getUserAgentPermissions).toBeCalledWith({
     userAgent: ctx.meta.userSession.userAgents,
     query: {
-      permissionName: { $regex: `^${ctx.prefixPN('')}` },
+      permissionName: { $regex: `^${escapeRegExp(ctx.prefixPN(''))}` },
       target: categoryId,
     },
   });

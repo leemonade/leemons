@@ -6,6 +6,7 @@ const {
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
 const { LeemonsError } = require('@leemons/error');
+const { escapeRegExp } = require('lodash');
 
 const { addPermissionsToAsset } = require('./addPermissionsToAsset');
 const getPermissionsMocks = require('../../../__fixtures__/getPermissionsMocks');
@@ -64,7 +65,7 @@ it('Should correctly add permissions to assets', async () => {
     params: {
       item: params.id,
       permissionName: allPermissionsMock,
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
   expect(removeItemsAction).toBeCalledWith({
@@ -126,7 +127,7 @@ it('Should set permissions correctly when none are passed', async () => {
     params: {
       item: params.id,
       permissionName: [],
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
   expect(removeItemsAction).toBeCalledWith({

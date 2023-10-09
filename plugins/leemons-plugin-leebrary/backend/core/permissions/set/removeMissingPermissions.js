@@ -1,4 +1,4 @@
-const { uniq, forEach } = require('lodash');
+const { uniq, forEach, escapeRegExp } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const canUnassignRole = require('../helpers/canUnassignRole');
 
@@ -32,7 +32,7 @@ async function removeMissingPermissions({ id, permissions, assignerRole, ctx }) 
     params: {
       item: id,
       permissionName: { $nin: allPermissions },
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
 

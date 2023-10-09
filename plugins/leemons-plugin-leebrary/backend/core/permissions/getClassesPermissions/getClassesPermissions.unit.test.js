@@ -5,6 +5,7 @@ const {
   jest: { fn },
 } = require('@jest/globals');
 const { generateCtx } = require('@leemons/testing');
+const { escapeRegExp } = require('lodash');
 
 const { getClassesPermissions } = require('./getClassesPermissions');
 
@@ -86,8 +87,8 @@ it('Should correctly retreive a class permissions and the class info', async () 
   expect(findItems).toBeCalledWith({
     params: {
       item: assetsIds,
-      permissionName: { $regex: '^academic-portfolio.class.' },
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      permissionName: { $regex: `^${escapeRegExp('academic-portfolio.class.')}` },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
   expect(classByIds).toBeCalledWith({ ids: ['classOne', 'classTwo'] });
@@ -203,8 +204,8 @@ it('Should not call classByIds if no classes have permissions', async () => {
   expect(findItems).toBeCalledWith({
     params: {
       item: assetsIds,
-      permissionName: { $regex: '^academic-portfolio.class.' },
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      permissionName: { $regex: `^${escapeRegExp('academic-portfolio.class.')}` },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
   expect(classByIds).not.toBeCalled();

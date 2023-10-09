@@ -31,7 +31,7 @@ async function addPermissionsToAsset({ id, categoryId, permissions, assignerRole
     params: {
       item: id,
       permissionName: allPermissions,
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      type: { $regex: `^${_.escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
 

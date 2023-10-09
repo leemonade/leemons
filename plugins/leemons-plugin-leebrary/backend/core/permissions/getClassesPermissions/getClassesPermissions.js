@@ -1,4 +1,4 @@
-const { groupBy, uniq } = require('lodash');
+const { groupBy, uniq, escapeRegExp } = require('lodash');
 
 /**
  * getClassesPermissions is a function that retrieves the permissions for classes.
@@ -15,8 +15,8 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
   const permissions = await ctx.tx.call('users.permissions.findItems', {
     params: {
       item: ids,
-      permissionName: { $regex: '^academic-portfolio.class.' },
-      type: { $regex: `^${ctx.prefixPN('asset')}` },
+      permissionName: { $regex: `^${escapeRegExp('academic-portfolio.class.')}` },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
     },
   });
 
