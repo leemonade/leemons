@@ -1,13 +1,13 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/error": "0.0.36",
-    "@leemons/mongodb-helpers": "0.0.36",
-    "@leemons/utils": "0.0.36",
+    "@leemons/error": "0.0.37",
+    "@leemons/mongodb-helpers": "0.0.37",
+    "@leemons/utils": "0.0.37",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/multi-events",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
