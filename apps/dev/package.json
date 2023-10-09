@@ -88,7 +88,7 @@
     "leemons-plugin-widgets-frontend-react": "1.0.0",
     "leemons-plugin-xapi": "1.0.0",
     "leemons-plugin-xapi-frontend-react": "1.0.0",
-    "@leemons/runner": "0.0.38",
+    "@leemons/runner": "0.0.39",
     "moment": "^2.29.4",
     "nats": "^2.16.0",
     "squirrelly": "^9.0.0"

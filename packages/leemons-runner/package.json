@@ -1,6 +1,6 @@
 {
   "name": "@leemons/runner",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "description": "",
   "main": "lib/index.js",
   "bin": {

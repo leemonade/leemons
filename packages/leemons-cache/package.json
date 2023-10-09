@@ -1,13 +1,13 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/service-name-parser": "0.0.38",
+    "@leemons/service-name-parser": "0.0.39",
     "lodash": "^4.17.21",
     "node-cache": "^5.1.2",
     "redis": "^4.6.10"
   },
   "name": "@leemons/cache",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
