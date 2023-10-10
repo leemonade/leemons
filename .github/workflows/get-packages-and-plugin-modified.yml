@@ -1,21 +1,25 @@
-name: DEV Publish packages to NPM
+name: Get packages and plugins modified
 on:
   workflow_call:
     inputs:
-      NPM_TAG:
+      tag_pattern:
         required: true
         type: string
-      GIT_BRANCH:
-        required: true
-        type: string
-    secrets:
-      NPM_TOKEN:
-        required: true
+    outputs:
+      packages:
+        description: "Modified packages"
+        value: ${{ jobs.publish.outputs.packages }}
+      plugins:
+        description: "Modified plugins"
+        value: ${{ jobs.publish.outputs.plugins }}
 
 jobs:
   publish:
 
     runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.packages.outputs.packages }}
+      plugins: ${{ steps.plugins.outputs.plugins }}
     steps:
 
       - name: 🛎️ Checkout
@@ -23,36 +27,24 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: 🔧 Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
+      - name: 🔧 Get last tag
+        run: echo "LAST_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
 
-      - name: 🔧 Patch and publish to NPM
-        run: NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} NPM_TAG=${{ inputs.NPM_TAG }} bash scripts/patch_publish.sh ./packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: 🔧 Get current tag
+        run: echo "CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)" >> "$GITHUB_ENV"
+        
+      - name: 🔧 Get packages files
+        id: packages
+        run:  echo "packages=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^packages/' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
 
-      - name: 📝 Obtener archivos modificados
-        id: files
-        run: |
-          LAST_TAG=$(git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1`)
-          CURRENT_TAG=$(git describe --abbrev=0 --tags)
-          echo "::set-output name=modified::$(git diff --name-only $LAST_TAG $CURRENT_TAG)"
+      - name: 🔧 Get plugins files
+        id: plugins
+        run:  echo "plugins=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^plugins/.*/backend' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
 
-      - name: 🔧 Check for modified files
-        id: git-check
-        run: echo ::set-output name=modified::$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)
+      - name: 🔧 Log plugins
+        run:  echo "${{ steps.plugins.outputs.plugins }}"
 
-      - name: 🚀 Git push
-        if: steps.git-check.outputs.modified == 'true'
-        run: |
-          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-          git fetch origin ${{ inputs.GIT_BRANCH }}
-          git checkout ${{ inputs.GIT_BRANCH }}
-          git add .
-          git commit -m 'chore: version bump'
-          git push origin ${{ inputs.GIT_BRANCH }}
+      - name: 🔧 Log packages
+        run:  echo "${{ steps.packages.outputs.packages }}"
+
+

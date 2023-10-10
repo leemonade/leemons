@@ -2,7 +2,7 @@
   "devDependencies": {},
   "dependencies": {},
   "name": "@leemons/lrn",
-  "version": "0.0.33",
+  "version": "0.0.40",
   "description": "",
   "main": "src/index.js",
   "keywords": [],

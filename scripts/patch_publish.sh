@@ -55,3 +55,4 @@ do
     echo "La carpeta '$carpeta' no es un directorio válido."
   fi
 done
+

@@ -1,4 +1,4 @@
-name: DEV Publish packages to NPM
+name: Publish packages to NPM
 on:
   workflow_call:
     inputs:

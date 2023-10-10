@@ -3,8 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 const _ = require('lodash');
-const mongoose = require('mongoose');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { randomString } = require('@leemons/utils');
 const { LeemonsError } = require('@leemons/error');
 const { newTransaction } = require('@leemons/transactions');
@@ -124,7 +123,7 @@ module.exports = () => ({
   },
 
   created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 
   events: {

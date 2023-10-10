@@ -16,6 +16,18 @@ module.exports = {
     LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false, getDeploymentIdInCall: true }),
   ],
 
+  actions: {
+    status: {
+      rest: {
+        method: 'GET',
+        path: '/status',
+      },
+      async handler(ctx) {
+        return { status: 200, timestamp: new Date() };
+      },
+    },
+  },
+
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
     cors: {
@@ -31,6 +43,19 @@ module.exports = {
     use: [],
 
     routes: [
+      {
+        path: '/',
+        whitelist: ['**'],
+        use: [],
+        mergeParams: true,
+        uthentication: false,
+        authorization: false,
+        autoAliases: true,
+        aliases: {
+          // -- Gateway (Finish) --
+          'GET /': 'gateway.status',
+        },
+      },
       {
         path: '/api',
 
@@ -53,6 +78,10 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          // -- Gateway (Finish) --
+          'GET status': 'gateway.status',
+
+          // -- Deployment Manager (Finish) --
           'POST deployment-manager/add-manual-deployment':
             'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
@@ -527,7 +556,7 @@ module.exports = {
           'POST leebrary/assets': 'v1.leebrary.assets.addRest',
           'POST leebrary/assets/:id': 'v1.leebrary.assets.duplicateRest',
           'POST leebrary/assets/list': 'v1.leebrary.assets.listByIdsRest',
-          'POST leebrary/asset/:asset/permissions': 'v1.leebrary.permissions.setRest', // ! El front debería apuntar a leebrary/permissions/asset/:asset
+          'POST leebrary/asset/:asset/permissions': 'v1.leebrary.permissions.setRest',
           'POST leebrary/assets/pins': 'v1.leebrary.assets.addPinRest',
           'PUT leebrary/assets/:id': 'v1.leebrary.assets.updateRest',
           'DELETE leebrary/assets/:id': 'v1.leebrary.assets.removeRest',
@@ -552,29 +581,29 @@ module.exports = {
         },
 
         /**
-         * Before call hook. You can check the request.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         *
-         onBeforeCall(ctx, route, req, res) {
-         // Set request headers to context meta
-         ctx.meta.userAgent = req.headers["user-agent"];
-         }, */
+                 * Before call hook. You can check the request.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 *
+                 onBeforeCall(ctx, route, req, res) {
+                 // Set request headers to context meta
+                 ctx.meta.userAgent = req.headers["user-agent"];
+                 }, */
 
         /**
-         * After call hook. You can modify the data.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         onAfterCall(ctx, route, req, res, data) {
-         // Async function which return with Promise
-         return doSomething(ctx, res, data);
-         }, */
+                 * After call hook. You can modify the data.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 onAfterCall(ctx, route, req, res, data) {
+                 // Async function which return with Promise
+                 return doSomething(ctx, res, data);
+                 }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =
@@ -585,9 +614,13 @@ module.exports = {
           const parseResult = parse(
             req.headers.referer || req.headers.referrer || req.headers.host
           );
-          ctx.meta.hostname =
-            parseResult.hostname || parseResult.host || parseResult.pathname || parseResult.path;
-          console.log('ctx.meta.hostname', ctx.meta.hostname);
+          if (ctx.meta) {
+            ctx.meta.hostname =
+              parseResult?.hostname ||
+              parseResult?.host ||
+              parseResult?.pathname ||
+              parseResult?.path;
+          }
         },
 
         onError(req, res, err) {

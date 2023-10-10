@@ -28,7 +28,9 @@ async function getKeysCanAction({ locationName, pluginName, userAgent, actions: 
       ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent,
         query: {
-          permissionName: { $regex: `^${ctx.prefixPN(`${locationName}.${pluginName}`)}` },
+          permissionName: {
+            $regex: _.escapeRegExp(`^${ctx.prefixPN(`${locationName}.${pluginName}`)}`),
+          },
         },
       })
     );
