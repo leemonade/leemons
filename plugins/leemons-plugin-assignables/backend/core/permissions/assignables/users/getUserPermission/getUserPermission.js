@@ -1,7 +1,7 @@
 const { escapeRegExp } = require('lodash');
 
-const { getPermissionName } = require('../../../assignables/helpers/getPermissionName');
-const { getRoleMatchingActions } = require('../../../assignables/helpers/getRoleMatchingActions');
+const { getPermissionName } = require('../../helpers/getPermissionName');
+const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
 const { getTeacherPermission } = require('../getTeacherPermission');
 
 /**

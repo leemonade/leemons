@@ -8,14 +8,14 @@ const { updateInstance } = require('./updateInstance');
 const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
 const { instancesSchema } = require('../../../models/instances');
 
-const { getUserPermission } = require('../../permissions/users/instances/getUserPermission');
+const { getUserPermission } = require('../../permissions/instances/users/getUserPermission');
 const { updateClasses } = require('../../classes/updateClasses');
 const { updateDates } = require('../../dates/updateDates');
 const { getInstance } = require('../getInstance');
 const { createRelatedInstance } = require('./createRelatedInstance');
 const { updateEventAndAddToUsers } = require('./updateEventAndAddToUsers');
 
-jest.mock('../../permissions/users/instances/getUserPermission');
+jest.mock('../../permissions/instances/users/getUserPermission');
 jest.mock('../../classes/updateClasses');
 jest.mock('../../dates/updateDates');
 jest.mock('../getInstance');

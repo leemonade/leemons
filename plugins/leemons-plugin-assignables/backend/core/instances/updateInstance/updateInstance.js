@@ -5,7 +5,7 @@ const { LeemonsError } = require('leemons-error');
 const { validateInstance } = require('../../helpers/validators/instance');
 const { updateClasses } = require('../../classes/updateClasses');
 const { updateDates } = require('../../dates/updateDates');
-const { getUserPermission } = require('../../permissions/users/instances/getUserPermission');
+const { getUserPermission } = require('../../permissions/instances/users/getUserPermission');
 const { getInstance } = require('../getInstance');
 
 const { createRelatedInstance } = require('./createRelatedInstance');

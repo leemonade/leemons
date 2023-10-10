@@ -2,12 +2,12 @@ const { it, expect, beforeEach } = require('@jest/globals');
 const { generateCtx } = require('leemons-testing');
 const { listAssignableUserAgents } = require('./listAssignableUserAgents');
 const { getAssignable } = require('../getAssignable');
-const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 
 // Mocking the external function calls
 jest.mock('../getAssignable');
 
-jest.mock('../../permissions/users/assignables/getUserPermission');
+jest.mock('../../permissions/assignables/users/getUserPermission');
 
 const findUserAgentsWithPermissionHandler = jest.fn();
 const getUserAgentsInfoHandler = jest.fn();

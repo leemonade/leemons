@@ -3,7 +3,7 @@ const { validateInstance } = require('../../helpers/validators/instance');
 const { getAssignable } = require('../../assignables/getAssignable');
 const { registerClass } = require('../../classes');
 const { registerPermission } = require('../../permissions/instances/registerPermission');
-const { addPermissionToUser } = require('../../permissions/users/instances/addPermissionToUser');
+const { addPermissionToUser } = require('../../permissions/instances/users/addPermissionToUser');
 const { createAssignation } = require('../../assignations/createAssignation');
 const {
   addTeachersToAssignableInstance,

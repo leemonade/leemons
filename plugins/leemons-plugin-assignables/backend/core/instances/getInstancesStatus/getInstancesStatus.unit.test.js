@@ -13,10 +13,10 @@ const { gradesSchema } = require('../../../models/grades');
 
 const {
   getUserPermissionMultiple,
-} = require('../../permissions/users/instances/getUserPermissionMultiple');
+} = require('../../permissions/instances/users/getUserPermissionMultiple');
 const { getDates } = require('../../dates');
 
-jest.mock('../../permissions/users/instances/getUserPermissionMultiple');
+jest.mock('../../permissions/instances/users/getUserPermissionMultiple');
 jest.mock('../../dates');
 
 const instance = getInstanceObject();

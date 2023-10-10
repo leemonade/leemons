@@ -16,8 +16,8 @@ const { getAssignable } = require('../getAssignable');
 jest.mock('../createAssignable');
 const { createAssignable } = require('../createAssignable');
 
-jest.mock('../../permissions/users/assignables/getUserPermission');
-const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
+jest.mock('../../permissions/assignables/users/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 
 jest.mock('../../leebrary/assets/updateAsset');
 const { updateAsset } = require('../../leebrary/assets/updateAsset');

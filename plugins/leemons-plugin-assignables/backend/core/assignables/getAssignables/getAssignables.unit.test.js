@@ -11,7 +11,7 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const { pick, omit } = require('lodash');
 
-globalJest.mock('../../permissions/users/assignables/getUserPermissions');
+globalJest.mock('../../permissions/assignables/users/getUserPermissions');
 globalJest.mock('../../roles');
 globalJest.mock('../../subjects');
 globalJest.mock('../../leebrary/assets');
@@ -23,7 +23,7 @@ const { getAssignableObject } = require('../../../__fixtures__/getAssignableObje
 const { getRoles } = require('../../roles');
 const { getSubjects } = require('../../subjects');
 const { getAsset } = require('../../leebrary/assets');
-const { getUserPermissions } = require('../../permissions/users/assignables/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
 
 let mongooseConnection;
 let disconnectMongoose;

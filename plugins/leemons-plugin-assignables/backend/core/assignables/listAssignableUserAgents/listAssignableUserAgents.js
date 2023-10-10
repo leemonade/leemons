@@ -1,6 +1,6 @@
 const { getAssignable } = require('../getAssignable');
 const { getPermissionName } = require('../../permissions/assignables/helpers');
-const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 /**
  * List assignable user agents
  * @async

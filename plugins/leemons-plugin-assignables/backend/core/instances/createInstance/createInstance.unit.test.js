@@ -16,7 +16,7 @@ const {
 const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
 const { registerDates } = require('../../dates/registerDates');
 const { updateInstance } = require('../updateInstance');
-const { addPermissionToUser } = require('../../permissions/users/instances/addPermissionToUser');
+const { addPermissionToUser } = require('../../permissions/instances/users/addPermissionToUser');
 
 jest.mock('../../assignables/getAssignable');
 jest.mock('../../permissions/instances/registerPermission');
@@ -26,7 +26,7 @@ jest.mock('../../teachers/addTeachersToAssignableInstance');
 jest.mock('./createEventAndAddToUsers');
 jest.mock('../../dates/registerDates');
 jest.mock('../updateInstance');
-jest.mock('../../permissions/users/instances/addPermissionToUser');
+jest.mock('../../permissions/instances/users/addPermissionToUser');
 jest.mock('../../assignations/createAssignation');
 
 let mongooseConnection;
