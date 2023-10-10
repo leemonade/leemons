@@ -30,7 +30,7 @@ async function getUserPermissions({ assignables, ctx }) {
 
   const query = {
     $or: assignablesIds.map((id) => ({
-      permissionName: { $regex: escapeRegExp(new RegExp(getPermissionName({ id, ctx }), 'i')) },
+      permissionName: { $regex: new RegExp(escapeRegExp(getPermissionName({ id, ctx })), 'i') },
     })),
   };
 

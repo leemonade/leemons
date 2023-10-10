@@ -55,7 +55,7 @@ describe('getUserPermissions function', () => {
       query: {
         $or: [
           {
-            permissionName: { $regex: '/assignable\\.assignableId1@2\\.0\\.0/i' },
+            permissionName: { $regex: /assignable\.assignableId1@2\.0\.0/i },
           },
         ],
       },
@@ -119,10 +119,10 @@ describe('getUserPermissions function', () => {
       query: {
         $or: [
           {
-            permissionName: { $regex: '/assignable\\.assignableId1@2\\.0\\.0/i' },
+            permissionName: { $regex: /assignable\.assignableId1@2\.0\.0/i },
           },
           {
-            permissionName: { $regex: '/assignable\\.assignableId4@2\\.0\\.0/i' },
+            permissionName: { $regex: /assignable\.assignableId4@2\.0\.0/i },
           },
         ],
       },
@@ -192,10 +192,10 @@ describe('getUserPermissions function', () => {
       query: {
         $or: [
           {
-            permissionName: { $regex: '/assignable\\.assignableId1@2\\.0\\.0/i' },
+            permissionName: { $regex: /assignable\.assignableId1@2\.0\.0/i },
           },
           {
-            permissionName: { $regex: '/assignable\\.assignableId4@2\\.0\\.0/i' },
+            permissionName: { $regex: /assignable\.assignableId4@2\.0\.0/i },
           },
         ],
       },
