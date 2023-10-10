@@ -55,7 +55,7 @@ async function removeInstance({ assignableInstanceId, ctx }) {
   // EN: Remove the assignable instance permission item
   // ES: Elimina el item de permiso del asignable instance
   await removePermission({
-    asignableInstance: assignableInstanceId,
+    assignableInstance: assignableInstanceId,
     assignable: assignable.id,
     ctx,
   });
