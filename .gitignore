@@ -152,3 +152,4 @@ apps/dev/frontend
 apps/dev/build
 apps/dev/events.json
 docs-build
+.scannerwork
