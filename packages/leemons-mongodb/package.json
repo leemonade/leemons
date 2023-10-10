@@ -1,17 +1,17 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.37",
-    "@leemons/error": "0.0.37",
-    "@leemons/lrn": "0.0.37",
-    "@leemons/service-name-parser": "0.0.37",
-    "@leemons/transactions": "0.0.37",
+    "@leemons/deployment-manager": "0.0.39",
+    "@leemons/error": "0.0.39",
+    "@leemons/lrn": "0.0.39",
+    "@leemons/service-name-parser": "0.0.39",
+    "@leemons/transactions": "0.0.39",
     "lodash": "^4.17.21",
     "mongodb": "6.1.0",
     "mongoose": "7.5.2"
   },
   "name": "@leemons/mongodb",
-  "version": "0.0.37",
+  "version": "0.0.39",
   "description": "",
   "main": "src/index.js",
   "keywords": [],

@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY ${PLUGIN_PATH}/package.json ./
 RUN yarn install --production
-RUN yarn add @leemons/runner@latest nats --production
+RUN yarn add @leemons/runner@dev nats --production
 
 RUN mkdir /temp
 RUN cp package.json yarn.lock /temp

@@ -5,7 +5,7 @@
     "lodash": "^4.17.21"
   },
   "name": "leemons-hooks",
-  "version": "0.0.28",
+  "version": "0.0.30",
   "main": "lib/index.js",
   "license": "MIT"
 }
