@@ -280,7 +280,7 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
         getLocalizationModelFromCTXAndIsPrivate({
           isPrivate,
           ctx,
-        }).find({ key: { $regex: _.escapeRegExp(`^${tuple.key}`), $options: 'i' }, locale })
+        }).find({ key: { $regex: `^${_.escapeRegExp(`${tuple.key}`)}`, $options: 'i' }, locale })
       )
     );
     return mergeTranslations(responses);
