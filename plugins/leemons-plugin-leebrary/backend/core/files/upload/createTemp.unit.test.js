@@ -16,7 +16,7 @@ const { streamToBuffer } = require('./streamToBuffer');
 beforeEach(() => jest.resetAllMocks());
 
 const mockContentType = 'text/plain';
-const mockTempFile = { path: '/tmp/leebrary123', fd: 123 };
+const mockTempFile = { path: '/fake-tmp/leebrary123', fd: 123 };
 const bufferText = 'Hello, World!';
 
 it('should create a temporary file from a readable stream', async () => {

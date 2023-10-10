@@ -22,7 +22,7 @@ beforeEach(() => jest.resetAllMocks());
 
 const url = 'http://example.com/file.jpg';
 const mockMimeExtension = 'image/jpeg';
-const mockTempPath = '/tmp/file.jpg';
+const mockTempPath = '/fake-tmp/file.jpg';
 
 it('should download a file successfully', async () => {
   // Arrange

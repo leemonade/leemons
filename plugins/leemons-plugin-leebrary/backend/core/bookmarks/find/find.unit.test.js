@@ -90,7 +90,7 @@ describe('Find Bookmark Test', () => {
 
   it('should return empty array if no bookmark is found', async () => {
     // Arrange
-    params.query = { url: 'http://nonexistent.com' };
+    params.query = { url: 'https://nonexistent.com' };
 
     // Act
     const bookmark = await find(params);

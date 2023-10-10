@@ -11,7 +11,7 @@ it('should upload file from stream successfully', async () => {
   const mockFile = { readStream: {}, contentType: 'image/png' };
   const mockName = 'test.png';
   const mockCtx = {};
-  const mockPath = '/tmp/test.png';
+  const mockPath = '/fake-tmp/test.png';
   const mockFileObject = { uri: '/uploaded/test.png' };
 
   createTemp.mockResolvedValue({ path: mockPath });
@@ -57,7 +57,7 @@ it('should throw error when upload fails', async () => {
   const mockFile = { readStream: {}, contentType: 'image/png' };
   const mockName = 'test.png';
   const mockCtx = {};
-  const mockPath = '/tmp/test.png';
+  const mockPath = '/fake-tmp/test.png';
   const mockError = new Error('Failed to upload file');
 
   createTemp.mockResolvedValue({ path: mockPath });

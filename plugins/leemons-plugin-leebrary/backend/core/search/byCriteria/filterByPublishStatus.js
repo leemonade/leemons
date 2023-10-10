@@ -9,7 +9,7 @@ const semver = require('semver');
  * @param {Array} params.assetsWithPermissions - The assets with permissions.
  * @param {boolean} params.nothingFound - Flag to indicate if no assets were found.
  * @param {boolean} params.preferCurrent - Flag to prefer current versions of the asset in the search.
- * @param {boolean} params.published - Flag to include only published assets in the search.
+ * @param {boolean|string } params.published - Flag to include only published assets in the search.
  * @param {Array} params.roles - The roles to be included in the search.
  * @param {Object} params.ctx - The Moleculer context.
  * @returns {Promise<Array>} - Returns the filtered assets.
