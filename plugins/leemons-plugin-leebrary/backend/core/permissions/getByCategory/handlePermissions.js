@@ -9,6 +9,7 @@ const { escapeRegExp } = require('lodash');
  * @returns {Promise<Array>} - Returns a promise that resolves to an array of permissions.
  */
 async function handlePermissions({ userSession, categoryId, ctx }) {
+  const usersService = 'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType';
   return Promise.all([
     ctx.tx.call('users.permissions.getUserAgentPermissions', {
       userAgent: userSession.userAgents,
@@ -17,15 +18,21 @@ async function handlePermissions({ userSession, categoryId, ctx }) {
         target: categoryId,
       },
     }),
-    ctx.tx.call('users.permissions.getAllItemsForTheUserAgentHasPermissionsByType', {
+    ctx.tx.call(usersService, {
       userAgentId: userSession.userAgents,
       type: ctx.prefixPN('asset.can-view'),
       ignoreOriginalTarget: true,
       target: categoryId,
     }),
-    ctx.tx.call('users.permissions.getAllItemsForTheUserAgentHasPermissionsByType', {
+    ctx.tx.call(usersService, {
       userAgentId: userSession.userAgents,
       type: ctx.prefixPN('asset.can-edit'),
+      ignoreOriginalTarget: true,
+      target: categoryId,
+    }),
+    ctx.tx.call(usersService, {
+      userAgentId: userSession.userAgents,
+      type: ctx.prefixPN('asset.can-assign'),
       ignoreOriginalTarget: true,
       target: categoryId,
     }),

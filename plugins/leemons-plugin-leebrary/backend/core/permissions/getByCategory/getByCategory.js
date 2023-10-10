@@ -16,6 +16,7 @@ const { handleViewerRole } = require('./handleViewerRole');
 const { handleEditorRole } = require('./handleEditorRole');
 const { handleIndexable } = require('./handleIndexable');
 const { handlePreferCurrent } = require('./handlePreferCurrent');
+const { handleAssignerRole } = require('./handleAssignerRole');
 
 /**
  * This function retrieves permissions by category.
@@ -37,6 +38,7 @@ const { handlePreferCurrent } = require('./handlePreferCurrent');
  * @returns {Promise<Array>} - Returns a promise that resolves to an array of assets.
  * @throws {LeemonsError} - Throws an error if the retrieval of permissions by category fails.
  */
+// eslint-disable-next-line sonarjs/cognitive-complexity
 async function getByCategory({
   categoryId,
   sortBy: sortingBy,
@@ -60,7 +62,7 @@ async function getByCategory({
       providerQuery: _providerQuery,
     });
 
-    const [permissions, viewItems, editItems] = await handlePermissions({
+    const [permissions, viewItems, editItems, assignItems] = await handlePermissions({
       userSession,
       categoryId,
       ctx,
@@ -72,6 +74,7 @@ async function getByCategory({
       publicAssets,
       viewItems,
       editItems,
+      assignItems,
       categoryId,
       published,
       preferCurrent,
@@ -126,6 +129,9 @@ async function getByCategory({
 
     if (!roles?.length || roles.includes('editor')) {
       results = handleEditorRole({ roles, editItems, results, assetIds, ctx });
+    }
+    if (!roles?.length || roles.includes('assigner')) {
+      results = handleAssignerRole({ roles, assignItems, results, assetIds, ctx });
     }
 
     if (indexable === true) {

@@ -19,6 +19,7 @@ async function handleAssetIds({
   publicAssets,
   viewItems,
   editItems,
+  assignItems,
   categoryId,
   published,
   preferCurrent,
@@ -32,6 +33,7 @@ async function handleAssetIds({
       .concat(publicAssets.map((item) => item.asset))
       .concat(viewItems)
       .concat(editItems)
+      .concat(assignItems)
   );
 
   try {
