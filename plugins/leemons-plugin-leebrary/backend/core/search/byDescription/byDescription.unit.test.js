@@ -113,12 +113,7 @@ describe('byDescription', () => {
       const testFunc = async () => byDescription({ description: descriptionMissing, ctx });
 
       // Assert
-      await expect(testFunc).rejects.toThrow(
-        new LeemonsError(ctx, {
-          message: 'Failed to find asset with description: $regex has to be a string',
-          httpStatusCode: 500,
-        })
-      );
+      await expect(testFunc).rejects.toThrowError(LeemonsError);
     });
   });
 });

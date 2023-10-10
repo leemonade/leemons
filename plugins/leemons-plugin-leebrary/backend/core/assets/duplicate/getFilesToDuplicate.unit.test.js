@@ -56,6 +56,6 @@ it('Should retrieve files using their IDs and find the cover file among them', a
   const response = await getFilesToDuplicate({ filesIds, coverId: bookmarkAsset.cover.id, ctx });
 
   // Assert
-  expect(getFiles).toBeCalledWith({ filesIds, parsed: false, ctx });
+  expect(getFiles).toBeCalledWith({ fileIds: filesIds, parsed: false, ctx });
   expect(response).toEqual(expectedResult);
 });

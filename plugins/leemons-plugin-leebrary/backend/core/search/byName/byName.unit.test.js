@@ -113,12 +113,7 @@ describe('byName', () => {
       const testFunc = async () => byName({ name: nameMissing, ctx });
 
       // Assert
-      await expect(testFunc).rejects.toThrow(
-        new LeemonsError(ctx, {
-          message: 'Failed to find asset with name: $regex has to be a string',
-          httpStatusCode: 500,
-        })
-      );
+      await expect(testFunc).rejects.toThrowError(LeemonsError);
     });
   });
 });

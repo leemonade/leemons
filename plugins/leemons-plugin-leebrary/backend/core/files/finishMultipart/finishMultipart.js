@@ -5,7 +5,8 @@ const { dataForReturnFile } = require('../dataForReturnFile');
 const { createTemp } = require('../upload/createTemp');
 
 /**
- * Finishes multipart upload for a file.
+ * Finishes multipart upload for a file by handling the provider process and getting
+ * metadata for the file.
  *
  * @param {Object} params - The parameters object.
  * @param {string} params.fileId - The ID of the file.

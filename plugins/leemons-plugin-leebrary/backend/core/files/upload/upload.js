@@ -18,7 +18,11 @@ async function upload({ file, name, ctx }) {
   // GET METADATA
   const { path, type } = file;
   const extension = mime.extension(type);
-  const { metadata, fileSize } = getMetadataObject({ filePath: path, fileType: type, extension });
+  const { metadata, fileSize } = await getMetadataObject({
+    filePath: path,
+    fileType: type,
+    extension,
+  });
 
   // ·········································································
   // CREATE NEW FILE IN DB

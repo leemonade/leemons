@@ -57,12 +57,12 @@ describe('Handle Clone File', () => {
     const newFile = await ctx.tx.db.Files.findOne({ id: { $ne: fromFile.id } }).lean();
 
     // Assert
-    expect(getByName).toHaveBeenCalledWith(fromFile.provider);
+    expect(getByName).toHaveBeenCalledWith({ name: fromFile.provider, ctx });
     expect(ctx.tx.call).toHaveBeenCalledWith(
       `${fromFile.provider}.files.clone`,
       expect.objectContaining({
-        fromFile,
-        newFile: expect.objectContaining({
+        itemFrom: fromFile,
+        itemTo: expect.objectContaining({
           id: newFile.id,
         }),
       })

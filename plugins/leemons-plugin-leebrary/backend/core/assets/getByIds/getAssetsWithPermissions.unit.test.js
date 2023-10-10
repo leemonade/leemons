@@ -409,7 +409,6 @@ it('Should correctly return public assets', async () => {
     showPublic: true,
     ctx,
   });
-  console.log('result', result);
 
   // Assert
   expect(findUsersWithPermissions).toBeCalledTimes(1);

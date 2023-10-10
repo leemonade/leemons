@@ -5,7 +5,7 @@ const { generateCtx } = require('@leemons/testing');
 jest.mock('./handleMetadata');
 jest.mock('./handleDocumentInfo');
 jest.mock('./handleMediaInfo');
-jest.mock('fs/promises', () => ({ open: jest.fn().mockResolvedValue({ fd: 42 }) }));
+jest.mock('fs/promises');
 const fsPromises = require('fs/promises');
 const { handleMetadata } = require('./handleMetadata');
 const { handleDocumentInfo } = require('./handleDocumentInfo');
@@ -29,8 +29,12 @@ it('Should return an object containing metdatadata for a file', async () => {
   const handleMediaInfoResponse = { meta: 'meta', data: 'data' };
   const handleDocumentInfoResponse = { doc: 'info' };
 
-  const expectedResult = handleDocumentInfoResponse;
+  const expectedResult = {
+    metadata: handleDocumentInfoResponse,
+    fileSize: handleMetadataResponse.fileSize,
+  };
 
+  fsPromises.open.mockResolvedValue({ fd: 42 });
   handleMetadata.mockResolvedValue(handleMetadataResponse);
   handleMediaInfo.mockResolvedValue(handleMediaInfoResponse);
   handleDocumentInfo.mockResolvedValue(handleDocumentInfoResponse);
@@ -40,18 +44,4 @@ it('Should return an object containing metdatadata for a file', async () => {
 
   // Assert
   expect(response).toEqual(expectedResult);
-});
-
-it.skip('Should return an object containing metdatadata for a file', async () => {
-  // Arrange
-  const params = {
-    filePath: 'fileURI',
-    fileType: 'image',
-  };
-
-  // Act
-  const response = getMetadataObject({ ...params, ctx });
-
-  // Assert
-  expect(response).toBeDefined();
 });

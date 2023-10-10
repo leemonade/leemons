@@ -53,9 +53,8 @@ async function handlePermissions({ permissions, canAccess, asset, category, ctx 
       );
     });
   }
+  await Promise.all(permissionsPromises);
 
-  const clo = await Promise.all(permissionsPromises);
-  console.log('clo', clo);
   // ES: Luego, añade los permisos a los usuarios
   // EN: Then, add the permissions to the users
   const permissionsToAdd = [];
@@ -92,8 +91,7 @@ async function handlePermissions({ permissions, canAccess, asset, category, ctx 
     );
   }
 
-  const clo2 = await Promise.all(permissionsToAdd);
-  console.log('clo2', await clo2.items);
+  await Promise.all(permissionsToAdd);
   return true;
 }
 

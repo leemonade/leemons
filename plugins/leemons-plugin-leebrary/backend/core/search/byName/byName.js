@@ -6,6 +6,7 @@ const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
 
 async function byName({ name, details = false, indexable = true, assets: assetsIds, ctx }) {
   try {
+    if (!name) throw new Error('Name is required.');
     const query = {
       name: { $regex: escapeRegExp(name), $options: 'i' },
       indexable,

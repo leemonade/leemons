@@ -15,7 +15,7 @@ it('Should call handlePermissions correctly', async () => {
   // Arrange
   const categoryId = 'categoryOne';
   const permissionsMockValue = 'Permissions';
-  const itemsMockValue = 'View or edit items';
+  const itemsMockValue = 'View, edit or assign items';
   const getUserAgentPermissions = fn().mockResolvedValue(permissionsMockValue);
   const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue(itemsMockValue);
 
@@ -55,5 +55,5 @@ it('Should call handlePermissions correctly', async () => {
     ignoreOriginalTarget: true,
     target: categoryId,
   });
-  expect(response).toEqual([permissionsMockValue, itemsMockValue, itemsMockValue]);
+  expect(response).toEqual([permissionsMockValue, itemsMockValue, itemsMockValue, itemsMockValue]);
 });

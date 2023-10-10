@@ -12,6 +12,7 @@ async function byDescription({
   ctx,
 }) {
   try {
+    if (!description) throw new Error('Description is required.');
     const query = {
       description: { $regex: escapeRegExp(description), $options: 'i' },
       indexable,

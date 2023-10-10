@@ -60,7 +60,7 @@ it('Correctly call add asset and return the new one', async () => {
 
   // Assert
   expect(add).nthCalledWith(1, {
-    assetData: {
+    asset: {
       ...assetData,
       tags: bookmarkAsset.tags,
       name: `${asset.name} (1)`,
@@ -69,14 +69,12 @@ it('Correctly call add asset and return the new one', async () => {
       indexable: asset.indexable,
       public: bookmarkAsset.public,
     },
-    options: {
-      duplicating: true,
-      newId: undefined,
-    },
+    duplicating: true,
+    newId: undefined,
     ctx,
   });
   expect(add).nthCalledWith(2, {
-    assetData: {
+    asset: {
       ...assetData,
       tags: bookmarkAsset.tags,
       name: asset.name,
@@ -85,10 +83,8 @@ it('Correctly call add asset and return the new one', async () => {
       indexable: false,
       public: true,
     },
-    options: {
-      duplicating: true,
-      newId: undefined,
-    },
+    duplicating: true,
+    newId: undefined,
     ctx,
   });
   expect(responseBookmark).toEqual(expectedResponseBookmark);

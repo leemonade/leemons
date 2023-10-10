@@ -2,22 +2,16 @@ const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals')
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 const mime = require('mime-types');
-const fsPromises = require('fs/promises');
 
 const { upload } = require('./upload');
 const { filesSchema } = require('../../../models/files');
-const { handleMetadata } = require('./handleMetadata');
 const { handleFileProvider } = require('./handleFileProvider');
-const { handleDocumentInfo } = require('./handleDocumentInfo');
-const { handleMediaInfo } = require('./handleMediaInfo');
 const { findOne: getSettings } = require('../../settings');
+const { getMetadataObject } = require('./getMetadataObject');
 
-jest.mock('./handleMetadata');
 jest.mock('./handleFileProvider');
-jest.mock('./handleDocumentInfo');
-jest.mock('./handleMediaInfo');
+jest.mock('./getMetadataObject');
 jest.mock('mime-types');
-jest.mock('fs/promises');
 jest.mock('../../settings');
 
 let mongooseConnection;
@@ -68,22 +62,14 @@ it('Should upload a file and return the uploaded file data', async () => {
       Files: newModel(mongooseConnection, 'Files', filesSchema),
     },
   });
-  const fileHandle = () => {};
-  const fileSize = 102400;
   const mockMetadata = {
     metadata: { size: '100 KB', width: '800', height: '600' },
-    fileSize,
+    fileSize: 102400,
   };
   const mockSettings = { providerName: 'provider' };
   const mockUri = 'uri';
 
-  fsPromises.open.mockResolvedValue(fileHandle);
-  handleMetadata.mockResolvedValue({
-    metadata: { size: mockMetadata.size },
-    fileSize,
-  });
-  handleMediaInfo.mockResolvedValue({ ...mockMetadata.metadata });
-  handleDocumentInfo.mockResolvedValue({ ...mockMetadata.metadata });
+  getMetadataObject.mockResolvedValue(mockMetadata);
   handleFileProvider.mockResolvedValue({
     uri: mockUri,
     provider: mockSettings.providerName,
@@ -96,20 +82,12 @@ it('Should upload a file and return the uploaded file data', async () => {
   const createdFileId = handleFileProvider.mock.calls[0][0].newFile.id; // Retrieves the DB file ID when the file is created
 
   // Assert
-  expect(handleMetadata).toHaveBeenCalledWith({ fileHandle, path: file.path });
-  expect(handleMediaInfo).toHaveBeenCalledWith({
-    metadata: { size: mockMetadata.size },
-    fileHandle,
-    fileType: 'image',
-    fileSize: mockMetadata.fileSize,
-    ctx,
-  });
-  expect(handleDocumentInfo).toHaveBeenCalledWith({
-    metadata: mockMetadata.metadata,
-    path: file.path,
+  expect(getSettings).toBeCalledWith({ ctx });
+  expect(getMetadataObject).toBeCalledWith({
+    filePath: file.path,
+    fileType: file.type,
     extension: 'png',
   });
-  expect(getSettings).toBeCalledWith({ ctx });
   expect(handleFileProvider).toHaveBeenCalledWith({
     newFile: expect.any(Object),
     settings: mockSettings,
@@ -120,7 +98,7 @@ it('Should upload a file and return the uploaded file data', async () => {
     expect(handleFileProvider.mock.calls[0][0].newFile).toMatchObject({
       [key]: expect.anything(),
       name,
-      size: fileSize,
+      size: mockMetadata.fileSize,
       uri: '',
       provider: 'sys',
       deletedAt: null,

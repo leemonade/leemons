@@ -44,7 +44,7 @@ it('Should correctly remove user agent permissions', async () => {
   });
 
   // Assert
-  expect(findUserAgentsWithPermissionAction).toBeCalledWith({ permissionName });
+  expect(findUserAgentsWithPermissionAction).toBeCalledWith({ permissions: { permissionName } });
   expect(removeMissingUserAgent).toBeCalledWith({
     id: asset.id,
     userAgent: expect.stringMatching('userAgentId'),
@@ -78,6 +78,6 @@ it('Should not remove the current user permission', async () => {
   });
 
   // Assert
-  expect(findUserAgentsWithPermissionAction).toBeCalledWith({ permissionName });
+  expect(findUserAgentsWithPermissionAction).toBeCalledWith({ permissions: { permissionName } });
   expect(removeMissingUserAgent).not.toBeCalled();
 });

@@ -32,7 +32,6 @@ async function uploadMultipartChunk({ fileId, partNumber, chunk, path, ctx } = {
   } else if (file.isFolder) {
     await fsPromises.appendFile(`${file.uri}/${path}`, buffer);
   } else {
-    console.log('file.uri', file.uri)
     await fsPromises.appendFile(file.uri, buffer);
   }
 

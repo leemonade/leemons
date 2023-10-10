@@ -9,21 +9,17 @@ const { LeemonsError } = require('@leemons/error');
 
 const { uploadFromUrl } = require('./uploadFromUrl');
 const { getById } = require('../getById');
-const { dataForReturnFile } = require('../dataForReturnFile');
-const { uploadFromFileStream } = require('./uploadFromFileStream');
 const { download } = require('./download');
 const { upload } = require('./upload');
 
 // MOCKS
 jest.mock('../getById');
-jest.mock('../dataForReturnFile');
-jest.mock('./uploadFromFileStream');
 jest.mock('./download');
 jest.mock('./upload');
 
 beforeEach(() => jest.resetAllMocks());
 
-it('should upload a file from a URL', async () => {
+it('Should upload a file from a URL', async () => {
   // Arrange
   const url = 'http://example.com/file.txt';
   const name = 'file.txt';
@@ -40,8 +36,6 @@ it('should upload a file from a URL', async () => {
   const result = await uploadFromUrl({ url, name, ctx });
 
   // Assert
-  expect(dataForReturnFile).not.toHaveBeenCalled();
-  expect(uploadFromFileStream).not.toHaveBeenCalled();
   expect(getById).toHaveBeenCalledWith({ id: url, ctx });
   expect(download).toHaveBeenCalledWith({ url, compress: true });
   expect(upload).toHaveBeenCalledWith({
@@ -52,48 +46,23 @@ it('should upload a file from a URL', async () => {
   expect(result).toEqual(expetedUploadedFile);
 });
 
-it('should identify when a file needs to be uploaded from a file stream and proceed accordingly', async () => {
+it('Identifies when a file must not be uploaded and returns it unmodified', async () => {
   // Arrange
   const url = 'fileId';
   const name = 'fileName';
   const file = { id: '123', isFolder: false };
-  const fileStream = {};
-  const uploadedFile = { id: '123', name: 'file.txt' };
   const ctx = generateCtx({});
 
   getById.mockResolvedValue(file);
-  dataForReturnFile.mockResolvedValue(fileStream);
-  uploadFromFileStream.mockResolvedValue(uploadedFile);
 
   // Act
   const result = await uploadFromUrl({ url, name, ctx });
 
   // Assert
-  expect(result).toEqual(uploadedFile);
-  expect(download).not.toHaveBeenCalled();
   expect(getById).toHaveBeenCalledWith({ id: url, ctx });
-  expect(dataForReturnFile).toHaveBeenCalledWith({ id: file.id, ctx });
-  expect(uploadFromFileStream).toHaveBeenCalledWith({ file: fileStream, name, ctx });
-});
-
-it('should identify if the URL is a file ID pointing to a folder and return it unmodified', async () => {
-  // Arrange
-  const url = 'folderFileId';
-  const name = 'fileName';
-  const file = { id: '123', isFolder: true };
-  const ctx = generateCtx({});
-
-  getById.mockResolvedValue(file);
-
-  // Act
-  const result = await uploadFromUrl({ url, name, ctx });
-
-  // Assert
   expect(result).toEqual(file);
   expect(download).not.toHaveBeenCalled();
-  expect(getById).toHaveBeenCalledWith({ id: url, ctx });
-  expect(dataForReturnFile).not.toHaveBeenCalled();
-  expect(uploadFromFileStream).not.toHaveBeenCalled();
+  expect(upload).not.toHaveBeenCalledWith();
 });
 
 it('should throw and log an error when the download fails', async () => {
