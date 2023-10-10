@@ -1,8 +1,16 @@
+/**
+ * Retrieves the teacher permissions for the given instances and user context.
+ *
+ * @param {Object} params - The params object.
+ * @param {Array} params.instances - The instances to retrieve permissions for.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @return {Object} - An object mapping instances to a boolean value indicating whether the teacher has permissions for any classes in that instance.
+ */
 async function getTeacherPermissions({ instances, ctx }) {
   const { userSession } = ctx.meta;
 
   const classes = await ctx.tx.db.Classes.find({
-    assignableInstance_$in: instances,
+    assignableInstance: instances,
   })
     .select(['assignableInstance', 'class'])
     .lean();

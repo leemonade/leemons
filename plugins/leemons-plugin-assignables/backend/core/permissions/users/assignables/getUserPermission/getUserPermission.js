@@ -4,6 +4,14 @@ const { getPermissionName } = require('../../../assignables/helpers/getPermissio
 const { getRoleMatchingActions } = require('../../../assignables/helpers/getRoleMatchingActions');
 const { getTeacherPermission } = require('../getTeacherPermission');
 
+/**
+ * Retrieves the user permissions based on the assignable ID and context.
+ *
+ * @param {Object} options - The options for retrieving the user permissions.
+ * @param {string} options.assignableId - The ID of the assignable.
+ * @param {MoleculerContext} options.ctx - The Moleculer context.
+ * @return {Promise<Object>} A promise that resolves to an object containing the user's role and actions.
+ */
 async function getUserPermission({ assignableId, ctx }) {
   const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
     userAgent: ctx.meta.userSession.userAgents,

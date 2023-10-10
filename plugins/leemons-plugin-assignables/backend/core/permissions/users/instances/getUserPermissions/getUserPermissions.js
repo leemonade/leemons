@@ -5,6 +5,14 @@ const { getPermissionName } = require('../../../instances/helpers/getPermissionN
 
 // TODO: Impelement item permissions for teachers
 
+/**
+ * Retrieves the user permissions for a given set of instance IDs.
+ *
+ * @param {Object} params - The parameters for retrieving user permissions.
+ * @param {string[]} params.instancesIds - The IDs of the instances.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.e user's session object.
+ * @return {Object} An object mapping instance IDs to their corresponding permissions.
+ */
 async function getUserPermissions({ instancesIds, ctx }) {
   const { userSession } = ctx.meta;
 
@@ -23,7 +31,10 @@ async function getUserPermissions({ instancesIds, ctx }) {
   const ids = uniq(instancesIds);
   const query = {
     $or: ids.map((id) => ({
-      permissionName: { $regex: escapeRegExp(getPermissionName(id)), $options: 'i' },
+      permissionName: {
+        $regex: escapeRegExp(getPermissionName({ assignableInstance: id })),
+        $options: 'i',
+      },
     })),
   };
 
@@ -34,7 +45,6 @@ async function getUserPermissions({ instancesIds, ctx }) {
 
   const directPermissions = Object.fromEntries(
     permissions.map(({ permissionName, actionNames }) => [
-      //! TODO ROBERTO: Esto lo tengo que preguntar: ¿el assignableInstance donde se añade?!! si lo cambiamos a .instance. hay que cambiar la regex!!!!!
       // PermissionName like: assignables.assignable.addfcaa9-9ce9-4420-ac40-f12b49107b94@1.0.0.assignableInstance.020f9aca-7486-47ce-a858-c098972b118a
       /\.assignableInstance\.(?<id>[^.]+)/.exec(permissionName).groups.id,
       actionNames,
@@ -64,7 +74,7 @@ async function getUserPermissions({ instancesIds, ctx }) {
       if (directPermissions[id]) {
         actions = directPermissions[id];
       } else if (teacherPermissions[id]) {
-        actions = ['edit', 'view', 'assign']; // Teacher actions
+        actions = ['edit', 'view']; // Teacher actions
       }
 
       return [

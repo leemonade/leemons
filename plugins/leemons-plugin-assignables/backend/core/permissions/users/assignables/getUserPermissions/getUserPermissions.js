@@ -6,6 +6,14 @@ const { getTeacherPermissions } = require('../getTeacherPermissions');
 
 const { getParentPermissions } = require('./getParentPermissions');
 
+/**
+ * Retrieves the user permissions based on the given assignables and context.
+ *
+ * @param {Object} options - The options for retrieving user permissions.
+ * @param {Array} options.assignables - The list of assignables.
+ * @param {MoleculerContext} options.ctx - The Moleculer context.
+ * @return {Promise<Object>} A promise that resolves to an object containing the user permissions.
+ */
 async function getUserPermissions({ assignables, ctx }) {
   const assignablesIds = uniq(map(assignables, 'id'));
   const assetsIds = uniq(map(assignables, 'asset'));

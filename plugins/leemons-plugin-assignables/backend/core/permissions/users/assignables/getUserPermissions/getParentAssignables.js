@@ -1,5 +1,13 @@
 const { uniq, map, groupBy } = require('lodash');
 
+/**
+ * Retrieves the parent assignables based on the given ids and context.
+ *
+ * @param {Object} params - The parameters for retrieving the parent assignables.
+ * @param {Array} params.ids - The array of ids to filter the parent assignables.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Object} - The parent assignables grouped by asset.
+ */
 async function getParentAssignables({ ids, ctx }) {
   const parentAssignables = await ctx.tx.db.Assignables.find({
     $or: ids.map((id) => ({

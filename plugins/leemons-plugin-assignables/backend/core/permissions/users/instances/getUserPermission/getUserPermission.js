@@ -2,12 +2,20 @@ const { getPermissionName } = require('../../../instances/helpers/getPermissionN
 const { getRoleMatchingActions } = require('../../../instances/helpers/getRoleMatchingActions');
 const { getTeacherPermission } = require('../getTeacherPermission');
 
+/**
+ * Retrieves the user's permission based on the assignable instance and the context.
+ *
+ * @param {Object} params - The params object.
+ * @param {Object} params.assignableInstance - The assignable instance.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.e user's session object.
+ * @return {Promise<Object>} The user's permission object.
+ */
 async function getUserPermission({ assignableInstance, ctx }) {
   const { userSession } = ctx.meta;
 
   const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
     userAgent: userSession.userAgents,
-    query: { permissionName: getPermissionName({ assignableId: assignableInstance, ctx }) },
+    query: { permissionName: getPermissionName({ assignableInstance, ctx }) },
   });
 
   if (!permissions.length) {
