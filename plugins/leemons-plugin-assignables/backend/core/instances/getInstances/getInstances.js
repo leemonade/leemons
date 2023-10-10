@@ -3,7 +3,7 @@ const { map } = require('lodash');
 const { LeemonsError } = require('leemons-error');
 
 const { listInstanceClasses } = require('../../classes/listInstanceClasses');
-const { getUserPermissions } = require('../../permissions/users/instances/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
 const { getAssignables } = require('../../assignables/getAssignables');
 
 const { getRelatedInstances } = require('./getRelatedInstances');

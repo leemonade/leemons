@@ -15,7 +15,6 @@ async function registerPermission({ assignableInstance, assignable, ctx }) {
         actionNames: assignableInstanceActions,
       },
       isCustomPermission: true,
-      ctx,
     });
   } catch (e) {
     throw new LeemonsError(ctx, { message: `Error registering permission: ${e.message}` });

@@ -8,7 +8,7 @@ const { getInstances } = require('./getInstances');
 const { instancesSchema } = require('../../../models/instances');
 const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
 
-const { getUserPermissions } = require('../../permissions/users/instances/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
 const { getRelatedInstances } = require('./getRelatedInstances');
 const { listInstanceClasses } = require('../../classes/listInstanceClasses');
 const { findDates } = require('./findDates');
@@ -16,7 +16,7 @@ const { getAssignables } = require('../../assignables/getAssignables');
 const { getAssignationsData } = require('./getAssignationsData');
 const { getInstancesSubjects } = require('./getInstancesSubjects');
 
-jest.mock('../../permissions/users/instances/getUserPermissions');
+jest.mock('../../permissions/instances/users/getUserPermissions');
 jest.mock('./getRelatedInstances');
 jest.mock('../../classes/listInstanceClasses');
 jest.mock('./findDates');

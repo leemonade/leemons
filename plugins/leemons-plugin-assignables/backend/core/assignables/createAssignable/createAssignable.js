@@ -2,7 +2,7 @@ const { pick } = require('lodash');
 const { validateAssignable } = require('../../../validations/validateAssignable');
 const { duplicateAsset } = require('../../leebrary/assets/duplicateAsset');
 const { registerAssignablePermission } = require('../../permissions/assignables');
-const { addPermissionToUser } = require('../../permissions/users/assignables/addPermissionToUser');
+const { addPermissionToUser } = require('../../permissions/assignables/users/addPermissionToUser');
 const { saveSubjects } = require('../../subjects/saveSubjects');
 const { publishAssignable } = require('../publishAssignable');
 

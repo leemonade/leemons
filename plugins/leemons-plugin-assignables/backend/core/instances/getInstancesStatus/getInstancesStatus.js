@@ -13,7 +13,7 @@ const { getStatus } = require('./getStatus');
 const { getDates } = require('../../dates');
 const {
   getUserPermissionMultiple,
-} = require('../../permissions/users/instances/getUserPermissionMultiple');
+} = require('../../permissions/instances/users/getUserPermissionMultiple');
 /**
  * Retrieves the status of multiple instances.
  *

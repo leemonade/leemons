@@ -2,13 +2,13 @@ const { it, expect, jest: globalJest } = require('@jest/globals');
 const { generateCtx } = require('leemons-testing');
 
 globalJest.mock('../../leebrary/assets/updateAsset');
-globalJest.mock('../../permissions/users/assignables/getUserPermission');
+globalJest.mock('../../permissions/assignables/users/getUserPermission');
 globalJest.mock('../getAssignable');
 
 const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 const { publishAssignable } = require('./publishAssignable');
 
-const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const { getAssignable } = require('../getAssignable');
 
 it('Publishes the assignable', async () => {

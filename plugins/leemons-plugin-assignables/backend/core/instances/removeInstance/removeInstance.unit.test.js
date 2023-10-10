@@ -91,7 +91,7 @@ it('Should remove instance successfully', async () => {
     ctx,
   });
   expect(removePermission).toBeCalledWith({
-    asignableInstance: instanceId,
+    assignableInstance: instanceId,
     assignable: instance.assignable.id,
     ctx,
   });

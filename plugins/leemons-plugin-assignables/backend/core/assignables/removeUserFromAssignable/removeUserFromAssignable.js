@@ -3,10 +3,10 @@ const { LeemonsError } = require('leemons-error');
 const { assignableRolesObject } = require('../../../config/constants');
 
 const { getAssignable } = require('../getAssignable');
-const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const {
   removePermissionFromUser,
-} = require('../../permissions/users/assignables/removePermissionFromUser');
+} = require('../../permissions/assignables/users/removePermissionFromUser');
 /**
  * Remove a user from an assignable
  * @async

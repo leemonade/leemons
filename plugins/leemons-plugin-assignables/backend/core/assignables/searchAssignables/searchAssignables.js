@@ -6,7 +6,7 @@ const { filterByPublished } = require('./filterByPublished');
 const { filterByPreferCurrent } = require('./filterByPreferCurrent');
 const { getAssignableLastVersion } = require('./getAssignableLastVersion');
 
-const { getUserPermissions } = require('../../permissions/users/assignables/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
 
 // TODO: Refactor to be able to search deleted assignables
 /**

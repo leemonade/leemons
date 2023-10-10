@@ -3,6 +3,14 @@ const _ = require('lodash');
 const { getPermissionName } = require('../../../instances/helpers/getPermissionName');
 const { getRoleMatchingActions } = require('../../../instances/helpers/getRoleMatchingActions');
 
+/**
+ * Retrieves user permissions for multiple assignable instances.
+ *
+ * @param {Object} params - The params object.
+ * @param {Array} params.assignableInstances - The assignable instances to retrieve permissions for.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.e user's session object.
+ * @return {Promise<Array>} - A promise that resolves to an array of permission objects.
+ */
 async function getUserPermissionMultiple({ assignableInstances: _assignableInstances, ctx }) {
   const { userSession } = ctx.meta;
 
@@ -16,7 +24,7 @@ async function getUserPermissionMultiple({ assignableInstances: _assignableInsta
     query: {
       $or: _.map(assignableInstances, (assignableInstance) => ({
         permissionName: {
-          $regex: _.escapeRegExp(getPermissionName({ assignableId: assignableInstance, ctx })),
+          $regex: _.escapeRegExp(getPermissionName({ assignableInstance, ctx })),
           $options: 'i',
         },
       })),
@@ -30,10 +38,7 @@ async function getUserPermissionMultiple({ assignableInstances: _assignableInsta
   // Comprobamos de los assignable instances a cuales no tenemos permiso y los almacenamos
   const instanceWithOutPermissions = [];
   _.forEach(assignableInstances, (assignableInstance) => {
-    if (
-      !getByPermissionNameContains(getPermissionName({ assignableId: assignableInstance, ctx }))
-        .length
-    ) {
+    if (!getByPermissionNameContains(getPermissionName({ assignableInstance, ctx })).length) {
       instanceWithOutPermissions.push(assignableInstance);
     }
   });
@@ -57,21 +62,24 @@ async function getUserPermissionMultiple({ assignableInstances: _assignableInsta
     // Para cada instancia a la que no teniamos permisos sacamos sus clases y comprobamos si tenemos permiso
     _.forEach(instanceWithOutPermissions, (assignableInstance) => {
       const _classes = classesByAssignableInstance[assignableInstance];
+
       const classesKeys = _.map(_classes, ({ class: id }) => `academic-portfolio.class.${id}`);
+
       const _permissions = _.filter(classesPermissions, ({ permissionName }) =>
         classesKeys.includes(permissionName)
       );
+
       if (_permissions.length) {
         // Si tenemos permiso simulamos que teniamos el permiso del assignable instance como view y edit
         permissions.push({
-          permissionName: getPermissionName({ assignableId: assignableInstance, ctx }),
+          permissionName: getPermissionName({ assignableInstance, ctx }),
           actionNames: ['view', 'edit'],
         });
       } else {
         // Si no tenemos permisos simulamos como que podemos verlo
         // TODO: Return no permissions (for the demo everything is public)
         permissions.push({
-          permissionName: getPermissionName({ assignableId: assignableInstance, ctx }),
+          permissionName: getPermissionName({ assignableInstance, ctx }),
           actionNames: ['view'],
         });
       }
@@ -80,9 +88,7 @@ async function getUserPermissionMultiple({ assignableInstances: _assignableInsta
 
   const result = [];
   _.forEach(assignableInstances, (assignableInstance) => {
-    const perm = getByPermissionNameContains(
-      getPermissionName({ assignableId: assignableInstance, ctx })
-    );
+    const perm = getByPermissionNameContains(getPermissionName({ assignableInstance, ctx }));
     result.push({
       role: getRoleMatchingActions({ actions: perm[0].actionNames }),
       actions: perm[0].actionNames,

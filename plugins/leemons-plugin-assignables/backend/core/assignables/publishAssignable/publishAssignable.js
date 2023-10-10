@@ -5,7 +5,7 @@ const {
   validAssignableProperties,
 } = require('../../../validations/validateAssignable');
 const { updateAsset } = require('../../leebrary/assets');
-const { getUserPermission } = require('../../permissions/users/assignables/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const { getAssignable } = require('../getAssignable');
 
 /**
