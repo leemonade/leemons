@@ -1,4 +1,3 @@
-// const ChannelsMiddleware = require('@moleculer/channels').Middleware;
 const { pluginName } = require('./config/constants');
 
 /**

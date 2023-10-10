@@ -6,7 +6,7 @@ const { getConfig } = require('./getConfig');
  *
  * @param {Object} params - The parameters object.
  * @param {MoleculerContext} params.ctx - The Moleculer context, used to interact with the database.
- * @returns {Object|null} An object containing the initialized S3 instance and the configuration, or null if no configuration was found.
+ * @returns {Promise<Object|null>} An object containing the initialized S3 instance and the configuration, or null if no configuration was found.
  */
 async function getS3AndConfig({ ctx } = {}) {
   const config = await getConfig({ ctx });

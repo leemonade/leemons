@@ -21,16 +21,8 @@ beforeEach(() => jest.resetAllMocks());
 
 it('Should call the users service to add permissions and custom permissions for new assets', async () => {
   // Arrange
-  const mockUsersPermissionsAddItem = fn(() => [
-    new Promise((res) => {
-      res('foo');
-    }),
-  ]);
-  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [
-    new Promise((res) => {
-      res('bar');
-    }),
-  ]);
+  const mockUsersPermissionsAddItem = fn(() => [Promise.resolve('test')]);
+  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [Promise.resolve('test')]);
   const ctx = generateCtx({
     actions: {
       'users.permissions.addItem': mockUsersPermissionsAddItem,
@@ -74,16 +66,8 @@ it('Should call the users service to add permissions and custom permissions for 
 
 it('Should call the users service to add permissions and custom permissions for existent assets', async () => {
   // Arrange
-  const mockUsersPermissionsAddItem = fn(() => [
-    new Promise((res) => {
-      res('foo');
-    }),
-  ]);
-  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [
-    new Promise((res) => {
-      res('bar');
-    }),
-  ]);
+  const mockUsersPermissionsAddItem = fn(() => [Promise.resolve('test')]);
+  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [Promise.resolve('test')]);
 
   const ctx = generateCtx({
     actions: {

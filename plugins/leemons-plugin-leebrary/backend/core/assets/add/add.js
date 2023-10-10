@@ -125,7 +125,7 @@ async function add({
   // ··········································································
   // HANDLE SUBJECTS
 
-  if (subjects && subjects.length) {
+  if (subjects?.length) {
     await handleSubjects({ subjects, assetId: newAsset.id, ctx });
   }
 

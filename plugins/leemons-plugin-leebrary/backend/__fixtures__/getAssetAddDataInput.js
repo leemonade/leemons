@@ -1,4 +1,5 @@
 module.exports = function getAssetAddDataInput() {
+  const categoryId = 'lrn:segment1:segment2:segment3:segment4:segment5:segment6';
   return {
     dataInput: {
       name: 'Tecnología de aprendizaje colaborativo para pedagogías activas',
@@ -16,7 +17,7 @@ module.exports = function getAssetAddDataInput() {
       ],
       icon: 'https://uploads-ssl.webflow.com/63d7ab145d360ca1dd2d418f/63da71ec56119768e6afc9b8_Favicon.png',
       category: {
-        id: 'lrn:segment1:segment2:segment3:segment4:segment5:segment6', // TODO Paola@categoryId Realmente llega del frontend como uuid, o llegará así?
+        id: categoryId,
         key: 'bookmarks',
         pluginOwner: 'leebrary',
         creatable: 1,
@@ -31,7 +32,7 @@ module.exports = function getAssetAddDataInput() {
         order: 2,
         deleted: 0,
       },
-      categoryId: 'lrn:segment1:segment2:segment3:segment4:segment5:segment6', // TODO Paola@categoryId Realmente llega del frontend como uuid, o llegará así?
+      categoryId,
       tags: ['Leemons'],
     },
     dataInputWithEmptyFields: {
@@ -41,11 +42,11 @@ module.exports = function getAssetAddDataInput() {
       program: null,
       subjects: null,
       icon: null,
-      categoryId: 'lrn:segment1:segment2:segment3:segment4:segment5:segment6',
+      categoryId,
       tags: ['Leemons'],
       categoryKey: 'bookmarks',
       category: {
-        id: 'lrn:segment1:segment2:segment3:segment4:segment5:segment6',
+        id: categoryId,
         key: 'bookmarks',
         pluginOwner: 'leebrary',
         creatable: 1,

@@ -35,7 +35,7 @@ async function handlePermissions({ permissions, canAccess, asset, category, ctx 
     }),
   ];
 
-  if (permissions && permissions.length) {
+  if (permissions?.length) {
     forEach(permissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
       let permission = 'can-view';
       if (canEdit) {
