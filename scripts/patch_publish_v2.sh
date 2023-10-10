@@ -47,8 +47,6 @@ function process_package() {
     npm version patch --legacy-peer-deps > /dev/null 2>&1
     # Configura la variable de entorno NODE_AUTH_TOKEN
     export NODE_AUTH_TOKEN="$NODE_AUTH_TOKEN"
-    # Publica el paquete
-    npm publish --tag "$NPM_TAG" > /dev/null 2>&1
     # Obtiene el nombre y la versión del paquete
     pkg_name=$(cat package.json | grep '"name":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
     pkg_version=$(cat package.json | grep '"version":' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
@@ -82,6 +80,14 @@ do
   # Modifica el string para que sea de la forma packages/$string
   string="packages/$string"
   process_package "$string"
+done
+
+# Publica todos los paquetes procesados
+for package in "${processed_packages[@]}"
+do
+  cd "$package"
+  npm publish --tag "$NPM_TAG" > /dev/null 2>&1
+  cd - > /dev/null
 done
 
 # Imprime los paquetes procesados separados por una coma
