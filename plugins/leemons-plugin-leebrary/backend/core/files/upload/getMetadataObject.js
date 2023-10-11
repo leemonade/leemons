@@ -12,7 +12,7 @@ const { handleMetadata } = require('./handleMetadata');
  * @param {string} params.fileType - The file's type.
  * @param {string} params.extension - The file's extension.
  * @param {MoleculerContext} params.ctx - The moleculer context.
- * @returns {Object} - An object containing the file's metadata and its size
+ * @returns {Promise<Object>} - A promise that resolves to an object containing the file's metadata and its size
  */
 async function getMetadataObject({ filePath, fileType, extension, ctx }) {
   const fileHandle = await fsPromises.open(filePath, 'r');

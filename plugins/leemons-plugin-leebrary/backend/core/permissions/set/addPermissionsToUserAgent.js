@@ -13,7 +13,7 @@ const { getByAsset } = require('../getByAsset');
  * @param {string} params.assignerRole - The role of the assigner.
  * @param {string} params.permissionName - The name of the permission to be assigned.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
- * @returns {Array} result - The array of results from assigning permissions to the user agent.
+ * @returns {Promise<Array>} result - The promise that resolves to an array of results from assigning permissions to the user agent.
  */
 
 async function addPermissionsToUserAgent({

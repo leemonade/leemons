@@ -7,7 +7,7 @@ const { groupBy, uniq, escapeRegExp } = require('lodash');
  * @param {Array} params.assetsIds - An array of asset IDs to be checked against.
  * @param {Boolean} params.withInfo - A boolean indicating whether to include additional class information.
  * @param {MoleculerContext} params.ctx - An object representing the context.
- * @returns {Array} - Returns an array of permissions after mapping and filtering.
+ * @returns {Promise<Array>} - Returns a promise that resolves to an array of permissions after mapping and filtering.
  */
 async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
   const ids = Array.isArray(assetsIds) ? assetsIds : [assetsIds];

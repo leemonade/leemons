@@ -62,10 +62,8 @@ module.exports = {
       });
 
       if (isSuperAdmin) {
-        // const provider = leemons.getProvider(ctx.request.body.provider);
         const provider = getProviderByName({ name: ctx.params.provider, ctx });
         if (provider?.supportedMethods?.removeConfig) {
-          // await provider.services.provider.removeConfig();
           await ctx.tx.call(`${ctx.params.provider}.provider.removeConfig`, {});
         }
         await setActiveProvider({ providerName: null, ctx });

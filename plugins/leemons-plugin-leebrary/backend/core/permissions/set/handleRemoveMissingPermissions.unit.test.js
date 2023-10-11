@@ -31,12 +31,7 @@ it('Should be called correctly', async () => {
   const expectedPermissionName = ctx.prefixPN(permissionSeparator + asset.id);
   const spyPromises = spyOn(Promise, 'all');
 
-  removeMissingUserAgents.mockImplementation(
-    () =>
-      new Promise((res) => {
-        res(undefined);
-      })
-  );
+  removeMissingUserAgents.mockImplementation(() => Promise.resolve(undefined));
   removeMissingPermissions.mockImplementation(() => undefined);
 
   // Act

@@ -6,7 +6,7 @@ const { LeemonsError } = require('@leemons/error');
  * @param {Object} params - The parameters object.
  * @param {string} params.assetId - The ID of the asset.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
- * @returns {Object} - Returns the asset object.
+ * @returns {Promise<Object>} - Returns a promise that resolves to the asset object.
  * @throws {LeemonsError} - Throws a LeemonsError if the asset is not found.
  */
 async function getAndCheckAsset({ assetId, ctx }) {

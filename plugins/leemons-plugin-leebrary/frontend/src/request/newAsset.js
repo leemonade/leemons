@@ -4,7 +4,6 @@ import { uploadFileAsMultipart } from '../helpers/uploadFileAsMultipart';
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function newAsset(assetData, categoryId, categoryKey) {
   const { file, cover, ...data } = assetData;
-  // const formData = new FormData();
   const formData = {};
 
   if (categoryKey === 'media-files') {
@@ -15,7 +14,7 @@ async function newAsset(assetData, categoryId, categoryKey) {
     }
 
     if (cover && isString(cover)) formData.cover = cover;
-    if (cover && cover.name) {
+    if (cover?.name) {
       formData.cover = await uploadFileAsMultipart(cover, { name: cover.name });
     }
   }
