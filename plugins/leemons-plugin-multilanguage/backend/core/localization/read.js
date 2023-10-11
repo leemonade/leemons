@@ -217,7 +217,7 @@ async function getWithLocale({ locale, isPrivate, ctx }) {
   };
 
   if (isPrivate) {
-    query.key = { $regex: _.escapeRegExp(`^${ctx.callerPlugin}`), $options: 'i' };
+    query.key = { $regex: `^${_.escapeRegExp(ctx.callerPlugin)}`, $options: 'i' };
   }
 
   try {

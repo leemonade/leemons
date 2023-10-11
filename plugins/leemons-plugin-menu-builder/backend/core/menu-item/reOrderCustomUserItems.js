@@ -19,7 +19,7 @@ async function reOrderCustomUserItems({ menuKey, parentKey, ids, ctx }) {
     parentKey,
     id: ids,
     key: {
-      $regex: _.escapeRegExp(new RegExp(`^${ctx.prefixPN(`user.${ctx.meta.userSession.id}.`)}`)),
+      $regex: new RegExp(`^${_.escapeRegExp(ctx.prefixPN(`user.${ctx.meta.userSession.id}.`))}`),
     },
   });
   if (count !== ids.length)

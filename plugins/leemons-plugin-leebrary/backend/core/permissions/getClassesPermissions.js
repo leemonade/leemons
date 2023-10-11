@@ -7,9 +7,9 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
     params: {
       item: ids,
       // permissionName_$startsWith: 'academic-portfolio.class.',
-      permissionName: /^academic-portfolio.class/i,
+      permissionName: { $regex: /^academic-portfolio.class/, $options: 'i' },
       // type_$startsWith: leemons.plugin.prefixPN('asset'),
-      type: `/^${ctx.prefixPN('asset')}/i`,
+      type: { $regex: `^${_.escapeRegExp(ctx.prefixPN('asset'))}`, $options: 'i' },
     },
   });
 

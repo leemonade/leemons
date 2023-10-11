@@ -71,7 +71,7 @@ async function getIfHasPermission({ menuKey, ctx }) {
   // ES: Cogemos solo los elementos del menu a los que tenemos acceso
   // EN: We take only the menu items to which we have access.
   const query = {
-    type: { $regex: _.escapeRegExp(`^${ctx.prefixPN(`${menuKey}.menu-item`)}`) },
+    type: { $regex: `^${_.escapeRegExp(ctx.prefixPN(`${menuKey}.menu-item`))}` },
   };
   query.$or = queryPermissions;
   const menuItemPermissions = await ctx.tx.call('users.permissions.findItems', { params: query });

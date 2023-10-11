@@ -20,7 +20,7 @@ async function countKeyStartsWith({ ctx, key, locale, isPrivate }) {
   try {
     // Get the count of localizations in the given locale starting with the given tuple
     return await getLocalizationModelFromCTXAndIsPrivate({ ctx, isPrivate }).countDocuments({
-      key: { $regex: _.escapeRegExp(`^${tuple.key}`), $options: 'i' },
+      key: { $regex: `^${_.escapeRegExp(tuple.key)}`, $options: 'i' },
       locale: tuple.locale,
     });
   } catch (e) {

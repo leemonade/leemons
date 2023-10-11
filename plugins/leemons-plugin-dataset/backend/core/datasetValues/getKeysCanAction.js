@@ -29,7 +29,7 @@ async function getKeysCanAction({ locationName, pluginName, userAgent, actions: 
         userAgent,
         query: {
           permissionName: {
-            $regex: _.escapeRegExp(`^${ctx.prefixPN(`${locationName}.${pluginName}`)}`),
+            $regex: `^${_.escapeRegExp(ctx.prefixPN(`${locationName}.${pluginName}`))}`,
           },
         },
       })
