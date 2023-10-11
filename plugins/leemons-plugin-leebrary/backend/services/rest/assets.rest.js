@@ -270,7 +270,8 @@ module.exports = {
       }
       let metas = {};
       try {
-        const { body: html } = got(url);
+        const response = await got(url);
+        const { body: html } = response;
         metas = await metascraper({ html, url });
       } catch (e) {
         ctx.logger.error(e);

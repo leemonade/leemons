@@ -25,7 +25,8 @@ const { metascraper } = require('../../shared');
 async function handleBookmarkData({ data, cover, ctx }) {
   if (isString(data.url) && !isEmpty(data.url) && (isNil(data.icon) || isEmpty(data.icon))) {
     try {
-      const { body: html } = await got(data.url);
+      const response = await got(data.url);
+      const { body: html } = response;
       const metas = await metascraper({ html, url: data.url });
       data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
       data.description = data.description || metas.description;
