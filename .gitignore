@@ -155,3 +155,4 @@ apps/dev/events.json
 docs-build
 
 package-lock.json
+.scannerwork
