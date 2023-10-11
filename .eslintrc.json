@@ -1,28 +1,45 @@
 {
   "env": {
     "browser": true,
+    "commonjs": true,
     "es2021": true,
-    "node": true,
-    "jest": true
+    "node": true
   },
   "globals": {
     "leemons": true
   },
   "extends": [
-    // "plugin:react/recommended",
+    "plugin:react/recommended",
+    "plugin:sonarjs/recommended",
     "airbnb-base",
     "prettier"
   ],
-  // "parser": "babel-eslint",
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "babelrc": false,
+      "configFile": false,
+      "presets": [
+        "@babel/preset-env"
+      ],
+      "plugins": [
+        "@babel/plugin-syntax-jsx"
+      ]
+    },
+    "ecmaVersion": 2020,
     "ecmaFeatures": {
       "jsx": true
-    },
-    "ecmaVersion": 12,
-    "sourceType": "module"
+    }
   },
   "plugins": [
     "react",
+    "sonarjs",
     "import",
     "prettier"
   ],
@@ -47,7 +64,6 @@
           "@academic-calendar",
           "@academic-portfolio",
           "@admin",
-          "@assets",
           "@assignables",
           "@attendance-control",
           "@board-messages",
@@ -62,21 +78,20 @@
           "@emails-aws-ses",
           "@emails-smtp",
           "@families",
+          "@families-emergency-numbers",
           "@feedback",
           "@fundae",
           "@grades",
           "@layout",
           "@learning-paths",
           "@leebrary",
-          "@leebrary-aws-s3",
-          "@leebrary-tasks",
-          "@leebrary-tests",
           "@menu-builder",
           "@mqtt-aws-iot",
           "@mqtt-socket-io",
           "@multilanguage",
           "@package-manager",
           "@scores",
+          "@scorm",
           "@tasks",
           "@tests",
           "@timetable",
