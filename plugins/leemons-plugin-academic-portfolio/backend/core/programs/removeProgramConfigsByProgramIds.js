@@ -3,7 +3,7 @@ const _ = require('lodash');
 async function removeProgramConfigsByProgramIds({ programIds, soft, ctx }) {
   const configs = await ctx.tx.db.Configs.find({
     $or: _.map(_.isArray(programIds) ? programIds : [programIds], (programId) => ({
-      key: `/^program-${programId}/i`,
+      key: { $regex: `^program-${_.escapeRegExp(programId)}`, $options: 'i' },
     })),
   }).lean();
   await ctx.tx.emit('before-remove-program-configs', {

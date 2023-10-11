@@ -14,12 +14,14 @@ const { LeemonsError } = require('@leemons/error');
  * */
 async function reOrderCustomUserItems({ menuKey, parentKey, ids, ctx }) {
   // Check if use have access to all menu item ids
+  const userSessionId = `user.${ctx.meta.userSession.id}.`;
+  const regexPattern = `^${_.escapeRegExp(ctx.prefixPN(userSessionId))}`;
   const count = await ctx.tx.db.MenuItem.countDocuments({
     menuKey,
     parentKey,
     id: ids,
     key: {
-      $regex: _.escapeRegExp(new RegExp(`^${ctx.prefixPN(`user.${ctx.meta.userSession.id}.`)}`)),
+      $regex: new RegExp(regexPattern),
     },
   });
   if (count !== ids.length)

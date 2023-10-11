@@ -276,11 +276,14 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
 
   try {
     const responses = await Promise.all(
-      _.map(tuple.locales, (locale) =>
+      _.map(tuple.locales, (_locale) =>
         getLocalizationModelFromCTXAndIsPrivate({
           isPrivate,
           ctx,
-        }).find({ key: { $regex: `^${_.escapeRegExp(tuple.key)}`, $options: 'i' }, locale })
+        }).find({
+          key: { $regex: `^${_.escapeRegExp(tuple.key)}`, $options: 'i' },
+          locale: _locale,
+        })
       )
     );
     return mergeTranslations(responses);
