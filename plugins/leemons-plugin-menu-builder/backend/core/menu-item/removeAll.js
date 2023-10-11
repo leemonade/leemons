@@ -1,3 +1,5 @@
+const { escapeRegExp } = require('lodash');
+
 const { validateKeyPrefix } = require('../../validations/exists');
 
 /**
@@ -18,7 +20,7 @@ async function removeAll({ menuKey, ctx }) {
     ctx.tx.call('users.permissions.removeItems', {
       query: {
         type: {
-          $regex: new RegExp(`^${_.escapeRegExp(ctx.prefixPN(menuKey))}`, 'i'),
+          $regex: new RegExp(`^${escapeRegExp(ctx.prefixPN(menuKey))}`, 'i'),
         },
       },
     }),

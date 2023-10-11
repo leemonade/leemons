@@ -24,12 +24,13 @@ async function getKeysCanAction({ locationName, pluginName, userAgent, actions: 
   const promises = [getSchema({ locationName, pluginName, ctx })];
 
   if (userAgent) {
+    const permissionNameTemplate = _.escapeRegExp(ctx.prefixPN(`${locationName}.${pluginName}`));
     promises.push(
       ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent,
         query: {
           permissionName: {
-            $regex: `^${_.escapeRegExp(ctx.prefixPN(`${locationName}.${pluginName}`))}`,
+            $regex: `^${permissionNameTemplate}`,
           },
         },
       })
@@ -49,10 +50,8 @@ async function getKeysCanAction({ locationName, pluginName, userAgent, actions: 
   }
 
   _.forIn(jsonSchema.properties, (value, key) => {
-    if (value.permissions && value.permissions['*']) {
-      if (value.permissions['*'].some((r) => actions.indexOf(r) >= 0)) {
-        goodKeys.push(key);
-      }
+    if (value.permissions?.['*']?.some((r) => actions.indexOf(r) >= 0)) {
+      goodKeys.push(key);
     }
   });
 
