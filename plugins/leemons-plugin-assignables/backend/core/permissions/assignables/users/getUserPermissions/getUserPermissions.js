@@ -1,7 +1,7 @@
 const { escapeRegExp, uniq, map, groupBy, difference } = require('lodash');
 
-const { getRoleMatchingActions } = require('../../../assignables/helpers/getRoleMatchingActions');
-const { getPermissionName } = require('../../../assignables/helpers/getPermissionName');
+const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
+const { getPermissionName } = require('../../helpers/getPermissionName');
 const { getTeacherPermissions } = require('../getTeacherPermissions');
 
 const { getParentPermissions } = require('./getParentPermissions');

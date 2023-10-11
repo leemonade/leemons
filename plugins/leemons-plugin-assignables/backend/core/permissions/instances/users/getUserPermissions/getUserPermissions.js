@@ -1,7 +1,7 @@
 const { uniq, difference, escapeRegExp } = require('lodash');
-const { getRoleMatchingActions } = require('../../../instances/helpers/getRoleMatchingActions');
+const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
 const { getTeacherPermissions } = require('../getTeacherPermissions');
-const { getPermissionName } = require('../../../instances/helpers/getPermissionName');
+const { getPermissionName } = require('../../helpers/getPermissionName');
 
 // TODO: Impelement item permissions for teachers
 
@@ -32,7 +32,7 @@ async function getUserPermissions({ instancesIds, ctx }) {
   const query = {
     $or: ids.map((id) => ({
       permissionName: {
-        $regex: escapeRegExp(getPermissionName({ assignableInstance: id })),
+        $regex: escapeRegExp(getPermissionName({ assignableInstance: id, ctx })),
         $options: 'i',
       },
     })),

@@ -8,7 +8,11 @@ const { getTeacherPermissions } = require('../getTeacherPermissions');
 const { getParentPermissions } = require('./getParentPermissions');
 
 const getUserAgentPermissionsHandle = jest.fn();
+
 const getAllItemsForTheUserAgentHasPermissionsByTypeHandler = jest.fn();
+
+const permissionName = 'assignables.assignable.assignableId1@2.0.0';
+const assignableIds = ['assignableId1@2.0.0', 'assignableId2@2.0.0', 'assignableId3@2.0.0'];
 
 jest.mock('../getTeacherPermissions');
 jest.mock('./getParentPermissions');
@@ -30,19 +34,17 @@ describe('getUserPermissions function', () => {
       pluginName,
     });
 
-    getUserAgentPermissionsHandle.mockResolvedValue([
-      { permissionName: 'assignables.assignable.assignableId1@2.0.0', actionNames: ['edit'] },
-    ]);
+    getUserAgentPermissionsHandle.mockResolvedValue([{ permissionName, actionNames: ['edit'] }]);
 
     getParentPermissions.mockResolvedValue([
-      ['assignableId2@2.0.0', ['view']],
-      ['assignableId3@2.0.0', ['view']],
+      [assignableIds[1], ['view']],
+      [assignableIds[2], ['view']],
     ]);
 
     getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue(['assetId1']);
 
     const mockParams = {
-      assignables: [{ id: 'assignableId1@2.0.0', asset: 'assetId1' }],
+      assignables: [{ id: assignableIds[0], asset: 'assetId1' }],
       ctx,
     };
 
@@ -68,7 +70,7 @@ describe('getUserPermissions function', () => {
     });
     expect(getTeacherPermissions).not.toBeCalled();
     expect(resp).toEqual({
-      'assignableId1@2.0.0': {
+      [assignableIds[0]]: {
         role: 'viewer',
         actions: ['view'],
       },
@@ -87,13 +89,11 @@ describe('getUserPermissions function', () => {
       pluginName,
     });
 
-    getUserAgentPermissionsHandle.mockResolvedValue([
-      { permissionName: 'assignables.assignable.assignableId1@2.0.0', actionNames: ['edit'] },
-    ]);
+    getUserAgentPermissionsHandle.mockResolvedValue([{ permissionName, actionNames: ['edit'] }]);
 
     getParentPermissions.mockResolvedValue([
-      ['assignableId2@2.0.0', ['view']],
-      ['assignableId3@2.0.0', ['view']],
+      [assignableIds[1], ['view']],
+      [assignableIds[2], ['view']],
     ]);
 
     getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue(['assetId1']);
@@ -104,7 +104,7 @@ describe('getUserPermissions function', () => {
 
     const mockParams = {
       assignables: [
-        { id: 'assignableId1@2.0.0', asset: 'assetId1' },
+        { id: assignableIds[0], asset: 'assetId1' },
         { id: 'assignableId4@2.0.0', asset: 'assetId2' },
       ],
       ctx,
@@ -139,7 +139,7 @@ describe('getUserPermissions function', () => {
     });
 
     expect(resp).toEqual({
-      'assignableId1@2.0.0': {
+      [assignableIds[0]]: {
         role: 'viewer',
         actions: ['view'],
       },
@@ -167,8 +167,8 @@ describe('getUserPermissions function', () => {
     ]);
 
     getParentPermissions.mockResolvedValue([
-      ['assignableId2@2.0.0', ['view']],
-      ['assignableId3@2.0.0', ['view']],
+      [assignableIds[1], ['view']],
+      [assignableIds[2], ['view']],
     ]);
 
     getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue(['assetId1']);
@@ -177,7 +177,7 @@ describe('getUserPermissions function', () => {
 
     const mockParams = {
       assignables: [
-        { id: 'assignableId1@2.0.0', asset: 'assetId1' },
+        { id: assignableIds[0], asset: 'assetId1' },
         { id: 'assignableId4@2.0.0', asset: 'assetId2' },
       ],
       ctx,
@@ -212,7 +212,7 @@ describe('getUserPermissions function', () => {
     });
 
     expect(resp).toEqual({
-      'assignableId1@2.0.0': {
+      [assignableIds[0]]: {
         role: 'viewer',
         actions: ['view'],
       },
@@ -236,7 +236,7 @@ describe('getUserPermissions function', () => {
     });
 
     const mockParams = {
-      assignables: [{ id: 'assignableId1@2.0.0', asset: 'assetId1' }],
+      assignables: [{ id: assignableIds[0], asset: 'assetId1' }],
       ctx,
     };
     ctx.meta.userSession.userAgents = [];
@@ -245,7 +245,7 @@ describe('getUserPermissions function', () => {
 
     // Assert
     expect(resp).toEqual({
-      'assignableId1@2.0.0': {
+      [assignableIds[0]]: {
         role: null,
         actions: [],
       },
