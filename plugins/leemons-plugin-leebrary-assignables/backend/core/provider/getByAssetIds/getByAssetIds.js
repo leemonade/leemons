@@ -7,7 +7,7 @@
  * @returns {Promise<Array<object>>} - Returns a promise that resolves to an array of assignables.
  */
 async function getByAssetIds({ assetIds, ctx }) {
-  // TODO: Implement this
+  // To implement: this
   return ctx.tx.call('assignables.assignables.findAssignableByAssetIds', { assetIds });
 }
 

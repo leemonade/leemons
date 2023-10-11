@@ -61,12 +61,12 @@ it('Should return only assets and bookmark asset Ids related to file', async () 
   );
   // Act
   const response = await getRelatedAssets({ fileId, ctx });
-  const sortedResponse = response.sort((a, b) => a.localeCompare(b));
+  response.sort((a, b) => a.localeCompare(b));
 
   // Assert
   expect(findAssets).toBeCalledWith({ query: { cover: fileId }, ctx });
   expect(findBookmarks).toBeCalledWith({ query: { icon: fileId }, ctx });
-  expect(sortedResponse).toEqual(expectedResponse);
+  expect(response).toEqual(expectedResponse);
 });
 
 it('Should return empty array if no related assets or bookmarks found', async () => {
