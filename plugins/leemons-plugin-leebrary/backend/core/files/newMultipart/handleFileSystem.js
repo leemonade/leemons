@@ -21,10 +21,13 @@ async function handleFileSystem({ file, filePaths }) {
     await fsPromises.writeFile(file.uri, '');
   } else {
     file.uri = path.resolve(__dirname, '..', '..', '..', 'files', `${file.id}`);
-    for (let i = 0; i < filePaths.length; i++) {
-      await fsPromises.mkdir(path.dirname(`${file.uri}/${filePaths[i]}`), { recursive: true });
-      await fsPromises.writeFile(`${file.uri}/${filePaths[i]}`, '');
-    }
+    Promise.allSettled(
+      filePaths.map((filePath) =>
+        fsPromises
+          .mkdir(path.dirname(`${file.uri}/${filePath}`), { recursive: true })
+          .then(() => fsPromises.writeFile(`${file.uri}/${filePath}`, ''))
+      )
+    );
   }
 
   return file;

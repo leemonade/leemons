@@ -51,7 +51,7 @@ module.exports = {
     },
     getCoverUrl: {
       handler(ctx) {
-        // TODO: Esto deberia de hacerse en un paquete de leebrary para gastar menos recursos
+        // * To implement: Esto deberia de hacerse en un paquete de leebrary para gastar menos recursos
         return `/api/leebrary/img/${ctx.params.assetId}`;
       },
     },
@@ -70,8 +70,5 @@ module.exports = {
         return duplicate({ ...ctx.params, ctx });
       },
     },
-  },
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
   },
 };

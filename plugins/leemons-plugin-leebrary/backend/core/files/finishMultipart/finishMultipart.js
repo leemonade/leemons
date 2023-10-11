@@ -23,7 +23,6 @@ async function finishMultipart({ fileId, path, ctx }) {
     await handleProviderMultipart({ file, path, ctx });
   }
 
-  // TODO Paola: check how to do it when the file is a folder... one by one?
   // Get metadata for the file and update it in DB
   if (!file.isFolder) {
     const { contentType, readStream } = await dataForReturnFile({ id: fileId, ctx });

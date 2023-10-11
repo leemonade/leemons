@@ -30,7 +30,4 @@ module.exports = () => ({
     ...getProvidersActions(),
     ...restActions,
   },
-  created() {
-    // mongoose.connect(process.env.MONGO_URI);
-  },
 });

@@ -37,9 +37,7 @@ it('Should handle permissions by asset correctly', async () => {
         item: 'asset1',
       },
     ];
-    return new Promise((resolve) => {
-      resolve(permissions.filter((item) => `testing.${item.type}` === type));
-    });
+    return Promise.resolve(permissions.filter((item) => `testing.${item.type}` === type));
   });
   const userPermissionsGetAllItemsForTheUserAgentHasPermissionsByType = fn();
   const expectedValue = [
@@ -87,17 +85,9 @@ it('Should handle permissions by asset correctly', async () => {
 
 it('Should handle canEditPermissions correctly', async () => {
   // Arrange
-  const userPermissionsGetItemPermissions = fn(
-    () =>
-      new Promise((resolve) => {
-        resolve([]);
-      })
-  );
-  const userPermissionsGetAllItemsForTheUserAgentHasPermissionsByType = fn(
-    () =>
-      new Promise((resolve) => {
-        resolve(['permission1']);
-      })
+  const userPermissionsGetItemPermissions = fn(() => Promise.resolve([]));
+  const userPermissionsGetAllItemsForTheUserAgentHasPermissionsByType = fn(() =>
+    Promise.resolve(['permission1'])
   );
 
   const ctx = generateCtx({

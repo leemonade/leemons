@@ -12,7 +12,7 @@ const { map } = require('lodash');
 async function handleSubjectsUpdates({ assetId, subjects, diff, ctx }) {
   if (diff.includes('subjects')) {
     await ctx.tx.db.AssetsSubjects.deleteMany({ asset: assetId });
-    if (subjects && subjects.length) {
+    if (subjects?.length) {
       await Promise.all(
         map(subjects, (item) => ctx.tx.db.AssetsSubjects.create({ asset: assetId, ...item }))
       );

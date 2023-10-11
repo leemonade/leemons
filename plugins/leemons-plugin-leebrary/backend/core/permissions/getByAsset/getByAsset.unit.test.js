@@ -138,9 +138,7 @@ it('Should determine the correct role for an editor', async () => {
   ]);
   const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
     const response = type === 'leemons-testing.asset.can-edit' ? [asset.id] : [];
-    return new Promise((res) => {
-      res(response);
-    });
+    return Promise.resolve(response);
   });
   const ctx = generateCtx({
     actions: {
@@ -168,9 +166,7 @@ it('Should determine the correct role for a viewer', async () => {
   const getUserAgentPermissions = fn().mockResolvedValue([]);
   const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
     const response = type === 'leemons-testing.asset.can-view' ? [asset.id] : [];
-    return new Promise((res) => {
-      res(response);
-    });
+    return Promise.resolve(response);
   });
   const ctx = generateCtx({
     actions: {
@@ -207,9 +203,7 @@ it('Should determine the correct role for an assigner', async () => {
   ]);
   const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
     const response = type === 'leemons-testing.asset.can-assign' ? [asset.id] : [];
-    return new Promise((res) => {
-      res(response);
-    });
+    return Promise.resolve(response);
   });
   const ctx = generateCtx({
     actions: {
@@ -245,9 +239,7 @@ it('Should determine the correct role for an owner', async () => {
   ]);
   const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
     const response = type === 'leemons-testing.asset.can-assigner' ? [asset.id] : [];
-    return new Promise((res) => {
-      res(response);
-    });
+    return Promise.resolve(response);
   });
   const ctx = generateCtx({
     actions: {

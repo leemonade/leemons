@@ -34,18 +34,6 @@ async function remove({ assetId, assigneeAgent, ctx } = {}) {
         httpStatusCode: 401,
       });
     }
-
-    // EN: Remove role
-    // ES: Eliminar rol
-    /*
-    return await tables.permissions.deleteMany(
-      {
-        asset: assetId,
-        userAgent: assigneeAgent,
-      },
-      { transacting }
-    );
-    */
   } catch (e) {
     throw new LeemonsError(ctx, {
       message: `Failed to delete role: ${e.message}`,

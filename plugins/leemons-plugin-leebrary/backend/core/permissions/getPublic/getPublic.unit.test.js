@@ -25,8 +25,6 @@ it('Should call getPublic correctly', async () => {
   findAsset.mockResolvedValue(publicAssets);
   // Act
   const response = await getPublic({ categoryId, ctx });
-  // const responseNotIndexables = getPublic({ indexable: false, ctx });
-
   // Assert
   expect(findAsset).toBeCalledWith({
     query: {

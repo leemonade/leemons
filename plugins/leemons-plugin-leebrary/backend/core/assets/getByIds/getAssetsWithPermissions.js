@@ -43,10 +43,7 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) 
     asset.classesCanAccess = classesWithPermissions;
     const permission = permissions.find((item) => item.asset === asset.id);
     if (!isEmpty(permission?.permissions)) {
-      // const { permissions: userPermissions } = permission;
-      // if (userPermissions.edit) {
       getUsersAssetIds.push(asset.id);
-      // }
     }
   }
 
@@ -77,7 +74,6 @@ async function getAssetsWithPermissions({ assets, assetsIds, showPublic, ctx }) 
           ({ permissionName }) => permissionName === assetPermissionName
         );
         const assetUserAgents = uniqBy(rawPerm, 'userAgent');
-        // userAgent1, luego userAgent2
 
         let assetPermissions = [];
 

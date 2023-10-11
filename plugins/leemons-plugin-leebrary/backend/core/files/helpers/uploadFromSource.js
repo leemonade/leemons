@@ -35,7 +35,6 @@ async function uploadFromSource({ source, name, ctx }) {
     const extension = mime.extension(contentType);
     if (fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
       const imageFile = await prepareImage({ path: source.path, extension, ctx });
-      // resultFile = await uploadFile({ ...imageFile, type: contentType }, { name }, { transacting });
       resultFile = await uploadFile({ ...imageFile, type: contentType, name, ctx });
     } else {
       resultFile = await uploadFile({ file: { ...source }, name, ctx });

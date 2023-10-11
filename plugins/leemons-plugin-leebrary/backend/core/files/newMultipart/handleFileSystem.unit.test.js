@@ -20,7 +20,7 @@ describe('handleFileSystem', () => {
   const mockFilePaths = ['path1', 'path2'];
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should handle a non-folder file correctly', async () => {

@@ -100,7 +100,6 @@ async function set({ assetId, isPublic, permissions, canAccess, deleteMissing, c
   } catch (e) {
     ctx.logger.error(e);
     throw e;
-    // throw new global.utils.HttpError(400, `Failed to set permissions: ${e.message}`);
   }
 }
 

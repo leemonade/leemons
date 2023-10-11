@@ -85,12 +85,10 @@ it('Should correctly assign owner permissions', async () => {
     addTimesCalled++;
     if (addTimesCalled === 1) {
       // realmente devuelve esto { item: [{...}], ... }
-      return new Promise((res) => {
-        res({
-          items: [{}],
-          count: 1,
-          warnings: null,
-        });
+      return Promise.resolve({
+        items: [{}],
+        count: 1,
+        warnings: null,
       });
     }
     return [{ ...userAgentPermissionForAnAsset }];

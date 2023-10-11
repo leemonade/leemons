@@ -78,7 +78,7 @@ async function addPermissionsToAsset({ id, categoryId, permissions, assignerRole
 
   // EN: Save permissions
   // ES: Guardar los permisos
-  // TODO: Ver en qué afecta esto ya que no se estaba devolviendo el Array o haciendo await
+  // ! Ver en qué afecta esto ya que no se estaba devolviendo el Array o haciendo await
   // const permissionsPromises = [];
   _.forEach(roles, (role) => {
     if (rolePermissionType[role]) {

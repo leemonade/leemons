@@ -23,7 +23,6 @@ const { CATEGORIES } = require('../../../config/constants');
  * @returns {Promise<Object>} Asset data
  */
 
-
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function setAsset({
   id,

@@ -39,7 +39,6 @@ async function getByIds({
   showPublic,
   ctx,
 }) {
-
   const assetsIds = flatten([ids]);
   const query = buildQuery({ assetsIds, indexable });
 

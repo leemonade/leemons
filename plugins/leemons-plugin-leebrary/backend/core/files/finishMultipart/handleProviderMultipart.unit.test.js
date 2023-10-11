@@ -45,21 +45,6 @@ describe('Finish Provider Multipart', () => {
     expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.finishMultipart`, { file });
   });
 
-  /*
-  it('Should not call provider finishMultipart for sys provider', async () => {
-    // Arrange
-    const ctx = generateCtx({});
-    const file = { provider: 'sys', uri: 'test-uri' };
-    ctx.tx.call = jest.fn(); // Mock ctx.call
-
-    // Act
-    await finishProviderMultipart({ file, ctx });
-
-    // Assert
-    expect(ctx.tx.call).not.toHaveBeenCalled();
-  });
-  */
-
   it('Should not call provider finishMultipart if provider does not support it', async () => {
     // Arrange
     const { provider } = getProviders();

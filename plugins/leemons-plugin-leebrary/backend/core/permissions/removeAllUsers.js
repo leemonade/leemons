@@ -21,18 +21,6 @@ async function removeAllUsers({ assetId, ctx } = {}) {
         httpStatusCode: 401,
       });
     }
-
-    // EN: Remove all the users
-    // ES: Eliminar todos los usuarios
-    // TODO: MIGRATION > Check if this function should really call the permissions to delete them
-    /*
-    return await tables.permissions.deleteMany(
-      {
-        asset: assetId,
-      },
-      { transacting }
-    );
-    */
   } catch (e) {
     throw new LeemonsError(ctx, {
       message: `Failed to delete role: ${e.message}`,

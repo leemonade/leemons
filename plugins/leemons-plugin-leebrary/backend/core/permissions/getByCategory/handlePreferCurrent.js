@@ -22,7 +22,7 @@ async function handlePreferCurrent({ results, ctx }) {
     }))
   );
 
-  // TODO: Remove and use setAsCurrent on asset creation
+  // * To implement: Remove and use setAsCurrent on asset creation
   // EN: Filter by preferCurrent status
   // ES: Filtrar por estado preferCurrent
   const groupedAssets = groupBy(results, (asset) => asset.uuid);

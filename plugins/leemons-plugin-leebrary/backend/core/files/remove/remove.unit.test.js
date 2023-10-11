@@ -67,12 +67,7 @@ it('Should remove files correctly', async () => {
   await ctx.tx.db.Files.create(initialValues);
 
   unlinkFiles.mockResolvedValue(true);
-  deleteFile.mockImplementation(
-    () =>
-      new Promise((res) => {
-        res(true);
-      })
-  );
+  deleteFile.mockImplementation(() => Promise.resolve(true));
 
   // Act
   const fileOneAfterDB = await ctx.tx.db.Files.findOne({ id: [file.id] }).lean();

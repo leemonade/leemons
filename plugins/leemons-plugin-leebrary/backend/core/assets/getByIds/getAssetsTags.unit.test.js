@@ -15,13 +15,9 @@ it('Should call the tags service correctly and return its return value', async (
   const getValuesTagsAction = fn(() => {
     timesCalled++;
     if (timesCalled === 1) {
-      return new Promise((res) => {
-        res(expectedResponse[0]);
-      });
+      return Promise.resolve(expectedResponse[0]);
     }
-    return new Promise((res) => {
-      res(expectedResponse[1]);
-    });
+    return Promise.resolve(expectedResponse[1]);
   });
 
   const ctx = generateCtx({

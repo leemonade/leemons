@@ -11,7 +11,7 @@
  */
 async function getByKey({ key, columns, ctx }) {
   const category = await ctx.tx.db.Categories.findOne({ key }).select(columns).lean();
-  if (category && category.canUse) category.canUse = JSON.parse(category.canUse);
+  if (category?.canUse) category.canUse = JSON.parse(category.canUse);
 
   return category;
 }

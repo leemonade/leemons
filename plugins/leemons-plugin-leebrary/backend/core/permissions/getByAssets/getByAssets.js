@@ -28,7 +28,7 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
     let viewItems = [];
     let editItems = [];
     let assignItems = [];
-    if (userSession && userSession?.userAgents) {
+    if (userSession?.userAgents) {
       permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent: userSession.userAgents,
         query: {
@@ -44,7 +44,7 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
       [permissions, assetsIds] = handleOnlyShared({ permissions, assetsIds });
     }
 
-    if (userSession && userSession?.userAgents) {
+    if (userSession?.userAgents) {
       [viewItems, editItems, assignItems] = await handleItemPermissions({
         assetsIds,
         userAgents: userSession.userAgents,

@@ -15,27 +15,9 @@ const { list } = require('../list');
  */
 async function listWithMenuItem({ page, size = 999, ctx }) {
   const categories = await list({ page, size, ctx });
-
-  //   const { services: menuServices } = leemons.getPlugin('menu-builder');
-
   const menuItems = await ctx.tx.call('menu-builder.menu.getIfHasPermission', {
     menuKey: categoriesMenu.key,
   });
-
-  /*
-  const orderKeys = [
-    'media-files',
-    'bookmarks',
-    'assignables.task',
-    'tests-questions-banks',
-    'assignables.tests',
-  ];
-
-  const items = categories.items.sort(
-    (a, b) => orderKeys.indexOf(a.key) - orderKeys.indexOf(b.key)
-  );
-
-   */
 
   return sortBy(
     categories.items

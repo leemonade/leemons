@@ -3,11 +3,11 @@
     "browser": true,
     "commonjs": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "globals": {
-    "leemons": true,
-    "jest": true
+    "leemons": true
   },
   "extends": [
     "plugin:react/recommended",

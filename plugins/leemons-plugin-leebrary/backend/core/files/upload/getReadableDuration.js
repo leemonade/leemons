@@ -19,9 +19,12 @@ function getReadableDuration({ duration, padStart }) {
     minutes %= 60;
   }
 
+  const formattedHours = `${padStart ? pad(hours) : hours}`;
+  const formattedMinutes = `${padStart ? pad(minutes) : minutes}`;
+
   return hours
-    ? `${padStart ? pad(hours) : hours}:${pad(minutes)}:${pad(seconds)}`
-    : `${padStart ? pad(minutes) : minutes}:${pad(seconds)}`;
+    ? `${formattedHours}:${pad(minutes)}:${pad(seconds)}`
+    : `${formattedMinutes}:${pad(seconds)}`;
 }
 
 module.exports = { getReadableDuration };

@@ -18,6 +18,8 @@ const { uploadMultipartChunk } = require('../../core/files/uploadMultipartChunk'
 const { createTemp } = require('../../core/files/upload/createTemp');
 const { getByIds } = require('../../core/assets/getByIds');
 
+const fileRestService = 'leebrary.file.fileRest';
+
 module.exports = {
   newMultipartRest: {
     rest: {
@@ -89,7 +91,6 @@ module.exports = {
       }
 
       const asset = await getByFile({ fileId: id, checkPermissions: !onlyPublic, onlyPublic, ctx });
-
       const canAccess = !_.isEmpty(asset);
 
       if (!canAccess) {
@@ -120,9 +121,6 @@ module.exports = {
 
       // Redirect to external URL
       if (_.isString(readStream) && readStream.indexOf('http') === 0) {
-        // ctx.status = 307;
-        // ctx.set('Cache-Control', 'max-age=300');
-        // ctx.redirect(readStream);
         ctx.meta.$statusCode = 307;
         ctx.meta.$responseHeaders = {
           'Cache-Control': 'max-age=300',
@@ -133,17 +131,12 @@ module.exports = {
 
       const mediaType = contentType.split('/')[0];
 
-      // ctx.status = 200;
-      // ctx.body = readStream;
-      // ctx.set('Content-Type', contentType);
       ctx.meta.$responseType = 'stream';
       ctx.meta.$responseHeaders = {
         'Content-Type': contentType,
       };
 
       if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
-        // // if (download || !['image', 'video', 'audio'].includes(mediaType)) {
-        // ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
         ctx.meta.$responseHeaders = {
           'Content-Disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
         };
@@ -159,24 +152,12 @@ module.exports = {
         }
 
         if (fileSize > 0) {
-          // ctx.set('Content-Length', fileSize);
           ctx.meta.$responseHeaders = { 'Content-Length': fileSize };
-          // TODO Check if Accept-Ranges header is needed and streaming implications
-          // ctx.set('Accept-Ranges', 'bytes');
+          // TO solve: Check if Accept-Ranges header is needed and streaming implications
           ctx.meta.$responseHeaders = { 'Accept-Ranges': 'bytes' };
         }
-
-        /*
-        if (file.size > 0 && bytesStart > -1 && bytesEnd > -1) {
-          ctx.status = 206;
-          bytesEnd = Math.min(bytesEnd, file.size - 1);
-
-          ctx.set('Accept-Ranges', 'bytes');
-          ctx.set('Content-Length', bytesEnd - bytesStart);
-          ctx.set('Content-Range', `bytes ${bytesStart}-${bytesEnd}/${file.size}`);
-        }
-        */
       }
+      // eslint-disable-next-line consistent-return
       return { status: 200, readStream };
     },
   },
@@ -189,7 +170,7 @@ module.exports = {
     async handler(ctx) {
       const payload = { ...ctx.params };
       payload.forceStream = true;
-      return ctx.tx.call('leebrary.file.fileRest', payload);
+      return ctx.tx.call(fileRestService, payload);
     },
   },
   publicFileRest: {
@@ -200,7 +181,7 @@ module.exports = {
     async handler(ctx) {
       const payload = { ...ctx.params };
       payload.onlyPublic = true;
-      return ctx.tx.call('leebrary.file.fileRest', payload);
+      return ctx.tx.call(fileRestService, payload);
     },
   },
   publicFolderRest: {
@@ -212,7 +193,7 @@ module.exports = {
       const payload = { ...ctx.params };
       payload.onlyPublic = true;
       payload.forceStream = true;
-      return ctx.tx.call('leebrary.file.fileRest', payload);
+      return ctx.tx.call(fileRestService, payload);
     },
   },
   coverRest: {
@@ -252,9 +233,6 @@ module.exports = {
 
         if (_.isString(readStream) && readStream.indexOf('http') === 0) {
           // Redirect to external URL
-          // ctx.status = 307;
-          // ctx.set('Cache-Control', 'max-age=300');
-          // ctx.redirect(readStream);
           ctx.meta.$statusCode = 307;
           ctx.meta.$responseHeaders = {
             'Cache-Control': 'max-age=300',
@@ -265,24 +243,22 @@ module.exports = {
 
         const mediaType = contentType.split('/')[0];
 
-        // ctx.status = 200;
-        // ctx.body = readStream;
-        // ctx.set('Content-Type', contentType);
         ctx.meta.$responseHeaders = {
           'Contet-Type': contentType,
         };
 
         if (['image', 'video', 'audio'].includes(mediaType)) {
-          // TODO: handle content disposition for images, video and audio. Taking care of download param
+          // To implement: handle content disposition for images, video and audio. Taking care of download param
         } else {
-          // ctx.set('Content-disposition', `attachment; filename=${encodeURIComponent(fileName)}`);
           ctx.meta.$responseHeaders = {
             'Content-disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
           };
         }
+        // eslint-disable-next-line consistent-return
         return { status: 200, readStream };
       }
-      // ctx.status = 400;
+
+      // eslint-disable-next-line consistent-return
       return { status: 400 }; // The following two lines were commented in leemons legacy
       // ctx.body = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>';
       // ctx.set('Content-Type', 'image/svg+xml');

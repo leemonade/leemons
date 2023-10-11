@@ -71,11 +71,11 @@ describe('getByAsset pin', () => {
       // Act
       const result = await getByAsset({ assetId, ctx });
 
-      // Asser
+      // Assert
       expect(result.length).toBe(2);
-      for (let i = 0; i < result.length; i++) {
-        expect(result[i].asset).toBe(assetId);
-      }
+      result.forEach((res) => {
+        expect(res.asset).toBe(assetId);
+      });
     });
   });
 

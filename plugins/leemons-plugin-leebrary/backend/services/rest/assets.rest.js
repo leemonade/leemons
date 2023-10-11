@@ -275,7 +275,6 @@ module.exports = {
       } catch (e) {
         ctx.logger.error(e);
         throw new LeemonsError(ctx, { message: `Error getting URL metadata: ${url}` });
-        // throw new Error(`Error getting URL metadata: ${url}`, { cause: e });
       }
 
       return { status: 200, metas };

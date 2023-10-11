@@ -7,7 +7,7 @@
  * @returns {Promise<Array>} The array of files.
  */
 async function getByUser({ userId, ctx }) {
-  // ! Deprecated, model has no fromUser field.
+  // ! Model has no fromUser field.
   const results = await ctx.tx.db.Files.find({ fromUser: userId }).lean();
   return results.map((item) => {
     const data = { ...item };

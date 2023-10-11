@@ -382,14 +382,7 @@ it('Should correctly return public assets', async () => {
       'users.users.getUserAgentsInfo': getUserAgentsInfoAction,
     },
   });
-  // const assetPermissions = [
-  //   {
-  //     ...userAgentPermissionForAnAsset.user,
-  //     userAgentIds: ['userAgentOne'],
-  //     permissions: ['viewer'],
-  //     editable: false,
-  //   },
-  // ];
+
   const expectedAssetsResponse = [
     { ...assetOne, isPrivate: false, classesCanAccess: classesWithPermission[0], canAccess: null },
     { ...assetTwo, isPrivate: false, classesCanAccess: classesWithPermission[1] },

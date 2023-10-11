@@ -257,9 +257,7 @@ it('Should search in provider if needed and catch any related error that could b
     if (getByProviderTimesCalled > 1) {
       throw new Error('Boom!');
     }
-    return new Promise((res) => {
-      res([viewItems[1]]);
-    });
+    return Promise.resolve([viewItems[1]]);
   });
   handlePermissionsRoles.mockReturnValue(mockAccessiblesByAsset);
   handleViewerRole.mockReturnValue(mockAccessiblesByAsset);

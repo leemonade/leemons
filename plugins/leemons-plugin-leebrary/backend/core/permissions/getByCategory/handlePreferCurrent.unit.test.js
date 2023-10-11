@@ -20,9 +20,7 @@ it('Should call handlePreferCurrent correctly', async () => {
 
   const parseId = fn().mockImplementation(({ id }) => {
     const [uuid, version] = id.split('@');
-    return new Promise((res) => {
-      res({ fullId: id, version, uuid });
-    });
+    return Promise.resolve({ fullId: id, version, uuid });
   });
 
   const ctx = generateCtx({
