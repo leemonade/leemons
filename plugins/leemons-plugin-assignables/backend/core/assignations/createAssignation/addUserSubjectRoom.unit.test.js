@@ -1,25 +1,36 @@
-
 const { addUserSubjectRoom } = require('./addUserSubjectRoom');
 const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb/src/mixin');
+const { newModel } = require('leemons-mongodb');
 const { getServiceModels } = require('../../../models');
 const assignablesSchema = getServiceModels().Assignables.schema;
 const assignationsSchema = getServiceModels().Assignations.schema;
 
 describe('addUserSubjectRoom', () => {
-  let mongooseConnection;
   let ctx;
   let actions;
 
+  let mongooseConnection;
+  let disconnectMongoose;
+
   beforeAll(async () => {
-    mongooseConnection = await createMongooseConnection();
+    const { mongoose, disconnect } = await createMongooseConnection();
+
+    mongooseConnection = mongoose;
+    disconnectMongoose = disconnect;
   });
 
-  beforeEach(() => {
+  afterAll(async () => {
+    await disconnectMongoose();
+
+    mongooseConnection = null;
+    disconnectMongoose = null;
+  });
+
+  beforeEach(async () => {
+    await mongooseConnection.dropDatabase();
     actions = {
       'comunica.room.add': jest.fn(),
     };
-
     ctx = generateCtx({
       actions,
       models: {
@@ -27,10 +38,6 @@ describe('addUserSubjectRoom', () => {
         Assignations: newModel(mongooseConnection, 'Assignations', assignationsSchema),
       },
     });
-  });
-
-  afterAll(async () => {
-    await mongooseConnection.disconnect();
   });
 
   it('should call the comunica.room.add action with the correct parameters', async () => {

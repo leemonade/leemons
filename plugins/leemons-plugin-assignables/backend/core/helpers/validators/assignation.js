@@ -1,11 +1,11 @@
 const _ = require('lodash');
+const { LeemonsValidator } = require('leemons-validator');
 
 const assignationObject = {
   type: 'object',
   properties: {
     instance: {
       type: 'string',
-      format: 'uuid',
       nullable: false,
     },
     indexable: {
@@ -16,7 +16,6 @@ const assignationObject = {
       type: 'array',
       items: {
         type: 'string',
-        format: 'uuid',
         nullable: false,
       },
     },
@@ -24,7 +23,6 @@ const assignationObject = {
       type: 'array',
       items: {
         type: 'string',
-        format: 'uuid',
       },
       nullable: false,
     },
@@ -39,7 +37,6 @@ const assignationObject = {
         properties: {
           subject: {
             type: 'string',
-            format: 'uuid',
             nullable: true,
           },
           type: {
@@ -101,7 +98,7 @@ function validateAssignation(assignation, { useRequired } = {}) {
     obj.required = assignationRequiredProperties;
   }
 
-  const validator = new global.utils.LeemonsValidator(obj);
+  const validator = new LeemonsValidator(obj);
 
   if (!validator.validate(assignation)) {
     throw validator.error;

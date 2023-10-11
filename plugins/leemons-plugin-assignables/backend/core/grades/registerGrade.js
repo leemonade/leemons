@@ -29,12 +29,10 @@ async function registerGrade({
     ...newValue,
   });
 
-  const response = await ctx.tx.db.Grades.findOneAndUpdate(query, newValue, {
+  return ctx.tx.db.Grades.findOneAndUpdate(query, newValue, {
     new: true,
     upsert: true,
   });
-
-  return response;
 }
 
 module.exports = { registerGrade };

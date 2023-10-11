@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 async function addUserSubjectRoom({
   parentKey,
   instance,
@@ -19,7 +21,7 @@ async function addUserSubjectRoom({
     bgColor: classe.color,
     parentRoom: parentKey,
     program: classe.program,
-    type: leemons.plugin.prefixPN('assignation.user'),
+    type: ctx.prefixPN('assignation.user'),
     userAgents: user,
     adminUserAgents: _.compact(_.uniq(teachers)),
     metadata: {

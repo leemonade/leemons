@@ -56,21 +56,21 @@ it('Should return all teachers for given classes', async () => {
         {
           type: 'main-teacher',
           teacher: {
-            id: 'teacher2'
+            id: 'teacher2',
           },
         },
         {
-            type: 'non-teacher',
-            teacher: {
-              id: 'teacher2'
-            },
+          type: 'non-teacher',
+          teacher: {
+            id: 'teacher2',
           },
+        },
       ],
     },
   ];
 
   // Act
-  const teachers = getAllTeachers(classes, classesData);
+  const teachers = getAllTeachers({ classes, classesData });
 
   // Assert
   expect(teachers).toEqual(['teacher1', 'teacher2']);

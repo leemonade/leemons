@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-function getAllTeachers(classes, classesData) {
+function getAllTeachers({ classes, classesData }) {
   const teachers = [];
   _.forEach(classes, ({ subject: { id: subjectId } }) => {
     _.forEach(classesData, (data) => {

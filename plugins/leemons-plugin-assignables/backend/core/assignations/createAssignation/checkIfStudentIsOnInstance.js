@@ -4,8 +4,6 @@ async function checkIfStudentIsOnInstance({ user, instance, ctx }) {
     user,
   });
 
-  console.log(assignationsCount);
-
   return assignationsCount > 0;
 }
 
