@@ -13,7 +13,7 @@ const specialVersions = ['latest', 'current', 'published', 'draft'];
  * @param {Array.<(string|Object)>} params.ids - An array of IDs to parse. Each ID can be a string or an object of the form `{ id, version }`.
  * @param {boolean} [params.verifyVersion=true] - Whether to verify the version of each ID. If verification fails, an exception is thrown.
  * @param {boolean} [params.ignoreMissing=false] - Whether to ignore missing versions in the input. If true, IDs with missing versions are removed from the output.
- * @param {import('moleculer').Context} params.ctx - The moleculer context object, which must include a transaction object `tx` with a `call` method for retrieving version info.
+ * @param {MoleculerContext} params.ctx Moleculer context which must include a transaction object `tx` with a `call` method for retrieving version info.
  *
  * @returns {Promise.<Array.<Object>>} A promise that resolves to an array of parsed IDs. Each parsed ID is an object of the form `{ fullId, uuid, version }`.
  *
@@ -96,7 +96,7 @@ async function parseIdMany({ ids, verifyVersion = true, ignoreMissing, ctx }) {
  * @param {(string|Array.<(string|Object)>)} params.id - An ID or array of IDs to parse. Each ID can be a string or an object of the form `{ id, version }`.
  * @param {boolean} [params.verifyVersion=true] - Whether to verify the version of each ID. If verification fails, an exception is thrown.
  * @param {boolean} [params.ignoreMissing=false] - Whether to ignore missing versions in the input. If true, IDs with missing versions are removed from the output.
- * @param {import('moleculer').Context} params.ctx - The moleculer context object, which must include a transaction object `tx` with a `call` method for retrieving version info.
+ * @param {MoleculerContext} params.ctx Moleculer context, which must include a transaction object `tx` with a `call` method for retrieving version info.
  *
  * @returns {Promise.<(Object|Array.<Object>)>} A promise that resolves to a parsed ID or array of parsed IDs. Each parsed ID is an object of the form `{ fullId, uuid, version }`.
  *

@@ -1,3 +1,4 @@
+const requireField = 'Required field';
 module.exports = {
   tableInput: {
     add: 'Add',
@@ -102,22 +103,22 @@ module.exports = {
           },
           errorMessages: {
             program: {
-              required: 'Required field',
+              required: requireField,
             },
             course: {
-              required: 'Required field',
+              required: requireField,
             },
             subjects: {
-              required: 'Required field',
+              required: requireField,
             },
             level: {
-              required: 'Required field',
+              required: requireField,
             },
             summary: {
-              required: 'Required field',
+              required: requireField,
             },
             subject: {
-              required: 'Required field',
+              required: requireField,
             },
           },
         },

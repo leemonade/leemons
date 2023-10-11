@@ -5,13 +5,13 @@
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
-    "ci": "jest --watch",
-    "test": "jest --coverage",
+    "test": "jest --watch --coverage",
     "lint": "eslint services"
   },
   "keywords": [
     "microservices",
-    "moleculer"
+    "moleculer",
+    "leemons"
   ],
   "author": "",
   "devDependencies": {
@@ -33,11 +33,25 @@
     "@leemons/permissions": "0.0.40",
     "@leemons/validator": "0.0.40",
     "@leemons/widgets": "0.0.40",
-    "got": "^13.0.0",
+    "got": "^11.8.5",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "mediainfo.js": "^0.2.0",
     "metascraper": "^5.34.10",
+    "metascraper-audio": "^5.26.0",
+    "metascraper-author": "^5.26.0",
+    "metascraper-date": "^5.26.0",
+    "metascraper-description": "^5.26.0",
+    "metascraper-iframe": "^5.26.3",
+    "metascraper-image": "^5.26.0",
+    "metascraper-lang": "^5.26.0",
+    "metascraper-logo": "^5.26.0",
+    "metascraper-logo-favicon": "^5.27.2",
+    "metascraper-media-provider": "^5.27.0",
+    "metascraper-publisher": "^5.26.0",
+    "metascraper-title": "^5.26.0",
+    "metascraper-url": "^5.26.0",
+    "metascraper-video": "^5.26.0",
     "mime-types": "^2.1.35",
     "moleculer": "^0.14.26",
     "office-document-properties": "^1.1.0",
@@ -47,13 +61,5 @@
   },
   "engines": {
     "node": ">= 16.x.x"
-  },
-  "jest": {
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "rootDir": "./services",
-    "roots": [
-      "../test"
-    ]
   }
 }

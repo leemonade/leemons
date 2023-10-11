@@ -69,7 +69,7 @@ module.exports = {
       throw validator.error;
     },
   },
-  ResetRest: {
+  resetRest: {
     rest: {
       path: '/reset',
       method: 'POST',

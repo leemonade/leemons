@@ -542,6 +542,42 @@ module.exports = {
           'GET grades/settings': 'v1.grades.settings.findOneRest',
           'POST grades/settings': 'v1.grades.settings.updateRest',
           'POST grades/settings/enable-menu-item': 'v1.grades.settings.enableMenuItemRest',
+
+          // -- Leebrary (NOT FINISHED) --
+          'GET leebrary/providers': 'v1.leebrary.providers.listRest',
+          'POST leebrary/providers/config': 'v1.leebrary.providers.setConfigRest',
+          'POST leebrary/providers/config/delete': 'v1.leebrary.providers.deleteConfigRest',
+          'GET leebrary/assets/:id': 'v1.leebrary.assets.getRest',
+          'GET leebrary/assets/my': 'v1.leebrary.assets.myRest',
+          'GET leebrary/assets/url-metadata': 'v1.leebrary.assets.urlMetadataRest',
+          'GET leebrary/assets/list': 'v1.leebrary.assets.listRest',
+          'GET leebrary/assets/pins': 'v1.leebrary.assets.pinsRest',
+          'GET leebrary/assets/has-pins': 'v1.leebrary.assets.hasPinsRest',
+          'POST leebrary/assets': 'v1.leebrary.assets.addRest',
+          'POST leebrary/assets/:id': 'v1.leebrary.assets.duplicateRest',
+          'POST leebrary/assets/list': 'v1.leebrary.assets.listByIdsRest',
+          'POST leebrary/asset/:asset/permissions': 'v1.leebrary.permissions.setRest',
+          'POST leebrary/assets/pins': 'v1.leebrary.assets.addPinRest',
+          'PUT leebrary/assets/:id': 'v1.leebrary.assets.updateRest',
+          'DELETE leebrary/assets/:id': 'v1.leebrary.assets.removeRest',
+          'DELETE leebrary/assets/pins/:id': 'v1.leebrary.assets.removePinRest',
+          'GET leebrary/categories/menu-list': 'v1.leebrary.categories.listWithMenuItemRest',
+          'GET leebrary/categories/:id/types': 'v1.leebrary.categories.assetTypesRest',
+          'GET leebrary/search/search': 'v1.leebrary.search.searchRest',
+          'POST leebrary/tags/list': 'v1.leebrary.tags.listTagsRest',
+          'POST leebrary/file/multipart/new': 'v1.leebrary.file.newMultipartRest',
+          'POST leebrary/file/multipart/abort': 'v1.leebrary.file.abortMultipartRest',
+          'POST leebrary/file/multipart/finish': 'v1.leebrary.file.finishMultipartRest',
+          'POST leebrary/file/multipart/chunk':
+            'multipart:v1.leebrary.file.uploadMultipartChunkRest',
+          'GET leebrary/img/:assetId': 'v1.leebrary.file.coverRest',
+          'GET leebrary/file/:id': 'v1.leebrary.file.fileRest',
+          'GET leebrary/file/:id/(.*)': 'v1.leebrary.file.folderRest',
+          'GET leebrary/file/public/:id': 'v1.leebrary.file.publicFileRest',
+          'GET leebrary/file/public/:id/(.*)': 'v1.leebrary.file.publicFolderRest',
+
+          // -- Leebrary AWS S3 (NOT FINISHED) --
+          'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
         },
 
         /**

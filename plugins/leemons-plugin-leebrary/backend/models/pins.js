@@ -1,6 +1,6 @@
 const { mongoose, newModel } = require('@leemons/mongodb');
 
-const schema = new mongoose.Schema(
+const pinsSchema = new mongoose.Schema(
   {
     id: {
       type: String,
@@ -15,7 +15,7 @@ const schema = new mongoose.Schema(
     },
     //
     asset: {
-      specificType: String,
+      type: String,
     },
     userAgent: {
       // ref: 'plugins_users::user-agent',
@@ -27,6 +27,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const pinsModel = newModel(mongoose.connection, 'v1::leebrary_Pins', schema);
+const pinsModel = newModel(mongoose.connection, 'v1::leebrary_Pins', pinsSchema);
 
-module.exports = { pinsModel };
+module.exports = { pinsModel, pinsSchema };

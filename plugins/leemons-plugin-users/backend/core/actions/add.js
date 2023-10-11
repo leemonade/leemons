@@ -13,7 +13,7 @@ async function add({ ctx, ...data }) {
   const action = await ctx.tx.db.Actions.countDocuments({ actionName: data.actionName });
   if (action)
     throw new LeemonsError(ctx, { message: `Action '${data.actionName}' already exists` });
-  const values = await Promise.all(
+  const values = await Promise.all([
     ctx.tx.db.Actions.create({
       actionName: data.actionName,
       order: data.order,
@@ -22,7 +22,7 @@ async function add({ ctx, ...data }) {
       key: `users.${data.actionName}.name`,
       data: data.localizationName,
     })
-  );
+  ]);
   return values[0];
 }
 
