@@ -37,6 +37,8 @@
   },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
+    "@babel/eslint-parser": "^7.22.15",
+    "@babel/preset-env": "^7.22.20",
     "@jest/globals": "^29.6.4",
     "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -44,6 +46,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-sonarjs": "^0.21.0",
     "husky": "^8.0.3",
     "jest": "^29.6.4",
     "prettier": "^2.8.8",

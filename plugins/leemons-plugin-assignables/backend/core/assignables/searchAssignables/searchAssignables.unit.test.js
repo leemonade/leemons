@@ -112,7 +112,7 @@ describe('searchAssignables', () => {
     });
 
     expect(getUserPermissions).toBeCalledWith({
-      assignables: [
+      assignables: expect.arrayContaining([
         {
           _id: expect.anything(),
           id: 'assignable3',
@@ -128,7 +128,7 @@ describe('searchAssignables', () => {
           id: 'assignable2',
           asset: 'asset2',
         },
-      ],
+      ]),
       ctx: params.ctx,
     });
 

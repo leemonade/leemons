@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-const { getPermissionName } = require('../../../instances/helpers/getPermissionName');
-const { getRoleMatchingActions } = require('../../../instances/helpers/getRoleMatchingActions');
+const { getPermissionName } = require('../../helpers/getPermissionName');
+const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
 
 /**
  * Retrieves user permissions for multiple assignable instances.
