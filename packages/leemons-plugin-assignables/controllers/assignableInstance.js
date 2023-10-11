@@ -103,6 +103,12 @@ module.exports = {
         query.archived = false;
       }
 
+      if (query.finished === 'true') {
+        query.finished = true;
+      } else if (query.finished === 'false') {
+        query.finished = false;
+      }
+
       const assignableInstances = await services.searchAssignableInstances(query, {
         userSession: ctx.state.userSession,
       });
