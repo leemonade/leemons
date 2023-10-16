@@ -1,10 +1,17 @@
-async function getAssignation({assignableInstanceId, user, ctx}) {
-    const assignations = await getAssignations([{ instance: assignableInstanceId, user }], {
-        userSession,
-        transacting,
-    });
+const { getAssignations } = require('../getAssignations');
 
-    return assignations[0];
-};
+async function getAssignation({ assignableInstanceId, user, ctx }) {
+  const assignations = await getAssignations({
+    assignationsIds: [
+      {
+        instance: assignableInstanceId,
+        user,
+      },
+    ],
+    ctx,
+  });
 
-module.exports = { getAssignation }
+  return assignations[0];
+}
+
+module.exports = { getAssignation };
