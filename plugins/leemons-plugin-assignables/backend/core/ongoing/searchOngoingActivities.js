@@ -58,7 +58,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   /*
     === STUDENT ===
   */
-  let assignations = await getStudentAssignations({ userSession, transacting });
+  let assignations = await getStudentAssignations({ ctx });
 
   let instances = filterInstancesByRoleAndQuery({
     instances: map(assignations, 'instance'),

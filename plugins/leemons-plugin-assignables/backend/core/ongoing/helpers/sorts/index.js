@@ -1,4 +1,7 @@
+const { applyOffsetAndLimit } = require('./applyOffsetAndLimit');
+const { sortInstancesByDates } = require('./sortInstancesByDates');
+
 module.exports = {
-  applyOffsetAndLimit: () => null,
-  sortInstancesByDates: () => null,
+  applyOffsetAndLimit,
+  sortInstancesByDates,
 };
