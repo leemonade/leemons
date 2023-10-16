@@ -169,7 +169,6 @@ it('Should return all assignations for given instances with details false', asyn
   const assignationsMultiple = await getAssignationsOfInstance({ instances, details: false, ctx });
   const assignationsSingle = await getAssignationsOfInstance({ instances: instances[0], details: false, ctx });
 
-  console.log(assignationsSingle);
   // Assert
   expect(assignationsSingle).toBeDefined();
   expect(assignationsMultiple).toBeDefined();

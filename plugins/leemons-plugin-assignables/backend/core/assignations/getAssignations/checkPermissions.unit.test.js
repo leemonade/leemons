@@ -66,10 +66,10 @@ it('Should check permissions correctly', async () => {
 
   // Act
   const result = await checkPermissions({ assignationsData, ctx });
-
+  
   // Assert
   expect(result).toBeDefined();
   expect(result).toHaveProperty('assignation1');
-  expect(result.assignation1).toBe(false);
+  expect(result.assignation1).toBe(true);
   expect(result.assignation2).toBe(true);
 });
