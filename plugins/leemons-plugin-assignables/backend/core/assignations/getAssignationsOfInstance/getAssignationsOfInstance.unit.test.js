@@ -3,7 +3,7 @@ const { generateCtx, createMongooseConnection } = require('leemons-testing');
 const { newModel } = require('leemons-mongodb');
 const { getAssignationsOfInstance } = require('./getAssignationsOfInstance');
 const { assignationsSchema } = require('../../../models/assignations');
-const { getUserPermissions } = require('../../permissions/instances/users');
+
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -28,6 +28,8 @@ jest.mock('../getAssignations', () => ({
   ]),
 }));
 jest.mock('../../permissions/instances/users');
+
+const { getUserPermissions } = require('../../permissions/instances/users');
 
 beforeAll(async () => {
   const { mongoose, disconnect } = await createMongooseConnection();
