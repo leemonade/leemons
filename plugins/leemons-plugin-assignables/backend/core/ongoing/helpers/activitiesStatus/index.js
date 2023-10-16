@@ -1,7 +1,7 @@
-// const { getAssignationsProgress } = require('./getAssignationsProgress');
+const { getAssignationsProgress } = require('./getAssignationsProgress');
 const { getInstancesStatus } = require('./getInstancesStatus');
 
 module.exports = {
-  // getAssignationsProgress,
+  getAssignationsProgress,
   getInstancesStatus,
 };

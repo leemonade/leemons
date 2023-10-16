@@ -1,11 +1,15 @@
 const { filterInstancesByNotModule } = require('./filterInstancesByNotModule');
 const { filterInstancesByRoleAndQuery } = require('./filterInstancesByRoleAndQuery');
+const { filterInstancesByProgramAndSubjects } = require('./filterInstancesByProgramAndSubjects');
+const { filterInstancesByStatusAndArchived } = require('./filterInstancesByStatusAndArchived');
+const { filterAssignationsByInstance } = require('./filterAssignationsByInstance');
+const { filterAssignationsByProgress } = require('./filterAssignationsByProgress');
 
 module.exports = {
-  filterAssignationsByInstance: () => null,
-  filterAssignationsByProgress: () => null,
-  filterInstancesByProgramAndSubjects: () => null,
-  filterInstancesByStatusAndArchived: () => null,
+  filterAssignationsByInstance,
+  filterAssignationsByProgress,
+  filterInstancesByProgramAndSubjects,
+  filterInstancesByStatusAndArchived,
   filterInstancesByNotModule,
   filterInstancesByRoleAndQuery,
 };
