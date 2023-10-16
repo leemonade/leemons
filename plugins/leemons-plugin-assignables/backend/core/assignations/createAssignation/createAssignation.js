@@ -14,7 +14,7 @@ const { registerGrade } = require('../../grades');
 
 const rolesWithChat = ['tests', 'task'];
 
-async function createAssignation({assignableInstanceId, users, options, ctx}) {
+async function createAssignation({ assignableInstanceId, users, options, ctx }) {
   const { userSession } = ctx.meta;
   // TODO: Permissions like `task.${taskId}.instance.${instanceId}` to allow assignation removals and permissions changes
   validateAssignation(
@@ -59,8 +59,6 @@ async function createAssignation({assignableInstanceId, users, options, ctx}) {
     // instance.dates.visualization
     // instance.dates.start
 
-
-
     // TODO @MIGUEL
     let subjectRooms = null;
     let instanceRoom = null;
@@ -97,7 +95,6 @@ async function createAssignation({assignableInstanceId, users, options, ctx}) {
       });
     }
 
-  
     // EN: Create the assignation
     // ES: Crea la asignación
     return await Promise.all(
@@ -107,8 +104,6 @@ async function createAssignation({assignableInstanceId, users, options, ctx}) {
           instance: assignableInstanceId,
           ctx,
         });
-
-        console.log('isOnInstance', isOnInstance);
 
         if (isOnInstance) {
           throw new LeemonsError(ctx, {
