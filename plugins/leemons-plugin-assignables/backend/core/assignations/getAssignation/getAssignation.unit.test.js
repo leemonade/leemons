@@ -17,8 +17,6 @@ it('Should get an assignation', async () => {
   // Act
   const result = await getAssignation({ assignableInstanceId, user, ctx });
 
-  console.log('result', result);
-
   // Assert
   expect(result).toBeDefined();
   expect(result.id).toEqual('assignationId');
