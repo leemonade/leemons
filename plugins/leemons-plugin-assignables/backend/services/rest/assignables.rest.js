@@ -17,21 +17,14 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { ids, withFiles, deleted } = ctx.params;
-
       const idsToUse = Array.isArray(ids) ? ids : [ids];
-
-      try {
-        const assignables = await getAssignables({
-          ids: idsToUse,
-          withFiles: withFiles === 'true',
-          showDeleted: deleted === 'true',
-          ctx,
-        });
-
-        return { status: 200, assignables };
-      } catch (e) {
-        return { status: 400, message: e.message };
-      }
+      const assignables = await getAssignables({
+        ids: idsToUse,
+        withFiles: withFiles === 'true',
+        showDeleted: deleted === 'true',
+        ctx,
+      });
+      return { status: 200, assignables };
     },
   },
 };

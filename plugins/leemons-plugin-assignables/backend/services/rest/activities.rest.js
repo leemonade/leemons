@@ -18,14 +18,8 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { params: query } = ctx;
-
-      try {
-        const activities = await searchOngoingActivities({ query, ctx });
-
-        return { status: 200, activities };
-      } catch (e) {
-        return { status: 500, message: e.message };
-      }
+      const activities = await searchOngoingActivities({ query, ctx });
+      return { status: 200, activities };
     },
   },
   searchNyaActivitiesRest: {
@@ -36,14 +30,8 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { params: query } = ctx;
-
-      try {
-        const activities = await searchNyaActivities({ query, ctx });
-
-        return { status: 200, activities };
-      } catch (e) {
-        return { status: 500, message: e.message };
-      }
+      const activities = await searchNyaActivities({ query, ctx });
+      return { status: 200, activities };
     },
   },
 };
