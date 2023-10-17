@@ -98,6 +98,6 @@ it('Should remove instance successfully', async () => {
   expect(response.deletedCount).toEqual(1);
 
   // nos aseguramos que se haya borrado también la relatedAssignableInstance
-  const instancesDB = await ctx.tx.db.Instances.find();
+  const instancesDB = await ctx.tx.db.Instances.find().lean();
   expect(instancesDB.length).toBe(0);
 });
