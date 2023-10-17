@@ -497,7 +497,6 @@ describe('should filter instances by deadline', () => {
     });
   });
 
-  //! TODO Roberto: Estas validaciones me parecen "raras" Preguntar a Miguel
   describe('should return the same instances if no date filters are provided', () => {
     test.skip('should return the same instances if no date filters are provided', async () => {
       // Arrange

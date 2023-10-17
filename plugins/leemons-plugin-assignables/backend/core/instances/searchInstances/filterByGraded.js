@@ -3,6 +3,16 @@ const { map, uniq } = require('lodash');
 const { getGrade } = require('../../grades/getGrade');
 const { getInstancesSubjects } = require('./getInstancesSubjects');
 
+/**
+ * Filters an array of objects based on a query by subject grades and the user's role.
+ *
+ * @param {Object} options - An object containing the following properties:
+ * @param {Array<AssignablesInstance>|Array<AssignablesAssignation>} options.objects: The array of objects to be filtered.
+ * @param {Object} options.query: The query used for filtering.
+ * @param {Boolean} options.isTeacher: Indicates whether the user is a teacher.
+ * @param {MoleculerContext} options.options.ctx - The Moleculer context object.
+ * @return {Array} The filtered array of objects.
+ */
 async function filterByGraded({ objects, query, isTeacher, ctx }) {
   let instances = objects;
   if (!isTeacher) {

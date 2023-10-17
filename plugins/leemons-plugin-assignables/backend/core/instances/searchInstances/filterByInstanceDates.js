@@ -120,7 +120,6 @@ function filterInstancesWithDates(query, _instancesWithDates) {
  * @returns {Array} - The filtered array of assignable instance IDs.
  */
 async function filterByInstanceDates({ query, assignableInstancesIds, ctx }) {
-  //! TODO Roberto: Estas validaciones me parecen "raras" Preguntar a Miguel
   if (
     !(
       isNil(query.closed) ||

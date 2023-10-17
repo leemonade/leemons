@@ -47,7 +47,7 @@ const { getAssignationsDates } = require('./getAssignationsDates');
 const { getInstanceDates } = require('./getInstanceDates');
 const { sortByDates } = require('./sortByDates');
 
-module.exports = async function searchAssignableInstances({ query, ctx }) {
+async function searchInstances({ query, ctx }) {
   const activitiesByProfile = await getActivitiesByProfile({ ctx });
 
   const { isTeacher } = activitiesByProfile;
@@ -72,18 +72,18 @@ module.exports = async function searchAssignableInstances({ query, ctx }) {
   try {
     assignableInstancesFound = await filterByInstanceDates({
       query,
-      assignableInstancesFound,
+      assignableInstancesIds: assignableInstancesFound,
       ctx,
     });
 
     assignableInstancesFound = await filterByClasses({
       query,
-      assignableInstancesFound,
+      assignableInstancesIds: assignableInstancesFound,
       ctx,
     });
 
     let assignablesFound = await getAssignables({
-      assignableInstancesFound,
+      assignableInstancesIds: assignableInstancesFound,
       ctx,
     });
 
@@ -94,7 +94,7 @@ module.exports = async function searchAssignableInstances({ query, ctx }) {
     );
 
     const assetsMatchingQuery = await searchByAsset({
-      assignablesFound,
+      assignablesByAssignableInstance: assignablesFound,
       query,
       ctx,
     });
@@ -136,7 +136,7 @@ module.exports = async function searchAssignableInstances({ query, ctx }) {
 
   try {
     const instances = (
-      await ctx.tx.db.AssignableInstances.find({
+      await ctx.tx.db.Instances.find({
         id: assignableInstancesFound,
       })
         .select(['id', 'created_at', 'relatedAssignableInstances'])
@@ -151,7 +151,6 @@ module.exports = async function searchAssignableInstances({ query, ctx }) {
       (obj, instance) => ({ ...obj, [instance.id]: instance }),
       {}
     );
-
     if (isTeacher) {
       const instancesGroupedByDependencies = instances.reduce((groups, instance) => {
         if (
@@ -377,4 +376,6 @@ module.exports = async function searchAssignableInstances({ query, ctx }) {
       message: `Failed to search activities: ${e.message}`,
     });
   }
-};
+}
+
+module.exports = { searchInstances };

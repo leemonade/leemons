@@ -1,3 +1,5 @@
-const searchInstances = require('./searchInstances');
+const { searchInstances } = require('./searchInstances');
 
-module.exports = searchInstances;
+module.exports = {
+  searchInstances,
+};
