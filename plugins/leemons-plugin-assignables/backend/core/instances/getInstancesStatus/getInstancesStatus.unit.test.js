@@ -1,10 +1,20 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getInstancesStatus } = require('./getInstancesStatus');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
-const { getAssignationObject } = require('../../../__fixtures__/getAssignationObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
+const {
+  getAssignationObject,
+} = require('../../../__fixtures__/getAssignationObject');
 const { getGradeObject } = require('../../../__fixtures__/getGradeObject');
 
 const { instancesSchema } = require('../../../models/instances');
@@ -50,7 +60,11 @@ beforeEach(async () => {
   ctx = generateCtx({
     models: {
       Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-      Assignations: newModel(mongooseConnection, 'Assignations', assignationsSchema),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        assignationsSchema
+      ),
       Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
     },
   });
@@ -70,7 +84,11 @@ it('Should return student instances status', async () => {
   }));
   await ctx.tx.db.Assignations.create([
     ...assignations,
-    { ...assignations[0], id: 'assignationIdinstanceId3', instance: 'instanceId1' },
+    {
+      ...assignations[0],
+      id: 'assignationIdinstanceId3',
+      instance: 'instanceId1',
+    },
   ]);
 
   const { grades } = getGradeObject();
@@ -206,8 +224,11 @@ it('Should throw Error if some instance does not have view permissions', async (
   ]);
 
   // Act
-  const testFunc = () => getInstancesStatus({ assignableInstanceIds: 'instanceId1', ctx });
+  const testFunc = () =>
+    getInstancesStatus({ assignableInstanceIds: 'instanceId1', ctx });
   // Assert
 
-  await expect(testFunc).rejects.toThrowError(/You do not have permissions to view the instance/);
+  await expect(testFunc).rejects.toThrowError(
+    /You do not have permissions to view the instance/
+  );
 });

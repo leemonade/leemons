@@ -7,11 +7,13 @@ const {
 } = require('@jest/globals');
 const { set } = require('lodash');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { sendEmail } = require('./sendEmail');
 
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
 const getConfigHandle = jest.fn();
 const sendAsEducationalCenterHandle = jest.fn();
@@ -33,7 +35,9 @@ describe('sendEmail function', () => {
       actions: {
         'emails.config.getConfig': getConfigHandle,
         'emails.email.sendAsEducationalCenter': sendAsEducationalCenterHandle,
-        'leebrary.assets.getCoverUrl': jest.fn(() => '/api/leebrary/img/assetId'),
+        'leebrary.assets.getCoverUrl': jest.fn(
+          () => '/api/leebrary/img/assetId'
+        ),
       },
     });
 
@@ -69,7 +73,11 @@ describe('sendEmail function', () => {
         instance: {
           dates: { deadline: expect.any(Number) },
           assignable: {
-            asset: { id: 'assetId', color: '#D9DCE0', url: 'localhost/api/leebrary/img/assetId' },
+            asset: {
+              id: 'assetId',
+              color: '#D9DCE0',
+              url: 'localhost/api/leebrary/img/assetId',
+            },
           },
         },
         classes: [],
@@ -93,7 +101,9 @@ describe('sendEmail function', () => {
       actions: {
         'emails.config.getConfig': getConfigHandle,
         'emails.email.sendAsEducationalCenter': sendAsEducationalCenterHandle,
-        'leebrary.assets.getCoverUrl': jest.fn(() => '/api/leebrary/img/assetId'),
+        'leebrary.assets.getCoverUrl': jest.fn(
+          () => '/api/leebrary/img/assetId'
+        ),
       },
     });
 
@@ -131,7 +141,9 @@ describe('sendEmail function', () => {
       actions: {
         'emails.config.getConfig': getConfigHandle,
         'emails.email.sendAsEducationalCenter': sendAsEducationalCenterHandle,
-        'leebrary.assets.getCoverUrl': jest.fn(() => '/api/leebrary/img/assetId'),
+        'leebrary.assets.getCoverUrl': jest.fn(
+          () => '/api/leebrary/img/assetId'
+        ),
       },
     });
 
@@ -146,7 +158,10 @@ describe('sendEmail function', () => {
     });
 
     const mockParams = {
-      instance: { ...instance, dates: { ...instance.dates, deadline: undefined } },
+      instance: {
+        ...instance,
+        dates: { ...instance.dates, deadline: undefined },
+      },
       userAgent: { user: { id: 'userId' }, center: { id: 'centerId' } },
       hostnameApi: 'localhost',
       classes: [{ color: '#67728E' }],
@@ -168,7 +183,9 @@ describe('sendEmail function', () => {
       actions: {
         'emails.config.getConfig': getConfigHandle,
         'emails.email.sendAsEducationalCenter': sendAsEducationalCenterHandle,
-        'leebrary.assets.getCoverUrl': jest.fn(() => '/api/leebrary/img/assetId'),
+        'leebrary.assets.getCoverUrl': jest.fn(
+          () => '/api/leebrary/img/assetId'
+        ),
       },
     });
 

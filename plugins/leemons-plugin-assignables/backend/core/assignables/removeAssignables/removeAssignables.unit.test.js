@@ -1,6 +1,13 @@
-const { it, expect, beforeAll, afterAll, beforeEach, jest: globalJest } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  jest: globalJest,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 globalJest.mock('../../leebrary/assets');
 globalJest.mock('../getAssignables');
@@ -11,7 +18,9 @@ const { assignablesSchema } = require('../../../models/assignables');
 
 const { getAsset } = require('../../leebrary/assets');
 const { getAssignables } = require('../getAssignables');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -42,7 +51,11 @@ it('Removes all the requested assignables', async () => {
 
   const ctx = generateCtx({
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -87,7 +100,9 @@ it('Removes all the requested assignables', async () => {
     }))
   );
 
-  getAsset.mockImplementation(({ id: el }) => el.map((id) => ({ id, indexable: true })));
+  getAsset.mockImplementation(({ id: el }) =>
+    el.map((id) => ({ id, indexable: true }))
+  );
 
   // Act
   const response = await removeAssignables({ ids, ctx });
@@ -98,5 +113,7 @@ it('Removes all the requested assignables', async () => {
   // Assert
   expect(response).toEqual(2);
   expect(dbDataAfterDeletion).toHaveLength(2);
-  expect(dbDataAfterDeletion.every(({ isDeleted }) => !!isDeleted)).toBeTruthy();
+  expect(
+    dbDataAfterDeletion.every(({ isDeleted }) => !!isDeleted)
+  ).toBeTruthy();
 });

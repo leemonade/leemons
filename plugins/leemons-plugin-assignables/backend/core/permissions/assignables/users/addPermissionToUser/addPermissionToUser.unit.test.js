@@ -1,6 +1,6 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { addPermissionToUser } = require('./addPermissionToUser');
 const { assignableRolesObject } = require('../../../../../config/constants');
@@ -17,7 +17,8 @@ describe('addPermissionToUser function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.addCustomPermissionToUserAgent': addCustomPermissionToUserAgentHandle,
+        'users.permissions.addCustomPermissionToUserAgent':
+          addCustomPermissionToUserAgentHandle,
       },
       pluginName,
     });
@@ -41,6 +42,10 @@ describe('addPermissionToUser function', () => {
         actionNames: actions,
       },
     });
-    expect(resp).toEqual({ userAgents: mockParams.userAgents, role: mockParams.role, actions });
+    expect(resp).toEqual({
+      userAgents: mockParams.userAgents,
+      role: mockParams.role,
+      actions,
+    });
   });
 });

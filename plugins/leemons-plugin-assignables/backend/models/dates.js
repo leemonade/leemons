@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('leemons-mongodb');
+const { mongoose, newModel } = require('@leemons/mongodb');
 
 const datesSchema = new mongoose.Schema({
   id: {
@@ -30,6 +30,10 @@ const datesSchema = new mongoose.Schema({
   },
 });
 
-const datesModel = newModel(mongoose.connection, 'v1::assignables_Dates', datesSchema);
+const datesModel = newModel(
+  mongoose.connection,
+  'v1::assignables_Dates',
+  datesSchema
+);
 
 module.exports = { datesSchema, datesModel };

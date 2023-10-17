@@ -1,11 +1,19 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
 
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getParentAssignables } = require('./getParentAssignables');
 const { assignablesSchema } = require('../../../../../models/assignables');
-const { getAssignableObject } = require('../../../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../../../__fixtures__/getAssignableObject');
 
 const assignableId = 'b82cf6dd-5ef0-41fa-a4c1-930d34a46eba@2.0.0';
 const assignable = {
@@ -49,7 +57,11 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 

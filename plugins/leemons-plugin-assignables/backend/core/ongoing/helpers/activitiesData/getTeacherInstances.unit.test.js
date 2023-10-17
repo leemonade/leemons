@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getTeacherInstances } = require('./getTeacherInstances');
 const { teachersSchema } = require('../../../../models/teachers');
@@ -39,7 +45,9 @@ it('Should call getTeacherInstances correctly', async () => {
       Teachers: newModel(mongooseConnection, 'Teachers', teachersSchema),
     },
   });
-  ctx.meta.userSession = { userAgents: [{ id: 'userAgentOne' }, { id: 'userAgentTwo' }] };
+  ctx.meta.userSession = {
+    userAgents: [{ id: 'userAgentOne' }, { id: 'userAgentTwo' }],
+  };
   const mockInstances = ['assignableInstanceOne', 'assignableInstanceTwo'];
   const initialValues = [
     {
@@ -61,7 +69,10 @@ it('Should call getTeacherInstances correctly', async () => {
     'mockValueRepresentingAnInstanceObjectTwo',
   ];
 
-  getInstancesData.mockResolvedValue({ mockOne: expectedResult[0], mockTwo: expectedResult[1] });
+  getInstancesData.mockResolvedValue({
+    mockOne: expectedResult[0],
+    mockTwo: expectedResult[1],
+  });
 
   // Act
   const response = await getTeacherInstances({ ctx });

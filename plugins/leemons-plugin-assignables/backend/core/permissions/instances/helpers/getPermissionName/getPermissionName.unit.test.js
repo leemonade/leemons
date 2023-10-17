@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getPermissionName } = require('./getPermissionName');
 
@@ -44,7 +44,9 @@ it('Should return the permission name with prefix', () => {
     pluginName: 'testing',
   });
 
-  const expectedValue = ctx.prefixPN(`assignableInstance.${assignableInstance}`);
+  const expectedValue = ctx.prefixPN(
+    `assignableInstance.${assignableInstance}`
+  );
 
   // Act
   const response = getPermissionName({ assignableInstance, prefix: true, ctx });

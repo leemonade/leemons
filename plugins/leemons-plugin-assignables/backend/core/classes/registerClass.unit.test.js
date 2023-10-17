@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { registerClass } = require('./registerClass');
 const { classesSchema } = require('../../models/classes');
@@ -105,8 +111,12 @@ it('Should register multiple classes', async () => {
 
   // Assert
   expect(response).toEqual(expectedValue);
-  expect(classesSaved[0]).toEqual(expect.objectContaining(expectedStoredValue[0]));
-  expect(classesSaved[1]).toEqual(expect.objectContaining(expectedStoredValue[1]));
+  expect(classesSaved[0]).toEqual(
+    expect.objectContaining(expectedStoredValue[0])
+  );
+  expect(classesSaved[1]).toEqual(
+    expect.objectContaining(expectedStoredValue[1])
+  );
   expect(classesSaved).toHaveLength(2);
 });
 
@@ -148,7 +158,13 @@ it('Should throw if a param is not provided', async () => {
     });
 
   // Assert
-  expect(noIdFn).rejects.toThrowError('id, instance and assignable are required');
-  expect(noAssignableFn).rejects.toThrowError('id, instance and assignable are required');
-  expect(noInstanceFn).rejects.toThrowError('id, instance and assignable are required');
+  expect(noIdFn).rejects.toThrowError(
+    'id, instance and assignable are required'
+  );
+  expect(noAssignableFn).rejects.toThrowError(
+    'id, instance and assignable are required'
+  );
+  expect(noInstanceFn).rejects.toThrowError(
+    'id, instance and assignable are required'
+  );
 });

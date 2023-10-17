@@ -1,16 +1,26 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { removeInstance } = require('./removeInstance');
 
 const { instancesSchema } = require('../../../models/instances');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
 const { unregisterClass } = require('../../classes');
 const { unregisterDates } = require('../../dates');
 const { getInstance } = require('../getInstance');
-const { removePermission } = require('../../permissions/instances/removePermission');
+const {
+  removePermission,
+} = require('../../permissions/instances/removePermission');
 
 jest.mock('../../classes/unregisterClass');
 jest.mock('../../dates/unregisterDates');
@@ -71,10 +81,16 @@ it('Should remove instance successfully', async () => {
       ...instance,
       relatedAssignableInstances: ['relatedAssignableId1'],
     })
-    .mockResolvedValueOnce({ ...relatedInstance, relatedAssignableInstances: [] });
+    .mockResolvedValueOnce({
+      ...relatedInstance,
+      relatedAssignableInstances: [],
+    });
 
   // Act
-  const response = await removeInstance({ assignableInstanceId: instanceId, ctx });
+  const response = await removeInstance({
+    assignableInstanceId: instanceId,
+    ctx,
+  });
 
   // Assert
   expect(getInstance).toBeCalledWith({ id: instanceId, details: true, ctx });

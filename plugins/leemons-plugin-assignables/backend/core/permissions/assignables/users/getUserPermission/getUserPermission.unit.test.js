@@ -1,7 +1,7 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 const { escapeRegExp } = require('lodash');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 const { getUserPermission } = require('./getUserPermission');
 
 const { getTeacherPermission } = require('../getTeacherPermission');
@@ -20,7 +20,8 @@ describe('getUserPermission function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+        'users.permissions.getUserAgentPermissions':
+          getUserAgentPermissionsHandler,
       },
       pluginName,
     });
@@ -47,7 +48,10 @@ describe('getUserPermission function', () => {
     });
     expect(getTeacherPermission).not.toBeCalled();
 
-    expect(resp).toEqual({ role: 'editor', actions: ['assign', 'edit', 'view'] });
+    expect(resp).toEqual({
+      role: 'editor',
+      actions: ['assign', 'edit', 'view'],
+    });
   });
 
   test('should get default user permissions successfully if not permissions found (valid for demo)', async () => {
@@ -55,7 +59,8 @@ describe('getUserPermission function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+        'users.permissions.getUserAgentPermissions':
+          getUserAgentPermissionsHandler,
       },
       pluginName,
     });

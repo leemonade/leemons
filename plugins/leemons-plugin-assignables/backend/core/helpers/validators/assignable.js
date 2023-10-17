@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 
 const { subjectsValidationObject } = require('./subjects');
 
@@ -142,7 +142,10 @@ const validAssignableProperties = [
 
 const assignableRequiredProperties = ['asset', 'role'];
 
-function validateAssignable(assignable, { validationObject, useRequired = false } = {}) {
+function validateAssignable(
+  assignable,
+  { validationObject, useRequired = false } = {}
+) {
   const obj = validationObject || _.clone(assignableValidationObject);
   if (useRequired) {
     if (Array.isArray(useRequired)) {

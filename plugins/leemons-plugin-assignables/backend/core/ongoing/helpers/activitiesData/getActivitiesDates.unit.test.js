@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getActivitiesDates } = require('./getActivitiesDates');
 const { datesSchema } = require('../../../../models/dates');
@@ -83,7 +89,12 @@ it('Should return correct dates when filtering by status and progress', async ()
   ];
   await ctx.db.Dates.create(initialValues);
 
-  const result = await getActivitiesDates({ instances, assignations, filters, ctx });
+  const result = await getActivitiesDates({
+    instances,
+    assignations,
+    filters,
+    ctx,
+  });
 
   expect(result).toHaveProperty('instances');
   expect(result).toHaveProperty('assignations');
@@ -131,7 +142,12 @@ it('Should return correct dates when filtering only by status', async () => {
   ];
   await ctx.db.Dates.create(initialValues);
 
-  const result = await getActivitiesDates({ instances, assignations, filters, ctx });
+  const result = await getActivitiesDates({
+    instances,
+    assignations,
+    filters,
+    ctx,
+  });
 
   expect(result).toHaveProperty('instances');
   expect(result).toHaveProperty('assignations');

@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function registerClass({ id, instance, assignable, ctx }) {
   const ids = Array.isArray(id) ? id : [id].filter(Boolean);

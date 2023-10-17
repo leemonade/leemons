@@ -1,6 +1,6 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { getAllTeachers } = require('./getAllTeachers');
 const { classesModel } = require('../../../models/classes');
 const { assignablesModel } = require('../../../models/assignables');

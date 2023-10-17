@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 /**
  *
@@ -16,7 +16,11 @@ async function unregisterDates({ type, instance, name, ctx }) {
       httpStatusCode: 400,
     });
   }
-  const { deletedCount } = await ctx.tx.db.Dates.deleteMany({ type, instance, name });
+  const { deletedCount } = await ctx.tx.db.Dates.deleteMany({
+    type,
+    instance,
+    name,
+  });
 
   return deletedCount;
 }

@@ -1,6 +1,6 @@
 const { it, beforeEach, expect } = require('@jest/globals');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { filterByPreferCurrent } = require('./filterByPreferCurrent');
 
@@ -33,7 +33,9 @@ describe('filterByPreferCurrent', () => {
     };
 
     getCurrentVersionHandler.mockResolvedValue({ current: '1.0.0' });
-    stringifyIdHandler.mockResolvedValueOnce('uuid1@1.0.0').mockResolvedValueOnce('uuid2@1.0.0');
+    stringifyIdHandler
+      .mockResolvedValueOnce('uuid1@1.0.0')
+      .mockResolvedValueOnce('uuid2@1.0.0');
 
     // Act
     const result = await filterByPreferCurrent(params);
@@ -74,7 +76,9 @@ describe('filterByPreferCurrent', () => {
     };
 
     getCurrentVersionHandler.mockResolvedValue({ current: null });
-    stringifyIdHandler.mockResolvedValueOnce('uuid1@null').mockResolvedValueOnce('uuid2@null');
+    stringifyIdHandler
+      .mockResolvedValueOnce('uuid1@null')
+      .mockResolvedValueOnce('uuid2@null');
 
     // Act
     const result = await filterByPreferCurrent(params);

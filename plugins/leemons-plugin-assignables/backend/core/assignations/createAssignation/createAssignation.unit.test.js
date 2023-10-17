@@ -1,6 +1,6 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { createAssignation } = require('./createAssignation');
 const { getServiceModels } = require('../../../models');
 
@@ -58,10 +58,9 @@ it('Should create an assignation', async () => {
   const options = {
     indexable: true,
     timestamps: {
-      start: new Date()
+      start: new Date(),
     },
-    grades: [{}]
-
+    grades: [{}],
   };
   const ctx = generateCtx({
     actions: {
@@ -80,7 +79,7 @@ it('Should create an assignation', async () => {
             {
               type: 'main-teacher',
               teacher: {
-                id: 'teacher2'
+                id: 'teacher2',
               },
             },
           ],
@@ -108,7 +107,12 @@ it('Should create an assignation', async () => {
   });
 
   // Act
-  const result = await createAssignation({ assignableInstanceId, users, options, ctx });
+  const result = await createAssignation({
+    assignableInstanceId,
+    users,
+    options,
+    ctx,
+  });
 
   // Assert
   expect(result).toBeDefined();
@@ -149,5 +153,7 @@ it('Should throw an error if student is already assigned to instance', async () 
   });
 
   // Act and Assert
-  await expect(createAssignation({ assignableInstanceId, users, options, ctx })).rejects.toThrow();
+  await expect(
+    createAssignation({ assignableInstanceId, users, options, ctx })
+  ).rejects.toThrow();
 });

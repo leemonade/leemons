@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { set } = require('lodash');
 
 async function getDates({ type, instance, ctx }) {

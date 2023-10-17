@@ -1,5 +1,5 @@
 const { pick, difference, keys, without } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getDates } = require('./getDates');
 // const { unregisterDates } = require('./unregisterDates');
 const { registerDates } = require('./registerDates');
@@ -48,7 +48,12 @@ async function updateDates({ type, instance, dates, ctx }) {
     // await unregisterDates({ type, instance, name: deleted.concat(updated), ctx });
   }
   if (added.length || updated.length) {
-    await registerDates({ type, instance, dates: pick(dates, added, updated), ctx });
+    await registerDates({
+      type,
+      instance,
+      dates: pick(dates, added, updated),
+      ctx,
+    });
   }
 
   return {

@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { registerDates } = require('./registerDates');
 const { datesSchema } = require('../../models/dates');
@@ -84,9 +90,12 @@ it('Should throw if not valid parameters are provided', async () => {
   });
 
   // Act
-  const noTypeFn = () => registerDates({ type: undefined, instance, dates, ctx });
-  const noInstanceFn = () => registerDates({ type, instance: undefined, dates, ctx });
-  const noDatesFn = () => registerDates({ type, instance, dates: undefined, ctx });
+  const noTypeFn = () =>
+    registerDates({ type: undefined, instance, dates, ctx });
+  const noInstanceFn = () =>
+    registerDates({ type, instance: undefined, dates, ctx });
+  const noDatesFn = () =>
+    registerDates({ type, instance, dates: undefined, ctx });
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(

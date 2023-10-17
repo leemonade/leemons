@@ -1,6 +1,6 @@
 const { it, expect, beforeEach } = require('@jest/globals');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getParentPermissions } = require('./getParentPermissions');
 
@@ -40,7 +40,9 @@ describe('getParentPermissions', () => {
         },
       ],
     });
-    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue(['assetId1']);
+    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue([
+      'assetId1',
+    ]);
 
     // Act
     const response = await getParentPermissions({ ids: assignableIds, ctx });
@@ -50,7 +52,9 @@ describe('getParentPermissions', () => {
       ids: assignableIds,
       ctx,
     });
-    expect(getAllItemsForTheUserAgentHasPermissionsByTypeHandler).toBeCalledWith({
+    expect(
+      getAllItemsForTheUserAgentHasPermissionsByTypeHandler
+    ).toBeCalledWith({
       userAgentId: ctx.meta.userSession.userAgents.map((el) => el.id),
       type: 'leebrary.asset.can-assign',
       ignoreOriginalTarget: true,

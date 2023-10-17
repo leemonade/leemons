@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { initial } = require('lodash');
 const { getSubjects } = require('./getSubjects');
@@ -160,7 +166,11 @@ it("Should return the assignables' subjects with id", async () => {
     .lean();
 
   // Act
-  const response = await getSubjects({ assignableIds: assignable, useIds: true, ctx });
+  const response = await getSubjects({
+    assignableIds: assignable,
+    useIds: true,
+    ctx,
+  });
 
   // Assert
   expect(response.sort()).toEqual(expectedValues.sort());
@@ -209,8 +219,17 @@ it("Should return both assignables' subjects with id", async () => {
   ];
   await ctx.db.Subjects.insertMany(initialValues);
 
-  const savedSubjects = await ctx.db.Subjects.find({ assignable: { $in: assignables } })
-    .select({ assignable: true, program: true, subject: true, level: true, id: true, _id: false })
+  const savedSubjects = await ctx.db.Subjects.find({
+    assignable: { $in: assignables },
+  })
+    .select({
+      assignable: true,
+      program: true,
+      subject: true,
+      level: true,
+      id: true,
+      _id: false,
+    })
     .lean();
   const expectedValues = savedSubjects.reduce(
     (obj, { assignable, ...program }) => ({
@@ -221,7 +240,11 @@ it("Should return both assignables' subjects with id", async () => {
   );
 
   // Act
-  const response = await getSubjects({ assignableIds: assignables, useIds: true, ctx });
+  const response = await getSubjects({
+    assignableIds: assignables,
+    useIds: true,
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual(expectedValues);
@@ -257,5 +280,7 @@ it('Should throw when no ids are provided', () => {
   const testFn = () => getSubjects({ assignableIds: undefined, ctx });
 
   // Assert
-  return expect(testFn).rejects.toThrowError('Cannot get subjects: assignableIds is required');
+  return expect(testFn).rejects.toThrowError(
+    'Cannot get subjects: assignableIds is required'
+  );
 });

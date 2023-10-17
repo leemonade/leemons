@@ -1,6 +1,6 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { removePermissionFromUser } = require('./removePermissionFromUser');
 const { getUserPermission } = require('../getUserPermission');

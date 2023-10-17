@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getTeacherPermission } = require('./getTeacherPermission');
 
@@ -13,7 +13,8 @@ it('Should get Teacher Permissions', async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     pluginName: 'assignables',
   });
@@ -24,7 +25,10 @@ it('Should get Teacher Permissions', async () => {
     },
   ];
 
-  listInstanceClasses.mockResolvedValue([{ class: 'classId1' }, { class: 'classId2' }]);
+  listInstanceClasses.mockResolvedValue([
+    { class: 'classId1' },
+    { class: 'classId2' },
+  ]);
   getUserAgentPermissionsHandler.mockResolvedValue(['edit']);
 
   const mockParams = {
@@ -43,7 +47,10 @@ it('Should get Teacher Permissions', async () => {
   expect(getUserAgentPermissionsHandler).toBeCalledWith({
     userAgent: ctx.meta.userSession.userAgents,
     query: {
-      permissionName: ['academic-portfolio.class.classId1', 'academic-portfolio.class.classId2'],
+      permissionName: [
+        'academic-portfolio.class.classId1',
+        'academic-portfolio.class.classId2',
+      ],
       actionName: 'edit',
     },
   });
@@ -54,14 +61,18 @@ it('Should get empty array if no teacher permissions', async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     pluginName: 'assignables',
   });
 
   const expectedValue = [];
 
-  listInstanceClasses.mockResolvedValue([{ class: 'classId1' }, { class: 'classId2' }]);
+  listInstanceClasses.mockResolvedValue([
+    { class: 'classId1' },
+    { class: 'classId2' },
+  ]);
   getUserAgentPermissionsHandler.mockResolvedValue([]);
 
   const mockParams = {
@@ -80,7 +91,10 @@ it('Should get empty array if no teacher permissions', async () => {
   expect(getUserAgentPermissionsHandler).toBeCalledWith({
     userAgent: ctx.meta.userSession.userAgents,
     query: {
-      permissionName: ['academic-portfolio.class.classId1', 'academic-portfolio.class.classId2'],
+      permissionName: [
+        'academic-portfolio.class.classId1',
+        'academic-portfolio.class.classId2',
+      ],
       actionName: 'edit',
     },
   });

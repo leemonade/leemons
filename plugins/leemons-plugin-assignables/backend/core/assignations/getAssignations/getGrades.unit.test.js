@@ -1,6 +1,6 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { getGrades } = require('./getGrades');
 const { getServiceModels } = require('../../../models');
 
@@ -33,8 +33,8 @@ it('Should get grades', async () => {
       id: 'assignation-id',
     },
     {
-        user: 'NoneuserAgentId',
-        id: 'assignation-id',
+      user: 'NoneuserAgentId',
+      id: 'assignation-id',
     },
   ];
   const ctx = generateCtx({
@@ -59,7 +59,7 @@ it('Should get grades', async () => {
     grade: 1,
     gradedBy: 'gradedBy',
     feedback: 'feedback',
-    visibleToStudent: true
+    visibleToStudent: true,
   });
 
   // Act

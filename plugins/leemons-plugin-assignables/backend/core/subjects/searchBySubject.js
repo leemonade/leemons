@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { compact, isArray, difference } = require('lodash');
 
 async function searchBySubject({ id, ctx }) {

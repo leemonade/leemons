@@ -2,7 +2,7 @@
 const { it, beforeEach, expect } = require('@jest/globals');
 const { map } = require('lodash');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
 const { registerEvent } = require('../calendar/registerEvent');
@@ -19,7 +19,8 @@ beforeEach(() => {
 
   ctx = generateCtx({
     actions: {
-      'calendar.calendar.grantAccessUserAgentToEvent': grantAccessUserAgentToEventHandler,
+      'calendar.calendar.grantAccessUserAgentToEvent':
+        grantAccessUserAgentToEventHandler,
     },
   });
   eventId = 'eventId';

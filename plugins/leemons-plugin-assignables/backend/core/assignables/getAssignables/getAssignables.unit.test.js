@@ -7,8 +7,8 @@ const {
   jest: globalJest,
   describe,
 } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { pick, omit } = require('lodash');
 
 globalJest.mock('../../permissions/assignables/users/getUserPermissions');
@@ -18,12 +18,16 @@ globalJest.mock('../../leebrary/assets');
 
 const { getAssignables } = require('./getAssignables');
 const { assignablesSchema } = require('../../../models/assignables');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 const { getRoles } = require('../../roles');
 const { getSubjects } = require('../../subjects');
 const { getAsset } = require('../../leebrary/assets');
-const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
+const {
+  getUserPermissions,
+} = require('../../permissions/assignables/users/getUserPermissions');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -90,19 +94,26 @@ function getActions({ assignable, assetIds, mock }) {
 
   if (mock.getAsset) {
     getAsset.mockImplementation(({ id: assetsIds }) =>
-      Object.values(pick(assets, Array.isArray(assetsIds) ? assetsIds : [assetsIds]))
+      Object.values(
+        pick(assets, Array.isArray(assetsIds) ? assetsIds : [assetsIds])
+      )
     );
   }
   if (mock.getRoles) {
     getRoles.mockImplementation(({ roles }) => pick(roleDetails, roles));
   }
   if (mock.getSubjects) {
-    getSubjects.mockImplementation(({ assignableIds }) => pick(subjects, assignableIds));
+    getSubjects.mockImplementation(({ assignableIds }) =>
+      pick(subjects, assignableIds)
+    );
   }
   if (mock.getUserPermissions) {
     getUserPermissions.mockImplementation(({ assignables }) =>
       Object.fromEntries(
-        assignables.map(({ id: assignableId }) => [assignableId, { actions: ['view'] }])
+        assignables.map(({ id: assignableId }) => [
+          assignableId,
+          { actions: ['view'] },
+        ])
       )
     );
   }
@@ -144,7 +155,11 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -208,7 +223,11 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -251,7 +270,9 @@ describe('Intended execution', () => {
 
     // Assert
     expect(response.sort()).toEqual(
-      expectedValues.map((expectedValue) => expect.objectContaining(expectedValue)).sort()
+      expectedValues
+        .map((expectedValue) => expect.objectContaining(expectedValue))
+        .sort()
     );
   });
 
@@ -276,7 +297,11 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -298,7 +323,11 @@ describe('Intended execution', () => {
     await ctx.db.Assignables.create(initialValue);
 
     // Act
-    const response = await getAssignables({ ids: [initialValue.id], columns: [], ctx });
+    const response = await getAssignables({
+      ids: [initialValue.id],
+      columns: [],
+      ctx,
+    });
 
     // Assert
     expect(response[0].asset).toBe(assetId);
@@ -324,7 +353,11 @@ describe('Throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -359,7 +392,11 @@ describe('Throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -431,12 +468,20 @@ describe('Do not throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
     // Act
-    const response = await getAssignables({ ids: [id], throwOnMissing: false, ctx });
+    const response = await getAssignables({
+      ids: [id],
+      throwOnMissing: false,
+      ctx,
+    });
 
     // Assert
     await expect(response).toEqual([]);
@@ -464,7 +509,11 @@ describe('Do not throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -508,7 +557,11 @@ describe('Do not throw on missing property', () => {
     await ctx.db.Assignables.insertMany(initialValues);
 
     // Act
-    const response = await getAssignables({ ids: [firstId, secondId], throwOnMissing: false, ctx });
+    const response = await getAssignables({
+      ids: [firstId, secondId],
+      throwOnMissing: false,
+      ctx,
+    });
 
     // Assert
     expect(response).toHaveLength(1);
@@ -538,7 +591,11 @@ describe('ShowDeleted property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -611,7 +668,11 @@ describe('ShowDeleted property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 

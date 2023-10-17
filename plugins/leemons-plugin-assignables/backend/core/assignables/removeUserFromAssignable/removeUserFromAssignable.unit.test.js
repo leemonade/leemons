@@ -1,8 +1,10 @@
 const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 const { removeUserFromAssignable } = require('./removeUserFromAssignable');
 const { getAssignable } = require('../getAssignable');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const {
+  getUserPermission,
+} = require('../../permissions/assignables/users/getUserPermission');
 const {
   removePermissionFromUser,
 } = require('../../permissions/assignables/users/removePermissionFromUser');
@@ -38,7 +40,11 @@ describe('removeUserFromAssignable', () => {
     removePermissionFromUser.mockResolvedValue({ userAgents, actions });
 
     // Act
-    const result = await removeUserFromAssignable({ assignableId, userAgents, ctx });
+    const result = await removeUserFromAssignable({
+      assignableId,
+      userAgents,
+      ctx,
+    });
 
     // Assert
     expect(getAssignable).toHaveBeenCalledWith({ id: assignableId, ctx });
@@ -82,10 +88,13 @@ describe('removeUserFromAssignable', () => {
     getUserAgentsInfoHandle.mockResolvedValue(userAgents);
 
     // Act
-    const testFunc = () => removeUserFromAssignable({ assignableId, userAgents, ctx });
+    const testFunc = () =>
+      removeUserFromAssignable({ assignableId, userAgents, ctx });
 
     // Assert
-    await expect(testFunc).rejects.toThrow(/User cannot remove from assignable with role/);
+    await expect(testFunc).rejects.toThrow(
+      /User cannot remove from assignable with role/
+    );
     expect(removePermissionFromUser).not.toBeCalled();
   });
 
@@ -104,9 +113,12 @@ describe('removeUserFromAssignable', () => {
     // });
 
     // Act
-    const testFunc = () => removeUserFromAssignable({ assignableId, userAgents, ctx });
+    const testFunc = () =>
+      removeUserFromAssignable({ assignableId, userAgents, ctx });
 
     // Assert
-    await expect(testFunc).rejects.toThrow(/does not exist or you don't have access to it/);
+    await expect(testFunc).rejects.toThrow(
+      /does not exist or you don't have access to it/
+    );
   });
 });

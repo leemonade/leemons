@@ -1,5 +1,5 @@
 const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const searchOngoingActivities = require('./searchOngoingActivities');
 
@@ -20,7 +20,10 @@ const {
   filterInstancesByStatusAndArchived,
   filterInstancesByNotModule,
 } = require('./helpers/filters');
-const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
+const {
+  applyOffsetAndLimit,
+  sortInstancesByDates,
+} = require('./helpers/sorts');
 
 beforeEach(() => jest.resetAllMocks());
 
@@ -67,10 +70,18 @@ it('Should correctly return ongoing activities for a teacher', async () => {
   getTeacherInstances.mockResolvedValue([instanceOne, instanceTwo]);
   filterInstancesByNotModule.mockReturnValue([instanceOne, instanceTwo]);
   filterInstancesByRoleAndQuery.mockReturnValue([instanceOne, instanceTwo]);
-  getInstanceSubjectsProgramsAndClasses.mockResolvedValue(instanceSubjectsProgramsAndClasses);
-  filterInstancesByProgramAndSubjects.mockReturnValue([instanceOne, instanceTwo]);
+  getInstanceSubjectsProgramsAndClasses.mockResolvedValue(
+    instanceSubjectsProgramsAndClasses
+  );
+  filterInstancesByProgramAndSubjects.mockReturnValue([
+    instanceOne,
+    instanceTwo,
+  ]);
   getActivitiesDates.mockResolvedValue(mockDates);
-  filterInstancesByStatusAndArchived.mockReturnValue([instanceOne, instanceTwo]);
+  filterInstancesByStatusAndArchived.mockReturnValue([
+    instanceOne,
+    instanceTwo,
+  ]);
   sortInstancesByDates.mockReturnValue([instanceTwo, instanceOne]);
   applyOffsetAndLimit.mockReturnValue([instanceTwo.id, instanceOne.id]);
 
@@ -107,7 +118,10 @@ it('Should correctly return ongoing activities for a teacher', async () => {
     dates: mockDates,
     filters: query,
   });
-  expect(applyOffsetAndLimit).toBeCalledWith([instanceTwo.id, instanceOne.id], query);
+  expect(applyOffsetAndLimit).toBeCalledWith(
+    [instanceTwo.id, instanceOne.id],
+    query
+  );
   expect(response).toEqual([instanceTwo.id, instanceOne.id]);
   expect(getStudentAssignations).not.toBeCalled();
 });
@@ -135,8 +149,16 @@ it('Should correctly return ongoing activities for a student', async () => {
     allowFeedback: 1,
     created_at: '1990-01-02',
   };
-  const assignationOne = { id: 'assignationOne', instance: instanceOne, user: 'userOne' };
-  const assignationTwo = { id: 'assignationTwo', instance: instanceTwo, user: 'userOne' };
+  const assignationOne = {
+    id: 'assignationOne',
+    instance: instanceOne,
+    user: 'userOne',
+  };
+  const assignationTwo = {
+    id: 'assignationTwo',
+    instance: instanceTwo,
+    user: 'userOne',
+  };
   const instanceSubjectsProgramsAndClasses = {
     [instanceOne.id]: {
       subjects: ['subjectOneId'],
@@ -161,11 +183,17 @@ it('Should correctly return ongoing activities for a student', async () => {
   getStudentAssignations.mockResolvedValue([assignationOne, assignationTwo]);
   filterInstancesByRoleAndQuery.mockReturnValue([instanceOne, instanceTwo]);
   filterInstancesByNotModule.mockReturnValue([instanceOne, instanceTwo]);
-  getInstanceSubjectsProgramsAndClasses.mockResolvedValue(instanceSubjectsProgramsAndClasses);
-  filterInstancesByProgramAndSubjects.mockReturnValue([instanceOne, instanceTwo]);
+  getInstanceSubjectsProgramsAndClasses.mockResolvedValue(
+    instanceSubjectsProgramsAndClasses
+  );
+  filterInstancesByProgramAndSubjects.mockReturnValue([
+    instanceOne,
+    instanceTwo,
+  ]);
   filterAssignationsByInstance.mockImplementation(() => {
     filterAssignationsByInstanceCounter++;
-    if (filterAssignationsByInstanceCounter === 1) return [assignationOne, assignationTwo];
+    if (filterAssignationsByInstanceCounter === 1)
+      return [assignationOne, assignationTwo];
     return [assignationOne];
   });
   getActivitiesDates.mockResolvedValue(mockDates);

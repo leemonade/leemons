@@ -1,5 +1,5 @@
 const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 globalJest.mock('../removeAssignables', () => ({
   removeAssignables: globalJest.fn(() => 'removeAssignablesCount'),
@@ -44,12 +44,18 @@ it('Removes the assignable version', async () => {
   });
 
   // Act
-  const response = await removeAssignable({ assignable: id, removeAll: 0, ctx });
+  const response = await removeAssignable({
+    assignable: id,
+    removeAll: 0,
+    ctx,
+  });
 
   // Assert
   expect(response).toHaveProperty('count', 'removeAssignablesCount');
   expect(response).toHaveProperty('versions', [id]);
-  expect(removeAssignables).toHaveBeenCalledWith(expect.objectContaining({ ids: [id] }));
+  expect(removeAssignables).toHaveBeenCalledWith(
+    expect.objectContaining({ ids: [id] })
+  );
 });
 
 it('Removes all versions of the assignable', async () => {
@@ -61,7 +67,11 @@ it('Removes all versions of the assignable', async () => {
   });
 
   // Act
-  const response = await removeAssignable({ assignable: id, removeAll: 2, ctx });
+  const response = await removeAssignable({
+    assignable: id,
+    removeAll: 2,
+    ctx,
+  });
 
   // Assert
   expect(response).toHaveProperty('count', 'removeAssignablesCount');
@@ -80,12 +90,18 @@ it('Removes only the same publish state versions of the assignable', async () =>
   });
 
   // Act
-  const response = await removeAssignable({ assignable: id, removeAll: 1, ctx });
+  const response = await removeAssignable({
+    assignable: id,
+    removeAll: 1,
+    ctx,
+  });
 
   // Assert
   expect(response).toHaveProperty('count', 'removeAssignablesCount');
   expect(response).toHaveProperty('versions', [id]);
-  expect(removeAssignables).toHaveBeenCalledWith(expect.objectContaining({ ids: [id] }));
+  expect(removeAssignables).toHaveBeenCalledWith(
+    expect.objectContaining({ ids: [id] })
+  );
 });
 
 it('Throws an error if no valid removeAll param is provided', async () => {

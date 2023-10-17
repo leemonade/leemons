@@ -1,16 +1,26 @@
 // Importing required modules and functions
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
 
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { assignablesSchema } = require('../../../models/assignables');
 const { rolesSchema } = require('../../../models/roles');
 const { instancesSchema } = require('../../../models/instances');
 
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 const { getRoleObject } = require('../../../__fixtures__/getRoleObject');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
 const { adminDashboard } = require('./adminDashboard');
 
@@ -50,7 +60,11 @@ it('Should handle adminDashboard correctly', async () => {
 
   const ctx = generateCtx({
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
       Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
       Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
     },

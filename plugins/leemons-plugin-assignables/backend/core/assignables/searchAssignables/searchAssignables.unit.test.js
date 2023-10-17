@@ -1,12 +1,14 @@
 const { it, expect, beforeEach } = require('@jest/globals');
 
-const { LeemonsError } = require('leemons-error');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { LeemonsError } = require('@leemons/error');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { assignablesSchema } = require('../../../models/assignables');
 const { searchAssignables } = require('./searchAssignables');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 jest.mock('./buildQuery');
 jest.mock('./filterByPublished');
@@ -16,7 +18,9 @@ jest.mock('../../permissions/assignables/users/getUserPermissions');
 const { buildQuery } = require('./buildQuery');
 const { filterByPublished } = require('./filterByPublished');
 const { filterByPreferCurrent } = require('./filterByPreferCurrent');
-const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
+const {
+  getUserPermissions,
+} = require('../../permissions/assignables/users/getUserPermissions');
 
 describe('searchAssignables', () => {
   let mongooseConnection;
@@ -43,7 +47,11 @@ describe('searchAssignables', () => {
 
     ctx = generateCtx({
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
     assignable = getAssignableObject();
@@ -83,18 +91,52 @@ describe('searchAssignables', () => {
 
     filterByPublished.mockReturnValue({
       uuid2: [
-        { id: 'assignable2', uuid: 'uuid2', version: '1.0.0', fullId: 'uuid2@1.0.0' },
-        { id: 'assignable2', uuid: 'uuid2', version: '2.0.0', fullId: 'uuid2@2.0.0' },
+        {
+          id: 'assignable2',
+          uuid: 'uuid2',
+          version: '1.0.0',
+          fullId: 'uuid2@1.0.0',
+        },
+        {
+          id: 'assignable2',
+          uuid: 'uuid2',
+          version: '2.0.0',
+          fullId: 'uuid2@2.0.0',
+        },
       ],
-      uuid1: [{ id: 'assignable1', uuid: 'uuid1', version: '1.0.0', fullId: 'uuid2@1.0.0' }],
+      uuid1: [
+        {
+          id: 'assignable1',
+          uuid: 'uuid1',
+          version: '1.0.0',
+          fullId: 'uuid2@1.0.0',
+        },
+      ],
     });
 
     filterByPreferCurrent.mockReturnValue({
       uuid2: [
-        { id: 'assignable2', uuid: 'uuid2', version: '1.0.0', fullId: 'uuid2@1.0.0' },
-        { id: 'assignable2', uuid: 'uuid2', version: '2.0.0', fullId: 'uuid2@2.0.0' },
+        {
+          id: 'assignable2',
+          uuid: 'uuid2',
+          version: '1.0.0',
+          fullId: 'uuid2@1.0.0',
+        },
+        {
+          id: 'assignable2',
+          uuid: 'uuid2',
+          version: '2.0.0',
+          fullId: 'uuid2@2.0.0',
+        },
       ],
-      uuid1: [{ id: 'assignable1', uuid: 'uuid1', version: '1.0.0', fullId: 'uuid1@1.0.0' }],
+      uuid1: [
+        {
+          id: 'assignable1',
+          uuid: 'uuid1',
+          version: '1.0.0',
+          fullId: 'uuid1@1.0.0',
+        },
+      ],
     });
 
     // Act

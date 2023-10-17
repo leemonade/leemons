@@ -1,6 +1,6 @@
 const { it, beforeEach, expect } = require('@jest/globals');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { buildQuery } = require('./buildQuery');
 const { searchBySubject } = require('../../subjects/searchBySubject');
@@ -40,7 +40,11 @@ describe('buildQuery', () => {
 
     // Act
     const result = await buildQuery(params);
-    const result2 = await buildQuery({ ...params, sort: 'name', roles: 'role1' });
+    const result2 = await buildQuery({
+      ...params,
+      sort: 'name',
+      roles: 'role1',
+    });
 
     // Assert
 
@@ -157,8 +161,14 @@ describe('buildQuery', () => {
 
     // Assert
     expect(listRoles).toBeCalledWith({ ctx: params.ctx });
-    expect(searchBySubject).toBeCalledWith({ id: expect.anything(), ctx: params.ctx });
-    expect(searchByProgram).toBeCalledWith({ id: expect.anything(), ctx: params.ctx });
+    expect(searchBySubject).toBeCalledWith({
+      id: expect.anything(),
+      ctx: params.ctx,
+    });
+    expect(searchByProgram).toBeCalledWith({
+      id: expect.anything(),
+      ctx: params.ctx,
+    });
     expect(result.query.id).toEqual(['assignable1']);
   });
 

@@ -1,10 +1,18 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getAssignablesData } = require('./getAssignablesData');
 const { assignablesSchema } = require('../../../../models/assignables');
-const { getAssignableObject } = require('../../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../../__fixtures__/getAssignableObject');
 
 // MOCK
 jest.mock('./getAssetsData');
@@ -39,7 +47,11 @@ it('Should correctly get assignable data without duplications', async () => {
 
   const ctx = generateCtx({
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -71,6 +83,9 @@ it('Should correctly get assignable data without duplications', async () => {
   const response = await getAssignablesData({ assignables, ctx });
 
   // Assert
-  expect(getAssetsData).toBeCalledWith({ assets: initialValues.map((item) => item.asset), ctx });
+  expect(getAssetsData).toBeCalledWith({
+    assets: initialValues.map((item) => item.asset),
+    ctx,
+  });
   expect(response).toMatchObject(expectedResult);
 });

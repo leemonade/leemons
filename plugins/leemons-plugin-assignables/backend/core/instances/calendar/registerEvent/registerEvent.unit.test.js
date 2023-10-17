@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { registerEvent } = require('./registerEvent');
 
@@ -22,11 +22,21 @@ it('Should register an event (dates are Date objects)', async () => {
   const date = new Date();
   const dates = { deadline: date };
 
-  getCalendarsByClassHandler.mockResolvedValue([{ calendar: 'class1' }, { calendar: 'class2' }]);
+  getCalendarsByClassHandler.mockResolvedValue([
+    { calendar: 'class1' },
+    { calendar: 'class2' },
+  ]);
   addEventHandler.mockResolvedValue({});
 
   // Act
-  const response = await registerEvent({ assignable, classes, id, isAllDay, dates, ctx });
+  const response = await registerEvent({
+    assignable,
+    classes,
+    id,
+    isAllDay,
+    dates,
+    ctx,
+  });
 
   // Assert
   expect(addEventHandler).toBeCalledWith({
@@ -64,11 +74,21 @@ it('Should register an event (dates are strings)', async () => {
   const date = new Date();
   const dates = { deadline: date.toISOString() };
 
-  getCalendarsByClassHandler.mockResolvedValue([{ calendar: 'class1' }, { calendar: 'class2' }]);
+  getCalendarsByClassHandler.mockResolvedValue([
+    { calendar: 'class1' },
+    { calendar: 'class2' },
+  ]);
   addEventHandler.mockResolvedValue({});
 
   // Act
-  const response = await registerEvent({ assignable, classes, id, isAllDay, dates, ctx });
+  const response = await registerEvent({
+    assignable,
+    classes,
+    id,
+    isAllDay,
+    dates,
+    ctx,
+  });
 
   // Assert
   expect(addEventHandler).toBeCalledWith({
@@ -105,11 +125,21 @@ it('Should register an event without dates (dates are undefined)', async () => {
   const isAllDay = true;
   const dates = {};
 
-  getCalendarsByClassHandler.mockResolvedValue([{ calendar: 'class1' }, { calendar: 'class2' }]);
+  getCalendarsByClassHandler.mockResolvedValue([
+    { calendar: 'class1' },
+    { calendar: 'class2' },
+  ]);
   addEventHandler.mockResolvedValue({});
 
   // Act
-  const response = await registerEvent({ assignable, classes, id, isAllDay, dates, ctx });
+  const response = await registerEvent({
+    assignable,
+    classes,
+    id,
+    isAllDay,
+    dates,
+    ctx,
+  });
 
   // Assert
   expect(addEventHandler).toBeCalledWith({

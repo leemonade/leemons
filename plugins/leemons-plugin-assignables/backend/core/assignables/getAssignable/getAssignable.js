@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getAssignables } = require('../getAssignables');
 
 /**
@@ -19,9 +19,21 @@ const { getAssignables } = require('../getAssignables');
  * @throws {LeemonsError} If the assignable does not exist or the user does not have access to it, a LeemonsError is thrown.
  */
 
-async function getAssignable({ id, columns = ['asset'], withFiles, showDeleted = true, ctx }) {
+async function getAssignable({
+  id,
+  columns = ['asset'],
+  withFiles,
+  showDeleted = true,
+  ctx,
+}) {
   try {
-    const assignables = await getAssignables({ ids: [id], columns, withFiles, showDeleted, ctx });
+    const assignables = await getAssignables({
+      ids: [id],
+      columns,
+      withFiles,
+      showDeleted,
+      ctx,
+    });
 
     return assignables[0];
   } catch (e) {

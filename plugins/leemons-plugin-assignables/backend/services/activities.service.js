@@ -1,8 +1,10 @@
 /** @type {import('moleculer').ServiceSchema} */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const {
+  LeemonsDeploymentManagerMixin,
+} = require('@leemons/deployment-manager');
 // Descomentar una vez hecho el merge con microservices/dev
 // const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 // const { LeemonsMQTTMixin } = require('@leemons/mqtt');

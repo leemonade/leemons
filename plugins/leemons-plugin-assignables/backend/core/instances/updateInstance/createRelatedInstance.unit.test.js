@@ -1,8 +1,10 @@
 const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { createRelatedInstance } = require('./createRelatedInstance');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
 const { getInstance } = require('../getInstance');
 const { createInstance } = require('../createInstance');
@@ -81,13 +83,21 @@ it('Should create a related instance successfully if relation is an object (with
     assignableInstance: {
       relatedAssignableInstances: {
         ...relation.instance.relatedAssignableInstances,
-        before: [...(relation.instance.relatedAssignableInstances?.before || [])],
-        after: [...(relation.instance.relatedAssignableInstances?.after || []), caller.id],
+        before: [
+          ...(relation.instance.relatedAssignableInstances?.before || []),
+        ],
+        after: [
+          ...(relation.instance.relatedAssignableInstances?.after || []),
+          caller.id,
+        ],
       },
     },
     ctx,
   });
-  const { instance: kk, ...relationResp } = { ...relation, id: 'createdInstanceId' };
+  const { instance: kk, ...relationResp } = {
+    ...relation,
+    id: 'createdInstanceId',
+  };
   expect(response).toEqual(relationResp);
 });
 
@@ -101,10 +111,13 @@ it('Should throw an error if the related instance does not exist', async () => {
   getInstance.mockResolvedValue(null);
 
   // Act
-  const testFunc = () => createRelatedInstance({ caller, relation, type, propagate, ctx });
+  const testFunc = () =>
+    createRelatedInstance({ caller, relation, type, propagate, ctx });
 
   // Assert
-  await expect(testFunc).rejects.toThrowError(/The related instance nonExistentId does not exists/);
+  await expect(testFunc).rejects.toThrowError(
+    /The related instance nonExistentId does not exists/
+  );
   expect(getInstance).toBeCalled();
   expect(updateInstance).not.toBeCalled();
 });

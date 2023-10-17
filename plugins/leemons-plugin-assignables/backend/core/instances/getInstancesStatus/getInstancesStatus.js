@@ -7,7 +7,7 @@
  */
 const _ = require('lodash');
 
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { getStatus } = require('./getStatus');
 const { getDates } = require('../../dates');
@@ -35,7 +35,9 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
   const { userSession } = ctx.meta;
 
   const ids = _.uniq(
-    Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]
+    Array.isArray(assignableInstanceIds)
+      ? assignableInstanceIds
+      : [assignableInstanceIds]
   );
 
   const statusObject = {};
@@ -43,7 +45,10 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
   // EN: Get user permissions for each instance
   // ES: Obtener los permisos del usuario para cada instancia
 
-  const permissions = await getUserPermissionMultiple({ assignableInstances: ids, ctx });
+  const permissions = await getUserPermissionMultiple({
+    assignableInstances: ids,
+    ctx,
+  });
 
   permissions.forEach((permission) => {
     if (!permission.actions.includes('view')) {
@@ -52,7 +57,11 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
       });
     }
     const isTeacher = permission.actions.includes('edit');
-    _.set(statusObject, `${permission.assignableInstance}.isTeacher`, isTeacher);
+    _.set(
+      statusObject,
+      `${permission.assignableInstance}.isTeacher`,
+      isTeacher
+    );
   });
 
   const promises = [];
@@ -60,11 +69,13 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
   // EN: Get instance dates
   // ES: Obtener fechas de la instancia
   promises.push(
-    getDates({ type: 'assignableInstance', instance: ids, ctx }).then((instanceDates) => {
-      Object.entries(instanceDates).map(([id, datesObject]) =>
-        _.set(statusObject, `${id}.dates`, datesObject)
-      );
-    })
+    getDates({ type: 'assignableInstance', instance: ids, ctx }).then(
+      (instanceDates) => {
+        Object.entries(instanceDates).map(([id, datesObject]) =>
+          _.set(statusObject, `${id}.dates`, datesObject)
+        );
+      }
+    )
   );
 
   // EN: Get always available
@@ -109,13 +120,15 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
 
   // DATES
   promises2.push(
-    getDates({ type: 'assignation', instance: _.map(assignationsFound, 'id'), ctx }).then(
-      (assignationDates) => {
-        Object.entries(assignationDates).map(([id, datesObject]) =>
-          _.set(assignationsObject, `${id}.timestamps`, datesObject)
-        );
-      }
-    )
+    getDates({
+      type: 'assignation',
+      instance: _.map(assignationsFound, 'id'),
+      ctx,
+    }).then((assignationDates) => {
+      Object.entries(assignationDates).map(([id, datesObject]) =>
+        _.set(assignationsObject, `${id}.timestamps`, datesObject)
+      );
+    })
   );
 
   // GRADES

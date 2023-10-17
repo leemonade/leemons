@@ -1,14 +1,24 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
 
-const { LeemonsError } = require('leemons-error');
-const { newModel } = require('leemons-mongodb');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
+const { LeemonsError } = require('@leemons/error');
+const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 
 const { getInstances } = require('./getInstances');
 const { instancesSchema } = require('../../../models/instances');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
-const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
+const {
+  getUserPermissions,
+} = require('../../permissions/instances/users/getUserPermissions');
 const { getRelatedInstances } = require('./getRelatedInstances');
 const { listInstanceClasses } = require('../../classes/listInstanceClasses');
 const { findDates } = require('./findDates');
@@ -120,7 +130,9 @@ it('should return instances data', async () => {
   await ctx.tx.db.Instances.create(instances);
 
   // Act
-  const dbInstances = await ctx.tx.db.Instances.find({ id: ['instance1'] }).lean();
+  const dbInstances = await ctx.tx.db.Instances.find({
+    id: ['instance1'],
+  }).lean();
 
   const result = await getInstances({
     ids: instances.map((el) => el.id),

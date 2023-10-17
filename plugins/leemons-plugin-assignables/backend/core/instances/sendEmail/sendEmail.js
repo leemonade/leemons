@@ -1,4 +1,4 @@
-const { diffHours } = require('leemons-utils');
+const { diffHours } = require('@leemons/utils');
 /**
  * Sends an email with the instance details.
  *
@@ -49,7 +49,10 @@ async function sendEmail({
       const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
       if (instance.dates.deadline) {
         const date1 = new Date(instance.dates.deadline);
-        const dateTimeFormat2 = new Intl.DateTimeFormat(userAgent.user.locale, options1);
+        const dateTimeFormat2 = new Intl.DateTimeFormat(
+          userAgent.user.locale,
+          options1
+        );
         date = dateTimeFormat2.format(date1);
       }
 
@@ -72,7 +75,9 @@ async function sendEmail({
       try {
         await ctx.tx.call('emails.email.sendAsEducationalCenter', {
           to: userAgent.user.email,
-          templateName: isReminder ? 'user-assignation-remember' : 'user-create-assignation',
+          templateName: isReminder
+            ? 'user-assignation-remember'
+            : 'user-create-assignation',
           language: userAgent.user.locale,
           context: {
             instance: {
@@ -97,7 +102,9 @@ async function sendEmail({
             taskDate: date,
             userSession: {
               ...userSession,
-              avatarUrl: userSession.avatar ? (hostnameApi || hostname) + userSession.avatar : null,
+              avatarUrl: userSession.avatar
+                ? (hostnameApi || hostname) + userSession.avatar
+                : null,
             },
           },
           centerId: userAgent.center.id,

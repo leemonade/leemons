@@ -1,14 +1,18 @@
 const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 globalJest.mock('../../leebrary/assets/updateAsset');
 globalJest.mock('../../permissions/assignables/users/getUserPermission');
 globalJest.mock('../getAssignable');
 
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 const { publishAssignable } = require('./publishAssignable');
 
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const {
+  getUserPermission,
+} = require('../../permissions/assignables/users/getUserPermission');
 const { getAssignable } = require('../getAssignable');
 
 it('Publishes the assignable', async () => {
@@ -59,7 +63,9 @@ it('Throws an error if already published', async () => {
   const testFn = () => publishAssignable({ id, ctx });
 
   // Assert
-  expect(testFn()).rejects.toThrowError('Cannot publish assignable: already published');
+  expect(testFn()).rejects.toThrowError(
+    'Cannot publish assignable: already published'
+  );
 });
 
 it('Throws an error if user lacks permissions', async () => {
@@ -104,6 +110,8 @@ it('Throws an error if the assignable is soft-deleted', async () => {
   const testFn = () => publishAssignable({ id, ctx });
 
   // Assert
-  expect(testFn()).rejects.toThrowError('Cannot publish assignable: The assignable is deleted');
+  expect(testFn()).rejects.toThrowError(
+    'Cannot publish assignable: The assignable is deleted'
+  );
   expect(actions['common.versionControl.publishVersion']).not.toBeCalled();
 });

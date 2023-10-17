@@ -1,9 +1,11 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function getUserDataForFundae({ userAgent, classes, ctx }) {
   if (ctx.callerPlugin !== 'plugins.fundae')
-    throw new LeemonsError(ctx, { message: 'Only plugin fundae can call this function' });
+    throw new LeemonsError(ctx, {
+      message: 'Only plugin fundae can call this function',
+    });
 
   const _assignations = await ctx.tx.db.Assignations.find({
     user: userAgent,
@@ -13,12 +15,17 @@ async function getUserDataForFundae({ userAgent, classes, ctx }) {
 
   const [_instances, classInstances] = await Promise.all([
     ctx.tx.db.Instances.find({ id: _instanceIds }).lean(),
-    ctx.tx.db.Classes.find({ assignableInstance: _instanceIds, class: classes }).lean(),
+    ctx.tx.db.Classes.find({
+      assignableInstance: _instanceIds,
+      class: classes,
+    }).lean(),
   ]);
 
   const instanceIds = _.uniq(_.map(classInstances, 'assignableInstance'));
   const instances = _.filter(_instances, (e) => instanceIds.includes(e.id));
-  const assignations = _.filter(_assignations, (e) => instanceIds.includes(e.instance));
+  const assignations = _.filter(_assignations, (e) =>
+    instanceIds.includes(e.instance)
+  );
   const instanceById = _.keyBy(instances, 'id');
   const assignationIds = _.map(assignations, 'id');
 
@@ -32,8 +39,12 @@ async function getUserDataForFundae({ userAgent, classes, ctx }) {
       assignation: assignationIds,
       type: 'main',
     }).lean(),
-    ctx.tx.db.Assignables.find({ id: _.uniq(_.map(instances, 'assignable')) }).lean(),
-    ctx.tx.db.Subjects.find({ assignable: _.uniq(_.map(instances, 'assignable')) }).lean(),
+    ctx.tx.db.Assignables.find({
+      id: _.uniq(_.map(instances, 'assignable')),
+    }).lean(),
+    ctx.tx.db.Subjects.find({
+      assignable: _.uniq(_.map(instances, 'assignable')),
+    }).lean(),
   ]);
 
   const assets = await ctx.tx.call('leebrary.assets.getByIds', {
@@ -60,10 +71,24 @@ async function getUserDataForFundae({ userAgent, classes, ctx }) {
       const subjects = _.map(subjectsByAssignable[assignable.id], 'subject');
       if (instance.gradable) {
         if (date) endDatesGradables.push(date);
-        gradables.push({ ...toSave, instance, assignable, endDate: date, asset, subjects });
+        gradables.push({
+          ...toSave,
+          instance,
+          assignable,
+          endDate: date,
+          asset,
+          subjects,
+        });
       } else {
         if (date) endDatesNoGradables.push(date);
-        noGradables.push({ ...toSave, instance, assignable, endDate: date, asset, subjects });
+        noGradables.push({
+          ...toSave,
+          instance,
+          assignable,
+          endDate: date,
+          asset,
+          subjects,
+        });
       }
     }
   });

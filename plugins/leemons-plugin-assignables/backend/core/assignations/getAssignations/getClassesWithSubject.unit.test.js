@@ -1,6 +1,6 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { getClassesWithSubject } = require('./getClassesWithSubject');
 const { getServiceModels } = require('../../../models');
 
@@ -30,7 +30,10 @@ it('Should get classes with subject correctly', async () => {
   const instancesIds = ['instance1', 'instance2'];
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.classes.classByIds': () => [{ id: 'class1', subject: { id: 'subject1' } }, { id: 'class2', subject: { id: 'subject2' } }],
+      'academic-portfolio.classes.classByIds': () => [
+        { id: 'class1', subject: { id: 'subject1' } },
+        { id: 'class2', subject: { id: 'subject2' } },
+      ],
     },
     models: {
       Classes: newModel(

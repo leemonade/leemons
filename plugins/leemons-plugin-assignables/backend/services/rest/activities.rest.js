@@ -4,7 +4,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const searchOngoingActivities = require('../../core/ongoing/searchOngoingActivities');
 const searchNyaActivities = require('../../core/ongoing/searchNyaActivities');
 

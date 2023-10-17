@@ -4,7 +4,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { getAssignables } = require('../../core/assignables');
 
 /** @type {ServiceSchema} */

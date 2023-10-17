@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getStudentAssignations } = require('./getStudentAssignations');
 const { assignationsSchema } = require('../../../../models/assignations');
@@ -46,11 +52,18 @@ it('Should call getStudentAssignations correctly', async () => {
     user: 'userOne',
     classes: ['classOne'],
   };
-  const mockInstances = { instanceOne: { id: 'instanceOne' }, instanceTwo: { id: 'instanceTwo' } };
+  const mockInstances = {
+    instanceOne: { id: 'instanceOne' },
+    instanceTwo: { id: 'instanceTwo' },
+  };
 
   const ctx = generateCtx({
     models: {
-      Assignations: newModel(mongooseConnection, 'Assignations', assignationsSchema),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        assignationsSchema
+      ),
     },
   });
   ctx.meta.userSession = { userAgents: [{ id: 'userOne' }] };
@@ -65,7 +78,9 @@ it('Should call getStudentAssignations correctly', async () => {
 
   // Assert
   expect(getInstancesData).toBeCalledWith({
-    instances: expect.arrayContaining(assignations.map((item) => item.instance)),
+    instances: expect.arrayContaining(
+      assignations.map((item) => item.instance)
+    ),
     relatedInstances: undefined,
     ctx,
   });
@@ -74,8 +89,13 @@ it('Should call getStudentAssignations correctly', async () => {
     expect(item).toMatchObject({
       id: item.id === assignationOne.id ? assignationOne.id : assignationTwo.id,
       instance:
-        item.id === assignationOne.id ? mockInstances.instanceOne : mockInstances.instanceTwo,
-      user: item.id === assignationOne.id ? assignationOne.user : assignationTwo.user,
+        item.id === assignationOne.id
+          ? mockInstances.instanceOne
+          : mockInstances.instanceTwo,
+      user:
+        item.id === assignationOne.id
+          ? assignationOne.user
+          : assignationTwo.user,
     });
     expect(item._id).toBeDefined();
   });

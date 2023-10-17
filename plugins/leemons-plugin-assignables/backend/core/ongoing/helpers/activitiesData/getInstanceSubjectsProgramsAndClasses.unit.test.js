@@ -6,8 +6,8 @@ const {
   beforeEach,
   jest: { fn },
 } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const {
   getInstanceSubjectsProgramsAndClasses,
@@ -71,7 +71,11 @@ const mockClassThree = {
 it('Should call getInstanceSubjectsProgramsAndClasses correctly', async () => {
   // Arrange
   const instances = [instanceOne, instanceTwo];
-  const classByIdsAction = fn().mockResolvedValue([mockClassOne, mockClassTwo, mockClassThree]);
+  const classByIdsAction = fn().mockResolvedValue([
+    mockClassOne,
+    mockClassTwo,
+    mockClassThree,
+  ]);
 
   const ctx = generateCtx({
     actions: {
@@ -99,10 +103,18 @@ it('Should call getInstanceSubjectsProgramsAndClasses correctly', async () => {
     assignable: instanceTwo.assignable.id,
     class: mockClassThree.id,
   };
-  const initialValues = [mockClassRelationOne, mockClassRelationTwo, mockClassRelationThree];
+  const initialValues = [
+    mockClassRelationOne,
+    mockClassRelationTwo,
+    mockClassRelationThree,
+  ];
   await ctx.db.Classes.create([
     ...initialValues,
-    { ...mockClassRelationOne, id: 4, assignableInstance: 'anotherAssignableInstance' },
+    {
+      ...mockClassRelationOne,
+      id: 4,
+      assignableInstance: 'anotherAssignableInstance',
+    },
   ]);
 
   const expectedResponse = {
@@ -112,14 +124,23 @@ it('Should call getInstanceSubjectsProgramsAndClasses correctly', async () => {
       classes: [mockClassRelationOne.class],
     },
     [instances[1].id]: {
-      subjects: expect.arrayContaining([mockClassTwo.subject.id, mockClassThree.subject.id]),
+      subjects: expect.arrayContaining([
+        mockClassTwo.subject.id,
+        mockClassThree.subject.id,
+      ]),
       programs: [mockClassTwo.program],
-      classes: expect.arrayContaining([mockClassRelationTwo.class, mockClassRelationThree.class]),
+      classes: expect.arrayContaining([
+        mockClassRelationTwo.class,
+        mockClassRelationThree.class,
+      ]),
     },
   };
 
   // Act
-  const response = await getInstanceSubjectsProgramsAndClasses({ instances, ctx });
+  const response = await getInstanceSubjectsProgramsAndClasses({
+    instances,
+    ctx,
+  });
 
   // Assert
   expect(classByIdsAction).toBeCalledWith({

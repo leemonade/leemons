@@ -1,10 +1,14 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { addUserToAssignable } = require('./addUserToAssignable');
 const { getAssignable } = require('../getAssignable');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
-const { addPermissionToUser } = require('../../permissions/assignables/users/addPermissionToUser');
+const {
+  getUserPermission,
+} = require('../../permissions/assignables/users/getUserPermission');
+const {
+  addPermissionToUser,
+} = require('../../permissions/assignables/users/addPermissionToUser');
 
 jest.mock('../getAssignable');
 jest.mock('../../permissions/assignables/users/getUserPermission');
@@ -24,7 +28,12 @@ it('Should add user to assignable', async () => {
   addPermissionToUser.mockReturnValue({ userAgents, role, actions });
 
   // Act
-  const response = await addUserToAssignable({ assignableId, userAgents, role, ctx });
+  const response = await addUserToAssignable({
+    assignableId,
+    userAgents,
+    role,
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual({ userAgents, role, actions });
@@ -43,10 +52,13 @@ it('Should throw Error if user has no permission', async () => {
   });
 
   // Act
-  const testFunc = () => addUserToAssignable({ assignableId, userAgents, role, ctx });
+  const testFunc = () =>
+    addUserToAssignable({ assignableId, userAgents, role, ctx });
 
   // Assert
-  await expect(testFunc).rejects.toThrow(/does not exist or you don't have access to it/);
+  await expect(testFunc).rejects.toThrow(
+    /does not exist or you don't have access to it/
+  );
 });
 
 it('Should throw Error if role cannot assign', async () => {
@@ -63,8 +75,11 @@ it('Should throw Error if role cannot assign', async () => {
   addPermissionToUser.mockReturnValue({ userAgents, role, actions });
 
   // Act
-  const testFunc = () => addUserToAssignable({ assignableId, userAgents, role, ctx });
+  const testFunc = () =>
+    addUserToAssignable({ assignableId, userAgents, role, ctx });
 
   // Assert
-  await expect(testFunc).rejects.toThrow(/User cannot assign to assignable with role/);
+  await expect(testFunc).rejects.toThrow(
+    /User cannot assign to assignable with role/
+  );
 });

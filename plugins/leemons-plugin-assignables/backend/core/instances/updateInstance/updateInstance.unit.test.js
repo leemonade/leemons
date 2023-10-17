@@ -1,14 +1,18 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 const { pick } = require('lodash');
 
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { updateInstance } = require('./updateInstance');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 const { instancesSchema } = require('../../../models/instances');
 
-const { getUserPermission } = require('../../permissions/instances/users/getUserPermission');
+const {
+  getUserPermission,
+} = require('../../permissions/instances/users/getUserPermission');
 const { updateClasses } = require('../../classes/updateClasses');
 const { updateDates } = require('../../dates/updateDates');
 const { getInstance } = require('../getInstance');
@@ -103,7 +107,11 @@ describe('updateInstance function', () => {
     createRelatedInstance.mockResolvedValue('relatedInstanceId1');
     // Act
     const response = await updateInstance({
-      assignableInstance: pick(changedInstance, [...updatableFields, 'id', 'relatedAssignables']),
+      assignableInstance: pick(changedInstance, [
+        ...updatableFields,
+        'id',
+        'relatedAssignables',
+      ]),
       propagateRelated,
       ctx,
     });
@@ -161,7 +169,9 @@ describe('updateInstance function', () => {
     });
     expect(altResponse).toBeDefined();
 
-    expect(dbInstance.relatedAssignableInstances.after).toEqual(['relatedInstanceId1']);
+    expect(dbInstance.relatedAssignableInstances.after).toEqual([
+      'relatedInstanceId1',
+    ]);
   });
 
   test('should throw error if some of the provided keys are not updatable', async () => {
@@ -175,7 +185,9 @@ describe('updateInstance function', () => {
       });
 
     // Assert
-    expect(testFunc).rejects.toThrowError('Some of the provided keys are not updatable');
+    expect(testFunc).rejects.toThrowError(
+      'Some of the provided keys are not updatable'
+    );
   });
 
   test('should throw error if user has not permission to update', async () => {
@@ -188,7 +200,11 @@ describe('updateInstance function', () => {
     // Act
     const testFunc = () =>
       updateInstance({
-        assignableInstance: pick(instance, [...updatableFields, 'id', 'relatedAssignables']),
+        assignableInstance: pick(instance, [
+          ...updatableFields,
+          'id',
+          'relatedAssignables',
+        ]),
         propagateRelated,
         ctx,
       });

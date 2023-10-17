@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { map } = require('lodash');
 
 /**
@@ -16,7 +16,12 @@ async function registerDates({ type, instance, dates, ctx }) {
       httpStatusCode: 400,
     });
   }
-  const datesToSave = map(dates, (date, name) => ({ type, instance, name, date }));
+  const datesToSave = map(dates, (date, name) => ({
+    type,
+    instance,
+    name,
+    date,
+  }));
 
   await ctx.tx.db.Dates.insertMany(datesToSave);
 

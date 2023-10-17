@@ -3,20 +3,26 @@
 
 const { getUserPermissions } = require('../../permissions/instances/users');
 const { getAssignations } = require('../getAssignations');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function getAssignationsOfInstance({ instances, details = false, ctx }) {
   const ids = Array.isArray(instances) ? instances : [instances];
 
   const permissions = await getUserPermissions({ instancesIds: ids, ctx });
 
-  if (!Object.values(permissions).every((permission) => permission.actions.includes('edit'))) {
+  if (
+    !Object.values(permissions).every((permission) =>
+      permission.actions.includes('edit')
+    )
+  ) {
     throw new LeemonsError(ctx, { message: 'You do not have permissions' });
   }
 
   const query = { instance: ids };
 
-  const studentsAssignations = await ctx.tx.db.Assignations.find(query).select(details ? ['id'] : undefined).lean();
+  const studentsAssignations = await ctx.tx.db.Assignations.find(query)
+    .select(details ? ['id'] : undefined)
+    .lean();
 
   if (details) {
     const studentsAssignationPerInstance = {};

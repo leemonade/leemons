@@ -1,15 +1,29 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getAssignables } = require('./getAssignables');
 const { instancesSchema } = require('../../../models/instances');
 const { assignablesSchema } = require('../../../models/assignables');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 const instance = { ...getInstanceObject(), id: 'assignableId1' };
-const assignable = { ...getAssignableObject(), asset: 'assetId', id: instance.assignable };
+const assignable = {
+  ...getAssignableObject(),
+  asset: 'assetId',
+  id: instance.assignable,
+};
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -35,7 +49,11 @@ beforeEach(async () => {
   ctx = generateCtx({
     models: {
       Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 });
@@ -46,7 +64,10 @@ it('Should return assignables if instances match', async () => {
   await ctx.tx.db.Assignables.create(assignable);
 
   // Act
-  const response = await getAssignables({ assignableInstancesIds: [instance.id], ctx });
+  const response = await getAssignables({
+    assignableInstancesIds: [instance.id],
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual([
@@ -63,7 +84,10 @@ it('Should return empty array if no instances match', async () => {
   // Arrange
 
   // Act
-  const response = await getAssignables({ assignableInstancesIds: ['nonexistent-id'], ctx });
+  const response = await getAssignables({
+    assignableInstancesIds: ['nonexistent-id'],
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual([]);

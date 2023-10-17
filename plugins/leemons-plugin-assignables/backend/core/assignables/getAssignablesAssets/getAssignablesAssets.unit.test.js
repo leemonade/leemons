@@ -1,11 +1,19 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
 
-const { newModel } = require('leemons-mongodb');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
+const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 
 const { getAssignablesAssets } = require('./getAssignablesAssets');
 const { assignablesSchema } = require('../../../models/assignables');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 describe('getAssignablesAssets', () => {
   let mongooseConnection;
@@ -34,7 +42,11 @@ describe('getAssignablesAssets', () => {
 
     ctx = generateCtx({
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
     assignables = [
@@ -52,7 +64,10 @@ describe('getAssignablesAssets', () => {
 
   it('should return assignables for given asset ids', async () => {
     // Act
-    const result = await getAssignablesAssets({ ids: assignables.map((el) => el.id), ctx });
+    const result = await getAssignablesAssets({
+      ids: assignables.map((el) => el.id),
+      ctx,
+    });
 
     // Assert
     expect(result).toEqual(expectedAssignables);

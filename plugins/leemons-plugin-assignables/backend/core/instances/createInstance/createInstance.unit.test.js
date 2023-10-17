@@ -1,13 +1,23 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { createInstance } = require('./createInstance');
 const { instancesSchema } = require('../../../models/instances');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
 const { getAssignable } = require('../../assignables/getAssignable');
-const { registerPermission } = require('../../permissions/instances/registerPermission');
+const {
+  registerPermission,
+} = require('../../permissions/instances/registerPermission');
 const { registerClass } = require('../../classes/registerClass');
 const { getTeachersOfGivenClasses } = require('./getTeachersOfGivenClasses');
 const {
@@ -16,7 +26,9 @@ const {
 const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
 const { registerDates } = require('../../dates/registerDates');
 const { updateInstance } = require('../updateInstance');
-const { addPermissionToUser } = require('../../permissions/instances/users/addPermissionToUser');
+const {
+  addPermissionToUser,
+} = require('../../permissions/instances/users/addPermissionToUser');
 
 jest.mock('../../assignables/getAssignable');
 jest.mock('../../permissions/instances/registerPermission');
@@ -61,7 +73,10 @@ it('Should create an assignable instance correctly', async () => {
     ...getInstanceObject(),
     assignable: assignable.id,
     dates: { deadLine: new Date() },
-    classes: ['123e4567-e89b-12d3-a456-426614174001', '123e4567-e89b-12d3-a456-426614174002'],
+    classes: [
+      '123e4567-e89b-12d3-a456-426614174001',
+      '123e4567-e89b-12d3-a456-426614174002',
+    ],
     metadata: {},
     curriculum: {},
     relatedAssignables: [],
@@ -126,7 +141,10 @@ it('Should create an assignable instance correctly', async () => {
     ctx,
   });
 
-  expect(getTeachersOfGivenClasses).toBeCalledWith({ classes: instance.classes, ctx });
+  expect(getTeachersOfGivenClasses).toBeCalledWith({
+    classes: instance.classes,
+    ctx,
+  });
 
   expect(createEventAndAddToUsers).toBeCalledWith({
     assignable,

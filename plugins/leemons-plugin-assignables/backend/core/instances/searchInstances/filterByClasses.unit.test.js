@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { filterByClasses } = require('./filterByClasses');
 const { classesSchema } = require('../../../models/classes');
@@ -55,7 +61,11 @@ it('Should return same assignables Instances Ids if no classes, subjects or prog
   const assignableInstancesIds = ['assignableId1', 'assignableId2'];
 
   // Act
-  const response = await filterByClasses({ query, assignableInstancesIds, ctx });
+  const response = await filterByClasses({
+    query,
+    assignableInstancesIds,
+    ctx,
+  });
 
   // Assert
   expect(classesByIdsHandler).not.toBeCalled();
@@ -70,7 +80,11 @@ it('Should return assignable Instances Ids filtered by classes', async () => {
   await ctx.tx.db.Classes.create(classes);
 
   // Act
-  const response = await filterByClasses({ query, assignableInstancesIds, ctx });
+  const response = await filterByClasses({
+    query,
+    assignableInstancesIds,
+    ctx,
+  });
 
   // Assert
   expect(classesByIdsHandler).not.toBeCalled();
@@ -90,7 +104,11 @@ it('Should return assignable Instances Ids filtered by subjects and programs', a
   ]);
 
   // Act
-  const response = await filterByClasses({ query, assignableInstancesIds, ctx });
+  const response = await filterByClasses({
+    query,
+    assignableInstancesIds,
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual(['assignableId2']);

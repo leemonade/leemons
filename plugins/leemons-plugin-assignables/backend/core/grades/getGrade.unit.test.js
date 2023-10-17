@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getGrade } = require('./getGrade');
 const { gradesSchema } = require('../../models/grades');
@@ -317,8 +323,16 @@ it("Should return the assignation's grade for the given visibility", async () =>
   const expectedValues = await ctx.db.Grades.find({}).lean();
 
   // Act
-  const visibilityResponse = await getGrade({ assignation, visibleToStudent: true, ctx });
-  const noVisibilityResponse = await getGrade({ assignation, visibleToStudent: false, ctx });
+  const visibilityResponse = await getGrade({
+    assignation,
+    visibleToStudent: true,
+    ctx,
+  });
+  const noVisibilityResponse = await getGrade({
+    assignation,
+    visibleToStudent: false,
+    ctx,
+  });
 
   // Assert
   expect(visibilityResponse).toEqual(
@@ -341,5 +355,7 @@ it('Should throw when no assignation id is provided', async () => {
   const testFn = () => getGrade({ assignation: undefined, ctx });
 
   // Assert
-  expect(testFn).rejects.toThrowError('Cannot getGrade: assignation is required');
+  expect(testFn).rejects.toThrowError(
+    'Cannot getGrade: assignation is required'
+  );
 });

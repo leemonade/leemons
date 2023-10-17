@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { map } = require('lodash');
 const { removeSubjects } = require('./removeSubjects');
@@ -56,12 +62,16 @@ it('Should remove the subjects', async () => {
     },
   ];
   await ctx.db.Subjects.create(initialValues);
-  const savedSubject = await ctx.db.Subjects.find({ assignable: 'assignable-id' }).lean();
+  const savedSubject = await ctx.db.Subjects.find({
+    assignable: 'assignable-id',
+  }).lean();
   const ids = map(savedSubject, 'id');
 
   // Act
   const response = await removeSubjects({ ids, ctx });
-  const countOfRemovedIds = await ctx.db.Subjects.countDocuments({ assignable: 'assignable-id' });
+  const countOfRemovedIds = await ctx.db.Subjects.countDocuments({
+    assignable: 'assignable-id',
+  });
   const totalCount = await ctx.db.Subjects.countDocuments({});
 
   // Assert
@@ -84,6 +94,10 @@ it('Should throw if no valid ids are provided', async () => {
   const noStringIdsFn = () => removeSubjects({ ids, ctx });
 
   // Assert
-  await expect(noIdsFn).rejects.toThrowError('Cannot remove subjects: Ids must be strings');
-  await expect(noStringIdsFn).rejects.toThrowError('Cannot remove subjects: Ids must be strings');
+  await expect(noIdsFn).rejects.toThrowError(
+    'Cannot remove subjects: Ids must be strings'
+  );
+  await expect(noStringIdsFn).rejects.toThrowError(
+    'Cannot remove subjects: Ids must be strings'
+  );
 });

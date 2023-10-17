@@ -1,7 +1,7 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getTeacherPermissions } = require('./getTeacherPermissions');
 const { classesSchema } = require('../../../../../models/classes');
@@ -48,7 +48,8 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     models: {
       Classes: newModel(mongooseConnection, 'Classes', classesSchema),
@@ -69,8 +70,14 @@ describe('getTeacherPermissions function', () => {
     };
 
     getUserAgentPermissionsHandler.mockResolvedValue([
-      { permissionName: 'academic-portfolio.class.classId1', actionName: 'edit' },
-      { permissionName: 'academic-portfolio.class.classId2', actionName: 'edit' },
+      {
+        permissionName: 'academic-portfolio.class.classId1',
+        actionName: 'edit',
+      },
+      {
+        permissionName: 'academic-portfolio.class.classId2',
+        actionName: 'edit',
+      },
     ]);
 
     // Act

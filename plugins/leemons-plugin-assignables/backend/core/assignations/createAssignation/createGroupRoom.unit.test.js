@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { createGroupRoom } = require('./createGroupRoom');
 const { getServiceModels } = require('../../../models');
 const _ = require('lodash');
@@ -58,8 +64,16 @@ it('Should create a new group room if it does not exist', async () => {
       'comunica.room.add': (params) => params,
     },
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', getServiceModels().Assignables.schema),
-      Assignations: newModel(mongooseConnection, 'Assignations', getServiceModels().Assignations.schema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        getServiceModels().Assignables.schema
+      ),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        getServiceModels().Assignations.schema
+      ),
     },
   });
 
@@ -140,8 +154,16 @@ it('Should create a new group room if it does not exist multi class', async () =
       'comunica.room.add': (params) => params,
     },
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', getServiceModels().Assignables.schema),
-      Assignations: newModel(mongooseConnection, 'Assignations', getServiceModels().Assignations.schema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        getServiceModels().Assignables.schema
+      ),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        getServiceModels().Assignations.schema
+      ),
     },
   });
 
@@ -156,7 +178,6 @@ it('Should create a new group room if it does not exist multi class', async () =
     ctx,
   });
 
-
   // Assert
   expect(result).toEqual({
     key: ctx.prefixPN(`instance:${assignableInstanceId}:group`),
@@ -164,8 +185,8 @@ it('Should create a new group room if it does not exist multi class', async () =
     subName: _.map(classes, 'subject.name').join(','),
     parentRoom: parentKey,
     program: classes[0].program,
-    bgColor: "#67728E",
-    icon: "/public/assets/svgs/module-three.svg",
+    bgColor: '#67728E',
+    icon: '/public/assets/svgs/module-three.svg',
     type: ctx.prefixPN('assignation.group'),
     metadata: {
       headerName: instance.assignable.asset.name,
@@ -214,8 +235,16 @@ it('Should add extra students to the existing group room', async () => {
       'comunica.room.get': (params) => params,
     },
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', getServiceModels().Assignables.schema),
-      Assignations: newModel(mongooseConnection, 'Assignations', getServiceModels().Assignations.schema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        getServiceModels().Assignables.schema
+      ),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        getServiceModels().Assignations.schema
+      ),
     },
   });
 
@@ -231,9 +260,10 @@ it('Should add extra students to the existing group room', async () => {
   });
 
   // Assert
-  expect(result).toEqual({ key: ctx.prefixPN(`instance:${assignableInstanceId}:group`) });
+  expect(result).toEqual({
+    key: ctx.prefixPN(`instance:${assignableInstanceId}:group`),
+  });
 });
-
 
 it('Should add extra students to the existing group room withut teacher and user', async () => {
   // Arrange
@@ -268,8 +298,16 @@ it('Should add extra students to the existing group room withut teacher and user
       'comunica.room.get': (params) => params,
     },
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', getServiceModels().Assignables.schema),
-      Assignations: newModel(mongooseConnection, 'Assignations', getServiceModels().Assignations.schema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        getServiceModels().Assignables.schema
+      ),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        getServiceModels().Assignations.schema
+      ),
     },
   });
 
@@ -285,5 +323,7 @@ it('Should add extra students to the existing group room withut teacher and user
   });
 
   // Assert
-  expect(result).toEqual({ key: ctx.prefixPN(`instance:${assignableInstanceId}:group`) });
+  expect(result).toEqual({
+    key: ctx.prefixPN(`instance:${assignableInstanceId}:group`),
+  });
 });

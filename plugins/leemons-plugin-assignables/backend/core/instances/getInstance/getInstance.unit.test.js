@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 const { getInstance } = require('./getInstance');
 const { getInstances } = require('../getInstances');
 
@@ -16,7 +16,12 @@ it('Should get instance successfully', async () => {
   getInstances.mockReturnValue([instance]);
 
   // Act
-  const response = await getInstance({ id, relatedAssignableInstances, details, ctx });
+  const response = await getInstance({
+    id,
+    relatedAssignableInstances,
+    details,
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual(instance);
@@ -35,7 +40,8 @@ it('Should throw error when getInstances fails', async () => {
   });
 
   // Act
-  const testFunc = () => getInstance({ id, relatedAssignableInstances, details, ctx });
+  const testFunc = () =>
+    getInstance({ id, relatedAssignableInstances, details, ctx });
 
   // Assert
   await expect(testFunc).rejects.toThrow(errorMessage);

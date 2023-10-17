@@ -1,5 +1,5 @@
 const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 const { filterByPublished } = require('./filterByPublished');
 
 const getVersionHandler = jest.fn();
@@ -34,7 +34,9 @@ describe('filterByPublished', () => {
 
     // Assert
     expect(result).toHaveLength(3);
-    expect(result).toEqual(expect.arrayContaining(assignablesWithControlVersion));
+    expect(result).toEqual(
+      expect.arrayContaining(assignablesWithControlVersion)
+    );
   });
 
   it('Should return only published assignables when published is true', async () => {
@@ -48,7 +50,10 @@ describe('filterByPublished', () => {
     // Assert
     expect(result).toHaveLength(2);
     expect(result).toEqual(
-      expect.arrayContaining([assignablesWithControlVersion[0], assignablesWithControlVersion[2]])
+      expect.arrayContaining([
+        assignablesWithControlVersion[0],
+        assignablesWithControlVersion[2],
+      ])
     );
   });
 
@@ -62,6 +67,8 @@ describe('filterByPublished', () => {
 
     // Assert
     expect(result).toHaveLength(1);
-    expect(result).toEqual(expect.arrayContaining([assignablesWithControlVersion[1]]));
+    expect(result).toEqual(
+      expect.arrayContaining([assignablesWithControlVersion[1]])
+    );
   });
 });
