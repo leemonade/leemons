@@ -6,8 +6,83 @@ const { addMenuItemsDeploy } = require('leemons-menu-builder');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
 const { addPermissionsDeploy } = require('leemons-permissions');
 const { LeemonsMongoDBMixin } = require('leemons-mongodb');
+const { getEmailTypes } = require('leemons-emails');
+
+const newActivity = require('../emails/userCreateAssignation');
+const rememberActivity = require('../emails/userAssignationRemember');
+const rememberActivityTimeout = require('../emails/userRememberAssignationTimeout');
+const userWeekly = require('../emails/userWeekly');
 const { menuItems, widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
+const { afterAddClassTeacher } = require('../core/events/afterAddClassTeacher');
+const { afterRemoveClassesTeachers } = require('../core/events/afterRemoveClassesTeachers');
+
+async function initEmails(ctx) {
+  const emailsServiceAddIfNotExists = 'emails.email.addIfNotExist';
+
+  await ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-create-assignation',
+    language: 'es',
+    subject: 'Nueva actividad',
+    html: newActivity.es,
+    type: getEmailTypes().active,
+  });
+  await ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-create-assignation',
+    language: 'en',
+    subject: 'New activity',
+    html: newActivity.en,
+    type: getEmailTypes().active,
+  });
+  ctx.tx.emit('init-email-recover-password');
+
+  await ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-assignation-remember',
+    language: 'es',
+    subject: 'Recordatorio de actividad',
+    html: rememberActivity.es,
+    type: getEmailTypes().active,
+  });
+  ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-assignation-remember',
+    language: 'en',
+    subject: 'Activity reminder',
+    html: rememberActivity.en,
+    type: getEmailTypes().active,
+  });
+
+  ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-remember-assignation-timeout',
+    language: 'es',
+    subject: 'Esta actividad finaliza pronto',
+    html: rememberActivityTimeout.es,
+    type: getEmailTypes().active,
+  });
+  ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-remember-assignation-timeout',
+    language: 'en',
+    subject: 'This activity ends soon',
+    html: rememberActivityTimeout.en,
+    type: getEmailTypes().active,
+  });
+
+  ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-weekly-resume',
+    language: 'es',
+    subject: 'Aquí tienes tus actividades pendientes',
+    html: userWeekly.es,
+    type: getEmailTypes().active,
+  });
+  ctx.tx.call(emailsServiceAddIfNotExists, {
+    templateName: 'user-weekly-resume',
+    language: 'en',
+    subject: 'Have a look to your pending activities',
+    html: userWeekly.en,
+    type: getEmailTypes().active,
+  });
+
+  ctx.tx.emit('init-emails');
+}
 
 // TODO: Implement cron job for sending emails
 
@@ -25,13 +100,25 @@ module.exports = {
   multiEvents: [
     {
       type: 'once-per-install',
-      events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
+      events: [
+        'menu-builder.init-main-menu',
+        'assignables.init-permissions',
+        'multilanguage.newLocale',
+      ],
       handler: async (ctx) => {
+        const [mainItem, ...items] = menuItems;
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
-          item: menuItems,
+          item: mainItem,
           ctx,
         });
+        ctx.tx.emit('init-menu');
+        await addMenuItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          item: items,
+          ctx,
+        });
+        ctx.tx.emit('init-submenu');
       },
     },
   ],
@@ -51,25 +138,25 @@ module.exports = {
         i18nPath: path.resolve(__dirname, '../i18n'),
         ctx,
       });
+
+      // Email Templates
+      await initEmails(ctx);
     },
     /*
       --- Academic Portfolio ---
     */
     'academic-portfolio.after-add-class-teacher': async (ctx) => {
-      // TODO: Implement this event (after-add-class-teacher)
+      await afterAddClassTeacher({ ...ctx.params, ctx });
     },
     'academic-portfolio.after-remove-classes-teachers': async (ctx) => {
-      // TODO: Implement this event (after-temove-classes-teachers)
+      await afterRemoveClassesTeachers({ ...ctx.params, ctx });
     },
     'academic-portfolio.after-add-class-student': async (ctx) => {
-      // TODO: Implement this event (after-add-class-student)
-    },
-
-    /*
-      --- Emails ---
-    */
-    'emails.': async (ctx) => {
-      // TODO: Implement this event (emails plugin ready)
+      const {
+        addStudentsToOpenInstancesWithClass,
+        // eslint-disable-next-line global-require
+      } = require('../core/assignations/addStudentToOpenInstancesWithClass');
+      await addStudentsToOpenInstancesWithClass({ ...ctx.params, ctx });
     },
 
     /*
