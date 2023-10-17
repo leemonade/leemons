@@ -24,6 +24,7 @@ const {
   getAssignablesAssets,
 } = require('../core/assignables');
 const { getUserPermission, getUserPermissions } = require('../core/permissions/assignables/users');
+const restActions = require('./rest/assignables.rest');
 
 module.exports = {
   name: 'assignables.assignables',
@@ -38,6 +39,7 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     createAssignable: {
       handler(ctx) {
         return createAssignable({ ...ctx.params, ctx });

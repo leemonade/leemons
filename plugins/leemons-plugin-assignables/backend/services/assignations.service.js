@@ -13,6 +13,7 @@ const { getAssignation } = require('../core/assignations/getAssignation');
 const { getAssignations } = require('../core/assignations/getAssignations');
 const { updateAssignation } = require('../core/assignations/updateAssignation');
 const { getUserDataForFundae } = require('../core/assignations/getUserDataForFundae');
+const restActions = require('./rest/assignables.rest');
 
 module.exports = {
   name: 'assignables.assignations',
@@ -27,6 +28,7 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
     createAssignation: {
       handler(ctx) {
         return createAssignation({ ...ctx.params, ctx });
