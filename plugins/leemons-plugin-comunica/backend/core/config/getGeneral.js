@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function getGeneral({ transacting } = {}) {
-  const item = await table.config.findOne({ type: 'general' }, { transacting });
+async function getGeneral({ ctx }) {
+  const item = await ctx.tx.db.Config.findOne({ type: 'general' }).lean();
   let config = {
     enabled: true,
   };

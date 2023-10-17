@@ -1,11 +1,12 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { checkPermissions } = require('./checkPermissions');
 const { getServiceModels } = require('../../../models');
 
-
-jest.mock('../../permissions/instances/users/getUserPermissions/getUserPermissions');
+jest.mock(
+  '../../permissions/instances/users/getUserPermissions/getUserPermissions'
+);
 
 const {
   getUserPermissions,
@@ -38,12 +39,12 @@ it('Should check permissions correctly', async () => {
     {
       id: 'assignation1',
       user: 'userAgentId',
-      instance: 'instance1'
+      instance: 'instance1',
     },
     {
       id: 'assignation2',
       user: 'NOuserAgentId',
-      instance: 'instance2'
+      instance: 'instance2',
     },
   ];
   const ctx = generateCtx({
@@ -66,7 +67,7 @@ it('Should check permissions correctly', async () => {
 
   // Act
   const result = await checkPermissions({ assignationsData, ctx });
-  
+
   // Assert
   expect(result).toBeDefined();
   expect(result).toHaveProperty('assignation1');

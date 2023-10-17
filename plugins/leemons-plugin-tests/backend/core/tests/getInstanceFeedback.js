@@ -1,33 +1,33 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
+const { LeemonsError } = require('@leemons/error');
 
-async function getInstanceFeedback(instanceId, userAgent, { userSession, transacting } = {}) {
-  const { assignableInstances: assignableInstancesService } =
-    leemons.getPlugin('assignables').services;
-
-  const permissions = await assignableInstancesService.getUserPermission(instanceId, {
-    userSession,
-    transacting,
+async function getInstanceFeedback({ instanceId, userAgent, ctx }) {
+  const permissions = await ctx.tx.call('assignables.assignableInstances.getUserPermission', {
+    assignableInstance: instanceId,
   });
   if (!permissions.actions.includes('view')) {
-    throw new Error('You do not have permissions');
+    throw new LeemonsError(ctx, { message: 'You do not have permissions' });
   }
 
   const isTeacher = permissions.actions.includes('edit');
 
-  const userAgentIds = _.map(userSession.userAgents, 'id');
+  const userAgentIds = _.map(ctx.meta.userSession.userAgents, 'id');
 
   if (!isTeacher) {
     if (!userAgentIds.includes(userAgent)) {
-      throw new Error('You only have permission to show your own feedback');
+      throw new LeemonsError(ctx, {
+        message: 'You only have permission to show your own feedback',
+      });
     }
   }
 
-  const result = await table.userFeedback.findOne({
+  const result = await ctx.tx.db.UserFeedback.findOne({
     instance: instanceId,
     toUserAgent: userAgent,
-  });
+  })
+    .select(['feedback'])
+    .lean();
 
   return {
     isTeacher,

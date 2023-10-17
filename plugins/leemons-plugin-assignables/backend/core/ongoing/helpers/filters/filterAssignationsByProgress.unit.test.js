@@ -1,11 +1,13 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 // MOCKS
 jest.mock('../activitiesStatus');
 const { getAssignationsProgress } = require('../activitiesStatus');
 
-const { filterAssignationsByProgress } = require('./filterAssignationsByProgress');
+const {
+  filterAssignationsByProgress,
+} = require('./filterAssignationsByProgress');
 
 it('Should call filterAssignationsByProgress correctly', async () => {
   // Arrange
@@ -32,7 +34,10 @@ it('Should call filterAssignationsByProgress correctly', async () => {
       instanceTwo: { closed: new Date('December 31, 2000') },
     },
     assignations: {
-      instanceTwo: { start: new Date('October 22, 2000'), finished: new Date('December 31, 2000') },
+      instanceTwo: {
+        start: new Date('October 22, 2000'),
+        finished: new Date('December 31, 2000'),
+      },
     },
   };
 

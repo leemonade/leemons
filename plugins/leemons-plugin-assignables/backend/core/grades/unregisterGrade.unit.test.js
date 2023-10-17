@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { unregisterGrade } = require('./unregisterGrade');
 const { gradesSchema } = require('../../models/grades');
@@ -211,7 +217,10 @@ it('Should unregister all the grades for an assignation, subject and type', asyn
 
   // Act
   const response = await unregisterGrade({ assignation, subject, type, ctx });
-  const remainingCount = await ctx.db.Grades.countDocuments({ type, subject }).lean();
+  const remainingCount = await ctx.db.Grades.countDocuments({
+    type,
+    subject,
+  }).lean();
 
   // Assert
   expect(response).toBe(1);
@@ -230,5 +239,7 @@ it('Should throw an error if no assignation is provided', async () => {
   const testFn = () => unregisterGrade({ assignation: undefined, ctx });
 
   // Act and Assert
-  await expect(testFn).rejects.toThrowError('Cannot unregister grade: assignation is required');
+  await expect(testFn).rejects.toThrowError(
+    'Cannot unregister grade: assignation is required'
+  );
 });

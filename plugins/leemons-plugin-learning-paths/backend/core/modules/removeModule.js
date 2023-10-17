@@ -1,10 +1,7 @@
-module.exports = async function removeModule(id, { transacting, userSession } = {}) {
-  const assignablesServices = leemons.getPlugin('assignables').services.assignables;
-
+module.exports = async function removeModule({ id, ctx }) {
   // TODO: For now remove all the versions in the same status
-  return assignablesServices.removeAssignable(id, {
-    userSession,
-    transacting,
+  return ctx.tx.call('assignables.assignables.removeAssignable', {
+    assignable: id,
     removeAll: 1,
   });
 };

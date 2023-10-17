@@ -5,7 +5,7 @@
  */
 
 const _ = require('lodash');
-const { LeemonsMiddlewareAuthenticated } = require('leemons-middlewares');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { searchInstances } = require('../../core/instances/searchInstances');
 const { getInstance } = require('../../core/instances/getInstance');
 const { getInstances } = require('../../core/instances/getInstances');
@@ -16,7 +16,11 @@ async function get(ctx) {
   const { id, details, ids, throwOnMissing, relatedInstances } = ctx.params;
 
   if (id) {
-    const assignableInstance = await getInstance({ id, details: details === 'true', ctx });
+    const assignableInstance = await getInstance({
+      id,
+      details: details === 'true',
+      ctx,
+    });
 
     return {
       status: 200,
@@ -26,7 +30,9 @@ async function get(ctx) {
     const instances = await getInstances({
       ids: Array.isArray(ids) ? ids : [ids],
       details: _.isBoolean(details) ? details : details === 'true',
-      throwOnMissing: _.isBoolean(throwOnMissing) ? throwOnMissing : throwOnMissing === 'true',
+      throwOnMissing: _.isBoolean(throwOnMissing)
+        ? throwOnMissing
+        : throwOnMissing === 'true',
       relatedAssignableInstances: _.isBoolean(relatedInstances)
         ? relatedInstances
         : relatedInstances === 'true',
@@ -61,19 +67,35 @@ module.exports = {
 
       if (_.isBoolean(query.closed) ? query.closed : query.closed === 'true') {
         query.closed = true;
-      } else if (_.isBoolean(query.closed) ? !query.closed : query.closed === 'false') {
+      } else if (
+        _.isBoolean(query.closed) ? !query.closed : query.closed === 'false'
+      ) {
         query.closed = false;
       }
 
-      if (_.isBoolean(query.evaluated) ? query.evaluated : query.evaluated === 'true') {
+      if (
+        _.isBoolean(query.evaluated)
+          ? query.evaluated
+          : query.evaluated === 'true'
+      ) {
         query.evaluated = true;
-      } else if (_.isBoolean(query.evaluated) ? !query.evaluated : query.evaluated === 'false') {
+      } else if (
+        _.isBoolean(query.evaluated)
+          ? !query.evaluated
+          : query.evaluated === 'false'
+      ) {
         query.evaluated = false;
       }
 
-      if (_.isBoolean(query.archived) ? query.archived : query.archived === 'true') {
+      if (
+        _.isBoolean(query.archived) ? query.archived : query.archived === 'true'
+      ) {
         query.archived = true;
-      } else if (_.isBoolean(query.archived) ? !query.archived : query.archived === 'false') {
+      } else if (
+        _.isBoolean(query.archived)
+          ? !query.archived
+          : query.archived === 'false'
+      ) {
         query.archived = false;
       }
 

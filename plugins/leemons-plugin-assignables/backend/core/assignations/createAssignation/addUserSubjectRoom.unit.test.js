@@ -1,6 +1,6 @@
 const { addUserSubjectRoom } = require('./addUserSubjectRoom');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { getServiceModels } = require('../../../models');
 const assignablesSchema = getServiceModels().Assignables.schema;
 const assignationsSchema = getServiceModels().Assignations.schema;
@@ -34,8 +34,16 @@ describe('addUserSubjectRoom', () => {
     ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
-        Assignations: newModel(mongooseConnection, 'Assignations', assignationsSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
+        Assignations: newModel(
+          mongooseConnection,
+          'Assignations',
+          assignationsSchema
+        ),
       },
     });
   });

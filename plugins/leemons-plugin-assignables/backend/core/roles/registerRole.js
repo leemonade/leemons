@@ -1,5 +1,5 @@
 const { pick } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateRole } = require('../../validations/validateRole');
 const { getRole } = require('./getRole');
 

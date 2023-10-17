@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const Sqrl = require('squirrelly');
 
-const { getPluginProviders, getPluginProvider } = require('leemons-providers');
-const { LeemonsError } = require('leemons-error');
-const { getEmailTypes } = require('leemons-emails');
+const { getPluginProviders, getPluginProvider } = require('@leemons/providers');
+const { LeemonsError } = require('@leemons/error');
+const { getEmailTypes } = require('@leemons/emails');
 const nodemailer = require('nodemailer');
 const testTemplate = require('../emails/test');
 
@@ -38,7 +38,7 @@ class Email {
    * Return array of installed providers for email
    * @public
    * @static
-   * @return {any[]}
+   * @return {Promise<any[]>}
    * */
   static async providers({ ctx }) {
     const providers = [];
@@ -433,7 +433,7 @@ class Email {
         html: email.html,
         provider,
       });
-      // console.log('--> Resultado email:', info);
+      console.log('--> Resultado email:', info);
       info.error = false;
       return info;
     } catch (err) {

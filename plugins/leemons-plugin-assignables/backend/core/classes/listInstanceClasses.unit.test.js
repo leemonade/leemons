@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { listInstanceClasses } = require('./listInstanceClasses');
 const { classesSchema } = require('../../models/classes');
@@ -144,7 +150,10 @@ it('Should list classes for multiple instances', async () => {
   await ctx.db.Classes.insertMany(initialValues);
 
   // Act
-  const response = await listInstanceClasses({ id: [instanceId, instanceId2], ctx });
+  const response = await listInstanceClasses({
+    id: [instanceId, instanceId2],
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual({

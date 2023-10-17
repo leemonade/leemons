@@ -1,4 +1,4 @@
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 
 // AJV Validator
 const gradeValidationObject = {
@@ -27,12 +27,21 @@ const gradeValidationObject = {
       type: 'boolean',
     },
   },
-  required: ['assignation', 'subject', 'type', 'grade', 'gradedBy', 'visibleToStudent'],
+  required: [
+    'assignation',
+    'subject',
+    'type',
+    'grade',
+    'gradedBy',
+    'visibleToStudent',
+  ],
   additionalProperties: false,
 };
 
 function validateGrade(grade) {
-  const validator = new LeemonsValidator(gradeValidationObject, { allowUnionTypes: true });
+  const validator = new LeemonsValidator(gradeValidationObject, {
+    allowUnionTypes: true,
+  });
 
   if (!validator.validate(grade)) {
     throw validator.error;

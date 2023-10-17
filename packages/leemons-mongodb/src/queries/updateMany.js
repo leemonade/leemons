@@ -1,5 +1,5 @@
-const { addTransactionState } = require('leemons-transactions');
-const { generateLRN } = require('leemons-lrn');
+const { addTransactionState } = require('@leemons/transactions');
+const { generateLRN } = require('@leemons/lrn');
 const { ObjectId } = require('mongodb');
 const _ = require('lodash');
 const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
@@ -21,7 +21,7 @@ function updateMany({
   ignoreTransaction,
   ctx,
 }) {
-  return async function (_conditions, _update, options) {
+  return async function (_conditions = {}, _update = {}, options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
       autoTransaction,

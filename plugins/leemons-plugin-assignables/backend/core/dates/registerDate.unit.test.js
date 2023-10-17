@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { registerDate } = require('./registerDate');
 const { datesSchema } = require('../../models/dates');
@@ -68,10 +74,14 @@ it('Should throw if no required params are provided', async () => {
   });
 
   // Act
-  const noTypeFn = () => registerDate({ type: undefined, instance, name, date, ctx });
-  const noInstanceFn = () => registerDate({ type, instance: undefined, name, date, ctx });
-  const noNameFn = () => registerDate({ type, instance, name: undefined, date, ctx });
-  const noDateFn = () => registerDate({ type, instance, name, date: undefined, ctx });
+  const noTypeFn = () =>
+    registerDate({ type: undefined, instance, name, date, ctx });
+  const noInstanceFn = () =>
+    registerDate({ type, instance: undefined, name, date, ctx });
+  const noNameFn = () =>
+    registerDate({ type, instance, name: undefined, date, ctx });
+  const noDateFn = () =>
+    registerDate({ type, instance, name, date: undefined, ctx });
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(

@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getInstanceDates } = require('./getInstanceDates');
 const { datesSchema } = require('../../../models/dates');

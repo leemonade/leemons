@@ -1,12 +1,11 @@
-async function sharePackage(
-  id,
-  { canAccess, programsCanAccess, classesCanAccess, isPublic },
-  { transacting, userSession } = {}
-) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+async function sharePackage({ id, canAccess, programsCanAccess, classesCanAccess, isPublic, ctx }) {
   await Promise.all(
     canAccess.map(({ userAgent, role }) =>
-      assignableService.addUserToAssignable(id, [userAgent], role, { userSession, transacting })
+      ctx.tx.call('assignables.assignables.addUserToAssignable', {
+        assignableId: id,
+        userAgents: [userAgent],
+        role,
+      })
     )
   );
 }

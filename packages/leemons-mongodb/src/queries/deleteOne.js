@@ -1,4 +1,4 @@
-const { addTransactionState } = require('leemons-transactions');
+const { addTransactionState } = require('@leemons/transactions');
 const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
 const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const {
@@ -16,9 +16,17 @@ function deleteOne({
   ignoreTransaction,
   ctx,
 }) {
-  return async function (_conditions, options = {}) {
-    if (options.soft) {
-      return updateOne(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
+  return async function (_conditions = {}, options = {}) {
+    if (options?.soft) {
+      return updateOne({
+        model,
+        modelKey,
+        autoDeploymentID,
+        autoTransaction,
+        autoRollback,
+        ignoreTransaction,
+        ctx,
+      })(_conditions, { isDeleted: true, deletedAt: new Date() }, options);
     }
     await createTransactionIDIfNeed({
       ignoreTransaction,

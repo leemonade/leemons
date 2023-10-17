@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { profiles: getUserProfiles } = require('./profiles');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 
@@ -71,7 +71,10 @@ async function profileToken({ user, profile, ctx }) {
     profilesTokens = await Promise.all(
       profiles.map((item) =>
         generateJWTToken({
-          userAgent: userAgentsByRole[item.role].id,
+          payload: {
+            userAgent: userAgentsByRole[item.role].id,
+          },
+          ctx,
         })
       )
     );

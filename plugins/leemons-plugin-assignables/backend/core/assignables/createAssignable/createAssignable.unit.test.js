@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { omit } = require('lodash');
 
 jest.mock('../../subjects/saveSubjects');
@@ -10,11 +16,15 @@ jest.mock('../publishAssignable');
 
 const { createAssignable } = require('./createAssignable');
 const { assignablesSchema } = require('../../../models/assignables');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 const { saveSubjects } = require('../../subjects');
 const { publishAssignable } = require('../publishAssignable');
-const { addPermissionToUser } = require('../../permissions/assignables/users/addPermissionToUser');
+const {
+  addPermissionToUser,
+} = require('../../permissions/assignables/users/addPermissionToUser');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -53,8 +63,12 @@ const actions = {
       id: `${uuid}@1.0.0`,
     };
   },
-  'leebrary.assets.duplicate': ({ assetId: id }) => ({ id: `duplicated-asset-from-${id}` }),
-  'leebrary.assets.update': ({ asset }) => ({ id: `updated-asset-from-${asset.id}` }),
+  'leebrary.assets.duplicate': ({ assetId: id }) => ({
+    id: `duplicated-asset-from-${id}`,
+  }),
+  'leebrary.assets.update': ({ asset }) => ({
+    id: `updated-asset-from-${asset.id}`,
+  }),
 };
 
 it('Should register the new assignable', async () => {
@@ -69,22 +83,32 @@ it('Should register the new assignable', async () => {
       ...assignable.metadata,
       leebrary: {
         other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({ assetId: assignable.metadata.leebrary.other }).id
+          actions['leebrary.assets.duplicate']({
+            assetId: assignable.metadata.leebrary.other,
+          }).id
         ),
         test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: asset }).id)
+          expect.stringContaining(
+            actions['leebrary.assets.duplicate']({ assetId: asset }).id
+          )
         ),
       },
     },
     resources: assignable.resources.map((resource) =>
-      expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: resource }).id)
+      expect.stringContaining(
+        actions['leebrary.assets.duplicate']({ assetId: resource }).id
+      )
     ),
   };
 
   const ctx = generateCtx({
     actions,
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -96,7 +120,10 @@ it('Should register the new assignable', async () => {
   expect(response).toEqual(expect.objectContaining(expectedValue));
   expect(savedAssignable).toEqual(expect.objectContaining(expectedValue));
   expect(saveSubjects).toHaveBeenCalledWith(
-    expect.objectContaining({ assignableId: response.id, subjects: assignable.subjects })
+    expect.objectContaining({
+      assignableId: response.id,
+      subjects: assignable.subjects,
+    })
   );
 });
 
@@ -116,22 +143,32 @@ it('Should register the new agnostic assignable (no subjects)', async () => {
       ...assignable.metadata,
       leebrary: {
         other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({ assetId: assignable.metadata.leebrary.other }).id
+          actions['leebrary.assets.duplicate']({
+            assetId: assignable.metadata.leebrary.other,
+          }).id
         ),
         test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: asset }).id)
+          expect.stringContaining(
+            actions['leebrary.assets.duplicate']({ assetId: asset }).id
+          )
         ),
       },
     },
     resources: assignable.resources.map((resource) =>
-      expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: resource }).id)
+      expect.stringContaining(
+        actions['leebrary.assets.duplicate']({ assetId: resource }).id
+      )
     ),
   };
 
   const ctx = generateCtx({
     actions,
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -143,7 +180,10 @@ it('Should register the new agnostic assignable (no subjects)', async () => {
   expect(response).toEqual(expect.objectContaining(expectedValue));
   expect(savedAssignable).toEqual(expect.objectContaining(expectedValue));
   expect(saveSubjects).toHaveBeenCalledWith(
-    expect.objectContaining({ assignableId: response.id, subjects: assignable.subjects })
+    expect.objectContaining({
+      assignableId: response.id,
+      subjects: assignable.subjects,
+    })
   );
 });
 
@@ -159,22 +199,32 @@ it('Should register the new assignable in published format', async () => {
       ...assignable.metadata,
       leebrary: {
         other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({ assetId: assignable.metadata.leebrary.other }).id
+          actions['leebrary.assets.duplicate']({
+            assetId: assignable.metadata.leebrary.other,
+          }).id
         ),
         test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: asset }).id)
+          expect.stringContaining(
+            actions['leebrary.assets.duplicate']({ assetId: asset }).id
+          )
         ),
       },
     },
     resources: assignable.resources.map((resource) =>
-      expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: resource }).id)
+      expect.stringContaining(
+        actions['leebrary.assets.duplicate']({ assetId: resource }).id
+      )
     ),
   };
 
   const ctx = generateCtx({
     actions,
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -183,7 +233,9 @@ it('Should register the new assignable in published format', async () => {
 
   // Assert
   expect(response).toEqual(expect.objectContaining(expectedValue));
-  expect(publishAssignable).toHaveBeenCalledWith(expect.objectContaining({ id: response.id }));
+  expect(publishAssignable).toHaveBeenCalledWith(
+    expect.objectContaining({ id: response.id })
+  );
 });
 
 it('Should use the provided id and asset id for the new assignable', async () => {
@@ -199,7 +251,11 @@ it('Should use the provided id and asset id for the new assignable', async () =>
   const ctx = generateCtx({
     actions,
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -218,7 +274,11 @@ it('Should create the userAgent permissions for the assignable', async () => {
   const ctx = generateCtx({
     actions,
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -256,7 +316,11 @@ it('Should return an empty array of resources and no leebrary if not provided', 
   const ctx = generateCtx({
     actions,
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
@@ -274,13 +338,19 @@ it('Should throw an error if no required assignable param is provided', async ()
   const ctx = generateCtx({
     actions,
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        'Assignables',
+        assignablesSchema
+      ),
     },
   });
 
   // Act
-  const noAssetFn = () => createAssignable({ assignable: omit(assignable, ['asset']), ctx });
-  const noRoleFn = () => createAssignable({ assignable: omit(assignable, ['role']), ctx });
+  const noAssetFn = () =>
+    createAssignable({ assignable: omit(assignable, ['asset']), ctx });
+  const noRoleFn = () =>
+    createAssignable({ assignable: omit(assignable, ['role']), ctx });
 
   // Assert
   await expect(noAssetFn()).rejects.toThrowError(/asset/);

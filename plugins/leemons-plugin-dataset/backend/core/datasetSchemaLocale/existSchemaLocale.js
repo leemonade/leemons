@@ -1,4 +1,4 @@
-const { getTranslationKey } = require('leemons-multilanguage');
+const { getTranslationKey } = require('@leemons/multilanguage');
 const { validateExistSchemaLocaleData } = require('../../validations/datasetSchemaLocale');
 
 /**
@@ -16,13 +16,13 @@ const { validateExistSchemaLocaleData } = require('../../validations/datasetSche
  * @param {string} locale
  * @param {any=} transacting - DB transaction
  * @example
- * existLocation('users-dataset', 'plugins.users');
+ * existLocation('users-dataset', 'users');
  * @return {Promise<boolean>}
  * */
 async function _existSchemaLocale({ locationName, pluginName, key, locale, ctx }) {
   validateExistSchemaLocaleData({ locationName, pluginName, key, locale });
   return ctx.tx.call('multilanguage.contents.has', {
-    key: getTranslationKey({ locationName, pluginName, key }),
+    key: getTranslationKey({ locationName, pluginName, key, ctx }),
     locale,
   });
 }

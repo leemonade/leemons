@@ -1,19 +1,20 @@
 const path = require('path');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { addLocalesDeploy } = require('leemons-multilanguage');
-const { LeemonsMultiEventsMixin } = require('leemons-multi-events');
-const { addMenuItemsDeploy } = require('leemons-menu-builder');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('leemons-widgets');
-const { addPermissionsDeploy } = require('leemons-permissions');
-const { LeemonsMongoDBMixin } = require('leemons-mongodb');
-const { getEmailTypes } = require('leemons-emails');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { getEmailTypes } = require('@leemons/emails');
 
+const { menuItems, widgets, permissions } = require('../config/constants');
+const { getServiceModels } = require('../models');
 const newActivity = require('../emails/userCreateAssignation');
 const rememberActivity = require('../emails/userAssignationRemember');
 const rememberActivityTimeout = require('../emails/userRememberAssignationTimeout');
 const userWeekly = require('../emails/userWeekly');
-const { menuItems, widgets, permissions } = require('../config/constants');
-const { getServiceModels } = require('../models');
 const { afterAddClassTeacher } = require('../core/events/afterAddClassTeacher');
 const { afterRemoveClassesTeachers } = require('../core/events/afterRemoveClassesTeachers');
 
@@ -95,6 +96,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   multiEvents: [

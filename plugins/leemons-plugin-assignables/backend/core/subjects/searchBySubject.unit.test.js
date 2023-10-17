@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { searchBySubject } = require('./searchBySubject');
 const { subjectsSchema } = require('../../models/subjects');
@@ -234,5 +240,7 @@ it('Should throw if no required params are provided', () => {
   const testFn = () => searchBySubject({ id: undefined, ctx });
 
   // Assert
-  return expect(testFn).rejects.toThrowError('Cannot search by subject: id is required');
+  return expect(testFn).rejects.toThrowError(
+    'Cannot search by subject: id is required'
+  );
 });

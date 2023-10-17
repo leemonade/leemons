@@ -15,11 +15,6 @@ const { validatePermissionName } = require('../../validations/exists');
  * @return {Promise<any>} Created permissions-roles
  * */
 async function addPermissionMany({ roleId, permissions, isCustom, ctx }) {
-  if (ctx.callerPlugin !== 'users') {
-    _.forEach(permissions, (permission) => {
-      validatePermissionName(permission.permissionName, ctx.callerPlugin);
-    });
-  }
   const roleExist = await ctx.tx.db.Roles.countDocuments({ id: roleId });
   if (!roleExist) throw new Error('The role with the specified id does not exist');
   const items = [];

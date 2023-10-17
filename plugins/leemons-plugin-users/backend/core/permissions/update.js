@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { addActionMany } = require('./addActionMany');
 
 /**
@@ -16,7 +16,7 @@ async function update({ ctx, ...data }) {
   });
   if (!permission)
     throw new LeemonsError(ctx, {
-      message: `Permission '${data.permissionName}' for plugin '${this.calledFrom}' not exists`,
+      message: `Permission '${data.permissionName}' for plugin '${ctx.callerPlugin}' not exists`,
     });
 
   ctx.logger.info(`Updating permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);

@@ -1,10 +1,18 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getInstancesData } = require('./getInstancesData');
 const { instancesSchema } = require('../../../../models/instances');
-const { getInstanceObject } = require('../../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../../__fixtures__/getInstanceObject');
 
 // MOCKS
 jest.mock('./getAssignablesData');
@@ -59,8 +67,16 @@ it('Should return instances data correctly', async () => {
   await ctx.db.Instances.create(initialValues);
 
   const mockAssignablesData = {
-    [initialValues[0].assignable]: { asset: {}, id: initialValues[0].assignable, role: 'task' },
-    [initialValues[1].assignable]: { asset: {}, id: initialValues[1].assignable, role: 'feedback' },
+    [initialValues[0].assignable]: {
+      asset: {},
+      id: initialValues[0].assignable,
+      role: 'task',
+    },
+    [initialValues[1].assignable]: {
+      asset: {},
+      id: initialValues[1].assignable,
+      role: 'feedback',
+    },
   };
   getAssignablesData.mockResolvedValue(mockAssignablesData);
 
@@ -113,8 +129,16 @@ it('Should return related instances data correctly', async () => {
   ];
   await ctx.db.Instances.create(initialValues);
   const mockAssignablesData = {
-    [initialValues[0].assignable]: { asset: {}, id: initialValues[0].assignable, role: 'task' },
-    [initialValues[1].assignable]: { asset: {}, id: initialValues[1].assignable, role: 'feedback' },
+    [initialValues[0].assignable]: {
+      asset: {},
+      id: initialValues[0].assignable,
+      role: 'task',
+    },
+    [initialValues[1].assignable]: {
+      asset: {},
+      id: initialValues[1].assignable,
+      role: 'feedback',
+    },
   };
 
   getAssignablesData.mockResolvedValue(mockAssignablesData);
@@ -126,7 +150,9 @@ it('Should return related instances data correctly', async () => {
       alwaysAvailable: true,
       requiresScoring: false,
       allowFeedback: false,
-      relatedAssignableInstances: JSON.parse(initialValues[0].relatedAssignableInstances),
+      relatedAssignableInstances: JSON.parse(
+        initialValues[0].relatedAssignableInstances
+      ),
     },
     [instances[1]]: {
       id: instances[1],
@@ -135,15 +161,23 @@ it('Should return related instances data correctly', async () => {
       alwaysAvailable: true,
       requiresScoring: false,
       allowFeedback: false,
-      relatedAssignableInstances: JSON.parse(initialValues[1].relatedAssignableInstances),
+      relatedAssignableInstances: JSON.parse(
+        initialValues[1].relatedAssignableInstances
+      ),
     },
   };
   // Act
-  const response = await getInstancesData({ instances, relatedInstances: true, ctx });
+  const response = await getInstancesData({
+    instances,
+    relatedInstances: true,
+    ctx,
+  });
 
   // Assert
   expect(getAssignablesData).toBeCalledWith({
-    assignables: expect.arrayContaining(initialValues.map((item) => item.assignable)),
+    assignables: expect.arrayContaining(
+      initialValues.map((item) => item.assignable)
+    ),
     ctx,
   });
   expect(response).toMatchObject(expectedResult);

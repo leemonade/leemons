@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const getAllItemsForTheUserAgentHasPermissionsByTypeHandler = jest.fn();
 
@@ -18,7 +18,9 @@ it('Should list instances that user has permission', async () => {
     },
   });
 
-  getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockReturnValue(expectedValue);
+  getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockReturnValue(
+    expectedValue
+  );
 
   // Act
   const response = await listAssignableInstancesUserHasPermissionTo({ ctx });

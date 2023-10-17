@@ -1,14 +1,16 @@
 // TODO Add tests for else branches (main flow is covered)
 
 const { describe, it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
-const { LeemonsError } = require('leemons-error');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
+const { LeemonsError } = require('@leemons/error');
 
 const { updateAssignable } = require('./updateAssignable');
 const { assignablesSchema } = require('../../../models/assignables');
 
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 jest.mock('../getAssignable');
 const { getAssignable } = require('../getAssignable');
@@ -17,7 +19,9 @@ jest.mock('../createAssignable');
 const { createAssignable } = require('../createAssignable');
 
 jest.mock('../../permissions/assignables/users/getUserPermission');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const {
+  getUserPermission,
+} = require('../../permissions/assignables/users/getUserPermission');
 
 jest.mock('../../leebrary/assets/updateAsset');
 const { updateAsset } = require('../../leebrary/assets/updateAsset');
@@ -122,7 +126,9 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: true }),
+        'common.versionControl.getVersion': jest
+          .fn()
+          .mockReturnValue({ published: true }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
@@ -153,7 +159,10 @@ describe('updateAssignable function', () => {
 
     // Assert
     expect(getAssignable).toBeCalledWith({ id: updatedAssignable.id, ctx });
-    expect(getUserPermission).toBeCalledWith({ assignableId: assignable.id, ctx });
+    expect(getUserPermission).toBeCalledWith({
+      assignableId: assignable.id,
+      ctx,
+    });
     expect(updateAsset).toBeCalledWith({
       asset: { ...updatedAssignable.asset, file: updatedAssignable.file },
       upgrade: true,
@@ -161,14 +170,23 @@ describe('updateAssignable function', () => {
       scale: 'major',
       ctx,
     });
-    expect(listAssignableUserAgents).toBeCalledWith({ assignableId: updatedAssignable.id, ctx });
+    expect(listAssignableUserAgents).toBeCalledWith({
+      assignableId: updatedAssignable.id,
+      ctx,
+    });
     expect(addUserToAssignable).toBeCalledWith(
       expect.objectContaining({ assignableId: 'assetId@2.0.0', ctx })
     );
     expect(publishAssignable).toBeCalledWith({ id: 'assetId@2.0.0', ctx });
     expect(publishAssignable).toBeCalledTimes(1);
-    expect(responseWithPublish).toEqual({ ...updatedAssignable, published: true });
-    expect(responseWithoutPublish).toEqual({ ...updatedAssignable, published: false });
+    expect(responseWithPublish).toEqual({
+      ...updatedAssignable,
+      published: true,
+    });
+    expect(responseWithoutPublish).toEqual({
+      ...updatedAssignable,
+      published: false,
+    });
   });
 
   it('update the assignable subject correctly', async () => {
@@ -186,7 +204,9 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest
+          .fn()
+          .mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
@@ -202,7 +222,9 @@ describe('updateAssignable function', () => {
       { id: 'agent2', role: 'role2' },
     ]);
     updateSubjects.mockReturnValue(subjects);
-    duplicateAsset.mockReturnValue({ id: '550e8400-e29b-41d4-a716-446655440000@2.0.1' });
+    duplicateAsset.mockReturnValue({
+      id: '550e8400-e29b-41d4-a716-446655440000@2.0.1',
+    });
 
     // Act
     const response = await updateAssignable({
@@ -213,7 +235,10 @@ describe('updateAssignable function', () => {
 
     // Assert
     expect(getAssignable).toBeCalledWith({ id: updatedAssignable.id, ctx });
-    expect(getUserPermission).toBeCalledWith({ assignableId: assignable.id, ctx });
+    expect(getUserPermission).toBeCalledWith({
+      assignableId: assignable.id,
+      ctx,
+    });
     expect(updateAsset).toBeCalledWith({
       asset: { ...updatedAssignable.asset, file: updatedAssignable.file },
       upgrade: true,
@@ -225,7 +250,10 @@ describe('updateAssignable function', () => {
 
     expect(duplicateAsset).not.toBeCalled();
 
-    expect(response).toEqual({ ...updatedAssignable, id: updatedAssignable.id });
+    expect(response).toEqual({
+      ...updatedAssignable,
+      id: updatedAssignable.id,
+    });
   });
 
   it('update the assignable correctly', async () => {
@@ -245,13 +273,19 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest
+          .fn()
+          .mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
       },
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -266,7 +300,9 @@ describe('updateAssignable function', () => {
       { id: 'agent2', role: 'role2' },
     ]);
     updateSubjects.mockReturnValue(subjects);
-    duplicateAsset.mockReturnValue({ id: '550e8400-e29b-41d4-a716-446655440000@2.0.1' });
+    duplicateAsset.mockReturnValue({
+      id: '550e8400-e29b-41d4-a716-446655440000@2.0.1',
+    });
 
     // Act
     const response = await updateAssignable({
@@ -280,7 +316,10 @@ describe('updateAssignable function', () => {
 
     // Assert
     expect(getAssignable).toBeCalledWith({ id: updatedAssignable.id, ctx });
-    expect(getUserPermission).toBeCalledWith({ assignableId: assignable.id, ctx });
+    expect(getUserPermission).toBeCalledWith({
+      assignableId: assignable.id,
+      ctx,
+    });
     expect(updateAsset).toBeCalledWith({
       asset: { ...updatedAssignable.asset, file: updatedAssignable.file },
       upgrade: true,
@@ -297,7 +336,10 @@ describe('updateAssignable function', () => {
       indexable: 0,
       ctx,
     });
-    expect(removeAsset).toBeCalledWith({ id: '550e8400-e29b-41d4-a716-446655440000@2.0.0', ctx });
+    expect(removeAsset).toBeCalledWith({
+      id: '550e8400-e29b-41d4-a716-446655440000@2.0.0',
+      ctx,
+    });
 
     expect(response).toEqual({
       ...updatedAssignable,
@@ -332,13 +374,19 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest
+          .fn()
+          .mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
       },
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -361,7 +409,10 @@ describe('updateAssignable function', () => {
 
     // Assert
     expect(getAssignable).toBeCalledWith({ id: updatedAssignable.id, ctx });
-    expect(getUserPermission).toBeCalledWith({ assignableId: assignable.id, ctx });
+    expect(getUserPermission).toBeCalledWith({
+      assignableId: assignable.id,
+      ctx,
+    });
     expect(updateAsset).toBeCalledWith({
       asset: { ...updatedAssignable.asset, file: updatedAssignable.file },
       upgrade: true,
@@ -411,13 +462,19 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest
+          .fn()
+          .mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
       },
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          'Assignables',
+          assignablesSchema
+        ),
       },
     });
 
@@ -440,7 +497,10 @@ describe('updateAssignable function', () => {
 
     // Assert
     expect(getAssignable).toBeCalledWith({ id: updatedAssignable.id, ctx });
-    expect(getUserPermission).toBeCalledWith({ assignableId: assignable.id, ctx });
+    expect(getUserPermission).toBeCalledWith({
+      assignableId: assignable.id,
+      ctx,
+    });
     expect(updateAsset).toBeCalledWith({
       asset: { ...updatedAssignable.asset, file: updatedAssignable.file },
       upgrade: true,
@@ -488,10 +548,14 @@ describe('updateAssignable function', () => {
 
     // Assert
     await expect(testFn()).rejects.toThrow(
-      new LeemonsError(ctx, { message: 'Failed to update assignable: No changes detected' })
+      new LeemonsError(ctx, {
+        message: 'Failed to update assignable: No changes detected',
+      })
     );
     await expect(testFn2()).rejects.toThrow(
-      new LeemonsError(ctx, { message: 'Failed to update assignable: No changes detected' })
+      new LeemonsError(ctx, {
+        message: 'Failed to update assignable: No changes detected',
+      })
     );
   });
 
@@ -515,7 +579,9 @@ describe('updateAssignable function', () => {
     // Assert
 
     await expect(testFn()).rejects.toThrow(
-      new LeemonsError(ctx, { message: 'Failed to update assignable: The assignable is deleted' })
+      new LeemonsError(ctx, {
+        message: 'Failed to update assignable: The assignable is deleted',
+      })
     );
   });
 
@@ -537,7 +603,9 @@ describe('updateAssignable function', () => {
 
     // Assert
     await expect(testFn()).rejects.toThrow(
-      new LeemonsError(ctx, { message: 'Failed to update assignable: You do not have permissions' })
+      new LeemonsError(ctx, {
+        message: 'Failed to update assignable: You do not have permissions',
+      })
     );
   });
 });

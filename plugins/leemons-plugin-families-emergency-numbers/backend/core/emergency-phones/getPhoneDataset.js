@@ -1,13 +1,14 @@
 const _ = require('lodash');
 
-async function getPhoneDataset(phone, userSession, { transacting } = {}) {
+async function getPhoneDataset({ phone, ctx }) {
   const locationName = 'families-emergency-numbers-data';
-  const pluginName = 'plugins.families-emergency-numbers';
-  const dataset = leemons.getPlugin('dataset').services.dataset;
+  const pluginName = 'families-emergency-numbers';
 
-  return dataset.getValues(locationName, pluginName, userSession.userAgents, {
+  return ctx.tx.call('dataset.dataset.getValues', {
+    locationName,
+    pluginName,
+    userAgent: ctx.meta.userSession?.userAgents,
     target: phone,
-    transacting,
   });
 }
 

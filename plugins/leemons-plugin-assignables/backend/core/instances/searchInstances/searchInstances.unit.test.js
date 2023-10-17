@@ -1,12 +1,20 @@
 // TODO UNFINISHED TEST (skipped)
 
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { searchInstances } = require('./searchInstances');
 const { instancesSchema } = require('../../../models/instances');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
 const { getActivitiesByProfile } = require('./getActivitiesByProfile');
 const { filterByInstanceDates } = require('./filterByInstanceDates');
@@ -25,7 +33,11 @@ jest.mock('./getAssignables');
 const instance = getInstanceObject();
 
 const instances = [
-  { ...instance, id: 'instanceId1', relatedAssignableInstances: { after: ['instanceId3'] } },
+  {
+    ...instance,
+    id: 'instanceId1',
+    relatedAssignableInstances: { after: ['instanceId3'] },
+  },
   { ...instance, id: 'instanceId2' },
 ];
 
@@ -86,8 +98,16 @@ describe('searchInstances if role is teacher', () => {
       isTeacher: true,
       assignableInstances: ['instanceId1', 'instanceId2', 'instanceId3'],
     });
-    filterByInstanceDates.mockReturnValue(['instanceId1', 'instanceId2', 'instanceId3']);
-    filterByClasses.mockReturnValue(['instanceId1', 'instanceId2', 'instanceId3']);
+    filterByInstanceDates.mockReturnValue([
+      'instanceId1',
+      'instanceId2',
+      'instanceId3',
+    ]);
+    filterByClasses.mockReturnValue([
+      'instanceId1',
+      'instanceId2',
+      'instanceId3',
+    ]);
     getAssignables.mockReturnValue([
       {
         asset: 'assetId1',
@@ -115,8 +135,15 @@ describe('searchInstances if role is teacher', () => {
       assignableInstancesIds: ['instanceId1'],
       ctx,
     });
-    expect(filterByClasses).toBeCalledWith({ query, assignableInstancesIds: ['instanceId1'], ctx });
-    expect(getAssignables).toBeCalledWith({ assignableInstancesIds: ['instanceId1'], ctx });
+    expect(filterByClasses).toBeCalledWith({
+      query,
+      assignableInstancesIds: ['instanceId1'],
+      ctx,
+    });
+    expect(getAssignables).toBeCalledWith({
+      assignableInstancesIds: ['instanceId1'],
+      ctx,
+    });
     expect(searchByAsset).toBeCalledWith({
       assignableInstancesIds: ['instanceId1'],
       query,

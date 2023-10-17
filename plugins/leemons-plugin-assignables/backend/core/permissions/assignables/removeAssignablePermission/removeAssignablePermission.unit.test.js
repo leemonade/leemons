@@ -1,5 +1,5 @@
 const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { removeAssignablePermission } = require('./removeAssignablePermission');
 const { getPermissionType } = require('../helpers/getPermissionType');
@@ -39,7 +39,8 @@ it('Should throw if required params are not provided', async () => {
 
   // Act
   const noIdFn = () => removeAssignablePermission({ id: undefined, role, ctx });
-  const noRoleFn = () => removeAssignablePermission({ id, role: undefined, ctx });
+  const noRoleFn = () =>
+    removeAssignablePermission({ id, role: undefined, ctx });
 
   // Assert
   await expect(noIdFn).rejects.toThrowError(
@@ -67,5 +68,7 @@ it('Should handle internal function error', async () => {
   const testFn = () => removeAssignablePermission({ id, role, ctx });
 
   // Assert
-  await expect(testFn).rejects.toThrowError(`Error removing permission: ${error}`);
+  await expect(testFn).rejects.toThrowError(
+    `Error removing permission: ${error}`
+  );
 });

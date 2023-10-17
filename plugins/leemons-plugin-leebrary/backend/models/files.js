@@ -1,6 +1,11 @@
-const { mongoose, newModel } = require('leemons-mongodb');
+const { mongoose, newModel } = require('@leemons/mongodb');
+const { isString } = require('lodash');
 
-const schema = new mongoose.Schema(
+function requiredWhenNotString() {
+  return !isString(this.uri);
+}
+
+const filesSchema = new mongoose.Schema(
   {
     id: {
       type: String,
@@ -36,7 +41,10 @@ const schema = new mongoose.Schema(
     },
     uri: {
       type: String,
-      required: true,
+      required: requiredWhenNotString,
+    },
+    isFolder: {
+      type: Boolean,
     },
     metadata: {
       type: String,
@@ -47,6 +55,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const filesModel = newModel(mongoose.connection, 'v1::leebrary_Files', schema);
+const filesModel = newModel(mongoose.connection, 'v1::leebrary_Files', filesSchema);
 
-module.exports = { filesModel };
+module.exports = { filesModel, filesSchema };

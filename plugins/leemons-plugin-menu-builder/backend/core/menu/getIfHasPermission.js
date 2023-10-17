@@ -1,6 +1,8 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
-const transformManyMenuItemsToFrontEndMenu = require('../menu-item/transformManyMenuItemsToFrontEndMenu');
+const { LeemonsError } = require('@leemons/error');
+const {
+  transformManyMenuItemsToFrontEndMenu,
+} = require('../menu-item/transformManyMenuItemsToFrontEndMenu');
 const { validateNotExistMenu } = require('../../validations/exists');
 
 /**
@@ -68,8 +70,9 @@ async function getIfHasPermission({ menuKey, ctx }) {
 
   // ES: Cogemos solo los elementos del menu a los que tenemos acceso
   // EN: We take only the menu items to which we have access.
+  const typeTemplate = _.escapeRegExp(ctx.prefixPN(`${menuKey}.menu-item`));
   const query = {
-    type: { $regex: `^${ctx.prefixPN(`${menuKey}.menu-item`)}` },
+    type: { $regex: `^${typeTemplate}` },
   };
   query.$or = queryPermissions;
   const menuItemPermissions = await ctx.tx.call('users.permissions.findItems', { params: query });

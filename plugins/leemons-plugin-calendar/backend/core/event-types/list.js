@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Lista all event types
@@ -9,8 +8,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function list({ transacting } = {}) {
-  let eventTypes = await table.eventTypes.find(undefined, { transacting });
+async function list({ ctx }) {
+  let eventTypes = await ctx.tx.db.EventTypes.find().lean();
   eventTypes = _.sortBy(eventTypes, 'order');
   return _.map(eventTypes, (eventType) => ({
     ...eventType,

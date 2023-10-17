@@ -1,6 +1,6 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { findInstanceDates } = require('./findInstanceDates');
 const { getServiceModels } = require('../../../models');
 
@@ -40,12 +40,12 @@ it('Should find instance dates', async () => {
 
   await ctx.tx.db.Dates.create([
     {
-        id: 'id1',
-        type: 'assignableInstance',
-        instance: 'instance1',
-        name: 'name1',
-        date: new Date()
-    }
+      id: 'id1',
+      type: 'assignableInstance',
+      instance: 'instance1',
+      name: 'name1',
+      date: new Date(),
+    },
   ]);
 
   // Act
@@ -56,4 +56,3 @@ it('Should find instance dates', async () => {
   expect(result).toHaveProperty('instance1');
   expect(result.instance1).toHaveProperty('name1');
 });
-

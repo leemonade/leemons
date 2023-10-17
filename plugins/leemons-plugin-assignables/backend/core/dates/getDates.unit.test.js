@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getDates } = require('./getDates');
 const { datesSchema } = require('../../models/dates');
@@ -58,7 +64,11 @@ it('Should return an object with the instance dates', async () => {
   };
 
   // Act
-  const response = await getDates({ instance: instanceId, type: 'instance', ctx });
+  const response = await getDates({
+    instance: instanceId,
+    type: 'instance',
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual(expectedValue);
@@ -115,7 +125,11 @@ it('Should return an object with the dates per instance', async () => {
   };
 
   // Act
-  const response = await getDates({ instance: [instanceId, instanceId2], type: 'instance', ctx });
+  const response = await getDates({
+    instance: [instanceId, instanceId2],
+    type: 'instance',
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual(expectedValue);
@@ -132,7 +146,11 @@ it('Should return empty object if no date is found for instance', async () => {
   });
 
   // Act
-  const response = await getDates({ instance: instanceId, type: 'instance', ctx });
+  const response = await getDates({
+    instance: instanceId,
+    type: 'instance',
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual({});
@@ -150,7 +168,11 @@ it('Should return empty object if no date is found in array instances', async ()
   });
 
   // Act
-  const response = await getDates({ instance: [instanceId, instanceId2], type: 'instance', ctx });
+  const response = await getDates({
+    instance: [instanceId, instanceId2],
+    type: 'instance',
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual({});
@@ -174,5 +196,7 @@ it('Should throw if no instance or type are provided', async () => {
   await expect(noInstanceFn).rejects.toThrowError(
     'Cannot get dates: type and instance are required'
   );
-  await expect(noTypeFn).rejects.toThrowError('Cannot get dates: type and instance are required');
+  await expect(noTypeFn).rejects.toThrowError(
+    'Cannot get dates: type and instance are required'
+  );
 });

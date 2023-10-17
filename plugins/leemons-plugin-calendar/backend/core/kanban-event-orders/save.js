@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * Add kanban column
  * @public
@@ -10,11 +8,12 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function save(userSession, column, events, { transacting } = {}) {
-  const result = await table.kanbanEventOrders.set(
+async function save({ column, events, ctx }) {
+  const { userSession } = ctx.meta;
+  const result = await ctx.tx.db.KanbanEventOrders.findOneAndUpdate(
     { userAgent: userSession.userAgents[0].id },
     { userAgent: userSession.userAgents[0].id, column, events: JSON.stringify(events) },
-    { transacting }
+    { new: true, lean: true, upsert: true }
   );
   return { ...result, events: JSON.parse(result.events) };
 }

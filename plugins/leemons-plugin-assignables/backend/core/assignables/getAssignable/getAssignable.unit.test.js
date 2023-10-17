@@ -1,5 +1,5 @@
 const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 globalJest.mock('../getAssignables');
 
@@ -16,7 +16,12 @@ it('Calls getAssignables and returns the first item', async () => {
   getAssignables.mockImplementation(() => ['First value']);
 
   // Act
-  const response = await getAssignable({ id, showDeleted: false, withFiles: true, ctx });
+  const response = await getAssignable({
+    id,
+    showDeleted: false,
+    withFiles: true,
+    ctx,
+  });
 
   // Assert
   expect(getAssignables).toBeCalledWith(

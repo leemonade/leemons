@@ -1,0 +1,50 @@
+name: Get packages and plugins modified
+on:
+  workflow_call:
+    inputs:
+      tag_pattern:
+        required: true
+        type: string
+    outputs:
+      packages:
+        description: "Modified packages"
+        value: ${{ jobs.publish.outputs.packages }}
+      plugins:
+        description: "Modified plugins"
+        value: ${{ jobs.publish.outputs.plugins }}
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.packages.outputs.packages }}
+      plugins: ${{ steps.plugins.outputs.plugins }}
+    steps:
+
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: 🔧 Get last tag
+        run: echo "LAST_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
+
+      - name: 🔧 Get current tag
+        run: echo "CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)" >> "$GITHUB_ENV"
+        
+      - name: 🔧 Get packages files
+        id: packages
+        run:  echo "packages=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^packages/' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Get plugins files
+        id: plugins
+        run:  echo "plugins=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^plugins/.*/backend' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Log plugins
+        run:  echo "${{ steps.plugins.outputs.plugins }}"
+
+      - name: 🔧 Log packages
+        run:  echo "${{ steps.packages.outputs.packages }}"
+
+

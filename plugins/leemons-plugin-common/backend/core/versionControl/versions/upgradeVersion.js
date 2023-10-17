@@ -1,5 +1,5 @@
 const semver = require('semver');
-const LeemonsError = require('leemons-error');
+const LeemonsError = require('@leemons/error');
 const { parseId, parseVersion } = require('../helpers');
 const createVersion = require('./createVersion');
 const update = require('../currentVersions/update');

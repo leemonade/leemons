@@ -5,12 +5,13 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
-const { getTagsRouterActions } = require('leemons-common');
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+} = require('@leemons/middlewares');
+const { getTagsRouterActions } = require('@leemons/common');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -23,6 +24,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
 
@@ -31,8 +33,10 @@ module.exports = {
       middlewares: [
         LeemonsMiddlewareAuthenticated(),
         LeemonsMiddlewareNecessaryPermits({
-          'users.users': {
-            actions: ['update', 'create', 'delete', 'admin'],
+          allowedPermissions: {
+            'users.users': {
+              actions: ['update', 'create', 'delete', 'admin'],
+            },
           },
         }),
       ],
@@ -40,6 +44,6 @@ module.exports = {
   },
 
   created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

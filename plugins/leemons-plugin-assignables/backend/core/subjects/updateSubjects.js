@@ -1,5 +1,5 @@
 const { differenceWith, isEqual, omit, map } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getSubjects } = require('./getSubjects');
 const { saveSubjects } = require('./saveSubjects');
 const { removeSubjects } = require('./removeSubjects');
@@ -12,7 +12,11 @@ async function updateSubjects({ assignable, subjects, ctx }) {
     });
   }
 
-  const savedSubjects = await getSubjects({ assignableIds: assignable, useIds: true, ctx });
+  const savedSubjects = await getSubjects({
+    assignableIds: assignable,
+    useIds: true,
+    ctx,
+  });
 
   const subjectsToAdd = differenceWith(subjects, savedSubjects, (a, b) =>
     isEqual(a, omit(b, ['id']))
@@ -22,7 +26,11 @@ async function updateSubjects({ assignable, subjects, ctx }) {
   );
 
   if (subjectsToAdd.length) {
-    await saveSubjects({ assignableId: assignable, subjects: subjectsToAdd, ctx });
+    await saveSubjects({
+      assignableId: assignable,
+      subjects: subjectsToAdd,
+      ctx,
+    });
   }
   if (subjectsToRemove.length) {
     await removeSubjects({ ids: map(subjectsToRemove, 'id'), ctx });

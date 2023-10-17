@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { listClasses } = require('./listClasses');
 const { classesSchema } = require('../../models/classes');
@@ -140,5 +146,7 @@ it('Should throw an error if no assignable and instance are provided', () => {
   const testFn = () => listClasses({ ctx });
 
   // Assert
-  expect(testFn).rejects.toThrowError('You must provide an assignable or an assignableInstance');
+  expect(testFn).rejects.toThrowError(
+    'You must provide an assignable or an assignableInstance'
+  );
 });

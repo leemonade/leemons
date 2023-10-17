@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { unregisterClass } = require('./unregisterClass');
 const { classesSchema } = require('../../models/classes');
@@ -47,7 +53,11 @@ it('Should unregister the class', async () => {
   await ctx.db.Classes.create(initialValue);
 
   // Act
-  const response = await unregisterClass({ instance: instanceId, id: classId, ctx });
+  const response = await unregisterClass({
+    instance: instanceId,
+    id: classId,
+    ctx,
+  });
   const documentsCount = await ctx.db.Classes.countDocuments({});
 
   // Assert
@@ -76,7 +86,11 @@ it('Should unregister multiple classes', async () => {
   await ctx.db.Classes.insertMany(initialValues);
 
   // Act
-  const response = await unregisterClass({ instance: instanceId, id: classIds, ctx });
+  const response = await unregisterClass({
+    instance: instanceId,
+    id: classIds,
+    ctx,
+  });
   const documentsCount = await ctx.db.Classes.countDocuments({});
 
   // Assert
@@ -118,7 +132,11 @@ it('Should not unregister all the classes in the table', async () => {
   await ctx.db.Classes.insertMany(initialValues);
 
   // Act
-  const response = await unregisterClass({ instance: instanceId, id: classId, ctx });
+  const response = await unregisterClass({
+    instance: instanceId,
+    id: classId,
+    ctx,
+  });
   const documentsCount = await ctx.db.Classes.countDocuments({});
 
   // Assert

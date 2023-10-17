@@ -19,12 +19,9 @@ async function getClassesProgramInfo({ programs: _programs, classes, ctx }) {
   }));
 }
 
-async function listSessionClasses({ program, type, withProgram, _withProgram, withTeachers, ctx }) {
+async function listSessionClasses({ program, type, withProgram, withTeachers, ctx }) {
   const { userSession } = ctx.meta;
-  if (_withProgram) {
-    // eslint-disable-next-line no-param-reassign
-    withProgram = _withProgram;
-  }
+
   let typeQuery = {};
   if (type) {
     typeQuery = {

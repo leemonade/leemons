@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 /**
  * Set default locale por platform
@@ -20,6 +20,8 @@ async function setDefaultLocale({ value, ctx }) {
       value,
     },
     {
+      new: true,
+      lean: true,
       upsert: true,
     }
   );

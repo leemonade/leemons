@@ -13,6 +13,6 @@ module.exports = class MultilanguageBase {
    */
   isOwner(key) {
     // TODO: Add to the callers the plugins prefix
-    return key.startsWith(`plugins.${this.caller}`);
+    return key.startsWith(`${this.caller}`);
   }
 };

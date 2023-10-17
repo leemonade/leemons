@@ -1,14 +1,13 @@
 const _ = require('lodash');
 
-const { LeemonsValidator } = global.utils;
-const { booleanSchemaNullable } = require('leemons-plugin-academic-calendar/src/validations/types');
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   stringSchema,
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
   textSchema,
-  numberSchema,
+  booleanSchemaNullable,
   integerSchemaNullable,
 } = require('./types');
 

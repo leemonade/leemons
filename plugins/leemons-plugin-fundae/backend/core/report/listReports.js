@@ -1,22 +1,21 @@
 const _ = require('lodash');
-const { tables } = require('../tables');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-async function listReports(page, size, { filters = {}, transacting } = {}) {
-  const response = await global.utils.paginate(
-    tables.report,
+async function listReports({ page, size, filters = {}, ctx }) {
+  const response = await mongoDBPaginate({
+    model: ctx.tx.db.Report,
     page,
     size,
-    { $sort: 'created_at:desc', ...filters },
-    {
-      transacting,
-    }
-  );
+    query: { ...filters },
+    sort: { createdAt: 1 },
+  });
 
-  const userServices = leemons.getPlugin('users').services;
-  const academicPortfolio = leemons.getPlugin('academic-portfolio').services;
   const [userAgents, programs] = await Promise.all([
-    userServices.users.getUserAgentsInfo(_.map(response.items, 'userAgent')),
-    academicPortfolio.programs.programsByIds(_.map(response.items, 'program'), {
+    ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentsIds: _.map(response.items, 'userAgent'),
+    }),
+    ctx.tx.call('academic-portfolio.programs.programsByIds', {
+      ids: _.map(response.items, 'program'),
       onlyProgram: true,
     }),
   ]);

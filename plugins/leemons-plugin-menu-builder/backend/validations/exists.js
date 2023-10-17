@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { exist: existMenu } = require('../core/menu/exist');
 const { exist: existMenuItem } = require('../core/menu-item/exist');
 

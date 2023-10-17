@@ -13,8 +13,8 @@ async function add({ class: _class, teacher, type, ctx }) {
     }).then((mongooseDoc) => mongooseDoc.toObject()),
     getClassProgram({ id: _class, ctx }),
     ctx.tx.call('comunica.room.addUserAgents', {
-      room: ctx.prefixPN(`room.class.${_class}`),
-      userAgent: teacher,
+      key: ctx.prefixPN(`room.class.${_class}`),
+      userAgents: teacher,
       isAdmin: true,
     }),
   ]);
@@ -22,7 +22,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   const { teacher: teacherProfileId } = await getProfiles({ ctx });
 
   await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-    userAgent: teacher,
+    userAgentId: teacher,
     data: {
       permissionName: `academic-portfolio.class.${_class}`,
       actionNames: ['view', 'edit'],
@@ -30,7 +30,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   });
 
   await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-    userAgent: teacher,
+    userAgentId: teacher,
     data: {
       permissionName: `academic-portfolio.class-profile.${_class}.${teacherProfileId}`,
       actionNames: ['view', 'edit'],
@@ -38,8 +38,8 @@ async function add({ class: _class, teacher, type, ctx }) {
   });
 
   try {
-    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-      userAgent: teacher,
+    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
+      userAgentId: teacher,
       data: {
         permissionName: `academic-portfolio.program.inside.${program.id}`,
         actionNames: ['view'],
@@ -50,8 +50,8 @@ async function add({ class: _class, teacher, type, ctx }) {
   }
 
   try {
-    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-      userAgent: teacher,
+    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
+      userAgentId: teacher,
       data: {
         permissionName: `academic-portfolio.program-profile.inside.${program.id}-${teacherProfileId}`,
         actionNames: ['view'],

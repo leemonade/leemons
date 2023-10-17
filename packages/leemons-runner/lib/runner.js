@@ -10,6 +10,7 @@ const os = require('os');
 const cluster = require('cluster');
 const kleur = require('kleur');
 const { execSync } = require('child_process');
+const { mongoose } = require('@leemons/mongodb');
 
 const stopSignals = [
   'SIGHUP',
@@ -56,20 +57,20 @@ class LeemonsRunner {
   }
 
   /**
-	 * Process command line arguments
-	 *
-	 * Available options:
-		-c, --config     Load the configuration from a file
-		-e, --env        Load .env file from the current directory
-		-E, --envfile    Load a specified .env file
-		-h, --help       Output usage information
-		-H, --hot        Hot reload services if changed (disabled by default)
-		-i, --instances  Launch [number] instances node (load balanced)
-		-m, --mask       Filemask for service loading
-		-r, --repl       Start REPL mode (disabled by default)
-		-s, --silent     Silent mode. No logger (disabled by default)
-		-v, --version    Output the version number
-	*/
+     * Process command line arguments
+     *
+     * Available options:
+     -c, --config     Load the configuration from a file
+     -e, --env        Load .env file from the current directory
+     -E, --envfile    Load a specified .env file
+     -h, --help       Output usage information
+     -H, --hot        Hot reload services if changed (disabled by default)
+     -i, --instances  Launch [number] instances node (load balanced)
+     -m, --mask       Filemask for service loading
+     -r, --repl       Start REPL mode (disabled by default)
+     -s, --silent     Silent mode. No logger (disabled by default)
+     -v, --version    Output the version number
+     */
   processFlags(procArgs) {
     Args.option('config', 'Load the configuration from a file')
       .option('repl', 'Start REPL mode', false)
@@ -138,10 +139,10 @@ class LeemonsRunner {
    *
    * Try to load a configuration file in order to:
    *
-   *		- load file defined in MOLECULER_CONFIG env var
-   * 		- try to load file which is defined in CLI option with --config
-   * 		- try to load the `moleculer.config.js` file if exist in the cwd
-   * 		- try to load the `moleculer.config.json` file if exist in the cwd
+   *        - load file defined in MOLECULER_CONFIG env var
+   *        - try to load file which is defined in CLI option with --config
+   *        - try to load the `moleculer.config.js` file if exist in the cwd
+   *        - try to load the `moleculer.config.json` file if exist in the cwd
    */
   loadConfigFile() {
     let filePath;
@@ -276,11 +277,11 @@ class LeemonsRunner {
    *
    * Example options:
    *
-   * 	Original broker option: `logLevel`
+   *    Original broker option: `logLevel`
    *  Config file property: 	`logLevel`
    *  Env variable:			`LOGLEVEL`
    *
-   * 	Original broker option: `circuitBreaker.enabled`
+   *    Original broker option: `circuitBreaker.enabled`
    *  Config file property: 	`circuitBreaker.enabled`
    *  Env variable:			`CIRCUITBREAKER_ENABLED`
    *
@@ -341,6 +342,17 @@ class LeemonsRunner {
     const packageJsonPath = path.join(svcDir, 'package.json');
     const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
     const packageJson = JSON.parse(packageJsonContent);
+
+    // We are executed inside a plugin
+    if (packageJson.name.indexOf('leemons-plugin-') === 0) {
+      return [
+        {
+          name: packageJson.name,
+          path: './',
+        },
+      ];
+    }
+
     const dependencies = Object.keys(packageJson.dependencies);
 
     const result = [];
@@ -357,6 +369,8 @@ class LeemonsRunner {
       }
     });
 
+    console.log(result);
+
     return result;
   }
 
@@ -370,10 +384,10 @@ class LeemonsRunner {
    * 5. If find directory(ies), load it/them
    *
    * Please note: you can use shorthand names for `SERVICES` env var.
-   * 	E.g.
-   * 		SERVICES=posts,users
+   *    E.g.
+   *        SERVICES=posts,users
    *
-   * 		It will be load the `posts.service.js` and `users.service.js` files
+   *        It will be load the `posts.service.js` and `users.service.js` files
    *
    *
    */
@@ -392,88 +406,88 @@ class LeemonsRunner {
     });
 
     /*
-    const serviceDir = process.env.SERVICEDIR || "";
-    const svcDir = path.isAbsolute(serviceDir)
-      ? serviceDir
-      : path.resolve(process.cwd(), serviceDir);
+                                                            const serviceDir = process.env.SERVICEDIR || "";
+                                                            const svcDir = path.isAbsolute(serviceDir)
+                                                              ? serviceDir
+                                                              : path.resolve(process.cwd(), serviceDir);
 
 
 
-    let patterns = this.servicePaths;
+                                                            let patterns = this.servicePaths;
 
-    if (process.env.SERVICES || process.env.SERVICEDIR) {
-      if (this.isDirectory(svcDir) && !process.env.SERVICES) {
-        // Load all services from directory (from subfolders too)
-        this.broker.loadServices(svcDir, fileMask);
+                                                            if (process.env.SERVICES || process.env.SERVICEDIR) {
+                                                              if (this.isDirectory(svcDir) && !process.env.SERVICES) {
+                                                                // Load all services from directory (from subfolders too)
+                                                                this.broker.loadServices(svcDir, fileMask);
 
-        if (this.config.hotReload) {
-          this.watchFolders.push(svcDir);
-        }
-      } else if (process.env.SERVICES) {
-        // Load services from env list
-        patterns = Array.isArray(process.env.SERVICES)
-          ? process.env.SERVICES
-          : process.env.SERVICES.split(",");
-      }
-    }
+                                                                if (this.config.hotReload) {
+                                                                  this.watchFolders.push(svcDir);
+                                                                }
+                                                              } else if (process.env.SERVICES) {
+                                                                // Load services from env list
+                                                                patterns = Array.isArray(process.env.SERVICES)
+                                                                  ? process.env.SERVICES
+                                                                  : process.env.SERVICES.split(",");
+                                                              }
+                                                            }
 
-    if (patterns.length > 0) {
-      let serviceFiles = [];
+                                                            if (patterns.length > 0) {
+                                                              let serviceFiles = [];
 
-      patterns
-        .map((s) => s.trim())
-        .forEach((p) => {
-          const skipping = p[0] == "!";
-          if (skipping) p = p.slice(1);
+                                                              patterns
+                                                                .map((s) => s.trim())
+                                                                .forEach((p) => {
+                                                                  const skipping = p[0] == "!";
+                                                                  if (skipping) p = p.slice(1);
 
-          if (p.startsWith("npm:")) {
-            // Load NPM module
-            this.loadNpmModule(p.slice(4));
-          } else {
-            let files;
-            const svcPath = path.isAbsolute(p) ? p : path.resolve(svcDir, p);
-            // Check is it a directory?
-            if (this.isDirectory(svcPath)) {
-              if (this.config.hotReload) {
-                this.watchFolders.push(svcPath);
-              }
-              files = glob(svcPath + "/" + fileMask, { absolute: true });
-              if (files.length == 0)
-                return this.broker.logger.warn(
-                  kleur
-                    .yellow()
-                    .bold(
-                      `There is no service files in directory: '${svcPath}'`
-                    )
-                );
-            } else if (this.isServiceFile(svcPath)) {
-              files = [svcPath.replace(/\\/g, "/")];
-            } else if (this.isServiceFile(svcPath + ".service.js")) {
-              files = [svcPath.replace(/\\/g, "/") + ".service.js"];
-            } else {
-              // Load with glob
-              files = glob(p, { cwd: svcDir, absolute: true });
-              if (files.length == 0)
-                this.broker.logger.warn(
-                  kleur
-                    .yellow()
-                    .bold(`There is no matched file for pattern: '${p}'`)
-                );
-            }
+                                                                  if (p.startsWith("npm:")) {
+                                                                    // Load NPM module
+                                                                    this.loadNpmModule(p.slice(4));
+                                                                  } else {
+                                                                    let files;
+                                                                    const svcPath = path.isAbsolute(p) ? p : path.resolve(svcDir, p);
+                                                                    // Check is it a directory?
+                                                                    if (this.isDirectory(svcPath)) {
+                                                                      if (this.config.hotReload) {
+                                                                        this.watchFolders.push(svcPath);
+                                                                      }
+                                                                      files = glob(svcPath + "/" + fileMask, { absolute: true });
+                                                                      if (files.length == 0)
+                                                                        return this.broker.logger.warn(
+                                                                          kleur
+                                                                            .yellow()
+                                                                            .bold(
+                                                                              `There is no service files in directory: '${svcPath}'`
+                                                                            )
+                                                                        );
+                                                                    } else if (this.isServiceFile(svcPath)) {
+                                                                      files = [svcPath.replace(/\\/g, "/")];
+                                                                    } else if (this.isServiceFile(svcPath + ".service.js")) {
+                                                                      files = [svcPath.replace(/\\/g, "/") + ".service.js"];
+                                                                    } else {
+                                                                      // Load with glob
+                                                                      files = glob(p, { cwd: svcDir, absolute: true });
+                                                                      if (files.length == 0)
+                                                                        this.broker.logger.warn(
+                                                                          kleur
+                                                                            .yellow()
+                                                                            .bold(`There is no matched file for pattern: '${p}'`)
+                                                                        );
+                                                                    }
 
-            if (files && files.length > 0) {
-              if (skipping)
-                serviceFiles = serviceFiles.filter(
-                  (f) => files.indexOf(f) === -1
-                );
-              else serviceFiles.push(...files);
-            }
-          }
-        });
+                                                                    if (files && files.length > 0) {
+                                                                      if (skipping)
+                                                                        serviceFiles = serviceFiles.filter(
+                                                                          (f) => files.indexOf(f) === -1
+                                                                        );
+                                                                      else serviceFiles.push(...files);
+                                                                    }
+                                                                  }
+                                                                });
 
-      _.uniq(serviceFiles).forEach((f) => this.broker.loadService(f));
-    }
-    */
+                                                              _.uniq(serviceFiles).forEach((f) => this.broker.loadService(f));
+                                                            }
+                                                            */
   }
 
   /**
@@ -562,6 +576,12 @@ class LeemonsRunner {
       .then(() => this.loadEnvFile())
       .then(() => this.loadConfigFile())
       .then(() => this.mergeOptions())
+      .then(() => {
+        return mongoose.connect(process.env.MONGO_URI, {
+          maxPoolSize: process.env.MAX_POOL_SIZE || 100,
+          minPoolSize: process.env.MIN_POOL_SIZE || 25,
+        });
+      })
       .then(() => this.startBroker())
       .catch((err) => {
         logger.error(err);

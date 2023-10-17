@@ -1,9 +1,8 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 const { checkIfStudentIsOnInstance } = require('./checkIfStudentIsOnInstance');
 const { getServiceModels } = require('../../../models');
-
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -33,11 +32,20 @@ it('Should return true if student is on instance', async () => {
 
   const ctx = generateCtx({
     models: {
-      Assignations: newModel(mongooseConnection, 'Assignations', getServiceModels().Assignations.schema),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        getServiceModels().Assignations.schema
+      ),
     },
   });
 
-  await ctx.tx.db.Assignations.create({ user, instance, classes: [], indexable: true });
+  await ctx.tx.db.Assignations.create({
+    user,
+    instance,
+    classes: [],
+    indexable: true,
+  });
 
   // Act
   const result = await checkIfStudentIsOnInstance({ user, instance, ctx });
@@ -53,7 +61,11 @@ it('Should return false if student is not on instance', async () => {
 
   const ctx = generateCtx({
     models: {
-      Assignations: newModel(mongooseConnection, 'Assignations', getServiceModels().Assignations.schema),
+      Assignations: newModel(
+        mongooseConnection,
+        'Assignations',
+        getServiceModels().Assignations.schema
+      ),
     },
   });
   console.log(await ctx.tx.db.Assignations.find({}).lean());
@@ -64,4 +76,3 @@ it('Should return false if student is not on instance', async () => {
   // Assert
   expect(result).toBe(false);
 });
-

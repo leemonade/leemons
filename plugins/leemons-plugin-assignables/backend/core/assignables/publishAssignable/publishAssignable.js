@@ -1,11 +1,13 @@
 const { pick } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const {
   validateAssignable,
   validAssignableProperties,
 } = require('../../../validations/validateAssignable');
 const { updateAsset } = require('../../leebrary/assets');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const {
+  getUserPermission,
+} = require('../../permissions/assignables/users/getUserPermission');
 const { getAssignable } = require('../getAssignable');
 
 /**
@@ -22,7 +24,10 @@ const { getAssignable } = require('../getAssignable');
 
 function validateAssignableForPublish({ assignable, ctx }) {
   if (assignable.isDeleted) {
-    throw new LeemonsError(ctx, { message: 'The assignable is deleted', httpStatusCode: 404 });
+    throw new LeemonsError(ctx, {
+      message: 'The assignable is deleted',
+      httpStatusCode: 404,
+    });
   }
 
   validateAssignable(pick(assignable, validAssignableProperties), {
@@ -40,7 +45,10 @@ async function publishAssignable({ id, ctx }) {
     const { actions } = await getUserPermission({ assignableId: id, ctx });
 
     if (!actions.includes('edit')) {
-      throw new LeemonsError(ctx, { message: 'You do not have permissions', httpStatusCode: 403 });
+      throw new LeemonsError(ctx, {
+        message: 'You do not have permissions',
+        httpStatusCode: 403,
+      });
     }
 
     await updateAsset({ asset: assignable.asset, published: true, ctx });

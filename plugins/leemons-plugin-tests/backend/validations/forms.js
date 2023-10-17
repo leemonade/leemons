@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { LeemonsValidator } = global.utils;
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   stringSchema,
   booleanSchema,

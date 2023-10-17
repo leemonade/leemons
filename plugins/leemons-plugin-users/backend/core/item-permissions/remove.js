@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { validateTypePrefix } = require('../../validations/exists');
 const { removeAllItemsCache } = require('./removeAllItemsCache');
 
@@ -29,14 +29,14 @@ async function remove({ query, ctx }) {
 
   if (typeArray) {
     _.forEach(query[typeKey], (key) => {
-      validateTypePrefix(key, this.calledFrom);
+      validateTypePrefix(key, ctx.callerPlugin);
     });
   } else {
-    validateTypePrefix(query[typeKey], this.calledFrom);
+    validateTypePrefix(query[typeKey], ctx.callerPlugin);
   }
 
   const response = await ctx.tx.db.ItemPermissions.deleteMany(query);
-  await removeAllItemsCache();
+  await removeAllItemsCache({ ctx });
   return response;
 }
 

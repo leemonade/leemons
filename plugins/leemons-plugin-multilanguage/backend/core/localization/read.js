@@ -217,7 +217,7 @@ async function getWithLocale({ locale, isPrivate, ctx }) {
   };
 
   if (isPrivate) {
-    query.key = { $regex: `^${ctx.callerPlugin}`, $options: 'i' };
+    query.key = { $regex: `^${_.escapeRegExp(ctx.callerPlugin)}`, $options: 'i' };
   }
 
   try {
@@ -276,11 +276,14 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
 
   try {
     const responses = await Promise.all(
-      _.map(tuple.locales, (locale) =>
+      _.map(tuple.locales, (_locale) =>
         getLocalizationModelFromCTXAndIsPrivate({
           isPrivate,
           ctx,
-        }).find({ key: { $regex: `^${tuple.key}`, $options: 'i' }, locale })
+        }).find({
+          key: { $regex: `^${_.escapeRegExp(tuple.key)}`, $options: 'i' },
+          locale: _locale,
+        })
       )
     );
     return mergeTranslations(responses);

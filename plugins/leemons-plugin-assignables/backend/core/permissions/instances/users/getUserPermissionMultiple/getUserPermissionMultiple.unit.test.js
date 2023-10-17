@@ -1,7 +1,7 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 
-const { newModel } = require('leemons-mongodb');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
+const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 
 const { getUserPermissionMultiple } = require('./getUserPermissionMultiple');
 const { classesSchema } = require('../../../../../models/classes');
@@ -43,7 +43,8 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     models: {
       Classes: newModel(mongooseConnection, 'Classes', classesSchema),
@@ -87,7 +88,11 @@ describe('getUserPermissionMultiple function', () => {
       },
     });
     expect(resp).toEqual([
-      { actions: ['edit', 'view'], assignableInstance: 'instanceId1', role: 'teacher' },
+      {
+        actions: ['edit', 'view'],
+        assignableInstance: 'instanceId1',
+        role: 'teacher',
+      },
     ]);
   });
 
@@ -119,8 +124,16 @@ describe('getUserPermissionMultiple function', () => {
     // Assert
     expect(getUserAgentPermissionsHandler).toHaveBeenCalledTimes(2);
     expect(resp).toEqual([
-      { actions: ['edit', 'view'], assignableInstance: 'instanceId1', role: 'teacher' },
-      { actions: ['edit', 'view'], assignableInstance: 'instanceId2', role: 'teacher' },
+      {
+        actions: ['edit', 'view'],
+        assignableInstance: 'instanceId1',
+        role: 'teacher',
+      },
+      {
+        actions: ['edit', 'view'],
+        assignableInstance: 'instanceId2',
+        role: 'teacher',
+      },
     ]);
   });
 
@@ -132,7 +145,9 @@ describe('getUserPermissionMultiple function', () => {
       ctx,
     };
 
-    getUserAgentPermissionsHandler.mockReturnValueOnce([]).mockReturnValueOnce([]);
+    getUserAgentPermissionsHandler
+      .mockReturnValueOnce([])
+      .mockReturnValueOnce([]);
 
     // Act
     const resp = await getUserPermissionMultiple(mockParams);

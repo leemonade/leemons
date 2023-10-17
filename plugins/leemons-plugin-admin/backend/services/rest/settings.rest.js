@@ -4,12 +4,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 const settingsService = require('../../core/settings');
 
 /** @type {ServiceSchema} */
@@ -32,8 +32,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.setup': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'permissions.setup': {
+            actions: ['admin'],
+          },
         },
       }),
     ],

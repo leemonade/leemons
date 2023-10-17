@@ -1,12 +1,9 @@
 /** @type {import('moleculer').ServiceSchema} */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-// Descomentar una vez hecho el merge con microservices/dev
-// const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-// const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const { registerRole, unregisterRole, getRole } = require('../core/roles');
 
@@ -19,7 +16,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
-    // LeemonsMQTTMixin(),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -41,6 +38,6 @@ module.exports = {
   },
   // Esto debe eliminarse una vez hecho el merge a microservices/dev
   async created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

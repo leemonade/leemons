@@ -1,4 +1,4 @@
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
 async function listSubjectType({ page, size, program, ctx }) {
   return mongoDBPaginate({

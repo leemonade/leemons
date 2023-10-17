@@ -10,7 +10,7 @@ async function update({ ctx, ...theme }) {
   let currentTheme = await findOne({ ctx });
   if (_.isNil(currentTheme)) {
     currentTheme = await ctx.tx.db.Theme.create({ configured: false });
-    currentTheme.toObject();
+    currentTheme = currentTheme.toObject();
   }
   const newTheme = { ...currentTheme, ...theme };
   delete newTheme.id;

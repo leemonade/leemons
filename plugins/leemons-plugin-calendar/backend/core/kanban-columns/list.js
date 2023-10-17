@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * List kanban columns
@@ -8,18 +7,12 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function list({ transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const columns = await table.kanbanColumns.find({}, { transacting });
-      return _.map(columns, (column) => ({
-        ...column,
-        nameKey: leemons.plugin.prefixPN(`kanban.columns.${column.id}`),
-      }));
-    },
-    table.calendars,
-    _transacting
-  );
+async function list({ ctx }) {
+  const columns = await ctx.tx.db.KanbanColumns.find().lean();
+  return _.map(columns, (column) => ({
+    ...column,
+    nameKey: ctx.prefixPN(`kanban.columns.${column.id}`),
+  }));
 }
 
 module.exports = { list };

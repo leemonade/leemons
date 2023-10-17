@@ -1,27 +1,24 @@
 const { map } = require('lodash');
-const { periods } = require('../tables');
+const { LeemonsError } = require('@leemons/error');
 
-module.exports = async function removePeriod(periodId, { transacting, userSession } = {}) {
+module.exports = async function removePeriod({ periodId, ctx }) {
   try {
-    const period = await periods.findOne({ id: periodId }, { transacting });
+    const period = await ctx.tx.db.Periods.findOne({ id: periodId }).lean();
 
     if (!period) {
-      throw new Error('period not found');
+      throw new LeemonsError(ctx, { message: 'period not found' });
     }
 
-    const userAgents = map(userSession.userAgents, 'id');
+    const userAgents = map(ctx.meta.userSession.userAgents, 'id');
 
     if (!userAgents.includes(period.createdBy)) {
-      throw new Error('you are not the creator of this period');
+      throw new LeemonsError(ctx, { message: 'you are not the creator of this period' });
     }
 
-    return await periods.delete(
-      {
-        id: periodId,
-      },
-      { transacting }
-    );
+    return await ctx.tx.db.Periods.deleteOne({
+      id: periodId,
+    });
   } catch (e) {
-    throw new Error(`Error removing period: ${e.message}`);
+    throw new LeemonsError(ctx, { message: `Error removing period: ${e.message}` });
   }
 };

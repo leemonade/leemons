@@ -1,9 +1,17 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { sendReminder } = require('./sendReminder');
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require('../../../__fixtures__/getInstanceObject');
 
 const { datesSchema } = require('../../../models/dates');
 
@@ -100,7 +108,12 @@ it('Should send reminder to users', async () => {
   getUserAgentsInfoHandler.mockResolvedValue(userAgents);
 
   // Act
-  await sendReminder({ assignableInstanceId: 'assignationId1', users, type, ctx });
+  await sendReminder({
+    assignableInstanceId: 'assignationId1',
+    users,
+    type,
+    ctx,
+  });
 
   // Assert
   expect(getInstance).toBeCalledWith({
@@ -177,7 +190,12 @@ it('Should send reminder to users', async () => {
   getUserAgentsInfoHandler.mockResolvedValue(userAgents);
 
   // Act
-  await sendReminder({ assignableInstanceId: 'assignationId1', users, type, ctx });
+  await sendReminder({
+    assignableInstanceId: 'assignationId1',
+    users,
+    type,
+    ctx,
+  });
 
   // Assert
   expect(getInstance).toBeCalledWith({

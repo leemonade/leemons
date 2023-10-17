@@ -5,9 +5,10 @@
 const _ = require('lodash');
 const { setTimeout } = require('timers/promises');
 const mongoose = require('mongoose');
-const { randomString } = require('leemons-utils');
+const { randomString } = require('@leemons/utils');
 const { Transaction } = require('../models/transaction');
 const { TransactionState } = require('../models/transaction-state');
+const { LeemonsError } = require('@leemons/error');
 
 async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber = 0) {
   const transaction = await Transaction.findOne({
@@ -61,7 +62,10 @@ module.exports = (broker) => ({
     new: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.deploymentID',
+            caller: ctx.caller,
+          });
         }
 
         const transaction = await Transaction.create({
@@ -76,10 +80,16 @@ module.exports = (broker) => ({
     addPendingState: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.deploymentID',
+            caller: ctx.caller,
+          });
         }
         if (!ctx.meta.transactionID) {
-          throw new Error('Need ctx.meta.transactionID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.transactionID',
+            caller: ctx.caller,
+          });
         }
 
         const transaction = await Transaction.findOneAndUpdate(
@@ -101,10 +111,16 @@ module.exports = (broker) => ({
     addFinishedState: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.deploymentID',
+            caller: ctx.caller,
+          });
         }
         if (!ctx.meta.transactionID) {
-          throw new Error('Need ctx.meta.transactionID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.transactionID',
+            caller: ctx.caller,
+          });
         }
         const transaction = await Transaction.findOneAndUpdate(
           {
@@ -123,13 +139,19 @@ module.exports = (broker) => ({
     addTransactionState: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.deploymentID',
+            caller: ctx.caller,
+          });
         }
         if (!ctx.meta.transactionID) {
-          throw new Error('Need ctx.meta.transactionID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.transactionID',
+            caller: ctx.caller,
+          });
         }
         if (!_.isString(ctx.params.action)) {
-          throw new Error('Field "action" is required and must be string');
+          throw new LeemonsError(ctx, { message: 'Field "action" is required and must be string' });
         }
         const transaction = await Transaction.findOne({
           _id: ctx.meta.transactionID,
@@ -167,10 +189,16 @@ module.exports = (broker) => ({
       async handler(ctx) {
         console.log(`--- ROLLBACK - ${ctx.meta.transactionID}`);
         if (!ctx.meta.deploymentID) {
-          throw new Error('Need ctx.meta.deploymentID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.deploymentID',
+            caller: ctx.caller,
+          });
         }
         if (!ctx.meta.transactionID) {
-          throw new Error('Need ctx.meta.transactionID');
+          throw new LeemonsError(ctx, {
+            message: 'Need ctx.meta.transactionID',
+            caller: ctx.caller,
+          });
         }
 
         let transaction = await Transaction.findOne({

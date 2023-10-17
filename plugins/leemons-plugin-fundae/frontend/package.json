@@ -1,0 +1,20 @@
+{
+  "name": "leemons-plugin-fundae-frontend-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/icons": "dev",
+    "@bubbles-ui/leemons": "dev",
+    "@loadable/component": "^5.15.2",
+    "lodash": "^4.17.21",
+    "p-min-delay": "^4.0.2",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.3",
+    "react-to-print": "^2.14.13"
+  },
+  "devDependencies": {}
+}

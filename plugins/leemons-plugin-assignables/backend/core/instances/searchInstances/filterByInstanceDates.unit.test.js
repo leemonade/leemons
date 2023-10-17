@@ -1,7 +1,7 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 const dayjs = require('dayjs');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { filterByInstanceDates } = require('./filterByInstanceDates');
 
@@ -296,7 +296,11 @@ describe('should filter instances by deadline', () => {
       });
 
       const mockParams = {
-        query: { finished: true, finished_$gt: dateBeforeNow, finished_$lt: dateAfterNow },
+        query: {
+          finished: true,
+          finished_$gt: dateBeforeNow,
+          finished_$lt: dateAfterNow,
+        },
         assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
         ctx,
       };
@@ -327,7 +331,11 @@ describe('should filter instances by deadline', () => {
         },
       });
       const mockParams = {
-        query: { finished: true, finished_$gt: undefined, finished_$lt: undefined },
+        query: {
+          finished: true,
+          finished_$gt: undefined,
+          finished_$lt: undefined,
+        },
         assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
         ctx,
       };

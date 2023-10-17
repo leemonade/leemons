@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { saveSubjects } = require('./saveSubjects');
 const { subjectsSchema } = require('../../models/subjects');
@@ -56,7 +62,11 @@ it('Should save the subjects to the assignable', async () => {
   });
 
   // Act
-  const response = await saveSubjects({ assignableId: assignable, subjects, ctx });
+  const response = await saveSubjects({
+    assignableId: assignable,
+    subjects,
+    ctx,
+  });
 
   const dbValues = await ctx.tx.db.Subjects.find({}).lean();
 

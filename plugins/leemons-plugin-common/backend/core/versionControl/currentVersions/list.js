@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const stringifyType = require('../helpers/type/stringifyType');
 const verifyOwnership = require('../helpers/type/verifyOwnership');
 

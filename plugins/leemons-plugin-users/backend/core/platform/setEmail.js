@@ -7,13 +7,15 @@
  * @return {Promise<any>}
  * */
 async function setEmail({ value, ctx }) {
-  return ctx.tx.db.Config.updateOne(
+  return ctx.tx.db.Config.findOneAndUpdate(
     { key: 'platform-email' },
     {
       key: 'platform-email',
       value,
     },
     {
+      new: true,
+      lean: true,
       upsert: true,
     }
   );

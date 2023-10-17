@@ -1,9 +1,10 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function registerDate({ type, instance, name, date, ctx }) {
   if (!type || !instance || !name || !date) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot register date: type, instance, name and date are required',
+      message:
+        'Cannot register date: type, instance, name and date are required',
       httpStatusCode: 400,
     });
   }

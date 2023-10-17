@@ -8,16 +8,14 @@ const _ = require('lodash');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeDatasetValues(family, { transacting } = {}) {
+async function removeDatasetValues({ family, ctx, tx = true }) {
   const locationName = 'families-data';
-  const pluginName = 'plugins.families';
-  const dataset = leemons.getPlugin('dataset').services.dataset;
+  const pluginName = 'families';
 
-  if (await dataset.existValues(locationName, pluginName, { target: family, transacting })) {
-    return dataset.deleteValues(locationName, pluginName, {
-      target: family,
-      transacting,
-    });
+  const call = tx ? ctx.tx.call : ctx.call;
+
+  if (await call('dataset.dataset.existValues', { locationName, pluginName, target: family })) {
+    return call('dataset.dataset.deleteValues', { locationName, pluginName, target: family });
   }
   return null;
 }

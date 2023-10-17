@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
-const { sqlDatetime, diffHours } = require('leemons-utils');
+const { sqlDatetime, diffHours } = require('@leemons/utils');
 
 const getAsset = require('../leebrary/assets/getAsset');
 
@@ -178,16 +178,21 @@ async function createNextInstance({
 }
 
 async function sendWeeklyEmails({ ctx }) {
-  const userAgentIds = await ctx.tx.call('emails.config.getUserAgentsWithKeyValue', {
-    key: 'week-resume-email',
-    value: new Date().getDay().toString(),
-  });
+  const userAgentIds = await ctx.tx.call(
+    'emails.config.getUserAgentsWithKeyValue',
+    {
+      key: 'week-resume-email',
+      value: new Date().getDay().toString(),
+    }
+  );
 
-  const [{ userAgentInstances, instanceDatesByInstanceId }, evaluatedActivities] =
-    await Promise.all([
-      getNextActivities({ userAgents: userAgentIds, ctx }),
-      getEvaluatedActivities({ userAgents: userAgentIds, ctx }),
-    ]);
+  const [
+    { userAgentInstances, instanceDatesByInstanceId },
+    evaluatedActivities,
+  ] = await Promise.all([
+    getNextActivities({ userAgents: userAgentIds, ctx }),
+    getEvaluatedActivities({ userAgents: userAgentIds, ctx }),
+  ]);
 
   let instanceIds = [];
   _.forIn(userAgentInstances, (value) => {
@@ -202,22 +207,23 @@ async function sendWeeklyEmails({ ctx }) {
 
   instanceIds = _.uniq(instanceIds);
 
-  const [hostname, hostnameApi, instances, _classes, userAgents] = await Promise.all([
-    ctx.tx.call('users.platform.getHostname'),
-    ctx.tx.call('users.platform.getHostnameApi'),
-    ctx.tx.db.Instances.find({
-      id: instanceIds,
-    }).lean(),
-    ctx.tx.db.Classes.find({
-      assignableInstance: instanceIds,
-    }).lean(),
-    // Sacamos el detalle de los user agent ya que lo necesitamos para enviar el email
-    ctx.tx.call('users.users.getUserAgentsInfo', {
-      userAgentIds: _.uniq(userAgentIds),
-      withCenter: true,
-      userColumns: ['id', 'email', 'locale'],
-    }),
-  ]);
+  const [hostname, hostnameApi, instances, _classes, userAgents] =
+    await Promise.all([
+      ctx.tx.call('users.platform.getHostname'),
+      ctx.tx.call('users.platform.getHostnameApi'),
+      ctx.tx.db.Instances.find({
+        id: instanceIds,
+      }).lean(),
+      ctx.tx.db.Classes.find({
+        assignableInstance: instanceIds,
+      }).lean(),
+      // Sacamos el detalle de los user agent ya que lo necesitamos para enviar el email
+      ctx.tx.call('users.users.getUserAgentsInfo', {
+        userAgentIds: _.uniq(userAgentIds),
+        withCenter: true,
+        userColumns: ['id', 'email', 'locale'],
+      }),
+    ]);
 
   const [assignables, classes] = await Promise.all([
     ctx.tx.db.Assignables.find({
@@ -249,8 +255,11 @@ async function sendWeeklyEmails({ ctx }) {
 
   const promises = _.map(userAgents, async (userAgent) => {
     const hasEvaluated =
-      evaluatedActivities[userAgent.id] && evaluatedActivities[userAgent.id].length > 0;
-    const hasNext = userAgentInstances[userAgent.id] && userAgentInstances[userAgent.id].length > 0;
+      evaluatedActivities[userAgent.id] &&
+      evaluatedActivities[userAgent.id].length > 0;
+    const hasNext =
+      userAgentInstances[userAgent.id] &&
+      userAgentInstances[userAgent.id].length > 0;
 
     if (hasNext || hasEvaluated) {
       let nextInstances = [];
@@ -278,19 +287,21 @@ async function sendWeeklyEmails({ ctx }) {
 
       if (hasNext) {
         const now = new Date();
-        const nextInstancesPromises = _.map(userAgentInstances[userAgent.id], async (instanceId) =>
-          createNextInstance({
-            assetById,
-            assignableById,
-            hostname,
-            hostnameApi,
-            instanceById,
-            instanceClasses,
-            instanceDatesByInstanceId,
-            instanceId,
-            now,
-            ctx,
-          })
+        const nextInstancesPromises = _.map(
+          userAgentInstances[userAgent.id],
+          async (instanceId) =>
+            createNextInstance({
+              assetById,
+              assignableById,
+              hostname,
+              hostnameApi,
+              instanceById,
+              instanceClasses,
+              instanceDatesByInstanceId,
+              instanceId,
+              now,
+              ctx,
+            })
         );
 
         nextInstances = await Promise.all(nextInstancesPromises);

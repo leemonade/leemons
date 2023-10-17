@@ -1,4 +1,4 @@
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 
 const subjectsValidationObject = {
   type: 'array',

@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 function getPermissionName({ id, prefix = false, ctx }) {
   if (!id) {

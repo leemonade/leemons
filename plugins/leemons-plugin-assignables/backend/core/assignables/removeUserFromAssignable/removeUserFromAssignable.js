@@ -1,9 +1,11 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { assignableRolesObject } = require('../../../config/constants');
 
 const { getAssignable } = require('../getAssignable');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const {
+  getUserPermission,
+} = require('../../permissions/assignables/users/getUserPermission');
 const {
   removePermissionFromUser,
 } = require('../../permissions/assignables/users/removePermissionFromUser');

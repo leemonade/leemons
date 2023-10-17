@@ -1,15 +1,11 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function removeConditionsByRule(ids, { transacting } = {}) {
-  const conditions = await table.conditions.find(
-    { rule_$in: _.isArray(ids) ? ids : [ids] },
-    { transacting }
-  );
+async function removeConditionsByRule({ ids, ctx }) {
+  const conditions = await ctx.tx.db.Conditions.find({ rule: _.isArray(ids) ? ids : [ids] }).lean();
   const conditionIds = _.map(conditions, 'id');
-  await leemons.events.emit('before-remove-conditions', { conditions, transacting });
-  await table.conditions.deleteMany({ id_$in: conditionIds }, { transacting });
-  await leemons.events.emit('after-remove-conditions', { conditions, transacting });
+  await ctx.tx.emit('before-remove-conditions', { conditions });
+  await ctx.tx.db.Conditions.deleteMany({ id: conditionIds });
+  await ctx.tx.emit('after-remove-conditions', { conditions });
   return true;
 }
 

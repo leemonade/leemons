@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongodb');
-const { getDeploymentIDFromCTX } = require('leemons-deployment-manager');
-const { getPluginNameFromCTX } = require('leemons-service-name-parser');
+const { getDeploymentIDFromCTX } = require('@leemons/deployment-manager');
+const { getPluginNameFromCTX } = require('@leemons/service-name-parser');
 
 function getLRNConfig({ modelKey, ctx }) {
   return {

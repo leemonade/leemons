@@ -1,26 +1,19 @@
 /* eslint-disable no-param-reassign */
-const { table } = require('../tables');
 
-async function setInstanceFeedback(
-  instanceId,
-  userAgent,
-  feedback,
-  { userSession, transacting } = {}
-) {
-  const { assignableInstances: assignableInstancesService } =
-    leemons.getPlugin('assignables').services;
+const { LeemonsError } = require('@leemons/error');
 
-  const permissions = await assignableInstancesService.getUserPermission(instanceId, {
-    userSession,
-    transacting,
+async function setInstanceFeedback({ instanceId, userAgent, feedback, ctx }) {
+  const permissions = await ctx.tx.call('assignables.assignableInstances.getUserPermission', {
+    assignableInstance: instanceId,
   });
+
   const isTeacher = permissions.actions.includes('edit');
 
   if (!isTeacher) {
-    throw new Error('Only teachers can set feedback');
+    throw new LeemonsError(ctx, { message: 'Only teachers can set feedback' });
   }
 
-  return table.userFeedback.set(
+  return ctx.tx.db.UserFeedback.findOneAndUpdate(
     {
       instance: instanceId,
       toUserAgent: userAgent,
@@ -28,9 +21,10 @@ async function setInstanceFeedback(
     {
       instance: instanceId,
       toUserAgent: userAgent,
-      fromUserAgent: userSession.userAgents[0].id,
+      fromUserAgent: ctx.meta.userSession.userAgents[0].id,
       feedback,
-    }
+    },
+    { upsert: true, new: true, lean: true }
   );
 }
 

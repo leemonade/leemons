@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function getDate({ type, instance, name, ctx }) {
   if (!type || !instance || !name) {

@@ -5,3 +5,5 @@ function getEmailTypes() {
 }
 
 module.exports = { getEmailTypes };
+
+// tdd

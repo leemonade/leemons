@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { updateEvent } = require('./updateEvent');
 
@@ -21,7 +21,13 @@ it('Should update an event (dates are Date objects)', async () => {
   updateEventHandler.mockResolvedValue({});
 
   // Act
-  const response = await updateEvent({ eventId, assignable, classes, dates, ctx });
+  const response = await updateEvent({
+    eventId,
+    assignable,
+    classes,
+    dates,
+    ctx,
+  });
 
   // Assert
   expect(updateEventHandler).toBeCalledWith({
@@ -49,12 +55,21 @@ it('Should update an event (dates are Strings)', async () => {
   const assignable = { asset: { name: 'Test Asset' } };
   const classes = ['class1', 'class2'];
   const eventId = 'testId';
-  const dates = { startDate: new Date().toISOString(), deadline: new Date().toISOString() };
+  const dates = {
+    startDate: new Date().toISOString(),
+    deadline: new Date().toISOString(),
+  };
 
   updateEventHandler.mockResolvedValue({});
 
   // Act
-  const response = await updateEvent({ eventId, assignable, classes, dates, ctx });
+  const response = await updateEvent({
+    eventId,
+    assignable,
+    classes,
+    dates,
+    ctx,
+  });
 
   // Assert
   expect(updateEventHandler).toBeCalledWith({

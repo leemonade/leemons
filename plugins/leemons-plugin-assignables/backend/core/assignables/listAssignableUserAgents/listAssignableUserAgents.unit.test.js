@@ -1,8 +1,10 @@
 const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 const { listAssignableUserAgents } = require('./listAssignableUserAgents');
 const { getAssignable } = require('../getAssignable');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const {
+  getUserPermission,
+} = require('../../permissions/assignables/users/getUserPermission');
 
 // Mocking the external function calls
 jest.mock('../getAssignable');
@@ -23,14 +25,21 @@ describe('listAssignableUserAgents', () => {
     const assignableId = 'assignable1';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.findUserAgentsWithPermission': findUserAgentsWithPermissionHandler,
+        'users.permissions.findUserAgentsWithPermission':
+          findUserAgentsWithPermissionHandler,
         'users.users.getUserAgentsInfo': getUserAgentsInfoHandler,
       },
     });
     const expectedUserPermission = { role: 'student', action: 'view' };
     getAssignable.mockResolvedValue();
-    findUserAgentsWithPermissionHandler.mockResolvedValue(['userAgentId1', 'userAgentId2']);
-    getUserAgentsInfoHandler.mockResolvedValue([{ id: 'userAgentId1' }, { id: 'userAgentId2' }]);
+    findUserAgentsWithPermissionHandler.mockResolvedValue([
+      'userAgentId1',
+      'userAgentId2',
+    ]);
+    getUserAgentsInfoHandler.mockResolvedValue([
+      { id: 'userAgentId1' },
+      { id: 'userAgentId2' },
+    ]);
     getUserPermission.mockResolvedValue(expectedUserPermission);
 
     // Act

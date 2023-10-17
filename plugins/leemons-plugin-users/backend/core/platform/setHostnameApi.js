@@ -9,13 +9,15 @@ const URL = require('url');
  * */
 async function setHostnameApi({ value, ctx }) {
   const url = URL.parse(value, true);
-  return ctx.tx.db.Config.updateOne(
+  return ctx.tx.db.Config.findOneAndUpdate(
     { key: 'platform-hostname-api' },
     {
       key: 'platform-hostname-api',
       value: `${url.protocol}//${url.host}`,
     },
     {
+      lean: true,
+      new: true,
       upsert: true,
     }
   );

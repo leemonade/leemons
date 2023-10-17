@@ -1,3 +1,6 @@
+const selectPlaceholder = 'Seleccionar...';
+const requiredField = 'Campo necesario';
+
 module.exports = {
   tableInput: {
     add: 'Añadir',
@@ -86,25 +89,25 @@ module.exports = {
             },
           },
           placeholders: {
-            center: 'Seleccionar...',
-            program: 'Seleccionar...',
-            course: 'Seleccionar...',
-            subject: 'Seleccionar...',
+            center: selectPlaceholder,
+            program: selectPlaceholder,
+            course: selectPlaceholder,
+            subject: selectPlaceholder,
             addSubject: 'Añadir asignatura',
-            level: 'Seleccionar...',
+            level: selectPlaceholder,
           },
           errorMessages: {
             program: {
-              required: 'Campo necesario',
+              required: requiredField,
             },
             course: {
-              required: 'Campo necesario',
+              required: requiredField,
             },
             subject: {
-              required: 'Campo necesario',
+              required: requiredField,
             },
             level: {
-              required: 'Campo necesario',
+              required: requiredField,
             },
           },
         },

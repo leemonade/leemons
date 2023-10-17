@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function getUserAgentRooms(userAgent, { transacting } = {}) {
-  const rooms = await table.userAgentInRoom.find({ userAgent }, { transacting });
+async function getUserAgentRooms({ userAgent, ctx }) {
+  const rooms = await ctx.tx.db.UserAgentInRoom.find({ userAgent }).select(['room']).lean();
   return _.map(rooms, 'room');
 }
 

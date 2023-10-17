@@ -1,7 +1,3 @@
-'use strict';
-
-const ChannelsMiddleware = require('@moleculer/channels').Middleware;
-
 /**
  * Moleculer ServiceBroker configuration file
  *
@@ -11,13 +7,13 @@ const ChannelsMiddleware = require('@moleculer/channels').Middleware;
  *
  * Overwriting options in production:
  * ================================
- * 	You can overwrite any option with environment variables.
- * 	For example to overwrite the "logLevel" value, use `LOGLEVEL=warn` env var.
- * 	To overwrite a nested parameter, e.g. retryPolicy.retries, use `RETRYPOLICY_RETRIES=10` env var.
+ *  You can overwrite any option with environment variables.
+ *  For example to overwrite the "logLevel" value, use `LOGLEVEL=warn` env var.
+ *  To overwrite a nested parameter, e.g. retryPolicy.retries, use `RETRYPOLICY_RETRIES=10` env var.
  *
- * 	To overwrite broker’s deeply nested default options, which are not presented in "moleculer.config.js",
- * 	use the `MOL_` prefix and double underscore `__` for nested properties in .env file.
- * 	For example, to set the cacher prefix to `MYCACHE`, you should declare an env var as `MOL_CACHER__OPTIONS__PREFIX=mycache`.
+ *  To overwrite broker’s deeply nested default options, which are not presented in "moleculer.config.js",
+ *  use the `MOL_` prefix and double underscore `__` for nested properties in .env file.
+ *  For example, to set the cacher prefix to `MYCACHE`, you should declare an env var as `MOL_CACHER__OPTIONS__PREFIX=mycache`.
  *  It will set this:
  *  {
  *    cacher: {
@@ -33,7 +29,7 @@ module.exports = {
   // Namespace of nodes to segment your nodes on the same network.
   namespace: '',
   // Unique node identifier. Must be unique in a namespace.
-  nodeID: 'leemons-users',
+  nodeID: null,
   // Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
   metadata: {},
 
@@ -62,7 +58,7 @@ module.exports = {
   // More info: https://moleculer.services/docs/0.14/networking.html
   // Note: During the development, you don't need to define it because all services will be loaded locally.
   // In production you can set it via `TRANSPORTER=nats://localhost:4222` environment variable.
-  transporter: null, //"NATS"
+  transporter: null, // "NATS"
 
   // Define a cacher.
   // More info: https://moleculer.services/docs/0.14/caching.html
@@ -74,7 +70,7 @@ module.exports = {
   serializer: 'JSON',
 
   // Number of milliseconds to wait before reject a request with a RequestTimeout error. Disabled: 0
-  requestTimeout: 10 * 1000,
+  requestTimeout: 2 * 60 * 1000,
 
   // Retry policy settings. More info: https://moleculer.services/docs/0.14/fault-tolerance.html#Retry
   retryPolicy: {
@@ -157,15 +153,12 @@ module.exports = {
   // Enable/disable built-in metrics function. More info: https://moleculer.services/docs/0.14/metrics.html
   metrics: {
     enabled: false,
-    // Available built-in reporters: "Console", "CSV", "Event", "Prometheus", "Datadog", "StatsD"
     reporter: {
       type: 'Prometheus',
       options: {
-        // HTTP port
         port: 3030,
-        // HTTP URL path
         path: '/metrics',
-        // Default labels which are appended to all metrics labels
+        metricNamePrefix: 'users.',
         defaultLabels: (registry) => ({
           namespace: registry.broker.namespace,
           nodeID: registry.broker.nodeID,
@@ -176,32 +169,25 @@ module.exports = {
 
   // Enable built-in tracing function. More info: https://moleculer.services/docs/0.14/tracing.html
   tracing: {
-    enabled: false,
-    // Available built-in exporters: "Console", "Datadog", "Event", "EventLegacy", "Jaeger", "Zipkin"
+    enabled: true,
     exporter: {
-      type: 'Console', // Console exporter is only for development!
+      type: 'Jaeger',
       options: {
-        // Custom logger
-        logger: null,
-        // Using colors
-        colors: true,
-        // Width of row
-        width: 100,
-        // Gauge width in the row
-        gaugeWidth: 40,
+        endpoint: null,
+        host: process.env.JAEGER_HOST,
+        port: process.env.JAEGER_PORT,
+        sampler: {
+          type: 'Const',
+          options: {},
+        },
+        tracerOptions: {},
+        defaultTags: null,
       },
     },
   },
 
   // Register custom middlewares
-  middlewares: [
-    /*
-    ChannelsMiddleware({
-      adapter:
-        "redis://",
-    }),
-    */
-  ],
+  middlewares: [],
 
   // Register custom REPL commands.
   replCommands: null,

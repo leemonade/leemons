@@ -1,0 +1,14 @@
+[
+  "ora",
+  "execa",
+  "chalk",
+  "squirrelly",
+  "babel-loader",
+  "@svgr/webpack",
+  "react-router-dom",
+  "fs-extra",
+  "commander",
+  "boxen",
+  "webpack-dev-server",
+  "address"
+]

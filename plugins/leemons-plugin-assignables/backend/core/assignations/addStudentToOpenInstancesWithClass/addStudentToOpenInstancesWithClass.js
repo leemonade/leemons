@@ -1,6 +1,6 @@
 const { map, difference, compact, uniq } = require('lodash');
 
-const { sqlDatetime } = require('leemons-utils');
+const { sqlDatetime } = require('@leemons/utils');
 
 const { searchInstancesByClass } = require('../../classes');
 
@@ -26,7 +26,9 @@ async function filterByOpenInstances({ instances, ctx }) {
         },
         {
           name: 'deadline',
-          date: { $lte: sqlDatetime(new Date().getTime() + 24 * 60 * 60 * 1000) },
+          date: {
+            $lte: sqlDatetime(new Date().getTime() + 24 * 60 * 60 * 1000),
+          },
         },
         {
           name: 'archived',
@@ -38,7 +40,10 @@ async function filterByOpenInstances({ instances, ctx }) {
 
   const expiredInstancesIds = map(InstanceDates, 'instance');
 
-  const openInstances = difference(autoAssignableInstancesIds, expiredInstancesIds);
+  const openInstances = difference(
+    autoAssignableInstancesIds,
+    expiredInstancesIds
+  );
 
   return openInstances;
 }
@@ -64,17 +69,21 @@ async function getInstancesClasses({ instances, ctx }) {
   const instancesClassesObj = {};
 
   const classes = map(instancesClasses, 'class');
-  const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
-    ids: classes,
-    withTeachers: true,
-  });
+  const classesData = await ctx.tx.call(
+    'academic-portfolio.classes.classByIds',
+    {
+      ids: classes,
+      withTeachers: true,
+    }
+  );
   const classesById = {};
   classesData.forEach((classData) => {
     classesById[classData.id] = classData;
   });
 
   instancesClasses.forEach((instance) => {
-    instancesClassesObj[instance.assignableInstance] = classesById[instance.class];
+    instancesClassesObj[instance.assignableInstance] =
+      classesById[instance.class];
   });
 
   return instancesClassesObj;
@@ -99,7 +108,11 @@ async function grantUserAccessToEvens({ student, instances, ctx }) {
 async function addStudentToInstances({ student, instances, ctx }) {
   // EN: Check if user is on the instances
   // ES: Comprobar si el usuario ya ha sido asignado
-  const alreadyAssignedInstances = await getAlreadyAssignedInstances({ student, instances, ctx });
+  const alreadyAssignedInstances = await getAlreadyAssignedInstances({
+    student,
+    instances,
+    ctx,
+  });
   const instancesToAssign = difference(instances, alreadyAssignedInstances);
 
   // EN: Add the student to all the instances
@@ -142,11 +155,14 @@ async function addStudentToInstances({ student, instances, ctx }) {
 }
 
 async function getMainTeacherUserSession({ klass, ctx }) {
-  const teachers = await ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {
-    classe: { id: klass },
-    type: 'main-teacher',
-    returnIds: true,
-  });
+  const teachers = await ctx.tx.call(
+    'academic-portfolio.classes.teacherGetByClass',
+    {
+      classe: { id: klass },
+      type: 'main-teacher',
+      returnIds: true,
+    }
+  );
 
   const mainTeacher = teachers[0];
 
@@ -159,10 +175,17 @@ async function getMainTeacherUserSession({ klass, ctx }) {
   };
 }
 
-async function addStudentsToOpenInstancesWithClass({ student, class: klass, ctx }) {
+async function addStudentsToOpenInstancesWithClass({
+  student,
+  class: klass,
+  ctx,
+}) {
   const assignableInstances = await searchInstancesByClass({ id: klass, ctx });
 
-  const openInstances = await filterByOpenInstances({ instances: assignableInstances, ctx });
+  const openInstances = await filterByOpenInstances({
+    instances: assignableInstances,
+    ctx,
+  });
 
   const userSession = await getMainTeacherUserSession({ klass, ctx });
 

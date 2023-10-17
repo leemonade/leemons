@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getAssignationsDates } = require('./getAssignationsDates');
 const { datesSchema } = require('../../../models/dates');
@@ -43,7 +49,10 @@ it('Should return dates if has assignations', async () => {
   const expectedResponse = { instanceId1: { start: date.date } };
 
   // Act
-  const response = await getAssignationsDates({ assignations: ['instanceId1'], ctx });
+  const response = await getAssignationsDates({
+    assignations: ['instanceId1'],
+    ctx,
+  });
 
   // Assert
   expect(response).toEqual(expectedResponse);

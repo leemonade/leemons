@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { pick, forEach, sortBy } = require('lodash');
 
 async function getSubjects({ assignableIds, useIds = false, ctx }) {
@@ -10,12 +10,19 @@ async function getSubjects({ assignableIds, useIds = false, ctx }) {
   }
   const ids = Array.isArray(assignableIds) ? assignableIds : [assignableIds];
 
-  const subjects = await ctx.tx.db.Subjects.find({ assignable: { $in: ids } }).lean();
+  const subjects = await ctx.tx.db.Subjects.find({
+    assignable: { $in: ids },
+  }).lean();
 
   const subjectsPerAssignable = {};
 
   subjects.forEach((subject) => {
-    const subjectData = pick(subject, ['program', 'subject', 'level', 'curriculum']);
+    const subjectData = pick(subject, [
+      'program',
+      'subject',
+      'level',
+      'curriculum',
+    ]);
 
     if (useIds) {
       subjectData.id = subject.id;

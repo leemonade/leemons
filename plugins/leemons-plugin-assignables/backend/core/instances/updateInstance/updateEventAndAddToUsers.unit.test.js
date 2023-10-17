@@ -4,7 +4,7 @@ const {
   beforeEach,
   jest: { spyOn },
 } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { updateEventAndAddToUsers } = require('./updateEventAndAddToUsers');
 
@@ -43,7 +43,13 @@ it('Should update event and add to users', async () => {
 
   // Act
 
-  const response = await updateEventAndAddToUsers({ assignable, event, dates, id, ctx });
+  const response = await updateEventAndAddToUsers({
+    assignable,
+    event,
+    dates,
+    id,
+    ctx,
+  });
 
   // Assert
   expect(listInstanceClasses).toHaveBeenCalledWith({ id, ctx });
@@ -72,7 +78,13 @@ it('Should log an error if there is an error', async () => {
   });
 
   // Act
-  const resp = await updateEventAndAddToUsers({ assignable, event, dates, id, ctx });
+  const resp = await updateEventAndAddToUsers({
+    assignable,
+    event,
+    dates,
+    id,
+    ctx,
+  });
 
   // Assert
   expect(spyErrorLogger).toBeCalled();

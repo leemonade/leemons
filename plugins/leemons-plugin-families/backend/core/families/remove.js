@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { table } = require('../tables');
+const { mainMenuKey } = require('@leemons/menu-builder');
 const { getMembers } = require('./getMembers');
 const { removeMember } = require('../family-members/removeMember');
 const { removeDatasetValues } = require('./removeDatasetValues');
@@ -12,51 +12,47 @@ const { removeDatasetValues } = require('./removeDatasetValues');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function remove(family, { transacting: _transacting } = {}) {
-  const menuBuilderServices = leemons.getPlugin('menu-builder').services;
+async function remove({ family, ctx }) {
+  const { guardians, students } = await getMembers({ familyId: family, ctx });
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const { guardians, students } = await getMembers(family, { transacting });
+  const promises = [];
 
-      const promises = [];
+  try {
+    await ctx.call('menu-builder.menuItem.remove', {
+      menuKey: mainMenuKey,
+      key: ctx.prefixPN(`family-${family}`),
+    });
+  } catch (e) {
+    // Nothing
+  }
 
-      try {
-        await menuBuilderServices.menuItem.remove(
-          menuBuilderServices.config.constants.mainMenuKey,
-          leemons.plugin.prefixPN(`family-${family}`),
-          { transacting }
-        );
-      } catch (e) {}
+  try {
+    await removeDatasetValues({ family, ctx, tx: false });
+  } catch (e) {
+    // Nothing
+  }
 
-      try {
-        await removeDatasetValues(family, { transacting });
-      } catch (e) {}
-
-      _.forEach(guardians, (guardian) => {
-        promises.push(removeMember(family, guardian.id, { transacting }));
-      });
-      _.forEach(students, (student) => {
-        promises.push(removeMember(family, student.id, { transacting }));
-      });
-      const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
-      if (familyEmergencyNumbers) {
-        promises.push(
-          familyEmergencyNumbers.services.emergencyPhones.removeFamilyPhones(family, {
-            transacting,
-          })
-        );
-      }
-
-      await Promise.all(promises);
-
-      await table.families.delete({ id: family }, { transacting });
-
-      return true;
-    },
-    table.families,
-    _transacting
+  _.forEach(guardians, (guardian) => {
+    promises.push(removeMember({ family, user: guardian.id, ctx }));
+  });
+  _.forEach(students, (student) => {
+    promises.push(removeMember({ family, user: student.id, ctx }));
+  });
+  const isFamilyEmergencyNumbersInstalled = await ctx.tx.call(
+    'deployment-manager.pluginIsInstalled',
+    { pluginName: 'families-emergency-numbers' }
   );
+  if (isFamilyEmergencyNumbersInstalled) {
+    promises.push(
+      ctx.tx.call('families-emergency-numbers.emergencyPhones.removeFamilyPhones', { family })
+    );
+  }
+
+  await Promise.all(promises);
+
+  await ctx.tx.db.Families.deleteOne({ id: family });
+
+  return true;
 }
 
 module.exports = { remove };

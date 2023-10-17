@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { map } = require('lodash');
 
 async function listClasses({ assignable, instance, ctx }) {

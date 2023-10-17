@@ -1,6 +1,6 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getUserPermissions } = require('./getUserPermissions');
 
@@ -12,7 +12,11 @@ const getUserAgentPermissionsHandle = jest.fn();
 const getAllItemsForTheUserAgentHasPermissionsByTypeHandler = jest.fn();
 
 const permissionName = 'assignables.assignable.assignableId1@2.0.0';
-const assignableIds = ['assignableId1@2.0.0', 'assignableId2@2.0.0', 'assignableId3@2.0.0'];
+const assignableIds = [
+  'assignableId1@2.0.0',
+  'assignableId2@2.0.0',
+  'assignableId3@2.0.0',
+];
 
 jest.mock('../getTeacherPermissions');
 jest.mock('./getParentPermissions');
@@ -27,21 +31,26 @@ describe('getUserPermissions function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandle,
+        'users.permissions.getUserAgentPermissions':
+          getUserAgentPermissionsHandle,
         'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
           getAllItemsForTheUserAgentHasPermissionsByTypeHandler,
       },
       pluginName,
     });
 
-    getUserAgentPermissionsHandle.mockResolvedValue([{ permissionName, actionNames: ['edit'] }]);
+    getUserAgentPermissionsHandle.mockResolvedValue([
+      { permissionName, actionNames: ['edit'] },
+    ]);
 
     getParentPermissions.mockResolvedValue([
       [assignableIds[1], ['view']],
       [assignableIds[2], ['view']],
     ]);
 
-    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue(['assetId1']);
+    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue([
+      'assetId1',
+    ]);
 
     const mockParams = {
       assignables: [{ id: assignableIds[0], asset: 'assetId1' }],
@@ -63,7 +72,9 @@ describe('getUserPermissions function', () => {
       },
     });
     expect(getUserAgentPermissionsHandle).toHaveBeenCalled();
-    expect(getAllItemsForTheUserAgentHasPermissionsByTypeHandler).toHaveBeenCalled();
+    expect(
+      getAllItemsForTheUserAgentHasPermissionsByTypeHandler
+    ).toHaveBeenCalled();
     expect(getParentPermissions).toHaveBeenCalledWith({
       ids: mockParams.assignables.map((assignable) => assignable.id),
       ctx,
@@ -82,21 +93,26 @@ describe('getUserPermissions function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandle,
+        'users.permissions.getUserAgentPermissions':
+          getUserAgentPermissionsHandle,
         'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
           getAllItemsForTheUserAgentHasPermissionsByTypeHandler,
       },
       pluginName,
     });
 
-    getUserAgentPermissionsHandle.mockResolvedValue([{ permissionName, actionNames: ['edit'] }]);
+    getUserAgentPermissionsHandle.mockResolvedValue([
+      { permissionName, actionNames: ['edit'] },
+    ]);
 
     getParentPermissions.mockResolvedValue([
       [assignableIds[1], ['view']],
       [assignableIds[2], ['view']],
     ]);
 
-    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue(['assetId1']);
+    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue([
+      'assetId1',
+    ]);
 
     getTeacherPermissions.mockResolvedValue({
       'assignableId4@2.0.0': true,
@@ -128,7 +144,9 @@ describe('getUserPermissions function', () => {
       },
     });
     expect(getUserAgentPermissionsHandle).toHaveBeenCalled();
-    expect(getAllItemsForTheUserAgentHasPermissionsByTypeHandler).toHaveBeenCalled();
+    expect(
+      getAllItemsForTheUserAgentHasPermissionsByTypeHandler
+    ).toHaveBeenCalled();
     expect(getParentPermissions).toHaveBeenCalledWith({
       ids: mockParams.assignables.map((assignable) => assignable.id),
       ctx,
@@ -155,7 +173,8 @@ describe('getUserPermissions function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandle,
+        'users.permissions.getUserAgentPermissions':
+          getUserAgentPermissionsHandle,
         'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
           getAllItemsForTheUserAgentHasPermissionsByTypeHandler,
       },
@@ -163,7 +182,10 @@ describe('getUserPermissions function', () => {
     });
 
     getUserAgentPermissionsHandle.mockResolvedValue([
-      { permissionName: 'assignables.assignable.assignableId1@2.0.0', actionNames: ['edit'] },
+      {
+        permissionName: 'assignables.assignable.assignableId1@2.0.0',
+        actionNames: ['edit'],
+      },
     ]);
 
     getParentPermissions.mockResolvedValue([
@@ -171,7 +193,9 @@ describe('getUserPermissions function', () => {
       [assignableIds[2], ['view']],
     ]);
 
-    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue(['assetId1']);
+    getAllItemsForTheUserAgentHasPermissionsByTypeHandler.mockResolvedValue([
+      'assetId1',
+    ]);
 
     getTeacherPermissions.mockResolvedValue({});
 
@@ -201,7 +225,9 @@ describe('getUserPermissions function', () => {
       },
     });
     expect(getUserAgentPermissionsHandle).toHaveBeenCalled();
-    expect(getAllItemsForTheUserAgentHasPermissionsByTypeHandler).toHaveBeenCalled();
+    expect(
+      getAllItemsForTheUserAgentHasPermissionsByTypeHandler
+    ).toHaveBeenCalled();
     expect(getParentPermissions).toHaveBeenCalledWith({
       ids: mockParams.assignables.map((assignable) => assignable.id),
       ctx,
@@ -228,7 +254,8 @@ describe('getUserPermissions function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandle,
+        'users.permissions.getUserAgentPermissions':
+          getUserAgentPermissionsHandle,
         'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
           getAllItemsForTheUserAgentHasPermissionsByTypeHandler,
       },

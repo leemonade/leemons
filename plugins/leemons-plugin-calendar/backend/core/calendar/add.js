@@ -34,7 +34,7 @@ async function add({ key, config, ctx }) {
     item: calendar.id,
     type: permissionConfig.type,
     data: permissionConfig.all,
-    isCurrentPermission: true,
+    isCustomPermission: true,
   });
 
   return calendar;

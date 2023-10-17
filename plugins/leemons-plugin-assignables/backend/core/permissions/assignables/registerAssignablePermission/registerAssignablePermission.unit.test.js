@@ -1,7 +1,9 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
-const { registerAssignablePermission } = require('./registerAssignablePermission');
+const {
+  registerAssignablePermission,
+} = require('./registerAssignablePermission');
 
 it('Should register the permission', async () => {
   // Arrange
@@ -29,13 +31,16 @@ it('Should throw if a required param is not provided', async () => {
   // Arrange
   const id = 'assignableId';
   const role = 'assignableRole';
-  const expectedError = 'Error registering permission: The id and role params are required';
+  const expectedError =
+    'Error registering permission: The id and role params are required';
 
   const ctx = generateCtx({});
 
   // Act
-  const noIdTestFn = () => registerAssignablePermission({ id: undefined, role, ctx });
-  const noRoleTestFn = () => registerAssignablePermission({ id, role: undefined, ctx });
+  const noIdTestFn = () =>
+    registerAssignablePermission({ id: undefined, role, ctx });
+  const noRoleTestFn = () =>
+    registerAssignablePermission({ id, role: undefined, ctx });
 
   // Assert
   expect(noIdTestFn).rejects.toThrowError(expectedError);

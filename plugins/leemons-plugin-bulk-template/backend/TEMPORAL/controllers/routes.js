@@ -5,10 +5,10 @@ module.exports = [
     handler: 'users.add',
     authenticated: true,
     allowedPermissions: {
-      'plugins.users.users': {
+      'users.users': {
         actions: ['admin'],
       },
-      'plugins.academic-portfolio.portfolio': {
+      'academic-portfolio.portfolio': {
         actions: ['admin'],
       },
     },
@@ -19,7 +19,7 @@ module.exports = [
     handler: 'stress.load',
     authenticated: true,
     allowedPermissions: {
-      'plugins.users.users': {
+      'users.users': {
         actions: ['admin'],
       },
     },

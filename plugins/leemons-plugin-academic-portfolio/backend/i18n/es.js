@@ -130,6 +130,8 @@ module.exports = {
           substagesFrequency: 'Seleccionar frecuencia',
         },
         errorMessages: {
+          abbrevationOnlyNumbers: 'Sólo se admiten números',
+          maximunSubstageAbbreviation: 'Maximo {n} caracteres',
           useDefaultSubstagesName: {
             required: 'Campo necesario',
           },
@@ -206,7 +208,7 @@ module.exports = {
   subject_page: {
     page_title: 'Configuración de asignaturas',
     page_description:
-      'Es necesario configurar las áreas de conocimiento y tipo de asignatura (troncal, optativa…), para cargar (manualmente o en bloque) las asignaturas y definir el arbol de portafolio.',
+      'Define primero los tipos de asignaturas (troncal, optativa...) y las áreas de conocimiento (si aplican a tu programa).',
     centerLabel: 'Centro formativo',
     centerPlaceholder: 'Seleccionar centro',
     programLabel: 'Programa',
@@ -239,9 +241,10 @@ module.exports = {
       creditsCourse: 'Créditos por curso',
       creditsProgram: 'Créditos por programa',
       groupVisibility: 'Visibilidad del grupo',
-      groupVisibilityLabel: 'No mostrar grupos',
+      groupVisibilityLabel: 'Evitar anidación por grupos',
     },
     subjects: {
+      addSubject: 'Añadir asignatura',
       newTitle: 'Nueva asignatura',
       title: 'Asignaturas',
       course: 'Curso/s',
@@ -278,7 +281,7 @@ module.exports = {
       cancel: 'Cancelar',
     },
     programTreeType: {
-      title: 'Configuración del árbol de portafolio',
+      title: 'Configurar vista del árbol de {name}',
       description1:
         'Permite definir la vista del árbol para adaptarlo a las características del programa formativo. Esta configuración se puede editar siemrpe que sea necesario.',
       note: 'NOTA:',
@@ -324,6 +327,7 @@ module.exports = {
     studentRequired: 'Campo necesario',
   },
   tree_page: {
+    configTreeView: 'Configurar vista del árbol',
     page_title: 'Arbol de portafolio',
     page_description:
       'En el arbol de Portafolio es posible This is your Portfolio Tree, you can edit, duplicate or create new elements for your program. You also can assign students at any level (all subjects under it will inherit this task).',
@@ -551,5 +555,10 @@ module.exports = {
   },
   classStudents: {
     label: 'Estudiantes',
+  },
+  subjectsDrawer: {
+    add: 'Añadir asignatura',
+    edit: 'Editar asignatura',
+    save: 'Guardar asignatura',
   },
 };

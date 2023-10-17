@@ -23,7 +23,7 @@ async function importFamilies(filePath, users) {
           };
         });
 
-      family.maritalStatus = `plugins.families.detail_page.maritalStatus.${toLower(
+      family.maritalStatus = `families.detail_page.maritalStatus.${toLower(
         family.maritalStatus
       ).replace(/ /g, '_')}`;
 

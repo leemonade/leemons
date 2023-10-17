@@ -1,20 +1,15 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getQuestionsBanksDetails } = require('./getQuestionsBanksDetails');
 
-async function findByAssetIds(ids, { userSession, transacting } = {}) {
-  const questionsBanks = await table.questionsBanks.find(
+async function findByAssetIds({ ids, ctx }) {
+  const questionsBanks = await ctx.tx.db.QuestionsBanks.find(
     {
-      asset_$in: ids,
-      deleted_$null: false,
+      asset: ids,
     },
-    { transacting }
+    undefined,
+    { excludeDeleted: false }
   );
-  return getQuestionsBanksDetails(_.map(questionsBanks, 'id'), {
-    userSession,
-    transacting,
-    getAssets: false,
-  });
+  return getQuestionsBanksDetails({ id: _.map(questionsBanks, 'id'), getAssets: false, ctx });
 }
 
 module.exports = { findByAssetIds };

@@ -1,7 +1,7 @@
 const { beforeEach, describe, test, expect } = require('@jest/globals');
 
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { getUserPermissions } = require('./getUserPermissions');
 const { classesSchema } = require('../../../../../models/classes');
@@ -52,7 +52,8 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     models: {
       Classes: newModel(mongooseConnection, 'Classes', classesSchema),
@@ -67,8 +68,14 @@ describe('getUserPermissions function', () => {
   test('should get user permissions successfully', async () => {
     // Arrange
     getUserAgentPermissionsHandler.mockResolvedValue([
-      { permissionName: 'prefix.assignableInstance.instanceId1', actionNames: ['view', 'edit'] },
-      { permissionName: 'prefix.assignableInstance.instanceId2', actionNames: ['view'] },
+      {
+        permissionName: 'prefix.assignableInstance.instanceId1',
+        actionNames: ['view', 'edit'],
+      },
+      {
+        permissionName: 'prefix.assignableInstance.instanceId2',
+        actionNames: ['view'],
+      },
     ]);
 
     const mockParams = {
@@ -126,7 +133,10 @@ describe('getUserPermissions function', () => {
     };
 
     getUserAgentPermissionsHandler.mockResolvedValue([
-      { permissionName: 'prefix.assignableInstance.instanceId1', actionNames: ['view', 'edit'] },
+      {
+        permissionName: 'prefix.assignableInstance.instanceId1',
+        actionNames: ['view', 'edit'],
+      },
     ]);
 
     // Act

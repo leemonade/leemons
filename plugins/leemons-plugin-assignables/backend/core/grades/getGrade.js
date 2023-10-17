@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 async function getGrade({ assignation, subject, type, visibleToStudent, ctx }) {
   if (!assignation) {

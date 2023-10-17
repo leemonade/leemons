@@ -10,17 +10,15 @@ const { getGuardianProfile, getStudentProfile } = require('../profiles-config');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function searchUsers(profileType, query, { transacting } = {}) {
+async function searchUsers({ profileType, query, ctx }) {
   let profile = null;
-  if (profileType === 'guardian') profile = await getGuardianProfile({ transacting });
-  if (profileType === 'student') profile = await getStudentProfile({ transacting });
-  const userAgents = await leemons.getPlugin('users').services.users.searchUserAgents(
-    {
-      ...query,
-      profile,
-    },
-    { transacting }
-  );
+  if (profileType === 'guardian') profile = await getGuardianProfile({ ctx });
+  if (profileType === 'student') profile = await getStudentProfile({ ctx });
+  const userAgents = await ctx.tx.call('users.users.searchUserAgents', {
+    ...query,
+    profile,
+  });
+
   const userIds = [];
   const users = [];
   _.forEach(userAgents, (userAgent) => {

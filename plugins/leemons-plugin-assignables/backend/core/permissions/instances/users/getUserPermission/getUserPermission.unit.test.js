@@ -1,5 +1,5 @@
 const { it, beforeEach, expect } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getUserPermission } = require('./getUserPermission');
 
@@ -17,7 +17,8 @@ it('Should get User Permissions', async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     pluginName: 'assignables',
   });
@@ -51,7 +52,8 @@ it('Should get teacher permissions', async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     pluginName: 'assignables',
   });
@@ -87,7 +89,8 @@ it('Should get default permissions', async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions':
+        getUserAgentPermissionsHandler,
     },
     pluginName: 'assignables',
   });

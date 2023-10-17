@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { isString, some, negate } = require('lodash');
 
 async function removeSubjects({ ids, ctx }) {
@@ -9,7 +9,9 @@ async function removeSubjects({ ids, ctx }) {
     });
   }
 
-  const { deletedCount } = await ctx.tx.db.Subjects.deleteMany({ id: { $in: ids } });
+  const { deletedCount } = await ctx.tx.db.Subjects.deleteMany({
+    id: { $in: ids },
+  });
 
   return deletedCount;
 }

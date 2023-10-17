@@ -1,10 +1,10 @@
 const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { getAssignation } = require('./getAssignation');
 
 jest.mock('../getAssignations');
 
-const {getAssignations} = require('../getAssignations');
+const { getAssignations } = require('../getAssignations');
 
 it('Should get an assignation', async () => {
   // Arrange
@@ -12,7 +12,7 @@ it('Should get an assignation', async () => {
   const user = 'user-id';
   const ctx = generateCtx({});
 
-  getAssignations.mockImplementation(() => ([{id: 'assignationId'}]));
+  getAssignations.mockImplementation(() => [{ id: 'assignationId' }]);
 
   // Act
   const result = await getAssignation({ assignableInstanceId, user, ctx });

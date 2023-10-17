@@ -3,10 +3,11 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/class.rest');
 const {
@@ -35,6 +36,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -90,23 +92,23 @@ module.exports = {
         return getClassesUnderProgramCourse({ ...ctx.params, ctx });
       },
     },
-    'student.getByClassAndUserAgent': {
+    studentGetByClassAndUserAgent: {
       handler(ctx) {
         return getByClassAndUserAgent({ ...ctx.params, ctx });
       },
     },
-    'student.getByClass': {
+    studentGetByClass: {
       handler(ctx) {
         return getByClass({ ...ctx.params, ctx });
       },
     },
-    'teacher.getByClass': {
+    teacherGetByClass: {
       handler(ctx) {
         return getTeachersByClass({ ...ctx.params, ctx });
       },
     },
   },
   async created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { updateSubjects } = require('./updateSubjects');
 const { subjectsSchema } = require('../../models/subjects');
@@ -56,7 +62,9 @@ it('Should add the new subjects', async () => {
   // Assert
   expect(response.sort()).toEqual(subjects.sort());
   expect(subjectsSaved.sort()).toEqual(
-    subjects.map((subject) => expect.objectContaining({ ...subject, assignable }))
+    subjects.map((subject) =>
+      expect.objectContaining({ ...subject, assignable })
+    )
   );
 });
 
@@ -164,8 +172,10 @@ it('Should throw if no valid params are provided', async () => {
   });
 
   // Act
-  const noAssignableFn = () => updateSubjects({ assignable: undefined, subjects, ctx });
-  const noSubjectsFn = () => updateSubjects({ assignable, subjects: undefined, ctx });
+  const noAssignableFn = () =>
+    updateSubjects({ assignable: undefined, subjects, ctx });
+  const noSubjectsFn = () =>
+    updateSubjects({ assignable, subjects: undefined, ctx });
 
   // Assert
   expect(noAssignableFn).rejects.toThrowError(

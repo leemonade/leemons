@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { validateAssignation } = require('../../helpers/validators/assignation');
 const { getAssignation } = require('../getAssignation');
 const { getDiff } = require('../../helpers/getDiff');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { updateDates } = require('../../dates');
 const { registerGrade } = require('../../grades');
 
@@ -59,7 +59,12 @@ async function updateAssignation({ assignation, ctx }) {
   // EN: Update dates
   // ES: Actualizar fechas
   if (diff.includes('timestamps')) {
-    await updateDates({ type: 'assignation', instance: id, dates: object.timestamps, ctx });
+    await updateDates({
+      type: 'assignation',
+      instance: id,
+      dates: object.timestamps,
+      ctx,
+    });
   }
 
   // EN: Update the grades

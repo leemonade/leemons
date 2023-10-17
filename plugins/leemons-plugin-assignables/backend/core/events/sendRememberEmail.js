@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
-const { sqlDatetime, diffHours } = require('leemons-utils');
+const { sqlDatetime, diffHours } = require('@leemons/utils');
 
 const getAsset = require('../leebrary/assets/getAsset');
 
@@ -33,40 +33,49 @@ async function sendRememberEmails({ ctx }) {
     // De las instancias sacadas, sacamos las asignaciones a los que aun no se les ha mandado el email de recordatorio
     let assignations = await ctx.tx.db.Assignations.find({
       instance: instances,
-      $or: [{ rememberEmailSended: { $ne: true } }, { rememberEmailSended: null }],
+      $or: [
+        { rememberEmailSended: { $ne: true } },
+        { rememberEmailSended: null },
+      ],
     })
       .select(['id', 'user', 'instance'])
       .lean();
 
-    const [endAssignations, userAgents, _userAgents, finalInstances, _classes, hostname] =
-      await Promise.all([
-        // De todas las asignaciones que podrian necesitar mandar el email de recordatorio comprobamos cuales ya han sido finalizadas por el usuario para no mandar el email
-        ctx.tx.db.Dates.find({
-          type: 'assignation',
-          instance: _.map(assignations, 'id'),
-          name: 'end',
-        })
-          .select(['instance'])
-          .lean(),
-        // Sacamos la configuracion de los emails de recordatorio de todos los usuarios para ver si quieren que se les mande y cuando quede cuanto tiempo
-        ctx.tx.call('emails.config.getValuesForUserAgentsAndKey', {
-          userAgents: _.uniq(_.map(assignations, 'user')),
-          key: 'new-assignation-timeout-email',
-        }),
-        // Sacamos el detalle de los user agent ya que lo necesitamos para enviar el email
-        ctx.tx.call('users.users.getUserAgentsInfo', {
-          userAgentIds: _.uniq(_.map(assignations, 'user')),
-          withCenter: true,
-          userColumns: ['id', 'email', 'locale'],
-        }),
-        ctx.tx.db.Instances.find({
-          id: _.map(assignations, 'instance'),
-        }).lean(),
-        ctx.tx.db.Classes.find({
-          assignableInstance: _.uniq(_.map(assignations, 'instance')),
-        }).lean(),
-        ctx.tx.call('users.platform.getHostname'),
-      ]);
+    const [
+      endAssignations,
+      userAgents,
+      _userAgents,
+      finalInstances,
+      _classes,
+      hostname,
+    ] = await Promise.all([
+      // De todas las asignaciones que podrian necesitar mandar el email de recordatorio comprobamos cuales ya han sido finalizadas por el usuario para no mandar el email
+      ctx.tx.db.Dates.find({
+        type: 'assignation',
+        instance: _.map(assignations, 'id'),
+        name: 'end',
+      })
+        .select(['instance'])
+        .lean(),
+      // Sacamos la configuracion de los emails de recordatorio de todos los usuarios para ver si quieren que se les mande y cuando quede cuanto tiempo
+      ctx.tx.call('emails.config.getValuesForUserAgentsAndKey', {
+        userAgents: _.uniq(_.map(assignations, 'user')),
+        key: 'new-assignation-timeout-email',
+      }),
+      // Sacamos el detalle de los user agent ya que lo necesitamos para enviar el email
+      ctx.tx.call('users.users.getUserAgentsInfo', {
+        userAgentIds: _.uniq(_.map(assignations, 'user')),
+        withCenter: true,
+        userColumns: ['id', 'email', 'locale'],
+      }),
+      ctx.tx.db.Instances.find({
+        id: _.map(assignations, 'instance'),
+      }).lean(),
+      ctx.tx.db.Classes.find({
+        assignableInstance: _.uniq(_.map(assignations, 'instance')),
+      }).lean(),
+      ctx.tx.call('users.platform.getHostname'),
+    ]);
 
     const assignables = await ctx.tx.db.Assignables.find({
       id: _.uniq(_.map(finalInstances, 'assignable')),
@@ -78,9 +87,12 @@ async function sendRememberEmails({ ctx }) {
     const instanceById = _.keyBy(finalInstances, 'id');
     const assignableById = _.keyBy(assignables, 'id');
 
-    const classes = await ctx.tx.call('academic-portfolio.classes.classesByIds', {
-      ids: _.uniq(_.map(assignables, 'class')),
-    });
+    const classes = await ctx.tx.call(
+      'academic-portfolio.classes.classesByIds',
+      {
+        ids: _.uniq(_.map(assignables, 'class')),
+      }
+    );
 
     const classesById = _.keyBy(classes, 'id');
 
@@ -122,7 +134,9 @@ async function sendRememberEmails({ ctx }) {
 
         asset.url =
           hostname +
-          (await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: assignable.asset }));
+          (await ctx.tx.call('leebrary.assets.getCoverUrl', {
+            assetId: assignable.asset,
+          }));
         ctx.tx
           .call('emails.email.sendAsEducationalCenter', {
             to: userAgentByIds[assignation.user].user.email,
@@ -140,7 +154,9 @@ async function sendRememberEmails({ ctx }) {
           })
           .then(async () => {
             ctx.logger.log(
-              `Email remember assignation sended to ${userAgentByIds[assignation.user].user.email}`
+              `Email remember assignation sended to ${
+                userAgentByIds[assignation.user].user.email
+              }`
             );
             await ctx.tx.db.Assignations.updateOne(
               { id: assignation.id },

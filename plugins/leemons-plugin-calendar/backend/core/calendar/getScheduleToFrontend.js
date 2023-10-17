@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { programsByIds } = require('leemons-plugin-academic-portfolio/src/services/programs');
 
 function getBreakData(breaks) {
   const start = new Date();
@@ -25,24 +24,25 @@ function getBreakData(breaks) {
   };
 }
 
-async function getScheduleToFrontend(userSession, { transacting } = {}) {
+async function getScheduleToFrontend({ ctx }) {
+  const { userSession } = ctx.meta;
   if (userSession.sessionConfig?.program) {
-    const academicCalendar = leemons.getPlugin('academic-calendar');
-    const academicPortfolioServices = leemons.getPlugin('academic-portfolio').services;
+    const isAcademicCalendarInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
+      pluginName: 'academic-calendar',
+    });
     // eslint-disable-next-line prefer-const
     let [classes, [program], config] = await Promise.all([
-      academicPortfolioServices.classes.listSessionClasses(
-        userSession,
-        { program: userSession.sessionConfig.program },
-        { withProgram: true, withTeachers: true, transacting }
-      ),
-      academicPortfolioServices.programs.programsByIds([userSession.sessionConfig.program], {
-        userSession,
-        transacting,
+      ctx.tx.call('academic-portfolio.classes.listSessionClasses', {
+        program: userSession.sessionConfig.program,
+        withProgram: true,
+        withTeachers: true,
       }),
-      academicCalendar
-        ? academicCalendar.services.config.getConfig(userSession.sessionConfig.program, {
-            transacting,
+      ctx.tx.call('academic-portfolio.programs.programsByIds', {
+        ids: [userSession.sessionConfig.program],
+      }),
+      isAcademicCalendarInstalled
+        ? ctx.tx.call('academic-calendar.config.getConfig', {
+            program: userSession.sessionConfig.program,
           })
         : null,
     ]);

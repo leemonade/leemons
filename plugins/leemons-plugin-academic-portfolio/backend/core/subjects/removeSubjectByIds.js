@@ -22,7 +22,7 @@ async function removeSubjectByIds({ ids, soft, ctx }) {
     ),
   ]);
   await removeSubjectCreditsBySubjectsIds({ subjectIds: _.map(subjects, 'id'), soft, ctx });
-  await ctx.tx.db.Subjects.deleteMany({ id: _.map(subjects, 'id'), soft });
+  await ctx.tx.db.Subjects.deleteMany({ id: _.map(subjects, 'id') }, { soft });
   await ctx.tx.emit('after-remove-subjects', { subjects, soft });
   return true;
 }

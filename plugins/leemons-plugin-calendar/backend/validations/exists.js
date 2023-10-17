@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 const { exist: existEvent } = require('../core/events/exist');
 const { exist: existCalendar } = require('../core/calendar/exist');
@@ -7,7 +7,7 @@ const { exist: existCalendarConfig } = require('../core/calendar-configs/exist')
 const { existByKey: existCalendarByKey } = require('../core/calendar/existByKey');
 
 async function validateExistCalendarKey({ key, ctx }) {
-  if (await existCalendarByKey(key))
+  if (await existCalendarByKey({ key, ctx }))
     throw new LeemonsError(ctx, { message: `Calendar '${key}' already exists` });
 }
 

@@ -1,6 +1,12 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('leemons-testing');
-const { newModel } = require('leemons-mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require('@jest/globals');
+const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const { newModel } = require('@leemons/mongodb');
 
 const { updateDates } = require('./updateDates');
 const { datesSchema } = require('../../models/dates');
@@ -185,8 +191,10 @@ it('Should throw an error if no valid params areprovided', async () => {
 
   // Act
   const noTypeFn = () => updateDates({ type: undefined, instance, dates, ctx });
-  const noInstanceFn = () => updateDates({ type, instance: undefined, dates, ctx });
-  const noDatesFn = () => updateDates({ type, instance, dates: undefined, ctx });
+  const noInstanceFn = () =>
+    updateDates({ type, instance: undefined, dates, ctx });
+  const noDatesFn = () =>
+    updateDates({ type, instance, dates: undefined, ctx });
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(

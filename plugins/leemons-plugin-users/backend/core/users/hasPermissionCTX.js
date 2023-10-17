@@ -61,7 +61,7 @@ async function hasPermissionCTX({ allowedPermissions, ctx }) {
   }
 
   if (_hasPermission) return true;
-  _hasPermission = await isSuperAdmin(userSession.id);
+  _hasPermission = await isSuperAdmin({ userId: userSession.id, ctx });
   if (_hasPermission) return true;
   return false;
 }

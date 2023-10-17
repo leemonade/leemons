@@ -1,9 +1,11 @@
 const { map, difference, omit } = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { getRoles } = require('../../roles');
 const { getSubjects } = require('../../subjects');
 const { getAsset } = require('../../leebrary/assets');
-const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
+const {
+  getUserPermissions,
+} = require('../../permissions/assignables/users/getUserPermissions');
 /**
  * Fetches assignables based on provided ids and showDeleted flag.
  * It constructs a query to find assignables either by their id or asset id.
@@ -71,9 +73,13 @@ function getNoPermissionAssignables({ permissions }) {
  * @returns {Promise<Object>} The publish state of assignables.
  */
 async function getAssignablesPublishState({ ids, ctx }) {
-  const versions = await ctx.tx.call('common.versionControl.getVersion', { id: ids });
+  const versions = await ctx.tx.call('common.versionControl.getVersion', {
+    id: ids,
+  });
 
-  return Object.fromEntries(versions.map((version) => [version.fullId, version.published]));
+  return Object.fromEntries(
+    versions.map((version) => [version.fullId, version.published])
+  );
 }
 
 /**
@@ -143,7 +149,9 @@ async function getAssignables({
     ctx,
   });
 
-  const noPermissionAssignables = await getNoPermissionAssignables({ permissions });
+  const noPermissionAssignables = await getNoPermissionAssignables({
+    permissions,
+  });
 
   if (throwOnMissing && Object.keys(noPermissionAssignables).length > 0) {
     throw new LeemonsError(ctx, {
@@ -167,7 +175,9 @@ async function getAssignables({
     getAssetData({ ids: assetsFound, columns, withFiles, ctx }),
   ];
 
-  const [publishState, roles, subjects, assetsData] = await Promise.all(promises);
+  const [publishState, roles, subjects, assetsData] = await Promise.all(
+    promises
+  );
 
   return assignables.map((assignable) => ({
     ...assignable,

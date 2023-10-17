@@ -1,5 +1,5 @@
 const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 globalJest.mock('../getAssignable');
 globalJest.mock('../createAssignable');
@@ -9,7 +9,9 @@ const { duplicateAssignable } = require('./duplicateAssignable');
 
 const { getAssignable } = require('../getAssignable');
 const { createAssignable } = require('../createAssignable');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const {
+  getAssignableObject,
+} = require('../../../__fixtures__/getAssignableObject');
 
 it('Duplicates the assignable', async () => {
   // Arrange

@@ -1,16 +1,14 @@
-const { table } = require('../tables');
-
-async function saveProgram(program, config, { transacting } = {}) {
-  await table.config.set(
+async function saveProgram({ program, config, ctx }) {
+  await ctx.tx.db.Config.updateOne(
     { type: 'program', typeId: program },
     {
       type: 'program',
       typeId: program,
       config: JSON.stringify(config),
     },
-    { transacting }
+    { upsert: true }
   );
-  leemons.socket.emitToAll(`COMUNICA:CONFIG:PROGRAM`, { program, config });
+  ctx.socket.emitToAll(`COMUNICA:CONFIG:PROGRAM`, { program, config });
 
   return config;
 }

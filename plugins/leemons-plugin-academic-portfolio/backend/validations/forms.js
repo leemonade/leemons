@@ -1,5 +1,5 @@
-const { LeemonsValidator } = require('leemons-validator');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { isArray } = require('lodash');
 const {
@@ -18,7 +18,6 @@ const { getProgramSubjectDigits } = require('../core/programs/getProgramSubjectD
 const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCourses');
 
 const teacherTypes = ['main-teacher', 'associate-teacher'];
-
 
 const addProgramSchema = {
   type: 'object',

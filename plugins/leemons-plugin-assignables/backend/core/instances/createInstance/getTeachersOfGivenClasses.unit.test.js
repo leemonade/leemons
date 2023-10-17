@@ -1,7 +1,7 @@
 // Importing required modules and functions
 const { it, beforeEach, expect } = require('@jest/globals');
 
-const { generateCtx } = require('leemons-testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { getTeachersOfGivenClasses } = require('./getTeachersOfGivenClasses');
 
@@ -23,8 +23,14 @@ it('Should return teachers of given classes', async () => {
   const classes = ['classId1', 'classId2'];
 
   classesByIdsHandler.mockResolvedValue([
-    { id: 'classId1', teachers: [{ teacher: 'teacherId1' }, { teacher: 'teacherId2' }] },
-    { id: 'classId2', teachers: [{ teacher: 'teacherId2' }, { teacher: 'teacherId3' }] },
+    {
+      id: 'classId1',
+      teachers: [{ teacher: 'teacherId1' }, { teacher: 'teacherId2' }],
+    },
+    {
+      id: 'classId2',
+      teachers: [{ teacher: 'teacherId2' }, { teacher: 'teacherId3' }],
+    },
   ]);
 
   // Act

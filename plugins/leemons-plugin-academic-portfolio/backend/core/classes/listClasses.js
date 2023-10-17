@@ -1,4 +1,4 @@
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const _ = require('lodash');
 const { classByIds } = require('./classByIds');
 

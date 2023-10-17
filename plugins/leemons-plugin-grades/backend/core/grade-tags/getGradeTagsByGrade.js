@@ -1,14 +1,12 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getGradeTagsByIds } = require('./getGradeTagsByIds');
 
-async function getGradeTagsByGrade(grade, { transacting } = {}) {
-  const tags = await table.gradeTags.find(
-    { grade_$in: _.isArray(grade) ? grade : [grade] },
-    { columns: ['id'], transacting }
-  );
+async function getGradeTagsByGrade({ grade, ctx }) {
+  const tags = await ctx.tx.db.GradeTags.find({ grade: _.isArray(grade) ? grade : [grade] })
+    .select(['id'])
+    .lean();
 
-  return getGradeTagsByIds(_.map(tags, 'id'), { transacting });
+  return getGradeTagsByIds({ ids: _.map(tags, 'id'), ctx });
 }
 
 module.exports = { getGradeTagsByGrade };
