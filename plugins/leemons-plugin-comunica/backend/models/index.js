@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('leemons-mongodb-helpers');
+const { getKeyValueModel } = require('@leemons/mongodb-helpers');
 
 const models = {
   ...require('./config'),
@@ -19,8 +19,8 @@ module.exports = {
       Message: models.messageModel,
       Room: models.roomModel,
       RoomMessagesUnRead: models.roomMessagesUnReadModel,
-      userAgentConfig: models.userAgentConfigModel,
-      userAgentInRoom: models.userAgentInRoomModel,
+      UserAgentConfig: models.userAgentConfigModel,
+      UserAgentInRoom: models.userAgentInRoomModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::comunica_KeyValue' }),
     };
   },

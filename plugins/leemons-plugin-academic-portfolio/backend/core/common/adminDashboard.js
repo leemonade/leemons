@@ -1,11 +1,17 @@
 const _ = require('lodash');
 
-async function adminDashboard({
-  // config // unused old param,
-  ctx,
-}) {
+async function adminDashboard({ config, ctx }) {
+  const { userSession } = ctx.meta;
+  let centers = [];
+  if (config.center && config.center !== 'undefined') {
+    centers.push({ id: config.center });
+  }
+  if (!centers.length) {
+    centers = await ctx.tx.call('users.users.getUserCenters', { user: userSession.id });
+  }
+  const programCenter = await ctx.tx.db.ProgramCenter.find({ center: _.map(centers, 'id') }).lean();
   const [programs, classStudents, classTeachers, classes, subjects, groups] = await Promise.all([
-    ctx.tx.db.Programs.find({}).lean(),
+    ctx.tx.db.Programs.find({ id: _.map(programCenter, 'program') }).lean(),
     ctx.tx.db.ClassStudent.find({}).lean(),
     ctx.tx.db.ClassTeacher.find({}).lean(),
     ctx.tx.db.Class.find({}).select(['id', 'program']).lean(),

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { addTransactionState } = require('leemons-transactions');
+const { addTransactionState } = require('@leemons/transactions');
 const { addDeploymentIDToArrayOrObject } = require('./helpers/addDeploymentIDToArrayOrObject');
 const { createTransactionIDIfNeed } = require('./helpers/createTransactionIDIfNeed');
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');

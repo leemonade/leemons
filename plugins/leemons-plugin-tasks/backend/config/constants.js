@@ -198,7 +198,7 @@ const assignableRoles = [
       previewUrl: '/private/tasks/library/:id/view',
       creatable: true,
       createUrl: '/private/tasks/library/create',
-      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
       pluralName: { en: 'tasks', es: 'tareas' },
       singularName: { en: 'task', es: 'tarea' },
       order: 2,

@@ -4,10 +4,11 @@
  */
 
 const _ = require('lodash');
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/users.rest');
 
@@ -32,7 +33,6 @@ const { userAgentsAreContacts } = require('../core/user-agents/contacts/userAgen
 const { getUserAgentContacts } = require('../core/user-agents/contacts/getUserAgentContacts');
 const { addUserAgentContacts } = require('../core/user-agents/contacts/addUserAgentContacts');
 const { removeUserAgentContacts } = require('../core/user-agents/contacts/removeUserAgentContacts');
-const { getUserAgentCalendarKey } = require('../core/user-agents/calendar/getUserAgentCalendarKey');
 const {
   getUserAgentPermissions,
   userAgentHasCustomPermission,
@@ -67,6 +67,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -166,12 +167,6 @@ module.exports = {
         return removeUserAgentContacts({ ...ctx.params, ctx });
       },
     },
-    // Calendar
-    getUserAgentCalendarKey: {
-      async handler(ctx) {
-        return getUserAgentCalendarKey({ ...ctx.params, ctx });
-      },
-    },
 
     // Permissions
     getUserAgentPermissions: {
@@ -220,17 +215,9 @@ module.exports = {
         return getAllItemsForTheUserAgentHasPermissionsByType({ ...ctx.params, ctx });
       },
     },
-    getUserFullName: {
-      async handler(ctx) {
-        const { userSession } = ctx.meta;
-        return `${userSession.name ? userSession.name : ''}${
-          userSession.surnames ? ` ${userSession.surnames}` : ''
-        }${userSession.secondSurname ? ` ${userSession.secondSurname}` : ''}`;
-      },
-    },
   },
 
   created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

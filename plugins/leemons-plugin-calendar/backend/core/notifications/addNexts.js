@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * Add nexts notifications to event
@@ -9,14 +8,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function addNexts(eventId, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      // TODO Calcular y añadir notificaciones del evento del calendario
-    },
-    table.calendars,
-    _transacting
-  );
+async function addNexts({ eventId, ctx }) {
+  // TODO Calcular y añadir notificaciones del evento del calendario
 }
 
 module.exports = { addNexts };

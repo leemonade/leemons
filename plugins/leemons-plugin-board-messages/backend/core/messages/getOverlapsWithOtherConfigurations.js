@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getMessageIdsByFilters } = require('./getMessageIdsByFilters');
 
-async function getOverlapsWithOtherConfigurations(_item, { transacting } = {}) {
+async function getOverlapsWithOtherConfigurations({ item: _item, ctx }) {
   const item = { ..._item };
 
   if (!item.startDate || item.publicationType === 'immediately') {
@@ -17,18 +16,17 @@ async function getOverlapsWithOtherConfigurations(_item, { transacting } = {}) {
 
   const query = {
     zone: item.zone,
-    status_$in: ['published', 'programmed'],
-    $not: { $or: [{ endDate_$lt: item.startDate }, { startDate_$gt: item.endDate }] },
+    status: ['published', 'programmed'],
+    $not: { $or: [{ endDate: { $lt: item.startDate } }, { startDate: { $gt: item.endDate } }] },
   };
   if (item.id) {
-    query.id_$ne = item.id;
+    query.id = { $ne: item.id };
   }
-  const ids = await getMessageIdsByFilters(item, { transacting });
+  const ids = await getMessageIdsByFilters({ item, ctx });
   if (ids !== null) {
-    query.id_$in = _.uniq(ids);
+    query.id = _.uniq(ids);
   }
-  const items = await table.messageConfig.find(query, { transacting });
-  return items;
+  return ctx.tx.db.MessageConfig.find(query).lean();
 }
 
 module.exports = { getOverlapsWithOtherConfigurations };

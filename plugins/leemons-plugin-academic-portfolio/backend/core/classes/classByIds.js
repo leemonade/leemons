@@ -28,7 +28,7 @@ async function classByIds({
     _childClasses,
     timeTables,
   ] = await Promise.all([
-    ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }),
+    ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
     getKnowledgeByClass({ class: ids, ctx }),
     getSubstageByClass({ class: ids, ctx }),
     getCourseByClass({ class: ids, ctx }),

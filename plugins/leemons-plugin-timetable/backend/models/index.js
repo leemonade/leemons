@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('leemons-mongodb-helpers');
+const { getKeyValueModel } = require('@leemons/mongodb-helpers');
 
 const models = {
   ...require('./breaks'),
@@ -11,13 +11,13 @@ const models = {
 
 module.exports = {
   ...models,
-  Breaks: models.breaksModel,
-  Config: models.configModel,
-  Settings: models.settingsModel,
-  Timetable: models.timetableModel,
   getServiceModels() {
     return {
       Actions: models.actionsModel,
+      Breaks: models.breaksModel,
+      Config: models.configModel,
+      Settings: models.settingsModel,
+      Timetable: models.timetableModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::timetable_KeyValue' }),
     };
   },

@@ -5,11 +5,11 @@
  */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 
 const {
   validatePutSubjectCredits,
@@ -39,17 +39,15 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['create'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create'],
+          },
         },
       }),
     ],
     async handler(ctx) {
-      const data = JSON.parse(ctx.params.data);
-      _.forIn(ctx.params.files, (value, key) => {
-        _.set(data, key, value);
-      });
-      const subject = await addSubject({ data, ctx });
+      const subject = await addSubject({ data: ctx.params, ctx });
       return { status: 200, subject };
     },
   },
@@ -61,17 +59,15 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
     async handler(ctx) {
-      const data = JSON.parse(ctx.params.data);
-      _.forIn(ctx.params.files, (value, key) => {
-        _.set(data, key, value);
-      });
-      const subject = await updateSubject({ data, ctx });
+      const subject = await updateSubject({ data: ctx.params, ctx });
       return { status: 200, subject };
     },
   },
@@ -83,8 +79,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['delete'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'delete'],
+          },
         },
       }),
     ],
@@ -102,8 +100,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['update'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'update'],
+          },
         },
       }),
     ],
@@ -142,8 +142,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -162,8 +164,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],
@@ -202,8 +206,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.subjects': {
-          actions: ['view'],
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
         },
       }),
     ],

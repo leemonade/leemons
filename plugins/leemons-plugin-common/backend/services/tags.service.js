@@ -3,10 +3,11 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 // const restActions = require('./rest/common.rest');
 const {
@@ -19,6 +20,7 @@ const {
   addTagsToValues,
   getTagsValues,
   listTags,
+  getTagsValueByPartialTags,
 } = require('../core/tags');
 
 /** @type {ServiceSchema} */
@@ -31,6 +33,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -80,8 +83,13 @@ module.exports = {
         return setTagsToValues({ ...ctx.params, ctx });
       },
     },
+    getTagsValueByPartialTags: {
+      handler(ctx) {
+        return getTagsValueByPartialTags({ ...ctx.params, ctx });
+      },
+    },
   },
   async created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

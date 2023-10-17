@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  * It says that the platform profile corresponds to a guardian
  * @public
@@ -8,14 +6,14 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function setGuardianProfile(profile, { transacting } = {}) {
-  return await table.profilesConfig.set(
+async function setGuardianProfile({ profile, ctx }) {
+  return ctx.tx.db.ProfilesConfig.findOneAndUpdate(
     { type: 'guardian' },
     {
       type: 'guardian',
       profile,
     },
-    { transacting }
+    { upsert: true, new: true, lean: true }
   );
 }
 

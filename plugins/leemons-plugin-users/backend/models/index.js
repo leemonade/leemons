@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('leemons-mongodb-helpers');
+const { getKeyValueModel } = require('@leemons/mongodb-helpers');
 
 const models = {
   ...require('./actions'),
@@ -27,6 +27,7 @@ const models = {
   ...require('./userProfile'),
   ...require('./userRecoverPassword'),
   ...require('./userRememberLogin'),
+  ...require('./userRegisterPassword'),
   ...require('./users'),
 };
 

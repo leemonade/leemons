@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 const { validateUpdateEvent } = require('../../validations/forms');
 const { addNexts } = require('../notifications');
@@ -15,7 +14,7 @@ const { addToCalendar } = require('./addToCalendar');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function update(id, data, { calendar, transacting: _transacting } = {}) {
+async function update({ id, data, calendar, ctx }) {
   validateUpdateEvent(data);
 
   // eslint-disable-next-line no-param-reassign
@@ -23,26 +22,20 @@ async function update(id, data, { calendar, transacting: _transacting } = {}) {
   // eslint-disable-next-line no-param-reassign
   if (data.endDate) data.endDate = data.endDate.slice(0, 19).replace('T', ' ');
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const toSave = {
-        ...data,
-        data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
-      };
-      if (calendar) {
-        const calendars = _.isArray(calendar) ? calendar : [calendar];
-        await table.eventCalendar.deleteMany({ event: id }, { transacting });
-        await addToCalendar(id, calendars, { transacting });
-      }
-      const event = await table.events.update({ id }, toSave, { transacting });
+  const toSave = {
+    ...data,
+    data: _.isObject(data.data) ? JSON.stringify(data.data) : data.data,
+  };
+  if (calendar) {
+    const calendars = _.isArray(calendar) ? calendar : [calendar];
+    await ctx.tx.db.EventCalendar.deleteMany({ event: id });
+    await addToCalendar({ eventIds: id, calendarIds: calendars, ctx });
+  }
+  const event = await ctx.tx.db.Events.findOneAndUpdate({ id }, toSave, { new: true, lean: true });
 
-      await removeAll(event.id, { transacting });
-      await addNexts(event.id, { transacting });
-      return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };
-    },
-    table.calendars,
-    _transacting
-  );
+  await removeAll({ eventId: event.id, ctx });
+  await addNexts({ eventId: event.id, ctx });
+  return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };
 }
 
 module.exports = { update };

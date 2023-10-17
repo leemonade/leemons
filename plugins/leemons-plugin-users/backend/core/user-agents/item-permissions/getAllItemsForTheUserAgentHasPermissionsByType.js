@@ -17,7 +17,7 @@ async function getAllItemsForTheUserAgentHasPermissionsByType({
 
   // eslint-disable-next-line camelcase
   if (type_$startssWith) {
-    query.type = { $regex: `^${_type}` };
+    query.type = { $regex: `^${_.escapeRegExp(_type)}` };
   } else {
     query.type = _type;
   }

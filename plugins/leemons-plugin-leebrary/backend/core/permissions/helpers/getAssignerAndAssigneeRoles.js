@@ -1,25 +1,38 @@
 const { getByAsset } = require('../getByAsset');
 
-module.exports = async function getAssignerAndAssigneeRoles(
-  assetId,
-  assignerSession,
-  assigneeId,
-  { transacting } = {}
-) {
+/**
+ * This function retrieves the roles of the assigner and assignee for a given asset.
+ *
+ * @param {string} assetId - The ID of the asset for which roles are to be retrieved.
+ * @param {object} assignerSession - The session object of the assigner.
+ * @param {string} assigneeId - The ID of the assignee.
+ * @param {MoleculerContext} ctx - The context object containing additional information.
+ * @returns {Promise<object>} An object containing the roles of the assigner and assignee.
+ */
+async function getAssignerAndAssigneeRoles({ assetId, assignerSession, assigneeId, ctx } = {}) {
   const permissions = await Promise.all([
     // EN: Get assigner role
     // ES: Obtener rol del asignador
-    getByAsset(assetId, {
-      userSession: assignerSession,
-      transacting,
+    getByAsset({
+      assetId,
+      ctx: {
+        ...ctx,
+        meta: { ...ctx.meta, userSession: assignerSession },
+      },
     }),
     // EN: Get assignee role
     // ES: Obtener rol del asignado
-    getByAsset(assetId, {
-      userSession: {
-        userAgents: [{ id: assigneeId }],
+    getByAsset({
+      assetId,
+      ctx: {
+        ...ctx,
+        meta: {
+          ...ctx.meta,
+          userSession: {
+            userAgents: [{ id: assigneeId }],
+          },
+        },
       },
-      transacting,
     }),
   ]);
 
@@ -27,4 +40,6 @@ module.exports = async function getAssignerAndAssigneeRoles(
     assignerRole: permissions[0].role,
     assigneeRole: permissions[1].role,
   };
-};
+}
+
+module.exports = getAssignerAndAssigneeRoles;

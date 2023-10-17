@@ -3,10 +3,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('leemons-middlewares');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { getCourseName } = require('@leemons/academic-portfolio');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/course.rest');
 const { addCourse } = require('../core/courses/addCourse');
@@ -21,6 +23,7 @@ module.exports = {
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -33,11 +36,11 @@ module.exports = {
     getCourseName: {
       handler(ctx) {
         const { item } = ctx.params;
-        return item.name ? `${item.name}` : `${item.index}º`;
+        return getCourseName(item);
       },
     },
   },
   async created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

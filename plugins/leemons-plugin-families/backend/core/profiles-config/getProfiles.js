@@ -8,10 +8,10 @@ const { getStudentProfile } = require('./getStudentProfile');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getProfiles({ transacting } = {}) {
+async function getProfiles({ ctx }) {
   const [guardian, student] = await Promise.all([
-    getGuardianProfile({ transacting }),
-    getStudentProfile({ transacting }),
+    getGuardianProfile({ ctx }),
+    getStudentProfile({ ctx }),
   ]);
   return { guardian, student };
 }

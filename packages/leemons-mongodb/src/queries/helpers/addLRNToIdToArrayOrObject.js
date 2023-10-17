@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { ObjectId } = require('mongodb');
-const { generateLRN } = require('leemons-lrn');
+const { generateLRN } = require('@leemons/lrn');
 const { getLRNConfig } = require('./getLRNConfig');
 
 function addLRNToIdToArrayOrObject({ items: _items, modelKey, ctx }) {

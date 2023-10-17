@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 /**
  * List kanban columns
@@ -10,12 +9,13 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function list(userSession, { column, transacting } = {}) {
+async function list({ column, ctx }) {
+  const { userSession } = ctx.meta;
   const query = {
     userAgent: userSession.userAgents[0].id,
   };
   if (column) query.column = column;
-  const response = await table.kanbanEventOrders.find(query, { transacting });
+  const response = await ctx.tx.db.KanbanEventOrders.find(query).lean();
   return _.map(response, (r) => ({ ...r, events: JSON.parse(r.events) }));
 }
 

@@ -53,7 +53,7 @@ async function remove({ classe, ctx }) {
       ctx.tx.call('calendar.calendar.remove', {
         id: classCalendar.calendar,
       }),
-      ctx.tx.db.deleteOne({ id: classCalendar }),
+      ctx.tx.db.ClassCalendar.deleteOne({ id: classCalendar.id }),
       ...promises,
     ]);
   }

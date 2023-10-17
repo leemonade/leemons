@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   dateSchema,
   stringSchema,
@@ -99,6 +99,7 @@ const updateEventSchema = {
 };
 
 function validateUpdateEvent(data) {
+  console.log('data', data);
   const validator = new LeemonsValidator(updateEventSchema);
 
   if (!validator.validate(data)) {

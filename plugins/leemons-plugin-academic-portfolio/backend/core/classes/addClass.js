@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { isArray, map } = require('lodash');
 const { validateAddClass } = require('../../validations/forms');
@@ -205,6 +205,7 @@ async function addClass({ data, ctx }) {
       classes: [classe],
       ctx,
     });
+
     await ctx.tx.emit('after-add-class', { class: classe });
 
     if (teachers) {

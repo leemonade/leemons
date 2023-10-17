@@ -1,4 +1,3 @@
-const { table } = require('../tables');
 const { validateNotExistCalendar } = require('../../validations/exists');
 const { getEvents } = require('./getEvents');
 
@@ -11,11 +10,11 @@ const { getEvents } = require('./getEvents');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function detail(id, { withEvents, transacting } = {}) {
-  await validateNotExistCalendar(id);
-  const calendar = await table.calendars.findOne({ id }, { transacting });
+async function detail({ id, withEvents, ctx }) {
+  await validateNotExistCalendar({ id, ctx });
+  const calendar = await ctx.tx.db.Calendars.findOne({ id }).lean();
   if (withEvents) {
-    calendar.events = await getEvents(id, { transacting });
+    calendar.events = await getEvents({ calendar: id, ctx });
   }
   return calendar;
 }

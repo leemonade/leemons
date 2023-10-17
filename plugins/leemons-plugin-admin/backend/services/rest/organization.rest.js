@@ -7,7 +7,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 const organizationService = require('../../core/organization');
 
 /** @type {ServiceSchema} */
@@ -20,8 +20,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.setup': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'permissions.setup': {
+            actions: ['admin'],
+          },
         },
       }),
     ],
@@ -49,8 +51,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.setup': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'permissions.setup': {
+            actions: ['admin'],
+          },
         },
       }),
     ],

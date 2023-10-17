@@ -1,8 +1,7 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function rulesInGrade(grade, { transacting } = {}) {
-  return table.rules.count({ grade_$in: _.isArray(grade) ? grade : [grade] }, { transacting });
+async function rulesInGrade({ grade, ctx }) {
+  return ctx.tx.db.Rules.countDocuments({ grade: _.isArray(grade) ? grade : [grade] });
 }
 
 module.exports = { rulesInGrade };

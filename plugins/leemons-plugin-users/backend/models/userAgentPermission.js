@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('leemons-mongodb');
+const { mongoose, newModel } = require('@leemons/mongodb');
 
 const schema = new mongoose.Schema(
   {
@@ -35,12 +35,10 @@ const schema = new mongoose.Schema(
     role: {
       // ref: 'users_Roles',
       type: String,
-      required: true,
     },
     center: {
       // ref: 'users_Centers',
       type: String,
-      required: true,
     },
   },
   {

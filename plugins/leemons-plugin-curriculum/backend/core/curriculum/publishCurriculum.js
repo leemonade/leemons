@@ -1,12 +1,10 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function publishCurriculum(curriculumId, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) =>
-      table.curriculums.update({ id: curriculumId }, { published: true }, { transacting }),
-    table.curriculums,
-    _transacting
+async function publishCurriculum({ curriculumId, ctx }) {
+  return ctx.tx.db.Curriculums.findOneAndUpdate(
+    { id: curriculumId },
+    { published: true },
+    { new: true, lean: true }
   );
 }
 

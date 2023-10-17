@@ -70,7 +70,7 @@ async function addProgram({ data, userSession, ctx }) {
     { id: program.id },
     {
       image: assetImage.id,
-      imageUrl: ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: assetImage.id }),
+      imageUrl: await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: assetImage.id }),
     },
     { new: true, lean: true }
   );

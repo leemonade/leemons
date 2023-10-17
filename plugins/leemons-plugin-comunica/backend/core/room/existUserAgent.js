@@ -1,5 +1,3 @@
-const {table} = require('../tables');
-
 /**
  * Check if the user agent exist in room
  * @public
@@ -8,9 +6,9 @@ const {table} = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function existUserAgent(room, userAgent, {transacting} = {}) {
-  const count = await table.userAgentInRoom.count({room, userAgent}, {transacting});
+async function existUserAgent({ room, userAgent, ctx }) {
+  const count = await ctx.tx.db.UserAgentInRoom.countDocuments({ room, userAgent });
   return !!count;
 }
 
-module.exports = {existUserAgent};
+module.exports = { existUserAgent };

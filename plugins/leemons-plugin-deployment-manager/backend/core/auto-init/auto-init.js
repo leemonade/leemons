@@ -2,8 +2,8 @@ const _ = require('lodash');
 const {
   getAutoDeploymentIDIfCanIFNotThrowError,
   isCoreService,
-} = require('leemons-deployment-manager');
-const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+} = require('@leemons/deployment-manager');
+const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
 
 async function autoInit(broker) {
   // This function return a default deploymentID if not DISABLE_AUTO_INIT
@@ -62,7 +62,7 @@ async function autoInit(broker) {
   );
   console.log('- Auto init - Post SavePlugins');
   console.log('- Auto init - Pre SavePluginsRelationships');
-  // We simulate that the store adds the permissions between the actions of the plugins.
+  // We simulate that the store adds the permissions between the actions of the
   await broker.call('deployment-manager.savePluginsRelationships', relationship, {
     meta: { deploymentID },
   });

@@ -7,9 +7,9 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const emailService = require('../../core/email');
 
 const validateProviderConfigObj = {
@@ -43,8 +43,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'admin.setup': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'admin.setup': {
+            actions: ['admin'],
+          },
         },
       }),
     ],
@@ -109,8 +111,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'admin.setup': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'admin.setup': {
+            actions: ['admin'],
+          },
         },
       }),
     ],
@@ -131,8 +135,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'admin.setup': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'admin.setup': {
+            actions: ['admin'],
+          },
         },
       }),
     ],

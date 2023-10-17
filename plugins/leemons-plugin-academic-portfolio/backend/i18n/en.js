@@ -131,6 +131,8 @@ module.exports = {
           substagesFrequency: 'Select frequency',
         },
         errorMessages: {
+          abbrevationOnlyNumbers: 'Only numbers allowed',
+          maximunSubstageAbbreviation: 'Maximum {n} characters',
           useDefaultSubstagesName: {
             required: 'Required field',
           },
@@ -207,7 +209,7 @@ module.exports = {
   subject_page: {
     page_title: 'Subjects configuration',
     page_description:
-      'Configure knowledge areas/topics and type (core, electives…), then it is possible to upload the subject database or add them manually. After this, it will be possible to create your tree portfolio schema.',
+      'Define first the types of subjects (core, elective...) and the areas of knowledge (if applicable to your program).',
     centerLabel: 'Center',
     centerPlaceholder: 'Select a center',
     programLabel: 'Program',
@@ -243,6 +245,7 @@ module.exports = {
       groupVisibilityLabel: 'Avoid nested groups',
     },
     subjects: {
+      addSubject: 'Add subject',
       newTitle: 'New subject',
       title: 'Subjects',
       course: 'Course/s',
@@ -279,7 +282,7 @@ module.exports = {
       cancel: 'Cancel',
     },
     programTreeType: {
-      title: 'Portfolio tree schema',
+      title: 'Configure {name} tree view',
       description1:
         'Configure portfolio tree view in order to adapt it to your specific program characteristics. This setting can be changed whenever needed.',
       note: 'NOTE:',
@@ -321,6 +324,7 @@ module.exports = {
     studentRequired: 'Field required',
   },
   tree_page: {
+    configTreeView: 'Configure tree view',
     page_title: 'Academic Portofolio Tree',
     page_description:
       'This is the Portfolio Tree, it can be edited, duplicated or used to create new elements for your program. Students can also be assigned at any level (all subjects under it will inherit this task).',
@@ -510,7 +514,7 @@ module.exports = {
       attention: 'Attention',
       groupAny: 'Must be {max} characters',
       groupNumbers: 'Must be {max} numbers',
-      enrollStudents: 'Currently enrolled',
+      enrollStudents: 'Enroll students',
       currentlyEnrolled: 'Currently enrolled',
       subjectChangeCourse:
         'Your tree model indicates that your courses are structuring, i.e. subjects are nested within course levels. When making a course change, the subject will disappear from the current course level and will be moved to the newly selected course.',
@@ -550,5 +554,10 @@ module.exports = {
   },
   classStudents: {
     label: 'Students',
+  },
+  subjectsDrawer: {
+    add: 'Add subject',
+    edit: 'Edit subject',
+    save: 'Save subject',
   },
 };

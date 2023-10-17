@@ -1,16 +1,16 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const constants = require('../../config/constants');
 const getHostname = require('../platform/getHostname');
 
 async function sendWelcomeEmailToUser({ user, ctx }) {
   const recovery = await ctx.tx.db.UserRegisterPassword.findOne({ user: user.id }).lean();
-  const hostname = await getHostname();
+  const hostname = await getHostname({ ctx });
 
   if (!recovery) throw new LeemonsError(ctx, { message: 'User is already active' });
-  const email = await ctx.tx.call('emails.email.sendAsPlatform', {
-    to: user.name,
-    templateName: 'userWelcome',
+  return ctx.tx.call('emails.email.sendAsPlatform', {
+    to: user.email,
+    templateName: 'user-welcome',
     language: user.locale,
     context: {
       name: user.name,
@@ -23,7 +23,6 @@ async function sendWelcomeEmailToUser({ user, ctx }) {
       expDays: constants.daysForRegisterPassword,
     },
   });
-  return email;
 }
 
 module.exports = { sendWelcomeEmailToUser };

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getActionNameFromCTX } = require('leemons-service-name-parser');
+const { getActionNameFromCTX } = require('@leemons/service-name-parser');
 
 module.exports = () => ({
   name: '',

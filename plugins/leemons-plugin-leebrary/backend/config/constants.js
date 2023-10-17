@@ -43,7 +43,7 @@ const menuItems = [
       url: '/private/leebrary/',
       label: {
         en: 'Library',
-        es: 'Librería',
+        es: 'Biblioteca',
       },
     },
     permissions: [
@@ -77,7 +77,7 @@ const categories = [
     duplicable: true,
     provider: 'leebrary',
     canUse: '*',
-    order: 2,
+    order: 1,
     menu: {
       item: {
         iconSvg: '/public/leebrary/media-files.svg',
@@ -101,7 +101,7 @@ const categories = [
     duplicable: true,
     provider: 'leebrary',
     canUse: '*',
-    order: 3,
+    order: 2,
     menu: {
       item: {
         iconSvg: '/public/leebrary/bookmarks.svg',
@@ -123,7 +123,7 @@ const categories = [
 
 // EN: The roles must be ordered by allowance. Each role can only assign lower roles.
 // ES: Los roles deben estar ordenados por permisos. Cada rol sólo puede asignar roles inferiores.
-const assetRoles = ['viewer', 'commentor', 'editor', 'owner'];
+const assetRoles = ['viewer', 'commentor', 'editor', 'assigner', 'owner'];
 const roles = ['public', 'noPermission', ...assetRoles];
 
 // EN: The permissions each role has.
@@ -131,6 +131,7 @@ const roles = ['public', 'noPermission', ...assetRoles];
 const rolesPermissions = {
   public: {
     view: true,
+    assign: false,
     comment: false,
     edit: false,
     delete: false,
@@ -140,6 +141,7 @@ const rolesPermissions = {
   },
   noPermission: {
     view: false,
+    assign: false,
     comment: false,
     edit: false,
     delete: false,
@@ -149,6 +151,7 @@ const rolesPermissions = {
   },
   viewer: {
     view: true,
+    assign: false,
     comment: false,
     edit: false,
     delete: false,
@@ -156,8 +159,19 @@ const rolesPermissions = {
     canAssign: ['viewer'],
     canUnassign: [],
   },
+  assigner: {
+    view: true,
+    assign: true,
+    comment: false,
+    edit: false,
+    delete: false,
+    duplicate: false,
+    canAssign: ['viewer'],
+    canUnassign: [],
+  },
   commentor: {
     view: true,
+    assign: false,
     comment: true,
     edit: false,
     delete: false,
@@ -167,21 +181,23 @@ const rolesPermissions = {
   },
   editor: {
     view: true,
+    assign: true,
     comment: true,
     edit: true,
     delete: false,
     duplicate: true,
-    canAssign: ['viewer', 'commentor', 'editor'],
-    canUnassign: ['viewer', 'commentor'],
+    canAssign: ['assigner', 'viewer', 'commentor', 'editor'],
+    canUnassign: ['assigner', 'viewer', 'commentor'],
   },
   owner: {
     view: true,
+    assign: true,
     comment: true,
     edit: true,
     delete: true,
     duplicate: true,
-    canAssign: ['viewer', 'commentor', 'editor', 'owner'],
-    canUnassign: ['viewer', 'commentor', 'editor'],
+    canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
+    canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
   },
 };
 

@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 module.exports = function stringifyType({ calledFrom, type, ctx }) {
   if (type.includes('::')) {

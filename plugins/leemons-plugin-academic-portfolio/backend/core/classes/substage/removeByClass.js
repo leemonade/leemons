@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 async function removeByClass({ classIds, soft, ctx }) {
-  const classSubstages = await ctx.tx.ClassSubstage.find({
+  const classSubstages = await ctx.tx.db.ClassSubstage.find({
     class: _.isArray(classIds) ? classIds : [classIds],
   }).lean();
   await ctx.tx.emit('before-remove-classes-substages', {

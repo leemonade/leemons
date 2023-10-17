@@ -1,0 +1,14 @@
+{
+  "provider": {
+    "title": "Amazon S3 settings",
+    "description": "Amazon Simple Storage Service (Amazon S3) is an object storage service that offers industry-leading scalability, data availability, security, and performance.",
+    "tableAdd": "Add",
+    "tableEdit": "Edit",
+    "tableRemove": "Remove",
+    "bucket": "Bucket (Ex: leemons-assets)",
+    "region": "Region (Ex: eu-central-1)",
+    "accessKey": "Access key",
+    "secretAccessKey": "Secret access key",
+    "fieldRequired": "This field is required"
+  }
+}

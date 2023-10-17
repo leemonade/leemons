@@ -63,7 +63,7 @@ async function importEvents(filePath, { users, programs }) {
       event.data = { ...(event.data || {}), hideInCalendar: event.hideInCalendar };
     }
 
-    event.type = `plugins.calendar.${event.type}`;
+    event.type = `calendar.${event.type}`;
 
     // ·······························································
     // SUBTASKS

@@ -5,43 +5,23 @@ const duration = require('dayjs/plugin/duration');
 const { keyBy, forEach } = require('lodash');
 const { getUserQuestionResponses } = require('./getUserQuestionResponses');
 const { getByIds } = require('../questions/getByIds');
-const {
-  getQuestionClues,
-} = require('../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues');
-const {
-  getConfigByInstance,
-} = require('../../../frontend/src/pages/private/tests/StudentInstance/helpers/getConfigByInstance');
+const { getQuestionClues } = require('./helpers/getQuestionClues');
+const { getConfigByInstance } = require('./helpers/getConfigByInstance');
 
 dayjs.extend(duration);
 
-async function calculeUserAgentInstanceNote(
-  instanceId,
-  userAgent,
-  { userSession, transacting } = {}
-) {
-  const { assignableInstances: assignableInstancesService } =
-    leemons.getPlugin('assignables').services;
-  const { programs: programsService } = leemons.getPlugin('academic-portfolio').services;
-
-  const instance = await assignableInstancesService.getAssignableInstance(instanceId, {
-    userSession,
+async function calculeUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
+  const instance = await ctx.tx.call('assignables.assignableInstances.getAssignableInstance', {
+    id: instanceId,
     details: true,
-    transacting,
   });
 
   const [evaluationSystem, questionResponses, questions] = await Promise.all([
-    programsService.getProgramEvaluationSystem(instance.subjects[0].program, {
-      userSession,
-      transacting,
+    ctx.tx.call('academic-portfolio.programs.getProgramEvaluationSystem', {
+      id: instance.subjects[0].program,
     }),
-    getUserQuestionResponses(instance.id, userAgent, {
-      userSession,
-      transacting,
-    }),
-    getByIds(instance.metadata.questions, {
-      userSession,
-      transacting,
-    }),
+    getUserQuestionResponses({ instance: instance.id, userAgent, ctx }),
+    getByIds({ id: instance.metadata.questions, ctx }),
   ]);
 
   const perQuestion =

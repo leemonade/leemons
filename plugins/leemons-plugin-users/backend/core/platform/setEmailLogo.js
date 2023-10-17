@@ -6,6 +6,8 @@ async function setEmailLogo({ value, ctx }) {
       value,
     },
     {
+      lean: true,
+      new: true,
       upsert: true,
     }
   );

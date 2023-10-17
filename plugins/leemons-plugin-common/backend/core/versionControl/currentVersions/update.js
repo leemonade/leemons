@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { stringifyVersion } = require('../helpers');
 const getVersion = require('../versions/getVersion');
 

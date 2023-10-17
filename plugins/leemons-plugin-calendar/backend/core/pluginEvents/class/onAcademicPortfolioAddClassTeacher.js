@@ -23,7 +23,7 @@ function onAcademicPortfolioAddClassTeacher({
 
       try {
         await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
-          key: leemons.plugin.prefixPN(`program.${classCalendar.program}`),
+          key: ctx.prefixPN(`program.${classCalendar.program}`),
           userAgentId: teacher,
           actionName: 'view',
         });

@@ -1,6 +1,13 @@
 {
-  "name": "leemons-cache",
-  "version": "1.0.0",
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/service-name-parser": "0.0.40",
+    "lodash": "^4.17.21",
+    "node-cache": "^5.1.2",
+    "redis": "^4.6.10"
+  },
+  "name": "@leemons/cache",
+  "version": "0.0.40",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -9,6 +16,10 @@
     "name": "Leemons Edtech Solutions",
     "url": "https://www.leemons.io"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "maintainers": [
     {
       "email": "hi@leemons.io",
@@ -16,11 +27,5 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
-  "dependencies": {
-    "leemons-service-name-parser": "1.0.0",
-    "lodash": "^4.17.21",
-    "node-cache": "^5.1.2",
-    "redis": "^4.6.7"
-  }
+  "license": "MIT"
 }

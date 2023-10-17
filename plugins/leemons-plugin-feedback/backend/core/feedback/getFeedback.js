@@ -1,22 +1,21 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
+const { LeemonsError } = require('@leemons/error');
 const { getFeedbackQuestionByIds } = require('../feedback-questions');
 
-async function getFeedback(id, { userSession, transacting } = {}, getAssets = true) {
-  const { assignables: assignableService } = leemons.getPlugin('assignables').services;
+async function getFeedback({ id, getAssets = true, ctx }) {
+  const { userSession } = ctx.meta;
   const assetService = leemons.getPlugin('leebrary').services.assets;
 
   // Check is userSession is provided
   if (getAssets && !userSession)
-    throw new Error('User session is required (getQuestionsBanksDetails)');
+    throw new LeemonsError(ctx, { message: 'User session is required (getQuestionsBanksDetails)' });
 
   const ids = _.isArray(id) ? id : [id];
 
-  const assignables = await assignableService.getAssignables(ids, {
+  const assignables = await ctx.tx.call('assignables.assignables.getAssignables', {
+    ids,
     withFiles: true,
-    userSession,
-    transacting,
   });
 
   const imagesIds = [];
@@ -24,27 +23,19 @@ async function getFeedback(id, { userSession, transacting } = {}, getAssets = tr
     if (assignable.metadata.featuredImage) imagesIds.push(assignable.metadata.featuredImage);
   });
 
-  const questionAssets = await assetService.getByIds(imagesIds, {
+  const questionAssets = await ctx.tx.call('leebrary.assets.getByIds', {
+    assetsIds: imagesIds,
     withFiles: true,
-    userSession,
-    transacting,
   });
 
   const questionAssetsById = _.keyBy(questionAssets, 'id');
 
   const assignableIds = _.map(assignables, 'id');
-  const questionIds = await table.feedbackQuestions.find(
-    { assignable_$in: assignableIds },
-    {
-      columns: ['id'],
-      transacting,
-    }
-  );
+  const questionIds = await ctx.tx.db.FeedbackQuestions.find({ assignable: assignableIds })
+    .select(['id'])
+    .lean();
 
-  const questions = await getFeedbackQuestionByIds(_.map(questionIds, 'id'), {
-    userSession,
-    transacting,
-  });
+  const questions = await getFeedbackQuestionByIds({ id: _.map(questionIds, 'id'), ctx });
 
   const questionsByFeedback = _.groupBy(questions, 'assignable');
   const result = _.map(assignables, (feedback) => {

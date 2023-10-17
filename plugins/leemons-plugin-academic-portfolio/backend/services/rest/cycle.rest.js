@@ -7,7 +7,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 
 const { updateCycle } = require('../../core/cycle');
 
@@ -21,8 +21,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'permissions.programs': {
-          actions: ['create', 'update'],
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'create', 'update'],
+          },
         },
       }),
     ],

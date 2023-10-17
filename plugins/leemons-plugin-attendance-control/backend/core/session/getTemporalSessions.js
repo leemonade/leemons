@@ -1,22 +1,20 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { tables } = require('../tables');
 const {
   calculeSessionsBetweenDatesFromSchedule,
 } = require('./calculeSessionsBetweenDatesFromSchedule');
 
-async function getTemporalSessions(classeId, { start, end, withAssistances, transacting } = {}) {
+async function getTemporalSessions({ classeId, start, end, withAssistances, ctx }) {
   let [[classe], sessions] = await Promise.all([
-    leemons.getPlugin('academic-portfolio').services.classes.classByIds(classeId, { transacting }),
-    tables.session.find({ class: classeId }, { transacting }),
+    ctx.tx.call('academic-portfolio.classes.classByIds', {
+      ids: classeId,
+    }),
+    ctx.tx.db.Session.find({ class: classeId }).lean(),
   ]);
 
   if (withAssistances) {
-    const assistances = await tables.assistance.find(
-      { session_$in: _.map(sessions, 'id') },
-      { transacting }
-    );
+    const assistances = await ctx.tx.db.Assistance.find({ session: _.map(sessions, 'id') }).lean();
     const assistancesBySession = _.groupBy(assistances, 'session');
     _.forEach(sessions, (session) => {
       session.attendance = assistancesBySession[session.id];
@@ -26,9 +24,7 @@ async function getTemporalSessions(classeId, { start, end, withAssistances, tran
   const programId = classe.program;
   const courseId = classe.courses?.id;
 
-  const calendar = await leemons
-    .getPlugin('academic-calendar')
-    .services.config.getConfig(programId, { transacting });
+  const calendar = await ctx.tx.call('academic-calendar.config.getConfig', { program: programId });
 
   if (!calendar) {
     return null;

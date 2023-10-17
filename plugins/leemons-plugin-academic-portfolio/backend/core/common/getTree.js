@@ -70,7 +70,7 @@ async function getTree({ nodeTypes, program, ctx }) {
   managerIds = managerIds.concat(_.map(subjectTypes, 'id'));
   managerIds = managerIds.concat(_.map(cycles, 'id'));
 
-  const managers = await getManagers({ relationships: managerIds, returnAgents: false });
+  const managers = await getManagers({ relationships: managerIds, returnAgents: false, ctx });
   const managersByRelationship = _.groupBy(managers, 'relationship');
 
   function process(items) {

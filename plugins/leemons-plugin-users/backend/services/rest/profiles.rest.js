@@ -3,11 +3,11 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 /** @type {ServiceSchema} */
-const { LeemonsValidator } = require('leemons-validator');
+const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 const {
   list,
   add,
@@ -60,8 +60,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -100,8 +102,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['create', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['create', 'admin'],
+          },
         },
       }),
     ],
@@ -132,8 +136,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -161,8 +167,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.profiles': {
-          actions: ['update', 'admin'],
+        allowedPermissions: {
+          'users.profiles': {
+            actions: ['update', 'admin'],
+          },
         },
       }),
     ],

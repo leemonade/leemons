@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('leemons-mongodb');
+const { mongoose, newModel } = require('@leemons/mongodb');
 
 const schema = new mongoose.Schema(
   {
@@ -8,11 +8,14 @@ const schema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+    /*
+    Esta configuracion es unica para todos
     deploymentID: {
       type: String,
       required: true,
       index: true,
     },
+    */
     region: {
       type: String,
       required: true,

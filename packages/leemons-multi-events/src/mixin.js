@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { setTimeout } = require('timers/promises');
-const { LeemonsError } = require('leemons-error');
-const { setKey, hasKeys, hasKey, getKey } = require('leemons-mongodb-helpers');
-const { randomString } = require('leemons-utils');
+const { LeemonsError } = require('@leemons/error');
+const { setKey, hasKeys, hasKey, getKey } = require('@leemons/mongodb-helpers');
+const { randomString } = require('@leemons/utils');
 
 function getEventKey(str) {
   return `multi-events-${str}`;
@@ -45,7 +45,7 @@ async function markEventCalledAndCallIfCan({
           randomStr
         );
 
-        await setTimeout(100);
+        await setTimeout(50);
 
         const savedRandomStr = await getKey(
           model,

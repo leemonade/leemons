@@ -30,7 +30,7 @@ function onAcademicPortfolioAddClass({
       }
 
       const calendar = await ctx.tx.call('calendar.calendar.add', {
-        item: ctx.prefixPN(`class.${id}`),
+        key: ctx.prefixPN(`class.${id}`),
         config,
       });
 

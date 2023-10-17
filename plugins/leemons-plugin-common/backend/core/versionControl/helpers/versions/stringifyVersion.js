@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 
 module.exports = function stringifyVersion({ major, minor, patch, ctx }) {
   if (typeof major !== 'number' || typeof minor !== 'number' || typeof patch !== 'number') {

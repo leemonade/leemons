@@ -1,4 +1,4 @@
-const { mongoDBPaginate } = require('leemons-mongodb-helpers');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
 async function list({ page, size, indexable = true, ctx }) {
   const query = { indexable };

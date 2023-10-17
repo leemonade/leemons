@@ -16,8 +16,6 @@ const transformTokensAndSave = async ({ tokens, sets, excludes, options, ctx }) 
  * Reads the given input file, transforms all tokens and writes them to the output file
  */
 const compileTokens = async ({ jsonRaw, ctx }) => {
-  const output = './config/tokens/tokens-compiled.json';
-
   const options = {
     expandTypography: false,
     expandShadow: false,
@@ -26,12 +24,11 @@ const compileTokens = async ({ jsonRaw, ctx }) => {
     resolveReferences: true,
   };
 
-  transformTokensAndSave({
-    jsonRaw,
+  await transformTokensAndSave({
+    tokens: jsonRaw,
     sets: ['core', 'global', 'component'],
     excludes: [],
     options,
-    output,
     ctx,
   });
 };

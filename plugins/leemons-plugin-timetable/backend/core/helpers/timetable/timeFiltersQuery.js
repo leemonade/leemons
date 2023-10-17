@@ -4,8 +4,8 @@ module.exports = function timeFiltersQuery({ end, start, endBetween, startBetwee
   // Start time query
   if (startBetween) {
     const [startStart, startEnd] = startBetween;
-    startQuery.start_$gte = startStart;
-    startQuery.start_$lte = startEnd;
+    startQuery.start = { $gte: startStart };
+    startQuery.start = { $lte: startEnd };
   }
   if (start) {
     // If start between is set, find timetables starting after start or in startBetween
@@ -27,8 +27,8 @@ module.exports = function timeFiltersQuery({ end, start, endBetween, startBetwee
   let endQuery = {};
   if (endBetween) {
     const [endStart, endEnd] = endBetween;
-    endQuery.end_$gte = endStart;
-    endQuery.end_$lte = endEnd;
+    endQuery.end = { $gte: endStart };
+    endQuery.end = { $lte: endEnd };
   }
 
   if (end) {

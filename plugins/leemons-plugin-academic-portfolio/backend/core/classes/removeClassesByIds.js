@@ -20,19 +20,23 @@ async function removeClassesByIds({ ids, soft, ctx }) {
   });
 
   await Promise.allSettled(
-    _.map(classes, (classe) =>
-      ctx.tx.call('leebrary.assets.remove', {
-        id: { id: classe.image.id },
-      })
-    )
+    _.map(classes, (classe) => {
+      if (classe.image) {
+        return ctx.tx.call('leebrary.assets.remove', {
+          id: { id: classe.image.id },
+        });
+      } else {
+        return Promise.resolve();
+      }
+    })
   );
 
-  await removeKnowledgeByClass({ classesIds, soft, ctx });
-  await removeSubstageByClass({ classesIds, soft, ctx });
-  await removeStudentsByClass({ classesIds, soft, ctx });
-  await removeTeachersByClass({ classesIds, soft, ctx });
-  await removeCourseByClass({ classesIds, soft, ctx });
-  await removeGroupByClass({ classesIds, soft, ctx });
+  await removeKnowledgeByClass({ classIds: classesIds, soft, ctx });
+  await removeSubstageByClass({ classIds: classesIds, soft, ctx });
+  await removeStudentsByClass({ classIds: classesIds, soft, ctx });
+  await removeTeachersByClass({ classIds: classesIds, soft, ctx });
+  await removeCourseByClass({ classIds: classesIds, soft, ctx });
+  await removeGroupByClass({ classIds: classesIds, soft, ctx });
 
   const refClasses = await ctx.tx.db.Class.find({ class: _.map(classes, 'id') }).lean();
 
@@ -41,6 +45,7 @@ async function removeClassesByIds({ ids, soft, ctx }) {
     await removeClassesByIds({ ids: refIds, soft, ctx });
   }
 
+  console.log('Vamos a borrar ');
   await ctx.tx.db.Class.deleteMany({ id: _.map(classes, 'id') }, { soft });
   // TODO: Borrar permiso de la clase a todo quisqui
   /*

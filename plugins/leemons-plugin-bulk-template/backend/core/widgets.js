@@ -7,37 +7,37 @@ async function initWidgets() {
   const profiles = await settings.getProfiles();
 
   const zoneReorders = {
-    'plugins.dashboard.program.left': [
-      'plugins.board-messages.dashboard',
-      'plugins.academic-portfolio.user.classes.swiper',
-      'plugins.assignables.dashboard.need-your-attention',
-      'plugins.calendar.user.program.calendar',
-      'plugins.calendar.user.program.kanban',
+    'dashboard.program.left': [
+      'board-messages.dashboard',
+      'academic-portfolio.user.classes.swiper',
+      'assignables.dashboard.need-your-attention',
+      'calendar.user.program.calendar',
+      'calendar.user.program.kanban',
     ],
-    'plugins.dashboard.class.tabs': [
-      // 'plugins.dashboard.class.tab.control-panel',
-      'plugins.assignables.class.tab.ongoing',
-      'plugins.calendar.class.tab.kanban',
-      'plugins.calendar.class.tab.calendar',
-      'plugins.academic-portfolio.class.tab.detail',
+    'dashboard.class.tabs': [
+      // 'dashboard.class.tab.control-panel',
+      'assignables.class.tab.ongoing',
+      'calendar.class.tab.kanban',
+      'calendar.class.tab.calendar',
+      'academic-portfolio.class.tab.detail',
     ],
-    'plugins.assignables.class.ongoing': [
-      'plugins.board-messages.class-dashboard',
-      'plugins.assignables.dashboard.subject.need-your-attention',
-      'plugins.assignables.class.ongoing',
+    'assignables.class.ongoing': [
+      'board-messages.class-dashboard',
+      'assignables.dashboard.subject.need-your-attention',
+      'assignables.class.ongoing',
     ],
-    'plugins.academic-portfolio.class.detail': ['plugins.board-messages.class-dashboard'],
-    // 'plugins.dashboard.class.control-panel': [
-    //   'plugins.assignables.dashboard.subject.need-your-attention',
-    //   'plugins.calendar.user.class.calendar',
-    //   'plugins.calendar.user.class.kanban',
+    'academic-portfolio.class.detail': ['board-messages.class-dashboard'],
+    // 'dashboard.class.control-panel': [
+    //   'assignables.dashboard.subject.need-your-attention',
+    //   'calendar.user.class.calendar',
+    //   'calendar.user.class.kanban',
     // ],
   };
 
   const itemProfiles = [
     {
-      zoneKey: 'plugins.dashboard.class.tabs',
-      key: 'plugins.tasks.class.tab.students.tasks',
+      zoneKey: 'dashboard.class.tabs',
+      key: 'tasks.class.tab.students.tasks',
       profiles: [profiles.student],
     },
   ];

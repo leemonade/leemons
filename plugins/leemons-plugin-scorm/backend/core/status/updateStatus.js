@@ -1,5 +1,5 @@
 const { map, toArray, uniqBy } = require('lodash');
-const { scormProgress } = require('../../tables');
+const { LeemonsError } = require('@leemons/error');
 
 function getScormGrade({ state, numberOfQuestions }) {
   if (state?.cmi?.score?.raw && state?.cmi?.score?.min && state?.cmi?.score?.max) {
@@ -112,36 +112,33 @@ function getLeemonsScormObject({ assignable, state }) {
   return {};
 }
 
-module.exports = async function updateStatus(
-  { instance: instanceId, user, state },
-  { userSession, transacting }
-) {
-  const userAgentIds = map(userSession.userAgents, 'id');
+module.exports = async function updateStatus({ instance: instanceId, user, state, ctx }) {
+  const userAgentIds = map(ctx.meta.userSession.userAgents, 'id');
   const isUser = userAgentIds.includes(user);
 
   if (!isUser) {
-    throw new Error('Only the assignation student can update the scorm status');
+    throw new LeemonsError(ctx, {
+      message: 'Only the assignation student can update the scorm status',
+    });
   }
 
-  const { assignableInstances, assignations } = leemons.getPlugin('assignables').services;
-
-  const instance = await assignableInstances.getAssignableInstance(instanceId, {
+  const instance = await ctx.tx.call('assignables.assignableInstances.getAssignableInstance', {
+    id: instanceId,
     details: true,
-    userSession,
-    transacting,
   });
 
   const leemonsScormState = getLeemonsScormObject({ assignable: instance?.assignable, state });
 
   if (instance.assignable.role !== 'scorm') {
-    throw new Error('This service can only update scorm grades');
+    throw new LeemonsError(ctx, { message: 'This service can only update scorm grades' });
   }
 
   const classes = instance?.subjects;
   const program = classes?.[0]?.program;
-  const evaluationSystem = await leemons
-    .getPlugin('academic-portfolio')
-    .services.programs.getProgramEvaluationSystem(program);
+  const evaluationSystem = await ctx.tx.call(
+    'academic-portfolio.programs.getProgramEvaluationSystem',
+    { id: program }
+  );
 
   const grade = getScormGrade({
     state: leemonsScormState,
@@ -151,9 +148,17 @@ module.exports = async function updateStatus(
   const scaledGrade = getScaledGrade({ grade, evaluationSystem });
 
   await Promise.all([
-    scormProgress.set({ instance: instanceId, user }, { state }, { transacting }),
-    assignations.updateAssignation(
+    ctx.tx.db.ScormProgress.findOneAndUpdate(
+      { instance: instanceId, user },
+      { state },
       {
+        lean: true,
+        new: true,
+        upsert: true,
+      }
+    ),
+    ctx.tx.call('assignables.assignations.updateAssignation', {
+      assignation: {
         assignableInstance: instanceId,
         user,
         grades: classes.map((klass) => ({
@@ -163,7 +168,6 @@ module.exports = async function updateStatus(
           gradedBy: 'auto-graded',
         })),
       },
-      { userSession, transacting }
-    ),
+    }),
   ]);
 };

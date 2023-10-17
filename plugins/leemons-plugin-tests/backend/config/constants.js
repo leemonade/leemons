@@ -178,7 +178,7 @@ const assignableRoles = [
       previewUrl: '/private/tests/detail/:id',
       creatable: true,
       createUrl: '/private/tests/new',
-      canUse: [], // Assignables le calza 'calledFrom ('plugins.tasks')' y 'plugins.assignables'
+      canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
       pluralName: { en: 'tests', es: 'tests' },
       singularName: { en: 'test', es: 'test' },
       order: 3,

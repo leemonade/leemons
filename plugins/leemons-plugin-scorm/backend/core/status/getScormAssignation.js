@@ -1,20 +1,13 @@
-const { scormProgress } = require('../../tables');
-
-module.exports = async function getScormAssignation(
-  { instance, user },
-  { userSession, transacting }
-) {
+module.exports = async function getScormAssignation({ instance, user, ctx }) {
   const [assignation, scormStatus] = await Promise.all([
-    leemons
-      .getPlugin('assignables')
-      .services.assignations.getAssignation(instance, user, { userSession, transacting }),
-    scormProgress.find(
-      {
-        instance,
-        user,
-      },
-      { transacting }
-    ),
+    ctx.tx.call('assignables.assignations.getAssignation', {
+      assignableInstanceId: instance,
+      user,
+    }),
+    ctx.tx.db.ScormProgress.find({
+      instance,
+      user,
+    }).lean(),
   ]);
 
   return {

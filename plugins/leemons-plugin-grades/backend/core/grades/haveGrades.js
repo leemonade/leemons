@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function haveGrades({ transacting } = {}) {
-  const grades = await table.grades.count({}, { transacting });
+async function haveGrades({ ctx }) {
+  const grades = await ctx.tx.db.Grades.countDocuments({});
   return !!grades;
 }
 

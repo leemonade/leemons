@@ -1,4 +1,4 @@
-const { newTransaction } = require('leemons-transactions');
+const { newTransaction } = require('@leemons/transactions');
 
 async function createTransactionIDIfNeed({ ignoreTransaction, autoTransaction, ctx }) {
   if (!ignoreTransaction) {

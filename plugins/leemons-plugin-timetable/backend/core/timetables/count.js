@@ -1,10 +1,14 @@
-const timeFiltersQuery = require('../../helpers/timetable/timeFiltersQuery');
-const { table } = require('../tables');
+const timeFiltersQuery = require('../helpers/timetable/timeFiltersQuery');
 
-module.exports = async function count(
+module.exports = async function count({
   classId,
-  { start, startBetween, end, endBetween, days, transacting } = {}
-) {
+  start,
+  startBetween,
+  end,
+  endBetween,
+  days,
+  ctx,
+}) {
   const query = {
     class: classId,
   };
@@ -17,17 +21,12 @@ module.exports = async function count(
   });
 
   if (days) {
-    query.day_$in = days;
+    query.day = days;
   }
 
-  const hasTimetables = await table.timetable.count(
-    {
-      ...query,
-      ...startQuery,
-      ...endQuery,
-    },
-    { transacting }
-  );
-
-  return hasTimetables;
+  return ctx.tx.db.Timetable.countDocuments({
+    ...query,
+    ...startQuery,
+    ...endQuery,
+  });
 };

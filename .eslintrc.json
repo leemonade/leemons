@@ -86,6 +86,7 @@
           "@layout",
           "@learning-paths",
           "@leebrary",
+          "@leebrary-aws-s3",
           "@menu-builder",
           "@mqtt-aws-iot",
           "@mqtt-socket-io",

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('leemons-mongodb');
+const { mongoose, newModel } = require('@leemons/mongodb');
 
 const schema = new mongoose.Schema(
   {
@@ -32,6 +32,7 @@ const schema = new mongoose.Schema(
     },
     disabled: {
       type: Boolean,
+      default: false,
     },
   },
   {

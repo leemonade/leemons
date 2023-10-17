@@ -3,10 +3,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const {
   add,
   update,
@@ -45,17 +47,19 @@ const {
   addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile,
 } = require('../core/user-profile');
-const restActions = require('./rest/actions.rest');
+const restActions = require('./rest/permissions.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'users.permissions',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -246,6 +250,6 @@ module.exports = {
     },
   },
   async created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

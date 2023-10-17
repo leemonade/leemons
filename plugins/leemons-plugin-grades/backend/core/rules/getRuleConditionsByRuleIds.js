@@ -1,18 +1,16 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { getConditionsByRule } = require('../conditions/getConditionsByRule');
 const { getConditionGroupsByRule } = require('../condition-groups/getConditionGroupsByRule');
 
-async function getRuleConditionsByRuleIds(ids, { transacting } = {}) {
+async function getRuleConditionsByRuleIds({ ids, ctx }) {
   const result = {};
 
   const [rules, conditions, groupConditions] = await Promise.all([
-    table.rules.find(
-      { id_$in: _.isArray(ids) ? ids : [ids] },
-      { columns: ['id', 'group'], transacting }
-    ),
-    getConditionsByRule(ids, { transacting }),
-    getConditionGroupsByRule(ids, { transacting }),
+    ctx.tx.db.Rules.find({ id: _.isArray(ids) ? ids : [ids] })
+      .select(['id', 'group'])
+      .lean(),
+    getConditionsByRule({ ids, ctx }),
+    getConditionGroupsByRule({ ids, ctx }),
   ]);
 
   _.forEach(rules, (rule) => {
@@ -37,6 +35,10 @@ async function getRuleConditionsByRuleIds(ids, { transacting } = {}) {
     'updated_at',
     'deleted_at',
     'deleted',
+    'createdAt',
+    'updatedAt',
+    'deletedAt',
+    'isDeleted',
     'rule',
     'childGroup',
     'parentGroup',

@@ -1,0 +1,5 @@
+# ~/.huskyrc
+
+HOMEBREW_DIR=$(brew --prefix)
+. "$HOMEBREW_DIR/opt/nvm/nvm.sh"
+PATH=$NVM_BIN:$PATH

@@ -1,0 +1,61 @@
+{
+  "name": "@leemons/react",
+  "version": "0.0.40",
+  "bin": {
+    "leemonsFront": "bin/leemonsFront.js"
+  },
+  "main": "index.js",
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "license": "MIT",
+  "scripts": {
+    "leemonsFront": "leemonsFront"
+  },
+  "dependencies": {
+    "@leemons/utils": "0.0.40",
+    "@loadable/component": "^5.15.2",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+    "@tanstack/react-query": "^4.35.3",
+    "address": "^1.2.2",
+    "chalk": "^4.1.2",
+    "commander": "^9.4.0",
+    "execa": "^5.1.1",
+    "fs-extra": "^10.1.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "ora": "^5.4.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-refresh": "^0.14.0",
+    "react-router-dom": "^5.3.3",
+    "terser-webpack-plugin": "^5.3.9"
+  },
+  "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
+    "@types/webpack": "^5.28.2",
+    "boxen": "^5.1.2",
+    "copy-webpack-plugin": "^11.0.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "serve-handler": "^6.1.3",
+    "source-map-loader": "^4.0.1",
+    "squirrelly": "^9.0.0",
+    "webpack": "^5.88.2",
+    "webpack-bundle-analyzer": "^4.9.1",
+    "webpack-dev-server": "4.11.1"
+  }
+}

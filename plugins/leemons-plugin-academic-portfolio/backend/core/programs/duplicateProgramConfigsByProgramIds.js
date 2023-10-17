@@ -5,7 +5,7 @@ async function duplicateProgramConfigsByProgramIds({ programIds, duplications: d
 
   const configs = await ctx.tx.db.Configs.find({
     $or: _.map(_.isArray(programIds) ? programIds : [programIds], (programId) => ({
-      key: `/^program-${programId}/i`,
+      key: { $regex: `^program-${_.escapeRegExp(programId)}`, $options: 'i' },
     })),
   }).lean();
   await ctx.tx.emit('before-duplicate-program-configs', {

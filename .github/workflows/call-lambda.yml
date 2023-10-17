@@ -1,0 +1,39 @@
+name: Call lambda
+on:
+  workflow_call:
+    inputs:
+      PLUGINS_VERSIONS:
+        required: true
+        type: string
+      AWS_REGION:
+        required: true
+        type: string
+    secrets:
+      LAMBDA_ARN:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔧 Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.AWS_REGION }}
+      - name: Parse plugins_versions
+        id: parse
+        run: echo "images_map=$(echo "${{ inputs.PLUGINS_VERSIONS }}" | awk -F',' '{for(i=1;i<=NF;i++){split($i,a,"|"); printf "\"%s\":\"%s\",", a[1], a[2]}}' | sed 's/,$//')" >> $GITHUB_OUTPUT
+    
+      - name: Call AWS Lambda
+        run: |
+          payload=$(echo -n '{"environment":"dev","images_map":{${{ steps.parse.outputs.images_map }}}}' | base64)
+          aws lambda invoke --function-name ${{ secrets.LAMBDA_ARN }} --payload "$payload" outputfile.txt
+      - name: Show Lambda Result
+        run: cat outputfile.txt
+  

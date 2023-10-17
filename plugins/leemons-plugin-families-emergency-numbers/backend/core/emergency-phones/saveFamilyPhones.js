@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const {
   getSessionEmergencyPhoneNumbersPermissions,
 } = require('./getSessionEmergencyPhoneNumbersPermissions');
@@ -18,67 +17,54 @@ const { removePhone } = require('./removePhone');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function saveFamilyPhones(
-  family,
-  phones,
-  userSession,
-  { fromBulk, transacting: _transacting } = {}
-) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      let permissions;
+async function saveFamilyPhones({ family, phones, fromBulk, ctx }) {
+  let permissions;
 
-      if (!fromBulk) {
-        permissions = await getSessionEmergencyPhoneNumbersPermissions(userSession, {
-          transacting,
-        });
+  if (!fromBulk) {
+    permissions = await getSessionEmergencyPhoneNumbersPermissions({ ctx });
+  }
+  if (fromBulk || permissions.phoneNumbersInfo.update) {
+    const alreadyPhones = await ctx.tx.db.EmergencyPhones.find({ family }).lean();
+
+    const alreadyPhonesById = _.keyBy(alreadyPhones, 'id');
+    const phonesById = _.keyBy(phones, 'id');
+
+    // const unknownPhones = [];
+    const addPhones = [];
+    const updatePhones = [];
+    const removePhones = [];
+    _.forEach(phones, (phone) => {
+      if (phone.id) {
+        if (alreadyPhonesById[phone.id]) {
+          updatePhones.push(phone);
+        } else {
+          // unknownPhones.push(phone);
+        }
+      } else {
+        addPhones.push(phone);
       }
-      if (fromBulk || permissions.phoneNumbersInfo.update) {
-        const alreadyPhones = await table.emergencyPhones.find({ family }, { transacting });
-
-        const alreadyPhonesById = _.keyBy(alreadyPhones, 'id');
-        const phonesById = _.keyBy(phones, 'id');
-
-        const unknownPhones = [];
-        const addPhones = [];
-        const updatePhones = [];
-        const removePhones = [];
-        _.forEach(phones, (phone) => {
-          if (phone.id) {
-            if (alreadyPhonesById[phone.id]) {
-              updatePhones.push(phone);
-            } else {
-              unknownPhones.push(phone);
-            }
-          } else {
-            addPhones.push(phone);
-          }
-        });
-        _.forEach(alreadyPhones, (phone) => {
-          if (!phonesById[phone.id]) {
-            removePhones.push(phone);
-          }
-        });
-
-        const promises = [];
-
-        _.forEach(addPhones, (phone) => {
-          promises.push(createPhone({ family, ...phone }, userSession, { transacting }));
-        });
-        _.forEach(updatePhones, (phone) => {
-          promises.push(updatePhone({ family, ...phone }, userSession, { transacting }));
-        });
-        _.forEach(removePhones, (phone) => {
-          promises.push(removePhone({ family, ...phone }, { transacting }));
-        });
-
-        await Promise.all(promises);
+    });
+    _.forEach(alreadyPhones, (phone) => {
+      if (!phonesById[phone.id]) {
+        removePhones.push(phone);
       }
-      return true;
-    },
-    table.emergencyPhones,
-    _transacting
-  );
+    });
+
+    const promises = [];
+
+    _.forEach(addPhones, (phone) => {
+      promises.push(createPhone({ family, ...phone, ctx }));
+    });
+    _.forEach(updatePhones, (phone) => {
+      promises.push(updatePhone({ family, ...phone, ctx }));
+    });
+    _.forEach(removePhones, (phone) => {
+      promises.push(removePhone({ family, ...phone, ctx }));
+    });
+
+    await Promise.all(promises);
+  }
+  return true;
 }
 
 module.exports = { saveFamilyPhones };

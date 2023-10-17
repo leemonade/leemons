@@ -1,19 +1,9 @@
-const { table } = require('../tables');
-
-async function updateCategory(data, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const { id, ...props } = data;
-      return table.questionBankCategories.update(
-        { id },
-        {
-          ...props,
-        },
-        { transacting }
-      );
-    },
-    table.questionBankCategories,
-    _transacting
+async function updateCategory({ data, ctx }) {
+  const { id, ...props } = data;
+  return ctx.tx.db.QuestionBankCategories.findOneAndUpdate(
+    { id },
+    { ...props },
+    { new: true, lean: true }
   );
 }
 

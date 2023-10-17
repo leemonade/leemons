@@ -1,47 +1,27 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
 
-async function removeUserAgents(
-  key,
-  _userAgents,
-  { ignoreCalledFrom, transacting: _transacting } = {}
-) {
-  if (!ignoreCalledFrom) validateKeyPrefix(key, this.calledFrom);
+async function removeUserAgents({ key, userAgents: _userAgents, ignoreCalledFrom, ctx }) {
+  if (!ignoreCalledFrom) validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
   const userAgents = _.isArray(_userAgents) ? _userAgents : [_userAgents];
 
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistRoomKey(key, { transacting });
+  await validateNotExistRoomKey({ key, ctx });
 
-      await table.userAgentInRoom.deleteMany(
-        { room: key, userAgent_$in: userAgents },
-        {
-          soft: true,
-          transacting,
-        }
-      );
+  await ctx.tx.db.UserAgentInRoom.deleteMany({ room: key, userAgent: userAgents }, { soft: true });
 
-      leemons.socket.emit(userAgents, `COMUNICA:ROOM:REMOVE`, { key });
+  ctx.socket.emit(userAgents, `COMUNICA:ROOM:REMOVE`, { key });
 
-      const currentUserAgents = await table.userAgentInRoom.find(
-        { room: key },
-        {
-          transacting,
-        }
-      );
+  const currentUserAgents = await ctx.tx.db.UserAgentInRoom.find({ room: key })
+    .select(['userAgent'])
+    .lean();
 
-      leemons.socket.emit(_.map(currentUserAgents, 'userAgent'), `COMUNICA:ROOM:USERS_REMOVED`, {
-        key,
-        userAgents,
-      });
+  ctx.socket.emit(_.map(currentUserAgents, 'userAgent'), `COMUNICA:ROOM:USERS_REMOVED`, {
+    key,
+    userAgents,
+  });
 
-      return true;
-    },
-    table.room,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = { removeUserAgents };

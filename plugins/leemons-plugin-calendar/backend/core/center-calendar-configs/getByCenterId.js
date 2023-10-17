@@ -1,5 +1,3 @@
-const { table } = require('../tables');
-
 /**
  *
  * @public
@@ -8,8 +6,8 @@ const { table } = require('../tables');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getByCenterId(center, { transacting } = {}) {
-  return table.centerCalendarConfigs.findOne({ center }, { transacting });
+async function getByCenterId({ center, ctx }) {
+  return ctx.tx.db.CenterCalendarConfigs.findOne({ center }).lean();
 }
 
 module.exports = { getByCenterId };

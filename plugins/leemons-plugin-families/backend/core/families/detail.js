@@ -1,6 +1,6 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
-const { table } = require('../tables');
 const { canViewFamily } = require('../users/canViewFamily');
 const { getMembers } = require('./getMembers');
 
@@ -13,28 +13,31 @@ const { getMembers } = require('./getMembers');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function detail(familyId, userSession, { transacting } = {}) {
-  const havePermissions = await canViewFamily(familyId, userSession, { transacting });
-  if (!havePermissions) throw new Error('You don`t have permission');
+async function detail({ familyId, ctx }) {
+  const havePermissions = await canViewFamily({ familyId, ctx });
+  if (!havePermissions) throw new LeemonsError(ctx, { message: 'You don`t have permission' });
   const [family, members, datasetValues, permissions] = await Promise.all([
-    table.families.findOne({ id: familyId }, { transacting }),
-    getMembers(familyId, { transacting }),
-    leemons
-      .getPlugin('dataset')
-      .services.dataset.getValues('families-data', 'plugins.families', userSession.userAgents, {
-        target: familyId,
-        transacting,
-      }),
-    getSessionFamilyPermissions(userSession, { transacting }),
+    ctx.tx.db.Families.findOne({ id: familyId }).lean(),
+    getMembers({ familyId, ctx }),
+    ctx.tx.call('dataset.dataset.getValues', {
+      locationName: 'families-data',
+      pluginName: 'families',
+      userAgent: ctx.meta.userSession.userAgents,
+      target: familyId,
+    }),
+    getSessionFamilyPermissions({ ctx }),
   ]);
-  const familyEmergencyNumbers = leemons.getPlugin('families-emergency-numbers');
-  if (familyEmergencyNumbers) {
-    family.emergencyPhoneNumbers =
-      await familyEmergencyNumbers.services.emergencyPhones.getFamilyPhones(
-        family.id,
-        userSession,
-        { transacting }
-      );
+  const isFamilyEmergencyNumbersInstalled = await ctx.tx.call(
+    'deployment-manager.pluginIsInstalled',
+    { pluginName: 'families-emergency-numbers' }
+  );
+  if (isFamilyEmergencyNumbersInstalled) {
+    family.emergencyPhoneNumbers = await ctx.tx.call(
+      'families-emergency-numbers.emergencyPhones.getFamilyPhones',
+      {
+        family: family.id,
+      }
+    );
   }
   family.guardians = members.guardians;
   family.students = members.students;

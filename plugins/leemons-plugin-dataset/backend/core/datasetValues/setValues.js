@@ -2,24 +2,22 @@ const existValues = require('./existValues');
 const addValues = require('./addValues');
 const updateValues = require('./updateValues');
 
-async function setValues(
-  locationName,
-  pluginName,
-  values,
-  userAgent,
-  { target, transacting } = {}
-) {
+async function setValues({ locationName, pluginName, values, userAgent, target, ctx }) {
   const func = {
     addValues,
     updateValues,
   };
   let functionName = 'addValues';
-  if (await existValues(locationName, pluginName, { target, transacting })) {
+  if (await existValues({ locationName, pluginName, target, ctx })) {
     functionName = 'updateValues';
   }
-  return func[functionName].call(this, locationName, pluginName, values, userAgent, {
+  return func[functionName]({
+    locationName,
+    pluginName,
+    formData: values,
+    userAgent,
     target,
-    transacting,
+    ctx,
   });
 }
 

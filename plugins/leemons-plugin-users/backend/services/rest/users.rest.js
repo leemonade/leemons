@@ -5,12 +5,12 @@
 /** @type {ServiceSchema} */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('leemons-validator');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('leemons-middlewares');
+} = require('@leemons/middlewares');
 const usersService = require('../../core/users');
 const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
 const {
@@ -69,7 +69,7 @@ module.exports = {
       throw validator.error;
     },
   },
-  ResetRest: {
+  resetRest: {
     rest: {
       path: '/reset',
       method: 'POST',
@@ -303,7 +303,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const jwtToken = await usersService.profileToken({
-        user: ctx.state.userSession.id,
+        user: ctx.meta.userSession.id,
         profile: ctx.params.id,
         ctx,
       });
@@ -321,6 +321,7 @@ module.exports = {
         user: ctx.meta.userSession.id,
         centerId: ctx.params.centerId,
         profileId: ctx.params.profileId,
+        ctx,
       });
       return { status: 200, jwtToken };
     },
@@ -412,11 +413,13 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['create', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['update', 'create', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['create', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['update', 'create', 'admin'],
+          },
         },
       }),
     ],
@@ -433,11 +436,13 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.centers': {
-          actions: ['delete', 'admin'],
-        },
-        'admin.setup': {
-          actions: ['delete', 'admin'],
+        allowedPermissions: {
+          'users.centers': {
+            actions: ['delete', 'admin'],
+          },
+          'admin.setup': {
+            actions: ['delete', 'admin'],
+          },
         },
       }),
     ],
@@ -454,8 +459,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -490,8 +497,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -512,8 +521,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
         },
       }),
     ],
@@ -557,7 +568,7 @@ module.exports = {
       });
     },
   },
-  // TODO dataset middleware?
+  // TODO: Hacer un middleware de dataset que refleje: disableUserAgentDatasetCheck: true,
   getDataForUserAgentDatasetsRest: {
     rest: {
       path: '/get-data-for-user-agent-datasets',
@@ -710,8 +721,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['admin'],
+          },
         },
       }),
     ],
@@ -732,8 +745,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.users': {
-          actions: ['admin'],
+        allowedPermissions: {
+          'users.users': {
+            actions: ['admin'],
+          },
         },
       }),
     ],
@@ -757,8 +772,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.enabledisable': {
-          actions: ['delete', 'admin'],
+        allowedPermissions: {
+          'users.enabledisable': {
+            actions: ['delete', 'admin'],
+          },
         },
       }),
     ],
@@ -775,8 +792,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        'users.enabledisable': {
-          actions: ['create', 'admin'],
+        allowedPermissions: {
+          'users.enabledisable': {
+            actions: ['create', 'admin'],
+          },
         },
       }),
     ],

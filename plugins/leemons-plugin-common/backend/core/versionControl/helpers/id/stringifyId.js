@@ -1,4 +1,4 @@
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const { isValidVersion } = require('../versions');
 const stringifyVersion = require('../versions/stringifyVersion');
 
@@ -12,7 +12,7 @@ module.exports = function stringifyId({ id, version: _version, verifyVersion = t
         throw e;
       }
     }
-  } else if (verifyVersion && !isValidVersion(_version)) {
+  } else if (verifyVersion && !isValidVersion({ version: _version, ctx })) {
     throw new LeemonsError(ctx, { message: 'The provided version must be valid' });
   }
 

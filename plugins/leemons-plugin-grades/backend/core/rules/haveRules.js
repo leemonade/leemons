@@ -1,7 +1,5 @@
-const { table } = require('../tables');
-
-async function haveRules({ isDependency = false, transacting } = {}) {
-  const count = await table.rules.count({ isDependency }, { transacting });
+async function haveRules({ isDependency = false, ctx }) {
+  const count = await ctx.tx.db.Rules.countDocuments({ isDependency });
   return !!count;
 }
 

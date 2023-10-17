@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 const { validateNotExistCalendarConfig } = require('../../validations/exists');
 const { removeByConfigId } = require('../center-calendar-configs');
@@ -14,24 +13,14 @@ const { getCalendars } = require('./getCalendars');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function remove(id, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      await validateNotExistCalendarConfig(id, { transacting });
-      const configCalendars = getCalendars(id, { transacting });
-      await table.calendarConfigCalendars.deleteMany({ config: id }, { transacting });
-      await Promise.all(
-        _.map(configCalendars, (calendar) => {
-          return removeCalendar(calendar.id);
-        })
-      );
-      await removeByConfigId(id, { transacting });
-      await table.calendarConfigs.delete({ id }, { transacting });
-      return true;
-    },
-    table.calendars,
-    _transacting
-  );
+async function remove({ id, ctx }) {
+  await validateNotExistCalendarConfig({ id, ctx });
+  const configCalendars = getCalendars({ id, ctx });
+  await ctx.tx.db.CalendarConfigCalendars.deleteMany({ config: id });
+  await Promise.all(_.map(configCalendars, (calendar) => removeCalendar({ id: calendar.id, ctx })));
+  await removeByConfigId({ configId: id, ctx });
+  await ctx.tx.db.CalendarConfigs.deleteOne({ id });
+  return true;
 }
 
 module.exports = { remove };

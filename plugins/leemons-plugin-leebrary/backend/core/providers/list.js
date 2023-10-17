@@ -1,17 +1,14 @@
-const _ = require('lodash');
+const { getPluginProviders } = require('@leemons/providers');
 
-async function listProviders() {
-  const providers = [];
-  _.forIn(leemons.listProviders(), (value) => {
-    if (value.services?.provider?.data) {
-      providers.push({
-        ...value.services?.provider?.data,
-        providerName: value.name,
-      });
-    }
-  });
-
-  return providers;
+/**
+ * This function lists all the providers available in the plugin.
+ *
+ * @param {Object} params - The params object.
+ * @param {MoleculerContext} params.ctx - The Moleculer context.
+ * @returns {Promise<Array>} - Returns an array of plugin providers.
+ */
+async function list({ ctx }) {
+  return getPluginProviders({ keyValueModel: ctx.tx.db.KeyValue, raw: true });
 }
 
-module.exports = { listProviders };
+module.exports = { list };

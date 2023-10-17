@@ -3,16 +3,16 @@ const { saveGeneral } = require('./saveGeneral');
 const { saveCenter } = require('./saveCenter');
 const { saveProgram } = require('./saveProgram');
 
-async function saveFullByCenter(center, data, { transacting } = {}) {
+async function saveFullByCenter({ center, data, ctx }) {
   const programPromises = [];
   _.forEach(data.program, (programData, programId) => {
-    programPromises.push(saveProgram(programId, programData, { transacting }));
+    programPromises.push(saveProgram({ program: programId, config: programData, ctx }));
   });
   await Promise.all([
-    saveGeneral({ enabled: data.enabled }, { transacting }),
-    saveCenter(
+    saveGeneral({ config: { enabled: data.enabled }, ctx }),
+    saveCenter({
       center,
-      {
+      config: {
         enableSecureWords: data.enableSecureWords,
         secureWords: data.secureWords,
         enableStudentsChats: data.enableStudentsChats,
@@ -20,8 +20,8 @@ async function saveFullByCenter(center, data, { transacting } = {}) {
         disableChatsBetweenStudentsAndTeachers: data.disableChatsBetweenStudentsAndTeachers,
         studentsCanAddTeachersToGroups: data.studentsCanAddTeachersToGroups,
       },
-      { transacting }
-    ),
+      ctx,
+    }),
     Promise.all(programPromises),
   ]);
   return data;

@@ -1,13 +1,12 @@
 const _ = require('lodash');
-const { table } = require('../tables');
 
 const { detail: detailCalendar } = require('../calendar/detail');
 
-async function getEventCalendars(eventId, { transacting } = {}) {
-  const eventCalendars = await table.eventCalendar.find({ event: eventId }, { transacting });
+async function getEventCalendars({ eventId, ctx }) {
+  const eventCalendars = await ctx.tx.db.EventCalendar.find({ event: eventId }).lean();
 
   return Promise.all(
-    _.map(eventCalendars, ({ calendar }) => detailCalendar(calendar, { transacting }))
+    _.map(eventCalendars, ({ calendar }) => detailCalendar({ id: calendar, ctx }))
   );
 }
 

@@ -1,12 +1,10 @@
 /** @type {import('moleculer').ServiceSchema} */
 
-const { LeemonsCacheMixin } = require('leemons-cache');
-const { LeemonsMongoDBMixin, mongoose } = require('leemons-mongodb');
-const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
-// Descomentar una vez hecho el merge con microservices/dev
-// const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-// const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { getServiceModels } = require('../models');
 const {
   createAssignable,
@@ -30,12 +28,12 @@ module.exports = {
   name: 'assignables.assignables',
   version: 1,
   mixins: [
-    // LeemonsMiddlewaresMixin(),
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
-    // LeemonsMQTTMixin(),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
@@ -119,6 +117,6 @@ module.exports = {
 
   // Esto debe eliminarse una vez hecho el merge a microservices/dev
   async created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };

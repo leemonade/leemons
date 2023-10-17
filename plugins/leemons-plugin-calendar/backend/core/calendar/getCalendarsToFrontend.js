@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const dayjs = require('dayjs');
-const { table } = require('../tables');
+const { getUserAgentCalendarKey, getUserFullName } = require('@leemons/users');
 const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 const { getByCenterId } = require('../calendar-configs');
 const { getCalendars } = require('../calendar-configs/getCalendars');
 const { getEventsMultipleCalendars } = require('./getEvents');
+const { list: listKanbanColumns } = require('../kanban-columns');
 
 function hasGrades(studentData) {
   const grades = studentData?.grades;
@@ -26,18 +26,20 @@ function hasGrades(studentData) {
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function getCalendarsToFrontend(userSession, { transacting } = {}) {
+async function getCalendarsToFrontend({ ctx }) {
+  const { userSession } = ctx.meta;
   const permissionConfigCalendar = getPermissionConfigCalendar();
   const permissionConfigEvent = getPermissionConfigEvent();
-  const userPlugin = leemons.getPlugin('users');
 
   // ES: Cogemos todos los permisos del usuario
   // EN: We take all the user permissions
   const [userPermissions, center] = await Promise.all([
-    userPlugin.services.permissions.getUserAgentPermissions(userSession.userAgents, {
-      transacting,
+    ctx.tx.call('users.permissions.getUserAgentPermissions', {
+      userAgent: userSession.userAgents,
     }),
-    userPlugin.services.users.getUserAgentCenter(userSession.userAgents[0], { transacting }),
+    ctx.tx.call('users.users.getUserAgentCenter', {
+      userAgent: userSession.userAgents[0],
+    }),
   ]);
 
   const queryPermissions = [];
@@ -49,13 +51,13 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     _.forEach(userPermissions, (userPermission) => {
       queryPermissions.push({
         permissionName: userPermission.permissionName,
-        actionName_$in: userPermission.actionNames,
+        actionName: userPermission.actionNames,
         target: userPermission.target,
       });
       if (userPermission.actionNames.indexOf('owner') >= 0) {
         ownerPermissions.push({
           permissionName: userPermission.permissionName,
-          actionName_$in: ['owner'],
+          actionName: ['owner'],
           target: userPermission.target,
         });
       }
@@ -64,35 +66,33 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
 
   // ES: Calendarios/Eventos a los que tiene acceso de lectura
   // EN: Calendars/Events with view access
+  const params1 = {
+    $or: queryPermissions,
+    type: [permissionConfigCalendar.type, permissionConfigEvent.type],
+  };
+  const params2 = {
+    $or: ownerPermissions,
+    type: [permissionConfigCalendar.type],
+  };
+  if (!params1.$or.length) delete params1.$or;
+  if (!params2.$or.length) delete params2.$or;
   let promises = [
-    userPlugin.services.permissions.findItems(
-      {
-        $or: queryPermissions,
-        type_$in: [permissionConfigCalendar.type, permissionConfigEvent.type],
-      },
-      {
-        transacting,
-      }
-    ),
-    userPlugin.services.permissions.findItems(
-      {
-        $or: ownerPermissions,
-        type_$in: [permissionConfigCalendar.type],
-      },
-      {
-        transacting,
-      }
-    ),
+    ctx.tx.call('users.permissions.findItems', {
+      params: params1,
+    }),
+    ctx.tx.call('users.permissions.findItems', {
+      params: params2,
+    }),
   ];
   promises.push(
-    leemons.getPlugin('users').services.users.getUserAgentsInfo([userSession.userAgents[0].id], {
+    ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: [userSession.userAgents[0].id],
       withProfile: true,
       withCenter: true,
-      transacting,
     })
   );
 
-  if (center) promises.push(getByCenterId(center.id, { transacting }));
+  if (center) promises.push(getByCenterId({ center: center.id, ctx }));
   const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
 
   // ES: Separamos los calendarios de los eventos
@@ -108,32 +108,18 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   });
 
   promises = [
-    table.calendars.find(
-      { id_$in: calendarIds },
-      {
-        transacting,
-      }
-    ),
-    getEventsMultipleCalendars(calendarIds, { getPrivates: false, transacting }),
-    table.events.find(
-      { id_$in: eventIds },
-      {
-        transacting,
-      }
-    ),
-    table.classCalendar.find({ calendar_$in: calendarIds }, { transacting }),
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.programs.listPrograms(0, 9999, userAgent.center.id, { userSession, transacting }),
+    ctx.tx.db.Calendars.find({ id: calendarIds }).lean(),
+    getEventsMultipleCalendars({ calendars: calendarIds, getPrivates: false, ctx }),
+    ctx.tx.db.Events.find({ id: eventIds }).lean(),
+    ctx.tx.db.ClassCalendar.find({ calendar: calendarIds }).lean(),
+    ctx.tx.call('academic-portfolio.programs.listPrograms', {
+      page: 0,
+      size: 9999,
+      center: userAgent.center.id,
+    }),
   ];
 
-  if (calendarConfig)
-    promises.push(
-      getCalendars(calendarConfig.id, {
-        withEvents: true,
-        transacting,
-      })
-    );
+  if (calendarConfig) promises.push(getCalendars({ id: calendarConfig.id, withEvents: true, ctx }));
   const [
     _calendars,
     eventsCalendars,
@@ -149,13 +135,13 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   let events = [];
   let calendars = [];
   if (userAgent.profile.sysName === 'admin') {
-    const programIds = _.map(programs, (program) => `plugins.calendar.program.${program.id}`);
+    const programIds = _.map(programs, (program) => `calendar.program.${program.id}`);
     _.forEach(_calendars, (calendar) => {
-      if (calendar.section === 'plugins.calendar.programs') {
+      if (calendar.section === 'calendar.programs') {
         if (programIds.includes(calendar.key)) {
           calendars.push(calendar);
         }
-      } else if (calendar.key.startsWith('plugins.users.calendar.agent.')) {
+      } else if (calendar.key.startsWith('users.calendar.agent.')) {
         if (calendar.key.includes(userAgent.id)) {
           calendars.push(calendar);
         }
@@ -177,7 +163,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   // ES: Buscamos si el user agent tiene calendario
   // EN: We check if the user agent has a calendar
   const userCalendar = _.find(calendars, {
-    key: userPlugin.services.users.getUserAgentCalendarKey(userSession.userAgents[0].id),
+    key: getUserAgentCalendarKey({ userAgent: userSession.userAgents[0].id }),
   });
   if (userCalendar) {
     // ES: Si tiene calendario todos los eventos sueltos los asignamos a su calendario
@@ -204,7 +190,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   _.forEach(ownerCalendars, (calendar) => {
     if (finalCalendarsIds.indexOf(calendar.id) < 0) {
       // eslint-disable-next-line no-param-reassign
-      calendar.section = 'plugins.users.calendar.user_section';
+      calendar.section = 'users.calendar.user_section';
       finalCalendars.push(calendar);
       finalCalendarsIds.push(calendar.id);
     }
@@ -224,7 +210,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
       // eslint-disable-next-line no-param-reassign
       delete calendar.events;
       // eslint-disable-next-line no-param-reassign
-      calendar.section = 'plugins.users.calendar.user_section';
+      calendar.section = 'users.calendar.user_section';
       finalCalendars.push(calendar);
     });
   }
@@ -237,13 +223,10 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   const calendarFunc = (calendar) => ({
     ...calendar,
     isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
-    isUserCalendar: calendar.id === userCalendar.id,
-    image: calendar.id === userCalendar.id ? userSession.avatar : null,
+    isUserCalendar: calendar.id === userCalendar?.id,
+    image: calendar.id === userCalendar?.id ? userSession.avatar : null,
     metadata: calendar.metadata ? JSON.parse(calendar.metadata) : calendar.metadata,
-    fullName:
-      calendar.id === userCalendar.id
-        ? leemons.getPlugin('users').services.users.getUserFullName(userSession)
-        : calendar.name,
+    fullName: calendar.id === userCalendar?.id ? getUserFullName({ userSession }) : calendar.name,
   });
 
   // ES: Resultados con todos los eventos y calendarios a los que tiene acceso el usuario
@@ -252,18 +235,18 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met?.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
-        return id === userCalendar.id ? 0 : 1;
+        return id === userCalendar?.id ? 0 : 1;
       }
     }),
     configCalendars,
     calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id, metadata }) => {
       try {
         const met = JSON.parse(metadata);
-        return met?.internalId || id === userCalendar.id ? 0 : 1;
+        return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
-        return id === userCalendar.id ? 0 : 1;
+        return id === userCalendar?.id ? 0 : 1;
       }
     }),
     events: _.uniqBy(
@@ -289,20 +272,14 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     usedCalendarIds = _.uniq(usedCalendarIds);
     // Cogemos las ids de los calendarios que entre los que tenemos sabemos que no pertenecen a nuestro programa
     const [noClassCalendars, noProgramCalendars] = await Promise.all([
-      table.classCalendar.find(
-        {
-          calendar_$in: usedCalendarIds,
-          program_$ne: userSession.sessionConfig?.program,
-        },
-        { transacting }
-      ),
-      table.programCalendar.find(
-        {
-          calendar_$in: usedCalendarIds,
-          program_$ne: userSession.sessionConfig?.program,
-        },
-        { transacting }
-      ),
+      ctx.tx.db.ClassCalendar.find({
+        calendar: usedCalendarIds,
+        program: { $ne: userSession.sessionConfig?.program },
+      }).lean(),
+      ctx.tx.db.ProgramCalendar.find({
+        calendar: usedCalendarIds,
+        program: { $ne: userSession.sessionConfig?.program },
+      }).lean(),
     ]);
 
     const calendarIdsToRemove = _.map(noClassCalendars, 'calendar').concat(
@@ -327,7 +304,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   let programIds = [];
   const allCalendars = result.calendars.concat(result.ownerCalendars);
   _.forEach(allCalendars, ({ id, section, key }) => {
-    if (key.startsWith('plugins.calendar.program.')) {
+    if (key.startsWith('calendar.program.')) {
       const split = key.split('.');
       programIds.push(split[split.length - 1]);
       calendarByProgramId[split[split.length - 1]] = id;
@@ -389,32 +366,27 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   });
 
   // ES: Sacamos para todos los eventos que userAgents tiene permiso de ver y cuales son sus owers
-  const [viewPermissions, _ownerPermissions, isAcademicStudent] = await Promise.all([
-    leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
-      {
-        permissionName_$in: permissionNames,
+  const [viewPermissions, _ownerPermissions] = await Promise.all([
+    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+      permissions: {
+        permissionName: permissionNames,
         actionNames: ['view'],
       },
-      { returnUserAgents: false, transacting }
-    ),
-    leemons.getPlugin('users').services.permissions.findUserAgentsWithPermission(
-      {
-        permissionName_$in: permissionNames,
+      returnUserAgents: false,
+    }),
+    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+      permissions: {
+        permissionName: permissionNames,
         actionNames: ['owner'],
       },
-      { returnUserAgents: false, transacting }
-    ),
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.config.userSessionIsStudent(userSession, { transacting }),
+      returnUserAgents: false,
+    }),
   ]);
 
   let kanbanColumns = [];
   const instanceIdEvents = {};
   let instanceStatusByInstance = {};
   try {
-    const instanceService = leemons.getPlugin('assignables').services.assignableInstances;
-
     const instanceIds = [];
     _.forEach(result.events, (event) => {
       if (event?.data?.instanceId) {
@@ -424,11 +396,10 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
     });
 
     const [instanceStatus, _kanbanColumns] = await Promise.all([
-      instanceService.getAssignableInstancesStatus(instanceIds, {
-        userSession,
-        transacting,
+      ctx.tx.call('assignables.assignableInstances.getAssignableInstancesStatus', {
+        assignableInstanceIds: instanceIds,
       }),
-      leemons.plugin.services.kanban.listColumns({ transacting }),
+      listKanbanColumns({ ctx }),
     ]);
 
     kanbanColumns = _kanbanColumns;
@@ -441,9 +412,7 @@ async function getCalendarsToFrontend(userSession, { transacting } = {}) {
   const permissionsByName = _.groupBy(viewPermissions, 'permissionName');
   const ownerPermissionsByName = _.groupBy(_ownerPermissions, 'permissionName');
 
-  const userAgents = await await leemons
-    .getPlugin('users')
-    .services.users.getUserAgentsInfo(userAgentIds, { transacting });
+  const userAgents = await ctx.tx.call('users.users.getUserAgentsInfo', { userAgentIds });
 
   const userAgentsById = _.keyBy(userAgents, 'id');
 

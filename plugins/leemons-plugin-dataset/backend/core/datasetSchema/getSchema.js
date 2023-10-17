@@ -1,6 +1,5 @@
 const { validateNotExistSchema, validateNotExistLocation } = require('../../validations/exists');
-const { validateLocationAndPlugin } = require('../../validations/dataset-location');
-const { table } = require('../tables');
+const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
 
 /** *
  *  ES:
@@ -16,12 +15,12 @@ const { table } = require('../tables');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<Action>} The new dataset location
  *  */
-async function getSchema(locationName, pluginName, { transacting } = {}) {
+async function getSchema({ locationName, pluginName, ctx }) {
   validateLocationAndPlugin(locationName, pluginName);
-  await validateNotExistLocation(locationName, pluginName, { transacting });
-  await validateNotExistSchema(locationName, pluginName, { transacting });
+  await validateNotExistLocation({ locationName, pluginName, ctx });
+  await validateNotExistSchema({ locationName, pluginName, ctx });
 
-  const dataset = await table.dataset.findOne({ locationName, pluginName }, { transacting });
+  const dataset = await ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean();
 
   dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
   dataset.jsonUI = JSON.parse(dataset.jsonUI);

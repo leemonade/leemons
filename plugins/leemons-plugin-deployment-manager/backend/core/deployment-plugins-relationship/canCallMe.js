@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
-const { getPluginNameFromServiceName } = require('leemons-service-name-parser');
+const { LeemonsError } = require('@leemons/error');
+const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
 
 /**
  * Esta función comprueba si quien quiere llamar tiene acceso a hacer

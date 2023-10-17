@@ -1,11 +1,11 @@
 const _ = require('lodash');
+const systeminformation = require('systeminformation');
 
-async function getAdminDashboard(config, { userSession, transacting } = {}) {
+async function getAdminDashboard({ config, ctx }) {
+  const { userSession } = ctx.meta;
   if (config.center && config.center !== 'undefined') {
     return {
-      academicPortfolio: await leemons
-        .getPlugin('academic-portfolio')
-        .services.common.adminDashboard(config, { userSession, transacting }),
+      academicPortfolio: await ctx.tx.call('academic-portfolio.common.adminDashboard', { config }),
     };
   }
   const [
@@ -20,20 +20,16 @@ async function getAdminDashboard(config, { userSession, transacting } = {}) {
     networkInterfaces,
     networkInterfaceDefault,
   ] = await Promise.all([
-    leemons
-      .getPlugin('academic-portfolio')
-      .services.common.adminDashboard(config, { userSession, transacting }),
-    leemons
-      .getPlugin('assignables')
-      .services.assignableInstances.adminDashboard(config, { userSession, transacting }),
-    global.utils.systeminformation.cpu(),
-    global.utils.systeminformation.mem(),
-    global.utils.systeminformation.memLayout(),
-    global.utils.systeminformation.currentLoad(),
-    global.utils.systeminformation.diskLayout(),
-    global.utils.systeminformation.fsSize(),
-    global.utils.systeminformation.networkInterfaces(),
-    global.utils.systeminformation.networkInterfaceDefault(),
+    ctx.tx.call('academic-portfolio.common.adminDashboard', { config }),
+    ctx.tx.call('assignables.assignableInstances.adminDashboard', { config }),
+    systeminformation.cpu(),
+    systeminformation.mem(),
+    systeminformation.memLayout(),
+    systeminformation.currentLoad(),
+    systeminformation.diskLayout(),
+    systeminformation.fsSize(),
+    systeminformation.networkInterfaces(),
+    systeminformation.networkInterfaceDefault(),
   ]);
 
   return {

@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { LeemonsError } = require('leemons-error');
+const { LeemonsError } = require('@leemons/error');
 const {
   getPluginNameFromServiceName,
   getActionWithOutVersion,
-} = require('leemons-service-name-parser');
+} = require('@leemons/service-name-parser');
 
 async function getGoodServiceActionToCall(ctx) {
   if (!ctx.params || !ctx.params?.actionName) {

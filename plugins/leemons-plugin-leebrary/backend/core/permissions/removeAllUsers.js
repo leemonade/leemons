@@ -1,26 +1,31 @@
-const { tables } = require('../tables');
+const { LeemonsError } = require('@leemons/error');
 const { getByAsset } = require('./getByAsset');
 
-async function removeAllUsers(assetId, { userSession, transacting } = {}) {
+/**
+ * This function removes all users from a given asset.
+ *
+ * @param {Object} params - The parameters for the function.
+ * @param {string} params.assetId - The ID of the asset from which to remove all users.
+ * @param {MoleculerContext} params.ctx - The context object containing additional information.
+ * @throws {LeemonsError} When the user does not have permission to remove the role, or when the role deletion fails.
+ */
+async function removeAllUsers({ assetId, ctx } = {}) {
   try {
     // EN: Get user role
     // ES: Obtener rol del usuario
-    const { permissions } = await getByAsset(assetId, { userSession, transacting });
+    const { permissions } = await getByAsset({ assetId, ctx });
 
     if (!permissions.delete) {
-      throw new global.utils.HttpError(401, "You don't have permission to remove this role");
+      throw new LeemonsError(ctx, {
+        message: "You don't have permission to remove this role",
+        httpStatusCode: 401,
+      });
     }
-
-    // EN: Remove all the users
-    // ES: Eliminar todos los usuarios
-    return await tables.permissions.deleteMany(
-      {
-        asset: assetId,
-      },
-      { transacting }
-    );
   } catch (e) {
-    throw new global.utils.HttpError(500, `Failed to delete role: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Failed to delete role: ${e.message}`,
+      httpStatusCode: 500,
+    });
   }
 }
 

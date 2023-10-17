@@ -4,7 +4,7 @@ const { addTagsToValues } = require('./addTagsToValues');
 
 // eslint-disable-next-line consistent-return
 async function setTagsToValues({ type, tags, values, ctx }) {
-  validateTypePrefix({ type, calledFrom: ctx.callerPluggin, ctx });
+  validateTypePrefix({ type, calledFrom: ctx.callerPlugin, ctx });
   await removeAllTagsForValues({ type, values, ctx });
 
   try {
