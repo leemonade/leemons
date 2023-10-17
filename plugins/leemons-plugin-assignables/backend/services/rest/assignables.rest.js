@@ -28,15 +28,9 @@ module.exports = {
           ctx,
         });
 
-        return {
-          status: 200,
-          assignables,
-        };
+        return { status: 200, assignables };
       } catch (e) {
-        return {
-          status: 400,
-          message: e.message,
-        };
+        return { status: 400, message: e.message };
       }
     },
   },
