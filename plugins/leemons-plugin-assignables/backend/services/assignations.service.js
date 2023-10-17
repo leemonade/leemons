@@ -8,10 +8,14 @@ const { LeemonsDeploymentManagerMixin } = require('leemons-deployment-manager');
 // const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
 const { getServiceModels } = require('../models');
-const { registerRole, unregisterRole, getRole } = require('../core/roles');
+const { createAssignation } = require('../core/assignations/createAssignation');
+const { getAssignation } = require('../core/assignations/getAssignation');
+const { getAssignations } = require('../core/assignations/getAssignations');
+const { updateAssignation } = require('../core/assignations/updateAssignation');
+const { getUserDataForFundae } = require('../core/assignations/getUserDataForFundae');
 
 module.exports = {
-  name: 'assignables.roles',
+  name: 'assignables.assignations',
   version: 1,
   mixins: [
     // LeemonsMiddlewaresMixin(),
@@ -23,19 +27,29 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
-    registerRole: {
+    createAssignation: {
       handler(ctx) {
-        return registerRole({ ...ctx.params, ctx });
+        return createAssignation({ ...ctx.params, ctx });
       },
     },
-    unregisterRole: {
+    getAssignation: {
       handler(ctx) {
-        return unregisterRole({ ...ctx.params, ctx });
+        return getAssignation({ ...ctx.params, ctx });
       },
     },
-    getRole: {
+    getAssignations: {
       handler(ctx) {
-        return getRole({ ...ctx.params, ctx });
+        return getAssignations({ ...ctx.params, ctx });
+      },
+    },
+    updateAssignation: {
+      handler(ctx) {
+        return updateAssignation({ ...ctx.params, ctx });
+      },
+    },
+    getUserDataForFundae: {
+      handler(ctx) {
+        return getUserDataForFundae({ ...ctx.params, ctx });
       },
     },
   },
