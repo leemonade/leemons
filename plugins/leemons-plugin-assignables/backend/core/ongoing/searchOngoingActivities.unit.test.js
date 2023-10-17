@@ -1,4 +1,4 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect, beforeEach } = require('@jest/globals');
 const { generateCtx } = require('leemons-testing');
 
 const searchOngoingActivities = require('./searchOngoingActivities');
@@ -22,7 +22,9 @@ const {
 } = require('./helpers/filters');
 const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
 
-it('Should correctly return instances for a teacher', async () => {
+beforeEach(() => jest.resetAllMocks());
+
+it('Should correctly return ongoing activities for a teacher', async () => {
   // Arrange
   const query = {
     isTeacher: 'true',
@@ -110,7 +112,7 @@ it('Should correctly return instances for a teacher', async () => {
   expect(getStudentAssignations).not.toBeCalled();
 });
 
-it.skip('Should correctly return assignations for a student', async () => {
+it('Should correctly return ongoing activities for a student', async () => {
   // Arrange
   const query = {
     isTeacher: 'false',
@@ -124,13 +126,17 @@ it.skip('Should correctly return assignations for a student', async () => {
   const instanceOne = {
     id: 'instanceOne',
     assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
+    allowFeedback: 1,
     created_at: '1990-01-01',
   };
   const instanceTwo = {
     id: 'instanceTwo',
-    assignable: undefined,
+    assignable: { asset: {}, id: 'assignableTwoId', role: 'task' },
+    allowFeedback: 1,
     created_at: '1990-01-02',
   };
+  const assignationOne = { id: 'assignationOne', instance: instanceOne, user: 'userOne' };
+  const assignationTwo = { id: 'assignationTwo', instance: instanceTwo, user: 'userOne' };
   const instanceSubjectsProgramsAndClasses = {
     [instanceOne.id]: {
       subjects: ['subjectOneId'],
@@ -146,26 +152,37 @@ it.skip('Should correctly return assignations for a student', async () => {
   const mockDates = {
     instances: {
       [instanceOne.id]: { start: new Date('December 31, 1993') },
-      [instanceTwo.id]: { deadline: new Date('December 31, 2000') },
+      [instanceTwo.id]: { archived: new Date('December 31, 2000') },
     },
     assignations: {},
   };
+  let filterAssignationsByInstanceCounter = 0;
 
-  getStudentAssignations.mockResolvedValue([instanceOne, instanceTwo]);
-  // filterInstancesByNotModule.mockReturnValue([instanceOne, instanceTwo]);
-  // filterInstancesByRoleAndQuery.mockReturnValue([instanceOne, instanceTwo]);
-  // getInstanceSubjectsProgramsAndClasses.mockResolvedValue(instanceSubjectsProgramsAndClasses);
-  // filterInstancesByProgramAndSubjects.mockReturnValue([instanceOne, instanceTwo]);
-  // getActivitiesDates.mockResolvedValue(mockDates);
-  // filterInstancesByStatusAndArchived.mockReturnValue([instanceOne, instanceTwo]);
-  // sortInstancesByDates.mockReturnValue([instanceTwo, instanceOne]);
-  // applyOffsetAndLimit.mockReturnValue([instanceTwo.id, instanceOne.id]);
+  getStudentAssignations.mockResolvedValue([assignationOne, assignationTwo]);
+  filterInstancesByRoleAndQuery.mockReturnValue([instanceOne, instanceTwo]);
+  filterInstancesByNotModule.mockReturnValue([instanceOne, instanceTwo]);
+  getInstanceSubjectsProgramsAndClasses.mockResolvedValue(instanceSubjectsProgramsAndClasses);
+  filterInstancesByProgramAndSubjects.mockReturnValue([instanceOne, instanceTwo]);
+  filterAssignationsByInstance.mockImplementation(() => {
+    filterAssignationsByInstanceCounter++;
+    if (filterAssignationsByInstanceCounter === 1) return [assignationOne, assignationTwo];
+    return [assignationOne];
+  });
+  getActivitiesDates.mockResolvedValue(mockDates);
+  filterInstancesByStatusAndArchived.mockReturnValue([instanceOne]);
+  filterAssignationsByProgress.mockResolvedValue([assignationOne]);
+  sortInstancesByDates.mockReturnValue([instanceOne]);
+  applyOffsetAndLimit.mockReturnValue([instanceOne.id]);
 
   // Act
   const response = await searchOngoingActivities({ query, ctx });
 
   // Assert
   expect(getStudentAssignations).toBeCalledWith({ ctx });
+  expect(filterInstancesByRoleAndQuery).toBeCalledWith({
+    instances: [assignationOne.instance, assignationTwo.instance],
+    filters: query,
+  });
   expect(filterInstancesByNotModule).toBeCalledWith({
     instances: [instanceOne, instanceTwo],
     filters: query,
@@ -179,22 +196,39 @@ it.skip('Should correctly return assignations for a student', async () => {
     filters: query,
     instanceSubjectsProgramsAndClasses,
   });
+  expect(filterAssignationsByInstance).nthCalledWith(1, {
+    assignations: [assignationOne, assignationTwo],
+    instances: [instanceOne, instanceTwo],
+  });
   expect(getActivitiesDates).toBeCalledWith({
     instances: [instanceOne, instanceTwo],
-    filters: query,
+    assignations: [assignationOne, assignationTwo],
+    filters: { ...query, studentCanSee: true },
     ctx,
   });
   expect(filterInstancesByStatusAndArchived).toBeCalledWith({
     instances: [instanceOne, instanceTwo],
     filters: query,
     dates: mockDates,
+    hideNonVisible: true,
+  });
+  expect(filterAssignationsByInstance).nthCalledWith(2, {
+    assignations: [assignationOne, assignationTwo],
+    instances: [instanceOne],
+  });
+  expect(filterAssignationsByProgress).toBeCalledWith({
+    assignations: [assignationOne],
+    dates: mockDates,
+    filters: query,
+    instanceSubjectsProgramsAndClasses,
+    ctx,
   });
   expect(sortInstancesByDates).toBeCalledWith({
-    instances: [instanceOne, instanceTwo],
+    instances: [instanceOne],
     dates: mockDates,
     filters: query,
   });
-  expect(applyOffsetAndLimit).toBeCalledWith([instanceTwo.id, instanceOne.id], query);
-  expect(response).toEqual([instanceTwo.id, instanceOne.id]);
+  expect(applyOffsetAndLimit).toBeCalledWith([instanceOne.id], query);
+  expect(response).toEqual([instanceOne.id]);
   expect(getTeacherInstances).not.toBeCalled();
 });

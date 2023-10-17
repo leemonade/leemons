@@ -110,7 +110,7 @@ describe('updateInstance function', () => {
 
     const dbInstance = await ctx.tx.db.Instances.findOne({
       id: instance.id,
-    });
+    }).lean();
 
     const altResponse = await updateInstance({
       assignableInstance: pick(

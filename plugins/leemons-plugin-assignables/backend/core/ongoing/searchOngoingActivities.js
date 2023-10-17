@@ -67,13 +67,10 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
 
   instances = filterInstancesByNotModule({ instances, filters: query });
 
-  const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses(
+  const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
     instances,
-    {
-      userSession,
-      transacting,
-    }
-  );
+    ctx,
+  });
 
   instances = filterInstancesByProgramAndSubjects({
     instances,
@@ -82,10 +79,12 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   });
 
   assignations = filterAssignationsByInstance({ assignations, instances });
-  const dates = await getActivitiesDates(
-    { instances, assignations, filters: { ...query, studentCanSee: true } },
-    { transacting }
-  );
+  const dates = await getActivitiesDates({
+    instances,
+    assignations,
+    filters: { ...query, studentCanSee: true },
+    ctx,
+  });
 
   instances = filterInstancesByStatusAndArchived({
     instances,
@@ -100,6 +99,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
     dates,
     filters: query,
     instanceSubjectsProgramsAndClasses,
+    ctx,
   });
 
   instances = sortInstancesByDates({

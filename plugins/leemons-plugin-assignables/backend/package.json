@@ -9,6 +9,7 @@
     "lint": "eslint services"
   },
   "dependencies": {
+    "dayjs": "^1.10.7",
     "jest": "^29.6.2",
     "leemons-cache": "1.0.0",
     "leemons-deployment-manager": "1.0.0",
