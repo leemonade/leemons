@@ -20,14 +20,14 @@ export default {
 };
 
 const Template = ({ ...props }) => (
-  <div
+  <Box
     style={{
       maxWidth: '100px !important',
       marginLeft: '-1rem',
     }}
   >
     <UserButton {...props} />
-  </div>
+  </Box>
 );
 
 export const Playground = Template.bind({});

@@ -3,7 +3,6 @@ import { createStyles } from '@bubbles-ui/components';
 
 export const SpotLightButtonStyles = createStyles((theme) => {
   const leemonsStyles = theme.other;
-  console.log(theme);
   return {
     buttonWrapper: {
       padding: '12px 16px 12px 20px',

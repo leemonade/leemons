@@ -1,9 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import { createStyles } from '@bubbles-ui/components';
 
-export const UserButttonStyles = createStyles((theme) => {
+export const UserButttonStyles = createStyles((theme, { opened }) => {
   const leemonsStyles = theme.other;
-
   return {
     control: {
       zIndex: 3,
@@ -18,7 +17,7 @@ export const UserButttonStyles = createStyles((theme) => {
       paddingLeft: 4,
       fontSize: theme.fontSizes.sm,
       backgroundColor: leemonsStyles.menu.background.color.main.default,
-      boxShadow: '0px 10px 36px 0px rgba(33, 39, 42, 0.12)',
+      boxShadow: opened ? '0px 10px 36px 0px rgba(33, 39, 42, 0.12)' : 'none',
       '&:hover': {
         backgroundColor: leemonsStyles.menu.background.color.main.hover,
         color: theme.colorScheme === 'dark' ? theme.white : theme.black,
@@ -46,12 +45,13 @@ export const UserButttonStyles = createStyles((theme) => {
     },
     menuItemsContainer: {
       paddingTop: leemonsStyles.menu.spacing.padding.xsm,
+      backgroundColor: leemonsStyles.menu.background.color.main.default,
       position: 'absolute',
-      bottom: 36,
+      bottom: 40,
       width: '100%',
       boxShadow:
         '0px 10px 36px 0px rgba(26, 32, 43, 0.16), 0px 2px 0px 0px rgba(221, 225, 230, 0.24)',
-      maxHeight: 196,
+      maxHeight: 220,
       overflowY: 'scroll',
     },
     link: {
@@ -90,8 +90,6 @@ export const UserButttonStyles = createStyles((theme) => {
       borderBottomRightRadius: leemonsStyles.menu.border.radius.md,
       '&:active': {
         backgroundColor: leemonsStyles.menu.background.color.main.active,
-        borderTopRightRadius: leemonsStyles.menu.border.radius.md,
-        borderBottomRightRadius: leemonsStyles.menu.border.radius.md,
       },
     },
     openIcon: {

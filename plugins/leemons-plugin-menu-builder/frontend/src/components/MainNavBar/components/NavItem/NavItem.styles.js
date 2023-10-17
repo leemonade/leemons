@@ -68,6 +68,7 @@ export const NavItemStyles = createStyles((theme) => {
       height: '10px',
       color: leemonsStyles.menu.content.color.main.default,
       marginRight: 4,
+      marginTop: 4,
     },
 
     childOpenIcon: {

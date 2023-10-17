@@ -65,7 +65,7 @@ const NavItem = ({
       <LinkWrapper useRouter={useRouter} url={child.url} key={`itemId--${index}`}>
         <Box className={classes.itemContainer}>
           <TextClamp lines={2}>
-            <Text className={isChildrenActive ? classes.linkActive : classes.link}>
+            <Text className={isChildrenActive ? classes.linkActive : classes.link} truncate={true}>
               {child.label}
               {hasChildOpenIcon && <OpenIcon className={classes.childOpenIcon} />}
             </Text>
