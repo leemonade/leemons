@@ -1,21 +1,19 @@
 import PropTypes from 'prop-types';
 
 export const MAIN_NAV_BAR_DEFAULT_PROPS = {
-  lightMode: true,
   isLoading: false,
   useSpotlight: true,
   logoUrl: '',
-  navTitle: 'leemons for devs',
+  navTitle: 'leemons for developers',
   spotlightLabel: 'Search',
   session: null,
   sessionMenu: null,
   menuData: [],
-  useRouter: true
+  useRouter: true,
 };
 
 export const MAIN_NAV_BAR_PROP_TYPES = {
   logoUrl: PropTypes.string,
-  lightMode: PropTypes.bool,
   navTitle: PropTypes.string,
   isLoading: PropTypes.bool,
   session: PropTypes.any,

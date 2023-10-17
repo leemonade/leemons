@@ -337,5 +337,30 @@ export const sessionMenu = {
       window: 'BLANK',
       disabled: null,
     },
+
+    {
+      id: 'menu-6',
+      label: 'Cambiar perfil',
+      order: 4,
+      url: '/private/users/logout',
+      window: 'BLANK',
+      disabled: null,
+    },
+    {
+      id: 'menu-6',
+      label: 'Cambiar perfil',
+      order: 4,
+      url: '/private/users/logout',
+      window: 'BLANK',
+      disabled: null,
+    },
+    {
+      id: 'menu-6',
+      label: 'Cambiar perfil',
+      order: 4,
+      url: '/private/users/logout',
+      window: 'BLANK',
+      disabled: null,
+    },
   ],
 };

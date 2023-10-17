@@ -7,7 +7,7 @@ import {
   UnstyledButton,
   Collapse,
   TextClamp,
-  // Badge,
+  Badge,
 } from '@bubbles-ui/components';
 import { ChevDownIcon, OpenIcon } from '@bubbles-ui/icons/outline';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,9 +16,9 @@ import { NAV_ITEM_DEFAULT_PROPS, NAV_ITEM_PROP_TYPES } from './NavItem.constants
 import { NavItemStyles } from './NavItem.styles';
 import { LinkWrapper } from '../LinkWrapper';
 
-export const NavItem = ({
+const NavItem = ({
   label,
-  children,
+  childrenCollection,
   useRouter,
   activeIconSvg,
   iconSvg,
@@ -31,11 +31,11 @@ export const NavItem = ({
   onOpen,
   isActive,
   subItemActive,
-  lightMode,
   window,
+  isNew,
 }) => {
-  const { classes, theme } = NavItemStyles({ lightMode });
-  const hasChildren = Array.isArray(children) && children.length > 0;
+  const { classes, theme } = NavItemStyles();
+  const hasChildren = Array.isArray(childrenCollection) && childrenCollection.length > 0;
   const [opened, setOpened] = useState(false);
   const handleSvgProps = !activeIconSvg || (!!activeIconSvg && activeIconSvg === iconSvg);
 
@@ -49,7 +49,7 @@ export const NavItem = ({
   }, [isCollapsed]);
 
   const handleOpenChildren = (childrenId) => {
-    if (children.length === 0) {
+    if (childrenCollection.length === 0) {
       onOpen(childrenId);
     } else {
       setOpened((o) => !o);
@@ -58,16 +58,11 @@ export const NavItem = ({
   };
   const hasOpenIcon = window === 'BLANK' || window === 'NEW';
 
-  const items = (hasChildren ? children : []).map((child, index) => {
+  const items = (hasChildren ? childrenCollection : []).map((child, index) => {
     const isChildrenActive = child.id === subItemActive?.id;
     const hasChildOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
     return (
-      <LinkWrapper
-        useRouter={useRouter}
-        url={child.url}
-        id={child.id}
-        key={`nav-child--${child.id}--${index}`}
-      >
+      <LinkWrapper useRouter={useRouter} url={child.url} key={`itemId--${index}`}>
         <Box className={classes.itemContainer}>
           <TextClamp lines={2}>
             <Text className={isChildrenActive ? classes.linkActive : classes.link}>
@@ -82,7 +77,7 @@ export const NavItem = ({
 
   return (
     <AnimatePresence>
-      <LinkWrapper useRouter={useRouter} url={url} id={id}>
+      <LinkWrapper useRouter={useRouter} url={url} id={id} key="LinkChild">
         <UnstyledButton
           onClick={() => handleOpenChildren(id)}
           className={isActive ? classes.controlActive : classes.control}
@@ -92,7 +87,7 @@ export const NavItem = ({
               <ImageLoader
                 className={classes.icon}
                 src={active && items.activeIconSvg ? activeIconSvg : iconSvg}
-                alt={iconAlt}
+                alt={`figure ${iconAlt}`}
                 strokeCurrent
                 ignoreFill={!active && handleSvgProps}
               />
@@ -105,14 +100,18 @@ export const NavItem = ({
                   <TextClamp lines={1}>
                     <Text className={classes.labelText}>{label}</Text>
                   </TextClamp>
-                  {/* <Badge closable={false} alt="new" color={'blue'}>
-                    <Text size="xs">NEW</Text>
-                  </Badge> */}
                 </Box>
               </motion.div>
             </Box>
           </Group>
           <Box className={classes.chevronContainer}>
+            {isNew && (
+              <Badge closable={false} alt="badge" className={classes.badgeNew}>
+                <Text size="xs" className={classes.newText}>
+                  NEW
+                </Text>
+              </Badge>
+            )}
             {hasOpenIcon && <OpenIcon className={classes.openIcon} />}
             {hasChildren && (
               <ChevDownIcon
@@ -133,3 +132,6 @@ export const NavItem = ({
 NavItem.displayName = 'NavItem';
 NavItem.defaultProps = NAV_ITEM_DEFAULT_PROPS;
 NavItem.propTypes = NAV_ITEM_PROP_TYPES;
+
+export default NavItem;
+export { NavItem };

@@ -1,10 +1,8 @@
+/* eslint-disable import/prefer-default-export */
 import { createStyles } from '@bubbles-ui/components';
 
-export const UserButttonStyles = createStyles((theme, { lightMode }) => {
+export const UserButttonStyles = createStyles((theme) => {
   const leemonsStyles = theme.other;
-  const defaultDark = 'default--dark';
-  const activeDark = 'active--dark';
-  const defaultReverse = 'default--reverse';
 
   return {
     control: {
@@ -19,14 +17,10 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
       paddingRight: 16,
       paddingLeft: 4,
       fontSize: theme.fontSizes.sm,
-      borderTop: `1px solid ${leemonsStyles.menu.border.color.main.default}`,
-      backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.background.color.main[defaultDark],
+      backgroundColor: leemonsStyles.menu.background.color.main.default,
+      boxShadow: '0px 10px 36px 0px rgba(33, 39, 42, 0.12)',
       '&:hover': {
-        backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main.hover
-          : leemonsStyles.menu.background.color.main['hover--dark'],
+        backgroundColor: leemonsStyles.menu.background.color.main.hover,
         color: theme.colorScheme === 'dark' ? theme.white : theme.black,
       },
     },
@@ -42,59 +36,48 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
     },
     chevron: {
       transition: 'transform 200ms ease',
-      color: lightMode
-        ? leemonsStyles.menu.content.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultReverse],
+      color: leemonsStyles.menu.content.color.main.default,
     },
     nameContainer: {
-      ...leemonsStyles.menu.content.typo.md,
+      ...leemonsStyles.menu.content['typo--regular'],
       maxWidth: 140,
-      color: lightMode
-        ? leemonsStyles.menu.content.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultReverse],
+      color: leemonsStyles.menu.content.color.main.default,
       lineHeight: '24px',
     },
     menuItemsContainer: {
+      paddingTop: leemonsStyles.menu.spacing.padding.xsm,
       position: 'absolute',
-      bottom: 48,
+      bottom: 36,
       width: '100%',
       boxShadow:
         '0px 10px 36px 0px rgba(26, 32, 43, 0.16), 0px 2px 0px 0px rgba(221, 225, 230, 0.24)',
-      maxHeight: 182,
+      maxHeight: 196,
       overflowY: 'scroll',
     },
     link: {
-      ...leemonsStyles.menu.content.typo.md,
+      ...leemonsStyles.menu.content['typo--regular'],
       lineHeight: '24px',
       width: '100%',
       display: 'block',
       textDecoration: 'none',
       cursor: 'pointer',
-      color: lightMode
-        ? leemonsStyles.menu.content.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultReverse],
+      color: leemonsStyles.menu.content.color.main.default,
     },
     childrenContainer: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       padding: '8px 16px',
-      backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main.default
-        : leemonsStyles.menu.background.color.main[defaultDark],
-      color: lightMode
-        ? leemonsStyles.menu.content.color.main.default
-        : leemonsStyles.menu.content.color.main[defaultReverse],
+      backgroundColor: leemonsStyles.menu.background.color.main.default,
+      color: leemonsStyles.menu.content.color.main.default,
+      borderTopRightRadius: leemonsStyles.menu.border.radius.md,
+      borderBottomRightRadius: leemonsStyles.menu.border.radius.md,
       '&:hover': {
-        backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main.hover
-          : leemonsStyles.menu.background.color.main['hover--dark'],
+        backgroundColor: leemonsStyles.menu.background.color.main.hover,
         width: '100%',
       },
       '&:active': {
-        backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main.active
-          : leemonsStyles.menu.background.color.main[activeDark],
+        backgroundColor: leemonsStyles.menu.background.color.main.active,
       },
     },
     childrenContainerActive: {
@@ -102,13 +85,13 @@ export const UserButttonStyles = createStyles((theme, { lightMode }) => {
       justifyContent: 'center',
       alignItems: 'center',
       padding: '8px 16px',
-      backgroundColor: lightMode
-        ? leemonsStyles.menu.background.color.main.active
-        : leemonsStyles.menu.background.color.main[activeDark],
+      backgroundColor: leemonsStyles.menu.background.color.main.active,
+      borderTopRightRadius: leemonsStyles.menu.border.radius.md,
+      borderBottomRightRadius: leemonsStyles.menu.border.radius.md,
       '&:active': {
-        backgroundColor: lightMode
-          ? leemonsStyles.menu.background.color.main.active
-          : leemonsStyles.menu.background.color.main[activeDark],
+        backgroundColor: leemonsStyles.menu.background.color.main.active,
+        borderTopRightRadius: leemonsStyles.menu.border.radius.md,
+        borderBottomRightRadius: leemonsStyles.menu.border.radius.md,
       },
     },
     openIcon: {
