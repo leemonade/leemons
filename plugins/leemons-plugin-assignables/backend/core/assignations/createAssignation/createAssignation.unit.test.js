@@ -104,7 +104,6 @@ it('Should create an assignation', async () => {
     },
   }));
   checkIfStudentIsOnInstance.mockImplementation(async () => {
-    console.log('entra');
     return false;
   });
 

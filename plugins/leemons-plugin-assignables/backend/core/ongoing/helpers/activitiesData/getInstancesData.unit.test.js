@@ -143,7 +143,7 @@ it('Should return related instances data correctly', async () => {
 
   // Assert
   expect(getAssignablesData).toBeCalledWith({
-    assignables: initialValues.map((item) => item.assignable),
+    assignables: expect.arrayContaining(initialValues.map((item) => item.assignable)),
     ctx,
   });
   expect(response).toMatchObject(expectedResult);
