@@ -1,6 +1,8 @@
 const { map, difference, compact, uniq } = require('lodash');
+
+const { sqlDatetime } = require('leemons-utils');
+
 const { searchInstancesByClass } = require('../../classes');
-const { sqlDatetime } = require('leemons-utils/src/sqlDatetime');
 
 // TODO: Only add to assignable if student is on all the subjects of the assignableInstance
 
