@@ -83,6 +83,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
     instances,
     assignations,
     filters: { ...query, studentCanSee: true },
+    ctx,
   });
 
   instances = filterInstancesByStatusAndArchived({

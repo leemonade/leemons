@@ -29,9 +29,11 @@ it('Should call filterAssignationsByProgress correctly', async () => {
   const dates = {
     instances: {
       instanceOne: { start: new Date('December 31, 1993') },
-      instanceTwo: { archived: new Date('December 31, 2000') },
+      instanceTwo: { closed: new Date('December 31, 2000') },
     },
-    assignations: {},
+    assignations: {
+      instanceTwo: { start: new Date('October 22, 2000'), finished: new Date('December 31, 2000') },
+    },
   };
 
   getAssignationsProgress.mockResolvedValue(['started', 'finished']);
@@ -51,6 +53,7 @@ it('Should call filterAssignationsByProgress correctly', async () => {
     instanceSubjectsProgramsAndClasses,
     ctx,
   });
+  expect(response).toEqual([{ id: 'assignationTwo' }]);
 });
 
 it('Should not filter if the progress filter value is not supported or not passed', async () => {

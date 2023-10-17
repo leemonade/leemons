@@ -1,4 +1,4 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect, beforeEach } = require('@jest/globals');
 const { generateCtx } = require('leemons-testing');
 
 const searchOngoingActivities = require('./searchOngoingActivities');
@@ -21,6 +21,8 @@ const {
   filterInstancesByNotModule,
 } = require('./helpers/filters');
 const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
+
+beforeEach(() => jest.resetAllMocks());
 
 it('Should correctly return ongoing activities for a teacher', async () => {
   // Arrange
@@ -110,7 +112,7 @@ it('Should correctly return ongoing activities for a teacher', async () => {
   expect(getStudentAssignations).not.toBeCalled();
 });
 
-it.skip('Should correctly return ongoing activities for a student', async () => {
+it('Should correctly return ongoing activities for a student', async () => {
   // Arrange
   const query = {
     isTeacher: 'false',
@@ -133,8 +135,8 @@ it.skip('Should correctly return ongoing activities for a student', async () => 
     allowFeedback: 1,
     created_at: '1990-01-02',
   };
-  const assignationOne = { id: 'assignationOne', instance: { instanceOne }, user: 'userOne' };
-  const assignationTwo = { id: 'assignationTwo', instance: { instanceTwo }, user: 'userOne' };
+  const assignationOne = { id: 'assignationOne', instance: instanceOne, user: 'userOne' };
+  const assignationTwo = { id: 'assignationTwo', instance: instanceTwo, user: 'userOne' };
   const instanceSubjectsProgramsAndClasses = {
     [instanceOne.id]: {
       subjects: ['subjectOneId'],
@@ -163,12 +165,12 @@ it.skip('Should correctly return ongoing activities for a student', async () => 
   filterInstancesByProgramAndSubjects.mockReturnValue([instanceOne, instanceTwo]);
   filterAssignationsByInstance.mockImplementation(() => {
     filterAssignationsByInstanceCounter++;
-    if (filterAssignationsByInstanceCounter < 2) return [assignationOne, assignationTwo];
+    if (filterAssignationsByInstanceCounter === 1) return [assignationOne, assignationTwo];
     return [assignationOne];
   });
   getActivitiesDates.mockResolvedValue(mockDates);
   filterInstancesByStatusAndArchived.mockReturnValue([instanceOne]);
-  filterAssignationsByProgress.mockResolvedValue([instanceOne]);
+  filterAssignationsByProgress.mockResolvedValue([assignationOne]);
   sortInstancesByDates.mockReturnValue([instanceOne]);
   applyOffsetAndLimit.mockReturnValue([instanceOne.id]);
 
@@ -195,7 +197,7 @@ it.skip('Should correctly return ongoing activities for a student', async () => 
     instanceSubjectsProgramsAndClasses,
   });
   expect(filterAssignationsByInstance).nthCalledWith(1, {
-    assgnations: [assignationOne, assignationTwo],
+    assignations: [assignationOne, assignationTwo],
     instances: [instanceOne, instanceTwo],
   });
   expect(getActivitiesDates).toBeCalledWith({
@@ -211,7 +213,7 @@ it.skip('Should correctly return ongoing activities for a student', async () => 
     hideNonVisible: true,
   });
   expect(filterAssignationsByInstance).nthCalledWith(2, {
-    assgnations: [assignationOne, assignationTwo],
+    assignations: [assignationOne, assignationTwo],
     instances: [instanceOne],
   });
   expect(filterAssignationsByProgress).toBeCalledWith({
