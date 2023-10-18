@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Navbar, Box, Text, TextClamp, openSpotlight, ImageLoader } from '@bubbles-ui/components';
 import { isEmpty, isArray, find } from 'lodash';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,7 +21,6 @@ import { getActiveItem } from '../../helpers/getActiveItem';
 
 const MainNavBar = ({
   logoUrl,
-  lightMode,
   navTitle,
   isLoading,
   session,
@@ -35,7 +34,7 @@ const MainNavBar = ({
   const [activeItem, setActiveItem] = useState(null);
   const [activeSubItem, setActiveSubItem] = useState(null);
   const { classes } = MainNavBarStyles(
-    { itemWidth: MAIN_NAV_WIDTH_EXPANDED, lightMode, isCollapsed },
+    { itemWidth: MAIN_NAV_WIDTH_EXPANDED, isCollapsed },
     { name: 'MainNav' }
   );
   const handleItemClick = (item) => {
@@ -84,29 +83,33 @@ const MainNavBar = ({
 
   const hasLogo = !isEmpty(logoUrl);
 
-  const navBarItems = menuData.map((item, index) => {
-    const isSubItemActive =
-      item.children.length > 0
-        ? item.children.find((child) => child?.id === activeSubItem?.id)
-        : false;
-    const isActive = isCollapsed
-      ? activeItem?.id === item.id
-      : item.id === activeItem?.id && !isSubItemActive;
-    return (
-      <NavItem
-        {...item}
-        key={`nav-item--${item.id}--${index}`}
-        isCollapsed={isCollapsed}
-        id={item.id}
-        onOpen={() => handleItemClick(item)}
-        expandedItem={expandedItem}
-        isActive={isActive}
-        subItemActive={isSubItemActive}
-        lightMode={lightMode}
-        useRouter={useRouter}
-      />
-    );
-  });
+  const navBarItems = useMemo(
+    () =>
+      menuData.map((item, index) => {
+        const isSubItemActive =
+          item.children.length > 0
+            ? item.children.find((child) => child?.id === activeSubItem?.id)
+            : false;
+        const isActive = isCollapsed
+          ? activeItem?.id === item.id
+          : item.id === activeItem?.id && !isSubItemActive;
+        return (
+          <NavItem
+            {...item}
+            key={`navItem--${index}`}
+            isCollapsed={isCollapsed}
+            id={item.id}
+            onOpen={() => handleItemClick(item)}
+            expandedItem={expandedItem}
+            isActive={isActive}
+            subItemActive={isSubItemActive}
+            useRouter={useRouter}
+            childrenCollection={item.children}
+          />
+        );
+      }),
+    [isCollapsed]
+  );
 
   return (
     <>
@@ -124,6 +127,7 @@ const MainNavBar = ({
             onMouseLeave={() => setIsCollapsed(true)}
             sx={() => ({ overflow: 'hidden' })}
             className={classes.navBar}
+            withBorder={false}
           >
             <Box className={classes.navWrapper}>
               <Box>
@@ -134,6 +138,7 @@ const MainNavBar = ({
                       forceImage
                       className={classes.logoUrl}
                       height="auto"
+                      alt="custom-logo"
                     />
                   ) : (
                     <Logo isotype className={classes.logo} />
@@ -164,7 +169,6 @@ const MainNavBar = ({
                   <SpotLightButton
                     onClick={() => openSpotlight()}
                     isCollapsed={isCollapsed}
-                    lightMode={lightMode}
                     spotlightLabel={spotlightLabel}
                   />
                 </Box>
@@ -179,7 +183,6 @@ const MainNavBar = ({
                       onOpen={() => handleItemClick(sessionMenu)}
                       expandedItem={expandedItem}
                       subItemActive={activeSubItem}
-                      lightMode={lightMode}
                     />
                   </Box>
                 </Box>
@@ -196,4 +199,5 @@ MainNavBar.displayName = 'MainNavBar';
 
 MainNavBar.defaultProps = MAIN_NAV_BAR_DEFAULT_PROPS;
 MainNavBar.propTypes = MAIN_NAV_BAR_PROP_TYPES;
+export default MainNavBar;
 export { MainNavBar };

@@ -25,23 +25,16 @@ export function UserButton({
   onOpen,
   expandedItem,
   subItemActive,
-  lightMode,
   useRouter,
 }) {
   const [opened, setOpened] = useState(false);
-  const { classes, theme } = UserButttonStyles({ opened, lightMode });
+  const { classes, theme } = UserButttonStyles({ opened });
   const hasChildren = sessionMenu?.children.length > 0;
   const items = (hasChildren ? sessionMenu.children : []).map((child, index) => {
     const isChildrenActive = child.id === subItemActive?.id;
     const hasOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
-
     return (
-      <LinkWrapper
-        useRouter={useRouter}
-        url={child.url}
-        id={child.id}
-        key={`user-nav-child--${child.label}--${index}`}
-      >
+      <LinkWrapper useRouter={useRouter} url={child.url} id={child.id} key={`itemLink--${index}`}>
         <Box
           className={isChildrenActive ? classes.childrenContainerActive : classes.childrenContainer}
         >
@@ -70,7 +63,7 @@ export function UserButton({
 
   return (
     <AnimatePresence>
-      <Group>
+      <Group key="groupKey">
         <UnstyledButton className={classes.control} onClick={() => handleOpenChildren()}>
           <Group className={classes.itemWrapper}>
             <Avatar
@@ -79,7 +72,7 @@ export function UserButton({
               size="sm"
               image={session?.avatar}
               fullName={session ? getUserFullName(session) : undefined}
-              alt={session ? getUserFullName(session) : 'user icon'}
+              alt={session ? getUserFullName(session) : 'user avatar'}
             />
             <motion.div
               initial={{ opacity: '0' }}
