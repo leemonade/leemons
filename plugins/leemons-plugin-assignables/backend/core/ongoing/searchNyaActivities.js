@@ -19,6 +19,15 @@ const {
 } = require('./helpers/filters/filterInstancesByStudentCompletionPercentage');
 const { sortInstancesByDates, applyOffsetAndLimit } = require('./helpers/sorts');
 const filterByBlockedActivities = require('./helpers/filters/filterByBlockedActivities');
+/**
+ * This function is used to search Nya activities.
+ * @async
+ * @function searchNyaActivities
+ * @param {Object} params - The parameters for the function.
+ * @param {Object} params.query - The query parameters.
+ * @param {Moleculer.Context} params.ctx - The Moleculer context.
+ * @returns {Promise<Array>} A promise that resolves to an array of Nya activities.
+ */
 
 module.exports = async function searchNyaActivities({ query, ctx }) {
   // EN: Keep in mind we are working with 2 different resources: Assignations for students and Instances for teachers.

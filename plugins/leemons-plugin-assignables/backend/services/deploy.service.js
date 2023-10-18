@@ -102,25 +102,13 @@ module.exports = {
   multiEvents: [
     {
       type: 'once-per-install',
-      events: [
-        'menu-builder.init-main-menu',
-        'assignables.init-permissions',
-        'multilanguage.newLocale',
-      ],
+      events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
       handler: async (ctx) => {
-        const [mainItem, ...items] = menuItems;
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
-          item: mainItem,
+          item: menuItems,
           ctx,
         });
-        ctx.tx.emit('init-menu');
-        await addMenuItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          item: items,
-          ctx,
-        });
-        ctx.tx.emit('init-submenu');
       },
     },
     {
