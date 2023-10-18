@@ -1,5 +1,18 @@
 const { map } = require('lodash');
 
+/**
+ * This function is used to get the dates of activities.
+ * @async
+ * @function getActivitiesDates
+ * @param {Object} params - The parameters for the function.
+ * @param {Array} params.instances - The instances of the activities.
+ * @param {Array} params.assignations - The assignations of the activities.
+ * @param {Object} params.filters - The filters for the activities.
+ * @param {Moleculer.Context} params.ctx - The Moleculer context.
+ * @returns {Promise<Object>} A promise that resolves to an object of activities dates grouped by instances and assignations
+ */
+
+// eslint-disable-next-line sonarjs/cognitive-complexity
 async function getActivitiesDates({ instances, assignations, filters, ctx }) {
   const { status, progress, isArchived, sort, studentDidOpen, studentCanSee } = filters;
 

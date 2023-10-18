@@ -5,9 +5,7 @@ const { LeemonsError } = require('@leemons/error');
 const { validateInstance } = require('../../helpers/validators/instance');
 const { updateClasses } = require('../../classes/updateClasses');
 const { updateDates } = require('../../dates/updateDates');
-const {
-  getUserPermission,
-} = require('../../permissions/instances/users/getUserPermission');
+const { getUserPermission } = require('../../permissions/instances/users/getUserPermission');
 const { getInstance } = require('../getInstance');
 
 const { createRelatedInstance } = require('./createRelatedInstance');
@@ -43,8 +41,7 @@ const updatableFields = [
  * @returns {Object} The updated assignable instance object.
  */
 async function updateInstance({ assignableInstance, propagateRelated, ctx }) {
-  const { id, relatedAssignables, ...assignableInstanceObj } =
-    assignableInstance;
+  const { id, relatedAssignables, ...assignableInstanceObj } = assignableInstance;
 
   if (keys(omit(assignableInstanceObj, updatableFields)).length) {
     throw new LeemonsError(ctx, {
@@ -66,17 +63,13 @@ async function updateInstance({ assignableInstance, propagateRelated, ctx }) {
 
   // EN: Get the current existing assignable instance
   // ES: Obtener el asignable instance actual
-  const { relatedAssignableInstances, ...currentAssignableInstance } =
-    await getInstance({
-      id,
-      details: true,
-      ctx,
-    });
+  const { relatedAssignableInstances, ...currentAssignableInstance } = await getInstance({
+    id,
+    details: true,
+    ctx,
+  });
 
-  const { object, diff } = getDiff(
-    assignableInstanceObj,
-    currentAssignableInstance
-  );
+  const { object, diff } = getDiff(assignableInstanceObj, currentAssignableInstance);
 
   let changesDetected = false;
 
@@ -114,10 +107,7 @@ async function updateInstance({ assignableInstance, propagateRelated, ctx }) {
 
   // EN: Update the assignable instance
   // ES: Actualizar el asignable instance
-  const cleanObj = pick(
-    object,
-    without(diff, ['assignable', 'classes', 'dates'])
-  );
+  const cleanObj = pick(object, without(diff, ['assignable', 'classes', 'dates']));
 
   if (diff.includes('relatedAssignableInstances')) {
     const before = await Promise.all(

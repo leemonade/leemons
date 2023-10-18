@@ -3,9 +3,7 @@ const { map } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 const { listInstanceClasses } = require('../../classes/listInstanceClasses');
-const {
-  getUserPermissions,
-} = require('../../permissions/instances/users/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
 const { getAssignables } = require('../../assignables/getAssignables');
 
 const { getRelatedInstances } = require('./getRelatedInstances');
@@ -41,9 +39,7 @@ async function getInstances({
   // ES: Lanza un error si faltan permisos, o descarta esas instancias
   if (
     throwOnMissing &&
-    !Object.values(permissions).every((permission) =>
-      permission.actions.includes('view')
-    )
+    !Object.values(permissions).every((permission) => permission.actions.includes('view'))
   ) {
     throw new LeemonsError(ctx, {
       message:
@@ -66,18 +62,14 @@ async function getInstances({
 
   // EN: Find the instances
   // ES: Busca las instancias
-  const instancesData = await ctx.tx.db.Instances.find({
-    id: instancesIds,
-  }).lean();
+  const instancesData = await ctx.tx.db.Instances.find({ id: instancesIds }).lean();
 
   const promises = [];
 
   // EN: Get the related instances data
   // ES: Obtener los datos de las instancias relacionadas
   if (relatedAssignableInstances) {
-    promises.push(
-      getRelatedInstances({ instances: instancesData, details, ctx })
-    );
+    promises.push(getRelatedInstances({ instances: instancesData, details, ctx }));
   } else {
     promises.push(undefined);
   }
@@ -107,20 +99,14 @@ async function getInstances({
 
     // EN: Get the assignations data
     // ES: Obtener los datos de las assignations
-    promises.push(
-      getAssignationsData({ instances: instancesIds, instancesTeached, ctx })
-    );
+    promises.push(getAssignationsData({ instances: instancesIds, instancesTeached, ctx }));
 
     promises.push(getInstancesSubjects({ classesPerInstance: classes, ctx }));
   }
 
-  const [
-    relatedInstances,
-    instancesDates,
-    assignables,
-    assignations,
-    subjects,
-  ] = await Promise.all(promises);
+  const [relatedInstances, instancesDates, assignables, assignations, subjects] = await Promise.all(
+    promises
+  );
 
   return instancesData.map((instance) => {
     const isTeacher = instancesTeached[instance.id];
@@ -135,11 +121,7 @@ async function getInstances({
     // EN: Hide custom group name to students (if checked)
     // ES: Ocultar nombre de grupo personalizado a los estudiantes (si seleccionado)
 
-    if (
-      !isTeacher &&
-      instanceData.metadata &&
-      !instanceData.metadata?.showGroupNameToStudents
-    ) {
+    if (!isTeacher && instanceData.metadata && !instanceData.metadata?.showGroupNameToStudents) {
       instanceData.metadata.groupName = undefined;
       instanceData.metadata.showGroupNameToStudents = undefined;
     }

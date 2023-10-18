@@ -2,13 +2,10 @@ const { checkPermissions } = require('./checkPermissions');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { getClassesWithSubject } = require('./getClassesWithSubject');
-const {
-  getRelatedAssignationsTimestamps,
-} = require('./getRelatedAssignationsTimestamps');
+const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 const { findAssignationDates } = require('./findAssignationDates');
 const { findInstanceDates } = require('./findInstanceDates');
 const { getGrades } = require('./getGrades');
-const { getInstances } = require('../../instances/getInstances');
 const { getAssignationStatus } = require('./getAssignationStatus');
 
 async function getAssignations({
@@ -18,6 +15,10 @@ async function getAssignations({
   fetchInstance,
   ctx,
 }) {
+  // Require inside function to avoid circular dependency
+  // eslint-disable-next-line global-require
+  const { getInstances } = require('../../instances/getInstances');
+
   // EN: Get the assignations data
   // ES: Obtener los datos de las asignaciones
   const orQueries = [];
@@ -47,9 +48,7 @@ async function getAssignations({
       });
     }
   } else {
-    assignationsData = assignationsData.filter(
-      (assignation) => permissions[assignation.id]
-    );
+    assignationsData = assignationsData.filter((assignation) => permissions[assignation.id]);
 
     Object.values(permissions).filter((permission) => permission);
   }
@@ -94,8 +93,9 @@ async function getAssignations({
     );
   }
 
-  const [classes, relatedAssignations, timestamps, dates, grades, instances] =
-    await Promise.all(promises);
+  const [classes, relatedAssignations, timestamps, dates, grades, instances] = await Promise.all(
+    promises
+  );
 
   return assignationsData.map((assignation) => {
     const chatKeys = classes[assignation.instance].subjectsIds.map(

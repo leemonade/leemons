@@ -20,6 +20,15 @@ const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts')
   === Main function ===
 */
 
+/**
+ * This function is used to search ongoing activities.
+ * @async
+ * @function searchOngoingActivities
+ * @param {Object} params - The parameters for the function.
+ * @param {Object} params.query - The query parameters.
+ * @param {Moleculer.Context} params.ctx - The Moleculer context.
+ * @returns {Promise<Array>} A promise that resolves to an array of ongoing activities.
+ */
 module.exports = async function searchOngoingActivities({ query, ctx }) {
   // EN: Keep in mind we are working with 2 different resources: Assignations for students and Instances for teachers.
   // ES: Ten en mente que estamos trabajando con 2 recursos: Assignations para estudiantes e Instancias para profesores.

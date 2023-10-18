@@ -1,8 +1,6 @@
 const { omit, uniq } = require('lodash');
 
 const { getInstance } = require('../getInstance');
-const { createInstance } = require('../createInstance');
-const { updateInstance } = require('./updateInstance');
 /**
  * Create a related instance.
  *
@@ -15,6 +13,13 @@ const { updateInstance } = require('./updateInstance');
  * @return {object} The created or updated relation object.
  */
 async function createRelatedInstance({ caller, relation, type, propagate = true, ctx }) {
+  // Require inside function to avoid circular dependency
+  // eslint-disable-next-line global-require
+  const { updateInstance } = require('./updateInstance');
+  // Require inside function to avoid circul∫ar dependency
+  // eslint-disable-next-line global-require
+  const { createInstance } = require('../createInstance');
+
   const oppositeType = type === 'before' ? 'after' : 'before';
 
   // EN: Given instance is an id
