@@ -9,7 +9,7 @@ import { getSessionConfig } from '@users/session';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
-    import(`@leemons/plugins/${pluginName.split('.')[1]}/src/widgets/leebrary/${component}.js`)
+    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
   );
 }
 
