@@ -86,6 +86,13 @@ module.exports = () => ({
         });
       },
     },
+    getAllDeploymentIds: {
+      dontCreateTransactionOnCallThisFunction: true,
+      async handler() {
+        const deployments = await deploymentModel.find({}).select(['id']).lean();
+        return _.map(deployments, 'id');
+      },
+    },
     savePluginsRelationships: {
       // TODO Proteger para que solo le pueda llamar la tienda o el mismo
       async handler(ctx) {
