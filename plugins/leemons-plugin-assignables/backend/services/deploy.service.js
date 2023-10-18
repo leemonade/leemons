@@ -126,7 +126,6 @@ module.exports = {
         'assignables.init-widget-items',
       ],
       handler: async (ctx) => {
-        console.log('⭐️⭐️⭐️ INIT PLUGIN!!!!!! ----------------------- -- - -- -- - !!!⭐️');
         ctx.tx.emit('init-plugin');
       },
     },
