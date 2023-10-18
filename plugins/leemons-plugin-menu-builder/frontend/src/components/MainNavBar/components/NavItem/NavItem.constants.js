@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 export const NAV_ITEM_DEFAULT_PROPS = {
   label: '',
-  children: [],
+  childrenCollection: [],
   useRouter: false,
   activeIconSvg: '',
   iconSvg: '',
@@ -18,7 +18,7 @@ export const NAV_ITEM_DEFAULT_PROPS = {
 
 export const NAV_ITEM_PROP_TYPES = {
   label: PropTypes.string,
-  children: PropTypes.array,
+  childrenCollection: PropTypes.array,
   useRouter: PropTypes.bool,
   activeIconSvg: PropTypes.string,
   iconSvg: PropTypes.string,

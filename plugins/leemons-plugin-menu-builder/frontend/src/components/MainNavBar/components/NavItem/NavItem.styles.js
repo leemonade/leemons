@@ -64,31 +64,34 @@ export const NavItemStyles = createStyles((theme) => {
       color: leemonsStyles.menu.content.color.main.default,
     },
     openIcon: {
-      width: '10px',
-      height: '10px',
+      width: '12px',
+      height: '12px',
       color: leemonsStyles.menu.content.color.main.default,
       marginRight: 4,
       marginTop: 4,
     },
 
     childOpenIcon: {
-      width: '10px',
-      height: '10px',
-      marginTop: 4,
-      marginRight: 6,
-      marginLeft: 6,
+      position: 'absolute',
+      right: 10,
+      top: 10,
+      width: '12px',
+      minWidth: '12px',
+      height: '12px',
+
       color: leemonsStyles.menu.content.color.main.default,
     },
     link: {
-      display: 'flex !important',
+      display: 'flex',
       justifyContent: spaceBetween,
-      alingItems: 'baseline !important',
+      alingItems: 'baseline',
       width: '100%',
       ...typoRegular,
       lineHeight: '16px',
       padding: 8,
       paddingLeft: 30,
       marginLeft: 25,
+      paddingRight: 24,
       maxHeight: '42px',
       cursor: 'pointer',
       backgroundColor: 'transparent',
@@ -106,9 +109,9 @@ export const NavItemStyles = createStyles((theme) => {
       },
     },
     linkActive: {
-      display: 'flex !important',
+      display: 'flex',
       justifyContent: spaceBetween,
-      alingItems: 'baseline !important',
+      alingItems: 'baseline',
       width: '100%',
       ...typoRegular,
       lineHeight: '16px',
@@ -131,6 +134,7 @@ export const NavItemStyles = createStyles((theme) => {
     },
     itemContainer: {
       display: 'flex',
+      position: 'relative'
     },
     badgeNew: {
       '& > div': {

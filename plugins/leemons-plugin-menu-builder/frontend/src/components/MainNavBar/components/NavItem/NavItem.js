@@ -37,6 +37,7 @@ const NavItem = ({
   const { classes, theme } = NavItemStyles();
   const hasChildren = Array.isArray(childrenCollection) && childrenCollection.length > 0;
   const [opened, setOpened] = useState(false);
+  const [isIconShow, setisIconShow] = useState(false);
   const handleSvgProps = !activeIconSvg || (!!activeIconSvg && activeIconSvg === iconSvg);
 
   useEffect(() => {
@@ -65,11 +66,11 @@ const NavItem = ({
       <LinkWrapper useRouter={useRouter} url={child.url} key={`itemId--${index}`}>
         <Box className={classes.itemContainer}>
           <TextClamp lines={2}>
-            <Text className={isChildrenActive ? classes.linkActive : classes.link} truncate={true}>
+            <Text className={isChildrenActive ? classes.linkActive : classes.link} >
               {child.label}
-              {hasChildOpenIcon && <OpenIcon className={classes.childOpenIcon} />}
             </Text>
           </TextClamp>
+          {hasChildOpenIcon && <OpenIcon className={classes.childOpenIcon} />}
         </Box>
       </LinkWrapper>
     );
