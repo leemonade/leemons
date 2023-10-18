@@ -20,7 +20,6 @@ const { categoriesMenu } = require('../../../config/constants');
 
 async function add({ data, ctx }) {
   const { menu, ...categoryData } = data;
-
   if (isEmpty(categoryData.key)) {
     throw new LeemonsError(ctx, {
       message: 'Category `key` is required',
@@ -57,7 +56,6 @@ async function add({ data, ctx }) {
       shouldWait: false,
       menuKey: categoriesMenu.key,
     });
-
     return newCategory?.toObject() ?? newCategory;
   } catch (e) {
     ctx.logger.error(e);

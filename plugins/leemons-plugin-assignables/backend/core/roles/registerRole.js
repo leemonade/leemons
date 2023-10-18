@@ -29,7 +29,7 @@ async function saveRoleLocalizations({ role, data, ctx }) {
   ]);
 }
 
-async function registerRole({ name, ctx, ...data }) {
+async function registerRole({ role: name, ctx, ...data }) {
   const role = {
     name,
     teacherDetailUrl: data.teacherDetailUrl,
@@ -42,7 +42,8 @@ async function registerRole({ name, ctx, ...data }) {
   };
 
   const category = {
-    role: `assignables.${role.name}`,
+    // (key === role)
+    key: `assignables.${role.name}`,
     ...pick(data, [
       'order',
       'creatable',
@@ -54,7 +55,7 @@ async function registerRole({ name, ctx, ...data }) {
     ]),
     provider: data.provider ?? 'leebrary-assignables',
   };
-
+  console.log('role.teacherDetailUrl', role.teacherDetailUrl);
   validateRole(role);
 
   const roleExists = await checkIfRoleExists({ name, ctx });
@@ -70,7 +71,7 @@ async function registerRole({ name, ctx, ...data }) {
 
   await saveRoleLocalizations({ role: role.name, data, ctx });
 
-  await ctx.tx.call('leebrary.categories.add', category);
+  await ctx.tx.call('leebrary.categories.add', { data: category });
 
   return true;
 }

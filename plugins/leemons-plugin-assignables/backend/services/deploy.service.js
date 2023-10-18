@@ -102,13 +102,15 @@ module.exports = {
   multiEvents: [
     {
       type: 'once-per-install',
-      events: ['menu-builder.init-main-menu', 'multilanguage.newLocale'],
+      events: ['menu-builder.init-main-menu', 'assignables.init-permissions'],
       handler: async (ctx) => {
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: menuItems,
           ctx,
         });
+        console.log('⭐️⭐️⭐️ INIT MENU!!!!!! ----------------------- -- - -- -- - !!!⭐️');
+        ctx.tx.emit('init-menu');
       },
     },
     {
@@ -117,11 +119,11 @@ module.exports = {
         'leebrary.init-menu',
         'assignables.init-permissions',
         'assignables.init-menu',
-        'assignables.init-submenu',
         'assignables.init-widget-zones',
         'assignables.init-widget-items',
       ],
       handler: async (ctx) => {
+        console.log('⭐️⭐️⭐️ INIT PLUGIN!!!!!! ----------------------- -- - -- -- - !!!⭐️');
         ctx.tx.emit('init-plugin');
       },
     },
@@ -176,6 +178,9 @@ module.exports = {
     },
     // Permissions
     'users.init-permissions': async (ctx) => {
+      console.log(
+        '⭐️⭐️⭐️ A punto de init-permissions!!!!!! ----------------------- -- - -- -- - !!!⭐️'
+      );
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions,

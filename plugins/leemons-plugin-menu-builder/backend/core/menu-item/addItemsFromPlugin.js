@@ -23,6 +23,7 @@ async function addMenuItem({ menuKey, removed, item, permissions, ctx }) {
     // ES: Si existe pero deberia de estar borrado lo borramos
     await removeItem({ menuKey, key: `${ctx.callerPlugin}.${item.key}`, ctx });
   }
+  console.log('🍋')
   return null;
 }
 
@@ -36,7 +37,8 @@ async function addItemsFromPlugin({
   if (!isArray(itemsData)) {
     items = [itemsData];
   }
-
+  console.log('itemsData', itemsData);
+  console.log('menuKey', menuKey);
   if (shouldWait) {
     const itemsLength = items.length;
     const menuItems = [];

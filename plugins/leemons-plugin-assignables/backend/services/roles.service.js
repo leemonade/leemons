@@ -36,8 +36,4 @@ module.exports = {
       },
     },
   },
-  // Esto debe eliminarse una vez hecho el merge a microservices/dev
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
-  },
 };
