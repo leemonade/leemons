@@ -17,6 +17,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
+      console.log('🎉', ctx.params);
       const { params: query } = ctx;
       const activities = await searchOngoingActivities({ query, ctx });
       return { status: 200, activities };

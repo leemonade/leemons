@@ -578,6 +578,10 @@ module.exports = {
 
           // -- Leebrary AWS S3 (NOT FINISHED) --
           'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
+
+          // -- Assignables(NOT FINISHED) --
+          'GET assignables/activities/search/ongoing':
+            'v1.assignables.activities.searchOngoingRest',
         },
 
         /**

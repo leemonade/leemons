@@ -55,7 +55,6 @@ async function registerRole({ role: name, ctx, ...data }) {
     ]),
     provider: data.provider ?? 'leebrary-assignables',
   };
-  console.log('role.teacherDetailUrl', role.teacherDetailUrl);
   validateRole(role);
 
   const roleExists = await checkIfRoleExists({ name, ctx });

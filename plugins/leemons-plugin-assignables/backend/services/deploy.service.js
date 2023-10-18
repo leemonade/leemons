@@ -113,7 +113,6 @@ module.exports = {
           item: menuItems,
           ctx,
         });
-        console.log('⭐️⭐️⭐️ INIT MENU!!!!!! ----------------------- -- - -- -- - !!!⭐️');
         ctx.tx.emit('init-menu');
       },
     },
@@ -182,9 +181,6 @@ module.exports = {
     },
     // Permissions
     'users.init-permissions': async (ctx) => {
-      console.log(
-        '⭐️⭐️⭐️ A punto de init-permissions!!!!!! ----------------------- -- - -- -- - !!!⭐️'
-      );
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions,
