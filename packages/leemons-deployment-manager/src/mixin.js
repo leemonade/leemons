@@ -30,7 +30,7 @@ async function modifyCTX(
 ) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
-  if (ctx.service.name !== 'gateway' || ctx.caller)
+  if (ctx.service.name !== 'gateway' && ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
 
   ctx.__leemonsDeploymentManagerCall = ctx.call;
@@ -78,7 +78,7 @@ async function modifyCTX(
       actionCallCache[ctx.meta.deploymentID] = {};
     }
 
-    const cacheKey = ctx.service.fullName + '.' + actionName;
+    const cacheKey = `${ctx.service.fullName}.${actionName}`;
 
     let manager = null;
     if (actionCallCache[ctx.meta.deploymentID][cacheKey]) {

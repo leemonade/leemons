@@ -8,7 +8,9 @@ const { addPermissionsDeploy } = require('@leemons/permissions');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getEmailTypes } = require('@leemons/emails');
+const _ = require('lodash');
 
+const { Agenda } = require('@hokify/agenda');
 const { menuItems, widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
 const newActivity = require('../emails/userCreateAssignation');
@@ -17,6 +19,8 @@ const rememberActivityTimeout = require('../emails/userRememberAssignationTimeou
 const userWeekly = require('../emails/userWeekly');
 const { afterAddClassTeacher } = require('../core/events/afterAddClassTeacher');
 const { afterRemoveClassesTeachers } = require('../core/events/afterRemoveClassesTeachers');
+const { sendRememberEmails } = require('../core/events/sendRememberEmail');
+const { sendWeeklyEmails } = require('../core/events/sendWeeklyEmail');
 
 async function initEmails(ctx) {
   const emailsServiceAddIfNotExists = 'emails.email.addIfNotExist';
@@ -130,8 +134,8 @@ module.exports = {
   ],
   events: {
     /*
-      New Deployment or plugin installation
-    */
+                                              New Deployment or plugin installation
+                                            */
     'deployment-manager.install': async (ctx) => {
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
@@ -149,8 +153,8 @@ module.exports = {
       await initEmails(ctx);
     },
     /*
-      --- Academic Portfolio ---
-    */
+                                              --- Academic Portfolio ---
+                                            */
     'academic-portfolio.after-add-class-teacher': async (ctx) => {
       await afterAddClassTeacher({ ...ctx.params, ctx });
     },
@@ -166,8 +170,8 @@ module.exports = {
     },
 
     /*
-      --- Multilanguage ---
-    */
+                                              --- Multilanguage ---
+                                            */
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -187,5 +191,52 @@ module.exports = {
         ctx,
       });
     },
+  },
+  actions: {
+    sendRememberEmails: {
+      handler(ctx) {
+        return sendRememberEmails({ ctx });
+      },
+    },
+    sendWeeklyEmails: {
+      handler(ctx) {
+        return sendWeeklyEmails({ ctx });
+      },
+    },
+  },
+  async created() {
+    const customCall = async ({ actionName }) => {
+      const r = async ({ deploymentId }) => {
+        const manager = await this.broker.call(
+          'deployment-manager.getGoodActionToCall',
+          {
+            actionName,
+          },
+          { caller: 'assignables.deploy', meta: { deploymentID: deploymentId } }
+        );
+        return this.broker.call(
+          manager.actionToCall,
+          {},
+          {
+            caller: 'assignables.deploy',
+            meta: { deploymentID: deploymentId, relationshipID: manager.relationshipID },
+          }
+        );
+      };
+      const deploymentIds = await this.broker.call('deployment-manager.getAllDeploymentIds');
+      await Promise.allSettled(_.map(deploymentIds, (deploymentId) => r({ deploymentId })));
+    };
+
+    const agenda = new Agenda({ db: { address: process.env.MONGO_URI } });
+    agenda.define('sendRememberEmails', async () => {
+      await customCall({ actionName: 'assignables.deploy.sendRememberEmails' });
+    });
+    agenda.define('sendWeeklyEmails', async () => {
+      await customCall({ actionName: 'assignables.deploy.sendWeeklyEmails' });
+    });
+    await agenda.start();
+
+    await agenda.every('0 * * * *', 'sendRememberEmails');
+    await agenda.every('0 10 * * *', 'sendWeeklyEmails');
   },
 };
