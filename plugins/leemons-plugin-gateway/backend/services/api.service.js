@@ -579,9 +579,19 @@ module.exports = {
           // -- Leebrary AWS S3 (NOT FINISHED) --
           'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
 
-          // -- Assignables(NOT FINISHED) --
+          // -- Assignables(FINISHED) --
+          'GET assignables/find': 'v1.assignables.assignables.getRest',
           'GET assignables/activities/search/ongoing':
             'v1.assignables.activities.searchOngoingRest',
+          'GET /activities/search/nya': 'v1.assignables.activities.searchNyaActivitiesRest',
+          'GET /assignations/find': 'v1.assignables.assignations.getManyRest',
+          'GET /assignableInstances/:instance/assignations/:user':
+            'v1.assignables.assignations.getRest',
+          'GET /assignableInstances/search': 'v1.assignables.assignableInstances.searchRest',
+          'GET /assignableInstances/find': 'v1.assignables.assignableInstances.getRest',
+          'GET /assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
+          'PUT /assignableInstances/:id': 'v1.assignables.assignableInstances.updateRest',
+          'POST /assignableInstances/:id': 'v1.assignables.assignableInstance.sendReminderRest',
         },
 
         /**

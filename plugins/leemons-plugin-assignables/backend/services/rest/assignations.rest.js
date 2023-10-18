@@ -17,13 +17,10 @@ module.exports = {
     async handler(ctx) {
       const { instance, user } = ctx.params;
 
-      const assignations = await ctx.tx.call(
-        'assignables.assignations.getAssignation',
-        {
-          assignableInstanceId: instance,
-          user,
-        }
-      );
+      const assignations = await ctx.tx.call('assignables.assignations.getAssignation', {
+        assignableInstanceId: instance,
+        user,
+      });
       return { status: 200, assignations };
     },
   },
@@ -35,18 +32,13 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { queries, details, throwOnMissing, fetchInstance } = ctx.params;
-      const parsedQueries = (Array.isArray(queries) ? queries : [queries]).map(
-        JSON.parse
-      );
-      const assignations = await ctx.tx.call(
-        'assignables.assignations.getAssignations',
-        {
-          assignationsIds: parsedQueries,
-          throwOnMissing: throwOnMissing === 'true',
-          details: details === 'true',
-          fetchInstance: fetchInstance === 'true',
-        }
-      );
+      const parsedQueries = (Array.isArray(queries) ? queries : [queries]).map(JSON.parse);
+      const assignations = await ctx.tx.call('assignables.assignations.getAssignations', {
+        assignationsIds: parsedQueries,
+        throwOnMissing: throwOnMissing === 'true',
+        details: details === 'true',
+        fetchInstance: fetchInstance === 'true',
+      });
       return { status: 200, assignations };
     },
   },
