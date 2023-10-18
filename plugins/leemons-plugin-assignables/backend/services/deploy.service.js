@@ -123,6 +123,20 @@ module.exports = {
         ctx.tx.emit('init-submenu');
       },
     },
+    {
+      type: 'once-per-install',
+      events: [
+        'leebrary.init-menu',
+        'assignables.init-permissions',
+        'assignables.init-menu',
+        'assignables.init-submenu',
+        'assignables.init-widget-zones',
+        'assignables.init-widget-items',
+      ],
+      handler: async (ctx) => {
+        ctx.tx.emit('init-plugin');
+      },
+    },
   ],
   events: {
     /*
