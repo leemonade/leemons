@@ -223,15 +223,15 @@ module.exports = {
     };
 
     const agenda = new Agenda({ db: { address: process.env.MONGO_URI } });
-    agenda.define('sendRememberEmails', async () => {
+    agenda.define('assignables_sendRememberEmails', async () => {
       await customCall({ actionName: 'assignables.deploy.sendRememberEmails' });
     });
-    agenda.define('sendWeeklyEmails', async () => {
+    agenda.define('assignables_sendWeeklyEmails', async () => {
       await customCall({ actionName: 'assignables.deploy.sendWeeklyEmails' });
     });
     await agenda.start();
 
-    await agenda.every('0 * * * *', 'sendRememberEmails');
-    await agenda.every('0 10 * * *', 'sendWeeklyEmails');
+    await agenda.every('0 * * * *', 'assignables_sendRememberEmails');
+    await agenda.every('0 10 * * *', 'assignables_sendWeeklyEmails');
   },
 };
