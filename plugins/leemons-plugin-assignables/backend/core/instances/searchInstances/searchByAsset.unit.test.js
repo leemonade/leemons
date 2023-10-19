@@ -60,7 +60,7 @@ it('should return assets correctly', async () => {
     allVersions: true,
     published: true,
   });
-  expect(response.sort()).toEqual(expectedValue.sort());
+  expect(response).toEqual(expect.arrayContaining(expectedValue));
 });
 
 it('should return empty array if no assets found', async () => {

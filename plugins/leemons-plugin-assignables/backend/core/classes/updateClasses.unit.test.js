@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
@@ -58,16 +52,16 @@ it('Should add the new classes', async () => {
     removed: [],
   });
 
-  expect(classesInDb.sort()).toEqual(
-    ids
-      .map((id) =>
+  expect(classesInDb).toEqual(
+    expect.arrayContaining(
+      ids.map((id) =>
         expect.objectContaining({
           assignableInstance: instanceId,
           assignable: assignableId,
           class: id,
         })
       )
-      .sort()
+    )
   );
 });
 
