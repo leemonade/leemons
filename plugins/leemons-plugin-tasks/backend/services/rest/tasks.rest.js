@@ -185,7 +185,7 @@ module.exports = {
       }
     },
   },
-  search: {
+  searchRest: {
     rest: {
       method: 'GET',
       path: '/tasks/search',
