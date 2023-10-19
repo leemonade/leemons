@@ -38,241 +38,119 @@ const actions = {
   'comunica.room.get': jest.fn(),
 };
 
-it('Should create a new room if it does not exist multisubjects', async () => {
-  // Arrange
-  const assignableInstanceId = 'assignableInstanceId';
-  const instance = {
-    assignable: {
-      asset: {
-        name: 'assetName',
+const testCases = [
+  {
+    title: 'Should create a new room if it does not exist multisubjects',
+    classes: [
+      {
+        subject: {
+          name: 'subjectName',
+        },
+        program: 'program',
+        color: '#color',
       },
-    },
-  };
-  const classes = [
-    {
-      subject: {
-        name: 'subjectName',
+      {
+        subject: {
+          name: 'subjectName2',
+        },
+        program: 'program2',
+        color: '#color2',
       },
-      program: 'program',
-      color: '#color',
-    },
-    {
-      subject: {
-        name: 'subjectName2',
+    ],
+    expectedAction: 'comunica.room.add',
+  },
+  {
+    title: 'Should create a new room if it does not exist',
+    classes: [
+      {
+        subject: {
+          name: 'subjectName',
+        },
+        program: 'program',
+        color: '#color',
       },
-      program: 'program2',
-      color: '#color2',
-    },
-  ];
-  const teachers = ['teacher1', 'teacher2'];
-  const users = ['user1', 'user2'];
+    ],
+    expectedAction: 'comunica.room.add',
+  },
+  {
+    title: 'Should add user agents to the room if it already exists',
+    classes: [
+      {
+        subject: {
+          name: 'subjectName',
+        },
+        program: 'program',
+        color: '#color',
+      },
+    ],
+    roomExists: true,
+    expectedAction: 'comunica.room.addUserAgents',
+  },
+  {
+    title: 'Should not error if not users or teachers provided',
+    classes: [
+      {
+        subject: {
+          name: 'subjectName',
+        },
+        program: 'program',
+        color: '#color',
+      },
+    ],
+    teachers: [],
+    users: [],
+    roomExists: true,
+    expectedAction: 'comunica.room.addUserAgents',
+  },
+];
 
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-      Assignations: newModel(
-        mongooseConnection,
-        'Assignations',
-        assignationsSchema
-      ),
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
-    },
-  });
-
-  // Act
-  await createInstanceRoom({
-    assignableInstanceId,
-    instance,
+testCases.forEach(
+  ({
+    title,
     classes,
-    teachers,
-    users,
-    ctx,
-  });
+    teachers = ['teacher1', 'teacher2'],
+    users = ['user1', 'user2'],
+    roomExists = false,
+    expectedAction,
+  }) => {
+    it(title, async () => {
+      // Arrange
+      actions['comunica.room.exists'] = jest.fn(() => roomExists);
 
-  // Assert
-  expect(actions['comunica.room.add']).toHaveBeenCalled();
-});
+      const assignableInstanceId = 'assignableInstanceId';
+      const instance = {
+        assignable: {
+          asset: {
+            name: 'assetName',
+          },
+        },
+      };
 
-it('Should create a new room if it does not exist', async () => {
-  // Arrange
-  const assignableInstanceId = 'assignableInstanceId';
-  const instance = {
-    assignable: {
-      asset: {
-        name: 'assetName',
-      },
-    },
-  };
-  const classes = [
-    {
-      subject: {
-        name: 'subjectName',
-      },
-      program: 'program',
-      color: '#color',
-    },
-  ];
-  const teachers = ['teacher1', 'teacher2'];
-  const users = ['user1', 'user2'];
+      const ctx = generateCtx({
+        actions,
+        models: {
+          Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+          Assignations: newModel(mongooseConnection, 'Assignations', assignationsSchema),
+          Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+          Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+          Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
+          Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+          Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+        },
+      });
 
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-      Assignations: newModel(
-        mongooseConnection,
-        'Assignations',
-        assignationsSchema
-      ),
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
-    },
-  });
+      // Act
+      await createInstanceRoom({
+        assignableInstanceId,
+        instance,
+        classes,
+        teachers,
+        users,
+        ctx,
+      });
 
-  // Act
-  await createInstanceRoom({
-    assignableInstanceId,
-    instance,
-    classes,
-    teachers,
-    users,
-    ctx,
-  });
-
-  // Assert
-  expect(actions['comunica.room.add']).toHaveBeenCalled();
-});
-
-it('Should add user agents to the room if it already exists', async () => {
-  // Arrange
-  actions['comunica.room.exists'] = jest.fn(() => true);
-
-  const assignableInstanceId = 'assignableInstanceId';
-  const instance = {
-    assignable: {
-      asset: {
-        name: 'assetName',
-      },
-    },
-  };
-  const classes = [
-    {
-      subject: {
-        name: 'subjectName',
-      },
-      program: 'program',
-      color: '#color',
-    },
-  ];
-  const teachers = ['teacher1', 'teacher2'];
-  const users = ['user1', 'user2'];
-
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-      Assignations: newModel(
-        mongooseConnection,
-        'Assignations',
-        assignationsSchema
-      ),
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
-    },
-  });
-
-  // Act
-  await createInstanceRoom({
-    assignableInstanceId,
-    instance,
-    classes,
-    teachers,
-    users,
-    ctx,
-  });
-
-  // Assert
-  expect(actions['comunica.room.addUserAgents']).toHaveBeenCalled();
-});
-
-it('Should not error if not users or teachers provided', async () => {
-  // Arrange
-  actions['comunica.room.exists'] = jest.fn(() => true);
-
-  const assignableInstanceId = 'assignableInstanceId';
-  const instance = {
-    assignable: {
-      asset: {
-        name: 'assetName',
-      },
-    },
-  };
-  const classes = [
-    {
-      subject: {
-        name: 'subjectName',
-      },
-      program: 'program',
-      color: '#color',
-    },
-  ];
-  const teachers = [];
-  const users = [];
-
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-      Assignations: newModel(
-        mongooseConnection,
-        'Assignations',
-        assignationsSchema
-      ),
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
-    },
-  });
-
-  // Act
-  await createInstanceRoom({
-    assignableInstanceId,
-    instance,
-    classes,
-    teachers,
-    users,
-    ctx,
-  });
-
-  // Assert
-  expect(actions['comunica.room.addUserAgents']).toHaveBeenCalled();
-});
+      // Assert
+      expect(actions[expectedAction]).toHaveBeenCalled();
+    });
+  }
+);

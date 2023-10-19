@@ -1,17 +1,9 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
 const { sendReminder } = require('./sendReminder');
-const {
-  getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
+const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
 
 const { datesSchema } = require('../../../models/dates');
 
@@ -69,166 +61,94 @@ beforeEach(async () => {
   };
 });
 
-it('Should send reminder to users', async () => {
-  // Arrange
-  const users = ['userId1', 'userId2'];
-  const type = 'deadline';
+const testCases = [
+  {
+    users: ['userId1', 'userId2'],
+    type: 'deadline',
+  },
+  {
+    users: [],
+    type: undefined,
+  },
+];
 
-  // Create test data for dates from the model @dates.js
-  const dates = [
-    {
-      id: 'dateId1',
-      type: 'assignation',
-      instance: 'assignationId2',
-      name: 'deadline',
-      date: new Date(),
-    },
-  ];
-  await ctx.tx.db.Dates.create(dates);
-
-  getInstance.mockResolvedValue(instance);
-  getHostnameHandler.mockResolvedValue('example.com');
-  getHostnameApiHandler.mockResolvedValue('api.example.com');
-  const classes = [
-    {
-      id: 'classId1',
-      subject: {
-        id: 'subjectId1',
+testCases.forEach(({ users, type }) => {
+  it('Should send reminder to users', async () => {
+    // Arrange
+    // Create test data for dates from the model @dates.js
+    const dates = [
+      {
+        id: 'dateId1',
+        type: 'assignation',
+        instance: 'assignationId2',
+        name: 'deadline',
+        date: new Date(),
       },
-    },
-    {
-      id: 'classId2',
-      subject: {
-        id: 'subjectId1',
+    ];
+    await ctx.tx.db.Dates.create(dates);
+
+    getInstance.mockResolvedValue(instance);
+    getHostnameHandler.mockResolvedValue('example.com');
+    getHostnameApiHandler.mockResolvedValue('api.example.com');
+    const classes = [
+      {
+        id: 'classId1',
+        subject: {
+          id: 'subjectId1',
+        },
       },
-    },
-  ];
-  classByIdsHandler.mockResolvedValue(classes);
-  const userAgents = ['userAgentId1', 'userAgentId2'];
-  getUserAgentsInfoHandler.mockResolvedValue(userAgents);
-
-  // Act
-  await sendReminder({
-    assignableInstanceId: 'assignationId1',
-    users,
-    type,
-    ctx,
-  });
-
-  // Assert
-  expect(getInstance).toBeCalledWith({
-    id: 'assignationId1',
-    details: true,
-    ctx,
-  });
-  expect(getHostnameHandler).toBeCalledWith(undefined);
-  expect(getHostnameApiHandler).toBeCalledWith(undefined);
-  expect(classByIdsHandler).toBeCalledWith({
-    ids: ['classId1', 'classId2'],
-    withTeachers: true,
-  });
-  expect(getUserAgentsInfoHandler).toBeCalledWith({
-    userAgentIds: ['userId1'],
-    withCenter: true,
-    userColumns: ['id', 'email', 'locale'],
-  });
-
-  expect(sendEmail).toBeCalledTimes(2);
-  expect(sendEmail).toBeCalledWith({
-    instance,
-    userAgent: expect.stringContaining('userAgentId'),
-    classes: [classes[0]],
-    hostname: 'example.com',
-    hostnameApi: 'api.example.com',
-    ignoreUserConfig: true,
-    isReminder: true,
-    ctx,
-  });
-  expect(getInstance).toHaveBeenCalledWith({
-    id: 'assignationId1',
-    details: true,
-    ctx,
-  });
-});
-
-it('Should send reminder to users', async () => {
-  // Arrange
-  const users = [];
-  const type = undefined;
-
-  // Create test data for dates from the model @dates.js
-  const dates = [
-    {
-      id: 'dateId1',
-      type: 'assignation',
-      instance: 'assignationId2',
-      name: 'deadline',
-      date: new Date(),
-    },
-  ];
-  await ctx.tx.db.Dates.create(dates);
-
-  getInstance.mockResolvedValue(instance);
-  getHostnameHandler.mockResolvedValue('example.com');
-  getHostnameApiHandler.mockResolvedValue('api.example.com');
-  const classes = [
-    {
-      id: 'classId1',
-      subject: {
-        id: 'subjectId1',
+      {
+        id: 'classId2',
+        subject: {
+          id: 'subjectId1',
+        },
       },
-    },
-    {
-      id: 'classId2',
-      subject: {
-        id: 'subjectId1',
-      },
-    },
-  ];
-  classByIdsHandler.mockResolvedValue(classes);
-  const userAgents = ['userAgentId1', 'userAgentId2'];
-  getUserAgentsInfoHandler.mockResolvedValue(userAgents);
+    ];
+    classByIdsHandler.mockResolvedValue(classes);
+    const userAgents = ['userAgentId1', 'userAgentId2'];
+    getUserAgentsInfoHandler.mockResolvedValue(userAgents);
 
-  // Act
-  await sendReminder({
-    assignableInstanceId: 'assignationId1',
-    users,
-    type,
-    ctx,
-  });
+    // Act
+    await sendReminder({
+      assignableInstanceId: 'assignationId1',
+      users,
+      type,
+      ctx,
+    });
 
-  // Assert
-  expect(getInstance).toBeCalledWith({
-    id: 'assignationId1',
-    details: true,
-    ctx,
-  });
-  expect(getHostnameHandler).toBeCalledWith(undefined);
-  expect(getHostnameApiHandler).toBeCalledWith(undefined);
-  expect(classByIdsHandler).toBeCalledWith({
-    ids: ['classId1', 'classId2'],
-    withTeachers: true,
-  });
-  expect(getUserAgentsInfoHandler).toBeCalledWith({
-    userAgentIds: ['userId1'],
-    withCenter: true,
-    userColumns: ['id', 'email', 'locale'],
-  });
+    // Assert
+    expect(getInstance).toBeCalledWith({
+      id: 'assignationId1',
+      details: true,
+      ctx,
+    });
+    expect(getHostnameHandler).toBeCalledWith(undefined);
+    expect(getHostnameApiHandler).toBeCalledWith(undefined);
+    expect(classByIdsHandler).toBeCalledWith({
+      ids: ['classId1', 'classId2'],
+      withTeachers: true,
+    });
+    expect(getUserAgentsInfoHandler).toBeCalledWith({
+      userAgentIds: ['userId1'],
+      withCenter: true,
+      userColumns: ['id', 'email', 'locale'],
+    });
 
-  expect(sendEmail).toBeCalledTimes(2);
-  expect(sendEmail).toBeCalledWith({
-    instance,
-    userAgent: expect.stringContaining('userAgentId'),
-    classes: [classes[0]],
-    hostname: 'example.com',
-    hostnameApi: 'api.example.com',
-    ignoreUserConfig: true,
-    isReminder: true,
-    ctx,
-  });
-  expect(getInstance).toHaveBeenCalledWith({
-    id: 'assignationId1',
-    details: true,
-    ctx,
+    expect(sendEmail).toBeCalledTimes(2);
+    expect(sendEmail).toBeCalledWith({
+      instance,
+      userAgent: expect.stringContaining('userAgentId'),
+      classes: [classes[0]],
+      hostname: 'example.com',
+      hostnameApi: 'api.example.com',
+      ignoreUserConfig: true,
+      isReminder: true,
+      ctx,
+    });
+    expect(getInstance).toHaveBeenCalledWith({
+      id: 'assignationId1',
+      details: true,
+      ctx,
+    });
   });
 });
