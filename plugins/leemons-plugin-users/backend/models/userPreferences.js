@@ -14,8 +14,8 @@ const schema = new mongoose.Schema(
       index: true,
     },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users_Users',
+      type: String,
+      // ref: 'users_Users',
       required: true,
     },
     gender: {
