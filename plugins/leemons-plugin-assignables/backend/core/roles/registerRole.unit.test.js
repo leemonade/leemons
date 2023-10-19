@@ -58,17 +58,16 @@ it('Should register the role correctly', async () => {
 
   // Assert
   expect(actions['multilanguage.common.addManyByKey']).nthCalledWith(1, {
-    key: ctx.prefixPN(`roles.${role.name}.plural`),
+    key: ctx.prefixPN(`roles.${role.role}.plural`),
     data: role.pluralName,
   });
   expect(actions['multilanguage.common.addManyByKey']).nthCalledWith(2, {
-    key: ctx.prefixPN(`roles.${role.name}.singular`),
+    key: ctx.prefixPN(`roles.${role.role}.singular`),
     data: role.singularName,
   });
   expect(actions['leebrary.categories.add']).toBeCalledWith(
     expect.objectContaining({
-      ...category,
-      role: `assignables.${role.name}`,
+      data: { ...category, provider: 'leebrary-assignables', key: `assignables.${role.role}` },
     })
   );
   expect(response).toBe(true);
@@ -93,7 +92,7 @@ it('Should throw if the role already exists', async () => {
   });
 
   await ctx.tx.db.Roles.create({
-    name: role.name,
+    name: role.role,
     plugin: ctx.callerPlugin,
   });
 
@@ -121,7 +120,7 @@ it('Should throw if the required params are not provided', () => {
   });
 
   // Act
-  const testFnWithoutRoleName = () => registerRole({ ...role, name: undefined, ctx });
+  const testFnWithoutRoleName = () => registerRole({ ...role, role: undefined, ctx });
   const testFnWithoutTeacherDetailUrl = () =>
     registerRole({ ...role, teacherDetailUrl: undefined, ctx });
   const testFnWithoutStudentDetailUrl = () =>

@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
@@ -34,12 +28,72 @@ beforeEach(async () => {
 
 const instanceOne = { id: 'instanceOneId' };
 const instanceTwo = { id: 'instanceTwoId' };
+const instances = [instanceOne, instanceTwo];
 const assignationOne = { id: 'assignationOneId' };
 const assignationTwo = { id: 'assignationTwoId' };
+const assignations = [assignationOne, assignationTwo];
+const initialInstancesDates = {
+  start: {
+    id: 'startDateId',
+    type: 'assignableInstance',
+    instance: instanceOne.id,
+    name: 'start',
+    date: new Date(),
+  },
+  closed: {
+    id: 'closedDateId',
+    type: 'assignableInstance',
+    instance: instanceOne.id,
+    name: 'closed',
+    date: new Date(),
+  },
+  visibility: {
+    id: 'visibilityDateId',
+    type: 'assignableInstance',
+    instance: instanceOne.id,
+    name: 'visibility',
+    date: new Date(),
+  },
+  deadline: {
+    id: 'deadlineDateId',
+    type: 'assignableInstance',
+    instance: instanceTwo.id,
+    name: 'deadline',
+    date: new Date(),
+  },
+  archived: {
+    id: 'archiveDateId',
+    type: 'assignableInstance',
+    instance: instanceTwo.id,
+    name: 'archived',
+    date: new Date(),
+  },
+};
+const initialAssignationsDates = {
+  start: {
+    id: 'assignationStartId',
+    type: 'assignation',
+    instance: assignationOne.id,
+    name: 'start',
+    date: new Date(),
+  },
+  end: {
+    id: 'assignationEndId',
+    type: 'assignation',
+    instance: assignationTwo.id,
+    name: 'end',
+    date: new Date(),
+  },
+  open: {
+    id: 'assignationOpenId',
+    type: 'assignation',
+    instance: assignationTwo.id,
+    name: 'open',
+    date: new Date(),
+  },
+};
 
 it('Should return correct dates when filtering by status and progress', async () => {
-  const instances = [instanceOne, instanceTwo];
-  const assignations = [assignationOne, assignationTwo];
   const filters = {
     status: true,
     progress: true,
@@ -51,41 +105,11 @@ it('Should return correct dates when filtering by status and progress', async ()
     },
   });
   const initialValues = [
-    {
-      id: 'dateOne',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateTwo',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'visibility',
-      date: new Date(),
-    },
-    {
-      id: 'dateThree',
-      type: 'assignableInstance',
-      instance: instanceTwo.id,
-      name: 'deadline',
-      date: new Date(),
-    },
-    {
-      id: 'dateFour',
-      type: 'assignation',
-      instance: assignations[0].id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateFive',
-      type: 'assignation',
-      instance: assignations[1].id,
-      name: 'end',
-      date: new Date(),
-    },
+    initialInstancesDates.start,
+    initialInstancesDates.visibility,
+    initialInstancesDates.deadline,
+    initialAssignationsDates.start,
+    initialAssignationsDates.end,
   ];
   await ctx.db.Dates.create(initialValues);
 
@@ -106,8 +130,6 @@ it('Should return correct dates when filtering by status and progress', async ()
 });
 
 it('Should return correct dates when filtering only by status', async () => {
-  const instances = [instanceOne, instanceTwo];
-  const assignations = [assignationOne, assignationTwo];
   const filters = {
     status: true,
     progress: false,
@@ -117,29 +139,7 @@ it('Should return correct dates when filtering only by status', async () => {
       Dates: newModel(mongooseConnection, 'Dates', datesSchema),
     },
   });
-  const initialValues = [
-    {
-      id: 'dateOne',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'closed',
-      date: new Date(),
-    },
-    {
-      id: 'dateFour',
-      type: 'assignation',
-      instance: assignationOne.id,
-      name: 'end',
-      date: new Date(),
-    },
-    {
-      id: 'dateFive',
-      type: 'assignation',
-      instance: assignationTwo.id,
-      name: 'open',
-      date: new Date(),
-    },
-  ];
+  const initialValues = [initialInstancesDates.closed, initialAssignationsDates.end];
   await ctx.db.Dates.create(initialValues);
 
   const result = await getActivitiesDates({
@@ -156,7 +156,6 @@ it('Should return correct dates when filtering only by status', async () => {
 });
 
 it('Should return correct dates when filtering by studentDidOpen flag', async () => {
-  const assignations = [assignationOne, assignationTwo];
   const filters = {
     studentDidOpen: true,
   };
@@ -166,27 +165,9 @@ it('Should return correct dates when filtering by studentDidOpen flag', async ()
     },
   });
   const initialValues = [
-    {
-      id: 'dateOne',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateFour',
-      type: 'assignation',
-      instance: assignations[0].id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateFive',
-      type: 'assignation',
-      instance: assignations[1].id,
-      name: 'open',
-      date: new Date(),
-    },
+    initialInstancesDates.start,
+    initialAssignationsDates.start,
+    initialAssignationsDates.open,
   ];
   await ctx.db.Dates.create(initialValues);
 
@@ -198,8 +179,8 @@ it('Should return correct dates when filtering by studentDidOpen flag', async ()
   expect(result.assignations).not.toHaveProperty(assignationOne.id);
   expect(result.assignations[assignationTwo.id]).toHaveProperty('open');
 });
+
 it('Should return correct dates when filtering by archivedFiles', async () => {
-  const instances = [instanceOne, instanceTwo];
   const filters = {
     isArchived: true,
   };
@@ -209,41 +190,10 @@ it('Should return correct dates when filtering by archivedFiles', async () => {
     },
   });
   const initialValues = [
-    {
-      id: 'dateOne',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateTwo',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'visibility',
-      date: new Date(),
-    },
-    {
-      id: 'dateThree',
-      type: 'assignableInstance',
-      instance: instanceTwo.id,
-      name: 'archived',
-      date: new Date(),
-    },
-    {
-      id: 'dateFour',
-      type: 'assignation',
-      instance: assignationOne.id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateFive',
-      type: 'assignation',
-      instance: assignationTwo.id,
-      name: 'end',
-      date: new Date(),
-    },
+    initialInstancesDates.start,
+    initialInstancesDates.visibility,
+    initialInstancesDates.archived,
+    initialAssignationsDates.start,
   ];
   await ctx.db.Dates.create(initialValues);
 
@@ -257,8 +207,6 @@ it('Should return correct dates when filtering by archivedFiles', async () => {
 });
 
 it('Should return correct dates when filtering by studentCanSee flag', async () => {
-  const instances = [instanceOne, instanceTwo];
-  const assignations = [assignationOne, assignationTwo];
   const filters = {
     studentCanSee: true,
     sort: true,
@@ -269,41 +217,11 @@ it('Should return correct dates when filtering by studentCanSee flag', async () 
     },
   });
   const initialValues = [
-    {
-      id: 'dateOne',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateThree',
-      type: 'assignableInstance',
-      instance: instanceOne.id,
-      name: 'visibility',
-      date: new Date(),
-    },
-    {
-      id: 'dateTwo',
-      type: 'assignableInstance',
-      instance: instanceTwo.id,
-      name: 'archived',
-      date: new Date(),
-    },
-    {
-      id: 'dateFour',
-      type: 'assignation',
-      instance: assignations[0].id,
-      name: 'start',
-      date: new Date(),
-    },
-    {
-      id: 'dateFive',
-      type: 'assignation',
-      instance: assignations[1].id,
-      name: 'end',
-      date: new Date(),
-    },
+    initialInstancesDates.start,
+    initialInstancesDates.visibility,
+    initialInstancesDates.archived,
+    initialAssignationsDates.start,
+    initialAssignationsDates.end,
   ];
   await ctx.db.Dates.create(initialValues);
 
@@ -319,7 +237,7 @@ it('Should return correct dates when filtering by studentCanSee flag', async () 
 
 it('Should return an empty object if no filters are passed', async () => {
   // Arrange
-  const instances = [instanceOne, instanceTwo];
+
   const ctx = generateCtx({
     models: {
       Dates: newModel(mongooseConnection, 'Dates', datesSchema),
