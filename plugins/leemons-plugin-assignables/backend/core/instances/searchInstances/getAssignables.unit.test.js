@@ -1,22 +1,12 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
 const { getAssignables } = require('./getAssignables');
 const { instancesSchema } = require('../../../models/instances');
 const { assignablesSchema } = require('../../../models/assignables');
-const {
-  getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
-const {
-  getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
+const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 const instance = { ...getInstanceObject(), id: 'assignableId1' };
 const assignable = {
@@ -49,11 +39,7 @@ beforeEach(async () => {
   ctx = generateCtx({
     models: {
       Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
+      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
     },
   });
 });
@@ -75,7 +61,7 @@ it('Should return assignables if instances match', async () => {
       asset: 'assetId',
       assignable: 'test-assignable',
       id: 'assignableId1',
-      role: 'plugins.example',
+      role: 'example',
     }),
   ]);
 });

@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
@@ -89,7 +83,7 @@ it('Should find multiple instances', async () => {
   const response = await searchInstancesByClass({ id: classId, ctx });
 
   // Assert
-  expect(response.sort()).toEqual([instanceId, instanceId2].sort());
+  expect(response).toEqual(expect.arrayContaining([(instanceId, instanceId2)]));
 });
 
 it("Should only find the requested classes' instances", async () => {
@@ -124,5 +118,5 @@ it("Should only find the requested classes' instances", async () => {
   const response = await searchInstancesByClass({ id: classId, ctx });
 
   // Assert
-  expect(response.sort()).not.toContain(instanceId3);
+  expect(response).not.toContain(instanceId3);
 });

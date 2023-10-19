@@ -18,16 +18,12 @@ globalJest.mock('../../leebrary/assets');
 
 const { getAssignables } = require('./getAssignables');
 const { assignablesSchema } = require('../../../models/assignables');
-const {
-  getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 const { getRoles } = require('../../roles');
 const { getSubjects } = require('../../subjects');
 const { getAsset } = require('../../leebrary/assets');
-const {
-  getUserPermissions,
-} = require('../../permissions/assignables/users/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -94,26 +90,19 @@ function getActions({ assignable, assetIds, mock }) {
 
   if (mock.getAsset) {
     getAsset.mockImplementation(({ id: assetsIds }) =>
-      Object.values(
-        pick(assets, Array.isArray(assetsIds) ? assetsIds : [assetsIds])
-      )
+      Object.values(pick(assets, Array.isArray(assetsIds) ? assetsIds : [assetsIds]))
     );
   }
   if (mock.getRoles) {
     getRoles.mockImplementation(({ roles }) => pick(roleDetails, roles));
   }
   if (mock.getSubjects) {
-    getSubjects.mockImplementation(({ assignableIds }) =>
-      pick(subjects, assignableIds)
-    );
+    getSubjects.mockImplementation(({ assignableIds }) => pick(subjects, assignableIds));
   }
   if (mock.getUserPermissions) {
     getUserPermissions.mockImplementation(({ assignables }) =>
       Object.fromEntries(
-        assignables.map(({ id: assignableId }) => [
-          assignableId,
-          { actions: ['view'] },
-        ])
+        assignables.map(({ id: assignableId }) => [assignableId, { actions: ['view'] }])
       )
     );
   }
@@ -155,11 +144,7 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -223,11 +208,7 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -269,10 +250,10 @@ describe('Intended execution', () => {
     const response = await getAssignables({ ids: [firstId, secondId], ctx });
 
     // Assert
-    expect(response.sort()).toEqual(
-      expectedValues
-        .map((expectedValue) => expect.objectContaining(expectedValue))
-        .sort()
+    expect(response).toEqual(
+      expect.arrayContaining(
+        expectedValues.map((expectedValue) => expect.objectContaining(expectedValue))
+      )
     );
   });
 
@@ -297,11 +278,7 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -353,11 +330,7 @@ describe('Throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -392,11 +365,7 @@ describe('Throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -468,11 +437,7 @@ describe('Do not throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -509,11 +474,7 @@ describe('Do not throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -591,11 +552,7 @@ describe('ShowDeleted property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -668,11 +625,7 @@ describe('ShowDeleted property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 

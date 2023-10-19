@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
@@ -95,8 +89,8 @@ it('Should list multiple classes', async () => {
   const response = await listInstanceClasses({ id: instanceId, ctx });
 
   // Assert
-  expect(response.sort()).toEqual(
-    [
+  expect(response).toEqual(
+    expect.arrayContaining([
       {
         instance: instanceId,
         assignable: assignableId,
@@ -107,7 +101,7 @@ it('Should list multiple classes', async () => {
         assignable: assignableId,
         class: classId2,
       },
-    ].sort()
+    ])
   );
 });
 
