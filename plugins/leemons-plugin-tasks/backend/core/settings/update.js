@@ -1,30 +1,28 @@
 const _ = require('lodash');
-const table = require('../table');
 const findOne = require('./findOne');
 
 /**
- * @public
- * @static
- * @return {Promise<any>}
- * */
-async function update(settings, { transacting: _transacting } = {}) {
-  return global.utils.withTransaction(
-    async (transacting) => {
-      let currentSettings = await findOne({ transacting });
-      if (_.isNil(currentSettings)) {
-        currentSettings = await table.settings.create(
-          { hideWelcome: false, configured: false },
-          { transacting }
-        );
-      }
-      const newSettings = { ...currentSettings, ...settings };
-      delete newSettings.id;
+ * Updates settings data.
+ *
+ * @param {MoleculerContext} ctx - The moleculer context
+ * @returns {Promise<Array>} - A promise that resolves to an array
+ */
 
-      return table.settings.update({ id: currentSettings.id }, newSettings, { transacting });
-    },
-    table.settings,
-    _transacting
-  );
+async function update({ settings, ctx }) {
+  let currentSettings = await findOne({ ctx });
+  if (_.isNil(currentSettings)) {
+    currentSettings = await ctx.tx.db.Settings.create({
+      hideWelcome: false,
+      configured: false,
+    }).then((mongooseDoc) => mongooseDoc.toObject());
+  }
+  const newSettings = { ...currentSettings, ...settings };
+  delete newSettings.id;
+
+  return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
+    new: true,
+    lean: true,
+  });
 }
 
-module.exports = update;
+module.exports = { update };

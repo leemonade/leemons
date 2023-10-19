@@ -1,13 +1,13 @@
-const table = require('../table');
-
 /**
- * @public
- * @static
- * @return {Promise<any>}
- * */
-async function findOne({ transacting } = {}) {
-  const results = await table.settings.find({ $limit: 1 }, { transacting });
+ * Retrieves settings data.
+ *
+ * @param {MoleculerContext} ctx - The moleculer context
+ * @returns {Promise<Array>} - A promise that resolves to an array
+ */
+
+async function findOne({ ctx }) {
+  const results = await ctx.tx.db.Settings.find().limit(1).lean();
   return Array.isArray(results) ? results[0] : null;
 }
 
-module.exports = findOne;
+module.exports = { findOne };

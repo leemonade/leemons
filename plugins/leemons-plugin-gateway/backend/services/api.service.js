@@ -592,6 +592,11 @@ module.exports = {
           'GET /assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
           'PUT /assignableInstances/:id': 'v1.assignables.assignableInstances.updateRest',
           'POST /assignableInstances/:id': 'v1.assignables.assignableInstance.sendReminderRest',
+
+          // -- Assignables(NOT FINISHED) --
+          'GET /settings': 'v1.tasks.settings.findOneRest',
+          'POST /settings': 'v1.tasks.settings.updateRest',
+          'POST /settings/enable-menu-item': 'v1.tasks.settings.enableMenuItemRest',
         },
 
         /**
