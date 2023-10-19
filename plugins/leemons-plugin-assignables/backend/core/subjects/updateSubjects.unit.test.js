@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
@@ -60,11 +54,11 @@ it('Should add the new subjects', async () => {
   const subjectsSaved = await ctx.db.Subjects.find({}).lean();
 
   // Assert
-  expect(response.sort()).toEqual(subjects.sort());
+  expect(response.sort((a, b) => a.subject.localeCompare(b.subject))).toEqual(
+    subjects.sort((a, b) => a.subject.localeCompare(b.subject))
+  );
   expect(subjectsSaved.sort()).toEqual(
-    subjects.map((subject) =>
-      expect.objectContaining({ ...subject, assignable })
-    )
+    subjects.map((subject) => expect.objectContaining({ ...subject, assignable }))
   );
 });
 
@@ -150,7 +144,9 @@ it('Should both remove the old subjects and add the new ones', async () => {
   const subjectsSavedCount = await ctx.db.Subjects.countDocuments({});
 
   // Assert
-  expect(response.sort()).toEqual(subjects.sort());
+  expect(response.sort((a, b) => a.subject.localeCompare(b.subject))).toEqual(
+    subjects.sort((a, b) => a.subject.localeCompare(b.subject))
+  );
   expect(subjectsSavedCount).toBe(2);
 });
 
@@ -172,10 +168,8 @@ it('Should throw if no valid params are provided', async () => {
   });
 
   // Act
-  const noAssignableFn = () =>
-    updateSubjects({ assignable: undefined, subjects, ctx });
-  const noSubjectsFn = () =>
-    updateSubjects({ assignable, subjects: undefined, ctx });
+  const noAssignableFn = () => updateSubjects({ assignable: undefined, subjects, ctx });
+  const noSubjectsFn = () => updateSubjects({ assignable, subjects: undefined, ctx });
 
   // Assert
   expect(noAssignableFn).rejects.toThrowError(

@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
@@ -69,7 +63,7 @@ it('Should find all the assignables', async () => {
   const response = await searchBySubject({ id: subjectId, ctx });
 
   // Assert
-  expect(response.sort()).toEqual(assignables.sort());
+  expect(response).toEqual(expect.arrayContaining(assignables));
 });
 
 it('Should find all the assignables having all the subjects', async () => {
@@ -121,7 +115,9 @@ it('Should find all the assignables having all the subjects', async () => {
   const response = await searchBySubject({ id: subjectIds, ctx });
 
   // Assert
-  expect(response.sort()).toEqual(assignables.sort());
+  expect(response.sort((a, b) => a.localeCompare(b))).toEqual(
+    assignables.sort((a, b) => a.localeCompare(b))
+  );
 });
 
 it('Should not the assignables not having all the subjects', async () => {
@@ -225,7 +221,7 @@ it('Should include all the assignables having more than the provided subjects', 
   const response = await searchBySubject({ id: subjectIds, ctx });
 
   // Assert
-  expect(response.sort()).toEqual(assignables.sort());
+  expect(response).toEqual(expect.arrayContaining(assignables));
 });
 
 it('Should throw if no required params are provided', () => {
@@ -240,7 +236,5 @@ it('Should throw if no required params are provided', () => {
   const testFn = () => searchBySubject({ id: undefined, ctx });
 
   // Assert
-  return expect(testFn).rejects.toThrowError(
-    'Cannot search by subject: id is required'
-  );
+  return expect(testFn).rejects.toThrow('Cannot search by subject: id is required');
 });

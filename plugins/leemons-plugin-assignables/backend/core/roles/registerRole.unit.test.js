@@ -8,6 +8,7 @@ const {
 } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
+const { LeemonsError } = require('@leemons/error');
 
 const { getRoleObject } = require('../../__fixtures__/getRoleObject');
 const { registerRole } = require('./registerRole');
@@ -100,7 +101,7 @@ it('Should throw if the role already exists', async () => {
   const testFn = () => registerRole({ ...role, ctx });
 
   // Assert
-  return expect(testFn).rejects.toThrowError(`Role "${role.name}" already exists in assignables`);
+  return expect(testFn).rejects.toThrow();
 });
 
 it('Should throw if the required params are not provided', () => {

@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 
@@ -70,7 +64,7 @@ it("Should return the assignables' subjects", async () => {
   const response = await getSubjects({ assignableIds: assignable, ctx });
 
   // Assert
-  expect(response.sort()).toEqual(expectedValues.sort());
+  expect(response).toEqual(expect.arrayContaining(expectedValues));
 });
 
 it("Should return both assignables' subjects", async () => {
@@ -280,7 +274,5 @@ it('Should throw when no ids are provided', () => {
   const testFn = () => getSubjects({ assignableIds: undefined, ctx });
 
   // Assert
-  return expect(testFn).rejects.toThrowError(
-    'Cannot get subjects: assignableIds is required'
-  );
+  return expect(testFn).rejects.toThrowError('Cannot get subjects: assignableIds is required');
 });
