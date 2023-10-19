@@ -593,10 +593,20 @@ module.exports = {
           'PUT /assignableInstances/:id': 'v1.assignables.assignableInstances.updateRest',
           'POST /assignableInstances/:id': 'v1.assignables.assignableInstance.sendReminderRest',
 
-          // -- Assignables(NOT FINISHED) --
-          'GET /settings': 'v1.tasks.settings.findOneRest',
-          'POST /settings': 'v1.tasks.settings.updateRest',
-          'POST /settings/enable-menu-item': 'v1.tasks.settings.enableMenuItemRest',
+          // -- Tasks (FINISHED) --
+          'GET tasks/settings': 'v1.tasks.settings.findOneRest',
+          'POST tasks/settings': 'v1.tasks.settings.updateRest',
+          'POST tasks/settings/enable-menu-item': 'v1.tasks.settings.enableMenuItemRest',
+          'GET tasks/profiles/:key': 'v1.tasks.profiles.getRest',
+          'POST tasks/profiles/:key': 'v1.tasks.profiles.setRest',
+          'POST tasks/profiles': 'v1.tasks.profiles.setManyRest',
+          'POST tasks/tasks': 'v1.tasks.tasks.createRest',
+          'PUT tasks/tasks/:id': 'v1.tasks.tasks.updateRest',
+          'GET tasks/tasks/:id': 'v1.tasks.tasks.getRest',
+          'POST tasks/tasks/:id/duplicate': 'v1.tasks.tasks.duplicateRest',
+          'DELETE tasks/tasks/:id': 'v1.tasks.tasks.removeRest',
+          'POST tasks/tasks/:id/publish': 'v1.tasks.tasks.publishRest',
+          'GET tasks/tasks/search': 'v1.tasks.tasks.searchRest',
         },
 
         /**
