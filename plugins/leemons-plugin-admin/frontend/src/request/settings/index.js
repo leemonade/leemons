@@ -11,6 +11,8 @@ async function updateSettings(values) {
     body.configured = ['true', '1', 'on'].includes(String(body.configured));
     delete body.created_at;
     delete body.updated_at;
+    delete body.createdAt;
+    delete body.updatedAt;
     delete body.status;
     delete body.id;
   }

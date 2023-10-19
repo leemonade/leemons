@@ -3,8 +3,8 @@ import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/requ
 import {
   Box,
   Button,
-  COLORS,
   Col,
+  COLORS,
   ContextContainer,
   Grid,
   IconButton,
@@ -57,7 +57,7 @@ export default function Index() {
   store.handlePrint = useReactToPrint({
     content: () => printRef.current,
     documentTitle: `${t('report')} - ${store.downloadReport?.userAgentName} - ${toDate(
-      store.downloadReport?.created_at
+      store.downloadReport?.createdAt
     )}`,
   });
 
@@ -85,7 +85,7 @@ export default function Index() {
   ];
 
   function downloadPDF(item) {
-    store.downloadReport = { ...item.report, created_at: item.created_at, item };
+    store.downloadReport = { ...item.report, createdAt: item.createdAt, item };
     render();
     setTimeout(() => {
       store.handlePrint();
@@ -143,7 +143,7 @@ export default function Index() {
         ...item,
         created: (
           <LocaleDate
-            date={item.created_at}
+            date={item.createdAt}
             options={{
               year: 'numeric',
               month: 'numeric',

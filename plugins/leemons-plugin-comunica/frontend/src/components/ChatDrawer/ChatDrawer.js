@@ -67,27 +67,27 @@ function ChatDrawer({
       store.programConfig = await RoomService.getProgramConfig(store.room.program);
     }
     store.messages = await store.service.getRoomMessages();
-    store.messages = orderBy(store.messages, 'created_at', 'asc');
+    store.messages = orderBy(store.messages, 'createdAt', 'asc');
     store.messages = map(store.messages, (message) => ({
       ...message,
-      created_at: new Date(message.created_at),
+      createdAt: new Date(message.createdAt),
     }));
     store.userAgentsById = _.keyBy(_.map(store.room.userAgents, 'userAgent'), 'id');
     /*
-    const { userAgents } = await getUserAgentsInfoRequest(map(store.room.userAgents, 'userAgent'), {
-      withProfile: true,
-    });
-    const roomUserAgentsById = keyBy(store.room.userAgents, 'userAgent');
-    store.userAgents = map(userAgents, (userAgent) => ({
-      ...userAgent.user,
-      id: userAgent.id,
-      profile: userAgent.profile.id,
-      roomDeleted: roomUserAgentsById[userAgent.id].deleted,
-    }));
-    store.userAgentsById = keyBy(store.userAgents, 'id');
-    const profiles = uniqBy(userAgents, 'profile.id');
-    store.profiles = map(profiles, 'profile');
-    */
+            const { userAgents } = await getUserAgentsInfoRequest(map(store.room.userAgents, 'userAgent'), {
+              withProfile: true,
+            });
+            const roomUserAgentsById = keyBy(store.room.userAgents, 'userAgent');
+            store.userAgents = map(userAgents, (userAgent) => ({
+              ...userAgent.user,
+              id: userAgent.id,
+              profile: userAgent.profile.id,
+              roomDeleted: roomUserAgentsById[userAgent.id].deleted,
+            }));
+            store.userAgentsById = keyBy(store.userAgents, 'id');
+            const profiles = uniqBy(userAgents, 'profile.id');
+            store.profiles = map(profiles, 'profile');
+            */
 
     render();
     onRoomLoad(store.room);
@@ -166,7 +166,7 @@ function ChatDrawer({
     }
     store.messages.push({
       ...data,
-      created_at: new Date(data.created_at),
+      createdAt: new Date(data.createdAt),
     });
     onMessage(data);
     render();
@@ -360,7 +360,7 @@ function ChatDrawer({
               store.messages.map((message, index) => {
                 const comp = [];
                 let forceUserImage = false;
-                const day = new Date(message.created_at).toLocaleDateString(locale, {
+                const day = new Date(message.createdAt).toLocaleDateString(locale, {
                   weekday: 'short',
                   year: 'numeric',
                   month: 'short',
@@ -399,7 +399,7 @@ function ChatDrawer({
                       }
                       isOwn={message.userAgent === store.userAgent}
                       user={store.userAgentsById?.[message.userAgent]?.user}
-                      message={{ ...message.message, date: message.created_at }}
+                      message={{ ...message.message, date: message.createdAt }}
                     />
                   </Box>
                 );

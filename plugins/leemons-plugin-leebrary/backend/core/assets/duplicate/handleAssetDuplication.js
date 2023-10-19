@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { isTruthy } = require('../../shared');
 const { add } = require('../add');
+
 /**
  * Handles the creation of a new asset during the duplication process.
  * It prepares the asset data, determines the indexable and public status, and calls the add function to create the new asset.
@@ -37,6 +38,8 @@ async function handleAssetDuplication({
     'fromUserAgent',
     'created_at',
     'updated_at',
+    'createdAt',
+    'updatedAt',
   ]);
   const _isIndexable = isIndexable === undefined ? asset.indexable : isTruthy(isIndexable);
   const _isPublic = isPublic === undefined ? asset.public : isTruthy(isPublic);

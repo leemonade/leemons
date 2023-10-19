@@ -13,7 +13,7 @@ const { handleCloneFile } = require('./handleCloneFile');
  */
 async function duplicate({ file, ctx } = {}) {
   // eslint-disable-next-line camelcase
-  const { created_at, updated_at, ...fromFile } = file;
+  const { created_at, updated_at, createdAt, updatedAt, ...fromFile } = file;
 
   // EN: Use active provider
   // ES: Usar el proveedor activo

@@ -1,26 +1,26 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Box,
-  Text,
+  ActionButton,
   Alert,
-  Drawer,
-  Switch,
+  Box,
   Button,
-  Select,
-  Divider,
   Checkbox,
+  Divider,
+  Drawer,
+  MultiSelect,
+  RadioGroup,
+  Select,
+  Switch,
+  Text,
   TextInput,
   TimeInput,
-  RadioGroup,
-  MultiSelect,
-  ActionButton,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { DatePicker, TextEditorInput } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { listSessionClassesRequest, listProgramsRequest } from '@academic-portfolio/request';
+import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { saveRequest } from '@board-messages/request';
 import isArray from 'lodash/isArray';
@@ -118,6 +118,9 @@ const DetailDrawer = ({
       delete message.updated_at;
       delete message.created_at;
       delete message.deleted_at;
+      delete message.updatedAt;
+      delete message.createdAt;
+      delete message.deletedAt;
       delete message.deleted;
     }
     try {

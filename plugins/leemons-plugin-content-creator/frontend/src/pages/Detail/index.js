@@ -2,24 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
-  PageHeader,
   LoadingOverlay,
+  PageHeader,
   Stack,
   useDebouncedCallback,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useStore, useProcessTextEditor } from '@common';
+import { useProcessTextEditor, useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { DocumentIcon, SetupContent } from '@content-creator/components/icons';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import {
-  saveDocumentRequest,
-  getDocumentRequest,
-  // shareDocumentRequest,
-} from '@content-creator/request';
+import { getDocumentRequest, saveDocumentRequest } from '@content-creator/request';
 import { AssetFormInput } from '@leebrary/components';
 // import { PermissionsDataDrawer } from '@leebrary/components/AssetSetup';
 // import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -123,7 +119,17 @@ export default function Index({ readOnly, isNew }) {
       if (!store.isNew) {
         const {
           // eslint-disable-next-line camelcase
-          document: { deleted, deleted_at, created_at, updated_at, published, ...document },
+          document: {
+            deleted,
+            deleted_at,
+            created_at,
+            updated_at,
+            deletedAt,
+            createdAt,
+            updatedAt,
+            published,
+            ...document
+          },
         } = await getDocumentRequest(params.id);
 
         // eslint-disable-next-line react/prop-types
