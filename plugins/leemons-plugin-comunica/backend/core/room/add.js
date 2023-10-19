@@ -76,6 +76,7 @@ async function add({
       ctx,
     });
   }
+  return room;
 }
 
 module.exports = { add };

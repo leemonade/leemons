@@ -8,7 +8,7 @@ async function remove({ key, ignoreCalledFrom, ctx }) {
 
   const userAgents = await ctx.tx.db.UserAgentInRoom.find({ room: key }).lean();
 
-  await Promise.all([
+  const a = await Promise.all([
     ctx.tx.db.Room.deleteOne({ key }),
     ctx.tx.db.UserAgentInRoom.deleteMany({ room: key }),
     ctx.tx.db.Message.deleteMany({ room: key }),
@@ -20,7 +20,7 @@ async function remove({ key, ignoreCalledFrom, ctx }) {
     }),
   ]);
 
-  ctx.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:CONFIG:ROOM:REMOVE`, { key });
+  ctx.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:REMOVE`, { key });
 }
 
 module.exports = { remove };

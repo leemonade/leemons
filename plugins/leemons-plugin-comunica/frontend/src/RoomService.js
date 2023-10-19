@@ -107,7 +107,7 @@ class RoomService {
   }
 
   static adminRemoveUserAgentFromRoom(key, userAgent) {
-    return leemons.api(`comunica/room/${key}/admin/remove`, {
+    return leemons.api(`comunica/room/${key}/admin/remove/user-agent`, {
       allAgents: true,
       method: 'POST',
       body: {

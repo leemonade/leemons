@@ -270,7 +270,9 @@ module.exports = {
           'POST comunica/room/:key/mute': 'v1.comunica.room.toggleMutedRoomRest',
           'POST comunica/room/:key/admin/mute': 'v1.comunica.room.toggleAdminMutedRoomRest',
           'POST comunica/room/:key/admin/disable': 'v1.comunica.room.toggleAdminDisableRoomRest',
-          'POST comunica/room/:key/admin/remove': 'v1.comunica.room.adminRemoveUserAgentRest',
+          'POST comunica/room/:key/admin/remove/user-agent':
+            'v1.comunica.room.adminRemoveUserAgentRest',
+          'POST comunica/room/:key/admin/remove': 'v1.comunica.room.adminRemoveRoomRest',
           'POST comunica/room/:key/admin/name': 'v1.comunica.room.adminUpdateRoomNameRest',
           'POST comunica/room/:key/admin/users': 'v1.comunica.room.adminAddUsersToRoomRest',
           'POST comunica/room/create': 'v1.comunica.room.createRoomRest',
