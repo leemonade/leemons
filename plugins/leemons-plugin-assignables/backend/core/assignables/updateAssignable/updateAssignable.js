@@ -13,9 +13,7 @@ const { addUserToAssignable } = require('../addUserToAssignable');
 const { createAssignable } = require('../createAssignable');
 const { getAssignable } = require('../getAssignable');
 const { listAssignableUserAgents } = require('../listAssignableUserAgents');
-const {
-  getUserPermission,
-} = require('../../permissions/assignables/users/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const { publishAssignable } = require('../publishAssignable');
 const { duplicateAsset } = require('../../leebrary/assets');
 const { removeAsset } = require('../../leebrary/assets');
@@ -91,12 +89,9 @@ async function updateAssignable({ assignable, published = false, ctx }) {
 
     // EN: Check if the current version is published.
     // ES: Comprueba si la versión actual está publicada.
-    const currentVersion = await ctx.tx.call(
-      'common.versionControl.getVersion',
-      {
-        ids: id,
-      }
-    );
+    const currentVersion = await ctx.tx.call('common.versionControl.getVersion', {
+      ids: id,
+    });
 
     if (currentVersion.published) {
       shouldUpgrade = true;
@@ -121,13 +116,10 @@ async function updateAssignable({ assignable, published = false, ctx }) {
     // ES: Actualiza la versión.
     if (shouldUpgrade) {
       // TODO: Let the user decide which upgrade scale to use.
-      const { fullId } = await ctx.tx.call(
-        'common.versionControl.upgradeVersion',
-        {
-          id,
-          upgrade: 'major',
-        }
-      );
+      const { fullId } = await ctx.tx.call('common.versionControl.upgradeVersion', {
+        id,
+        upgrade: 'major',
+      });
 
       // TODO: Duplicate everything and apply changes
       // TODO: Ensure to keep original owner
@@ -150,10 +142,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
       // ES: Añade los permisos a los usuarios.
       await Promise.all(
         users
-          .filter(
-            (user) =>
-              !userAgents.includes(user.userAgent) && user.role !== 'student'
-          )
+          .filter((user) => !userAgents.includes(user.userAgent) && user.role !== 'student')
           .map((user) =>
             addUserToAssignable({
               assignableId: fullId,
@@ -199,10 +188,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
 
     if (diff.includes('resources')) {
       const resourcesToSave = [];
-      const newResources = _.difference(
-        assignableObject.resources,
-        currentAssignable.resources
-      );
+      const newResources = _.difference(assignableObject.resources, currentAssignable.resources);
       const resourcesToDelete = _.difference(
         currentAssignable.resources,
         assignableObject.resources
@@ -254,10 +240,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
           async ([key, value]) => {
             if (Array.isArray(value)) {
               const resourcesToSave = [];
-              const newResources = _.difference(
-                value,
-                currentAssignable.metadata?.leebrary?.[key]
-              );
+              const newResources = _.difference(value, currentAssignable.metadata?.leebrary?.[key]);
               const resourcesToDelete = _.difference(
                 currentAssignable.metadata?.leebrary?.[key],
                 value
@@ -289,9 +272,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
 
               if (resourcesToDelete.length) {
                 promises.push(
-                  ...resourcesToDelete.map((resource) =>
-                    removeAsset({ id: resource, ctx })
-                  )
+                  ...resourcesToDelete.map((resource) => removeAsset({ id: resource, ctx }))
                 );
               }
 
@@ -299,8 +280,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
 
               _.set(updateObject, `metadata.leebrary.${key}`, resourcesToSave);
             } else {
-              const shouldSave =
-                value.id !== currentAssignable.metadata?.leebrary?.[key];
+              const shouldSave = value.id !== currentAssignable.metadata?.leebrary?.[key];
               const shouldRemove =
                 currentAssignable.metadata?.leebrary?.[key] &&
                 value.id !== currentAssignable.metadata?.leebrary?.[key];
@@ -322,11 +302,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
                   indexable: 0,
                   ctx,
                 });
-                _.set(
-                  updateObject,
-                  `metadata.leebrary.${key}`,
-                  duplicatedAsset.id
-                );
+                _.set(updateObject, `metadata.leebrary.${key}`, duplicatedAsset.id);
               }
             }
           }

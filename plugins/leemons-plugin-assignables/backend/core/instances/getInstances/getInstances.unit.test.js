@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 
 const { LeemonsError } = require('@leemons/error');
 const { newModel } = require('@leemons/mongodb');
@@ -12,13 +6,9 @@ const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 
 const { getInstances } = require('./getInstances');
 const { instancesSchema } = require('../../../models/instances');
-const {
-  getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
+const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
 
-const {
-  getUserPermissions,
-} = require('../../permissions/instances/users/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
 const { getRelatedInstances } = require('./getRelatedInstances');
 const { listInstanceClasses } = require('../../classes/listInstanceClasses');
 const { findDates } = require('./findDates');
@@ -36,6 +26,7 @@ jest.mock('./getInstancesSubjects');
 
 let mongooseConnection;
 let disconnectMongoose;
+let ctx;
 
 beforeAll(async () => {
   const { mongoose, disconnect } = await createMongooseConnection();
@@ -54,35 +45,33 @@ afterAll(async () => {
 beforeEach(async () => {
   await mongooseConnection.dropDatabase();
   jest.resetAllMocks();
-});
-
-it('should return instances data', async () => {
-  // Arrange
-
-  const ctx = generateCtx({
+  ctx = generateCtx({
     models: {
       Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
     },
   });
+});
 
-  const instance = getInstanceObject();
+const instance = getInstanceObject();
+const instances = [
+  {
+    ...instance,
+    id: 'instance1',
+    assignable: 'assignable1',
+    curriculum: 'curriculum1',
+    metadata: { groupName: 'group1' },
+  },
+  {
+    ...instance,
+    id: 'instance2',
+    assignable: 'assignable2',
+    curriculum: 'curriculum2',
+    metadata: { groupName: 'group2' },
+  },
+];
 
-  const instances = [
-    {
-      ...instance,
-      id: 'instance1',
-      assignable: 'assignable1',
-      curriculum: 'curriculum1',
-      metadata: { groupName: 'group1' },
-    },
-    {
-      ...instance,
-      id: 'instance2',
-      assignable: 'assignable2',
-      curriculum: 'curriculum2',
-      metadata: { groupName: 'group2' },
-    },
-  ];
+it('should return instances data', async () => {
+  // Arrange
 
   getUserPermissions.mockReturnValue({
     instance1: { actions: ['edit', 'view'] },
@@ -189,31 +178,6 @@ it('should return instances data', async () => {
 it('should return instances data - alternative flow', async () => {
   // Arrange
 
-  const ctx = generateCtx({
-    models: {
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
-    },
-  });
-
-  const instance = getInstanceObject();
-
-  const instances = [
-    {
-      ...instance,
-      id: 'instance1',
-      assignable: 'assignable1',
-      curriculum: 'curriculum1',
-      metadata: { groupName: 'group1' },
-    },
-    {
-      ...instance,
-      id: 'instance2',
-      assignable: 'assignable2',
-      curriculum: 'curriculum2',
-      metadata: { groupName: 'group2' },
-    },
-  ];
-
   getUserPermissions.mockReturnValue({
     instance1: { actions: ['view'] },
   });
@@ -241,25 +205,6 @@ it('should return instances data - alternative flow', async () => {
 
 it('should throw an error if missing permissions', async () => {
   // Arrange
-  const ctx = generateCtx({});
-  const instance = getInstanceObject();
-
-  const instances = [
-    {
-      ...instance,
-      id: 'instance1',
-      assignable: 'assignable1',
-      curriculum: 'curriculum1',
-      metadata: { groupName: 'group1' },
-    },
-    {
-      ...instance,
-      id: 'instance2',
-      assignable: 'assignable2',
-      curriculum: 'curriculum2',
-      metadata: { groupName: 'group2' },
-    },
-  ];
 
   getUserPermissions.mockReturnValue({
     instance1: { actions: ['edit', 'view'] },

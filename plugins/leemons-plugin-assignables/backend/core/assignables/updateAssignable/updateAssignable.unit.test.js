@@ -8,9 +8,7 @@ const { LeemonsError } = require('@leemons/error');
 const { updateAssignable } = require('./updateAssignable');
 const { assignablesSchema } = require('../../../models/assignables');
 
-const {
-  getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 jest.mock('../getAssignable');
 const { getAssignable } = require('../getAssignable');
@@ -19,9 +17,7 @@ jest.mock('../createAssignable');
 const { createAssignable } = require('../createAssignable');
 
 jest.mock('../../permissions/assignables/users/getUserPermission');
-const {
-  getUserPermission,
-} = require('../../permissions/assignables/users/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 
 jest.mock('../../leebrary/assets/updateAsset');
 const { updateAsset } = require('../../leebrary/assets/updateAsset');
@@ -126,9 +122,7 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest
-          .fn()
-          .mockReturnValue({ published: true }),
+        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: true }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
@@ -204,9 +198,7 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest
-          .fn()
-          .mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
@@ -273,19 +265,13 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest
-          .fn()
-          .mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
       },
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -374,19 +360,13 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest
-          .fn()
-          .mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
       },
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 
@@ -462,19 +442,13 @@ describe('updateAssignable function', () => {
 
     const ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': jest
-          .fn()
-          .mockReturnValue({ published: false }),
+        'common.versionControl.getVersion': jest.fn().mockReturnValue({ published: false }),
         'common.versionControl.upgradeVersion': jest
           .fn()
           .mockReturnValue({ fullId: 'assetId@2.0.0' }),
       },
       models: {
-        Assignables: newModel(
-          mongooseConnection,
-          'Assignables',
-          assignablesSchema
-        ),
+        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
       },
     });
 

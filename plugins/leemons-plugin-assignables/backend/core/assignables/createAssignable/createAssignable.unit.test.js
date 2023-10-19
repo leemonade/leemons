@@ -1,10 +1,4 @@
-const {
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} = require('@jest/globals');
+const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
 const { generateCtx, createMongooseConnection } = require('@leemons/testing');
 const { newModel } = require('@leemons/mongodb');
 const { omit } = require('lodash');
@@ -16,36 +10,11 @@ jest.mock('../publishAssignable');
 
 const { createAssignable } = require('./createAssignable');
 const { assignablesSchema } = require('../../../models/assignables');
-const {
-  getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
 
 const { saveSubjects } = require('../../subjects');
 const { publishAssignable } = require('../publishAssignable');
-const {
-  addPermissionToUser,
-} = require('../../permissions/assignables/users/addPermissionToUser');
-
-let mongooseConnection;
-let disconnectMongoose;
-
-beforeAll(async () => {
-  const { mongoose, disconnect } = await createMongooseConnection();
-
-  mongooseConnection = mongoose;
-  disconnectMongoose = disconnect;
-});
-
-afterAll(async () => {
-  await disconnectMongoose();
-
-  mongooseConnection = null;
-  disconnectMongoose = null;
-});
-
-beforeEach(async () => {
-  await mongooseConnection.dropDatabase();
-});
+const { addPermissionToUser } = require('../../permissions/assignables/users/addPermissionToUser');
 
 const actions = {
   'assignables.roles.get': () => {},
@@ -71,46 +40,61 @@ const actions = {
   }),
 };
 
+let mongooseConnection;
+let disconnectMongoose;
+let ctx;
+
+beforeAll(async () => {
+  const { mongoose, disconnect } = await createMongooseConnection();
+
+  mongooseConnection = mongoose;
+  disconnectMongoose = disconnect;
+});
+
+afterAll(async () => {
+  await disconnectMongoose();
+
+  mongooseConnection = null;
+  disconnectMongoose = null;
+});
+
+beforeEach(async () => {
+  await mongooseConnection.dropDatabase();
+
+  ctx = generateCtx({
+    actions,
+    models: {
+      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+    },
+  });
+});
+
+const generateExpectedValue = (assignable) => ({
+  ...omit(assignable, ['subjects']),
+  id: actions['common.versionControl.register']().fullId,
+  asset: actions['leebrary.assets.add']().id,
+  metadata: {
+    ...assignable.metadata,
+    leebrary: {
+      other: expect.stringContaining(
+        actions['leebrary.assets.duplicate']({
+          assetId: assignable.metadata.leebrary.other,
+        }).id
+      ),
+      test: assignable.metadata.leebrary.test.map((asset) =>
+        expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: asset }).id)
+      ),
+    },
+  },
+  resources: assignable.resources.map((resource) =>
+    expect.stringContaining(actions['leebrary.assets.duplicate']({ assetId: resource }).id)
+  ),
+});
+
 it('Should register the new assignable', async () => {
   // Arrange
   const assignable = getAssignableObject();
-
-  const expectedValue = {
-    ...omit(assignable, ['subjects']),
-    id: actions['common.versionControl.register']().fullId,
-    asset: actions['leebrary.assets.add']().id,
-    metadata: {
-      ...assignable.metadata,
-      leebrary: {
-        other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({
-            assetId: assignable.metadata.leebrary.other,
-          }).id
-        ),
-        test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(
-            actions['leebrary.assets.duplicate']({ assetId: asset }).id
-          )
-        ),
-      },
-    },
-    resources: assignable.resources.map((resource) =>
-      expect.stringContaining(
-        actions['leebrary.assets.duplicate']({ assetId: resource }).id
-      )
-    ),
-  };
-
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-    },
-  });
+  const expectedValue = generateExpectedValue(assignable);
 
   // Act
   const response = await createAssignable({ assignable, ctx });
@@ -134,43 +118,7 @@ it('Should register the new agnostic assignable (no subjects)', async () => {
     ...assignable,
     subjects: [],
   };
-
-  const expectedValue = {
-    ...omit(assignable, ['subjects']),
-    id: actions['common.versionControl.register']().fullId,
-    asset: actions['leebrary.assets.add']().id,
-    metadata: {
-      ...assignable.metadata,
-      leebrary: {
-        other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({
-            assetId: assignable.metadata.leebrary.other,
-          }).id
-        ),
-        test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(
-            actions['leebrary.assets.duplicate']({ assetId: asset }).id
-          )
-        ),
-      },
-    },
-    resources: assignable.resources.map((resource) =>
-      expect.stringContaining(
-        actions['leebrary.assets.duplicate']({ assetId: resource }).id
-      )
-    ),
-  };
-
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-    },
-  });
+  const expectedValue = generateExpectedValue(assignable);
 
   // Act
   const response = await createAssignable({ assignable, ctx });
@@ -190,52 +138,14 @@ it('Should register the new agnostic assignable (no subjects)', async () => {
 it('Should register the new assignable in published format', async () => {
   // Arrange
   const assignable = getAssignableObject();
-
-  const expectedValue = {
-    ...omit(assignable, ['subjects']),
-    id: actions['common.versionControl.register']().fullId,
-    asset: actions['leebrary.assets.add']().id,
-    metadata: {
-      ...assignable.metadata,
-      leebrary: {
-        other: expect.stringContaining(
-          actions['leebrary.assets.duplicate']({
-            assetId: assignable.metadata.leebrary.other,
-          }).id
-        ),
-        test: assignable.metadata.leebrary.test.map((asset) =>
-          expect.stringContaining(
-            actions['leebrary.assets.duplicate']({ assetId: asset }).id
-          )
-        ),
-      },
-    },
-    resources: assignable.resources.map((resource) =>
-      expect.stringContaining(
-        actions['leebrary.assets.duplicate']({ assetId: resource }).id
-      )
-    ),
-  };
-
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-    },
-  });
+  const expectedValue = generateExpectedValue(assignable);
 
   // Act
   const response = await createAssignable({ assignable, published: true, ctx });
 
   // Assert
   expect(response).toEqual(expect.objectContaining(expectedValue));
-  expect(publishAssignable).toHaveBeenCalledWith(
-    expect.objectContaining({ id: response.id })
-  );
+  expect(publishAssignable).toHaveBeenCalledWith(expect.objectContaining({ id: response.id }));
 });
 
 it('Should use the provided id and asset id for the new assignable', async () => {
@@ -248,17 +158,6 @@ it('Should use the provided id and asset id for the new assignable', async () =>
     asset,
   };
 
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-    },
-  });
-
   // Act
   const response = await createAssignable({ assignable, id, ctx });
 
@@ -270,17 +169,6 @@ it('Should use the provided id and asset id for the new assignable', async () =>
 it('Should create the userAgent permissions for the assignable', async () => {
   // Arrange
   const assignable = getAssignableObject();
-
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-    },
-  });
 
   // Act
   const response = await createAssignable({ assignable, ctx });
@@ -313,17 +201,6 @@ it('Should return an empty array of resources and no leebrary if not provided', 
     resources: [],
   };
 
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-    },
-  });
-
   // Act
   const response = await createAssignable({ assignable, ctx });
 
@@ -335,22 +212,9 @@ it('Should throw an error if no required assignable param is provided', async ()
   // Arrange
   const assignable = getAssignableObject();
 
-  const ctx = generateCtx({
-    actions,
-    models: {
-      Assignables: newModel(
-        mongooseConnection,
-        'Assignables',
-        assignablesSchema
-      ),
-    },
-  });
-
   // Act
-  const noAssetFn = () =>
-    createAssignable({ assignable: omit(assignable, ['asset']), ctx });
-  const noRoleFn = () =>
-    createAssignable({ assignable: omit(assignable, ['role']), ctx });
+  const noAssetFn = () => createAssignable({ assignable: omit(assignable, ['asset']), ctx });
+  const noRoleFn = () => createAssignable({ assignable: omit(assignable, ['role']), ctx });
 
   // Assert
   await expect(noAssetFn()).rejects.toThrowError(/asset/);
