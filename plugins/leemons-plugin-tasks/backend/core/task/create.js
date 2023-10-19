@@ -1,28 +1,23 @@
-const assignablesServices = require('../assignables');
+const { LeemonsError } = require('@leemons/error');
 
-module.exports = async function create(
-  data,
-
-  { transacting, userSession } = {}
-) {
-  const { assignables } = assignablesServices();
+async function create({ ctx, ...data }) {
   try {
     const assignableObject = {
       role: 'task',
       ...data,
     };
-    const createdAssignable = await assignables.createAssignable(assignableObject, {
-      transacting,
-      userSession,
+    const createdAssignable = await ctx.tx.call('assignables.assignables.createAssignable', {
+      assignable: assignableObject,
     });
 
     // TODO: Save attachments
 
-    return leemons
-      .getPlugin('common')
-      .services.versionControl.parseId(createdAssignable.id, { transacting });
+    return ctx.tx.call('common.versionControl.parseId', {
+      id: createdAssignable.id,
+    });
   } catch (error) {
-    error.message = `Error creating task: ${error.message}`;
-    throw error;
+    throw new LeemonsError(ctx, { message: `Error creating task: ${error.message}` });
   }
-};
+}
+
+module.exports = create;

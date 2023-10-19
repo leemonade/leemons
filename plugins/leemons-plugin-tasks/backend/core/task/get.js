@@ -1,4 +1,4 @@
-const assignablesServices = require('../assignables');
+const { LeemonsError } = require('@leemons/error');
 
 const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags'];
 const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
@@ -28,35 +28,39 @@ const TASK_EXISTING_COLUMNS = [
 const TASK_VERSIONS_EXISTING_COLUMNS = ['status'];
 const TASK_SUBJECTS_EXISTING_COLUMNS = ['subjects'];
 
-async function getMany(taskIds, { withFiles, userSession, transacting } = {}) {
-  const { assignables } = assignablesServices();
-
+async function getMany({ taskIds, columns, withFiles, ctx }) {
   try {
-    return assignables.getAssignables(taskIds, { userSession, withFiles, transacting });
+    return ctx.tx.call('assignables.assignables.getAssignables', {
+      ids: taskIds,
+      columns,
+      withFiles,
+    });
   } catch (e) {
-    throw new Error(`Error getting multiple tasks: ${e.message}`, { cause: e });
+    throw new LeemonsError(ctx, {
+      message: `Error getting multiple tasks: ${e.message}`,
+      cause: e,
+    });
   }
 }
 
-async function get(
-  taskId,
-  { columns = DEFAULT_COLUMNS, userSession, withFiles, transacting } = {}
-) {
+async function get({ taskId, columns = DEFAULT_COLUMNS, withFiles, ctx }) {
   try {
     if (Array.isArray(taskId)) {
-      return getMany(taskId, { columns, userSession, withFiles, transacting });
+      return getMany({ taskId, columns, withFiles, ctx });
     }
 
-    const result = await getMany([taskId], {
+    const result = await getMany({
+      taskIds: [taskId],
       columns,
-      userSession,
-      transacting,
       withFiles,
+      ctx,
     });
 
     return result[0];
   } catch (e) {
-    throw new Error(`Error getting task: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Error getting task: ${e.message}`,
+    });
   }
 }
 

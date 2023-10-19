@@ -1,24 +1,23 @@
-const assignablesServices = require('../assignables');
+const { LeemonsError } = require('@leemons/error');
 
-module.exports = async function searchTask({
-  draft,
-  preferCurrent,
-  search,
-  subjects,
-  sort,
-  userSession,
-  transacting,
-  ...query
-} = {}) {
-  const { assignables } = assignablesServices();
-
+async function searchTask({ draft, preferCurrent, search, subjects, sort, ctx, ...query }) {
   try {
-    return await assignables.searchAssignables(
-      'task',
-      { published: !draft, preferCurrent, search, subjects, sort, ...query },
-      { userSession, transacting }
-    );
+    return await ctx.tx.call('assignables.assignables.searchAssignables', {
+      roles: 'task',
+      data: {
+        published: !draft,
+        preferCurrent,
+        search,
+        subjects,
+        sort,
+        ...query,
+      },
+    });
   } catch (e) {
-    throw new Error(`Failed to search tasks: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Error to search tasks: ${e.message}`,
+    });
   }
-};
+}
+
+module.exports = searchTask;

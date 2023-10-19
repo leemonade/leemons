@@ -7,15 +7,15 @@ const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
+const restActions = require('./rest/profiles.rest');
 const { pluginName } = require('../config/constants');
-const create = require('../core/task/create');
-const restActions = require('./rest/tasks.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: `${pluginName}.tasks`,
+  name: `${pluginName}.profiles`,
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -29,9 +29,7 @@ module.exports = {
   actions: {
     ...restActions,
   },
-  create: {
-    handler(ctx) {
-      return create({ ...ctx.params, ctx });
-    },
+  async created() {
+    // mongoose.connect(process.env.MONGO_URI);
   },
 };
