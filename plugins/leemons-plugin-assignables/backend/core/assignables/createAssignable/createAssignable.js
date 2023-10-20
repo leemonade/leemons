@@ -24,7 +24,7 @@ async function createAsset({ asset, role, subjects, published, ctx }) {
     ? subjects.map(({ subject, level }) => ({ subject, level }))
     : null;
 
-  const savedAsset = await ctx.tx.call('leebrary.assets.add', {
+  return ctx.tx.call('leebrary.assets.add', {
     asset: {
       ...pick(asset, ['cover', 'color', 'name', 'tagline', 'description', 'tags', 'indexable']),
       program: assetProgram,
@@ -34,8 +34,6 @@ async function createAsset({ asset, role, subjects, published, ctx }) {
     },
     published,
   });
-
-  return savedAsset;
 }
 
 /**
@@ -138,7 +136,7 @@ async function createAssignable({
     validateAssignable(assignable, { useRequired: true });
 
     // Throw error if role does not exists
-    await ctx.tx.call('assignables.roles.get', { role: assignable.role });
+    await ctx.tx.call('assignables.roles.getRole', { role: assignable.role });
 
     /*
       Compute the ids to save

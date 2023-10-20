@@ -15,16 +15,10 @@ const publish = require('../../core/task/publish');
 const search = require('../../core/task/search');
 
 function parseTaskObject(ctx) {
-  const { body, files } = ctx.params;
-
   // eslint-disable-next-line prefer-const
-  let { task, ...otherProperties } = body;
+  let { task, ...otherProperties } = ctx.params;
 
   task = JSON.parse(task);
-
-  _.forIn(files, (file, key) => {
-    _.set(task, key, file);
-  });
 
   _.forIn(otherProperties, (value, key) => {
     _.set(task, key, value);
@@ -43,7 +37,6 @@ module.exports = {
     async handler(ctx) {
       try {
         let task = parseTaskObject(ctx);
-
         task = await create({ ...task, ctx });
 
         return {

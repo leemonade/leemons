@@ -1,13 +1,14 @@
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+
 async function updateUserImage(user, file) {
-  const form = new FormData();
-  form.append('image', file, file.name);
+  const image = await uploadFileAsMultipart(file, { name: file.name });
   return leemons.api(`users/user/${user}/update-avatar`, {
     allAgents: true,
     method: 'POST',
     headers: {
       'content-type': 'none',
     },
-    body: form,
+    body: { image },
   });
 }
 
