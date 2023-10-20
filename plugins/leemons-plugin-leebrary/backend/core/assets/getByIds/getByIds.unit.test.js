@@ -185,6 +185,7 @@ it('Should check permissions only if userSession is provided and handle falsy fl
       Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
     },
   });
+  ctx.meta.userSession = undefined;
 
   const initialValues = [{ ...assets[0] }, { ...assets[1] }, { id: 'otherAsset' }];
   await ctx.db.Assets.create(initialValues);

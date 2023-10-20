@@ -95,6 +95,7 @@ describe('getByAsset pin', () => {
     it('should return an empty array if no pin found for asset ID and no userSession is in ctx.meta', async () => {
       // Arrange
       const nonExistentAssetId = 'nonExistentAssetId';
+      ctx.meta.userSession = undefined;
 
       // Act
       const result = await getByAsset({ assetId: nonExistentAssetId, ctx });
