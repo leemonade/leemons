@@ -333,6 +333,7 @@ it('Should return an empty array when no user is found and the showPublic flag i
       'users.users.getUserAgentsInfo': getUserAgentsInfoAction,
     },
   });
+  delete ctx.meta.userSession;
 
   getClassesPermissions.mockResolvedValue([]);
   canUnassignRole.mockReturnValue(false);

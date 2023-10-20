@@ -56,6 +56,7 @@ it('Should handle permissions by asset correctly', async () => {
     },
     pluginName: 'testing',
   });
+  delete ctx.meta.userSession;
 
   // Act
   const response = await getUserPermissionsByAsset({

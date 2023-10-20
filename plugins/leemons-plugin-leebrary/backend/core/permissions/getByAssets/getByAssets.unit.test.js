@@ -205,6 +205,7 @@ it('Should retrieve only public assets when no user session is passed', async ()
       Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
     },
   });
+  delete ctx.meta.userSession;
 
   await ctx.db.Assets.create({ id: assetId, public: true });
 

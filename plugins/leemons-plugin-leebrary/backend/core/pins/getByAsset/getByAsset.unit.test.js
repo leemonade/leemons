@@ -67,7 +67,7 @@ describe('getByAsset pin', () => {
     });
     it('should get a pin array by asset ID and no userSession is in ctx.meta', async () => {
       // Arrange
-
+      delete ctx.meta.userSession;
       // Act
       const result = await getByAsset({ assetId, ctx });
 

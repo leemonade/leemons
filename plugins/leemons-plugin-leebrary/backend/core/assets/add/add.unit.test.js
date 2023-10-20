@@ -216,6 +216,7 @@ it('Should not create a bookmark for media files', async () => {
       'common.tags.setTagsToValues': setTagsToValuesMock,
     },
   });
+  delete ctx.meta.userSession;
   const assetData = { category: 'categoryId', name: 'assetOne' };
 
   handleCategoryData.mockResolvedValue({
@@ -240,6 +241,7 @@ it('Should set asset data corrctly', async () => {
       'common.tags.setTagsToValues': setTagsToValuesMock,
     },
   });
+  delete ctx.meta.userSession;
   const assetData = { category: 'categoryId', name: 'assetOne', indexable: false };
 
   handleCategoryData.mockResolvedValue({
