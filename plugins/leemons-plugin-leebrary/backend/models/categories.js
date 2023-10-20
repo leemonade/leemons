@@ -49,6 +49,7 @@ const categoriesSchema = new mongoose.Schema(
     detailComponent: {
       type: String,
     },
+    // Array (stringlificado) de plugins que pueden añadir assets a esta categoria.
     canUse: {
       type: String,
     },

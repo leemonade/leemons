@@ -8,7 +8,7 @@ async function findByAssetIds({ ids, ctx }) {
     },
     undefined,
     { excludeDeleted: false }
-  );
+  ).lean();
   return getQuestionsBanksDetails({ id: _.map(questionsBanks, 'id'), getAssets: false, ctx });
 }
 
