@@ -1,15 +1,17 @@
 /** @type {import('moleculer').ServiceSchema} */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
+const { registerRole, unregisterRole, getRole } = require('../core/roles');
 
 module.exports = {
   name: 'assignables.roles',
   version: 1,
   mixins: [
+    // LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
@@ -17,8 +19,21 @@ module.exports = {
     LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
-  actions: {},
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
+  actions: {
+    registerRole: {
+      handler(ctx) {
+        return registerRole({ ...ctx.params, ctx });
+      },
+    },
+    unregisterRole: {
+      handler(ctx) {
+        return unregisterRole({ ...ctx.params, ctx });
+      },
+    },
+    getRole: {
+      handler(ctx) {
+        return getRole({ ...ctx.params, ctx });
+      },
+    },
   },
 };

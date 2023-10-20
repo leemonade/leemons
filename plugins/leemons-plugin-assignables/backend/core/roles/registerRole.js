@@ -1,4 +1,5 @@
 const { pick } = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { validateRole } = require('../../validations/validateRole');
 const { getRole } = require('./getRole');
 
@@ -28,7 +29,7 @@ async function saveRoleLocalizations({ role, data, ctx }) {
   ]);
 }
 
-async function registerRole({ name, ctx, ...data }) {
+async function registerRole({ role: name, ctx, ...data }) {
   const role = {
     name,
     teacherDetailUrl: data.teacherDetailUrl,
@@ -41,7 +42,8 @@ async function registerRole({ name, ctx, ...data }) {
   };
 
   const category = {
-    role: `assignables.${role.name}`,
+    // (key === role)
+    key: `assignables.${role.name}`,
     ...pick(data, [
       'order',
       'creatable',
@@ -53,20 +55,22 @@ async function registerRole({ name, ctx, ...data }) {
     ]),
     provider: data.provider ?? 'leebrary-assignables',
   };
-
   validateRole(role);
 
   const roleExists = await checkIfRoleExists({ name, ctx });
 
   if (roleExists) {
-    throw new Error(`Role "${name}" already exists in assignables`);
+    throw new LeemonsError(ctx, {
+      message: `Role "${name}" already exists in assignables`,
+      httpStatusCode: 409,
+    });
   }
 
   await ctx.tx.db.Roles.create(role);
 
   await saveRoleLocalizations({ role: role.name, data, ctx });
 
-  await ctx.tx.call('leebrary.categories.add', category);
+  await ctx.tx.call('leebrary.categories.add', { data: category });
 
   return true;
 }

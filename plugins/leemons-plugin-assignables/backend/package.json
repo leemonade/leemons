@@ -5,11 +5,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest --watch --coverage",
+    "lint": "eslint services"
   },
   "dependencies": {
+    "@hokify/agenda": "^6.3.0",
     "@leemons/cache": "0.0.40",
     "@leemons/deployment-manager": "0.0.40",
+    "@leemons/emails": "0.0.53",
+    "@leemons/error": "0.0.40",
     "@leemons/menu-builder": "0.0.40",
     "@leemons/mongodb": "0.0.40",
     "@leemons/mongodb-helpers": "0.0.40",
@@ -20,11 +24,11 @@
     "@leemons/testing": "0.0.40",
     "@leemons/validator": "0.0.40",
     "@leemons/widgets": "0.0.40",
+    "dayjs": "^1.10.7",
     "jaeger-client": "^3.19.0",
-    "jest": "^29.6.2",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0"
+    "jest": "^29.7.0"
   }
 }

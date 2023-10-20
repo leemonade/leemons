@@ -5,7 +5,7 @@ async function registerAssignableRolesDeploy({ keyValueModel, assignableRoles, c
   if (!(await hasKey(keyValueModel, 'init-assignables'))) {
     await Promise.allSettled(
       _.map(assignableRoles, (role) =>
-        ctx.tx.call('assignables.assignables.registerRole', {
+        ctx.tx.call('assignables.roles.registerRole', {
           role: role.role,
           ...role.options,
         })

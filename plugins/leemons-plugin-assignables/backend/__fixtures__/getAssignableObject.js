@@ -1,4 +1,4 @@
-module.exports = function getAssignableObject() {
+function getAssignableObject() {
   return {
     asset: {
       name: 'Assignable name',
@@ -40,4 +40,6 @@ module.exports = function getAssignableObject() {
       },
     },
   };
-};
+}
+
+module.exports = { getAssignableObject };

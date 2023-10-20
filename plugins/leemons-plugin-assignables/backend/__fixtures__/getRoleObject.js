@@ -27,7 +27,7 @@ function getRoleObject() {
   };
 
   const role = {
-    name: 'testing-role',
+    role: 'testing-role',
 
     teacherDetailUrl: '/teacherDetailUrl',
     studentDetailUrl: '/studentDetailUrl',

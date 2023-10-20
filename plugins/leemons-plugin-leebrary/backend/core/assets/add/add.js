@@ -75,11 +75,9 @@ async function add({
 
   // eslint-disable-next-line prefer-const
   let { categoryId, categoryKey, tags, subjects, ...assetData } = data;
-
   if (ctx.meta.userSession) {
     assetData = handleUserSessionData({ assetData, ctx });
   }
-
   // ··········································
   // PROCESS CATEGORY AND CHECK PERMISSIONS
 

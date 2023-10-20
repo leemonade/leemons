@@ -136,9 +136,9 @@ dist
 .DS_Store
 
 # Editor
-
 .vscode/
 .idea/
+
 
 
 # Leemons
@@ -155,4 +155,5 @@ apps/dev/events.json
 docs-build
 
 package-lock.json
+
 .scannerwork

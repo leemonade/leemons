@@ -1,18 +1,15 @@
-const assignablesServices = require('../assignables');
+const { LeemonsError } = require('@leemons/error');
 
-async function duplicate(taskId, { published, userSession, transacting } = {}) {
-  const { assignables } = assignablesServices();
-
+async function duplicate({ taskId, published, ctx }) {
   try {
-    const task = await assignables.duplicateAssignable(taskId, {
+    return await ctx.tx.call('assignables.assignables.duplicateAssignable', {
+      id: taskId,
       published,
-      userSession,
-      transacting,
     });
-
-    return task;
   } catch (e) {
-    throw new Error(`Error duplicating task: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Error duplicating task: ${e.message}`,
+    });
   }
 }
 

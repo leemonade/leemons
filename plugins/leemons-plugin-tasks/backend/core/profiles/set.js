@@ -1,7 +1,5 @@
-const { profiles } = require('../table');
-
-module.exports = async function set(key, profile, { transacting } = {}) {
-  await profiles.set({ key }, { profile }, { transacting });
+module.exports = async function set({ key, profile, ctx }) {
+  await ctx.tx.db.Profiles.updateOne({ key }, { profile });
 
   return true;
 };

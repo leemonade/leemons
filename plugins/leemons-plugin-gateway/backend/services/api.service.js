@@ -580,6 +580,35 @@ module.exports = {
 
           // -- Leebrary AWS S3 (NOT FINISHED) --
           'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
+
+          // -- Assignables(FINISHED) --
+          'GET assignables/find': 'v1.assignables.assignables.getRest',
+          'GET assignables/activities/search/ongoing':
+            'v1.assignables.activities.searchOngoingRest',
+          'GET /activities/search/nya': 'v1.assignables.activities.searchNyaActivitiesRest',
+          'GET /assignations/find': 'v1.assignables.assignations.getManyRest',
+          'GET /assignableInstances/:instance/assignations/:user':
+            'v1.assignables.assignations.getRest',
+          'GET /assignableInstances/search': 'v1.assignables.assignableInstances.searchRest',
+          'GET /assignableInstances/find': 'v1.assignables.assignableInstances.getRest',
+          'GET /assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
+          'PUT /assignableInstances/:id': 'v1.assignables.assignableInstances.updateRest',
+          'POST /assignableInstances/:id': 'v1.assignables.assignableInstance.sendReminderRest',
+
+          // -- Tasks (FINISHED) --
+          'GET tasks/settings': 'v1.tasks.settings.findOneRest',
+          'POST tasks/settings': 'v1.tasks.settings.updateRest',
+          'POST tasks/settings/enable-menu-item': 'v1.tasks.settings.enableMenuItemRest',
+          'GET tasks/profiles/:key': 'v1.tasks.profiles.getRest',
+          'POST tasks/profiles/:key': 'v1.tasks.profiles.setRest',
+          'POST tasks/profiles': 'v1.tasks.profiles.setManyRest',
+          'POST tasks/tasks': 'v1.tasks.tasks.createRest',
+          'PUT tasks/tasks/:id': 'v1.tasks.tasks.updateRest',
+          'GET tasks/tasks/:id': 'v1.tasks.tasks.getRest',
+          'POST tasks/tasks/:id/duplicate': 'v1.tasks.tasks.duplicateRest',
+          'DELETE tasks/tasks/:id': 'v1.tasks.tasks.removeRest',
+          'POST tasks/tasks/:id/publish': 'v1.tasks.tasks.publishRest',
+          'GET tasks/tasks/search': 'v1.tasks.tasks.searchRest',
         },
 
         /**

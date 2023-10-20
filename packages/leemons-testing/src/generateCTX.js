@@ -33,7 +33,15 @@ function generateCtx({
     service: {
       name: pluginName,
     },
-    meta: {},
+    meta: {
+      userSession: {
+        userAgents: [
+          {
+            id: 'userAgentId',
+          },
+        ],
+      },
+    },
 
     prefixPN: (str) => `${pluginName}.${str}`,
     callerPlugin: caller ?? undefined,

@@ -36,7 +36,6 @@ async function addItemsFromPlugin({
   if (!isArray(itemsData)) {
     items = [itemsData];
   }
-
   if (shouldWait) {
     const itemsLength = items.length;
     const menuItems = [];

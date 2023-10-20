@@ -60,4 +60,4 @@ const schema = new mongoose.Schema(
 
 const assignablesModel = newModel(mongoose.connection, 'v1::assignables_Assignables', schema);
 
-module.exports = { assignablesModel };
+module.exports = { assignablesSchema: schema, assignablesModel };
