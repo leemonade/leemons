@@ -256,7 +256,18 @@ export default function PromotionsList() {
         render();
 
         if (e.id) {
-          const { created_at, deleted, deleted_at, updated_at, subject, isDependency, ...data } = e;
+          const {
+            deleted,
+            created_at,
+            deleted_at,
+            updated_at,
+            createdAt,
+            deletedAt,
+            updatedAt,
+            subject,
+            isDependency,
+            ...data
+          } = e;
           await updatePromotionRequest({
             ...data,
             group: parseConditions(e.group),

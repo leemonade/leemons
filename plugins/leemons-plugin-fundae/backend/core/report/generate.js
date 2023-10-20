@@ -206,11 +206,11 @@ async function startGeneration({ report, dataToSocket, ctx }) {
         toSave.mediaFiles.push({
           id: item.statement.object.definition.extensions.id,
           name: item.statement.object.definition.extensions.name,
-          first: item.created_at,
-          last: item.created_at,
+          first: item.createdAt,
+          last: item.createdAt,
         });
       } else {
-        toSave.mediaFiles[index].last = item.created_at;
+        toSave.mediaFiles[index].last = item.createdAt;
       }
     });
 
@@ -218,7 +218,7 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     _.forEach(xapiVirtualClass, (item) => {
       toSave.virtualClassClicks.push({
         name: item.statement.object.definition.extensions.name,
-        date: item.created_at,
+        date: item.createdAt,
         url: item.statement.object.definition.extensions.url,
       });
     });
@@ -234,17 +234,17 @@ async function startGeneration({ report, dataToSocket, ctx }) {
       if (!indexsUsed.includes(index)) {
         indexsUsed.push(index);
         if (item.statement.verb.id === XAPIVerbs.INITIALIZED.id) {
-          con.start = item.created_at;
+          con.start = item.createdAt;
           con.ip = item.statement.object.definition.extensions.ip;
           const nextItem = xapiProgramViewDates[index + 1];
           if (nextItem) {
             // Si hay siguiente item tenemos que comprobar que sea de terminar si no lo es generamos nostros el terinar 15 minutos despues (Algo peto y no se registro)
             if (nextItem.statement.verb.id === XAPIVerbs.TERMINATED.id) {
-              con.end = nextItem.created_at;
+              con.end = nextItem.createdAt;
               indexsUsed.push(index + 1);
             } else {
               // TODO almacenar estos para procesarlos despeus co probando que no esten ya dentro de algun otro margen de fechas.
-              const date = new Date(item.created_at);
+              const date = new Date(item.createdAt);
               date.setMinutes(date.getMinutes() + 15);
               con.end = date;
             }
@@ -401,7 +401,7 @@ async function startGeneration({ report, dataToSocket, ctx }) {
               toSave.nMessagesReceived++;
             }
             privateChat.messages.push({
-              created_at: message.created_at,
+              createdAt: message.createdAt,
               userAgent: message.userAgent,
               message: message.message,
               id: message.id,

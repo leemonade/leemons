@@ -79,7 +79,16 @@ export default function Index() {
       if (!store.isNew) {
         const {
           // eslint-disable-next-line camelcase
-          feedback: { deleted, deleted_at, created_at, updated_at, ...props },
+          feedback: {
+            deleted,
+            deleted_at,
+            created_at,
+            updated_at,
+            deletedAt,
+            createdAt,
+            updatedAt,
+            ...props
+          },
         } = await getFeedbackRequest(params.id);
         if (props.questions.length > 0) {
           store.currentStep = 1;

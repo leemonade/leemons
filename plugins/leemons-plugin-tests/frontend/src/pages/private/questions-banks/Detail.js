@@ -7,7 +7,6 @@ import {
 } from '@bubbles-ui/components';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @common plugin
-
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -77,7 +76,16 @@ export default function Detail(p) {
       if (!store.isNew) {
         const {
           // eslint-disable-next-line camelcase
-          questionBank: { deleted, deleted_at, created_at, updated_at, ...props },
+          questionBank: {
+            deleted,
+            deleted_at,
+            created_at,
+            updated_at,
+            deletedAt,
+            createdAt,
+            updatedAt,
+            ...props
+          },
         } = await getQuestionBankRequest(params.id);
         if (props.questions.length > 0) {
           store.currentStep = 3;

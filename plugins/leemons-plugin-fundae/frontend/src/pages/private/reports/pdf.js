@@ -152,7 +152,7 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                 </Box>
                 <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                   <Title order={6}>
-                    {t('emitDate')}: {new Date(report.created_at).toLocaleString()}
+                    {t('emitDate')}: {new Date(report.createdAt).toLocaleString()}
                   </Title>
                 </Box>
               </Box>
@@ -345,7 +345,7 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                       {_.map(chat.messages, (message, index) => {
                         const comp = [];
                         let forceUserImage = false;
-                        const day = new Date(message.created_at).toLocaleDateString(undefined, {
+                        const day = new Date(message.createdAt).toLocaleDateString(undefined, {
                           weekday: 'short',
                           year: 'numeric',
                           month: 'short',
@@ -380,7 +380,10 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                               }
                               isOwn={message.userAgent === report.item.userAgent.id}
                               user={userAgentsById?.[message.userAgent].user}
-                              message={{ ...message.message, date: new Date(message.created_at) }}
+                              message={{
+                                ...message.message,
+                                date: new Date(message.createdAt),
+                              }}
                             />
                           </Box>
                         );

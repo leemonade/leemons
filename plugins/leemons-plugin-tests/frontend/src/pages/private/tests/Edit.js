@@ -3,8 +3,8 @@ import {
   Box,
   LoadingOverlay,
   Stack,
-  VerticalStepperContainer,
   useDebouncedCallback,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @common plugin
@@ -107,7 +107,16 @@ export default function Edit() {
       if (!store.isNew) {
         const {
           // eslint-disable-next-line camelcase
-          test: { deleted, deleted_at, created_at, updated_at, ...props },
+          test: {
+            deleted,
+            deleted_at,
+            created_at,
+            updated_at,
+            deletedAt,
+            createdAt,
+            updatedAt,
+            ...props
+          },
         } = await getTestRequest(params.id);
         props.subjects = map(props.subjects, (subject) => ({ subject }));
         form.reset({ ...props, questions: map(props.questions, 'id') });

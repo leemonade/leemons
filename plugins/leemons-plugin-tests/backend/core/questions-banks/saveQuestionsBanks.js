@@ -24,6 +24,9 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     delete question.created_at;
     delete question.updated_at;
     delete question.deleted_at;
+    delete question.createdAt;
+    delete question.updatedAt;
+    delete question.deletedAt;
   });
   // Check is userSession is provided
   if (!userSession)

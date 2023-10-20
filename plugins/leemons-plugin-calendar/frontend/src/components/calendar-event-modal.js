@@ -264,11 +264,11 @@ function NewCalendarEventModal({
           ref.current.isOwner = isOwner;
         }
         /*
-        ref.current.isOwner = !!_.find(ref.current.calendarData.ownerCalendars, {
-          id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
-        });
+                ref.current.isOwner = !!_.find(ref.current.calendarData.ownerCalendars, {
+                  id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
+                });
 
-         */
+                 */
 
         const {
           startDate,
@@ -281,6 +281,9 @@ function NewCalendarEventModal({
           created_at,
           updated_at,
           deleted_at,
+          createdAt,
+          updatedAt,
+          deletedAt,
           ...eventData
         } = event;
 

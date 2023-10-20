@@ -103,7 +103,17 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
     render();
   }
 
-  async function onSubmit({ created_at, deleted_at, updated_at, deleted, limits, ...data }) {
+  async function onSubmit({
+    created_at,
+    deleted_at,
+    updated_at,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    deleted,
+    limits,
+    ...data
+  }) {
     try {
       store.saving = true;
       render();

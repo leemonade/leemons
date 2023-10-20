@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, HtmlText, Loader, Text, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles, HtmlText, Loader, Text } from '@bubbles-ui/components';
 import { capitalize, get, map, sortBy } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
@@ -260,9 +260,9 @@ export function ModuleDashboardBody({
                   preview={preview}
                 />
               ),
-              created_at: activitiesById[activity?.id].created_at,
+              createdAt: activitiesById[activity?.id].createdAt,
             })),
-            'created_at'
+            'createdAt'
           ).map((a) => a.comp)}
         </Box>
       </Box>

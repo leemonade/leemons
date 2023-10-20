@@ -57,9 +57,7 @@ function useSelectedResources() {
     cache('indexableAssets', indexableAssets)
   );
 
-  const assetsById = useMemo(() => keyBy(assets, 'id'));
-
-  return assetsById;
+  return useMemo(() => keyBy(assets, 'id'));
 }
 
 function useParseResources({ assets, onRemove, localizations }) {
@@ -94,7 +92,7 @@ function useParseResources({ assets, onRemove, localizations }) {
                       />
                     ),
                   },
-                  updated_at: asset.updated_at,
+                  updatedAt: asset.updatedAt,
                 }}
                 localizations={localizations?.steps?.resourcesData?.moduleComposer}
               />

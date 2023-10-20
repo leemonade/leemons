@@ -6,7 +6,7 @@ const {
 } = require('../../validations/exists');
 
 async function toggleMutedRoom({ key, userAgent, ctx }) {
-  validateKeyPrefix({ key, calledFrom: ct.callerPlugin, ctx });
+  validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
   await validateNotExistRoomKey({ key, ctx });
   await validateNotExistUserAgentInRoomKey({ key, userAgent, ctx });
