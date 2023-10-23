@@ -138,7 +138,6 @@ module.exports = function ({
             if (checkIfCanCallMe) {
               // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
               // sin comprobar nada, ya que intenta lanzar un evento y los eventos tienen su propia seguridad
-              console.log(ctx.action.name);
               if (
                 !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
                 !ctx.action.name.includes('leemonsMongoDBRollback') &&

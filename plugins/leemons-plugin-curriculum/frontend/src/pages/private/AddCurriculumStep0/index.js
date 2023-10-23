@@ -56,8 +56,8 @@ function AddCurriculumStep0({ onNext }) {
 
       store.selectData = {
         country: map(allCountries, (item) => ({
-          value: item.countryShortCode,
-          label: item.countryName,
+          value: item[1],
+          label: item[0],
         })),
         language: map(locales, (item) => ({ value: item.code, label: item.name })),
         center: map(getCentersWithToken(), (item) => ({ value: item.id, label: item.name })),
