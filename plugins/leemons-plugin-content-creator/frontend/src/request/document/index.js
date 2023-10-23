@@ -1,8 +1,10 @@
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+
 const { cloneDeep, isString } = require('lodash');
 
 async function saveDocument(_body) {
   const body = cloneDeep(_body);
-  const form = new FormData();
+  const form = {};
 
   if (
     (_body.featuredImage && !isString(_body.featuredImage)) ||
@@ -15,7 +17,7 @@ async function saveDocument(_body) {
       } else if (_body.cover.id) {
         data.cover = _body.cover.id;
       } else {
-        form.append('cover', _body.cover, _body.cover.name);
+        form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
       }
     }
     if (_body.featuredImage) {
@@ -24,20 +26,19 @@ async function saveDocument(_body) {
       } else if (_body.featuredImage.id) {
         data.featuredImage = _body.featuredImage.id;
       } else {
-        form.append('featuredImage', _body.featuredImage, _body.featuredImage.name);
+        form.featuredImage = await uploadFileAsMultipart(_body.featuredImage, {
+          name: _body.featuredImage.name,
+        });
       }
     }
-    form.append('data', JSON.stringify(data));
+    form.data = JSON.stringify(data);
   } else {
-    form.append('data', JSON.stringify(body));
+    form.data = JSON.stringify(body);
   }
 
   return leemons.api('content-creator/document', {
     allAgents: true,
     method: 'POST',
-    headers: {
-      'content-type': 'none',
-    },
     body: form,
   });
 }
