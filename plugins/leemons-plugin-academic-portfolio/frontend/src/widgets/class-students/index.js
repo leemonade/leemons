@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const zoneKey = 'academic-portfolio.class.students';
+
 function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) {
   const [openedStudent, setOpenedStudent] = React.useState();
   const [label, setLabel] = React.useState();
@@ -44,6 +45,7 @@ function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) 
   React.useEffect(() => {
     if (_label) getLabel();
   }, [_label]);
+  console.log('render padre');
 
   return (
     <>

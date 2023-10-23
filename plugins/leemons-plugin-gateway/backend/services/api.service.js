@@ -585,15 +585,19 @@ module.exports = {
           'GET assignables/find': 'v1.assignables.assignables.getRest',
           'GET assignables/activities/search/ongoing':
             'v1.assignables.activities.searchOngoingRest',
-          'GET /activities/search/nya': 'v1.assignables.activities.searchNyaActivitiesRest',
-          'GET /assignations/find': 'v1.assignables.assignations.getManyRest',
-          'GET /assignableInstances/:instance/assignations/:user':
+          'GET assignables/activities/search/nya':
+            'v1.assignables.activities.searchNyaActivitiesRest',
+          'GET assignables/assignations/find': 'v1.assignables.assignations.getManyRest',
+          'GET assignables/assignableInstances/:instance/assignations/:user':
             'v1.assignables.assignations.getRest',
-          'GET /assignableInstances/search': 'v1.assignables.assignableInstances.searchRest',
-          'GET /assignableInstances/find': 'v1.assignables.assignableInstances.getRest',
-          'GET /assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
-          'PUT /assignableInstances/:id': 'v1.assignables.assignableInstances.updateRest',
-          'POST /assignableInstances/:id': 'v1.assignables.assignableInstance.sendReminderRest',
+          'GET assignables/assignableInstances/search':
+            'v1.assignables.assignableInstances.searchRest',
+          'GET assignables/assignableInstances/find': 'v1.assignables.assignableInstances.getRest',
+          'GET assignables/assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
+          'PUT assignables/assignableInstances/:id':
+            'v1.assignables.assignableInstances.updateRest',
+          'POST assignables/assignableInstances/:id':
+            'v1.assignables.assignableInstance.sendReminderRest',
 
           // -- Tasks (FINISHED) --
           'GET tasks/settings': 'v1.tasks.settings.findOneRest',
@@ -612,29 +616,29 @@ module.exports = {
         },
 
         /**
-                 * Before call hook. You can check the request.
-                 * @param {Context} ctx
-                 * @param {Object} route
-                 * @param {IncomingRequest} req
-                 * @param {ServerResponse} res
-                 * @param {Object} data
-                 *
-                 onBeforeCall(ctx, route, req, res) {
-                 // Set request headers to context meta
-                 ctx.meta.userAgent = req.headers["user-agent"];
-                 }, */
+         * Before call hook. You can check the request.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         *
+         onBeforeCall(ctx, route, req, res) {
+         // Set request headers to context meta
+         ctx.meta.userAgent = req.headers["user-agent"];
+         }, */
 
         /**
-                 * After call hook. You can modify the data.
-                 * @param {Context} ctx
-                 * @param {Object} route
-                 * @param {IncomingRequest} req
-                 * @param {ServerResponse} res
-                 * @param {Object} data
-                 onAfterCall(ctx, route, req, res, data) {
-                 // Async function which return with Promise
-                 return doSomething(ctx, res, data);
-                 }, */
+         * After call hook. You can modify the data.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         onAfterCall(ctx, route, req, res, data) {
+         // Async function which return with Promise
+         return doSomething(ctx, res, data);
+         }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =

@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Navbar, Box, Text, TextClamp, openSpotlight, ImageLoader } from '@bubbles-ui/components';
-import { isEmpty, isArray, find } from 'lodash';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Box, ImageLoader, Navbar, openSpotlight, Text, TextClamp } from '@bubbles-ui/components';
+import { find, isArray, isEmpty } from 'lodash';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import {
   MAIN_NAV_BAR_DEFAULT_PROPS,
   MAIN_NAV_BAR_PROP_TYPES,
-  MAIN_NAV_WIDTH_EXPANDED,
   MAIN_NAV_WIDTH_COLLAPSED,
+  MAIN_NAV_WIDTH_EXPANDED,
   mainNavVariants,
   navTitleVariants,
 } from './MainNavBar.constants';
@@ -115,7 +115,7 @@ const MainNavBar = ({
     <>
       <AnimatePresence>
         <motion.div
-          sx={() => ({ overflow: 'hidden' })}
+          // sx={() => ({ overflow: 'hidden' })} // comentad por que sx no es soportado por un div normal
           initial={{ width: MAIN_NAV_WIDTH_COLLAPSED }}
           amimate={isCollapsed ? 'closed' : 'open'}
           variants={mainNavVariants}

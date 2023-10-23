@@ -1,11 +1,11 @@
 import React from 'react';
 import { Badge, Box, ContextContainer, Drawer, Text, UserCards } from '@bubbles-ui/components';
+import { isFunction } from 'lodash';
 import { UserDetailModalStyles } from './UserDetailModal.styles';
 import {
   USER_DETAIL_MODAL_DEFAULT_PROPS,
   USER_DETAIL_MODAL_PROP_TYPES,
 } from './UserDetailModal.constants';
-import { isFunction } from 'lodash';
 
 const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) => {
   const handleOnClose = () => {
@@ -58,6 +58,7 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
   };
 
   const { classes, cx } = UserDetailModalStyles({}, { name: 'UserDetailModal' });
+
   return (
     <Drawer opened={opened} onClose={handleOnClose} centered position="right" size={650} {...props}>
       <ContextContainer divided>
@@ -81,4 +82,9 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
 UserDetailModal.defaultProps = USER_DETAIL_MODAL_DEFAULT_PROPS;
 UserDetailModal.propTypes = USER_DETAIL_MODAL_PROP_TYPES;
 
-export { UserDetailModal };
+const Gatitos = () => {
+  console.log('se pintan gatitos');
+  return 'hatitos';
+};
+
+export { UserDetailModal, Gatitos };

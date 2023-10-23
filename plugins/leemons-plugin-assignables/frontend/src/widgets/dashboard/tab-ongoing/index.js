@@ -24,7 +24,7 @@ function TabOngoing(props) {
 
 TabOngoing.propTypes = {
   classe: PropTypes.object.isRequired,
-  key: PropTypes.string.isRequired,
+  // key: PropTypes.string.isRequired,
 };
 
 export default TabOngoing;
