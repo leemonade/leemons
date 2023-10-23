@@ -13,8 +13,6 @@ export default async function saveTaskRequest(taskId, task) {
   const taskData = _.omit(task, [assetCoverPropertyName]);
   formData.task = JSON.stringify(taskData);
 
-  formData.append('task', JSON.stringify(taskData));
-
   if (cover instanceof File) {
     formData[assetCoverPropertyName] = await uploadFileAsMultipart(cover, { name: cover.name });
   } else if (typeof cover === 'string') {

@@ -1,8 +1,10 @@
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { cloneDeep, forEach, isString } from 'lodash';
 
 async function saveFeedback(_body) {
   const body = cloneDeep(_body);
-  const form = new FormData();
+  const form = {};
+
   const questionsFiles = [];
   forEach(_body.questions || [], (question, index) => {
     if (question.properties.responses) {
@@ -38,7 +40,7 @@ async function saveFeedback(_body) {
       } else if (_body.cover.id) {
         data.cover = _body.cover.id;
       } else {
-        form.append('cover', _body.cover, _body.cover.name);
+        form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
       }
     }
     if (_body.featuredImage) {
@@ -49,23 +51,25 @@ async function saveFeedback(_body) {
       } else if (_body.featuredImage.id) {
         data.featuredImage = _body.featuredImage.id;
       } else {
-        form.append('featuredImage', _body.featuredImage, _body.featuredImage.name);
+        form.featuredImage = await uploadFileAsMultipart(_body.featuredImage, {
+          name: _body.featuredImage.name,
+        });
       }
     }
-    forEach(questionsFiles, ({ index, name, file }) => {
-      form.append(`questions[${index}].${name}`, file, file.name);
-    });
-    form.append('data', JSON.stringify(data));
+    const uploadQuestionFilesPromises = questionsFiles.map(({ index, name, file }) =>
+      uploadFileAsMultipart(file, { name: file.name }).then((uploadedFile) => {
+        form[`questions[${index}].${name}`] = uploadedFile;
+      })
+    );
+    await Promise.all(uploadQuestionFilesPromises);
+    form.data = JSON.stringify(data);
   } else {
-    form.append('data', JSON.stringify(body));
+    form.data = JSON.stringify(body);
   }
 
   return leemons.api('feedback/feedback', {
     allAgents: true,
     method: 'POST',
-    headers: {
-      'content-type': 'none',
-    },
     body: form,
   });
 }
