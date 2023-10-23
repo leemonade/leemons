@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 async function getUserDataForFundae({ userAgent, classes, ctx }) {
-  if (ctx.callerPlugin !== 'plugins.fundae')
+  if (ctx.callerPlugin !== 'fundae')
     throw new LeemonsError(ctx, {
       message: 'Only plugin fundae can call this function',
     });
@@ -23,9 +23,7 @@ async function getUserDataForFundae({ userAgent, classes, ctx }) {
 
   const instanceIds = _.uniq(_.map(classInstances, 'assignableInstance'));
   const instances = _.filter(_instances, (e) => instanceIds.includes(e.id));
-  const assignations = _.filter(_assignations, (e) =>
-    instanceIds.includes(e.instance)
-  );
+  const assignations = _.filter(_assignations, (e) => instanceIds.includes(e.instance));
   const instanceById = _.keyBy(instances, 'id');
   const assignationIds = _.map(assignations, 'id');
 

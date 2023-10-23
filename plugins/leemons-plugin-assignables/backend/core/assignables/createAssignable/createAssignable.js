@@ -24,7 +24,7 @@ async function createAsset({ asset, role, subjects, published, ctx }) {
     ? subjects.map(({ subject, level }) => ({ subject, level }))
     : null;
 
-  return ctx.tx.call('leebrary.assets.add', {
+  return await ctx.tx.call('leebrary.assets.add', {
     asset: {
       ...pick(asset, ['cover', 'color', 'name', 'tagline', 'description', 'tags', 'indexable']),
       program: assetProgram,
@@ -130,8 +130,8 @@ async function createAssignable({
     } = assignable;
 
     /*
-      Validate entities
-    */
+          Validate entities
+        */
 
     validateAssignable(assignable, { useRequired: true });
 
@@ -139,8 +139,8 @@ async function createAssignable({
     await ctx.tx.call('assignables.roles.getRole', { role: assignable.role });
 
     /*
-      Compute the ids to save
-    */
+          Compute the ids to save
+        */
     const idToUse = await registerVersionIfNoId({ id, ctx });
 
     // Duplicate assets to avoid permission conflicts
@@ -151,8 +151,8 @@ async function createAssignable({
     });
 
     /*
-      Create the assignable entity
-    */
+          Create the assignable entity
+        */
     const asset = id
       ? assignableAsset
       : (await createAsset({ asset: assignableAsset, role, subjects, published: false, ctx })).id;
@@ -181,8 +181,8 @@ async function createAssignable({
     });
 
     /*
-      Permissions
-    */
+          Permissions
+        */
     await registerAssignablePermission({
       id: assignableCreated.id,
       role: assignableCreated.role,

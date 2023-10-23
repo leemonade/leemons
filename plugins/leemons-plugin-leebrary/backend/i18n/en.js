@@ -1,4 +1,3 @@
-const requireField = 'Required field';
 module.exports = {
   tableInput: {
     add: 'Add',
@@ -103,22 +102,22 @@ module.exports = {
           },
           errorMessages: {
             program: {
-              required: requireField,
+              required: 'Required field',
             },
             course: {
-              required: requireField,
+              required: 'Required field',
             },
             subjects: {
-              required: requireField,
+              required: 'Required field',
             },
             level: {
-              required: requireField,
+              required: 'Required field',
             },
             summary: {
-              required: requireField,
+              required: 'Required field',
             },
             subject: {
-              required: requireField,
+              required: 'Required field',
             },
           },
         },
@@ -239,6 +238,7 @@ module.exports = {
       commentor: 'Commentor',
       editor: 'Editor',
       owner: 'Owner',
+      assigner: 'Assigner',
       public: 'Public',
     },
   },
@@ -318,5 +318,12 @@ module.exports = {
   },
   uploadFileModal: {
     title: 'Uploading file',
+    fileOf: 'Uploading file {currentFile} of {totalFiles} - {currentFilePercentageCompleted}%',
+    init: 'Starting file upload',
+    unzip: 'Preparing zip for upload',
+  },
+  assetsList: {
+    published: 'Published',
+    draft: 'Drafts',
   },
 };
