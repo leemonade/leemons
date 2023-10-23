@@ -50,7 +50,8 @@ export default function Edit() {
       store.saving = 'duplicate';
       render();
       const { subjects, ...toSend } = formValues;
-      toSend.subjects = subjects.map(({ subject }) => subject);
+      toSend.subjects = subjects?.map(({ subject }) => subject);
+      console.log('toSend', toSend);
       await saveTestRequest({ ...toSend, published: false });
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/tests/draft');

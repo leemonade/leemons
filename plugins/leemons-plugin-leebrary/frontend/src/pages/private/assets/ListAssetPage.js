@@ -1,7 +1,7 @@
 /* eslint-disable no-unreachable */
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { Box, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
 import { isEmpty, isNil } from 'lodash';

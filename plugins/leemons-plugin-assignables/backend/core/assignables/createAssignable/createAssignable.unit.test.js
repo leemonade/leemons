@@ -17,7 +17,7 @@ const { publishAssignable } = require('../publishAssignable');
 const { addPermissionToUser } = require('../../permissions/assignables/users/addPermissionToUser');
 
 const actions = {
-  'assignables.roles.get': () => {},
+  'assignables.roles.getRole': () => {},
   'common.versionControl.register': () => {
     const uuid = 'version-control-uuid';
     return {

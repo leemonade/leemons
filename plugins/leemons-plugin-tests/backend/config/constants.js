@@ -216,8 +216,8 @@ const libraryQuestionBankCategory = {
   order: 204,
   menu: {
     item: {
-      iconSvg: '/public/leebrary-tests/menu-icon.svg',
-      activeIconSvg: '/public/leebrary-tests/menu-icon.svg',
+      iconSvg: '/public/tests/qb-menu-icon.svg',
+      activeIconSvg: '/public/tests/qb-menu-icon.svg',
       label: {
         en: 'Questions Banks',
         es: 'Bancos de preguntas',
