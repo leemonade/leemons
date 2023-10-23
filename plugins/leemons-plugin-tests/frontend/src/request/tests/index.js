@@ -1,3 +1,4 @@
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { cloneDeep, isString } from 'lodash';
 
 async function listTests({ page, size, published }) {
@@ -9,26 +10,23 @@ async function listTests({ page, size, published }) {
 
 async function saveTest(_body) {
   const body = cloneDeep(_body);
-  const form = new FormData();
+  const form = {};
   if (_body.cover && !isString(_body.cover)) {
     const { cover, ...data } = body;
     if (_body.cover) {
       if (_body.cover.id) {
         data.cover = _body.cover.cover?.id;
       } else {
-        form.append('cover', _body.cover, _body.cover.name);
+        form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
       }
     }
-    form.append('data', JSON.stringify(data));
+    form.data = JSON.stringify(data);
   } else {
-    form.append('data', JSON.stringify(body));
+    form.data = JSON.stringify(body);
   }
   return leemons.api('tests/tests', {
     allAgents: true,
     method: 'POST',
-    headers: {
-      'content-type': 'none',
-    },
     body: form,
   });
 }

@@ -246,8 +246,10 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
+      const { key, image: avatar } = ctx.params;
       const room = await adminChangeRoomImage({
-        ...ctx.params,
+        key,
+        avatar,
         ctx,
       });
       return { status: 200, room };
