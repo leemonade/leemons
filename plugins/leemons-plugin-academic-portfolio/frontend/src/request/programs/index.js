@@ -1,4 +1,5 @@
-import { isString } from 'lodash';
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import { isString, cloneDeep } from 'lodash';
 
 async function getProgramTree(programId) {
   return leemons.api(`academic-portfolio/program/${programId}/tree`, {
@@ -37,16 +38,18 @@ async function getUserPrograms() {
 }
 
 async function createProgram(_body) {
-  const body = _.cloneDeep(_body);
+  const body = cloneDeep(_body);
   if (body.image && !isString(body.image)) {
     if (body.image) {
       if (body.image.id) {
         body.image = body.image.cover?.id;
       } else {
-        alert('MIGRACION: Se tiene que pasar un file en el campo image o la id del cover');
-        throw new Error(
-          'MIGRACION: Se tiene que pasar un file en el campo image o la id del cover'
-        );
+        console.log('BODY', body);
+        body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
+        // alert('MIGRACION: Se tiene que pasar un file en el campo image o la id del cover');
+        // throw new Error(
+        //   'MIGRACION: Se tiene que pasar un file en el campo image o la id del cover'
+        // );
       }
     }
   }
@@ -58,7 +61,7 @@ async function createProgram(_body) {
 }
 
 async function updateProgram(_body) {
-  const body = _.cloneDeep(_body);
+  const body = cloneDeep(_body);
   if (body.image && !isString(body.image)) {
     const { image, ...data } = body;
     if (body.image) {

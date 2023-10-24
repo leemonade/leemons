@@ -68,6 +68,9 @@ async function getByCategory({
       ctx,
     });
 
+    console.log('GETBYCATEGORY published', published);
+    console.log('GETBYCATEGORY permissions', permissions);
+
     const publicAssets = showPublic ? await getPublic({ categoryId, indexable, ctx }) : [];
     let assetIds = await handleAssetIds({
       permissions,
@@ -80,6 +83,7 @@ async function getByCategory({
       preferCurrent,
       ctx,
     });
+    console.log('⭐️ GETBYCATEGORY assetIds', assetIds);
 
     // ES: Buscamos en el provider si se ha indicado
     // EN: Search in the provider if indicated so

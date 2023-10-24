@@ -27,7 +27,7 @@ module.exports = {
   actions: {
     getByIds: {
       handler(ctx) {
-        return findByAssetIds({ ids: ctx.params.assetIds, ctx });
+        return findByAssetIds({ ids: ctx.params.assetIds, getAssets: ctx.params.getAssets, ctx });
       },
     },
   },

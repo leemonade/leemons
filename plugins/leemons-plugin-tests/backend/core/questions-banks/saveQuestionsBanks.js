@@ -18,6 +18,10 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
   const { userSession } = ctx.meta;
   const data = _.cloneDeep(_data);
   delete data.asset;
+  delete data._id;
+  delete data.deploymentID;
+  delete data.__v;
+  delete data.isDeleted;
   _.forEach(data.questions, (question) => {
     delete question.questionBank;
     delete question.deleted;
@@ -27,7 +31,12 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     delete question.createdAt;
     delete question.updatedAt;
     delete question.deletedAt;
+    delete question._id;
+    delete question.deploymentID;
+    delete question.__v;
+    delete question.isDeleted;
   });
+  console.log('📢data', data);
   // Check is userSession is provided
   if (!userSession)
     throw new LeemonsError(ctx, { message: 'User session is required (saveQuestionsBanks)' });
@@ -116,7 +125,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
       // -- Asset create
       const asset = await ctx.tx.call('leebrary.assets.add', {
         asset: assetsToSave,
-        options: { published },
+        published,
       });
       questionBank = await ctx.tx.db.QuestionsBanks.findOneAndUpdate(
         { id: questionBank.id },

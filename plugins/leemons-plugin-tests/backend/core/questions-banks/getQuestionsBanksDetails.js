@@ -14,7 +14,7 @@ async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {
     { $or: [{ id: ids }, { asset: ids }] },
     undefined,
     { excludeDeleted: false }
-  );
+  ).lean();
 
   const questionBankIds = _.map(questionsBanks, 'id');
   const questionIds = await ctx.tx.db.Questions.find({ questionBank: questionBankIds })
@@ -34,10 +34,11 @@ async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {
         values: _.map(questionsBanks, 'id'),
       })
     );
+
     if (getAssets) {
       promises.push(
         ctx.tx.call('leebrary.assets.getByIds', {
-          assetsIds: _.map(questionsBanks, 'asset'),
+          ids: _.map(questionsBanks, 'asset'),
           withFiles: true,
         })
       );

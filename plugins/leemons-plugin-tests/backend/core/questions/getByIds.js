@@ -21,7 +21,7 @@ async function getByIds({ id, options, ctx }) {
 
   const [questionAssets, questionsTags] = await Promise.all([
     ctx.tx.call('leebrary.assets.getByIds', {
-      assetsIds: assetIds,
+      ids: assetIds,
       withFiles: true,
     }),
     ctx.tx.call('common.tags.getValuesTags', {
@@ -33,7 +33,8 @@ async function getByIds({ id, options, ctx }) {
   const questionAssetsById = _.keyBy(questionAssets, 'id');
   _.forEach(questions, (question, i) => {
     question.tags = questionsTags[i];
-    question.clues = JSON.parse(question.clues);
+    // question.clues = JSON.parse(question.clues);
+    question.clues = JSON.parse(question.clues || '[]');
     if (question.properties?.image) {
       question.properties.image = questionAssetsById[question.properties.image];
     }

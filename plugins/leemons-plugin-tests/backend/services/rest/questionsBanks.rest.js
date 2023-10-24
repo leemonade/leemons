@@ -110,7 +110,8 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const questionBank = await save({ data: ctx.params, ctx });
+      const data = JSON.parse(ctx.params.data);
+      const questionBank = await save({ data, ctx });
       return { status: 200, questionBank };
     },
   },
