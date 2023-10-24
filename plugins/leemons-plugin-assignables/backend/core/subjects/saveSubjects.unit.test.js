@@ -108,3 +108,39 @@ it('Should throw if no valid subject is provided', () => {
     ),
   ]);
 });
+
+it('Should return empty array if subject is undefined', async () => {
+  // Arrange
+  const assignable = 'assignable01';
+  const subjects = undefined;
+
+  const ctx = generateCtx({
+    models: {
+      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+    },
+  });
+
+  // Act
+  const resp = await saveSubjects({ assignableId: assignable, subjects, ctx });
+
+  // Assert
+  expect(resp).toEqual([]);
+});
+
+it('Should return empty array if subject is empty array', async () => {
+  // Arrange
+  const assignable = 'assignable01';
+  const subjects = [];
+
+  const ctx = generateCtx({
+    models: {
+      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+    },
+  });
+
+  // Act
+  const resp = await saveSubjects({ assignableId: assignable, subjects, ctx });
+
+  // Assert
+  expect(resp).toEqual([]);
+});

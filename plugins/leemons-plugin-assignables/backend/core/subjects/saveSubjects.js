@@ -2,6 +2,9 @@ const { validateSubjects } = require('../../validations/validateSubjects');
 
 async function saveSubjects({ assignableId, subjects, ctx }) {
   try {
+    if (!subjects) {
+      return [];
+    }
     // TODO: test no subject length
     validateSubjects(subjects);
 

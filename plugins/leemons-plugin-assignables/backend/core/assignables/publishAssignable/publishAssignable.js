@@ -5,9 +5,7 @@ const {
   validAssignableProperties,
 } = require('../../../validations/validateAssignable');
 const { updateAsset } = require('../../leebrary/assets');
-const {
-  getUserPermission,
-} = require('../../permissions/assignables/users/getUserPermission');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const { getAssignable } = require('../getAssignable');
 
 /**
@@ -29,7 +27,6 @@ function validateAssignableForPublish({ assignable, ctx }) {
       httpStatusCode: 404,
     });
   }
-
   validateAssignable(pick(assignable, validAssignableProperties), {
     useRequired: ['asset', 'role', 'subjects'],
   });

@@ -3,9 +3,7 @@ const { LeemonsError } = require('@leemons/error');
 const { getRoles } = require('../../roles');
 const { getSubjects } = require('../../subjects');
 const { getAsset } = require('../../leebrary/assets');
-const {
-  getUserPermissions,
-} = require('../../permissions/assignables/users/getUserPermissions');
+const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
 /**
  * Fetches assignables based on provided ids and showDeleted flag.
  * It constructs a query to find assignables either by their id or asset id.
@@ -77,9 +75,7 @@ async function getAssignablesPublishState({ ids, ctx }) {
     id: ids,
   });
 
-  return Object.fromEntries(
-    versions.map((version) => [version.fullId, version.published])
-  );
+  return Object.fromEntries(versions.map((version) => [version.fullId, version.published]));
 }
 
 /**
@@ -175,9 +171,7 @@ async function getAssignables({
     getAssetData({ ids: assetsFound, columns, withFiles, ctx }),
   ];
 
-  const [publishState, roles, subjects, assetsData] = await Promise.all(
-    promises
-  );
+  const [publishState, roles, subjects, assetsData] = await Promise.all(promises);
 
   return assignables.map((assignable) => ({
     ...assignable,
