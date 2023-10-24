@@ -36,7 +36,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     delete question.__v;
     delete question.isDeleted;
   });
-  console.log('📢data', data);
+
   // Check is userSession is provided
   if (!userSession)
     throw new LeemonsError(ctx, { message: 'User session is required (saveQuestionsBanks)' });
