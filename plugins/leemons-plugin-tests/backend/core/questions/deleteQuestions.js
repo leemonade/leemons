@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 async function deleteQuestions({ questionId, ctx }) {
   const questionIds = _.isArray(questionId) ? questionId : [questionId];
-  const questions = await ctx.tx.db.Questions.find({ id_$in: questionIds }).lean();
+  const questions = await ctx.tx.db.Questions.find({ id: questionIds }).lean();
 
   const assetIds = [];
   _.forEach(questions, (question) => {
@@ -15,7 +15,7 @@ async function deleteQuestions({ questionId, ctx }) {
 
   // TODO: Añadir borrado de assets
   await Promise.all([
-    ctx.tx.db.Questions.deleteMany({ id_$in: questionIds }),
+    ctx.tx.db.Questions.deleteMany({ id: questionIds }),
     ctx.tx.call('common.tags.removeAllTagsForValues', {
       type: 'tests.questionBanks',
       values: questionIds,
