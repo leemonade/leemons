@@ -13,7 +13,7 @@ async function getInstancesSubjects({ classesPerInstance, ctx }) {
   const instances = Object.keys(classesPerInstance);
   const classes = uniq(flatten(Object.values(classesPerInstance)));
 
-  const classesData = ctx.tx.call('academic-portfolio.classes.classesByIds', {
+  const classesData = await ctx.tx.call('academic-portfolio.classes.classesByIds', {
     ids: classes,
     withProgram: false,
     withTeachers: false,
