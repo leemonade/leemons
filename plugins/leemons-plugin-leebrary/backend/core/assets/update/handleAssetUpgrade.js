@@ -11,7 +11,7 @@ const { duplicate } = require('../duplicate');
  * @returns {Promise<object>} The duplicated asset.
  */
 async function handleAssetUpgrade({ assetId, scale, published, ctx }) {
-  const { fullId } = ctx.tx.call('common.versionControl.upgradeVersion', {
+  const { fullId } = await ctx.tx.call('common.versionControl.upgradeVersion', {
     id: assetId,
     upgrade: scale,
     published,
