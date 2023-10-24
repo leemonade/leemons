@@ -147,7 +147,6 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      console.log('⭐️ctx', ctx.params);
       const {
         category,
         criteria,
@@ -181,7 +180,6 @@ module.exports = {
       const _providerQuery = JSON.parse(providerQuery || null);
       const _programs = JSON.parse(programs || null);
       const _subjects = JSON.parse(subjects || null);
-      console.log('⭐️', assetPublished);
 
       if (!_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category)) {
         assets = await getByCriteria({
