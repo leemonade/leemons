@@ -326,10 +326,11 @@ module.exports = {
       const validator = new LeemonsValidator({
         type: 'object',
         properties: {
+          id: { type: 'string' },
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
         },
-        required: ['page', 'size'],
+        required: ['page', 'size', 'id'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {

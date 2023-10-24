@@ -1,5 +1,5 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, isString } from 'lodash';
+import { cloneDeep, isString, merge } from 'lodash';
 
 async function listTests({ page, size, published }) {
   return leemons.api(`tests/tests?page=${page}&size=${size}&published=${published}`, {
@@ -10,7 +10,7 @@ async function listTests({ page, size, published }) {
 
 async function saveTest(_body) {
   const body = cloneDeep(_body);
-  const form = {};
+  let form = {};
   if (_body.cover && !isString(_body.cover)) {
     const { cover, ...data } = body;
     if (_body.cover) {
@@ -20,9 +20,9 @@ async function saveTest(_body) {
         form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
       }
     }
-    form.data = JSON.stringify(data);
+    form = merge(data, form);
   } else {
-    form.data = JSON.stringify(body);
+    form = merge(body, form);
   }
   return leemons.api('tests/tests', {
     allAgents: true,
