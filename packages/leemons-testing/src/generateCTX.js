@@ -9,14 +9,14 @@ function generateCtx({
   autoDeploymentID = true,
   autoLRN = true,
 }) {
-  const actionHandler = (actionName, props) => {
+  const actionHandler = async (actionName, props) => {
     if (actions.hasOwnProperty(actionName)) {
       return actions[actionName](props);
     }
     throw new Error(`The action ${actionName} was not mocked yet`);
   };
 
-  const eventsHandler = (eventName, props) => {
+  const eventsHandler = async (eventName, props) => {
     if (events.hasOwnProperty(eventName)) {
       return events[eventName](props);
     }
