@@ -163,7 +163,7 @@ module.exports = {
       try {
         const { id: taskId } = ctx.params;
 
-        const published = await publish({ taskId, userSession: ctx.state.userSession });
+        const published = await publish({ taskId, ctx });
 
         return {
           status: 200,

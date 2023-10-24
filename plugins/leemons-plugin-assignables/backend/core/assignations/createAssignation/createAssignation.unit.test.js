@@ -153,7 +153,5 @@ it('Should throw an error if student is already assigned to instance', async () 
   });
 
   // Act and Assert
-  await expect(
-    createAssignation({ assignableInstanceId, users, options, ctx })
-  ).rejects.toThrow();
+  await expect(createAssignation({ assignableInstanceId, users, options, ctx })).rejects.toThrow();
 });
