@@ -90,7 +90,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
     // EN: Check if the current version is published.
     // ES: Comprueba si la versión actual está publicada.
     const currentVersion = await ctx.tx.call('common.versionControl.getVersion', {
-      ids: id,
+      id,
     });
 
     if (currentVersion.published) {
