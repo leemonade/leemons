@@ -33,6 +33,7 @@ async function fetchAssignables({ ids, showDeleted, ctx }) {
   const assignables = await ctx.tx.db.Assignables.find(query, '', {
     excludeDeleted: !showDeleted,
   }).lean();
+
   const idsFound = map(assignables, 'id');
   const assetsFound = map(assignables, 'asset');
 

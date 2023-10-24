@@ -15,14 +15,12 @@ jest.mock('./../../instances/getInstances');
 
 const { checkPermissions } = require('./checkPermissions');
 const { getClassesWithSubject } = require('./getClassesWithSubject');
-const {
-  getRelatedAssignationsTimestamps,
-} = require('./getRelatedAssignationsTimestamps');
+const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 const { findAssignationDates } = require('./findAssignationDates');
 const { findInstanceDates } = require('./findInstanceDates');
 const { getGrades } = require('./getGrades');
 const { getAssignationStatus } = require('./getAssignationStatus');
-const { getInstances } = require('./../../instances/getInstances');
+const { getInstances } = require('../../instances/getInstances');
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -122,8 +120,6 @@ it('Should get assignations', async () => {
     fetchInstance: true,
     ctx,
   });
-
-  console.log('result', result);
 
   // Assert
   expect(result).toBeDefined();

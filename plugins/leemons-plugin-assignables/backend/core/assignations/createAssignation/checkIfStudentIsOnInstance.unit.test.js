@@ -68,7 +68,6 @@ it('Should return false if student is not on instance', async () => {
       ),
     },
   });
-  console.log(await ctx.tx.db.Assignations.find({}).lean());
 
   // Act
   const result = await checkIfStudentIsOnInstance({ user, instance, ctx });

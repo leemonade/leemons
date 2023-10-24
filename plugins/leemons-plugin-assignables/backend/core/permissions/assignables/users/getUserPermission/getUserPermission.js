@@ -15,14 +15,20 @@ const { getTeacherPermission } = require('../getTeacherPermission');
 async function getUserPermission({ assignableId, ctx }) {
   const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
     userAgent: ctx.meta.userSession.userAgents,
-    query: { permissionName: escapeRegExp(getPermissionName({ id: assignableId, ctx })) },
+    query: {
+      permissionName: { $regex: escapeRegExp(getPermissionName({ id: assignableId, ctx })) },
+    },
   });
+
+  console.log('STUDENT PERMISSIONS', permissions);
 
   if (!permissions.length) {
     const teacherPermissions = await getTeacherPermission({ assignableId, ctx });
 
     permissions.push(...teacherPermissions);
   }
+
+  console.log('TEACHER PERMISSIONS', permissions, 'ASSIGNABLEID', assignableId);
 
   if (!permissions.length) {
     // TODO: Return no permissions (for the demo everything is public)
