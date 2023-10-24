@@ -36,7 +36,7 @@ module.exports = {
     ...restActions,
     add: {
       handler(ctx) {
-        return add({ ...ctx.params, ctx });
+        return add({ ...ctx.params, ...(ctx.params?.options || {}), ctx });
       },
     },
     update: {
