@@ -55,7 +55,7 @@ async function classByIds({
     teacherByIds = _.keyBy(_teachers, 'id');
   }
 
-  const images = ctx.tx.call('leebrary.assets.getByIds', {
+  const images = await ctx.tx.call('leebrary.assets.getByIds', {
     assetIds: _.map(classes, 'image'),
     withFiles: true,
   });
@@ -167,9 +167,9 @@ async function classByIds({
       schedule: timetablesByClass[id] ? timetablesByClass[id] : [],
       teachers: teachersByClass[id]
         ? _.map(teachersByClass[id], ({ teacher, type }) => ({
-            teacher: teacherByIds[teacher] ? teacherByIds[teacher] : teacher,
-            type,
-          }))
+          teacher: teacherByIds[teacher] ? teacherByIds[teacher] : teacher,
+          type,
+        }))
         : [],
     };
   });

@@ -15,7 +15,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const isSuperAdmin = ctx.tx.call('users.users.isSuperAdmin', {
+      const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
         userId: ctx.meta.userSession.id,
       });
 
