@@ -26,22 +26,21 @@ async function get(ctx) {
       status: 200,
       assignableInstance,
     };
-  } else {
-    const instances = await getInstances({
-      ids: Array.isArray(ids) ? ids : [ids],
-      details: _.isBoolean(details) ? details : details === 'true',
-      throwOnMissing: _.isBoolean(throwOnMissing) ? throwOnMissing : throwOnMissing === 'true',
-      relatedAssignableInstances: _.isBoolean(relatedInstances)
-        ? relatedInstances
-        : relatedInstances === 'true',
-      ctx,
-    });
-
-    return {
-      status: 200,
-      instances,
-    };
   }
+  const instances = await getInstances({
+    ids: Array.isArray(ids) ? ids : [ids],
+    details: _.isBoolean(details) ? details : details === 'true',
+    throwOnMissing: _.isBoolean(throwOnMissing) ? throwOnMissing : throwOnMissing === 'true',
+    relatedAssignableInstances: _.isBoolean(relatedInstances)
+      ? relatedInstances
+      : relatedInstances === 'true',
+    ctx,
+  });
+
+  return {
+    status: 200,
+    instances,
+  };
 }
 
 /** @type {ServiceSchema} */

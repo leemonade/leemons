@@ -31,6 +31,7 @@ const assignationsSchema = new mongoose.Schema(
     },
     metadata: {
       type: mongoose.Schema.Types.Mixed,
+      default: null,
     },
     emailSended: {
       type: Boolean,

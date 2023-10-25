@@ -5,7 +5,7 @@ async function getRoles({ roles, ctx }) {
   const uniqRoles = uniq(roles);
 
   const foundRoles = await ctx.tx.db.Roles.find({
-    name: { $in: uniqRoles },
+    name: uniqRoles,
   }).lean();
 
   if (foundRoles.length >= uniqRoles?.length || false) {

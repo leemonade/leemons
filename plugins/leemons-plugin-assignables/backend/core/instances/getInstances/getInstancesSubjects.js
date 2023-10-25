@@ -1,4 +1,5 @@
 const { flatten, uniq } = require('lodash');
+
 /**
  * @async
  * @function getInstancesSubjects

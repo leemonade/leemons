@@ -214,7 +214,7 @@ it("Should return both assignables' subjects with id", async () => {
   await ctx.db.Subjects.insertMany(initialValues);
 
   const savedSubjects = await ctx.db.Subjects.find({
-    assignable: { $in: assignables },
+    assignable: assignables,
   })
     .select({
       assignable: true,

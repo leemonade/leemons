@@ -37,7 +37,7 @@ async function removeAssignables({ ids, ctx }) {
 
   const { modifiedCount } = await ctx.tx.db.Assignables.deleteMany(
     {
-      id: { $in: ids },
+      id: ids,
     },
     {
       soft: true,

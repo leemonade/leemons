@@ -17,7 +17,7 @@ async function getDates({ type, instance, ctx }) {
 
   const datesFound = await ctx.tx.db.Dates.find({
     type,
-    instance: { $in: instance },
+    instance,
   })
     .select(['instance', 'name', 'date'])
     .lean();

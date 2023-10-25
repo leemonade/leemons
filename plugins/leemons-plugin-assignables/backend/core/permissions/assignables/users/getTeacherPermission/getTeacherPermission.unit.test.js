@@ -4,9 +4,7 @@ const { generateCtx } = require('@leemons/testing');
 
 const { getTeacherPermission } = require('./getTeacherPermission');
 
-const {
-  listAssignableClasses,
-} = require('../../../../classes/listAssignableClasses');
+const { listAssignableClasses } = require('../../../../classes/listAssignableClasses');
 
 jest.mock('../../../../classes/listAssignableClasses');
 
@@ -22,17 +20,13 @@ describe('getTeacherPermission function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions':
-          getUserAgentPermissionsHandle,
+        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandle,
       },
       pluginName,
     });
     const assignableId = 'assignableId';
 
-    listAssignableClasses.mockResolvedValue([
-      { class: 'classId1' },
-      { class: 'classId2' },
-    ]);
+    listAssignableClasses.mockResolvedValue([{ class: 'classId1' }, { class: 'classId2' }]);
     getUserAgentPermissionsHandle.mockResolvedValue(['teacherPermission']);
 
     const mockParams = {
@@ -50,12 +44,7 @@ describe('getTeacherPermission function', () => {
     });
     expect(getUserAgentPermissionsHandle).toHaveBeenCalledWith({
       query: {
-        permissionName: {
-          $in: [
-            'academic-portfolio.class.classId1',
-            'academic-portfolio.class.classId2',
-          ],
-        },
+        permissionName: ['academic-portfolio.class.classId1', 'academic-portfolio.class.classId2'],
         actionName: 'edit',
       },
       userAgent: ctx.meta.userSession.userAgents,
@@ -72,17 +61,13 @@ describe('getTeacherPermission function', () => {
     const pluginName = 'assignables';
     const ctx = generateCtx({
       actions: {
-        'users.permissions.getUserAgentPermissions':
-          getUserAgentPermissionsHandle,
+        'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandle,
       },
       pluginName,
     });
     const assignableId = 'assignableId';
 
-    listAssignableClasses.mockResolvedValue([
-      { class: 'classId1' },
-      { class: 'classId2' },
-    ]);
+    listAssignableClasses.mockResolvedValue([{ class: 'classId1' }, { class: 'classId2' }]);
     getUserAgentPermissionsHandle.mockResolvedValue([]);
 
     const mockParams = {

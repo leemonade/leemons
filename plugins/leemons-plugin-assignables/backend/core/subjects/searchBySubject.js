@@ -11,7 +11,7 @@ async function searchBySubject({ id, ctx }) {
 
   const ids = compact(isArray(id) ? id : [id]);
   const subjects = await ctx.tx.db.Subjects.find({
-    subject: { $in: id },
+    subject: id,
   })
     .select(['assignable', 'subject'])
     .lean();
@@ -26,11 +26,9 @@ async function searchBySubject({ id, ctx }) {
     }
   });
 
-  const assignablesHavingExactSubjects = Object.entries(subjectsByAssignable)
+  return Object.entries(subjectsByAssignable)
     .filter(([, iteratorSubjects]) => !difference(ids, iteratorSubjects).length)
     .map(([assignable]) => assignable);
-
-  return assignablesHavingExactSubjects;
 }
 
 module.exports = { searchBySubject };

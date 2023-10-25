@@ -40,7 +40,6 @@ async function getAssignations({
   // EN: Check if the user has permissions
   // ES: Comprobar si el usuario tiene permisos
   const permissions = await checkPermissions({ assignationsData, ctx });
-
   if (throwOnMissing) {
     if (Object.values(permissions).some((permission) => !permission)) {
       throw new LeemonsError(ctx, {
@@ -97,7 +96,6 @@ async function getAssignations({
   const [classes, relatedAssignations, timestamps, dates, grades, instances] = await Promise.all(
     promises
   );
-
   return assignationsData.map((assignation) => {
     const chatKeys = classes[assignation.instance].subjectsIds.map(
       (subject) =>

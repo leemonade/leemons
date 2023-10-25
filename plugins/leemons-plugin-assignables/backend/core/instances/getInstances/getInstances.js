@@ -10,6 +10,7 @@ const { getRelatedInstances } = require('./getRelatedInstances');
 const { findDates } = require('./findDates');
 const { getAssignationsData } = require('./getAssignationsData');
 const { getInstancesSubjects } = require('./getInstancesSubjects');
+
 /**
  * @async
  * @function getInstances
