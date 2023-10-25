@@ -137,8 +137,11 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
+      // Solución temporal, desde el frontend llega levels. Arroja un error de validación en la primera línea de save()
+      const data = { ...ctx.params, level: ctx.params.levels || null };
+      delete data.levels;
       const test = await save({
-        data: ctx.params,
+        data,
         ctx,
       });
       return { status: 200, test };
