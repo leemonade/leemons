@@ -57,8 +57,8 @@ async function get({ key, userAgent, returnUserAgents = true, ctx }) {
 
   return {
     ...room,
-    nameReplaces: JSON.parse(room.nameReplaces),
-    metadata: JSON.parse(room.metadata),
+    nameReplaces: JSON.parse(room.nameReplaces || null),
+    metadata: JSON.parse(room.metadata || null),
     muted: uair?.muted || false,
     isAdmin: uair?.isAdmin,
     adminMuted: uair?.adminMuted,

@@ -6,7 +6,7 @@ async function getUserAssignableResponses({ instanceId, ctx }) {
 
   const responses = {};
   results.forEach((result) => {
-    responses[result.question] = JSON.parse(result.response);
+    responses[result.question] = JSON.parse(result.response || null);
   });
 
   return responses;

@@ -20,7 +20,7 @@ async function getEvents({ calendar, getPrivates = true, ctx }) {
   return _.map(events, (event) => ({
     ...event,
     calendar,
-    data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
+    data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data,
   }));
 }
 
@@ -43,7 +43,7 @@ async function getEventsMultipleCalendars({ calendars: _calendars, getPrivates =
           ...eventsById[eventId],
           calendar: calendarId,
           data: _.isString(eventsById[eventId]?.data)
-            ? JSON.parse(eventsById[eventId].data)
+            ? JSON.parse(eventsById[eventId].data || null)
             : eventsById[eventId]?.data,
         });
       }

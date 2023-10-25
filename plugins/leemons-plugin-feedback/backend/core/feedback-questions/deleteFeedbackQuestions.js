@@ -8,7 +8,7 @@ async function deleteFeedbackQuestions({ questionId, ctx }) {
   const assetIds = [];
   _.forEach(questions, (question) => {
     // eslint-disable-next-line no-param-reassign
-    question.properties = JSON.parse(question.properties);
+    question.properties = JSON.parse(question.properties || null);
     if (question.properties.responses) {
       forEach(question.properties.responses, (response) => {
         if (response.value.image && !isString(response.value.image)) {

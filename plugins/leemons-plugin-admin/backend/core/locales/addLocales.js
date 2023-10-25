@@ -16,7 +16,7 @@ async function addLocales({ langs, ctx }) {
       try {
         // eslint-disable-next-line no-await-in-loop
         localesData[locale] = await fs.readFile(localePath, 'utf8');
-        localesData[locale] = JSON.parse(localesData[locale]);
+        localesData[locale] = JSON.parse(localesData[locale] || null);
       } catch (err) {
         console.error(err);
         ctx.logger.error(`Unable to load locale: ${localePath}`);

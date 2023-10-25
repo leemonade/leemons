@@ -51,7 +51,7 @@ async function getFeedbackResults({ id, ctx }) {
   const questionResponses = _.groupBy(
     _.map(feedbackResponses, (value) => ({
       ...value,
-      response: JSON.parse(value.response),
+      response: JSON.parse(value.response || null),
     })),
     'question'
   );

@@ -7,7 +7,7 @@ async function deleteQuestions({ questionId, ctx }) {
   const assetIds = [];
   _.forEach(questions, (question) => {
     // eslint-disable-next-line no-param-reassign
-    question.properties = JSON.parse(question.properties);
+    question.properties = JSON.parse(question.properties || null);
     if (question.properties?.image) {
       assetIds.push(question.properties.image);
     }

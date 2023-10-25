@@ -40,7 +40,7 @@ async function get({ key, ctx }) {
     ...zone,
     widgetItems: _.map(widgetItems, (widgetItem) => ({
       ...widgetItem,
-      properties: JSON.parse(widgetItem.properties),
+      properties: JSON.parse(widgetItem.properties || null),
     })),
   };
 }
