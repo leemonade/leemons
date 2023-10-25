@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
-import { Box, COLORS, IconButton, ImageLoader, Menu, FavButton } from '@bubbles-ui/components';
+import { Box, COLORS, IconButton, ImageLoader, Menu } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
@@ -10,6 +10,7 @@ import {
   overlayVariants,
 } from './LibraryCardCover.constants';
 import { LibraryCardEmptyCover } from '../LibraryCardEmptyCover';
+import { FavButton } from '../FavButton';
 
 const LibraryCardCover = ({
   height,
