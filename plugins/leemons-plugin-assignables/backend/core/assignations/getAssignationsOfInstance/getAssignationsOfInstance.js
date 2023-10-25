@@ -1,20 +1,16 @@
 //! Antes era getAssignationsOfAssignationInstance
 //! Está solo para que no peten los test hay que migrarla
+const { LeemonsError } = require('@leemons/error');
 
 const { getUserPermissions } = require('../../permissions/instances/users');
 const { getAssignations } = require('../getAssignations');
-const { LeemonsError } = require('@leemons/error');
 
 async function getAssignationsOfInstance({ instances, details = false, ctx }) {
   const ids = Array.isArray(instances) ? instances : [instances];
 
   const permissions = await getUserPermissions({ instancesIds: ids, ctx });
 
-  if (
-    !Object.values(permissions).every((permission) =>
-      permission.actions.includes('edit')
-    )
-  ) {
+  if (!Object.values(permissions).every((permission) => permission.actions.includes('edit'))) {
     throw new LeemonsError(ctx, { message: 'You do not have permissions' });
   }
 

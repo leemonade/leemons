@@ -1,6 +1,6 @@
-const { checkPermissions } = require('./checkPermissions');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
+const { checkPermissions } = require('./checkPermissions');
 const { getClassesWithSubject } = require('./getClassesWithSubject');
 const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 const { findAssignationDates } = require('./findAssignationDates');
@@ -15,6 +15,7 @@ async function getAssignations({
   fetchInstance,
   ctx,
 }) {
+  if (!assignationsIds?.length) return [];
   // Require inside function to avoid circular dependency
   // eslint-disable-next-line global-require
   const { getInstances } = require('../../instances/getInstances');
@@ -108,7 +109,8 @@ async function getAssignations({
       timestamps: timestamps[assignation.id] || {},
     });
 
-    const assignationObject = {
+    // Returns the assignationObject
+    return {
       ...assignation,
       classes: JSON.parse(assignation.classes),
       metadata: JSON.parse(assignation.metadata),
@@ -124,8 +126,6 @@ async function getAssignations({
 
       ...status,
     };
-
-    return assignationObject;
   });
 }
 
