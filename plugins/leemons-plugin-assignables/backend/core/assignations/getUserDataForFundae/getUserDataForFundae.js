@@ -46,7 +46,7 @@ async function getUserDataForFundae({ userAgent, classes, ctx }) {
   ]);
 
   const assets = await ctx.tx.call('leebrary.assets.getByIds', {
-    assetsIds: _.map(assignables, 'asset'),
+    ids: _.map(assignables, 'asset'),
   });
 
   const assetsById = _.keyBy(assets, 'id');

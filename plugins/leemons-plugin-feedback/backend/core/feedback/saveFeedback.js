@@ -11,9 +11,13 @@ async function saveFeedback({ data: _data, ctx }) {
   const data = _.cloneDeep(_data);
   delete data.asset;
   _.forEach(data.questions, (question) => {
+    delete question._id;
+    delete question.__v;
+    delete question.deploymentID;
     delete question.deleted;
     delete question.feedback;
     delete question.assignable;
+    delete question.isDeleted;
     delete question.created_at;
     delete question.updated_at;
     delete question.deleted_at;

@@ -22,7 +22,7 @@ async function getByIds({ id, options, ctx }) {
 
   const [questionAssets, questionsTags] = await Promise.all([
     ctx.tx.call('leebrary.assets.getByIds', {
-      assetIds,
+      ids: assetIds,
       withFiles: true,
     }),
     ctx.tx.call('common.tags.getValuesTags', {

@@ -1,5 +1,5 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, forEach, isString, set, merge } from 'lodash';
+import { cloneDeep, forEach, isString, merge, set } from 'lodash';
 
 async function saveFeedback(_body) {
   const body = cloneDeep(_body);

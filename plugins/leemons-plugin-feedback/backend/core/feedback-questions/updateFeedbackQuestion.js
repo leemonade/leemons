@@ -15,7 +15,7 @@ async function updateFeedbackQuestion({ data, published, ctx }) {
       }
     });
 
-    if (data.withImages) {
+    if (properties.withImages) {
       const promises = [];
       _.forEach(properties.responses, (response, index) => {
         promises.push(

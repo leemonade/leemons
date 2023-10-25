@@ -18,13 +18,13 @@ async function getPackage({ id, ctx }) {
 
   // Get the Package Asset in metadata
   const assets = await ctx.tx.call('leebrary.assets.getByIds', {
-    assetsIds: assignables.map((a) => a.metadata.packageAsset).filter(Boolean),
+    ids: assignables.map((a) => a.metadata.packageAsset).filter(Boolean),
     withFiles: true,
   });
 
   const result = _.map(assignables, (assignable) => {
     const { asset, metadata, statement } = assignable;
-    const toReturn = {
+    return {
       id: assignable.id,
       asset,
       statement,
@@ -41,7 +41,6 @@ async function getPackage({ id, ctx }) {
       version: metadata.version,
       gradable: assignable.gradable,
     };
-    return toReturn;
   });
   return _.isArray(id) ? result : result[0];
 }

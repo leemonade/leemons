@@ -8,7 +8,7 @@ async function getUserPrograms({ ctx }) {
   const programs = await ctx.tx.db.Programs.find({ id: programIds }).lean();
 
   const images = await ctx.tx.call('leebrary.assets.getByIds', {
-    assetsIds: map(programs, 'image'),
+    ids: map(programs, 'image'),
     withFiles: true,
   });
 

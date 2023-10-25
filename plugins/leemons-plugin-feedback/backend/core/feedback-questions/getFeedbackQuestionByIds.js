@@ -16,7 +16,7 @@ async function getFeedbackQuestionByIds({ id, ctx }) {
   });
 
   const questionAssets = await ctx.tx.call('leebrary.assets.getByIds', {
-    assetIds,
+    ids: assetIds,
     withFiles: true,
   });
 
