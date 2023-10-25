@@ -3,7 +3,7 @@ const { LeemonsError } = require('@leemons/error');
 const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
 module.exports = async function listPeriods({ sort, page, size, ctx, ...query }) {
-  const { userSession } = ctx.params;
+  const { userSession } = ctx.meta;
   const q = {
     ...query,
   };
@@ -11,7 +11,7 @@ module.exports = async function listPeriods({ sort, page, size, ctx, ...query })
   if (q.public === false) {
     q.createdBy = map(userSession.userAgents, 'id');
   } else {
-    q.$or = [{ public: true }, { createdBy_$in: map(userSession.userAgents, 'id') }];
+    q.$or = [{ public: true }, { createdBy: map(userSession.userAgents, 'id') }];
   }
 
   try {

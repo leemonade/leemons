@@ -31,11 +31,10 @@ const NavItem = ({
   onOpen,
   isActive,
   subItemActive,
-  lightMode,
   window,
   isNew,
 }) => {
-  const { classes, theme } = NavItemStyles({ lightMode });
+  const { classes, theme } = NavItemStyles();
   const hasChildren = Array.isArray(childrenCollection) && childrenCollection.length > 0;
   const [opened, setOpened] = useState(false);
   const handleSvgProps = !activeIconSvg || (!!activeIconSvg && activeIconSvg === iconSvg);
@@ -62,19 +61,14 @@ const NavItem = ({
     const isChildrenActive = child.id === subItemActive?.id;
     const hasChildOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
     return (
-      <LinkWrapper
-        useRouter={useRouter}
-        url={child.url}
-        id={child.id}
-        key={`nav-child--${child.id}--${index}`}
-      >
+      <LinkWrapper useRouter={useRouter} url={child.url} key={`itemId--${index}`}>
         <Box className={classes.itemContainer}>
           <TextClamp lines={2}>
             <Text className={isChildrenActive ? classes.linkActive : classes.link}>
               {child.label}
-              {hasChildOpenIcon && <OpenIcon className={classes.childOpenIcon} />}
             </Text>
           </TextClamp>
+          {hasChildOpenIcon && <OpenIcon className={classes.childOpenIcon} />}
         </Box>
       </LinkWrapper>
     );
@@ -82,7 +76,7 @@ const NavItem = ({
 
   return (
     <AnimatePresence>
-      <LinkWrapper useRouter={useRouter} url={url} id={id}>
+      <LinkWrapper useRouter={useRouter} url={url} id={id} key="LinkChild">
         <UnstyledButton
           onClick={() => handleOpenChildren(id)}
           className={isActive ? classes.controlActive : classes.control}
@@ -92,7 +86,7 @@ const NavItem = ({
               <ImageLoader
                 className={classes.icon}
                 src={active && items.activeIconSvg ? activeIconSvg : iconSvg}
-                alt={iconAlt}
+                alt={`figure ${iconAlt}`}
                 strokeCurrent
                 ignoreFill={!active && handleSvgProps}
               />
@@ -111,7 +105,7 @@ const NavItem = ({
           </Group>
           <Box className={classes.chevronContainer}>
             {isNew && (
-              <Badge closable={false} alt="new" className={classes.badgeNew}>
+              <Badge closable={false} alt="badge" className={classes.badgeNew}>
                 <Text size="xs" className={classes.newText}>
                   NEW
                 </Text>
@@ -133,8 +127,10 @@ const NavItem = ({
     </AnimatePresence>
   );
 };
-export default NavItem;
-export { NavItem };
+
 NavItem.displayName = 'NavItem';
 NavItem.defaultProps = NAV_ITEM_DEFAULT_PROPS;
 NavItem.propTypes = NAV_ITEM_PROP_TYPES;
+
+export default NavItem;
+export { NavItem };

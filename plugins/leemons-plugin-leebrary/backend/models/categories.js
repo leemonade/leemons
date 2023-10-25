@@ -1,6 +1,6 @@
 const { mongoose, newModel } = require('@leemons/mongodb');
 
-const schema = new mongoose.Schema(
+const categoriesSchema = new mongoose.Schema(
   {
     id: {
       type: String,
@@ -49,6 +49,7 @@ const schema = new mongoose.Schema(
     detailComponent: {
       type: String,
     },
+    // Array (stringlificado) de plugins que pueden añadir assets a esta categoria.
     canUse: {
       type: String,
     },
@@ -61,6 +62,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-const categoriesModel = newModel(mongoose.connection, 'v1::leebrary_Categories', schema);
+const categoriesModel = newModel(mongoose.connection, 'v1::leebrary_Categories', categoriesSchema);
 
-module.exports = { categoriesModel };
+module.exports = { categoriesModel, categoriesSchema };

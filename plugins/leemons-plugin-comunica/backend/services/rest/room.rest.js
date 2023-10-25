@@ -224,7 +224,7 @@ module.exports = {
       let key = null;
       if (ctx.params.type === 'group') {
         key = `leemons.comunica.room.group.${randomString()}`;
-      } else if (ctx.request.body.type === 'chat') {
+      } else if (ctx.params.type === 'chat') {
         key = `leemons.comunica.room.chat.${randomString()}`;
       } else {
         throw new LeemonsError(ctx, { message: 'Type not allowed' });
@@ -233,7 +233,9 @@ module.exports = {
         ...ctx.params,
         key,
         adminUserAgents: ctx.params.type === 'chat' ? [] : ctx.meta.userSession.userAgents[0].id,
+        ctx,
       });
+
       return { status: 200, room };
     },
   },
@@ -244,8 +246,10 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
+      const { key, image: avatar } = ctx.params;
       const room = await adminChangeRoomImage({
-        ...ctx.params,
+        key,
+        avatar,
         ctx,
       });
       return { status: 200, room };

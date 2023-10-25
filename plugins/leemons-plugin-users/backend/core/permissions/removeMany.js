@@ -11,7 +11,7 @@ const { settledResponseToManyResponse } = require('@leemons/utils');
 async function removeMany({ permissionNames, ctx }) {
   const response = await Promise.allSettled(
     _.map(permissionNames, (permissionName) =>
-      ctx.tx.call('users.permissions.remove', { permissionName, ctx })
+      ctx.tx.call('users.permissions.remove', { permissionName })
     )
   );
   return settledResponseToManyResponse(response);

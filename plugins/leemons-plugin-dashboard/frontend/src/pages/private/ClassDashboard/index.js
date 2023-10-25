@@ -4,7 +4,7 @@ import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
-//TODO: ClassroomHeaderBar, HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
+// TODO: ClassroomHeaderBar, HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
 import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
@@ -179,6 +179,7 @@ export default function ClassDashboard({ session }) {
   }
 
   async function onGetRightZone(zone) {
+    console.log('zone', zone);
     store.rightZone = zone;
     if (zone.widgetItems && zone.widgetItems.length) {
       const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });

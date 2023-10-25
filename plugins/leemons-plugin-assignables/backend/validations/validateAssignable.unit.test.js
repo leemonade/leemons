@@ -1,7 +1,7 @@
 const { it, expect } = require('@jest/globals');
 
 const { validateAssignable } = require('./validateAssignable');
-const getAssignableObject = require('../__fixtures__/getAssignableObject');
+const { getAssignableObject } = require('../__fixtures__/getAssignableObject');
 
 it('should not throw if a valid object is provided', () => {
   const assignable = getAssignableObject();

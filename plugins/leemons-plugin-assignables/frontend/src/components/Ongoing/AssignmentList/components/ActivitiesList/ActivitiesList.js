@@ -25,11 +25,9 @@ function useAssignmentsColumns() {
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`));
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN(`assignment_list.${isTeacher ? 'teacher' : 'student'}`));
     }
 
     return {};
@@ -66,7 +64,7 @@ function useAssignmentsColumns() {
         accessor: 'evaluated',
       },
       {
-        Header: labels.messages || '',
+        Header: labels?.messages || '',
         accessor: 'messages',
       },
     ],
@@ -100,7 +98,7 @@ function useAssignmentsColumns() {
         accessor: 'progress',
       },
       {
-        Header: labels.messages || '',
+        Header: labels?.messages || '',
         accessor: 'messages',
       },
     ],
@@ -122,7 +120,7 @@ function useOngoingQuery(filters) {
   const sessionConfig = getSessionConfig();
   const isStudent = useIsStudent();
 
-  const query = useMemo(() => {
+  return useMemo(() => {
     const q = {};
 
     if (filters?.query) {
@@ -167,8 +165,6 @@ function useOngoingQuery(filters) {
 
     return q;
   }, [filters, sessionConfig?.program, isStudent]);
-
-  return query;
 }
 
 function useOngoingLocalizations() {
@@ -177,7 +173,7 @@ function useOngoingLocalizations() {
     prefixPN('activities_list'),
   ]);
 
-  const labels = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
@@ -188,8 +184,6 @@ function useOngoingLocalizations() {
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 
 function useBlockingActivitiesStatus(assignations) {
@@ -226,7 +220,7 @@ function useBlockingActivitiesStatus(assignations) {
 
   const { data, isLoading } = useAssignationsByProfile(blockingIdsMissing, {
     enabled: !!blockingIdsMissing.length,
-    placeholderData: {},
+    placeholderData: [],
     select: (instancesData) =>
       keyBy(
         instancesData.map((assignation) => ({

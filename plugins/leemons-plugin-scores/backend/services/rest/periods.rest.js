@@ -53,9 +53,9 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const { query } = ctx.params;
+      console.log(ctx.params);
       const q = Object.fromEntries(
-        Object.entries(query).map(([key, value]) => {
+        Object.entries(ctx.params).map(([key, value]) => {
           try {
             const jsonValue = JSON.parse(value);
 

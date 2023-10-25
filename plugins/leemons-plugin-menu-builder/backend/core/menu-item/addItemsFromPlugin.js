@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
 const { isArray } = require('lodash');
 const constants = require('../../config/constants');
-const addItem = require('./add');
-const existItem = require('./exist');
-const removeItem = require('./remove');
+const { add: addItem } = require('./add');
+const { exist: existItem } = require('./exist');
+const { remove: removeItem } = require('./remove');
 
 async function addMenuItem({ menuKey, removed, item, permissions, ctx }) {
   if (!(await existItem({ menuKey, key: `${ctx.callerPlugin}.${item.key}`, ctx }))) {
@@ -14,6 +14,7 @@ async function addMenuItem({ menuKey, removed, item, permissions, ctx }) {
         key: `${ctx.callerPlugin}.${item.key}`,
         parentKey: item.parentKey ? `${ctx.callerPlugin}.${item.parentKey}` : undefined,
         permissions,
+        ctx,
       });
     }
     return null;
@@ -35,7 +36,6 @@ async function addItemsFromPlugin({
   if (!isArray(itemsData)) {
     items = [itemsData];
   }
-
   if (shouldWait) {
     const itemsLength = items.length;
     const menuItems = [];

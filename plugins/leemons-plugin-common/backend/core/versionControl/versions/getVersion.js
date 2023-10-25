@@ -5,6 +5,7 @@ const { parseId, parseVersion, stringifyVersion, stringifyId } = require('../hel
 const specialVersions = ['latest', 'current', 'published', 'draft'];
 
 async function getVersionMany({ ids, published, ignoreMissing = false, ctx }) {
+  if (!ids.length) return [];
   const parsedIds = await parseId({ id: ids, verifyVersion: false, ctx });
 
   const uuids = parsedIds.map((id) => id.uuid);
@@ -22,7 +23,6 @@ async function getVersionMany({ ids, published, ignoreMissing = false, ctx }) {
     const subQuery = {
       uuid,
     };
-
     if (published !== undefined) {
       subQuery.published = published;
     }
@@ -59,7 +59,6 @@ async function getVersionMany({ ids, published, ignoreMissing = false, ctx }) {
       version: stringifyVersion({ ...version, ctx }),
     })
   );
-
   if (!versionsFound?.length && !ignoreMissing) {
     throw new LeemonsError(ctx, { message: 'Versions not found' });
   }

@@ -1,9 +1,16 @@
 import React, { useRef } from 'react';
-import { Box } from '@bubbles-ui/components';
-import { AssetAudioIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetAudioIcon/AssetAudioIcon';
-import { AssetVideoIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetVideoIcon/AssetVideoIcon';
-import { AssetBookmarkIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetBookmarkIcon/AssetBookmarkIcon';
-import { AssetImageIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetImageIcon/AssetImageIcon';
+// import { Box } from '@bubbles-ui/components';
+// import { AssetAudioIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetAudioIcon/AssetAudioIcon';
+// import { AssetVideoIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetVideoIcon/AssetVideoIcon';
+// import { AssetBookmarkIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetBookmarkIcon/AssetBookmarkIcon';
+// import { AssetImageIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetImageIcon/AssetImageIcon';
+import {
+  Box,
+  AssetAudioIcon,
+  AssetVideoIcon,
+  AssetImageIcon,
+  AssetBookmarkIcon,
+} from '@bubbles-ui/components';
 import { useHTMLToCanvas } from '../../hooks/useHTMLToCanvas';
 import { LibraryCardEmptyCoverStyles } from './LibraryCardEmptyCover.styles';
 import {

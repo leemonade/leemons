@@ -18,17 +18,15 @@ export default {
     },
   },
   argTypes: {
-    lightMode: { control: 'boolean' },
     window: { control: 'select', options: ['BLANK', 'SELF', 'NEW'] },
   },
 };
 
-const Template = ({ testChildren, ...props }) => (
+const Template = ({ ...props }) => (
   <Box
     style={{
       margin: '-1rem',
       width: '300px',
-      backgroundColor: props.lightMode === false && '#193e3a',
     }}
   >
     <NavItem {...props} />
@@ -41,13 +39,12 @@ Playground.args = {
   ...NAV_ITEM_DEFAULT_PROPS,
   childrenCollection: NavItemElement.children,
   iconSvg: NavItemElement.iconSvg,
-  lightMode: true,
   label: NavItemElement.label,
   isActive: true,
   isCollapsed: false,
   url: NavItemElement.url,
-  window: 'BLANK',
+  window: 'SELF',
   expandedItem: '',
-  iconAlt: '',
-  testChildren: NavItemElement.children,
+  iconAlt: 'nav item icon',
+  isNew: false,
 };

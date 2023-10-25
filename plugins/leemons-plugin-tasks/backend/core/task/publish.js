@@ -1,10 +1,15 @@
-const assignablesServices = require('../assignables');
+const { LeemonsError } = require('@leemons/error');
 
-module.exports = async function publish(taskId, { transacting, userSession } = {}) {
-  const { assignables } = assignablesServices();
+async function publish({ taskId, ctx }) {
   try {
-    return await assignables.publishAssignable(taskId, { userSession, transacting });
+    return await ctx.tx.call('assignables.assignables.publishAssignable', {
+      id: taskId,
+    });
   } catch (e) {
-    throw new Error(`Error publishing task: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Error publishing task: ${e.message}`,
+    });
   }
-};
+}
+
+module.exports = publish;

@@ -35,11 +35,9 @@ export default function useInstances({
     modificationTrend: 'frequently',
   });
 
-  const query = useQuery({
+  return useQuery({
     queryKey,
     queryFn,
     ...options,
   });
-
-  return query;
 }

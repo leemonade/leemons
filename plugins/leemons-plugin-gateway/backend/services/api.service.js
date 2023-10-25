@@ -16,6 +16,18 @@ module.exports = {
     LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false, getDeploymentIdInCall: true }),
   ],
 
+  actions: {
+    status: {
+      rest: {
+        method: 'GET',
+        path: '/status',
+      },
+      async handler(ctx) {
+        return { status: 200, timestamp: new Date() };
+      },
+    },
+  },
+
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
     cors: {
@@ -31,6 +43,19 @@ module.exports = {
     use: [],
 
     routes: [
+      {
+        path: '/',
+        whitelist: ['**'],
+        use: [],
+        mergeParams: true,
+        uthentication: false,
+        authorization: false,
+        autoAliases: true,
+        aliases: {
+          // -- Gateway (Finish) --
+          'GET /': 'gateway.status',
+        },
+      },
       {
         path: '/api',
 
@@ -53,9 +78,25 @@ module.exports = {
         autoAliases: true,
 
         aliases: {
+          // -- Gateway (Finish) --
+          'GET status': 'gateway.status',
+
+          // -- Deployment Manager (Finish) --
           'POST deployment-manager/add-manual-deployment':
             'deployment-manager.addManualDeploymentRest',
           'POST package-manager/info': 'deployment-manager.infoRest',
+
+          // -- Scorm (Finish) --
+          'POST scorm/tags/list': 'v1.scorm.tags.listTagsRest',
+          'POST scorm/package': 'v1.scorm.package.savePackageRest',
+          'POST scorm/package/duplicate': 'v1.scorm.package.duplicatePackageRest',
+          'POST scorm/package/assign': 'v1.scorm.package.assignPackageRest',
+          'POST scorm/package/share': 'v1.scorm.package.sharePackageRest',
+          'GET scorm/package/supported-versions': 'v1.scorm.package.getSupportedVersionsRest',
+          'GET scorm/package/:id': 'v1.scorm.package.getPackageRest',
+          'DELETE scorm/package/:id': 'v1.scorm.package.deletePackageRest',
+          'PUT scorm/status/:instance/:user': 'v1.scorm.status.updateStatusRest',
+          'GET scorm/assignation/:instance/:user': 'v1.scorm.status.getScormAssignationRest',
 
           // -- Learning Paths (Finish) --
           'POST learning-paths/tags/list': 'v1.learning-paths.tags.listTagsRest',
@@ -229,7 +270,9 @@ module.exports = {
           'POST comunica/room/:key/mute': 'v1.comunica.room.toggleMutedRoomRest',
           'POST comunica/room/:key/admin/mute': 'v1.comunica.room.toggleAdminMutedRoomRest',
           'POST comunica/room/:key/admin/disable': 'v1.comunica.room.toggleAdminDisableRoomRest',
-          'POST comunica/room/:key/admin/remove': 'v1.comunica.room.adminRemoveUserAgentRest',
+          'POST comunica/room/:key/admin/remove/user-agent':
+            'v1.comunica.room.adminRemoveUserAgentRest',
+          'POST comunica/room/:key/admin/remove': 'v1.comunica.room.adminRemoveRoomRest',
           'POST comunica/room/:key/admin/name': 'v1.comunica.room.adminUpdateRoomNameRest',
           'POST comunica/room/:key/admin/users': 'v1.comunica.room.adminAddUsersToRoomRest',
           'POST comunica/room/create': 'v1.comunica.room.createRoomRest',
@@ -501,32 +544,101 @@ module.exports = {
           'GET grades/settings': 'v1.grades.settings.findOneRest',
           'POST grades/settings': 'v1.grades.settings.updateRest',
           'POST grades/settings/enable-menu-item': 'v1.grades.settings.enableMenuItemRest',
+
+          // -- Leebrary (NOT FINISHED) --
+          'GET leebrary/providers': 'v1.leebrary.providers.listRest',
+          'POST leebrary/providers/config': 'v1.leebrary.providers.setConfigRest',
+          'POST leebrary/providers/config/delete': 'v1.leebrary.providers.deleteConfigRest',
+          'GET leebrary/assets/:id': 'v1.leebrary.assets.getRest',
+          'GET leebrary/assets/my': 'v1.leebrary.assets.myRest',
+          'GET leebrary/assets/url-metadata': 'v1.leebrary.assets.urlMetadataRest',
+          'GET leebrary/assets/list': 'v1.leebrary.assets.listRest',
+          'GET leebrary/assets/pins': 'v1.leebrary.assets.pinsRest',
+          'GET leebrary/assets/has-pins': 'v1.leebrary.assets.hasPinsRest',
+          'POST leebrary/assets': 'v1.leebrary.assets.addRest',
+          'POST leebrary/assets/:id': 'v1.leebrary.assets.duplicateRest',
+          'POST leebrary/assets/list': 'v1.leebrary.assets.listByIdsRest',
+          'POST leebrary/asset/:asset/permissions': 'v1.leebrary.permissions.setRest',
+          'POST leebrary/assets/pins': 'v1.leebrary.assets.addPinRest',
+          'PUT leebrary/assets/:id': 'v1.leebrary.assets.updateRest',
+          'DELETE leebrary/assets/:id': 'v1.leebrary.assets.removeRest',
+          'DELETE leebrary/assets/pins/:id': 'v1.leebrary.assets.removePinRest',
+          'GET leebrary/categories/menu-list': 'v1.leebrary.categories.listWithMenuItemRest',
+          'GET leebrary/categories/:id/types': 'v1.leebrary.categories.assetTypesRest',
+          'GET leebrary/search/search': 'v1.leebrary.search.searchRest',
+          'POST leebrary/tags/list': 'v1.leebrary.tags.listTagsRest',
+          'POST leebrary/file/multipart/new': 'v1.leebrary.file.newMultipartRest',
+          'POST leebrary/file/multipart/abort': 'v1.leebrary.file.abortMultipartRest',
+          'POST leebrary/file/multipart/finish': 'v1.leebrary.file.finishMultipartRest',
+          'POST leebrary/file/multipart/chunk':
+            'multipart:v1.leebrary.file.uploadMultipartChunkRest',
+          'GET leebrary/img/:assetId': 'v1.leebrary.file.coverRest',
+          'GET leebrary/file/:id': 'v1.leebrary.file.fileRest',
+          'GET leebrary/file/:id/(.*)': 'v1.leebrary.file.folderRest',
+          'GET leebrary/file/public/:id': 'v1.leebrary.file.publicFileRest',
+          'GET leebrary/file/public/:id/(.*)': 'v1.leebrary.file.publicFolderRest',
+
+          // -- Leebrary AWS S3 (NOT FINISHED) --
+          'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
+
+          // -- Assignables(FINISHED) --
+          'GET assignables/find': 'v1.assignables.assignables.getRest',
+          'GET assignables/activities/search/ongoing':
+            'v1.assignables.activities.searchOngoingRest',
+          'GET assignables/activities/search/nya':
+            'v1.assignables.activities.searchNyaActivitiesRest',
+          'GET assignables/assignations/find': 'v1.assignables.assignations.getManyRest',
+          'GET assignables/assignableInstances/:instance/assignations/:user':
+            'v1.assignables.assignations.getRest',
+          'GET assignables/assignableInstances/search':
+            'v1.assignables.assignableInstances.searchRest',
+          'GET assignables/assignableInstances/find': 'v1.assignables.assignableInstances.getRest',
+          'GET assignables/assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
+          'PUT assignables/assignableInstances/:id':
+            'v1.assignables.assignableInstances.updateRest',
+          'POST assignables/assignableInstances/:id':
+            'v1.assignables.assignableInstance.sendReminderRest',
+
+          // -- Tasks (FINISHED) --
+          'GET tasks/settings': 'v1.tasks.settings.findOneRest',
+          'POST tasks/settings': 'v1.tasks.settings.updateRest',
+          'POST tasks/settings/enable-menu-item': 'v1.tasks.settings.enableMenuItemRest',
+          'GET tasks/profiles/:key': 'v1.tasks.profiles.getRest',
+          'POST tasks/profiles/:key': 'v1.tasks.profiles.setRest',
+          'POST tasks/profiles': 'v1.tasks.profiles.setManyRest',
+          'POST tasks/tasks': 'v1.tasks.tasks.createRest',
+          'PUT tasks/tasks/:id': 'v1.tasks.tasks.updateRest',
+          'GET tasks/tasks/:id': 'v1.tasks.tasks.getRest',
+          'POST tasks/tasks/:id/duplicate': 'v1.tasks.tasks.duplicateRest',
+          'DELETE tasks/tasks/:id': 'v1.tasks.tasks.removeRest',
+          'POST tasks/tasks/:id/publish': 'v1.tasks.tasks.publishRest',
+          'GET tasks/tasks/search': 'v1.tasks.tasks.searchRest',
         },
 
         /**
-				 * Before call hook. You can check the request.
-				 * @param {Context} ctx
-				 * @param {Object} route
-				 * @param {IncomingRequest} req
-				 * @param {ServerResponse} res
-				 * @param {Object} data
-				 *
-				onBeforeCall(ctx, route, req, res) {
-					// Set request headers to context meta
-					ctx.meta.userAgent = req.headers["user-agent"];
-				}, */
+         * Before call hook. You can check the request.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         *
+         onBeforeCall(ctx, route, req, res) {
+         // Set request headers to context meta
+         ctx.meta.userAgent = req.headers["user-agent"];
+         }, */
 
         /**
-				 * After call hook. You can modify the data.
-				 * @param {Context} ctx
-				 * @param {Object} route
-				 * @param {IncomingRequest} req
-				 * @param {ServerResponse} res
-				 * @param {Object} data
-				onAfterCall(ctx, route, req, res, data) {
-					// Async function which return with Promise
-					return doSomething(ctx, res, data);
-				}, */
+         * After call hook. You can modify the data.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         onAfterCall(ctx, route, req, res, data) {
+         // Async function which return with Promise
+         return doSomething(ctx, res, data);
+         }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =
@@ -537,9 +649,13 @@ module.exports = {
           const parseResult = parse(
             req.headers.referer || req.headers.referrer || req.headers.host
           );
-          ctx.meta.hostname =
-            parseResult.hostname || parseResult.host || parseResult.pathname || parseResult.path;
-          console.log('ctx.meta.hostname', ctx.meta.hostname);
+          if (ctx.meta) {
+            ctx.meta.hostname =
+              parseResult?.hostname ||
+              parseResult?.host ||
+              parseResult?.pathname ||
+              parseResult?.path;
+          }
         },
 
         onError(req, res, err) {

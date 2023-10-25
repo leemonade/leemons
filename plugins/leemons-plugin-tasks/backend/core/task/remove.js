@@ -1,13 +1,19 @@
-const assignablesServices = require('../assignables');
+const { LeemonsError } = require('@leemons/error');
 
-module.exports = async function remove(taskId, { transacting, userSession } = {}) {
-  const { assignables } = assignablesServices();
+async function remove({ taskId, ctx }) {
   try {
     // EN: remove the given task.
     // ES: Eliminar la tarea dada.
     // TODO: For now remove all the versions in the same status
-    return await assignables.removeAssignable(taskId, { userSession, transacting, removeAll: 1 });
+    return await ctx.tx.call('assignables.assignables.removeAssignable', {
+      assignable: taskId,
+      removeAll: 1,
+    });
   } catch (e) {
-    throw new Error(`Error removing task: ${e.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Error removing task: ${e.message}`,
+    });
   }
-};
+}
+
+module.exports = remove;

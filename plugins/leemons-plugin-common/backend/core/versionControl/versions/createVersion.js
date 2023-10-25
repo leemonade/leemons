@@ -5,7 +5,7 @@ const getVersion = require('./getVersion');
 
 module.exports = async function createVersion({ id, version, published = false, ctx }) {
   const { uuid, version: v, fullId } = await parseId({ id: { id, version }, ctx });
-  const { major, minor, patch } = parseVersion({ v, ctx });
+  const { major, minor, patch } = parseVersion({ version: v, ctx });
 
   // EN: Check if uuid exists
   // ES: Comprueba si el uuid existe

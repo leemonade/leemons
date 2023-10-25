@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, Text, TextClamp, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles, Text, TextClamp } from '@bubbles-ui/components';
 
 import { LocaleDate } from '@common';
 import { AvatarActivity } from '../../../AvatarActivity';
@@ -42,7 +42,7 @@ export function ResourceRenderer({ activity, localizations }) {
           <Text className={classes.activityName}>{activity.asset.name}</Text>
         </TextClamp>
         <Text className={classes.lastUpdate}>
-          {localizations?.lastUpdate}: <LocaleDate date={activity.updated_at || null} />
+          {localizations?.lastUpdate}: <LocaleDate date={activity.updatedAt || null} />
         </Text>
       </Box>
     </Box>
@@ -55,6 +55,6 @@ ResourceRenderer.propTypes = {
     asset: PropTypes.shape({
       name: PropTypes.string,
     }),
-    updated_at: PropTypes.instanceOf(Date),
+    updatedAt: PropTypes.instanceOf(Date),
   }),
 };

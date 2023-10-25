@@ -424,6 +424,7 @@ module.exports = {
         ids,
         noSearchChildren: ctx.params.noSearchChildren,
         noSearchParents: ctx.params.noSearchParents,
+        ctx,
       });
       return { status: 200, classes };
     },

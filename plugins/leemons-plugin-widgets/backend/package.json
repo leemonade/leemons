@@ -20,14 +20,15 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/cache": "0.0.27",
-    "@leemons/deployment-manager": "0.0.27",
-    "@leemons/error": "0.0.27",
-    "@leemons/middlewares": "0.0.27",
-    "@leemons/mongodb": "0.0.27",
-    "@leemons/mongodb-helpers": "0.0.27",
-    "@leemons/mqtt": "0.0.27",
-    "@leemons/validator": "0.0.27",
+    "@leemons/cache": "0.0.40",
+    "@leemons/deployment-manager": "0.0.40",
+    "@leemons/error": "0.0.40",
+    "@leemons/middlewares": "0.0.40",
+    "@leemons/mongodb": "0.0.40",
+    "@leemons/mongodb-helpers": "0.0.40",
+    "@leemons/mqtt": "0.0.40",
+    "@leemons/validator": "0.0.40",
+    "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },

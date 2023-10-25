@@ -29,6 +29,7 @@ async function addUserBulk({
   avatar,
   // eslint-disable-next-line camelcase
   created_at,
+  createdAt,
   dataset,
   profile,
   ctx,

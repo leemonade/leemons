@@ -45,6 +45,7 @@ module.exports = () => ({
       },
     },
     {
+      type: 'once-per-install',
       events: ['menu-builder.init-main-menu', 'board-messages.init-permissions'],
       handler: async (ctx) => {
         const [mainMenuItem, ...otherMenuItems] = menuItems;
@@ -92,6 +93,6 @@ module.exports = () => ({
     },
   },
   created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 });

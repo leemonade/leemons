@@ -80,6 +80,9 @@
       "@leebrary/*": [
         "./plugins/leemons-plugin-leebrary/frontend/src/*"
       ],
+      "@leebrary-aws-s3/*": [
+        "./plugins/leemons-plugin-leebrary-aws-s3/frontend/src/*"
+      ],
       "@menu-builder/*": [
         "./plugins/leemons-plugin-menu-builder/frontend/src/*"
       ],

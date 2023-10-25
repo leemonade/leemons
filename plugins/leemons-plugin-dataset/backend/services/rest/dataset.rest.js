@@ -196,6 +196,7 @@ module.exports = {
           ...(ctx.params.options || {}),
           ctx,
         });
+        ctx.meta.$statusCode = 200;
         return {
           status: 200,
           dataset,

@@ -1,27 +1,26 @@
-const assignablesServices = require('../assignables');
+const { LeemonsError } = require('@leemons/error');
 
-module.exports = async function update(
-  taskId,
-  { published, role, ...data },
-  { transacting, userSession } = {}
-) {
-  const { assignables } = assignablesServices();
+async function update({ taskId, published, role, ctx, ...data }) {
   try {
-    const assignable = await assignables.updateAssignable(
-      {
+    const assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+      assignable: {
         id: taskId,
         ...data,
       },
-      { userSession, transacting }
-    );
-    const version = await leemons
-      .getPlugin('common')
-      .services.versionControl.parseId(assignable.id, { transacting });
+    });
+
+    const version = await ctx.tx.call('common.versionControl.parseId', {
+      id: assignable.id,
+    });
 
     return { ...assignable, ...version };
 
     // TODO: Update attachments
   } catch (error) {
-    throw new Error(`Error updating task: ${error.message}`);
+    throw new LeemonsError(ctx, {
+      message: `Error updating task: ${error.message}`,
+    });
   }
-};
+}
+
+module.exports = update;

@@ -50,7 +50,17 @@ async function updateLibrary(file, { assets, programs, users }) {
         const { creator, enabled, program: programKey, subject: subjectKey } = assetsRaw[key];
         if (enabled !== false && enabled !== 'No') {
           // eslint-disable-next-line camelcase
-          const { created_at, deleted_at, updated_at, deleted, cover, ...asset } = assets[key];
+          const {
+            created_at,
+            deleted_at,
+            updated_at,
+            createdAt,
+            deletedAt,
+            updatedAt,
+            deleted,
+            cover,
+            ...asset
+          } = assets[key];
 
           asset.cover = cover?.id ?? cover;
           asset.file = asset.file?.id ?? asset.file;

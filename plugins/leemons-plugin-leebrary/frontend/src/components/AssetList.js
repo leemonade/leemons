@@ -29,9 +29,9 @@ import { prepareAssetType } from '../helpers/prepareAssetType';
 import {
   deleteAssetRequest,
   duplicateAssetRequest,
-  getAssetTypesRequest,
   getAssetsByIdsRequest,
   getAssetsRequest,
+  getAssetTypesRequest,
   listCategoriesRequest,
   pinAssetRequest,
   unpinAssetRequest,
@@ -516,11 +516,11 @@ function AssetList({
   }
 
   /*
-  const handleOnShowPublic = (value) => {
-    setShowPublic(value);
-    onShowPublic(value);
-  };
-  */
+    const handleOnShowPublic = (value) => {
+      setShowPublic(value);
+      onShowPublic(value);
+    };
+    */
 
   function handleOnPin(item) {
     pinAsset(item);
@@ -569,7 +569,7 @@ function AssetList({
       {
         Header: t('tableLabels.updated'),
         accessor: 'updated',
-        valueRender: (_, row) => <LocaleDate date={row.updated_at} />,
+        valueRender: (_, row) => <LocaleDate date={row.updatedAt} />,
       },
     ],
     [t]
@@ -700,8 +700,7 @@ function AssetList({
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
-      const data = items.leebrary.list.labels;
-      return data;
+      return items.leebrary.list.labels;
     }
     return {};
   }, [JSON.stringify(translations)]);

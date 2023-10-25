@@ -1,35 +1,36 @@
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { isEmpty, isNil, isString } from 'lodash';
 
 async function updateAsset(assetData, categoryId, categoryKey) {
   const { id, file, cover, category, ...data } = assetData;
-  const formData = new FormData();
+  const formData = {};
 
   if (categoryKey === 'media-files') {
     if (file?.id) {
-      formData.append('file', file.id);
+      formData.file = file.id;
     } else if (isString(file) && !isEmpty(file)) {
-      formData.append('file', file);
+      formData.file = file;
     } else if (!isNil(file)) {
-      formData.append('files', file, file.name);
+      formData.file = await uploadFileAsMultipart(file, { name: file.name });
     }
   }
 
   if (cover?.id) {
-    formData.append('cover', cover.id);
+    formData.cover = cover.id;
   } else if (isString(cover) && !isEmpty(cover)) {
-    formData.append('cover', cover);
+    formData.cover = cover;
   } else if (!isNil(cover)) {
-    formData.append('cover', cover, cover.name);
+    formData.cover = await uploadFileAsMultipart(cover, { name: cover.name });
   }
 
-  formData.append('categoryId', categoryId || category);
+  formData.categoryId = categoryId || category;
 
   Object.keys(data).forEach((key) => {
     if (data[key] !== undefined && (typeof data[key] !== 'string' || data[key]?.length > 0)) {
       if (key === 'subjects') {
-        formData.append(key, JSON.stringify(data[key]));
+        formData[key] = JSON.stringify(data[key]);
       } else {
-        formData.append(key, data[key]);
+        formData[key] = data[key];
       }
     }
   });
@@ -38,9 +39,6 @@ async function updateAsset(assetData, categoryId, categoryKey) {
     allAgents: true,
     method: 'PUT',
     body: formData,
-    headers: {
-      'content-type': 'none',
-    },
   });
 }
 

@@ -69,7 +69,7 @@ module.exports = {
       throw validator.error;
     },
   },
-  ResetRest: {
+  resetRest: {
     rest: {
       path: '/reset',
       method: 'POST',
@@ -224,11 +224,12 @@ module.exports = {
       _.forIn(allowedPermissions, ({ actions }, permissionName) => {
         rAllowedPermissions.push({ permissionName, actions });
       });
-      return {
-        status: 401,
-        message: 'You do not have permissions',
-        allowedPermissions: rAllowedPermissions,
-      };
+      throw new LeemonsError(ctx, {
+        message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
+          ', '
+        )}.`,
+        httpStatusCode: 401,
+      });
     },
   },
   agentDetailForPageRest: {
@@ -266,11 +267,12 @@ module.exports = {
       _.forIn(allowedPermissions, ({ actions }, permissionName) => {
         rAllowedPermissions.push({ permissionName, actions });
       });
-      return {
-        status: 401,
-        message: 'You do not have permissions',
-        allowedPermissions: rAllowedPermissions,
-      };
+      throw new LeemonsError(ctx, {
+        message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
+          ', '
+        )}.`,
+        httpStatusCode: 401,
+      });
     },
   },
   profilesRest: {
@@ -621,11 +623,12 @@ module.exports = {
       _.forIn(allowedPermissions, ({ actions }, permissionName) => {
         rAllowedPermissions.push({ permissionName, actions });
       });
-      return {
-        status: 401,
-        message: 'You do not have permissions',
-        allowedPermissions: rAllowedPermissions,
-      };
+      throw new LeemonsError(ctx, {
+        message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
+          ', '
+        )}.`,
+        httpStatusCode: 401,
+      });
     },
   },
   updateUserAvatarRest: {
@@ -649,7 +652,7 @@ module.exports = {
       if (hasPermission) {
         const data = await usersService.updateAvatar({
           userId: ctx.params.id,
-          avatar: ctx.params.files.image,
+          avatar: ctx.params.image,
           ctx,
         });
         return { status: 200, data };
@@ -658,11 +661,12 @@ module.exports = {
       _.forIn(allowedPermissions, ({ actions }, permissionName) => {
         rAllowedPermissions.push({ permissionName, actions });
       });
-      return {
-        status: 401,
-        message: 'You do not have permissions',
-        allowedPermissions: rAllowedPermissions,
-      };
+      throw new LeemonsError(ctx, {
+        message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
+          ', '
+        )}.`,
+        httpStatusCode: 401,
+      });
     },
   },
   updateUserAgentRest: {
@@ -695,11 +699,12 @@ module.exports = {
       _.forIn(allowedPermissions, ({ actions }, permissionName) => {
         rAllowedPermissions.push({ permissionName, actions });
       });
-      return {
-        status: 401,
-        message: 'You do not have permissions',
-        allowedPermissions: rAllowedPermissions,
-      };
+      throw new LeemonsError(ctx, {
+        message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
+          ', '
+        )}.`,
+        httpStatusCode: 401,
+      });
     },
   },
   updateSessionConfigRest: {

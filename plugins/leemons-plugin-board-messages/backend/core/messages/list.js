@@ -17,7 +17,7 @@ async function list({ page, size, filters, ctx }) {
       query.status = _.isArray(filters.status) ? filters.status : [filters.status];
     }
     if (filters.internalName) {
-      query.internalName = { $regex: filters.internalName, $options: 'i' };
+      query.internalName = { $regex: _.escapeRegExp(filters.internalName), $options: 'i' };
     }
   }
   const results = await mongoDBPaginate({

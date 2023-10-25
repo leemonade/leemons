@@ -12,18 +12,16 @@ export function useSortTypes() {
   const localizations = React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('sortTypes'));
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN('sortTypes')) ?? {};
     }
 
     return {};
   }, [translations]);
 
   // TRANSLATE
-  const sortTypes = React.useMemo(
+  return React.useMemo(
     () =>
       Object.entries(localizations).map(([key, value]) => ({
         value: key,
@@ -31,8 +29,6 @@ export function useSortTypes() {
       })),
     [localizations]
   );
-
-  return sortTypes;
 }
 
 const Sort = React.forwardRef(({ labels, value, onChange }, ref) => {

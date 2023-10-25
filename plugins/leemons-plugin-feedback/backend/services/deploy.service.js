@@ -14,6 +14,7 @@ const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
 const { addMenuItemsDeploy } = require('@leemons/menu-builder');
 const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { addCategoryDeploy } = require('@leemons/library');
 const { assignableRoles, permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -87,6 +88,6 @@ module.exports = () => ({
     },
   },
   created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 });

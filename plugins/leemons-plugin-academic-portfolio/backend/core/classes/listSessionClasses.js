@@ -49,7 +49,7 @@ async function listSessionClasses({ program, type, withProgram, withTeachers, ct
     classIds = _.map(programClasses, 'id');
   }
 
-  let classes = await classByIds({ classIds, withProgram, withTeachers, ctx });
+  let classes = await classByIds({ ids: classIds, withProgram, withTeachers, ctx });
 
   classes = await getClassesProgramInfo({
     programs: program || _.uniq(_.map(classes, 'subject.program')),

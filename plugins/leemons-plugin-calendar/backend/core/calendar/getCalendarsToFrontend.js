@@ -116,7 +116,6 @@ async function getCalendarsToFrontend({ ctx }) {
       page: 0,
       size: 9999,
       center: userAgent.center.id,
-      ctx,
     }),
   ];
 

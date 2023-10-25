@@ -46,7 +46,6 @@ async function removeMember({ family, user, ctx }) {
     user,
     profile,
     permissions: permissionsToRemove,
-    ctx,
   });
 
   return member;

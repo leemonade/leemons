@@ -14,6 +14,8 @@ async function updateSettings(values) {
     body.hideWelcome = ['true', '1', 'on'].includes(String(body.hideWelcome));
     delete body.created_at;
     delete body.updated_at;
+    delete body.createdAt;
+    delete body.updatedAt;
     delete body.status;
     delete body.id;
   }

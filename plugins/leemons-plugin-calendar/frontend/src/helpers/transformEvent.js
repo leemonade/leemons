@@ -61,7 +61,7 @@ export default function transformEvent(
       const instance = {
         dates: {
           deadline: event.endDate,
-          start: event.instanceData ? event.startDate : event.created_at,
+          start: event.instanceData ? event.startDate : event.createdAt,
         },
         status: event.instanceData?.status || 'opened',
       };

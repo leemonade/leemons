@@ -1,4 +1,4 @@
-async function getCourseName(item) {
+function getCourseName(item) {
   return item.name ? `${item.name}` : `${item.index}º`;
 }
 

@@ -1,3 +1,5 @@
+const { escapeRegExp } = require('lodash');
+
 const { validateLocaleCode } = require('../../validations/locale');
 const { Validator } = require('../../validations/localization');
 const {
@@ -49,7 +51,10 @@ async function deleteKeyStartsWith({ key, locale = null, isPrivate, ctx }) {
   const validator = new Validator(ctx.callerPlugin);
   const query = {
     // Validate key and get it lowercased
-    key: { $regex: `^${validator.validateLocalizationKey(key, true)}`, $options: 'i' },
+    key: {
+      $regex: `^${escapeRegExp(validator.validateLocalizationKey(key, true))}`,
+      $options: 'i',
+    },
   };
 
   if (locale) {
@@ -113,7 +118,7 @@ async function deleteAll({ key = null, locale = null, isPrivate, ctx }) {
     query.key = validator.validateLocalizationKey(key, true);
   }
   if (locale) {
-    query.key = { $regex: `^${ctx.callerPlugin}`, $options: 'i' };
+    query.key = { $regex: `^${escapeRegExp(ctx.callerPlugin)}`, $options: 'i' };
     query.locale = validateLocaleCode(locale);
   }
 

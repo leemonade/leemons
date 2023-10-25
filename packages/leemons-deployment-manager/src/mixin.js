@@ -4,6 +4,9 @@ const { getPluginNameFromServiceName } = require('@leemons/service-name-parser')
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
+const actionCallCache = {};
+const actionCanCache = {};
+
 async function getDeploymentID(ctx) {
   try {
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
@@ -27,7 +30,7 @@ async function modifyCTX(
 ) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
-  if (ctx.service.name !== 'gateway' || ctx.caller)
+  if (ctx.service.name !== 'gateway' && ctx.caller)
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
 
   ctx.__leemonsDeploymentManagerCall = ctx.call;
@@ -40,7 +43,7 @@ async function modifyCTX(
   ctx.logger = console;
 
   ctx.prefixPN = function (string) {
-    return `${getPluginNameFromServiceName(ctx.service.name)}.${string}`;
+    return `${getPluginNameFromServiceName(ctx.service.name)}${string ? '.' : ''}${string}`;
   };
 
   ctx.emit = async function (event, params, opts) {
@@ -67,16 +70,25 @@ async function modifyCTX(
       await getDeploymentID(ctx);
     }
 
-    if (actionName.startsWith('deployment-manager.')) {
+    if (actionName.startsWith('deployment-manager.') || actionName.startsWith('gateway.')) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }
 
-    const manager = await ctx.__leemonsDeploymentManagerCall(
-      'deployment-manager.getGoodActionToCall',
-      {
+    if (!actionCallCache.hasOwnProperty(ctx.meta.deploymentID)) {
+      actionCallCache[ctx.meta.deploymentID] = {};
+    }
+
+    const cacheKey = `${ctx.service.fullName}.${actionName}`;
+
+    let manager = null;
+    if (actionCallCache[ctx.meta.deploymentID][cacheKey]) {
+      manager = actionCallCache[ctx.meta.deploymentID][cacheKey];
+    } else {
+      manager = await ctx.__leemonsDeploymentManagerCall('deployment-manager.getGoodActionToCall', {
         actionName,
-      }
-    );
+      });
+      actionCallCache[ctx.meta.deploymentID][cacheKey] = manager;
+    }
 
     if (process.env.DEBUG === 'true')
       console.log(
@@ -111,7 +123,6 @@ module.exports = function ({
           if (!ctx.params?.event) throw new LeemonsError(ctx, { message: 'event param required' });
           if (this.events && this.events[ctx.params.event]) {
             // Llamamos al evento el cual a sido machado por el nuestro en el created()
-            console.log('Nos llaman al evento:' + ctx.params.event);
             return this.events[ctx.params.event](ctx.params.params, { parentCtx: ctx });
           }
           return null;
@@ -129,16 +140,26 @@ module.exports = function ({
               // sin comprobar nada, ya que intenta lanzar un evento y los eventos tienen su propia seguridad
               if (
                 !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
-                !ctx.action.name.includes('leemonsMongoDBRollback')
+                !ctx.action.name.includes('leemonsMongoDBRollback') &&
+                !ctx.action.name.startsWith('gateway.')
               ) {
                 if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
                   if (!ctx.meta.relationshipID)
                     throw new LeemonsError(ctx, { message: 'relationshipID is required' });
-                  await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
-                    fromService: ctx.caller,
-                    toAction: ctx.action.name,
-                    relationshipID: ctx.meta.relationshipID,
-                  });
+
+                  if (!actionCanCache.hasOwnProperty(ctx.meta.deploymentID)) {
+                    actionCanCache[ctx.meta.deploymentID] = [];
+                  }
+
+                  const cacheKey = ctx.caller + ctx.action.name + ctx.meta.relationshipID;
+                  if (actionCanCache[ctx.meta.deploymentID].indexOf(cacheKey) === -1) {
+                    await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
+                      fromService: ctx.caller,
+                      toAction: ctx.action.name,
+                      relationshipID: ctx.meta.relationshipID,
+                    });
+                    actionCanCache[ctx.meta.deploymentID].push(cacheKey);
+                  }
                 }
               }
             }

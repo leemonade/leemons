@@ -206,6 +206,34 @@ const assignableRoles = [
   },
 ];
 
+const libraryQuestionBankCategory = {
+  key: 'tests-questions-banks',
+  creatable: true,
+  createUrl: '/private/tests/questions-banks/new',
+  duplicable: true,
+  provider: 'tests',
+  canUse: ['tests'],
+  order: 204,
+  menu: {
+    item: {
+      iconSvg: '/public/tests/qb-menu-icon.svg',
+      activeIconSvg: '/public/tests/qb-menu-icon.svg',
+      label: {
+        en: 'Questions Banks',
+        es: 'Bancos de preguntas',
+      },
+    },
+    permissions: [
+      {
+        permissionName: 'tests.questionsBanks',
+        actionNames: ['admin'],
+      },
+    ],
+  },
+  listCardComponent: 'QuestionsBanksListCard',
+  detailComponent: 'QuestionsBanksDetail',
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -215,4 +243,5 @@ module.exports = {
   },
   menuItems,
   assignableRoles,
+  libraryQuestionBankCategory,
 };

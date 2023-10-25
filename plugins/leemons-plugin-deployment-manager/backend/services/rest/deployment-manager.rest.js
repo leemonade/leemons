@@ -19,7 +19,11 @@ const {
   getPluginVersionFromServiceName,
 } = require('@leemons/service-name-parser');
 const { newTransaction, addTransactionState } = require('@leemons/transactions');
-const { ObjectId } = require('mongodb');
+const {
+  mongoose: {
+    mongo: { ObjectId },
+  },
+} = require('@leemons/mongodb');
 
 /** @type {ServiceSchema} */
 module.exports = {

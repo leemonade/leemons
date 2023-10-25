@@ -20,23 +20,24 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/cache": "0.0.27",
-    "@leemons/common": "0.0.27",
-    "@leemons/deployment-manager": "0.0.27",
-    "@leemons/emails": "0.0.27",
-    "@leemons/error": "0.0.27",
-    "@leemons/menu-builder": "0.0.27",
-    "@leemons/middlewares": "0.0.27",
-    "@leemons/mongodb": "0.0.27",
-    "@leemons/mongodb-helpers": "0.0.27",
-    "@leemons/mqtt": "0.0.27",
-    "@leemons/multilanguage": "0.0.27",
-    "@leemons/permissions": "0.0.27",
-    "@leemons/users": "0.0.27",
-    "@leemons/utils": "0.0.27",
-    "@leemons/validator": "0.0.27",
-    "@leemons/widgets": "0.0.27",
+    "@leemons/cache": "0.0.40",
+    "@leemons/common": "0.0.40",
+    "@leemons/deployment-manager": "0.0.40",
+    "@leemons/emails": "0.0.53",
+    "@leemons/error": "0.0.40",
+    "@leemons/menu-builder": "0.0.40",
+    "@leemons/middlewares": "0.0.40",
+    "@leemons/mongodb": "0.0.40",
+    "@leemons/mongodb-helpers": "0.0.40",
+    "@leemons/mqtt": "0.0.40",
+    "@leemons/multilanguage": "0.0.40",
+    "@leemons/permissions": "0.0.40",
+    "@leemons/users": "0.0.40",
+    "@leemons/utils": "0.0.40",
+    "@leemons/validator": "0.0.40",
+    "@leemons/widgets": "0.0.40",
     "bcrypt": "^5.0.1",
+    "jaeger-client": "^3.19.0",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
@@ -46,13 +47,5 @@
   },
   "engines": {
     "node": ">= 16.x.x"
-  },
-  "jest": {
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "rootDir": "./services",
-    "roots": [
-      "../test"
-    ]
   }
 }

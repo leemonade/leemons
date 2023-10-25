@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   ContextContainer,
+  createStyles,
   Drawer,
   InputWrapper,
   NumberInput,
@@ -11,7 +12,6 @@ import {
   Stack,
   Switch,
   TextInput,
-  createStyles,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -97,13 +97,23 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
       { label: t('sunday'), value: 0 },
     ];
     store.countries = map(allCountries, (item) => ({
-      value: item.countryShortCode,
-      label: item.countryName,
+      value: item[1],
+      label: item[0],
     }));
     render();
   }
 
-  async function onSubmit({ created_at, deleted_at, updated_at, deleted, limits, ...data }) {
+  async function onSubmit({
+    created_at,
+    deleted_at,
+    updated_at,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    deleted,
+    limits,
+    ...data
+  }) {
     try {
       store.saving = true;
       render();

@@ -396,7 +396,7 @@ function ChatInfoDrawer({
 }
 
 ChatInfoDrawer.propTypes = {
-  room: PropTypes.string,
+  room: PropTypes.object,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onReturn: PropTypes.func,

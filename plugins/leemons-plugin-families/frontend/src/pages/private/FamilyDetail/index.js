@@ -5,29 +5,24 @@ import { useHistory, useParams } from 'react-router-dom';
 import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import {
   Alert,
+  Box,
   Button,
-  TextInput,
+  ContextContainer,
   Modal,
   PageContainer,
-  RadioGroup,
   Radio,
-  Box,
-  Textarea,
+  RadioGroup,
   Select,
-  ContextContainer,
-  Title,
   Stack,
   Table,
   Text,
+  Textarea,
+  TextInput,
   UserDisplayItem,
 } from '@bubbles-ui/components';
 // TODO: fix this import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import {
-  DeleteBinIcon,
-  FamilyChildIcon,
-  SingleActionsGraduateMaleIcon,
-} from '@bubbles-ui/icons/outline';
+import { FamilyChildIcon, SingleActionsGraduateMaleIcon } from '@bubbles-ui/icons/outline';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@families/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -100,7 +95,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} })
       },
       {
         Header: t('table.created_at'),
-        accessor: ({ created_at }) => moment(created_at).format('L'),
+        accessor: ({ createdAt }) => moment(createdAt).format('L'),
       },
     ],
     [t, selectedUser]

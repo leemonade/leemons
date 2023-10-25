@@ -32,7 +32,7 @@ const schema = new mongoose.Schema(
     isCustom: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
   },
   {

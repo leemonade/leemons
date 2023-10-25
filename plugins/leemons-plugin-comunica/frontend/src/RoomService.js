@@ -1,3 +1,4 @@
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import SocketIoService from '@mqtt-socket-io/service';
 import _ from 'lodash';
 
@@ -58,16 +59,12 @@ class RoomService {
     return RoomService.adminRemoveRoom(this.room, file);
   }
 
-  static adminChangeRoomImage(key, file) {
-    const form = new FormData();
-    form.append('image', file, file.name);
+  static async adminChangeRoomImage(key, file) {
+    const image = await uploadFileAsMultipart(file, { name: file.name });
     return leemons.api(`comunica/room/${key}/admin/image`, {
       allAgents: true,
       method: 'POST',
-      headers: {
-        'content-type': 'none',
-      },
-      body: form,
+      body: { image },
     });
   }
 
@@ -107,7 +104,7 @@ class RoomService {
   }
 
   static adminRemoveUserAgentFromRoom(key, userAgent) {
-    return leemons.api(`comunica/room/${key}/admin/remove`, {
+    return leemons.api(`comunica/room/${key}/admin/remove/user-agent`, {
       allAgents: true,
       method: 'POST',
       body: {

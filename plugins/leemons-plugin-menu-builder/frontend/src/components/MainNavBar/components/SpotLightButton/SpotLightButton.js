@@ -9,8 +9,8 @@ import {
   SPOTLIGHT_BUTTON_PROP_TYPES,
 } from './SpotLightButton.constants';
 
-export const SpotLightButton = ({ onClick, isCollapsed, lightMode, spotlightLabel }) => {
-  const { classes } = SpotLightButtonStyles({ lightMode });
+const SpotLightButton = ({ onClick, isCollapsed, spotlightLabel }) => {
+  const { classes } = SpotLightButtonStyles();
   return (
     <Box>
       <Box variant="link" role="button" onClick={() => onClick()} className={classes.buttonWrapper}>
@@ -30,3 +30,6 @@ export const SpotLightButton = ({ onClick, isCollapsed, lightMode, spotlightLabe
 SpotLightButton.displayName = 'SpotLightButton';
 SpotLightButton.defaultProps = SPOTLIGHT_BUTTON_DEFAULT_PROPS;
 SpotLightButton.propTypes = SPOTLIGHT_BUTTON_PROP_TYPES;
+
+export default SpotLightButton;
+export { SpotLightButton };

@@ -13,7 +13,6 @@ export const NAV_ITEM_DEFAULT_PROPS = {
   isCollapsed: false,
   expandedItem: '',
   onOpen: () => {},
-  lightMode: false,
   isNew: false,
 };
 
@@ -30,6 +29,5 @@ export const NAV_ITEM_PROP_TYPES = {
   isCollapsed: PropTypes.bool,
   expandedItem: PropTypes.string,
   onOpen: PropTypes.func,
-  lightMode: PropTypes.bool,
   isNew: PropTypes.bool,
 };

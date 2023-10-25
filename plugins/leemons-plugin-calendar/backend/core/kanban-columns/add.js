@@ -28,7 +28,6 @@ async function add({ data, ctx }) {
   await ctx.tx.call('multilanguage.common.addManyByKey', {
     key: ctx.prefixPN(`kanban.columns.${column.id}`),
     data: name,
-    ctx,
   });
 
   return column;

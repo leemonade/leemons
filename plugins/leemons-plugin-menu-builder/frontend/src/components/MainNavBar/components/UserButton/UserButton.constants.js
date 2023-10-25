@@ -8,7 +8,6 @@ export const USER_BUTTON_DEFAULT_PROPS = {
   onOpen: () => {},
   expandedItem: null,
   isSubItemActive: false,
-  lightMode: false,
 };
 
 export const USER_BUTTON_PROP_TYPES = {

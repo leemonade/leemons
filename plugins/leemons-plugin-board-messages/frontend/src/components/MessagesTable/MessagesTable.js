@@ -7,7 +7,7 @@ import { listProfilesRequest } from '@users/request';
 import getUserCenters from '@users/request/getUserCenters';
 import { getCentersWithToken, useSession } from '@users/session';
 import React, { useMemo, useState } from 'react';
-import { saveRequest, listRequest } from '../../request';
+import { listRequest, saveRequest } from '../../request';
 import { Filters } from '../Filters';
 import { ActionItem } from './components/ActionItem';
 import { DateItem } from './components/DateItem';
@@ -22,8 +22,8 @@ import {
 } from './MessagesTable.constants';
 import { MessagesTableStyles } from './MessagesTable.styles';
 
-const useMessagesColumns = (labels) => {
-  const messagesColumns = useMemo(
+const useMessagesColumns = (labels) =>
+  useMemo(
     () => [
       {
         Header: labels?.name || '',
@@ -56,8 +56,6 @@ const useMessagesColumns = (labels) => {
     ],
     [labels]
   );
-  return messagesColumns;
-};
 
 const DEFAULT_VALUES = {
   internalName: '',
@@ -183,6 +181,9 @@ const MessagesTable = ({
     delete messageToSave.updated_at;
     delete messageToSave.created_at;
     delete messageToSave.deleted_at;
+    delete messageToSave.updatedAt;
+    delete messageToSave.createdAt;
+    delete messageToSave.deletedAt;
     delete messageToSave.deleted;
     try {
       await saveRequest(messageToSave);
@@ -193,8 +194,8 @@ const MessagesTable = ({
     }
   };
 
-  const parseMessagesData = (unparsedMessages) => {
-    const parsedMessages = unparsedMessages.map((message) => {
+  const parseMessagesData = (unparsedMessages) =>
+    unparsedMessages.map((message) => {
       const name = (
         <NameItem name={message.internalName} owner={message.owner.user} asset={message.asset} />
       );
@@ -236,8 +237,6 @@ const MessagesTable = ({
       );
       return { name, objective, format, publishDate, state, actions, statistics };
     });
-    return parsedMessages;
-  };
 
   React.useEffect(() => {
     if (isTeacher === null) return;

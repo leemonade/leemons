@@ -14,7 +14,13 @@ const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
 const { addMenuItemsDeploy } = require('@leemons/menu-builder');
 const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { permissions, assignableRoles, menuItems } = require('../config/constants');
+const { addCategoryDeploy } = require('@leemons/library');
+const {
+  permissions,
+  assignableRoles,
+  menuItems,
+  libraryQuestionBankCategory,
+} = require('../config/constants');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -49,9 +55,27 @@ module.exports = () => ({
         ctx.tx.emit('init-submenu');
       },
     },
+    {
+      type: 'once-per-install',
+      events: ['leebrary.init-categories', 'tests.init-permissions'],
+      handler: async (ctx) => {
+        // Library categories
+        await addCategoryDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          category: libraryQuestionBankCategory,
+          ctx,
+        });
+      },
+    },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
+      await ctx.tx.call('leebrary.providers.register', {
+        name: 'Library Test (Question banks)',
+        supportedMethods: {
+          getByIds: true,
+        },
+      });
       // Locales
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
@@ -86,6 +110,6 @@ module.exports = () => ({
     },
   },
   created() {
-    mongoose.connect(process.env.MONGO_URI);
+    // mongoose.connect(process.env.MONGO_URI);
   },
 });

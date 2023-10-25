@@ -47,6 +47,8 @@ function CalendarSimpleEventModal({ event, eventTypes, close, config, calendars 
         created_at,
         // eslint-disable-next-line camelcase
         updated_at,
+        createdAt,
+        updatedAt,
         ...eventData
       } = event;
       _.forIn(eventData, (value, key) => {

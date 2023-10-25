@@ -272,7 +272,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const data = await listDetailPage({ user: ctx.meta.userSession, ctx });
+      const data = await listDetailPage({ user: ctx.params.user, ctx });
       return { status: 200, data };
     },
   },

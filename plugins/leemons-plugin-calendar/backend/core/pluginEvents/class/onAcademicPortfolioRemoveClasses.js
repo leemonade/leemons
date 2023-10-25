@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 async function removeStudentFromProgramIfNeed({ program, userAgentId, ctx }) {
-  const insideProgram = ctx.tx.call('academic-portfolio.programs.isUserInsideProgram', {
+  const insideProgram = await ctx.tx.call('academic-portfolio.programs.isUserInsideProgram', {
     userSession: { userAgents: [{ id: userAgentId }] },
     programId: program,
   });

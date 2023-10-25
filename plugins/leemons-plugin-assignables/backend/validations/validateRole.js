@@ -10,23 +10,23 @@ const roleValidationObject = {
     },
     teacherDetailUrl: {
       type: 'string',
-      minLength: 2,
+      minLength: 1,
     },
     studentDetailUrl: {
       type: 'string',
-      minLength: 2,
+      minLength: 1,
     },
     evaluationDetailUrl: {
       type: 'string',
-      minLength: 2,
+      minLength: 1,
     },
     dashboardUrl: {
       type: 'string',
-      minLength: 2,
+      minLength: 1,
     },
     previewUrl: {
       type: 'string',
-      minLength: 2,
+      minLength: 1,
     },
     plugin: {
       type: 'string',

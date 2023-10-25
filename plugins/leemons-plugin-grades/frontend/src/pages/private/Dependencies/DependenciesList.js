@@ -255,7 +255,16 @@ export default function DependenciesList() {
         render();
 
         if (e.id) {
-          const { created_at, deleted, deleted_at, updated_at, ...data } = e;
+          const {
+            deleted,
+            created_at,
+            deleted_at,
+            updated_at,
+            createdAt,
+            deletedAt,
+            updatedAt,
+            ...data
+          } = e;
           await updateDependencyRequest({
             ...data,
             group: parseConditions(e.group),

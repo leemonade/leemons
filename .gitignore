@@ -133,10 +133,12 @@ dist
 .idea
 
 .DS_STORE
+.DS_Store
 
 # Editor
-
 .vscode/
+.idea/
+
 
 
 # Leemons
@@ -151,3 +153,7 @@ apps/dev/frontend
 apps/dev/build
 apps/dev/events.json
 docs-build
+
+package-lock.json
+
+.scannerwork

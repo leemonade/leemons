@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 function setLabelAndDescriptionToItems({ menuItems, translationItemsByKey, ctx }) {
   const notFoundLabelsKeys = [];
   const notFoundDescriptionsKeys = [];
@@ -53,7 +54,7 @@ async function transformManyMenuItemsToFrontEndMenu({ menuItems, locale, customI
 
   // If any of the items is not in the specified language, we will try to make it available in any language.
   if (notFoundLabelsKeys.length || notFoundDescriptionsKeys.length) {
-    translationItemsByKey = ctx.tx.call('multilanguage.contents.getManyWithKeys', {
+    translationItemsByKey = await ctx.tx.call('multilanguage.contents.getManyWithKeys', {
       keys: notFoundLabelsKeys.concat(notFoundDescriptionsKeys),
     });
 

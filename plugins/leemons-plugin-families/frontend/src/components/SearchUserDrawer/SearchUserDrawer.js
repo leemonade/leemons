@@ -1,19 +1,19 @@
 import * as _ from 'lodash';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Drawer,
-  Stack,
-  RadioGroup,
-  TextInput,
-  Box,
-  Title,
-  Text,
-  Button,
   Alert,
-  Radio,
-  Table,
+  Box,
+  Button,
+  Drawer,
   Paper,
+  Radio,
+  RadioGroup,
+  Stack,
+  Table,
+  Text,
+  TextInput,
+  Title,
   UserDisplayItem,
 } from '@bubbles-ui/components';
 import moment from 'moment';
@@ -66,7 +66,7 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
       },
       {
         Header: t('table.created_at'),
-        accessor: ({ created_at }) => moment(created_at).format('L'),
+        accessor: ({ createdAt }) => moment(createdAt).format('L'),
       },
     ],
     [t, selectedUser]

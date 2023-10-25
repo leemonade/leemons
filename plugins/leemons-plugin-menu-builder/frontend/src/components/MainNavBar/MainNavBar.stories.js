@@ -18,9 +18,7 @@ export default {
       url: 'https://www.figma.com/file/OMMWWv7my6KCmpVwmZ6QcW/Bubbles---Components-(Copy)?node-id=1330%3A19227&mode=dev',
     },
   },
-  argTypes: {
-    lightMode: { control: 'boolean' },
-  },
+  argTypes: {},
   // play: async ({ canvasElement }) => {
   //   const canvas = within(canvasElement);
   //   await userEvent.hover(canvas.getAllByRole('button')[0]);
@@ -55,7 +53,6 @@ export const Playground = Template.bind({});
 
 Playground.args = {
   ...MAIN_NAV_BAR_DEFAULT_PROPS,
-  lightMode: false,
   menuData,
   sessionMenu,
   session,
