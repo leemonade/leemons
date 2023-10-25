@@ -1,3 +1,5 @@
+const { LeemonsValidator } = require('@leemons/validator');
+
 const subjectsValidationObject = {
   type: 'array',
   items: {
@@ -23,7 +25,7 @@ const subjectsValidationObject = {
 };
 
 function validateSubjects(subjects) {
-  const validator = new global.utils.LeemonsValidator(subjectsValidationObject);
+  const validator = new LeemonsValidator(subjectsValidationObject, { allowUnionTypes: true });
 
   if (!validator.validate(subjects)) {
     throw validator.error;

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const { LeemonsValidator } = require('@leemons/validator');
 
 const { subjectsValidationObject } = require('./subjects');
@@ -70,11 +71,6 @@ const assignableValidationObject = {
       nullable: true,
     },
     subjects: subjectsValidationObject,
-    // methodology: {
-    //   type: 'string',
-    //   maxLength: 255,
-    //   nullable: true,
-    // },
     statement: {
       type: 'string',
       maxLength: 16777215,
@@ -130,7 +126,7 @@ const validAssignableProperties = [
   // 'methodology',
   'statement',
   'development',
-  'relatedAssignables',
+  // 'relatedAssignables',
   'duration',
   'resources',
   'submission',
@@ -151,9 +147,7 @@ function validateAssignable(assignable, { validationObject, useRequired = false 
     }
   }
 
-  const validator = new LeemonsValidator(obj, {
-    allowUnionTypes: true,
-  });
+  const validator = new LeemonsValidator(obj, { allowUnionTypes: true });
 
   if (!validator.validate(assignable)) {
     throw validator.error;
