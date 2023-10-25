@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+// const { map } = require('lodash');
 const { getAssignables } = require('../getAssignables');
 
 /**
@@ -15,15 +15,12 @@ async function findAssignableByAssetIds({ assets, deleted, ctx }) {
   // EN: Get the details of each assignable (if no permissions, don't return it)
   // ES: Obtiene los detalles de cada asignable (si no tiene permisos, no lo devuelve)
 
-  const assetIds = map(assets, 'id');
-  const assignables = await getAssignables({
-    ids: assetIds,
+  return getAssignables({
+    ids: assets,
     columns: [],
     showDeleted: deleted,
     throwOnMissing: false,
     ctx,
   });
-
-  return assignables;
 }
 module.exports = { findAssignableByAssetIds };

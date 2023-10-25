@@ -1,5 +1,8 @@
 const _ = require('lodash');
 
+const { searchAssignables } = require('../../assignables/searchAssignables');
+const { getAssignablesAssets } = require('../../assignables/getAssignablesAssets');
+
 /**
  * This function performs a search operation based on the provided parameters.
  * It retrieves assignables based on the criteria, query, category, assets, published status, and preference.
@@ -25,18 +28,19 @@ async function search({
 }) {
   const role = category.key.replace('assignables.', '');
 
-  const assignablesIds = await ctx.tx.call('assignables.assignables.searchAssignables', {
-    role,
-    published,
-    preferCurrent,
-    search: criteria,
-    subjects: query?.subjects,
-    program: query?.program,
+  const assignablesIds = await searchAssignables({
+    roles: role,
+    data: {
+      published,
+      preferCurrent,
+      search: criteria,
+      subjects: query?.subjects,
+      program: query?.program,
+    },
+    ctx,
   });
 
-  const assets = await ctx.tx.call('assignables.assignables.getAssignablesAssets', {
-    assignablesIds,
-  });
+  const assets = await getAssignablesAssets({ ids: assignablesIds, ctx });
 
   if (assetsIds?.length) {
     return _.intersection(Object.values(assets), assetsIds);

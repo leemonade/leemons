@@ -1,3 +1,5 @@
+const { findAssignableByAssetIds } = require('../../assignables/findAssignableByAssetIds');
+
 /**
  * Retrieves assignables by their asset IDs.
  *
@@ -8,7 +10,7 @@
  */
 async function getByAssetIds({ assetIds, ctx }) {
   // To implement: this
-  return ctx.tx.call('assignables.assignables.findAssignableByAssetIds', { assetIds });
+  return findAssignableByAssetIds({ assets: assetIds, ctx });
 }
 
 module.exports = { getByAssetIds };
