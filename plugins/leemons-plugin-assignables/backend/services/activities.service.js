@@ -3,9 +3,8 @@
 const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-// Descomentar una vez hecho el merge con microservices/dev
-// const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-// const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/activities.rest');
@@ -14,12 +13,12 @@ module.exports = {
   name: 'assignables.activities',
   version: 1,
   mixins: [
-    // LeemonsMiddlewaresMixin(),
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
-    // LeemonsMQTTMixin(),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
