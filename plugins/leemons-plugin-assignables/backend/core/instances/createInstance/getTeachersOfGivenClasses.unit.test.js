@@ -12,7 +12,7 @@ beforeEach(() => {
   jest.resetAllMocks();
   ctx = generateCtx({
     actions: {
-      'academic-portfolio.classes.classesByIds': classesByIdsHandler,
+      'academic-portfolio.classes.classByIds': classesByIdsHandler,
     },
   });
 });

@@ -1,4 +1,7 @@
 const path = require('path');
+const _ = require('lodash');
+const { Agenda } = require('@hokify/agenda');
+
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { addLocalesDeploy } = require('@leemons/multilanguage');
 const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
@@ -8,9 +11,7 @@ const { addPermissionsDeploy } = require('@leemons/permissions');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getEmailTypes } = require('@leemons/emails');
-const _ = require('lodash');
 
-const { Agenda } = require('@hokify/agenda');
 const { menuItems, widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
 const newActivity = require('../emails/userCreateAssignation');
@@ -149,6 +150,15 @@ module.exports = {
 
       // Email Templates
       await initEmails(ctx);
+
+      // Register as a library provider
+      await ctx.tx.call('leebrary.providers.register', {
+        name: 'Library Assignables',
+        supportedMethods: {
+          getByIds: true,
+          search: true,
+        },
+      });
     },
     /*
                                               --- Academic Portfolio ---

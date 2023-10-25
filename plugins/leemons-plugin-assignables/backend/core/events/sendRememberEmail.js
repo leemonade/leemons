@@ -78,7 +78,7 @@ async function sendRememberEmails({ ctx }) {
     const instanceById = _.keyBy(finalInstances, 'id');
     const assignableById = _.keyBy(assignables, 'id');
 
-    const classes = await ctx.tx.call('academic-portfolio.classes.classesByIds', {
+    const classes = await ctx.tx.call('academic-portfolio.classes.classByIds', {
       ids: _.uniq(_.map(assignables, 'class')),
     });
 

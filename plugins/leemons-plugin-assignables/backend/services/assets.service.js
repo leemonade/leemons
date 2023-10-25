@@ -4,16 +4,26 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { pluginName } = require('../config/constants');
-const { getByAssetIds, search } = require('../core/provider');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { getByAssetIds, search } = require('../core/assets');
+const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: `${pluginName}.assets`,
+  name: 'assignables.assets',
   version: 1,
-  mixins: [LeemonsMiddlewaresMixin(), LeemonsCacheMixin(), LeemonsDeploymentManagerMixin()],
+  mixins: [
+    LeemonsMiddlewaresMixin(),
+    LeemonsCacheMixin(),
+    LeemonsMongoDBMixin({
+      models: getServiceModels(),
+    }),
+    LeemonsMQTTMixin(),
+    LeemonsDeploymentManagerMixin(),
+  ],
   actions: {
     getByIds: {
       handler(ctx) {

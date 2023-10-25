@@ -17,12 +17,7 @@ async function getSubjects({ assignableIds, useIds = false, ctx }) {
   const subjectsPerAssignable = {};
 
   subjects.forEach((subject) => {
-    const subjectData = pick(subject, [
-      'program',
-      'subject',
-      'level',
-      'curriculum',
-    ]);
+    const subjectData = pick(subject, ['program', 'subject', 'level', 'curriculum']);
 
     if (useIds) {
       subjectData.id = subject.id;

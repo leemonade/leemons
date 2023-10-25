@@ -9,7 +9,7 @@ async function getInstancesSubjects({ instances, ctx }) {
 
   const dedupedClasses = uniq(map(instancesClasses, 'class'));
 
-  const apClasses = await ctx.tx.call('academic-portfolio.classes.classesByIds', {
+  const apClasses = await ctx.tx.call('academic-portfolio.classes.classByIds', {
     ids: dedupedClasses,
   });
 

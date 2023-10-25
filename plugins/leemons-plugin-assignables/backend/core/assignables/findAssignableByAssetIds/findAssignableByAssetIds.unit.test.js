@@ -32,7 +32,7 @@ describe('findAssignableByAssetIds', () => {
 
     // Assert
     expect(getAssignables).toHaveBeenCalledWith({
-      ids: _.map(assets, 'id'),
+      ids: assets,
       columns: [],
       showDeleted: deleted,
       throwOnMissing: false,
