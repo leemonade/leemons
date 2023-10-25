@@ -37,7 +37,7 @@ async function updateReportPer({ report, percentageCompleted, dataToSocket, ctx 
       percentageCompleted,
     }
   );
-  await leemons.socket.emit(report.creator, `FUNDAE_REPORT_CHANGE`, {
+  await ctx.socket.emit(report.creator, `FUNDAE_REPORT_CHANGE`, {
     ...dataToSocket,
     id: report.id,
     percentageCompleted,
@@ -297,7 +297,7 @@ async function startGeneration({ report, dataToSocket, ctx }) {
       evaluationSystem = await ctx.call('academic-portfolio.programs.getProgramEvaluationSystem', {
         id: program.id,
       });
-    } catch (e) { }
+    } catch (e) {}
 
     toSave.exams = {};
 
@@ -327,16 +327,20 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     toSave.examsPlatform = assignablesData.gradables.length;
     toSave.totalExams = toSave.examsPlatform;
     toSave.lessonsPlatfom = assignablesData.noGradables.length;
-    toSave.examsPerformed = `${(assignablesData.endDatesGradables.length / assignablesData.gradables.length) * 100
-      }% (${assignablesData.endDatesGradables.length}/${assignablesData.gradables.length})`;
-    toSave.lessonsPerformed = `${(assignablesData.endDatesNoGradables.length / assignablesData.noGradables.length) * 100
-      }% (${assignablesData.endDatesNoGradables.length}/${assignablesData.noGradables.length})`;
+    toSave.examsPerformed = `${
+      (assignablesData.endDatesGradables.length / assignablesData.gradables.length) * 100
+    }% (${assignablesData.endDatesGradables.length}/${assignablesData.gradables.length})`;
+    toSave.lessonsPerformed = `${
+      (assignablesData.endDatesNoGradables.length / assignablesData.noGradables.length) * 100
+    }% (${assignablesData.endDatesNoGradables.length}/${assignablesData.noGradables.length})`;
 
-    toSave.totalPerformed = `${((assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length) /
+    toSave.totalPerformed = `${
+      ((assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length) /
         (assignablesData.noGradables.length + assignablesData.gradables.length)) *
       100
-      }% (${assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length}/${assignablesData.noGradables.length + assignablesData.gradables.length
-      })`;
+    }% (${assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length}/${
+      assignablesData.noGradables.length + assignablesData.gradables.length
+    })`;
 
     const [teachersInClasses] = await Promise.all([
       ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {

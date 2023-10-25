@@ -2,8 +2,6 @@ const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 async function getPackage({ id, ctx }) {
-  const { assets: assetService } = leemons.getPlugin('leebrary').services;
-
   // Check is userSession is provided
   if (!ctx.meta.userSession)
     throw new LeemonsError(ctx, { message: 'User session is required (getPackage)' });

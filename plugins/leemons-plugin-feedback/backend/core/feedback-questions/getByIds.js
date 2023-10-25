@@ -2,7 +2,6 @@
 const _ = require('lodash');
 
 async function getByIds({ id, options, ctx }) {
-  const tagsService = leemons.getPlugin('common').services.tags;
   const questions = await ctx.tx.db.Questions.find({ id: _.isArray(id) ? id : [id] }).lean();
   const assetIds = [];
   _.forEach(questions, (question) => {
