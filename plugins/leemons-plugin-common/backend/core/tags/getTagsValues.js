@@ -18,7 +18,7 @@ async function getTagsValues({ tags, type, ctx }) {
   const valuesByTag = _.groupBy(values, 'tag');
 
   return _.map(_tags, (value) =>
-    valuesByTag[value] ? _.map(valuesByTag[value], (v) => JSON.parse(v.value)) : []
+    valuesByTag[value] ? _.map(valuesByTag[value], (v) => JSON.parse(v.value || null)) : []
   );
 }
 

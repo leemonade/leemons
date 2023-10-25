@@ -12,7 +12,7 @@ const { getAssignation } = require('../core/assignations/getAssignation');
 const { getAssignations } = require('../core/assignations/getAssignations');
 const { updateAssignation } = require('../core/assignations/updateAssignation');
 const { getUserDataForFundae } = require('../core/assignations/getUserDataForFundae');
-const restActions = require('./rest/assignables.rest');
+const restActions = require('./rest/assignations.rest');
 
 module.exports = {
   name: 'assignables.assignations',

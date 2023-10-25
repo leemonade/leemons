@@ -225,7 +225,7 @@ async function getCalendarsToFrontend({ ctx }) {
     isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
     isUserCalendar: calendar.id === userCalendar?.id,
     image: calendar.id === userCalendar?.id ? userSession.avatar : null,
-    metadata: calendar.metadata ? JSON.parse(calendar.metadata) : calendar.metadata,
+    metadata: calendar.metadata ? JSON.parse(calendar.metadata || null) : calendar.metadata,
     fullName: calendar.id === userCalendar?.id ? getUserFullName({ userSession }) : calendar.name,
   });
 
@@ -234,7 +234,7 @@ async function getCalendarsToFrontend({ ctx }) {
     userCalendar,
     ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id, metadata }) => {
       try {
-        const met = JSON.parse(metadata);
+        const met = JSON.parse(metadata || null);
         return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
         return id === userCalendar?.id ? 0 : 1;
@@ -243,7 +243,7 @@ async function getCalendarsToFrontend({ ctx }) {
     configCalendars,
     calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id, metadata }) => {
       try {
-        const met = JSON.parse(metadata);
+        const met = JSON.parse(metadata || null);
         return met?.internalId || id === userCalendar?.id ? 0 : 1;
       } catch (e) {
         return id === userCalendar?.id ? 0 : 1;
@@ -259,7 +259,7 @@ async function getCalendarsToFrontend({ ctx }) {
         .concat(configCalendarEvents)
         .map((event) => ({
           ...event,
-          data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
+          data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data,
         })),
       'id'
     ),
@@ -314,50 +314,50 @@ async function getCalendarsToFrontend({ ctx }) {
   programIds = _.uniq(programIds);
 
   /*
-    console.time('9');
-    const [programs, isAcademic, ...calendarConfigs] = await Promise.all([
-      leemons
-        .getPlugin('academic-portfolio')
-        .services.programs.programsByIds(programIds, { transacting }),
-      leemons
-        .getPlugin('academic-portfolio')
-        .services.config.userSessionIsAcademic(userSession, { transacting }),
-      ..._.map(programIds, (programId) =>
-        leemons.getPlugin('academic-calendar').services.config.getConfig(programId, { transacting })
-      ),
-    ]);
-    console.timeEnd('9');
+      console.time('9');
+      const [programs, isAcademic, ...calendarConfigs] = await Promise.all([
+        leemons
+          .getPlugin('academic-portfolio')
+          .services.programs.programsByIds(programIds, { transacting }),
+        leemons
+          .getPlugin('academic-portfolio')
+          .services.config.userSessionIsAcademic(userSession, { transacting }),
+        ..._.map(programIds, (programId) =>
+          leemons.getPlugin('academic-calendar').services.config.getConfig(programId, { transacting })
+        ),
+      ]);
+      console.timeEnd('9');
 
-    console.time('10');
+      console.time('10');
 
-    let courses = [];
-    if (isAcademic) {
-      let classes = await Promise.all(
-        _.map(programs, (program) =>
-          leemons
-            .getPlugin('academic-portfolio')
-            .services.classes.listSessionClasses(
-              userSession,
-              { program: program.id },
-              { transacting }
-            )
-        )
-      );
-      classes = _.flatten(classes);
-      _.forEach(classes, (classe) => {
-        if (_.isArray(classe.courses)) {
-          courses = courses.concat(classe.courses);
-        } else {
-          courses.push(classe.courses);
-        }
-      });
+      let courses = [];
+      if (isAcademic) {
+        let classes = await Promise.all(
+          _.map(programs, (program) =>
+            leemons
+              .getPlugin('academic-portfolio')
+              .services.classes.listSessionClasses(
+                userSession,
+                { program: program.id },
+                { transacting }
+              )
+          )
+        );
+        classes = _.flatten(classes);
+        _.forEach(classes, (classe) => {
+          if (_.isArray(classe.courses)) {
+            courses = courses.concat(classe.courses);
+          } else {
+            courses.push(classe.courses);
+          }
+        });
 
-      courses = _.uniqBy(courses, 'id');
-    }
+        courses = _.uniqBy(courses, 'id');
+      }
 
 
-  console.timeEnd('10');
-  */
+    console.timeEnd('10');
+    */
 
   const permissionNames = [];
 
@@ -514,42 +514,42 @@ async function getCalendarsToFrontend({ ctx }) {
           }
 
           /*
-          if (instance.dates) {
-            if (instance.dates.visualization) {
-              // Si hay fecha de visualización
-              if (now > new Date(instance.dates.visualization)) {
-                // Si la fecha actual es mayor debe de poder ver el evento
-                event.data.column = kanbanColumnsByOrder[1].id;
-              }
-            }
-            // Si siempre tiene que estar disponible lo ponemos en por hacer
-            if (instance.alwaysAvailable) {
-              event.data.column = kanbanColumnsByOrder[2].id;
-            }
-            // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
-            if (instance.dates.start) {
-              if (now > new Date(instance.dates.start)) {
-                event.data.column = kanbanColumnsByOrder[2].id;
-              }
-            }
-          }
-          // Si ya ha empezado con la tarea
-          if (assignation.timestamps?.start) {
-            event.data.column = kanbanColumnsByOrder[3].id;
-          }
-          if (instance.dates) {
-            if (instance.dates.deadline) {
-              if (now > new Date(instance.dates.deadline)) {
-                event.data.column = kanbanColumnsByOrder[5].id;
-              }
-            }
-          }
-          console.log(assignation);
-          if (assignation.finished) {
-            event.data.column = kanbanColumnsByOrder[5].id;
-          }
+                    if (instance.dates) {
+                      if (instance.dates.visualization) {
+                        // Si hay fecha de visualización
+                        if (now > new Date(instance.dates.visualization)) {
+                          // Si la fecha actual es mayor debe de poder ver el evento
+                          event.data.column = kanbanColumnsByOrder[1].id;
+                        }
+                      }
+                      // Si siempre tiene que estar disponible lo ponemos en por hacer
+                      if (instance.alwaysAvailable) {
+                        event.data.column = kanbanColumnsByOrder[2].id;
+                      }
+                      // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
+                      if (instance.dates.start) {
+                        if (now > new Date(instance.dates.start)) {
+                          event.data.column = kanbanColumnsByOrder[2].id;
+                        }
+                      }
+                    }
+                    // Si ya ha empezado con la tarea
+                    if (assignation.timestamps?.start) {
+                      event.data.column = kanbanColumnsByOrder[3].id;
+                    }
+                    if (instance.dates) {
+                      if (instance.dates.deadline) {
+                        if (now > new Date(instance.dates.deadline)) {
+                          event.data.column = kanbanColumnsByOrder[5].id;
+                        }
+                      }
+                    }
+                    console.log(assignation);
+                    if (assignation.finished) {
+                      event.data.column = kanbanColumnsByOrder[5].id;
+                    }
 
-           */
+                     */
           if (!event.data.column) {
             return null;
           }

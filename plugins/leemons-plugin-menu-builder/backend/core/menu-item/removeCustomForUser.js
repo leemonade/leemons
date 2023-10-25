@@ -37,7 +37,7 @@ async function removeCustomForUser({ menuKey, key, ctx }) {
   promises.push(
     ctx.tx.call('users.permissions.removeItems', {
       query: {
-        type: leemons.plugin.prefixPN(`${menuKey}.menu-item.custom`),
+        type: ctx.prefixPN(`${menuKey}.menu-item.custom`),
         item: key,
       },
     })

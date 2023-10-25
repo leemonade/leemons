@@ -8,7 +8,7 @@ async function getAssignSavedConfigs({ ctx }) {
   }).lean();
   return _.map(configs, (config) => ({
     ...config,
-    config: JSON.parse(config.config),
+    config: JSON.parse(config.config || null),
   }));
 }
 

@@ -18,7 +18,7 @@ async function getUserAgentsWithKeyValue({ key, value, ctx } = {}) {
 
   const result = {};
   _.forEach(configs, ({ userAgent, value: v }) => {
-    result[userAgent] = JSON.parse(v);
+    result[userAgent] = JSON.parse(v || null);
   });
   return result;
 }

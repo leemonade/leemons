@@ -44,9 +44,9 @@ async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx 
   // EN: We transform the jsonSchema
   const { profiles: oldProfilePermissions, roles: oldRolesPermissions } =
     transformPermissionKeysToObjectsByType({
-      jsonSchema: JSON.parse(oldJsonSchema),
+      jsonSchema: JSON.parse(oldJsonSchema || null),
       keysByType: getJsonSchemaProfilePermissionsKeysByType({
-        jsonSchema: JSON.parse(oldJsonSchema),
+        jsonSchema: JSON.parse(oldJsonSchema || null),
       }),
       prefix: `${locationName}.${pluginName}`,
       ctx,
@@ -113,8 +113,8 @@ async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx 
 
   const [dataset] = await Promise.all(promises);
 
-  dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
-  dataset.jsonUI = JSON.parse(dataset.jsonUI);
+  dataset.jsonSchema = JSON.parse(dataset.jsonSchema || null);
+  dataset.jsonUI = JSON.parse(dataset.jsonUI || null);
 
   return dataset;
 }

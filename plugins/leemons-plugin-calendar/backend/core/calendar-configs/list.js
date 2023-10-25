@@ -18,8 +18,8 @@ async function list({ ctx }) {
 
   return _.map(responses, (response) => ({
     ...response,
-    schoolDays: JSON.parse(response.schoolDays),
-    notSchoolDays: JSON.parse(response.notSchoolDays),
+    schoolDays: JSON.parse(response.schoolDays || null),
+    notSchoolDays: JSON.parse(response.notSchoolDays || null),
     centers: _.intersectionBy(
       centersConfigsByConfig[response.id],
       centers,

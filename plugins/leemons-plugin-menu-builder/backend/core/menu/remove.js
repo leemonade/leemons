@@ -18,7 +18,7 @@ async function remove({ key, ctx }) {
     ctx.tx.db.Menu.deleteOne({ key }),
     ctx.tx.call('users.permissions.removeItems', {
       query: {
-        type: leemons.plugin.prefixPN('menu'),
+        type: ctx.prefixPN('menu'),
         item: key,
       },
     }),

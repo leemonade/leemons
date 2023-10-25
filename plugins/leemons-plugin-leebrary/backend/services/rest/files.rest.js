@@ -229,6 +229,7 @@ module.exports = {
         const { readStream, fileName, contentType } = await dataForReturnFile({
           id: asset.cover,
           forceStream: false,
+          ctx,
         });
 
         if (_.isString(readStream) && readStream.indexOf('http') === 0) {

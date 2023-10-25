@@ -18,7 +18,7 @@ async function getConfig({ keys, userAgent, ctx }) {
     //! NOTA: No entiendo esta lógica
     //* Si es la key es un string (no piden más que una) y se recibe por lo menos una configuración
     //* ¿Por qué se le da la primera que hay? Ni si quiera miramos si es de la key que queremos!!!!
-    return configs.length ? JSON.parse(configs[0].value) : keysDefaults[keys];
+    return configs.length ? JSON.parse(configs[0].value || null) : keysDefaults[keys];
   }
 
   let finalKeys = _.cloneDeep(keys);
@@ -31,7 +31,7 @@ async function getConfig({ keys, userAgent, ctx }) {
     if (!_.find(configs, { key })) {
       return { key, value: keysDefaults[key] };
     }
-    return { key, value: JSON.parse(_.find(configs, { key }).value) };
+    return { key, value: JSON.parse(_.find(configs, { key }).value || null) };
   });
   // Lo transformamos en un objeto
   return _.reduce(

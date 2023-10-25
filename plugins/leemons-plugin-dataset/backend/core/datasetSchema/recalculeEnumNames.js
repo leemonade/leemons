@@ -26,16 +26,16 @@ async function recalculeEnumNames({ locationName, pluginName, ctx }) {
       key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
     }),
     /*
-    translations().contents.getLocaleValueWithKey(
-      getTranslationKey(locationName, pluginName, 'jsonUI'),
-      { transacting }
-    ),
+        translations().contents.getLocaleValueWithKey(
+          getTranslationKey(locationName, pluginName, 'jsonUI'),
+          { transacting }
+        ),
 
-     */
+         */
   ]);
 
   // eslint-disable-next-line no-return-assign
-  _.forIn(localeSchemas, (value, key) => (localeSchemas[key] = JSON.parse(value)));
+  _.forIn(localeSchemas, (value, key) => (localeSchemas[key] = JSON.parse(value || null)));
   // _.forIn(localeUi, (value, key) => (localeUi[key] = JSON.parse(value)));
 
   _.forIn(dataset.jsonSchema.properties, (value, key) => {

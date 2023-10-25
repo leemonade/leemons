@@ -15,7 +15,7 @@ async function save({ column, events, ctx }) {
     { userAgent: userSession.userAgents[0].id, column, events: JSON.stringify(events) },
     { new: true, lean: true, upsert: true }
   );
-  return { ...result, events: JSON.parse(result.events) };
+  return { ...result, events: JSON.parse(result.events || null) };
 }
 
 module.exports = { save };

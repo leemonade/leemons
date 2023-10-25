@@ -3,8 +3,8 @@ async function getFamilyMenuBuilderData({ family, familyName, ctx }) {
   return {
     item: {
       key: `family-${family}`,
-      pluginName: leemons.plugin.prefixPN(),
-      parentKey: leemons.plugin.prefixPN('user-families'),
+      pluginName: ctx.prefixPN(),
+      parentKey: ctx.prefixPN('user-families'),
       url: `/families/private/detail/${family}`,
       label: {
         [locale]: familyName,
