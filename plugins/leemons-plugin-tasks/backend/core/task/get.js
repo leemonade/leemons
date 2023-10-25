@@ -1,6 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
 
-const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags'];
+const DEFAULT_COLUMNS = ['id', 'current', 'last', 'name', 'status', 'subjects', 'tags', 'asset'];
 const TASK_VERSIONING_EXISTING_COLUMNS = ['id', 'name', 'current', 'last'];
 const TASK_EXISTING_COLUMNS = [
   'tagline',
@@ -43,8 +43,9 @@ async function getMany({ taskIds, columns, withFiles, ctx }) {
   }
 }
 
-async function get({ taskId, columns = DEFAULT_COLUMNS, withFiles, ctx }) {
+async function get({ taskId, columns: _columns = DEFAULT_COLUMNS, withFiles, ctx }) {
   try {
+    const columns = _columns === '*' ? DEFAULT_COLUMNS : _columns;
     if (Array.isArray(taskId)) {
       return getMany({ taskId, columns, withFiles, ctx });
     }

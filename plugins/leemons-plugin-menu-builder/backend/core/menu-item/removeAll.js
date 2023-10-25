@@ -20,7 +20,8 @@ async function removeAll({ menuKey, ctx }) {
     ctx.tx.call('users.permissions.removeItems', {
       query: {
         type: {
-          $regex: new RegExp(`^${escapeRegExp(ctx.prefixPN(menuKey))}`, 'i'),
+          $regex: `^${escapeRegExp(ctx.prefixPN(menuKey))}`,
+          $options: 'i',
         },
       },
     }),
