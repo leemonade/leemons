@@ -4,6 +4,7 @@ const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { getServiceModels } = require('../models');
 const { registerRole, unregisterRole, getRole } = require('../core/roles');
 
@@ -11,7 +12,7 @@ module.exports = {
   name: 'assignables.roles',
   version: 1,
   mixins: [
-    // LeemonsMiddlewaresMixin(),
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),

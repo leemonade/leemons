@@ -2,33 +2,28 @@
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const {
-  LeemonsDeploymentManagerMixin,
-} = require('@leemons/deployment-manager');
-// Descomentar una vez hecho el merge con microservices/dev
-// const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-// const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
 const { getServiceModels } = require('../models');
 const { createAssignation } = require('../core/assignations/createAssignation');
 const { getAssignation } = require('../core/assignations/getAssignation');
 const { getAssignations } = require('../core/assignations/getAssignations');
 const { updateAssignation } = require('../core/assignations/updateAssignation');
-const {
-  getUserDataForFundae,
-} = require('../core/assignations/getUserDataForFundae');
+const { getUserDataForFundae } = require('../core/assignations/getUserDataForFundae');
 const restActions = require('./rest/assignables.rest');
 
 module.exports = {
   name: 'assignables.assignations',
   version: 1,
   mixins: [
-    // LeemonsMiddlewaresMixin(),
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
-    // LeemonsMQTTMixin(),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
