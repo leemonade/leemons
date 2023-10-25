@@ -53,7 +53,8 @@ async function registerRole({ role: name, ctx, ...data }) {
       'componentOwner',
       'menu',
     ]),
-    provider: data.provider ?? 'leebrary-assignables',
+    // provider: data.provider ?? 'leebrary-assignables',
+    provider: data.provider ?? 'assignables',
   };
   validateRole(role);
 
