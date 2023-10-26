@@ -20,7 +20,7 @@ async function getProgramEvaluationSystem({ id, ctx }) {
     });
     return evaluationSystem;
   }
-  throw new LeemonsError(ctx, { message: 'This program dont have evaluation system' });
+  throw new LeemonsError(ctx, { message: 'This program does not have evaluation system' });
 }
 
 module.exports = { getProgramEvaluationSystem };
