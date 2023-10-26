@@ -59,8 +59,8 @@ async function getAssignations({
   if (!details) {
     return assignationsData.map((assignation) => ({
       ...assignation,
-      classes: JSON.parse(assignation.classes),
-      metadata: JSON.parse(assignation.metadata),
+      classes: JSON.parse(assignation.classes || null),
+      metadata: JSON.parse(assignation.metadata || null),
     }));
   }
 
@@ -110,8 +110,8 @@ async function getAssignations({
     // Returns the assignationObject
     return {
       ...assignation,
-      classes: JSON.parse(assignation.classes),
-      metadata: JSON.parse(assignation.metadata),
+      classes: JSON.parse(assignation.classes || null),
+      metadata: JSON.parse(assignation.metadata || null),
       instance: instances?.[assignation.instance] || assignation.instance,
 
       relatedAssignableInstances: {

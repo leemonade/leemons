@@ -44,8 +44,8 @@ async function getAssignationsOfInstance({ instances, details = false, ctx }) {
   studentsAssignations.forEach((assignation) => {
     const assignationObj = {
       ...assignation,
-      classes: JSON.parse(assignation.classes),
-      metadata: JSON.parse(assignation.metadata),
+      classes: JSON.parse(assignation.classes || null),
+      metadata: JSON.parse(assignation.metadata || null),
     };
 
     if (!studentsAssignationPerInstance[assignation.instance]) {

@@ -420,7 +420,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const ids = JSON.parse(ctx.params.ids);
+      const ids = JSON.parse(ctx.params.ids || null);
       const classes = await classByIds({
         ids,
         noSearchChildren: ctx.params.noSearchChildren,

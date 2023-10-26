@@ -60,6 +60,6 @@ it('Should retrieve a file by its ID from the database', async () => {
   // Assert
   expect(response.id).toEqual(file.id);
   expect(responseMetadata.id).toEqual(fileMetadata.id);
-  expect(responseMetadata.metadata).toEqual(JSON.parse(fileMetadata.metadata));
+  expect(responseMetadata.metadata).toEqual(JSON.parse(fileMetadata.metadata || null));
   expect(responseNull).toBe(null);
 });

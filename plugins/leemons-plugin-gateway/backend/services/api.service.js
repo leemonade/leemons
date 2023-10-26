@@ -582,7 +582,7 @@ module.exports = {
           'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
 
           // -- Assignables(FINISHED) --
-          'GET assignables/find': 'v1.assignables.assignables.getRest',
+          'GET assignables/assignables/find': 'v1.assignables.assignables.getRest',
           'GET assignables/activities/search/ongoing':
             'v1.assignables.activities.searchOngoingRest',
           'GET assignables/activities/search/nya':
@@ -596,7 +596,7 @@ module.exports = {
           'GET assignables/assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
           'PUT assignables/assignableInstances/:id':
             'v1.assignables.assignableInstances.updateRest',
-          'POST assignables/assignableInstances/:id':
+          'POST assignables/assignableInstances/reminder':
             'v1.assignables.assignableInstance.sendReminderRest',
 
           // -- Tasks (FINISHED) --
@@ -616,29 +616,29 @@ module.exports = {
         },
 
         /**
-         * Before call hook. You can check the request.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         *
-         onBeforeCall(ctx, route, req, res) {
-         // Set request headers to context meta
-         ctx.meta.userAgent = req.headers["user-agent"];
-         }, */
+                 * Before call hook. You can check the request.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 *
+                 onBeforeCall(ctx, route, req, res) {
+                 // Set request headers to context meta
+                 ctx.meta.userAgent = req.headers["user-agent"];
+                 }, */
 
         /**
-         * After call hook. You can modify the data.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         onAfterCall(ctx, route, req, res, data) {
-         // Async function which return with Promise
-         return doSomething(ctx, res, data);
-         }, */
+                 * After call hook. You can modify the data.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 onAfterCall(ctx, route, req, res, data) {
+                 // Async function which return with Promise
+                 return doSomething(ctx, res, data);
+                 }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =
