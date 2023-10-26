@@ -24,7 +24,7 @@ module.exports = {
           'assignables.assignableInstances.createAssignableInstance',
           {
             assignableInstance: {
-              assignable: task.id,
+              assignable: task,
               ...instanceData,
             },
           }
