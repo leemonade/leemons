@@ -613,6 +613,10 @@ module.exports = {
           'DELETE tasks/tasks/:id': 'v1.tasks.tasks.removeRest',
           'POST tasks/tasks/:id/publish': 'v1.tasks.tasks.publishRest',
           'GET tasks/tasks/search': 'v1.tasks.tasks.searchRest',
+          'POST tasks/tasks/:task/assignments/instance': 'v1.tasks.assignments.instanceCreateRest',
+          'PUT tasks/tasks/assignments/instance/:instance': 'v1.tasks.assignments.instanceGetRest',
+          'PUT tasks/tasks/instances/:instance/students/:student':
+            'v1.tasks.assignments.studentUpdateRest',
         },
 
         /**
