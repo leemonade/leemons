@@ -99,7 +99,7 @@ async function getAssignations({
   return assignationsData.map((assignation) => {
     const chatKeys = classes[assignation.instance].subjectsIds.map(
       (subject) =>
-        `plugins.assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
+        `assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
     );
 
     const status = getAssignationStatus({
