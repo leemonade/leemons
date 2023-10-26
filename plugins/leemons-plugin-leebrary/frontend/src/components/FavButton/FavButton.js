@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Box } from '@mantine/core';
+import { LoveItIcon } from '@bubbles-ui/icons/outline';
 import { FavButtonStyles } from './FavButton.styles';
 import { FAV_BUTTON_DEFAULT_PROPS, FAV_BUTTON_PROP_TYPES } from './FavButton.constants';
-import { LoveItIcon } from '@bubbles-ui/icons/outline';
 
-const FavButton = ({ isActive, isParentHovered }) => {
+const FavButton = ({ isActive }) => {
   const [active, setActive] = useState(isActive);
-  const { classes } = FavButtonStyles({ isActive, isParentHovered }, { name: 'FavButton' });
+  const { classes } = FavButtonStyles({ isActive }, { name: 'FavButton' });
 
   const handleIsActive = () => {
     setActive(!active);
@@ -14,7 +14,7 @@ const FavButton = ({ isActive, isParentHovered }) => {
 
   return (
     <Box className={classes.root} onClick={() => handleIsActive()}>
-      <LoveItIcon width={15} height={15} className={classes.loveIcon} />
+      <LoveItIcon width={24} height={24} className={classes.loveIcon} />
     </Box>
   );
 };
@@ -22,4 +22,5 @@ const FavButton = ({ isActive, isParentHovered }) => {
 FavButton.defaultProps = FAV_BUTTON_DEFAULT_PROPS;
 FavButton.propTypes = FAV_BUTTON_PROP_TYPES;
 
+export default FavButton;
 export { FavButton };

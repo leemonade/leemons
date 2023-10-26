@@ -4,25 +4,38 @@ import { createStyles, pxToRem } from '@bubbles-ui/components';
 export const LibraryCardBodyStyles = createStyles((theme, { fullHeight }) => ({
   root: {
     padding: pxToRem(16),
+    paddingTop: pxToRem(24),
     flex: fullHeight && 1,
     display: 'flex',
     flexDirection: 'column',
   },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: pxToRem(16),
+  },
+
   draftBadge: {
     '& > div': {
-      backgroundColor: theme.other.badge.background.color.secondary.default,
-      height: '16px',
+      backgroundColor: 'transparent',
+      border: '1px solid #878D96',
+      borderRadius: 4,
+      fontSize: 10,
       '&:hover': {
-        backgroundColor: theme.other.badge.background.color.secondary.default,
+        backgroundColor: 'transparent',
+        color: '#4D5358',
       },
       '& > span': {
-        marginTop: -2.5,
+        marginTop: 2,
+        color: '#4D5358',
       },
     },
   },
   draftText: {
-    color: theme.colors.mainWhite,
-    fontSize: '8px',
+    color: '#4D5358',
+
+    fontSize: '10px',
   },
   titleContainer: {
     paddingTop: pxToRem(8),
@@ -52,27 +65,4 @@ export const LibraryCardBodyStyles = createStyles((theme, { fullHeight }) => ({
   subjectName: {
     maxWidth: '70%',
   },
-  // mainContainer: {
-  //   // minHeight: 86,
-  //   padding: `${pxToRem(14)} ${pxToRem(16)}`,
-  //   // backgroundColor: theme.colors.mainWhite,
-  //   flex: 1,
-  // },
-  // description: {
-  //   color: theme.colors.text02,
-  // },
-  // tagsContainer: {
-  //   // minHeight: 38,
-  //   display: 'flex',
-  //   gap: pxToRem(10),
-  //   alignItems: 'center',
-  //   flexWrap: 'wrap',
-  //   padding: `${pxToRem(8)} ${pxToRem(16)}`,
-  // },
-  // label: {
-  //   color: theme.colors.text05,
-  // },
-  // value: {
-  //   color: theme.colors.text02,
-  // },
 }));

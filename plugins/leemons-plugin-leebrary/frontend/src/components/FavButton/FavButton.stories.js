@@ -2,7 +2,6 @@ import React from 'react';
 import { Box } from '@mantine/core';
 import { FavButton } from './FavButton';
 import { FAV_BUTTON_DEFAULT_PROPS } from './FavButton.constants';
-import mdx from './FavButton.mdx';
 
 export default {
   title: 'leemons/Library/FavButton',
@@ -12,10 +11,6 @@ export default {
       type: 'figma',
       // url: 'https://www.figma.com/file/kcSXz3QZFByFDTumNgzPpV/?node-id=2962%3A31342',
     },
-  },
-  argTypes: {
-    // myBooleanProp: { control: { type: 'boolean' } },
-    // mySelectProp: { options: ['Hello', 'World'], control: { type: 'select' } },
   },
 };
 
@@ -37,7 +32,5 @@ const Template = ({ ...props }) => (
 export const Playground = Template.bind({});
 
 Playground.args = {
-  // myBooleanProp: false,
-  // mySelectProp: 'Hello'
   ...FAV_BUTTON_DEFAULT_PROPS,
 };

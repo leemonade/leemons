@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Badge, Text, TextClamp, BulletSubject } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import {
@@ -7,6 +7,7 @@ import {
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
 } from './LibraryCardBody.constants';
 import { LibraryCardBodyStyles } from './LibraryCardBody.styles';
+import { FavButton } from '../FavButton';
 
 const LibraryCardBody = ({
   tagline,
@@ -28,19 +29,26 @@ const LibraryCardBody = ({
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
+  const [isFav, setIsFav] = useState(false);
+
   const isDraft = typeof published === 'boolean' && published === false;
   const title = props.name ? props.name : null;
   const isMultipleSubjects = isArray(subjects) && subjects.length > 1;
-
+  const handleIsFav = () => {
+    setIsFav(!isFav);
+  };
   return (
     <Box className={classes.root}>
-      {isDraft && (
-        <Badge closable={false} size="xs" className={classes.draftBadge}>
-          <Text className={classes.draftText} strong>
-            {'BORRADOR'}
-          </Text>
-        </Badge>
-      )}
+      <Box className={classes.header}>
+        <Box onClick={handleIsFav}>
+          <FavButton isActive={isFav} />
+        </Box>
+        {isDraft && (
+          <Badge closable={false} size="xs" className={classes.draftBadge}>
+            <Text className={classes.draftText}>{'BORRADOR'}</Text>
+          </Badge>
+        )}
+      </Box>
       <Box className={classes.titleContainer}>
         {title && (
           <TextClamp lines={2}>

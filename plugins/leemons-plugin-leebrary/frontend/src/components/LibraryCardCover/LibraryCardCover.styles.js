@@ -4,8 +4,10 @@ import { createStyles, getFontExpressive, pxToRem } from '@bubbles-ui/components
 const spaceBetween = 'space-between';
 
 export const LibraryCardCoverStyles = createStyles(
-  (theme, { color, height, parentHovered, subjectColor, isFav }) => {
+  (theme, { color, height, parentHovered, subjectColor, showMenu }) => {
     const isParentHovered = parentHovered ? 'visible' : 'hidden';
+    const buttonIconCardStyles = theme.other.buttonIconCard;
+    const focusDefaultBorder = theme.other.global.focus['default-border'];
     return {
       root: {
         ...getFontExpressive(theme.fontSizes['2']),
@@ -31,20 +33,10 @@ export const LibraryCardCoverStyles = createStyles(
         justifyContent: spaceBetween,
         borderRadius: '4px 0 0 0',
       },
-      overlayGradient: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        zIndex: 0,
-        background:
-          'linear-gradient(180deg, #000 -65%, rgba(0, 0, 0, 0.00) 65%), transparent 50% / cover no-repeat',
-        justifyContent: spaceBetween,
-        borderRadius: '4px 0 0 0',
-      },
       leftContainer: {
+        width: '100%',
         display: 'flex',
+        justifyContent: 'flex-end',
       },
       iconRow: {
         zIndex: 3,
@@ -52,20 +44,19 @@ export const LibraryCardCoverStyles = createStyles(
         visibility: isParentHovered,
         alignItems: 'center',
         justifyContent: spaceBetween,
-        paddingTop: pxToRem(2),
-        paddingInline: pxToRem(4),
+        paddingTop: pxToRem(8),
+        paddingInline: pxToRem(8),
       },
       menuIcon: {
-        color: '#FFFFFF',
+        color: buttonIconCardStyles.content.color.primary.default,
+        zIndex: 10,
+        position: 'absolute',
+        marginBottom: 0,
+        top: 3.5,
+        right: 4,
+        height: 17,
       },
-      menuButton: {
-        backgroundColor: 'transparent !important',
-      },
-      favButton: {
-        zIndex: 3,
-        paddingRight: pxToRem(4),
-        visibility: isFav ? 'visible' : isParentHovered,
-      },
+
       favActive: {
         position: 'absolute',
         right: 0,
@@ -95,8 +86,42 @@ export const LibraryCardCoverStyles = createStyles(
         borderRadius: '4px 2px 0 0',
       },
       menuItem: {
-        color: theme.colors.text04,
+        backgroundColor: buttonIconCardStyles.content.color.primary.default,
       },
+      ellipsisBox: {
+        position: 'relative',
+        width: pxToRem(24),
+        height: pxToRem(24),
+        '&::before': {
+          content: '""',
+          display: 'grid',
+          placeContent: 'center',
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          border: `${focusDefaultBorder.width} solid transparent`,
+          backgroundColor: !showMenu
+            ? buttonIconCardStyles.background.color.primary.default
+            : buttonIconCardStyles.background.color.primary.down,
+
+          borderRadius: !showMenu
+            ? buttonIconCardStyles.border.radius.md
+            : `${buttonIconCardStyles.border.radius.md} ${buttonIconCardStyles.border.radius.md} 0px 0px`,
+
+          backdropFilter: 'blur(2px)',
+          zIndex: -10,
+        },
+        '&:hover::before': {
+          backgroundColor: buttonIconCardStyles.background.color.primary.hover,
+        },
+        '&:focus-visible': {
+          outline: 'none',
+          backgroundColor: buttonIconCardStyles.background.color.primary.hover,
+          border: `${focusDefaultBorder.width} ${focusDefaultBorder.style} ${focusDefaultBorder.color}`,
+          borderRadius: buttonIconCardStyles.border.radius.md,
+        },
+      },
+
       badge: {
         marginBottom: 8,
       },

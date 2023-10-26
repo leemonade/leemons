@@ -10,7 +10,6 @@ import {
   overlayVariants,
 } from './LibraryCardCover.constants';
 import { LibraryCardEmptyCover } from '../LibraryCardEmptyCover';
-import { FavButton } from '../FavButton';
 
 const LibraryCardCover = ({
   height,
@@ -25,14 +24,10 @@ const LibraryCardCover = ({
   fileType,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
-  const [isFav, setIsFav] = useState(false);
   const { classes, cx } = LibraryCardCoverStyles(
-    { color, height, parentHovered, subjectColor: subject?.color, isFav },
+    { color, height, parentHovered, subjectColor: subject?.color, showMenu },
     { name: 'LibraryCardCover' }
   );
-  const handleIsFav = () => {
-    setIsFav(!isFav);
-  };
 
   const icon = useMemo(
     () =>
@@ -48,10 +43,11 @@ const LibraryCardCover = ({
     }
   }, [parentHovered, showMenu]);
 
-  const preventPropagation = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  // const preventPropagation = (e) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   setShowMenu(!showMenu);
+  // };
 
   const iconRow = (
     <Box>
@@ -60,29 +56,19 @@ const LibraryCardCover = ({
           {!isEmpty(menuItems) && (
             <Box>
               <Menu
-                opened={showMenu && parentHovered}
+                opened={showMenu}
                 onOpen={() => setShowMenu(true)}
                 onClose={() => setShowMenu(false)}
                 items={menuItems.map((item) => ({
                   ...item,
                   className: cx(classes.menuItem, item.className),
                 }))}
-                position="bottom-start"
+                position="bottom-end"
                 withinPortal={true}
                 control={
-                  <IconButton
-                    icon={
-                      <SettingMenuVerticalIcon
-                        width={26}
-                        height={26}
-                        className={classes.menuIcon}
-                      />
-                    }
-                    variant={'transparent'}
-                    size="xs"
-                    onClick={preventPropagation}
-                    className={classes.menuButton}
-                  />
+                  <Box className={classes.ellipsisBox}>
+                    <SettingMenuVerticalIcon width={16} height={16} className={classes.menuIcon} />
+                  </Box>
                 }
               />
             </Box>
@@ -102,9 +88,6 @@ const LibraryCardCover = ({
             </>
           )}
         </Box>
-        <Box onClick={() => handleIsFav()} className={classes.favButton}>
-          <FavButton isActive={isFav} isParentHovered={parentHovered} />
-        </Box>
       </Box>
     </Box>
   );
@@ -119,10 +102,8 @@ const LibraryCardCover = ({
             variants={overlayVariants}
             animate={parentHovered ? 'visible' : 'hidden'}
           >
-            <Box className={classes.overlayGradient} />
             <Box>{iconRow}</Box>
           </motion.div>
-          <Box className={classes.favActive}>{isFav && !parentHovered && iconRow}</Box>
         </Box>
         {cover ? (
           <ImageLoader src={cover} height={height} width={'100%'} forceImage />
