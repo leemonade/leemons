@@ -47,9 +47,9 @@ async function createInstance({ assignableInstance, createEvent = true, ctx }) {
       ...assignableInstanceObj,
       event: null, // Not created yet due to instance.id dependency
       sendMail: !!sendMail,
-      metadata: JSON.stringify(metadata),
-      curriculum: JSON.stringify(curriculum),
-      relatedAssignableInstances: JSON.stringify({ before: [], after: [] }),
+      metadata,
+      curriculum,
+      relatedAssignableInstances: { before: [], after: [] },
     })
   ).toObject();
 

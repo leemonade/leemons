@@ -28,7 +28,7 @@ async function getRelatedAssignations({ assignationsData, ctx }) {
 
   const relatedInstancesByInstance = {};
   relatedInstances.forEach(({ id, relatedAssignableInstances }) => {
-    const { before } = JSON.parse(relatedAssignableInstances);
+    const { before } = relatedAssignableInstances;
 
     relatedInstancesByInstance[id] = before;
   });
