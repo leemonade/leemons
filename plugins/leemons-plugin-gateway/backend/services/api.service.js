@@ -582,7 +582,7 @@ module.exports = {
           'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
 
           // -- Assignables(FINISHED) --
-          'GET assignables/find': 'v1.assignables.assignables.getRest',
+          'GET assignables/assignables/find': 'v1.assignables.assignables.getRest',
           'GET assignables/activities/search/ongoing':
             'v1.assignables.activities.searchOngoingRest',
           'GET assignables/activities/search/nya':
