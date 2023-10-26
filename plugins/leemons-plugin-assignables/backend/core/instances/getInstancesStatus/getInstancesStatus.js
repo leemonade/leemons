@@ -39,6 +39,10 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
     Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]
   );
 
+  if (!ids.length) {
+    return [];
+  }
+
   const statusObject = {};
 
   // EN: Get user permissions for each instance

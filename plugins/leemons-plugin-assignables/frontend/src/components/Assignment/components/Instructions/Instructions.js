@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
-import { TextEditorInput, HEADINGS_TOOL_DEFAULT_PROPS } from '@bubbles-ui/editors';
+import { HEADINGS_TOOL_DEFAULT_PROPS, TextEditorInput } from '@bubbles-ui/editors';
 import { Container } from '../Container';
 
 export const useInstructionsStyles = createStyles(() => ({
@@ -32,7 +32,7 @@ export function Instructions({ localizations, value, onChange, hideSectionHeader
 }
 
 Instructions.propTypes = {
-  localizations: PropTypes.string,
+  localizations: PropTypes.object,
   value: PropTypes.string,
   onChange: PropTypes.func,
   hideSectionHeaders: PropTypes.bool,

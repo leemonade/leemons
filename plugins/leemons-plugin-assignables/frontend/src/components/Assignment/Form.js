@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { get, set, uniq } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
@@ -18,7 +18,7 @@ export function useFormLocalizations() {
   const key = prefixPN('assignmentForm');
   const [, translations] = useTranslateLoader(key);
 
-  const labels = React.useMemo(() => {
+  return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return get(res, key);
@@ -26,8 +26,6 @@ export function useFormLocalizations() {
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 
 function onSubmitFunc(onSubmit, evaluationType, values) {
@@ -36,15 +34,15 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
 
   const submissionValues = {
     /*
-      === Students ===
-    */
+              === Students ===
+            */
     students: uniq(values.students.value.flatMap((group) => group.students)),
     classes: uniq(values.students.value.flatMap((group) => group.group)),
     addNewClassStudents: !!values.students.autoAssign,
 
     /*
-      === Dates ====
-    */
+              === Dates ====
+            */
     alwaysAvailable: values.dates.alwaysAvailable,
     dates: {
       ...values.dates.dates,
@@ -52,8 +50,8 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
     duration: values.dates.maxTime,
 
     /*
-      === Evaluation ===
-    */
+              === Evaluation ===
+            */
     gradable: values.evaluation.evaluation.gradable,
     requiresScoring: values.evaluation.evaluation.requiresScoring,
     allowFeedback: values.evaluation.evaluation.allowFeedback,
@@ -62,8 +60,8 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
     ),
 
     /*
-      === Others ===
-    */
+              === Others ===
+            */
     sendMail: values.others.notifyStudents,
     messageToAssignees: values.others.message,
     showResults: !values.others.hideReport,

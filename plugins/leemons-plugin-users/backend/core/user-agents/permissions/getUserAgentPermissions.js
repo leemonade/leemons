@@ -13,6 +13,9 @@ const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
  * @return {Promise<ListOfUserPermissions>} User permissions
  * */
 async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
+  if (_.isArray(_query?.$or) && !_query.$or.length) {
+    return [];
+  }
   const _userAgents = _.isArray(userAgent) ? userAgent : [userAgent];
 
   const reloadUserAgents = [];
@@ -51,9 +54,7 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
       createdAt,
       updatedAt,
       ...rest
-    }) => {
-      return JSON.stringify(rest);
-    }
+    }) => JSON.stringify(rest)
   );
 
   const responses = [];
