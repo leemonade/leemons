@@ -11,14 +11,14 @@ async function remove({ classCalendar, teacher, ctx }) {
       { meta: { userSession: { userAgents: [{ id: teacher }] } } }
     ),
     ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
-      keykey: ctx.prefixPN(`class.${classCalendar.class}`),
+      key: ctx.prefixPN(`class.${classCalendar.class}`),
       userAgentId: teacher,
       actionName: ['owner', 'view'],
     }),
   ]);
   if (!insideProgram) {
     await ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
-      keykey: ctx.prefixPN(`program.${classCalendar.program}`),
+      key: ctx.prefixPN(`program.${classCalendar.program}`),
       userAgentId: teacher,
       actionName: 'view',
     });
