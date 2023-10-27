@@ -34,7 +34,7 @@ function flatCurriculumNodes(curriculumNodes) {
 }
 
 export function useCurriculumNodes({ curriculum }) {
-  const curriculumNodes = React.useMemo(() => {
+  return React.useMemo(() => {
     const nodesByIds = {};
 
     flatCurriculumNodes(curriculum?.nodes)?.forEach((node) => {
@@ -43,12 +43,10 @@ export function useCurriculumNodes({ curriculum }) {
 
     return nodesByIds;
   }, [curriculum?.nodes]);
-
-  return curriculumNodes;
 }
 
 export function useSelectedCurriculumValues({ assignable }) {
-  const selectedCurriculumValues = React.useMemo(
+  return React.useMemo(
     () =>
       assignable?.subjects?.flatMap((subject) => {
         let hasCustomObjectives = false;
@@ -65,8 +63,6 @@ export function useSelectedCurriculumValues({ assignable }) {
       }) ?? [],
     [assignable]
   );
-
-  return selectedCurriculumValues;
 }
 
 export function useCustomObjectivesLocalizations() {
@@ -157,7 +153,7 @@ export function useInstanceCurriculum({ instance }) {
 
 export function useCurriculumVisibleValues({ assignation }) {
   const { instance } = assignation;
-  const { assignable, curriculum: visibleCategories } = instance;
+  const { assignable, curriculum: visibleCategories = {} } = instance;
 
   const curriculum = useInstanceCurriculum({ instance });
   const curriculumNodes = useCurriculumNodes({ curriculum });
@@ -202,16 +198,13 @@ export function useCurriculumVisibleValues({ assignation }) {
 }
 
 export function useCurriculumFields({ assignable }) {
-  const curriculum = useInstanceCurriculum({ assignable });
+  const curriculum = useInstanceCurriculum({ instance: assignable });
   const curriculumNodes = useCurriculumNodes({ curriculum });
   const selectedCurriculumValues = useSelectedCurriculumValues({ assignable });
-
-  const usedProperties = useSelectedCurriculumProperties({
+  return useSelectedCurriculumProperties({
     curriculum,
     curriculumNodes,
     nodeLevels: curriculum?.nodeLevels,
     selectedCurriculumValues,
   });
-
-  return usedProperties;
 }
