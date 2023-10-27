@@ -28,7 +28,10 @@ const contentsSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    minimize: false,
+  }
 );
 
 const contentsModel = newModel(mongoose.connection, 'v1::multilanguage_Contents', contentsSchema);

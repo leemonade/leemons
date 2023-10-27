@@ -47,6 +47,7 @@ const schema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 const configModel = newModel(mongoose.connection, 'v1::timetable_Config', schema);

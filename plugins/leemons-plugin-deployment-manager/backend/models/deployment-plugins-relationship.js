@@ -24,7 +24,10 @@ const deploymentPluginsRelationshipSchema = new mongoose.Schema(
     actions: [String],
     events: [String],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    minimize: false,
+  }
 );
 
 deploymentPluginsRelationshipSchema.index(
