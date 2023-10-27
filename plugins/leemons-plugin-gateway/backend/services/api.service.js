@@ -617,6 +617,9 @@ module.exports = {
           'PUT tasks/tasks/assignments/instance/:instance': 'v1.tasks.assignments.instanceGetRest',
           'PUT tasks/tasks/instances/:instance/students/:student':
             'v1.tasks.assignments.studentUpdateRest',
+
+          // -- Bulk Template (Not Finished) --
+          'POST bulk-template/load-from-file': 'multipart:v1.bulk-data.bulk.loadRest',
         },
 
         /**

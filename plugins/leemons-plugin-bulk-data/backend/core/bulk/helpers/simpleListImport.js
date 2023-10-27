@@ -44,7 +44,7 @@ async function simpleListImport(
   const itemsStartRowOffset = 2; // fields names and header items
   const itemsStartRow = findIndex(data.slice(1), (item) => item[1] !== '') + itemsStartRowOffset;
 
-  const items = data
+  return data
     .slice(itemsStartRow)
     .map((row) => {
       const item = { root: row[1] };
@@ -79,8 +79,6 @@ async function simpleListImport(
 
       return acc;
     }, {});
-
-  return items;
 }
 
 module.exports = simpleListImport;
