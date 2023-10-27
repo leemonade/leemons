@@ -116,7 +116,7 @@ Playground.args = {
     },
   },
   subject: {
-    name: 'Bases para el análisis y el tratamiento de',
+    name: 'Lengua Castellana y Literatura de España',
     color: '#FABADA',
     icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
   },

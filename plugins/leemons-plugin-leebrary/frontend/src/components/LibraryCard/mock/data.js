@@ -8,7 +8,7 @@ export const AUDIO_ASSET = {
   description:
     'This is a very large description of the book Rythim of War, the fourth book in The Stormlight Archive.',
   tagline: '',
-  programName: 'ESO',
+  programName: ' 1º ESO',
   metadata: [
     { label: 'Quality', value: '128kb' },
     { label: 'Format', value: 'mp3' },

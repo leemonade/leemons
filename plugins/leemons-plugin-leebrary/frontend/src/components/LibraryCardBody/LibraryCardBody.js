@@ -65,7 +65,7 @@ const LibraryCardBody = ({
           </TextClamp>
         )}
       </Box>
-      <Box>
+      <Box className={classes.subjectsContainer}>
         {/* MULTIASIGNATURASº */}
         {isMultipleSubjects && (
           <Box className={classes.subject}>
@@ -91,21 +91,21 @@ const LibraryCardBody = ({
                 color={subject.color}
                 icon={subject.icon}
                 altText={subject.name}
-                size="sm"
+                size="lg"
               />
             </Box>
-            {programName && (
-              <TextClamp lines={1}>
-                <Text color="primary" role="productive" size="xs">
-                  {programName}
+            <Box>
+              <TextClamp lines={programName ? 1 : 0}>
+                <Text color="muted" role="productive" size="xs" className={classes.subjectName}>
+                  {subject.name}
                 </Text>
               </TextClamp>
-            )}
-            <TextClamp lines={programName ? 1 : 0}>
-              <Text color="primary" role="productive" size="xs" className={classes.subjectName}>
-                {`- ${subject.name}`}
-              </Text>
-            </TextClamp>
+              {programName && (
+                <TextClamp lines={1}>
+                  <Text className={classes.programName}>{programName}</Text>
+                </TextClamp>
+              )}
+            </Box>
           </Box>
         )}
       </Box>
