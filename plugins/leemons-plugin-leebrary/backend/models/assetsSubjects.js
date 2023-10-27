@@ -28,6 +28,7 @@ const assetsSubjectsSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

@@ -45,13 +45,10 @@ const gradesSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 
-const gradesModel = newModel(
-  mongoose.connection,
-  'v1::assignables_Grades',
-  gradesSchema
-);
+const gradesModel = newModel(mongoose.connection, 'v1::assignables_Grades', gradesSchema);
 
 module.exports = { gradesSchema, gradesModel };

@@ -23,7 +23,10 @@ const localesSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    minimize: false,
+  }
 );
 
 const localesModel = newModel(mongoose.connection, 'v1::multilanguage_Locales', localesSchema);
