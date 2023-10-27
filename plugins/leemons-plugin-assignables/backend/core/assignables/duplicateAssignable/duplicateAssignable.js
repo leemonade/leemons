@@ -26,13 +26,11 @@ async function duplicateAssignable({ assignableId: id, published, ctx }) {
 
   const assignableToCreate = pick(assignable, validAssignableProperties);
 
-  const newAssignable = await createAssignable({
+  return await createAssignable({
     assignable: assignableToCreate,
     published: published === undefined ? false : published,
     ctx,
   });
-
-  return newAssignable;
 }
 
 module.exports = { duplicateAssignable };
