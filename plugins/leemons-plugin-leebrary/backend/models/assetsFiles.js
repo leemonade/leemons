@@ -24,6 +24,7 @@ const assetsFilesSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

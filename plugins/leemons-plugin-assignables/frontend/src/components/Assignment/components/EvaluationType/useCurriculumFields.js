@@ -152,6 +152,7 @@ export function useInstanceCurriculum({ instance }) {
 }
 
 export function useCurriculumVisibleValues({ assignation }) {
+  console.log('assignation', assignation);
   const { instance } = assignation;
   const { assignable, curriculum: visibleCategories = {} } = instance;
 
@@ -201,6 +202,7 @@ export function useCurriculumFields({ assignable }) {
   const curriculum = useInstanceCurriculum({ instance: assignable });
   const curriculumNodes = useCurriculumNodes({ curriculum });
   const selectedCurriculumValues = useSelectedCurriculumValues({ assignable });
+
   return useSelectedCurriculumProperties({
     curriculum,
     curriculumNodes,

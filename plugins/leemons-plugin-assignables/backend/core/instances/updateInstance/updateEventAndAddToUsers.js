@@ -1,6 +1,7 @@
 const { map } = require('lodash');
 const { updateEvent } = require('../calendar/updateEvent');
 const { listInstanceClasses } = require('../../classes');
+
 /**
  * Update an event and add it to users.
  *
@@ -16,7 +17,7 @@ async function updateEventAndAddToUsers({ assignable, event, dates, id, ctx }) {
 
   try {
     if (event) {
-      await updateEvent({ event, assignable, classes, dates, ctx });
+      await updateEvent({ event, assignable, classes, dates, ctx, withTX: false });
     }
     // TODO: Create the event and add it to the users. Needs: Users assigned and teachers
     //  else {

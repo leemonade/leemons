@@ -44,6 +44,7 @@ const assignationsSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

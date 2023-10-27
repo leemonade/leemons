@@ -191,7 +191,7 @@ module.exports = {
         properties: {
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
-          subject: { type: 'string', format: 'uuid' },
+          subject: { type: 'string' },
         },
         required: ['page', 'size', 'subject'],
         additionalProperties: false,

@@ -34,12 +34,12 @@ async function createInstanceRoom({
   // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
   if (userAgents.length)
     await ctx.tx.call('comunica.room.addUserAgents', {
-      room: roomKey,
+      key: roomKey,
       userAgent: userAgents,
     });
   if (teachersUserAgents.length) {
     await ctx.tx.call('comunica.room.addUserAgents', {
-      room: roomKey,
+      key: roomKey,
       userAgent: teachersUserAgents,
       isAdmin: true,
     });
