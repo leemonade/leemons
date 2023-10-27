@@ -27,14 +27,7 @@ const gradeValidationObject = {
       type: 'boolean',
     },
   },
-  required: [
-    'assignation',
-    'subject',
-    'type',
-    'grade',
-    'gradedBy',
-    'visibleToStudent',
-  ],
+  required: ['assignation', 'subject', 'type', 'grade', 'gradedBy', 'visibleToStudent'],
   additionalProperties: false,
 };
 

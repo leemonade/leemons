@@ -7,7 +7,7 @@ async function registerGrade({
   grade,
   gradedBy,
   feedback,
-  visibleToStudent,
+  visibleToStudent = true,
   ctx,
 }) {
   // TODO: Check permissions
