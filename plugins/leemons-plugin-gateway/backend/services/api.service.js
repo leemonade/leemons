@@ -619,7 +619,8 @@ module.exports = {
             'v1.tasks.assignments.studentUpdateRest',
 
           // -- Bulk Template (Not Finished) --
-          'POST bulk-template/load-from-file': 'multipart:v1.bulk-data.bulk.loadRest',
+          'POST bulk-data/load-from-file': 'multipart:v1.bulk-data.bulk.loadRest',
+          'GET bulk-data/init-super': 'v1.bulk-data.users.initSuperRest',
         },
 
         /**
@@ -653,15 +654,18 @@ module.exports = {
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress;
-          const parseResult = parse(
-            req.headers.referer || req.headers.referrer || req.headers.host
-          );
-          if (ctx.meta) {
-            ctx.meta.hostname =
-              parseResult?.hostname ||
-              parseResult?.host ||
-              parseResult?.pathname ||
-              parseResult?.path;
+          const url = req.headers.referer || req.headers.referrer || req.headers.host;
+          if (url.startsWith('localhost')) {
+            ctx.meta.hostname = 'localhost';
+          } else {
+            const parseResult = parse(url);
+            if (ctx.meta) {
+              ctx.meta.hostname =
+                parseResult?.hostname ||
+                parseResult?.host ||
+                parseResult?.pathname ||
+                parseResult?.path;
+            }
           }
         },
 

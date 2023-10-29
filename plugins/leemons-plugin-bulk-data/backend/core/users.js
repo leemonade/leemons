@@ -6,14 +6,18 @@ const importUsers = require('./bulk/users');
 
 const pool = new Pool({ concurrency: 1 });
 
-async function _addUser(key, users) {
-  const { services } = leemons.getPlugin('users');
+async function _addUser({ key, users, ctx }) {
   const { roles, ...item } = users[key];
 
   let itemRoles = await Promise.all(
     roles
       .filter((rol) => rol.center)
-      .map((rol) => services.profiles.getRoleForRelationshipProfileCenter(rol.profile, rol.center))
+      .map((rol) =>
+        ctx.tx.call('users.profiles.getRoleForRelationshipProfileCenter', {
+          profileId: rol.profile,
+          centerId: rol.center,
+        })
+      )
   );
 
   if (isEmpty(itemRoles)) {
@@ -21,7 +25,11 @@ async function _addUser(key, users) {
   }
 
   leemons.log.debug(`Adding user: ${item.name}`);
-  const itemData = await services.users.add({ ...item, active: true }, map(itemRoles, 'id'));
+  const itemData = await ctx.tx.call('users.users.add', {
+    ...item,
+    roles: map(itemRoles, 'id'),
+    active: true,
+  });
   leemons.log.info(`User ADDED: ${item.name}`);
 
   const userProfiles = roles.map((rol) => rol.profileKey);
@@ -29,7 +37,7 @@ async function _addUser(key, users) {
   users[key] = { ...itemData, profiles: uniq(userProfiles) };
 }
 
-async function initUsers(file, centers, profiles) {
+async function initUsers({ file, centers, profiles, ctx }) {
   try {
     const users = await importUsers(file, centers, profiles);
     const itemsKeys = keys(users);
@@ -37,17 +45,17 @@ async function initUsers(file, centers, profiles) {
     for (let i = 0, len = itemsKeys.length; i < len; i++) {
       const itemKey = itemsKeys[i];
       if (itemKey !== 'super') {
-        pool.add(() => _addUser(itemKey, users));
+        pool.add(() => _addUser({ itemKey, users, ctx }));
       }
     }
 
-    leemons.log.debug('Batch processing users ...');
+    ctx.logger.debug('Batch processing users ...');
     await pool.all();
-    leemons.log.info('Users CREATED');
+    ctx.logger.info('Users CREATED');
 
     return users;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

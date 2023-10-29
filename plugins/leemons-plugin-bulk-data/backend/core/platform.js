@@ -2,9 +2,7 @@
 const { keys } = require('lodash');
 const importPlatform = require('./bulk/platform');
 
-async function initPlatform(file) {
-  const { services } = leemons.getPlugin('users');
-
+async function initPlatform({ file, ctx }) {
   try {
     const platform = await importPlatform(file);
     const itemKeys = keys(platform);
@@ -13,15 +11,15 @@ async function initPlatform(file) {
     const { email, locale, hostname } = platform[itemKey];
 
     await Promise.all([
-      services.platform.setDefaultLocale(locale),
-      services.platform.setEmail(email),
-      services.platform.setHostname(hostname),
-      services.platform.setAppearanceDarkMode(true),
+      ctx.tx.call('users.platform.setDefaultLocale', { value: locale }),
+      ctx.tx.call('users.platform.setEmail', { value: email }),
+      ctx.tx.call('users.platform.setHostname', { value: hostname }),
+      ctx.tx.call('users.platform.setAppearanceDarkMode', { value: true }),
     ]);
 
     return platform;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

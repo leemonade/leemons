@@ -2,9 +2,7 @@
 const { keys } = require('lodash');
 const importGrades = require('./bulk/grades');
 
-async function initGrades(file, centers) {
-  const { services } = leemons.getPlugin('grades');
-
+async function initGrades({ file, centers, ctx }) {
   try {
     const grades = await importGrades(file, centers);
     const itemsKeys = keys(grades);
@@ -13,15 +11,13 @@ async function initGrades(file, centers) {
       const itemKey = itemsKeys[i];
       const item = grades[itemKey];
 
-      // console.dir(item, { depth: null });
-
-      const itemData = await services.evaluations.add(item);
+      const itemData = await ctx.tx.call('grades.evaluations.add', { data: item });
       grades[itemKey] = { ...itemData };
     }
 
     return grades;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

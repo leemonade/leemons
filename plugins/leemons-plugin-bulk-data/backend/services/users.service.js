@@ -5,10 +5,10 @@ const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 
 const { pluginName } = require('../config/constants');
-const restActions = require('./rest/bulk.rest');
+const restActions = require('./rest/users.rest');
 
 module.exports = {
-  name: `${pluginName}.bulk`,
+  name: `${pluginName}.users`,
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

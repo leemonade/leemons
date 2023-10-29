@@ -1,12 +1,15 @@
 const importUsers = require('./bulk/users');
 
-async function initAdmin(file) {
-  const { services } = leemons.getPlugin('admin');
-
+async function initAdmin({ file, ctx }) {
   const users = await importUsers(file, {}, {});
+  await ctx.tx.call('admin.settings.registerAdmin', {
+    ...users.super,
+  });
 
-  await services.settings.registerAdmin(users.super);
-  await services.settings.update({ status: 'INSTALLED', configured: true });
+  await ctx.tx.call('admin.settings.update', {
+    status: 'INSTALLED',
+    configured: true,
+  });
 }
 
 module.exports = initAdmin;

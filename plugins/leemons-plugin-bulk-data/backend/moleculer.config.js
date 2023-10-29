@@ -158,7 +158,7 @@ module.exports = {
       options: {
         port: 3030,
         path: '/metrics',
-        metricNamePrefix: 'bulk-template.',
+        metricNamePrefix: 'bulk-data.',
         defaultLabels: (registry) => ({
           namespace: registry.broker.namespace,
           nodeID: registry.broker.nodeID,

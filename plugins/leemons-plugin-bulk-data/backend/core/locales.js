@@ -2,9 +2,7 @@
 const { keys } = require('lodash');
 const importLocales = require('./bulk/locales');
 
-async function initLocales(file) {
-  const { services } = leemons.getPlugin('users');
-
+async function initLocales({ file, ctx }) {
   try {
     const locales = await importLocales(file);
     const itemKeys = keys(locales);
@@ -12,16 +10,19 @@ async function initLocales(file) {
     for (let i = 0, len = itemKeys.length; i < len; i++) {
       const itemKey = itemKeys[i];
       const { code, name } = locales[itemKey];
-      const localeData = await services.platform.addLocale(code, name);
+      const localeData = await ctx.tx.call('users.platform.addLocale', {
+        locale: code,
+        name,
+      });
 
       locales[itemKey] = localeData;
     }
 
-    await leemons.getPlugin('admin').services.settings.update({ status: 'LOCALIZED' });
+    await ctx.tx.call('admin.settings.update', { status: 'LOCALIZED' });
 
     return locales;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

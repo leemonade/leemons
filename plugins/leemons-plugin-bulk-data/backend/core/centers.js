@@ -2,22 +2,22 @@
 const { keys } = require('lodash');
 const importCenters = require('./bulk/centers');
 
-async function initCenters(file) {
-  const { services } = leemons.getPlugin('users');
-
+async function initCenters({ file, ctx }) {
   try {
     const centers = await importCenters(file);
     const centersKeys = keys(centers);
 
     for (let i = 0, len = centersKeys.length; i < len; i++) {
       const centerKey = centersKeys[i];
-      const centerData = await services.centers.add(centers[centerKey]);
+      const centerData = await ctx.tx.call('users.centers.add', {
+        ...centers[centerKey],
+      });
       centers[centerKey] = centerData;
     }
 
     return centers;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

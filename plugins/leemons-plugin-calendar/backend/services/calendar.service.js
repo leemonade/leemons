@@ -79,7 +79,7 @@ module.exports = {
         _.forEach(keys, (k) => {
           if (
             !ctx.callerPlugin.startsWith('assignables') &&
-            !ctx.callerPlugin.startsWith('bulk-template')
+            !ctx.callerPlugin.startsWith('bulk-data')
           ) {
             validateKeyPrefix({ key: k, calledFrom: ctx.callerPlugin, ctx });
           }

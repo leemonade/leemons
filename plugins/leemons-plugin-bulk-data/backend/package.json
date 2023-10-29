@@ -1,7 +1,7 @@
 {
-  "name": "leemons-plugin-bulk-template",
+  "name": "leemons-plugin-bulk-data",
   "version": "1.0.0",
-  "description": "Leemons bulk template plugin",
+  "description": "Leemons bulk data plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "async-promise-pool": "^1.0.6",
+    "chalk": "^4.1.1",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "mime": "^3.0.0",
