@@ -10,7 +10,7 @@ async function listTests({ page, size, published, ctx }) {
     model: ctx.tx.db.Tests,
     page,
     size,
-    query: { id_$in: _.map(versions, 'fullId') },
+    query: { id: _.map(versions, 'fullId') },
   });
   const questions = await ctx.tx.db.QuestionsTests.find({ test: _.map(paginate.items, 'id') })
     .select(['id', 'test'])

@@ -5,7 +5,7 @@ async function filterUserAgentsByProfileAndCenter({ userAgentIds, profile, cente
   const profiles = profile ? (_.isArray(profile) ? profile : [profile]) : [];
   // eslint-disable-next-line no-nested-ternary
   const centers = center ? (_.isArray(center) ? center : [center]) : [];
-  const profileQuery = profiles.length ? { profile_$in: profiles } : {};
+  const profileQuery = profiles.length ? { profile: profiles } : {};
   const profileRoles = await ctx.tx.db.ProfileRole.find(profileQuery).select(['role']).lean();
   let roleIds = [];
   if (centers.length) {
