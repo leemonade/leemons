@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import _, { map, uniq, isFunction } from 'lodash';
-import { useForm, Controller } from 'react-hook-form';
+import _, { isFunction, map, uniq } from 'lodash';
+import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
   Button,
@@ -62,10 +62,11 @@ function CenterAlignedSelect(props) {
     />
   );
 }
+
 function PeriodFilters({ centers, programs, onChange }) {
   /*
-    --- Form Handling ---
-  */
+                                            --- Form Handling ---
+                                          */
   const { control, watch } = useForm({
     defaultValues: {
       search: '',
@@ -80,11 +81,9 @@ function PeriodFilters({ centers, programs, onChange }) {
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('periods.periodListFilters'), {});
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN('periods.periodListFilters'), {});
     }
 
     return {};
@@ -106,13 +105,13 @@ function PeriodFilters({ centers, programs, onChange }) {
     }
   }, [onChange, watch]);
   /*
-    --- Styles ---
-  */
+                                            --- Styles ---
+                                          */
   const { classes } = useStyle();
 
   /*
-      --- Render ---
-    */
+                                              --- Render ---
+                                            */
   return (
     <Box className={classes.filters}>
       <Box className={classes.filtersTop}>
@@ -266,30 +265,28 @@ function CourseSelect({ field, watch, labels }) {
 
 export default function PeriodList({ onRemove, className }) {
   /*
-    --- Pagination ---
-  */
+                                            --- Pagination ---
+                                          */
   const [page, setPage] = React.useState(1);
   const [size, setSize] = React.useState(10);
 
   /*
-    --- Filters ---
-  */
+                                            --- Filters ---
+                                          */
   const [filters, setFilters] = React.useState({});
 
   /*
-    --- Table ---
-  */
+                                            --- Table ---
+                                          */
 
   const [, translations] = useTranslateLoader(prefixPN('periods.periodListColumns'));
 
   const columnLabels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('periods.periodListColumns'), {});
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN('periods.periodListColumns'), {});
     }
 
     return {};
@@ -330,8 +327,8 @@ export default function PeriodList({ onRemove, className }) {
   );
 
   /*
-    --- Data fetching ---
-  */
+                                            --- Data fetching ---
+                                          */
 
   const { data: centers } = useUserCenters();
   const programsByCenter = useCenterPrograms(map(centers, 'id'));
@@ -344,10 +341,12 @@ export default function PeriodList({ onRemove, className }) {
   const { data: periods } = usePeriods({
     page: page - 1,
     size,
-    sort: 'center:ASC,program:ASC,course:ASC,startDate:ASC,endDate:ASC,name:ASC,id:ASC',
+    sort: 'center,program,course,startDate,endDate,name,id',
     query: {
-      center: filters.center || undefined,
-      center_$in: JSON.stringify(map(centers, 'id')),
+      $and: JSON.stringify([
+        { center: filters.center || undefined },
+        { center: map(centers, 'id') },
+      ]),
       program: filters.program || undefined,
       course: filters.course || undefined,
       name_$contains: filters.search || undefined,
@@ -368,8 +367,8 @@ export default function PeriodList({ onRemove, className }) {
   }, [programDetails]);
 
   /*
-    --- Table Formatting ---
-  */
+                                            --- Table Formatting ---
+                                          */
   const items = React.useMemo(
     () =>
       (periods?.items || []).map((period) => {
@@ -391,13 +390,13 @@ export default function PeriodList({ onRemove, className }) {
   );
 
   /*
-    --- Styles ---
-  */
+                                            --- Styles ---
+                                          */
   const { classes, cx } = useStyle();
 
   /*
-    --- Render ---
-  */
+                                            --- Render ---
+                                          */
   return (
     <Box className={cx(classes.paginatedList, className)}>
       <PeriodFilters centers={centers} programs={programs} onChange={setFilters} />
