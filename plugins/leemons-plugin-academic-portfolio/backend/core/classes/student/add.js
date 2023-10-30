@@ -36,7 +36,7 @@ async function add({ class: _class, student, ctx }) {
   });
 
   try {
-    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
       data: {
         permissionName: `academic-portfolio.program.inside.${program.id}`,
@@ -48,7 +48,7 @@ async function add({ class: _class, student, ctx }) {
   }
 
   try {
-    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
       data: {
         permissionName: `academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
