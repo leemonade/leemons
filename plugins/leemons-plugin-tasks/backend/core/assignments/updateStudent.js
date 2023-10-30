@@ -19,10 +19,9 @@ async function updateStudent({ student, instance, ctx, ...data }) {
   // EN: Only update the allowed fields
   // ES: Solo actualizar los campos permitidos
   const newData = _.pick(data, isStudent ? STUDENT_UPDATABLE_FIELDS : TEACHER_UPDATABLE_FIELD);
-
   if (newData.timestamps) {
     const assignation = await ctx.tx.call('assignables.assignations.getAssignation', {
-      assignabelInstanceId: instance,
+      assignableInstanceId: instance,
       user: student,
     });
 
