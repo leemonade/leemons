@@ -4,7 +4,7 @@ const { duplicateSubjectCreditsBySubjectsIds } = require('./duplicateSubjectCred
 async function duplicateSubjectByIds({ ids, duplications: dup = {}, ctx }) {
   const duplications = dup;
 
-  const subjects = await ctx.tx.db.Subjects.find({ id_$in: _.isArray(ids) ? ids : [ids] }).lean();
+  const subjects = await ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
   await ctx.tx.emit('before-duplicate-subjects', { subjects });
 
   // ES: Empezamos la duplicación de los items
