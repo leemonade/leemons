@@ -102,31 +102,31 @@ class Email {
     //! Dejo comentado el código "antiguo"
 
     /*
-    const promises = [];
+        const promises = [];
 
-    _.forIn(leemons.listProviders(), (value) => {
-      if (
-        value.services &&
-        value.services.email &&
-        _.isFunction(value.services.email.getTransporters)
-      ) {
-        promises.push(value.services.email.getTransporters());
-      }
-    });
-    const transportersArray = await Promise.all(promises);
-    const transporters = _.compact(_.flattenDeep(transportersArray));
-    if (!sendMailTransporter) {
-      sendMailTransporter = global.utils.nodemailer.createTransport({
-        sendmail: true,
-      });
-      transporters.push(sendMailTransporter);
-    }
+        _.forIn(leemons.listProviders(), (value) => {
+          if (
+            value.services &&
+            value.services.email &&
+            _.isFunction(value.services.email.getTransporters)
+          ) {
+            promises.push(value.services.email.getTransporters());
+          }
+        });
+        const transportersArray = await Promise.all(promises);
+        const transporters = _.compact(_.flattenDeep(transportersArray));
+        if (!sendMailTransporter) {
+          sendMailTransporter = global.utils.nodemailer.createTransport({
+            sendmail: true,
+          });
+          transporters.push(sendMailTransporter);
+        }
 
-    // console.log('-- EmailService > getTransporters:');
-    // console.dir(transporters, { depth: null });
+        // console.log('-- EmailService > getTransporters:');
+        // console.dir(transporters, { depth: null });
 
-    return transporters;
-     */
+        return transporters;
+         */
   }
 
   /**
@@ -161,7 +161,7 @@ class Email {
    * @return {Promise<Email>}
    * */
   static async add({ templateName, language, subject, html, type, ctx }) {
-    let template = await ctx.tx.db.EmailTemplate.findOne({ templateName }, ['id']).lean();
+    let template = await ctx.tx.db.EmailTemplate.findOne({ templateName }).select(['id']).lean();
     if (!template) {
       template = await ctx.tx.db.EmailTemplate.create({
         name: templateName,
@@ -187,9 +187,9 @@ class Email {
         { new: true, lean: true }
       );
       /*
-        * throw new Error(
-          `The ${templateName} email template already have the language ${language} of type ${type}`
-        ); */
+              * throw new Error(
+                `The ${templateName} email template already have the language ${language} of type ${type}`
+              ); */
     }
 
     ctx.logger.info(

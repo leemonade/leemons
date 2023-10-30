@@ -38,7 +38,7 @@ const newProfileAdded = require('../emails/newProfileAdded');
 
 async function initEmails({ ctx }) {
   await ctx.tx.call('emails.email.addIfNotExist', {
-    template: 'user-recover-password',
+    templateName: 'user-recover-password',
     language: 'es',
     subject: 'Recuperar contraseña',
     html: recoverEmail.es,
@@ -157,7 +157,7 @@ module.exports = {
       // Dataset Locations
       await initDataset({ ctx });
 
-      // email Templates
+      // Email Templates
       await initEmails({ ctx });
     },
     'menu-builder.init-main-menu': async (ctx) => {
