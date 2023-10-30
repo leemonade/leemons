@@ -97,6 +97,7 @@ module.exports = {
           'DELETE scorm/package/:id': 'v1.scorm.package.deletePackageRest',
           'PUT scorm/status/:instance/:user': 'v1.scorm.status.updateStatusRest',
           'GET scorm/assignation/:instance/:user': 'v1.scorm.status.getScormAssignationRest',
+          'GET scorm/public/:filePath(.*)': 'v1.scorm.public.serveFileRest',
 
           // -- Learning Paths (Finish) --
           'POST learning-paths/tags/list': 'v1.learning-paths.tags.listTagsRest',

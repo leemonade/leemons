@@ -19,7 +19,7 @@ module.exports = {
     async handler(ctx) {
       const { filePath } = ctx.params;
 
-      const publicPath = path.resolve(__dirname, '../public');
+      const publicPath = path.resolve(__dirname, '../../public');
       const absolutePath = path.resolve(publicPath, filePath);
       const relative = path.relative(publicPath, absolutePath);
       const isInside = relative && !relative.startsWith('..') && !path.isAbsolute(relative);
@@ -30,7 +30,9 @@ module.exports = {
         const readStream = createReadStream(absolutePath);
         const contentType = mime.lookup(absolutePath);
 
-        ctx.meta.$responseType = 'stream';
+        console.log('absolutePath', absolutePath, 'content-Type', contentType);
+
+        ctx.meta.$responseType = contentType;
         ctx.meta.$responseHeaders = {
           'Content-Type': contentType,
         };
