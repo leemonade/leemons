@@ -1,13 +1,17 @@
 /* eslint-disable import/prefer-default-export */
 import { createStyles, pxToRem, getFontExpressive } from '@bubbles-ui/components';
 
-export const LibraryCardFooterStyles = createStyles((theme, { action, color, size }) => ({
+export const LibraryCardFooterStyles = createStyles((theme, { color }) => ({
   root: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     minHeight: 38,
-    padding: action ? `${pxToRem(3)} ${pxToRem(16)}` : `${pxToRem(13)} ${pxToRem(16)}`,
+    width: '100%',
+    bottom: 0,
+    padding: `${pxToRem(16)}`,
+    paddingTop: '0px',
+    position: 'absolute',
     backgroundColor: theme.colors.mainWhite,
   },
   date: {
@@ -21,10 +25,8 @@ export const LibraryCardFooterStyles = createStyles((theme, { action, color, siz
     color,
   },
   FileIconLabel: {
-    marginLeft: pxToRem(size / 1.5),
-    fontSize: pxToRem(size),
-    lineHeight: '1em',
-    color,
+    ...theme.other.cardLibrary.content.typo.sm,
+    color: theme.other.cardLibrary.content.color.muted,
   },
   fileIconContainer: {
     display: 'flex',

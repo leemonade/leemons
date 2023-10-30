@@ -21,6 +21,7 @@ const FavButton = ({ isActive }) => {
 
 FavButton.defaultProps = FAV_BUTTON_DEFAULT_PROPS;
 FavButton.propTypes = FAV_BUTTON_PROP_TYPES;
+FavButton.displayName = 'FavButton';
 
 export default FavButton;
 export { FavButton };

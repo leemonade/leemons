@@ -32,7 +32,10 @@ const LibraryCard = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
+  const { classes, cx } = LibraryCardStyles(
+    { shadow, fullHeight, isHovered },
+    { name: 'LibraryCard' }
+  );
 
   if (isLoading) {
     return <LibraryCardSkeleton />;

@@ -77,3 +77,4 @@ const LibraryCardFooter = ({
 LibraryCardFooter.propTypes = LIBRARY_CARD_FOOTER_PROP_TYPES;
 
 export { LibraryCardFooter };
+export default LibraryCardFooter;

@@ -54,7 +54,6 @@ export const LibraryCardBodyStyles = createStyles((theme, { fullHeight }) => {
       paddingTop: pxToRem(4),
     },
     subjectsContainer: {
-      marginTop: pxToRem(8),
       display: 'flex',
       alignContent: 'flex-start',
     },

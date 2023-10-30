@@ -1,3 +1,6 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Box, Paper, ImageLoader } from '@bubbles-ui/components';
 import { ArchiveIcon, StarIcon, DeleteBinIcon, FlagIcon } from '@bubbles-ui/icons/solid';
@@ -17,6 +20,7 @@ export default {
   },
   argTypes: {
     testShowImage: { control: 'boolean' },
+    testShowTitle: { control: 'boolean' },
     variant: { control: { type: 'select' }, options: LIBRARYCARD_VARIANTS },
     role: { control: { type: 'select' }, options: LIBRARYCARD_ASSIGMENT_ROLES },
     onAction: { action: 'onAction' },
@@ -30,6 +34,7 @@ const Template = ({
   testShowAction,
   testShowAssigment,
   testShowSubject,
+  testShowTitle,
   children,
   asset,
   assigment,
@@ -46,6 +51,7 @@ const Template = ({
   const assetToRender = {
     cover: testShowImage ? (isBookmark ? URL_ASSET.cover : asset.cover) : undefined,
     description: testShowDescription ? asset.description : undefined,
+    name: testShowTitle ? asset.name : undefined,
   };
 
   const assetChecker = {
@@ -89,6 +95,7 @@ Playground.args = {
   testShowAssigment: true,
   testShowSubject: true,
   testIsDraft: true,
+  testShowTitle: true,
   variant: 'media',
   action: 'View feedback',
   badge: '',
