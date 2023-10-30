@@ -39,7 +39,10 @@ async function importProfiles(filePath) {
   // ·····················································
   // PROFILE PERMISSION START COLUMN INDEX
 
-  const permissionStartColumn = findIndex(fields, (field) => field.indexOf('plugins') > -1);
+  const permissionStartColumn = findIndex(
+    fields,
+    (field) => !['root', 'name', 'description', 'indexable', 'accessTo'].includes(field)
+  );
 
   // ·····················································
   // PROFILE ITEMS START ROW INDEX
@@ -48,7 +51,7 @@ async function importProfiles(filePath) {
   const itemsStartRow =
     findIndex(profiles.slice(1), (profile) => profile[1] !== '') + itemsStartRowOffset;
 
-  const items = profiles
+  return profiles
     .slice(itemsStartRow)
     .map((profile) => {
       const item = { root: profile[1], permissions: [] };
@@ -87,9 +90,6 @@ async function importProfiles(filePath) {
       acc[root] = rest;
       return acc;
     }, {});
-
-  // console.dir(items, { depth: null });
-  return items;
 }
 
 // ·····················································

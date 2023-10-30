@@ -24,13 +24,13 @@ async function _addUser({ key, users, ctx }) {
     itemRoles = roles.map((rol) => ({ id: rol.profileRole }));
   }
 
-  leemons.log.debug(`Adding user: ${item.name}`);
+  ctx.logger.debug(`Adding user: ${item.name}`);
   const itemData = await ctx.tx.call('users.users.add', {
     ...item,
     roles: map(itemRoles, 'id'),
     active: true,
   });
-  leemons.log.info(`User ADDED: ${item.name}`);
+  ctx.logger.info(`User ADDED: ${item.name}`);
 
   const userProfiles = roles.map((rol) => rol.profileKey);
 
@@ -45,7 +45,7 @@ async function initUsers({ file, centers, profiles, ctx }) {
     for (let i = 0, len = itemsKeys.length; i < len; i++) {
       const itemKey = itemsKeys[i];
       if (itemKey !== 'super') {
-        pool.add(() => _addUser({ itemKey, users, ctx }));
+        pool.add(() => _addUser({ key: itemKey, users, ctx }));
       }
     }
 

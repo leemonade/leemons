@@ -13,7 +13,6 @@ async function initProfiles({ file, ctx }) {
     for (let i = 0, len = itemsKeys.length; i < len; i++) {
       const itemKey = itemsKeys[i];
       const { accessTo, ...item } = profiles[itemKey];
-
       const itemData = await ctx.tx.call('users.profiles.saveBySysName', {
         ...item,
         sysName: itemKey,

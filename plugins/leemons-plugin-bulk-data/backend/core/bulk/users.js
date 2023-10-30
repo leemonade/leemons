@@ -41,7 +41,7 @@ async function importUsers(filePath, centers, profiles) {
   const itemsStartRowOffset = 2; // fields names and header items
   const itemsStartRow = findIndex(data.slice(1), (item) => item[1] !== '') + itemsStartRowOffset;
 
-  const items = data
+  return data
     .slice(itemsStartRow)
     .map((row) => {
       const item = { root: row[1], roles: [] };
@@ -85,9 +85,6 @@ async function importUsers(filePath, centers, profiles) {
       acc[root] = rest;
       return acc;
     }, {});
-
-  // console.dir(items, { depth: null });
-  return items;
 }
 
 // ·····················································

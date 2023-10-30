@@ -90,7 +90,7 @@ async function bulkData({ docPath, ctx }) {
     currentPhase = LOAD_PHASES.PROVIDERS;
 
     // ·······························································
-    // ! CENTERS, PROFILES & USERS
+    // CENTERS, PROFILES & USERS
 
     ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Admin plugin ...}`);
     await initAdmin({ file: docPath, ctx });
@@ -179,11 +179,9 @@ module.exports = {
     async handler(ctx) {
       console.log('🛑 en bulk-data: ctx.meta => ', ctx.meta);
       const settings = await ctx.tx.call('admin.settings.findOne');
-      console.log('🛑 aquí bulk-data, settings =>', settings);
 
       if (settings?.status !== 'INSTALLED' && !settings?.configured) {
         const file = await createTempFile({ readStream: ctx.params });
-        console.log('file.path', file.path);
         await bulkData({ docPath: file.path, ctx });
         return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
       }
