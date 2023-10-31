@@ -24,6 +24,7 @@ it('Correctly call add asset and return the new one', async () => {
   delete asset.file;
 
   const assetData = _.omit({ ...asset }, [
+    '_id',
     'id',
     'cover',
     'icon',

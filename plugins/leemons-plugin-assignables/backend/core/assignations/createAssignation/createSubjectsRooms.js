@@ -37,7 +37,7 @@ async function createSubjectsRooms({
     // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
     if (teachers.length)
       await ctx.tx.call('comunica.room.addUserAgents', {
-        room: roomKey,
+        key: roomKey,
         userAgent: _.compact(_.uniq(teachers)),
         isAdmin: true,
       });

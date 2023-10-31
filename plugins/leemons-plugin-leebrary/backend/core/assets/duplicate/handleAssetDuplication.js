@@ -29,6 +29,7 @@ async function handleAssetDuplication({
   ctx,
 }) {
   const assetData = _.omit(asset, [
+    '_id',
     'id',
     'file',
     'cover',

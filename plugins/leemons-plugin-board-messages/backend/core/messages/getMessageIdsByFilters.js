@@ -5,7 +5,7 @@ async function getMessageIdsByFilters({ item, ctx }) {
   if (item.centers && item.centers.length) {
     const q = { center: [...item.centers, '*'] };
     if (ids !== null) {
-      q.messageConfig_$in = ids;
+      q.messageConfig = ids;
     }
     const items = await ctx.tx.db.MessageConfigCenters.find(q).select(['messageConfig']).lean();
     ids = _.map(items, 'messageConfig');

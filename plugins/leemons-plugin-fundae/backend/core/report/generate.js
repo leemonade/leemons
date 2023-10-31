@@ -174,8 +174,10 @@ async function startGeneration({ report, dataToSocket, ctx }) {
         query: {
           type: 'log',
           'statement.actor.account.name': report.userAgent.toString(),
-          'statement.object.definition.extensions.id_$in': classesIds,
-          'statement.object.id_$endsWith': '/api/open/virtual-classroom',
+          'statement.object.definition.extensions.id': classesIds,
+          'statement.object.id': {
+            $regex: /^.*\/api\/open\/virtual-classroom$/,
+          },
         },
         sort: { createdAt: 1 },
       }),
@@ -184,7 +186,9 @@ async function startGeneration({ report, dataToSocket, ctx }) {
           type: 'log',
           'statement.actor.account.name': report.userAgent.toString(),
           'statement.object.definition.extensions.id': program.id.toString(),
-          'statement.object.id_$endsWith': '/api/view/program',
+          'statement.object.id': {
+            $regex: /^.*\/api\/view\/program$/,
+          },
         },
         sort: { createdAt: 1 },
       }),
@@ -193,7 +197,9 @@ async function startGeneration({ report, dataToSocket, ctx }) {
           type: 'log',
           'statement.actor.account.name': report.userAgent.toString(),
           'statement.object.definition.extensions.program': program.id.toString(),
-          'statement.object.id_$endsWith': '/api/view/leebrary/media-files',
+          'statement.object.id': {
+            $regex: /^.*\/api\/view\/leebrary\/media-files$/,
+          },
         },
         sort: { createdAt: 1 },
       }),

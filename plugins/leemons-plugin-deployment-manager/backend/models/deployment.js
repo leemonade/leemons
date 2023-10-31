@@ -17,7 +17,10 @@ const deploymentSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    minimize: false,
+  }
 );
 
 const deploymentModel = newModel(

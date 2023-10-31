@@ -4,13 +4,16 @@ import { CheckBoxGroup } from '@bubbles-ui/components';
 
 export function CurriculumFieldsPicker({ curriculumFields, onChange, value }) {
   const data = React.useMemo(
-    () => curriculumFields.map((cField) => ({
-      label: cField.name,
-      value: cField.id,
-      checked: value?.includes(cField.id),
-    })),
+    () =>
+      curriculumFields.map((cField) => ({
+        label: cField.name,
+        value: cField.id,
+        checked: value?.includes(cField.id),
+      })),
     [curriculumFields, value]
   );
+
+  console.log('Final curriculum data', data);
 
   return <CheckBoxGroup data={data} checked={value} onChange={onChange} direction="column" />;
 }

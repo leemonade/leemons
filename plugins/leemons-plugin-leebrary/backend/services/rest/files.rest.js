@@ -81,7 +81,7 @@ module.exports = {
       path: '/:id',
       method: 'GET',
     },
-    middlewares: [LeemonsMiddlewareAuthenticated()],
+    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
     // eslint-disable-next-line sonarjs/cognitive-complexity
     async handler(ctx) {
       const { id, download, onlyPublic } = ctx.params;
@@ -131,7 +131,7 @@ module.exports = {
 
       const mediaType = contentType.split('/')[0];
 
-      ctx.meta.$responseType = 'stream';
+      ctx.meta.$responseType = contentType;
       ctx.meta.$responseHeaders = {
         'Content-Type': contentType,
       };
@@ -158,7 +158,7 @@ module.exports = {
         }
       }
       // eslint-disable-next-line consistent-return
-      return { status: 200, readStream };
+      return readStream;
     },
   },
   folderRest: {

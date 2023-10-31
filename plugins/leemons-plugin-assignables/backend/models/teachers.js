@@ -29,13 +29,10 @@ const teachersSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 
-const teachersModel = newModel(
-  mongoose.connection,
-  'v1::assignables_Teachers',
-  teachersSchema
-);
+const teachersModel = newModel(mongoose.connection, 'v1::assignables_Teachers', teachersSchema);
 
 module.exports = { teachersSchema, teachersModel };

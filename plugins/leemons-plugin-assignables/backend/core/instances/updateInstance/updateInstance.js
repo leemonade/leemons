@@ -28,6 +28,7 @@ const updatableFields = [
   'showCorrectAnsers',
   'relatedAssignableInstances',
 ];
+
 /**
  * Update an assignable instance.
  *
