@@ -154,18 +154,19 @@ async function bulkData({ docPath, ctx }) {
     currentPhase = LOAD_PHASES.TESTS;
 
     // ·······························································
-    // ! TASKS - solve permissions
+    // TASKS
 
-    // ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`);
-    // config.tasks = await initTasks({ file: docPath, config, ctx });
-    // ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
-    // currentPhase = LOAD_PHASES.TASKS;
+    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`);
+    config.tasks = await initTasks({ file: docPath, config, ctx });
+    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
+    currentPhase = LOAD_PHASES.TASKS;
 
     // ·······························································
     // WIDGETS
 
     await initWidgets({ ctx });
     currentPhase = LOAD_PHASES.WIDGETS;
+    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Widgets plugin`);
   }
 }
 
