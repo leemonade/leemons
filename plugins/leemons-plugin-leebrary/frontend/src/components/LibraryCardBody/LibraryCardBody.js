@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import React, { useState } from 'react';
-import { Box, Badge, Text, TextClamp, BulletSubject } from '@bubbles-ui/components';
+import { Box, Badge, Text, TextClamp, AvatarSubject } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
@@ -70,11 +70,11 @@ const LibraryCardBody = ({
         {isMultipleSubjects && (
           <Box className={classes.subject}>
             <Box className={classes.subjectIcon}>
-              <BulletSubject
+              <AvatarSubject
                 color={'#A2A9B0'}
                 icon={subject.icon}
                 altText={subject.name}
-                size="sm"
+                size="md"
               />
             </Box>
             <TextClamp lines={1}>
@@ -87,11 +87,11 @@ const LibraryCardBody = ({
         {!isMultipleSubjects && subject && (
           <Box className={classes.subject}>
             <Box className={classes.subjectIcon}>
-              <BulletSubject
+              <AvatarSubject
                 color={subject.color}
                 icon={subject.icon}
                 altText={subject.name}
-                size="lg"
+                size="md"
               />
             </Box>
             <Box>
