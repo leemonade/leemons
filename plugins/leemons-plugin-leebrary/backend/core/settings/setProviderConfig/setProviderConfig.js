@@ -14,7 +14,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @throws {LeemonsError} If the provider is not found or does not support the setConfig method.
  */
 async function setProviderConfig({ providerName, config, ctx } = {}) {
-  if (!['bulk-template', 'admin', 'leebrary'].includes(ctx.callerPlugin)) {
+  if (!['bulk-data', 'admin', 'leebrary'].includes(ctx.callerPlugin)) {
     throw new Error('Must be called from leemons-plugin-leebrary');
   }
 
