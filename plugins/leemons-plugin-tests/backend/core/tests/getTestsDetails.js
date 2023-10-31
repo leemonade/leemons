@@ -51,7 +51,7 @@ async function getTestsDetails({ id, withQuestionBank, ctx }) {
     filters: assignable.metadata.filters,
     questions: _.map(assignable?.metadata?.questions, (questionId) => ({
       ...questionsById[questionId],
-      properties: JSON.parse(questionsById[questionId].properties),
+      properties: JSON.parse(questionsById[questionId].properties || null),
     })),
     type: assignable.metadata.type,
     levels: assignable.metadata.level,
@@ -59,63 +59,63 @@ async function getTestsDetails({ id, withQuestionBank, ctx }) {
   }));
 
   /*
-  const tagsService = leemons.getPlugin('common').services.tags;
-  const ids = _.isArray(id) ? id : [id];
-  const [tests, questionsTests] = await Promise.all([
-    table.tests.find({ id_$in: ids }, { transacting }),
-    table.questionsTests.find({ test_$in: ids }, { transacting }),
-  ]);
+    const tagsService = leemons.getPlugin('common').services.tags;
+    const ids = _.isArray(id) ? id : [id];
+    const [tests, questionsTests] = await Promise.all([
+      table.tests.find({ id_$in: ids }, { transacting }),
+      table.questionsTests.find({ test_$in: ids }, { transacting }),
+    ]);
 
-  const questions = await table.questions.find(
-    { id_$in: _.map(questionsTests, 'question') },
-    { transacting }
-  );
-
-  const promises = [];
-  if (tests.length) {
-    promises.push(
-      tagsService.getValuesTags(_.map(tests, 'id'), {
-        type: 'plugins.tests.tests',
-        transacting,
-      })
+    const questions = await table.questions.find(
+      { id_$in: _.map(questionsTests, 'question') },
+      { transacting }
     );
-  } else {
-    promises.push(Promise.resolve([]));
-  }
 
-  if (questions.length) {
-    promises.push(
-      tagsService.getValuesTags(_.map(questions, 'id'), {
-        type: 'plugins.tests.questions',
-        transacting,
-      })
-    );
-  } else {
-    promises.push(Promise.resolve([]));
-  }
+    const promises = [];
+    if (tests.length) {
+      promises.push(
+        tagsService.getValuesTags(_.map(tests, 'id'), {
+          type: 'plugins.tests.tests',
+          transacting,
+        })
+      );
+    } else {
+      promises.push(Promise.resolve([]));
+    }
 
-  const [questionBanksTags, questionsTags] = await Promise.all(promises);
+    if (questions.length) {
+      promises.push(
+        tagsService.getValuesTags(_.map(questions, 'id'), {
+          type: 'plugins.tests.questions',
+          transacting,
+        })
+      );
+    } else {
+      promises.push(Promise.resolve([]));
+    }
 
-  _.forEach(tests, (questionBank, i) => {
-    questionBank.tags = questionBanksTags[i];
-  });
-  _.forEach(questions, (question, i) => {
-    question.tags = questionsTags[i];
-  });
+    const [questionBanksTags, questionsTags] = await Promise.all(promises);
 
-  const questionsById = _.keyBy(questions, 'id');
-  const questionsTestsByTest = _.groupBy(questionsTests, 'test');
+    _.forEach(tests, (questionBank, i) => {
+      questionBank.tags = questionBanksTags[i];
+    });
+    _.forEach(questions, (question, i) => {
+      question.tags = questionsTags[i];
+    });
 
-  return _.map(tests, (test) => ({
-    ...test,
-    filters: JSON.parse(test.filters),
-    questions: _.map(questionsTestsByTest[test.id] || [], (quest) => ({
-      ...questionsById[quest.question],
-      properties: JSON.parse(questionsById[quest.question].properties),
-    })),
-  }));
+    const questionsById = _.keyBy(questions, 'id');
+    const questionsTestsByTest = _.groupBy(questionsTests, 'test');
 
-   */
+    return _.map(tests, (test) => ({
+      ...test,
+      filters: JSON.parse(test.filters),
+      questions: _.map(questionsTestsByTest[test.id] || [], (quest) => ({
+        ...questionsById[quest.question],
+        properties: JSON.parse(questionsById[quest.question].properties),
+      })),
+    }));
+
+     */
 }
 
 module.exports = { getTestsDetails };

@@ -1,9 +1,9 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, forEach, isString } from 'lodash';
+import { cloneDeep, forEach, isString, merge, set } from 'lodash';
 
 async function saveFeedback(_body) {
   const body = cloneDeep(_body);
-  const form = {};
+  let form = {};
 
   const questionsFiles = [];
   forEach(_body.questions || [], (question, index) => {
@@ -58,13 +58,13 @@ async function saveFeedback(_body) {
     }
     const uploadQuestionFilesPromises = questionsFiles.map(({ index, name, file }) =>
       uploadFileAsMultipart(file, { name: file.name }).then((uploadedFile) => {
-        form[`questions[${index}].${name}`] = uploadedFile;
+        set(form, `questions[${index}].${name}`, uploadedFile);
       })
     );
     await Promise.all(uploadQuestionFilesPromises);
-    form.data = JSON.stringify(data);
+    form = merge(data, form);
   } else {
-    form.data = JSON.stringify(body);
+    form = merge(body, form);
   }
 
   return leemons.api('feedback/feedback', {

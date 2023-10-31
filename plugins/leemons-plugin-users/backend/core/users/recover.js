@@ -51,28 +51,26 @@ async function recover({ email, ctx }) {
     });
     recovery = recovery.toObject();
   }
-  if (leemons.getPlugin('emails')) {
-    const hostname = await getHostname({ ctx });
+  const hostname = await getHostname({ ctx });
 
-    await ctx.tx.call('emails.email.sendAsEducationalCenter', {
-      to: email,
-      templateName: 'user-recover-password',
-      language: user.locale,
-      context: {
-        name: user.name,
-        resetUrl: `${hostname}/users/reset?token=${encodeURIComponent(
-          await generateJWTToken({
-            payload: {
-              id: user.id,
-              code: recovery.code,
-            },
-            ctx,
-          })
-        )}`,
-        recoverUrl: `${hostname}/users/recover`,
-      },
-    });
-  }
+  await ctx.tx.call('emails.email.sendAsEducationalCenter', {
+    to: email,
+    templateName: 'user-recover-password',
+    language: user.locale,
+    context: {
+      name: user.name,
+      resetUrl: `${hostname}/users/reset?token=${encodeURIComponent(
+        await generateJWTToken({
+          payload: {
+            id: user.id,
+            code: recovery.code,
+          },
+          ctx,
+        })
+      )}`,
+      recoverUrl: `${hostname}/users/recover`,
+    },
+  });
   return undefined;
 }
 

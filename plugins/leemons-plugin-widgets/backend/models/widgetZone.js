@@ -27,6 +27,7 @@ const schema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });

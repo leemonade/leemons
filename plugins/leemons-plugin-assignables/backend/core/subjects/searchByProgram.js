@@ -11,7 +11,7 @@ async function searchByProgram({ id, ctx }) {
 
   const ids = compact(isArray(id) ? id : [id]);
   const programs = await ctx.tx.db.Subjects.find({
-    program: { $in: id },
+    program: id,
   })
     .select(['assignable', 'program'])
     .lean();
@@ -26,11 +26,9 @@ async function searchByProgram({ id, ctx }) {
     }
   });
 
-  const assignablesHavingExactPrograms = Object.entries(programsByAssignable)
+  return Object.entries(programsByAssignable)
     .filter(([, iteratorPrograms]) => !difference(ids, iteratorPrograms).length)
     .map(([assignable]) => assignable);
-
-  return assignablesHavingExactPrograms;
 }
 
 module.exports = { searchByProgram };

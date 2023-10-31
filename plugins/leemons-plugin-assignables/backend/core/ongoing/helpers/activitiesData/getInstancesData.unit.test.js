@@ -28,10 +28,7 @@ afterAll(async () => {
 });
 
 const mockInstanceObj = getInstanceObject();
-mockInstanceObj.metadata = JSON.stringify(mockInstanceObj.metadata);
-mockInstanceObj.relatedAssignableInstances = JSON.stringify(
-  mockInstanceObj.relatedAssignableInstances
-);
+
 const instances = ['assignableInstanceOneId', 'assignableInstanceTwoId'];
 let ctx;
 let initialValues = [
@@ -69,7 +66,7 @@ const expectedResult = {
   [instances[0]]: {
     id: instances[0],
     assignable: mockAssignablesData[initialValues[0].assignable],
-    metadata: JSON.parse(initialValues[0].metadata),
+    metadata: initialValues[0].metadata,
     alwaysAvailable: true,
     requiresScoring: false,
     allowFeedback: false,
@@ -77,7 +74,7 @@ const expectedResult = {
   [instances[1]]: {
     id: instances[1],
     assignable: mockAssignablesData[initialValues[1].assignable],
-    metadata: JSON.parse(initialValues[1].metadata),
+    metadata: initialValues[1].metadata,
     alwaysAvailable: true,
     requiresScoring: false,
     allowFeedback: false,
@@ -106,11 +103,11 @@ it('Should return related instances data correctly', async () => {
   const expectedResultAlt = {
     [instances[0]]: {
       ...expectedResult[instances[0]],
-      relatedAssignableInstances: JSON.parse(initialValues[0].relatedAssignableInstances),
+      relatedAssignableInstances: initialValues[0].relatedAssignableInstances,
     },
     [instances[1]]: {
       ...expectedResult[instances[1]],
-      relatedAssignableInstances: JSON.parse(initialValues[1].relatedAssignableInstances),
+      relatedAssignableInstances: initialValues[1].relatedAssignableInstances,
     },
   };
   // Act

@@ -8,7 +8,7 @@ async function findQuestionResponses({ query, columns, ctx }) {
   }
   responses = await responses.lean();
   return _.map(responses, (response) => {
-    response.properties = JSON.parse(response.properties);
+    response.properties = JSON.parse(response.properties || null);
     return response;
   });
 }

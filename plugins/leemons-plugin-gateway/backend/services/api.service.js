@@ -97,6 +97,7 @@ module.exports = {
           'DELETE scorm/package/:id': 'v1.scorm.package.deletePackageRest',
           'PUT scorm/status/:instance/:user': 'v1.scorm.status.updateStatusRest',
           'GET scorm/assignation/:instance/:user': 'v1.scorm.status.getScormAssignationRest',
+          'GET scorm/public/:filePath(.*)': 'v1.scorm.public.serveFileRest',
 
           // -- Learning Paths (Finish) --
           'POST learning-paths/tags/list': 'v1.learning-paths.tags.listTagsRest',
@@ -582,7 +583,7 @@ module.exports = {
           'GET leebrary-aws-s3/config': 'v1.leebrary-aws-s3.config.getConfigRest',
 
           // -- Assignables(FINISHED) --
-          'GET assignables/find': 'v1.assignables.assignables.getRest',
+          'GET assignables/assignables/find': 'v1.assignables.assignables.getRest',
           'GET assignables/activities/search/ongoing':
             'v1.assignables.activities.searchOngoingRest',
           'GET assignables/activities/search/nya':
@@ -596,7 +597,7 @@ module.exports = {
           'GET assignables/assignableInstances/:id': 'v1.assignables.assignableInstances.getRest',
           'PUT assignables/assignableInstances/:id':
             'v1.assignables.assignableInstances.updateRest',
-          'POST assignables/assignableInstances/:id':
+          'POST assignables/assignableInstances/reminder':
             'v1.assignables.assignableInstance.sendReminderRest',
 
           // -- Tasks (FINISHED) --
@@ -613,32 +614,36 @@ module.exports = {
           'DELETE tasks/tasks/:id': 'v1.tasks.tasks.removeRest',
           'POST tasks/tasks/:id/publish': 'v1.tasks.tasks.publishRest',
           'GET tasks/tasks/search': 'v1.tasks.tasks.searchRest',
+          'POST tasks/tasks/:task/assignments/instance': 'v1.tasks.assignments.instanceCreateRest',
+          'PUT tasks/tasks/assignments/instance/:instance': 'v1.tasks.assignments.instanceGetRest',
+          'PUT tasks/tasks/instances/:instance/students/:student':
+            'v1.tasks.assignments.studentUpdateRest',
         },
 
         /**
-         * Before call hook. You can check the request.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         *
-         onBeforeCall(ctx, route, req, res) {
-         // Set request headers to context meta
-         ctx.meta.userAgent = req.headers["user-agent"];
-         }, */
+                 * Before call hook. You can check the request.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 *
+                 onBeforeCall(ctx, route, req, res) {
+                 // Set request headers to context meta
+                 ctx.meta.userAgent = req.headers["user-agent"];
+                 }, */
 
         /**
-         * After call hook. You can modify the data.
-         * @param {Context} ctx
-         * @param {Object} route
-         * @param {IncomingRequest} req
-         * @param {ServerResponse} res
-         * @param {Object} data
-         onAfterCall(ctx, route, req, res, data) {
-         // Async function which return with Promise
-         return doSomething(ctx, res, data);
-         }, */
+                 * After call hook. You can modify the data.
+                 * @param {Context} ctx
+                 * @param {Object} route
+                 * @param {IncomingRequest} req
+                 * @param {ServerResponse} res
+                 * @param {Object} data
+                 onAfterCall(ctx, route, req, res, data) {
+                 // Async function which return with Promise
+                 return doSomething(ctx, res, data);
+                 }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =

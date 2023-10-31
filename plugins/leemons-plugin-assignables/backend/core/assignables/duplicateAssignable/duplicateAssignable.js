@@ -17,23 +17,20 @@ const { createAssignable } = require('../createAssignable');
  * @returns {Promise<AssignablesAssignable>} The duplicated assignable.
  * @throws {LeemonsError} If the assignable does not exist or the user does not have access to it, a LeemonsError is thrown.
  */
-async function duplicateAssignable({ id, published, ctx }) {
+async function duplicateAssignable({ assignableId: id, published, ctx }) {
   const assignable = await getAssignable({
     id,
     ctx,
   });
-
   assignable.asset.name += ' (1)';
 
   const assignableToCreate = pick(assignable, validAssignableProperties);
 
-  const newAssignable = await createAssignable({
+  return await createAssignable({
     assignable: assignableToCreate,
     published: published === undefined ? false : published,
     ctx,
   });
-
-  return newAssignable;
 }
 
 module.exports = { duplicateAssignable };

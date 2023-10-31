@@ -90,7 +90,7 @@ async function setAsset({
 
   if (assetData.subjects) {
     // eslint-disable-next-line no-param-reassign
-    assetData.subjects = JSON.parse(assetData.subjects);
+    assetData.subjects = JSON.parse(assetData.subjects || null);
   }
 
   if (id) {

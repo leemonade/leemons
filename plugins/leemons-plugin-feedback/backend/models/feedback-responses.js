@@ -28,10 +28,12 @@ const schema = new mongoose.Schema(
     },
     response: {
       type: String,
+      default: null,
     },
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

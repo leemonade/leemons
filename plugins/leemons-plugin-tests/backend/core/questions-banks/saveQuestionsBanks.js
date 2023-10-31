@@ -65,6 +65,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
       // EN - Delete the id to create new
       _.forEach(data.questions, (question) => {
         delete question.id;
+        delete question._id;
         if (oldCategoriesById[question.category]) {
           question.category = oldCategoriesById[question.category].order;
         }

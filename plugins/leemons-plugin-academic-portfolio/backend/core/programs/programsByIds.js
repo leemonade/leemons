@@ -39,7 +39,7 @@ async function programsByIds({ ids, onlyProgram, ctx }) {
   let imagesById = null;
   if (userSession) {
     const images = await ctx.tx.call('leebrary.assets.getByIds', {
-      assetsIds: _.map(programs, 'image'),
+      ids: _.map(programs, 'image'),
       withFiles: true,
     });
     imagesById = _.keyBy(images, 'id');

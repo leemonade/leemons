@@ -32,6 +32,7 @@ const multipartEtagSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

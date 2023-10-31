@@ -10,7 +10,7 @@ async function getValuesForUserAgentsAndKey({ key, userAgents, ctx } = {}) {
   const result = {};
   _.forEach(userAgents, (userAgent) => {
     if (configByUserAgents[userAgent]) {
-      result[userAgent] = JSON.parse(configByUserAgents[userAgent].value);
+      result[userAgent] = JSON.parse(configByUserAgents[userAgent].value || null);
     } else {
       result[userAgent] = keysDefaults[key];
     }

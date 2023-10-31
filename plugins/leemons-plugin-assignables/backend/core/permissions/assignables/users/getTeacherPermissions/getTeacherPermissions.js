@@ -10,7 +10,7 @@
 
 async function getTeacherPermissions({ assignableIds, ctx }) {
   const classes = await ctx.tx.db.Classes.find({
-    assignable: { $in: assignableIds },
+    assignable: assignableIds,
   })
     .select({ assignable: true, class: true })
     .lean();
@@ -31,7 +31,7 @@ async function getTeacherPermissions({ assignableIds, ctx }) {
   const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
     userAgent: ctx.meta.userSession.userAgents,
     query: {
-      permissionName: { $in: classesPermissionNames },
+      permissionName: classesPermissionNames,
       actionName: 'edit',
     },
   });

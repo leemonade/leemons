@@ -21,7 +21,7 @@ async function reOrderCustomUserItems({ menuKey, parentKey, ids, ctx }) {
     parentKey,
     id: ids,
     key: {
-      $regex: new RegExp(regexPattern),
+      $regex: regexPattern,
     },
   });
   if (count !== ids.length)

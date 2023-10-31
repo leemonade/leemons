@@ -24,6 +24,7 @@ const settingsSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

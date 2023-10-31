@@ -5,11 +5,11 @@ async function subjectByIds({ ids, ctx }) {
 
   const [images, icons] = await Promise.all([
     ctx.tx.call('leebrary.assets.getByIds', {
-      assetsIds: _.map(subjects, 'image'),
+      ids: _.map(subjects, 'image'),
       withFiles: true,
     }),
     ctx.tx.call('leebrary.assets.getByIds', {
-      assetsIds: _.map(subjects, 'icon'),
+      ids: _.map(subjects, 'icon'),
       withFiles: true,
     }),
   ]);

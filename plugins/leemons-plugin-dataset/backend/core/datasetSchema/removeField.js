@@ -54,7 +54,7 @@ async function removeField({ locationName, pluginName, item, ctx }) {
 
   const savePromises = [];
   _.forIn(schema, (value, locale) => {
-    const jsonValue = JSON.parse(value);
+    const jsonValue = JSON.parse(value || null);
     if (jsonValue && jsonValue.properties && jsonValue.properties[item]) {
       delete jsonValue.properties[item];
       savePromises.push(
@@ -68,7 +68,7 @@ async function removeField({ locationName, pluginName, item, ctx }) {
   });
 
   _.forIn(ui, (value, locale) => {
-    const jsonValue = JSON.parse(value);
+    const jsonValue = JSON.parse(value || null);
     delete jsonValue[item];
     savePromises.push(
       ctx.tx.call('multilanguage.contents.setValue', {

@@ -23,7 +23,7 @@ async function getCalendars({ id, withEvents, ctx }) {
     eventsByCalendar = _.groupBy(
       _.map(events, (event) => ({
         ...event,
-        data: _.isString(event.data) ? JSON.parse(event.data) : event.data,
+        data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data,
       })),
       'calendar'
     );

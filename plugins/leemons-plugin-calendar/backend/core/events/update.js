@@ -35,7 +35,7 @@ async function update({ id, data, calendar, ctx }) {
 
   await removeAll({ eventId: event.id, ctx });
   await addNexts({ eventId: event.id, ctx });
-  return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };
+  return { ...event, data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data };
 }
 
 module.exports = { update };

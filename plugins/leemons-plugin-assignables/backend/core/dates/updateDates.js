@@ -13,8 +13,12 @@ function getDiff(oldObject, newObject) {
 
   const commonKeys = without(keys(oldObject), ...newKeys.concat(deletedKeys));
 
-  const updatedKeys = commonKeys.filter(
-    (key) => oldObject[key]?.getTime() !== newObject[key]?.getTime()
+  const updatedKeys = commonKeys.filter((key) =>
+    oldObject[key]
+      ? new Date(oldObject[key]).getTime()
+      : undefined !== newObject[key]
+      ? new Date(newObject[key]).getTime()
+      : undefined
   );
 
   return {

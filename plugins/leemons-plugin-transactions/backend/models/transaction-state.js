@@ -25,7 +25,10 @@ const transactionStateSchema = new mongoose.Schema(
       expires: 60 * 60, // 1hora,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    minimize: false,
+  }
 );
 
 let TransactionState = null;

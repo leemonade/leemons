@@ -39,9 +39,11 @@ const schema = new mongoose.Schema(
     },
     resources: {
       type: mongoose.Schema.Types.Mixed,
+      default: [],
     },
     submission: {
       type: mongoose.Schema.Types.Mixed,
+      default: null,
     },
     instructionsForTeachers: {
       type: String,
@@ -51,10 +53,12 @@ const schema = new mongoose.Schema(
     },
     metadata: {
       type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

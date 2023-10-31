@@ -58,7 +58,7 @@ async function nodesTreeByCurriculum({ id, ctx }) {
 
   _.forEach(nodes, (node) => {
     // eslint-disable-next-line no-param-reassign
-    node.formValues = node.data ? JSON.parse(node.data) : null;
+    node.formValues = node.data ? JSON.parse(node.data || null) : null;
   });
 
   const nodesByParent = _.groupBy(nodes, 'parentNode');

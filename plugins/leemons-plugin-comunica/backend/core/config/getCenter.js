@@ -4,7 +4,7 @@ async function getCenter({ center, ctx }) {
     studentsCanAddTeachersToGroups: true,
   };
   if (item) {
-    config = JSON.parse(item.config);
+    config = JSON.parse(item.config || null);
   }
   return config;
 }

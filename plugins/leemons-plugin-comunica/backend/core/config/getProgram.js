@@ -7,7 +7,7 @@ async function getProgram({ program, ctx }) {
     onlyTeachersCanWriteInSubjectsRooms: false,
   };
   if (item) {
-    config = JSON.parse(item.config);
+    config = JSON.parse(item.config || null);
   }
   return config;
 }

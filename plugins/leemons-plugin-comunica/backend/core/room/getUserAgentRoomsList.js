@@ -27,8 +27,8 @@ async function getUserAgentRoomsList({ userAgent, ctx }) {
   _.forEach(rooms, (room) => {
     result.push({
       ...room,
-      nameReplaces: JSON.parse(room.nameReplaces),
-      metadata: JSON.parse(room.metadata),
+      nameReplaces: JSON.parse(room.nameReplaces || null),
+      metadata: JSON.parse(room.metadata || null),
       muted: uairByRoom[room.key]?.muted || false,
       attached: uairByRoom[room.key]?.attached || null,
       isAdmin: uairByRoom[room.key]?.isAdmin || null,

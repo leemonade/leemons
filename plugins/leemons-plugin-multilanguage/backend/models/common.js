@@ -28,7 +28,10 @@ const commonSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    minimize: false,
+  }
 );
 
 const commonModel = newModel(mongoose.connection, 'v1::multilanguage_Common', commonSchema);

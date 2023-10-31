@@ -1,4 +1,5 @@
 const { map } = require('lodash');
+
 /**
  * Updates an event in the calendar.
  *
@@ -9,8 +10,10 @@ const { map } = require('lodash');
  * @param {MoleculerContext} options.ctx - The Moleculer context object.
  * @returns {Promise} - A promise that resolves to the updated event.
  */
-async function updateEvent({ eventId, assignable, classes, dates, ctx }) {
-  return ctx.tx.call('calendar.calendar.updateEvent', {
+async function updateEvent({ eventId, assignable, classes, dates, ctx, withTX = true }) {
+  let { call } = ctx;
+  if (withTX) call = ctx.tx.call;
+  return call('calendar.calendar.updateEvent', {
     //
     id: eventId,
     data: {
@@ -20,7 +23,7 @@ async function updateEvent({ eventId, assignable, classes, dates, ctx }) {
       startDate: dates.startDate instanceof Date ? dates.startDate.toISOString() : dates.startDate,
       endDate: dates.deadline instanceof Date ? dates.deadline.toISOString() : dates.deadline,
     },
-    calendar: { calendar: map(classes, (classe) => `calendar.class.${classe}`) },
+    calendar: map(classes, (classe) => `calendar.class.${classe}`),
   });
 }
 

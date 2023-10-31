@@ -21,7 +21,7 @@ module.exports = {
           path.resolve(__dirname, `../../i18n/${lang}.json`),
           'utf8'
         );
-        const locale = JSON.parse(localeData);
+        const locale = JSON.parse(localeData || null);
         ctx.meta.$statusCode = 200;
         return { status: 200, data: { [lang]: { [page]: locale[page] } } };
       } catch (e) {

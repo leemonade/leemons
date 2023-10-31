@@ -26,8 +26,8 @@ async function detail({ id, ctx }) {
   }
   return {
     ...response,
-    schoolDays: JSON.parse(response.schoolDays),
-    notSchoolDays: JSON.parse(response.notSchoolDays),
+    schoolDays: JSON.parse(response.schoolDays || null),
+    notSchoolDays: JSON.parse(response.notSchoolDays || null),
   };
 }
 

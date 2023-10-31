@@ -11,7 +11,7 @@ async function getByUser({ userId, ctx }) {
   const results = await ctx.tx.db.Files.find({ fromUser: userId }).lean();
   return results.map((item) => {
     const data = { ...item };
-    if (data.metadata) data.metadata = JSON.parse(data.metadata);
+    if (data.metadata) data.metadata = JSON.parse(data.metadata || null);
     return data;
   });
 }

@@ -1,4 +1,5 @@
 const { getAssignationsOfInstance } = require('../../assignations/getAssignationsOfInstance');
+
 /**
  * @async
  * @function getAssignationsData
@@ -13,13 +14,11 @@ const { getAssignationsOfInstance } = require('../../assignations/getAssignation
 async function getAssignationsData({ instances, instancesTeached, ctx }) {
   const ids = instances.filter((instance) => instancesTeached[instance]);
 
-  const studentsPerInstance = await getAssignationsOfInstance({
+  return getAssignationsOfInstance({
     instances: ids,
     details: true,
     ctx,
   });
-
-  return studentsPerInstance;
 }
 
 module.exports = { getAssignationsData };

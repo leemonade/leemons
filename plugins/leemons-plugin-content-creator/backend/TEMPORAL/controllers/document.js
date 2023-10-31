@@ -2,7 +2,7 @@ const _ = require('lodash');
 const documentService = require('../src/services/document');
 
 async function saveDocument(ctx) {
-  const data = JSON.parse(ctx.request.body.data);
+  const data = JSON.parse(ctx.request.body.data || null);
   _.forIn(ctx.request.files, (value, key) => {
     _.set(data, key, value);
   });
@@ -20,6 +20,7 @@ async function getDocument(ctx) {
   ctx.status = 200;
   ctx.body = { status: 200, document };
 }
+
 async function deleteDocument(ctx) {
   const document = await documentService.deleteDocument(ctx.request.params.id, {
     userSession: ctx.state.userSession,

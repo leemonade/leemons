@@ -37,7 +37,7 @@ async function byIds({ ids: _ids, ctx }) {
 
   const [owners, assets] = await Promise.all([
     ctx.tx.call('users.users.getUserAgentsInfo', { userAgentIds: ownerIds }),
-    ctx.tx.call('leebrary.assets.getByIds', { assetsIds: assetIds, withFiles: true }),
+    ctx.tx.call('leebrary.assets.getByIds', { ids: assetIds, withFiles: true }),
   ]);
 
   const assetsById = _.keyBy(assets, 'id');

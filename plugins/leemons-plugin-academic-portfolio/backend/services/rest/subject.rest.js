@@ -123,7 +123,7 @@ module.exports = {
     async handler(ctx) {
       let { subjects } = ctx.params;
       if (subjects) {
-        subjects = JSON.parse(subjects);
+        subjects = JSON.parse(subjects || null);
         validateGetSubjectsCredits(subjects);
         const subjectsCredits = await getSubjectsCredits({ subjects, ctx });
         return { status: 200, subjectsCredits };
@@ -217,7 +217,7 @@ module.exports = {
       let { id } = ctx.params;
       if (!id) {
         const { ids } = ctx.params;
-        id = JSON.parse(ids);
+        id = JSON.parse(ids || null);
       }
       const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
       if (ctx.params.id) {

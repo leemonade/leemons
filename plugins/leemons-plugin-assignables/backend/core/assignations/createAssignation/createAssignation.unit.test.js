@@ -102,9 +102,7 @@ it('Should create an assignation', async () => {
       key: 'key1',
     },
   }));
-  checkIfStudentIsOnInstance.mockImplementation(async () => {
-    return false;
-  });
+  checkIfStudentIsOnInstance.mockImplementation(async () => false);
 
   // Act
   const result = await createAssignation({
@@ -147,10 +145,7 @@ it('Should throw an error if student is already assigned to instance', async () 
     indexable: true,
   });
 
-  checkIfStudentIsOnInstance.mockImplementation(async () => {
-    console.log('entra2');
-    return true;
-  });
+  checkIfStudentIsOnInstance.mockImplementation(async () => true);
 
   // Act and Assert
   await expect(createAssignation({ assignableInstanceId, users, options, ctx })).rejects.toThrow();

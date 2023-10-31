@@ -191,7 +191,7 @@ module.exports = {
         properties: {
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
-          subject: { type: 'string', format: 'uuid' },
+          subject: { type: 'string' },
         },
         required: ['page', 'size', 'subject'],
         additionalProperties: false,
@@ -326,10 +326,11 @@ module.exports = {
       const validator = new LeemonsValidator({
         type: 'object',
         properties: {
+          id: { type: 'string' },
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
         },
-        required: ['page', 'size'],
+        required: ['page', 'size', 'id'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -419,7 +420,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const ids = JSON.parse(ctx.params.ids);
+      const ids = JSON.parse(ctx.params.ids || null);
       const classes = await classByIds({
         ids,
         noSearchChildren: ctx.params.noSearchChildren,

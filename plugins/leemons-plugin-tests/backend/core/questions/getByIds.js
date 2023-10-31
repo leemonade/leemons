@@ -5,7 +5,7 @@ async function getByIds({ id, options, ctx }) {
   const questions = await ctx.tx.db.Questions.find({ id: _.isArray(id) ? id : [id] }).lean();
   const assetIds = [];
   _.forEach(questions, (question) => {
-    question.properties = JSON.parse(question.properties);
+    question.properties = JSON.parse(question.properties || null);
     if (question.questionImage) {
       assetIds.push(question.questionImage);
     }

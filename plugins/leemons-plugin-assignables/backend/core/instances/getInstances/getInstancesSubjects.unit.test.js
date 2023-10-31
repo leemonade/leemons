@@ -8,7 +8,7 @@ it('Should return subjects per instance', async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.classes.classesByIds': classesByIdsHandler,
+      'academic-portfolio.classes.classByIds': classesByIdsHandler,
     },
   });
   const classesPerInstance = {

@@ -5,7 +5,6 @@ const { getFeedbackQuestionByIds } = require('../feedback-questions');
 
 async function getFeedback({ id, getAssets = true, ctx }) {
   const { userSession } = ctx.meta;
-  const assetService = leemons.getPlugin('leebrary').services.assets;
 
   // Check is userSession is provided
   if (getAssets && !userSession)
@@ -24,7 +23,7 @@ async function getFeedback({ id, getAssets = true, ctx }) {
   });
 
   const questionAssets = await ctx.tx.call('leebrary.assets.getByIds', {
-    assetsIds: imagesIds,
+    ids: imagesIds,
     withFiles: true,
   });
 

@@ -6,7 +6,7 @@ async function getTeacherPermission({ assignableId, ctx }) {
   const classesIds = classes.map(({ class: id }) => `academic-portfolio.class.${id}`);
 
   const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-    query: { permissionName: { $in: classesIds }, actionName: 'edit' },
+    query: { permissionName: classesIds, actionName: 'edit' },
     userAgent: ctx.meta.userSession.userAgents,
   });
 

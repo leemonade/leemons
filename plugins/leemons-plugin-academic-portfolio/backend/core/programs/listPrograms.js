@@ -28,7 +28,7 @@ async function listPrograms({ page, size, center, ctx }) {
   });
 
   const images = await ctx.tx.call('leebrary.assets.getByIds', {
-    assetsIds: _.map(results.items, 'image'),
+    ids: _.map(results.items, 'image'),
     withFiles: true,
   });
   const imagesById = _.keyBy(images, 'id');

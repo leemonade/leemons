@@ -13,7 +13,7 @@ async function list({ ctx }) {
   eventTypes = _.sortBy(eventTypes, 'order');
   return _.map(eventTypes, (eventType) => ({
     ...eventType,
-    config: JSON.parse(eventType.config),
+    config: JSON.parse(eventType.config || null),
   }));
 }
 

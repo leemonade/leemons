@@ -5,7 +5,7 @@ async function getTheme({ ctx }) {
   const r = await query({
     ctx,
     query: {
-      key_$in: [
+      key: [
         'platform-appearance-main-color',
         'platform-appearance-menu-main-color',
         'platform-appearance-menu-drawer-color',

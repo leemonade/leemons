@@ -5,7 +5,7 @@ async function getSystemDataFieldsConfig({ ctx }) {
     secondSurname: { required: false, disabled: false },
   };
   if (data) {
-    const value = JSON.parse(data.value);
+    const value = JSON.parse(data.value || null);
     if (value.avatar) {
       result.avatar.required = value.avatar.required || false;
       result.avatar.disabled = value.avatar.disabled || false;

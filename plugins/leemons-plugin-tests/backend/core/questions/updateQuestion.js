@@ -3,7 +3,7 @@ const _ = require('lodash');
 async function updateQuestion({ data, published, ctx }) {
   const { id, tags, clues, properties, ...props } = data;
   const question = await ctx.tx.db.Questions.findOne({ id }).lean();
-  question.properties = JSON.parse(question.properties);
+  question.properties = JSON.parse(question.properties || null);
 
   // Si el tipo es mapa, comprobamos si ya existia un asset, si ya existia lo actualizamos, si no existia lo creamos.
   if (data.type === 'map') {

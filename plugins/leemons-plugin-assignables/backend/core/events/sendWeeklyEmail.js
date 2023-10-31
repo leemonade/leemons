@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const { sqlDatetime, diffHours } = require('@leemons/utils');
 
-const getAsset = require('../leebrary/assets/getAsset');
+const { getAsset } = require('../leebrary/assets/getAsset');
 
 async function getNextActivities({ userAgents, ctx }) {
   const now = new Date();

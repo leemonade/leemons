@@ -35,6 +35,7 @@ async function duplicateFeedback({ id, published, ctx }) {
 
   const newQuestions = _.map(questions, (question) => {
     delete question.id;
+    delete question._id;
     question.assignable = newAssignable.id;
     if (
       (question.type === 'singleResponse' || question.type === 'multiResponse') &&

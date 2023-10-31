@@ -3,7 +3,7 @@ const _ = require('lodash');
 async function updateFeedbackQuestion({ data, published, ctx }) {
   const { id, properties, ...props } = data;
   const question = await ctx.tx.db.FeedbackQuestions.findOne({ id }).lean();
-  question.properties = JSON.parse(question.properties);
+  question.properties = JSON.parse(question.properties || null);
 
   // Si el tipo es mapa, comprobamos si ya existia un asset, si ya existia lo actualizamos, si no existia lo creamos.
 
@@ -15,7 +15,7 @@ async function updateFeedbackQuestion({ data, published, ctx }) {
       }
     });
 
-    if (data.withImages) {
+    if (properties.withImages) {
       const promises = [];
       _.forEach(properties.responses, (response, index) => {
         promises.push(

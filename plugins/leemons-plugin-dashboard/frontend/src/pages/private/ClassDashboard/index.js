@@ -139,7 +139,7 @@ export default function ClassDashboard({ session }) {
     store.programClasses = programClasses;
     store.classesSelect = map(store.programClasses, (programClass) => {
       const courseMultiple = isArray(programClass.courses);
-      const group = programClass.groups.isAlone
+      const group = programClass.groups?.isAlone
         ? null
         : programClass.groups
         ? programClass.groups.abbreviation

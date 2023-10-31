@@ -32,7 +32,7 @@ async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
       promises.push(
         ctx.tx.call('comunica.room.addUserAgents', {
           // room, userAgent, isAdmin, ctx
-          room: ctx.prefixPN(
+          key: ctx.prefixPN(
             `subject|${_classe.subject.id}.assignation|${assignation.id}.userAgent|${assignation.user}`
           ),
           userAgent: teacher,

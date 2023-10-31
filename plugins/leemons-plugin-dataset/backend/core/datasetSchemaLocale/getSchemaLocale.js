@@ -41,8 +41,8 @@ async function getSchemaLocale({ locationName, pluginName, locale, ctx }) {
   ]);
 
   return {
-    schemaData: JSON.parse(schemaData),
-    uiData: JSON.parse(uiData),
+    schemaData: JSON.parse(schemaData || null),
+    uiData: JSON.parse(uiData || null),
     locationName,
     pluginName,
     locale,
