@@ -170,12 +170,26 @@ async function bulkData({ docPath, ctx }) {
   }
 }
 
+// function timeTest({ ctx }) {
+//   let count = 0;
+//   const intervalId = setInterval(async () => {
+//     const settings = await ctx.call('admin.settings.findOne');
+//     console.log(`Soy time Test: ${count * 0.5} 🎉`, settings);
+//     count++;
+//     if (count >= 4) {
+//       // 3 minutes / 0.5 minutes = 6 times
+//       clearInterval(intervalId);
+//     }
+//   }, 0.5 * 60 * 1000); // 0.5 minutes = 30 seconds
+// }
+
 module.exports = {
   loadRest: {
     rest: {
       path: '/load-from-file',
       method: 'POST',
     },
+    timeout: 0,
     async handler(ctx) {
       const settings = await ctx.call('admin.settings.findOne');
 
