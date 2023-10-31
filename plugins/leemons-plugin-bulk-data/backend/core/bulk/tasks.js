@@ -24,15 +24,12 @@ function scapeHTML(value) {
   return value;
 }
 
-async function newAssetForTextEditor(props, { userSession }) {
-  const { services } = leemons.getPlugin('leebrary');
-
-  const duplicatedAsset = await services.assets.duplicate(props.id, {
-    preserveName: true,
-    indexable: false,
-    public: true,
-    userSession,
-  });
+async function newAssetForTextEditor({ props, userSession, ctx }) {
+  const duplicatedAsset = await ctx.call(
+    'leebrary.assets.duplicate',
+    { assetId: props.id, preserveName: true, indexable: false, public: true },
+    { meta: { userSession } }
+  );
 
   if (duplicatedAsset.file?.id) {
     duplicatedAsset.url = getFileUrl(duplicatedAsset.file.id);
@@ -50,7 +47,7 @@ async function newAssetForTextEditor(props, { userSession }) {
   };
 }
 
-async function parseDevelopment({ task, assets, userSession }) {
+async function parseDevelopment({ task, assets, userSession, ctx }) {
   if (isEmpty(task.development)) {
     return null;
   }
@@ -96,7 +93,7 @@ async function parseDevelopment({ task, assets, userSession }) {
           }
 
           // eslint-disable-next-line no-await-in-loop
-          assetInfo = await newAssetForTextEditor(props, { userSession });
+          assetInfo = await newAssetForTextEditor({ props, userSession, ctx });
 
           duplicatedAssets[componentInfo.asset] = assetInfo;
         }
@@ -168,7 +165,7 @@ function getDataType(extensions) {
   }, {});
 }
 
-async function importTasks(filePath, { users, centers, programs, assets }) {
+async function importTasks({ filePath, config: { users, centers, programs, assets }, ctx }) {
   const items = await itemsImport(filePath, 'ta_tasks', 40);
   const subjects = await itemsImport(filePath, 'ta_task_subjects', 40);
 
@@ -233,7 +230,7 @@ async function importTasks(filePath, { users, centers, programs, assets }) {
         }
 
         const creator = users[task.creator];
-        const development = await parseDevelopment({ task, assets, userSession: creator });
+        const development = await parseDevelopment({ task, assets, userSession: creator, ctx });
 
         items[key] = {
           asset: {

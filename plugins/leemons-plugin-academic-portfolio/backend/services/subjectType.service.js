@@ -29,7 +29,7 @@ module.exports = {
     ...restActions,
     addSubjectType: {
       handler(ctx) {
-        addSubjectType(...ctx.params, ctx);
+        return addSubjectType({ ...ctx.params, ctx });
       },
     },
   },

@@ -9,7 +9,7 @@ async function initCenters({ file, ctx }) {
 
     for (let i = 0, len = centersKeys.length; i < len; i++) {
       const centerKey = centersKeys[i];
-      const centerData = await ctx.tx.call('users.centers.add', {
+      const centerData = await ctx.call('users.centers.add', {
         ...centers[centerKey],
       });
       centers[centerKey] = centerData;

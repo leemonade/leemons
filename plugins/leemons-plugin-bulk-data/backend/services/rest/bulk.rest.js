@@ -50,11 +50,10 @@ function getLoadProgress() {
   return Math.floor((current / total) * 100);
 }
 
-function getLoadStatus(ctx) {
+function getLoadStatus() {
   const progress = getLoadProgress();
 
-  ctx.status = 200;
-  ctx.body = {
+  return {
     status: 200,
     currentPhase: String(currentPhase).toUpperCase(),
     overallProgress: `${progress} %`,
@@ -119,54 +118,54 @@ async function bulkData({ docPath, ctx }) {
     currentPhase = LOAD_PHASES.GRADES;
 
     // ·······························································
-    // ! MEDIA LIBRARY
+    // MEDIA LIBRARY
 
-    // ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
-    // config.assets = await initLibrary(docPath, config);
-    // ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
-    // currentPhase = LOAD_PHASES.LIBRARY;
-
-    // ·······························································
-    // ! ACADEMIC PORTFOLIO
-
-    // ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`);
-    // config.programs = await initAcademicPortfolio(docPath, config);
-    // ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
-    // currentPhase = LOAD_PHASES.AP;
-
-    // ctx.logger.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
-    // await updateLibrary(docPath, config);
-    // ctx.logger.info(chalk`{cyan.bold BULK} UPDATED Leebrary plugin`);
+    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
+    config.assets = await initLibrary({ file: docPath, config, ctx });
+    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
+    currentPhase = LOAD_PHASES.LIBRARY;
 
     // ·······························································
-    // ! CALENDAR & KANBAN
+    // ACADEMIC PORTFOLIO -> Da error por duplicación de userAgentPermisions, expected & handled in academic portfolio
 
-    // ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`);
-    // await initCalendar(docPath, config);
-    // ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Calendar plugin`);
-    // currentPhase = LOAD_PHASES.CALENDAR;
+    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`);
+    config.programs = await initAcademicPortfolio({ file: docPath, config, ctx });
+    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
+    currentPhase = LOAD_PHASES.AP;
 
-    // ·······························································
-    // ! TESTS & QBANKS
-
-    // ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`);
-    // config.tests = await initTests(docPath, config);
-    // ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tests plugin`);
-    // currentPhase = LOAD_PHASES.TESTS;
+    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
+    await updateLibrary({ file: docPath, config, ctx });
+    ctx.logger.info(chalk`{cyan.bold BULK} UPDATED Leebrary plugin`);
 
     // ·······························································
-    // ! TASKS
+    // CALENDAR & KANBAN
+
+    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`);
+    await initCalendar({ file: docPath, config, ctx });
+    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Calendar plugin`);
+    currentPhase = LOAD_PHASES.CALENDAR;
+
+    // ·······························································
+    // TESTS & QBANKS
+
+    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`);
+    config.tests = await initTests({ file: docPath, config, ctx });
+    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tests plugin`);
+    currentPhase = LOAD_PHASES.TESTS;
+
+    // ·······························································
+    // ! TASKS - solve permissions
 
     // ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`);
-    // config.tasks = await initTasks(docPath, config);
+    // config.tasks = await initTasks({ file: docPath, config, ctx });
     // ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
     // currentPhase = LOAD_PHASES.TASKS;
 
     // ·······························································
-    // ! WIDGETS
+    // WIDGETS
 
-    // await initWidgets();
-    // currentPhase = LOAD_PHASES.WIDGETS;
+    await initWidgets({ ctx });
+    currentPhase = LOAD_PHASES.WIDGETS;
   }
 }
 
@@ -177,17 +176,23 @@ module.exports = {
       method: 'POST',
     },
     async handler(ctx) {
-      console.log('🛑 en bulk-data: ctx.meta => ', ctx.meta);
-      const settings = await ctx.tx.call('admin.settings.findOne');
+      const settings = await ctx.call('admin.settings.findOne');
 
       if (settings?.status !== 'INSTALLED' && !settings?.configured) {
         const file = await createTempFile({ readStream: ctx.params });
-        await bulkData({ docPath: file.path, ctx });
+        bulkData({ docPath: file.path, ctx });
         return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
       }
-      // await adminServices.settings.update({ status: 'INSTALLED', configured: true });
       throw new LeemonsError(ctx, { message: 'Something went wrong', httpStatusCode: 403 });
     },
   },
-  statusRest: getLoadStatus,
+  statusRest: {
+    rest: {
+      path: '/load-from-file',
+      method: 'GET',
+    },
+    handler() {
+      return getLoadStatus();
+    },
+  },
 };

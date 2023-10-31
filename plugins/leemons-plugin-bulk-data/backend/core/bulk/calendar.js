@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-const { keys, isString, isEmpty, isNaN, trim, isNil, forEach } = require('lodash');
+const { keys, isString, isEmpty, isNaN: _isNaN, trim, isNil, forEach } = require('lodash');
 const itemsImport = require('./helpers/simpleListImport');
 
 function getSubjectAndClassroom(programs, subjectString) {
@@ -28,14 +28,11 @@ function getSubjectAndClassroom(programs, subjectString) {
   return { subject, classroom };
 }
 
-async function importEvents(filePath, { users, programs }) {
+async function importEvents({ filePath, config: { users, programs }, ctx }) {
   const items = await itemsImport(filePath, 'calendar', 40, true, true);
 
-  const { services } = leemons.getPlugin('calendar');
-  const kanbanColumns = await services.kanban.listColumns();
+  const kanbanColumns = await ctx.call('calendar.kanban.listColumns');
   const kanbanCols = ['', 'backlog', 'todo', 'inprogress', 'underreview', 'done'];
-
-  // console.dir(kanbanColumns, { depth: null });
 
   const calendars = {};
   const itemsKeys = keys(items).filter((key) => !isNil(key) && !isEmpty(key));
@@ -44,8 +41,8 @@ async function importEvents(filePath, { users, programs }) {
     const key = itemsKeys[i];
     const event = items[key];
 
-    if (isNaN(event.startDate)) delete event.startDate;
-    if (isNaN(event.endDate)) delete event.endDate;
+    if (_isNaN(event.startDate)) delete event.startDate;
+    if (_isNaN(event.endDate)) delete event.endDate;
 
     if (isString(event.startDate) && !isEmpty(event.startDate)) {
       event.startDate = new Date(event.startDate).toISOString();
@@ -59,7 +56,7 @@ async function importEvents(filePath, { users, programs }) {
       event.data = { ...(event.data || {}), description: event.description };
     }
 
-    if (!isNil(event.hideInCalendar) && !isNaN(event.hideInCalendar)) {
+    if (!isNil(event.hideInCalendar) && !_isNaN(event.hideInCalendar)) {
       event.data = { ...(event.data || {}), hideInCalendar: event.hideInCalendar };
     }
 
@@ -97,7 +94,13 @@ async function importEvents(filePath, { users, programs }) {
 
     if (!creatorCalendars) {
       const creator = users[event.creator];
-      const userCalendars = await services.calendar.getCalendars(creator);
+      const userCalendars = await ctx.call(
+        'calendar.calendar.getCalendars',
+        {},
+        {
+          meta: { userSession: { ...creator } },
+        }
+      );
 
       calendars[event.creator] = userCalendars.ownerCalendars;
       creatorCalendars = calendars[event.creator];

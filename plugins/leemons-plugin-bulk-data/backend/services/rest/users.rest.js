@@ -9,11 +9,11 @@ module.exports = {
     async handler(ctx) {
       if (process.env.NODE_ENV !== 'production') {
         try {
-          await ctx.tx.call('admin.settings.setLanguages', {
+          await ctx.call('admin.settings.setLanguages', {
             langs: { code: 'es', name: 'Español' },
             defaultLang: 'es',
           });
-          await ctx.tx.call('admin.settings.registerAdmin', {
+          await ctx.call('admin.settings.registerAdmin', {
             email: 'super@leemons.io',
             password: 'testing',
             locale: 'es',
@@ -22,7 +22,7 @@ module.exports = {
             gender: 'female',
             birthdate: new Date(),
           });
-          await ctx.tx.call('admin.settings.update', {
+          await ctx.call('admin.settings.update', {
             status: 'INSTALLED',
             configured: true,
           });

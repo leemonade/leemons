@@ -19,7 +19,7 @@ async function initProviders({ file, ctx }) {
       !isEmpty(providers.storage.accessKey) &&
       !isEmpty(providers.storage.secretAccessKey)
     ) {
-      await ctx.tx.call('mqtt-aws-iot.socket.setConfig', {
+      await ctx.call('mqtt-aws-iot.socket.setConfig', {
         region: providers.iot.region || euCentralOneRegion,
         accessKeyId: providers.iot.accessKey,
         secretAccessKey: providers.iot.secretAccessKey,
@@ -41,7 +41,7 @@ async function initProviders({ file, ctx }) {
         secretAccessKey: providers.storage.secretAccessKey,
       };
 
-      await ctx.tx.call('leebrary.settings.setProviderConfig', {
+      await ctx.call('leebrary.settings.setProviderConfig', {
         providerName: storageProvider,
         config: storageConfig,
       });
@@ -62,7 +62,7 @@ async function initProviders({ file, ctx }) {
         secretAccessKey: providers.email.secretAccessKey,
       };
 
-      await ctx.tx.call('emails.email.addProvider', {
+      await ctx.call('emails.email.addProvider', {
         providerName: emailProvider,
         config: emailConfig,
       });
@@ -97,7 +97,7 @@ async function initProviders({ file, ctx }) {
         pass: providers.email.smtpPass,
       };
 
-      await ctx.tx.call('emails.email.addProvider', {
+      await ctx.call('emails.email.addProvider', {
         providerName: smtpEmailProvider,
         config: emailConfig,
       });

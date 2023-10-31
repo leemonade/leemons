@@ -11,10 +11,10 @@ async function initPlatform({ file, ctx }) {
     const { email, locale, hostname } = platform[itemKey];
 
     await Promise.all([
-      ctx.tx.call('users.platform.setDefaultLocale', { value: locale }),
-      ctx.tx.call('users.platform.setEmail', { value: email }),
-      ctx.tx.call('users.platform.setHostname', { value: hostname }),
-      ctx.tx.call('users.platform.setAppearanceDarkMode', { value: true }),
+      ctx.call('users.platform.setDefaultLocale', { value: locale }),
+      ctx.call('users.platform.setEmail', { value: email }),
+      ctx.call('users.platform.setHostname', { value: hostname }),
+      ctx.call('users.platform.setAppearanceDarkMode', { value: true }),
     ]);
 
     return platform;

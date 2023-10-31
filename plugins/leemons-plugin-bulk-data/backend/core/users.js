@@ -13,7 +13,7 @@ async function _addUser({ key, users, ctx }) {
     roles
       .filter((rol) => rol.center)
       .map((rol) =>
-        ctx.tx.call('users.profiles.getRoleForRelationshipProfileCenter', {
+        ctx.call('users.profiles.getRoleForRelationshipProfileCenter', {
           profileId: rol.profile,
           centerId: rol.center,
         })
@@ -25,7 +25,7 @@ async function _addUser({ key, users, ctx }) {
   }
 
   ctx.logger.debug(`Adding user: ${item.name}`);
-  const itemData = await ctx.tx.call('users.users.add', {
+  const itemData = await ctx.call('users.users.add', {
     ...item,
     roles: map(itemRoles, 'id'),
     active: true,

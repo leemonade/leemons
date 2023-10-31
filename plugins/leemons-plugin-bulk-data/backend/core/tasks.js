@@ -1,14 +1,12 @@
 /* eslint-disable no-await-in-loop */
+const chalk = require('chalk');
 const { keys } = require('lodash');
 const importTasks = require('./bulk/tasks');
 const _delay = require('./bulk/helpers/delay');
 
-async function initTasks(file, config) {
-  const { services } = leemons.getPlugin('tasks');
-  const { chalk } = global.utils;
-
+async function initTasks({ file, config, ctx }) {
   try {
-    const tasks = await importTasks(file, config);
+    const tasks = await importTasks({ filePath: file, config, ctx });
 
     const tasksKeys = keys(tasks);
 
@@ -17,17 +15,20 @@ async function initTasks(file, config) {
       const { creator, ...task } = tasks[key];
 
       try {
-        leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding task: ${task.asset?.name}}`);
-        const taskData = await services.tasks.create(task, { userSession: creator });
+        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding task: ${task.asset?.name}}`);
+        const taskData = await ctx.call(
+          'tasks.tasks.create',
+          { ...task },
+          { meta: { userSession: creator } }
+        );
         tasks[key] = { ...taskData };
 
-        leemons.log.info(chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`);
+        ctx.logger.info(chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`);
       } catch (e) {
-        console.log('-- TASK CREATION ERROR --');
-        // console.dir(task, { depth: null });
-        console.log(`task: ${task.asset?.name}`);
-        console.log(`creator: ${creator.name}`);
-        console.error(e);
+        ctx.logger.log('-- TASK CREATION ERROR --');
+        ctx.logger.log(`task: ${task.asset?.name}`);
+        ctx.logger.log(`creator: ${creator.name}`);
+        ctx.logger.error(e);
       }
 
       await _delay(3000);
@@ -35,7 +36,7 @@ async function initTasks(file, config) {
 
     return tasks;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

@@ -2,11 +2,11 @@ const importUsers = require('./bulk/users');
 
 async function initAdmin({ file, ctx }) {
   const users = await importUsers(file, {}, {});
-  await ctx.tx.call('admin.settings.registerAdmin', {
+  await ctx.call('admin.settings.registerAdmin', {
     ...users.super,
   });
 
-  await ctx.tx.call('admin.settings.update', {
+  await ctx.call('admin.settings.update', {
     status: 'INSTALLED',
     configured: true,
   });

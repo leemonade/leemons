@@ -1,10 +1,7 @@
 const _ = require('lodash');
 
-async function initWidgets() {
-  const { widgets } = leemons.getPlugin('widgets').services;
-  const { settings } = leemons.getPlugin('academic-portfolio').services;
-
-  const profiles = await settings.getProfiles();
+async function initWidgets({ ctx }) {
+  const profiles = await ctx.tx.call('academic-portfolio.settings.getProfiles');
 
   const zoneReorders = {
     'dashboard.program.left': [
@@ -43,7 +40,9 @@ async function initWidgets() {
   ];
 
   const zones = await Promise.all(
-    _.map(Object.keys(zoneReorders), (zoneKey) => widgets.getZone(zoneKey))
+    _.map(Object.keys(zoneReorders), (zoneKey) =>
+      ctx.tx.call('widgets.widgets.getZone', { key: zoneKey })
+    )
   );
 
   const itemsToUpdate = [];
@@ -60,8 +59,8 @@ async function initWidgets() {
     });
   });
 
-  await widgets.updateOrderItemsInZone(itemsToUpdate);
-  await widgets.updateProfileItemsInZone(itemProfiles);
+  await ctx.tx.call('widgets.widgets.updateOrderItemsInZone', { items: itemsToUpdate });
+  await ctx.tx.call('widgets.widgets.updateProfileItemsInZone', { items: itemProfiles });
 
   return null;
 }

@@ -1,16 +1,12 @@
 /* eslint-disable no-await-in-loop */
+const chalk = require('chalk');
 const { keys, isEmpty } = require('lodash');
 const importEvents = require('./bulk/calendar');
 
-async function initCalendar(file, { users, programs }) {
-  const { services } = leemons.getPlugin('calendar');
-
+async function initCalendar({ file, config: { users, programs }, ctx }) {
   try {
-    const events = await importEvents(file, { programs, users });
+    const events = await importEvents({ filePath: file, config: { programs, users }, ctx });
     const eventKeys = keys(events);
-    const { chalk } = global.utils;
-
-    // console.dir(events, { depth: null });
 
     for (let i = 0, len = eventKeys.length; i < len; i++) {
       const key = eventKeys[i];
@@ -24,19 +20,25 @@ async function initCalendar(file, { users, programs }) {
               throw new Error('This event does not have any Calendar');
             }
 
-            leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding calendar event: ${event.title}}`);
-            const eventData = await services.calendar.addEventFromUser(users[creator], {
-              ...event,
-              calendar,
-            });
+            ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding calendar event: ${event.title}}`);
+            const eventData = await ctx.call(
+              'calendar.calendar.addEventFromUser',
+              {
+                data: {
+                  ...event,
+                  calendar,
+                },
+              },
+              { meta: { userSession: { ...users[creator] } } }
+            );
             events[key] = { ...eventData };
-            leemons.log.info(chalk`{cyan.bold BULK} Calendar event ADDED: ${event.title}`);
+            ctx.logger.info(chalk`{cyan.bold BULK} Calendar event ADDED: ${event.title}`);
           } catch (e) {
-            console.log('-- ERROR Creating event calendar --');
-            console.log(`event: ${event.title}`);
-            console.log(`calendar: ${calendar}`);
-            console.log(`creator: ${creator.name}`);
-            console.error(e);
+            ctx.logger.log('-- ERROR Creating event calendar --');
+            ctx.logger.log(`event: ${event.title}`);
+            ctx.logger.log(`calendar: ${calendar}`);
+            ctx.logger.log(`creator: ${creator.name}`);
+            ctx.logger.error(e);
           }
         }
       }
@@ -44,7 +46,7 @@ async function initCalendar(file, { users, programs }) {
 
     return events;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

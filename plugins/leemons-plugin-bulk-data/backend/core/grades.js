@@ -11,7 +11,7 @@ async function initGrades({ file, centers, ctx }) {
       const itemKey = itemsKeys[i];
       const item = grades[itemKey];
 
-      const itemData = await ctx.tx.call('grades.evaluations.add', { data: item });
+      const itemData = await ctx.call('grades.evaluations.add', { data: item });
       grades[itemKey] = { ...itemData };
     }
 

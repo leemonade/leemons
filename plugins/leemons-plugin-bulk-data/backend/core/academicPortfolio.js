@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, compact, isNil } = require('lodash');
+const { keys, find, compact, isNil, omit } = require('lodash');
 const Pool = require('async-promise-pool');
 const importProfiles = require('./bulk/academic-portfolio/profiles');
 const importPrograms = require('./bulk/academic-portfolio/programs');
@@ -11,16 +11,18 @@ const importSubjects = require('./bulk/academic-portfolio/subjects');
 
 const pool = new Pool({ concurrency: 1 });
 
-async function _addSubjectAndClassroom(key, subjects, users, programs, apProfiles) {
-  const { services } = leemons.getPlugin('academic-portfolio');
-  const { services: userService } = leemons.getPlugin('users');
-  const { classes, seats, creator, students: rawStudents, courses, ...subject } = subjects[key];
+async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfiles, ctx }) {
+  const { classes, seats, creator, courses, ...subject } = subjects[key];
 
   try {
-    leemons.log.debug(`Adding subject: ${subject.name}`);
-    const subjectData = await services.subjects.addSubject(subject, {
-      userSession: users[creator],
-    });
+    ctx.logger.debug(`Adding subject: ${subject.name}`);
+    const subjectData = await ctx.call(
+      'academic-portfolio.subjects.addSubject',
+      {
+        data: omit(subject, 'students'),
+      },
+      { meta: { userSession: { ...users[creator] } } }
+    );
     subjects[key] = { ...subjectData };
 
     const programKey = Object.keys(programs).filter(
@@ -31,13 +33,16 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
     // ·····················································
     // CLASSES
 
-    leemons.log.debug(`Adding groups ...`);
+    ctx.logger.debug(`Adding groups ...`);
     const groups = classes.map((classroom) => classroom.group);
 
     // First create the class group
     const groupsData = await Promise.all(
       groups.map((group) => {
-        if (group) return services.groups.addGroupIfNotExists(group);
+        if (group)
+          return ctx.call('academic-portfolio.groups.addGroupIfNotExists', {
+            group,
+          });
         return null;
       })
     );
@@ -45,7 +50,7 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
     // Then create the classes
     const classesData = [];
 
-    leemons.log.debug(`Adding classrooms ...`);
+    ctx.logger.debug(`Adding classrooms ...`);
 
     for (let j = 0, l = classes.length; j < l; j++) {
       const { program, teachers, students, ...rest } = classes[j];
@@ -55,11 +60,15 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
       const teachersData = await Promise.all(
         // eslint-disable-next-line no-loop-func
         teachers.map(({ teacher }) =>
-          userService.users.getUserAgentByCenterProfile(teacher, center, apProfiles.teacher)
+          ctx.call('users.users.getUserAgentByCenterProfile', {
+            userId: teacher,
+            centerId: center,
+            profileId: apProfiles.teacher,
+          })
         )
       );
 
-      // Todo : Mover los seats de la asignatura a la clase
+      // To implement : Mover los seats de la asignatura a la clase
       const classroomData = {
         ...rest,
         program,
@@ -72,11 +81,13 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
         }),
       };
 
-      // console.log('classroomData', classroomData);
-
-      const classroom = await services.classes.addClass(classroomData, {
-        userSession: users[creator],
-      });
+      const classroom = await ctx.call(
+        'academic-portfolio.classes.addClass',
+        {
+          data: classroomData,
+        },
+        { meta: { userSession: { ...users[creator] } } }
+      );
 
       classesData.push(classroom);
 
@@ -87,13 +98,11 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
         let studentsData = await Promise.all(
           students.map((item) => {
             if (item?.student) {
-              return leemons
-                .getPlugin('users')
-                .services.users.getUserAgentByCenterProfile(
-                  item.student,
-                  center,
-                  apProfiles.student
-                );
+              return ctx.call('users.users.getUserAgentByCenterProfile', {
+                userId: item.student,
+                centerId: center,
+                profileId: apProfiles.student,
+              });
             }
             return null;
           })
@@ -107,35 +116,36 @@ async function _addSubjectAndClassroom(key, subjects, users, programs, apProfile
             students: studentsData.map(({ id }) => id),
           };
 
-          await services.classes.addStudentsToClasses(data);
+          await ctx.call('academic-portfolio.classes.addStudentsToClasses', {
+            data,
+          });
         }
       }
     }
-    leemons.log.debug(`Subject ADDED: ${subject.name}`);
+    ctx.logger.debug(`Subject ADDED: ${subject.name}`);
 
     subjects[key].classes = classesData;
   } catch (error) {
-    console.log('-- ERROR: Subject cannot be imported');
-    console.log(error);
+    ctx.logger.log('-- ERROR: Subject cannot be imported');
+    ctx.logger.log(error);
   }
 }
 
-async function initAcademicPortfolio(
+async function initAcademicPortfolio({
   file,
-  { centers, profiles, users, grades },
+  config: { centers, profiles, users, grades },
   skipSubjects = false,
-  returnAll = false
-) {
-  const { services } = leemons.getPlugin('academic-portfolio');
-  const { services: timetableService } = leemons.getPlugin('timetable');
-  const weekdays = timetableService.timetable.getWeekdays();
+  returnAll = false,
+  ctx,
+}) {
+  const weekdays = await ctx.call('timetable.timetable.getWeekdays');
 
   try {
     // ·····················································
     // SETTINGS
 
     let apProfiles = await importProfiles(file, profiles);
-    apProfiles = await services.settings.setProfiles(apProfiles);
+    apProfiles = await ctx.call('academic-portfolio.settings.setProfiles', { ...apProfiles });
 
     // ·····················································
     // PROGRAMS
@@ -145,8 +155,8 @@ async function initAcademicPortfolio(
 
     for (let i = 0, len = programsKeys.length; i < len; i++) {
       const { creator, ...program } = programs[programsKeys[i]];
-      // console.log('Program', program);
-      const programData = await services.programs.addProgram(program, {
+      const programData = await ctx.call('academic-portfolio.programs.addProgram', {
+        data: program,
         userSession: users[creator],
       });
       programs[programsKeys[i]] = { ...programData, subjects: {} };
@@ -161,19 +171,20 @@ async function initAcademicPortfolio(
     for (let i = 0, len = knowledgeAreasKeys.length; i < len; i++) {
       const key = knowledgeAreasKeys[i];
       const knowledgeArea = knowledgeAreas[key];
-      leemons.log.debug(`Adding Knowledge area: ${knowledgeArea.name}`);
+      ctx.logger.debug(`Adding Knowledge area: ${knowledgeArea.name}`);
 
       try {
-        const knowledgeAreaData = await services.knowledges.addKnowledge({
-          ...knowledgeArea,
-          credits_program: null,
+        const knowledgeAreaData = await ctx.call('academic-portfolio.knowledges.addKnowledge', {
+          data: {
+            ...knowledgeArea,
+            credits_program: null,
+          },
         });
         knowledgeAreas[key] = { ...knowledgeAreaData };
-        leemons.log.info(`Knowledge area ADDED: ${knowledgeArea.name}`);
+        ctx.logger.info(`Knowledge area ADDED: ${knowledgeArea.name}`);
       } catch (error) {
-        console.log('-- ERROR: Knowledge area cannot be imported');
-        console.dir(knowledgeArea, { depth: null });
-        console.log(error);
+        ctx.logger.log('-- ERROR: Knowledge area cannot be imported');
+        ctx.logger.log(error);
       }
     }
 
@@ -186,7 +197,9 @@ async function initAcademicPortfolio(
     for (let i = 0, len = subjectTypesKeys.length; i < len; i++) {
       const key = subjectTypesKeys[i];
       const subjectType = subjectTypes[key];
-      const subjectTypeData = await services.subjectType.addSubjectType(subjectType);
+      const subjectTypeData = await ctx.call('academic-portfolio.subjectType.addSubjectType', {
+        data: subjectType,
+      });
       subjectTypes[key] = { ...subjectTypeData };
     }
 
@@ -205,17 +218,19 @@ async function initAcademicPortfolio(
 
       for (let i = 0, len = subjectsKeys.length; i < len; i++) {
         const key = subjectsKeys[i];
-        pool.add(() => _addSubjectAndClassroom(key, subjects, users, programs, apProfiles));
+        pool.add(() =>
+          _addSubjectAndClassroom({ key, subjects, users, programs, apProfiles, ctx })
+        );
       }
 
-      leemons.log.debug('Batch processing Subjects & Classrooms ...');
+      ctx.logger.debug('Batch processing Subjects & Classrooms ...');
       await pool.all();
-      leemons.log.info('Classrooms CREATED');
+      ctx.logger.info('Classrooms CREATED');
     }
 
     // ·····················································
     // MENU BUILDER
-    await services.settings.enableAllMenuItems();
+    await ctx.call('academic-portfolio.settings.enableAllMenuItems');
 
     if (returnAll) {
       return {
@@ -229,7 +244,7 @@ async function initAcademicPortfolio(
 
     return programs;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

@@ -13,5 +13,4 @@ module.exports = () => ({
   version: 1,
   mixins: [LeemonsMultiEventsMixin(), LeemonsMQTTMixin(), LeemonsDeploymentManagerMixin()],
   multiEvents: [],
-  events: {},
 });

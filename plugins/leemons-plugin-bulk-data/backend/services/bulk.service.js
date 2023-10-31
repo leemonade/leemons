@@ -1,3 +1,5 @@
+// * Conventional leemons. Uncomment if the other solution does not work
+
 const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');

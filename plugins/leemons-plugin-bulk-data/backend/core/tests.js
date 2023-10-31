@@ -1,15 +1,13 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
+const chalk = require('chalk');
 const { keys, isEmpty, findIndex, uniqBy, isNil } = require('lodash');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
 const _delay = require('./bulk/helpers/delay');
 
-async function initTests(file, { users, programs }) {
-  const { services } = leemons.getPlugin('tests');
-  const { chalk } = global.utils;
-
+async function initTests({ file, config: { users, programs }, ctx }) {
   try {
     // ·····················································
     // QUESTIONS
@@ -40,20 +38,20 @@ async function initTests(file, { users, programs }) {
       let qbankData = null;
 
       try {
-        leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding QBank: ${qbank.name}}`);
-        qbankData = await services.questionsBanks.save(
-          { ...qbank, categories },
+        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding QBank: ${qbank.name}}`);
+        qbankData = await ctx.call(
+          'tests.questionsBanks.save',
           {
-            userSession: users[creator],
-          }
+            data: { ...qbank, categories },
+          },
+          { meta: { userSession: { ...users[creator] } } }
         );
-        leemons.log.info(chalk`{cyan.bold BULK} QBank ADDED: ${qbank.name}`);
+        ctx.logger.info(chalk`{cyan.bold BULK} QBank ADDED: ${qbank.name}`);
       } catch (e) {
-        console.log('-- QBANK CREATION ERROR --');
-        console.log(`qbank: ${qbank.name}`);
-        // console.dir(qbank, { depth: null });
-        console.log(`creator: ${creator}`);
-        console.error(e);
+        ctx.logger.log('-- QBANK CREATION ERROR --');
+        ctx.logger.log(`qbank: ${qbank.name}`);
+        ctx.logger.log(`creator: ${creator}`);
+        ctx.logger.error(e);
       }
 
       await _delay(10000);
@@ -62,9 +60,13 @@ async function initTests(file, { users, programs }) {
       // POST-PROCESSING QUESTIONS
 
       const qbanksDetail = (
-        await services.questionsBanks.findByAssetIds([qbankData?.asset], {
-          userSession: users[creator],
-        })
+        await ctx.call(
+          'tests.questionsBanks.findByAssetIds',
+          {
+            ids: [qbankData?.asset],
+          },
+          { meta: { userSession: { ...users[creator] } } }
+        )
       )[0];
 
       if (qbanksDetail && !isEmpty(qbanksDetail.questions)) {
@@ -94,27 +96,28 @@ async function initTests(file, { users, programs }) {
       const { creator, ...test } = tests[key];
 
       try {
-        leemons.log.debug(chalk`{cyan.bold BULK} {gray Adding Test: ${test.name}}`);
-        const testData = await services.tests.save(
-          { ...test },
+        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding Test: ${test.name}}`);
+        const testData = await ctx.call(
+          'tests.tests.save',
           {
-            userSession: users[creator],
-          }
+            ...test,
+          },
+          { meta: { userSession: { ...users[creator] } } }
         );
 
         tests[key] = { ...testData };
-        leemons.log.info(chalk`{cyan.bold BULK} Test ADDED: ${test.name}`);
+        ctx.logger.info(chalk`{cyan.bold BULK} Test ADDED: ${test.name}`);
       } catch (e) {
-        console.log('-- TEST CREATION ERROR --');
-        console.log(`test: ${test.name}`);
-        console.log(`creator: ${creator}`);
-        console.error(e);
+        ctx.logger.log('-- TEST CREATION ERROR --');
+        ctx.logger.log(`test: ${test.name}`);
+        ctx.logger.log(`creator: ${creator}`);
+        ctx.logger.error(e);
       }
     }
 
     return tests;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;
