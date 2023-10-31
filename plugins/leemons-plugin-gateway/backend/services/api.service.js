@@ -1,6 +1,27 @@
+//const fs = require('fs');
+
 const ApiGateway = require('moleculer-web');
 const { parse } = require('url');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { mongoose } = require('@leemons/mongodb');
+const { LeemonsError } = require('../../../../packages/leemons-error/src');
+
+// async function dumpCollections(database) {
+//   // Obtener todas las colecciones
+//   const collections = await database.listCollections().toArray();
+
+//   const dump = {};
+
+//   const promises = collections.map(async (collection) => {
+//     const documents = await mongoose.connection.collection(collection.name).find({}).toArray();
+//     dump[collection.name] = documents;
+//   });
+//   await Promise.all(promises);
+
+//   // Escribir el dump en un archivo JSON
+//   await fs.writeFileSync('./dump.json', JSON.stringify(dump, null, 2));
+// }
+
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -26,6 +47,32 @@ module.exports = {
         return { status: 200, timestamp: new Date() };
       },
     },
+
+    // restore Database
+    ...(process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing
+      ? {
+          restoreDB: {
+            rest: {
+              method: 'POST',
+              path: '/database/restore',
+            },
+            async handler(ctx) {
+              try {
+                //await dumpCollections(mongoose.connection.db);
+
+                mongoose.connection.db.dropDatabase();
+                return { status: 200, message: 'Successfull Drop Database' };
+              } catch (error) {
+                throw new LeemonsError(ctx, {
+                  message: `Restoring Database Error: ${error.message || error}`,
+                });
+                // ctx.meta.$statusCode = 500;
+                // return { status: 500, error: error.message || error };
+              }
+            },
+          },
+        }
+      : {}),
   },
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
@@ -80,6 +127,7 @@ module.exports = {
         aliases: {
           // -- Gateway (Finish) --
           'GET status': 'gateway.status',
+          'POST database/restore': 'gateway.restoreDB',
 
           // -- Deployment Manager (Finish) --
           'POST deployment-manager/add-manual-deployment':
