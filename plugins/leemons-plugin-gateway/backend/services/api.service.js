@@ -1,10 +1,7 @@
-//const fs = require('fs');
-
 const ApiGateway = require('moleculer-web');
 const { parse } = require('url');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { mongoose } = require('@leemons/mongodb');
-const { LeemonsError } = require('../../../../packages/leemons-error/src');
+const restActions = require('./rest/api.rest');
 
 // async function dumpCollections(database) {
 //   // Obtener todas las colecciones
@@ -38,41 +35,7 @@ module.exports = {
   ],
 
   actions: {
-    status: {
-      rest: {
-        method: 'GET',
-        path: '/status',
-      },
-      async handler(ctx) {
-        return { status: 200, timestamp: new Date() };
-      },
-    },
-
-    // restore Database
-    ...(process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing
-      ? {
-          restoreDB: {
-            rest: {
-              method: 'POST',
-              path: '/database/restore',
-            },
-            async handler(ctx) {
-              try {
-                //await dumpCollections(mongoose.connection.db);
-
-                mongoose.connection.db.dropDatabase();
-                return { status: 200, message: 'Successfull Drop Database' };
-              } catch (error) {
-                throw new LeemonsError(ctx, {
-                  message: `Restoring Database Error: ${error.message || error}`,
-                });
-                // ctx.meta.$statusCode = 500;
-                // return { status: 500, error: error.message || error };
-              }
-            },
-          },
-        }
-      : {}),
+    ...restActions,
   },
 
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
