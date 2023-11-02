@@ -3,8 +3,8 @@ const { LeemonsError } = require('@leemons/error');
 module.exports = {
   initSuperRest: {
     rest: {
-      path: '/init-super',
-      method: 'GET',
+      path: '/init-super/:pass',
+      method: 'POST',
     },
     async handler(ctx) {
       if (process.env.NODE_ENV !== 'production') {
@@ -15,7 +15,7 @@ module.exports = {
           });
           await ctx.call('admin.settings.registerAdmin', {
             email: 'super@leemons.io',
-            password: 'testing',
+            password: ctx.params.pass,
             locale: 'es',
             name: 'Super',
             surnames: 'Admin',
