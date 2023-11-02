@@ -9,13 +9,16 @@ module.exports = {
     async handler(ctx) {
       if (process.env.NODE_ENV !== 'production') {
         try {
+          if (!ctx.params.password)
+            throw new Error('A password field must be included in the request body');
+
           await ctx.call('admin.settings.setLanguages', {
             langs: { code: 'es', name: 'Español' },
             defaultLang: 'es',
           });
           await ctx.call('admin.settings.registerAdmin', {
             email: 'super@leemons.io',
-            password: ctx.params.pass,
+            password: ctx.params.password,
             locale: 'es',
             name: 'Super',
             surnames: 'Admin',
