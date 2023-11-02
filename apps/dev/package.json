@@ -25,6 +25,7 @@
     "leemons-plugin-attendance-control-frontend-react": "1.0.0",
     "leemons-plugin-board-messages": "1.0.0",
     "leemons-plugin-board-messages-frontend-react": "1.0.0",
+    "leemons-plugin-bulk-data": "1.0.0",
     "leemons-plugin-calendar": "1.0.0",
     "leemons-plugin-calendar-frontend-react": "1.0.0",
     "leemons-plugin-common": "1.0.0",
