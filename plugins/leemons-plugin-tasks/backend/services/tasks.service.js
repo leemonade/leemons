@@ -28,10 +28,10 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-  },
-  create: {
-    handler(ctx) {
-      return create({ ...ctx.params, ctx });
+    create: {
+      handler(ctx) {
+        return create({ ...ctx.params, ctx });
+      },
     },
   },
 };
