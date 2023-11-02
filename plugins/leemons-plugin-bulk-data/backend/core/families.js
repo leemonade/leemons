@@ -2,17 +2,19 @@ const { keys, map, uniq } = require('lodash');
 const importFamilyProfiles = require('./bulk/families/profiles');
 const importFamilies = require('./bulk/families');
 
-async function initFamilies(file, profiles, users) {
-  const { services } = leemons.getPlugin('families');
-
+async function initFamilies({ file, profiles, users, ctx }) {
   try {
     // ·····················································
     // FAMILY PROFILES
 
     const { guardian, student } = await importFamilyProfiles(file, profiles);
 
-    await services.config.setGuardianProfile(guardian.id);
-    await services.config.setStudentProfile(student.id);
+    await ctx.call('families.config.setGuardianProfile', {
+      profile: guardian.id,
+    });
+    await ctx.call('families.config.setStudentProfile', {
+      profile: student.id,
+    });
 
     // ·····················································
     // FAMILY RELATIONSHIPS
@@ -32,8 +34,13 @@ async function initFamilies(file, profiles, users) {
 
       familiesData.push({ ...family, guardians, students });
     });
-
-    await Promise.all(familiesData.map((family) => services.family.add(family)));
+    await Promise.all(
+      familiesData.map((family) =>
+        ctx.call('families.family.add', {
+          ...family,
+        })
+      )
+    );
 
     // ·······························································
     // USER AGENTS ACCESS TO
@@ -45,12 +52,10 @@ async function initFamilies(file, profiles, users) {
       const family = families[key];
       family.relations.forEach((relation) =>
         userAgentContacts.push(
-          leemons
-            .getPlugin('users')
-            .services.users.addUserAgentContacts(
-              map(relation.student.userAgents, 'id'),
-              map(relation.guardian.userAgents, 'id')
-            )
+          ctx.call('users.users.addUserAgentContacts', {
+            fromUserAgent: map(relation.student.userAgents, 'id'),
+            toUserAgent: map(relation.guardian.userAgents, 'id'),
+          })
         )
       );
     });
@@ -59,7 +64,7 @@ async function initFamilies(file, profiles, users) {
 
     return families;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;
