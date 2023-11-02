@@ -34,18 +34,7 @@ async function importGrades(filePath, centers) {
       items[key] = grade;
     });
 
-  // console.dir(items, { depth: null });
   return items;
 }
 
-// ·····················································
-// TESTING
-/*
-const CENTERS = {
-  centerA: { id: 'A' },
-  centerB: { id: 'B' },
-};
-
-importGrades(CENTERS);
-*/
 module.exports = importGrades;

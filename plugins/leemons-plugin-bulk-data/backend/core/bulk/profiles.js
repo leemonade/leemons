@@ -92,9 +92,4 @@ async function importProfiles(filePath) {
     }, {});
 }
 
-// ·····················································
-// TESTING
-
-// importProfiles();
-
 module.exports = importProfiles;

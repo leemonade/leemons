@@ -1,4 +1,4 @@
-const { range, keys, findIndex, toLower, isNaN, isEmpty } = require('lodash');
+const { range, keys, findIndex, toLower, isNaN: _isNaN, isEmpty } = require('lodash');
 const getColumns = require('./getColumns');
 const DataImporter = require('./getXlsImporter')();
 
@@ -61,7 +61,7 @@ async function simpleListImport(
               value = true;
             }
             // Number check
-            else if (!isNaN(Number(value))) {
+            else if (!_isNaN(Number(value))) {
               value = parseFloat(value);
             }
           }

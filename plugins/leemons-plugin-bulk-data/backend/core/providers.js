@@ -66,19 +66,6 @@ async function initProviders({ file, ctx }) {
         providerName: emailProvider,
         config: emailConfig,
       });
-      /*
-      await leemons.getPlugin('emails').services.email.addProvider({
-        providerName: 'emails-smtp',
-        config: {
-          name: providers.email.name,
-          host: providers.email.host,
-          port: providers.email.port || 25,
-          secure: providers.email.secure || false,
-          user: providers.email.user,
-          pass: providers.email.pass,
-        },
-      });
-      */
     }
 
     if (

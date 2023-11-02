@@ -19,21 +19,7 @@ async function importAcademicPortfolioProfiles(filePath, profiles) {
       items[key] = profiles[items[key][subKey]]?.id;
     });
 
-  // console.dir(items, { depth: null });
   return items;
 }
-
-// ·····················································
-// TESTING
-/*
-const PROFILES = {
-  admin: { id: 'A' },
-  teacher: { id: 'T' },
-  student: { id: 'S' },
-  guardian: { id: 'G' },
-};
-
-importAcademicPortfolioProfiles(PROFILES);
-*/
 
 module.exports = importAcademicPortfolioProfiles;

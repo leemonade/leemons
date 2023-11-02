@@ -40,19 +40,7 @@ async function importFamilies(filePath, users) {
       items[key] = family;
     });
 
-  // console.dir(items, { depth: null });
   return items;
 }
 
-// ·····················································
-// TESTING
-/*
-const USERS = {
-  guardian01: { id: 'G01' },
-  studentA02: { id: 'SA02' },
-  studentB02: { id: 'SB02' },
-};
-
-importFamilies(USERS);
-*/
 module.exports = importFamilies;
