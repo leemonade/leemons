@@ -3,7 +3,7 @@ const { LeemonsError } = require('@leemons/error');
 module.exports = {
   initSuperRest: {
     rest: {
-      path: '/init-super/:pass',
+      path: '/init-super',
       method: 'POST',
     },
     async handler(ctx) {
