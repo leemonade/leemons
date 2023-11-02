@@ -6,14 +6,16 @@ import { FAV_BUTTON_DEFAULT_PROPS, FAV_BUTTON_PROP_TYPES } from './FavButton.con
 
 const FavButton = ({ isActive }) => {
   const [active, setActive] = useState(isActive);
-  const { classes } = FavButtonStyles({ isActive }, { name: 'FavButton' });
+  const { classes } = FavButtonStyles({ active }, { name: 'FavButton' });
 
-  const handleIsActive = () => {
+  const handleIsActive = (e) => {
     setActive(!active);
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   return (
-    <Box className={classes.root} onClick={() => handleIsActive()}>
+    <Box as="button" className={classes.root} onClick={handleIsActive}>
       <LoveItIcon width={24} height={24} className={classes.loveIcon} />
     </Box>
   );

@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { createStyles } from '@mantine/styles';
 
-export const FavButtonStyles = createStyles((theme, { isActive }) => {
+export const FavButtonStyles = createStyles((theme, { active }) => {
   const favButtonStyles = theme.other.buttonIconLike;
   return {
     root: {
@@ -15,10 +15,10 @@ export const FavButtonStyles = createStyles((theme, { isActive }) => {
       position: 'relative',
       zIndex: 10,
       paddingTop: 1,
-      stroke: isActive
+      stroke: active
         ? favButtonStyles.content.color.primary.hover
         : favButtonStyles.content.color.primary.default,
-      fill: isActive ? favButtonStyles.content.color.primary.hover : 'transparent',
+      fill: active ? favButtonStyles.content.color.primary.hover : 'transparent',
       '&:hover': {
         stroke: favButtonStyles.content.color.primary.hover,
       },
