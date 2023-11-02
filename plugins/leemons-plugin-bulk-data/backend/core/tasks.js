@@ -18,7 +18,7 @@ async function initTasks({ file, config, ctx }) {
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding task: ${task.asset?.name}}`);
         const taskData = await ctx.call(
           'tasks.tasks.create',
-          { ...task },
+          { ...task, published: true },
           { meta: { userSession: creator } }
         );
         tasks[key] = { ...taskData };
