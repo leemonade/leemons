@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
-import { Box, COLORS, IconButton, ImageLoader, Menu } from '@bubbles-ui/components';
+import { Box, Button, COLORS, IconButton, ImageLoader, Menu } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
@@ -43,11 +43,10 @@ const LibraryCardCover = ({
     }
   }, [parentHovered, showMenu]);
 
-  // const preventPropagation = (e) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   setShowMenu(!showMenu);
-  // };
+  const preventPropagation = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   const iconRow = (
     <Box>
@@ -66,7 +65,7 @@ const LibraryCardCover = ({
                 position="bottom-end"
                 withinPortal={true}
                 control={
-                  <Box className={classes.ellipsisBox}>
+                  <Box as="button" className={classes.ellipsisBox} onClick={preventPropagation}>
                     <SettingMenuVerticalIcon width={16} height={16} className={classes.menuIcon} />
                   </Box>
                 }

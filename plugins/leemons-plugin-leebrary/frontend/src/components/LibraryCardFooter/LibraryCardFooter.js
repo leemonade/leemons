@@ -57,7 +57,7 @@ const LibraryCardFooter = ({
             />
             <Text className={classes.fileLabel}>{variantIconLabel}</Text>
           </Box>
-          <Box>
+          <Box className={classes.avatars}>
             <AvatarsGroup
               size="sm"
               data={canAccess}

@@ -94,8 +94,6 @@ export const LibraryCardCoverStyles = createStyles(
         height: pxToRem(24),
         '&::before': {
           content: '""',
-          display: 'grid',
-          placeContent: 'center',
           position: 'absolute',
           width: '100%',
           height: '100%',

@@ -37,4 +37,7 @@ export const LibraryCardFooterStyles = createStyles((theme, { color }) => ({
     color: '#878D96',
     fontSize: pxToRem(12),
   },
+  avatars: {
+    marginRight: pxToRem(12),
+  },
 }));

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Box } from '@bubbles-ui/components';
 import { LibraryCardBody } from './LibraryCardBody';
