@@ -11,18 +11,7 @@ async function importAcademicPortfolioKnowledgeAreas(filePath, programs) {
       items[key].program = programs[programKey]?.id;
     });
 
-  // console.dir(items, { depth: null });
   return items;
 }
 
-// ·····················································
-// TESTING
-/*
-const PROGRAMS = {
-  programA: { id: 'PA' },
-  programB: { id: 'PB' },
-};
-
-importAcademicPortfolioKnowledgeAreas(PROGRAMS);
-*/
 module.exports = importAcademicPortfolioKnowledgeAreas;

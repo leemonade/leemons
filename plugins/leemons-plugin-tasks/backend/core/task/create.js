@@ -1,6 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
 
-async function create({ ctx, ...data }) {
+async function create({ ctx, published, ...data }) {
   try {
     const assignableObject = {
       role: 'task',
@@ -8,6 +8,7 @@ async function create({ ctx, ...data }) {
     };
     const createdAssignable = await ctx.tx.call('assignables.assignables.createAssignable', {
       assignable: assignableObject,
+      published,
     });
 
     // TODO: Save attachments

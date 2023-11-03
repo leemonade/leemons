@@ -176,6 +176,7 @@ module.exports = {
       path: '/load-from-file',
       method: 'POST',
     },
+    timeout: 0,
     async handler(ctx) {
       const settings = await ctx.call('admin.settings.findOne');
 

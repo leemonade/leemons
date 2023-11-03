@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 async function initWidgets({ ctx }) {
-  const profiles = await ctx.tx.call('academic-portfolio.settings.getProfiles');
+  const profiles = await ctx.call('academic-portfolio.settings.getProfiles');
 
   const zoneReorders = {
     'dashboard.program.left': [
@@ -59,8 +59,8 @@ async function initWidgets({ ctx }) {
     });
   });
 
-  await ctx.tx.call('widgets.widgets.updateOrderItemsInZone', { items: itemsToUpdate });
-  await ctx.tx.call('widgets.widgets.updateProfileItemsInZone', { items: itemProfiles });
+  await ctx.call('widgets.widgets.updateOrderItemsInZone', { items: itemsToUpdate });
+  await ctx.call('widgets.widgets.updateProfileItemsInZone', { items: itemProfiles });
 
   return null;
 }

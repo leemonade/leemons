@@ -72,7 +72,7 @@ const LoginForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <ContextContainer title={labels.title} {...props}>
+      <ContextContainer title={labels.title} {...props} data-cypress-id="loginForm">
         {formError && <Alert severity="error">{formError}</Alert>}
 
         <Controller
@@ -87,6 +87,7 @@ const LoginForm = ({
           }}
           render={({ field }) => (
             <TextInput
+              data-cypress-id="emailInput"
               label={labels.username}
               placeholder={placeholders.username}
               error={errors.email}
@@ -105,6 +106,7 @@ const LoginForm = ({
             }}
             render={({ field }) => (
               <PasswordInput
+                data-cypress-id="passwordInput"
                 label={labels.password}
                 placeholder={placeholders.password}
                 error={errors.password}

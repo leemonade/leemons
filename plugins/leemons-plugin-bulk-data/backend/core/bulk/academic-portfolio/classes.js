@@ -51,40 +51,7 @@ async function importAcademicPortfolioClasses(
         .map((userKey) => users[userKey]?.id);
     });
 
-  // console.dir(items, { depth: null });
   return items;
 }
 
-// ·····················································
-// TESTING
-/*
-const PROGRAMS = {
-  programA: {
-    id: 'PA',
-    courses: [
-      { id: 'CA1', index: 1, type: 'course' },
-      { id: 'CA2', index: 2, type: 'course' },
-    ],
-  },
-  programB: {
-    id: 'PB',
-    courses: [
-      { id: 'CB1', index: 1, type: 'course' },
-      { id: 'CB2', index: 2, type: 'course' },
-    ],
-  },
-};
-
-const USERS = {
-  teacher01: { id: 'TEACHER01' },
-};
-
-importAcademicPortfolioClasses({
-  programs: PROGRAMS,
-  subjects: {},
-  knowledgeAreas: {},
-  subjectTypes: {},
-  users: USERS,
-});
-*/
 module.exports = importAcademicPortfolioClasses;

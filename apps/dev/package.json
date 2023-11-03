@@ -7,7 +7,10 @@
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
     "front:dev": "NODE_OPTIONS=\"--max-old-space-size=4096\" PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
-    "front:build:dev": "API_URL=https://api.leemons.dev NODE_OPTIONS=\"--max-old-space-size=8192\" leemonsFront build"
+    "front:build:dev": "API_URL=https://api.leemons.dev NODE_OPTIONS=\"--max-old-space-size=8192\" leemonsFront build",
+    "front:build": "PORT=3000 API_URL=http://localhost:8080 leemonsFront build -m ../..",
+    "front:preview": "leemonsFront preview",
+    "front": "yarn front:build && yarn front:preview"
   },
   "leemons": {},
   "dependencies": {

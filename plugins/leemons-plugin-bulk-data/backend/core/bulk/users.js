@@ -87,22 +87,4 @@ async function importUsers(filePath, centers, profiles) {
     }, {});
 }
 
-// ·····················································
-// TESTING
-/*
-const CENTERS = {
-  centerA: { id: 'A' },
-  centerB: { id: 'B' },
-};
-
-const PROFILES = {
-  admin: { id: 'A' },
-  teacher: { id: 'T' },
-  student: { id: 'S' },
-  guardian: { id: 'G' },
-};
-
-importUsers(CENTERS, PROFILES);
-*/
-
 module.exports = importUsers;

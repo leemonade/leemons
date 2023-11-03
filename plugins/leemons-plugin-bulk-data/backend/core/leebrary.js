@@ -38,7 +38,7 @@ async function initLibrary({ file, config: { users }, ctx }) {
 
     return assets;
   } catch (err) {
-    console.error(err);
+    ctx.logger.error(err);
   }
 
   return null;

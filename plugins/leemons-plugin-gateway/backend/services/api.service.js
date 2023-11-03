@@ -633,7 +633,7 @@ module.exports = {
           // -- Bulk Template (Not Finished) --
           'POST bulk-data/load-from-file': 'multipart:v1.bulk-data.bulk.loadRest',
           'GET bulk-data/load-from-file': 'v1.bulk-data.bulk.statusRest',
-          'GET bulk-data/init-super': 'v1.bulk-data.users.initSuperRest',
+          'POST bulk-data/init-super': 'v1.bulk-data.users.initSuperRest',
         },
 
         /**
