@@ -90,7 +90,7 @@ module.exports = {
         aliases: {
           // -- Gateway (Finish) --
           'GET status': 'gateway.status',
-          'POST database/restore': 'gateway.restoreDB',
+          'POST database/drop': 'gateway.dropDBRest',
 
           // -- Deployment Manager (Finish) --
           'POST deployment-manager/add-manual-deployment':
