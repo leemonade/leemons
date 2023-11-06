@@ -68,7 +68,7 @@ async function connectWebsocket(data) {
 }
 
 async function getCredentials() {
-  const data = await leemons.api(`mqtt-aws-iot/credentials`, {
+  const data = await leemons.api(`v1/mqtt-aws-iot/socket/credentials`, {
     allAgents: true,
     method: 'GET',
   });

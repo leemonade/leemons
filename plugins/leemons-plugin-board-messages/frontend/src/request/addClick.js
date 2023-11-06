@@ -1,5 +1,5 @@
 async function addClick(id) {
-  return leemons.api(`board-messages/click`, {
+  return leemons.api(`v1/board-messages/messages/click`, {
     allAgents: true,
     method: 'POST',
     body: { id },

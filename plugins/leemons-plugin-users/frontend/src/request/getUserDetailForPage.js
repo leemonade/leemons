@@ -1,5 +1,5 @@
 async function getUserDetailForPage(user) {
-  return leemons.api(`users/user/${user}/detail/page`, {
+  return leemons.api(`v1/users/users/${user}/detail/page`, {
     allAgents: true,
     method: 'GET',
   });

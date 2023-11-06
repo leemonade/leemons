@@ -67,7 +67,7 @@ async function saveFeedback(_body) {
     form = merge(body, form);
   }
 
-  return leemons.api('feedback/feedback', {
+  return leemons.api('v1/feedback/feedback', {
     allAgents: true,
     method: 'POST',
     body: form,
@@ -75,21 +75,21 @@ async function saveFeedback(_body) {
 }
 
 async function getFeedback(id) {
-  return leemons.api(`feedback/feedback/${id}`, {
+  return leemons.api(`v1/feedback/feedback/${id}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function deleteFeedback(id) {
-  return leemons.api(`feedback/feedback/${id}`, {
+  return leemons.api(`v1/feedback/feedback/${id}`, {
     allAgents: true,
     method: 'DELETE',
   });
 }
 
 async function duplicateFeedback(id, published) {
-  return leemons.api(`feedback/feedback/duplicate`, {
+  return leemons.api(`v1/feedback/feedback/duplicate`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -100,7 +100,7 @@ async function duplicateFeedback(id, published) {
 }
 
 async function assignFeedback(id, data) {
-  return leemons.api(`feedback/feedback/assign`, {
+  return leemons.api(`v1/feedback/feedback/assign`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -111,7 +111,7 @@ async function assignFeedback(id, data) {
 }
 
 async function setQuestionResponse(questionId, instanceId, value) {
-  return leemons.api(`feedback/feedback/instance/question/response`, {
+  return leemons.api(`v1/feedback/feedback/instance/question/response`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -123,7 +123,7 @@ async function setQuestionResponse(questionId, instanceId, value) {
 }
 
 async function setInstanceTimestamp(instance, timeKey, user) {
-  return leemons.api(`feedback/feedback/instance/timestamp`, {
+  return leemons.api(`v1/feedback/feedback/instance/timestamp`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -135,7 +135,7 @@ async function setInstanceTimestamp(instance, timeKey, user) {
 }
 
 async function getUserAssignableResponses(instanceId) {
-  const { responses } = await leemons.api(`feedback/feedback/instance/responses/${instanceId}`, {
+  const { responses } = await leemons.api(`v1/feedback/feedback/instance/responses/${instanceId}`, {
     allAgents: true,
     method: 'GET',
   });
@@ -143,7 +143,7 @@ async function getUserAssignableResponses(instanceId) {
 }
 
 async function getFeedbackResults(id) {
-  const { results } = await leemons.api(`feedback/feedback/results/${id}`, {
+  const { results } = await leemons.api(`v1/feedback/feedback/results/${id}`, {
     allAgents: true,
     method: 'GET',
   });
@@ -151,7 +151,7 @@ async function getFeedbackResults(id) {
 }
 
 async function getFeedbackResultsWithTime(id) {
-  const { results } = await leemons.api(`feedback/feedback/results/time/${id}`, {
+  const { results } = await leemons.api(`v1/feedback/feedback/results/time/${id}`, {
     allAgents: true,
     method: 'GET',
   });

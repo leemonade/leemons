@@ -16,7 +16,7 @@ module.exports = {
   adminRest: {
     rest: {
       method: 'GET',
-      path: '/realtime',
+      path: '/',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

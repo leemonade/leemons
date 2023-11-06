@@ -12,7 +12,7 @@ export default function updateInstanceRequest(
   }
 ) {
   const instance = leemons
-    .api(`tasks/tasks/assignments/instance/${instanceId}`, {
+    .api(`v1/tasks/tasks/assignments/instance/${instanceId}`, {
       method: 'PUT',
       body: {
         // Can be a Date object or a string

@@ -35,7 +35,7 @@ async function updateAsset(assetData, categoryId, categoryKey) {
     }
   });
 
-  return leemons.api(`leebrary/assets/${id}`, {
+  return leemons.api(`v1/leebrary/assets/${id}`, {
     allAgents: true,
     method: 'PUT',
     body: formData,

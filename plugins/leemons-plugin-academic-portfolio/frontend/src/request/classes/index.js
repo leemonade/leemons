@@ -1,14 +1,14 @@
 import { isString } from 'lodash';
 
 async function haveClasses() {
-  return leemons.api(`academic-portfolio/classes/have`, {
+  return leemons.api(`v1/academic-portfolio/classes/have`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function listClasses({ page, size, program }) {
-  return leemons.api(`academic-portfolio/class?page=${page}&size=${size}&program=${program}`, {
+  return leemons.api(`v1/academic-portfolio/classes?page=${page}&size=${size}&program=${program}`, {
     waitToFinish: true,
     allAgents: true,
     method: 'GET',
@@ -17,7 +17,7 @@ async function listClasses({ page, size, program }) {
 
 async function listSubjectClasses({ page, size, subject }) {
   return leemons.api(
-    `academic-portfolio/subjects/class?page=${page}&size=${size}&subject=${subject}`,
+    `v1/academic-portfolio/subjects/class?page=${page}&size=${size}&subject=${subject}`,
     {
       allAgents: true,
       method: 'GET',
@@ -26,21 +26,21 @@ async function listSubjectClasses({ page, size, subject }) {
 }
 
 async function listStudentClasses({ page, size, student }) {
-  return leemons.api(`academic-portfolio/student/${student}/classes?page=${page}&size=${size}`, {
+  return leemons.api(`v1/academic-portfolio/student/${student}/classes?page=${page}&size=${size}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function listTeacherClasses({ page, size, teacher }) {
-  return leemons.api(`academic-portfolio/teacher/${teacher}/classes?page=${page}&size=${size}`, {
+  return leemons.api(`v1/academic-portfolio/classes/teacher/${teacher}?page=${page}&size=${size}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function listSessionClasses(body) {
-  return leemons.api(`academic-portfolio/session/classes`, {
+  return leemons.api(`v1/academic-portfolio/classes/session`, {
     allAgents: true,
     method: 'POST',
     body,
@@ -69,7 +69,7 @@ async function createClass(body) {
     }
     toSend = data;
   }
-  return leemons.api('academic-portfolio/class', {
+  return leemons.api('v1/academic-portfolio/classes', {
     allAgents: true,
     method: 'POST',
     body: toSend,
@@ -77,7 +77,7 @@ async function createClass(body) {
 }
 
 async function createClassInstance(body) {
-  return leemons.api('academic-portfolio/class/instance', {
+  return leemons.api('v1/academic-portfolio/classes/instance', {
     allAgents: true,
     method: 'POST',
     body,
@@ -106,7 +106,7 @@ async function updateClass(body) {
     }
     toSend = data;
   }
-  return leemons.api('academic-portfolio/class', {
+  return leemons.api('v1/academic-portfolio/classes', {
     allAgents: true,
     method: 'PUT',
     body: toSend,
@@ -114,7 +114,7 @@ async function updateClass(body) {
 }
 
 async function updateClassMany(body) {
-  return leemons.api('academic-portfolio/class/many', {
+  return leemons.api('v1/academic-portfolio/classes/many', {
     allAgents: true,
     method: 'PUT',
     body,
@@ -122,7 +122,7 @@ async function updateClassMany(body) {
 }
 
 async function addStudentsToClass(body) {
-  return leemons.api('academic-portfolio/class/students', {
+  return leemons.api('v1/academic-portfolio/classes/students', {
     allAgents: true,
     method: 'POST',
     body,
@@ -130,7 +130,7 @@ async function addStudentsToClass(body) {
 }
 
 async function addTeachersToClass(body) {
-  return leemons.api('academic-portfolio/class/teachers', {
+  return leemons.api('v1/academic-portfolio/classes/teachers', {
     allAgents: true,
     method: 'POST',
     body,
@@ -138,14 +138,14 @@ async function addTeachersToClass(body) {
 }
 
 async function removeClass(id) {
-  return leemons.api(`academic-portfolio/class/${id}`, {
+  return leemons.api(`v1/academic-portfolio/classes/${id}`, {
     allAgents: true,
     method: 'DELETE',
   });
 }
 
 async function removeStudentFromClass(classId, student) {
-  return leemons.api(`academic-portfolio/class/remove/students`, {
+  return leemons.api(`v1/academic-portfolio/classes/remove/students`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -156,7 +156,7 @@ async function removeStudentFromClass(classId, student) {
 }
 
 async function classDetailForDashboard(classId) {
-  return leemons.api(`academic-portfolio/class/dashboard/${classId}`, {
+  return leemons.api(`v1/academic-portfolio/classes/dashboard/${classId}`, {
     allAgents: true,
     method: 'GET',
   });
@@ -165,7 +165,7 @@ async function classDetailForDashboard(classId) {
 async function classByIds(classIds) {
   const ids = JSON.stringify(Array.isArray(classIds) ? classIds : [classIds]);
 
-  return leemons.api(`academic-portfolio/classes?ids=${ids}`, {
+  return leemons.api(`v1/academic-portfolio/classes?ids=${ids}`, {
     allAgents: true,
     method: 'GET',
   });

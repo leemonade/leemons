@@ -15,7 +15,7 @@ export default function OnboarderForm() {
   Component = dynamicImport('/emails-aws-ses/onboarder-form');
 
   async function onSubmit(config) {
-    await leemons.api('emails/add-provider', {
+    await leemons.api('v1/emails/add-provider', {
       method: 'POST',
       body: {
         providerName,
@@ -25,7 +25,7 @@ export default function OnboarderForm() {
   }
 
   async function onTest(config) {
-    const data = await leemons.api('emails/send-test', {
+    const data = await leemons.api('v1/emails/send-test', {
       method: 'POST',
       body: {
         providerName,

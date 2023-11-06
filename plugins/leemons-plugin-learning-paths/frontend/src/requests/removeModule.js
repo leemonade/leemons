@@ -1,7 +1,5 @@
 export default async function removeModuleRequest(id) {
-  const response = await leemons.api(`learning-paths/modules/${id}`, {
+  return await leemons.api(`v1/learning-paths/modules/${id}`, {
     method: 'DELETE',
   });
-
-  return response;
 }

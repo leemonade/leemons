@@ -51,6 +51,7 @@ module.exports = {
       method: 'GET',
       path: '/',
     },
+
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({

@@ -1,6 +1,6 @@
 async function listSubjectTypes({ page, size, program }) {
   return leemons.api(
-    `academic-portfolio/subject-type?page=${page}&size=${size}&program=${program}`,
+    `v1/academic-portfolio/subjectType?page=${page}&size=${size}&program=${program}`,
     {
       allAgents: true,
       method: 'GET',
@@ -9,7 +9,7 @@ async function listSubjectTypes({ page, size, program }) {
 }
 
 async function createSubjectType(body) {
-  return leemons.api('academic-portfolio/subject-type', {
+  return leemons.api('v1/academic-portfolio/subjectType', {
     allAgents: true,
     method: 'POST',
     body,
@@ -17,7 +17,7 @@ async function createSubjectType(body) {
 }
 
 async function updateSubjectType(body) {
-  return leemons.api('academic-portfolio/subject-type', {
+  return leemons.api('v1/academic-portfolio/subjectType', {
     allAgents: true,
     method: 'PUT',
     body,

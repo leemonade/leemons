@@ -8,7 +8,7 @@ class TagsService {
   }
 
   static listTags(pluginName, page, size, query) {
-    return leemons.api(`${pluginName}/tags/list`, {
+    return leemons.api(`v1/${pluginName}/tags/list`, {
       allAgents: true,
       method: 'POST',
       body: {

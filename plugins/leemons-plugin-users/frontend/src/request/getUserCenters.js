@@ -1,6 +1,6 @@
 async function getUserCenters(token) {
   return leemons.api(
-    'users/user/centers',
+    'v1/users/users/centers',
     token
       ? {
           headers: {

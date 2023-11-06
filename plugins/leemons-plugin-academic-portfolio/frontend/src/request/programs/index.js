@@ -1,15 +1,15 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { isString, cloneDeep } from 'lodash';
+import { cloneDeep, isString } from 'lodash';
 
 async function getProgramTree(programId) {
-  return leemons.api(`academic-portfolio/program/${programId}/tree`, {
+  return leemons.api(`v1/academic-portfolio/programs/${programId}/tree`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function listPrograms({ page, size, center }) {
-  return leemons.api(`academic-portfolio/program?page=${page}&size=${size}&center=${center}`, {
+  return leemons.api(`v1/academic-portfolio/programs?page=${page}&size=${size}&center=${center}`, {
     waitToFinish: true,
     allAgents: true,
     method: 'GET',
@@ -17,21 +17,21 @@ async function listPrograms({ page, size, center }) {
 }
 
 async function havePrograms() {
-  return leemons.api(`academic-portfolio/program/have`, {
+  return leemons.api(`v1/academic-portfolio/programs/have`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function detailProgram(id) {
-  return leemons.api(`academic-portfolio/program/${id}`, {
+  return leemons.api(`v1/academic-portfolio/programs/${id}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function getUserPrograms() {
-  return leemons.api(`academic-portfolio/user/programs`, {
+  return leemons.api(`v1/academic-portfolio/programs/user`, {
     allAgents: true,
     method: 'GET',
   });
@@ -53,7 +53,7 @@ async function createProgram(_body) {
       }
     }
   }
-  return leemons.api('academic-portfolio/program', {
+  return leemons.api('v1/academic-portfolio/programs', {
     allAgents: true,
     method: 'POST',
     body,
@@ -75,7 +75,7 @@ async function updateProgram(_body) {
       }
     }
   }
-  return leemons.api('academic-portfolio/program', {
+  return leemons.api('v1/academic-portfolio/programs', {
     allAgents: true,
     method: 'PUT',
     body,
@@ -83,7 +83,7 @@ async function updateProgram(_body) {
 }
 
 async function addStudentsToClassesUnderNodeTree(body) {
-  return leemons.api('academic-portfolio/program/add-students-to-classes-under-node-tree', {
+  return leemons.api('v1/academic-portfolio/programs/add-students-to-classes-under-node-tree', {
     allAgents: true,
     method: 'POST',
     body,
@@ -91,7 +91,7 @@ async function addStudentsToClassesUnderNodeTree(body) {
 }
 
 async function getProgramEvaluationSystem(id) {
-  return leemons.api(`academic-portfolio/program/${id}/evaluation-system`, {
+  return leemons.api(`v1/academic-portfolio/programs/${id}/evaluation-system`, {
     allAgents: true,
     method: 'GET',
   });

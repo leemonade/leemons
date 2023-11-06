@@ -1,5 +1,5 @@
 async function activateUser(body) {
-  return leemons.api('users/user/activate-user', {
+  return leemons.api('v1/users/users/activate-user', {
     method: 'POST',
     body,
   });

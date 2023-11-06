@@ -1,5 +1,5 @@
 export function updateStatus({ instance, user, state }) {
-  return leemons.api(`scorm/status/${instance}/${user}`, {
+  return leemons.api(`v1/scorm/status/${instance}/${user}`, {
     allAgents: true,
     method: 'PUT',
     body: {
@@ -9,7 +9,7 @@ export function updateStatus({ instance, user, state }) {
 }
 
 export function getScormAssignation({ instance, user }) {
-  return leemons.api(`scorm/assignation/${instance}/${user}`, {
+  return leemons.api(`v1/scorm/assignation/${instance}/${user}`, {
     allAgents: true,
     method: 'GET',
   });

@@ -1,5 +1,5 @@
 export async function listCourses({ page, size, program }) {
-  return leemons.api(`academic-portfolio/course?page=${page}&size=${size}&program=${program}`, {
+  return leemons.api(`v1/academic-portfolio/courses?page=${page}&size=${size}&program=${program}`, {
     waitToFinish: true,
     allAgents: true,
     method: 'GET',
@@ -7,7 +7,7 @@ export async function listCourses({ page, size, program }) {
 }
 
 export async function updateCourse(body) {
-  return leemons.api(`academic-portfolio/course`, {
+  return leemons.api(`v1/academic-portfolio/courses`, {
     allAgents: true,
     method: 'PUT',
     body,

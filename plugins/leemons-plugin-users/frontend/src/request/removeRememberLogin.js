@@ -1,5 +1,5 @@
 async function removeRememberLogin() {
-  return leemons.api('users/user/remember/login', { method: 'DELETE' });
+  return leemons.api('v1/users/users/remember/login', { method: 'DELETE' });
 }
 
 export default removeRememberLogin;

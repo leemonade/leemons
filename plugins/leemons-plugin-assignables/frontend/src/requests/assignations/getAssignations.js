@@ -27,7 +27,7 @@ export default async function getAssignations({
     query += '&fetchInstance=true';
   }
 
-  const response = await leemons.api(`assignables/assignations/find?&${query}&${idsQuery}`, {
+  const response = await leemons.api(`v1/assignables/assignations/find?&${query}&${idsQuery}`, {
     method: 'GET',
     allAgents: true,
   });
