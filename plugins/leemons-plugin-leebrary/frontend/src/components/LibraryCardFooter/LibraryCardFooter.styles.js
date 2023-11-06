@@ -27,13 +27,14 @@ export const LibraryCardFooterStyles = createStyles((theme, { color }) => ({
   FileIconLabel: {
     ...theme.other.cardLibrary.content.typo.sm,
     color: theme.other.cardLibrary.content.color.muted,
+    paddingLeft: pxToRem(8),
   },
   fileIconContainer: {
     display: 'flex',
     alignItems: 'center',
   },
   fileLabel: {
-    marginLeft: pxToRem(4),
+    paddingLeft: pxToRem(8),
     color: '#878D96',
     fontSize: pxToRem(12),
   },

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Box, Badge, Text, TextClamp, AvatarSubject } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
+import { useSubjects, useSubjectDetails } from '@academic-portfolio/hooks';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
@@ -37,6 +38,15 @@ const LibraryCardBody = ({
   const handleIsFav = () => {
     setIsFav(!isFav);
   };
+  // const preparedSubjects = useSubjects([
+  //   'lrn:local:leebrary:local:auto-deployment-id:AssetsSubjects:6544e1113cc4177922b791f7',
+  // ]);
+  const oneSubject = subjects?.length > 0 && subjects[0]._id;
+  // console.log('oneSubject', oneSubject);
+  const { data } = useSubjectDetails(oneSubject, { enabled: subjects?.length > 0 });
+  // console.log('data', data);
+  // console.log('subjects', subjects);
+  // console.log('preparedSubjects', preparedSubjects);
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
@@ -72,8 +82,8 @@ const LibraryCardBody = ({
             <Box className={classes.subjectIcon}>
               <AvatarSubject
                 color={'#A2A9B0'}
-                icon={subject.icon}
-                altText={subject.name}
+                // icon={subject.icon}
+                // altText={subject.name}
                 size="md"
               />
             </Box>
@@ -88,9 +98,9 @@ const LibraryCardBody = ({
           <Box className={classes.subject}>
             <Box className={classes.subjectIcon}>
               <AvatarSubject
-                color={subject.color}
-                icon={subject.icon}
-                altText={subject.name}
+                // color={subject.color}
+                // icon={subject.icon}
+                // altText={subject.name}
                 size="md"
               />
             </Box>

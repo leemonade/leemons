@@ -1613,9 +1613,9 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@bubbles-ui/calendars@dev":
-  version "1.2.25"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.25.tgz#8ed611cc95f4fd295d5265d024ea692170aef05e"
-  integrity sha512-EeBPaXYuZWzyZBU925iKcZNrhM9DBB3w+f9C/XSRFX9j8dPH4D82T/OzOtsZ5Nx1lHQh1jdCHzEuhf5ef8nI9A==
+  version "1.2.26"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.26.tgz#fffe400d6ad4c999dded85cde77170c566094a76"
+  integrity sha512-ZBzFJhzSdGF9f+VzSgheX/NkRqP+UnRva7YfpfwlAc0SjESXxUENhIRP1sbXHXiRiCX3eZMwUqO08c4NnxjHZA==
   dependencies:
     colord "^2.9.2"
     dom-helpers "^5.2.1"
@@ -1627,11 +1627,11 @@
     rrule "^2.6.8"
 
 "@bubbles-ui/components@dev":
-  version "1.2.25"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.25.tgz#d2ab7eafe0f61eca1c45751323e22021e4f8cbab"
-  integrity sha512-AWF6cOOg+50wo6j1DNnTTkYojb2HN6OLrnBvdBwLLczlXkAKljgx7w37jFpdUoMWgzJr4en9wSKJ/d6XdXb01Q==
+  version "1.2.26"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.26.tgz#048c5c57f188904418cd9175878d835e7c550a51"
+  integrity sha512-kI28y5MPCSWR2HSyxwjbnwUsp+f/7oreHHTorRbGKURH256B3GXodAKsCxhcb4hasM2Xyq1WmUaFMjvlT80Yyg==
   dependencies:
-    "@bubbles-ui/icons" "^1.2.25"
+    "@bubbles-ui/icons" "^1.2.26"
     "@emotion/react" "^11.10.0"
     "@heroicons/react" "^1.0.5"
     "@leemonade/react-dnd-treeview" "^1.5.44"
@@ -1666,9 +1666,9 @@
     uuid "^8.3.2"
 
 "@bubbles-ui/editors@dev":
-  version "1.2.25"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.25.tgz#383e484c22925188f7b10daf47599a2f52c62c42"
-  integrity sha512-SHIM0wMIlUAH3XYeNmBXtDDf8u/d3LKhKjCOaVfn2g5Y19uIzp4d1YqCGew2wtSPrmvvQuNI7qknPSs+4xHy9Q==
+  version "1.2.26"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.26.tgz#cc243305fc3b168f1e33cde13386ecec5491341a"
+  integrity sha512-loNz2c0GgeswMIp5JCKWE1vAt5Ldu0G+IjGT1S3ewWC/Ca3lTBlBwjwlAd/wZUCW1rmoLfE/X9/KWZL8b5dw6w==
   dependencies:
     "@tiptap/extension-character-count" "^2.0.0-beta.25"
     "@tiptap/extension-code-block-lowlight" "^2.0.0-beta.68"
@@ -1701,15 +1701,15 @@
     styled-components "^5.3.3"
     styled-icons "^10.45.0"
 
-"@bubbles-ui/icons@^1.2.25", "@bubbles-ui/icons@dev":
-  version "1.2.25"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.25.tgz#045ed338ea76d5cef1b70ce8d6ba7e39be4a1231"
-  integrity sha512-W8hOOPqfMl7ODsG12wpGikITOZMtAegkjUGBC/MNttbCguXV/GkZp0s9IQv+KB5/t0ZdZfIoyzpQef2rCotGJw==
+"@bubbles-ui/icons@^1.2.26", "@bubbles-ui/icons@dev":
+  version "1.2.26"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.26.tgz#68cae653094c1a6e9936f4877285267d76a58bbf"
+  integrity sha512-5bfPljwCjbh39kykgZWqOdCjQzwF0XfEZZmaEWG1V2RNP5UAsZvFTIXAKpyGh9082T3N0cnbkHLZsMgHxipihQ==
 
 "@bubbles-ui/leemons@dev":
-  version "1.2.25"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.25.tgz#c1e89834c64b7f46d0effe70db01016a249b1bee"
-  integrity sha512-fcwvIxWGIkA4TiVJqMk2P5bbCFIK/rh6mQL/+9dq+/RvBlsKcw6kqpcWThFh140PMczOYTjKyYf86BkFb2IT9Q==
+  version "1.2.26"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.26.tgz#669eebd8246a004b6f14f8c66433f020b79550f2"
+  integrity sha512-9YJLFAh6bTbd0SRzRl8UEuCXnMZ359+TN2gzM/U6IWkY0fMYVSVHagcHw71wxc7tfAKFBsztx2RgWQyLd9lGNA==
   dependencies:
     "@leemonade/rjsf-core" "^3.0.0"
     "@rjsf/core" "^3.2.1"
@@ -1731,9 +1731,9 @@
     uuid "^8.3.2"
 
 "@bubbles-ui/notifications@dev":
-  version "1.2.25"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.25.tgz#73d302f1e15cf19e80731d62a9a052f686002d82"
-  integrity sha512-qJi3x9aAFRB0M/XMgcyZ2vrvq42nTN/IRKa1tWWtjTHB+k1sfbRBdb1vdfaEQt63o5MrybpQqzVmXq2LgBwAGQ==
+  version "1.2.26"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.26.tgz#a95648ff8ba7b0b7ee89d409e3e80c3836b8bdc0"
+  integrity sha512-wTRweJYokWuUk6jYoOVDq26oQpJP+w1YigNEeCphh11ReSCS35y/BlUSjAF08mZFjE9QhtiSslgLeZVUu/VtuQ==
   dependencies:
     "@mantine/notifications" "5.5.5"
     lodash "^4.17.21"
@@ -7070,9 +7070,9 @@ aws-iot-device-sdk@^2.2.12:
     websocket-stream "^5.5.2"
 
 aws-sdk@^2.1438.0, aws-sdk@^2.1463.0:
-  version "2.1486.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1486.0.tgz#66919ee00af3a13df22133539ed773179b963d6b"
-  integrity sha512-YVGhKGWP5mHWIla6/a7MXwHyKrjcy2xIo65Z6rCvG2uxVa3NxGz4Wo7yNRqA8QGCS6buYz9MmRJLv2KOtkb7JQ==
+  version "2.1487.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1487.0.tgz#b071de08f9cf64a359b28bfc293cf8b91aae9b75"
+  integrity sha512-EqDn+beJU0pfANLdg8mh7OER5TH2W6DgZ78WWWgt9fOwczhJQYkQhqevSlCV700vtHtatRjYPG+Q47f5aurZVQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -7900,7 +7900,7 @@ chalk@^3.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chalk@^4.0.0, chalk@^4.0.2, chalk@^4.1.0, chalk@^4.1.2:
+chalk@^4.0.0, chalk@^4.0.2, chalk@^4.1.0, chalk@^4.1.1, chalk@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
@@ -9457,9 +9457,9 @@ ejs@^3.1.8:
     jake "^10.8.5"
 
 electron-to-chromium@^1.4.535:
-  version "1.4.574"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.574.tgz#6de04d7c6e244e5ffcae76d2e2a33b02cab66781"
-  integrity sha512-bg1m8L0n02xRzx4LsTTMbBPiUd9yIR+74iPtS/Ao65CuXvhVZHP0ym1kSdDG3yHFDXqHQQBKujlN1AQ8qZnyFg==
+  version "1.4.575"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.575.tgz#7c0b87eb2c6214a993699792abd704de41255c39"
+  integrity sha512-kY2BGyvgAHiX899oF6xLXSIf99bAvvdPhDoJwG77nxCSyWYuRH6e9a9a3gpXBvCs6lj4dQZJkfnW2hdKWHEISg==
 
 elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
@@ -14621,9 +14621,9 @@ napi-build-utils@^1.0.1:
   integrity sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==
 
 nats@^2.16.0:
-  version "2.17.0"
-  resolved "https://registry.yarnpkg.com/nats/-/nats-2.17.0.tgz#1f6ffa5d89bb8ea4549e205f42601dbf66c4561e"
-  integrity sha512-749TtweWL6bc9R9yNra4a+tuk8J0bqurxcPV/9R2D+WPTplY4PPde/LPSXspqR/eCCTxiM80/AjVlfboEafRxA==
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/nats/-/nats-2.18.0.tgz#a82b263ed71be0f8518af4313e2339055e5d946b"
+  integrity sha512-zZF004ejzf67Za0Tva+xphxoxBMNc5IMLqbZ7Ho0j9TMuisjpo+qCd1EktXRCLNxmrZ8O6Tbm1dBsZYNF6yR1A==
   dependencies:
     nkeys.js "1.0.5"
 

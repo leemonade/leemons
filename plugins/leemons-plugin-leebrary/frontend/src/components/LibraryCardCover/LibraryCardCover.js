@@ -22,6 +22,7 @@ const LibraryCardCover = ({
   subject,
   hideDashboardIcons,
   fileType,
+  variantIcon,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const { classes, cx } = LibraryCardCoverStyles(
@@ -107,7 +108,7 @@ const LibraryCardCover = ({
         {cover ? (
           <ImageLoader src={cover} height={height} width={'100%'} forceImage />
         ) : (
-          <LibraryCardEmptyCover icon={icon} fileType={fileType} />
+          <LibraryCardEmptyCover icon={icon || variantIcon} fileType={fileType} />
         )}
       </Box>
     </AnimatePresence>

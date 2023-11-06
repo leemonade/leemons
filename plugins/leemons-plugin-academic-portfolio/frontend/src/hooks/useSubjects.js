@@ -8,7 +8,7 @@ export default function useSubjects(subjectsIds) {
 
   useEffect(() => {
     (async () => {
-      if (!subjectsIds.length) {
+      if (!subjectsIds?.length) {
         return;
       }
 

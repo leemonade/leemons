@@ -59,6 +59,7 @@ const LibraryCard = ({
         role={role}
         badge={badge}
         subject={subject}
+        variantIcon={variantIcon}
       />
       <LibraryCardBody
         {...asset}
