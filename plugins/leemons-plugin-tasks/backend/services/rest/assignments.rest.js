@@ -13,7 +13,7 @@ module.exports = {
   instanceCreateRest: {
     rest: {
       method: 'POST',
-      path: '/tasks/:task/assignments/instance',
+      path: '/:task/instance',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -46,7 +46,7 @@ module.exports = {
   instanceGetRest: {
     rest: {
       method: 'PUT',
-      path: '/tasks/assignments/instance/:instance',
+      path: '/instance/:instance',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -73,7 +73,7 @@ module.exports = {
   studentUpdateRest: {
     rest: {
       method: 'PUT',
-      path: '/tasks/instances/:instance/students/:student',
+      path: '/instance/:instance/student/:student',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

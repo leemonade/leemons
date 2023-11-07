@@ -165,7 +165,7 @@ async function classDetailForDashboard(classId) {
 async function classByIds(classIds) {
   const ids = JSON.stringify(Array.isArray(classIds) ? classIds : [classIds]);
 
-  return leemons.api(`v1/academic-portfolio/classes?ids=${ids}`, {
+  return leemons.api(`v1/academic-portfolio/classes/raw-list?ids=${ids}`, {
     allAgents: true,
     method: 'GET',
   });
