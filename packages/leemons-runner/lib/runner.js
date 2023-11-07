@@ -11,6 +11,7 @@ const cluster = require('cluster');
 const kleur = require('kleur');
 const { execSync } = require('child_process');
 const { mongoose } = require('@leemons/mongodb');
+const { ControllerValidator } = require('@leemons/validator');
 
 const stopSignals = [
   'SIGHUP',
@@ -554,7 +555,10 @@ class LeemonsRunner {
     }
 
     // Create service broker
-    this.broker = new ServiceBroker({ ...this.config });
+    this.broker = new ServiceBroker({
+      ...this.config,
+      validator: new ControllerValidator(),
+    });
     this.broker.runner = this;
 
     this.loadServices();
