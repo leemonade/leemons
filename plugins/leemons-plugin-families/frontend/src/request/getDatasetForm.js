@@ -1,5 +1,5 @@
 async function getDatasetForm() {
-  return leemons.api('families/dataset-form', {
+  return leemons.api('v1/families/families/dataset-form', {
     allAgents: true,
   });
 }

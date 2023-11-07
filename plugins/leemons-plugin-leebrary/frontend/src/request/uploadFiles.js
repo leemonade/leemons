@@ -9,7 +9,7 @@ async function uploadFiles(files) {
     formData.append('files', files);
   }
 
-  return leemons.api('leebrary/upload', {
+  return leemons.api('v1/leebrary/upload', {
     allAgents: true,
     method: 'POST',
     body: formData,

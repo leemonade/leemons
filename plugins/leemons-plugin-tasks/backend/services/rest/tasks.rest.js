@@ -31,7 +31,7 @@ module.exports = {
   createRest: {
     rest: {
       method: 'POST',
-      path: '/tasks',
+      path: '/',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -53,7 +53,7 @@ module.exports = {
   updateRest: {
     rest: {
       method: 'PUT',
-      path: '/tasks/:id',
+      path: '/:id',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -74,7 +74,7 @@ module.exports = {
   getRest: {
     rest: {
       method: 'GET',
-      path: '/tasks/:id',
+      path: '/:id',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -108,7 +108,7 @@ module.exports = {
   duplicateRest: {
     rest: {
       method: 'POST',
-      path: '/tasks/:id/duplicate',
+      path: '/:id/duplicate',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -131,7 +131,7 @@ module.exports = {
   removeRest: {
     rest: {
       method: 'DELETE',
-      path: '/tasks/:id',
+      path: '/:id',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -156,7 +156,7 @@ module.exports = {
   publishRest: {
     rest: {
       method: 'POST',
-      path: '/tasks/:id/publish',
+      path: '/:id/publish',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -181,7 +181,7 @@ module.exports = {
   searchRest: {
     rest: {
       method: 'GET',
-      path: '/tasks/search',
+      path: '/search',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

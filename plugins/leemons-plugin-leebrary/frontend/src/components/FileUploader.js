@@ -24,7 +24,7 @@ export default function FileUploader() {
         data.append('description', values.description);
         values.files.map((file) => data.append('files', file));
 
-        leemons.api('leebrary/upload', {
+        leemons.api('v1/leebrary/upload', {
           allAgents: true,
           method: 'POST',
           body: data,

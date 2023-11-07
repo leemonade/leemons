@@ -1,6 +1,6 @@
 async function getPlatformTheme() {
-  const { theme } = await leemons.api(`users/platform/theme`);
-  const { jsonTheme } = await leemons.api('admin/organization/jsonTheme');
+  const { theme } = await leemons.api(`v1/users/platform/theme`);
+  const { jsonTheme } = await leemons.api('v1/admin/organization/jsonTheme');
   return { theme, jsonTheme };
 }
 

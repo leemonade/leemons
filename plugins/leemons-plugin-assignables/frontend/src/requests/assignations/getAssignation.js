@@ -1,7 +1,7 @@
 import getAssignableInstance from '../assignableInstances/getAssignableInstance';
 
 export default async function getAssignation({ id, user, details = true }) {
-  const response = await leemons.api(`assignables/assignableInstances/${id}/assignations/${user}`, {
+  const response = await leemons.api(`v1/assignables/assignations/instance/${id}/user/${user}`, {
     method: 'GET',
     allAgents: true,
   });

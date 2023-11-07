@@ -1,5 +1,5 @@
 async function updateFamily(body) {
-  return leemons.api('families/update', {
+  return leemons.api('v1/families/families/update', {
     allAgents: true,
     method: 'POST',
     body,

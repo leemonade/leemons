@@ -1,5 +1,5 @@
 async function reset(token, password) {
-  return leemons.api('users/user/reset', {
+  return leemons.api('v1/users/users/reset', {
     method: 'POST',
     body: {
       token,

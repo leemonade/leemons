@@ -18,7 +18,7 @@ export default async function getAssignableInstances({
     query += '&throwOnMissing=false';
   }
 
-  const apiData = await leemons.api(`assignables/assignableInstances/find?${query}&${idsQuery}`, {
+  const apiData = await leemons.api(`v1/assignables/assignableInstances/find?${query}&${idsQuery}`, {
     method: 'GET',
     allAgents: true,
   });

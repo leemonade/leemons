@@ -1,5 +1,5 @@
 async function getQuestionByIds(questionIds, options) {
-  return leemons.api(`tests/questions/details`, {
+  return leemons.api(`v1/tests/questions/details`, {
     allAgents: true,
     method: 'POST',
     body: {

@@ -18,7 +18,7 @@ export default function ConfigPage({ onNextLabel, onNext = () => {} }) {
   const form = useForm();
 
   async function load() {
-    const { config } = await leemons.api(`mqtt-aws-iot/config`, {
+    const { config } = await leemons.api(`v1/mqtt-aws-iot/socket/config`, {
       allAgents: true,
       method: 'GET',
     });
@@ -35,7 +35,7 @@ export default function ConfigPage({ onNextLabel, onNext = () => {} }) {
         store.saving = true;
         render();
 
-        await leemons.api(`mqtt-aws-iot/config`, {
+        await leemons.api(`v1/mqtt-aws-iot/socket/config`, {
           allAgents: true,
           method: 'POST',
           body: data,

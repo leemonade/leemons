@@ -1,5 +1,5 @@
 async function todayQuote() {
-  return leemons.api('users/init/today-quote', {
+  return leemons.api('v1/users/init/today-quote', {
     method: 'GET',
   });
 }

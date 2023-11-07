@@ -1,5 +1,5 @@
 async function getAsset(assetId) {
-  return leemons.api(`leebrary/assets/${assetId}`, {
+  return leemons.api(`v1/leebrary/assets/${assetId}`, {
     allAgents: true,
     method: 'GET',
   });

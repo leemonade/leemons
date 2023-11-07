@@ -11,10 +11,10 @@ async function getAssets({ pinned, showPublic, ...filters } = {}) {
 
   params = params.join('&');
 
-  let url = `leebrary/assets/list?${params}`;
+  let url = `v1/leebrary/assets/list?${params}`;
 
   if (pinned) {
-    url = `leebrary/assets/pins?${params}`;
+    url = `v1/leebrary/assets/pins?${params}`;
   }
 
   return leemons.api(url, {

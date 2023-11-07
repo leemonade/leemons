@@ -1,5 +1,5 @@
 async function listPermissions() {
-  return leemons.api('users/permission/list', { allAgents: true });
+  return leemons.api('v1/users/permissions/list', { allAgents: true });
 }
 
 export default listPermissions;

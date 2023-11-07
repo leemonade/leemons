@@ -12,7 +12,7 @@ function SocketTest() {
   });
 
   const sendMessage = () => {
-    leemons.api('users/test-mqtt-socket-io', {
+    leemons.api('v1/users/test-mqtt-socket-io', {
       allAgents: true,
     });
   };

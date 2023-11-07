@@ -1,5 +1,5 @@
 async function sendWelcomeEmailToUser(body) {
-  return leemons.api('users/user/activation-mail', {
+  return leemons.api('v1/users/users/activation-mail', {
     method: 'POST',
     body,
   });

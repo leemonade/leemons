@@ -1,5 +1,5 @@
 async function detailFamily(id) {
-  return leemons.api(`families/detail/${id}`, {
+  return leemons.api(`v1/families/families/detail/${id}`, {
     allAgents: true,
   });
 }

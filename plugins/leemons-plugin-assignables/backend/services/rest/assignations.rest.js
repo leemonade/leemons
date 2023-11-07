@@ -11,7 +11,7 @@ module.exports = {
   getRest: {
     rest: {
       method: 'GET',
-      path: '/assignableInstances/:instance/assignations/:user',
+      path: '/instance/:instance/user/:user',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

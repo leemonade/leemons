@@ -138,4 +138,14 @@ module.exports = {
       };
     },
   },
+  getRest2: {
+    rest: {
+      method: 'GET',
+      path: '/:id',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      return get(ctx);
+    },
+  },
 };
