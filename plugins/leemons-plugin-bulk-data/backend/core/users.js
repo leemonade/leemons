@@ -4,8 +4,6 @@ const { keys, map, uniq, isEmpty } = require('lodash');
 const Pool = require('async-promise-pool');
 const importUsers = require('./bulk/users');
 
-const pool = new Pool({ concurrency: 1 });
-
 async function _addUser({ key, users, ctx }) {
   const { roles, ...item } = users[key];
 
@@ -38,6 +36,7 @@ async function _addUser({ key, users, ctx }) {
 }
 
 async function initUsers({ file, centers, profiles, ctx }) {
+  const pool = new Pool({ concurrency: 1 });
   try {
     const users = await importUsers(file, centers, profiles);
     const itemsKeys = keys(users);
