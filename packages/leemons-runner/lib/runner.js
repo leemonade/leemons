@@ -557,6 +557,7 @@ class LeemonsRunner {
     // Create service broker
     this.broker = new ServiceBroker({
       ...this.config,
+      // validator: new ControllerValidator(),
       validator: new ControllerValidator(),
     });
     this.broker.runner = this;
