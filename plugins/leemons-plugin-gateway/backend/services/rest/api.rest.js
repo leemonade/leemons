@@ -21,24 +21,24 @@ module.exports = {
   // restore Database
   ...(process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing
     ? {
-        restoreDB: {
+        dropDBRest: {
           dontCreateTransactionOnCallThisFunction: true,
           rest: {
             method: 'POST',
-            path: '/database/restore',
+            path: '/database/drop',
           },
           async handler(ctx) {
             try {
-              // await dumpCollections(mongoose.connection.db);
-
               await mongoose.connection.db.dropDatabase();
-
-              return { status: 200, message: 'Successfull Drop Database' };
+              return {
+                status: 200,
+                message: 'Successful Database Drop',
+              };
             } catch (error) {
               ctx.meta.$statusCode = 500;
               return {
                 status: 500,
-                error: `Restoring Database Error: ${error.message || error}   `,
+                error: `Database Drop Error: ${error.message || error}   `,
               };
             }
           },

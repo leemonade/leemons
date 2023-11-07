@@ -44,12 +44,7 @@ async function createProgram(_body) {
       if (body.image.id) {
         body.image = body.image.cover?.id;
       } else {
-        console.log('BODY', body);
         body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
-        // alert('MIGRACION: Se tiene que pasar un file en el campo image o la id del cover');
-        // throw new Error(
-        //   'MIGRACION: Se tiene que pasar un file en el campo image o la id del cover'
-        // );
       }
     }
   }
@@ -68,10 +63,9 @@ async function updateProgram(_body) {
       if (body.image.id) {
         body.image = body.image.cover?.id;
       } else {
-        alert('MIGRACION: Se tiene que pasar un file en el campo image o la id del cover');
-        throw new Error(
-          'MIGRACION: Se tiene que pasar un file en el campo image o la id del cover'
-        );
+        console.log('BODY', body);
+        console.log('BODY', body.image.name);
+        body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
       }
     }
   }

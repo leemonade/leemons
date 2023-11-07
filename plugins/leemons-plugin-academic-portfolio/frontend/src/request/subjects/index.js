@@ -1,3 +1,4 @@
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { isString } from 'lodash';
 
 async function listSubjects({ page, size, program, course }) {
@@ -19,16 +20,14 @@ async function createSubject(body) {
       if (body.image.id) {
         data.image = body.image.cover?.id;
       } else {
-        alert('MIGRACION: image no puede ser un js File');
-        throw new Error('MIGRACION: image no puede ser un js File');
+        data.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
       }
     }
     if (body.icon) {
       if (body.icon.id) {
         data.icon = body.icon.cover?.id;
       } else {
-        alert('MIGRACION: icon no puede ser un js File');
-        throw new Error('MIGRACION: icon no puede ser un js File');
+        data.icon = await uploadFileAsMultipart(body.icon, { name: body.icon.name });
       }
     }
     toSend = data;
@@ -48,16 +47,14 @@ async function updateSubject(body) {
       if (body.image.id) {
         data.image = body.image.cover?.id;
       } else {
-        alert('MIGRACION: image no puede ser un js File');
-        throw new Error('MIGRACION: image no puede ser un js File');
+        data.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
       }
     }
     if (body.icon) {
       if (body.icon.id) {
         data.icon = body.icon.cover?.id;
       } else {
-        alert('MIGRACION: icon no puede ser un js File');
-        throw new Error('MIGRACION: icon no puede ser un js File');
+        data.icon = await uploadFileAsMultipart(body.icon, { name: body.icon.name });
       }
     }
     toSend = data;

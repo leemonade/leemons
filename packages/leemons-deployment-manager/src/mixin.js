@@ -115,7 +115,7 @@ module.exports = function ({
   getDeploymentIdInCall = false,
   dontGetDeploymentIDOnActionCall = [
     'deployment-manager.addManualDeploymentRest',
-    'gateway.restoreDB',
+    'gateway.dropDBRest',
   ],
 } = {}) {
   return {
