@@ -33,7 +33,7 @@
         "./plugins/leemons-plugin-common/frontend/src/*"
       ],
       "@comunica/*": [
-        "./plugins/leemons-plugin-comunica/frontend/src/*"
+        "./private-plugins/leemons-plugin-comunica/frontend/src/*"
       ],
       "@content-creator/*": [
         "./plugins/leemons-plugin-content-creator/frontend/src/*"
@@ -131,6 +131,7 @@
   "include": [
     "./packages/**/*",
     "./plugins/**/*",
+    "./private-plugins/**/*",
     "plugins/leemons-plugin-menu-builder/frontend/.babelrc.js"
   ]
 }
