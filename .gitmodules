@@ -1,0 +1,3 @@
+[submodule "private-plugins"]
+	path = private-plugins
+	url = https://github.com/leemonade/leemons-private-plugins
