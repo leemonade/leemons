@@ -176,17 +176,25 @@ module.exports = {
     rest: {
       path: '/load-from-file',
       method: 'POST',
+      type: 'multipart',
     },
     timeout: 0,
     async handler(ctx) {
       const settings = await ctx.call('admin.settings.findOne');
 
-      if (settings?.status !== 'INSTALLED' && !settings?.configured) {
-        const file = await createTempFile({ readStream: ctx.params });
-        bulkData({ docPath: file.path, ctx });
-        return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
+      try {
+        if (settings?.status !== 'INSTALLED' && !settings?.configured) {
+          const file = await createTempFile({ readStream: ctx.params });
+          bulkData({ docPath: file.path, ctx });
+          return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
+        }
+      } catch (error) {
+        throw new LeemonsError(ctx, {
+          message: `Something went wrong: ${error}`,
+          httpStatusCode: 500,
+        });
       }
-      throw new LeemonsError(ctx, { message: 'Something went wrong', httpStatusCode: 403 });
+      throw new LeemonsError(ctx, { message: 'Unexpected error', httpStatusCode: 500 });
     },
   },
   statusRest: {
