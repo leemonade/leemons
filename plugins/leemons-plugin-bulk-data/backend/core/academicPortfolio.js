@@ -9,8 +9,6 @@ const importSubjectTypes = require('./bulk/academic-portfolio/subjectTypes');
 const importKnowledgeAreas = require('./bulk/academic-portfolio/knowledgeAreas');
 const importSubjects = require('./bulk/academic-portfolio/subjects');
 
-const pool = new Pool({ concurrency: 1 });
-
 async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfiles, ctx }) {
   const { classes, seats, creator, courses, ...subject } = subjects[key];
 
@@ -139,7 +137,7 @@ async function initAcademicPortfolio({
   ctx,
 }) {
   const weekdays = await ctx.call('timetable.timetable.getWeekdays');
-
+  const pool = new Pool({ concurrency: 1 });
   try {
     // ·····················································
     // SETTINGS

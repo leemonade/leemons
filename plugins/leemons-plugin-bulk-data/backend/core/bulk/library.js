@@ -17,7 +17,7 @@ async function importLibrary(filePath, { users }) {
           const [user, role] = userItem.split('|');
           return {
             user: users[user],
-            userAgent: users[user]?.userAgents[0].id,
+            userAgent: users[user]?.userAgents[0]?.id,
             role,
           };
         });

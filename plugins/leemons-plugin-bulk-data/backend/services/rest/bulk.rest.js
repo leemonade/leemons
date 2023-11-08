@@ -61,6 +61,7 @@ function getLoadStatus() {
 }
 
 async function bulkData({ docPath, ctx }) {
+  currentPhase = null;
   const config = {
     profiles: null,
     centers: null,
