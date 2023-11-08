@@ -92,26 +92,31 @@ const LibraryCardCover = ({
     </Box>
   );
 
+  const MemoizedEmptyCover = useMemo(
+    () => <LibraryCardEmptyCover icon={icon || variantIcon} fileType={fileType} />,
+    [icon, variantIcon, fileType]
+  );
+
   return (
-    <AnimatePresence>
-      <Box className={classes.root}>
-        <Box className={classes.color} />
-        <Box className={classes.overlayTransparent}>
-          <motion.div
+    // <AnimatePresence>
+    <Box className={classes.root}>
+      <Box className={classes.color} />
+      <Box className={classes.overlayTransparent}>
+        {/* <motion.div
             key="overlay"
             variants={overlayVariants}
             animate={parentHovered ? 'visible' : 'hidden'}
-          >
-            <Box>{iconRow}</Box>
-          </motion.div>
-        </Box>
-        {cover ? (
-          <ImageLoader src={cover} height={height} width={'100%'} forceImage />
-        ) : (
-          <LibraryCardEmptyCover icon={icon || variantIcon} fileType={fileType} />
-        )}
+          > */}
+        <Box>{iconRow}</Box>
+        {/* </motion.div> */}
       </Box>
-    </AnimatePresence>
+      {cover ? (
+        <ImageLoader src={cover} height={height} width={'100%'} forceImage />
+      ) : (
+        MemoizedEmptyCover
+      )}
+    </Box>
+    // </AnimatePresence>
   );
 };
 

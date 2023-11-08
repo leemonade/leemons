@@ -200,7 +200,7 @@ module.exports = {
   },
   subjectByIdsRest: {
     rest: {
-      path: '/:id',
+      path: '/',
       method: 'GET',
     },
     middlewares: [

@@ -1,8 +1,8 @@
 /* eslint-disable import/prefer-default-export */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Badge, Text, TextClamp, AvatarSubject } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
-import { useSubjects, useSubjectDetails } from '@academic-portfolio/hooks';
+import { useSubjects } from '@academic-portfolio/hooks';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
@@ -27,26 +27,29 @@ const LibraryCardBody = ({
   published,
   subject,
   subjects,
+  original,
+  providerData,
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
   const [isFav, setIsFav] = useState(false);
+  const [subjectData, setSubjectData] = useState(null);
 
-  const isDraft = typeof published === 'boolean' && published === false;
+  const isDraft = typeof providerData.published === 'boolean' && providerData.published === false;
   const title = props.name ? props.name : null;
   const isMultipleSubjects = isArray(subjects) && subjects.length > 1;
+  const originalProgramName = original?.programName;
   const handleIsFav = () => {
     setIsFav(!isFav);
   };
-  // const preparedSubjects = useSubjects([
-  //   'lrn:local:leebrary:local:auto-deployment-id:AssetsSubjects:6544e1113cc4177922b791f7',
-  // ]);
-  const oneSubject = subjects?.length > 0 && subjects[0]._id;
-  // console.log('oneSubject', oneSubject);
-  const { data } = useSubjectDetails(oneSubject, { enabled: subjects?.length > 0 });
-  // console.log('data', data);
-  // console.log('subjects', subjects);
-  // console.log('preparedSubjects', preparedSubjects);
+
+  useEffect(() => {
+    const oneSubject = subjects?.length > 0 && [subjects[0].subject];
+    setSubjectData(oneSubject);
+  }, [subjects]);
+
+  const preparedSubject = useSubjects(subjectData);
+
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
@@ -94,27 +97,25 @@ const LibraryCardBody = ({
             </TextClamp>
           </Box>
         )}
-        {!isMultipleSubjects && subject && (
+        {!isMultipleSubjects && isArray(subjects) && (
           <Box className={classes.subject}>
             <Box className={classes.subjectIcon}>
               <AvatarSubject
-                // color={subject.color}
-                // icon={subject.icon}
-                // altText={subject.name}
+                color={'darkturquoise'}
+                icon={preparedSubject[0]?.icon}
+                altText={preparedSubject[0]?.name}
                 size="md"
               />
             </Box>
             <Box>
-              <TextClamp lines={programName ? 1 : 0}>
+              <TextClamp lines={originalProgramName ? 1 : 0}>
                 <Text color="muted" role="productive" size="xs" className={classes.subjectName}>
-                  {subject.name}
+                  {preparedSubject[0]?.name}
                 </Text>
               </TextClamp>
-              {programName && (
-                <TextClamp lines={1}>
-                  <Text className={classes.programName}>{programName}</Text>
-                </TextClamp>
-              )}
+              <TextClamp lines={1}>
+                <Text className={classes.programName}>{!!originalProgramName && originalProgramName}</Text>
+              </TextClamp>
             </Box>
           </Box>
         )}

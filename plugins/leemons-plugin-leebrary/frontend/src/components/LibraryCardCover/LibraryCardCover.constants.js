@@ -14,6 +14,9 @@ export const LIBRARY_CARD_COVER_DEFAULT_PROPS = {
   height: 144,
   menuItems: [],
   dashboard: false,
+  fileIcon: null,
+  variantIcon: null,
+  fileType: null,
 };
 export const LIBRARY_CARD_COVER_PROP_TYPES = {
   name: PropTypes.string,

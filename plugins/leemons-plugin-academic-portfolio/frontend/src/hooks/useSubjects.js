@@ -11,7 +11,6 @@ export default function useSubjects(subjectsIds) {
       if (!subjectsIds?.length) {
         return;
       }
-
       const subjectsResult = await getSubjectDetails(subjectsIds);
       const subjectsData = subjectsResult.data;
       const creditsResult = await getSubjectsCredits(

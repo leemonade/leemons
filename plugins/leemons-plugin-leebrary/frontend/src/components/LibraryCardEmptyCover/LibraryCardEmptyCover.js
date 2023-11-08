@@ -1,8 +1,4 @@
-import React, { useRef } from 'react';
-// import { AssetAudioIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetAudioIcon/AssetAudioIcon';
-// import { AssetVideoIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetVideoIcon/AssetVideoIcon';
-// import { AssetBookmarkIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetBookmarkIcon/AssetBookmarkIcon';
-// import { AssetImageIcon } from '@bubbles-ui/components/lib/misc/FileIcon/AssetImageIcon/AssetImageIcon';
+import React, { useRef, memo } from 'react';
 import {
   AssetAudioIcon,
   AssetVideoIcon,
@@ -17,7 +13,7 @@ import {
   LIBRARY_CARD_EMPTY_COVER_PROP_TYPES,
 } from './LibraryCardEmptyCover.constants';
 
-const LibraryCardEmptyCover = ({ icon, fileType }) => {
+const LibraryCardEmptyCover = memo(({ icon, fileType }) => {
   const pairColumnRef = useRef(null);
 
   const { canvasImage } = useHTMLToCanvas(pairColumnRef);
@@ -59,7 +55,7 @@ const LibraryCardEmptyCover = ({ icon, fileType }) => {
       )}
     </Box>
   );
-};
+});
 
 LibraryCardEmptyCover.propTypes = LIBRARY_CARD_EMPTY_COVER_DEFAULT_PROPS;
 LibraryCardEmptyCover.propTypes = LIBRARY_CARD_EMPTY_COVER_PROP_TYPES;

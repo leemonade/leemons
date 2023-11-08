@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
@@ -130,16 +130,21 @@ const CardWrapper = ({
     return items;
   }, [asset, t]);
 
-  let Component = LibraryCard;
-  const componentOwner = category?.componentOwner || category?.pluginOwner;
+  const Component = useMemo(() => {
+    let componentToRender = LibraryCard;
+    const componentOwner = category?.componentOwner || category?.pluginOwner;
 
-  if (category?.listCardComponent && componentOwner) {
-    try {
-      Component = dynamicImport(componentOwner, category.listCardComponent);
-    } catch (e) {
-      //
+    if (category?.listCardComponent && componentOwner) {
+      try {
+        componentToRender = dynamicImport(componentOwner, category.listCardComponent);
+      } catch (e) {
+        //
+      }
     }
-  }
+
+    return componentToRender;
+  }, [LibraryCard, category?.componentOwner, category?.pluginOwner, category?.listCardComponent]);
+
   const _asset = asset;
   // console.log(category);
   if (realCategory?.key !== 'pins') {

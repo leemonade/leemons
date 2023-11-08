@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { isNil } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
@@ -31,12 +31,10 @@ const LibraryCard = ({
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-
   const { classes, cx } = LibraryCardStyles(
     { shadow, fullHeight, isHovered },
     { name: 'LibraryCard' }
   );
-
   if (isLoading) {
     return <LibraryCardSkeleton />;
   }

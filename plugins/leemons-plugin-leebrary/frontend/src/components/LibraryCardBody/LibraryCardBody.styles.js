@@ -61,14 +61,13 @@ export const LibraryCardBodyStyles = createStyles((theme, { fullHeight }) => {
       marginRight: pxToRem(4),
     },
     subject: {
-      paddingTop: pxToRem(8),
       display: 'flex',
-      justifyContent: 'flex-start',
+      justifyContent: 'center',
       alignItems: 'center',
       gap: 5,
     },
     subjectName: {
-      paddingTop: pxToRem(8),
+      marginTop: pxToRem(20),
       ...cardLibraryStyles.content.typo.md,
       lineHeight: '20px',
       color: cardLibraryStyles.content.color.subje,

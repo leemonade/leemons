@@ -36,40 +36,36 @@ const LibraryCardFooter = ({
 
   return (
     <Box className={cx(classes.root, className)} style={style}>
-      {action && !variantIcon ? (
-        <Button variant={'link'} onClick={() => handleOnAction()} size={'xs'}>
-          {action}
-        </Button>
-      ) : !action && variantIcon ? (
+      {!action && variantIcon ? (
         <Box className={classes.FileIconRoot}>
           {variantIcon}
           {variantIconLabel && <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>}
         </Box>
       ) : (
-        <>
-          <Box className={classes.fileIconContainer}>
-            <FileIcon
-              size={24}
-              fileType={fileType || variant}
-              fileExtension={fileExtension}
-              color={'#878D96'}
-              hideExtension
-            />
-            <Text className={classes.fileLabel}>{variantIconLabel}</Text>
-          </Box>
-          <Box className={classes.avatars}>
-            <AvatarsGroup
-              size="sm"
-              data={canAccess}
-              moreThanUsersAsMulti={2}
-              classesData={classesCanAccess}
-              numberFromClassesAndData
-              customAvatarMargin={14}
-              limit={3}
-            />
-          </Box>
-        </>
+        <Box className={classes.fileIconContainer}>
+          <FileIcon
+            size={24}
+            fileType={fileType || variant}
+            fileExtension={fileExtension}
+            color={'#878D96'}
+            hideExtension
+          />
+          <Text className={classes.fileLabel}>{variantIconLabel}</Text>
+        </Box>
       )}
+
+      <Box className={classes.avatars}>
+        <AvatarsGroup
+          size="sm"
+          data={canAccess}
+          moreThanUsersAsMulti={2}
+          classesData={classesCanAccess}
+          numberFromClassesAndData
+          customAvatarMargin={14}
+          limit={3}
+          zIndexInverted={true}
+        />
+      </Box>
     </Box>
   );
 };
