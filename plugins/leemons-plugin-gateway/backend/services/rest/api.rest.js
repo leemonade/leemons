@@ -17,6 +17,26 @@ module.exports = {
       return { status: 200, timestamp: new Date() };
     },
   },
+  controllers: {
+    rest: {
+      method: 'GET',
+      path: '/controllers',
+    },
+    params: {
+      properties: {
+        name: { type: 'number' },
+        message: {
+          type: 'object',
+          properties: { message: { type: ['string', 'boolean'] } },
+        },
+        arrayParam: { type: 'array', items: { type: 'boolean' } },
+      },
+      required: ['name', 'array'],
+    },
+    async handler(ctx) {
+      return { status: 200, timestamp: new Date() };
+    },
+  },
 
   // restore Database
   ...(process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing
