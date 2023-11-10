@@ -1,5 +1,5 @@
 const { map } = require('lodash');
-const { LeemonsError } = require('@Leemons/error');
+const { LeemonsError } = require('@leemons/error');
 const canAssignRole = require('../helpers/canAssignRole');
 const { getByAsset } = require('../getByAsset');
 

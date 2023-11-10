@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('@Leemons/error');
+const { LeemonsError } = require('@leemons/error');
 const { default: mediainfoAlias } = require('mediainfo.js');
 const { getReadableDuration } = require('./getReadableDuration');
 const { getReadableBitrate } = require('./getReadableBitrate');
