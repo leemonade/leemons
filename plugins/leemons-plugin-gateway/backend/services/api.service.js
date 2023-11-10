@@ -709,6 +709,14 @@ module.exports = {
         // Enable/disable logging
         logging: true,
       },
+      {
+        path: '/api/openapi',
+        aliases: {
+          'GET /openapi.json': 'openapi.generateDocs', // swagger scheme
+          'GET /ui': 'openapi.ui', // ui
+          'GET /assets/:file': 'openapi.assets', // js/css files
+        },
+      },
     ],
 
     // Do not log client side errors (does not log an error response when the error.code is 400<=X<500)
@@ -766,7 +774,7 @@ module.exports = {
       const { user } = ctx.meta;
 
       // It check the `auth` property in action schema.
-      if (req.$action.auth == 'required' && !user) {
+      if (req.$action.auth === 'required' && !user) {
         throw new ApiGateway.Errors.UnAuthorizedError('NO_RIGHTS');
       }
     },
