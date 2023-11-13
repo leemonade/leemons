@@ -62,7 +62,7 @@ const LibraryCardFooter = ({
           classesData={classesCanAccess}
           numberFromClassesAndData
           customAvatarMargin={14}
-          limit={3}
+          limit={2}
           zIndexInverted={true}
         />
       </Box>

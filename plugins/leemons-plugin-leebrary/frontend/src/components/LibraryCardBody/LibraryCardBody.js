@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Badge, Text, TextClamp, AvatarSubject } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { useSubjects } from '@academic-portfolio/hooks';
+import { SubjectItemDisplay } from '@academic-portfolio/components';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
@@ -35,20 +36,17 @@ const LibraryCardBody = ({
   const [isFav, setIsFav] = useState(false);
   const [subjectData, setSubjectData] = useState(null);
 
-  const isDraft = typeof providerData.published === 'boolean' && providerData.published === false;
+  const isDraft = typeof providerData?.published === 'boolean' && providerData?.published === false;
   const title = props.name ? props.name : null;
-  const isMultipleSubjects = isArray(subjects) && subjects.length > 1;
-  const originalProgramName = original?.programName;
+
   const handleIsFav = () => {
     setIsFav(!isFav);
   };
 
   useEffect(() => {
-    const oneSubject = subjects?.length > 0 && [subjects[0].subject];
-    setSubjectData(oneSubject);
+    const subjectIds = isArray(subjects) && subjects.map((s) => s.subject);
+    setSubjectData(subjectIds);
   }, [subjects]);
-
-  const preparedSubject = useSubjects(subjectData);
 
   return (
     <Box className={classes.root}>
@@ -80,7 +78,7 @@ const LibraryCardBody = ({
       </Box>
       <Box className={classes.subjectsContainer}>
         {/* MULTIASIGNATURASº */}
-        {isMultipleSubjects && (
+        {/* {isMultipleSubjects && (
           <Box className={classes.subject}>
             <Box className={classes.subjectIcon}>
               <AvatarSubject
@@ -91,19 +89,19 @@ const LibraryCardBody = ({
               />
             </Box>
             <TextClamp lines={1}>
-              <Text color="primary" role="productive" size="xs">
-                {'Multi asignatura'}
+              <Text color="primary" role="productive" size="xs" className={classes.subjectName}>
+                {'Multiasignatura'}
               </Text>
             </TextClamp>
           </Box>
-        )}
-        {!isMultipleSubjects && isArray(subjects) && (
+        )} */}
+        {/* {!isMultipleSubjects && isArray(subjects) && (
           <Box className={classes.subject}>
             <Box className={classes.subjectIcon}>
               <AvatarSubject
                 color={'darkturquoise'}
-                icon={preparedSubject[0]?.icon}
-                altText={preparedSubject[0]?.name}
+                // icon={preparedSubject[0]?.icon}
+                // altText={preparedSubject[0]?.name}
                 size="md"
               />
             </Box>
@@ -114,11 +112,16 @@ const LibraryCardBody = ({
                 </Text>
               </TextClamp>
               <TextClamp lines={1}>
-                <Text className={classes.programName}>{!!originalProgramName && originalProgramName}</Text>
+                <Text className={classes.programName}>
+                  {!!originalProgramName && originalProgramName}
+                </Text>
               </TextClamp>
             </Box>
           </Box>
-        )}
+        )} */}
+        <Box className={classes.subject}>
+          <SubjectItemDisplay subjectsIds={subjectData} />
+        </Box>
       </Box>
     </Box>
   );

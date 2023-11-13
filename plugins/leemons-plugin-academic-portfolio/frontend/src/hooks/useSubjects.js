@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { getSubjectDetails, getSubjectsCredits } from '../request/subjects';
 
-export default function useSubjects(subjectsIds) {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    (async () => {
+export default function useSubjects(subjectsIds, { ...options }) {
+  const { data, isLoading } = useQuery(
+    ['subjects', subjectsIds],
+    async () => {
       if (!subjectsIds?.length) {
-        return;
+        return [];
       }
       const subjectsResult = await getSubjectDetails(subjectsIds);
       const subjectsData = subjectsResult.data;
@@ -21,7 +20,7 @@ export default function useSubjects(subjectsIds) {
       );
       const creditsData = creditsResult.subjectsCredits;
 
-      const fullData = subjectsData.map((subjectData) => ({
+      return subjectsData.map((subjectData) => ({
         id: subjectData.id,
         name: subjectData.name,
         program: subjectData.program,
@@ -31,10 +30,12 @@ export default function useSubjects(subjectsIds) {
         internalId: creditsData.find((credit) => credit.subject === subjectData.id)
           ?.compiledInternalId,
       }));
+    },
+    { ...options }
+  );
 
-      setData(fullData);
-    })();
-  }, [subjectsIds]);
-
-  return data;
+  return {
+    data,
+    isLoading,
+  };
 }

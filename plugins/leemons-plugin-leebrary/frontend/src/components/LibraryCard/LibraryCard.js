@@ -39,6 +39,8 @@ const LibraryCard = ({
     return <LibraryCardSkeleton />;
   }
 
+  console.log('asset', asset);
+
   return (
     <Box
       className={cx(classes.root, props.className)}
