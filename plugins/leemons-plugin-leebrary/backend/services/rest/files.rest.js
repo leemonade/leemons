@@ -261,7 +261,8 @@ module.exports = {
       }
 
       // eslint-disable-next-line consistent-return
-      return { status: 400 }; // The following two lines were commented in leemons legacy
+      ctx.meta.$statusCode = 400;
+      // The following two lines were commented in leemons legacy
       // ctx.body = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>';
       // ctx.set('Content-Type', 'image/svg+xml');
     },

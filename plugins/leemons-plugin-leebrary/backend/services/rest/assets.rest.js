@@ -23,6 +23,7 @@ const { add: addPin } = require('../../core/pins/add');
 const { removeByAsset: removePin } = require('../../core/pins/removeByAsset');
 const { getByUser: getPinsByUser } = require('../../core/pins/getByUser');
 const { setAsset } = require('../../core/assets/set');
+const { prepareAsset } = require('../../core/assets/prepareAsset');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -93,7 +94,7 @@ module.exports = {
   // ! xapi ? middleware?
   getRest: {
     rest: {
-      path: '/assets/:id',
+      path: '/:id',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -162,13 +163,6 @@ module.exports = {
         onlyShared,
       } = ctx.params;
 
-      /*
-      if (isEmpty(category)) {
-        // throw new global.utils.HttpError(400, 'Not category was specified');
-        throw new LeemonsError(ctx, { message: 'No category was specified, httpStatusCode: 400})
-      }
-      */
-
       const trueValues = ['true', true, '1', 1];
 
       let assets;
@@ -180,6 +174,8 @@ module.exports = {
       const _providerQuery = JSON.parse(providerQuery || null);
       const _programs = JSON.parse(programs || null);
       const _subjects = JSON.parse(subjects || null);
+
+      // ! map de todos los assets y gardar la promesa de prepareAsset, luego un map all de todo esto.
 
       if (!_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category)) {
         assets = await getByCriteria({
@@ -251,10 +247,26 @@ module.exports = {
         ctx,
       });
 
-      return {
-        status: 200,
-        assets,
-      };
+      // ! El criterio para construir EN EL FRONTEND las urls que apuntan al backend es que las propiedades:
+      // ! prepared y original no existan en el asset devuelto por el backend.
+      // ! A menos de que no puedan haber asests con proveedores sys y no sys a la vez, no se puede marcar
+      // ! un asset como prepared desde el backend si no es el mismo backend quien también prepara la url para
+      // ! sys files. Por esto, paso todos los assets por prepareAssets y prepareAssets prepara todas las urls
+      const processSingnedUrlsPromises = assets.map((asset) =>
+        prepareAsset({ rawAsset: asset, isPublished: published, ctx })
+      );
+      try {
+        const finalAssets = await Promise.all(processSingnedUrlsPromises);
+        return {
+          status: 200,
+          assets: finalAssets,
+        };
+      } catch (error) {
+        throw new LeemonsError(ctx, {
+          httpStatusCode: 500,
+          message: `Error preparing final assets: ${error}`,
+        });
+      }
     },
   },
   urlMetadataRest: {
