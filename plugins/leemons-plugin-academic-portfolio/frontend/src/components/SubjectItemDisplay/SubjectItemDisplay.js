@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { SubjectItemDisplayStyles } from './SubjectItemDisplay.styles';
-import { useSubjects } from '../../hooks';
+import { useProgramDetail, useSubjects } from '../../hooks';
 import {
   SUBJECTITEMSDISPLAY_DEFAULT_PROPS,
   SUBJECTITEMSDISPLAY_PROP_TYPES,
 } from './SubjectItemDisplay.constants';
 import { getMultiSubjectData } from '../../helpers/getMultiSubjectData';
 
-const SubjectItemDisplay = ({ subjectsIds }) => {
+const SubjectItemDisplay = ({ subjectsIds, programId }) => {
   const [subjectData, setSubjectData] = useState(null);
   const { classes } = SubjectItemDisplayStyles();
   const labelsMultiSubject = {
@@ -19,6 +19,9 @@ const SubjectItemDisplay = ({ subjectsIds }) => {
   };
   const preparedSubject = useSubjects(subjectsIds, {
     enabled: Array.isArray(subjectsIds) && subjectsIds?.length === 1,
+  });
+  const { data: programData } = useProgramDetail(programId, {
+    enabled: typeof programId === 'string' && programId?.length > 1,
   });
   const isMultiSubjectCase = isArray(subjectsIds) && subjectsIds.length > 1;
   useEffect(() => {
@@ -30,10 +33,10 @@ const SubjectItemDisplay = ({ subjectsIds }) => {
       subjectsIds.length === 1 &&
       typeof subjectsIds[0] === 'string'
     ) {
-      setSubjectData(preparedSubject.data[0]);
+      setSubjectData(preparedSubject?.data?.[0]);
     }
     if (!isArray(subjectsIds)) setSubjectData(subjectsIds);
-  }, []);
+  }, [isMultiSubjectCase, preparedSubject.data]);
   return (
     <Box className={classes.root}>
       <AvatarSubject
@@ -42,9 +45,16 @@ const SubjectItemDisplay = ({ subjectsIds }) => {
         isMultiSubject={isMultiSubjectCase}
         icon={subjectData?.icon}
       />
-      <TextClamp lines={1}>
-        <Text className={classes.text}>{subjectData?.name}</Text>
-      </TextClamp>
+      <Box className={classes.textWrapper}>
+        <TextClamp lines={programData?.name ? 1 : 0}>
+          <Text color="muted" role="productive" size="xs" className={classes.subjectName}>
+            {subjectData?.name}
+          </Text>
+        </TextClamp>
+        <TextClamp lines={1}>
+          <Text className={classes.programName}>{programData?.name}</Text>
+        </TextClamp>
+      </Box>
     </Box>
   );
 };

@@ -33,7 +33,7 @@
         "./plugins/leemons-plugin-common/frontend/src/*"
       ],
       "@comunica/*": [
-        "./private-plugins/leemons-plugin-comunica/frontend/src/*"
+        "./plugins/leemons-plugin-comunica/frontend/src/*"
       ],
       "@content-creator/*": [
         "./plugins/leemons-plugin-content-creator/frontend/src/*"

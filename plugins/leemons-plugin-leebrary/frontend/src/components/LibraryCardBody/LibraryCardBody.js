@@ -1,8 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import React, { useState, useEffect } from 'react';
-import { Box, Badge, Text, TextClamp, AvatarSubject } from '@bubbles-ui/components';
+import { Box, Badge, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
-import { useSubjects } from '@academic-portfolio/hooks';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
@@ -30,6 +29,7 @@ const LibraryCardBody = ({
   subjects,
   original,
   providerData,
+  program,
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
@@ -120,7 +120,7 @@ const LibraryCardBody = ({
           </Box>
         )} */}
         <Box className={classes.subject}>
-          <SubjectItemDisplay subjectsIds={subjectData} />
+          <SubjectItemDisplay subjectsIds={subjectData} programId={program} />
         </Box>
       </Box>
     </Box>

@@ -23,5 +23,13 @@ export const SubjectItemDisplayStyles = createStyles((theme) => {
       borderRadius: '50%',
       color: theme.other.core.color.neutral['500'],
     },
+    textWrapper: {
+      marginTop: pxToRem(21),
+    },
+    programName: {
+      ...sidStyles.content.typo.md,
+      lineHeight: '20px',
+      color: sidStyles.content.color.muted,
+    },
   };
 });

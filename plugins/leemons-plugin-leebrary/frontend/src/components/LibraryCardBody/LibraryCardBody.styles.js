@@ -61,7 +61,7 @@ export const LibraryCardBodyStyles = createStyles((theme, { fullHeight }) => {
       marginRight: pxToRem(4),
     },
     subject: {
-      paddingTop: pxToRem(10),
+      // paddingTop: pxToRem(10),
       display: 'flex',
       justifyContent: 'center',
       // alignItems: 'center',
