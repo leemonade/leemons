@@ -19,7 +19,7 @@ module.exports = {
   },
   controllers: {
     rest: {
-      method: 'GET',
+      method: 'POST',
       path: '/controllers',
     },
     params: {

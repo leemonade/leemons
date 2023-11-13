@@ -22,6 +22,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@openapi-contrib/json-schema-to-openapi-schema": "^3.0.0",
     "swagger-ui-dist": "^5.9.3"
   }
 }

@@ -93,7 +93,7 @@ module.exports = {
           'POST database/drop': 'gateway.dropDBRest',
 
           // TODO Roberto: Eliminar este controlador
-          'GET /controllers': 'gateway.controllers',
+          'POST /controllers': 'gateway.controllers',
 
           // -- Deployment Manager (Finish) --
           'POST deployment-manager/add-manual-deployment':

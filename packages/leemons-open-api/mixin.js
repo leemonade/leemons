@@ -7,7 +7,7 @@
 /* eslint-disable no-continue */
 const swaggerUiAssetPath = require('swagger-ui-dist').getAbsoluteFSPath();
 const fs = require('fs');
-const { convertSchemaToMoleculer } = require('./convertSchemaToMoleculer');
+const convert = require('@openapi-contrib/json-schema-to-openapi-schema').default;
 
 const UNRESOLVED_ACTION_NAME = 'unknown-action';
 
@@ -364,26 +364,23 @@ module.exports = {
     async generateSchema() {
       const doc = JSON.parse(JSON.stringify(this.settings.openapi));
 
-      console.log('HOLA K ASHE!!!!!!!!', doc);
-
       const nodes = await this.fetchServicesWithActions();
 
       const routes = await this.collectRoutes(nodes);
 
-      this.attachParamsAndOpenapiFromEveryActionToRoutes(routes, nodes);
+      await this.attachParamsAndOpenapiFromEveryActionToRoutes(routes, nodes);
 
       this.attachRoutesToDoc(routes, doc);
 
       return doc;
     },
-    attachParamsAndOpenapiFromEveryActionToRoutes(routes, nodes) {
+    async attachParamsAndOpenapiFromEveryActionToRoutes(routes, nodes) {
       for (const routeAction in routes) {
         for (const node of nodes) {
           for (const nodeAction in node.actions) {
             if (routeAction === nodeAction) {
               const actionProps = node.actions[nodeAction];
-
-              routes[routeAction].params = convertSchemaToMoleculer(actionProps.params) || {};
+              routes[routeAction].params = await convert(actionProps.params || {});
               routes[routeAction].openapi = actionProps.openapi || null;
               break;
             }
@@ -633,9 +630,9 @@ module.exports = {
 
       for (const fieldName in obj) {
         // skip system field in validator scheme
-        if (fieldName.startsWith('$$')) {
-          continue;
-        }
+        // if (fieldName.startsWith('$$')) {
+        //   continue;
+        // }
         if (exclude.includes(fieldName)) {
           continue;
         }
@@ -646,19 +643,20 @@ module.exports = {
         if (Array.isArray(node) || (node.type && node.type === 'array')) {
           const item = {
             name: `${fieldName}[]`,
-            description: node.$$t,
+            description: node.description,
             in: 'query',
-            schema: {
-              type: 'array',
-              items: this.getTypeAndExample({
-                default: node.default ? node.default[0] : undefined,
-                enum: node.enum,
-                type: node.items,
-              }),
-              unique: node.unique,
-              minItems: node.length || node.min,
-              maxItems: node.length || node.max,
-            },
+            schema: node,
+            // schema: {
+            //   type: 'array',
+            //   items: this.getTypeAndExample({
+            //     default: node.default ? node.default[0] : undefined,
+            //     enum: node.enum,
+            //     type: node.items,
+            //   }),
+            //   unique: node.unique,
+            //   minItems: node.length || node.min,
+            //   maxItems: node.length || node.max,
+            // },
           };
           out.push(item);
           continue;
@@ -667,8 +665,9 @@ module.exports = {
         out.push({
           in: 'query',
           name: fieldName,
-          description: node.$$t,
-          schema: this.getTypeAndExample(node),
+          description: node.description,
+          schema: node,
+          // schema: this.getTypeAndExample(node),
         });
       }
 
@@ -685,123 +684,11 @@ module.exports = {
     createSchemaFromParams(doc, schemeName, obj, exclude = [], parentNode = {}) {
       // Schema model
       // https://github.com/OAI/OpenAPI-Specification/blob/b748a884fa4571ffb6dd6ed9a4d20e38e41a878c/versions/3.0.3.md#models-with-polymorphism-support
-      const def = {
-        type: 'object',
-        properties: {},
-        required: [],
-        default: parentNode.default,
-      };
-      doc.components.schemas[schemeName] = def;
+      console.log('SCHEMA', schemeName, obj, exclude);
+      doc.components.schemas[schemeName] = obj;
 
-      for (const fieldName in obj) {
-        // arr or object desc
-        if (fieldName === '$$t') {
-          def.description = obj[fieldName];
-        }
-
-        let node = obj[fieldName];
-        const nextSchemeName = `${schemeName}.${fieldName}`;
-
-        if (
-          // expand $$type: "object|optional"
-          node &&
-          node.$$type &&
-          node.$$type.includes('object')
-        ) {
-          node = {
-            type: 'object',
-            optional: node.$$type.includes('optional'),
-            $$t: node.$$t || '',
-            props: {
-              ...node,
-            },
-          };
-        } else if (
-          // skip system field in validator scheme
-          fieldName.startsWith('$$')
-        ) {
-          continue;
-        }
-
-        if (exclude.includes(fieldName)) {
-          continue;
-        }
-
-        // expand from short rule to full
-        if (!(node && node.type)) {
-          node = this.expandShortDefinition(node);
-        }
-
-        // mark as required
-        if (node.type === 'array') {
-          if (node.min || node.length || node.max) {
-            def.required.push(fieldName);
-            def.minItems = node.length || node.min;
-            def.maxItems = node.length || node.max;
-          }
-          def.unique = node.unique;
-        } else if (!node.optional) {
-          def.required.push(fieldName);
-        }
-
-        // common props
-        def.properties[fieldName] = {
-          description: node.$$t,
-        };
-
-        if (node.type === 'object') {
-          def.properties[fieldName] = {
-            ...def.properties[fieldName],
-            $ref: `#/components/schemas/${nextSchemeName}`,
-          };
-          this.createSchemaFromParams(doc, nextSchemeName, node.props, [], node);
-          continue;
-        }
-
-        // array with objects
-        if (node.type === 'array' && node.items && node.items.type === 'object') {
-          def.properties[fieldName] = {
-            ...def.properties[fieldName],
-            type: 'array',
-            default: node.default,
-            unique: node.unique,
-            minItems: node.length || node.min,
-            maxItems: node.length || node.max,
-            items: {
-              $ref: `#/components/schemas/${nextSchemeName}`,
-            },
-          };
-          this.createSchemaFromParams(doc, nextSchemeName, node.items.props, [], node);
-          continue;
-        }
-
-        // simple array
-        if (node.type === 'array' || node.type === 'tuple') {
-          def.properties[fieldName] = {
-            ...def.properties[fieldName],
-            type: 'array',
-            items: this.getTypeAndExample({
-              enum: node.enum,
-              type: node.items && node.items.type ? node.items.type : node.items,
-              values: node.items && node.items.values ? node.items.values : undefined,
-            }),
-            default: node.default,
-            unique: node.unique,
-            minItems: node.length || node.min,
-            maxItems: node.length || node.max,
-          };
-          continue;
-        }
-
-        // string/number/boolean
-        def.properties[fieldName] = {
-          ...def.properties[fieldName],
-          ...this.getTypeAndExample(node),
-        };
-      }
-
-      if (def.required.length === 0) {
-        delete def.required;
+      if (obj.required?.length === 0) {
+        delete obj.required;
       }
     },
     getTypeAndExample(node) {
