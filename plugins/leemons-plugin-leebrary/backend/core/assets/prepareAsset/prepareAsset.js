@@ -22,7 +22,6 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         fileID: asset.file.id,
         provider: asset.file.provider,
         uri: asset.file.uri,
-        // ! isPublic: asset.public
         ctx,
       });
       console.log('signedUrl for asset.file => asset.url:', asset.url);
@@ -50,7 +49,6 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         fileID: asset.cover.id,
         provider: asset.cover.provider,
         uri: asset.cover.uri,
-        // ! isPublic: asset.public
         ctx,
       });
       console.log('signedUrl for asset.cover => asset.url:', asset.cover);

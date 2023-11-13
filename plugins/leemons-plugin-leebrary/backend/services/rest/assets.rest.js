@@ -256,7 +256,13 @@ module.exports = {
         prepareAsset({ rawAsset: asset, isPublished: published, ctx })
       );
       try {
-        const finalAssets = await Promise.all(processSingnedUrlsPromises);
+        const results = await Promise.allSettled(processSingnedUrlsPromises);
+        const finalAssets = results
+          .filter((result) => result.status === 'fulfilled')
+          .map((result) => result.value);
+        // concatenate here the difference between finalAssets & assets, just to
+        // give a second chance to any possible failed asset preparation
+        // This assets would be passed as rawAssets to the frontend.
         return {
           status: 200,
           assets: finalAssets,
