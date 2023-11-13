@@ -36,7 +36,7 @@ async function saveDocument(_body) {
     form.data = JSON.stringify(body);
   }
 
-  return leemons.api('content-creator/document', {
+  return leemons.api('v1/content-creator/document', {
     allAgents: true,
     method: 'POST',
     body: form,
@@ -44,21 +44,21 @@ async function saveDocument(_body) {
 }
 
 async function getDocument(id) {
-  return leemons.api(`content-creator/document/${id}`, {
+  return leemons.api(`v1/content-creator/document/${id}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function deleteDocument(id) {
-  return leemons.api(`content-creator/document/${id}`, {
+  return leemons.api(`v1/content-creator/document/${id}`, {
     allAgents: true,
     method: 'DELETE',
   });
 }
 
 async function duplicateDocument(id, published) {
-  return leemons.api(`content-creator/document/duplicate`, {
+  return leemons.api(`v1/content-creator/document/duplicate`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -69,7 +69,7 @@ async function duplicateDocument(id, published) {
 }
 
 async function assignDocument(id, data) {
-  return leemons.api(`content-creator/document/assign`, {
+  return leemons.api(`v1/content-creator/document/assign`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -80,7 +80,7 @@ async function assignDocument(id, data) {
 }
 
 async function shareDocument(id, { canAccess }) {
-  return leemons.api(`content-creator/document/share`, {
+  return leemons.api(`v1/content-creator/document/share`, {
     allAgents: true,
     method: 'POST',
     body: {

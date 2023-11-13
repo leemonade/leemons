@@ -13,6 +13,6 @@
   "dependencies": {
     "@leemons/mongodb": "0.0.40",
     "mongodb-memory-server-core": "^8.15.0",
-    "mongoose": "^7.5.2"
+    "mongoose": "7.5.2"
   }
 }

@@ -16,7 +16,7 @@ async function save(body) {
   } else {
     form.data = JSON.stringify(body);
   }
-  return leemons.api(`board-messages/save`, {
+  return leemons.api(`v1/board-messages/messages/save`, {
     allAgents: true,
     method: 'POST',
     body: form,

@@ -1,5 +1,5 @@
 async function getIfKnowHowToUse() {
-  return leemons.api('menu-builder/know-how-to-use');
+  return leemons.api('v1/menu-builder/know-how-to-use');
 }
 
 export default getIfKnowHowToUse;

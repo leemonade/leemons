@@ -19,7 +19,7 @@ export default async function getScores({ students, classes, gradedBy, periods, 
   const query = { students, classes, gradedBy, periods, published };
 
   try {
-    const response = await leemons.api(`scores/scores?${convertObjectToURLQuery(query)}`, {
+    const response = await leemons.api(`v1/scores/scores?${convertObjectToURLQuery(query)}`, {
       method: 'GET',
     });
 

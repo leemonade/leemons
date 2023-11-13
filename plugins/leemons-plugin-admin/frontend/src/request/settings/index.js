@@ -1,7 +1,7 @@
 import { PLUGIN_NAME } from '../../constants';
 
 async function getSettings() {
-  return leemons.api(`${PLUGIN_NAME}/settings`);
+  return leemons.api(`v1/${PLUGIN_NAME}/settings`);
 }
 
 async function updateSettings(values) {
@@ -17,17 +17,17 @@ async function updateSettings(values) {
     delete body.id;
   }
 
-  return leemons.api(`${PLUGIN_NAME}/settings`, { method: 'POST', body });
+  return leemons.api(`v1/${PLUGIN_NAME}/settings`, { method: 'POST', body });
 }
 
 async function getLanguages() {
-  return leemons.api(`${PLUGIN_NAME}/settings/languages`);
+  return leemons.api(`v1/${PLUGIN_NAME}/settings/languages`);
 }
 
 async function setLanguages(langs, defaultLang) {
   const body = { langs, defaultLang };
 
-  return leemons.api(`${PLUGIN_NAME}/settings/languages`, { method: 'POST', body });
+  return leemons.api(`v1/${PLUGIN_NAME}/settings/languages`, { method: 'POST', body });
 }
 
 async function signup(values) {
@@ -37,7 +37,7 @@ async function signup(values) {
     locale: values.locale,
   };
 
-  return leemons.api(`${PLUGIN_NAME}/settings/signup`, { method: 'POST', body });
+  return leemons.api(`v1/${PLUGIN_NAME}/settings/signup`, { method: 'POST', body });
 }
 
 export {

@@ -1,7 +1,7 @@
 const pluginPath = 'timetable';
 
 async function getSettings() {
-  return leemons.api(`${pluginPath}/settings`, {
+  return leemons.api(`v1/${pluginPath}/settings`, {
     allAgents: true,
   });
 }
@@ -20,11 +20,11 @@ async function updateSettings(values) {
     delete body.id;
   }
 
-  return leemons.api(`${pluginPath}/settings`, { allAgents: true, method: 'POST', body });
+  return leemons.api(`v1/${pluginPath}/settings`, { allAgents: true, method: 'POST', body });
 }
 
 async function enableMenuItem(key) {
-  return leemons.api(`${pluginPath}/settings/enable-menu-item`, {
+  return leemons.api(`v1/${pluginPath}/settings/enable-menu-item`, {
     allAgents: true,
     method: 'POST',
     body: { key },

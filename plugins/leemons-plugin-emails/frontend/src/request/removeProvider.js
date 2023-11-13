@@ -1,5 +1,5 @@
 async function removeProvider(body) {
-  return leemons.api('emails/remove-provider', {
+  return leemons.api('v1/emails/remove-provider', {
     allAgents: true,
     method: 'POST',
     body,

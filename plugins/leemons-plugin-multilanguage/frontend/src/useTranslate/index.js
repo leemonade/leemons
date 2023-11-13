@@ -20,10 +20,10 @@ function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) 
     _keysStartsWith = [...new Set([keysStartsWith])];
   }
 
-  let url = 'multilanguage/common';
+  let url = 'v1/multilanguage/common';
 
   if (!locale) {
-    url = 'multilanguage/common/logged';
+    url = 'v1/multilanguage/common/logged';
   }
   // Get the desired localizations from the api
   return () =>

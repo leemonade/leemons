@@ -1,19 +1,19 @@
 const pluginPath = 'academic-portfolio';
 
 async function isConfigProfiles() {
-  return leemons.api(`${pluginPath}/settings/profiles/is-config`, {
+  return leemons.api(`v1/${pluginPath}/settings/profiles/is-config`, {
     allAgents: true,
   });
 }
 
 async function getProfiles() {
-  return leemons.api(`${pluginPath}/settings/profiles`, {
+  return leemons.api(`v1/${pluginPath}/settings/profiles`, {
     allAgents: true,
   });
 }
 
 async function setProfiles(body) {
-  return leemons.api(`${pluginPath}/settings/profiles`, {
+  return leemons.api(`v1/${pluginPath}/settings/profiles`, {
     allAgents: true,
     method: 'PUT',
     body,
@@ -21,7 +21,7 @@ async function setProfiles(body) {
 }
 
 async function getSettings() {
-  return leemons.api(`${pluginPath}/settings`, {
+  return leemons.api(`v1/${pluginPath}/settings`, {
     allAgents: true,
   });
 }
@@ -40,11 +40,11 @@ async function updateSettings(values) {
     delete body.id;
   }
 
-  return leemons.api(`${pluginPath}/settings`, { allAgents: true, method: 'POST', body });
+  return leemons.api(`v1/${pluginPath}/settings`, { allAgents: true, method: 'POST', body });
 }
 
 async function enableMenuItem(key) {
-  return leemons.api(`${pluginPath}/settings/enable-menu-item`, {
+  return leemons.api(`v1/${pluginPath}/settings/enable-menu-item`, {
     allAgents: true,
     method: 'POST',
     body: { key },

@@ -1,5 +1,5 @@
 async function updateEventSubTasks(id, subtask) {
-  return leemons.api('calendar/update/event-subtask', {
+  return leemons.api('v1/calendar/calendar/update/event-subtask', {
     method: 'POST',
     body: {
       id,

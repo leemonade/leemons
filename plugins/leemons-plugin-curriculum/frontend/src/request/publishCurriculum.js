@@ -1,5 +1,5 @@
 async function publishCurriculum(id) {
-  return leemons.api(`curriculum/curriculum/${id}/publish`, {
+  return leemons.api(`v1/curriculum/curriculum/${id}/publish`, {
     allAgents: true,
     method: 'POST',
   });

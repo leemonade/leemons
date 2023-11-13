@@ -1,5 +1,5 @@
 async function addCalendarConfig(config) {
-  return leemons.api('calendar/configs/add', {
+  return leemons.api('v1/calendar/calendar/configs/add', {
     allAgents: true,
     method: 'POST',
     body: {

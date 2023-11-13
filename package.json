@@ -27,6 +27,8 @@
     "packages/*",
     "plugins/*/backend",
     "plugins/*/frontend",
+    "private-plugins/*/backend",
+    "private-plugins/*/frontend",
     "apps/*"
   ],
   "scripts": {

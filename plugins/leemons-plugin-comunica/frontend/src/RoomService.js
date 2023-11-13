@@ -61,7 +61,7 @@ class RoomService {
 
   static async adminChangeRoomImage(key, file) {
     const image = await uploadFileAsMultipart(file, { name: file.name });
-    return leemons.api(`comunica/room/${key}/admin/image`, {
+    return leemons.api(`v1/comunica/room/${key}/admin/image`, {
       allAgents: true,
       method: 'POST',
       body: { image },
@@ -69,7 +69,7 @@ class RoomService {
   }
 
   static createRoom(body) {
-    return leemons.api(`comunica/room/create`, {
+    return leemons.api(`v1/comunica/room/create`, {
       allAgents: true,
       method: 'POST',
       body,
@@ -77,14 +77,14 @@ class RoomService {
   }
 
   static adminRemoveRoom(key) {
-    return leemons.api(`comunica/room/${key}/admin/remove`, {
+    return leemons.api(`v1/comunica/room/${key}/admin/remove`, {
       allAgents: true,
       method: 'POST',
     });
   }
 
   static adminAddUsersToRoom(key, userAgents) {
-    return leemons.api(`comunica/room/${key}/admin/users`, {
+    return leemons.api(`v1/comunica/room/${key}/admin/users`, {
       allAgents: true,
       method: 'POST',
       body: {
@@ -94,7 +94,7 @@ class RoomService {
   }
 
   static adminUpdateRoomName(key, name) {
-    return leemons.api(`comunica/room/${key}/admin/name`, {
+    return leemons.api(`v1/comunica/room/${key}/admin/name`, {
       allAgents: true,
       method: 'POST',
       body: {
@@ -104,7 +104,7 @@ class RoomService {
   }
 
   static adminRemoveUserAgentFromRoom(key, userAgent) {
-    return leemons.api(`comunica/room/${key}/admin/remove/user-agent`, {
+    return leemons.api(`v1/comunica/room/${key}/admin/remove/user-agent`, {
       allAgents: true,
       method: 'POST',
       body: {
@@ -114,7 +114,7 @@ class RoomService {
   }
 
   static toggleAdminRoomMute(key, userAgent) {
-    return leemons.api(`comunica/room/${key}/admin/mute`, {
+    return leemons.api(`v1/comunica/room/${key}/admin/mute`, {
       allAgents: true,
       method: 'POST',
       body: {
@@ -124,21 +124,21 @@ class RoomService {
   }
 
   static toggleRoomAttached(key) {
-    return leemons.api(`comunica/room/${key}/attach`, {
+    return leemons.api(`v1/comunica/room/${key}/attach`, {
       allAgents: true,
       method: 'POST',
     });
   }
 
   static adminDisableMessages(key) {
-    return leemons.api(`comunica/room/${key}/admin/disable`, {
+    return leemons.api(`v1/comunica/room/${key}/admin/disable`, {
       allAgents: true,
       method: 'POST',
     });
   }
 
   static toggleRoomMute(key) {
-    return leemons.api(`comunica/room/${key}/mute`, {
+    return leemons.api(`v1/comunica/room/${key}/mute`, {
       allAgents: true,
       method: 'POST',
     });
@@ -171,7 +171,7 @@ class RoomService {
   }
 
   static sendMessageToRoom(key, message) {
-    return leemons.api(`comunica/room/${key}/messages`, {
+    return leemons.api(`v1/comunica/room/${key}/messages`, {
       allAgents: true,
       method: 'POST',
       body: {
@@ -181,7 +181,7 @@ class RoomService {
   }
 
   static async getRoomMessages(key) {
-    const { messages } = await leemons.api(`comunica/room/${key}/messages`, {
+    const { messages } = await leemons.api(`v1/comunica/room/${key}/messages`, {
       allAgents: true,
       method: 'GET',
     });
@@ -189,7 +189,7 @@ class RoomService {
   }
 
   static async markRoomMessagesAsRead(key) {
-    const { messages } = await leemons.api(`comunica/room/${key}/messages/read`, {
+    const { messages } = await leemons.api(`v1/comunica/room/${key}/messages/read`, {
       allAgents: true,
       method: 'POST',
     });
@@ -197,7 +197,7 @@ class RoomService {
   }
 
   static async getRoom(key) {
-    const { room } = await leemons.api(`comunica/room/${key}`, {
+    const { room } = await leemons.api(`v1/comunica/room/${key}`, {
       allAgents: true,
       method: 'GET',
     });
@@ -205,7 +205,7 @@ class RoomService {
   }
 
   static async getUnreadMessages(keys) {
-    const { count } = await leemons.api(`comunica/room/messages/unread`, {
+    const { count } = await leemons.api(`v1/comunica/room/messages/unread`, {
       allAgents: true,
       method: 'POST',
       body: {
@@ -216,7 +216,7 @@ class RoomService {
   }
 
   static async getMessagesCount(keys) {
-    const { count } = await leemons.api(`comunica/room/messages/count`, {
+    const { count } = await leemons.api(`v1/comunica/room/messages/count`, {
       allAgents: true,
       method: 'POST',
       body: {
@@ -228,7 +228,7 @@ class RoomService {
   }
 
   static async getRoomsList() {
-    const { rooms } = await leemons.api(`comunica/room/list`, {
+    const { rooms } = await leemons.api(`v1/comunica/room/list`, {
       allAgents: true,
       method: 'GET',
     });
@@ -237,7 +237,7 @@ class RoomService {
   }
 
   static async getConfig() {
-    const { config } = await leemons.api(`comunica/config`, {
+    const { config } = await leemons.api(`v1/comunica/config`, {
       allAgents: true,
       method: 'GET',
     });
@@ -246,7 +246,7 @@ class RoomService {
   }
 
   static async saveConfig(body) {
-    const { config } = await leemons.api(`comunica/config`, {
+    const { config } = await leemons.api(`v1/comunica/config`, {
       allAgents: true,
       method: 'POST',
       body,
@@ -256,13 +256,13 @@ class RoomService {
   }
 
   static async getAdminConfig(center) {
-    const { config } = await leemons.api(`comunica/admin/config/${center}`);
+    const { config } = await leemons.api(`v1/comunica/config/admin/config/${center}`);
 
     return config;
   }
 
   static async saveAdminConfig(center, data) {
-    const { config } = await leemons.api(`comunica/admin/config/${center}`, {
+    const { config } = await leemons.api(`v1/comunica/config/admin/config/${center}`, {
       allAgents: true,
       method: 'POST',
       body: data,
@@ -272,17 +272,17 @@ class RoomService {
   }
 
   static async getGeneralConfig() {
-    const { config } = await leemons.api(`comunica/config/general`);
+    const { config } = await leemons.api(`v1/comunica/config/general`);
     return config;
   }
 
   static async getCenterConfig(center) {
-    const { config } = await leemons.api(`comunica/config/center/${center}`);
+    const { config } = await leemons.api(`v1/comunica/config/center/${center}`);
     return config;
   }
 
   static async getProgramConfig(program) {
-    const { config } = await leemons.api(`comunica/config/program/${program}`);
+    const { config } = await leemons.api(`v1/comunica/config/program/${program}`);
     return config;
   }
 }

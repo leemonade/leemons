@@ -1,5 +1,5 @@
 async function hasPins() {
-  return leemons.api(`leebrary/assets/has-pins`, {
+  return leemons.api(`v1/leebrary/assets/has-pins`, {
     allAgents: true,
     method: 'GET',
   });

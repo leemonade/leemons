@@ -55,7 +55,7 @@ const UserRedirect = ({ to }) => {
     try {
       let userToken = null;
       try {
-        userToken = await leemons.api(`users/user`);
+        userToken = await leemons.api(`v1/users/users`);
       } catch (e) {
         leemons.log.debug('Token not valid or session expired');
       }

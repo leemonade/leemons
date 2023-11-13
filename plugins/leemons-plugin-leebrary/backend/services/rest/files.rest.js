@@ -37,6 +37,7 @@ module.exports = {
     rest: {
       method: 'POST',
       path: '/multipart/chunk',
+      type: 'multipart',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

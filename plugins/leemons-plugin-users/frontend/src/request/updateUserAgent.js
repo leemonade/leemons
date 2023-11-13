@@ -1,5 +1,5 @@
 async function updateUserAgent(userAgent, body) {
-  return leemons.api(`users/user-agent/${userAgent}/update`, {
+  return leemons.api(`v1/users/users/user-agent/${userAgent}/update`, {
     allAgents: true,
     method: 'POST',
     body,

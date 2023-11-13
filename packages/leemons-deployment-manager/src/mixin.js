@@ -113,7 +113,10 @@ async function modifyCTX(
 module.exports = function ({
   checkIfCanCallMe = true,
   getDeploymentIdInCall = false,
-  dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+  dontGetDeploymentIDOnActionCall = [
+    'deployment-manager.addManualDeploymentRest',
+    'gateway.dropDBRest',
+  ],
 } = {}) {
   return {
     name: '',

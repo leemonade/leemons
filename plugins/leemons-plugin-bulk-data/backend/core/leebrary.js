@@ -74,6 +74,10 @@ async function updateLibrary({ file, config: { assets, programs, users }, ctx })
           if (subjectId) {
             asset.subjects = [{ subject: subjectId, level: 'beginner' }];
             asset.program = programs[programKey]?.id;
+            console.log(
+              '🛑 en core/leebrary updateLibrary: asset.public etc. Debería ser undefined => ',
+              asset.public
+            );
 
             return ctx.call(
               'leebrary.assets.update',

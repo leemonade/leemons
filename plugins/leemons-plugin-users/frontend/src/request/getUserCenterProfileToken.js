@@ -1,6 +1,6 @@
 async function getUserCenterProfileToken(centerId, profileId, token) {
   return leemons.api(
-    `users/user/center/${centerId}/profile/${profileId}/token`,
+    `v1/users/users/center/${centerId}/profile/${profileId}/token`,
     token
       ? {
           headers: {

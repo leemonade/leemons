@@ -22,7 +22,7 @@ export default async function saveTaskRequest(taskId, task) {
   if (!taskId) {
     // EN: Create a new task
     // ES: Crear una nueva tarea
-    return leemons.api(`${pluginPath}/tasks`, {
+    return leemons.api(`v1/${pluginPath}/tasks`, {
       allAgents: true,
       method: 'POST',
       body: formData,
@@ -31,7 +31,7 @@ export default async function saveTaskRequest(taskId, task) {
 
   // EN: Update an existing task
   // ES: Actualizar una tarea existente
-  return leemons.api(`${pluginPath}/tasks/${taskId}`, {
+  return leemons.api(`v1/${pluginPath}/tasks/${taskId}`, {
     allAgents: true,
     method: 'PUT',
     body: formData,

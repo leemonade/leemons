@@ -1,5 +1,5 @@
 async function getRememberLogin(token) {
-  return leemons.api('users/user/remember/login', {
+  return leemons.api('v1/users/users/remember/login', {
     headers: {
       Authorization: token,
     },
