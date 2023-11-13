@@ -62,7 +62,6 @@ const TreeKnowledgeDetail = ({
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{knowledge ? messages.title : messages.titleNew}</Title>
           <Box>
-            gatitos
             <Controller
               control={control}
               name="name"
