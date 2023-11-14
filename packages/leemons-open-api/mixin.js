@@ -36,20 +36,6 @@ module.exports = {
     assetsPath: '/api/openapi/assets',
     // names of moleculer-web services which contains urls, by default - all
     collectOnlyFromWebServices: [],
-    commonPathItemObjectResponses: {
-      200: {
-        $ref: '#/components/responses/ReturnedData',
-      },
-      401: {
-        $ref: '#/components/responses/UnauthorizedError',
-      },
-      422: {
-        $ref: '#/components/responses/ValidationError',
-      },
-      default: {
-        $ref: '#/components/responses/ServerError',
-      },
-    },
     requestBodyAndResponseBodyAreSameOnMethods: [
       /* 'post',
       'patch',
@@ -66,6 +52,11 @@ module.exports = {
       },
       tags: [],
       paths: {},
+      security: [
+        {
+          JWTToken: [],
+        },
+      ],
       components: {
         schemas: {
           // Standart moleculer schemas
@@ -93,7 +84,13 @@ module.exports = {
             type: 'object',
           },
         },
-        securitySchemes: {},
+        securitySchemes: {
+          JWTToken: {
+            type: 'apiKey',
+            in: 'header',
+            name: 'authorization',
+          },
+        },
         responses: {
           // Standart moleculer responses
           ServerError: {
@@ -118,9 +115,10 @@ module.exports = {
                 schema: {
                   type: 'object',
                   example: {
-                    name: 'MoleculerClientError',
-                    message: 'Unauth error message',
-                    code: 401,
+                    pluginName: 'leebrary',
+                    pluginVersion: 1,
+                    httpStatusCode: 401,
+                    message: '[LeemonsMiddlewareAuthenticated] No authorization header',
                   },
                 },
               },
@@ -132,15 +130,56 @@ module.exports = {
               'application/json': {
                 schema: {
                   type: 'object',
-                  example: {
-                    name: 'MoleculerClientError',
-                    message: 'Error message',
-                    code: 422,
-                    data: [
-                      { name: 'fieldName', message: 'Field invalid' },
-                      { name: 'arrayField[0].fieldName', message: 'Whats wrong' },
-                      { name: 'object.fieldName', message: 'Whats wrong' },
-                    ],
+                  properties: {
+                    code: {
+                      type: 'integer',
+                      example: 422,
+                    },
+                    type: {
+                      type: 'string',
+                      example: 'VALIDATION_ERROR',
+                    },
+                    data: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          instancePath: {
+                            type: 'string',
+                            example: '',
+                          },
+                          schemaPath: {
+                            type: 'string',
+                            example: '#/required',
+                          },
+                          keyword: {
+                            type: 'string',
+                            example: 'required',
+                          },
+                          params: {
+                            type: 'object',
+                            properties: {
+                              missingProperty: {
+                                type: 'string',
+                                example: 'name',
+                              },
+                            },
+                          },
+                          message: {
+                            type: 'string',
+                            example: "must have required property 'name'",
+                          },
+                        },
+                      },
+                    },
+                    retryable: {
+                      type: 'boolean',
+                      example: false,
+                    },
+                    message: {
+                      type: 'string',
+                      example: 'Parameters validation error!',
+                    },
                   },
                 },
               },
@@ -352,6 +391,29 @@ module.exports = {
     },
   },
   methods: {
+    commonPathItemObjectResponses(params) {
+      const defaultResponses = {
+        200: {
+          $ref: '#/components/responses/ReturnedData',
+        },
+        401: {
+          $ref: '#/components/responses/UnauthorizedError',
+        },
+        // 422: {
+        //   $ref: '#/components/responses/ValidationError',
+        // },
+        default: {
+          $ref: '#/components/responses/ServerError',
+        },
+      };
+
+      if (params && Object.keys(params).length) {
+        defaultResponses[422] = {
+          $ref: '#/components/responses/ValidationError',
+        };
+      }
+      return defaultResponses;
+    },
     fetchServicesWithActions() {
       return this.broker.call('$node.services', {
         withActions: true,
@@ -380,6 +442,8 @@ module.exports = {
           for (const nodeAction in node.actions) {
             if (routeAction === nodeAction) {
               const actionProps = node.actions[nodeAction];
+              // actionProps.params === null means that the action has no params
+              // actionsProps.params = {} means than the action params has to be documented
               routes[routeAction].params = await convert(actionProps.params || {});
               routes[routeAction].openapi = actionProps.openapi || null;
               break;
@@ -536,7 +600,7 @@ module.exports = {
             parameters: [...queryParams],
             responses: {
               // attach common responses
-              ...this.settings.commonPathItemObjectResponses,
+              ...this.commonPathItemObjectResponses(params),
             },
           };
 
@@ -547,15 +611,17 @@ module.exports = {
           } else {
             const schemaName = action;
             this.createSchemaFromParams(doc, schemaName, params, addedQueryParams);
-            doc.paths[openapiPath][method].requestBody = {
-              content: {
-                'application/json': {
-                  schema: {
-                    $ref: `#/components/schemas/${schemaName}`,
+            if (params && Object.keys(params).length) {
+              doc.paths[openapiPath][method].requestBody = {
+                content: {
+                  'application/json': {
+                    schema: {
+                      $ref: `#/components/schemas/${schemaName}`,
+                    },
                   },
                 },
-              },
-            };
+              };
+            }
           }
 
           if (this.settings.requestBodyAndResponseBodyAreSameOnMethods.includes(method)) {
@@ -607,6 +673,11 @@ module.exports = {
             ${doc.paths[openapiPath][method].summary}
             (${action})
             ${path.autoAliases ? '[autoAlias]' : ''}
+            ${
+              (!openapi || !Object.keys(openapi).length) && !Object.keys(params).length
+                ? '(TO BE DOCUMENTED)'
+                : ''
+            }
           `.trim();
         }
       }
@@ -885,32 +956,6 @@ module.exports = {
         output.push(match);
       }
       return output;
-    },
-    expandShortDefinition(shortDefinition) {
-      const node = {
-        type: 'string',
-      };
-
-      let params = shortDefinition.split('|');
-      params = params.map((v) => v.trim());
-
-      if (params.includes('optional')) {
-        node.optional = true;
-      }
-
-      for (const type of Object.values(NODE_TYPES)) {
-        if (params.includes(type)) {
-          node.type = type;
-          break;
-        } else if (params.includes(`${type}[]`)) {
-          const [arrayType] = node.type.split('[');
-          node.type = 'array';
-          node.items = arrayType;
-          break;
-        }
-      }
-
-      return node;
     },
     getFileContentRequestBodyScheme(openapiPath, method, actionType) {
       return {
