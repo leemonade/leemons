@@ -22,7 +22,9 @@ class LeemonsValidator {
   }
 
   get error() {
-    return new Error(this.errorMessage);
+    const err = new Error(this.errorMessage);
+    err.code = 422;
+    return err;
   }
 
   get errorMessage() {
