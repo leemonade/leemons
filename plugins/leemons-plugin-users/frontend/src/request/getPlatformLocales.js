@@ -1,5 +1,5 @@
 async function getPlatformLocales() {
-  return leemons.api('users/platform/locales');
+  return leemons.api('v1/users/platform/locales');
 }
 
 export default getPlatformLocales;

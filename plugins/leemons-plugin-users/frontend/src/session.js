@@ -35,7 +35,7 @@ export async function getSession({ req }) {
   try {
     const { token } = getAppCookies(req);
     if (token) {
-      const response = await leemons.api('users/user', {
+      const response = await leemons.api('v1/users/users', {
         headers: { Authorization: token },
       });
       return response.user;
@@ -47,7 +47,7 @@ export async function getSession({ req }) {
 }
 
 const fetcher = () => async () => {
-  const result = await leemons.api('users/user');
+  const result = await leemons.api('v1/users/users');
   result.user.avatar = leemons.apiUrl + result.user.avatar;
   return result;
 };

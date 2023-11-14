@@ -1,5 +1,5 @@
 async function getDataForUserAgentDatasets() {
-  return leemons.api('users/get-data-for-user-agent-datasets', {
+  return leemons.api('v1/users/get-data-for-user-agent-datasets', {
     method: 'GET',
     allAgents: true,
   });

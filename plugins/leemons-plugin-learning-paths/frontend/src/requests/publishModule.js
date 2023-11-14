@@ -1,7 +1,5 @@
 export default async function publishModuleRequest(id) {
-  const response = await leemons.api(`learning-paths/modules/${id}/publish`, {
+  return await leemons.api(`v1/learning-paths/modules/${id}/publish`, {
     method: 'POST',
   });
-
-  return response;
 }

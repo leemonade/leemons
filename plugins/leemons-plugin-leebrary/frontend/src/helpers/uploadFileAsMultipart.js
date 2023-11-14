@@ -9,7 +9,7 @@ const chunksSize = 1024 * 1024 * 5; // 5mb
 const maxRetry = 3;
 
 async function abort(dbfile) {
-  return leemons.api('leebrary/file/multipart/abort', {
+  return leemons.api('v1/leebrary/file/multipart/abort', {
     allAgents: true,
     body: {
       fileId: dbfile.id,
@@ -31,7 +31,7 @@ async function sendChunk(dbfile, chunk, partNumber, path, retry = 0) {
     );
     formData.append('chunk', chunk, 'chunk');
     console.log('chunk', chunk)
-    await leemons.api('leebrary/file/multipart/chunk', {
+    await leemons.api('v1/leebrary/file/multipart/chunk', {
       allAgents: true,
       body: formData,
       headers: {
@@ -69,7 +69,7 @@ async function sendAllChunksInOrder(jsfile, dbfile, onProgress) {
 }
 
 async function createNewMultipartFileUpload(jsfile, { filePaths, pathsInfo, isFolder, name } = {}) {
-  return leemons.api('leebrary/file/multipart/new', {
+  return leemons.api('v1/leebrary/file/multipart/new', {
     allAgents: true,
     body: {
       name: name || jsfile.name,
@@ -84,7 +84,7 @@ async function createNewMultipartFileUpload(jsfile, { filePaths, pathsInfo, isFo
 }
 
 async function finishMultipartFileUpload(dbfile, path) {
-  return leemons.api('leebrary/file/multipart/finish', {
+  return leemons.api('v1/leebrary/file/multipart/finish', {
     allAgents: true,
     body: {
       fileId: dbfile.id,

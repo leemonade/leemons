@@ -1,5 +1,5 @@
 export default function addPeriod(period) {
-  return leemons.api('scores/periods', {
+  return leemons.api('v1/scores/periods', {
     method: 'POST',
     body: { period },
   });

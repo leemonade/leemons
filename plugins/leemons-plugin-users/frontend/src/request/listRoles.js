@@ -1,5 +1,5 @@
 async function listRoles(body) {
-  return leemons.api('users/roles/list', {
+  return leemons.api('v1/users/roles/list', {
     method: 'POST',
     body,
   });

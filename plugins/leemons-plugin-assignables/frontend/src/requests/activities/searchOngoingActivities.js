@@ -15,7 +15,7 @@
  */
 export default async function searchOngoingActivities(query) {
   const result = await leemons.api(
-    `assignables/activities/search/ongoing?${Object.entries(query)
+    `v1/assignables/activities/search/ongoing?${Object.entries(query)
       .map(([key, value]) => `${key}=${value}`)
       .join('&')}`,
     {

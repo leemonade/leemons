@@ -12,8 +12,8 @@ function modifyCTX(ctx, { forceLeemonsDeploymentManagerMixinNeedToBeImported }) 
   ctx.socket = {
     emit: (ids, eventName, eventData) =>
       ctx.call('mqtt-aws-iot.socket.emit', { ids, eventName, eventData }),
-    emitAll: (eventName, eventData) =>
-      ctx.call('mqtt-aws-iot.socket.emitAll', { eventName, eventData }),
+    emitToAll: (eventName, eventData) =>
+      ctx.call('mqtt-aws-iot.socket.emitToAll', { eventName, eventData }),
   };
 }
 

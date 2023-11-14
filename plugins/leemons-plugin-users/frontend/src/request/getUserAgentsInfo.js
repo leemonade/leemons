@@ -1,5 +1,5 @@
 async function getUserAgentsInfo(ids, options) {
-  return leemons.api('users/user-agents/info', {
+  return leemons.api('v1/users/users/user-agents/info', {
     method: 'POST',
     allAgents: true,
     body: {

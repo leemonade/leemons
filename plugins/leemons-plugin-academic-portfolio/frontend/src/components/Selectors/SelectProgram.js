@@ -37,6 +37,7 @@ const SelectProgram = forwardRef(
       ensureIntegrity,
       multiple,
       autoSelectOneOption = true,
+      onLoadedPrograms = () => {},
       ...props
     },
     ref
@@ -73,6 +74,7 @@ const SelectProgram = forwardRef(
       if (firstSelected && data?.length > 0) {
         handleChange(data[0].value);
       }
+      onLoadedPrograms(data);
     }, [data]);
 
     // EN: Ensure that the value is valid (exists in the data)

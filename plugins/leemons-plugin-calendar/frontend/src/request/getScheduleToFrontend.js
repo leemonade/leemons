@@ -1,5 +1,5 @@
 async function getScheduleToFrontend(centerToken) {
-  return leemons.api('calendar/schedule', {
+  return leemons.api('v1/calendar/calendar/schedule', {
     centerToken,
     method: 'POST',
   });

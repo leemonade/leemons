@@ -1,5 +1,5 @@
 async function reOrderCustomUserItems(key, parentKey, orderedIds) {
-  return leemons.api(`menu-builder/menu/${key}/re-order`, {
+  return leemons.api(`v1/menu-builder/menu/${key}/re-order`, {
     allAgents: true,
     method: 'POST',
     body: {

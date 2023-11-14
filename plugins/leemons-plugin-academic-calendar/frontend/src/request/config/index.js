@@ -2,7 +2,7 @@
 import { forIn } from 'lodash';
 
 async function getConfig(programId) {
-  const response = await leemons.api(`academic-calendar/config/${programId}`, {
+  const response = await leemons.api(`v1/academic-calendar/config/${programId}`, {
     allAgents: true,
     method: 'GET',
   });
@@ -16,7 +16,7 @@ async function getConfig(programId) {
 }
 
 async function saveConfig(body) {
-  return leemons.api(`academic-calendar/config`, {
+  return leemons.api(`v1/academic-calendar/config`, {
     allAgents: true,
     method: 'POST',
     body,

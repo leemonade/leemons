@@ -1,5 +1,5 @@
 async function recover(body) {
-  return leemons.api('users/user/recover', {
+  return leemons.api('v1/users/users/recover', {
     method: 'POST',
     body,
   });

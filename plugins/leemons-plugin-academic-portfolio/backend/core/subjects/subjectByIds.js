@@ -1,7 +1,14 @@
 const _ = require('lodash');
 
 async function subjectByIds({ ids, ctx }) {
-  const subjects = await ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
+  const [subjects, classes] = await Promise.all([
+    ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
+    ctx.tx.db.Class.find({ subject: _.isArray(ids) ? ids : [ids] })
+      .select(['color', 'subject'])
+      .lean(),
+  ]);
+
+  const classesBySubject = _.groupBy(classes, 'subject');
 
   const [images, icons] = await Promise.all([
     ctx.tx.call('leebrary.assets.getByIds', {
@@ -19,6 +26,7 @@ async function subjectByIds({ ids, ctx }) {
 
   return _.map(subjects, (subject) => ({
     ...subject,
+    color: classesBySubject[subject.id]?.[0]?.color,
     image: imagesById[subject.image],
     icon: iconsById[subject.icon],
   }));

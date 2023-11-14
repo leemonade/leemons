@@ -1,5 +1,5 @@
 async function getZone(zoneKey) {
-  return leemons.api(`widgets/zone/${zoneKey}`, {
+  return leemons.api(`v1/widgets/widgets/zone/${zoneKey}`, {
     allAgents: true,
     method: 'GET',
   });

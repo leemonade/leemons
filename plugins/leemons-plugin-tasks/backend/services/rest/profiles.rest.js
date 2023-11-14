@@ -14,7 +14,7 @@ module.exports = {
   getRest: {
     rest: {
       method: 'GET',
-      path: '/profiles/:key',
+      path: '/:key',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -30,7 +30,7 @@ module.exports = {
   setRest: {
     rest: {
       method: 'POST',
-      path: '/profiles/:key',
+      path: '/:key',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -48,7 +48,7 @@ module.exports = {
   setManyRest: {
     rest: {
       method: 'POST',
-      path: '/profiles',
+      path: '/',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

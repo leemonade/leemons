@@ -1,5 +1,5 @@
 async function getAssetTypes(categoryId) {
-  return leemons.api(`leebrary/categories/${categoryId}/types`, {
+  return leemons.api(`v1/leebrary/categories/${categoryId}/types`, {
     allAgents: true,
     method: 'GET',
   });

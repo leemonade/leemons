@@ -1,5 +1,5 @@
 async function listCalendarConfigs() {
-  return leemons.api('calendar/configs/list', {
+  return leemons.api('v1/calendar/calendar/configs/list', {
     allAgents: true,
   });
 }
