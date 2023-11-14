@@ -688,7 +688,8 @@ module.exports = {
         onError(req, res, err) {
           const response = { ...err, message: err.message };
           res.setHeader('Content-Type', 'application/json');
-          res.writeHead(err.httpStatusCode || 500);
+          res.writeHead(err.httpStatusCode || err.code || 500);
+
           res.end(JSON.stringify(response));
         },
 
