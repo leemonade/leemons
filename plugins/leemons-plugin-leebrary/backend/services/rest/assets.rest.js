@@ -247,11 +247,6 @@ module.exports = {
         ctx,
       });
 
-      // ! El criterio para construir EN EL FRONTEND las urls que apuntan al backend es que las propiedades:
-      // ! prepared y original no existan en el asset devuelto por el backend.
-      // ! A menos de que no puedan haber asests con proveedores sys y no sys a la vez, no se puede marcar
-      // ! un asset como prepared desde el backend si no es el mismo backend quien también prepara la url para
-      // ! sys files. Por esto, paso todos los assets por prepareAssets y prepareAssets prepara todas las urls
       const processSingnedUrlsPromises = assets.map((asset) =>
         prepareAsset({ rawAsset: asset, isPublished: published, ctx })
       );

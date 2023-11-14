@@ -5,21 +5,14 @@ async function getFileUrl({ fileID, provider, uri, segment, isPublic = false, ct
   if (!isString(fileID)) {
     return '';
   }
-
   if (fileID.startsWith('http')) {
     return fileID;
   }
 
-  // ! Si hacemos toodo aquí (pasar la el dato de la cookie desde front end),
-  // ! podemos garantizar que el asset estará realmente preparado.
-  // ! De lo contrario, podríamos tener falsos positivos si un asset tiene recursos
-  // ! de provedores sys y provedores no sys a la vez
-
-  const authTokens = ctx.meta.authorization; // ! Cuidado aquí, esto en el frontend viene de la cookie. TODO!
-  const urlSuffixSegment = segment ? `/${segment}` : '';
-  const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
-
   if (provider === 'sys') {
+    const authTokens = ctx.meta.authorization;
+    const urlSuffixSegment = segment ? `/${segment}` : '';
+    const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
     return `${leemons.apiUrl}/api/v1/leebrary/file/${
       isPublic ? 'public/' : ''
     }${fileID}${urlSuffixSegment}${authParam}`;

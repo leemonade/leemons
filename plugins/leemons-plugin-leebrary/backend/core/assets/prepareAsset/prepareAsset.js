@@ -24,7 +24,6 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         uri: asset.file.uri,
         ctx,
       });
-      console.log('signedUrl for asset.file => asset.url:', asset.url);
     }
 
     if (isEmpty(asset.fileExtension)) {
@@ -51,14 +50,11 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         uri: asset.cover.uri,
         ctx,
       });
-      console.log('signedUrl for asset.cover => asset.url:', asset.cover);
     } else if (asset.cover instanceof File) {
+      console.log('🛑 Instance of file! asset.cover', asset.cover);
       asset.cover = URL.createObjectURL(asset.cover);
-      // ! Will we ever get here?
     } else if (isString(asset.cover)) {
-      // ! Will we ever get here?
       asset.cover = await getFileUrl({ fileID: asset.cover, ctx });
-      console.log('signedUrl for asset.cover when it is a string => asset.url:', asset.cover);
     }
   }
 
