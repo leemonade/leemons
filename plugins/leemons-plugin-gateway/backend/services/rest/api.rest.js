@@ -17,21 +17,37 @@ module.exports = {
       return { status: 200, timestamp: new Date() };
     },
   },
-  controllers: {
+  // TODO Roberto: Borrar este controlador. Es para pruebas de la openapi y swagger
+  openApiTestRest: {
     rest: {
       method: 'POST',
-      path: '/controllers',
+      path: '/openapi/test',
     },
     params: {
       properties: {
         name: { type: 'number' },
         message: {
           type: 'object',
-          properties: { message: { type: ['string', 'boolean'] } },
+          properties: { message: { type: ['string', 'boolean'] }, code: { type: 'number' } },
         },
-        arrayParam: { type: 'array', items: { type: 'boolean' } },
       },
-      required: ['name', 'array'],
+      required: ['name', 'message'],
+    },
+    openapi: {
+      security: [],
+      responses: {
+        200: {
+          description: 'Success',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: { status: { type: 'number' }, timestamp: { type: 'string' } },
+              },
+            },
+          },
+        },
+      },
     },
     async handler(ctx) {
       return { status: 200, timestamp: new Date() };
