@@ -25,7 +25,7 @@ module.exports = async function buildFront({ app, build, output, base }) {
   const pluginsRaw = await getPlugins({ app: appDir });
   const plugins = pluginsRaw.map((plugin) => ({
     ...plugin,
-    name: plugin.name.replace('-frontend-react', ''),
+    name: plugin.name.replace('-frontend-react-private', '').replace('-frontend-react', ''),
   }));
 
   const publicFiles = await generatePublicFolders(outputDir, plugins);
