@@ -154,27 +154,29 @@ module.exports = {
       path: '/login',
       method: 'POST',
     },
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          email: { type: 'string', format: 'email' },
-          password: {
-            type: 'string',
-          },
+    params: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+        password: {
+          type: 'string',
         },
-        required: ['email', 'password'],
-        additionalProperties: false,
+      },
+      required: ['email', 'password'],
+      additionalProperties: false,
+    },
+    openapi: {
+      summary: 'Login',
+      description: 'Login',
+      security: [],
+    },
+    async handler(ctx) {
+      const data = await usersService.login({
+        email: ctx.params.email,
+        password: ctx.params.password,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const data = await usersService.login({
-          email: ctx.params.email,
-          password: ctx.params.password,
-          ctx,
-        });
-        return { status: 200, user: data.user, jwtToken: data.token };
-      }
-      throw validator.error;
+      return { status: 200, user: data.user, jwtToken: data.token };
     },
   },
   detailRest: {
