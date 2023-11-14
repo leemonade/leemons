@@ -12,7 +12,7 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
     asset.pinneable = isPublished;
   }
 
-  if (!isEmpty(asset.file) && asset.file.provider !== 'sys') {
+  if (!isEmpty(asset.file)) {
     if (isEmpty(asset.fileType)) {
       asset.fileType = prepareAssetType(asset.file.type, false);
     }
@@ -42,7 +42,7 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
     }
   }
 
-  if (asset.cover && asset.cover.provider !== 'sys') {
+  if (asset.cover) {
     if (!isEmpty(asset.cover?.id)) {
       asset.cover = await getFileUrl({
         fileID: asset.cover.id,
@@ -51,14 +51,13 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         ctx,
       });
     } else if (asset.cover instanceof File) {
-      console.log('🛑 Instance of file! asset.cover', asset.cover);
       asset.cover = URL.createObjectURL(asset.cover);
     } else if (isString(asset.cover)) {
       asset.cover = await getFileUrl({ fileID: asset.cover, ctx });
     }
   }
 
-  if (!isEmpty(asset.icon?.id) && asset.icon.provider !== 'sys') {
+  if (!isEmpty(asset.icon?.id)) {
     asset.icon = await getFileUrl({
       fileID: asset.icon.id,
       provider: asset.icon.provider,
