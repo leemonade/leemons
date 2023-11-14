@@ -100,7 +100,12 @@ const LoginProfileSelector = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <ContextContainer title={labels.title} description={labels.description} {...props}>
+      <ContextContainer
+        title={labels.title}
+        description={labels.description}
+        data-cypress-id="profileForm"
+        {...props}
+      >
         {profiles?.length && profiles.length > 1 ? (
           <Controller
             name="profile"

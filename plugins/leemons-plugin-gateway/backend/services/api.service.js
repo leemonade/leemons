@@ -92,6 +92,8 @@ module.exports = {
           'GET status': 'gateway.status',
           'POST database/drop': 'gateway.dropDBRest',
 
+          // -- Temporal for leebrary ---
+          'GET leebrary/img/:assetId': 'v1.leebrary.file.coverRest',
           /*
                     // -- Deployment Manager (Finish) --
                     // 'POST package-manager/info': 'deployment-manager.infoRest',
