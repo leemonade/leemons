@@ -1,79 +1,25 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable prefer-template */
 /* eslint-disable no-param-reassign */
-/* eslint-disable sonarjs/cognitive-complexity */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable guard-for-in */
-/* eslint-disable no-continue */
 const swaggerUiAssetPath = require('swagger-ui-dist').getAbsoluteFSPath();
 const fs = require('fs');
 const convert = require('@openapi-contrib/json-schema-to-openapi-schema').default;
 
 const UNRESOLVED_ACTION_NAME = 'unknown-action';
 
-const NODE_TYPES = {
-  boolean: 'boolean',
-  number: 'number',
-  date: 'date',
-  uuid: 'uuid',
-  email: 'email',
-  url: 'url',
-  string: 'string',
-  enum: 'enum',
-};
-
-const ui = {
-  openapi: {
-    summary: 'OpenAPI ui',
-    description: 'You can provide any schema file in query param',
-  },
-  params: {
-    url: { $$t: 'Schema url', type: 'string', optional: true },
-  },
-  handler(ctx) {
-    ctx.meta.$responseType = 'text/html; charset=utf-8';
-
-    return `
-      <html>
-        <head>
-           <title>OpenAPI UI</title>
-           <link rel="stylesheet" href="${this.settings.assetsPath}/swagger-ui.css"/>
-        </head>
-        <body>
-
-          <div id="swagger-ui">
-            <p>Loading...</p>
-            <noscript>If you see json, you need to update your moleculer-web to 0.8.0 and moleculer to 0.12</noscript>
-          </div>
-
-          <script src="${this.settings.assetsPath}/swagger-ui-bundle.js"></script>
-          <script src="${this.settings.assetsPath}/swagger-ui-standalone-preset.js"></script>
-          <script>
-            window.onload = function() {
-             SwaggerUIBundle({
-               url: "${ctx.params.url || this.settings.schemaPath}",
-               dom_id: '#swagger-ui',
-               deepLinking: true,
-               presets: [
-                 SwaggerUIBundle.presets.apis,
-                 SwaggerUIStandalonePreset,
-               ],
-               plugins: [
-                 SwaggerUIBundle.plugins.DownloadUrl
-               ],
-               layout: "StandaloneLayout",
-             });
-            }
-          </script>
-
-        </body>
-      </html>`;
-  },
-};
-
-/*
- * Inspired by https://github.com/icebob/kantab/blob/fd8cfe38d0e159937f4e3f2f5857c111cadedf44/backend/mixins/openapi.mixin.js
+/**
+ * Mixin Based on https://www.npmjs.com/package/moleculer-auto-openapi
  */
+/**
+ * This is a Moleculer mixin for generating OpenAPI documentation for your services.
+ * It automatically generates an OpenAPI (Swagger) JSON document based on your service definitions.
+ * It also provides a Swagger UI for interactive API exploration.
+ * Based on https://www.npmjs.com/package/moleculer-auto-openapi
+ *
+ * This mixin contains three actions:
+ * 1. Assets: Serves the static files required for the Swagger UI.
+ * 2. Generate JSON Document: Generates the OpenAPI document based on the services and actions in the application.
+ * 3. Swagger UI: Provides a user interface for interacting with the API. This action is only available in non-production environments.
+ */
+
 const mixin = {
   name: `openapi`,
   settings: {
@@ -449,59 +395,49 @@ const mixin = {
       return doc;
     },
     async attachParamsAndOpenapiFromEveryActionToRoutes(routes, nodes) {
-      for (const routeAction in routes) {
-        for (const node of nodes) {
-          for (const nodeAction in node.actions) {
-            if (routeAction === nodeAction) {
-              const actionProps = node.actions[nodeAction];
-              // actionProps.params === null means that the action has no params
-              // actionsProps.params = {} means than the action params has to be documented
-              routes[routeAction].params = await convert(actionProps.params || {});
-              routes[routeAction].openapi = actionProps.openapi || null;
-              break;
-            }
-          }
+      const routeActions = Object.keys(routes);
+      const promises = routeActions.map(async (routeAction) => {
+        const node = nodes.find((n) => Object.keys(n.actions).includes(routeAction));
+        if (node) {
+          const actionProps = node.actions[routeAction];
+          // actionProps.params === null means that the action has no params
+          // actionsProps.params = {} means than the action params has to be documented
+          routes[routeAction].params = await convert(actionProps.params || {});
+          routes[routeAction].openapi = actionProps.openapi || null;
         }
-      }
+      });
+      await Promise.all(promises);
     },
     async collectRoutes(nodes) {
       const routes = {};
-
-      for (const node of nodes) {
-        // find routes in web-api service
-        if (node.settings && node.settings.routes) {
+      const promises = nodes.map(async (node) => {
+        if (node.settings?.routes) {
           if (
             this.settings.collectOnlyFromWebServices &&
             this.settings.collectOnlyFromWebServices.length > 0 &&
             !this.settings.collectOnlyFromWebServices.includes(node.name)
           ) {
-            continue;
+            return;
           }
-
-          // iterate each route
-          for (const route of node.settings.routes) {
-            // map standart aliases
+          node.settings.routes.forEach((route) => {
             this.buildActionRouteStructFromAliases(route, routes);
-          }
-
+          });
           let service = node.name;
-          // resolve paths with auto aliases
           const hasAutoAliases = node.settings.routes.some((route) => route.autoAliases);
           if (hasAutoAliases) {
-            // suport services that has version, like v1.api
             if (
               Object.prototype.hasOwnProperty.call(node, 'version') &&
               node.version !== undefined
             ) {
-              service = `v${node.version}.` + service;
+              service = `v${node.version}.${service}`;
             }
             const autoAliases = await this.fetchAliasesForService(service);
             const convertedRoute = this.convertAutoAliasesToRoute(autoAliases);
             this.buildActionRouteStructFromAliases(convertedRoute, routes);
           }
         }
-      }
-
+      });
+      await Promise.all(promises);
       return routes;
     },
     /**
@@ -516,10 +452,10 @@ const mixin = {
         aliases: {},
       };
 
-      for (const obj of autoAliases) {
+      autoAliases.forEach((obj) => {
         const alias = `${obj.methods} ${obj.fullPath}`;
         route.aliases[alias] = obj.actionName || UNRESOLVED_ACTION_NAME;
-      }
+      });
 
       return route;
     },
@@ -539,7 +475,7 @@ const mixin = {
      * @returns {{}}
      */
     buildActionRouteStructFromAliases(route, routes) {
-      for (const alias in route.aliases) {
+      Object.keys(route.aliases).forEach((alias) => {
         const aliasInfo = route.aliases[alias];
         let actionType = aliasInfo.type;
 
@@ -573,126 +509,142 @@ const mixin = {
           autoAliases: route.autoAliases,
           openapi: aliasInfo.openapi || null,
         });
-      }
+      });
 
       return routes;
     },
     attachRoutesToDoc(routes, doc) {
       // route to openapi paths
-      for (const action in routes) {
+      Object.keys(routes).forEach((action) => {
         const { paths, params, actionType, openapi = {} } = routes[action];
         const service = action.split('.').slice(0, -1).join('.');
 
         this.addTagToDoc(doc, service);
 
-        for (const path of paths) {
-          // parse method and path from: POST /api/table
-          const [tmpMethod, subPath] = path.alias.split(' ');
-          const method = tmpMethod.toLowerCase();
+        paths.forEach((path) => {
+          this.processPath(path, doc, service, params, actionType, openapi, action);
+        });
+      });
+    },
+    processPath(path, doc, service, params, actionType, openapi, action) {
+      // parse method and path from: POST /api/table
+      const [tmpMethod, subPath] = path.alias.split(' ');
+      const method = tmpMethod.toLowerCase();
 
-          // convert /:table to /{table}
-          const openapiPath = this.formatParamUrl(this.normalizePath(`${path.base}/${subPath}`));
+      // convert /:table to /{table}
+      const openapiPath = this.formatParamUrl(this.normalizePath(`${path.base}/${subPath}`));
 
-          const [queryParams, addedQueryParams] = this.extractParamsFromUrl(openapiPath);
+      const [queryParams, addedQueryParams] = this.extractParamsFromUrl(openapiPath);
 
-          if (!doc.paths[openapiPath]) {
-            doc.paths[openapiPath] = {};
-          }
+      if (!doc.paths[openapiPath]) {
+        doc.paths[openapiPath] = {};
+      }
 
-          if (doc.paths[openapiPath][method]) {
-            continue;
-          }
+      if (doc.paths[openapiPath][method]) {
+        return;
+      }
 
-          // Path Item Object
-          // https://github.com/OAI/OpenAPI-Specification/blob/b748a884fa4571ffb6dd6ed9a4d20e38e41a878c/versions/3.0.3.md#path-item-object-example
-          doc.paths[openapiPath][method] = {
-            summary: '',
-            tags: [service],
-            // rawParams: params,
-            parameters: [...queryParams],
-            responses: {
-              // attach common responses
-              ...this.commonPathItemObjectResponses(params),
+      this.createPathItemObject(doc, openapiPath, method, service, params, queryParams);
+      this.handleMethod(doc, openapiPath, method, params, addedQueryParams, action);
+      this.handleActionType(doc, openapiPath, method, actionType, queryParams);
+      this.mergeOpenapiValues(doc, openapiPath, method, openapi, path);
+      this.addTagsAndComponents(doc, openapiPath, method);
+      this.setSummary(doc, openapiPath, method, openapi, params, action, path);
+    },
+    createPathItemObject(doc, openapiPath, method, service, params, queryParams) {
+      // Path Item Object
+      // https://github.com/OAI/OpenAPI-Specification/blob/b748a884fa4571ffb6dd6ed9a4d20e38e41a878c/versions/3.0.3.md#path-item-object-example
+      doc.paths[openapiPath][method] = {
+        summary: '',
+        tags: [service],
+        // rawParams: params,
+        parameters: [...queryParams],
+        responses: {
+          // attach common responses
+          ...this.commonPathItemObjectResponses(params),
+        },
+      };
+    },
+    handleMethod(doc, openapiPath, method, params, addedQueryParams, action) {
+      if (method === 'get' || method === 'delete') {
+        doc.paths[openapiPath][method].parameters.push(
+          ...this.moleculerParamsToQuery(params, addedQueryParams)
+        );
+      } else {
+        const schemaName = action;
+        this.createSchemaFromParams(doc, schemaName, params, addedQueryParams);
+        if (params && Object.keys(params).length) {
+          doc.paths[openapiPath][method].requestBody = {
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: `#/components/schemas/${schemaName}`,
+                },
+              },
             },
           };
-
-          if (method === 'get' || method === 'delete') {
-            doc.paths[openapiPath][method].parameters.push(
-              ...this.moleculerParamsToQuery(params, addedQueryParams)
-            );
-          } else {
-            const schemaName = action;
-            this.createSchemaFromParams(doc, schemaName, params, addedQueryParams);
-            if (params && Object.keys(params).length) {
-              doc.paths[openapiPath][method].requestBody = {
-                content: {
-                  'application/json': {
-                    schema: {
-                      $ref: `#/components/schemas/${schemaName}`,
-                    },
-                  },
-                },
-              };
-            }
-          }
-
-          if (this.settings.requestBodyAndResponseBodyAreSameOnMethods.includes(method)) {
-            doc.paths[openapiPath][method].responses[200] = {
-              description: this.settings.requestBodyAndResponseBodyAreSameDescription,
-              ...doc.paths[openapiPath][method].requestBody,
-            };
-          }
-
-          // if multipart/stream convert fo formData/binary
-          if (actionType === 'multipart' || actionType === 'stream') {
-            doc.paths[openapiPath][method] = {
-              ...doc.paths[openapiPath][method],
-              parameters: [...queryParams],
-              requestBody: this.getFileContentRequestBodyScheme(openapiPath, method, actionType),
-            };
-          }
-
-          // merge values from action
-          doc.paths[openapiPath][method] = this.mergePathItemObjects(
-            doc.paths[openapiPath][method],
-            openapi
-          );
-
-          // merge values which exist in web-api service
-          // in routes or custom function
-          doc.paths[openapiPath][method] = this.mergePathItemObjects(
-            doc.paths[openapiPath][method],
-            path.openapi
-          );
-
-          // add tags to root of scheme
-          if (doc.paths[openapiPath][method].tags) {
-            doc.paths[openapiPath][method].tags.forEach((name) => {
-              this.addTagToDoc(doc, name);
-            });
-          }
-
-          // add components to root of scheme
-          if (doc.paths[openapiPath][method].components) {
-            doc.components = this.mergeObjects(
-              doc.components,
-              doc.paths[openapiPath][method].components
-            );
-            delete doc.paths[openapiPath][method].components;
-          }
-
-          doc.paths[openapiPath][method].summary = `
-            ${doc.paths[openapiPath][method].summary}
-            (${action})
-            ${path.autoAliases ? '[autoAlias]' : ''}
-            ${
-              (!openapi || !Object.keys(openapi).length) && !Object.keys(params).length
-                ? '(TO BE DOCUMENTED)'
-                : ''
-            }
-          `.trim();
         }
       }
+
+      if (this.settings.requestBodyAndResponseBodyAreSameOnMethods.includes(method)) {
+        doc.paths[openapiPath][method].responses[200] = {
+          description: this.settings.requestBodyAndResponseBodyAreSameDescription,
+          ...doc.paths[openapiPath][method].requestBody,
+        };
+      }
+    },
+    handleActionType(doc, openapiPath, method, actionType, queryParams) {
+      // if multipart/stream convert fo formData/binary
+      if (actionType === 'multipart' || actionType === 'stream') {
+        doc.paths[openapiPath][method] = {
+          ...doc.paths[openapiPath][method],
+          parameters: [...queryParams],
+          requestBody: this.getFileContentRequestBodyScheme(openapiPath, method, actionType),
+        };
+      }
+    },
+    mergeOpenapiValues(doc, openapiPath, method, openapi, path) {
+      // merge values from action
+      doc.paths[openapiPath][method] = this.mergePathItemObjects(
+        doc.paths[openapiPath][method],
+        openapi
+      );
+
+      // merge values which exist in web-api service
+      // in routes or custom function
+      doc.paths[openapiPath][method] = this.mergePathItemObjects(
+        doc.paths[openapiPath][method],
+        path.openapi
+      );
+    },
+    addTagsAndComponents(doc, openapiPath, method) {
+      // add tags to root of scheme
+      if (doc.paths[openapiPath][method].tags) {
+        doc.paths[openapiPath][method].tags.forEach((name) => {
+          this.addTagToDoc(doc, name);
+        });
+      }
+
+      // add components to root of scheme
+      if (doc.paths[openapiPath][method].components) {
+        doc.components = this.mergeObjects(
+          doc.components,
+          doc.paths[openapiPath][method].components
+        );
+        delete doc.paths[openapiPath][method].components;
+      }
+    },
+    setSummary(doc, openapiPath, method, openapi, params, action, path) {
+      doc.paths[openapiPath][method].summary = `
+        ${doc.paths[openapiPath][method].summary}
+        (${action})
+        ${path.autoAliases ? '[autoAlias]' : ''}
+        ${
+          (!openapi || !Object.keys(openapi).length) && !Object.keys(params).length
+            ? '(TO BE DOCUMENTED)'
+            : ''
+        }
+      `.trim();
     },
     addTagToDoc(doc, tagName) {
       const exist = doc.tags.some((v) => v.name === tagName);
@@ -711,13 +663,9 @@ const mixin = {
     moleculerParamsToQuery(obj = {}, exclude = []) {
       const out = [];
 
-      for (const fieldName in obj) {
-        // skip system field in validator scheme
-        // if (fieldName.startsWith('$$')) {
-        //   continue;
-        // }
+      Object.keys(obj).forEach((fieldName) => {
         if (exclude.includes(fieldName)) {
-          continue;
+          return;
         }
 
         const node = obj[fieldName];
@@ -729,20 +677,9 @@ const mixin = {
             description: node.description,
             in: 'query',
             schema: node,
-            // schema: {
-            //   type: 'array',
-            //   items: this.getTypeAndExample({
-            //     default: node.default ? node.default[0] : undefined,
-            //     enum: node.enum,
-            //     type: node.items,
-            //   }),
-            //   unique: node.unique,
-            //   minItems: node.length || node.min,
-            //   maxItems: node.length || node.max,
-            // },
           };
           out.push(item);
-          continue;
+          return;
         }
 
         out.push({
@@ -750,9 +687,8 @@ const mixin = {
           name: fieldName,
           description: node.description,
           schema: node,
-          // schema: this.getTypeAndExample(node),
         });
-      }
+      });
 
       return out;
     },
@@ -767,138 +703,45 @@ const mixin = {
     createSchemaFromParams(doc, schemeName, obj, exclude = [], parentNode = {}) {
       // Schema model
       // https://github.com/OAI/OpenAPI-Specification/blob/b748a884fa4571ffb6dd6ed9a4d20e38e41a878c/versions/3.0.3.md#models-with-polymorphism-support
-      console.log('SCHEMA', schemeName, obj, exclude);
       doc.components.schemas[schemeName] = obj;
 
       if (obj.required?.length === 0) {
         delete obj.required;
       }
     },
-    getTypeAndExample(node) {
-      if (!node) {
-        node = {};
-      }
-      let out = {};
-      let nodeType = node.type;
 
-      if (Array.isArray(nodeType)) {
-        nodeType = (nodeType[0] || 'string').toString();
-      }
-
-      switch (nodeType) {
-        case NODE_TYPES.boolean:
-          out = {
-            example: false,
-            type: 'boolean',
-          };
-          break;
-        case NODE_TYPES.number:
-          out = {
-            example: null,
-            type: 'number',
-          };
-          break;
-        case NODE_TYPES.date:
-          out = {
-            example: '1998-01-10T13:00:00.000Z',
-            type: 'string',
-            format: 'date-time',
-          };
-          break;
-        case NODE_TYPES.uuid:
-          out = {
-            example: '10ba038e-48da-487b-96e8-8d3b99b6d18a',
-            type: 'string',
-            format: 'uuid',
-          };
-          break;
-        case NODE_TYPES.email:
-          out = {
-            example: 'foo@example.com',
-            type: 'string',
-            format: 'email',
-          };
-          break;
-        case NODE_TYPES.url:
-          out = {
-            example: 'https://example.com',
-            type: 'string',
-            format: 'uri',
-          };
-          break;
-        case NODE_TYPES.enum:
-          out = {
-            type: 'string',
-            enum: node.values,
-            example: Array.isArray(node.values) ? node.values[0] : undefined,
-          };
-          break;
-        default:
-          out = {
-            example: '',
-            type: 'string',
-          };
-          break;
-      }
-
-      if (Array.isArray(node.enum)) {
-        out.example = node.enum[0];
-        out.enum = node.enum;
-      }
-
-      if (node.default) {
-        out.default = node.default;
-        delete out.example;
-      }
-
-      out.minLength = node.length || node.min;
-      out.maxLength = node.length || node.max;
-
-      /**
-       * by DenisFerrero
-       * @link https://github.com/grinat/moleculer-auto-openapi/issues/13
-       */
-      if (node.pattern && (node.pattern.length > 0 || node.pattern.source.length > 0)) {
-        out.pattern = new RegExp(node.pattern).source;
-      }
-
-      return out;
-    },
     mergePathItemObjects(orig = {}, toMerge = {}) {
-      for (const key in toMerge) {
+      Object.keys(toMerge || {}).forEach((key) => {
         // merge components
         if (key === 'components') {
           orig[key] = this.mergeObjects(orig[key], toMerge[key]);
-          continue;
         }
-
         // merge responses
-        if (key === 'responses') {
+        else if (key === 'responses') {
           orig[key] = this.mergeObjects(orig[key], toMerge[key]);
 
           // iterate codes
-          for (const code in orig[key]) {
+          Object.keys(orig[key]).forEach((code) => {
             // remove $ref if exist content
             if (orig[key][code] && orig[key][code].content) {
               delete orig[key][code].$ref;
             }
-          }
-
-          continue;
+          });
         }
-
         // replace non components attributes
-        orig[key] = toMerge[key];
-      }
+        else {
+          orig[key] = toMerge[key];
+        }
+      });
       return orig;
     },
     mergeObjects(orig = {}, toMerge = {}) {
-      for (const key in toMerge) {
+      Object.keys(toMerge).forEach((key) => {
         orig[key] = {
           ...(orig[key] || {}),
           ...toMerge[key],
         };
-      }
+      });
       return orig;
     },
     /**
@@ -924,11 +767,11 @@ const mixin = {
       const end = url.indexOf('/', ++start);
 
       if (end === -1) {
-        return url.slice(0, start) + '{' + url.slice(++start) + '}';
+        return `${url.slice(0, start)}{${url.slice(++start)}}`;
       }
 
       return this.formatParamUrl(
-        url.slice(0, start) + '{' + url.slice(++start, end) + '}' + url.slice(end)
+        `${url.slice(0, start)}{${url.slice(++start, end)}}${url.slice(end)}`
       );
     },
     /**
@@ -941,12 +784,12 @@ const mixin = {
       const added = [];
 
       const matches = [...this.matchAll(/{(\w+)}/g, url)];
-      for (const match of matches) {
+      matches.forEach((match) => {
         const [, name] = match;
 
         added.push(name);
         params.push({ name, in: 'path', required: true, schema: { type: 'string' } });
-      }
+      });
 
       return [params, added];
     },
@@ -961,7 +804,11 @@ const mixin = {
       let match;
       // make sure the pattern has the global flag
       const regexPatternWithGlobal = RegExp(regexPattern, 'g');
-      while ((match = regexPatternWithGlobal.exec(sourceString)) !== null) {
+      for (
+        match = regexPatternWithGlobal.exec(sourceString);
+        match !== null;
+        match = regexPatternWithGlobal.exec(sourceString)
+      ) {
         // get rid of the string copy
         delete match.input;
         // store the match data
@@ -1005,7 +852,6 @@ const mixin = {
     },
   },
   started() {
-    console.log('NODEENV!!!!!----------', 999999999, process.env.NODE_ENV);
     if (process.env.NODE_ENV !== 'production') {
       this.logger.info(
         `📜OpenAPI Docs server is available at http://0.0.0.0:${this.settings.port}${this.settings.uiPath}`
@@ -1014,9 +860,56 @@ const mixin = {
   },
 };
 
+const ui = {
+  openapi: {
+    summary: 'OpenAPI ui',
+    description: 'You can provide any schema file in query param',
+  },
+  params: {
+    url: { $$t: 'Schema url', type: 'string', optional: true },
+  },
+  handler(ctx) {
+    ctx.meta.$responseType = 'text/html; charset=utf-8';
+
+    return `
+      <html>
+        <head>
+           <title>OpenAPI UI</title>
+           <link rel="stylesheet" href="${this.settings.assetsPath}/swagger-ui.css"/>
+        </head>
+        <body>
+
+          <div id="swagger-ui">
+            <p>Loading...</p>
+            <noscript>If you see json, you need to update your moleculer-web to 0.8.0 and moleculer to 0.12</noscript>
+          </div>
+
+          <script src="${this.settings.assetsPath}/swagger-ui-bundle.js"></script>
+          <script src="${this.settings.assetsPath}/swagger-ui-standalone-preset.js"></script>
+          <script>
+            window.onload = function() {
+             SwaggerUIBundle({
+               url: "${ctx.params.url || this.settings.schemaPath}",
+               dom_id: '#swagger-ui',
+               deepLinking: true,
+               presets: [
+                 SwaggerUIBundle.presets.apis,
+                 SwaggerUIStandalonePreset,
+               ],
+               plugins: [
+                 SwaggerUIBundle.plugins.DownloadUrl
+               ],
+               layout: "StandaloneLayout",
+             });
+            }
+          </script>
+
+        </body>
+      </html>`;
+  },
+};
 // Swagger UI disabled in production
 if (process.env.NODE_ENV !== 'production') {
-  console.log('------CARGO MIXIN!!!!!!');
   mixin.actions.ui = ui;
 }
 

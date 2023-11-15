@@ -14312,13 +14312,6 @@ mkdirp@^1.0.3:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-moleculer-auto-openapi@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/moleculer-auto-openapi/-/moleculer-auto-openapi-1.1.6.tgz#b383d8c203c503c1a18590acf4013c594080393d"
-  integrity sha512-/loUqmhqtGjm+abHx0A11ZF2Sjcl/0Yrbk90/0gxaD8aXvIMFiH0gGk2jQ/ODreImd1vYo64DiIp/g45/1cFyg==
-  dependencies:
-    swagger-ui-dist "^4.1.3"
-
 moleculer-web@^0.10.5:
   version "0.10.6"
   resolved "https://registry.yarnpkg.com/moleculer-web/-/moleculer-web-0.10.6.tgz#a8bc99b7f153b882018aec9fa553496a86b864f5"
@@ -18054,11 +18047,6 @@ svgo@^3.0.2:
     css-tree "^2.2.1"
     csso "^5.0.5"
     picocolors "^1.0.0"
-
-swagger-ui-dist@^4.1.3:
-  version "4.19.1"
-  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-4.19.1.tgz#c6d53ba0961a006c6b6b4323ba700e87f31da856"
-  integrity sha512-n/gFn+R7G/BXWwl5UZLw6F1YgWOlf3zkwGlsPhTMhNtAAolBGKg0JS5b2RKt5NI6/hSopVaSrki2wTIMUDDy2w==
 
 swagger-ui-dist@^5.9.3:
   version "5.9.3"
