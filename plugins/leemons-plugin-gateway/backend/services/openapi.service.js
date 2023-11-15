@@ -1,4 +1,4 @@
-const { LeemonsOpenApiMixin } = require('@leemons/open-api');
+const { LeemonsOpenApiMixin } = require('@leemons/openapi');
 
 module.exports = {
   name: 'openapi',

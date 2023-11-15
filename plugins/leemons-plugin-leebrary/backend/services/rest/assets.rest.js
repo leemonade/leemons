@@ -36,6 +36,9 @@ module.exports = {
       const asset = await setAsset({ ...ctx.params, ctx });
       return { status: 200, asset };
     },
+    openapi: {
+      description: 'Receive all assets for which the user has permissions',
+    },
   },
   updateRest: {
     rest: {

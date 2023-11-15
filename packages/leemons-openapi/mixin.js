@@ -1005,15 +1005,19 @@ const mixin = {
     },
   },
   started() {
-    this.logger.info(
-      `📜OpenAPI Docs server is available at http://0.0.0.0:${this.settings.port}${this.settings.uiPath}`
-    );
+    console.log('NODEENV!!!!!----------', 999999999, process.env.NODE_ENV);
+    if (process.env.NODE_ENV !== 'production') {
+      this.logger.info(
+        `📜OpenAPI Docs server is available at http://0.0.0.0:${this.settings.port}${this.settings.uiPath}`
+      );
+    }
   },
 };
 
 // Swagger UI disabled in production
 if (process.env.NODE_ENV !== 'production') {
-  mixin.ui = ui;
+  console.log('------CARGO MIXIN!!!!!!');
+  mixin.actions.ui = ui;
 }
 
 module.exports = mixin;
