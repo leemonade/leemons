@@ -139,7 +139,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="document"
       variantTitle={t('document')}
-      variantIcon={<PluginContentCreatorIcon />}
+      variantIcon={<PluginContentCreatorIcon color={'#878D96'} />}
       className={classes.root}
     />
   );

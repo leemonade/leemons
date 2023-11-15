@@ -9,38 +9,37 @@ import {
 } from './LibraryCardBody.constants';
 import { LibraryCardBodyStyles } from './LibraryCardBody.styles';
 import { FavButton } from '../FavButton';
+import { pinAssetRequest, unpinAssetRequest } from '../../request';
 
 const LibraryCardBody = ({
-  tagline,
   description,
-  tags,
-  programName,
-  metadata,
-  locale,
   variant,
-  assigment,
-  icon,
-  url,
-  truncated,
   fullHeight,
-  role,
   published,
-  subject,
   subjects,
-  original,
   providerData,
   program,
+  pinned,
+  id,
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
-  const [isFav, setIsFav] = useState(false);
+  const [isFav, setIsFav] = useState(pinned);
   const [subjectData, setSubjectData] = useState(null);
 
   const isDraft = typeof providerData?.published === 'boolean' && providerData?.published === false;
   const title = props.name ? props.name : null;
 
-  const handleIsFav = () => {
-    setIsFav(!isFav);
+  const handleIsFav = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isFav) {
+      unpinAssetRequest(id);
+      setIsFav(false);
+    } else {
+      pinAssetRequest(id);
+      setIsFav(true);
+    }
   };
 
   useEffect(() => {
@@ -77,48 +76,6 @@ const LibraryCardBody = ({
         )}
       </Box>
       <Box className={classes.subjectsContainer}>
-        {/* MULTIASIGNATURASº */}
-        {/* {isMultipleSubjects && (
-          <Box className={classes.subject}>
-            <Box className={classes.subjectIcon}>
-              <AvatarSubject
-                color={'#A2A9B0'}
-                // icon={subject.icon}
-                // altText={subject.name}
-                size="md"
-              />
-            </Box>
-            <TextClamp lines={1}>
-              <Text color="primary" role="productive" size="xs" className={classes.subjectName}>
-                {'Multiasignatura'}
-              </Text>
-            </TextClamp>
-          </Box>
-        )} */}
-        {/* {!isMultipleSubjects && isArray(subjects) && (
-          <Box className={classes.subject}>
-            <Box className={classes.subjectIcon}>
-              <AvatarSubject
-                color={'darkturquoise'}
-                // icon={preparedSubject[0]?.icon}
-                // altText={preparedSubject[0]?.name}
-                size="md"
-              />
-            </Box>
-            <Box>
-              <TextClamp lines={originalProgramName ? 1 : 0}>
-                <Text color="muted" role="productive" size="xs" className={classes.subjectName}>
-                  {preparedSubject[0]?.name}
-                </Text>
-              </TextClamp>
-              <TextClamp lines={1}>
-                <Text className={classes.programName}>
-                  {!!originalProgramName && originalProgramName}
-                </Text>
-              </TextClamp>
-            </Box>
-          </Box>
-        )} */}
         <Box className={classes.subject}>
           <SubjectItemDisplay subjectsIds={subjectData} programId={program} />
         </Box>

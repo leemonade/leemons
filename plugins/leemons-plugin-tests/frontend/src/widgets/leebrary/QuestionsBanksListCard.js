@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@bubbles-ui/leemons';
+import { LibraryCard } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
@@ -10,6 +10,7 @@ import { deleteQuestionBankRequest } from '@tests/request';
 import { useHistory } from 'react-router-dom';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
+import { QuestionBankIcon } from '../../components/Icons/QuestionBankIcon';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -23,7 +24,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
 const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { classes } = ListCardStyles({ selected });
-  const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
+  const { openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
@@ -74,6 +75,7 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="questionBank"
       variantTitle={t('questionBank')}
+      variantIcon={<QuestionBankIcon />}
       className={classes.root}
     />
   );

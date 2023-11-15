@@ -5,9 +5,8 @@ import { useCallback } from 'react';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import { getAssetsKey } from '../keys/assets';
 
-export default function useAssets({ ids, filters, ...options }) {
+function useAssets({ ids, filters, ...options }) {
   const queryKey = getAssetsKey(ids, filters);
-
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'frequently',
   });
@@ -23,3 +22,6 @@ export default function useAssets({ ids, filters, ...options }) {
     queryFn,
   });
 }
+
+export default useAssets;
+export { useAssets };

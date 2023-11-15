@@ -39,12 +39,14 @@ const SubjectItemDisplay = ({ subjectsIds, programId }) => {
   }, [isMultiSubjectCase, preparedSubject.data]);
   return (
     <Box className={classes.root}>
-      <AvatarSubject
-        color={subjectData?.color || 'aquamarine'}
-        size={'md'}
-        isMultiSubject={isMultiSubjectCase}
-        icon={subjectData?.icon}
-      />
+      {subjectData && (
+        <AvatarSubject
+          color={subjectData?.color || 'aquamarine'}
+          size={'md'}
+          isMultiSubject={isMultiSubjectCase}
+          icon={subjectData?.icon}
+        />
+      )}
       <Box className={classes.textWrapper}>
         <TextClamp lines={programData?.name ? 1 : 0}>
           <Text color="muted" role="productive" size="xs" className={classes.subjectName}>
