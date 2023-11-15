@@ -7,12 +7,10 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
   const asset = { ...rawAsset, original: rawAsset, prepared: true };
   asset.public = [1, '1', true, 'true'].includes(asset.public);
   asset.canAccess = asset.canAccess || [];
-
-  if (isNil(asset.pinneable)) {
-    asset.pinneable = isPublished;
-  }
+  asset.pinneable = isPublished;
 
   if (!isEmpty(asset.file)) {
+    asset.fileExtension = asset.file.extension;
     if (isEmpty(asset.fileType)) {
       asset.fileType = prepareAssetType(asset.file.type, false);
     }
@@ -24,10 +22,6 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         uri: asset.file.uri,
         ctx,
       });
-    }
-
-    if (isEmpty(asset.fileExtension)) {
-      asset.fileExtension = asset.file.extension;
     }
 
     if (isNil(asset.metadata) && asset.file.metadata) {
