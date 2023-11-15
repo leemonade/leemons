@@ -22,10 +22,59 @@ const NODE_TYPES = {
   enum: 'enum',
 };
 
+const ui = {
+  openapi: {
+    summary: 'OpenAPI ui',
+    description: 'You can provide any schema file in query param',
+  },
+  params: {
+    url: { $$t: 'Schema url', type: 'string', optional: true },
+  },
+  handler(ctx) {
+    ctx.meta.$responseType = 'text/html; charset=utf-8';
+
+    return `
+      <html>
+        <head>
+           <title>OpenAPI UI</title>
+           <link rel="stylesheet" href="${this.settings.assetsPath}/swagger-ui.css"/>
+        </head>
+        <body>
+
+          <div id="swagger-ui">
+            <p>Loading...</p>
+            <noscript>If you see json, you need to update your moleculer-web to 0.8.0 and moleculer to 0.12</noscript>
+          </div>
+
+          <script src="${this.settings.assetsPath}/swagger-ui-bundle.js"></script>
+          <script src="${this.settings.assetsPath}/swagger-ui-standalone-preset.js"></script>
+          <script>
+            window.onload = function() {
+             SwaggerUIBundle({
+               url: "${ctx.params.url || this.settings.schemaPath}",
+               dom_id: '#swagger-ui',
+               deepLinking: true,
+               presets: [
+                 SwaggerUIBundle.presets.apis,
+                 SwaggerUIStandalonePreset,
+               ],
+               plugins: [
+                 SwaggerUIBundle.plugins.DownloadUrl
+               ],
+               layout: "StandaloneLayout",
+             });
+            }
+          </script>
+
+        </body>
+      </html>`;
+  },
+};
+
 /*
  * Inspired by https://github.com/icebob/kantab/blob/fd8cfe38d0e159937f4e3f2f5857c111cadedf44/backend/mixins/openapi.mixin.js
  */
-module.exports = {
+const mixin = {
   name: `openapi`,
   settings: {
     port: process.env.PORT || 3000,
@@ -99,9 +148,20 @@ module.exports = {
               'application/json': {
                 schema: {
                   type: 'object',
+                  properties: {
+                    name: {
+                      type: 'string',
+                    },
+                    message: {
+                      type: 'string',
+                    },
+                    code: {
+                      type: 'integer',
+                    },
+                  },
                   example: {
-                    name: 'MoleculerClientError',
-                    message: 'Server error message',
+                    name: 'Error',
+                    message: 'LeemonsError is not defined',
                     code: 500,
                   },
                 },
@@ -339,54 +399,6 @@ module.exports = {
         }
 
         return fs.createReadStream(`${swaggerUiAssetPath}/${ctx.params.file}`);
-      },
-    },
-    ui: {
-      openapi: {
-        summary: 'OpenAPI ui',
-        description: 'You can provide any schema file in query param',
-      },
-      params: {
-        url: { $$t: 'Schema url', type: 'string', optional: true },
-      },
-      handler(ctx) {
-        ctx.meta.$responseType = 'text/html; charset=utf-8';
-
-        return `
-      <html>
-        <head>
-           <title>OpenAPI UI</title>
-           <link rel="stylesheet" href="${this.settings.assetsPath}/swagger-ui.css"/>
-        </head>
-        <body>
-
-          <div id="swagger-ui">
-            <p>Loading...</p>
-            <noscript>If you see json, you need to update your moleculer-web to 0.8.0 and moleculer to 0.12</noscript>
-          </div>
-
-          <script src="${this.settings.assetsPath}/swagger-ui-bundle.js"></script>
-          <script src="${this.settings.assetsPath}/swagger-ui-standalone-preset.js"></script>
-          <script>
-            window.onload = function() {
-             SwaggerUIBundle({
-               url: "${ctx.params.url || this.settings.schemaPath}",
-               dom_id: '#swagger-ui',
-               deepLinking: true,
-               presets: [
-                 SwaggerUIBundle.presets.apis,
-                 SwaggerUIStandalonePreset,
-               ],
-               plugins: [
-                 SwaggerUIBundle.plugins.DownloadUrl
-               ],
-               layout: "StandaloneLayout",
-             });
-            }
-          </script>
-
-        </body>
-      </html>`;
       },
     },
   },
@@ -998,3 +1010,10 @@ module.exports = {
     );
   },
 };
+
+// Swagger UI disabled in production
+if (process.env.NODE_ENV !== 'production') {
+  mixin.ui = ui;
+}
+
+module.exports = mixin;
