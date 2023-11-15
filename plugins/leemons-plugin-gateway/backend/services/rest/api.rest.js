@@ -13,7 +13,7 @@ module.exports = {
       method: 'GET',
       path: '/status',
     },
-    async handler(ctx) {
+    async handler() {
       return { status: 200, timestamp: new Date() };
     },
   },

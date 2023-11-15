@@ -6,7 +6,7 @@ module.exports = {
   settings: {
     openapi: {
       info: {
-        description: 'Leemons API',
+        description: '**The ultimate open source learning platform**',
         title: 'Leemons',
       },
       components: {},

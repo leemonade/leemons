@@ -54,16 +54,10 @@ module.exports = {
 
     routes: [
       {
-        path: '/status',
-        whitelist: ['**'],
-        use: [],
-        mergeParams: true,
-        authentication: false,
-        authorization: false,
-        autoAliases: true,
+        path: '/',
+        whitelist: ['gateway.status'],
         aliases: {
-          // -- Gateway (Finish) --
-          'GET /': 'gateway.status',
+          'GET status': 'gateway.status',
         },
       },
       {
@@ -89,9 +83,8 @@ module.exports = {
 
         aliases: {
           // -- Gateway (Finish) --
-          'GET status': 'gateway.status',
+          // 'GET status': 'gateway.status',
           'POST database/drop': 'gateway.dropDBRest',
-
           /*
                     // -- Deployment Manager (Finish) --
                     // 'POST package-manager/info': 'deployment-manager.infoRest',
