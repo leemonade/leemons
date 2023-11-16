@@ -28,6 +28,8 @@ const { listSessionClasses } = require('../../core/classes/listSessionClasses');
 const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
 const { classByIds } = require('../../core/classes/classByIds');
 
+const { listTeacherClassesRest } = require('./openapi/class/listTeacherClassesRest');
+
 /** @type {ServiceSchema} */
 module.exports = {
   haveClassesRest: {
@@ -332,28 +334,26 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        page: { type: ['number', 'string'] },
+        size: { type: ['number', 'string'] },
+      },
+      required: ['page', 'size', 'id'],
+      additionalProperties: false,
+    },
+    openapi: listTeacherClassesRest,
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-        },
-        required: ['page', 'size', 'id'],
-        additionalProperties: false,
+      const { page, size } = ctx.params;
+      const data = await listTeacherClasses({
+        page: parseInt(page, 10),
+        size: parseInt(size, 10),
+        teacher: ctx.params.id,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const { page, size } = ctx.params;
-        const data = await listTeacherClasses({
-          page: parseInt(page, 10),
-          size: parseInt(size, 10),
-          teacher: ctx.params.id,
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
   removeClassRest: {

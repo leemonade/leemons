@@ -6,9 +6,6 @@ const convert = require('@openapi-contrib/json-schema-to-openapi-schema').defaul
 const UNRESOLVED_ACTION_NAME = 'unknown-action';
 
 /**
- * Mixin Based on https://www.npmjs.com/package/moleculer-auto-openapi
- */
-/**
  * This is a Moleculer mixin for generating OpenAPI documentation for your services.
  * It automatically generates an OpenAPI (Swagger) JSON document based on your service definitions.
  * It also provides a Swagger UI for interactive API exploration.
@@ -568,7 +565,7 @@ const mixin = {
     handleMethod(doc, openapiPath, method, params, addedQueryParams, action) {
       if (method === 'get' || method === 'delete') {
         doc.paths[openapiPath][method].parameters.push(
-          ...this.moleculerParamsToQuery(params, addedQueryParams)
+          ...this.moleculerParamsToQuery(params.properties, addedQueryParams, params.required)
         );
       } else {
         const schemaName = action;
@@ -638,10 +635,9 @@ const mixin = {
       doc.paths[openapiPath][method].summary = `
         ${doc.paths[openapiPath][method].summary}
         (${action})
-        ${path.autoAliases ? '[autoAlias]' : ''}
         ${
           (!openapi || !Object.keys(openapi).length) && !Object.keys(params).length
-            ? '(TO BE DOCUMENTED)'
+            ? '[TO BE DOCUMENTED]'
             : ''
         }
       `.trim();
@@ -660,7 +656,7 @@ const mixin = {
      * @param exclude{Array<string>}
      * @returns {[]}
      */
-    moleculerParamsToQuery(obj = {}, exclude = []) {
+    moleculerParamsToQuery(obj = {}, exclude = [], required = []) {
       const out = [];
 
       Object.keys(obj).forEach((fieldName) => {
@@ -677,6 +673,7 @@ const mixin = {
             description: node.description,
             in: 'query',
             schema: node,
+            required: required.includes(fieldName),
           };
           out.push(item);
           return;
@@ -687,6 +684,7 @@ const mixin = {
           name: fieldName,
           description: node.description,
           schema: node,
+          required: required.includes(fieldName),
         });
       });
 
@@ -700,7 +698,11 @@ const mixin = {
      * @param exclude{Array<string>}
      * @param parentNode
      */
-    createSchemaFromParams(doc, schemeName, obj, exclude = [], parentNode = {}) {
+    createSchemaFromParams(doc, schemeName, obj, exclude = []) {
+      if (exclude.includes(schemeName)) {
+        return;
+      }
+
       // Schema model
       // https://github.com/OAI/OpenAPI-Specification/blob/b748a884fa4571ffb6dd6ed9a4d20e38e41a878c/versions/3.0.3.md#models-with-polymorphism-support
       doc.components.schemas[schemeName] = obj;
@@ -892,6 +894,7 @@ const ui = {
                url: "${ctx.params.url || this.settings.schemaPath}",
                dom_id: '#swagger-ui',
                deepLinking: true,
+               persistAuthorization: true,
                presets: [
                  SwaggerUIBundle.presets.apis,
                  SwaggerUIStandalonePreset,
