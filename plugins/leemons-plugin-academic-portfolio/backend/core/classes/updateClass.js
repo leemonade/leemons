@@ -22,6 +22,9 @@ const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubj
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
 const { getProgramCourses } = require('../programs/getProgramCourses');
+const {
+  addComunicaRoomsBetweenStudentsAndTeachers,
+} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
@@ -167,42 +170,61 @@ async function updateClass({ data, ctx }) {
 
   await ctx.tx.emit('after-update-class', { class: classe });
 
-  let subName = program.name;
-  if (classe.groups?.abbreviation) {
-    subName += ` - ${classe.groups?.abbreviation}`;
-  }
+  await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
+
   try {
-    const roomKey = ctx.prefixPN(`room.class.${nClass.id}`);
-    const roomExists = await ctx.tx.call('comunica.room.exists', { key: roomKey });
-    const roomConfig = {
-      name: classe.subject.name,
-      type: ctx.prefixPN('class'),
+    let subName = program.name;
+    if (classe.groups?.abbreviation) {
+      subName += ` - ${classe.groups?.abbreviation}`;
+    }
+    const roomData = {
+      name: `${classe.subject.name} ${subName}`,
+      type: ctx.prefixPN('class.group'),
+      // subName,
       bgColor: classe.subject.color,
-      subName,
       image: null,
       icon: null,
-      program: program.id,
+      program: data.program,
     };
     if (classe.subject.icon?.cover) {
-      roomConfig.icon = classe.subject.icon.id;
+      roomData.icon = classe.subject.icon.id;
     }
     if (classe.subject.image?.cover) {
-      roomConfig.image = classe.subject.image.id;
+      roomData.image = classe.subject.image.id;
     }
     if (assetImage.cover) {
-      roomConfig.image = assetImage.id;
+      roomData.image = assetImage.id;
     }
-    if (roomExists) {
-      await ctx.tx.call('comunica.room.update', {
-        key: roomKey,
-        ...roomConfig,
-      });
-    } else {
-      await ctx.tx.call('comunica.room.add', {
-        key: roomKey,
-        ...roomConfig,
-      });
+
+    let action = 'add';
+    if (
+      await ctx.tx.call('comunica.room.exists', {
+        key: ctx.prefixPN(`room.class.group.${nClass.id}`),
+      })
+    ) {
+      action = 'update';
     }
+    await ctx.tx.call(`comunica.room.${action}`, {
+      key: ctx.prefixPN(`room.class.group.${nClass.id}`),
+      ...roomData,
+    });
+
+    action = 'add';
+    if (
+      await ctx.tx.call('comunica.room.exists', {
+        key: ctx.prefixPN(`room.class.${nClass.id}`),
+      })
+    ) {
+      action = 'update';
+    }
+    await ctx.tx.call(`comunica.room.${action}`, {
+      ...roomData,
+      type: ctx.prefixPN('class'),
+      key: ctx.prefixPN(`room.class.${nClass.id}`),
+      parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
+      name: 'roomCard.class',
+      subName: roomData.name,
+    });
   } catch (e) {
     // Nothing
   }
