@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Badge, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
@@ -26,6 +27,7 @@ const LibraryCardBody = ({
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
   const [isFav, setIsFav] = useState(pinned);
   const [subjectData, setSubjectData] = useState(null);
+  const queryClient = useQueryClient();
 
   const isDraft = typeof providerData?.published === 'boolean' && providerData?.published === false;
   const title = props.name ? props.name : null;
@@ -36,6 +38,8 @@ const LibraryCardBody = ({
     if (isFav) {
       unpinAssetRequest(id);
       setIsFav(false);
+      queryClient.invalidateQueries({ queryKey: ['fetch-assets-data'] });
+      queryClient.refetchQueries();
     } else {
       pinAssetRequest(id);
       setIsFav(true);

@@ -3,10 +3,9 @@ import { useVariantForQueryKey } from '@common/queries';
 
 import { useCallback } from 'react';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import { getAssetsKey } from '../keys/assets';
 
 function useAssets({ ids, filters, ...options }) {
-  const queryKey = getAssetsKey(ids, filters);
+  const queryKey = ['fetch-assets-data', ids];
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'frequently',
   });

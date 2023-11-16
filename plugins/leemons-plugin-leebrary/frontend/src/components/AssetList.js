@@ -22,6 +22,7 @@ import { useSession } from '@users/session';
 import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getPageItems } from '../helpers/getPageItems';
 import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
@@ -99,6 +100,10 @@ function AssetList({
     subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
   }
 
+  const location = useLocation();
+
+  const isPinsRoute = location.pathname.includes('pins');
+
   const initialState = {
     loading: true,
     category: categoryProp,
@@ -149,10 +154,10 @@ function AssetList({
     filters: {
       published,
       showPublic: !pinned ? store.showPublic : true,
+      onlyPinned: isPinsRoute,
     },
     options: {
-      // enabled: !isEmpty(store.assets),
-      enabled: false,
+      enabled: !isEmpty(store.assets),
     },
   });
 
@@ -491,7 +496,7 @@ function AssetList({
     } else if (!isEmpty(store.category?.id) || pinned) {
       loadAssets(store.category?.id, searchDebounced, store.assetType, filters);
     }
-  }, [searchDebounced, store.category, pinned, store.assetType, filters]);
+  }, [searchDebounced, store.category, pinned, store.assetType, filters, assetsData]);
 
   useEffect(() => {
     // Good
@@ -597,15 +602,8 @@ const handleOnShowPublic = (value) => {
   );
 
   const cardVariant = useMemo(() => {
-    let option = 'media';
-    switch (store.category?.key) {
-      case 'bookmarks':
-        option = 'bookmark';
-        break;
-      default:
-        break;
-    }
-    return option;
+    const categoryKey = store.category?.key;
+    return categoryKey === 'bookmarks' ? 'bookmark' : 'media';
   }, [store.category]);
 
   const showDrawer = useMemo(
@@ -769,6 +767,16 @@ const handleOnShowPublic = (value) => {
   // ·········································································
   // RENDER
 
+  const childNotEmbeddedStyles = {
+    flex: 0,
+    alignItems: 'end',
+    width: containerRect.width,
+    top: containerRect.top,
+    position: 'fixed',
+    zIndex: 101,
+    backgroundColor: '#fff',
+  };
+
   return (
     <>
       <Stack
@@ -785,19 +793,7 @@ const handleOnShowPublic = (value) => {
           skipFlex
           spacing={5}
           padding={isEmbedded ? 0 : 5}
-          style={
-            isEmbedded
-              ? { flex: 0, alignItems: 'end' }
-              : {
-                flex: 0,
-                alignItems: 'end',
-                width: containerRect.width,
-                top: containerRect.top,
-                position: 'fixed',
-                zIndex: 101,
-                backgroundColor: '#fff',
-              }
-          }
+          style={isEmbedded ? { flex: 0, alignItems: 'end' } : childNotEmbeddedStyles}
         >
           <Stack fullWidth spacing={5}>
             {canSearch && (

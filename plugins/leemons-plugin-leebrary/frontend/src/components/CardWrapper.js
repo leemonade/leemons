@@ -56,7 +56,6 @@ const CardWrapper = ({
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
   const [t] = useTranslateLoader(prefixPN('list'));
   const history = useHistory();
-
   const { classes } = CardWrapperStyles({ selected });
 
   const menuItems = React.useMemo(() => {
@@ -146,7 +145,6 @@ const CardWrapper = ({
   }, [LibraryCard, category?.componentOwner, category?.pluginOwner, category?.listCardComponent]);
 
   const _asset = asset;
-  // console.log(category);
   if (realCategory?.key !== 'pins') {
     delete _asset.programName;
   }
