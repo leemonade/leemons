@@ -51,6 +51,7 @@ const CardWrapper = ({
   onUnpin,
   onDownload,
   locale,
+  assetsLoading,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
@@ -142,7 +143,13 @@ const CardWrapper = ({
     }
 
     return componentToRender;
-  }, [LibraryCard, category?.componentOwner, category?.pluginOwner, category?.listCardComponent]);
+  }, [
+    LibraryCard,
+    category?.componentOwner,
+    category?.pluginOwner,
+    category?.listCardComponent,
+    assetsLoading,
+  ]);
 
   const _asset = asset;
   if (realCategory?.key !== 'pins') {
@@ -161,6 +168,7 @@ const CardWrapper = ({
         onShare={onShare}
         single={single}
         locale={locale}
+        isLoading={assetsLoading}
       />
     </Box>
   ) : null;
@@ -186,6 +194,8 @@ CardWrapper.propTypes = {
   onPin: PropTypes.func,
   onUnpin: PropTypes.func,
   onDownload: PropTypes.func,
+  assetsLoading: PropTypes.bool,
+  realCategory: PropTypes.any,
 };
 
 export { CardWrapper };

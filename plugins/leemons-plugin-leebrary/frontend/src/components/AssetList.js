@@ -665,6 +665,7 @@ const handleOnShowPublic = (value) => {
             onUnpin={handleOnUnpin}
             onDownload={handleOnDownload}
             locale={locale}
+            assetsLoading={loadingRef.current.loading}
           />
         ),
         itemMinWidth,
