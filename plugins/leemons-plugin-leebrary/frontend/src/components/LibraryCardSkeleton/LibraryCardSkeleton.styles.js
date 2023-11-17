@@ -3,8 +3,10 @@ import { createStyles } from '@bubbles-ui/components';
 
 export const LibraryCardSkeletonStyles = createStyles((theme) => ({
   root: {
-    width: 254,
-    height: 324,
+    minWidth: 264,
+    maxWidth: 320,
+    width: 'auto',
+    height: 399,
     borderRadius: '2px',
     backgroundColor: theme.colors.mainWhite,
     border: '1px solid  #DDE1E6',
@@ -20,7 +22,7 @@ export const LibraryCardSkeletonStyles = createStyles((theme) => ({
   subjectContainer: {
     display: 'flex',
     justifyContent: 'flex-start',
-    marginTop: 12,
+    marginTop: 22,
     gap: 3,
     alignItems: 'center',
   },
@@ -32,7 +34,7 @@ export const LibraryCardSkeletonStyles = createStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 24,
     gap: 3,
   },
 }));

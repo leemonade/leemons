@@ -9,14 +9,17 @@ const LibraryCardSkeleton = () => {
       <Box className={classes.subjectCover} />
       <Skeleton height={144} radius={0} />
       <Box className={classes.cardContent}>
-        <Skeleton height={16} width={61} radius={100} />
-        <Skeleton height={12} width={186} radius={100} mt={8} />
-        <Skeleton height={12} width={215} radius={100} mt={8} />
-        <Skeleton height={8} width={186} radius={100} mt={12} />
-        <Skeleton height={8} width={215} radius={100} mt={8} />
+        <Skeleton height={20} width={20} radius={0} />
+        <Skeleton height={12} width={186} radius={100} mt={18} />
+        <Skeleton height={12} width={215} radius={100} mt={12} />
+        <Skeleton height={8} width={186} radius={100} mt={18} />
+        <Skeleton height={8} width={215} radius={100} mt={12} />
         <Box className={classes.subjectContainer}>
           <Skeleton height={16} width={16} radius={4} />
-          <Skeleton height={8} width={103} radius={100} />
+          <Box className={classes.programContainer}>
+            <Skeleton height={8} width={186} radius={100} mt={12} />
+            <Skeleton height={8} width={58} radius={100} mt={6} />
+          </Box>
         </Box>
         <Box className={classes.footer}>
           <Box className={classes.footerContainer}>

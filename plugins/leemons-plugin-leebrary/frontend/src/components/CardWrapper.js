@@ -157,7 +157,7 @@ const CardWrapper = ({
   }
 
   return !isNil(category) && !isEmpty(asset) ? (
-    <Box key={key} {...props}>
+    <Box key={key} {...props} style={{ display: 'flex', gap: 32 }}>
       <Component
         asset={_asset}
         menuItems={menuItems}
