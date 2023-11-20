@@ -23,7 +23,8 @@ export const SubjectItemDisplayStyles = createStyles((theme) => {
       borderRadius: '50%',
       color: theme.other.core.color.neutral['500'],
     },
-    textWrapper: {
+    textWrapper: {},
+    subjectName: {
       marginTop: pxToRem(21),
     },
     programName: {

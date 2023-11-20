@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box } from '@mantine/core';
 import { LoveItIcon } from '@bubbles-ui/icons/outline';
 import { FavButtonStyles } from './FavButton.styles';

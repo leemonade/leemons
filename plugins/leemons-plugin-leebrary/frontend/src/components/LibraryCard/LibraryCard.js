@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { isNil } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import { LibraryCardSkeleton } from '../LibraryCardSkeleton';

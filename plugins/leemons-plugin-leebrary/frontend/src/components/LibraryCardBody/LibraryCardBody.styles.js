@@ -40,10 +40,11 @@ export const LibraryCardBodyStyles = createStyles((theme, { fullHeight }) => {
       fontSize: '10px',
     },
     titleContainer: {
-      paddingTop: pxToRem(10),
+      paddingTop: pxToRem(8),
     },
     title: {
       ...cardLibraryStyles.content.typo.lg,
+      lineHeight: '20px',
       color: cardLibraryStyles.content.color.emphasis,
       paddingTop: '0px !important',
     },
@@ -61,10 +62,8 @@ export const LibraryCardBodyStyles = createStyles((theme, { fullHeight }) => {
       marginRight: pxToRem(4),
     },
     subject: {
-      // paddingTop: pxToRem(10),
       display: 'flex',
       justifyContent: 'center',
-      // alignItems: 'center',
       gap: 5,
     },
     subjectName: {
