@@ -107,14 +107,12 @@ Playground.args = {
   ...LIBRARY_CARD_DEFAULT_PROPS,
   asset: {
     ...AUDIO_ASSET,
-    subjects: [
-      {
-        subject: 'id1',
-      },
-      {
-        subject: 'id2',
-      },
-    ],
+    subjects: {
+      name: 'Lengua Castellana y Literatura de España',
+      color: '#FABADA',
+      icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
+    },
+    program: 'ESO',
   },
   assigment: {
     completed: 0.3,

@@ -47,8 +47,12 @@ const LibraryCardBody = ({
   };
 
   useEffect(() => {
-    const subjectIds = isArray(subjects) && subjects.map((s) => s.subject);
-    setSubjectData(subjectIds);
+    if (isArray(subjects)) {
+      const subjectIds = subjects.map((s) => s.subject);
+      setSubjectData(subjectIds);
+    } else if (!isArray(subjects) && subjects?.name) {
+      setSubjectData(subjects);
+    }
   }, [subjects]);
 
   return (
@@ -79,10 +83,8 @@ const LibraryCardBody = ({
           </TextClamp>
         )}
       </Box>
-      <Box className={classes.subjectsContainer}>
-        <Box className={classes.subject}>
-          <SubjectItemDisplay subjectsIds={subjectData} programId={program} />
-        </Box>
+      <Box className={classes.subject}>
+        <SubjectItemDisplay subjectsIds={subjectData} programId={program} />
       </Box>
     </Box>
   );

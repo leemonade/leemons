@@ -11,19 +11,23 @@ import { getMultiSubjectData } from '../../helpers/getMultiSubjectData';
 
 const SubjectItemDisplay = ({ subjectsIds, programId }) => {
   const [subjectData, setSubjectData] = useState(null);
+  const [programName, setProgramName] = useState(null);
   const { classes } = SubjectItemDisplayStyles();
   const labelsMultiSubject = {
     subjectName: 'Multiasignatura',
     groupName: 'Multiasignatura',
     name: 'Multiasignatura',
   };
+
   const preparedSubject = useSubjects(subjectsIds, {
     enabled: Array.isArray(subjectsIds) && subjectsIds?.length === 1,
   });
   const { data: programData } = useProgramDetail(programId, {
-    enabled: typeof programId === 'string' && programId?.length > 1,
+    enabled: typeof programId === 'string' && programId?.length > 1 && programId.includes('lrn:'),
   });
+
   const isMultiSubjectCase = isArray(subjectsIds) && subjectsIds.length > 1;
+
   useEffect(() => {
     if (isMultiSubjectCase) {
       const isMultisubject = getMultiSubjectData(labelsMultiSubject);
@@ -35,8 +39,20 @@ const SubjectItemDisplay = ({ subjectsIds, programId }) => {
     ) {
       setSubjectData(preparedSubject?.data?.[0]);
     }
-    if (!isArray(subjectsIds)) setSubjectData(subjectsIds);
-  }, [isMultiSubjectCase, preparedSubject.data]);
+    if (!isArray(subjectsIds) && subjectsIds?.name)
+      setSubjectData({
+        color: subjectsIds.color,
+        icon: subjectsIds.icon,
+        name: subjectsIds.name,
+      });
+  }, [isMultiSubjectCase, preparedSubject.data, subjectsIds]);
+  useEffect(() => {
+    if (programData) {
+      setProgramName(programData?.name);
+    } else if (typeof programId === 'string' && !programId.includes('lrn:')) {
+      setProgramName(programId);
+    }
+  }, [programData]);
   return (
     <Box className={classes.root}>
       {subjectData && (
@@ -48,13 +64,13 @@ const SubjectItemDisplay = ({ subjectsIds, programId }) => {
         />
       )}
       <Box className={classes.textWrapper}>
-        <TextClamp lines={programData?.name ? 1 : 0}>
-          <Text color="muted" role="productive" size="xs" className={classes.subjectName}>
+        <TextClamp lines={1}>
+          <Text color="muted" role="productive" size="xs">
             {subjectData?.name}
           </Text>
         </TextClamp>
         <TextClamp lines={1}>
-          <Text className={classes.programName}>{programData?.name}</Text>
+          <Text className={classes.programName}>{programName}</Text>
         </TextClamp>
       </Box>
     </Box>

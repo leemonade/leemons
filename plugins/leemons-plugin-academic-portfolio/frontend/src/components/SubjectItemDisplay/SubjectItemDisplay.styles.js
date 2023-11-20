@@ -23,14 +23,16 @@ export const SubjectItemDisplayStyles = createStyles((theme) => {
       borderRadius: '50%',
       color: theme.other.core.color.neutral['500'],
     },
-    textWrapper: {},
-    subjectName: {
-      marginTop: pxToRem(21),
+    textWrapper: {
+      position: 'relative',
     },
+
     programName: {
       ...sidStyles.content.typo.md,
       lineHeight: '20px',
       color: sidStyles.content.color.muted,
+      position: 'absolute',
+      top: 16,
     },
   };
 });

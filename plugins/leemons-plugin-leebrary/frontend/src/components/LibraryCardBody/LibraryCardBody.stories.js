@@ -1,13 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { Box } from '@bubbles-ui/components';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LibraryCardBody } from './LibraryCardBody';
 import { LIBRARY_CARD_BODY_DEFAULT_PROPS } from './LibraryCardBody.constants';
 import { LIBRARYCARD_VARIANTS } from '../LibraryCard';
 import { LIBRARYCARD_ASSIGMENT_ROLES } from '../Library.constants';
-
-const queryClient = new QueryClient();
 
 export default {
   title: 'leemons/Library/LibraryCardBody',
@@ -33,17 +30,15 @@ const Template = ({
   showAssigment,
   ...props
 }) => (
-  <QueryClientProvider client={queryClient}>
-    <Box style={{ width: 322, height: 300, border: '1px solid #B9BEC4', borderRadius: 8 }}>
-      <LibraryCardBody
-        {...props}
-        description={showDescription ? description : null}
-        assigment={showAssigment ? assigment : null}
-      >
-        {children}
-      </LibraryCardBody>
-    </Box>
-  </QueryClientProvider>
+  <Box style={{ width: 322, height: 300, border: '1px solid #B9BEC4', borderRadius: 8 }}>
+    <LibraryCardBody
+      {...props}
+      description={showDescription ? description : null}
+      assigment={showAssigment ? assigment : null}
+    >
+      {children}
+    </LibraryCardBody>
+  </Box>
 );
 
 export const Playground = Template.bind({});
@@ -76,12 +71,6 @@ Playground.args = {
     activityType: 'Tarea/Test',
     grade: 8.5,
   },
-  subjects: [
-    {
-      subject: 'id1',
-    },
-    {
-      subject: 'id2',
-    },
-  ],
+  subjects: [{ subject: 'id1' }, { subject: 'id2' }],
+  program: 'ESO',
 };
