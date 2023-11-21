@@ -374,7 +374,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
-
+  console.log({ instance, showSubject, labels, classData });
   const query = useMemo(
     () => ({
       classData,

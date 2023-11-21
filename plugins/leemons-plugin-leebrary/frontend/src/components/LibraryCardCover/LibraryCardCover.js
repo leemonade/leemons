@@ -1,15 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
-import { Box, Button, COLORS, IconButton, ImageLoader, Menu } from '@bubbles-ui/components';
+import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
-import { motion, AnimatePresence } from 'framer-motion';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
 import {
   LIBRARY_CARD_COVER_DEFAULT_PROPS,
   LIBRARY_CARD_COVER_PROP_TYPES,
-  overlayVariants,
 } from './LibraryCardCover.constants';
-import { LibraryCardEmptyCover } from '../LibraryCardEmptyCover';
 
 const LibraryCardCover = ({
   height,
@@ -93,7 +90,7 @@ const LibraryCardCover = ({
   );
 
   const MemoizedEmptyCover = useMemo(
-    () => <LibraryCardEmptyCover icon={icon || variantIcon} fileType={fileType} />,
+    () => <CardEmptyCover icon={icon || variantIcon} fileType={fileType} />,
     [icon, variantIcon, fileType]
   );
 
