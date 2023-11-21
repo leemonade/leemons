@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable sonarjs/cognitive-complexity */
 const fs = require('fs');
 const path = require('path');
 const { rimraf } = require('rimraf');
@@ -14,16 +16,16 @@ function buildAllStorybooks(pluginsPath, docsBuildPath) {
       }
 
       let checkedFolders = 0;
-      folders.forEach(folder => {
+      folders.forEach((folder) => {
         const frontendPath = path.join(pluginsPath, folder, 'frontend');
         const storybookPath = path.join(frontendPath, '.storybook');
         const packageJsonPath = path.join(frontendPath, 'package.json');
 
-        fs.access(storybookPath, fs.constants.F_OK, (err) => {
-          if (!err) {
-            fs.readFile(packageJsonPath, 'utf8', (err, data) => {
-              if (err) {
-                console.error(`Error reading package.json for ${folder}: ${err}`);
+        fs.access(storybookPath, fs.constants.F_OK, (accessErr) => {
+          if (!accessErr) {
+            fs.readFile(packageJsonPath, 'utf8', (readFileErr, data) => {
+              if (readFileErr) {
+                console.error(`Error reading package.json for ${folder}: ${readFileErr}`);
                 checkedFolders++;
                 if (checkedFolders === folders.length) {
                   resolve(jsonData);
@@ -33,14 +35,21 @@ function buildAllStorybooks(pluginsPath, docsBuildPath) {
 
               const packageData = JSON.parse(data);
               const packageName = packageData.name;
-              const buildCommand = `yarn workspace ${packageName} build-storybook -o ${path.join(docsBuildPath, folder)}`;
-              exec(buildCommand, (err, stdout, stderr) => {
-                if (err) {
-                  console.error(`Error building storybook for ${folder}: ${err}`);
+              const buildCommand = `yarn workspace ${packageName} build-storybook -o ${path.join(
+                docsBuildPath,
+                folder
+              )}`;
+              exec(buildCommand, (execErr) => {
+                if (execErr) {
+                  console.error(`Error building storybook for ${folder}: ${execErr}`);
                   rimraf.sync(path.join(docsBuildPath, folder));
                 } else {
                   console.log(`Successfully built storybook for ${folder}`);
-                  jsonData.push({ name: packageData.displayName, description: packageData.description, url: folder });
+                  jsonData.push({
+                    name: packageData.displayName,
+                    description: packageData.description,
+                    url: folder,
+                  });
                 }
                 checkedFolders++;
                 if (checkedFolders === folders.length) {
@@ -57,7 +66,7 @@ function buildAllStorybooks(pluginsPath, docsBuildPath) {
         });
       });
     });
-  })
+  });
 }
 
 (async () => {
@@ -77,11 +86,14 @@ function buildAllStorybooks(pluginsPath, docsBuildPath) {
       return;
     }
 
-    let modifiedData = data.replace(/var jsonData = \[\];/, `var jsonData = ${JSON.stringify(jsonData)};`);
+    const modifiedData = data.replace(
+      /var jsonData = \[\];/,
+      `var jsonData = ${JSON.stringify(jsonData)};`
+    );
 
-    fs.writeFile(outputHtmlPath, modifiedData, 'utf8', (err) => {
-      if (err) {
-        console.error(`Error writing to output index.html: ${err}`);
+    fs.writeFile(outputHtmlPath, modifiedData, 'utf8', (writeFileErr) => {
+      if (writeFileErr) {
+        console.error(`Error writing to output index.html: ${writeFileErr}`);
       } else {
         console.log('Successfully updated index.html with jsonData');
       }

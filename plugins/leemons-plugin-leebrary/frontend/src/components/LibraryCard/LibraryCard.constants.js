@@ -62,6 +62,7 @@ export const LIBRARY_CARD_DEFAULT_PROPS = {
   locale: 'en-GB',
   fullHeight: false,
   excludeMetadatas: [],
+  isLoading: false,
 };
 export const LIBRARY_CARD_PROP_TYPES = {
   asset: ASSET_PROPS,
@@ -82,4 +83,8 @@ export const LIBRARY_CARD_PROP_TYPES = {
   variantTitle: PropTypes.string,
   fullHeight: PropTypes.bool,
   excludeMetadatas: PropTypes.arrayOf(PropTypes.string),
+  providerData: PropTypes.shape({
+    published: PropTypes.bool,
+  }),
+  isLoading: PropTypes.bool,
 };

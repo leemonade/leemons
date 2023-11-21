@@ -230,14 +230,14 @@ module.exports = {
     async handler(ctx) {
       const {
         assets: assetIds,
-        filters: { published, showPublic, indexable = true },
+        filters: { published, showPublic, indexable = true, onlyPinned },
       } = ctx.params;
 
       if (_.isEmpty(assetIds)) {
         throw new LeemonsError(ctx, { message: 'No assets were specified' });
       }
 
-      const assets = await getByIds({
+      let assets = await getByIds({
         ids: assetIds,
         withFiles: true,
         checkPermissions: true,
@@ -246,6 +246,9 @@ module.exports = {
         published, // not used within getByIds()
         ctx,
       });
+      if (onlyPinned) {
+        assets = assets.filter((asset) => asset.pinned);
+      }
 
       const processSingnedUrlsPromises = assets.map((asset) =>
         prepareAsset({ rawAsset: asset, isPublished: published, ctx })

@@ -11,11 +11,22 @@ async function remove({ classId, studentId, soft, ctx }) {
       // { excludeDeleted: soft }
     ).lean(),
     getClassProgram({ id: classId, ctx }),
+  ]);
+
+  await Promise.allSettled([
     ctx.tx.call('comunica.room.removeUserAgents', {
       key: ctx.prefixPN(`room.class.${classId}`),
       userAgents: studentId,
     }),
+    ctx.tx.call('comunica.room.removeUserAgents', {
+      key: ctx.prefixPN(`room.class.group.${classId}`),
+      userAgents: studentId,
+    }),
+    ctx.tx.call('comunica.room.removeAllUserAgents', {
+      key: ctx.prefixPN(`room.class.${classId}.student.${studentId}.teachers`),
+    }),
   ]);
+
   if (!classStudent) {
     throw new LeemonsError(ctx, {
       message: `Class student with class ${classId} and student ${studentId} not found`,

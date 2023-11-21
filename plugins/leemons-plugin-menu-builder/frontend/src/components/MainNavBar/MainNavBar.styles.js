@@ -37,7 +37,7 @@ export const MainNavBarStyles = createStyles((theme, { itemWidth, isCollapsed })
       height: '100%',
     },
     linksInner: {
-      overflow: 'scroll',
+      overflow: 'auto',
       marginBottom: '180px',
       textDecoration: 'none',
     },

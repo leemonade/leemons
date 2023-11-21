@@ -5,9 +5,9 @@ export default create({
   brandTitle: 'Bubbles UI',
   brandUrl: 'https://www.leemons.io',
   brandImage:
-    'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/logo_leemons_bb2ece3956.svg',
+    'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/Group_4_1_54d7c2cd36.png',
   brandTarget: '_blank',
-  appBg: '#212B3D',
-  colorSecondary: '#3B76CC',
-  barSelectedColor: '#3B76CC',
+  appBg: 'white',
+  colorSecondary: '#4D5358',
+  barSelectedColor: '#338077',
 });

@@ -18,6 +18,9 @@ const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubj
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { getClassesProgramInfo } = require('./listSessionClasses');
+const {
+  addComunicaRoomsBetweenStudentsAndTeachers,
+} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function addClass({ data, ctx }) {
   try {
@@ -177,9 +180,9 @@ async function addClass({ data, ctx }) {
       subName += ` - ${classe.groups?.abbreviation}`;
     }
     const roomData = {
-      name: classe.subject.name,
-      type: ctx.prefixPN('class'),
-      subName,
+      name: `${classe.subject.name} ${subName}`,
+      type: ctx.prefixPN('class.group'),
+      // subName,
       bgColor: classe.subject.color,
       image: null,
       icon: null,
@@ -196,8 +199,17 @@ async function addClass({ data, ctx }) {
     }
 
     await ctx.tx.call('comunica.room.add', {
-      key: ctx.prefixPN(`room.class.${nClass.id}`),
+      key: ctx.prefixPN(`room.class.group.${nClass.id}`),
       ...roomData,
+    });
+
+    await ctx.tx.call('comunica.room.add', {
+      ...roomData,
+      type: ctx.prefixPN('class'),
+      key: ctx.prefixPN(`room.class.${nClass.id}`),
+      parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
+      name: 'roomCard.class',
+      subName: roomData.name,
     });
 
     [classe] = await getClassesProgramInfo({
@@ -213,6 +225,8 @@ async function addClass({ data, ctx }) {
         _.map(teachers, ({ teacher, type }) => addTeacher({ class: nClass.id, teacher, type, ctx }))
       );
     }
+
+    await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
     return (await classByIds({ ids: nClass.id, ctx }))[0];
   } catch (e) {
