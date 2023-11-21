@@ -20,7 +20,7 @@ async function createInstanceRoom({
       key: roomKey,
       name: instance.assignable.asset.name,
       subName: classes.length > 1 ? 'multisubjects' : classes[0].subject.name,
-      parentRoom: null,
+      parentRoom: _.map(classes, (nClass) => `academic-portfolio.room.class.group.${nClass.id}`),
       image: instance.assignable.asset.id,
       program: classes[0].program,
       icon:

@@ -14,7 +14,9 @@ async function _addCustomPermissionToUserAgent({ userAgentId, data, throwIfExist
   );
   if (hasPermissions.length > 1 || hasPermissions[0]) {
     if (throwIfExists) {
-      throw new LeemonsError(ctx, { message: `You have already been assigned this custom permit` });
+      throw new LeemonsError(ctx, {
+        message: `You have already been assigned this custom permit  ${JSON.stringify(data)}`,
+      });
     } else {
       return null;
     }

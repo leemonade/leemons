@@ -1,31 +1,31 @@
+/* eslint-disable consistent-return */
 import React, { useCallback } from 'react';
 import { isFunction } from 'lodash';
 import { Box, ImageLoader, Text } from '@bubbles-ui/components';
+import { ChevUpIcon } from '@bubbles-ui/icons/outline';
 import { LibraryNavbarItemStyles } from './LibraryNavbarItem.styles';
 import {
   LIBRARY_NAVBAR_ITEM_DEFAULT_PROPS,
-  LIBRARY_NAVBAR_ITEM_PROP_TYPES
+  LIBRARY_NAVBAR_ITEM_PROP_TYPES,
 } from './LibraryNavbarItem.constants';
-import { ChevUpIcon } from '@bubbles-ui/icons/outline';
 
 const LibraryNavbarItem = ({
-                             icon,
-                             label,
-                             canOpen,
-                             opened,
-                             selected,
-                             disabled,
-                             onClick,
-                             loading,
-                             children,
-                             ...props
-                           }) => {
+  icon,
+  label,
+  canOpen,
+  opened,
+  selected,
+  disabled,
+  onClick,
+  loading,
+  children,
+}) => {
   const onClickHandler = (e) => {
     if (disabled || loading) return;
-    isFunction(onClick) && onClick(e);
+    if (isFunction(onClick)) return onClick(e);
   };
 
-  const { classes, cx } = LibraryNavbarItemStyles(
+  const { classes } = LibraryNavbarItemStyles(
     { selected, disabled, loading, opened },
     { name: 'LibraryNavbarItem' }
   );
@@ -45,9 +45,7 @@ const LibraryNavbarItem = ({
           <Box className={classes.iconWrapper}>{renderIcon()}</Box>
           <Text className={classes.label}>{label}</Text>
         </Box>
-        <Box className={classes.chev}>
-          {canOpen ? <ChevUpIcon /> : null}
-        </Box>
+        <Box className={classes.chev}>{canOpen ? <ChevUpIcon /> : null}</Box>
       </Box>
       {children && opened ? children : null}
     </>
@@ -58,3 +56,4 @@ LibraryNavbarItem.defaultProps = LIBRARY_NAVBAR_ITEM_DEFAULT_PROPS;
 LibraryNavbarItem.propTypes = LIBRARY_NAVBAR_ITEM_PROP_TYPES;
 
 export { LibraryNavbarItem };
+export default LibraryNavbarItem;

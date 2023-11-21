@@ -1,17 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { isNil } from 'lodash';
-import { Box, FileIcon } from '@bubbles-ui/components';
-import {
-  AssetBookmarkIcon,
-  AssetPathIcon,
-  AssetTaskIcon,
-  PluginCurriculumIcon,
-} from '@bubbles-ui/icons/solid';
+import { Box } from '@bubbles-ui/components';
+import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
 import { LibraryCardCover } from '../LibraryCardCover';
-import { LibraryCardContent } from '../LibraryCardContent';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
+import { LibraryCardBody } from '../LibraryCardBody';
 
 const LibraryCard = ({
   asset,
@@ -32,23 +27,17 @@ const LibraryCard = ({
   subject,
   fullHeight,
   excludeMetadatas,
+  isLoading,
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-
-  const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
-  const variantIconComponent = useMemo(() => {
-    if (!variantIcon) return null;
-    return React.cloneElement(variantIcon, {
-      style: {
-        position: 'relative',
-        fontSize: 64,
-        width: 55,
-        height: 55,
-        color: '#B9BEC4',
-      },
-    });
-  }, [variantIcon]);
+  const { classes, cx } = LibraryCardStyles(
+    { shadow, fullHeight, isHovered },
+    { name: 'LibraryCard' }
+  );
+  if (isLoading) {
+    return <LibraryCardSkeleton />;
+  }
 
   return (
     <Box
@@ -58,39 +47,6 @@ const LibraryCard = ({
     >
       <LibraryCardCover
         {...asset}
-        fileIcon={
-          {
-            bookmark: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <AssetBookmarkIcon />
-              </Box>
-            ),
-            path: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <AssetPathIcon />
-              </Box>
-            ),
-            task: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <AssetTaskIcon />
-              </Box>
-            ),
-            curriculum: (
-              <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                <PluginCurriculumIcon />
-              </Box>
-            ),
-          }[variant] ||
-          variantIconComponent || (
-            <FileIcon
-              size={64}
-              fileExtension={asset.fileExtension}
-              fileType={asset.fileType || variant}
-              color={'#B9BEC4'}
-              hideExtension
-            />
-          )
-        }
         deadlineProps={!isNil(deadlineProps) ? deadlineProps : null}
         locale={locale || deadlineProps?.locale}
         direction={variant === 'assigment' ? 'vertical' : null}
@@ -101,8 +57,9 @@ const LibraryCard = ({
         role={role}
         badge={badge}
         subject={subject}
+        variantIcon={variantIcon}
       />
-      <LibraryCardContent
+      <LibraryCardBody
         {...asset}
         metadata={(Array.isArray(asset.metadata) ? asset.metadata : []).filter(
           (item) => !excludeMetadatas.map((e) => e.toLowerCase()).includes(item.label.toLowerCase())
@@ -112,6 +69,7 @@ const LibraryCard = ({
         assigment={assigment}
         fullHeight={fullHeight}
         role={role}
+        subject={subject}
       />
       <LibraryCardFooter
         {...asset}
@@ -128,5 +86,5 @@ const LibraryCard = ({
 
 LibraryCard.defaultProps = LIBRARY_CARD_DEFAULT_PROPS;
 LibraryCard.propTypes = LIBRARY_CARD_PROP_TYPES;
-
+export default LibraryCard;
 export { LibraryCard };

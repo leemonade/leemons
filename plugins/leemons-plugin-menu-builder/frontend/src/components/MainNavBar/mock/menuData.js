@@ -82,7 +82,8 @@ export const menuData = [
         disabled: true,
         created_at: '2021-11-08T09:48:03.000Z',
         updated_at: '2021-11-08T09:48:03.000Z',
-        label: 'Perfiles',
+        label:
+          'Perfiles con un nombre lmuy largo para comprobar si desborda siguiendo los requisitos de UXUI',
         children: [],
         customChildren: [],
       },

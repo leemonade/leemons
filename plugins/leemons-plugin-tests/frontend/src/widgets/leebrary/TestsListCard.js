@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
@@ -12,6 +13,7 @@ import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { deleteTestRequest, duplicateRequest } from '../../request';
+import { TestIcon } from '../../components/Icons/TestIcon';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -126,6 +128,7 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="tests"
       variantTitle={t('tests')}
+      variantIcon={<TestIcon />}
       className={classes.root}
     />
   );

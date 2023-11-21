@@ -1,12 +1,18 @@
+/* eslint-disable import/prefer-default-export */
 import { createStyles, getFontExpressive, pxToRem } from '@bubbles-ui/components';
 
+const spaceBetween = 'space-between';
+
 export const LibraryCardCoverStyles = createStyles(
-  (theme, { color, height, blur, parentHovered, subjectColor }) => {
+  (theme, { color, height, parentHovered, subjectColor, showMenu }) => {
+    const isParentHovered = parentHovered ? 'visible' : 'hidden';
+    const buttonIconCardStyles = theme.other.buttonIconCard;
+    const focusDefaultBorder = theme.other.global.focus['default-border'];
     return {
       root: {
         ...getFontExpressive(theme.fontSizes['2']),
         position: 'relative',
-        height: height,
+        height,
         width: '100%',
         borderRadius: '4px 2px 0 0',
       },
@@ -17,26 +23,43 @@ export const LibraryCardCoverStyles = createStyles(
         fontWeight: 600,
         lineHeight: pxToRem(20),
       },
-      blurryBox: {
+      overlayTransparent: {
         display: 'flex',
         flexDirection: 'column',
-        width: '50%',
+        width: '100%',
         height: '100%',
         position: 'absolute',
         zIndex: 1,
-        background: parentHovered ? 'rgba(247, 248, 250, 0.95)' : 'rgba(247, 248, 250, 0.8)',
-        backdropFilter: `blur(${blur}px)`,
-        justifyContent: 'space-between',
+        justifyContent: spaceBetween,
         borderRadius: '4px 0 0 0',
       },
+      leftContainer: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-end',
+      },
       iconRow: {
-        display: parentHovered ? 'flex' : 'none',
+        zIndex: 3,
+        display: 'flex',
+        visibility: isParentHovered,
         alignItems: 'center',
-        paddingTop: pxToRem(2),
-        paddingInline: pxToRem(4),
+        justifyContent: spaceBetween,
+        paddingTop: pxToRem(8),
+        paddingInline: pxToRem(8),
       },
       menuIcon: {
-        color: theme.colors.text05,
+        color: buttonIconCardStyles.content.color.primary.default,
+        zIndex: 10,
+        position: 'absolute',
+        marginBottom: 0,
+        top: 3.5,
+        right: 4,
+        height: 17,
+      },
+
+      favActive: {
+        position: 'absolute',
+        right: 0,
       },
       deadline: {
         position: 'absolute',
@@ -47,8 +70,8 @@ export const LibraryCardCoverStyles = createStyles(
       },
       color: {
         width: '100%',
-        height: pxToRem(8),
-        backgroundColor: color || theme.colors.ui01,
+        height: pxToRem(4),
+        backgroundColor: color || 'transparent',
         transition: 'all 0.2s ease-out',
         borderRadius: '2px 0 0 0',
       },
@@ -63,8 +86,40 @@ export const LibraryCardCoverStyles = createStyles(
         borderRadius: '4px 2px 0 0',
       },
       menuItem: {
-        color: theme.colors.text04,
+        backgroundColor: buttonIconCardStyles.content.color.primary.default,
       },
+      ellipsisBox: {
+        position: 'relative',
+        width: pxToRem(24),
+        height: pxToRem(24),
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          border: `${focusDefaultBorder.width} solid transparent`,
+          backgroundColor: !showMenu
+            ? buttonIconCardStyles.background.color.primary.default
+            : buttonIconCardStyles.background.color.primary.down,
+
+          borderRadius: !showMenu
+            ? buttonIconCardStyles.border.radius.md
+            : `${buttonIconCardStyles.border.radius.md} ${buttonIconCardStyles.border.radius.md} 0px 0px`,
+
+          backdropFilter: 'blur(2px)',
+          zIndex: -10,
+        },
+        '&:hover::before': {
+          backgroundColor: buttonIconCardStyles.background.color.primary.hover,
+        },
+        '&:focus-visible': {
+          outline: 'none',
+          backgroundColor: buttonIconCardStyles.background.color.primary.hover,
+          border: `${focusDefaultBorder.width} ${focusDefaultBorder.style} ${focusDefaultBorder.color}`,
+          borderRadius: buttonIconCardStyles.border.radius.md,
+        },
+      },
+
       badge: {
         marginBottom: 8,
       },

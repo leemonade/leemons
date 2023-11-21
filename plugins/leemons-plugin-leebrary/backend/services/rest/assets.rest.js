@@ -23,6 +23,7 @@ const { add: addPin } = require('../../core/pins/add');
 const { removeByAsset: removePin } = require('../../core/pins/removeByAsset');
 const { getByUser: getPinsByUser } = require('../../core/pins/getByUser');
 const { setAsset } = require('../../core/assets/set');
+const { prepareAsset } = require('../../core/assets/prepareAsset');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -93,7 +94,7 @@ module.exports = {
   // ! xapi ? middleware?
   getRest: {
     rest: {
-      path: '/assets/:id',
+      path: '/:id',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
@@ -162,13 +163,6 @@ module.exports = {
         onlyShared,
       } = ctx.params;
 
-      /*
-      if (isEmpty(category)) {
-        // throw new global.utils.HttpError(400, 'Not category was specified');
-        throw new LeemonsError(ctx, { message: 'No category was specified, httpStatusCode: 400})
-      }
-      */
-
       const trueValues = ['true', true, '1', 1];
 
       let assets;
@@ -180,6 +174,8 @@ module.exports = {
       const _providerQuery = JSON.parse(providerQuery || null);
       const _programs = JSON.parse(programs || null);
       const _subjects = JSON.parse(subjects || null);
+
+      // ! map de todos los assets y gardar la promesa de prepareAsset, luego un map all de todo esto.
 
       if (!_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category)) {
         assets = await getByCriteria({
@@ -234,14 +230,14 @@ module.exports = {
     async handler(ctx) {
       const {
         assets: assetIds,
-        filters: { published, showPublic, indexable = true },
+        filters: { published, showPublic, indexable = true, onlyPinned },
       } = ctx.params;
 
       if (_.isEmpty(assetIds)) {
         throw new LeemonsError(ctx, { message: 'No assets were specified' });
       }
 
-      const assets = await getByIds({
+      let assets = await getByIds({
         ids: assetIds,
         withFiles: true,
         checkPermissions: true,
@@ -250,11 +246,31 @@ module.exports = {
         published, // not used within getByIds()
         ctx,
       });
+      if (onlyPinned) {
+        assets = assets.filter((asset) => asset.pinned);
+      }
 
-      return {
-        status: 200,
-        assets,
-      };
+      const processSingnedUrlsPromises = assets.map((asset) =>
+        prepareAsset({ rawAsset: asset, isPublished: published, ctx })
+      );
+      try {
+        const results = await Promise.allSettled(processSingnedUrlsPromises);
+        const finalAssets = results
+          .filter((result) => result.status === 'fulfilled')
+          .map((result) => result.value);
+        // concatenate here the difference between finalAssets & assets, just to
+        // give a second chance to any possible failed asset preparation
+        // This assets would be passed as rawAssets to the frontend.
+        return {
+          status: 200,
+          assets: finalAssets,
+        };
+      } catch (error) {
+        throw new LeemonsError(ctx, {
+          httpStatusCode: 500,
+          message: `Error preparing final assets: ${error}`,
+        });
+      }
     },
   },
   urlMetadataRest: {

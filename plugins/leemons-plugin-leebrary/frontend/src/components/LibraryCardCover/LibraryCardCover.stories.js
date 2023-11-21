@@ -20,15 +20,13 @@ export default {
   },
 };
 
-const Template = ({ children, showSubject, subject, ...props }) => {
-  return (
-    <Box style={{ width: 287, display: 'inline-block' }}>
-      <LibraryCardCover {...props} subject={showSubject ? subject : undefined}>
-        {children}
-      </LibraryCardCover>
-    </Box>
-  );
-};
+const Template = ({ children, showSubject, subject, ...props }) => (
+  <Box style={{ width: 287, display: 'inline-block' }}>
+    <LibraryCardCover {...props} subject={showSubject ? subject : undefined}>
+      {children}
+    </LibraryCardCover>
+  </Box>
+);
 
 export const Playground = Template.bind({});
 
@@ -38,8 +36,7 @@ Playground.args = {
   fileIcon: <FileIcon fileType={'audio'} size={64} color={COLORS.text06} />,
   color: '#DC5571',
   name: 'El ritmo de la guerra',
-  cover:
-    'https://images.unsplash.com/photo-1627552245715-77d79bbf6fe2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=640&q=80',
+  cover: 'https://uh.gsstatic.es/sfAttachPlugin/1029293.jpg',
   deadlineProps: {
     icon: <ArchiveIcon width={16} height={16} />,
     deadline: new Date('2022-02-20'),

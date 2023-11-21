@@ -2,12 +2,13 @@ import pdf from './google-apps-for-work-datasheet-es.pdf';
 
 export const AUDIO_ASSET = {
   color: '#DC5571',
-  name: 'El ritmo de la guerra',
+  name: 'El ritmo de la guerra y título más largo para ver desbordamiento por ellipsis',
   fileType: 'audio',
   created: '2022-02-04T16:26:31.485Z',
   description:
     'This is a very large description of the book Rythim of War, the fourth book in The Stormlight Archive.',
   tagline: '',
+  programName: ' 1º ESO',
   metadata: [
     { label: 'Quality', value: '128kb' },
     { label: 'Format', value: 'mp3' },
@@ -15,9 +16,15 @@ export const AUDIO_ASSET = {
     { label: 'Transcript', value: 'Not available' },
   ],
   tags: ['Fantasy', 'Adventure', 'Fiction'],
-  cover:
-    'https://images.unsplash.com/photo-1627552245715-77d79bbf6fe2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=640&q=80',
+  cover: 'https://uh.gsstatic.es/sfAttachPlugin/1029293.jpg',
   url: 'https://storage.googleapis.com/media-session/elephants-dream/the-wires.mp3',
+  canAccess: [
+    { fullName: 'John Doe', permissions: ['owner'] },
+    { fullName: 'Mary Jane' },
+    { fullName: 'Peter Parker' },
+    { fullName: 'Will Teacher' },
+    { fullName: 'Tony Stark' },
+  ],
 };
 
 export const YOUTUBE_ASSET = {
@@ -87,7 +94,7 @@ export const URL_ASSET = {
   cover:
     'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/Logo_1200x620_B_bc44bfa5fe.png',
   canAccess: [
-    { fullName: 'John Doe' },
+    { fullName: 'John Doe', permissions: ['owner'] },
     { fullName: 'Mary Jane' },
     { fullName: 'Peter Parker' },
     { fullName: 'Will Teacher' },
@@ -98,7 +105,7 @@ export const URL_ASSET = {
 export const TASK_ASSET = {
   color: '#c8d98c',
   name: 'Leemons (la plataforma de aprendizaje gratuita, potente, flexible y amigable), descubre para ti las nuevas fronteras del aprendizaje y la enseñanza, de la mano de expertos en pedagogía, profesores y neurocientíficos.',
-  fileType: 'task',
+  fileType: 'feedback',
   created: '2022-02-04T16:26:31.485Z',
   description:
     'Leemons (la plataforma de aprendizaje gratuita, potente, flexible y amigable), descubre para ti las nuevas fronteras del aprendizaje y la enseñanza, de la mano de expertos en pedagogía, profesores y neurocientíficos.',
@@ -116,6 +123,12 @@ export const TASK_ASSET = {
     { fullName: 'Will Teacher' },
     { fullName: 'Tony Stark' },
   ],
+  category: {
+    menuItem: {
+      iconSvg:
+        'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/plugin_test_0b058cf8b7.svg',
+    },
+  },
 };
 
 export const CURRICULUM_ASSET = {

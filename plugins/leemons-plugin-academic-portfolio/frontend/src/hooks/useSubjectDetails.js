@@ -2,7 +2,7 @@ import { getSubjectDetails } from '@academic-portfolio/request/subjects';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useSubjectDetails(subjectId, { enabled = true } = {}) {
-  const query = useQuery(
+  return useQuery(
     ['subjectDetail', { subject: subjectId }],
     async () => {
       const response = await getSubjectDetails(subjectId);
@@ -20,6 +20,4 @@ export default function useSubjectDetails(subjectId, { enabled = true } = {}) {
     },
     { enabled }
   );
-
-  return query;
 }

@@ -14,14 +14,15 @@ import {
 } from '@bubbles-ui/components';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import { LibraryItem } from '@leebrary/components/LibraryItem';
-import { LocaleDate, unflatten, useRequestErrorMessage, useStore } from '@common';
+import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getPageItems } from '../helpers/getPageItems';
 import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
@@ -42,6 +43,8 @@ import { CardDetailWrapper } from './CardDetailWrapper';
 import { CardWrapper } from './CardWrapper';
 import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
+import { useAssetListStore } from '../hooks/useAssetListStore';
+import { useAssets } from '../request/hooks/queries/useAssets';
 
 const DRAWER_WIDTH = 350;
 
@@ -97,7 +100,11 @@ function AssetList({
     subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
   }
 
-  const [store, render] = useStore({
+  const location = useLocation();
+
+  const isPinsRoute = location.pathname.includes('pins');
+
+  const initialState = {
     loading: true,
     category: categoryProp,
     categories: categoriesProp,
@@ -114,7 +121,9 @@ function AssetList({
     serverData: {},
     showPublic: showPublicProp,
     searchCriteria: searchProp,
-  });
+  };
+
+  const [store, setStoreValue] = useAssetListStore(initialState);
 
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -136,6 +145,22 @@ function AssetList({
 
   const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
 
+  const {
+    data: assetsData,
+    isLoading,
+    isError,
+  } = useAssets({
+    ids: store.assets.map((item) => item.asset),
+    filters: {
+      published,
+      showPublic: !pinned ? store.showPublic : true,
+      onlyPinned: isPinsRoute,
+    },
+    options: {
+      enabled: !isEmpty(store.assets),
+    },
+  });
+
   // ·········································································
   // DATA PROCESSING
 
@@ -147,8 +172,9 @@ function AssetList({
       name: data.menuItem.label,
     }));
     store.categories = items;
-    if (!isEmpty(selectedCategoryKey)) store.category = find(items, { key: selectedCategoryKey });
-    render();
+    setStoreValue('categories', items);
+    if (!isEmpty(selectedCategoryKey))
+      setStoreValue('category', find(items, { key: selectedCategoryKey }));
   }
 
   async function loadAssetTypes(categoryId) {
@@ -161,8 +187,7 @@ function AssetList({
         })),
         'value'
       );
-      store.assetTypes = types;
-      render();
+      setStoreValue('assetTypes', types);
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -170,9 +195,8 @@ function AssetList({
 
   function clearAssetLoading() {
     setTimeout(() => {
-      store.loading = false;
+      setStoreValue('loading', false);
       loadingRef.current.loading = false;
-      render();
     }, 500);
   }
 
@@ -182,10 +206,9 @@ function AssetList({
       loadingRef.current.waitQuery = null;
       loadingRef.current.firstTime = false;
 
-      store.page = 1;
-      store.asset = null;
-      store.loading = true;
-      render();
+      setStoreValue('loading', true);
+      setStoreValue('asset', null);
+      setStoreValue('page', 1);
       try {
         const query = {
           providerQuery: _filters ? JSON.stringify(_filters) : null,
@@ -224,13 +247,12 @@ function AssetList({
         }
 
         const results = response?.assets || [];
-        store.assets = uniqBy(results, 'asset');
+        setStoreValue('assets', uniqBy(results, 'asset'));
 
         if (isEmpty(results)) {
-          store.serverData = [];
+          setStoreValue('serverData', []);
           clearAssetLoading();
         }
-        render();
       } catch (err) {
         clearAssetLoading();
         addErrorAlert(getErrorMessage(err));
@@ -246,70 +268,68 @@ function AssetList({
     return null;
   }
 
-  async function loadAssetsData() {
-    if (store.assets && !isEmpty(store.assets)) {
-      store.loading = true;
-      render();
+  // async function loadAssetsData() {
+  //   if (store.assets && !isEmpty(store.assets)) {
+  //     setStoreValue('loading', true);
 
-      try {
-        if (!isEmpty(store.assets)) {
-          const paginated = getPageItems({
-            data: store.assets,
-            page: store.page - 1,
-            size: store.size,
-          });
-          const assetIds = paginated.items.map((item) => item.asset);
-          const response = await getAssetsByIdsRequest(assetIds, {
-            published,
-            showPublic: !pinned ? store.showPublic : true,
-          });
+  //     try {
+  //       if (!isEmpty(store.assets)) {
+  //         const paginated = getPageItems({
+  //           data: store.assets,
+  //           page: store.page - 1,
+  //           size: store.size,
+  //         });
+  //         const assetIds = paginated.items.map((item) => item.asset);
+  //         const response = await getAssetsByIdsRequest(assetIds, {
+  //           published,
+  //           showPublic: !pinned ? store.showPublic : true,
+  //         });
 
-          paginated.items = response.assets || [];
-          forEach(paginated.items, (item) => {
-            if (item.file?.metadata?.indexOf('pathsInfo')) {
-              item.file.metadata = JSON.parse(item.file.metadata);
-              delete item.file.metadata.pathsInfo;
-              item.file.metadata = JSON.stringify(item.file.metadata);
-            }
-          });
-          paginated.page += 1;
-          store.serverData = paginated;
-        } else {
-          store.serverData = [];
-        }
-        clearAssetLoading();
-        render();
-      } catch (err) {
-        clearAssetLoading();
-        addErrorAlert(getErrorMessage(err));
-      }
-    }
-  }
+  //         paginated.items = response.assets || [];
+  //         forEach(paginated.items, (item) => {
+  //           if (item.file?.metadata?.indexOf('pathsInfo')) {
+  //             item.file.metadata = JSON.parse(item.file.metadata);
+  //             delete item.file.metadata.pathsInfo;
+  //             item.file.metadata = JSON.stringify(item.file.metadata);
+  //           }
+  //         });
+  //         paginated.page += 1;
+  //         setStoreValue('serverData', paginated);
+  //       } else {
+  //         setStoreValue('serverData', []);
+  //       }
+  //       clearAssetLoading();
+  //     } catch (err) {
+  //       clearAssetLoading();
+  //       addErrorAlert(getErrorMessage(err));
+  //     }
+  //   }
+  // }
 
   async function loadAsset(id, forceLoad) {
     try {
       const item = find(store.serverData.items, { id });
 
       if (item && !forceLoad) {
-        store.asset = prepareAsset(item, published);
+        setStoreValue('asset', prepareAsset(item, published));
       } else {
         const response = await getAssetsByIdsRequest([id]);
         if (!isEmpty(response?.assets)) {
           const value = response.assets[0];
 
-          if (store.asset) store.asset = prepareAsset(value, published);
+          setStoreValue('asset', prepareAsset(value, published));
 
           if (forceLoad && item) {
             const index = store.serverData.items.findIndex((i) => i.id === id);
-            store.serverData.items[index] = value;
-            store.serverData.items = [...store.serverData.items];
-            store.serverData = { ...store.serverData };
+
+            const newItems = [...store.serverData.items];
+            newItems[index] = value;
+            setStoreValue('serverData', { ...store.serverData, items: newItems });
           }
         } else {
-          store.asset = null;
+          setStoreValue('asset', null);
         }
       }
-      render();
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -340,7 +360,7 @@ function AssetList({
       await deleteAssetRequest(id);
       setAppLoading(false);
       addSuccessAlert(t('labels.removeSuccess'));
-      store.asset = null;
+      setStoreValue('asset', null);
       reloadAssets();
     } catch (err) {
       setAppLoading(false);
@@ -378,67 +398,79 @@ function AssetList({
   // EFFECTS
 
   useEffect(() => {
-    store.size = pageSize;
-    render();
+    setStoreValue('size', pageSize);
   }, [JSON.stringify(pageSize)]);
   useEffect(() => {
-    store.page = pageProp || 1;
-    render();
+    setStoreValue('page', pageProp || 1);
   }, [JSON.stringify(pageProp)]);
   useEffect(() => {
-    store.layout = layoutProp;
-    render();
+    setStoreValue('layout', layoutProp);
   }, [JSON.stringify(layoutProp)]);
   useEffect(() => {
-    store.categories = categoriesProp;
-    render();
+    setStoreValue('categories', categoriesProp);
   }, [JSON.stringify(categoriesProp)]);
   useEffect(() => {
-    store.assetType = assetTypeProp;
-    render();
+    setStoreValue('assetType', assetTypeProp);
   }, [JSON.stringify(assetTypeProp)]);
   useEffect(() => {
-    store.showPublic = showPublicProp;
-    render();
+    setStoreValue('showPublic', showPublicProp);
   }, [JSON.stringify(showPublicProp)]);
   useEffect(() => {
     onLoading(store.loading);
   }, [store.loading]);
 
   useEffect(() => {
+    if (assetsData && !isEmpty(assetsData)) {
+      const paginated = getPageItems({
+        data: store.assets,
+        page: store.page - 1,
+        size: store.size,
+      });
+
+      paginated.items = assetsData || [];
+      forEach(paginated.items, (item) => {
+        if (item.file?.metadata?.indexOf('pathsInfo')) {
+          item.file.metadata = JSON.parse(item.file.metadata);
+          delete item.file.metadata.pathsInfo;
+          item.file.metadata = JSON.stringify(item.file.metadata);
+        }
+      });
+      paginated.page += 1;
+      setStoreValue('serverData', paginated);
+    } else {
+      setStoreValue('serverData', []);
+    }
+    clearAssetLoading();
+  }, [assetsData, isLoading, isError]);
+
+  useEffect(() => {
     if (!isEmpty(assetProp?.id) && assetProp.id !== store.asset?.id) {
-      store.asset = assetProp;
-      render();
+      setStoreValue('asset', assetProp);
     } else if (isString(assetProp) && assetProp !== store.asset?.id) {
       loadAsset(assetProp);
     } else {
-      store.asset = null;
-      render();
+      setStoreValue('asset', null);
     }
   }, [JSON.stringify(assetProp)]);
 
   useEffect(() => {
     if (!isEmpty(categoryProp?.id)) {
-      store.category = categoryProp;
-      render();
+      setStoreValue('category', categoryProp);
     } else if (isString(categoryProp) && isEmpty(store.categories)) {
       loadCategories(categoryProp);
     } else if (isString(categoryProp) && !isEmpty(store.categories)) {
-      store.category = find(store.categories, { key: categoryProp });
-      render();
+      setStoreValue('category', find(store.categories, { key: categoryProp }));
     }
   }, [JSON.stringify(categoryProp), store.categories]);
 
   useEffect(() => {
     if (!isEmpty(store.category?.id)) {
-      // loadAssets(category.id);
       loadAssetTypes(store.category.id);
     } else if (categoryProp?.key === 'pins' || categoryProp?.key === 'leebrary-shared') {
       const cat = find(store.categories, { key: 'media-files' });
       if (cat) loadAssetTypes(cat.id);
     } else {
-      store.assetTypes = null;
-      render();
+      setStoreValue('assetTypes', null);
     }
   }, [store.category, JSON.stringify(categoryProp)]);
 
@@ -446,17 +478,16 @@ function AssetList({
     if (store.assetTypes && !isEmpty(store.assetTypes) && store.assetTypes[0].value !== '') {
       const label = t('labels.allResourceTypes');
 
-      if (label !== 'labels.allResourceTypes') {
-        store.assetTypes = [{ label, value: '' }, ...store.assetTypes];
-        render();
+      if (label !== t('labels.allResourceTypes')) {
+        setStoreValue('assetTypes', [{ label, value: '' }, ...store.assetTypes]);
       }
     }
   }, [store.assetTypes, t]);
 
-  useEffect(() => {
-    // Good
-    loadAssetsData();
-  }, [store.assets, store.page, store.size]);
+  // useEffect(() => {
+  //   // Good
+  //   loadAssetsData();
+  // }, [store.assets, store.page, store.size]);
 
   useEffect(() => {
     // Good
@@ -465,7 +496,7 @@ function AssetList({
     } else if (!isEmpty(store.category?.id) || pinned) {
       loadAssets(store.category?.id, searchDebounced, store.assetType, filters);
     }
-  }, [searchDebounced, store.category, pinned, store.assetType, filters]);
+  }, [searchDebounced, store.category, pinned, store.assetType, filters, assetsData]);
 
   useEffect(() => {
     // Good
@@ -487,9 +518,8 @@ function AssetList({
   // HANDLERS
 
   function handleOnSelect(item) {
-    store.openDetail = true;
+    setStoreValue('openDetail', true);
     onSelectItem(item);
-    render();
   }
 
   function handleOnDelete(item) {
@@ -505,22 +535,20 @@ function AssetList({
   }
 
   function handleOnEdit(item) {
-    store.asset = item;
+    setStoreValue('asset', item);
     onEditItem(item);
-    render();
   }
 
   function handleOnShare(item) {
-    store.sharingItem = item;
-    render();
+    setStoreValue('sharingItem', item);
   }
 
   /*
-    const handleOnShowPublic = (value) => {
-      setShowPublic(value);
-      onShowPublic(value);
-    };
-    */
+const handleOnShowPublic = (value) => {
+  setShowPublic(value);
+  onShowPublic(value);
+};
+*/
 
   function handleOnPin(item) {
     pinAsset(item);
@@ -537,15 +565,13 @@ function AssetList({
   }
 
   function handleOnChangeCategory(key) {
-    store.assetType = '';
-    store.category = find(store.categories, { key });
-    render();
+    setStoreValue('assetType', '');
+    setStoreValue('category', find(store.categories, { key }));
   }
 
   function handleOnTypeChange(type) {
     if (isEmbedded) {
-      store.assetType = type;
-      render();
+      setStoreValue('assetType', type);
     }
 
     onTypeChange(type);
@@ -576,15 +602,8 @@ function AssetList({
   );
 
   const cardVariant = useMemo(() => {
-    let option = 'media';
-    switch (store.category?.key) {
-      case 'bookmarks':
-        option = 'bookmark';
-        break;
-      default:
-        break;
-    }
-    return option;
+    const categoryKey = store.category?.key;
+    return categoryKey === 'bookmarks' ? 'bookmark' : 'media';
   }, [store.category]);
 
   const showDrawer = useMemo(
@@ -592,27 +611,26 @@ function AssetList({
     [store.loading, store.asset]
   );
 
-  function toggleDetail(val) {
-    if (!val) {
-      setTimeout(() => {
-        store.isDetailOpened = val;
-        render();
-      }, 10);
-      setTimeout(() => {
-        store.openDetail = val;
-        render();
-      }, 200); // 200
-    } else {
-      setTimeout(() => {
-        store.isDetailOpened = val;
-        render();
-      }, 500); // 500
-      setTimeout(() => {
-        store.openDetail = val;
-        render();
-      }, 10);
-    }
-  }
+  const toggleDetail = useCallback(
+    (val) => {
+      if (!val) {
+        setTimeout(() => {
+          setStoreValue('isDetailOpened', val);
+        }, 10);
+        setTimeout(() => {
+          setStoreValue('openDetail', val);
+        }, 200); // 200
+      } else {
+        setTimeout(() => {
+          setStoreValue('isDetailOpened', val);
+        }, 500); // 500
+        setTimeout(() => {
+          setStoreValue('openDetail', val);
+        }, 10);
+      }
+    },
+    [setStoreValue]
+  );
 
   useEffect(() => {
     toggleDetail(showDrawer);
@@ -647,6 +665,7 @@ function AssetList({
             onUnpin={handleOnUnpin}
             onDownload={handleOnDownload}
             locale={locale}
+            assetsLoading={loadingRef.current.loading}
           />
         ),
         itemMinWidth,
@@ -689,8 +708,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-        ? t('cardToolbar.pin')
-        : false,
+          ? t('cardToolbar.pin')
+          : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -749,6 +768,16 @@ function AssetList({
   // ·········································································
   // RENDER
 
+  const childNotEmbeddedStyles = {
+    flex: 0,
+    alignItems: 'end',
+    width: containerRect.width,
+    top: containerRect.top,
+    position: 'fixed',
+    zIndex: 101,
+    backgroundColor: '#fff',
+  };
+
   return (
     <>
       <Stack
@@ -765,27 +794,14 @@ function AssetList({
           skipFlex
           spacing={5}
           padding={isEmbedded ? 0 : 5}
-          style={
-            isEmbedded
-              ? { flex: 0, alignItems: 'end' }
-              : {
-                  flex: 0,
-                  alignItems: 'end',
-                  width: containerRect.width,
-                  top: containerRect.top,
-                  position: 'fixed',
-                  zIndex: 101,
-                  backgroundColor: '#fff',
-                }
-          }
+          style={isEmbedded ? { flex: 0, alignItems: 'end' } : childNotEmbeddedStyles}
         >
           <Stack fullWidth spacing={5}>
             {canSearch && (
               <SearchInput
                 variant={isEmbedded ? 'default' : 'filled'}
                 onChange={(e) => {
-                  store.searchCriteria = e;
-                  render();
+                  setStoreValue('searchCriteria', e);
                 }}
                 value={store.searchCriteria}
                 disabled={store.loading}
@@ -814,8 +830,7 @@ function AssetList({
                 size="xs"
                 value={store.layout}
                 onChange={(e) => {
-                  store.layout = e;
-                  render();
+                  setStoreValue('layout', e);
                 }}
               />
             </Box>
@@ -894,12 +909,10 @@ function AssetList({
                   }}
                   onSelect={handleOnSelect}
                   onPageChange={(e) => {
-                    store.page = e;
-                    render();
+                    setStoreValue('page', e);
                   }}
                   onSizeChange={(e) => {
-                    store.size = e;
-                    render();
+                    setStoreValue('size', e);
                   }}
                 />
               </Box>
@@ -959,12 +972,10 @@ function AssetList({
         sharing={true}
         onNext={() => {
           loadAsset(store.sharingItem.id, true);
-          store.sharingItem = null;
-          render();
+          setStoreValue('sharingItem', null);
         }}
         onClose={() => {
-          store.sharingItem = null;
-          render();
+          setStoreValue('sharingItem', null);
         }}
       />
     </>

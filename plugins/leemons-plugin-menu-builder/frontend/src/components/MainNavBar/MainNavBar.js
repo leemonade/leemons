@@ -108,7 +108,7 @@ const MainNavBar = ({
           />
         );
       }),
-    [isCollapsed]
+    [isCollapsed, activeItem, activeSubItem, menuData]
   );
 
   return (
