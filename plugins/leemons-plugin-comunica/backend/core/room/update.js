@@ -41,7 +41,7 @@ async function update({
   if (subName) toUpdate.subName = subName;
   if (initDate) toUpdate.initDate = initDate;
   if (metadata) toUpdate.metadata = JSON.stringify(metadata);
-  if (parentRoom) toUpdate.parentRoom = parentRoom;
+  if (parentRoom) toUpdate.parentRoom = _.isArray(parentRoom) ? parentRoom[0] : parentRoom;
   if (nameReplaces) toUpdate.nameReplaces = JSON.stringify(nameReplaces);
 
   const room = await ctx.tx.db.Room.findOneAndUpdate({ key }, toUpdate, { new: true, lean: true });

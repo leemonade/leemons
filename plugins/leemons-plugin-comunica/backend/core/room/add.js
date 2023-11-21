@@ -44,7 +44,7 @@ async function add({
     subName,
     icon,
     image,
-    parentRoom,
+    parentRoom: _.isArray(parentRoom) ? parentRoom[0] : parentRoom,
     useEncrypt,
     program,
     center,

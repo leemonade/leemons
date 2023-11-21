@@ -228,7 +228,7 @@ async function sendWeeklyEmails({ ctx }) {
     }),
   ]);
 
-  const assets = await getAsset({ id: _.map(assignables, 'asset') });
+  const assets = await getAsset({ id: _.map(assignables, 'asset'), ctx });
 
   const assetById = _.keyBy(assets, 'id');
   const classesById = _.keyBy(classes, 'id');

@@ -22,6 +22,7 @@ async function grantAccessUserAgentToCalendar({ key, userAgentId, actionName, ct
 
   const { warnings } = await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: userAgentIds,
+    throwIfExists: false,
     data: {
       permissionName: permissionConfig.permissionName,
       actionNames,

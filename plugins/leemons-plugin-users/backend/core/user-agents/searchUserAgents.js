@@ -153,16 +153,19 @@ async function searchUserAgents({
   // EN: Finally, the agents and their corresponding users according to the filters
   let userAgents = await ctx.tx.db.UserAgent.find(finalQuery).select(['id']).lean();
 
+  console.log('search hola', program);
   if (program) {
+    console.log('hay programa', program, course);
     const usersAgentIdsInProgram = await ctx.tx.call(
       'academic-portfolio.programs.getUsersInProgram',
       { program, course }
     );
+    console.log('usersAgentIdsInProgram', usersAgentIdsInProgram);
 
     userAgents = _.filter(userAgents, (userAgent) => usersAgentIdsInProgram.includes(userAgent.id));
   }
 
-  return getUserAgentsInfo({
+  return await getUserAgentsInfo({
     userAgentIds: _.map(userAgents, 'id'),
     withProfile,
     withCenter,
