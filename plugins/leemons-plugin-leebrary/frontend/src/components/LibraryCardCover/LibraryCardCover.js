@@ -163,7 +163,7 @@ const LibraryCardCover = ({
         <Box className={classes.titleWrapper}>
           {renderSubjectAndBadge()}
           <TextClamp lines={4}>
-            <Title order={5} className={classes.title}>
+            <Title order={5} className={classes.title} data-cypress-id="library-card-asset-name">
               {name}
             </Title>
           </TextClamp>

@@ -760,6 +760,7 @@ function AssetList({
       >
         {/* SEARCH BAR ············· */}
         <Stack
+          data-cypress-id="search-asset"
           ref={childRef}
           fullWidth
           skipFlex
@@ -796,6 +797,7 @@ function AssetList({
             {!!filterComponents && filterComponents({ loading: store.loading })}
             {!isEmpty(store.assetTypes) && canChangeType && (
               <Select
+                data-cypress-id="search-asset-type-selector"
                 skipFlex
                 data={store.assetTypes}
                 value={store.assetType}
@@ -877,6 +879,7 @@ function AssetList({
                 })}
               >
                 <PaginatedList
+                  data-cypress-id="paginated-asset-list"
                   {...store.serverData}
                   {...listProps}
                   paperProps={paperProps}
