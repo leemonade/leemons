@@ -9,6 +9,9 @@ const { uniq, map, groupBy } = require('lodash');
  * @returns {Object} - The parent assignables grouped by asset.
  */
 async function getParentAssignables({ ids, ctx }) {
+  if (!ids.length) {
+    return {};
+  }
   const parentAssignables = await ctx.tx.db.Assignables.find({
     $or: ids.map((id) => ({
       'submission.activities.activity': id,

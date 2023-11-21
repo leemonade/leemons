@@ -32,7 +32,7 @@ async function getMessages({ key, userAgent, ctx }) {
   console.log('messages', messages);
 
   _.forEach(messages, (message) => {
-    message.message = JSON.parse(message.message);
+    message.message = JSON.parse(message.message || null);
     if (message.isEncrypt) {
       message.message = decrypt(message.message, userAgentsById[message.userAgent].encryptKey);
     }

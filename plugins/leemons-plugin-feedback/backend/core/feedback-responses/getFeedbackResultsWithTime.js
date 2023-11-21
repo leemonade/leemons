@@ -17,7 +17,7 @@ async function getFeedbackResultsWithTime({ instanceId, ctx }) {
   const responsesByUser = groupBy(
     map(userResponses, (value) => ({
       ...value,
-      response: JSON.parse(value.response),
+      response: JSON.parse(value.response || null),
     })),
     'userAgent'
   );

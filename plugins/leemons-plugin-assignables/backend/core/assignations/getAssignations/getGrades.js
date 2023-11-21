@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 async function getGrades({ assignationsData, ctx }) {
+  if (!assignationsData?.length) return {};
   const orQuery = [];
 
   assignationsData.forEach(({ user, id }) => {

@@ -59,12 +59,15 @@ const instancesSchema = new mongoose.Schema(
     },
     curriculum: {
       type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
     metadata: {
       type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
     relatedAssignableInstances: {
       type: mongoose.Schema.Types.Mixed,
+      default: { before: [], after: [] },
     },
     event: {
       type: String,
@@ -77,13 +80,10 @@ const instancesSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 
-const instancesModel = newModel(
-  mongoose.connection,
-  'v1::assignables_Instances',
-  instancesSchema
-);
+const instancesModel = newModel(mongoose.connection, 'v1::assignables_Instances', instancesSchema);
 
 module.exports = { instancesSchema, instancesModel };

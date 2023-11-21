@@ -1,5 +1,5 @@
 async function getDatasetForm() {
-  return leemons.api('families-emergency-numbers/dataset-form', {
+  return leemons.api('v1/families-emergency-numbers/emergencyPhones/dataset-form', {
     allAgents: true,
   });
 }

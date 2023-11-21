@@ -1,5 +1,5 @@
 async function listCategories() {
-  const response = await leemons.api('leebrary/categories/menu-list', {
+  const response = await leemons.api('v1/leebrary/categories/menu-list', {
     allAgents: true,
   });
 

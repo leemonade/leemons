@@ -3,6 +3,9 @@ const { LeemonsError } = require('@leemons/error');
 const { validateAddClassTeachers } = require('../../validations/forms');
 const { classByIds } = require('./classByIds');
 const { add: addTeacher } = require('./teacher/add');
+const {
+  addComunicaRoomsBetweenStudentsAndTeachers,
+} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function addClassTeachers({ data, ctx }) {
   await validateAddClassTeachers(data);
@@ -27,6 +30,9 @@ async function addClassTeachers({ data, ctx }) {
   });
 
   await Promise.all(promises);
+
+  const classe = (await classByIds({ ids: data.class, ctx }))[0];
+  await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
   return getClass();
 }

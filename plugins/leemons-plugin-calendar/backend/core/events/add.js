@@ -45,7 +45,7 @@ async function add({ key, data, ignoreType, ctx }) {
     isCustomPermission: true,
   });
   await addNexts({ eventId: event.id, ctx });
-  return { ...event, data: _.isString(event.data) ? JSON.parse(event.data) : event.data };
+  return { ...event, data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data };
 }
 
 module.exports = { add };

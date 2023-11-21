@@ -34,8 +34,8 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   // ES: Ten en mente que estamos trabajando con 2 recursos: Assignations para estudiantes e Instancias para profesores.
   const isTeacher = [true, 1, 'true'].includes(query?.isTeacher);
   /*
-    === TEACHER ===
-  */
+          === TEACHER ===
+        */
   if (isTeacher) {
     let instances = await getTeacherInstances({ ctx });
 
@@ -65,8 +65,8 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   }
 
   /*
-    === STUDENT ===
-  */
+          === STUDENT ===
+        */
   let assignations = await getStudentAssignations({ ctx });
 
   let instances = filterInstancesByRoleAndQuery({

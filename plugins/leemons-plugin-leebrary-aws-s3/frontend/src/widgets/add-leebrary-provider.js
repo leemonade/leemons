@@ -21,7 +21,7 @@ export default function AddLeebraryProvider() {
 
   async function load() {
     try {
-      const { config } = await leemons.api(`leebrary-aws-s3/config`, {
+      const { config } = await leemons.api(`v1/leebrary-aws-s3/config`, {
         allAgents: true,
         method: 'GET',
       });
@@ -38,7 +38,7 @@ export default function AddLeebraryProvider() {
 
   async function onBeforeAdd(config) {
     try {
-      await leemons.api(`leebrary/providers/config`, {
+      await leemons.api(`v1/leebrary/providers/config`, {
         allAgents: true,
         method: 'POST',
         body: {
@@ -57,7 +57,7 @@ export default function AddLeebraryProvider() {
 
   async function onUpdate({ newItem }) {
     try {
-      await leemons.api(`leebrary/providers/config`, {
+      await leemons.api(`v1/leebrary/providers/config`, {
         allAgents: true,
         method: 'POST',
         body: {
@@ -74,7 +74,7 @@ export default function AddLeebraryProvider() {
 
   async function onBeforeRemove() {
     try {
-      await leemons.api(`leebrary/providers/config/delete`, {
+      await leemons.api(`v1/leebrary/providers/config/delete`, {
         allAgents: true,
         method: 'POST',
         body: {

@@ -4,14 +4,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
+  createStyles,
   DropdownButton,
   Tooltip,
-  createStyles,
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { fireEvent } from 'leemons-hooks';
 import { cloneDeep, get, set, without } from 'lodash';
 import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';

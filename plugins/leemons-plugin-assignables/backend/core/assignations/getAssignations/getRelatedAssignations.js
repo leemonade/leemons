@@ -28,7 +28,7 @@ async function getRelatedAssignations({ assignationsData, ctx }) {
 
   const relatedInstancesByInstance = {};
   relatedInstances.forEach(({ id, relatedAssignableInstances }) => {
-    const { before } = JSON.parse(relatedAssignableInstances);
+    const { before } = relatedAssignableInstances;
 
     relatedInstancesByInstance[id] = before;
   });
@@ -60,6 +60,9 @@ async function getRelatedAssignations({ assignationsData, ctx }) {
     });
   });
 
+  if (!assignationsToSearch.length) {
+    return {};
+  }
 
   const relatedAssignations = await ctx.tx.db.Assignations.find({
     $or: assignationsToSearch,
@@ -90,5 +93,4 @@ async function getRelatedAssignations({ assignationsData, ctx }) {
   return relatedAssignationsByAssignation;
 }
 
-
-module.exports = {getRelatedAssignations}
+module.exports = { getRelatedAssignations };

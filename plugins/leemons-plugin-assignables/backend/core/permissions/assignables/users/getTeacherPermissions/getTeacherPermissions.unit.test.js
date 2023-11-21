@@ -48,8 +48,7 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions':
-        getUserAgentPermissionsHandler,
+      'users.permissions.getUserAgentPermissions': getUserAgentPermissionsHandler,
     },
     models: {
       Classes: newModel(mongooseConnection, 'Classes', classesSchema),
@@ -87,12 +86,10 @@ describe('getTeacherPermissions function', () => {
     expect(getUserAgentPermissionsHandler).toBeCalledWith({
       userAgent: ctx.meta.userSession.userAgents,
       query: {
-        permissionName: {
-          $in: expect.arrayContaining([
-            'academic-portfolio.class.classId1',
-            'academic-portfolio.class.classId2',
-          ]),
-        },
+        permissionName: expect.arrayContaining([
+          'academic-portfolio.class.classId1',
+          'academic-portfolio.class.classId2',
+        ]),
         actionName: 'edit',
       },
     });

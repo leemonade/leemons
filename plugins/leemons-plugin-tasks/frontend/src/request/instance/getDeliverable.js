@@ -1,5 +1,5 @@
 export default async function getDeliverableRequest({ instance, student, type }) {
-  return leemons.api(`tasks/tasks/instances/${instance}/${student}/deliverables/${type}`, {
+  return leemons.api(`v1/tasks/tasks/instances/${instance}/${student}/deliverables/${type}`, {
     method: 'GET',
   });
 }

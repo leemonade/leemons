@@ -10,7 +10,7 @@ async function removeSubjects({ ids, ctx }) {
   }
 
   const { deletedCount } = await ctx.tx.db.Subjects.deleteMany({
-    id: { $in: ids },
+    id: ids,
   });
 
   return deletedCount;

@@ -59,7 +59,7 @@ function transformJsonOrUiSchema({ jsonSchema, saveKeys, replaces }) {
     });
   }
 
-  values = JSON.parse(values);
+  values = JSON.parse(values || null);
 
   let obj;
   let property;
@@ -103,9 +103,15 @@ module.exports = {
   arrKeys,
   getJsonSchemaProfilePermissionsKeys,
   getJsonSchemaProfilePermissionsKeysByType({ jsonSchema: _jsonSchema }) {
-    const jsonSchema = _.cloneDeep(_.isString(_jsonSchema) ? JSON.parse(_jsonSchema) : _jsonSchema);
-    const profiles = _.clone(_.isString(jsonSchema) ? JSON.parse(jsonSchema) : jsonSchema || {});
-    const roles = _.clone(_.isString(jsonSchema) ? JSON.parse(jsonSchema) : jsonSchema || {});
+    const jsonSchema = _.cloneDeep(
+      _.isString(_jsonSchema) ? JSON.parse(_jsonSchema || null) : _jsonSchema
+    );
+    const profiles = _.clone(
+      _.isString(jsonSchema) ? JSON.parse(jsonSchema || null) : jsonSchema || {}
+    );
+    const roles = _.clone(
+      _.isString(jsonSchema) ? JSON.parse(jsonSchema || null) : jsonSchema || {}
+    );
     profiles.properties = {};
     roles.properties = {};
     _.forIn(jsonSchema.properties, (value, key) => {

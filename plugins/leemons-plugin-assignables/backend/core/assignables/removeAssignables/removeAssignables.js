@@ -15,7 +15,7 @@ const { getAssignables } = require('../getAssignables');
  * @returns {Promise<number>} The count of modified assignables.
  */
 async function removeAssignables({ ids, ctx }) {
-  const assignables = getAssignables({ ids });
+  const assignables = await getAssignables({ ids, ctx });
 
   // TODO: Include metadata.leebrary ids
   const assetIds = assignables.map((assignable) => assignable.asset?.id ?? assignable.asset);
@@ -37,7 +37,7 @@ async function removeAssignables({ ids, ctx }) {
 
   const { modifiedCount } = await ctx.tx.db.Assignables.deleteMany(
     {
-      id: { $in: ids },
+      id: ids,
     },
     {
       soft: true,

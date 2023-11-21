@@ -1,5 +1,5 @@
 async function addProgramConfig(body) {
-  return leemons.api('curriculum/node-levels', {
+  return leemons.api('v1/curriculum/node-levels', {
     allAgents: true,
     method: 'PUT',
     body,
@@ -7,7 +7,7 @@ async function addProgramConfig(body) {
 }
 
 async function updateProgramConfig(body) {
-  return leemons.api('curriculum/node-levels', {
+  return leemons.api('v1/curriculum/node-levels', {
     allAgents: true,
     method: 'PUT',
     body,

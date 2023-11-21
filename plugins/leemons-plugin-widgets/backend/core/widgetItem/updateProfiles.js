@@ -17,7 +17,7 @@ async function updateProfiles({ items, ctx }) {
   // ES:  Borramos los perfiles actuales de los items
   await Promise.all(
     _.map(items, (item) =>
-      ctx.tx.db.WidgetItemProfile.deleteMany({
+      ctx.tx.db.WidgetItemProfiles.deleteMany({
         zoneKey: item.zoneKey,
         key: item.key,
       })
@@ -29,7 +29,7 @@ async function updateProfiles({ items, ctx }) {
     _.map(items, (item) =>
       Promise.all(
         _.map(item.profiles, (profile) =>
-          ctx.tx.db.WidgetItemProfile.create({
+          ctx.tx.db.WidgetItemProfiles.create({
             profile,
             zoneKey: item.zoneKey,
             key: item.key,

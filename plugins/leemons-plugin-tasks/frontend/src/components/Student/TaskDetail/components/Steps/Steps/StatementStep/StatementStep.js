@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { uniqBy } from 'lodash';
 
 function CurriculumTab({ subjects, curriculumTab, labels }) {
   const subject = subjects[curriculumTab];
@@ -63,13 +64,13 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
                 {`
               <ul>
               ${curriculum?.objectives
-                    ?.map(
-                      (objective) =>
-                        `<li>
+                ?.map(
+                  (objective) =>
+                    `<li>
                     ${objective}
                   </li>`
-                    )
-                    ?.join('')}
+                )
+                ?.join('')}
               </ul>
             `}
               </HtmlText>
@@ -81,19 +82,22 @@ function CurriculumTab({ subjects, curriculumTab, labels }) {
   );
 }
 
-function CurriculumRender({ assignation, showCurriculum: showCurriculumObj, labels }) {
+function CurriculumRender({ assignation, showCurriculum: showCurriculumObj = {}, labels }) {
   const curriculum = useCurriculumVisibleValues({ assignation });
   const subjects = useClassesSubjects(assignation.instance.classes);
 
   const subjectsWithCurriculum = React.useMemo(
     () =>
-      curriculum
-        ?.map((subject) => ({
-          ...subject,
-          name: subjects.find((s) => s.id === subject.subject)?.name,
-        }))
-        ?.filter((subject) => subject.name),
-    [subjects, curriculum]
+      uniqBy(
+        curriculum
+          ?.map((subject) => ({
+            ...subject,
+            name: subjects.find((s) => s.id === subject.subject)?.name,
+          }))
+          ?.filter((subject) => subject.name),
+        'subject'
+      ),
+    [(subjects, curriculum)]
   );
 
   const [curriculumTab, setCurriculumTab] = React.useState(0);
@@ -134,7 +138,7 @@ CurriculumRender.propTypes = {
 };
 
 function useSupportImage(assignable) {
-  const query = useQuery(
+  return useQuery(
     ['asset', { id: assignable?.metadata?.leebrary?.statementImage?.[0] }],
     () =>
       getAssetsByIdsRequest([assignable?.metadata?.leebrary?.statementImage?.[0]], {
@@ -145,8 +149,6 @@ function useSupportImage(assignable) {
         .then((asset) => (asset ? prepareAsset(asset) : asset)),
     { enabled: !!assignable?.metadata?.leebrary?.statementImage?.[0] }
   );
-
-  return query;
 }
 
 export default function StatementStep({

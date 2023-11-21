@@ -1,10 +1,8 @@
 export default function createInstanceRequest(taskId, body) {
-  const instance = leemons
-    .api(`tasks/tasks/${taskId}/assignments/instance`, {
+  return leemons
+    .api(`v1/tasks/assignments/${taskId}/instance`, {
       method: 'POST',
       body,
     })
     .then(({ instance: i }) => i);
-
-  return instance;
 }

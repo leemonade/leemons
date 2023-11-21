@@ -140,6 +140,7 @@ const LoginProfileSelector = ({
             }}
             render={({ field: { onChange, value, onBlur } }) => (
               <Select
+                data-cypress-id="centerSelector"
                 data={profileCenters}
                 required
                 placeholder={labels.centerPlaceholder}

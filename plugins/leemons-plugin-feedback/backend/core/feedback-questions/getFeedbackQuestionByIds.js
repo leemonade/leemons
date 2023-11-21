@@ -7,7 +7,7 @@ async function getFeedbackQuestionByIds({ id, ctx }) {
   }).lean();
   const assetIds = [];
   _.forEach(questions, (question) => {
-    question.properties = JSON.parse(question.properties);
+    question.properties = JSON.parse(question.properties || null);
     if (question.properties.withImages && question.properties.responses?.length) {
       _.forEach(question.properties.responses, (response) => {
         assetIds.push(response.value.image);
@@ -16,7 +16,7 @@ async function getFeedbackQuestionByIds({ id, ctx }) {
   });
 
   const questionAssets = await ctx.tx.call('leebrary.assets.getByIds', {
-    assetIds,
+    ids: assetIds,
     withFiles: true,
   });
 

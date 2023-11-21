@@ -22,7 +22,10 @@ const deploymentPluginsSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    minimize: false,
+  }
 );
 
 deploymentPluginsSchema.index({ deploymentID: 1, pluginName: 1 }, { unique: true });

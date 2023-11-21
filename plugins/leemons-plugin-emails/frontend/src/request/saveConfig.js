@@ -1,5 +1,5 @@
 async function saveConfig(body) {
-  return leemons.api('emails/config', {
+  return leemons.api('v1/emails/config', {
     allAgents: true,
     method: 'POST',
     body,

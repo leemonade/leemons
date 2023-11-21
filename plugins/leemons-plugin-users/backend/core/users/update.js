@@ -17,7 +17,7 @@ async function update({ userId, dataset, birthdate, preferences, avatar, ctx, ..
   if (dataset) await setUserDatasetInfo({ userId, value: dataset, ctx });
 
   if (oldUser.locale !== user.locale) {
-    leemons.socket.emit(userId, 'USER_CHANGE_LOCALE', {
+    ctx.socket.emit(userId, 'USER_CHANGE_LOCALE', {
       old: oldUser.locale,
       new: user.locale,
     });

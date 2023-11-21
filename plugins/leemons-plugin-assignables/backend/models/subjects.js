@@ -33,17 +33,15 @@ const subjectsSchema = new mongoose.Schema(
     },
     curriculum: {
       type: mongoose.SchemaTypes.Mixed,
+      default: {},
     },
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 
-const subjectsModel = newModel(
-  mongoose.connection,
-  'v1::assignables_Subjects',
-  subjectsSchema
-);
+const subjectsModel = newModel(mongoose.connection, 'v1::assignables_Subjects', subjectsSchema);
 
 module.exports = { subjectsModel, subjectsSchema };

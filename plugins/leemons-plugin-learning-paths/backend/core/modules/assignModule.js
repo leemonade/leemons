@@ -2,7 +2,7 @@ const { omit, clone } = require('lodash');
 
 module.exports = async function assignModule({ moduleId, config, ctx }) {
   const moduleAssignable = await ctx.tx.call('assignables.assignables.getAssignable', {
-    ids: moduleId,
+    id: moduleId,
   });
 
   const { activities } = moduleAssignable.submission;
@@ -96,12 +96,12 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
 
     activitiesInstanceIds.push(instanceCreated.id);
     /*
-    1. Crear el objeto de asignación de la actividad
-    2. Guardar el id de la asignación
-    3. Tener en cuenta las dependencias, pues tendremos que usar el id del anterior
+                    1. Crear el objeto de asignación de la actividad
+                    2. Guardar el id de la asignación
+                    3. Tener en cuenta las dependencias, pues tendremos que usar el id del anterior
 
-    Nota: De momento el requirement no es algo de assignables, por lo que usaremos el required: bool
-  */
+                    Nota: De momento el requirement no es algo de assignables, por lo que usaremos el required: bool
+                  */
   }
 
   await ctx.tx.call('assignables.assignableInstances.updateAssignableInstance', {

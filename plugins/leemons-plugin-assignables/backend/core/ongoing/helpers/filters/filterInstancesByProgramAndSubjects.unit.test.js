@@ -36,7 +36,7 @@ it('Should correctly filter instances by programs parsing data if needed', () =>
   const instances = [instanceOne, instanceTwo];
 
   const filters = {
-    programs: JSON.stringify(instanceSubjectsProgramsAndClasses[instanceTwo.id].programs),
+    programs: instanceSubjectsProgramsAndClasses[instanceTwo.id].programs,
   };
 
   const expectedResponse = [instanceTwo];
@@ -62,7 +62,7 @@ it('Should correctly filter instances by subjects parsing data if needed', () =>
   // Arrange
   const instances = [instanceOne, instanceTwo];
   const filters = {
-    subjects: JSON.stringify(instanceSubjectsProgramsAndClasses[instanceTwo.id].subjects),
+    subjects: instanceSubjectsProgramsAndClasses[instanceTwo.id].subjects,
   };
 
   const expectedResponse = [instanceTwo];

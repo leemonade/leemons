@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const { sqlDatetime, diffHours } = require('@leemons/utils');
 
-const getAsset = require('../leebrary/assets/getAsset');
+const { getAsset } = require('../leebrary/assets/getAsset');
 
 async function getNextActivities({ userAgents, ctx }) {
   const now = new Date();
@@ -228,7 +228,7 @@ async function sendWeeklyEmails({ ctx }) {
     }),
   ]);
 
-  const assets = await getAsset({ id: _.map(assignables, 'asset') });
+  const assets = await getAsset({ id: _.map(assignables, 'asset'), ctx });
 
   const assetById = _.keyBy(assets, 'id');
   const classesById = _.keyBy(classes, 'id');

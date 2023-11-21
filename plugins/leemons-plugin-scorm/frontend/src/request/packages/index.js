@@ -9,7 +9,7 @@ async function savePackage(packageData) {
     body.file = file.id;
   }
 
-  return leemons.api('scorm/package', {
+  return leemons.api('v1/scorm/package', {
     allAgents: true,
     method: 'POST',
     body,
@@ -17,21 +17,21 @@ async function savePackage(packageData) {
 }
 
 async function getPackage(id) {
-  return leemons.api(`scorm/package/${id}`, {
+  return leemons.api(`v1/scorm/package/${id}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function deletePackage(id) {
-  return leemons.api(`scorm/package/${id}`, {
+  return leemons.api(`v1/scorm/package/${id}`, {
     allAgents: true,
     method: 'DELETE',
   });
 }
 
 async function duplicatePackage(id, published) {
-  return leemons.api(`scorm/package/duplicate`, {
+  return leemons.api(`v1/scorm/package/duplicate`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -42,7 +42,7 @@ async function duplicatePackage(id, published) {
 }
 
 async function assignPackage(id, data) {
-  return leemons.api(`scorm/package/assign`, {
+  return leemons.api(`v1/scorm/package/assign`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -53,7 +53,7 @@ async function assignPackage(id, data) {
 }
 
 async function sharePackage(id, { canAccess }) {
-  return leemons.api(`scorm/package/share`, {
+  return leemons.api(`v1/scorm/package/share`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -64,7 +64,7 @@ async function sharePackage(id, { canAccess }) {
 }
 
 async function getSupportedVersions() {
-  return leemons.api('scorm/package/supported-versions', {
+  return leemons.api('v1/scorm/package/supported-versions', {
     allAgents: true,
     method: 'GET',
   });

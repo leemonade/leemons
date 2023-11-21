@@ -33,7 +33,7 @@ const {
 module.exports = {
   postSubjectRest: {
     rest: {
-      path: '/',
+      path: '/subject',
       method: 'POST',
     },
     middlewares: [
@@ -53,7 +53,7 @@ module.exports = {
   },
   putSubjectRest: {
     rest: {
-      path: '/',
+      path: '/subject',
       method: 'PUT',
     },
     middlewares: [
@@ -123,7 +123,7 @@ module.exports = {
     async handler(ctx) {
       let { subjects } = ctx.params;
       if (subjects) {
-        subjects = JSON.parse(subjects);
+        subjects = JSON.parse(subjects || null);
         validateGetSubjectsCredits(subjects);
         const subjectsCredits = await getSubjectsCredits({ subjects, ctx });
         return { status: 200, subjectsCredits };
@@ -158,7 +158,7 @@ module.exports = {
   },
   listSubjectRest: {
     rest: {
-      path: '/',
+      path: '/subject',
       method: 'GET',
     },
     middlewares: [
@@ -198,6 +198,34 @@ module.exports = {
       throw validator.error;
     },
   },
+  subjectsRest: {
+    rest: {
+      path: '/',
+      method: 'GET',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      let { id } = ctx.params;
+      if (!id) {
+        const { ids } = ctx.params;
+        id = JSON.parse(ids || null);
+      }
+      const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
+      if (ctx.params.id) {
+        return { status: 200, data: data && data[0] };
+      }
+      return { status: 200, data };
+    },
+  },
   subjectByIdsRest: {
     rest: {
       path: '/:id',
@@ -217,7 +245,7 @@ module.exports = {
       let { id } = ctx.params;
       if (!id) {
         const { ids } = ctx.params;
-        id = JSON.parse(ids);
+        id = JSON.parse(ids || null);
       }
       const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
       if (ctx.params.id) {

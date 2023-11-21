@@ -29,6 +29,18 @@ async function saveRoleLocalizations({ role, data, ctx }) {
   ]);
 }
 
+function getOrder(order) {
+  const assignablesOrder = 200;
+  if (order < 100) {
+    return assignablesOrder + order;
+  }
+  if (order) {
+    const hundreds = Math.floor(assignablesOrder / 100);
+    return assignablesOrder + (order % (hundreds * 100));
+  }
+  return assignablesOrder + 99;
+}
+
 async function registerRole({ role: name, ctx, ...data }) {
   const role = {
     name,
@@ -53,7 +65,8 @@ async function registerRole({ role: name, ctx, ...data }) {
       'componentOwner',
       'menu',
     ]),
-    provider: data.provider ?? 'leebrary-assignables',
+    // provider: data.provider ?? 'leebrary-assignables',
+    provider: data.provider ?? 'assignables',
   };
   validateRole(role);
 
@@ -70,7 +83,14 @@ async function registerRole({ role: name, ctx, ...data }) {
 
   await saveRoleLocalizations({ role: role.name, data, ctx });
 
-  await ctx.tx.call('leebrary.categories.add', { data: category });
+  await ctx.tx.call('leebrary.categories.add', {
+    data: {
+      ...category,
+      order: getOrder(category.order),
+      creatable: Boolean(category.creatable && category.createUrl),
+      duplicable: true,
+    },
+  });
 
   return true;
 }

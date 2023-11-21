@@ -1,8 +1,6 @@
 export default async function assignModuleRequest(id, options) {
-  const response = await leemons.api(`learning-paths/modules/${id}/assign`, {
+  return await leemons.api(`v1/learning-paths/modules/${id}/assign`, {
     method: 'POST',
     body: { ...options },
   });
-
-  return response;
 }

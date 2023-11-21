@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const slugify = require('slugify');
 const getProfileRole = require('./getProfileRole');
@@ -20,11 +19,15 @@ async function update({ ctx, ...data }) {
     });
 
   const [profile] = await Promise.all([
-    ctx.tx.db.Profiles.findByIdAndUpdate(data.id, {
-      name: data.name,
-      description: data.description,
-      uri: slugify(data.name, { lower: true }),
-    }),
+    ctx.tx.db.Profiles.findByIdAndUpdate(
+      data.id,
+      {
+        name: data.name,
+        description: data.description,
+        uri: slugify(data.name, { lower: true }),
+      },
+      { new: true, lean: true }
+    ),
     markAllUsersWithProfileToReloadPermissions({ profileId: data.id, ctx }),
   ]);
 

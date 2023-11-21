@@ -60,8 +60,8 @@ async function addSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) 
 
   const [dataset] = await Promise.all(promises);
 
-  dataset.jsonSchema = JSON.parse(dataset.jsonSchema);
-  dataset.jsonUI = JSON.parse(dataset.jsonUI);
+  dataset.jsonSchema = JSON.parse(dataset.jsonSchema || null);
+  dataset.jsonUI = JSON.parse(dataset.jsonUI || null);
 
   return dataset;
 }

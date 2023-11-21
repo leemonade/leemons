@@ -15,6 +15,10 @@ async function add({ class: _class, student, ctx }) {
       key: ctx.prefixPN(`room.class.${_class}`),
       userAgents: student,
     }),
+    ctx.tx.call('comunica.room.addUserAgents', {
+      key: ctx.prefixPN(`room.class.group.${_class}`),
+      userAgents: student,
+    }),
   ]);
 
   const { student: studentProfileId } = await getProfiles({ ctx });
@@ -36,7 +40,7 @@ async function add({ class: _class, student, ctx }) {
   });
 
   try {
-    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
       data: {
         permissionName: `academic-portfolio.program.inside.${program.id}`,
@@ -48,8 +52,9 @@ async function add({ class: _class, student, ctx }) {
   }
 
   try {
-    await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: student,
+      throwIfExists: false,
       data: {
         permissionName: `academic-portfolio.program-profile.inside.${program.id}.${studentProfileId}`,
         actionNames: ['view'],
@@ -62,7 +67,7 @@ async function add({ class: _class, student, ctx }) {
   if (!program.hideStudentsToStudents) {
     await addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
   }
-  await ctx.tx.emit('after-add-class-student', { class: _class, student });
+  await ctx.emit('after-add-class-student', { class: _class, student });
   return classStudent;
 }
 

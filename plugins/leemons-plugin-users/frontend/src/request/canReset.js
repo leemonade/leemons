@@ -1,6 +1,5 @@
-
 async function canReset(token) {
-  return leemons.api('users/user/can/reset', {
+  return leemons.api('v1/users/users/can/reset', {
     method: 'POST',
     body: {
       token,

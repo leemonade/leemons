@@ -1,5 +1,5 @@
 async function listKanbanColumns() {
-  return leemons.api('calendar/kanban/list/columns', {
+  return leemons.api('v1/calendar/calendar/kanban/list/columns', {
     allAgents: true,
   });
 }

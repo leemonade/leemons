@@ -5,9 +5,6 @@ const { LeemonsError } = require('@leemons/error');
 dayjs.extend(duration);
 
 async function setQuestionResponse({ data, ctx }) {
-  const { assignations: assignationsService, assignableInstances: assignableInstancesService } =
-    leemons.getPlugin('assignables').services;
-
   const { questionId, instanceId, value } = data;
 
   const [{ timestamps, finished }, instance] = await Promise.all([

@@ -11,6 +11,7 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
+const { escapeRegExp } = require('lodash');
 const addPeriod = require('../../core/periods/addPeriod');
 const listPeriods = require('../../core/periods/listPeriods');
 const removePeriod = require('../../core/periods/removePeriod');
@@ -65,8 +66,13 @@ module.exports = {
           }
         })
       );
+      // eslint-disable-next-line no-prototype-builtins
+      if (q.hasOwnProperty('name_$contains')) {
+        q.name = { $regex: `.*${escapeRegExp(q.name_$contains)}.*`, $options: 'i' };
+        delete q.name_$contains;
+      }
       const periods = await listPeriods({ ...q, ctx });
-      return { status: 200, periods };
+      return { status: 200, data: periods };
     },
   },
   removeRest: {

@@ -5,15 +5,12 @@ const periodValidationObject = {
   properties: {
     center: {
       type: 'string',
-      format: 'uuid',
     },
     program: {
       type: 'string',
-      format: 'uuid',
     },
     course: {
       type: 'string',
-      format: 'uuid',
       nullable: true,
     },
     name: {

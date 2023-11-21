@@ -1,5 +1,5 @@
 async function canRegisterPassword(token) {
-  return leemons.api('users/user/can/register-password', {
+  return leemons.api('v1/users/users/can/register-password', {
     method: 'POST',
     body: {
       token,

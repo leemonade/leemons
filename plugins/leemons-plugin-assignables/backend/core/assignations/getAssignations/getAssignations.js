@@ -1,6 +1,6 @@
-const { checkPermissions } = require('./checkPermissions');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
+const { checkPermissions } = require('./checkPermissions');
 const { getClassesWithSubject } = require('./getClassesWithSubject');
 const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 const { findAssignationDates } = require('./findAssignationDates');
@@ -15,6 +15,7 @@ async function getAssignations({
   fetchInstance,
   ctx,
 }) {
+  if (!assignationsIds?.length) return [];
   // Require inside function to avoid circular dependency
   // eslint-disable-next-line global-require
   const { getInstances } = require('../../instances/getInstances');
@@ -39,7 +40,6 @@ async function getAssignations({
   // EN: Check if the user has permissions
   // ES: Comprobar si el usuario tiene permisos
   const permissions = await checkPermissions({ assignationsData, ctx });
-
   if (throwOnMissing) {
     if (Object.values(permissions).some((permission) => !permission)) {
       throw new LeemonsError(ctx, {
@@ -59,8 +59,8 @@ async function getAssignations({
   if (!details) {
     return assignationsData.map((assignation) => ({
       ...assignation,
-      classes: JSON.parse(assignation.classes),
-      metadata: JSON.parse(assignation.metadata),
+      classes: JSON.parse(assignation.classes || null),
+      metadata: JSON.parse(assignation.metadata || null),
     }));
   }
 
@@ -96,11 +96,10 @@ async function getAssignations({
   const [classes, relatedAssignations, timestamps, dates, grades, instances] = await Promise.all(
     promises
   );
-
   return assignationsData.map((assignation) => {
     const chatKeys = classes[assignation.instance].subjectsIds.map(
       (subject) =>
-        `plugins.assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
+        `assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
     );
 
     const status = getAssignationStatus({
@@ -108,10 +107,11 @@ async function getAssignations({
       timestamps: timestamps[assignation.id] || {},
     });
 
-    const assignationObject = {
+    // Returns the assignationObject
+    return {
       ...assignation,
-      classes: JSON.parse(assignation.classes),
-      metadata: JSON.parse(assignation.metadata),
+      classes: JSON.parse(assignation.classes || null),
+      metadata: JSON.parse(assignation.metadata || null),
       instance: instances?.[assignation.instance] || assignation.instance,
 
       relatedAssignableInstances: {
@@ -124,8 +124,6 @@ async function getAssignations({
 
       ...status,
     };
-
-    return assignationObject;
   });
 }
 

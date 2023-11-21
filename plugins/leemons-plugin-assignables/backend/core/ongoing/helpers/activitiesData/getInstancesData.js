@@ -30,13 +30,11 @@ async function getInstancesData({ instances, relatedInstances = false, ctx }) {
     instancesObj[instance.id] = {
       ...instance,
       assignable: assignablesData[instance.assignable],
-      metadata: JSON.parse(instance.metadata),
+      metadata: instance.metadata,
     };
 
     if (relatedInstances) {
-      instancesObj[instance.id].relatedAssignableInstances = JSON.parse(
-        instance.relatedAssignableInstances
-      );
+      instancesObj[instance.id].relatedAssignableInstances = instance.relatedAssignableInstances;
     }
   });
 

@@ -44,7 +44,7 @@ it('Should call getInstancesSubjects correctly', async () => {
 
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.classes.classesByIds': classesByIdsHandler,
+      'academic-portfolio.classes.classByIds': classesByIdsHandler,
     },
     models: {
       Classes: newModel(mongooseConnection, 'Classes', classesSchema),

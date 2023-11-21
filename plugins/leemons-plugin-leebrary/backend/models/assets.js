@@ -60,6 +60,7 @@ const assetsSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 

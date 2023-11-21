@@ -25,13 +25,10 @@ const classesSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    minimize: false,
   }
 );
 
-const classesModel = newModel(
-  mongoose.connection,
-  'v1::assignables_Classes',
-  classesSchema
-);
+const classesModel = newModel(mongoose.connection, 'v1::assignables_Classes', classesSchema);
 
 module.exports = { classesSchema, classesModel };

@@ -1,5 +1,5 @@
 async function listReports(page, size, filters) {
-  return leemons.api(`fundae/report/list?page=${page}&size=${size}`, {
+  return leemons.api(`v1/fundae/report/list?page=${page}&size=${size}`, {
     allAgents: true,
     method: 'POST',
     body: {

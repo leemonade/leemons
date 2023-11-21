@@ -14,12 +14,7 @@ const { registerGrade } = require('../../grades');
 
 const rolesWithChat = ['tests', 'task'];
 
-async function createAssignation({
-  assignableInstanceId,
-  users,
-  options,
-  ctx,
-}) {
+async function createAssignation({ assignableInstanceId, users, options, ctx }) {
   const { userSession } = ctx.meta;
   // TODO: Permissions like `task.${taskId}.instance.${instanceId}` to allow assignation removals and permissions changes
   validateAssignation(
@@ -46,13 +41,10 @@ async function createAssignation({
     }),
   ]);
 
-  const classesData = await ctx.tx.call(
-    'academic-portfolio.classes.classByIds',
-    {
-      ids: instance.classes,
-      withTeachers: true,
-    }
-  );
+  const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+    ids: instance.classes,
+    withTeachers: true,
+  });
 
   const hostname = await ctx.tx.call('users.platform.getHostname');
   const hostnameApi = await ctx.tx.call('users.platform.getHostnameApi');
@@ -61,8 +53,7 @@ async function createAssignation({
   const userAgentByIds = _.keyBy(userAgents, 'id');
 
   try {
-    const { indexable, classes, group, grades, timestamps, status, metadata } =
-      options;
+    const { indexable, classes, group, grades, timestamps, status, metadata } = options;
 
     // Saber si la fecha que se quiere es la de visualizacion o la de inicio de la tarea.
     // instance.dates.visualization
@@ -139,9 +130,7 @@ async function createAssignation({
               _.forEach(data.teachers, (teacher) => {
                 if (teacher.type === 'main-teacher')
                   _teachers.push(
-                    _.isString(teacher.teacher)
-                      ? teacher.teacher
-                      : teacher.teacher.id
+                    _.isString(teacher.teacher) ? teacher.teacher : teacher.teacher.id
                   );
               });
             }
@@ -151,9 +140,7 @@ async function createAssignation({
           if (rolesWithChat.includes(instance.assignable.role)) {
             roomsPromises.push(
               addUserSubjectRoom({
-                parentKey: `${subjectRooms[classe.subject.id].key}|${
-                  instanceRoom.key
-                }`,
+                parentKey: `${subjectRooms[classe.subject.id].key}|${instanceRoom.key}`,
                 classe,
                 instance,
                 assignation,
@@ -194,9 +181,7 @@ async function createAssignation({
         // ES: Guarda las calificaciones
         if (!_.isEmpty(grades)) {
           assignation.grades = await Promise.all(
-            grades.map((grade) =>
-              registerGrade({ assignation: assignation.id, ...grade, ctx })
-            )
+            grades.map((grade) => registerGrade({ assignation: assignation.id, ...grade, ctx }))
           );
         }
 

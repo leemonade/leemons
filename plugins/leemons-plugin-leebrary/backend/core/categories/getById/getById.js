@@ -12,7 +12,7 @@
  */
 async function getById({ id, columns, ctx }) {
   const category = await ctx.tx.db.Categories.findOne({ id }).select(columns).lean();
-  if (category?.canUse) category.canUse = JSON.parse(category.canUse);
+  if (category?.canUse) category.canUse = JSON.parse(category.canUse || null);
   return category;
 }
 

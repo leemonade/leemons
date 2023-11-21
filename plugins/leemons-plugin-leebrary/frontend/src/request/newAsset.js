@@ -35,7 +35,7 @@ async function newAsset(assetData, categoryId, categoryKey) {
     }
   });
 
-  return leemons.api('leebrary/assets', {
+  return leemons.api('v1/leebrary/assets', {
     allAgents: true,
     method: 'POST',
     body: formData,

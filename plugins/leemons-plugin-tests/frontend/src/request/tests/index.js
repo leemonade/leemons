@@ -1,8 +1,8 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, isString } from 'lodash';
+import { cloneDeep, isString, merge } from 'lodash';
 
 async function listTests({ page, size, published }) {
-  return leemons.api(`tests/tests?page=${page}&size=${size}&published=${published}`, {
+  return leemons.api(`v1/tests/tests?page=${page}&size=${size}&published=${published}`, {
     allAgents: true,
     method: 'GET',
   });
@@ -10,7 +10,7 @@ async function listTests({ page, size, published }) {
 
 async function saveTest(_body) {
   const body = cloneDeep(_body);
-  const form = {};
+  let form = {};
   if (_body.cover && !isString(_body.cover)) {
     const { cover, ...data } = body;
     if (_body.cover) {
@@ -20,11 +20,11 @@ async function saveTest(_body) {
         form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
       }
     }
-    form.data = JSON.stringify(data);
+    form = merge(data, form);
   } else {
-    form.data = JSON.stringify(body);
+    form = merge(body, form);
   }
-  return leemons.api('tests/tests', {
+  return leemons.api('v1/tests/tests', {
     allAgents: true,
     method: 'POST',
     body: form,
@@ -32,14 +32,14 @@ async function saveTest(_body) {
 }
 
 async function getTest(id, { withQuestionBank } = { withQuestionBank: false }) {
-  return leemons.api(`tests/tests/${id}?withQuestionBank=${withQuestionBank}`, {
+  return leemons.api(`v1/tests/tests/${id}?withQuestionBank=${withQuestionBank}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function setInstanceTimestamp(instance, timeKey, user) {
-  return leemons.api(`tests/tests/instance/timestamp`, {
+  return leemons.api(`v1/tests/tests/instance/timestamp`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -51,7 +51,7 @@ async function setInstanceTimestamp(instance, timeKey, user) {
 }
 
 async function setQuestionResponse(body) {
-  return leemons.api(`tests/tests/instance/question/response`, {
+  return leemons.api(`v1/tests/tests/instance/question/response`, {
     allAgents: true,
     method: 'POST',
     body,
@@ -59,7 +59,7 @@ async function setQuestionResponse(body) {
 }
 
 async function getUserQuestionResponses(instance, user) {
-  let url = `tests/tests/instance/${instance}/question/response`;
+  let url = `v1/tests/tests/instance/${instance}/question/response`;
   if (user) {
     url += `?user=${user}`;
   }
@@ -70,14 +70,14 @@ async function getUserQuestionResponses(instance, user) {
 }
 
 async function deleteTest(id) {
-  return leemons.api(`tests/tests/${id}`, {
+  return leemons.api(`v1/tests/tests/${id}`, {
     allAgents: true,
     method: 'DELETE',
   });
 }
 
 async function assignTest(id, data) {
-  return leemons.api(`tests/tests/assign`, {
+  return leemons.api(`v1/tests/tests/assign`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -88,21 +88,21 @@ async function assignTest(id, data) {
 }
 
 async function getAssignConfigs() {
-  return leemons.api(`tests/tests/assign/configs`, {
+  return leemons.api(`v1/tests/tests/assign/configs`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function getFeedback(instance, user) {
-  return leemons.api(`tests/tests/instance/${instance}/feedback/${user}`, {
+  return leemons.api(`v1/tests/tests/instance/${instance}/feedback/${user}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function setFeedback(instance, user, feedback) {
-  return leemons.api(`tests/tests/instance/feedback`, {
+  return leemons.api(`v1/tests/tests/instance/feedback`, {
     allAgents: true,
     method: 'POST',
     body: {
@@ -114,7 +114,7 @@ async function setFeedback(instance, user, feedback) {
 }
 
 async function duplicate(instance, published = false) {
-  return leemons.api(`tests/tests/duplicate`, {
+  return leemons.api(`v1/tests/tests/duplicate`, {
     allAgents: true,
     method: 'POST',
     body: {

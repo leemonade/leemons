@@ -3,7 +3,7 @@ const { LeemonsError } = require('@leemons/error');
 async function duplicate({ taskId, published, ctx }) {
   try {
     return await ctx.tx.call('assignables.assignables.duplicateAssignable', {
-      id: taskId,
+      assignableId: taskId,
       published,
     });
   } catch (e) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isArray } from 'lodash';
+import { isArray, escapeRegExp } from 'lodash';
 import { TagsInput } from '@bubbles-ui/components';
 import { useStore } from '../useStore';
 import { TagsService } from './TagsService';
@@ -14,8 +14,10 @@ function TagsAutocomplete({ pluginName, type, ...props }) {
   const [store, render] = useStore({ data: [] });
 
   async function search(text) {
-    const query = { tag: { $regex: text, $options: 'i' } };
-    if (type) query.type = type;
+    const query = { tag: { $regex: escapeRegExp(text), $options: 'i' } };
+    if (type) {
+      query.type = type.replace(/\.$/, '');
+    }
     const result = await TagsService.listTags(pluginName, 0, 10, query);
     store.data = result?.data?.items || [];
     render();

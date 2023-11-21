@@ -1,5 +1,5 @@
 async function saveKanbanEventOrders(centerToken, column, events) {
-  return leemons.api('calendar/kanban/save/event/orders', {
+  return leemons.api('v1/calendar/calendar/kanban/save/event/orders', {
     centerToken,
     method: 'POST',
     body: {

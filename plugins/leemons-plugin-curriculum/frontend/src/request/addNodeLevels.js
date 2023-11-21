@@ -1,5 +1,5 @@
 async function addNodeLevels(curriculum, nodeLevels) {
-  return leemons.api('curriculum/node-levels', {
+  return leemons.api('v1/curriculum/node-levels', {
     allAgents: true,
     method: 'POST',
     body: {

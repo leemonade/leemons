@@ -62,13 +62,15 @@ async function add({
     _.map(roles, (role) => checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx }))
   );
 
-  user.userAgents = await ctx.tx.db.UserAgent.insertMany(
-    _.map(roles, (role) => ({
-      role,
-      user: user.id,
-      reloadPermissions: true,
-    }))
-  );
+  user.userAgents = (
+    await ctx.tx.db.UserAgent.insertMany(
+      _.map(roles, (role) => ({
+        role,
+        user: user.id,
+        reloadPermissions: true,
+      }))
+    )
+  ).map((doc) => doc.toObject());
 
   await addCenterProfilePermissionToUserAgents({ userAgentIds: _.map(user.userAgents, 'id'), ctx });
 

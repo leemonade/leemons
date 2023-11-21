@@ -1,8 +1,10 @@
 const _ = require('lodash');
+
+const { LeemonsError } = require('@leemons/error');
+
 const { validateAssignation } = require('../../helpers/validators/assignation');
 const { getAssignation } = require('../getAssignation');
 const { getDiff } = require('../../helpers/getDiff');
-const { LeemonsError } = require('@leemons/error');
 const { updateDates } = require('../../dates');
 const { registerGrade } = require('../../grades');
 

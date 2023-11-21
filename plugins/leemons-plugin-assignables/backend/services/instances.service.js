@@ -2,14 +2,11 @@
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const {
-  LeemonsDeploymentManagerMixin,
-} = require('@leemons/deployment-manager');
+const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
-const {
-  getUserPermission,
-  getUserPermissions,
-} = require('../core/permissions/instances/users');
+const { getUserPermission, getUserPermissions } = require('../core/permissions/instances/users');
 const { createInstance } = require('../core/instances/createInstance');
 const { getInstance } = require('../core/instances/getInstance');
 const { getInstances } = require('../core/instances/getInstances');
@@ -25,10 +22,12 @@ module.exports = {
   name: 'assignables.assignableInstances',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {

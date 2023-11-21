@@ -14,6 +14,7 @@ const { getDates } = require('../../dates');
 const {
   getUserPermissionMultiple,
 } = require('../../permissions/instances/users/getUserPermissionMultiple');
+
 /**
  * Retrieves the status of multiple instances.
  *
@@ -35,10 +36,12 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
   const { userSession } = ctx.meta;
 
   const ids = _.uniq(
-    Array.isArray(assignableInstanceIds)
-      ? assignableInstanceIds
-      : [assignableInstanceIds]
+    Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]
   );
+
+  if (!ids.length) {
+    return [];
+  }
 
   const statusObject = {};
 
@@ -57,11 +60,7 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
       });
     }
     const isTeacher = permission.actions.includes('edit');
-    _.set(
-      statusObject,
-      `${permission.assignableInstance}.isTeacher`,
-      isTeacher
-    );
+    _.set(statusObject, `${permission.assignableInstance}.isTeacher`, isTeacher);
   });
 
   const promises = [];
@@ -69,13 +68,11 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
   // EN: Get instance dates
   // ES: Obtener fechas de la instancia
   promises.push(
-    getDates({ type: 'assignableInstance', instance: ids, ctx }).then(
-      (instanceDates) => {
-        Object.entries(instanceDates).map(([id, datesObject]) =>
-          _.set(statusObject, `${id}.dates`, datesObject)
-        );
-      }
-    )
+    getDates({ type: 'assignableInstance', instance: ids, ctx }).then((instanceDates) => {
+      Object.entries(instanceDates).map(([id, datesObject]) =>
+        _.set(statusObject, `${id}.dates`, datesObject)
+      );
+    })
   );
 
   // EN: Get always available
@@ -96,14 +93,10 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
 
   // EN: Get assignations data
   // ES: Obtener datos de la asignación
-  const assignationsQuery = ids.map((id) => {
-    const query = {
-      instance: id,
-      user: userSession.userAgents[0].id,
-    };
-
-    return query;
-  });
+  const assignationsQuery = ids.map((id) => ({
+    instance: id,
+    user: userSession.userAgents[0].id,
+  }));
 
   const assignationsFound = await ctx.tx.db.Assignations.find({
     $or: assignationsQuery,

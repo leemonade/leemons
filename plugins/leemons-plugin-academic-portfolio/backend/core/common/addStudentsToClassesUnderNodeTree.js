@@ -14,10 +14,9 @@ async function addStudentsClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, st
     ctx,
   });
 
-  const result = await Promise.all(
+  return Promise.all(
     _.map(classes, (_class) => addClassStudents({ data: { class: _class.id, students }, ctx }))
   );
-  return result;
 }
 
 module.exports = { addStudentsClassesUnderNodeTree };

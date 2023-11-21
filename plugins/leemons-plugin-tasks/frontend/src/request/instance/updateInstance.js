@@ -11,8 +11,8 @@ export default function updateInstanceRequest(
     showCurriculum,
   }
 ) {
-  const instance = leemons
-    .api(`tasks/tasks/assignments/instance/${instanceId}`, {
+  return leemons
+    .api(`v1/tasks/assignments/instance/${instanceId}`, {
       method: 'PUT',
       body: {
         // Can be a Date object or a string
@@ -28,6 +28,4 @@ export default function updateInstanceRequest(
       },
     })
     .then(({ instance: i }) => i);
-
-  return instance;
 }

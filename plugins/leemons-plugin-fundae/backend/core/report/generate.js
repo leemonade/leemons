@@ -37,7 +37,7 @@ async function updateReportPer({ report, percentageCompleted, dataToSocket, ctx 
       percentageCompleted,
     }
   );
-  await leemons.socket.emit(report.creator, `FUNDAE_REPORT_CHANGE`, {
+  await ctx.socket.emit(report.creator, `FUNDAE_REPORT_CHANGE`, {
     ...dataToSocket,
     id: report.id,
     percentageCompleted,
@@ -174,8 +174,10 @@ async function startGeneration({ report, dataToSocket, ctx }) {
         query: {
           type: 'log',
           'statement.actor.account.name': report.userAgent.toString(),
-          'statement.object.definition.extensions.id_$in': classesIds,
-          'statement.object.id_$endsWith': '/api/open/virtual-classroom',
+          'statement.object.definition.extensions.id': classesIds,
+          'statement.object.id': {
+            $regex: /^.*\/api\/open\/virtual-classroom$/,
+          },
         },
         sort: { createdAt: 1 },
       }),
@@ -184,7 +186,9 @@ async function startGeneration({ report, dataToSocket, ctx }) {
           type: 'log',
           'statement.actor.account.name': report.userAgent.toString(),
           'statement.object.definition.extensions.id': program.id.toString(),
-          'statement.object.id_$endsWith': '/api/view/program',
+          'statement.object.id': {
+            $regex: /^.*\/api\/view\/program$/,
+          },
         },
         sort: { createdAt: 1 },
       }),
@@ -193,7 +197,9 @@ async function startGeneration({ report, dataToSocket, ctx }) {
           type: 'log',
           'statement.actor.account.name': report.userAgent.toString(),
           'statement.object.definition.extensions.program': program.id.toString(),
-          'statement.object.id_$endsWith': '/api/view/leebrary/media-files',
+          'statement.object.id': {
+            $regex: /^.*\/api\/view\/leebrary\/media-files$/,
+          },
         },
         sort: { createdAt: 1 },
       }),
@@ -297,7 +303,7 @@ async function startGeneration({ report, dataToSocket, ctx }) {
       evaluationSystem = await ctx.call('academic-portfolio.programs.getProgramEvaluationSystem', {
         id: program.id,
       });
-    } catch (e) { }
+    } catch (e) {}
 
     toSave.exams = {};
 
@@ -327,16 +333,20 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     toSave.examsPlatform = assignablesData.gradables.length;
     toSave.totalExams = toSave.examsPlatform;
     toSave.lessonsPlatfom = assignablesData.noGradables.length;
-    toSave.examsPerformed = `${(assignablesData.endDatesGradables.length / assignablesData.gradables.length) * 100
-      }% (${assignablesData.endDatesGradables.length}/${assignablesData.gradables.length})`;
-    toSave.lessonsPerformed = `${(assignablesData.endDatesNoGradables.length / assignablesData.noGradables.length) * 100
-      }% (${assignablesData.endDatesNoGradables.length}/${assignablesData.noGradables.length})`;
+    toSave.examsPerformed = `${
+      (assignablesData.endDatesGradables.length / assignablesData.gradables.length) * 100
+    }% (${assignablesData.endDatesGradables.length}/${assignablesData.gradables.length})`;
+    toSave.lessonsPerformed = `${
+      (assignablesData.endDatesNoGradables.length / assignablesData.noGradables.length) * 100
+    }% (${assignablesData.endDatesNoGradables.length}/${assignablesData.noGradables.length})`;
 
-    toSave.totalPerformed = `${((assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length) /
+    toSave.totalPerformed = `${
+      ((assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length) /
         (assignablesData.noGradables.length + assignablesData.gradables.length)) *
       100
-      }% (${assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length}/${assignablesData.noGradables.length + assignablesData.gradables.length
-      })`;
+    }% (${assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length}/${
+      assignablesData.noGradables.length + assignablesData.gradables.length
+    })`;
 
     const [teachersInClasses] = await Promise.all([
       ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {

@@ -1,16 +1,14 @@
 const { uniqBy } = require('lodash');
 
 async function getTeachersOfGivenClasses({ classes, ctx }) {
-  const classesData = await ctx.tx.call('academic-portfolio.classes.classesByIds', {
+  const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
     ids: classes,
   });
 
-  const teachers = uniqBy(
+  return uniqBy(
     classesData.flatMap((classData) => classData.teachers),
     'teacher'
   );
-
-  return teachers;
 }
 
 module.exports = { getTeachersOfGivenClasses };

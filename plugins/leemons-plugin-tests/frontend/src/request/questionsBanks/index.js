@@ -1,8 +1,8 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, forEach, isString } from 'lodash';
+import { cloneDeep, forEach, isString, merge, set } from 'lodash';
 
 async function listQuestionsBanks(body) {
-  return leemons.api(`tests/question-bank/list`, {
+  return leemons.api(`v1/tests/questionsBanks/list`, {
     allAgents: true,
     method: 'POST',
     body,
@@ -11,7 +11,7 @@ async function listQuestionsBanks(body) {
 
 async function saveQuestionBank(_body) {
   const body = cloneDeep(_body);
-  const form = {};
+  let form = {};
   const questionsFiles = [];
 
   forEach(_body.questions || [], (question, index) => {
@@ -65,16 +65,16 @@ async function saveQuestionBank(_body) {
     }
     const uploadQuestionsFilesPromises = questionsFiles.map(({ index, name, file }) =>
       uploadFileAsMultipart(file, { name: file.name }).then((uploadedFile) => {
-        form[`questions[${index}].${name}`] = uploadedFile;
+        set(form, `questions[${index}].${name}`, uploadedFile);
       })
     );
     await Promise.all(uploadQuestionsFilesPromises);
-    form.data = JSON.stringify(data);
+    form = merge(data, form);
   } else {
-    form.data = JSON.stringify(body);
+    form = merge(body, form);
   }
 
-  return leemons.api('tests/question-bank', {
+  return leemons.api('v1/tests/questionsBanks', {
     allAgents: true,
     method: 'POST',
     body: form,
@@ -82,14 +82,14 @@ async function saveQuestionBank(_body) {
 }
 
 async function getQuestionBank(id) {
-  return leemons.api(`tests/question-bank/${id}`, {
+  return leemons.api(`v1/tests/questionsBanks/${id}`, {
     allAgents: true,
     method: 'GET',
   });
 }
 
 async function deleteQuestionBank(id) {
-  return leemons.api(`tests/question-bank/${id}`, {
+  return leemons.api(`v1/tests/questionsBanks/${id}`, {
     allAgents: true,
     method: 'DELETE',
   });

@@ -20,7 +20,7 @@ async function createInstanceRoom({
       key: roomKey,
       name: instance.assignable.asset.name,
       subName: classes.length > 1 ? 'multisubjects' : classes[0].subject.name,
-      parentRoom: null,
+      parentRoom: _.map(classes, (nClass) => `academic-portfolio.room.class.group.${nClass.id}`),
       image: instance.assignable.asset.id,
       program: classes[0].program,
       icon:
@@ -34,12 +34,12 @@ async function createInstanceRoom({
   // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala
   if (userAgents.length)
     await ctx.tx.call('comunica.room.addUserAgents', {
-      room: roomKey,
+      key: roomKey,
       userAgent: userAgents,
     });
   if (teachersUserAgents.length) {
     await ctx.tx.call('comunica.room.addUserAgents', {
-      room: roomKey,
+      key: roomKey,
       userAgent: teachersUserAgents,
       isAdmin: true,
     });
