@@ -28,8 +28,6 @@ const { listSessionClasses } = require('../../core/classes/listSessionClasses');
 const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
 const { classByIds } = require('../../core/classes/classByIds');
 
-const { listTeacherClassesRest } = require('./openapi/class/listTeacherClassesRest');
-
 /** @type {ServiceSchema} */
 module.exports = {
   haveClassesRest: {
