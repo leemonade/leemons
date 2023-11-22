@@ -165,50 +165,6 @@ module.exports = {
       required: ['email', 'password'],
       additionalProperties: false,
     },
-    openapi: {
-      description: 'User login with email & password',
-      security: [],
-      responses: {
-        200: {
-          description: 'User received successfully',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                example: {
-                  status: 200,
-                  user: {
-                    _id: '65521d392db10ded93077087',
-                    id: 'lrn:local:users:local:auto-deployment-id:Users:65521d396f3798a0b2dbee97',
-                    deploymentID: 'auto-deployment-id',
-                    name: 'Antonio',
-                    surnames: 'Villaverde',
-                    email: 'teacher@leemons.io',
-                    birthdate: '1975-10-03T00:00:00.000Z',
-                    password: '$2b$10$tyAtAPgOIFomHHACH6f/V.jre4emAUIeuxdAAA5qiWRix3jwtI61.',
-                    locale: 'es',
-                    active: true,
-                    gender: 'male',
-                    isDeleted: false,
-                    deletedAt: null,
-                    createdAt: '2023-11-13T12:57:29.660Z',
-                    updatedAt: '2023-11-13T12:57:30.996Z',
-                    __v: 0,
-                    avatar:
-                      '/api/leebrary/img/lrn:local:common:local:auto-deployment-id:CurrentVersions:65521d3a6f3798a0b2dbeea3@1.0.0?t=1699880250995',
-                    avatarAsset:
-                      'lrn:local:common:local:auto-deployment-id:CurrentVersions:65521d3a6f3798a0b2dbeea3@1.0.0',
-                    isSuperAdmin: false,
-                  },
-                  jwtToken:
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Imxybjpsb2NhbDp1c2Vyczpsb2NhbDphdXRvLWRlcGxveW1lbnQtaWQ6VXNlcnM6NjU1MhFkMzk2ZjM3OThhMGIyZGJlZTk3IiwiaWF0IjoxNzAwMDM2NDY3LCJleHAiOjE3MDAxMjM4Njd9.jOXxZNBCoh8J_MA6LxKUxf_shaWjGUY3jcBI898n579',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
     async handler(ctx) {
       const data = await usersService.login({
         email: ctx.params.email,

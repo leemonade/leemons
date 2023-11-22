@@ -344,7 +344,6 @@ module.exports = {
       required: ['page', 'size', 'id'],
       additionalProperties: false,
     },
-    openapi: listTeacherClassesRest,
     async handler(ctx) {
       const { page, size } = ctx.params;
       const data = await listTeacherClasses({
