@@ -4,10 +4,12 @@ const {
   getAutoDeploymentIDIfCanIFNotThrowError,
 } = require('./getAutoDeploymentIDIfCanIFNotThrowError');
 const { isCoreService } = require('./isCoreService');
+const { createOpenapiResponse } = require('./createOpenapiResponse');
 
 module.exports = {
   LeemonsDeploymentManagerMixin: mixin,
   isCoreService,
   getDeploymentIDFromCTX,
   getAutoDeploymentIDIfCanIFNotThrowError,
+  createOpenapiResponse,
 };
