@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, createStyles, HtmlText, Loader, Text } from '@bubbles-ui/components';
-import { capitalize, get, map, sortBy } from 'lodash';
+import { capitalize, get, head, map, omit, pick, sortBy, tail } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
@@ -18,6 +18,8 @@ import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import Sidebar from '@tasks/components/Student/TaskDetail/components/Sidebar/Sidebar';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { DashboardCard } from './components/DashboardCard';
 import { useHeaderDataForPreview, useModuleDataForPreview } from './helpers/previewHooks';
 
@@ -72,6 +74,8 @@ export const useModuleDashboardStyles = createStyles((theme) => {
 });
 
 export function useModuleData(id) {
+  const isStudent = useIsStudent();
+
   const {
     data: module,
     isLoading: isLoadingModule,
@@ -79,10 +83,14 @@ export function useModuleData(id) {
     isError: isModuleError,
   } = useInstances({ id });
 
-  const activitiesIds = useMemo(
-    () => map(module?.metadata?.module?.activities, 'id'),
-    [module?.metadata?.module?.activities]
-  );
+  const activitiesIds = useMemo(() => {
+    const ids = map(module?.metadata?.module?.activities, 'id');
+    if (isStudent && module?.id) {
+      ids.unshift(module.id);
+    }
+
+    return ids;
+  }, [module?.id, module?.metadata?.module?.activities, isStudent]);
 
   const {
     data: activitiesByProfile,
@@ -91,18 +99,21 @@ export function useModuleData(id) {
     isError: isActivitiesError,
   } = useAssignationsByProfile(activitiesIds, { enabled: !!activitiesIds?.length });
 
-  const isStudent = useIsStudent();
-
-  const { assignations, activities } = useMemo(() => {
+  const {
+    module: moduleAssignation,
+    assignations,
+    activities,
+  } = useMemo(() => {
     if (isStudent) {
       return {
-        assignations: activitiesByProfile,
-        activities: map(activitiesByProfile, 'instance'),
+        module: head(activitiesByProfile),
+        assignations: tail(activitiesByProfile),
+        activities: map(tail(activitiesByProfile), 'instance'),
       };
     }
 
-    return { assignations: [], activities: activitiesByProfile };
-  }, [activitiesByProfile, isStudent]);
+    return { module: null, assignations: [], activities: activitiesByProfile };
+  }, [module?.id, activitiesByProfile, isStudent]);
 
   const activitiesById = useMemo(() => {
     const object = {};
@@ -143,6 +154,7 @@ export function useModuleData(id) {
 
   return {
     module,
+    moduleAssignation,
     activitiesById,
     assignationsById,
     activities: module?.metadata?.module?.activities ?? [],
@@ -287,9 +299,18 @@ ModuleDashboardBody.propTypes = {
 };
 
 export function ModuleDashboard({ id, preview }) {
-  const { module, activities, activitiesById, assignationsById, isLoading } = preview
-    ? useModuleDataForPreview(id)
-    : useModuleData(id);
+  const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
+    preview ? useModuleDataForPreview(id) : useModuleData(id);
+
+  const isStudent = useIsStudent();
+  const { mutateAsync } = useStudentAssignationMutation();
+  const updateTimestamps = useUpdateTimestamps(mutateAsync, moduleAssignation);
+  useEffect(() => {
+    if (isStudent) {
+      updateTimestamps('open');
+    }
+  }, []);
+
   const localizations = useModuleDashboardLocalizations();
   const headersData = preview ? useHeaderDataForPreview(module) : useHeaderData(module);
 
