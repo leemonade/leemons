@@ -81,7 +81,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const document = await deleteDocument({ id: ctx.request.params.id, ctx });
+      const document = await deleteDocument({ id: ctx.params.id, ctx });
       return { status: 200, document };
     },
   },
@@ -98,8 +98,8 @@ module.exports = {
     ],
     async handler(ctx) {
       const document = await duplicateDocument({
-        id: ctx.request.body.id,
-        published: ctx.request.body.published,
+        id: ctx.params.id,
+        published: ctx.params.published,
         ctx,
       });
       return { status: 200, document };
