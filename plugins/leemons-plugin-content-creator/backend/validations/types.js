@@ -1,5 +1,3 @@
-const { translations } = require('../translations');
-
 const textSchema = {
   type: 'string',
   minLength: 1,
@@ -63,15 +61,6 @@ const integerSchemaNullable = {
   nullable: true,
 };
 
-const localeObjectSchema = () => ({
-  type: 'object',
-  patternProperties: {
-    [translations().functions.localeRegexString]: {
-      type: 'string',
-    },
-  },
-});
-
 module.exports = {
   dateSchema,
   textSchema,
@@ -81,7 +70,6 @@ module.exports = {
   integerSchema,
   arrayStringSchema,
   textSchemaNullable,
-  localeObjectSchema,
   stringSchemaNullable,
   integerSchemaNullable,
   arrayStringRequiredSchema,

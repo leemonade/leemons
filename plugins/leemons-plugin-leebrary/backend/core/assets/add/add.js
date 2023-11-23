@@ -34,11 +34,10 @@ const { handleFiles } = require('./handleFiles');
  * @async
  * @param {Object} params - The main parameter object.
  * @param {Object} params.assetData - The data of the asset to add. This includes information such as the asset's name, description, related url, etc.
- * @param {Object} params.options - Additional options for adding the asset.
- * @param {string} [params.options.newId] - The new ID for the asset. If not provided, a new ID will be generated.
- * @param {boolean} [params.options.published=true] - Whether the asset is published.
- * @param {Array} [params.options.permissions] - The permissions for the asset. Each permission is an object that contains the permission's data.
- * @param {boolean} [params.options.duplicating=false] - Whether the asset is a duplicate.
+ * @param {string} [params.newId] - The new ID for the asset. If not provided, a new ID will be generated.
+ * @param {boolean} [params.published=true] - Whether the asset is published.
+ * @param {Array} [params.permissions] - The permissions for the asset. Each permission is an object that contains the permission's data.
+ * @param {boolean} [params.duplicating=false] - Whether the asset is a duplicate.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} A promise that resolves with the added asset object.
  */
