@@ -19,97 +19,102 @@ const {
 } = require('./helpers/filters/filterInstancesByStudentCompletionPercentage');
 const { sortInstancesByDates, applyOffsetAndLimit } = require('./helpers/sorts');
 const filterByBlockedActivities = require('./helpers/filters/filterByBlockedActivities');
+const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
+const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
+
 /**
- * This function is used to search Nya activities.
- * @async
- * @function searchNyaActivities
- * @param {Object} params - The parameters for the function.
- * @param {Object} params.query - The query parameters.
- * @param {Moleculer.Context} params.ctx - The Moleculer context.
- * @returns {Promise<Array>} A promise that resolves to an array of Nya activities.
+ * This function is used to search for NYA (Need Your Attention) activities for teachers.
+ * It fetches teacher instances, filters them based on various criteria, sorts them and applies offset and limit.
+ *
+ * @param {Object} query - The query object containing filters and sorting options.
+ * @param {Object} ctx - The context object containing additional information.
+ *
+ * @returns {Array} - Returns an array of instances that match the search criteria.
  */
+async function searchTeacherNyaActivities({ query, ctx }) {
+  let instances = await getTeacherInstances({ ctx });
 
-module.exports = async function searchNyaActivities({ query, ctx }) {
-  // EN: Keep in mind we are working with 2 different resources: Assignations for students and Instances for teachers.
-  // ES: Ten en mente que estamos trabajando con 2 recursos: Assignations para estudiantes e Instancias para profesores.
-  const isTeacher = [true, 1, 'true'].includes(query?.isTeacher);
+  instances = filterInstancesByEvaluable({ instances, evaluable: true });
 
-  /*
-    === TEACHER ===
-  */
-  if (isTeacher) {
-    let instances = await getTeacherInstances({ ctx });
+  const modules = filterInstancesByIsModule({ instances });
+  instances = filterInstancesByNotModule({ instances });
 
-    instances = filterInstancesByEvaluable({ instances, evaluable: true });
+  const dates = await getActivitiesDates({
+    instances,
+    filters: {
+      status: 'closed',
+      sort: 'deadline',
+      isArchived: false,
+    },
+    ctx,
+  });
 
-    instances = filterInstancesByNotModule({ instances });
+  const closedInstances = filterInstancesByStatusAndArchived({
+    instances,
+    filters: {
+      status: 'closed',
+      isArchived: false,
+    },
+    dates,
+  });
 
-    const dates = await getActivitiesDates({
-      instances,
-      filters: {
-        status: 'closed',
-        sort: 'deadline',
-        isArchived: false,
-      },
-      ctx,
-    });
+  const openedInstances = without(instances, ...closedInstances);
 
-    const closedInstances = filterInstancesByStatusAndArchived({
-      instances,
-      filters: {
-        status: 'closed',
-        isArchived: false,
-      },
-      dates,
-    });
+  const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
+    instances,
+    ctx,
+  });
 
-    const openedInstances = without(instances, ...closedInstances);
+  const instancesWithStudentsWhoFinished = await filterInstancesByStudentCompletionPercentage({
+    instances: openedInstances,
+    min: 0,
+    max: 100,
+    instanceSubjectsProgramsAndClasses,
+    excludeStudentsFullyEvaluated: true,
+    ctx,
+  });
 
-    const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
-      instances,
-      ctx,
-    });
+  const instancesToEvaluate = closedInstances.concat(instancesWithStudentsWhoFinished);
 
-    const instancesWithStudentsWhoFinished = await filterInstancesByStudentCompletionPercentage({
-      instances: openedInstances,
-      min: 0,
-      max: 100,
-      instanceSubjectsProgramsAndClasses,
-      excludeStudentsFullyEvaluated: true,
-      ctx,
-    });
+  const instancesByProgramAndSubjects = filterInstancesByProgramAndSubjects({
+    instances: instancesToEvaluate,
+    filters: query,
+    instanceSubjectsProgramsAndClasses,
+  });
 
-    const instancesToEvaluate = closedInstances.concat(instancesWithStudentsWhoFinished);
+  const instancesGroupedInModules = groupInstancesInModules({
+    instances: instancesByProgramAndSubjects,
+    modules,
+  });
 
-    const sortedInstances = sortInstancesByDates({
-      instances: instancesToEvaluate,
-      dates,
-      filters: {
-        sort: 'deadline',
-      },
-    });
+  const sortedInstances = sortInstancesByDates({
+    instances: instancesGroupedInModules,
+    dates,
+    filters: {
+      sort: 'deadline',
+    },
+  });
 
-    let instancesToReturn = filterInstancesByProgramAndSubjects({
-      instances: sortedInstances,
-      filters: query,
-      instanceSubjectsProgramsAndClasses,
-    });
+  const instancesToReturn = map(sortedInstances, 'id');
 
-    instancesToReturn = map(instancesToReturn, 'id');
+  return applyOffsetAndLimit(instancesToReturn, query);
+}
 
-    return applyOffsetAndLimit(instancesToReturn, query);
-  }
-
-  /*
-    === STUDENT ===
-  */
+/**
+ * This function is used to search for NYA (Need Your Attention) activities for students.
+ * It fetches student assignations, filters them based on various criteria, sorts them and applies offset and limit.
+ *
+ * @param {Object} query - The query object containing filters and sorting options.
+ * @param {Object} ctx - The context object containing additional information.
+ *
+ * @returns {Array} - Returns an array of instances that match the search criteria.
+ */
+async function searchStudentNyaActivities({ query, ctx }) {
   let assignations = await getStudentAssignations({
     relatedInstances: true,
     ctx,
   });
   let instances = map(assignations, 'instance');
-
-  instances = filterInstancesByNotModule({ instances });
 
   const dates = await getActivitiesDates({
     assignations,
@@ -123,6 +128,9 @@ module.exports = async function searchNyaActivities({ query, ctx }) {
     ctx,
   });
 
+  const modules = filterInstancesByIsModule({ instances });
+  instances = filterInstancesByNotModule({ instances });
+
   instances = filterByBlockedActivities({ instances, assignations, dates });
 
   instances = filterInstancesByStatusAndArchived({
@@ -133,6 +141,8 @@ module.exports = async function searchNyaActivities({ query, ctx }) {
     },
     dates,
   });
+
+  instances = groupInstancesInModules({ instances, modules });
 
   assignations = filterAssignationsByInstance({ assignations, instances });
 
@@ -189,4 +199,26 @@ module.exports = async function searchNyaActivities({ query, ctx }) {
   instancesToReturn = map(instancesToReturn, 'id');
 
   return applyOffsetAndLimit(instancesToReturn, query);
+}
+
+/**
+ * This function is used to search Nya activities.
+ * @async
+ * @function searchNyaActivities
+ * @param {Object} params - The parameters for the function.
+ * @param {Object} params.query - The query parameters.
+ * @param {Moleculer.Context} params.ctx - The Moleculer context.
+ * @returns {Promise<Array>} A promise that resolves to an array of Nya activities.
+ */
+
+module.exports = async function searchNyaActivities({ query, ctx }) {
+  // EN: Keep in mind we are working with 2 different resources: Assignations for students and Instances for teachers.
+  // ES: Ten en mente que estamos trabajando con 2 recursos: Assignations para estudiantes e Instancias para profesores.
+  const isTeacher = [true, 1, 'true'].includes(query?.isTeacher);
+
+  if (isTeacher) {
+    return searchTeacherNyaActivities({ query, ctx });
+  }
+
+  return searchStudentNyaActivities({ query, ctx });
 };
