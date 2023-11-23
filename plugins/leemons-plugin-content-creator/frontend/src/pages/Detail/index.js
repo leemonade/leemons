@@ -1,286 +1,138 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  Box,
-  LoadingOverlay,
-  PageHeader,
-  Stack,
-  useDebouncedCallback,
-} from '@bubbles-ui/components';
+import React, { useState, useEffect } from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useProcessTextEditor, useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { DocumentIcon, SetupContent } from '@content-creator/components/icons';
+import { Box, PageHeader, LoadingOverlay, Stack } from '@bubbles-ui/components';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import { getDocumentRequest, saveDocumentRequest } from '@content-creator/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useHistory, useParams } from 'react-router-dom';
+import { SetupContent } from '@content-creator/components';
 import { AssetFormInput } from '@leebrary/components';
-// import { PermissionsDataDrawer } from '@leebrary/components/AssetSetup';
-// import prepareAsset from '@leebrary/helpers/prepareAsset';
+import useDocument from '@content-creator/request/hooks/queries/useDocument';
+import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
+import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
+import PropTypes from 'prop-types';
 import { PageContent } from './components/PageContent/PageContent';
 
-export default function Index({ readOnly, isNew }) {
+const advancedConfigForAssetFormInput = {
+  alwaysOpen: true,
+  fileToRight: true,
+  colorToRight: true,
+  program: { show: true, required: false },
+  subjects: { show: true, required: true, showLevel: true, maxOne: false },
+};
+
+export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
-  const processTextEditor = useProcessTextEditor();
-
-  // ----------------------------------------------------------------------
-  // SETTINGS
-
-  const debounce = useDebouncedCallback(1000);
-  const [store, render] = useStore({
-    loading: true,
-    isNew: false,
-    titleValue: '',
-    document: {},
-    preparedAsset: {},
-    isConfigPage: false,
-    openShareDrawer: false,
-  });
-
+  const [publishing, setPublishing] = useState(false);
   const history = useHistory();
   const params = useParams();
-
-  if (isNew) {
-    params.id = 'new';
-  }
-
+  const query = !isNew ? useDocument({ id: params.id }) : { data: null, isLoading: false };
   const form = useForm();
+  const mutation = useMutateDocument();
   const formValues = form.watch();
 
-  async function saveAsDraft() {
-    try {
-      store.saving = 'duplicate';
-      render();
-
-      const content = await processTextEditor(formValues.content, store.document.content, {
-        force: !!store.published,
-      });
-
-      await saveDocumentRequest({ ...formValues, content, published: false });
-      addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/leebrary/assignables.content-creator/list?activeTab=draft');
-    } catch (error) {
-      addErrorAlert(error);
+  useEffect(() => {
+    if (isNew) form.reset();
+    else {
+      form.setValue('name', query.data?.name);
+      form.setValue('content', query.data?.content);
     }
-    store.saving = null;
-    render();
-  }
+  }, [query.data]);
 
-  async function saveAsPublish() {
-    try {
-      store.saving = 'edit';
-      render();
-
-      const content = await processTextEditor(formValues.content, store.document.content, {
-        force: !!store.published,
-      });
-
-      const { document: documentRequest } = await saveDocumentRequest({
-        ...formValues,
-        content,
-        published: true,
-      });
-      store.document = documentRequest;
-      addSuccessAlert(t('published'));
-    } catch (error) {
-      addErrorAlert(error);
-    } finally {
-      store.saving = null;
-      render();
-    }
-  }
-
-  async function onlyPublish() {
-    await saveAsPublish();
-    history.push('/private/leebrary/assignables.content-creator/list?activeTab=published');
-  }
-
-  // async function publishAndShare() {
-  //   await saveAsPublish();
-  //   const { document } = await getDocumentRequest(store.document.assignable);
-  //   store.preparedAsset = prepareAsset(document.asset);
-
-  //   store.openShareDrawer = true;
-  //   render();
-  // }
-
-  async function publishAndAssign() {
-    await saveAsPublish();
-    history.push(`/private/content-creator/${store.document.assignable}/assign`);
-  }
-
-  async function init() {
-    try {
-      store.loading = true;
-      store.isNew = params.id === 'new';
-      render();
-      if (!store.isNew) {
-        const {
-          // eslint-disable-next-line camelcase
-          document: {
-            deleted,
-            deleted_at,
-            created_at,
-            updated_at,
-            deletedAt,
-            createdAt,
-            updatedAt,
-            published,
-            ...document
-          },
-        } = await getDocumentRequest(params.id);
-
-        // eslint-disable-next-line react/prop-types
-        store.titleValue = document.name;
-        document.program = document.subjects?.[0]?.program;
-        store.published = published;
-        store.document = { ...document };
-        form.reset(document);
+  const handleMutations = async (assign = '') => {
+    const documentToSave = { ...formValues, published: publishing };
+    if (!isNew) documentToSave.id = params.id;
+    mutation.mutate(
+      { ...documentToSave },
+      {
+        onSuccess: (data) => {
+          addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
+          if (!assign) history.push(`/private/content-creator${publishing ? '' : '/?fromDraft=1'}`);
+          else history.push(`/private/content-creator/${data.document.assignable}/assign`);
+        },
+        onError: (e) => addErrorAlert(e),
       }
-      store.idLoaded = params.id;
-      store.loading = false;
-      render();
-    } catch (error) {
-      addErrorAlert(error);
-    }
-  }
-
-  // const savePermissions = async (assetId, { canAccess }) => {
-  //   const permissions = await shareDocumentRequest(store.document.assignable, { canAccess });
-  //   return permissions;
-  // };
-
-  const setTitleIfItsUndefined = (value) => {
-    if (store.titleValue) return;
-    const parser = new DOMParser();
-    const htmlContent = Array.from(
-      parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
     );
-    const firstElementWithText = htmlContent.find((element) => element.textContent)?.textContent;
-    form.setValue('name', firstElementWithText);
-  };
-
-  const onTitleChangeHandler = (value) => {
-    form.setValue('name', value);
-    store.titleValue = value;
-    render();
   };
 
   const onContentChangeHandler = (value) => {
-    setTitleIfItsUndefined(value);
     form.setValue('content', value);
-  };
-
-  // const handleDrawerClose = () => {
-  //   store.openShareDrawer = false;
-  //   render();
-  // };
-
-  async function goToConfig() {
-    store.isConfigPage = true;
-    render();
-  }
-
-  React.useEffect(() => {
-    if (params?.id && store.idLoaded !== params?.id) init();
-  }, [params]);
-
-  React.useEffect(() => {
-    const subscription = form.watch(() => {
-      debounce(async () => {
-        store.isValid = await form.trigger();
-        render();
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (store.loading || tLoading) return <LoadingOverlay visible />;
-
-  const advancedConfig = {
-    alwaysOpen: true,
-    fileToRight: true,
-    colorToRight: true,
-    program: { show: true, required: false },
-    subjects: { show: true, required: true, showLevel: true, maxOne: false },
+    if (!query.data?.name && !formValues.name) {
+      const parser = new DOMParser();
+      const htmlContent = Array.from(
+        parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
+      );
+      const firstElementWithText = htmlContent.find((element) => element.textContent)?.textContent;
+      setTimeout(() => {
+        form.setValue('name', firstElementWithText);
+      }, 1250);
+    }
   };
 
   return (
-    <Box style={{ height: '100vh' }}>
-      <Stack direction="column" fullHeight>
-        <PageHeader
-          placeholders={{ title: t('titlePlaceholder') }}
-          values={{
-            title: formValues.name,
-          }}
-          buttons={
-            !readOnly && {
-              duplicate: t('saveDraft'),
-              edit: !store.isConfigPage && t('publish'),
-              dropdown: store.isConfigPage && t('publishOptions'),
-            }
-          }
-          buttonsIcons={{
-            edit: <SetupContent size={16} />,
-          }}
-          isEditMode={!store.isConfigPage}
-          icon={!store.isConfigPage ? <DocumentIcon /> : null}
-          onChange={onTitleChangeHandler}
-          onEdit={() => goToConfig()}
-          onDuplicate={() => saveAsDraft()}
-          onDropdown={[
-            { label: t('onlyPublish'), onClick: () => onlyPublish() },
-            // { label: t('publishAndShare'), onClick: () => publishAndShare() },
-            { label: t('publishAndAssign'), onClick: () => publishAndAssign() },
-          ]}
-          loading={store.saving}
-          fullWidth
-        />
-        {!store.isConfigPage ? (
-          <ContentEditorInput
-            useSchema
-            schemaLabel={t('schemaLabel')}
-            labels={{
-              format: t('formatLabel'),
+    <>
+      <LoadingOverlay visible={tLoading || query?.isLoading} />
+      <Box>
+        <Stack direction="column" fullHeight>
+          <PageHeader
+            placeholders={{ title: t('titlePlaceholder') }}
+            values={{
+              title: form.watch('name'),
             }}
-            onChange={onContentChangeHandler}
-            value={formValues.content}
-            openLibraryModal={false}
-            readOnly={readOnly}
+            buttons={
+              !readOnly && {
+                duplicate: params.id ? 'Guardar cambios' : t('saveDraft'),
+                edit: !publishing && t('publish'),
+                dropdown: publishing && t('publishOptions'),
+              }
+            }
+            buttonsIcons={{
+              edit: <SetupContent size={16} />,
+            }}
+            isEditMode={!publishing && !readOnly}
+            onChange={(value) => form.setValue('name', value)}
+            onEdit={() => setPublishing(true)}
+            onDuplicate={() => handleMutations()}
+            onDropdown={[
+              { label: t('onlyPublish'), onClick: () => handleMutations() },
+              { label: t('publishAndAssign'), onClick: () => handleMutations('assign') },
+            ]}
+            fullWidth
+            loding={query?.isLoading}
           />
-        ) : (
-          <PageContent title={t('config')}>
-            <Box style={{ padding: '48px 32px' }}>
-              <AssetFormInput
-                preview
-                form={form}
-                category="assignables.content-creator"
-                previewVariant="document"
-                advancedConfig={advancedConfig}
-                tagsPluginName="content-creator"
-              />
-            </Box>
-          </PageContent>
-        )}
-        {/* {store.isConfigPage && (
-          <PermissionsDataDrawer
-            opened={store.openShareDrawer}
-            asset={store.preparedAsset}
-            onClose={handleDrawerClose}
-            sharing
-            size={720}
-            onSavePermissions={savePermissions}
-          />
-        )} */}
-      </Stack>
-    </Box>
+          {!publishing ? (
+            <ContentEditorInput
+              useSchema
+              schemaLabel={t('schemaLabel')}
+              labels={{
+                format: t('formatLabel'),
+              }}
+              onChange={onContentChangeHandler}
+              value={formValues.content}
+              openLibraryModal={false}
+              readOnly={readOnly}
+            />
+          ) : (
+            <PageContent title={t('config')}>
+              <Box style={{ padding: '48px 32px' }}>
+                <AssetFormInput
+                  preview
+                  form={form}
+                  category="assignables.content-creator"
+                  previewVariant="document"
+                  advancedConfig={{ advancedConfigForAssetFormInput }}
+                  tagsPluginName="content-creator"
+                />
+              </Box>
+            </PageContent>
+          )}
+        </Stack>
+      </Box>
+    </>
   );
 }
 
 Index.propTypes = {
-  readOnly: PropTypes.bool,
-  isNew: PropTypes.bool,
+  isNew: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired,
 };
