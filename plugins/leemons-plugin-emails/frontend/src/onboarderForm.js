@@ -25,7 +25,7 @@ export default function OnboarderForm() {
   }
 
   async function onTest(config) {
-    const data = await leemons.api('v1/emails/send-test', {
+    const data = await leemons.api('v1/emails/email/send-test', {
       method: 'POST',
       body: {
         providerName,
