@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
+
 const { readFile } = require('./files');
 
 /**
@@ -46,7 +48,28 @@ function findServiceFile(directoryPath, service) {
   return null;
 }
 
+function parseServiceFile(file) {
+  const serviceFileContent = fs.readFileSync(file, 'utf8');
+  const serviceNameMatch = serviceFileContent.match(/name:\s*['"`](?:[^'"`]*\.)?([^'"`]*)['"`]/);
+  const service = serviceNameMatch ? serviceNameMatch[1] : null;
+
+  const lines = serviceFileContent.split(os.EOL);
+  const importLine = lines.find(
+    (line) => line.includes(`require('./`) && line.endsWith(`.rest');`)
+  );
+
+  const match = importLine?.match(/require\('(.*)'\)/);
+
+  if (!match || !match[1]) {
+    throw new Error(`Openapi: service in ${file} has not REST actions`);
+  }
+  const controllerFile = path.resolve(path.dirname(file), `${match[1]}.js`);
+
+  return { service, controllerFile };
+}
+
 module.exports = {
   buildServicePath,
   findServiceFile,
+  parseServiceFile,
 };

@@ -10,12 +10,24 @@ const { findServiceFile } = require('./services');
 const { prettierOptions } = require('./prettierOptions');
 
 /**
- * Parses the code into an AST
+ * Parses the code into an Abstract Syntax Tree (AST)
  * @param {string} code - The code to parse
  * @returns {Object} The AST of the code
  */
 function parseCodeToAst(code) {
   return espree.parse(code, { range: true, ecmaVersion: 12, sourceType: 'module' });
+}
+
+/**
+ * Finds all the controllers in a given file
+ * @param {string} controllerFilePath - The path of the controller file
+ * @returns {Array} An array of the names of the controllers
+ */
+function findControllers(controllerFilePath) {
+  const code = readFile(controllerFilePath);
+
+  const regex = /(\w+Rest):\s\{/g; // Note the 'g' flag for global search
+  return [...code.matchAll(regex)].map((match) => match[1]);
 }
 
 /**
@@ -124,6 +136,13 @@ function getImportedFilePath(importLine, currentFilePath) {
   return null;
 }
 
+/**
+ * Gets the path of the controller
+ * @param {string} filePath - The path of the file
+ * @param {string} service - The service
+ * @returns {string} The path of the controller
+ * @throws {Error} If the import line of rest actions is not found
+ */
 function getControllerPath(filePath, service) {
   const importLine = findImportLine(filePath, service);
   if (!importLine) throw Error('import line of rest actions not found');
@@ -137,24 +156,31 @@ function getControllerPath(filePath, service) {
  * @param {string} params.service - The service
  * @param {string} params.controller - The controller
  * @param {Object} params.ctx - The context
+ * @throws {Error} If the controller is not found or the openapi property already exists
  */
 function prepareControllerFile({ controllerFilePath, service, controller, ctx }) {
   let code = readFile(controllerFilePath);
   const ast = parseCodeToAst(code);
   const controllerObj = searchController(ast, controller);
-  if (!controllerObj) throw new Error(`Controller ${controller} not found`);
+  if (!controllerObj)
+    throw new Error(`Openapi: ${controllerFilePath} Controller "${controller}" not found`);
 
   if (controllerObj && !hasOpenApiProperty(controllerObj)) {
     code = addRequireStatement(code, service, controller);
     code = addOpenApi(code, controller);
-  } else
-    ctx.logger.warn(
-      `Openapi: ${path.basename(
-        controllerFilePath
-      )} Property "openapi" already exists, I can't replace it`
-    );
-
+  } else {
+    const message = `Openapi: ${controllerFilePath} - ${controller}: Property "openapi" already exists, I can't replace it`;
+    if (ctx) {
+      ctx.logger.warn(message);
+    } else {
+      console.warn(message);
+    }
+  }
   writeFile(controllerFilePath, prettier.format(code, prettierOptions));
 }
 
-module.exports = { getControllerPath, prepareControllerFile };
+module.exports = {
+  findControllers,
+  getControllerPath,
+  prepareControllerFile,
+};

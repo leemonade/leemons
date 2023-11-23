@@ -35,7 +35,8 @@
     "start:app": "yarn workspace leemons-app backend:dev",
     "done": "echo Done ✨",
     "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "createOpenapi": "yarn workspace leemons-app leemons-openapi"
   },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
