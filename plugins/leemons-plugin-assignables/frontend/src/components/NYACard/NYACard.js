@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components/LibraryCard';
@@ -11,6 +11,9 @@ import { useIsTeacher } from '@academic-portfolio/hooks';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
+import { NYACardCover } from './NYACardCover';
+import { NYACardStyles } from './NYACard.styles';
+import { NYACardBody } from './NYCardBody';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -354,6 +357,7 @@ function useNYACardLocalizations(labels) {
     prefixPN('roles'),
     prefixPN('need_your_attention'),
     prefixPN('multiSubject'),
+    prefixPN('assignmentForm'),
   ]);
 
   return useMemo(() => {
@@ -363,6 +367,7 @@ function useNYACardLocalizations(labels) {
         ..._.get(res, prefixPN('need_your_attention')),
         roles: _.get(res, prefixPN('roles')),
         multiSubject: _.get(res, prefixPN('multiSubject')),
+        assignmentForm: _.get(res, prefixPN('assignmentForm')),
       };
     }
 
@@ -374,7 +379,8 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
-  console.log({ instance, showSubject, labels, classData });
+  const [isHovered, setIsHovered] = useState(false);
+  const { classes } = NYACardStyles({ isHovered }, { name: 'NYACard' });
   const query = useMemo(
     () => ({
       classData,
@@ -384,6 +390,8 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
   );
 
   const preparedInstance = usePreparedInstance(instance, query, localizations);
+
+  console.log('preparedInstance', preparedInstance);
 
   if (!preparedInstance) {
     return null;
@@ -397,7 +405,26 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
           height: '100%',
         }}
       >
-        <LibraryCard
+        <Box
+          className={classes.root}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <NYACardCover
+            {...preparedInstance?.asset}
+            variantTitle={preparedInstance?.assignable?.role}
+            topColor={preparedInstance?.subject?.color}
+          />
+          <NYACardBody
+            {...preparedInstance?.asset}
+            isNew={preparedInstance?.isNew}
+            localizations={localizations}
+            instance={preparedInstance}
+            classroom={preparedInstance?.classes}
+            locale={locale}
+          />
+        </Box>
+        {/* <LibraryCard
           fullHeight
           asset={{
             ...preparedInstance?.asset,
@@ -434,7 +461,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
               />
             </Box>
           }
-        />
+        /> */}
       </Box>
     </Link>
   );
