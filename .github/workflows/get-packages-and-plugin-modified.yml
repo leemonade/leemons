@@ -32,7 +32,7 @@ jobs:
 
       - name: 🔧 Get current tag
         run: echo "CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)" >> "$GITHUB_ENV"
-        
+
       - name: 🔧 Get packages files
         id: packages
         run:  echo "packages=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^packages/' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
