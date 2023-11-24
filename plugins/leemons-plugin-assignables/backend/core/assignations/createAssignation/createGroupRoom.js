@@ -28,6 +28,7 @@ async function createGroupRoom({
       bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       type: ctx.prefixPN('assignation.group'),
       metadata: {
+        assignableInstanceId,
         iconIsUrl: classes.length > 1,
         headerIconIsUrl: classes.length > 1,
         headerName: instance.assignable.asset.name,

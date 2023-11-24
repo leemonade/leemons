@@ -56,6 +56,7 @@ const {
 const {
   getAllItemsForTheUserAgentHasPermissionsByType,
 } = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
+const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUserAgentContactIds');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -155,6 +156,11 @@ module.exports = {
     getUserAgentContacts: {
       async handler(ctx) {
         return getUserAgentContacts({ ...ctx.params, ctx });
+      },
+    },
+    getUserAgentContactIds: {
+      async handler(ctx) {
+        return getUserAgentContactIds({ ...ctx.params, ctx });
       },
     },
     addUserAgentContacts: {

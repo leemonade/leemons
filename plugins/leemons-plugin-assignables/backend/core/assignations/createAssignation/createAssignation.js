@@ -87,16 +87,16 @@ async function createAssignation({ assignableInstanceId, users, options, ctx }) 
 
       // TODO @MIGUEL
       /* Viejo comunica
-          subjectRooms = await createSubjectsRooms({
-            assignableInstanceId,
-            instance,
-            parentKey: instanceRoom.key,
-            classes: _classes,
-            teachers,
-            ctx,
-          });
+                subjectRooms = await createSubjectsRooms({
+                  assignableInstanceId,
+                  instance,
+                  parentKey: instanceRoom.key,
+                  classes: _classes,
+                  teachers,
+                  ctx,
+                });
 
-             */
+                   */
     }
 
     // EN: Create the assignation
@@ -144,6 +144,7 @@ async function createAssignation({ assignableInstanceId, users, options, ctx }) 
           if (rolesWithChat.includes(instance.assignable.role)) {
             roomsPromises.push(
               addUserSubjectRoom({
+                assignableInstanceId,
                 parentRoom: [instanceRoom.key, `comunica.room.chat.parent.${user}`],
                 classe,
                 instance,
