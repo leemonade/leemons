@@ -16,9 +16,12 @@ export default function ActivityCarousel({
   const { theme } = useNyaStyles();
 
   const swiperProps = {
+    watchOverflow: true,
     selectable: true,
     deselectable: false,
     disableSelectedStyles: true,
+    slidesPerView: 'auto',
+    spaceBetween: 60,
     breakAt: {
       [theme.breakpoints.xs]: {
         slidesPerView: 1,
@@ -29,12 +32,16 @@ export default function ActivityCarousel({
         spaceBetween: theme.spacing[4],
       },
       [theme.breakpoints.lg]: {
-        slidesPerView: 3,
+        slidesPerView: 5,
         spaceBetween: theme.spacing[4],
       },
     },
     slideStyles: {
       height: 'auto',
+      paddingTop: '24px',
+      paddingBottom: '24px',
+      minWidth: '264px !important',
+      maxWidth: '320px !important',
     },
   };
 

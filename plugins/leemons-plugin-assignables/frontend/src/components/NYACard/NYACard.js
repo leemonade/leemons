@@ -361,8 +361,6 @@ function useNYACardLocalizations(labels) {
     prefixPN('assignmentForm'),
     prefixPN('ongoing'),
   ]);
-  console.log(translations);
-  console.log(translations);
 
   return useMemo(() => {
     if (translations && translations.items) {
@@ -396,15 +394,10 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
 
   const preparedInstance = usePreparedInstance(instance, query, localizations);
 
-  console.log(
-    'preparedInstance?.assignable?.roleDetails?.icon',
-    preparedInstance?.assignable?.roleDetails?.icon
-  );
-
   if (!preparedInstance) {
     return null;
   }
-
+  console.log(preparedInstance?.assignable?.role);
   return (
     <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
       <Box

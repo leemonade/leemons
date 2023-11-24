@@ -61,7 +61,7 @@ const NYACardBody = ({
     getInstanceTypeLocale(instance);
   }, [instance]);
   const title = props.name ? props.name : null;
-
+  const isModule = instance?.assignable?.role === 'learningpaths.module'
   const newLocale = localizations?.new?.toUpperCase();
 
   const deadLineLocales = localizations?.deadline
@@ -103,9 +103,9 @@ const NYACardBody = ({
           </TextClamp>
         )}
       </Box>
-      <Box className={classes.subject}>
+      {!isModule && <Box className={classes.subject}>
         <ClassroomItemDisplay classroomIds={classroom} />
-      </Box>
+      </Box>}
       <Box className={classes.deadline}>
         <Text className={classes.deadlineDate}>{formattedDeadline.date} - </Text>
         <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>{formattedDeadline.status}</Text>
