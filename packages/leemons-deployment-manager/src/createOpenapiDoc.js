@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const espree = require('espree');
 const estraverse = require('estraverse');
+require('dotenv').config();
 
 function readFile(filePath) {
   try {
@@ -176,9 +177,8 @@ async function callOpenAI(systemMessage, userMessage) {
   ];
 
   const response = await axios.post(
-    'https://api.openai.com/v1/chat/completions',
+    process.env.APIURL_OPENAI,
     {
-      // model: 'gpt-4-1106-preview',
       model: 'gpt-3.5-turbo-16k',
       messages,
       temperature: 1,
@@ -189,7 +189,7 @@ async function callOpenAI(systemMessage, userMessage) {
     },
     {
       headers: {
-        Authorization: `Bearer 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`,
+        Authorization: `Bearer ${process.env.APIKEY_OPENAI}`,
         'Content-Type': 'application/json',
       },
     }
