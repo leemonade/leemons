@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
@@ -51,12 +51,12 @@ const CardWrapper = ({
   onUnpin,
   onDownload,
   locale,
+  assetsLoading,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
   const [t] = useTranslateLoader(prefixPN('list'));
   const history = useHistory();
-
   const { classes } = CardWrapperStyles({ selected });
 
   const menuItems = React.useMemo(() => {
@@ -130,24 +130,34 @@ const CardWrapper = ({
     return items;
   }, [asset, t]);
 
-  let Component = LibraryCard;
-  const componentOwner = category?.componentOwner || category?.pluginOwner;
+  const Component = useMemo(() => {
+    let componentToRender = LibraryCard;
+    const componentOwner = category?.componentOwner || category?.pluginOwner;
 
-  if (category?.listCardComponent && componentOwner) {
-    try {
-      Component = dynamicImport(componentOwner, category.listCardComponent);
-    } catch (e) {
-      //
+    if (category?.listCardComponent && componentOwner) {
+      try {
+        componentToRender = dynamicImport(componentOwner, category.listCardComponent);
+      } catch (e) {
+        //
+      }
     }
-  }
+
+    return componentToRender;
+  }, [
+    LibraryCard,
+    category?.componentOwner,
+    category?.pluginOwner,
+    category?.listCardComponent,
+    assetsLoading,
+  ]);
+
   const _asset = asset;
-  // console.log(category);
   if (realCategory?.key !== 'pins') {
     delete _asset.programName;
   }
 
   return !isNil(category) && !isEmpty(asset) ? (
-    <Box key={key} {...props}>
+    <Box key={key} {...props} style={{ display: 'flex', gap: 32 }}>
       <Component
         asset={_asset}
         menuItems={menuItems}
@@ -158,6 +168,7 @@ const CardWrapper = ({
         onShare={onShare}
         single={single}
         locale={locale}
+        isLoading={assetsLoading}
       />
     </Box>
   ) : null;
@@ -183,6 +194,8 @@ CardWrapper.propTypes = {
   onPin: PropTypes.func,
   onUnpin: PropTypes.func,
   onDownload: PropTypes.func,
+  assetsLoading: PropTypes.bool,
+  realCategory: PropTypes.any,
 };
 
 export { CardWrapper };

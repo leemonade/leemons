@@ -127,7 +127,7 @@ const LibraryDetailToolbar = ({
     isFunction(onUnpin) && onUnpin(item);
   };
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} data-cypress-id="library-detail-toolbar">
       <Stack>
         {toolbarItems.view && (
           <ActionButton
@@ -155,6 +155,7 @@ const LibraryDetailToolbar = ({
         )}
         {toolbarItems.download && (
           <ActionButton
+            data-cypress-id="library-detail-toolbar-download"
             icon={<DownloadIcon height={20} width={20} />}
             onClick={handleDownload}
             tooltip={toolbarItems.download}

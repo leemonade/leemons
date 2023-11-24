@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import React, { useCallback } from 'react';
 import { isEmpty } from 'lodash';
 import { Badge, Box, ImageLoader, Stack, Text, TextClamp } from '@bubbles-ui/components';
@@ -10,11 +11,10 @@ import {
 const getAverageTime = (seconds) => {
   if (seconds <= 59) {
     return `${seconds}s`;
-  } else {
-    const minutes = Math.floor(seconds / 60);
-    const secondsLeft = seconds % 60;
-    return secondsLeft === 0 ? `${minutes}m` : `${minutes}m ${secondsLeft}s`;
   }
+  const minutes = Math.floor(seconds / 60);
+  const secondsLeft = seconds % 60;
+  return secondsLeft === 0 ? `${minutes}m` : `${minutes}m ${secondsLeft}s`;
 };
 
 const getDomain = (url) => {

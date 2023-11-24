@@ -11,9 +11,12 @@ export { LIBRARYCARD_COVER_DIRECTIONS };
 
 export const LIBRARY_CARD_COVER_DEFAULT_PROPS = {
   blur: 5,
-  height: 180,
+  height: 144,
   menuItems: [],
   dashboard: false,
+  fileIcon: null,
+  variantIcon: null,
+  fileType: null,
 };
 export const LIBRARY_CARD_COVER_PROP_TYPES = {
   name: PropTypes.string,
@@ -30,4 +33,21 @@ export const LIBRARY_CARD_COVER_PROP_TYPES = {
   isNew: PropTypes.bool,
   role: PropTypes.oneOf(LIBRARYCARD_ASSIGMENT_ROLES),
   badge: PropTypes.string,
+};
+
+export const overlayVariants = {
+  hidden: {
+    opacity: 0,
+    transition: {
+      duration: 0.3,
+      type: 'tween',
+    },
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.3,
+      type: 'tween',
+    },
+  },
 };

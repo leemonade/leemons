@@ -2,17 +2,17 @@
  * Gets the pins by the asset IDs.
  *
  * @param {Object} params - The parameters object.
- * @param {string[]} params.assetIds - The asset IDs.
+ * @param {string[]} params.assetsIds - The asset IDs.
  * @param {string[]} params.columns - The columns to select.
  * @param {Context} params.ctx - The Moleculer context object.
  * @returns {Promise<LibraryPin[]>} A promise that resolves with the found pin documents.
  */
 const { flattenDeep } = require('lodash');
 
-async function getByAssets({ assetIds, columns, ctx }) {
-  const assetsIds = flattenDeep([assetIds]);
+async function getByAssets({ assetsIds, columns, ctx }) {
+  const assets = flattenDeep([assetsIds]);
 
-  const query = { asset: assetsIds };
+  const query = { asset: assets };
 
   const userAgents = ctx.meta.userSession?.userAgents;
 
