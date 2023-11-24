@@ -2,7 +2,7 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
-  const cardLibraryStyles = theme.other.cardAssignments;
+  const cardAssignmentsStyles = theme.other.cardAssignments;
   return {
     root: {
       padding: pxToRem(16),
@@ -59,15 +59,15 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
       paddingTop: pxToRem(8),
     },
     title: {
-      ...cardLibraryStyles.content.typo.lg,
+      ...cardAssignmentsStyles.content.typo.lg,
       lineHeight: '20px',
-      color: cardLibraryStyles.content.color.emphasis,
+      color: cardAssignmentsStyles.content.color.emphasis,
       paddingTop: '0px !important',
     },
     description: {
-      ...cardLibraryStyles.content.typo.md,
+      ...cardAssignmentsStyles.content.typo.md,
       lineHeight: '20px',
-      color: cardLibraryStyles.content.color.default,
+      color: cardAssignmentsStyles.content.color.default,
       paddingTop: pxToRem(4),
     },
     subjectIcon: {
@@ -79,15 +79,15 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
       gap: 5,
       marginTop: pxToRem(16),
     },
-    subjectName: {
-      ...cardLibraryStyles.content.typo.md,
-      lineHeight: '20px',
-      color: cardLibraryStyles.content.color.subje,
+    deadline: {
+      marginTop: pxToRem(24),
     },
-    programName: {
-      ...cardLibraryStyles.content.typo.md,
-      lineHeight: '20px',
-      color: cardLibraryStyles.content.color.muted,
+    deadlineDate: {
+      color: cardAssignmentsStyles.content.color.subje,
+      ...cardAssignmentsStyles.content.typo['sm--medium'],
+    },
+    progress: {
+      marginTop: pxToRem(16),
     },
   };
 });

@@ -11,7 +11,7 @@ export const NYACardStyles = createStyles((theme, { fullHeight, isHovered }) => 
   return {
     root: {
       ...getFontExpressive(theme.fontSizes['2']),
-      border: `1px solid ${theme.other.cardLibrary.background.color.subtle}`,
+      border: `1px solid ${theme.other.cardLibrary.border.color.subtle}`,
       borderRadius: '4px',
       backgroundColor: theme.other.cardLibrary.background.color.default,
       height: '100%',

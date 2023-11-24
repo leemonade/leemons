@@ -1,14 +1,14 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable import/prefer-default-export */
 import React, { useState, useEffect } from 'react';
-import { Box, Badge, Text, TextClamp } from '@bubbles-ui/components';
-import { isArray } from 'lodash';
-// import { useQueryClient } from '@tanstack/react-query';
+import { Box, Badge, Text, TextClamp, ProgressColorBar } from '@bubbles-ui/components';
 import getActivityType from '@assignables/helpers/getActivityType';
 import { ClassroomItemDisplay } from '@academic-portfolio/components';
+import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
+import { htmlToText } from '@common';
 import { NYACARD_BODY_PROP_TYPES, NYACARD_BODY_DEFAULT_PROPS } from './NYACardBody.constants';
 import { NYACardBodyStyles } from './NYACardBody.styles';
-// import { FavButton } from '../FavButton';
-// import { pinAssetRequest, unpinAssetRequest } from '../../request';
+import { getDeadlineData } from '../../../helpers/getDeadlineData'
 
 const NYACardBody = ({
   description,
@@ -25,12 +25,27 @@ const NYACardBody = ({
   instance,
   classroom,
   locale,
+  totalActivities,
+  submitedActivities,
   ...props
 }) => {
   const { classes } = NYACardBodyStyles({ fullHeight }, { name: 'NYACardBody' });
   // const [isFav, setIsFav] = useState(pinned);
   const [calificationType, setCalificationType] = useState(null);
-  const instanceChild = instance;
+  const hasProgressBar = totalActivities && totalActivities > 0;
+  const activitiesPercentage = hasProgressBar && (submitedActivities / totalActivities) * 100;
+  const getDescription = () => {
+    if (instance?.assignable?.role === 'feedback') {
+      return instance?.assignable?.instructionsForStudents ? htmlToText(instance?.assignable?.instructionsForStudents) : description;
+    }
+    if (instance?.assignable?.role === 'task' || instance?.assignable?.role === 'test') {
+      return instance?.assignable?.statement ? htmlToText(instance?.assignable?.statement) : description;
+    }
+    return description
+  };
+
+  const cardDescription = getDescription();
+
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
     const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
@@ -41,46 +56,20 @@ const NYACardBody = ({
     };
     setCalificationType(activityTypeLocale[activityType]);
   };
-
+  console.log(props?.name)
+  console.log(localizations)
   useEffect(() => {
-    getInstanceTypeLocale(instanceChild);
+    getInstanceTypeLocale(instance);
   }, [instance]);
-  const [subjectData, setSubjectData] = useState(null);
-  // const queryClient = useQueryClient();
   const title = props.name ? props.name : null;
 
-  // const handleIsFav = (e) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   if (isFav) {
-  //     unpinAssetRequest(id);
-  //     setIsFav(false);
-  //     queryClient.invalidateQueries({ queryKey: ['fetch-assets-data'] });
-  //     queryClient.refetchQueries();
-  //   } else {
-  //     pinAssetRequest(id);
-  //     setIsFav(true);
-  //   }
-  // };
+  const newLocale = localizations?.new?.toUpperCase();
 
-  // useEffect(() => {
-  //   if (isArray(subjects)) {
-  //     const subjectIds = subjects.map((s) => s.subject);
-  //     setSubjectData(subjectIds);
-  //   } else if (!isArray(subjects) && subjects?.name) {
-  //     setSubjectData(subjects);
-  //   }
-  // }, [subjects]);
-  const newLocale = localizations.new.toUpperCase();
-  const formattedDate =
-    instance?.deadlineProps?.deadline instanceof Date
-      ? `${instance?.deadlineProps?.deadline.toLocaleDateString(
-        locale
-      )} - ${instance?.deadlineProps?.deadline.toLocaleTimeString(locale, {
-        hour: '2-digit',
-        minute: '2-digit',
-      })}`
-      : '';
+  const deadLineLocales = localizations?.deadline
+  const activitiesLocale = localizations?.ongoing?.activities.toLowerCase()
+
+  const formattedDeadline = getDeadlineData(instance?.deadlineProps?.deadline, instance?.dates?.visualization, deadLineLocales);
+  const deadlineColors = getColorByDateRange(instance?.deadlineProps?.deadline, instance?.dates?.visualization);
 
   return (
     <Box className={classes.root}>
@@ -110,7 +99,7 @@ const NYACardBody = ({
         {description && (
           <TextClamp lines={2}>
             <Text size="xs" className={classes.description}>
-              {description}
+              {cardDescription}
             </Text>
           </TextClamp>
         )}
@@ -118,9 +107,13 @@ const NYACardBody = ({
       <Box className={classes.subject}>
         <ClassroomItemDisplay classroomIds={classroom} />
       </Box>
-      <Box>
-        <Text>{formattedDate}</Text>
+      <Box className={classes.deadline}>
+        <Text className={classes.deadlineDate}>{formattedDeadline.date} - </Text>
+        <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>{formattedDeadline.status}</Text>
       </Box>
+      {activitiesPercentage && <Box className={classes.progress}>
+        <ProgressColorBar value={activitiesPercentage} size={'md'} color={'#F39C12'} labelLeft={`Progreso: ${activitiesPercentage}%`} labelRight={`(${submitedActivities}/${totalActivities} ${activitiesLocale})`} />
+      </Box>}
     </Box>
   );
 };

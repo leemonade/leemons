@@ -358,6 +358,7 @@ function useNYACardLocalizations(labels) {
     prefixPN('need_your_attention'),
     prefixPN('multiSubject'),
     prefixPN('assignmentForm'),
+    prefixPN('ongoing'),
   ]);
 
   return useMemo(() => {
@@ -368,6 +369,7 @@ function useNYACardLocalizations(labels) {
         roles: _.get(res, prefixPN('roles')),
         multiSubject: _.get(res, prefixPN('multiSubject')),
         assignmentForm: _.get(res, prefixPN('assignmentForm')),
+        ongoing: _.get(res, prefixPN('ongoing')),
       };
     }
 
@@ -391,7 +393,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
 
   const preparedInstance = usePreparedInstance(instance, query, localizations);
 
-  console.log('preparedInstance', preparedInstance);
+  // console.log('preparedInstance', preparedInstance);
 
   if (!preparedInstance) {
     return null;
@@ -422,6 +424,8 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
             instance={preparedInstance}
             classroom={preparedInstance?.classes}
             locale={locale}
+            totalActivities={10}
+            submitedActivities={5}
           />
         </Box>
         {/* <LibraryCard

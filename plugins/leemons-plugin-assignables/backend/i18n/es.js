@@ -347,6 +347,14 @@ module.exports = {
       score: 'Respuestas correctas',
       activityType: 'Tipo de actividad',
     },
+    deadline: {
+      opened: 'Abierta',
+      programmed: 'Programada',
+      daysRemaining: 'Faltan {{count}} días',
+      hoursRemaining: 'Faltan {{count}} horas',
+      late: 'Tarde',
+      noDeadline: 'Sin fecha límite',
+    },
     status: {
       evaluated: 'Ver evaluación',
       submission: 'Entrega',
