@@ -1,4 +1,3 @@
-const path = require('path');
 const jsonSchemaGenerator = require('json-schema-generator');
 
 const { getControllerPath, prepareControllerFile } = require('./lib/controllers');
@@ -21,7 +20,7 @@ function decomposeActionName(actionName) {
  * @param {Object} params.res - The response
  * @param {Object} params.ctx - The context
  */
-function createOpenapiResponse({ res, ctx }) {
+async function createOpenapiResponse({ res, ctx }) {
   const actionName = ctx.action.name;
   const schema = jsonSchemaGenerator(res);
   try {
@@ -32,7 +31,12 @@ function createOpenapiResponse({ res, ctx }) {
 
     prepareControllerFile({ controllerFilePath, service, controller, ctx });
 
-    prepareOpenapiFile(path.dirname(controllerFilePath, 'rest'), service, controller, schema);
+    await prepareOpenapiFile({
+      controllerFilePath,
+      service,
+      controller,
+      schema,
+    });
   } catch (error) {
     ctx.logger.error(`ERROR Openapi: ${ctx.action.name} - ${error.message}`);
   }

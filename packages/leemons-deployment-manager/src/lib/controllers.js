@@ -168,6 +168,7 @@ function prepareControllerFile({ controllerFilePath, service, controller, ctx })
   if (controllerObj && !hasOpenApiProperty(controllerObj)) {
     code = addRequireStatement(code, service, controller);
     code = addOpenApi(code, controller);
+    writeFile(controllerFilePath, prettier.format(code, prettierOptions));
   } else {
     const message = `Openapi: ${controllerFilePath} - ${controller}: Property "openapi" already exists, I can't replace it`;
     if (ctx) {
@@ -176,7 +177,6 @@ function prepareControllerFile({ controllerFilePath, service, controller, ctx })
       console.warn(message);
     }
   }
-  writeFile(controllerFilePath, prettier.format(code, prettierOptions));
 }
 
 module.exports = {

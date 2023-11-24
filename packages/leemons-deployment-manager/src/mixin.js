@@ -177,7 +177,7 @@ module.exports = function ({
               (process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing) &&
               ctx.action.rest
             )
-              createOpenapiResponse({ res, ctx });
+              await createOpenapiResponse({ res, ctx });
             return res;
           },
         ],

@@ -1,28 +1,34 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable no-restricted-syntax */
 const glob = require('glob').sync;
 const path = require('path');
-const { parseServiceFile } = require('./lib/services');
 
+const { parseServiceFile } = require('./lib/services');
 const { findControllers, prepareControllerFile } = require('./lib/controllers');
 const { prepareOpenapiFile } = require('./lib/openapi');
 
-function createOpenapiFiles(startPath) {
+async function createOpenapiFiles(startPath) {
   try {
     const serviceDirs = glob(`${startPath}/**/services/rest`, { realPath: true }).filter(
       (el) => !el.includes('node_modules')
     );
-
-    serviceDirs.forEach((_dir) => {
+    for (const _dir of serviceDirs) {
       const dir = _dir.replace('/rest', '');
       const grandparentDir = path.dirname(path.dirname(dir));
-      const plugin = path.basename(grandparentDir).replace('leemons-plugin-', '');
+      const plugin = path.basename(grandparentDir);
 
       const serviceFiles = glob(`${dir}/*.service.js`, { realPath: true });
-      serviceFiles.forEach((file) => {
+      for (const file of serviceFiles) {
         try {
           const { service, controllerFile } = parseServiceFile(file);
 
           const controllers = findControllers(controllerFile);
-          controllers.forEach((controller) => {
+          for (const controller of controllers) {
+            console.log(
+              'Creating openapi:',
+              `(${plugin}-${service}-${controller})`,
+              controllerFile
+            );
             try {
               prepareControllerFile({
                 controllerFilePath: controllerFile,
@@ -30,17 +36,22 @@ function createOpenapiFiles(startPath) {
                 controller,
                 ctx: undefined,
               });
+              // eslint-disable-next-line no-await-in-loop
+              await prepareOpenapiFile({
+                controllerFilePath: controllerFile,
+                service,
+                controller,
+                useAItoCreateOpenapiDoc: true,
+              });
             } catch (error) {
               console.warn(error.message);
             }
-
-            prepareOpenapiFile(path.dirname(controllerFile), service, controller, {});
-          });
+          }
         } catch (error) {
           console.warn(error.message);
         }
-      });
-    });
+      }
+    }
   } catch (error) {
     console.error('ERROR:', error);
   }
