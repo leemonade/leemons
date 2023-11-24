@@ -6,7 +6,6 @@ import {
   AssignIcon,
   DeleteBinIcon,
   DuplicateIcon,
-  PluginLearningPathsIcon,
   ShareIcon,
   ViewOnIcon,
 } from '@bubbles-ui/icons/outline';
@@ -22,6 +21,7 @@ import { useLayout } from '@layout/context';
 import duplicateModuleRequest from '@learning-paths/requests/duplicateModule';
 import removeModuleRequest from '@learning-paths/requests/removeModule';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { ModuleCardIcon } from '@learning-paths/components/ModuleCardIcon';
 
 export function useListCardLocalizations() {
   const keys = ['assignables.roles.learningpaths.module.singular', 'learning-paths.libraryCard'];
@@ -175,7 +175,7 @@ function ListCard({ asset, single, onRefresh = () => {}, onShare = () => {}, ...
       asset={asset}
       menuItems={menuItems}
       variant="task"
-      variantIcon={<PluginLearningPathsIcon />}
+      variantIcon={<ModuleCardIcon />}
       variantTitle={localizations?.variantTitle}
     />
   );

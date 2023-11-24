@@ -56,8 +56,7 @@ const NYACardBody = ({
     };
     setCalificationType(activityTypeLocale[activityType]);
   };
-  console.log(props?.name)
-  console.log(localizations)
+
   useEffect(() => {
     getInstanceTypeLocale(instance);
   }, [instance]);

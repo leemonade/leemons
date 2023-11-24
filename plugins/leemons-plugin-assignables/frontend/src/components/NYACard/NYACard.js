@@ -14,6 +14,7 @@ import getStatus from '../Details/components/UsersList/helpers/getStatus';
 import { NYACardCover } from './NYACardCover';
 import { NYACardStyles } from './NYACard.styles';
 import { NYACardBody } from './NYCardBody';
+import { NYACardFooter } from './NYACardFooter';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -360,6 +361,8 @@ function useNYACardLocalizations(labels) {
     prefixPN('assignmentForm'),
     prefixPN('ongoing'),
   ]);
+  console.log(translations);
+  console.log(translations);
 
   return useMemo(() => {
     if (translations && translations.items) {
@@ -393,7 +396,10 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
 
   const preparedInstance = usePreparedInstance(instance, query, localizations);
 
-  // console.log('preparedInstance', preparedInstance);
+  console.log(
+    'preparedInstance?.assignable?.roleDetails?.icon',
+    preparedInstance?.assignable?.roleDetails?.icon
+  );
 
   if (!preparedInstance) {
     return null;
@@ -426,6 +432,32 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
             locale={locale}
             totalActivities={10}
             submitedActivities={5}
+          />
+          <NYACardFooter
+            {...preparedInstance?.asset}
+            variantTitle={
+              get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
+              preparedInstance?.assignable?.role
+            }
+            variantIcon={
+              <Box
+                style={{
+                  position: 'relative',
+                }}
+              >
+                <ImageLoader
+                  style={{
+                    width: 24,
+                    height: 24,
+                    position: 'relative',
+                  }}
+                  width={24}
+                  height={24}
+                  src={preparedInstance?.assignable?.roleDetails?.icon}
+                />
+              </Box>
+            }
+            locale={locale}
           />
         </Box>
         {/* <LibraryCard
