@@ -2,16 +2,14 @@
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { AvatarsGroup, Box, FileIcon, Text } from '@bubbles-ui/components';
+import { Box, FileIcon, Text } from '@bubbles-ui/components';
+import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import { NYACardFooterStyles } from './NYACardFooter.styles';
 import { NYACARD_FOOTER_PROP_TYPES } from './NYACardFooter.constants';
 
 const NYACardFooter = ({
   fileType,
   fileExtension,
-  canAccess,
-  classesCanAccess,
-  action,
   className,
   style,
   variant,
@@ -19,17 +17,16 @@ const NYACardFooter = ({
   variantIcon,
 }) => {
   const { classes, cx } = NYACardFooterStyles(
-    { action, size: 12, color: '#636D7D' },
+    { size: 12, color: '#636D7D' },
     { name: 'NYACardFooter' }
   );
-
   const variantIconLabel =
     (variantTitle ?? fileType ?? variant)?.charAt(0)?.toUpperCase() +
     (variantTitle ?? fileType ?? variant)?.slice(1);
 
   return (
     <Box className={cx(classes.root, className)} style={style}>
-      {!action && variantIcon ? (
+      {variantIcon ? (
         <Box className={classes.FileIconRoot}>
           {variantIcon}
           {variantIconLabel && <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>}
@@ -47,17 +44,9 @@ const NYACardFooter = ({
         </Box>
       )}
 
-      <Box className={classes.avatars}>
-        <AvatarsGroup
-          size="sm"
-          data={canAccess}
-          moreThanUsersAsMulti={2}
-          classesData={classesCanAccess}
-          numberFromClassesAndData
-          customAvatarMargin={14}
-          limit={2}
-          zIndexInverted={true}
-        />
+      <Box className={classes.comunica}>
+        <PluginComunicaIcon color={'#878D96'} width={18} height={18} />
+        <Text>{16}</Text>
       </Box>
     </Box>
   );

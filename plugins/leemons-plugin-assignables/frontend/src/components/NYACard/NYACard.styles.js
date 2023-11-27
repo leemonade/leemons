@@ -22,7 +22,7 @@ export const NYACardStyles = createStyles((theme, { fullHeight, isHovered }) => 
       width: '100%',
       minWidth: pxToRem(264),
       maxWidth: pxToRem(330),
-      minHeight: pxToRem(396),
+      minHeight: pxToRem(480),
       boxShadow: isHovered ? cardShadow.boxShadow : 'none',
     },
   };

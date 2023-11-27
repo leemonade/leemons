@@ -2,48 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { useClassroomsData } from '@academic-portfolio/hooks/useClassroomsData';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { unflatten } from '@common';
+import { Loader } from '@bubbles-ui/components/lib/feedback/Loader/Loader';
 import { ClassroomItemDisplayStyles } from './ClassroomItemDisplay.styles';
 import {
   CLASSROOMTITEMSDISPLAY_DEFAULT_PROPS,
   CLASSROOMTITEMSDISPLAY_PROP_TYPES,
 } from './ClassroomItemDisplay.constants';
 
-const ClassroomItemDisplay = ({ classroomIds }) => {
+const ClassroomItemDisplay = ({ classroomIds, isModule }) => {
   const [programNames, setProgramNames] = useState(null);
   const { classes } = ClassroomItemDisplayStyles();
-  const { data: classData } = useClassroomsData(classroomIds);
-  // const labelsMultiSubject = {
-  //   subjectName: 'Multiasignatura',
-  //   groupName: 'Multiasignatura',
-  //   name: 'Multiasignatura',
-  // };
-
+  const { data: classData, isLoading } = useClassroomsData(classroomIds);
+  const [, translations] = useTranslateLoader([prefixPN('subject_page.subjects')]);
+  // const groupLocale = unflatten(translations.items);
+  // console.log('groupLocale', groupLocale)
+  const isModuleNotMultiSubject = isModule && !classData?.subjectName?.includes('Multiasignatura');
   const handleCourses = (data) => {
     let allCoursesStrigyfied = '';
+    if (isArray(data) && data.length === 1) {
+      return setProgramNames(`Grupo ${data[0]?.name}`);
+    }
     if (isArray(data)) {
-      data.forEach((course) => {
-        allCoursesStrigyfied += `${course?.name},`;
+      data.forEach((course, index) => {
+        allCoursesStrigyfied += `${course?.name}${index < data.length - 1 ? ',' : ''}`;
       });
     }
-    return setProgramNames(allCoursesStrigyfied);
+    if (!allCoursesStrigyfied) {
+      return setProgramNames('');
+    }
+    return setProgramNames(`Grupos (${allCoursesStrigyfied})`);
   };
-
+  console.log('classData', classData);
+  const isMultiSubjectCase = classData?.isMultiSubject;
   useEffect(() => {
     if (classData) {
       handleCourses(classData?.courses);
     }
   }, [classData?.courses, programNames]);
 
+  if (isLoading) return <Loader />;
+  if (isModuleNotMultiSubject) return null;
+
   return (
     <Box className={classes.root}>
-      {classData && (
-        <AvatarSubject
-          color={classData?.color}
-          size={'md'}
-          // isMultiSubject={isMultiSubjectCase}
-          icon={classData?.icon ?? undefined}
-        />
-      )}
+      <AvatarSubject
+        color={classData?.color}
+        size={'md'}
+        isMultiSubject={isMultiSubjectCase}
+        icon={classData?.icon ?? undefined}
+      />
       <Box className={classes.textWrapper}>
         <TextClamp lines={1}>
           <Text color="muted" role="productive" size="xs">
@@ -51,15 +61,14 @@ const ClassroomItemDisplay = ({ classroomIds }) => {
           </Text>
         </TextClamp>
         <TextClamp lines={1}>
-          <Text className={classes.programName}>{`${programNames}${classData?.groupName}`}</Text>
+          <Text className={classes.programName}>{`${classData?.groupName} ${programNames}`}</Text>
         </TextClamp>
       </Box>
     </Box>
   );
 };
-ClassroomItemDisplay.propTypes = CLASSROOMTITEMSDISPLAY_PROP_TYPES;
 ClassroomItemDisplay.defaultProps = CLASSROOMTITEMSDISPLAY_DEFAULT_PROPS;
-ClassroomItemDisplay.displayName = 'ClassroomItemDisplay';
+ClassroomItemDisplay.propTypes = CLASSROOMTITEMSDISPLAY_PROP_TYPES;
 
 export default ClassroomItemDisplay;
 export { ClassroomItemDisplay };

@@ -35,10 +35,15 @@ export const NYACardFooterStyles = createStyles((theme, { color }) => ({
   },
   fileLabel: {
     paddingLeft: pxToRem(8),
-    color: '#878D96',
+    color: theme.other.cardLibrary.content.color.muted,
     fontSize: pxToRem(12),
   },
-  avatars: {
+  comunica: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'nowrap',
+    gap: pxToRem(8),
     marginRight: pxToRem(12),
   },
 }));

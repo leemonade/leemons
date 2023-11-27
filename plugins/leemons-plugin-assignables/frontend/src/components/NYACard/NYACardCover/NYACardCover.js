@@ -13,6 +13,7 @@ const NYACardCover = ({
   variantIcon,
   variantTitle,
   topColor,
+  assignable,
 }) => {
   const { classes } = NYACardCoverStyles(
     { color: topColor, height, parentHovered },

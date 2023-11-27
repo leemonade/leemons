@@ -397,7 +397,6 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
   if (!preparedInstance) {
     return null;
   }
-  console.log(preparedInstance?.assignable?.role);
   return (
     <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
       <Box

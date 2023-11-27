@@ -4,25 +4,24 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
   const visualizationDateObj = new Date(visualizationDate);
 
   if (!deadline) {
-    return { date: 'Sin fecha límite', status: 'Abierta' };
-    // return { date: labels.noDeadline, status: labels.opened' };
+    return { date: labels.noDeadline, status: labels.opened };
   }
 
   if (visualizationDate && now < visualizationDateObj) {
-    return { date: deadlineDate.toLocaleDateString(), status: 'Programada' };
-    // return { date: deadlineDate.toLocaleDateString(), status: labels.programmed };
+    return { date: deadlineDate.toLocaleDateString(), status: labels.programmed };
   }
 
   const diffDays = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
 
   if (diffDays > 5) {
-    return { date: deadlineDate.toLocaleDateString(), status: 'Abierta' };
-    // return { date: deadlineDate.toLocaleDateString(), status: labels.opened };
+    return { date: deadlineDate.toLocaleDateString(), status: labels.opened };
   }
 
   if (diffDays > 0) {
-    return { date: deadlineDate.toLocaleDateString(), status: `Faltan ${diffDays} días` };
-    // return { date: deadlineDate.toLocaleDateString(), status: labels.daysRemaining.replace('{{count}}', diffDays) };
+    return {
+      date: deadlineDate.toLocaleDateString(),
+      status: labels?.daysRemaining.replace('{{count}}', diffDays),
+    };
   }
 
   const diffHours = Math.ceil((deadlineDate - now) / (1000 * 60 * 60));
@@ -33,16 +32,8 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
         hour: '2-digit',
         minute: '2-digit',
       })}`,
-      status: `Faltan ${diffHours} horas`,
+      status: labels.hoursRemaining.replace('{{count}}', diffHours),
     };
-
-    // {
-    //   date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString('es-ES', {
-    //     hour: '2-digit',
-    //     minute: '2-digit',
-    //   })}`,
-    //   status: labels.hoursRemaining.replace('{{count}}', diffHours),
-    // };
   }
 
   return {
@@ -50,15 +41,8 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
       hour: '2-digit',
       minute: '2-digit',
     })}`,
-    status: 'Tarde',
+    status: labels.late,
   };
-  // {
-  //   date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString('es-ES', {
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //   })}`,
-  //   status: labels.late,
-  // };
 };
 
 export default getDeadlineData;

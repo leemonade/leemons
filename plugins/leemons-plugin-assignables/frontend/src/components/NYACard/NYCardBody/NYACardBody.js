@@ -50,9 +50,9 @@ const NYACardBody = ({
     const activityType = getActivityType(instanceParam);
     const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
     const activityTypeLocale = {
-      calificable: localizationType.calificable,
-      puntuable: localizationType.punctuable,
-      no_evaluable: localizationType.nonEvaluable,
+      calificable: localizationType?.calificable,
+      puntuable: localizationType?.punctuable,
+      no_evaluable: localizationType?.nonEvaluable,
     };
     setCalificationType(activityTypeLocale[activityType]);
   };
@@ -69,7 +69,6 @@ const NYACardBody = ({
 
   const formattedDeadline = getDeadlineData(instance?.deadlineProps?.deadline, instance?.dates?.visualization, deadLineLocales);
   const deadlineColors = getColorByDateRange(instance?.deadlineProps?.deadline, instance?.dates?.visualization);
-
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
@@ -85,7 +84,6 @@ const NYACardBody = ({
             </Badge>
           )}
         </Box>
-        {/* {isNew && ( */}
       </Box>
       <Box className={classes.titleContainer}>
         {title && (
@@ -103,14 +101,14 @@ const NYACardBody = ({
           </TextClamp>
         )}
       </Box>
-      {!isModule && <Box className={classes.subject}>
-        <ClassroomItemDisplay classroomIds={classroom} />
+      {<Box className={classes.subject} >
+        <ClassroomItemDisplay classroomIds={classroom} isModule={isModule} />
       </Box>}
       <Box className={classes.deadline}>
-        <Text className={classes.deadlineDate}>{formattedDeadline.date} - </Text>
+        <Text className={classes.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
         <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>{formattedDeadline.status}</Text>
       </Box>
-      {activitiesPercentage && <Box className={classes.progress}>
+      {activitiesPercentage && isModule && <Box className={classes.progress}>
         <ProgressColorBar value={activitiesPercentage} size={'md'} color={'#F39C12'} labelLeft={`Progreso: ${activitiesPercentage}%`} labelRight={`(${submitedActivities}/${totalActivities} ${activitiesLocale})`} />
       </Box>}
     </Box>

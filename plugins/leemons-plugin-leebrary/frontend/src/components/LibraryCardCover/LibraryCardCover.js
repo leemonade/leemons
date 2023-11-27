@@ -95,17 +95,10 @@ const LibraryCardCover = ({
   );
 
   return (
-    // <AnimatePresence>
     <Box className={classes.root}>
       <Box className={classes.color} />
       <Box className={classes.overlayTransparent}>
-        {/* <motion.div
-            key="overlay"
-            variants={overlayVariants}
-            animate={parentHovered ? 'visible' : 'hidden'}
-          > */}
         <Box>{iconRow}</Box>
-        {/* </motion.div> */}
       </Box>
       {cover ? (
         <ImageLoader src={cover} height={height} width={'100%'} forceImage />

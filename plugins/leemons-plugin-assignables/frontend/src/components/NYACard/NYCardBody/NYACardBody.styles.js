@@ -6,7 +6,6 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
   return {
     root: {
       padding: pxToRem(16),
-      // paddingTop: pxToRem(24),
       flex: fullHeight && 1,
       display: 'flex',
       flexDirection: 'column',
@@ -15,7 +14,6 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      // marginBottom: pxToRem(16),
     },
     badgesContainer: {
       display: 'flex',
