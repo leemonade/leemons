@@ -1,9 +1,11 @@
 const _ = require('lodash');
+
 const { LeemonsError } = require('@leemons/error');
+const { createOpenapiResponse } = require('@leemons/openapi');
 const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
+
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
-const { createOpenapiResponse } = require('./createOpenapiResponse');
 
 const actionCallCache = {};
 const actionCanCache = {};
@@ -173,11 +175,11 @@ module.exports = function ({
       after: {
         '*': [
           async (ctx, res) => {
-            if (
-              (process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing) &&
-              ctx.action.rest
-            )
-              await createOpenapiResponse({ res, ctx });
+            // if (
+            //   (process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing) &&
+            //   ctx.action.rest
+            // )
+            await createOpenapiResponse({ res, ctx });
             return res;
           },
         ],

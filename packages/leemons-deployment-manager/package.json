@@ -27,6 +27,7 @@
   "devDependencies": {},
   "dependencies": {
     "@leemons/error": "0.0.40",
+    "@leemons/openapi": "0.0.40",
     "@leemons/service-name-parser": "0.0.40",
     "json-schema-generator": "^2.0.6",
     "lodash": "^4.17.21",
