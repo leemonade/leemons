@@ -1,7 +1,8 @@
 const _ = require('lodash');
 
 async function addUserSubjectRoom({
-  parentKey,
+  assignableInstanceId,
+  parentRoom,
   instance,
   classe,
   assignation,
@@ -19,12 +20,14 @@ async function addUserSubjectRoom({
     },
     icon: classe.subject.icon?.id,
     bgColor: classe.color,
-    parentRoom: parentKey,
+    parentRoom,
+    image: instance.assignable.asset.id,
     program: classe.program,
     type: ctx.prefixPN('assignation.user'),
     userAgents: user,
     adminUserAgents: _.compact(_.uniq(teachers)),
     metadata: {
+      assignableInstanceId,
       headerIconIsUrl: false,
       headerName: instance.assignable.asset.name,
       headerImage: instance.assignable.asset.id,
