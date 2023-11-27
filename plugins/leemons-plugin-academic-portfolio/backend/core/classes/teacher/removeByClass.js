@@ -10,18 +10,45 @@ async function removeByClass({ classIds, soft, ctx }) {
     _.map(classeIds, (classId) => getClassProgram({ id: classId, ctx }))
   );
 
+  const classStudents = await ctx.tx.db.ClassStudent.find({ class: classeIds }).lean();
   const classTeachers = await ctx.tx.db.ClassTeacher.find({ class: classeIds }).lean();
 
+  const promisesRemoveUserAgentsFromRooms = [];
   // Remove users from class room
-  await Promise.all(
-    _.map(classeIds, (classId) => {
-      const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
-      return ctx.tx.call('comunica.room.removeUserAgents', {
+  _.forEach(classeIds, (classId) => {
+    const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
+    promisesRemoveUserAgentsFromRooms.push(
+      ctx.tx.call('comunica.room.removeUserAgents', {
         key: ctx.prefixPN(`room.class.${classId}`),
         userAgents: userIds, // TODO ask: Convención para parametros que empiezan con underscore, userAgents: _userAgents
-      });
-    })
-  );
+      })
+    );
+  });
+
+  _.forEach(classeIds, (classId) => {
+    const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
+    promisesRemoveUserAgentsFromRooms.push(
+      ctx.tx.call('comunica.room.removeUserAgents', {
+        key: ctx.prefixPN(`room.class.group.${classId}`),
+        userAgents: userIds, // TODO ask: Convención para parametros que empiezan con underscore, userAgents: _userAgents
+      })
+    );
+  });
+
+  _.forEach(classeIds, (classId) => {
+    const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
+    const teacherIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
+    _.forEach(studentIds, (studentId) => {
+      promisesRemoveUserAgentsFromRooms.push(
+        ctx.tx.call('comunica.room.removeUserAgents', {
+          key: ctx.prefixPN(`room.class.${classId}.student.${studentId}.teachers`),
+          userAgents: teacherIds, // TODO ask: Convención para parametros que empiezan con underscore, userAgents: _userAgents
+        })
+      );
+    });
+  });
+
+  await Promise.all(promisesRemoveUserAgentsFromRooms);
 
   const programIds = _.uniq(_.map(programs, 'id'));
 

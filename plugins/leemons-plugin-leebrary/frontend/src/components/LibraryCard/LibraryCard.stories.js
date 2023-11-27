@@ -1,10 +1,16 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { Box, Paper, ImageLoader } from '@bubbles-ui/components';
 import { ArchiveIcon, StarIcon, DeleteBinIcon, FlagIcon } from '@bubbles-ui/icons/solid';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LibraryCard } from './LibraryCard';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARYCARD_VARIANTS } from './LibraryCard.constants';
 import { LIBRARYCARD_ASSIGMENT_ROLES } from '../Library.constants';
 import { AUDIO_ASSET, URL_ASSET, CURRICULUM_ASSET } from './mock/data';
+
+const queryClient = new QueryClient();
 
 export default {
   title: 'leemons/Library/LibraryCard',
@@ -16,19 +22,22 @@ export default {
     },
   },
   argTypes: {
-    showImage: { control: 'boolean' },
+    testShowImage: { control: 'boolean' },
+    testShowTitle: { control: 'boolean' },
     variant: { control: { type: 'select' }, options: LIBRARYCARD_VARIANTS },
     role: { control: { type: 'select' }, options: LIBRARYCARD_ASSIGMENT_ROLES },
     onAction: { action: 'onAction' },
+    testIsDraft: { control: 'boolean' },
   },
 };
 
 const Template = ({
-  showImage,
-  showDescription,
-  showAction,
-  showAssigment,
-  showSubject,
+  testShowImage,
+  testShowDescription,
+  testShowAction,
+  testShowAssigment,
+  testShowSubject,
+  testShowTitle,
   children,
   asset,
   assigment,
@@ -36,38 +45,48 @@ const Template = ({
   variant,
   action,
   subject,
+  testIsDraft,
   ...props
 }) => {
   const isBookmark = variant === 'bookmark';
   const isCurriculum = variant === 'curriculum';
 
   const assetToRender = {
-    cover: showImage ? (isBookmark ? URL_ASSET.cover : asset.cover) : undefined,
-    description: showDescription ? asset.description : undefined,
+    cover: testShowImage ? (isBookmark ? URL_ASSET.cover : asset.cover) : undefined,
+    description: testShowDescription ? asset.description : undefined,
+    name: testShowTitle ? asset.name : undefined,
   };
+
+  const assetChecker = {
+    [`${isCurriculum}`]: { CURRICULUM_ASSET },
+    [`${isBookmark}`]: { ...URL_ASSET, ...assetToRender },
+    [`${!isBookmark && !isCurriculum}`]: { ...asset, ...assetToRender },
+  };
+  if (testIsDraft) {
+    asset.published = false;
+  } else {
+    asset.published = true;
+  }
 
   return (
     <Paper color="solid" style={{ width: 322, height: 600 }}>
-      <LibraryCard
-        {...props}
-        asset={
-          isCurriculum
-            ? CURRICULUM_ASSET
-            : isBookmark
-            ? { ...URL_ASSET, ...assetToRender }
-            : { ...asset, ...assetToRender, cover: null }
-        }
-        deadlineProps={isCurriculum ? null : deadlineProps}
-        assigment={!isCurriculum && showAssigment ? assigment : null}
-        variant="document"
-        action={showAction ? action : undefined}
-        subject={showSubject ? subject : undefined}
-        variantIcon={
-          <Box style={{ position: 'relative', width: 14, height: 14 }}>
-            <ImageLoader src={`/img/library/tasks.svg`} width={14} height={14} />
-          </Box>
-        }
-      />
+      <QueryClientProvider client={queryClient}>
+        <LibraryCard
+          {...props}
+          // eslint-disable-next-line dot-notation
+          asset={assetChecker['true']}
+          deadlineProps={isCurriculum ? null : deadlineProps}
+          assigment={!isCurriculum && testShowSubject ? assigment : null}
+          variant="document"
+          action={testShowAction ? action : undefined}
+          subject={testShowSubject ? subject : undefined}
+          variantIcon={
+            <Box style={{ position: 'relative', width: 14, height: 14 }}>
+              <ImageLoader src={`/img/library/tasks.svg`} width={14} height={14} />
+            </Box>
+          }
+        />
+      </QueryClientProvider>
     </Paper>
   );
 };
@@ -75,16 +94,26 @@ const Template = ({
 export const Playground = Template.bind({});
 
 Playground.args = {
-  showImage: true,
-  showDescription: true,
-  showAction: false,
-  showAssigment: true,
-  showSubject: true,
+  testShowImage: true,
+  testShowDescription: true,
+  testShowAction: true,
+  testShowAssigment: true,
+  testShowSubject: true,
+  testIsDraft: true,
+  testShowTitle: true,
   variant: 'media',
   action: 'View feedback',
   badge: '',
   ...LIBRARY_CARD_DEFAULT_PROPS,
-  asset: AUDIO_ASSET,
+  asset: {
+    ...AUDIO_ASSET,
+    subjects: {
+      name: 'Lengua Castellana y Literatura de España',
+      color: '#FABADA',
+      icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
+    },
+    program: 'ESO',
+  },
   assigment: {
     completed: 0.3,
     submission: 15,
@@ -106,11 +135,7 @@ Playground.args = {
       deadline: 'Deadline',
     },
   },
-  subject: {
-    name: 'Bases para el análisis y el tratamiento de',
-    color: '#FABADA',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Globe_icon_2.svg',
-  },
+
   menuItems: [
     {
       icon: <StarIcon />,

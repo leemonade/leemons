@@ -35,7 +35,7 @@ const LibraryDetailPlayer = ({
 
   const { classes, cx } = LibraryDetailPlayerStyles({ color }, { name: 'LibraryDetailPlayer' });
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} data-cypress-id="library-detail-player">
       <AssetPlayer height={height} asset={asset} hideURLInfo viewPDF={false} compact />
       <Box className={classes.color} />
       <Box className={classes.titleRow}>

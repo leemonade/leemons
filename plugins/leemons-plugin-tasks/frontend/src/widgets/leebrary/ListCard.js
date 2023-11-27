@@ -5,12 +5,7 @@ import { createStyles } from '@bubbles-ui/components';
 // TODO: import from @library plugin
 import { LibraryCard } from '@leebrary/components';
 
-import {
-  AssignIcon,
-  DuplicateIcon,
-  PluginAssignmentsIcon,
-  ViewOnIcon,
-} from '@bubbles-ui/icons/outline';
+import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -18,6 +13,8 @@ import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '../../helpers/prefixPN';
+import { TaskIcon } from '../../components/Icons/TaskIcon';
+import { ExpressTaskIcon } from '../../components/Icons/ExpressTaskIcon';
 
 const ListCardStyles = createStyles((theme, { single }) => ({
   root: {
@@ -179,7 +176,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       asset={asset}
       menuItems={menuItems}
       variant="task"
-      variantIcon={<PluginAssignmentsIcon />}
+      variantIcon={isExpress ? <ExpressTaskIcon /> : <TaskIcon />}
       // TRANSLATE
       variantTitle={isExpress ? expressTaskLabel : taskLabel}
       className={classes.root}

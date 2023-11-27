@@ -266,9 +266,7 @@ function modifyCTX(
   ctx.call = (actionName, params, opts) => {
     if (!_.isObject(opts)) opts = {};
     if (!_.isObject(opts.meta)) opts.meta = {};
-    if (!opts.meta.transactionID) {
-      opts.meta.transactionID = null;
-    }
+    opts.meta.transactionID = null;
     return ctx.__leemonsMongoDBCall(actionName, params, opts);
   };
   ctx.emit = (event, params) =>
@@ -368,7 +366,6 @@ const mixin = ({
               rollbackTransaction(ctx);
             }
           }
-          console.log('va a petar');
           throw err;
         },
       ],

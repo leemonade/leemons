@@ -17,6 +17,10 @@ async function add({ class: _class, teacher, type, ctx }) {
       userAgents: teacher,
       isAdmin: true,
     }),
+    ctx.tx.call('comunica.room.addUserAgents', {
+      key: ctx.prefixPN(`room.class.group.${_class}`),
+      userAgents: teacher,
+    }),
   ]);
 
   const { teacher: teacherProfileId } = await getProfiles({ ctx });

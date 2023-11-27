@@ -1,12 +1,11 @@
+const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 
-const { LeemonsValidator } = global.utils;
 const {
   stringSchema,
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
-  textSchema,
 } = require('./types');
 
 const saveDocumentSchema = {

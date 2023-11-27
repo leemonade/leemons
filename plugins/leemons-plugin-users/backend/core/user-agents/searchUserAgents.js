@@ -137,16 +137,20 @@ async function searchUserAgents({
 
   // ES: Si alfinal hay ids de usuarios las añadimos a los filtros finales
   // EN: If there are user ids, we add them to the final filters.
-  if (userIds.length || addUserIdsToQuery) {
-    finalQuery.user = userIds;
+  if (addUserIdsToQuery) {
+    finalQuery.user = { $in: userIds };
   }
 
   // ES: Nos saltamos las ids de usuarios especificadas awui, comunmente se usara por que ya hemos
   // seleccionado dicho usuario y no queremos que vuelva a salir en el listado
   // EN: We skip the user ids specified awui, commonly used because we have already selected that
   // user and we do not want it to appear again in the list.
-  if (_.isArray(ignoreUserIds) && ignoreUserIds.length) {
-    finalQuery.user = { $nin: ignoreUserIds };
+  if (_.isArray(ignoreUserIds)) {
+    if (_.isObject(finalQuery.user)) {
+      finalQuery.user.$nin = ignoreUserIds;
+    } else {
+      finalQuery.user = { $nin: ignoreUserIds };
+    }
   }
 
   // ES: Finalmente sacamos los agentes con sus correspondientes usuarios según los filtros
@@ -162,7 +166,7 @@ async function searchUserAgents({
     userAgents = _.filter(userAgents, (userAgent) => usersAgentIdsInProgram.includes(userAgent.id));
   }
 
-  return getUserAgentsInfo({
+  return await getUserAgentsInfo({
     userAgentIds: _.map(userAgents, 'id'),
     withProfile,
     withCenter,

@@ -50,7 +50,7 @@ async function classByIds({
   if (withTeachers) {
     const teacherIds = _.uniq(_.map(teachers, 'teacher'));
     const _teachers = await ctx.tx.call('users.users.getUserAgentsInfo', {
-      userAgentsIds: teacherIds,
+      userAgentIds: teacherIds,
     });
     teacherByIds = _.keyBy(_teachers, 'id');
   }

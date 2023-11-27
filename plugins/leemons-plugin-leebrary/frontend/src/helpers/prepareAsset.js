@@ -21,7 +21,7 @@ function getFileUrl(fileID, segment, isPublic = false) {
     return fileID;
   }
 
-  const authParam = !isPublic ? `?authorization=${encodeURIComponent(`${authTokens}`)}` : '';
+  const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
   return `${leemons.apiUrl}/api/v1/leebrary/file/${
     isPublic ? 'public/' : ''
@@ -36,7 +36,6 @@ function prepareAsset(assetFromApi, isPublished = true) {
   if (assetFromApi.prepared && assetFromApi.original) {
     return assetFromApi;
   }
-
   const asset = { ...assetFromApi, original: assetFromApi, prepared: true };
   asset.public = [1, '1', true, 'true'].includes(asset.public);
   asset.canAccess = asset.canAccess || [];
