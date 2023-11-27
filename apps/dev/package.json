@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "backend:dev": "PORT=8080 leemons-runner --env --hot services/**/*.service.js",
+    "backend:test": "PORT=8080 NODE_ENV=test leemons-runner --env services/**/*.service.js",
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
     "front:dev": "NODE_OPTIONS=\"--max-old-space-size=4096\" PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
@@ -15,7 +16,7 @@
   },
   "leemons": {},
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.40",
+    "@leemons/openapi": "0.0.40",
     "@leemons/runner": "0.0.40",
     "colord": "^2.9.3",
     "dotenv": "^16.0.3",
