@@ -22,6 +22,7 @@ const { emit } = require('../core/events/emit');
 const { isInstalled } = require('../core/deployment-plugins/isInstalled');
 const restActions = require('./rest/deployment-manager.rest');
 const { deploymentModel } = require('../models/deployment');
+const { reloadAllDeployments } = require('../core/auto-init/reload-all-deployments');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -141,6 +142,11 @@ module.exports = () => ({
             console.info('- Auto init -');
             await autoInit(this.broker);
             console.info('- Auto init finished -');
+          }
+          if (process.env.RELOAD_ALL_DEPLOYMENTS_ON_INIT === 'true') {
+            console.info('- Reload all deployments -');
+            await reloadAllDeployments(this.broker);
+            console.info('- Reload all deployments finished -');
           }
         } catch (e) {
           console.error('- Auto init error -', e);

@@ -57,8 +57,7 @@ async function removeAssignable({ assignable, removeAll = 2, ctx }) {
   }
 
   throw new LeemonsError(ctx, {
-    message:
-      'Cannot remove assignable: invalid removeAll value, only 0, 1 or 2 are valid',
+    message: 'Cannot remove assignable: invalid removeAll value, only 0, 1 or 2 are valid',
     httpStatusCode: 401,
   });
 }

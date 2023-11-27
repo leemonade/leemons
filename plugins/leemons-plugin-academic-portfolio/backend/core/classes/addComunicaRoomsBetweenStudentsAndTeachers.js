@@ -12,7 +12,10 @@ async function add({ student, teachers, classe, ctx }) {
       bgColor: classe.subject.color,
       image: null,
       icon: null,
-      parentRoom: ctx.prefixPN(`room.class.group.${classe.id}`),
+      parentRoom: [
+        ctx.prefixPN(`room.class.group.${classe.id}`),
+        `comunica.room.chat.parent.${student.student}`,
+      ],
       program: classe.program.id,
     };
 

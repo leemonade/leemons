@@ -1,32 +1,22 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
-const { table } = require('../tables');
 
-async function deleteDocument(id, { userSession, transacting: _transacting } = {}) {
-  const { assignables } = leemons.getPlugin('assignables').services;
-  return global.utils.withTransaction(
-    async (transacting) => {
-      const { versions } = await assignables.removeAssignable(id, {
-        userSession,
-        transacting,
-        removeAll: 1,
-      });
+async function deleteDocument({ id, ctx }) {
+  const { versions } = await ctx.tx.call('assignables.assignables.removeAssignable', {
+    assignable: id,
+    removeAll: 1,
+  });
 
-      const documents = await table.documents.find(
-        {
-          assignable_$in: versions,
-        },
-        { transacting, columns: ['id'] }
-      );
-      const documentsIds = _.map(documents, 'id');
+  const documents = await ctx.tx.db.Documents.find({
+    assignable: versions,
+  })
+    .select(['id'])
+    .lean();
+  const documentsIds = _.map(documents, 'id');
 
-      await table.documents.deleteMany({ id_$in: documentsIds }, { userSession, transacting });
+  await ctx.tx.db.Documents.deleteMany({ id: documentsIds });
 
-      return true;
-    },
-    table.documents,
-    _transacting
-  );
+  return true;
 }
 
 module.exports = deleteDocument;

@@ -41,6 +41,7 @@ const LibraryCard = ({
 
   return (
     <Box
+      data-cypress-id={`libraryCard-${asset.id}`}
       className={cx(classes.root, props.className)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

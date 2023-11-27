@@ -789,6 +789,7 @@ const handleOnShowPublic = (value) => {
       >
         {/* SEARCH BAR ············· */}
         <Stack
+          data-cypress-id="search-asset"
           ref={childRef}
           fullWidth
           skipFlex
@@ -812,6 +813,7 @@ const handleOnShowPublic = (value) => {
             {!!filterComponents && filterComponents({ loading: store.loading })}
             {!isEmpty(store.assetTypes) && canChangeType && (
               <Select
+                data-cypress-id="search-asset-type-selector"
                 skipFlex
                 data={store.assetTypes}
                 value={store.assetType}
@@ -892,6 +894,7 @@ const handleOnShowPublic = (value) => {
                 })}
               >
                 <PaginatedList
+                  data-cypress-id="paginated-asset-list"
                   {...store.serverData}
                   {...listProps}
                   paperProps={paperProps}

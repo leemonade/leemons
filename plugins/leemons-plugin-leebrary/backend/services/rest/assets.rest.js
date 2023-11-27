@@ -175,8 +175,6 @@ module.exports = {
       const _programs = JSON.parse(programs || null);
       const _subjects = JSON.parse(subjects || null);
 
-      // ! map de todos los assets y gardar la promesa de prepareAsset, luego un map all de todo esto.
-
       if (!_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category)) {
         assets = await getByCriteria({
           category,
@@ -258,9 +256,7 @@ module.exports = {
         const finalAssets = results
           .filter((result) => result.status === 'fulfilled')
           .map((result) => result.value);
-        // concatenate here the difference between finalAssets & assets, just to
-        // give a second chance to any possible failed asset preparation
-        // This assets would be passed as rawAssets to the frontend.
+        // final assets are being filtered by the result of each promise, concatenate here the difference to avoid it
         return {
           status: 200,
           assets: finalAssets,

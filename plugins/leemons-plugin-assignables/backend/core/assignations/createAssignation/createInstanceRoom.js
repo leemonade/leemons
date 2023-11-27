@@ -29,6 +29,9 @@ async function createInstanceRoom({
       type: ctx.prefixPN('assignation'),
       userAgents,
       adminUserAgents: teachersUserAgents,
+      metadata: {
+        assignableInstanceId,
+      },
     });
   }
   // Si la sala ya existia significa que estamos añadiendo alumnos extra, añadimos estos a la sala y devolvemos la sala

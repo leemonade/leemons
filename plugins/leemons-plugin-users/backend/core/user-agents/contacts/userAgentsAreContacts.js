@@ -10,11 +10,11 @@ const _ = require('lodash');
  * @return {Promise<boolean>}
  * */
 async function userAgentsAreContacts({ fromUserAgent, toUserAgent, ctx }) {
-  const response = await ctx.tx.db.UserAgentContacts.find({
+  const response = await ctx.tx.db.UserAgentContacts.countDocuments({
     fromUserAgent: _.isArray(fromUserAgent) ? fromUserAgent : [fromUserAgent],
     toUserAgent: _.isArray(toUserAgent) ? toUserAgent : [toUserAgent],
   }).lean();
-  return !!response.length;
+  return !!response;
 }
 
 module.exports = { userAgentsAreContacts };

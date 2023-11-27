@@ -48,7 +48,10 @@ const LibraryDetail = ({
   };
 
   return (
-    <Box style={{ position: 'absolute', height: '100%', width: '100%' }}>
+    <Box
+      style={{ position: 'absolute', height: '100%', width: '100%' }}
+      data-cypress-id="library-detail-drawer"
+    >
       <Stack
         direction="column"
         fullHeight

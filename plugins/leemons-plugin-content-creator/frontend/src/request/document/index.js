@@ -17,7 +17,7 @@ async function saveDocument(_body) {
       } else if (_body.cover.id) {
         data.cover = _body.cover.id;
       } else {
-        form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
+        data.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
       }
     }
     if (_body.featuredImage) {
@@ -26,7 +26,7 @@ async function saveDocument(_body) {
       } else if (_body.featuredImage.id) {
         data.featuredImage = _body.featuredImage.id;
       } else {
-        form.featuredImage = await uploadFileAsMultipart(_body.featuredImage, {
+        data.featuredImage = await uploadFileAsMultipart(_body.featuredImage, {
           name: _body.featuredImage.name,
         });
       }

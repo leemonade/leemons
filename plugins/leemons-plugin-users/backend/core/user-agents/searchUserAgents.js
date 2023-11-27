@@ -137,30 +137,31 @@ async function searchUserAgents({
 
   // ES: Si alfinal hay ids de usuarios las añadimos a los filtros finales
   // EN: If there are user ids, we add them to the final filters.
-  if (userIds.length || addUserIdsToQuery) {
-    finalQuery.user = userIds;
+  if (addUserIdsToQuery) {
+    finalQuery.user = { $in: userIds };
   }
 
   // ES: Nos saltamos las ids de usuarios especificadas awui, comunmente se usara por que ya hemos
   // seleccionado dicho usuario y no queremos que vuelva a salir en el listado
   // EN: We skip the user ids specified awui, commonly used because we have already selected that
   // user and we do not want it to appear again in the list.
-  if (_.isArray(ignoreUserIds) && ignoreUserIds.length) {
-    finalQuery.user = { $nin: ignoreUserIds };
+  if (_.isArray(ignoreUserIds)) {
+    if (_.isObject(finalQuery.user)) {
+      finalQuery.user.$nin = ignoreUserIds;
+    } else {
+      finalQuery.user = { $nin: ignoreUserIds };
+    }
   }
 
   // ES: Finalmente sacamos los agentes con sus correspondientes usuarios según los filtros
   // EN: Finally, the agents and their corresponding users according to the filters
   let userAgents = await ctx.tx.db.UserAgent.find(finalQuery).select(['id']).lean();
 
-  console.log('search hola', program);
   if (program) {
-    console.log('hay programa', program, course);
     const usersAgentIdsInProgram = await ctx.tx.call(
       'academic-portfolio.programs.getUsersInProgram',
       { program, course }
     );
-    console.log('usersAgentIdsInProgram', usersAgentIdsInProgram);
 
     userAgents = _.filter(userAgents, (userAgent) => usersAgentIdsInProgram.includes(userAgent.id));
   }
