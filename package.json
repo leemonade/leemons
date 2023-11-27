@@ -32,11 +32,12 @@
     "apps/*"
   ],
   "scripts": {
-    "start:app": "yarn workspace leemons-app backend:dev",
+    "start:app": "TRANSPORTER=nats yarn workspace leemons-app backend:dev",
+    "start:test": "TRANSPORTER=nats yarn workspace leemons-app backend:test",
     "done": "echo Done ✨",
     "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
     "prepare": "husky install",
-    "createOpenapi": "yarn workspace leemons-app leemons-openapi"
+    "leemons-openapi": "yarn workspace leemons-app leemons-openapi"
   },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
