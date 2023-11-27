@@ -4,10 +4,8 @@ async function updateDocument({ documentId, data, ctx }) {
     {
       ...data,
     },
-    {
-      lean: true,
-      new: true,
-    }
+
+    { upsert: true, new: true, lean: true }
   );
 }
 

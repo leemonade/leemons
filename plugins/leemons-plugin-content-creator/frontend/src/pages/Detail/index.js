@@ -24,6 +24,7 @@ const advancedConfigForAssetFormInput = {
 export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
   const [publishing, setPublishing] = useState(false);
+  const [staticTitle, setStaticTitle] = useState(false);
   const history = useHistory();
   const params = useParams();
   const query = !isNew ? useDocument({ id: params.id }) : { data: null, isLoading: false };
@@ -57,15 +58,13 @@ export default function Index({ isNew, readOnly }) {
 
   const onContentChangeHandler = (value) => {
     form.setValue('content', value);
-    if (!query.data?.name && !formValues.name) {
+    if (!query.data?.name && !staticTitle) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
         parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
       );
       const firstElementWithText = htmlContent.find((element) => element.textContent)?.textContent;
-      setTimeout(() => {
-        form.setValue('name', firstElementWithText);
-      }, 1250);
+      form.setValue('name', firstElementWithText);
     }
   };
 
@@ -81,7 +80,7 @@ export default function Index({ isNew, readOnly }) {
             }}
             buttons={
               !readOnly && {
-                duplicate: params.id ? 'Guardar cambios' : t('saveDraft'),
+                duplicate: t('saveDraft'),
                 edit: !publishing && t('publish'),
                 dropdown: publishing && t('publishOptions'),
               }
@@ -90,7 +89,10 @@ export default function Index({ isNew, readOnly }) {
               edit: <SetupContent size={16} />,
             }}
             isEditMode={!publishing && !readOnly}
-            onChange={(value) => form.setValue('name', value)}
+            onChange={(value) => {
+              form.setValue('name', value);
+              if (formValues.name.length > 0) setStaticTitle(true);
+            }}
             onEdit={() => setPublishing(true)}
             onDuplicate={() => handleMutations()}
             onDropdown={[

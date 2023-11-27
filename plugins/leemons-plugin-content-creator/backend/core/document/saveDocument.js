@@ -93,7 +93,7 @@ async function saveDocument({ data: _data, ctx }) {
   let document = null;
   const documentData = { content: data.content, assignable: assignable.id };
   if (currentDocument?.id) {
-    document = await updateDocument({ documentId: currentDocument.id, documentData, ctx });
+    document = await updateDocument({ documentId: currentDocument.id, data: documentData, ctx });
   } else {
     document = await createDocument({ data: documentData, ctx });
   }
