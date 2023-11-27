@@ -50,21 +50,18 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        locationName: { type: 'string' },
+        pluginName: { type: 'string' },
+      },
+      required: ['locationName', 'pluginName'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          locationName: { type: 'string' },
-          pluginName: { type: 'string' },
-        },
-        required: ['locationName', 'pluginName'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const dataset = await getSchema({ ...ctx.params, ctx });
-        return { status: 200, dataset };
-      }
-      throw validator.error;
+      const dataset = await getSchema({ ...ctx.params, ctx });
+      return { status: 200, dataset };
     },
   },
   getSchemaLocaleRest: {
@@ -82,29 +79,26 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        locationName: { type: 'string' },
+        pluginName: { type: 'string' },
+        locale: { type: 'string' },
+      },
+      required: ['locationName', 'pluginName'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          locationName: { type: 'string' },
-          pluginName: { type: 'string' },
-          locale: { type: 'string' },
-        },
-        required: ['locationName', 'pluginName'],
-        additionalProperties: false,
+      let { locale } = ctx.params;
+      if (!locale) locale = await ctx.tx.call('users.platform.getDefaultLocale');
+      // TODO Esto es "inseguro" ya que se le esta pasando el calledFrom
+      const dataset = await getSchemaWithLocale({
+        ...ctx.params,
+        locale,
+        ctx: { ...ctx, callerPlugin: ctx.params.pluginName },
       });
-      if (validator.validate(ctx.params)) {
-        let { locale } = ctx.params;
-        if (!locale) locale = await ctx.tx.call('users.platform.getDefaultLocale');
-        // TODO Esto es "inseguro" ya que se le esta pasando el calledFrom
-        const dataset = await getSchemaWithLocale({
-          ...ctx.params,
-          locale,
-          ctx: { ...ctx, callerPlugin: ctx.params.pluginName },
-        });
-        return { status: 200, dataset };
-      }
-      throw validator.error;
+      return { status: 200, dataset };
     },
   },
   getSchemaFieldLocaleRest: {
@@ -122,33 +116,29 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        locationName: { type: 'string' },
+        pluginName: { type: 'string' },
+        locale: { type: 'string' },
+        item: { type: 'string' },
+      },
+      required: ['locationName', 'pluginName', 'locale', 'item'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          locationName: { type: 'string' },
-          pluginName: { type: 'string' },
-          locale: { type: 'string' },
-          item: { type: 'string' },
-        },
-        required: ['locationName', 'pluginName', 'locale', 'item'],
-        additionalProperties: false,
+      // TODO Esto es "inseguro" ya que se le esta pasando el calledFrom
+      const { compileJsonSchema, compileJsonUI } = await getSchemaWithLocale({
+        ...ctx.params,
+        defaultWithEmptyValues: true,
+        ctx: { ...ctx, callerPlugin: ctx.params.pluginName },
       });
-      if (validator.validate(ctx.params)) {
-        // TODO Esto es "inseguro" ya que se le esta pasando el calledFrom
-
-        const { compileJsonSchema, compileJsonUI } = await getSchemaWithLocale({
-          ...ctx.params,
-          defaultWithEmptyValues: true,
-          ctx: { ...ctx, callerPlugin: ctx.params.pluginName },
-        });
-        return {
-          status: 200,
-          schema: compileJsonSchema.properties[ctx.params.item],
-          ui: compileJsonUI[ctx.params.item],
-        };
-      }
-      throw validator.error;
+      return {
+        status: 200,
+        schema: compileJsonSchema.properties[ctx.params.item],
+        ui: compileJsonUI[ctx.params.item],
+      };
     },
   },
   saveFieldRest: {
@@ -166,43 +156,40 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          locationName: { type: 'string' },
-          pluginName: { type: 'string' },
-          schemaConfig,
-          schemaLocales: {
-            type: 'object',
-            patternProperties: {
-              [localeRegexString]: schemaConfig,
-            },
-          },
-          options: {
-            type: 'object',
-            properties: {
-              useDefaultLocaleCallback: { type: 'boolean' },
-            },
-            additionalProperties: false,
+    params: {
+      type: 'object',
+      properties: {
+        locationName: { type: 'string' },
+        pluginName: { type: 'string' },
+        schemaConfig,
+        schemaLocales: {
+          type: 'object',
+          patternProperties: {
+            [localeRegexString]: schemaConfig,
           },
         },
-        required: ['locationName', 'pluginName', 'schemaConfig', 'schemaLocales'],
-        additionalProperties: false,
+        options: {
+          type: 'object',
+          properties: {
+            useDefaultLocaleCallback: { type: 'boolean' },
+          },
+          additionalProperties: false,
+        },
+      },
+      required: ['locationName', 'pluginName', 'schemaConfig', 'schemaLocales'],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const dataset = await saveField({
+        ...ctx.params,
+        ...(ctx.params.options || {}),
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const dataset = await saveField({
-          ...ctx.params,
-          ...(ctx.params.options || {}),
-          ctx,
-        });
-        ctx.meta.$statusCode = 200;
-        return {
-          status: 200,
-          dataset,
-        };
-      }
-      throw validator.error;
+      ctx.meta.$statusCode = 200;
+      return {
+        status: 200,
+        dataset,
+      };
     },
   },
   saveMultipleFieldsRest: {
@@ -220,43 +207,40 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          locationName: { type: 'string' },
-          pluginName: { type: 'string' },
-          fields: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                schemaConfig,
-                schemaLocales: {
-                  type: 'object',
-                  patternProperties: {
-                    [localeRegexString]: schemaConfig,
-                  },
+    params: {
+      type: 'object',
+      properties: {
+        locationName: { type: 'string' },
+        pluginName: { type: 'string' },
+        fields: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              schemaConfig,
+              schemaLocales: {
+                type: 'object',
+                patternProperties: {
+                  [localeRegexString]: schemaConfig,
                 },
               },
-              required: ['schemaConfig', 'schemaLocales'],
             },
+            required: ['schemaConfig', 'schemaLocales'],
           },
         },
-        required: ['locationName', 'pluginName', 'fields'],
-        additionalProperties: false,
+      },
+      required: ['locationName', 'pluginName', 'fields'],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const dataset = await saveMultipleFields({
+        ...ctx.params,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const dataset = await saveMultipleFields({
-          ...ctx.params,
-          ctx,
-        });
-        return {
-          status: 200,
-          dataset,
-        };
-      }
-      throw validator.error;
+      return {
+        status: 200,
+        dataset,
+      };
     },
   },
   removeFieldRest: {
@@ -274,28 +258,25 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        locationName: { type: 'string' },
+        pluginName: { type: 'string' },
+        item: { type: 'string' },
+      },
+      required: ['locationName', 'pluginName', 'item'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          locationName: { type: 'string' },
-          pluginName: { type: 'string' },
-          item: { type: 'string' },
-        },
-        required: ['locationName', 'pluginName', 'item'],
-        additionalProperties: false,
+      const dataset = await removeField({
+        ...ctx.params,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const dataset = await removeField({
-          ...ctx.params,
-          ctx,
-        });
-        return {
-          status: 200,
-          dataset,
-        };
-      }
-      throw validator.error;
+      return {
+        status: 200,
+        dataset,
+      };
     },
   },
 };

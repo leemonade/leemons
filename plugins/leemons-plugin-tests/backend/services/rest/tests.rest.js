@@ -4,7 +4,6 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 
 const {
@@ -43,33 +42,30 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: ['number', 'string'] },
+        size: { type: ['number', 'string'] },
+        published: { type: ['boolean', 'string'] },
+      },
+      required: ['page', 'size'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          published: { type: ['boolean', 'string'] },
-        },
-        required: ['page', 'size'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const { page, size, ...options } = ctx.params;
-        if (options.published === 'true') {
-          options.published = true;
-        } else if (options.published === 'false') {
-          options.published = false;
-        }
-        const data = await list({
-          page: parseInt(page, 10),
-          size: parseInt(size, 10),
-          ...options,
-          ctx,
-        });
-        return { status: 200, data };
+      const { page, size, ...options } = ctx.params;
+      if (options.published === 'true') {
+        options.published = true;
+      } else if (options.published === 'false') {
+        options.published = false;
       }
-      throw validator.error;
+      const data = await list({
+        page: parseInt(page, 10),
+        size: parseInt(size, 10),
+        ...options,
+        ctx,
+      });
+      return { status: 200, data };
     },
   },
   getTestRest: {

@@ -5,7 +5,7 @@
 /** @type {ServiceSchema} */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+
 const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
@@ -32,20 +32,17 @@ module.exports = {
       path: '/can/reset',
       method: 'POST',
     },
+    params: {
+      type: 'object',
+      properties: {
+        token: { type: 'string' },
+      },
+      required: ['token'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          token: { type: 'string' },
-        },
-        required: ['token'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const can = await usersService.canReset({ token: ctx.params.token, ctx });
-        return { status: 200, can };
-      }
-      throw validator.error;
+      const can = await usersService.canReset({ token: ctx.params.token, ctx });
+      return { status: 200, can };
     },
   },
   canRegisterPasswordRest: {
@@ -53,20 +50,17 @@ module.exports = {
       path: '/can/register-password',
       method: 'POST',
     },
+    params: {
+      type: 'object',
+      properties: {
+        token: { type: 'string' },
+      },
+      required: ['token'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          token: { type: 'string' },
-        },
-        required: ['token'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const can = await usersService.canRegisterPassword({ token: ctx.params.token, ctx });
-        return { status: 200, can };
-      }
-      throw validator.error;
+      const can = await usersService.canRegisterPassword({ token: ctx.params.token, ctx });
+      return { status: 200, can };
     },
   },
   resetRest: {
@@ -74,25 +68,22 @@ module.exports = {
       path: '/reset',
       method: 'POST',
     },
+    params: {
+      type: 'object',
+      properties: {
+        token: { type: 'string' },
+        password: { type: 'string' },
+      },
+      required: ['token', 'password'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          token: { type: 'string' },
-          password: { type: 'string' },
-        },
-        required: ['token', 'password'],
-        additionalProperties: false,
+      const user = await usersService.reset({
+        token: ctx.params.token,
+        password: ctx.params.password,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const user = await usersService.reset({
-          token: ctx.params.token,
-          password: ctx.params.password,
-          ctx,
-        });
-        return { status: 200, user };
-      }
-      throw validator.error;
+      return { status: 200, user };
     },
   },
   registerPasswordRest: {
@@ -100,25 +91,22 @@ module.exports = {
       path: '/register-password',
       method: 'POST',
     },
+    params: {
+      type: 'object',
+      properties: {
+        token: { type: 'string' },
+        password: { type: 'string' },
+      },
+      required: ['token', 'password'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          token: { type: 'string' },
-          password: { type: 'string' },
-        },
-        required: ['token', 'password'],
-        additionalProperties: false,
+      const user = await usersService.registerPassword({
+        token: ctx.params.token,
+        password: ctx.params.password,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const user = await usersService.registerPassword({
-          token: ctx.params.token,
-          password: ctx.params.password,
-          ctx,
-        });
-        return { status: 200, user };
-      }
-      throw validator.error;
+      return { status: 200, user };
     },
   },
   recoverRest: {
@@ -126,26 +114,22 @@ module.exports = {
       path: '/recover',
       method: 'POST',
     },
+    params: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', format: 'email' },
+      },
+      required: ['email'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          email: { type: 'string', format: 'email' },
-        },
-        required: ['email'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        try {
-          await usersService.recover({ email: ctx.params.email, ctx });
-          return { status: 200, message: 'Email sent' };
-        } catch (e) {
-          console.error(e);
-          // Always send 200 so hackers can't know if the email exists
-          return { status: 200, code: e.code, message: 'Email sent' };
-        }
-      } else {
-        throw validator.error;
+      try {
+        await usersService.recover({ email: ctx.params.email, ctx });
+        return { status: 200, message: 'Email sent' };
+      } catch (e) {
+        console.error(e);
+        // Always send 200 so hackers can't know if the email exists
+        return { status: 200, code: e.code, message: 'Email sent' };
       }
     },
   },
@@ -465,27 +449,24 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: 'number' },
+        size: { type: 'number' },
+        query: { type: 'object', additionalProperties: true },
+      },
+      required: ['page', 'size'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
-          query: { type: 'object', additionalProperties: true },
-        },
-        required: ['page', 'size'],
-        additionalProperties: false,
+      const data = await usersService.list({
+        page: ctx.params.page,
+        size: ctx.params.size,
+        ...ctx.params.query,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const data = await usersService.list({
-          page: ctx.params.page,
-          size: ctx.params.size,
-          ...ctx.params.query,
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
   getUserAgentsInfoRest: {

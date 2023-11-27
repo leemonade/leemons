@@ -3,7 +3,7 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsValidator } = require('@leemons/validator');
+
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -106,18 +106,15 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: { ...settingsSchema.attributes },
+      required: [],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { ...settingsSchema.attributes },
-        required: [],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const settings = await update({ settings: ctx.params, ctx });
-        return { status: 200, settings };
-      }
-      throw validator.error;
+      const settings = await update({ settings: ctx.params, ctx });
+      return { status: 200, settings };
     },
   },
   // TODO Verificar que esto se va a usar
@@ -136,19 +133,16 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: { key: { type: 'string' } },
+      required: ['key'],
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+      const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+        key: ctx.prefixPN(ctx.params.key),
       });
-      if (validator.validate(ctx.params)) {
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
-          key: ctx.prefixPN(ctx.params.key),
-        });
-        return { status: 200, item };
-      }
-      throw validator.error;
+      return { status: 200, item };
     },
   },
   // TODO Verificar que esto se va a usar, la ruta no existía
@@ -157,17 +151,14 @@ module.exports = {
   //     // path: '/settings/remove-menu-item',
   //     // method: 'DELETE'? 'PUT?
   //   },
-  //   async handler(ctx) {
-  //     const validator = new LeemonsValidator({
+  // params: {
   //       type: 'object',
   //       properties: { key: { type: 'string' } },
   //       required: ['key'],
-  //     });
-  //     if (validator.validate(ctx.params)) {
+  //     }
+  //   async handler(ctx) {
   //       const item = await removeMenuItemService({ key: ctx.params.key, ctx });
   //       return { status: 200, item };
-  //     }
-  //     throw validator.error;
   //   },
   // },
 };

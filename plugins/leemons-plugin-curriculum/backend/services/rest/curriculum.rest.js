@@ -4,8 +4,6 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
-
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -51,34 +49,30 @@ module.exports = {
       method: 'GET',
       path: '/',
     },
-
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: ['number', 'string'] },
+        size: { type: ['number', 'string'] },
+        canListUnpublished: { type: ['number', 'string'] },
+      },
+      required: ['page', 'size'],
+      additionalProperties: true,
+    },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          canListUnpublished: { type: ['number', 'string'] },
-        },
-        required: ['page', 'size'],
-        additionalProperties: true,
+      const { page, size, canListUnpublished, ...query } = ctx.params;
+      const can = _.isString(canListUnpublished)
+        ? canListUnpublished === 'true'
+        : canListUnpublished;
+      const data = await listCurriculums({
+        page: parseInt(page, 10),
+        size: parseInt(size, 10),
+        canListUnpublished: can,
+        query,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const { page, size, canListUnpublished, ...query } = ctx.params;
-        const can = _.isString(canListUnpublished)
-          ? canListUnpublished === 'true'
-          : canListUnpublished;
-        const data = await listCurriculums({
-          page: parseInt(page, 10),
-          size: parseInt(size, 10),
-          canListUnpublished: can,
-          query,
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
   generateCurriculumRest: {

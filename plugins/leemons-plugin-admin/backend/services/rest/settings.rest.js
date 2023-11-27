@@ -4,8 +4,6 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
-
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -39,28 +37,25 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          configured: {
-            type: 'boolean',
-          },
-          status: {
-            type: 'string',
-          },
-          lang: {
-            type: 'string',
-          },
+    params: {
+      type: 'object',
+      properties: {
+        configured: {
+          type: 'boolean',
         },
-        required: [],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const settings = await settingsService.update({ ...ctx.params, ctx });
-        return { status: 200, settings };
-      }
-      throw validator.error;
+        status: {
+          type: 'string',
+        },
+        lang: {
+          type: 'string',
+        },
+      },
+      required: [],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const settings = await settingsService.update({ ...ctx.params, ctx });
+      return { status: 200, settings };
     },
   },
   signupRest: {
@@ -68,28 +63,24 @@ module.exports = {
       method: 'POST',
       path: '/signup',
     },
+    params: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        password: { type: 'string' },
+        locale: { type: 'string' },
+      },
+      required: ['email', 'password', 'locale'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          email: { type: 'string' },
-          password: { type: 'string' },
-          locale: { type: 'string' },
-        },
-        required: ['email', 'password', 'locale'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        try {
-          await settingsService.registerAdmin({ ...ctx.params, ctx });
-          const settings = await settingsService.findOne({ ctx });
-          return { status: 200, settings };
-        } catch (e) {
-          ctx.meta.$statusCode = 400;
-          return { status: 400, error: e.message };
-        }
-      } else {
-        throw validator.error;
+      try {
+        await settingsService.registerAdmin({ ...ctx.params, ctx });
+        const settings = await settingsService.findOne({ ctx });
+        return { status: 200, settings };
+      } catch (e) {
+        ctx.meta.$statusCode = 400;
+        return { status: 400, error: e.message };
       }
     },
   },

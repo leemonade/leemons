@@ -4,7 +4,6 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -71,28 +70,25 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: ['number', 'string'] },
+        size: { type: ['number', 'string'] },
+        program: { type: 'string' },
+      },
+      required: ['page', 'size', 'program'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          program: { type: 'string' },
-        },
-        required: ['page', 'size', 'program'],
-        additionalProperties: false,
+      const { page, size, program } = ctx.params;
+      const data = await listSubjectType({
+        page: parseInt(page, 10),
+        size: parseInt(size, 10),
+        program,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const { page, size, program } = ctx.params;
-        const data = await listSubjectType({
-          page: parseInt(page, 10),
-          size: parseInt(size, 10),
-          program,
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
 };

@@ -5,7 +5,6 @@
  */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -156,17 +155,6 @@ module.exports = {
       additionalProperties: false,
     },
     async handler(ctx) {
-      // const validator = new LeemonsValidator({
-      //   type: 'object',
-      //   properties: {
-      //     page: { type: ['number', 'string'] },
-      //     size: { type: ['number', 'string'] },
-      //     program: { type: 'string' },
-      //   },
-      //   required: ['page', 'size', 'program'],
-      //   additionalProperties: false,
-      // });
-      // if (validator.validate(ctx.params)) {
       const { page, size, program, ...options } = ctx.params;
       const data = await listClasses({
         ...options,
@@ -176,8 +164,6 @@ module.exports = {
         ctx,
       });
       return { status: 200, data };
-      // }
-      // throw validator.error;
     },
   },
   listSubjectClassesRest: {
@@ -195,33 +181,29 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: ['number', 'string'] },
+        size: { type: ['number', 'string'] },
+        subject: { type: 'string' },
+      },
+      required: ['page', 'size', 'subject'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          subject: { type: 'string' },
+      const { page, size, subject } = ctx.params;
+
+      const data = await listSubjectClasses({
+        page: parseInt(page, 10),
+        size: parseInt(size, 10),
+        subject,
+        query: {
+          userSession: ctx.meta.userSession,
         },
-        required: ['page', 'size', 'subject'],
-        additionalProperties: false,
+        ctx,
       });
-
-      if (validator.validate(ctx.params)) {
-        const { page, size, subject } = ctx.params;
-
-        const data = await listSubjectClasses({
-          page: parseInt(page, 10),
-          size: parseInt(size, 10),
-          subject,
-          query: {
-            userSession: ctx.meta.userSession,
-          },
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
   postClassStudentsRest: {
@@ -294,27 +276,24 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: ['number', 'string'] },
+        size: { type: ['number', 'string'] },
+      },
+      required: ['page', 'size'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-        },
-        required: ['page', 'size'],
-        additionalProperties: false,
+      const { page, size } = ctx.param;
+      const data = await listStudentClasses({
+        page: parseInt(page, 10),
+        size: parseInt(size, 10),
+        student: ctx.params.id,
+        ctx,
       });
-      if (validator.validate(ctx.param)) {
-        const { page, size } = ctx.param;
-        const data = await listStudentClasses({
-          page: parseInt(page, 10),
-          size: parseInt(size, 10),
-          student: ctx.params.id,
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
   listTeacherClassesRest: {

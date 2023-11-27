@@ -3,7 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 /** @type {ServiceSchema} */
-const { LeemonsValidator } = require('@leemons/validator');
+
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');

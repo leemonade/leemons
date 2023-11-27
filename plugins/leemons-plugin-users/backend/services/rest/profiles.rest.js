@@ -3,7 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 /** @type {ServiceSchema} */
-const { LeemonsValidator } = require('@leemons/validator');
+
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -67,31 +67,28 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
-          withRoles: {
-            anyOf: [
-              { type: 'boolean' },
-              {
-                type: 'object',
-                properties: { columns: { type: 'array', items: { type: 'string' } } },
-              },
-            ],
-          },
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: 'number' },
+        size: { type: 'number' },
+        withRoles: {
+          anyOf: [
+            { type: 'boolean' },
+            {
+              type: 'object',
+              properties: { columns: { type: 'array', items: { type: 'string' } } },
+            },
+          ],
         },
-        required: ['page', 'size'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const { page, size, ...options } = ctx.params;
-        const data = await list({ page, size, ...options, ctx });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      },
+      required: ['page', 'size'],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const { page, size, ...options } = ctx.params;
+      const data = await list({ page, size, ...options, ctx });
+      return { status: 200, data };
     },
   },
   addRest: {
@@ -109,23 +106,20 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: 'string' },
+        permissions: permissionsValidation,
+        translations: translationsValidations,
+      },
+      required: ['name', 'description', 'permissions'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          description: { type: 'string' },
-          permissions: permissionsValidation,
-          translations: translationsValidations,
-        },
-        required: ['name', 'description', 'permissions'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const profile = await add({ ...ctx.params, ctx });
-        return { status: 200, profile };
-      }
-      throw validator.error;
+      const profile = await add({ ...ctx.params, ctx });
+      return { status: 200, profile };
     },
   },
   detailRest: {
@@ -143,20 +137,17 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        uri: { type: 'string' },
+      },
+      required: ['uri'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          uri: { type: 'string' },
-        },
-        required: ['uri'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const profile = await detailByUri({ uri: ctx.params.uri, ctx });
-        return { status: 200, profile };
-      }
-      throw validator.error;
+      const profile = await detailByUri({ uri: ctx.params.uri, ctx });
+      return { status: 200, profile };
     },
   },
   updateRest: {
@@ -174,24 +165,21 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        description: { type: 'string' },
+        permissions: permissionsValidation,
+        translations: translationsValidations,
+      },
+      required: ['id', 'name', 'description', 'permissions'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-          name: { type: 'string' },
-          description: { type: 'string' },
-          permissions: permissionsValidation,
-          translations: translationsValidations,
-        },
-        required: ['id', 'name', 'description', 'permissions'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const profile = await update({ ctx, ...ctx.params });
-        return { status: 200, profile };
-      }
-      throw validator.error;
+      const profile = await update({ ctx, ...ctx.params });
+      return { status: 200, profile };
     },
   },
   getProfileSysNameRest: {

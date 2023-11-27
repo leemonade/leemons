@@ -4,7 +4,6 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -19,22 +18,19 @@ module.exports = {
       path: '/',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
+    params: {
+      type: 'object',
+      properties: {
+        start: { type: 'string' },
+        end: { type: 'string' },
+        program: { type: 'string' },
+        center: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          start: { type: 'string' },
-          end: { type: 'string' },
-          program: { type: 'string' },
-          center: { type: 'string' },
-        },
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const data = await getAdminDashboard({ config: ctx.params, ctx });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      const data = await getAdminDashboard({ config: ctx.params, ctx });
+      return { status: 200, data };
     },
   },
   adminRealtimeRest: {

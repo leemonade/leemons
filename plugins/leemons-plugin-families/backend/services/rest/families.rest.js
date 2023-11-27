@@ -8,7 +8,7 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
+
 const { searchUsers } = require('../../core/users');
 const { add, update, detail, remove, list, listDetailPage } = require('../../core/families');
 
@@ -71,24 +71,21 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          profileType: { type: 'string', enum: ['student', 'guardian'] },
-          query: {
-            type: 'object',
-            additionalProperties: true,
-          },
+    params: {
+      type: 'object',
+      properties: {
+        profileType: { type: 'string', enum: ['student', 'guardian'] },
+        query: {
+          type: 'object',
+          additionalProperties: true,
         },
-        required: ['profileType'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const users = await searchUsers({ ...ctx.params, ctx });
-        return { status: 200, users };
-      }
-      throw validator.error;
+      },
+      required: ['profileType'],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const users = await searchUsers({ ...ctx.params, ctx });
+      return { status: 200, users };
     },
   },
   getDatasetFormRest: {
@@ -133,18 +130,15 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: addUpdateFamilySchema,
+      required: ['name'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: addUpdateFamilySchema,
-        required: ['name'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const family = await add({ ...ctx.params, ctx });
-        return { status: 200, family };
-      }
-      throw validator.error;
+      const family = await add({ ...ctx.params, ctx });
+      return { status: 200, family };
     },
   },
   updateRest: {
@@ -152,22 +146,19 @@ module.exports = {
       method: 'POST',
       path: '/update',
     },
+    params: {
+      type: 'object',
+      properties: {
+        ...addUpdateFamilySchema,
+        id: { type: 'string' },
+      },
+      required: ['id', 'name'],
+      additionalProperties: false,
+    },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          ...addUpdateFamilySchema,
-          id: { type: 'string' },
-        },
-        required: ['id', 'name'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const family = await update({ ...ctx.params, ctx });
-        return { status: 200, family };
-      }
-      throw validator.error;
+      const family = await update({ ...ctx.params, ctx });
+      return { status: 200, family };
     },
   },
   detailRest: {
@@ -176,20 +167,17 @@ module.exports = {
       path: '/detail/:id',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+      },
+      required: ['id'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-        },
-        required: ['id'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const family = await detail({ familyId: ctx.params.id, ctx });
-        return { status: 200, family };
-      }
-      throw validator.error;
+      const family = await detail({ familyId: ctx.params.id, ctx });
+      return { status: 200, family };
     },
   },
   removeRest: {
@@ -207,20 +195,17 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+      },
+      required: ['id'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          id: { type: 'string' },
-        },
-        required: ['id'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const family = await remove({ family: ctx.params.id, ctx });
-        return { status: 200, family };
-      }
-      throw validator.error;
+      const family = await remove({ family: ctx.params.id, ctx });
+      return { status: 200, family };
     },
   },
   listRest: {
@@ -238,22 +223,19 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: 'number' },
+        size: { type: 'number' },
+        query: { type: 'object', additionalProperties: true },
+      },
+      required: ['page', 'size'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
-          query: { type: 'object', additionalProperties: true },
-        },
-        required: ['page', 'size'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const data = await list({ ...ctx.params, ctx });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      const data = await list({ ...ctx.params, ctx });
+      return { status: 200, data };
     },
   },
   listDetailPageRest: {

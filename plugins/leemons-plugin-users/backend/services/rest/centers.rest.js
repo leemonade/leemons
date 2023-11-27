@@ -7,7 +7,7 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
+
 const { list, add, remove } = require('../../core/centers');
 
 module.exports = {
@@ -29,32 +29,29 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
-          withRoles: {
-            anyOf: [
-              { type: 'boolean' },
-              {
-                type: 'object',
-                properties: { columns: { type: 'array', items: { type: 'string' } } },
-              },
-            ],
-          },
-          withLimits: { type: 'boolean' },
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: 'number' },
+        size: { type: 'number' },
+        withRoles: {
+          anyOf: [
+            { type: 'boolean' },
+            {
+              type: 'object',
+              properties: { columns: { type: 'array', items: { type: 'string' } } },
+            },
+          ],
         },
-        required: ['page', 'size'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const { page, size, ...options } = ctx.params;
-        const data = await list({ page, size, ...options, ctx });
-        return { status: 200, data };
-      }
-      throw validator.error;
+        withLimits: { type: 'boolean' },
+      },
+      required: ['page', 'size'],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const { page, size, ...options } = ctx.params;
+      const data = await list({ page, size, ...options, ctx });
+      return { status: 200, data };
     },
   },
   addRest: {

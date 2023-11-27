@@ -3,7 +3,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 /** @type {ServiceSchema} */
-const { LeemonsValidator } = require('@leemons/validator');
+
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { list } = require('../../core/permissions/list');
 const { getUserAgentPermissions } = require('../../core/permissions');
@@ -26,29 +26,26 @@ module.exports = {
       method: 'POST',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          permissionNames: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
+    params: {
+      type: 'object',
+      properties: {
+        permissionNames: {
+          type: 'array',
+          items: {
+            type: 'string',
           },
         },
-        required: ['permissionNames'],
-        additionalProperties: false,
+      },
+      required: ['permissionNames'],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const permissions = await getUserAgentPermissions({
+        userAgent: ctx.meta.userSession.userAgents,
+        query: { permissionName: ctx.params.permissionNames },
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const permissions = await getUserAgentPermissions({
-          userAgent: ctx.meta.userSession.userAgents,
-          query: { permissionName: ctx.params.permissionNames },
-          ctx,
-        });
-        return { status: 200, permissions };
-      }
-      throw validator.error;
+      return { status: 200, permissions };
     },
   },
 };

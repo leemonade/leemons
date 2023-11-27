@@ -9,7 +9,6 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { LeemonsValidator } = require('@leemons/validator');
 const emailService = require('../../core/email');
 
 const validateProviderConfigObj = {
@@ -118,13 +117,10 @@ module.exports = {
         },
       }),
     ],
+    params: validateProviderConfigObj,
     async handler(ctx) {
-      const validator = new LeemonsValidator(validateProviderConfigObj);
-      if (validator.validate(ctx.params)) {
-        const provider = await emailService.saveProvider({ ...ctx.params, ctx });
-        return { status: 200, provider };
-      }
-      throw validator.error;
+      const provider = await emailService.saveProvider({ ...ctx.params, ctx });
+      return { status: 200, provider };
     },
   },
   removeProviderRest: {
@@ -142,14 +138,10 @@ module.exports = {
         },
       }),
     ],
+    params: validateRemoveProviderConfigObj,
     async handler(ctx) {
-      const validator = new LeemonsValidator(validateRemoveProviderConfigObj);
-      if (validator.validate(ctx.params)) {
-        await emailService.removeProvider({ ...ctx.params, ctx });
-
-        return { status: 200 };
-      }
-      throw validator.error;
+      await emailService.removeProvider({ ...ctx.params, ctx });
+      return { status: 200 };
     },
   },
 };

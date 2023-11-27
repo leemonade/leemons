@@ -5,7 +5,7 @@
  */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -52,28 +52,25 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          hideWelcome: {
-            type: 'boolean',
-          },
-          configured: {
-            type: 'boolean',
-          },
+    params: {
+      type: 'object',
+      properties: {
+        hideWelcome: {
+          type: 'boolean',
         },
-        required: [],
-        additionalProperties: false,
+        configured: {
+          type: 'boolean',
+        },
+      },
+      required: [],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const data = await update({
+        settings: ctx.params,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const data = await update({
-          settings: ctx.params,
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
   enableMenuItemRest: {
@@ -91,19 +88,16 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: { key: { type: 'string' } },
+      required: ['key'],
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+      const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+        key: ctx.prefixPN(ctx.params.key),
       });
-      if (validator.validate(ctx.params)) {
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
-          key: ctx.prefixPN(ctx.params.key),
-        });
-        return { status: 200, item };
-      }
-      throw validator.error;
+      return { status: 200, item };
     },
   },
 };

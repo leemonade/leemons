@@ -5,7 +5,7 @@
  */
 
 const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -28,31 +28,27 @@ module.exports = {
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
+    params: {
+      type: 'object',
+      properties: {
+        page: { type: ['number', 'string'] },
+        size: { type: ['number', 'string'] },
+        center: { type: ['string'] },
+      },
+      required: ['page', 'size'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          center: { type: ['string'] },
-        },
-        required: ['page', 'size'],
-        additionalProperties: false,
+      const { page, size, center, ...options } = ctx.params;
+
+      const data = await listRules({
+        ...options,
+        page: parseInt(page, 10),
+        size: parseInt(size, 10),
+        center,
+        ctx,
       });
-
-      if (validator.validate(ctx.params)) {
-        const { page, size, center, ...options } = ctx.params;
-
-        const data = await listRules({
-          ...options,
-          page: parseInt(page, 10),
-          size: parseInt(size, 10),
-          center,
-          ctx,
-        });
-        return { status: 200, data };
-      }
-      throw validator.error;
+      return { status: 200, data };
     },
   },
   haveRulesRest: {

@@ -36,23 +36,20 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: {
+        program: { type: 'string' },
+        course: { type: 'string' },
+        group: { type: 'string' },
+      },
+      required: ['program'],
+      additionalProperties: false,
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          program: { type: 'string' },
-          course: { type: 'string' },
-          group: { type: 'string' },
-        },
-        required: ['program'],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const { program, course, group } = ctx.params;
-        const { classes, subjects } = await listClassesSubjects({ program, course, group, ctx });
-        return { status: 200, classes, subjects };
-      }
-      throw validator.error;
+      const { program, course, group } = ctx.params;
+      const { classes, subjects } = await listClassesSubjects({ program, course, group, ctx });
+      return { status: 200, classes, subjects };
     },
   },
   getTreeRest: {

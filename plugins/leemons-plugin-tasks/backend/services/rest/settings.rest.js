@@ -8,7 +8,6 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
 
 const {
   permissions: { names: permissions },
@@ -63,26 +62,22 @@ module.exports = {
         allowedPermissions: getPermissions(permissions.tasks, ['update']),
       }),
     ],
-    async handler(ctx) {
-      const settingsSchema = {
+    params: {
+      type: 'object',
+      properties: {
         hideWelcome: {
           type: 'boolean',
         },
         configured: {
           type: 'boolean',
         },
-      };
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { ...settingsSchema },
-        required: [],
-        additionalProperties: false,
-      });
-      if (validator.validate(ctx.params)) {
-        const settings = await update({ settings: ctx.params, ctx });
-        return { status: 200, settings };
-      }
-      throw validator.error;
+      },
+      required: [],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const settings = await update({ settings: ctx.params, ctx });
+      return { status: 200, settings };
     },
   },
   enableMenuItemRest: {
@@ -96,20 +91,17 @@ module.exports = {
         allowedPermissions: getPermissions(permissions.tasks, ['update']),
       }),
     ],
+    params: {
+      type: 'object',
+      properties: { key: { type: 'string' } },
+      required: ['key'],
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+      // To verify: menuKey defaults to mainMenuKey, verificar que es lo que se quiere
+      const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+        key: ctx.prefixPN(ctx.params.key),
       });
-      if (validator.validate(ctx.params)) {
-        // To verify: menuKey defaults to mainMenuKey, verificar que es lo que se quiere
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
-          key: ctx.prefixPN(ctx.params.key),
-        });
-        return { status: 200, item };
-      }
-      throw validator.error;
+      return { status: 200, item };
     },
   },
   // No route in legacy for removeMenuItem

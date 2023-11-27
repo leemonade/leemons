@@ -9,7 +9,6 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { LeemonsValidator } = require('@leemons/validator');
 const { findOne, update } = require('../../core/settings');
 
 /** @type {ServiceSchema} */
@@ -52,33 +51,25 @@ module.exports = {
         },
       }),
     ],
-    async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: {
-          type: 'object',
-          properties: {
-            hideWelcome: {
-              type: 'boolean',
-            },
-            configured: {
-              type: 'boolean',
-            },
-          },
-          required: [],
-          additionalProperties: false,
+    params: {
+      type: 'object',
+      properties: {
+        hideWelcome: {
+          type: 'boolean',
         },
-        required: ['page', 'size', 'program'],
-        additionalProperties: false,
+        configured: {
+          type: 'boolean',
+        },
+      },
+      required: [],
+      additionalProperties: false,
+    },
+    async handler(ctx) {
+      const settings = await update({
+        settings: ctx.params,
+        ctx,
       });
-      if (validator.validate(ctx.params)) {
-        const settings = await update({
-          settings: ctx.params,
-          ctx,
-        });
-        return { status: 200, settings };
-      }
-      throw validator.error;
+      return { status: 200, settings };
     },
   },
   enableMenuItemRest: {
@@ -96,19 +87,16 @@ module.exports = {
         },
       }),
     ],
+    params: {
+      type: 'object',
+      properties: { key: { type: 'string' } },
+      required: ['key'],
+    },
     async handler(ctx) {
-      const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+      const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+        key: ctx.prefixPN(ctx.params.key),
       });
-      if (validator.validate(ctx.params)) {
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
-          key: ctx.prefixPN(ctx.params.key),
-        });
-        return { status: 200, item };
-      }
-      throw validator.error;
+      return { status: 200, item };
     },
   },
 };
