@@ -101,9 +101,9 @@ const NYACardBody = ({
           </TextClamp>
         )}
       </Box>
-      {<Box className={classes.subject} >
+      <Box className={classes.subject} >
         <ClassroomItemDisplay classroomIds={classroom} isModule={isModule} />
-      </Box>}
+      </Box>
       <Box className={classes.deadline}>
         <Text className={classes.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
         <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>{formattedDeadline.status}</Text>

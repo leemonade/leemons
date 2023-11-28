@@ -344,7 +344,7 @@ export function usePreparedInstance(instance, query, labels) {
     return null;
   }
 
-  return results;
+  return { ...results, chatKeys: instance.chatKeys };
 }
 
 function useNYACardLocalizations(labels) {
@@ -393,10 +393,12 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
   );
 
   const preparedInstance = usePreparedInstance(instance, query, localizations);
+  console.log('preparedInstance -------------_>', preparedInstance);
 
   if (!preparedInstance) {
     return null;
   }
+
   return (
     <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
       <Box
@@ -427,6 +429,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
           />
           <NYACardFooter
             {...preparedInstance?.asset}
+            chatKeys={preparedInstance?.chatKeys}
             variantTitle={
               get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
               preparedInstance?.assignable?.role

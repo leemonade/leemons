@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { useClassroomsData } from '@academic-portfolio/hooks/useClassroomsData';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { unflatten } from '@common';
 import { Loader } from '@bubbles-ui/components/lib/feedback/Loader/Loader';
 import { ClassroomItemDisplayStyles } from './ClassroomItemDisplay.styles';
 import {
@@ -16,7 +13,6 @@ const ClassroomItemDisplay = ({ classroomIds, isModule }) => {
   const [programNames, setProgramNames] = useState(null);
   const { classes } = ClassroomItemDisplayStyles();
   const { data: classData, isLoading } = useClassroomsData(classroomIds);
-  const [, translations] = useTranslateLoader([prefixPN('subject_page.subjects')]);
   // const groupLocale = unflatten(translations.items);
   // console.log('groupLocale', groupLocale)
   const isModuleNotMultiSubject = isModule && !classData?.subjectName?.includes('Multiasignatura');
@@ -35,7 +31,6 @@ const ClassroomItemDisplay = ({ classroomIds, isModule }) => {
     }
     return setProgramNames(`Grupos (${allCoursesStrigyfied})`);
   };
-  console.log('classData', classData);
   const isMultiSubjectCase = classData?.isMultiSubject;
   useEffect(() => {
     if (classData) {

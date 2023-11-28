@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles, ImageLoader, Text } from '@bubbles-ui/components';
-import RoomService from '@comunica/RoomService';
 import CommentIcon from '../icons/CommentIcon.svg';
+import { useRoomsMessageCount } from '../hooks';
 
 export const UnreadMessagesStyles = createStyles((theme) => ({
   iconWrapper: {
@@ -36,34 +36,6 @@ export const UnreadMessagesStyles = createStyles((theme) => ({
     gap: theme.spacing[2],
   },
 }));
-
-export function useRoomsMessageCount(rooms) {
-  const [messages, setMessages] = React.useState({ unread: 0, count: 0, read: 0 });
-
-  const getNewMessages = React.useCallback(
-    async (chatKeys) => {
-      const unread = await RoomService.getUnreadMessages(chatKeys);
-      const count = await RoomService.getMessagesCount(chatKeys);
-
-      setMessages({ unread, count, read: count - unread });
-    },
-    [setMessages]
-  );
-
-  RoomService.watchRooms(rooms, () => {
-    getNewMessages(rooms);
-  });
-
-  RoomService.watchOnReadRooms(rooms, () => {
-    getNewMessages(rooms);
-  });
-
-  React.useEffect(() => {
-    getNewMessages(rooms);
-  }, [rooms]);
-
-  return messages;
-}
 
 export function UnreadMessages({ rooms }) {
   const { unread, count } = useRoomsMessageCount(rooms);

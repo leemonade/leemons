@@ -38,12 +38,4 @@ export const NYACardFooterStyles = createStyles((theme, { color }) => ({
     color: theme.other.cardLibrary.content.color.muted,
     fontSize: pxToRem(12),
   },
-  comunica: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexWrap: 'nowrap',
-    gap: pxToRem(8),
-    marginRight: pxToRem(12),
-  },
 }));

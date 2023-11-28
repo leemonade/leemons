@@ -313,6 +313,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
   });
 
   const columns = useAssignmentsColumns();
+  console.log('parsedInstances', parsedInstances);
 
   if (isLoading) {
     return <Loader />;

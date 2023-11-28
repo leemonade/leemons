@@ -6,6 +6,7 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
   return {
     root: {
       padding: pxToRem(16),
+      paddingTop: pxToRem(22),
       flex: fullHeight && 1,
       display: 'flex',
       flexDirection: 'column',
@@ -54,7 +55,7 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
       },
     },
     titleContainer: {
-      paddingTop: pxToRem(8),
+      paddingTop: pxToRem(12),
     },
     title: {
       ...cardAssignmentsStyles.content.typo.lg,
@@ -77,9 +78,7 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
       gap: 5,
       marginTop: pxToRem(16),
     },
-    deadline: {
-      marginTop: pxToRem(24),
-    },
+    deadline: {},
     deadlineDate: {
       color: cardAssignmentsStyles.content.color.subje,
       ...cardAssignmentsStyles.content.typo['sm--medium'],

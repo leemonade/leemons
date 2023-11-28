@@ -3,7 +3,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import { Box, FileIcon, Text } from '@bubbles-ui/components';
-import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
+import { RoomItemDisplay } from '@comunica/components';
 import { NYACardFooterStyles } from './NYACardFooter.styles';
 import { NYACARD_FOOTER_PROP_TYPES } from './NYACardFooter.constants';
 
@@ -15,6 +15,7 @@ const NYACardFooter = ({
   variant,
   variantTitle,
   variantIcon,
+  chatKeys,
 }) => {
   const { classes, cx } = NYACardFooterStyles(
     { size: 12, color: '#636D7D' },
@@ -45,8 +46,7 @@ const NYACardFooter = ({
       )}
 
       <Box className={classes.comunica}>
-        <PluginComunicaIcon color={'#878D96'} width={18} height={18} />
-        <Text>{16}</Text>
+        <RoomItemDisplay chatKeys={chatKeys} />
       </Box>
     </Box>
   );

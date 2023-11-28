@@ -11,6 +11,7 @@ export const ClassroomItemDisplayStyles = createStyles((theme) => {
       alignContent: 'center',
       alignItems: 'center',
       gap: pxToRem(8),
+      marginBottom: pxToRem(24),
     },
     text: {
       color: sidStyles.content.color.subje,
