@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const espree = require('espree');
 const estraverse = require('estraverse');
+
 require('dotenv').config();
 
 function readFile(filePath) {
@@ -163,7 +164,10 @@ function createCodeContext(filePath, controllerName) {
   concatenatedFiles.add(filePath);
 
   controllerRequires.forEach((controllerRequire) => {
-    const requiredFilesContext = getRequiredFiles(controllerRequire, concatenatedFiles);
+    const requiredFilesContext = getRequiredFiles(
+      path.join(filePath, controllerRequire),
+      concatenatedFiles
+    );
     codeContext = codeContext.concat(requiredFilesContext);
   });
 
@@ -211,10 +215,13 @@ async function createOpenapiDoc(service, controller, controllerFile) {
   // * Report the necessary permissions for the user to use the endpoint.`;
 
   const systemMessage = `Respond as if you were an expert in REST APIs for JavaScript using the Moleculer framework.Return a valid JSON object with only 'summary' and 'description' properties that can be used to document, using OpenAPI specifications, what the handler of the '${controller}' property does in the '${controllerFile}' file, which is an action in the Moleculer JavaScript framework.
+I want 'summary' only have a short resume of what the controller does. Don't start it with "This handler" or "This Endpoint", only the summary.
 I want the description to be in markdown format and contain the following information (each point should be clearly separated into a different paragraph):
-* Detailed description of what the handler does. It should always start with "This endpoint" and should not contain information about the parameters it receives and the response it returns, only what is expected to be done.
+* Short detailed description of what the handler does. It should always start with "This endpoint" and should not contain information about the parameters it receives and the response it returns, only what is expected to be done.
 * Authentication: Information about whether the user needs to be logged in to use the endpoint. It should start with '**Authentication:**"
-* Permissions: Information about the permissions required for the user to use the endpoint. It should start with "**Permissions:**"`;
+* Permissions: Information about the permissions required for the user to use the endpoint. It should start with "**Permissions:**"
+* Fully detailed description of what the controller handler, and the methods it calls, does.
+`;
 
   const userMessage = createCodeContext(controllerFile, controller);
 
@@ -231,21 +238,29 @@ I want the description to be in markdown format and contain the following inform
     console.info('OpenAI Response', AIResponse);
 
     try {
-      const response = JSON.parse(AIResponse);
+      const response = JSON.parse(AIResponse.replace(/`/g, '\\`'));
       responseObj = {
         summary: response.summary,
         description: response.description,
         AIGenerated: true,
       };
     } catch (error) {
+      console.log('-----ERROR-----', error);
+      throw error;
       responseObj = { description: AIResponse, AIGenerated: true };
     }
   } catch (error) {
+    throw error;
     console.warn('Openapi: OpenAI Error', error);
+  }
+  const requestFolder = path.resolve(__dirname, 'requests');
+
+  if (!fs.existsSync(requestFolder)) {
+    fs.mkdirSync(requestFolder);
   }
 
   fs.writeFileSync(
-    path.resolve(__dirname, 'requests', `${service}-${controller}.request.txt`),
+    path.resolve(requestFolder, `${service}-${controller}.request.txt`),
     JSON.stringify({ systemMessage, userMessage, response: responseObj }, null, 2)
   );
 

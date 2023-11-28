@@ -25,7 +25,8 @@ async function createOpenapiResponse({ res, ctx }) {
   const isTesting = TESTING || NODE_ENV === 'test' || process.env.testing;
   if (isTesting && ctx.action.rest) {
     const actionName = ctx.action.name;
-    const schema = jsonSchemaGenerator(res);
+    const responseSchema = jsonSchemaGenerator(res);
+    const requestSchema = jsonSchemaGenerator(ctx.params);
     try {
       const [, plugin, service, controller] = decomposeActionName(actionName);
 
@@ -38,7 +39,8 @@ async function createOpenapiResponse({ res, ctx }) {
         controllerFilePath,
         service,
         controller,
-        schema,
+        responseSchema,
+        requestSchema,
       });
     } catch (error) {
       ctx.logger.error(`ERROR Openapi: ${ctx.action.name} - ${error.message}`);
