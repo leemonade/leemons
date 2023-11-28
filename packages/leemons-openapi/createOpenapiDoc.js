@@ -245,12 +245,9 @@ I want the description to be in markdown format and contain the following inform
         AIGenerated: true,
       };
     } catch (error) {
-      console.log('-----ERROR-----', error);
-      throw error;
       responseObj = { description: AIResponse, AIGenerated: true };
     }
   } catch (error) {
-    throw error;
     console.warn('Openapi: OpenAI Error', error);
   }
   const requestFolder = path.resolve(__dirname, 'requests');
