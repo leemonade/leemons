@@ -4,7 +4,7 @@ import { prepareAssetType } from './prepareAssetType';
 
 function getAssetUrl(assetID) {
   const authTokens = getAuthorizationTokenForAllCenters();
-  return `${leemons.apiUrl}/api/v1/leebrary/img/${assetID}?authorization=${encodeURIComponent(
+  return `${leemons.apiUrl}/api/v1/leebrary/file/img/${assetID}?authorization=${encodeURIComponent(
     `${authTokens}`
   )}`;
 }

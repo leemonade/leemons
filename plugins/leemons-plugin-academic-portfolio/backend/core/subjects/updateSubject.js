@@ -35,6 +35,36 @@ async function processRoom({ subject, color, assetImage, classe, assetIcon, ctx 
   return ctx.tx.call('comunica.room.add', { key: roomKey, ...roomData });
 }
 
+async function processRoomGroup({ subject, color, assetImage, classe, assetIcon, ctx }) {
+  const roomKey = ctx.prefixPN(`room.class.group.${classe.id}`);
+
+  const roomExists = await ctx.tx.call('comunica.room.exists', { key: roomKey });
+
+  let subName = classe.program.name;
+  if (classe.groups?.abbreviation && classe.groups?.abbreviation !== '-auto-') {
+    subName += ` - ${classe.groups?.abbreviation}`;
+  }
+  const roomData = {
+    name: `${subject.name} ${subName}`,
+    bgColor: color,
+    image: null,
+    icon: null,
+  };
+  if (assetImage.cover) {
+    roomData.image = assetImage.id;
+  }
+  if (classe.image?.cover) {
+    roomData.image = classe.image.id;
+  }
+  if (assetIcon.cover) {
+    roomData.icon = assetIcon.id;
+  }
+  if (roomExists) {
+    return ctx.tx.call('comunica.room.update', { key: roomKey, ...roomData });
+  }
+  return ctx.tx.call('comunica.room.add', { key: roomKey, ...roomData });
+}
+
 async function updateSubject({ data, ctx }) {
   await validateUpdateSubject({ data, ctx });
   let { id, course, credits, internalId, subjectType, knowledge, image, icon, color, ..._data } =
@@ -76,11 +106,28 @@ async function updateSubject({ data, ctx }) {
   const classesWithSubject = await ctx.tx.db.Class.find({ subject: subject.id })
     .select(['id'])
     .lean();
-  const classes = await classByIds({ ids: _.map(classesWithSubject, 'id'), ctx });
+  const classes = await classByIds({
+    ids: _.map(classesWithSubject, 'id'),
+    withProgram: true,
+    ctx,
+  });
 
   await Promise.allSettled(
     _.map(classes, (classe) =>
       processRoom({
+        subject,
+        color,
+        assetImage,
+        classe,
+        assetIcon,
+        ctx,
+      })
+    )
+  );
+
+  await Promise.allSettled(
+    _.map(classes, (classe) =>
+      processRoomGroup({
         subject,
         color,
         assetImage,

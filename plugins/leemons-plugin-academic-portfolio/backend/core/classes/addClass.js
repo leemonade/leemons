@@ -176,7 +176,7 @@ async function addClass({ data, ctx }) {
     let classe = (await classByIds({ ids: nClass.id, ctx }))[0];
 
     let subName = program.name;
-    if (classe.groups?.abbreviation) {
+    if (classe.groups?.abbreviation && classe.groups?.abbreviation !== '-auto-') {
       subName += ` - ${classe.groups?.abbreviation}`;
     }
     const roomData = {

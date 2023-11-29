@@ -18,15 +18,16 @@ async function addUserSubjectRoom({
     nameReplaces: {
       subjectName: classe.subject.name,
     },
-    icon: classe.subject.icon?.id,
+    icon: instance.assignable.roleDetails.icon,
     bgColor: classe.color,
     parentRoom,
-    image: instance.assignable.asset.id,
+    image: instance.assignable.asset.cover ? instance.assignable.asset.id : undefined,
     program: classe.program,
     type: ctx.prefixPN('assignation.user'),
     userAgents: user,
     adminUserAgents: _.compact(_.uniq(teachers)),
     metadata: {
+      iconIsUrl: true,
       assignableInstanceId,
       headerIconIsUrl: false,
       headerName: instance.assignable.asset.name,
