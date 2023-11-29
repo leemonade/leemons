@@ -4,7 +4,10 @@ import { Select } from '@bubbles-ui/components';
 import { listClassesRequest, listSessionClassesRequest } from '../../request';
 
 const SelectClass = forwardRef(
-  ({ program, onlyClassesWhichIBelong, value: userValue, onChange, ...props }, ref) => {
+  (
+    { program, onlyClassesWhichIBelong, value: userValue, customOptions = [], onChange, ...props },
+    ref
+  ) => {
     const [data, setData] = useState([]);
     const [value, setValue] = useState(userValue);
 
@@ -64,7 +67,7 @@ const SelectClass = forwardRef(
       <Select
         {...props}
         ref={ref}
-        data={data}
+        data={[...customOptions, ...data]}
         disabled={!data.length}
         onChange={handleChange}
         value={value}
@@ -75,6 +78,7 @@ const SelectClass = forwardRef(
 
 SelectClass.displayName = '@academic-portfolio/components/SelectClass';
 SelectClass.propTypes = {
+  customOptions: PropTypes.any,
   onlyClassesWhichIBelong: PropTypes.bool,
   program: PropTypes.string,
   value: PropTypes.string,

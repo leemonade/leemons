@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, createStyles, ImageLoader, Text } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { RatingStarIcon } from '@bubbles-ui/icons/solid';
-import { useRoomsMessageCount } from '@comunica/components';
+import { useRoomsMessageCount } from '@comunica/hooks';
 import { cloneDeep, sortBy } from 'lodash';
 import CommentIcon from './CommentIcon.svg';
 

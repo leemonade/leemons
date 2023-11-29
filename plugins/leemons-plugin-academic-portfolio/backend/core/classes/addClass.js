@@ -185,11 +185,15 @@ async function addClass({ data, ctx }) {
       // subName,
       bgColor: classe.subject.color,
       image: null,
-      icon: null,
+      icon: '/public/academic-portfolio/subject-icon.svg',
       program: data.program,
+      metadata: {
+        iconIsUrl: true,
+      },
     };
     if (classe.subject.icon?.cover) {
       roomData.icon = classe.subject.icon.id;
+      delete roomData.metadata.iconIsUrl;
     }
     if (classe.subject.image?.cover) {
       roomData.image = classe.subject.image.id;

@@ -18,7 +18,10 @@ async function processRoom({ subject, color, assetImage, classe, assetIcon, ctx 
     name: subject.name,
     bgColor: color,
     image: null,
-    icon: null,
+    icon: '/public/academic-portfolio/subject-icon.svg',
+    metadata: {
+      iconIsUrl: true,
+    },
   };
   if (assetImage.cover) {
     roomData.image = assetImage.id;
@@ -28,6 +31,7 @@ async function processRoom({ subject, color, assetImage, classe, assetIcon, ctx 
   }
   if (assetIcon.cover) {
     roomData.icon = assetIcon.id;
+    delete roomData.metadata.iconIsUrl;
   }
   if (roomExists) {
     return ctx.tx.call('comunica.room.update', { key: roomKey, ...roomData });
@@ -48,7 +52,10 @@ async function processRoomGroup({ subject, color, assetImage, classe, assetIcon,
     name: `${subject.name} ${subName}`,
     bgColor: color,
     image: null,
-    icon: null,
+    icon: '/public/academic-portfolio/subject-icon.svg',
+    metadata: {
+      iconIsUrl: true,
+    },
   };
   if (assetImage.cover) {
     roomData.image = assetImage.id;
@@ -58,6 +65,7 @@ async function processRoomGroup({ subject, color, assetImage, classe, assetIcon,
   }
   if (assetIcon.cover) {
     roomData.icon = assetIcon.id;
+    delete roomData.metadata.iconIsUrl;
   }
   if (roomExists) {
     return ctx.tx.call('comunica.room.update', { key: roomKey, ...roomData });

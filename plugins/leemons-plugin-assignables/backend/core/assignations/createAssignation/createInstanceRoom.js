@@ -13,7 +13,6 @@ async function createInstanceRoom({
 
   const userAgents = _.compact(_.uniq(users));
   const teachersUserAgents = _.compact(_.uniq(teachers));
-  console.log('instance.assignable', instance.assignable.roleDetails.icon);
 
   // Creamos la sala que estara a primera altura
   if (!roomAlreadyExists) {

@@ -33,8 +33,7 @@ async function createGroupRoom({
         headerName: instance.assignable.asset.name,
         headerSubName: classes.length > 1 ? 'multisubjects' : classes[0].subject.name,
         headerImage: instance.assignable.asset.cover ? instance.assignable.asset.id : undefined,
-        headerIcon:
-          classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
+        headerIcon: instance.assignable.roleDetails.icon,
         headerBgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       },
       userAgents,

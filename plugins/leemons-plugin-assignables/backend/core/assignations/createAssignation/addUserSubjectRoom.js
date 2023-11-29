@@ -32,7 +32,7 @@ async function addUserSubjectRoom({
       headerIconIsUrl: false,
       headerName: instance.assignable.asset.name,
       headerImage: instance.assignable.asset.id,
-      headerIcon: classe.subject.icon?.id,
+      headerIcon: instance.assignable.roleDetails.icon,
       headerBgColor: classe.color,
     },
   });
