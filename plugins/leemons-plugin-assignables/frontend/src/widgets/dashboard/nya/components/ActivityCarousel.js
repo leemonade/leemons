@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Swiper, Loader } from '@bubbles-ui/components';
+import { useLocation } from 'react-router-dom';
 import NYACard from '../../../../components/NYACard';
 import EmptyState from './EmptyState';
 import { useNyaStyles } from '../hooks';
@@ -10,10 +11,11 @@ export default function ActivityCarousel({
   activities,
   count,
   isLoading,
-  showSubjects,
   classData,
 }) {
   const { theme } = useNyaStyles();
+  const location = useLocation();
+  const isStudentDashboard = location.pathname.includes('private/dashboard/class');
 
   const swiperProps = {
     watchOverflow: true,
@@ -59,7 +61,7 @@ export default function ActivityCarousel({
         <NYACard
           key={activity.id}
           instance={activity}
-          showSubject={showSubjects}
+          showSubject={!isStudentDashboard}
           classData={classData}
         />
       ))}

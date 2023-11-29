@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { Box, ImageLoader } from '@bubbles-ui/components';
-import { LibraryCard } from '@leebrary/components/LibraryCard';
+import { Box, ImageLoader, Loader } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _, { get } from 'lodash';
@@ -318,7 +317,8 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     ...instance,
     assignment,
     deadlineProps,
-    subject: showSubject ? subject : null,
+    subject,
+    showSubject,
     isNew: object?.timestamps?.open === undefined && !isTeacher,
     asset: prepareAsset(instance.assignable.asset),
     url,
@@ -339,7 +339,6 @@ export function usePreparedInstance(instance, query, labels) {
   );
 
   const [results] = useApi(prepareInstance, options);
-
   if (!results) {
     return null;
   }
@@ -391,12 +390,13 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
     }),
     [showSubject]
   );
-
   const preparedInstance = usePreparedInstance(instance, query, localizations);
-  console.log('preparedInstance -------------_>', preparedInstance);
-
   if (!preparedInstance) {
-    return null;
+    return (
+      <Box className={classes.root}>
+        <Loader label={'Loading...'} />
+      </Box>
+    );
   }
 
   return (
@@ -415,7 +415,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
           <NYACardCover
             {...preparedInstance?.asset}
             variantTitle={preparedInstance?.assignable?.role}
-            topColor={preparedInstance?.subject?.color}
+            topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
           />
           <NYACardBody
             {...preparedInstance?.asset}
@@ -426,6 +426,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
             locale={locale}
             totalActivities={10}
             submitedActivities={5}
+            showSubject={showSubject}
           />
           <NYACardFooter
             {...preparedInstance?.asset}

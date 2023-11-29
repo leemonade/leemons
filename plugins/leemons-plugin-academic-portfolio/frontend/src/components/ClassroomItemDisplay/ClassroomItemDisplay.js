@@ -9,13 +9,11 @@ import {
   CLASSROOMTITEMSDISPLAY_PROP_TYPES,
 } from './ClassroomItemDisplay.constants';
 
-const ClassroomItemDisplay = ({ classroomIds, isModule }) => {
+const ClassroomItemDisplay = ({ classroomIds, showSubject }) => {
   const [programNames, setProgramNames] = useState(null);
   const { classes } = ClassroomItemDisplayStyles();
   const { data: classData, isLoading } = useClassroomsData(classroomIds);
-  // const groupLocale = unflatten(translations.items);
-  // console.log('groupLocale', groupLocale)
-  const isModuleNotMultiSubject = isModule && !classData?.subjectName?.includes('Multiasignatura');
+
   const handleCourses = (data) => {
     let allCoursesStrigyfied = '';
     if (isArray(data) && data.length === 1) {
@@ -38,8 +36,13 @@ const ClassroomItemDisplay = ({ classroomIds, isModule }) => {
     }
   }, [classData?.courses, programNames]);
 
-  if (isLoading) return <Loader />;
-  if (isModuleNotMultiSubject) return null;
+  if (isLoading)
+    return (
+      <Box className={classes.root}>
+        <Loader />
+      </Box>
+    );
+  if (!showSubject && !isMultiSubjectCase) return null;
 
   return (
     <Box className={classes.root}>

@@ -25,6 +25,8 @@ const NYACardFooter = ({
     (variantTitle ?? fileType ?? variant)?.charAt(0)?.toUpperCase() +
     (variantTitle ?? fileType ?? variant)?.slice(1);
 
+  const hasChatKeys = Array.isArray(chatKeys) && chatKeys.length > 0;
+
   return (
     <Box className={cx(classes.root, className)} style={style}>
       {variantIcon ? (
@@ -45,9 +47,11 @@ const NYACardFooter = ({
         </Box>
       )}
 
-      <Box className={classes.comunica}>
-        <RoomItemDisplay chatKeys={chatKeys} />
-      </Box>
+      {hasChatKeys && (
+        <Box className={classes.comunica}>
+          <RoomItemDisplay chatKeys={chatKeys} />
+        </Box>
+      )}
     </Box>
   );
 };

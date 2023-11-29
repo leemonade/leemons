@@ -27,6 +27,7 @@ const NYACardBody = ({
   locale,
   totalActivities,
   submitedActivities,
+  showSubject,
   ...props
 }) => {
   const { classes } = NYACardBodyStyles({ fullHeight }, { name: 'NYACardBody' });
@@ -43,7 +44,6 @@ const NYACardBody = ({
     }
     return description
   };
-
   const cardDescription = getDescription();
 
   const getInstanceTypeLocale = (instanceParam) => {
@@ -102,7 +102,7 @@ const NYACardBody = ({
         )}
       </Box>
       <Box className={classes.subject} >
-        <ClassroomItemDisplay classroomIds={classroom} isModule={isModule} />
+        <ClassroomItemDisplay classroomIds={classroom} showSubject={showSubject} />
       </Box>
       <Box className={classes.deadline}>
         <Text className={classes.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
