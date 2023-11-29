@@ -7,7 +7,7 @@ export const NYACardSkeletonStyles = createStyles((theme) => ({
     minWidth: pxToRem(264),
     maxWidth: pxToRem(330),
     minHeight: pxToRem(480),
-    width: 'auto',
+    width: '100%',
     borderRadius: '2px',
     backgroundColor: theme.colors.mainWhite,
     border: '1px solid  #DDE1E6',

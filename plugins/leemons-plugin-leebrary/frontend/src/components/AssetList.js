@@ -268,44 +268,6 @@ function AssetList({
     return null;
   }
 
-  // async function loadAssetsData() {
-  //   if (store.assets && !isEmpty(store.assets)) {
-  //     setStoreValue('loading', true);
-
-  //     try {
-  //       if (!isEmpty(store.assets)) {
-  //         const paginated = getPageItems({
-  //           data: store.assets,
-  //           page: store.page - 1,
-  //           size: store.size,
-  //         });
-  //         const assetIds = paginated.items.map((item) => item.asset);
-  //         const response = await getAssetsByIdsRequest(assetIds, {
-  //           published,
-  //           showPublic: !pinned ? store.showPublic : true,
-  //         });
-
-  //         paginated.items = response.assets || [];
-  //         forEach(paginated.items, (item) => {
-  //           if (item.file?.metadata?.indexOf('pathsInfo')) {
-  //             item.file.metadata = JSON.parse(item.file.metadata);
-  //             delete item.file.metadata.pathsInfo;
-  //             item.file.metadata = JSON.stringify(item.file.metadata);
-  //           }
-  //         });
-  //         paginated.page += 1;
-  //         setStoreValue('serverData', paginated);
-  //       } else {
-  //         setStoreValue('serverData', []);
-  //       }
-  //       clearAssetLoading();
-  //     } catch (err) {
-  //       clearAssetLoading();
-  //       addErrorAlert(getErrorMessage(err));
-  //     }
-  //   }
-  // }
-
   async function loadAsset(id, forceLoad) {
     try {
       const item = find(store.serverData.items, { id });
@@ -542,13 +504,6 @@ function AssetList({
   function handleOnShare(item) {
     setStoreValue('sharingItem', item);
   }
-
-  /*
-const handleOnShowPublic = (value) => {
-  setShowPublic(value);
-  onShowPublic(value);
-};
-*/
 
   function handleOnPin(item) {
     pinAsset(item);
@@ -877,15 +832,7 @@ const handleOnShowPublic = (value) => {
               paddingLeft: !isEmbedded && theme.spacing[5],
             })}
           >
-            <LoadingOverlay visible={store.loading} overlayOpacity={0} />
-
-            {/* !loading && !pinned && canShowPublicToggle && (
-            <Switch
-              label={t('labels.showPublic')}
-              checked={showPublic}
-              onChange={handleOnShowPublic}
-            />
-          ) */}
+            <LoadingOverlay visible={store.loading} overlayOpacity={0} style={{ height: '100%' }} />
 
             {!store.loading && !isEmpty(store.serverData?.items) && (
               <Box

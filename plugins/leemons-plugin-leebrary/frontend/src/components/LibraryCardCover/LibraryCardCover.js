@@ -96,7 +96,7 @@ const LibraryCardCover = ({
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.color} />
+      {color && <Box className={classes.color} />}
       <Box className={classes.overlayTransparent}>
         <Box>{iconRow}</Box>
       </Box>
