@@ -14,6 +14,7 @@ import { NYACardCover } from './NYACardCover';
 import { NYACardStyles } from './NYACard.styles';
 import { NYACardBody } from './NYCardBody';
 import { NYACardFooter } from './NYACardFooter';
+import { NYACardSkeleton } from './NYACardSkeleton';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -394,7 +395,7 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
   if (!preparedInstance) {
     return (
       <Box className={classes.root}>
-        <Loader label={'Loading...'} />
+        <NYACardSkeleton />
       </Box>
     );
   }

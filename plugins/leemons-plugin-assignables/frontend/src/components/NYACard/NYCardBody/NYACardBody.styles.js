@@ -54,9 +54,6 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
         },
       },
     },
-    titleContainer: {
-      paddingTop: pxToRem(12),
-    },
     title: {
       ...cardAssignmentsStyles.content.typo.lg,
       lineHeight: '20px',

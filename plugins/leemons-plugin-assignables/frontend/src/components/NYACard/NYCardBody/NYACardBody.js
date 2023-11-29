@@ -85,7 +85,7 @@ const NYACardBody = ({
           )}
         </Box>
       </Box>
-      <Box className={classes.titleContainer}>
+      <Box style={{ paddingTop: isNew || calificationType ? 12 : 0 }}>
         {title && (
           <TextClamp lines={2}>
             <Text className={classes.title}>{title}</Text>

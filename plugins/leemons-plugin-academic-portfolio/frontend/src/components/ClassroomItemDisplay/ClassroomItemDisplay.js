@@ -8,6 +8,7 @@ import {
   CLASSROOMTITEMSDISPLAY_DEFAULT_PROPS,
   CLASSROOMTITEMSDISPLAY_PROP_TYPES,
 } from './ClassroomItemDisplay.constants';
+import { ClassroomItemDisplaySkeleton } from './ClassroomItemDisplaySkeleton';
 
 const ClassroomItemDisplay = ({ classroomIds, showSubject }) => {
   const [programNames, setProgramNames] = useState(null);
@@ -39,7 +40,7 @@ const ClassroomItemDisplay = ({ classroomIds, showSubject }) => {
   if (isLoading)
     return (
       <Box className={classes.root}>
-        <Loader />
+        <ClassroomItemDisplaySkeleton />
       </Box>
     );
   if (!showSubject && !isMultiSubjectCase) return null;
