@@ -25,12 +25,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@openapi-contrib/json-schema-to-openapi-schema": "^3.0.0",
-    "swagger-ui-dist": "^5.9.3",
     "@leemons/error": "0.0.40",
     "@leemons/service-name-parser": "0.0.40",
+    "@openapi-contrib/json-schema-to-openapi-schema": "^3.0.0",
     "json-schema-generator": "^2.0.6",
     "lodash": "^4.17.21",
-    "prettier": "^2.8.8"
+    "prettier": "^2.8.8",
+    "swagger-ui-dist": "^5.9.3",
+    "uglify-js": "^3.17.4"
   }
 }

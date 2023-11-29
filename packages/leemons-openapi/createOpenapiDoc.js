@@ -1,11 +1,17 @@
+require('dotenv').config();
+
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const UglifyJS = require('uglify-js');
 const espree = require('espree');
 const estraverse = require('estraverse');
 
-require('dotenv').config();
-
+/**
+ * Reads a file and returns its content.
+ * @param {string} filePath - The path of the file to read.
+ * @returns {string} The content of the file.
+ */
 function readFile(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf8');
@@ -14,19 +20,28 @@ function readFile(filePath) {
   }
 }
 
+/**
+ * Extracts required variables from a piece of code.
+ * @param {string} code - The code to extract required variables from.
+ * @returns {Object} An object containing the required variables.
+ */
 function extractRequiredVariables(code) {
-  const requires = code.match(/const\s*({\s*([^}]+)\s*}|[^}]+)\s*= require\(['"]([^'"]+)['"]\)/g);
+  const requires = code.match(/const\s*({\s*([^}]+)\s*}|[^=]+)\s*= require\(['"]([^'"]+)['"]\)/g);
   const requiredVariables = {};
+
+  if (!requires) {
+    return {};
+  }
 
   requires.forEach((req) => {
     const variableNameMatch = req.match(
-      /const\s*({\s*([^}]+)\s*}|[^}]+)\s*= require\(['"]([^'"]+)['"]\)/
+      /const\s*({\s*([^}]+)\s*}|[^=]+)\s*= require\(['"]([^'"]+)['"]\)/
     );
-    let variableName = variableNameMatch[2] ? variableNameMatch[2] : variableNameMatch[1];
+    let variableName = variableNameMatch[1] ? variableNameMatch[1] : variableNameMatch[2];
     const importedFile = variableNameMatch[3];
     if (importedFile.includes('.')) {
       if (variableName.includes(':')) {
-        [, variableName] = variableName.split(':');
+        [variableName] = variableName.split(':');
       }
 
       variableName
@@ -41,6 +56,12 @@ function extractRequiredVariables(code) {
   return requiredVariables;
 }
 
+/**
+ * Finds a controller node in an Abstract Syntax Tree (AST).
+ * @param {Object} ast - The AST to search in.
+ * @param {string} controllerName - The name of the controller to find.
+ * @returns {Object} The controller node.
+ */
 function findControllerNode(ast, controllerName) {
   let controllerNode = null;
   estraverse.traverse(ast, {
@@ -54,18 +75,25 @@ function findControllerNode(ast, controllerName) {
   return controllerNode;
 }
 
-function findRealRequired(controllerNode, variables, requiredVariables) {
-  const realRequired = new Set();
-  estraverse.traverse(controllerNode, {
+/**
+ * Finds the real required variables in a father node.
+ * @param {Object} fatherNode - The node to search in.
+ * @param {Object} requiredVariables - The required variables to find.
+ * @returns {Object} The real required variables.
+ */
+function findRealRequired(fatherNode, requiredVariables) {
+  const variables = Object.keys(requiredVariables);
+  const realRequired = {};
+  estraverse.traverse(fatherNode, {
     enter(node) {
       if (node.type === 'CallExpression') {
         if (variables.includes(node.callee.name)) {
-          realRequired.add(requiredVariables[node.callee.name]);
+          realRequired[node.callee.name] = requiredVariables[node.callee.name];
         } else if (
           node.callee.type === 'MemberExpression' &&
           variables.includes(node.callee.object.name)
         ) {
-          realRequired.add(requiredVariables[node.callee.object.name]);
+          realRequired[node.callee.object.name] = requiredVariables[node.callee.object.name];
         }
       }
     },
@@ -73,14 +101,18 @@ function findRealRequired(controllerNode, variables, requiredVariables) {
   return realRequired;
 }
 
+/**
+ * Finds a function in a controller.
+ * @param {string} filePath - The path of the file to search in.
+ * @param {string} controllerName - The name of the controller to find.
+ * @returns {Object} The found function.
+ */
 function findFunctionInController(filePath, controllerName) {
   // Read the source code of the file
   const code = fs.readFileSync(filePath, 'utf8');
 
   // Find all require calls and extract variable names
   const requiredVariables = extractRequiredVariables(code);
-
-  const variables = Object.keys(requiredVariables);
 
   // Parse the source code into an AST
   const ast = espree.parse(code, {
@@ -97,83 +129,207 @@ function findFunctionInController(filePath, controllerName) {
     return [];
   }
 
-  const realRequired = findRealRequired(controllerNode, variables, requiredVariables);
+  const realRequired = findRealRequired(controllerNode, requiredVariables);
 
-  return [...realRequired];
+  return { ...realRequired };
 }
 
-function getRequiredFiles(filePath, concatenatedFiles = new Set()) {
-  // Create a set to store the paths of the files that have been concatenated
-
-  let requiredFiles = [];
-  const fileContent = readFile(filePath);
-
-  if (!concatenatedFiles.has(filePath)) {
-    requiredFiles = [filePath, fileContent];
-    concatenatedFiles.add(filePath);
-  }
-
-  const regex = /require\('(.*)'\)/g;
-  let match = regex.exec(fileContent);
-
-  while (match !== null) {
-    const matchPath = match[1];
-    if (matchPath.indexOf('.') < 0) {
-      match = regex.exec(fileContent);
-    } else {
-      let requiredFilePath = path.resolve(path.join(path.dirname(filePath), match[1]));
-      try {
-        if (fs.lstatSync(requiredFilePath).isDirectory()) {
-          requiredFilePath = path.join(requiredFilePath, '/index.js');
-        }
-      } catch (err) {
-        if (requiredFilePath.indexOf('.') < 0) {
-          requiredFilePath = path.join(requiredFilePath, '.js').replace('/.js', '.js');
-        }
-      }
-      if (
-        requiredFilePath.endsWith('.js') &&
-        !requiredFilePath.endsWith('transform.js') &&
-        !requiredFilePath.includes('rest/openapi/')
-      ) {
-        // Check if the file has already been concatenated
-        if (!concatenatedFiles.has(requiredFilePath)) {
-          requiredFiles.push(requiredFilePath);
-          requiredFiles.push(readFile(requiredFilePath));
-          // Add the file to the set of concatenated files
-          concatenatedFiles.add(requiredFilePath);
-          requiredFiles = requiredFiles.concat(
-            getRequiredFiles(requiredFilePath, concatenatedFiles)
-          );
-        }
-      }
-      match = regex.exec(fileContent);
+/**
+ * Finds and reads a file.
+ * @param {string} filePath - The path of the file to find and read.
+ * @returns {Array} An array containing the file path and its content.
+ */
+function findAndReadFile(filePath) {
+  try {
+    if (fs.lstatSync(filePath, { throwIfNoEntry: false })?.isDirectory()) {
+      // si es un directorio debería ser un index.js
+      return findAndReadFile(path.join(filePath, 'index.js')) || '';
     }
+    // si no es un directorio debe ser un archivo y debe acabar en .js
+    // sino acaba en .js se lo añadimos
+    if (
+      !filePath.endsWith('.js') &&
+      !filePath.endsWith('transform.js') &&
+      !filePath.includes('rest/openapi/')
+    ) {
+      let _filePath = '';
+      if (filePath.endsWith('/')) _filePath = filePath.replace('/', '.js');
+      else _filePath = `${filePath}.js`;
+      if (fs.existsSync(_filePath)) {
+        return [_filePath, readFile(_filePath)];
+      }
+      // si tampoco es un archivo probamos a quitarle la última parte de la ruta y ver si eso es un directorio
+      return findAndReadFile(path.join(filePath, '..', 'index.js'));
+    }
+    return [filePath, readFile(filePath)];
+  } catch (error) {
+    console.error('Openapi: findAndReadFile Error:', error);
+    return [filePath, ''];
   }
-
-  return requiredFiles;
 }
 
+/**
+ * Minimizes and concatenates files.
+ * @param {Array} codeContext - The context of the code.
+ * @param {string} filePath - The path of the file to minimize and concatenate.
+ * @param {string} fileContent - The content of the file to minimize and concatenate.
+ * @param {Set} concatenatedFiles - The set of already concatenated files.
+ * @returns {Object} An object containing the new code context and the set of concatenated files.
+ */
+function minimizeAndConcatenateFiles(codeContext, filePath, fileContent, concatenatedFiles) {
+  if (!concatenatedFiles.has(filePath)) {
+    const minimizedContent = UglifyJS.minify(fileContent, { keep_fnames: true });
+    concatenatedFiles.add(filePath);
+    codeContext.push(filePath, minimizedContent);
+  }
+  return { codeContext, concatenatedFiles };
+}
+
+/**
+ * Gets the real required files.
+ * @param {string} fileContent - The content of the file.
+ * @param {string} filePath - The path of the file.
+ * @param {Object} requires - The required variables.
+ * @param {string} variableRequired - The required variable.
+ * @returns {Object} The real required files.
+ */
+function getRealRequires(fileContent, filePath, requires, variableRequired) {
+  const ast = espree.parse(fileContent, { ecmaVersion: 2020 });
+  let functionNode;
+  let realRequires = {};
+
+  estraverse.traverse(ast, {
+    enter(node) {
+      // Si el nodo es una declaración de función y su nombre es el nombre de la variable requerida
+      if (node.type === 'FunctionDeclaration' && node.id.name === variableRequired) {
+        functionNode = node;
+        this.break(); // Detener la búsqueda
+      }
+    },
+  });
+
+  if (!functionNode) {
+    // si no podemos encontrar la declaración que buscamos, no podemos filtrar los requires
+    if (path.basename(filePath) === 'index.js') {
+      // vemos a ver si alguno de lo requires es como la variable
+      // Check if any of the requires matches the variable
+      const matchingVariables = Object.keys(requires).filter(
+        (variable) => variable === variableRequired
+      );
+
+      if (matchingVariables.length > 0) {
+        matchingVariables.forEach((variable) => {
+          realRequires[variable] = requires[variable];
+        });
+      } else {
+        // no hay ninguna variable que coincida... me traigo todas...
+        console.log(
+          'EN EL INDEX NO ENCUENTRO LA VARIABLE QUE QUIERO... ME TRAIGO TODO',
+          666666,
+          variableRequired,
+          filePath
+        );
+        realRequires = requires;
+      }
+    } else {
+      // no hay ninguna variable que coincida... me traigo todas...
+      console.log(
+        'EN EL ARCHIVO NO ENCUENTRO LA DECLARACIÓN DE FUNCIÓN QUE QUIERO... ME TRAIGO TODO',
+        666666,
+        variableRequired,
+        filePath
+      );
+      realRequires = requires;
+    }
+  } else {
+    // recorremos los nodos de la variable para filtrar los requires que se llaman desde esa variable
+    estraverse.traverse(functionNode, {
+      enter(node) {
+        if (node.type === 'CallExpression' && requires[node.callee.name]) {
+          realRequires[node.callee.name] = requires[node.callee.name];
+        }
+      },
+    });
+  }
+  return realRequires;
+}
+
+/**
+ * Gets the required files.
+ * @param {string} filePath - The path of the file.
+ * @param {string} variableRequired - The required variable.
+ * @param {Set} _concatenatedFiles - The set of already concatenated files.
+ * @returns {Array} The required files.
+ */
+function getRequiredFiles(filePath, variableRequired, _concatenatedFiles = new Set()) {
+  let concatenatedFiles = _concatenatedFiles;
+
+  const [_filePath, fileContent] = findAndReadFile(filePath);
+  const requires = extractRequiredVariables(fileContent);
+
+  let codeContext = [];
+
+  ({ codeContext, concatenatedFiles } = minimizeAndConcatenateFiles(
+    codeContext,
+    _filePath,
+    fileContent,
+    concatenatedFiles
+  ));
+
+  const realRequires = getRealRequires(fileContent, _filePath, requires, variableRequired);
+  console.log('REAL REQUIRES', realRequires);
+
+  Object.entries(realRequires).forEach(([matchingVariable, matchingPath]) => {
+    const requiredPath = path.join(path.dirname(_filePath), matchingPath);
+    if (!concatenatedFiles.has(requiredPath)) {
+      const content = getRequiredFiles(requiredPath, matchingVariable, concatenatedFiles);
+      if (content) {
+        codeContext = [...codeContext, ...content];
+      }
+    }
+  });
+
+  return codeContext;
+}
+
+/**
+ * Creates a code context.
+ * @param {string} filePath - The path of the file.
+ * @param {string} controllerName - The name of the controller.
+ * @returns {string} The code context.
+ */
 function createCodeContext(filePath, controllerName) {
   const controllerRequires = findFunctionInController(filePath, controllerName);
 
-  const concatenatedFiles = new Set();
-  concatenatedFiles.add(filePath);
+  let concatenatedFiles = new Set();
+  let codeContext = [];
+  ({ codeContext, concatenatedFiles } = minimizeAndConcatenateFiles(
+    codeContext,
+    filePath,
+    readFile(filePath),
+    concatenatedFiles
+  ));
 
-  let codeContext = [filePath, readFile(filePath)];
-  concatenatedFiles.add(filePath);
-
-  controllerRequires.forEach((controllerRequire) => {
+  Object.keys(controllerRequires).forEach((variableRequired) => {
+    const requirePath = controllerRequires[variableRequired];
     const requiredFilesContext = getRequiredFiles(
-      path.join(filePath, controllerRequire),
+      path.join(filePath, '..', requirePath),
+      variableRequired,
       concatenatedFiles
     );
-    codeContext = codeContext.concat(requiredFilesContext);
+
+    codeContext = [...codeContext, ...requiredFilesContext];
   });
 
   return codeContext.join('\n');
 }
 
+/**
+ * Calls the OpenAI API.
+ * @param {string} systemMessage - The system message to send.
+ * @param {string} userMessage - The user message to send.
+ * @returns {Promise<string>} The response from the OpenAI API.
+ */
 async function callOpenAI(systemMessage, userMessage) {
   const messages = [
     { role: 'user', content: userMessage },
@@ -201,19 +357,14 @@ async function callOpenAI(systemMessage, userMessage) {
   return response.data.choices[0].message.content.replace('```json', '').replace('```', '');
 }
 
+/**
+ * Creates an OpenAPI document.
+ * @param {string} service - The service to create the document for.
+ * @param {string} controller - The controller to create the document for.
+ * @param {string} controllerFile - The file of the controller.
+ * @returns {Promise<Object>} The created OpenAPI document.
+ */
 async function createOpenapiDoc(service, controller, controllerFile) {
-  // const systemMessage = `Return a valid JSON object with "Summary" and "Description" properties, to be used in an OpenAPI spec, describing what the handler of the "${controller}" property does in file "${path.basename(
-  //   controllerFile
-  // )}", based on the user Javascript code. Only response with the JSON object and only with 'summary' and 'description' properties.`;
-
-  // const userMessage = `Return a valid JSON object with 'summary' and 'description' properties (ALWAYS in downcase), to be used in an OpenAPI spec, describing what the handler  of the "${controller}" property does in file "${path.basename(
-  //   controllerFile
-  // )}", based on the user JavaScript code.
-  // Only respond with the JSON object and only with 'summary' and 'description' properties. The 'description' must be in markdown format and field should contain the following information (each point should be clearly separated into a new paragraph):
-  // * Detailed description of what the controller does (no information about the parameters it accepts and what the response would contain or its status).
-  // * Report whether the endpoint requires user login.
-  // * Report the necessary permissions for the user to use the endpoint.`;
-
   const systemMessage = `Respond as if you were an expert in REST APIs for JavaScript using the Moleculer framework.Return a valid JSON object with only 'summary' and 'description' properties that can be used to document, using OpenAPI specifications, what the handler of the '${controller}' property does in the '${controllerFile}' file, which is an action in the Moleculer JavaScript framework.
 I want 'summary' only have a short resume of what the controller does. Don't start it with "This handler" or "This Endpoint", only the summary.
 I want the description to be in markdown format and contain the following information (each point should be clearly separated into a different paragraph):
