@@ -1,50 +1,28 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { keys, isEmpty } from 'lodash';
-import { Box, IconButton } from '@bubbles-ui/components';
-import {
-  TextEditor,
-  ColorTool,
-  TransformsTool,
-  HeadingsTool,
-  ListIndentTool,
-  TextAlignTool,
-  ScriptsTool,
-  LinkTool,
-  ButtonGroup,
-} from '@bubbles-ui/editors';
+import { Box } from '@bubbles-ui/components';
 import { useTextEditor } from '@common/context';
 import { useEditorLabels } from '@common/hooks/useEditorLabels';
-import { ExpandDiagonalIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
 import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
   CONTENT_EDITOR_INPUT_PROP_TYPES,
 } from './ContentEditorInput.constants';
 import { Schema } from './components/Schema/Schema';
-
-const CONTENT_EDITOR_ACCEPTED_TAGS = [{ type: 'library', updateWithoutContent: true }];
+import { TextEditorContent } from './components/TextEditorContent/TextEditorContent';
+import { useContentEditorStore } from './context/ContentEditorInput.context';
 
 const ContentEditorInput = ({
-  error,
-  required,
-  value,
-  onChange,
-  placeholder,
   toolbars,
   children,
-  toolLabels,
   schemaLabel,
   openSchema,
   useSchema,
   editorStyles,
-  editorClassname,
-  openLibraryModal,
   ...props
 }) => {
   const editorLabels = useEditorLabels();
-  const [schema, setSchema] = useState([]);
-  const [isSchemaOpened, setIsSchemaOpened] = useState(openSchema);
-  const [fullWidth, setFullWidth] = useState(false);
+  const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
 
   const { textEditorTools } = useTextEditor();
 
@@ -64,67 +42,28 @@ const ContentEditorInput = ({
 
   // ··································································
   // STYLES
-  const { classes, cx } = ContentEditorInputStyles(
-    { editorStyles, fullWidth },
-    { name: 'ContentEditorInput' }
-  );
+
+  const { classes } = ContentEditorInputStyles({}, { name: 'ContentEditorInput' });
 
   useEffect(() => {
-    if (openSchema !== isSchemaOpened) setIsSchemaOpened(openSchema);
+    setIsSchemaOpened(openSchema);
   }, [openSchema]);
 
   if (isEmpty(editorLabels)) return null;
 
   return (
     <Box className={classes.root}>
-      {useSchema && (
-        <Schema
-          schema={schema}
-          schemaLabel={schemaLabel}
-          isSchemaOpened={isSchemaOpened}
-          setIsSchemaOpened={setIsSchemaOpened}
-        />
-      )}
+      {useSchema && <Schema schemaLabel={schemaLabel} />}
       <Box className={classes.textEditorContainer}>
-        <Box className={classes.widthButton}>
-          <IconButton onClick={() => setFullWidth((fw) => !fw)}>
-            {fullWidth ? <ShrinkIcon /> : <ExpandDiagonalIcon />}
-          </IconButton>
-        </Box>
-        <TextEditor
+        <TextEditorContent
           {...props}
-          placeholder={placeholder}
-          content={value}
-          onChange={onChange}
-          onSchemaChange={(json) => setSchema(json.content)}
-          editorClassname={cx(classes.editor, editorClassname)}
-          toolbarClassname={classes.toolbarRoot}
-          editorContainerClassname={classes.editorContainer}
-          acceptedTags={CONTENT_EDITOR_ACCEPTED_TAGS}
-          useSchema
-          toolbarPosition={'center'}
+          leemonsTools={leemonsTools}
+          toolbars={toolbars}
+          useSchema={useSchema}
+          editorLabels={editorLabels}
         >
-          {toolbars.heading && <HeadingsTool labels={editorLabels.headingsTool} />}
-          {toolbars.color && <ColorTool label={editorLabels.colorTool} />}
-          {toolbars.style && <TransformsTool labels={editorLabels.transformsTool} />}
-          {toolbars.align && <TextAlignTool labels={editorLabels.textAlignTool} />}
-          {toolbars.list && <ListIndentTool labels={editorLabels.listIndentTool} />}
-          {toolbars.formulation && <ScriptsTool labels={editorLabels.scriptsTool} />}
-
-          <ButtonGroup>
-            {toolbars.link && <LinkTool {...editorLabels.linkTool} />}
-            {leemonsTools.map((item, i) =>
-              React.cloneElement(item.tool, {
-                key: item.tool.id || `t-${i}`,
-                ...editorLabels.libraryTool,
-                alignLabels: editorLabels.textAlignTool,
-                openLibraryModal,
-              })
-            )}
-          </ButtonGroup>
-
           {children}
-        </TextEditor>
+        </TextEditorContent>
       </Box>
     </Box>
   );

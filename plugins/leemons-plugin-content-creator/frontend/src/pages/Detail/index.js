@@ -27,10 +27,11 @@ export default function Index({ isNew, readOnly }) {
   const [staticTitle, setStaticTitle] = useState(false);
   const history = useHistory();
   const params = useParams();
-  const query = !isNew ? useDocument({ id: params.id }) : { data: null, isLoading: false };
+  const query = useDocument({ id: params.id, isNew });
   const form = useForm();
   const mutation = useMutateDocument();
   const formValues = form.watch();
+  const toolbarRef = React.useRef();
 
   useEffect(() => {
     if (isNew) form.reset();
@@ -102,6 +103,8 @@ export default function Index({ isNew, readOnly }) {
             fullWidth
             loding={query?.isLoading}
           />
+
+          <div ref={toolbarRef}></div>
           {!publishing ? (
             <ContentEditorInput
               useSchema
@@ -113,6 +116,7 @@ export default function Index({ isNew, readOnly }) {
               value={formValues.content}
               openLibraryModal={false}
               readOnly={readOnly}
+              toolbarPortal={toolbarRef.current}
             />
           ) : (
             <PageContent title={t('config')}>
@@ -135,6 +139,6 @@ export default function Index({ isNew, readOnly }) {
 }
 
 Index.propTypes = {
-  isNew: PropTypes.bool.isRequired,
-  readOnly: PropTypes.bool.isRequired,
+  isNew: PropTypes.bool,
+  readOnly: PropTypes.bool,
 };
