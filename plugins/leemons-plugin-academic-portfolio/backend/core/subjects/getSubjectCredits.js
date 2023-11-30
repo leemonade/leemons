@@ -9,9 +9,11 @@ async function getSubjectCredits({ subject, program, ctx }) {
 }
 
 async function getSubjectsCredits({ subjects, ctx }) {
+  if (subjects.length === 0) {
+    return [];
+  }
   const query = subjects.map((subject) => _.pick(subject, ['subject', 'program']));
-  const response = await ctx.tx.db.ProgramSubjectsCredits.find({ $or: query }).lean();
-  return response;
+  return ctx.tx.db.ProgramSubjectsCredits.find({ $or: query }).lean();
 }
 
 module.exports = { getSubjectCredits, getSubjectsCredits };
