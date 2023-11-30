@@ -25,7 +25,8 @@ export default function SubjectTabs({ assignation, instance, children, loading, 
       )
       .map((s) => s.id);
   }, [classes, instanceSubjects]);
-  const subjects = useSubjects(subjectsIds);
+
+  const { data: subjects } = useSubjects(subjectsIds);
 
   useEffect(() => {
     if (_.isFunction(onChange)) {
