@@ -28,6 +28,7 @@ async function searchUserAgents({
   user,
   program,
   course,
+  classes,
   ignoreUserIds,
   withProfile,
   withCenter,
@@ -164,6 +165,23 @@ async function searchUserAgents({
     );
 
     userAgents = _.filter(userAgents, (userAgent) => usersAgentIdsInProgram.includes(userAgent.id));
+  }
+
+  const _classes = _.isArray(classes) ? classes : classes ? [classes] : null;
+
+  if (_.isArray(_classes)) {
+    const [students, teachers] = await Promise.all([
+      ctx.tx.call('academic-portfolio.classes.studentGetByClass', {
+        class: _classes,
+        returnIds: true,
+      }),
+      ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {
+        class: _classes,
+        returnIds: true,
+      }),
+    ]);
+    const st = students.concat(teachers);
+    userAgents = _.filter(userAgents, (userAgent) => st.includes(userAgent.id));
   }
 
   return await getUserAgentsInfo({

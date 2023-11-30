@@ -21,16 +21,16 @@ async function createInstanceRoom({
       name: instance.assignable.asset.name,
       subName: classes.length > 1 ? 'multisubjects' : classes[0].subject.name,
       parentRoom: _.map(classes, (nClass) => `academic-portfolio.room.class.group.${nClass.id}`),
-      image: instance.assignable.asset.id,
+      image: instance.assignable.asset.cover ? instance.assignable.asset.id : undefined,
       program: classes[0].program,
-      icon:
-        classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
+      icon: instance.assignable.roleDetails.icon,
       bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       type: ctx.prefixPN('assignation'),
       userAgents,
       adminUserAgents: teachersUserAgents,
       metadata: {
         assignableInstanceId,
+        iconIsUrl: true,
       },
     });
   }

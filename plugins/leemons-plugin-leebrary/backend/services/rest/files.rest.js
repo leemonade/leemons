@@ -162,18 +162,6 @@ module.exports = {
       return readStream;
     },
   },
-  folderRest: {
-    rest: {
-      path: '/:id/(.*)',
-      method: 'GET',
-    },
-    middlewares: [LeemonsMiddlewareAuthenticated()],
-    async handler(ctx) {
-      const payload = { ...ctx.params };
-      payload.forceStream = true;
-      return ctx.tx.call(fileRestService, payload);
-    },
-  },
   publicFileRest: {
     rest: {
       path: '/public/:id',
@@ -267,4 +255,19 @@ module.exports = {
       // ctx.set('Content-Type', 'image/svg+xml');
     },
   },
+  /*
+      folderRest: {
+        rest: {
+          path: '/:id/(.*)',
+          method: 'GET',
+        },
+        middlewares: [LeemonsMiddlewareAuthenticated()],
+        async handler(ctx) {
+          const payload = { ...ctx.params };
+          payload.forceStream = true;
+          return ctx.tx.call(fileRestService, payload);
+        },
+      },
+
+       */
 };

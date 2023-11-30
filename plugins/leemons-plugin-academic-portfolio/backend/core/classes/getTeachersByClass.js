@@ -1,7 +1,8 @@
 const _ = require('lodash');
 
-async function getTeachersByClass({ classe, type, returnIds, ctx }) {
-  const classes = _.isArray(classe) ? classe : [classe];
+async function getTeachersByClass({ class: _class, classe, type, returnIds, ctx }) {
+  const __classes = _class || classe;
+  const classes = _.isArray(__classes) ? __classes : [__classes];
   const query = {
     class: _.map(classes, (c) => (_.isString(c) ? c : c.id)),
   };

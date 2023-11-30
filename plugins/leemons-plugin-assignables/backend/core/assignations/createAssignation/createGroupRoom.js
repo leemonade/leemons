@@ -23,19 +23,17 @@ async function createGroupRoom({
       subName: _.map(classes, 'subject.name').join(','),
       parentRoom: parentKey,
       program: classes[0].program,
-      icon:
-        classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
+      icon: instance.assignable.roleDetails.icon,
       bgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       type: ctx.prefixPN('assignation.group'),
       metadata: {
         assignableInstanceId,
-        iconIsUrl: classes.length > 1,
+        iconIsUrl: true,
         headerIconIsUrl: classes.length > 1,
         headerName: instance.assignable.asset.name,
         headerSubName: classes.length > 1 ? 'multisubjects' : classes[0].subject.name,
-        headerImage: instance.assignable.asset.id,
-        headerIcon:
-          classes.length > 1 ? '/public/assets/svgs/module-three.svg' : classes[0].subject.icon?.id,
+        headerImage: instance.assignable.asset.cover ? instance.assignable.asset.id : undefined,
+        headerIcon: instance.assignable.roleDetails.icon,
         headerBgColor: classes.length > 1 ? '#67728E' : classes[0].color,
       },
       userAgents,
