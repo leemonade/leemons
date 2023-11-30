@@ -277,7 +277,6 @@ function getRequiredFiles(filePath, variableRequired, _concatenatedFiles = new S
   ));
 
   const realRequires = getRealRequires(fileContent, _filePath, requires, variableRequired);
-  console.log('REAL REQUIRES', realRequires);
 
   Object.entries(realRequires).forEach(([matchingVariable, matchingPath]) => {
     const requiredPath = path.join(path.dirname(_filePath), matchingPath);
@@ -389,7 +388,7 @@ I want the description to be in markdown format and contain the following inform
     console.info('OpenAI Response', AIResponse);
 
     try {
-      const response = JSON.parse(AIResponse.replace(/`/g, '\\`'));
+      const response = JSON.parse(AIResponse);
       responseObj = {
         summary: response.summary,
         description: response.description,
