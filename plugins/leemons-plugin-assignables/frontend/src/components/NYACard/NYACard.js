@@ -1,6 +1,7 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 import React, { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { Box, ImageLoader, Loader } from '@bubbles-ui/components';
+import { Box, ImageLoader } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _, { get } from 'lodash';
@@ -15,6 +16,7 @@ import { NYACardStyles } from './NYACard.styles';
 import { NYACardBody } from './NYCardBody';
 import { NYACardFooter } from './NYACardFooter';
 import { NYACardSkeleton } from './NYACardSkeleton';
+import { NYACARD_PROP_TYPES } from './NYACard.constants';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -378,8 +380,8 @@ function useNYACardLocalizations(labels) {
   }, [translations]);
 }
 
-export default function NYACard({ instance, showSubject, labels, classData }) {
-  const isTeacher = useIsTeacher();
+const NYACard = ({ instance, showSubject, labels, classData }) => {
+  // const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
   const [isHovered, setIsHovered] = useState(false);
@@ -457,45 +459,12 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
             locale={locale}
           />
         </Box>
-        {/* <LibraryCard
-          fullHeight
-          asset={{
-            ...preparedInstance?.asset,
-            hideDashboardIcons: true,
-          }}
-          variant="assigment"
-          role={isTeacher ? 'teacher' : 'student'}
-          dashboard
-          shadow
-          locale={locale}
-          assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
-          deadlineProps={preparedInstance?.deadlineProps}
-          subject={preparedInstance?.subject}
-          badge={preparedInstance?.isNew ? localizations?.new?.toUpperCase() : ''}
-          variantTitle={
-            get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
-            preparedInstance?.assignable?.role
-          }
-          variantIcon={
-            <Box
-              style={{
-                position: 'relative',
-              }}
-            >
-              <ImageLoader
-                style={{
-                  width: 12,
-                  height: 12,
-                  position: 'relative',
-                }}
-                width={12}
-                height={12}
-                src={preparedInstance?.assignable?.roleDetails?.icon}
-              />
-            </Box>
-          }
-        /> */}
       </Box>
     </Link>
   );
-}
+};
+
+NYACard.propTypes = NYACARD_PROP_TYPES;
+
+export { NYACard };
+export default NYACard;

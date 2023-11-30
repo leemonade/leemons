@@ -25,6 +25,7 @@ export const SubjectItemDisplayStyles = createStyles((theme) => {
     },
     textWrapper: {
       position: 'relative',
+      width: '100%',
     },
 
     programName: {

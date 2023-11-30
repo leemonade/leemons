@@ -56,18 +56,6 @@ export const LibraryCardCoverStyles = createStyles(
         right: 4,
         height: 17,
       },
-
-      favActive: {
-        position: 'absolute',
-        right: 0,
-      },
-      deadline: {
-        position: 'absolute',
-        bottom: 0,
-        left: '50%',
-        right: 0,
-        zIndex: 2,
-      },
       color: {
         width: '100%',
         height: pxToRem(4),

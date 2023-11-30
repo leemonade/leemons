@@ -46,6 +46,8 @@ const LibraryCardCover = ({
     e.stopPropagation();
   };
 
+  const heightAndSubjectColor = color ? height : height + 6;
+
   const iconRow = (
     <Box>
       <Box className={classes.iconRow}>
@@ -101,7 +103,7 @@ const LibraryCardCover = ({
         <Box>{iconRow}</Box>
       </Box>
       {cover ? (
-        <ImageLoader src={cover} height={height} width={'100%'} forceImage />
+        <ImageLoader src={cover} height={heightAndSubjectColor} width={'100%'} forceImage />
       ) : (
         MemoizedEmptyCover
       )}
