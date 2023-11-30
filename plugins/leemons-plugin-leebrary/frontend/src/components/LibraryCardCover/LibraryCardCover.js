@@ -1,15 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
-import { Box, Button, COLORS, IconButton, ImageLoader, Menu } from '@bubbles-ui/components';
+import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
-import { motion, AnimatePresence } from 'framer-motion';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
 import {
   LIBRARY_CARD_COVER_DEFAULT_PROPS,
   LIBRARY_CARD_COVER_PROP_TYPES,
-  overlayVariants,
 } from './LibraryCardCover.constants';
-import { LibraryCardEmptyCover } from '../LibraryCardEmptyCover';
 
 const LibraryCardCover = ({
   height,
@@ -48,6 +45,8 @@ const LibraryCardCover = ({
     e.preventDefault();
     e.stopPropagation();
   };
+
+  const heightAndSubjectColor = color ? height : height + 6;
 
   const iconRow = (
     <Box>
@@ -93,25 +92,18 @@ const LibraryCardCover = ({
   );
 
   const MemoizedEmptyCover = useMemo(
-    () => <LibraryCardEmptyCover icon={icon || variantIcon} fileType={fileType} />,
+    () => <CardEmptyCover icon={icon || variantIcon} fileType={fileType} />,
     [icon, variantIcon, fileType]
   );
 
   return (
-    // <AnimatePresence>
     <Box className={classes.root}>
-      <Box className={classes.color} />
+      {color && <Box className={classes.color} />}
       <Box className={classes.overlayTransparent}>
-        {/* <motion.div
-            key="overlay"
-            variants={overlayVariants}
-            animate={parentHovered ? 'visible' : 'hidden'}
-          > */}
         <Box>{iconRow}</Box>
-        {/* </motion.div> */}
       </Box>
       {cover ? (
-        <ImageLoader src={cover} height={height} width={'100%'} forceImage />
+        <ImageLoader src={cover} height={heightAndSubjectColor} width={'100%'} forceImage />
       ) : (
         MemoizedEmptyCover
       )}

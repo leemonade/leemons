@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+/* eslint-disable sonarjs/cognitive-complexity */
+import React, { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
-import { LibraryCard } from '@leebrary/components/LibraryCard';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import _, { get } from 'lodash';
@@ -11,6 +11,12 @@ import { useIsTeacher } from '@academic-portfolio/hooks';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
+import { NYACardCover } from './NYACardCover';
+import { NYACardStyles } from './NYACard.styles';
+import { NYACardBody } from './NYCardBody';
+import { NYACardFooter } from './NYACardFooter';
+import { NYACardSkeleton } from './NYACardSkeleton';
+import { NYACARD_PROP_TYPES } from './NYACard.constants';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -314,7 +320,8 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
     ...instance,
     assignment,
     deadlineProps,
-    subject: showSubject ? subject : null,
+    subject,
+    showSubject,
     isNew: object?.timestamps?.open === undefined && !isTeacher,
     asset: prepareAsset(instance.assignable.asset),
     url,
@@ -335,12 +342,11 @@ export function usePreparedInstance(instance, query, labels) {
   );
 
   const [results] = useApi(prepareInstance, options);
-
   if (!results) {
     return null;
   }
 
-  return results;
+  return { ...results, chatKeys: instance.chatKeys };
 }
 
 function useNYACardLocalizations(labels) {
@@ -354,6 +360,8 @@ function useNYACardLocalizations(labels) {
     prefixPN('roles'),
     prefixPN('need_your_attention'),
     prefixPN('multiSubject'),
+    prefixPN('assignmentForm'),
+    prefixPN('ongoing'),
   ]);
 
   return useMemo(() => {
@@ -363,6 +371,8 @@ function useNYACardLocalizations(labels) {
         ..._.get(res, prefixPN('need_your_attention')),
         roles: _.get(res, prefixPN('roles')),
         multiSubject: _.get(res, prefixPN('multiSubject')),
+        assignmentForm: _.get(res, prefixPN('assignmentForm')),
+        ongoing: _.get(res, prefixPN('ongoing')),
       };
     }
 
@@ -370,11 +380,12 @@ function useNYACardLocalizations(labels) {
   }, [translations]);
 }
 
-export default function NYACard({ instance, showSubject, labels, classData }) {
-  const isTeacher = useIsTeacher();
+const NYACard = ({ instance, showSubject, labels, classData }) => {
+  // const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
-
+  const [isHovered, setIsHovered] = useState(false);
+  const { classes } = NYACardStyles({ isHovered }, { name: 'NYACard' });
   const query = useMemo(
     () => ({
       classData,
@@ -382,11 +393,13 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
     }),
     [showSubject]
   );
-
   const preparedInstance = usePreparedInstance(instance, query, localizations);
-
   if (!preparedInstance) {
-    return null;
+    return (
+      <Box className={classes.root}>
+        <NYACardSkeleton />
+      </Box>
+    );
   }
 
   return (
@@ -397,45 +410,61 @@ export default function NYACard({ instance, showSubject, labels, classData }) {
           height: '100%',
         }}
       >
-        <LibraryCard
-          fullHeight
-          asset={{
-            ...preparedInstance?.asset,
-            hideDashboardIcons: true,
-          }}
-          variant="assigment"
-          role={isTeacher ? 'teacher' : 'student'}
-          dashboard
-          shadow
-          locale={locale}
-          assigment={!isTeacher && instance?.finished ? preparedInstance?.assignment : null}
-          deadlineProps={preparedInstance?.deadlineProps}
-          subject={preparedInstance?.subject}
-          badge={preparedInstance?.isNew ? localizations?.new?.toUpperCase() : ''}
-          variantTitle={
-            get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
-            preparedInstance?.assignable?.role
-          }
-          variantIcon={
-            <Box
-              style={{
-                position: 'relative',
-              }}
-            >
-              <ImageLoader
+        <Box
+          className={classes.root}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <NYACardCover
+            {...preparedInstance?.asset}
+            variantTitle={preparedInstance?.assignable?.role}
+            topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
+          />
+          <NYACardBody
+            {...preparedInstance?.asset}
+            isNew={preparedInstance?.isNew}
+            localizations={localizations}
+            instance={preparedInstance}
+            classroom={preparedInstance?.classes}
+            locale={locale}
+            totalActivities={10}
+            submitedActivities={5}
+            showSubject={showSubject}
+          />
+          <NYACardFooter
+            {...preparedInstance?.asset}
+            chatKeys={preparedInstance?.chatKeys}
+            variantTitle={
+              get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
+              preparedInstance?.assignable?.role
+            }
+            variantIcon={
+              <Box
                 style={{
-                  width: 12,
-                  height: 12,
                   position: 'relative',
                 }}
-                width={12}
-                height={12}
-                src={preparedInstance?.assignable?.roleDetails?.icon}
-              />
-            </Box>
-          }
-        />
+              >
+                <ImageLoader
+                  style={{
+                    width: 24,
+                    height: 24,
+                    position: 'relative',
+                  }}
+                  width={24}
+                  height={24}
+                  src={preparedInstance?.assignable?.roleDetails?.icon}
+                />
+              </Box>
+            }
+            locale={locale}
+          />
+        </Box>
       </Box>
     </Link>
   );
-}
+};
+
+NYACard.propTypes = NYACARD_PROP_TYPES;
+
+export { NYACard };
+export default NYACard;

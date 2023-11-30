@@ -16,6 +16,7 @@ import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
+import { ContentCreatorCardIcon } from '@content-creator/components/icons/ContentCreatorCardIcon';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -139,7 +140,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="document"
       variantTitle={t('document')}
-      variantIcon={<PluginContentCreatorIcon color={'#878D96'} />}
+      variantIcon={<ContentCreatorCardIcon />}
       className={classes.root}
     />
   );

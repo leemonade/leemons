@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
-// TODO: import from @library plugin maybe?
 import { LibraryCard } from '@leebrary/components/LibraryCard';
 import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
@@ -12,7 +11,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { prefixPN } from '@scorm/helpers';
 import { deletePackageRequest, duplicatePackageRequest } from '@scorm/request';
-import { CardVariantIcon } from '@scorm/components/icons';
+import { CardVariantIcon, ScormCardIcon } from '@scorm/components/icons';
 
 const ScormCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -137,7 +136,7 @@ const ScormListCard = ({ asset, selected, onRefresh, ...props }) => {
       variant="document"
       variantTitle={t('document')}
       className={classes.root}
-      variantIcon={CardVariantIcon}
+      variantIcon={<ScormCardIcon />}
     />
   );
 };

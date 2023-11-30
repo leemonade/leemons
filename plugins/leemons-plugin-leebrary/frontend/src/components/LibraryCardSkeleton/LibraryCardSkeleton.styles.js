@@ -5,7 +5,7 @@ export const LibraryCardSkeletonStyles = createStyles((theme) => ({
   root: {
     minWidth: 264,
     maxWidth: 320,
-    width: 'auto',
+    width: '100%',
     height: 399,
     borderRadius: '2px',
     backgroundColor: theme.colors.mainWhite,

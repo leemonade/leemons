@@ -105,7 +105,7 @@ export function useSelectedCurriculumProperties({
       flattenSelectedValues.map((selectedValue) => {
         const nodeLevelProperty =
           curriculumNodes[selectedValue.node]?.nodeLevelPropertyByPropertyId?.[
-            selectedValue.property
+          selectedValue.property
           ];
 
         const nodeLevel = nodeLevels.find(
@@ -152,7 +152,6 @@ export function useInstanceCurriculum({ instance }) {
 }
 
 export function useCurriculumVisibleValues({ assignation }) {
-  console.log('assignation', assignation);
   const { instance } = assignation;
   const { assignable, curriculum: visibleCategories = {} } = instance;
 

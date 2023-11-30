@@ -61,6 +61,7 @@ export function useModuleDataForPreview(id) {
 
   return {
     module: { assignable: module },
+    moduleAssignation: null,
     activitiesById,
     activities:
       module?.submission?.activities?.map((activity) => ({ id: activity.activity })) ?? [],

@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
-// TODO: import from @library
-import { LibraryCard } from '@bubbles-ui/leemons';
+import { LibraryCard } from '@leebrary/components/LibraryCard';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
@@ -12,6 +11,7 @@ import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
+import { FeedbackCardIcon } from '../../components/FeedbackCardIcon';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -128,6 +128,7 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="feedback"
       variantTitle={t('feedback')}
+      variantIcon={<FeedbackCardIcon />}
       className={classes.root}
     />
   );

@@ -5,15 +5,15 @@
   "license": "MIT",
   "dependencies": {
     "@bubbles-ui/components": "dev",
-    "@bubbles-ui/leemons": "dev",
     "@bubbles-ui/editors": "dev",
     "@bubbles-ui/icons": "dev",
+    "@bubbles-ui/leemons": "dev",
     "@loadable/component": "^5.15.2",
     "@tanstack/react-query": "^4.16.1",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21",
-    "prop-types": "^15.8.1",
     "p-min-delay": "^4.0.2",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
@@ -30,7 +30,8 @@
     "@storybook/react": "^7.3.2",
     "@storybook/react-webpack5": "^7.3.2",
     "@storybook/testing-library": "^0.2.0",
-    "storybook": "^7.3.2"
+    "storybook": "^7.3.2",
+    "storybook-addon-designs": "^6.3.1"
   },
   "scripts": {
     "storybook": "storybook dev -p 6006",
