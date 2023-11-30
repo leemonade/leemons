@@ -174,7 +174,7 @@ function prepareControllerFile({ controllerFilePath, service, controller, ctx })
     if (ctx) {
       ctx.logger.warn(message);
     } else {
-      console.warn(message);
+      console.warn('\x1b[31m', message);
     }
   }
 }

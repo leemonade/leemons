@@ -23,11 +23,13 @@ async function createOpenapiFiles(startPath) {
           const { service, controllerFile } = parseServiceFile(file);
 
           const controllers = findControllers(controllerFile);
+          let counter = 1;
           for (const controller of controllers) {
             console.log(
               'Creating openapi:',
               `(${plugin}-${service}-${controller})`,
-              controllerFile
+              controllerFile,
+              `(${counter}/${controllers.length})`
             );
             try {
               prepareControllerFile({
@@ -43,17 +45,19 @@ async function createOpenapiFiles(startPath) {
                 controller,
                 useAItoCreateOpenapiDoc: true,
               });
+
+              counter++;
             } catch (error) {
-              console.warn(error.message);
+              console.warn('\x1b[31m', error.message);
             }
           }
         } catch (error) {
-          console.warn(error.message);
+          console.warn('\x1b[31m', error.message);
         }
       }
     }
   } catch (error) {
-    console.error('ERROR:', error);
+    console.error('\x1b[31m', 'ERROR:', error);
   }
 }
 

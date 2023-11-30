@@ -125,7 +125,7 @@ function findFunctionInController(filePath, controllerName) {
   const controllerNode = findControllerNode(ast, controllerName);
 
   if (!controllerNode) {
-    console.warn(`Openapi: Controller "${controllerName}" not found in "${filePath}"`);
+    console.warn('\x1b[31m', `Openapi: Controller "${controllerName}" not found in "${filePath}"`);
     return [];
   }
 
@@ -163,7 +163,7 @@ function findAndReadFile(filePath) {
     }
     return [filePath, readFile(filePath)];
   } catch (error) {
-    console.error('Openapi: findAndReadFile Error:', error);
+    console.error('\x1b[31m', 'Openapi: findAndReadFile Error:', error);
     return [filePath, ''];
   }
 }
@@ -223,22 +223,12 @@ function getRealRequires(fileContent, filePath, requires, variableRequired) {
         });
       } else {
         // no hay ninguna variable que coincida... me traigo todas...
-        console.log(
-          'EN EL INDEX NO ENCUENTRO LA VARIABLE QUE QUIERO... ME TRAIGO TODO',
-          666666,
-          variableRequired,
-          filePath
-        );
+
         realRequires = requires;
       }
     } else {
       // no hay ninguna variable que coincida... me traigo todas...
-      console.log(
-        'EN EL ARCHIVO NO ENCUENTRO LA DECLARACIÓN DE FUNCIÓN QUE QUIERO... ME TRAIGO TODO',
-        666666,
-        variableRequired,
-        filePath
-      );
+
       realRequires = requires;
     }
   } else {
@@ -338,10 +328,11 @@ async function callOpenAI(systemMessage, userMessage) {
   const response = await axios.post(
     process.env.APIURL_OPENAI,
     {
-      model: 'gpt-3.5-turbo-16k',
+      // model: 'gpt-3.5-turbo-16k',
+      model: 'gpt-4-1106-preview',
       messages,
       temperature: 1,
-      max_tokens: 256,
+      max_tokens: 500,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
@@ -370,7 +361,8 @@ I want the description to be in markdown format and contain the following inform
 * Short detailed description of what the handler does. It should always start with "This endpoint" and should not contain information about the parameters it receives and the response it returns, only what is expected to be done.
 * Authentication: Information about whether the user needs to be logged in to use the endpoint. It should start with '**Authentication:**"
 * Permissions: Information about the permissions required for the user to use the endpoint. It should start with "**Permissions:**"
-* Fully detailed description of what the controller handler, and the methods it calls, does.
+* Fully detailed description of what the controller handler, and the methods the controller flow from request to response, does.
+You can use this response as example: '{"summary":"Retrieve assets owned by the current user","description":"This endpoint retrieves all digital assets that are owned by the currently authenticated user. The collection of assets returned includes those that the user has created or have been shared with them within the platform.\\n\\n**Authentication:** The users must be authenticated to access their digital assets. An invalid or missing authentication token will result in endpoint access denial.\\n\\n**Permissions:** No specific permissions are called out for this endpoint; however, it\'s implied that users can only access assets that they have rights to view based on the asset\'s ownership and sharing properties.\\n\\nThe endpoint starts by invoking the \`getByUser\` method from the \`Pins\` core, passing in the \`ctx\` (context) parameter which includes user authentication information. This method leverages a database call to find all pins associated with the user\'s agent ID. These pins represent the user\'s digital assets within the platform. The result is a promise that, when resolved, returns the list of assets that the authenticated user owns or has access to. The HTTP response contains these assets in a JSON array format."}'
 `;
 
   const userMessage = createCodeContext(controllerFile, controller);
@@ -398,7 +390,7 @@ I want the description to be in markdown format and contain the following inform
       responseObj = { description: AIResponse, AIGenerated: true };
     }
   } catch (error) {
-    console.warn('Openapi: OpenAI Error', error);
+    console.warn('\x1b[31m', 'Openapi: OpenAI Error', error);
   }
   const requestFolder = path.resolve(__dirname, 'requests');
 
