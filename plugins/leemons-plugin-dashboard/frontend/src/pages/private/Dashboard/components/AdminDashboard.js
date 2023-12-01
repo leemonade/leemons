@@ -10,11 +10,11 @@ import {
   PageContainer,
   Paper,
   Stack,
-  Swiper,
   Text,
   Title,
   createStyles,
 } from '@bubbles-ui/components';
+import { Swiper } from '@bubbles-ui/extras';
 import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
 import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
 import { LibraryCardBasic } from '@bubbles-ui/leemons';
@@ -34,7 +34,7 @@ function bytesToSize(bytes) {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   if (bytes == 0) return '0 Byte';
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-  return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
+  return `${Math.round(bytes / 1024 ** i, 2)} ${sizes[i]}`;
 }
 
 const rightZoneWidth = '320px';
@@ -528,30 +528,30 @@ export default function AdminDashboard({ session }) {
             {/* --- DISCO --- */}
             {store.pc?.diskLayout
               ? store.pc.diskLayout.map((disk, i) => (
-                  <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
-                    <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                      <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
+                <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+                  <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                    <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
+                  </Box>
+                  <Box sx={() => ({ width: '100%' })}>
+                    <Box>
+                      <Text color="primary" strong>
+                        {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
+                      </Text>
                     </Box>
-                    <Box sx={() => ({ width: '100%' })}>
-                      <Box>
-                        <Text color="primary" strong>
-                          {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
-                        </Text>
-                      </Box>
-                      {disk.name ? <PCValue text={t('name')} value={disk.name} /> : null}
-                      {disk.type ? <PCValue text={t('type')} value={disk.type} /> : null}
-                      {disk.size ? (
-                        <PCValue text={t('space')} value={bytesToSize(disk.size)} />
-                      ) : null}
-                      {store.pc.fsSize ? (
-                        <PCValue
-                          text={t('used')}
-                          value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
-                        />
-                      ) : null}
-                    </Box>
-                  </Stack>
-                ))
+                    {disk.name ? <PCValue text={t('name')} value={disk.name} /> : null}
+                    {disk.type ? <PCValue text={t('type')} value={disk.type} /> : null}
+                    {disk.size ? (
+                      <PCValue text={t('space')} value={bytesToSize(disk.size)} />
+                    ) : null}
+                    {store.pc.fsSize ? (
+                      <PCValue
+                        text={t('used')}
+                        value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
+                      />
+                    ) : null}
+                  </Box>
+                </Stack>
+              ))
               : null}
 
             {/* --- INTERNET --- */}

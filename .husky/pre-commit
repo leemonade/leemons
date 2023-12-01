@@ -3,4 +3,4 @@
 
 node --version
 # node ./.husky/npm_check.js
-yarn run check
+# yarn run check

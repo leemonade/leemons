@@ -6,6 +6,7 @@
   "dependencies": {
     "@bubbles-ui/leemons": "dev",
     "@bubbles-ui/components": "dev",
+    "@bubbles-ui/extras": "dev",
     "@bubbles-ui/icons": "dev",
     "react-content-loader": "^6.2.0",
     "@loadable/component": "^5.15.2",

@@ -13,11 +13,11 @@ import {
   Stack,
   TableInput,
   TAGIFY_TAG_REGEX,
-  TagifyInput,
   Text,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { TagifyInput } from '@bubbles-ui/extras';
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
 
@@ -388,8 +388,8 @@ function BranchBlockGroup2({ ...props }) {
             {groupTypeOfContents === 'list'
               ? listTypeController
               : groupTypeOfContents
-              ? maxController
-              : null}
+                ? maxController
+                : null}
           </Box>
           <Box>{groupTypeOfContents === 'list' ? maxController : null}</Box>
           <Box>{groupTypeOfContents === 'list' ? listOrderedController : null}</Box>

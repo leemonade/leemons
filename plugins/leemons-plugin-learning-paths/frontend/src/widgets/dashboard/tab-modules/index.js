@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, Swiper, createStyles, useTheme } from '@bubbles-ui/components';
-import { Link } from 'react-router-dom';
+import { Box, createStyles, useTheme } from '@bubbles-ui/components';
+import { Swiper } from '@bubbles-ui/extras';
 // TODO: import from @library plugin
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import NYACard from '@assignables/components/NYACard';

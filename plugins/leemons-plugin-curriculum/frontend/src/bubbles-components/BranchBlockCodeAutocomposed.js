@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import { forEach } from 'lodash';
-import { Box, TagifyInput } from '@bubbles-ui/components';
+import { Box } from '@bubbles-ui/components';
+import { TagifyInput } from '@bubbles-ui/extras';
 
 function BranchBlockCodeAutocomposed({ ...props }) {
   const {

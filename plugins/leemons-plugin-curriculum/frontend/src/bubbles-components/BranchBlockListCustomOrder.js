@@ -1,11 +1,5 @@
-import {
-  Box,
-  Button,
-  createStyles,
-  Stack,
-  TagifyInput,
-  TAGIFY_TAG_REGEX,
-} from '@bubbles-ui/components';
+import { Box, Button, createStyles, Stack, TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
+import { TagifyInput } from '@bubbles-ui/extras';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { forEach } from 'lodash';
 import PropTypes from 'prop-types';
