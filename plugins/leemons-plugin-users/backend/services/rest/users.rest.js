@@ -11,7 +11,9 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 const usersService = require('../../core/users');
-const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
+const {
+  userAgentsAreContacts,
+} = require('../../core/user-agents/contacts/userAgentsAreContacts');
 const {
   agentDetailForPage,
   deleteById,
@@ -23,7 +25,9 @@ const {
   active,
   saveDataForUserAgentDatasets,
 } = require('../../core/user-agents');
-const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
+const {
+  getUserAgentContacts,
+} = require('../../core/user-agents/contacts/getUserAgentContacts');
 
 const canResetRest = require('./openapi/users/canResetRest');
 const canRegisterPasswordRest = require('./openapi/users/canRegisterPasswordRest');
@@ -57,6 +61,8 @@ const activateUserRest = require('./openapi/users/activateUserRest');
 const sendWelcomeEmailToUserRest = require('./openapi/users/sendWelcomeEmailToUserRest');
 const disableUserAgentRest = require('./openapi/users/disableUserAgentRest');
 const activeUserAgentRest = require('./openapi/users/activeUserAgentRest');
+const searchUserAgentsRest = require('./openapi/users/searchUserAgentsRest');
+const contactsRest = require('./openapi/users/contactsRest');
 /** @type {ServiceSchema} */
 module.exports = {
   canResetRest: {
@@ -586,6 +592,7 @@ module.exports = {
     },
   },
   searchUserAgentsRest: {
+    openapi: searchUserAgentsRest.openapi,
     rest: {
       path: '/user-agents/search',
       method: 'POST',
@@ -610,6 +617,7 @@ module.exports = {
     },
   },
   contactsRest: {
+    openapi: contactsRest.openapi,
     rest: {
       path: '/contacts',
       method: 'POST',

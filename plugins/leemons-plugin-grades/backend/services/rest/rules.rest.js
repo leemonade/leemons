@@ -23,6 +23,8 @@ const listRulesRest = require('./openapi/rules/listRulesRest');
 const haveRulesRest = require('./openapi/rules/haveRulesRest');
 const deleteRuleRest = require('./openapi/rules/deleteRuleRest');
 const postRuleProcessRest = require('./openapi/rules/postRuleProcessRest');
+const postRuleRest = require('./openapi/rules/postRuleRest');
+const putRuleRest = require('./openapi/rules/putRuleRest');
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
@@ -69,6 +71,7 @@ module.exports = {
     },
   },
   postRuleRest: {
+    openapi: postRuleRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -80,6 +83,7 @@ module.exports = {
     },
   },
   putRuleRest: {
+    openapi: putRuleRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',

@@ -46,6 +46,8 @@ async function get(ctx) {
 const searchRest = require('./openapi/assignableInstances/searchRest');
 const getRest = require('./openapi/assignableInstances/getRest');
 
+const updateRest = require('./openapi/assignableInstances/updateRest');
+const sendReminderRest = require('./openapi/assignableInstances/sendReminderRest');
 /** @type {ServiceSchema} */
 module.exports = {
   searchRest: {
@@ -104,6 +106,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'PUT',
       path: '/:id',
@@ -127,6 +130,7 @@ module.exports = {
     },
   },
   sendReminderRest: {
+    openapi: sendReminderRest.openapi,
     rest: {
       method: 'POST',
       path: '/reminder',
