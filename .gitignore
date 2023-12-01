@@ -6,6 +6,7 @@ npm-debug.log_
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log\*
+error.log
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 
@@ -157,3 +158,4 @@ docs-build
 package-lock.json
 
 .scannerwork
+
