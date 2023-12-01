@@ -1,4 +1,19 @@
-// automatic hash: 49d228cbffb071ef63b85fc4064de9980d08d5449130cdbc3f3dc621522e2ff6
-const schema = {};
+// automatic hash: 23bccef8172cc202f28e3e2bc8f69986668007edeefa56fd00cb3cd5a58c2317
+const schema = {
+  $schema: 'http://json-schema.org/draft-04/schema#',
+  description: '',
+  type: 'object',
+  properties: {
+    authorization: {
+      type: 'string',
+      minLength: 1,
+    },
+    id: {
+      type: 'string',
+      minLength: 1,
+    },
+  },
+  required: ['authorization', 'id'],
+};
 
 module.exports = { schema };
