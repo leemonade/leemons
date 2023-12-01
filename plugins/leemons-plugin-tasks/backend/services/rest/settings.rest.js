@@ -20,7 +20,9 @@ const getPermissions = (permissionsArr, actions = null) => {
       (obj, [permission, _actions]) => ({
         ...obj,
         [permission]: {
-          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+          actions: _actions.includes('admin')
+            ? _actions
+            : ['admin', ..._actions],
         },
       }),
       {}
@@ -33,9 +35,13 @@ const getPermissions = (permissionsArr, actions = null) => {
   };
 };
 
+const findOneRest = require('./openapi/settings/findOneRest');
+const updateRest = require('./openapi/settings/updateRest');
+const enableMenuItemRest = require('./openapi/settings/enableMenuItemRest');
 /** @type {ServiceSchema} */
 module.exports = {
   findOneRest: {
+    openapi: findOneRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -52,6 +58,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -81,6 +88,7 @@ module.exports = {
     },
   },
   enableMenuItemRest: {
+    openapi: enableMenuItemRest.openapi,
     rest: {
       path: '/enable-menu-item',
       method: 'POST',

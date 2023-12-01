@@ -10,9 +10,12 @@ const {
 } = require('@leemons/middlewares');
 const { getConfig, saveConfig } = require('../../core/config');
 
+const getRest = require('./openapi/config/getRest');
+const saveRest = require('./openapi/config/saveRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/:programId',
@@ -39,6 +42,7 @@ module.exports = {
     },
   },
   saveRest: {
+    openapi: saveRest.openapi,
     rest: {
       method: 'POST',
       path: '/',

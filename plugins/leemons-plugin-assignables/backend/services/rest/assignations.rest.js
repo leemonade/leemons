@@ -6,9 +6,12 @@
 
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
+const getRest = require('./openapi/assignations/getRest');
+const getManyRest = require('./openapi/assignations/getManyRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/instance/:instance/user/:user',
@@ -25,6 +28,7 @@ module.exports = {
     },
   },
   getManyRest: {
+    openapi: getManyRest.openapi,
     rest: {
       method: 'GET',
       path: '/find',

@@ -9,11 +9,19 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { addKnowledge, updateKnowledge, listKnowledges } = require('../../core/knowledges');
+const {
+  addKnowledge,
+  updateKnowledge,
+  listKnowledges,
+} = require('../../core/knowledges');
 
+const postKnowledgeRest = require('./openapi/knowledges/postKnowledgeRest');
+const putKnowledgeRest = require('./openapi/knowledges/putKnowledgeRest');
+const listKnowledgeRest = require('./openapi/knowledges/listKnowledgeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postKnowledgeRest: {
+    openapi: postKnowledgeRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -34,6 +42,7 @@ module.exports = {
     },
   },
   putKnowledgeRest: {
+    openapi: putKnowledgeRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -54,6 +63,7 @@ module.exports = {
     },
   },
   listKnowledgeRest: {
+    openapi: listKnowledgeRest.openapi,
     rest: {
       path: '/',
       method: 'GET',

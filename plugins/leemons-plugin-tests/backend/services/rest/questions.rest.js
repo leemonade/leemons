@@ -10,9 +10,11 @@ const {
 } = require('@leemons/middlewares');
 const { getByIds } = require('../../core/questions');
 
+const getDetailsRest = require('./openapi/questions/getDetailsRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getDetailsRest: {
+    openapi: getDetailsRest.openapi,
     rest: {
       method: 'POST',
       path: '/details',

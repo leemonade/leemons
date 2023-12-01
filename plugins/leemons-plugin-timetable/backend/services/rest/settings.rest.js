@@ -11,9 +11,13 @@ const {
 
 const { findOne, update } = require('../../core/settings');
 
+const findOneRest = require('./openapi/settings/findOneRest');
+const updateRest = require('./openapi/settings/updateRest');
+const enableMenuItemRest = require('./openapi/settings/enableMenuItemRest');
 /** @type {ServiceSchema} */
 module.exports = {
   findOneRest: {
+    openapi: findOneRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -37,6 +41,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -73,6 +78,7 @@ module.exports = {
     },
   },
   enableMenuItemRest: {
+    openapi: enableMenuItemRest.openapi,
     rest: {
       method: 'POST',
       path: '/enable-menu-item',

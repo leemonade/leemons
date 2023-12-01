@@ -18,9 +18,16 @@ const {
   duplicateGroup,
 } = require('../../core/groups');
 
+const postGroupRest = require('./openapi/groups/postGroupRest');
+const deleteGroupFromClassesUnderNodeTreeRest = require('./openapi/groups/deleteGroupFromClassesUnderNodeTreeRest');
+const putGroupRest = require('./openapi/groups/putGroupRest');
+const listGroupRest = require('./openapi/groups/listGroupRest');
+const duplicateGroupWithClassesUnderNodeTreeRest = require('./openapi/groups/duplicateGroupWithClassesUnderNodeTreeRest');
+const duplicateGroupRest = require('./openapi/groups/duplicateGroupRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postGroupRest: {
+    openapi: postGroupRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -41,6 +48,7 @@ module.exports = {
     },
   },
   deleteGroupFromClassesUnderNodeTreeRest: {
+    openapi: deleteGroupFromClassesUnderNodeTreeRest.openapi,
     rest: {
       path: '/group-from-classes-under-node-tree',
       method: 'DELETE',
@@ -61,6 +69,7 @@ module.exports = {
     },
   },
   putGroupRest: {
+    openapi: putGroupRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -81,6 +90,7 @@ module.exports = {
     },
   },
   listGroupRest: {
+    openapi: listGroupRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -118,6 +128,7 @@ module.exports = {
     },
   },
   duplicateGroupWithClassesUnderNodeTreeRest: {
+    openapi: duplicateGroupWithClassesUnderNodeTreeRest.openapi,
     rest: {
       path: '/:id/duplicate-with-classes-under-node-tree',
       method: 'POST',
@@ -141,6 +152,7 @@ module.exports = {
     },
   },
   duplicateGroupRest: {
+    openapi: duplicateGroupRest.openapi,
     rest: {
       path: '/duplicate',
       method: 'POST',

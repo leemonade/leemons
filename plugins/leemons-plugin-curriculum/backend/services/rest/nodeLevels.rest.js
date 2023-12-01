@@ -13,9 +13,12 @@ const _ = require('lodash');
 const { addNodeLevels, updateNodeLevel } = require('../../core/nodeLevels');
 
 // TODO [Importante]: Añadir autenticación y permisos
+const postNodeLevelsRest = require('./openapi/nodeLevels/postNodeLevelsRest');
+const putNodeLevelRest = require('./openapi/nodeLevels/putNodeLevelRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postNodeLevelsRest: {
+    openapi: postNodeLevelsRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -27,6 +30,7 @@ module.exports = {
     },
   },
   putNodeLevelRest: {
+    openapi: putNodeLevelRest.openapi,
     rest: {
       method: 'PUT',
       path: '/',

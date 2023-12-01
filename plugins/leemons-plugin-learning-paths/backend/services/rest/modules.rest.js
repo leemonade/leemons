@@ -19,9 +19,16 @@ const {
   assignModule,
 } = require('../../core/modules');
 
+const createRest = require('./openapi/modules/createRest');
+const updateRest = require('./openapi/modules/updateRest');
+const duplicateRest = require('./openapi/modules/duplicateRest');
+const removeRest = require('./openapi/modules/removeRest');
+const publishRest = require('./openapi/modules/publishRest');
+const assignRest = require('./openapi/modules/assignRest');
 /** @type {ServiceSchema} */
 module.exports = {
   createRest: {
+    openapi: createRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -43,6 +50,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'PUT',
       path: '/:id',
@@ -64,6 +72,7 @@ module.exports = {
     },
   },
   duplicateRest: {
+    openapi: duplicateRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id/duplicate',
@@ -89,6 +98,7 @@ module.exports = {
     },
   },
   removeRest: {
+    openapi: removeRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',
@@ -113,6 +123,7 @@ module.exports = {
     },
   },
   publishRest: {
+    openapi: publishRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id/publish',
@@ -137,6 +148,7 @@ module.exports = {
     },
   },
   assignRest: {
+    openapi: assignRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id/assign',

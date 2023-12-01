@@ -43,9 +43,13 @@ async function get(ctx) {
   };
 }
 
+const searchRest = require('./openapi/assignableInstances/searchRest');
+const getRest = require('./openapi/assignableInstances/getRest');
+
 /** @type {ServiceSchema} */
 module.exports = {
   searchRest: {
+    openapi: searchRest.openapi,
     rest: {
       method: 'GET',
       path: '/search',
@@ -89,6 +93,7 @@ module.exports = {
     },
   },
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/find',
@@ -141,7 +146,6 @@ module.exports = {
   getRest2: {
     rest: {
       method: 'GET',
-      path: '/:id',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

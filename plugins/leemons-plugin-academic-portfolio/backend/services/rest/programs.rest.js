@@ -29,9 +29,27 @@ const {
   getProgramEvaluationSystem,
 } = require('../../core/programs');
 
+const getProgramTreeRest = require('./openapi/programs/getProgramTreeRest');
+const haveProgramsRest = require('./openapi/programs/haveProgramsRest');
+const postProgramRest = require('./openapi/programs/postProgramRest');
+const putProgramRest = require('./openapi/programs/putProgramRest');
+const listProgramRest = require('./openapi/programs/listProgramRest');
+const detailProgramRest = require('./openapi/programs/detailProgramRest');
+const programHasCoursesRest = require('./openapi/programs/programHasCoursesRest');
+const programHasGroupsRest = require('./openapi/programs/programHasGroupsRest');
+const programHasSubstagesRest = require('./openapi/programs/programHasSubstagesRest');
+const programCoursesRest = require('./openapi/programs/programCoursesRest');
+const programGroupsRest = require('./openapi/programs/programGroupsRest');
+const programSubstagesRest = require('./openapi/programs/programSubstagesRest');
+const deleteProgramRest = require('./openapi/programs/deleteProgramRest');
+const duplicateProgramRest = require('./openapi/programs/duplicateProgramRest');
+const addStudentsToClassesUnderNodeTreeRest = require('./openapi/programs/addStudentsToClassesUnderNodeTreeRest');
+const getUserProgramsRest = require('./openapi/programs/getUserProgramsRest');
+const getProgramEvaluationSystemRest = require('./openapi/programs/getProgramEvaluationSystemRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getProgramTreeRest: {
+    openapi: getProgramTreeRest.openapi,
     rest: {
       path: '/:id/tree',
       method: 'GET',
@@ -52,6 +70,7 @@ module.exports = {
     },
   },
   haveProgramsRest: {
+    openapi: haveProgramsRest.openapi,
     rest: {
       path: '/have',
       method: 'GET',
@@ -72,6 +91,7 @@ module.exports = {
     },
   },
   postProgramRest: {
+    openapi: postProgramRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -96,6 +116,7 @@ module.exports = {
     },
   },
   putProgramRest: {
+    openapi: putProgramRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -116,6 +137,7 @@ module.exports = {
     },
   },
   listProgramRest: {
+    openapi: listProgramRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -144,6 +166,7 @@ module.exports = {
     },
   },
   detailProgramRest: {
+    openapi: detailProgramRest.openapi,
     rest: {
       path: '/:id',
       method: 'GET',
@@ -160,11 +183,13 @@ module.exports = {
     ],
     async handler(ctx) {
       const [program] = await programsByIds({ ids: ctx.params.id, ctx });
-      if (!program) throw new LeemonsError(ctx, { message: 'Program not found' });
+      if (!program)
+        throw new LeemonsError(ctx, { message: 'Program not found' });
       return { status: 200, program };
     },
   },
   programHasCoursesRest: {
+    openapi: programHasCoursesRest.openapi,
     rest: {
       path: '/:id/has/courses',
       method: 'GET',
@@ -185,6 +210,7 @@ module.exports = {
     },
   },
   programHasGroupsRest: {
+    openapi: programHasGroupsRest.openapi,
     rest: {
       path: '/:id/has/groups',
       method: 'GET',
@@ -205,6 +231,7 @@ module.exports = {
     },
   },
   programHasSubstagesRest: {
+    openapi: programHasSubstagesRest.openapi,
     rest: {
       path: '/:id/has/substages',
       method: 'GET',
@@ -225,6 +252,7 @@ module.exports = {
     },
   },
   programCoursesRest: {
+    openapi: programCoursesRest.openapi,
     rest: {
       path: '/:id/courses',
       method: 'GET',
@@ -245,6 +273,7 @@ module.exports = {
     },
   },
   programGroupsRest: {
+    openapi: programGroupsRest.openapi,
     rest: {
       path: '/:id/groups',
       method: 'GET',
@@ -265,6 +294,7 @@ module.exports = {
     },
   },
   programSubstagesRest: {
+    openapi: programSubstagesRest.openapi,
     rest: {
       path: '/:id/substages',
       method: 'GET',
@@ -285,6 +315,7 @@ module.exports = {
     },
   },
   deleteProgramRest: {
+    openapi: deleteProgramRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',
@@ -309,6 +340,7 @@ module.exports = {
     },
   },
   duplicateProgramRest: {
+    openapi: duplicateProgramRest.openapi,
     rest: {
       path: '/:id/duplicate',
       method: 'POST',
@@ -324,11 +356,15 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const [program] = await duplicateProgramByIds({ ids: ctx.params.id, ctx });
+      const [program] = await duplicateProgramByIds({
+        ids: ctx.params.id,
+        ctx,
+      });
       return { status: 200, program };
     },
   },
   addStudentsToClassesUnderNodeTreeRest: {
+    openapi: addStudentsToClassesUnderNodeTreeRest.openapi,
     rest: {
       path: '/add-students-to-classes-under-node-tree',
       method: 'POST',
@@ -352,6 +388,7 @@ module.exports = {
     },
   },
   getUserProgramsRest: {
+    openapi: getUserProgramsRest.openapi,
     rest: {
       path: '/user',
       method: 'GET',
@@ -363,13 +400,17 @@ module.exports = {
     },
   },
   getProgramEvaluationSystemRest: {
+    openapi: getProgramEvaluationSystemRest.openapi,
     rest: {
       path: '/:id/evaluation-system',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const evaluationSystem = await getProgramEvaluationSystem({ id: ctx.params.id, ctx });
+      const evaluationSystem = await getProgramEvaluationSystem({
+        id: ctx.params.id,
+        ctx,
+      });
       return { status: 200, evaluationSystem };
     },
   },

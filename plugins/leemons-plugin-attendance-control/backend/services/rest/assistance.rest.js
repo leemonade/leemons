@@ -11,9 +11,11 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
+const rollCallRest = require('./openapi/assistance/rollCallRest');
 /** @type {ServiceSchema} */
 module.exports = {
   rollCallRest: {
+    openapi: rollCallRest.openapi,
     rest: {
       path: '/roll-call',
       method: 'POST',

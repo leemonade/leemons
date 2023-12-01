@@ -17,19 +17,44 @@ const { updateClassMany } = require('../../core/classes/updateClassMany');
 const { addInstanceClass } = require('../../core/classes/addInstanceClass');
 const { listClasses } = require('../../core/classes/listClasses');
 const { listSubjectClasses } = require('../../core/classes/listSubjectClasses');
-const { addClassStudentsMany } = require('../../core/classes/addClassStudentsMany');
-const { addClassTeachersMany } = require('../../core/classes/addClassTeachersMany');
+const {
+  addClassStudentsMany,
+} = require('../../core/classes/addClassStudentsMany');
+const {
+  addClassTeachersMany,
+} = require('../../core/classes/addClassTeachersMany');
 const { listStudentClasses } = require('../../core/classes/listStudentClasses');
 const { listTeacherClasses } = require('../../core/classes/listTeacherClasses');
 const { removeClassesByIds } = require('../../core/classes/removeClassesByIds');
-const { remove: removeStudentFromClass } = require('../../core/classes/student/remove');
+const {
+  remove: removeStudentFromClass,
+} = require('../../core/classes/student/remove');
 const { listSessionClasses } = require('../../core/classes/listSessionClasses');
-const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
+const {
+  classDetailForDashboard,
+} = require('../../core/classes/classDetailForDashboard');
 const { classByIds } = require('../../core/classes/classByIds');
 
+const haveClassesRest = require('./openapi/classes/haveClassesRest');
+const postClassRest = require('./openapi/classes/postClassRest');
+const putClassRest = require('./openapi/classes/putClassRest');
+const putClassManyRest = require('./openapi/classes/putClassManyRest');
+const postClassInstanceRest = require('./openapi/classes/postClassInstanceRest');
+const listClassRest = require('./openapi/classes/listClassRest');
+const listSubjectClassesRest = require('./openapi/classes/listSubjectClassesRest');
+const postClassStudentsRest = require('./openapi/classes/postClassStudentsRest');
+const postClassTeachersRest = require('./openapi/classes/postClassTeachersRest');
+const listStudentClassesRest = require('./openapi/classes/listStudentClassesRest');
+const listTeacherClassesRest = require('./openapi/classes/listTeacherClassesRest');
+const removeClassRest = require('./openapi/classes/removeClassRest');
+const removeStudentRest = require('./openapi/classes/removeStudentRest');
+const listSessionClassesRest = require('./openapi/classes/listSessionClassesRest');
+const classDetailForDashboardRest = require('./openapi/classes/classDetailForDashboardRest');
+const classByIdsRest = require('./openapi/classes/classByIdsRest');
 /** @type {ServiceSchema} */
 module.exports = {
   haveClassesRest: {
+    openapi: haveClassesRest.openapi,
     rest: {
       path: '/have',
       method: 'GET',
@@ -50,6 +75,7 @@ module.exports = {
     },
   },
   postClassRest: {
+    openapi: postClassRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -70,6 +96,7 @@ module.exports = {
     },
   },
   putClassRest: {
+    openapi: putClassRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -90,6 +117,7 @@ module.exports = {
     },
   },
   putClassManyRest: {
+    openapi: putClassManyRest.openapi,
     rest: {
       path: '/many',
       method: 'PUT',
@@ -110,6 +138,7 @@ module.exports = {
     },
   },
   postClassInstanceRest: {
+    openapi: postClassInstanceRest.openapi,
     rest: {
       path: '/instance',
       method: 'POST',
@@ -130,6 +159,7 @@ module.exports = {
     },
   },
   listClassRest: {
+    openapi: listClassRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -167,6 +197,7 @@ module.exports = {
     },
   },
   listSubjectClassesRest: {
+    openapi: listSubjectClassesRest.openapi,
     rest: {
       path: '/subjects/class',
       method: 'GET',
@@ -207,6 +238,7 @@ module.exports = {
     },
   },
   postClassStudentsRest: {
+    openapi: postClassStudentsRest.openapi,
     rest: {
       path: '/students',
       method: 'POST',
@@ -233,6 +265,7 @@ module.exports = {
     },
   },
   postClassTeachersRest: {
+    openapi: postClassTeachersRest.openapi,
     rest: {
       path: '/teachers',
       method: 'POST',
@@ -262,6 +295,7 @@ module.exports = {
     },
   },
   listStudentClassesRest: {
+    openapi: listStudentClassesRest.openapi,
     rest: {
       path: '/student/:id',
       method: 'GET',
@@ -297,6 +331,7 @@ module.exports = {
     },
   },
   listTeacherClassesRest: {
+    openapi: listTeacherClassesRest.openapi,
     rest: {
       path: '/teacher/:id',
       method: 'GET',
@@ -333,6 +368,7 @@ module.exports = {
     },
   },
   removeClassRest: {
+    openapi: removeClassRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',
@@ -348,11 +384,16 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const data = await removeClassesByIds({ ids: ctx.params.id, soft: true, ctx });
+      const data = await removeClassesByIds({
+        ids: ctx.params.id,
+        soft: true,
+        ctx,
+      });
       return { status: 200, data };
     },
   },
   removeStudentRest: {
+    openapi: removeStudentRest.openapi,
     rest: {
       path: '/remove/students',
       method: 'POST',
@@ -377,6 +418,7 @@ module.exports = {
     },
   },
   listSessionClassesRest: {
+    openapi: listSessionClassesRest.openapi,
     rest: {
       path: '/session',
       method: 'POST',
@@ -388,17 +430,22 @@ module.exports = {
     },
   },
   classDetailForDashboardRest: {
+    openapi: classDetailForDashboardRest.openapi,
     rest: {
       path: '/dashboard/:id',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const data = await classDetailForDashboard({ classId: ctx.params.id, ctx });
+      const data = await classDetailForDashboard({
+        classId: ctx.params.id,
+        ctx,
+      });
       return { status: 200, ...data };
     },
   },
   classByIdsRest: {
+    openapi: classByIdsRest.openapi,
     rest: {
       // raw porque a diferencia del get a '/' no utiliza mongoDBPaginate();
       path: '/raw-list',

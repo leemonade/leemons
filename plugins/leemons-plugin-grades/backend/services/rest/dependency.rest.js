@@ -13,10 +13,14 @@ const {
 const { listGrades } = require('../../core/grades');
 const { listRules, addRule, updateRule, removeRule } = require('../../core/rules');
 
+const listDependenciesRest = require('./openapi/dependency/listDependenciesRest');
+const deleteDependencyRest = require('./openapi/dependency/deleteDependencyRest');
+
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   listDependenciesRest: {
+    openapi: listDependenciesRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -76,6 +80,7 @@ module.exports = {
     },
   },
   deleteDependencyRest: {
+    openapi: deleteDependencyRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',

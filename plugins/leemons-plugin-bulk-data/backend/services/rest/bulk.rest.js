@@ -73,7 +73,9 @@ async function bulkData({ docPath, ctx }) {
     // ·······························································
     // LOCALES
 
-    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Init Platform & locales ...}`);
+    ctx.logger.debug(
+      chalk`{cyan.bold BULK} {gray Init Platform & locales ...}`
+    );
     await initLocales({ file: docPath, ctx });
     currentPhase = LOAD_PHASES.LOCALES;
 
@@ -113,15 +115,23 @@ async function bulkData({ docPath, ctx }) {
     ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Users plugin`);
     currentPhase = LOAD_PHASES.USERS;
 
-    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Rules plugin ...}`);
-    config.grades = await initGrades({ file: docPath, centers: config.centers, ctx });
+    ctx.logger.debug(
+      chalk`{cyan.bold BULK} {gray Starting Academic Rules plugin ...}`
+    );
+    config.grades = await initGrades({
+      file: docPath,
+      centers: config.centers,
+      ctx,
+    });
     ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Rules plugin`);
     currentPhase = LOAD_PHASES.GRADES;
 
     // ·······························································
     // MEDIA LIBRARY
 
-    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
+    ctx.logger.debug(
+      chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`
+    );
     config.assets = await initLibrary({ file: docPath, config, ctx });
     ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
     currentPhase = LOAD_PHASES.LIBRARY;
@@ -129,19 +139,31 @@ async function bulkData({ docPath, ctx }) {
     // ·······························································
     // ACADEMIC PORTFOLIO -> Da error por duplicación de userAgentPermisions, expected & handled in academic portfolio
 
-    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`);
-    config.programs = await initAcademicPortfolio({ file: docPath, config, ctx });
-    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
+    ctx.logger.debug(
+      chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`
+    );
+    config.programs = await initAcademicPortfolio({
+      file: docPath,
+      config,
+      ctx,
+    });
+    ctx.logger.info(
+      chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`
+    );
     currentPhase = LOAD_PHASES.AP;
 
-    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
+    ctx.logger.debug(
+      chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`
+    );
     await updateLibrary({ file: docPath, config, ctx });
     ctx.logger.info(chalk`{cyan.bold BULK} UPDATED Leebrary plugin`);
 
     // ·······························································
     // CALENDAR & KANBAN
 
-    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`);
+    ctx.logger.debug(
+      chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`
+    );
     await initCalendar({ file: docPath, config, ctx });
     ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Calendar plugin`);
     currentPhase = LOAD_PHASES.CALENDAR;
@@ -171,8 +193,12 @@ async function bulkData({ docPath, ctx }) {
   }
 }
 
+const loadRest = require('./openapi/bulk/loadRest');
+const statusRest = require('./openapi/bulk/statusRest');
+/** @type {ServiceSchema} */
 module.exports = {
   loadRest: {
+    openapi: loadRest.openapi,
     rest: {
       path: '/load-from-file',
       method: 'POST',
@@ -186,7 +212,11 @@ module.exports = {
         if (settings?.status !== 'INSTALLED' && !settings?.configured) {
           const file = await createTempFile({ readStream: ctx.params });
           bulkData({ docPath: file.path, ctx });
-          return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
+          return {
+            status: 200,
+            currentPhase: 'Proccessing file',
+            overallProgress: '0%',
+          };
         }
       } catch (error) {
         throw new LeemonsError(ctx, {
@@ -194,10 +224,14 @@ module.exports = {
           httpStatusCode: 500,
         });
       }
-      throw new LeemonsError(ctx, { message: 'Unexpected error', httpStatusCode: 500 });
+      throw new LeemonsError(ctx, {
+        message: 'Unexpected error',
+        httpStatusCode: 500,
+      });
     },
   },
   statusRest: {
+    openapi: statusRest.openapi,
     rest: {
       path: '/load-from-file',
       method: 'GET',

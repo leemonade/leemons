@@ -8,9 +8,13 @@ const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
 const { updateStudent } = require('../../core/assignments/updateStudent');
 
+const instanceCreateRest = require('./openapi/assignments/instanceCreateRest');
+const instanceGetRest = require('./openapi/assignments/instanceGetRest');
+const studentUpdateRest = require('./openapi/assignments/studentUpdateRest');
 /** @type {ServiceSchema} */
 module.exports = {
   instanceCreateRest: {
+    openapi: instanceCreateRest.openapi,
     rest: {
       method: 'POST',
       path: '/:task/instance',
@@ -44,6 +48,7 @@ module.exports = {
     },
   },
   instanceGetRest: {
+    openapi: instanceGetRest.openapi,
     rest: {
       method: 'PUT',
       path: '/instance/:instance',
@@ -53,9 +58,12 @@ module.exports = {
       try {
         const { instance } = ctx.request.params;
 
-        const data = await ctx.tx.call('assignables.instances.getAssignableInstance', {
-          ids: instance,
-        });
+        const data = await ctx.tx.call(
+          'assignables.instances.getAssignableInstance',
+          {
+            ids: instance,
+          }
+        );
 
         return {
           status: 200,
@@ -71,6 +79,7 @@ module.exports = {
     },
   },
   studentUpdateRest: {
+    openapi: studentUpdateRest.openapi,
     rest: {
       method: 'PUT',
       path: '/instance/:instance/student/:student',
@@ -80,7 +89,12 @@ module.exports = {
       try {
         const { instance, student, ...body } = ctx.params;
 
-        const updated = await updateStudent({ instance, student, ...body, ctx });
+        const updated = await updateStudent({
+          instance,
+          student,
+          ...body,
+          ctx,
+        });
 
         return {
           status: 200,

@@ -9,11 +9,19 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { updateSubjectType, addSubjectType, listSubjectType } = require('../../core/subject-type');
+const {
+  updateSubjectType,
+  addSubjectType,
+  listSubjectType,
+} = require('../../core/subject-type');
 
+const postSubjectTypeRest = require('./openapi/subjectType/postSubjectTypeRest');
+const putSubjectTypeRest = require('./openapi/subjectType/putSubjectTypeRest');
+const listSubjectTypeRest = require('./openapi/subjectType/listSubjectTypeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postSubjectTypeRest: {
+    openapi: postSubjectTypeRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -34,6 +42,7 @@ module.exports = {
     },
   },
   putSubjectTypeRest: {
+    openapi: putSubjectTypeRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -54,6 +63,7 @@ module.exports = {
     },
   },
   listSubjectTypeRest: {
+    openapi: listSubjectTypeRest.openapi,
     rest: {
       path: '/',
       method: 'GET',

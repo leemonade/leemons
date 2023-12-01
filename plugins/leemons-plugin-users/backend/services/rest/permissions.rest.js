@@ -2,14 +2,17 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { list } = require('../../core/permissions/list');
 const { getUserAgentPermissions } = require('../../core/permissions');
 
+const listRest = require('./openapi/permissions/listRest');
+const getPermissionsWithActionsIfIHaveRest = require('./openapi/permissions/getPermissionsWithActionsIfIHaveRest');
+/** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       path: '/list',
       method: 'GET',
@@ -21,6 +24,7 @@ module.exports = {
     },
   },
   getPermissionsWithActionsIfIHaveRest: {
+    openapi: getPermissionsWithActionsIfIHaveRest.openapi,
     rest: {
       path: '/get-if-have', // rename to exist ?
       method: 'POST',

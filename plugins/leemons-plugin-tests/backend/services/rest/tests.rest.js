@@ -25,9 +25,22 @@ const {
   getUserQuestionResponses,
 } = require('../../core/tests');
 
+const listTestsRest = require('./openapi/tests/listTestsRest');
+const getTestRest = require('./openapi/tests/getTestRest');
+const deleteTestRest = require('./openapi/tests/deleteTestRest');
+const saveTestRest = require('./openapi/tests/saveTestRest');
+const getAssignConfigsRest = require('./openapi/tests/getAssignConfigsRest');
+const assignTestRest = require('./openapi/tests/assignTestRest');
+const duplicateRest = require('./openapi/tests/duplicateRest');
+const getInstanceFeedbackRest = require('./openapi/tests/getInstanceFeedbackRest');
+const setInstanceFeedbackRest = require('./openapi/tests/setInstanceFeedbackRest');
+const setInstanceTimestampRest = require('./openapi/tests/setInstanceTimestampRest');
+const setQuestionResponseRest = require('./openapi/tests/setQuestionResponseRest');
+const getUserQuestionResponsesRest = require('./openapi/tests/getUserQuestionResponsesRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listTestsRest: {
+    openapi: listTestsRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -69,6 +82,7 @@ module.exports = {
     },
   },
   getTestRest: {
+    openapi: getTestRest.openapi,
     rest: {
       method: 'GET',
       path: '/:id',
@@ -95,6 +109,7 @@ module.exports = {
     },
   },
   deleteTestRest: {
+    openapi: deleteTestRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',
@@ -118,6 +133,7 @@ module.exports = {
     },
   },
   saveTestRest: {
+    openapi: saveTestRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -144,6 +160,7 @@ module.exports = {
     },
   },
   getAssignConfigsRest: {
+    openapi: getAssignConfigsRest.openapi,
     rest: {
       method: 'GET',
       path: '/assign/configs',
@@ -166,6 +183,7 @@ module.exports = {
     },
   },
   assignTestRest: {
+    openapi: assignTestRest.openapi,
     rest: {
       method: 'POST',
       path: '/assign',
@@ -189,6 +207,7 @@ module.exports = {
     },
   },
   duplicateRest: {
+    openapi: duplicateRest.openapi,
     rest: {
       method: 'POST',
       path: '/duplicate',
@@ -213,6 +232,7 @@ module.exports = {
     },
   },
   getInstanceFeedbackRest: {
+    openapi: getInstanceFeedbackRest.openapi,
     rest: {
       method: 'GET',
       path: '/instance/:id/feedback/:user',
@@ -228,6 +248,7 @@ module.exports = {
     },
   },
   setInstanceFeedbackRest: {
+    openapi: setInstanceFeedbackRest.openapi,
     rest: {
       method: 'POST',
       path: '/instance/feedback',
@@ -244,6 +265,7 @@ module.exports = {
     },
   },
   setInstanceTimestampRest: {
+    openapi: setInstanceTimestampRest.openapi,
     rest: {
       method: 'POST',
       path: '/instance/timestamp',
@@ -260,6 +282,7 @@ module.exports = {
     },
   },
   setQuestionResponseRest: {
+    openapi: setQuestionResponseRest.openapi,
     rest: {
       method: 'POST',
       path: '/instance/question/response',
@@ -274,6 +297,7 @@ module.exports = {
     },
   },
   getUserQuestionResponsesRest: {
+    openapi: getUserQuestionResponsesRest.openapi,
     rest: {
       method: 'GET',
       path: '/instance/:id/question/response',

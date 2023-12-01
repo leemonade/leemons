@@ -10,9 +10,15 @@ const {
 } = require('@leemons/middlewares');
 const settingsService = require('../../core/settings');
 
+const findOneRest = require('./openapi/settings/findOneRest');
+const updateRest = require('./openapi/settings/updateRest');
+const signupRest = require('./openapi/settings/signupRest');
+const setLanguagesRest = require('./openapi/settings/setLanguagesRest');
+const getLanguagesRest = require('./openapi/settings/getLanguagesRest');
 /** @type {ServiceSchema} */
 module.exports = {
   findOneRest: {
+    openapi: findOneRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -23,6 +29,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -59,6 +66,7 @@ module.exports = {
     },
   },
   signupRest: {
+    openapi: signupRest.openapi,
     rest: {
       method: 'POST',
       path: '/signup',
@@ -85,6 +93,7 @@ module.exports = {
     },
   },
   setLanguagesRest: {
+    openapi: setLanguagesRest.openapi,
     rest: {
       method: 'POST',
       path: '/languages',
@@ -97,6 +106,7 @@ module.exports = {
     },
   },
   getLanguagesRest: {
+    openapi: getLanguagesRest.openapi,
     rest: {
       method: 'GET',
       path: '/languages',

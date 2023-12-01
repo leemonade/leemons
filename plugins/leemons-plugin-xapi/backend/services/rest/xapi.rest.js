@@ -2,15 +2,17 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { add } = require('../../core/xapi/statement');
 
+const addStatementRest = require('./openapi/xapi/addStatementRest');
+/** @type {ServiceSchema} */
 module.exports = {
   addStatementRest: {
+    openapi: addStatementRest.openapi,
     rest: {
       path: '/add/statement',
       method: 'POST',
@@ -26,7 +28,9 @@ module.exports = {
         await add({ ...ctx.params, actor, ip: ctx.meta.clientIP, ctx });
         return { status: 200 };
       }
-      throw new LeemonsError(ctx, { message: 'Only type (learning | log) are available' });
+      throw new LeemonsError(ctx, {
+        message: 'Only type (learning | log) are available',
+      });
     },
   },
 };

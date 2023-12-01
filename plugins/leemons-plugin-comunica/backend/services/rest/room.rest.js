@@ -32,9 +32,27 @@ const {
   getRoomsMessageCount,
 } = require('../../core/room');
 
+const getRoomListRest = require('./openapi/room/getRoomListRest');
+const getMessagesRest = require('./openapi/room/getMessagesRest');
+const sendMessageRest = require('./openapi/room/sendMessageRest');
+const markMessagesAsReadRest = require('./openapi/room/markMessagesAsReadRest');
+const getRoomRest = require('./openapi/room/getRoomRest');
+const toggleMutedRoomRest = require('./openapi/room/toggleMutedRoomRest');
+const toggleAdminMutedRoomRest = require('./openapi/room/toggleAdminMutedRoomRest');
+const toggleAdminDisableRoomRest = require('./openapi/room/toggleAdminDisableRoomRest');
+const adminRemoveUserAgentRest = require('./openapi/room/adminRemoveUserAgentRest');
+const adminUpdateRoomNameRest = require('./openapi/room/adminUpdateRoomNameRest');
+const adminAddUsersToRoomRest = require('./openapi/room/adminAddUsersToRoomRest');
+const adminRemoveRoomRest = require('./openapi/room/adminRemoveRoomRest');
+const createRoomRest = require('./openapi/room/createRoomRest');
+const adminChangeRoomImageRest = require('./openapi/room/adminChangeRoomImageRest');
+const toggleAttachedRoomRest = require('./openapi/room/toggleAttachedRoomRest');
+const getUnreadMessagesRest = require('./openapi/room/getUnreadMessagesRest');
+const getRoomsMessageCountRest = require('./openapi/room/getRoomsMessageCountRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getRoomListRest: {
+    openapi: getRoomListRest.openapi,
     rest: {
       path: '/list',
       method: 'GET',
@@ -49,6 +67,7 @@ module.exports = {
     },
   },
   getMessagesRest: {
+    openapi: getMessagesRest.openapi,
     rest: {
       path: '/:key/messages',
       method: 'GET',
@@ -64,6 +83,7 @@ module.exports = {
     },
   },
   sendMessageRest: {
+    openapi: sendMessageRest.openapi,
     rest: {
       path: '/:key/messages',
       method: 'POST',
@@ -79,6 +99,7 @@ module.exports = {
     },
   },
   markMessagesAsReadRest: {
+    openapi: markMessagesAsReadRest.openapi,
     rest: {
       path: '/:key/messages/read',
       method: 'POST',
@@ -94,6 +115,7 @@ module.exports = {
     },
   },
   getRoomRest: {
+    openapi: getRoomRest.openapi,
     rest: {
       path: '/:key',
       method: 'GET',
@@ -109,6 +131,7 @@ module.exports = {
     },
   },
   toggleMutedRoomRest: {
+    openapi: toggleMutedRoomRest.openapi,
     rest: {
       path: '/:key/mute',
       method: 'POST',
@@ -124,6 +147,7 @@ module.exports = {
     },
   },
   toggleAdminMutedRoomRest: {
+    openapi: toggleAdminMutedRoomRest.openapi,
     rest: {
       path: '/:key/admin/mute',
       method: 'POST',
@@ -139,6 +163,7 @@ module.exports = {
     },
   },
   toggleAdminDisableRoomRest: {
+    openapi: toggleAdminDisableRoomRest.openapi,
     rest: {
       path: '/:key/admin/disable',
       method: 'POST',
@@ -154,6 +179,7 @@ module.exports = {
     },
   },
   adminRemoveUserAgentRest: {
+    openapi: adminRemoveUserAgentRest.openapi,
     rest: {
       path: '/:key/admin/remove',
       method: 'POST',
@@ -170,6 +196,7 @@ module.exports = {
     },
   },
   adminUpdateRoomNameRest: {
+    openapi: adminUpdateRoomNameRest.openapi,
     rest: {
       path: '/:key/admin/name',
       method: 'POST',
@@ -185,6 +212,7 @@ module.exports = {
     },
   },
   adminAddUsersToRoomRest: {
+    openapi: adminAddUsersToRoomRest.openapi,
     rest: {
       path: '/:key/admin/users',
       method: 'POST',
@@ -200,6 +228,7 @@ module.exports = {
     },
   },
   adminRemoveRoomRest: {
+    openapi: adminRemoveRoomRest.openapi,
     rest: {
       path: '/:key/admin/remove',
       method: 'POST',
@@ -215,6 +244,7 @@ module.exports = {
     },
   },
   createRoomRest: {
+    openapi: createRoomRest.openapi,
     rest: {
       path: '/create',
       method: 'POST',
@@ -232,7 +262,10 @@ module.exports = {
       const room = await add({
         ...ctx.params,
         key,
-        adminUserAgents: ctx.params.type === 'chat' ? [] : ctx.meta.userSession.userAgents[0].id,
+        adminUserAgents:
+          ctx.params.type === 'chat'
+            ? []
+            : ctx.meta.userSession.userAgents[0].id,
         ctx,
       });
 
@@ -240,6 +273,7 @@ module.exports = {
     },
   },
   adminChangeRoomImageRest: {
+    openapi: adminChangeRoomImageRest.openapi,
     rest: {
       path: '/:key/admin/image',
       method: 'POST',
@@ -256,6 +290,7 @@ module.exports = {
     },
   },
   toggleAttachedRoomRest: {
+    openapi: toggleAttachedRoomRest.openapi,
     rest: {
       path: '/:key/attach',
       method: 'POST',
@@ -271,6 +306,7 @@ module.exports = {
     },
   },
   getUnreadMessagesRest: {
+    openapi: getUnreadMessagesRest.openapi,
     rest: {
       path: '/messages/unread',
       method: 'POST',
@@ -286,6 +322,7 @@ module.exports = {
     },
   },
   getRoomsMessageCountRest: {
+    openapi: getRoomsMessageCountRest.openapi,
     rest: {
       path: '/messages/count',
       method: 'POST',

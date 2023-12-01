@@ -2,12 +2,15 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const { getAll, add } = require('../../core/locale');
 
+const addRest = require('./openapi/locales/addRest');
+const listRest = require('./openapi/locales/listRest');
+/** @type {ServiceSchema} */
 module.exports = {
   addRest: {
+    openapi: addRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -24,6 +27,7 @@ module.exports = {
     },
   },
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       method: 'GET',
       path: '/',

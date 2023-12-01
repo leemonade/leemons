@@ -8,20 +8,27 @@ const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const searchOngoingActivities = require('../../core/ongoing/searchOngoingActivities');
 const searchNyaActivities = require('../../core/ongoing/searchNyaActivities');
 
+const searchOngoingRest = require('./openapi/activities/searchOngoingRest');
+const searchNyaActivitiesRest = require('./openapi/activities/searchNyaActivitiesRest');
 /** @type {ServiceSchema} */
 module.exports = {
   searchOngoingRest: {
+    openapi: searchOngoingRest.openapi,
     rest: {
       method: 'GET',
       path: '/search/ongoing',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const activities = await searchOngoingActivities({ query: ctx.params, ctx });
+      const activities = await searchOngoingActivities({
+        query: ctx.params,
+        ctx,
+      });
       return { status: 200, activities };
     },
   },
   searchNyaActivitiesRest: {
+    openapi: searchNyaActivitiesRest.openapi,
     rest: {
       method: 'GET',
       path: '/search/nya',

@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
@@ -14,14 +13,27 @@ const { abortMultipart } = require('../../core/files/abortMultipart');
 const { finishMultipart } = require('../../core/files/finishMultipart');
 const { getByFile } = require('../../core/assets/files/getByFile');
 const { dataForReturnFile } = require('../../core/files');
-const { uploadMultipartChunk } = require('../../core/files/uploadMultipartChunk');
+const {
+  uploadMultipartChunk,
+} = require('../../core/files/uploadMultipartChunk');
 const { createTemp } = require('../../core/files/upload/createTemp');
 const { getByIds } = require('../../core/assets/getByIds');
 
 const fileRestService = 'leebrary.file.fileRest';
 
+const newMultipartRest = require('./openapi/file/newMultipartRest');
+const uploadMultipartChunkRest = require('./openapi/file/uploadMultipartChunkRest');
+const abortMultipartRest = require('./openapi/file/abortMultipartRest');
+const finishMultipartRest = require('./openapi/file/finishMultipartRest');
+const fileRest = require('./openapi/file/fileRest');
+const folderRest = require('./openapi/file/folderRest');
+const publicFileRest = require('./openapi/file/publicFileRest');
+const publicFolderRest = require('./openapi/file/publicFolderRest');
+const coverRest = require('./openapi/file/coverRest');
+/** @type {ServiceSchema} */
 module.exports = {
   newMultipartRest: {
+    openapi: newMultipartRest.openapi,
     rest: {
       method: 'POST',
       path: '/multipart/new',
@@ -34,6 +46,7 @@ module.exports = {
     },
   },
   uploadMultipartChunkRest: {
+    openapi: uploadMultipartChunkRest.openapi,
     rest: {
       method: 'POST',
       path: '/multipart/chunk',
@@ -53,6 +66,7 @@ module.exports = {
     },
   },
   abortMultipartRest: {
+    openapi: abortMultipartRest.openapi,
     rest: {
       method: 'POST',
       path: '/multipart/abort',
@@ -66,6 +80,7 @@ module.exports = {
   },
 
   finishMultipartRest: {
+    openapi: finishMultipartRest.openapi,
     rest: {
       method: 'POST',
       path: '/multipart/finish',
@@ -78,20 +93,33 @@ module.exports = {
     },
   },
   fileRest: {
+    openapi: fileRest.openapi,
     rest: {
       path: '/:id',
       method: 'GET',
     },
-    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
+    middlewares: [
+      LeemonsMiddlewareAuthenticated({
+        continueEvenThoughYouAreNotLoggedIn: true,
+      }),
+    ],
     // eslint-disable-next-line sonarjs/cognitive-complexity
     async handler(ctx) {
       const { id, download, onlyPublic } = ctx.params;
 
       if (_.isEmpty(id)) {
-        throw new LeemonsError(ctx, { message: 'Id is required', httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: 'Id is required',
+          httpStatusCode: 400,
+        });
       }
 
-      const asset = await getByFile({ fileId: id, checkPermissions: !onlyPublic, onlyPublic, ctx });
+      const asset = await getByFile({
+        fileId: id,
+        checkPermissions: !onlyPublic,
+        onlyPublic,
+        ctx,
+      });
       const canAccess = !_.isEmpty(asset);
 
       if (!canAccess) {
@@ -108,17 +136,20 @@ module.exports = {
       if (!download && range?.indexOf('bytes=') > -1) {
         const parts = range.replace(/bytes=/, '').split('-');
         bytesStart = parseInt(parts[0], 10);
-        bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
+        bytesEnd = parts[1]
+          ? parseInt(parts[1], 10)
+          : bytesStart + 10 * 1024 ** 2;
       }
 
-      const { readStream, fileName, contentType, file } = await dataForReturnFile({
-        id,
-        path: ctx.params[0],
-        start: bytesStart,
-        end: bytesEnd,
-        forceStream: !!ctx.params.forceStream,
-        ctx,
-      });
+      const { readStream, fileName, contentType, file } =
+        await dataForReturnFile({
+          id,
+          path: ctx.params[0],
+          start: bytesStart,
+          end: bytesEnd,
+          forceStream: !!ctx.params.forceStream,
+          ctx,
+        });
 
       // Redirect to external URL
       if (_.isString(readStream) && readStream.indexOf('http') === 0) {
@@ -137,9 +168,14 @@ module.exports = {
         'Content-Type': contentType,
       };
 
-      if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
+      if (
+        download ||
+        (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)
+      ) {
         ctx.meta.$responseHeaders = {
-          'Content-Disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
+          'Content-Disposition': `attachment; filename=${encodeURIComponent(
+            fileName
+          )}`,
         };
       }
 
@@ -163,6 +199,7 @@ module.exports = {
     },
   },
   folderRest: {
+    openapi: folderRest.openapi,
     rest: {
       path: '/:id/(.*)',
       method: 'GET',
@@ -175,6 +212,7 @@ module.exports = {
     },
   },
   publicFileRest: {
+    openapi: publicFileRest.openapi,
     rest: {
       path: '/public/:id',
       method: 'GET',
@@ -186,6 +224,7 @@ module.exports = {
     },
   },
   publicFolderRest: {
+    openapi: publicFolderRest.openapi,
     rest: {
       path: '/public/:id/(.*)',
       method: 'GET',
@@ -198,16 +237,24 @@ module.exports = {
     },
   },
   coverRest: {
+    openapi: coverRest.openapi,
     rest: {
       path: '/img/:assetId',
       method: 'GET',
     },
-    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
+    middlewares: [
+      LeemonsMiddlewareAuthenticated({
+        continueEvenThoughYouAreNotLoggedIn: true,
+      }),
+    ],
     async handler(ctx) {
       const { assetId } = ctx.params;
 
       if (_.isEmpty(assetId)) {
-        throw new LeemonsError(ctx, { message: 'Asset ID is required', httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: 'Asset ID is required',
+          httpStatusCode: 400,
+        });
       }
 
       const assets = await getByIds({
@@ -221,7 +268,8 @@ module.exports = {
 
       if (!asset) {
         throw new LeemonsError(ctx, {
-          message: "You don't have permissions to view this Asset or the asset doens't exists",
+          message:
+            "You don't have permissions to view this Asset or the asset doens't exists",
           httpStatusCode: 403,
         });
       }
@@ -253,7 +301,9 @@ module.exports = {
           // To implement: handle content disposition for images, video and audio. Taking care of download param
         } else {
           ctx.meta.$responseHeaders = {
-            'Content-disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
+            'Content-disposition': `attachment; filename=${encodeURIComponent(
+              fileName
+            )}`,
           };
         }
         // eslint-disable-next-line consistent-return

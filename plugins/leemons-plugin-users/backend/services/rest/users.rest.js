@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const _ = require('lodash');
 
@@ -26,8 +25,42 @@ const {
 } = require('../../core/user-agents');
 const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
 
+const canResetRest = require('./openapi/users/canResetRest');
+const canRegisterPasswordRest = require('./openapi/users/canRegisterPasswordRest');
+const resetRest = require('./openapi/users/resetRest');
+const registerPasswordRest = require('./openapi/users/registerPasswordRest');
+const recoverRest = require('./openapi/users/recoverRest');
+const loginRest = require('./openapi/users/loginRest');
+const detailRest = require('./openapi/users/detailRest');
+const detailForPageRest = require('./openapi/users/detailForPageRest');
+const agentDetailForPageRest = require('./openapi/users/agentDetailForPageRest');
+const profilesRest = require('./openapi/users/profilesRest');
+const centersRest = require('./openapi/users/centersRest');
+const profileTokenRest = require('./openapi/users/profileTokenRest');
+const centerProfileTokenRest = require('./openapi/users/centerProfileTokenRest');
+const setRememberLoginRest = require('./openapi/users/setRememberLoginRest');
+const removeRememberLoginRest = require('./openapi/users/removeRememberLoginRest');
+const getRememberLoginRest = require('./openapi/users/getRememberLoginRest');
+const createBulkRest = require('./openapi/users/createBulkRest');
+const deleteUserAgentRest = require('./openapi/users/deleteUserAgentRest');
+const listRest = require('./openapi/users/listRest');
+const getUserAgentsInfoRest = require('./openapi/users/getUserAgentsInfoRest');
+
+const createSuperAdminRest = require('./openapi/users/createSuperAdminRest');
+const getDataForUserAgentDatasetsRest = require('./openapi/users/getDataForUserAgentDatasetsRest');
+const saveDataForUserAgentDatasetsRest = require('./openapi/users/saveDataForUserAgentDatasetsRest');
+const updateUserRest = require('./openapi/users/updateUserRest');
+const updateUserAvatarRest = require('./openapi/users/updateUserAvatarRest');
+const updateUserAgentRest = require('./openapi/users/updateUserAgentRest');
+const updateSessionConfigRest = require('./openapi/users/updateSessionConfigRest');
+const activateUserRest = require('./openapi/users/activateUserRest');
+const sendWelcomeEmailToUserRest = require('./openapi/users/sendWelcomeEmailToUserRest');
+const disableUserAgentRest = require('./openapi/users/disableUserAgentRest');
+const activeUserAgentRest = require('./openapi/users/activeUserAgentRest');
+/** @type {ServiceSchema} */
 module.exports = {
   canResetRest: {
+    openapi: canResetRest.openapi,
     rest: {
       path: '/can/reset',
       method: 'POST',
@@ -46,6 +79,7 @@ module.exports = {
     },
   },
   canRegisterPasswordRest: {
+    openapi: canRegisterPasswordRest.openapi,
     rest: {
       path: '/can/register-password',
       method: 'POST',
@@ -59,11 +93,15 @@ module.exports = {
       additionalProperties: false,
     },
     async handler(ctx) {
-      const can = await usersService.canRegisterPassword({ token: ctx.params.token, ctx });
+      const can = await usersService.canRegisterPassword({
+        token: ctx.params.token,
+        ctx,
+      });
       return { status: 200, can };
     },
   },
   resetRest: {
+    openapi: resetRest.openapi,
     rest: {
       path: '/reset',
       method: 'POST',
@@ -87,6 +125,7 @@ module.exports = {
     },
   },
   registerPasswordRest: {
+    openapi: registerPasswordRest.openapi,
     rest: {
       path: '/register-password',
       method: 'POST',
@@ -110,6 +149,7 @@ module.exports = {
     },
   },
   recoverRest: {
+    openapi: recoverRest.openapi,
     rest: {
       path: '/recover',
       method: 'POST',
@@ -134,6 +174,7 @@ module.exports = {
     },
   },
   loginRest: {
+    openapi: loginRest.openapi,
     rest: {
       path: '/login',
       method: 'POST',
@@ -159,17 +200,22 @@ module.exports = {
     },
   },
   detailRest: {
+    openapi: detailRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const user = await usersService.detail({ userId: ctx.meta.userSession.id, ctx });
+      const user = await usersService.detail({
+        userId: ctx.meta.userSession.id,
+        ctx,
+      });
       return { status: 200, user };
     },
   },
   detailForPageRest: {
+    openapi: detailForPageRest.openapi,
     rest: {
       path: '/:id/detail/page',
       method: 'GET',
@@ -184,10 +230,16 @@ module.exports = {
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
-      const data = await usersService.detailForPage({ userId: ctx.params.id, ctx });
+      const data = await usersService.detailForPage({
+        userId: ctx.params.id,
+        ctx,
+      });
 
       // Comprobamos si se tienen como contactos
       if (!hasPermission) {
@@ -214,6 +266,7 @@ module.exports = {
     },
   },
   agentDetailForPageRest: {
+    openapi: agentDetailForPageRest.openapi,
     rest: {
       path: '/user-agent/:id/detail/page',
       method: 'GET',
@@ -228,7 +281,10 @@ module.exports = {
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       // Comprobamos si se tienen como contactos
@@ -241,7 +297,10 @@ module.exports = {
       }
 
       if (hasPermission) {
-        const data = await agentDetailForPage({ userAgentId: ctx.params.id, ctx });
+        const data = await agentDetailForPage({
+          userAgentId: ctx.params.id,
+          ctx,
+        });
         return { status: 200, data };
       }
       const rAllowedPermissions = [];
@@ -257,28 +316,37 @@ module.exports = {
     },
   },
   profilesRest: {
+    openapi: profilesRest.openapi,
     rest: {
       path: '/profile',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const profiles = await usersService.profiles({ user: ctx.meta.userSession.id, ctx });
+      const profiles = await usersService.profiles({
+        user: ctx.meta.userSession.id,
+        ctx,
+      });
       return { status: 200, profiles };
     },
   },
   centersRest: {
+    openapi: centersRest.openapi,
     rest: {
       path: '/centers',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
+      const centers = await usersService.centers({
+        user: ctx.meta.userSession.id,
+        ctx,
+      });
       return { status: 200, centers };
     },
   },
   profileTokenRest: {
+    openapi: profileTokenRest.openapi,
     rest: {
       path: '/profile/:id/token',
       method: 'GET',
@@ -294,6 +362,7 @@ module.exports = {
     },
   },
   centerProfileTokenRest: {
+    openapi: centerProfileTokenRest.openapi,
     rest: {
       path: '/center/:centerId/profile/:profileId/token',
       method: 'GET',
@@ -310,16 +379,22 @@ module.exports = {
     },
   },
   setRememberLoginRest: {
+    openapi: setRememberLoginRest.openapi,
     rest: {
       path: '/remember/login',
       method: 'POST',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
+      const centers = await usersService.centers({
+        user: ctx.meta.userSession.id,
+        ctx,
+      });
       const centerI = _.findIndex(centers, { id: ctx.params.center });
       if (centerI >= 0) {
-        const profileI = _.findIndex(centers[centerI].profiles, { id: ctx.params.profile });
+        const profileI = _.findIndex(centers[centerI].profiles, {
+          id: ctx.params.profile,
+        });
         if (profileI >= 0) {
           await ctx.tx.db.UserRememberLogin.updateOne(
             { user: ctx.meta.userSession.id },
@@ -336,13 +411,18 @@ module.exports = {
             center: centers[centerI],
           };
         }
-        throw new LeemonsError(ctx, { message: 'You do not have access to the specified profile' });
+        throw new LeemonsError(ctx, {
+          message: 'You do not have access to the specified profile',
+        });
       } else {
-        throw new LeemonsError(ctx, { message: 'You do not have access to the specified center' });
+        throw new LeemonsError(ctx, {
+          message: 'You do not have access to the specified center',
+        });
       }
     },
   },
   removeRememberLoginRest: {
+    openapi: removeRememberLoginRest.openapi,
     rest: {
       path: '/remember/login',
       method: 'DELETE',
@@ -354,12 +434,15 @@ module.exports = {
       }).lean();
 
       if (remember) {
-        await ctx.tx.db.UserRememberLogin.deleteOne({ user: ctx.meta.userSession.id });
+        await ctx.tx.db.UserRememberLogin.deleteOne({
+          user: ctx.meta.userSession.id,
+        });
       }
       return { status: 200 };
     },
   },
   getRememberLoginRest: {
+    openapi: getRememberLoginRest.openapi,
     rest: {
       path: '/remember/login',
       method: 'GET',
@@ -370,10 +453,15 @@ module.exports = {
         user: ctx.meta.userSession.id,
       }).lean();
       if (remember) {
-        const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
+        const centers = await usersService.centers({
+          user: ctx.meta.userSession.id,
+          ctx,
+        });
         const centerI = _.findIndex(centers, { id: remember.center });
         if (centerI >= 0) {
-          const profileI = _.findIndex(centers[centerI].profiles, { id: remember.profile });
+          const profileI = _.findIndex(centers[centerI].profiles, {
+            id: remember.profile,
+          });
           if (profileI >= 0) {
             return {
               status: 200,
@@ -389,6 +477,7 @@ module.exports = {
     },
   },
   createBulkRest: {
+    openapi: createBulkRest.openapi,
     rest: {
       path: '/create/bulk',
       method: 'POST',
@@ -412,6 +501,7 @@ module.exports = {
     },
   },
   deleteUserAgentRest: {
+    openapi: deleteUserAgentRest.openapi,
     rest: {
       path: '/user-agent/:id',
       method: 'DELETE',
@@ -435,6 +525,7 @@ module.exports = {
     },
   },
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       path: '/list',
       method: 'POST',
@@ -470,6 +561,7 @@ module.exports = {
     },
   },
   getUserAgentsInfoRest: {
+    openapi: getUserAgentsInfoRest.openapi,
     rest: {
       path: '/user-agents/info',
       method: 'POST',
@@ -533,6 +625,7 @@ module.exports = {
     },
   },
   createSuperAdminRest: {
+    openapi: createSuperAdminRest.openapi,
     rest: {
       path: '/super-admin',
       method: 'POST',
@@ -550,6 +643,7 @@ module.exports = {
   },
   // TODO: Hacer un middleware de dataset que refleje: disableUserAgentDatasetCheck: true,
   getDataForUserAgentDatasetsRest: {
+    openapi: getDataForUserAgentDatasetsRest.openapi,
     rest: {
       path: '/get-data-for-user-agent-datasets',
       method: 'GET',
@@ -562,6 +656,7 @@ module.exports = {
   },
 
   saveDataForUserAgentDatasetsRest: {
+    openapi: saveDataForUserAgentDatasetsRest.openapi,
     rest: {
       path: '/save-data-for-user-agent-datasets',
       method: 'POST',
@@ -576,6 +671,7 @@ module.exports = {
     },
   },
   updateUserRest: {
+    openapi: updateUserRest.openapi,
     rest: {
       path: '/:id/update',
       method: 'POST',
@@ -590,11 +686,18 @@ module.exports = {
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       if (hasPermission) {
-        const data = await usersService.update({ userId: ctx.params.id, ...ctx.params, ctx });
+        const data = await usersService.update({
+          userId: ctx.params.id,
+          ...ctx.params,
+          ctx,
+        });
         return { status: 200, data };
       }
       const rAllowedPermissions = [];
@@ -610,6 +713,7 @@ module.exports = {
     },
   },
   updateUserAvatarRest: {
+    openapi: updateUserAvatarRest.openapi,
     rest: {
       path: '/:id/update-avatar',
       method: 'POST',
@@ -624,7 +728,10 @@ module.exports = {
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       if (hasPermission) {
@@ -648,6 +755,7 @@ module.exports = {
     },
   },
   updateUserAgentRest: {
+    openapi: updateUserAgentRest.openapi,
     rest: {
       path: '/user-agent/:id/update',
       method: 'POST',
@@ -662,7 +770,10 @@ module.exports = {
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       if (hasPermission) {
@@ -686,6 +797,7 @@ module.exports = {
     },
   },
   updateSessionConfigRest: {
+    openapi: updateSessionConfigRest.openapi,
     rest: {
       path: '/session/config',
       method: 'POST',
@@ -697,6 +809,7 @@ module.exports = {
     },
   },
   activateUserRest: {
+    openapi: activateUserRest.openapi,
     rest: {
       path: '/activate-user',
       method: 'POST',
@@ -721,6 +834,7 @@ module.exports = {
     },
   },
   sendWelcomeEmailToUserRest: {
+    openapi: sendWelcomeEmailToUserRest.openapi,
     rest: {
       path: '/activation-mail',
       method: 'POST',
@@ -748,6 +862,7 @@ module.exports = {
     },
   },
   disableUserAgentRest: {
+    openapi: disableUserAgentRest.openapi,
     rest: {
       path: '/user-agents/disable',
       method: 'POST',
@@ -768,6 +883,7 @@ module.exports = {
     },
   },
   activeUserAgentRest: {
+    openapi: activeUserAgentRest.openapi,
     rest: {
       path: '/user-agents/active',
       method: 'POST',

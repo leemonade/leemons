@@ -2,13 +2,15 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const _ = require('lodash');
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsValidator } = require('@leemons/validator');
 
-const { getManyWithLocale, getKeyStartsWith } = require('../../core/localization');
+const {
+  getManyWithLocale,
+  getKeyStartsWith,
+} = require('../../core/localization');
 const { resolveLocales } = require('../../core/locale');
 
 async function get({ ctx }) {
@@ -115,7 +117,12 @@ async function get({ ctx }) {
           ctx,
         }).then((_localizations) =>
           // Return in object format: { key: 'value' }
-          _.fromPairs(_localizations.map((localization) => [localization.key, localization.value]))
+          _.fromPairs(
+            _localizations.map((localization) => [
+              localization.key,
+              localization.value,
+            ])
+          )
         )
       )
     );
@@ -133,19 +140,28 @@ async function get({ ctx }) {
   return { items: resolvedLocalizations };
 }
 
+const getLoggedRest = require('./openapi/common/getLoggedRest');
+const getRest = require('./openapi/common/getRest');
+/** @type {ServiceSchema} */
 module.exports = {
   getLoggedRest: {
+    openapi: getLoggedRest.openapi,
     rest: {
       method: 'POST',
       path: '/logged',
     },
-    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
+    middlewares: [
+      LeemonsMiddlewareAuthenticated({
+        continueEvenThoughYouAreNotLoggedIn: true,
+      }),
+    ],
     async handler(ctx) {
       ctx.params.locale = await resolveLocales({ ctx });
       return get({ ctx });
     },
   },
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'POST',
       path: '/',

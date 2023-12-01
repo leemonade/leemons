@@ -18,16 +18,22 @@ const {
   getPluginNameWithVersionIfHaveFromServiceName,
   getPluginVersionFromServiceName,
 } = require('@leemons/service-name-parser');
-const { newTransaction, addTransactionState } = require('@leemons/transactions');
+const {
+  newTransaction,
+  addTransactionState,
+} = require('@leemons/transactions');
 const {
   mongoose: {
     mongo: { ObjectId },
   },
 } = require('@leemons/mongodb');
 
+const infoRest = require('./openapi/deployment-manager/infoRest');
+const addManualDeploymentRest = require('./openapi/deployment-manager/addManualDeploymentRest');
 /** @type {ServiceSchema} */
 module.exports = {
   infoRest: {
+    openapi: infoRest.openapi,
     rest: {
       method: 'POST',
       path: '/info',
@@ -43,12 +49,16 @@ module.exports = {
     },
     async handler(ctx) {
       const pluginName = ctx.params.name.replace('leemons-plugin-', '');
-      const plugin = await ctx.db.DeploymentPlugins.findOne({ pluginName }).lean();
-      if (plugin) return { name: plugin.pluginName, version: plugin.pluginVersion };
+      const plugin = await ctx.db.DeploymentPlugins.findOne({
+        pluginName,
+      }).lean();
+      if (plugin)
+        return { name: plugin.pluginName, version: plugin.pluginVersion };
       return null;
     },
   },
   addManualDeploymentRest: {
+    openapi: addManualDeploymentRest.openapi,
     dontCreateTransactionOnCallThisFunction: true,
     rest: {
       method: 'POST',
@@ -68,11 +78,15 @@ module.exports = {
     async handler(ctx) {
       if (!process.env.MANUAL_PASSWORD) {
         throw new LeemonsError(ctx, {
-          message: 'Disabled by default specify process.env.MANUAL_PASSWORD to be able to use it.',
+          message:
+            'Disabled by default specify process.env.MANUAL_PASSWORD to be able to use it.',
         });
       }
       if (ctx.params.password === process.env.MANUAL_PASSWORD) {
-        const domains = _.map(ctx.params.domains, (domain) => new URL(domain).hostname);
+        const domains = _.map(
+          ctx.params.domains,
+          (domain) => new URL(domain).hostname
+        );
 
         console.time('$node.services');
         const servicesRaw = await this.broker.call('$node.services', {
@@ -83,11 +97,14 @@ module.exports = {
         console.time('process');
         const servicesByVersionAndName = {};
         _.forEach(servicesRaw, (serviceRaw) => {
-          const serviceNameWithVersionIfHave = getPluginNameWithVersionIfHaveFromServiceName(
-            serviceRaw.fullName
-          );
+          const serviceNameWithVersionIfHave =
+            getPluginNameWithVersionIfHaveFromServiceName(serviceRaw.fullName);
           // eslint-disable-next-line no-prototype-builtins
-          if (!servicesByVersionAndName.hasOwnProperty(serviceNameWithVersionIfHave)) {
+          if (
+            !servicesByVersionAndName.hasOwnProperty(
+              serviceNameWithVersionIfHave
+            )
+          ) {
             servicesByVersionAndName[serviceNameWithVersionIfHave] = {
               actions: [],
               events: [],
@@ -140,7 +157,9 @@ module.exports = {
           .select(['id'])
           .lean();
         if (domainAlreadyUsed)
-          throw new LeemonsError(ctx, { message: 'One of this domains already in use' });
+          throw new LeemonsError(ctx, {
+            message: 'One of this domains already in use',
+          });
 
         console.timeEnd('Deployment.findOne');
         console.time('Deployment.create');
@@ -185,7 +204,10 @@ module.exports = {
         console.timeEnd('deployment-manager.savePlugins');
         // We simulate that the store adds the permissions between the actions of the
         console.time('deployment-manager.savePluginsRelationships');
-        await ctx.tx.call('deployment-manager.savePluginsRelationships', relationship);
+        await ctx.tx.call(
+          'deployment-manager.savePluginsRelationships',
+          relationship
+        );
         console.timeEnd('deployment-manager.savePluginsRelationships');
         // We simulate that the store tells us to start this deploymentID.
         console.time('deployment-manager.initDeployment');

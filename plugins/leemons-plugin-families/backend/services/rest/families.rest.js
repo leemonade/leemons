@@ -10,7 +10,14 @@ const {
 } = require('@leemons/middlewares');
 
 const { searchUsers } = require('../../core/users');
-const { add, update, detail, remove, list, listDetailPage } = require('../../core/families');
+const {
+  add,
+  update,
+  detail,
+  remove,
+  list,
+  listDetailPage,
+} = require('../../core/families');
 
 const memberValidation = {
   type: 'array',
@@ -54,9 +61,18 @@ const addUpdateFamilySchema = {
   },
 };
 
+const searchUsersRest = require('./openapi/families/searchUsersRest');
+const getDatasetFormRest = require('./openapi/families/getDatasetFormRest');
+const addRest = require('./openapi/families/addRest');
+const updateRest = require('./openapi/families/updateRest');
+const detailRest = require('./openapi/families/detailRest');
+const removeRest = require('./openapi/families/removeRest');
+const listRest = require('./openapi/families/listRest');
+const listDetailPageRest = require('./openapi/families/listDetailPageRest');
 /** @type {ServiceSchema} */
 module.exports = {
   searchUsersRest: {
+    openapi: searchUsersRest.openapi,
     rest: {
       method: 'POST',
       path: '/search-users',
@@ -89,6 +105,7 @@ module.exports = {
     },
   },
   getDatasetFormRest: {
+    openapi: getDatasetFormRest.openapi,
     rest: {
       method: 'GET',
       path: '/dataset-form',
@@ -112,10 +129,15 @@ module.exports = {
           locale: ctx.meta.userSession.locale,
         }
       );
-      return { status: 200, jsonSchema: compileJsonSchema, jsonUI: compileJsonUI };
+      return {
+        status: 200,
+        jsonSchema: compileJsonSchema,
+        jsonUI: compileJsonUI,
+      };
     },
   },
   addRest: {
+    openapi: addRest.openapi,
     rest: {
       method: 'POST',
       path: '/add',
@@ -142,6 +164,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'POST',
       path: '/update',
@@ -162,6 +185,7 @@ module.exports = {
     },
   },
   detailRest: {
+    openapi: detailRest.openapi,
     rest: {
       method: 'GET',
       path: '/detail/:id',
@@ -181,6 +205,7 @@ module.exports = {
     },
   },
   removeRest: {
+    openapi: removeRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/remove/:id',
@@ -209,6 +234,7 @@ module.exports = {
     },
   },
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       method: 'POST',
       path: '/list',
@@ -239,6 +265,7 @@ module.exports = {
     },
   },
   listDetailPageRest: {
+    openapi: listDetailPageRest.openapi,
     rest: {
       method: 'GET',
       path: '/list/detail/page/:user',

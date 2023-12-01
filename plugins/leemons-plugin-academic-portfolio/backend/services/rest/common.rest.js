@@ -10,7 +10,9 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { listClassesSubjects } = require('../../core/common/listClassesSubjects');
+const {
+  listClassesSubjects,
+} = require('../../core/common/listClassesSubjects');
 const {
   getTree,
   getClassesUnderNodeTree,
@@ -18,9 +20,16 @@ const {
   getStudentsByTags,
 } = require('../../core/common');
 
+const listClassSubjectsRest = require('./openapi/common/listClassSubjectsRest');
+const getTreeRest = require('./openapi/common/getTreeRest');
+const getClassesUnderNodeTreeRest = require('./openapi/common/getClassesUnderNodeTreeRest');
+const addStudentsToClassesUnderNodeTreeRest = require('./openapi/common/addStudentsToClassesUnderNodeTreeRest');
+const addTeachersToClassesUnderNodeTreeRest = require('./openapi/common/addTeachersToClassesUnderNodeTreeRest');
+const getStudentsByTagsRest = require('./openapi/common/getStudentsByTagsRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listClassSubjectsRest: {
+    openapi: listClassSubjectsRest.openapi,
     rest: {
       path: '/class-subjects',
       method: 'GET',
@@ -47,11 +56,17 @@ module.exports = {
     },
     async handler(ctx) {
       const { program, course, group } = ctx.params;
-      const { classes, subjects } = await listClassesSubjects({ program, course, group, ctx });
+      const { classes, subjects } = await listClassesSubjects({
+        program,
+        course,
+        group,
+        ctx,
+      });
       return { status: 200, classes, subjects };
     },
   },
   getTreeRest: {
+    openapi: getTreeRest.openapi,
     rest: {
       path: '/tree',
       method: 'GET',
@@ -83,6 +98,7 @@ module.exports = {
     },
   },
   getClassesUnderNodeTreeRest: {
+    openapi: getClassesUnderNodeTreeRest.openapi,
     rest: {
       path: '/classes-under-node-tree',
       method: 'GET',
@@ -109,11 +125,17 @@ module.exports = {
           .replaceAll(' ', '')
           .split(',');
       }
-      const classes = await getClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, ctx });
+      const classes = await getClassesUnderNodeTree({
+        nodeTypes,
+        nodeType,
+        nodeId,
+        ctx,
+      });
       return { status: 200, classes };
     },
   },
   addStudentsToClassesUnderNodeTreeRest: {
+    openapi: addStudentsToClassesUnderNodeTreeRest.openapi,
     rest: {
       path: '/add-students-to-classes-under-node-tree',
       method: 'POST',
@@ -140,11 +162,17 @@ module.exports = {
           .replaceAll(' ', '')
           .split(',');
       }
-      const classes = await getClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, ctx });
+      const classes = await getClassesUnderNodeTree({
+        nodeTypes,
+        nodeType,
+        nodeId,
+        ctx,
+      });
       return { status: 200, classes };
     },
   },
   addTeachersToClassesUnderNodeTreeRest: {
+    openapi: addTeachersToClassesUnderNodeTreeRest.openapi,
     rest: {
       path: '/add-teachers-to-classes-under-node-tree',
       method: 'POST',
@@ -180,6 +208,7 @@ module.exports = {
     },
   },
   getStudentsByTagsRest: {
+    openapi: getStudentsByTagsRest.openapi,
     rest: {
       path: '/students/by/tags',
       method: 'POST',

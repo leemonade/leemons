@@ -14,7 +14,9 @@ const { duplicate } = require('../../core/assets/duplicate');
 const { remove } = require('../../core/assets/remove');
 const { getByUser } = require('../../core/assets/getByUser');
 const { getByIds } = require('../../core/assets/getByIds');
-const { getByAsset: getPermissions } = require('../../core/permissions/getByAsset');
+const {
+  getByAsset: getPermissions,
+} = require('../../core/permissions/getByAsset');
 const { getUsersByAsset } = require('../../core/permissions/getUsersByAsset');
 const canAssignRole = require('../../core/permissions/helpers/canAssignRole');
 const { getByCategory } = require('../../core/permissions/getByCategory');
@@ -25,9 +27,23 @@ const { getByUser: getPinsByUser } = require('../../core/pins/getByUser');
 const { setAsset } = require('../../core/assets/set');
 const { prepareAsset } = require('../../core/assets/prepareAsset');
 
+const addRest = require('./openapi/assets/addRest');
+const updateRest = require('./openapi/assets/updateRest');
+const removeRest = require('./openapi/assets/removeRest');
+const duplicateRest = require('./openapi/assets/duplicateRest');
+const myRest = require('./openapi/assets/myRest');
+const getRest = require('./openapi/assets/getRest');
+const listRest = require('./openapi/assets/listRest');
+const listByIdsRest = require('./openapi/assets/listByIdsRest');
+const urlMetadataRest = require('./openapi/assets/urlMetadataRest');
+const addPinRest = require('./openapi/assets/addPinRest');
+const removePinRest = require('./openapi/assets/removePinRest');
+const pinsRest = require('./openapi/assets/pinsRest');
+const hasPinsRest = require('./openapi/assets/hasPinsRest');
 /** @type {ServiceSchema} */
 module.exports = {
   addRest: {
+    openapi: addRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -39,6 +55,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       path: '/:id',
       method: 'PUT',
@@ -50,6 +67,7 @@ module.exports = {
     },
   },
   removeRest: {
+    openapi: removeRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',
@@ -62,13 +80,19 @@ module.exports = {
     },
   },
   duplicateRest: {
+    openapi: duplicateRest.openapi,
     rest: {
       path: '/:id',
       method: 'POST',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { id: assetId, preserveName, indexable, public: isPublic } = ctx.params;
+      const {
+        id: assetId,
+        preserveName,
+        indexable,
+        public: isPublic,
+      } = ctx.params;
 
       const asset = await duplicate({
         assetId,
@@ -81,6 +105,7 @@ module.exports = {
     },
   },
   myRest: {
+    openapi: myRest.openapi,
     rest: {
       path: '/my',
       method: 'GET',
@@ -93,6 +118,7 @@ module.exports = {
   },
   // ! xapi ? middleware?
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       path: '/:id',
       method: 'GET',
@@ -108,10 +134,16 @@ module.exports = {
       });
 
       if (!asset) {
-        throw new LeemonsError(ctx, { message: 'Asset not found', httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: 'Asset not found',
+          httpStatusCode: 400,
+        });
       }
 
-      const { role: assignerRole, permissions } = await getPermissions({ assetId, ctx });
+      const { role: assignerRole, permissions } = await getPermissions({
+        assetId,
+        ctx,
+      });
 
       if (!permissions?.view) {
         throw new LeemonsError(ctx, {
@@ -142,6 +174,7 @@ module.exports = {
     },
   },
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       path: '/list',
       method: 'GET',
@@ -220,6 +253,7 @@ module.exports = {
     },
   },
   listByIdsRest: {
+    openapi: listByIdsRest.openapi,
     rest: {
       path: '/list',
       method: 'POST',
@@ -270,6 +304,7 @@ module.exports = {
     },
   },
   urlMetadataRest: {
+    openapi: urlMetadataRest.openapi,
     rest: {
       path: '/url-metadata',
       method: 'GET',
@@ -278,7 +313,10 @@ module.exports = {
     async handler(ctx) {
       const { url } = ctx.params;
       if (_.isEmpty(url)) {
-        throw new LeemonsError(ctx, { message: 'Url is required', httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: 'Url is required',
+          httpStatusCode: 400,
+        });
       }
       let metas = {};
       try {
@@ -287,13 +325,16 @@ module.exports = {
         metas = await metascraper({ html, url });
       } catch (e) {
         ctx.logger.error(e);
-        throw new LeemonsError(ctx, { message: `Error getting URL metadata: ${url}` });
+        throw new LeemonsError(ctx, {
+          message: `Error getting URL metadata: ${url}`,
+        });
       }
 
       return { status: 200, metas };
     },
   },
   addPinRest: {
+    openapi: addPinRest.openapi,
     rest: {
       path: '/pins',
       method: 'POST',
@@ -302,13 +343,17 @@ module.exports = {
     async handler(ctx) {
       const { asset: assetId } = ctx.params;
       if (!assetId || _.isEmpty(assetId)) {
-        throw new LeemonsError(ctx, { message: 'Asset id is required', httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: 'Asset id is required',
+          httpStatusCode: 400,
+        });
       }
       const pin = await addPin({ assetId, ctx });
       return { status: 200, pin };
     },
   },
   removePinRest: {
+    openapi: removePinRest.openapi,
     rest: {
       path: '/pins/:id',
       method: 'DELETE',
@@ -321,13 +366,21 @@ module.exports = {
     },
   },
   pinsRest: {
+    openapi: pinsRest.openapi,
     rest: {
       path: '/pins',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { criteria, type, published, preferCurrent, showPublic, providerQuery } = ctx.params;
+      const {
+        criteria,
+        type,
+        published,
+        preferCurrent,
+        showPublic,
+        providerQuery,
+      } = ctx.params;
 
       const _providerQuery = JSON.parse(providerQuery || null);
       const assetPublished = ['true', true, '1', 1].includes(published);
@@ -353,6 +406,7 @@ module.exports = {
     },
   },
   hasPinsRest: {
+    openapi: hasPinsRest.openapi,
     rest: {
       path: '/has-pins',
       method: 'GET',

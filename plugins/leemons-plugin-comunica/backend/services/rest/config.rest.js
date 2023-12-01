@@ -21,9 +21,17 @@ const {
 } = require('../../core/config');
 
 // TODO AÑADIR PERMISOS
+const getGeneralConfigRest = require('./openapi/config/getGeneralConfigRest');
+const getCenterConfigRest = require('./openapi/config/getCenterConfigRest');
+const getProgramConfigRest = require('./openapi/config/getProgramConfigRest');
+const getRest = require('./openapi/config/getRest');
+const saveRest = require('./openapi/config/saveRest');
+const getAdminConfigRest = require('./openapi/config/getAdminConfigRest');
+const saveAdminConfigRest = require('./openapi/config/saveAdminConfigRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getGeneralConfigRest: {
+    openapi: getGeneralConfigRest.openapi,
     rest: {
       path: '/general',
       method: 'GET',
@@ -35,6 +43,7 @@ module.exports = {
     },
   },
   getCenterConfigRest: {
+    openapi: getCenterConfigRest.openapi,
     rest: {
       path: '/center/:center',
       method: 'GET',
@@ -46,6 +55,7 @@ module.exports = {
     },
   },
   getProgramConfigRest: {
+    openapi: getProgramConfigRest.openapi,
     rest: {
       path: '/program/:program',
       method: 'GET',
@@ -57,17 +67,22 @@ module.exports = {
     },
   },
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const config = await get({ userAgent: ctx.meta.userSession.userAgents[0].id, ctx });
+      const config = await get({
+        userAgent: ctx.meta.userSession.userAgents[0].id,
+        ctx,
+      });
       return { status: 200, config };
     },
   },
   saveRest: {
+    openapi: saveRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -83,6 +98,7 @@ module.exports = {
     },
   },
   getAdminConfigRest: {
+    openapi: getAdminConfigRest.openapi,
     rest: {
       path: '/admin/config/:center',
       method: 'GET',
@@ -106,6 +122,7 @@ module.exports = {
     },
   },
   saveAdminConfigRest: {
+    openapi: saveAdminConfigRest.openapi,
     rest: {
       path: '/admin/config/:center',
       method: 'POST',

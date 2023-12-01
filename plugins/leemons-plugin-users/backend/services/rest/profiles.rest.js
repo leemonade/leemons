@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const {
   LeemonsMiddlewareAuthenticated,
@@ -51,8 +50,16 @@ const translationsValidations = {
   },
 };
 
+const listRest = require('./openapi/profiles/listRest');
+const addRest = require('./openapi/profiles/addRest');
+const detailRest = require('./openapi/profiles/detailRest');
+const updateRest = require('./openapi/profiles/updateRest');
+const getProfileSysNameRest = require('./openapi/profiles/getProfileSysNameRest');
+const addAllPermissionsToAllProfilesRest = require('./openapi/profiles/addAllPermissionsToAllProfilesRest');
+/** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       path: '/list',
       method: 'POST',
@@ -77,7 +84,9 @@ module.exports = {
             { type: 'boolean' },
             {
               type: 'object',
-              properties: { columns: { type: 'array', items: { type: 'string' } } },
+              properties: {
+                columns: { type: 'array', items: { type: 'string' } },
+              },
             },
           ],
         },
@@ -92,6 +101,7 @@ module.exports = {
     },
   },
   addRest: {
+    openapi: addRest.openapi,
     rest: {
       path: '/add',
       method: 'POST',
@@ -123,6 +133,7 @@ module.exports = {
     },
   },
   detailRest: {
+    openapi: detailRest.openapi,
     rest: {
       path: '/detail/:uri',
       method: 'GET',
@@ -151,6 +162,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       path: '/update',
       method: 'POST',
@@ -183,6 +195,7 @@ module.exports = {
     },
   },
   getProfileSysNameRest: {
+    openapi: getProfileSysNameRest.openapi,
     rest: {
       path: '/sysName',
       method: 'GET',
@@ -194,6 +207,7 @@ module.exports = {
     },
   },
   addAllPermissionsToAllProfilesRest: {
+    openapi: addAllPermissionsToAllProfilesRest.openapi,
     rest: {
       path: '/add-all-permissions-to-all-profiles',
       method: 'POST',

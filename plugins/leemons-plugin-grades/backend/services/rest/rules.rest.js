@@ -19,10 +19,15 @@ const {
   processRulesForUserAgent,
 } = require('../../core/rules');
 
+const listRulesRest = require('./openapi/rules/listRulesRest');
+const haveRulesRest = require('./openapi/rules/haveRulesRest');
+const deleteRuleRest = require('./openapi/rules/deleteRuleRest');
+const postRuleProcessRest = require('./openapi/rules/postRuleProcessRest');
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   listRulesRest: {
+    openapi: listRulesRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -52,6 +57,7 @@ module.exports = {
     },
   },
   haveRulesRest: {
+    openapi: haveRulesRest.openapi,
     rest: {
       path: '/have',
       method: 'GET',
@@ -85,6 +91,7 @@ module.exports = {
     },
   },
   deleteRuleRest: {
+    openapi: deleteRuleRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',
@@ -96,6 +103,7 @@ module.exports = {
     },
   },
   postRuleProcessRest: {
+    openapi: postRuleProcessRest.openapi,
     rest: {
       path: '/process',
       method: 'POST',

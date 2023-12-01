@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -10,8 +9,13 @@ const {
 
 const { list, add, remove } = require('../../core/centers');
 
+const listRest = require('./openapi/centers/listRest');
+const addRest = require('./openapi/centers/addRest');
+const removeRest = require('./openapi/centers/removeRest');
+/** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -39,7 +43,9 @@ module.exports = {
             { type: 'boolean' },
             {
               type: 'object',
-              properties: { columns: { type: 'array', items: { type: 'string' } } },
+              properties: {
+                columns: { type: 'array', items: { type: 'string' } },
+              },
             },
           ],
         },
@@ -55,6 +61,7 @@ module.exports = {
     },
   },
   addRest: {
+    openapi: addRest.openapi,
     rest: {
       path: '/add',
       method: 'POST',
@@ -80,6 +87,7 @@ module.exports = {
     },
   },
   removeRest: {
+    openapi: removeRest.openapi,
     rest: {
       path: '/remove',
       method: 'POST',

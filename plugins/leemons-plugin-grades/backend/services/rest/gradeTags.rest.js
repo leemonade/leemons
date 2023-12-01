@@ -11,12 +11,20 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { addGradeTag, updateGradeTag, removeGradeTag } = require('../../core/grade-tags');
+const {
+  addGradeTag,
+  updateGradeTag,
+  removeGradeTag,
+} = require('../../core/grade-tags');
 
+const postGradeTagRest = require('./openapi/gradeTags/postGradeTagRest');
+const putGradeTagRest = require('./openapi/gradeTags/putGradeTagRest');
+const removeGradeTagRest = require('./openapi/gradeTags/removeGradeTagRest');
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   postGradeTagRest: {
+    openapi: postGradeTagRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -28,6 +36,7 @@ module.exports = {
     },
   },
   putGradeTagRest: {
+    openapi: putGradeTagRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -39,6 +48,7 @@ module.exports = {
     },
   },
   removeGradeTagRest: {
+    openapi: removeGradeTagRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',

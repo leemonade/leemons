@@ -11,9 +11,11 @@ const {
 
 const { updateCycle } = require('../../core/cycle');
 
+const putCycleRest = require('./openapi/cycle/putCycleRest');
 /** @type {ServiceSchema} */
 module.exports = {
   putCycleRest: {
+    openapi: putCycleRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',

@@ -15,9 +15,15 @@ const has = require('../../core/config/has');
 const update = require('../../core/config/update');
 const deleteOne = require('../../core/config/delete');
 
+const createRest = require('./openapi/config/createRest');
+const getRest = require('./openapi/config/getRest');
+const hasRest = require('./openapi/config/hasRest');
+const updateRest = require('./openapi/config/updateRest');
+const deleteRest = require('./openapi/config/deleteRest');
 /** @type {ServiceSchema} */
 module.exports = {
   createRest: {
+    openapi: createRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -41,6 +47,7 @@ module.exports = {
     },
   },
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -69,6 +76,7 @@ module.exports = {
     },
   },
   hasRest: {
+    openapi: hasRest.openapi,
     rest: {
       method: 'GET',
       path: '/has',
@@ -97,6 +105,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'PUT',
       path: '/',
@@ -120,6 +129,7 @@ module.exports = {
     },
   },
   deleteRest: {
+    openapi: deleteRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/',

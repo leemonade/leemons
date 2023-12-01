@@ -9,11 +9,17 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 const { getConfig, saveConfig } = require('../../core/config');
-const { listRegionalConfigs, saveRegionalConfig } = require('../../core/regional-config');
+const {
+  listRegionalConfigs,
+  saveRegionalConfig,
+} = require('../../core/regional-config');
 
+const listRest = require('./openapi/regionalConfig/listRest');
+const saveRest = require('./openapi/regionalConfig/saveRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       method: 'GET',
       path: '/list/:center',
@@ -40,6 +46,7 @@ module.exports = {
     },
   },
   saveRest: {
+    openapi: saveRest.openapi,
     rest: {
       method: 'POST',
       path: '/save',

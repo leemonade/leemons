@@ -10,9 +10,13 @@ const {
 } = require('@leemons/middlewares');
 const organizationService = require('../../core/organization');
 
+const getRest = require('./openapi/organization/getRest');
+const postRest = require('./openapi/organization/postRest');
+const getJsonThemeRest = require('./openapi/organization/getJsonThemeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -44,6 +48,7 @@ module.exports = {
     },
   },
   postRest: {
+    openapi: postRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -75,6 +80,7 @@ module.exports = {
     },
   },
   getJsonThemeRest: {
+    openapi: getJsonThemeRest.openapi,
     rest: {
       method: 'GET',
       path: '/jsonTheme',

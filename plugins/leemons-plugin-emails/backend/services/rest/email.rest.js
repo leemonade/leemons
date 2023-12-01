@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const {
   LeemonsMiddlewareAuthenticated,
@@ -33,8 +32,15 @@ const validateRemoveProviderConfigObj = {
   additionalProperties: false,
 };
 
+const providersRest = require('./openapi/email/providersRest');
+const sendTestRest = require('./openapi/email/sendTestRest');
+const sendCustomTestRest = require('./openapi/email/sendCustomTestRest');
+const saveProviderRest = require('./openapi/email/saveProviderRest');
+const removeProviderRest = require('./openapi/email/removeProviderRest');
+/** @type {ServiceSchema} */
 module.exports = {
   providersRest: {
+    openapi: providersRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -55,6 +61,7 @@ module.exports = {
     },
   },
   sendTestRest: {
+    openapi: sendTestRest.openapi,
     rest: {
       method: 'POST',
       path: '/send-test',
@@ -74,6 +81,7 @@ module.exports = {
     },
   },
   sendCustomTestRest: {
+    openapi: sendCustomTestRest.openapi,
     rest: {
       method: 'POST',
       path: '/send-custom-test',
@@ -103,6 +111,7 @@ module.exports = {
     },
   },
   saveProviderRest: {
+    openapi: saveProviderRest.openapi,
     rest: {
       method: 'POST',
       path: '/save-provider',
@@ -124,6 +133,7 @@ module.exports = {
     },
   },
   removeProviderRest: {
+    openapi: removeProviderRest.openapi,
     rest: {
       method: 'POST',
       path: '/remove-provider',

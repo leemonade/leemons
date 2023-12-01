@@ -26,9 +26,17 @@ function parseTaskObject(ctx) {
   return task;
 }
 
+const createRest = require('./openapi/tasks/createRest');
+const updateRest = require('./openapi/tasks/updateRest');
+const getRest = require('./openapi/tasks/getRest');
+const duplicateRest = require('./openapi/tasks/duplicateRest');
+const removeRest = require('./openapi/tasks/removeRest');
+const publishRest = require('./openapi/tasks/publishRest');
+const searchRest = require('./openapi/tasks/searchRest');
 /** @type {ServiceSchema} */
 module.exports = {
   createRest: {
+    openapi: createRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -51,6 +59,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'PUT',
       path: '/:id',
@@ -72,6 +81,7 @@ module.exports = {
     },
   },
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/:id',
@@ -106,6 +116,7 @@ module.exports = {
     },
   },
   duplicateRest: {
+    openapi: duplicateRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id/duplicate',
@@ -129,6 +140,7 @@ module.exports = {
     },
   },
   removeRest: {
+    openapi: removeRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',
@@ -154,6 +166,7 @@ module.exports = {
     },
   },
   publishRest: {
+    openapi: publishRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id/publish',
@@ -179,6 +192,7 @@ module.exports = {
     },
   },
   searchRest: {
+    openapi: searchRest.openapi,
     rest: {
       method: 'GET',
       path: '/search',

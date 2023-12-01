@@ -11,13 +11,22 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 const { listGrades } = require('../../core/grades');
-const { listRules, addRule, updateRule, removeRule } = require('../../core/rules');
+const {
+  listRules,
+  addRule,
+  updateRule,
+  removeRule,
+} = require('../../core/rules');
 const { findOne, update } = require('../../core/settings');
 
+const findOneRest = require('./openapi/settings/findOneRest');
+const updateRest = require('./openapi/settings/updateRest');
+const enableMenuItemRest = require('./openapi/settings/enableMenuItemRest');
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   findOneRest: {
+    openapi: findOneRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -38,6 +47,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -74,6 +84,7 @@ module.exports = {
     },
   },
   enableMenuItemRest: {
+    openapi: enableMenuItemRest.openapi,
     rest: {
       path: '/enable-menu-item',
       method: 'POST',

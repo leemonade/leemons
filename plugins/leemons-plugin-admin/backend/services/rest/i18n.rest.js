@@ -2,13 +2,15 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const path = require('path');
 const fs = require('fs/promises');
 
+const getLangRest = require('./openapi/i18n/getLangRest');
+/** @type {ServiceSchema} */
 module.exports = {
   getLangRest: {
+    openapi: getLangRest.openapi,
     rest: {
       method: 'GET',
       path: '/:page/:lang',
