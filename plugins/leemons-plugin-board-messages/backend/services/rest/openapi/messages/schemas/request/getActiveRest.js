@@ -1,14 +1,10 @@
-// automatic hash: e49fd574a79622f913a82a54a980a1eb8d0c75c2c5941f87f72cd71bb33793aa
+// automatic hash: 7c6ed05a06be076802eaad1186d5116bb7686edd8805c8da5098fe74cbe5b95c
 const schema = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   description: '',
   type: 'object',
   properties: {
     center: {
-      type: 'string',
-      minLength: 1,
-    },
-    classe: {
       type: 'string',
       minLength: 1,
     },
@@ -21,7 +17,7 @@ const schema = {
       minLength: 1,
     },
   },
-  required: ['center', 'classe', 'program', 'zone'],
+  required: ['center', 'program', 'zone'],
 };
 
 module.exports = { schema };

@@ -1,4 +1,4 @@
-// automatic hash: b45bc12bbb4a3645ec9e70e05b7bd82fa58d264fbee668c48fe142568db3a203
+// automatic hash: d9cfd1d7606a8c700367b545db5c87fa7beae16cf7d4072a6925a299d0021276
 const schema = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   description: '',
@@ -60,6 +60,7 @@ const schema = {
               'pluginName',
               'isDeleted',
               '__v',
+              'order',
             ],
             properties: {
               _id: {
@@ -113,6 +114,9 @@ const schema = {
                 required: [],
               },
               __v: {
+                type: 'number',
+              },
+              order: {
                 type: 'number',
               },
             },

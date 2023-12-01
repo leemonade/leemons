@@ -1,4 +1,4 @@
-// automatic hash: 2ff0326ef9a0f463670affaa92ec1f588e1c9a0db9c387e9733c2c4f15d56cce
+// automatic hash: 4c7c76dd27ca29c906f57ea53c7e5dcfee8ef33b49c668cf70b16b01e0b93a84
 const schema = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   description: '',
@@ -45,20 +45,12 @@ const schema = {
                   type: 'string',
                   minLength: 1,
                 },
-                name: {
-                  type: 'string',
-                  minLength: 1,
-                },
-                program: {
-                  type: 'string',
-                  minLength: 1,
-                },
-                type: {
+                ip: {
                   type: 'string',
                   minLength: 1,
                 },
               },
-              required: ['id', 'name', 'program', 'type'],
+              required: ['id', 'ip'],
             },
             description: {
               type: 'object',

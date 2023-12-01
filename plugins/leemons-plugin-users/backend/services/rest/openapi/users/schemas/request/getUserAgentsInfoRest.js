@@ -1,18 +1,24 @@
-// automatic hash: e024e974686c76c2435f7f86f61fffd61f85fffba1f89558bef753e39b7b5386
+// automatic hash: dddb9cc9511799955244bcc532eba79d0e26467074775721346ebee94886697c
 const schema = {
   $schema: 'http://json-schema.org/draft-04/schema#',
   description: '',
   type: 'object',
   properties: {
     ids: {
-      type: 'array',
-      items: {
-        required: [],
-        properties: {},
+      type: 'string',
+      minLength: 1,
+    },
+    options: {
+      type: 'object',
+      properties: {
+        withProfile: {
+          type: 'boolean',
+        },
       },
+      required: ['withProfile'],
     },
   },
-  required: ['ids'],
+  required: ['ids', 'options'],
 };
 
 module.exports = { schema };
