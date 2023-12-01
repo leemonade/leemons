@@ -84,9 +84,14 @@ async function modifyCTX(
     if (actionCallCache[ctx.meta.deploymentID][cacheKey]) {
       manager = actionCallCache[ctx.meta.deploymentID][cacheKey];
     } else {
+      let hasTransaction = false;
+      if (ctx.meta.transactionID) hasTransaction = true;
       manager = await ctx.__leemonsDeploymentManagerCall('deployment-manager.getGoodActionToCall', {
         actionName,
       });
+      if (ctx.meta.transactionID && !hasTransaction) {
+        delete ctx.meta.transactionID;
+      }
       actionCallCache[ctx.meta.deploymentID][cacheKey] = manager;
     }
 
@@ -156,11 +161,16 @@ module.exports = function ({
 
                   const cacheKey = ctx.caller + ctx.action.name + ctx.meta.relationshipID;
                   if (actionCanCache[ctx.meta.deploymentID].indexOf(cacheKey) === -1) {
+                    let hasTransaction = false;
+                    if (ctx.meta.transactionID) hasTransaction = true;
                     await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
                       fromService: ctx.caller,
                       toAction: ctx.action.name,
                       relationshipID: ctx.meta.relationshipID,
                     });
+                    if (ctx.meta.transactionID && !hasTransaction) {
+                      delete ctx.meta.transactionID;
+                    }
                     actionCanCache[ctx.meta.deploymentID].push(cacheKey);
                   }
                 }
