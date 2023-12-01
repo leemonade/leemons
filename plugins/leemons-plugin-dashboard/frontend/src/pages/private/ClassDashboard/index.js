@@ -142,21 +142,20 @@ export default function ClassDashboard({ session }) {
       const group = programClass.groups?.isAlone
         ? null
         : programClass.groups
-        ? programClass.groups.abbreviation
-        : null;
+          ? programClass.groups.abbreviation
+          : null;
       return {
         id: programClass.id,
         color: programClass.color,
         image: getClassImage(programClass),
         icon: getClassIcon(programClass),
         label: programClass.subject.name,
-        description: `${
-          programClass.courses
+        description: `${programClass.courses
             ? courseMultiple
               ? `${t('multipleCourses')} - ${programClass.subject.internalId}`
               : `${programClass.courses?.index}${programClass.subject.internalId}`
             : ''
-        } ${group ? `- ${group}` : ''}`,
+          } ${group ? `- ${group}` : ''}`,
       };
     });
 
@@ -179,7 +178,6 @@ export default function ClassDashboard({ session }) {
   }
 
   async function onGetRightZone(zone) {
-    console.log('zone', zone);
     store.rightZone = zone;
     if (zone.widgetItems && zone.widgetItems.length) {
       const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });

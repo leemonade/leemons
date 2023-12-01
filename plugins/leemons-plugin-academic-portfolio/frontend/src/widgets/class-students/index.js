@@ -45,7 +45,6 @@ function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) 
   React.useEffect(() => {
     if (_label) getLabel();
   }, [_label]);
-  console.log('render padre');
 
   return (
     <>

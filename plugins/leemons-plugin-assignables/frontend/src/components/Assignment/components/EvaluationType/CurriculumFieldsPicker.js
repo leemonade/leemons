@@ -13,8 +13,6 @@ export function CurriculumFieldsPicker({ curriculumFields, onChange, value }) {
     [curriculumFields, value]
   );
 
-  console.log('Final curriculum data', data);
-
   return <CheckBoxGroup data={data} checked={value} onChange={onChange} direction="column" />;
 }
 CurriculumFieldsPicker.propTypes = {

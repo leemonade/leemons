@@ -337,6 +337,14 @@ module.exports = {
       score: 'Correct answers',
       activityType: 'Activity type',
     },
+    deadline: {
+      opened: 'Opened',
+      programmed: 'Programmed',
+      daysRemaining: '{{count}} days remaining',
+      hoursRemaining: '{{count}} hours remaining',
+      late: 'Late',
+      noDeadline: 'No deadline',
+    },
     status: {
       evaluated: 'See evaluation',
       submission: 'Submission',

@@ -3,7 +3,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import { isFunction } from 'lodash';
-import { AvatarsGroup, Box, Button, FileIcon, Text } from '@bubbles-ui/components';
+import { AvatarsGroup, Box, FileIcon, Text } from '@bubbles-ui/components';
 import { LibraryCardFooterStyles } from './LibraryCardFooter.styles';
 import { LIBRARY_CARD_FOOTER_PROP_TYPES } from './LibraryCardFooter.constants';
 
@@ -13,7 +13,6 @@ const LibraryCardFooter = ({
   canAccess,
   classesCanAccess,
   action,
-  onAction,
   className,
   style,
   variant,
@@ -24,11 +23,6 @@ const LibraryCardFooter = ({
     { action, size: 12, color: '#636D7D' },
     { name: 'LibraryCardFooter' }
   );
-
-  const handleOnAction = () => {
-    if (isFunction(onAction)) return onAction();
-    return null;
-  };
 
   const variantIconLabel =
     (variantTitle ?? fileType ?? variant)?.charAt(0)?.toUpperCase() +

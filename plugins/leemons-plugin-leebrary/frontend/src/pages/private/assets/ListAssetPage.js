@@ -28,7 +28,7 @@ const ListPageStyles = createStyles((theme) => ({
   original: {
     display: 'flex',
     flex: 1,
-    height: '100%',
+    minHeight: '100%',
     paddingTop: theme.spacing[5],
     paddingBottom: theme.spacing[5],
     paddingLeft: theme.spacing[8],
