@@ -359,7 +359,11 @@ const mixin = ({
           if (!err.message.includes('LeemonsMiddlewareAuthenticated')) {
             console.error('[MongoDB Hook Error] - ', err);
           }
-          if (autoRollback && ctx.meta.transactionID) {
+          if (
+            autoRollback &&
+            ctx.meta.transactionID &&
+            ctx.id === ctx.meta.transactionExecutionId
+          ) {
             if (waitToRollbackFinishOnError) {
               await rollbackTransaction(ctx);
             } else {
@@ -399,7 +403,11 @@ const mixin = ({
         value(params, opts, {
           onError: async (ctx, err) => {
             console.error('[MongoDB Event Error] - ', err);
-            if (autoRollback && ctx.meta.transactionID) {
+            if (
+              autoRollback &&
+              ctx.meta.transactionID &&
+              ctx.id === ctx.meta.transactionExecutionId
+            ) {
               if (waitToRollbackFinishOnError) {
                 await rollbackTransaction(ctx);
               } else {

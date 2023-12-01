@@ -16,6 +16,9 @@ const deploymentSchema = new mongoose.Schema(
       type: [String],
       required: true,
     },
+    config: {
+      type: mongoose.Schema.Types.Mixed,
+    },
   },
   {
     timestamps: true,

@@ -5,6 +5,7 @@ async function createTransactionIDIfNeed({ ignoreTransaction, autoTransaction, c
     if (!ctx.meta.transactionID) {
       if (autoTransaction) {
         ctx.meta.transactionID = await newTransaction(ctx);
+        ctx.meta.transactionExecutionId = ctx.id;
 
         if (process.env.DEBUG === true)
           console.log(
