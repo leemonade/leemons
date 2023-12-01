@@ -1,6 +1,6 @@
 const mixin = require('./mixin');
 const { createOpenapiResponse } = require('./createOpenapiResponse');
-const { createOpenapiFiles } = require('./createOpenapiFiles');
+const { createOpenapiFiles } = require('./lib/createOpenapiFiles');
 
 module.exports = {
   LeemonsOpenApiMixin: mixin,

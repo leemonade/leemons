@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 const swaggerUiAssetPath = require('swagger-ui-dist').getAbsoluteFSPath();
 const fs = require('fs');
+const _ = require('lodash');
+
 const convert = require('@openapi-contrib/json-schema-to-openapi-schema').default;
 
 const UNRESOLVED_ACTION_NAME = 'unknown-action';
@@ -379,7 +381,7 @@ const mixin = {
       return this.broker.call(`${service}.listAliases`);
     },
     async generateSchema() {
-      const doc = JSON.parse(JSON.stringify(this.settings.openapi));
+      const doc = _.cloneDeep(this.settings.openapi);
 
       const nodes = await this.fetchServicesWithActions();
 
@@ -522,16 +524,18 @@ const mixin = {
     },
     attachRoutesToDoc(routes, doc) {
       // route to openapi paths
-      Object.keys(routes).forEach((action) => {
-        const { paths, params, actionType, openapi = {} } = routes[action];
-        const service = action.split('.').slice(0, -1).join('.');
+      Object.keys(routes)
+        .sort()
+        .forEach((action) => {
+          const { paths, params, actionType, openapi = {} } = routes[action];
+          const service = action.split('.').slice(0, -1).join('.');
 
-        this.addTagToDoc(doc, service);
+          this.addTagToDoc(doc, service);
 
-        paths.forEach((path) => {
-          this.processPath(path, doc, service, params, actionType, openapi, action);
+          paths.forEach((path) => {
+            this.processPath(path, doc, service, params, actionType, openapi, action);
+          });
         });
-      });
     },
     processPath(path, doc, service, params, actionType, openapi, action) {
       // parse method and path from: POST /api/table

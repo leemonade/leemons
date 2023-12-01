@@ -125,7 +125,7 @@ function findFunctionInController(filePath, controllerName) {
   const controllerNode = findControllerNode(ast, controllerName);
 
   if (!controllerNode) {
-    console.warn('\x1b[31m', `Openapi: Controller "${controllerName}" not found in "${filePath}"`);
+    console.warn('\x1b[33m', `Openapi: Controller "${controllerName}" not found in "${filePath}"`);
     return [];
   }
 
@@ -163,7 +163,7 @@ function findAndReadFile(filePath) {
     }
     return [filePath, readFile(filePath)];
   } catch (error) {
-    console.error('\x1b[31m', 'Openapi: findAndReadFile Error:', error);
+    console.error('\x1b[31m', 'Openapi: findAndReadFile Error:', error, '\x1b[37m');
     return [filePath, ''];
   }
 }
@@ -177,11 +177,11 @@ function findAndReadFile(filePath) {
  * @returns {Object} An object containing the new code context and the set of concatenated files.
  */
 function minimizeAndConcatenateFiles(codeContext, filePath, fileContent, concatenatedFiles) {
-  if (!concatenatedFiles.has(filePath)) {
-    const minimizedContent = UglifyJS.minify(fileContent, { keep_fnames: true });
-    concatenatedFiles.add(filePath);
-    codeContext.push(filePath, minimizedContent);
-  }
+  if (concatenatedFiles.has(filePath)) return false;
+
+  const minimizedContent = UglifyJS.minify(fileContent, { keep_fnames: true });
+  concatenatedFiles.add(filePath);
+  codeContext.push(filePath, minimizedContent);
   return { codeContext, concatenatedFiles };
 }
 
@@ -255,21 +255,25 @@ function getRequiredFiles(filePath, variableRequired, _concatenatedFiles = new S
   let concatenatedFiles = _concatenatedFiles;
 
   const [_filePath, fileContent] = findAndReadFile(filePath);
-  const requires = extractRequiredVariables(fileContent);
-
   let codeContext = [];
 
-  ({ codeContext, concatenatedFiles } = minimizeAndConcatenateFiles(
+  const minimizeReturn = minimizeAndConcatenateFiles(
     codeContext,
     _filePath,
     fileContent,
     concatenatedFiles
-  ));
+  );
+  if (minimizeReturn === false) return [];
+
+  ({ codeContext, concatenatedFiles } = minimizeReturn);
+
+  const requires = extractRequiredVariables(fileContent);
 
   const realRequires = getRealRequires(fileContent, _filePath, requires, variableRequired);
 
   Object.entries(realRequires).forEach(([matchingVariable, matchingPath]) => {
     const requiredPath = path.join(path.dirname(_filePath), matchingPath);
+
     if (!concatenatedFiles.has(requiredPath)) {
       const content = getRequiredFiles(requiredPath, matchingVariable, concatenatedFiles);
       if (content) {
@@ -320,6 +324,10 @@ function createCodeContext(filePath, controllerName) {
  * @returns {Promise<string>} The response from the OpenAI API.
  */
 async function callOpenAI(systemMessage, userMessage) {
+  const MINIMUM_EXECUTION_TIME = 0 * 60 * 1000;
+  // Guarda la hora de inicio
+  const startTime = Date.now();
+
   const messages = [
     { role: 'user', content: userMessage },
     { role: 'system', content: systemMessage },
@@ -344,6 +352,21 @@ async function callOpenAI(systemMessage, userMessage) {
       },
     }
   );
+
+  console.log('HEADERS-------', response.headers);
+  console.log('TOKENS USED:', JSON.stringify(response.data.usage, null, 2));
+
+  // Calcula cuánto tiempo ha pasado
+  const elapsedTime = Date.now() - startTime;
+
+  // Si han pasado menos de 30 segundos, espera el tiempo restante
+  if (elapsedTime < MINIMUM_EXECUTION_TIME) {
+    await new Promise((resolve) => {
+      console.log('Esperando tiempo mínimo de ejecución....');
+      setTimeout(resolve, MINIMUM_EXECUTION_TIME - elapsedTime);
+    });
+  }
+
   return response.data.choices[0].message.content.replace('```json', '').replace('```', '');
 }
 
@@ -390,7 +413,20 @@ You can use this response as example: '{"summary":"Retrieve assets owned by the 
       responseObj = { description: AIResponse, AIGenerated: true };
     }
   } catch (error) {
-    console.warn('\x1b[31m', 'Openapi: OpenAI Error', error);
+    console.error('\x1b[31m', 'Openapi: OpenAI Error', error, '\x1b[37m');
+    fs.appendFileSync(
+      path.resolve(__dirname, 'leemons-openapi.error.log'),
+      `--------------------------
+date: ${new Date().toISOString()}
+controllerFile: ${controllerFile}
+service: ${service}
+controller: ${controller}
+userMessage: ${userMessage}
+systemMessage: ${systemMessage}
+error: ${error}
+--------------------------
+`
+    );
   }
   const requestFolder = path.resolve(__dirname, 'requests');
 
@@ -400,7 +436,7 @@ You can use this response as example: '{"summary":"Retrieve assets owned by the 
 
   fs.writeFileSync(
     path.resolve(requestFolder, `${service}-${controller}.request.txt`),
-    JSON.stringify({ systemMessage, userMessage, response: responseObj }, null, 2)
+    JSON.stringify({ systemMessage, userMessage, response: JSON.stringify(responseObj) }, null, 2)
   );
 
   return responseObj;

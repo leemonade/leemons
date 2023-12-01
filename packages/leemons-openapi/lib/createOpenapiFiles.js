@@ -3,9 +3,9 @@
 const glob = require('glob').sync;
 const path = require('path');
 
-const { parseServiceFile } = require('./lib/services');
-const { findControllers, prepareControllerFile } = require('./lib/controllers');
-const { prepareOpenapiFile } = require('./lib/openapi');
+const { parseServiceFile } = require('./services');
+const { findControllers, prepareControllerFile } = require('./controllers');
+const { prepareOpenapiFile } = require('./openapi');
 
 async function createOpenapiFiles(startPath) {
   try {
@@ -48,16 +48,16 @@ async function createOpenapiFiles(startPath) {
 
               counter++;
             } catch (error) {
-              console.warn('\x1b[31m', error.message);
+              console.warn('\x1b[31m', error.message, '\x1b[37m');
             }
           }
         } catch (error) {
-          console.warn('\x1b[31m', error.message);
+          console.warn('\x1b[31m', error.message, '\x1b[37m');
         }
       }
     }
   } catch (error) {
-    console.error('\x1b[31m', 'ERROR:', error);
+    console.error('\x1b[31m', 'ERROR:', error, '\x1b[37m');
   }
 }
 
