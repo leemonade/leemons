@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Loader } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import { useLocation } from 'react-router-dom';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import NYACard from '../../../../components/NYACard';
 import EmptyState from './EmptyState';
 import { useNyaStyles } from '../hooks';
@@ -19,12 +20,12 @@ export default function ActivityCarousel({
   const isStudentDashboard = location.pathname.includes('private/dashboard/class');
 
   const swiperProps = {
-    watchOverflow: true,
+    // watchOverflow: true,
     selectable: true,
     deselectable: false,
     disableSelectedStyles: true,
-    slidesPerView: 'auto',
-    spaceBetween: 60,
+    // slidesPerView: 'auto',
+    // spaceBetween: 60,
     breakAt: {
       [theme.breakpoints.xs]: {
         slidesPerView: 1,
@@ -41,10 +42,10 @@ export default function ActivityCarousel({
     },
     slideStyles: {
       height: 'auto',
-      paddingTop: '24px',
-      paddingBottom: '24px',
-      minWidth: '264px !important',
-      maxWidth: '320px !important',
+      // paddingTop: '24px',
+      // paddingBottom: '24px',
+      // minWidth: '264px !important',
+      // maxWidth: '320px !important',
     },
   };
 

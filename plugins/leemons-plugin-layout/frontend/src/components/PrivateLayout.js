@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
-import { Box, createStyles, LoadingOverlay, MAIN_NAV_WIDTH } from '@bubbles-ui/components';
+import { Box, createStyles, LoadingOverlay } from '@bubbles-ui/components';
+import { MAIN_NAV_WIDTH } from '@bubbles-ui/extras'
 import MainMenu from '@menu-builder/components/mainMenu';
 import { getProfilesRequest } from '@academic-portfolio/request';
 import { getCookieToken } from '@users/session';

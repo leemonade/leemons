@@ -17,6 +17,7 @@ import { NYACardBody } from './NYCardBody';
 import { NYACardFooter } from './NYACardFooter';
 import { NYACardSkeleton } from './NYACardSkeleton';
 import { NYACARD_PROP_TYPES } from './NYACard.constants';
+import { EvaluationCard } from '../EvaluationCard';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -31,7 +32,6 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
 
   if (isTeacher) {
     const { students } = instance;
-
     // EN: If the activity is not started yer, the assignation is not available
     // ES: Si la actividad no ha sido iniciada, la asignación no está disponible
     if (!students?.[0]?.started) {
@@ -60,6 +60,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
     ).toFixed(2);
 
     const total = students.length;
+
     return {
       ...commonInfo,
       // Only if finished
@@ -381,7 +382,7 @@ function useNYACardLocalizations(labels) {
 }
 
 const NYACard = ({ instance, showSubject, labels, classData }) => {
-  // const isTeacher = useIsTeacher();
+  const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
   const [isHovered, setIsHovered] = useState(false);
@@ -401,6 +402,44 @@ const NYACard = ({ instance, showSubject, labels, classData }) => {
       </Box>
     );
   }
+  if (isTeacher)
+    return (
+      <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
+        <Box
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}>
+          <EvaluationCard
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            isHovered={isHovered}
+            instance={preparedInstance}
+            localizations={localizations}
+            variantTitle={
+              get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
+              preparedInstance?.assignable?.role
+            }
+            variantIcon={
+              <Box
+                style={{
+                  position: 'relative',
+                }}
+              >
+                <ImageLoader
+                  style={{
+                    width: 24,
+                    height: 24,
+                    position: 'relative',
+                  }}
+                  width={24}
+                  height={24}
+                  src={preparedInstance?.assignable?.roleDetails?.icon}
+                />
+              </Box>
+            }
+          />
+        </Box>
+      </Link>
+    );
 
   return (
     <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
