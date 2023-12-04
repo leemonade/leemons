@@ -15,12 +15,12 @@ function decomposeActionName(actionName) {
 }
 
 /**
- * Creates the openapi response
+ * Creates the openapi request & response schemas
  * @param {Object} params - The parameters
  * @param {Object} params.res - The response
  * @param {Object} params.ctx - The context
  */
-async function createOpenapiResponse({ res, ctx }) {
+async function createOpenapiSchemas({ res, ctx }) {
   const { TESTING, NODE_ENV } = process.env;
   const isTesting = TESTING || NODE_ENV === 'test' || process.env.testing;
   if (isTesting && ctx.action.rest) {
@@ -48,4 +48,4 @@ async function createOpenapiResponse({ res, ctx }) {
   }
 }
 
-module.exports = { createOpenapiResponse };
+module.exports = { createOpenapiSchemas };

@@ -1,9 +1,9 @@
 const mixin = require('./mixin');
-const { createOpenapiResponse } = require('./createOpenapiResponse');
+const { createOpenapiSchemas } = require('./createOpenapiSchemas');
 const { createOpenapiFiles } = require('./lib/createOpenapiFiles');
 
 module.exports = {
   LeemonsOpenApiMixin: mixin,
-  createOpenapiResponse,
+  createOpenapiSchemas,
   createOpenapiFiles,
 };
