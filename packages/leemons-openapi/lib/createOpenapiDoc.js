@@ -324,7 +324,8 @@ function createCodeContext(filePath, controllerName) {
  * @returns {Promise<string>} The response from the OpenAI API.
  */
 async function callOpenAI(systemMessage, userMessage) {
-  const MINIMUM_EXECUTION_TIME = process.env.OPENAPI_MINIMUM_EXECUTION_TIME || 1 * 60 * 1000;
+  const MINIMUM_EXECUTION_TIME =
+    Number(process.env.OPENAPI_MINIMUM_EXECUTION_TIME) || 1 * 60 * 1000;
   // Guarda la hora de inicio
   const startTime = Date.now();
 
@@ -355,7 +356,10 @@ async function callOpenAI(systemMessage, userMessage) {
 
   console.log(
     'AI TOKENS INFO:',
-    response.headers.filter((header) => header.includes('x-tokens'))
+    'REMAINING REQUESTS:',
+    response.headers['x-ratelimit-remaining-requests'],
+    'REMAINING TOKENS:',
+    response.headers['x-ratelimit-remaining-tokens']
   );
   console.log('AI TOKENS USED IN THIS REQUEST:', JSON.stringify(response.data.usage, null, 2));
 
@@ -366,7 +370,9 @@ async function callOpenAI(systemMessage, userMessage) {
   if (elapsedTime < MINIMUM_EXECUTION_TIME) {
     await new Promise((resolve) => {
       console.log(
-        `Waiting for Minimum Execution Time:${(MINIMUM_EXECUTION_TIME - elapsedTime) / 1000}....`
+        `Waiting ${
+          (MINIMUM_EXECUTION_TIME - elapsedTime) / 1000
+        } seconds for Minimum Execution Time....`
       );
       setTimeout(resolve, MINIMUM_EXECUTION_TIME - elapsedTime);
     });
