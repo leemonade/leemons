@@ -324,7 +324,7 @@ function createCodeContext(filePath, controllerName) {
  * @returns {Promise<string>} The response from the OpenAI API.
  */
 async function callOpenAI(systemMessage, userMessage) {
-  const MINIMUM_EXECUTION_TIME = 0 * 60 * 1000;
+  const MINIMUM_EXECUTION_TIME = process.env.OPENAPI_MINIMUM_EXECUTION_TIME || 1 * 60 * 1000;
   // Guarda la hora de inicio
   const startTime = Date.now();
 
@@ -334,7 +334,7 @@ async function callOpenAI(systemMessage, userMessage) {
   ];
 
   const response = await axios.post(
-    process.env.APIURL_OPENAI,
+    process.env.OPENAPI_APIURL_OPENAI,
     {
       // model: 'gpt-3.5-turbo-16k',
       model: 'gpt-4-1106-preview',
@@ -347,14 +347,17 @@ async function callOpenAI(systemMessage, userMessage) {
     },
     {
       headers: {
-        Authorization: `Bearer ${process.env.APIKEY_OPENAI}`,
+        Authorization: `Bearer ${process.env.OPENAPI_APIKEY_OPENAI}`,
         'Content-Type': 'application/json',
       },
     }
   );
 
-  console.log('HEADERS-------', response.headers);
-  console.log('TOKENS USED:', JSON.stringify(response.data.usage, null, 2));
+  console.log(
+    'AI TOKENS INFO:',
+    response.headers.filter((header) => header.includes('x-tokens'))
+  );
+  console.log('AI TOKENS USED IN THIS REQUEST:', JSON.stringify(response.data.usage, null, 2));
 
   // Calcula cuánto tiempo ha pasado
   const elapsedTime = Date.now() - startTime;
@@ -362,7 +365,9 @@ async function callOpenAI(systemMessage, userMessage) {
   // Si han pasado menos de 30 segundos, espera el tiempo restante
   if (elapsedTime < MINIMUM_EXECUTION_TIME) {
     await new Promise((resolve) => {
-      console.log('Esperando tiempo mínimo de ejecución....');
+      console.log(
+        `Waiting for Minimum Execution Time:${(MINIMUM_EXECUTION_TIME - elapsedTime) / 1000}....`
+      );
       setTimeout(resolve, MINIMUM_EXECUTION_TIME - elapsedTime);
     });
   }

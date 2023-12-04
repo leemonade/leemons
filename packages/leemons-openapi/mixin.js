@@ -405,12 +405,8 @@ const mixin = {
             routes[routeAction].params = actionProps.openapi
               ? actionProps.openapi['x-request'] || {}
               : {};
-            actionProps.openapi['x-params'] = 'infered';
           } else {
             routes[routeAction].params = {};
-            actionProps.openapi = {
-              'x-params': 'none',
-            };
           }
           routes[routeAction].openapi = actionProps.openapi || null;
         }
@@ -648,22 +644,9 @@ const mixin = {
     setSummary(doc, openapiPath, method, openapi, params, action, path) {
       const myDoc = doc.paths[openapiPath][method] || {};
 
-      console.log('MYDOC', myDoc);
-
       myDoc.summary = `
         ${myDoc.summary}
         (${action})
-        ${
-          (!openapi || !Object.keys(openapi).length) && !Object.keys(params).length
-            ? '[TO BE DOCUMENTED]'
-            : ''
-        }
-        ${
-          myDoc['x-params'] && doc.paths[openapiPath][method]['x-params'] === 'infered'
-            ? '[Params: Infered]'
-            : '[Params: To Be Documented]'
-        }
-        ${myDoc.description ? '' : '[Description: To Be Documented]'}
       `.trim();
     },
     addTagToDoc(doc, tagName) {

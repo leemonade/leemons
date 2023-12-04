@@ -19,9 +19,7 @@ module.exports = {
     },
   },
   // restore Database
-  ...(process.env.TESTING ||
-  process.env.NODE_ENV === 'test' ||
-  process.env.testing
+  ...(process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing
     ? {
         dropDBRest: {
           openapi: dropDBRest.openapi,
