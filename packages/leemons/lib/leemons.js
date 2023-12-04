@@ -259,7 +259,7 @@ class Leemons {
             ctx.state.userSession = user;
             return next();
           }
-        } else {
+        } else if (!_.isEmpty(authorization)) {
           authorization = _.compact(authorization);
           const user = await this.plugins.users.services.users.detailForJWT(authorization[0], true);
           const userAgents = await Promise.all(
