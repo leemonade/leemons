@@ -321,6 +321,7 @@ module.exports = {
     ongoing: 'Actividades en curso',
     history: 'Actividades pasadas',
     activities: 'Actividades',
+    pendingActivities: 'Actividades para evaluar',
   },
   dates: {
     visualization: 'Visualización',

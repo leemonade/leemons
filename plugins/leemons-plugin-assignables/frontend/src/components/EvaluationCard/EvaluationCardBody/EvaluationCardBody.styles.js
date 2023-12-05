@@ -5,10 +5,12 @@ const EvaluationCardBodyStyles = createStyles((theme) => {
   return {
     root: {
       heigth: '100%',
-      // minWidth: pxToRem(324),
-      // maxWidth: pxToRem(372),
+      minWidth: pxToRem(324),
+      maxWidth: pxToRem(372),
+      width: 372,
       padding: `${cardEvaluation.spacing.padding.horizontal.md} ${cardEvaluation.spacing.padding.vertical.md}`,
       backgroundColor: cardEvaluation.background.color.default,
+      position: 'relative',
     },
     title: {
       ...cardEvaluation.content.typo.lg,

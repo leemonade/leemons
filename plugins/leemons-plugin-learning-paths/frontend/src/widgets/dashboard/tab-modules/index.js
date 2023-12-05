@@ -32,7 +32,6 @@ function useSwiperProps() {
     () => ({
       selectable: true,
       deselectable: false,
-      centeredSlides: true,
       disableSelectedStyles: true,
       breakAt: {
         [theme.breakpoints.xs]: {

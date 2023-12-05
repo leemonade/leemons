@@ -18,6 +18,7 @@ import { NYACardFooter } from './NYACardFooter';
 import { NYACardSkeleton } from './NYACardSkeleton';
 import { NYACARD_PROP_TYPES } from './NYACard.constants';
 import { EvaluationCard } from '../EvaluationCard';
+import EvaluationCardSkeleton from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -363,6 +364,7 @@ function useNYACardLocalizations(labels) {
     prefixPN('multiSubject'),
     prefixPN('assignmentForm'),
     prefixPN('ongoing'),
+    prefixPN('assignment_list'),
   ]);
 
   return useMemo(() => {
@@ -374,6 +376,7 @@ function useNYACardLocalizations(labels) {
         multiSubject: _.get(res, prefixPN('multiSubject')),
         assignmentForm: _.get(res, prefixPN('assignmentForm')),
         ongoing: _.get(res, prefixPN('ongoing')),
+        assignment_list: _.get(res, prefixPN('assignment_list')),
       };
     }
 
@@ -381,7 +384,7 @@ function useNYACardLocalizations(labels) {
   }, [translations]);
 }
 
-const NYACard = ({ instance, showSubject, labels, classData }) => {
+const NYACard = ({ instance, showSubject, labels, classData, isActivityCarousel }) => {
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
@@ -395,19 +398,21 @@ const NYACard = ({ instance, showSubject, labels, classData }) => {
     [showSubject]
   );
   const preparedInstance = usePreparedInstance(instance, query, localizations);
+
   if (!preparedInstance) {
+    if (isTeacher && isActivityCarousel) {
+      return <EvaluationCardSkeleton />;
+    }
     return (
       <Box className={classes.root}>
         <NYACardSkeleton />
       </Box>
     );
   }
-  if (isTeacher)
+  if (isTeacher && isActivityCarousel)
     return (
       <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
-        <Box
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}>
+        <Box onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
           <EvaluationCard
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

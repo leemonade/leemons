@@ -15,7 +15,6 @@ const EvaluationCardFooter = ({
   variant,
   variantTitle,
   variantIcon,
-  chatKeys,
   students,
 }) => {
   const { classes, cx } = EvaluationCardFooterStyles(
@@ -58,6 +57,8 @@ const EvaluationCardFooter = ({
     </Box>
   );
 };
+
+EvaluationCardFooter.propTypes = EVALUATIONCARD_FOOTER_PROP_TYPES;
 
 export { EvaluationCardFooter };
 export default EvaluationCardFooter;
