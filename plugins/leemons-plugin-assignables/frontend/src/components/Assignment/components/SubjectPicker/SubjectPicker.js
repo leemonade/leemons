@@ -1,44 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, MultiSelect, createStyles, Select } from '@bubbles-ui/components';
-import { useSessionClasses, useSubjectDetails } from '@academic-portfolio/hooks';
-import { map, uniqBy } from 'lodash';
+import { clone, findIndex, map, pullAt, uniq } from 'lodash';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import {
+  Box,
+  MultiSelect,
+  createStyles,
+  Button,
+  Select,
+  Text,
+  ActionButton,
+  Table,
+} from '@bubbles-ui/components';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import { Container } from '../Container';
-
-export const useSubjectPickerStyles = createStyles(() => ({
-  subjectPicker: { maxWidth: 543 },
-}));
-
-export function useSubjectsForSubjectPicker(subjects) {
-  // EN: If no subject is provides on the assignable, fetch all the users subjects
-  // ES: Si no hay asignaturas en el asignable, pedimos todas las asignaturas del usuario
-  const { data: classes } = useSessionClasses({}, { enabled: !subjects?.length });
-
-  const subjectsIds = React.useMemo(() => {
-    if (subjects?.length) {
-      return subjects?.map(({ subject }) => subject);
-    }
-
-    return classes?.map((klass) => klass.subject.id) || [];
-  }, [subjects, classes]);
-
-  const { data: subjectDetails } = useSubjectDetails(subjectsIds, {
-    enabled: !!subjectsIds?.length,
-  });
-
-  return React.useMemo(
-    () =>
-      uniqBy(
-        subjectDetails?.map((subject) => ({
-          label: subject.name,
-          value: subject.id,
-          // icon: prepareAsset(subject.icon).cover,
-        })),
-        'value'
-      ) || [],
-    [subjectDetails]
-  );
-}
+import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
+import useSubjectPickerStyles from './SubjectPicker.styles';
 
 export function SubjectPicker({
   assignable,
@@ -50,51 +27,122 @@ export function SubjectPicker({
   onlyOneSubject,
   ...props
 }) {
-  const subjects = useSubjectsForSubjectPicker(assignable?.subjects);
+  const form = useForm({
+    defaultValues: {
+      program: undefined,
+      course: undefined,
+      subject: undefined,
+      selectedSubjects: [],
+    },
+  });
+
+  const { programs, courses, subjects, selectedSubjects } = useDataForSubjectPicker({
+    subjects: assignable?.subjects,
+    control: form.control,
+  });
+
   const { classes } = useSubjectPickerStyles();
 
-  const isFirstSubjectsLoad = React.useRef(true);
+  const onSubmit = ({ selectedSubjects, ...newSubject }) => {
+    const newSelectedSubjects = [newSubject?.subject, ...selectedSubjects];
+    form.setValue('selectedSubjects', uniq(newSelectedSubjects));
+    onChange(newSelectedSubjects);
 
-  React.useEffect(() => {
-    isFirstSubjectsLoad.current = true;
-  }, [assignable?.subjects]);
+    return false;
+  };
 
-  React.useEffect(() => {
-    if (isFirstSubjectsLoad.current && subjects?.length) {
-      if (assignable?.subjects?.length) {
-        const values = map(subjects, 'value');
-        onChange(onlyOneSubject ? [values?.[0]] : values);
-      }
-      isFirstSubjectsLoad.current = false;
+  const onRemove = ({ id }) => {
+    const selSubjects = form.getValues('selectedSubjects');
+
+    const index = findIndex(selSubjects, id);
+
+    if (index >= 0) {
+      const newSelectedSubjects = [...selSubjects];
+      newSelectedSubjects.splice(index, 1);
+      form.setValue('selectedSubjects', newSelectedSubjects);
+      onChange(newSelectedSubjects);
     }
-  }, [subjects]);
+  };
 
   return (
     <Container title={localizations?.title} hideSectionHeaders={hideSectionHeaders}>
       <Box className={classes.subjectPicker}>
-        {onlyOneSubject ? (
-          <Select
-            {...props}
-            label={localizations?.subjectInput?.label}
-            placeholder={localizations?.subjectInput?.placeholder}
-            data={subjects}
-            onChange={(data) => onChange([data])}
-            error={error && localizations?.subjectInput?.error}
-            value={value?.[0]}
-            searchable
-          />
-        ) : (
-          <MultiSelect
-            {...props}
-            label={localizations?.subjectInput?.label}
-            placeholder={localizations?.subjectInput?.placeholder}
-            canAddNewSuggestions={false}
-            data={subjects}
-            onChange={onChange}
-            error={error && localizations?.subjectInput?.error}
-            value={value}
+        <Controller
+          control={form.control}
+          name="program"
+          render={({ field }) => (
+            <Select
+              {...field}
+              cleanOnMissingValue
+              label={localizations?.program}
+              placeholder={localizations?.placeholder}
+              data={programs}
+              disabled={!programs?.length}
+            />
+          )}
+        />
+        {courses !== null && (
+          <Controller
+            control={form.control}
+            name="course"
+            shouldUnregister
+            render={({ field }) => (
+              <Select
+                {...field}
+                cleanOnMissingValue
+                label={localizations?.course}
+                placeholder={localizations?.placeholder}
+                data={courses}
+                disabled={!courses?.length}
+              />
+            )}
           />
         )}
+        <Controller
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <Select
+              {...field}
+              cleanOnMissingValue
+              label={localizations?.subject}
+              placeholder={localizations?.placeholder}
+              data={subjects}
+              disabled={!subjects?.length}
+            />
+          )}
+        />
+
+        <Button leftIcon={<AddCircleIcon />} variant="link" onClick={form.handleSubmit(onSubmit)}>
+          {localizations?.add}
+        </Button>
+      </Box>
+      <Box className={classes.table}>
+        <Table
+          data={selectedSubjects.map((subject) => ({
+            ...subject,
+            course: subject?.course ?? '-',
+            action: <ActionButton icon={<DeleteBinIcon />} onClick={() => onRemove(subject)} />,
+          }))}
+          columns={[
+            {
+              Header: '',
+              accessor: 'program',
+            },
+            {
+              Header: '',
+              accessor: 'course',
+            },
+            {
+              Header: '',
+              accessor: 'subject',
+            },
+            {
+              Header: '',
+              accessor: 'action',
+            },
+          ]}
+        />
       </Box>
     </Container>
   );
@@ -109,3 +157,5 @@ SubjectPicker.propTypes = {
   hideSectionHeaders: PropTypes.bool,
   onlyOneSubject: PropTypes.bool,
 };
+
+export default SubjectPicker;

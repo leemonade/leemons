@@ -5,12 +5,17 @@ module.exports = {
   },
   assignmentForm: {
     subjects: {
-      title: 'Included subjects',
+      placeholder: 'Select...',
+      program: 'Program',
+      course: 'Course',
+      subject: 'Subject',
+      title: 'Subjects',
       subjectInput: {
         label: 'Subjects',
         placeholder: 'Type the subject names',
         error: 'Pick at least one subject',
       },
+      add: 'Add',
     },
     groups: {
       title: '¿Who will perform?',
