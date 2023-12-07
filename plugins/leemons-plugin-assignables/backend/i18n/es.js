@@ -9,12 +9,17 @@ module.exports = {
       action: 'Asignar',
     },
     subjects: {
-      title: 'Asignaturas incluidas',
+      placeholder: 'Seleccionar...',
+      program: 'Programa',
+      course: 'Curso',
+      subject: 'Asignatura',
+      title: 'Asignaturas',
       subjectInput: {
         label: 'Asignaturas',
         placeholder: 'Escribe las asignaturas',
         error: 'Selecciona al menos una asignatura',
       },
+      add: 'Añadir',
     },
     groups: {
       title: '¿Quién lo realizará?',

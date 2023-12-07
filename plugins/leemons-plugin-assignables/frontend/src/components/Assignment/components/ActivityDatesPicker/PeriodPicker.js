@@ -1,15 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
-import {
-  Box,
-  Text,
-  DatePicker,
-  TimeInput,
-  InputWrapper,
-  createStyles,
-} from '@bubbles-ui/components';
-import { TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
+import { Box, Text, DatePicker, InputWrapper, createStyles } from '@bubbles-ui/components';
 
 export const usePeriodPickerStyles = createStyles((theme) => ({
   root: {
@@ -23,50 +15,42 @@ export const usePeriodPickerStyles = createStyles((theme) => ({
   },
   dates: {
     display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'end',
+    flexDirection: 'column',
+    alignItems: 'start',
     gap: theme.other.global.spacing.padding.lg,
   },
 }));
 
-export function PeriodPicker({ value, onChange, localizations, sameDay, error }) {
-  const { classes } = usePeriodPickerStyles();
+function calculateNewDeadline(startDate, dayjsStartDate) {
+  let newDeadline;
+  if (startDate) {
+    newDeadline = dayjsStartDate.add(1, 'day').set('hours', 23).set('minutes', 59).toDate();
+  } else {
+    newDeadline = null;
+  }
+  return newDeadline;
+}
 
-  const [startDate, setStartDate] = React.useState(value?.start || null);
-  const [deadline, setDeadline] = React.useState(value?.deadline || null);
-
+function updateDeadline(startDate, deadline) {
+  let newDeadline = deadline;
   const dayjsStartDate = dayjs(startDate);
   const dayjsDeadline = dayjs(deadline);
 
-  React.useEffect(() => {
-    let newDeadline = deadline;
+  if (!startDate || !deadline || !dayjsStartDate.isBefore(dayjsDeadline)) {
+    newDeadline = calculateNewDeadline(startDate, dayjsStartDate);
+  }
 
-    if (!startDate || !deadline || !dayjsStartDate.isBefore(dayjsDeadline)) {
-      if (startDate) {
-        if (sameDay) {
-          if (dayjsStartDate.format('HH') === '23') {
-            if (dayjsStartDate.format('HH:mm') === '23:59') {
-              setStartDate(dayjsStartDate.set('minute', 58).toDate());
-            }
-            newDeadline = dayjsStartDate.set('minute', 59).toDate();
-          } else {
-            newDeadline = dayjsStartDate.add(1, 'hour').toDate();
-          }
-        } else {
-          newDeadline = dayjsStartDate.add(1, 'day').set('hours', 23).set('minutes', 59).toDate();
-        }
-      } else {
-        newDeadline = null;
-      }
-    } else if (
-      sameDay &&
-      dayjsStartDate.format('YYYY-MM-DD') !== dayjsDeadline.format('YYYY-MM-DD')
-    ) {
-      newDeadline = dayjs(startDate)
-        .set('hours', deadline.getHours())
-        .set('minutes', deadline.getMinutes())
-        .toDate();
-    }
+  return newDeadline;
+}
+
+export function PeriodPicker({ value, onChange, localizations, error }) {
+  const { classes } = usePeriodPickerStyles();
+
+  const [startDate, setStartDate] = useState(value?.start || null);
+  const [deadline, setDeadline] = useState(value?.deadline || null);
+
+  useEffect(() => {
+    const newDeadline = updateDeadline(startDate, deadline);
 
     if (newDeadline !== deadline) {
       setDeadline(newDeadline);
@@ -76,13 +60,11 @@ export function PeriodPicker({ value, onChange, localizations, sameDay, error })
       start: startDate,
       deadline: newDeadline,
     });
-  }, [startDate, deadline, sameDay]);
+  }, [startDate, deadline]);
 
   return (
     <Box className={classes.root}>
-      <Text className={classes.title}>
-        {sameDay ? localizations?.title?.session : localizations?.title?.fixed}
-      </Text>
+      <Text className={classes.title}>{localizations?.title?.fixed}</Text>
       <InputWrapper
         error={
           error &&
@@ -97,36 +79,20 @@ export function PeriodPicker({ value, onChange, localizations, sameDay, error })
             placeholder={localizations?.startDate?.placeholder}
             value={startDate}
             minDate={new Date()}
-            maxDate={!sameDay && dayjs(deadline).subtract(1, 'minutes').toDate()}
+            maxDate={dayjs(deadline).subtract(1, 'minutes').toDate()}
             onChange={setStartDate}
             withTime
           />
-          {sameDay ? (
-            <TimeInput
-              value={deadline}
-              disabled={!startDate}
-              icon={<TimeClockCircleIcon />}
-              onChange={(v) => {
-                const newDeadline = dayjs(startDate)
-                  .set('hour', v.getHours())
-                  .set('minute', v.getMinutes())
-                  .toDate();
-
-                setDeadline(newDeadline);
-              }}
-            />
-          ) : (
-            <DatePicker
-              label={localizations?.deadline?.label}
-              placeholder={localizations?.deadline?.placeholder}
-              minDate={dayjs(startDate).add(1, 'minutes').toDate()}
-              value={deadline}
-              disabled={!startDate}
-              clearable={false}
-              withTime
-              onChange={setDeadline}
-            />
-          )}
+          <DatePicker
+            label={localizations?.deadline?.label}
+            placeholder={localizations?.deadline?.placeholder}
+            minDate={dayjs(startDate).add(1, 'minutes').toDate()}
+            value={deadline}
+            disabled={!startDate}
+            clearable={false}
+            withTime
+            onChange={setDeadline}
+          />
         </Box>
       </InputWrapper>
     </Box>
