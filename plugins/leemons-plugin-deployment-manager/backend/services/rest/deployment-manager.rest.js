@@ -112,7 +112,7 @@ module.exports = {
           plugins: { type: 'array', minItems: 2, items: { type: 'string' } },
           config: { type: 'object' },
         },
-        required: ['name', 'domains', 'plugins', 'password'],
+        required: ['name', 'domains', 'plugins'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
