@@ -20,6 +20,8 @@ export default function EvaluationsCarousel({
     selectable: true,
     deselectable: false,
     disableSelectedStyles: true,
+    slidesPerView: 2,
+    spaceBetween: 60,
     breakAt: {
       [theme.breakpoints.xs]: {
         slidesPerView: 1,

@@ -1,14 +1,16 @@
-import React from 'react';
-import { Box, createStyles, ImageLoader, Text } from '@bubbles-ui/components';
+import React, { useMemo, useState, useEffect } from 'react';
+import { Box, Text, Badge } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { RatingStarIcon } from '@bubbles-ui/icons/solid';
-import { useRoomsMessageCount } from '@comunica/hooks';
-import { cloneDeep, sortBy } from 'lodash';
-import CommentIcon from './CommentIcon.svg';
+import _, { cloneDeep, sortBy } from 'lodash';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { unflatten } from '@common';
+import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
+import { getActivityType } from '../../../../../../helpers/getActivityType';
+import prefixPN from '../../../../../../helpers/prefixPN';
+import { ArrowComponent } from './ArrowComponent/ArrowComponent';
 
 export function findNearestFloorScore(score, scales) {
   const sortedScales = sortBy(cloneDeep(scales), 'number');
-
   let nearestScore = null;
   let distance = Infinity;
   const { length } = sortedScales;
@@ -29,74 +31,30 @@ export function findNearestFloorScore(score, scales) {
       break;
     }
   }
-
   return nearestScore;
 }
 
-const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
-  let color;
-  switch (_c) {
-    case 'error':
-      color = theme.other.global.content.color.negative;
-      break;
-    case 'warning':
-      color = theme.other.global.content.color.attention;
-      break;
-    case 'success':
-      color = theme.other.global.content.color.positive;
-      break;
-    default:
-      color = undefined;
-  }
-
-  return {
-    root: {
-      height: 198,
-      display: 'flex',
-      flexDirection: 'column',
-      borderTopRightRadius: theme.other.global.border.radius.md,
-      borderBottomRightRadius: theme.other.global.border.radius.md,
-    },
-    container: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: 142,
-      position: 'relative',
-    },
-    score: {
-      gap: theme.spacing[2],
-      background: color?.emphasis,
-      flex: '1 0',
-    },
-    text: {
-      color: theme.other.score.background.color.neutral.subtle,
-      ...theme.other.score.content.typo['2xlg'],
-    },
-    feedback: {
-      flex: '1 0',
-      background: color?.default,
-    },
-    icon: {
-      position: 'relative',
-      height: 46,
-      width: 51,
-    },
-    iconText: {
-      position: 'absolute',
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
-      ...theme.other.score.content.typo['2xlg'],
-    },
-  };
-});
-
-export default function ScoreFeedback({ score, program, rooms, isCalificable }) {
+export default function ScoreFeedback({ score, program, instance }) {
   const evaluationSystem = useProgramEvaluationSystem(program);
-  const { count } = useRoomsMessageCount(rooms);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
+  const [, translations] = useTranslateLoader(prefixPN('assignmentForm'));
+  const localizations = useMemo(() => {
+    const res = unflatten(translations?.items);
+    return {
+      assignmentForm: _.get(res, prefixPN('assignmentForm')),
+    };
+  }, [translations]);
+  const [calificationType, setCalificationType] = useState(null);
+  const getInstanceTypeLocale = (instanceParam) => {
+    const activityType = getActivityType(instanceParam);
+    const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
+    const activityTypeLocale = {
+      calificable: localizationType?.calificable,
+      puntuable: localizationType?.punctuable,
+      no_evaluable: localizationType?.nonEvaluable,
+    };
+    setCalificationType(activityTypeLocale[activityType]);
+  };
 
   const color = React.useMemo(() => {
     const minScale = minScaleToPromote?.number;
@@ -108,31 +66,60 @@ export default function ScoreFeedback({ score, program, rooms, isCalificable }) 
     }
     return 'success';
   });
+  const isLetterType = type === 'letter';
 
-  const grade = React.useMemo(() => {
-    if (type === 'letter') {
-      return findNearestFloorScore(Number(score), scales).letter;
+  let grade = React.useMemo(() => {
+    if (isLetterType) {
+      return {
+        letter: findNearestFloorScore(Number(score), scales).letter,
+        description: findNearestFloorScore(Number(score), scales).description,
+      };
     }
-
-    return score;
+    const isInteger = score % 1 === 0;
+    const integerPart = !isInteger && score.toFixed(2).split('.')[0];
+    const decimalsPart = !isInteger && score.toFixed(2).split('.')[1];
+    if (isInteger) {
+      return {
+        integer: score,
+        decimals: null,
+        description: findNearestFloorScore(Number(score), scales).description,
+      };
+    }
+    return {
+      integer: integerPart,
+      decimals: decimalsPart,
+      description: findNearestFloorScore(Number(score), scales).description,
+    };
   }, [scales, type, score]);
 
-  const { classes, cx } = useScoreFeedbackStyles({ color });
+  useEffect(() => {
+    getInstanceTypeLocale(instance);
+  }, [instance]);
+
+  const { classes } = useScoreFeedbackStyles({ color });
+  grade = { integer: 8, decimals: '02', description: 'nota mockeada' };
   return (
     <Box className={classes.root}>
-      {!!score && (
-        <Box className={cx(classes.container, classes.score, classes.text)}>
-          {!!isCalificable && <RatingStarIcon />}
-          <Text className={classes.text}>{grade}</Text>
-        </Box>
+      {calificationType && (
+        <Badge closable={false} size="xs" className={classes.calificationBadge}>
+          <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
+        </Badge>
       )}
-      {!!rooms?.length && (
-        <Box className={cx(classes.container, classes.feedback, classes.text)}>
-          <Box className={classes.icon}>
-            <ImageLoader src={CommentIcon} height="100%" />
+      {!!score && (
+        <>
+          <Box className={classes.containerGrade}>
+            <Box className={classes.containerNumber}>
+              <Text className={classes.gradeNumber}>{false ? grade.letter : grade.integer}</Text>
+              {grade.decimals && (
+                <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
+              )}
+              <Text>
+                <ArrowComponent state={'bad'} />
+              </Text>
+            </Box>
+            <Text className={classes.descriptionGrade}>{grade.description.toUpperCase()}</Text>
           </Box>
-          <Text className={classes.iconText}>{count > 99 ? '+99' : count}</Text>
-        </Box>
+        </>
       )}
     </Box>
   );
