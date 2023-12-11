@@ -26,6 +26,7 @@ module.exports = {
       options: {
         class: 'Clase existente',
         customGroup: 'Grupo personalizado',
+        singleStudent: 'Estudiante individual',
       },
       noStudentsError:
         'No se encuentran estudiantes para las asignaturas seleccionadas. Añade o quita asignaturas para continuar.',
@@ -39,6 +40,10 @@ module.exports = {
           label: 'Estudiantes',
           placeholder: 'Escribe los estudiantes excluidos',
         },
+        total: 'Total',
+        selectedStudents: 'Estudiantes incluidos',
+        nonMatchingStudents: 'No coincidentes',
+        excluded: 'Excluidos manualmente',
       },
       customGroup: {
         studentsInput: {
@@ -51,7 +56,13 @@ module.exports = {
           placeholder: 'Escribe el nombre',
           error: 'El nombre es necesario',
         },
-        hideCustomName: 'Ocultar el nombre del grupo a los estudiantes',
+        hideCustomName: 'Hacer visible para los estudiantes',
+      },
+      singleStudent: {
+        studentInput: {
+          label: 'Seleccionar estudiante',
+          placeholder: 'Selecciona un estudiante',
+        },
       },
     },
     dates: {
