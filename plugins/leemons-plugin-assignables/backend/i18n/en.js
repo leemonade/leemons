@@ -22,19 +22,24 @@ module.exports = {
       options: {
         class: 'Existing class',
         customGroup: 'Custom group',
+        singleStudent: 'Single student',
       },
       noStudentsError:
         'No student was found for the selected subjects. Add or remove subjects to continue.',
       class: {
         studentsCount: 'matching students',
         autoAssignStudents: 'Auto-assign new students',
-        excludeStudents: 'Esclude specific students',
+        excludeStudents: 'Exclude specific students',
         error: 'Pick at least one group',
         notAllStudentsAssigned: "Some students won't be included in the activity",
         excludeStudentsInput: {
           label: 'Students',
           placeholder: 'Type the excluded students',
         },
+        total: 'Total',
+        selectedStudents: 'Selected students',
+        nonMatchingStudents: 'Non matching',
+        excluded: 'Manually excluded',
       },
       customGroup: {
         studentsInput: {
@@ -47,7 +52,13 @@ module.exports = {
           placeholder: 'Type the name',
           error: 'The name is required',
         },
-        hideCustomName: 'Hide groupname to students',
+        hideCustomName: 'Show to students',
+      },
+      singleStudent: {
+        studentInput: {
+          label: 'Select student',
+          placeholder: 'Add a student',
+        },
       },
     },
     dates: {
