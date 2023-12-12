@@ -15,6 +15,23 @@ const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { permissions, menuItems } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
+async function addMenuItems(ctx) {
+  const [mainMenuItem, ...otherMenuItems] = menuItems;
+
+  await addMenuItemsDeploy({
+    keyValueModel: ctx.tx.db.KeyValue,
+    item: mainMenuItem,
+    ctx,
+  });
+  ctx.tx.emit('init-menu');
+  await addMenuItemsDeploy({
+    keyValueModel: ctx.tx.db.KeyValue,
+    item: otherMenuItems,
+    ctx,
+  });
+  ctx.tx.emit('init-submenu');
+}
+
 /** @type {ServiceSchema} */
 module.exports = () => ({
   name: 'grades.deploy',
@@ -31,22 +48,7 @@ module.exports = () => ({
     {
       type: 'once-per-install',
       events: ['menu-builder.init-main-menu', 'grades.init-permissions'],
-      handler: async (ctx) => {
-        const [mainMenuItem, ...otherMenuItems] = menuItems;
-
-        await addMenuItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          item: mainMenuItem,
-          ctx,
-        });
-        ctx.tx.emit('init-menu');
-        await addMenuItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          item: otherMenuItems,
-          ctx,
-        });
-        ctx.tx.emit('init-submenu');
-      },
+      handler: async (ctx) => addMenuItems(ctx),
     },
   ],
   events: {
@@ -59,6 +61,7 @@ module.exports = () => ({
         ctx,
       });
     },
+    'deployment-manager.config-change': async (ctx) => addMenuItems(ctx),
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,

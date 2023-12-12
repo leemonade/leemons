@@ -31,6 +31,7 @@ import { forEachRight } from 'lodash/collection';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { SubjectsDrawer } from './SubjectsDrawer';
 
 function getGroups({ program, selectGroups, subject }) {
@@ -131,6 +132,10 @@ function SubjectsTable({
   onlyNewSubject = false,
 }) {
   const locale = useLocale();
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: 'academic-portfolio',
+    ignoreVersion: true,
+  });
   const [store, render] = useStore({
     tempSubjects: [],
     tempGroups: [],
@@ -383,24 +388,26 @@ function SubjectsTable({
     });
   }
 
-  // SUBJECT TYPE
-  columns.push({
-    Header: messages.subjectType,
-    accessor: 'subjectType',
-    showOnTable: true,
-    input: {
-      node: (
-        <EnableIfFormPropHasValue>
-          <Select data={selects.subjectTypes} required />
-        </EnableIfFormPropHasValue>
-      ),
-      rules: { required: messages.subjectTypeRequired },
-    },
-    cellStyle: {
-      paddingLeft: 0,
-    },
-    valueRender: (value) => <>{value?.name}</>,
-  });
+  if (!(deploymentConfig?.deny?.others?.indexOf('subjectType') >= 0)) {
+    // SUBJECT TYPE
+    columns.push({
+      Header: messages.subjectType,
+      accessor: 'subjectType',
+      showOnTable: true,
+      input: {
+        node: (
+          <EnableIfFormPropHasValue>
+            <Select data={selects.subjectTypes} required />
+          </EnableIfFormPropHasValue>
+        ),
+        rules: { required: messages.subjectTypeRequired },
+      },
+      cellStyle: {
+        paddingLeft: 0,
+      },
+      valueRender: (value) => <>{value?.name}</>,
+    });
+  }
 
   // CREDITS
   if (program.credits) {
@@ -512,16 +519,18 @@ function SubjectsTable({
     });
   }
 
-  columns.push({
-    Header: messages.seats,
-    accessor: 'seats',
-    input: {
-      node: <NumberInput />,
-    },
-    cellStyle: {
-      paddingLeft: 0,
-    },
-  });
+  if (!(deploymentConfig?.deny?.others?.indexOf('classSeats') >= 0)) {
+    columns.push({
+      Header: messages.seats,
+      accessor: 'seats',
+      input: {
+        node: <NumberInput />,
+      },
+      cellStyle: {
+        paddingLeft: 0,
+      },
+    });
+  }
 
   columns.push({
     Header: messages.teacher,
@@ -628,11 +637,15 @@ function SubjectsTable({
     <ContextContainer direction="column" fullWidth>
       <Title order={4}>{onlyNewSubject ? messages.newTitle : messages.title}</Title>
       <Box sx={(theme) => ({ paddingBottom: theme.spacing[3], width: '100%', overflow: 'auto' })}>
-        <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
-          <Button onClick={newSubject} variant="link" leftIcon={<AddIcon />}>
-            {messages.addSubject}
-          </Button>
-        </Box>
+        {!deploymentConfig?.limits?.maxSubjects ||
+          (deploymentConfig?.limits?.maxSubjects > program.classes.length && (
+            <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
+              <Button onClick={newSubject} variant="link" leftIcon={<AddIcon />}>
+                {messages.addSubject}
+              </Button>
+            </Box>
+          ))}
+
         <Box>
           <TableInput
             data={program.classes}

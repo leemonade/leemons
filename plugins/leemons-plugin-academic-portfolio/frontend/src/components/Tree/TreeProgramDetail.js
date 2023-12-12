@@ -11,6 +11,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeProgramDetail = ({
@@ -25,6 +26,10 @@ const TreeProgramDetail = ({
   saving,
 }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: 'academic-portfolio',
+    ignoreVersion: true,
+  });
 
   const {
     reset,
@@ -51,71 +56,80 @@ const TreeProgramDetail = ({
       <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
-          <Box>
-            <Controller
-              control={control}
-              name="name"
-              rules={{ required: messages.nameRequired }}
-              render={({ field }) => (
-                <TextInput label={messages.nameLabel} error={errors.name} required {...field} />
-              )}
-            />
-          </Box>
-          {managersSelect ? (
-            <Box>
-              <Controller
-                control={control}
-                name="managers"
-                render={({ field }) =>
-                  React.cloneElement(managersSelect, {
-                    label: messagesAddUsers.managersLabel,
-                    maxSelectedValues: 999,
-                    ...field,
-                  })
-                }
-              />
-            </Box>
-          ) : null}
-          <Box>
-            <Controller
-              control={control}
-              name="abbreviation"
-              rules={{
-                required: messages.abbreviationRequired,
-                maxLength: 8,
-                minLength: 1,
-              }}
-              render={({ field }) => (
-                <TextInput
-                  label={messages.abbreviationLabel}
-                  help={messages.abbreviationHelper}
-                  error={errors.abbreviation}
-                  maxLength={8}
-                  required
-                  {...field}
+          {!(deploymentConfig?.deny?.others?.indexOf('treeProgramForm') >= 0) ? (
+            <>
+              <Box>
+                <Controller
+                  control={control}
+                  name="name"
+                  rules={{ required: messages.nameRequired }}
+                  render={({ field }) => (
+                    <TextInput label={messages.nameLabel} error={errors.name} required {...field} />
+                  )}
                 />
-              )}
-            />
-          </Box>
-          {program.credits ? (
-            <Box>
-              <Controller
-                name="credits"
-                control={control}
-                render={({ field }) => (
-                  <NumberInput defaultValue={0} min={0} label={messages.creditsLabel} {...field} />
-                )}
-              />
-            </Box>
+              </Box>
+              {managersSelect ? (
+                <Box>
+                  <Controller
+                    control={control}
+                    name="managers"
+                    render={({ field }) =>
+                      React.cloneElement(managersSelect, {
+                        label: messagesAddUsers.managersLabel,
+                        maxSelectedValues: 999,
+                        ...field,
+                      })
+                    }
+                  />
+                </Box>
+              ) : null}
+              <Box>
+                <Controller
+                  control={control}
+                  name="abbreviation"
+                  rules={{
+                    required: messages.abbreviationRequired,
+                    maxLength: 8,
+                    minLength: 1,
+                  }}
+                  render={({ field }) => (
+                    <TextInput
+                      label={messages.abbreviationLabel}
+                      help={messages.abbreviationHelper}
+                      error={errors.abbreviation}
+                      maxLength={8}
+                      required
+                      {...field}
+                    />
+                  )}
+                />
+              </Box>
+              {program.credits ? (
+                <Box>
+                  <Controller
+                    name="credits"
+                    control={control}
+                    render={({ field }) => (
+                      <NumberInput
+                        defaultValue={0}
+                        min={0}
+                        label={messages.creditsLabel}
+                        {...field}
+                      />
+                    )}
+                  />
+                </Box>
+              ) : null}
+              <Box>
+                <Paragraph>
+                  {messages.visitProgramDescription}&nbsp;
+                  <Button variant="link" onClick={onGoProgram}>
+                    {messages.visitProgramLabel}
+                  </Button>
+                </Paragraph>
+              </Box>
+            </>
           ) : null}
-          <Box>
-            <Paragraph>
-              {messages.visitProgramDescription}&nbsp;
-              <Button variant="link" onClick={onGoProgram}>
-                {messages.visitProgramLabel}
-              </Button>
-            </Paragraph>
-          </Box>
 
           <SelectUsersForAddToClasses
             onChange={onChangeAddUsers}
