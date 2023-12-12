@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$DIRECTORY="$1"
+DIRECTORY="$1"
 IFS=',' read -ra PLUGINS <<< "$2"
 
 if [ ${#PLUGINS[@]} -gt 0 ]; then
