@@ -40,6 +40,9 @@ jobs:
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
+        with:
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
 
       - name: 🔧 Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
