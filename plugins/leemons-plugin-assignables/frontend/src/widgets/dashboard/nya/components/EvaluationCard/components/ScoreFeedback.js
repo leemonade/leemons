@@ -68,7 +68,7 @@ export default function ScoreFeedback({ score, program, instance }) {
   });
   const isLetterType = type === 'letter';
 
-  let grade = React.useMemo(() => {
+  const grade = React.useMemo(() => {
     if (isLetterType) {
       return {
         letter: findNearestFloorScore(Number(score), scales).letter,
@@ -82,22 +82,21 @@ export default function ScoreFeedback({ score, program, instance }) {
       return {
         integer: score,
         decimals: null,
-        description: findNearestFloorScore(Number(score), scales).description,
+        description: findNearestFloorScore(Number(score), scales)?.description,
       };
     }
     return {
       integer: integerPart,
       decimals: decimalsPart,
-      description: findNearestFloorScore(Number(score), scales).description,
+      description: findNearestFloorScore(Number(score), scales)?.description,
     };
   }, [scales, type, score]);
 
   useEffect(() => {
     getInstanceTypeLocale(instance);
-  }, [instance]);
+  }, [instance, calificationType, setCalificationType]);
 
   const { classes } = useScoreFeedbackStyles({ color });
-  grade = { integer: 8, decimals: '02', description: 'nota mockeada' };
   return (
     <Box className={classes.root}>
       {calificationType && (
@@ -109,15 +108,17 @@ export default function ScoreFeedback({ score, program, instance }) {
         <>
           <Box className={classes.containerGrade}>
             <Box className={classes.containerNumber}>
-              <Text className={classes.gradeNumber}>{false ? grade.letter : grade.integer}</Text>
+              <Text className={classes.gradeNumber}>
+                {isLetterType ? grade.letter : grade.integer}
+              </Text>
               {grade.decimals && (
                 <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
               )}
-              <Text>
-                <ArrowComponent state={'bad'} />
-              </Text>
+              <Box className={classes.containerArrow}>
+                <ArrowComponent state={'better'} />
+              </Box>
             </Box>
-            <Text className={classes.descriptionGrade}>{grade.description.toUpperCase()}</Text>
+            <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
           </Box>
         </>
       )}

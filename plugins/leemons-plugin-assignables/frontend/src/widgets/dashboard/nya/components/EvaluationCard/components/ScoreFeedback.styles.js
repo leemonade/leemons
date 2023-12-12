@@ -54,8 +54,13 @@ const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
       ...cardEvaluation.content.typo.xl,
       fontSize: pxToRem(24),
     },
-    descriptuionGrade: {
-      textAlign: 'left',
+    descriptionGrade: {
+      textAlign: 'center',
+      paddingLeft: pxToRem(12),
+      paddingRight: pxToRem(12),
+    },
+    containerArrow: {
+      marginLeft: pxToRem(8),
     },
     feedback: {
       flex: '1 0',

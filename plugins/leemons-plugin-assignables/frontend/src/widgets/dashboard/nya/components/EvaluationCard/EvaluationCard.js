@@ -16,6 +16,7 @@ import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { Link } from 'react-router-dom';
 import { ClassroomItemDisplay } from '@academic-portfolio/components';
 import { RoomItemDisplay } from '@comunica/components';
+import { EvaluationCardSkeleton } from '@assignables/components/EvaluationCard/EvaluationCardSkeleton';
 import ScoreFeedback from './components/ScoreFeedback';
 
 function useRoleLocalization(role) {
@@ -174,7 +175,7 @@ const useEvaluationCardStyles = createStyles((theme, { isHovered, color }) => {
   };
 });
 
-export default function EvaluationCard({ assignation, showSubject, classData }) {
+export default function EvaluationCard({ assignation }) {
   const { instance } = assignation;
   const { assignable } = instance;
   const { asset, roleDetails } = assignable;
@@ -196,6 +197,7 @@ export default function EvaluationCard({ assignation, showSubject, classData }) 
   const dateDelivered =
     instance?.dates?.deadline && new Date(instance?.dates?.deadline).toLocaleDateString();
 
+  if (!assignation) return <EvaluationCardSkeleton />;
   return (
     <Link
       to={roleDetails.evaluationDetailUrl
