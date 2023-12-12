@@ -5,10 +5,10 @@ import {
   Button,
   Col,
   ContextContainer,
+  createStyles,
   Grid,
   PageContainer,
   Paper,
-  createStyles,
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { AddCircleIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
@@ -20,6 +20,7 @@ import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
 import React, { useContext } from 'react';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { RegionalConfigDetail } from './components/regionalConfigDetail';
 
 const useStyle = createStyles((theme) => ({
@@ -92,6 +93,10 @@ export default function RegionalCalendars() {
   const { classes, cx } = useStyle();
   const { layoutState } = useLayout();
   const { setLoading, scrollTo } = useContext(LayoutContext);
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: 'academic-calendar',
+    ignoreVersion: true,
+  });
   const [store, render] = useStore({
     center: null,
     scroll: 0,
@@ -198,15 +203,19 @@ export default function RegionalCalendars() {
                                     ))
                                   : null}
                               </Box>
-                              <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                                <Button
-                                  onClick={addNewRegionalCalendar}
-                                  leftIcon={<AddCircleIcon />}
-                                  variant="link"
-                                >
-                                  {t('addRegionalCalendar')}
-                                </Button>
-                              </Box>
+                              {!(
+                                deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0
+                              ) ? (
+                                <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
+                                  <Button
+                                    onClick={addNewRegionalCalendar}
+                                    leftIcon={<AddCircleIcon />}
+                                    variant="link"
+                                  >
+                                    {t('addRegionalCalendar')}
+                                  </Button>
+                                </Box>
+                              ) : null}
                             </Box>
                           ) : null}
                         </ContextContainer>

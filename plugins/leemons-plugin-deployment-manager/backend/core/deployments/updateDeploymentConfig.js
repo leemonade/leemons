@@ -13,6 +13,7 @@ async function updateDeploymentConfig({ ctx, deploymentID, domains, config }) {
     throw new LeemonsError(ctx, { message: 'More than one deployment found' });
   }
   await ctx.db.deployment.updateOne(query, { $set: { config } });
+  await ctx.tx.emit('config-change');
   return true;
 }
 
