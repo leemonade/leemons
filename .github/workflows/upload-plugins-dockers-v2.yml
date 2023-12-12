@@ -12,10 +12,16 @@ on:
       PLUGINS:
         required: true
         type: string
+      PRIVATE_PLUGINS:
+        required: true
+        type: string
       AWS_REGION:
         required: true
         type: string
       GIT_BRANCH:
+        required: true
+        type: string
+      GIT_TAG:
         required: true
         type: string
     secrets:
@@ -51,32 +57,68 @@ jobs:
         continue-on-error: true
 
       - name: 🔧 Log plugins
-        run:  echo "${{ inputs.PLUGINS }}"
+        run: echo "${{ inputs.PLUGINS }}"
 
-      # Actualiza los plugins con las nuevas versiones de los packages y tambien sube una version patch a todos los plugins implicados
+      - name: 🔧 Log private plugins
+        run: echo "${{ inputs.PRIVATE_PLUGINS }}"
+
+      # Actualiza los plugins con las nuevas versiones de los packages y también sube una version patch a todos los plugins implicados
       # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
       - name: 🔧 Change package versions in plugins and change plugins versions
         id: plugins_versions
-        run:  echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
+        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh plugins '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
+
+      # Actualiza los plugins privados con las nuevas versiones de los packages y también sube una version patch a todos los plugins implicados
+      # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
+      - name: 🔧 Change package versions in plugins and change plugins versions
+        id: private_plugins_versions
+        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh private-plugins '${{ inputs.PACKAGES }}' '${{ inputs.PRIVATE_PLUGINS }}')" >> $GITHUB_OUTPUT
 
       # Compila todos los dockers de los plugins modificados
-      - name: 🔧 Compile all dockers
+      - name: 🔧 Compile all plugins dockers
         run: bash scripts/build_dockers_by_names_versions.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
+
+      # Compila todos los dockers de los plugins privados modificados
+      - name: 🔧 Compile all private plugins dockers
+        run: bash scripts/build_dockers_by_names_versions.sh "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
 
       # Tagea con la propia version del plugin todas las imagenes y las publica en ecr
       - name: 🔧 Upload all dockers to ECR
         run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
 
-      # Subimos los cambios de las versiones de los plugins
+      - name: 🔧 Upload all dockers to ECR
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
+
+      # Subimos los cambios de las versiones de los plugins privados
+      - name: 🔧 Checkout to latest submodule version
+        run: git submodule init
+
+      - name: 🔧 Check for modified files
+        id: private-git-check
+        run: echo "modified=$(if git -C private-plugins status | grep 'nothing to commit'; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Log private plugins versions
+        run: echo "${{ steps.git-check.outputs.modified }}"
+
+      - name: 🚀 Git push private-plugins submodule
+        if: steps.private-git-check.outputs.modified == 'true'
+        run: |
+          git -C private-plugins config user.name "GitHub Actions Bot"
+          git -C private-plugins config user.email "<>"
+          git -C private-plugins add -A
+          git -C private-plugins commit -m 'chore: version bump'
+          git -C private-plugins tag "$GIT_TAG"
+          git -C private-plugins push origin "$GIT_TAG"
+
       - name: 🔧 Check for modified files
         id: git-check
         run: echo "modified=$(if git status | grep 'nothing to commit'; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
 
-      - name: 🔧 Log plugins versios
-        run:  git status
+      - name: 🔧 Log plugins versions
+        run: git status
 
-      - name: 🔧 Log plugins versios
-        run:  echo "${{ steps.git-check.outputs.modified }}"
+      - name: 🔧 Log plugins versions
+        run: echo "${{ steps.git-check.outputs.modified }}"
 
       - name: 🚀 Git push
         if: steps.git-check.outputs.modified == 'true'
@@ -88,6 +130,6 @@ jobs:
           git stash
           git checkout ${{ inputs.GIT_BRANCH }}
           git stash apply
-          git add .
+          git add -A
           git commit -m 'chore: version bump'
           git push origin ${{ inputs.GIT_BRANCH }}
