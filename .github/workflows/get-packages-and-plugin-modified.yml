@@ -45,6 +45,12 @@ jobs:
         id: plugins
         run: echo "plugins=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^plugins/.*/backend' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
 
+      - name: ls-submodule
+        run: ls private-plugins
+
+      - name: git diff
+        run: git -C private-plugins diff --name-only $CURRENT_SUBMODULE_COMMIT $LAST_SUBMODULE_COMMIT
+
       - name: 🔧 Get private-plugins files
         id: private-plugins
         run: echo "private-plugins=$(git -C private-plugins diff --name-only $CURRENT_SUBMODULE_COMMIT $LAST_SUBMODULE_COMMIT | grep '^.*/backend' | cut -d/ -f1 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
