@@ -43,15 +43,15 @@ jobs:
       GIT_BRANCH: microservices/dev
       GIT_TAG: ${GITHUB_REF#refs/tags/}
 
-  call_lambda:
-    name: Call lambda
-    needs:
-      - build_and_publish_dockers
-    uses: ./.github/workflows/call-lambda.yml
-    secrets:
-      LAMBDA_ARN: ${{ secrets.DEV_LAMBDA_ARN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
-    with:
-      PLUGINS_VERSIONS: ${{ needs.build_and_publish_dockers.outputs.plugins_versions }}
-      AWS_REGION: eu-west-1
+  # call_lambda:
+  #   name: Call lambda
+  #   needs:
+  #     - build_and_publish_dockers
+  #   uses: ./.github/workflows/call-lambda.yml
+  #   secrets:
+  #     LAMBDA_ARN: ${{ secrets.DEV_LAMBDA_ARN }}
+  #     AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+  #   with:
+  #     PLUGINS_VERSIONS: ${{ needs.build_and_publish_dockers.outputs.plugins_versions }}
+  #     AWS_REGION: eu-west-1
