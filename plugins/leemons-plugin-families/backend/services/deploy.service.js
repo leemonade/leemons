@@ -28,6 +28,15 @@ const initDataset = async ({ ctx }) => {
   ctx.tx.emit('init-dataset-locations');
 };
 
+async function addMenuItems(ctx) {
+  await addMenuItemsDeploy({
+    keyValueModel: ctx.tx.db.KeyValue,
+    item: menuItems,
+    ctx,
+  });
+  ctx.tx.emit('init-menu');
+}
+
 /** @type {ServiceSchema} */
 module.exports = () => ({
   name: 'families.deploy',
@@ -44,14 +53,7 @@ module.exports = () => ({
     {
       type: 'once-per-install',
       events: ['users.init-menu', 'families.init-permissions'],
-      handler: async (ctx) => {
-        await addMenuItemsDeploy({
-          keyValueModel: ctx.tx.db.KeyValue,
-          item: menuItems,
-          ctx,
-        });
-        ctx.tx.emit('init-menu');
-      },
+      handler: async (ctx) => addMenuItems(ctx),
     },
   ],
   events: {
@@ -67,6 +69,7 @@ module.exports = () => ({
       // Dataset
       await initDataset({ ctx });
     },
+    'deployment-manager.config-change': async (ctx) => addMenuItems(ctx),
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,

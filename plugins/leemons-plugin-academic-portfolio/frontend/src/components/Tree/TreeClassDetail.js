@@ -22,6 +22,7 @@ import { useStore } from '@common';
 import { forEach, isArray, isString, map } from 'lodash';
 import { useLayout } from '@layout/context';
 import { TreeClassroomUsersDetail } from '@academic-portfolio/components/Tree/TreeClassroomUsersDetail';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
@@ -49,6 +50,10 @@ const TreeClassDetail = ({
   const [store, render] = useStore({
     createMode,
     page: createMode ? '2' : '1',
+  });
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: 'academic-portfolio',
+    ignoreVersion: true,
   });
   const {
     reset,
@@ -170,31 +175,35 @@ const TreeClassDetail = ({
       {store.page === '1' ? (
         <form onSubmit={handleSubmit(onBeforeSaveSubject)} autoComplete="off">
           <ContextContainer direction="column" fullWidth>
-            <Box>
-              <Controller
-                control={control}
-                name="name"
-                rules={{ required: messages.subjectNameRequired }}
-                render={({ field }) => (
-                  <TextInput error={errors.name} label={messages.subjectNameLabel} {...field} />
-                )}
-              />
-            </Box>
-            <Box>
-              <Controller
-                control={control}
-                name="subjectType"
-                rules={{ required: messages.subjectTypeRequired }}
-                render={({ field }) => (
-                  <Select
-                    data={selects.subjectTypes}
-                    error={errors.subjectType}
-                    label={messages.subjectType}
-                    {...field}
+            {!(deploymentConfig?.deny?.others?.indexOf('treeClassNameAndTypeFromForm') >= 0) ? (
+              <>
+                <Box>
+                  <Controller
+                    control={control}
+                    name="name"
+                    rules={{ required: messages.subjectNameRequired }}
+                    render={({ field }) => (
+                      <TextInput error={errors.name} label={messages.subjectNameLabel} {...field} />
+                    )}
                   />
-                )}
-              />
-            </Box>
+                </Box>
+                <Box>
+                  <Controller
+                    control={control}
+                    name="subjectType"
+                    rules={{ required: messages.subjectTypeRequired }}
+                    render={({ field }) => (
+                      <Select
+                        data={selects.subjectTypes}
+                        error={errors.subjectType}
+                        label={messages.subjectType}
+                        {...field}
+                      />
+                    )}
+                  />
+                </Box>
+              </>
+            ) : null}
 
             {program.maxNumberOfCourses > 1 ? (
               <Box>
