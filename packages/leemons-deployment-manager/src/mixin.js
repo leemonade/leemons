@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
+const {
+  getPluginNameFromServiceName,
+  getPluginNameWithVersionIfHaveFromServiceName,
+} = require('@leemons/service-name-parser');
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 
@@ -30,8 +33,10 @@ async function modifyCTX(
 ) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
-  if (ctx.service.name !== 'gateway' && ctx.caller)
+  if (ctx.service.name !== 'gateway' && ctx.caller) {
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
+    ctx.callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
+  }
 
   ctx.__leemonsDeploymentManagerCall = ctx.call;
   ctx.__leemonsDeploymentManagerEmit = ctx.emit;
@@ -43,7 +48,13 @@ async function modifyCTX(
   ctx.logger = console;
 
   ctx.prefixPN = function (string) {
-    return `${getPluginNameFromServiceName(ctx.service.name)}${string ? '.' : ''}${string}`;
+    return `${getPluginNameFromServiceName(ctx.service.name)}${string ? '.' : ''}${string || ''}`;
+  };
+
+  ctx.prefixPNV = function (string) {
+    return `${getPluginNameWithVersionIfHaveFromServiceName(ctx.service.fullName)}${
+      string ? '.' : ''
+    }${string || ''}`;
   };
 
   ctx.emit = async function (event, params, opts) {

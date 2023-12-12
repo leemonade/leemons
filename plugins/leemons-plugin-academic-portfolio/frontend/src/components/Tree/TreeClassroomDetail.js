@@ -18,6 +18,7 @@ import { filter, find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 
 const TreeClassroomDetail = ({
   messagesAddUsers,
@@ -36,6 +37,10 @@ const TreeClassroomDetail = ({
   teacherSelect,
 }) => {
   const [store, render] = useStore({ students: [], tempGroups: [] });
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: 'academic-portfolio',
+    ignoreVersion: true,
+  });
   const selects = React.useMemo(
     () => ({
       knowledges: map(program.knowledges, ({ name, id }) => ({
@@ -90,7 +95,9 @@ const TreeClassroomDetail = ({
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm({ defaultValues: classForForm() });
+  console.log(getValues());
 
   React.useEffect(() => {
     reset(classForForm());
@@ -123,7 +130,7 @@ const TreeClassroomDetail = ({
                       value: new RegExp(
                         `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
                           program.maxGroupAbbreviation
-                        }}|.{36})$`,
+                        }}|lrn:.*)$`,
                         'g'
                       ),
                     },
@@ -143,13 +150,15 @@ const TreeClassroomDetail = ({
                 />
               </Box>
             )}
-            <Box>
-              <Controller
-                control={control}
-                name="seats"
-                render={({ field }) => <NumberInput label={messages.seatsLabel} {...field} />}
-              />
-            </Box>
+            {!(deploymentConfig?.deny?.others?.indexOf('classSeats') >= 0) ? (
+              <Box>
+                <Controller
+                  control={control}
+                  name="seats"
+                  render={({ field }) => <NumberInput label={messages.seatsLabel} {...field} />}
+                />
+              </Box>
+            ) : null}
           </Stack>
 
           {program.haveKnowledge || program.haveSubstagesPerCourse ? (
@@ -199,31 +208,37 @@ const TreeClassroomDetail = ({
             </Box>
           </Stack>
 
-          <Box>
-            <Controller
-              control={control}
-              name="associateTeachers"
-              render={({ field }) =>
-                React.cloneElement(teacherSelect, {
-                  label: messages.associateTeachersLabel,
-                  maxSelectedValues: 999,
-                  ...field,
-                })
-              }
-            />
-          </Box>
+          {!(
+            deploymentConfig?.deny?.others?.indexOf('treeClassSecondTeacherAndImageFromForm') >= 0
+          ) ? (
+            <>
+              <Box>
+                <Controller
+                  control={control}
+                  name="associateTeachers"
+                  render={({ field }) =>
+                    React.cloneElement(teacherSelect, {
+                      label: messages.associateTeachersLabel,
+                      maxSelectedValues: 999,
+                      ...field,
+                    })
+                  }
+                />
+              </Box>
 
-          <Box>
-            <Controller
-              control={control}
-              name="image"
-              render={({ field }) => (
-                <InputWrapper label={messages.imageLabel}>
-                  <ImagePicker {...field} />
-                </InputWrapper>
-              )}
-            />
-          </Box>
+              <Box>
+                <Controller
+                  control={control}
+                  name="image"
+                  render={({ field }) => (
+                    <InputWrapper label={messages.imageLabel}>
+                      <ImagePicker {...field} />
+                    </InputWrapper>
+                  )}
+                />
+              </Box>
+            </>
+          ) : null}
 
           <Stack spacing={4} fullWidth>
             <Box>

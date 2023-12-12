@@ -9,7 +9,6 @@ import {
   Select,
 } from '@bubbles-ui/components';
 // TODO: import from @common plugin
-
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useStore } from '@common/useStore';
@@ -20,6 +19,7 @@ import SelectUserAgent from '@users/components/SelectUserAgent';
 import _, { find, isArray, map } from 'lodash';
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { KnowledgeTable } from '../../../components/KnowledgeTable';
 import { SubjectTypesTable } from '../../../components/SubjectTypesTable';
 import { SubjectsTable } from '../../../components/SubjectsTable';
@@ -49,6 +49,10 @@ export default function SubjectList() {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const history = useHistory();
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: 'academic-portfolio',
+    ignoreVersion: true,
+  });
 
   const [store, render] = useStore({
     loading: false,
@@ -400,14 +404,16 @@ export default function SubjectList() {
                       ) : null}
                       {store.program
                         ? [
-                            <SubjectTypesTable
-                              key="1"
-                              messages={messages.subjectTypes}
-                              tableLabels={messages.tableLabels}
-                              program={store.program}
-                              onAdd={addSubjectType}
-                              updateVisibility={updateVisibility}
-                            />,
+                            !(deploymentConfig?.deny?.others?.indexOf('subjectType') >= 0) ? (
+                              <SubjectTypesTable
+                                key="1"
+                                messages={messages.subjectTypes}
+                                tableLabels={messages.tableLabels}
+                                program={store.program}
+                                onAdd={addSubjectType}
+                                updateVisibility={updateVisibility}
+                              />
+                            ) : null,
                             <SubjectsTable
                               key="2"
                               messages={messages.subjects}
