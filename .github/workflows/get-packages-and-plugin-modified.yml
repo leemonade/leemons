@@ -32,7 +32,7 @@ jobs:
         run: echo "CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)" >> "$GITHUB_ENV"
 
       - name: 🔧 Get last tag private-plugins submodule commit id
-        run: echo "LAST_SUBMODULE_COMMIT=$(git ls-tree $LAST_TAG private-plugins | cut -d' ' -f3 | cut -f1)" >> "$GITHUB_ENV"
+        run: echo "LAST_SUBMODULE_COMMIT=513155cf431f85d305b3114e8a5939cde38c9fa8" >> "$GITHUB_ENV"
 
       - name: 🔧 Get current tag private-plugins submodule commit id
         run: echo "CURRENT_SUBMODULE_COMMIT=$(git ls-tree $CURRENT_TAG private-plugins | cut -d' ' -f3 | cut -f1)" >> "$GITHUB_ENV"
