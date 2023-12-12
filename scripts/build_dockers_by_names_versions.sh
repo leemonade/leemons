@@ -1,6 +1,7 @@
 #!/bin/bash
 
-IFS=',' read -ra PLUGINS <<< "$1"
+$DIRECTORY="$1"
+IFS=',' read -ra PLUGINS <<< "$2"
 
 if [ ${#PLUGINS[@]} -gt 0 ]; then
   for plugin_version in "${PLUGINS[@]}"
@@ -10,6 +11,6 @@ if [ ${#PLUGINS[@]} -gt 0 ]; then
     plugin=${PLUGIN[0]}
     version=${PLUGIN[1]}
 
-    bash ./scripts/build_dockers_by_uri.sh "plugins/${plugin}/backend"
+    bash ./scripts/build_dockers_by_uri.sh "${DIRECTORY}/${plugin}/backend" "$DIRECTORY"
   done
 fi
