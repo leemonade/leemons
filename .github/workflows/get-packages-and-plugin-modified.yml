@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: "0"
       - name: 🛎️ Initialize submodule
-        run: git submodule init
+        run: git submodule update --init
 
       - name: 🔧 Get last tag
         run: echo "LAST_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"

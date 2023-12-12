@@ -91,7 +91,7 @@ jobs:
 
       # Subimos los cambios de las versiones de los plugins privados
       - name: 🔧 Checkout to latest submodule version
-        run: git submodule init
+        run: git submodule update --init
 
       - name: 🔧 Check for modified files
         id: private-git-check
