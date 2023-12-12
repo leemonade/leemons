@@ -2,7 +2,7 @@ name: DEV Publish packages & publish dockers
 on:
   push:
     tags:
-      - '*.*.*-mdev'
+      - "*.*.*-mdev"
 
 jobs:
   publish_packages_to_npm:
@@ -25,5 +25,3 @@ jobs:
       IMAGE_TAG: dev
       GIT_BRANCH: microservices/dev
       NPM_TAG: dev
-
-

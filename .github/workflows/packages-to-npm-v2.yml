@@ -21,22 +21,20 @@ on:
 
 jobs:
   publish:
-
     runs-on: ubuntu-latest
     outputs:
       packages: ${{ steps.packages.outputs.packages }}
     steps:
-
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: '0'
+          fetch-depth: "0"
 
       - name: 🔧 Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
 
       # Sube la version path de todos los packages que han sido modificados y publica la version en npm
       # @return package_name|package_version
@@ -49,7 +47,7 @@ jobs:
       # Subimos los cambios al repositorio
       - name: 🔧 Check for modified files
         id: git-check
-        run: echo "modified=$(if git status | grep 'nothing to commit'; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
+        run: echo "modified=$(if git status | grep 'nothing to commit' > /dev/null; then echo false; else echo true; fi)" >> $GITHUB_OUTPUT
 
       - name: 🚀 Git push
         if: steps.git-check.outputs.modified == 'true'
