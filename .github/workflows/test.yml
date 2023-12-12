@@ -27,7 +27,7 @@ jobs:
   build_and_publish_dockers:
     name: Build and publish dockers
     needs:
-      - publish_packages_to_npm
+      # - publish_packages_to_npm
       - get_packages_and_plugins_modified
     uses: ./.github/workflows/upload-plugins-dockers-v2.yml
     secrets:
@@ -36,7 +36,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
       GH_PAT: ${{ secrets.GH_PAT }}
     with:
-      PACKAGES: ${{ needs.publish_packages_to_npm.outputs.packages }}
+      PACKAGES: "" #${{ needs.publish_packages_to_npm.outputs.packages }}
       PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.plugins }}
       PRIVATE_PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.private-plugins }}
       AWS_REGION: eu-west-1
