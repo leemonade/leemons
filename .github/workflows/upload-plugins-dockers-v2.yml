@@ -71,13 +71,13 @@ jobs:
       # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
       - name: 🔧 Change package versions in plugins and change plugins versions
         id: plugins_versions
-        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh plugins '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
+        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh 'plugins' '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
 
       # Actualiza los plugins privados con las nuevas versiones de los packages y también sube una version patch a todos los plugins implicados
       # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
       - name: 🔧 Change package versions in plugins and change plugins versions
         id: private_plugins_versions
-        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh private-plugins '${{ inputs.PACKAGES }}' '${{ inputs.PRIVATE_PLUGINS }}')" >> $GITHUB_OUTPUT
+        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh 'private-plugins' '${{ inputs.PACKAGES }}' '${{ inputs.PRIVATE_PLUGINS }}')" >> $GITHUB_OUTPUT
 
       # Compila todos los dockers de los plugins modificados
       - name: 🔧 Compile all plugins dockers
