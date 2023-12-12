@@ -34,6 +34,7 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
       AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+      GH_PAT: ${{ secrets.GH_PAT }}
     with:
       PACKAGES: ${{ needs.publish_packages_to_npm.outputs.packages }}
       PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.plugins }}

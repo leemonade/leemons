@@ -31,6 +31,8 @@ on:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
+      GH_PAT:
+        required: true
 
 jobs:
   upload:
