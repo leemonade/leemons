@@ -97,6 +97,8 @@ module.exports = {
           calificable: 'Calificable',
           punctuable: 'Puntuable',
           feedbackOnly: 'Solo comentarios',
+          feedback: 'Feedback',
+          feedbackAvailable: 'Feedback disponible',
         },
       },
       showCurriculum: 'Mostrar curriculum',

@@ -4,6 +4,7 @@ import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationS
 import _, { cloneDeep, sortBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
+import { GotFeedbackIcon } from './GotFeedbackIcon';
 import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
 import { getActivityType } from '../../../../../../helpers/getActivityType';
 import prefixPN from '../../../../../../helpers/prefixPN';
@@ -34,7 +35,7 @@ export function findNearestFloorScore(score, scales) {
   return nearestScore;
 }
 
-export default function ScoreFeedback({ score, program, instance }) {
+export default function ScoreFeedback({ score, program, instance, isFeedback }) {
   const evaluationSystem = useProgramEvaluationSystem(program);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
   const [, translations] = useTranslateLoader(prefixPN('assignmentForm'));
@@ -45,9 +46,9 @@ export default function ScoreFeedback({ score, program, instance }) {
     };
   }, [translations]);
   const [calificationType, setCalificationType] = useState(null);
+  const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
-    const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
     const activityTypeLocale = {
       calificable: localizationType?.calificable,
       puntuable: localizationType?.punctuable,
@@ -104,7 +105,7 @@ export default function ScoreFeedback({ score, program, instance }) {
           <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
         </Badge>
       )}
-      {!!score && (
+      {!!score && !isFeedback ? (
         <>
           <Box className={classes.containerGrade}>
             <Box className={classes.containerNumber}>
@@ -119,6 +120,18 @@ export default function ScoreFeedback({ score, program, instance }) {
               </Box>
             </Box>
             <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
+          </Box>
+        </>
+      ) : (
+        <>
+          <Badge closable={false} size="xs" className={classes.calificationBadge}>
+            <Text className={classes.badgeText}>{localizationType?.feedback?.toUpperCase()}</Text>
+          </Badge>
+          <Box className={classes.containerGrade} style={{ marginTop: 0 }}>
+            <Box className={classes.containerFeedback}>
+              <GotFeedbackIcon />
+              <Text className={classes.textFeedback}>{localizationType?.feedbackAvailable}</Text>
+            </Box>
           </Box>
         </>
       )}

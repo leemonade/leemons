@@ -1,7 +1,7 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
-  const { cardEvaluation, badge } = theme.other;
+  const { cardEvaluation, badge, global } = theme.other;
   let color;
   switch (_c) {
     case 'error':
@@ -43,7 +43,17 @@ const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
       display: 'flex',
       alignItems: 'baseline',
     },
-
+    containerFeedback: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: pxToRem(16),
+    },
+    textFeedback: {
+      color: global.content.color.text.default,
+      ...global.content.typo.body.xsm,
+    },
     gradeNumber: {
       color: cardEvaluation.content.color.subje,
       ...cardEvaluation.content.typo.xxl,
