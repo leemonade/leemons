@@ -8,6 +8,7 @@
     "@bubbles-ui/editors": "dev",
     "@bubbles-ui/icons": "dev",
     "@bubbles-ui/leemons": "dev",
+    "@bubbles-ui/extras": "dev",
     "@loadable/component": "^5.15.2",
     "@tanstack/react-query": "^4.35.3",
     "dayjs": "^1.11.2",

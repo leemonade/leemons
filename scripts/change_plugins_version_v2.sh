@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Paso1. Verifica que se haya proporcionado al menos un string como argumento
-IFS=',' read -ra PACKAGES <<< "$1"
-IFS=',' read -ra PLUGINS <<< "$2"
+PLUGINS_PATH="$1"
+IFS=',' read -ra PACKAGES <<< "$2"
+IFS=',' read -ra PLUGINS <<< "$3"
 
-cd plugins
+cd "$PLUGINS_PATH"
 
 if [ ${#PACKAGES[@]} -gt 0 ]; then
   for string in "${PACKAGES[@]}"

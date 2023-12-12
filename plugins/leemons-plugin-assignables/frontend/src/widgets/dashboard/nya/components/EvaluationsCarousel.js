@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Swiper, Loader } from '@bubbles-ui/components';
+import { Loader } from '@bubbles-ui/components';
+import { Swiper } from '@bubbles-ui/extras';
 import EmptyState from './EmptyState';
 import { useNyaStyles } from '../hooks';
 import EvaluationCard from './EvaluationCard';

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Swiper, Loader } from '@bubbles-ui/components';
+import { Loader } from '@bubbles-ui/components';
+import { Swiper } from '@bubbles-ui/extras';
 import { useLocation } from 'react-router-dom';
 import NYACard from '../../../../components/NYACard';
 import EmptyState from './EmptyState';

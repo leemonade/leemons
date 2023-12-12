@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import _ from 'lodash';
-import { Box, Swiper, Loader } from '@bubbles-ui/components';
+import { Box, Loader } from '@bubbles-ui/components';
+import { Swiper } from '@bubbles-ui/extras';
 import SubjectCard from './components/SubjectCard';
 
 export default function SubjectSelector({

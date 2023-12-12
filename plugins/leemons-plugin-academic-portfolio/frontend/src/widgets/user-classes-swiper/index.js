@@ -7,10 +7,10 @@ import {
   ImageLoader,
   Loader,
   Stack,
-  Swiper,
   Text,
   TextClamp,
 } from '@bubbles-ui/components';
+import { Swiper } from '@bubbles-ui/extras';
 import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -141,16 +141,16 @@ function UserClassesSwiperWidget({ program }) {
             !classe.groups || classe.groups.isAlone
               ? null
               : classe.groups
-              ? classe.groups.abbreviation
-              : null;
+                ? classe.groups.abbreviation
+                : null;
           const course =
             !classe.groups || classe.groups.isAlone
               ? null
               : isArray(classe.courses)
-              ? t('multiCourse')
-              : classe.courses
-              ? getCourseName(classe.courses)
-              : null;
+                ? t('multiCourse')
+                : classe.courses
+                  ? getCourseName(classe.courses)
+                  : null;
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@bubbles-ui/components": "dev",
+    "@bubbles-ui/extras": "dev",
     "@bubbles-ui/icons": "dev",
     "@bubbles-ui/leemons": "dev",
     "@loadable/component": "^5.15.2",

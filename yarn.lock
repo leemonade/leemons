@@ -1710,6 +1710,17 @@
     styled-components "^5.3.3"
     styled-icons "^10.45.0"
 
+"@bubbles-ui/extras@dev":
+  version "1.2.44"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/extras/-/extras-1.2.44.tgz#ddb445b8506993189e7600acfce430eb79e797e4"
+  integrity sha512-6LFfAfIWeKjMbhVGVHI6aTCWFyeQaXuMh2vcKJiWzSlGoJBGNAe3FzT3+cnYCno5tlYSvW3CoODTGPkb70S2/g==
+  dependencies:
+    "@yaireo/tagify" "^4.9.4"
+    lodash "^4.17.21"
+    prop-types "^15.7.2"
+    simplebar-react "^2.3.6"
+    swiper "^8.1.4"
+
 "@bubbles-ui/icons@^1.2.31", "@bubbles-ui/icons@dev":
   version "1.2.31"
   resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.31.tgz#18498c216777d5d0d9c1b48b898e64b911401e33"

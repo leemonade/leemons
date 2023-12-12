@@ -2,16 +2,15 @@ name: DEV Publish packages & publish dockers
 on:
   push:
     tags:
-      - '*.*.*-test'
+      - "*.*.*-test"
 
 jobs:
-
   # Sacamos los plugins y packages modificados de un tag a otro
   get_packages_and_plugins_modified:
     name: Get packages and plugins modified
     uses: ./.github/workflows/get-packages-and-plugin-modified.yml
     with:
-      tag_pattern: '*.*.*-test'
+      tag_pattern: "*.*.*-test"
     secrets: inherit
 
   # Sube los packages a npm y devuelve un string con los packages y sus nuevas versiones
@@ -27,7 +26,7 @@ jobs:
 
   build_and_publish_dockers:
     name: Build and publish dockers
-    needs: 
+    needs:
       - publish_packages_to_npm
       - get_packages_and_plugins_modified
     uses: ./.github/workflows/upload-plugins-dockers-v2.yml
@@ -38,12 +37,14 @@ jobs:
     with:
       PACKAGES: ${{ needs.publish_packages_to_npm.outputs.packages }}
       PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.plugins }}
+      PRIVATE_PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.private-plugins }}
       AWS_REGION: eu-west-1
       GIT_BRANCH: microservices/dev
+      GIT_TAG: ${GITHUB_REF#refs/tags/}
 
   call_lambda:
     name: Call lambda
-    needs: 
+    needs:
       - build_and_publish_dockers
     uses: ./.github/workflows/call-lambda.yml
     secrets:
