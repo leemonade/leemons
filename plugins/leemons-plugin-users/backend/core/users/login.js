@@ -27,6 +27,12 @@ async function login({ email, password, ctx }) {
     .select(['id'])
     .lean();
 
+  if (!userP.password)
+    throw new LeemonsError(ctx, {
+      message: 'Credentials do not match',
+      httpStatusCode: 401,
+    });
+
   const areEquals = await comparePassword(password, userP.password);
   if (!areEquals)
     throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });

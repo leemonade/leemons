@@ -30,7 +30,7 @@ module.exports = {
         config = {
           'v1.curriculum': {
             deny: {
-              menu: ['curriculum'],
+              menu: ['curriculum', 'curriculum-new', 'curriculum-library'],
             },
           },
           'v1.academic-portfolio': {
@@ -58,7 +58,7 @@ module.exports = {
           },
           'v1.fundae': {
             deny: {
-              menu: ['fundae'],
+              menu: ['fundae', 'fundae-list'],
             },
           },
           'v1.users': {
@@ -73,12 +73,16 @@ module.exports = {
           },
           'v1.grades': {
             deny: {
-              menu: ['rules'],
+              menu: ['rules', 'welcome', 'evaluations', 'promotions', 'dependencies'],
             },
           },
         };
       } else {
-        const deployment = await ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }).lean();
+        const deployment = await ctx.db.Deployment.findOne(
+          { id: ctx.meta.deploymentID },
+          undefined,
+          { disableAutoDeploy: true }
+        ).lean();
         if (!deployment && process.env.DISABLE_AUTO_INIT === 'true')
           throw new LeemonsError(ctx, { message: 'Deployment not found at get config' });
         config = deployment?.config;

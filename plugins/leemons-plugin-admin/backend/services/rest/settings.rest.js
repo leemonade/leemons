@@ -75,8 +75,12 @@ module.exports = {
           email: { type: 'string' },
           password: { type: 'string' },
           locale: { type: 'string' },
+          name: { type: 'string' },
+          surnames: { type: 'string' },
+          birthdate: { type: 'string' },
+          gender: { type: 'string' },
         },
-        required: ['email', 'password', 'locale'],
+        required: ['email', 'locale'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
