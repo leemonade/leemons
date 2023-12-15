@@ -13,12 +13,12 @@ async function add({ ctx, ...data }) {
   let start = performance.now();
   validatePermissionName(data.permissionName, ctx.callerPlugin);
   let end = performance.now();
-  console.log(`Execution time for validatePermissionName: ${end - start} ms`);
+  // console.log(`Execution time for validatePermissionName: ${end - start} ms`);
 
   start = performance.now();
   await validateExistPermission({ permissionName: data.permissionName, ctx });
   end = performance.now();
-  console.log(`Execution time for validateExistPermission: ${end - start} ms`);
+  // console.log(`Execution time for validateExistPermission: ${end - start} ms`);
 
   ctx.logger.info(`Adding permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
 
@@ -34,15 +34,14 @@ async function add({ ctx, ...data }) {
     }),
   ]);
   end = performance.now();
-  console.log(`Execution time for creating permission and adding localization: ${end - start} ms`);
+  // console.log(`Execution time for creating permission and adding localization: ${end - start} ms`);
 
   start = performance.now();
   await addActionMany({ permissionName: data.permissionName, actionNames: data.actions, ctx });
   end = performance.now();
-  console.log(`Execution time for addActionMany: ${end - start} ms`);
+  // console.log(`Execution time for addActionMany: ${end - start} ms`);
 
   return values[0];
 }
 
 module.exports = { add };
-

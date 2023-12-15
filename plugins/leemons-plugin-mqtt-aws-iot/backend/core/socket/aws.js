@@ -56,55 +56,63 @@ async function getRegion({ ctx }) {
 
 async function getAccount({ ctx }) {
   return new Promise(async (resolve, reject) => {
-    const sts = await getSts({ ctx });
-    if (account) resolve(account);
-    sts.getCallerIdentity({}, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        account = data.Accoun;
-        resolve(data.Account);
-      }
-    });
+    try {
+      const sts = await getSts({ ctx });
+      if (account) resolve(account);
+      sts.getCallerIdentity({}, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          account = data.Accoun;
+          resolve(data.Account);
+        }
+      });
+    } catch (e) {
+      reject(e);
+    }
   });
 }
 
 async function getFederationToken({ policy, ctx }) {
   if (!policy) throw new LeemonsError(ctx, { message: 'Policy is required' });
   return new Promise(async (resolve, reject) => {
-    const sts = await getSts({ ctx });
-    sts.getFederationToken(
-      {
-        Name: randomString(32),
-        DurationSeconds: 129600,
-        Policy: _.isString(policy) ? policy : JSON.stringify(policy),
-      },
-      (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
+    try {
+      const sts = await getSts({ ctx });
+      sts.getFederationToken(
+        {
+          Name: randomString(32),
+          DurationSeconds: 129600,
+          Policy: _.isString(policy) ? policy : JSON.stringify(policy),
+        },
+        (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data);
+          }
         }
-      }
-    );
+      );
+    } catch (e) {
+      reject(e);
+    }
   });
 }
 
 /** {
-          Version: '2012-10-17',
-          Statement: [
-            {
-              Effect: 'Allow',
-              Action: [
-                'iot:Connect',
-                'iot:Publish',
-                'iot:Subscribe',
-                'iot:Receive',
-                'iot:DescribeEndpoint',
-              ],
-              Resource: '*',
-            },
-          ],
-        } */
+ Version: '2012-10-17',
+ Statement: [
+ {
+ Effect: 'Allow',
+ Action: [
+ 'iot:Connect',
+ 'iot:Publish',
+ 'iot:Subscribe',
+ 'iot:Receive',
+ 'iot:DescribeEndpoint',
+ ],
+ Resource: '*',
+ },
+ ],
+ } */
 
 module.exports = { getIot, getRegion, getFederationToken, getAccount, configChanged };
