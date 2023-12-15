@@ -13,7 +13,7 @@ import { prepareAsset } from '../../helpers/prepareAsset';
 import { BasicDataLibraryForm } from '../LibraryForm/BasicDataLibraryForm';
 
 const BasicData = ({ file, advancedConfig, asset: assetProp, categoryId, editing, ...props }) => {
-  const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading] = useState(false);
   const [tags, setTags] = useState(assetProp?.tags || []);
 

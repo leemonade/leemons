@@ -106,6 +106,8 @@ const NewAssetPage = () => {
             onSave={setAsset}
             type={asset?.fileType}
             asset={asset}
+            file={asset?.file}
+            editing={params.id?.length}
           />
         ),
       },
@@ -121,7 +123,7 @@ const NewAssetPage = () => {
   });
   const formValues = form.watch();
 
-  // Edit: To receive an asset resets the form.
+  // Edit: If an asset is passed the form resets
   React.useEffect(() => {
     form.reset(initialStepsInfo[totalLayoutProps.activeStep]?.initialValues);
   }, [asset]);
