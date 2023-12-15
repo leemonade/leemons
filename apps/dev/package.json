@@ -14,7 +14,7 @@
   },
   "leemons": {},
   "dependencies": {
-    "@leemons/runner": "0.0.40",
+    "@leemons/runner": "0.0.41",
     "colord": "^2.9.3",
     "dotenv": "^16.0.3",
     "html2canvas": "^1.4.1",

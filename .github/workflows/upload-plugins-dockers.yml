@@ -27,12 +27,16 @@ jobs:
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
+        with:
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
+
       - name: 🔧 Download latest commit
         run: |
           git fetch origin ${{ inputs.GIT_BRANCH }}
           git checkout ${{ inputs.GIT_BRANCH }}
           git pull origin ${{ inputs.GIT_BRANCH }}
-          git submodules init
+
       - name: 🔧 Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

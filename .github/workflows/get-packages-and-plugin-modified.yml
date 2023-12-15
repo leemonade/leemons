@@ -24,6 +24,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: "0"
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
 
       - name: 🔧 Get last tag
         run: echo "LAST_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
@@ -32,7 +34,7 @@ jobs:
         run: echo "CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)" >> "$GITHUB_ENV"
 
       - name: 🔧 Get last tag private-plugins submodule commit id
-        run: echo "LAST_SUBMODULE_COMMIT=$(git ls-tree $LAST_TAG private-plugins | cut -d' ' -f3 | cut -f1)" >> "$GITHUB_ENV"
+        run: echo "LAST_SUBMODULE_COMMIT=513155cf431f85d305b3114e8a5939cde38c9fa8" >> "$GITHUB_ENV"
 
       - name: 🔧 Get current tag private-plugins submodule commit id
         run: echo "CURRENT_SUBMODULE_COMMIT=$(git ls-tree $CURRENT_TAG private-plugins | cut -d' ' -f3 | cut -f1)" >> "$GITHUB_ENV"
@@ -44,6 +46,12 @@ jobs:
       - name: 🔧 Get plugins files
         id: plugins
         run: echo "plugins=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^plugins/.*/backend' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: ls-submodule
+        run: echo $(ls private-plugins)
+
+      - name: git diff
+        run: git -C private-plugins diff --name-only $CURRENT_SUBMODULE_COMMIT $LAST_SUBMODULE_COMMIT
 
       - name: 🔧 Get private-plugins files
         id: private-plugins
