@@ -6,11 +6,16 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 
 function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
   const [t] = useTranslateLoader(prefixPN('subjectsDrawer'));
   const [reload, setReload] = React.useState(false);
   const form = useForm();
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: 'academic-portfolio',
+    ignoreVersion: true,
+  });
   const {
     control,
     handleSubmit,
@@ -71,6 +76,9 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
       _.forEach(columns, (column) => {
         v[column.accessor] = data[column.accessor];
       });
+      if (!v.hasOwnProperty('seats') && deploymentConfig?.defaults?.classSeats) {
+        v.seats = deploymentConfig?.defaults?.classSeats;
+      }
       onSave(v);
     })();
   }

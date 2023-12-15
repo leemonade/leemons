@@ -32,7 +32,16 @@ if [ ${#PLUGINS[@]} -gt 0 ]; then
 
       # Publica la imagen en AWS ECR
       docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$image_and_ecr_name:$version
+    elif [ -d "private-plugins/${plugin}/backend" ]; then
 
+      # Extrae el nombre del directorio actual para usarlo como nombre de la imagen
+      image_and_ecr_name=$(echo "$plugin" | awk -F'/' '{print $(NF-1)}' | sed 's/^leemons-plugin-/private-/')
+
+      # Etiqueta la imagen docker que tiene que estar creada previamente
+      docker tag $image_and_ecr_name:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$image_and_ecr_name:$version
+
+      # Publica la imagen en AWS ECR
+      docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$image_and_ecr_name:$version
     else
       echo "La ruta '$carpeta' no es un directorio válido."
     fi

@@ -7,7 +7,6 @@ import {
   Button,
   ContextContainer,
   Pager,
-  Paragraph,
   Stack,
   Table,
   TextInput,
@@ -228,12 +227,7 @@ const TreeClassroomUsersDetail = ({
               />
             </Stack>
           </ContextContainer>
-        ) : (
-          <Stack fullWidth alignItems="center" justifyContent="space-between">
-            <Paragraph>{messages.noStudentsYet}</Paragraph>
-            <Button onClick={toggleAddStudents}>{messages.addStudents}</Button>
-          </Stack>
-        )}
+        ) : null}
       </ContextContainer>
     </Box>
   );

@@ -12,6 +12,9 @@ async function listClasses({ page, size, program, query, ctx }) {
 
   response.items = await classByIds({ ids: _.map(response.items, 'id'), ctx });
 
+  // Order by createdAt
+  response.items = _.orderBy(response.items, ['createdAt'], ['desc']);
+
   return response;
 }
 

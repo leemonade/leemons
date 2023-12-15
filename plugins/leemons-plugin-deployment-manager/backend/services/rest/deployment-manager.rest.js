@@ -7,6 +7,8 @@
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
+const { getPluginNameWithVersionIfHaveFromServiceName } = require('@leemons/service-name-parser');
 const { checkIfManualPasswordIsGood } = require('../../helpers/checkIfManualPasswordIsGood');
 const { updateDeploymentConfig } = require('../../core/deployments/updateDeploymentConfig');
 const { addDeployment } = require('../../core/deployments/addDeployment');
@@ -20,10 +22,86 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const deployment = await ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }).lean();
-      if (!deployment)
-        throw new LeemonsError(ctx, { message: 'Deployment not found at get config' });
-      return deployment.config;
+      let config = {};
+      if (
+        ctx.meta.deploymentID === 'auto-deployment-id' &&
+        process.env.TEST_DEPLOYMENT_CONFIG === 'true'
+      ) {
+        config = {
+          'v1.curriculum': {
+            deny: {
+              menu: ['curriculum'],
+            },
+          },
+          'v1.academic-portfolio': {
+            deny: {
+              menu: ['welcome', 'profiles', 'programs'],
+              others: [
+                'subjectType',
+                'classSeats',
+                'treeProgramForm',
+                'treeClassNameAndTypeFromForm',
+                'treeClassSecondTeacherAndImageFromForm',
+              ],
+            },
+            limits: {
+              maxSubjects: 6,
+            },
+            defaults: {
+              classSeats: 50,
+            },
+          },
+          'v1.academic-calendar': {
+            deny: {
+              others: ['addRegionalCalendar'],
+            },
+          },
+          'v1.fundae': {
+            deny: {
+              menu: ['fundae'],
+            },
+          },
+          'v1.users': {
+            deny: {
+              menu: ['roles-list', 'profile-list', 'user-data'],
+            },
+          },
+          'v1.families': {
+            deny: {
+              menu: ['families', 'families-data'],
+            },
+          },
+          'v1.grades': {
+            deny: {
+              menu: ['rules'],
+            },
+          },
+        };
+      } else {
+        const deployment = await ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }).lean();
+        if (!deployment && process.env.DISABLE_AUTO_INIT === 'true')
+          throw new LeemonsError(ctx, { message: 'Deployment not found at get config' });
+        config = deployment?.config;
+      }
+
+      const callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
+
+      if (!ctx.params.allConfig && config) {
+        const keys = Object.keys(config);
+        let result = null;
+        _.forEach(keys, (key) => {
+          if (ctx.params.ignoreVersion) {
+            if (key.split('.')[1] === callerPluginV.split('.')[1]) {
+              result = config[key];
+            }
+          } else if (key === callerPluginV) {
+            result = config[key];
+          }
+        });
+        return result;
+      }
+
+      return config;
     },
   },
   infoRest: {
@@ -112,7 +190,7 @@ module.exports = {
           plugins: { type: 'array', minItems: 2, items: { type: 'string' } },
           config: { type: 'object' },
         },
-        required: ['name', 'domains', 'plugins', 'password'],
+        required: ['name', 'domains', 'plugins'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {

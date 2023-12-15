@@ -1,7 +1,9 @@
 FROM node:20-alpine
 
 ARG PLUGIN_NAME
-ARG PLUGIN_PATH=./plugins/leemons-plugin-${PLUGIN_NAME}/backend
+ARG PATH_NAME
+
+ARG PLUGIN_PATH=./${PATH_NAME}/leemons-plugin-${PLUGIN_NAME}/backend
 
 RUN mkdir /app
 WORKDIR /app

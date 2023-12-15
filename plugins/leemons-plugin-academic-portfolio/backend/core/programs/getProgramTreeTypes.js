@@ -9,7 +9,10 @@ async function getProgramTreeTypes({ programId, ctx }) {
     program = programId;
   }
 
-  const haveCycles = await ctx.tx.db.Cycles.countDocuments({ program: program.id });
+  const [haveCycles, deploymentConfig] = await Promise.all([
+    ctx.tx.db.Cycles.countDocuments({ program: program.id }),
+    ctx.tx.call('deployment-manager.getConfigRest'),
+  ]);
 
   // subject
   let result = [];
@@ -42,6 +45,12 @@ async function getProgramTreeTypes({ programId, ctx }) {
   // If the program lasts more than one academic year, remove 'courses' from the tree types.
   if (program.moreThanOneAcademicYear) {
     const index = result.indexOf('courses');
+    if (index >= 0) {
+      result.splice(index, 1);
+    }
+  }
+  if (deploymentConfig?.deny?.others?.includes('subjectType')) {
+    const index = result.indexOf('subjectType');
     if (index >= 0) {
       result.splice(index, 1);
     }

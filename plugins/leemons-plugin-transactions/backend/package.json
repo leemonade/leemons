@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-transactions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Leemons transactions plugins",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -20,8 +20,8 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/error": "0.0.40",
-    "@leemons/utils": "0.0.40",
+    "@leemons/error": "0.0.41",
+    "@leemons/utils": "0.0.41",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",

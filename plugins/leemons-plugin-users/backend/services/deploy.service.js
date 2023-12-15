@@ -117,6 +117,22 @@ const initDataset = async ({ ctx }) => {
   ctx.tx.emit('init-dataset-locations');
 };
 
+async function addMenuItems(ctx) {
+  const [mainMenuItem, ...otherMenuItems] = menuItems;
+  await addMenuItemsDeploy({
+    keyValueModel: ctx.tx.db.KeyValue,
+    item: mainMenuItem,
+    ctx,
+  });
+  ctx.tx.emit('init-menu');
+  await addMenuItemsDeploy({
+    keyValueModel: ctx.tx.db.KeyValue,
+    item: otherMenuItems,
+    ctx,
+  });
+  ctx.tx.emit('init-submenu');
+}
+
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'users.deploy',
@@ -160,21 +176,8 @@ module.exports = {
       // Email Templates
       await initEmails({ ctx });
     },
-    'menu-builder.init-main-menu': async (ctx) => {
-      const [mainMenuItem, ...otherMenuItems] = menuItems;
-      await addMenuItemsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        item: mainMenuItem,
-        ctx,
-      });
-      ctx.tx.emit('init-menu');
-      await addMenuItemsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        item: otherMenuItems,
-        ctx,
-      });
-      ctx.tx.emit('init-submenu');
-    },
+    'menu-builder.init-main-menu': async (ctx) => addMenuItems(ctx),
+    'deployment-manager.config-change': async (ctx) => addMenuItems(ctx),
     'multilanguage.newLocale': async (ctx) => {
       await addLocalesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
