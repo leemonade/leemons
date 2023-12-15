@@ -81,6 +81,7 @@ async function add({
   // PROCESS CATEGORY AND CHECK PERMISSIONS
 
   category = await handleCategoryData({ category, categoryId, categoryKey, ctx });
+  console.log('category', category);
   checkAndHandleCanUse({ category, calledFrom: ctx.callerPlugin, ctx });
 
   // ··········································································

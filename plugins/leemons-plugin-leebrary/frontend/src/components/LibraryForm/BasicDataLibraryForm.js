@@ -312,7 +312,10 @@ const BasicDataLibraryForm = ({
                   <Controller
                     control={control}
                     name="file"
-                    render={({ field: { ref, value, ...field } }) => (
+                    render={({ field: { ref, value, ...field } }) => {
+
+                      if (value && typeof value === 'object' && value?.hasOwnProperty('id')) {
+                      return(
                       <FileUpload
                         icon={<CloudUploadIcon height={32} width={32} />}
                         title={labels.browseFile}
@@ -323,12 +326,12 @@ const BasicDataLibraryForm = ({
                         }}
                         hideUploadButton
                         single
-                        initialFiles={value ? [value] : []}
+                        initialFiles={value}
                         inputWrapperProps={{ error: errors.file }}
                         accept={onlyImages ? ['image/*'] : undefined}
                         {...field}
                       />
-                    )}
+                    )}}
                   />
                 )}
                 {type === LIBRARY_FORM_TYPES.BOOKMARKS && (

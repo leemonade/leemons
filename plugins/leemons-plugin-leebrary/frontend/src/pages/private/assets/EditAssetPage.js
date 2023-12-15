@@ -19,7 +19,7 @@ import { getAssetRequest } from '../../../request';
 import { VIEWS } from '../library/Library.constants';
 
 const EditAssetPage = () => {
-  const { setView, category, setCategory, categories, setAsset, asset } =
+  const { file, setView, category, setCategory, categories, setAsset, asset } =
     useContext(LibraryContext);
   const [t] = useTranslateLoader(prefixPN('assetSetup'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -85,20 +85,33 @@ const EditAssetPage = () => {
         steps: [
           {
             label: labels.basicData,
-            content: (
-              <MediaBasicData
-                advancedConfig={{
-                  alwaysOpen: false,
-                  program: { show: true, required: false },
-                  subjects: { show: true, required: false, showLevel: true, maxOne: false },
-                }}
-                file={asset.file}
-                categoryId={asset.category}
-                asset={asset}
-                onSave={setAsset}
-                editing
-              />
-            ),
+            content:
+              category.key === 'bookmarks' ? (
+                <BookmarkBasicData
+                  editing
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
+                  categoryId={asset.category}
+                  asset={asset}
+                  onSave={setAsset}
+                />
+              ) : (
+                <MediaBasicData
+                  advancedConfig={{
+                    alwaysOpen: false,
+                    program: { show: true, required: false },
+                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  }}
+                  file={asset.file}
+                  categoryId={asset.category}
+                  asset={asset}
+                  onSave={setAsset}
+                  editing
+                />
+              ),
           },
           {
             label: labels.permissionsData,

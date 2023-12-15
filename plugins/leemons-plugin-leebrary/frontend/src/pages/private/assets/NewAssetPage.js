@@ -36,7 +36,9 @@ const NewAssetPage = () => {
   // Set Category for Library context
   React.useEffect(() => {
     if (!_.isEmpty(params.category)) selectCategory(params.category);
-  }, [params]);
+    const item = _.find(categories, { id: asset?.category });
+    setCategory(item);
+  }, [params, asset, categories, category]);
 
   // #region * INITIAL STEP VALUES -------------------------------------------
   const getInitialValues = () => {
@@ -52,6 +54,26 @@ const NewAssetPage = () => {
       subjects: asset?.subjects || null,
     };
   };
+
+  const loadAsset = async (id) => {
+    try {
+      const response = await getAssetRequest(id);
+      if (!_.isEmpty(response?.asset)) {
+        const loadedAsset = await prepareAsset(response.asset);
+        setAsset(loadedAsset);
+      } else {
+        setAsset(null);
+      }
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+  };
+  React.useEffect(() => {
+    if (!_.isEmpty(params.id) && _.isEmpty(asset)) {
+      loadAsset(params.id);
+    }
+    console.log('asset', asset);
+  }, [params, asset]);
 
   const initialStepsInfo = React.useMemo(
     () => [
@@ -82,6 +104,8 @@ const NewAssetPage = () => {
             }}
             categoryId={category?.id}
             onSave={setAsset}
+            type={asset?.fileType}
+            asset={asset}
           />
         ),
       },
