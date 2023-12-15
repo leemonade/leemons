@@ -7,7 +7,7 @@ import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
 import { listCategoriesRequest } from '../request';
 import { AssetList } from './AssetList';
-import { BasicData } from './AssetSetup/BasicData';
+import { BasicData } from './AssetSetup/BasicData_old';
 import prefixPN from '../helpers/prefixPN';
 
 const AssetListDrawer = ({

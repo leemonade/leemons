@@ -23,7 +23,7 @@ import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
-import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
+import _, { flatten, isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useFormContext } from 'react-hook-form';
 import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
@@ -134,10 +134,6 @@ const BasicDataLibraryForm = ({
   const assetFile = watch('file');
   const bookmarkUrl = watch('url');
   const program = watch('program');
-
-  React.useEffect(() => {
-    console.log('formValues', formValues);
-  }, [formValues]);
   // #endregion
 
   // #region * PROGRAM AND SUBJECT SELECTOR -----------------------------------------
@@ -216,23 +212,13 @@ const BasicDataLibraryForm = ({
     }
   }, [coverFile]);
 
-  // If needed only image files should be supported (cover for an audio file, i.e.)
+  // If needed, only image files should be supported (cover for an audio file, i.e.)
   useEffect(() => {
     if (!isImage && !isNil(onlyImages)) {
       setIsImage(onlyImages);
     }
   }, [onlyImages, isImage]);
   // #endregion
-
-  // const handleOnSubmit = (e) => {
-  //   if (assetFile) e.file = assetFile;
-  //   if (coverFile) e.cover = coverFile;
-  //   if (asset.id) e.id = asset.id;
-  //   if (urlMetadata?.logo) e.icon = urlMetadata.logo;
-  //   if (coverAsset) e.cover = coverAsset.file.id;
-
-  //   if (isFunction(onSubmit)) onSubmit(e);
-  // };
 
   // #region * HANDLERS, VALIDATIONS & LOGIC -------------------------------------------
   const validateUrl = async () => trigger('url', { shouldFocus: true });
@@ -312,8 +298,9 @@ const BasicDataLibraryForm = ({
                   <Controller
                     control={control}
                     name="file"
-                    render={({ field: { ref, value, ...field } }) => (
+                    render={({ field: { value, ...field } }) => (
                       <FileUpload
+                        {...field}
                         icon={<CloudUploadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
@@ -322,11 +309,10 @@ const BasicDataLibraryForm = ({
                           message: errorMessages.file?.rejected || 'File was rejected',
                         }}
                         hideUploadButton
+                        initialFiles={value ? flatten([value]) : []}
                         single
-                        initialFiles={{ name: 'hello', type: 'image}' }}
                         inputWrapperProps={{ error: errors.file }}
                         accept={onlyImages ? ['image/*'] : undefined}
-                        {...field}
                       />
                     )}
                   />

@@ -1,21 +1,21 @@
 /* eslint-disable no-param-reassign */
-import React, { useMemo, useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import { ContextContainer, TotalLayoutStepContainer, InputWrapper } from '@bubbles-ui/components';
 import { TagsAutocomplete, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
+import LibraryContext from '../../context/LibraryContext';
 
 import prefixPN from '../../helpers/prefixPN';
-import { prepareAsset } from '../../helpers/prepareAsset';
 // eslint-disable-next-line import/no-cycle
 import { BasicDataLibraryForm } from '../LibraryForm/BasicDataLibraryForm';
 
-const BasicData = ({ file, advancedConfig, asset: assetProp, categoryId, editing, ...props }) => {
+const BasicData = ({ advancedConfig, editing }) => {
+  const { asset } = useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [loading] = useState(false);
-  const [tags, setTags] = useState(assetProp?.tags || []);
+  const [tags, setTags] = useState(asset?.tags || []);
 
   // ··············································································
   // FORM LABELS & STATICS
@@ -31,28 +31,21 @@ const BasicData = ({ file, advancedConfig, asset: assetProp, categoryId, editing
     return {};
   }, [translations]);
 
-  const preparedAsset = useMemo(() => {
-    if (assetProp) {
-      return prepareAsset(assetProp);
-    }
-    return {};
-  }, [assetProp]);
-
   // ··············································································
-  // FORM HANDLERS
-
+  // TAGS
   const handleOnTagsChange = (val) => {
     setTags(val);
   };
 
+  if (editing && !asset) return null;
+
   return (
     <TotalLayoutStepContainer>
       <BasicDataLibraryForm
-        {...props}
         {...formLabels}
         advancedConfig={advancedConfig}
         loading={loading}
-        asset={{ ...assetProp, file, cover: preparedAsset.cover }}
+        asset={{ ...asset }}
       >
         <ContextContainer spacing={2}>
           <InputWrapper label="Tags">

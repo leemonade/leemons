@@ -6,7 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { getAssetRequest, newAssetRequest } from '@leebrary/request';
+import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import {
   createStyles,
@@ -35,9 +35,15 @@ const NewAssetPage = () => {
 
   // Set Category for Library context
   React.useEffect(() => {
-    if (!_.isEmpty(params.category)) selectCategory(params.category);
-    const item = _.find(categories, { id: asset?.category });
-    setCategory(item);
+    if (params) {
+      if (!_.isEmpty(params.category)) selectCategory(params.category);
+      const query = {};
+      if (params.category) query.key = params.category;
+      else query.id = asset?.category;
+
+      const item = _.find(categories, query);
+      setCategory(item);
+    }
   }, [params, asset, categories, category]);
 
   // #region * INITIAL STEP VALUES -------------------------------------------
@@ -72,7 +78,6 @@ const NewAssetPage = () => {
     if (!_.isEmpty(params.id) && _.isEmpty(asset)) {
       loadAsset(params.id);
     }
-    console.log('asset', asset);
   }, [params, asset]);
 
   const initialStepsInfo = React.useMemo(
@@ -104,9 +109,6 @@ const NewAssetPage = () => {
             }}
             categoryId={category?.id}
             onSave={setAsset}
-            type={asset?.fileType}
-            asset={asset}
-            file={asset?.file}
             editing={params.id?.length}
           />
         ),
@@ -116,21 +118,17 @@ const NewAssetPage = () => {
   );
   // #endregion
 
-  // #region * INITI FORM ----------------------------------------------------
+  // #region * INIT FORM ----------------------------------------------------
   const form = useForm({
     defaultValues: initialStepsInfo[totalLayoutProps.activeStep]?.initialValues,
     resolver: zodResolver(initialStepsInfo[totalLayoutProps.activeStep]?.validationSchema),
   });
   const formValues = form.watch();
 
-  // Edit: If an asset is passed the form resets
+  // Edit: If an asset is passed the form resets to load initial values
   React.useEffect(() => {
     form.reset(initialStepsInfo[totalLayoutProps.activeStep]?.initialValues);
   }, [asset]);
-
-  React.useEffect(() => {
-    console.log('formValues', formValues);
-  }, [formValues]);
   // #endregion
 
   // #region * INIT HEADER & handleOnCancel ------------------------------------------
@@ -145,7 +143,6 @@ const NewAssetPage = () => {
 
   const gerAssetTitleAndIcon = () => {
     if (category?.key === 'bookmark') return { title: 'NUEVO MARCADOR', icon: null };
-    // TODO es scorm??? return 'NUEVO SCORM'
     return { title: 'NUEVO RECURSO', icon: null };
   };
 
@@ -165,10 +162,11 @@ const NewAssetPage = () => {
   };
 
   const handlePublish = async () => {
-    if (category.key === 'bookmarks') {
+    if (category?.key === 'bookmarks') {
       // handle publish bookmark()
       return;
     }
+    const editing = params.id?.length > 0;
 
     try {
       formValues.file = await uploadFileAsMultipart(formValues.file, {
@@ -178,22 +176,20 @@ const NewAssetPage = () => {
       });
       setUploadingFileInfo(null);
       const { cover } = formValues;
-      const requestMethod = newAssetRequest;
+      const requestMethod = editing ? updateAssetRequest : newAssetRequest;
       setLoading(true);
 
       try {
-        const { asset: newAsset } = await requestMethod(
-          { ...formValues, cover, tags: formValues.tags || [] },
-          category.id,
-          'media-files'
-        );
+        const requestBody = { ...formValues, cover, tags: formValues.tags || [] };
+        if (editing) requestBody.id = params.id;
+
+        const { asset: newAsset } = await requestMethod(requestBody, category.id, 'media-files');
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
         setLoading(false);
         addSuccessAlert(t('basicData.labels.createdSuccess'));
         history.goBack();
       } catch (err) {
-        console.log('err', err);
         setLoading(false);
         addErrorAlert(getErrorMessage(err));
       }
