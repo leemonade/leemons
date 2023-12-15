@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Box, Text, Badge } from '@bubbles-ui/components';
+import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import _, { cloneDeep, sortBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -9,6 +9,7 @@ import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
 import { getActivityType } from '../../../../../../helpers/getActivityType';
 import prefixPN from '../../../../../../helpers/prefixPN';
 import { ArrowComponent } from './ArrowComponent/ArrowComponent';
+import { SCOREFEEDBACK_DEFAULT_PROPS, SCOREFEEDBACK_PROP_TYPES } from './ScoreFeedback.constants';
 
 export function findNearestFloorScore(score, scales) {
   const sortedScales = sortBy(cloneDeep(scales), 'number');
@@ -35,18 +36,27 @@ export function findNearestFloorScore(score, scales) {
   return nearestScore;
 }
 
-export default function ScoreFeedback({ score, program, instance, isFeedback }) {
+export default function ScoreFeedback({
+  score,
+  program,
+  instance,
+  isFeedback,
+  totalActivities,
+  submitedActivities,
+}) {
   const evaluationSystem = useProgramEvaluationSystem(program);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
-  const [, translations] = useTranslateLoader(prefixPN('assignmentForm'));
+  const [, translations] = useTranslateLoader([prefixPN('assignmentForm'), prefixPN('ongoing')]);
   const localizations = useMemo(() => {
     const res = unflatten(translations?.items);
     return {
       assignmentForm: _.get(res, prefixPN('assignmentForm')),
+      ongoing: _.get(res, prefixPN('ongoing')),
     };
   }, [translations]);
   const [calificationType, setCalificationType] = useState(null);
   const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
+  const isModule = instance?.assignable?.role === 'learningpaths.module';
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
     const activityTypeLocale = {
@@ -113,13 +123,22 @@ export default function ScoreFeedback({ score, program, instance, isFeedback }) 
                 {isLetterType ? grade.letter : grade.integer}
               </Text>
               {grade.decimals && (
-                <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
+                <TextClamp lines={2}>
+                  <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
+                </TextClamp>
               )}
               <Box className={classes.containerArrow}>
                 <ArrowComponent state={'better'} />
               </Box>
             </Box>
             <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
+            {isModule && (
+              <Box className={classes.containerArrow}>
+                <Text
+                  className={classes.submitedNumber}
+                >{`(${submitedActivities}/${totalActivities} ${localizations?.ongoing?.activities.toLowerCase()})`}</Text>
+              </Box>
+            )}
           </Box>
         </>
       ) : (
@@ -138,3 +157,6 @@ export default function ScoreFeedback({ score, program, instance, isFeedback }) 
     </Box>
   );
 }
+
+ScoreFeedback.propTypes = SCOREFEEDBACK_PROP_TYPES;
+ScoreFeedback.defaultProps = SCOREFEEDBACK_DEFAULT_PROPS;

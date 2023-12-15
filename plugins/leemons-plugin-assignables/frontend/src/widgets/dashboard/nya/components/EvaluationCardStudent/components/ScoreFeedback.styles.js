@@ -111,6 +111,10 @@ const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
         },
       },
     },
+    submitedNumber: {
+      color: cardEvaluation.content.color.muted,
+      ...cardEvaluation.content.typo.sm,
+    },
   };
 });
 
