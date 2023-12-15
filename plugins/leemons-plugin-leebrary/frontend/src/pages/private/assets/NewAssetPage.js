@@ -1,116 +1,213 @@
-/* eslint-disable no-unreachable */
-import React, { useContext, useEffect, useMemo } from 'react';
-import { isArray, isEmpty } from 'lodash';
+import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { ActionButton, Box, createStyles, Stack } from '@bubbles-ui/components';
-import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider, useForm } from 'react-hook-form';
+import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import { getAssetRequest, newAssetRequest } from '@leebrary/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import {
+  createStyles,
+  TotalLayout,
+  TotalLayoutHeader,
+  useTotalLayout,
+} from '@bubbles-ui/components';
+import { useRequestErrorMessage } from '@common';
+
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
-import { VIEWS } from '../library/Library.constants';
-import {
-  BasicData as MediaBasicData,
-  BookmarkBasicData,
-  PermissionsData,
-  Setup,
-} from '../../../components/AssetSetup';
-
-const NewAssetPageStyles = createStyles((theme) => ({
-  root: {
-    maxWidth: theme.breakpoints.xs,
-    flex: 1,
-  },
-}));
+import { prepareAsset } from '../../../helpers/prepareAsset';
+import { BasicData, BookmarkBasicData } from '../../../components/AssetSetup';
+import { UploadingFileModal } from '../../../components/UploadingFileModal';
 
 const NewAssetPage = () => {
-  const { file, setView, category, selectCategory, setAsset, asset } = useContext(LibraryContext);
+  const { category, categories, selectCategory, setCategory, setAsset, asset } =
+    React.useContext(LibraryContext);
+  const totalLayoutProps = useTotalLayout();
+  const [uploadingFileInfo, setUploadingFileInfo] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
   const [t] = useTranslateLoader(prefixPN('assetSetup'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
   const history = useHistory();
   const params = useParams();
 
-  useEffect(() => {
-    setView(VIEWS.NEW);
-    selectCategory(params.category);
+  // Set Category for Library context
+  React.useEffect(() => {
+    if (!_.isEmpty(params.category)) selectCategory(params.category);
   }, [params]);
 
-  const handleOnBack = () => {
+  // #region * INITIAL STEP VALUES -------------------------------------------
+  const getInitialValues = () => {
+    if (category?.key === 'bookmarks') return {};
+    return {
+      file: asset?.file || null,
+      name: asset?.name || '',
+      description: asset?.description || '',
+      color: asset?.color || '',
+      cover: asset?.cover || null,
+      url: asset?.url || null,
+      program: asset?.program || null,
+      subjects: asset?.subjects || null,
+    };
+  };
+
+  const initialStepsInfo = React.useMemo(
+    () => [
+      {
+        label: '',
+        badge: null,
+        status: null,
+        showStep: true,
+        validationSchema: z.object({
+          name: z
+            .string({ required_error: 'Title error HARDCODED WITH NO MERCY' })
+            .min(1, 'Title error HARDCODED WITH NO MERCY'),
+          file: z.instanceof(File).or(
+            z.object({
+              name: z.string(),
+              type: z.string(),
+            })
+          ),
+        }),
+        initialValues: getInitialValues(),
+        stepComponent: (
+          <BasicData
+            key={'basic-data'}
+            advancedConfig={{
+              alwaysOpen: false,
+              program: { show: true, required: false },
+              subjects: { show: true, required: false, showLevel: true, maxOne: false },
+            }}
+            categoryId={category?.id}
+            onSave={setAsset}
+          />
+        ),
+      },
+    ],
+    [category, asset]
+  );
+  // #endregion
+
+  // #region * INITI FORM ----------------------------------------------------
+  const form = useForm({
+    defaultValues: initialStepsInfo[totalLayoutProps.activeStep]?.initialValues,
+    resolver: zodResolver(initialStepsInfo[totalLayoutProps.activeStep]?.validationSchema),
+  });
+  const formValues = form.watch();
+
+  // Edit: To receive an asset resets the form.
+  React.useEffect(() => {
+    form.reset(initialStepsInfo[totalLayoutProps.activeStep]?.initialValues);
+  }, [asset]);
+
+  React.useEffect(() => {
+    console.log('formValues', formValues);
+  }, [formValues]);
+  // #endregion
+
+  // #region * INIT HEADER & handleOnCancel ------------------------------------------
+  const handleOnCancel = () => {
+    if (totalLayoutProps.formIsDirty) {
+      // Usar openConfirmationModal del plugin Layout(leemons)
+      return;
+    }
+    console.log('totalLayoutProps', totalLayoutProps);
     history.goBack();
   };
 
-  const handleOnFinish = () => {
-    handleOnBack();
+  const gerAssetTitleAndIcon = () => {
+    if (category?.key === 'bookmark') return { title: 'NUEVO MARCADOR', icon: null };
+    // TODO es scorm??? return 'NUEVO SCORM'
+    return { title: 'NUEVO RECURSO', icon: null };
   };
 
-  // ·········································································
-  // INIT VALUES
+  const buildHeader = () => (
+    <TotalLayoutHeader
+      title={gerAssetTitleAndIcon().title}
+      icon={gerAssetTitleAndIcon().icon}
+      formTitlePlaceholder={formValues.name || 'Título del Recurso'}
+      onCancel={handleOnCancel}
+    />
+  );
+  // #endregion
 
-  const setupProps = useMemo(() => {
-    if (!isEmpty(category)) {
-      const labels = {
-        basicData: t('basicData.header.stepLabel'),
-        permissionsData: t('permissionsData.header.stepLabel'),
-      };
+  // #region * HANDLERS -------------------------------------------------------
+  const publishAndAssign = () => {
+    console.log('handling publish and assign');
+  };
 
-      return {
-        steps: [
-          {
-            label: labels.basicData,
-            content:
-              category.key === 'bookmarks' ? (
-                <BookmarkBasicData
-                  advancedConfig={{
-                    alwaysOpen: false,
-                    program: { show: true, required: false },
-                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
-                  }}
-                  categoryId={category?.id}
-                  onSave={setAsset}
-                />
-              ) : (
-                <MediaBasicData
-                  advancedConfig={{
-                    alwaysOpen: false,
-                    program: { show: true, required: false },
-                    subjects: { show: true, required: false, showLevel: true, maxOne: false },
-                  }}
-                  file={file}
-                  categoryId={category?.id}
-                  onSave={setAsset}
-                />
-              ),
-          },
-          {
-            label: labels.permissionsData,
-            content: <PermissionsData asset={asset} />,
-          },
-        ],
-      };
+  const handlePublish = async () => {
+    if (category.key === 'bookmarks') {
+      // handle publish bookmark()
+      return;
     }
-    return null;
-  }, [t, file, category, asset]);
 
-  const { classes, cx } = NewAssetPageStyles({}, { name: 'NewAssetPage' });
+    try {
+      formValues.file = await uploadFileAsMultipart(formValues.file, {
+        onProgress: (info) => {
+          setUploadingFileInfo(info);
+        },
+      });
+      setUploadingFileInfo(null);
+      const { cover } = formValues;
+      const requestMethod = newAssetRequest;
+      setLoading(true);
+
+      try {
+        const { asset: newAsset } = await requestMethod(
+          { ...formValues, cover, tags: formValues.tags || [] },
+          category.id,
+          'media-files'
+        );
+        const response = await getAssetRequest(newAsset.id);
+        setAsset(prepareAsset(response.asset));
+        setLoading(false);
+        addSuccessAlert(t('basicData.labels.createdSuccess'));
+        history.goBack();
+      } catch (err) {
+        console.log('err', err);
+        setLoading(false);
+        addErrorAlert(getErrorMessage(err));
+      }
+    } catch (e) {
+      setUploadingFileInfo(null);
+    }
+  };
+  // #endregion
+
+  // #region * FOOTER ACTIONS ------------------------------------------------
+  const footerActionsLabels = {
+    back: 'Anterior',
+    save: 'Guardar borrador',
+    next: 'Siguiente',
+    dropdownLabel: 'Finalizar',
+  };
+
+  const footerFinalActionsAndLabels = [
+    { label: 'Publicar', action: handlePublish },
+    { label: 'Publicar y asignar', action: publishAndAssign },
+  ];
+  // #endregion
+
+  // React.useEffect(() => console.log(formValues), [formValues]);
 
   return (
-    <Stack fullWidth fullHeight>
-      <Box className={classes.root} skipFlex>
-        <Box sx={(theme) => ({ padding: `${theme.spacing[4]}px ${theme.spacing[7]}px` })}>
-          <Stack fullWidth justifyContent="start">
-            <ActionButton
-              icon={<ChevronLeftIcon />}
-              label={t('header.back')}
-              tooltip={t('header.back')}
-              onClick={handleOnBack}
-            />
-          </Stack>
-        </Box>
-        <Box sx={(theme) => ({ padding: `${theme.spacing[4]}px ${theme.spacing[8]}px` })}>
-          {!isEmpty(setupProps) && isArray(setupProps.steps) && (
-            <Setup {...setupProps} onFinish={handleOnFinish} />
-          )}
-        </Box>
-      </Box>
-    </Stack>
+    <>
+      <FormProvider {...form}>
+        <TotalLayout
+          {...totalLayoutProps}
+          Header={() => buildHeader()}
+          footerActionsLabels={footerActionsLabels}
+          footerFinalActions={footerFinalActionsAndLabels}
+          initialStepsInfo={initialStepsInfo}
+          onCancel={handleOnCancel}
+          isLoading={loading}
+        />
+      </FormProvider>
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
+    </>
   );
 };
 

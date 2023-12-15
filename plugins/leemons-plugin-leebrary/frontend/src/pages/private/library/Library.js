@@ -134,7 +134,7 @@ const LibraryPageContent = () => {
 
           {/* EDIT ASSET ·························································· */}
           <Route path={cleanPath(`${path}/edit/:id`)}>
-            <EditAssetPage />
+            <EditAssetPage />s
           </Route>
 
           {/* LIST ASSETS ························································ */}
