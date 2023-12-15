@@ -23,6 +23,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       let config = {};
+
       if (
         ctx.meta.deploymentID === 'auto-deployment-id' &&
         process.env.TEST_DEPLOYMENT_CONFIG === 'true'
@@ -83,9 +84,10 @@ module.exports = {
           undefined,
           { disableAutoDeploy: true }
         ).lean();
+
         if (!deployment && process.env.DISABLE_AUTO_INIT === 'true')
           throw new LeemonsError(ctx, { message: 'Deployment not found at get config' });
-        config = deployment?.config;
+        config = deployment?.config || {};
       }
 
       const callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
