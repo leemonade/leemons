@@ -1,5 +1,5 @@
-const { createCredentials } = require('./createCredentials');
 const awsIotDeviceSdk = require('aws-iot-device-sdk');
+const { createCredentials } = require('./createCredentials');
 
 /* eslint-disable no-use-before-define */
 let client;
@@ -67,21 +67,25 @@ function clientOnError(err) {
   };
   clearClient();
 }
+
 function clientReconnect() {
   console.log('Backend - Iot reconnect');
 }
+
 function clientOnOffline() {
   console.error('Backend - Iot offline');
   creatingClient = false;
   clientError = { message: 'Unable to connect to AWS Iot' };
   clearClient();
 }
+
 function clientOnClose() {
   console.error('Backend - Iot se a cerrado');
   creatingClient = false;
   clientError = { message: 'Connection with AWS Iot closed' };
   clearClient();
 }
+
 function clientOnConnect() {
   console.log('Backend - Conectado a iot correctamente');
   creatingClient = false;

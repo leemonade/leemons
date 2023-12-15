@@ -171,6 +171,28 @@ async function bulkData({ docPath, ctx }) {
   }
 }
 
+async function loadFromFile(ctx, { isAsync = false }) {
+  const settings = await ctx.call('admin.settings.findOne');
+
+  try {
+    if (settings?.status !== 'INSTALLED' && !settings?.configured) {
+      const file = await createTempFile({ readStream: ctx.params });
+      if (isAsync) {
+        bulkData({ docPath: file.path, ctx });
+        return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
+      }
+      await bulkData({ docPath: file.path, ctx });
+      return { status: 200 };
+    }
+  } catch (error) {
+    throw new LeemonsError(ctx, {
+      message: `Something went wrong: ${error}`,
+      httpStatusCode: 500,
+    });
+  }
+  throw new LeemonsError(ctx, { message: 'Unexpected error', httpStatusCode: 500 });
+}
+
 module.exports = {
   loadRest: {
     rest: {
@@ -180,21 +202,18 @@ module.exports = {
     },
     timeout: 0,
     async handler(ctx) {
-      const settings = await ctx.call('admin.settings.findOne');
-
-      try {
-        if (settings?.status !== 'INSTALLED' && !settings?.configured) {
-          const file = await createTempFile({ readStream: ctx.params });
-          bulkData({ docPath: file.path, ctx });
-          return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
-        }
-      } catch (error) {
-        throw new LeemonsError(ctx, {
-          message: `Something went wrong: ${error}`,
-          httpStatusCode: 500,
-        });
-      }
-      throw new LeemonsError(ctx, { message: 'Unexpected error', httpStatusCode: 500 });
+      return loadFromFile(ctx, { isAsync: true });
+    },
+  },
+  loadRestSync: {
+    rest: {
+      path: '/load-from-file-sync',
+      method: 'POST',
+      type: 'multipart',
+    },
+    timeout: 0,
+    async handler(ctx) {
+      return loadFromFile(ctx, { isAsync: false });
     },
   },
   statusRest: {

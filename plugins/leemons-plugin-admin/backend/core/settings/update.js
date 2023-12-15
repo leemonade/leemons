@@ -15,6 +15,7 @@ async function update({ ctx, ...settings }) {
     ctx.callerPlugin &&
     (ctx.callerPlugin.startsWith('bulk-data') ||
       ctx.callerPlugin.startsWith('admin') ||
+      ctx.callerPlugin.startsWith('client-manager') ||
       ctx.callerPlugin.startsWith('gateway'))
   ) {
     allowed = true;

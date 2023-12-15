@@ -23,7 +23,7 @@ async function createCredentials({ policy, ctx }) {
       },
     };
   } catch (err) {
-    console.error(err);
+    console.error('Error in createCredentials - ', err);
     throw err;
   }
 }
