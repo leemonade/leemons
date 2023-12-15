@@ -6,23 +6,11 @@ const {
 } = require('@leemons/service-name-parser');
 const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
+const { getDeploymentID } = require('./getDeploymentID');
+const { ctxCall } = require('./ctxCall');
 
 const actionCallCache = {};
 const actionCanCache = {};
-
-async function getDeploymentID(ctx) {
-  try {
-    ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
-  } catch (e) {
-    // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
-    ctx.meta.deploymentID = await ctx.__leemonsDeploymentManagerCall(
-      'deployment-manager.getDeploymentIDByDomain'
-    );
-    if (!ctx.meta.deploymentID) {
-      throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
-    }
-  }
-}
 
 async function modifyCTX(
   ctx,
@@ -72,57 +60,10 @@ async function modifyCTX(
   };
 
   ctx.call = async function (_actionName, params, opts) {
-    let actionName = _actionName;
-    if (_.isObject(actionName)) {
-      actionName = actionName.action.name;
-    }
-
-    if (getDeploymentIdInCall && !dontGetDeploymentIDOnActionCall.includes(actionName)) {
-      await getDeploymentID(ctx);
-    }
-
-    if (actionName.startsWith('deployment-manager.') || actionName.startsWith('gateway.')) {
-      return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
-    }
-
-    if (!actionCallCache.hasOwnProperty(ctx.meta.deploymentID)) {
-      actionCallCache[ctx.meta.deploymentID] = {};
-    }
-
-    const cacheKey = `${ctx.service.fullName}.${actionName}`;
-
-    let manager = null;
-    if (actionCallCache[ctx.meta.deploymentID][cacheKey]) {
-      manager = actionCallCache[ctx.meta.deploymentID][cacheKey];
-    } else {
-      let hasTransaction = false;
-      if (ctx.meta.transactionID) hasTransaction = true;
-      manager = await ctx.__leemonsDeploymentManagerCall('deployment-manager.getGoodActionToCall', {
-        actionName,
-      });
-      if (ctx.meta.transactionID && !hasTransaction) {
-        delete ctx.meta.transactionID;
-      }
-      actionCallCache[ctx.meta.deploymentID][cacheKey] = manager;
-    }
-
-    if (process.env.DEBUG === 'true')
-      console.log(
-        `CALL from "${ctx.action?.name || ctx.event?.name}" to "${manager.actionToCall}"`
-      );
-
-    try {
-      return await ctx.__leemonsDeploymentManagerCall(manager.actionToCall, params, {
-        ...opts,
-        meta: {
-          ...(opts?.meta || {}),
-          relationshipID: manager.relationshipID,
-        },
-      });
-    } catch (e) {
-      delete ctx.meta.$statusCode;
-      throw e;
-    }
+    return ctxCall(ctx, _actionName, params, opts, {
+      getDeploymentIdInCall,
+      dontGetDeploymentIDOnActionCall,
+    });
   };
 }
 

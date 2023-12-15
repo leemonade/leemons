@@ -8,4 +8,5 @@ module.exports = {
   ...require('./getObjectArrayKeys'),
   ...require('./numberToEncodedLetter'),
   ...require('./settledResponseToManyResponse'),
+  ...require('./timeoutPromise'),
 };
