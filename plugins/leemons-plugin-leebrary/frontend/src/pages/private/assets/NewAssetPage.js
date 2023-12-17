@@ -8,6 +8,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
 import {
   createStyles,
   TotalLayout,
@@ -30,6 +31,7 @@ const NewAssetPage = () => {
   const [loading, setLoading] = React.useState(false);
   const [t] = useTranslateLoader(prefixPN('assetSetup'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const { openConfirmationModal } = useLayout();
   const history = useHistory();
   const params = useParams();
 
@@ -110,6 +112,7 @@ const NewAssetPage = () => {
             categoryId={category?.id}
             onSave={setAsset}
             editing={params.id?.length}
+            isLoading={loading}
           />
         ),
       },
@@ -133,17 +136,24 @@ const NewAssetPage = () => {
 
   // #region * INIT HEADER & handleOnCancel ------------------------------------------
   const handleOnCancel = () => {
-    if (totalLayoutProps.formIsDirty) {
-      // Usar openConfirmationModal del plugin Layout(leemons)
-      return;
+    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
+    const formIsNotEmpty = !_.isEmpty(formValues);
+    if (formHasBeenTouched || formIsNotEmpty) {
+      openConfirmationModal({
+        title: '¿Cancelar formulario?',
+        description: '¿Deseas cancelar el formulario?',
+        labels: { confim: 'Cancelar', cancel: 'Cancelar' },
+        onConfirm: () => history.goBack(),
+      })();
+    } else {
+      history.goBack();
     }
-    console.log('totalLayoutProps', totalLayoutProps);
-    history.goBack();
   };
 
   const gerAssetTitleAndIcon = () => {
-    if (category?.key === 'bookmark') return { title: 'NUEVO MARCADOR', icon: null };
-    return { title: 'NUEVO RECURSO', icon: null };
+    if (category?.key === 'bookmark')
+      return { title: `${params.id?.length ? 'EDITAR' : 'NUEVO'} MARCADOR`, icon: null };
+    return { title: `${params.id?.length ? 'EDITAR' : 'NUEVO'} RECURSO`, icon: null };
   };
 
   const buildHeader = () => (
@@ -212,8 +222,6 @@ const NewAssetPage = () => {
     { label: 'Publicar y asignar', action: publishAndAssign },
   ];
   // #endregion
-
-  // React.useEffect(() => console.log(formValues), [formValues]);
 
   return (
     <>

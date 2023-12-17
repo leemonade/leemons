@@ -1,4 +1,5 @@
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import { getFakeImage } from '@tasks/helpers/getFakeImage';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
 import {
   ActionButton,
@@ -23,7 +24,7 @@ import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
-import _, { flatten, isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
+import { flatten, isEmpty, isNil, isString, toLower } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useFormContext } from 'react-hook-form';
 import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
@@ -35,6 +36,7 @@ import {
   LIBRARY_FORM_TYPES,
 } from './LibraryForm.constants';
 import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
+import { LibraryCard } from '../LibraryCard';
 
 // -----------------------------------------------------------------------------
 // HELPERS
@@ -104,6 +106,7 @@ const BasicDataLibraryForm = ({
   onlyImages,
   advancedConfig,
   hidePreview,
+  isLoading,
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -268,6 +271,22 @@ const BasicDataLibraryForm = ({
     return {};
   }, [type, urlMetadata]);
   // #endregion
+
+  const getPreviewCard = () => {
+    // TODO: Quitar el corazón de la card de preview, Fernando.
+    // TODO: No se ve el mosaico cuando no hay card cover, Fernando.
+    const fileType = formValues.file?.type?.split('/')[0] || 'Recurso de librería';
+    const resolvedFileType = ['audio', 'video', 'image', 'Recurso de librería'].includes(fileType)
+      ? fileType
+      : 'Document';
+    const formData = {
+      ...formValues,
+      cover: isImage ? getCoverUrl(formValues.file) : getCoverUrl(formValues.cover),
+      fileType: resolvedFileType,
+      fileExtension: formValues.file?.name?.split('.')[1],
+    };
+    return <LibraryCard asset={formData} isLoading={isLoading} />;
+  };
 
   // #region * STYLES TEMP -------------------------------------------------------------
   const titleTwoStyle = {
@@ -565,9 +584,8 @@ const BasicDataLibraryForm = ({
         </form>
       </Box>
       {!hidePreview && (
-        <Box style={{ maxWidth: 288, display: 'flex', justifyContent: 'center' }}>
-          {/* Reemplazar por la card correspondiente... ¿? */}
-          <LibraryCardSkeleton />
+        <Box style={{ maxWidth: 288, height: 436, display: 'flex', justifyContent: 'center' }}>
+          {getPreviewCard()}
         </Box>
       )}
 

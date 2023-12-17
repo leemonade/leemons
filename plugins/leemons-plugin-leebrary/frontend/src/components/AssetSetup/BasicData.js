@@ -11,10 +11,9 @@ import prefixPN from '../../helpers/prefixPN';
 // eslint-disable-next-line import/no-cycle
 import { BasicDataLibraryForm } from '../LibraryForm/BasicDataLibraryForm';
 
-const BasicData = ({ advancedConfig, editing }) => {
+const BasicData = ({ advancedConfig, editing, isLoading }) => {
   const { asset } = useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
-  const [loading] = useState(false);
   const [tags, setTags] = useState(asset?.tags || []);
 
   // ··············································································
@@ -44,7 +43,7 @@ const BasicData = ({ advancedConfig, editing }) => {
       <BasicDataLibraryForm
         {...formLabels}
         advancedConfig={advancedConfig}
-        loading={loading}
+        isLoading={isLoading}
         asset={{ ...asset }}
       >
         <ContextContainer spacing={2}>
