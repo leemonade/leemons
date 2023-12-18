@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { ContextContainer } from '@bubbles-ui/components';
+import { ContextContainer, InputWrapper } from '@bubbles-ui/components';
 import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
@@ -108,15 +108,17 @@ const LibraryDrawerData = ({
         asset={{ ...assetProp, file, cover: preparedAsset.cover }}
         onSubmit={handleOnSubmit}
       >
-        <ContextContainer subtitle="Tags" spacing={1}>
-          <TagsAutocomplete
-            pluginName="leebrary"
-            type={prefixPN('')}
-            labels={{ addButton: formLabels?.labels?.addTag }}
-            placeholder={formLabels?.placeholders?.tagsInput}
-            value={tags}
-            onChange={handleOnTagsChange}
-          />
+        <ContextContainer spacing={2}>
+          <InputWrapper label={t('basicData.labels.tags')}>
+            <TagsAutocomplete
+              pluginName="leebrary"
+              type={prefixPN('')}
+              labels={{ addButton: formLabels?.labels?.addTag }}
+              placeholder={formLabels?.placeholders?.tagsInput}
+              value={tags}
+              onChange={handleOnTagsChange}
+            />
+          </InputWrapper>
         </ContextContainer>
       </LibraryDrawerForm>
       <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />

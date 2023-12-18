@@ -1,4 +1,4 @@
-const { isEmpty, map, find, compact, uniq } = require('lodash');
+const { isEmpty, map, find, compact, uniq, isArray } = require('lodash');
 const { find: findBookmarks } = require('../../bookmarks/find');
 /* eslint-disable no-param-reassign */
 /**
@@ -51,6 +51,8 @@ async function getAssetsWithFiles({ assets, assetsIds, ctx }) {
       }
     }
 
+    if (isArray(asset.file))
+      [asset.file] = asset.file.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return asset;
   });
 }

@@ -11,9 +11,9 @@ import prefixPN from '../../helpers/prefixPN';
 // eslint-disable-next-line import/no-cycle
 import { BasicDataLibraryForm } from '../LibraryForm/BasicDataLibraryForm';
 
-const BasicData = ({ advancedConfig, editing, isLoading }) => {
-  const { asset } = useContext(LibraryContext);
-  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+const BasicData = ({ advancedConfig, editing, isLoading, categoryType }) => {
+  const { asset, category } = useContext(LibraryContext);
+  const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [tags, setTags] = useState(asset?.tags || []);
 
   // ··············································································
@@ -45,9 +45,10 @@ const BasicData = ({ advancedConfig, editing, isLoading }) => {
         advancedConfig={advancedConfig}
         isLoading={isLoading}
         asset={{ ...asset }}
+        type={category?.key || categoryType}
       >
         <ContextContainer spacing={2}>
-          <InputWrapper label="Tags">
+          <InputWrapper label={t('basicData.labels.tags')}>
             <TagsAutocomplete
               pluginName="leebrary"
               type={prefixPN('')}
@@ -64,12 +65,11 @@ const BasicData = ({ advancedConfig, editing, isLoading }) => {
 };
 
 BasicData.propTypes = {
-  categoryId: PropTypes.string.isRequired,
-  file: PropTypes.instanceOf(Object),
+  isLoading: PropTypes.bool,
+  categoryType: PropTypes.string,
+  type: PropTypes.string,
   editing: PropTypes.bool,
   asset: PropTypes.instanceOf(Object),
-  onSave: PropTypes.func,
-  onNext: PropTypes.func,
   advancedConfig: PropTypes.instanceOf(Object),
 };
 

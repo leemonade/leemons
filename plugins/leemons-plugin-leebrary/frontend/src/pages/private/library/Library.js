@@ -14,8 +14,7 @@ import prefixPN from '../../../helpers/prefixPN';
 import { hasPinsRequest, listCategoriesRequest } from '../../../request';
 import { VIEWS } from './Library.constants';
 
-const NewAssetPage = loadable(() => import('../assets/NewAssetPage'));
-const EditAssetPage = loadable(() => import('../assets/EditAssetPage'));
+const AssetPage = loadable(() => import('../assets/AssetPage'));
 const ListAssetPage = loadable(() => import('../assets/ListAssetPage'));
 
 function cleanPath(path) {
@@ -129,12 +128,12 @@ const LibraryPageContent = () => {
         <Switch>
           {/* NEW ASSET ·························································· */}
           <Route path={cleanPath(`${path}/:category/new`)}>
-            <NewAssetPage />
+            <AssetPage />
           </Route>
 
           {/* EDIT ASSET ·························································· */}
           <Route path={cleanPath(`${path}/edit/:id`)}>
-            <NewAssetPage />
+            <AssetPage />
           </Route>
 
           {/* LIST ASSETS ························································ */}

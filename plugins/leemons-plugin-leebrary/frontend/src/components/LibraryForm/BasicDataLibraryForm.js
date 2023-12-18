@@ -17,6 +17,7 @@ import {
   TextInput,
   Textarea,
   Text,
+  Title,
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
@@ -24,9 +25,9 @@ import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
-import { flatten, isEmpty, isNil, isString, toLower } from 'lodash';
+import { flatten, isEmpty, isNil, isString, toLower, isObject, map } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, useForm, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
 import { AssetListDrawer } from '../AssetListDrawer';
@@ -35,12 +36,10 @@ import {
   LIBRARY_FORM_PROP_TYPES,
   LIBRARY_FORM_TYPES,
 } from './LibraryForm.constants';
-import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
 import { LibraryCard } from '../LibraryCard';
 
 // -----------------------------------------------------------------------------
 // HELPERS
-
 function isValidURL(url) {
   const urlPattern =
     /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
@@ -116,9 +115,8 @@ const BasicDataLibraryForm = ({
   const [checking, setChecking] = useState(false);
   const [urlMetadata, setUrlMetadata] = useState({});
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
-  const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [boxRef, rect] = useResizeObserver();
+  const [boxRef] = useResizeObserver();
   const { width: viewportWidth } = useViewportSize();
   const isTeacher = useIsTeacher();
 
@@ -161,7 +159,7 @@ const BasicDataLibraryForm = ({
         }
       }
       const { programs } = await getUserProgramsRequest();
-      store.programs = _.map(programs, (item) => ({ label: item.name, value: item.id }));
+      store.programs = map(programs, (item) => ({ label: item.name, value: item.id }));
     }
     render();
   }
@@ -172,7 +170,7 @@ const BasicDataLibraryForm = ({
 
   // #region * EFFECTS -------------------------------------------------------------
   useEffect(() => {
-    if (_.isObject(coverFile) || store.cover) {
+    if (isObject(coverFile) || store.cover) {
       store.coverName = getCoverName(store.cover || coverFile);
       render();
     }
@@ -208,12 +206,6 @@ const BasicDataLibraryForm = ({
       }
     }
   }, [assetFile]);
-
-  useEffect(() => {
-    if (isEmpty(coverFile)) {
-      setCoverAsset(null);
-    }
-  }, [coverFile]);
 
   // If needed, only image files should be supported (cover for an audio file, i.e.)
   useEffect(() => {
@@ -254,7 +246,6 @@ const BasicDataLibraryForm = ({
   const handleOnSelectAsset = (item) => {
     store.cover = item.cover;
     const preparedAsset = prepareAsset(item);
-    setCoverAsset(preparedAsset);
     setValue('cover', preparedAsset.cover);
     setShowAssetDrawer(false);
   };
@@ -273,19 +264,20 @@ const BasicDataLibraryForm = ({
   // #endregion
 
   const getPreviewCard = () => {
-    // TODO: Quitar el corazón de la card de preview, Fernando.
-    // TODO: No se ve el mosaico cuando no hay card cover, Fernando.
-    const fileType = formValues.file?.type?.split('/')[0] || 'Recurso de librería';
-    const resolvedFileType = ['audio', 'video', 'image', 'Recurso de librería'].includes(fileType)
+    const fileExtension = formValues.file?.name?.split('.').pop();
+    const defautlType = type === 'bookmarks' ? 'bookmark' : 'file';
+    const fileType = formValues.file?.type?.split('/')[0]?.toLowerCase() || defautlType;
+    const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)
       ? fileType
-      : 'Document';
+      : defautlType;
+
     const formData = {
       ...formValues,
       cover: isImage ? getCoverUrl(formValues.file) : getCoverUrl(formValues.cover),
       fileType: resolvedFileType,
-      fileExtension: formValues.file?.name?.split('.')[1],
+      fileExtension,
     };
-    return <LibraryCard asset={formData} isLoading={isLoading} />;
+    return <LibraryCard asset={{ ...formData }} isLoading={isLoading} isCreationPreview />;
   };
 
   // #region * STYLES TEMP -------------------------------------------------------------
@@ -310,10 +302,10 @@ const BasicDataLibraryForm = ({
             {/* CONTENIDO */}
             <ContextContainer spacing={4}>
               <Text color="primary" style={titleTwoStyle}>
-                {'Contenido HARCODED WITH NO MERCY' || labels.title}
+                {labels.content}
               </Text>
               <>
-                {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (
+                {type === 'media-files' && (
                   <Controller
                     control={control}
                     name="file"
@@ -336,11 +328,11 @@ const BasicDataLibraryForm = ({
                     )}
                   />
                 )}
-                {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
+                {/* {type === 'media-files' && asset && <Text>{asset.file?.name}</Text>} */}
+                {type === 'bookmarks' && (
                   <Controller
                     control={control}
                     name="url"
-                    shouldUnregister
                     render={({ field }) => (
                       <Stack fullWidth alignItems="end" spacing={4}>
                         <Box style={{ flex: 1 }}>
@@ -351,6 +343,7 @@ const BasicDataLibraryForm = ({
                             required
                             {...field}
                             onBlur={validateUrl}
+                            disabled={!!asset?.url?.length}
                           />
                         </Box>
                         <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
@@ -372,7 +365,7 @@ const BasicDataLibraryForm = ({
             {/* PRESENTACIÓN */}
             <ContextContainer spacing={3}>
               <Text color="primary" style={titleTwoStyle}>
-                Presentación HARCODED WITH NO MERCY
+                {labels.presentation}
               </Text>
               <ContextContainer spacing={6}>
                 {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
@@ -496,7 +489,7 @@ const BasicDataLibraryForm = ({
                         <ContextContainer spacing={9}>
                           <ContextContainer spacing={4}>
                             <Text color="primary" style={titleTwoStyle}>
-                              Programas y Asignatures HARCODED WITH NO MERCY
+                              {labels.subjectSelects.labels.titles}
                             </Text>
                             <Stack>
                               <InputWrapper style={{ width: '25%' }}>
@@ -537,7 +530,7 @@ const BasicDataLibraryForm = ({
                           </ContextContainer>
                           <ContextContainer spacing={4}>
                             <Text color="primary" style={titleTwoStyle}>
-                              Otros HARCODED WITH NO MERCY
+                              {labels.other}
                             </Text>
                             {useTags && (
                               <Controller

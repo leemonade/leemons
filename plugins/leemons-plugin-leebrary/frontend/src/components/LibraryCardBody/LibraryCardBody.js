@@ -22,6 +22,7 @@ const LibraryCardBody = ({
   program,
   pinned,
   id,
+  isCreationPreview,
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
@@ -58,9 +59,11 @@ const LibraryCardBody = ({
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
-        <Box onClick={handleIsFav}>
-          <FavButton isActive={isFav} />
-        </Box>
+        {!isCreationPreview && (
+          <Box onClick={handleIsFav}>
+            <FavButton isActive={isFav} />
+          </Box>
+        )}
         {isDraft && (
           <Badge closable={false} size="xs" className={classes.draftBadge}>
             <Text className={classes.draftText}>{'BORRADOR'}</Text>

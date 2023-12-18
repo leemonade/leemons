@@ -14,16 +14,18 @@ import {
   TotalLayout,
   TotalLayoutHeader,
   useTotalLayout,
+  AssetMediaIcon,
+  AssetBookmarkIcon,
 } from '@bubbles-ui/components';
 import { useRequestErrorMessage } from '@common';
 
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
 import { prepareAsset } from '../../../helpers/prepareAsset';
-import { BasicData, BookmarkBasicData } from '../../../components/AssetSetup';
+import { BasicData } from '../../../components/AssetSetup';
 import { UploadingFileModal } from '../../../components/UploadingFileModal';
 
-const NewAssetPage = () => {
+const AssetPage = () => {
   const { category, categories, selectCategory, setCategory, setAsset, asset } =
     React.useContext(LibraryContext);
   const totalLayoutProps = useTotalLayout();
@@ -49,18 +51,36 @@ const NewAssetPage = () => {
   }, [params, asset, categories, category]);
 
   // #region * INITIAL STEP VALUES -------------------------------------------
-  const getInitialValues = () => {
-    if (category?.key === 'bookmarks') return {};
-    return {
-      file: asset?.file || null,
-      name: asset?.name || '',
-      description: asset?.description || '',
-      color: asset?.color || '',
-      cover: asset?.cover || null,
-      url: asset?.url || null,
-      program: asset?.program || null,
-      subjects: asset?.subjects || null,
+  const getInitialValues = () => ({
+    file: asset?.file || null,
+    name: asset?.name || '',
+    description: asset?.description || '',
+    color: asset?.color || '',
+    cover: asset?.cover || null,
+    url: asset?.url || null,
+    program: asset?.program || null,
+    subjects: asset?.subjects || null,
+  });
+
+  const getValidationSchema = (assetType) => {
+    const zodSchema = {
+      name: z
+        .string({ required_error: t('basicData.errorMessages.name') })
+        .min(1, t('basicData.errorMessages.name')),
     };
+    if (assetType === 'bookmarks') {
+      zodSchema.url = z
+        .string({ required_error: t('basicData.errorMessages.url') })
+        .min(1, t('basicData.errorMessages.url'));
+    } else {
+      zodSchema.file = z.instanceof(File).or(
+        z.object({
+          name: z.string(),
+          type: z.string(),
+        })
+      );
+    }
+    return z.object(zodSchema);
   };
 
   const loadAsset = async (id) => {
@@ -89,35 +109,25 @@ const NewAssetPage = () => {
         badge: null,
         status: null,
         showStep: true,
-        validationSchema: z.object({
-          name: z
-            .string({ required_error: 'Title error HARDCODED WITH NO MERCY' })
-            .min(1, 'Title error HARDCODED WITH NO MERCY'),
-          file: z.instanceof(File).or(
-            z.object({
-              name: z.string(),
-              type: z.string(),
-            })
-          ),
-        }),
+        validationSchema: getValidationSchema(category?.key),
         initialValues: getInitialValues(),
         stepComponent: (
           <BasicData
-            key={'basic-data'}
+            key={t('basicData')}
             advancedConfig={{
               alwaysOpen: false,
               program: { show: true, required: false },
               subjects: { show: true, required: false, showLevel: true, maxOne: false },
             }}
-            categoryId={category?.id}
             onSave={setAsset}
             editing={params.id?.length}
             isLoading={loading}
+            categoryType={params.category || ''}
           />
         ),
       },
     ],
-    [category, asset]
+    [category, asset, params]
   );
   // #endregion
 
@@ -134,7 +144,7 @@ const NewAssetPage = () => {
   }, [asset]);
   // #endregion
 
-  // #region * INIT HEADER & handleOnCancel ------------------------------------------
+  // #region * HANDLERS -------------------------------------------------------
   const handleOnCancel = () => {
     const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
     const formIsNotEmpty = !_.isEmpty(formValues);
@@ -150,54 +160,37 @@ const NewAssetPage = () => {
     }
   };
 
-  const gerAssetTitleAndIcon = () => {
-    if (category?.key === 'bookmark')
-      return { title: `${params.id?.length ? 'EDITAR' : 'NUEVO'} MARCADOR`, icon: null };
-    return { title: `${params.id?.length ? 'EDITAR' : 'NUEVO'} RECURSO`, icon: null };
-  };
-
-  const buildHeader = () => (
-    <TotalLayoutHeader
-      title={gerAssetTitleAndIcon().title}
-      icon={gerAssetTitleAndIcon().icon}
-      formTitlePlaceholder={formValues.name || 'Título del Recurso'}
-      onCancel={handleOnCancel}
-    />
-  );
-  // #endregion
-
-  // #region * HANDLERS -------------------------------------------------------
   const publishAndAssign = () => {
     console.log('handling publish and assign');
   };
 
   const handlePublish = async () => {
-    if (category?.key === 'bookmarks') {
-      // handle publish bookmark()
-      return;
-    }
     const editing = params.id?.length > 0;
+    const { cover } = formValues;
+    const requestMethod = editing ? updateAssetRequest : newAssetRequest;
+    let file;
+    setLoading(true);
 
     try {
-      formValues.file = await uploadFileAsMultipart(formValues.file, {
-        onProgress: (info) => {
-          setUploadingFileInfo(info);
-        },
-      });
-      setUploadingFileInfo(null);
-      const { cover } = formValues;
-      const requestMethod = editing ? updateAssetRequest : newAssetRequest;
-      setLoading(true);
+      if (category?.key !== 'bookmarks') {
+        file = await uploadFileAsMultipart(formValues.file, {
+          onProgress: (info) => {
+            setUploadingFileInfo(info);
+          },
+        });
+        setUploadingFileInfo(null);
+      }
 
       try {
-        const requestBody = { ...formValues, cover, tags: formValues.tags || [] };
-        if (editing) requestBody.id = params.id;
-
-        const { asset: newAsset } = await requestMethod(requestBody, category.id, 'media-files');
+        const assetData = { ...formValues, file, cover, tags: formValues.tags || [] };
+        if (editing) assetData.id = params.id;
+        const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key);
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
         setLoading(false);
-        addSuccessAlert(t('basicData.labels.createdSuccess'));
+        addSuccessAlert(
+          editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
+        );
         history.goBack();
       } catch (err) {
         setLoading(false);
@@ -207,6 +200,31 @@ const NewAssetPage = () => {
       setUploadingFileInfo(null);
     }
   };
+  // #endregion
+
+  // #region * HEADER --------------------------------------------------------
+  const gerAssetTitleAndIcon = () => {
+    const editing = params.id?.length;
+    if (category?.key === 'bookmarks')
+      return {
+        title: editing ? t('basicData.bookmark.titleEdit') : t('basicData.bookmark.title'),
+        icon: <AssetBookmarkIcon width={24} height={24} color={'#878D96'} />,
+      };
+    return {
+      title: editing ? t('basicData.header.titleEdit') : t('basicData.header.titleNew'),
+      icon: <AssetMediaIcon width={24} height={24} color={'#878D96'} />,
+    };
+  };
+
+  const buildHeader = () => (
+    <TotalLayoutHeader
+      title={gerAssetTitleAndIcon().title}
+      icon={gerAssetTitleAndIcon().icon}
+      formTitlePlaceholder={formValues.name || t('basicData.placeholders.name')}
+      onSave={form.handleSubmit(publishAndAssign)}
+      onCancel={handleOnCancel}
+    />
+  );
   // #endregion
 
   // #region * FOOTER ACTIONS ------------------------------------------------
@@ -241,5 +259,5 @@ const NewAssetPage = () => {
   );
 };
 
-export { NewAssetPage };
-export default NewAssetPage;
+export { AssetPage };
+export default AssetPage;
