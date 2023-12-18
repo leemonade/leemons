@@ -17,7 +17,6 @@ import {
   TextInput,
   Textarea,
   Text,
-  Title,
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
@@ -291,6 +290,18 @@ const BasicDataLibraryForm = ({
   };
   // #endregion
 
+  const getFileValue = (value) => {
+    const [fileValue] = value ? flatten([value]) : [];
+    if (!fileValue) {
+      return [];
+    }
+    if (fileValue?.id) {
+      const fileUrl = getCoverUrl(fileValue);
+      fileValue.url = fileUrl;
+    }
+    return [fileValue];
+  }
+
   return (
     <Stack ref={boxRef} id={'stack-here'} fullWidth justifyContent="space-between">
       <Box
@@ -320,7 +331,7 @@ const BasicDataLibraryForm = ({
                           message: errorMessages.file?.rejected || 'File was rejected',
                         }}
                         hideUploadButton
-                        initialFiles={value ? flatten([value]) : []}
+                        initialFiles={getFileValue(value)}
                         single
                         inputWrapperProps={{ error: errors.file }}
                         accept={onlyImages ? ['image/*'] : undefined}
@@ -369,7 +380,7 @@ const BasicDataLibraryForm = ({
               </Text>
               <ContextContainer spacing={6}>
                 {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-                (advancedConfigMode && advancedConfig?.fileToRight) ? (
+                  (advancedConfigMode && advancedConfig?.fileToRight) ? (
                   <>
                     {!isImage && (
                       <>

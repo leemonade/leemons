@@ -10,7 +10,6 @@ import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import {
-  createStyles,
   TotalLayout,
   TotalLayoutHeader,
   useTotalLayout,
@@ -182,8 +181,15 @@ const AssetPage = () => {
       }
 
       try {
-        const assetData = { ...formValues, file, cover, tags: formValues.tags || [] };
+        const assetData = { ...formValues, cover, file, tags: formValues.tags || [] };
+
+        // If Cover doesn't change, set to original value
+        if (_.isString(cover) && cover.indexOf('http') === 0) {
+          assetData.cover = asset.original.cover.id;
+        }
+
         if (editing) assetData.id = params.id;
+
         const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key);
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
@@ -246,7 +252,7 @@ const AssetPage = () => {
       <FormProvider {...form}>
         <TotalLayout
           {...totalLayoutProps}
-          Header={() => buildHeader()}
+          Header={buildHeader}
           footerActionsLabels={footerActionsLabels}
           footerFinalActions={footerFinalActionsAndLabels}
           initialStepsInfo={initialStepsInfo}
