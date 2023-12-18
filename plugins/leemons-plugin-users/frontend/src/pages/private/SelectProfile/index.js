@@ -16,11 +16,12 @@ import {
   getRememberLoginRequest,
   getUserCenterProfileTokenRequest,
   getUserCentersRequest,
+  getUserProfilesRequest,
   getUserProfileTokenRequest,
   removeRememberLoginRequest,
   setRememberLoginRequest,
-} from '../../../request';
-import { getCookieToken } from '../../../session';
+} from '@users/request';
+import { getCookieToken } from '@users/session';
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -45,18 +46,27 @@ export default function SelectProfile({ session }) {
   const { layoutState, setLayoutState } = useContext(LayoutContext);
 
   const { t: tCommon } = useCommonTranslate('forms');
-  const [t] = useTranslateLoader(prefixPN('selectProfile'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('selectProfile'));
 
   // ····················································································
   // HANDLERS
 
   async function init() {
     setLayoutState({ ...layoutState, private: false, profileChecked: false });
-    const [{ centers }, { profile, center }] = await Promise.all([
+    const [{ centers }, { profile, center }, userToken] = await Promise.all([
       getUserCentersRequest(),
       getRememberLoginRequest(getCookieToken()),
+      leemons.api(`v1/users/users`),
     ]);
+
     store.centers = centers;
+    if (userToken?.user?.isSuperAdmin) {
+      const { profiles } = await getUserProfilesRequest();
+      const superProfile = _.find(profiles, { sysName: 'super' });
+      _.forEach(store.centers, (center) => {
+        center.profiles.push(superProfile);
+      });
+    }
     if (profile && center) {
       store.defaultValues = {
         profile: profile.id,
@@ -68,8 +78,8 @@ export default function SelectProfile({ session }) {
   }
 
   React.useEffect(() => {
-    init();
-  }, []);
+    if (!tLoading) init();
+  }, [tLoading]);
 
   async function handleOnSubmit(data) {
     try {
@@ -93,13 +103,14 @@ export default function SelectProfile({ session }) {
       } else {
         await removeRememberLoginRequest();
       }
-      if (profile.sysName === 'admin') {
+
+      if (profile.sysName === 'admin' || profile.sysName === 'super') {
         const { jwtToken } = await getUserProfileTokenRequest(profile.id);
         await hooks.fireEvent('user:change:profile', profile);
         const newToken = { ...jwtToken, profile: data.profile };
         Cookies.set('token', newToken);
         hooks.fireEvent('user:cookie:session:change');
-        history.push(`/private/dashboard`);
+        history.push(profile.sysName === 'super' ? '/private/admin/setup' : `/private/dashboard`);
       } else {
         const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
         await hooks.fireEvent('user:change:profile', profile);

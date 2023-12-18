@@ -197,6 +197,7 @@ module.exports = {
     change_easy: 'You can always change your profile or center from your user account.',
     log_in: 'Log in',
     choose_center: 'Choose center',
+    superAdmin: 'Super admin',
   },
   list_users: {
     import: 'Import users',
