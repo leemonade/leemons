@@ -12,11 +12,11 @@ const { getS3AndConfig } = require('./getS3AndConfig');
 async function clone({ itemFrom, itemTo, ctx } = {}) {
   const { s3, config } = await getS3AndConfig({ ctx });
 
-  const Key = `leemons/leebrary/${itemTo.id}.${itemTo.extension}`;
+  const Key = `leemons/${ctx.meta.deploymentID}/leebrary/${itemTo.id}.${itemTo.extension}`;
 
   await s3
     .copyObject({
-      CopySource: `${config.bucket}/leemons/leebrary/${itemFrom.id}.${itemFrom.extension}`,
+      CopySource: `${config.bucket}/leemons/${ctx.meta.deploymentID}/leebrary/${itemFrom.id}.${itemFrom.extension}`,
       Bucket: config.bucket,
       Key,
     })
