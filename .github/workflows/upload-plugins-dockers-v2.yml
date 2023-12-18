@@ -103,7 +103,7 @@ jobs:
         run: echo "modified=$(if git -C private-plugins status | grep 'nothing to commit' > /dev/null; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
 
       - name: 🔧 Log private plugins versions
-        run: echo "${{ steps.git-check.outputs.modified }}"
+        run: echo "${{ steps.private-git-check.outputs.modified }}"
 
       - name: 🚀 Git push private-plugins submodule
         if: steps.private-git-check.outputs.modified == 'true'
