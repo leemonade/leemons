@@ -40,9 +40,8 @@ async function modifyCTX(
   };
 
   ctx.prefixPNV = function (string) {
-    return `${getPluginNameWithVersionIfHaveFromServiceName(ctx.service.fullName)}${
-      string ? '.' : ''
-    }${string || ''}`;
+    return `${getPluginNameWithVersionIfHaveFromServiceName(ctx.service.fullName)}${string ? '.' : ''
+      }${string || ''}`;
   };
 
   ctx.emit = async function (event, params, opts) {
@@ -73,6 +72,8 @@ module.exports = function ({
   dontGetDeploymentIDOnActionCall = [
     'deployment-manager.addManualDeploymentRest',
     'gateway.dropDBRest',
+    'v1.client-manager.protected.newFreemiumClient',
+    'v1.client-manager.protected.isSubdomainInUse',
   ],
 } = {}) {
   return {
