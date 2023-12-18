@@ -22,10 +22,8 @@ const { validateNotExistMenu } = require('../../validations/exists');
 async function getIfHasPermission({ menuKey, ctx }) {
   await validateNotExistMenu({ key: menuKey, ctx });
 
-  const [isSuperAdmin, userPermissions] = await Promise.all([
-    ctx.tx.call('users.users.isSuperAdmin', {
-      userId: ctx.meta.userSession.id,
-    }),
+  const [profileSysName, userPermissions] = await Promise.all([
+    ctx.tx.call('users.profiles.getProfileSysName'),
     ctx.tx.call('users.permissions.getUserAgentPermissions', {
       userAgent: ctx.meta.userSession.userAgents,
     }),
@@ -88,7 +86,7 @@ async function getIfHasPermission({ menuKey, ctx }) {
     'item'
   );
 
-  if (isSuperAdmin) {
+  if (profileSysName === 'super') {
     menuItems = menuItems.filter((item) => item.key.indexOf('admin') === 0);
   }
 

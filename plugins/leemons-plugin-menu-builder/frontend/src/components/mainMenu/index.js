@@ -4,8 +4,8 @@ import { getMenu } from '@menu-builder/helpers';
 import prefixPN from '@menu-builder/helpers/prefixPN';
 import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getUserCentersRequest } from '@users/request';
-import { useSession } from '@users/session';
+import { getUserCentersRequest, getUserProfilesRequest } from '@users/request';
+import { currentProfileIsSuperAdmin, getCookieToken, useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -13,6 +13,7 @@ import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
+  if (session) session.isSuperAdmin = currentProfileIsSuperAdmin();
   const [t] = useTranslateLoader(prefixPN('sessionMenu'));
   const [ts] = useTranslateLoader(prefixPN('spotlight'));
   const [store, render] = useStore({
@@ -31,8 +32,12 @@ export default function MainMenu({ subNavWidth, ...props }) {
   };
 
   async function load() {
-    const { centers } = await getUserCentersRequest();
-    if (centers.length === 1 && centers[0].profiles.length === 1) {
+    const [{ centers }, { profiles }] = await Promise.all([
+      getUserCentersRequest(),
+      getUserProfilesRequest(),
+    ]);
+    console.log('profiles', profiles, getCookieToken(true));
+    if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       store.onlyOneProfile = true;
       store.centerName = centers[0].name;
       render();
@@ -99,6 +104,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
 
   if (!session) return null;
 
+  console.log('store.onlyOneProfile', store.onlyOneProfile);
+
   return (
     <Spotlight
       data={menuData}
@@ -131,28 +138,28 @@ export default function MainMenu({ subNavWidth, ...props }) {
             ...(session.isSuperAdmin
               ? []
               : [
-                {
-                  id: 'menu-1',
-                  label: t('accountInfo'),
-                  order: 0,
-                  url: '/private/users/detail',
-                  window: 'SELF',
-                  disabled: null,
-                },
-              ].concat(
-                store.onlyOneProfile
-                  ? []
-                  : [
-                    {
-                      id: 'menu-2',
-                      label: t('switchProfile'),
-                      order: 1,
-                      url: '/private/users/select-profile',
-                      window: 'BLANK',
-                      disabled: null,
-                    },
-                  ]
-              )),
+                  {
+                    id: 'menu-1',
+                    label: t('accountInfo'),
+                    order: 0,
+                    url: '/private/users/detail',
+                    window: 'SELF',
+                    disabled: null,
+                  },
+                ].concat(
+                  store.onlyOneProfile
+                    ? []
+                    : [
+                        {
+                          id: 'menu-2',
+                          label: t('switchProfile'),
+                          order: 1,
+                          url: '/private/users/select-profile',
+                          window: 'BLANK',
+                          disabled: null,
+                        },
+                      ]
+                )),
             {
               id: 'menu-3',
               label: t('changeLanguage'),
