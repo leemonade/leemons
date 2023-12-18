@@ -14,7 +14,7 @@ import { prepareAsset } from '../../helpers/prepareAsset';
 import { LibraryDrawerForm } from '../LibraryForm/LibraryDrawerForm';
 import { UploadingFileModal } from '../UploadingFileModal';
 
-const LibraryDrawerData = ({
+const DrawerBasicData = ({
   file,
   advancedConfig,
   asset: assetProp,
@@ -126,7 +126,7 @@ const LibraryDrawerData = ({
   );
 };
 
-LibraryDrawerData.propTypes = {
+DrawerBasicData.propTypes = {
   categoryId: PropTypes.string.isRequired,
   file: PropTypes.instanceOf(Object),
   editing: PropTypes.bool,
@@ -136,5 +136,5 @@ LibraryDrawerData.propTypes = {
   advancedConfig: PropTypes.instanceOf(Object),
 };
 
-export { LibraryDrawerData };
-export default LibraryDrawerData;
+export { DrawerBasicData };
+export default DrawerBasicData;

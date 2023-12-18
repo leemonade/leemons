@@ -7,7 +7,7 @@ import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
 import { listCategoriesRequest } from '../request';
 import { AssetList } from './AssetList';
-import { LibraryDrawerData } from './AssetSetup/LibraryDrawerData';
+import { DrawerBasicData } from './AssetSetup/DrawerBasicData';
 import prefixPN from '../helpers/prefixPN';
 
 const AssetListDrawer = ({
@@ -144,7 +144,7 @@ const AssetListDrawer = ({
                   })}
                 >
                   {category?.key === 'media-files' ? (
-                    <LibraryDrawerData
+                    <DrawerBasicData
                       {...(onlyCreateImages ? { onlyImages: true, hideTitle: true } : {})}
                       categoryId={category?.id}
                       onSave={onSelect}
