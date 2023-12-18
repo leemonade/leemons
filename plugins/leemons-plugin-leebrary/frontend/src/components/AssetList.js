@@ -11,6 +11,7 @@ import {
   Stack,
   useDebouncedValue,
   useResizeObserver,
+  Drawer,
 } from '@bubbles-ui/components';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import { LibraryItem } from '@leebrary/components/LibraryItem';
@@ -45,8 +46,6 @@ import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 import { useAssetListStore } from '../hooks/useAssetListStore';
 import { useAssets } from '../request/hooks/queries/useAssets';
-
-const DRAWER_WIDTH = 350;
 
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
@@ -103,6 +102,8 @@ function AssetList({
   const location = useLocation();
 
   const isPinsRoute = location.pathname.includes('pins');
+
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
   const initialState = {
     loading: true,
@@ -561,10 +562,14 @@ function AssetList({
     return categoryKey === 'bookmarks' ? 'bookmark' : 'media';
   }, [store.category]);
 
-  const showDrawer = useMemo(
-    () => !store.loading && !isNil(store.asset) && !isEmpty(store.asset),
-    [store.loading, store.asset]
-  );
+  const showDrawer = useMemo(() => {
+    if (!store.loading && !isNil(store.asset) && !isEmpty(store.asset)) {
+      setIsDrawerOpen(true);
+    } else {
+      setIsDrawerOpen(false);
+    }
+    return !store.loading && !isNil(store.asset) && !isEmpty(store.asset);
+  }, [store.loading, store.asset]);
 
   const toggleDetail = useCallback(
     (val) => {
@@ -687,17 +692,19 @@ function AssetList({
     return emptyComponent || <ListEmpty t={t} />;
   };
 
-  const listWidth = useMemo(() => {
-    if (store.openDetail && showDrawer) {
-      return `calc(100% - ${DRAWER_WIDTH}px)`;
-    }
+  const listWidth = useMemo(
+    () =>
+      // if (store.openDetail && showDrawer) {
+      //   return `calc(100% - ${DRAWER_WIDTH}px)`;
+      // }
 
-    if (showDrawer) {
-      return `calc(100% - 50px)`;
-    }
+      // if (showDrawer) {
+      //   return `calc(100% - 50px)`;
+      // }
 
-    return '100%';
-  }, [store.openDetail, showDrawer]);
+      '100%',
+    [store.openDetail, showDrawer]
+  );
 
   const categoriesRadioData = useMemo(
     () =>
@@ -885,33 +892,27 @@ function AssetList({
             zIndex: 99,
           })}
         >
-          {showDrawer && (
-            <Box
-              style={{
-                width: store.isDetailOpened ? DRAWER_WIDTH : 0,
-                height: '100%',
-              }}
-            >
-              <CardDetailWrapper
-                category={store.category || {}}
-                asset={store.asset}
-                labels={detailLabels}
-                variant={cardVariant}
-                open={store.isDetailOpened}
-                toolbarItems={toolbarItems}
-                onToggle={() => toggleDetail(!store.isDetailOpened)}
-                onDuplicate={handleOnDuplicate}
-                onDelete={handleOnDelete}
-                onEdit={handleOnEdit}
-                onShare={handleOnShare}
-                onPin={handleOnPin}
-                onUnpin={handleOnUnpin}
-                onRefresh={reloadAssets}
-                onDownload={handleOnDownload}
-                locale={locale}
-              />
-            </Box>
-          )}
+          <Drawer opened={isDrawerOpen} size="496px" close={false} empty={true}>
+            <CardDetailWrapper
+              category={store.category || {}}
+              asset={store.asset}
+              labels={detailLabels}
+              variant={cardVariant}
+              open={store.isDetailOpened}
+              toolbarItems={toolbarItems}
+              onToggle={() => toggleDetail(!store.isDetailOpened)}
+              onDuplicate={handleOnDuplicate}
+              onDelete={handleOnDelete}
+              onEdit={handleOnEdit}
+              onShare={handleOnShare}
+              onPin={handleOnPin}
+              onUnpin={handleOnUnpin}
+              onRefresh={reloadAssets}
+              onDownload={handleOnDownload}
+              onCloseDrawer={() => setIsDrawerOpen(false)}
+              locale={locale}
+            />
+          </Drawer>
         </Box>
       </Stack>
       <PermissionsDataDrawer

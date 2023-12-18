@@ -34,7 +34,7 @@ const LibraryDetailContent = ({
   onCopy = () => {},
   ...props
 }) => {
-  const { classes, cx } = LibraryDetailContentStyles({}, { name: 'LibraryDetailContent' });
+  const { classes } = LibraryDetailContentStyles({}, { name: 'LibraryDetailContent' });
   const clipboard = useClipboard({ timeout: 2000 });
 
   const handleCopy = () => {
@@ -119,4 +119,5 @@ const LibraryDetailContent = ({
 LibraryDetailContent.defaultProps = LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS;
 LibraryDetailContent.propTypes = LIBRARY_DETAIL_CONTENT_PROP_TYPES;
 
+export default LibraryDetailContent;
 export { LibraryDetailContent };

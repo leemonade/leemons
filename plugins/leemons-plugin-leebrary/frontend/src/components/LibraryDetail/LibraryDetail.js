@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { isEmpty, isFunction } from 'lodash';
 import { ActionButton, AvatarsGroup, Box, FileIcon, Stack, Text } from '@bubbles-ui/components';
 import { MoveRightIcon } from '@bubbles-ui/icons/outline';
-import { LibraryDetailContent } from '../LibraryDetailContent';
-import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
-import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
-import { LibraryDetailStyles } from './LibraryDetail.styles';
 import {
   AssetBookmarkIcon,
   AssetPathIcon,
   AssetTaskIcon,
   PluginCurriculumIcon,
 } from '@bubbles-ui/icons/solid';
+import { LibraryDetailContent } from '../LibraryDetailContent';
+import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
+import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
+import { LibraryDetailStyles } from './LibraryDetail.styles';
 import { LIBRARY_DETAIL_DEFAULT_PROPS, LIBRARY_DETAIL_PROP_TYPES } from './LibraryDetail.constants';
 
 const LibraryDetail = ({
@@ -27,6 +27,7 @@ const LibraryDetail = ({
   titleActionButton,
   style,
   excludeMetadatas,
+  onCloseDrawer,
   ...events
 }) => {
   const [showDrawer, setShowDrawer] = useState(open);
@@ -41,10 +42,12 @@ const LibraryDetail = ({
 
   const { classes, cx } = LibraryDetailStyles({ drawer, open }, { name: 'LibraryDetail' });
 
-  const { fileType, fileExtension } = asset;
+  const { fileExtension } = asset;
 
   const handleToggle = () => {
-    isFunction(events?.onToggle) && events.onToggle();
+    if (isFunction(events?.onToggle)) {
+      events.onToggle();
+    }
   };
 
   return (
@@ -58,11 +61,7 @@ const LibraryDetail = ({
         className={cx(classes.root, classes.wrapper, { [classes.show]: showDrawer })}
         style={style}
       >
-        <Stack
-          direction="column"
-          fullHeight
-          // className={cx(classes.wrapper, { [classes.show]: showDrawer })}
-        >
+        <Stack direction="column" fullHeight>
           {toolbar && (
             <Box>
               <LibraryDetailToolbar
@@ -71,6 +70,7 @@ const LibraryDetail = ({
                 toolbarItems={toolbarItems}
                 open={open}
                 labels={labels}
+                onCloseDrawer={onCloseDrawer}
               />
             </Box>
           )}
@@ -167,4 +167,5 @@ const LibraryDetail = ({
 LibraryDetail.defaultProps = LIBRARY_DETAIL_DEFAULT_PROPS;
 LibraryDetail.propTypes = LIBRARY_DETAIL_PROP_TYPES;
 
+export default LibraryDetail;
 export { LibraryDetail };
