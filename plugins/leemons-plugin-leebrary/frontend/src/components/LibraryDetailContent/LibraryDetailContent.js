@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { isEmpty } from 'lodash';
 import {
   ActionButton,
@@ -9,8 +9,12 @@ import {
   Stack,
   Text,
   useClipboard,
+  Tabs,
+  TabPanel,
 } from '@bubbles-ui/components';
 import { DuplicateIcon } from '@bubbles-ui/icons/outline';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { unflatten } from '@common';
 import { getDomain, LibraryCardContent } from '../LibraryCardContent';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
@@ -18,6 +22,7 @@ import {
   LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS,
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
 } from './LibraryDetailContent.constants';
+import prefixPN from '../../helpers/prefixPN';
 
 const LibraryDetailContent = ({
   description,
@@ -31,11 +36,20 @@ const LibraryDetailContent = ({
   variantIcon,
   variantTitle,
   excludeMetadatas,
+  name,
   onCopy = () => {},
   ...props
 }) => {
   const { classes } = LibraryDetailContentStyles({}, { name: 'LibraryDetailContent' });
   const clipboard = useClipboard({ timeout: 2000 });
+  const [, translations] = useTranslateLoader(prefixPN('list'));
+  const detailLabels = useMemo(() => {
+    if (!isEmpty(translations)) {
+      const items = unflatten(translations.items);
+      return items.leebrary.list.labels;
+    }
+    return {};
+  }, [JSON.stringify(translations)]);
 
   const handleCopy = () => {
     clipboard.copy(url);
@@ -43,7 +57,28 @@ const LibraryDetailContent = ({
   };
 
   return (
-    <Stack direction="column" className={classes.root}>
+    <Box className={classes.root}>
+      <Tabs
+        panelColor="default"
+        fullHeight
+        fullWidth
+        centerGrow
+        className={classes.tab}
+        // onTabClick={() => setCurrentAsset(null)}
+        onTabClick={() => console.log('onTabClick')}
+      >
+        <TabPanel label={detailLabels?.detail}>
+          <Box className={classes.tabPanel}>
+            <Text className={classes.title}>{name}</Text>
+          </Box>
+        </TabPanel>
+        <TabPanel label={detailLabels?.permissions}>
+          <Box className={classes.tabPane}>hello 2</Box>
+        </TabPanel>
+        <TabPanel label={detailLabels?.instructions}>
+          <Box className={classes.tabPane}>hello 2</Box>
+        </TabPanel>
+      </Tabs>
       <LibraryCardContent description={description} truncated={false} />
       <LibraryCardFooter
         variantIcon={variantIcon}
@@ -112,7 +147,7 @@ const LibraryDetailContent = ({
           </Box>
         )}
       </Stack>
-    </Stack>
+    </Box>
   );
 };
 

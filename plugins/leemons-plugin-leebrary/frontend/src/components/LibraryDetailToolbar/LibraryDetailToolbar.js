@@ -23,6 +23,7 @@ import { DownloadIcon } from './icons/DownloadIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
 import { ShareIcon } from './icons/ShareIcon';
 import { LoveIcon } from './icons/LoveIcon';
+import { LoveFullIcon } from './icons/LoveFullIcon';
 
 const LibraryDetailToolbar = ({
   item,
@@ -96,6 +97,7 @@ const LibraryDetailToolbar = ({
       onUnpin(item);
     }
   };
+  const canShowLoveIcon = toolbarItems.pin || toolbarItems.unpin;
   return (
     <Box className={classes.root} data-cypress-id="library-detail-toolbar">
       <Stack className={classes.buttons}>
@@ -159,7 +161,7 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
-          {toolbarItems.pin && <Divider orientation="vertical" />}
+          {canShowLoveIcon && <Divider orientation="vertical" />}
 
           {toolbarItems.pin && (
             <ActionButton
@@ -171,8 +173,7 @@ const LibraryDetailToolbar = ({
           )}
           {toolbarItems.unpin && (
             <ActionButton
-              icon={<LoveIcon height={20} width={20} active />}
-              active
+              icon={<LoveFullIcon height={20} width={20} active />}
               variant="solid"
               onClick={handleUnpin}
               tooltip={toolbarItems.unpin}

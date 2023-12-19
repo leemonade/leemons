@@ -1,13 +1,13 @@
 import React from 'react';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
 import { ActionButton, Box, TextClamp, Title } from '@bubbles-ui/components';
+// TODO: AssetPlayer comes from @common
+import { AssetPlayer } from '@bubbles-ui/leemons';
 import { LibraryDetailPlayerStyles } from './LibraryDetailPlayer.styles';
 import {
   LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS,
   LIBRARY_DETAIL_PLAYER_PROP_TYPES,
 } from './LibraryDetailPlayer.constants';
-// TODO: AssetPlayer comes from @common
-import { AssetPlayer } from '@bubbles-ui/leemons';
 
 const LibraryDetailPlayer = ({
   name,
@@ -33,17 +33,17 @@ const LibraryDetailPlayer = ({
     url,
   };
 
-  const { classes, cx } = LibraryDetailPlayerStyles({ color }, { name: 'LibraryDetailPlayer' });
+  const { classes } = LibraryDetailPlayerStyles({ color }, { name: 'LibraryDetailPlayer' });
   return (
     <Box className={classes.root} data-cypress-id="library-detail-player">
-      <AssetPlayer height={height} asset={asset} hideURLInfo viewPDF={false} compact />
       <Box className={classes.color} />
+      <AssetPlayer height={100} width={496} asset={asset} hideURLInfo viewPDF={false} compact />
       <Box className={classes.titleRow}>
-        <TextClamp lines={6}>
+        {/* <TextClamp lines={6}>
           <Title order={4} className={classes.title}>
             {name}
           </Title>
-        </TextClamp>
+        </TextClamp> */}
         {/* <IconButton size={'xs'} icon={<ExpandDiagonalIcon height={16} width={16} />} /> */}
         {variant === 'bookmark' && (
           <ActionButton
@@ -60,4 +60,5 @@ const LibraryDetailPlayer = ({
 LibraryDetailPlayer.defaultProps = LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS;
 LibraryDetailPlayer.propTypes = LIBRARY_DETAIL_PLAYER_PROP_TYPES;
 
+export default LibraryDetailPlayer;
 export { LibraryDetailPlayer };

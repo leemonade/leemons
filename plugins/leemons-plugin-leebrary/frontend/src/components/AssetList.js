@@ -339,6 +339,8 @@ function AssetList({
     setAppLoading(true);
     try {
       await pinAssetRequest(item.id);
+      queryClient.invalidateQueries(allAssetsKey);
+      // queryClient.refetchQueries();
       setAppLoading(false);
       // addSuccessAlert(t('labels.pinnedSuccess'));
       loadAsset(item.id, true);
@@ -352,6 +354,8 @@ function AssetList({
     setAppLoading(true);
     try {
       await unpinAssetRequest(item.id);
+      queryClient.invalidateQueries(allAssetsKey);
+      // queryClient.refetchQueries();
       setAppLoading(false);
       // addSuccessAlert(t('labels.unpinnedSuccess'));
       loadAsset(item.id, true);
@@ -512,17 +516,10 @@ function AssetList({
 
   function handleOnPin(item) {
     pinAsset(item);
-    queryClient.invalidateQueries(allAssetsKey);
-    queryClient.refetchQueries();
   }
 
   function handleOnUnpin(item) {
     unpinAsset(item);
-    queryClient.invalidateQueries(allAssetsKey);
-    queryClient.refetchQueries();
-    // openConfirmationModal({
-    //   onConfirm: () => unpinAsset(item),
-    // })();
   }
 
   function handleOnDownload(item) {
