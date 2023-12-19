@@ -36,7 +36,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
       getUserCentersRequest(),
       getUserProfilesRequest(),
     ]);
-    console.log('profiles', profiles, getCookieToken(true));
     if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       store.onlyOneProfile = true;
       store.centerName = centers[0].name;

@@ -25,6 +25,8 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
   tabPanel: {
     padding: pxToRem(24),
+    display: 'flex',
+    flexDirection: 'column',
   },
   title: {
     color: theme.other.global.content.color.tertiary.default,
@@ -32,6 +34,19 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     fontWeight: 500,
     lineHeight: '24px',
     fontStyle: 'normal',
+    paddingBottom: pxToRem(8),
+  },
+  description: {
+    color: theme.other.global.content.color.tertiary.default,
+    fontSize: pxToRem(14),
+    fontWeight: 400,
+    lineHeight: '20px',
+    fontStyle: 'normal',
+  },
+  subjectItem: {
+    display: 'flex',
+    marginBottom: pxToRem(10),
+    alignItems: 'center',
   },
 }));
 

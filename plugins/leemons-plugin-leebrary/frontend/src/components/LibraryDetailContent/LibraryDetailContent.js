@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import {
   ActionButton,
@@ -15,6 +15,7 @@ import {
 import { DuplicateIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
+import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { getDomain, LibraryCardContent } from '../LibraryCardContent';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
@@ -37,12 +38,15 @@ const LibraryDetailContent = ({
   variantTitle,
   excludeMetadatas,
   name,
+  subjects,
+  program,
   onCopy = () => {},
   ...props
 }) => {
   const { classes } = LibraryDetailContentStyles({}, { name: 'LibraryDetailContent' });
   const clipboard = useClipboard({ timeout: 2000 });
   const [, translations] = useTranslateLoader(prefixPN('list'));
+  const [subjectsIds, setSubjectsIds] = useState([]);
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -55,6 +59,12 @@ const LibraryDetailContent = ({
     clipboard.copy(url);
     onCopy();
   };
+
+  useEffect(() => {
+    if (subjects) {
+      setSubjectsIds(subjects);
+    }
+  }, [subjects]);
 
   return (
     <Box className={classes.root}>
@@ -70,6 +80,16 @@ const LibraryDetailContent = ({
         <TabPanel label={detailLabels?.detail}>
           <Box className={classes.tabPanel}>
             <Text className={classes.title}>{name}</Text>
+            <Text className={classes.description}>{description}</Text>
+            <Box style={{ marginTop: 24 }}>
+              {Array.isArray(subjectsIds) &&
+                subjectsIds.length > 0 &&
+                subjectsIds?.map((subject, index) => (
+                  <Box key={index} className={classes.subjectItem}>
+                    <SubjectItemDisplay subjectsIds={[subject.subject]} programId={program} />
+                  </Box>
+                ))}
+            </Box>
           </Box>
         </TabPanel>
         <TabPanel label={detailLabels?.permissions}>
