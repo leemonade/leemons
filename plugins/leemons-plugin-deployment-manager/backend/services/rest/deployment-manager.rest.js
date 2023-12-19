@@ -92,11 +92,11 @@ module.exports = {
 
       const callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
 
-      if (!ctx.params.allConfig && config) {
+      if (!ctx.params?.allConfig && config) {
         const keys = Object.keys(config);
         let result = null;
         _.forEach(keys, (key) => {
-          if (ctx.params.ignoreVersion) {
+          if (ctx.params?.ignoreVersion) {
             if (key.split('.')[1] === callerPluginV.split('.')[1]) {
               result = config[key];
             }
