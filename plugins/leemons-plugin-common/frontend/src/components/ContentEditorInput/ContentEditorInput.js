@@ -19,6 +19,7 @@ const ContentEditorInput = ({
   openSchema,
   useSchema,
   editorStyles,
+  Footer,
   ...props
 }) => {
   const editorLabels = useEditorLabels();
@@ -43,7 +44,10 @@ const ContentEditorInput = ({
   // ··································································
   // STYLES
 
-  const { classes } = ContentEditorInputStyles({}, { name: 'ContentEditorInput' });
+  const { classes } = ContentEditorInputStyles(
+    { hasFooter: !!Footer },
+    { name: 'ContentEditorInput' }
+  );
 
   useEffect(() => {
     setIsSchemaOpened(openSchema);
@@ -64,6 +68,7 @@ const ContentEditorInput = ({
         >
           {children}
         </TextEditorContent>
+        {!!Footer && Footer}
       </Box>
     </Box>
   );

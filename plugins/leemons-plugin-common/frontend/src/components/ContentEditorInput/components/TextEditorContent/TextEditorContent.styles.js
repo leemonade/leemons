@@ -2,7 +2,7 @@ import { createStyles } from '@bubbles-ui/components';
 
 const TextEditorContentStyles = createStyles((theme, { editorStyles, fullWidth }) => {
   const globalTheme = theme.other.global;
-  const pageWidth = '210mm';
+  const pageWidth = '928px';
 
   const calcExpandButton = () => {
     const containerCenter = '50%';
@@ -37,7 +37,7 @@ const TextEditorContentStyles = createStyles((theme, { editorStyles, fullWidth }
       paddingBlock: 32,
       paddingInline: 48,
       width: fullWidth ? '100%' : pageWidth,
-      minHeight: '297mm',
+      minHeight: '100%',
       height: 'max-content',
     },
     editorContainer: {
@@ -48,8 +48,9 @@ const TextEditorContentStyles = createStyles((theme, { editorStyles, fullWidth }
       flex: 1,
       overflowY: 'auto',
       display: 'flex',
-      scrollbarGutter: 'stable',
       justifyContent: 'center',
+      /*
+      scrollbarGutter: 'stable',
       '::-webkit-scrollbar': {
         width: '12px',
         border: `1px solid ${globalTheme.border.color.line.muted}`,
@@ -61,6 +62,7 @@ const TextEditorContentStyles = createStyles((theme, { editorStyles, fullWidth }
         backgroundColor: globalTheme.background.color.surface.muted,
         borderRadius: 8,
       },
+      */
     },
     toolbarRoot: {
       padding: '8px 16px 16px 24px',

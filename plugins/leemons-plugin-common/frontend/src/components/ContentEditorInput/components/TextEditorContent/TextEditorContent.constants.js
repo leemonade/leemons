@@ -14,6 +14,7 @@ export const TEXTEDITOR_CONTENT_DEFAULT_PROPS = {
   openSchema: false,
   useSchema: false,
   openLibraryModal: true,
+  canExpand: false,
 };
 export const TEXTEDITOR_CONTENT_PROP_TYPES = {
   placeholder: PropTypes.string,
@@ -26,4 +27,5 @@ export const TEXTEDITOR_CONTENT_PROP_TYPES = {
   editorClassname: PropTypes.string,
   openLibraryModal: PropTypes.bool,
   editorLabels: PropTypes.object,
+  canExpand: PropTypes.bool,
 };

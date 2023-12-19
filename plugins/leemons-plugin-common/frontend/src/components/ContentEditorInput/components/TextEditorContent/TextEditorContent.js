@@ -34,6 +34,7 @@ const TextEditorContent = ({
   toolbarPortal,
   editorLabels,
   openLibraryModal,
+  canExpand,
   ...props
 }) => {
   const setSchema = useContentEditorStore((state) => state.setSchema);
@@ -45,11 +46,13 @@ const TextEditorContent = ({
   );
   return (
     <>
-      <Box className={classes.expandButton}>
-        <IconButton onClick={() => setFullWidth((fw) => !fw)}>
-          {fullWidth ? <ShrinkIcon /> : <ExpandDiagonalIcon />}
-        </IconButton>
-      </Box>
+      {canExpand && (
+        <Box className={classes.expandButton}>
+          <IconButton onClick={() => setFullWidth((fw) => !fw)}>
+            {fullWidth ? <ShrinkIcon /> : <ExpandDiagonalIcon />}
+          </IconButton>
+        </Box>
+      )}
       <TextEditor
         {...props}
         placeholder={placeholder}
