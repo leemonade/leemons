@@ -300,13 +300,17 @@ const LibraryBasicDataForm = ({
       fileValue.url = fileUrl;
     }
     return [fileValue];
-  }
+  };
 
   return (
     <Stack ref={boxRef} id={'stack-here'} fullWidth justifyContent="space-between">
       <Box
         id={'form-box-here'}
-        style={{ width: hidePreview ? '100%' : 640, marginRight: !hidePreview && 24 }}
+        style={{
+          minWidth: hidePreview ? '100%' : 600,
+          maxWidth: hidePreview ? '100%' : 600,
+          marginRight: !hidePreview && 24,
+        }}
       >
         <form autoComplete="off">
           <ContextContainer spacing={8}>
@@ -380,7 +384,7 @@ const LibraryBasicDataForm = ({
               </Text>
               <ContextContainer spacing={6}>
                 {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-                  (advancedConfigMode && advancedConfig?.fileToRight) ? (
+                (advancedConfigMode && advancedConfig?.fileToRight) ? (
                   <>
                     {!isImage && (
                       <>
