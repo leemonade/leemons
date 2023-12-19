@@ -57,11 +57,11 @@ export const SchemaStyles = createStyles((theme, { isSchemaOpened }) => {
     },
     title: {
       color: globalTheme.content.color.text.muted,
-      ...globalTheme.content.typo.heading.xsm,
+      ...globalTheme.content.typo.heading.sm,
     },
     subtitle: {
       color: globalTheme.content.color.text.muted,
-      ...globalTheme.content.typo.body.lg,
+      ...globalTheme.content.typo.heading.xsm,
       paddingLeft: 8,
     },
     arrowIcon: {

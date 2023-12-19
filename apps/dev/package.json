@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "backend:dev": "PORT=8080 leemons-runner --env --hot services/**/*.service.js",
+    "backend:nats:dev": "TRANSPORTER=NATS yarn backend:dev",
     "leemons-runner": "leemons-runner",
     "leemonsFront": "leemonsFront",
     "front:dev": "NODE_OPTIONS=\"--max-old-space-size=4096\" PORT=3000 API_URL=http://localhost:8080 leemonsFront dev -m ../..",
