@@ -1,4 +1,14 @@
 module.exports = {
+  detailPage : {
+    titleNew: 'NUEVO DOCUMENTO',
+    titleEdit: 'EDITAR DOCUMENTO',
+    saveDraft: 'Guardar borrador',
+    publish: 'Publicar',
+    publishAndAssign: 'Publicar y Asignar',
+    next: 'Siguiente',
+    previous: 'Anterior',
+    cancel: 'Cancelar'
+  },
   documentDetail: {
     basic: 'Información básica',
     coverRequired: 'Es necesario subir una imagen de portada',

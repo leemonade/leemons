@@ -24,7 +24,7 @@ import useMutateDocument from '@content-creator/request/hooks/mutations/useMutat
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 
 export default function Index({ isNew, readOnly }) {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
+  const [t, translations, , tLoading] = useTranslateLoader(prefixPN('detailPage'));
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const { openConfirmationModal } = useLayout();
@@ -87,7 +87,7 @@ export default function Index({ isNew, readOnly }) {
     );
   };
 
-  const setDynamicTitle = (value) => {
+  const handleDynamicTitle = (value) => {
     form.setValue('content', value);
     if (!query.data?.name) {
       const parser = new DOMParser();
@@ -121,13 +121,14 @@ export default function Index({ isNew, readOnly }) {
   };
 
   const footerFinalActionsAndLabels = [
-    { label: 'Publicar', onClick: () => handleMutations({ publishing: true, assigning: false }) },
+    { label: t('publish'), onClick: () => handleMutations({ publishing: true, assigning: false }) },
     {
-      label: 'Publicar y asignar',
+      label: t('publishAndAssign'),
       onClick: () => handleMutations({ publishing: true, assigning: true }),
     },
   ];
   // #endregion
+
 
   return (
     <FormProvider {...form}>
@@ -136,7 +137,7 @@ export default function Index({ isNew, readOnly }) {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={isNew ? 'Nuevo Documento HARDCODED' : 'Editar Documento HARCODED'}
+            title={isNew ? t('titleNew') : t('titleEdit')}
             icon={<AssetDocumentIcon width={24} height={24} color={'#878D96'} />}
             formTitlePlaceholder={form.watch('name')}
             onCancel={handleOnCancel}
@@ -159,7 +160,7 @@ export default function Index({ isNew, readOnly }) {
                   labels={{
                     format: t('formatLabel'),
                   }}
-                  onChange={setDynamicTitle}
+                  onChange={handleDynamicTitle}
                   value={field.value}
                   openLibraryModal={false}
                   readOnly={readOnly}
@@ -175,9 +176,9 @@ export default function Index({ isNew, readOnly }) {
                             variant="link"
                             onClick={() => handleMutations({ publishing: false, assigning: false })}
                           >
-                            Guardar Borrador HARDCODED WITH NO MERCY
+                           {t('saveDraft')}
                           </Button>
-                          <Button onClick={handleNext}>Siguiente HARDCODED WITH NO MERCY</Button>
+                          <Button onClick={handleNext}>{t('next')}</Button>
                         </>
                       }
                     />
@@ -205,7 +206,7 @@ export default function Index({ isNew, readOnly }) {
                           variant="link"
                           onClick={() => handleMutations({ publishing: false, assigning: false })}
                         >
-                          Guardar Borrador HARDCODED WITH NO MERCY
+                          {t('saveDraft')}
                         </Button>
                         <DropdownButton
                           data={footerFinalActionsAndLabels}
@@ -218,7 +219,7 @@ export default function Index({ isNew, readOnly }) {
                     }
                     leftZone={
                       <Button variant="outline" onClick={handlePrev}>
-                        Anterior HARDCODED WITH NO MERCY
+                        {t('previous')}
                       </Button>
                     }
                   />
