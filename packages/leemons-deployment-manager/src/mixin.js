@@ -40,8 +40,9 @@ async function modifyCTX(
   };
 
   ctx.prefixPNV = function (string) {
-    return `${getPluginNameWithVersionIfHaveFromServiceName(ctx.service.fullName)}${string ? '.' : ''
-      }${string || ''}`;
+    return `${getPluginNameWithVersionIfHaveFromServiceName(ctx.service.fullName)}${
+      string ? '.' : ''
+    }${string || ''}`;
   };
 
   ctx.emit = async function (event, params, opts) {
@@ -102,7 +103,8 @@ module.exports = function ({
               if (
                 !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
                 !ctx.action.name.includes('leemonsMongoDBRollback') &&
-                !ctx.action.name.startsWith('gateway.')
+                !ctx.action.name.startsWith('gateway.') &&
+                !ctx.callerPlugin.startsWith('gateway')
               ) {
                 if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
                   if (!ctx.meta.relationshipID)
