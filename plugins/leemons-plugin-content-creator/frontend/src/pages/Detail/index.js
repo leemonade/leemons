@@ -23,24 +23,40 @@ import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 
+const validators = [
+  z.object({
+    content: z.string().min(1),
+  }),
+  z.object({
+    name: z
+      .string({ required_error: 'Title is required HARDCODED WITH NO MERCY' })
+      .min(1, 'Title is required HARDCODED WITH NO MERCY'),
+  }),
+];
+
 export default function Index({ isNew, readOnly }) {
   const [t, translations, , tLoading] = useTranslateLoader(prefixPN('detailPage'));
   const [isLoading, setIsLoading] = useState(false);
+  const [disableNext, setDisableNext] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
   const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
   const history = useHistory();
   const params = useParams();
   const query = useDocument({ id: params.id, isNew });
-  const form = useForm();
   const mutation = useMutateDocument();
-  const formValues = form.watch();
   const toolbarRef = React.useRef();
+  const form = useForm({
+    resolver: zodResolver(validators[activeStep]),
+  });
+  const formValues = form.watch();
 
   // ··································································
   // HANDLERS
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    const isValidStep = await form.trigger();
+    if (!isValidStep) return;
     setActiveStep((current) => current + 1);
     window.scrollTo(0, 0, { behavior: 'smooth' });
   };
@@ -66,6 +82,8 @@ export default function Index({ isNew, readOnly }) {
   };
 
   const handleMutations = async ({ publishing, assigning }) => {
+    const isValidStep = await form.trigger();
+    if (!isValidStep) return;
     setIsLoading(true);
     const documentToSave = { ...formValues, published: publishing };
     if (!isNew) documentToSave.id = params.id;
@@ -115,6 +133,14 @@ export default function Index({ isNew, readOnly }) {
     }
   }, [query.data]);
 
+  useEffect(() => {
+    if (formValues.content) {
+      setDisableNext(false);
+    } else {
+      setDisableNext(true);
+    }
+  }, [formValues.content]);
+
   // #region * FOOTER ACTIONS ------------------------------------------------
   const footerActionsLabels = {
     dropdownLabel: 'Finalizar',
@@ -129,7 +155,6 @@ export default function Index({ isNew, readOnly }) {
   ];
   // #endregion
 
-
   return (
     <FormProvider {...form}>
       <LoadingOverlay visible={tLoading || query?.isLoading} />
@@ -142,6 +167,7 @@ export default function Index({ isNew, readOnly }) {
             formTitlePlaceholder={form.watch('name')}
             onCancel={handleOnCancel}
             compact
+            mainActionLabel={t('cancel')}
           >
             <div ref={toolbarRef}></div>
           </TotalLayoutHeader>
@@ -176,9 +202,11 @@ export default function Index({ isNew, readOnly }) {
                             variant="link"
                             onClick={() => handleMutations({ publishing: false, assigning: false })}
                           >
-                           {t('saveDraft')}
+                            {t('saveDraft')}
                           </Button>
-                          <Button onClick={handleNext}>{t('next')}</Button>
+                          <Button onClick={handleNext} disabled={disableNext}>
+                            {t('next')}
+                          </Button>
                         </>
                       }
                     />
