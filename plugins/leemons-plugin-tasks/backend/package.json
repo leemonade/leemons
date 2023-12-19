@@ -24,6 +24,7 @@
     "@leemons/cache": "^0.0.41",
     "@leemons/deployment-manager": "0.0.41",
     "@leemons/menu-builder": "0.0.41",
+    "@leemons/middlewares": "0.0.41",
     "@leemons/mongodb": "0.0.41",
     "@leemons/mongodb-helpers": "0.0.41",
     "@leemons/mqtt": "0.0.41",

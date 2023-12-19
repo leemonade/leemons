@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
+    "@leemons/middlewares": "0.0.41",
     "async-promise-pool": "^1.0.6",
     "chalk": "^4.1.1",
     "jaeger-client": "^3.19.0",
