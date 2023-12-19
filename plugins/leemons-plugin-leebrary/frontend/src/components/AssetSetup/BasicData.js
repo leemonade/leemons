@@ -36,8 +36,6 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryType, Footer })
     setTags(val);
   };
 
-  if (editing && !asset) return null;
-
   return (
     <TotalLayoutStepContainer Footer={Footer}>
       <LibraryBasicDataForm
@@ -65,12 +63,11 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryType, Footer })
 };
 
 BasicData.propTypes = {
+  advancedConfig: PropTypes.instanceOf(Object),
+  editing: PropTypes.bool,
   isLoading: PropTypes.bool,
   categoryType: PropTypes.string,
-  type: PropTypes.string,
-  editing: PropTypes.bool,
-  asset: PropTypes.instanceOf(Object),
-  advancedConfig: PropTypes.instanceOf(Object),
+  Footer: PropTypes.element,
 };
 
 export { BasicData };

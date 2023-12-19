@@ -138,7 +138,6 @@ export default function Index({ isNew, readOnly }) {
       onSave={handleMutations}
       editing={!isNew}
       categoryType={'document'}
-      Footer={ }
     />
   );
 

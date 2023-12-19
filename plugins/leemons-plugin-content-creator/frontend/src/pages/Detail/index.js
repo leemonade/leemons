@@ -4,6 +4,7 @@ import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useHistory, useParams } from 'react-router-dom';
+import { useLayout } from '@layout/context';
 import {
   LoadingOverlay,
   Button,
@@ -11,7 +12,8 @@ import {
   TotalLayoutContainer,
   TotalLayoutHeader,
   TotalLayoutFooterContainer,
-  DropdownButton
+  DropdownButton,
+  AssetDocumentIcon,
 } from '@bubbles-ui/components';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -23,10 +25,9 @@ import ContentEditorInput from '@common/components/ContentEditorInput/ContentEdi
 
 export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
-  const [publishing, setPublishing] = useState(false);
-  const [staticTitle, setStaticTitle] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+  const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
   const history = useHistory();
   const params = useParams();
@@ -40,12 +41,12 @@ export default function Index({ isNew, readOnly }) {
   // HANDLERS
 
   const handleNext = () => {
-    setActiveStep(activeStep + 1);
+    setActiveStep((current) => current + 1);
     window.scrollTo(0, 0, { behavior: 'smooth' });
   };
 
   const handlePrev = () => {
-    setActiveStep(activeStep - 1);
+    setActiveStep((current) => current - 1);
     window.scrollTo(0, 0, { behavior: 'smooth' });
   };
 
@@ -64,7 +65,8 @@ export default function Index({ isNew, readOnly }) {
     }
   };
 
-  const handleMutations = async (assign = '') => {
+  const handleMutations = async ({ publishing, assigning }) => {
+    setIsLoading(true);
     const documentToSave = { ...formValues, published: publishing };
     if (!isNew) documentToSave.id = params.id;
     mutation.mutate(
@@ -72,17 +74,22 @@ export default function Index({ isNew, readOnly }) {
       {
         onSuccess: (data) => {
           addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
-          if (!assign) history.push(`/private/content-creator${publishing ? '' : '/?fromDraft=1'}`);
+          setIsLoading(false);
+          if (!assigning)
+            history.push(`/private/content-creator${publishing ? '' : '/?fromDraft=1'}`);
           else history.push(`/private/content-creator/${data.document.assignable}/assign`);
         },
-        onError: (e) => addErrorAlert(e),
+        onError: (e) => {
+          addErrorAlert(e);
+          setIsLoading(false);
+        },
       }
     );
   };
 
-  const onContentChangeHandler = (value) => {
+  const setDynamicTitle = (value) => {
     form.setValue('content', value);
-    if (!query.data?.name && !staticTitle) {
+    if (!query.data?.name) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
         parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
@@ -108,19 +115,17 @@ export default function Index({ isNew, readOnly }) {
     }
   }, [query.data]);
 
-  useEffect(() => {
-    if (activeStep === 1) setPublishing(true);
-    else setPublishing(false);
-  }, [activeStep]);
-
   // #region * FOOTER ACTIONS ------------------------------------------------
   const footerActionsLabels = {
     dropdownLabel: 'Finalizar',
   };
 
   const footerFinalActionsAndLabels = [
-    { label: 'Publicar', action: handleMutations },
-    { label: 'Publicar y asignar', action: () => handleMutations(true) },
+    { label: 'Publicar', onClick: () => handleMutations({ publishing: true, assigning: false }) },
+    {
+      label: 'Publicar y asignar',
+      onClick: () => handleMutations({ publishing: true, assigning: true }),
+    },
   ];
   // #endregion
 
@@ -131,76 +136,91 @@ export default function Index({ isNew, readOnly }) {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={'Nuevo Documento'}
-            icon={<div>CC</div>}
+            title={isNew ? 'Nuevo Documento HARDCODED' : 'Editar Documento HARCODED'}
+            icon={<AssetDocumentIcon width={24} height={24} color={'#878D96'} />}
             formTitlePlaceholder={form.watch('name')}
             onCancel={handleOnCancel}
+            compact
           >
             <div ref={toolbarRef}></div>
           </TotalLayoutHeader>
-        }>
+        }
+      >
         {
           [
-            <>
-              <Controller
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <ContentEditorInput
-                    key="s1"
-                    useSchema
-                    schemaLabel={t('schemaLabel')}
-                    labels={{
-                      format: t('formatLabel'),
-                    }}
-                    onChange={onContentChangeHandler}
-                    value={field.value}
-                    openLibraryModal={false}
-                    readOnly={readOnly}
-                    toolbarPortal={toolbarRef.current}
-                    scrollRef={scrollRef}
-                    Footer={
-                      <TotalLayoutFooterContainer
-                        fixed
-                        scrollRef={scrollRef}
-                        rightZone={
-                          <>
-                            <Button variant="link" onClick={handleMutations}>
-                              Guardar Borrador
-                            </Button>
-                            <Button onClick={handleNext}>Siguiente</Button>
-                          </>
-                        }
-                      />
-                    }
-                  />)} />
-            </>,
-            <Stack justifyContent="center">
+            <Controller
+              key="step-1"
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <ContentEditorInput
+                  useSchema
+                  schemaLabel={t('schemaLabel')}
+                  labels={{
+                    format: t('formatLabel'),
+                  }}
+                  onChange={setDynamicTitle}
+                  value={field.value}
+                  openLibraryModal={false}
+                  readOnly={readOnly}
+                  toolbarPortal={toolbarRef.current}
+                  scrollRef={scrollRef}
+                  Footer={
+                    <TotalLayoutFooterContainer
+                      fixed
+                      scrollRef={scrollRef}
+                      rightZone={
+                        <>
+                          <Button
+                            variant="link"
+                            onClick={() => handleMutations({ publishing: false, assigning: false })}
+                          >
+                            Guardar Borrador HARDCODED WITH NO MERCY
+                          </Button>
+                          <Button onClick={handleNext}>Siguiente HARDCODED WITH NO MERCY</Button>
+                        </>
+                      }
+                    />
+                  }
+                />
+              )}
+            />,
+            <Stack key="step-2" justifyContent="center">
               <BasicData
-                key={t('basicData')}
                 advancedConfig={{
                   alwaysOpen: false,
                   program: { show: true, required: false },
                   subjects: { show: true, required: false, showLevel: true, maxOne: false },
                 }}
-                onSave={handleMutations}
                 editing={!isNew}
                 categoryType={'document'}
+                isLoading={isLoading}
                 Footer={
                   <TotalLayoutFooterContainer
                     fixed
                     scrollRef={scrollRef}
                     rightZone={
                       <>
-                        <Button variant="link" onClick={handleMutations}>
-                          Guardar Borrador
+                        <Button
+                          variant="link"
+                          onClick={() => handleMutations({ publishing: false, assigning: false })}
+                        >
+                          Guardar Borrador HARDCODED WITH NO MERCY
                         </Button>
-                        <DropdownButton data={footerFinalActionsAndLabels} loading={isLoading} disabled={isLoading}>
-                          {footerActionsLabels.dropdownLabel || 'Finalizar'}
+                        <DropdownButton
+                          data={footerFinalActionsAndLabels}
+                          loading={isLoading}
+                          disabled={isLoading}
+                        >
+                          {footerActionsLabels.dropdownLabel}
                         </DropdownButton>
                       </>
                     }
-                    leftZone={<Button variant="outline" onClick={handlePrev}>Anterior</Button>}
+                    leftZone={
+                      <Button variant="outline" onClick={handlePrev}>
+                        Anterior HARDCODED WITH NO MERCY
+                      </Button>
+                    }
                   />
                 }
               />
