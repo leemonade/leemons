@@ -9,6 +9,7 @@ import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   TotalLayout,
   TotalLayoutHeader,
@@ -35,6 +36,7 @@ const AssetPage = () => {
   const { openConfirmationModal } = useLayout();
   const history = useHistory();
   const params = useParams();
+  const queryClient = useQueryClient();
 
   // Set Category for Library context
   React.useEffect(() => {
@@ -202,6 +204,7 @@ const AssetPage = () => {
         addSuccessAlert(
           editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
         );
+        queryClient.invalidateQueries({ queryKey: ['fetch-assets-data'] });
         history.goBack();
       } catch (err) {
         setLoading(false);
