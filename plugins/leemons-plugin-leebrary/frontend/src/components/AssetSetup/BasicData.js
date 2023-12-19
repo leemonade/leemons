@@ -9,7 +9,7 @@ import LibraryContext from '../../context/LibraryContext';
 
 import prefixPN from '../../helpers/prefixPN';
 // eslint-disable-next-line import/no-cycle
-import { BasicDataLibraryForm } from '../LibraryForm/BasicDataLibraryForm';
+import { LibraryBasicDataForm } from '../LibraryForm/LibraryBasicDataForm';
 
 const BasicData = ({ advancedConfig, editing, isLoading, categoryType }) => {
   const { asset, category } = useContext(LibraryContext);
@@ -40,7 +40,7 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryType }) => {
 
   return (
     <TotalLayoutStepContainer>
-      <BasicDataLibraryForm
+      <LibraryBasicDataForm
         {...formLabels}
         advancedConfig={advancedConfig}
         isLoading={isLoading}
@@ -59,7 +59,7 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryType }) => {
             />
           </InputWrapper>
         </ContextContainer>
-      </BasicDataLibraryForm>
+      </LibraryBasicDataForm>
     </TotalLayoutStepContainer>
   );
 };

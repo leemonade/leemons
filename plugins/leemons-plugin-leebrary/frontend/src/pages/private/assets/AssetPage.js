@@ -184,7 +184,12 @@ const AssetPage = () => {
         const assetData = { ...formValues, cover, file, tags: formValues.tags || [] };
 
         // If Cover doesn't change, set to original value
-        if (_.isString(cover) && cover.indexOf('http') === 0) {
+        if (
+          _.isString(cover) &&
+          cover.indexOf('http') === 0 &&
+          asset &&
+          !form.formState.dirtyFields.cover
+        ) {
           assetData.cover = asset.original.cover.id;
         }
 

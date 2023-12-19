@@ -90,7 +90,7 @@ function getCoverName(cover) {
 // -----------------------------------------------------------------------------
 // COMPONENT
 
-const BasicDataLibraryForm = ({
+const LibraryBasicDataForm = ({
   advancedConfigMode,
   labels,
   placeholders,
@@ -606,8 +606,8 @@ const BasicDataLibraryForm = ({
   );
 };
 
-BasicDataLibraryForm.defaultProps = LIBRARY_FORM_DEFAULT_PROPS;
-BasicDataLibraryForm.propTypes = LIBRARY_FORM_PROP_TYPES;
+LibraryBasicDataForm.defaultProps = LIBRARY_FORM_DEFAULT_PROPS;
+LibraryBasicDataForm.propTypes = LIBRARY_FORM_PROP_TYPES;
 
-export { BasicDataLibraryForm };
-export default BasicDataLibraryForm;
+export { LibraryBasicDataForm };
+export default LibraryBasicDataForm;
