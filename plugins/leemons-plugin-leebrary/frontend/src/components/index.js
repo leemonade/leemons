@@ -7,6 +7,7 @@ import { LibraryCardEmbed } from './LibraryCardEmbed';
 import { LibraryCard } from './LibraryCard';
 import { LibraryDetail } from './LibraryDetail';
 import { LibraryItem } from './LibraryItem';
+import { BasicData } from './AssetSetup/BasicData'
 
 export * from './LibraryTool';
 export {
@@ -19,4 +20,5 @@ export {
   LibraryCard,
   LibraryDetail,
   LibraryItem,
+  BasicData
 };

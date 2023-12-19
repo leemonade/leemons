@@ -263,12 +263,15 @@ const LibraryBasicDataForm = ({
   // #endregion
 
   const getPreviewCard = () => {
-    const fileExtension = formValues.file?.name?.split('.').pop();
-    const defautlType = type === 'bookmarks' ? 'bookmark' : 'file';
+    let defautlType = 'file';
+    if (type === 'bookmarks') defautlType = 'bookmark';
+    else if (type === 'document') defautlType = 'document';
+
     const fileType = formValues.file?.type?.split('/')[0]?.toLowerCase() || defautlType;
     const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)
       ? fileType
       : defautlType;
+    const fileExtension = formValues.file?.name?.split('.').pop();
 
     const formData = {
       ...formValues,
@@ -315,68 +318,69 @@ const LibraryBasicDataForm = ({
         <form autoComplete="off">
           <ContextContainer spacing={8}>
             {/* CONTENIDO */}
-            <ContextContainer spacing={4}>
-              <Text color="primary" style={titleTwoStyle}>
-                {labels.content}
-              </Text>
-              <>
-                {type === 'media-files' && (
-                  <Controller
-                    control={control}
-                    name="file"
-                    render={({ field: { value, ...field } }) => (
-                      <FileUpload
-                        {...field}
-                        icon={<CloudUploadIcon height={32} width={32} />}
-                        title={labels.browseFile}
-                        subtitle={labels.dropFile}
-                        errorMessage={{
-                          title: 'Error',
-                          message: errorMessages.file?.rejected || 'File was rejected',
-                        }}
-                        hideUploadButton
-                        initialFiles={getFileValue(value)}
-                        single
-                        inputWrapperProps={{ error: errors.file }}
-                        accept={onlyImages ? ['image/*'] : undefined}
-                      />
-                    )}
-                  />
-                )}
-                {/* {type === 'media-files' && asset && <Text>{asset.file?.name}</Text>} */}
-                {type === 'bookmarks' && (
-                  <Controller
-                    control={control}
-                    name="url"
-                    render={({ field }) => (
-                      <Stack fullWidth alignItems="end" spacing={4}>
-                        <Box style={{ flex: 1 }}>
-                          <TextInput
-                            label={labels.url}
-                            placeholder={placeholders.url}
-                            error={errors.url}
-                            required
-                            {...field}
-                            onBlur={validateUrl}
-                            disabled={!!asset?.url?.length}
-                          />
-                        </Box>
-                        <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
-                          <Button
-                            color="secondary"
-                            leftIcon={<CommonFileSearchIcon />}
-                            onClick={handleCheckUrl}
-                            loading={checking}
-                          >
-                            {labels.checkUrl}
-                          </Button>
-                        </Box>
-                      </Stack>
-                    )}
-                  />
-                )}
-              </>
-            </ContextContainer>
+            {type !== 'document' && (
+              <ContextContainer spacing={4}>
+                <Text color="primary" style={titleTwoStyle}>
+                  {labels.content}
+                </Text>
+                <>
+                  {type === 'media-files' && (
+                    <Controller
+                      control={control}
+                      name="file"
+                      render={({ field: { value, ...field } }) => (
+                        <FileUpload
+                          {...field}
+                          icon={<CloudUploadIcon height={32} width={32} />}
+                          title={labels.browseFile}
+                          subtitle={labels.dropFile}
+                          errorMessage={{
+                            title: 'Error',
+                            message: errorMessages.file?.rejected || 'File was rejected',
+                          }}
+                          hideUploadButton
+                          initialFiles={getFileValue(value)}
+                          single
+                          inputWrapperProps={{ error: errors.file }}
+                          accept={onlyImages ? ['image/*'] : undefined}
+                        />
+                      )}
+                    />
+                  )}
+                  {type === 'bookmarks' && (
+                    <Controller
+                      control={control}
+                      name="url"
+                      render={({ field }) => (
+                        <Stack fullWidth alignItems="end" spacing={4}>
+                          <Box style={{ flex: 1 }}>
+                            <TextInput
+                              label={labels.url}
+                              placeholder={placeholders.url}
+                              error={errors.url}
+                              required
+                              {...field}
+                              onBlur={validateUrl}
+                              disabled={!!asset?.url?.length}
+                            />
+                          </Box>
+                          <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
+                            <Button
+                              color="secondary"
+                              leftIcon={<CommonFileSearchIcon />}
+                              onClick={handleCheckUrl}
+                              loading={checking}
+                            >
+                              {labels.checkUrl}
+                            </Button>
+                          </Box>
+                        </Stack>
+                      )}
+                    />
+                  )}
+                </>
+              </ContextContainer>
+            )}
             {/* PRESENTACIÓN */}
             <ContextContainer spacing={3}>
               <Text color="primary" style={titleTwoStyle}>

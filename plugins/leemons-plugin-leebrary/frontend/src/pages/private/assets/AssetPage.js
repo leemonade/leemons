@@ -10,6 +10,7 @@ import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import { useQueryClient } from '@tanstack/react-query';
+import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import {
   TotalLayout,
   TotalLayoutHeader,
@@ -204,7 +205,8 @@ const AssetPage = () => {
         addSuccessAlert(
           editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
         );
-        queryClient.invalidateQueries({ queryKey: ['fetch-assets-data'] });
+        queryClient.invalidateQueries(allAssetsKey);
+        queryClient.refetchQueries();
         history.goBack();
       } catch (err) {
         setLoading(false);
@@ -217,7 +219,7 @@ const AssetPage = () => {
   // #endregion
 
   // #region * HEADER --------------------------------------------------------
-  const gerAssetTitleAndIcon = () => {
+  const getAssetTitleAndIcon = () => {
     const editing = params.id?.length;
     if (category?.key === 'bookmarks')
       return {
@@ -232,8 +234,8 @@ const AssetPage = () => {
 
   const buildHeader = () => (
     <TotalLayoutHeader
-      title={gerAssetTitleAndIcon().title}
-      icon={gerAssetTitleAndIcon().icon}
+      title={getAssetTitleAndIcon().title}
+      icon={getAssetTitleAndIcon().icon}
       formTitlePlaceholder={formValues.name || t('basicData.placeholders.name')}
       onSave={form.handleSubmit(publishAndAssign)}
       onCancel={handleOnCancel}
