@@ -8,6 +8,7 @@
  * */
 
 const { LeemonsError } = require('@leemons/error');
+const fetch = require('node-fetch');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { comparePassword } = require('./bcrypt/comparePassword');
 
@@ -27,15 +28,27 @@ async function login({ email, password, ctx }) {
     .select(['id'])
     .lean();
 
-  if (!userP.password)
-    throw new LeemonsError(ctx, {
-      message: 'Credentials do not match',
-      httpStatusCode: 401,
-    });
-
-  const areEquals = await comparePassword(password, userP.password);
-  if (!areEquals)
-    throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });
+  if (!userP.password) {
+    if (process.env.EXTERNAL_IDENTITY_URL) {
+      // Is no error its done
+      await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, deploymentID: ctx.meta.deploymentID }),
+      });
+    } else {
+      throw new LeemonsError(ctx, {
+        message: 'Credentials do not match',
+        httpStatusCode: 401,
+      });
+    }
+  } else {
+    const areEquals = await comparePassword(password, userP.password);
+    if (!areEquals)
+      throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });
+  }
 
   const [user, token] = await Promise.all([
     ctx.tx.db.Users.findOne({ email }).lean(),

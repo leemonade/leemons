@@ -6,9 +6,9 @@ const { randomString } = require('@leemons/utils');
  * @param {Object} s3 - The AWS S3 instance.
  * @param {Object} config - The configuration object containing the bucket details.
  */
-const hasPermissions = async (s3, config) => {
+const hasPermissions = async (s3, config, ctx) => {
   try {
-    const Key = `leemons/leebrary/t${randomString(6)}.json`;
+    const Key = `leemons/${ctx.meta.deploymentID}/leebrary/t${randomString(6)}.json`;
     const uploadConf = {
       Bucket: config.bucket.trim(),
       Key,

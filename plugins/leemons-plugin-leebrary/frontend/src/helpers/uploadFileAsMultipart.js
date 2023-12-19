@@ -30,7 +30,6 @@ async function sendChunk(dbfile, chunk, partNumber, path, retry = 0) {
       })
     );
     formData.append('chunk', chunk, 'chunk');
-    console.log('chunk', chunk)
     await leemons.api('v1/leebrary/file/multipart/chunk', {
       allAgents: true,
       body: formData,

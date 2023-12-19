@@ -21,7 +21,7 @@ async function setConfig({ config, ctx } = {}) {
   const s3 = new aws.S3(options);
 
   try {
-    const hasPermission = await hasPermissions(s3, config);
+    const hasPermission = await hasPermissions(s3, config, ctx);
     // Si el bucket no existe intentamos crearlo
     if (!hasPermission) {
       await s3

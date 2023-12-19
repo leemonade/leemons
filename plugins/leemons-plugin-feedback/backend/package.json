@@ -25,6 +25,7 @@
     "@leemons/common": "0.0.41",
     "@leemons/deployment-manager": "0.0.41",
     "@leemons/error": "0.0.41",
+    "@leemons/library": "^0.0.41",
     "@leemons/menu-builder": "0.0.41",
     "@leemons/middlewares": "0.0.41",
     "@leemons/mongodb": "0.0.41",
