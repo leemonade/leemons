@@ -2,7 +2,6 @@ import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
-import { Button, Stack } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import Form from '@assignables/components/Assignment/Form';
 import prefixPN from '@content-creator/helpers/prefixPN';
@@ -14,7 +13,6 @@ export default function Assign() {
   const [store, render] = useStore({
     loading: false,
     isNew: false,
-    currentStep: 0,
     data: {
       metadata: {},
     },
@@ -55,20 +53,13 @@ export default function Assign() {
 
   return (
     <Form
-      action={t('assign')}
+      loading={store.loading}
       onSubmit={send}
       showInstructions
       showMessageForStudents
       assignable={store.document}
       evaluationType="none"
       evaluationTypes={['nonEvaluable']}
-      buttonsComponent={
-        <Stack fullWidth justifyContent="end">
-          <Button loading={store.loading} type="submit">
-            {t('assignNow')}
-          </Button>
-        </Stack>
-      }
     />
   );
 }

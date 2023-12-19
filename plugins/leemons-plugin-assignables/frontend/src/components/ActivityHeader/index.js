@@ -5,33 +5,33 @@ import { useParams } from 'react-router-dom';
 
 import { FormProvider, useForm } from 'react-hook-form';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
 import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
-import Date from './components/Date/Date';
+import DateComponent from './components/Date/Date';
 import Timer from './components/Timer/Timer';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
 import useTotalLayoutStyles from './TotalLayout.style';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import CloseButtons from './components/CloseButtons/CloseButtons';
 
 export default function ActivityHeader({
+  instance,
+
   action,
   showClass,
   showRole,
   showEvaluationType,
   showTime,
   showDeadline,
+
+  showCloseButtons,
+  allowEditDeadline,
 }) {
-  const params = useParams();
   const form = useForm();
 
   /*
     === Activity data ===
   */
-  const { data: assignation } = useAssignations({
-    query: { instance: params.instance, user: params.student },
-    fetchInstance: true,
-  });
-  const instance = assignation?.instance;
   const assignable = instance?.assignable;
 
   const isModule = !!instance?.metadata?.module;
@@ -87,8 +87,13 @@ export default function ActivityHeader({
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
             <CalificationTypeDisplay assignable={assignable} hidden={!showEvaluationType} />
             <Timer instance={instance} hidden={!showTime} />
-            <Date instance={instance} hidden={!showDeadline} />
+            <DateComponent
+              instance={instance}
+              hidden={!showDeadline}
+              allowEdit={!!allowEditDeadline}
+            />
           </Box>
+          <CloseButtons instance={instance} hidden={!showCloseButtons} />
         </Box>
       </TotalLayoutHeader>
     </FormProvider>

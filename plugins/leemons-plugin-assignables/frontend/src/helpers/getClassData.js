@@ -43,7 +43,10 @@ export default async function getClassData(
   if (multiSubject) {
     return getMultipleClassData(classes);
   }
-  if (classes.length > 1) {
+  if (classes.length !== 1) {
+    if (classes.length === 0) {
+      return [];
+    }
     return getMultiClassData(labels);
   }
 

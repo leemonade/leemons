@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Loader, TextInput, Switch, createStyles } from '@bubbles-ui/components';
+import { Box, Loader, TextInput, createStyles, Checkbox } from '@bubbles-ui/components';
 import { SelectUserAgent } from '@users/components';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { intersection } from 'lodash';
@@ -45,7 +45,7 @@ function useOnChange({ control, onChange, classes }) {
           students: group.students,
           c,
           name: groupName,
-          showToStudents: !hideGroupName,
+          showToStudents: !!hideGroupName,
         }));
       }
 
@@ -55,7 +55,7 @@ function useOnChange({ control, onChange, classes }) {
         students: group.students,
         c: group,
         name: groupName,
-        showToStudents: !hideGroupName,
+        showToStudents: !!hideGroupName,
       };
     });
 
@@ -107,7 +107,7 @@ export function SelectCustomGroup({
           name="hideGroupName"
           control={control}
           render={({ field }) => (
-            <Switch
+            <Checkbox
               {...field}
               checked={!!field.value}
               shouldUnregister

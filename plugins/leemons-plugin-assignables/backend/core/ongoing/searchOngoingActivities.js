@@ -15,6 +15,9 @@ const {
   filterInstancesByNotModule,
 } = require('./helpers/filters');
 const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
+const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
+const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
+const { returnModulesData } = require('./helpers/filters/returnModulesData');
 
 /*
   === Main function ===
@@ -39,6 +42,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   if (isTeacher) {
     let instances = await getTeacherInstances({ ctx });
 
+    const modules = filterInstancesByIsModule({ instances });
     instances = filterInstancesByNotModule({ instances, filters: query });
 
     instances = filterInstancesByRoleAndQuery({ instances, filters: query });
@@ -58,15 +62,26 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
 
     instances = filterInstancesByStatusAndArchived({ instances, filters: query, dates });
 
-    return applyOffsetAndLimit(
-      map(sortInstancesByDates({ instances, dates, filters: query }), 'id'),
-      query
-    );
+    const instancesGroupedInModules = groupInstancesInModules({
+      instances,
+      modules,
+      dates,
+    });
+
+    const sortedInstances = sortInstancesByDates({
+      instances: instancesGroupedInModules,
+      dates,
+      filters: query,
+    });
+
+    const paginatedData = applyOffsetAndLimit(sortedInstances, query);
+
+    return returnModulesData({ paginatedData, filters: query });
   }
 
   /*
-          === STUDENT ===
-        */
+    === STUDENT ===
+  */
   let assignations = await getStudentAssignations({ ctx });
 
   let instances = filterInstancesByRoleAndQuery({
@@ -74,6 +89,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
     filters: query,
   });
 
+  const modules = filterInstancesByIsModule({ instances });
   instances = filterInstancesByNotModule({ instances, filters: query });
 
   const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
@@ -117,5 +133,9 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
     filters: query,
   });
 
-  return applyOffsetAndLimit(uniq(map(instances, 'id')), query);
+  instances = groupInstancesInModules({ instances, modules });
+
+  const paginatedData = applyOffsetAndLimit(instances, query);
+
+  return returnModulesData({ paginatedData, filters: query });
 };

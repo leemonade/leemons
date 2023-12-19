@@ -342,6 +342,7 @@ export function usePreparedInstance(instance, query, labels) {
   );
 
   const [results] = useApi(prepareInstance, options);
+
   if (!results) {
     return null;
   }
@@ -380,7 +381,19 @@ function useNYACardLocalizations(labels) {
   }, [translations]);
 }
 
-const NYACard = ({ instance, showSubject, labels, classData }) => {
+function LinkContainer({ to, disabled, children }) {
+  if (disabled) {
+    return children;
+  }
+
+  return (
+    <Link to={to} style={{ textDecoration: 'none' }}>
+      {children}
+    </Link>
+  );
+}
+
+const NYACard = ({ instance, showSubject, labels, classData, clickable }) => {
   // const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
@@ -403,7 +416,7 @@ const NYACard = ({ instance, showSubject, labels, classData }) => {
   }
 
   return (
-    <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
+    <LinkContainer disabled={!clickable} to={preparedInstance?.url}>
       <Box
         key={preparedInstance?.id}
         style={{
@@ -412,8 +425,8 @@ const NYACard = ({ instance, showSubject, labels, classData }) => {
       >
         <Box
           className={classes.root}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          onMouseEnter={clickable ? () => setIsHovered(true) : undefined}
+          onMouseLeave={clickable ? () => setIsHovered(false) : undefined}
         >
           <NYACardCover
             {...preparedInstance?.asset}
@@ -460,7 +473,7 @@ const NYACard = ({ instance, showSubject, labels, classData }) => {
           />
         </Box>
       </Box>
-    </Link>
+    </LinkContainer>
   );
 };
 

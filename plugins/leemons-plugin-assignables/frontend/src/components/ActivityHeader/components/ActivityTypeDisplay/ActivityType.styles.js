@@ -15,8 +15,8 @@ export const useActivityTypeStyles = createStyles((theme) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      width: 24,
-      height: 24,
+      width: 18,
+      height: 18,
       color: '#878D96',
     },
     text: {

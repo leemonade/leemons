@@ -1,43 +1,41 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Box, createStyles, ImageLoader, Text, TextClamp } from '@bubbles-ui/components';
+import { ChevronDownIcon, ChevronUpIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate, unflatten } from '@common';
 
 import dayjs from 'dayjs';
 import { get, mapValues, pick } from 'lodash';
-import getClassData from '@assignables/helpers/getClassData';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useIsTeacher } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+import { ClassroomItemDisplay } from '@academic-portfolio/components';
 
-const useActivityItemStyles = createStyles((theme, { activityColor }) => ({
+const useActivityItemStyles = createStyles((theme, { isModuleActivity }) => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
-    gap: theme.spacing[5],
+    gap: theme.other.global.spacing.gap.md,
     alignItems: 'center',
+    paddingLeft: isModuleActivity ? 40 : 0,
   },
   activityType: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    background: activityColor || theme.other.global.background.color.surface.emphasis,
     borderRadius: theme.radius.md,
 
-    bottom: theme.spacing[1],
-    left: theme.spacing[1],
     width: 20,
     height: 20,
   },
   activityTypeIcon: {
-    width: 12,
-    height: 12,
-    filter: 'brightness(0) invert(1)',
+    position: 'relative',
+    width: 18,
+    height: 18,
+    color: theme.other.global.content.color.icon.default,
   },
   cover: {
-    position: 'relative',
     border: `1px solid ${theme.other.global.border.color.line.muted}`,
     borderRadius: theme.other.global.border.radius.sm,
   },
@@ -46,106 +44,73 @@ const useActivityItemStyles = createStyles((theme, { activityColor }) => ({
     height: 40,
     background: theme.other.global.background.color.surface.subtle,
   },
+  role: {
+    fontSize: 10,
+    fontWeight: 600,
+  },
 }));
 
-function ActivityItem({ instance }) {
+function ActivityItem({ instance, onModuleClick, modulesOpened }) {
   const assignable = instance?.assignable;
+  const role = assignable?.role;
   const activityColor = assignable.asset.color;
   const activityTypeIcon = assignable.roleDetails.icon;
 
+  const isOpened = useMemo(
+    () => modulesOpened?.includes(instance?.id),
+    [modulesOpened, instance?.id]
+  );
+
+  const rolesLocalizations = useRolesLocalizations([role]);
+
   const preparedAsset = prepareAsset(assignable?.asset);
 
-  const { classes } = useActivityItemStyles({ activityColor });
+  const { classes, theme } = useActivityItemStyles({
+    activityColor,
+    isModuleActivity: instance?.metadata?.module?.type === 'activity',
+  });
 
   return (
     <Box className={classes.root}>
+      <Box
+        className={classes.activityType}
+        onClick={(e) => {
+          if (onModuleClick && role === 'learningpaths.module') {
+            onModuleClick(instance?.id);
+            e.stopPropagation();
+          }
+        }}
+      >
+        <Box className={classes.activityTypeIcon}>
+          {role === 'learningpaths.module' && isOpened && (
+            <ChevronUpIcon color={theme.other.button.content.color.secondary.default} />
+          )}
+          {role === 'learningpaths.module' && !isOpened && (
+            <ChevronDownIcon color={theme.other.button.content.color.secondary.default} />
+          )}
+          {role !== 'learningpaths.module' && (
+            <ImageLoader src={activityTypeIcon} width={18} height={18} />
+          )}
+        </Box>
+      </Box>
       <Box className={classes.cover}>
         {preparedAsset?.cover ? (
           <ImageLoader src={preparedAsset?.cover} width={40} height={40} />
         ) : (
           <Box className={classes.coverFallback} />
         )}
-        <Box className={classes.activityType}>
-          <Box className={classes.activityTypeIcon}>
-            <ImageLoader src={activityTypeIcon} width={12} height={12} />
-          </Box>
-        </Box>
       </Box>
-      <TextClamp lines={1}>
-        <Text>{assignable?.asset?.name}</Text>
-      </TextClamp>
-    </Box>
-  );
-}
-
-const useSubjectItemStyles = createStyles((theme, { iconColor }) => {
-  const iconWrapperWidth = theme.spacing[5];
-  const iconWidth = iconWrapperWidth / 2;
-  const rowsGap = theme.spacing[2];
-  const secondRowMargin = iconWrapperWidth + rowsGap;
-
-  return {
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    row: {
-      display: 'flex',
-      gap: rowsGap,
-    },
-    secondRow: {
-      marginLeft: secondRowMargin,
-    },
-    internalId: {
-      whiteSpace: 'nowrap',
-    },
-    icon: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: iconWrapperWidth,
-      height: iconWrapperWidth,
-      borderRadius: theme.other.global.border.radius.rounded,
-      backgroundColor: iconColor,
-    },
-    svg: {
-      width: iconWidth,
-      height: iconWidth,
-      borderRadius: 0,
-      filter: 'brightness(0) invert(1)',
-    },
-    subjectName: {
-      maxHeight: '1rem',
-    },
-  };
-});
-
-function SubjectItem({ classData, studentsLength, fullLength }) {
-  const { classes, cx } = useSubjectItemStyles({ iconColor: classData.color });
-
-  const isTeacher = useIsTeacher();
-  return (
-    <Box className={classes.root}>
-      <Box className={classes.row}>
-        <Box className={classes.icon}>
-          <Box className={classes.svg}>
-            {!!classData?.icon && <ImageLoader src={classData?.icon} width={12} height={12} />}
+      <Box>
+        {role === 'learningpaths.module' && (
+          <Box className={classes.role}>
+            <TextClamp lines={1}>
+              <Text transform="uppercase">{rolesLocalizations?.[role]?.singular}</Text>
+            </TextClamp>
           </Box>
-        </Box>
-        <TextClamp lines={1} strong>
-          <Text strong className={classes.subjectName}>
-            {classData.subjectName}
-          </Text>
-        </TextClamp>
-        {!!classData.internalId && (
-          <Text strong className={classes.internalId}>
-            - {classData.internalId}
-          </Text>
         )}
-      </Box>
-      <Box className={cx(classes.row, classes.secondRow)}>
-        <Text>{classData.groupName}</Text>
-        {!!(isTeacher && typeof studentsLength === 'number') && <Text>({studentsLength})</Text>}
+        <TextClamp lines={1}>
+          <Text>{assignable?.asset?.name}</Text>
+        </TextClamp>
       </Box>
     </Box>
   );
@@ -199,14 +164,14 @@ function Status({ instance }) {
   const isOpen = (isAlwaysAvailable || !isDeadline) && !isClosed;
 
   if (!isAlwaysAvailable && !isStarted) {
-    return <Text>{localizations?.assigned}</Text>;
+    return <Text color="primary">{localizations?.assigned}</Text>;
   }
 
   if (isOpen) {
-    return <Text>{localizations?.opened}</Text>;
+    return <Text color="primary">{localizations?.opened}</Text>;
   }
 
-  return <Text>{localizations?.closed}</Text>;
+  return <Text color="primary">{localizations?.closed}</Text>;
 }
 
 function parseDates(dates, keysToParse) {
@@ -221,21 +186,29 @@ function parseDates(dates, keysToParse) {
   ));
 }
 
-export async function parseAssignationForCommonView(instance, labels, { subjectFullLength }) {
+export async function parseAssignationForCommonView(
+  instance,
+  labels,
+  { subjectFullLength, onModuleClick, modulesOpened }
+) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
-  const classData = await getClassData(instance.classes, {
-    multiSubject: labels.multiSubject,
-    groupName: instance?.metadata?.groupName,
-  });
 
   return {
     id: instance.id,
-    activity: <ActivityItem instance={instance} />,
+    parentModule: instance.metadata?.module?.id ?? null,
+    trStyle: instance.metadata?.module?.id ? { backgroundColor: '#F8F9FB' } : null,
+    activity: (
+      <ActivityItem
+        instance={instance}
+        onModuleClick={onModuleClick}
+        modulesOpened={modulesOpened}
+      />
+    ),
     subject: (
-      <SubjectItem
-        classData={classData}
-        studentsLength={instance.students?.length}
-        fullLength={subjectFullLength}
+      <ClassroomItemDisplay
+        classroomIds={instance.classes}
+        showSubject={!!subjectFullLength}
+        compact
       />
     ),
     parsedDates: {

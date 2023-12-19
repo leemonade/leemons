@@ -8,7 +8,7 @@ const { filter } = require('lodash');
  * @returns {Array} The filtered instances.
  */
 
-function filterInstancesByIsModule({ instances, filters }) {
+function filterInstancesByIsModule({ instances }) {
   return filter(instances, (instance) => instance.metadata?.module?.type === 'module');
 }
 
