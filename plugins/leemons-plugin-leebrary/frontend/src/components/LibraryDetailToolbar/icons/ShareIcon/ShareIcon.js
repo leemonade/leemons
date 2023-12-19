@@ -3,7 +3,7 @@ import { SHARE_ICON_PROP_TYPES, SHARE_ICON_DEFAULT_PROPS } from './ShareIcon.con
 
 const ShareIcon = ({ width, height, color }) => (
   <svg
-    viewBox="0 0 24 24"
+    viewBox="0 0 18 18"
     stroke="currentColor"
     width={width}
     height={height}

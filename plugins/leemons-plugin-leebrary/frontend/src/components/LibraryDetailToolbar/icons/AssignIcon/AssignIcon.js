@@ -3,7 +3,7 @@ import { ASSIGN_ICON_PROP_TYPES, ASSIGN_ICON_DEFAULT_PROPS } from './AssignIcon.
 
 const AssignIcon = ({ width, height, color }) => (
   <svg
-    viewBox="0 0 24 24"
+    viewBox="0 0 18 18"
     stroke="currentColor"
     width={width}
     height={height}

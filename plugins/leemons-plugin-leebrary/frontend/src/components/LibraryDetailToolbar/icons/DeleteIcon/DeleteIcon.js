@@ -3,7 +3,7 @@ import { DELETE_ICON_PROP_TYPES, DELETE_ICON_DEFAULT_PROPS } from './DeleteIcon.
 
 const DeleteIcon = ({ width, height, color }) => (
   <svg
-    viewBox="0 0 24 24"
+    viewBox="0 0 18 18"
     stroke="currentColor"
     width={width}
     height={height}

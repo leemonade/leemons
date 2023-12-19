@@ -42,7 +42,8 @@ const LibraryDetail = ({
 
   const { classes, cx } = LibraryDetailStyles({ drawer, open }, { name: 'LibraryDetail' });
 
-  const { fileExtension } = asset;
+  // const { fileExtension } = asset;
+  const fileExtension = asset?.fileExtension;
 
   const handleToggle = () => {
     if (isFunction(events?.onToggle)) {
@@ -106,8 +107,8 @@ const LibraryDetail = ({
               }[variant] || (
                 <FileIcon
                   size={64}
-                  fileExtension={asset.fileExtension}
-                  fileType={asset.fileType || variant}
+                  fileExtension={asset?.fileExtension}
+                  fileType={asset?.fileType || variant}
                   color={'#B9BEC4'}
                   hideExtension
                 />
@@ -122,7 +123,7 @@ const LibraryDetail = ({
             variant={variant}
             labels={labels}
           />
-          {!asset.public && (!isEmpty(asset?.canAccess) || !isEmpty(asset?.classesCanAccess)) && (
+          {!asset?.public && (!isEmpty(asset?.canAccess) || !isEmpty(asset?.classesCanAccess)) && (
             <Stack direction="column" spacing={2} padding={4}>
               <Text role="productive" size="xs">
                 {asset.isPrivate ? labels.privated : labels.sharedWith}
@@ -139,7 +140,7 @@ const LibraryDetail = ({
               />
             </Stack>
           )}
-          {asset.public && (
+          {asset?.public && (
             <Stack direction="column" spacing={2} padding={4}>
               <Text role="productive" size="xs">
                 {labels.sharedWithEverybody}
@@ -148,7 +149,7 @@ const LibraryDetail = ({
           )}
         </Stack>
       </Stack>
-      {toolbarItems?.toggle && (
+      {/* {toolbarItems?.toggle && (
         <Box className={cx(classes.lastIcon, { [classes.stickRight]: !showDrawer && !open })}>
           <ActionButton
             icon={<MoveRightIcon height={20} width={20} />}
@@ -159,7 +160,7 @@ const LibraryDetail = ({
             })}
           />
         </Box>
-      )}
+      )} */}
     </Box>
   );
 };

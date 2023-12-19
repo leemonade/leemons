@@ -3,7 +3,7 @@ import { DUPLICATE_ICON_PROP_TYPES, DUPLICATE_ICON_DEFAULT_PROPS } from './Dupli
 
 const DuplicateIcon = ({ width, height, color }) => (
   <svg
-    viewBox="0 0 24 24"
+    viewBox="0 0 18 18"
     stroke="currentColor"
     width={width}
     height={height}

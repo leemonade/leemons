@@ -4,6 +4,7 @@ import { Box, Badge, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { useQueryClient } from '@tanstack/react-query';
+import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
@@ -38,7 +39,7 @@ const LibraryCardBody = ({
     if (isFav) {
       unpinAssetRequest(id);
       setIsFav(false);
-      queryClient.invalidateQueries({ queryKey: ['fetch-assets-data'] });
+      queryClient.invalidateQueries(allAssetsKey);
       queryClient.refetchQueries();
     } else {
       pinAssetRequest(id);

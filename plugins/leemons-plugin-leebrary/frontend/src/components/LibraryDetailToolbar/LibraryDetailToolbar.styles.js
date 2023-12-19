@@ -17,9 +17,17 @@ const LibraryDetailToolbarStyles = createStyles((theme) => ({
   buttons: {
     display: 'flex',
     alignItems: 'center',
-    gap: pxToRem(8),
-    flex: 1,
     justifyContent: 'space-between',
+    width: '100%',
+  },
+  leftContainer: {
+    width: '100%',
+    gap: pxToRem(8),
+    display: 'flex',
+  },
+  divider: {
+    // display: 'inline-block',
+    // verticalAlign: 'middle',
   },
 }));
 

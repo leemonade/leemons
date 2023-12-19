@@ -1,18 +1,14 @@
 import React from 'react';
 import { isFunction } from 'lodash';
-import { ActionButton, Box, Stack } from '@bubbles-ui/components';
-import {
-  // DeleteBinIcon,
-  // EditWriteIcon,
-  PluginKimIcon as PluginKimSolidIcon,
-} from '@bubbles-ui/icons/solid';
+import { ActionButton, Box, Stack, Divider } from '@bubbles-ui/components';
+
 import {
   // DownloadIcon,
   // DuplicateIcon,
-  PluginKimIcon,
+  // PluginKimIcon,
   // ViewOnIcon,
   // ShareSocialIcon,
-  LoveItIcon,
+  // LoveItIcon,
   RemoveIcon,
 } from '@bubbles-ui/icons/outline';
 import { AssignIcon } from './icons/AssignIcon';
@@ -103,7 +99,7 @@ const LibraryDetailToolbar = ({
   return (
     <Box className={classes.root} data-cypress-id="library-detail-toolbar">
       <Stack className={classes.buttons}>
-        <Box>
+        <Box className={classes.leftContainer}>
           {/* {toolbarItems.view && (
             <ActionButton
               icon={<ViewOnIcon height={20} width={20} />}
@@ -112,6 +108,14 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )} */}
+          {toolbarItems.share && (
+            <ActionButton
+              icon={<ShareIcon height={20} width={20} />}
+              onClick={handleShare}
+              tooltip={toolbarItems.share}
+              className={classes.button}
+            />
+          )}
           {toolbarItems.assign && (
             <ActionButton
               icon={<AssignIcon height={20} width={20} />}
@@ -120,6 +124,16 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
+          {toolbarItems.download && (
+            <ActionButton
+              data-cypress-id="library-detail-toolbar-download"
+              icon={<DownloadIcon height={20} width={20} />}
+              onClick={handleDownload}
+              tooltip={toolbarItems.download}
+              className={classes.button}
+            />
+          )}
+          <Divider orientation="vertical" />
           {toolbarItems.edit && (
             <ActionButton
               icon={<EditIcon height={20} width={20} />}
@@ -136,15 +150,6 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
-          {toolbarItems.download && (
-            <ActionButton
-              data-cypress-id="library-detail-toolbar-download"
-              icon={<DownloadIcon height={20} width={20} />}
-              onClick={handleDownload}
-              tooltip={toolbarItems.download}
-              className={classes.button}
-            />
-          )}
 
           {toolbarItems.delete && (
             <ActionButton
@@ -154,17 +159,11 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
-          {toolbarItems.share && (
-            <ActionButton
-              icon={<ShareIcon height={20} width={20} />}
-              onClick={handleShare}
-              tooltip={toolbarItems.share}
-              className={classes.button}
-            />
-          )}
+          {toolbarItems.pin && <Divider orientation="vertical" />}
+
           {toolbarItems.pin && (
             <ActionButton
-              icon={<LoveIcon height={20} width={20} />}
+              icon={<LoveIcon height={24} width={24} />}
               onClick={handlePin}
               tooltip={toolbarItems.pin}
               className={classes.button}

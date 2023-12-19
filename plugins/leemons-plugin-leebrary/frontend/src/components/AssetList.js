@@ -24,6 +24,8 @@ import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, uniqBy } 
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import { getPageItems } from '../helpers/getPageItems';
 import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
@@ -104,6 +106,8 @@ function AssetList({
   const isPinsRoute = location.pathname.includes('pins');
 
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+
+  const queryClient = useQueryClient();
 
   const initialState = {
     loading: true,
@@ -336,11 +340,11 @@ function AssetList({
     try {
       await pinAssetRequest(item.id);
       setAppLoading(false);
-      addSuccessAlert(t('labels.pinnedSuccess'));
+      // addSuccessAlert(t('labels.pinnedSuccess'));
       loadAsset(item.id, true);
     } catch (err) {
       setAppLoading(false);
-      addErrorAlert(getErrorMessage(err));
+      // addErrorAlert(getErrorMessage(err));
     }
   }
 
@@ -349,7 +353,7 @@ function AssetList({
     try {
       await unpinAssetRequest(item.id);
       setAppLoading(false);
-      addSuccessAlert(t('labels.unpinnedSuccess'));
+      // addSuccessAlert(t('labels.unpinnedSuccess'));
       loadAsset(item.id, true);
     } catch (err) {
       setAppLoading(false);
@@ -508,12 +512,17 @@ function AssetList({
 
   function handleOnPin(item) {
     pinAsset(item);
+    queryClient.invalidateQueries(allAssetsKey);
+    queryClient.refetchQueries();
   }
 
   function handleOnUnpin(item) {
-    openConfirmationModal({
-      onConfirm: () => unpinAsset(item),
-    })();
+    unpinAsset(item);
+    queryClient.invalidateQueries(allAssetsKey);
+    queryClient.refetchQueries();
+    // openConfirmationModal({
+    //   onConfirm: () => unpinAsset(item),
+    // })();
   }
 
   function handleOnDownload(item) {
