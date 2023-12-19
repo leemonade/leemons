@@ -21,8 +21,8 @@ async function ctxCall(
 
   if (
     actionName.startsWith('deployment-manager.') ||
-    actionName.startsWith('gateway.') ||
-    ctx.action?.name.startsWith('gateway.')
+    actionName.startsWith('gateway.')
+    // || ctx.action?.name.startsWith('gateway.')
   ) {
     if (ctx.__leemonsDeploymentManagerCall) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
