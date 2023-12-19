@@ -10,9 +10,9 @@ import {
 } from './ClassroomItemDisplay.constants';
 import { ClassroomItemDisplaySkeleton } from './ClassroomItemDisplaySkeleton';
 
-const ClassroomItemDisplay = ({ classroomIds, showSubject }) => {
+const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
   const [programNames, setProgramNames] = useState(null);
-  const { classes } = ClassroomItemDisplayStyles();
+  const { classes } = ClassroomItemDisplayStyles({ compact });
   const { data: classData, isLoading } = useClassroomsData(classroomIds);
 
   const handleCourses = (data) => {
@@ -55,13 +55,16 @@ const ClassroomItemDisplay = ({ classroomIds, showSubject }) => {
       />
       <Box className={classes.textWrapper}>
         <TextClamp lines={1}>
-          <Text color="muted" role="productive" size="xs">
+          <Text color={compact ? 'primary' : 'muted'} role="productive" size="xs">
             {classData?.subjectName}
+            {!!compact && ` - ${classData?.groupName} ${programNames}`}
           </Text>
         </TextClamp>
-        <TextClamp lines={1}>
-          <Text className={classes.programName}>{`${classData?.groupName} ${programNames}`}</Text>
-        </TextClamp>
+        {!compact && (
+          <TextClamp lines={1}>
+            <Text className={classes.programName}>{`${classData?.groupName} ${programNames}`}</Text>
+          </TextClamp>
+        )}
       </Box>
     </Box>
   );
