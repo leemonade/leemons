@@ -20,6 +20,7 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
+    "@leemons/cache": "0.0.41",
     "async-promise-pool": "^1.0.6",
     "chalk": "^4.1.1",
     "jaeger-client": "^3.19.0",
@@ -27,8 +28,8 @@
     "mime": "^3.0.0",
     "moleculer": "^0.14.26",
     "showdown": "^2.1.0",
-    "xlsx-import": "^2.4.4",
-    "temp": "^0.9.4"
+    "temp": "^0.9.4",
+    "xlsx-import": "^2.4.4"
   },
   "engines": {
     "node": ">= 16.x.x"
