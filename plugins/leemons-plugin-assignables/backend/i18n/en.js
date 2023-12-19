@@ -4,6 +4,10 @@ module.exports = {
     multiSubject: 'Multi-subject',
   },
   assignmentForm: {
+    steps: {
+      assignation: 'Assignation',
+      action: 'Assign',
+    },
     subjects: {
       title: 'Included subjects',
       subjectInput: {
@@ -116,6 +120,8 @@ module.exports = {
     },
     buttons: {
       assign: 'Assign',
+      next: 'Next',
+      previous: 'Previous',
       save: 'Save', // Used on modules assignation drawer
     },
   },

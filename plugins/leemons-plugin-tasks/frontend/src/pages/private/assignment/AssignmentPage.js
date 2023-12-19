@@ -14,7 +14,7 @@ function useAssignmentPageLocalizations() {
   const key = prefixPN('assignment_page');
   const [, translations] = useTranslateLoader(key);
 
-  const labels = React.useMemo(() => {
+  return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return get(res, key);
@@ -22,40 +22,42 @@ function useAssignmentPageLocalizations() {
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 
 export default function AssignmentPage() {
   const history = useHistory();
   const labels = useAssignmentPageLocalizations();
   const [task, setTask] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const { setLoading } = useLayout();
+  const { setLoading: setPageLoading } = useLayout();
 
   const { id } = useParams();
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
+      setPageLoading(true);
       if (!id) {
         return;
       }
       const t = await getTaskRequest({ id });
 
-      setLoading(false);
+      setPageLoading(false);
       setTask(t);
     })();
   }, [id]);
 
   const handleAssignment = async ({ value }) => {
     try {
+      setLoading(true);
       await createInstanceRequest(id, value);
 
       addSuccessAlert('Assignment created successfully');
       history.push('/private/assignables/ongoing');
     } catch (e) {
       addErrorAlert(e.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,6 +73,7 @@ export default function AssignmentPage() {
       evaluationType="manual"
       showEvaluation
       showMessageForStudents
+      loading={loading}
     />
   );
 }

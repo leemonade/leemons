@@ -41,6 +41,7 @@ async function getFeedback({ id, getAssets = true, ctx }) {
     const toReturn = {
       id: feedback.id,
       asset: feedback.asset,
+      roleDetails: feedback.roleDetails,
       name: feedback.asset.name,
       file: feedback.asset.file,
       tags: feedback.asset.tags,
