@@ -356,7 +356,7 @@ const mixin = ({
     error: {
       '*': [
         async function (ctx, err) {
-          if (!err.message.includes('LeemonsMiddlewareAuthenticated')) {
+          if (!err.message?.includes('LeemonsMiddlewareAuthenticated')) {
             console.error('[MongoDB Hook Error] - ', err);
           }
           if (
