@@ -12,6 +12,9 @@ on:
       plugins:
         description: "Modified plugins"
         value: ${{ jobs.publish.outputs.plugins }}
+      private-plugins:
+        description: "Modified private plugins"
+        value: ${{ jobs.publish.outputs.private-plugins }}
 
 jobs:
   publish:
@@ -19,6 +22,7 @@ jobs:
     outputs:
       packages: ${{ steps.packages.outputs.packages }}
       plugins: ${{ steps.plugins.outputs.plugins }}
+      private-plugins: ${{ steps.private-plugins.outputs.plugins }}
     steps:
       - name: 🛎️ Checkout
         uses: actions/checkout@v3
@@ -55,13 +59,13 @@ jobs:
 
       - name: 🔧 Get private-plugins files
         id: private-plugins
-        run: echo "private-plugins=$(git -C private-plugins diff --name-only $CURRENT_SUBMODULE_COMMIT $LAST_SUBMODULE_COMMIT | grep '^.*/backend' | cut -d/ -f1 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
+        run: echo "plugins=$(git -C private-plugins diff --name-only $CURRENT_SUBMODULE_COMMIT $LAST_SUBMODULE_COMMIT | grep '^.*/backend' | cut -d/ -f1 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
 
       - name: 🔧 Log plugins
         run: echo "${{ steps.plugins.outputs.plugins }}"
 
       - name: 🔧 Log private plugins
-        run: echo "${{ steps.private-plugins.outputs.private-plugins }}"
+        run: echo "${{ steps.private-plugins.outputs.plugins }}"
 
       - name: 🔧 Log packages
         run: echo "${{ steps.packages.outputs.packages }}"
