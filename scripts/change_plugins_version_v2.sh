@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Paso1. Verifica que se haya proporcionado al menos un string como argumento
+BASE_PATH=$(pwd)
 PLUGINS_PATH="$1"
 IFS=',' read -ra PACKAGES <<< "$2"
 IFS=',' read -ra PLUGINS <<< "$3"
@@ -16,7 +17,7 @@ if [ ${#PACKAGES[@]} -gt 0 ]; then
     dep_version=${DEP[1]}
 
     # Actualizamos todos los package.json a la nueva version del paquete
-    find . -name 'node_modules' -prune -o -name 'package.json' -exec sed -i "s|\"$dep_name\": \"[^\"]*\"|\"$dep_name\": \"$dep_version\"|g" {} \;
+    find . -name 'node_modules' -prune -o -name 'package.json' -exec sed -i "" "s|\"$dep_name\": \"[^\"]*\"|\"$dep_name\": \"$dep_version\"|g" {} \;
 
     dependent_plugins=$(find */backend/* -name 'package.json' -not -path "*/node_modules/*" -exec grep -l "$dep_name" {} \;)
 
@@ -52,10 +53,14 @@ if [ ${#PLUGINS[@]} -gt 0 ]; then
     patch=$((patch+1))
     # Construye la nueva versión
     new_version="$major.$minor.$patch"
-    # Actualiza la versión en el package.json
-    sed -i "s|\"version\": \"[^\"]*\"|\"version\": \"$new_version\"|g" ./package.json
+    # Actualiza la versión en el package.json del plugin
+    sed -i "" "s|\"version\": \"[^\"]*\"|\"version\": \"$new_version\"|g" ./package.json
+    # Actualiza la versión del plugin en apps/dev/package.json
+    sed -i "" "s|\"$plugin\": \"[^\"]*\"|\"$plugin\": \"$new_version\"|g" $BASE_PATH/apps/dev/package.json
+
     # Vuelve al directorio original
     cd - > /dev/null
+
     # Add the plugin and its new version to the new variable
     new_plugins_versions+=("$plugin|$new_version")
   done

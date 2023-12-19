@@ -81,18 +81,18 @@ jobs:
 
       # Compila todos los dockers de los plugins modificados
       - name: 🔧 Compile all plugins dockers
-        run: bash scripts/build_dockers_by_names_versions.sh plugins "${{ steps.plugins_versions.outputs.plugins_versions }}"
+        run: bash scripts/build_dockers_by_names_versions.sh -d plugins "${{ steps.plugins_versions.outputs.plugins_versions }}"
 
       # Compila todos los dockers de los plugins privados modificados
       - name: 🔧 Compile all private plugins dockers
-        run: bash scripts/build_dockers_by_names_versions.sh private-plugins "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
+        run: bash scripts/build_dockers_by_names_versions.sh -d private-plugins -p private "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
 
       # Tagea con la propia version del plugin todas las imagenes y las publica en ecr
       - name: 🔧 Upload all dockers to ECR
-        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh "${{ steps.plugins_versions.outputs.plugins_versions }}"
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh -d plugins "${{ steps.plugins_versions.outputs.plugins_versions }}"
 
-      - name: 🔧 Upload all dockers to ECR
-        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
+      - name: 🔧 Upload all private dockers to ECR
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh -d private-plugins -p private "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
 
       # Subimos los cambios de las versiones de los plugins privados
       - name: 🔧 Checkout to latest submodule version
@@ -103,7 +103,7 @@ jobs:
         run: echo "modified=$(if git -C private-plugins status | grep 'nothing to commit' > /dev/null; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
 
       - name: 🔧 Log private plugins versions
-        run: echo "${{ steps.git-check.outputs.modified }}"
+        run: echo "${{ steps.private-git-check.outputs.modified }}"
 
       - name: 🚀 Git push private-plugins submodule
         if: steps.private-git-check.outputs.modified == 'true'
@@ -112,8 +112,8 @@ jobs:
           git -C private-plugins config user.email "<>"
           git -C private-plugins add -A
           git -C private-plugins commit -m 'chore: version bump'
-          git -C private-plugins tag "$GIT_TAG"
-          git -C private-plugins push origin "$GIT_TAG"
+          git -C private-plugins tag "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
+          git -C private-plugins push origin "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
 
       - name: 🔧 Check for modified files
         id: git-check

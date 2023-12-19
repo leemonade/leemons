@@ -1,5 +1,7 @@
 FROM node:20-alpine
 
+RUN apk add --update python3
+
 ARG PLUGIN_NAME
 ARG PATH_NAME
 

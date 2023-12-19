@@ -15,6 +15,7 @@
     "@leemons/emails": "0.0.54",
     "@leemons/error": "0.0.41",
     "@leemons/menu-builder": "0.0.41",
+    "@leemons/middlewares": "0.0.41",
     "@leemons/mongodb": "0.0.41",
     "@leemons/mongodb-helpers": "0.0.41",
     "@leemons/mqtt": "0.0.41",

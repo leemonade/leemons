@@ -39,9 +39,9 @@ jobs:
       PACKAGES: "" #${{ needs.publish_packages_to_npm.outputs.packages }}
       PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.plugins }}
       PRIVATE_PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.private-plugins }}
+      GIT_TAG: ${{ github.ref }}
       AWS_REGION: eu-west-1
       GIT_BRANCH: microservices/dev
-      GIT_TAG: ${GITHUB_REF#refs/tags/}
 
   # call_lambda:
   #   name: Call lambda
@@ -55,3 +55,14 @@ jobs:
   #   with:
   #     PLUGINS_VERSIONS: ${{ needs.build_and_publish_dockers.outputs.plugins_versions }}
   #     AWS_REGION: eu-west-1
+
+  upload_front:
+    name: Build and upload frontend
+    uses: ./.github/workflows/compile-frontend.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+      DOMAIN: ${{ secrets.DEV_DOMAIN }}
+      GH_PAT: ${{ secrets.GH_PAT }}
+    with:
+      AWS_REGION: eu-west-1
