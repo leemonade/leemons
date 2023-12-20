@@ -34,12 +34,16 @@ module.exports = {
         presentation: 'Presentation',
       },
       bookmark: {
-        title: 'New bookmark',
+        titleNew: 'New bookmark',
+        titleEdit: 'Edit bookmark',
       },
       labels: {
+        content: 'Content',
+        presentation: 'Presentation',
+        other: 'Other',
         title: 'Upload file',
         featuredImage: 'Featured image',
-        tags: 'Tags',
+        tags: 'Tags (separated by commas)',
         addTag: 'Add',
         browseFile: 'Click to browse your files',
         advancedConfig: 'Advanced config',
@@ -66,7 +70,7 @@ module.exports = {
         preview: 'Thumbnail preview',
         subjectSelects: {
           labels: {
-            configTitle: 'Configure',
+            configTitle: 'Programs and Subjects',
             center: 'Center',
             program: 'Program',
             course: 'Course',
@@ -127,8 +131,8 @@ module.exports = {
         featuredImage: "Only to change the webpage's default featured image",
       },
       placeholders: {
-        tagsInput: 'Name of tag',
-        name: 'Resource name',
+        tagsInput: 'Write your tags here and press enter',
+        name: 'Resource Title',
         tagline: 'Resource tagline',
         tags: 'Resource tags',
         url: 'Webpage link',
@@ -137,7 +141,7 @@ module.exports = {
       },
       errorMessages: {
         name: {
-          required: 'Name is required',
+          required: 'Title is required',
         },
         url: {
           required: 'URL is required',

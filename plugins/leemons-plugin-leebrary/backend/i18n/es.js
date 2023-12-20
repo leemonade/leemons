@@ -34,12 +34,16 @@ module.exports = {
         presentation: 'Presentación',
       },
       bookmark: {
-        title: 'Nuevo marcador',
+        titleNew: 'Nuevo marcador',
+        titleEdit: 'Editar marcador',
       },
       labels: {
+        content: 'Contenido',
+        presentation: 'Presentación',
+        other: 'Otros',
         title: 'Subir archivo',
         featuredImage: 'Imagen destacada',
-        tags: 'Tags',
+        tags: 'Etiquetas (separadas por comas)',
         addTag: 'Añadir',
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
@@ -66,7 +70,7 @@ module.exports = {
         preview: 'Vista previa',
         subjectSelects: {
           labels: {
-            title: 'Configuración',
+            title: 'Programas y Asignaturas',
             center: 'Centro',
             program: 'Programa',
             course: 'Curso',
@@ -114,8 +118,8 @@ module.exports = {
         featuredImage: 'Cambiar la imagen por defecto de la página web',
       },
       placeholders: {
-        tagsInput: 'Escribir etiqueta',
-        name: 'Nombre del recurso',
+        tagsInput: 'Escribe aquí las etiquetas y pulsa intro',
+        name: 'Título del recurso',
         tagline: 'Subtítulo',
         tags: 'Etiquetas',
         description: 'Descripción del recurso',
@@ -124,7 +128,7 @@ module.exports = {
       },
       errorMessages: {
         name: {
-          required: 'Nombre es necesario',
+          required: 'Título es necesario',
         },
         file: {
           required: 'Archivo es necesario',

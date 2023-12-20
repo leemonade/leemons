@@ -34,6 +34,8 @@ async function handleCategoryData({ category, categoryId, categoryKey, ctx }) {
     } else {
       category = await getCategoryByKey({ key: category, ctx });
     }
+  } else if (categoryKey) {
+    await getCategoryByKey({ key: categoryKey, ctx });
   }
   return category;
 }

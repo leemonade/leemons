@@ -7,6 +7,7 @@
     "@bubbles-ui/components": "dev",
     "@bubbles-ui/icons": "dev",
     "@bubbles-ui/leemons": "dev",
+    "@hookform/resolvers": "^3.3.2",
     "@loadable/component": "^5.15.2",
     "@tanstack/react-query": "^4.35.3",
     "lodash": "^4.17.21",
@@ -15,7 +16,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
-    "react-router-dom": "^5.3.3"
+    "react-router-dom": "^5.3.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {},
   "peerDependencies": {}
