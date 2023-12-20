@@ -2,14 +2,14 @@ import { capitalize, isEmpty, isNil, isString } from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
-function getAssetUrl(assetID) {
+export function getAssetUrl(assetID) {
   const authTokens = getAuthorizationTokenForAllCenters();
   return `${leemons.apiUrl}/api/v1/leebrary/file/img/${assetID}?authorization=${encodeURIComponent(
     `${authTokens}`
   )}`;
 }
 
-function getFileUrl(fileID, segment, isPublic = false) {
+export function getFileUrl(fileID, segment, isPublic = false) {
   if (!isString(fileID)) {
     return '';
   }
@@ -23,16 +23,15 @@ function getFileUrl(fileID, segment, isPublic = false) {
 
   const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
-  return `${leemons.apiUrl}/api/v1/leebrary/file/${
-    isPublic ? 'public/' : ''
-  }${fileID}${urlSuffixSegment}${authParam}`;
+  return `${leemons.apiUrl}/api/v1/leebrary/file/${isPublic ? 'public/' : ''
+    }${fileID}${urlSuffixSegment}${authParam}`;
 }
 
-function getPublicFileUrl(fileID, segment) {
+export function getPublicFileUrl(fileID, segment) {
   return getFileUrl(fileID, segment, true);
 }
 
-function prepareAsset(assetFromApi, isPublished = true) {
+export function prepareAsset(assetFromApi, isPublished = true) {
   if (assetFromApi.prepared && assetFromApi.original) {
     return assetFromApi;
   }
@@ -94,5 +93,52 @@ function prepareAsset(assetFromApi, isPublished = true) {
   return asset;
 }
 
-export { prepareAsset, getFileUrl, getAssetUrl, getPublicFileUrl };
+export function isValidURL(url) {
+  const urlPattern =
+    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
+  return urlPattern.test(url) ? true : 'Invalid URL';
+}
+
+export function isImageFile(file) {
+  if (file?.type && file?.type.indexOf('image') === 0) {
+    return true;
+  }
+
+  const name = file?.path || file?.name;
+
+  if (!isEmpty(name)) {
+    const ext = toLower(name.split('.').at(-1));
+    return ['png', 'jpeg', 'jpg', 'webp', 'gif', 'bmp'].includes(ext);
+  }
+
+  return false;
+}
+
+export function isNullish(obj) {
+  return Object.values(obj).every((value) => !!isNil(value));
+}
+
+export function getCoverUrl(cover) {
+  if (cover?.id) {
+    return getFileUrl(cover.id);
+  }
+
+  if (cover instanceof File) {
+    return URL.createObjectURL(cover);
+  }
+
+  if (isString(cover) && isValidURL(cover)) {
+    return cover;
+  }
+
+  return null;
+}
+
+export function getCoverName(cover) {
+  if (cover) {
+    return `${cover.name}.${cover.extension}`;
+  }
+  return null;
+}
+
 export default prepareAsset;

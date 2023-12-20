@@ -16,7 +16,7 @@ export const useNewResourceStyles = createStyles((theme) => {
   };
 });
 
-export function NewResource({ onlyImages, onSelect }) {
+export function NewResource({ onlyCreateImages, onSelect }) {
   const categories = usePickerCategories();
   const categoriesByKey = useMemo(() => keyBy(categories, 'key'), [categories]);
 
@@ -31,9 +31,8 @@ export function NewResource({ onlyImages, onSelect }) {
   return (
     <Box className={classes.root}>
       <BasicData
+        {...(onlyCreateImages ? { onlyImages: true, hideTitle: true } : {})}
         onSave={(asset) => onSelect(asset)}
-        onlyImages={true}
-        hideTitle={true}
         categoryId={categoriesByKey['media-files'].id}
       />
     </Box>
@@ -42,6 +41,6 @@ export function NewResource({ onlyImages, onSelect }) {
 
 NewResource.propTypes = {
   localizations: PropTypes.object,
-  onlymages: PropTypes.bool,
+  onlyCreateImages: PropTypes.bool,
   onSelect: PropTypes.func,
 };

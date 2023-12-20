@@ -22,10 +22,17 @@ import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
-import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
+import _, { isEmpty, isFunction, isNil } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
+import {
+  getCoverName,
+  getCoverUrl,
+  isImageFile,
+  isNullish,
+  isValidURL,
+  prepareAsset,
+} from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
 import { AssetListDrawer } from '../AssetListDrawer';
 import {
@@ -33,66 +40,6 @@ import {
   LIBRARY_FORM_PROP_TYPES,
   LIBRARY_FORM_TYPES,
 } from './LibraryForm.constants';
-
-// -----------------------------------------------------------------------------
-// HELPERS
-
-function isValidURL(url) {
-  const urlPattern =
-    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
-  return urlPattern.test(url) ? true : 'Invalid URL';
-}
-
-function isImageFile(file) {
-  if (file?.type && file?.type.indexOf('image') === 0) {
-    return true;
-  }
-
-  const name = file?.path || file?.name;
-
-  if (!isEmpty(name)) {
-    const ext = toLower(name.split('.').at(-1));
-    return ['png', 'jpeg', 'jpg', 'webp', 'gif', 'bmp'].includes(ext);
-  }
-
-  return false;
-}
-
-function isNullish(obj) {
-  return Object.values(obj).every((value) => {
-    if (isNil(value)) {
-      return true;
-    }
-
-    return false;
-  });
-}
-
-function getCoverUrl(cover) {
-  if (cover?.id) {
-    return getFileUrl(cover.id);
-  }
-
-  if (cover instanceof File) {
-    return URL.createObjectURL(cover);
-  }
-
-  if (isString(cover) && isValidURL(cover)) {
-    return cover;
-  }
-
-  return null;
-}
-
-function getCoverName(cover) {
-  if (cover) {
-    return `${cover.name}.${cover.extension}`;
-  }
-  return null;
-}
-
-// -----------------------------------------------------------------------------
-// COMPONENT
 
 const LibraryForm = ({
   advancedConfigMode,
@@ -114,7 +61,7 @@ const LibraryForm = ({
   hideTitle,
   advancedConfig,
   hideSubmit,
-  onChange = () => {},
+  onChange = () => { },
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -258,10 +205,7 @@ const LibraryForm = ({
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
-  const validateUrl = async () => {
-    const isValid = await trigger('url', { shouldFocus: true });
-    return isValid;
-  };
+  const validateUrl = async () => await trigger('url', { shouldFocus: true });
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
@@ -465,7 +409,7 @@ const LibraryForm = ({
             ) : null}
 
             {(!advancedConfigMode && !advancedConfig?.colorToRight) ||
-            (advancedConfigMode && advancedConfig?.colorToRight) ? (
+              (advancedConfigMode && advancedConfig?.colorToRight) ? (
               <Controller
                 control={control}
                 name="color"
@@ -483,7 +427,7 @@ const LibraryForm = ({
             ) : null}
           </ContextContainer>
           {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-          (advancedConfigMode && advancedConfig?.fileToRight) ? (
+            (advancedConfigMode && advancedConfig?.fileToRight) ? (
             <>
               {!isImage && (
                 <>

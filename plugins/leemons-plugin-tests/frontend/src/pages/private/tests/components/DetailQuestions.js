@@ -1,22 +1,57 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { filter, isNil } from 'lodash';
-import { ContextContainer, Paragraph, Title } from '@bubbles-ui/components';
+import { filter, isNil, noop } from 'lodash';
+import { Controller, useForm } from 'react-hook-form';
+import {
+  Box,
+  ContextContainer,
+  Paragraph,
+  Title,
+  Button,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Controller } from 'react-hook-form';
 import { getQuestionBankRequest } from '../../../../request';
 import DetailQuestionsFilters from './DetailQuestionsFilters';
 import DetailQuestionsSelect from './DetailQuestionsSelect';
 
-export default function DetailQuestions({ form, t, onNext, onPrev }) {
+export default function DetailQuestions({
+  form,
+  t,
+  stepName,
+  scrollRef,
+  onNext = noop,
+  onPrev = noop,
+  onSave = noop,
+}) {
   const [isDirty, setIsDirty] = React.useState(false);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore();
+  const formValues = form.watch();
 
   const questions = form.watch('questions');
   const filters = form.watch('filters');
+  const filtersForm = useForm({ defaultValues: filters });
+
+  function checkFilters({ type, level, categories, question }) {
+    let good = true;
+
+    if (type?.length > 0 && !type.includes(question.type)) {
+      good = false;
+    }
+    if (level?.length > 0 && !level.includes(question.level)) {
+      good = false;
+    }
+    if (categories?.length > 0 && !categories.includes(question.category)) {
+      good = false;
+    }
+
+    return good;
+  }
 
   function getQuestionsApplyingFilters() {
     const f = form.getValues('filters');
@@ -24,22 +59,9 @@ export default function DetailQuestions({ form, t, onNext, onPrev }) {
       if (f.useAllQuestions) {
         return true;
       }
-      let good = true;
-      if (f.type && f.type.length > 0) {
-        if (!f.type.includes(question.type)) {
-          good = false;
-        }
-      }
-      if (f.level && f.level.length > 0) {
-        if (!f.level.includes(question.level)) {
-          good = false;
-        }
-      }
-      if (f.categories && f.categories.length > 0) {
-        if (!f.categories.includes(question.category)) {
-          good = false;
-        }
-      }
+
+      let good = checkFilters({ ...f, question });
+
       if (f.tags && f.tags.length > 0) {
         let tagsGood = true;
         f.tags.forEach((tag) => {
@@ -61,6 +83,18 @@ export default function DetailQuestions({ form, t, onNext, onPrev }) {
     render();
   }
 
+  function returnToFilters() {
+    if (store.reorderPage) {
+      store.reorderPage = false;
+    } else {
+      store.questionsFiltered = null;
+    }
+    render();
+  }
+
+  // ···························································
+  // INITIAL DATA PROCESSING
+
   async function load() {
     try {
       const questionBankId = form.getValues('questionBank');
@@ -80,19 +114,18 @@ export default function DetailQuestions({ form, t, onNext, onPrev }) {
     }
   }
 
-  function returnToFilters() {
-    if (store.reorderPage) {
-      store.reorderPage = false;
-    } else {
-      store.questionsFiltered = null;
-    }
-    render();
-  }
+  React.useEffect(() => {
+    load();
+  }, []);
+
+  // ···························································
+  // HANDLERS
+
+  const validate = async () => form.trigger(['questions']);
 
   async function questionsSelected() {
     setIsDirty(true);
-    const isGood = await form.trigger(['questions']);
-    if (isGood) {
+    if (await validate()) {
       if (store.reorderPage) {
         onNext();
       } else {
@@ -102,9 +135,22 @@ export default function DetailQuestions({ form, t, onNext, onPrev }) {
     }
   }
 
-  React.useEffect(() => {
-    load();
-  }, []);
+  async function handleOnNext() {
+    if (isNil(store.questionsFiltered)) {
+      filtersForm.handleSubmit((data) => {
+        form.setValue('filters', data);
+        onFiltersChange();
+      })();
+    }
+  }
+
+  async function handleOnPrev() {
+    if (isNil(store.questionsFiltered)) {
+      onPrev();
+    } else {
+      returnToFilters();
+    }
+  }
 
   if (!store.questionBank) {
     return null;
@@ -117,59 +163,100 @@ export default function DetailQuestions({ form, t, onNext, onPrev }) {
   }
 
   return (
-    <ContextContainer>
-      <Title order={4}>{t('questionBank', { name: store.questionBank.name })}</Title>
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={handleOnPrev}
+            >
+              {t('previous')}
+            </Button>
+          }
+          rightZone={
+            <>
+              {!formValues.published ? (
+                <Button
+                  variant="link"
+                  onClick={onSave}
+                  disabled={!formValues.name || store.saving}
+                  loading={store.saving === 'draft'}
+                >
+                  {t('saveDraft')}
+                </Button>
+              ) : null}
 
-      <Title order={6}>{t('nQuestions', { n: nQuestions })}</Title>
+              <Button
+                rightIcon={<ChevRightIcon height={20} width={20} />}
+                onClick={handleOnNext}
+                disabled={store.saving}
+                loading={store.saving === 'publish'}
+              >
+                {t('continue')}
+              </Button>
+            </>
+          }
+        />
+      }
+    >
+      <Box>
+        <ContextContainer>
+          <Title order={4}>{t('questionBank', { name: store.questionBank.name })}</Title>
+          <Title order={6}>{t('nQuestions', { n: nQuestions })}</Title>
+          <Paragraph>
+            {t(reorderMode ? 'questionsDescriptionReorder' : 'questionsDescription')}
+          </Paragraph>
 
-      <Paragraph>
-        {t(reorderMode ? 'questionsDescriptionReorder' : 'questionsDescription')}
-      </Paragraph>
-
-      {!isNil(store.questionsFiltered) ? (
-        <Controller
-          key={1}
-          control={form.control}
-          name="questions"
-          render={({ field }) => (
-            <DetailQuestionsSelect
-              questions={store.questionsFiltered}
-              questionBank={store.questionBank}
-              t={t}
-              next={questionsSelected}
-              back={returnToFilters}
-              error={isDirty ? form.formState.errors.questions : null}
-              reorderMode={reorderMode}
-              {...field}
+          {isNil(store.questionsFiltered) ? (
+            <Controller
+              key={2}
+              control={form.control}
+              name="filters"
+              render={({ field }) => (
+                <DetailQuestionsFilters
+                  {...field}
+                  t={t}
+                  form={filtersForm}
+                  questionBank={store.questionBank}
+                />
+              )}
+            />
+          ) : (
+            <Controller
+              key={1}
+              control={form.control}
+              name="questions"
+              render={({ field }) => (
+                <DetailQuestionsSelect
+                  {...field}
+                  t={t}
+                  questions={store.questionsFiltered}
+                  questionBank={store.questionBank}
+                  next={questionsSelected}
+                  back={returnToFilters}
+                  error={isDirty ? form.formState.errors.questions : null}
+                  reorderMode={reorderMode}
+                />
+              )}
             />
           )}
-        />
-      ) : (
-        <Controller
-          key={2}
-          control={form.control}
-          name="filters"
-          render={({ field }) => (
-            <DetailQuestionsFilters
-              defaultValues={filters}
-              questionBank={store.questionBank}
-              t={t}
-              {...field}
-              back={onPrev}
-              onChange={(v) => {
-                field.onChange(v);
-                onFiltersChange();
-              }}
-            />
-          )}
-        />
-      )}
-    </ContextContainer>
+        </ContextContainer>
+      </Box>
+    </TotalLayoutStepContainer>
   );
 }
 
 DetailQuestions.propTypes = {
-  form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  form: PropTypes.object.isRequired,
   onNext: PropTypes.func,
+  onPrev: PropTypes.func,
+  onSave: PropTypes.func,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.any,
 };

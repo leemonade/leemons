@@ -1,22 +1,24 @@
+/* eslint-disable camelcase */
+import React from 'react';
+import { groupBy, map, uniqBy } from 'lodash';
+import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import {
   Box,
   LoadingOverlay,
-  Stack,
+  Button,
   useDebouncedCallback,
   VerticalStepperContainer,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { PluginTestIcon } from '@bubbles-ui/icons/outline';
-// TODO: import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { ChevRightIcon, PluginTestIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { groupBy, map, uniqBy } from 'lodash';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
 import { getTestRequest, saveTestRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
 import DetailConfig from './components/DetailConfig';
@@ -40,18 +42,18 @@ export default function Edit() {
 
   const history = useHistory();
   const params = useParams();
-
+  const scrollRef = React.useRef();
   const form = useForm();
   const formValues = form.watch();
   store.isValid = form.formState.isValid;
 
   async function saveAsDraft() {
     try {
-      store.saving = 'duplicate';
+      store.saving = 'draft';
       render();
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects?.map(({ subject }) => subject);
-      console.log('toSend', toSend);
+      // console.log('toSend', toSend);
       await saveTestRequest({ ...toSend, published: false });
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/tests/draft');
@@ -64,7 +66,7 @@ export default function Edit() {
 
   async function saveAsPublish(redictToAssign = false) {
     try {
-      store.saving = 'edit';
+      store.saving = 'publish';
       render();
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects?.map(({ subject }) => subject);
@@ -107,7 +109,6 @@ export default function Edit() {
       render();
       if (!store.isNew) {
         const {
-          // eslint-disable-next-line camelcase
           test: {
             deleted,
             deleted_at,
@@ -167,20 +168,36 @@ export default function Edit() {
         <DetailQuestionsBanks
           t={t}
           form={form}
+          store={store}
+          stepName={t('questionsBank')}
+          scrollRef={scrollRef}
+          onSave={saveAsDraft}
           onNext={() => setStep(3)}
           onPrev={() => setStep(1)}
         />
       );
     if (store.currentStep === 3)
       component = (
-        <DetailQuestions t={t} form={form} onNext={() => setStep(4)} onPrev={() => setStep(2)} />
+        <DetailQuestions
+          t={t}
+          form={form}
+          store={store}
+          stepName={t('questions')}
+          scrollRef={scrollRef}
+          onSave={saveAsDraft}
+          onNext={() => setStep(4)}
+          onPrev={() => setStep(2)}
+        />
       );
     if (store.currentStep === 4)
       component = (
         <DetailContent
-          store={store}
           t={t}
           form={form}
+          store={store}
+          stepName={t('contentLabel')}
+          scrollRef={scrollRef}
+          onSave={saveAsDraft}
           onNext={() => setStep(5)}
           onPrev={() => setStep(3)}
         />
@@ -190,6 +207,10 @@ export default function Edit() {
         <DetailInstructions
           t={t}
           form={form}
+          store={store}
+          stepName={t('instructions')}
+          scrollRef={scrollRef}
+          onSave={saveAsDraft}
           onPublish={() => saveAsPublish()}
           onAssign={() => saveAsPublish(true)}
           onPrev={() => setStep(4)}
@@ -197,23 +218,31 @@ export default function Edit() {
       );
   }
 
-  const handleOnHeaderResize = (size) => {
-    store.headerHeight = size?.height - 1;
-    render();
+  const getTitle = () => {
+    if (store.isNew) return t('pageTitleNew');
+    return t('pageTitleEdit');
   };
 
+  // ························································
+  // RENDER
+
+  if (store.loading) {
+    return <LoadingOverlay visible />;
+  }
+
   return (
-    <Stack direction="column" fullHeight>
-      {store.loading ? <LoadingOverlay visible /> : null}
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          icon={<PluginTestIcon />}
+          title={getTitle()}
+          formTitlePlaceholder={formValues.name}
+        />
+      }
+    >
+      {/* 
       <AdminPageHeader
-        values={{
-          // eslint-disable-next-line no-nested-ternary
-          title: formValues.name
-            ? formValues.name
-            : store.isNew
-            ? t('pageTitleNew')
-            : t('pageTitle', { name: formValues.name }),
-        }}
         buttons={{
           duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
           edit: store.isValid && !store.isNew ? t('publish') : undefined,
@@ -225,40 +254,44 @@ export default function Edit() {
         loading={store.saving}
         onResize={handleOnHeaderResize}
       />
+      */}
 
-      <Box>
-        <VerticalStepperContainer
-          stickyAt={store.headerHeight}
-          currentStep={store.currentStep}
-          data={steps}
-          onChangeActiveIndex={setStep}
-        >
-          {store.currentStep === 0 && (
-            <DetailBasic
-              t={t}
-              advancedConfig={{
-                alwaysOpen: true,
-                fileToRight: true,
-                colorToRight: true,
-                program: { show: true, required: false },
-                subjects: { show: true, required: true, showLevel: false, maxOne: true },
-              }}
-              form={form}
-              onNext={() => setStep(1)}
-            />
-          )}
-          {store.currentStep === 1 && (
-            <DetailConfig
-              store={store}
-              t={t}
-              form={form}
-              onNext={() => setStep(2)}
-              onPrev={() => setStep(0)}
-            />
-          )}
-          {component}
-        </VerticalStepperContainer>
-      </Box>
-    </Stack>
+      <VerticalStepperContainer
+        currentStep={store.currentStep}
+        data={steps}
+        onChangeActiveIndex={setStep}
+        scrollRef={scrollRef}
+      >
+        {store.currentStep === 0 && (
+          <DetailBasic
+            t={t}
+            form={form}
+            store={store}
+            stepName={t('basic')}
+            scrollRef={scrollRef}
+            advancedConfig={{
+              alwaysOpen: true,
+              program: { show: true, required: false },
+              subjects: { show: true, required: true, showLevel: false, maxOne: true },
+            }}
+            onNext={() => setStep(1)}
+            onSave={saveAsDraft}
+          />
+        )}
+        {store.currentStep === 1 && (
+          <DetailConfig
+            t={t}
+            form={form}
+            store={store}
+            stepName={t('basic')}
+            scrollRef={scrollRef}
+            onNext={() => setStep(2)}
+            onPrev={() => setStep(0)}
+            onSave={saveAsDraft}
+          />
+        )}
+        {component}
+      </VerticalStepperContainer>
+    </TotalLayoutContainer>
   );
 }
