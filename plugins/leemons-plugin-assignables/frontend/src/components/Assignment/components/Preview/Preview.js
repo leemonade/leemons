@@ -14,7 +14,7 @@ export default function Preview({ assignable, localizations }) {
     assignable: {
       ...assignable,
       asset: {
-        ...assignable.asset,
+        ...assignable?.asset,
         name: values?.title ?? assignable?.asset?.name,
       },
     },

@@ -65,8 +65,8 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   }
 
   /*
-          === STUDENT ===
-        */
+    === STUDENT ===
+  */
   let assignations = await getStudentAssignations({ ctx });
 
   let instances = filterInstancesByRoleAndQuery({

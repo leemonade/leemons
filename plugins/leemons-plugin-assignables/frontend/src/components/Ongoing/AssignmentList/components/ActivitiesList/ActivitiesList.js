@@ -9,12 +9,13 @@ import { getSessionConfig } from '@users/session';
 import _, { keyBy, uniq, without } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
+import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import EmptyState from '../../../../../assets/EmptyState.png';
 import prefixPN from '../../../../../helpers/prefixPN';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
 import useParseAssignations from '../../hooks/useParseAssignations';
 
-function useAssignmentsColumns() {
+function useAssignmentsColumns({ archived }) {
   const isTeacher = useIsTeacher();
   const isStudent = useIsStudent();
 
@@ -34,74 +35,72 @@ function useAssignmentsColumns() {
   }, [translations]);
 
   const teacherColumns = useMemo(
-    () => [
-      {
-        Header: labels?.activity || '',
-        accessor: 'activity',
-      },
-      {
-        Header: labels?.subject || '',
-        accessor: 'subject',
-      },
-      {
-        Header: labels?.start || '',
-        accessor: 'parsedDates.start',
-      },
-      {
-        Header: labels?.deadline || '',
-        accessor: 'parsedDates.deadline',
-      },
-      {
-        Header: labels?.status || '',
-        accessor: 'status',
-      },
-      {
-        Header: labels?.completions || '',
-        accessor: 'completion',
-      },
-      {
-        Header: labels?.evaluated || '',
-        accessor: 'evaluated',
-      },
-      {
-        Header: labels?.messages || '',
-        accessor: 'messages',
-      },
-    ],
+    () =>
+      [
+        {
+          Header: labels?.activity || '',
+          accessor: 'activity',
+        },
+        {
+          Header: labels?.subject || '',
+          accessor: 'subject',
+        },
+        {
+          Header: labels?.deadline || '',
+          accessor: 'parsedDates.deadline',
+        },
+        !archived && {
+          Header: labels?.status || '',
+          accessor: 'status',
+        },
+        {
+          Header: labels?.students || '',
+          accessor: 'students',
+        },
+        {
+          Header: labels?.completions || '',
+          accessor: 'completion',
+        },
+        {
+          Header: labels?.evaluated || '',
+          accessor: 'evaluated',
+        },
+        !archived && {
+          Header: <PluginComunicaIcon />,
+          accessor: 'messages',
+        },
+      ].filter(Boolean),
     [labels]
   );
 
   const studentColumns = useMemo(
-    () => [
-      {
-        Header: labels?.activity || '',
-        accessor: 'activity',
-      },
-      {
-        Header: labels?.subject || '',
-        accessor: 'subject',
-      },
-      {
-        Header: labels?.start || '',
-        accessor: 'parsedDates.start',
-      },
-      {
-        Header: labels?.deadline || '',
-        accessor: 'parsedDates.deadline',
-      },
-      {
-        Header: labels?.status || '',
-        accessor: 'status',
-      },
-      {
-        Header: labels?.progress || '',
-        accessor: 'progress',
-      },
-      {
-        Header: labels?.messages || '',
-        accessor: 'messages',
-      },
-    ],
+    () =>
+      [
+        {
+          Header: labels?.activity || '',
+          accessor: 'activity',
+        },
+        {
+          Header: labels?.subject || '',
+          accessor: 'subject',
+        },
+        {
+          Header: labels?.deadline || '',
+          accessor: 'parsedDates.deadline',
+        },
+        !archived && {
+          Header: labels?.status || '',
+          accessor: 'status',
+        },
+        {
+          Header: labels?.progress || '',
+          accessor: 'progress',
+        },
+        !archived && {
+          Header: labels?.messages || '',
+          accessor: 'messages',
+        },
+      ].filter(Boolean),
     [labels]
   );
 
@@ -312,7 +311,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     subjectFullLength,
   });
 
-  const columns = useAssignmentsColumns();
+  const columns = useAssignmentsColumns({ archived: !!filters?.isArchived });
 
   if (isLoading) {
     return <Loader />;

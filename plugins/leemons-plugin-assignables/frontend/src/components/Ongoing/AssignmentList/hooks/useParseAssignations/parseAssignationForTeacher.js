@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Badge } from '@bubbles-ui/components';
+import { Badge, Text } from '@bubbles-ui/components';
 
 import { forEach, get, uniq } from 'lodash';
 
@@ -25,7 +25,7 @@ function Completion({ instance }) {
 
   const severity = React.useMemo(() => {
     if (instance.alwaysAvailable) {
-      return 'default';
+      return 'primary';
     }
 
     const startDate = new Date(instance.dates.start);
@@ -72,17 +72,9 @@ function Completion({ instance }) {
   // TODO: Add custom visualization
 
   if (!requiresScoring) {
-    return (
-      <Badge closable={false} color="stroke">
-        -
-      </Badge>
-    );
+    return '-';
   }
-  return (
-    <Badge closable={false} severity={severity}>
-      {percentage}%
-    </Badge>
-  );
+  return <Text color={severity}>{percentage}%</Text>;
 }
 
 function useEvaluatedLocalizations() {
@@ -125,21 +117,14 @@ function Evaluated({ instance }) {
   );
 
   if (!requiresScoring) {
-    return (
-      <Badge closable={false} color="stroke">
-        {localizations?.notEvaluable}
-      </Badge>
-    );
+    return localizations?.notEvaluable;
   }
-  return (
-    <Badge closable={false} color="stroke">
-      {Math.round((studentsWithEvaluations / studentsLength) * 100)}%
-    </Badge>
-  );
+  return `${Math.round((studentsWithEvaluations / studentsLength) * 100)}%`;
 }
 
 export async function parseAssignationForTeacherView(instance, labels, options) {
   const commonData = await parseAssignationForCommonView(instance, labels, options);
+  const studentsCount = instance?.students?.length || 0;
   const role = instance?.assignable?.roleDetails;
   const dashboardURL = (role.dashboardUrl || '/private/assignables/details/:id').replace(
     ':id',
@@ -156,6 +141,7 @@ export async function parseAssignationForTeacherView(instance, labels, options) 
     ...commonData,
     completion: <Completion instance={instance} />,
     dashboardURL,
+    students: studentsCount,
     evaluated: <Evaluated instance={instance} />,
     messages: <UnreadMessages rooms={rooms} />,
   };

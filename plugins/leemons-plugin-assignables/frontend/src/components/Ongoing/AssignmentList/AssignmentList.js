@@ -166,8 +166,8 @@ export default function AssignmentList({
                   labels={labels.filters}
                   value={filters}
                   onChange={setFilters}
-                  hideStatus={isStudent}
-                  hideProgress={isTeacher}
+                  hideStatus={tab.value === 'evaluated'}
+                  hideProgress
                   defaultFilters={defaultFilters}
                   useRouter
                   {...filtersProps}

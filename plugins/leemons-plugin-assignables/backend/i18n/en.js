@@ -296,10 +296,9 @@ module.exports = {
   },
   assignment_list: {
     teacher: {
-      activity: 'Activity/Module',
-      subject: 'Subject, group and students',
+      activity: 'Activity',
+      subject: 'Group',
       students: 'Students',
-      start: 'Start',
       deadline: 'Deadline',
       status: 'Status',
       completions: 'Completions',
@@ -307,9 +306,8 @@ module.exports = {
       messages: 'Messages',
     },
     student: {
-      activity: 'Activity/Module',
-      subject: 'Subject and group',
-      start: 'Start',
+      activity: 'Activity',
+      subject: 'Group',
       deadline: 'Deadline',
       status: 'Status',
       progress: 'Progress',
@@ -321,7 +319,7 @@ module.exports = {
   activities_filters: {
     ongoing: 'Ongoing {{count}}',
     evaluated: 'Evaluated {{count}}',
-    history: 'History {{count}}',
+    history: 'Archived {{count}}',
     search: 'Search activities in progress',
     subject: 'Subject',
     status: 'Status',
