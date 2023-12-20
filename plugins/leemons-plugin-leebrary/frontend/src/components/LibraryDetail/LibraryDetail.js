@@ -140,13 +140,13 @@ const LibraryDetail = ({
               />
             </Stack>
           )}
-          {asset?.public && (
+          {/* {asset?.public && (
             <Stack direction="column" spacing={2} padding={4}>
               <Text role="productive" size="xs">
                 {labels.sharedWithEverybody}
               </Text>
             </Stack>
-          )}
+          )} */}
         </Stack>
       </Stack>
       {/* {toolbarItems?.toggle && (

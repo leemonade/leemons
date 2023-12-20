@@ -2,6 +2,11 @@ import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 const AssetMetadataTestStyles = createStyles((theme) => ({
   root: {},
+  typologyContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: pxToRem(8),
+  },
   title: {
     color: theme.other.global.content.color.text.default,
     fontSize: pxToRem(14),

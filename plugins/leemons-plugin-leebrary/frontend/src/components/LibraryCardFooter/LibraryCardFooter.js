@@ -2,7 +2,6 @@
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { isFunction } from 'lodash';
 import { AvatarsGroup, Box, FileIcon, Text } from '@bubbles-ui/components';
 import { LibraryCardFooterStyles } from './LibraryCardFooter.styles';
 import { LIBRARY_CARD_FOOTER_PROP_TYPES } from './LibraryCardFooter.constants';

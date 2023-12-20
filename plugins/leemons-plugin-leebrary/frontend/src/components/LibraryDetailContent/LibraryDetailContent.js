@@ -16,16 +16,13 @@ import { DuplicateIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { getDomain, LibraryCardContent } from '../LibraryCardContent';
-import { LibraryCardFooter } from '../LibraryCardFooter';
+import { getDomain } from '../LibraryCardContent';
 import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
 import {
   LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS,
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
 } from './LibraryDetailContent.constants';
 import prefixPN from '../../helpers/prefixPN';
-import { VariantItemDisplay } from './components/VariantItemDisplay';
-import { MetadataDisplay } from './components/MetadataDisplay';
 
 const LibraryDetailContent = ({
   description,
@@ -71,15 +68,7 @@ const LibraryDetailContent = ({
 
   return (
     <Box className={classes.root}>
-      <Tabs
-        panelColor="default"
-        fullHeight
-        fullWidth
-        centerGrow
-        className={classes.tab}
-        // onTabClick={() => setCurrentAsset(null)}
-        onTabClick={() => console.log('onTabClick')}
-      >
+      <Tabs panelColor="default" fullHeight fullWidth centerGrow className={classes.tab}>
         <TabPanel label={detailLabels?.detail}>
           <Box className={classes.tabPanel}>
             <Text className={classes.title}>{name}</Text>
@@ -94,25 +83,8 @@ const LibraryDetailContent = ({
                 ))}
             </Box>
             <Stack direction="column" className={classes.lowerContent}>
-              <VariantItemDisplay
-                variantIcon={variantIcon}
-                variantTitle={variantTitle}
-                variant={variant}
-                fileType={fileType}
-                fileExtension={fileExtension}
-              />
               {!!metadataComponent && metadataComponent}
-              <MetadataDisplay metadata={metadata} />
-              {/* {!isEmpty(metadata) && (
-                <LibraryCardContent
-                  metadata={metadata.filter(
-                    (item) =>
-                      !excludeMetadatas
-                        .map((e) => e.toLowerCase())
-                        .includes(item.label.toLowerCase())
-                  )}
-                />
-              )} */}
+              {/* <MetadataDisplay metadata={metadata} /> */}
             </Stack>
             {tags?.length > 0 && (
               <Box className={classes.tags}>
@@ -124,7 +96,7 @@ const LibraryDetailContent = ({
                         size="md"
                         closable={false}
                         radius={'default'}
-                        color={'stroke'}
+                        color={'solid'}
                       />
                     </Box>
                   ))}
@@ -140,14 +112,6 @@ const LibraryDetailContent = ({
           <Box className={classes.tabPane}>hello 2</Box>
         </TabPanel>
       </Tabs>
-      {/* <LibraryCardContent description={description} truncated={false} /> */}
-      {/* <LibraryCardFooter
-        variantIcon={variantIcon}
-        variantTitle={variantTitle}
-        variant={variant}
-        fileType={fileType}
-        fileExtension={fileExtension}
-      /> */}
       {variant === 'bookmark' && (
         <Box
           sx={(theme) => ({ padding: theme.spacing[2], backgroundColor: theme.colors.mainWhite })}

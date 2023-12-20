@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text } from '@bubbles-ui/components';
+import { Box, Text, ImageLoader } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
+import { capitalize } from 'lodash';
 import { AssetMetadataTestStyles } from './AssetMetadataTest.styles';
 import {
   ASSET_METADATA_TEST_DEFAULT_PROPS,
@@ -15,6 +16,7 @@ const AssetMetadataTest = ({ metadata }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const [data, setData] = useState(null);
   const [fields, setFields] = useState();
+  const typologyName = metadata?.providerData?.role;
   const getQuestionBankData = () =>
     getQuestionBankRequest(metadata?.providerData?.metadata?.questionBank).then((res) =>
       setData(res.questionBank)
@@ -66,15 +68,33 @@ const AssetMetadataTest = ({ metadata }) => {
       setFields(getFieldsToRender(name, questions, categories));
     }
   }, [data]);
+  const iconComponent = (
+    <ImageLoader
+      src={metadata?.providerData?.roleDetails?.icon}
+      style={{
+        width: 24,
+        height: 24,
+        position: 'relative',
+      }}
+      width={24}
+      height={24}
+    />
+  );
 
   if (!fields) return null;
   return (
     <Box>
-      <Text className={classes.title}>{`${t('questionBank')}: `}</Text>{' '}
-      <Link to={fields.titleTest.url} className={classes.link}>
-        {fields.titleTest.name}
-        <OpenIcon className={classes.openIcon} />
-      </Link>
+      <Box className={classes.typologyContainer}>
+        {iconComponent}
+        <Text className={classes.value}>{capitalize(typologyName)}</Text>
+      </Box>
+      <Box className={classes.box}>
+        <Text className={classes.title}>{`${t('questionBank')}: `}</Text>{' '}
+        <Link to={fields.titleTest.url} className={classes.link}>
+          {fields.titleTest.name}
+          <OpenIcon className={classes.openIcon} />
+        </Link>
+      </Box>
       <Box className={classes.box}>
         <Box>
           <Text className={classes.title}>{`${t('questions')} `}</Text>
