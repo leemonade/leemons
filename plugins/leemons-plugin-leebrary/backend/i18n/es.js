@@ -315,5 +315,6 @@ module.exports = {
   assetsList: {
     published: 'Publicados',
     draft: 'Borradores',
+    isDraft: 'Borrador',
   },
 };

@@ -11,6 +11,7 @@ import {
   useClipboard,
   Tabs,
   TabPanel,
+  pxToRem,
 } from '@bubbles-ui/components';
 import { DuplicateIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -65,14 +66,13 @@ const LibraryDetailContent = ({
       setSubjectsIds(subjects);
     }
   }, [subjects]);
-
   return (
     <Box className={classes.root}>
       <Tabs panelColor="default" fullHeight fullWidth centerGrow className={classes.tab}>
         <TabPanel label={detailLabels?.detail}>
           <Box className={classes.tabPanel}>
-            <Text className={classes.title}>{name}</Text>
-            <Text className={classes.description}>{description}</Text>
+            {name && <Text className={classes.title}>{name}</Text>}
+            {description && <Text className={classes.description}>{description}</Text>}
             <Box style={{ marginTop: 24 }}>
               {Array.isArray(subjectsIds) &&
                 subjectsIds.length > 0 &&
@@ -82,7 +82,11 @@ const LibraryDetailContent = ({
                   </Box>
                 ))}
             </Box>
-            <Stack direction="column" className={classes.lowerContent}>
+            <Stack
+              direction="column"
+              className={classes.lowerContent}
+              styles={{ marginTop: !name || !description ? pxToRem(24) : 0 }}
+            >
               {!!metadataComponent && metadataComponent}
               {/* <MetadataDisplay metadata={metadata} /> */}
             </Stack>

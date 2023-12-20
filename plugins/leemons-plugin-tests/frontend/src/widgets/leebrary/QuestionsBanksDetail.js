@@ -1,5 +1,6 @@
 import React from 'react';
-import { LibraryDetail } from '@bubbles-ui/leemons';
+import { LibraryDetail } from '@leebrary/components';
+
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -8,6 +9,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { deleteQuestionBankRequest } from '@tests/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
+import { AssetMetadataQuestionBank } from '@tests/components/AssetMetadataQuestionBank';
 
 const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
@@ -25,7 +27,6 @@ const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
       toolbarItems.delete = t('delete');
     }
   }
-  React.useEffect(() => console.log('asset', asset), [asset]);
 
   // ·········································································
   // HANDLERS
@@ -67,6 +68,14 @@ const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
         ...asset,
         metadata,
       }}
+      metadataComponent={
+        <AssetMetadataQuestionBank
+          metadata={{
+            ...asset,
+            metadata,
+          }}
+        />
+      }
       variant="questionBank"
       variantTitle={t('questionBank')}
       toolbarItems={toolbarItems}

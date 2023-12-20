@@ -228,6 +228,8 @@ module.exports = {
     simpleQuestion: 'Respuesta única',
     map: 'Mapa',
     hints: 'Pistas',
+    yes: 'Si',
+    no: 'No',
   },
   studentInstance: {
     multiSubject: 'Multi-Asignatura',

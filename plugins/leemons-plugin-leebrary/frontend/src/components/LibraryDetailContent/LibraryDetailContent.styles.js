@@ -9,7 +9,6 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     flex: 1,
     backgroundColor: theme.colors.ui03,
     padding: pxToRem(16),
-    marginTop: pxToRem(24),
   },
   tagsContainer: {
     minHeight: 38,

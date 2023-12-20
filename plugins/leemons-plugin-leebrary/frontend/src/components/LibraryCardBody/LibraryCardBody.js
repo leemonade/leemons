@@ -5,6 +5,8 @@ import { isArray } from 'lodash';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@leebrary/helpers/prefixPN';
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
@@ -26,11 +28,15 @@ const LibraryCardBody = ({
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
+  const [t] = useTranslateLoader(prefixPN('assetsList'));
   const [isFav, setIsFav] = useState(pinned);
   const [subjectData, setSubjectData] = useState(null);
   const queryClient = useQueryClient();
-
-  const isDraft = typeof providerData?.published === 'boolean' && providerData?.published === false;
+  const isQuestionBank = variant === 'questionBank';
+  const isDraft =
+    !isQuestionBank &&
+    typeof providerData?.published === 'boolean' &&
+    providerData?.published === false;
   const title = props.name ? props.name : null;
 
   const handleIsFav = (e) => {
@@ -64,7 +70,7 @@ const LibraryCardBody = ({
         </Box>
         {isDraft && (
           <Badge closable={false} size="xs" className={classes.draftBadge}>
-            <Text className={classes.draftText}>{'BORRADOR'}</Text>
+            <Text className={classes.draftText}>{t('isDraft').toUpperCase()}</Text>
           </Badge>
         )}
       </Box>

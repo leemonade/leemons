@@ -2,15 +2,7 @@ import React from 'react';
 import { isFunction } from 'lodash';
 import { ActionButton, Box, Stack, Divider } from '@bubbles-ui/components';
 
-import {
-  // DownloadIcon,
-  // DuplicateIcon,
-  // PluginKimIcon,
-  // ViewOnIcon,
-  // ShareSocialIcon,
-  // LoveItIcon,
-  RemoveIcon,
-} from '@bubbles-ui/icons/outline';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { AssignIcon } from './icons/AssignIcon';
 import { LibraryDetailToolbarStyles } from './LibraryDetailToolbar.styles';
 import {
@@ -98,6 +90,7 @@ const LibraryDetailToolbar = ({
     }
   };
   const canShowLoveIcon = toolbarItems.pin || toolbarItems.unpin;
+  const canShowFirstSetOfIcons = toolbarItems.share || toolbarItems.assign || toolbarItems.download;
   return (
     <Box className={classes.root} data-cypress-id="library-detail-toolbar">
       <Stack className={classes.buttons}>
@@ -135,7 +128,7 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
-          <Divider orientation="vertical" />
+          {canShowFirstSetOfIcons && <Divider orientation="vertical" />}
           {toolbarItems.edit && (
             <ActionButton
               icon={<EditIcon height={20} width={20} />}

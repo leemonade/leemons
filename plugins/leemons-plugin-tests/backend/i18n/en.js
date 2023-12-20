@@ -230,6 +230,8 @@ module.exports = {
     simpleQuestion: 'Simple question',
     map: 'Map',
     hints: 'Hints',
+    yes: 'Yes',
+    no: 'No',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',
