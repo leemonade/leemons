@@ -28,10 +28,10 @@ const LibraryDetail = ({
   style,
   excludeMetadatas,
   onCloseDrawer,
+  metadataComponent,
   ...events
 }) => {
   const [showDrawer, setShowDrawer] = useState(open);
-
   useEffect(() => {
     if (open) {
       setTimeout(() => setShowDrawer(true), 100);
@@ -50,7 +50,6 @@ const LibraryDetail = ({
       events.onToggle();
     }
   };
-
   return (
     <Box
       style={{ position: 'absolute', height: '100%', width: '100%' }}
@@ -122,6 +121,7 @@ const LibraryDetail = ({
             variantTitle={variantTitle}
             variant={variant}
             labels={labels}
+            metadataComponent={metadataComponent}
           />
           {!asset?.public && (!isEmpty(asset?.canAccess) || !isEmpty(asset?.classesCanAccess)) && (
             <Stack direction="column" spacing={2} padding={4}>

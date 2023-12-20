@@ -94,7 +94,6 @@ export const NavItemStyles = createStyles((theme) => {
       width: '12px',
       minWidth: '12px',
       height: '12px',
-
       color: leemonsStyles.menu.content.color.main.default,
     },
     link: {
@@ -150,7 +149,7 @@ export const NavItemStyles = createStyles((theme) => {
     },
     itemContainer: {
       display: 'flex',
-      position: 'relative'
+      position: 'relative',
     },
     badgeNew: {
       '& > div': {

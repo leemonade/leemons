@@ -225,6 +225,9 @@ module.exports = {
     open: 'Abrir',
     duplicate: 'Duplicar',
     duplicated: 'Duplicado',
+    simpleQuestion: 'Respuesta única',
+    map: 'Mapa',
+    hints: 'Pistas',
   },
   studentInstance: {
     multiSubject: 'Multi-Asignatura',

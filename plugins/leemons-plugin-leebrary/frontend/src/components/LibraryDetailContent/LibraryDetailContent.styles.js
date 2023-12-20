@@ -8,7 +8,8 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   lowerContent: {
     flex: 1,
     backgroundColor: theme.colors.ui03,
-    padding: `${pxToRem(8)} ${pxToRem(8)} ${pxToRem(8)} ${pxToRem(8)}`,
+    padding: pxToRem(16),
+    marginTop: pxToRem(24),
   },
   tagsContainer: {
     minHeight: 38,
@@ -16,7 +17,7 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     gap: pxToRem(10),
     alignItems: 'center',
     flexWrap: 'wrap',
-    padding: `${pxToRem(8)} ${pxToRem(8)}`,
+    paddingTop: pxToRem(24),
   },
   tab: {
     '& button[aria-selected="true"]': {

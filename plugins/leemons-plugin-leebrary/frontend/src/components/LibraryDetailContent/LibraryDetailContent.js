@@ -24,6 +24,8 @@ import {
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
 } from './LibraryDetailContent.constants';
 import prefixPN from '../../helpers/prefixPN';
+import { VariantItemDisplay } from './components/VariantItemDisplay';
+import { MetadataDisplay } from './components/MetadataDisplay';
 
 const LibraryDetailContent = ({
   description,
@@ -40,6 +42,7 @@ const LibraryDetailContent = ({
   name,
   subjects,
   program,
+  metadataComponent,
   onCopy = () => {},
   ...props
 }) => {
@@ -90,6 +93,44 @@ const LibraryDetailContent = ({
                   </Box>
                 ))}
             </Box>
+            <Stack direction="column" className={classes.lowerContent}>
+              <VariantItemDisplay
+                variantIcon={variantIcon}
+                variantTitle={variantTitle}
+                variant={variant}
+                fileType={fileType}
+                fileExtension={fileExtension}
+              />
+              {!!metadataComponent && metadataComponent}
+              <MetadataDisplay metadata={metadata} />
+              {/* {!isEmpty(metadata) && (
+                <LibraryCardContent
+                  metadata={metadata.filter(
+                    (item) =>
+                      !excludeMetadatas
+                        .map((e) => e.toLowerCase())
+                        .includes(item.label.toLowerCase())
+                  )}
+                />
+              )} */}
+            </Stack>
+            {tags?.length > 0 && (
+              <Box className={classes.tags}>
+                <Box className={classes.tagsContainer}>
+                  {tags.map((tag, index) => (
+                    <Box key={`${tag} ${index}`}>
+                      <Badge
+                        label={tag}
+                        size="md"
+                        closable={false}
+                        radius={'default'}
+                        color={'stroke'}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            )}
           </Box>
         </TabPanel>
         <TabPanel label={detailLabels?.permissions}>
@@ -99,14 +140,14 @@ const LibraryDetailContent = ({
           <Box className={classes.tabPane}>hello 2</Box>
         </TabPanel>
       </Tabs>
-      <LibraryCardContent description={description} truncated={false} />
-      <LibraryCardFooter
+      {/* <LibraryCardContent description={description} truncated={false} /> */}
+      {/* <LibraryCardFooter
         variantIcon={variantIcon}
         variantTitle={variantTitle}
         variant={variant}
         fileType={fileType}
         fileExtension={fileExtension}
-      />
+      /> */}
       {variant === 'bookmark' && (
         <Box
           sx={(theme) => ({ padding: theme.spacing[2], backgroundColor: theme.colors.mainWhite })}
@@ -140,33 +181,6 @@ const LibraryDetailContent = ({
           </Paper>
         </Box>
       )}
-      <Stack direction="column" className={classes.lowerContent}>
-        {!isEmpty(metadata) && (
-          <LibraryCardContent
-            metadata={metadata.filter(
-              (item) =>
-                !excludeMetadatas.map((e) => e.toLowerCase()).includes(item.label.toLowerCase())
-            )}
-          />
-        )}
-        {tags?.length > 0 && (
-          <Box className={classes.tags}>
-            <Box className={classes.tagsContainer}>
-              {tags.map((tag, index) => (
-                <Box key={`${tag} ${index}`}>
-                  <Badge
-                    label={tag}
-                    size="md"
-                    closable={false}
-                    radius={'default'}
-                    color={'stroke'}
-                  />
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        )}
-      </Stack>
     </Box>
   );
 };
