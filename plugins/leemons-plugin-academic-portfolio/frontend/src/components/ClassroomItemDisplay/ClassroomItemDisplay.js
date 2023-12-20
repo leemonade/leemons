@@ -37,7 +37,7 @@ const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
     }
   }, [classData?.courses, programNames]);
 
-  if (isLoading)
+  if (isLoading || !classData)
     return (
       <Box className={classes.root}>
         <ClassroomItemDisplaySkeleton />
