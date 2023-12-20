@@ -124,7 +124,7 @@ const AssetPage = () => {
             onSave={setAsset}
             editing={params.id?.length}
             isLoading={loading}
-            categoryType={params.category || ''}
+            categoryKey={params.category || ''}
           />
         ),
       },
@@ -193,7 +193,7 @@ const AssetPage = () => {
           asset &&
           !form.formState.dirtyFields.cover
         ) {
-          console.log('asset', asset)
+          console.log('asset', asset);
           assetData.cover = asset.original?.cover?.id;
         }
 
@@ -224,7 +224,7 @@ const AssetPage = () => {
     const editing = params.id?.length;
     if (category?.key === 'bookmarks')
       return {
-        title: editing ? t('basicData.bookmark.titleEdit') : t('basicData.bookmark.title'),
+        title: editing ? t('basicData.bookmark.titleEdit') : t('basicData.bookmark.titleNew'),
         icon: <AssetBookmarkIcon width={24} height={24} color={'#878D96'} />,
       };
     return {

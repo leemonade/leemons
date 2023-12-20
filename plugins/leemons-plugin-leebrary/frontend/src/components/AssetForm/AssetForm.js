@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import _, { noop, isEmpty, isFunction, isNil } from 'lodash';
+import _, { noop, isEmpty, isFunction, isNil, flatten } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
@@ -166,6 +166,9 @@ const AssetForm = ({
       if (isEmpty(formValues.name)) {
         setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
       }
+      if (isImageType) {
+        setValue('cover', null);
+      }
     }
   }, [assetFile]);
 
@@ -249,114 +252,123 @@ const AssetForm = ({
   return (
     <Box ref={boxRef}>
       <form autoComplete="off">
-        <ContextContainer title={!hideTitle ? labels.title : undefined}>
-          {!isImage && (
-            <ImagePicker
-              labels={labels}
-              value={coverFile?.id ? coverFile?.id : coverFile}
-              onChange={handleOnSelectAsset}
-            />
-          )}
+        <ContextContainer>
           <ContextContainer>
-            {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (
+            {[LIBRARY_FORM_TYPES.MEDIA_FILES, LIBRARY_FORM_TYPES.BOOKMARKS].includes(type) && (
+              <ContextContainer title={!hideTitle ? labels.title : undefined}>
+                {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (
+                  <Controller
+                    control={control}
+                    name="file"
+                    shouldUnregister
+                    rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
+                    render={({ field: { ref, value, ...field } }) => (
+                      <FileUpload
+                        {...field}
+                        icon={<CloudUploadIcon height={32} width={32} />}
+                        title={labels.browseFile}
+                        subtitle={labels.dropFile}
+                        errorMessage={{
+                          title: 'Error',
+                          message: errorMessages.file?.rejected || 'File was rejected',
+                        }}
+                        hideUploadButton
+                        single
+                        initialFiles={value ? flatten([value]) : []}
+                        inputWrapperProps={{ error: errors.file }}
+                        accept={onlyImages ? ['image/*'] : undefined}
+                      />
+                    )}
+                  />
+                )}
+
+                {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
+                  <Controller
+                    control={control}
+                    name="url"
+                    shouldUnregister
+                    rules={{
+                      required: errorMessages.url?.required ?? REQUIRED_FIELD,
+                      validate: isValidURL,
+                    }}
+                    render={({ field }) => (
+                      <Stack fullWidth alignItems="end" spacing={4}>
+                        <Box style={{ flex: 1 }}>
+                          <TextInput
+                            {...field}
+                            label={labels.url}
+                            placeholder={placeholders.url}
+                            error={errors.url}
+                            required
+                            onBlur={validateUrl}
+                            disabled={field.value}
+                          />
+                        </Box>
+                        <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
+                          <Button
+                            variant="outline"
+                            leftIcon={<CommonFileSearchIcon />}
+                            onClick={handleCheckUrl}
+                            loading={checking}
+                            disabled={field.value}
+                          >
+                            {labels.checkUrl}
+                          </Button>
+                        </Box>
+                      </Stack>
+                    )}
+                  />
+                )}
+              </ContextContainer>
+            )}
+            <ContextContainer title={labels.presentation}>
+              {!isImage && (
+                <ImagePicker
+                  labels={labels}
+                  value={coverFile?.id ? coverFile?.id : coverFile}
+                  onChange={handleOnSelectAsset}
+                />
+              )}
               <Controller
                 control={control}
-                name="file"
-                shouldUnregister
-                rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
-                render={({ field: { ref, value, ...field } }) => (
-                  <FileUpload
-                    icon={<CloudUploadIcon height={32} width={32} />}
-                    title={labels.browseFile}
-                    subtitle={labels.dropFile}
-                    errorMessage={{
-                      title: 'Error',
-                      message: errorMessages.file?.rejected || 'File was rejected',
-                    }}
-                    hideUploadButton
-                    single
-                    initialFiles={value ? [value] : []}
-                    inputWrapperProps={{ error: errors.file }}
-                    accept={onlyImages ? ['image/*'] : undefined}
+                name="name"
+                rules={{ required: errorMessages.name?.required ?? REQUIRED_FIELD }}
+                render={({ field }) => (
+                  <TextInput
+                    label={labels.name}
+                    placeholder={placeholders.name}
+                    error={errors.name}
+                    required
+                    {...getAssetIcon()}
                     {...field}
                   />
                 )}
               />
-            )}
-            {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
               <Controller
                 control={control}
-                name="url"
-                shouldUnregister
-                rules={{
-                  required: errorMessages.url?.required ?? REQUIRED_FIELD,
-                  validate: isValidURL,
-                }}
+                name="description"
+                rules={
+                  !isNil(errorMessages?.description?.required) && {
+                    required: errorMessages.description.required,
+                  }
+                }
                 render={({ field }) => (
-                  <Stack fullWidth alignItems="end" spacing={4}>
-                    <Box style={{ flex: 1 }}>
-                      <TextInput
-                        label={labels.url}
-                        placeholder={placeholders.url}
-                        error={errors.url}
-                        required
-                        {...field}
-                        onBlur={validateUrl}
-                      />
-                    </Box>
-                    <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
-                      <Button
-                        color="secondary"
-                        leftIcon={<CommonFileSearchIcon />}
-                        onClick={handleCheckUrl}
-                        loading={checking}
-                      >
-                        {labels.checkUrl}
-                      </Button>
-                    </Box>
-                  </Stack>
+                  <Textarea
+                    label={labels.description}
+                    placeholder={placeholders.description}
+                    required={!isNil(errorMessages?.description?.required)}
+                    error={errors.description}
+                    counter="word"
+                    counterLabels={{
+                      single: labels?.wordCounter?.single,
+                      plural: labels?.wordCounter?.plural,
+                    }}
+                    showCounter
+                    {...field}
+                  />
                 )}
               />
-            )}
-            <Controller
-              control={control}
-              name="name"
-              rules={{ required: errorMessages.name?.required ?? REQUIRED_FIELD }}
-              render={({ field }) => (
-                <TextInput
-                  label={labels.name}
-                  placeholder={placeholders.name}
-                  error={errors.name}
-                  required
-                  {...getAssetIcon()}
-                  {...field}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="description"
-              rules={
-                !isNil(errorMessages?.description?.required) && {
-                  required: errorMessages.description.required,
-                }
-              }
-              render={({ field }) => (
-                <Textarea
-                  label={labels.description}
-                  placeholder={placeholders.description}
-                  required={!isNil(errorMessages?.description?.required)}
-                  error={errors.description}
-                  counter="word"
-                  counterLabels={{
-                    single: labels?.wordCounter?.single,
-                    plural: labels?.wordCounter?.plural,
-                  }}
-                  showCounter
-                  {...field}
-                />
-              )}
-            />
+            </ContextContainer>
 
             {isTeacher ? (
               <>
@@ -416,42 +428,43 @@ const AssetForm = ({
               </>
             ) : null}
 
-            <ContextContainer title="Otros">
-              {useTags && (
+            {store.showAdvancedConfig ? (
+              <ContextContainer title="Otros">
+                {children || null}
+                {useTags && (
+                  <Controller
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                      <TagsAutocomplete
+                        pluginName={pluginName}
+                        type={tagsType}
+                        label={labels.tags}
+                        labels={{ addButton: labels.addTag }}
+                        placeholder={placeholders.tags}
+                        {...field}
+                      />
+                    )}
+                  />
+                )}
+
                 <Controller
-                  control={form.control}
-                  name="tags"
+                  control={control}
+                  name="color"
                   render={({ field }) => (
-                    <TagsAutocomplete
-                      pluginName={pluginName}
-                      type={tagsType}
-                      label={labels.tags}
-                      labels={{ addButton: labels.addTag }}
-                      placeholder={placeholders.tags}
+                    <ColorInput
+                      label={labels.color}
+                      placeholder={placeholders.color}
+                      useHsl
+                      compact={false}
+                      manual={false}
                       {...field}
                     />
                   )}
                 />
-              )}
-
-              <Controller
-                control={control}
-                name="color"
-                render={({ field }) => (
-                  <ColorInput
-                    label={labels.color}
-                    placeholder={placeholders.color}
-                    useHsl
-                    compact={false}
-                    manual={false}
-                    {...field}
-                  />
-                )}
-              />
-            </ContextContainer>
+              </ContextContainer>
+            ) : null}
           </ContextContainer>
-
-          {children || null}
 
           {!hideSubmit && (
             <Stack justifyContent={'end'} fullWidth>

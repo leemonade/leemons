@@ -1,4 +1,4 @@
-import { capitalize, isEmpty, isNil, isString } from 'lodash';
+import { capitalize, isEmpty, isNil, isString, toLower } from 'lodash';
 import { getAuthorizationTokenForAllCenters } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
@@ -23,8 +23,9 @@ export function getFileUrl(fileID, segment, isPublic = false) {
 
   const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
-  return `${leemons.apiUrl}/api/v1/leebrary/file/${isPublic ? 'public/' : ''
-    }${fileID}${urlSuffixSegment}${authParam}`;
+  return `${leemons.apiUrl}/api/v1/leebrary/file/${
+    isPublic ? 'public/' : ''
+  }${fileID}${urlSuffixSegment}${authParam}`;
 }
 
 export function getPublicFileUrl(fileID, segment) {
@@ -119,12 +120,14 @@ export function isNullish(obj) {
 }
 
 export function getCoverUrl(cover) {
-  if (cover?.id) {
-    return getFileUrl(cover.id);
-  }
+  if (isImageFile(cover)) {
+    if (cover?.id) {
+      return getFileUrl(cover.id);
+    }
 
-  if (cover instanceof File) {
-    return URL.createObjectURL(cover);
+    if (cover instanceof File) {
+      return URL.createObjectURL(cover);
+    }
   }
 
   if (isString(cover) && isValidURL(cover)) {
@@ -139,6 +142,22 @@ export function getCoverName(cover) {
     return `${cover.name}.${cover.extension}`;
   }
   return null;
+}
+
+export function resolveAssetType(file, type) {
+  let defaultType = type === 'assignables.content-creator' ? 'document' : 'file';
+  console.log('type', type)
+  if (type === 'bookmarks') defaultType = 'bookmark';
+
+  const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;
+  const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)
+    ? fileType
+    : defaultType;
+
+  const fileExtension = file?.name?.split('.').pop();
+  const finalFileType =
+    resolvedFileType === 'file' && fileExtension ? fileExtension.toUpperCase() : resolvedFileType;
+  return { fileType: finalFileType, fileExtension };
 }
 
 export default prepareAsset;

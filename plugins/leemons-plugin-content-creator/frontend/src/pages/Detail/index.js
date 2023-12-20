@@ -230,7 +230,7 @@ export default function Index({ isNew, readOnly }) {
                   subjects: { show: true, required: false, showLevel: true, maxOne: false },
                 }}
                 editing={!isNew}
-                categoryType={'document'}
+                categoryKey={'assignables.content-creator'}
                 isLoading={isLoading}
                 Footer={
                   <TotalLayoutFooterContainer

@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 
 export const LIBRARY_FORM_TYPES = {
-  MEDIA_FILES: 'mediaFiles',
+  MEDIA_FILES: 'media-files',
   BOOKMARKS: 'bookmarks',
+  DOCUMENT: 'document'
 };
 
 export const LIBRARY_FORM_DEFAULT_PROPS = {

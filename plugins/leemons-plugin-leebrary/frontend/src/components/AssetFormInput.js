@@ -64,11 +64,14 @@ const AssetFormInput = ({
 
   async function loadCategory() {
     const result = await listCategoriesRequest();
+    console.log('result', result);
     const items = result.map((data) => ({
       ...data,
       icon: data.menuItem.iconSvg,
       name: data.menuItem.label,
     }));
+    console.log('items', items);
+    console.log('find', find(items, { key: categoryKey }));
     setCategory(find(items, { key: categoryKey }));
   }
 
@@ -83,7 +86,7 @@ const AssetFormInput = ({
     <AssetForm
       {...formLabels}
       asset={{ ...asset, file }}
-      type={null}
+      type={categoryKey}
       form={form}
       pluginName="leebrary"
       advancedConfig={advancedConfig}
@@ -104,6 +107,7 @@ const AssetFormInput = ({
         <Box sx={() => ({ minWidth: 264, maxWidth: 264 })} noFlex>
           <ContextContainer title={formLabels?.labels?.preview}>
             <CardWrapper
+              isCreationPreview
               item={{ original: form?.watch() }}
               category={category}
               variant={previewVariant}

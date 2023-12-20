@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useEffect, useMemo, useState, useContext } from 'react';
+import React, {  useMemo, useState, useContext } from 'react';
 import { ContextContainer, TotalLayoutStepContainer, InputWrapper } from '@bubbles-ui/components';
 import { TagsAutocomplete, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -8,10 +8,11 @@ import PropTypes from 'prop-types';
 import LibraryContext from '../../context/LibraryContext';
 
 import prefixPN from '../../helpers/prefixPN';
-// eslint-disable-next-line import/no-cycle
-import { LibraryBasicDataForm } from '../LibraryForm/LibraryBasicDataForm';
+import { useFormContext } from 'react-hook-form';
+import AssetFormInput from '../AssetFormInput';
 
-const BasicData = ({ advancedConfig, editing, isLoading, categoryType, Footer }) => {
+const BasicData = ({ advancedConfig, editing, isLoading, categoryKey, Footer, ZoneOne }) => {
+  const form = useFormContext();
   const { asset, category } = useContext(LibraryContext);
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const [tags, setTags] = useState(asset?.tags || []);
@@ -23,7 +24,7 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryType, Footer })
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
       const data = items.leebrary.assetSetup.basicData;
-      data.labels.title = editing ? data.header.titleEdit : data.header.titleNew;
+      data.labels.title = data.labels.content;
       data.labels.submitForm = editing ? data.labels.submitChanges : data.labels.submitForm;
       return data;
     }
@@ -38,12 +39,13 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryType, Footer })
 
   return (
     <TotalLayoutStepContainer Footer={Footer}>
-      <LibraryBasicDataForm
+      <AssetFormInput
         {...formLabels}
         advancedConfig={advancedConfig}
         isLoading={isLoading}
-        asset={{ ...asset }}
-        type={category?.key || categoryType}
+        category={category?.key || categoryKey}
+        form={form}
+        preview
       >
         <ContextContainer spacing={2}>
           <InputWrapper label={t('basicData.labels.tags')}>
@@ -57,7 +59,7 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryType, Footer })
             />
           </InputWrapper>
         </ContextContainer>
-      </LibraryBasicDataForm>
+      </AssetFormInput>
     </TotalLayoutStepContainer>
   );
 };
