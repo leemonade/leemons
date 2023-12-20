@@ -4,19 +4,14 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import {
-  AssignIcon,
-  DuplicateIcon,
-  PluginContentCreatorIcon,
-  ViewOnIcon,
-} from '@bubbles-ui/icons/outline';
+import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
-import { ContentCreatorCardIcon } from '@content-creator/components/icons/ContentCreatorCardIcon';
+import { DocumentIcon } from '@content-creator/components';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -42,92 +37,83 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
   const menuItems = React.useMemo(() => {
     const items = [];
 
-    if (asset?.id) {
-      if (asset.providerData?.published) {
-        items.push({
-          icon: <ViewOnIcon />,
-          children: t('view'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/content-creator/${asset.providerData.id}/view`);
-          },
-        });
-      }
-      if (asset.editable) {
-        items.push({
-          icon: <EditWriteIcon />,
-          children: t('edit'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/content-creator/${asset.providerData.id}/edit`);
-          },
-        });
-      }
-      if (asset.providerData?.published) {
-        items.push({
-          icon: <AssignIcon />,
-          children: t('assign'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/content-creator/${asset.providerData.id}/assign`);
-          },
-        });
-      }
+    if (!asset?.id) {
+      return items;
+    }
 
-      if (asset.duplicable && asset.providerData) {
-        items.push({
-          icon: <DuplicateIcon />,
-          children: t('duplicate'),
-          onClick: (e) => {
-            e.stopPropagation();
-            openConfirmationModal({
-              onConfirm: async () => {
-                try {
-                  setAppLoading(true);
-                  await duplicateDocumentRequest(
-                    asset.providerData.id,
-                    asset.providerData.published
-                  );
-                  addSuccessAlert(t('duplicated'));
-                  onRefresh();
-                } catch (err) {
-                  addErrorAlert(getErrorMessage(err));
-                }
-                setAppLoading(false);
-              },
-            })();
-          },
-        });
-      }
-      if (asset.deleteable) {
-        items.push({
-          icon: <DeleteBinIcon />,
-          children: t('delete'),
-          onClick: (e) => {
-            e.stopPropagation();
-            openDeleteConfirmationModal({
-              onConfirm: async () => {
-                try {
-                  setAppLoading(true);
-                  await deleteDocumentRequest(asset.providerData.id);
-                  addSuccessAlert(t('deleted'));
-                  onRefresh();
-                } catch (err) {
-                  addErrorAlert(getErrorMessage(err));
-                }
-                setAppLoading(false);
-              },
-            })();
-          },
-        });
-      }
-      // if (asset.shareable) {
-      //   items.push({
-      //     icon: null,
-      //     children: t('share'),
-      //     onClick: () => {},
-      //   });
-      // }
+    if (asset.providerData?.published) {
+      items.push({
+        icon: <ViewOnIcon />,
+        children: t('view'),
+        onClick: (e) => {
+          e.stopPropagation();
+          history.push(`/private/content-creator/${asset.providerData.id}/view`);
+        },
+      });
+    }
+    if (asset.editable) {
+      items.push({
+        icon: <EditWriteIcon />,
+        children: t('edit'),
+        onClick: (e) => {
+          e.stopPropagation();
+          history.push(`/private/content-creator/${asset.providerData.id}/edit`);
+        },
+      });
+    }
+    if (asset.providerData?.published) {
+      items.push({
+        icon: <AssignIcon />,
+        children: t('assign'),
+        onClick: (e) => {
+          e.stopPropagation();
+          history.push(`/private/content-creator/${asset.providerData.id}/assign`);
+        },
+      });
+    }
+    if (asset.duplicable && asset.providerData) {
+      items.push({
+        icon: <DuplicateIcon />,
+        children: t('duplicate'),
+        onClick: (e) => {
+          e.stopPropagation();
+          openConfirmationModal({
+            onConfirm: async () => {
+              try {
+                setAppLoading(true);
+                await duplicateDocumentRequest(asset.providerData.id, asset.providerData.published);
+                addSuccessAlert(t('duplicated'));
+                onRefresh();
+              } catch (err) {
+                addErrorAlert(getErrorMessage(err));
+              }
+              setAppLoading(false);
+            },
+          })();
+        },
+      });
+    }
+    if (asset.deleteable) {
+      items.push({
+        icon: <DeleteBinIcon />,
+        children: t('delete'),
+        onClick: (e) => {
+          e.stopPropagation();
+          openDeleteConfirmationModal({
+            onConfirm: async () => {
+              try {
+                setAppLoading(true);
+                await deleteDocumentRequest(asset.providerData.id);
+                addSuccessAlert(t('deleted'));
+                onRefresh();
+              } catch (err) {
+                addErrorAlert(getErrorMessage(err));
+              }
+              setAppLoading(false);
+            },
+          })();
+        },
+      });
     }
 
     return items;
@@ -140,7 +126,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="document"
       variantTitle={t('document')}
-      variantIcon={<ContentCreatorCardIcon />}
+      variantIcon={<DocumentIcon size={20} style={{ color: '#878D96' }} />}
       className={classes.root}
     />
   );

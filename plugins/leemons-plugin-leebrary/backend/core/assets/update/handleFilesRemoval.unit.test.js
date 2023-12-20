@@ -38,7 +38,7 @@ describe('handleFilesRemoval', () => {
 
     // Assert
     expect(removeFilesById).toHaveBeenCalledWith({
-      filesId: [...filesToRemove, assetData.file],
+      fileIds: [...filesToRemove, assetData.file],
       assetId,
       ctx,
     });
@@ -61,7 +61,7 @@ describe('handleFilesRemoval', () => {
 
     // Assert
     expect(removeFilesById).toHaveBeenCalledWith({
-      filesId: [...filesToRemove, assetData.cover, assetData.coverFile],
+      fileIds: [...filesToRemove, assetData.cover, assetData.coverFile],
       assetId,
       ctx,
     });

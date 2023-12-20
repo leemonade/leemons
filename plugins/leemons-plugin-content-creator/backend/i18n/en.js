@@ -1,4 +1,15 @@
 module.exports = {
+  detailPage: {
+    titleNew: 'NEW DOCUMENT',
+    titleEdit: 'EDIT DOCUMENT',
+    saveDraft: 'Save as draft',
+    publish: 'Publish',
+    publishAndAssign: 'Publish and Assign',
+    next: 'Next',
+    previous: 'Back',
+    cancel: 'Cancel',
+    back: 'Back',
+  },
   documentDetail: {
     basic: 'Basic',
     coverRequired: 'Cover is required',

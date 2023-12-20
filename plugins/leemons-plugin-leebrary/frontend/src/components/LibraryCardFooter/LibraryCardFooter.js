@@ -39,12 +39,16 @@ const LibraryCardFooter = ({
         <Box className={classes.fileIconContainer}>
           <FileIcon
             size={24}
-            fileType={fileType || variant}
+            fileType={fileType === 'document' ? fileExtension : fileType || variant}
             fileExtension={fileExtension}
             color={'#878D96'}
             hideExtension
           />
-          <Text className={classes.fileLabel}>{variantIconLabel}</Text>
+          <Text className={classes.fileLabel}>
+            {fileType === 'document'
+              ? fileExtension?.toUpperCase() || variantIconLabel
+              : variantIconLabel}
+          </Text>
         </Box>
       )}
 
