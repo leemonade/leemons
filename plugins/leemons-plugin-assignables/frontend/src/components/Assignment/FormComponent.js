@@ -7,18 +7,27 @@ import { set, uniq } from 'lodash';
 import {
   Box,
   Button,
+  ImageLoader,
+  Input,
+  TextInput,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import { CardEmptyCover } from '@bubbles-ui/components/lib/misc/CardEmptyCover/CardEmptyCover';
 import { ActivityDatesPicker } from './components/ActivityDatesPicker';
 import { EvaluationType } from './components/EvaluationType';
 import { GroupPicker } from './components/GroupPicker';
 import { Instructions } from './components/Instructions';
 import { OtherOptions } from './components/OtherOptions';
 import { SubjectPicker } from './components/SubjectPicker';
+import useFormComponentStyles from './FormComponent.styles';
+import Presentation from './components/Presentation/Presentation';
+import NYACard from '../NYACard';
+import Preview from './components/Preview/Preview';
 
 function onSubmitFunc(onSubmit, evaluationType, values) {
   const allowedTypes = ['auto', 'manual', 'none'];
@@ -26,15 +35,15 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
 
   const submissionValues = {
     /*
-              === Students ===
-            */
+      === Students ===
+    */
     students: uniq(values.students.value.flatMap((group) => group.students)),
     classes: uniq(values.students.value.flatMap((group) => group.group)),
     addNewClassStudents: !!values.students.autoAssign,
 
     /*
-              === Dates ====
-            */
+      === Dates ====
+    */
     alwaysAvailable: values.dates.alwaysAvailable,
     dates: {
       ...values.dates.dates,
@@ -42,8 +51,8 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
     duration: values.dates.maxTime,
 
     /*
-              === Evaluation ===
-            */
+      === Evaluation ===
+    */
     gradable: values.evaluation.evaluation.gradable,
     requiresScoring: values.evaluation.evaluation.requiresScoring,
     allowFeedback: values.evaluation.evaluation.allowFeedback,
@@ -52,8 +61,8 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
     ),
 
     /*
-              === Others ===
-            */
+      === Others ===
+    */
     sendMail: values.others.notifyStudents,
     messageToAssignees: values.others.message,
     showResults: !values.others.hideReport,
@@ -108,6 +117,8 @@ export default function Form({
   hideSectionHeaders,
   onlyOneSubject,
   onSubmit,
+  showTitle,
+  showThumbnail,
   showEvaluation,
   showInstructions,
   showMessageForStudents,
@@ -127,6 +138,8 @@ export default function Form({
     (...props) => onSubmitFunc(onSubmit, evaluationType, ...props),
     [onSubmit, evaluationType]
   );
+
+  const { classes } = useFormComponentStyles();
 
   return (
     <form
@@ -168,105 +181,116 @@ export default function Form({
             />
           }
         >
-          <Box>
-            <Controller
-              name="subjects"
-              control={control}
-              rules={{
-                required: true,
-                minLength: 1,
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <SubjectPicker
-                  {...field}
-                  error={error}
-                  assignable={assignable}
-                  localizations={localizations?.subjects}
-                  hideSectionHeaders={hideSectionHeaders}
-                  onlyOneSubject={onlyOneSubject}
+          <Box className={classes.root}>
+            <Box className={classes.leftColumn}>
+              <Presentation
+                localizations={localizations?.presentation}
+                showTitle={showTitle}
+                showThumbnail={showThumbnail}
+              />
+              {!!showInstructions && (
+                <Controller
+                  name="instructions"
+                  control={control}
+                  render={({ field }) => (
+                    <Instructions
+                      {...field}
+                      localizations={localizations?.instructions}
+                      hideSectionHeaders={hideSectionHeaders}
+                    />
+                  )}
                 />
               )}
-            />
-            <Controller
-              name="students"
-              control={control}
-              rules={{
-                required: true,
-                validate: (value) => value?.value?.length > 0,
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <GroupPicker
-                  {...field}
-                  localizations={localizations?.groups}
-                  error={error}
-                  hideSectionHeaders={hideSectionHeaders}
-                />
-              )}
-            />
-            <Controller
-              name="dates"
-              control={control}
-              rules={{
-                required: true,
-                validate: (value) =>
-                  value.alwaysAvailable || !!(value.dates?.start && value.dates?.deadline),
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <ActivityDatesPicker
-                  {...field}
-                  localizations={localizations?.dates}
-                  error={error}
-                  hideMaxTime={hideMaxTime}
-                  hideSectionHeaders={hideSectionHeaders}
-                />
-              )}
-            />
-            {!!showInstructions && (
               <Controller
-                name="instructions"
+                name="subjects"
                 control={control}
-                render={({ field }) => (
-                  <Instructions
+                rules={{
+                  required: true,
+                  minLength: 1,
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <SubjectPicker
                     {...field}
-                    localizations={localizations?.instructions}
+                    error={error}
+                    assignable={assignable}
+                    localizations={localizations?.subjects}
+                    hideSectionHeaders={hideSectionHeaders}
+                    onlyOneSubject={onlyOneSubject}
+                  />
+                )}
+              />
+              <Controller
+                name="students"
+                control={control}
+                rules={{
+                  required: true,
+                  validate: (value) => value?.value?.length > 0,
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <GroupPicker
+                    {...field}
+                    localizations={localizations?.groups}
+                    error={error}
                     hideSectionHeaders={hideSectionHeaders}
                   />
                 )}
               />
-            )}
-            <Controller
-              name="evaluation"
-              control={control}
-              render={({ field }) => (
-                <EvaluationType
-                  {...field}
-                  evaluationTypes={evaluationTypes}
-                  assignable={assignable}
-                  hidden={!showEvaluation}
-                  localizations={localizations?.evaluation}
-                  hideSectionHeaders={hideSectionHeaders}
-                />
-              )}
-            />
-            <Controller
-              name="others"
-              control={control}
-              rules={{
-                validate: (value) => !value.useTeacherDeadline || !!value.teacherDeadline,
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <OtherOptions
-                  {...field}
-                  error={error}
-                  assignable={assignable}
-                  localizations={localizations?.others}
-                  showReport={showReport}
-                  showResponses={showResponses}
-                  showMessageForStudents={showMessageForStudents}
-                  hideSectionHeaders={hideSectionHeaders}
-                />
-              )}
-            />
+              <Controller
+                name="dates"
+                control={control}
+                rules={{
+                  required: true,
+                  validate: (value) =>
+                    value.alwaysAvailable || !!(value.dates?.start && value.dates?.deadline),
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <ActivityDatesPicker
+                    {...field}
+                    localizations={localizations?.dates}
+                    error={error}
+                    hideMaxTime={hideMaxTime}
+                    hideSectionHeaders={hideSectionHeaders}
+                  />
+                )}
+              />
+
+              <Controller
+                name="evaluation"
+                control={control}
+                render={({ field }) => (
+                  <EvaluationType
+                    {...field}
+                    evaluationTypes={evaluationTypes}
+                    assignable={assignable}
+                    hidden={!showEvaluation}
+                    localizations={localizations?.evaluation}
+                    hideSectionHeaders={hideSectionHeaders}
+                  />
+                )}
+              />
+              <Controller
+                name="others"
+                control={control}
+                rules={{
+                  validate: (value) => !value.useTeacherDeadline || !!value.teacherDeadline,
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <OtherOptions
+                    {...field}
+                    error={error}
+                    assignable={assignable}
+                    localizations={localizations?.others}
+                    showReport={showReport}
+                    showResponses={showResponses}
+                    showMessageForStudents={showMessageForStudents}
+                    hideSectionHeaders={hideSectionHeaders}
+                  />
+                )}
+              />
+            </Box>
+            <Box className={classes.rightColumn}>
+              <Preview assignable={assignable} localizations={localizations?.preview} />
+            </Box>
           </Box>
         </TotalLayoutStepContainer>
       </FormProvider>
@@ -292,6 +316,8 @@ Form.propTypes = {
   hideSectionHeaders: PropTypes.bool,
   onlyOneSubject: PropTypes.bool,
   onSubmit: PropTypes.func,
+  showTitle: PropTypes.bool,
+  showThumbnail: PropTypes.bool,
   showEvaluation: PropTypes.bool,
   showInstructions: PropTypes.bool,
   showMessageForStudents: PropTypes.bool,

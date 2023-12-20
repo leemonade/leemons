@@ -9,13 +9,13 @@ export const useContainerStyles = createStyles((theme, { hideDivider }) => ({
     flexDirection: 'column',
   },
   titleSection: {
-    marginBottom: theme.other.global.spacing.padding.xlg,
+    marginBottom: theme.other.global.spacing.padding.md,
     display: 'flex',
     flexDirection: 'column',
     gap: theme.other.global.spacing.gap.sm,
   },
   title: {
-    ...theme.other.global.content.typo.heading.xsm,
+    ...theme.other.global.content.typo.heading['sm--semibold'],
     color: theme.other.global.content.color.text.default,
   },
   description: {
@@ -24,7 +24,6 @@ export const useContainerStyles = createStyles((theme, { hideDivider }) => ({
   },
   content: {
     marginBottom: hideDivider ? 0 : theme.other.global.spacing.padding.lg,
-    marginLeft: theme.other.global.spacing.padding.lg,
   },
 }));
 
@@ -53,8 +52,6 @@ export function Container({
         </Box>
       )}
       <Box className={classes.content}>{children}</Box>
-
-      {!hideDivider && <Divider />}
     </Box>
   );
 }

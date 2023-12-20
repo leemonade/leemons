@@ -50,7 +50,13 @@ export default function FormWithLayout({ assignable, children, ...props }) {
   const [currentStep, setCurrentStep] = useState(0);
 
   const formComponent = (
-    <Form {...props} withoutLayout scrollRef={scrollRef} localizations={localizations} />
+    <Form
+      {...props}
+      assignable={assignable}
+      withoutLayout
+      scrollRef={scrollRef}
+      localizations={localizations}
+    />
   );
 
   const steps = useMemo(() => {

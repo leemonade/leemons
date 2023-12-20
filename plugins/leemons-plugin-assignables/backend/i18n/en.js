@@ -100,10 +100,11 @@ module.exports = {
       },
     },
     instructions: {
-      title: 'Statement or instructions',
-      description: 'Indications on how to consume the resource (optional)',
+      title: 'Instructions',
+      description: 'Instructions for the consult of content',
       editor: {
-        placeholder: 'Type the statement',
+        placeholder: 'You can specify the best way to consult this content...',
+        help: 'Help information visible in the assignment card (preview view)',
       },
     },
     evaluation: {
@@ -139,6 +140,16 @@ module.exports = {
       next: 'Next',
       previous: 'Previous',
       save: 'Save', // Used on modules assignation drawer
+    },
+    presentation: {
+      title: 'Presentation',
+      titleInput: {
+        label: 'Title',
+        placeholder: 'Type the title',
+      },
+    },
+    preview: {
+      title: 'Preview',
     },
   },
   activity_deadline_header: {

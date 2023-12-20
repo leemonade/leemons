@@ -100,10 +100,11 @@ module.exports = {
       },
     },
     instructions: {
-      title: 'Enunciado o instrucciones',
-      description: 'Indicaciones sobre cómo consumir el recurso (opcional)',
+      title: 'Instrucciones',
+      description: 'Instrucciones para la consulta del contenido',
       editor: {
-        placeholder: 'Escribe el enunciado',
+        placeholder: 'Puedes especificar la mejor manera de consultar este contenido...',
+        help: 'Información de apoyo visible en la tarjeta de asignación (ver vista previa)',
       },
     },
     evaluation: {
@@ -139,6 +140,16 @@ module.exports = {
       next: 'Siguiente',
       previous: 'Anterior',
       save: 'Guardar', // Used on modules assignation drawer
+    },
+    presentation: {
+      title: 'Presentación',
+      titleInput: {
+        label: 'Título',
+        placeholder: 'Escribe el título',
+      },
+    },
+    preview: {
+      title: 'Vista previa',
     },
   },
   activity_deadline_header: {
