@@ -7,7 +7,8 @@ module.exports = {
     publishAndAssign: 'Publicar y Asignar',
     next: 'Siguiente',
     previous: 'Anterior',
-    cancel: 'Cancelar'
+    cancel: 'Cancelar',
+    back: 'Volver',
   },
   documentDetail: {
     basic: 'Información básica',

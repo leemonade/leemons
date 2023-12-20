@@ -1,5 +1,5 @@
 module.exports = {
-  detailPage : {
+  detailPage: {
     titleNew: 'NEW DOCUMENT',
     titleEdit: 'EDIT DOCUMENT',
     saveDraft: 'Save as draft',
@@ -7,7 +7,8 @@ module.exports = {
     publishAndAssign: 'Publish and Assign',
     next: 'Next',
     previous: 'Back',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    back: 'Back',
   },
   documentDetail: {
     basic: 'Basic',

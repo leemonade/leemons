@@ -20,6 +20,7 @@ const ContentEditorInput = ({
   useSchema,
   editorStyles,
   Footer,
+  toolbarPortal,
   ...props
 }) => {
   const editorLabels = useEditorLabels();
@@ -65,6 +66,7 @@ const ContentEditorInput = ({
           toolbars={toolbars}
           useSchema={useSchema}
           editorLabels={editorLabels}
+          toolbarPortal={toolbarPortal}
         >
           {children}
         </TextEditorContent>

@@ -35,7 +35,7 @@ const validators = [
 ];
 
 export default function Index({ isNew, readOnly }) {
-  const [t, translations, , tLoading] = useTranslateLoader(prefixPN('detailPage'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
@@ -163,13 +163,17 @@ export default function Index({ isNew, readOnly }) {
         Header={
           <TotalLayoutHeader
             title={isNew ? t('titleNew') : t('titleEdit')}
-            icon={<AssetDocumentIcon width={24} height={24} color={'#878D96'} />}
+            icon={
+              <Stack justifyContent="center" alignItems="center">
+                <AssetDocumentIcon width={24} height={24} color={'#878D96'} />
+              </Stack>
+            }
             formTitlePlaceholder={form.watch('name')}
             onCancel={handleOnCancel}
             compact
-            mainActionLabel={t('cancel')}
+            mainActionLabel={readOnly ? t('back') : t('cancel')}
           >
-            <div ref={toolbarRef}></div>
+            <div id="toolbar-div" style={{ width: '100%'}} ref={toolbarRef}></div>
           </TotalLayoutHeader>
         }
       >
@@ -193,23 +197,27 @@ export default function Index({ isNew, readOnly }) {
                   toolbarPortal={toolbarRef.current}
                   scrollRef={scrollRef}
                   Footer={
-                    <TotalLayoutFooterContainer
-                      fixed
-                      scrollRef={scrollRef}
-                      rightZone={
-                        <>
-                          <Button
-                            variant="link"
-                            onClick={() => handleMutations({ publishing: false, assigning: false })}
-                          >
-                            {t('saveDraft')}
-                          </Button>
-                          <Button onClick={handleNext} disabled={disableNext}>
-                            {t('next')}
-                          </Button>
-                        </>
-                      }
-                    />
+                    !readOnly && (
+                      <TotalLayoutFooterContainer
+                        fixed
+                        scrollRef={scrollRef}
+                        rightZone={
+                          <>
+                            <Button
+                              variant="link"
+                              onClick={() =>
+                                handleMutations({ publishing: false, assigning: false })
+                              }
+                            >
+                              {t('saveDraft')}
+                            </Button>
+                            <Button onClick={handleNext} disabled={disableNext}>
+                              {t('next')}
+                            </Button>
+                          </>
+                        }
+                      />
+                    )
                   }
                 />
               )}

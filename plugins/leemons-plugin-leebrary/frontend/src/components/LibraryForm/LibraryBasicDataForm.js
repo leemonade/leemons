@@ -19,6 +19,8 @@ import {
   Text,
   useResizeObserver,
   useViewportSize,
+  AssetDocumentIconSmall,
+  FileItemDisplay,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
@@ -263,23 +265,34 @@ const LibraryBasicDataForm = ({
   // #endregion
 
   const getPreviewCard = () => {
-    let defautlType = 'file';
-    if (type === 'bookmarks') defautlType = 'bookmark';
-    else if (type === 'document') defautlType = 'document';
+    let defaultType = type === 'document' ? 'document' : 'file';
+    if (type === 'bookmarks') defaultType = 'bookmark';
 
-    const fileType = formValues.file?.type?.split('/')[0]?.toLowerCase() || defautlType;
+    const fileType = formValues.file?.type?.split('/')[0]?.toLowerCase() || defaultType;
     const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)
       ? fileType
-      : defautlType;
+      : defaultType;
+
     const fileExtension = formValues.file?.name?.split('.').pop();
 
     const formData = {
       ...formValues,
       cover: isImage ? getCoverUrl(formValues.file) : getCoverUrl(formValues.cover),
-      fileType: resolvedFileType,
+      fileType:
+        resolvedFileType === 'file' && fileExtension
+          ? fileExtension.toUpperCase()
+          : resolvedFileType,
       fileExtension,
     };
-    return <LibraryCard asset={{ ...formData }} isLoading={isLoading} isCreationPreview />;
+
+    return (
+      <LibraryCard
+        asset={{ ...formData }}
+        isLoading={isLoading}
+        isCreationPreview
+        variantIcon={resolvedFileType === 'document' && <AssetDocumentIconSmall />}
+      />
+    );
   };
 
   // #region * STYLES TEMP -------------------------------------------------------------

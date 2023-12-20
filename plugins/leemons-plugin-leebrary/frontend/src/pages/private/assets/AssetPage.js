@@ -193,7 +193,8 @@ const AssetPage = () => {
           asset &&
           !form.formState.dirtyFields.cover
         ) {
-          assetData.cover = asset.original.cover.id;
+          console.log('asset', asset)
+          assetData.cover = asset.original?.cover?.id;
         }
 
         if (editing) assetData.id = params.id;
