@@ -23,9 +23,8 @@ export function getFileUrl(fileID, segment, isPublic = false) {
 
   const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
-  return `${leemons.apiUrl}/api/v1/leebrary/file/${
-    isPublic ? 'public/' : ''
-  }${fileID}${urlSuffixSegment}${authParam}`;
+  return `${leemons.apiUrl}/api/v1/leebrary/file/${isPublic ? 'public/' : ''
+    }${fileID}${urlSuffixSegment}${authParam}`;
 }
 
 export function getPublicFileUrl(fileID, segment) {
@@ -146,7 +145,6 @@ export function getCoverName(cover) {
 
 export function resolveAssetType(file, type) {
   let defaultType = type === 'assignables.content-creator' ? 'document' : 'file';
-  console.log('type', type)
   if (type === 'bookmarks') defaultType = 'bookmark';
 
   const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;

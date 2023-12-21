@@ -36,7 +36,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
       getUserCentersRequest(),
       getUserProfilesRequest(),
     ]);
-    console.log('profiles', profiles, getCookieToken(true));
+
     if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       store.onlyOneProfile = true;
       store.centerName = centers[0].name;
@@ -104,8 +104,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
 
   if (!session) return null;
 
-  console.log('store.onlyOneProfile', store.onlyOneProfile);
-
   return (
     <Spotlight
       data={menuData}
@@ -138,28 +136,28 @@ export default function MainMenu({ subNavWidth, ...props }) {
             ...(session.isSuperAdmin
               ? []
               : [
-                  {
-                    id: 'menu-1',
-                    label: t('accountInfo'),
-                    order: 0,
-                    url: '/private/users/detail',
-                    window: 'SELF',
-                    disabled: null,
-                  },
-                ].concat(
-                  store.onlyOneProfile
-                    ? []
-                    : [
-                        {
-                          id: 'menu-2',
-                          label: t('switchProfile'),
-                          order: 1,
-                          url: '/private/users/select-profile',
-                          window: 'BLANK',
-                          disabled: null,
-                        },
-                      ]
-                )),
+                {
+                  id: 'menu-1',
+                  label: t('accountInfo'),
+                  order: 0,
+                  url: '/private/users/detail',
+                  window: 'SELF',
+                  disabled: null,
+                },
+              ].concat(
+                store.onlyOneProfile
+                  ? []
+                  : [
+                    {
+                      id: 'menu-2',
+                      label: t('switchProfile'),
+                      order: 1,
+                      url: '/private/users/select-profile',
+                      window: 'BLANK',
+                      disabled: null,
+                    },
+                  ]
+              )),
             {
               id: 'menu-3',
               label: t('changeLanguage'),

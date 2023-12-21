@@ -56,6 +56,7 @@ async function getTestsDetails({ id, withQuestionBank, ctx }) {
     type: assignable.metadata.type,
     levels: assignable.metadata.level,
     curriculum: assignable.subjects?.[0]?.curriculum,
+    config: assignable.metadata.config,
   }));
 
   /*

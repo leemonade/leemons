@@ -141,6 +141,8 @@ export default function DetailQuestions({
         form.setValue('filters', data);
         onFiltersChange();
       })();
+    } else {
+      questionsSelected();
     }
   }
 
@@ -160,6 +162,13 @@ export default function DetailQuestions({
   let nQuestions = store.questionBank.questions.length;
   if (!isNil(store.questionsFiltered)) {
     nQuestions = reorderMode ? questions.length : store.questionsFiltered.length;
+  }
+
+  const getNextButtonLabel = () => {
+    if (!isNil(store.questionsFiltered)) {
+      return reorderMode ? 'continue' : 'assignSelectedQuestions';
+    }
+    return 'continue'
   }
 
   return (
@@ -197,7 +206,7 @@ export default function DetailQuestions({
                 disabled={store.saving}
                 loading={store.saving === 'publish'}
               >
-                {t('continue')}
+                {t(getNextButtonLabel())}
               </Button>
             </>
           }
@@ -237,8 +246,6 @@ export default function DetailQuestions({
                   t={t}
                   questions={store.questionsFiltered}
                   questionBank={store.questionBank}
-                  next={questionsSelected}
-                  back={returnToFilters}
                   error={isDirty ? form.formState.errors.questions : null}
                   reorderMode={reorderMode}
                 />
