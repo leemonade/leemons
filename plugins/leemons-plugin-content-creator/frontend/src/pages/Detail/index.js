@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { FormProvider, useForm, Controller } from 'react-hook-form';
+import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useHistory, useParams } from 'react-router-dom';
@@ -29,8 +29,8 @@ const validators = [
   }),
   z.object({
     name: z
-      .string({ required_error: 'Title is required HARDCODED WITH NO MERCY' })
-      .min(1, 'Title is required HARDCODED WITH NO MERCY'),
+      .string({ required_error: 'Title is required' })
+      .min(1, 'Title is required'),
   }),
 ];
 
@@ -49,7 +49,7 @@ export default function Index({ isNew, readOnly }) {
   const form = useForm({
     resolver: zodResolver(validators[activeStep]),
   });
-  const formValues = form.watch();
+  const formValues = useWatch({ control: form.control });
 
   // ··································································
   // HANDLERS
@@ -168,12 +168,12 @@ export default function Index({ isNew, readOnly }) {
                 <AssetDocumentIcon width={24} height={24} color={'#878D96'} />
               </Stack>
             }
-            formTitlePlaceholder={form.watch('name')}
+            formTitlePlaceholder={formValues.name || t('detailPage.documentTitlePlaceholder')}
             onCancel={handleOnCancel}
             compact
             mainActionLabel={readOnly ? t('back') : t('cancel')}
           >
-            <div id="toolbar-div" style={{ width: '100%'}} ref={toolbarRef}></div>
+            <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>
           </TotalLayoutHeader>
         }
       >

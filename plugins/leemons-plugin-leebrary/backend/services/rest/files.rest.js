@@ -18,7 +18,82 @@ const { uploadMultipartChunk } = require('../../core/files/uploadMultipartChunk'
 const { createTemp } = require('../../core/files/upload/createTemp');
 const { getByIds } = require('../../core/assets/getByIds');
 
-const fileRestService = 'leebrary.file.fileRest';
+const getFileRest = async ({ ctx, payload }) => {
+  const { id, download, onlyPublic } = payload;
+
+  if (_.isEmpty(id)) {
+    throw new LeemonsError(ctx, { message: 'Id is required', httpStatusCode: 400 });
+  }
+
+  const asset = await getByFile({ fileId: id, checkPermissions: !onlyPublic, onlyPublic, ctx });
+  const canAccess = !_.isEmpty(asset);
+
+  if (!canAccess) {
+    throw new LeemonsError(ctx, {
+      message: 'You do not have permissions to view this file',
+      httpStatusCode: 403,
+    });
+  }
+
+  let bytesStart = -1;
+  let bytesEnd = -1;
+  const range = ctx.meta.headers?.range || undefined;
+
+  if (!download && range?.indexOf('bytes=') > -1) {
+    const parts = range.replace(/bytes=/, '').split('-');
+    bytesStart = parseInt(parts[0], 10);
+    bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
+  }
+
+  const { readStream, fileName, contentType, file } = await dataForReturnFile({
+    id,
+    path: ctx.params[0],
+    start: bytesStart,
+    end: bytesEnd,
+    forceStream: !!ctx.params.forceStream,
+    ctx,
+  });
+
+  // Redirect to external URL
+  if (_.isString(readStream) && readStream.indexOf('http') === 0) {
+    ctx.meta.$statusCode = 307;
+    ctx.meta.$responseHeaders = {
+      'Cache-Control': 'max-age=300',
+    };
+    ctx.meta.$location = readStream;
+    return;
+  }
+
+  const mediaType = contentType.split('/')[0];
+
+  ctx.meta.$responseType = contentType;
+  ctx.meta.$responseHeaders = {
+    'Content-Type': contentType,
+  };
+  if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
+    ctx.meta.$responseHeaders = {
+      'Content-Disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
+    };
+  }
+
+  if (!download && ['video', 'audio'].includes(mediaType)) {
+    let fileSize = file.size;
+
+    if (!fileSize && file.provider === 'sys') {
+      const fileHandle = await fs.open(file.uri, 'r');
+      const stats = await fileHandle.stat(file.uri);
+      fileSize = stats.size;
+    }
+
+    if (fileSize > 0) {
+      ctx.meta.$responseHeaders = { 'Content-Length': fileSize };
+      // TO solve: Check if Accept-Ranges header is needed and streaming implications
+      ctx.meta.$responseHeaders = { 'Accept-Ranges': 'bytes' };
+    }
+  }
+  // eslint-disable-next-line consistent-return
+  return readStream;
+};
 
 module.exports = {
   newMultipartRest: {
@@ -85,81 +160,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
     // eslint-disable-next-line sonarjs/cognitive-complexity
     async handler(ctx) {
-      const { id, download, onlyPublic } = ctx.params;
-
-      if (_.isEmpty(id)) {
-        throw new LeemonsError(ctx, { message: 'Id is required', httpStatusCode: 400 });
-      }
-
-      const asset = await getByFile({ fileId: id, checkPermissions: !onlyPublic, onlyPublic, ctx });
-      const canAccess = !_.isEmpty(asset);
-
-      if (!canAccess) {
-        throw new LeemonsError(ctx, {
-          message: 'You do not have permissions to view this file',
-          httpStatusCode: 403,
-        });
-      }
-
-      let bytesStart = -1;
-      let bytesEnd = -1;
-      const range = ctx.meta.headers?.range || undefined;
-
-      if (!download && range?.indexOf('bytes=') > -1) {
-        const parts = range.replace(/bytes=/, '').split('-');
-        bytesStart = parseInt(parts[0], 10);
-        bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
-      }
-
-      const { readStream, fileName, contentType, file } = await dataForReturnFile({
-        id,
-        path: ctx.params[0],
-        start: bytesStart,
-        end: bytesEnd,
-        forceStream: !!ctx.params.forceStream,
-        ctx,
-      });
-
-      // Redirect to external URL
-      if (_.isString(readStream) && readStream.indexOf('http') === 0) {
-        ctx.meta.$statusCode = 307;
-        ctx.meta.$responseHeaders = {
-          'Cache-Control': 'max-age=300',
-        };
-        ctx.meta.$location = readStream;
-        return;
-      }
-
-      const mediaType = contentType.split('/')[0];
-
-      ctx.meta.$responseType = contentType;
-      ctx.meta.$responseHeaders = {
-        'Content-Type': contentType,
-      };
-
-      if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
-        ctx.meta.$responseHeaders = {
-          'Content-Disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
-        };
-      }
-
-      if (!download && ['video', 'audio'].includes(mediaType)) {
-        let fileSize = file.size;
-
-        if (!fileSize && file.provider === 'sys') {
-          const fileHandle = await fs.open(file.uri, 'r');
-          const stats = await fileHandle.stat(file.uri);
-          fileSize = stats.size;
-        }
-
-        if (fileSize > 0) {
-          ctx.meta.$responseHeaders = { 'Content-Length': fileSize };
-          // TO solve: Check if Accept-Ranges header is needed and streaming implications
-          ctx.meta.$responseHeaders = { 'Accept-Ranges': 'bytes' };
-        }
-      }
-      // eslint-disable-next-line consistent-return
-      return readStream;
+      return getFileRest({ ctx, payload: ctx.params });
     },
   },
   publicFileRest: {
@@ -170,7 +171,7 @@ module.exports = {
     async handler(ctx) {
       const payload = { ...ctx.params };
       payload.onlyPublic = true;
-      return ctx.tx.call(fileRestService, payload);
+      return getFileRest({ ctx, payload });
     },
   },
   publicFolderRest: {
@@ -182,7 +183,8 @@ module.exports = {
       const payload = { ...ctx.params };
       payload.onlyPublic = true;
       payload.forceStream = true;
-      return ctx.tx.call(fileRestService, payload);
+      console.log('PASANDO POR LA ACTION!!!');
+      return getFileRest({ ctx, payload });
     },
   },
   coverRest: {
@@ -258,7 +260,7 @@ module.exports = {
   /*
       folderRest: {
         rest: {
-          path: '/:id/(.*)',
+          path: 'private/:id/(.*)',
           method: 'GET',
         },
         middlewares: [LeemonsMiddlewareAuthenticated()],

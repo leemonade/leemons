@@ -9,6 +9,7 @@ module.exports = {
     previous: 'Back',
     cancel: 'Cancel',
     back: 'Back',
+    documentTitlePlaceHolder: 'Write the document name...',
   },
   documentDetail: {
     basic: 'Basic',

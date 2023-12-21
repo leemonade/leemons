@@ -162,10 +162,6 @@ const AssetPage = () => {
     }
   };
 
-  const publishAndAssign = () => {
-    console.log('handling publish and assign');
-  };
-
   const handlePublish = async () => {
     const editing = params.id?.length > 0;
     const { cover } = formValues;
@@ -193,7 +189,6 @@ const AssetPage = () => {
           asset &&
           !form.formState.dirtyFields.cover
         ) {
-          console.log('asset', asset);
           assetData.cover = asset.original?.cover?.id;
         }
 
@@ -217,6 +212,11 @@ const AssetPage = () => {
       setUploadingFileInfo(null);
     }
   };
+
+  const handlePlublishAndAssign = async () => {
+    await handlePublish();
+    console.log('REDIRECCIÓN A ASIGNAR');
+  };
   // #endregion
 
   // #region * HEADER --------------------------------------------------------
@@ -238,7 +238,7 @@ const AssetPage = () => {
       title={getAssetTitleAndIcon().title}
       icon={getAssetTitleAndIcon().icon}
       formTitlePlaceholder={formValues.name || t('basicData.placeholders.name')}
-      onSave={form.handleSubmit(publishAndAssign)}
+      onSave={form.handleSubmit(handlePlublishAndAssign)}
       onCancel={handleOnCancel}
     />
   );
@@ -254,7 +254,7 @@ const AssetPage = () => {
 
   const footerFinalActionsAndLabels = [
     { label: 'Publicar', action: handlePublish },
-    { label: 'Publicar y asignar', action: publishAndAssign },
+    { label: 'Publicar y asignar', action: handlePlublishAndAssign },
   ];
   // #endregion
 

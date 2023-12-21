@@ -61,4 +61,5 @@ export const LIBRARY_FORM_PROP_TYPES = {
   type: PropTypes.oneOf(Object.keys(LIBRARY_FORM_TYPES).map((key) => LIBRARY_FORM_TYPES[key])),
   hideSubmit: PropTypes.bool,
   form: PropTypes.any,
+  ContentExtraFields: PropTypes.element,
 };

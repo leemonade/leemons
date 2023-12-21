@@ -28,6 +28,7 @@ const AssetFormInput = ({
   labels,
   placeholders,
   errorMessages,
+  ...props
 }) => {
   const [category, setCategory] = React.useState(null);
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -85,6 +86,7 @@ const AssetFormInput = ({
   const formComponent = (
     <AssetForm
       {...formLabels}
+      {...props}
       asset={{ ...asset, file }}
       type={categoryKey}
       form={form}

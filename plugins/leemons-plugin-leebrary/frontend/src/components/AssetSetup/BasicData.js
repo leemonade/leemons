@@ -11,7 +11,7 @@ import prefixPN from '../../helpers/prefixPN';
 import { useFormContext } from 'react-hook-form';
 import AssetFormInput from '../AssetFormInput';
 
-const BasicData = ({ advancedConfig, editing, isLoading, categoryKey, Footer, ZoneOne }) => {
+const BasicData = ({ advancedConfig, editing, isLoading, categoryKey, Footer, ContentExtraFields }) => {
   const form = useFormContext();
   const { asset, category } = useContext(LibraryContext);
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -46,6 +46,7 @@ const BasicData = ({ advancedConfig, editing, isLoading, categoryKey, Footer, Zo
         category={category?.key || categoryKey}
         form={form}
         preview
+        ContentExtraFields={ContentExtraFields}
       >
         <ContextContainer spacing={2}>
           <InputWrapper label={t('basicData.labels.tags')}>

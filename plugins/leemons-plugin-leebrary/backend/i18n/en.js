@@ -43,7 +43,7 @@ module.exports = {
         other: 'Other',
         title: 'Upload file',
         featuredImage: 'Featured image',
-        tags: 'Tags (separated by commas)',
+        tags: 'Tags',
         addTag: 'Add',
         browseFile: 'Click to browse your files',
         advancedConfig: 'Advanced config',
