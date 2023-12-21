@@ -1,24 +1,24 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Box, createStyles, ImageLoader, Text, TextClamp } from '@bubbles-ui/components';
+import { ChevronDownIcon, ChevronUpIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate, unflatten } from '@common';
 
 import dayjs from 'dayjs';
 import { get, mapValues, pick } from 'lodash';
-import getClassData from '@assignables/helpers/getClassData';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useIsTeacher } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { ClassroomItemDisplay } from '@academic-portfolio/components';
 
-const useActivityItemStyles = createStyles((theme, { activityColor }) => ({
+const useActivityItemStyles = createStyles((theme, { isModuleActivity }) => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
     gap: theme.other.global.spacing.gap.md,
     alignItems: 'center',
+    paddingLeft: isModuleActivity ? 40 : 0,
   },
   activityType: {
     display: 'flex',
@@ -50,23 +50,43 @@ const useActivityItemStyles = createStyles((theme, { activityColor }) => ({
   },
 }));
 
-function ActivityItem({ instance }) {
+function ActivityItem({ instance, onModuleClick, modulesOpened }) {
   const assignable = instance?.assignable;
   const role = assignable?.role;
   const activityColor = assignable.asset.color;
   const activityTypeIcon = assignable.roleDetails.icon;
 
+  const isOpened = useMemo(
+    () => modulesOpened?.includes(instance?.id),
+    [modulesOpened, instance?.id]
+  );
+
   const rolesLocalizations = useRolesLocalizations([role]);
 
   const preparedAsset = prepareAsset(assignable?.asset);
 
-  const { classes } = useActivityItemStyles({ activityColor });
+  const { classes } = useActivityItemStyles({
+    activityColor,
+    isModuleActivity: instance?.metadata?.module?.type === 'activity',
+  });
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.activityType}>
+      <Box
+        className={classes.activityType}
+        onClick={(e) => {
+          if (onModuleClick && role === 'learningpaths.module') {
+            onModuleClick(instance?.id);
+            e.stopPropagation();
+          }
+        }}
+      >
         <Box className={classes.activityTypeIcon}>
-          <ImageLoader src={activityTypeIcon} width={18} height={18} />
+          {role === 'learningpaths.module' && isOpened && <ChevronUpIcon />}
+          {role === 'learningpaths.module' && !isOpened && <ChevronDownIcon />}
+          {role !== 'learningpaths.module' && (
+            <ImageLoader src={activityTypeIcon} width={18} height={18} />
+          )}
         </Box>
       </Box>
       <Box className={classes.cover}>
@@ -162,12 +182,23 @@ function parseDates(dates, keysToParse) {
   ));
 }
 
-export async function parseAssignationForCommonView(instance, labels, { subjectFullLength }) {
+export async function parseAssignationForCommonView(
+  instance,
+  labels,
+  { subjectFullLength, onModuleClick, modulesOpened }
+) {
   const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
 
   return {
     id: instance.id,
-    activity: <ActivityItem instance={instance} />,
+    parentModule: instance.metadata?.module?.id ?? null,
+    activity: (
+      <ActivityItem
+        instance={instance}
+        onModuleClick={onModuleClick}
+        modulesOpened={modulesOpened}
+      />
+    ),
     subject: (
       <ClassroomItemDisplay
         classroomIds={instance.classes}

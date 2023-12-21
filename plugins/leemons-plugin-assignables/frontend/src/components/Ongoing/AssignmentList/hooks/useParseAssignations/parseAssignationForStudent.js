@@ -160,7 +160,13 @@ function getDashboardURL(assignation) {
     assignable: { roleDetails },
   } = instance;
 
+  const moduleId = instance?.metadata?.module?.id;
+
   const finished = isFinished(assignation);
+
+  if (moduleId) {
+    return `/private/learning-paths/modules/dashboard/${instance.id}`;
+  }
 
   if (!finished || (!instance.requiresScoring && !instance.allowFeedback)) {
     return roleDetails.studentDetailUrl

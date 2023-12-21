@@ -126,10 +126,9 @@ export async function parseAssignationForTeacherView(instance, labels, options) 
   const commonData = await parseAssignationForCommonView(instance, labels, options);
   const studentsCount = instance?.students?.length || 0;
   const role = instance?.assignable?.roleDetails;
-  const dashboardURL = (role.dashboardUrl || '/private/assignables/details/:id').replace(
-    ':id',
-    instance.id
-  );
+  const dashboardURL = instance?.metadata?.module?.id
+    ? `/private/learning-paths/modules/dashboard/${instance.metadata?.module?.id}`
+    : (role.dashboardUrl || '/private/assignables/details/:id').replace(':id', instance.id);
 
   let rooms = [];
   forEach(instance.students, ({ chatKeys }) => {

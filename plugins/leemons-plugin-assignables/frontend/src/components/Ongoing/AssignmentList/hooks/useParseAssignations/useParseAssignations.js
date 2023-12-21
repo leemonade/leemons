@@ -27,23 +27,19 @@ function useParseAssignationsLocalizations() {
     prefixPN('activities_list'),
   ]);
 
-  const labels = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = {
+      return {
         student_actions: _.get(res, prefixPN('student_actions')),
         activity_status: _.get(res, prefixPN('activity_status')),
         multiSubject: _.get(res, prefixPN('multiSubject')),
         activitiesList: _.get(res, prefixPN('activities_list')),
       };
-
-      return data;
     }
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 
 export default function useParseAssignations(assignations, options) {
@@ -64,7 +60,7 @@ export default function useParseAssignations(assignations, options) {
     modificationTrend: 'occasionally',
   });
 
-  const result = useQuery(
+  return useQuery(
     [
       {
         ...queryKey[0],
@@ -72,10 +68,7 @@ export default function useParseAssignations(assignations, options) {
         isTeacher,
         assignations: hashObject(assignations),
         labels: hashObject(labels),
-        options: {
-          ...options,
-          blockingActivities: hashObject(options.blockingActivities),
-        },
+        options,
       },
     ],
     () =>
@@ -86,6 +79,4 @@ export default function useParseAssignations(assignations, options) {
         isTeacher,
       })
   );
-
-  return result;
 }
