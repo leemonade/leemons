@@ -142,7 +142,7 @@ export async function parseAssignationForTeacherView(instance, labels, options) 
     dashboardURL,
     students: studentsCount,
     evaluated: <Evaluated instance={instance} />,
-    messages: <UnreadMessages rooms={rooms} />,
+    messages: !commonData?.parentModule && <UnreadMessages rooms={rooms} />,
   };
 }
 

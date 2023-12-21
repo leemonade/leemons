@@ -65,7 +65,7 @@ function ActivityItem({ instance, onModuleClick, modulesOpened }) {
 
   const preparedAsset = prepareAsset(assignable?.asset);
 
-  const { classes } = useActivityItemStyles({
+  const { classes, theme } = useActivityItemStyles({
     activityColor,
     isModuleActivity: instance?.metadata?.module?.type === 'activity',
   });
@@ -82,8 +82,12 @@ function ActivityItem({ instance, onModuleClick, modulesOpened }) {
         }}
       >
         <Box className={classes.activityTypeIcon}>
-          {role === 'learningpaths.module' && isOpened && <ChevronUpIcon />}
-          {role === 'learningpaths.module' && !isOpened && <ChevronDownIcon />}
+          {role === 'learningpaths.module' && isOpened && (
+            <ChevronUpIcon color={theme.other.button.content.color.secondary.default} />
+          )}
+          {role === 'learningpaths.module' && !isOpened && (
+            <ChevronDownIcon color={theme.other.button.content.color.secondary.default} />
+          )}
           {role !== 'learningpaths.module' && (
             <ImageLoader src={activityTypeIcon} width={18} height={18} />
           )}
@@ -192,6 +196,7 @@ export async function parseAssignationForCommonView(
   return {
     id: instance.id,
     parentModule: instance.metadata?.module?.id ?? null,
+    trStyle: instance.metadata?.module?.id ? { backgroundColor: '#F8F9FB' } : null,
     activity: (
       <ActivityItem
         instance={instance}

@@ -193,7 +193,7 @@ export async function parseAssignationForStudentView(assignation, labels, option
     ...commonData,
     isBlocked,
     progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
-    messages: <UnreadMessages rooms={assignation.chatKeys} />,
+    messages: !commonData?.parentModule && <UnreadMessages rooms={assignation.chatKeys} />,
     dashboardURL: () => getDashboardURL(assignation),
   };
 }

@@ -333,6 +333,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         onSizeChange={setSize}
         onPageChange={setPage}
         selectable
+        hidePaper
         onSelect={({ isBlocked, dashboardURL }) => {
           if (isBlocked) {
             addErrorAlert(labels?.activitiesList?.blocked);
@@ -343,6 +344,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
             }
           }
         }}
+        onStyleRow={({ row }) => row?.original?.trStyle ?? null}
         labels={labels.pagination}
         headerStyles={headerStyles}
       />
