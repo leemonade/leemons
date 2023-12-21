@@ -4,6 +4,7 @@ import { AlarmClockIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import dayjsDuration from 'dayjs/plugin/duration';
 import { Box, Text } from '@bubbles-ui/components';
+import { padStart } from 'lodash';
 import useTimerStyles from './Timer.styles';
 
 dayjs.extend(dayjsDuration);
@@ -35,7 +36,7 @@ export default function Timer({ instance, hidden }) {
         <AlarmClockIcon width={18} height={18} />
       </Box>
       <Text className={classes.text}>
-        {duration.hours}:{duration.minutes}
+        {padStart(duration.hours, 2, '0')}:{padStart(duration.minutes, 2, '0')}
       </Text>
     </Box>
   );

@@ -142,7 +142,7 @@ export default function CloseButtons({ instance, hidden }) {
     <Stack>
       <Switch
         label="Cerrar"
-        disabled={!alwaysAvailable}
+        disabled={!alwaysAvailable || archived}
         checked={!!closed || !!deadlinePassed}
         onChange={onCloseTask({ instance, t, mutateAsync })}
       />

@@ -23,7 +23,7 @@ import Filters from './components/Filters';
 import ActivitiesList from './components/ActivitiesList';
 import prefixPN from '../../../helpers/prefixPN';
 
-function parseTitleKey(title, archived) {
+function parseTitleKey(title) {
   if (title === null) {
     return null;
   }
@@ -32,9 +32,6 @@ function parseTitleKey(title, archived) {
     return title;
   }
 
-  if (archived) {
-    return prefixPN('ongoing.history');
-  }
   return prefixPN('ongoing.ongoing');
 }
 
