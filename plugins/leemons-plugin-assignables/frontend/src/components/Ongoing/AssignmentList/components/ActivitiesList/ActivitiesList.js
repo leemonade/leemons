@@ -67,7 +67,7 @@ function useAssignmentsColumns({ archived }) {
         },
         !archived && {
           Header: <PluginComunicaIcon />,
-          accessor: 'messages',
+          accessor: 'unreadMessages',
         },
       ].filter(Boolean),
     [labels]

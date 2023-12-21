@@ -1,21 +1,51 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { LoadingOverlay, Text } from '@bubbles-ui/components';
+import {
+  LoadingOverlay,
+  Text,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  Stack,
+} from '@bubbles-ui/components';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@assignables/helpers/prefixPN';
 import { TaskOngoingList } from './components/TaskOngoingList';
 import UsersList from './components/UsersList';
+import ActivityHeader from '../ActivityHeader';
 
 export default function Details() {
   const { id } = useParams();
 
   const { data: instance, isLoading, isError } = useInstances({ id });
 
+  const [t] = useTranslateLoader(prefixPN('studentsList'));
+
   if (instance) {
     return (
-      <>
-        <TaskOngoingList instance={instance} />
-        <UsersList instance={instance} />
-      </>
+      <TotalLayoutContainer
+        Header={
+          <ActivityHeader
+            action={t('title')}
+            instance={instance}
+            showClass
+            showDeadline
+            showEvaluationType
+            showRole
+            showTime
+            //
+            showCloseButtons
+            allowEditDeadline
+          />
+        }
+      >
+        <Stack justifyContent="center">
+          <TotalLayoutStepContainer stepName={t('title')}>
+            <TaskOngoingList instance={instance} />
+            <UsersList instance={instance} />
+          </TotalLayoutStepContainer>
+        </Stack>
+      </TotalLayoutContainer>
     );
   }
 

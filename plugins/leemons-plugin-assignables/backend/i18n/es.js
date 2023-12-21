@@ -216,10 +216,8 @@ module.exports = {
         studentsCount: 'Estudiantes {{count}}',
         search: 'Buscar estudiante',
         student: 'Estudiante',
-        status: 'Estado',
-        completed: 'Completada',
+        progress: 'progreso',
         avg: 'Tiempo medio',
-        score: 'Puntuación',
       },
     },
     archiveModal: {
@@ -232,6 +230,7 @@ module.exports = {
     },
   },
   studentsList: {
+    title: 'Actividad en curso',
     labels: {
       students: 'Estudiantes',
       assignStudent: 'Asignar estudiante',
@@ -248,11 +247,8 @@ module.exports = {
       },
       studentListcolumns: {
         student: 'Estudiantes',
-        status: 'Estado',
-        completed: 'Completada',
+        progress: 'Progreso',
         avgTime: 'Tiempo medio',
-        score: 'Puntuación',
-        unreadMessages: 'Mensajes',
         sendReminder: 'Enviar recordatorio',
       },
     },

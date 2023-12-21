@@ -54,7 +54,7 @@ function useProgressLocalizations() {
   }, [translations]);
 }
 
-function Progress({ assignation, isBlocked }) {
+export function Progress({ assignation, isBlocked }) {
   const { instance } = assignation;
   const { classes } = instance;
 

@@ -64,7 +64,9 @@ export function PeriodPicker({ value, onChange, localizations, error }) {
 
   return (
     <Box className={classes.root}>
-      <Text className={classes.title}>{localizations?.title?.fixed}</Text>
+      {!!localizations?.title?.fixed && (
+        <Text className={classes.title}>{localizations?.title?.fixed}</Text>
+      )}
       <InputWrapper
         error={
           error &&

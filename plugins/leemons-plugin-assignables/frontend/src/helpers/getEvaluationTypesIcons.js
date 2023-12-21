@@ -3,7 +3,7 @@ import {
   PluginFeedbackIcon,
   PunctuableIcon,
   NonEvaluableIcon,
-} from '@bubbles-ui/icons/outline';
+} from '@bubbles-ui/icons/solid';
 
 export default function getEvaluationTypesIcons() {
   return {

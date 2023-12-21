@@ -12,6 +12,7 @@ import { getUserAgentsInfoRequest } from '@users/request';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useMemo } from 'react';
+import { Progress } from '@assignables/components/Ongoing/AssignmentList/hooks/useParseAssignations/parseAssignationForStudent';
 import prefixPN from '../../../../../helpers/prefixPN';
 import getActions from './getActions';
 import getStatus from './getStatus';
@@ -37,7 +38,7 @@ function useStudentData(students) {
       return [];
     }
 
-    const data = students.map((student) => {
+    return students.map((student) => {
       const userAgent = userAgentsInfoMulti.data.find((d) => d.id === student.user);
       return {
         ...student,
@@ -45,8 +46,6 @@ function useStudentData(students) {
         userAgentIsDisabled: userAgent.disabled,
       };
     });
-
-    return data;
   }, [students, userAgentsInfoMulti.data]);
 }
 
@@ -73,18 +72,14 @@ export default function useParseStudents(instance, statusLabels) {
   const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
 
   const { openConfirmationModal } = useLayout();
-  const [store, render] = useStore({
-    rememberType: 'open',
-  });
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const localizations = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('teacher_actions'));
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN('teacher_actions'));
     }
 
     return {};
@@ -120,16 +115,8 @@ export default function useParseStudents(instance, statusLabels) {
       id: student.user,
       userAgentIsDisabled: student.userAgentIsDisabled,
       student: <UserDisplayItem {...student.userInfo} />,
-      status: statusLabels[getStatus(student, instance)],
       unreadMessages: <UnreadMessages rooms={student.chatKeys} />,
-      completed:
-        (student?.timestamps?.end && (
-          <LocaleDate
-            date={student?.timestamps?.end}
-            options={{ dateStyle: 'short', timeStyle: 'short' }}
-          />
-        )) ||
-        '-',
+      progress: <Progress assignation={{ ...student, instance }} />,
       avgTime:
         student?.timestamps?.start && student?.timestamps?.end ? (
           <LocaleDuration
@@ -138,8 +125,10 @@ export default function useParseStudents(instance, statusLabels) {
         ) : (
           '-'
         ),
-      score: getStudentAverageScore(student),
-      actions: getActions(student, instance, localizations, subjects, { reminder }),
+      actions: getActions(student, instance, localizations, subjects, {
+        reminder,
+        score: getStudentAverageScore(student),
+      }),
       userInfo: student.userInfo,
     }));
   }, [students, subjects]);
