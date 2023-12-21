@@ -1,5 +1,5 @@
 module.exports = {
-  detailPage : {
+  detailPage: {
     titleNew: 'NUEVO DOCUMENTO',
     titleEdit: 'EDITAR DOCUMENTO',
     saveDraft: 'Guardar borrador',
@@ -9,6 +9,7 @@ module.exports = {
     previous: 'Anterior',
     cancel: 'Cancelar',
     back: 'Volver',
+    documentTitlePlaceHolder: 'Escribe el nombre del documento...',
   },
   documentDetail: {
     basic: 'Información básica',

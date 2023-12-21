@@ -146,7 +146,6 @@ export function getCoverName(cover) {
 
 export function resolveAssetType(file, type) {
   let defaultType = type === 'assignables.content-creator' ? 'document' : 'file';
-  console.log('type', type)
   if (type === 'bookmarks') defaultType = 'bookmark';
 
   const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;

@@ -157,8 +157,6 @@ const CardWrapper = ({
     delete _asset.programName;
   }
 
-  console.log('category', category);
-
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props} style={{ display: 'flex', gap: 32 }}>
       <Component

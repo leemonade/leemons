@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { FormProvider, useForm, Controller } from 'react-hook-form';
+import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useHistory, useParams } from 'react-router-dom';
 import { useLayout } from '@layout/context';
-import { useWatch } from 'react-hook-form';
 import {
   LoadingOverlay,
   Button,
@@ -169,7 +168,7 @@ export default function Index({ isNew, readOnly }) {
                 <AssetDocumentIcon width={24} height={24} color={'#878D96'} />
               </Stack>
             }
-            formTitlePlaceholder={form.watch('name')}
+            formTitlePlaceholder={formValues.name || t('detailPage.documentTitlePlaceholder')}
             onCancel={handleOnCancel}
             compact
             mainActionLabel={readOnly ? t('back') : t('cancel')}

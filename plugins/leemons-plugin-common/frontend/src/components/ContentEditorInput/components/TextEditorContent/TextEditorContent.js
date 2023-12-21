@@ -45,9 +45,6 @@ const TextEditorContent = ({
     { name: 'TextEditorContent' }
   );
 
-  React.useEffect(() => {
-    console.log('toolbarPortal', toolbarPortal);
-  }, [toolbarPortal]);
   return (
     <>
       {canExpand && (
