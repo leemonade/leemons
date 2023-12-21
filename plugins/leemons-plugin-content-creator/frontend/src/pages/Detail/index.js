@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useHistory, useParams } from 'react-router-dom';
 import { useLayout } from '@layout/context';
+import { useWatch } from 'react-hook-form';
 import {
   LoadingOverlay,
   Button,
@@ -49,7 +50,7 @@ export default function Index({ isNew, readOnly }) {
   const form = useForm({
     resolver: zodResolver(validators[activeStep]),
   });
-  const formValues = form.watch();
+  const formValues = useWatch({ control: form.control });
 
   // ··································································
   // HANDLERS
@@ -173,7 +174,7 @@ export default function Index({ isNew, readOnly }) {
             compact
             mainActionLabel={readOnly ? t('back') : t('cancel')}
           >
-            <div id="toolbar-div" style={{ width: '100%'}} ref={toolbarRef}></div>
+            <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>
           </TotalLayoutHeader>
         }
       >
