@@ -9,6 +9,7 @@ import { PluginAssignmentsIcon } from '@bubbles-ui/icons/outline';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import { prefixPN } from '@tasks/helpers';
+import AssetMetadataTask from '@tasks/components/AssetMetadataTask/AssetMetadataTask';
 
 const Detail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
@@ -116,6 +117,14 @@ const Detail = ({ asset, onRefresh, ...props }) => {
         ...asset,
         metadata,
       }}
+      metadataComponent={
+        <AssetMetadataTask
+          metadata={{
+            ...asset,
+            metadata,
+          }}
+        />
+      }
       variant="task"
       variantIcon={<PluginAssignmentsIcon />}
       variantTitle={t('task')}

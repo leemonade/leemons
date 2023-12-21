@@ -340,6 +340,12 @@ module.exports = {
   },
   variant: 'Task',
   expressVariant: 'Express Task',
+  deliverables: 'Deliverables',
+  yes: 'Yes',
+  no: 'No',
+  statementTitle: 'Statement',
+  viewMore: 'View more',
+  viewLess: 'View less',
   task_realization: {
     confirmation_modal: {
       title: 'Tasks finished',

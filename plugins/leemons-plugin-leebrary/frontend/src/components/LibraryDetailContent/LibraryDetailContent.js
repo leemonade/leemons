@@ -73,7 +73,7 @@ const LibraryDetailContent = ({
           <Box className={classes.tabPanel}>
             {name && <Text className={classes.title}>{name}</Text>}
             {description && <Text className={classes.description}>{description}</Text>}
-            <Box style={{ marginTop: 24 }}>
+            <Box style={{ marginTop: 24, marginBottom: 24 }}>
               {Array.isArray(subjectsIds) &&
                 subjectsIds.length > 0 &&
                 subjectsIds?.map((subject, index) => (
@@ -99,8 +99,7 @@ const LibraryDetailContent = ({
                         label={tag}
                         size="md"
                         closable={false}
-                        radius={'default'}
-                        color={'solid'}
+                        className={classes.labelBadge}
                       />
                     </Box>
                   ))}
