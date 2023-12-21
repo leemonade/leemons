@@ -17,6 +17,7 @@ const {
 const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
 const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
 const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
+const { returnModulesData } = require('./helpers/filters/returnModulesData');
 
 /*
   === Main function ===
@@ -67,13 +68,15 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
       dates,
     });
 
-    return applyOffsetAndLimit(
-      map(
-        sortInstancesByDates({ instances: instancesGroupedInModules, dates, filters: query }),
-        'id'
-      ),
-      query
-    );
+    const sortedInstances = sortInstancesByDates({
+      instances: instancesGroupedInModules,
+      dates,
+      filters: query,
+    });
+
+    const paginatedData = applyOffsetAndLimit(sortedInstances, query);
+
+    return returnModulesData({ paginatedData, filters: query });
   }
 
   /*
@@ -132,5 +135,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
 
   instances = groupInstancesInModules({ instances, modules });
 
-  return applyOffsetAndLimit(uniq(map(instances, 'id')), query);
+  const paginatedData = applyOffsetAndLimit(instances, query);
+
+  return returnModulesData({ paginatedData, filters: query });
 };
