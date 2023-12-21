@@ -66,6 +66,7 @@ const AssetForm = ({
   advancedConfig,
   hideSubmit,
   onChange = noop,
+  ContentExtraFields = null,
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -254,7 +255,11 @@ const AssetForm = ({
       <form autoComplete="off">
         <ContextContainer>
           <ContextContainer>
-            {[LIBRARY_FORM_TYPES.MEDIA_FILES, LIBRARY_FORM_TYPES.BOOKMARKS].includes(type) && (
+            {[
+              LIBRARY_FORM_TYPES.MEDIA_FILES,
+              LIBRARY_FORM_TYPES.BOOKMARKS,
+              'assignables.scorm',
+            ].includes(type) && (
               <ContextContainer title={!hideTitle ? labels.title : undefined}>
                 {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (
                   <Controller
@@ -318,6 +323,43 @@ const AssetForm = ({
                       </Stack>
                     )}
                   />
+                )}
+
+                {type === 'assignables.scorm' && (
+                  <>
+                    <Controller
+                      control={form.control}
+                      name="file"
+                      shouldUnregister
+                      rules={{
+                        required: errorMessages.file?.required ?? REQUIRED_FIELD,
+                      }}
+                      render={({ field: { ref, value, ...field } }) => (
+                        <FileUpload
+                          {...field}
+                          icon={<CloudUploadIcon height={32} width={32} />}
+                          title={labels.browseFile}
+                          subtitle={labels.dropFile}
+                          errorMessage={{
+                            title: 'Error',
+                            message: errorMessages.file?.rejected || 'File was rejected',
+                          }}
+                          hideUploadButton
+                          single
+                          initialFiles={value ? flatten([value]) : []}
+                          inputWrapperProps={{ error: errors.file }}
+                          accept={[
+                            'application/octet-stream',
+                            'application/zip',
+                            'application/x-zip',
+                            'application/x-zip-compressed',
+                          ]}
+                        />
+                      )}
+                    />
+                    {ContentExtraFields}
+
+                  </>
                 )}
               </ContextContainer>
             )}

@@ -43,7 +43,7 @@ module.exports = {
         other: 'Otros',
         title: 'Subir archivo',
         featuredImage: 'Imagen destacada',
-        tags: 'Etiquetas (separadas por comas)',
+        tags: 'Etiquetas',
         addTag: 'Añadir',
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',

@@ -133,10 +133,9 @@ const ScormListCard = ({ asset, selected, onRefresh, ...props }) => {
       {...props}
       asset={asset}
       menuItems={menuItems}
-      variant="document"
-      variantTitle={t('document')}
+      variant="scorm"
+      variantTitle="SCORM"
       className={classes.root}
-      variantIcon={<ScormCardIcon />}
     />
   );
 };

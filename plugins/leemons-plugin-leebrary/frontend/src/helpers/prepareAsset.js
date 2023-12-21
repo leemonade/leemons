@@ -145,17 +145,30 @@ export function getCoverName(cover) {
 }
 
 export function resolveAssetType(file, type) {
-  let defaultType = type === 'assignables.content-creator' ? 'document' : 'file';
-  if (type === 'bookmarks') defaultType = 'bookmark';
+  let defaultType;
+  switch (type) {
+    case 'assignables.content-creator':
+      defaultType = 'document';
+      break;
+    case 'assignables.scorm':
+      defaultType = 'scorm';
+      break;
+    case 'bookmarks':
+      defaultType = 'bookmark';
+      break;
+    default:
+      defaultType = 'file';
+  }
+
+  const fileExtension = file?.name?.split('.').pop();
 
   const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;
   const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)
     ? fileType
     : defaultType;
-
-  const fileExtension = file?.name?.split('.').pop();
   const finalFileType =
     resolvedFileType === 'file' && fileExtension ? fileExtension.toUpperCase() : resolvedFileType;
+
   return { fileType: finalFileType, fileExtension };
 }
 

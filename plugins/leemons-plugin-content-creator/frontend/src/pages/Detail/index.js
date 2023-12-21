@@ -29,8 +29,8 @@ const validators = [
   }),
   z.object({
     name: z
-      .string({ required_error: 'Title is required HARDCODED WITH NO MERCY' })
-      .min(1, 'Title is required HARDCODED WITH NO MERCY'),
+      .string({ required_error: 'Title is required' })
+      .min(1, 'Title is required'),
   }),
 ];
 
