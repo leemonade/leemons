@@ -85,6 +85,7 @@ async function searchTeacherNyaActivities({ query, ctx }) {
   const instancesGroupedInModules = groupInstancesInModules({
     instances: instancesByProgramAndSubjects,
     modules,
+    dates,
   });
 
   const sortedInstances = sortInstancesByDates({

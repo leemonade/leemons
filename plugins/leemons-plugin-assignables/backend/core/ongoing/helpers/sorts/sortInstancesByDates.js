@@ -10,8 +10,8 @@ function sortInstancesByDates({ instances, dates, filters }) {
 
   if (['start', 'deadline'].includes(sort)) {
     return sortedInstances.sort((a, b) => {
-      const aDate = instanceDates[a.id]?.[sort];
-      const bDate = instanceDates[b.id]?.[sort];
+      const aDate = instanceDates[a.id]?.[sort] ?? a?.dates?.[sort];
+      const bDate = instanceDates[b.id]?.[sort] ?? b?.dates?.[sort];
 
       if (aDate && bDate) {
         return new Date(aDate) - new Date(bDate);

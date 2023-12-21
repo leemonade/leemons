@@ -15,6 +15,8 @@ const {
   filterInstancesByNotModule,
 } = require('./helpers/filters');
 const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
+const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
+const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
 
 /*
   === Main function ===
@@ -39,6 +41,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   if (isTeacher) {
     let instances = await getTeacherInstances({ ctx });
 
+    const modules = filterInstancesByIsModule({ instances });
     instances = filterInstancesByNotModule({ instances, filters: query });
 
     instances = filterInstancesByRoleAndQuery({ instances, filters: query });
@@ -58,8 +61,17 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
 
     instances = filterInstancesByStatusAndArchived({ instances, filters: query, dates });
 
+    const instancesGroupedInModules = groupInstancesInModules({
+      instances,
+      modules,
+      dates,
+    });
+
     return applyOffsetAndLimit(
-      map(sortInstancesByDates({ instances, dates, filters: query }), 'id'),
+      map(
+        sortInstancesByDates({ instances: instancesGroupedInModules, dates, filters: query }),
+        'id'
+      ),
       query
     );
   }
@@ -74,6 +86,7 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
     filters: query,
   });
 
+  const modules = filterInstancesByIsModule({ instances });
   instances = filterInstancesByNotModule({ instances, filters: query });
 
   const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
@@ -116,6 +129,8 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
     dates,
     filters: query,
   });
+
+  instances = groupInstancesInModules({ instances, modules });
 
   return applyOffsetAndLimit(uniq(map(instances, 'id')), query);
 };
