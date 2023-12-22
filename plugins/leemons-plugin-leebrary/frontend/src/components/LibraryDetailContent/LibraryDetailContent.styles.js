@@ -27,6 +27,8 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     padding: pxToRem(24),
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative',
+    height: '100%',
   },
   title: {
     color: theme.other.global.content.color.tertiary.default,
@@ -45,7 +47,7 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
   subjectItem: {
     display: 'flex',
-    marginBottom: pxToRem(10),
+    marginBottom: pxToRem(16),
     alignItems: 'center',
   },
   labelBadge: {
@@ -63,6 +65,48 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
         fontWeight: 400,
       },
     },
+  },
+  canAccessContainer: {
+    marginTop: pxToRem(24),
+    width: '100%',
+  },
+  canAccessItem: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    // justifyContent: 'space-between',
+    paddingLeft: pxToRem(8),
+  },
+  avatarWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: pxToRem(8),
+    width: pxToRem(336),
+  },
+  canAccessText: {
+    fontSize: pxToRem(14),
+    fontWeight: 400,
+    lineHeight: '20px',
+    color: '#343A3F',
+  },
+  canAccessFooter: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    height: pxToRem(64),
+    width: '100%',
+    borderTop: '1px solid #DDE1E6',
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    paddingRight: pxToRem(24),
+  },
+  canAccessButton: {
+    // display: 'flex',
+    // alignItems: 'center',
+    // gap: pxToRem(8),
+    // padding: 0,
+    height: pxToRem(40),
   },
 }));
 

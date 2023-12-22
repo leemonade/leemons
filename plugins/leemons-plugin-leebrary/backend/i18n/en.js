@@ -250,6 +250,12 @@ module.exports = {
   list: {
     show: 'Show',
     goTo: 'Go to',
+    permissions: 'Permissions',
+    editPermissions: 'Edit permissions',
+    owner: 'Owner',
+    reading: 'Reading',
+    editor: 'Editor',
+    assigner: 'Assigner',
     tableLabels: {
       name: 'Name',
       owner: 'Owner',

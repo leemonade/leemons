@@ -45,11 +45,6 @@ const LibraryDetail = ({
   // const { fileExtension } = asset;
   const fileExtension = asset?.fileExtension;
 
-  const handleToggle = () => {
-    if (isFunction(events?.onToggle)) {
-      events.onToggle();
-    }
-  };
   return (
     <Box
       style={{ position: 'absolute', height: '100%', width: '100%' }}
@@ -116,6 +111,8 @@ const LibraryDetail = ({
           />
           <LibraryDetailContent
             {...asset}
+            asset={asset}
+            onShare={events.onShare}
             excludeMetadatas={excludeMetadatas}
             variantIcon={variantIcon}
             variantTitle={variantTitle}
@@ -123,44 +120,8 @@ const LibraryDetail = ({
             labels={labels}
             metadataComponent={metadataComponent}
           />
-          {!asset?.public && (!isEmpty(asset?.canAccess) || !isEmpty(asset?.classesCanAccess)) && (
-            <Stack direction="column" spacing={2} padding={4}>
-              <Text role="productive" size="xs">
-                {asset.isPrivate ? labels.privated : labels.sharedWith}
-              </Text>
-              <AvatarsGroup
-                size="sm"
-                data={asset.canAccess}
-                numberFromClassesAndData
-                moreThanUsersAsMulti={2}
-                customAvatarMargin={4}
-                zIndexInverted
-                classesData={asset?.classesCanAccess}
-                limit={3}
-              />
-            </Stack>
-          )}
-          {/* {asset?.public && (
-            <Stack direction="column" spacing={2} padding={4}>
-              <Text role="productive" size="xs">
-                {labels.sharedWithEverybody}
-              </Text>
-            </Stack>
-          )} */}
         </Stack>
       </Stack>
-      {/* {toolbarItems?.toggle && (
-        <Box className={cx(classes.lastIcon, { [classes.stickRight]: !showDrawer && !open })}>
-          <ActionButton
-            icon={<MoveRightIcon height={20} width={20} />}
-            onClick={handleToggle}
-            tooltip={!open ? toolbarItems.open || toolbarItems.toggle : toolbarItems.toggle}
-            className={cx(classes.button, {
-              [classes.flip]: !showDrawer,
-            })}
-          />
-        </Box>
-      )} */}
     </Box>
   );
 };

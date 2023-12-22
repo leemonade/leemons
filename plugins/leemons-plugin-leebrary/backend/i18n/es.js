@@ -237,6 +237,12 @@ module.exports = {
   list: {
     show: 'Mostrar',
     goTo: 'Ir a',
+    permissions: 'Permisos',
+    editPermissions: 'Editar permisos',
+    owner: 'Propietario',
+    reading: 'Lectura',
+    editor: 'Editor',
+    assigner: 'Asignador',
     tableLabels: {
       name: 'Nombre',
       owner: 'Propietario/a',

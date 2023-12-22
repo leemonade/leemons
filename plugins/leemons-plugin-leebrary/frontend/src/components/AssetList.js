@@ -898,7 +898,16 @@ function AssetList({
             zIndex: 99,
           })}
         >
-          <Drawer opened={isDrawerOpen} size="496px" close={false} empty={true}>
+          <Drawer
+            opened={isDrawerOpen}
+            size="496px"
+            close={false}
+            empty={true}
+            className={{
+              root: { borderRadius: 0, border: 'none !important' },
+              body: { borderRadius: 0, border: 'none !important' },
+            }}
+          >
             <CardDetailWrapper
               category={store.category || {}}
               asset={store.asset}

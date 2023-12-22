@@ -1,23 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, isFunction } from 'lodash';
 import {
-  ActionButton,
+  Button,
   Badge,
   Box,
-  ImageLoader,
-  Paper,
   Stack,
   Text,
+  TextClamp,
   useClipboard,
   Tabs,
   TabPanel,
   pxToRem,
+  Avatar,
 } from '@bubbles-ui/components';
-import { DuplicateIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { getDomain } from '../LibraryCardContent';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
 import {
   LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS,
@@ -25,6 +24,7 @@ import {
 } from './LibraryDetailContent.constants';
 import prefixPN from '../../helpers/prefixPN';
 import { MetadataDisplay } from './components/MetadataDisplay';
+import { EditIcon } from '../LibraryDetailToolbar/icons/EditIcon';
 
 const LibraryDetailContent = ({
   description,
@@ -43,13 +43,19 @@ const LibraryDetailContent = ({
   program,
   metadataComponent,
   file,
+  canAccess,
+  classesCanAccess,
+  asset,
+  onShare = () => {},
   onCopy = () => {},
   ...props
 }) => {
+  const isTeacher = useIsTeacher();
   const { classes } = LibraryDetailContentStyles({}, { name: 'LibraryDetailContent' });
   const clipboard = useClipboard({ timeout: 2000 });
-  const [, translations] = useTranslateLoader(prefixPN('list'));
+  const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [subjectsIds, setSubjectsIds] = useState([]);
+  const [canAccessData, setCanAccessData] = useState([]);
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -57,10 +63,15 @@ const LibraryDetailContent = ({
     }
     return {};
   }, [JSON.stringify(translations)]);
-
   const handleCopy = () => {
     clipboard.copy(url);
     onCopy();
+  };
+
+  const handleShare = () => {
+    if (isFunction(onShare)) {
+      onShare(asset);
+    }
   };
 
   useEffect(() => {
@@ -68,6 +79,13 @@ const LibraryDetailContent = ({
       setSubjectsIds(subjects);
     }
   }, [subjects]);
+
+  useEffect(() => {
+    if (canAccess && canAccess.length > 0) {
+      setCanAccessData([...canAccess, ...classesCanAccess]);
+    }
+  }, [canAccess, classesCanAccess]);
+
   return (
     <Box className={classes.root}>
       <Tabs panelColor="default" fullHeight fullWidth centerGrow className={classes.tab}>
@@ -103,7 +121,6 @@ const LibraryDetailContent = ({
                   }}
                 />
               )}
-              {/* <MetadataDisplay metadata={metadata} /> */}
             </Stack>
             {tags?.length > 0 && (
               <Box className={classes.tags}>
@@ -124,13 +141,53 @@ const LibraryDetailContent = ({
           </Box>
         </TabPanel>
         <TabPanel label={detailLabels?.permissions}>
-          <Box className={classes.tabPane}>hello 2</Box>
+          <Box className={classes.tabPanel}>
+            <Box>
+              <Text
+                className={classes.title}
+              >{`${detailLabels?.permissions} (${canAccess?.length})`}</Text>
+              <Box>
+                {canAccessData?.length > 0 && (
+                  <Box className={classes.canAccessContainer}>
+                    {canAccessData.map((user, index) => (
+                      <Box key={index} className={classes.canAccessItem}>
+                        <Box className={classes.avatarWrapper}>
+                          <Avatar alt={user?.name} name={user?.name} image={user?.avatar} />
+                          <TextClamp lines={1}>
+                            <Text className={classes.canAccessText}> {user?.name}</Text>
+                          </TextClamp>
+                        </Box>
+                        <Box>
+                          {Array.isArray(user.permissions) &&
+                            user?.permissions.map((permission) => t(`${permission}`))}
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            </Box>
+            <Box className={classes.canAccessFooter}>
+              <Button
+                variant="outline"
+                size="md"
+                label={'Editar Permisos'}
+                className={classes.canAccessButton}
+                leftIcon={<EditIcon width={18} height={18} />}
+                onClick={handleShare}
+              >
+                {'Editar Permisos'}
+              </Button>
+            </Box>
+          </Box>
         </TabPanel>
-        <TabPanel label={detailLabels?.instructions}>
-          <Box className={classes.tabPane}>hello 2</Box>
-        </TabPanel>
+        {isTeacher && (
+          <TabPanel label={detailLabels?.instructions}>
+            <Box className={classes.tabPanel}>hello 2</Box>
+          </TabPanel>
+        )}
       </Tabs>
-      {variant === 'bookmark' && (
+      {/* {variant === 'bookmark' && (
         <Box
           sx={(theme) => ({ padding: theme.spacing[2], backgroundColor: theme.colors.mainWhite })}
         >
@@ -162,7 +219,7 @@ const LibraryDetailContent = ({
             </Stack>
           </Paper>
         </Box>
-      )}
+      )} */}
     </Box>
   );
 };
