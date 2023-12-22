@@ -13,7 +13,7 @@ const restActions = require('./rest/nodeLevels.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'curriculum.nodeLevels',
+  name: 'curriculum.node-levels',
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
