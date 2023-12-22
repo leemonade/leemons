@@ -63,7 +63,9 @@ module.exports = {
     shared: 'Compartido',
   },
   scormSetup: {
-    title: 'Añadir nuevo contenido SCORM',
+    titleNew: 'NUEVO SCORM',
+    titleEdit: 'EDITAR SCORM',
+    scormTitlePlaceholder: "Título del nuevo SCORM",
     description:
       'Para importar un contenido SCORM, debe estar comprimido (.zip) y debe tener un archivo <strong>imsmanifest.xml</strong> que describa el curso y su contenido.',
     addFile: 'Subir archivo zip',
@@ -77,17 +79,17 @@ module.exports = {
     formatLabel: 'Formato',
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
-    publishOptions: 'Opciones de publicación',
-    onlyPublish: 'Solo publicar',
-    publishAndShare: 'Publicar y compartir',
-    publishAndAssign: 'Publicar y asignar como tarea',
+    publishAndAssign: 'Publicar y asignar',
     config: 'Configuración general',
     schemaVersion: 'Versión de SCORM',
+    schemaVersionPlaceholder: 'Select version...',
     configHelp:
       'Hemos extraído algunos datos del paquete SCORM para que puedas confirmarlos o editarlos. Además, puedes clasificar este contenido según programas o asignaturas de forma opcional.',
     gradable: 'Contiene actividades/tests evaluables',
     multipleAttempts: 'Permite varios intentos',
     numberOfAttempts: 'Indícanos el número de preguntas que tiene este SCORM*',
+    finish: 'Finalizar',
+    cancel: 'Cancelar'
   },
   scormAssign: {
     assign: 'Asignar como tarea',

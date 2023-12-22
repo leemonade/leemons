@@ -38,7 +38,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
   ]);
 
   const { menuLabels, taskLabel, expressTaskLabel } = useMemo(() => {
-    if (translations && translations.items) {
+    if (translations?.items) {
       const res = unflatten(translations.items);
 
       // EN: Modify the data object here

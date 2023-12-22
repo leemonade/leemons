@@ -24,7 +24,7 @@ module.exports = {
     summaryLabel: 'Summary',
     summaryRequired: 'Field required',
     tagsLabel: 'Tags',
-    addTag: 'Add tag',
+    addTag: 'Add',
     continue: 'Continue',
     previous: 'Previous',
     featuredImage: 'Add featured image',
@@ -61,7 +61,9 @@ module.exports = {
     shared: 'Shared',
   },
   scormSetup: {
-    title: 'Add new SCORM package',
+    titleNew: 'NEW SCORM PACKAGE',
+    titleEdit: 'EDIT SCORM PACKAGE',
+    scormTitlePlaceholder: "New score package title",
     description:
       'To import a SCORM package, it needs to be zipped up (.zip) and needs to have a <strong>imsmanifest.xml</strong> file which describes the course and its content.',
     fileFormatError:
@@ -75,17 +77,17 @@ module.exports = {
     formatLabel: 'Format',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
-    publishOptions: 'Publish options',
-    onlyPublish: 'Only publish',
-    publishAndShare: 'Publish and share',
     publishAndAssign: 'Publish and assign',
     config: 'General configuration',
     schemaVersion: 'SCORM version',
+    schemaVersionPlaceholder: 'Select version...',
     configHelp:
       'We have extracted some data from the SCORM package for you to confirm or edit. In addition, you can optionally sort this content according to programs or subjects.',
     gradable: 'Contains assessable activities/tests',
     multipleAttempts: 'Allows multiple attempts',
     numberOfAttempts: 'Please indicate the number of questions in this SCORM*',
+    finish: 'Finish',
+    cancel: 'Cancel'
   },
   scormAssign: {
     assign: 'Assign as task',

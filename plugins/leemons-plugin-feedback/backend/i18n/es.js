@@ -27,7 +27,7 @@ module.exports = {
     summaryLabel: 'Resumen',
     summaryRequired: 'Campo necesario',
     tagsLabel: 'Etiquetas',
-    addTag: 'Añadir etiqueta',
+    addTag: 'Añadir',
     continue: 'Continuar',
     previous: 'Anterior',
     addQuestion: 'Añadir nueva pregunta',

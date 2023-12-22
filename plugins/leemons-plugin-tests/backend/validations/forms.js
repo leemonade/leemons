@@ -154,6 +154,11 @@ const saveTestSchema = {
         type: 'string',
       },
     },
+    config: {
+      type: 'object',
+      additionalProperties: true,
+      nullable: true,
+    },
     published: booleanSchema,
   },
   required: ['name'],

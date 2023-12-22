@@ -1,19 +1,71 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
-import AssetFormInput from '@leebrary/components/AssetFormInput';
+import {
+  Button,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import AssetFormInput from '@leebrary/components/AssetFormInput';
 
-export default function DetailBasic({ form, t, onNext, advancedConfig }) {
-  async function next() {
-    const formGood = await form.trigger(['name', 'program', 'subjects']);
-    if (formGood) {
+export default function DetailBasic({
+  t,
+  form,
+  store,
+  advancedConfig,
+  stepName,
+  scrollRef,
+  onNext,
+  onSave,
+}) {
+  const formValues = form.watch();
+  const validate = async () => form.trigger(['name', 'program', 'subjects']);
+
+  const handleOnNext = async () => {
+    if (await validate()) {
       onNext();
     }
-  }
+  };
+
+  const handleOnSave = async () => {
+    if (await validate()) {
+      onSave();
+    }
+  };
 
   return (
-    <ContextContainer divided>
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          rightZone={
+            <>
+              {!formValues.published ? (
+                <Button
+                  variant="link"
+                  onClick={handleOnSave}
+                  disabled={!formValues.name || store.saving}
+                  loading={store.saving === 'draft'}
+                >
+                  {t('saveDraft')}
+                </Button>
+              ) : null}
+
+              <Button
+                rightIcon={<ChevRightIcon height={20} width={20} />}
+                onClick={handleOnNext}
+                disabled={store.saving}
+                loading={store.saving === 'publish'}
+              >
+                {t('continue')}
+              </Button>
+            </>
+          }
+        />
+      }
+    >
       <AssetFormInput
         advancedConfig={advancedConfig}
         form={form}
@@ -21,18 +73,18 @@ export default function DetailBasic({ form, t, onNext, advancedConfig }) {
         tagsPluginName="tests"
         category="assignables.tests"
       />
-      <Stack fullWidth justifyContent="end">
-        <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={next}>
-          {t('continue')}
-        </Button>
-      </Stack>
-    </ContextContainer>
+    </TotalLayoutStepContainer>
   );
 }
 
 DetailBasic.propTypes = {
-  form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func,
+  form: PropTypes.object.isRequired,
   advancedConfig: PropTypes.object,
+  stepName: PropTypes.string,
+  Footer: PropTypes.any,
+  onNext: PropTypes.func,
+  onSave: PropTypes.func,
+  scrollRef: PropTypes.any,
+  store: PropTypes.object,
 };

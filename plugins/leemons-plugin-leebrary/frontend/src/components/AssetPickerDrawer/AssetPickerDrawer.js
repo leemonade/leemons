@@ -14,7 +14,7 @@ export function useAssetPickerDrawerLocalizations() {
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
-    if (translations && translations.items) {
+    if (translations?.items) {
       const res = unflatten(translations.items);
 
       return get(res, key);
@@ -43,11 +43,20 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
 });
 
 /**
+ * Renders the AssetPickerDrawer component.
  *
- * @param {{
- *  layout: 'rows' | 'thumbnails' | 'cards'
- *  filters: {type: 'image' | 'audio' | 'video' | 'document'}
- * }} param0
+ * @param {object} position - The position of the drawer.
+ * @param {boolean} opened - Whether the drawer is opened or not.
+ * @param {string} size - The size of the drawer.
+ * @param {boolean} shadow - Whether to show shadow or not.
+ * @param {string} layout - The layout variant of the asset picker.
+ * @param {boolean} creatable - Whether the asset picker is creatable or not.
+ * @param {array} categories - The categories of the assets.
+ * @param {array} filters - The filters to apply to the assets.
+ * @param {function} onClose - The function to close the drawer.
+ * @param {function} onSelect - The function to select an asset.
+ * @param {boolean} onlyCreateImages - Whether to only create images or not.
+ * @return {JSX.Element} The rendered AssetPickerDrawer component.
  */
 export function AssetPickerDrawer({
   position,
@@ -60,9 +69,9 @@ export function AssetPickerDrawer({
   filters,
   onClose,
   onSelect,
+  onlyCreateImages,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
-
   const { classes } = useAssetPickerDrawerStyles();
 
   return (
@@ -78,7 +87,7 @@ export function AssetPickerDrawer({
       <Box className={classes.root}>
         <Header localizations={localizations?.header} onClose={onClose} />
         {creatable ? (
-          <Tabs usePaddedLayout fullHeight>
+          <Tabs fullHeight>
             <TabPanel key="library" label={localizations?.tabs?.library}>
               <AssetList
                 variant={layout}
@@ -89,7 +98,11 @@ export function AssetPickerDrawer({
               />
             </TabPanel>
             <TabPanel key="new" label={localizations?.tabs?.new}>
-              <NewResource localizations={localizations} onSelect={onSelect} />
+              <NewResource
+                localizations={localizations}
+                onSelect={onSelect}
+                onlyCreateImages={onlyCreateImages}
+              />
             </TabPanel>
           </Tabs>
         ) : (
@@ -108,6 +121,9 @@ export function AssetPickerDrawer({
   );
 }
 
+AssetPickerDrawer.defaultProps = {
+  onlyCreateImages: true,
+};
 AssetPickerDrawer.propTypes = {
   position: PropTypes.oneOf(['left', 'right']),
   opened: PropTypes.bool,
@@ -119,4 +135,5 @@ AssetPickerDrawer.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.string),
   layout: PropTypes.oneOf(['rows', 'thumbnails', 'cards']),
   filters: PropTypes.object,
+  onlyCreateImages: PropTypes.bool,
 };

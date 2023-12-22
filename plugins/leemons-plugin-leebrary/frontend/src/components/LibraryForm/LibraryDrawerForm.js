@@ -22,17 +22,10 @@ import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
-import _, { isEmpty, isFunction, isNil } from 'lodash';
+import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  getCoverName,
-  getCoverUrl,
-  isImageFile,
-  isNullish,
-  isValidURL,
-  prepareAsset,
-} from '../../helpers/prepareAsset';
+import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
 import { AssetListDrawer } from '../AssetListDrawer';
 import {
@@ -41,7 +34,67 @@ import {
   LIBRARY_FORM_TYPES,
 } from './LibraryForm.constants';
 
-const LibraryForm = ({
+// -----------------------------------------------------------------------------
+// HELPERS
+
+function isValidURL(url) {
+  const urlPattern =
+    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
+  return urlPattern.test(url) ? true : 'Invalid URL';
+}
+
+function isImageFile(file) {
+  if (file?.type && file?.type.indexOf('image') === 0) {
+    return true;
+  }
+
+  const name = file?.path || file?.name;
+
+  if (!isEmpty(name)) {
+    const ext = toLower(name.split('.').at(-1));
+    return ['png', 'jpeg', 'jpg', 'webp', 'gif', 'bmp'].includes(ext);
+  }
+
+  return false;
+}
+
+function isNullish(obj) {
+  return Object.values(obj).every((value) => {
+    if (isNil(value)) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
+function getCoverUrl(cover) {
+  if (cover?.id) {
+    return getFileUrl(cover.id);
+  }
+
+  if (cover instanceof File) {
+    return URL.createObjectURL(cover);
+  }
+
+  if (isString(cover) && isValidURL(cover)) {
+    return cover;
+  }
+
+  return null;
+}
+
+function getCoverName(cover) {
+  if (cover) {
+    return `${cover.name}.${cover.extension}`;
+  }
+  return null;
+}
+
+// -----------------------------------------------------------------------------
+// COMPONENT
+
+const LibraryDrawerForm = ({
   advancedConfigMode,
   labels,
   placeholders,
@@ -61,7 +114,7 @@ const LibraryForm = ({
   hideTitle,
   advancedConfig,
   hideSubmit,
-  onChange = () => { },
+  onChange = () => {},
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -83,7 +136,6 @@ const LibraryForm = ({
   const defaultValues = {
     file: asset?.file || null,
     name: asset?.name || '',
-    tagline: asset?.tagline || '',
     description: asset?.description || '',
     color: asset?.color || '',
     cover: asset?.cover || null,
@@ -143,16 +195,7 @@ const LibraryForm = ({
 
   useEffect(() => {
     if (!isNullish(asset) && isEmpty(asset?.id)) {
-      const valueNames = [
-        'file',
-        'name',
-        'tagline',
-        'description',
-        'color',
-        'cover',
-        'program',
-        'subjects',
-      ];
+      const valueNames = ['file', 'name', 'description', 'color', 'cover', 'program', 'subjects'];
       const values = getValues(valueNames);
       valueNames.forEach((valueName, index) => {
         setValue(valueName, asset[valueName] || values[index]);
@@ -205,7 +248,7 @@ const LibraryForm = ({
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
-  const validateUrl = async () => await trigger('url', { shouldFocus: true });
+  const validateUrl = async () => trigger('url', { shouldFocus: true });
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
@@ -266,7 +309,6 @@ const LibraryForm = ({
       <form autoComplete="off">
         <ContextContainer
           title={!hideTitle ? labels.title : undefined}
-          divided={!advancedConfigMode}
           sx={(theme) => ({ marginTop: advancedConfigMode ? theme.spacing[4] : 0 })}
         >
           <ContextContainer>
@@ -349,24 +391,6 @@ const LibraryForm = ({
                 />
                 <Controller
                   control={control}
-                  name="tagline"
-                  rules={
-                    !isNil(errorMessages?.tagline?.required) && {
-                      required: errorMessages.tagline.required,
-                    }
-                  }
-                  render={({ field }) => (
-                    <TextInput
-                      label={labels.tagline}
-                      placeholder={placeholders.tagline}
-                      error={errors.tagline}
-                      required={!isNil(errorMessages?.tagline?.required)}
-                      {...field}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
                   name="description"
                   rules={
                     !isNil(errorMessages?.description?.required) && {
@@ -408,8 +432,10 @@ const LibraryForm = ({
               </>
             ) : null}
 
+            {children || null}
+
             {(!advancedConfigMode && !advancedConfig?.colorToRight) ||
-              (advancedConfigMode && advancedConfig?.colorToRight) ? (
+            (advancedConfigMode && advancedConfig?.colorToRight) ? (
               <Controller
                 control={control}
                 name="color"
@@ -427,7 +453,7 @@ const LibraryForm = ({
             ) : null}
           </ContextContainer>
           {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-            (advancedConfigMode && advancedConfig?.fileToRight) ? (
+          (advancedConfigMode && advancedConfig?.fileToRight) ? (
             <>
               {!isImage && (
                 <>
@@ -484,8 +510,6 @@ const LibraryForm = ({
               )}
             </>
           ) : null}
-
-          {children || null}
 
           {!advancedConfigMode ? (
             <>
@@ -571,8 +595,8 @@ const LibraryForm = ({
   );
 };
 
-LibraryForm.defaultProps = LIBRARY_FORM_DEFAULT_PROPS;
-LibraryForm.propTypes = LIBRARY_FORM_PROP_TYPES;
+LibraryDrawerForm.defaultProps = LIBRARY_FORM_DEFAULT_PROPS;
+LibraryDrawerForm.propTypes = LIBRARY_FORM_PROP_TYPES;
 
-export { LibraryForm };
-export default LibraryForm;
+export { LibraryDrawerForm };
+export default LibraryDrawerForm;

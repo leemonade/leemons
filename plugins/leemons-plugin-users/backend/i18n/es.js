@@ -300,7 +300,7 @@ module.exports = {
     recoveryEmailSent: 'Correo de recuperación enviado',
     otherInformationLabel: 'Otra información',
     tags: 'Tags',
-    addTag: 'Añadir tag',
+    addTag: 'Añadir',
     edit: 'Editar',
     save: 'Guardar',
     cancel: 'Cancelar',

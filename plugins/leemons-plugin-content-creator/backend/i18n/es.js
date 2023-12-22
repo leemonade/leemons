@@ -1,4 +1,16 @@
 module.exports = {
+  detailPage: {
+    titleNew: 'NUEVO DOCUMENTO',
+    titleEdit: 'EDITAR DOCUMENTO',
+    saveDraft: 'Guardar borrador',
+    publish: 'Publicar',
+    publishAndAssign: 'Publicar y Asignar',
+    next: 'Siguiente',
+    previous: 'Anterior',
+    cancel: 'Cancelar',
+    back: 'Volver',
+    documentTitlePlaceHolder: 'Escribe el nombre del documento...',
+  },
   documentDetail: {
     basic: 'Información básica',
     coverRequired: 'Es necesario subir una imagen de portada',
@@ -24,7 +36,7 @@ module.exports = {
     summaryLabel: 'Resumen',
     summaryRequired: 'Campo necesario',
     tagsLabel: 'Etiquetas',
-    addTag: 'Añadir etiqueta',
+    addTag: 'Añadir',
     continue: 'Continuar',
     previous: 'Anterior',
     featuredImage: 'Añadir imagen destacada',

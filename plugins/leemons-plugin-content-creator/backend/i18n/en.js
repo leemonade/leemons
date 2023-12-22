@@ -1,4 +1,16 @@
 module.exports = {
+  detailPage: {
+    titleNew: 'NEW DOCUMENT',
+    titleEdit: 'EDIT DOCUMENT',
+    saveDraft: 'Save as draft',
+    publish: 'Publish',
+    publishAndAssign: 'Publish and Assign',
+    next: 'Next',
+    previous: 'Back',
+    cancel: 'Cancel',
+    back: 'Back',
+    documentTitlePlaceHolder: 'Write the document name...',
+  },
   documentDetail: {
     basic: 'Basic',
     coverRequired: 'Cover is required',
@@ -24,7 +36,7 @@ module.exports = {
     summaryLabel: 'Summary',
     summaryRequired: 'Field required',
     tagsLabel: 'Tags',
-    addTag: 'Add tag',
+    addTag: 'Add',
     continue: 'Continue',
     previous: 'Previous',
     featuredImage: 'Add featured image',

@@ -32,6 +32,7 @@ async function saveTest({ data, ctx }) {
       questions: data.questions,
       type: data.type,
       level: data.level,
+      config: data.config,
     },
   };
 

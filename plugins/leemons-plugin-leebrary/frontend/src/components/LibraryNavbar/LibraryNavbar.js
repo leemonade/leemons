@@ -9,7 +9,6 @@ import {
   IconButton,
   Paper,
   ScrollArea,
-  SimpleBar,
   Stack,
   Text,
 } from '@bubbles-ui/components';
@@ -101,7 +100,7 @@ const LibraryNavbar = ({
           )),
       ];
 
-      if (subjects && subjects.length) {
+      if (subjects?.length > 0) {
         result.push(
           <NavbarItem
             key={'student-subjects'}
@@ -119,6 +118,7 @@ const LibraryNavbar = ({
               {subjects.map((subject) => {
                 return (
                   <Box
+                    key={JSON.stringify(subject)}
                     onClick={() => onNavSubject(subject)}
                     sx={(theme) => ({
                       display: 'flex',
@@ -169,7 +169,7 @@ const LibraryNavbar = ({
         <PluginLeebraryIcon height={24} width={24} />
         <Text className={classes.title}>{labels.title}</Text>
       </Box>
-      <SimpleBar className={classes.navItems}>
+      <ScrollArea className={classes.navItems}>
         <Stack direction={'column'} fullWidth>
           {useNewCreateButton ? (
             <Box sx={(theme) => ({ padding: theme.spacing[2] })}>
@@ -265,7 +265,7 @@ const LibraryNavbar = ({
             </Stack>
           </Paper>
         ) : null}
-      </SimpleBar>
+      </ScrollArea>
     </Box>
   );
 };

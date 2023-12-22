@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { HtmlText, InputWrapper, TableInput, Textarea } from '@bubbles-ui/components';
-// import { TextEditorInput } from '@bubbles-ui/editors';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
 export default function Objectives({ form, name, label, required }) {
@@ -11,7 +10,7 @@ export default function Objectives({ form, name, label, required }) {
   const {
     control,
     formState: { errors },
-  } = form || useFormContext();
+  } = form;
 
   const columns = useMemo(() => [
     {

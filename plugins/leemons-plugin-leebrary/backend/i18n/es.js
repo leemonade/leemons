@@ -31,15 +31,20 @@ module.exports = {
         titleNew: 'Nuevo recurso',
         titleEdit: 'Editar recurso',
         back: 'Volver',
+        presentation: 'Presentación',
       },
       bookmark: {
-        title: 'Nuevo marcador',
+        titleNew: 'Nuevo marcador',
+        titleEdit: 'Editar marcador',
       },
       labels: {
+        content: 'Contenido',
+        presentation: 'Presentación',
+        other: 'Otros',
         title: 'Subir archivo',
         featuredImage: 'Imagen destacada',
-        tags: 'Tags',
-        addTag: 'Añadir tag',
+        tags: 'Etiquetas',
+        addTag: 'Añadir',
         changeImage: 'Cambiar imagen',
         uploadButton: 'Subir imagen',
         browseFile: 'Click para buscar un archivo',
@@ -50,7 +55,7 @@ module.exports = {
         search: 'Buscar en la biblioteca',
         submitForm: 'Añadir a la biblioteca',
         submitChanges: 'Guardar cambios',
-        name: 'Nombre',
+        name: 'Título',
         tagline: 'Subtítulo',
         description: 'Descripción',
         createdSuccess: 'Recurso creado con éxito',
@@ -65,7 +70,7 @@ module.exports = {
         preview: 'Vista previa',
         subjectSelects: {
           labels: {
-            title: 'Configuración',
+            title: 'Programas y Asignaturas',
             center: 'Centro',
             program: 'Programa',
             course: 'Curso',
@@ -113,8 +118,8 @@ module.exports = {
         featuredImage: 'Cambiar la imagen por defecto de la página web',
       },
       placeholders: {
-        tagsInput: 'Escribir etiqueta',
-        name: 'Nombre del recurso',
+        tagsInput: 'Escribe aquí las etiquetas y pulsa intro',
+        name: 'Título del recurso',
         tagline: 'Subtítulo',
         tags: 'Etiquetas',
         description: 'Descripción del recurso',
@@ -123,7 +128,7 @@ module.exports = {
       },
       errorMessages: {
         name: {
-          required: 'Nombre es necesario',
+          required: 'Título es necesario',
         },
         file: {
           required: 'Archivo es necesario',

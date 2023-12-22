@@ -5,11 +5,9 @@ import React from 'react';
 import QuestionsTable from './QuestionsTable';
 
 export default function DetailQuestionsSelect({
-  back,
-  questions,
   t,
+  questions,
   onChange,
-  next,
   value = [],
   reorderMode,
   error,
@@ -56,29 +54,12 @@ export default function DetailQuestionsSelect({
           </Box>
         )}
       </ContextContainer>
-      <Stack fullWidth justifyContent="space-between">
-        <Box>
-          <Button
-            compact
-            variant="light"
-            leftIcon={<ChevLeftIcon height={20} width={20} />}
-            onClick={back}
-          >
-            {t('previous')}
-          </Button>
-        </Box>
-        <Box>
-          <Button onClick={next}>{t(reorderMode ? 'continue' : 'assignSelectedQuestions')}</Button>
-        </Box>
-      </Stack>
     </ContextContainer>
   );
 }
 
 DetailQuestionsSelect.propTypes = {
   t: PropTypes.func.isRequired,
-  next: PropTypes.func.isRequired,
-  back: PropTypes.func.isRequired,
   questionBank: PropTypes.object,
   questions: PropTypes.array,
   value: PropTypes.array,

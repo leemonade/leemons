@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 
 export const LIBRARY_FORM_TYPES = {
-  MEDIA_FILES: 'mediaFiles',
+  MEDIA_FILES: 'media-files',
   BOOKMARKS: 'bookmarks',
+  DOCUMENT: 'document'
 };
 
 export const LIBRARY_FORM_DEFAULT_PROPS = {
@@ -60,4 +61,5 @@ export const LIBRARY_FORM_PROP_TYPES = {
   type: PropTypes.oneOf(Object.keys(LIBRARY_FORM_TYPES).map((key) => LIBRARY_FORM_TYPES[key])),
   hideSubmit: PropTypes.bool,
   form: PropTypes.any,
+  ContentExtraFields: PropTypes.element,
 };
