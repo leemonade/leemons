@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
+  ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
@@ -66,13 +67,15 @@ export default function DetailBasic({
         />
       }
     >
-      <AssetFormInput
-        advancedConfig={advancedConfig}
-        form={form}
-        preview
-        tagsPluginName="tests"
-        category="assignables.tests"
-      />
+      <ContextContainer>
+        <AssetFormInput
+          advancedConfig={advancedConfig}
+          form={form}
+          preview
+          tagsPluginName="tests"
+          category="assignables.tests"
+        />
+      </ContextContainer>
     </TotalLayoutStepContainer>
   );
 }

@@ -137,6 +137,7 @@ export default function DetailContent({
 
           <ContextContainer title="Otros">
             <Stack direction="column">
+              {/*
               <Controller
                 control={form.control}
                 name="config.hasResources"
@@ -144,6 +145,7 @@ export default function DetailContent({
                   <Switch {...field} checked={field.value} label="Añadir recursos" />
                 )}
               />
+              */}
               <Controller
                 control={form.control}
                 name="config.hasInstructions"
