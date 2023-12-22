@@ -165,7 +165,11 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const [program] = await programsByIds({ ids: ctx.params.id, ctx });
+      const [program] = await programsByIds({
+        ids: ctx.params.id,
+        withClasses: ctx.params.withClasses,
+        ctx,
+      });
       if (!program) throw new LeemonsError(ctx, { message: 'Program not found' });
       return { status: 200, program };
     },

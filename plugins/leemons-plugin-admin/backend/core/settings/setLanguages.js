@@ -12,7 +12,7 @@ const { STATUS } = require('../../config/constants');
  * @static
  * @return {Promise<any>}
  * */
-async function setLanguages({ langs, defaultLang, ctx }) {
+async function setLanguages({ langs, defaultLang, removeOthers, ctx }) {
   const currentSettings = await findOne({ ctx });
 
   const locales = flattenDeep([langs]);
@@ -30,6 +30,14 @@ async function setLanguages({ langs, defaultLang, ctx }) {
       ctx.tx.call('users.platform.addLocale', { locale: lang.code, name: lang.name })
     )
   );
+
+  if (removeOthers) {
+    await Promise.all(
+      localesToRemove.map((locale) =>
+        ctx.tx.call('users.platform.removeLocale', { locale: locale.code })
+      )
+    );
+  }
 
   // await addLocales(localesAdded.map((locale) => locale.code));
 
