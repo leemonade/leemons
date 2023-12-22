@@ -156,4 +156,10 @@ module.exports = {
   modulesTab: {
     tabName: 'Modules',
   },
+  moduleDrawer: {
+    module: 'Módulo',
+    activities: 'Actividades',
+    name: 'Nombre',
+    Type: 'Tipo',
+  },
 };

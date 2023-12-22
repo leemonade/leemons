@@ -1,27 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { PluginLearningPathsIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @library plugin
 import { LibraryDetail } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { get } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import duplicateModuleRequest from '@learning-paths/requests/duplicateModule';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import removeModuleRequest from '@learning-paths/requests/removeModule';
 import { prefixPN } from '@learning-paths/helpers';
+import { AssetMetadataModule } from '@learning-paths/components/AssetMetadataModule';
 import { useListCardLocalizations } from './ListCard';
 
 function Details({ asset, onRefresh, onShare, ...props }) {
   const { id, published } = asset?.providerData ?? {};
-  const { name, role } = asset;
+  const name = asset?.name;
+  const role = asset?.role;
 
   const isOwner = role === 'owner';
 
   const localizations = useListCardLocalizations();
-  const [t, traslations] = useTranslateLoader(prefixPN('libraryCard.menuItems'));
+  const [t] = useTranslateLoader(prefixPN('libraryCard.menuItems'));
   const {
     openDeleteConfirmationModal,
     openConfirmationModal,
@@ -114,6 +114,7 @@ function Details({ asset, onRefresh, onShare, ...props }) {
       {...props}
       asset={asset}
       variant="task"
+      metadataComponent={<AssetMetadataModule metadata={asset} />}
       variantIcon={<PluginLearningPathsIcon />}
       variantTitle={localizations.variantTitle}
       toolbarItems={toolbarItems}

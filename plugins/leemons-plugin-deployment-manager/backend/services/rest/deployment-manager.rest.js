@@ -92,7 +92,7 @@ module.exports = {
 
       const callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
 
-      if (!ctx.params.allConfig && config) {
+      if (!ctx.params?.allConfig && config) {
         const keys = Object.keys(config);
         let result = null;
         _.forEach(keys, (key) => {
