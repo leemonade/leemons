@@ -246,6 +246,12 @@ module.exports = {
       assigner: 'Assigner',
       public: 'Public',
     },
+    cancelModal: {
+      title: 'Cancel content',
+      description: 'Do you want to cancel?',
+      confirm: 'Confirm',
+      cancel: 'Back',
+    },
   },
   list: {
     show: 'Show',

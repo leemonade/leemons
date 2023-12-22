@@ -67,6 +67,7 @@ const AssetForm = ({
   hideSubmit,
   onChange = noop,
   ContentExtraFields = null,
+  editing,
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -168,7 +169,7 @@ const AssetForm = ({
         setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
       }
       if (isImageType) {
-        setValue('cover', null);
+        // setValue('cover', null);
       }
     }
   }, [assetFile]);
@@ -306,7 +307,7 @@ const AssetForm = ({
                             error={errors.url}
                             required
                             onBlur={validateUrl}
-                            disabled={field.value}
+                            disabled={editing}
                           />
                         </Box>
                         <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
@@ -315,7 +316,7 @@ const AssetForm = ({
                             leftIcon={<CommonFileSearchIcon />}
                             onClick={handleCheckUrl}
                             loading={checking}
-                            disabled={field.value}
+                            disabled={editing}
                           >
                             {labels.checkUrl}
                           </Button>
@@ -358,7 +359,6 @@ const AssetForm = ({
                       )}
                     />
                     {ContentExtraFields}
-
                   </>
                 )}
               </ContextContainer>

@@ -62,4 +62,5 @@ export const LIBRARY_FORM_PROP_TYPES = {
   hideSubmit: PropTypes.bool,
   form: PropTypes.any,
   ContentExtraFields: PropTypes.element,
+  editing: PropTypes.bool,
 };

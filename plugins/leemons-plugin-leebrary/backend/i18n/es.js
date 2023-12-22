@@ -233,6 +233,12 @@ module.exports = {
       owner: 'Propietario',
       public: 'Público',
     },
+    cancelModal: {
+      title: 'Cancelar contenido',
+      description: '¿Quieres cancelar este contenido?',
+      confirm: 'Confirmar',
+      cancel: 'Atrás',
+    },
   },
   list: {
     show: 'Mostrar',

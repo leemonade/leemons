@@ -1,12 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
-import JSZip from 'jszip';
+import React, { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
+import { useForm, Controller, FormProvider } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   LoadingOverlay,
   Stack,
   Box,
+  useDebouncedCallback,
   DropdownButton,
   TotalLayoutHeader,
   TotalLayoutFooterContainer,
@@ -14,109 +14,143 @@ import {
   AssetScormIcon,
   Select,
 } from '@bubbles-ui/components';
+import { BasicData, UploadingFileModal } from '@leebrary/components';
+import JSZip from 'jszip';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useLayout } from '@layout/context';
+import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { BasicData, UploadingFileModal } from '@leebrary/components';
-import usePackage from '@scorm/request/hooks/queries/usePackage';
 import { prefixPN } from '@scorm/helpers';
-import { getSupportedVersionsRequest } from '@scorm/request';
-import useMutatePackage from '@scorm/request/hooks/mutations/useMutatePackage';
+import { savePackageRequest, getPackageRequest, getSupportedVersionsRequest } from '@scorm/request';
 import {
   xml2json,
   getVersionFromMetadata,
   getLaunchURL,
   getDefaultOrganization,
 } from '@scorm/lib/utilities';
+import { useLayout } from '@layout/context';
 
 export default function Detail() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('scormSetup'));
-  const scrollRef = useRef(null);
-  const params = useParams();
-  const history = useHistory();
-  const [isNew, setIsNew] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [supportedVersions, setSupportedVersions] = useState([]);
-  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
-  const packageQuery = usePackage({ id: params.id, isNew: false });
-  const mutation = useMutatePackage();
   const { openConfirmationModal } = useLayout();
-  const form = useForm({});
+  const scrollRef = React.useRef(null);
+
+  // ----------------------------------------------------------------------
+  // SETTINGS
+
+  const debounce = useDebouncedCallback(1000);
+  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
+  const [store, render] = useStore({
+    loading: true,
+    isNew: false,
+    package: {},
+    supportedVersions: [],
+    preparedAsset: {},
+    openShareDrawer: false,
+  });
+
+  const history = useHistory();
+  const params = useParams();
+
+  const form = useForm();
   const formValues = form.watch();
 
-  // ···································································
-  // INITIAL DATA
+  // ----------------------------------------------------------------------------
+  // INIT DATA LOADING
 
-  useEffect(() => {
-    const getVersions = async () => {
-      const response = await getSupportedVersionsRequest();
-      setSupportedVersions(response.versions || []);
-    };
-    getVersions();
-  }, []);
+  async function init() {
+    try {
+      store.loading = true;
+      store.isNew = params.id === 'new';
+      render();
+      if (!store.isNew) {
+        const { scorm } = await getPackageRequest(params.id);
+        store.titleValue = scorm.name;
+        store.package = scorm;
 
-  useEffect(() => {
-    setIsLoading(true);
-    if (params.id === 'new') {
-      form.reset();
-      setIsNew(true);
-    } else {
-      form.reset({
-        ...packageQuery.data,
-        cover: packageQuery.data?.cover,
-      });
+        form.reset({
+          ...scorm,
+          file: { id: scorm.file?.id, name: scorm.file?.name, type: scorm.file?.type },
+        });
+      }
 
-      setIsNew(false);
+      const { versions: supportedVersions } = await getSupportedVersionsRequest();
+      store.supportedVersions = supportedVersions;
+      store.idLoaded = params.id;
+      store.loading = false;
+      render();
+    } catch (error) {
+      addErrorAlert(error);
     }
-    setIsLoading(false);
-  }, [packageQuery.data, params.id]);
+  }
 
-  // ··································································
+  useEffect(() => {
+    if (params?.id && store.idLoaded !== params?.id) init();
+  }, [params]);
+
+  // ----------------------------------------------------------------------------
   // HANDLERS
-  const savePackage = async ({ publishing = true, assigning }) => {
-    setIsLoading(true);
 
+  async function savePackage(published) {
     const file = await uploadFileAsMultipart(formValues.file, {
       onProgress: (info) => {
         setUploadingFileInfo(info);
       },
     });
+    const fileId = file?.id ? file.id : file;
     setUploadingFileInfo(null);
 
-    const requestBody = {
+    const dataToSave = {
       ...formValues,
-      file,
-      published: publishing,
+      id: store.isNew ? null : store.idLoaded,
+      file: fileId,
+      launchUrl: store.package.launchUrl,
+      packageAsset: store.package.packageAsset,
+      published,
     };
-    mutation.mutate(
-      { ...requestBody },
-      {
-        onSuccess: (data) => {
-          addSuccessAlert(t('published'));
-          setIsLoading(false);
-          if (assigning) history.push(`/private/scorm/assign/${data.package?.id}`);
-          else history.push('/private/leebrary/assignables.scorm/list?activeTab=published');
-        },
-        onError: (error) => {
-          addErrorAlert(error.message);
-          setIsLoading(false);
-        },
-      }
-    );
-  };
 
-  const handlePublish = async () => {
-    const formIsValid = await form.trigger();
-    if (formIsValid) await savePackage({ publishing: true });
-  };
+    const {
+      package: { id },
+    } = await savePackageRequest(dataToSave);
 
-  const handlePublishAndAssign = async () => {
-    const formIsValid = await form.trigger();
-    if (formIsValid) await savePackage({ publishing: true, assigning: true });
-  };
+    store.package.id = id;
+    store.idLoaded = id;
+    store.isNew = false;
 
-  const handleFileLoad = async (file) => {
+    if (file !== formValues.file.id) {
+      form.setValue('file', {
+        id: file,
+        name: formValues.file.name,
+        type: formValues.file.type,
+      });
+    }
+  }
+
+  async function saveAndPublish() {
+    try {
+      store.saving = 'edit';
+      render();
+      await savePackage(true);
+      addSuccessAlert(t('published'));
+    } catch (error) {
+      addErrorAlert(error);
+    } finally {
+      store.saving = null;
+      render();
+    }
+  }
+
+  async function onlyPublish() {
+    await saveAndPublish();
+    history.push('/private/leebrary/assignables.scorm/list?activeTab=published');
+  }
+
+  async function publishAndAssign() {
+    await saveAndPublish();
+    history.push(`/private/scorm/assign/${store.package.id}`);
+  }
+
+  async function loadFiles(file) {
     if (file instanceof File) {
       try {
         const zip = new JSZip();
@@ -146,7 +180,7 @@ export default function Detail() {
           const organization = getDefaultOrganization(scormData);
           const launchUrl = getLaunchURL(scormData);
 
-          form.setValue('launchUrl', launchUrl);
+          store.package = { ...store.package, launchUrl };
 
           if (organization?.title && isEmpty(formValues.name)) {
             form.setValue('name', organization.title);
@@ -155,7 +189,7 @@ export default function Detail() {
           if (scormData.metadata) {
             const versionValue = getVersionFromMetadata(
               String(scormData.metadata.schemaversion),
-              supportedVersions
+              store.supportedVersions
             );
             if (versionValue) {
               form.setValue('version', versionValue.value);
@@ -169,11 +203,12 @@ export default function Detail() {
         });
       }
     }
-  };
+  }
 
   const handleOnCancel = () => {
     const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
-    if (formHasBeenTouched) {
+    const formIsNotEmpty = !isEmpty(formValues);
+    if (formHasBeenTouched || formIsNotEmpty) {
       openConfirmationModal({
         title: t('cancelModalTitle'),
         description: t('cancelModalDescription'),
@@ -185,15 +220,23 @@ export default function Detail() {
     }
   };
 
-  // ···································································
+  // ----------------------------------------------------------------------------
   // EFFECTS
+
   useEffect(() => {
-    setIsNew(Boolean(params.id));
-  }, [params.id]);
+    const subscription = form.watch(() => {
+      debounce(async () => {
+        store.isValid = await form.trigger();
+        render();
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (formValues.file) {
-      handleFileLoad(formValues.file);
+      loadFiles(formValues.file);
     }
   }, [formValues.file]);
 
@@ -202,22 +245,25 @@ export default function Detail() {
   const footerFinalActionsAndLabels = [
     {
       label: t('publish'),
-      onClick: handlePublish,
+      onClick: () => onlyPublish(),
     },
     {
       label: t('publishAndAssign'),
-      onClick: handlePublishAndAssign,
+      onClick: () => publishAndAssign(),
     },
   ];
 
+  // ----------------------------------------------------------------------------
+  // RENDER
+
   return (
     <FormProvider {...form}>
-      <LoadingOverlay visible={tLoading || isLoading} />
+      <LoadingOverlay visible={tLoading || store.loading} />
       <TotalLayoutContainer
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={isNew ? t('titleNew') : t('titleEdit')}
+            title={store.isNew ? t('titleNew') : t('titleEdit')}
             icon={
               <Stack justifyContent="center" alignItems="center">
                 <AssetScormIcon />
@@ -236,9 +282,9 @@ export default function Detail() {
               program: { show: true, required: false },
               subjects: { show: true, required: false, showLevel: true, maxOne: false },
             }}
-            editing={isNew}
+            editing={!store.isNew}
             categoryKey={'assignables.scorm'}
-            isLoading={isLoading}
+            isLoading={store.loading}
             Footer={
               <TotalLayoutFooterContainer
                 fixed
@@ -246,8 +292,8 @@ export default function Detail() {
                 rightZone={
                   <DropdownButton
                     data={footerFinalActionsAndLabels}
-                    loading={isLoading}
-                    disabled={isLoading}
+                    loading={store.loading}
+                    disabled={store.loading}
                   >
                     {t('finish')}
                   </DropdownButton>
@@ -265,7 +311,7 @@ export default function Detail() {
                     <Select
                       {...field}
                       label={t('schemaVersion')}
-                      data={supportedVersions}
+                      data={store.supportedVersions}
                       placeholder={t('schemaVersionPlaceholder')}
                     />
                   )}

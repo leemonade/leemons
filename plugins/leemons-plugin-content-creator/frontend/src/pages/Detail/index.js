@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
+import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useHistory, useParams } from 'react-router-dom';
@@ -28,9 +29,7 @@ const validators = [
     content: z.string().min(1),
   }),
   z.object({
-    name: z
-      .string({ required_error: 'Title is required' })
-      .min(1, 'Title is required'),
+    name: z.string({ required_error: 'Title is required' }).min(1, 'Title is required'),
   }),
 ];
 
@@ -68,12 +67,12 @@ export default function Index({ isNew, readOnly }) {
 
   const handleOnCancel = () => {
     const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
-    const formIsNotEmpty = !_.isEmpty(formValues);
-    if (formHasBeenTouched || formIsNotEmpty) {
+    const formIsNotEmpty = !isEmpty(formValues);
+    if ((formHasBeenTouched || formIsNotEmpty) && !readOnly) {
       openConfirmationModal({
-        title: '¿Cancelar formulario?',
-        description: '¿Deseas cancelar el formulario?',
-        labels: { confim: 'Cancelar', cancel: 'Cancelar' },
+        title: t('cancelModalTitle'),
+        description: t('cancelModalDescription'),
+        labels: { confim: t('cancelModalConfirm'), cancel: t('cancelModalCancel') },
         onConfirm: () => history.goBack(),
       })();
     } else {
@@ -91,7 +90,7 @@ export default function Index({ isNew, readOnly }) {
       { ...documentToSave },
       {
         onSuccess: (data) => {
-          addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
+          addSuccessAlert(t(`${publishing ? t('published') : t('savedAsDraft')}`));
           setIsLoading(false);
           if (!assigning)
             history.push(`/private/content-creator${publishing ? '' : '/?fromDraft=1'}`);
