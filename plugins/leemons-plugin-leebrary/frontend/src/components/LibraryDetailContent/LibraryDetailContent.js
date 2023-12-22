@@ -24,6 +24,7 @@ import {
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
 } from './LibraryDetailContent.constants';
 import prefixPN from '../../helpers/prefixPN';
+import { MetadataDisplay } from './components/MetadataDisplay';
 
 const LibraryDetailContent = ({
   description,
@@ -41,6 +42,7 @@ const LibraryDetailContent = ({
   subjects,
   program,
   metadataComponent,
+  file,
   onCopy = () => {},
   ...props
 }) => {
@@ -87,7 +89,20 @@ const LibraryDetailContent = ({
               className={classes.lowerContent}
               styles={{ marginTop: !name || !description ? pxToRem(24) : 0 }}
             >
-              {!!metadataComponent && metadataComponent}
+              {metadataComponent || (
+                <MetadataDisplay
+                  metadata={{
+                    metadata,
+                    icon,
+                    fileType,
+                    fileExtension,
+                    variant,
+                    variantIcon,
+                    variantTitle,
+                    file,
+                  }}
+                />
+              )}
               {/* <MetadataDisplay metadata={metadata} /> */}
             </Stack>
             {tags?.length > 0 && (

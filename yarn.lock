@@ -1594,9 +1594,9 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@bubbles-ui/calendars@dev":
-  version "1.2.79"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.79.tgz#f409efe732989f76859935d22172a205a57599cf"
-  integrity sha512-GUZKlSgYBxzbCF/opzmtzT/v0zy4nh7JBdOigLGskUjnyEEM497B5LeqgRwOY6J2toDrqdHna5xdzWUQHoVAVg==
+  version "1.2.82"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.82.tgz#92eb536bf7fbfbaace219f3f5cf1c06e795a8cfb"
+  integrity sha512-M/1QLdyiCaoWbybqje0QvRQtMh6mGcXhN60DtZ8F9cisUAH8jgkddNewHjZsWYBjqZCScsMPvaIlKXcC2SwE/w==
   dependencies:
     colord "^2.9.2"
     dom-helpers "^5.2.1"
@@ -1608,11 +1608,11 @@
     rrule "^2.6.8"
 
 "@bubbles-ui/components@dev":
-  version "1.2.79"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.79.tgz#c475a04ad9660bf8c1604ef41ab17231764b6002"
-  integrity sha512-TVPYPwkgO9pvINk5I5MylbP+GcVmXNGdKAVpN2BzFTu/dJNppvYC2OkKKplYQLhCQF8Tip4tmMHKqXEO1NClBg==
+  version "1.2.82"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.82.tgz#93886d14153ce52c56b31a054dd4f101b9588775"
+  integrity sha512-0ZH4RwdUZVufns+EpDJ0ZyLGZMGUZ4QW4ydq/eEc8Zn0RDOGlMFRgUsjL+sZ3PYv6XQ33LLmj/ndQhD+Jbpf1w==
   dependencies:
-    "@bubbles-ui/icons" "^1.2.79"
+    "@bubbles-ui/icons" "^1.2.82"
     "@emotion/react" "^11.10.0"
     "@heroicons/react" "^1.0.5"
     "@hookform/resolvers" "^3.3.2"
@@ -1648,9 +1648,9 @@
     zod "^3.22.4"
 
 "@bubbles-ui/editors@dev":
-  version "1.2.79"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.79.tgz#4f5006b76eb388dcee54fc98ecaf5373b9db2502"
-  integrity sha512-DCtD0KX/eGCFFqriHw8T/VbZs3Tb8k3HyWFspgIqE7aygh90nUFygwtj0zHsWfh2DJ+XfPn1hD7Vg9zHNMx1ow==
+  version "1.2.82"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.82.tgz#2fc8f1d91d818b2801018fbccb230883e16d2818"
+  integrity sha512-alWG+NYI+QwA9GrhhCiB+qhjLYVSb+HUMFe8DvJYxXy9Gl/Fw4PfDrV1qY3vFN4dXJGKXPfOtz8s0CLPzkQ0rA==
   dependencies:
     "@tiptap/extension-character-count" "2.1.12"
     "@tiptap/extension-code-block-lowlight" "2.1.12"
@@ -1684,9 +1684,9 @@
     styled-icons "^10.45.0"
 
 "@bubbles-ui/extras@dev":
-  version "1.2.79"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/extras/-/extras-1.2.79.tgz#742b69bf2eb00223b3a7beba3387b9eef1401195"
-  integrity sha512-gkQ5A3JH483bImHi5ACLctsjj4tb8oSxwaEQFMKxndWnMiNa+oadOeH4NcX7ZnmSpbXgaSWLFfatnABu03w8ow==
+  version "1.2.82"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/extras/-/extras-1.2.82.tgz#cf3659aa8bbbe937c7efceaf3243157aac10955f"
+  integrity sha512-5kiZPNvDOTIoNDlSpVPMYBxAU5vfH48OAhvV8iIwio4DOzksyNpXjLM211JjEI6Of6XVAPcbhJ7c07hdjHLBhA==
   dependencies:
     "@yaireo/tagify" "^4.9.4"
     lodash "^4.17.21"
@@ -1694,15 +1694,15 @@
     simplebar-react "^2.3.6"
     swiper "^8.1.4"
 
-"@bubbles-ui/icons@^1.2.79", "@bubbles-ui/icons@dev":
-  version "1.2.79"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.79.tgz#8133ae34723bc69e6cea52122c3035ed96db6f66"
-  integrity sha512-A3hrZA1OzM4rvxuXmkjxy7AvpLO83CWRzUN6mfGtggW+UTvKGqt6wxYG3Jm8/0CQvZTG5+Una1hib+WXYhg5vw==
+"@bubbles-ui/icons@^1.2.82", "@bubbles-ui/icons@dev":
+  version "1.2.82"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.82.tgz#6dd8fc3710b9358b694b58c9bba12c8fecd85ec0"
+  integrity sha512-8ahNQPM4Qwx3i5SwRF6kcYw72Hx0JIsqlUPRbgwaUojkvtP4uQtGHdH55QqA41BCic3p/gOFax9ssUiDLFvYfg==
 
 "@bubbles-ui/leemons@dev":
-  version "1.2.79"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.79.tgz#75135668d89cdedaa3a4cf66c3e816c55b9f42ae"
-  integrity sha512-kgMGVGSgyRebtGWygxyGo6rFaR7P7m3ZvieMQwGEMqQjl1YZqEWsffjVk2t9l14y/x7uTyxSRQVOSLMvbnntow==
+  version "1.2.82"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.82.tgz#9ff9b9d1723fc28f9c29a0c9c69acaee58e70960"
+  integrity sha512-naFw3eSbRoF24QnlqiJ0pBHmkUpfaKatbpGaiyRoJhRHbMCdKLS85+CEoruRvuO1r0cJOKvJKAbyCQyoboVC2g==
   dependencies:
     "@leemonade/rjsf-core" "^3.0.0"
     "@rjsf/core" "^3.2.1"
@@ -1724,9 +1724,9 @@
     uuid "^8.3.2"
 
 "@bubbles-ui/notifications@dev":
-  version "1.2.79"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.79.tgz#e9b1bcf412832e1bb253a926c6fa51856fe71654"
-  integrity sha512-fPRLx9vr87ELR2O8d7nrofj0oF0SgpJsLN6WIC9N8utNJj1JVP6K7i5SMDtCt7c+xg7VmaAc0zn/0Z9q07vWQw==
+  version "1.2.82"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.82.tgz#5b2d2c02c33e8c399e4d3889f5359119b4c55f1d"
+  integrity sha512-dT27o2XjF3nqbOWj7zIrqkS0qCa2nq8OIbA66GqUEKFgKXu55lGrfpem64tOfexLd3cUpcwjeIJRhiy8HiTAHw==
   dependencies:
     "@mantine/notifications" "5.5.5"
     lodash "^4.17.21"
@@ -6111,9 +6111,9 @@
   integrity sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==
 
 "@types/qs@*", "@types/qs@^6.9.5":
-  version "6.9.10"
-  resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.10.tgz#0af26845b5067e1c9a622658a51f60a3934d51e8"
-  integrity sha512-3Gnx08Ns1sEoCrWssEgTSJs/rsT2vhGP+Ja9cnnk9k4ALxinORlQneLXFeFKOTJMOeZUFD1s7w+w2AphTpvzZw==
+  version "6.9.11"
+  resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.11.tgz#208d8a30bc507bd82e03ada29e4732ea46a6bbda"
+  integrity sha512-oGk0gmhnEJK4Yyk+oI7EfXsLayXatCWPHary1MtcmbAifkobT9cM9yutG/hZKIseOU0MqbIwQ/u2nn/Gb+ltuQ==
 
 "@types/range-parser@*":
   version "1.2.7"
@@ -7101,9 +7101,9 @@ aws-iot-device-sdk@^2.2.12:
     websocket-stream "^5.5.2"
 
 aws-sdk@^2.1438.0, aws-sdk@^2.1463.0, aws-sdk@^2.1520.0:
-  version "2.1523.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1523.0.tgz#c916b2d089343cf7400c7c418a97cbd640d6a94c"
-  integrity sha512-Zodeu0h4NfpYs8B+5+OFEhkY5MJlhzAns8oocMQc2aZTiMx178qcxqD3FFltTUyLc0FFlY7ZGjoVfPnuky1MQg==
+  version "2.1524.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1524.0.tgz#d0b60ba5276420f9e26895ffdf424e8156126226"
+  integrity sha512-nJQ7q6ykflHWkyYaobgSYkKMrqkQLKObCLPN+FfePl9Y4ZCsRVBut59wbZiYmQw1K4QitSwuBjuMdH4ES8vOpg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -7838,9 +7838,9 @@ can-use-dom@^0.1.0:
   integrity sha512-ceOhN1DL7Y4O6M0j9ICgmTYziV89WMd96SvSl0REd8PMgrY0B/WBOPoed5S1KUmJqXgUXh8gzSe6E3ae27upsQ==
 
 caniuse-lite@^1.0.30001565:
-  version "1.0.30001570"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001570.tgz#b4e5c1fa786f733ab78fc70f592df6b3f23244ca"
-  integrity sha512-+3e0ASu4sw1SWaoCtvPeyXp+5PsjigkSt8OXZbF9StH5pQWbxEjLAZE3n8Aup5udop1uRiKA7a4utUk/uoSpUw==
+  version "1.0.30001571"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001571.tgz#4182e93d696ff42930f4af7eba515ddeb57917ac"
+  integrity sha512-tYq/6MoXhdezDLFZuCO/TKboTzuQ/xR5cFdgXPfDtM7/kchBO3b4VWghE/OAi/DV7tTdhmLjZiZBZi1fA/GheQ==
 
 case-anything@^2.1.13:
   version "2.1.13"
@@ -9444,9 +9444,9 @@ ejs@^3.1.8:
     jake "^10.8.5"
 
 electron-to-chromium@^1.4.601:
-  version "1.4.615"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.615.tgz#b1c41839962d2e4e63dca05519da9040e34848c2"
-  integrity sha512-/bKPPcgZVUziECqDc+0HkT87+0zhaWSZHNXqF8FLd2lQcptpmUFwoCSWjCdOng9Gdq+afKArPdEg/0ZW461Eng==
+  version "1.4.616"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.616.tgz#4bddbc2c76e1e9dbf449ecd5da3d8119826ea4fb"
+  integrity sha512-1n7zWYh8eS0L9Uy+GskE0lkBUNK83cXTVJI0pU3mGprFsbfSdAc15VTFbo+A+Bq4pwstmL30AVcEU3Fo463lNg==
 
 elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
@@ -18053,9 +18053,9 @@ synchronous-promise@^2.0.15:
   integrity sha512-AsS729u2RHUfEra9xJrE39peJcc2stq2+poBXX8bcM08Y6g9j/i/PUzwNQqkaJde7Ntg1TO7bSREbR5sdosQ+g==
 
 systeminformation@^5.21.8:
-  version "5.21.20"
-  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.20.tgz#16bd0d0c4118d00e670409a1f592ba7043159d2c"
-  integrity sha512-AyS1fNc+MDoAJtFknFbbo587H8h6yejJwM+H9rVusnOToIEkiMehMyD5JM7o3j55Cto20MawIZrcgNMgd4BfOQ==
+  version "5.21.21"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.21.tgz#f34bd4a7188a633e2aa1e9258a58a330d43abc99"
+  integrity sha512-BTQ4+smD8lfh2C0nCRm59Ne1apKYMPhvU1bbE6NIoOroQgZBegnfXE7fQ66/5C1NZtep8cc7XAf/7qYJz1BWVQ==
 
 tapable@^2.0.0, tapable@^2.1.1, tapable@^2.2.0, tapable@^2.2.1:
   version "2.2.1"
@@ -18334,9 +18334,9 @@ to-regex-range@^5.0.1:
     is-number "^7.0.0"
 
 tocbot@^4.20.1:
-  version "4.23.0"
-  resolved "https://registry.yarnpkg.com/tocbot/-/tocbot-4.23.0.tgz#5d3788ccf5a8b0ae2c00819b1ed0c127013e2e34"
-  integrity sha512-5DWuSZXsqG894mkGb8ZsQt9myyQyVxE50AiGRZ0obV0BVUTVkaZmc9jbgpknaAAPUm4FIrzGkEseD6FuQJYJDQ==
+  version "4.25.0"
+  resolved "https://registry.yarnpkg.com/tocbot/-/tocbot-4.25.0.tgz#bc38aea5ec8f076779bb39636f431b044129a237"
+  integrity sha512-kE5wyCQJ40hqUaRVkyQ4z5+4juzYsv/eK+aqD97N62YH0TxFhzJvo22RUQQZdO3YnXAk42ZOfOpjVdy+Z0YokA==
 
 toidentifier@1.0.1:
   version "1.0.1"

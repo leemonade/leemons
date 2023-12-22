@@ -321,5 +321,9 @@ module.exports = {
     published: 'Publicados',
     draft: 'Borradores',
     isDraft: 'Borrador',
+    size: 'Tamaño',
+    dimensions: 'Dimensiones',
+    format: 'Formato',
+    duration: 'Duración',
   },
 };

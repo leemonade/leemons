@@ -334,5 +334,9 @@ module.exports = {
     published: 'Published',
     draft: 'Drafts',
     isDraft: 'Draft',
+    size: 'Size',
+    dimensions: 'Dimensions',
+    format: 'Format',
+    duration: 'Duration',
   },
 };

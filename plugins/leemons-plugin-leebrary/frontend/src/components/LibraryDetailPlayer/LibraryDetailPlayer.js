@@ -38,21 +38,6 @@ const LibraryDetailPlayer = ({
     <Box className={classes.root} data-cypress-id="library-detail-player">
       <Box className={classes.color} />
       <AssetPlayer height={100} width={496} asset={asset} hideURLInfo viewPDF={false} compact />
-      {/* <Box className={classes.titleRow}> */}
-      {/* <TextClamp lines={6}>
-          <Title order={4} className={classes.title}>
-            {name}
-          </Title>
-        </TextClamp> */}
-      {/* <IconButton size={'xs'} icon={<ExpandDiagonalIcon height={16} width={16} />} /> */}
-      {/* {variant === 'bookmark' && (
-          <ActionButton
-            icon={<OpenIcon height={16} width={16} />}
-            onClick={() => window.open(url, '_blank')}
-          />
-        )} */}
-      {/* {titleActionButton ? <ActionButton {...titleActionButton} /> : null} */}
-      {/* </Box> */}
     </Box>
   );
 };
