@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { isEmpty, isFunction } from 'lodash';
-import { ActionButton, AvatarsGroup, Box, FileIcon, Stack, Text } from '@bubbles-ui/components';
-import { MoveRightIcon } from '@bubbles-ui/icons/outline';
+import { isFunction } from 'lodash';
+import { Box, FileIcon, Stack, Button } from '@bubbles-ui/components';
 import {
   AssetBookmarkIcon,
   AssetPathIcon,
@@ -12,6 +11,8 @@ import { LibraryDetailContent } from '../LibraryDetailContent';
 import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
 import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
 import { LibraryDetailStyles } from './LibraryDetail.styles';
+import { EditIcon } from '../LibraryDetailToolbar/icons/EditIcon';
+
 import { LIBRARY_DETAIL_DEFAULT_PROPS, LIBRARY_DETAIL_PROP_TYPES } from './LibraryDetail.constants';
 
 const LibraryDetail = ({
@@ -32,6 +33,15 @@ const LibraryDetail = ({
   ...events
 }) => {
   const [showDrawer, setShowDrawer] = useState(open);
+  const [activeTab, setActiveTab] = useState('tab1');
+  const handleShare = () => {
+    if (isFunction(events?.onShare)) {
+      events?.onShare(asset);
+    }
+  };
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
   useEffect(() => {
     if (open) {
       setTimeout(() => setShowDrawer(true), 100);
@@ -44,7 +54,6 @@ const LibraryDetail = ({
 
   // const { fileExtension } = asset;
   const fileExtension = asset?.fileExtension;
-
   return (
     <Box
       style={{ position: 'absolute', height: '100%', width: '100%' }}
@@ -112,16 +121,32 @@ const LibraryDetail = ({
           <LibraryDetailContent
             {...asset}
             asset={asset}
-            onShare={events.onShare}
             excludeMetadatas={excludeMetadatas}
             variantIcon={variantIcon}
             variantTitle={variantTitle}
             variant={variant}
             labels={labels}
             metadataComponent={metadataComponent}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            handleTabChange={handleTabChange}
           />
         </Stack>
       </Stack>
+      {activeTab === 'tab2' && (
+        <Box className={classes.canAccessFooter}>
+          <Button
+            variant="outline"
+            size="md"
+            label={'Editar Permisos'}
+            className={classes.canAccessButton}
+            leftIcon={<EditIcon width={18} height={18} />}
+            onClick={handleShare}
+          >
+            {'Editar Permisos'}
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

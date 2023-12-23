@@ -240,7 +240,7 @@ module.exports = {
     permissions: 'Permisos',
     editPermissions: 'Editar permisos',
     owner: 'Propietario',
-    reading: 'Lectura',
+    viewer: 'Lectura',
     editor: 'Editor',
     assigner: 'Asignador',
     tableLabels: {

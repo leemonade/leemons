@@ -1594,9 +1594,9 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@bubbles-ui/calendars@dev":
-  version "1.2.82"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.82.tgz#92eb536bf7fbfbaace219f3f5cf1c06e795a8cfb"
-  integrity sha512-M/1QLdyiCaoWbybqje0QvRQtMh6mGcXhN60DtZ8F9cisUAH8jgkddNewHjZsWYBjqZCScsMPvaIlKXcC2SwE/w==
+  version "1.2.84"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.84.tgz#98c033ee78b13ca0b5f33e9411d41db6e1da3e20"
+  integrity sha512-izBJdSD9jLfq8uzFk94apglJrbCe7uwEzAlGjpNXvwPC96UniwENsr8g2M6bxWd8hMEgSOuXMDpGYVfmUdAtyQ==
   dependencies:
     colord "^2.9.2"
     dom-helpers "^5.2.1"
@@ -1608,11 +1608,11 @@
     rrule "^2.6.8"
 
 "@bubbles-ui/components@dev":
-  version "1.2.82"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.82.tgz#93886d14153ce52c56b31a054dd4f101b9588775"
-  integrity sha512-0ZH4RwdUZVufns+EpDJ0ZyLGZMGUZ4QW4ydq/eEc8Zn0RDOGlMFRgUsjL+sZ3PYv6XQ33LLmj/ndQhD+Jbpf1w==
+  version "1.2.84"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.84.tgz#2c0fbbfb4f4c5dd890434731c750ed669fc516c1"
+  integrity sha512-0ypeBfQo8wHp2kQcrGqUP03uMClIIz0XM95FGdOTdI8h7E+v7VJcagoCIjT1k9osu1di62D7wAcBjV3gsVPsKA==
   dependencies:
-    "@bubbles-ui/icons" "^1.2.82"
+    "@bubbles-ui/icons" "^1.2.84"
     "@emotion/react" "^11.10.0"
     "@heroicons/react" "^1.0.5"
     "@hookform/resolvers" "^3.3.2"
@@ -1648,9 +1648,9 @@
     zod "^3.22.4"
 
 "@bubbles-ui/editors@dev":
-  version "1.2.82"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.82.tgz#2fc8f1d91d818b2801018fbccb230883e16d2818"
-  integrity sha512-alWG+NYI+QwA9GrhhCiB+qhjLYVSb+HUMFe8DvJYxXy9Gl/Fw4PfDrV1qY3vFN4dXJGKXPfOtz8s0CLPzkQ0rA==
+  version "1.2.84"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.84.tgz#7dc8a8d64bb8fb5efb6eb04166da1e802dc2d7c8"
+  integrity sha512-XN8HcWg+txb1jqSDGOdjp1cC0z5Hpqhks/HdLASEHpFZh//5y9dsJXgPSH3HGUEj1L2kEVbl7J/WVY0KFK723g==
   dependencies:
     "@tiptap/extension-character-count" "2.1.12"
     "@tiptap/extension-code-block-lowlight" "2.1.12"
@@ -1684,9 +1684,9 @@
     styled-icons "^10.45.0"
 
 "@bubbles-ui/extras@dev":
-  version "1.2.82"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/extras/-/extras-1.2.82.tgz#cf3659aa8bbbe937c7efceaf3243157aac10955f"
-  integrity sha512-5kiZPNvDOTIoNDlSpVPMYBxAU5vfH48OAhvV8iIwio4DOzksyNpXjLM211JjEI6Of6XVAPcbhJ7c07hdjHLBhA==
+  version "1.2.84"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/extras/-/extras-1.2.84.tgz#6480acc5335ee85791bee4c8629ab6c64326acda"
+  integrity sha512-YWWPRbncyUwvnmr2TKKvOBuKVmslfuqMXynIL5t3urq2GUzgVtEx9mErmRQi3sUkOff6FR3JrTo9M9Z/AKf/tA==
   dependencies:
     "@yaireo/tagify" "^4.9.4"
     lodash "^4.17.21"
@@ -1694,15 +1694,15 @@
     simplebar-react "^2.3.6"
     swiper "^8.1.4"
 
-"@bubbles-ui/icons@^1.2.82", "@bubbles-ui/icons@dev":
-  version "1.2.82"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.82.tgz#6dd8fc3710b9358b694b58c9bba12c8fecd85ec0"
-  integrity sha512-8ahNQPM4Qwx3i5SwRF6kcYw72Hx0JIsqlUPRbgwaUojkvtP4uQtGHdH55QqA41BCic3p/gOFax9ssUiDLFvYfg==
+"@bubbles-ui/icons@^1.2.84", "@bubbles-ui/icons@dev":
+  version "1.2.84"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.84.tgz#3f058bc19b41a76da2827963879b81e7373e447e"
+  integrity sha512-yU3L6osMgQX0hrD1VAH4uVHEo2P+09hGHcIQeTO0xY2ViGVb2gc4NL2AvaZLezfzLADN5rmIgBaM9zOOIfg6mQ==
 
 "@bubbles-ui/leemons@dev":
-  version "1.2.82"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.82.tgz#9ff9b9d1723fc28f9c29a0c9c69acaee58e70960"
-  integrity sha512-naFw3eSbRoF24QnlqiJ0pBHmkUpfaKatbpGaiyRoJhRHbMCdKLS85+CEoruRvuO1r0cJOKvJKAbyCQyoboVC2g==
+  version "1.2.84"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.84.tgz#035313c0a408d177438cabb76bf4a4cd31150134"
+  integrity sha512-tk4Ozggq/vN0brxPlzGMyrniNPHQNaHBW5udZGNXFwJelgO0LvwiNPSLfM0+sEBBwdwALAz8YyLEo4OSs/vtew==
   dependencies:
     "@leemonade/rjsf-core" "^3.0.0"
     "@rjsf/core" "^3.2.1"
@@ -1724,9 +1724,9 @@
     uuid "^8.3.2"
 
 "@bubbles-ui/notifications@dev":
-  version "1.2.82"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.82.tgz#5b2d2c02c33e8c399e4d3889f5359119b4c55f1d"
-  integrity sha512-dT27o2XjF3nqbOWj7zIrqkS0qCa2nq8OIbA66GqUEKFgKXu55lGrfpem64tOfexLd3cUpcwjeIJRhiy8HiTAHw==
+  version "1.2.84"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.84.tgz#e1b0783930bceb1200eea968671a9104e99ff0f2"
+  integrity sha512-t5+rTpQoAlgyLAAuKp3/XIP0fs75O89nmRktxmNs0USemtDwboZx1yLpGUu0mxbNN0tqyIih1n9jp5XABDXfnw==
   dependencies:
     "@mantine/notifications" "5.5.5"
     lodash "^4.17.21"
@@ -3883,15 +3883,15 @@
     tslib "^2.5.0"
 
 "@smithy/core@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@smithy/core/-/core-1.2.0.tgz#36286de5460905708221313b8b1faebf185761e6"
-  integrity sha512-l8R89X7+hlt2FEFg+OrNq29LP3h9DfGPmO6ObwT9IXWHD6V7ycpj5u2rVQyIis26ovrgOYakl6nfgmPMm8m1IQ==
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@smithy/core/-/core-1.2.1.tgz#2ee9b9894f3b2ce5eac4010ea1a85874b446f203"
+  integrity sha512-f6cwmMuHo7RIw/c184NBd2rGeGvGIX6p55HSrG5jfR3qkNYo80PHRfhzkJMq1+mv1ZjI5p8NhenWMMkIRJR4tw==
   dependencies:
     "@smithy/middleware-endpoint" "^2.2.3"
-    "@smithy/middleware-retry" "^2.0.24"
+    "@smithy/middleware-retry" "^2.0.25"
     "@smithy/middleware-serde" "^2.0.15"
     "@smithy/protocol-http" "^3.0.11"
-    "@smithy/smithy-client" "^2.1.18"
+    "@smithy/smithy-client" "^2.2.0"
     "@smithy/types" "^2.7.0"
     "@smithy/util-middleware" "^2.0.8"
     tslib "^2.5.0"
@@ -3975,15 +3975,15 @@
     "@smithy/util-middleware" "^2.0.8"
     tslib "^2.5.0"
 
-"@smithy/middleware-retry@^2.0.24":
-  version "2.0.24"
-  resolved "https://registry.yarnpkg.com/@smithy/middleware-retry/-/middleware-retry-2.0.24.tgz#556a39e7d2be32cc61862e020409d3f93e2c5be1"
-  integrity sha512-q2SvHTYu96N7lYrn3VSuX3vRpxXHR/Cig6MJpGWxd0BWodUQUWlKvXpWQZA+lTaFJU7tUvpKhRd4p4MU3PbeJg==
+"@smithy/middleware-retry@^2.0.24", "@smithy/middleware-retry@^2.0.25":
+  version "2.0.25"
+  resolved "https://registry.yarnpkg.com/@smithy/middleware-retry/-/middleware-retry-2.0.25.tgz#ae948f4a1ad5968bc315f07df930a55c09ffe040"
+  integrity sha512-FXhafCPvx/9L9OgHJ3cdo/pD1f7ngC7DKsjDV2J7k6LO/Yl69POoBLk4sI1OZPUGc4dfxriENlTma9Nj1hI+IQ==
   dependencies:
     "@smithy/node-config-provider" "^2.1.8"
     "@smithy/protocol-http" "^3.0.11"
     "@smithy/service-error-classification" "^2.0.8"
-    "@smithy/smithy-client" "^2.1.18"
+    "@smithy/smithy-client" "^2.2.0"
     "@smithy/types" "^2.7.0"
     "@smithy/util-middleware" "^2.0.8"
     "@smithy/util-retry" "^2.0.8"
@@ -4089,12 +4089,14 @@
     "@smithy/util-utf8" "^2.0.2"
     tslib "^2.5.0"
 
-"@smithy/smithy-client@^2.1.18":
-  version "2.1.18"
-  resolved "https://registry.yarnpkg.com/@smithy/smithy-client/-/smithy-client-2.1.18.tgz#f8ce2c0e9614f207256ddcd992403aff40750546"
-  integrity sha512-7FqdbaJiVaHJDD9IfDhmzhSDbpjyx+ZsfdYuOpDJF09rl8qlIAIlZNoSaflKrQ3cEXZN2YxGPaNWGhbYimyIRQ==
+"@smithy/smithy-client@^2.1.18", "@smithy/smithy-client@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@smithy/smithy-client/-/smithy-client-2.2.0.tgz#9865981a2f49dd0e9ef68193aebcd5654cdd7f00"
+  integrity sha512-C/bkNue5H5Obgl83SnlBt4v6VM68CqIjIELh3vAabud87xFYznLNKtj6Qb69Z+QOnLp9T+We++sEem/f2AHE+Q==
   dependencies:
+    "@smithy/middleware-endpoint" "^2.2.3"
     "@smithy/middleware-stack" "^2.0.9"
+    "@smithy/protocol-http" "^3.0.11"
     "@smithy/types" "^2.7.0"
     "@smithy/util-stream" "^2.0.23"
     tslib "^2.5.0"
@@ -4153,26 +4155,26 @@
     tslib "^2.5.0"
 
 "@smithy/util-defaults-mode-browser@^2.0.22":
-  version "2.0.22"
-  resolved "https://registry.yarnpkg.com/@smithy/util-defaults-mode-browser/-/util-defaults-mode-browser-2.0.22.tgz#8ef8c36b8c3c2f98f7a62278c3c684d659134269"
-  integrity sha512-qcF20IHHH96FlktvBRICDXDhLPtpVmtksHmqNGtotb9B0DYWXsC6jWXrkhrrwF7tH26nj+npVTqh9isiFV1gdA==
+  version "2.0.23"
+  resolved "https://registry.yarnpkg.com/@smithy/util-defaults-mode-browser/-/util-defaults-mode-browser-2.0.23.tgz#27bce42b7a55974ed4aff5b2b870256ce383613a"
+  integrity sha512-2u+7t7Wgz1jlfsf6il3pz6DIzyJHS3qrnNnmATICm00pQeqp2D4kUOYauOgKGIeKgVpwzzq8+hFQe749r3xR5w==
   dependencies:
     "@smithy/property-provider" "^2.0.16"
-    "@smithy/smithy-client" "^2.1.18"
+    "@smithy/smithy-client" "^2.2.0"
     "@smithy/types" "^2.7.0"
     bowser "^2.11.0"
     tslib "^2.5.0"
 
 "@smithy/util-defaults-mode-node@^2.0.29":
-  version "2.0.29"
-  resolved "https://registry.yarnpkg.com/@smithy/util-defaults-mode-node/-/util-defaults-mode-node-2.0.29.tgz#6b210aede145a6bf4bd83d9f465948fb300ca577"
-  integrity sha512-+uG/15VoUh6JV2fdY9CM++vnSuMQ1VKZ6BdnkUM7R++C/vLjnlg+ToiSR1FqKZbMmKBXmsr8c/TsDWMAYvxbxQ==
+  version "2.0.30"
+  resolved "https://registry.yarnpkg.com/@smithy/util-defaults-mode-node/-/util-defaults-mode-node-2.0.30.tgz#12c4c737a9f8b151cfbd951348cdf94febd083dd"
+  integrity sha512-nmcmEyRlClNprp7mBnUzfmW6HrKQK+yvl+cyXCRUoQSxRvZuLDrztV+JD+zr3qV/oirEc4Q0QNIrrhTDCE6JeA==
   dependencies:
     "@smithy/config-resolver" "^2.0.21"
     "@smithy/credential-provider-imds" "^2.1.4"
     "@smithy/node-config-provider" "^2.1.8"
     "@smithy/property-provider" "^2.0.16"
-    "@smithy/smithy-client" "^2.1.18"
+    "@smithy/smithy-client" "^2.2.0"
     "@smithy/types" "^2.7.0"
     tslib "^2.5.0"
 
@@ -7101,9 +7103,9 @@ aws-iot-device-sdk@^2.2.12:
     websocket-stream "^5.5.2"
 
 aws-sdk@^2.1438.0, aws-sdk@^2.1463.0, aws-sdk@^2.1520.0:
-  version "2.1524.0"
-  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1524.0.tgz#d0b60ba5276420f9e26895ffdf424e8156126226"
-  integrity sha512-nJQ7q6ykflHWkyYaobgSYkKMrqkQLKObCLPN+FfePl9Y4ZCsRVBut59wbZiYmQw1K4QitSwuBjuMdH4ES8vOpg==
+  version "2.1525.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1525.0.tgz#2d55fa7bbc110c96bb2e10a30af6b0d64a7d422b"
+  integrity sha512-M6wNOrq9HliJoWgmgHeRzMHHrgK6UY20RL2tUhNqq45ETZnj1ihrqG5vSt5ywLrV9WUyI/lUQAVmCP/2PYjpQw==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -13919,9 +13921,9 @@ merge2@^1.3.0, merge2@^1.4.1:
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
 metascraper-audio@^5.26.0:
-  version "5.42.5"
-  resolved "https://registry.yarnpkg.com/metascraper-audio/-/metascraper-audio-5.42.5.tgz#b9a794cef4f83d4f11a254a189a5f8e7c2591fa5"
-  integrity sha512-u63BH8XANdiuVeIbruUFNUE2YSFc0YVcx5DD/TRxJKVeqs3PUCZlljJE59GmFSEhnPWk2MUQ1qtnBfXQViBs+w==
+  version "5.42.6"
+  resolved "https://registry.yarnpkg.com/metascraper-audio/-/metascraper-audio-5.42.6.tgz#c0a1ceff415d7fd02f41b777673d0aab5ba2dc91"
+  integrity sha512-4x+GF80mWLWuO9bCDl73Iw1oztaMRfo+lQs4e8kczdO4x6ZeFSqoI8r02zhFfRIzF4E6C+6apqCt30TV0QL0yw==
   dependencies:
     "@metascraper/helpers" "^5.42.5"
     lodash "~4.17.21"
@@ -13935,9 +13937,9 @@ metascraper-author@^5.26.0:
     "@metascraper/helpers" "^5.42.5"
 
 metascraper-date@^5.26.0:
-  version "5.42.5"
-  resolved "https://registry.yarnpkg.com/metascraper-date/-/metascraper-date-5.42.5.tgz#d1ed64912c8b3e89acc01296f1eceff46a7129b1"
-  integrity sha512-anhCowgyd61sjey6hli69JZ1JF/jf9MMhjqRmBipHiyQwTQkqD3fYHLCZHgZYzv668YKsk+45wZ8Vdb04LhLAw==
+  version "5.42.6"
+  resolved "https://registry.yarnpkg.com/metascraper-date/-/metascraper-date-5.42.6.tgz#a98eda68d56e6a34448ef3c5adc7f088a7a256f2"
+  integrity sha512-gNYlShYHb2shYeD/EEWOQJmg3IAbhgrtc50D2hRh6aRUTuo4f5Dslxd6O77NlTnA4z+mEURrvC2KllUBmdbaIg==
   dependencies:
     "@metascraper/helpers" "^5.42.5"
 
@@ -13992,16 +13994,15 @@ metascraper-logo@^5.26.0:
     lodash "~4.17.21"
 
 metascraper-media-provider@^5.27.0:
-  version "5.42.5"
-  resolved "https://registry.yarnpkg.com/metascraper-media-provider/-/metascraper-media-provider-5.42.5.tgz#991e65d23893b892979c496be042d5919d26f63e"
-  integrity sha512-5GtJKpdGX7mT9GUPSTJrZ8A9ZEI5MwdcyhtQbpa4bf07sTenKPn/rWKPymlHZiHCLl/MPw8dmvnCnRKE3bHJ8Q==
+  version "5.42.6"
+  resolved "https://registry.yarnpkg.com/metascraper-media-provider/-/metascraper-media-provider-5.42.6.tgz#a68111fd67b054d525d1b36b5452d7b70989e93a"
+  integrity sha512-02GXwgyDakjpYSovNPPLsYFFXjUaVlaHSlqIPeM0A5oa4ennJ2qoeLjJxuRoPdTKxFotry9JXDlFVfuSOYjKBg==
   dependencies:
     "@metascraper/helpers" "^5.42.5"
     async-memoize-one "~1.1.3"
     debug-logfmt "~1.0.4"
     got "~11.8.6"
     lodash "~4.17.21"
-    p-do-whilst "~1.1.0"
     p-reflect "~2.1.0"
     p-retry "~4.6.1"
     p-timeout "~4.1.0"
@@ -15073,11 +15074,6 @@ p-cancelable@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/p-cancelable/-/p-cancelable-2.1.1.tgz#aab7fbd416582fa32a3db49859c122487c5ed2cf"
   integrity sha512-BZOr3nRQHOntUjTrH8+Lh54smKHoHyur8We1V8DSMVrl5A2malOOwuJRnKRDjSnkoeBh4at6BwEnb5I7Jl31wg==
-
-p-do-whilst@~1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/p-do-whilst/-/p-do-whilst-1.1.0.tgz#acb0305c01aa9be6c4dfe3b340221b9c57e865c8"
-  integrity sha512-ntAQbyZJAqCBoTrW3M8XEn1+45wkWgoG6EKRKGCrSvMs0wBY2a3W3mY0I5OErEweFrQsTLAhIv3KN6yyujQnzQ==
 
 p-limit@^2.0.0, p-limit@^2.2.0:
   version "2.3.0"
@@ -18053,9 +18049,9 @@ synchronous-promise@^2.0.15:
   integrity sha512-AsS729u2RHUfEra9xJrE39peJcc2stq2+poBXX8bcM08Y6g9j/i/PUzwNQqkaJde7Ntg1TO7bSREbR5sdosQ+g==
 
 systeminformation@^5.21.8:
-  version "5.21.21"
-  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.21.tgz#f34bd4a7188a633e2aa1e9258a58a330d43abc99"
-  integrity sha512-BTQ4+smD8lfh2C0nCRm59Ne1apKYMPhvU1bbE6NIoOroQgZBegnfXE7fQ66/5C1NZtep8cc7XAf/7qYJz1BWVQ==
+  version "5.21.22"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.22.tgz#9f0cb9955d564855d0992734212f3f2f03b29c6d"
+  integrity sha512-gNHloAJSyS+sKWkwvmvozZ1eHrdVTEsynWMTY6lvLGBB70gflkBQFw8drXXr1oEXY84+Vr9tOOrN8xHZLJSycA==
 
 tapable@^2.0.0, tapable@^2.1.1, tapable@^2.2.0, tapable@^2.2.1:
   version "2.2.1"

@@ -22,13 +22,28 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     '& button[aria-selected="true"]': {
       borderBottomColor: '#B4E600 !important',
     },
+    '& button:hover': {
+      backgroundColor: '#F1FFBD !important',
+      borderBottomColor: '#F1FFBD   !important',
+    },
+    '& button[aria-selected="true"]:hover': {
+      backgroundColor: '#F1FFBD !important',
+      borderBottomColor: '#B4E600 !important',
+    },
   },
   tabPanel: {
     padding: pxToRem(24),
     display: 'flex',
     flexDirection: 'column',
     position: 'relative',
+  },
+  tabPanelPermissions: {
+    padding: pxToRem(24),
+    display: 'flex',
+    flexDirection: 'column',
     height: '100%',
+    overflowY: 'scroll',
+    marginBottom: pxToRem(48),
   },
   title: {
     color: theme.other.global.content.color.tertiary.default,
@@ -66,6 +81,7 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
       },
     },
   },
+
   canAccessContainer: {
     marginTop: pxToRem(24),
     width: '100%',
@@ -74,7 +90,6 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    // justifyContent: 'space-between',
     paddingLeft: pxToRem(8),
   },
   avatarWrapper: {
@@ -96,16 +111,13 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     height: pxToRem(64),
     width: '100%',
     borderTop: '1px solid #DDE1E6',
-    position: 'fixed',
-    bottom: 0,
+    position: 'sticky',
+    bottom: '0%',
     left: 0,
     paddingRight: pxToRem(24),
+    backgroundColor: 'white',
   },
   canAccessButton: {
-    // display: 'flex',
-    // alignItems: 'center',
-    // gap: pxToRem(8),
-    // padding: 0,
     height: pxToRem(40),
   },
 }));

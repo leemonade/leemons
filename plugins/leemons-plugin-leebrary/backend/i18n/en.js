@@ -253,7 +253,7 @@ module.exports = {
     permissions: 'Permissions',
     editPermissions: 'Edit permissions',
     owner: 'Owner',
-    reading: 'Reading',
+    viewer: 'Viewer',
     editor: 'Editor',
     assigner: 'Assigner',
     tableLabels: {

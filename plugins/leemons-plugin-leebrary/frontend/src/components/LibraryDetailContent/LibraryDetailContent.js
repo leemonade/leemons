@@ -1,17 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { isEmpty, isFunction } from 'lodash';
+import { isEmpty } from 'lodash';
 import {
-  Button,
   Badge,
   Box,
   Stack,
   Text,
-  TextClamp,
   useClipboard,
   Tabs,
   TabPanel,
   pxToRem,
-  Avatar,
+  UserDisplayItem,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
@@ -24,7 +22,6 @@ import {
 } from './LibraryDetailContent.constants';
 import prefixPN from '../../helpers/prefixPN';
 import { MetadataDisplay } from './components/MetadataDisplay';
-import { EditIcon } from '../LibraryDetailToolbar/icons/EditIcon';
 
 const LibraryDetailContent = ({
   description,
@@ -46,8 +43,10 @@ const LibraryDetailContent = ({
   canAccess,
   classesCanAccess,
   asset,
-  onShare = () => {},
+  activeTab,
+  setActiveTab,
   onCopy = () => {},
+  // eslint-disable-next-line no-unused-vars
   ...props
 }) => {
   const isTeacher = useIsTeacher();
@@ -56,6 +55,7 @@ const LibraryDetailContent = ({
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [subjectsIds, setSubjectsIds] = useState([]);
   const [canAccessData, setCanAccessData] = useState([]);
+  const isAssetWithInstuctions = asset?.providerData?.role === 'task';
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -66,12 +66,6 @@ const LibraryDetailContent = ({
   const handleCopy = () => {
     clipboard.copy(url);
     onCopy();
-  };
-
-  const handleShare = () => {
-    if (isFunction(onShare)) {
-      onShare(asset);
-    }
   };
 
   useEffect(() => {
@@ -86,10 +80,19 @@ const LibraryDetailContent = ({
     }
   }, [canAccess, classesCanAccess]);
 
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
   return (
     <Box className={classes.root}>
-      <Tabs panelColor="default" fullHeight fullWidth centerGrow className={classes.tab}>
-        <TabPanel label={detailLabels?.detail}>
+      <Tabs
+        panelColor="default"
+        centerGrow
+        className={classes.tab}
+        activeKey={activeTab}
+        onChange={handleTabChange}
+      >
+        <TabPanel label={detailLabels?.detail} key="tab1">
           <Box className={classes.tabPanel}>
             {name && <Text className={classes.title}>{name}</Text>}
             {description && <Text className={classes.description}>{description}</Text>}
@@ -118,7 +121,10 @@ const LibraryDetailContent = ({
                     variantIcon,
                     variantTitle,
                     file,
+                    url,
+                    name,
                   }}
+                  onCopy={handleCopy}
                 />
               )}
             </Stack>
@@ -140,26 +146,30 @@ const LibraryDetailContent = ({
             )}
           </Box>
         </TabPanel>
-        <TabPanel label={detailLabels?.permissions}>
-          <Box className={classes.tabPanel}>
+        <TabPanel label={detailLabels?.permissions} key="tab2">
+          <Box className={classes.tabPanelPermissions}>
             <Box>
               <Text
                 className={classes.title}
               >{`${detailLabels?.permissions} (${canAccess?.length})`}</Text>
-              <Box>
+              <Box styles={{ paddingBottom: 1000 }}>
                 {canAccessData?.length > 0 && (
                   <Box className={classes.canAccessContainer}>
                     {canAccessData.map((user, index) => (
                       <Box key={index} className={classes.canAccessItem}>
                         <Box className={classes.avatarWrapper}>
-                          <Avatar alt={user?.name} name={user?.name} image={user?.avatar} />
-                          <TextClamp lines={1}>
-                            <Text className={classes.canAccessText}> {user?.name}</Text>
-                          </TextClamp>
+                          <UserDisplayItem
+                            variant="inline"
+                            size="md"
+                            alt={user?.name}
+                            name={user?.fullName}
+                            image={user.avatar}
+                          />
                         </Box>
                         <Box>
-                          {Array.isArray(user.permissions) &&
-                            user?.permissions.map((permission) => t(`${permission}`))}
+                          <Text className={classes.canAccessText}>
+                            {Array.isArray(user.permissions) && t(`${user?.permissions[0]}`)}
+                          </Text>
                         </Box>
                       </Box>
                     ))}
@@ -167,23 +177,19 @@ const LibraryDetailContent = ({
                 )}
               </Box>
             </Box>
-            <Box className={classes.canAccessFooter}>
-              <Button
-                variant="outline"
-                size="md"
-                label={'Editar Permisos'}
-                className={classes.canAccessButton}
-                leftIcon={<EditIcon width={18} height={18} />}
-                onClick={handleShare}
-              >
-                {'Editar Permisos'}
-              </Button>
-            </Box>
           </Box>
         </TabPanel>
-        {isTeacher && (
-          <TabPanel label={detailLabels?.instructions}>
-            <Box className={classes.tabPanel}>hello 2</Box>
+        {isTeacher && isAssetWithInstuctions && (
+          <TabPanel label={detailLabels?.instructions} key="tab3">
+            <Box className={classes.tabPanel}>
+              {asset.instructionsForTeachers ? (
+                asset.instructionsForTeachers
+              ) : (
+                <>
+                  <Text>Este asset no tiene instrucciones para profesores aún.</Text>
+                </>
+              )}
+            </Box>
           </TabPanel>
         )}
       </Tabs>

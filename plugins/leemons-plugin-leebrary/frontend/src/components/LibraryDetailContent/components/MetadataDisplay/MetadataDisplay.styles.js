@@ -29,6 +29,12 @@ const MetadataDisplayStyles = createStyles((theme) => ({
     fontWeight: 600,
     lineHeight: '20px',
   },
+  url: {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 }));
 
 export default MetadataDisplayStyles;

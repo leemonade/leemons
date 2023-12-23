@@ -1,7 +1,8 @@
 /* eslint-disable no-unsafe-optional-chaining */
 import React, { useEffect, useState } from 'react';
-import { Box, Text, FileIcon } from '@bubbles-ui/components';
+import { Box, Text, TextClamp, FileIcon } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { DuplicateIcon } from '@bubbles-ui/icons/outline';
 import {
   METADATA_DISPLAY_PROP_TYPES,
   METADATA_DISPLAY_DEFAULT_PROPS,
@@ -9,7 +10,7 @@ import {
 import { MetadataDisplayStyles } from './MetadataDisplay.styles';
 import prefixPn from '../../../../helpers/prefixPN';
 
-const MetadataDisplay = ({ metadata }) => {
+const MetadataDisplay = ({ metadata, onCopy }) => {
   const [data, setData] = useState();
   const fileSizeMB = metadata?.file?.size / 1024;
   const fileSizeDocument = metadata?.fileType === 'document' && metadata?.metadata[0]?.value;
@@ -50,12 +51,16 @@ const MetadataDisplay = ({ metadata }) => {
     }
     return dataObject;
   };
+
   useEffect(() => {
     if (metadata?.fileType === 'image') {
       setData(getImageDimensions());
     }
     if (metadata?.fileType === 'video') {
       setData(getVideoData());
+    }
+    if (metadata?.fileType === 'bookmark') {
+      setData({ url: metadata?.url, name: metadata.name });
     }
   }, [metadata]);
 
@@ -128,6 +133,23 @@ const MetadataDisplay = ({ metadata }) => {
             <Box>
               <Text className={classes.title}>{`${t('size')}: `}</Text>
               <Text className={classes.value}>{`${fileSizeDocument}`}</Text>
+            </Box>
+          </Box>
+        )}
+        {metadata?.fileType === 'bookmark' && (
+          <Box>
+            <Box>
+              <Text className={classes.value}>{metadata.name}</Text>
+            </Box>
+            <Box className={classes.url}>
+              <Box>
+                <TextClamp lines={1}>
+                  <Text className={classes.title}>{metadata.url}</Text>
+                </TextClamp>
+              </Box>
+              <Box onClick={onCopy} style={{ cursor: 'pointer' }}>
+                <DuplicateIcon width={22} height={22} color={'rgb(135, 141, 150)'} />
+              </Box>
             </Box>
           </Box>
         )}
