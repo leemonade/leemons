@@ -36,7 +36,7 @@ function useLayoutProviderModals() {
   const [t] = useTranslateLoader(prefixPN('modals'));
 
   const openConfirmationModal = useCallback(
-    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    ({ title, description, labels, onCancel = () => { }, onConfirm = () => { } }) =>
       () =>
         modals.openConfirmModal({
           title: title || t('title.confirm'),
@@ -61,7 +61,7 @@ function useLayoutProviderModals() {
   );
 
   const openDeleteConfirmationModal = useCallback(
-    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    ({ title, description, labels, onCancel = () => { }, onConfirm = () => { } }) =>
       () =>
         modals.openConfirmModal({
           title: title || t('title.delete', { 'title.delete': 'Esta muriendo' }),
@@ -97,6 +97,7 @@ function LayoutProviderWrapper({ children, theme: themeProp }) {
     contentRef: useRef(),
     isAcademicMode: true,
     profileChecked: false,
+    hasFooter: false,
   });
   const location = useLocation();
 

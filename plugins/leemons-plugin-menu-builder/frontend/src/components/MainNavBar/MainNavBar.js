@@ -1,6 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, ImageLoader, Navbar, openSpotlight, Text, TextClamp } from '@bubbles-ui/components';
-import { useHover, useTimeout } from '@mantine/hooks';
+import {
+  Box,
+  ImageLoader,
+  Navbar,
+  openSpotlight,
+  Text,
+  TextClamp,
+  useHover,
+} from '@bubbles-ui/components';
 import { find, isArray, isEmpty } from 'lodash';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';

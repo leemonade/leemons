@@ -1,16 +1,18 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { HtmlText, InputWrapper, TableInput, Textarea } from '@bubbles-ui/components';
+import { Controller, useFormContext } from 'react-hook-form';
+import { HtmlText, InputWrapper, TableInput, Textarea, Button } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
 export default function Objectives({ form, name, label, required }) {
   const tableInputLabels = useTableInputLabels();
+  const localForm = useFormContext();
 
   const {
     control,
     formState: { errors },
-  } = form;
+  } = form ?? localForm;
 
   const columns = useMemo(() => [
     {
@@ -32,10 +34,20 @@ export default function Objectives({ form, name, label, required }) {
             {...field}
             columns={columns}
             editable
-            // TRANSLATE: Required error label
+            // TODO: TRANSLATE: Required error label
             error={errors.objectives && 'This field is required'}
             data={field.value || []}
             labels={tableInputLabels}
+            renderActionButton={({ disabled, onAdd }) => (
+              <Button
+                variant="link"
+                leftIcon={<AddCircleIcon />}
+                disabled={disabled}
+                onClick={onAdd}
+              >
+                Añadir
+              </Button>
+            )}
           />
         )}
       />

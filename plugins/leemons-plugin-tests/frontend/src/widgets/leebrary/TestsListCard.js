@@ -124,11 +124,11 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
   return (
     <LibraryCard
       {...props}
-      asset={asset}
+      asset={{ ...asset, fileType: 'test' }}
       menuItems={menuItems}
       variant="tests"
       variantTitle={t('tests')}
-      variantIcon={<TestIcon />}
+      variantIcon={<TestIcon width={18} height={18} />}
       className={classes.root}
     />
   );

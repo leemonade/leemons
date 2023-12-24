@@ -47,7 +47,7 @@ export default function DetailBasic({
                 <Button
                   variant="link"
                   onClick={handleOnSave}
-                  disabled={!formValues.name || store.saving}
+                  disabled={store.saving}
                   loading={store.saving === 'draft'}
                 >
                   {t('saveDraft')}

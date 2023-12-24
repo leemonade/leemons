@@ -145,6 +145,7 @@ module.exports = {
     publishAndAssign: 'Publicar y asignar',
     questionsBank: 'Banco de preguntas',
     design: 'Diseño',
+    evaluation: 'Evaluación',
     questionsBanksDescription: 'Seleccionar el banco de preguntas',
     questionsBanks: 'Bancos de preguntas',
     nameHeader: 'Nombre',
@@ -153,10 +154,12 @@ module.exports = {
     actionsHeader: 'Acciones',
     questionBankRequired: 'Seleccionar un banco de preguntas',
     questions: 'Preguntas',
+    questionsStepName: 'Selección de preguntas',
     noQuestionBanks:
       'No hay ningún banco de preguntas disponible para las asignaturas seleccionadas',
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
+    finish: 'Finalizar',
     questionsDescription: 'Selecciona las preguntas del banco para utilizar en este test',
     questionsDescriptionReorder:
       'Ahora puedes modificar el orden en el que el alumno responderá las preguntas. Arrastra y suelta las preguntas para re-ordenarlas.',

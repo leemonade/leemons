@@ -146,6 +146,7 @@ module.exports = {
     publishAndAssign: 'Publish and assign',
     questionsBank: 'Questions Bank',
     design: 'Design',
+    evaluation: 'Evaluation',
     questionsBanksDescription: 'Select question bank',
     questionsBanks: 'Questions Banks',
     nameHeader: 'Name',
@@ -155,8 +156,10 @@ module.exports = {
     actionsHeader: 'Actions',
     questionBankRequired: 'You must select one question bank',
     questions: 'Questions',
+    questionsStepName: 'Question selection',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
+    finish: 'Finish',
     questionsDescription:
       'Select the questions you want to add to this test question bank to use in this test.',
     questionsDescriptionReorder:

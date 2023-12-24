@@ -99,11 +99,12 @@ const LibraryCardCover = ({
     return isDocument && !isCCreator ? 'file' : type;
   };
   useEffect(() => {
+    console.log('fileType:', fileType);
     setResolvedIcon(getFileIcon(fileType));
   }, [fileType, icon, variantIcon]);
 
   const MemoizedEmptyCover = useMemo(
-    () => <CardEmptyCover icon={icon || variantIcon} fileType={resolvedIcon} />,
+    () => <CardEmptyCover icon={variantIcon ?? icon} fileType={resolvedIcon} />,
     [icon, variantIcon, fileType, resolvedIcon]
   );
 
