@@ -104,8 +104,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
 
   if (!session) return null;
 
-  console.log('store.onlyOneProfile', store.onlyOneProfile);
-
   return (
     <Spotlight
       data={menuData}
