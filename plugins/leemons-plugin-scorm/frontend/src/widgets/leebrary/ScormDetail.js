@@ -11,6 +11,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { prefixPN } from '@scorm/helpers';
 import { deletePackageRequest, duplicatePackageRequest } from '@scorm/request';
 import { CardVariantIcon } from '@scorm/components/icons';
+import { AssetMetadataScorm } from '@scorm/components/AssetMetadataScorm';
 
 const ScormDetail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
@@ -97,6 +98,7 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
       asset={{
         ...asset,
       }}
+      metadataComponent={<AssetMetadataScorm metadata={asset} />}
       variant="document"
       variantTitle={t('document')}
       variantIcon={CardVariantIcon}

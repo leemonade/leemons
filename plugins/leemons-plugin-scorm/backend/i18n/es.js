@@ -32,6 +32,9 @@ module.exports = {
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
     actionsHeader: 'Acciones',
+    type: 'SCORM',
+    version: 'Versión',
+    size: 'Tamaño',
   },
   scormList: {
     pageTitle: 'Biblioteca SCORM',
@@ -65,7 +68,7 @@ module.exports = {
   scormSetup: {
     titleNew: 'NUEVO SCORM',
     titleEdit: 'EDITAR SCORM',
-    scormTitlePlaceholder: "Título del nuevo SCORM",
+    scormTitlePlaceholder: 'Título del nuevo SCORM',
     description:
       'Para importar un contenido SCORM, debe estar comprimido (.zip) y debe tener un archivo <strong>imsmanifest.xml</strong> que describa el curso y su contenido.',
     addFile: 'Subir archivo zip',
@@ -89,7 +92,7 @@ module.exports = {
     multipleAttempts: 'Permite varios intentos',
     numberOfAttempts: 'Indícanos el número de preguntas que tiene este SCORM*',
     finish: 'Finalizar',
-    cancel: 'Cancelar'
+    cancel: 'Cancelar',
   },
   scormAssign: {
     assign: 'Asignar como tarea',

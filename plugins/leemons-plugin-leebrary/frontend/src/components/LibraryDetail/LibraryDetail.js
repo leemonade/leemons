@@ -7,6 +7,7 @@ import {
   AssetTaskIcon,
   PluginCurriculumIcon,
 } from '@bubbles-ui/icons/solid';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { LibraryDetailContent } from '../LibraryDetailContent';
 import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
 import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
@@ -34,6 +35,7 @@ const LibraryDetail = ({
 }) => {
   const [showDrawer, setShowDrawer] = useState(open);
   const [activeTab, setActiveTab] = useState('tab1');
+  const isTeacher = useIsTeacher();
   const handleShare = () => {
     if (isFunction(events?.onShare)) {
       events?.onShare(asset);
@@ -133,7 +135,7 @@ const LibraryDetail = ({
           />
         </Stack>
       </Stack>
-      {activeTab === 'tab2' && (
+      {activeTab === 'tab2' && isTeacher && (
         <Box className={classes.canAccessFooter}>
           <Button
             variant="outline"

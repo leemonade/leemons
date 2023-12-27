@@ -30,6 +30,9 @@ module.exports = {
     featuredImage: 'Add featured image',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
+    type: 'SCORM',
+    version: 'Version',
+    size: 'Size',
   },
   scormList: {
     pageTitle: 'SCORM library',
@@ -63,7 +66,7 @@ module.exports = {
   scormSetup: {
     titleNew: 'NEW SCORM PACKAGE',
     titleEdit: 'EDIT SCORM PACKAGE',
-    scormTitlePlaceholder: "New score package title",
+    scormTitlePlaceholder: 'New score package title',
     description:
       'To import a SCORM package, it needs to be zipped up (.zip) and needs to have a <strong>imsmanifest.xml</strong> file which describes the course and its content.',
     fileFormatError:
@@ -87,7 +90,7 @@ module.exports = {
     multipleAttempts: 'Allows multiple attempts',
     numberOfAttempts: 'Please indicate the number of questions in this SCORM*',
     finish: 'Finish',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
   },
   scormAssign: {
     assign: 'Assign as task',
