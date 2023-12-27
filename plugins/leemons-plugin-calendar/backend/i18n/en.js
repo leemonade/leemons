@@ -27,6 +27,7 @@ module.exports = {
     showWeekends: 'Show weekends',
     entirePeriod: 'Entire period',
     onlyInitAndEnd: 'Only show start and end',
+    new: 'New',
     onlyEnd: 'Show deadline only',
     display: 'Show',
     calendar: 'Calendar',

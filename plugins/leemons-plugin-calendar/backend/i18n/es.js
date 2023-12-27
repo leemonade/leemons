@@ -28,6 +28,7 @@ module.exports = {
     display: 'Mostrar',
     entirePeriod: 'Periodo completo',
     onlyInitAndEnd: 'Solo mostrar inicio y final',
+    new: 'Nuevo',
     onlyEnd: 'Solo mostrar fecha límite',
     calendar: 'Calendario',
     schedule: 'Horario',
