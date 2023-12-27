@@ -3074,14 +3074,6 @@
     url-regex-safe "~4.0.0"
     video-extensions "~1.2.0"
 
-"@moleculer/channels@^0.1.6":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@moleculer/channels/-/channels-0.1.8.tgz#19905814598d34ed355e418a7bad9902b81e95dd"
-  integrity sha512-nCWzYCjvrV2IaHAwKCZQPUYu4IV1067Q9wByd+dVRiXB44auy9dv8Whyl1oBTGzk78CcZNejfBG9Dw0UbRtkXA==
-  dependencies:
-    lodash "^4.17.21"
-    semver "^7.5.4"
-
 "@mongodb-js/saslprep@^1.1.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@mongodb-js/saslprep/-/saslprep-1.1.1.tgz#9a6c2516bc9188672c4d953ec99760ba49970da7"
@@ -10094,7 +10086,7 @@ evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
     md5.js "^1.3.4"
     safe-buffer "^5.1.1"
 
-exceljs@^4.2.0, exceljs@^4.3.0:
+exceljs@^4.2.0, exceljs@^4.3.0, exceljs@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/exceljs/-/exceljs-4.4.0.tgz#cfb1cb8dcc82c760a9fc9faa9e52dadab66b0156"
   integrity sha512-XctvKaEMaj1Ii9oDOqbW/6e1gXknSY4g/aLCDicOXqBE4M0nRWkUu0PTp++UPNzoFY12BNHMfs/VadKIS6llvg==
@@ -18473,7 +18465,7 @@ turbo-windows-arm64@1.11.2:
   resolved "https://registry.yarnpkg.com/turbo-windows-arm64/-/turbo-windows-arm64-1.11.2.tgz#ca1b4d7ac6fe8c931baef1a270ac07bbd924277b"
   integrity sha512-829aVBU7IX0c/B4G7g1VI8KniAGutHhIupkYMgF6xPkYVev2G3MYe6DMS/vsLt9GGM9ulDtdWxWrH5P2ngK8IQ==
 
-turbo@^1.9.3, turbo@^1.9.6:
+turbo@^1.9.3:
   version "1.11.2"
   resolved "https://registry.yarnpkg.com/turbo/-/turbo-1.11.2.tgz#7bae6df12c210e9b12973aad8f0e7b077039d4ce"
   integrity sha512-jPC7LVQJzebs5gWf8FmEvsvXGNyKbN+O9qpvv98xpNaM59aS0/Irhd0H0KbcqnXfsz7ETlzOC3R+xFWthC4Z8A==

@@ -20,10 +20,12 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
+    "@jest/globals": "^29.7.0",
     "@leemons/cache": "0.0.41",
+    "@leemons/common": "0.0.41",
     "@leemons/deployment-manager": "0.0.41",
     "@leemons/error": "0.0.41",
-    "@leemons/library": "0.0.41",
+    "@leemons/lrn": "0.0.41",
     "@leemons/menu-builder": "0.0.41",
     "@leemons/middlewares": "0.0.41",
     "@leemons/mongodb": "0.0.41",
@@ -33,6 +35,7 @@
     "@leemons/multilanguage": "0.0.41",
     "@leemons/permissions": "0.0.41",
     "@leemons/providers": "0.0.41",
+    "@leemons/testing": "0.0.41",
     "@leemons/validator": "0.0.41",
     "@leemons/widgets": "0.0.41",
     "got": "^11.8.5",

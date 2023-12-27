@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@leemons/deployment-manager": "0.0.41",
+    "@leemons/mongodb": "0.0.41",
     "ioredis": "^5.3.2",
     "jaeger-client": "^3.19.0",
     "moleculer": "^0.14.26",
