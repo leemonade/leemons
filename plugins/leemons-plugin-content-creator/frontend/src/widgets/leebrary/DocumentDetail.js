@@ -9,6 +9,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
 
 const DocumentDetail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();
@@ -95,6 +96,7 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
       asset={{
         ...asset,
       }}
+      metadataComponent={<AssetMetadataContentCreator metadata={asset} />}
       variant="document"
       variantTitle={t('document')}
       toolbarItems={toolbarItems}
