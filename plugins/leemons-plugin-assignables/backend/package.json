@@ -28,6 +28,7 @@
     "@leemons/validator": "0.0.41",
     "@leemons/widgets": "0.0.41",
     "dayjs": "^1.10.7",
+    "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "semver": "^7.5.4"
   },
