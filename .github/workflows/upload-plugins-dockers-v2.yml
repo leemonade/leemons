@@ -98,6 +98,12 @@ jobs:
       - name: 🔧 Checkout to latest submodule version
         run: git submodule update --init
 
+      - name: Check git status (private)
+        run: git -C private-plugins status
+
+      - name: Check git status
+        run: git status
+
       - name: 🔧 Check for modified files
         id: private-git-check
         run: echo "modified=$(if git -C private-plugins status | grep 'nothing to commit' > /dev/null; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
