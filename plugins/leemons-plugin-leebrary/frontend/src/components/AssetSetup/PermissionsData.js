@@ -10,6 +10,7 @@ import {
   Stack,
   TabPanel,
   Tabs,
+  Text,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@leebrary/components/LibraryItem';
 import { unflatten, useRequestErrorMessage, useStore } from '@common';
@@ -31,6 +32,7 @@ import { PermissionsDataClasses } from './components/PermissionsDataClasses';
 import { PermissionsDataProfiles } from './components/PermissionsDataProfiles';
 import { PermissionsDataPrograms } from './components/PermissionsDataPrograms';
 import { PermissionsDataUsers } from './components/PermissionsDataUsers';
+import PermissionsDataStyles from './PermissionsData.styles';
 
 const ROLESBYROLE = {
   viewer: [
@@ -87,6 +89,7 @@ const PermissionsData = ({
   const params = useParams();
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const profileSysName = useGetProfileSysName();
+  const { classes: classesStyles } = PermissionsDataStyles();
 
   // ··············································································
   // DATA PROCESS
@@ -416,19 +419,97 @@ const PermissionsData = ({
 
   return (
     <Box>
+      <Box className={classesStyles.header}>
+        <Text className={classesStyles.title}>{t('permissionsData.header.stepLabel')}</Text>
+      </Box>
       {!isEmpty(asset) && (
-        <ContextContainer
-          title={
-            sharing ? t('permissionsData.header.shareTitle') : t('permissionsData.labels.title')
-          }
-        >
+        <ContextContainer className={classesStyles.contentContainer}>
+          <Text className={classesStyles.titleItem}>{t('permissionsData.header.libraryItem')}</Text>
           <Paper bordered padding={1} shadow="none">
             <LibraryItem asset={asset} />
           </Paper>
+          <Text className={classesStyles.titleTabs}>
+            {t('permissionsData.header.permissionsHeader')}
+          </Text>
 
           {isArray(asset?.canAccess) ? (
             <Tabs forceRender>
-              <TabPanel label={t('permissionsData.labels.shareTab')}>
+              <TabPanel label={t('permissionsData.labels.currentUsers')}>
+                <Box
+                  sx={(theme) => ({
+                    flexDirection: 'column',
+                    display: 'flex',
+                    gap: theme.spacing[4],
+                    marginTop: theme.spacing[4],
+                  })}
+                >
+                  {shareTypesValues.includes('centers') ? (
+                    <PermissionsDataCenterProgramsProfiles
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      asset={asset}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                      translations={translations}
+                      profileSysName={profileSysName}
+                      editMode
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('programs') ? (
+                    <PermissionsDataPrograms
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      editMode
+                      t={t}
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('profiles') ? (
+                    <PermissionsDataProfiles
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      editMode
+                      t={t}
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('classes') ? (
+                    <PermissionsDataClasses
+                      roles={roles}
+                      value={editPermissions}
+                      onChange={setEditPermission}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                      editMode
+                    />
+                  ) : null}
+                  {shareTypesValues.includes('users') ? (
+                    <PermissionsDataUsers
+                      roles={roles}
+                      value={editUsersData}
+                      alreadySelectedUsers={[]}
+                      onChange={setEditUsersData}
+                      t={t}
+                      editMode
+                    />
+                  ) : null}
+                </Box>
+                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                  <Stack justifyContent={'end'} fullWidth>
+                    <Button loading={loading} onClick={saveEditPermissions}>
+                      {t('permissionsData.labels.saveButton')}
+                    </Button>
+                  </Stack>
+                </Box>
+              </TabPanel>
+              <TabPanel label={`${t('permissionsData.labels.addUsers')}hello`}>
                 <Select
                   sx={(theme) => ({ marginTop: theme.spacing[4], width: 270 })}
                   label={t('permissionsData.labels.shareTab')}
@@ -500,81 +581,6 @@ const PermissionsData = ({
                       {sharing
                         ? t('permissionsData.labels.shareButton')
                         : t('permissionsData.labels.saveButton')}
-                    </Button>
-                  </Stack>
-                </Box>
-              </TabPanel>
-              <TabPanel label={t('permissionsData.labels.sharedTab')}>
-                <Box
-                  sx={(theme) => ({
-                    flexDirection: 'column',
-                    display: 'flex',
-                    gap: theme.spacing[4],
-                    marginTop: theme.spacing[4],
-                  })}
-                >
-                  {shareTypesValues.includes('centers') ? (
-                    <PermissionsDataCenterProgramsProfiles
-                      roles={roles}
-                      value={editPermissions}
-                      onChange={setEditPermission}
-                      asset={asset}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      t={t}
-                      translations={translations}
-                      profileSysName={profileSysName}
-                      editMode
-                    />
-                  ) : null}
-                  {shareTypesValues.includes('programs') ? (
-                    <PermissionsDataPrograms
-                      roles={roles}
-                      value={editPermissions}
-                      onChange={setEditPermission}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      editMode
-                      t={t}
-                    />
-                  ) : null}
-                  {shareTypesValues.includes('profiles') ? (
-                    <PermissionsDataProfiles
-                      roles={roles}
-                      value={editPermissions}
-                      onChange={setEditPermission}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      editMode
-                      t={t}
-                    />
-                  ) : null}
-                  {shareTypesValues.includes('classes') ? (
-                    <PermissionsDataClasses
-                      roles={roles}
-                      value={editPermissions}
-                      onChange={setEditPermission}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      t={t}
-                      editMode
-                    />
-                  ) : null}
-                  {shareTypesValues.includes('users') ? (
-                    <PermissionsDataUsers
-                      roles={roles}
-                      value={editUsersData}
-                      alreadySelectedUsers={[]}
-                      onChange={setEditUsersData}
-                      t={t}
-                      editMode
-                    />
-                  ) : null}
-                </Box>
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                  <Stack justifyContent={'end'} fullWidth>
-                    <Button loading={loading} onClick={saveEditPermissions}>
-                      {t('permissionsData.labels.saveButton')}
                     </Button>
                   </Stack>
                 </Box>

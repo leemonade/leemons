@@ -166,8 +166,12 @@ module.exports = {
         stepLabel: 'Permissions',
         shareTitle: 'Share resource',
         close: 'Close',
+        libraryItem: 'Library item',
+        permissionsHeader: 'Permissions configuration',
       },
       labels: {
+        currentUsers: 'Current users',
+        addUsersTab: 'Add users',
         allCenters: 'All centers',
         shareTypePublic: 'Public',
         shareTypeCenters: 'By centers',

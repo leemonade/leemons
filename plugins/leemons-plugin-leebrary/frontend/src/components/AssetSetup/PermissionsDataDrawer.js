@@ -25,6 +25,8 @@ const PermissionsDataDrawer = ({
       close={t('header.close')}
       onClose={onClose}
       onBack={onClose}
+      size={728}
+      empty
       {...props}
     >
       <PermissionsData
@@ -47,4 +49,5 @@ PermissionsDataDrawer.propTypes = {
   onClose: PropTypes.func,
 };
 
+export default PermissionsDataDrawer;
 export { PermissionsDataDrawer };
