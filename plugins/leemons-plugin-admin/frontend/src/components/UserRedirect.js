@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { LoadingOverlay } from '@bubbles-ui/components';
 import { useStore } from '@common';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { getSettingsRequest } from '../request/settings';
 import LocaleContext from '../contexts/translations';
 
@@ -10,6 +11,7 @@ const UserRedirect = ({ to }) => {
   const [store, render] = useStore({
     loading: true,
   });
+  const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
   const { loadLocale } = React.useContext(LocaleContext);
   const { path } = useRouteMatch();
 
@@ -18,7 +20,7 @@ const UserRedirect = ({ to }) => {
   const getRedirect = (settings, isSuperAdmin) => {
     if (settings.configured) {
       if (isSuperAdmin) {
-        return getComponent('/private/admin/setup', to);
+        return getComponent(deploymentConfig?.superRedirectUrl || '/private/admin/setup', to);
       }
       if (path === '/admin/login') {
         return getComponent('/users/login', to);
@@ -31,7 +33,7 @@ const UserRedirect = ({ to }) => {
       let toPath = path;
 
       if (path === '/admin') {
-        toPath = '/private/admin/setup';
+        toPath = deploymentConfig?.superRedirectUrl || '/private/admin/setup';
       }
 
       return getComponent(toPath, to);
@@ -75,9 +77,9 @@ const UserRedirect = ({ to }) => {
 
   React.useEffect(() => {
     (async () => {
-      await getSettings();
+      if (deploymentConfig !== undefined) await getSettings();
     })();
-  }, [to, path]);
+  }, [to, path, deploymentConfig]);
 
   if (store.loading) return <LoadingOverlay visible />;
 

@@ -41,8 +41,6 @@ const Styles = createStyles((theme, { inTab }) => ({
   title: {
     paddingLeft: theme.spacing[2],
     paddingRight: theme.spacing[4],
-    paddingLeft: theme.spacing[2],
-    paddingRight: theme.spacing[4],
     fontSize: '20px',
     fontWeight: 600,
     lineHeight: '28px',
