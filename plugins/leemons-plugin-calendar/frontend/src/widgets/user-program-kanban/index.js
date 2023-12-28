@@ -3,15 +3,15 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
+  Button,
   createStyles,
-  IconButton,
   Kanban as BubblesKanban,
   Loader,
   Stack,
   Text,
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
-import { AddIcon as PlusIcon, PluginKanbanIcon } from '@bubbles-ui/icons/outline';
+import { AddIcon as PlusIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@calendar/components';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -41,6 +41,11 @@ const Styles = createStyles((theme, { inTab }) => ({
   title: {
     paddingLeft: theme.spacing[2],
     paddingRight: theme.spacing[4],
+    paddingLeft: theme.spacing[2],
+    paddingRight: theme.spacing[4],
+    fontSize: '20px',
+    fontWeight: 600,
+    lineHeight: '28px',
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
@@ -312,7 +317,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
         <Box>
           {!inTab ? (
             <>
-              <PluginKanbanIcon />
+              {/* <PluginKanbanIcon /> */}
               <Text size="lg" color="primary" className={styles.title}>
                 {t('kanban')}
               </Text>
@@ -327,9 +332,9 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
         </Box>
         <Box>
           {!store.loading ? (
-            <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
-              <PlusIcon />
-            </IconButton>
+            <Button leftIcon={<PlusIcon />} onClick={onNewEvent}>
+              {t('new')}
+            </Button>
           ) : null}
         </Box>
       </Stack>
