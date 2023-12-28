@@ -5,6 +5,7 @@ const getTheme = require('./getTheme');
 const setEmail = require('./setEmail');
 const getEmail = require('./getEmail');
 const addLocale = require('./addLocale');
+const removeLocale = require('./removeLocale');
 const getLocales = require('./getLocales');
 const setHostname = require('./setHostname');
 const getHostname = require('./getHostname');
@@ -45,6 +46,7 @@ module.exports = {
   setEmail,
   getEmail,
   addLocale,
+  removeLocale,
   getLocales,
   setHostname,
   getHostname,

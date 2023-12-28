@@ -57,20 +57,20 @@ class LeemonsRunner {
   }
 
   /**
-     * Process command line arguments
-     *
-     * Available options:
-     -c, --config     Load the configuration from a file
-     -e, --env        Load .env file from the current directory
-     -E, --envfile    Load a specified .env file
-     -h, --help       Output usage information
-     -H, --hot        Hot reload services if changed (disabled by default)
-     -i, --instances  Launch [number] instances node (load balanced)
-     -m, --mask       Filemask for service loading
-     -r, --repl       Start REPL mode (disabled by default)
-     -s, --silent     Silent mode. No logger (disabled by default)
-     -v, --version    Output the version number
-     */
+   * Process command line arguments
+   *
+   * Available options:
+   -c, --config     Load the configuration from a file
+   -e, --env        Load .env file from the current directory
+   -E, --envfile    Load a specified .env file
+   -h, --help       Output usage information
+   -H, --hot        Hot reload services if changed (disabled by default)
+   -i, --instances  Launch [number] instances node (load balanced)
+   -m, --mask       Filemask for service loading
+   -r, --repl       Start REPL mode (disabled by default)
+   -s, --silent     Silent mode. No logger (disabled by default)
+   -v, --version    Output the version number
+   */
   processFlags(procArgs) {
     Args.option('config', 'Load the configuration from a file')
       .option('repl', 'Start REPL mode', false)
@@ -400,7 +400,7 @@ class LeemonsRunner {
         logger.info(`Loading service (${dependency.name}) from path ${dependency.path}`);
       this.broker.loadServices(dependency.path, fileMask);
 
-      if (this.config.hotReload) {
+      if (this.config.hotReload && !dependency.path.endsWith('frontend')) {
         this.watchFolders.push(dependency.path);
       }
     });
@@ -576,12 +576,12 @@ class LeemonsRunner {
       .then(() => this.loadEnvFile())
       .then(() => this.loadConfigFile())
       .then(() => this.mergeOptions())
-      .then(() => {
-        return mongoose.connect(process.env.MONGO_URI, {
+      .then(() =>
+        mongoose.connect(process.env.MONGO_URI, {
           maxPoolSize: process.env.MAX_POOL_SIZE || 100,
           minPoolSize: process.env.MIN_POOL_SIZE || 25,
-        });
-      })
+        })
+      )
       .then(() => this.startBroker())
       .catch((err) => {
         logger.error(err);

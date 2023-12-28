@@ -16,7 +16,7 @@ export function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
     modificationTrend: 'frequently',
   });
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey,
     queryFn,
     ...options,
@@ -37,5 +37,5 @@ export function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
     return result;
   }
 
-  return data;
+  return isLoading ? undefined : data || null;
 }

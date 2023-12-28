@@ -73,6 +73,8 @@ module.exports = function ({
   dontGetDeploymentIDOnActionCall = [
     'deployment-manager.addManualDeploymentRest',
     'gateway.dropDBRest',
+    'v1.client-manager.protected.newFreemiumClient',
+    'v1.client-manager.protected.isSubdomainInUse',
   ],
 } = {}) {
   return {
@@ -101,7 +103,8 @@ module.exports = function ({
               if (
                 !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
                 !ctx.action.name.includes('leemonsMongoDBRollback') &&
-                !ctx.action.name.startsWith('gateway.')
+                !ctx.action.name.startsWith('gateway.') &&
+                !ctx.callerPlugin.startsWith('gateway')
               ) {
                 if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
                   if (!ctx.meta.relationshipID)

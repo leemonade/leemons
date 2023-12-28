@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { getRolesProfiles } = require('../roles/getRolesProfiles');
 const { getRolesCenters } = require('../roles/getRolesCenters');
 
@@ -11,7 +12,10 @@ async function check({ nUserAgents, limit, rolesProfiles, ctx }) {
       $or: [{ disabled: null }, { disabled: false }],
     });
     if (totalUserAgentsForRole + nUserAgents > limit.limit) {
-      throw new Error('Cannot add the user exceeds the maximum limit.');
+      throw new LeemonsError(ctx, {
+        message: 'Cannot add the user exceeds the maximum limit.',
+        httpStatusCode: 400,
+      });
     }
   }
   // Si es ilimitado no comprobamos nada

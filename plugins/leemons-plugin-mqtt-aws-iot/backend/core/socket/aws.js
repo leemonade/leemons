@@ -17,12 +17,13 @@ function configChanged() {
 
 async function getConfig({ ctx }) {
   if (process.env.AWS_REGION && process.env.AWS_ACCESS_KEY && process.env.AWS_SECRET_ACCESS_KEY) {
-    return {
+    config = {
       id: 'aws-iot',
       region: process.env.AWS_REGION,
       accessKeyId: process.env.AWS_ACCESS_KEY,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     };
+    return config;
   }
   const now = new Date();
   if (configDateEnd && configDateEnd > now) {

@@ -71,6 +71,7 @@
           "@attendance-control",
           "@board-messages",
           "@calendar",
+          "@client-manager",
           "@common",
           "@comunica",
           "@content-creator",

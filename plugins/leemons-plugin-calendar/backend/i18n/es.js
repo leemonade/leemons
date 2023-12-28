@@ -28,6 +28,7 @@ module.exports = {
     display: 'Mostrar',
     entirePeriod: 'Periodo completo',
     onlyInitAndEnd: 'Solo mostrar inicio y final',
+    new: 'Nuevo',
     onlyEnd: 'Solo mostrar fecha límite',
     calendar: 'Calendario',
     schedule: 'Horario',
@@ -190,6 +191,7 @@ module.exports = {
     kanban: 'Kanban destacado',
     description: 'Tareas destacadas que finalizan en menos de 5 días',
     showAllKanban: 'Ver kanban completo',
+    new: 'Nuevo',
   },
   tabKanban: {
     label: 'Kanban',

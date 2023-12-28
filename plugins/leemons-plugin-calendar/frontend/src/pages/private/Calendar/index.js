@@ -13,7 +13,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { CalendarSubNavFilters, EventDetailPanel } from '@calendar/components';
+import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -393,9 +393,12 @@ function Calendar({ session }) {
       <Box style={{ width: '250px' }}>
         <CalendarSubNavFilters
           style={{ position: 'static' }}
-          lightMode={!theme.useDarkMode}
-          drawerColor={theme.menuDrawerColor}
-          mainColor={theme.menuMainColor}
+          // lightMode={!theme.useDarkMode}
+          // drawerColor={theme.menuDrawerColor}
+          lightMode={false}
+          drawerColor="#FFFFFF"
+          mainColor="#FFFFFF"
+          // mainColor={theme.menuMainColor}
           showPageControl={
             store.scheduleCenter?.[store.center?.id]?.allClasses?.length &&
             store.scheduleCenter?.[store.center?.id]?.config
@@ -496,6 +499,7 @@ function Calendar({ session }) {
               date: t('date'),
               time: t('time'),
               event: t('event'),
+              new: t('new'),
               noEventsInRange: (
                 <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[12] })}>
                   <Title order={2}>{t('empty')}</Title>

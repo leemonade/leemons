@@ -103,8 +103,8 @@ module.exports = {
       path: '/languages',
     },
     async handler(ctx) {
-      const { langs, defaultLang } = ctx.params;
-      await settingsService.setLanguages({ langs, defaultLang, ctx });
+      const { langs, defaultLang, removeOthers } = ctx.params;
+      await settingsService.setLanguages({ langs, defaultLang, removeOthers, ctx });
       const settings = await settingsService.findOne({ ctx });
       return { status: 200, settings };
     },

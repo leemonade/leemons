@@ -26,6 +26,9 @@
       "@calendar/*": [
         "./plugins/leemons-plugin-calendar/frontend/src/*"
       ],
+      "@client-manager/*": [
+        "./private-plugins/leemons-plugin-client-manager/frontend/src/*"
+      ],
       "@common": [
         "./plugins/leemons-plugin-common/frontend/src/index"
       ],
