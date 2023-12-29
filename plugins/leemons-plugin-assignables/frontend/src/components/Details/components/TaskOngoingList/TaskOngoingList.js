@@ -1,21 +1,8 @@
 import React, { useMemo } from 'react';
-import {
-  Box,
-  HorizontalTimeline,
-  Text,
-  ScoresBar,
-  useResizeObserver,
-  Stack,
-} from '@bubbles-ui/components';
-import { HeaderBackground, TaskDeadlineHeader } from '@bubbles-ui/leemons';
-import { OpenIcon, TimeClockCircleIcon, CheckCircleIcon } from '@bubbles-ui/icons/outline';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import dayjs from 'dayjs';
+import { Box, Text } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { useLayout } from '@layout/context';
 import { TaskOngoingListStyles } from './TaskOngoingList.styles';
 import {
   TASK_ONGOING_LIST_DEFAULT_PROPS,
@@ -23,7 +10,8 @@ import {
 } from './TaskOngoingList.constants';
 import useTaskOngoingInstanceParser from './hooks/useTaskOngoingInstanceParser';
 import prefixPN from '../../../../helpers/prefixPN';
-import useMutateAssignableInstance from '../../../../hooks/assignableInstance/useMutateAssignableInstance';
+import StatusGraph from './components/StatusGraph/StatusGraph';
+import GradesGraph from './components/GradesGraph/GradesGraph';
 
 export function useTaskOngoingListLocalizations() {
   const [, translations] = useTranslateLoader([
@@ -51,38 +39,33 @@ export function useTaskOngoingListLocalizations() {
 
 const TaskOngoingList = ({ instance }) => {
   const instanceData = useTaskOngoingInstanceParser(instance);
-  const { dashboardLocalizations, statusLocalizations } = useTaskOngoingListLocalizations();
+
+  const { dashboardLocalizations } = useTaskOngoingListLocalizations();
 
   const { classes } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
 
   return (
-    <Box style={{ marginTop: 0 }} className={classes.mainContent}>
-      <Box className={classes.leftSide}>
-        <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.status}</Text>
-        <Box className={classes.leftScoreBarWrapper}>
-          <Box className={classes.scoreBarLeftLegend}>
-            <Box className={classes.legend}>
-              <OpenIcon width={12} height={12} />
-              <Text role="productive">{statusLocalizations?.opened}</Text>
-            </Box>
-            <Box className={classes.legend}>
-              <TimeClockCircleIcon width={12} height={12} />
-              <Text role="productive">{statusLocalizations?.started}</Text>
-            </Box>
-            <Box className={classes.legend}>
-              <CheckCircleIcon width={12} height={12} />
-              <Text role="productive">{statusLocalizations?.submitted}</Text>
-            </Box>
-          </Box>
-          <ScoresBar {...instanceData.leftScoresBar} />
-        </Box>
+    <Box className={classes.root}>
+      <Box>
+        <Text color="primary" className={classes.title}>
+          {dashboardLocalizations?.progress}
+        </Text>
+        <StatusGraph {...instanceData.leftScoresBar} />
       </Box>
-      {!!instance?.requiresScoring && (
-        <Box className={classes.rightSide}>
-          <Text transform="uppercase">{dashboardLocalizations?.labels?.graphs?.grades}</Text>
-          <Box className={classes.rightScoreBarWrapper}>
-            {instanceData.rightScoresBar && <ScoresBar {...instanceData.rightScoresBar} />}
-          </Box>
+      {!!instance.requiresScoring && (
+        <Box>
+          <Text color="primary" className={classes.title}>
+            {dashboardLocalizations?.evaluation}
+          </Text>
+
+          <GradesGraph
+            {...instanceData.rightScoresBar}
+            labels={{
+              students: dashboardLocalizations?.students,
+              califications: dashboardLocalizations?.califications,
+              passed: dashboardLocalizations?.passed,
+            }}
+          />
         </Box>
       )}
     </Box>

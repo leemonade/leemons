@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   LoadingOverlay,
@@ -16,6 +16,7 @@ import ActivityHeader from '../ActivityHeader';
 
 export default function Details() {
   const { id } = useParams();
+  const scrollRef = useRef();
 
   const { data: instance, isLoading, isError } = useInstances({ id });
 
@@ -24,6 +25,7 @@ export default function Details() {
   if (instance) {
     return (
       <TotalLayoutContainer
+        scrollRef={scrollRef}
         Header={
           <ActivityHeader
             action={t('title')}
@@ -39,10 +41,22 @@ export default function Details() {
           />
         }
       >
-        <Stack justifyContent="center">
-          <TotalLayoutStepContainer stepName={t('title')}>
-            <TaskOngoingList instance={instance} />
-            <UsersList instance={instance} />
+        <Stack
+          justifyContent="center"
+          fullWidth
+          fullHeight
+          style={{
+            backgroundColor: '#f8f9fb',
+            overflow: 'auto',
+            position: 'relative',
+          }}
+          ref={scrollRef}
+        >
+          <TotalLayoutStepContainer>
+            <Stack spacing={8} fullWidth fullHeight direction="column">
+              <TaskOngoingList instance={instance} />
+              <UsersList instance={instance} />
+            </Stack>
           </TotalLayoutStepContainer>
         </Stack>
       </TotalLayoutContainer>

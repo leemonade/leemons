@@ -13,6 +13,8 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useMemo } from 'react';
 import { Progress } from '@assignables/components/Ongoing/AssignmentList/hooks/useParseAssignations/parseAssignationForStudent';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import getNearestScale from '@scorm/helpers/getNearestScale';
 import prefixPN from '../../../../../helpers/prefixPN';
 import getActions from './getActions';
 import getStatus from './getStatus';
@@ -70,6 +72,7 @@ export default function useParseStudents(instance, statusLabels) {
   const students = useStudentData(instance?.students);
   const subjects = useClassesSubjects(instance?.classes);
   const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
+  const evaluationSystem = useProgramEvaluationSystem(instance, { enabled: !!instance });
 
   const { openConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -111,25 +114,29 @@ export default function useParseStudents(instance, statusLabels) {
       return [];
     }
 
-    return students?.map((student) => ({
-      id: student.user,
-      userAgentIsDisabled: student.userAgentIsDisabled,
-      student: <UserDisplayItem {...student.userInfo} />,
-      unreadMessages: <UnreadMessages rooms={student.chatKeys} />,
-      progress: <Progress assignation={{ ...student, instance }} />,
-      avgTime:
-        student?.timestamps?.start && student?.timestamps?.end ? (
-          <LocaleDuration
-            seconds={dayjs(student.timestamps.end).diff(student.timestamps.start, 'seconds')}
-          />
-        ) : (
-          '-'
-        ),
-      actions: getActions(student, instance, localizations, subjects, {
-        reminder,
-        score: getStudentAverageScore(student),
-      }),
-      userInfo: student.userInfo,
-    }));
+    return students?.map((student) => {
+      const scale = getNearestScale({ grade: getStudentAverageScore(student), evaluationSystem });
+
+      return {
+        id: student.user,
+        userAgentIsDisabled: student.userAgentIsDisabled,
+        student: <UserDisplayItem {...student.userInfo} />,
+        unreadMessages: <UnreadMessages rooms={student.chatKeys} />,
+        progress: <Progress assignation={{ ...student, instance }} />,
+        avgTime:
+          student?.timestamps?.start && student?.timestamps?.end ? (
+            <LocaleDuration
+              seconds={dayjs(student.timestamps.end).diff(student.timestamps.start, 'seconds')}
+            />
+          ) : (
+            '-'
+          ),
+        actions: getActions(student, instance, localizations, subjects, {
+          reminder,
+          score: scale?.letter ?? scale?.number,
+        }),
+        userInfo: student.userInfo,
+      };
+    });
   }, [students, subjects]);
 }

@@ -171,6 +171,11 @@ module.exports = {
     liveSessionData: 'Date',
   },
   activity_dashboard: {
+    progress: 'Progress',
+    evaluation: 'Evaluation',
+    students: 'Students',
+    califications: 'Califications',
+    passed: 'Pass',
     closeAction: {
       verbs: {
         opening: 'opening',
