@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { clone, findIndex, map, pullAt, uniq } from 'lodash';
 import { useForm, Controller, useWatch } from 'react-hook-form';
@@ -22,6 +22,7 @@ export function SubjectPicker({
   localizations,
   value,
   onChange,
+  onChangeRaw,
   error,
   hideSectionHeaders,
   onlyOneSubject,
@@ -40,6 +41,10 @@ export function SubjectPicker({
     subjects: assignable?.subjects,
     control: form.control,
   });
+
+  useEffect(() => {
+    onChangeRaw(selectedSubjects);
+  }, [selectedSubjects, onChangeRaw]);
 
   const { classes } = useSubjectPickerStyles();
 

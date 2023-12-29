@@ -84,6 +84,9 @@ export function useDataForSubjectPicker({ subjects, control }) {
 
         return {
           id: s,
+          programId: subjectProgram?.id,
+          courseId: subjectCourse?.id,
+
           program: subjectProgram?.name,
           course: subjectCourse?.name,
           subject: subject?.name,
