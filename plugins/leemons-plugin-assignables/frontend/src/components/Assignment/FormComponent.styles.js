@@ -9,6 +9,7 @@ const useFormComponentStyles = createStyles((theme) => {
       flexDirection: 'row',
       gap: globalTheme.spacing.gap.xlg, // 24
       zIndex: 0,
+      paddingBottom: 10,
     },
     leftColumn: {
       maxWidth: 928 - 266 - 24 * 2, // leftColumn + rightColumn

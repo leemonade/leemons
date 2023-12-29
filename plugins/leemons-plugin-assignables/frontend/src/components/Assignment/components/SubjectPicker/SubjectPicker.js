@@ -54,7 +54,7 @@ export function SubjectPicker({
   const onRemove = ({ id }) => {
     const selSubjects = form.getValues('selectedSubjects');
 
-    const index = findIndex(selSubjects, id);
+    const index = findIndex(selSubjects, (subject) => subject === id);
 
     if (index >= 0) {
       const newSelectedSubjects = [...selSubjects];

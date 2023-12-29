@@ -9,6 +9,7 @@ const useSelectedStudentsInfoStyles = createStyles((theme) => {
   return {
     root: {
       display: 'flex',
+      flexDirection: 'column',
       gap: globalTheme.spacing.gap.md,
     },
     options: {

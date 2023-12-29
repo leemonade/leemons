@@ -189,7 +189,7 @@ export default function AssignConfig({
             !hideButtons && (
               <Button
                 compact
-                variant="light"
+                variant="outline"
                 leftIcon={<ChevLeftIcon height={20} width={20} />}
                 onClick={() => {
                   const values = form.getValues();

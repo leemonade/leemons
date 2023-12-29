@@ -1,31 +1,15 @@
 import React from 'react';
-import { forIn, map, omit, set, uniq } from 'lodash';
+import { map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  ContextContainer,
-  Stack,
-  VerticalStepperContainer,
-} from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 // TODO: import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import Form from '@assignables/components/Assignment/Form';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
 import { assignTestRequest, getAssignConfigsRequest, getTestRequest } from '../../../request';
 import AssignConfig from '../../../components/AssignConfig';
-
-function parseDates(date) {
-  if (date instanceof Date) {
-    return date.toISOString();
-  }
-
-  return undefined;
-}
 
 export default function Assign() {
   const [t] = useTranslateLoader(prefixPN('testAssign'));

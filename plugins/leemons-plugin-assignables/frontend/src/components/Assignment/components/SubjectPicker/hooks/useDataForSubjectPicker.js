@@ -83,7 +83,7 @@ export function useDataForSubjectPicker({ subjects, control }) {
         const subjectCourse = find(subjectProgram?.courses, { id: subject?.course });
 
         return {
-          id: s?.subject,
+          id: s,
           program: subjectProgram?.name,
           course: subjectCourse?.name,
           subject: subject?.name,
