@@ -85,6 +85,7 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         try {
+          console.log('- Vamos a registrar al super admin', ctx.params.email);
           await settingsService.registerAdmin({ ...ctx.params, ctx });
           const settings = await settingsService.findOne({ ctx });
           return { status: 200, settings };

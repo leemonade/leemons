@@ -637,29 +637,29 @@ module.exports = {
         },
 
         /**
-                 * Before call hook. You can check the request.
-                 * @param {Context} ctx
-                 * @param {Object} route
-                 * @param {IncomingRequest} req
-                 * @param {ServerResponse} res
-                 * @param {Object} data
-                 *
-                 onBeforeCall(ctx, route, req, res) {
-                 // Set request headers to context meta
-                 ctx.meta.userAgent = req.headers["user-agent"];
-                 }, */
+         * Before call hook. You can check the request.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         *
+         onBeforeCall(ctx, route, req, res) {
+         // Set request headers to context meta
+         ctx.meta.userAgent = req.headers["user-agent"];
+         }, */
 
         /**
-                 * After call hook. You can modify the data.
-                 * @param {Context} ctx
-                 * @param {Object} route
-                 * @param {IncomingRequest} req
-                 * @param {ServerResponse} res
-                 * @param {Object} data
-                 onAfterCall(ctx, route, req, res, data) {
-                 // Async function which return with Promise
-                 return doSomething(ctx, res, data);
-                 }, */
+         * After call hook. You can modify the data.
+         * @param {Context} ctx
+         * @param {Object} route
+         * @param {IncomingRequest} req
+         * @param {ServerResponse} res
+         * @param {Object} data
+         onAfterCall(ctx, route, req, res, data) {
+         // Async function which return with Promise
+         return doSomething(ctx, res, data);
+         }, */
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =
@@ -668,18 +668,17 @@ module.exports = {
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress;
           const url = req.headers.referer || req.headers.referrer || req.headers.host;
-          if (url.startsWith('localhost')) {
+          if (url.startsWith('localhost') && req.headers.apikey !== process.env.MANUAL_PASSWORD) {
             ctx.meta.hostname = 'localhost';
-          } else {
-            const parseResult = parse(url);
-            if (ctx.meta) {
-              if (
-                process.env.MANUAL_PASSWORD &&
-                req.headers.apiKey === process.env.MANUAL_PASSWORD &&
-                req.headers.customDomain
-              ) {
-                ctx.meta.hostname = req.headers.customDomain;
-              }
+          } else if (ctx.meta) {
+            if (
+              process.env.MANUAL_PASSWORD &&
+              req.headers.apikey === process.env.MANUAL_PASSWORD &&
+              req.headers.customdomain
+            ) {
+              ctx.meta.hostname = req.headers.customdomain;
+            } else {
+              const parseResult = parse(url);
               ctx.meta.hostname =
                 parseResult?.hostname ||
                 parseResult?.host ||

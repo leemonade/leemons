@@ -36,7 +36,12 @@ async function login({ email, password, ctx }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, deploymentID: ctx.meta.deploymentID }),
+        body: JSON.stringify({
+          email,
+          password,
+          deploymentID: ctx.meta.deploymentID,
+          manualPassword: process.env.MANUAL_PASSWORD,
+        }),
       });
     } else {
       throw new LeemonsError(ctx, {

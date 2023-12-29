@@ -9,6 +9,13 @@ import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
 import { apiSessionMiddleware } from '../globalContext';
 
+const params = new URLSearchParams(window.location.search);
+const jwtToken = params.get('jwtToken'); // reemplace 'myParam' con el nombre de su parámetro
+
+if (jwtToken) {
+  Cookies.set('token', jwtToken);
+}
+
 /**
  * @private
  * @param {request} req extracted from request response

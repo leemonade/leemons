@@ -1,23 +1,56 @@
+const fetch = require('node-fetch');
 const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
 
 async function registerPassword({ token, password, ctx }) {
   const config = await getRegisterPasswordConfig({ token, ctx });
 
-  const values = await Promise.all([
-    ctx.tx.db.Users.findOneAndUpdate(
-      { id: config.user.id },
-      { password: await encryptPassword(password), status: 'password-registered', active: true },
-      { new: true, lean: true }
-    ),
-    ctx.tx.db.UserRegisterPassword.deleteOne({ id: config.recoveryId }),
-  ]);
+  let user = await ctx.tx.db.Users.findOne({ id: config.user.id }).lean();
+
+  let setPassword = true;
+  // Si esta external identity url, le mandamos que cambie la contraseña del usuario (email), si el
+  // usuario no existe no dara un error y procedemos a añadir la contraseña en nuestra base de datos
+  // como siempre si no da error no seteamos la contraseña en nuestra base de datos
+  if (process.env.EXTERNAL_IDENTITY_URL) {
+    try {
+      // Is no error its done
+      await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+          password,
+          deploymentID: ctx.meta.deploymentID,
+          manualPassword: process.env.MANUAL_PASSWORD,
+        }),
+      });
+      setPassword = false;
+    } catch (error) {}
+  }
+
+  const toUpdate = {
+    status: 'password-registered',
+    active: true,
+  };
+
+  if (setPassword) {
+    toUpdate.password = await encryptPassword(password);
+  }
+
+  user = await ctx.tx.db.Users.findOneAndUpdate({ id: config.user.id }, toUpdate, {
+    new: true,
+    lean: true,
+  });
+
+  await ctx.tx.db.UserRegisterPassword.deleteOne({ id: config.recoveryId });
 
   // if (leemons.getPlugin('emails')) {
   //   // TODO Mandar algun email si se quiere cuando el usuario haya seteado su contraseña del todo
   // }
 
-  return values[0];
+  return user;
 }
 
 module.exports = {
