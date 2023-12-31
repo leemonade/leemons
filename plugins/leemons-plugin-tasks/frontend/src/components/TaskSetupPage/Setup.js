@@ -12,7 +12,7 @@ function getInitialProgram(sharedData) {
   return null;
 }
 
-function Setup({ labels, steps, values, editable, onSave, useObserver, ...props }) {
+function Setup({ labels, steps, values, editable, onSave, useObserver, scrollRef, ...props }) {
   const { setValue, getValues } = useObservableContext();
 
   useEffect(() => {
@@ -87,6 +87,7 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, ...props 
       currentStep={active}
       data={steps}
       onChangeActiveIndex={onChangeActiveIndex}
+      scrollRef={scrollRef}
     >
       {
         steps.map((item) =>
@@ -122,6 +123,7 @@ Setup.propTypes = {
   onPrev: PropTypes.func,
   onSave: PropTypes.func,
   useObserver: PropTypes.func,
+  scrollRef: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export

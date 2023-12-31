@@ -22,7 +22,7 @@ const ListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...props }) => {
+const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ...props }) => {
   const history = useHistory();
   const {
     openConfirmationModal,
@@ -173,7 +173,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
   return (
     <LibraryCard
       {...props}
-      asset={asset}
+      asset={{ ...asset, fileType: 'task' }}
       menuItems={menuItems}
       variant="task"
       variantIcon={isExpress ? <ExpressTaskIcon /> : <TaskIcon />}

@@ -45,7 +45,7 @@ export default function Objectives({ form, name, label, required }) {
                 disabled={disabled}
                 onClick={onAdd}
               >
-                Añadir
+                {tableInputLabels.add}
               </Button>
             )}
           />
