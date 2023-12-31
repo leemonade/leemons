@@ -40,6 +40,7 @@ export default function Edit() {
 
   const [store, render] = useStore({
     loading: true,
+    saving: null,
     isNew: false,
     currentStep: 0,
     headerHeight: null,
@@ -75,7 +76,6 @@ export default function Edit() {
   }
 
   async function saveAsPublish(redictToAssign = false) {
-    console.log('saveAsPublish!!');
     try {
       store.saving = 'publish';
       render();
