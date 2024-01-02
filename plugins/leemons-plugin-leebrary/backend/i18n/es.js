@@ -204,6 +204,8 @@ module.exports = {
         removeUserButton: 'Eliminar',
         acceptButton: 'Aceptar',
         cancelButton: 'Cancelar',
+        updateButton: 'Actualizar',
+        saveFooterButton: 'Guardar',
         permissionsSuccess: 'Permisos establecidos con éxito',
         shareSuccess: 'Recurso compartido con éxito',
         shareCenters: 'Buscar centros',
@@ -212,6 +214,8 @@ module.exports = {
         sharePermissions: 'Permisos',
         shareClasses: 'Buscar clase',
         editAddUsers: 'Usuarios individuales',
+        addUserAlert:
+          'Los docentes verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida sino tiene etiquetas de asignatura asignada.',
       },
       placeholders: {
         userInput: 'Escribir nombre',

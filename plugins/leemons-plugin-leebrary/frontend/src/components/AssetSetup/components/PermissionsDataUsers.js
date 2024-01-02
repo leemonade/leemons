@@ -56,6 +56,17 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
   const USERS_COLUMNS = useMemo(
     () => [
       {
+        Header: 'Profile',
+        accessor: 'profile',
+        input: {
+          node: <SelectAgents usersData={[...alreadySelectedUsers, ...value]} />,
+          rules: { required: 'Required field' },
+        },
+        editable: false,
+        valueRender: (val) => <UserDisplayItem {...val} variant="inline" size="xs" />,
+        style: { width: '30%' },
+      },
+      {
         Header: 'User',
         accessor: 'user',
         input: {
@@ -64,7 +75,7 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
         },
         editable: false,
         valueRender: (val) => <UserDisplayItem {...val} variant="inline" size="xs" />,
-        style: { width: '50%' },
+        style: { width: '30%' },
       },
       {
         Header: 'Role',
@@ -98,8 +109,8 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
     <ContextContainer>
       {!editMode ? (
         <Box>
-          <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-          <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph>
+          {/* <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
+          <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph> */}
         </Box>
       ) : (
         <Box>

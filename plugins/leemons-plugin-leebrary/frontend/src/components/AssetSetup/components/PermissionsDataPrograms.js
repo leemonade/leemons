@@ -130,10 +130,10 @@ const PermissionsDataPrograms = ({
     <ContextContainer spacing={editMode ? 0 : 5}>
       {!editMode ? (
         <>
-          <Box>
+          {/* <Box>
             <Title order={5}>{t('permissionsData.labels.addPrograms')}</Title>
             <Paragraph>{t('permissionsData.labels.addProgramsDescription')}</Paragraph>
-          </Box>
+          </Box> */}
 
           {profiles?.length ? (
             <Stack>

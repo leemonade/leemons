@@ -217,6 +217,8 @@ module.exports = {
         removeUserButton: 'Remove',
         acceptButton: 'Accept',
         cancelButton: 'Cancel',
+        updateButton: 'Update',
+        saveFooterButton: 'Guardar',
         permissionsSuccess: 'Permissions successfully established',
         shareSuccess: 'Resource successfully shared',
         shareCenters: 'Search centers',
@@ -225,6 +227,8 @@ module.exports = {
         sharePermissions: 'Permissions',
         shareClasses: 'Search class',
         editAddUsers: 'Individual users',
+        addUserAlert:
+          'Teachers will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if it does not have assigned subject tags.',
       },
       placeholders: {
         userInput: 'Start typing a name',

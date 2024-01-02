@@ -90,6 +90,11 @@ const PermissionsData = ({
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const profileSysName = useGetProfileSysName();
   const { classes: classesStyles } = PermissionsDataStyles();
+  const [activeTab, setActiveTab] = useState('tab1');
+
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
 
   // ··············································································
   // DATA PROCESS
@@ -433,8 +438,13 @@ const PermissionsData = ({
           </Text>
 
           {isArray(asset?.canAccess) ? (
-            <Tabs forceRender>
-              <TabPanel label={t('permissionsData.labels.currentUsers')}>
+            <Tabs
+              forceRender
+              activeKey={activeTab}
+              onChange={handleTabChange}
+              className={classesStyles.tab}
+            >
+              <TabPanel label={t('permissionsData.labels.currentUsers')} key="tab1">
                 <Box
                   sx={(theme) => ({
                     flexDirection: 'column',
@@ -509,7 +519,7 @@ const PermissionsData = ({
                   </Stack>
                 </Box>
               </TabPanel>
-              <TabPanel label={`${t('permissionsData.labels.addUsers')}hello`}>
+              <TabPanel label={`${t('permissionsData.labels.addUsersTab')}`} key="tab2">
                 <Select
                   sx={(theme) => ({ marginTop: theme.spacing[4], width: 270 })}
                   label={t('permissionsData.labels.shareTab')}
@@ -517,6 +527,11 @@ const PermissionsData = ({
                   value={store.shareType}
                   onChange={onChangeShareType}
                 />
+                <Box className={classesStyles.alertContainer}>
+                  <Alert severity="info" closeable={false}>
+                    {t('permissionsData.labels.addUserAlert')}
+                  </Alert>
+                </Box>
 
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   {store.shareType === 'centers' ? (
@@ -633,6 +648,20 @@ const PermissionsData = ({
               )}
             </>
           ) : null}
+          <Box className={classesStyles.footer}>
+            {activeTab === 'tab1' && (
+              <Box className={classesStyles.footerButtons}>
+                <Button variant="link">{t('permissionsData.labels.cancelButton')}</Button>
+                <Button variant="primary">{t('permissionsData.labels.updateButton')}</Button>
+              </Box>
+            )}
+            {activeTab === 'tab2' && (
+              <Box className={classesStyles.footerButtons}>
+                <Button variant="link">{t('permissionsData.labels.cancelButton')}</Button>
+                <Button variant="primary">{t('permissionsData.labels.saveFooterButton')}</Button>
+              </Box>
+            )}
+          </Box>
         </ContextContainer>
       )}
     </Box>
