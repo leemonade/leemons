@@ -23,8 +23,8 @@ const menuItems = [
     item: {
       key: 'curriculum',
       order: 300,
-      iconSvg: '/public/curriculum/curriculum.svg',
-      activeIconSvg: '/public/curriculum/curriculum-active.svg',
+      iconSvg: '/public/curriculum/menu-icon.svg',
+      activeIconSvg: '/public/curriculum/menu-icon.svg',
       label: {
         en: 'Curriculum',
         es: 'Curriculum',
