@@ -1,28 +1,19 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { clone, findIndex, map, pullAt, uniq } from 'lodash';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import {
-  Box,
-  MultiSelect,
-  createStyles,
-  Button,
-  Select,
-  Text,
-  ActionButton,
-  Table,
-} from '@bubbles-ui/components';
+import { findIndex, noop, uniq } from 'lodash';
+import { Controller, useForm } from 'react-hook-form';
+import { ActionButton, Box, Button, Select, Table } from '@bubbles-ui/components';
 import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
-import { Container } from '../Container';
+import { Container } from '@assignables/components/Assignment/components/Container';
 import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
-import useSubjectPickerStyles from './SubjectPicker.styles';
+import { useSubjectPickerStyles } from './SubjectPicker.styles';
 
 export function SubjectPicker({
   assignable,
   localizations,
   value,
   onChange,
-  onChangeRaw,
+  onChangeRaw = noop,
   error,
   hideSectionHeaders,
   onlyOneSubject,
@@ -44,7 +35,7 @@ export function SubjectPicker({
 
   useEffect(() => {
     onChangeRaw(selectedSubjects);
-  }, [selectedSubjects, onChangeRaw]);
+  }, [selectedSubjects]);
 
   const { classes } = useSubjectPickerStyles();
 
@@ -157,6 +148,7 @@ SubjectPicker.propTypes = {
   localizations: PropTypes.object,
   assignable: PropTypes.object,
   onChange: PropTypes.func,
+  onChangeRaw: PropTypes.func,
   value: PropTypes.arrayOf(PropTypes.string),
   error: PropTypes.any,
   hideSectionHeaders: PropTypes.bool,

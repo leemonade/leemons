@@ -7,26 +7,19 @@ import { set, uniq } from 'lodash';
 import {
   Box,
   Button,
-  ImageLoader,
-  Input,
-  TextInput,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import { CardEmptyCover } from '@bubbles-ui/components/lib/misc/CardEmptyCover/CardEmptyCover';
+import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
 import { ActivityDatesPicker } from './components/ActivityDatesPicker';
 import { EvaluationType } from './components/EvaluationType';
 import { GroupPicker } from './components/GroupPicker';
 import { Instructions } from './components/Instructions';
 import { OtherOptions } from './components/OtherOptions';
-import { SubjectPicker } from './components/SubjectPicker';
 import useFormComponentStyles from './FormComponent.styles';
 import Presentation from './components/Presentation/Presentation';
-import NYACard from '../NYACard';
 import Preview from './components/Preview/Preview';
 
 function onSubmitFunc(onSubmit, evaluationType, values) {

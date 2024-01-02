@@ -13,7 +13,7 @@ import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { groupBy, map, uniqBy } from 'lodash';
+import { groupBy, isString, map, uniqBy } from 'lodash';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
@@ -50,8 +50,7 @@ export default function Edit() {
       store.saving = 'duplicate';
       render();
       const { subjects, ...toSend } = formValues;
-      toSend.subjects = subjects?.map(({ subject }) => subject);
-      console.log('toSend', toSend);
+      toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
       await saveTestRequest({ ...toSend, published: false });
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/tests/draft');

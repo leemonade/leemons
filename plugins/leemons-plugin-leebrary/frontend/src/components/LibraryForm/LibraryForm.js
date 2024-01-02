@@ -10,21 +10,20 @@ import {
   ImageLoader,
   ImagePreviewInput,
   InputWrapper,
-  Select,
   Stack,
   Switch,
-  TextInput,
   Textarea,
+  TextInput,
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import SelectSubjects from '@leebrary/components/SelectSubjects';
 import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
 import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
 import { AssetListDrawer } from '../AssetListDrawer';
@@ -258,10 +257,7 @@ const LibraryForm = ({
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
-  const validateUrl = async () => {
-    const isValid = await trigger('url', { shouldFocus: true });
-    return isValid;
-  };
+  const validateUrl = async () => await trigger('url', { shouldFocus: true });
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
@@ -562,6 +558,38 @@ const LibraryForm = ({
                   ) : null}
 
                   {store.showAdvancedConfig ? (
+                    <Controller
+                      name="subjects"
+                      control={control}
+                      rules={store.subjectRequired}
+                      render={({ field, fieldState: { error } }) => (
+                        <SubjectPicker
+                          {...field}
+                          value={_.map(field.value || [], 'subject')}
+                          onChangeRaw={(e) => {
+                            if (e.length > 0) {
+                              if (!program) setValue('program', e[0].program);
+                            } else if (program) setValue('program', null);
+                          }}
+                          error={error}
+                          assignable={{}}
+                          localizations={{
+                            title: labels?.programAndSubjects,
+                            program: labels?.program,
+                            subject: labels?.subjectSelects?.labels?.subject,
+                            add: labels?.subjectSelects?.placeholders?.addSubject,
+                            course: labels?.course,
+                            placeholder: labels?.selectPlaceholder,
+                          }}
+                          hideSectionHeaders={false}
+                          onlyOneSubject={store.maxOneSubject}
+                        />
+                      )}
+                    />
+                  ) : null}
+
+                  {/*
+                  {store.showAdvancedConfig ? (
                     <ContextContainer subtitle={labels.advancedConfig}>
                       <Controller
                         control={control}
@@ -600,6 +628,7 @@ const LibraryForm = ({
                       />
                     </ContextContainer>
                   ) : null}
+                  */}
                 </>
               ) : null}
 
