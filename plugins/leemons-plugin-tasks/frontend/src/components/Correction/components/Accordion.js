@@ -16,7 +16,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ChatButton from '@comunica/components/ChatButton';
 import { useStore } from '@common';
-import { findNearestFloorScore } from '@assignables/widgets/dashboard/nya/components/EvaluationCard/components/ScoreFeedback';
+import { findNearestFloorScore } from '@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback';
 
 function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {
   const formKey = `${user}.${subject}.score`;

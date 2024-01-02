@@ -89,8 +89,8 @@ const AssetListDrawer = ({
       position={position}
       opened={opened}
       size={size}
-      close={false}
-      shadow={shadow}
+      close={true}
+      shadow={true}
       onClose={onClose}
       empty
     >

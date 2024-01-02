@@ -97,7 +97,6 @@ export const NavItemStyles = createStyles((theme) => {
       width: '12px',
       minWidth: '12px',
       height: '12px',
-
       color: leemonsStyles.menu.content.color.main.default,
     },
     link: {

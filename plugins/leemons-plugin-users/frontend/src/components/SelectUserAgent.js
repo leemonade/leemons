@@ -25,7 +25,7 @@ import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 export function SelectUserAgentValueComponent({ onRemove, value, ...props }) {
   return (
     <Stack sx={(theme) => ({ paddingRight: theme.spacing[1] })}>
-      <UserDisplayItem {...props} />
+      <UserDisplayItem {...props} variant="inline" />
       {onRemove ? (
         <Box>
           <ActionButton icon={<RemoveIcon />} onClick={(event) => onRemove(event, value)} />
@@ -184,9 +184,8 @@ const SelectUserAgent = forwardRef(
                   rol: userAgents[0].profile.name,
                   center: userAgents[0].center.name,
                   value: userAgents[0].id,
-                  label: `${userAgents[0].user.name}${
-                    userAgents[0].user.surnames ? ` ${userAgents[0].user.surnames}` : ''
-                  }`,
+                  label: `${userAgents[0].user.name}${userAgents[0].user.surnames ? ` ${userAgents[0].user.surnames}` : ''
+                    }`,
                 };
               }
             }

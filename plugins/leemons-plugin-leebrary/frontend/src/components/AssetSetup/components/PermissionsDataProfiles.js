@@ -41,7 +41,7 @@ const PermissionsDataProfiles = ({
       const [item] = _.difference(stringifyValue, stringifyVals);
       const [newItem] = _.difference(stringifyVals, stringifyValue);
       if (item) {
-        let sValues = _.map(_value, (v) => JSON.stringify(v));
+        const sValues = _.map(_value, (v) => JSON.stringify(v));
         const index = sValues.indexOf(item);
         if (index >= 0) {
           if (type === 'remove') {
@@ -109,10 +109,10 @@ const PermissionsDataProfiles = ({
     <ContextContainer spacing={editMode ? 0 : 5}>
       {!editMode ? (
         <>
-          <Box>
+          {/* <Box>
             <Title order={5}>{t('permissionsData.labels.addProfiles')}</Title>
             <Paragraph>{t('permissionsData.labels.addProfilesDescription')}</Paragraph>
-          </Box>
+          </Box> */}
         </>
       ) : (
         <Title order={5}>{t('permissionsData.labels.addProfilesEdit')}</Title>

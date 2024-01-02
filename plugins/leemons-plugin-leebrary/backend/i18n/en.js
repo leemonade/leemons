@@ -166,8 +166,14 @@ module.exports = {
         stepLabel: 'Permissions',
         shareTitle: 'Share resource',
         close: 'Close',
+        libraryItem: 'Library item',
+        permissionsHeader: 'Permissions configuration',
+        groupUserHeader: 'Group/User',
+        actionsHeader: 'Actions',
       },
       labels: {
+        currentUsers: 'Current users',
+        addUsersTab: 'Add users',
         allCenters: 'All centers',
         shareTypePublic: 'Public',
         shareTypeCenters: 'By centers',
@@ -213,6 +219,8 @@ module.exports = {
         removeUserButton: 'Remove',
         acceptButton: 'Accept',
         cancelButton: 'Cancel',
+        updateButton: 'Update',
+        saveFooterButton: 'Guardar',
         permissionsSuccess: 'Permissions successfully established',
         shareSuccess: 'Resource successfully shared',
         shareCenters: 'Search centers',
@@ -221,6 +229,8 @@ module.exports = {
         sharePermissions: 'Permissions',
         shareClasses: 'Search class',
         editAddUsers: 'Individual users',
+        addUserAlert:
+          'Teachers will see this resource in their shared folder, students will see it in their corresponding subject folder or in their shared folder if it does not have assigned subject tags.',
       },
       placeholders: {
         userInput: 'Start typing a name',
@@ -256,6 +266,12 @@ module.exports = {
   list: {
     show: 'Show',
     goTo: 'Go to',
+    permissions: 'Permissions',
+    editPermissions: 'Edit permissions',
+    owner: 'Owner',
+    viewer: 'Viewer',
+    editor: 'Editor',
+    assigner: 'Assigner',
     tableLabels: {
       name: 'Name',
       owner: 'Owner',
@@ -284,6 +300,9 @@ module.exports = {
       showPublic: 'Show public assets',
       resourceTypes: 'Type of resource',
       allResourceTypes: 'All types',
+      detail: 'Detail',
+      permissions: 'Permissions',
+      instructions: 'Instructions',
     },
     cardToolbar: {
       edit: 'Edit',
@@ -292,8 +311,8 @@ module.exports = {
       delete: 'Delete',
       share: 'Share',
       assign: 'Assign',
-      pin: 'Pin',
-      unpin: 'Unpin',
+      pin: 'Mark as favorite',
+      unpin: 'Remove from favorites',
       toggle: 'Toggle',
       open: 'Open',
       covertToTask: 'Convert to task',
@@ -336,5 +355,10 @@ module.exports = {
   assetsList: {
     published: 'Published',
     draft: 'Drafts',
+    isDraft: 'Draft',
+    size: 'Size',
+    dimensions: 'Dimensions',
+    format: 'Format',
+    duration: 'Duration',
   },
 };

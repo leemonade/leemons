@@ -181,4 +181,16 @@ module.exports = {
     showPreview: 'Ver vista previa',
     returnToTable: 'Volver a la tabla',
   },
+  feedbackDrawerDetail: {
+    survey: 'Encuesta',
+    questions: 'Preguntas',
+    singleAnswer: 'Respuesta única',
+    multiAnswer: 'Respuesta múltiple',
+    open: 'Respuesta abierta',
+    nps: 'NPS',
+    likert: 'Likert',
+    introduction: 'Introducción',
+    viewMore: 'Ver más',
+    viewLess: 'Ver menos',
+  },
 };

@@ -25,10 +25,12 @@ const PermissionsDataDrawer = ({
       close={t('header.close')}
       onClose={onClose}
       onBack={onClose}
+      size={728}
+      empty
       {...props}
     >
       <PermissionsData
-        {...{ asset, loading, sharing, onNext, onSavePermissions }}
+        {...{ asset, loading, sharing, onNext, onSavePermissions, onClose }}
         isDrawer
         drawerTranslations={[t, translations]}
       />
@@ -47,4 +49,5 @@ PermissionsDataDrawer.propTypes = {
   onClose: PropTypes.func,
 };
 
+export default PermissionsDataDrawer;
 export { PermissionsDataDrawer };

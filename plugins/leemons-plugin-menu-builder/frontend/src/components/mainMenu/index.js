@@ -39,7 +39,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
       getUserCentersRequest(),
       getUserProfilesRequest(),
     ]);
-
     if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       store.onlyOneProfile = true;
       store.centerName = centers[0].name;

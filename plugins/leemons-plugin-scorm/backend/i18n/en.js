@@ -30,6 +30,9 @@ module.exports = {
     featuredImage: 'Add featured image',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
+    type: 'SCORM',
+    version: 'Version',
+    size: 'Size',
   },
   scormList: {
     pageTitle: 'SCORM library',

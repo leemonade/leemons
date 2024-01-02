@@ -10,6 +10,8 @@ import {
   Stack,
   TabPanel,
   Tabs,
+  Table,
+  Text,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@leebrary/components/LibraryItem';
 import { unflatten, useRequestErrorMessage, useStore } from '@common';
@@ -21,7 +23,7 @@ import { listCentersRequest, listProfilesRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';
 import _, { isArray, isEmpty, isFunction, isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
@@ -31,6 +33,7 @@ import { PermissionsDataClasses } from './components/PermissionsDataClasses';
 import { PermissionsDataProfiles } from './components/PermissionsDataProfiles';
 import { PermissionsDataPrograms } from './components/PermissionsDataPrograms';
 import { PermissionsDataUsers } from './components/PermissionsDataUsers';
+import { PermissionsDataStyles } from './PermissionsData.styles';
 
 const ROLESBYROLE = {
   viewer: [
@@ -70,6 +73,7 @@ const PermissionsData = ({
   onSavePermissions,
   isDrawer,
   drawerTranslations,
+  onClose = () => {},
 }) => {
   const [asset, setAsset] = useState(assetProp);
   const [roles, setRoles] = useState([]);
@@ -87,6 +91,12 @@ const PermissionsData = ({
   const params = useParams();
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const profileSysName = useGetProfileSysName();
+  const { classes: classesStyles } = PermissionsDataStyles();
+  const [activeTab, setActiveTab] = useState('tab1');
+
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
 
   // ··············································································
   // DATA PROCESS
@@ -414,97 +424,46 @@ const PermissionsData = ({
     }
   }
 
+  const USER_TABLE_HEADERS = useMemo(() => [
+    {
+      Header: t('permissionsData.header.groupUserHeader'),
+      accessor: 'user',
+      style: { width: '64%' },
+    },
+    {
+      Header: t('permissionsData.header.stepLabel'),
+      accessor: 'role',
+      style: { width: '20%' },
+    },
+    {
+      Header: t('permissionsData.header.actionsHeader'),
+      accessor: 'actions',
+    },
+  ]);
+
   return (
     <Box>
+      <Box className={classesStyles.header}>
+        <Text className={classesStyles.title}>{t('permissionsData.header.stepLabel')}</Text>
+      </Box>
       {!isEmpty(asset) && (
-        <ContextContainer
-          title={
-            sharing ? t('permissionsData.header.shareTitle') : t('permissionsData.labels.title')
-          }
-        >
+        <ContextContainer className={classesStyles.contentContainer}>
+          <Text className={classesStyles.titleItem}>{t('permissionsData.header.libraryItem')}</Text>
           <Paper bordered padding={1} shadow="none">
             <LibraryItem asset={asset} />
           </Paper>
+          <Text className={classesStyles.titleTabs}>
+            {t('permissionsData.header.permissionsHeader')}
+          </Text>
 
           {isArray(asset?.canAccess) ? (
-            <Tabs forceRender>
-              <TabPanel label={t('permissionsData.labels.shareTab')}>
-                <Select
-                  sx={(theme) => ({ marginTop: theme.spacing[4], width: 270 })}
-                  label={t('permissionsData.labels.shareTab')}
-                  data={shareTypes || []}
-                  value={store.shareType}
-                  onChange={onChangeShareType}
-                />
-
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                  {store.shareType === 'centers' ? (
-                    <PermissionsDataCenterProgramsProfiles
-                      roles={roles}
-                      value={permissions}
-                      onChange={setPermissions}
-                      asset={asset}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      t={t}
-                      translations={translations}
-                      profileSysName={profileSysName}
-                    />
-                  ) : null}
-                  {store.shareType === 'programs' ? (
-                    <PermissionsDataPrograms
-                      roles={roles}
-                      value={permissions}
-                      onChange={setPermissions}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      t={t}
-                    />
-                  ) : null}
-                  {store.shareType === 'profiles' ? (
-                    <PermissionsDataProfiles
-                      roles={roles}
-                      value={permissions}
-                      onChange={setPermissions}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      t={t}
-                    />
-                  ) : null}
-                  {store.shareType === 'classes' ? (
-                    <PermissionsDataClasses
-                      roles={roles}
-                      value={permissions}
-                      onChange={setPermissions}
-                      profiles={store.profiles}
-                      centers={store.centers}
-                      asset={asset}
-                      t={t}
-                      profileSysName={profileSysName}
-                    />
-                  ) : null}
-                  {store.shareType === 'users' ? (
-                    <PermissionsDataUsers
-                      roles={roles}
-                      value={usersData}
-                      alreadySelectedUsers={editUsersData}
-                      onChange={setUsersData}
-                      asset={asset}
-                      t={t}
-                    />
-                  ) : null}
-                </Box>
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                  <Stack justifyContent={'end'} fullWidth>
-                    <Button loading={loading} onClick={savePermissions}>
-                      {sharing
-                        ? t('permissionsData.labels.shareButton')
-                        : t('permissionsData.labels.saveButton')}
-                    </Button>
-                  </Stack>
-                </Box>
-              </TabPanel>
-              <TabPanel label={t('permissionsData.labels.sharedTab')}>
+            <Tabs
+              forceRender
+              activeKey={activeTab}
+              onChange={handleTabChange}
+              className={classesStyles.tab}
+            >
+              <TabPanel label={t('permissionsData.labels.currentUsers')} key="tab1">
                 <Box
                   sx={(theme) => ({
                     flexDirection: 'column',
@@ -513,6 +472,8 @@ const PermissionsData = ({
                     marginTop: theme.spacing[4],
                   })}
                 >
+                  <Table columns={USER_TABLE_HEADERS} />
+
                   {shareTypesValues.includes('centers') ? (
                     <PermissionsDataCenterProgramsProfiles
                       roles={roles}
@@ -571,13 +532,94 @@ const PermissionsData = ({
                     />
                   ) : null}
                 </Box>
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                {/* <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <Stack justifyContent={'end'} fullWidth>
                     <Button loading={loading} onClick={saveEditPermissions}>
                       {t('permissionsData.labels.saveButton')}
                     </Button>
                   </Stack>
+                </Box> */}
+              </TabPanel>
+              <TabPanel label={`${t('permissionsData.labels.addUsersTab')}`} key="tab2">
+                <Select
+                  sx={(theme) => ({ marginTop: theme.spacing[4], width: 270 })}
+                  label={t('permissionsData.labels.shareTab')}
+                  data={shareTypes || []}
+                  value={store.shareType}
+                  onChange={onChangeShareType}
+                />
+                <Box className={classesStyles.alertContainer}>
+                  <Alert severity="info" closeable={false}>
+                    {t('permissionsData.labels.addUserAlert')}
+                  </Alert>
                 </Box>
+
+                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                  {store.shareType === 'centers' ? (
+                    <PermissionsDataCenterProgramsProfiles
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      asset={asset}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                      translations={translations}
+                      profileSysName={profileSysName}
+                    />
+                  ) : null}
+                  {store.shareType === 'programs' ? (
+                    <PermissionsDataPrograms
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                    />
+                  ) : null}
+                  {store.shareType === 'profiles' ? (
+                    <PermissionsDataProfiles
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      t={t}
+                    />
+                  ) : null}
+                  {store.shareType === 'classes' ? (
+                    <PermissionsDataClasses
+                      roles={roles}
+                      value={permissions}
+                      onChange={setPermissions}
+                      profiles={store.profiles}
+                      centers={store.centers}
+                      asset={asset}
+                      t={t}
+                      profileSysName={profileSysName}
+                    />
+                  ) : null}
+                  {store.shareType === 'users' ? (
+                    <PermissionsDataUsers
+                      roles={roles}
+                      value={usersData}
+                      alreadySelectedUsers={editUsersData}
+                      onChange={setUsersData}
+                      asset={asset}
+                      t={t}
+                    />
+                  ) : null}
+                </Box>
+                {/* <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                  <Stack justifyContent={'end'} fullWidth>
+                    <Button loading={loading} onClick={savePermissions}>
+                      {sharing
+                        ? t('permissionsData.labels.shareButton')
+                        : t('permissionsData.labels.saveButton')}
+                    </Button>
+                  </Stack>
+                </Box> */}
               </TabPanel>
             </Tabs>
           ) : (
@@ -627,6 +669,28 @@ const PermissionsData = ({
               )}
             </>
           ) : null}
+          <Box className={classesStyles.footer}>
+            {activeTab === 'tab1' && (
+              <Box className={classesStyles.footerButtons}>
+                <Button variant="link" onClick={onClose}>
+                  {t('permissionsData.labels.cancelButton')}
+                </Button>
+                <Button variant="primary" loading={loading} onClick={saveEditPermissions}>
+                  {t('permissionsData.labels.updateButton')}
+                </Button>
+              </Box>
+            )}
+            {activeTab === 'tab2' && (
+              <Box className={classesStyles.footerButtons}>
+                <Button variant="link" onClick={onClose}>
+                  {t('permissionsData.labels.cancelButton')}
+                </Button>
+                <Button variant="primary" loading={loading} onClick={savePermissions}>
+                  {t('permissionsData.labels.saveFooterButton')}
+                </Button>
+              </Box>
+            )}
+          </Box>
         </ContextContainer>
       )}
     </Box>
@@ -641,6 +705,7 @@ PermissionsData.propTypes = {
   onSavePermissions: PropTypes.func,
   isDrawer: PropTypes.bool,
   drawerTranslations: PropTypes.array,
+  onClose: PropTypes.func,
 };
 
 export default PermissionsData;

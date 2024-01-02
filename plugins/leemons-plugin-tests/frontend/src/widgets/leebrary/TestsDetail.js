@@ -9,6 +9,7 @@ import { useLayout } from '@layout/context';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
+import AssetMetadataTest from '@tests/components/AssetMetadataTest/AssetMetadataTest';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const TestsDetail = ({ asset, onRefresh, ...props }) => {
@@ -107,15 +108,24 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
         ...asset,
         metadata,
       }}
+      metadataComponent={
+        <AssetMetadataTest
+          metadata={{
+            ...asset,
+            metadata,
+          }}
+        />
+      }
+      // metadataComponent={<div>hello!</div>}
       variant="tests"
       variantTitle={t('tests')}
       toolbarItems={toolbarItems}
       titleActionButton={
         asset?.providerData?.published
           ? {
-              icon: <ViewOnIcon height={16} width={16} />,
-              onClick: handleView,
-            }
+            icon: <ViewOnIcon height={16} width={16} />,
+            onClick: handleView,
+          }
           : null
       }
       onEdit={handleEdit}

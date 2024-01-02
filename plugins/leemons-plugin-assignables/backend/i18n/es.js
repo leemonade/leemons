@@ -97,6 +97,8 @@ module.exports = {
           calificable: 'Calificable',
           punctuable: 'Puntuable',
           feedbackOnly: 'Solo comentarios',
+          feedback: 'Feedback',
+          feedbackAvailable: 'Feedback disponible',
         },
       },
       showCurriculum: 'Mostrar curriculum',
@@ -321,6 +323,7 @@ module.exports = {
     ongoing: 'Actividades en curso',
     history: 'Actividades pasadas',
     activities: 'Actividades',
+    pendingActivities: 'Actividades para evaluar',
   },
   dates: {
     visualization: 'Visualización',

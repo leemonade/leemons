@@ -1,8 +1,5 @@
-/* eslint-disable import/prefer-default-export */
 /* eslint-disable no-unsafe-optional-chaining */
-/* eslint-disable no-nested-ternary */
 import React from 'react';
-import { isFunction } from 'lodash';
 import { AvatarsGroup, Box, FileIcon, Text } from '@bubbles-ui/components';
 import { LibraryCardFooterStyles } from './LibraryCardFooter.styles';
 import { LIBRARY_CARD_FOOTER_PROP_TYPES } from './LibraryCardFooter.constants';
@@ -45,9 +42,7 @@ const LibraryCardFooter = ({
             hideExtension
           />
           <Text className={classes.fileLabel}>
-            {fileType === 'document'
-              ? fileExtension?.toUpperCase() || variantIconLabel
-              : variantIconLabel}
+            {fileType === 'document' ? fileExtension.toUpperCase() : variantIconLabel}
           </Text>
         </Box>
       )}

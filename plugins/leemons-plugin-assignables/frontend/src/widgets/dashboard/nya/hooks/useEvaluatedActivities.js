@@ -19,7 +19,6 @@ export default function useEvaluatedActivities({ program, class: klass }) {
       },
       { enabled, select: (results) => results.items }
     );
-
   const { data: activities, isLoading: activitiesAreLoading } =
     useActivitiesByProfile(evaluatedActivities);
 

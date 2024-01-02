@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // TODO: import from @library
-import { LibraryDetail } from '@bubbles-ui/leemons';
+import { LibraryDetail } from '@leebrary/components';
+
 import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
@@ -10,6 +11,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
+import { AssetMetadataFeedback } from '../../components/AssetMetadataFeedback';
 // import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
@@ -101,15 +103,23 @@ const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
         ...asset,
         metadata,
       }}
+      metadataComponent={
+        <AssetMetadataFeedback
+          metadata={{
+            ...asset,
+            metadata,
+          }}
+        />
+      }
       variant="feedback"
       variantTitle={t('feedback')}
       toolbarItems={toolbarItems}
       titleActionButton={
         asset?.providerData?.published
           ? {
-              icon: <ViewOnIcon height={16} width={16} />,
-              onClick: handleView,
-            }
+            icon: <ViewOnIcon height={16} width={16} />,
+            onClick: handleView,
+          }
           : null
       }
       onEdit={handleEdit}

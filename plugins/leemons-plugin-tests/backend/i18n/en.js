@@ -234,6 +234,11 @@ module.exports = {
     open: 'Open',
     duplicate: 'Duplicate',
     duplicated: 'Duplicated',
+    simpleQuestion: 'Simple question',
+    map: 'Map',
+    hints: 'Hints',
+    yes: 'Yes',
+    no: 'No',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',

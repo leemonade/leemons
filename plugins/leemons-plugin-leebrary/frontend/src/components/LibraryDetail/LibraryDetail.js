@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { isEmpty, isFunction } from 'lodash';
-import { ActionButton, AvatarsGroup, Box, FileIcon, Stack, Text } from '@bubbles-ui/components';
-import { MoveRightIcon } from '@bubbles-ui/icons/outline';
-import { LibraryDetailContent } from '../LibraryDetailContent';
-import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
-import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
-import { LibraryDetailStyles } from './LibraryDetail.styles';
+import { isFunction } from 'lodash';
+import { Box, FileIcon, Stack, Button } from '@bubbles-ui/components';
 import {
   AssetBookmarkIcon,
   AssetPathIcon,
   AssetTaskIcon,
   PluginCurriculumIcon,
 } from '@bubbles-ui/icons/solid';
+import { useIsTeacher } from '@academic-portfolio/hooks';
+import { LibraryDetailContent } from '../LibraryDetailContent';
+import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
+import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
+import { LibraryDetailStyles } from './LibraryDetail.styles';
+import { EditIcon } from '../LibraryDetailToolbar/icons/EditIcon';
+
 import { LIBRARY_DETAIL_DEFAULT_PROPS, LIBRARY_DETAIL_PROP_TYPES } from './LibraryDetail.constants';
 
 const LibraryDetail = ({
@@ -27,10 +29,21 @@ const LibraryDetail = ({
   titleActionButton,
   style,
   excludeMetadatas,
+  onCloseDrawer,
+  metadataComponent,
   ...events
 }) => {
   const [showDrawer, setShowDrawer] = useState(open);
-
+  const [activeTab, setActiveTab] = useState('tab1');
+  const isTeacher = useIsTeacher();
+  const handleShare = () => {
+    if (isFunction(events?.onShare)) {
+      events?.onShare(asset);
+    }
+  };
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
   useEffect(() => {
     if (open) {
       setTimeout(() => setShowDrawer(true), 100);
@@ -41,12 +54,8 @@ const LibraryDetail = ({
 
   const { classes, cx } = LibraryDetailStyles({ drawer, open }, { name: 'LibraryDetail' });
 
-  const { fileType, fileExtension } = asset;
-
-  const handleToggle = () => {
-    isFunction(events?.onToggle) && events.onToggle();
-  };
-
+  // const { fileExtension } = asset;
+  const fileExtension = asset?.fileExtension;
   return (
     <Box
       style={{ position: 'absolute', height: '100%', width: '100%' }}
@@ -58,11 +67,7 @@ const LibraryDetail = ({
         className={cx(classes.root, classes.wrapper, { [classes.show]: showDrawer })}
         style={style}
       >
-        <Stack
-          direction="column"
-          fullHeight
-          // className={cx(classes.wrapper, { [classes.show]: showDrawer })}
-        >
+        <Stack direction="column" fullHeight>
           {toolbar && (
             <Box>
               <LibraryDetailToolbar
@@ -71,6 +76,7 @@ const LibraryDetail = ({
                 toolbarItems={toolbarItems}
                 open={open}
                 labels={labels}
+                onCloseDrawer={onCloseDrawer}
               />
             </Box>
           )}
@@ -106,8 +112,8 @@ const LibraryDetail = ({
               }[variant] || (
                 <FileIcon
                   size={64}
-                  fileExtension={asset.fileExtension}
-                  fileType={asset.fileType || variant}
+                  fileExtension={asset?.fileExtension}
+                  fileType={asset?.fileType || variant}
                   color={'#B9BEC4'}
                   hideExtension
                 />
@@ -116,48 +122,31 @@ const LibraryDetail = ({
           />
           <LibraryDetailContent
             {...asset}
+            asset={asset}
             excludeMetadatas={excludeMetadatas}
             variantIcon={variantIcon}
             variantTitle={variantTitle}
             variant={variant}
             labels={labels}
+            metadataComponent={metadataComponent}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            handleTabChange={handleTabChange}
           />
-          {!asset.public && (!isEmpty(asset?.canAccess) || !isEmpty(asset?.classesCanAccess)) && (
-            <Stack direction="column" spacing={2} padding={4}>
-              <Text role="productive" size="xs">
-                {asset.isPrivate ? labels.privated : labels.sharedWith}
-              </Text>
-              <AvatarsGroup
-                size="sm"
-                data={asset.canAccess}
-                numberFromClassesAndData
-                moreThanUsersAsMulti={2}
-                customAvatarMargin={4}
-                zIndexInverted
-                classesData={asset?.classesCanAccess}
-                limit={3}
-              />
-            </Stack>
-          )}
-          {asset.public && (
-            <Stack direction="column" spacing={2} padding={4}>
-              <Text role="productive" size="xs">
-                {labels.sharedWithEverybody}
-              </Text>
-            </Stack>
-          )}
         </Stack>
       </Stack>
-      {toolbarItems?.toggle && (
-        <Box className={cx(classes.lastIcon, { [classes.stickRight]: !showDrawer && !open })}>
-          <ActionButton
-            icon={<MoveRightIcon height={20} width={20} />}
-            onClick={handleToggle}
-            tooltip={!open ? toolbarItems.open || toolbarItems.toggle : toolbarItems.toggle}
-            className={cx(classes.button, {
-              [classes.flip]: !showDrawer,
-            })}
-          />
+      {activeTab === 'tab2' && isTeacher && (
+        <Box className={classes.canAccessFooter}>
+          <Button
+            variant="outline"
+            size="md"
+            label={'Editar Permisos'}
+            className={classes.canAccessButton}
+            leftIcon={<EditIcon width={18} height={18} />}
+            onClick={handleShare}
+          >
+            {'Editar Permisos'}
+          </Button>
         </Box>
       )}
     </Box>
@@ -167,4 +156,5 @@ const LibraryDetail = ({
 LibraryDetail.defaultProps = LIBRARY_DETAIL_DEFAULT_PROPS;
 LibraryDetail.propTypes = LIBRARY_DETAIL_PROP_TYPES;
 
+export default LibraryDetail;
 export { LibraryDetail };

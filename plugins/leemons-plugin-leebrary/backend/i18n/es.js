@@ -153,8 +153,14 @@ module.exports = {
         stepLabel: 'Permisos',
         shareTitle: 'Compartir recurso',
         close: 'Cerrar',
+        libraryItem: 'Item de biblioteca',
+        permissionsHeader: 'Configuración de permisos',
+        groupUserHeader: 'Grupo/Usuario',
+        actionsHeader: 'Acciones',
       },
       labels: {
+        currentUsers: 'Usuarios actuales',
+        addUsersTab: 'Añadir usuarios',
         allCenters: 'Todos los centros',
         shareTypePublic: 'Público',
         shareTypeCenters: 'Por centros',
@@ -200,6 +206,8 @@ module.exports = {
         removeUserButton: 'Eliminar',
         acceptButton: 'Aceptar',
         cancelButton: 'Cancelar',
+        updateButton: 'Actualizar',
+        saveFooterButton: 'Guardar',
         permissionsSuccess: 'Permisos establecidos con éxito',
         shareSuccess: 'Recurso compartido con éxito',
         shareCenters: 'Buscar centros',
@@ -208,6 +216,8 @@ module.exports = {
         sharePermissions: 'Permisos',
         shareClasses: 'Buscar clase',
         editAddUsers: 'Usuarios individuales',
+        addUserAlert:
+          'Los docentes verán este recurso en su carpeta compartida, los estudiantes lo verán en su carpeta de asignatura correspondiente o en su carpeta compartida sino tiene etiquetas de asignatura asignada.',
       },
       placeholders: {
         userInput: 'Escribir nombre',
@@ -243,6 +253,12 @@ module.exports = {
   list: {
     show: 'Mostrar',
     goTo: 'Ir a',
+    permissions: 'Permisos',
+    editPermissions: 'Editar permisos',
+    owner: 'Propietario',
+    viewer: 'Lectura',
+    editor: 'Editor',
+    assigner: 'Asignador',
     tableLabels: {
       name: 'Nombre',
       owner: 'Propietario/a',
@@ -271,6 +287,9 @@ module.exports = {
       showPublic: 'Mostrar recursos públicos',
       resourceTypes: 'Tipos de recursos',
       allResourceTypes: 'Todos los tipos',
+      detail: 'Detalle',
+      permissions: 'Permisos',
+      instructions: 'Instrucciones',
     },
     cardToolbar: {
       edit: 'Editar',
@@ -279,8 +298,8 @@ module.exports = {
       delete: 'Eliminar',
       share: 'Compartir',
       assign: 'Asignar',
-      pin: 'Pinear',
-      unpin: 'Despinear',
+      pin: 'Marcar como favorito',
+      unpin: 'Quitar de favorito',
       toggle: 'Cerrar',
       open: 'Abrir',
       covertToTask: 'Convertir a tarea',
@@ -323,5 +342,10 @@ module.exports = {
   assetsList: {
     published: 'Publicados',
     draft: 'Borradores',
+    isDraft: 'Borrador',
+    size: 'Tamaño',
+    dimensions: 'Dimensiones',
+    format: 'Formato',
+    duration: 'Duración',
   },
 };

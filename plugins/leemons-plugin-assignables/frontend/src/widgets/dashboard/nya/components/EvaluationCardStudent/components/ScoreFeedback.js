@@ -1,0 +1,162 @@
+import React, { useMemo, useState, useEffect } from 'react';
+import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import _, { cloneDeep, sortBy } from 'lodash';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { unflatten } from '@common';
+import { GotFeedbackIcon } from './GotFeedbackIcon';
+import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
+import { getActivityType } from '../../../../../../helpers/getActivityType';
+import prefixPN from '../../../../../../helpers/prefixPN';
+import { ArrowComponent } from './ArrowComponent/ArrowComponent';
+import { SCOREFEEDBACK_DEFAULT_PROPS, SCOREFEEDBACK_PROP_TYPES } from './ScoreFeedback.constants';
+
+export function findNearestFloorScore(score, scales) {
+  const sortedScales = sortBy(cloneDeep(scales), 'number');
+  let nearestScore = null;
+  let distance = Infinity;
+  const { length } = sortedScales;
+
+  for (let i = 0; i < length; i++) {
+    const scale = sortedScales[i];
+
+    if (score === scale.number) {
+      return scale;
+    }
+
+    const currentDistance = Math.abs(scale.number - score);
+
+    if (currentDistance < distance) {
+      nearestScore = scale;
+      distance = currentDistance;
+    } else {
+      break;
+    }
+  }
+  return nearestScore;
+}
+
+export default function ScoreFeedback({
+  score,
+  program,
+  instance,
+  isFeedback,
+  totalActivities,
+  submitedActivities,
+}) {
+  const evaluationSystem = useProgramEvaluationSystem(program);
+  const { minScaleToPromote, scales, type } = evaluationSystem || {};
+  const [, translations] = useTranslateLoader([prefixPN('assignmentForm'), prefixPN('ongoing')]);
+  const localizations = useMemo(() => {
+    const res = unflatten(translations?.items);
+    return {
+      assignmentForm: _.get(res, prefixPN('assignmentForm')),
+      ongoing: _.get(res, prefixPN('ongoing')),
+    };
+  }, [translations]);
+  const [calificationType, setCalificationType] = useState(null);
+  const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
+  const isModule = instance?.assignable?.role === 'learningpaths.module';
+  const getInstanceTypeLocale = (instanceParam) => {
+    const activityType = getActivityType(instanceParam);
+    const activityTypeLocale = {
+      calificable: localizationType?.calificable,
+      puntuable: localizationType?.punctuable,
+      no_evaluable: localizationType?.nonEvaluable,
+    };
+    setCalificationType(activityTypeLocale[activityType]);
+  };
+
+  const color = React.useMemo(() => {
+    const minScale = minScaleToPromote?.number;
+    if (score < minScale) {
+      return 'error';
+    }
+    if (score === minScale) {
+      return 'warning';
+    }
+    return 'success';
+  });
+  const isLetterType = type === 'letter';
+
+  const grade = React.useMemo(() => {
+    if (isLetterType) {
+      return {
+        letter: findNearestFloorScore(Number(score), scales).letter,
+        description: findNearestFloorScore(Number(score), scales).description,
+      };
+    }
+    const isInteger = score % 1 === 0;
+    const integerPart = !isInteger && score.toFixed(2).split('.')[0];
+    const decimalsPart = !isInteger && score.toFixed(2).split('.')[1];
+    if (isInteger) {
+      return {
+        integer: score,
+        decimals: null,
+        description: findNearestFloorScore(Number(score), scales)?.description,
+      };
+    }
+    return {
+      integer: integerPart,
+      decimals: decimalsPart,
+      description: findNearestFloorScore(Number(score), scales)?.description,
+    };
+  }, [scales, type, score]);
+
+  useEffect(() => {
+    getInstanceTypeLocale(instance);
+  }, [instance, calificationType, setCalificationType]);
+
+  const { classes } = useScoreFeedbackStyles({ color });
+  return (
+    <Box className={classes.root}>
+      {calificationType && (
+        <Badge closable={false} size="xs" className={classes.calificationBadge}>
+          <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
+        </Badge>
+      )}
+      {!!score && !isFeedback ? (
+        <>
+          <Box className={classes.containerGrade}>
+            <Box className={classes.containerNumber}>
+              <Text className={classes.gradeNumber}>
+                {isLetterType ? grade.letter : grade.integer}
+              </Text>
+              {grade.decimals && (
+                <TextClamp lines={2}>
+                  <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
+                </TextClamp>
+              )}
+              <Box className={classes.containerArrow}>
+                <ArrowComponent state={'better'} />
+              </Box>
+            </Box>
+            <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
+            {isModule && (
+              <Box className={classes.containerArrow}>
+                <Text
+                  className={classes.submitedNumber}
+                >{`(${submitedActivities}/${totalActivities} ${localizations?.ongoing?.activities.toLowerCase()})`}</Text>
+              </Box>
+            )}
+          </Box>
+        </>
+      ) : (
+        <>
+          <Badge closable={false} size="xs" className={classes.calificationBadge}>
+            <Text className={classes.badgeText}>{localizationType?.feedback?.toUpperCase()}</Text>
+          </Badge>
+          <Box className={classes.containerGrade} style={{ marginTop: 0 }}>
+            <Box className={classes.containerFeedback}>
+              <GotFeedbackIcon />
+              <Text className={classes.textFeedback}>{localizationType?.feedbackAvailable}</Text>
+            </Box>
+          </Box>
+        </>
+      )}
+    </Box>
+  );
+}
+
+ScoreFeedback.propTypes = SCOREFEEDBACK_PROP_TYPES;
+ScoreFeedback.defaultProps = SCOREFEEDBACK_DEFAULT_PROPS;

@@ -32,6 +32,9 @@ module.exports = {
     savedAsDraft: 'Guardado como borrador',
     published: 'Publicado',
     actionsHeader: 'Acciones',
+    type: 'SCORM',
+    version: 'Versión',
+    size: 'Tamaño',
   },
   scormList: {
     pageTitle: 'Biblioteca SCORM',

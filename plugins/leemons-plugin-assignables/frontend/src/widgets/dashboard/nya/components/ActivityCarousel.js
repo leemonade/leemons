@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Loader } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import { useLocation } from 'react-router-dom';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import NYACard from '../../../../components/NYACard';
 import EmptyState from './EmptyState';
 import { useNyaStyles } from '../hooks';
@@ -15,15 +16,16 @@ export default function ActivityCarousel({
   classData,
 }) {
   const { theme } = useNyaStyles();
+  const isTeacher = useIsTeacher();
   const location = useLocation();
   const isStudentDashboard = location.pathname.includes('private/dashboard/class');
 
   const swiperProps = {
-    watchOverflow: true,
+    // watchOverflow: true,
     selectable: true,
     deselectable: false,
     disableSelectedStyles: true,
-    slidesPerView: 'auto',
+    slidesPerView: 2,
     spaceBetween: 60,
     breakAt: {
       [theme.breakpoints.xs]: {
@@ -35,16 +37,14 @@ export default function ActivityCarousel({
         spaceBetween: theme.spacing[4],
       },
       [theme.breakpoints.lg]: {
-        slidesPerView: 5,
+        slidesPerView: 3,
         spaceBetween: theme.spacing[4],
       },
     },
     slideStyles: {
       height: 'auto',
-      paddingTop: '24px',
-      paddingBottom: '24px',
-      minWidth: '264px !important',
-      maxWidth: '320px !important',
+      minWidth: isTeacher ? '532px !important' : '264px !important',
+      maxWidth: isTeacher ? '532px !important' : '330px !important',
     },
   };
 
@@ -64,6 +64,7 @@ export default function ActivityCarousel({
           instance={activity}
           showSubject={!isStudentDashboard}
           classData={classData}
+          isActivityCarousel={true}
         />
       ))}
     </Swiper>

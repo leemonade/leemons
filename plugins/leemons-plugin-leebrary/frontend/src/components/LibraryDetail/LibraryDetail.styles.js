@@ -1,13 +1,11 @@
-import { createStyles, getFontExpressive } from '@bubbles-ui/components';
+import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-export const LibraryDetailStyles = createStyles((theme, { drawer, open }) => {
+const LibraryDetailStyles = createStyles((theme, { drawer, open }) => {
   let drawerProps = {};
   if (drawer) {
     drawerProps = {
-      border: `1px solid ${theme.colors.ui01}`,
       borderRight: 0,
       borderBottom: 0,
-      borderRadius: '4px 0 0 0',
       backgroundColor: theme.colors.mainWhite,
     };
   }
@@ -45,5 +43,46 @@ export const LibraryDetailStyles = createStyles((theme, { drawer, open }) => {
       right: 'auto',
       left: -50,
     },
+    canAccessContainer: {
+      marginTop: pxToRem(24),
+      width: '100%',
+    },
+    canAccessItem: {
+      display: 'flex',
+      alignItems: 'center',
+      width: '100%',
+      paddingLeft: pxToRem(8),
+    },
+    avatarWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: pxToRem(8),
+      width: pxToRem(336),
+    },
+    canAccessText: {
+      fontSize: pxToRem(14),
+      fontWeight: 400,
+      lineHeight: '20px',
+      color: '#343A3F',
+    },
+    canAccessFooter: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      height: pxToRem(64),
+      width: '100%',
+      borderTop: '1px solid #DDE1E6',
+      position: 'sticky',
+      bottom: '0%',
+      left: 0,
+      paddingRight: pxToRem(24),
+      backgroundColor: 'white',
+    },
+    canAccessButton: {
+      height: pxToRem(40),
+    },
   };
 });
+
+export default LibraryDetailStyles;
+export { LibraryDetailStyles };

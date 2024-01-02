@@ -232,6 +232,11 @@ module.exports = {
     open: 'Abrir',
     duplicate: 'Duplicar',
     duplicated: 'Duplicado',
+    simpleQuestion: 'Respuesta única',
+    map: 'Mapa',
+    hints: 'Pistas',
+    yes: 'Si',
+    no: 'No',
   },
   studentInstance: {
     multiSubject: 'Multi-Asignatura',
