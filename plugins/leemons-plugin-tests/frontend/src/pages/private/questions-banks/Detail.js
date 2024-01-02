@@ -174,7 +174,20 @@ export default function Detail(p) {
             ]}
             onChangeActiveIndex={setStep}
           >
-            {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
+            {store.currentStep === 0 && (
+              <DetailBasic
+                t={t}
+                advancedConfig={{
+                  alwaysOpen: true,
+                  fileToRight: true,
+                  colorToRight: true,
+                  program: { show: true, required: false },
+                  subjects: { show: true, required: true, showLevel: false, maxOne: true },
+                }}
+                form={form}
+                onNext={() => setStep(1)}
+              />
+            )}
             {store.currentStep === 1 && (
               <DetailConfig t={t} form={form} onPrev={() => setStep(0)} onNext={() => setStep(2)} />
             )}

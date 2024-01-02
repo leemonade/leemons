@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Stack, ContextContainer } from '@bubbles-ui/components';
+import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import AssetFormInput from '@leebrary/components/AssetFormInput';
 
-export default function DetailBasic({ form, t, onNext }) {
+export default function DetailBasic({ form, t, onNext, advancedConfig }) {
   async function next() {
     const formGood = await form.trigger(['name']);
     if (formGood) {
@@ -14,7 +14,13 @@ export default function DetailBasic({ form, t, onNext }) {
 
   return (
     <ContextContainer divided>
-      <AssetFormInput form={form} preview tagsPluginName="tests" category="tests-questions-banks" />
+      <AssetFormInput
+        advancedConfig={advancedConfig}
+        form={form}
+        preview
+        tagsPluginName="tests"
+        category="tests-questions-banks"
+      />
 
       <Stack fullWidth justifyContent="end">
         <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={next}>
@@ -26,6 +32,7 @@ export default function DetailBasic({ form, t, onNext }) {
 }
 
 DetailBasic.propTypes = {
+  advancedConfig: PropTypes.object,
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func,

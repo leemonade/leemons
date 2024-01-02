@@ -557,6 +557,8 @@ const LibraryForm = ({
                     />
                   ) : null}
 
+                  {JSON.stringify(store.subjectRequired)}
+
                   {store.showAdvancedConfig ? (
                     <Controller
                       name="subjects"
@@ -566,6 +568,10 @@ const LibraryForm = ({
                         <SubjectPicker
                           {...field}
                           value={_.map(field.value || [], 'subject')}
+                          onChange={(e) => {
+                            console.log('field.value', field.value);
+                            console.log('Hola?', e);
+                          }}
                           onChangeRaw={(e) => {
                             if (e.length > 0) {
                               if (!program) setValue('program', e[0].program);
