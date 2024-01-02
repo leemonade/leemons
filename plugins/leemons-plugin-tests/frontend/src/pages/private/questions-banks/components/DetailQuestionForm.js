@@ -8,8 +8,8 @@ import {
   InputWrapper,
   ListInput,
   Select,
-  Stack,
-  Title,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
@@ -17,21 +17,20 @@ import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
-import { MonoResponse } from './question-types/MonoResponse';
-import { QuestionMap } from './question-types/Map';
+import { questionComponents, questionTypeT } from './QuestionForm';
 
-export const typesWithImage = ['mono-response'];
-export const questionComponents = {
-  'mono-response': <MonoResponse />,
-  map: <QuestionMap />,
-};
-
-export const questionTypeT = {
-  'mono-response': 'monoResponse',
-  map: 'map',
-};
-
-export default function QuestionForm({ t, onSave, defaultValues, categories, onCancel }) {
+export default function DetailQuestionForm({
+  t,
+  stepName,
+  scrollRef,
+  isPublished,
+  store,
+  onSave,
+  onSaveQuestion,
+  defaultValues,
+  categories,
+  onCancel,
+}) {
   const questionTypes = [];
   forIn(questionTypeT, (value, key) => {
     questionTypes.push({ value: key, label: t(value) });
@@ -40,7 +39,13 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
   const form = useForm({ defaultValues });
   const type = form.watch('type');
 
-  function save() {
+  function handleOnSaveQuestion() {
+    form.handleSubmit((data) => {
+      onSaveQuestion(data);
+    })();
+  }
+
+  function handleOnSave() {
     form.handleSubmit((data) => {
       onSave(data);
     })();
@@ -51,31 +56,72 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
     label: category.value,
   }));
 
+  const QuestionComponent = React.useMemo(() => {
+    if (!type) return null;
+
+    return React.cloneElement(questionComponents[type], {
+      form,
+      t,
+    });
+  }, [type, form, t]);
+
   return (
-    <Box style={{ marginBottom: 20 }}>
-      <ContextContainer title={t('questionDetail')}>
-        <Box style={{ width: '230px' }}>
-          <ContextContainer fullWidth direction="row">
-            <Controller
-              control={form.control}
-              name="type"
-              rules={{ required: t('typeRequired') }}
-              render={({ field }) => (
-                <Box style={{ width: '100%' }}>
-                  <Select
-                    required
-                    data={questionTypes}
-                    error={form.formState.errors.type}
-                    label={t('typeLabel')}
-                    {...field}
-                  />
-                </Box>
-              )}
-            />
-          </ContextContainer>
-        </Box>
-        {type ? (
-          <>
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={onCancel}
+            >
+              {t('returnToList')}
+            </Button>
+          }
+          rightZone={
+            <>
+              {!isPublished ? (
+                <Button
+                  variant="link"
+                  onClick={handleOnSave}
+                  disabled={store.saving}
+                  loading={store.saving === 'draft'}
+                >
+                  {t('saveDraft')}
+                </Button>
+              ) : null}
+              <Button onClick={handleOnSaveQuestion}>{t('saveQuestion')}</Button>
+            </>
+          }
+        />
+      }
+    >
+      <Box style={{ marginBottom: 20 }}>
+        <ContextContainer title={t('questionDetail')}>
+          <Box style={{ width: '230px' }}>
+            <ContextContainer fullWidth direction="row">
+              <Controller
+                control={form.control}
+                name="type"
+                rules={{ required: t('typeRequired') }}
+                render={({ field }) => (
+                  <Box style={{ width: '100%' }}>
+                    <Select
+                      required
+                      data={questionTypes}
+                      error={form.formState.errors.type}
+                      label={t('typeLabel')}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            </ContextContainer>
+          </Box>
+          {type ? (
             <ContextContainer divided>
               <ContextContainer>
                 <ContextContainer fullWidth direction="row">
@@ -161,12 +207,7 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   />
                 ) : null}
 
-                {type
-                  ? React.cloneElement(questionComponents[type], {
-                    form,
-                    t,
-                  })
-                  : null}
+                {QuestionComponent}
 
                 <Controller
                   control={form.control}
@@ -182,25 +223,23 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   )}
                 />
               </ContextContainer>
-
-              <Stack alignItems="center" justifyContent="space-between">
-                <Button variant="light" leftIcon={<ChevLeftIcon />} onClick={onCancel}>
-                  {t('returnToList')}
-                </Button>
-                <Button onClick={save}>{t('saveQuestion')}</Button>
-              </Stack>
             </ContextContainer>
-          </>
-        ) : null}
-      </ContextContainer>
-    </Box>
+          ) : null}
+        </ContextContainer>
+      </Box>
+    </TotalLayoutStepContainer>
   );
 }
 
-QuestionForm.propTypes = {
+DetailQuestionForm.propTypes = {
   onSave: PropTypes.func,
   defaultValues: PropTypes.object,
   t: PropTypes.func.isRequired,
   onCancel: PropTypes.func,
   categories: PropTypes.array,
+  store: PropTypes.object,
+  onSaveQuestion: PropTypes.func,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.object,
+  isPublished: PropTypes.bool,
 };

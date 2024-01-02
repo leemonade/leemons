@@ -71,7 +71,7 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
   return (
     <LibraryCard
       {...props}
-      asset={asset}
+      asset={{ ...asset, fileType: 'questionBank' }}
       menuItems={menuItems}
       variant="questionBank"
       variantTitle={t('questionBank')}

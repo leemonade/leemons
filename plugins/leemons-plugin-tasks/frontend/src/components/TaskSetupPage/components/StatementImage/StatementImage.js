@@ -14,7 +14,7 @@ import { LibraryCardEmbed, AssetListDrawer } from '@leebrary/components';
 import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { PluginLeebraryIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 
 const styles = createStyles((theme) => ({
   attachmentContainer: {
@@ -152,7 +152,11 @@ export default function StatementImage({ labels }) {
             }
           }}
         >
-          <Button variant="outline" onClick={toggleDrawer}>
+          <Button
+            variant="link"
+            onClick={toggleDrawer}
+            leftIcon={<PluginLeebraryIcon height={18} width={18} />}
+          >
             {labels?.searchFromLibrary}
           </Button>
           <AssetListDrawer

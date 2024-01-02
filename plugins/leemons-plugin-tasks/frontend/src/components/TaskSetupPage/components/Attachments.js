@@ -13,7 +13,7 @@ import { AssetListDrawer } from '@leebrary/components';
 import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { RemoveIcon, AddCircleIcon } from '@bubbles-ui/icons/outline';
 
 const styles = createStyles((theme) => ({
   attachmentContainer: {
@@ -139,7 +139,7 @@ export default function Attachments({ labels }) {
             }
           }}
         >
-          <Button variant="outline" onClick={toggleDrawer}>
+          <Button variant="link" onClick={toggleDrawer} leftIcon={<AddCircleIcon />}>
             {labels?.searchFromLibraryDocsAndMedia}
           </Button>
           <AssetListDrawer

@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { isArray, isEmpty, isNil } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
-import { Box, Stack } from '@bubbles-ui/components';
+import { TotalLayoutContainer, TotalLayoutHeader } from '@bubbles-ui/components';
 // TODO: import from @feedback plugin maybe?
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -19,6 +19,12 @@ import getTaskRequest from '../../../request/task/getTask';
 import useObserver from '../../../helpers/useObserver';
 
 async function processDevelopment({ values, store, processTextEditor }) {
+  if (!values?.metadata?.hasDevelopment) {
+    // eslint-disable-next-line no-param-reassign
+    values.metadata.development = null;
+    return;
+  }
+
   const force = !!store.currentTask?.published;
 
   const developments = values?.metadata?.development;
@@ -42,31 +48,36 @@ async function processDevelopment({ values, store, processTextEditor }) {
 
     // eslint-disable-next-line no-param-reassign
     values.metadata.development = (await Promise.all(promises)).filter(Boolean);
+    return;
   }
+
+  // eslint-disable-next-line no-param-reassign
+  values.metadata.development = [];
 }
 
 function useHeaderLabels(t) {
   const { useWatch } = useObservableContext();
   const taskName = useWatch({ name: 'taskName' });
 
-  const headerLabels = useMemo(
+  return useMemo(
     () => ({
       title: isNil(taskName) || isEmpty(taskName) ? t('title') : taskName,
     }),
     [t, taskName]
   );
-
-  return headerLabels;
 }
 
-function TaskSetupHeader({ t, emitEvent, loading, store, render }) {
-  const handleOnHeaderResize = (size) => {
-    store.headerHeight = size?.height - 1;
-    render();
-  };
-
+function TaskSetupHeader({ t, store }) {
   const headerLabels = useHeaderLabels(t);
 
+  return (
+    <TotalLayoutHeader
+      icon={<PluginAssignmentsIcon />}
+      title={t(!isEmpty(store?.currentTask) ? 'edit_title' : 'title')}
+      formTitlePlaceholder={headerLabels.title}
+    />
+  );
+  /*
   return (
     <AdminPageHeader
       variant="teacher"
@@ -90,9 +101,15 @@ function TaskSetupHeader({ t, emitEvent, loading, store, render }) {
       loading={loading.current}
     />
   );
+  */
 }
 
-function useSetupProps({ labels, store, useSaveObserver }) {
+TaskSetupHeader.propTypes = {
+  t: PropTypes.func,
+  store: PropTypes.object,
+};
+
+function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, setLoading }) {
   const { useWatch } = useObservableContext();
   const isExpress = !!useWatch({ name: 'isExpress' });
 
@@ -102,7 +119,7 @@ function useSetupProps({ labels, store, useSaveObserver }) {
     []
   );
 
-  const setupProps = useMemo(() => {
+  return useMemo(() => {
     if (isNil(labels)) {
       return null;
     }
@@ -133,32 +150,56 @@ function useSetupProps({ labels, store, useSaveObserver }) {
                 subjects: { show: true, required: true, showLevel: true, maxOne: false },
               }}
               useObserver={useSaveObserver}
+              stepName={basicData.step_label}
+              scrollRef={scrollRef}
+              loading={loading}
+              setLoading={setLoading}
+              t={t}
             />
           ),
           status: 'OK',
         },
         {
           label: contentData.step_label,
-          content: <ContentData useObserver={useSaveObserver} {...contentData} />,
+          content: (
+            <ContentData
+              useObserver={useSaveObserver}
+              {...contentData}
+              stepName={contentData.step_label}
+              scrollRef={scrollRef}
+              loading={loading}
+              setLoading={setLoading}
+              t={t}
+            />
+          ),
           status: 'OK',
         },
         !isExpress && {
           label: instructionData.step_label,
-          content: <InstructionData useObserver={useSaveObserver} {...instructionData} />,
+          content: (
+            <InstructionData
+              useObserver={useSaveObserver}
+              {...instructionData}
+              stepName={instructionData.step_label}
+              scrollRef={scrollRef}
+              loading={loading}
+              setLoading={setLoading}
+              t={t}
+            />
+          ),
           status: 'OK',
         },
       ].filter(Boolean),
     };
   }, [store.currentTask, completedSteps, store.currentTask, labels, useSaveObserver, isExpress]);
-
-  return setupProps;
 }
 
 function TaskSetup() {
   const searchParams = useSearchParams();
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
-  const loading = useRef(null);
+  const [loading, setLoading] = useState(null);
+  const scrollRef = React.useRef();
   const [store, render] = useStore({
     currentTask: null,
     taskName: null,
@@ -187,9 +228,7 @@ function TaskSetup() {
           ...subject,
           curriculum: curriculum && {
             objectives: curriculum[subject.subject]?.objectives?.map(({ objective }) => objective),
-            curriculum: curriculum[subject.subject]?.curriculum?.map(
-              ({ curriculum }) => curriculum
-            ),
+            curriculum: curriculum[subject.subject]?.curriculum?.map((item) => item.curriculum),
           },
         })),
       };
@@ -225,9 +264,8 @@ function TaskSetup() {
       addErrorAlert(e.message);
       emitEvent('saveTaskFailed');
     } finally {
-      if (loading.current === 'duplicate') {
-        loading.current = null;
-        render();
+      if (loading === 'draft') {
+        setLoading(null);
       }
     }
   };
@@ -250,8 +288,7 @@ function TaskSetup() {
       addErrorAlert(e.error);
       throw e;
     } finally {
-      loading.current = null;
-      render();
+      setLoading(null);
     }
   };
 
@@ -267,7 +304,7 @@ function TaskSetup() {
         const { curriculum } = subject;
         task.curriculum[subject.subject] = {
           objectives: curriculum?.objectives?.map((objective) => ({ objective })),
-          curriculum: curriculum?.curriculum?.map((curriculum) => ({ curriculum })),
+          curriculum: curriculum?.curriculum?.map((item) => ({ curriculum: item })),
         };
       });
       return task;
@@ -346,8 +383,8 @@ function TaskSetup() {
           }
         } else if (event === 'saveTaskFailed') {
           unsubscribe(f);
-          if (loading.current === 'edit') {
-            loading.current = null;
+          if (loading === 'publish') {
+            setLoading(null);
             render();
           }
         }
@@ -365,11 +402,8 @@ function TaskSetup() {
         } else if (event === 'publishTaskAndAssign') {
           await handleOnPublishTask();
           history.push(`/private/tasks/library/assign/${store.currentTask.id}`);
-        } else if (event === 'saveTaskFailed') {
-          if (loading.current) {
-            loading.current = null;
-            render();
-          }
+        } else if (event === 'saveTaskFailed' && !!loading) {
+          setLoading(null);
         }
       } catch (e) {
         // EN: The error was previously handled
@@ -385,31 +419,30 @@ function TaskSetup() {
   // ·········································································
   // INIT VALUES
 
-  const setupProps = useSetupProps({ labels, store, useSaveObserver });
+  const setupProps = useSetupProps({
+    t,
+    labels,
+    store,
+    useSaveObserver,
+    scrollRef,
+    loading,
+    setLoading,
+  });
 
   // -------------------------------------------------------------------------
   // COMPONENT
 
   return (
-    <Stack direction="column" fullHeight>
-      <TaskSetupHeader
-        t={t}
-        emitEvent={emitEvent}
-        loading={loading}
-        render={render}
-        store={store}
-      />
-      <Box>
-        {!isEmpty(setupProps) && isArray(setupProps.steps) && (
-          <Setup
-            {...setupProps}
-            stickyAt={store.headerHeight}
-            useObserver={useSaveObserver}
-            onSave={handleOnSaveTask}
-          />
-        )}
-      </Box>
-    </Stack>
+    <TotalLayoutContainer scrollRef={scrollRef} Header={<TaskSetupHeader t={t} store={store} />}>
+      {!isEmpty(setupProps) && isArray(setupProps.steps) && (
+        <Setup
+          {...setupProps}
+          useObserver={useSaveObserver}
+          onSave={handleOnSaveTask}
+          scrollRef={scrollRef}
+        />
+      )}
+    </TotalLayoutContainer>
   );
 }
 
