@@ -15,6 +15,7 @@ export const MainNavBarStyles = createStyles((theme, { itemWidth, isCollapsed })
     navBar: {
       boxShadow: navBarBoxShadow,
       backgroundColor: leemonsStyles.menu.background.color.main.default,
+      borderRight: `1px solid ${leemonsStyles.menu.border.color.main.default}`,
     },
     navTitle: {
       ...leemonsStyles.global.content.typo.heading.lg,
