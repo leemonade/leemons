@@ -93,7 +93,7 @@ export function ListInputRender({ t, withImages, addItem, value, ...props }) {
             </Stack>
             {store.useButton ? (
               <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                <Button variant="light" leftIcon={<AddCircleIcon />} onClick={add}>
+                <Button variant="link" leftIcon={<AddCircleIcon />} onClick={add}>
                   {t('addResponse')}
                 </Button>
               </Box>
@@ -118,7 +118,7 @@ export function ListInputRender({ t, withImages, addItem, value, ...props }) {
           </Box>
           {store.useButton ? (
             <Box>
-              <Button variant="light" onClick={add} leftIcon={<AddCircleIcon />}>
+              <Button variant="link" onClick={add} leftIcon={<AddCircleIcon />}>
                 {t('addResponse')}
               </Button>
             </Box>

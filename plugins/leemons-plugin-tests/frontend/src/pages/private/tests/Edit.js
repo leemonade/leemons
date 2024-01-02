@@ -320,6 +320,7 @@ export default function Edit() {
           icon={<TestIcon width={23} height={23} />}
           title={getTitle()}
           formTitlePlaceholder={formValues.name}
+          onCancel={() => history.goBack()}
         />
       }
     >

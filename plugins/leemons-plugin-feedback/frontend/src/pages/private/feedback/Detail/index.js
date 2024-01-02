@@ -1,20 +1,20 @@
+/* eslint-disable camelcase */
+import React from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import {
-  Box,
   LoadingOverlay,
-  Stack,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
   useDebouncedCallback,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
 // TODO: fix this import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { getFeedbackRequest, saveFeedbackRequest } from '@feedback/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
 
 import DetailBasic from '@feedback/pages/private/feedback/Detail/components/DetailBasic';
 import DetailQuestions from '@feedback/pages/private/feedback/Detail/components/DetailQuestions';
@@ -25,6 +25,7 @@ export default function Index() {
 
   // ----------------------------------------------------------------------
   // SETTINGS
+
   const debounce = useDebouncedCallback(1000);
   const [store, render] = useStore({
     loading: true,
@@ -35,17 +36,22 @@ export default function Index() {
 
   const history = useHistory();
   const params = useParams();
-
+  const scrollRef = React.useRef();
   const form = useForm();
   const formValues = form.watch();
 
-  async function saveAsDraft() {
+  // ························································
+  // DATA STORE HANDLERS
+
+  async function saveAsDraft(redirect = false) {
     try {
-      store.saving = 'duplicate';
+      store.saving = 'draft';
       render();
       await saveFeedbackRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/feedback/draft');
+      if (redirect) {
+        history.push('/private/feedback/draft');
+      }
     } catch (error) {
       addErrorAlert(error);
     }
@@ -55,7 +61,7 @@ export default function Index() {
 
   async function saveAsPublish(goAssign) {
     try {
-      store.saving = 'edit';
+      store.saving = 'publish';
       render();
       const { feedback } = await saveFeedbackRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
@@ -70,6 +76,9 @@ export default function Index() {
     store.saving = null;
     render();
   }
+
+  // ························································
+  // INITIAL DATA LOADING
 
   async function init() {
     try {
@@ -87,13 +96,13 @@ export default function Index() {
             deletedAt,
             createdAt,
             updatedAt,
-            ...props
+            ...feedback
           },
         } = await getFeedbackRequest(params.id);
-        if (props.questions.length > 0) {
+        if (feedback.questions.length > 0) {
           store.currentStep = 1;
         }
-        form.reset(props);
+        form.reset(feedback);
       }
       store.idLoaded = params.id;
       store.loading = false;
@@ -102,6 +111,9 @@ export default function Index() {
       addErrorAlert(error);
     }
   }
+
+  // ························································
+  // STEP HANDLERS
 
   function setStep(step) {
     store.currentStep = step;
@@ -133,63 +145,67 @@ export default function Index() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleOnHeaderResize = (size) => {
-    store.headerHeight = size?.height - 1;
-    render();
+  const getTitle = () => {
+    if (store.isNew) return t('pageTitleNew');
+    return t('pageTitle');
   };
 
-  if (store.loading) return <LoadingOverlay visible />;
+  // ························································
+  // RENDER
+
+  if (store.loading) {
+    return <LoadingOverlay visible />;
+  }
 
   return (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
-      <Stack direction="column" fullHeight>
-        <AdminPageHeader
-          values={{
-            // eslint-disable-next-line no-nested-ternary
-            title: formValues.name
-              ? formValues.name
-              : store.isNew
-              ? t('pageTitleNew', { name: '' })
-              : t('pageTitle', { name: '' }),
-          }}
-          buttons={{
-            duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            // edit: store.isValid && !store.isNew ? t('publish') : undefined,
-          }}
-          icon={<PluginFeedbackIcon />}
-          variant="teacher"
-          onEdit={() => saveAsPublish()}
-          onDuplicate={() => saveAsDraft()}
-          loading={store.saving}
-          onResize={handleOnHeaderResize}
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          icon={<PluginFeedbackIcon width={23} height={23} />}
+          title={getTitle()}
+          formTitlePlaceholder={formValues.name}
+          onCancel={() => history.goBack()}
         />
-
-        <Box>
-          <VerticalStepperContainer
-            stickyAt={store.headerHeight}
-            currentStep={
-              store.currentStep === 1 && formValues.questions?.length ? 2 : store.currentStep
-            }
-            data={[
-              { label: t('basic'), status: 'OK' },
-              { label: t('questions'), status: 'OK' },
-            ]}
-          >
-            {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
-            {store.currentStep > 0 && (
-              <DetailQuestions
-                t={t}
-                form={form}
-                saving={store.saving}
-                onNext={saveAsPublish}
-                onPrev={() => {
-                  setStep(0);
-                }}
-              />
-            )}
-          </VerticalStepperContainer>
-        </Box>
-      </Stack>
-    </Box>
+      }
+    >
+      <VerticalStepperContainer
+        scrollRef={scrollRef}
+        currentStep={
+          store.currentStep === 1 && formValues.questions?.length ? 2 : store.currentStep
+        }
+        data={[
+          { label: t('basic'), status: 'OK' },
+          { label: t('questions'), status: 'OK' },
+        ]}
+      >
+        {store.currentStep === 0 && (
+          <DetailBasic
+            t={t}
+            form={form}
+            store={store}
+            stepName={t('basic')}
+            scrollRef={scrollRef}
+            onSave={saveAsDraft}
+            onNext={() => setStep(1)}
+          />
+        )}
+        {store.currentStep > 0 && (
+          <DetailQuestions
+            t={t}
+            form={form}
+            store={store}
+            stepName={t('questions')}
+            scrollRef={scrollRef}
+            onSave={saveAsDraft}
+            onPublish={saveAsPublish}
+            onAssign={() => saveAsPublish(true)}
+            onPrev={() => {
+              setStep(0);
+            }}
+          />
+        )}
+      </VerticalStepperContainer>
+    </TotalLayoutContainer>
   );
 }

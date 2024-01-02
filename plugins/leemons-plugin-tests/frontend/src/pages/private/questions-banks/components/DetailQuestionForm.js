@@ -87,13 +87,15 @@ export default function DetailQuestionForm({
                 <Button
                   variant="link"
                   onClick={handleOnSave}
-                  disabled={store.saving}
+                  disabled={store.saving || !type}
                   loading={store.saving === 'draft'}
                 >
                   {t('saveDraft')}
                 </Button>
               ) : null}
-              <Button onClick={handleOnSaveQuestion}>{t('saveQuestion')}</Button>
+              <Button disabled={!type} onClick={handleOnSaveQuestion}>
+                {t('saveQuestion')}
+              </Button>
             </>
           }
         />

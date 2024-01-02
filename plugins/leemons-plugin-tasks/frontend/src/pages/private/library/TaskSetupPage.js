@@ -69,39 +69,16 @@ function useHeaderLabels(t) {
 
 function TaskSetupHeader({ t, store }) {
   const headerLabels = useHeaderLabels(t);
+  const history = useHistory();
 
   return (
     <TotalLayoutHeader
       icon={<PluginAssignmentsIcon />}
       title={t(!isEmpty(store?.currentTask) ? 'edit_title' : 'title')}
       formTitlePlaceholder={headerLabels.title}
+      onCancel={() => history.goBack()}
     />
   );
-  /*
-  return (
-    <AdminPageHeader
-      variant="teacher"
-      icon={<PluginAssignmentsIcon />}
-      values={headerLabels}
-      buttons={{
-        duplicate: t('common.save'),
-        edit: t('common.publish'),
-      }}
-      onDuplicate={() => {
-        loading.current = 'duplicate';
-        render();
-        emitEvent('saveTask');
-      }}
-      onEdit={() => {
-        loading.current = 'edit';
-        render();
-        emitEvent('publishTaskAndLibrary');
-      }}
-      onResize={handleOnHeaderResize}
-      loading={loading.current}
-    />
-  );
-  */
 }
 
 TaskSetupHeader.propTypes = {

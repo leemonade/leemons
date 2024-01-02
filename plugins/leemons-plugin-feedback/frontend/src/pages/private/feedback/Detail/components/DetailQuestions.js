@@ -1,3 +1,7 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { map, noop } from 'lodash';
+import { Controller } from 'react-hook-form';
 import {
   ActionButton,
   Alert,
@@ -9,20 +13,29 @@ import {
   TableInput,
   Textarea,
   Title,
+  DropdownButton,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
-import QuestionForm from '@feedback/pages/private/feedback/Detail/components/QuestionForm';
+import DetailQuestionForm from '@feedback/pages/private/feedback/Detail/components/DetailQuestionForm';
 import { useLayout } from '@layout/context';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { map } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller } from 'react-hook-form';
 
-export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
+export default function DetailQuestions({
+  t,
+  form,
+  store = {},
+  stepName,
+  scrollRef,
+  onPrev = noop,
+  onSave = noop,
+  onPublish = noop,
+  onAssign = noop,
+}) {
   const [qStore, qRender] = useStore({
     newQuestion: false,
     isDirty: false,
@@ -30,7 +43,8 @@ export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
   });
 
   const { openDeleteConfirmationModal } = useLayout();
-  const questions = form.watch('questions');
+  const formValues = form.watch();
+  const { questions } = formValues;
 
   function addQuestion() {
     qStore.newQuestion = true;
@@ -46,7 +60,7 @@ export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
     qRender();
   }
 
-  function onSave(question) {
+  function onSaveQuestion(question) {
     const currentQuestions = form.getValues('questions') || [];
     if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
       currentQuestions[qStore.questionIndex] = question;
@@ -93,13 +107,27 @@ export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
     [qStore.questionChanged]
   );
 
-  if (qStore.newQuestion || qStore.question) {
+  function tryHandler(handler = noop) {
+    qStore.isDirty = true;
+    qStore.trySend = true;
+    qRender();
+    form.handleSubmit(() => {
+      handler();
+    })();
+  }
+
+  const showQuestionForm = qStore.newQuestion || qStore.question;
+
+  if (showQuestionForm) {
     return (
-      <QuestionForm
+      <DetailQuestionForm
         t={t}
-        onSave={onSave}
+        isPublished={formValues.published}
+        onSaveQuestion={onSaveQuestion}
         defaultValues={qStore.newQuestion ? {} : qStore.question}
         onCancel={onCancel}
+        onSave={onSave}
+        store={store}
       />
     );
   }
@@ -131,124 +159,123 @@ export default function DetailQuestions({ saving, form, t, onPrev, onNext }) {
   ];
 
   return (
-    <>
-      <ContextContainer divided>
-        <ContextContainer>
-          <Stack alignItems="center" justifyContent="space-between">
-            <Title order={4}>{t('questions')}</Title>
-          </Stack>
-
-          <Controller
-            control={form.control}
-            name="featuredImage"
-            render={({ field }) => (
-              <InputWrapper label={t('featuredImage')}>
-                <ImagePicker required error={form.formState.errors.featuredImage} {...field} />
-              </InputWrapper>
-            )}
-          />
-
-          <Controller
-            control={form.control}
-            name="introductoryText"
-            rules={{ required: t('introductoryTextRequired') }}
-            render={({ field }) => (
-              <TextEditorInput
-                required
-                error={qStore.isDirty ? form.formState.errors.introductoryText : null}
-                label={t('introductoryText')}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            control={form.control}
-            name="thanksMessage"
-            rules={{ required: t('thanksMessageRequired') }}
-            render={({ field }) => (
-              <Textarea
-                required
-                error={qStore.isDirty ? form.formState.errors.thanksMessage : null}
-                label={t('thanksMessage')}
-                {...field}
-              />
-            )}
-          />
-
-          {questions && questions.length ? (
-            <TableInput
-              labels={{}}
-              showHeaders={false}
-              removable={false}
-              editable={false}
-              columns={tableHeaders}
-              data={questionsForTable}
-              onChange={(data) => {
-                form.setValue('questions', map(data, 'goodQuestion'));
-              }}
-            />
-          ) : null}
-          <Box>
-            <Button variant="light" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
-              {t('addQuestion')}
-            </Button>
-          </Box>
-          {qStore.trySend && form.formState.errors.questions ? (
-            <Alert severity="error" closeable={false}>
-              {form.formState.errors.questions?.message}
-            </Alert>
-          ) : null}
-        </ContextContainer>
-        <Stack alignItems="center" justifyContent="space-between">
-          <Button
-            variant="light"
-            leftIcon={<ChevLeftIcon height={20} width={20} />}
-            onClick={onPrev}
-          >
-            {t('previous')}
-          </Button>
-          <Box>
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
             <Button
               variant="outline"
-              loading={saving}
-              onClick={() => {
-                qStore.isDirty = true;
-                qStore.trySend = true;
-                qRender();
-                form.handleSubmit(() => {
-                  onNext();
-                })();
-              }}
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={onPrev}
             >
-              {t('publish')}
+              {t('previous')}
             </Button>
-            <Box sx={(theme) => ({ display: 'inline-block', marginLeft: theme.spacing[2] })}>
-              <Button
-                loading={saving}
-                onClick={() => {
-                  qStore.isDirty = true;
-                  qStore.trySend = true;
-                  qRender();
-                  form.handleSubmit(() => {
-                    onNext(true);
-                  })();
-                }}
+          }
+          rightZone={
+            <>
+              {!formValues.published ? (
+                <Button
+                  variant="link"
+                  onClick={() => tryHandler(onSave)}
+                  disabled={store.saving}
+                  loading={store.saving === 'draft'}
+                >
+                  {t('saveDraft')}
+                </Button>
+              ) : null}
+              <DropdownButton
+                data={[
+                  { label: t('publish'), onClick: () => tryHandler(onPublish) },
+                  { label: t('publishAndAssign'), onClick: () => tryHandler(onAssign) },
+                ]}
+                loading={store.saving === 'publish'}
+                disabled={store.saving}
               >
-                {t('publishAndAssign')}
-              </Button>
-            </Box>
-          </Box>
-        </Stack>
+                {t('finish')}
+              </DropdownButton>
+            </>
+          }
+        />
+      }
+    >
+      <ContextContainer title={t('questions')}>
+        <Controller
+          control={form.control}
+          name="featuredImage"
+          render={({ field }) => (
+            <InputWrapper label={t('featuredImage')}>
+              <ImagePicker required error={form.formState.errors.featuredImage} {...field} />
+            </InputWrapper>
+          )}
+        />
+
+        <Controller
+          control={form.control}
+          name="introductoryText"
+          rules={{ required: t('introductoryTextRequired') }}
+          render={({ field }) => (
+            <TextEditorInput
+              required
+              error={qStore.isDirty ? form.formState.errors.introductoryText : null}
+              label={t('introductoryText')}
+              {...field}
+            />
+          )}
+        />
+
+        <Controller
+          control={form.control}
+          name="thanksMessage"
+          rules={{ required: t('thanksMessageRequired') }}
+          render={({ field }) => (
+            <Textarea
+              required
+              error={qStore.isDirty ? form.formState.errors.thanksMessage : null}
+              label={t('thanksMessage')}
+              {...field}
+            />
+          )}
+        />
+
+        {questions && questions.length ? (
+          <TableInput
+            labels={{}}
+            showHeaders={false}
+            removable={false}
+            editable={false}
+            columns={tableHeaders}
+            data={questionsForTable}
+            onChange={(data) => {
+              form.setValue('questions', map(data, 'goodQuestion'));
+            }}
+          />
+        ) : null}
+        <Box>
+          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
+            {t('addQuestion')}
+          </Button>
+        </Box>
+        {qStore.trySend && form.formState.errors.questions ? (
+          <Alert severity="error" closeable={false}>
+            {form.formState.errors.questions?.message}
+          </Alert>
+        ) : null}
       </ContextContainer>
-    </>
+    </TotalLayoutStepContainer>
   );
 }
 
 DetailQuestions.propTypes = {
-  form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  saving: PropTypes.boolean,
-  onNext: PropTypes.func,
+  form: PropTypes.object.isRequired,
+  store: PropTypes.object,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.object,
   onPrev: PropTypes.func,
+  onPublish: PropTypes.func,
+  onSave: PropTypes.func,
+  onAssign: PropTypes.func,
 };
