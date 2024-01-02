@@ -155,6 +155,8 @@ module.exports = {
         close: 'Cerrar',
         libraryItem: 'Item de biblioteca',
         permissionsHeader: 'Configuración de permisos',
+        groupUserHeader: 'Grupo/Usuario',
+        actionsHeader: 'Acciones',
       },
       labels: {
         currentUsers: 'Usuarios actuales',

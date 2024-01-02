@@ -58,7 +58,6 @@ const PermissionsDataStyles = createStyles((theme) => ({
   footerButtons: {
     display: 'flex',
     width: '100%',
-
     justifyContent: 'space-between',
   },
 }));

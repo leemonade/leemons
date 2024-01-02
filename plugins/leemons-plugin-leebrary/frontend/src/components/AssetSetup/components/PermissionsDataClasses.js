@@ -57,9 +57,8 @@ function ClassItem({ class: klass, ...props }) {
             src={getClassIcon(klass)}
           />
         </Box>
-        <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
-        }`}</Text>
+        <Text>{`${klass.subject.name}${klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+          }`}</Text>
       </Box>
     </Box>
   );
@@ -207,10 +206,10 @@ const PermissionsDataClasses = ({
     <ContextContainer spacing={editMode ? 0 : 5}>
       {!editMode ? (
         <>
-          <Box>
+          {/* <Box>
             <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
             <Paragraph>{t('permissionsData.labels.addClassesDescription')}</Paragraph>
-          </Box>
+          </Box> */}
           {profiles?.length ? (
             <Stack>
               <Switch

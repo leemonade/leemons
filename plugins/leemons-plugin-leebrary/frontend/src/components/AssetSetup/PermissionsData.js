@@ -10,6 +10,7 @@ import {
   Stack,
   TabPanel,
   Tabs,
+  Table,
   Text,
 } from '@bubbles-ui/components';
 import { LibraryItem } from '@leebrary/components/LibraryItem';
@@ -22,7 +23,7 @@ import { listCentersRequest, listProfilesRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';
 import _, { isArray, isEmpty, isFunction, isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
@@ -32,7 +33,7 @@ import { PermissionsDataClasses } from './components/PermissionsDataClasses';
 import { PermissionsDataProfiles } from './components/PermissionsDataProfiles';
 import { PermissionsDataPrograms } from './components/PermissionsDataPrograms';
 import { PermissionsDataUsers } from './components/PermissionsDataUsers';
-import PermissionsDataStyles from './PermissionsData.styles';
+import { PermissionsDataStyles } from './PermissionsData.styles';
 
 const ROLESBYROLE = {
   viewer: [
@@ -72,6 +73,7 @@ const PermissionsData = ({
   onSavePermissions,
   isDrawer,
   drawerTranslations,
+  onClose = () => {},
 }) => {
   const [asset, setAsset] = useState(assetProp);
   const [roles, setRoles] = useState([]);
@@ -422,6 +424,23 @@ const PermissionsData = ({
     }
   }
 
+  const USER_TABLE_HEADERS = useMemo(() => [
+    {
+      Header: t('permissionsData.header.groupUserHeader'),
+      accessor: 'user',
+      style: { width: '64%' },
+    },
+    {
+      Header: t('permissionsData.header.stepLabel'),
+      accessor: 'role',
+      style: { width: '20%' },
+    },
+    {
+      Header: t('permissionsData.header.actionsHeader'),
+      accessor: 'actions',
+    },
+  ]);
+
   return (
     <Box>
       <Box className={classesStyles.header}>
@@ -453,6 +472,8 @@ const PermissionsData = ({
                     marginTop: theme.spacing[4],
                   })}
                 >
+                  <Table columns={USER_TABLE_HEADERS} />
+
                   {shareTypesValues.includes('centers') ? (
                     <PermissionsDataCenterProgramsProfiles
                       roles={roles}
@@ -511,13 +532,13 @@ const PermissionsData = ({
                     />
                   ) : null}
                 </Box>
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                {/* <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <Stack justifyContent={'end'} fullWidth>
                     <Button loading={loading} onClick={saveEditPermissions}>
                       {t('permissionsData.labels.saveButton')}
                     </Button>
                   </Stack>
-                </Box>
+                </Box> */}
               </TabPanel>
               <TabPanel label={`${t('permissionsData.labels.addUsersTab')}`} key="tab2">
                 <Select
@@ -590,7 +611,7 @@ const PermissionsData = ({
                     />
                   ) : null}
                 </Box>
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                {/* <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <Stack justifyContent={'end'} fullWidth>
                     <Button loading={loading} onClick={savePermissions}>
                       {sharing
@@ -598,7 +619,7 @@ const PermissionsData = ({
                         : t('permissionsData.labels.saveButton')}
                     </Button>
                   </Stack>
-                </Box>
+                </Box> */}
               </TabPanel>
             </Tabs>
           ) : (
@@ -651,14 +672,22 @@ const PermissionsData = ({
           <Box className={classesStyles.footer}>
             {activeTab === 'tab1' && (
               <Box className={classesStyles.footerButtons}>
-                <Button variant="link">{t('permissionsData.labels.cancelButton')}</Button>
-                <Button variant="primary">{t('permissionsData.labels.updateButton')}</Button>
+                <Button variant="link" onClick={onClose}>
+                  {t('permissionsData.labels.cancelButton')}
+                </Button>
+                <Button variant="primary" loading={loading} onClick={saveEditPermissions}>
+                  {t('permissionsData.labels.updateButton')}
+                </Button>
               </Box>
             )}
             {activeTab === 'tab2' && (
               <Box className={classesStyles.footerButtons}>
-                <Button variant="link">{t('permissionsData.labels.cancelButton')}</Button>
-                <Button variant="primary">{t('permissionsData.labels.saveFooterButton')}</Button>
+                <Button variant="link" onClick={onClose}>
+                  {t('permissionsData.labels.cancelButton')}
+                </Button>
+                <Button variant="primary" loading={loading} onClick={savePermissions}>
+                  {t('permissionsData.labels.saveFooterButton')}
+                </Button>
               </Box>
             )}
           </Box>
@@ -676,6 +705,7 @@ PermissionsData.propTypes = {
   onSavePermissions: PropTypes.func,
   isDrawer: PropTypes.bool,
   drawerTranslations: PropTypes.array,
+  onClose: PropTypes.func,
 };
 
 export default PermissionsData;

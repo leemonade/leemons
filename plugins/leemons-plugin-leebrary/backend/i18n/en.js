@@ -168,6 +168,8 @@ module.exports = {
         close: 'Close',
         libraryItem: 'Library item',
         permissionsHeader: 'Permissions configuration',
+        groupUserHeader: 'Group/User',
+        actionsHeader: 'Actions',
       },
       labels: {
         currentUsers: 'Current users',

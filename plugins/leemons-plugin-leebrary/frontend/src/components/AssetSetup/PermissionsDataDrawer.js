@@ -30,7 +30,7 @@ const PermissionsDataDrawer = ({
       {...props}
     >
       <PermissionsData
-        {...{ asset, loading, sharing, onNext, onSavePermissions }}
+        {...{ asset, loading, sharing, onNext, onSavePermissions, onClose }}
         isDrawer
         drawerTranslations={[t, translations]}
       />

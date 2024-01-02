@@ -4,6 +4,7 @@ import {
   Paragraph,
   Select,
   TableInput,
+  Table,
   Title,
   UserDisplayItem,
 } from '@bubbles-ui/components';
@@ -56,17 +57,6 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
   const USERS_COLUMNS = useMemo(
     () => [
       {
-        Header: 'Profile',
-        accessor: 'profile',
-        input: {
-          node: <SelectAgents usersData={[...alreadySelectedUsers, ...value]} />,
-          rules: { required: 'Required field' },
-        },
-        editable: false,
-        valueRender: (val) => <UserDisplayItem {...val} variant="inline" size="xs" />,
-        style: { width: '30%' },
-      },
-      {
         Header: 'User',
         accessor: 'user',
         input: {
@@ -75,11 +65,12 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
         },
         editable: false,
         valueRender: (val) => <UserDisplayItem {...val} variant="inline" size="xs" />,
-        style: { width: '30%' },
+        style: { width: '20%' },
       },
       {
         Header: 'Role',
         accessor: 'role',
+        editable: false,
         input: {
           node: <RoleSelect />,
           rules: { required: 'Required field' },
@@ -93,11 +84,11 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
 
   const USER_LABELS = useMemo(
     () => ({
-      add: t('permissionsData.labels.addUserButton', 'Add'),
+      // add: t('permissionsData.labels.addUserButton', 'Add'),
       remove: t('permissionsData.labels.removeUserButton', 'Remove'),
-      edit: t('permissionsData.labels.editUserButton', 'Edit'),
-      accept: t('permissionsData.labels.acceptButton', 'Accept'),
-      cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
+      // edit: t('permissionsData.labels.editUserButton', 'Edit'),
+      // accept: t('permissionsData.labels.acceptButton', 'Accept'),
+      // cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
     }),
     [t]
   );
@@ -106,17 +97,17 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
   // RENDER
 
   return (
-    <ContextContainer>
-      {!editMode ? (
+    <ContextContainer padded={false} spacing={0}>
+      {/* {!editMode ? (
         <Box>
-          {/* <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-          <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph> */}
+           <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
+          <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph> 
         </Box>
       ) : (
         <Box>
           <Title order={5}>{t('permissionsData.labels.editAddUsers')}</Title>
         </Box>
-      )}
+      )} */}
 
       {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
@@ -124,10 +115,11 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
           onChange={onChange}
           columns={USERS_COLUMNS}
           labels={USER_LABELS}
-          showHeaders={!editMode}
-          forceShowInputs={!editMode}
+          showHeaders={false}
+          forceShowInputs={false}
           sortable={false}
-          editable={editMode}
+          editable={false}
+          removable={true}
           onBeforeAdd={checkIfUserIsAdded}
           resetOnAdd
           unique

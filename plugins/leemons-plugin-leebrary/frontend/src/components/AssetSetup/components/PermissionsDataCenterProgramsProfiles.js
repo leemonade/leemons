@@ -145,10 +145,10 @@ const PermissionsDataCenterProgramsProfiles = ({
     <ContextContainer spacing={editMode ? 0 : 5}>
       {!editMode ? (
         <>
-          <Box>
+          {/* <Box>
             <Title order={5}>{t('permissionsData.labels.addCenters')}</Title>
             <Paragraph>{t('permissionsData.labels.addCentersDescription')}</Paragraph>
-          </Box>
+          </Box> */}
           <Stack>
             {profiles?.length ? (
               <Switch
