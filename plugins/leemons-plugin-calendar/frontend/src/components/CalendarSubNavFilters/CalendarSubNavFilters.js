@@ -6,9 +6,9 @@ import {
   ProSwitch,
   SegmentedControl,
   Select,
-  SubNav,
   Text,
 } from '@bubbles-ui/components';
+import { SubNav } from '@bubbles-ui/extras';
 import { PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { forEach } from 'lodash';
 import {

@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { groupBy, map, uniqBy } from 'lodash';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
@@ -10,25 +10,37 @@ import {
   TotalLayoutContainer,
   TotalLayoutHeader,
 } from '@bubbles-ui/components';
-import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
+import { useLayout } from '@layout/context';
+import { TestIcon } from '@tests/components/Icons/TestIcon';
 import { getTestRequest, saveTestRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
 import DetailContent from './components/DetailContent';
+import DetailEvaluation from './components/DetailEvaluation';
 import DetailInstructions from './components/DetailInstructions';
 import DetailQuestions from './components/DetailQuestions';
 import DetailQuestionsBanks from './components/DetailQuestionsBanks';
 
 export default function Edit() {
   const [t] = useTranslateLoader(prefixPN('testsEdit'));
+  const { layoutState, setLayoutState } = useLayout();
 
-  // ----------------------------------------------------------------------
+  useEffect(() => {
+    setLayoutState({
+      ...layoutState,
+      hasFooter: true,
+    });
+  }, []);
+
+  // ························································
   // SETTINGS
+
   const [store, render] = useStore({
     loading: true,
+    saving: null,
     isNew: false,
     currentStep: 0,
     headerHeight: null,
@@ -41,14 +53,19 @@ export default function Edit() {
   const formValues = form.watch();
   store.isValid = form.formState.isValid;
 
+  // ························································
+  // DATA STORE HANDLERS
+
   async function saveAsDraft() {
     try {
       store.saving = 'draft';
       render();
+
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects?.map(({ subject }) => subject);
-      // console.log('toSend', toSend);
+
       await saveTestRequest({ ...toSend, type: 'learn', published: false });
+
       addSuccessAlert(t('savedAsDraft'));
       history.push('/private/tests/draft');
     } catch (error) {
@@ -77,6 +94,9 @@ export default function Edit() {
     store.saving = null;
     render();
   }
+
+  // ························································
+  // INITIAL DATA LOADING
 
   async function load() {
     const [{ programs }, { classes }] = await Promise.all([
@@ -129,6 +149,13 @@ export default function Edit() {
     }
   }
 
+  React.useEffect(() => {
+    if (params?.id) init();
+  }, [params?.id]);
+
+  // ························································
+  // STEP HANDLERS
+
   function setStep(step) {
     store.currentStep = step;
     render();
@@ -144,28 +171,32 @@ export default function Edit() {
     render();
   }
 
-  React.useEffect(() => {
-    if (params?.id) init();
-  }, [params?.id]);
-
-  const steps = React.useMemo(() => {
-    const data = [
-      { label: t('basic'), status: 'OK' },
-      { label: t('contentLabel'), status: 'OK' },
-      { label: t('questionsBank'), status: 'OK' },
-      { label: t('questions'), status: 'OK' },
-    ];
+  function getInstructionsLabelKey() {
     const { config = {} } = formValues;
-    if (config.hasCurriculum || config.hasObjectives) {
-      data.push({ label: 'Evaluación', status: 'OK' });
-    }
     if (config.hasResources || config.hasInstructions) {
       let labelKey = 'instructions';
       if (config.hasResources) labelKey = 'resources';
       if (config.hasResources && config.hasInstructions) {
         labelKey = 'resoucesAndInstructions';
       }
-      data.push({ label: t(labelKey), status: 'OK' });
+      return labelKey;
+    }
+    return null;
+  }
+
+  const steps = React.useMemo(() => {
+    const data = [
+      { label: t('basic'), status: 'OK' },
+      { label: t('contentLabel'), status: 'OK' },
+      { label: t('questionsBank'), status: 'OK' },
+      { label: t('questionsStepName'), status: 'OK' },
+    ];
+    const { config = {} } = formValues;
+    if (config.hasCurriculum || config.hasObjectives) {
+      data.push({ label: t('evaluation'), status: 'OK' });
+    }
+    if (config.hasResources || config.hasInstructions) {
+      data.push({ label: t(getInstructionsLabelKey()), status: 'OK' });
     }
     return data;
   }, [t, formValues]);
@@ -186,6 +217,94 @@ export default function Edit() {
     return t('pageTitleEdit');
   };
 
+  const stepsContent = React.useMemo(() => {
+    const { config = {} } = formValues;
+    const result = [
+      <DetailBasic
+        key="s0"
+        t={t}
+        form={form}
+        store={store}
+        stepName={t('basic')}
+        scrollRef={scrollRef}
+        advancedConfig={{
+          alwaysOpen: true,
+          program: { show: true, required: false },
+          subjects: { show: true, required: true, showLevel: false, maxOne: true },
+        }}
+        onNext={nextStep}
+        onSave={saveAsDraft}
+      />,
+      <DetailContent
+        key="s1"
+        t={t}
+        form={form}
+        store={store}
+        stepName={t('contentLabel')}
+        scrollRef={scrollRef}
+        onSave={saveAsDraft}
+        onNext={nextStep}
+        onPrev={prevStep}
+      />,
+      <DetailQuestionsBanks
+        key="s2"
+        t={t}
+        form={form}
+        store={store}
+        stepName={t('questionsBank')}
+        scrollRef={scrollRef}
+        onSave={saveAsDraft}
+        onNext={nextStep}
+        onPrev={prevStep}
+      />,
+      <DetailQuestions
+        key="s3"
+        t={t}
+        form={form}
+        store={store}
+        stepName={t('questionsStepName')}
+        scrollRef={scrollRef}
+        onSave={saveAsDraft}
+        onNext={nextStep}
+        onPrev={prevStep}
+      />,
+    ];
+
+    if (config.hasCurriculum || config.hasObjectives) {
+      result.push(
+        <DetailEvaluation
+          t={t}
+          key="s4"
+          form={form}
+          store={store}
+          stepName={t('evaluation')}
+          scrollRef={scrollRef}
+          onSave={saveAsDraft}
+          onPublish={saveAsPublish}
+          onAssign={() => saveAsPublish(true)}
+          onPrev={prevStep}
+        />
+      );
+    }
+    if (config.hasResources || config.hasInstructions) {
+      result.push(
+        <DetailInstructions
+          key="s5"
+          t={t}
+          form={form}
+          store={store}
+          stepName={t(getInstructionsLabelKey())}
+          scrollRef={scrollRef}
+          onSave={saveAsDraft}
+          onPublish={saveAsPublish}
+          onAssign={() => saveAsPublish(true)}
+          onPrev={prevStep}
+        />
+      );
+    }
+    return result;
+  }, [form, formValues, t, store, scrollRef]);
+
   // ························································
   // RENDER
 
@@ -198,97 +317,19 @@ export default function Edit() {
       scrollRef={scrollRef}
       Header={
         <TotalLayoutHeader
-          icon={<PluginTestIcon />}
+          icon={<TestIcon width={23} height={23} />}
           title={getTitle()}
           formTitlePlaceholder={formValues.name}
         />
       }
     >
-      {/* 
-      <AdminPageHeader
-        buttons={{
-          duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-          edit: store.isValid && !store.isNew ? t('publish') : undefined,
-        }}
-        icon={<PluginTestIcon />}
-        variant="teacher"
-        onEdit={() => saveAsPublish()}
-        onDuplicate={() => saveAsDraft()}
-        loading={store.saving}
-        onResize={handleOnHeaderResize}
-      />
-      */}
-
       <VerticalStepperContainer
         currentStep={store.currentStep}
         data={steps}
         onChangeActiveIndex={setStep}
         scrollRef={scrollRef}
       >
-        {
-          [
-            <DetailBasic
-              key="s0"
-              t={t}
-              form={form}
-              store={store}
-              stepName={t('basic')}
-              scrollRef={scrollRef}
-              advancedConfig={{
-                alwaysOpen: true,
-                program: { show: true, required: false },
-                subjects: { show: true, required: true, showLevel: false, maxOne: true },
-              }}
-              onNext={nextStep}
-              onSave={saveAsDraft}
-            />,
-            <DetailContent
-              key="s4"
-              t={t}
-              form={form}
-              store={store}
-              stepName={t('contentLabel')}
-              scrollRef={scrollRef}
-              onSave={saveAsDraft}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />,
-            <DetailQuestionsBanks
-              key="s2"
-              t={t}
-              form={form}
-              store={store}
-              stepName={t('questionsBank')}
-              scrollRef={scrollRef}
-              onSave={saveAsDraft}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />,
-            <DetailQuestions
-              key="s3"
-              t={t}
-              form={form}
-              store={store}
-              stepName={t('questions')}
-              scrollRef={scrollRef}
-              onSave={saveAsDraft}
-              onNext={nextStep}
-              onPrev={prevStep}
-            />,
-            <DetailInstructions
-              key="s5"
-              t={t}
-              form={form}
-              store={store}
-              stepName={t('instructions')}
-              scrollRef={scrollRef}
-              onSave={saveAsDraft}
-              onPublish={saveAsPublish}
-              onAssign={() => saveAsPublish(true)}
-              onPrev={prevStep}
-            />,
-          ][store.currentStep]
-        }
+        {stepsContent[store.currentStep]}
       </VerticalStepperContainer>
     </TotalLayoutContainer>
   );

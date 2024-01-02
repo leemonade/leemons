@@ -143,7 +143,7 @@ async function addBulk({ data, ctx }) {
         ...user,
         locale: user.locale || _center.locale || locale,
         status: 'created',
-        active: false,
+        active: user.active || false,
         profile: _profile,
         ctx,
       })

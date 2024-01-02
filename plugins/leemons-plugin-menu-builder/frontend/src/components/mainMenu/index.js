@@ -5,7 +5,7 @@ import prefixPN from '@menu-builder/helpers/prefixPN';
 import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getUserCentersRequest, getUserProfilesRequest } from '@users/request';
-import { currentProfileIsSuperAdmin, getCookieToken, useSession } from '@users/session';
+import { currentProfileIsSuperAdmin, useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -31,6 +31,9 @@ export default function MainMenu({ subNavWidth, ...props }) {
     setLoadMenu(true);
   };
 
+  // ························································
+  // LOAD INITIAT DATA
+
   async function load() {
     const [{ centers }, { profiles }] = await Promise.all([
       getUserCentersRequest(),
@@ -47,6 +50,9 @@ export default function MainMenu({ subNavWidth, ...props }) {
     forceReload.current = true;
     reloadMenu();
   });
+
+  // ························································
+  // EFFECTS
 
   useEffect(() => {
     hooks.addAction('menu-builder:reload-menu', reloadMenu);

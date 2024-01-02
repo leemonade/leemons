@@ -64,6 +64,7 @@ module.exports = {
       no_id_error: 'No task ID provided',
       save: 'Save draft',
       publish: 'Publish',
+      finish: 'Finish',
     },
     setup: {
       basicData: {
@@ -197,7 +198,7 @@ module.exports = {
           forStudent: 'Instructions for Student',
           recommendedDuration: 'Recommended duration',
           buttonPublish: 'Only publish',
-          buttonNext: 'Publish and assign',
+          buttonPublishAndAssign: 'Publish and assign',
           buttonPrev: 'Previous',
         },
         placeholders: {

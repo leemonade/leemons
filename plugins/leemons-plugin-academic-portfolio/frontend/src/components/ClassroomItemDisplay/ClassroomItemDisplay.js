@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { useClassroomsData } from '@academic-portfolio/hooks/useClassroomsData';
-import { Loader } from '@bubbles-ui/components/lib/feedback/Loader/Loader';
 import { ClassroomItemDisplayStyles } from './ClassroomItemDisplay.styles';
 import {
   CLASSROOMTITEMSDISPLAY_DEFAULT_PROPS,

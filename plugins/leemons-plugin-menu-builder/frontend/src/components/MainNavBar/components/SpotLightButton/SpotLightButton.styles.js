@@ -27,6 +27,7 @@ export const SpotLightButtonStyles = createStyles((theme) => {
       ...leemonsStyles.menu.content['typo--regular'],
       lineHeight: '24px',
       color: leemonsStyles.menu.content.color.main.default,
+      paddingLeft: 5,
     },
   };
 });

@@ -6,7 +6,6 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import prefixPN from '../helpers/prefixPN';
-import { prepareAsset } from '../helpers/prepareAsset';
 import { listCategoriesRequest } from '../request';
 import { CardWrapper } from './CardWrapper';
 import { AssetForm } from './AssetForm/AssetForm';
@@ -53,26 +52,16 @@ const AssetFormInput = ({
     return { labels };
   }, [translations, labels]);
 
-  const preparedAsset = React.useMemo(() => {
-    if (asset) {
-      return prepareAsset(asset);
-    }
-    return {};
-  }, [asset]);
-
   // ························································
   // DATA PROCESS
 
   async function loadCategory() {
     const result = await listCategoriesRequest();
-    console.log('result', result);
     const items = result.map((data) => ({
       ...data,
       icon: data.menuItem.iconSvg,
       name: data.menuItem.label,
     }));
-    console.log('items', items);
-    console.log('find', find(items, { key: categoryKey }));
     setCategory(find(items, { key: categoryKey }));
   }
 
@@ -102,23 +91,25 @@ const AssetFormInput = ({
 
   if (preview) {
     return (
-      <Stack fullWidth>
-        <Box sx={(theme) => ({ width: '100%', paddingRight: theme.spacing[5] })}>
-          {formComponent}
-        </Box>
-        <Box sx={() => ({ minWidth: 264, maxWidth: 264 })} noFlex>
-          <ContextContainer title={formLabels?.labels?.preview}>
-            <CardWrapper
-              isCreationPreview
-              item={{ original: form?.watch() }}
-              category={category}
-              variant={previewVariant}
-              locale={locale}
-              single
-            />
-          </ContextContainer>
-        </Box>
-      </Stack>
+      <Box style={{ marginBottom: 16 }}>
+        <Stack fullWidth>
+          <Box sx={(theme) => ({ width: '100%', paddingRight: theme.spacing[5] })}>
+            {formComponent}
+          </Box>
+          <Box sx={() => ({ minWidth: 264, maxWidth: 264 })} noFlex>
+            <ContextContainer title={formLabels?.labels?.preview}>
+              <CardWrapper
+                isCreationPreview
+                item={{ original: form?.watch() }}
+                category={category}
+                variant={previewVariant}
+                locale={locale}
+                single
+              />
+            </ContextContainer>
+          </Box>
+        </Stack>
+      </Box>
     );
   }
 

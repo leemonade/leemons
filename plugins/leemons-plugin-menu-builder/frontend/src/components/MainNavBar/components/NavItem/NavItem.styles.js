@@ -57,12 +57,14 @@ export const NavItemStyles = createStyles((theme) => {
       display: 'flex',
       justifyContent: spaceBetween,
       alignItems: 'center',
+      paddingLeft: 4,
     },
     labelText: {
       ...typoRegular,
       lineHeight: '24px',
       color: leemonsStyles.menu.content.color.main.default,
     },
+    /*
     badgeNew: {
       '& > div': {
         backgroundColor: '#307AE8 !important',
@@ -79,6 +81,7 @@ export const NavItemStyles = createStyles((theme) => {
       padding: 0,
       margin: 0,
     },
+    */
     openIcon: {
       width: '12px',
       height: '12px',

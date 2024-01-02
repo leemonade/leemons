@@ -4,7 +4,7 @@ import { Loader } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import EmptyState from './EmptyState';
 import { useNyaStyles } from '../hooks';
-import EvaluationCard from './EvaluationCard';
+import EvaluationCardStudent from './EvaluationCardStudent';
 
 export default function EvaluationsCarousel({
   localizations,
@@ -20,6 +20,7 @@ export default function EvaluationsCarousel({
     selectable: true,
     deselectable: false,
     disableSelectedStyles: true,
+    spaceBetween: 60,
     breakAt: {
       [theme.breakpoints.xs]: {
         slidesPerView: 1,
@@ -36,6 +37,8 @@ export default function EvaluationsCarousel({
     },
     slideStyles: {
       height: 'auto',
+      maxWidth: '532px',
+      minWidth: '532px',
     },
   };
 
@@ -50,7 +53,7 @@ export default function EvaluationsCarousel({
   return (
     <Swiper {...swiperProps}>
       {activities.map((activity, i) => (
-        <EvaluationCard
+        <EvaluationCardStudent
           key={activity.id}
           assignation={activity}
           showSubject={showSubjects}

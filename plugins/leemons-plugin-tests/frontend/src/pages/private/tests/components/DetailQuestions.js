@@ -168,8 +168,8 @@ export default function DetailQuestions({
     if (!isNil(store.questionsFiltered)) {
       return reorderMode ? 'continue' : 'assignSelectedQuestions';
     }
-    return 'continue'
-  }
+    return 'continue';
+  };
 
   return (
     <TotalLayoutStepContainer
@@ -214,27 +214,28 @@ export default function DetailQuestions({
       }
     >
       <Box>
-        <ContextContainer>
-          <Title order={4}>{t('questionBank', { name: store.questionBank.name })}</Title>
+        <ContextContainer title={t('questionBank', { name: store.questionBank.name })}>
           <Title order={6}>{t('nQuestions', { n: nQuestions })}</Title>
           <Paragraph>
             {t(reorderMode ? 'questionsDescriptionReorder' : 'questionsDescription')}
           </Paragraph>
 
           {isNil(store.questionsFiltered) ? (
-            <Controller
-              key={2}
-              control={form.control}
-              name="filters"
-              render={({ field }) => (
-                <DetailQuestionsFilters
-                  {...field}
-                  t={t}
-                  form={filtersForm}
-                  questionBank={store.questionBank}
-                />
-              )}
-            />
+            <Box style={{ paddingBottom: 16 }}>
+              <Controller
+                key={2}
+                control={form.control}
+                name="filters"
+                render={({ field }) => (
+                  <DetailQuestionsFilters
+                    {...field}
+                    t={t}
+                    form={filtersForm}
+                    questionBank={store.questionBank}
+                  />
+                )}
+              />
+            </Box>
           ) : (
             <Controller
               key={1}

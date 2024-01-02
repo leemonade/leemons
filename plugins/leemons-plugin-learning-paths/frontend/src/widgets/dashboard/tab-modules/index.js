@@ -4,7 +4,6 @@ import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useS
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, createStyles, useTheme } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
-// TODO: import from @library plugin
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import NYACard from '@assignables/components/NYACard';
 
@@ -33,7 +32,6 @@ function useSwiperProps() {
     () => ({
       selectable: true,
       deselectable: false,
-      centeredSlides: true,
       disableSelectedStyles: true,
       breakAt: {
         [theme.breakpoints.xs]: {
@@ -51,10 +49,10 @@ function useSwiperProps() {
       },
       slideStyles: {
         height: 'auto',
-        paddingTop: '24px',
-        paddingBottom: '24px',
-        minWidth: '264px !important',
-        maxWidth: '320px !important',
+        // paddingTop: '24px',
+        // paddingBottom: '24px',
+        // minWidth: '264px !important',
+        // maxWidth: '320px !important',
       },
     }),
     [theme]

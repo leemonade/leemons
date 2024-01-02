@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
-import _ from 'lodash';
+import { isEmpty, find, isString } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
@@ -42,12 +42,12 @@ const AssetPage = () => {
   // Set Category for Library context
   React.useEffect(() => {
     if (params) {
-      if (!_.isEmpty(params.category)) selectCategory(params.category);
+      if (!isEmpty(params.category)) selectCategory(params.category);
       const query = {};
       if (params.category) query.key = params.category;
       else query.id = asset?.category;
 
-      const item = _.find(categories, query);
+      const item = find(categories, query);
       setCategory(item);
     }
   }, [params, asset, categories, category]);
@@ -62,6 +62,7 @@ const AssetPage = () => {
     url: asset?.url || null,
     program: asset?.program || null,
     subjects: asset?.subjects || null,
+    tags: asset?.tags || [],
   });
 
   const getValidationSchema = (assetType) => {
@@ -88,7 +89,7 @@ const AssetPage = () => {
   const loadAsset = async (id) => {
     try {
       const response = await getAssetRequest(id);
-      if (!_.isEmpty(response?.asset)) {
+      if (!isEmpty(response?.asset)) {
         const loadedAsset = await prepareAsset(response.asset);
         setAsset(loadedAsset);
       } else {
@@ -99,7 +100,7 @@ const AssetPage = () => {
     }
   };
   React.useEffect(() => {
-    if (!_.isEmpty(params.id) && _.isEmpty(asset)) {
+    if (!isEmpty(params.id) && isEmpty(asset)) {
       loadAsset(params.id);
     }
   }, [params, asset]);
@@ -149,12 +150,11 @@ const AssetPage = () => {
   // #region * HANDLERS -------------------------------------------------------
   const handleOnCancel = () => {
     const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
-    const formIsNotEmpty = !_.isEmpty(formValues);
-    if (formHasBeenTouched || formIsNotEmpty) {
+    if (formHasBeenTouched) {
       openConfirmationModal({
-        title: '¿Cancelar formulario?',
-        description: '¿Deseas cancelar el formulario?',
-        labels: { confim: 'Cancelar', cancel: 'Cancelar' },
+        title: t('cancelModal.title'),
+        description: t('cancelModal.description'),
+        labels: { confim: t('cancelModal.confirm'), cancel: t('cancelModal.cancel') },
         onConfirm: () => history.goBack(),
       })();
     } else {
@@ -167,6 +167,7 @@ const AssetPage = () => {
     const { cover } = formValues;
     const requestMethod = editing ? updateAssetRequest : newAssetRequest;
     let file;
+    const isImage = formValues.file?.type.indexOf('image') === 0;
     setLoading(true);
 
     try {
@@ -180,15 +181,13 @@ const AssetPage = () => {
       }
 
       try {
-        const assetData = { ...formValues, cover, file, tags: formValues.tags || [] };
+        const assetData = { ...formValues, cover, file };
+        const needsOldCover = isImage
+          ? form.formState.dirtyFields.file
+          : form.formState.dirtyFields.cover;
 
         // If Cover doesn't change, set to original value
-        if (
-          _.isString(cover) &&
-          cover.indexOf('http') === 0 &&
-          asset &&
-          !form.formState.dirtyFields.cover
-        ) {
+        if (isString(cover) && cover.indexOf('http') === 0 && asset && needsOldCover) {
           assetData.cover = asset.original?.cover?.id;
         }
 

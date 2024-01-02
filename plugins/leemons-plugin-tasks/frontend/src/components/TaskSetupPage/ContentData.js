@@ -5,11 +5,15 @@ import {
   ContextContainer,
   createStyles,
   Stack,
+  Switch,
+  DropdownButton,
   SegmentedControl,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@common/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { isFunction, uniq } from 'lodash';
+import { noop, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
@@ -61,14 +65,19 @@ function ContentData({
   helps,
   errorMessages,
   editable,
-  onNext,
-  onPrevious,
+  onNext = noop,
+  onPrevious = noop,
   useObserver,
+  stepName,
+  scrollRef,
+  loading,
+  setLoading,
+  t,
   ...props
 }) {
   const { useWatch, getValues, setValue } = useObservableContext();
-
   const isExpress = !!useWatch({ name: 'isExpress' });
+
   // ·······························································
   // FORM
 
@@ -81,14 +90,14 @@ function ContentData({
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors, isDirty },
   } = formData;
 
+  const hasDevelopment = watch('metadata.hasDevelopment');
   const subjects = useSubjectsWrapper();
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
-
-  const [loading, setLoading] = React.useState(null);
 
   const onSubmit = useCallback(
     (e) => {
@@ -120,7 +129,7 @@ function ContentData({
           }
         )();
       } else if (event === 'saveTaskFailed') {
-        setLoading(false);
+        setLoading(null);
       } else if (event === 'saveStep') {
         if (!isDirty) {
           emitEvent('stepSaved');
@@ -148,21 +157,44 @@ function ContentData({
   const handleOnPrev = () => {
     if (!isDirty) {
       onPrevious();
-
       return;
     }
 
     handleSubmit((values) => {
       onSubmit(values);
-
-      if (isFunction(onPrevious)) onPrevious();
+      onPrevious();
     })();
   };
 
-  const handleOnNext = (e) => {
-    onSubmit(e);
+  const handleOnNext = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      onNext();
+    })();
+  };
 
-    if (isFunction(onNext)) onNext();
+  const handleOnSave = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      setLoading('draft');
+      emitEvent('saveTask');
+    })();
+  };
+
+  const handleOnPublish = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      setLoading('publish');
+      emitEvent('publishTaskAndLibrary');
+    })();
+  };
+
+  const handleOnAssign = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      setLoading('publish');
+      emitEvent('publishTaskAndAssign');
+    })();
   };
 
   // ---------------------------------------------------------------
@@ -171,120 +203,131 @@ function ContentData({
   return (
     <FormProvider {...formData}>
       <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-        <ContextContainer {...props} divided>
-          <ContextContainer divided>
-            <ContextContainer title={labels?.statementAndDevelopmentTitle}>
-              <Controller
-                control={control}
-                name="statement"
-                render={({ field }) => (
-                  <TextEditorInput {...field} label={labels.statement} error={errors.statement} />
-                )}
-              />
-              <StatementImage labels={labels} />
-              {!isExpress && (
-                <Development
-                  label={labels.development}
-                  placeholder={placeholders.development}
-                  name="metadata.development"
+        <TotalLayoutStepContainer
+          stepName={stepName}
+          Footer={
+            <TotalLayoutFooterContainer
+              fixed
+              scrollRef={scrollRef}
+              leftZone={
+                <Button
+                  variant="outline"
+                  leftIcon={<ChevLeftIcon height={20} width={20} />}
+                  onClick={handleOnPrev}
+                >
+                  {labels.buttonPrev}
+                </Button>
+              }
+              rightZone={
+                <>
+                  <Button
+                    variant="link"
+                    onClick={handleOnSave}
+                    disabled={loading}
+                    loading={loading === 'draft'}
+                  >
+                    {t('common.save')}
+                  </Button>
+                  {isExpress ? (
+                    <DropdownButton
+                      data={[
+                        { label: labels.buttonPublish, onClick: handleOnPublish },
+                        { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                      ]}
+                      loading={loading === 'publish'}
+                      disabled={loading}
+                    >
+                      {t('common.finish')}
+                    </DropdownButton>
+                  ) : (
+                    <Button
+                      rightIcon={<ChevRightIcon height={20} width={20} />}
+                      onClick={handleOnNext}
+                      disabled={loading}
+                      loading={loading === 'publish'}
+                    >
+                      {labels.buttonNext}
+                    </Button>
+                  )}
+                </>
+              }
+            />
+          }
+        >
+          <ContextContainer {...props} divided>
+            <ContextContainer divided>
+              <ContextContainer title={labels?.statementAndDevelopmentTitle}>
+                <StatementImage labels={labels} />
+                <Controller
+                  control={control}
+                  name="statement"
+                  render={({ field }) => (
+                    <TextEditorInput {...field} label={labels.statement} error={errors.statement} />
+                  )}
                 />
-              )}
-            </ContextContainer>
-
-            <ContextContainer title={labels?.attachmentsTitle}>
-              <Attachments labels={labels} />
-            </ContextContainer>
-
-            {!isExpress && !!subjects.length && (
-              <ContextContainer title={labels.subjects}>
-                {subjects?.length > 1 && (
-                  <SegmentedControl
-                    data={subjects?.map((subject, i) => ({ value: i, label: subject.label }))}
-                    value={`${curriculumTab}`}
-                    onChange={(value) => setCurriculumTab(Number(value))}
+                <Controller
+                  control={control}
+                  name="metadata.hasDevelopment"
+                  render={({ field }) => (
+                    <Switch {...field} label={labels.development} checked={field.value} />
+                  )}
+                />
+                {!isExpress && hasDevelopment && (
+                  <Development
+                    label={labels.development}
+                    placeholder={placeholders.development}
+                    name="metadata.development"
                   />
                 )}
-
-                {
-                  <Box className={classes.tabPane}>
-                    <ContextContainer>
-                      <Controller
-                        control={control}
-                        name="program"
-                        render={({ field: { value: program } }) => (
-                          <Curriculum
-                            addLabel={labels?.addFromCurriculum}
-                            program={program}
-                            subjects={subjects[curriculumTab]?.value}
-                            name={`curriculum.${subjects[curriculumTab]?.value}.curriculum`}
-                            type="curriculum"
-                          />
-                        )}
-                      />
-                      <Objectives
-                        name={`curriculum.${subjects[curriculumTab]?.value}.objectives`}
-                        label={labels.objectives || ''}
-                        error={errors.objectives}
-                      />
-                    </ContextContainer>
-                  </Box>
-                }
               </ContextContainer>
-            )}
 
-            <ContextContainer title={labels?.submission?.title}>
-              <Submissions labels={labels} errorMessages={errorMessages} />
+              <ContextContainer title={labels?.attachmentsTitle}>
+                <Attachments labels={labels} />
+              </ContextContainer>
+
+              {!isExpress && !!subjects.length && (
+                <ContextContainer title={labels.subjects}>
+                  {subjects?.length > 1 && (
+                    <SegmentedControl
+                      data={subjects?.map((subject, i) => ({ value: i, label: subject.label }))}
+                      value={`${curriculumTab}`}
+                      onChange={(value) => setCurriculumTab(Number(value))}
+                    />
+                  )}
+
+                  {
+                    <Box className={classes.tabPane}>
+                      <ContextContainer>
+                        <Controller
+                          control={control}
+                          name="program"
+                          render={({ field: { value: program } }) => (
+                            <Curriculum
+                              addLabel={labels?.addFromCurriculum}
+                              program={program}
+                              subjects={subjects[curriculumTab]?.value}
+                              name={`curriculum.${subjects[curriculumTab]?.value}.curriculum`}
+                              type="curriculum"
+                            />
+                          )}
+                        />
+                        <Objectives
+                          name={`curriculum.${subjects[curriculumTab]?.value}.objectives`}
+                          label={labels.objectives || ''}
+                          error={errors.objectives}
+                        />
+                      </ContextContainer>
+                    </Box>
+                  }
+                </ContextContainer>
+              )}
+
+              <ContextContainer title={labels?.submission?.title} style={{ marginBottom: 20 }}>
+                <Submissions labels={labels} errorMessages={errorMessages} />
+              </ContextContainer>
             </ContextContainer>
           </ContextContainer>
-          <Stack fullWidth justifyContent="space-between">
-            <Box>
-              <Button
-                compact
-                variant="light"
-                leftIcon={<ChevLeftIcon height={20} width={20} />}
-                onClick={handleOnPrev}
-              >
-                {labels.buttonPrev}
-              </Button>
-            </Box>
-            <Box>
-              <ContextContainer direction="row">
-                {isExpress && (
-                  <Button
-                    loading={loading === 'onlyPublish'}
-                    variant="outline"
-                    onClick={() => {
-                      setLoading('onlyPublish');
-                      emitEvent('publishTaskAndLibrary');
-                    }}
-                  >
-                    {labels.buttonPublish}
-                  </Button>
-                )}
-
-                {isExpress && (
-                  <Button
-                    loading={loading === 'publishAndAssign'}
-                    onClick={() => {
-                      setLoading('publishAndAssign');
-                      emitEvent('publishTaskAndAssign');
-                    }}
-                  >
-                    {labels.buttonPublishAndAssign}
-                  </Button>
-                )}
-                {!isExpress && (
-                  <Button
-                    rightIcon={<ChevRightIcon height={20} width={20} />}
-                    onClick={handleSubmit(handleOnNext)}
-                  >
-                    {labels.buttonNext}
-                  </Button>
-                )}
-              </ContextContainer>
-            </Box>
-          </Stack>
-        </ContextContainer>
+        </TotalLayoutStepContainer>
       </form>
     </FormProvider>
   );
@@ -307,6 +350,11 @@ ContentData.propTypes = {
   onNext: PropTypes.func,
   onPrevious: PropTypes.func,
   useObserver: PropTypes.func,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.any,
+  loading: PropTypes.any,
+  setLoading: PropTypes.func,
+  t: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

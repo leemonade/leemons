@@ -45,12 +45,6 @@ export default function DetailContent({
     }
   }
 
-  // const programId = form.getValues('program');
-  // const subjectIds = form.getValues('subjects');
-
-  // const subjects = store.subjectsByProgram[programId];
-  // const subject = find(subjects, { value: subjectIds?.[0]?.subject });
-
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
@@ -110,9 +104,9 @@ export default function DetailContent({
             />
           </ContextContainer>
 
-          <ContextContainer title="Criterios de evaluación">
-            <Stack direction="column">
-              {formValues.subjects?.length > 0 && (
+          {formValues.subjects?.length > 0 && (
+            <ContextContainer title="Criterios de evaluación">
+              <Stack direction="column">
                 <Controller
                   control={form.control}
                   name="config.hasCurriculum"
@@ -120,23 +114,24 @@ export default function DetailContent({
                     <Switch {...field} checked={field.value} label="Habilitar Curriculum" />
                   )}
                 />
-              )}
-              <Controller
-                control={form.control}
-                name="config.hasObjectives"
-                render={({ field }) => (
-                  <Switch
-                    {...field}
-                    checked={field.value}
-                    label="Habilitar objetivos personalizados"
-                  />
-                )}
-              />
-            </Stack>
-          </ContextContainer>
+                <Controller
+                  control={form.control}
+                  name="config.hasObjectives"
+                  render={({ field }) => (
+                    <Switch
+                      {...field}
+                      checked={field.value}
+                      label="Habilitar objetivos personalizados"
+                    />
+                  )}
+                />
+              </Stack>
+            </ContextContainer>
+          )}
 
           <ContextContainer title="Otros">
             <Stack direction="column">
+              {/*
               <Controller
                 control={form.control}
                 name="config.hasResources"
@@ -144,6 +139,7 @@ export default function DetailContent({
                   <Switch {...field} checked={field.value} label="Añadir recursos" />
                 )}
               />
+              */}
               <Controller
                 control={form.control}
                 name="config.hasInstructions"

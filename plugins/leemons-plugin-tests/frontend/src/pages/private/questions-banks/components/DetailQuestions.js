@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map } from 'lodash';
+import { map, noop } from 'lodash';
 import {
   ActionButton,
   Alert,
@@ -9,15 +9,27 @@ import {
   ContextContainer,
   Stack,
   Table,
-  Title,
+  Text,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
-import QuestionForm from './QuestionForm';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
+import DetailQuestionForm from './DetailQuestionForm';
 
-export default function DetailQuestions({ form, t, onPrev, onNext }) {
+export default function DetailQuestions({
+  form,
+  t,
+  stepName,
+  store,
+  scrollRef,
+  onPrev,
+  onPublish,
+  onSave,
+}) {
+  const formValues = form.watch();
   const [qStore, qRender] = useStore({
     newQuestion: false,
   });
@@ -39,7 +51,7 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
     qRender();
   }
 
-  function onSave(question) {
+  function onSaveQuestions(question) {
     const currentQuestions = form.getValues('questions') || [];
     if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
       currentQuestions[qStore.questionIndex] = question;
@@ -48,18 +60,6 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
     }
     form.setValue('questions', currentQuestions);
     onCancel();
-  }
-
-  if (qStore.newQuestion || qStore.question) {
-    return (
-      <QuestionForm
-        t={t}
-        onSave={onSave}
-        defaultValues={qStore.newQuestion ? {} : qStore.question}
-        onCancel={onCancel}
-        categories={categories}
-      />
-    );
   }
 
   function editQuestion(index) {
@@ -76,6 +76,14 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
         form.setValue('questions', newQuestions);
       },
     })();
+  }
+
+  function tryHandler(handler = noop) {
+    qStore.trySend = true;
+    qRender();
+    if (questions && questions.length) {
+      handler();
+    }
   }
 
   const tableHeaders = [
@@ -102,13 +110,87 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
 
   // console.log(form.formState.errors.questions);
 
+  const showQuestionForm = qStore.newQuestion || qStore.question;
+
+  if (showQuestionForm) {
+    return (
+      <DetailQuestionForm
+        t={t}
+        isPublished={formValues.published}
+        onSave={onSave}
+        onSaveQuestion={onSaveQuestions}
+        onCancel={onCancel}
+        defaultValues={qStore.newQuestion ? {} : qStore.question}
+        categories={categories}
+        store={store}
+      />
+    );
+  }
+
   return (
-    <>
-      <ContextContainer divided>
-        <ContextContainer>
-          <Stack alignItems="center" justifyContent="space-between">
-            <Title order={4}>{t('questions')}</Title>
-          </Stack>
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
+            <>
+              {showQuestionForm ? (
+                <Button
+                  variant="outline"
+                  leftIcon={<ChevLeftIcon height={20} width={20} />}
+                  onClick={onCancel}
+                >
+                  {t('returnToList')}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  leftIcon={<ChevLeftIcon height={20} width={20} />}
+                  onClick={onPrev}
+                >
+                  {t('previous')}
+                </Button>
+              )}
+            </>
+          }
+          rightZone={
+            <>
+              {!formValues.published ? (
+                <Button
+                  variant="link"
+                  onClick={() => tryHandler(onSave)}
+                  disabled={store.saving}
+                  loading={store.saving === 'draft'}
+                >
+                  {t('saveDraft')}
+                </Button>
+              ) : null}
+              {showQuestionForm ? (
+                <Button
+                  onClick={() => tryHandler(onPublish)}
+                  disabled={store.saving}
+                  loading={store.saving === 'publish'}
+                >
+                  {t('saveQuestion')}
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => tryHandler(onPublish)}
+                  disabled={store.saving}
+                  loading={store.saving === 'publish'}
+                >
+                  {t('publish')}
+                </Button>
+              )}
+            </>
+          }
+        />
+      }
+    >
+      <Box>
+        <ContextContainer title={t('questionList')}>
           {questions && questions.length ? (
             <Table
               columns={tableHeaders}
@@ -122,9 +204,11 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
                 ),
               }))}
             />
-          ) : null}
+          ) : (
+            <Text>{t('questionListEmpty')}</Text>
+          )}
           <Box>
-            <Button variant="light" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
               {t('addQuestion')}
             </Button>
           </Box>
@@ -134,6 +218,8 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
             </Alert>
           ) : null}
         </ContextContainer>
+
+        {/* 
         <Stack alignItems="center" justifyContent="space-between">
           <Button
             variant="light"
@@ -154,14 +240,19 @@ export default function DetailQuestions({ form, t, onPrev, onNext }) {
             {t('publish')}
           </Button>
         </Stack>
-      </ContextContainer>
-    </>
+        */}
+      </Box>
+    </TotalLayoutStepContainer>
   );
 }
 
 DetailQuestions.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  onNext: PropTypes.func,
+  onPublish: PropTypes.func,
   onPrev: PropTypes.func,
+  onSave: PropTypes.func,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.object,
+  store: PropTypes.object,
 };

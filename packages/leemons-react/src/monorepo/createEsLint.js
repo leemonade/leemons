@@ -47,13 +47,16 @@ async function getEslint(basePath) {
       },
       plugins: ['react', 'sonarjs', 'import', 'prettier'],
       rules: {
+        radix: 'off',
         'no-plusplus': 'off',
+        'no-unused-vars': 'warn',
         'import/no-dynamic-requires': 'off',
         'import/no-extraneous-dependencies': 'off',
         'react/react-in-jsx-scope': 'off',
         'no-underscore-dangle': 'off',
         'prettier/prettier': [2, {}, { usePrettierrc: true }],
         'import/no-names-as-default': 'off',
+        'import/prefer-default-export': 'warn',
       },
     };
   }

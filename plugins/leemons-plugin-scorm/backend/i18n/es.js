@@ -93,6 +93,10 @@ module.exports = {
     numberOfAttempts: 'Indícanos el número de preguntas que tiene este SCORM*',
     finish: 'Finalizar',
     cancel: 'Cancelar',
+    cancelModalTitle: 'Cancelar contenido SCORM',
+    cancelModalDescription: '¿Deseas cancelar este contenido SCORM?',
+    cancelModalConfirm: 'Confirmar',
+    cancelModalCancel: 'Atrás',
   },
   scormAssign: {
     assign: 'Asignar como tarea',

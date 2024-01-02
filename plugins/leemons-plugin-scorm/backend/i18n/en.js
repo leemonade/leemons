@@ -91,6 +91,10 @@ module.exports = {
     numberOfAttempts: 'Please indicate the number of questions in this SCORM*',
     finish: 'Finish',
     cancel: 'Cancel',
+    cancelModalTitle: 'Cancel SCORM Package Content',
+    cancelModalDescription: 'Do you want to cancel this SCORM package?',
+    cancelModalConfirm: 'Confirm',
+    cancelModalCancel: 'Back',
   },
   scormAssign: {
     assign: 'Assign as task',

@@ -22,6 +22,7 @@ import {
   setRememberLoginRequest,
 } from '@users/request';
 import { getCookieToken } from '@users/session';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -42,6 +43,7 @@ export default function SelectProfile({ session }) {
     profiles: [],
   });
 
+  const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
   const history = useHistory();
   const { layoutState, setLayoutState } = useContext(LayoutContext);
 
@@ -51,41 +53,14 @@ export default function SelectProfile({ session }) {
   // ····················································································
   // HANDLERS
 
-  async function init() {
-    setLayoutState({ ...layoutState, private: false, profileChecked: false });
-    const [{ centers }, { profile, center }, userToken] = await Promise.all([
-      getUserCentersRequest(),
-      getRememberLoginRequest(getCookieToken()),
-      leemons.api(`v1/users/users`),
-    ]);
-
-    store.centers = centers;
-    if (userToken?.user?.isSuperAdmin) {
-      const { profiles } = await getUserProfilesRequest();
-      const superProfile = _.find(profiles, { sysName: 'super' });
-      _.forEach(store.centers, (center) => {
-        center.profiles.push(superProfile);
-      });
-    }
-    if (profile && center) {
-      store.defaultValues = {
-        profile: profile.id,
-        center: center.id,
-        remember: true,
-      };
-    }
-    render();
-  }
-
-  React.useEffect(() => {
-    if (!tLoading) init();
-  }, [tLoading]);
-
   async function handleOnSubmit(data) {
     try {
       store.loading = true;
       render();
       const _pro = [];
+      if (store.superProfile) {
+        _pro.push(store.superProfile);
+      }
       _.forEach(store.centers, (cen) => {
         _.forEach(cen.profiles, (pro) => {
           _pro.push({ ...pro, centerId: cen.id });
@@ -110,7 +85,12 @@ export default function SelectProfile({ session }) {
         const newToken = { ...jwtToken, profile: data.profile };
         Cookies.set('token', newToken);
         hooks.fireEvent('user:cookie:session:change');
-        history.push(profile.sysName === 'super' ? '/private/admin/setup' : `/private/dashboard`);
+
+        history.push(
+          profile.sysName === 'super'
+            ? deploymentConfig?.superRedirectUrl || '/private/admin/setup'
+            : `/private/dashboard`
+        );
       } else {
         const { jwtToken } = await getUserCenterProfileTokenRequest(data.center, data.profile);
         await hooks.fireEvent('user:change:profile', profile);
@@ -123,6 +103,42 @@ export default function SelectProfile({ session }) {
       console.error(e);
     }
   }
+
+  async function init() {
+    setLayoutState({ ...layoutState, private: false, profileChecked: false });
+    const [{ centers }, { profile, center }, userToken] = await Promise.all([
+      getUserCentersRequest(),
+      getRememberLoginRequest(getCookieToken()),
+      leemons.api(`v1/users/users`),
+    ]);
+
+    store.centers = centers;
+    if (userToken?.user?.isSuperAdmin) {
+      const { profiles } = await getUserProfilesRequest();
+      store.superProfile = _.find(profiles, { sysName: 'super' });
+
+      _.forEach(store.centers, (center) => {
+        center.profiles.push(store.superProfile);
+      });
+      if (!store.centers.length) {
+        handleOnSubmit({
+          profile: store.superProfile.id,
+        });
+      }
+    }
+    if (profile && center) {
+      store.defaultValues = {
+        profile: profile.id,
+        center: center.id,
+        remember: true,
+      };
+    }
+    render();
+  }
+
+  React.useEffect(() => {
+    if (!tLoading && deploymentConfig !== undefined) init();
+  }, [tLoading, deploymentConfig]);
 
   // ····················································································
   // LITERALS

@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, ImageLoader, Navbar, openSpotlight, Text, TextClamp } from '@bubbles-ui/components';
+import {
+  Box,
+  ImageLoader,
+  Navbar,
+  openSpotlight,
+  Text,
+  TextClamp,
+  useHover,
+} from '@bubbles-ui/components';
 import { find, isArray, isEmpty } from 'lodash';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -29,14 +37,22 @@ const MainNavBar = ({
   useRouter,
   spotlightLabel,
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  // const [isCollapsed, setIsCollapsed] = useState(true);
   const [expandedItem, setExpandedItem] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
   const [activeSubItem, setActiveSubItem] = useState(null);
+  const location = useLocation();
+  const hasLogo = !isEmpty(logoUrl);
+  const { hovered, ref } = useHover();
+
   const { classes } = MainNavBarStyles(
-    { itemWidth: MAIN_NAV_WIDTH_EXPANDED, isCollapsed },
+    { itemWidth: MAIN_NAV_WIDTH_EXPANDED, isCollapsed: !hovered },
     { name: 'MainNav' }
   );
+
+  // ························································
+  // HANDLERS
+
   const handleItemClick = (item) => {
     if (item.id === expandedItem) {
       setExpandedItem(null);
@@ -61,6 +77,9 @@ const MainNavBar = ({
     }
   };
 
+  // ························································
+  // EFFECTS
+
   useEffect(() => {
     if (isLoading || !menuData || (isArray(menuData) && !menuData.length)) {
       handleRouteChange();
@@ -74,14 +93,14 @@ const MainNavBar = ({
     }
   }, [menuData, sessionMenu, isLoading]);
 
-  const location = useLocation();
   useEffect(() => {
     if (!isLoading && isArray(menuData) && menuData.length) {
       handleRouteChange();
     }
   }, [location]);
 
-  const hasLogo = !isEmpty(logoUrl);
+  // ························································
+  // RENDER
 
   const navBarItems = useMemo(
     () =>
@@ -90,14 +109,14 @@ const MainNavBar = ({
           item.children.length > 0
             ? item.children.find((child) => child?.id === activeSubItem?.id)
             : false;
-        const isActive = isCollapsed
+        const isActive = !hovered
           ? activeItem?.id === item.id
           : item.id === activeItem?.id && !isSubItemActive;
         return (
           <NavItem
             {...item}
             key={`navItem--${index}`}
-            isCollapsed={isCollapsed}
+            isCollapsed={!hovered}
             id={item.id}
             onOpen={() => handleItemClick(item)}
             expandedItem={expandedItem}
@@ -108,23 +127,20 @@ const MainNavBar = ({
           />
         );
       }),
-    [isCollapsed, activeItem, activeSubItem, menuData]
+    [hovered, activeItem, activeSubItem, menuData]
   );
 
   return (
     <>
       <AnimatePresence>
         <motion.div
-          // sx={() => ({ overflow: 'hidden' })} // comentad por que sx no es soportado por un div normal
-          initial={{ width: MAIN_NAV_WIDTH_COLLAPSED }}
-          amimate={isCollapsed ? 'closed' : 'open'}
+          initial={{ width: hovered ? MAIN_NAV_WIDTH_EXPANDED : MAIN_NAV_WIDTH_COLLAPSED }}
+          animate={hovered ? 'open' : 'closed'}
           variants={mainNavVariants}
-          whileHover={{ width: MAIN_NAV_WIDTH_EXPANDED }}
           transition={{ type: 'tween' }}
         >
           <Navbar
-            onMouseEnter={() => setIsCollapsed(false)}
-            onMouseLeave={() => setIsCollapsed(true)}
+            ref={ref}
             sx={() => ({ overflow: 'hidden' })}
             className={classes.navBar}
             withBorder={false}
@@ -146,7 +162,7 @@ const MainNavBar = ({
                   {navTitle ? (
                     <motion.div
                       initial={{ opacity: '0' }}
-                      animate={isCollapsed ? 'closed' : 'open'}
+                      animate={hovered ? 'open' : 'closed'}
                       variants={navTitleVariants}
                     >
                       <TextClamp lines={1}>
@@ -168,7 +184,7 @@ const MainNavBar = ({
                 <Box>
                   <SpotLightButton
                     onClick={() => openSpotlight()}
-                    isCollapsed={isCollapsed}
+                    isCollapsed={!hovered}
                     spotlightLabel={spotlightLabel}
                   />
                 </Box>
@@ -177,7 +193,7 @@ const MainNavBar = ({
                   <Box>
                     <UserButton
                       name={getUserFullName(session)}
-                      isCollapsed={isCollapsed}
+                      isCollapsed={!hovered}
                       session={session}
                       sessionMenu={sessionMenu}
                       onOpen={() => handleItemClick(sessionMenu)}

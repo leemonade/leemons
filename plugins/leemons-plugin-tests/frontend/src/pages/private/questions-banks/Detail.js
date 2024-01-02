@@ -1,9 +1,13 @@
+/* eslint-disable camelcase */
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
 import {
-  Box,
   LoadingOverlay,
-  Stack,
   useDebouncedCallback,
   VerticalStepperContainer,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
 } from '@bubbles-ui/components';
 import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @common plugin
@@ -12,9 +16,8 @@ import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
+import { useLayout } from '@layout/context';
+import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
 import DetailConfig from './components/DetailConfig';
@@ -22,9 +25,18 @@ import DetailQuestions from './components/DetailQuestions';
 
 export default function Detail(p) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+  const { layoutState, setLayoutState } = useLayout();
+
+  React.useEffect(() => {
+    setLayoutState({
+      ...layoutState,
+      hasFooter: true,
+    });
+  }, []);
 
   // ----------------------------------------------------------------------
   // SETTINGS
+
   const debounce = useDebouncedCallback(1000);
   const [store, render] = useStore({
     loading: true,
@@ -35,9 +47,12 @@ export default function Detail(p) {
 
   const history = useHistory();
   const params = useParams();
-
+  const scrollRef = React.useRef();
   const form = useForm();
   const formValues = form.watch();
+
+  // ························································
+  // DATA STORE HANDLERS
 
   async function saveAsDraft() {
     try {
@@ -67,6 +82,9 @@ export default function Detail(p) {
     store.saving = null;
     render();
   }
+
+  // ························································
+  // INITIAL DATA LOADING
 
   async function init() {
     try {
@@ -105,6 +123,11 @@ export default function Detail(p) {
     render();
   }
 
+  const getTitle = () => {
+    if (store.isNew) return t('pageTitleNew');
+    return t('pageTitle');
+  };
+
   React.useEffect(() => {
     if (params?.id && store.idLoaded !== params?.id) init();
   }, [params]);
@@ -130,24 +153,28 @@ export default function Detail(p) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleOnHeaderResize = (size) => {
-    store.headerHeight = size?.height - 1;
-    render();
-  };
-
   if (store.loading) return <LoadingOverlay visible />;
 
   return (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
-      <Stack direction="column" fullHeight>
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          icon={<QuestionBankIcon width={23} height={23} />}
+          title={getTitle()}
+          formTitlePlaceholder={formValues.name}
+        />
+      }
+    >
+      {/* 
         <AdminPageHeader
           values={{
             // eslint-disable-next-line no-nested-ternary
             title: formValues.name
               ? formValues.name
               : store.isNew
-              ? t('pageTitleNew', { name: '' })
-              : t('pageTitle', { name: '' }),
+                ? t('pageTitleNew', { name: '' })
+                : t('pageTitle', { name: '' }),
           }}
           buttons={{
             duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
@@ -160,30 +187,56 @@ export default function Detail(p) {
           loading={store.saving}
           onResize={handleOnHeaderResize}
         />
+*/}
 
-        <Box>
-          <VerticalStepperContainer
-            stickyAt={store.headerHeight}
-            currentStep={
-              store.currentStep === 2 && formValues.questions?.length ? 3 : store.currentStep
-            }
-            data={[
-              { label: t('basic'), status: 'OK' },
-              { label: t('config'), status: 'OK' },
-              { label: t('questions'), status: 'OK' },
-            ]}
-            onChangeActiveIndex={setStep}
-          >
-            {store.currentStep === 0 && <DetailBasic t={t} form={form} onNext={() => setStep(1)} />}
-            {store.currentStep === 1 && (
-              <DetailConfig t={t} form={form} onPrev={() => setStep(0)} onNext={() => setStep(2)} />
-            )}
-            {store.currentStep === 2 || store.currentStep === 3 ? (
-              <DetailQuestions t={t} form={form} onPrev={() => setStep(1)} onNext={saveAsPublish} />
-            ) : null}
-          </VerticalStepperContainer>
-        </Box>
-      </Stack>
-    </Box>
+      <VerticalStepperContainer
+        scrollRef={scrollRef}
+        currentStep={
+          store.currentStep === 2 && formValues.questions?.length ? 3 : store.currentStep
+        }
+        data={[
+          { label: t('basic'), status: 'OK' },
+          { label: t('config'), status: 'OK' },
+          { label: t('questions'), status: 'OK' },
+        ]}
+        onChangeActiveIndex={setStep}
+      >
+        {store.currentStep === 0 && (
+          <DetailBasic
+            t={t}
+            form={form}
+            store={store}
+            stepName={t('basic')}
+            scrollRef={scrollRef}
+            onNext={() => setStep(1)}
+            onSave={saveAsDraft}
+          />
+        )}
+        {store.currentStep === 1 && (
+          <DetailConfig
+            t={t}
+            form={form}
+            store={store}
+            scrollRef={scrollRef}
+            stepName={t('config')}
+            onPrev={() => setStep(0)}
+            onNext={() => setStep(2)}
+            onSave={saveAsDraft}
+          />
+        )}
+        {store.currentStep === 2 || store.currentStep === 3 ? (
+          <DetailQuestions
+            t={t}
+            form={form}
+            store={store}
+            scrollRef={scrollRef}
+            stepName={t('questions')}
+            onPrev={() => setStep(1)}
+            onPublish={saveAsPublish}
+            onSave={saveAsDraft}
+          />
+        ) : null}
+      </VerticalStepperContainer>
+    </TotalLayoutContainer>
   );
 }

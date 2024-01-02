@@ -42,6 +42,7 @@ export const UserButttonStyles = createStyles((theme, { opened }) => {
       maxWidth: 140,
       color: leemonsStyles.menu.content.color.main.default,
       lineHeight: '24px',
+      paddingLeft: 3,
     },
     menuItemsContainer: {
       paddingTop: leemonsStyles.menu.spacing.padding.xsm,

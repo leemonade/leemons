@@ -19,7 +19,11 @@ async function ctxCall(
     await getDeploymentID(ctx);
   }
 
-  if (actionName.startsWith('deployment-manager.') || actionName.startsWith('gateway.')) {
+  if (
+    actionName.startsWith('deployment-manager.') ||
+    actionName.startsWith('gateway.') ||
+    ctx.action?.name.startsWith('gateway.')
+  ) {
     if (ctx.__leemonsDeploymentManagerCall) {
       return ctx.__leemonsDeploymentManagerCall(actionName, params, opts);
     }

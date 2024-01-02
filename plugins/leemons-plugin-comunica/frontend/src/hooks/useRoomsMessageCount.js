@@ -3,7 +3,6 @@ import RoomService from '@comunica/RoomService';
 
 const useRoomsMessageCount = (rooms) => {
   const [messages, setMessages] = useState({ unread: 0, count: 0, read: 0, room: null });
-
   const getNewMessages = useCallback(
     async (chatKeys) => {
       if (!chatKeys?.length) {

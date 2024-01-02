@@ -1,6 +1,6 @@
 const { it, expect, beforeEach } = require('@jest/globals');
 const { LeemonsError } = require('@leemons/error');
-const { generateCtx } = require('@Leemons/testing');
+const { generateCtx } = require('@leemons/testing');
 
 const { checkIfRolesExist } = require('./checkIfRolesExist');
 const validateRole = require('../helpers/validateRole');

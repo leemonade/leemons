@@ -65,6 +65,7 @@ module.exports = {
       no_id_error: 'No se ha provisto el id de la tarea',
       save: 'Guardar borrador',
       publish: 'Publicar',
+      finish: 'Finalizar',
     },
     setup: {
       basicData: {
@@ -185,7 +186,7 @@ module.exports = {
           forStudent: 'Instructions para Estudiantes',
           recommendedDuration: 'Duración recomendada',
           buttonPublish: 'Solo publicar',
-          buttonNext: 'Publicar y asignar',
+          buttonPublishAndAssign: 'Publicar y asignar',
           buttonPrev: 'Anterior',
         },
         placeholders: {

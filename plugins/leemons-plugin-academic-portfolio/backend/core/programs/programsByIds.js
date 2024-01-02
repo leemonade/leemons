@@ -7,8 +7,10 @@ const { getProgramCourses } = require('./getProgramCourses');
 const { getProgramSubstages } = require('./getProgramSubstages');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 const { getProgramCycles } = require('./getProgramCycles');
+const { listClasses } = require('../classes/listClasses');
+const { getClassesProgramInfo } = require('../classes/listSessionClasses');
 
-async function programsByIds({ ids, onlyProgram, ctx }) {
+async function programsByIds({ ids, onlyProgram, withClasses = false, ctx }) {
   const { userSession } = ctx.meta;
   if (onlyProgram) {
     return ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
@@ -36,6 +38,25 @@ async function programsByIds({ ids, onlyProgram, ctx }) {
     getProgramCycles({ ids, ctx }),
   ]);
 
+  let classes;
+  if (withClasses) {
+    const { items: _classes } = await listClasses({
+      page: 0,
+      size: 99999,
+      program: undefined,
+      query: { program: ids },
+      ctx,
+    });
+
+    if (ids?.length) {
+      classes = await getClassesProgramInfo({
+        programs: ids,
+        classes: _classes,
+        ctx,
+      });
+    }
+  }
+
   let imagesById = null;
   if (userSession) {
     const images = await ctx.tx.call('leebrary.assets.getByIds', {
@@ -62,6 +83,7 @@ async function programsByIds({ ids, onlyProgram, ctx }) {
     ...program,
     image: imagesById ? imagesById[program.image] : program.image,
     treeTypeNodes: treeTypes[i],
+    classes,
     centers: centersByProgram[program.id] ? _.map(centersByProgram[program.id], 'center') : [],
     groups: groupsByProgram[program.id] ? groupsByProgram[program.id] : [],
     courses: coursesByProgram[program.id] ? _.orderBy(coursesByProgram[program.id], 'index') : [],

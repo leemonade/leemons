@@ -58,6 +58,11 @@ module.exports = {
         return platformService.addLocale({ ...ctx.params, ctx });
       },
     },
+    removeLocale: {
+      async handler(ctx) {
+        return platformService.removeLocale({ ...ctx.params, ctx });
+      },
+    },
     getLocales: {
       async handler(ctx) {
         return platformService.getLocales({ ctx });

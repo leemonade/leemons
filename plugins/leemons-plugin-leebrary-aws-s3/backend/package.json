@@ -17,22 +17,19 @@
   "devDependencies": {
     "eslint": "^8.25.0",
     "jest": "^27.5.1",
-    "jest-cli": "^27.5.1",
-    "turbo": "^1.9.6"
+    "jest-cli": "^27.5.1"
   },
   "dependencies": {
-    "@moleculer/channels": "^0.1.6",
-    "aws-sdk": "^2.1438.0",
+    "@jest/globals": "^29.7.0",
     "@leemons/cache": "0.0.41",
     "@leemons/deployment-manager": "0.0.41",
-    "@leemons/error": "0.0.41",
     "@leemons/middlewares": "0.0.41",
     "@leemons/mongodb": "0.0.41",
     "@leemons/mongodb-helpers": "0.0.41",
     "@leemons/multilanguage": "0.0.41",
     "@leemons/testing": "0.0.41",
     "@leemons/utils": "0.0.41",
-    "@leemons/validator": "0.0.41",
+    "aws-sdk": "^2.1438.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   },
