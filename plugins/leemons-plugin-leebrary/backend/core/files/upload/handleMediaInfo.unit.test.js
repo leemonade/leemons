@@ -4,7 +4,7 @@ const {
   beforeEach,
   jest: { spyOn, fn },
 } = require('@jest/globals');
-const { LeemonsError } = require('@Leemons/error');
+const { LeemonsError } = require('@leemons/error');
 const { generateCtx } = require('@leemons/testing');
 const { default: mediainfoAlias } = require('mediainfo.js');
 
@@ -14,7 +14,7 @@ const { getReadableBitrate } = require('./getReadableBitrate');
 const { getMetaProps } = require('./getMetaProps');
 
 // MOCKS
-jest.mock('@Leemons/error');
+jest.mock('@leemons/error');
 jest.mock('./getReadableDuration');
 jest.mock('./getReadableBitrate');
 jest.mock('./getMetaProps');

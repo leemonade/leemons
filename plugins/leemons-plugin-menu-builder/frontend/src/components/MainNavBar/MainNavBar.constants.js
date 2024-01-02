@@ -28,16 +28,16 @@ export const MAIN_NAV_WIDTH_COLLAPSED = 56;
 
 export const mainNavVariants = {
   open: {
-    x: 0,
+    width: MAIN_NAV_WIDTH_EXPANDED,
     transition: {
-      duration: 1.5,
+      duration: 0.2,
       staggerChildren: 0.2,
     },
   },
   closed: {
-    x: 400,
+    width: MAIN_NAV_WIDTH_COLLAPSED,
     transition: {
-      duration: 1.5,
+      duration: 0.2,
       staggerChildren: 0.2,
     },
   },

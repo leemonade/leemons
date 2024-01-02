@@ -1,171 +1,122 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import JSZip from 'jszip';
 import { isEmpty } from 'lodash';
 import {
-  Box,
-  PageHeader,
   LoadingOverlay,
   Stack,
-  useDebouncedCallback,
-  ContextContainer,
-  FileUpload,
-  Paragraph,
-  Select,
-  Switch,
-  NumberInput,
+  Box,
   DropdownButton,
+  TotalLayoutHeader,
+  TotalLayoutFooterContainer,
+  TotalLayoutContainer,
+  AssetScormIcon,
+  Select,
 } from '@bubbles-ui/components';
-import JSZip from 'jszip';
-import { useHistory, useParams } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
-import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useStore, unflatten } from '@common';
+import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { AssetFormInput, UploadingFileModal } from '@leebrary/components';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import { BasicData, UploadingFileModal } from '@leebrary/components';
+import usePackage from '@scorm/request/hooks/queries/usePackage';
 import { prefixPN } from '@scorm/helpers';
-import { savePackageRequest, getPackageRequest, getSupportedVersionsRequest } from '@scorm/request';
+import { getSupportedVersionsRequest } from '@scorm/request';
+import useMutatePackage from '@scorm/request/hooks/mutations/useMutatePackage';
 import {
   xml2json,
   getVersionFromMetadata,
   getLaunchURL,
   getDefaultOrganization,
 } from '@scorm/lib/utilities';
-import { DocumentIcon } from '@scorm/components/icons';
-import { PageContent } from './components/PageContent/PageContent';
 
 export default function Detail() {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('scormSetup'));
-  const [, translations] = useTranslateLoader('leebrary.assetSetup');
-
-  // ----------------------------------------------------------------------
-  // SETTINGS
-
-  const debounce = useDebouncedCallback(1000);
-  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
-  const [store, render] = useStore({
-    loading: true,
-    isNew: false,
-    package: {},
-    supportedVersions: [],
-    preparedAsset: {},
-    openShareDrawer: false,
-  });
-
-  const history = useHistory();
+  const scrollRef = useRef(null);
   const params = useParams();
-
-  const form = useForm();
+  const history = useHistory();
+  const [isNew, setIsNew] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [supportedVersions, setSupportedVersions] = useState([]);
+  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
+  const packageQuery = usePackage({ id: params.id, isNew: false });
+  const mutation = useMutatePackage();
+  const { openConfirmationModal } = useLayout();
+  const form = useForm({});
   const formValues = form.watch();
 
-  // ························································
-  // LABELS & STATICS
-
-  const formLabels = React.useMemo(() => {
-    if (!isEmpty(translations)) {
-      const items = unflatten(translations.items);
-      const data = items.leebrary.assetSetup.basicData;
-      return data;
-    }
-    return null;
-  }, [translations]);
-
-  // ----------------------------------------------------------------------------
-  // INIT DATA LOADING
-
-  async function init() {
-    try {
-      store.loading = true;
-      store.isNew = params.id === 'new';
-      render();
-      if (!store.isNew) {
-        const { scorm } = await getPackageRequest(params.id);
-        store.titleValue = scorm.name;
-        store.package = scorm;
-
-        form.reset({
-          ...scorm,
-          file: { id: scorm.file?.id, name: scorm.file?.name, type: scorm.file?.type },
-        });
-      }
-
-      const { versions: supportedVersions } = await getSupportedVersionsRequest();
-      store.supportedVersions = supportedVersions;
-      store.idLoaded = params.id;
-      store.loading = false;
-      render();
-    } catch (error) {
-      addErrorAlert(error);
-    }
-  }
+  // ···································································
+  // INITIAL DATA
 
   useEffect(() => {
-    if (params?.id && store.idLoaded !== params?.id) init();
-  }, [params]);
+    const getVersions = async () => {
+      const response = await getSupportedVersionsRequest();
+      setSupportedVersions(response.versions || []);
+    };
+    getVersions();
+  }, []);
 
-  // ----------------------------------------------------------------------------
-  // METHODS
+  useEffect(() => {
+    setIsLoading(true);
+    if (params.id === 'new') {
+      form.reset();
+      setIsNew(true);
+    } else {
+      form.reset({
+        ...packageQuery.data,
+        cover: packageQuery.data?.cover,
+      });
 
-  async function savePackage(published) {
+      setIsNew(false);
+    }
+    setIsLoading(false);
+  }, [packageQuery.data, params.id]);
+
+  // ··································································
+  // HANDLERS
+  const savePackage = async ({ publishing = true, assigning }) => {
+    setIsLoading(true);
+
     const file = await uploadFileAsMultipart(formValues.file, {
       onProgress: (info) => {
         setUploadingFileInfo(info);
       },
     });
-    const fileId = file?.id ? file.id : file;
     setUploadingFileInfo(null);
 
-    const dataToSave = {
+    const requestBody = {
       ...formValues,
-      id: store.isNew ? null : store.idLoaded,
-      file: fileId,
-      launchUrl: store.package.launchUrl,
-      packageAsset: store.package.packageAsset,
-      published,
+      file,
+      published: publishing,
     };
+    mutation.mutate(
+      { ...requestBody },
+      {
+        onSuccess: (data) => {
+          addSuccessAlert(t('published'));
+          setIsLoading(false);
+          if (assigning) history.push(`/private/scorm/assign/${data.package?.id}`);
+          else history.push('/private/leebrary/assignables.scorm/list?activeTab=published');
+        },
+        onError: (error) => {
+          addErrorAlert(error.message);
+          setIsLoading(false);
+        },
+      }
+    );
+  };
 
-    const {
-      package: { id },
-    } = await savePackageRequest(dataToSave);
+  const handlePublish = async () => {
+    const formIsValid = await form.trigger();
+    if (formIsValid) await savePackage({ publishing: true });
+  };
 
-    store.package.id = id;
-    store.idLoaded = id;
-    store.isNew = false;
+  const handlePublishAndAssign = async () => {
+    const formIsValid = await form.trigger();
+    if (formIsValid) await savePackage({ publishing: true, assigning: true });
+  };
 
-    if (file !== formValues.file.id) {
-      form.setValue('file', {
-        id: file,
-        name: formValues.file.name,
-        type: formValues.file.type,
-      });
-    }
-  }
-
-  async function saveAsPublish() {
-    try {
-      store.saving = 'edit';
-      render();
-      await savePackage(true);
-      addSuccessAlert(t('published'));
-    } catch (error) {
-      addErrorAlert(error);
-    } finally {
-      store.saving = null;
-      render();
-    }
-  }
-
-  async function onlyPublish() {
-    await saveAsPublish();
-    history.push('/private/leebrary/assignables.scorm/list?activeTab=published');
-  }
-
-  async function publishAndAssign() {
-    await saveAsPublish();
-    history.push(`/private/scorm/assign/${store.package.id}`);
-  }
-
-  async function loadFiles(file) {
+  const handleFileLoad = async (file) => {
     if (file instanceof File) {
       try {
         const zip = new JSZip();
@@ -195,7 +146,7 @@ export default function Detail() {
           const organization = getDefaultOrganization(scormData);
           const launchUrl = getLaunchURL(scormData);
 
-          store.package = { ...store.package, launchUrl };
+          form.setValue('launchUrl', launchUrl);
 
           if (organization?.title && isEmpty(formValues.name)) {
             form.setValue('name', organization.title);
@@ -204,19 +155,11 @@ export default function Detail() {
           if (scormData.metadata) {
             const versionValue = getVersionFromMetadata(
               String(scormData.metadata.schemaversion),
-              store.supportedVersions
+              supportedVersions
             );
             if (versionValue) {
               form.setValue('version', versionValue.value);
             }
-            /*
-          const currentTags = isArray(formValues.tags) ? formValues.tags : [];
-          form.setValue('tags', [
-            ...currentTags,
-            scormData.metadata.schema,
-            `Version ${scormData.metadata.schemaversion}`,
-          ]);
-          */
           }
         }
       } catch (e) {
@@ -226,186 +169,113 @@ export default function Detail() {
         });
       }
     }
-  }
+  };
 
-  // ----------------------------------------------------------------------------
+  const handleOnCancel = () => {
+    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
+    if (formHasBeenTouched) {
+      openConfirmationModal({
+        title: t('cancelModalTitle'),
+        description: t('cancelModalDescription'),
+        labels: { confim: t('cancelModalConfirm'), cancel: t('cancelModalCancel') },
+        onConfirm: () => history.goBack(),
+      })();
+    } else {
+      history.goBack();
+    }
+  };
+
+  // ···································································
   // EFFECTS
-
   useEffect(() => {
-    const subscription = form.watch(() => {
-      debounce(async () => {
-        store.isValid = await form.trigger();
-        render();
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    setIsNew(Boolean(params.id));
+  }, [params.id]);
 
   useEffect(() => {
     if (formValues.file) {
-      loadFiles(formValues.file);
+      handleFileLoad(formValues.file);
     }
   }, [formValues.file]);
 
   // ----------------------------------------------------------------------------
-  // COMPONENT
-
-  if (store.loading || tLoading) return <LoadingOverlay visible />;
-
-  const advancedConfig = {
-    alwaysOpen: false,
-    fileToRight: true,
-    colorToRight: true,
-    program: { show: true, required: false },
-    subjects: { show: true, required: false, showLevel: true, maxOne: false },
-  };
+  // FOOTER ACTIONS
+  const footerFinalActionsAndLabels = [
+    {
+      label: t('publish'),
+      onClick: handlePublish,
+    },
+    {
+      label: t('publishAndAssign'),
+      onClick: handlePublishAndAssign,
+    },
+  ];
 
   return (
-    <Box style={{ height: '100vh' }}>
-      <ContextContainer divided>
-        <Stack direction="column" fullHeight>
-          <PageHeader
-            values={{
-              title: t('title'),
-            }}
-            isEditMode={true}
-            icon={<DocumentIcon />}
-            fullWidth
-          />
-
-          <PageContent title={t('pageTitle')}>
-            <ContextContainer divided>
-              <Box>
-                <Paragraph dangerouslySetInnerHTML={{ __html: t('description') }} />
-              </Box>
-              <ContextContainer>
-                <Box>
-                  <Controller
-                    control={form.control}
-                    name="file"
-                    shouldUnregister
-                    rules={{
-                      required: formLabels?.errorMessages.file?.required || 'Field required',
-                    }}
-                    render={({ field: { ref, value, ...field } }) => (
-                      <FileUpload
-                        icon={<CloudUploadIcon height={32} width={32} />}
-                        title={t('addFile')}
-                        subtitle={t('dropFile')}
-                        errorMessage={{
-                          title: 'Error',
-                          message: formLabels?.errorMessages.file?.rejected || 'File was rejected',
-                        }}
-                        hideUploadButton
-                        single
-                        initialFiles={value ? [value] : []}
-                        inputWrapperProps={{ error: form.formState.errors.file }}
-                        accept={[
-                          'application/octet-stream',
-                          'application/zip',
-                          'application/x-zip',
-                          'application/x-zip-compressed',
-                        ]}
-                        {...field}
-                      />
-                    )}
-                  />
-                </Box>
-                <AssetFormInput
-                  preview
-                  form={form}
-                  category="assignables.scorm"
-                  previewVariant="document"
-                  advancedConfig={advancedConfig}
-                  showAdvancedConfig
-                  tagsPluginName="scorm"
-                >
-                  <ContextContainer>
-                    <Box>
-                      <Paragraph dangerouslySetInnerHTML={{ __html: t('configHelp') }} />
-                    </Box>
-                    <Box style={{ maxWidth: 288 }}>
-                      <Controller
-                        control={form.control}
-                        name="version"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <Select
-                            {...field}
-                            label={t('schemaVersion')}
-                            data={store.supportedVersions}
-                          />
-                        )}
-                      />
-                    </Box>
-                    <Box>
-                      {/* <Controller
-                        control={form.control}
-                        name="gradable"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <>
-                            <Switch {...field} checked={field.value} label={t('gradable')} />
-                            {!!field.value && (
-                              <Box sx={{ paddingLeft: 20 }}>
-                                <Controller
-                                  control={form.control}
-                                  name="metadata.multipleAttempts"
-                                  shouldUnregister
-                                  render={({ field: multipleAttemptsField }) => (
-                                    <>
-                                      <Switch
-                                        {...multipleAttemptsField}
-                                        checked={multipleAttemptsField.value}
-                                        label={t('multipleAttempts')}
-                                      />
-                                      {!!multipleAttemptsField.value && (
-                                        <Controller
-                                          control={form.control}
-                                          name="metadata.numberOfAttempts"
-                                          shouldUnregister
-                                          render={({ field: numberOfAttemptsField }) => (
-                                            <Box sx={{ paddingLeft: 10 }}>
-                                              <NumberInput
-                                                {...numberOfAttemptsField}
-                                                label={t('numberOfAttempts')}
-                                              />
-                                            </Box>
-                                          )}
-                                        />
-                                      )}
-                                    </>
-                                  )}
-                                />
-                              </Box>
-                            )}
-                          </>
-                        )}
-                      /> */}
-                    </Box>
-                  </ContextContainer>
-                </AssetFormInput>
-              </ContextContainer>
-              <Stack justifyContent="flex-end">
-                <DropdownButton
-                  disabled={!form.formState.isValid}
-                  loading={store.saving}
-                  data={[
-                    { label: t('onlyPublish'), onClick: () => onlyPublish() },
-                    // { label: t('publishAndShare'), onClick: () => publishAndShare() },
-                    { label: t('publishAndAssign'), onClick: () => publishAndAssign() },
-                  ]}
-                >
-                  {t('publishOptions')}
-                </DropdownButton>
+    <FormProvider {...form}>
+      <LoadingOverlay visible={tLoading || isLoading} />
+      <TotalLayoutContainer
+        scrollRef={scrollRef}
+        Header={
+          <TotalLayoutHeader
+            title={isNew ? t('titleNew') : t('titleEdit')}
+            icon={
+              <Stack justifyContent="center" alignItems="center">
+                <AssetScormIcon />
               </Stack>
-            </ContextContainer>
-          </PageContent>
+            }
+            formTitlePlaceholder={formValues.name || t('scormTitlePlaceholder')}
+            onCancel={handleOnCancel}
+            mainActionLabel={t('cancel')}
+          />
+        }
+      >
+        <Stack key="step-1" justifyContent="center">
+          <BasicData
+            advancedConfig={{
+              alwaysOpen: false,
+              program: { show: true, required: false },
+              subjects: { show: true, required: false, showLevel: true, maxOne: false },
+            }}
+            editing={isNew}
+            categoryKey={'assignables.scorm'}
+            isLoading={isLoading}
+            Footer={
+              <TotalLayoutFooterContainer
+                fixed
+                scrollRef={scrollRef}
+                rightZone={
+                  <DropdownButton
+                    data={footerFinalActionsAndLabels}
+                    loading={isLoading}
+                    disabled={isLoading}
+                  >
+                    {t('finish')}
+                  </DropdownButton>
+                }
+              />
+            }
+            ContentExtraFields={
+              <Box style={{ maxWidth: 288 }}>
+                <Controller
+                  control={form.control}
+                  name="version"
+                  rules={{ required: 'Version Error' }}
+                  shouldUnregister
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      label={t('schemaVersion')}
+                      data={supportedVersions}
+                      placeholder={t('schemaVersionPlaceholder')}
+                    />
+                  )}
+                />
+              </Box>
+            }
+          />
         </Stack>
-      </ContextContainer>
-
+      </TotalLayoutContainer>
       <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
-    </Box>
+    </FormProvider>
   );
 }

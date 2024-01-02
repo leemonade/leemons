@@ -16,7 +16,7 @@ async function newMultipart({ file, filePaths, ctx } = {}) {
   const { s3, config } = await getS3AndConfig({ ctx });
 
   if (file.isFolder) {
-    const Key = `leemons/leebrary/${file.id}`;
+    const Key = `leemons/${ctx.meta.deploymentID}/leebrary/${file.id}`;
 
     const responses = await Promise.all(
       _.map(filePaths, (path) =>
@@ -40,7 +40,7 @@ async function newMultipart({ file, filePaths, ctx } = {}) {
     );
     return Key;
   }
-  const Key = `leemons/leebrary/${file.id}.${file.extension}`;
+  const Key = `leemons/${ctx.meta.deploymentID}/leebrary/${file.id}.${file.extension}`;
   const res = await s3
     .createMultipartUpload({
       Bucket: config.bucket,

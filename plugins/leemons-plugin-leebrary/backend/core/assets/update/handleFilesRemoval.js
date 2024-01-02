@@ -24,15 +24,18 @@ async function handleFilesRemoval({
   coverNeedsUpdate,
   ctx,
 }) {
+  // In theory the "filesToRemove" array, already contains the fileIds to remove
+  /*
   if (fileNeedsUpdate) {
     filesToRemove.push(assetData.file);
   }
   if (coverNeedsUpdate) {
     filesToRemove.push(assetData.cover, assetData.coverFile);
   }
+  */
   if (!isEmpty(filesToRemove)) {
     try {
-      await removeFilesById({ filesId: compact(uniq(filesToRemove)), assetId, ctx });
+      await removeFilesById({ fileIds: compact(uniq(filesToRemove)), assetId, ctx });
     } catch (e) {
       //
     }

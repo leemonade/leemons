@@ -1,15 +1,14 @@
 import React from 'react';
 import { find, isEmpty } from 'lodash';
-import { Box, InputWrapper } from '@bubbles-ui/components';
+import { Box, Stack, ContextContainer } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
-import { LibraryForm } from './LibraryForm/LibraryForm';
 import prefixPN from '../helpers/prefixPN';
-import { prepareAsset } from '../helpers/prepareAsset';
 import { listCategoriesRequest } from '../request';
 import { CardWrapper } from './CardWrapper';
+import { AssetForm } from './AssetForm/AssetForm';
 
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
@@ -28,6 +27,7 @@ const AssetFormInput = ({
   labels,
   placeholders,
   errorMessages,
+  ...props
 }) => {
   const [category, setCategory] = React.useState(null);
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -41,7 +41,7 @@ const AssetFormInput = ({
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
       const data = items.leebrary.assetSetup.basicData;
-      data.labels.title = data.header.titleNew;
+      data.labels.title = data.header.presentation;
       return {
         ...data,
         labels: { ...data.labels, ...labels },
@@ -51,13 +51,6 @@ const AssetFormInput = ({
     }
     return { labels };
   }, [translations, labels]);
-
-  const preparedAsset = React.useMemo(() => {
-    if (asset) {
-      return prepareAsset(asset);
-    }
-    return {};
-  }, [asset]);
 
   // ························································
   // DATA PROCESS
@@ -80,54 +73,42 @@ const AssetFormInput = ({
   // RENDER
 
   const formComponent = (
-    <LibraryForm
+    <AssetForm
       {...formLabels}
-      asset={{ ...asset, file, cover: preparedAsset.cover }}
-      type={null}
+      {...props}
+      asset={{ ...asset, file }}
+      type={categoryKey}
       form={form}
       pluginName="leebrary"
       advancedConfig={advancedConfig}
       tagsType={prefixPN('')}
       useTags={!!tagsPluginName}
-      hideTitle
       hideSubmit
     >
       {children}
-    </LibraryForm>
+    </AssetForm>
   );
 
   if (preview) {
     return (
-      <Box sx={() => ({ display: 'flex', width: '100%' })}>
-        <Box sx={(theme) => ({ width: '100%', paddingRight: theme.spacing[10] })}>
-          {formComponent}
-        </Box>
-        <Box sx={() => ({ minWidth: 288, maxWidth: 288 })}>
-          <InputWrapper label={formLabels?.labels?.preview}>
-            <CardWrapper
-              item={{ original: form?.watch() }}
-              category={category}
-              variant={previewVariant}
-              locale={locale}
-              single
-            />
-            {advancedConfig?.colorToRight || advancedConfig?.fileToRight ? (
-              <LibraryForm
-                {...formLabels}
-                asset={{ ...asset, file, cover: preparedAsset.cover }}
-                type={null}
-                form={form}
-                pluginName="leebrary"
-                advancedConfigMode
-                advancedConfig={advancedConfig}
-                tagsType={prefixPN('')}
-                useTags={!!tagsPluginName}
-                hideTitle
-                hideSubmit
+      <Box style={{ marginBottom: 16 }}>
+        <Stack fullWidth>
+          <Box sx={(theme) => ({ width: '100%', paddingRight: theme.spacing[5] })}>
+            {formComponent}
+          </Box>
+          <Box sx={() => ({ minWidth: 264, maxWidth: 264 })} noFlex>
+            <ContextContainer title={formLabels?.labels?.preview}>
+              <CardWrapper
+                isCreationPreview
+                item={{ original: form?.watch() }}
+                category={category}
+                variant={previewVariant}
+                locale={locale}
+                single
               />
-            ) : null}
-          </InputWrapper>
-        </Box>
+            </ContextContainer>
+          </Box>
+        </Stack>
       </Box>
     );
   }

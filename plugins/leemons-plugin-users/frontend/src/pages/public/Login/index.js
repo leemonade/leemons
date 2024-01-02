@@ -59,111 +59,115 @@ export default function Login() {
       const response = await loginRequest(data);
 
       try {
-        if (response?.user?.isSuperAdmin) {
-          const { profiles } = await getUserProfilesRequest(response.jwtToken);
-          if (profiles && !_.isEmpty(profiles)) {
-            const { jwtToken } = await getUserProfileTokenRequest(
-              profiles[0].id,
-              response.jwtToken
-            );
+        /*
+                if (response?.user?.isSuperAdmin) {
+                  const { profiles } = await getUserProfilesRequest(response.jwtToken);
+                  if (profiles && !_.isEmpty(profiles)) {
+                    const { jwtToken } = await getUserProfileTokenRequest(
+                      profiles[0].id,
+                      response.jwtToken
+                    );
 
-            response.jwtToken = { ...jwtToken, profile: profiles[0] };
-          }
-        } else {
-          // ES: Comprobamos si tiene recordado un perfil
-          // EN: Check if has remember a profile
-          const { profile, center } = await getRememberLoginRequest(response.jwtToken);
+                    response.jwtToken = { ...jwtToken, profile: profiles[0] };
+                  }
+                } else {
 
-          if (profile && center) {
-            try {
-              if (profile.sysName === 'admin') {
-                const { jwtToken } = await getUserProfileTokenRequest(
-                  profile.id,
-                  response.jwtToken
-                );
+                 */
+        // ES: Comprobamos si tiene recordado un perfil
+        // EN: Check if has remember a profile
+        const { profile, center } = await getRememberLoginRequest(response.jwtToken);
 
-                response.jwtToken = { ...jwtToken, profile };
-              } else {
-                // ES: Si lo tiene sacamos el token para dicho centro y perfil
-                // EN: If has, get the token for that center and profile
-                const { jwtToken } = await getUserCenterProfileTokenRequest(
-                  center.id,
-                  profile.id,
-                  response.jwtToken
-                );
+        if (profile && center) {
+          try {
+            if (profile.sysName === 'admin') {
+              const { jwtToken } = await getUserProfileTokenRequest(profile.id, response.jwtToken);
 
-                await hooks.fireEvent('user:change:profile', profile);
-                response.jwtToken = jwtToken;
-              }
-            } catch (er) {
-              // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
-              // EN: If not has, get all the profiles that has access to do login
-              const { centers } = await getUserCentersRequest(response.jwtToken);
-              // Si solo tiene un perfil hacemos login automaticamente con ese
-              if (centers.length === 1 && centers[0].profiles.length === 1) {
-                const { jwtToken } = await getUserCenterProfileTokenRequest(
-                  centers[0].id,
-                  centers[0].profiles[0].id,
-                  response.jwtToken
-                );
-
-                await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
-                response.jwtToken = jwtToken;
-              }
-            }
-          } else {
-            // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
-            // EN: If not has, get all the profiles that has access to do login
-            const [{ centers }, { profiles }] = await Promise.all([
-              getUserCentersRequest(response.jwtToken),
-              getUserProfilesRequest(response.jwtToken),
-            ]);
-            console.log('profile', centers, profiles);
-
-            // Si solo tiene un perfil (aun que este en muchos centros) y este es el de admin entramos como todos los centros a la vez
-            if (profiles.length === 1 && profiles[0].sysName === 'admin') {
-              const { jwtToken } = await getUserProfileTokenRequest(
-                profiles[0].id,
+              response.jwtToken = { ...jwtToken, profile };
+            } else {
+              // ES: Si lo tiene sacamos el token para dicho centro y perfil
+              // EN: If has, get the token for that center and profile
+              const { jwtToken } = await getUserCenterProfileTokenRequest(
+                center.id,
+                profile.id,
                 response.jwtToken
               );
 
-              response.jwtToken = { ...jwtToken, profile: profiles[0] };
-            } else if (centers.length === 1 && centers[0].profiles.length === 1) {
-              // Si solo tiene un perfil hacemos login automaticamente con ese
+              await hooks.fireEvent('user:change:profile', profile);
+              response.jwtToken = jwtToken;
+            }
+          } catch (er) {
+            // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
+            // EN: If not has, get all the profiles that has access to do login
+            const { centers } = await getUserCentersRequest(response.jwtToken);
+            // Si solo tiene un perfil hacemos login automaticamente con ese
+            if (centers.length === 1 && centers[0].profiles.length === 1) {
               const { jwtToken } = await getUserCenterProfileTokenRequest(
                 centers[0].id,
                 centers[0].profiles[0].id,
                 response.jwtToken
               );
 
-              console.log('jwtToken', jwtToken);
-
               await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
               response.jwtToken = jwtToken;
             }
           }
+        } else {
+          // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
+          // EN: If not has, get all the profiles that has access to do login
+          const [{ centers }, { profiles }] = await Promise.all([
+            getUserCentersRequest(response.jwtToken),
+            getUserProfilesRequest(response.jwtToken),
+          ]);
+
+          // Si solo tiene un perfil (aun que este en muchos centros) y este es el de admin entramos como todos los centros a la vez
+          if (profiles.length === 1 && profiles[0].sysName === 'admin') {
+            const { jwtToken } = await getUserProfileTokenRequest(
+              profiles[0].id,
+              response.jwtToken
+            );
+
+            response.jwtToken = { ...jwtToken, profile: profiles[0] };
+          } else if (
+            centers.length === 1 &&
+            centers[0].profiles.length === 1 &&
+            profiles.length === 1
+          ) {
+            // Si solo tiene un perfil hacemos login automaticamente con ese
+            const { jwtToken } = await getUserCenterProfileTokenRequest(
+              centers[0].id,
+              centers[0].profiles[0].id,
+              response.jwtToken
+            );
+
+            await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
+            response.jwtToken = jwtToken;
+          }
         }
+        // }
       } catch (e) {
-        //
+        throw e;
       }
 
       // Finalmente metemos el token
       Cookies.set('token', response.jwtToken);
       hooks.fireEvent('user:cookie:session:change');
 
-      if (response.user.isSuperAdmin) {
-        history.push('/private/admin/setup');
-      } else {
-        history.push(
-          _.isString(response.jwtToken) ? '/private/users/select-profile' : '/private/dashboard'
-        );
-      }
+      /* if (response.user.isSuperAdmin) {
+              history.push('/private/admin/setup');
+            } else {
+
+             */
+      history.push(
+        _.isString(response.jwtToken) ? '/private/users/select-profile' : '/private/dashboard'
+      );
+      // }
     } catch (err) {
-      if (_.isObject(err) && err.status === 401) {
+      console.log(err);
+      if (_.isObject(err) && err.httpStatusCode === 401) {
         setFormStatus('error-match');
         setFormError(t('form_error'));
       }
-      if (_.isObject(err) && err.status === 500) {
+      if (_.isObject(err) && err.httpStatusCode === 500) {
         setFormStatus('unknown-error');
         setFormError(tCommon('unknown_error'));
       }

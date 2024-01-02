@@ -9,7 +9,7 @@ const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { getPluginNameWithVersionIfHaveFromServiceName } = require('@leemons/service-name-parser');
-const { checkIfManualPasswordIsGood } = require('../../helpers/checkIfManualPasswordIsGood');
+const { checkIfManualPasswordIsGood } = require('@leemons/deployment-manager');
 const { updateDeploymentConfig } = require('../../core/deployments/updateDeploymentConfig');
 const { addDeployment } = require('../../core/deployments/addDeployment');
 const { isDomainInUse } = require('../../core/deployments/isDomainInUse');
@@ -23,6 +23,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       let config = {};
+
       if (
         ctx.meta.deploymentID === 'auto-deployment-id' &&
         process.env.TEST_DEPLOYMENT_CONFIG === 'true'
@@ -30,7 +31,7 @@ module.exports = {
         config = {
           'v1.curriculum': {
             deny: {
-              menu: ['curriculum'],
+              menu: ['curriculum', 'curriculum-new', 'curriculum-library'],
             },
           },
           'v1.academic-portfolio': {
@@ -58,7 +59,7 @@ module.exports = {
           },
           'v1.fundae': {
             deny: {
-              menu: ['fundae'],
+              menu: ['fundae', 'fundae-list'],
             },
           },
           'v1.users': {
@@ -73,24 +74,29 @@ module.exports = {
           },
           'v1.grades': {
             deny: {
-              menu: ['rules'],
+              menu: ['rules', 'welcome', 'evaluations', 'promotions', 'dependencies'],
             },
           },
         };
       } else {
-        const deployment = await ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }).lean();
+        const deployment = await ctx.db.Deployment.findOne(
+          { id: ctx.meta.deploymentID },
+          undefined,
+          { disableAutoDeploy: true }
+        ).lean();
+
         if (!deployment && process.env.DISABLE_AUTO_INIT === 'true')
           throw new LeemonsError(ctx, { message: 'Deployment not found at get config' });
-        config = deployment?.config;
+        config = deployment?.config || {};
       }
 
       const callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
 
-      if (!ctx.params.allConfig && config) {
+      if (!ctx.params?.allConfig && config) {
         const keys = Object.keys(config);
         let result = null;
         _.forEach(keys, (key) => {
-          if (ctx.params.ignoreVersion) {
+          if (ctx.params?.ignoreVersion) {
             if (key.split('.')[1] === callerPluginV.split('.')[1]) {
               result = config[key];
             }

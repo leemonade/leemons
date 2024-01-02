@@ -69,14 +69,17 @@ async function profileToken({ user, profile, ctx }) {
   let profilesTokens = [];
   if (!centerTokens || (centerTokens && _.isEmpty(centerTokens))) {
     profilesTokens = await Promise.all(
-      profiles.map((item) =>
-        generateJWTToken({
-          payload: {
-            userAgent: userAgentsByRole[item.role].id,
-          },
-          ctx,
-        })
-      )
+      profiles.map((item) => {
+        if (userAgentsByRole[item.role]) {
+          return generateJWTToken({
+            payload: {
+              userAgent: userAgentsByRole[item.role].id,
+            },
+            ctx,
+          });
+        }
+        return null;
+      })
     );
   }
 

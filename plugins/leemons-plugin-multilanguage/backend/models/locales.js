@@ -17,7 +17,6 @@ const localesSchema = new mongoose.Schema(
       type: String,
       required: true,
       index: true,
-      unique: true,
     },
     name: {
       type: String,
@@ -28,6 +27,8 @@ const localesSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+localesSchema.index({ deploymentID: 1, code: 1 }, { unique: true });
 
 const localesModel = newModel(mongoose.connection, 'v1::multilanguage_Locales', localesSchema);
 

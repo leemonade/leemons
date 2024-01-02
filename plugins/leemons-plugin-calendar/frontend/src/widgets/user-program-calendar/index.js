@@ -3,16 +3,15 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
+  Button,
   createStyles,
-  IconButton,
   ImageLoader,
   Loader,
   Select,
   Stack,
-  Text,
   Title,
 } from '@bubbles-ui/components';
-import { AddIcon as PlusIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { AddIcon as PlusIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -35,6 +34,9 @@ const Styles = createStyles((theme, { inTab }) => ({
   title: {
     paddingLeft: theme.spacing[2],
     paddingRight: theme.spacing[4],
+    fontSize: '20px',
+    fontWeight: 600,
+    lineHeight: '28px',
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
@@ -210,10 +212,8 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
     <Box className={styles.root}>
       {!inTab ? (
         <Stack alignItems="center">
-          <PluginCalendarIcon />
-          <Text size="lg" color="primary" className={styles.title}>
-            {t('calendar')}
-          </Text>
+          {/* <PluginCalendarIcon /> */}
+          <Box className={styles.title}>{t('calendar')}</Box>
           {program && !store.loading ? (
             <Select
               data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
@@ -257,6 +257,7 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
               date: tc('date'),
               time: tc('time'),
               event: tc('event'),
+              new: tc('new'),
               noEventsInRange: (
                 <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[12] })}>
                   <Title order={2}>{tc('empty')}</Title>
@@ -284,9 +285,9 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
               </Box> */}
 
                 <Box>
-                  <IconButton color="primary" size="lg" rounded onClick={onNewEvent}>
-                    <PlusIcon />
-                  </IconButton>
+                  <Button leftIcon={<PlusIcon />} onClick={onNewEvent}>
+                    {tc('new')}
+                  </Button>
                 </Box>
               </Stack>
             }

@@ -17,7 +17,10 @@ const useNyaStyles = createStyles((theme) => ({
     justifyContent: 'space-between',
   },
   sectionTitle: {
-    ...theme.other.global.content.typo.heading.sm,
+    fontSize: '20px',
+    fontWeight: 600,
+    lineHeight: '28px',
+    marginBottom: theme.spacing[4],
   },
 }));
 

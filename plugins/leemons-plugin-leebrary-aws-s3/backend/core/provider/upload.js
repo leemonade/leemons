@@ -12,7 +12,7 @@ const { getS3AndConfig } = require('./getS3AndConfig');
 async function upload({ item, buffer, ctx } = {}) {
   const { s3, config } = await getS3AndConfig({ ctx });
 
-  const Key = `leemons/leebrary/${item.id}.${item.extension}`;
+  const Key = `leemons/${ctx.meta.deploymentID}/leebrary/${item.id}.${item.extension}`;
   await s3
     .putObject({
       Bucket: config.bucket,

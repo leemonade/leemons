@@ -22,7 +22,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@leemons/mongodb-helpers": "0.0.41",
-    "lodash": "^4.17.21"
+    "@leemons/mongodb-helpers": "0.0.41"
   }
 }

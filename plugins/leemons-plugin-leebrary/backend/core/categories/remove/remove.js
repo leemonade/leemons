@@ -1,4 +1,4 @@
-const { LeemonsError } = require('../../../../../../packages/leemons-error/src');
+const { LeemonsError } = require('@leemons/error');
 
 async function remove({ category, ctx }) {
   const { key } = category;

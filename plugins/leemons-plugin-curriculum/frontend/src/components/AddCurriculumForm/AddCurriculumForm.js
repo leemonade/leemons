@@ -13,7 +13,7 @@ import {
   Stack,
   Text,
   Textarea,
-  TextInput
+  TextInput,
 } from '@bubbles-ui/components';
 import { AddCurriculumFormStyles } from './AddCurriculumForm.styles';
 
@@ -33,14 +33,14 @@ export const ADD_CURRICULUM_FORM_MESSAGES = {
   programPlaceholder: 'Select...',
   programNothingFound: 'No data',
   tagsLabel: 'Tags',
-  tagsPlaceholder: 'Add tags',
+  tagsPlaceholder: 'Type a tag and press Enter',
   tagsDescription: 'Enter tags separated by commas',
   tagsNothingFound: 'No data',
   tagsCreateLabel: '+ Create {{label}}',
   descriptionLabel: 'Description',
   descriptionPlaceholder: 'Enter description',
   continueButtonLabel: 'Continue to setup',
-  noPrograms: 'All programs for this center used'
+  noPrograms: 'All programs for this center used',
 };
 
 export const ADD_CURRICULUM_FORM_ERROR_MESSAGES = {
@@ -48,18 +48,17 @@ export const ADD_CURRICULUM_FORM_ERROR_MESSAGES = {
   countryRequired: 'Field required',
   languageRequired: 'Field required',
   centerRequired: 'Field required',
-  programRequired: 'Field required'
+  programRequired: 'Field required',
 };
 
 const AddCurriculumForm = ({
-                             messages,
-                             errorMessages,
-                             selectData = {},
-                             isLoading,
-                             onSubmit,
-                             onFormChange = () => {
-                             }
-                           }) => {
+  messages,
+  errorMessages,
+  selectData = {},
+  isLoading,
+  onSubmit,
+  onFormChange = () => { },
+}) => {
   const { classes } = AddCurriculumFormStyles({});
 
   const [tags, setTags] = useState([]);
@@ -69,7 +68,7 @@ const AddCurriculumForm = ({
     control,
     getValues,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm();
 
   useEffect(() => {
@@ -78,17 +77,17 @@ const AddCurriculumForm = ({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
+    <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
       <ContextContainer divided>
         <Box className={classes.container}>
           <ContextContainer>
-            <Group align='start' grow>
+            <Group align="start" grow>
               <Box>
                 <Controller
-                  name='name'
+                  name="name"
                   control={control}
                   rules={{
-                    required: errorMessages.nameRequired
+                    required: errorMessages.nameRequired,
                   }}
                   render={({ field }) => (
                     <TextInput
@@ -102,13 +101,13 @@ const AddCurriculumForm = ({
                 />
               </Box>
             </Group>
-            <Group align='start' grow>
+            <Group align="start" grow>
               <Box>
                 <Controller
-                  name='country'
+                  name="country"
                   control={control}
                   rules={{
-                    required: errorMessages.countryRequired
+                    required: errorMessages.countryRequired,
                   }}
                   render={({ field }) => (
                     <Select
@@ -126,10 +125,10 @@ const AddCurriculumForm = ({
               </Box>
               <Box>
                 <Controller
-                  name='language'
+                  name="language"
                   control={control}
                   rules={{
-                    required: errorMessages.languageRequired
+                    required: errorMessages.languageRequired,
                   }}
                   render={({ field }) => (
                     <Select
@@ -146,13 +145,13 @@ const AddCurriculumForm = ({
                 />
               </Box>
             </Group>
-            <Group align='start' grow>
+            <Group align="start" grow>
               <Box>
                 <Controller
-                  name='center'
+                  name="center"
                   control={control}
                   rules={{
-                    required: errorMessages.centerRequired
+                    required: errorMessages.centerRequired,
                   }}
                   render={({ field }) => (
                     <Select
@@ -170,10 +169,10 @@ const AddCurriculumForm = ({
               </Box>
               <Box>
                 <Controller
-                  name='program'
+                  name="program"
                   control={control}
                   rules={{
-                    required: errorMessages.programRequired
+                    required: errorMessages.programRequired,
                   }}
                   render={({ field }) => {
                     if (
@@ -206,7 +205,7 @@ const AddCurriculumForm = ({
             </Group>
             <Box>
               <Controller
-                name='description'
+                name="description"
                 control={control}
                 render={({ field }) => (
                   <Textarea
@@ -220,7 +219,7 @@ const AddCurriculumForm = ({
             </Box>
             <Box>
               <Controller
-                name='tags'
+                name="tags"
                 control={control}
                 render={({ field }) => (
                   <MultiSelect
@@ -238,11 +237,10 @@ const AddCurriculumForm = ({
                 )}
               />
             </Box>
-
           </ContextContainer>
         </Box>
-        <Stack justifyContent='end'>
-          <Button loading={isLoading} type='submit'>
+        <Stack justifyContent="end">
+          <Button loading={isLoading} type="submit">
             {messages.continueButtonLabel}
           </Button>
         </Stack>
@@ -253,7 +251,7 @@ const AddCurriculumForm = ({
 
 AddCurriculumForm.defaultProps = {
   messages: ADD_CURRICULUM_FORM_MESSAGES,
-  errorMessages: ADD_CURRICULUM_FORM_ERROR_MESSAGES
+  errorMessages: ADD_CURRICULUM_FORM_ERROR_MESSAGES,
 };
 
 AddCurriculumForm.propTypes = {
@@ -266,34 +264,34 @@ AddCurriculumForm.propTypes = {
     country: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.any,
-        label: PropTypes.string
+        label: PropTypes.string,
       })
     ),
     language: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.any,
-        label: PropTypes.string
+        label: PropTypes.string,
       })
     ),
     center: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.any,
-        label: PropTypes.string
+        label: PropTypes.string,
       })
     ),
     program: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.any,
-        label: PropTypes.string
+        label: PropTypes.string,
       })
     ),
     tags: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.any,
-        label: PropTypes.string
+        label: PropTypes.string,
       })
-    )
-  })
+    ),
+  }),
 };
 
 export { AddCurriculumForm };

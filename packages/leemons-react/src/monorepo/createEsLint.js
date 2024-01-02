@@ -20,22 +20,43 @@ async function getEslint(basePath) {
         jest: true,
       },
       globals: { leemons: true },
-      extends: ['plugin:react/recommended', 'airbnb-base', 'prettier'],
-      parser: 'babel-eslint',
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-        ecmaVersion: 12,
-        sourceType: 'module',
+      extends: [
+        'plugin:react/recommended',
+        'plugin:sonarjs/recommended',
+        'airbnb-base',
+        'prettier',
+      ],
+      settings: {
+        react: {
+          version: 'detect',
+        },
       },
-      plugins: ['react', 'import', 'prettier'],
+      parser: '@babel/eslint-parser',
+      parserOptions: {
+        requireConfigFile: false,
+        babelOptions: {
+          babelrc: false,
+          configFile: false,
+          presets: ['@babel/preset-env'],
+          plugins: ['@babel/plugin-syntax-jsx'],
+        },
+        ecmaVersion: 2020,
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      plugins: ['react', 'sonarjs', 'import', 'prettier'],
       rules: {
+        radix: 'off',
         'no-plusplus': 'off',
+        'no-unused-vars': 'warn',
         'import/no-dynamic-requires': 'off',
         'import/no-extraneous-dependencies': 'off',
         'react/react-in-jsx-scope': 'off',
         'no-underscore-dangle': 'off',
         'prettier/prettier': [2, {}, { usePrettierrc: true }],
         'import/no-names-as-default': 'off',
+        'import/prefer-default-export': 'warn',
       },
     };
   }

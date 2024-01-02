@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, ContextContainer, Select, Stack } from '@bubbles-ui/components';
+import {
+  Button,
+  ContextContainer,
+  Select,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useTestsTypes } from '../../../../helpers/useTestsTypes';
@@ -44,23 +50,82 @@ import { useTestsTypes } from '../../../../helpers/useTestsTypes';
         />
 * */
 
-export default function DetailConfig({ store, form, t, onNext, onPrev }) {
+export default function DetailConfig({
+  store,
+  form,
+  t,
+  stepName,
+  scrollRef,
+  onNext,
+  onPrev,
+  onSave,
+}) {
   const [isDirty, setIsDirty] = React.useState(false);
   const testTypes = useTestsTypes();
-  const program = form.watch('program');
-  const type = form.watch('type');
-  const selectedType = testTypes.find(({ value }) => value === type);
+  const formValues = form.watch();
 
-  async function next() {
+  // const program = form.watch('program');
+  // const type = form.watch('type');
+  // const selectedType = testTypes.find(({ value }) => value === type);
+
+  const validate = async () => form.trigger(['type']);
+
+  async function handleOnNext() {
     setIsDirty(true);
-    const formGood = await form.trigger(['type']);
-    if (formGood) {
+    if (await validate()) {
       onNext();
     }
   }
 
+  async function handleOnSave() {
+    setIsDirty(true);
+    if (await validate()) {
+      onSave();
+    }
+  }
+
   return (
-    <ContextContainer divided>
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={onPrev}
+            >
+              {t('previous')}
+            </Button>
+          }
+          rightZone={
+            <>
+              {!formValues.published ? (
+                <Button
+                  variant="link"
+                  onClick={handleOnSave}
+                  disabled={!formValues.name || store.saving}
+                  loading={store.saving === 'draft'}
+                >
+                  {t('saveDraft')}
+                </Button>
+              ) : null}
+
+              <Button
+                rightIcon={<ChevRightIcon height={20} width={20} />}
+                onClick={handleOnNext}
+                disabled={store.saving}
+                loading={store.saving === 'publish'}
+              >
+                {t('continue')}
+              </Button>
+            </>
+          }
+        />
+      }
+    >
       <ContextContainer>
         <Controller
           control={form.control}
@@ -88,30 +153,17 @@ export default function DetailConfig({ store, form, t, onNext, onPrev }) {
         ) : null}
         */}
       </ContextContainer>
-      <Stack fullWidth justifyContent="space-between">
-        <Box>
-          <Button
-            compact
-            variant="light"
-            leftIcon={<ChevLeftIcon height={20} width={20} />}
-            onClick={onPrev}
-          >
-            {t('previous')}
-          </Button>
-        </Box>
-        <Box>
-          <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={next}>
-            {t('continue')}
-          </Button>
-        </Box>
-      </Stack>
-    </ContextContainer>
+    </TotalLayoutStepContainer>
   );
 }
 
 DetailConfig.propTypes = {
-  form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  form: PropTypes.object.isRequired,
   onNext: PropTypes.func,
+  onPrev: PropTypes.func,
+  onSave: PropTypes.func,
   store: PropTypes.any,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.any,
 };

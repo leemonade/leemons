@@ -1,4 +1,4 @@
-export const allPackagesKey = [
+export const allPackagesKeys = [
   {
     plugin: 'plugin.scorm',
     scope: 'packages',
@@ -7,7 +7,7 @@ export const allPackagesKey = [
 
 export const getPackageKey = (id) => [
   {
-    ...allPackagesKey,
+    ...allPackagesKeys,
     action: 'get',
     id,
   },

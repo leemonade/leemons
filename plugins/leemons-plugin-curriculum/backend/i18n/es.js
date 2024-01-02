@@ -39,7 +39,7 @@ module.exports = {
     programPlaceholder: 'Seleccionar...',
     programNothingFound: 'Sin datos',
     tagsLabel: 'Etiquetas',
-    tagsPlaceholder: 'Añadir etiquetas',
+    tagsPlaceholder: 'Escribe la etiqueta y presiona Enter',
     tagsDescription: 'Introducir etiquetas separadas por comas',
     tagsNothingFound: 'No hay datos',
     tagsCreateLabel: '+ Crear {{etiqueta}}',

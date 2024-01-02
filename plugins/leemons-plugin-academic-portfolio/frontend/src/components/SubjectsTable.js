@@ -638,13 +638,13 @@ function SubjectsTable({
       <Title order={4}>{onlyNewSubject ? messages.newTitle : messages.title}</Title>
       <Box sx={(theme) => ({ paddingBottom: theme.spacing[3], width: '100%', overflow: 'auto' })}>
         {!deploymentConfig?.limits?.maxSubjects ||
-          (deploymentConfig?.limits?.maxSubjects > program.classes.length && (
-            <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
-              <Button onClick={newSubject} variant="link" leftIcon={<AddIcon />}>
-                {messages.addSubject}
-              </Button>
-            </Box>
-          ))}
+        deploymentConfig?.limits?.maxSubjects > program.classes.length ? (
+          <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
+            <Button onClick={newSubject} variant="link" leftIcon={<AddIcon />}>
+              {messages.addSubject}
+            </Button>
+          </Box>
+        ) : null}
 
         <Box>
           <TableInput

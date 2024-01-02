@@ -1,5 +1,7 @@
 FROM node:20-alpine
 
+RUN apk add --update python3
+
 ARG PLUGIN_NAME
 ARG PATH_NAME
 
@@ -10,7 +12,7 @@ WORKDIR /app
 
 COPY ${PLUGIN_PATH}/package.json ./
 RUN yarn install --production
-RUN yarn add @leemons/runner@dev nats --production
+RUN yarn add @leemons/runner@dev nats jaeger-client --production
 
 RUN mkdir /temp
 RUN cp package.json yarn.lock /temp

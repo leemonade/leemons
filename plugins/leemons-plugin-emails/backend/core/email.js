@@ -42,7 +42,8 @@ class Email {
    * */
   static async providers({ ctx }) {
     const providers = [];
-    _.forIn(await getPluginProviders({ keyValueModel: ctx.tx.db.KeyValue, raw: true }), (value) => {
+    const plugins = await getPluginProviders({ keyValueModel: ctx.tx.db.KeyValue, raw: true });
+    _.forIn(plugins, (value) => {
       providers.push(Email.getProvider({ pluginKeyValue: value, ctx }));
     });
     return Promise.all(providers);
@@ -102,31 +103,31 @@ class Email {
     //! Dejo comentado el código "antiguo"
 
     /*
-        const promises = [];
+                        const promises = [];
 
-        _.forIn(leemons.listProviders(), (value) => {
-          if (
-            value.services &&
-            value.services.email &&
-            _.isFunction(value.services.email.getTransporters)
-          ) {
-            promises.push(value.services.email.getTransporters());
-          }
-        });
-        const transportersArray = await Promise.all(promises);
-        const transporters = _.compact(_.flattenDeep(transportersArray));
-        if (!sendMailTransporter) {
-          sendMailTransporter = global.utils.nodemailer.createTransport({
-            sendmail: true,
-          });
-          transporters.push(sendMailTransporter);
-        }
+                        _.forIn(leemons.listProviders(), (value) => {
+                          if (
+                            value.services &&
+                            value.services.email &&
+                            _.isFunction(value.services.email.getTransporters)
+                          ) {
+                            promises.push(value.services.email.getTransporters());
+                          }
+                        });
+                        const transportersArray = await Promise.all(promises);
+                        const transporters = _.compact(_.flattenDeep(transportersArray));
+                        if (!sendMailTransporter) {
+                          sendMailTransporter = global.utils.nodemailer.createTransport({
+                            sendmail: true,
+                          });
+                          transporters.push(sendMailTransporter);
+                        }
 
-        // console.log('-- EmailService > getTransporters:');
-        // console.dir(transporters, { depth: null });
+                        // console.log('-- EmailService > getTransporters:');
+                        // console.dir(transporters, { depth: null });
 
-        return transporters;
-         */
+                        return transporters;
+                         */
   }
 
   /**
@@ -187,9 +188,9 @@ class Email {
         { new: true, lean: true }
       );
       /*
-              * throw new Error(
-                `The ${templateName} email template already have the language ${language} of type ${type}`
-              ); */
+                                      * throw new Error(
+                                        `The ${templateName} email template already have the language ${language} of type ${type}`
+                                      ); */
     }
 
     ctx.logger.info(

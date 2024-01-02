@@ -47,8 +47,6 @@ const Styles = createStyles((theme) => ({
     paddingRight: 0,
   },
   card: {
-    backgroundColor: theme.colors.uiBackground01,
-    borderRadius: '4px',
     padding: theme.spacing[6],
     paddingLeft: theme.spacing[4],
     paddingRight: theme.spacing[4],
@@ -57,9 +55,6 @@ const Styles = createStyles((theme) => ({
     border: '2px solid',
     borderColor: theme.colors.uiBackground01,
     transitionDuration: '100ms',
-    '&:hover': {
-      borderColor: theme.colors.ui01,
-    },
   },
   colorIcon: {
     position: 'absolute',
@@ -124,15 +119,24 @@ function UserClassesSwiperWidget({ program }) {
 
   return (
     <Box className={styles.root}>
+      <Box
+        sx={(theme) => ({
+          fontSize: '20px',
+          fontWeight: 600,
+          lineHeight: '28px',
+          marginBottom: theme.spacing[4],
+        })}
+      >
+        {t('subjects')}
+      </Box>
       <Swiper
-        className={styles.cardContainer}
         breakAt={{
-          1800: { slidesPerView: 6, spaceBetween: 2 },
-          1600: { slidesPerView: 5, spaceBetween: 2 },
-          1200: { slidesPerView: 4, spaceBetween: 2 },
-          940: { slidesPerView: 4, spaceBetween: 2 },
-          520: { slidesPerView: 3, spaceBetween: 2 },
-          360: { slidesPerView: 2, spaceBetween: 2 },
+          1800: { slidesPerView: 8, spaceBetween: 2 },
+          1600: { slidesPerView: 7, spaceBetween: 2 },
+          1200: { slidesPerView: 6, spaceBetween: 2 },
+          940: { slidesPerView: 5, spaceBetween: 2 },
+          520: { slidesPerView: 4, spaceBetween: 2 },
+          360: { slidesPerView: 3, spaceBetween: 2 },
         }}
       >
         {store.classes.map((classe, index) => {
@@ -141,16 +145,16 @@ function UserClassesSwiperWidget({ program }) {
             !classe.groups || classe.groups.isAlone
               ? null
               : classe.groups
-                ? classe.groups.abbreviation
-                : null;
+              ? classe.groups.abbreviation
+              : null;
           const course =
             !classe.groups || classe.groups.isAlone
               ? null
               : isArray(classe.courses)
-                ? t('multiCourse')
-                : classe.courses
-                  ? getCourseName(classe.courses)
-                  : null;
+              ? t('multiCourse')
+              : classe.courses
+              ? getCourseName(classe.courses)
+              : null;
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};

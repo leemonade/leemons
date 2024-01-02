@@ -197,6 +197,7 @@ module.exports = {
     change_easy: 'Siempre podrás cambiar de perfil o centro desde tu cuenta de usuario.',
     log_in: 'Entrar',
     choose_center: 'Seleccionar un centro',
+    superAdmin: 'Super admin',
   },
   list_users: {
     import: 'Importar usuarios',
@@ -299,7 +300,7 @@ module.exports = {
     recoveryEmailSent: 'Correo de recuperación enviado',
     otherInformationLabel: 'Otra información',
     tags: 'Tags',
-    addTag: 'Añadir tag',
+    addTag: 'Añadir',
     edit: 'Editar',
     save: 'Guardar',
     cancel: 'Cancelar',

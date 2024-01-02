@@ -22,7 +22,7 @@ export default function CardList({ items, onSelect }) {
   return (
     <Box className={classes.list}>
       {items.map((item) => (
-        <Item key={item.id} asset={item} onSelect={onSelect} />
+        <Item key={item.id} embedded asset={item} onSelect={onSelect} />
       ))}
     </Box>
   );

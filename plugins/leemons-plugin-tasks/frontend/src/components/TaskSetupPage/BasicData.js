@@ -1,8 +1,14 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { isFunction, omit, uniq } from 'lodash';
+import { noop, omit, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { Button, ContextContainer, Stack, Switch } from '@bubbles-ui/components';
+import {
+  Button,
+  ContextContainer,
+  Switch,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { AssetFormInput } from '@leebrary/components/AssetFormInput';
 import { useObservableContext } from '@common/context/ObservableContext';
@@ -73,8 +79,13 @@ function BasicData({
   helps,
   advancedConfig,
   errorMessages,
-  onNext,
+  onNext = noop,
   useObserver,
+  stepName,
+  scrollRef,
+  loading,
+  setLoading,
+  t,
 }) {
   // ·······························································
   // FORM
@@ -153,45 +164,80 @@ function BasicData({
   // ·······························································
   // HANDLERS
 
-  const handleOnNext = (e) => {
-    onSubmit(e);
-    if (isFunction(onNext)) onNext();
+  const handleOnNext = () => {
+    handleSubmit((data) => {
+      onSubmit(data);
+      onNext();
+    })();
   };
 
-  const handleOnSubmit = handleSubmit(handleOnNext);
+  const handleOnSave = () => {
+    handleSubmit((data) => {
+      onSubmit(data);
+      setLoading('draft');
+      emitEvent('saveTask');
+    })();
+  };
 
   // ························································
   // RENDER
 
   return (
-    <ContextContainer divided>
-      <Controller
-        name="express"
-        control={formData.control}
-        render={({ field }) => (
-          <Switch label="Tarea express" disabled={!!taskId} checked={!!field.value} {...field} />
-        )}
-      />
-      <AssetFormInput
-        form={formData}
-        {...{ labels, placeholders, helps, errorMessages }}
-        advancedConfig={advancedConfig}
-        category="assignables.task"
-        useTags={!express}
-        tagsPluginName={!express ? 'tasks' : undefined}
-        preview
-        previewVariant="task"
-      />
-      <Stack fullWidth justifyContent="end">
-        <Button rightIcon={<ChevRightIcon height={20} width={20} />} onClick={handleOnSubmit}>
-          {labels.buttonNext}
-        </Button>
-      </Stack>
-    </ContextContainer>
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          rightZone={
+            <>
+              <Button
+                variant="link"
+                onClick={handleOnSave}
+                disabled={loading}
+                loading={loading === 'draft'}
+              >
+                {t('common.save')}
+              </Button>
+
+              <Button
+                rightIcon={<ChevRightIcon height={20} width={20} />}
+                onClick={handleOnNext}
+                disabled={loading}
+                loading={loading === 'publish'}
+              >
+                {labels.buttonNext}
+              </Button>
+            </>
+          }
+        />
+      }
+    >
+      <ContextContainer divided>
+        <Controller
+          name="express"
+          control={formData.control}
+          render={({ field }) => (
+            <Switch label="Tarea express" disabled={!!taskId} checked={!!field.value} {...field} />
+          )}
+        />
+        <AssetFormInput
+          form={formData}
+          {...{ labels, placeholders, helps, errorMessages }}
+          advancedConfig={advancedConfig}
+          category="assignables.task"
+          useTags={!express}
+          tagsPluginName={!express ? 'tasks' : undefined}
+          preview
+          previewVariant="task"
+        />
+      </ContextContainer>
+    </TotalLayoutStepContainer>
   );
 }
 
 BasicData.propTypes = {
+  t: PropTypes.func,
   labels: PropTypes.object,
   descriptions: PropTypes.object,
   placeholders: PropTypes.object,
@@ -203,6 +249,10 @@ BasicData.propTypes = {
   useObserver: PropTypes.func,
   onNameChange: PropTypes.func,
   advancedConfig: PropTypes.object,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.any,
+  loading: PropTypes.any,
+  setLoading: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -75,12 +75,17 @@ module.exports = {
           email: { type: 'string' },
           password: { type: 'string' },
           locale: { type: 'string' },
+          name: { type: 'string' },
+          surnames: { type: 'string' },
+          birthdate: { type: 'string' },
+          gender: { type: 'string' },
         },
-        required: ['email', 'password', 'locale'],
+        required: ['email', 'locale'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
         try {
+          console.log('- Vamos a registrar al super admin', ctx.params.email);
           await settingsService.registerAdmin({ ...ctx.params, ctx });
           const settings = await settingsService.findOne({ ctx });
           return { status: 200, settings };
@@ -99,8 +104,8 @@ module.exports = {
       path: '/languages',
     },
     async handler(ctx) {
-      const { langs, defaultLang } = ctx.params;
-      await settingsService.setLanguages({ langs, defaultLang, ctx });
+      const { langs, defaultLang, removeOthers } = ctx.params;
+      await settingsService.setLanguages({ langs, defaultLang, removeOthers, ctx });
       const settings = await settingsService.findOne({ ctx });
       return { status: 200, settings };
     },

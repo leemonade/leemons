@@ -21,6 +21,18 @@ class Email {
   }
 
   static async getProviders({ ctx }) {
+    if (process.env.AWS_REGION && process.env.AWS_ACCESS_KEY && process.env.AWS_SECRET_ACCESS_KEY) {
+      return [
+        {
+          id: 'aws-ses',
+          deploymentID: ctx.meta.deploymentID,
+          name: 'Amazon SES',
+          region: process.env.AWS_REGION,
+          accessKey: process.env.AWS_ACCESS_KEY,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        },
+      ];
+    }
     return ctx.tx.db.Config.find().lean();
   }
 

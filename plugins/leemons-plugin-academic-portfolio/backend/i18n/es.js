@@ -370,7 +370,7 @@ module.exports = {
         'Los estudiantes seleccionados serán asignados a cada clase. Para consultar o editar los estudiantes de una clase concreta, acceder al detalle de la misma.',
       byTag: 'Buscar por etiqueta',
       byData: 'Buscar por datos del usuario',
-      addTag: 'Añadir etiqueta',
+      addTag: 'Añadir',
       emailHeader: 'Email',
       nameHeader: 'Nombre',
       surnameHeader: 'Apellido/s',
@@ -541,6 +541,7 @@ module.exports = {
   },
   userClassesSwiperWidget: {
     multiCourse: 'Multicurso',
+    subjects: 'Asignaturas',
   },
   tabDetail: {
     label: 'Clase',

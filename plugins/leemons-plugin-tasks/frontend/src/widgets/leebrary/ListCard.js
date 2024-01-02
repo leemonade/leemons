@@ -22,7 +22,7 @@ const ListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...props }) => {
+const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ...props }) => {
   const history = useHistory();
   const {
     openConfirmationModal,
@@ -38,7 +38,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
   ]);
 
   const { menuLabels, taskLabel, expressTaskLabel } = useMemo(() => {
-    if (translations && translations.items) {
+    if (translations?.items) {
       const res = unflatten(translations.items);
 
       // EN: Modify the data object here
@@ -173,7 +173,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
   return (
     <LibraryCard
       {...props}
-      asset={asset}
+      asset={{ ...asset, fileType: 'task' }}
       menuItems={menuItems}
       variant="task"
       variantIcon={isExpress ? <ExpressTaskIcon /> : <TaskIcon />}

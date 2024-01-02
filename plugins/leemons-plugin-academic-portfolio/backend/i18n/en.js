@@ -368,7 +368,7 @@ module.exports = {
         'selected students will be added to the current student lists for each classroom. If consultation or editing of a group of students is needed, it must be done directly in each classroom.',
       byTag: 'Select by tag',
       byData: 'Search by user data',
-      addTag: 'Add tag',
+      addTag: 'Add',
       emailHeader: 'Email',
       nameHeader: 'Name',
       surnameHeader: 'Surname',
@@ -540,6 +540,7 @@ module.exports = {
   },
   userClassesSwiperWidget: {
     multiCourse: 'Multi-course',
+    subjects: 'Subjects',
   },
   tabDetail: {
     label: 'Classroom',

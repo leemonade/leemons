@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@hokify/agenda": "^6.3.0",
+    "@jest/globals": "^29.7.0",
     "@leemons/cache": "0.0.41",
     "@leemons/deployment-manager": "0.0.41",
     "@leemons/emails": "0.0.54",
     "@leemons/error": "0.0.41",
     "@leemons/menu-builder": "0.0.41",
+    "@leemons/middlewares": "0.0.41",
     "@leemons/mongodb": "0.0.41",
     "@leemons/mongodb-helpers": "0.0.41",
     "@leemons/mqtt": "0.0.41",
@@ -22,11 +24,13 @@
     "@leemons/multilanguage": "0.0.41",
     "@leemons/permissions": "0.0.41",
     "@leemons/testing": "0.0.41",
+    "@leemons/utils": "0.0.41",
     "@leemons/validator": "0.0.41",
     "@leemons/widgets": "0.0.41",
     "dayjs": "^1.10.7",
     "jaeger-client": "^3.19.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "semver": "^7.5.4"
   },
   "devDependencies": {
     "jest": "^29.7.0"

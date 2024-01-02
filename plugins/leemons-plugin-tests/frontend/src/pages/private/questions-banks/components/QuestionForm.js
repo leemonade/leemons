@@ -20,8 +20,8 @@ import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty
 import { MonoResponse } from './question-types/MonoResponse';
 import { QuestionMap } from './question-types/Map';
 
-const typesWithImage = ['mono-response'];
-const questionComponents = {
+export const typesWithImage = ['mono-response'];
+export const questionComponents = {
   'mono-response': <MonoResponse />,
   map: <QuestionMap />,
 };
@@ -52,16 +52,8 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
   }));
 
   return (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
-      <ContextContainer>
-        <Box>
-          <Button variant="light" leftIcon={<ChevLeftIcon />} onClick={onCancel}>
-            {t('returnToList')}
-          </Button>
-        </Box>
-
-        <Title order={4}>{t('questionDetail')}</Title>
-
+    <Box style={{ marginBottom: 20 }}>
+      <ContextContainer title={t('questionDetail')}>
         <Box style={{ width: '230px' }}>
           <ContextContainer fullWidth direction="row">
             <Controller
@@ -171,9 +163,9 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
 
                 {type
                   ? React.cloneElement(questionComponents[type], {
-                      form,
-                      t,
-                    })
+                    form,
+                    t,
+                  })
                   : null}
 
                 <Controller

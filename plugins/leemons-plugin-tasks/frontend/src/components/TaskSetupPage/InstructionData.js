@@ -1,8 +1,16 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, uniq } from 'lodash';
+import { isFunction, noop, uniq } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Stack, ContextContainer, Button } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  ContextContainer,
+  Button,
+  DropdownButton,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { useObservableContext } from '@common/context/ObservableContext';
@@ -30,16 +38,19 @@ function InstructionData({
   helps,
   errorMessages,
   editable,
-  onNext,
-  onPrevious,
+  onNext = noop,
+  onPrevious = noop,
   useObserver,
+  loading,
+  setLoading = noop,
+  stepName,
+  scrollRef,
+  t,
   ...props
 }) {
   // ·······························································
   // FORM
   const { getValues, setValue } = useObservableContext();
-  const [loading, setLoading] = React.useState(null);
-
   const defaultValues = useDefaultValues();
 
   const {
@@ -107,22 +118,50 @@ function InstructionData({
   // ·······························································
   // HANDLERS
 
+  // ·······························································
+  // HANDLERS
+
   const handleOnPrev = () => {
     if (!isDirty) {
       onPrevious();
-
       return;
     }
 
     handleSubmit((values) => {
       onSubmit(values);
-      if (isFunction(onPrevious)) onPrevious();
+      onPrevious();
     })();
   };
 
-  const handleOnNext = (e) => {
-    onSubmit(e);
-    if (isFunction(onNext)) onNext();
+  const handleOnNext = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      onNext();
+    })();
+  };
+
+  const handleOnSave = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      setLoading('draft');
+      emitEvent('saveTask');
+    })();
+  };
+
+  const handleOnPublish = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      setLoading('publish');
+      emitEvent('publishTaskAndLibrary');
+    })();
+  };
+
+  const handleOnAssign = () => {
+    handleSubmit((values) => {
+      onSubmit(values);
+      setLoading('publish');
+      emitEvent('publishTaskAndAssign');
+    })();
   };
 
   // ---------------------------------------------------------------
@@ -135,88 +174,96 @@ function InstructionData({
       }}
       autoComplete="off"
     >
-      <ContextContainer {...props} divided>
-        <ContextContainer title={labels.title}>
-          <Box>
-            <Controller
-              control={control}
-              name="instructionsForTeachers"
-              render={({ field }) => (
-                <TextEditorInput
-                  {...field}
-                  label={labels.forTeacher}
-                  placeholder={placeholders.forTeacher}
-                  help={helps.forTeacher}
-                  error={errors.instructionsForTeachers}
-                />
-              )}
-            />
-          </Box>
-          <Box>
-            <Controller
-              control={control}
-              name="instructionsForStudents"
-              render={({ field }) => (
-                <TextEditorInput
-                  {...field}
-                  label={labels.forStudent}
-                  placeholder={placeholders.forStudent}
-                  help={helps.forStudent}
-                  error={errors.instructionsForStudents}
-                />
-              )}
-            />
-          </Box>
-        </ContextContainer>
-        <ContextContainer>
-          <Controller
-            control={control}
-            name="duration"
-            render={({ field }) => (
-              <TimeUnitsInput
-                {...field}
-                label={labels.recommendedDuration}
-                error={errors.recommendedDuration}
-              />
-            )}
-          />
-        </ContextContainer>
-        <Stack fullWidth justifyContent="space-between">
-          <Box>
-            <Button
-              compact
-              variant="light"
-              leftIcon={<ChevLeftIcon height={20} width={20} />}
-              onClick={handleOnPrev}
-            >
-              {labels.buttonPrev}
-            </Button>
-          </Box>
-          <Box>
-            <ContextContainer direction="row">
+      <TotalLayoutStepContainer
+        stepName={stepName}
+        Footer={
+          <TotalLayoutFooterContainer
+            fixed
+            scrollRef={scrollRef}
+            leftZone={
               <Button
-                loading={loading === 'onlyPublish'}
                 variant="outline"
-                onClick={() => {
-                  setLoading('onlyPublish');
-                  emitEvent('publishTaskAndLibrary');
-                }}
+                leftIcon={<ChevLeftIcon height={20} width={20} />}
+                onClick={handleOnPrev}
               >
-                {labels.buttonPublish}
+                {labels.buttonPrev}
               </Button>
-              <Button
-                loading={loading === 'publishAndAssign'}
-                onClick={() => {
-                  setLoading('publishAndAssign');
-                  emitEvent('publishTaskAndAssign');
-                }}
-              >
-                {labels.buttonNext}
-              </Button>
+            }
+            rightZone={
+              <>
+                <Button
+                  variant="link"
+                  onClick={handleOnSave}
+                  disabled={loading}
+                  loading={loading === 'draft'}
+                >
+                  {t('common.save')}
+                </Button>
+                <DropdownButton
+                  data={[
+                    { label: labels.buttonPublish, onClick: handleOnPublish },
+                    { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                  ]}
+                  loading={loading === 'publish'}
+                  disabled={loading}
+                >
+                  {t('common.finish')}
+                </DropdownButton>
+              </>
+            }
+          />
+        }
+      >
+        <Box style={{ marginBottom: 20 }}>
+          <ContextContainer {...props} divided>
+            <ContextContainer title={labels.title}>
+              <Box>
+                <Controller
+                  control={control}
+                  name="instructionsForTeachers"
+                  render={({ field }) => (
+                    <TextEditorInput
+                      {...field}
+                      label={labels.forTeacher}
+                      placeholder={placeholders.forTeacher}
+                      help={helps.forTeacher}
+                      error={errors.instructionsForTeachers}
+                    />
+                  )}
+                />
+              </Box>
+              <Box>
+                <Controller
+                  control={control}
+                  name="instructionsForStudents"
+                  render={({ field }) => (
+                    <TextEditorInput
+                      {...field}
+                      label={labels.forStudent}
+                      placeholder={placeholders.forStudent}
+                      help={helps.forStudent}
+                      error={errors.instructionsForStudents}
+                    />
+                  )}
+                />
+              </Box>
             </ContextContainer>
-          </Box>
-        </Stack>
-      </ContextContainer>
+            <ContextContainer>
+              <Controller
+                control={control}
+                name="duration"
+                render={({ field }) => (
+                  <TimeUnitsInput
+                    {...field}
+                    label={labels.recommendedDuration}
+                    error={errors.recommendedDuration}
+                  />
+                )}
+              />
+            </ContextContainer>
+          </ContextContainer>
+        </Box>
+      </TotalLayoutStepContainer>
     </form>
   );
 }
@@ -240,6 +287,11 @@ InstructionData.propTypes = {
   onNext: PropTypes.func,
   onPrevious: PropTypes.func,
   useObserver: PropTypes.func,
+  stepName: PropTypes.string,
+  scrollRef: PropTypes.any,
+  loading: PropTypes.any,
+  setLoading: PropTypes.func,
+  t: PropTypes.func,
 };
 
 // eslint-disable-next-line import/prefer-default-export

@@ -4,8 +4,8 @@ import { getMenu } from '@menu-builder/helpers';
 import prefixPN from '@menu-builder/helpers/prefixPN';
 import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getUserCentersRequest } from '@users/request';
-import { useSession } from '@users/session';
+import { getUserCentersRequest, getUserProfilesRequest } from '@users/request';
+import { currentProfileIsSuperAdmin, useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -13,6 +13,7 @@ import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
+  if (session) session.isSuperAdmin = currentProfileIsSuperAdmin();
   const [t] = useTranslateLoader(prefixPN('sessionMenu'));
   const [ts] = useTranslateLoader(prefixPN('spotlight'));
   const [store, render] = useStore({
@@ -30,9 +31,16 @@ export default function MainMenu({ subNavWidth, ...props }) {
     setLoadMenu(true);
   };
 
+  // ························································
+  // LOAD INITIAT DATA
+
   async function load() {
-    const { centers } = await getUserCentersRequest();
-    if (centers.length === 1 && centers[0].profiles.length === 1) {
+    const [{ centers }, { profiles }] = await Promise.all([
+      getUserCentersRequest(),
+      getUserProfilesRequest(),
+    ]);
+
+    if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       store.onlyOneProfile = true;
       store.centerName = centers[0].name;
       render();
@@ -43,6 +51,9 @@ export default function MainMenu({ subNavWidth, ...props }) {
     forceReload.current = true;
     reloadMenu();
   });
+
+  // ························································
+  // EFFECTS
 
   useEffect(() => {
     hooks.addAction('menu-builder:reload-menu', reloadMenu);

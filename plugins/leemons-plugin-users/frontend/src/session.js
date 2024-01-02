@@ -9,6 +9,13 @@ import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
 import { apiSessionMiddleware } from '../globalContext';
 
+const params = new URLSearchParams(window.location.search);
+const jwtToken = params.get('jwtToken'); // reemplace 'myParam' con el nombre de su parámetro
+
+if (jwtToken) {
+  Cookies.set('token', jwtToken);
+}
+
 /**
  * @private
  * @param {request} req extracted from request response
@@ -60,6 +67,15 @@ function getUserToken(data) {
     return data.userToken;
   }
   return null;
+}
+
+export function currentProfileIsSuperAdmin() {
+  const data = getCookieToken();
+  if (data.profile) {
+    const profile = _.find(data.profiles, { id: data.profile });
+    return profile.sysName === 'super';
+  }
+  return false;
 }
 
 export function getCookieToken(onlyCookie) {

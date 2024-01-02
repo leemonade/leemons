@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isNil, isString } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components/LibraryCard';
@@ -14,7 +14,7 @@ import {
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useHistory } from 'react-router-dom';
 import prefixPN from '../helpers/prefixPN';
-import { prepareAsset } from '../helpers/prepareAsset';
+import { getCoverUrl, prepareAsset, resolveAssetType } from '../helpers/prepareAsset';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
@@ -52,6 +52,7 @@ const CardWrapper = ({
   onDownload,
   locale,
   assetsLoading,
+  isCreationPreview,
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
@@ -159,7 +160,12 @@ const CardWrapper = ({
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props} style={{ display: 'flex', gap: 32 }}>
       <Component
-        asset={_asset}
+        isCreationPreview={isCreationPreview}
+        asset={{
+          ..._asset,
+          ...resolveAssetType(_asset.file, category?.key),
+          cover: getCoverUrl(_asset.cover || _asset.file),
+        }}
         menuItems={menuItems}
         variant={variant}
         className={classes.root}
@@ -196,6 +202,7 @@ CardWrapper.propTypes = {
   onDownload: PropTypes.func,
   assetsLoading: PropTypes.bool,
   realCategory: PropTypes.any,
+  isCreationPreview: PropTypes.bool,
 };
 
 export { CardWrapper };

@@ -3,7 +3,11 @@ import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
 import { getDocumentKey } from '../keys/document';
 
-export default function useDocument({ id, ...options }) {
+export default function useDocument({ id, isNew, ...options }) {
+  if (isNew) {
+    return { data: null, isLoading: false };
+  }
+
   const queryKey = getDocumentKey(id);
 
   const queryFn = () => getDocumentRequest(id).then((response) => response.document);

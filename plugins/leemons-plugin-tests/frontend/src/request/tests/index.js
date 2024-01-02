@@ -11,19 +11,8 @@ async function listTests({ page, size, published }) {
 async function saveTest(_body) {
   const body = cloneDeep(_body);
   let form = {};
-  if (_body.cover && !isString(_body.cover)) {
-    const { cover, ...data } = body;
-    if (_body.cover) {
-      if (_body.cover.id) {
-        data.cover = _body.cover.cover?.id;
-      } else {
-        form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
-      }
-    }
-    form = merge(data, form);
-  } else {
-    form = merge(body, form);
-  }
+  form = merge(body, form);
+
   return leemons.api('v1/tests/tests', {
     allAgents: true,
     method: 'POST',

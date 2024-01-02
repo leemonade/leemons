@@ -20,6 +20,7 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
+    "@jest/globals": "^29.7.0",
     "@leemons/cache": "0.0.41",
     "@leemons/common": "0.0.41",
     "@leemons/deployment-manager": "0.0.41",
@@ -32,6 +33,7 @@
     "@leemons/mqtt": "0.0.41",
     "@leemons/multilanguage": "0.0.41",
     "@leemons/permissions": "0.0.41",
+    "@leemons/testing": "0.0.41",
     "@leemons/users": "0.0.41",
     "@leemons/utils": "0.0.41",
     "@leemons/validator": "0.0.41",

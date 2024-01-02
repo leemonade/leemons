@@ -23,8 +23,8 @@ async function havePrograms() {
   });
 }
 
-async function detailProgram(id) {
-  return leemons.api(`v1/academic-portfolio/programs/${id}`, {
+async function detailProgram(id, withClasses = false) {
+  return leemons.api(`v1/academic-portfolio/programs/${id}?withClasses=${withClasses}`, {
     allAgents: true,
     method: 'GET',
   });

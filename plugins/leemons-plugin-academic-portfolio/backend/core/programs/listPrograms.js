@@ -9,8 +9,8 @@ async function listPrograms({ page, size, center, ctx }) {
     ctx.tx.db.ProgramCenter.find({ center }).lean(),
   ]);
 
-  if (!['teacher', 'student', 'admin'].includes(profile)) {
-    throw new LeemonsError(ctx, { message: 'Only teacher|student|admin can list programs' });
+  if (!['teacher', 'student', 'admin', 'super'].includes(profile)) {
+    throw new LeemonsError(ctx, { message: 'Only teacher|student|admin|super can list programs' });
   }
 
   let programIds = _.map(programCenter, 'program');

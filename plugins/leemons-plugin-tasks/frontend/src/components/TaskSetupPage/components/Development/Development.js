@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
-import { InputWrapper, TableInput } from '@bubbles-ui/components';
+import { Box, InputWrapper, TableInput, Button } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { TextEditorInput, TextEditorViewer } from '@common/components';
 import useTableInputLabels from '@tasks/helpers/useTableInputLabels';
 
@@ -14,7 +15,10 @@ export default function Development({ name, label, placeholder, required }) {
     {
       Header: '',
       accessor: 'development',
-      input: { node: <TextEditorInput placeholder={placeholder} />, rules: { required: true } },
+      input: {
+        node: <TextEditorInput placeholder={placeholder} />,
+        rules: { required: true },
+      },
       valueRender: (value) => <TextEditorViewer>{value}</TextEditorViewer>,
     },
   ]);
@@ -26,16 +30,28 @@ export default function Development({ name, label, placeholder, required }) {
         name={name}
         rules={{ validate: (value) => !required || value?.length > 0 }}
         render={({ field, fieldState: { error } }) => (
-          <TableInput
-            {...field}
-            columns={columns}
-            editable
-            resetOnAdd
-            // TRANSLATE: Required error label
-            error={error && 'This field is required'}
-            data={field.value || []}
-            labels={tableInputLabels}
-          />
+          <Box style={{ marginRight: 5 }}>
+            <TableInput
+              {...field}
+              columns={columns}
+              editable
+              resetOnAdd
+              // TRANSLATE: Required error label
+              error={error && 'This field is required'}
+              data={field.value || []}
+              labels={tableInputLabels}
+              renderActionButton={({ disabled, onAdd }) => (
+                <Button
+                  variant="link"
+                  leftIcon={<AddCircleIcon />}
+                  disabled={disabled}
+                  onClick={onAdd}
+                >
+                  {tableInputLabels.add}
+                </Button>
+              )}
+            />
+          </Box>
         )}
       />
     </InputWrapper>
