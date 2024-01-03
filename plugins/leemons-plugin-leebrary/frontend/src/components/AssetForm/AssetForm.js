@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import _, { noop, isEmpty, isFunction, isNil, flatten } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
+import _, { flatten, isEmpty, isFunction, isNil, noop } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
@@ -10,31 +10,17 @@ import {
   ContextContainer,
   FileUpload,
   ImageLoader,
-  ImagePreviewInput,
-  InputWrapper,
-  Select,
   Stack,
   Switch,
-  TextInput,
   Textarea,
+  TextInput,
   useResizeObserver,
 } from '@bubbles-ui/components';
-import {
-  CloudUploadIcon,
-  CommonFileSearchIcon,
-  PluginLeebraryIcon,
-} from '@bubbles-ui/icons/outline';
+import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import SelectSubjects from '@leebrary/components/SelectSubjects';
-import {
-  getCoverName,
-  getCoverUrl,
-  isImageFile,
-  isNullish,
-  isValidURL,
-  prepareAsset,
-} from '../../helpers/prepareAsset';
+import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
+import { isImageFile, isNullish, isValidURL } from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
@@ -429,6 +415,38 @@ const AssetForm = ({
                 ) : null}
 
                 {store.showAdvancedConfig ? (
+                  <Controller
+                    name="subjects"
+                    control={control}
+                    rules={store.subjectRequired}
+                    render={({ field, fieldState: { error } }) => (
+                      <SubjectPicker
+                        {...field}
+                        value={_.map(field.value || [], 'subject')}
+                        onChangeRaw={(e) => {
+                          if (e.length > 0) {
+                            if (!program) setValue('program', e[0].program);
+                          } else if (program) setValue('program', null);
+                        }}
+                        error={error}
+                        assignable={{}}
+                        localizations={{
+                          title: labels?.programAndSubjects,
+                          program: labels?.program,
+                          subject: labels?.subjectSelects?.labels?.subject,
+                          add: labels?.subjectSelects?.placeholders?.addSubject,
+                          course: labels?.course,
+                          placeholder: labels?.selectPlaceholder,
+                        }}
+                        hideSectionHeaders={false}
+                        onlyOneSubject={store.maxOneSubject}
+                      />
+                    )}
+                  />
+                ) : null}
+
+                {/*
+                {store.showAdvancedConfig ? (
                   <ContextContainer title="Programas y Asignaturas">
                     <Controller
                       control={control}
@@ -467,6 +485,7 @@ const AssetForm = ({
                     />
                   </ContextContainer>
                 ) : null}
+                */}
               </>
             ) : null}
 
