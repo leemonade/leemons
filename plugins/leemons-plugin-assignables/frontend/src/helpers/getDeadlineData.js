@@ -14,6 +14,7 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
   const diffDays = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
 
   if (diffDays > 5) {
+    console.log('2', deadlineDate);
     return { date: deadlineDate.toLocaleDateString(), status: labels.opened };
   }
 
@@ -36,6 +37,7 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
     };
   }
 
+  console.log('5', deadlineDate);
   return {
     date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString('es-ES', {
       hour: '2-digit',

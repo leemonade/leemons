@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
 import { useClassroomsData } from '@academic-portfolio/hooks/useClassroomsData';

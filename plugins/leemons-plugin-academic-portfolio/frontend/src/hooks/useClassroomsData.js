@@ -5,6 +5,7 @@ import { getSubjectCredits, getSubjectsCredits } from '@academic-portfolio/reque
 const { classByIdsRequest } = require('@academic-portfolio/request');
 
 let multiSubjectData;
+
 export function getMultiClassData(labels) {
   return {
     id: 'multiSubject',

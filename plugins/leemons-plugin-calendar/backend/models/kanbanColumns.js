@@ -23,6 +23,10 @@ const schema = new mongoose.Schema(
     isArchived: {
       type: Boolean,
     },
+    isHidden: {
+      type: Boolean,
+      default: false,
+    },
     bgColor: {
       type: String,
       required: true,
