@@ -94,12 +94,11 @@ const LibraryCardCover = ({
   );
 
   const getFileIcon = (type) => {
-    const isDocument = type === 'document';
-    const isCCreator = !fileExtension;
-    return isDocument && !isCCreator ? 'file' : type;
+    const isCCreator = type === 'document' && !fileExtension;
+    const isDefaultIcon = !['audio', 'video', 'bookmark', 'image'].includes(type);
+    return isDefaultIcon && !isCCreator ? 'file' : type;
   };
   useEffect(() => {
-    console.log('fileType:', fileType);
     setResolvedIcon(getFileIcon(fileType));
   }, [fileType, icon, variantIcon]);
 
