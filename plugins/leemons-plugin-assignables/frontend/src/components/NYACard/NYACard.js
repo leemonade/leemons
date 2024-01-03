@@ -474,6 +474,7 @@ const NYACard = ({
             totalActivities={10}
             submitedActivities={5}
             localizations={localizations}
+            instance={preparedInstance}
           />
           <NYACardBody
             {...preparedInstance?.asset}
