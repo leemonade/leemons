@@ -384,7 +384,14 @@ function useNYACardLocalizations(labels) {
   }, [translations]);
 }
 
-const NYACard = ({ instance, showSubject, labels, classData, isActivityCarousel }) => {
+const NYACard = ({
+  instance,
+  showSubject,
+  labels,
+  classData,
+  isActivityCarousel,
+  isTeacherSyllabus,
+}) => {
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
@@ -463,6 +470,10 @@ const NYACard = ({ instance, showSubject, labels, classData, isActivityCarousel 
             {...preparedInstance?.asset}
             variantTitle={preparedInstance?.assignable?.role}
             topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
+            isTeacherSyllabus={isTeacherSyllabus}
+            totalActivities={10}
+            submitedActivities={5}
+            localizations={localizations}
           />
           <NYACardBody
             {...preparedInstance?.asset}
@@ -474,6 +485,7 @@ const NYACard = ({ instance, showSubject, labels, classData, isActivityCarousel 
             totalActivities={10}
             submitedActivities={5}
             showSubject={showSubject}
+            isTeacherSyllabus={isTeacherSyllabus}
           />
           <NYACardFooter
             {...preparedInstance?.asset}

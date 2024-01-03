@@ -28,6 +28,7 @@ const NYACardBody = ({
   totalActivities,
   submitedActivities,
   showSubject,
+  isTeacherSyllabus,
   ...props
 }) => {
   const { classes } = NYACardBodyStyles({ fullHeight }, { name: 'NYACardBody' });
@@ -108,7 +109,7 @@ const NYACardBody = ({
         <Text className={classes.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
         <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>{formattedDeadline.status}</Text>
       </Box>
-      {activitiesPercentage && isModule && <Box className={classes.progress}>
+      {activitiesPercentage && isModule && !isTeacherSyllabus && <Box className={classes.progress}>
         <ProgressColorBar value={activitiesPercentage} size={'md'} color={'#F39C12'} labelLeft={`Progreso: ${activitiesPercentage}%`} labelRight={`(${submitedActivities}/${totalActivities} ${activitiesLocale})`} />
       </Box>}
     </Box>
