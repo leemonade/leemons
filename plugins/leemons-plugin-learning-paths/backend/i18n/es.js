@@ -162,4 +162,14 @@ module.exports = {
     name: 'Nombre',
     Type: 'Tipo',
   },
+  moduleCardBadge: {
+    options: {
+      nonEvaluable: 'No evaluable',
+      calificable: 'Calificable',
+      punctuable: 'Puntuable',
+      feedbackOnly: 'Solo comentarios',
+      feedback: 'Feedback',
+      feedbackAvailable: 'Feedback disponible',
+    },
+  },
 };
