@@ -68,8 +68,16 @@ const LibraryNavbar = ({
     [selectedCategory]
   );
 
+  // TODO cambiar esto en backend
+  const contentAssetsKeys = [
+    'bookmarks',
+    'media-files',
+    'assignables.scorm',
+    'assignables.content-creator',
+  ];
+
   const renderNavbarItems = useCallback(
-    (callback, onlyCreatable = false, ignoreSelected = false) => {
+    ({ callback, typeOfAsset, onlyCreatable = false, ignoreSelected = false }) => {
       if (onlyCreatable && useNewCreateButton) {
         return categories
           .filter((item) => item.creatable === true)
@@ -85,6 +93,11 @@ const LibraryNavbar = ({
       const result = [
         ...categories
           .filter((item) => (onlyCreatable ? item.creatable === true : true))
+          .filter((item) => {
+            if (typeOfAsset === 'contentAssets') return contentAssetsKeys.includes(item.key);
+            if (typeOfAsset === 'activities') return !contentAssetsKeys.includes(item.key);
+            return true;
+          })
           .map((category) => (
             <NavbarItem
               key={category.id}
@@ -115,44 +128,42 @@ const LibraryNavbar = ({
             }}
           >
             <ScrollArea style={{ height: 300, maxWidth: '100%' }}>
-              {subjects.map((subject) => {
-                return (
+              {subjects.map((subject) => (
+                <Box
+                  key={JSON.stringify(subject)}
+                  onClick={() => onNavSubject(subject)}
+                  sx={(theme) => ({
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: theme.spacing[2],
+                    alignItems: 'center',
+                    padding: `${theme.spacing[2]}px ${theme.spacing[4]}px`,
+                    cursor: 'pointer',
+                    backgroundColor: selectedCategory === subject.id && theme.colors.mainWhite,
+                    '&:hover': {
+                      backgroundColor:
+                        selectedCategory !== subject.id && theme.colors.interactive03,
+                    },
+                  })}
+                >
                   <Box
-                    key={JSON.stringify(subject)}
-                    onClick={() => onNavSubject(subject)}
-                    sx={(theme) => ({
+                    sx={() => ({
                       display: 'flex',
-                      flexDirection: 'row',
-                      gap: theme.spacing[2],
                       alignItems: 'center',
-                      padding: `${theme.spacing[2]}px ${theme.spacing[4]}px`,
-                      cursor: 'pointer',
-                      backgroundColor: selectedCategory === subject.id && theme.colors.mainWhite,
-                      '&:hover': {
-                        backgroundColor:
-                          selectedCategory !== subject.id && theme.colors.interactive03,
-                      },
+                      justifyContent: 'center',
+                      minWidth: 24,
+                      minHeight: 24,
+                      maxWidth: 24,
+                      maxHeight: 24,
+                      borderRadius: '50%',
+                      backgroundColor: subject?.color,
+                      backgroundImage: 'url(' + subject?.image + ')',
+                      backgroundSize: 'cover',
                     })}
-                  >
-                    <Box
-                      sx={() => ({
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: 24,
-                        minHeight: 24,
-                        maxWidth: 24,
-                        maxHeight: 24,
-                        borderRadius: '50%',
-                        backgroundColor: subject?.color,
-                        backgroundImage: 'url(' + subject?.image + ')',
-                        backgroundSize: 'cover',
-                      })}
-                    />
-                    <Text>{subject.name}</Text>
-                  </Box>
-                );
-              })}
+                  />
+                  <Text>{subject.name}</Text>
+                </Box>
+              ))}
             </ScrollArea>
           </NavbarItem>
         );
@@ -165,19 +176,20 @@ const LibraryNavbar = ({
   const { classes, cx } = LibraryNavbarStyles({ isExpanded }, { name: 'LibraryNavbar' });
   return (
     <Box className={classes.root}>
-      <Box className={classes.header}>
-        <PluginLeebraryIcon height={24} width={24} />
-        <Text className={classes.title}>{labels.title}</Text>
-      </Box>
       <ScrollArea className={classes.navItems}>
         <Stack direction={'column'} fullWidth>
           {useNewCreateButton ? (
             <Box sx={(theme) => ({ padding: theme.spacing[2] })}>
               <DropdownButton
                 sx={() => ({ width: '100%' })}
-                children={labels.uploadButton}
-                data={renderNavbarItems(onNewHandler, true, true)}
-              />
+                data={renderNavbarItems({
+                  callback: onNewHandler,
+                  onlyCreatable: true,
+                  ignoreSelected: true,
+                })}
+              >
+                {labels.uploadButton}
+              </DropdownButton>
             </Box>
           ) : null}
           <NavbarItem
@@ -198,7 +210,9 @@ const LibraryNavbar = ({
           ) : null}
 
           <Divider style={{ marginBlock: 8, marginInline: 10 }} />
-          {renderNavbarItems(onNavHandler)}
+          {renderNavbarItems({ callback: onNavHandler, typeOfAsset: 'contentAssets' })}
+          <Divider style={{ marginBlock: 8, marginInline: 10 }} />
+          {renderNavbarItems({ callback: onNavHandler, typeOfAsset: 'activities' })}
         </Stack>
         {!useNewCreateButton ? (
           <Paper
@@ -245,7 +259,11 @@ const LibraryNavbar = ({
                 className={classes.navbarTopList}
                 skipFlex
               >
-                {renderNavbarItems(onNewHandler, true, true)}
+                {renderNavbarItems({
+                  callback: onNewHandler,
+                  onlyCreatable: true,
+                  ignoreSelected: true,
+                })}
                 <Text transform="uppercase" className={classes.sectionTitle}>
                   {labels.uploadTitle}
                 </Text>
@@ -274,3 +292,11 @@ LibraryNavbar.defaultProps = LIBRARY_NAVBAR_DEFAULT_PROPS;
 LibraryNavbar.propTypes = LIBRARY_NAVBAR_PROP_TYPES;
 
 export { LibraryNavbar };
+
+
+/*
+TODO
+- El backend debería tener una prop de assetType, refiriendose a si es actividad o solo contenido
+- Buscar iconos en el backend de cada plugin para ver el nombre, el icono está en la carpeta public del frontend de cada plugin
+  icon y activeIcon apuntan al mismo sitio, normal.
+*/
