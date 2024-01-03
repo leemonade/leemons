@@ -123,6 +123,7 @@ export function AssetPickerDrawer({
 
 AssetPickerDrawer.defaultProps = {
   onlyCreateImages: true,
+  size: 728,
 };
 AssetPickerDrawer.propTypes = {
   position: PropTypes.oneOf(['left', 'right']),
