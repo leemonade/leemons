@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { findIndex, noop, uniq } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
-import { ActionButton, Box, Button, Select, Table } from '@bubbles-ui/components';
+import { ActionButton, Box, Button, InputWrapper, Select, Table } from '@bubbles-ui/components';
 import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import { Container } from '@assignables/components/Assignment/components/Container';
 import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
@@ -113,6 +113,7 @@ export function SubjectPicker({
           {localizations?.add}
         </Button>
       </Box>
+      <InputWrapper mt={4} error={error} />
       <Box className={classes.table}>
         <Table
           data={selectedSubjects.map((subject) => ({
