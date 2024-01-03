@@ -336,7 +336,7 @@ const ListAssetPage = () => {
   return !isNil(categories) && !isEmpty(categories) ? (
     <Box
       className={classes.original}
-      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}
+      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
     >
       <AssetList
         {...props}

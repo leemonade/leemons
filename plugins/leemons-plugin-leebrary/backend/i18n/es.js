@@ -11,8 +11,9 @@ module.exports = {
       title: 'Biblioteca',
       subjects: 'Asignaturas',
       sharedWithMe: 'Compartido conmigo',
-      quickAccess: 'Destacados',
-      uploadButton: 'Subir o crear',
+      quickAccess: 'Favoritos',
+      recent: 'Recientes',
+      uploadButton: 'Nuevo',
       createNewTitle: 'Crear nuevo',
       uploadTitle: 'Subir archivo',
       fileUploadTitle: 'Click para buscar un archivo',
@@ -275,9 +276,8 @@ module.exports = {
       removeSuccess: 'Recurso eliminado con éxito',
       pinnedSuccess: 'Recurso anclado con éxito',
       unpinnedSuccess: 'Recurso desanclado con éxito',
-      listEmpty: 'No hay ningún recurso disponible',
-      listEmptyDescription:
-        'Gracias a las Biblioteca de Leemons, los docentes pueden gestionar tareas, tests, sesiones... y tanto docentes como estudiantes crear y compartir archivos multi-media y guardar sus páginas web favoritas.',
+      listEmpty: 'Aún no has creado ningún item de biblioteca.',
+      listEmptyDescription: 'Aquí aparecerán los items más recientes.',
       searchListEmpty: 'No hay ningún recurso disponible con tus criterios de búsqueda',
       searchListEmptyDescription:
         'Prueba a buscar por palabras clave (tags) o a escribir un término más genérico y luego utiliza los filtros para refinar tu búsqueda.',
