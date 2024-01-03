@@ -23,8 +23,9 @@ export function getFileUrl(fileID, segment, isPublic = false) {
 
   const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
-  return `${leemons.apiUrl}/api/v1/leebrary/file/${isPublic ? 'public/' : ''
-    }${fileID}${urlSuffixSegment}${authParam}`;
+  return `${leemons.apiUrl}/api/v1/leebrary/file/${
+    isPublic ? 'public/' : ''
+  }${fileID}${urlSuffixSegment}${authParam}`;
 }
 
 export function getPublicFileUrl(fileID, segment) {
@@ -143,7 +144,7 @@ export function getCoverName(cover) {
   return null;
 }
 
-export function resolveAssetType(file, type) {
+export function resolveAssetType(file, type, asset) {
   let defaultType;
   switch (type) {
     case 'assignables.content-creator':
@@ -158,8 +159,8 @@ export function resolveAssetType(file, type) {
     default:
       defaultType = 'file';
   }
-
-  const fileExtension = file?.name?.split('.').pop();
+  const isNewAsset = !asset?.id;
+  const fileExtension = isNewAsset ? file?.name?.split('.').pop() : asset?.fileExtension;
 
   const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;
   const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)

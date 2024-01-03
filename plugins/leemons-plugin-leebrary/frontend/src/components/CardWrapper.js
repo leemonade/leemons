@@ -163,7 +163,7 @@ const CardWrapper = ({
         isCreationPreview={isCreationPreview}
         asset={{
           ..._asset,
-          ...resolveAssetType(_asset.file, category?.key),
+          ...resolveAssetType(_asset.file, category?.key, asset),
           cover: getCoverUrl(_asset.cover || _asset.file),
         }}
         menuItems={menuItems}
