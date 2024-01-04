@@ -198,8 +198,20 @@ const DashboardCardFooter = ({
   role,
   roleDetails,
   rolesLocalizations,
+  buttonLink,
 }) => {
   const { classes } = useDashboardCardFooterStyles();
+  if (buttonLink && localizations) {
+    return (
+      <Box className={classes.root}>
+        <Box className={classes.buttonFull}>
+          <Link to={buttonLink}>
+            <Button style={{ width: '100%' }}>{localizations?.buttons?.review}</Button>
+          </Link>
+        </Box>
+      </Box>
+    );
+  }
   return (
     <Box className={classes.root}>
       <Box className={classes.footer}>

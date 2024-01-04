@@ -15,14 +15,22 @@ const DashboardCardCover = ({
   program,
   isCalificable,
   instance,
+  cover,
 }) => {
   const { classes } = DashboardCardCoverStyles();
+  if (cover) {
+    return (
+      <Box className={classes.root}>
+        <ImageLoader src={cover} height={144} />
+        <Box className={classes.orderLabel}>{assetNumber}</Box>
+      </Box>
+    );
+  }
   const { grades } = assignation;
   const isGradeAssigned =
     Array.isArray(grades) && grades.length >= 1 && grades[0].grade !== null
       ? grades[0].grade
       : null;
-
   return (
     <Box className={classes.root}>
       {isGradeAssigned && (
@@ -35,7 +43,7 @@ const DashboardCardCover = ({
           />
         </Box>
       )}
-      {!isGradeAssigned && <ImageLoader src={asset?.cover} height={144} />}
+      {!isGradeAssigned && <ImageLoader src={asset?.cover || cover} height={144} />}
       <Box className={classes.orderLabel}>{assetNumber}</Box>
     </Box>
   );

@@ -191,12 +191,12 @@ function useHeaderData(module) {
       activityDates: alwaysAvailable
         ? null
         : {
-            startLabel: 'Desde',
-            endLabel: 'Hasta',
-            hourLabel: 'Hora',
-            startDate: new Date(dates?.start),
-            endDate: new Date(dates?.deadline),
-          },
+          startLabel: 'Desde',
+          endLabel: 'Hasta',
+          hourLabel: 'Hora',
+          startDate: new Date(dates?.start),
+          endDate: new Date(dates?.deadline),
+        },
     },
   };
 }
@@ -257,11 +257,19 @@ export function ModuleDashboardBody({
   return (
     <Box className={classes.body}>
       <Box className={classes.rootContainer}>
-        <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
-        {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>}
+        {/* <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
+        {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>} */}
         <Box className={classes.activitiesList}>
+          <DashboardCard
+            introductionCard
+            assetNumber={'Introducción'}
+            statement={module?.metadata?.statement}
+            cover={module?.assignable?.asset?.cover}
+            buttonLink={'buttonLink'}
+            localizations={localizations}
+          />
           {sortBy(
-            activities?.map((activity) => ({
+            activities?.map((activity, index) => ({
               comp: (
                 <DashboardCard
                   isBlocked={!!blockedActivities[activity?.id]}
@@ -270,6 +278,7 @@ export function ModuleDashboardBody({
                   assignation={assignationsById[activity?.id]}
                   key={activity?.id}
                   preview={preview}
+                  assetNumber={index + 1}
                 />
               ),
               createdAt: activitiesById[activity?.id].createdAt,

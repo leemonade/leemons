@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
+import prepareAsset, { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { useDashboardCardStyles } from './DashboardCard.styles';
 import { DashboardCardCover } from './components/DashboardCardCover';
 import { DashboardCardBody } from './components/DashboardCardBody';
@@ -15,13 +15,32 @@ const DashboardCard = ({
   localizations,
   preview,
   assetNumber,
+  introductionCard,
+  statement,
+  cover,
+  buttonLink,
 }) => {
+  const { classes } = useDashboardCardStyles();
+  if (introductionCard) {
+    return (
+      <Box className={classes.root}>
+        <DashboardCardCover
+          cover={getFileUrl(cover)}
+          assetNumber={assetNumber}
+          statement={statement}
+        />
+        <Box className={classes.content}>
+          <DashboardCardBody statement={statement} assetNumber={assetNumber} />
+          <DashboardCardFooter localizations={localizations} buttonLink={buttonLink} />
+        </Box>
+      </Box>
+    );
+  }
   const { assignable } = activity;
   const { asset, role, roleDetails } = assignable;
   const preparedAsset = prepareAsset(asset);
 
   const rolesLocalizations = useRolesLocalizations([role]);
-  const { classes } = useDashboardCardStyles();
 
   const score = React.useMemo(() => {
     if (!activity.requiresScoring) {
@@ -70,4 +89,9 @@ DashboardCard.propTypes = {
   isBlocked: PropTypes.bool,
   preview: PropTypes.bool,
   localizations: PropTypes.object,
+  assetNumber: PropTypes.number || PropTypes.string,
+  introductionCard: PropTypes.bool,
+  statement: PropTypes.string,
+  cover: PropTypes.object,
+  buttonLink: PropTypes.string,
 };

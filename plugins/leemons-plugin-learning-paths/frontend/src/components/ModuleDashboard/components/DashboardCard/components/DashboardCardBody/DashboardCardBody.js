@@ -3,6 +3,7 @@ import { Box, Text, TextClamp, Badge } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPn from '@learning-paths/helpers/prefixPN';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
+import { htmlToText } from '@learning-paths/components/ModuleDashboard/helpers/htmlToText';
 import { useDashboardCardBodyStyles } from './DashboardCardBody.styles';
 import {
   DASHBOARD_CARD_BODY_DEFAULT_PROPS,
@@ -10,10 +11,22 @@ import {
 } from './DashboardCardBody.constants';
 import { getActivityType } from '../../../../helpers/getActivityType';
 
-const DashboardCardBody = ({ activity }) => {
+const DashboardCardBody = ({ activity, statement, assetNumber }) => {
   const [calificationType, setCalificationType] = useState();
   const [t] = useTranslateLoader(prefixPn('moduleCardBadge.options'));
   const { classes } = useDashboardCardBodyStyles();
+  if (statement) {
+    return (
+      <Box className={classes.root}>
+        <TextClamp lines={2}>
+          <Text className={classes.title}>{assetNumber}</Text>
+        </TextClamp>
+        <TextClamp lines={4}>
+          <Text className={classes.description}>{htmlToText(statement)}</Text>
+        </TextClamp>
+      </Box>
+    );
+  }
   const { assignable } = activity;
   const { asset } = assignable;
   const { name, description } = asset;
