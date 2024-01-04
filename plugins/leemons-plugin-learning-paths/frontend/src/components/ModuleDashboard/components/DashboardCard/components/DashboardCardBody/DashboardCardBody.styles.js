@@ -4,15 +4,8 @@ const useDashboardCardBodyStyles = createStyles((theme) => {
   const { cardModule } = theme.other;
   return {
     root: {
-      padding: `${cardModule.spacing.padding.horizontal.md} ${cardModule.spacing.padding.vertical.md}`,
       borderRadius: cardModule.border.radius.sm,
       backgroundColor: cardModule.background.color.default,
-      borderColor: cardModule.border.color.subtle,
-      borderBottomRightRadius: cardModule.border.radius.sm,
-      borderBottomLeftRadius: cardModule.border.radius.sm,
-      borderLeftWidth: cardModule.border.width.sm,
-      borderRightWidth: cardModule.border.width.sm,
-      borderBottomWidth: cardModule.border.width.sm,
     },
     title: {
       color: cardModule.content.color.emphasis,

@@ -14,11 +14,8 @@ const DashboardCardBody = ({ activity }) => {
   const [calificationType, setCalificationType] = useState();
   const [t] = useTranslateLoader(prefixPn('moduleCardBadge.options'));
   const { classes } = useDashboardCardBodyStyles();
-  const {
-    assignable,
-    dates: { deadline },
-  } = activity;
-  const { asset, role, roleDetails } = assignable;
+  const { assignable } = activity;
+  const { asset } = assignable;
   const { name, description } = asset;
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
@@ -33,7 +30,7 @@ const DashboardCardBody = ({ activity }) => {
   useEffect(() => {
     getInstanceTypeLocale(activity);
   }, [activity]);
-  // const subjectIds = [activity?.subjects[0]?.subject];
+  const subjectIds = [activity?.subjects[0]?.subject];
   return (
     <Box className={classes.root}>
       {calificationType && (
@@ -52,7 +49,7 @@ const DashboardCardBody = ({ activity }) => {
         </Box>
       </Box>
       <Box className={classes.subject}>
-        <SubjectItemDisplay subjectsIds={[1, 2]} />
+        <SubjectItemDisplay subjectsIds={subjectIds} />
       </Box>
     </Box>
   );

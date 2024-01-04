@@ -147,9 +147,10 @@ module.exports = {
     activities: 'Actividades',
     buttons: {
       review: 'Revisar',
-      start: 'Comenzar',
+      start: 'Empezar',
       continue: 'Continuar',
       preview: 'Visualizar',
+      viewEvaluation: 'Ver evaluación',
     },
     resources: 'Recursos',
   },
@@ -171,5 +172,9 @@ module.exports = {
       feedback: 'Feedback',
       feedbackAvailable: 'Feedback disponible',
     },
+  },
+  gradeState: {
+    evaluated: 'Evaluada',
+    delivered: 'Entregada',
   },
 };

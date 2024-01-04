@@ -150,6 +150,7 @@ module.exports = {
       start: 'Start',
       continue: 'Continue',
       preview: 'Preview',
+      viewEvaluation: 'View evaluation',
     },
     resources: 'Resources',
   },
@@ -171,5 +172,9 @@ module.exports = {
       feedback: 'Feedback',
       feedbackAvailable: 'Feedback available',
     },
+  },
+  gradeState: {
+    evaluated: 'Evaluated',
+    delivered: 'Delivered',
   },
 };

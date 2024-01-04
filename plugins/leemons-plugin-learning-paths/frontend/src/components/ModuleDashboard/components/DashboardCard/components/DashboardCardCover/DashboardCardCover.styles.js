@@ -6,6 +6,7 @@ const DashboardCardCoverStyles = createStyles((theme) => {
     root: {
       width: '100%',
       height: pxToRem(144),
+      minHeight: pxToRem(144),
       position: 'relative',
       overflow: 'hidden',
       borderRadius: '4px 4px 0px 0px',

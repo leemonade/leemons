@@ -2,6 +2,7 @@ import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 const useDashboardCardStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
+  const { cardModule } = theme.other;
 
   return {
     root: {
@@ -15,7 +16,7 @@ const useDashboardCardStyles = createStyles((theme) => {
       maxWidth: pxToRem(320),
       minWidth: pxToRem(264),
       height: pxToRem(428),
-
+      position: 'relative',
       // gap: globalTheme.spacing.gap.lg,
     },
     body: {
@@ -24,9 +25,13 @@ const useDashboardCardStyles = createStyles((theme) => {
       // gap: globalTheme.spacing.gap.lg,
     },
 
-    contentContainer: {
-      paddingLeft: globalTheme.spacing.padding['2xsm'],
-      paddingRight: globalTheme.spacing.padding['2xsm'],
+    content: {
+      height: '100%',
+      borderBottomRightRadius: cardModule.border.radius.sm,
+      borderBottomLeftRadius: cardModule.border.radius.sm,
+      border: '1px solid #E9ECEF',
+      borderTop: 'none',
+      padding: `${cardModule.spacing.padding.horizontal.md} ${cardModule.spacing.padding.vertical.md}`,
     },
 
     name: {
