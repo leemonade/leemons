@@ -289,8 +289,11 @@ module.exports = {
       removeSuccess: 'Asset successfully removed',
       pinnedSuccess: 'Asset successfully pinned',
       unpinnedSuccess: 'Asset successfully unpinned',
-      listEmpty: "You haven't created any item in the library.",
-      listEmptyDescription: 'The most recent items will appear here.',
+      listEmpty: 'No assets found',
+      listEmptyDescription:
+        'Thanks to Leemons Libraries, teachers can manage assignments, tests, and sessions. Both teachers and students can create and share multimedia files and save their favorite web pages.',
+      recentListEmpty: "You haven't created any item in the library.",
+      recentListEmptyDescription: 'The most recent items will appear here.',
       searchListEmpty: 'No assets found with this search criteria',
       searchListEmptyDescription:
         'Try searching by keywords (tags) or type in more general information and then use the filters to refine the search.',

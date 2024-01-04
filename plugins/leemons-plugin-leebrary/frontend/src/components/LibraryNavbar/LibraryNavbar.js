@@ -12,24 +12,19 @@ import {
   Stack,
   Text,
 } from '@bubbles-ui/components';
-import { PluginKimIcon } from '@bubbles-ui/icons/solid';
-import {
-  BookPagesIcon,
-  CloudUploadIcon,
-  ManWomanIcon,
-  RemoveIcon,
-} from '@bubbles-ui/icons/outline';
+import { CloudUploadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { LibraryNavbarItem as NavbarItem } from './LibraryNavbarItem';
 import { LibraryNavbarStyles } from './LibraryNavbar.styles';
 import { LIBRARY_NAVBAR_DEFAULT_PROPS, LIBRARY_NAVBAR_PROP_TYPES } from './LibraryNavbar.constants';
 import { getProgramsNamesRequest } from '@leebrary/request';
+import { SubjectItemDisplay } from '@academic-portfolio/components';
 
 const LibraryNavbar = ({
   labels,
   categories,
   selectedCategory,
   subjects,
-  showSharedsWithMe,
+  showSharedWithMe,
   onNavShared,
   onNav,
   onNavSubject,
@@ -40,15 +35,21 @@ const LibraryNavbar = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
-  const [subjectsOpened, setSubjectsOpened] = useState(true);
-  const [programsNames, setProgramsNames] = useState(null);
+  const [programsDropdownInfo, setProgramsDropdownInfo] = useState(null);
 
   const callGetProgramsNames = async () => {
     const response = await getProgramsNamesRequest({
       programsIds: subjects?.map((item) => item.program),
     });
 
-    if (!isEmpty(response?.data)) setProgramsNames(response.data);
+    if (!isEmpty(response?.data)) {
+      const programsInfo = {};
+      Object.keys(response.data).forEach((programId) => {
+        programsInfo[programId] = { name: response.data[programId], dropdownOpen: false };
+      });
+      console.log('programsInfo', programsInfo);
+      setProgramsDropdownInfo(programsInfo);
+    }
   };
 
   useEffect(() => {
@@ -99,18 +100,22 @@ const LibraryNavbar = ({
         {Object.keys(subjectsByProgram).map((programId) => (
           <NavbarItem
             key={'student-subjects'}
-            icon={<BookPagesIcon />}
-            label={programsNames?.[programId]}
+            icon={'/public/leebrary/program.svg'}
+            label={programsDropdownInfo?.[programId].name}
             loading={loading}
             selected={false}
             canOpen
-            opened={subjectsOpened}
+            opened={programsDropdownInfo?.[programId].dropdownOpen}
             onClick={() => {
-              setSubjectsOpened(!subjectsOpened);
+              setProgramsDropdownInfo((current) => {
+                const updatedPrograms = { ...current };
+                updatedPrograms[programId].dropdownOpen = !updatedPrograms[programId].dropdownOpen;
+                return updatedPrograms;
+              });
             }}
           >
-            <ScrollArea style={{ height: 300, maxWidth: '100%' }}>
-              <Box key={`program-${programId}`} style={{ marginLeft: '26px' }}>
+            <ScrollArea style={{ maxWidth: '100%' }}>
+              <Box key={`program-${programId}`} style={{ padding: '0 0 0 16px', marginInline: 8 }}>
                 {subjectsByProgram[programId].map((subject) => (
                   <Box
                     key={JSON.stringify(subject)}
@@ -122,39 +127,26 @@ const LibraryNavbar = ({
                       alignItems: 'center',
                       padding: `8px`,
                       cursor: 'pointer',
-                      backgroundColor: selectedCategory === subject.id && '#e2ff7a',
+                      backgroundColor:
+                        selectedCategory === subject.id && theme.other.core.color.primary['200'],
                       '&:hover': {
-                        backgroundColor: selectedCategory !== subject.id && '#f1ffbd',
+                        backgroundColor:
+                          selectedCategory !== subject.id && theme.other.core.color.primary['100'],
                       },
                       borderLeft: '1px solid #dde1e6',
                     })}
                   >
                     <Box
-                      sx={() => ({
+                      sx={(theme) => ({
                         position: 'absolute',
                         left: '-1px',
                         width: 3,
                         height: '100%',
-                        backgroundColor: selectedCategory === subject.id && '#b4e600',
+                        backgroundColor:
+                          selectedCategory === subject.id && theme.other.core.color.primary['300'],
                       })}
                     />
-                    <Box
-                      sx={() => ({
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: 24,
-                        minHeight: 24,
-                        maxWidth: 24,
-                        maxHeight: 24,
-                        borderRadius: '50%',
-                        backgroundColor: subject?.color,
-                        backgroundImage: 'url(' + subject?.image + ')',
-                        backgroundSize: 'cover',
-                        marginRight: '8px',
-                      })}
-                    />
-                    <Text>{subject.name}</Text>
+                    <SubjectItemDisplay subjectsIds={[subject.id]} />
                   </Box>
                 ))}
               </Box>
@@ -208,15 +200,7 @@ const LibraryNavbar = ({
         return getSubjectsDropdown();
       }
     },
-    [
-      categories,
-      selectedCategory,
-      loading,
-      subjectsOpened,
-      subjects,
-      showSharedsWithMe,
-      programsNames,
-    ]
+    [categories, selectedCategory, loading, subjects, showSharedWithMe, programsDropdownInfo]
   );
 
   const { classes, cx } = LibraryNavbarStyles({ isExpanded }, { name: 'LibraryNavbar' });
@@ -225,7 +209,7 @@ const LibraryNavbar = ({
       <ScrollArea className={classes.navItems}>
         <Stack direction={'column'} fullWidth>
           {useNewCreateButton ? (
-            <Box sx={(theme) => ({ padding: theme.spacing[2] })}>
+            <Box sx={() => ({ padding: 12 })}>
               <DropdownButton
                 sx={() => ({ width: '100%' })}
                 data={renderNavbarItems({
@@ -239,15 +223,15 @@ const LibraryNavbar = ({
             </Box>
           ) : null}
           <NavbarItem
-            icon={<PluginKimIcon />}
+            icon={'/public/leebrary/favorite.svg'}
             label={labels.quickAccess}
             onClick={() => onNavHandler(null)}
             selected={quickAccessSelected}
           />
-          {showSharedsWithMe ? (
+          {showSharedWithMe ? (
             <NavbarItem
               key={'shared-with-me'}
-              icon={<ManWomanIcon />}
+              icon={'/public/leebrary/shared-with-me.svg'}
               label={labels.sharedWithMe}
               loading={loading}
               selected={selectedCategory === 'shared-with-me'}
@@ -255,11 +239,11 @@ const LibraryNavbar = ({
             />
           ) : null}
 
-          <Divider style={{ marginBlock: 8, marginInline: 10, marginTop: 24, marginBottom: 24 }} />
+          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
           {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'contentAssets' })}
-          <Divider style={{ marginBlock: 8, marginInline: 10, marginTop: 24, marginBottom: 24 }} />
+          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
           {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'activityAssets' })}
-          <Divider style={{ marginBlock: 8, marginInline: 10, marginTop: 24, marginBottom: 24 }} />
+          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
           {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'subjects' })}
         </Stack>
         {!useNewCreateButton ? (
@@ -346,4 +330,8 @@ TODO
 - El backend debería devolver las categorías con una prop de tipo de asset (i.e.: isActivity), refiriendose a si es actividad o contenido sólo consumible.
 - Buscar iconos en el backend de cada plugin para ver el nombre, el icono está en la carpeta public del frontend de cada plugin
   icon y activeIcon apuntan al mismo sitio, normal.
-*/
+
+
+
+
+                  */

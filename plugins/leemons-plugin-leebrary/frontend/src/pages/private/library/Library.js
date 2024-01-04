@@ -110,7 +110,7 @@ const LibraryPageContent = () => {
       <Box style={{ width: 240, height: '100%' }} skipFlex>
         {!isEmpty(categories) && (
           <LibraryNavbar
-            showSharedsWithMe
+            showSharedWithMe
             labels={navbarLabels}
             categories={categories}
             selectedCategory={category?.key === 'leebrary-shared' ? 'shared-with-me' : category?.id}
