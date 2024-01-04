@@ -182,6 +182,7 @@ module.exports = {
     archived: 'Ver tareas archivadas',
     selectCalendarsSubjects: 'Todas las asignaturas',
     onlyByMy: 'Solo las creadas por mi',
+    new: 'Nueva',
   },
   kanbanTaskCard: {
     delivery: 'Entrega',

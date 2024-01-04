@@ -9,8 +9,8 @@ import {
   Radio,
   Stack,
   Table,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
@@ -64,7 +64,7 @@ export default function DetailQuestionsBanks({
         page: store.page,
         size: store.size,
         published: true,
-        subjects: _.map(subjects, 'subject'),
+        subjects: _.map(subjects, (subject) => (_.isString(subject) ? subject : subject.subject)),
       });
 
       if (questionBank) {

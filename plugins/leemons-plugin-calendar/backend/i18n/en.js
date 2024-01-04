@@ -182,6 +182,7 @@ module.exports = {
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
     onlyByMy: 'Only those created by me',
+    new: 'New',
   },
   kanbanTaskCard: {
     delivery: 'Delivery',
