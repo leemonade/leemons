@@ -92,6 +92,7 @@ module.exports = {
         en: 'Backlog',
       },
       order: 1,
+      isHidden: true,
       isDone: false,
       isArchived: false,
       bgColor: '#a47dde',

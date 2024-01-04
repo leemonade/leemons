@@ -8,7 +8,8 @@ const _ = require('lodash');
  * @return {Promise<any>}
  * */
 async function list({ ctx }) {
-  const columns = await ctx.tx.db.KanbanColumns.find().lean();
+  let columns = await ctx.tx.db.KanbanColumns.find().lean();
+  columns = _.filter(columns, (column) => !column.isHidden);
   return _.map(columns, (column) => ({
     ...column,
     nameKey: ctx.prefixPN(`kanban.columns.${column.id}`),

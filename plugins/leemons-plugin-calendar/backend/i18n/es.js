@@ -16,6 +16,10 @@ module.exports = {
     end: 'Final',
     course: 'Curso',
   },
+  kanbanCard: {
+    progress: 'Progreso',
+    activities: 'actividades',
+  },
   calendar: {
     month: 'Mes',
     week: 'Semana',
