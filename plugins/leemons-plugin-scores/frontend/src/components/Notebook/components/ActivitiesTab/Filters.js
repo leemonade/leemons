@@ -7,6 +7,7 @@ import {
   ProSwitch,
   SearchInput,
   Select,
+  Switch,
   Text,
   Tooltip,
 } from '@bubbles-ui/components';
@@ -21,11 +22,11 @@ import { useLayout } from '@layout/context';
 
 const useStyles = createStyles((theme) => ({
   filters: {
-    backgroundColor: theme.colors.interactive03,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: theme.spacing[4],
+    paddingLeft: 0,
     width: '100%',
   },
   leftFilters: {
@@ -222,8 +223,8 @@ export function Filters({ onChange, labels, period, onSubmitEvaluationReport, is
             control={control}
             name="showNonCalificables"
             render={({ field }) => (
-              <Box sx={{ height: 20 }}>
-                <ProSwitch
+              <Box sx={{ height: 20, alignSelf: 'baseline' }}>
+                <Switch
                   icon={<CutStarIcon height={12} />}
                   size="md"
                   color={theme.colors.interactive01}

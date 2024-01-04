@@ -127,6 +127,35 @@ export default function ActivitiesTab({ filters, labels }) {
   const { data: programData } = useProgramDetail(filters?.program, { enabled: !!filters?.program });
   const { data: subjectData } = useSubjectDetails(filters.subject, { enabled: !!filters.subject });
 
+  const onSubmitEvaluationReport = () => {
+    try {
+      const scores = getStudentsScores({
+        activitiesData,
+        grades,
+        isLoading,
+        period: filters?.period,
+        class: filters?.class,
+        labels: labels?.periodSubmission,
+      });
+
+      mutateAsync({ scores })
+        .then(() =>
+          addSuccessAlert(
+            labels?.periodSubmission?.success?.replace('{{period}}', filters?.period?.period?.name)
+          )
+        )
+        .catch((e) =>
+          addErrorAlert(
+            labels?.periodSubmission?.error
+              ?.replace('{{period}}', filters?.period?.period?.name)
+              ?.replace('{{error}}', e.message || e.error)
+          )
+        );
+    } catch (e) {
+      //
+    }
+  };
+
   useExcelDownloadHandler({ activitiesData, grades, filters, programData, subjectData });
 
   return (
@@ -136,37 +165,7 @@ export default function ActivitiesTab({ filters, labels }) {
         period={filters?.period}
         labels={labels?.filters}
         isPeriodSubmitted={activitiesData?.isPeriodSubmitted}
-        onSubmitEvaluationReport={() => {
-          try {
-            const scores = getStudentsScores({
-              activitiesData,
-              grades,
-              isLoading,
-              period: filters?.period,
-              class: filters?.class,
-              labels: labels?.periodSubmission,
-            });
-
-            mutateAsync({ scores })
-              .then(() =>
-                addSuccessAlert(
-                  labels?.periodSubmission?.success?.replace(
-                    '{{period}}',
-                    filters?.period?.period?.name
-                  )
-                )
-              )
-              .catch((e) =>
-                addErrorAlert(
-                  labels?.periodSubmission?.error
-                    ?.replace('{{period}}', filters?.period?.period?.name)
-                    ?.replace('{{error}}', e.message || e.error)
-                )
-              );
-          } catch (e) {
-            //
-          }
-        }}
+        onSubmitEvaluationReport={onSubmitEvaluationReport}
       />
       {renderView({ isLoading, activitiesData, grades, filters, labels })}
     </Box>

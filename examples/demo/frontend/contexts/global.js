@@ -53,6 +53,9 @@ class LeemonsApi {
         }
       }
 
+      if (ctx.url === 'v1.comunica.config.connected') {
+        alert('comunica alert');
+      }
       const response = await fetch(`${global.leemons.apiUrl}/api/${ctx.url}`, ctx.options);
 
       const responseCtx = { middlewares: [], response };
@@ -151,8 +154,8 @@ export function Provider({ children }) {
     api.useRes(apiResponseParserMiddleware);
   }, []);
 
-      let apiUrl = window.location.origin;
-  
+  let apiUrl = window.location.origin;
+
   if (window.customEnv?.apiUrl) {
     apiUrl = window.customEnv.apiUrl;
   }

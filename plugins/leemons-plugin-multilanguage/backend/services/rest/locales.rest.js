@@ -30,8 +30,26 @@ module.exports = {
     },
     async handler(ctx) {
       try {
-        const locales = await getAll({ ctx });
+        const locales = await ctx.tx.db.Locales.find({ ctx });
         return { locales };
+      } catch (e) {
+        ctx.meta.$statusCode = 400;
+        return { status: 400, error: e.message };
+      }
+    },
+  },
+  reloadRest: {
+    rest: {
+      method: 'PUT',
+      path: '/',
+    },
+    async handler(ctx) {
+      try {
+        const locales = await getAll({ ctx });
+
+        locales.map((locale) => ctx.tx.emit('newLocale', { code: locale.code }));
+
+        return locales;
       } catch (e) {
         ctx.meta.$statusCode = 400;
         return { status: 400, error: e.message };

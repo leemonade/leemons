@@ -17,6 +17,7 @@ import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries'
 import _ from 'lodash';
 import React from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import dayjs from 'dayjs';
 import { useAcademicCalendarPeriods } from './useAcademicCalendarPeriods';
 
 function ClassItem({ class: klass, dropdown = false, ...props }) {
@@ -74,9 +75,7 @@ function ClassItem({ class: klass, dropdown = false, ...props }) {
 }
 
 const useFiltersStyles = createStyles((theme) => ({
-  root: {
-    marginLeft: theme.spacing[5],
-  },
+  root: {},
   title: {
     fontSize: theme.fontSizes[2],
     fontWeight: 500,
@@ -106,20 +105,16 @@ function useFiltersLocalizations() {
   const key = prefixPN('scoresPage.filters');
   const [, translations] = useTranslateLoader(key);
 
-  const localizations = React.useMemo(() => {
+  return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, key);
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, key);
     }
 
     return {};
   }, [translations]);
-
-  return localizations;
 }
 
 function useSelectedClass({ classes, control }) {
@@ -136,9 +131,7 @@ function useSelectedClass({ classes, control }) {
       return null;
     }
 
-    const classFound = classes.find((klass) => klass.id === selectedClass[0]);
-
-    return classFound;
+    return classes.find((klass) => klass.id === selectedClass[0]);
   }, [selectedClassId, classes]);
 }
 
@@ -247,11 +240,22 @@ function usePeriods({ selectedClass, classes }) {
 
   const academicCalendarPeriods = useAcademicCalendarPeriods({ classes });
 
+  const now = dayjs();
+
   const periods = React.useMemo(() => {
     const allPeriods = [
-      ...(adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })) || []),
-      ...(academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })) ||
-        []),
+      ...(adminPeriods?.map((p) => ({
+        ...p,
+        group: periodTypes?.custom,
+        type: 'custom',
+        current: !now.isBefore(p.startDate) && !now.isAfter(p.endDate),
+      })) || []),
+      ...(academicCalendarPeriods?.map((p) => ({
+        ...p,
+        group: periodTypes?.academicCalendar,
+        type: 'academic-calendar',
+        current: !now.isBefore(p.startDate) && !now.isAfter(p.endDate),
+      })) || []),
     ];
 
     if (!allPeriods.length) {
@@ -262,6 +266,13 @@ function usePeriods({ selectedClass, classes }) {
       ?.filter((period) => {
         if (!selectedClass) {
           return false;
+        }
+
+        if (Array.isArray(selectedClass.courses) && period.courses?.length) {
+          return (
+            period.programs.includes(selectedClass.program) &&
+            selectedClass.courses.some((course) => period.courses.includes(course?.id))
+          );
         }
 
         if (period.courses?.length) {
@@ -342,14 +353,34 @@ function PickDate({ control, name }) {
   );
 }
 
+function useSelectCurrentPeriod({ periods, control, setValue }) {
+  const { isDirty } = control.getFieldState('period');
+  const currentPeriod = React.useMemo(() => {
+    if (!periods.length) {
+      return null;
+    }
+
+    return periods.find((period) => period.type === 'academic-calendar' && period.current);
+  }, [periods]);
+
+  React.useEffect(() => {
+    if (!isDirty && currentPeriod) {
+      setValue('period', currentPeriod?.id, { shouldDirty: false });
+    }
+  }, [currentPeriod]);
+}
+
 export function Filters({ onChange }) {
   const { classes, cx } = useFiltersStyles();
   const localizations = useFiltersLocalizations();
   const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({});
-  const { control } = useForm();
+  const { control, setValue } = useForm();
 
   const selectedClass = useSelectedClass({ classes: classesData, control });
   const { periods } = usePeriods({ selectedClass, classes: classesData });
+
+  useSelectCurrentPeriod({ periods, control, setValue });
+
   const periodTypes = usePeriodTypes();
 
   const selectedPeriod = useSelectedPeriod({
@@ -410,7 +441,8 @@ export function Filters({ onChange }) {
               const data = [
                 ...(periods?.map((period) => ({
                   value: period.id,
-                  label: period.name,
+                  label:
+                    period.name + (period.current ? ` (${localizations?.period?.current})` : ''),
                   group: period.group,
                 })) || []),
                 {

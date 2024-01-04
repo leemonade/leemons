@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
+import { Box, createStyles, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
 import _, { isEmpty } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -26,20 +26,16 @@ const useNotebookStyles = createStyles((theme) => ({
 function useNotebookLocalizations(key) {
   const [, translations] = useTranslateLoader(prefixPN(key));
 
-  const labels = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN(key));
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN(key));
     }
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 
 export default function Notebook({ filters, isStudent, klasses }) {
@@ -53,21 +49,17 @@ export default function Notebook({ filters, isStudent, klasses }) {
   }
 
   return (
-    <Box className={classes.root}>
+    <Stack spacing="md" direction="column">
       <Header filters={filters} variant="notebook" allowDownload isStudent={isStudent} />
       {isStudent ? (
         <StudentActivities klasses={klasses} filters={filters} labels={labels} />
       ) : (
-        <Tabs className={classes.tabHeader}>
-          <TabPanel label={labels.activities.title} className={classes.tabPanel}>
-            <ActivitiesTab
-              key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
-              filters={filters}
-              labels={labels.activities}
-            />
-          </TabPanel>
-        </Tabs>
+        <ActivitiesTab
+          key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
+          filters={filters}
+          labels={labels.activities}
+        />
       )}
-    </Box>
+    </Stack>
   );
 }

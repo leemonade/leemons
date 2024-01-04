@@ -22,6 +22,7 @@ module.exports = {
         label: 'Periodo de evaluación',
         placeholder: 'Periodo de evaluación...',
         custom: 'Periodo personalizado',
+        current: 'en curso',
         final: 'Evaluación final',
       },
       startDate: {

@@ -22,6 +22,7 @@ module.exports = {
         label: 'Evaluation period',
         placeholder: 'Evaluation period...',
         custom: 'Custom period',
+        current: 'current',
         final: 'Final evaluation',
       },
       startDate: {

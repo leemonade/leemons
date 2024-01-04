@@ -4,13 +4,13 @@ import { unflatten, useCache, useLocale } from '@common';
 import _ from 'lodash';
 import { useUserAgentsInfo } from '@users/hooks';
 import { useScores } from '@scores/requests/hooks/queries';
-import { ScoresReviewerTable } from '../Tables/ScoresReviewerTable';
 import { Box, Loader } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useProgramDetail } from '@academic-portfolio/hooks';
+import { ScoresReviewerTable } from '../Tables/ScoresReviewerTable';
 import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
 import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesTab/useParsedActivities';
 import { onDataChange } from './onDataChange';
@@ -106,6 +106,7 @@ export function useMatchingAcademicCalendarPeriods({ classes, filters }) {
   const cache = useCache();
   const periods = useAcademicCalendarPeriods({ classes });
 
+  console.log('periods', { periods });
   const parsedPeriods = React.useMemo(() => {
     if (!(filters?.program && filters?.course && periods?.length)) {
       return cache('periods', []);

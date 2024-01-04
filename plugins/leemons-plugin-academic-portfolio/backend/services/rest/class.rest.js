@@ -204,9 +204,6 @@ module.exports = {
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           subject,
-          query: {
-            userSession: ctx.meta.userSession,
-          },
           ctx,
         });
         return { status: 200, data };

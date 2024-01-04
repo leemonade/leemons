@@ -6,10 +6,11 @@
   "dependencies": {
     "@bubbles-ui/components": "dev",
     "@bubbles-ui/editors": "dev",
-    "@bubbles-ui/icons": "dev",
     "@bubbles-ui/extras": "dev",
+    "@bubbles-ui/icons": "dev",
     "@bubbles-ui/leemons": "dev",
     "@loadable/component": "^5.15.2",
+    "@nivo/bar": "^0.84.0",
     "@tanstack/react-query": "^4.16.1",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21",
