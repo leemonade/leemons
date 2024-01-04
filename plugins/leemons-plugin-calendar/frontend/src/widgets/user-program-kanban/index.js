@@ -11,7 +11,7 @@ import {
   Text,
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
-import { AddIcon as PlusIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@calendar/components';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -330,7 +330,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
         </Box>
         <Box>
           {!store.loading ? (
-            <Button leftIcon={<PlusIcon />} onClick={onNewEvent}>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
               {t('new')}
             </Button>
           ) : null}

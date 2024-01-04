@@ -52,8 +52,6 @@ const Styles = createStyles((theme) => ({
     paddingRight: theme.spacing[4],
     cursor: 'pointer',
     textAlign: 'center',
-    border: '2px solid',
-    borderColor: theme.colors.uiBackground01,
     transitionDuration: '100ms',
   },
   colorIcon: {

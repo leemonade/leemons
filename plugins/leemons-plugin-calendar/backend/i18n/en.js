@@ -191,6 +191,7 @@ module.exports = {
     calendar: 'Calendar',
     allSubjects: 'All subjects',
     showAllCalendar: 'Show all calendar',
+    agenda: 'Agenda',
   },
   userProgramKanban: {
     kanban: 'Kanban highlight',

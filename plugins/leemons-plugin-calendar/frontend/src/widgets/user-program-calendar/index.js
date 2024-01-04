@@ -7,11 +7,10 @@ import {
   createStyles,
   ImageLoader,
   Loader,
-  Select,
   Stack,
   Title,
 } from '@bubbles-ui/components';
-import { AddIcon as PlusIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -39,8 +38,10 @@ const Styles = createStyles((theme, { inTab }) => ({
     lineHeight: '28px',
   },
   calendarContainer: {
-    paddingTop: theme.spacing[6],
     height: inTab ? '1150px' : '750px',
+    backgroundColor: '#FFFFFF',
+    marginTop: theme.spacing[4],
+    padding: theme.spacing[6],
   },
 }));
 
@@ -211,16 +212,25 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
   return (
     <Box className={styles.root}>
       {!inTab ? (
-        <Stack alignItems="center">
+        <Stack fullWidth alignItems="center" justifyContent="space-between">
           {/* <PluginCalendarIcon /> */}
-          <Box className={styles.title}>{t('calendar')}</Box>
-          {program && !store.loading ? (
-            <Select
-              data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
-              value={store.selectedCalendar || '*'}
-              onChange={onChangeSelectedCalendar}
-            />
-          ) : null}
+          <Box>
+            <Box className={styles.title}>{t('agenda')}</Box>
+            {/*
+            {program && !store.loading ? (
+              <Select
+                data={[{ label: t('allSubjects'), value: '*' }, ...store.calendarFilters]}
+                value={store.selectedCalendar || '*'}
+                onChange={onChangeSelectedCalendar}
+              />
+            ) : null}
+            */}
+          </Box>
+          <Box>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
+              {tc('new')}
+            </Button>
+          </Box>
         </Stack>
       ) : null}
 
@@ -234,7 +244,7 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
           />
           <BigCalendar
             style={{ height: '100%' }}
-            currentView="week"
+            currentView="agenda"
             eventClick={onEventClick}
             events={store.filteredEvents || []}
             {...store.fullCalendarConfig}
@@ -275,22 +285,6 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
             locale={session?.locale}
             showToolbarAddButton={false}
             showToolbarViewSwitcher={false}
-            toolbarRightNode={
-              <Stack alignItems="center">
-                {/* <Box sx={(theme) => ({ marginRight: theme.spacing[4] })}>
-                <Button variant="link" onClick={() => history.push('/private/calendar/home')}>
-                  {t('showAllCalendar')}
-                  <ChevRightIcon />
-                </Button>
-              </Box> */}
-
-                <Box>
-                  <Button leftIcon={<PlusIcon />} onClick={onNewEvent}>
-                    {tc('new')}
-                  </Button>
-                </Box>
-              </Stack>
-            }
           />
         </Box>
       ) : (
