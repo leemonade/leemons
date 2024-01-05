@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import {
   AvatarsGroup,
+  Badge,
   Box,
   ImageLoader,
   ProgressColorBar,
@@ -20,6 +21,7 @@ import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
 import { NYACardBodyStyles } from '@assignables/components/NYACard/NYCardBody/NYACardBody.styles';
 import { useSession } from '@users/session';
 import getUserFullName from '@users/helpers/getUserFullName';
+import getActivityType from '@assignables/helpers/getActivityType';
 import { KanbanTaskCardStyles } from './KanbanTaskCard.styles';
 
 const emptyPixel =
@@ -133,22 +135,22 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
 
   const end = value.deadline?.deadline || value.endDate;
   let endEl = null;
-  if (end && trans?.deadline) {
-    const formattedDeadline = getDeadlineData(
-      new Date(end),
-      new Date(value.startDate),
-      trans?.deadline
-    );
-    const deadlineColors = getColorByDateRange(new Date(end), new Date(value.startDate));
-    endEl = (
-      <Box className={classesNya.deadline}>
-        <Text className={classesNya.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
-        <Text className={classesNya.deadlineDate} style={{ color: deadlineColors }}>
-          {formattedDeadline.status}
-        </Text>
-      </Box>
-    );
-  }
+  const formattedDeadline = getDeadlineData(
+    end ? new Date(end) : null,
+    new Date(value.startDate),
+    trans?.deadline || {}
+  );
+  const deadlineColors = getColorByDateRange(end ? new Date(end) : null, new Date(value.startDate));
+  endEl = (
+    <Box className={classesNya.deadline}>
+      <Text className={classesNya.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
+      <Text className={classesNya.deadlineDate} style={{ color: deadlineColors }}>
+        {formattedDeadline.status}
+      </Text>
+    </Box>
+  );
+
+  const activityType = getActivityType(value?.instanceData?.instance || {});
 
   return (
     <Box
@@ -157,6 +159,17 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
       onClick={() => onClick(value)}
     >
       <Box className={classes.topSection}>
+        {activityType && (
+          <Badge
+            sx={(theme) => ({ marginBottom: theme.spacing[3] })}
+            closable={false}
+            size="xs"
+            className={classesNya.calificationBadge}
+          >
+            <Text className={classesNya.draftText}>{labels[activityType]?.toUpperCase()}</Text>
+          </Badge>
+        )}
+
         <TextClamp lines={2}>
           <Box className={classes.title}>{value.title}</Box>
         </TextClamp>
@@ -193,7 +206,8 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
               }
               labelRight={
                 <Box>
-                  ({percentaje.completed}/{percentaje.total} {t('activities')})
+                  ({percentaje.completed}/{percentaje.total}{' '}
+                  {t(value?.instanceData ? 'activities' : 'subtask')})
                 </Box>
               }
               size={'md'}

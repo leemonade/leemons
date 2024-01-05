@@ -41,6 +41,12 @@ const Styles = createStyles((theme) => ({
     backgroundPosition: '50% 50%',
     backgroundSize: 'cover',
     backgroundColor: theme.colors.ui02,
+    fontSize: '24px',
+    fontWeight: 600,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#FFFFFF',
   },
   cardWrapper: {
     padding: 2,
@@ -156,6 +162,14 @@ function UserClassesSwiperWidget({ program }) {
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
+
+          let nameFirstLetters = null;
+          const nameArray = classe.subject.name.split(' ');
+          if (nameArray.length > 1) {
+            nameFirstLetters = nameArray[0][0] + nameArray[1][0];
+          } else {
+            nameFirstLetters = nameArray[0][0];
+          }
           return (
             <Box
               key={classe.id}
@@ -171,7 +185,14 @@ function UserClassesSwiperWidget({ program }) {
                 onClick={() => goClassDashboard(classe)}
               >
                 <Box className={styles.imageContainer}>
-                  <Box className={styles.image} style={imageStyle} />
+                  <Box
+                    style={
+                      classe.color ? { backgroundColor: classe.color, ...imageStyle } : imageStyle
+                    }
+                    className={styles.image}
+                  >
+                    {nameFirstLetters}
+                  </Box>
                   {classe.color || classe.icon ? (
                     <Box
                       style={classe.color ? { backgroundColor: classe.color } : {}}

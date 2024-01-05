@@ -5,7 +5,7 @@ import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
 // TODO: ClassroomHeaderBar, HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
-import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
+import { ClassroomHeaderBar, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { LayoutContext } from '@layout/context/layout';
@@ -142,20 +142,21 @@ export default function ClassDashboard({ session }) {
       const group = programClass.groups?.isAlone
         ? null
         : programClass.groups
-          ? programClass.groups.abbreviation
-          : null;
+        ? programClass.groups.abbreviation
+        : null;
       return {
         id: programClass.id,
         color: programClass.color,
         image: getClassImage(programClass),
         icon: getClassIcon(programClass),
         label: programClass.subject.name,
-        description: `${programClass.courses
+        description: `${
+          programClass.courses
             ? courseMultiple
               ? `${t('multipleCourses')} - ${programClass.subject.internalId}`
               : `${programClass.courses?.index}${programClass.subject.internalId}`
             : ''
-          } ${group ? `- ${group}` : ''}`,
+        } ${group ? `- ${group}` : ''}`,
       };
     });
 
@@ -281,15 +282,13 @@ export default function ClassDashboard({ session }) {
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
       <Box className={styles.leftSide}>
-        <Box className={styles.header}>
-          <HeaderBackground {...headerProps} withGradient styles={{ position: 'absolute' }} />
-          <Box className={styles.dropdown}>
-            <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
-          </Box>
-        </Box>
         <Box className={styles.classBar}>
           <ClassroomHeaderBar
-            labels={{ virtualClassroom: t('virtualClassroom') }}
+            labels={{
+              chat: t('chat'),
+              schedule: t('schedule'),
+              virtualClassroom: t('virtualClassroom'),
+            }}
             onVirtualClassroomOpen={onVirtualClassroomOpen}
             classRoom={{
               schedule: store.class?.schedule,
@@ -298,6 +297,13 @@ export default function ClassDashboard({ session }) {
               teacher: mainTeacher?.user,
             }}
             locale={locale}
+            leftSide={
+              <HeaderDropdown
+                value={store.class}
+                data={store.classesSelect}
+                onChange={changeClass}
+              />
+            }
             rightSide={
               <>
                 {!store.loading ? (
@@ -350,6 +356,7 @@ export default function ClassDashboard({ session }) {
           </ZoneWidgets>
         ) : null}
       </Box>
+      {/*
       {!store.hideStudents ? (
         <Box className={styles.rightSide}>
           {store.rightWidgetSelect ? (
@@ -366,18 +373,7 @@ export default function ClassDashboard({ session }) {
               </Tabs>
             ) : null
           ) : null}
-          {/* {store.rightWidgetSelect ? (
-          <RadioGroup
-            variant="icon"
-            data={store.rightWidgetSelect || []}
-            fullWidth
-            onChange={(e) => {
-              store.selectedRightTab = e;
-              render();
-            }}
-            value={store.selectedRightTab}
-          />
-        ) : null} */}
+
           <Box className={styles.rightSidewidgetsContainer}>
             {!store.loading ? (
               <ZoneWidgets zone="dashboard.class.right-tabs" onGetZone={onGetRightZone}>
@@ -387,6 +383,7 @@ export default function ClassDashboard({ session }) {
           </Box>
         </Box>
       ) : null}
+      */}
     </>
   );
 }

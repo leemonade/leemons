@@ -19,6 +19,7 @@ module.exports = {
   kanbanCard: {
     progress: 'Progreso',
     activities: 'actividades',
+    subtask: 'Subtareas',
   },
   calendar: {
     month: 'Mes',
@@ -57,7 +58,7 @@ module.exports = {
   },
   event_modal: {
     name: 'Nombre',
-    subtasks: 'Sub-tareas',
+    subtasks: 'Subtareas',
     title: 'Titulo del evento',
     save: 'Guardar',
     update: 'Actualizar',
@@ -92,7 +93,7 @@ module.exports = {
   task_mode_event_type: {
     description: 'Descripción',
     subtask: 'Subtarea',
-    subtaskLabel: 'Sub-tareas',
+    subtaskLabel: 'Subtareas',
     add_subtask: 'Añadir sub-tarea',
     tags: 'Etiqueta de asignatura',
     column: 'Estado en Kanban',
@@ -186,6 +187,9 @@ module.exports = {
   },
   kanbanTaskCard: {
     delivery: 'Entrega',
+    no_evaluable: 'No evaluable',
+    calificable: 'Calificable',
+    puntuable: 'Puntuable',
   },
   userProgramCalendar: {
     calendar: 'Calendario',

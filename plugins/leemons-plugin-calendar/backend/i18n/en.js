@@ -19,6 +19,7 @@ module.exports = {
   kanbanCard: {
     progress: 'Progress',
     activities: 'activities',
+    subtask: 'Subtasks',
   },
   calendar: {
     month: 'Month',
@@ -186,6 +187,9 @@ module.exports = {
   },
   kanbanTaskCard: {
     delivery: 'Delivery',
+    no_evaluable: 'No evaluable',
+    calificable: 'Gradable',
+    puntuable: 'Punctuable',
   },
   userProgramCalendar: {
     calendar: 'Calendar',
