@@ -19,6 +19,8 @@ const DashboardCard = ({
   statement,
   cover,
   buttonLink,
+  emptyIcon,
+  fileType,
 }) => {
   const { classes } = useDashboardCardStyles();
   if (introductionCard) {
@@ -28,6 +30,8 @@ const DashboardCard = ({
           cover={getFileUrl(cover)}
           assetNumber={assetNumber}
           statement={statement}
+          emptyIcon={emptyIcon}
+          fileType={fileType}
         />
         <Box className={classes.content}>
           <DashboardCardBody statement={statement} assetNumber={assetNumber} />
@@ -94,4 +98,6 @@ DashboardCard.propTypes = {
   statement: PropTypes.string,
   cover: PropTypes.object,
   buttonLink: PropTypes.string,
+  emptyIcon: PropTypes.string,
+  fileType: PropTypes.string,
 };

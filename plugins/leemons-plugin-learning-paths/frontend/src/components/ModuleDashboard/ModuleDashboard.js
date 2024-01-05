@@ -253,7 +253,6 @@ export function ModuleDashboardBody({
   const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
 
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
-
   return (
     <Box className={classes.body}>
       <Box className={classes.rootContainer}>
@@ -267,6 +266,8 @@ export function ModuleDashboardBody({
             cover={module?.assignable?.asset?.cover}
             buttonLink={'buttonLink'}
             localizations={localizations}
+            emptyIcon={module?.assignable?.roleDetails?.icon}
+            fileType={module?.assignable?.roleDetails?.name}
           />
           {sortBy(
             activities?.map((activity, index) => ({
