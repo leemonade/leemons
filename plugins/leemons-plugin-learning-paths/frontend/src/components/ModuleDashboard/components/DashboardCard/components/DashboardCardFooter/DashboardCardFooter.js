@@ -6,6 +6,7 @@ import durationPlugin from 'dayjs/plugin/duration';
 import { Link } from 'react-router-dom';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import { capitalize, get } from 'lodash';
+import { LockIcon } from '@bubbles-ui/icons/solid';
 import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
 import { EvaluationStateDisplay } from '../EvaluationStateDisplay';
 
@@ -145,9 +146,13 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
 
   if (isBlocked) {
     return (
-      <Button disabled size="sm">
-        {isStartedByStudent ? localizations?.buttons?.continue : localizations?.buttons?.start}
-      </Button>
+      <Box className={classes.buttonFull}>
+        <Button disabled fullWidth leftIcon={<LockIcon />}>
+          {isStartedByStudent
+            ? localizations?.buttons?.continue
+            : localizations?.buttons?.notAvailable}
+        </Button>
+      </Box>
     );
   }
   return (

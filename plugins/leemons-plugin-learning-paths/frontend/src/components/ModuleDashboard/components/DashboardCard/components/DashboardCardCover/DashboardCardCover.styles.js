@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-const DashboardCardCoverStyles = createStyles((theme) => {
+const DashboardCardCoverStyles = createStyles((theme, { moduleColor }) => {
   const { ChipModule } = theme.other;
   return {
     root: {
@@ -18,6 +18,13 @@ const DashboardCardCoverStyles = createStyles((theme) => {
       backgroundColor: ChipModule.background.color.default,
       borderRadius: '0px 4px 4px 0px',
       padding: `${pxToRem(8)} ${pxToRem(12)}`,
+    },
+    color: {
+      width: '100%',
+      height: pxToRem(4),
+      backgroundColor: moduleColor || 'transparent',
+      transition: 'all 0.2s ease-out',
+      borderRadius: '2px 0 0 0',
     },
   };
 });

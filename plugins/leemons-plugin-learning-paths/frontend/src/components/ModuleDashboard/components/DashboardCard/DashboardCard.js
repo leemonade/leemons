@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import prepareAsset, { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { useDashboardCardStyles } from './DashboardCard.styles';
 import { DashboardCardCover } from './components/DashboardCardCover';
 import { DashboardCardBody } from './components/DashboardCardBody';
@@ -21,7 +22,9 @@ const DashboardCard = ({
   buttonLink,
   emptyIcon,
   fileType,
+  moduleColor,
 }) => {
+  const isTeacher = useIsTeacher();
   const { classes } = useDashboardCardStyles();
   if (introductionCard) {
     return (
@@ -45,8 +48,15 @@ const DashboardCard = ({
   const preparedAsset = prepareAsset(asset);
 
   const rolesLocalizations = useRolesLocalizations([role]);
+  // console.group();
+  // console.log('name', activity?.assignable?.asset?.name);
+  // console.log('activity', activity);
+  // console.groupEnd();
 
   const score = React.useMemo(() => {
+    if (isTeacher) {
+      return null;
+    }
     if (!activity.requiresScoring) {
       return null;
     }
@@ -54,18 +64,19 @@ const DashboardCard = ({
     const grades = assignation.grades.filter((grade) => grade.type === 'main');
     const sum = grades.reduce((s, grade) => grade.grade + s, 0);
     return sum / grades.length;
-  }, [assignation.grades, activity.requiresScoring]);
+  }, [assignation?.grades, activity.requiresScoring]);
 
   return (
     <Box className={classes.root}>
       <DashboardCardCover
         asset={preparedAsset}
-        assetNumber={assetNumber ?? 1}
+        assetNumber={assetNumber}
         assignation={assignation}
         score={activity.requiresScoring && score}
         program={activity?.subjects?.[0]?.program}
         isCalificable={activity.requiresScoring}
         instance={activity}
+        moduleColor={moduleColor}
       />
       <Box className={classes.content}>
         <DashboardCardBody activity={activity} />
@@ -100,4 +111,5 @@ DashboardCard.propTypes = {
   buttonLink: PropTypes.string,
   emptyIcon: PropTypes.string,
   fileType: PropTypes.string,
+  moduleColor: PropTypes.string,
 };

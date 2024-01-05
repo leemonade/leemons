@@ -18,9 +18,9 @@ const DashboardCardCover = ({
   cover,
   emptyIcon,
   fileType,
+  moduleColor,
 }) => {
-  const { classes } = DashboardCardCoverStyles();
-
+  const { classes } = DashboardCardCoverStyles({ moduleColor });
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -95,6 +95,7 @@ const DashboardCardCover = ({
       : null;
   return (
     <Box className={classes.root}>
+      <Box className={classes.color} />
       {isGradeAssigned && (
         <Box className={classes.gradeLabel}>
           <ScoreFeedback

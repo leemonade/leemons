@@ -251,7 +251,7 @@ export function ModuleDashboardBody({
   preview,
 }) {
   const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
-
+  const moduleColor = module?.assignable?.asset?.color;
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
   return (
     <Box className={classes.body}>
@@ -280,6 +280,7 @@ export function ModuleDashboardBody({
                   key={activity?.id}
                   preview={preview}
                   assetNumber={index + 1}
+                  moduleColor={moduleColor}
                 />
               ),
               createdAt: activitiesById[activity?.id].createdAt,

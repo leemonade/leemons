@@ -151,6 +151,7 @@ module.exports = {
       continue: 'Continue',
       preview: 'Preview',
       viewEvaluation: 'View evaluation',
+      notAvailable: 'Unavailable',
     },
     resources: 'Resources',
   },
