@@ -31,7 +31,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import ChatButton from '@comunica/components/ChatButton';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
@@ -88,14 +87,10 @@ export default function Result() {
     try {
       store.loading = true;
       render();
-      console.log('init');
       [store.instance, store.assignation] = await Promise.all([
         getAssignableInstance({ id: params.id }),
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
-
-      console.log('store.instance');
-      console.log(store.instance);
 
       const [{ evaluationSystem }, { questions }, { responses }, { timestamps }, { feedback }] =
         await Promise.all([

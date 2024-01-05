@@ -18,7 +18,7 @@ async function listClasses({ page, size, program }) {
 
 async function listSubjectClasses({ page, size, subject }) {
   return leemons.api(
-    `v1/academic-portfolio/subjects/class?page=${page}&size=${size}&subject=${subject}`,
+    `v1/academic-portfolio/classes/subjects/class?page=${page}&size=${size}&subject=${subject}`,
     {
       allAgents: true,
       method: 'GET',

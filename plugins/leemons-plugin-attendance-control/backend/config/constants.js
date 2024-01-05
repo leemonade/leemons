@@ -39,6 +39,12 @@ const widgets = {
       key: `attendance-control.class.header-bar`,
       url: 'class-header-bar/index',
     },
+    {
+      zoneKey: 'dashboard.class.tabs',
+      key: `attendance-control.class.tabs.detail`,
+      url: 'class-tab-detail/index',
+      profiles: ['teacher'],
+    },
   ],
 };
 

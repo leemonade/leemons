@@ -16,13 +16,18 @@ import { find, isArray, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { ChatDrawer } from '@comunica/components';
+import hooks from 'leemons-hooks';
 
 const rightZoneWidth = '320px';
 
 const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar }) => ({
+  root: {},
   leftSide: {
+    backgroundColor: '#F8F9FB',
     width: hideRightSide || hideStudents ? '100%' : `calc(100% - ${rightZoneWidth})`,
     transition: '300ms',
+    minHeight: '100vh',
   },
   rightSide: {
     width: rightZoneWidth,
@@ -92,13 +97,14 @@ export default function ClassDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
     tabNames: {},
+    chatOpened: false,
     tabsProperties: {},
     hideRightSide: false,
     haveScrollBar: false,
   });
 
   const { classes: styles } = Styles({
-    hideRightSide: store.hideRightSide,
+    hideRightSide: true, // store.hideRightSide,
     haveScrollBar: store.haveScrollBar,
     hideStudents: store.hideStudents,
   });
@@ -296,13 +302,21 @@ export default function ClassDashboard({ session }) {
               virtual_classroom: store.class?.virtualUrl,
               teacher: mainTeacher?.user,
             }}
+            showChat
+            onChat={() => {
+              hooks.fireEvent('chat:onRoomOpened', store.room);
+              store.chatOpened = true;
+              render();
+            }}
             locale={locale}
             leftSide={
-              <HeaderDropdown
-                value={store.class}
-                data={store.classesSelect}
-                onChange={changeClass}
-              />
+              <Box>
+                <HeaderDropdown
+                  value={store.class}
+                  data={store.classesSelect}
+                  onChange={changeClass}
+                />
+              </Box>
             }
             rightSide={
               <>
@@ -339,23 +353,42 @@ export default function ClassDashboard({ session }) {
         </Stack>
         */}
         {!store.loading ? (
-          <ZoneWidgets
-            zone="dashboard.class.tabs"
-            onGetZone={onGetZone}
-            container={
-              <Tabs
-                onChange={(key) => {
-                  store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
-                  render();
-                }}
-                style={{ width: '100%' }}
-              />
-            }
-          >
-            {classTabs}
-          </ZoneWidgets>
+          <Box className={styles.widgets}>
+            <ZoneWidgets
+              zone="dashboard.class.tabs"
+              onGetZone={onGetZone}
+              container={
+                <Tabs
+                  onChange={(key) => {
+                    store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
+                    render();
+                  }}
+                  style={{ width: '100%' }}
+                />
+              }
+            >
+              {classTabs}
+            </ZoneWidgets>
+          </Box>
         ) : null}
       </Box>
+      {!store.loading ? (
+        <>
+          <ChatDrawer
+            onClose={() => {
+              hooks.fireEvent('chat:closeDrawer');
+              store.chatOpened = false;
+              render();
+            }}
+            opened={store.chatOpened}
+            onRoomLoad={(room) => {
+              store.room = room;
+              render();
+            }}
+            room={`academic-portfolio.room.class.${store.idLoaded}`}
+          />
+        </>
+      ) : null}
       {/*
       {!store.hideStudents ? (
         <Box className={styles.rightSide}>

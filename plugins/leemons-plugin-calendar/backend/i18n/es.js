@@ -198,7 +198,8 @@ module.exports = {
     agenda: 'Agenda',
   },
   userProgramKanban: {
-    kanban: 'Kanban destacado',
+    kanban: 'Kanban',
+    kanbanHighlight: 'Kanban destacado',
     description: 'Tareas destacadas que finalizan en menos de 5 días',
     showAllKanban: 'Ver kanban completo',
     new: 'Nuevo',

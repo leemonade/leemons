@@ -313,14 +313,12 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     <Box className={styles.root}>
       <Stack fullWidth alignItems="center" justifyContent="space-between">
         <Box>
-          {!inTab ? (
-            <>
-              {/* <PluginKanbanIcon /> */}
-              <Text size="lg" color="primary" className={styles.title}>
-                {t('kanban')}
-              </Text>
-            </>
-          ) : null}
+          <>
+            {/* <PluginKanbanIcon /> */}
+            <Text size="lg" color="primary" className={styles.title}>
+              {t(inTab ? 'kanban' : 'kanbanHighlight')}
+            </Text>
+          </>
 
           {/* <Text color="soft">{t('description')}</Text> */}
           {/* <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
