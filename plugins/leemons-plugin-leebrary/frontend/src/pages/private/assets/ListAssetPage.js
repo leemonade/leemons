@@ -44,7 +44,7 @@ const ListAssetPage = () => {
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
 
-  const [assetType, setAssetType] = useState('');
+  const [mediaAssetType, setMediaAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
   const [showPublished, setShowPublished] = useState(true);
   const history = useHistory();
@@ -58,7 +58,7 @@ const ListAssetPage = () => {
   const isAdmin = profile === 'admin';
   const academicFilters = useAcademicFiltersForAssetList({
     // hideProgramSelect: isStudent,
-    useLabels: true,
+    useLabels: false,
   });
 
   // ·········································································
@@ -104,9 +104,9 @@ const ListAssetPage = () => {
     }
 
     if (isEmpty(type)) {
-      setAssetType('');
-    } else if (type !== assetType) {
-      setAssetType(type);
+      setMediaAssetType('');
+    } else if (type !== mediaAssetType) {
+      setMediaAssetType(type);
     }
 
     if (isEmpty(_activeTab)) {
@@ -166,7 +166,7 @@ const ListAssetPage = () => {
 
       return result.join('&');
     },
-    [query]
+    [query, activeTab]
   );
 
   // ·········································································
@@ -256,13 +256,17 @@ const ListAssetPage = () => {
   // RENDER
 
   let props = {};
+  const multiAssetSections = ['pins', 'leebrary-shared', 'leebrary-recent'];
+
   if (
-    (category?.key === 'pins' || category?.key?.startsWith('assignables.')) &&
+    (multiAssetSections.includes(category?.key) || category?.key?.startsWith('assignables.')) &&
     (isTeacher || isStudent)
   ) {
     props = academicFilters;
+    props.canChangeType = false;
   }
-  if (category?.key === 'media-files' && isTeacher) {
+
+  if ((category?.key === 'media-files' || category?.key === 'bookmarks') && isTeacher) {
     props = academicFilters;
     props.searchInProvider = false;
   }
@@ -272,64 +276,33 @@ const ListAssetPage = () => {
     category?.key !== 'assignables.scorm'
   ) {
     return (
-      <Tabs
-        panelColor="solid"
-        usePageLayout
-        fullHeight
-        fullWidth
-        activeKey={activeTab}
-        onTabClick={(e) => {
-          handleOnTabChange(e);
-          setCurrentAsset(null);
-        }}
+      <Box
+        className={classes.original}
+        sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
       >
-        <TabPanel key="published" label={t('published')}>
-          <Box className={classes.tabPane}>
-            <AssetList
-              {...props}
-              category={category}
-              categories={categories}
-              asset={currentAsset}
-              search={searchCriteria}
-              layout="grid"
-              showPublic={showPublic}
-              onSelectItem={handleOnSelectItem}
-              onEditItem={handleOnEditItem}
-              onSearch={handleOnSearch}
-              onTypeChange={handleOnTypeChange}
-              onShowPublic={handleOnShowPublic}
-              assetType={assetType}
-              pinned={category?.key === 'pins'}
-              onLoading={setLoading}
-              published={true}
-              variant="embedded"
-            />
-          </Box>
-        </TabPanel>
-        <TabPanel key="draft" label={t('draft')}>
-          <Box className={classes.tabPane}>
-            <AssetList
-              {...props}
-              category={category}
-              categories={categories}
-              asset={currentAsset}
-              search={searchCriteria}
-              layout="grid"
-              showPublic={showPublic}
-              onSelectItem={handleOnSelectItem}
-              onEditItem={handleOnEditItem}
-              onSearch={handleOnSearch}
-              onTypeChange={handleOnTypeChange}
-              onShowPublic={handleOnShowPublic}
-              assetType={assetType}
-              pinned={category?.key === 'pins'}
-              onLoading={setLoading}
-              published={false}
-              variant="embedded"
-            />
-          </Box>
-        </TabPanel>
-      </Tabs>
+        <AssetList
+          {...props}
+          category={category}
+          categories={categories}
+          asset={currentAsset}
+          search={searchCriteria}
+          layout="grid"
+          showPublic={showPublic}
+          onSelectItem={handleOnSelectItem}
+          onEditItem={handleOnEditItem}
+          onSearch={handleOnSearch}
+          onTypeChange={handleOnTypeChange}
+          onShowPublic={handleOnShowPublic}
+          assetType={mediaAssetType}
+          pinned={category?.key === 'pins'}
+          onLoading={setLoading}
+          published={activeTab === 'published'}
+          variant="embedded"
+          allowStateChanges={true}
+          onStateChange={handleOnTabChange}
+          assetState={activeTab}
+        />
+      </Box>
     );
   }
 
@@ -352,7 +325,7 @@ const ListAssetPage = () => {
         onSearch={handleOnSearch}
         onTypeChange={handleOnTypeChange}
         onShowPublic={handleOnShowPublic}
-        assetType={assetType}
+        assetType={mediaAssetType}
         pinned={category?.key === 'pins'}
         onLoading={setLoading}
         variant="embedded"

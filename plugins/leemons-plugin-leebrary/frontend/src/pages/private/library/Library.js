@@ -30,6 +30,7 @@ const LibraryPageContent = () => {
   const history = useHistory();
   const isStudent = useIsStudent();
   const [settings, setSettings] = useState({ hasPins: false, loadingPins: true });
+  const [hideNavBar, setHideNavBar] = useState(false);
 
   const getCategories = async () => {
     store.subjects = null;
@@ -59,6 +60,19 @@ const LibraryPageContent = () => {
   };
 
   useEffect(() => {
+    const pathSegments = history.location.pathname.split('/');
+    const editSegment = pathSegments[pathSegments.length - 2];
+    const lastSegment = pathSegments[pathSegments.length - 1];
+
+    if (lastSegment === 'new' || editSegment === 'edit') {
+      setAsset(null);
+      setHideNavBar(true);
+    } else {
+      setHideNavBar(false);
+    }
+  }, [history.location.pathname]);
+
+  useEffect(() => {
     if (isStudent !== null) getCategories();
   }, [isStudent]);
 
@@ -71,6 +85,7 @@ const LibraryPageContent = () => {
   }, [translations]);
 
   const handleOnNav = (data) => {
+    console.log('data', data)
     setAsset(null);
     if (data) {
       history.push(cleanPath(`${path}/${data.key}/list`));
@@ -107,23 +122,27 @@ const LibraryPageContent = () => {
 
   return (
     <Stack style={{ height: '100vh' }} fullWidth>
-      <Box style={{ width: 240, height: '100%' }} skipFlex>
-        {!isEmpty(categories) && (
-          <LibraryNavbar
-            showSharedWithMe
-            labels={navbarLabels}
-            categories={categories}
-            selectedCategory={category?.key === 'leebrary-shared' ? 'shared-with-me' : category?.id}
-            subjects={store.subjects}
-            onNavSubject={onNavSubject}
-            onNavShared={onNavShared}
-            onNav={handleOnNav}
-            onFile={handleOnFile}
-            onNew={handleOnNew}
-            loading={loading}
-          />
-        )}
-      </Box>
+      {!hideNavBar && (
+        <Box style={{ width: 240, height: '100%' }} skipFlex>
+          {!isEmpty(categories) && (
+            <LibraryNavbar
+              showSharedWithMe
+              labels={navbarLabels}
+              categories={categories}
+              selectedCategory={
+                category?.key === 'leebrary-shared' ? 'shared-with-me' : category?.id
+              }
+              subjects={store.subjects}
+              onNavSubject={onNavSubject}
+              onNavShared={onNavShared}
+              onNav={handleOnNav}
+              onFile={handleOnFile}
+              onNew={handleOnNew}
+              loading={loading}
+            />
+          )}
+        </Box>
+      )}
       <Box style={{ overflowY: 'scroll' }}>
         <Switch>
           {/* NEW ASSET ·························································· */}

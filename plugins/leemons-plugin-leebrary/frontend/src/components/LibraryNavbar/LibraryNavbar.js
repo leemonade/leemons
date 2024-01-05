@@ -12,12 +12,13 @@ import {
   Stack,
   Text,
 } from '@bubbles-ui/components';
+import { getProgramsNamesRequest } from '@leebrary/request';
+import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { CloudUploadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+
 import { LibraryNavbarItem as NavbarItem } from './LibraryNavbarItem';
 import { LibraryNavbarStyles } from './LibraryNavbar.styles';
 import { LIBRARY_NAVBAR_DEFAULT_PROPS, LIBRARY_NAVBAR_PROP_TYPES } from './LibraryNavbar.constants';
-import { getProgramsNamesRequest } from '@leebrary/request';
-import { SubjectItemDisplay } from '@academic-portfolio/components';
 
 const LibraryNavbar = ({
   labels,
@@ -47,7 +48,6 @@ const LibraryNavbar = ({
       Object.keys(response.data).forEach((programId) => {
         programsInfo[programId] = { name: response.data[programId], dropdownOpen: false };
       });
-      console.log('programsInfo', programsInfo);
       setProgramsDropdownInfo(programsInfo);
     }
   };
@@ -85,7 +85,7 @@ const LibraryNavbar = ({
     [selectedCategory]
   );
 
-  // TODO esto
+  // TODO: this is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
   const contentAssetsKeys = [
     'bookmarks',
     'media-files',
@@ -222,6 +222,12 @@ const LibraryNavbar = ({
               </DropdownButton>
             </Box>
           ) : null}
+          {/* <NavbarItem
+            icon={'/public/leebrary/favorite.svg'}
+            label={'RECIENTES HCD'}
+            onClick={() => onNavHandler({ key: 'leebrary-recents' })}
+            selected={quickAccessSelected}
+          /> */}
           <NavbarItem
             icon={'/public/leebrary/favorite.svg'}
             label={labels.quickAccess}

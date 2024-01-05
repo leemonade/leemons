@@ -26,6 +26,7 @@ import React, { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
+
 import { getPageItems } from '../helpers/getPageItems';
 import prefixPN from '../helpers/prefixPN';
 import { prepareAsset } from '../helpers/prepareAsset';
@@ -47,7 +48,7 @@ import { CardWrapper } from './CardWrapper';
 import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 import { useAssetListStore } from '../hooks/useAssetListStore';
-import { useAssets } from '../request/hooks/queries/useAssets';
+import { useAssets as useAssetsDetail } from '../request/hooks/queries/useAssets';
 
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
@@ -91,11 +92,15 @@ function AssetList({
   roles,
   filters,
   filterComponents,
+  allowStateChanges,
+  assetState,
+  onStateChange = () => {},
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
   onLoading = () => {},
 }) {
+  const [cardDetailIsLoading, setCardDetailIsLoading] = React.useState(false);
   if (categoryProp?.key?.includes('leebrary-subject')) {
     // eslint-disable-next-line no-param-reassign
     subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
@@ -113,6 +118,7 @@ function AssetList({
     loading: true,
     category: categoryProp,
     categories: categoriesProp,
+    categoryFilter: null,
     layout: layoutProp,
     asset: assetProp,
     page: pageProp || 1,
@@ -123,9 +129,10 @@ function AssetList({
     assetType: assetTypeProp,
     openDetail: false,
     isDetailOpened: false,
-    serverData: {},
+    pageAssetsData: {},
     showPublic: showPublicProp,
     searchCriteria: searchProp,
+    stateFilter: null,
   };
 
   const [store, setStoreValue] = useAssetListStore(initialState);
@@ -150,12 +157,18 @@ function AssetList({
 
   const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
 
+  const { items: currentPageAssets } = getPageItems({
+    data: store.assets,
+    page: store.page - 1,
+    size: store.size,
+  });
+
   const {
-    data: assetsData,
+    data: assetsDetail,
     isLoading,
     isError,
-  } = useAssets({
-    ids: store.assets.map((item) => item.asset),
+  } = useAssetsDetail({
+    ids: currentPageAssets.map((item) => item.asset),
     filters: {
       published,
       showPublic: !pinned ? store.showPublic : true,
@@ -201,81 +214,58 @@ function AssetList({
   function clearAssetLoading() {
     setTimeout(() => {
       setStoreValue('loading', false);
-      loadingRef.current.loading = false;
-    }, 500);
+    }, 1000);
   }
 
-  async function loadAssets(categoryId, criteria = '', type = '', _filters) {
-    if (!loadingRef.current.loading || loadingRef.current.firstTime) {
-      loadingRef.current.loading = true;
-      loadingRef.current.waitQuery = null;
-      loadingRef.current.firstTime = false;
-
-      setStoreValue('loading', true);
-      setStoreValue('asset', null);
-      setStoreValue('page', 1);
-      try {
-        const query = {
-          providerQuery: _filters ? JSON.stringify(_filters) : null,
-          category: categoryId,
-          criteria,
-          type,
-          published,
-          showPublic: !pinned ? store.showPublic : true,
-          pinned,
-          preferCurrent,
-          searchInProvider,
-          subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
-          programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
-          roles: JSON.stringify(roles || []),
-        };
-
-        if (categoryProp?.key?.includes('leebrary-subject')) {
-          delete query.category;
-        }
-        if (categoryProp?.key === 'leebrary-shared') {
-          delete query.category;
-          query.onlyShared = true;
-        }
-
-        const response = await getAssetsRequest(query);
-
-        if (loadingRef.current.waitQuery) {
-          loadingRef.current.loading = false;
-          loadAssets(
-            loadingRef.current.waitQuery.categoryId,
-            loadingRef.current.waitQuery.criteria,
-            loadingRef.current.waitQuery.type,
-            loadingRef.current.waitQuery.filters
-          );
-          return null;
-        }
-
-        const results = response?.assets || [];
-        setStoreValue('assets', uniqBy(results, 'asset'));
-
-        if (isEmpty(results)) {
-          setStoreValue('serverData', []);
-          clearAssetLoading();
-        }
-      } catch (err) {
-        clearAssetLoading();
-        addErrorAlert(getErrorMessage(err));
-      }
-    } else {
-      loadingRef.current.waitQuery = {
-        categoryId,
+  async function loadAllAssetsIds(categoryId, criteria = '', type = '', _filters = null) {
+    setStoreValue('loading', true);
+    setStoreValue('asset', null);
+    setStoreValue('page', 1);
+    setStoreValue('assets', []);
+    queryClient.invalidateQueries(allAssetsKey);
+    queryClient.refetchQueries();
+    try {
+      const query = {
+        providerQuery: _filters ? JSON.stringify(_filters) : null,
+        category: categoryId,
         criteria,
         type,
-        filters,
+        published,
+        showPublic: !pinned ? store.showPublic : true,
+        pinned,
+        preferCurrent,
+        searchInProvider,
+        subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
+        programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
+        roles: JSON.stringify(roles || []),
       };
+
+      if (categoryProp?.key?.includes('leebrary-subject')) {
+        delete query.category;
+      }
+      if (categoryProp?.key === 'leebrary-shared') {
+        delete query.category;
+        query.onlyShared = true;
+      }
+
+      const response = await getAssetsRequest(query);
+
+      const results = response?.assets || [];
+      setStoreValue('assets', uniqBy(results, 'asset'));
+      if (isEmpty(results)) {
+        setStoreValue('pageAssetsData', []);
+      }
+      clearAssetLoading();
+    } catch (err) {
+      clearAssetLoading();
+      addErrorAlert(getErrorMessage(err));
     }
     return null;
   }
 
   async function loadAsset(id, forceLoad) {
     try {
-      const item = find(store.serverData.items, { id });
+      const item = find(store.pageAssetsData.items, { id });
 
       if (item && !forceLoad) {
         setStoreValue('asset', prepareAsset(item, published));
@@ -287,11 +277,11 @@ function AssetList({
           setStoreValue('asset', prepareAsset(value, published));
 
           if (forceLoad && item) {
-            const index = store.serverData.items.findIndex((i) => i.id === id);
+            const index = store.pageAssetsData.items.findIndex((i) => i.id === id);
 
-            const newItems = [...store.serverData.items];
+            const newItems = [...store.pageAssetsData.items];
             newItems[index] = value;
-            setStoreValue('serverData', { ...store.serverData, items: newItems });
+            setStoreValue('pageAssetsData', { ...store.pageAssetsData, items: newItems });
           }
         } else {
           setStoreValue('asset', null);
@@ -303,7 +293,7 @@ function AssetList({
   }
 
   function reloadAssets() {
-    loadAssets(store.category?.id, searchDebounced, store.assetType, filters);
+    loadAllAssetsIds(store.category?.id, searchDebounced, store.assetType, filters);
   }
 
   async function duplicateAsset(id) {
@@ -386,19 +376,30 @@ function AssetList({
   useEffect(() => {
     setStoreValue('showPublic', showPublicProp);
   }, [JSON.stringify(showPublicProp)]);
+
   useEffect(() => {
     onLoading(store.loading);
   }, [store.loading]);
 
   useEffect(() => {
-    if (assetsData && !isEmpty(assetsData)) {
+    if (!isLoading) {
+      setTimeout(() => {
+        if (!store.loading) setCardDetailIsLoading(false);
+      }, 1000);
+    } else {
+      setCardDetailIsLoading(true);
+    }
+  }, [isLoading, store.loading]);
+
+  useEffect(() => {
+    if (assetsDetail && !isEmpty(assetsDetail)) {
       const paginated = getPageItems({
         data: store.assets,
         page: store.page - 1,
         size: store.size,
       });
 
-      paginated.items = assetsData || [];
+      paginated.items = assetsDetail || [];
       forEach(paginated.items, (item) => {
         if (item.file?.metadata?.indexOf('pathsInfo')) {
           item.file.metadata = JSON.parse(item.file.metadata);
@@ -407,12 +408,12 @@ function AssetList({
         }
       });
       paginated.page += 1;
-      setStoreValue('serverData', paginated);
+      setStoreValue('pageAssetsData', paginated);
     } else {
-      setStoreValue('serverData', []);
+      setStoreValue('pageAssetsData', []);
     }
     clearAssetLoading();
-  }, [assetsData, isLoading, isError]);
+  }, [assetsDetail, isError]);
 
   useEffect(() => {
     if (!isEmpty(assetProp?.id) && assetProp.id !== store.asset?.id) {
@@ -455,24 +456,13 @@ function AssetList({
     }
   }, [store.assetTypes, t]);
 
-  // useEffect(() => {
-  //   // Good
-  //   loadAssetsData();
-  // }, [store.assets, store.page, store.size]);
+  useEffect(() => {
+    if (isFunction(onSearch)) onSearch(searchDebounced);
+  }, [searchDebounced]);
 
   useEffect(() => {
-    // Good
-    if (isFunction(onSearch)) {
-      onSearch(searchDebounced);
-    } else if (!isEmpty(store.category?.id) || pinned) {
-      loadAssets(store.category?.id, searchDebounced, store.assetType, filters);
-    }
-  }, [searchDebounced, store.category, pinned, store.assetType, filters, assetsData]);
-
-  useEffect(() => {
-    // Good
     if (!isEmpty(store.category?.id) || pinned || categoryProp?.key === 'leebrary-shared') {
-      loadAssets(store.category?.id, searchProp, store.assetType, filters);
+      loadAllAssetsIds(store.category?.id, searchProp, store.assetType, filters);
     }
   }, [
     JSON.stringify(categoryProp),
@@ -526,10 +516,6 @@ function AssetList({
     window.open(item.url, '_blank', 'noopener');
   }
 
-  function handleOnChangeCategory(key) {
-    setStoreValue('assetType', '');
-    setStoreValue('category', find(store.categories, { key }));
-  }
 
   function handleOnTypeChange(type) {
     if (isEmbedded) {
@@ -631,7 +617,7 @@ function AssetList({
             onUnpin={handleOnUnpin}
             onDownload={handleOnDownload}
             locale={locale}
-            assetsLoading={loadingRef.current.loading}
+            assetsLoading={cardDetailIsLoading}
           />
         ),
         itemMinWidth,
@@ -652,7 +638,7 @@ function AssetList({
     }
 
     return { paperProps };
-  }, [store.layout, store.category, categoryProp, isEmbedded, showThumbnails]);
+  }, [store.layout, store.category, categoryProp, isEmbedded, showThumbnails, cardDetailIsLoading]);
 
   const listLayouts = useMemo(
     () => [
@@ -669,13 +655,11 @@ function AssetList({
       download: store.asset?.downloadable ? t('cardToolbar.download') : false,
       delete: store.asset?.deleteable ? t('cardToolbar.delete') : false,
       share: store.asset?.shareable ? t('cardToolbar.share') : false,
-      // assign: asset?.assignable ? t('cardToolbar.assign') : false,
-      // eslint-disable-next-line no-nested-ternary
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-          ? t('cardToolbar.pin')
-          : false,
+        ? t('cardToolbar.pin')
+        : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -710,27 +694,6 @@ function AssetList({
 
       '100%',
     [store.openDetail, showDrawer]
-  );
-
-  const categoriesRadioData = useMemo(
-    () =>
-      store.categories
-        ?.filter((item) =>
-          Array.isArray(allowChangeCategories) ? allowChangeCategories.includes(item.key) : true
-        )
-        .map((item) => ({
-          value: item.key,
-          label: item.name,
-          icon: (
-            <Box style={{ height: 16, marginBottom: 5 }}>
-              <ImageLoader
-                src={item.icon}
-                style={{ width: 16, height: 16, position: 'relative' }}
-              />
-            </Box>
-          ),
-        })),
-    [allowChangeCategories, store.categories]
   );
 
   // ·········································································
@@ -774,7 +737,6 @@ function AssetList({
                 }}
                 value={store.searchCriteria}
                 disabled={store.loading}
-                label={t('labels.search')}
                 placeholder={t('labels.searchPlaceholder')}
               />
             )}
@@ -782,13 +744,25 @@ function AssetList({
             {!isEmpty(store.assetTypes) && canChangeType && (
               <Select
                 data-cypress-id="search-asset-type-selector"
-                skipFlex
                 data={store.assetTypes}
                 value={store.assetType}
                 onChange={handleOnTypeChange}
-                label={t('labels.type')}
                 placeholder={t('labels.resourceTypes')}
                 disabled={store.loading}
+                skipFlex
+              />
+            )}
+            {allowStateChanges && (
+              <Select
+                data={[
+                  { label: t('labels.assetStatePublished'), value: 'published' },
+                  { label: t('labels.assetStateDraft'), value: 'draft' },
+                ]}
+                onChange={onStateChange}
+                value={categoryProp?.key === 'pins' ? store.stateFilter : assetState}
+                placeholder={t('labels.assetState')}
+                disabled={store.loading}
+                skipFlex
               />
             )}
           </Stack>
@@ -807,26 +781,6 @@ function AssetList({
           )}
         </Stack>
 
-        {/* CATEGORY RADIO GROUP ···· */}
-        {allowChangeCategories !== false &&
-          !isNil(store.categories) &&
-          !isEmpty(store.categories) && (
-            <Box
-              skipFlex
-              sx={(theme) => ({ marginTop: theme.spacing[5] })}
-              style={{ cursor: store.loading ? 'wait' : 'default' }}
-            >
-              <Box style={{ pointerEvents: store.loading ? 'none' : 'auto' }}>
-                <RadioGroup
-                  data={categoriesRadioData}
-                  variant="icon"
-                  onChange={handleOnChangeCategory}
-                  value={store.category?.key}
-                  fullWidth
-                />
-              </Box>
-            </Box>
-          )}
         {/* PAGINATED LIST ········· */}
         <Stack
           fullHeight
@@ -847,7 +801,7 @@ function AssetList({
           >
             <LoadingOverlay visible={store.loading} overlayOpacity={0} style={{ height: '100%' }} />
 
-            {!store.loading && !isEmpty(store.serverData?.items) && (
+            {!store.loading && !isEmpty(store.pageAssetsData?.items) && (
               <Box
                 sx={(theme) => ({
                   paddingBottom: theme.spacing[5],
@@ -855,7 +809,7 @@ function AssetList({
               >
                 <PaginatedList
                   data-cypress-id="paginated-asset-list"
-                  {...store.serverData}
+                  {...store.pageAssetsData}
                   {...listProps}
                   paperProps={paperProps}
                   selectable
@@ -880,7 +834,7 @@ function AssetList({
                 />
               </Box>
             )}
-            {!store.loading && isEmpty(store.serverData?.items) && (
+            {!store.loading && isEmpty(store.pageAssetsData?.items) && (
               <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 {getEmptyState()}
               </Stack>
@@ -958,7 +912,7 @@ AssetList.defaultProps = {
   page: 1,
   pageSize: 12,
   pageSizes: [12, 18, 24],
-  canChangeLayout: true,
+  canChangeLayout: false,
   canChangeType: true,
   canSearch: true,
   variant: 'full',
@@ -969,6 +923,7 @@ AssetList.defaultProps = {
   canShowPublicToggle: true,
   paperProps: { color: 'none', shadow: 'none', padding: 0 },
   allowChangeCategories: false,
+  allowStateChanges: false,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -1009,6 +964,9 @@ AssetList.propTypes = {
   subjects: PropTypes.array,
   filters: PropTypes.any,
   filterComponents: PropTypes.any,
+  allowStateChanges: PropTypes.bool,
+  assetState: PropTypes.string,
+  onStateChange: PropTypes.func,
 };
 
 export { AssetList };
