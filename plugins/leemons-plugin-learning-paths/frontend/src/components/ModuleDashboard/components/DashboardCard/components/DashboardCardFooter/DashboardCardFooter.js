@@ -7,15 +7,12 @@ import { Link } from 'react-router-dom';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import { capitalize, get } from 'lodash';
 import { LockIcon } from '@bubbles-ui/icons/solid';
+import getOngoingInfo from '@learning-paths/components/ModuleDashboard/helpers/getOngoingInfo';
 import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
 import { EvaluationStateDisplay } from '../EvaluationStateDisplay';
 
 dayjs.extend(durationPlugin);
 export function useStudentState({ assignation = {} }) {
-  // console.group();
-  // console.log('assignationName', assignation?.instance?.assignable?.asset?.name);
-  // console.log('assignation', assignation);
-  // console.groupEnd();
   if (!assignation) {
     return {};
   }
@@ -70,8 +67,49 @@ function PreviewActions({ activity, localizations }) {
 }
 
 function TeacherActions({ activity, localizations }) {
+  const getInfo = getOngoingInfo({ instance: activity });
   const { assignable, id } = activity;
   const { roleDetails } = assignable;
+  const { classes } = useDashboardCardFooterStyles();
+
+  if (getInfo === 'allDelivered') {
+    return (
+      <Box className={classes.buttonFull}>
+        <Link
+          to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}
+        >
+          <Button fullWidth variant="link">
+            {localizations?.buttons?.viewReport}
+          </Button>
+        </Link>
+      </Box>
+    );
+  }
+
+  if (getInfo === 'someDeliveredButNotAll') {
+    return (
+      <Box className={classes.buttonFull}>
+        <Link
+          to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}
+        >
+          <Button fullWidth>{localizations?.buttons?.forEvaluate}</Button>
+        </Link>
+      </Box>
+    );
+  }
+  if (getInfo === 'openedButNotStarted') {
+    return (
+      <Box className={classes.buttonFull}>
+        <Link
+          to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}
+        >
+          <Button fullWidth variant="outline">
+            {localizations?.buttons?.viewProgress}
+          </Button>
+        </Link>
+      </Box>
+    );
+  }
 
   return (
     <Link to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}>
