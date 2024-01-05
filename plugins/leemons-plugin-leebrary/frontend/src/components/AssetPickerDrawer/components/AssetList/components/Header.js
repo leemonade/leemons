@@ -6,35 +6,21 @@ import { isArray, keyBy, map, pick, sortBy } from 'lodash';
 
 export const useHeaderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
-
+  
   return {
     root: {
       position: 'sticky',
-      top: globalTheme.spacing.padding.lg,
+      top: 0,
       display: 'flex',
       flexDirection: 'row',
-      gap: globalTheme.spacing.padding.lg,
+      gap: globalTheme.spacing.padding.md,
       '& *': {
         flexGrow: 1,
       },
-
-      // TODO: Set color token
-      background: '#F8F9FC',
-      marginTop: globalTheme.spacing.padding.md,
-      margiBottom: globalTheme.spacing.padding.md,
-      padding: globalTheme.spacing.padding.md,
-      paddingBottom: globalTheme.spacing.padding.lg,
+      paddingTop: globalTheme.spacing.padding.lg,
+      paddingBottom: globalTheme.spacing.padding.md,
+      backgroundColor: theme.other.core.color.neutral['50'],
       zIndex: 1,
-    },
-    whiteCover: {
-      // This is needed to avoid content be shown above header :(
-      top: 0,
-      transform: `translateY(${-24}px)`,
-      left: 0,
-      position: 'absolute',
-      width: '100%',
-      height: globalTheme.spacing.padding.lg,
-      background: theme.white,
     },
   };
 });
@@ -77,17 +63,10 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
 
   useEffect(() => onChange?.({ category, search }), [category, search]);
 
-  const { classes } = useHeaderStyles();
+  const { classes } = useHeaderStyles({}, { name: 'AssetListHeader' });
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.whiteCover}></Box>
-      <SearchInput
-        placeholder={localizations?.search?.placeholder}
-        label={localizations?.search?.label}
-        value={search}
-        onChange={(newSearch) => setSearch(newSearch)}
-      />
       {resourcesData?.length > 1 && (
         <Select
           key="select"
@@ -98,6 +77,12 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
           onChange={setCategory}
         />
       )}
+      <SearchInput
+        placeholder={localizations?.search?.placeholder}
+        label={localizations?.search?.label}
+        value={search}
+        onChange={(newSearch) => setSearch(newSearch)}
+      />
     </Box>
   );
 }

@@ -33,6 +33,10 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
       flexDirection: 'column',
       overflow: 'hidden',
       height: '100%',
+      backgroundColor: theme.other.core.color.neutral['50'],
+    },
+    content: {
+      marginTop: globalTheme.spacing.padding.md,
     },
     contentPadding: {
       overflowY: 'auto',
@@ -87,7 +91,7 @@ export function AssetPickerDrawer({
       <Box className={classes.root}>
         <Header localizations={localizations?.header} onClose={onClose} />
         {creatable ? (
-          <Tabs fullHeight>
+          <Tabs usePaddedLayout fullHeight className={classes.content}>
             <TabPanel key="library" label={localizations?.tabs?.library}>
               <AssetList
                 variant={layout}
