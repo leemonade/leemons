@@ -61,6 +61,7 @@
     "moleculer": "^0.14.26",
     "office-document-properties": "^1.1.0",
     "semver": "^7.5.4",
+    "serialize-error": "^11.0.3",
     "sharp": "^0.32.4",
     "temp": "^0.9.4"
   },
