@@ -100,10 +100,11 @@ const ImagePicker = ({
 
       <AssetPickerDrawer
         {...props}
-        layout={'cards'}
+        layout={'thumbnails'}
         opened={showAssetDrawer}
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
+        categories={['media-files']}
         onlyCreateImages
       />
     </Box>

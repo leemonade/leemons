@@ -74,6 +74,7 @@ export function AssetPickerDrawer({
   onClose,
   onSelect,
   onlyCreateImages,
+  onlyImages,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
   const { classes } = useAssetPickerDrawerStyles();
@@ -99,6 +100,7 @@ export function AssetPickerDrawer({
                 categories={categories}
                 filters={filters}
                 onSelect={onSelect}
+                onlyImages={onlyImages}
               />
             </TabPanel>
             <TabPanel key="new" label={localizations?.tabs?.new}>
@@ -117,6 +119,7 @@ export function AssetPickerDrawer({
               categories={categories}
               filters={filters}
               onSelect={onSelect}
+              onlyImages={onlyImages}
             />
           </Box>
         )}
@@ -141,4 +144,5 @@ AssetPickerDrawer.propTypes = {
   layout: PropTypes.oneOf(['rows', 'thumbnails', 'cards']),
   filters: PropTypes.object,
   onlyCreateImages: PropTypes.bool,
+  onlyImages: PropTypes.bool,
 };

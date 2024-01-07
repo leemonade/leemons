@@ -1,12 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
-import { unflatten } from '@common';
+import { unflatten, useRequestErrorMessage } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { keyBy, isEmpty } from 'lodash';
-import { usePickerCategories } from '../hooks/usePickerCategories';
 import AssetForm from '@leebrary/components/AssetForm/AssetForm';
 import prefixPN from '@leebrary/helpers/prefixPN';
+import UploadingFileModal from '@leebrary/components/UploadingFileModal';
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import { newAssetRequest } from '@leebrary/request';
+import { addErrorAlert } from '@layout/alert';
+import { usePickerCategories } from '../hooks/usePickerCategories';
 
 export const useNewResourceStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -23,6 +27,8 @@ export function NewResource({ onlyCreateImages, onSelect }) {
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const categories = usePickerCategories();
   const categoriesByKey = useMemo(() => keyBy(categories, 'key'), [categories]);
+  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const { classes } = useNewResourceStyles();
 
@@ -43,15 +49,50 @@ export function NewResource({ onlyCreateImages, onSelect }) {
     return null;
   }
 
+  // ··············································································
+  // HANDLERS
+
+  const handleOnSubmit = async (data) => {
+    try {
+      const uploadedFile = await uploadFileAsMultipart(data.file, {
+        onProgress: (info) => {
+          // console.log(info);
+          setUploadingFileInfo(info);
+        },
+      });
+      setUploadingFileInfo(null);
+
+      try {
+        const { asset } = await newAssetRequest(
+          { ...data, file: uploadedFile },
+          null,
+          'media-files'
+        );
+
+        onSelect(asset);
+      } catch (err) {
+        addErrorAlert(getErrorMessage(err));
+      }
+    } catch (e) {
+      setUploadingFileInfo(null);
+    }
+  };
+
+  // ··············································································
+  // RENDER
+
   // TODO: Add other categories creation form
   // v - category.key === 'media-files'
+
   return (
     <Box className={classes.root}>
       <AssetForm
         {...(onlyCreateImages ? { onlyImages: true, hideTitle: true } : {})}
         {...formLabels}
-        onSave={(asset) => onSelect(asset)}
+        onSubmit={handleOnSubmit}
+        drawerLayout
       />
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </Box>
   );
 }

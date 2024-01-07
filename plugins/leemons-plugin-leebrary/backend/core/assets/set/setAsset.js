@@ -1,7 +1,8 @@
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 
-const { getById: getCategory } = require('../../categories/getById');
+const { getById: getCategoryById } = require('../../categories/getById');
+const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
 const { update } = require('../update');
 const { add } = require('../add');
 const canAssignRole = require('../../permissions/helpers/canAssignRole');
@@ -15,6 +16,7 @@ const { CATEGORIES } = require('../../../config/constants');
  * @param {string} params.id - Asset ID
  * @param {Object} params.filesData - Files data
  * @param {string} params.categoryId - Category ID
+ * @param {string} params.categoryKey - Category key
  * @param {Array} params.tags - Tags
  * @param {Object} params.file - Asset file
  * @param {Object} params.cover - Asset cover
@@ -28,6 +30,7 @@ async function setAsset({
   id,
   files: filesData,
   categoryId,
+  categoryKey,
   tags,
   file: assetFile,
   cover: assetCover,
@@ -41,11 +44,20 @@ async function setAsset({
     }
   });
 
-  if (_.isEmpty(categoryId)) {
+  if (_.isEmpty(categoryId) && _.isEmpty(categoryKey)) {
     throw new LeemonsError(ctx, { message: 'Category is required', httpStatusCode: 400 });
   }
 
-  const category = await getCategory({ id: categoryId, ctx });
+  let category = null;
+
+  if (!_.isEmpty(categoryId)) {
+    category = await getCategoryById({ id: categoryId, ctx });
+  }
+
+  // Prefer category by Id
+  if (!category && !_.isEmpty(categoryKey)) {
+    category = await getCategoryByKey({ key: categoryKey, ctx });
+  }
 
   let file;
   let cover;
