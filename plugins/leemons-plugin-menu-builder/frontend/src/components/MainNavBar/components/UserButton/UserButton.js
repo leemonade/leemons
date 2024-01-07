@@ -96,7 +96,9 @@ export function UserButton({
       </Group>
       {hasChildren ? (
         <Box className={classes.menuItemsContainer}>
-          <Collapse in={opened}>{items}</Collapse>
+          <Collapse in={opened}>
+            <Box className={classes.menuItems}>{items}</Box>
+          </Collapse>
         </Box>
       ) : null}
     </AnimatePresence>

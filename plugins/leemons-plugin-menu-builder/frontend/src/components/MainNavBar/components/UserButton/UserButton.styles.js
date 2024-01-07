@@ -45,15 +45,20 @@ export const UserButttonStyles = createStyles((theme, { opened }) => {
       paddingLeft: 3,
     },
     menuItemsContainer: {
-      paddingTop: leemonsStyles.menu.spacing.padding.xsm,
       backgroundColor: leemonsStyles.menu.background.color.main.default,
       position: 'absolute',
-      bottom: 40,
+      bottom: 49,
       width: '100%',
-      boxShadow:
-        '0px 10px 36px 0px rgba(26, 32, 43, 0.16), 0px 2px 0px 0px rgba(221, 225, 230, 0.24)',
       maxHeight: 220,
       overflowY: 'scroll',
+      boxShadow:
+        '0px 10px 36px 0px rgba(26, 32, 43, 0.16), 0px 2px 0px 0px rgba(221, 225, 230, 0.24)',
+    },
+    menuItems: {
+      paddingTop: leemonsStyles.menu.spacing.padding.xsm,
+      paddingBottom: leemonsStyles.menu.spacing.padding.xsm,
+      backgroundColor: leemonsStyles.menu.background.color.main.default,
+      width: '100%',
     },
     link: {
       ...leemonsStyles.menu.content['typo--regular'],
