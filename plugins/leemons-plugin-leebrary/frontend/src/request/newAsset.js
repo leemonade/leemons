@@ -23,7 +23,11 @@ async function newAsset(assetData, categoryId, categoryKey) {
     formData.cover = cover;
   }
 
-  if (categoryId) formData.categoryId = categoryId;
+  if (categoryId) {
+    formData.categoryId = categoryId;
+  } else if (categoryKey) {
+    formData.categoryKey = categoryKey;
+  }
 
   Object.keys(data).forEach((key) => {
     if (data[key] !== undefined && (typeof data[key] !== 'string' || data[key]?.length > 0)) {

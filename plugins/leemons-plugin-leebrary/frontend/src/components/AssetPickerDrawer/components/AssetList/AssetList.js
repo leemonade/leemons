@@ -11,7 +11,7 @@ export const useAssetListStyles = createStyles((theme) => {
     root: {
       display: 'flex',
       flexDirection: 'column',
-      gap: globalTheme.spacing.gap.xlg,
+      // gap: globalTheme.spacing.gap.xlg,
       minHeight: '100%',
       zIndex: 0,
     },
@@ -23,8 +23,7 @@ export const useAssetListStyles = createStyles((theme) => {
 });
 
 export function AssetList({ variant, localizations, categories, filters, onSelect }) {
-  const { classes } = useAssetListStyles();
-
+  const { classes } = useAssetListStyles({}, { name: 'AssetList' });
   const [query, setQuery] = useState({});
 
   return (

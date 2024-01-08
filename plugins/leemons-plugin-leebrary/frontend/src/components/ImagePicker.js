@@ -7,7 +7,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { PluginLeebraryIcon } from '@bubbles-ui/icons/outline';
 import prefixPN from '../helpers/prefixPN';
 import { AssetPickerDrawer } from './AssetPickerDrawer';
-import { AssetListModal } from './AssetListModal';
 import { getFileUrl, prepareAsset } from '../helpers/prepareAsset';
 
 const ImagePicker = ({
@@ -57,8 +56,6 @@ const ImagePicker = ({
     return labels;
   }, [translations, labels]);
 
-  const ListComponent = modal ? AssetListModal : AssetPickerDrawer;
-
   // ························································
   // HANDLERS
 
@@ -101,13 +98,13 @@ const ImagePicker = ({
         />
       </Stack>
 
-      <ListComponent
+      <AssetPickerDrawer
         {...props}
-        size={500}
-        layout={'cards'}
+        layout={'thumbnails'}
         opened={showAssetDrawer}
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
+        categories={['media-files']}
         onlyCreateImages
       />
     </Box>
