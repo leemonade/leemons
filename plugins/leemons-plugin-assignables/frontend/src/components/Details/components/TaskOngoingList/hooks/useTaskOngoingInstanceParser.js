@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { useLocale, unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { OpenIcon, TimeClockCircleIcon, CheckCircleIcon } from '@bubbles-ui/icons/outline';
 import useProgramEvaluationSystem from '../../../../../hooks/useProgramEvaluationSystem';
 import useClassData from '../../../../../hooks/useClassData';
 import prefixPN from '../../../../../helpers/prefixPN';
@@ -36,6 +37,7 @@ function getGradesGraphData(evaluationSystem, students) {
 
   return {
     scores: studentsWithGrades,
+    students,
     grades: evaluationSystem?.scales
       ?.map((scale) => ({
         number: scale.number,
@@ -52,15 +54,31 @@ function getStatusGraphData(students) {
     return null;
   }
 
-  return {
-    scores: students.map((student) => ({ student: student.id, score: student.status })),
-    grades: [{ number: 0 }, { number: 1 }, { number: 2 }],
-    showBarPercentage: true,
-    showLeftLegend: false,
-    variant: 'onecolor',
-    styles: {
-      width: 'calc(100% - 95px)',
+  const status = [
+    {
+      id: 'opened',
+      label: 'Abierta',
+      icon: <OpenIcon />,
+
+      studentCount: students.filter((student) => student.status >= 0).length,
     },
+    {
+      id: 'started',
+      label: 'Empezada',
+      icon: <TimeClockCircleIcon />,
+      studentCount: students.filter((student) => student.status >= 1).length,
+    },
+    {
+      id: 'submitted',
+      label: 'Entregada',
+      icon: <CheckCircleIcon />,
+      studentCount: students.filter((student) => student.status >= 2).length,
+    },
+  ];
+
+  return {
+    studentCount: students?.length ?? 0,
+    status: status.reverse(),
   };
 }
 
