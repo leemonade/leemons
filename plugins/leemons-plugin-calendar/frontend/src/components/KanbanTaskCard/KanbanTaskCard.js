@@ -1,19 +1,27 @@
-import React from 'react';
-
+import React, { useMemo } from 'react';
 import {
-  Avatar,
+  AvatarsGroup,
+  Badge,
   Box,
   ImageLoader,
-  Paper,
-  Paragraph,
+  ProgressColorBar,
   Text,
   TextClamp,
 } from '@bubbles-ui/components';
-import dayjs from 'dayjs';
-import { filter, find } from 'lodash';
-import { useMemo } from 'react';
-//TODO: import LibraryCardDeadline from plugin @leebrary
+import _, { filter, find, map } from 'lodash';
+// TODO: import LibraryCardDeadline from plugin @leebrary
 // import { LibraryCardDeadline } from '../../../../leebrary/src/components/LibraryCardDeadline';
+import ClassroomItemDisplay from '@academic-portfolio/components/ClassroomItemDisplay/ClassroomItemDisplay';
+import assignablePrefixPN from '@assignables/helpers/prefixPN';
+import prefixPN from '@calendar/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { unflatten } from '@common';
+import getDeadlineData from '@assignables/helpers/getDeadlineData';
+import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
+import { NYACardBodyStyles } from '@assignables/components/NYACard/NYCardBody/NYACardBody.styles';
+import { useSession } from '@users/session';
+import getUserFullName from '@users/helpers/getUserFullName';
+import getActivityType from '@assignables/helpers/getActivityType';
 import { KanbanTaskCardStyles } from './KanbanTaskCard.styles';
 
 const emptyPixel =
@@ -37,15 +45,27 @@ const ProgressBar = ({ value }) => {
 };
 
 const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
+  const session = useSession();
+  const classIds = [];
+  if (value.uniqClasses) {
+    value.uniqClasses.forEach((id) => {
+      const ca = _.find(config.calendars, { id });
+      if (ca) {
+        classIds.push(ca.key.replace('calendar.class.', ''));
+      }
+    });
+  }
+  const { classes: classesNya } = NYACardBodyStyles({}, { name: 'NYACardBody' });
   const calendar = find(config.calendars, { id: value.calendar });
   if (!calendar) return null;
 
   const isFromInstance = !!value?.data?.instanceId;
 
-  const image = value.image;
+  const { image } = value;
 
   const { classes, cx } = KanbanTaskCardStyles({
-    bgColor: value.disableDrag ? value.bgColor || calendar.bgColor : null,
+    classIds,
+    bgColor: value.bgColor || calendar.bgColor,
     titleMargin:
       value.deadline ||
       value.endDate ||
@@ -57,7 +77,11 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
     if (value.data && value.data.subtask && value.data.subtask.length) {
       const total = value.data.subtask.length;
       const completed = filter(value.data.subtask, { checked: true }).length;
-      return parseInt((completed / total) * 100);
+      return {
+        total,
+        completed,
+        percentaje: parseInt((completed / total) * 100),
+      };
     }
     return null;
   }, [value]);
@@ -96,44 +120,108 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
     avatarNoImage.icon = avatarNoImage._icon;
   }
 
+  const [t] = useTranslateLoader([prefixPN('kanbanCard')]);
+  const [, translations] = useTranslateLoader([assignablePrefixPN('need_your_attention')]);
+  const trans = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return {
+        ..._.get(res, assignablePrefixPN('need_your_attention')),
+      };
+    }
+
+    return {};
+  }, [translations]);
+
+  const end = value.deadline?.deadline || value.endDate;
+  let endEl = null;
+  const formattedDeadline = getDeadlineData(
+    end ? new Date(end) : null,
+    new Date(value.startDate),
+    trans?.deadline || {}
+  );
+  const deadlineColors = getColorByDateRange(end ? new Date(end) : null, new Date(value.startDate));
+  endEl = (
+    <Box className={classesNya.deadline}>
+      <Text className={classesNya.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
+      <Text className={classesNya.deadlineDate} style={{ color: deadlineColors }}>
+        {formattedDeadline.status}
+      </Text>
+    </Box>
+  );
+
+  const activityType = getActivityType(value?.instanceData?.instance || {});
+
   return (
-    <Paper
-      shadow="none"
+    <Box
       className={classes.root}
       style={{ cursor: value.disableDrag ? 'pointer' : 'grab' }}
       onClick={() => onClick(value)}
     >
       <Box className={classes.topSection}>
-        <Box className={classes.title}>{value.title}</Box>
+        {activityType && (
+          <Badge
+            sx={(theme) => ({ marginBottom: theme.spacing[3] })}
+            closable={false}
+            size="xs"
+            className={classesNya.calificationBadge}
+          >
+            <Text className={classesNya.draftText}>{labels[activityType]?.toUpperCase()}</Text>
+          </Badge>
+        )}
 
-        {value.deadline ||
-        value.endDate ||
-        value?.data?.description ||
-        (!isFromInstance && calendar.isUserCalendar) ? (
-          <Box className={classes.line}></Box>
-        ) : null}
+        <TextClamp lines={2}>
+          <Box className={classes.title}>{value.title}</Box>
+        </TextClamp>
 
-        {value.data && value.data.description ? (
-          <Box className={classes.description}>
-            <TextClamp lines={1} showTooltip>
-              <Text role="productive">{value.data.description}</Text>
-            </TextClamp>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
+          {classIds.length ? (
+            <ClassroomItemDisplay classroomIds={classIds} showSubject={true} />
+          ) : (
+            <Box style={{ display: 'flex' }}>
+              <AvatarsGroup
+                size="sm"
+                data={map([...map(value?.userAgents, 'user'), session], (e) => ({
+                  fullName: getUserFullName(e),
+                }))}
+                moreThanUsersAsMulti={2}
+                numberFromClassesAndData
+                customAvatarMargin={14}
+                limit={2}
+                zIndexInverted={true}
+              />
+            </Box>
+          )}
+        </Box>
+
+        {endEl}
+
+        {percentaje !== null ? (
+          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+            <ProgressColorBar
+              labelLeft={
+                <Box>
+                  {t('progress')}: {percentaje.percentaje}%
+                </Box>
+              }
+              labelRight={
+                <Box>
+                  ({percentaje.completed}/{percentaje.total}{' '}
+                  {t(value?.instanceData ? 'activities' : 'subtask')})
+                </Box>
+              }
+              size={'md'}
+              value={percentaje.percentaje}
+            />
           </Box>
-        ) : null}
-
-        {value.deadline && isFromInstance ? (
-          <Box sx={(theme) => ({ margin: `-0.5rem` })}>
-            {/* <LibraryCardDeadline {...value.deadline} /> */}
-          </Box>
-        ) : value.endDate ? (
-          <Text size="xs">
-            {labels.delivery} {dayjs(value.endDate).format('DD/MM/YYYY HH:mm')}
-          </Text>
         ) : null}
       </Box>
+
+      {/*
       <Box className={classes.bottomSection}>
         <Box className={classes.bottomSectionBg} />
         <Box className={classes.bottomSectionContent}>
+
           <Box className={classes.avatar}>
             {!isFromInstance || (isFromInstance && (!avatar.image || !avatar.icon)) ? (
               <Box
@@ -162,14 +250,11 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
               </Paragraph>
             ) : null}
           </Box>
-          {percentaje !== null ? (
-            <Box>
-              <ProgressBar value={percentaje} />
-            </Box>
-          ) : null}
+
         </Box>
       </Box>
-    </Paper>
+      */}
+    </Box>
   );
 };
 

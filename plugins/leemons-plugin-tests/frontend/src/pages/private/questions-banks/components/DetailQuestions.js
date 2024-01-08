@@ -86,6 +86,23 @@ export default function DetailQuestions({
     }
   }
 
+  const showQuestionForm = qStore.newQuestion || qStore.question;
+
+  if (showQuestionForm) {
+    return (
+      <DetailQuestionForm
+        t={t}
+        isPublished={formValues.published}
+        onSave={onSave}
+        onSaveQuestion={onSaveQuestions}
+        onCancel={onCancel}
+        defaultValues={qStore.newQuestion ? {} : qStore.question}
+        categories={categories}
+        store={store}
+      />
+    );
+  }
+
   const tableHeaders = [
     {
       Header: t('questionLabel'),
@@ -108,25 +125,6 @@ export default function DetailQuestions({
     },
   ];
 
-  // console.log(form.formState.errors.questions);
-
-  const showQuestionForm = qStore.newQuestion || qStore.question;
-
-  if (showQuestionForm) {
-    return (
-      <DetailQuestionForm
-        t={t}
-        isPublished={formValues.published}
-        onSave={onSave}
-        onSaveQuestion={onSaveQuestions}
-        onCancel={onCancel}
-        defaultValues={qStore.newQuestion ? {} : qStore.question}
-        categories={categories}
-        store={store}
-      />
-    );
-  }
-
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
@@ -135,25 +133,13 @@ export default function DetailQuestions({
           fixed
           scrollRef={scrollRef}
           leftZone={
-            <>
-              {showQuestionForm ? (
-                <Button
-                  variant="outline"
-                  leftIcon={<ChevLeftIcon height={20} width={20} />}
-                  onClick={onCancel}
-                >
-                  {t('returnToList')}
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  leftIcon={<ChevLeftIcon height={20} width={20} />}
-                  onClick={onPrev}
-                >
-                  {t('previous')}
-                </Button>
-              )}
-            </>
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={onPrev}
+            >
+              {t('previous')}
+            </Button>
           }
           rightZone={
             <>
@@ -167,23 +153,13 @@ export default function DetailQuestions({
                   {t('saveDraft')}
                 </Button>
               ) : null}
-              {showQuestionForm ? (
-                <Button
-                  onClick={() => tryHandler(onPublish)}
-                  disabled={store.saving}
-                  loading={store.saving === 'publish'}
-                >
-                  {t('saveQuestion')}
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => tryHandler(onPublish)}
-                  disabled={store.saving}
-                  loading={store.saving === 'publish'}
-                >
-                  {t('publish')}
-                </Button>
-              )}
+              <Button
+                onClick={() => tryHandler(onPublish)}
+                disabled={store.saving}
+                loading={store.saving === 'publish'}
+              >
+                {t('publish')}
+              </Button>
             </>
           }
         />

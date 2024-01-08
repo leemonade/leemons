@@ -35,7 +35,7 @@ const useStyles = createStyles((theme, { isStudent }) => ({
 function useHeaderLocalizations() {
   const [, translations] = useTranslateLoader(prefixPN('notebook.header'));
 
-  const labels = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return _.get(res, prefixPN('notebook.header'));
@@ -43,11 +43,9 @@ function useHeaderLocalizations() {
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 
-function onScoresDownload(extension) {
+export function onScoresDownload(extension) {
   let timer;
 
   const onClearTimer = () => {

@@ -33,6 +33,10 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
       flexDirection: 'column',
       overflow: 'hidden',
       height: '100%',
+      backgroundColor: theme.other.core.color.neutral['50'],
+    },
+    content: {
+      marginTop: globalTheme.spacing.padding.md,
     },
     contentPadding: {
       overflowY: 'auto',
@@ -70,6 +74,7 @@ export function AssetPickerDrawer({
   onClose,
   onSelect,
   onlyCreateImages,
+  onlyImages,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
   const { classes } = useAssetPickerDrawerStyles();
@@ -87,7 +92,7 @@ export function AssetPickerDrawer({
       <Box className={classes.root}>
         <Header localizations={localizations?.header} onClose={onClose} />
         {creatable ? (
-          <Tabs fullHeight>
+          <Tabs usePaddedLayout fullHeight className={classes.content}>
             <TabPanel key="library" label={localizations?.tabs?.library}>
               <AssetList
                 variant={layout}
@@ -95,6 +100,7 @@ export function AssetPickerDrawer({
                 categories={categories}
                 filters={filters}
                 onSelect={onSelect}
+                onlyImages={onlyImages}
               />
             </TabPanel>
             <TabPanel key="new" label={localizations?.tabs?.new}>
@@ -113,6 +119,7 @@ export function AssetPickerDrawer({
               categories={categories}
               filters={filters}
               onSelect={onSelect}
+              onlyImages={onlyImages}
             />
           </Box>
         )}
@@ -123,6 +130,7 @@ export function AssetPickerDrawer({
 
 AssetPickerDrawer.defaultProps = {
   onlyCreateImages: true,
+  size: 728,
 };
 AssetPickerDrawer.propTypes = {
   position: PropTypes.oneOf(['left', 'right']),
@@ -136,4 +144,5 @@ AssetPickerDrawer.propTypes = {
   layout: PropTypes.oneOf(['rows', 'thumbnails', 'cards']),
   filters: PropTypes.object,
   onlyCreateImages: PropTypes.bool,
+  onlyImages: PropTypes.bool,
 };

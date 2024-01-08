@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActionButton, Box, Text, createStyles } from '@bubbles-ui/components';
-import { PluginLeebraryIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { ActionButton, Box, Stack, Title, createStyles } from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 export const useHeaderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -9,6 +9,7 @@ export const useHeaderStyles = createStyles((theme) => {
   return {
     root: {
       width: '100%',
+      height: 72,
       display: 'flex',
       flexDirection: 'row',
       gap: globalTheme.spacing.gap.md,
@@ -18,6 +19,8 @@ export const useHeaderStyles = createStyles((theme) => {
       paddingBottom: globalTheme.spacing.padding.md,
       paddingLeft: globalTheme.spacing.padding.lg,
       paddingRight: globalTheme.spacing.padding.lg,
+      borderBottom: `1px solid ${theme.other.divider.background.color.default}`,
+      backgroundColor: 'white',
     },
     titleContainer: {
       display: 'flex',
@@ -25,11 +28,6 @@ export const useHeaderStyles = createStyles((theme) => {
       gap: globalTheme.spacing.gap.md,
       alignItems: 'center',
       justifyContent: 'start',
-    },
-    title: {
-      ...globalTheme.content.typo.heading.sm,
-      // TODO: Add color token
-      color: '#676E79',
     },
   };
 });
@@ -40,8 +38,7 @@ export function Header({ localizations, onClose }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.titleContainer}>
-        <PluginLeebraryIcon className={classes.title} height={20} width={20} />
-        <Text className={classes.title}>{localizations?.title}</Text>
+        <Title order={2}>{localizations?.title}</Title>
       </Box>
       <ActionButton icon={<RemoveIcon />} tooltip={localizations?.close} onClick={onClose} />
     </Box>

@@ -14,7 +14,7 @@ module.exports = {
   assistancePage: {
     header: {
       teacher: {
-        title: 'Assistance',
+        title: 'Attendance control',
         description:
           'Here you can consult the scores of all the evaluated activities, both gradable and non-gradable.',
       },
@@ -28,5 +28,12 @@ module.exports = {
     'on-time': 'On time',
     not: 'Missing',
     late: 'Late',
+  },
+  tabKanban: {
+    label: 'Attendance',
+  },
+  classTabDetailTable: {
+    title: 'Attendance',
+    attendanceMonitoring: 'Roll call now',
   },
 };

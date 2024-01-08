@@ -3,10 +3,8 @@ import {
   Button,
   ContextContainer,
   ListInput,
-  MultiSelect,
-  Select,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
@@ -32,7 +30,7 @@ export default function DetailConfig({
   const formValues = form.watch();
   const program = form.watch('program');
 
-  const validate = async () => form.trigger(['program', 'subjects']);
+  const validate = async () => form.trigger([]);
 
   const handleOnNext = async () => {
     setIsDirty(true);
@@ -114,6 +112,7 @@ export default function DetailConfig({
       }
     >
       <ContextContainer>
+        {/*
         <Controller
           control={form.control}
           name="program"
@@ -146,7 +145,7 @@ export default function DetailConfig({
             />
           )}
         />
-
+        */}
         <Controller
           control={form.control}
           name="categories"

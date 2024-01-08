@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Title, Button } from '@bubbles-ui/components';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import { Box, Button, Title } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useNyaStyles } from '../hooks';
 
 export default function Header({ titleLabel, linkLabel, count, linkTo }) {
@@ -14,7 +14,9 @@ export default function Header({ titleLabel, linkLabel, count, linkTo }) {
         {titleLabel} {count !== null && `(${count})`}
       </Title>
       <Link to={linkTo}>
-        <Button variant="link">{linkLabel}</Button>
+        <Button variant="link" rightIcon={<ChevRightIcon />}>
+          {linkLabel}
+        </Button>
       </Link>
     </Box>
   );

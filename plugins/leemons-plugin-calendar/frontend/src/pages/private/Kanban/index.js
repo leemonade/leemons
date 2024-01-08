@@ -19,6 +19,7 @@ import hooks from 'leemons-hooks';
 import * as _ from 'lodash';
 import { find, flatten, map, uniq } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
 function Kanban({ session }) {
@@ -257,7 +258,7 @@ function Kanban({ session }) {
     return () => {
       ref.current.mounted = false;
     };
-  }, [session, evLoading]);
+  }, [session, evLoading, ref.current.program]);
 
   useEffect(() => {
     hooks.addAction('calendar:force:reload', reload);
@@ -293,7 +294,7 @@ function Kanban({ session }) {
     <Box
       sx={(theme) => ({
         height: '100vh',
-        paddingTop: theme.spacing[12],
+        paddingTop: 80,
         background: theme.colors.uiBackground02,
       })}
     >
@@ -307,25 +308,32 @@ function Kanban({ session }) {
         />
       ) : null}
       <Box sx={() => ({ position: 'absolute', top: 0, left: 0, width: '100%' })}>
-        <KanbanFilters
-          data={ref.current.filtersData}
-          value={{ ...ref.current.filters }}
-          onChange={onFiltersChange}
-          messages={{
-            ...filterMessages,
-            filter:
-              ref.current?.centers?.length > 1 ? (
-                <SelectCenter
-                  firstSelected
-                  value={ref.current?.center?.id}
-                  onChange={centerChange}
-                />
-              ) : (
-                filterMessages.filter
-              ),
+        <ProgramBarSelector
+          onChange={(program) => {
+            ref.current.program = program;
+            render();
           }}
-          addEventClick={addEventClick}
-        />
+        >
+          <KanbanFilters
+            data={ref.current.filtersData}
+            value={{ ...ref.current.filters }}
+            onChange={onFiltersChange}
+            messages={{
+              ...filterMessages,
+              filter:
+                ref.current?.centers?.length > 1 ? (
+                  <SelectCenter
+                    firstSelected
+                    value={ref.current?.center?.id}
+                    onChange={centerChange}
+                  />
+                ) : (
+                  filterMessages.filter
+                ),
+            }}
+            addEventClick={addEventClick}
+          />
+        </ProgramBarSelector>
       </Box>
       <Box sx={(theme) => ({ height: '100%' })}>
         {ref.current.board ? (

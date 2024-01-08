@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import _, { noop, isEmpty, isFunction, isNil, flatten } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import _, { flatten, isEmpty, isFunction, isNil, noop } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
@@ -10,31 +11,18 @@ import {
   ContextContainer,
   FileUpload,
   ImageLoader,
-  ImagePreviewInput,
-  InputWrapper,
-  Select,
   Stack,
   Switch,
-  TextInput,
   Textarea,
+  TextInput,
   useResizeObserver,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import {
-  CloudUploadIcon,
-  CommonFileSearchIcon,
-  PluginLeebraryIcon,
-} from '@bubbles-ui/icons/outline';
+import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import SelectSubjects from '@leebrary/components/SelectSubjects';
-import {
-  getCoverName,
-  getCoverUrl,
-  isImageFile,
-  isNullish,
-  isValidURL,
-  prepareAsset,
-} from '../../helpers/prepareAsset';
+import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
+import { isImageFile, isNullish, isValidURL } from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
@@ -44,6 +32,21 @@ import {
 import { ImagePicker } from '../ImagePicker';
 
 const REQUIRED_FIELD = 'Field required';
+
+const FooterContainer = ({ children, scrollRef, drawerLayout }) => {
+  if (!drawerLayout) return React.Fragment;
+  return (
+    <Box sx={(theme) => ({ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000 })}>
+      <TotalLayoutFooterContainer scrollRef={scrollRef}>{children}</TotalLayoutFooterContainer>
+    </Box>
+  );
+};
+
+FooterContainer.propTypes = {
+  children: PropTypes.node,
+  scrollRef: PropTypes.any,
+  drawerLayout: PropTypes.bool,
+};
 
 const AssetForm = ({
   // advancedConfigMode,
@@ -68,6 +71,7 @@ const AssetForm = ({
   onChange = noop,
   ContentExtraFields = null,
   editing,
+  drawerLayout,
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -104,7 +108,7 @@ const AssetForm = ({
     setValue,
     getValues,
     formState: { errors },
-  } = form || useForm({ defaultValues });
+  } = form ?? useForm({ defaultValues });
 
   const formValues = watch();
   const coverFile = watch('cover');
@@ -196,12 +200,13 @@ const AssetForm = ({
   // HANDLERS
 
   const handleOnSubmit = (e) => {
+    console.log('handleOnSubmit:', e);
     if (assetFile) e.file = assetFile;
     if (coverFile) e.cover = coverFile;
     if (asset.id) e.id = asset.id;
     if (urlMetadata?.logo) e.icon = urlMetadata.logo;
     if (coverAsset) e.cover = coverAsset.file.id;
-
+    console.log('after e:', e);
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
@@ -429,43 +434,34 @@ const AssetForm = ({
                 ) : null}
 
                 {store.showAdvancedConfig ? (
-                  <ContextContainer title="Programas y Asignaturas">
-                    <Controller
-                      control={control}
-                      name="program"
-                      rules={store.programRequired}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          error={errors.program}
-                          required={!!store.programRequired}
-                          label={labels.program}
-                          data={store.programs}
-                        />
-                      )}
-                    />
-                  </ContextContainer>
-                ) : null}
-
-                {program ? (
-                  <ContextContainer>
-                    <Controller
-                      control={control}
-                      name="subjects"
-                      rules={store.subjectRequired}
-                      render={({ field }) => (
-                        <SelectSubjects
-                          {...field}
-                          {...labels.subjectSelects}
-                          errors={errors}
-                          required={!!store.subjectRequired}
-                          showLevel={store.showLevel}
-                          maxOne={store.maxOneSubject}
-                          programId={program}
-                        />
-                      )}
-                    />
-                  </ContextContainer>
+                  <Controller
+                    name="subjects"
+                    control={control}
+                    rules={store.subjectRequired}
+                    render={({ field, fieldState: { error } }) => (
+                      <SubjectPicker
+                        {...field}
+                        value={_.map(field.value || [], 'subject')}
+                        onChangeRaw={(e) => {
+                          if (e.length > 0) {
+                            if (!program) setValue('program', e[0].program);
+                          } else if (program) setValue('program', null);
+                        }}
+                        error={error}
+                        assignable={{}}
+                        localizations={{
+                          title: labels?.programAndSubjects,
+                          program: labels?.program,
+                          subject: labels?.subjectSelects?.labels?.subject,
+                          add: labels?.subjectSelects?.placeholders?.addSubject,
+                          course: labels?.course,
+                          placeholder: labels?.selectPlaceholder,
+                        }}
+                        hideSectionHeaders={false}
+                        onlyOneSubject={store.maxOneSubject}
+                      />
+                    )}
+                  />
                 ) : null}
               </>
             ) : null}
@@ -509,11 +505,13 @@ const AssetForm = ({
           </ContextContainer>
 
           {!hideSubmit && (
-            <Stack justifyContent={'end'} fullWidth>
-              <Button onClick={handleSubmit(handleOnSubmit)} loading={loading}>
-                {labels.submitForm}
-              </Button>
-            </Stack>
+            <FooterContainer drawerLayout={drawerLayout}>
+              <Stack justifyContent={'end'} fullWidth>
+                <Button onClick={() => handleSubmit(handleOnSubmit)()} loading={loading}>
+                  {labels.submitForm}
+                </Button>
+              </Stack>
+            </FooterContainer>
           )}
         </ContextContainer>
       </form>

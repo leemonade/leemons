@@ -1,14 +1,14 @@
 /* eslint-disable camelcase */
 import React, { useEffect } from 'react';
-import { groupBy, map, uniqBy } from 'lodash';
+import { groupBy, isString, map, uniqBy } from 'lodash';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import {
   LoadingOverlay,
-  VerticalStepperContainer,
   TotalLayoutContainer,
   TotalLayoutHeader,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -62,7 +62,7 @@ export default function Edit() {
       render();
 
       const { subjects, ...toSend } = formValues;
-      toSend.subjects = subjects?.map(({ subject }) => subject);
+      toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
 
       await saveTestRequest({ ...toSend, type: 'learn', published: false });
 
@@ -80,7 +80,7 @@ export default function Edit() {
       store.saving = 'publish';
       render();
       const { subjects, ...toSend } = formValues;
-      toSend.subjects = subjects?.map(({ subject }) => subject);
+      toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
       const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: true });
       addSuccessAlert(t('published'));
       if (redictToAssign) {
@@ -320,6 +320,7 @@ export default function Edit() {
           icon={<TestIcon width={23} height={23} />}
           title={getTitle()}
           formTitlePlaceholder={formValues.name}
+          onCancel={() => history.goBack()}
         />
       }
     >

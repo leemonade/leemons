@@ -386,6 +386,7 @@ async function getCalendarsToFrontend({ ctx }) {
   let kanbanColumns = [];
   const instanceIdEvents = {};
   let instanceStatusByInstance = {};
+  let instancesById = {};
   try {
     const instanceIds = [];
     _.forEach(result.events, (event) => {
@@ -395,15 +396,20 @@ async function getCalendarsToFrontend({ ctx }) {
       }
     });
 
-    const [instanceStatus, _kanbanColumns] = await Promise.all([
+    const [instanceStatus, _kanbanColumns, instances] = await Promise.all([
       ctx.tx.call('assignables.assignableInstances.getAssignableInstancesStatus', {
         assignableInstanceIds: instanceIds,
       }),
       listKanbanColumns({ ctx }),
+      ctx.tx.call('assignables.assignableInstances.getAssignableInstances', {
+        ids: instanceIds,
+        details: true,
+      }),
     ]);
 
     kanbanColumns = _kanbanColumns;
     instanceStatusByInstance = _.keyBy(instanceStatus, 'instance');
+    instancesById = _.keyBy(instances, 'id');
   } catch (e) {
     console.error(e);
   }
@@ -449,8 +455,11 @@ async function getCalendarsToFrontend({ ctx }) {
       // --- Instancia
       if (instanceIdEvents[event.id]) {
         const instanceStatus = instanceStatusByInstance[instanceIdEvents[event.id]];
-
-        event.instanceData = instanceStatus;
+        const instance = instancesById[instanceIdEvents[event.id]];
+        event.instanceData = {
+          ...instanceStatus,
+          instance,
+        };
 
         if (instanceStatus && (event.endDate || event.startDate) && instanceStatus.dates.deadline) {
           event.startDate = instanceStatus.dates.start;
@@ -471,7 +480,7 @@ async function getCalendarsToFrontend({ ctx }) {
             // Si hay fecha de visualización
             if (now >= new Date(instanceStatus.dates.visualization)) {
               // Si la fecha actual es mayor debe de poder ver el evento
-              event.data.column = kanbanColumnsByOrder[1].id;
+              event.data.column = kanbanColumnsByOrder[1]?.id;
             } else {
               return null;
             }
@@ -490,7 +499,7 @@ async function getCalendarsToFrontend({ ctx }) {
           }
 
           if (instanceStatus.status === 'assigned') {
-            event.data.column = kanbanColumnsByOrder[1].id;
+            event.data.column = kanbanColumnsByOrder[1]?.id;
           }
           if (instanceStatus.status === 'opened') {
             event.data.column = kanbanColumnsByOrder[2].id;

@@ -4,14 +4,12 @@ import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   LoadingOverlay,
-  useDebouncedCallback,
-  VerticalStepperContainer,
   TotalLayoutContainer,
   TotalLayoutHeader,
+  useDebouncedCallback,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import { PluginTestIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -166,7 +164,7 @@ export default function Detail(p) {
         />
       }
     >
-      {/* 
+      {/*
         <AdminPageHeader
           values={{
             // eslint-disable-next-line no-nested-ternary
@@ -208,6 +206,11 @@ export default function Detail(p) {
             store={store}
             stepName={t('basic')}
             scrollRef={scrollRef}
+            advancedConfig={{
+              alwaysOpen: true,
+              program: { show: true, required: false },
+              subjects: { show: true, required: true, showLevel: false, maxOne: true },
+            }}
             onNext={() => setStep(1)}
             onSave={saveAsDraft}
           />

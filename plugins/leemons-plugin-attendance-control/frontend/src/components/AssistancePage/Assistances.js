@@ -19,7 +19,7 @@ const useAssistancesStyles = createStyles((theme) => ({
   },
 }));
 
-export default function Assistances({ filters }) {
+export default function Assistances({ filters, hideHeader }) {
   const { classes } = useAssistancesStyles();
 
   if (isEmpty(filters)) {
@@ -28,7 +28,9 @@ export default function Assistances({ filters }) {
 
   return (
     <Box className={classes.root}>
-      <Header filters={filters} variant="notebook" allowDownload isStudent={false} />
+      {!hideHeader ? (
+        <Header filters={filters} variant="notebook" allowDownload isStudent={false} />
+      ) : null}
       <AssistancesInfo filters={filters} />
     </Box>
   );

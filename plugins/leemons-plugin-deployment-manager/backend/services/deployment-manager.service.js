@@ -39,7 +39,6 @@ module.exports = () => ({
       },
     }),
   ],
-
   actions: {
     ...restActions,
     getDeploymentIDByDomain: {
@@ -82,8 +81,11 @@ module.exports = () => ({
         // TODO: Crear transaccion
         ctx.meta.transactionID = await newTransaction(ctx);
         ctx.meta.initDeploymentProcessNumber = randomString();
-        return ctx.call('deployment-manager.emit', {
+        await ctx.call('deployment-manager.emit', {
           event: 'deployment-manager.install',
+        });
+        await ctx.call('deployment-manager.emit', {
+          event: 'deployment-manager.finish',
         });
       },
     },

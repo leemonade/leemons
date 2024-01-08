@@ -9,6 +9,7 @@ export default function Ongoing({ classe }) {
       defaultFilters={{ class: classe?.id, closed: false }}
       filters={{ hideSubject: true }}
       fullWidth
+      linkTo="/private/assignables/ongoing"
       titleComponent={<Text size="lg" color="primary"></Text>}
       subjectFullLength={false}
     />

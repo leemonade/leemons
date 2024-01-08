@@ -1,20 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   Box,
-  Title,
-  Text,
-  InlineSvg,
-  Tabs,
-  TabPanel,
-  Divider,
+  Button,
   createStyles,
+  Divider,
+  InlineSvg,
+  TabPanel,
+  Tabs,
+  Text,
+  Title,
 } from '@bubbles-ui/components';
 
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
+import { Link } from 'react-router-dom';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import Filters from './components/Filters';
 import ActivitiesList from './components/ActivitiesList';
 import prefixPN from '../../../helpers/prefixPN';
@@ -50,23 +53,38 @@ const useAssignmentListHeaderStyles = createStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+  titleText: {
+    fontSize: '20px',
+    fontWeight: 600,
+    lineHeight: '28px',
+  },
 }));
 
-function Header({ icon, title, fullWidth, separator, isTitle }) {
+function Header({ icon, title, fullWidth, separator, isTitle, linkTo, linkLabel }) {
   const { classes, cx } = useAssignmentListHeaderStyles();
   return (
     <>
-      <Box className={cx({ [classes?.fullWidth]: !fullWidth })}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+        className={cx({ [classes?.fullWidth]: !fullWidth })}
+      >
         <Box className={classes?.title}>
           {!!icon && icon}
           {isTitle ? (
             <Title order={1}>{title}</Title>
           ) : (
-            <Text color="primary" size="lg">
+            <Text color="primary" className={classes.titleText}>
               {title}
             </Text>
           )}
         </Box>
+        {linkTo && linkLabel ? (
+          <Link to={linkTo}>
+            <Button variant="link" rightIcon={<ChevRightIcon />}>
+              {linkLabel}
+            </Button>
+          </Link>
+        ) : null}
       </Box>
       {!!separator && <Divider />}
     </>
@@ -93,6 +111,7 @@ export default function AssignmentList({
   titleComponent,
   filters: filtersProps,
   defaultFilters = null,
+  linkTo,
   fullWidth,
   header,
   ...props
@@ -147,17 +166,27 @@ export default function AssignmentList({
   );
   const headerProps = {
     fullWidth,
-    icon: header?.icon || icon,
+    // icon: header?.icon || icon,
     title: header?.title || labels.title,
     separator: header?.separator || false,
     isTitle: header?.isTitle || false,
+    linkTo,
+    linkLabel: labels?.filters?.seeAllActivities,
   };
 
   const { classes, cx } = useAssignmentListStyles();
   return (
     <Box>
       <Header {...headerProps} />
-      <Box className={cx({ [classes.fullWidth]: !fullWidth })}>
+      <Box
+        sx={(theme) => ({
+          padding: theme.spacing[6],
+          marginTop: theme.spacing[4],
+          backgroundColor: 'white',
+          borderRadius: 4,
+        })}
+        className={cx({ [classes.fullWidth]: !fullWidth })}
+      >
         <Tabs>
           {tabs.map((tab) => (
             <TabPanel key={tab.value} label={tab.label}>

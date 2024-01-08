@@ -124,7 +124,7 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
   return (
     <LibraryCard
       {...props}
-      asset={asset}
+      asset={{ ...asset, fileType: 'feedback' }}
       menuItems={menuItems}
       variant="feedback"
       variantTitle={t('feedback')}

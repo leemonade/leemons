@@ -21,7 +21,7 @@ async function getSessionRequest(id) {
 }
 
 async function getClassSessionsRequest(body) {
-  return leemons.api(`v1/attendance-control/class/sessions`, {
+  return leemons.api(`v1/attendance-control/session/class/sessions`, {
     allAgents: true,
     method: 'POST',
     body,

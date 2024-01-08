@@ -13,11 +13,11 @@ export default function DetailBasic({
   t,
   form,
   store,
-  advancedConfig,
   stepName,
   scrollRef,
-  onNext,
   onSave,
+  onNext,
+  advancedConfig,
 }) {
   const formValues = form.watch();
   const validate = async () => form.trigger(['name', 'program', 'subjects']);
@@ -67,15 +67,13 @@ export default function DetailBasic({
         />
       }
     >
-      <ContextContainer>
-        <AssetFormInput
-          advancedConfig={advancedConfig}
-          form={form}
-          preview
-          tagsPluginName="tests"
-          category="assignables.tests"
-        />
-      </ContextContainer>
+      <AssetFormInput
+        advancedConfig={advancedConfig}
+        form={form}
+        preview
+        tagsPluginName="tests"
+        category="assignables.tests"
+      />
     </TotalLayoutStepContainer>
   );
 }

@@ -37,7 +37,6 @@ const NavItem = ({
   const { classes, theme } = NavItemStyles();
   const hasChildren = Array.isArray(childrenCollection) && childrenCollection.length > 0;
   const [opened, setOpened] = useState(false);
-  const handleSvgProps = !activeIconSvg || (!!activeIconSvg && activeIconSvg === iconSvg);
 
   useEffect(() => {
     setOpened(expandedItem === id);
@@ -87,8 +86,6 @@ const NavItem = ({
                 className={classes.icon}
                 src={active && items.activeIconSvg ? activeIconSvg : iconSvg}
                 alt={`figure ${iconAlt}`}
-                strokeCurrent
-                ignoreFill={!active && handleSvgProps}
               />
               <motion.div
                 initial={{ opacity: '0' }}
