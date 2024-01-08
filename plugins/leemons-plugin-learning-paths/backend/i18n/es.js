@@ -157,6 +157,7 @@ module.exports = {
       viewReport: 'Ver informe',
     },
     resources: 'Recursos',
+    students: 'Alumnos',
   },
   modulesTab: {
     tabName: 'Temario',

@@ -39,15 +39,16 @@ const getOngoingState = ({ students }) => {
   students.forEach((student) => {
     allStatuses.push(student.status);
   });
-  if (allStatuses.every((status) => status === -1 || status === 2)) {
-    return { state: 'openedButNotStarted' };
-  }
+
   if (allStatuses.includes(0) && allStatuses.some((status) => status !== 0)) {
     const evaluatedCount = getEvaluatedCounter(allStatuses);
     return { state: 'someDeliveredButNotAll', ...evaluatedCount };
   }
   if (allStatuses.every((status) => status === 0)) {
     return { state: 'allEvaluated' };
+  }
+  if (!allStatuses.some((status) => status === 0)) {
+    return { state: 'openedButNotStarted' };
   }
 };
 

@@ -78,6 +78,11 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
     ':id',
     id
   );
+  console.group();
+  console.log('activity name: ', activity?.assignable?.asset?.name);
+  console.log('students: ', activity?.students);
+  console.log('getInfo: ', evaluationInfo);
+  console.groupEnd();
 
   if (evaluationInfo?.state === 'allEvaluated') {
     return (

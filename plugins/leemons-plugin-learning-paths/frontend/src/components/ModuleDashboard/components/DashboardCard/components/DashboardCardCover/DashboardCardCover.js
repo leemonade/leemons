@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { Box, ImageLoader, CardEmptyCover, ProgressRing, Text } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@learning-paths/helpers/prefixPN';
 import {
   DASHBOARD_CARD_COVER_DEFAULT_PROPS,
   DASHBOARD_CARD_COVER_PROP_TYPES,
@@ -22,6 +24,7 @@ const DashboardCardCover = ({
   evaluationInfo,
 }) => {
   const { classes } = DashboardCardCoverStyles({ moduleColor });
+  const [t] = useTranslateLoader(prefixPN('dashboard'));
   const isSomethingEvaluable = evaluationInfo?.state === 'someDeliveredButNotAll';
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
@@ -72,7 +75,7 @@ const DashboardCardCover = ({
             </Box>
           }
         />
-        <Text>{`(${totalStudentsFinished}/${totalStudents} ${'Estudiantes'})`}</Text>
+        <Text>{`(${totalStudentsFinished}/${totalStudents} ${t('students')})`}</Text>
         <Box className={classes.orderLabel}>{assetNumber}</Box>
       </Box>
     );

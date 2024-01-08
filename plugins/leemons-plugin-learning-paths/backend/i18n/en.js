@@ -157,6 +157,7 @@ module.exports = {
       viewReport: 'View report',
     },
     resources: 'Resources',
+    students: 'Students',
   },
   modulesTab: {
     tabName: 'Modules',
