@@ -2,14 +2,11 @@
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
 import { Box, createStyles } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
 import { isEmpty, isNil } from 'lodash';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { AssetList } from '../../../components/AssetList';
 import LibraryContext from '../../../context/LibraryContext';
-import prefixPN from '../../../helpers/prefixPN';
 import { VIEWS } from '../library/Library.constants';
 
 function useQuery() {

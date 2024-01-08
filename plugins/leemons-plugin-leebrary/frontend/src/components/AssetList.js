@@ -71,7 +71,6 @@ function AssetList({
   showPublic: showPublicProp,
   programs,
   subjects,
-  itemMinWidth,
   canChangeLayout,
   canChangeType,
   canSearch,
@@ -85,6 +84,7 @@ function AssetList({
   pinned,
   paperProps,
   emptyComponent,
+  itemMinWidth,
   searchEmptyComponent,
   preferCurrent,
   searchInProvider,
@@ -627,7 +627,8 @@ function AssetList({
             assetsLoading={cardDetailIsLoading}
           />
         ),
-        itemMinWidth,
+        itemMinWidth: '300px',
+        staticColumnWidth: true,
         margin: 16,
         spacing: 4,
         paperProps: { shadow: 'none', padding: 0 },
@@ -637,7 +638,7 @@ function AssetList({
     if (showThumbnails && store.layout === 'grid') {
       return {
         itemRender: (p) => <AssetThumbnail {...p} />,
-        itemMinWidth: store.category?.key === 'media-files' ? 200 : itemMinWidth,
+        itemMinWidth: store.category?.key === 'media-files' ? 300 : itemMinWidth,
         margin: 16,
         spacing: 4,
         paperProps: { shadow: 'none', padding: 4 },
