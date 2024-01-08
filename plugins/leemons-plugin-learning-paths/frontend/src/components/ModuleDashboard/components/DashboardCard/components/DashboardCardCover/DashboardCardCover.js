@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
+import { Box, ImageLoader, CardEmptyCover, ProgressRing, Text } from '@bubbles-ui/components';
 import {
   DASHBOARD_CARD_COVER_DEFAULT_PROPS,
   DASHBOARD_CARD_COVER_PROP_TYPES,
@@ -19,8 +19,10 @@ const DashboardCardCover = ({
   emptyIcon,
   fileType,
   moduleColor,
+  evaluationInfo,
 }) => {
   const { classes } = DashboardCardCoverStyles({ moduleColor });
+  const isSomethingEvaluable = evaluationInfo?.state === 'someDeliveredButNotAll';
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -51,6 +53,26 @@ const DashboardCardCover = ({
     return (
       <Box className={classes.root}>
         <ImageLoader src={cover} height={144} />
+        <Box className={classes.orderLabel}>{assetNumber}</Box>
+      </Box>
+    );
+  }
+  if (isSomethingEvaluable) {
+    const totalStudents = evaluationInfo?.totalStudents;
+    const totalStudentsFinished = evaluationInfo?.totalStudentsFinished;
+    const percentage = Math.round((totalStudentsFinished / totalStudents) * 100);
+    return (
+      <Box className={classes.commonContainer}>
+        <ProgressRing
+          rootColor={'#DDE1E6'}
+          sections={[{ value: percentage, color: '#307AE8' }]}
+          label={
+            <Box className={classes.labelPercentage}>
+              <Text className={classes.textPercentage}>{`${percentage}%`}</Text>
+            </Box>
+          }
+        />
+        <Text>{`(${totalStudentsFinished}/${totalStudents} ${'Estudiantes'})`}</Text>
         <Box className={classes.orderLabel}>{assetNumber}</Box>
       </Box>
     );

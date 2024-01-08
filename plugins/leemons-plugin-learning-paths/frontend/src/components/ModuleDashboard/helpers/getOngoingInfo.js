@@ -27,42 +27,27 @@ const getOngoingStatusAsNumber = (student) => {
 
   return -1;
 };
+
+const getEvaluatedCounter = (allStatuses) => {
+  const totalStudents = allStatuses?.length;
+  const totalStudentsFinished = allStatuses.filter((status) => status === 0).length;
+  return { totalStudents, totalStudentsFinished };
+};
 const getOngoingState = ({ students }) => {
-  let someDeliveredButNotAll = false;
-  let openedButNotStarted = true;
-  let allEvaluated = true;
+  const allStatuses = [];
 
   students.forEach((student) => {
-    switch (student.status) {
-      case -1:
-      case 2:
-        someDeliveredButNotAll = true;
-        allEvaluated = false;
-        break;
-      case 0:
-        if (!student.grades || student.grades.length === 0) {
-          allEvaluated = false;
-        }
-        openedButNotStarted = false;
-        break;
-      case 1:
-        someDeliveredButNotAll = true;
-        openedButNotStarted = false;
-        allEvaluated = false;
-        break;
-      default:
-        return null;
-    }
+    allStatuses.push(student.status);
   });
-
-  if (allEvaluated) {
-    return 'allEvaluated';
+  if (allStatuses.every((status) => status === -1 || status === 2)) {
+    return { state: 'openedButNotStarted' };
   }
-  if (openedButNotStarted) {
-    return 'openedButNotStarted';
+  if (allStatuses.includes(0) && allStatuses.some((status) => status !== 0)) {
+    const evaluatedCount = getEvaluatedCounter(allStatuses);
+    return { state: 'someDeliveredButNotAll', ...evaluatedCount };
   }
-  if (someDeliveredButNotAll) {
-    return 'someDeliveredButNotAll';
+  if (allStatuses.every((status) => status === 0)) {
+    return { state: 'allEvaluated' };
   }
 };
 

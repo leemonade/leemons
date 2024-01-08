@@ -10,6 +10,10 @@ import { LockIcon } from '@bubbles-ui/icons/solid';
 import getOngoingInfo from '@learning-paths/components/ModuleDashboard/helpers/getOngoingInfo';
 import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
 import { EvaluationStateDisplay } from '../EvaluationStateDisplay';
+import {
+  DASHBOARD_CARD_FOOTER_DEFAULT_PROPS,
+  DASHBOARD_CARD_FOOTER_PROP_TYPES,
+} from './DashboardCardFooter.constants';
 
 dayjs.extend(durationPlugin);
 export function useStudentState({ assignation = {} }) {
@@ -66,18 +70,19 @@ function PreviewActions({ activity, localizations }) {
   );
 }
 
-function TeacherActions({ activity, localizations }) {
-  const getInfo = getOngoingInfo({ instance: activity });
+function TeacherActions({ activity, localizations, evaluationInfo }) {
   const { assignable, id } = activity;
   const { roleDetails } = assignable;
   const { classes } = useDashboardCardFooterStyles();
+  const assignablesURL = (roleDetails.dashboardURL || '/private/assignables/details/:id').replace(
+    ':id',
+    id
+  );
 
-  if (getInfo === 'allDelivered') {
+  if (evaluationInfo?.state === 'allEvaluated') {
     return (
       <Box className={classes.buttonFull}>
-        <Link
-          to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}
-        >
+        <Link to={assignablesURL}>
           <Button fullWidth variant="link">
             {localizations?.buttons?.viewReport}
           </Button>
@@ -86,23 +91,19 @@ function TeacherActions({ activity, localizations }) {
     );
   }
 
-  if (getInfo === 'someDeliveredButNotAll') {
+  if (evaluationInfo?.state === 'someDeliveredButNotAll') {
     return (
       <Box className={classes.buttonFull}>
-        <Link
-          to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}
-        >
+        <Link to={assignablesURL}>
           <Button fullWidth>{localizations?.buttons?.forEvaluate}</Button>
         </Link>
       </Box>
     );
   }
-  if (getInfo === 'openedButNotStarted') {
+  if (evaluationInfo?.state === 'openedButNotStarted') {
     return (
       <Box className={classes.buttonFull}>
-        <Link
-          to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}
-        >
+        <Link to={assignablesURL}>
           <Button fullWidth variant="outline">
             {localizations?.buttons?.viewProgress}
           </Button>
@@ -112,7 +113,7 @@ function TeacherActions({ activity, localizations }) {
   }
 
   return (
-    <Link to={(roleDetails.dashboardURL || '/private/assignables/details/:id').replace(':id', id)}>
+    <Link to={assignablesURL}>
       <Button size="sm">{localizations?.buttons?.review}</Button>
     </Link>
   );
@@ -204,7 +205,7 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
   );
 }
 
-function Actions({ isBlocked, activity, assignation, localizations, preview }) {
+function Actions({ isBlocked, activity, assignation, localizations, preview, evaluationInfo }) {
   const isTeacher = useIsTeacher();
   const isStudent = useIsStudent();
 
@@ -216,7 +217,13 @@ function Actions({ isBlocked, activity, assignation, localizations, preview }) {
     return <PreviewActions activity={activity} localizations={localizations} />;
   }
   if (isTeacher) {
-    return <TeacherActions activity={activity} localizations={localizations} />;
+    return (
+      <TeacherActions
+        activity={activity}
+        localizations={localizations}
+        evaluationInfo={evaluationInfo}
+      />
+    );
   }
   if (isStudent) {
     return (
@@ -242,6 +249,7 @@ const DashboardCardFooter = ({
   roleDetails,
   rolesLocalizations,
   buttonLink,
+  evaluationInfo,
 }) => {
   const { classes } = useDashboardCardFooterStyles();
   if (buttonLink && localizations) {
@@ -273,12 +281,16 @@ const DashboardCardFooter = ({
             assignation={assignation}
             localizations={localizations}
             preview={preview}
+            evaluationInfo={evaluationInfo}
           />
         </Box>
       </Box>
     </Box>
   );
 };
+
+DashboardCardFooter.propTypes = DASHBOARD_CARD_FOOTER_PROP_TYPES;
+DashboardCardFooter.defaultProps = DASHBOARD_CARD_FOOTER_DEFAULT_PROPS;
 
 export default DashboardCardFooter;
 export { DashboardCardFooter };

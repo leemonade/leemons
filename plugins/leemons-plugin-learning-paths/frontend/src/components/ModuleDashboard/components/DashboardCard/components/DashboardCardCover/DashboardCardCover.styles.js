@@ -1,7 +1,7 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 const DashboardCardCoverStyles = createStyles((theme, { moduleColor }) => {
-  const { ChipModule } = theme.other;
+  const { ChipModule, cardEvaluation, cardModule } = theme.other;
   return {
     root: {
       width: '100%',
@@ -25,6 +25,26 @@ const DashboardCardCoverStyles = createStyles((theme, { moduleColor }) => {
       backgroundColor: moduleColor || 'transparent',
       transition: 'all 0.2s ease-out',
       borderRadius: '2px 0 0 0',
+    },
+    commonContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: pxToRem(144),
+      minHeight: pxToRem(144),
+      width: '100%',
+      gap: pxToRem(8),
+      backgroundColor: cardModule.background.color.top,
+      position: 'relative',
+    },
+    labelPercentage: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
+    textPercentage: {
+      color: cardEvaluation.content.color.subje,
+      ...cardEvaluation.content.typo['sm--medium'],
     },
   };
 });

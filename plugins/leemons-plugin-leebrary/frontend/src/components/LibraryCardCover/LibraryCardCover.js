@@ -99,7 +99,6 @@ const LibraryCardCover = ({
     return isDocument && !isCCreator ? 'file' : type;
   };
   useEffect(() => {
-    console.log('fileType:', fileType);
     setResolvedIcon(getFileIcon(fileType));
   }, [fileType, icon, variantIcon]);
 

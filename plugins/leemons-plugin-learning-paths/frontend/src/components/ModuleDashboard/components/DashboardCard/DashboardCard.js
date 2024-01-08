@@ -8,6 +8,7 @@ import { useDashboardCardStyles } from './DashboardCard.styles';
 import { DashboardCardCover } from './components/DashboardCardCover';
 import { DashboardCardBody } from './components/DashboardCardBody';
 import { DashboardCardFooter } from './components/DashboardCardFooter';
+import { getOngoingInfo } from '../../helpers/getOngoingInfo';
 
 const DashboardCard = ({
   activity,
@@ -46,12 +47,9 @@ const DashboardCard = ({
   const { assignable } = activity;
   const { asset, role, roleDetails } = assignable;
   const preparedAsset = prepareAsset(asset);
+  const evaluationData = getOngoingInfo({ instance: activity });
 
   const rolesLocalizations = useRolesLocalizations([role]);
-  // console.group();
-  // console.log('name', activity?.assignable?.asset?.name);
-  // console.log('activity', activity);
-  // console.groupEnd();
 
   const score = React.useMemo(() => {
     if (isTeacher) {
@@ -77,6 +75,7 @@ const DashboardCard = ({
         isCalificable={activity.requiresScoring}
         instance={activity}
         moduleColor={moduleColor}
+        evaluationInfo={evaluationData}
       />
       <Box className={classes.content}>
         <DashboardCardBody activity={activity} />
@@ -89,6 +88,7 @@ const DashboardCard = ({
           role={role}
           roleDetails={roleDetails}
           rolesLocalizations={rolesLocalizations}
+          evaluationInfo={evaluationData}
         />
       </Box>
     </Box>

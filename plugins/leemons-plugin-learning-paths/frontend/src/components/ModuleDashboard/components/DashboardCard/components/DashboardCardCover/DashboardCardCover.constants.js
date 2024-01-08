@@ -5,6 +5,7 @@ export const DASHBOARD_CARD_COVER_PROP_TYPES = {
   assetNumber: propTypes.number,
   assignation: propTypes.object,
   moduleColor: propTypes.string,
+  evaluationInfo: propTypes.object,
 };
 
 export const DASHBOARD_CARD_COVER_DEFAULT_PROPS = {
@@ -12,4 +13,5 @@ export const DASHBOARD_CARD_COVER_DEFAULT_PROPS = {
   assetNumber: 0,
   assignation: {},
   moduleColor: '',
+  evaluationInfo: {},
 };
