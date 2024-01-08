@@ -17,6 +17,8 @@ import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries'
 import _ from 'lodash';
 import React from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { SelectProgram } from '@academic-portfolio/components';
+import { getCentersWithToken } from '@users/session';
 import { useAcademicCalendarPeriods } from './useAcademicCalendarPeriods';
 
 function ClassItem({ class: klass, dropdown = false, ...props }) {
@@ -333,11 +335,15 @@ function PickDate({ control, name }) {
   );
 }
 
-export function Filters({ classID, onChange }) {
-  const { classes, cx } = useFiltersStyles({ classID });
+export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
+  const centers = getCentersWithToken();
+  const { classes, cx } = useFiltersStyles({ classID, showProgramSelect });
   const localizations = useFiltersLocalizations();
-  const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({});
-  const { control } = useForm();
+  const { control, watch } = useForm();
+  const programId = watch('program');
+  const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({
+    program: programId,
+  });
 
   const selectedClass = useSelectedClass({ classes: classesData, control, classID });
   const { periods } = usePeriods({ selectedClass, classes: classesData });
@@ -369,12 +375,23 @@ export function Filters({ classID, onChange }) {
 
   return (
     <Box>
-      <Title order={2} className={classes.title} color="soft" transform="uppercase">
-        {localizations.title}
-      </Title>
+      {!hideTitle ? (
+        <Title order={2} className={classes.title} color="soft" transform="uppercase">
+          {localizations.title}
+        </Title>
+      ) : null}
 
       <Box className={classes.inputsContainer}>
         <Box className={cx(classes.inputs, classes.widthContainer)}>
+          {showProgramSelect ? (
+            <Controller
+              control={control}
+              name="program"
+              render={({ field }) => (
+                <SelectProgram {...field} firstSelected center={_.map(centers, 'id')} />
+              )}
+            />
+          ) : null}
           {!classID ? (
             <Controller
               control={control}
@@ -389,7 +406,7 @@ export function Filters({ classID, onChange }) {
                   }))}
                   itemComponent={({ c, ...item }) => <ClassItem class={c} dropdown {...item} />}
                   valueComponent={({ c, ...item }) => <ClassItem class={c} {...item} />}
-                  disabled={dataIsLoading}
+                  disabled={dataIsLoading || !programId}
                   autoSelectOneOption
                   {...field}
                 />

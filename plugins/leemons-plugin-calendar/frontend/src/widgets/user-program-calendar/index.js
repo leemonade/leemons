@@ -42,6 +42,7 @@ const Styles = createStyles((theme, { inTab }) => ({
     backgroundColor: '#FFFFFF',
     marginTop: theme.spacing[4],
     padding: theme.spacing[6],
+    borderRadius: 4,
   },
 }));
 

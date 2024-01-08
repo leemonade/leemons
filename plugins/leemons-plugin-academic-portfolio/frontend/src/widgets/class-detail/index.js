@@ -90,6 +90,7 @@ function ClassDetailWidget({ classe }) {
             marginTop: theme.spacing[4],
             padding: theme.spacing[6],
             backgroundColor: 'white',
+            borderRadius: 4,
           })}
         >
           <Table
@@ -107,6 +108,7 @@ function ClassDetailWidget({ classe }) {
             marginTop: theme.spacing[4],
             padding: theme.spacing[6],
             backgroundColor: 'white',
+            borderRadius: 4,
           })}
         >
           <Table

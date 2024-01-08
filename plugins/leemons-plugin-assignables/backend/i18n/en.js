@@ -298,6 +298,7 @@ module.exports = {
     type: 'Type',
     sort: 'Orden',
     seeAll: 'See all',
+    seeAllActivities: 'See all activities',
   },
   sortTypes: {
     assignation: 'Assignation',

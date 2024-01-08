@@ -14,7 +14,7 @@ module.exports = {
   assistancePage: {
     header: {
       teacher: {
-        title: 'Assistance',
+        title: 'Attendance control',
         description:
           'Here you can consult the scores of all the evaluated activities, both gradable and non-gradable.',
       },

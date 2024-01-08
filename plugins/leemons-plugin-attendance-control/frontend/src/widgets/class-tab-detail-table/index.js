@@ -108,7 +108,9 @@ function ClassTable({ classe }) {
         </Box>
       </Stack>
 
-      <Box sx={(theme) => ({ padding: theme.spacing[6], backgroundColor: 'white' })}>
+      <Box
+        sx={(theme) => ({ padding: theme.spacing[6], backgroundColor: 'white', borderRadius: 4 })}
+      >
         <Box className={classes.headerContainer}>
           <Filters classID={classe.id} onChange={setFilters} />
         </Box>

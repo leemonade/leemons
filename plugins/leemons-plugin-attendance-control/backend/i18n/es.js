@@ -14,7 +14,7 @@ module.exports = {
   assistancePage: {
     header: {
       teacher: {
-        title: 'Asistencia',
+        title: 'Control de asistencia',
         description:
           'Aquí puedes consultar las puntuaciones de todas las actividades evaluadas, tanto calificables como no calificables.',
       },

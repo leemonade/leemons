@@ -113,6 +113,9 @@ export default function ClassDashboard({ session }) {
   const isStudent = useIsStudent();
   const history = useHistory();
 
+  const tabsRef = React.useRef();
+  const headerRef = React.useRef();
+
   function onResize() {
     // TODO Ver que pasa con el scroll en los distintos navegadores
     const haveScrollBar =
@@ -223,6 +226,12 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
 
+      let height = headerRef?.current?.clientHeight || 0;
+      if (tabsRef?.current) {
+        const el = tabsRef.current.querySelector('&>div >div');
+        height += el.clientHeight || 0;
+      }
+
       if (properties.label === 'academic-portfolio.tabDetail.label' && store.hideStudents) {
         return null;
       }
@@ -232,11 +241,19 @@ export default function ClassDashboard({ session }) {
           label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
           key={key}
         >
-          <Component {...properties} classe={store.class} session={session} />
+          <Box style={{ height: `calc(100vh - ${height}px)`, overflow: 'auto' }}>
+            <Component {...properties} classe={store.class} session={session} />
+          </Box>
         </TabPanel>
       );
     },
-    [store.widgetLabels, store.class, session]
+    [
+      store.widgetLabels,
+      store.class,
+      session,
+      headerRef?.current?.clientHeight,
+      tabsRef?.current?.clientHeight,
+    ]
   );
 
   const classHeader = React.useCallback(
@@ -288,7 +305,7 @@ export default function ClassDashboard({ session }) {
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
       <Box className={styles.leftSide}>
-        <Box className={styles.classBar}>
+        <Box className={styles.classBar} ref={headerRef}>
           <ClassroomHeaderBar
             labels={{
               chat: t('chat'),
@@ -353,12 +370,13 @@ export default function ClassDashboard({ session }) {
         </Stack>
         */}
         {!store.loading ? (
-          <Box className={styles.widgets}>
+          <Box ref={tabsRef} className={styles.widgets}>
             <ZoneWidgets
               zone="dashboard.class.tabs"
               onGetZone={onGetZone}
               container={
                 <Tabs
+                  id="class-dashboard-tabs"
                   onChange={(key) => {
                     store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
                     render();
