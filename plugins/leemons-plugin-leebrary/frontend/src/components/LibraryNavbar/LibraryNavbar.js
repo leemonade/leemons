@@ -330,14 +330,3 @@ LibraryNavbar.defaultProps = LIBRARY_NAVBAR_DEFAULT_PROPS;
 LibraryNavbar.propTypes = LIBRARY_NAVBAR_PROP_TYPES;
 
 export { LibraryNavbar };
-
-/*
-TODO
-- El backend debería devolver las categorías con una prop de tipo de asset (i.e.: isActivity), refiriendose a si es actividad o contenido sólo consumible.
-- Buscar iconos en el backend de cada plugin para ver el nombre, el icono está en la carpeta public del frontend de cada plugin
-  icon y activeIcon apuntan al mismo sitio, normal.
-
-
-
-
-                  */

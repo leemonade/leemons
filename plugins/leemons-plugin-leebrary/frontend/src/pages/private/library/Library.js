@@ -85,7 +85,6 @@ const LibraryPageContent = () => {
   }, [translations]);
 
   const handleOnNav = (data) => {
-    console.log('data', data)
     setAsset(null);
     if (data) {
       history.push(cleanPath(`${path}/${data.key}/list`));
