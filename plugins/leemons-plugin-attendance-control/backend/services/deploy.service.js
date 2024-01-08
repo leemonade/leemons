@@ -39,6 +39,17 @@ module.exports = () => ({
         });
       },
     },
+    {
+      type: 'once-per-install',
+      events: ['dashboard.init-widget-zones', 'attendance-control.init-widget-zones'],
+      handler: async (ctx) => {
+        await addWidgetItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          items: widgets.items,
+          ctx,
+        });
+      },
+    },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
@@ -64,13 +75,6 @@ module.exports = () => ({
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions: permissions.permissions,
-        ctx,
-      });
-    },
-    'dashboard.init-widgets-zones': async (ctx) => {
-      await addWidgetItemsDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        items: widgets.items,
         ctx,
       });
     },

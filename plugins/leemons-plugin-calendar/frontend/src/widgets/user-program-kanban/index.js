@@ -47,7 +47,7 @@ const Styles = createStyles((theme, { inTab }) => ({
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
-    height: '750px',
+    height: inTab ? 'calc(100vh - 230px)' : '750px',
   },
 }));
 
