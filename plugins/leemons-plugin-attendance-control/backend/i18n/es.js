@@ -29,4 +29,11 @@ module.exports = {
     not: 'Ausente',
     late: 'Retraso',
   },
+  tabKanban: {
+    label: 'Asistencia',
+  },
+  classTabDetailTable: {
+    title: 'Asistencia',
+    attendanceMonitoring: 'Pasar lista ahora',
+  },
 };

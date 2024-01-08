@@ -12,7 +12,7 @@ module.exports = {
   setRest: {
     rest: {
       method: 'POST',
-      path: '/asset/:asset', // antes: '/asset/:asset/permissions'
+      path: '/asset/:asset',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

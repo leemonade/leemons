@@ -73,16 +73,13 @@ function ClassItem({ class: klass, dropdown = false, ...props }) {
   );
 }
 
-const useFiltersStyles = createStyles((theme) => ({
-  root: {
-    marginLeft: theme.spacing[5],
-  },
+const useFiltersStyles = createStyles((theme, { classID }) => ({
   title: {
     fontSize: theme.fontSizes[2],
     fontWeight: 500,
   },
   widthContainer: {
-    width: 750,
+    width: classID ? 375 : 750,
   },
   inputsContainer: {
     display: 'flex',
@@ -96,7 +93,7 @@ const useFiltersStyles = createStyles((theme) => ({
     gap: theme.spacing[5],
     alignItems: 'center',
     '& > *': {
-      maxWidth: `calc(50% - ${theme.spacing[5] / 2}px)`, // 50% - inputs.gap
+      maxWidth: classID ? '100%' : `calc(50% - ${theme.spacing[5] / 2}px)`, // 50% - inputs.gap
       flexGrow: 1,
     },
   },
@@ -106,39 +103,33 @@ function useFiltersLocalizations() {
   const key = prefixPN('scoresPage.filters');
   const [, translations] = useTranslateLoader(key);
 
-  const localizations = React.useMemo(() => {
+  return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, key);
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, key);
     }
 
     return {};
   }, [translations]);
-
-  return localizations;
 }
 
-function useSelectedClass({ classes, control }) {
+function useSelectedClass({ classes, control, classID }) {
   const selectedClass = useWatch({
     control,
     name: 'class',
     defaultValue: null,
   });
 
-  const selectedClassId = selectedClass?.[0];
+  const selectedClassId = classID || selectedClass?.[0];
 
   return React.useMemo(() => {
-    if (!selectedClass || !classes?.length) {
+    if (!selectedClassId || !classes?.length) {
       return null;
     }
 
-    const classFound = classes.find((klass) => klass.id === selectedClass[0]);
-
-    return classFound;
+    return classes.find((klass) => klass.id === selectedClassId);
   }, [selectedClassId, classes]);
 }
 
@@ -342,13 +333,13 @@ function PickDate({ control, name }) {
   );
 }
 
-export function Filters({ onChange }) {
-  const { classes, cx } = useFiltersStyles();
+export function Filters({ classID, onChange }) {
+  const { classes, cx } = useFiltersStyles({ classID });
   const localizations = useFiltersLocalizations();
   const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({});
   const { control } = useForm();
 
-  const selectedClass = useSelectedClass({ classes: classesData, control });
+  const selectedClass = useSelectedClass({ classes: classesData, control, classID });
   const { periods } = usePeriods({ selectedClass, classes: classesData });
   const periodTypes = usePeriodTypes();
 
@@ -377,32 +368,35 @@ export function Filters({ onChange }) {
   }, [JSON.stringify(selectedClass), JSON.stringify(selectedPeriod)]);
 
   return (
-    <Box className={classes.root}>
+    <Box>
       <Title order={2} className={classes.title} color="soft" transform="uppercase">
         {localizations.title}
       </Title>
 
       <Box className={classes.inputsContainer}>
         <Box className={cx(classes.inputs, classes.widthContainer)}>
-          <Controller
-            control={control}
-            name="class"
-            render={({ field }) => (
-              <Select
-                ariaLabel={localizations.class?.label}
-                placeholder={localizations.class?.placeholder}
-                data={classesData?.map((klass) => ({
-                  value: klass.id,
-                  c: klass,
-                }))}
-                itemComponent={({ c, ...item }) => <ClassItem class={c} dropdown {...item} />}
-                valueComponent={({ c, ...item }) => <ClassItem class={c} {...item} />}
-                disabled={dataIsLoading}
-                autoSelectOneOption
-                {...field}
-              />
-            )}
-          />
+          {!classID ? (
+            <Controller
+              control={control}
+              name="class"
+              render={({ field }) => (
+                <Select
+                  ariaLabel={localizations.class?.label}
+                  placeholder={localizations.class?.placeholder}
+                  data={classesData?.map((klass) => ({
+                    value: klass.id,
+                    c: klass,
+                  }))}
+                  itemComponent={({ c, ...item }) => <ClassItem class={c} dropdown {...item} />}
+                  valueComponent={({ c, ...item }) => <ClassItem class={c} {...item} />}
+                  disabled={dataIsLoading}
+                  autoSelectOneOption
+                  {...field}
+                />
+              )}
+            />
+          ) : null}
+
           <Controller
             control={control}
             name="period"

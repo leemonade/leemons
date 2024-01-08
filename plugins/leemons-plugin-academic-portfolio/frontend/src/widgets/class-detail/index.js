@@ -85,21 +85,37 @@ function ClassDetailWidget({ classe }) {
       <UserDetailModal opened={!!openedStudent} userAgent={openedStudent} onClose={closeStudent} />
       <Box>
         <Title order={4}>{t('teachers')}</Title>
-        <Table
-          onClickRow={onClickRow}
-          styleRow={{ cursor: 'pointer' }}
-          columns={tableHeaders}
-          data={data.teachers}
-        />
+        <Box
+          sx={(theme) => ({
+            marginTop: theme.spacing[4],
+            padding: theme.spacing[6],
+            backgroundColor: 'white',
+          })}
+        >
+          <Table
+            onClickRow={onClickRow}
+            styleRow={{ cursor: 'pointer' }}
+            columns={tableHeaders}
+            data={data.teachers}
+          />
+        </Box>
       </Box>
       <Box>
         <Title order={4}>{t('students')}</Title>
-        <Table
-          onClickRow={onClickRow}
-          styleRow={{ cursor: 'pointer' }}
-          columns={tableHeaders}
-          data={data.students}
-        />
+        <Box
+          sx={(theme) => ({
+            marginTop: theme.spacing[4],
+            padding: theme.spacing[6],
+            backgroundColor: 'white',
+          })}
+        >
+          <Table
+            onClickRow={onClickRow}
+            styleRow={{ cursor: 'pointer' }}
+            columns={tableHeaders}
+            data={data.students}
+          />
+        </Box>
       </Box>
     </ContextContainer>
   );

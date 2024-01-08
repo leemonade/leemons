@@ -17,7 +17,7 @@ async function setItemToZone({ config, ctx, profilesBySysName }) {
       if (!profilesBySysName[sysName]) {
         throw new LeemonsError(ctx, { message: `Profile ${sysName} not found` });
       }
-      data.profiles.push(profilesBySysName[sysName]);
+      data.profiles.push(profilesBySysName[sysName].id);
     });
   }
   return ctx.tx.call('widgets.widgets.setItemToZone', data);

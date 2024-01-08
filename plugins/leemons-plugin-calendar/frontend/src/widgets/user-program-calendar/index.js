@@ -38,7 +38,7 @@ const Styles = createStyles((theme, { inTab }) => ({
     lineHeight: '28px',
   },
   calendarContainer: {
-    height: inTab ? '1150px' : '750px',
+    height: inTab ? 'calc(100vh - 230px)' : '750px',
     backgroundColor: '#FFFFFF',
     marginTop: theme.spacing[4],
     padding: theme.spacing[6],

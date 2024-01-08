@@ -17,6 +17,9 @@ const useStyles = createStyles((theme) => ({
     flexDirection: 'column',
     gap: theme.spacing[5],
   },
+  headerFilters: {
+    paddingLeft: theme.spacing[5],
+  },
 }));
 
 export default function AssistancePage() {
@@ -34,7 +37,9 @@ export default function AssistancePage() {
     <Box className={classes.root}>
       <Box className={classes.headerContainer}>
         <Header prefixPN={prefixPN} variant={'assistancePage'} />
-        <Filters onChange={setFilters} />
+        <Box className={classes.headerFilters}>
+          <Filters onChange={setFilters} />
+        </Box>
       </Box>
       <Assistances filters={filters} />
     </Box>

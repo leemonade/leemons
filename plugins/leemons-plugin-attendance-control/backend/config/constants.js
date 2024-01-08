@@ -32,17 +32,26 @@ const menuItems = [
 ];
 
 const widgets = {
-  zones: [],
+  zones: [{ key: `${permissionsPrefix}.class` }],
   items: [
     {
       zoneKey: 'academic-portfolio.class.students',
-      key: `attendance-control.class.header-bar`,
+      key: `${permissionsPrefix}.class.header-bar`,
       url: 'class-header-bar/index',
     },
     {
       zoneKey: 'dashboard.class.tabs',
-      key: `attendance-control.class.tabs.detail`,
+      key: `${permissionsPrefix}.class.tabs.detail`,
       url: 'class-tab-detail/index',
+      profiles: ['teacher'],
+      properties: {
+        label: `${permissionsPrefix}.tabKanban.label`,
+      },
+    },
+    {
+      zoneKey: `${permissionsPrefix}.class`,
+      key: `${permissionsPrefix}.class.tabs.detail-table`,
+      url: 'class-tab-detail-table/index',
       profiles: ['teacher'],
     },
   ],
