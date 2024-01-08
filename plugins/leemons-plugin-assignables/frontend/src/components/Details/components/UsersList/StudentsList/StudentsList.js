@@ -1,6 +1,6 @@
 import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
-import { Box, Button, PaginatedList, RadioGroup } from '@bubbles-ui/components';
-import { SendEmailEnvelopeIcon } from '@bubbles-ui/icons/outline';
+import { Stack, Box, Button, PaginatedList, RadioGroup } from '@bubbles-ui/components';
+import { PluginComunicaIcon, SendEmailEnvelopeIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -63,32 +63,31 @@ export default function StudentsList({ labels, instance, students }) {
         accessor: 'student',
       },
       {
-        Header: labels?.studentListcolumns?.status || '',
-        accessor: 'status',
-      },
-      {
-        Header: labels?.studentListcolumns?.completed || '',
-        accessor: 'completed',
-      },
-      {
         Header: labels?.studentListcolumns?.avgTime || '',
         accessor: 'avgTime',
       },
-      !!instance?.requiresScoring && {
-        Header: labels?.studentListcolumns?.score || '',
-        accessor: 'score',
-      },
-      !!instance?.requiresScoring && {
-        Header: labels?.studentListcolumns?.unreadMessages || '',
-        accessor: 'unreadMessages',
+      {
+        Header: labels?.studentListcolumns?.progress || '',
+        accessor: 'progress',
       },
       {
         Header: (
-          <Button variant="link" leftIcon={<SendEmailEnvelopeIcon />} onClick={reminder}>
-            {labels?.studentListcolumns?.sendReminder}
-          </Button>
+          <Stack justifyContent="center" fullWidth>
+            <Button variant="link" leftIcon={<SendEmailEnvelopeIcon />} onClick={reminder}>
+              {labels?.studentListcolumns?.sendReminder}
+            </Button>
+          </Stack>
         ),
         accessor: 'actions',
+        Cell: ({ value }) => (
+          <Stack justifyContent="center" fullWidth>
+            {value}
+          </Stack>
+        ),
+      },
+      {
+        Header: <PluginComunicaIcon />,
+        accessor: 'unreadMessages',
       },
     ];
 
@@ -129,7 +128,7 @@ export default function StudentsList({ labels, instance, students }) {
       }}
       labels={labels?.pagination}
       headerStyles={headerStyles}
-    ></PaginatedList>
+    />
   );
 }
 
@@ -145,6 +144,7 @@ StudentsList.propTypes = {
       score: PropTypes.string,
       unreadMessages: PropTypes.string,
       sendReminder: PropTypes.string,
+      progress: PropTypes.string,
     }),
     rememberModal: PropTypes.shape({
       title: PropTypes.string,

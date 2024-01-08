@@ -4,19 +4,29 @@ module.exports = {
     multiSubject: 'Multi-asignatura',
   },
   assignmentForm: {
+    steps: {
+      assignation: 'Asignación',
+      action: 'Asignar',
+    },
     subjects: {
-      title: 'Asignaturas incluidas',
+      placeholder: 'Seleccionar...',
+      program: 'Programa',
+      course: 'Curso',
+      subject: 'Asignatura',
+      title: 'Asignaturas',
       subjectInput: {
         label: 'Asignaturas',
         placeholder: 'Escribe las asignaturas',
         error: 'Selecciona al menos una asignatura',
       },
+      add: 'Añadir',
     },
     groups: {
       title: '¿Quién lo realizará?',
       options: {
         class: 'Clase existente',
         customGroup: 'Grupo personalizado',
+        singleStudent: 'Estudiante individual',
       },
       noStudentsError:
         'No se encuentran estudiantes para las asignaturas seleccionadas. Añade o quita asignaturas para continuar.',
@@ -30,6 +40,10 @@ module.exports = {
           label: 'Estudiantes',
           placeholder: 'Escribe los estudiantes excluidos',
         },
+        total: 'Total',
+        selectedStudents: 'Estudiantes incluidos',
+        nonMatchingStudents: 'No coincidentes',
+        excluded: 'Excluidos manualmente',
       },
       customGroup: {
         studentsInput: {
@@ -42,7 +56,13 @@ module.exports = {
           placeholder: 'Escribe el nombre',
           error: 'El nombre es necesario',
         },
-        hideCustomName: 'Ocultar el nombre del grupo a los estudiantes',
+        hideCustomName: 'Hacer visible para los estudiantes',
+      },
+      singleStudent: {
+        studentInput: {
+          label: 'Seleccionar estudiante',
+          placeholder: 'Selecciona un estudiante',
+        },
       },
     },
     dates: {
@@ -80,10 +100,11 @@ module.exports = {
       },
     },
     instructions: {
-      title: 'Enunciado o instrucciones',
-      description: 'Indicaciones sobre cómo consumir el recurso (opcional)',
+      title: 'Instrucciones',
+      description: 'Instrucciones para la consulta del contenido',
       editor: {
-        placeholder: 'Escribe el enunciado',
+        placeholder: 'Puedes especificar la mejor manera de consultar este contenido...',
+        help: 'Información de apoyo visible en la tarjeta de asignación (ver vista previa)',
       },
     },
     evaluation: {
@@ -118,7 +139,19 @@ module.exports = {
     },
     buttons: {
       assign: 'Asignar',
+      next: 'Siguiente',
+      previous: 'Anterior',
       save: 'Guardar', // Used on modules assignation drawer
+    },
+    presentation: {
+      title: 'Presentación',
+      titleInput: {
+        label: 'Título',
+        placeholder: 'Escribe el título',
+      },
+    },
+    preview: {
+      title: 'Vista previa',
     },
   },
   activity_deadline_header: {
@@ -140,6 +173,11 @@ module.exports = {
     liveSessionData: 'Fecha',
   },
   activity_dashboard: {
+    progress: 'Progreso',
+    evaluation: 'Evaluación',
+    students: 'Estudiantes',
+    califications: 'Puntuaciones',
+    passed: 'Aprobado',
     closeAction: {
       verbs: {
         opening: 'Empezando',
@@ -185,10 +223,8 @@ module.exports = {
         studentsCount: 'Estudiantes {{count}}',
         search: 'Buscar estudiante',
         student: 'Estudiante',
-        status: 'Estado',
-        completed: 'Completada',
+        progress: 'progreso',
         avg: 'Tiempo medio',
-        score: 'Puntuación',
       },
     },
     archiveModal: {
@@ -201,6 +237,7 @@ module.exports = {
     },
   },
   studentsList: {
+    title: 'Actividad en curso',
     labels: {
       students: 'Estudiantes',
       assignStudent: 'Asignar estudiante',
@@ -217,11 +254,8 @@ module.exports = {
       },
       studentListcolumns: {
         student: 'Estudiantes',
-        status: 'Estado',
-        completed: 'Completada',
+        progress: 'Progreso',
         avgTime: 'Tiempo medio',
-        score: 'Puntuación',
-        unreadMessages: 'Mensajes',
         sendReminder: 'Enviar recordatorio',
       },
     },
@@ -275,21 +309,19 @@ module.exports = {
   },
   assignment_list: {
     teacher: {
-      activity: 'Actividad/Módulo',
-      subject: 'Asignatura, grupo y estudiantes',
+      activity: 'Actividad',
+      subject: 'Grupo',
       students: 'Estudiantes',
-      start: 'Inicio',
-      deadline: 'Fin',
+      deadline: 'Fecha Fin',
       status: 'Estado',
-      completions: 'Finalizado',
-      evaluated: 'Evaluado',
+      completions: 'Finalizada',
+      evaluated: 'Evaluada',
       messages: 'Mensajes',
     },
     student: {
-      activity: 'Actividad/Módulo',
-      subject: 'Asignatura y grupo',
-      start: 'Inicio',
-      deadline: 'Fin',
+      activity: 'Actividad',
+      subject: 'Grupo',
+      deadline: 'Fecha Fin',
       status: 'Estado',
       progress: 'Progreso',
       messages: 'Mensajes',
@@ -300,7 +332,7 @@ module.exports = {
   activities_filters: {
     ongoing: 'En curso {{count}}',
     evaluated: 'Evaluadas {{count}}',
-    history: 'Histórico {{count}}',
+    history: 'Archivadas {{count}}',
     search: 'Buscar actividades en curso',
     subject: 'Asignatura',
     status: 'Estado',

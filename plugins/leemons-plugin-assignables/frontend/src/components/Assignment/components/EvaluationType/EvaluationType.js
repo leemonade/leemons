@@ -124,6 +124,7 @@ export function EvaluationType({
             />
           )}
         />
+
         {!!curriculumFields?.length && (
           <Controller
             name="showCurriculum"
