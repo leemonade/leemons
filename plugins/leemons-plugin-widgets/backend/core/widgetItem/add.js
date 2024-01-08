@@ -38,7 +38,7 @@ async function add({ zoneKey, key, url, name, description, profiles, properties 
   if (_.isArray(profiles) && profiles.length > 0) {
     _.forEach(profiles, (profile) => {
       promises.push(
-        ctx.tx.db.WidgetItemProfile.create({
+        ctx.tx.db.WidgetItemProfiles.create({
           zoneKey,
           key,
           profile,

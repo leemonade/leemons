@@ -140,12 +140,12 @@ const LibraryDetail = ({
           <Button
             variant="outline"
             size="md"
-            label={'Editar Permisos'}
+            label={'TODO: Editar Permisos'}
             className={classes.canAccessButton}
             leftIcon={<EditIcon width={18} height={18} />}
             onClick={handleShare}
           >
-            {'Editar Permisos'}
+            {'TODO: Editar Permisos'}
           </Button>
         </Box>
       )}

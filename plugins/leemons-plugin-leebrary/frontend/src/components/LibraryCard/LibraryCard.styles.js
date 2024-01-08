@@ -7,13 +7,15 @@ import {
 } from '@bubbles-ui/components';
 
 export const LibraryCardStyles = createStyles((theme, { fullHeight, isHovered }) => {
-  const cardShadow = getBoxShadowFromToken(theme.other.cardLibrary.shadow.hover);
+  const cardTheme = theme.other.cardLibrary;
+  const cardShadow = getBoxShadowFromToken(cardTheme.shadow.hover);
+
   return {
     root: {
       ...getFontExpressive(theme.fontSizes['2']),
-      border: `1px solid ${theme.other.cardLibrary.border.color.subtle}`,
-      borderRadius: '4px',
-      backgroundColor: theme.other.cardLibrary.background.color.default,
+      border: `1px solid ${cardTheme.border.color.subtle}`,
+      borderRadius: cardTheme.border.radius.sm,
+      backgroundColor: cardTheme.background.color.default,
       height: fullHeight ? '100%' : 'auto',
       display: 'flex',
       flexDirection: 'column',

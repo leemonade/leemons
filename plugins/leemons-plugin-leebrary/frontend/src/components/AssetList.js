@@ -41,7 +41,7 @@ import {
   pinAssetRequest,
   unpinAssetRequest,
 } from '../request';
-import { PermissionsDataDrawer } from './AssetSetup';
+import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
 import { AssetThumbnail } from './AssetThumbnail';
 import { CardDetailWrapper } from './CardDetailWrapper';
 import { CardWrapper } from './CardWrapper';

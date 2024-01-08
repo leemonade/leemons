@@ -11,7 +11,7 @@ import {
   Text,
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
-import { AddIcon as PlusIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import { KanbanTaskCard } from '@calendar/components';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -47,7 +47,7 @@ const Styles = createStyles((theme, { inTab }) => ({
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
-    height: '750px',
+    height: inTab ? 'calc(100vh - 230px)' : '750px',
   },
 }));
 
@@ -313,14 +313,12 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     <Box className={styles.root}>
       <Stack fullWidth alignItems="center" justifyContent="space-between">
         <Box>
-          {!inTab ? (
-            <>
-              {/* <PluginKanbanIcon /> */}
-              <Text size="lg" color="primary" className={styles.title}>
-                {t('kanban')}
-              </Text>
-            </>
-          ) : null}
+          <>
+            {/* <PluginKanbanIcon /> */}
+            <Text size="lg" color="primary" className={styles.title}>
+              {t(inTab ? 'kanban' : 'kanbanHighlight')}
+            </Text>
+          </>
 
           {/* <Text color="soft">{t('description')}</Text> */}
           {/* <Button variant="link" onClick={() => history.push('/private/calendar/kanban')}>
@@ -330,7 +328,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
         </Box>
         <Box>
           {!store.loading ? (
-            <Button leftIcon={<PlusIcon />} onClick={onNewEvent}>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
               {t('new')}
             </Button>
           ) : null}

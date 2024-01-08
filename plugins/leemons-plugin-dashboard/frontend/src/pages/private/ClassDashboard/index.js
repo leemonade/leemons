@@ -5,7 +5,7 @@ import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
 // TODO: ClassroomHeaderBar, HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
-import { ClassroomHeaderBar, HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
+import { ClassroomHeaderBar, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import { LayoutContext } from '@layout/context/layout';
@@ -16,13 +16,18 @@ import { find, isArray, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { ChatDrawer } from '@comunica/components';
+import hooks from 'leemons-hooks';
 
 const rightZoneWidth = '320px';
 
 const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar }) => ({
+  root: {},
   leftSide: {
+    backgroundColor: '#F8F9FB',
     width: hideRightSide || hideStudents ? '100%' : `calc(100% - ${rightZoneWidth})`,
     transition: '300ms',
+    minHeight: '100vh',
   },
   rightSide: {
     width: rightZoneWidth,
@@ -92,13 +97,14 @@ export default function ClassDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
     tabNames: {},
+    chatOpened: false,
     tabsProperties: {},
     hideRightSide: false,
     haveScrollBar: false,
   });
 
   const { classes: styles } = Styles({
-    hideRightSide: store.hideRightSide,
+    hideRightSide: true, // store.hideRightSide,
     haveScrollBar: store.haveScrollBar,
     hideStudents: store.hideStudents,
   });
@@ -106,6 +112,9 @@ export default function ClassDashboard({ session }) {
   const { id } = useParams();
   const isStudent = useIsStudent();
   const history = useHistory();
+
+  const tabsRef = React.useRef();
+  const headerRef = React.useRef();
 
   function onResize() {
     // TODO Ver que pasa con el scroll en los distintos navegadores
@@ -142,20 +151,21 @@ export default function ClassDashboard({ session }) {
       const group = programClass.groups?.isAlone
         ? null
         : programClass.groups
-          ? programClass.groups.abbreviation
-          : null;
+        ? programClass.groups.abbreviation
+        : null;
       return {
         id: programClass.id,
         color: programClass.color,
         image: getClassImage(programClass),
         icon: getClassIcon(programClass),
         label: programClass.subject.name,
-        description: `${programClass.courses
+        description: `${
+          programClass.courses
             ? courseMultiple
               ? `${t('multipleCourses')} - ${programClass.subject.internalId}`
               : `${programClass.courses?.index}${programClass.subject.internalId}`
             : ''
-          } ${group ? `- ${group}` : ''}`,
+        } ${group ? `- ${group}` : ''}`,
       };
     });
 
@@ -216,6 +226,12 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
 
+      let height = headerRef?.current?.clientHeight || 0;
+      if (tabsRef?.current) {
+        const el = tabsRef.current.querySelector('&>div >div');
+        height += el.clientHeight || 0;
+      }
+
       if (properties.label === 'academic-portfolio.tabDetail.label' && store.hideStudents) {
         return null;
       }
@@ -225,11 +241,19 @@ export default function ClassDashboard({ session }) {
           label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
           key={key}
         >
-          <Component {...properties} classe={store.class} session={session} />
+          <Box style={{ height: `calc(100vh - ${height}px)`, overflow: 'auto' }}>
+            <Component {...properties} classe={store.class} session={session} />
+          </Box>
         </TabPanel>
       );
     },
-    [store.widgetLabels, store.class, session]
+    [
+      store.widgetLabels,
+      store.class,
+      session,
+      headerRef?.current?.clientHeight,
+      tabsRef?.current?.clientHeight,
+    ]
   );
 
   const classHeader = React.useCallback(
@@ -281,15 +305,13 @@ export default function ClassDashboard({ session }) {
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
       <Box className={styles.leftSide}>
-        <Box className={styles.header}>
-          <HeaderBackground {...headerProps} withGradient styles={{ position: 'absolute' }} />
-          <Box className={styles.dropdown}>
-            <HeaderDropdown value={store.class} data={store.classesSelect} onChange={changeClass} />
-          </Box>
-        </Box>
-        <Box className={styles.classBar}>
+        <Box className={styles.classBar} ref={headerRef}>
           <ClassroomHeaderBar
-            labels={{ virtualClassroom: t('virtualClassroom') }}
+            labels={{
+              chat: t('chat'),
+              schedule: t('schedule'),
+              virtualClassroom: t('virtualClassroom'),
+            }}
             onVirtualClassroomOpen={onVirtualClassroomOpen}
             classRoom={{
               schedule: store.class?.schedule,
@@ -297,7 +319,22 @@ export default function ClassDashboard({ session }) {
               virtual_classroom: store.class?.virtualUrl,
               teacher: mainTeacher?.user,
             }}
+            showChat
+            onChat={() => {
+              hooks.fireEvent('chat:onRoomOpened', store.room);
+              store.chatOpened = true;
+              render();
+            }}
             locale={locale}
+            leftSide={
+              <Box>
+                <HeaderDropdown
+                  value={store.class}
+                  data={store.classesSelect}
+                  onChange={changeClass}
+                />
+              </Box>
+            }
             rightSide={
               <>
                 {!store.loading ? (
@@ -333,23 +370,44 @@ export default function ClassDashboard({ session }) {
         </Stack>
         */}
         {!store.loading ? (
-          <ZoneWidgets
-            zone="dashboard.class.tabs"
-            onGetZone={onGetZone}
-            container={
-              <Tabs
-                onChange={(key) => {
-                  store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
-                  render();
-                }}
-                style={{ width: '100%' }}
-              />
-            }
-          >
-            {classTabs}
-          </ZoneWidgets>
+          <Box ref={tabsRef} className={styles.widgets}>
+            <ZoneWidgets
+              zone="dashboard.class.tabs"
+              onGetZone={onGetZone}
+              container={
+                <Tabs
+                  id="class-dashboard-tabs"
+                  onChange={(key) => {
+                    store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
+                    render();
+                  }}
+                  style={{ width: '100%' }}
+                />
+              }
+            >
+              {classTabs}
+            </ZoneWidgets>
+          </Box>
         ) : null}
       </Box>
+      {!store.loading ? (
+        <>
+          <ChatDrawer
+            onClose={() => {
+              hooks.fireEvent('chat:closeDrawer');
+              store.chatOpened = false;
+              render();
+            }}
+            opened={store.chatOpened}
+            onRoomLoad={(room) => {
+              store.room = room;
+              render();
+            }}
+            room={`academic-portfolio.room.class.${store.idLoaded}`}
+          />
+        </>
+      ) : null}
+      {/*
       {!store.hideStudents ? (
         <Box className={styles.rightSide}>
           {store.rightWidgetSelect ? (
@@ -366,18 +424,7 @@ export default function ClassDashboard({ session }) {
               </Tabs>
             ) : null
           ) : null}
-          {/* {store.rightWidgetSelect ? (
-          <RadioGroup
-            variant="icon"
-            data={store.rightWidgetSelect || []}
-            fullWidth
-            onChange={(e) => {
-              store.selectedRightTab = e;
-              render();
-            }}
-            value={store.selectedRightTab}
-          />
-        ) : null} */}
+
           <Box className={styles.rightSidewidgetsContainer}>
             {!store.loading ? (
               <ZoneWidgets zone="dashboard.class.right-tabs" onGetZone={onGetRightZone}>
@@ -387,6 +434,7 @@ export default function ClassDashboard({ session }) {
           </Box>
         </Box>
       ) : null}
+      */}
     </>
   );
 }

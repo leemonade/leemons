@@ -17,7 +17,7 @@ async function getInstancesData({ instances, relatedInstances = false, ctx }) {
         'requiresScoring',
         'allowFeedback',
         'metadata',
-        'created_at',
+        'createdAt',
         relatedInstances && 'relatedAssignableInstances',
       ].filter(Boolean)
     )

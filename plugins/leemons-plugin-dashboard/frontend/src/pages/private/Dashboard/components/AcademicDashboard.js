@@ -1,8 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { Box, ContextContainer, PageContainer, createStyles } from '@bubbles-ui/components';
+import { Box, ContextContainer, createStyles, PageContainer } from '@bubbles-ui/components';
 // TODO: HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
-import { HeaderBackground, HeaderDropdown } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -12,12 +11,16 @@ import _, { find, isNil, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 
 const rightZoneWidth = '320px';
 const Styles = createStyles((theme) => ({
   header: {
     position: 'relative',
-    height: 130 + 48,
+    height: 80,
+  },
+  content: {
+    backgroundColor: '#F8F9FB',
   },
   programSelectorContainer: {
     position: 'relative',
@@ -142,26 +145,13 @@ export default function AcademicDashboard({ session }) {
         })}
       >
         <Box className={styles.header}>
-          <HeaderBackground
-            {...headerProps}
-            withGradient
-            withOverlay={false}
-            styles={{ position: 'absolute', zIndex: 1 }}
-          />
-          <Box className={styles.programSelectorContainer}>
-            <HeaderDropdown
-              value={store.selectedProgram}
-              data={store.programsSelect}
-              readOnly={store.programsSelect?.length <= 1}
-              onChange={selectProgram}
-            />
-          </Box>
+          <ProgramBarSelector onChange={selectProgram} />
         </Box>
 
-        <ContextContainer fullHeight>
+        <ContextContainer className={styles.content} fullHeight>
           <PageContainer
             sx={(theme) => ({
-              paddingTop: theme.spacing[8],
+              paddingTop: theme.spacing[2],
               maxWidth: '100%',
             })}
           >

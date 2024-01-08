@@ -3,7 +3,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
-import { Button, Stack } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import Form from '@assignables/components/Assignment/Form';
 import { assignFeedbackRequest, getFeedbackRequest } from '@feedback/request';
@@ -14,7 +13,6 @@ export default function Assign() {
   const [store, render] = useStore({
     loading: false,
     isNew: false,
-    currentStep: 0,
     data: {
       metadata: {},
     },
@@ -62,13 +60,7 @@ export default function Assign() {
       assignable={store.feedback}
       evaluationType="none"
       evaluationTypes={['nonEvaluable']}
-      buttonsComponent={
-        <Stack fullWidth justifyContent="end">
-          <Button loading={store.loading} type="submit">
-            {t('assign')}
-          </Button>
-        </Stack>
-      }
+      loading={store.loading}
     />
   );
 }

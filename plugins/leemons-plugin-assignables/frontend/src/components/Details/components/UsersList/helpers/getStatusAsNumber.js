@@ -6,7 +6,7 @@ export default function getStatusAsNumber(student, instance) {
   const openDate = dayjs(student?.timestamps?.open || null);
 
   if (finishDate.isValid()) {
-    return 0;
+    return 2;
   }
 
   if (startDate.isValid()) {
@@ -14,7 +14,7 @@ export default function getStatusAsNumber(student, instance) {
   }
 
   if (openDate.isValid()) {
-    return 2;
+    return 0;
   }
 
   return -1;

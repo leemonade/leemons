@@ -131,83 +131,81 @@ const MainNavBar = ({
   );
 
   return (
-    <>
-      <AnimatePresence>
-        <motion.div
-          initial={{ width: hovered ? MAIN_NAV_WIDTH_EXPANDED : MAIN_NAV_WIDTH_COLLAPSED }}
-          animate={hovered ? 'open' : 'closed'}
-          variants={mainNavVariants}
-          transition={{ type: 'tween' }}
+    <AnimatePresence>
+      <motion.div
+        initial={{ width: hovered ? MAIN_NAV_WIDTH_EXPANDED : MAIN_NAV_WIDTH_COLLAPSED }}
+        animate={hovered ? 'open' : 'closed'}
+        variants={mainNavVariants}
+        transition={{ type: 'tween' }}
+      >
+        <Navbar
+          ref={ref}
+          sx={() => ({ overflow: 'hidden' })}
+          className={classes.navBar}
+          withBorder={false}
         >
-          <Navbar
-            ref={ref}
-            sx={() => ({ overflow: 'hidden' })}
-            className={classes.navBar}
-            withBorder={false}
-          >
-            <Box className={classes.navWrapper}>
-              <Box>
-                <Box className={classes.logoContainer}>
-                  {hasLogo ? (
-                    <ImageLoader
-                      src={logoUrl}
-                      forceImage
-                      className={classes.logoUrl}
-                      height="auto"
-                      alt="custom-logo"
-                    />
-                  ) : (
-                    <Logo isotype className={classes.logo} />
-                  )}
-                  {navTitle ? (
-                    <motion.div
-                      initial={{ opacity: '0' }}
-                      animate={hovered ? 'open' : 'closed'}
-                      variants={navTitleVariants}
-                    >
-                      <TextClamp lines={1}>
-                        <Text
-                          role="expressive"
-                          size="lg"
-                          lines={1}
-                          strong={true}
-                          className={classes.navTitle}
-                        >
-                          {navTitle}
-                        </Text>
-                      </TextClamp>
-                    </motion.div>
-                  ) : null}
-                </Box>
-              </Box>
-              <Box className={classes.navItemsWrapper}>
-                <Box>
-                  <SpotLightButton
-                    onClick={() => openSpotlight()}
-                    isCollapsed={!hovered}
-                    spotlightLabel={spotlightLabel}
+          <Box className={classes.navWrapper}>
+            <Box>
+              <Box className={classes.logoContainer}>
+                {hasLogo ? (
+                  <ImageLoader
+                    src={logoUrl}
+                    forceImage
+                    className={classes.logoUrl}
+                    height="auto"
+                    alt="custom-logo"
                   />
-                </Box>
-                <Box className={classes.navItems}>
-                  <Box className={classes.linksInner}>{navBarItems}</Box>
-                  <Box>
-                    <UserButton
-                      name={getUserFullName(session)}
-                      isCollapsed={!hovered}
-                      session={session}
-                      sessionMenu={sessionMenu}
-                      onOpen={() => handleItemClick(sessionMenu)}
-                      expandedItem={expandedItem}
-                      subItemActive={activeSubItem}
-                    />
-                  </Box>
+                ) : (
+                  <Logo isotype className={classes.logo} />
+                )}
+                {navTitle ? (
+                  <motion.div
+                    initial={{ opacity: '0' }}
+                    animate={hovered ? 'open' : 'closed'}
+                    variants={navTitleVariants}
+                  >
+                    <TextClamp lines={1}>
+                      <Text
+                        role="expressive"
+                        size="lg"
+                        lines={1}
+                        strong={true}
+                        className={classes.navTitle}
+                      >
+                        {navTitle}
+                      </Text>
+                    </TextClamp>
+                  </motion.div>
+                ) : null}
+              </Box>
+            </Box>
+            <Box className={classes.navItemsWrapper}>
+              <Box>
+                <SpotLightButton
+                  onClick={() => openSpotlight()}
+                  isCollapsed={!hovered}
+                  spotlightLabel={spotlightLabel}
+                />
+              </Box>
+              <Box className={classes.navItems}>
+                <Box className={classes.linksInner}>{navBarItems}</Box>
+                <Box>
+                  <UserButton
+                    name={getUserFullName(session)}
+                    isCollapsed={!hovered}
+                    session={session}
+                    sessionMenu={sessionMenu}
+                    onOpen={() => handleItemClick(sessionMenu)}
+                    expandedItem={expandedItem}
+                    subItemActive={activeSubItem}
+                  />
                 </Box>
               </Box>
             </Box>
-          </Navbar>
-        </motion.div>
-      </AnimatePresence>
-    </>
+          </Box>
+        </Navbar>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { Box, RadioGroup, Switch, createStyles } from '@bubbles-ui/components';
+import { Box, RadioGroup, Checkbox, createStyles } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
 import { Container } from '../Container';
@@ -64,10 +64,10 @@ export function ActivityDatesPicker({
         value: 'fixed',
         label: localizations?.optionsInput?.options?.fixed,
       },
-      {
-        value: 'session',
-        label: localizations?.optionsInput?.options?.session,
-      },
+      // {
+      //   value: 'session',
+      //   label: localizations?.optionsInput?.options?.session,
+      // },
     ],
     [localizations?.optionsInput?.options]
   );
@@ -116,7 +116,7 @@ export function ActivityDatesPicker({
                 control={control}
                 shouldUnregister
                 render={({ field }) => (
-                  <Switch
+                  <Checkbox
                     {...field}
                     checked={!!field.value}
                     label={localizations?.hideFromCalendar}

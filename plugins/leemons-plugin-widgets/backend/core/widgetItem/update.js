@@ -13,7 +13,7 @@ async function update({ zoneKey, key, url, name, description, properties, profil
   if (!_.isUndefined(description)) toUpdate.description = description;
   if (!_.isUndefined(properties)) toUpdate.properties = JSON.stringify(properties);
   if (_.isArray(profiles)) {
-    await ctx.tx.db.WidgetItemProfile.deleteMany({ key });
+    await ctx.tx.db.WidgetItemProfiles.deleteMany({ key });
   }
   const promises = [
     ctx.tx.db.WidgetItem.findOneAndUpdate({ key }, toUpdate, { new: true, lean: true }),
@@ -26,7 +26,7 @@ async function update({ zoneKey, key, url, name, description, properties, profil
 
     _.forEach(profiles, (profile) => {
       promises.push(
-        ctx.tx.db.WidgetItemProfile.create({
+        ctx.tx.db.WidgetItemProfiles.create({
           zoneKey,
           key,
           profile,

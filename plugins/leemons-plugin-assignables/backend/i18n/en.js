@@ -4,32 +4,46 @@ module.exports = {
     multiSubject: 'Multi-subject',
   },
   assignmentForm: {
+    steps: {
+      assignation: 'Assignation',
+      action: 'Assign',
+    },
     subjects: {
-      title: 'Included subjects',
+      placeholder: 'Select...',
+      program: 'Program',
+      course: 'Course',
+      subject: 'Subject',
+      title: 'Subjects',
       subjectInput: {
         label: 'Subjects',
         placeholder: 'Type the subject names',
         error: 'Pick at least one subject',
       },
+      add: 'Add',
     },
     groups: {
       title: '¿Who will perform?',
       options: {
         class: 'Existing class',
         customGroup: 'Custom group',
+        singleStudent: 'Single student',
       },
       noStudentsError:
         'No student was found for the selected subjects. Add or remove subjects to continue.',
       class: {
         studentsCount: 'matching students',
         autoAssignStudents: 'Auto-assign new students',
-        excludeStudents: 'Esclude specific students',
+        excludeStudents: 'Exclude specific students',
         error: 'Pick at least one group',
         notAllStudentsAssigned: "Some students won't be included in the activity",
         excludeStudentsInput: {
           label: 'Students',
           placeholder: 'Type the excluded students',
         },
+        total: 'Total',
+        selectedStudents: 'Selected students',
+        nonMatchingStudents: 'Non matching',
+        excluded: 'Manually excluded',
       },
       customGroup: {
         studentsInput: {
@@ -42,7 +56,13 @@ module.exports = {
           placeholder: 'Type the name',
           error: 'The name is required',
         },
-        hideCustomName: 'Hide groupname to students',
+        hideCustomName: 'Show to students',
+      },
+      singleStudent: {
+        studentInput: {
+          label: 'Select student',
+          placeholder: 'Add a student',
+        },
       },
     },
     dates: {
@@ -80,10 +100,11 @@ module.exports = {
       },
     },
     instructions: {
-      title: 'Statement or instructions',
-      description: 'Indications on how to consume the resource (optional)',
+      title: 'Instructions',
+      description: 'Instructions for the consult of content',
       editor: {
-        placeholder: 'Type the statement',
+        placeholder: 'You can specify the best way to consult this content...',
+        help: 'Help information visible in the assignment card (preview view)',
       },
     },
     evaluation: {
@@ -118,7 +139,19 @@ module.exports = {
     },
     buttons: {
       assign: 'Assign',
+      next: 'Next',
+      previous: 'Previous',
       save: 'Save', // Used on modules assignation drawer
+    },
+    presentation: {
+      title: 'Presentation',
+      titleInput: {
+        label: 'Title',
+        placeholder: 'Type the title',
+      },
+    },
+    preview: {
+      title: 'Preview',
     },
   },
   activity_deadline_header: {
@@ -140,6 +173,11 @@ module.exports = {
     liveSessionData: 'Date',
   },
   activity_dashboard: {
+    progress: 'Progress',
+    evaluation: 'Evaluation',
+    students: 'Students',
+    califications: 'Califications',
+    passed: 'Pass',
     closeAction: {
       verbs: {
         opening: 'opening',
@@ -173,7 +211,7 @@ module.exports = {
         studentsCount: 'Students {{count}}',
         search: 'Search student',
         student: 'Student',
-        status: 'Status',
+        progress: 'Progress',
         completed: 'Completed',
         avg: 'Avg. time',
         score: 'Score',
@@ -215,12 +253,9 @@ module.exports = {
         sended: 'Reminder sent',
       },
       studentListcolumns: {
-        student: 'Student',
-        status: 'Status',
-        completed: 'Completed',
-        avgTime: 'Avg. time',
-        score: 'Score',
-        unreadMessages: 'Messages',
+        student: 'Students',
+        progress: 'Progress',
+        avgTime: 'Average time',
         sendReminder: 'Send reminder',
       },
     },
@@ -265,10 +300,9 @@ module.exports = {
   },
   assignment_list: {
     teacher: {
-      activity: 'Activity/Module',
-      subject: 'Subject, group and students',
+      activity: 'Activity',
+      subject: 'Group',
       students: 'Students',
-      start: 'Start',
       deadline: 'Deadline',
       status: 'Status',
       completions: 'Completions',
@@ -276,9 +310,8 @@ module.exports = {
       messages: 'Messages',
     },
     student: {
-      activity: 'Activity/Module',
-      subject: 'Subject and group',
-      start: 'Start',
+      activity: 'Activity',
+      subject: 'Group',
       deadline: 'Deadline',
       status: 'Status',
       progress: 'Progress',
@@ -290,7 +323,7 @@ module.exports = {
   activities_filters: {
     ongoing: 'Ongoing {{count}}',
     evaluated: 'Evaluated {{count}}',
-    history: 'History {{count}}',
+    history: 'Archived {{count}}',
     search: 'Search activities in progress',
     subject: 'Subject',
     status: 'Status',
@@ -298,6 +331,7 @@ module.exports = {
     type: 'Type',
     sort: 'Orden',
     seeAll: 'See all',
+    seeAllActivities: 'See all activities',
   },
   sortTypes: {
     assignation: 'Assignation',

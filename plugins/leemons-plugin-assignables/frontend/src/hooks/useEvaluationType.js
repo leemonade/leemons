@@ -32,7 +32,9 @@ export function useEvaluationType(activity) {
       gradable: !!activity.gradable,
     };
 
-    const [type] = Object.entries(evaluationTypes).find(([, value]) => isEqual(typeValues, value));
+    const [type] = Object.entries(evaluationTypes).find(([, value]) =>
+      isEqual(typeValues, value)
+    ) ?? ['nonEvaluable'];
 
     return type;
   }, [!!activity?.requiresScoring, !!activity.allowFeedback, !!activity.gradable]);

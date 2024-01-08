@@ -16,12 +16,12 @@ const LibraryDetailStyles = createStyles((theme, { drawer, open }) => {
     },
     wrapper: {
       ...drawerProps,
-      transform: 'translateX(100%)',
-      transition: 'transform 0.2s ease-in',
+      // transform: 'translateX(100%)',
+      // transition: 'transform 0.2s ease-in',
     },
     show: {
-      transform: 'translateX(0)',
-      transition: 'transform 0.2s ease-out',
+      // transform: 'translateX(0)',
+      // transition: 'transform 0.2s ease-out',
     },
     button: {
       // transition: 'transform 0.2s ease-out',

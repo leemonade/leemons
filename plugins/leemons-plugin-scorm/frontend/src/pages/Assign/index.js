@@ -62,7 +62,6 @@ export default function Assign() {
 
   return (
     <Form
-      action={t('assign')}
       assignable={store.package}
       evaluationType={isGradable ? 'auto' : 'none'}
       evaluationTypes={isGradable ? ['calificable', 'punctuable'] : ['nonEvaluable']}
@@ -70,13 +69,7 @@ export default function Assign() {
       onSubmit={send}
       showEvaluation={isGradable}
       showMessageForStudents
-      buttonsComponent={
-        <Stack fullWidth justifyContent="end">
-          <Button loading={store.loading} type="submit">
-            {t('assignNow')}
-          </Button>
-        </Stack>
-      }
+      loading={store.loading}
     />
   );
 }

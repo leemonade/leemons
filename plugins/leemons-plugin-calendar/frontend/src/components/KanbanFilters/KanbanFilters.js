@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, IconButton, MultiSelect, Stack, Switch, Text, Title } from '@bubbles-ui/components';
-import { ExcludeIcon } from '@bubbles-ui/icons/solid';
+import { Box, Button, MultiSelect, Stack, Switch } from '@bubbles-ui/components';
 import { AddIcon as PlusIcon, PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
 import { KanbanFiltersStyles } from './KanbanFilters.styles';
 
@@ -10,16 +9,14 @@ export const KANBAN_FILTERS_DEFAULT_PROPS = {
     filter: 'Filter by',
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
-    onlyByMy: 'Only those created by me'
+    onlyByMy: 'Only those created by me',
   },
   value: {},
   data: {
-    calendars: []
+    calendars: [],
   },
-  onChange: () => {
-  },
-  addEventClick: () => {
-  }
+  onChange: () => {},
+  addEventClick: () => {},
 };
 export const KANBAN_FILTERS_PROP_TYPES = {};
 
@@ -28,17 +25,10 @@ const KanbanFilters = ({ value, data, messages, onChange, addEventClick, ...prop
 
   return (
     <Box className={classes.root}>
-      <Stack fullWidth justifyContent='space-between' alignItems='center'>
-        <Stack alignItems='center'>
-          <Stack alignItems='center'>
-            <ExcludeIcon className={classes.icon} />
-            <Title order={2} className={classes.title}>
-              {messages.title}
-            </Title>
-          </Stack>
-          <Box sx={(theme) => ({ marginLeft: theme.spacing[8] })}>
-            <Stack alignItems='center'>
-              <Text>{messages.filter}</Text>
+      <Stack fullWidth justifyContent="space-between" alignItems="center">
+        <Stack alignItems="center">
+          <Box>
+            <Stack alignItems="center">
               <MultiSelect
                 value={value.calendars}
                 data={data.calendars}
@@ -48,23 +38,24 @@ const KanbanFilters = ({ value, data, messages, onChange, addEventClick, ...prop
                 placeholder={messages.selectCalendarsSubjects}
                 clearable={true}
               />
-              <Switch label={messages.onlyByMy} checked={value.onlyByMy}
-                      onChange={(e) => onChange({ ...value, onlyByMy: e })} />
+              <Switch
+                label={messages.onlyByMy}
+                checked={value.onlyByMy}
+                onChange={(e) => onChange({ ...value, onlyByMy: e })}
+              />
+              <Switch
+                value={value.showArchived}
+                onChange={(e) => onChange({ ...value, showArchived: e })}
+                label={messages.archived}
+              />
             </Stack>
           </Box>
         </Stack>
-        <Stack alignItems='center'>
-          <Box sx={(theme) => ({ marginRight: theme.spacing[8] })}>
-            <Switch
-              value={value.showArchived}
-              onChange={(e) => onChange({ ...value, showArchived: e })}
-              label={messages.archived}
-            />
-          </Box>
-          <Stack alignItems='center'>
-            <IconButton color='primary' size='lg' rounded onClick={addEventClick}>
-              <PlusIcon />
-            </IconButton>
+        <Stack alignItems="center">
+          <Stack alignItems="center">
+            <Button leftIcon={<PlusIcon />} onClick={addEventClick}>
+              {messages.new}
+            </Button>
           </Stack>
         </Stack>
       </Stack>

@@ -19,6 +19,7 @@ module.exports = {
   kanbanCard: {
     progress: 'Progress',
     activities: 'activities',
+    subtask: 'Subtasks',
   },
   calendar: {
     month: 'Month',
@@ -182,17 +183,23 @@ module.exports = {
     archived: 'Show archived tasks',
     selectCalendarsSubjects: 'All subjects',
     onlyByMy: 'Only those created by me',
+    new: 'New',
   },
   kanbanTaskCard: {
     delivery: 'Delivery',
+    no_evaluable: 'No evaluable',
+    calificable: 'Gradable',
+    puntuable: 'Punctuable',
   },
   userProgramCalendar: {
     calendar: 'Calendar',
     allSubjects: 'All subjects',
     showAllCalendar: 'Show all calendar',
+    agenda: 'Agenda',
   },
   userProgramKanban: {
-    kanban: 'Kanban highlight',
+    kanban: 'Kanban',
+    kanbanHighlight: 'Kanban highlight',
     description: 'Outstanding tasks completed in less than 5 days',
     showAllKanban: 'View full kanban',
     new: 'New',

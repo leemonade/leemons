@@ -68,7 +68,7 @@ export function List({ variant, query, filters, onSelect }) {
   const items = assetsData?.slice((page - 1) * size, page * size) || [];
 
   const [t] = useTranslateLoader(prefixPN('list'));
-  const { classes } = useListStyles();
+  const { classes } = useListStyles({}, { name: 'AssetListList' });
 
   global.isLoadingList = isLoadingList;
   global.enabled = !!assets?.length;

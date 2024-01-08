@@ -1,4 +1,4 @@
-function groupInstancesInModules({ instances, modules }) {
+function groupInstancesInModules({ instances, modules, dates }) {
   const orphans = [];
   const activitiesPerModule = {};
 
@@ -13,11 +13,14 @@ function groupInstancesInModules({ instances, modules }) {
     }
   });
 
-  const groupedInstances = modules.map((module) => ({
-    ...module,
-    type: 'module',
-    activities: activitiesPerModule[module.id],
-  }));
+  const groupedInstances = modules
+    .map((module) => ({
+      dates: dates?.instances?.[activitiesPerModule[module.id]?.[0]?.id] ?? {},
+      ...module,
+      type: 'module',
+      activities: activitiesPerModule[module.id],
+    }))
+    .filter((module) => module.activities?.length);
 
   return [...groupedInstances, ...orphans];
 }

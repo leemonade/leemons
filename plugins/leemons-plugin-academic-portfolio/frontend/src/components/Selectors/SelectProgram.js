@@ -71,7 +71,7 @@ const SelectProgram = forwardRef(
     }, [userValue]);
 
     useEffect(() => {
-      if (firstSelected && data?.length > 0) {
+      if (firstSelected && data?.length > 0 && !userValue) {
         handleChange(data[0].value);
       }
       onLoadedPrograms(data);
