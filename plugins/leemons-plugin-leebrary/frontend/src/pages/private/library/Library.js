@@ -23,7 +23,7 @@ function cleanPath(path) {
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
-  const [store, render] = useStore();
+  const [store] = useStore();
   const { newAsset, category, loading, setAsset, setCategories, categories } =
     useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
@@ -128,9 +128,7 @@ const LibraryPageContent = () => {
               showSharedWithMe
               labels={navbarLabels}
               categories={categories}
-              selectedCategory={
-                category?.key === 'leebrary-shared' ? 'shared-with-me' : category?.id
-              }
+              selectedCategory={category?.id ? category.id : category?.key}
               subjects={store.subjects}
               onNavSubject={onNavSubject}
               onNavShared={onNavShared}
@@ -165,7 +163,7 @@ const LibraryPageContent = () => {
 
           {/* DEFAULT exact path={path} */}
           <Route>
-            <Redirect to={cleanPath(`${path}/${settings.hasPins ? 'pins' : 'media-files'}/list`)} />
+            <Redirect to={cleanPath(`${path}/leebrary-recent/list`)} />
           </Route>
         </Switch>
       </Box>
@@ -219,6 +217,8 @@ const LibraryPage = () => {
         setCategory({ key: 'pins', id: null });
       } else if (key === 'leebrary-shared' && category?.key !== 'leebrary-shared') {
         setCategory({ key: 'leebrary-shared', id: null });
+      } else if (key === 'leebrary-recent' && category?.key !== 'leebrary-recent') {
+        setCategory({ key: 'leebrary-recent', id: null });
       } else {
         const item = find(categories, { key });
         if (!isEmpty(item) && item.key !== category?.key) {

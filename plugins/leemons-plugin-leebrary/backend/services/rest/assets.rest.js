@@ -256,7 +256,7 @@ module.exports = {
         const finalAssets = results
           .filter((result) => result.status === 'fulfilled')
           .map((result) => result.value);
-        // final assets are being filtered by the result of each promise, concatenate here the difference to avoid it
+        // final assets are being filtered by the result of each promise
         return {
           status: 200,
           assets: finalAssets,

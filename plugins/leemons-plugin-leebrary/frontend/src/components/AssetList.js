@@ -86,15 +86,14 @@ function AssetList({
   paperProps,
   emptyComponent,
   searchEmptyComponent,
-  allowChangeCategories,
   preferCurrent,
   searchInProvider,
   roles,
   filters,
   filterComponents,
-  allowStateChanges,
-  assetState,
-  onStateChange = () => {},
+  allowStatusChange,
+  assetStatus,
+  onStatusChange = () => {},
   onSelectItem = () => {},
   onEditItem = () => {},
   onTypeChange = () => {},
@@ -149,7 +148,6 @@ function AssetList({
   const [searchDebounced] = useDebouncedValue(store.searchCriteria, 300);
   const session = useSession();
   const locale = getLocale(session);
-  const loadingRef = useRef({ firstTime: false, loading: false });
   const showThumbnails = useMemo(
     () => onlyThumbnails && store.category?.key === 'media-files',
     [onlyThumbnails, store.category]
@@ -246,6 +244,11 @@ function AssetList({
       if (categoryProp?.key === 'leebrary-shared') {
         delete query.category;
         query.onlyShared = true;
+      }
+
+      if (categoryProp?.key === 'leebrary-recent') {
+        delete query.category;
+        query.roles = JSON.stringify(['owner']);
       }
 
       const response = await getAssetsRequest(query);
@@ -461,7 +464,12 @@ function AssetList({
   }, [searchDebounced]);
 
   useEffect(() => {
-    if (!isEmpty(store.category?.id) || pinned || categoryProp?.key === 'leebrary-shared') {
+    const multiCategorySections = ['leebrary-shared', 'leebrary-recent'];
+    if (
+      !isEmpty(store.category?.id) ||
+      pinned ||
+      multiCategorySections.includes(categoryProp?.key)
+    ) {
       loadAllAssetsIds(store.category?.id, searchProp, store.assetType, filters);
     }
   }, [
@@ -515,7 +523,6 @@ function AssetList({
   function handleOnDownload(item) {
     window.open(item.url, '_blank', 'noopener');
   }
-
 
   function handleOnTypeChange(type) {
     if (isEmbedded) {
@@ -679,7 +686,9 @@ function AssetList({
       return searchEmptyComponent || emptyComponent || <SearchEmpty t={t} />;
     }
 
-    return emptyComponent || <ListEmpty t={t} />;
+    return (
+      emptyComponent || <ListEmpty t={t} isRecentPage={categoryProp?.key === 'leebrary-recent'} />
+    );
   };
 
   const listWidth = useMemo(
@@ -752,14 +761,14 @@ function AssetList({
                 skipFlex
               />
             )}
-            {allowStateChanges && (
+            {allowStatusChange && (
               <Select
                 data={[
                   { label: t('labels.assetStatePublished'), value: 'published' },
                   { label: t('labels.assetStateDraft'), value: 'draft' },
                 ]}
-                onChange={onStateChange}
-                value={categoryProp?.key === 'pins' ? store.stateFilter : assetState}
+                onChange={onStatusChange}
+                value={categoryProp?.key === 'pins' ? store.stateFilter : assetStatus}
                 placeholder={t('labels.assetState')}
                 disabled={store.loading}
                 skipFlex
@@ -964,9 +973,9 @@ AssetList.propTypes = {
   subjects: PropTypes.array,
   filters: PropTypes.any,
   filterComponents: PropTypes.any,
-  allowStateChanges: PropTypes.bool,
-  assetState: PropTypes.string,
-  onStateChange: PropTypes.func,
+  allowStatusChange: PropTypes.bool,
+  assetStatus: PropTypes.string,
+  onStatusChange: PropTypes.func,
 };
 
 export { AssetList };

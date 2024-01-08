@@ -222,12 +222,12 @@ const LibraryNavbar = ({
               </DropdownButton>
             </Box>
           ) : null}
-          {/* <NavbarItem
-            icon={'/public/leebrary/favorite.svg'}
-            label={'RECIENTES HCD'}
-            onClick={() => onNavHandler({ key: 'leebrary-recents' })}
-            selected={quickAccessSelected}
-          /> */}
+          <NavbarItem
+            icon={'/public/leebrary/recent.svg'}
+            label={labels.recent}
+            onClick={() => onNavHandler({ key: 'leebrary-recent' })}
+            selected={selectedCategory === 'leebrary-recent'}
+          />
           <NavbarItem
             icon={'/public/leebrary/favorite.svg'}
             label={labels.quickAccess}
@@ -236,12 +236,11 @@ const LibraryNavbar = ({
           />
           {showSharedWithMe ? (
             <NavbarItem
-              key={'shared-with-me'}
               icon={'/public/leebrary/shared-with-me.svg'}
               label={labels.sharedWithMe}
               loading={loading}
-              selected={selectedCategory === 'shared-with-me'}
-              onClick={() => onNavShared('shared-with-me')}
+              selected={selectedCategory === 'leebrary-shared'}
+              onClick={() => onNavShared('leebrary-shared')}
             />
           ) : null}
 

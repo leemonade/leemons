@@ -1,7 +1,7 @@
 /* eslint-disable no-unreachable */
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { Box, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
 import { isEmpty, isNil } from 'lodash';
@@ -39,7 +39,6 @@ const ListPageStyles = createStyles((theme) => ({
 const ListAssetPage = () => {
   const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
     useContext(LibraryContext);
-  const [t] = useTranslateLoader(prefixPN('assetsList'));
   const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
@@ -50,12 +49,10 @@ const ListAssetPage = () => {
   const history = useHistory();
   const params = useParams();
   const query = useQuery();
-  const [activeTab, setActiveTab] = useState(query.get('activeTab') || 'published');
+  const [activeStatus, setActiveStatus] = useState(query.get('activeTab') || 'published');
   const location = useLocation();
-  const profile = useGetProfileSysName();
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
-  const isAdmin = profile === 'admin';
   const academicFilters = useAcademicFiltersForAssetList({
     // hideProgramSelect: isStudent,
     useLabels: false,
@@ -110,9 +107,9 @@ const ListAssetPage = () => {
     }
 
     if (isEmpty(_activeTab)) {
-      setActiveTab('published');
-    } else if (_activeTab !== activeTab) {
-      setActiveTab(_activeTab);
+      setActiveStatus('published');
+    } else if (_activeTab !== activeStatus) {
+      setActiveStatus(_activeTab);
     }
   }, [query, asset]);
 
@@ -166,7 +163,7 @@ const ListAssetPage = () => {
 
       return result.join('&');
     },
-    [query, activeTab]
+    [query, activeStatus]
   );
 
   // ·········································································
@@ -239,7 +236,7 @@ const ListAssetPage = () => {
     );
   };
 
-  const handleOnTabChange = (tab) => {
+  const handleOnPublishingStatusChange = (tab) => {
     history.push(
       `${location.pathname}?${getQueryParams(
         {
@@ -256,10 +253,10 @@ const ListAssetPage = () => {
   // RENDER
 
   let props = {};
-  const multiAssetSections = ['pins', 'leebrary-shared', 'leebrary-recent'];
+  const multiCategorySections = ['pins', 'leebrary-shared', 'leebrary-recent'];
 
   if (
-    (multiAssetSections.includes(category?.key) || category?.key?.startsWith('assignables.')) &&
+    (multiCategorySections.includes(category?.key) || category?.key?.startsWith('assignables.')) &&
     (isTeacher || isStudent)
   ) {
     props = academicFilters;
@@ -296,11 +293,11 @@ const ListAssetPage = () => {
           assetType={mediaAssetType}
           pinned={category?.key === 'pins'}
           onLoading={setLoading}
-          published={activeTab === 'published'}
+          published={activeStatus === 'published'}
           variant="embedded"
-          allowStateChanges={true}
-          onStateChange={handleOnTabChange}
-          assetState={activeTab}
+          allowStatusChange={true}
+          onStatusChange={handleOnPublishingStatusChange}
+          assetStatus={activeStatus}
         />
       </Box>
     );

@@ -309,9 +309,9 @@ module.exports = {
       detail: 'Detail',
       permissions: 'Permissions',
       instructions: 'Instructions',
-      assetState: 'State',
-      assetStatePublished: 'Published',
-      assetStateDraft: 'Draft',
+      assetStatus: 'State',
+      assetStatusPublished: 'Published',
+      assetStatusDraft: 'Draft',
     },
     cardToolbar: {
       edit: 'Edit',
