@@ -39,7 +39,6 @@ module.exports = () => ({
       },
     }),
   ],
-
   actions: {
     ...restActions,
     getDeploymentIDByDomain: {
