@@ -86,7 +86,8 @@ async function getIfHasPermission({ menuKey, ctx }) {
     'item'
   );
 
-  if (profileSysName === 'super') {
+  // Skip main menu for super users
+  if (profileSysName === 'super' && menuKey.indexOf('leebrary') < 0) {
     menuItems = menuItems.filter((item) => item.key.indexOf('admin') === 0);
   }
 
