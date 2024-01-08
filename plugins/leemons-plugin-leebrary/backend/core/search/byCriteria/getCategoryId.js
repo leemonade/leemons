@@ -15,7 +15,7 @@ const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
  */
 async function getCategoryId({ category, ctx }) {
   let categoryId;
-  if (category) {
+  if (typeof category === 'string') {
     let _category;
 
     if (isLRN(category)) {

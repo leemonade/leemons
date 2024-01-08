@@ -232,7 +232,7 @@ const LibraryNavbar = ({
             icon={'/public/leebrary/favorite.svg'}
             label={labels.quickAccess}
             onClick={() => onNavHandler(null)}
-            selected={quickAccessSelected}
+            selected={selectedCategory === 'pins'}
           />
           {showSharedWithMe ? (
             <NavbarItem

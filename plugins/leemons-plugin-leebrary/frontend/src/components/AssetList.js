@@ -22,7 +22,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
@@ -92,6 +92,7 @@ function AssetList({
   filters,
   filterComponents,
   allowStatusChange,
+  allowCategoryFilter,
   assetStatus,
   onStatusChange = () => {},
   onSelectItem = () => {},
@@ -108,10 +109,13 @@ function AssetList({
   const location = useLocation();
 
   const isPinsRoute = location.pathname.includes('pins');
+  const [categoryFilter, setCategoryFilter] = React.useState(null);
 
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
   const queryClient = useQueryClient();
+
+  const multiCategorySections = ['pins', 'leebrary-recent', 'leebrary-shared']; // TODO save this in a constants file
 
   const initialState = {
     loading: true,
@@ -247,8 +251,19 @@ function AssetList({
       }
 
       if (categoryProp?.key === 'leebrary-recent') {
-        delete query.category;
         query.roles = JSON.stringify(['owner']);
+      }
+
+      // TODO: Category filter should apply to leebrary-shared section as well s
+      if (
+        multiCategorySections.includes(categoryProp?.key) &&
+        categoryProp?.key !== 'leebrary-shared'
+      ) {
+        if (!categoryFilter || categoryFilter === 'all') delete query.category;
+        else {
+          const chosenCategory = find(store.categories, { key: categoryFilter });
+          if (chosenCategory) query.category = chosenCategory.id;
+        }
       }
 
       const response = await getAssetsRequest(query);
@@ -439,11 +454,11 @@ function AssetList({
   }, [JSON.stringify(categoryProp), store.categories]);
 
   useEffect(() => {
+    setCategoryFilter(null);
+    queryClient.invalidateQueries(allAssetsKey);
+    queryClient.refetchQueries();
     if (!isEmpty(store.category?.id)) {
       loadAssetTypes(store.category.id);
-    } else if (categoryProp?.key === 'pins' || categoryProp?.key === 'leebrary-shared') {
-      const cat = find(store.categories, { key: 'media-files' });
-      if (cat) loadAssetTypes(cat.id);
     } else {
       setStoreValue('assetTypes', null);
     }
@@ -464,7 +479,6 @@ function AssetList({
   }, [searchDebounced]);
 
   useEffect(() => {
-    const multiCategorySections = ['leebrary-shared', 'leebrary-recent'];
     if (
       !isEmpty(store.category?.id) ||
       pinned ||
@@ -482,6 +496,12 @@ function AssetList({
     published,
     filters,
   ]);
+
+  useEffect(() => {
+    if (multiCategorySections.includes(categoryProp?.key)) {
+      loadAllAssetsIds();
+    }
+  }, [categoryFilter]);
 
   // ·········································································
   // HANDLERS
@@ -530,6 +550,10 @@ function AssetList({
     }
 
     onTypeChange(type);
+  }
+
+  function handleOnChangeCategory(value) {
+    setCategoryFilter(value);
   }
 
   // ·········································································
@@ -706,6 +730,23 @@ function AssetList({
     [store.openDetail, showDrawer]
   );
 
+  const categoriesSelectData = useMemo(() => {
+    const filteredCategories = store.categories
+      ?.filter((item) =>
+        Array.isArray(allowCategoryFilter) ? allowCategoryFilter.includes(item.key) : true
+      )
+      .map((item) => ({
+        value: item.key,
+        label: item.name,
+        icon: (
+          <Box style={{ height: 16, marginBottom: 5 }}>
+            <ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} />
+          </Box>
+        ),
+      }));
+    return [{ label: 'Todos los tipos', value: 'all' }, ...filteredCategories];
+  }, [allowCategoryFilter, store.categories]);
+
   // ·········································································
   // RENDER
 
@@ -765,16 +806,27 @@ function AssetList({
             {allowStatusChange && (
               <Select
                 data={[
-                  { label: t('labels.assetStatePublished'), value: 'published' },
-                  { label: t('labels.assetStateDraft'), value: 'draft' },
+                  { label: t('labels.assetStatusPublished'), value: 'published' },
+                  { label: t('labels.assetStatusDraft'), value: 'draft' },
                 ]}
                 onChange={onStatusChange}
-                value={categoryProp?.key === 'pins' ? store.stateFilter : assetStatus}
+                value={assetStatus}
                 placeholder={t('labels.assetState')}
                 disabled={store.loading}
                 skipFlex
               />
             )}
+            {multiCategorySections.includes(categoryProp?.key) &&
+              categoryProp.key !== 'leebrary-shared' && (
+                <Select
+                  data={categoriesSelectData}
+                  onChange={handleOnChangeCategory}
+                  value={categoryFilter}
+                  placeholder={t('labels.resourceTypes')}
+                  disabled={store.loading}
+                  skipFlex
+                />
+              )}
           </Stack>
           {canChangeLayout && (
             <Box skipFlex>
@@ -932,8 +984,8 @@ AssetList.defaultProps = {
   preferCurrent: true,
   canShowPublicToggle: true,
   paperProps: { color: 'none', shadow: 'none', padding: 0 },
-  allowChangeCategories: false,
-  allowStateChanges: false,
+  allowCategoryChange: false,
+  allowStatusChange: false,
 };
 AssetList.propTypes = {
   category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
@@ -967,7 +1019,6 @@ AssetList.propTypes = {
   onLoaded: PropTypes.func,
   onLoading: PropTypes.func,
   preferCurrent: PropTypes.bool,
-  allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
   searchInProvider: PropTypes.bool,
   roles: PropTypes.arrayOf(PropTypes.string),
   programs: PropTypes.array,
@@ -977,6 +1028,7 @@ AssetList.propTypes = {
   allowStatusChange: PropTypes.bool,
   assetStatus: PropTypes.string,
   onStatusChange: PropTypes.func,
+  allowCategoryFilter: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
 };
 
 export { AssetList };

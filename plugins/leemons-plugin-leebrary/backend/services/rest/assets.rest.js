@@ -213,6 +213,11 @@ module.exports = {
         });
       }
 
+      // TODO: Temporary solution. The previous if statement is assuming the single category filtering only
+      if (parsedRoles?.length === 1 && parsedRoles[0] === 'owner') {
+        assets = assets.filter((asset) => asset.role === 'owner');
+      }
+
       return {
         status: 200,
         assets,
@@ -327,15 +332,18 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { criteria, type, published, preferCurrent, showPublic, providerQuery } = ctx.params;
+      const { criteria, type, published, preferCurrent, showPublic, providerQuery, category } =
+        ctx.params;
 
       const _providerQuery = JSON.parse(providerQuery || null);
+      const _category = category === 'undefined' ? null : category;
       const assetPublished = ['true', true, '1', 1].includes(published);
       const displayPublic = ['true', true, '1', 1].includes(showPublic);
       const _preferCurrent = ['true', true, '1', 1].includes(preferCurrent);
 
       const assets = await getByCriteria({
         criteria,
+        category: _category,
         type,
         pinned: true,
         indexable: true,
