@@ -1,6 +1,7 @@
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 
 async function getAssetsByIds(assets, filters = {}) {
+  if (!assets?.length) return [];
   const response = await leemons.api(`v1/leebrary/assets/list`, {
     allAgents: true,
     body: {

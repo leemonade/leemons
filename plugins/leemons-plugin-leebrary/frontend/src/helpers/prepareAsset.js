@@ -145,31 +145,20 @@ export function getCoverName(cover) {
 }
 
 export function resolveAssetType(file, type, asset) {
-  let defaultType;
-  switch (type) {
-    case 'assignables.content-creator':
-      defaultType = 'document';
-      break;
-    case 'assignables.scorm':
-      defaultType = 'scorm';
-      break;
-    case 'bookmarks':
-      defaultType = 'bookmark';
-      break;
-    default:
-      defaultType = 'file';
-  }
+  let defaultType = 'file';
+  if (type === 'bookmarks') defaultType = 'bookmark';
+
   const isNewAsset = !asset?.id;
   const fileExtension = isNewAsset ? file?.name?.split('.').pop() : asset?.fileExtension;
 
   const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;
-  const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)
+  const resolvedFileType = ['audio', 'video', 'image', 'bookmark'].includes(fileType)
     ? fileType
     : defaultType;
   const finalFileType =
     resolvedFileType === 'file' && fileExtension ? fileExtension.toUpperCase() : resolvedFileType;
 
-  return { fileType: finalFileType, fileExtension };
+  return { fileType: resolvedFileType, fileExtension };
 }
 
 export default prepareAsset;

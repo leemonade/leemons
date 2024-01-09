@@ -122,11 +122,11 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
   return (
     <LibraryCard
       {...props}
-      asset={asset}
+      asset={{ ...asset, fileType: 'content-creator' }}
       menuItems={menuItems}
       variant="document"
       variantTitle={t('document')}
-      variantIcon={<DocumentIcon size={20} style={{ color: '#878D96' }} />}
+      variantIcon={<DocumentIcon />}
       className={classes.root}
     />
   );

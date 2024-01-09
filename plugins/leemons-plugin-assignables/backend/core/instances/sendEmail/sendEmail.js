@@ -60,7 +60,7 @@ async function sendEmail({
       let subjectIconUrl =
         // eslint-disable-next-line no-nested-ternary
         classes.length > 1
-          ? `${hostname || ctx.request.header.origin}/public/assets/svgs/module-three.svg`
+          ? `${hostname || ctx.request.header.origin}/public/assignables/module-three.svg`
           : classes[0].subject.icon.cover
             ? (hostname || ctx.request.header.origin) +
             leemons.getPlugin('leebrary').services.assets.getCoverUrl(classes[0].subject.icon.id)
