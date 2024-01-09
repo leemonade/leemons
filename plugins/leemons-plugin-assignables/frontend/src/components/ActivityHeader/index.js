@@ -73,9 +73,23 @@ export default function ActivityHeader({
       <TotalLayoutHeader
         title={title}
         formTitlePlaceholder={subtitle}
+        iconLarge
         icon={
-          <Box sx={{ position: 'relative', width: 24, height: 24 }}>
-            <ImageLoader src={coverUrl ?? assignable?.roleDetails?.icon} width={24} height={24} />
+          <Box
+            sx={{
+              position: 'relative',
+              width: 40,
+              height: 40,
+              borderRadius: 4,
+              overflow: 'hidden',
+            }}
+          >
+            <ImageLoader
+              src={coverUrl ?? assignable?.roleDetails?.icon}
+              width={40}
+              height={40}
+              imageStyles={{ borderRadius: 4 }}
+            />
           </Box>
         }
         direction="row"
