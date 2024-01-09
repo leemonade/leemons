@@ -21,7 +21,7 @@ export default function transformEvent(
       event.image = calendar.image;
       event.calendarName = null;
     }
-    event.icon = '/public/assets/svgs/module-three.svg';
+    event.icon = '/public/assignables/module-three.svg';
     event.bgColor = '#67728E';
     event.borderColor = '#67728E';
     event.calendarName = t ? t('multiSubject') : 'Multi-Subject';

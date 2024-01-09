@@ -39,6 +39,7 @@ const ListAssetPage = () => {
   const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
+  // const [subjectProgram, setSubjectProgram] = useState(null);
 
   const [mediaAssetType, setMediaAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
@@ -79,6 +80,13 @@ const ListAssetPage = () => {
     const type = query.get('type');
     const _activeTab = query.get('activeTab');
     const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
+    // const program = query.get('program');
+
+    // if (isEmpty(program)) {
+    //   setSubjectProgram('');
+    // } else if (program !== subjectProgram) {
+    //   setSubjectProgram(program);
+    // }
 
     if (displayPublic !== showPublic) {
       setShowPublic(displayPublic);
@@ -251,9 +259,11 @@ const ListAssetPage = () => {
 
   let props = {};
   const multiCategorySections = ['pins', 'leebrary-shared', 'leebrary-recent'];
+  const staticAssignables = ['assignables.content-creator', 'assignables.scorm'];
 
   if (
-    (multiCategorySections.includes(category?.key) || category?.key?.startsWith('assignables.')) &&
+    (multiCategorySections.includes(category?.key) ||
+      (category?.key?.startsWith('assignables.') && !staticAssignables.includes(category?.key))) &&
     (isTeacher || isStudent)
   ) {
     props = academicFilters;
@@ -261,10 +271,15 @@ const ListAssetPage = () => {
   }
 
   if ((category?.key === 'media-files' || category?.key === 'bookmarks') && isTeacher) {
-    props = academicFilters;
+    // props = academicFilters; // TODO: implement
     props.searchInProvider = false;
   }
 
+  // if (category?.key.startsWith('leebrary-subject')) {
+  //   props.programs = subjectProgram;
+  // }
+
+  // Publish & Draft filters allowed
   if (
     (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') &&
     category?.key !== 'assignables.scorm'

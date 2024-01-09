@@ -89,6 +89,7 @@ const AssetFormInput = ({
     </AssetForm>
   );
 
+  const formValues = form?.watch();
   if (preview) {
     return (
       <Box style={{ marginBottom: 16 }}>
@@ -100,11 +101,12 @@ const AssetFormInput = ({
             <ContextContainer title={formLabels?.labels?.preview}>
               <CardWrapper
                 isCreationPreview
-                item={{ original: form?.watch() }}
+                item={{ original: formValues }}
                 category={category}
                 variant={previewVariant}
                 locale={locale}
                 single
+                assetsLoading={!formValues?.name}
               />
             </ContextContainer>
           </Box>

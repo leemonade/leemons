@@ -177,7 +177,7 @@ function AssetList({
       onlyPinned: isPinsRoute,
     },
     options: {
-      enabled: !isEmpty(store.assets),
+      enabled: !isEmpty(store.assets) && !store.loading,
     },
   });
 
@@ -213,10 +213,10 @@ function AssetList({
     }
   }
 
-  function clearAssetLoading() {
+  function clearAssetLoading(delay = 500) {
     setTimeout(() => {
       setStoreValue('loading', false);
-    }, 1000);
+    }, delay);
   }
 
   async function loadAllAssetsIds(categoryId, criteria = '', type = '', _filters = null) {
@@ -226,6 +226,7 @@ function AssetList({
     setStoreValue('assets', []);
     queryClient.invalidateQueries(allAssetsKey);
     queryClient.refetchQueries();
+
     try {
       const query = {
         providerQuery: _filters ? JSON.stringify(_filters) : null,
@@ -254,7 +255,7 @@ function AssetList({
         query.roles = JSON.stringify(['owner']);
       }
 
-      // TODO: Category filter should apply to leebrary-shared section as well s
+      // TODO: Category filter should apply to leebrary-shared section as well
       if (
         multiCategorySections.includes(categoryProp?.key) &&
         categoryProp?.key !== 'leebrary-shared'
@@ -430,7 +431,6 @@ function AssetList({
     } else {
       setStoreValue('pageAssetsData', []);
     }
-    clearAssetLoading();
   }, [assetsDetail, isError]);
 
   useEffect(() => {
@@ -444,7 +444,9 @@ function AssetList({
   }, [JSON.stringify(assetProp)]);
 
   useEffect(() => {
-    if (!isEmpty(categoryProp?.id)) {
+    // Setea la store.category en base al categoryProp
+    // Si store.categories está vacío carga las categorías con loadCategories
+    if (categoryProp?.id === null || !isEmpty(categoryProp?.id)) {
       setStoreValue('category', categoryProp);
     } else if (isString(categoryProp) && isEmpty(store.categories)) {
       loadCategories(categoryProp);
@@ -454,9 +456,6 @@ function AssetList({
   }, [JSON.stringify(categoryProp), store.categories]);
 
   useEffect(() => {
-    setCategoryFilter(null);
-    queryClient.invalidateQueries(allAssetsKey);
-    queryClient.refetchQueries();
     if (!isEmpty(store.category?.id)) {
       loadAssetTypes(store.category.id);
     } else {
@@ -482,26 +481,21 @@ function AssetList({
     if (
       !isEmpty(store.category?.id) ||
       pinned ||
-      multiCategorySections.includes(categoryProp?.key)
+      multiCategorySections.includes(store.category?.key)
     ) {
       loadAllAssetsIds(store.category?.id, searchProp, store.assetType, filters);
     }
   }, [
-    JSON.stringify(categoryProp),
     searchProp,
     store.category,
     store.assetType,
-    store.showPublic,
     pinned,
-    published,
     filters,
+    published,
+    categoryFilter,
+    // JSON.stringify(categoryProp),
+    // store.showPublic,
   ]);
-
-  useEffect(() => {
-    if (multiCategorySections.includes(categoryProp?.key)) {
-      loadAllAssetsIds();
-    }
-  }, [categoryFilter]);
 
   // ·········································································
   // HANDLERS
@@ -635,7 +629,11 @@ function AssetList({
           <CardWrapper
             {...p}
             variant={cardVariant || 'media'}
-            category={store.category || { key: 'media-file' }}
+            category={
+              store.categories.find((category) => category.id === p.item.original.category) || {
+                key: 'media-file',
+              }
+            }
             realCategory={categoryProp}
             published={published}
             isEmbedded={isEmbedded}
@@ -670,7 +668,15 @@ function AssetList({
     }
 
     return { paperProps };
-  }, [store.layout, store.category, categoryProp, isEmbedded, showThumbnails, cardDetailIsLoading]);
+  }, [
+    store.layout,
+    store.category,
+    store.categories,
+    categoryProp,
+    isEmbedded,
+    showThumbnails,
+    cardDetailIsLoading,
+  ]);
 
   const listLayouts = useMemo(
     () => [
@@ -863,7 +869,7 @@ function AssetList({
           >
             <LoadingOverlay visible={store.loading} overlayOpacity={0} style={{ height: '100%' }} />
 
-            {!store.loading && !isEmpty(store.pageAssetsData?.items) && (
+            {!store.loading && !isEmpty(store.assets) && (
               <Box
                 sx={(theme) => ({
                   paddingBottom: theme.spacing[5],
@@ -877,7 +883,7 @@ function AssetList({
                   selectable
                   selected={store.asset}
                   columns={columns}
-                  loading={store.loading}
+                  loading={isLoading}
                   layout={store.layout}
                   page={store.page}
                   size={store.size}
@@ -896,7 +902,7 @@ function AssetList({
                 />
               </Box>
             )}
-            {!store.loading && isEmpty(store.pageAssetsData?.items) && (
+            {!store.loading && isEmpty(store.assets) && !isLoading && (
               <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 {getEmptyState()}
               </Stack>

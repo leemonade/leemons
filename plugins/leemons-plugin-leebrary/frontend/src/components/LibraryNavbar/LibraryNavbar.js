@@ -33,6 +33,7 @@ const LibraryNavbar = ({
   onNew,
   useNewCreateButton = true,
   loading,
+  isStudent,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
@@ -80,11 +81,6 @@ const LibraryNavbar = ({
     isFunction(onNav) && onNav(category);
   };
 
-  const quickAccessSelected = useMemo(
-    () => !selectedCategory || selectedCategory === '' || selectedCategory < 1,
-    [selectedCategory]
-  );
-
   // TODO: this is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
   const contentAssetsKeys = [
     'bookmarks',
@@ -119,7 +115,7 @@ const LibraryNavbar = ({
                 {subjectsByProgram[programId].map((subject) => (
                   <Box
                     key={JSON.stringify(subject)}
-                    onClick={() => onNavSubject(subject)}
+                    onClick={() => onNavSubject(subject, programId)}
                     sx={(theme) => ({
                       display: 'flex',
                       position: 'relative',
@@ -248,8 +244,12 @@ const LibraryNavbar = ({
           {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'contentAssets' })}
           <Divider style={{ marginBlock: 24, marginInline: 10 }} />
           {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'activityAssets' })}
-          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
-          {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'subjects' })}
+          {isStudent && (
+            <>
+              <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+              {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'subjects' })}
+            </>
+          )}
         </Stack>
         {!useNewCreateButton ? (
           <Paper

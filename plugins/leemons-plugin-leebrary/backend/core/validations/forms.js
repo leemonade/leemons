@@ -21,12 +21,7 @@ const addAssetSchema = {
       nullable: true,
       type: 'array',
       items: {
-        type: 'object',
-        properties: {
-          subject: stringSchema,
-          level: stringSchemaNullable,
-        },
-        required: ['subject'],
+        type: 'string',
       },
     },
   },

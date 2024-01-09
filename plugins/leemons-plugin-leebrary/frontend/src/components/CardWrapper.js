@@ -56,6 +56,7 @@ const CardWrapper = ({
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
+
   const [t] = useTranslateLoader(prefixPN('list'));
   const history = useHistory();
   const { classes } = CardWrapperStyles({ selected });
@@ -152,19 +153,19 @@ const CardWrapper = ({
     assetsLoading,
   ]);
 
-  const _asset = asset;
-  if (realCategory?.key !== 'pins') {
-    delete _asset.programName;
-  }
+  // const _asset = asset;
+  // if (realCategory?.key !== 'pins') {
+  //   delete _asset.programName;
+  // }
 
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props} style={{ display: 'flex', gap: 32 }}>
       <Component
         isCreationPreview={isCreationPreview}
         asset={{
-          ..._asset,
-          ...resolveAssetType(_asset.file, category?.key, asset),
-          cover: getCoverUrl(_asset.cover || _asset.file),
+          ...asset,
+          ...resolveAssetType(asset.file, category?.key, asset),
+          cover: getCoverUrl(asset.cover || asset.file),
         }}
         menuItems={menuItems}
         variant={variant}

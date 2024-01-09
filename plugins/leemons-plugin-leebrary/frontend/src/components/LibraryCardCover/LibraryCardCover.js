@@ -20,10 +20,8 @@ const LibraryCardCover = ({
   hideDashboardIcons,
   fileType,
   variantIcon,
-  fileExtension,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
-  const [resolvedIcon, setResolvedIcon] = useState(fileType);
   const { classes, cx } = LibraryCardCoverStyles(
     { color, height, parentHovered, subjectColor: subject?.color, showMenu },
     { name: 'LibraryCardCover' }
@@ -93,18 +91,9 @@ const LibraryCardCover = ({
     </Box>
   );
 
-  const getFileIcon = (type) => {
-    const isCCreator = type === 'document' && !fileExtension;
-    const isDefaultIcon = !['audio', 'video', 'bookmark', 'image'].includes(type);
-    return isDefaultIcon && !isCCreator ? 'file' : type;
-  };
-  useEffect(() => {
-    setResolvedIcon(getFileIcon(fileType));
-  }, [fileType, icon, variantIcon]);
-
   const MemoizedEmptyCover = useMemo(
-    () => <CardEmptyCover icon={variantIcon ?? icon} fileType={resolvedIcon} />,
-    [icon, variantIcon, fileType, resolvedIcon]
+    () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} />,
+    [icon, variantIcon, fileType]
   );
 
   return (
