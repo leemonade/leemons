@@ -45,7 +45,9 @@ const NYACardCover = ({
             <Text className={classes.separator}>/{totalActivities}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>
-            <Text className={classes.pendingLabel}>{localizations.ongoing.pendingActivities}</Text>
+            <Text className={classes.pendingLabel}>
+              {localizations?.ongoing?.pendingActivities}
+            </Text>
           </Box>
         </Box>
       </Box>

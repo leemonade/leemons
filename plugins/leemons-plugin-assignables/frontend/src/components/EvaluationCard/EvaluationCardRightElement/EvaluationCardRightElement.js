@@ -63,7 +63,9 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
             <Text className={classes.separator}>/{moduleTotal}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>
-            <Text className={classes.pendingLabel}>{localizations.ongoing.pendingActivities}</Text>
+            <Text className={classes.pendingLabel}>
+              {localizations?.ongoing?.pendingActivities}
+            </Text>
           </Box>
         </Box>
       ) : (

@@ -182,4 +182,8 @@ module.exports = {
     evaluated: 'Evaluated',
     delivered: 'Delivered',
   },
+  moduleJourney: {
+    introduction: 'Introduction',
+    resources: 'Resources',
+  },
 };

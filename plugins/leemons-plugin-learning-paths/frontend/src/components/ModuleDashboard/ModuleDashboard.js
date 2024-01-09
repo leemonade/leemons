@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, createStyles, HtmlText, Loader, Text } from '@bubbles-ui/components';
-import { capitalize, get, head, map, omit, pick, sortBy, tail } from 'lodash';
+import { Box, createStyles, Loader } from '@bubbles-ui/components';
+import { capitalize, get, head, map, sortBy, tail } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
@@ -251,6 +251,7 @@ export function ModuleDashboardBody({
   preview,
 }) {
   const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
+  const [t] = useTranslateLoader(prefixPN('moduleJourney'));
   const moduleColor = module?.assignable?.asset?.color;
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
   const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
@@ -262,7 +263,7 @@ export function ModuleDashboardBody({
         <Box className={classes.activitiesList}>
           <DashboardCard
             introductionCard
-            assetNumber={'Introducción'}
+            assetNumber={t('introduction')}
             statement={module?.metadata?.statement}
             cover={module?.assignable?.asset?.cover}
             localizations={localizations}
@@ -311,7 +312,6 @@ ModuleDashboardBody.propTypes = {
 };
 
 export function ModuleDashboard({ id, preview }) {
-  console.log('id in ModuleDashboard', id);
   const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
     preview ? useModuleDataForPreview(id) : useModuleData(id);
 

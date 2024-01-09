@@ -12,7 +12,6 @@ export const NYACARD_PROP_TYPES = {
 export const NYACARD_DEFAULT_PROPS = {
   instance: {},
   showSubject: false,
-  labels: {},
   classData: [],
   isTeacherSyllabus: false,
   clickable: true,

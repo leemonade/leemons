@@ -16,7 +16,7 @@ import { NYACardStyles } from './NYACard.styles';
 import { NYACardBody } from './NYCardBody';
 import { NYACardFooter } from './NYACardFooter';
 import { NYACardSkeleton } from './NYACardSkeleton';
-import { NYACARD_PROP_TYPES } from './NYACard.constants';
+import { NYACARD_PROP_TYPES, NYACARD_DEFAULT_PROPS } from './NYACard.constants';
 import { EvaluationCard } from '../EvaluationCard';
 import { EvaluationCardSkeleton } from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
 
@@ -397,11 +397,19 @@ function LinkContainer({ to, disabled, children }) {
   );
 }
 
-const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivityCarousel }) => {
+const NYACard = ({
+  instance,
+  showSubject,
+  labels,
+  classData,
+  clickable,
+  isActivityCarousel,
+  isTeacherSyllabus,
+}) => {
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
-  const { classes } = NYACardStyles({ name: 'NYACard' });
+  const { classes } = NYACardStyles({ clickable }, { name: 'NYACard' });
   const query = useMemo(
     () => ({
       classData,
@@ -463,11 +471,7 @@ const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivi
           height: '100%',
         }}
       >
-        <Box
-          className={classes.root}
-          onMouseEnter={clickable ? () => setIsHovered(true) : undefined}
-          onMouseLeave={clickable ? () => setIsHovered(false) : undefined}
-        >
+        <Box className={classes.root}>
           <NYACardCover
             {...preparedInstance?.asset}
             variantTitle={preparedInstance?.assignable?.role}
@@ -524,6 +528,7 @@ const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivi
 };
 
 NYACard.propTypes = NYACARD_PROP_TYPES;
+NYACard.defaultProps = NYACARD_DEFAULT_PROPS;
 
 export { NYACard };
 export default NYACard;

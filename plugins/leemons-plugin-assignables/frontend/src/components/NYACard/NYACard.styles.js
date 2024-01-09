@@ -6,7 +6,7 @@ import {
   getBoxShadowFromToken,
 } from '@bubbles-ui/components';
 
-export const NYACardStyles = createStyles((theme) => {
+export const NYACardStyles = createStyles((theme, { clickable }) => {
   const cardShadow = getBoxShadowFromToken(theme.other.cardAssignments.shadow.hover);
   return {
     root: {
@@ -24,7 +24,7 @@ export const NYACardStyles = createStyles((theme) => {
       maxWidth: pxToRem(330),
       minHeight: pxToRem(480),
       '&:hover': {
-        boxShadow: cardShadow.boxShadow,
+        boxShadow: !clickable ? 'none' : cardShadow.boxShadow,
       },
     },
   };
