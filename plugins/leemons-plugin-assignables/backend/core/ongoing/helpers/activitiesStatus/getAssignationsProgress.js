@@ -23,8 +23,9 @@ async function getAssignationsProgress({
     const isEvaluable = requiresScoring || allowFeedback;
     // TODO: Add if has any feedback when only allowFeedback
     const hasAllGrades =
+      grades[assignation.id]?.length > 0 &&
       grades[assignation.id]?.length ===
-      instanceSubjectsProgramsAndClasses[assignation.instance.id]?.subjects?.length;
+        instanceSubjectsProgramsAndClasses[assignation.instance.id]?.subjects?.length;
     const hasBeenEvaluated = isEvaluable && hasAllGrades;
 
     const now = dayjs();
