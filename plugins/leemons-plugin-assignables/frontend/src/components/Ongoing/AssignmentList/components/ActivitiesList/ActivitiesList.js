@@ -266,7 +266,7 @@ function useOngoingData({ query, page, size, subjectFullLength }) {
     parsedInstances: parsedInstancesWithoutCollapsedModules,
     isLoading,
     totalCount: paginatedInstances?.totalCount ?? 0,
-    totalPages: Math.ceil(paginatedInstances?.totalCount ?? 0 / size),
+    totalPages: Math.ceil((paginatedInstances?.totalCount ?? 0) / size),
   };
 }
 
