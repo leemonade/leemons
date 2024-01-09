@@ -18,6 +18,8 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useHistory } from 'react-router-dom';
 import { Locales } from './components/Locales';
 import { Start } from './components/Start';
 
@@ -28,6 +30,14 @@ function dynamicImport(pluginName, component) {
 // Pagina a la que solo tendra acceso el super admin
 function Setup({ session }) {
   const [t, translations] = useTranslateLoader(prefixPN('setup'));
+  const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
+  const history = useHistory();
+  if (
+    deploymentConfig?.superRedirectUrl &&
+    deploymentConfig.superRedirectUrl !== '/private/admin/setup'
+  ) {
+    history.push(deploymentConfig?.superRedirectUrl);
+  }
 
   // ····················································
   // SETTINGS

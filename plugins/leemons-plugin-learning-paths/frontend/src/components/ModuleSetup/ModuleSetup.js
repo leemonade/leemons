@@ -93,7 +93,7 @@ async function handleOnSaveEvent() {
 }
 
 function prepareAssignable(sharedData) {
-  const assignable = {
+  return {
     asset: {
       ...omit(get(sharedData, 'basicData'), 'subjects', 'program'),
       cover: get(sharedData, 'basicData.cover.id') || get(sharedData, 'basicData.cover'),
@@ -102,7 +102,7 @@ function prepareAssignable(sharedData) {
     // TODO: Add center
     center: null,
     subjects: get(sharedData, 'basicData.subjects', []).map((subject) => ({
-      ...subject,
+      subject: subject?.subject ?? subject,
       program: get(sharedData, 'basicData.program', null),
     })),
     submission: {
@@ -116,12 +116,10 @@ function prepareAssignable(sharedData) {
     // ES: Es requerido
     statement: 'Module',
   };
-
-  return assignable;
 }
 
 function prepareSharedData(module) {
-  const sharedData = {
+  return {
     id: module.id,
     basicData: {
       ...omit(module.asset, 'file'),
@@ -133,8 +131,6 @@ function prepareSharedData(module) {
       resources: module.resources,
     },
   };
-
-  return sharedData;
 }
 
 function onSaveDraft({ sharedDataRef, history, localizations }) {
@@ -222,7 +218,7 @@ function useEventHandler({ localizations }) {
 export function useStepRenderer({ step, tabs, props }) {
   const tabId = tabs[step]?.id;
 
-  const element = useMemo(
+  return useMemo(
     () =>
       !stepsRenderers[tabId]
         ? null
@@ -231,8 +227,6 @@ export function useStepRenderer({ step, tabs, props }) {
           }),
     [tabId, props]
   );
-
-  return element;
 }
 
 function useModuleInitialization() {

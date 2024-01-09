@@ -16,6 +16,7 @@ import {
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import Filters from './components/Filters';
 import ActivitiesList from './components/ActivitiesList';
 import prefixPN from '../../../helpers/prefixPN';
@@ -136,7 +137,13 @@ export default function AssignmentList({
   }
 
   return (
-    <TotalLayoutContainer>
+    <TotalLayoutContainer
+      Header={
+        <ProgramBarSelector
+          onChange={(program) => setFilters((f) => ({ ...f, program: program.id }))}
+        />
+      }
+    >
       <Stack justifyContent="center" fullWidth>
         <TotalLayoutStepContainer clean stepName={labels.title}>
           {View}

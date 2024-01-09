@@ -3,7 +3,7 @@ function groupInstancesInModules({ instances, modules, dates }) {
   const activitiesPerModule = {};
 
   instances.forEach((instance) => {
-    if (!instance.metadata?.module) {
+    if (!instance.metadata?.module || instance.assignable?.role === 'learningpaths.module') {
       orphans.push(instance);
     } else if (instance.metadata?.module?.type === 'activity') {
       if (!activitiesPerModule[instance.metadata.module.id]) {

@@ -162,12 +162,13 @@ export default function Login() {
       );
       // }
     } catch (err) {
-      console.log(err);
-      if (_.isObject(err) && err.httpStatusCode === 401) {
+      if (err.message === 'exceeded-login-attempts') {
+        setFormStatus('unknown-error');
+        setFormError(tCommon('exceededLoginAttempts'));
+      } else if (_.isObject(err) && err.httpStatusCode === 401) {
         setFormStatus('error-match');
         setFormError(t('form_error'));
-      }
-      if (_.isObject(err) && err.httpStatusCode === 500) {
+      } else if (_.isObject(err) && err.httpStatusCode === 500) {
         setFormStatus('unknown-error');
         setFormError(tCommon('unknown_error'));
       }

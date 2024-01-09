@@ -23,7 +23,7 @@ async function addGrade({ data, fromFrontend, ctx }) {
 
     await ctx.tx.db.Grades.updateOne({ id: grade.id }, { minScaleToPromote: minScale.id });
   }
-  await Promise.all([
+  await Promise.allSettled([
     ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('evaluations') }),
     ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('promotions') }),
   ]);

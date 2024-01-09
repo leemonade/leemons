@@ -1,6 +1,7 @@
 module.exports = {
   forms: {
     unknown_error: 'Unknown error',
+    exceededLoginAttempts: 'Exceeded login attempts',
     required: 'The field is required',
     email: 'Not a valid email',
     phone: 'Invalid phone',
@@ -84,6 +85,7 @@ module.exports = {
     selectTag: 'Select labels',
     startAt: 'Start at...',
     unknown_error: 'Unknown error',
+    exceededLoginAttempts: 'Exceeded login attempts',
     required: 'The field is required',
     email: 'Not a valid email',
     phone: 'Invalid phone',

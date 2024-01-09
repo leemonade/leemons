@@ -17,21 +17,31 @@ const { validateNotExistMenu } = require('../../validations/exists');
 async function enable({ menuKey = constants.mainMenuKey, key, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
-  // Check for required params
-  await validateNotExistMenu({ key: menuKey, ctx });
+  const config = await ctx.tx.call('deployment-manager.getConfigRest', { allConfig: true });
 
-  // Check if the MENU ITEM exists
-  await validateNotExistMenuItem({ menuKey, key, ctx });
+  const disableMenuKeys = config[ctx.callerPluginV]?.deny?.menu;
+  let toRemove = false;
+  if (disableMenuKeys?.indexOf(key.replace(`${ctx.callerPlugin}.`, '')) >= 0) {
+    toRemove = true;
+  }
+  if (!toRemove) {
+    // Check for required params
+    await validateNotExistMenu({ key: menuKey, ctx });
 
-  const menuItem = await ctx.tx.db.MenuItem.findOneAndUpdate(
-    { menuKey, key },
-    { disabled: false },
-    { new: true, lean: true }
-  );
+    // Check if the MENU ITEM exists
+    await validateNotExistMenuItem({ menuKey, key, ctx });
 
-  ctx.logger.info(`Enabled menu item "${key}" of menu "${menuKey}"`);
+    const menuItem = await ctx.tx.db.MenuItem.findOneAndUpdate(
+      { menuKey, key },
+      { disabled: false },
+      { new: true, lean: true }
+    );
 
-  return menuItem;
+    ctx.logger.info(`Enabled menu item "${key}" of menu "${menuKey}"`);
+
+    return menuItem;
+  }
+  return ctx.tx.db.MenuItem.findOne({ menuKey, key });
 }
 
 module.exports = { enable };

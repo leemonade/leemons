@@ -98,10 +98,19 @@ module.exports = {
         required: ['key'],
       });
       if (validator.validate(ctx.params)) {
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
-          key: ctx.prefixPN(ctx.params.key),
-        });
-        return { status: 200, item };
+        const config = await ctx.tx.call('deployment-manager.getConfigRest', { allConfig: true });
+        const disableMenuKeys = config[ctx.prefixPNV()]?.deny?.menu;
+        let toRemove = false;
+        if (disableMenuKeys?.indexOf(ctx.params.key) >= 0) {
+          toRemove = true;
+        }
+        if (!toRemove) {
+          const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+            key: ctx.prefixPN(ctx.params.key),
+          });
+          return { status: 200, item };
+        }
+        return { status: 200 };
       }
       throw validator.error;
     },
