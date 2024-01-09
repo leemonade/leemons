@@ -15,7 +15,7 @@ async function addRule({ data, isDependency = false, ctx }) {
 
   await ctx.tx.db.Rules.updateOne({ id: rule.id }, { group: _group.id });
 
-  await Promise.all([
+  await Promise.allSettled([
     ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('promotions') }),
     ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('dependencies') }),
   ]);
