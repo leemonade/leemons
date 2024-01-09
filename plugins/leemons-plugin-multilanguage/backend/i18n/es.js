@@ -1,6 +1,7 @@
 module.exports = {
   forms: {
     unknown_error: 'Error desconocido',
+    exceededLoginAttempts: 'Ha superado el número de intentos de inicio de sesión',
     required: 'El campo es necesario',
     email: 'No es un email valido',
     numbers: 'Solo se permiten números',
@@ -83,6 +84,7 @@ module.exports = {
     selectTag: 'Seleccionar etiquetas',
     startAt: 'Empezar en...',
     unknown_error: 'Error desconocido',
+    exceededLoginAttempts: 'Excedido el número de intentos de inicio de sesión',
     required: 'El campo es necesario',
     email: 'No es un email valido',
     numbers: 'Solo se permiten números',

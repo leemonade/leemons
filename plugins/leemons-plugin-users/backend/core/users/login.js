@@ -31,7 +31,7 @@ async function login({ email, password, ctx }) {
   if (!userP.password) {
     if (process.env.EXTERNAL_IDENTITY_URL) {
       // Is no error its done
-      await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/login`, {
+      const r = await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,6 +43,13 @@ async function login({ email, password, ctx }) {
           manualPassword: process.env.MANUAL_PASSWORD,
         }),
       });
+      const response = await r.json();
+      if (!r.ok) {
+        throw new LeemonsError(ctx, {
+          message: response.message,
+          httpStatusCode: 401,
+        });
+      }
     } else {
       throw new LeemonsError(ctx, {
         message: 'Credentials do not match',
