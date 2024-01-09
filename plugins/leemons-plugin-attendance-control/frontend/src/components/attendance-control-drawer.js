@@ -13,6 +13,7 @@ import {
   Box,
   Button,
   ContextContainer,
+  createStyles,
   Drawer,
   InputLabel,
   Loader,
@@ -23,11 +24,10 @@ import {
   Textarea,
   Title,
   UserDisplayItem,
-  createStyles,
 } from '@bubbles-ui/components';
 
 import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
-import { CommentIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
+import { AddCommentIcon, CommentedIcon } from '@bubbles-ui/icons/solid';
 import { useLocale, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -252,7 +252,7 @@ export function AttendanceControlDrawer({
                   <TimeClockCircleIcon />
                 </Box>
                 <Box sx={(theme) => ({ color: theme.colors.text06 })}>
-                  <CommentIcon />
+                  <CommentedIcon />
                 </Box>
               </Box>
             </Box>
@@ -291,7 +291,7 @@ export function AttendanceControlDrawer({
                           })}
                         >
                           <ActionButton
-                            icon={<EditWriteIcon />}
+                            icon={<AddCommentIcon />}
                             onClick={() => {
                               store.openedIndex = '';
                               render();

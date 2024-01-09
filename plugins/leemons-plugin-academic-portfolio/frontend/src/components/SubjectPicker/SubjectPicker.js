@@ -24,14 +24,18 @@ export function SubjectPicker({
       program: undefined,
       course: undefined,
       subject: undefined,
-      selectedSubjects: [],
+      selectedSubjects: value || [],
     },
   });
 
   const { programs, courses, subjects, selectedSubjects } = useDataForSubjectPicker({
-    subjects: assignable?.subjects,
+    subjects: assignable?.subjects || value,
     control: form.control,
   });
+
+  useEffect(() => {
+    form.setValue('selectedSubjects', value || []);
+  }, [JSON.stringify(value)]);
 
   useEffect(() => {
     onChangeRaw(selectedSubjects);
