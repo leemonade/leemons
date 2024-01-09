@@ -6,15 +6,16 @@ import { addErrorAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig } from '@users/session';
-import _, { keyBy, uniq, without } from 'lodash';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
+import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import EmptyState from '../../../../../assets/EmptyState.png';
 import prefixPN from '../../../../../helpers/prefixPN';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
 import useParseAssignations from '../../hooks/useParseAssignations';
 
-function useAssignmentsColumns() {
+function useAssignmentsColumns({ archived }) {
   const isTeacher = useIsTeacher();
   const isStudent = useIsStudent();
 
@@ -34,74 +35,72 @@ function useAssignmentsColumns() {
   }, [translations]);
 
   const teacherColumns = useMemo(
-    () => [
-      {
-        Header: labels?.activity || '',
-        accessor: 'activity',
-      },
-      {
-        Header: labels?.subject || '',
-        accessor: 'subject',
-      },
-      {
-        Header: labels?.start || '',
-        accessor: 'parsedDates.start',
-      },
-      {
-        Header: labels?.deadline || '',
-        accessor: 'parsedDates.deadline',
-      },
-      {
-        Header: labels?.status || '',
-        accessor: 'status',
-      },
-      {
-        Header: labels?.completions || '',
-        accessor: 'completion',
-      },
-      {
-        Header: labels?.evaluated || '',
-        accessor: 'evaluated',
-      },
-      {
-        Header: labels?.messages || '',
-        accessor: 'messages',
-      },
-    ],
+    () =>
+      [
+        {
+          Header: labels?.activity || '',
+          accessor: 'activity',
+        },
+        {
+          Header: labels?.subject || '',
+          accessor: 'subject',
+        },
+        {
+          Header: labels?.deadline || '',
+          accessor: 'parsedDates.deadline',
+        },
+        !archived && {
+          Header: labels?.status || '',
+          accessor: 'status',
+        },
+        {
+          Header: labels?.students || '',
+          accessor: 'students',
+        },
+        {
+          Header: labels?.completions || '',
+          accessor: 'completion',
+        },
+        {
+          Header: labels?.evaluated || '',
+          accessor: 'evaluated',
+        },
+        !archived && {
+          Header: <PluginComunicaIcon />,
+          accessor: 'unreadMessages',
+        },
+      ].filter(Boolean),
     [labels]
   );
 
   const studentColumns = useMemo(
-    () => [
-      {
-        Header: labels?.activity || '',
-        accessor: 'activity',
-      },
-      {
-        Header: labels?.subject || '',
-        accessor: 'subject',
-      },
-      {
-        Header: labels?.start || '',
-        accessor: 'parsedDates.start',
-      },
-      {
-        Header: labels?.deadline || '',
-        accessor: 'parsedDates.deadline',
-      },
-      {
-        Header: labels?.status || '',
-        accessor: 'status',
-      },
-      {
-        Header: labels?.progress || '',
-        accessor: 'progress',
-      },
-      {
-        Header: labels?.messages || '',
-        accessor: 'messages',
-      },
-    ],
+    () =>
+      [
+        {
+          Header: labels?.activity || '',
+          accessor: 'activity',
+        },
+        {
+          Header: labels?.subject || '',
+          accessor: 'subject',
+        },
+        {
+          Header: labels?.deadline || '',
+          accessor: 'parsedDates.deadline',
+        },
+        !archived && {
+          Header: labels?.status || '',
+          accessor: 'status',
+        },
+        {
+          Header: labels?.progress || '',
+          accessor: 'progress',
+        },
+        !archived && {
+          Header: labels?.messages || '',
+          accessor: 'messages',
+        },
+      ].filter(Boolean),
     [labels]
   );
 
@@ -186,64 +185,24 @@ function useOngoingLocalizations() {
   }, [translations]);
 }
 
-function useBlockingActivitiesStatus(assignations) {
-  const isStudent = useIsStudent();
-
-  const assignationsById = {};
-
-  const blockingIds = useMemo(() => {
-    if (!isStudent) {
-      return [];
-    }
-
-    const blocking = [];
-
-    assignations.forEach((assignation) => {
-      assignationsById[assignation.id] = {
-        id: assignation.id,
-        finished: !!assignation.timestamps.end,
-      };
-
-      const instanceBlocking = assignation.instance.relatedAssignableInstances?.blocking;
-      if (instanceBlocking?.length) {
-        blocking.push(...instanceBlocking);
-      }
-    });
-
-    return uniq(blocking);
-  }, [assignations]);
-
-  const blockingIdsMissing = useMemo(
-    () => without(blockingIds, ...Object.keys(assignationsById)),
-    [blockingIds, assignationsById]
-  );
-
-  const { data, isLoading } = useAssignationsByProfile(blockingIdsMissing, {
-    enabled: !!blockingIdsMissing.length,
-    placeholderData: [],
-    select: (instancesData) =>
-      keyBy(
-        instancesData.map((assignation) => ({
-          id: assignation.instance.id,
-          finished: !!assignation.timestamps.end,
-        })),
-        'id'
-      ),
-  });
-
-  const dataToReturn = useMemo(() => ({ ...data, ...assignationsById }), [data, assignationsById]);
-
-  return { data: dataToReturn, isLoading: blockingIdsMissing?.length ? isLoading : false };
-}
-
 function useOngoingData({ query, page, size, subjectFullLength }) {
+  const [modulesOpened, setModulesOpened] = useState([]);
+
   const { data: paginatedInstances, isLoading: instancesLoading } = useSearchOngoingActivities({
     ...query,
     offset: (page - 1) * size,
     limit: size,
+    modulesData: true,
   });
 
-  const instances = paginatedInstances?.items ?? [];
+  const instances = useMemo(
+    () =>
+      (paginatedInstances?.items ?? []).flatMap((instance) => [
+        instance,
+        ...(paginatedInstances?.modulesData?.[instance]?.activitiesIds || []),
+      ]),
+    [paginatedInstances]
+  );
 
   const originalOrder = useMemo(() => {
     const order = {};
@@ -272,28 +231,42 @@ function useOngoingData({ query, page, size, subjectFullLength }) {
     return sortedData;
   }, [originalOrder, instancesData]);
 
-  const { data: blockingActivities, isLoading: blockingActivitiesAreLoading } =
-    useBlockingActivitiesStatus(orderedInstancesData);
-
   const { data: parsedInstances, isLoading: parsedInstancesLoading } = useParseAssignations(
     orderedInstancesData,
     {
-      blockingActivities,
       subjectFullLength,
+      modulesOpened,
+      onModuleClick: (moduleId) => {
+        setModulesOpened((opened) => {
+          if (opened.includes(moduleId)) {
+            return opened.filter((id) => id !== moduleId);
+          }
+          return [...opened, moduleId];
+        });
+      },
     }
   );
 
-  const isLoading =
-    instancesLoading ||
-    instancesDataLoading ||
-    parsedInstancesLoading ||
-    blockingActivitiesAreLoading;
+  const parsedInstancesWithoutCollapsedModules = useMemo(
+    () =>
+      parsedInstances
+        ?.filter(
+          (instance) => !instance.parentModule || modulesOpened.includes(instance.parentModule)
+        )
+        .map((instance) => ({
+          ...instance,
+          modulesCollapsed: false,
+        })),
+    [parsedInstances, modulesOpened]
+  );
+
+  const isLoading = instancesLoading || instancesDataLoading || parsedInstancesLoading;
 
   return {
-    parsedInstances,
+    parsedInstances: parsedInstancesWithoutCollapsedModules,
     isLoading,
-    totalCount: paginatedInstances?.totalCount,
-    totalPages: Math.ceil(paginatedInstances?.totalCount / size),
+    totalCount: paginatedInstances?.totalCount ?? 0,
+    totalPages: Math.ceil(paginatedInstances?.totalCount ?? 0 / size),
   };
 }
 
@@ -312,7 +285,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
     subjectFullLength,
   });
 
-  const columns = useAssignmentsColumns();
+  const columns = useAssignmentsColumns({ archived: !!filters?.isArchived });
 
   if (isLoading) {
     return <Loader />;
@@ -360,6 +333,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
         onSizeChange={setSize}
         onPageChange={setPage}
         selectable
+        hidePaper
         onSelect={({ isBlocked, dashboardURL }) => {
           if (isBlocked) {
             addErrorAlert(labels?.activitiesList?.blocked);
@@ -370,6 +344,7 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
             }
           }
         }}
+        onStyleRow={({ row }) => row?.original?.trStyle ?? null}
         labels={labels.pagination}
         headerStyles={headerStyles}
       />

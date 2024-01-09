@@ -5,9 +5,7 @@ import useTeacherClassesOfSubject from './useTeacherClassesOfSubject';
 function difference(...arr) {
   const all = _.uniq(arr.flat());
 
-  const diff = all.filter((item) => !arr.every((array) => array.includes(item)));
-
-  return diff;
+  return all.filter((item) => !arr.every((array) => array.includes(item)));
 }
 
 // EN: Get all the classes of a given subject of the teacher grouped by group if enough students are shared
@@ -42,7 +40,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
       const groupStudents = _.uniq(group.flatMap((c) => c.students));
 
       const shouldDisplayOnlyGroup =
-        disableGrouping || group.length === 1
+        disableGrouping || group.length <= 1
           ? false
           : group.every(({ students }) => {
               const common = _.intersection(students, groupStudents);

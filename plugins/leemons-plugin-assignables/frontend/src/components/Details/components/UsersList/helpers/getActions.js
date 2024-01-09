@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from '@bubbles-ui/components';
 
-function CorrectionButton({ studentData, instanceData, label }) {
+function CorrectionButton({ studentData, instanceData, label, variant = 'outline' }) {
   const history = useHistory();
 
   const redirect = useCallback(() => {
@@ -11,7 +11,11 @@ function CorrectionButton({ studentData, instanceData, label }) {
     history.push(url);
   }, [studentData, instanceData]);
 
-  return <Button onClick={redirect}>{label}</Button>;
+  return (
+    <Button variant={variant} onClick={redirect}>
+      {label}
+    </Button>
+  );
 }
 
 export default function getActions(
@@ -19,7 +23,7 @@ export default function getActions(
   instanceData,
   localizations,
   subjects,
-  { reminder }
+  { reminder, score }
 ) {
   if (studentData.finished) {
     if (!instanceData?.requiresScoring && !instanceData?.allowFeedback) {
@@ -30,9 +34,10 @@ export default function getActions(
     if (grades?.length >= subjects?.length) {
       return (
         <CorrectionButton
+          variant="link"
           studentData={studentData}
           instanceData={instanceData}
-          label={localizations.review}
+          label={`(${score}) ${localizations.review}`}
         />
       );
     }

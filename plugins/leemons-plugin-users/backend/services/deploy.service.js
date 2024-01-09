@@ -192,6 +192,7 @@ module.exports = {
     },
     'users.change-platform-locale': async (ctx) => {
       await createInitialProfiles({ ctx });
+      ctx.tx.emit('init-profiles');
     },
   },
   async created() {

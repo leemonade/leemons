@@ -10,23 +10,21 @@ import {
   ImageLoader,
   ImagePreviewInput,
   InputWrapper,
-  Select,
   Stack,
   Switch,
-  TextInput,
   Textarea,
+  TextInput,
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import SelectSubjects from '@leebrary/components/SelectSubjects';
 import _, { isEmpty, isFunction, isNil } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
 import {
-  getCoverName,
   getCoverUrl,
   isImageFile,
   isNullish,
@@ -61,7 +59,7 @@ const LibraryForm = ({
   hideTitle,
   advancedConfig,
   hideSubmit,
-  onChange = () => { },
+  onChange = () => {},
 }) => {
   const [store, render] = useStore({
     programs: null,
@@ -409,7 +407,7 @@ const LibraryForm = ({
             ) : null}
 
             {(!advancedConfigMode && !advancedConfig?.colorToRight) ||
-              (advancedConfigMode && advancedConfig?.colorToRight) ? (
+            (advancedConfigMode && advancedConfig?.colorToRight) ? (
               <Controller
                 control={control}
                 name="color"
@@ -427,7 +425,7 @@ const LibraryForm = ({
             ) : null}
           </ContextContainer>
           {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-            (advancedConfigMode && advancedConfig?.fileToRight) ? (
+          (advancedConfigMode && advancedConfig?.fileToRight) ? (
             <>
               {!isImage && (
                 <>
@@ -505,6 +503,44 @@ const LibraryForm = ({
                     />
                   ) : null}
 
+                  {JSON.stringify(store.subjectRequired)}
+
+                  {store.showAdvancedConfig ? (
+                    <Controller
+                      name="subjects"
+                      control={control}
+                      rules={store.subjectRequired}
+                      render={({ field, fieldState: { error } }) => (
+                        <SubjectPicker
+                          {...field}
+                          value={_.map(field.value || [], 'subject')}
+                          onChange={(e) => {
+                            console.log('field.value', field.value);
+                            console.log('Hola?', e);
+                          }}
+                          onChangeRaw={(e) => {
+                            if (e.length > 0) {
+                              if (!program) setValue('program', e[0].program);
+                            } else if (program) setValue('program', null);
+                          }}
+                          error={error}
+                          assignable={{}}
+                          localizations={{
+                            title: labels?.programAndSubjects,
+                            program: labels?.program,
+                            subject: labels?.subjectSelects?.labels?.subject,
+                            add: labels?.subjectSelects?.placeholders?.addSubject,
+                            course: labels?.course,
+                            placeholder: labels?.selectPlaceholder,
+                          }}
+                          hideSectionHeaders={false}
+                          onlyOneSubject={store.maxOneSubject}
+                        />
+                      )}
+                    />
+                  ) : null}
+
+                  {/*
                   {store.showAdvancedConfig ? (
                     <ContextContainer subtitle={labels.advancedConfig}>
                       <Controller
@@ -544,6 +580,7 @@ const LibraryForm = ({
                       />
                     </ContextContainer>
                   ) : null}
+                  */}
                 </>
               ) : null}
 

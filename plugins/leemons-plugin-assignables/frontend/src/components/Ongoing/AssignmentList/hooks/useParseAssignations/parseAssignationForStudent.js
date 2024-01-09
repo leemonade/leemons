@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Badge } from '@bubbles-ui/components';
+import { Badge, Text } from '@bubbles-ui/components';
 
 import dayjs from 'dayjs';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -54,7 +54,7 @@ function useProgressLocalizations() {
   }, [translations]);
 }
 
-function Progress({ assignation, isBlocked }) {
+export function Progress({ assignation, isBlocked }) {
   const { instance } = assignation;
   const { classes } = instance;
 
@@ -83,7 +83,7 @@ function Progress({ assignation, isBlocked }) {
 
   const severity = React.useMemo(() => {
     if (instance.alwaysAvailable || !instance.dates?.deadline || !instance.dates?.start) {
-      return 'default';
+      return 'primary';
     }
 
     const remainingDays = dayjs(instance.dates.deadline).diff(
@@ -93,7 +93,7 @@ function Progress({ assignation, isBlocked }) {
     );
 
     if (remainingDays >= 6) {
-      return 'default';
+      return 'primary';
     }
 
     if (remainingDays >= 5) {
@@ -104,59 +104,31 @@ function Progress({ assignation, isBlocked }) {
   }, []);
 
   if (hasBeenEvaluated) {
-    return (
-      <Badge closable={false} color="stroke" severity="success">
-        {labels?.evaluated}
-      </Badge>
-    );
+    return <Text color="success">{labels?.evaluated}</Text>;
   }
 
   if (activityHasBeenClosed && !studentHasFinished) {
-    return (
-      <Badge closable={false} color="stroke" severity="error">
-        {labels?.notSubmitted}
-      </Badge>
-    );
+    return <Text color="error">{labels?.notSubmitted}</Text>;
   }
 
   if (studentHasFinished) {
     if (isEvaluable) {
-      return (
-        <Badge closable={false} color="stroke" severity="success">
-          {labels?.submitted}
-        </Badge>
-      );
+      return <Text color="success">{labels?.submitted}</Text>;
     }
 
-    return (
-      <Badge closable={false} color="stroke" severity="success">
-        {labels?.ended}
-      </Badge>
-    );
+    return <Text color="success">{labels?.ended}</Text>;
   }
 
   if (isBlocked) {
-    return (
-      <Badge closable={false} color="stroke" severity={severity}>
-        {labels?.blocked}
-      </Badge>
-    );
+    return <Text color={severity}>{labels?.blocked}</Text>;
   }
 
   if (!studentHasStarted) {
-    return (
-      <Badge closable={false} color="stroke" severity={severity}>
-        {labels?.notStarted}
-      </Badge>
-    );
+    return <Text color={severity}>{labels?.notStarted}</Text>;
   }
 
   if (studentHasStarted) {
-    return (
-      <Badge closable={false} color="stroke" severity={severity}>
-        {labels?.started}
-      </Badge>
-    );
+    return <Text color={severity}>{labels?.started}</Text>;
   }
 }
 
@@ -175,12 +147,11 @@ function isFinished(assignation) {
   const closeDate = dayjs(closed || null);
   const endTimestamp = dayjs(end || null);
 
-  const finished =
+  return (
     (alwaysAvailable && closeDate.isValid()) ||
     endTimestamp.isValid() ||
-    (deadline.isValid() && !deadline.isAfter(now));
-
-  return finished;
+    (deadline.isValid() && !deadline.isAfter(now))
+  );
 }
 
 function getDashboardURL(assignation) {
@@ -189,7 +160,13 @@ function getDashboardURL(assignation) {
     assignable: { roleDetails },
   } = instance;
 
+  const moduleId = instance?.metadata?.module?.id;
+
   const finished = isFinished(assignation);
+
+  if (moduleId) {
+    return `/private/learning-paths/modules/dashboard/${instance.id}`;
+  }
 
   if (!finished || (!instance.requiresScoring && !instance.allowFeedback)) {
     return roleDetails.studentDetailUrl
@@ -216,7 +193,7 @@ export async function parseAssignationForStudentView(assignation, labels, option
     ...commonData,
     isBlocked,
     progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
-    messages: <UnreadMessages rooms={assignation.chatKeys} />,
+    messages: !commonData?.parentModule && <UnreadMessages rooms={assignation.chatKeys} />,
     dashboardURL: () => getDashboardURL(assignation),
   };
 }

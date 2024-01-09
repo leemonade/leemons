@@ -1,28 +1,26 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 import {
   Box,
-  Button,
-  createStyles,
-  Divider,
-  InlineSvg,
-  TabPanel,
   Tabs,
-  Text,
-  Title,
+  TabPanel,
+  createStyles,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  Stack,
+  ContextContainer,
+  Paper,
 } from '@bubbles-ui/components';
 
 import _ from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { Link } from 'react-router-dom';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import Filters from './components/Filters';
 import ActivitiesList from './components/ActivitiesList';
 import prefixPN from '../../../helpers/prefixPN';
 
-function parseTitleKey(title, archived) {
+function parseTitleKey(title) {
   if (title === null) {
     return null;
   }
@@ -31,64 +29,7 @@ function parseTitleKey(title, archived) {
     return title;
   }
 
-  if (archived) {
-    return prefixPN('ongoing.history');
-  }
   return prefixPN('ongoing.ongoing');
-}
-
-const useAssignmentListHeaderStyles = createStyles((theme) => ({
-  fullWidth: {
-    marginLeft: theme.spacing[10],
-    marginRight: theme.spacing[10],
-    marginTop: theme.spacing[7],
-    marginBottom: theme.spacing[7],
-  },
-  title: {
-    position: 'relative',
-    marginTop: theme.spacing[6],
-    display: 'flex',
-    gap: theme.spacing[4],
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  titleText: {
-    fontSize: '20px',
-    fontWeight: 600,
-    lineHeight: '28px',
-  },
-}));
-
-function Header({ icon, title, fullWidth, separator, isTitle, linkTo, linkLabel }) {
-  const { classes, cx } = useAssignmentListHeaderStyles();
-  return (
-    <>
-      <Box
-        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-        className={cx({ [classes?.fullWidth]: !fullWidth })}
-      >
-        <Box className={classes?.title}>
-          {!!icon && icon}
-          {isTitle ? (
-            <Title order={1}>{title}</Title>
-          ) : (
-            <Text color="primary" className={classes.titleText}>
-              {title}
-            </Text>
-          )}
-        </Box>
-        {linkTo && linkLabel ? (
-          <Link to={linkTo}>
-            <Button variant="link" rightIcon={<ChevRightIcon />}>
-              {linkLabel}
-            </Button>
-          </Link>
-        ) : null}
-      </Box>
-      {!!separator && <Divider />}
-    </>
-  );
 }
 
 const useAssignmentListStyles = createStyles((theme) => ({
@@ -111,15 +52,11 @@ export default function AssignmentList({
   titleComponent,
   filters: filtersProps,
   defaultFilters = null,
-  linkTo,
-  fullWidth,
-  header,
+
+  withoutLayout,
   ...props
 }) {
-  const isStudent = useIsStudent();
-  const isTeacher = useIsTeacher();
-
-  const titleKey = parseTitleKey(title, archived);
+  const titleKey = parseTitleKey(title);
   const keys = [prefixPN('activities_filters')];
   if (titleKey) {
     keys.push(titleKey);
@@ -138,78 +75,82 @@ export default function AssignmentList({
   const [filters, setFilters] = useState(null);
 
   const tabs = useMemo(
-    () => [
-      {
-        label: labels?.filters?.ongoing?.replace?.('{{count}}', ''), // `(${ongoingCount})`),
-        value: 'ongoing',
-      },
-      {
-        label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${historyCount})`),
-        value: 'evaluated',
-      },
-    ],
-    [labels]
+    () =>
+      [
+        {
+          label: labels?.filters?.ongoing?.replace?.('{{count}}', ''), // `(${ongoingCount})`),
+          value: 'ongoing',
+        },
+        !!archived && {
+          label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${historyCount})`),
+          value: 'evaluated',
+        },
+      ].filter(Boolean),
+    [labels, archived]
   );
 
-  const icon = (
-    <InlineSvg
-      style={{
-        display: 'inline-block',
-        position: 'relative',
-        width: 24,
-        heiht: 24,
-      }}
-      width={24}
-      height={24}
-      src="/public/assignables/menu-icon.svg"
-    />
-  );
-  const headerProps = {
-    fullWidth,
-    // icon: header?.icon || icon,
-    title: header?.title || labels.title,
-    separator: header?.separator || false,
-    isTitle: header?.isTitle || false,
-    linkTo,
-    linkLabel: labels?.filters?.seeAllActivities,
-  };
+  const { classes } = useAssignmentListStyles();
 
-  const { classes, cx } = useAssignmentListStyles();
-  return (
-    <Box>
-      <Header {...headerProps} />
-      <Box
-        sx={(theme) => ({
-          padding: theme.spacing[6],
-          marginTop: theme.spacing[4],
-          backgroundColor: 'white',
-          borderRadius: 4,
-        })}
-        className={cx({ [classes.fullWidth]: !fullWidth })}
-      >
-        <Tabs>
+  const tabPane = useCallback(
+    (tab) => (
+      <>
+        <Filters
+          labels={labels.filters}
+          value={filters}
+          onChange={setFilters}
+          hideStatus={tab.value === 'evaluated'}
+          hideProgress
+          defaultFilters={defaultFilters}
+          useRouter
+          {...filtersProps}
+        />
+        <ActivitiesList
+          filters={{ ...filters, isArchived: tab.value === 'evaluated' }}
+          {...props}
+        />
+      </>
+    ),
+    [labels, filters, setFilters, filtersProps, props, classes.tabGaps]
+  );
+
+  const View = useMemo(
+    () =>
+      tabs?.length > 1 ? (
+        <Tabs tabPanelListStyle={{ backgroundColor: 'white' }} fullHeight>
           {tabs.map((tab) => (
             <TabPanel key={tab.value} label={tab.label}>
-              <Box className={classes.tabGaps}>
-                <Filters
-                  labels={labels.filters}
-                  value={filters}
-                  onChange={setFilters}
-                  hideStatus={isStudent}
-                  hideProgress={isTeacher}
-                  defaultFilters={defaultFilters}
-                  useRouter
-                  {...filtersProps}
-                />
-                <ActivitiesList
-                  filters={{ ...filters, isArchived: tab.value === 'evaluated' }}
-                  {...props}
-                />
-              </Box>
+              <ContextContainer padded>
+                <Box className={classes.tabGaps}>{tabPane(tab)}</Box>
+              </ContextContainer>
             </TabPanel>
           ))}
         </Tabs>
-      </Box>
-    </Box>
+      ) : (
+        <Paper>{tabPane(tabs['0'])}</Paper>
+      ),
+    [tabs, tabPane]
+  );
+
+  if (withoutLayout) {
+    return View;
+  }
+
+  return (
+    <TotalLayoutContainer>
+      <Stack justifyContent="center" fullWidth>
+        <TotalLayoutStepContainer clean stepName={labels.title}>
+          {View}
+        </TotalLayoutStepContainer>
+      </Stack>
+    </TotalLayoutContainer>
   );
 }
+
+AssignmentList.propTypes = {
+  archived: PropTypes.bool,
+  title: PropTypes.string,
+  titleComponent: PropTypes.element,
+  filters: PropTypes.object,
+  defaultFilters: PropTypes.object,
+  withoutLayout: PropTypes.bool,
+};

@@ -22,6 +22,7 @@ export function Instructions({ localizations, value, onChange, hideSectionHeader
       <Box className={classes.root}>
         <TextEditorInput
           placeholder={localizations?.editor?.placeholder}
+          help={localizations?.editor?.help}
           value={value}
           onChange={onChange}
           toolLabels={{ headingsTool: { ...HEADINGS_TOOL_DEFAULT_PROPS?.labels, label: '' } }}

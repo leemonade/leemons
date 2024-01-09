@@ -4,18 +4,17 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
   const visualizationDateObj = new Date(visualizationDate);
 
   if (!deadline) {
-    return { date: labels.noDeadline, status: labels.opened };
+    return { date: labels?.noDeadline, status: labels?.opened };
   }
 
   if (visualizationDate && now < visualizationDateObj) {
-    return { date: deadlineDate.toLocaleDateString(), status: labels.programmed };
+    return { date: deadlineDate.toLocaleDateString(), status: labels?.programmed };
   }
 
   const diffDays = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
 
   if (diffDays > 5) {
-    console.log('2', deadlineDate);
-    return { date: deadlineDate.toLocaleDateString(), status: labels.opened };
+    return { date: deadlineDate.toLocaleDateString(), status: labels?.opened };
   }
 
   if (diffDays > 0) {
@@ -33,17 +32,16 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
         hour: '2-digit',
         minute: '2-digit',
       })}`,
-      status: labels.hoursRemaining.replace('{{count}}', diffHours),
+      status: labels?.hoursRemaining.replace('{{count}}', diffHours),
     };
   }
 
-  console.log('5', deadlineDate);
   return {
     date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString('es-ES', {
       hour: '2-digit',
       minute: '2-digit',
     })}`,
-    status: labels.late,
+    status: labels?.late,
   };
 };
 
