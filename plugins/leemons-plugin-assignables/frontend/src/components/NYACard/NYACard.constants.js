@@ -6,6 +6,7 @@ export const NYACARD_PROP_TYPES = {
   labels: PropTypes.object,
   classData: PropTypes.array,
   isTeacherSyllabus: PropTypes.bool,
+  clickable: PropTypes.bool,
 };
 
 export const NYACARD_DEFAULT_PROPS = {
@@ -14,4 +15,5 @@ export const NYACARD_DEFAULT_PROPS = {
   labels: {},
   classData: [],
   isTeacherSyllabus: false,
+  clickable: true,
 };

@@ -112,6 +112,7 @@ const addKanbanColumnSchema = () => ({
   properties: {
     name: localeObjectSchema(),
     order: integerSchema,
+    isHidden: booleanSchema,
     isDone: booleanSchema,
     isArchived: booleanSchema,
     bgColor: stringSchema,

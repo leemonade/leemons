@@ -100,7 +100,7 @@ function ClassTable({ classe }) {
           </Text>
         </Box>
         <Box>
-          {!hiddeButton ? (
+          {hiddeButton ? (
             <Button variant="link" rightIcon={<ChevRightIcon />} onClick={openAssistanceControl}>
               {t('attendanceMonitoring')}
             </Button>

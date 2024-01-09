@@ -12,6 +12,9 @@ import { getUserAgentsInfoRequest } from '@users/request';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useMemo } from 'react';
+import { Progress } from '@assignables/components/Ongoing/AssignmentList/hooks/useParseAssignations/parseAssignationForStudent';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import getNearestScale from '@scorm/helpers/getNearestScale';
 import prefixPN from '../../../../../helpers/prefixPN';
 import getActions from './getActions';
 import getStatus from './getStatus';
@@ -37,7 +40,7 @@ function useStudentData(students) {
       return [];
     }
 
-    const data = students.map((student) => {
+    return students.map((student) => {
       const userAgent = userAgentsInfoMulti.data.find((d) => d.id === student.user);
       return {
         ...student,
@@ -45,8 +48,6 @@ function useStudentData(students) {
         userAgentIsDisabled: userAgent.disabled,
       };
     });
-
-    return data;
   }, [students, userAgentsInfoMulti.data]);
 }
 
@@ -71,20 +72,17 @@ export default function useParseStudents(instance, statusLabels) {
   const students = useStudentData(instance?.students);
   const subjects = useClassesSubjects(instance?.classes);
   const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
+  const evaluationSystem = useProgramEvaluationSystem(instance, { enabled: !!instance });
 
   const { openConfirmationModal } = useLayout();
-  const [store, render] = useStore({
-    rememberType: 'open',
-  });
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const localizations = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('teacher_actions'));
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN('teacher_actions'));
     }
 
     return {};
@@ -116,31 +114,29 @@ export default function useParseStudents(instance, statusLabels) {
       return [];
     }
 
-    return students?.map((student) => ({
-      id: student.user,
-      userAgentIsDisabled: student.userAgentIsDisabled,
-      student: <UserDisplayItem {...student.userInfo} />,
-      status: statusLabels[getStatus(student, instance)],
-      unreadMessages: <UnreadMessages rooms={student.chatKeys} />,
-      completed:
-        (student?.timestamps?.end && (
-          <LocaleDate
-            date={student?.timestamps?.end}
-            options={{ dateStyle: 'short', timeStyle: 'short' }}
-          />
-        )) ||
-        '-',
-      avgTime:
-        student?.timestamps?.start && student?.timestamps?.end ? (
-          <LocaleDuration
-            seconds={dayjs(student.timestamps.end).diff(student.timestamps.start, 'seconds')}
-          />
-        ) : (
-          '-'
-        ),
-      score: getStudentAverageScore(student),
-      actions: getActions(student, instance, localizations, subjects, { reminder }),
-      userInfo: student.userInfo,
-    }));
+    return students?.map((student) => {
+      const scale = getNearestScale({ grade: getStudentAverageScore(student), evaluationSystem });
+
+      return {
+        id: student.user,
+        userAgentIsDisabled: student.userAgentIsDisabled,
+        student: <UserDisplayItem {...student.userInfo} />,
+        unreadMessages: <UnreadMessages rooms={student.chatKeys} />,
+        progress: <Progress assignation={{ ...student, instance }} />,
+        avgTime:
+          student?.timestamps?.start && student?.timestamps?.end ? (
+            <LocaleDuration
+              seconds={dayjs(student.timestamps.end).diff(student.timestamps.start, 'seconds')}
+            />
+          ) : (
+            '-'
+          ),
+        actions: getActions(student, instance, localizations, subjects, {
+          reminder,
+          score: scale?.letter ?? scale?.number,
+        }),
+        userInfo: student.userInfo,
+      };
+    });
   }, [students, subjects]);
 }

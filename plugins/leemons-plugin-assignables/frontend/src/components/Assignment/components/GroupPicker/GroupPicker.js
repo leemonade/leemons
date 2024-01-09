@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, RadioGroup, createStyles, Alert } from '@bubbles-ui/components';
+import { Box, Select, createStyles, Alert } from '@bubbles-ui/components';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { useAcademicProfiles } from '@academic-portfolio/hooks';
 import { Container } from '../Container';
 import { useGroupedClassesWithSelectedSubjects } from '../../AssignStudents/hooks';
 import { SelectCustomGroup } from './SelectCustomGroup';
 import { SelectClass } from './SelectClass';
+import SelectSingleStudent from './SelectSingleStudent';
 
 const useGroupPickerStyles = createStyles((theme) => ({
   inline: {
@@ -46,6 +47,10 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
         value: 'customGroup',
         label: localizations?.options?.customGroup,
       },
+      {
+        value: 'singleStudent',
+        label: localizations?.options?.singleStudent,
+      },
     ],
     [localizations?.options]
   );
@@ -75,7 +80,11 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
         <Controller
           name="type"
           control={control}
-          render={({ field }) => <RadioGroup {...field} data={optionsData} />}
+          render={({ field }) => (
+            <Box>
+              <Select {...field} data={optionsData} />
+            </Box>
+          )}
         />
 
         <Box className={classes.content}>
@@ -92,6 +101,16 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
           {assignationType === 'customGroup' && (
             <SelectCustomGroup
               localizations={localizations?.customGroup}
+              groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+              studentProfile={studentProfile}
+              error={error}
+              onChange={onChange}
+              value={value}
+            />
+          )}
+          {assignationType === 'singleStudent' && (
+            <SelectSingleStudent
+              localizations={localizations?.singleStudent}
               groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
               studentProfile={studentProfile}
               error={error}

@@ -202,7 +202,7 @@ function TaskSetup() {
         // TODO: Esto debe establecerse en el Config
         subjects: values?.subjects?.map((subject) => ({
           program,
-          ...subject,
+          subject,
           curriculum: curriculum && {
             objectives: curriculum[subject.subject]?.objectives?.map(({ objective }) => objective),
             curriculum: curriculum[subject.subject]?.curriculum?.map((item) => item.curriculum),
@@ -279,6 +279,7 @@ function TaskSetup() {
       task.curriculum = {};
       task?.subjects?.forEach((subject) => {
         const { curriculum } = subject;
+
         task.curriculum[subject.subject] = {
           objectives: curriculum?.objectives?.map((objective) => ({ objective })),
           curriculum: curriculum?.curriculum?.map((item) => ({ curriculum: item })),

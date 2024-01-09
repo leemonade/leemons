@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-export const ClassroomItemDisplayStyles = createStyles((theme) => {
+export const ClassroomItemDisplayStyles = createStyles((theme, { compact } = {}) => {
   const sidStyles = theme.other.cardLibrary;
   return {
     root: {
@@ -11,7 +11,7 @@ export const ClassroomItemDisplayStyles = createStyles((theme) => {
       alignContent: 'center',
       alignItems: 'center',
       gap: pxToRem(8),
-      marginBottom: pxToRem(24),
+      marginBottom: compact ? 0 : pxToRem(24),
     },
     text: {
       color: sidStyles.content.color.subje,

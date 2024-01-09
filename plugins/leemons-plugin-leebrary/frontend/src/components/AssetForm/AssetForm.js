@@ -15,8 +15,8 @@ import {
   Switch,
   Textarea,
   TextInput,
-  useResizeObserver,
   TotalLayoutFooterContainer,
+  useResizeObserver,
 } from '@bubbles-ui/components';
 import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
@@ -200,13 +200,11 @@ const AssetForm = ({
   // HANDLERS
 
   const handleOnSubmit = (e) => {
-    console.log('handleOnSubmit:', e);
     if (assetFile) e.file = assetFile;
     if (coverFile) e.cover = coverFile;
     if (asset.id) e.id = asset.id;
     if (urlMetadata?.logo) e.icon = urlMetadata.logo;
     if (coverAsset) e.cover = coverAsset.file.id;
-    console.log('after e:', e);
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
@@ -441,7 +439,9 @@ const AssetForm = ({
                     render={({ field, fieldState: { error } }) => (
                       <SubjectPicker
                         {...field}
-                        value={_.map(field.value || [], 'subject')}
+                        value={_.map(field.value || [], (subject) =>
+                          _.isString(subject) ? subject : subject.subject
+                        )}
                         onChangeRaw={(e) => {
                           if (e.length > 0) {
                             if (!program) setValue('program', e[0].program);
