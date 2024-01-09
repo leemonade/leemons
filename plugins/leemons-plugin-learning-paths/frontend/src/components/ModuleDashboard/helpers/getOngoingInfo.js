@@ -53,6 +53,9 @@ const getOngoingState = ({ students }) => {
 };
 
 const getOngoingInfo = ({ instance }) => {
+  if (!instance.students) {
+    return null;
+  }
   const students = instance.students.map((student) => ({
     finished: student.finished,
     grades: student.grades,

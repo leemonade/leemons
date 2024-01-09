@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/cognitive-complexity */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -18,7 +18,7 @@ import { NYACardFooter } from './NYACardFooter';
 import { NYACardSkeleton } from './NYACardSkeleton';
 import { NYACARD_PROP_TYPES } from './NYACard.constants';
 import { EvaluationCard } from '../EvaluationCard';
-import EvaluationCardSkeleton from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
+import { EvaluationCardSkeleton } from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -395,8 +395,7 @@ const NYACard = ({
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
-  const [isHovered, setIsHovered] = useState(false);
-  const { classes } = NYACardStyles({ isHovered }, { name: 'NYACard' });
+  const { classes } = NYACardStyles({ name: 'NYACard' });
   const query = useMemo(
     () => ({
       classData,
@@ -419,11 +418,8 @@ const NYACard = ({
   if (isTeacher && isActivityCarousel)
     return (
       <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
-        <Box onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+        <Box>
           <EvaluationCard
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            isHovered={isHovered}
             instance={preparedInstance}
             localizations={localizations}
             variantTitle={
@@ -461,11 +457,7 @@ const NYACard = ({
           height: '100%',
         }}
       >
-        <Box
-          className={classes.root}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+        <Box className={classes.root}>
           <NYACardCover
             {...preparedInstance?.asset}
             variantTitle={preparedInstance?.assignable?.role}

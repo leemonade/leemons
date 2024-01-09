@@ -20,7 +20,7 @@ const DashboardCard = ({
   introductionCard,
   statement,
   cover,
-  buttonLink,
+  introductionLink,
   emptyIcon,
   fileType,
   moduleColor,
@@ -39,7 +39,7 @@ const DashboardCard = ({
         />
         <Box className={classes.content}>
           <DashboardCardBody statement={statement} assetNumber={assetNumber} />
-          <DashboardCardFooter localizations={localizations} buttonLink={buttonLink} />
+          <DashboardCardFooter localizations={localizations} introductionLink={introductionLink} />
         </Box>
       </Box>
     );
@@ -108,7 +108,7 @@ DashboardCard.propTypes = {
   introductionCard: PropTypes.bool,
   statement: PropTypes.string,
   cover: PropTypes.object,
-  buttonLink: PropTypes.string,
+  introductionLink: PropTypes.string,
   emptyIcon: PropTypes.string,
   fileType: PropTypes.string,
   moduleColor: PropTypes.string,

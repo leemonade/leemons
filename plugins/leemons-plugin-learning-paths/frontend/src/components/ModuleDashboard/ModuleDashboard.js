@@ -253,6 +253,7 @@ export function ModuleDashboardBody({
   const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
   const moduleColor = module?.assignable?.asset?.color;
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
+  const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   return (
     <Box className={classes.body}>
       <Box className={classes.rootContainer}>
@@ -264,10 +265,10 @@ export function ModuleDashboardBody({
             assetNumber={'Introducción'}
             statement={module?.metadata?.statement}
             cover={module?.assignable?.asset?.cover}
-            buttonLink={'buttonLink'}
             localizations={localizations}
             emptyIcon={module?.assignable?.roleDetails?.icon}
             fileType={module?.assignable?.roleDetails?.name}
+            introductionLink={introductionLink}
           />
           {sortBy(
             activities?.map((activity, index) => ({
@@ -310,6 +311,7 @@ ModuleDashboardBody.propTypes = {
 };
 
 export function ModuleDashboard({ id, preview }) {
+  console.log('id in ModuleDashboard', id);
   const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
     preview ? useModuleDataForPreview(id) : useModuleData(id);
 

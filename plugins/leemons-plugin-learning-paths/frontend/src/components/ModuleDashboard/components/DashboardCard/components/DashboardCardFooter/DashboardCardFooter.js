@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import { capitalize, get } from 'lodash';
 import { LockIcon } from '@bubbles-ui/icons/solid';
-import getOngoingInfo from '@learning-paths/components/ModuleDashboard/helpers/getOngoingInfo';
 import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
 import { EvaluationStateDisplay } from '../EvaluationStateDisplay';
 import {
@@ -78,11 +77,6 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
     ':id',
     id
   );
-  console.group();
-  console.log('activity name: ', activity?.assignable?.asset?.name);
-  console.log('students: ', activity?.students);
-  console.log('getInfo: ', evaluationInfo);
-  console.groupEnd();
 
   if (evaluationInfo?.state === 'allEvaluated') {
     return (
@@ -253,15 +247,15 @@ const DashboardCardFooter = ({
   role,
   roleDetails,
   rolesLocalizations,
-  buttonLink,
+  introductionLink,
   evaluationInfo,
 }) => {
   const { classes } = useDashboardCardFooterStyles();
-  if (buttonLink && localizations) {
+  if (introductionLink && localizations) {
     return (
       <Box className={classes.root}>
         <Box className={classes.buttonFull}>
-          <Link to={buttonLink}>
+          <Link to={introductionLink}>
             <Button style={{ width: '100%' }}>{localizations?.buttons?.review}</Button>
           </Link>
         </Box>

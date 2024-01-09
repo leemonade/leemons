@@ -1,15 +1,12 @@
-import { createStyles, pxToRem } from '@bubbles-ui/components';
+import { createStyles, getBoxShadowFromToken, pxToRem } from '@bubbles-ui/components';
 
 const useDashboardCardStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
   const { cardModule } = theme.other;
-
   return {
     root: {
       display: 'flex',
       flexDirection: 'column',
-      // justifyContent: 'space-between',
-      // padding: globalTheme.spacing.padding.xsm,
       background: globalTheme.background.color.surface.default,
       borderRadius: globalTheme.border.radius.md,
       width: '100%',
@@ -17,12 +14,13 @@ const useDashboardCardStyles = createStyles((theme) => {
       minWidth: pxToRem(264),
       height: pxToRem(428),
       position: 'relative',
-      // gap: globalTheme.spacing.gap.lg,
+      '&:hover': {
+        ...getBoxShadowFromToken(cardModule.shadow.hover),
+      },
     },
     body: {
       display: 'flex',
       flexDirection: 'column',
-      // gap: globalTheme.spacing.gap.lg,
     },
 
     content: {

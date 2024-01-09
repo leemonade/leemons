@@ -1,6 +1,6 @@
 import { createStyles, pxToRem, getBoxShadowFromToken } from '@bubbles-ui/components';
 
-const EvaluationCardStyles = createStyles((theme, { color, isHovered }) => {
+const EvaluationCardStyles = createStyles((theme, { color }) => {
   const { cardEvaluation } = theme.other;
   const getCardShadow = getBoxShadowFromToken(cardEvaluation.shadow.hover[0]);
   return {
@@ -12,9 +12,11 @@ const EvaluationCardStyles = createStyles((theme, { color, isHovered }) => {
       maxWidth: pxToRem(536),
       minWidth: pxToRem(488),
       overflow: 'hidden',
-      boxShadow: isHovered ? getCardShadow.boxShadow : 'none',
       display: 'flex',
       justifyContent: 'space-between',
+      '&:hover': {
+        boxShadow: getCardShadow.boxShadow,
+      },
     },
     wrapper: {
       display: 'flex',
