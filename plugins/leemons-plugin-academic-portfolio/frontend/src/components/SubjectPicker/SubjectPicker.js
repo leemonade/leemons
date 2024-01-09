@@ -35,6 +35,7 @@ export function SubjectPicker({
 
   useEffect(() => {
     form.setValue('selectedSubjects', value || []);
+    onChange(value || []);
   }, [JSON.stringify(value)]);
 
   useEffect(() => {

@@ -24,8 +24,8 @@ export default function useSubjects(task, useAllSubjects = true) {
     () =>
       uniqBy(
         subjectDetails?.map((subject) => ({
-          label: subject.name,
-          value: subject.id,
+          label: subject?.name,
+          value: subject?.id,
         })),
         'value'
       ) || [],
