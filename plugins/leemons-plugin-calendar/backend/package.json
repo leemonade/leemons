@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-calendar",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Leemons calendar plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -33,7 +33,7 @@
     "@leemons/permissions": "0.0.41",
     "@leemons/users": "0.0.41",
     "@leemons/validator": "0.0.41",
-    "@leemons/widgets": "0.0.41",
+    "@leemons/widgets": "0.0.42",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",

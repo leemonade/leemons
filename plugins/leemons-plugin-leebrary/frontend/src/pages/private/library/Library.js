@@ -111,8 +111,7 @@ const LibraryPageContent = () => {
     history.push(cleanPath(`${path}/leebrary-shared/list/`));
   }
 
-  function onNavSubject(subject, programId) {
-    // history.push(cleanPath(`${path}/leebrary-subject/${subject.id}/list/?program=${programId}`));
+  function onNavSubject(subject) {
     history.push(cleanPath(`${path}/leebrary-subject/${subject.id}/list/`));
   }
 
