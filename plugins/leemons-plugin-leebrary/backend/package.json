@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-leebrary",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Leemons leebrary plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -37,7 +37,7 @@
     "@leemons/providers": "0.0.41",
     "@leemons/testing": "0.0.41",
     "@leemons/validator": "0.0.41",
-    "@leemons/widgets": "0.0.41",
+    "@leemons/widgets": "0.0.42",
     "got": "^11.8.5",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",

@@ -29,6 +29,8 @@ const LibraryCard = ({
   excludeMetadatas,
   isLoading,
   isCreationPreview,
+  onPin,
+  onUnpin,
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -70,6 +72,8 @@ const LibraryCard = ({
         role={role}
         subject={subject}
         isCreationPreview={isCreationPreview}
+        onPin={onPin}
+        onUnpin={onUnpin}
       />
       <LibraryCardFooter
         {...asset}

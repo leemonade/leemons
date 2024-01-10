@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { isEmpty, isNil, isString } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components/LibraryCard';
@@ -25,7 +25,7 @@ function dynamicImport(pluginName, component) {
 const CardWrapperStyles = createStyles((theme, { selected }) => ({
   root: {
     cursor: 'pointer',
-    borderColor: selected && theme.colors.interactive01d,
+    borderColor: selected && theme.other.core.color.primary['400'],
     borderWidth: selected && '1px',
     boxShadow: selected && theme.shadows.shadow03,
   },
@@ -176,6 +176,8 @@ const CardWrapper = ({
         single={single}
         locale={locale}
         isLoading={assetsLoading}
+        onPin={onPin}
+        onUnpin={onUnpin}
       />
     </Box>
   ) : null;

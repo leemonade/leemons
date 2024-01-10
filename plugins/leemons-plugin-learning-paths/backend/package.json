@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-learning-paths",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Leemons learning paths plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -32,7 +32,7 @@
     "@leemons/multi-events": "0.0.41",
     "@leemons/multilanguage": "0.0.41",
     "@leemons/permissions": "0.0.41",
-    "@leemons/widgets": "0.0.41",
+    "@leemons/widgets": "0.0.42",
     "ioredis": "^5.3.2",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",

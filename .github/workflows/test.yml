@@ -14,20 +14,20 @@ jobs:
     secrets: inherit
 
   # Sube los packages a npm y devuelve un string con los packages y sus nuevas versiones
-  # publish_packages_to_npm:
-  #   name: Publish packages to npm
-  #   uses: ./.github/workflows/packages-to-npm-v2.yml
-  #   secrets: inherit
-  #   needs: get_packages_and_plugins_modified
-  #   with:
-  #     NPM_TAG: dev
-  #     GIT_BRANCH: microservices/dev
-  #     PACKAGES: ${{ needs.get_packages_and_plugins_modified.outputs.packages }}
+  publish_packages_to_npm:
+    name: Publish packages to npm
+    uses: ./.github/workflows/packages-to-npm-v2.yml
+    secrets: inherit
+    needs: get_packages_and_plugins_modified
+    with:
+      NPM_TAG: dev
+      GIT_BRANCH: microservices/dev
+      PACKAGES: ${{ needs.get_packages_and_plugins_modified.outputs.packages }}
 
   build_and_publish_dockers:
     name: Build and publish dockers
     needs:
-      # - publish_packages_to_npm
+      - publish_packages_to_npm
       - get_packages_and_plugins_modified
     uses: ./.github/workflows/upload-plugins-dockers-v2.yml
     secrets:
@@ -36,7 +36,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
       GH_PAT: ${{ secrets.GH_PAT }}
     with:
-      PACKAGES: "" #${{ needs.publish_packages_to_npm.outputs.packages }}
+      PACKAGES: ${{ needs.publish_packages_to_npm.outputs.packages }}
       PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.plugins }}
       PRIVATE_PLUGINS: ${{ needs.get_packages_and_plugins_modified.outputs.private-plugins }}
       GIT_TAG: ${{ github.ref }}
