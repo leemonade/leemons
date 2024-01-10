@@ -84,7 +84,7 @@ export function currentProfileIsSuperAdmin() {
   const data = getCookieToken(true);
   if (data.profile) {
     const profile = _.find(data.profiles, { id: data.profile });
-    return profile.sysName === 'super';
+    return profile?.sysName === 'super';
   }
   return false;
 }

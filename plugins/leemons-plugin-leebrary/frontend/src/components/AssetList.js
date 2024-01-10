@@ -345,31 +345,19 @@ function AssetList({
   }
 
   async function pinAsset(item) {
-    setAppLoading(true);
     try {
       await pinAssetRequest(item.id);
-      queryClient.invalidateQueries(allAssetsKey);
-      // queryClient.refetchQueries();
-      setAppLoading(false);
-      // addSuccessAlert(t('labels.pinnedSuccess'));
       loadAsset(item.id, true);
     } catch (err) {
       setAppLoading(false);
-      // addErrorAlert(getErrorMessage(err));
     }
   }
 
   async function unpinAsset(item) {
-    setAppLoading(true);
     try {
       await unpinAssetRequest(item.id);
-      queryClient.invalidateQueries(allAssetsKey);
-      // queryClient.refetchQueries();
-      setAppLoading(false);
-      // addSuccessAlert(t('labels.unpinnedSuccess'));
       loadAsset(item.id, true);
     } catch (err) {
-      setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
     }
   }
@@ -501,7 +489,11 @@ function AssetList({
   // HANDLERS
 
   function handleOnSelect(item) {
-    setStoreValue('openDetail', true);
+    if (store.isDetailOpened) {
+      setStoreValue('isDetailOpened', false);
+    } else {
+      setStoreValue('isDetailOpened', true);
+    }
     onSelectItem(item);
   }
 
@@ -585,8 +577,9 @@ function AssetList({
     } else {
       setIsDrawerOpen(false);
     }
+
     return !store.loading && !isNil(store.asset) && !isEmpty(store.asset);
-  }, [store.loading, store.asset]);
+  }, [store.loading, store.asset, store.isDetailOpened]);
 
   const toggleDetail = useCallback(
     (val) => {
@@ -626,28 +619,31 @@ function AssetList({
     if (!showThumbnails && store.layout === 'grid') {
       return {
         itemRender: (p) => (
-          <CardWrapper
-            {...p}
-            variant={cardVariant || 'media'}
-            category={
-              store.categories.find((category) => category.id === p.item.original.category) || {
-                key: 'media-file',
+          // console.log('p', p);
+          <Box>
+            <CardWrapper
+              {...p}
+              variant={cardVariant || 'media'}
+              category={
+                store.categories.find((category) => category.id === p.item.original.category) || {
+                  key: 'media-file',
+                }
               }
-            }
-            realCategory={categoryProp}
-            published={published}
-            isEmbedded={isEmbedded}
-            onRefresh={reloadAssets}
-            onDuplicate={handleOnDuplicate}
-            onDelete={handleOnDelete}
-            onEdit={handleOnEdit}
-            onShare={handleOnShare}
-            onPin={handleOnPin}
-            onUnpin={handleOnUnpin}
-            onDownload={handleOnDownload}
-            locale={locale}
-            assetsLoading={cardDetailIsLoading}
-          />
+              realCategory={categoryProp}
+              published={published}
+              isEmbedded={isEmbedded}
+              onRefresh={reloadAssets}
+              onDuplicate={handleOnDuplicate}
+              onDelete={handleOnDelete}
+              onEdit={handleOnEdit}
+              onShare={handleOnShare}
+              onPin={handleOnPin}
+              onUnpin={handleOnUnpin}
+              onDownload={handleOnDownload}
+              locale={locale}
+              assetsLoading={cardDetailIsLoading}
+            />
+          </Box>
         ),
         itemMinWidth: '300px',
         staticColumnWidth: true,
@@ -672,6 +668,7 @@ function AssetList({
     store.layout,
     store.category,
     store.categories,
+    store.pageAssetsData.items,
     categoryProp,
     isEmbedded,
     showThumbnails,
@@ -696,8 +693,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-        ? t('cardToolbar.pin')
-        : false,
+          ? t('cardToolbar.pin')
+          : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -947,6 +944,7 @@ function AssetList({
               onRefresh={reloadAssets}
               onDownload={handleOnDownload}
               onCloseDrawer={() => setIsDrawerOpen(false)}
+              onOpenDrawer={() => setIsDrawerOpen(true)}
               locale={locale}
             />
           </Drawer>

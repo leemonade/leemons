@@ -1,10 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import React, { useState, useEffect } from 'react';
 import { Box, Badge, Text, TextClamp } from '@bubbles-ui/components';
-import { isArray } from 'lodash';
+import { isArray, noop } from 'lodash';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { useQueryClient } from '@tanstack/react-query';
-import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import {
@@ -13,7 +11,6 @@ import {
 } from './LibraryCardBody.constants';
 import { LibraryCardBodyStyles } from './LibraryCardBody.styles';
 import { FavButton } from '../FavButton';
-import { pinAssetRequest, unpinAssetRequest } from '../../request';
 
 const LibraryCardBody = ({
   description,
@@ -26,13 +23,14 @@ const LibraryCardBody = ({
   pinned,
   id,
   isCreationPreview,
+  onPin = noop,
+  onUnpin = noop,
   ...props
 }) => {
   const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const [isFav, setIsFav] = useState(pinned);
   const [subjectData, setSubjectData] = useState(null);
-  const queryClient = useQueryClient();
   const isQuestionBank = variant === 'questionBank';
   const isDraft =
     !isQuestionBank &&
@@ -43,13 +41,14 @@ const LibraryCardBody = ({
   const handleIsFav = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    const pinParams = {
+      id,
+    };
     if (isFav) {
-      unpinAssetRequest(id);
+      onUnpin(pinParams);
       setIsFav(false);
-      queryClient.invalidateQueries(allAssetsKey);
-      queryClient.refetchQueries();
     } else {
-      pinAssetRequest(id);
+      onPin(pinParams);
       setIsFav(true);
     }
   };
@@ -62,6 +61,14 @@ const LibraryCardBody = ({
       setSubjectData(subjects);
     }
   }, [subjects]);
+
+  useEffect(() => {
+    if (pinned) {
+      setIsFav(true);
+    } else {
+      setIsFav(false);
+    }
+  }, [pinned]);
 
   return (
     <Box className={classes.root}>

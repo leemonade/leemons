@@ -8,6 +8,8 @@ import {
   PluginCurriculumIcon,
 } from '@bubbles-ui/icons/solid';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@leebrary/helpers/prefixPN';
 import { LibraryDetailContent } from '../LibraryDetailContent';
 import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
 import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
@@ -36,6 +38,7 @@ const LibraryDetail = ({
   const [showDrawer, setShowDrawer] = useState(open);
   const [activeTab, setActiveTab] = useState('tab1');
   const isTeacher = useIsTeacher();
+  const [t] = useTranslateLoader(prefixPN('list'));
   const handleShare = () => {
     if (isFunction(events?.onShare)) {
       events?.onShare(asset);
@@ -140,12 +143,12 @@ const LibraryDetail = ({
           <Button
             variant="outline"
             size="md"
-            label={'TODO: Editar Permisos'}
+            label={t('editPermissions')}
             className={classes.canAccessButton}
             leftIcon={<EditIcon width={18} height={18} />}
             onClick={handleShare}
           >
-            {'TODO: Editar Permisos'}
+            {t('editPermissions')}
           </Button>
         </Box>
       )}

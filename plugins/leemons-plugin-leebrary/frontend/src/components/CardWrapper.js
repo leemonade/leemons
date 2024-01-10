@@ -176,6 +176,8 @@ const CardWrapper = ({
         single={single}
         locale={locale}
         isLoading={assetsLoading}
+        onPin={onPin}
+        onUnpin={onUnpin}
       />
     </Box>
   ) : null;
