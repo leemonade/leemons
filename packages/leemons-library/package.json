@@ -1,6 +1,6 @@
 {
   "name": "@leemons/library",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -22,6 +22,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@leemons/mongodb-helpers": "0.0.44"
+    "@leemons/mongodb-helpers": "0.0.45"
   }
 }
