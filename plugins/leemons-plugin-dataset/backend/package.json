@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-dataset",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Leemons dataset plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
