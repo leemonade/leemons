@@ -2772,6 +2772,14 @@
     "@leemons/service-name-parser" "0.0.39"
     lodash "^4.17.21"
 
+"@leemons/error@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.12.tgz#96139b6d8630d97f0364a09dccfd32dfb818ba8c"
+  integrity sha512-Qz+5wVFvjA3AaOWVXwkauI8/b7N0OQQSJ/6pQ4v2igNj2TpkEUbI63fomxNfjC7PZtvPVG7KoZ2V5UIRHvxiCg==
+  dependencies:
+    "@leemons/service-name-parser" "0.0.11"
+    lodash "^4.17.21"
+
 "@leemons/lrn@0.0.10":
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/@leemons/lrn/-/lrn-0.0.10.tgz#2dcda86d8e76b09df8a6deff94d264acee678558"

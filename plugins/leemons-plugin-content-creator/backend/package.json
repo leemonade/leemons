@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@leemons/academic-portfolio": "0.0.41",
-    "@leemons/cache": "^0.0.41",
+    "@leemons/cache": "0.0.41",
     "@leemons/common": "0.0.41",
     "@leemons/deployment-manager": "0.0.41",
     "@leemons/error": "0.0.41",
