@@ -1,27 +1,39 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Title, ImageLoader, Paragraph, Box } from '@bubbles-ui/components';
+import { Stack, Text, ImageLoader } from '@bubbles-ui/components';
 import { useLayout } from '@layout/context';
 
-const ListEmpty = ({ t }) => {
+const ListEmpty = ({ t, isRecentPage }) => {
   const { theme } = useLayout();
   return (
-    <Stack alignItems="center" justifyContent="center" direction="column" spacing={5}>
-      <Box style={{ maxWidth: 400, textAlign: 'center' }}>
-        <Title order={3}>{t('labels.listEmpty')}</Title>
-      </Box>
+    <Stack
+      alignItems="center"
+      justifyContent="center"
+      direction="column"
+      spacing={5}
+      fullWidth
+      fullHeight
+    >
+      <Stack direction="column" style={{ maxWidth: 400, textAlign: 'center' }}>
+        <Text size="md" color="soft">
+          {isRecentPage ? t('labels.recentListEmpty') : t('labels.listEmpty')}
+        </Text>
+        {isRecentPage && (
+          <Text size="md" color="soft">
+            {t('labels.recentListEmptyDescription')}
+          </Text>
+        )}
+      </Stack>
       {theme.usePicturesEmptyStates && (
         <ImageLoader src="/public/leebrary/empty.png" height={200} />
       )}
-      {/* <Box style={{ maxWidth: 400 }}>
-      <Paragraph align="center">{t('labels.listEmptyDescription')}</Paragraph>
-    </Box> */}
     </Stack>
   );
 };
 
 ListEmpty.propTypes = {
   t: PropTypes.func.isRequired,
+  isRecentPage: PropTypes.bool,
 };
 
 export { ListEmpty };

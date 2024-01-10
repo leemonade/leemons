@@ -174,6 +174,22 @@ module.exports = {
       return { status: 200, program };
     },
   },
+  publicInfo: {
+    rest: {
+      path: '/publicInfo',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const programsInfo = await programsByIds({ ids: JSON.parse(ctx.params.ids), ctx });
+      const programsIdsAndNames = {};
+      programsInfo.forEach((program) => {
+        programsIdsAndNames[program.id] = program.name;
+      });
+
+      return { status: 200, data: programsIdsAndNames };
+    },
+  },
   programHasCoursesRest: {
     rest: {
       path: '/:id/has/courses',

@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { isFunction } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { isFunction, groupBy, isEmpty } from 'lodash';
 import {
   Box,
   Button,
@@ -12,13 +12,10 @@ import {
   Stack,
   Text,
 } from '@bubbles-ui/components';
-import { PluginKimIcon, PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
-import {
-  BookPagesIcon,
-  CloudUploadIcon,
-  ManWomanIcon,
-  RemoveIcon,
-} from '@bubbles-ui/icons/outline';
+import { getProgramsNamesRequest } from '@leebrary/request';
+import { SubjectItemDisplay } from '@academic-portfolio/components';
+import { CloudUploadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+
 import { LibraryNavbarItem as NavbarItem } from './LibraryNavbarItem';
 import { LibraryNavbarStyles } from './LibraryNavbar.styles';
 import { LIBRARY_NAVBAR_DEFAULT_PROPS, LIBRARY_NAVBAR_PROP_TYPES } from './LibraryNavbar.constants';
@@ -28,7 +25,7 @@ const LibraryNavbar = ({
   categories,
   selectedCategory,
   subjects,
-  showSharedsWithMe,
+  showSharedWithMe,
   onNavShared,
   onNav,
   onNavSubject,
@@ -36,10 +33,31 @@ const LibraryNavbar = ({
   onNew,
   useNewCreateButton = true,
   loading,
+  isStudent,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
-  const [subjectsOpened, setSubjectsOpened] = useState(true);
+  const [programsDropdownInfo, setProgramsDropdownInfo] = useState(null);
+
+  const callGetProgramsNames = async () => {
+    const response = await getProgramsNamesRequest({
+      programsIds: subjects?.map((item) => item.program),
+    });
+
+    if (!isEmpty(response?.data)) {
+      const programsInfo = {};
+      Object.keys(response.data).forEach((programId) => {
+        programsInfo[programId] = { name: response.data[programId], dropdownOpen: false };
+      });
+      setProgramsDropdownInfo(programsInfo);
+    }
+  };
+
+  useEffect(() => {
+    if (subjects?.length) {
+      callGetProgramsNames();
+    }
+  }, [subjects]);
 
   const onFileHandler = (e) => {
     isFunction(onFile) && onFile(e);
@@ -63,13 +81,80 @@ const LibraryNavbar = ({
     isFunction(onNav) && onNav(category);
   };
 
-  const quickAccessSelected = useMemo(
-    () => !selectedCategory || selectedCategory === '' || selectedCategory < 1,
-    [selectedCategory]
-  );
+  // TODO: this is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
+  const contentAssetsKeys = [
+    'bookmarks',
+    'media-files',
+    'assignables.scorm',
+    'assignables.content-creator',
+  ];
+
+  const getSubjectsDropdown = () => {
+    const subjectsByProgram = groupBy(subjects, 'program');
+    return (
+      <>
+        {Object.keys(subjectsByProgram).map((programId) => (
+          <NavbarItem
+            key={'student-subjects'}
+            icon={'/public/leebrary/program.svg'}
+            label={programsDropdownInfo?.[programId].name}
+            loading={loading}
+            selected={false}
+            canOpen
+            opened={programsDropdownInfo?.[programId].dropdownOpen}
+            onClick={() => {
+              setProgramsDropdownInfo((current) => {
+                const updatedPrograms = { ...current };
+                updatedPrograms[programId].dropdownOpen = !updatedPrograms[programId].dropdownOpen;
+                return updatedPrograms;
+              });
+            }}
+          >
+            <ScrollArea style={{ maxWidth: '100%' }}>
+              <Box key={`program-${programId}`} style={{ padding: '0 0 0 16px', marginInline: 8 }}>
+                {subjectsByProgram[programId].map((subject) => (
+                  <Box
+                    key={JSON.stringify(subject)}
+                    onClick={() => onNavSubject(subject, programId)}
+                    sx={(theme) => ({
+                      display: 'flex',
+                      position: 'relative',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      padding: `8px`,
+                      cursor: 'pointer',
+                      backgroundColor:
+                        selectedCategory === subject.id && theme.other.core.color.primary['200'],
+                      '&:hover': {
+                        backgroundColor:
+                          selectedCategory !== subject.id && theme.other.core.color.primary['100'],
+                      },
+                      borderLeft: '1px solid #dde1e6',
+                    })}
+                  >
+                    <Box
+                      sx={(theme) => ({
+                        position: 'absolute',
+                        left: '-1px',
+                        width: 3,
+                        height: '100%',
+                        backgroundColor:
+                          selectedCategory === subject.id && theme.other.core.color.primary['300'],
+                      })}
+                    />
+                    <SubjectItemDisplay subjectsIds={[subject.id]} />
+                  </Box>
+                ))}
+              </Box>
+            </ScrollArea>
+          </NavbarItem>
+        ))}
+      </>
+    );
+  };
 
   const renderNavbarItems = useCallback(
-    (callback, onlyCreatable = false, ignoreSelected = false) => {
+    ({ callback, typeOfItem, onlyCreatable = false, ignoreSelected = false }) => {
       if (onlyCreatable && useNewCreateButton) {
         return categories
           .filter((item) => item.creatable === true)
@@ -82,123 +167,89 @@ const LibraryNavbar = ({
           }));
       }
 
-      const result = [
-        ...categories
-          .filter((item) => (onlyCreatable ? item.creatable === true : true))
-          .map((category) => (
-            <NavbarItem
-              key={category.id}
-              icon={category.icon}
-              label={category.name}
-              loading={loading}
-              selected={
-                !ignoreSelected &&
-                (category.id === selectedCategory || category.key === selectedCategory)
-              }
-              onClick={() => callback(category)}
-            />
-          )),
-      ];
-
-      if (subjects?.length > 0) {
-        result.push(
-          <NavbarItem
-            key={'student-subjects'}
-            icon={<BookPagesIcon />}
-            label={labels.subjects}
-            loading={loading}
-            selected={false}
-            canOpen
-            opened={subjectsOpened}
-            onClick={() => {
-              setSubjectsOpened(!subjectsOpened);
-            }}
-          >
-            <ScrollArea style={{ height: 300, maxWidth: '100%' }}>
-              {subjects.map((subject) => {
-                return (
-                  <Box
-                    key={JSON.stringify(subject)}
-                    onClick={() => onNavSubject(subject)}
-                    sx={(theme) => ({
-                      display: 'flex',
-                      flexDirection: 'row',
-                      gap: theme.spacing[2],
-                      alignItems: 'center',
-                      padding: `${theme.spacing[2]}px ${theme.spacing[4]}px`,
-                      cursor: 'pointer',
-                      backgroundColor: selectedCategory === subject.id && theme.colors.mainWhite,
-                      '&:hover': {
-                        backgroundColor:
-                          selectedCategory !== subject.id && theme.colors.interactive03,
-                      },
-                    })}
-                  >
-                    <Box
-                      sx={() => ({
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: 24,
-                        minHeight: 24,
-                        maxWidth: 24,
-                        maxHeight: 24,
-                        borderRadius: '50%',
-                        backgroundColor: subject?.color,
-                        backgroundImage: 'url(' + subject?.image + ')',
-                        backgroundSize: 'cover',
-                      })}
-                    />
-                    <Text>{subject.name}</Text>
-                  </Box>
-                );
-              })}
-            </ScrollArea>
-          </NavbarItem>
-        );
+      if (typeOfItem !== 'subjects') {
+        return [
+          ...categories
+            .filter((item) => (onlyCreatable ? item.creatable === true : true))
+            .filter((item) => {
+              if (typeOfItem === 'contentAssets') return contentAssetsKeys.includes(item.key);
+              if (typeOfItem === 'activityAssets') return !contentAssetsKeys.includes(item.key);
+              return true;
+            })
+            .map((category) => (
+              <NavbarItem
+                key={category.id}
+                icon={category.icon}
+                label={category.name}
+                loading={loading}
+                selected={
+                  !ignoreSelected &&
+                  (category.id === selectedCategory || category.key === selectedCategory)
+                }
+                onClick={() => callback(category)}
+              />
+            )),
+        ];
       }
-      return result;
+
+      if (typeOfItem === 'subjects' && subjects?.length > 0) {
+        return getSubjectsDropdown();
+      }
     },
-    [categories, selectedCategory, loading, subjectsOpened, subjects, showSharedsWithMe]
+    [categories, selectedCategory, loading, subjects, showSharedWithMe, programsDropdownInfo]
   );
 
   const { classes, cx } = LibraryNavbarStyles({ isExpanded }, { name: 'LibraryNavbar' });
   return (
     <Box className={classes.root}>
-      <Box className={classes.header}>
-        <PluginLeebraryIcon height={24} width={24} />
-        <Text className={classes.title}>{labels.title}</Text>
-      </Box>
       <ScrollArea className={classes.navItems}>
         <Stack direction={'column'} fullWidth>
           {useNewCreateButton ? (
-            <Box sx={(theme) => ({ padding: theme.spacing[2] })}>
+            <Box sx={() => ({ padding: 12 })}>
               <DropdownButton
                 sx={() => ({ width: '100%' })}
-                children={labels.uploadButton}
-                data={renderNavbarItems(onNewHandler, true, true)}
-              />
+                data={renderNavbarItems({
+                  callback: onNewHandler,
+                  onlyCreatable: true,
+                  ignoreSelected: true,
+                })}
+              >
+                {labels.uploadButton}
+              </DropdownButton>
             </Box>
           ) : null}
           <NavbarItem
-            icon={<PluginKimIcon />}
+            icon={'/public/leebrary/recent.svg'}
+            label={labels.recent}
+            onClick={() => onNavHandler({ key: 'leebrary-recent' })}
+            selected={selectedCategory === 'leebrary-recent'}
+          />
+          <NavbarItem
+            icon={'/public/leebrary/favorite.svg'}
             label={labels.quickAccess}
             onClick={() => onNavHandler(null)}
-            selected={quickAccessSelected}
+            selected={selectedCategory === 'pins'}
           />
-          {showSharedsWithMe ? (
+          {showSharedWithMe ? (
             <NavbarItem
-              key={'shared-with-me'}
-              icon={<ManWomanIcon />}
+              icon={'/public/leebrary/shared-with-me.svg'}
               label={labels.sharedWithMe}
               loading={loading}
-              selected={selectedCategory === 'shared-with-me'}
-              onClick={() => onNavShared('shared-with-me')}
+              selected={selectedCategory === 'leebrary-shared'}
+              onClick={() => onNavShared('leebrary-shared')}
             />
           ) : null}
 
-          <Divider style={{ marginBlock: 8, marginInline: 10 }} />
-          {renderNavbarItems(onNavHandler)}
+          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+          {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'contentAssets' })}
+          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+          {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'activityAssets' })}
+          {isStudent && (
+            <>
+              <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+              {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'subjects' })}
+            </>
+          )}
         </Stack>
         {!useNewCreateButton ? (
           <Paper
@@ -245,7 +296,11 @@ const LibraryNavbar = ({
                 className={classes.navbarTopList}
                 skipFlex
               >
-                {renderNavbarItems(onNewHandler, true, true)}
+                {renderNavbarItems({
+                  callback: onNewHandler,
+                  onlyCreatable: true,
+                  ignoreSelected: true,
+                })}
                 <Text transform="uppercase" className={classes.sectionTitle}>
                   {labels.uploadTitle}
                 </Text>

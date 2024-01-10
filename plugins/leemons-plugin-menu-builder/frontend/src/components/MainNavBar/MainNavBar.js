@@ -36,6 +36,7 @@ const MainNavBar = ({
   menuData,
   useRouter,
   spotlightLabel,
+  useSpotlight,
 }) => {
   // const [isCollapsed, setIsCollapsed] = useState(true);
   const [expandedItem, setExpandedItem] = useState(null);
@@ -180,13 +181,15 @@ const MainNavBar = ({
               </Box>
             </Box>
             <Box className={classes.navItemsWrapper}>
-              <Box>
-                <SpotLightButton
-                  onClick={() => openSpotlight()}
-                  isCollapsed={!hovered}
-                  spotlightLabel={spotlightLabel}
-                />
-              </Box>
+              {useSpotlight ? (
+                <Box>
+                  <SpotLightButton
+                    onClick={() => openSpotlight()}
+                    isCollapsed={!hovered}
+                    spotlightLabel={spotlightLabel}
+                  />
+                </Box>
+              ) : null}
               <Box className={classes.navItems}>
                 <Box className={classes.linksInner}>{navBarItems}</Box>
                 <Box>

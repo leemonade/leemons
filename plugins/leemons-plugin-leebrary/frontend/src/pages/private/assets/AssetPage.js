@@ -202,7 +202,7 @@ const AssetPage = () => {
         );
         queryClient.invalidateQueries(allAssetsKey);
         queryClient.refetchQueries();
-        history.goBack();
+        history.push('/private/leebrary/leebrary-recent/list');
       } catch (err) {
         setLoading(false);
         addErrorAlert(getErrorMessage(err));

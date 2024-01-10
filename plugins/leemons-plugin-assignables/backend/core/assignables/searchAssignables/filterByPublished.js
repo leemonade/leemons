@@ -13,7 +13,7 @@ async function filterByPublished({ assignablesIds: _assignablesIds, published, c
 
   let assignablesIds = _assignablesIds;
   assignablesIds = await ctx.tx.call('common.versionControl.getVersion', {
-    ids: assignablesIds,
+    id: assignablesIds,
   });
 
   if (published !== 'all') {

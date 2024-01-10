@@ -30,5 +30,6 @@ module.exports = {
     ndays: '{n} días',
     nhours: '{n} horas',
     settingsSaved: 'Preferencias guardadas',
+    cancel: 'Cancelar',
   },
 };
