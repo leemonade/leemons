@@ -33,7 +33,7 @@
     "@leemons/permissions": "0.0.41",
     "@leemons/users": "0.0.41",
     "@leemons/validator": "0.0.41",
-    "@leemons/widgets": "0.0.41",
+    "@leemons/widgets": "0.0.42",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
