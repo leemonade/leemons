@@ -168,15 +168,20 @@ const LibraryNavbar = ({
       }
 
       if (typeOfItem !== 'subjects') {
-        return [
+        const itemsToShow = [
           ...categories
             .filter((item) => (onlyCreatable ? item.creatable === true : true))
             .filter((item) => {
               if (typeOfItem === 'contentAssets') return contentAssetsKeys.includes(item.key);
               if (typeOfItem === 'activityAssets') return !contentAssetsKeys.includes(item.key);
               return true;
-            })
-            .map((category) => (
+            }),
+        ];
+        if (!itemsToShow?.length) return null;
+        return (
+          <>
+            <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+            {itemsToShow.map((category) => (
               <NavbarItem
                 key={category.id}
                 icon={category.icon}
@@ -188,12 +193,18 @@ const LibraryNavbar = ({
                 }
                 onClick={() => callback(category)}
               />
-            )),
-        ];
+            ))}
+          </>
+        );
       }
 
       if (typeOfItem === 'subjects' && subjects?.length > 0) {
-        return getSubjectsDropdown();
+        return (
+          <>
+            <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+            {getSubjectsDropdown()}
+          </>
+        );
       }
     },
     [categories, selectedCategory, loading, subjects, showSharedWithMe, programsDropdownInfo]
@@ -240,15 +251,15 @@ const LibraryNavbar = ({
             />
           ) : null}
 
-          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+          {/* Content Assets */}
           {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'contentAssets' })}
-          <Divider style={{ marginBlock: 24, marginInline: 10 }} />
+
+          {/* Activity Assets */}
           {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'activityAssets' })}
+
+          {/* Program & subjects sections */}
           {isStudent && (
-            <>
-              <Divider style={{ marginBlock: 24, marginInline: 10 }} />
-              {renderNavbarItems({ callback: onNavHandler, typeOfItem: 'subjects' })}
-            </>
+            <>{renderNavbarItems({ callback: onNavHandler, typeOfItem: 'subjects' })}</>
           )}
         </Stack>
         {!useNewCreateButton ? (
