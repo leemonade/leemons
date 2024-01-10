@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-calendar",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Leemons calendar plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
