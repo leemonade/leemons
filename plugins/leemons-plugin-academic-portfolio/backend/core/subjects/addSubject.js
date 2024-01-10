@@ -12,8 +12,8 @@ async function addSubject({ data: _data, ctx }) {
 
   // ES: Añadimos el asset de la imagen
   const imageData = {
-    indexable: true,
-    public: true, // TODO Cambiar a false despues de hacer la demo
+    indexable: false,
+    public: true,
     name: subject.id,
   };
   const iconData = _.clone(imageData);
@@ -35,7 +35,7 @@ async function addSubject({ data: _data, ctx }) {
       },
     }),
     ctx.tx.call('leebrary.assets.add', {
-      asset: iconData,
+      asset: { ...iconData, indexable: false },
       options: {
         permissions: [
           {
