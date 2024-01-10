@@ -9,9 +9,9 @@ import {
   EVALUATIONCARD_PROP_TYPES,
 } from './EvaluationCard.constants';
 
-const EvaluationCard = ({ instance, variantTitle, variantIcon, localizations, isHovered }) => {
+const EvaluationCard = ({ instance, variantTitle, variantIcon, localizations }) => {
   const { color } = instance.asset;
-  const { classes } = EvaluationCardStyles({ color, isHovered });
+  const { classes } = EvaluationCardStyles({ color });
 
   return (
     <Box className={classes.root}>

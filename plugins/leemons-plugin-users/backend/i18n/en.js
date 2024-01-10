@@ -323,6 +323,7 @@ module.exports = {
     interface: 'Interface language',
     selectLocale: 'Select a language',
     save: 'Save',
+    cancel: 'Cancel',
     success: 'Language changed',
   },
   importUsers: {

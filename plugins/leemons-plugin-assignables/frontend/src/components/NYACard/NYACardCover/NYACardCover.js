@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { isNil } from 'lodash';
-import { Box, COLORS, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
+import { Box, COLORS, ImageLoader, CardEmptyCover, Text } from '@bubbles-ui/components';
 import { NYACardCoverStyles } from './NYACardCover.styles';
 import { NYACARD_COVER_DEFAULT_PROPS, NYACARD_COVER_PROP_TYPES } from './NYACardCover.constants';
 
@@ -14,6 +14,10 @@ const NYACardCover = ({
   variantTitle,
   topColor,
   assignable,
+  isTeacherSyllabus,
+  totalActivities,
+  submitedActivities,
+  localizations,
 }) => {
   const { classes } = NYACardCoverStyles(
     { color: topColor, height, parentHovered },
@@ -31,6 +35,24 @@ const NYACardCover = ({
     () => <CardEmptyCover icon={icon || variantIcon} fileType={fileType || variantTitle} />,
     [icon, variantIcon, fileType]
   );
+  if (isTeacherSyllabus) {
+    return (
+      <Box className={classes.rootTS}>
+        <Box className={classes.color} />
+        <Box className={classes.commonContainer}>
+          <Box>
+            <Text className={classes.submitedNumber}>{submitedActivities}</Text>
+            <Text className={classes.separator}>/{totalActivities}</Text>
+          </Box>
+          <Box className={classes.pendigLabelContainer}>
+            <Text className={classes.pendingLabel}>
+              {localizations?.ongoing?.pendingActivities}
+            </Text>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box className={classes.root}>

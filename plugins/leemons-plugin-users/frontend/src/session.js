@@ -69,15 +69,6 @@ function getUserToken(data) {
   return null;
 }
 
-export function currentProfileIsSuperAdmin() {
-  const data = getCookieToken();
-  if (data.profile) {
-    const profile = _.find(data.profiles, { id: data.profile });
-    return profile.sysName === 'super';
-  }
-  return false;
-}
-
 export function getCookieToken(onlyCookie) {
   let token = Cookies.get('token');
 
@@ -87,6 +78,15 @@ export function getCookieToken(onlyCookie) {
     /* AllGood */
   }
   return onlyCookie ? token : getUserToken(token);
+}
+
+export function currentProfileIsSuperAdmin() {
+  const data = getCookieToken(true);
+  if (data.profile) {
+    const profile = _.find(data.profiles, { id: data.profile });
+    return profile.sysName === 'super';
+  }
+  return false;
 }
 
 export function getCentersWithToken() {

@@ -1,5 +1,5 @@
 import { capitalize, isEmpty, isNil, isString, toLower } from 'lodash';
-import { getAuthorizationTokenForAllCenters } from '@users/session';
+import { getAuthorizationTokenForAllCenters, getCookieToken } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
 export function getAssetUrl(assetID) {
@@ -14,7 +14,11 @@ export function getFileUrl(fileID, segment, isPublic = false) {
     return '';
   }
 
-  const authTokens = getAuthorizationTokenForAllCenters();
+  let authTokens = getAuthorizationTokenForAllCenters();
+  if (isEmpty(JSON.parse(authTokens))) {
+    const userToken = getCookieToken();
+    authTokens = JSON.stringify([userToken]);
+  }
   const urlSuffixSegment = segment ? `/${segment}` : '';
 
   if (fileID.startsWith('http')) {
@@ -145,31 +149,20 @@ export function getCoverName(cover) {
 }
 
 export function resolveAssetType(file, type, asset) {
-  let defaultType;
-  switch (type) {
-    case 'assignables.content-creator':
-      defaultType = 'document';
-      break;
-    case 'assignables.scorm':
-      defaultType = 'scorm';
-      break;
-    case 'bookmarks':
-      defaultType = 'bookmark';
-      break;
-    default:
-      defaultType = 'file';
-  }
+  let defaultType = 'file';
+  if (type === 'bookmarks') defaultType = 'bookmark';
+
   const isNewAsset = !asset?.id;
   const fileExtension = isNewAsset ? file?.name?.split('.').pop() : asset?.fileExtension;
 
   const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;
-  const resolvedFileType = ['audio', 'video', 'image', 'document'].includes(fileType)
+  const resolvedFileType = ['audio', 'video', 'image', 'bookmark'].includes(fileType)
     ? fileType
     : defaultType;
   const finalFileType =
     resolvedFileType === 'file' && fileExtension ? fileExtension.toUpperCase() : resolvedFileType;
 
-  return { fileType: finalFileType, fileExtension };
+  return { fileType: resolvedFileType, fileExtension };
 }
 
 export default prepareAsset;

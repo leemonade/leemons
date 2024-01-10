@@ -32,10 +32,7 @@ const LibraryCard = ({
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { classes, cx } = LibraryCardStyles(
-    { shadow, fullHeight, isHovered },
-    { name: 'LibraryCard' }
-  );
+  const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
   if (isLoading) {
     return <LibraryCardSkeleton />;
   }
@@ -52,9 +49,9 @@ const LibraryCard = ({
         deadlineProps={!isNil(deadlineProps) ? deadlineProps : null}
         locale={locale || deadlineProps?.locale}
         direction={variant === 'assigment' ? 'vertical' : null}
-        parentHovered={isHovered}
         menuItems={menuItems}
         dashboard={dashboard}
+        parentHovered={isHovered}
         isNew={isNew}
         role={role}
         badge={badge}

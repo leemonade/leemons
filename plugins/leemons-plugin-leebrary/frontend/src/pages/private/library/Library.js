@@ -23,13 +23,14 @@ function cleanPath(path) {
 
 const LibraryPageContent = () => {
   const { path } = useRouteMatch();
-  const [store, render] = useStore();
+  const [store] = useStore();
   const { newAsset, category, loading, setAsset, setCategories, categories } =
     useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
   const history = useHistory();
   const isStudent = useIsStudent();
   const [settings, setSettings] = useState({ hasPins: false, loadingPins: true });
+  const [hideNavBar, setHideNavBar] = useState(false);
 
   const getCategories = async () => {
     store.subjects = null;
@@ -57,6 +58,19 @@ const LibraryPageContent = () => {
 
     setSettings({ hasPins: settingsResult.hasPins, loadingPins: false });
   };
+
+  useEffect(() => {
+    const pathSegments = history.location.pathname.split('/');
+    const editSegment = pathSegments[pathSegments.length - 2];
+    const lastSegment = pathSegments[pathSegments.length - 1];
+
+    if (lastSegment === 'new' || editSegment === 'edit') {
+      setAsset(null);
+      setHideNavBar(true);
+    } else {
+      setHideNavBar(false);
+    }
+  }, [history.location.pathname]);
 
   useEffect(() => {
     if (isStudent !== null) getCategories();
@@ -97,7 +111,8 @@ const LibraryPageContent = () => {
     history.push(cleanPath(`${path}/leebrary-shared/list/`));
   }
 
-  function onNavSubject(subject) {
+  function onNavSubject(subject, programId) {
+    // history.push(cleanPath(`${path}/leebrary-subject/${subject.id}/list/?program=${programId}`));
     history.push(cleanPath(`${path}/leebrary-subject/${subject.id}/list/`));
   }
 
@@ -107,23 +122,26 @@ const LibraryPageContent = () => {
 
   return (
     <Stack style={{ height: '100vh' }} fullWidth>
-      <Box style={{ width: 240, height: '100%' }} skipFlex>
-        {!isEmpty(categories) && (
-          <LibraryNavbar
-            showSharedsWithMe
-            labels={navbarLabels}
-            categories={categories}
-            selectedCategory={category?.key === 'leebrary-shared' ? 'shared-with-me' : category?.id}
-            subjects={store.subjects}
-            onNavSubject={onNavSubject}
-            onNavShared={onNavShared}
-            onNav={handleOnNav}
-            onFile={handleOnFile}
-            onNew={handleOnNew}
-            loading={loading}
-          />
-        )}
-      </Box>
+      {!hideNavBar && (
+        <Box style={{ width: 240, height: '100%' }} skipFlex>
+          {!isEmpty(categories) && (
+            <LibraryNavbar
+              showSharedWithMe
+              labels={navbarLabels}
+              categories={categories}
+              selectedCategory={category?.id ? category.id : category?.key}
+              subjects={store.subjects}
+              onNavSubject={onNavSubject}
+              onNavShared={onNavShared}
+              onNav={handleOnNav}
+              onFile={handleOnFile}
+              onNew={handleOnNew}
+              loading={loading}
+              isStudent={isStudent}
+            />
+          )}
+        </Box>
+      )}
       <Box style={{ overflowY: 'scroll' }}>
         <Switch>
           {/* NEW ASSET ·························································· */}
@@ -139,15 +157,17 @@ const LibraryPageContent = () => {
           {/* LIST ASSETS ························································ */}
           <Route path={cleanPath(`${path}/:category/list`)}>
             <ListAssetPage />
+            {/* <div>SOY CATEGORY / LIST</div> */}
           </Route>
 
           <Route path={cleanPath(`${path}/:category/:id/list`)}>
             <ListAssetPage />
+            {/* <div>SOY CATEGORY / ID / LIST</div> */}
           </Route>
 
           {/* DEFAULT exact path={path} */}
           <Route>
-            <Redirect to={cleanPath(`${path}/${settings.hasPins ? 'pins' : 'media-files'}/list`)} />
+            <Redirect to={cleanPath(`${path}/leebrary-recent/list`)} />
           </Route>
         </Switch>
       </Box>
@@ -201,6 +221,8 @@ const LibraryPage = () => {
         setCategory({ key: 'pins', id: null });
       } else if (key === 'leebrary-shared' && category?.key !== 'leebrary-shared') {
         setCategory({ key: 'leebrary-shared', id: null });
+      } else if (key === 'leebrary-recent' && category?.key !== 'leebrary-recent') {
+        setCategory({ key: 'leebrary-recent', id: null });
       } else {
         const item = find(categories, { key });
         if (!isEmpty(item) && item.key !== category?.key) {

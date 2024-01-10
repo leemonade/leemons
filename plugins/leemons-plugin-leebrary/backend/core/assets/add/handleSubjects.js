@@ -11,8 +11,8 @@ const { map } = require('lodash');
  */
 async function handleSubjects({ subjects, assetId, ctx }) {
   return Promise.all(
-    map(subjects, (item) =>
-      ctx.tx.db.AssetsSubjects.create({ asset: assetId, ...item }).then((mongooseDoc) =>
+    map(subjects, (subjectId) =>
+      ctx.tx.db.AssetsSubjects.create({ asset: assetId, subject: subjectId }).then((mongooseDoc) =>
         mongooseDoc.toObject()
       )
     )

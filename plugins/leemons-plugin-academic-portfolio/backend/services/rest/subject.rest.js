@@ -203,16 +203,7 @@ module.exports = {
       path: '/',
       method: 'GET',
     },
-    middlewares: [
-      LeemonsMiddlewareAuthenticated(),
-      LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
-          },
-        },
-      }),
-    ],
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       let { id } = ctx.params;
       if (!id) {
@@ -231,16 +222,7 @@ module.exports = {
       path: '/',
       method: 'GET',
     },
-    middlewares: [
-      LeemonsMiddlewareAuthenticated(),
-      LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
-          },
-        },
-      }),
-    ],
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       let { id } = ctx.params;
       if (!id) {

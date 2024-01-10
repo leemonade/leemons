@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, uniqBy } = require('lodash');
+const { isEmpty, uniqBy, isBoolean } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 const { getPublic } = require('../getPublic/getPublic');
@@ -97,6 +97,12 @@ async function getByCategory({
       } catch (e) {
         ctx.logger.error(`Failed to get assets from provider: ${e.message}`);
       }
+    }
+
+    if (isBoolean(indexable)) {
+      assetIds = (
+        await ctx.tx.db.Assets.find({ id: assetIds, indexable }).select(['id']).lean()
+      ).map((item) => item.id);
     }
 
     if (programs) {

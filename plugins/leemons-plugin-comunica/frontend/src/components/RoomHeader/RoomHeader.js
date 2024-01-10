@@ -33,7 +33,7 @@ function RoomHeader({ room, t, onImageChange }) {
           <Box className={classes.icon} style={{ backgroundColor: '#67728E' }}>
             <ImageLoader
               forceImage
-              src="/public/assets/svgs/module-three.svg"
+              src="/public/assignables/module-three.svg"
               width={14}
               height={14}
             />

@@ -1,15 +1,12 @@
 /* eslint-disable no-unreachable */
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { Box, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
+import { Box, createStyles } from '@bubbles-ui/components';
 import { isEmpty, isNil } from 'lodash';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { AssetList } from '../../../components/AssetList';
 import LibraryContext from '../../../context/LibraryContext';
-import prefixPN from '../../../helpers/prefixPN';
 import { VIEWS } from '../library/Library.constants';
 
 function useQuery() {
@@ -39,26 +36,24 @@ const ListPageStyles = createStyles((theme) => ({
 const ListAssetPage = () => {
   const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
     useContext(LibraryContext);
-  const [t] = useTranslateLoader(prefixPN('assetsList'));
   const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
+  // const [subjectProgram, setSubjectProgram] = useState(null);
 
-  const [assetType, setAssetType] = useState('');
+  const [mediaAssetType, setMediaAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
   const [showPublished, setShowPublished] = useState(true);
   const history = useHistory();
   const params = useParams();
   const query = useQuery();
-  const [activeTab, setActiveTab] = useState(query.get('activeTab') || 'published');
+  const [activeStatus, setActiveStatus] = useState(query.get('activeTab') || 'published');
   const location = useLocation();
-  const profile = useGetProfileSysName();
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
-  const isAdmin = profile === 'admin';
   const academicFilters = useAcademicFiltersForAssetList({
     // hideProgramSelect: isStudent,
-    useLabels: true,
+    useLabels: false,
   });
 
   // ·········································································
@@ -85,6 +80,13 @@ const ListAssetPage = () => {
     const type = query.get('type');
     const _activeTab = query.get('activeTab');
     const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
+    // const program = query.get('program');
+
+    // if (isEmpty(program)) {
+    //   setSubjectProgram('');
+    // } else if (program !== subjectProgram) {
+    //   setSubjectProgram(program);
+    // }
 
     if (displayPublic !== showPublic) {
       setShowPublic(displayPublic);
@@ -104,15 +106,15 @@ const ListAssetPage = () => {
     }
 
     if (isEmpty(type)) {
-      setAssetType('');
-    } else if (type !== assetType) {
-      setAssetType(type);
+      setMediaAssetType('');
+    } else if (type !== mediaAssetType) {
+      setMediaAssetType(type);
     }
 
     if (isEmpty(_activeTab)) {
-      setActiveTab('published');
-    } else if (_activeTab !== activeTab) {
-      setActiveTab(_activeTab);
+      setActiveStatus('published');
+    } else if (_activeTab !== activeStatus) {
+      setActiveStatus(_activeTab);
     }
   }, [query, asset]);
 
@@ -166,7 +168,7 @@ const ListAssetPage = () => {
 
       return result.join('&');
     },
-    [query]
+    [query, activeStatus]
   );
 
   // ·········································································
@@ -239,7 +241,7 @@ const ListAssetPage = () => {
     );
   };
 
-  const handleOnTabChange = (tab) => {
+  const handleOnPublishingStatusChange = (tab) => {
     history.push(
       `${location.pathname}?${getQueryParams(
         {
@@ -256,87 +258,67 @@ const ListAssetPage = () => {
   // RENDER
 
   let props = {};
+  const multiCategorySections = ['pins', 'leebrary-shared', 'leebrary-recent'];
+  const staticAssignables = ['assignables.content-creator', 'assignables.scorm'];
+
   if (
-    (category?.key === 'pins' || category?.key?.startsWith('assignables.')) &&
+    (multiCategorySections.includes(category?.key) ||
+      (category?.key?.startsWith('assignables.') && !staticAssignables.includes(category?.key))) &&
     (isTeacher || isStudent)
   ) {
     props = academicFilters;
+    props.canChangeType = false;
   }
-  if (category?.key === 'media-files' && isTeacher) {
-    props = academicFilters;
+
+  if ((category?.key === 'media-files' || category?.key === 'bookmarks') && isTeacher) {
+    // props = academicFilters; // TODO: implement
     props.searchInProvider = false;
   }
 
+  // if (category?.key.startsWith('leebrary-subject')) {
+  //   props.programs = subjectProgram;
+  // }
+
+  // Publish & Draft filters allowed
   if (
     (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') &&
     category?.key !== 'assignables.scorm'
   ) {
     return (
-      <Tabs
-        panelColor="solid"
-        usePageLayout
-        fullHeight
-        fullWidth
-        activeKey={activeTab}
-        onTabClick={(e) => {
-          handleOnTabChange(e);
-          setCurrentAsset(null);
-        }}
+      <Box
+        className={classes.original}
+        sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
       >
-        <TabPanel key="published" label={t('published')}>
-          <Box className={classes.tabPane}>
-            <AssetList
-              {...props}
-              category={category}
-              categories={categories}
-              asset={currentAsset}
-              search={searchCriteria}
-              layout="grid"
-              showPublic={showPublic}
-              onSelectItem={handleOnSelectItem}
-              onEditItem={handleOnEditItem}
-              onSearch={handleOnSearch}
-              onTypeChange={handleOnTypeChange}
-              onShowPublic={handleOnShowPublic}
-              assetType={assetType}
-              pinned={category?.key === 'pins'}
-              onLoading={setLoading}
-              published={true}
-              variant="embedded"
-            />
-          </Box>
-        </TabPanel>
-        <TabPanel key="draft" label={t('draft')}>
-          <Box className={classes.tabPane}>
-            <AssetList
-              {...props}
-              category={category}
-              categories={categories}
-              asset={currentAsset}
-              search={searchCriteria}
-              layout="grid"
-              showPublic={showPublic}
-              onSelectItem={handleOnSelectItem}
-              onEditItem={handleOnEditItem}
-              onSearch={handleOnSearch}
-              onTypeChange={handleOnTypeChange}
-              onShowPublic={handleOnShowPublic}
-              assetType={assetType}
-              pinned={category?.key === 'pins'}
-              onLoading={setLoading}
-              published={false}
-              variant="embedded"
-            />
-          </Box>
-        </TabPanel>
-      </Tabs>
+        <AssetList
+          {...props}
+          category={category}
+          categories={categories}
+          asset={currentAsset}
+          search={searchCriteria}
+          layout="grid"
+          showPublic={showPublic}
+          onSelectItem={handleOnSelectItem}
+          onEditItem={handleOnEditItem}
+          onSearch={handleOnSearch}
+          onTypeChange={handleOnTypeChange}
+          onShowPublic={handleOnShowPublic}
+          assetType={mediaAssetType}
+          pinned={category?.key === 'pins'}
+          onLoading={setLoading}
+          published={activeStatus === 'published'}
+          variant="embedded"
+          allowStatusChange={true}
+          onStatusChange={handleOnPublishingStatusChange}
+          assetStatus={activeStatus}
+        />
+      </Box>
     );
   }
 
   return !isNil(categories) && !isEmpty(categories) ? (
     <Box
       className={classes.original}
-      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}
+      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
     >
       <AssetList
         {...props}
@@ -352,7 +334,7 @@ const ListAssetPage = () => {
         onSearch={handleOnSearch}
         onTypeChange={handleOnTypeChange}
         onShowPublic={handleOnShowPublic}
-        assetType={assetType}
+        assetType={mediaAssetType}
         pinned={category?.key === 'pins'}
         onLoading={setLoading}
         variant="embedded"
