@@ -3,7 +3,6 @@ const { isEmpty } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 const { validateAddAsset } = require('../../validations/forms');
-const { prepareAssetData } = require('./prepareAssetData');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
 const { getByIds } = require('../getByIds/getByIds');
 const { handleUpdateObject } = require('./handleUpdateObject');
@@ -12,6 +11,7 @@ const { handleSubjectsUpdates } = require('./handleSubjectsUpdates');
 const { handleTagsUpdates } = require('./handleTagsUpdates');
 const { handleFileAndCoverUpdates } = require('./handleFileAndCoverUpdates');
 const { handleFilesRemoval } = require('./handleFilesRemoval');
+const { CATEGORIES } = require('../../../config/constants');
 
 // -----------------------------------------------------------------------------
 /**
@@ -34,7 +34,9 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
     throw new LeemonsError(ctx, { message: 'No changes detected' });
   }
 
-  const { id, ...assetData } = prepareAssetData({ data });
+  // const { id, ...assetData } = prepareAssetData({ data });
+  const { id, ...assetData } = data;
+  assetData.categoryKey = data.categoryKey || CATEGORIES.MEDIA_FILES;
 
   let assetId = id;
 
