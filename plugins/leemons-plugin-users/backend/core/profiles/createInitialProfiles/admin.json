@@ -2,127 +2,171 @@
   "permissions": [
     {
       "permissionName": "users.users",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "users.user-data",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "users.centers",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "users.profiles",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "dataset.dataset",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "calendar.calendar",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "academic-portfolio.portfolio",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "academic-portfolio.programs",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "academic-portfolio.profiles",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "academic-portfolio.subjects",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "academic-portfolio.tree",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "timetable.config",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "timetable.timetable",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "tasks.tasks",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "tasks.library",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "tasks.profiles",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "curriculum.curriculum",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "curriculum.curriculum-menu",
-      "actionNames": ["view"]
+      "actionNames": [
+        "view"
+      ]
     },
     {
       "permissionName": "leebrary.library",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "grades.rules",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "grades.evaluations",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "grades.promotions",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "grades.dependencies",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "tests.tests",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "tests.questionsBanks",
-      "actionNames": ["admin"]
-    },
-    {
-      "permissionName": "assignables.activities",
-      "actionNames": ["view"]
-    },
-    {
-      "permissionName": "assignables.ongoing",
-      "actionNames": ["view"]
-    },
-    {
-      "permissionName": "assignables.history",
-      "actionNames": ["view"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "scores.periods",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     },
     {
       "permissionName": "scores.scoresMenu",
-      "actionNames": ["view"]
+      "actionNames": [
+        "view"
+      ]
     },
     {
       "permissionName": "academic-calendar.config",
-      "actionNames": ["admin"]
+      "actionNames": [
+        "admin"
+      ]
     }
   ],
   "name": "Admin",

@@ -1,7 +1,7 @@
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
+import { useMemo } from 'react';
 import useActivitiesByProfile from './useActivitiesByProfile';
-
 // EN: This hook only works for students, as the teachers doesn't have a progreso.
 // ES: Este hook solo funciona para estudiantes, porque los profes no tienen progreso.
 export default function useEvaluatedActivities({ program, class: klass }) {
@@ -21,12 +21,15 @@ export default function useEvaluatedActivities({ program, class: klass }) {
     );
   const { data: activities, isLoading: activitiesAreLoading } =
     useActivitiesByProfile(evaluatedActivities);
+  const filteredctivities = useMemo(() =>
+    activities?.filter((evaluation) => evaluation?.grades?.length)
+  );
 
   const isLoading = evaluatedActivitiesAreLoading || activitiesAreLoading;
 
   return {
-    activities,
+    activities: filteredctivities,
     isLoading,
-    count: activities?.length ?? null,
+    count: filteredctivities?.length ?? null,
   };
 }

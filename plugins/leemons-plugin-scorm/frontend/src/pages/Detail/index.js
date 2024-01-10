@@ -96,7 +96,7 @@ export default function Detail() {
           addSuccessAlert(t('published'));
           setIsLoading(false);
           if (assigning) history.push(`/private/scorm/assign/${data.package?.id}`);
-          else history.push('/private/leebrary/assignables.scorm/list?activeTab=published');
+          else history.push('/private/leebrary/assignables.scorm/list');
         },
         onError: (error) => {
           addErrorAlert(error.message);

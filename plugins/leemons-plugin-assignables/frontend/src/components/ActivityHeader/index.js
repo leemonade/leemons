@@ -28,7 +28,7 @@ export default function ActivityHeader({
   allowEditDeadline,
 }) {
   const form = useForm();
-
+  console.log('instance');
   /*
     === Activity data ===
   */

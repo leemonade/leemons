@@ -85,16 +85,22 @@ export default function Index({ isNew, readOnly }) {
     if (!isValidStep) return;
     setIsLoading(true);
     const documentToSave = { ...formValues, published: publishing };
+
     if (!isNew) documentToSave.id = params.id;
     mutation.mutate(
       { ...documentToSave },
       {
         onSuccess: (data) => {
-          addSuccessAlert(t(`${publishing ? t('published') : t('savedAsDraft')}`));
+          addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
           setIsLoading(false);
-          if (!assigning)
-            history.push(`/private/content-creator${publishing ? '' : '/?fromDraft=1'}`);
-          else history.push(`/private/content-creator/${data.document.assignable}/assign`);
+          if (!assigning) {
+            // history.push(`/private/content-creator${publishing ? '' : '/?fromDraft=1'}`);
+            history.push(
+              `/private/leebrary/assignables.content-creator/list${
+                publishing ? '' : '/?activeTab=draft'
+              }`
+            );
+          } else history.push(`/private/content-creator/${data.document.assignable}/assign`);
         },
         onError: (e) => {
           addErrorAlert(e);

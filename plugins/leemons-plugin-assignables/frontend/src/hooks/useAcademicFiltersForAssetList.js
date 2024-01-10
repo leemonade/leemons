@@ -239,7 +239,7 @@ export function useAcademicFiltersForAssetList({ hideProgramSelect, useLabels } 
     filterComponents: ({ loading }) => (
       <SubjectFilters
         hideProgramSelect={hideProgramSelect}
-        useLabels
+        useLabels={useLabels}
         onChange={onChange}
         loading={loading}
       />

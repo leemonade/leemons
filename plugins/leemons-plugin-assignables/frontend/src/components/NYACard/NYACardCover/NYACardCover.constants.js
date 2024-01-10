@@ -8,6 +8,9 @@ export const NYACARD_COVER_DEFAULT_PROPS = {
   fileIcon: null,
   variantIcon: null,
   fileType: null,
+  totalActivities: 0,
+  submitedActivities: 0,
+  localizations: {},
 };
 export const NYACARD_COVER_PROP_TYPES = {
   name: PropTypes.string,
@@ -16,12 +19,11 @@ export const NYACARD_COVER_PROP_TYPES = {
   color: PropTypes.string,
   blur: PropTypes.number,
   fileIcon: PropTypes.node,
-  // deadlineProps: PropTypes.shape(LIBRARY_CARD_DEADLINE_PROP_TYPES),
+  totalActivities: PropTypes.number,
+  submitedActivities: PropTypes.number,
   parentHovered: PropTypes.bool,
-  // menuItems: PropTypes.arrayOf(PropTypes.shape(LIBRARY_CARD_MENU_ITEM)),
   dashboard: PropTypes.bool,
-  // subject: SUBJECT_PROPS,
   isNew: PropTypes.bool,
-  // role: PropTypes.oneOf(LIBRARYCARD_ASSIGMENT_ROLES),
   badge: PropTypes.string,
+  localizations: PropTypes.shape({}),
 };

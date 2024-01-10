@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/cognitive-complexity */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -16,9 +16,9 @@ import { NYACardStyles } from './NYACard.styles';
 import { NYACardBody } from './NYCardBody';
 import { NYACardFooter } from './NYACardFooter';
 import { NYACardSkeleton } from './NYACardSkeleton';
-import { NYACARD_PROP_TYPES } from './NYACard.constants';
+import { NYACARD_PROP_TYPES, NYACARD_DEFAULT_PROPS } from './NYACard.constants';
 import { EvaluationCard } from '../EvaluationCard';
-import EvaluationCardSkeleton from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
+import { EvaluationCardSkeleton } from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -397,12 +397,19 @@ function LinkContainer({ to, disabled, children }) {
   );
 }
 
-const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivityCarousel }) => {
+const NYACard = ({
+  instance,
+  showSubject,
+  labels,
+  classData,
+  clickable,
+  isActivityCarousel,
+  isTeacherSyllabus,
+}) => {
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
-  const [isHovered, setIsHovered] = useState(false);
-  const { classes } = NYACardStyles({ isHovered }, { name: 'NYACard' });
+  const { classes } = NYACardStyles({ clickable }, { name: 'NYACard' });
   const query = useMemo(
     () => ({
       classData,
@@ -425,11 +432,8 @@ const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivi
   if (isTeacher && isActivityCarousel)
     return (
       <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
-        <Box onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+        <Box>
           <EvaluationCard
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            isHovered={isHovered}
             instance={preparedInstance}
             localizations={localizations}
             variantTitle={
@@ -467,15 +471,16 @@ const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivi
           height: '100%',
         }}
       >
-        <Box
-          className={classes.root}
-          onMouseEnter={clickable ? () => setIsHovered(true) : undefined}
-          onMouseLeave={clickable ? () => setIsHovered(false) : undefined}
-        >
+        <Box className={classes.root}>
           <NYACardCover
             {...preparedInstance?.asset}
             variantTitle={preparedInstance?.assignable?.role}
             topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
+            isTeacherSyllabus={isTeacherSyllabus}
+            totalActivities={10}
+            submitedActivities={5}
+            localizations={localizations}
+            instance={preparedInstance}
           />
           <NYACardBody
             {...preparedInstance?.asset}
@@ -487,6 +492,7 @@ const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivi
             totalActivities={10}
             submitedActivities={5}
             showSubject={showSubject}
+            isTeacherSyllabus={isTeacherSyllabus}
           />
           <NYACardFooter
             {...preparedInstance?.asset}
@@ -522,6 +528,7 @@ const NYACard = ({ instance, showSubject, labels, classData, clickable, isActivi
 };
 
 NYACard.propTypes = NYACARD_PROP_TYPES;
+NYACard.defaultProps = NYACARD_DEFAULT_PROPS;
 
 export { NYACard };
 export default NYACard;

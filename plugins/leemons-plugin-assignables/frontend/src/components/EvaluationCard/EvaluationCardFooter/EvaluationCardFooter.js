@@ -28,7 +28,6 @@ const EvaluationCardFooter = ({
     Array.isArray(students) &&
     students.length > 0 &&
     students.flatMap((student) => student.chatKeys);
-
   return (
     <Box className={cx(classes.root, className)} style={style}>
       {variantIcon ? (

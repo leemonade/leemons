@@ -6,7 +6,7 @@ import {
   getBoxShadowFromToken,
 } from '@bubbles-ui/components';
 
-export const LibraryCardStyles = createStyles((theme, { fullHeight, isHovered }) => {
+export const LibraryCardStyles = createStyles((theme, { fullHeight, isCreationPreview }) => {
   const cardTheme = theme.other.cardLibrary;
   const cardShadow = getBoxShadowFromToken(cardTheme.shadow.hover);
 
@@ -25,7 +25,9 @@ export const LibraryCardStyles = createStyles((theme, { fullHeight, isHovered })
       minWidth: pxToRem(264),
       maxWidth: pxToRem(330),
       minHeight: pxToRem(396),
-      boxShadow: isHovered ? cardShadow.boxShadow : 'none',
+      '&:hover': {
+        boxShadow: isCreationPreview ? 'none' : cardShadow.boxShadow,
+      },
     },
   };
 });

@@ -9,7 +9,7 @@ export function getMultiClassData(labels) {
     subjectName: labels?.multiSubject,
     groupName: labels?.groupName || labels?.multiSubject,
     name: labels?.groupName || labels?.multiSubject,
-    icon: '/public/assets/svgs/module-three.svg',
+    icon: '/public/assignables/module-three.svg',
     color: '#67728E',
   };
 }

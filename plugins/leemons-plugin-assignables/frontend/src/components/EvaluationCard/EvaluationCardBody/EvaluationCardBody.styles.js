@@ -4,7 +4,7 @@ const EvaluationCardBodyStyles = createStyles((theme) => {
   const { cardEvaluation } = theme.other;
   return {
     root: {
-      heigth: '100%',
+      minHeight: '100%',
       minWidth: pxToRem(324),
       maxWidth: pxToRem(372),
       width: 372,

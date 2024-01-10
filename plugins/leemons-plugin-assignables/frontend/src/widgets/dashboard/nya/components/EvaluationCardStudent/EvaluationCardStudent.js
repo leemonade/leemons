@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Text, TextClamp } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
 import { ClassroomItemDisplay } from '@academic-portfolio/components';
@@ -16,9 +16,6 @@ export default function EvaluationCardStudent({ assignation }) {
   const { instance } = assignation;
   const { assignable } = instance;
   const { asset, roleDetails } = assignable;
-
-  const [isHovered, setIsHovered] = useState(false);
-
   const score = React.useMemo(() => {
     if (!instance.requiresScoring) {
       return null;
@@ -30,7 +27,7 @@ export default function EvaluationCardStudent({ assignation }) {
   }, [assignation.grades, instance.requiresScoring]);
   const color = asset?.color;
 
-  const { classes } = useEvaluationCardStyles({ isHovered, color });
+  const { classes } = useEvaluationCardStyles({ color });
   const dateDelivered =
     instance?.dates?.deadline && new Date(instance?.dates?.deadline).toLocaleDateString();
 
@@ -42,11 +39,7 @@ export default function EvaluationCardStudent({ assignation }) {
         ?.replace(':user', assignation.user)}
       style={{ textDecoration: 'none' }}
     >
-      <Box
-        className={classes.root}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+      <Box className={classes.root}>
         <Box className={classes.color} />
         <Box className={classes.leftContainer}>
           <Box className={classes.topLeftSection}>

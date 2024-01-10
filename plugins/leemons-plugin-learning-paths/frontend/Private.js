@@ -9,6 +9,7 @@ import pMinDelay from 'p-min-delay';
 import { goLoginPage } from '@users/navigate';
 import { useSearchParams } from '@common';
 import { useSession } from '@users/session';
+import { ModuleJourney } from '@learning-paths/pages/private/ModuleJourney/ModuleJourney';
 
 const Library = loadable(() => pMinDelay(import('./src/pages/private/Library'), 1000));
 const ModuleSetupPage = loadable(() =>
@@ -22,6 +23,10 @@ const ModuleDashboardPage = loadable(() =>
   pMinDelay(import('./src/pages/private/ModuleDashboardPage'), 1000)
 );
 
+const ModuleJourneyPage = loadable(() =>
+  pMinDelay(import('./src/pages/private/ModuleJourney/ModuleJourney'), 1000)
+);
+
 function Fallback() {
   return <LoadingOverlay visible />;
 }
@@ -30,7 +35,6 @@ export default function Private() {
   const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
   const query = useSearchParams();
-
   return (
     <Switch>
       {/* MODULES */}
@@ -55,6 +59,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/modules/dashboard/:id`}>
         <ModuleDashboardPage session={session} fallback={<Fallback />} />
+      </Route>
+      <Route path={`${path}/modules/journey/:id`}>
+        <ModuleJourneyPage session={session} fallback={<Fallback />} />
       </Route>
     </Switch>
   );

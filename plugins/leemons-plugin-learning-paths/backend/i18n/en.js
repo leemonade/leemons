@@ -150,8 +150,14 @@ module.exports = {
       start: 'Start',
       continue: 'Continue',
       preview: 'Preview',
+      viewEvaluation: 'View evaluation',
+      notAvailable: 'Unavailable',
+      forEvaluate: 'For evaluation',
+      viewProgress: 'View progress',
+      viewReport: 'View report',
     },
     resources: 'Resources',
+    students: 'Students',
   },
   modulesTab: {
     tabName: 'Modules',
@@ -161,5 +167,23 @@ module.exports = {
     activities: 'Actividades',
     name: 'Nombre',
     Type: 'Tipo',
+  },
+  moduleCardBadge: {
+    options: {
+      nonEvaluable: 'Non-evaluable',
+      calificable: 'Qualifiable',
+      punctuable: 'Punctuable',
+      feedbackOnly: 'Comments only',
+      feedback: 'Feedback',
+      feedbackAvailable: 'Feedback available',
+    },
+  },
+  gradeState: {
+    evaluated: 'Evaluated',
+    delivered: 'Delivered',
+  },
+  moduleJourney: {
+    introduction: 'Introduction',
+    resources: 'Resources',
   },
 };

@@ -5,13 +5,14 @@ export const NYACARD_PROP_TYPES = {
   showSubject: PropTypes.bool,
   labels: PropTypes.object,
   classData: PropTypes.array,
+  isTeacherSyllabus: PropTypes.bool,
   clickable: PropTypes.bool,
 };
 
 export const NYACARD_DEFAULT_PROPS = {
   instance: {},
   showSubject: false,
-  labels: {},
   classData: [],
+  isTeacherSyllabus: false,
   clickable: true,
 };

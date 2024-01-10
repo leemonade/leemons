@@ -147,11 +147,17 @@ module.exports = {
     activities: 'Actividades',
     buttons: {
       review: 'Revisar',
-      start: 'Comenzar',
+      start: 'Empezar',
       continue: 'Continuar',
       preview: 'Visualizar',
+      viewEvaluation: 'Ver evaluación',
+      notAvailable: 'No disponible',
+      forEvaluate: 'Para evaluar',
+      viewProgress: 'Ver progreso',
+      viewReport: 'Ver informe',
     },
     resources: 'Recursos',
+    students: 'Alumnos',
   },
   modulesTab: {
     tabName: 'Temario',
@@ -161,5 +167,23 @@ module.exports = {
     activities: 'Actividades',
     name: 'Nombre',
     Type: 'Tipo',
+  },
+  moduleCardBadge: {
+    options: {
+      nonEvaluable: 'No evaluable',
+      calificable: 'Calificable',
+      punctuable: 'Puntuable',
+      feedbackOnly: 'Solo comentarios',
+      feedback: 'Feedback',
+      feedbackAvailable: 'Feedback disponible',
+    },
+  },
+  gradeState: {
+    evaluated: 'Evaluada',
+    delivered: 'Entregada',
+  },
+  moduleJourney: {
+    introduction: 'Introducción',
+    resources: 'Recursos',
   },
 };

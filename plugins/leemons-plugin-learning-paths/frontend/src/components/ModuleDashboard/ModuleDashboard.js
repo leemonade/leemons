@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, createStyles, HtmlText, Loader, Text } from '@bubbles-ui/components';
-import { capitalize, get, head, map, omit, pick, sortBy, tail } from 'lodash';
+import { Box, createStyles, Loader } from '@bubbles-ui/components';
+import { capitalize, get, head, map, sortBy, tail } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
@@ -191,12 +191,12 @@ function useHeaderData(module) {
       activityDates: alwaysAvailable
         ? null
         : {
-            startLabel: 'Desde',
-            endLabel: 'Hasta',
-            hourLabel: 'Hora',
-            startDate: new Date(dates?.start),
-            endDate: new Date(dates?.deadline),
-          },
+          startLabel: 'Desde',
+          endLabel: 'Hasta',
+          hourLabel: 'Hora',
+          startDate: new Date(dates?.start),
+          endDate: new Date(dates?.deadline),
+        },
     },
   };
 }
@@ -251,17 +251,28 @@ export function ModuleDashboardBody({
   preview,
 }) {
   const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
-
+  const [t] = useTranslateLoader(prefixPN('moduleJourney'));
+  const moduleColor = module?.assignable?.asset?.color;
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
-
+  const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   return (
     <Box className={classes.body}>
       <Box className={classes.rootContainer}>
-        <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
-        {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>}
+        {/* <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
+        {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>} */}
         <Box className={classes.activitiesList}>
+          <DashboardCard
+            introductionCard
+            assetNumber={t('introduction')}
+            statement={module?.metadata?.statement}
+            cover={module?.assignable?.asset?.cover}
+            localizations={localizations}
+            emptyIcon={module?.assignable?.roleDetails?.icon}
+            fileType={module?.assignable?.roleDetails?.name}
+            introductionLink={introductionLink}
+          />
           {sortBy(
-            activities?.map((activity) => ({
+            activities?.map((activity, index) => ({
               comp: (
                 <DashboardCard
                   isBlocked={!!blockedActivities[activity?.id]}
@@ -270,6 +281,8 @@ export function ModuleDashboardBody({
                   assignation={assignationsById[activity?.id]}
                   key={activity?.id}
                   preview={preview}
+                  assetNumber={index + 1}
+                  moduleColor={moduleColor}
                 />
               ),
               createdAt: activitiesById[activity?.id].createdAt,

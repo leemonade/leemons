@@ -76,6 +76,7 @@ const EvaluationCardRightElementStyles = createStyles((theme) => {
     pendigLabelContainer: {
       width: 100,
       textAlign: 'center',
+      lineHeight: '16px',
     },
     pendingLabel: {
       ...cardEvaluation.content.typo.sm,

@@ -6,15 +6,16 @@ const spaceBetween = 'space-between';
 export const NYACardCoverStyles = createStyles(
   (theme, { color, height, parentHovered, subjectColor, showMenu }) => {
     const isParentHovered = parentHovered ? 'visible' : 'hidden';
-    const buttonIconCardStyles = theme.other.buttonIconCard;
+    const { buttonIconCard, cardEvaluation, cardAssignments } = theme.other;
     const focusDefaultBorder = theme.other.global.focus['default-border'];
+    const borderRadiusRoot = '4px 2px 0 0';
     return {
       root: {
         ...getFontExpressive(theme.fontSizes['2']),
         position: 'relative',
         height,
         width: '100%',
-        borderRadius: '4px 2px 0 0',
+        borderRadius: borderRadiusRoot,
       },
       titleWrapper: {
         padding: pxToRem(12),
@@ -48,7 +49,7 @@ export const NYACardCoverStyles = createStyles(
         paddingInline: pxToRem(8),
       },
       menuIcon: {
-        color: buttonIconCardStyles.content.color.primary.default,
+        color: buttonIconCard.content.color.primary.default,
         zIndex: 10,
         position: 'absolute',
         marginBottom: 0,
@@ -83,10 +84,10 @@ export const NYACardCoverStyles = createStyles(
         alignItems: 'flex-end',
         backgroundColor: theme.colors.interactive03h,
         padding: pxToRem(16),
-        borderRadius: '4px 2px 0 0',
+        borderRadius: borderRadiusRoot,
       },
       menuItem: {
-        backgroundColor: buttonIconCardStyles.content.color.primary.default,
+        backgroundColor: buttonIconCard.content.color.primary.default,
       },
       ellipsisBox: {
         position: 'relative',
@@ -99,24 +100,24 @@ export const NYACardCoverStyles = createStyles(
           height: '100%',
           border: `${focusDefaultBorder.width} solid transparent`,
           backgroundColor: !showMenu
-            ? buttonIconCardStyles.background.color.primary.default
-            : buttonIconCardStyles.background.color.primary.down,
+            ? buttonIconCard.background.color.primary.default
+            : buttonIconCard.background.color.primary.down,
 
           borderRadius: !showMenu
-            ? buttonIconCardStyles.border.radius.md
-            : `${buttonIconCardStyles.border.radius.md} ${buttonIconCardStyles.border.radius.md} 0px 0px`,
+            ? buttonIconCard.border.radius.md
+            : `${buttonIconCard.border.radius.md} ${buttonIconCard.border.radius.md} 0px 0px`,
 
           backdropFilter: 'blur(2px)',
           zIndex: -10,
         },
         '&:hover::before': {
-          backgroundColor: buttonIconCardStyles.background.color.primary.hover,
+          backgroundColor: buttonIconCard.background.color.primary.hover,
         },
         '&:focus-visible': {
           outline: 'none',
-          backgroundColor: buttonIconCardStyles.background.color.primary.hover,
+          backgroundColor: buttonIconCard.background.color.primary.hover,
           border: `${focusDefaultBorder.width} ${focusDefaultBorder.style} ${focusDefaultBorder.color}`,
-          borderRadius: buttonIconCardStyles.border.radius.md,
+          borderRadius: buttonIconCard.border.radius.md,
         },
       },
 
@@ -138,6 +139,46 @@ export const NYACardCoverStyles = createStyles(
         img: {
           filter: 'brightness(0) invert(1)',
         },
+      },
+      rootTS: {
+        position: 'relative',
+        height,
+        width: '100%',
+        borderRadius: borderRadiusRoot,
+        backgroundColor: cardAssignments.background.color.top,
+      },
+      commonContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%',
+        gap: pxToRem(8),
+      },
+      submitedNumber: {
+        ...cardEvaluation.content.typo['sm--medium'],
+        fontSize: pxToRem(48),
+        fontWeight: 500,
+        lineHeight: '40px',
+        letterSpacing: '-0.96px',
+        color: cardAssignments.content.color.subje,
+      },
+      separator: {
+        ...cardEvaluation.content.typo['sm--medium'],
+        fontSize: pxToRem(24),
+        fontStyle: 'normal',
+        fontWeight: 500,
+        lineHeight: '28px',
+        color: cardAssignments.content.color.subje,
+      },
+      pendigLabelContainer: {
+        width: 100,
+        textAlign: 'center',
+      },
+      pendingLabel: {
+        ...cardEvaluation.content.typo.sm,
+        color: cardAssignments.content.color.subje,
       },
     };
   }

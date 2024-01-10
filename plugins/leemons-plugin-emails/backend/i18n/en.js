@@ -27,5 +27,6 @@ module.exports = {
     ndays: '{n} days',
     nhours: '{n} hours',
     settingsSaved: 'Settings saved',
+    cancel: 'Cancel',
   },
 };

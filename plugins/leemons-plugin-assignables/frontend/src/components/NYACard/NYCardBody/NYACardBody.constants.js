@@ -11,6 +11,7 @@ export const NYACARD_BODY_DEFAULT_PROPS = {
   role: 'teacher',
   isNew: false,
   localizations: {},
+  isTeacherSyllabus: false,
 };
 export const NYACARD_BODY_PROP_TYPES = {
   tagline: PropTypes.string,
@@ -18,6 +19,7 @@ export const NYACARD_BODY_PROP_TYPES = {
   metadata: PropTypes.arrayOf(PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })),
   tags: PropTypes.arrayOf(PropTypes.string),
   locale: PropTypes.string,
+  isTeacherSyllabus: PropTypes.bool,
   // variant: PropTypes.oneOf(LIBRARYCARD_VARIANTS),
   // assigment: PropTypes.shape(LIBRARYCARD_ASSIGMENT),
   truncated: PropTypes.bool,

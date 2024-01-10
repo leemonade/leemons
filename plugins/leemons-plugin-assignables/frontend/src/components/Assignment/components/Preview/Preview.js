@@ -25,7 +25,7 @@ export default function Preview({ assignable, localizations }) {
 
   return (
     <Container title={localizations?.title}>
-      <NYACard instance={instance} showSubject />
+      <NYACard instance={instance} clickable={false} showSubject />
     </Container>
   );
 }

@@ -186,12 +186,13 @@ const AssetPage = () => {
           ? form.formState.dirtyFields.file
           : form.formState.dirtyFields.cover;
 
-        // If Cover doesn't change, set to original value
+        // If Cover doesn't change, set it to the original value
         if (isString(cover) && cover.indexOf('http') === 0 && asset && needsOldCover) {
           assetData.cover = asset.original?.cover?.id;
         }
 
         if (editing) assetData.id = params.id;
+
 
         const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key);
         const response = await getAssetRequest(newAsset.id);
@@ -202,7 +203,11 @@ const AssetPage = () => {
         );
         queryClient.invalidateQueries(allAssetsKey);
         queryClient.refetchQueries();
-        history.goBack();
+
+        // Redirects to the correspnding category page
+        if (response.asset?.fileType === 'bookmark')
+          history.push('/private/leebrary/bookmarks/list');
+        else history.push('/private/leebrary/media-files/list');
       } catch (err) {
         setLoading(false);
         addErrorAlert(getErrorMessage(err));

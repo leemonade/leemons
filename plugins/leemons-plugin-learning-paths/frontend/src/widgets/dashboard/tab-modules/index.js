@@ -61,12 +61,21 @@ function useSwiperProps() {
 
 function ActivitiesCarousel({ modules }) {
   const swiperProps = useSwiperProps();
+  const isTeacher = useIsTeacher();
+
   return (
-    <Swiper {...swiperProps}>
-      {modules.map((module) => (
-        <NYACard key={module.id} instance={module} showSubject={false} />
-      ))}
-    </Swiper>
+    <Box>
+      <Swiper {...swiperProps}>
+        {modules.map((module) => (
+          <NYACard
+            key={module.id}
+            instance={module}
+            showSubject={false}
+            isTeacherSyllabus={isTeacher}
+          />
+        ))}
+      </Swiper>
+    </Box>
   );
 }
 
