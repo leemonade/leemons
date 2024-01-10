@@ -1,5 +1,5 @@
 import { capitalize, isEmpty, isNil, isString, toLower } from 'lodash';
-import { getAuthorizationTokenForAllCenters } from '@users/session';
+import { getAuthorizationTokenForAllCenters, getCookieToken } from '@users/session';
 import { prepareAssetType } from './prepareAssetType';
 
 export function getAssetUrl(assetID) {
@@ -14,7 +14,11 @@ export function getFileUrl(fileID, segment, isPublic = false) {
     return '';
   }
 
-  const authTokens = getAuthorizationTokenForAllCenters();
+  let authTokens = getAuthorizationTokenForAllCenters();
+  if (isEmpty(JSON.parse(authTokens))) {
+    const userToken = getCookieToken();
+    authTokens = JSON.stringify([userToken]);
+  }
   const urlSuffixSegment = segment ? `/${segment}` : '';
 
   if (fileID.startsWith('http')) {

@@ -25,7 +25,21 @@ const getFileRest = async ({ ctx, payload }) => {
     throw new LeemonsError(ctx, { message: 'Id is required', httpStatusCode: 400 });
   }
 
-  const asset = await getByFile({ fileId: id, checkPermissions: !onlyPublic, onlyPublic, ctx });
+  let checkPermissions = !onlyPublic;
+  if (checkPermissions) {
+    const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
+      userId: ctx.meta.userSession.id,
+    });
+
+    checkPermissions = !isSuperAdmin;
+  }
+
+  const asset = await getByFile({
+    fileId: id,
+    checkPermissions,
+    onlyPublic,
+    ctx,
+  });
   const canAccess = !_.isEmpty(asset);
 
   if (!canAccess) {

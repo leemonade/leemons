@@ -110,31 +110,25 @@ export default function MainMenu({ subNavWidth, ...props }) {
   const sessionMenuData = React.useMemo(() => {
     const result = [];
     if (!session?.isSuperAdmin) {
-      result.push(
-        ...[
-          {
-            id: 'menu-1',
-            label: t('accountInfo'),
-            order: 0,
-            url: '/private/users/detail',
-            window: 'SELF',
-            disabled: null,
-          },
-        ].concat(
-          store.onlyOneProfile
-            ? []
-            : [
-                {
-                  id: 'menu-2',
-                  label: t('switchProfile'),
-                  order: 1,
-                  url: '/private/users/select-profile',
-                  window: 'BLANK',
-                  disabled: null,
-                },
-              ]
-        )
-      );
+      result.push({
+        id: 'menu-1',
+        label: t('accountInfo'),
+        order: 0,
+        url: '/private/users/detail',
+        window: 'SELF',
+        disabled: null,
+      });
+    }
+
+    if (!store.onlyOneProfile) {
+      result.push({
+        id: 'menu-2',
+        label: t('switchProfile'),
+        order: 1,
+        url: '/private/users/select-profile',
+        window: 'BLANK',
+        disabled: null,
+      });
     }
 
     result.push(
