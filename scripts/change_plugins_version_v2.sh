@@ -54,9 +54,9 @@ if [ ${#PLUGINS[@]} -gt 0 ]; then
     # Construye la nueva versión
     new_version="$major.$minor.$patch"
     # Actualiza la versión en el package.json del plugin
-    sed -i "" "s|\"version\": \"[^\"]*\"|\"version\": \"$new_version\"|g" ./package.json
+    sed -i "s|\"version\": \"[^\"]*\"|\"version\": \"$new_version\"|g" ./package.json
     # Actualiza la versión del plugin en apps/dev/package.json
-    sed -i "" "s|\"$plugin\": \"[^\"]*\"|\"$plugin\": \"$new_version\"|g" $BASE_PATH/apps/dev/package.json
+    sed -i "s|\"$plugin\": \"[^\"]*\"|\"$plugin\": \"$new_version\"|g" $BASE_PATH/apps/dev/package.json
 
     # Vuelve al directorio original
     cd - > /dev/null
