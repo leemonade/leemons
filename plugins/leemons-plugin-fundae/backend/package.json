@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-fundae",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Leemons fundae plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",

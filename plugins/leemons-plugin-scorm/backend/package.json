@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-scorm",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Leemons scorm plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
