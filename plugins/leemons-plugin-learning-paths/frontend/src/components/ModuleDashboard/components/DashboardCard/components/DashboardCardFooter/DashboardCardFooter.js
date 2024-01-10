@@ -20,21 +20,15 @@ export function useStudentState({ assignation = {} }) {
     return {};
   }
 
-  const {
-    instance,
-    timestamps: { start, end },
-    grades,
-  } = assignation;
-  const {
-    alwaysAvailable,
-    dates: { deadline: _deadline, closed },
-  } = instance;
+  const { instance, timestamps: { start = null, end = null } = {}, grades } = assignation;
+  const { alwaysAvailable, dates: { deadline: _deadline = null, closed = null } = {} } =
+    instance || {};
 
   const now = dayjs();
-  const deadline = dayjs(_deadline || null);
-  const closeDate = dayjs(closed || null);
-  const startTimestamp = dayjs(start || null);
-  const endTimestamp = dayjs(end || null);
+  const deadline = dayjs(_deadline);
+  const closeDate = dayjs(closed);
+  const startTimestamp = dayjs(start);
+  const endTimestamp = dayjs(end);
 
   const isFinished =
     (alwaysAvailable && closeDate.isValid()) ||
