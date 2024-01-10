@@ -18,11 +18,10 @@ on:
       GIT_TAG:
         required: true
         type: string
-      GH_PAT:
-        required: true
-        type: string
     secrets:
       NPM_TOKEN:
+        required: true
+      GH_PAT:
         required: true
 
 jobs:

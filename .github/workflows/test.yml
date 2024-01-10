@@ -22,7 +22,6 @@ jobs:
     with:
       NPM_TAG: dev
       GIT_TAG: ${{ github.ref }}
-      GH_PAT: ${{ secrets.GH_PAT }}
       GIT_BRANCH: microservices/dev
       PACKAGES: ${{ needs.get_packages_and_plugins_modified.outputs.packages }}
 
