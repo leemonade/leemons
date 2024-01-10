@@ -619,7 +619,6 @@ function AssetList({
     if (!showThumbnails && store.layout === 'grid') {
       return {
         itemRender: (p) => (
-          // console.log('p', p);
           <Box>
             <CardWrapper
               {...p}
