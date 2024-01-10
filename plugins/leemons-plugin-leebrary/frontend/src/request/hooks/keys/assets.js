@@ -7,7 +7,7 @@ export const allAssetsKey = [
 
 export const getAssetsKey = (ids, filters) => [
   {
-    ...allAssetsKey,
+    ...allAssetsKey[0],
     action: 'get',
     ids,
     filters,

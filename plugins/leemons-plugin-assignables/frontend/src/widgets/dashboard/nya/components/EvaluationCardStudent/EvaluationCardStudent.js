@@ -16,7 +16,6 @@ export default function EvaluationCardStudent({ assignation }) {
   const { instance } = assignation;
   const { assignable } = instance;
   const { asset, roleDetails } = assignable;
-
   const score = React.useMemo(() => {
     if (!instance.requiresScoring) {
       return null;

@@ -9,13 +9,41 @@ import {
   Button,
 } from '@bubbles-ui/components';
 import ActivityHeader from '@assignables/components/ActivityHeader/index';
+import { sortBy } from 'lodash';
+import { useIsTeacher } from '@academic-portfolio/hooks';
+import { Link } from 'react-router-dom/cjs/react-router-dom';
 import { Introduction } from './steps/Introduction';
 
 const ModuleJourney = () => {
+  const isTeacher = useIsTeacher();
   const { id } = useParams();
   const scrollRef = useRef();
   const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
     useModuleData(id);
+
+  const orderedActivities = sortBy(activitiesById, 'createdAt');
+  const assignablesURL = (
+    orderedActivities[0]?.assignable?.roleDetails?.dashboardURL ||
+    '/private/assignables/details/:id'
+  ).replace(':id', orderedActivities[0]?.id);
+  const activityUrl = orderedActivities[0]?.assignable?.roleDetails?.studentDetailUrl
+    ?.replace(':id', orderedActivities[0]?.id)
+    ?.replace(':user', moduleAssignation?.user);
+
+  const evaluationUrl = orderedActivities[0]?.assignable?.roleDetails?.evaluationDetailUrl
+    ?.replace(':id', orderedActivities[0]?.id)
+    ?.replace(':user', moduleAssignation?.user);
+
+  const handleButtonUrl = () => {
+    if (isTeacher) {
+      return assignablesURL;
+    }
+    if (moduleAssignation?.finished) {
+      return evaluationUrl;
+    }
+    return activityUrl;
+  };
+
   return (
     <TotalLayoutContainer
       ref={scrollRef}
@@ -26,7 +54,11 @@ const ModuleJourney = () => {
           Footer={
             <TotalLayoutFooterContainer
               scrollRef={scrollRef}
-              rightZone={<Button>Siguiente actividad</Button>}
+              rightZone={
+                <Link to={handleButtonUrl()}>
+                  <Button>Siguiente actividad</Button>
+                </Link>
+              }
               fixed
             />
           }
