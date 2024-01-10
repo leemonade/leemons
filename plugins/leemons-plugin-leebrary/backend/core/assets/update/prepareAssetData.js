@@ -2,6 +2,7 @@
 const { isArray, map } = require('lodash');
 const { CATEGORIES } = require('../../../config/constants');
 
+// ! Deprecated function as subjects accepts no longer an array of objects but an array of id strings
 /**
  * Prepares the asset data for further processing.
  *

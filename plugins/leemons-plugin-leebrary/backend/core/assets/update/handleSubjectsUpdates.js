@@ -14,7 +14,7 @@ async function handleSubjectsUpdates({ assetId, subjects, diff, ctx }) {
     await ctx.tx.db.AssetsSubjects.deleteMany({ asset: assetId });
     if (subjects?.length) {
       await Promise.all(
-        map(subjects, (item) => ctx.tx.db.AssetsSubjects.create({ asset: assetId, ...item }))
+        map(subjects, (item) => ctx.tx.db.AssetsSubjects.create({ asset: assetId, subject: item }))
       );
     }
   }
