@@ -99,7 +99,7 @@ function useActivities(activities) {
 function useRoles() {
   const [, translations] = useTranslateLoader(prefixPN('roles'));
 
-  const roles = React.useMemo(() => {
+  return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = _.get(res, prefixPN('roles'));
@@ -115,8 +115,6 @@ function useRoles() {
 
     return [];
   }, [translations]);
-
-  return roles;
 }
 
 const StudentActivitiesStyles = createStyles((theme) => ({
@@ -186,8 +184,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
   const getLetterScore = (score) => {
     if (!evaluationSystem) return null;
     if (!useLetterScore) return null;
-    const letter = evaluationSystem.scales.find((scale) => scale.number === score)?.letter;
-    return letter;
+    return evaluationSystem.scales.find((scale) => scale.number === score)?.letter;
   };
 
   const getAverageScore = (klass, classActivities) => {
@@ -195,7 +192,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce((total, next) => total + next.score.number, 0) /
-        classActivities.length || 0;
+      classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 
@@ -243,7 +240,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const classActivitiesRaw = filteredActivities.filter((activity) =>
       activity.classes.includes(klass.id)
     );
-    const classActivities = classActivitiesRaw.map((activity) => {
+    return classActivitiesRaw.map((activity) => {
       const percentage = (100 / classActivitiesRaw.length).toFixed(0);
       const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
       const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
@@ -258,7 +255,6 @@ export default function StudentActivities({ klasses, filters, labels }) {
         onClick: () => window.open(activityURL, '_blank', 'noopener'),
       };
     });
-    return classActivities;
   };
 
   const renderScores = () => {

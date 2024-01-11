@@ -10,7 +10,7 @@ function useHeaderLocalizations() {
   const key = prefixPN(`studentScoresPage.header.student`);
   const [, translations] = useTranslateLoader(key);
 
-  const localizations = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
 
@@ -19,22 +19,19 @@ function useHeaderLocalizations() {
 
     return {};
   }, [translations]);
-
-  return localizations;
 }
 
 export function Header() {
   const localizations = useHeaderLocalizations();
-  const { title, description } = localizations;
+  const { title } = localizations;
 
   return (
     <PageHeader
       values={{
         title,
-        description,
       }}
       icon={<PluginScoresBasicIcon />}
-      withDivider
+      fullWidth
     />
   );
 }

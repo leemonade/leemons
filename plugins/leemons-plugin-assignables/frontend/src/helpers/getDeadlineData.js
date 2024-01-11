@@ -20,7 +20,7 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
   if (diffDays > 0) {
     return {
       date: deadlineDate.toLocaleDateString(),
-      status: labels?.daysRemaining.replace('{{count}}', diffDays),
+      status: labels?.daysRemaining?.replace('{{count}}', diffDays),
     };
   }
 
@@ -32,7 +32,7 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
         hour: '2-digit',
         minute: '2-digit',
       })}`,
-      status: labels?.hoursRemaining.replace('{{count}}', diffHours),
+      status: labels?.hoursRemaining?.replace('{{count}}', diffHours),
     };
   }
 
