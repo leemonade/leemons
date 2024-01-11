@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-bulk-data",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Leemons bulk data plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",

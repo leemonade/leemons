@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-board-messages",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Leemons board messages plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",

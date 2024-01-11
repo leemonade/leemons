@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-learning-paths",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Leemons learning paths plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
