@@ -45,6 +45,9 @@ const widgets = {
       zoneKey: 'dashboard.program.left',
       key: `${permissionsPrefix}.dashboard`,
       url: 'dashboard/index',
+      properties: {
+        noPadding: true,
+      },
     },
     {
       zoneKey: `assignables.class.ongoing`,

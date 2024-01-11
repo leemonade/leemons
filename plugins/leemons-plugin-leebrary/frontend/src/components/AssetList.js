@@ -12,6 +12,7 @@ import {
   useDebouncedValue,
   useResizeObserver,
   Drawer,
+  TotalLayoutContainer,
 } from '@bubbles-ui/components';
 import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import { LibraryItem } from '@leebrary/components/LibraryItem';
@@ -114,6 +115,7 @@ function AssetList({
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
   const queryClient = useQueryClient();
+  const scrollRef = React.useRef();
 
   const multiCategorySections = ['pins', 'leebrary-recent', 'leebrary-shared']; // TODO save this in a constants file
 
@@ -764,105 +766,103 @@ function AssetList({
 
   return (
     <>
-      <Stack
-        ref={containerRef}
-        direction="column"
-        fullWidth
-        fullHeight
-        style={{ position: 'relative' }}
-      >
-        {/* SEARCH BAR ············· */}
-        <Stack
-          data-cypress-id="search-asset"
-          ref={childRef}
-          fullWidth
-          skipFlex
-          spacing={5}
-          padding={isEmbedded ? 0 : 5}
-          style={
-            isEmbedded
-              ? {
-                  flex: 0,
-                  alignItems: 'end',
-                  padding: '16px 24px',
-                  height: '72px',
-                  backgroundColor: 'white',
-                }
-              : childNotEmbeddedStyles
-          }
-        >
-          <Stack fullWidth spacing={5}>
-            {canSearch && (
-              <SearchInput
-                variant={isEmbedded ? 'default' : 'filled'}
-                onChange={(e) => {
-                  setStoreValue('searchCriteria', e);
-                }}
-                value={store.searchCriteria}
-                disabled={store.loading}
-                placeholder={t('labels.searchPlaceholder')}
-              />
-            )}
-            {!!filterComponents && filterComponents({ loading: store.loading })}
-            {!isEmpty(store.assetTypes) && canChangeType && (
-              <Select
-                data-cypress-id="search-asset-type-selector"
-                data={store.assetTypes}
-                value={store.assetType}
-                onChange={handleOnTypeChange}
-                placeholder={t('labels.resourceTypes')}
-                disabled={store.loading}
-                skipFlex
-              />
-            )}
-            {allowStatusChange && (
-              <Select
-                data={[
-                  { label: t('labels.assetStatusPublished'), value: 'published' },
-                  { label: t('labels.assetStatusDraft'), value: 'draft' },
-                ]}
-                onChange={onStatusChange}
-                value={assetStatus}
-                placeholder={t('labels.assetState')}
-                disabled={store.loading}
-                skipFlex
-              />
-            )}
-            {multiCategorySections.includes(categoryProp?.key) &&
-              categoryProp.key !== 'leebrary-shared' && (
+      <TotalLayoutContainer
+        scrollRef={scrollRef}
+        Header={
+          <Stack
+            data-cypress-id="search-asset"
+            ref={childRef}
+            fullWidth
+            skipFlex
+            spacing={5}
+            padding={isEmbedded ? 0 : 5}
+            style={
+              isEmbedded
+                ? {
+                    flex: 0,
+                    alignItems: 'end',
+                    padding: '16px 24px',
+                    height: '72px',
+                    backgroundColor: 'white',
+                  }
+                : childNotEmbeddedStyles
+            }
+          >
+            <Stack fullWidth spacing={5}>
+              {canSearch && (
+                <SearchInput
+                  variant={isEmbedded ? 'default' : 'filled'}
+                  onChange={(e) => {
+                    setStoreValue('searchCriteria', e);
+                  }}
+                  value={store.searchCriteria}
+                  disabled={store.loading}
+                  placeholder={t('labels.searchPlaceholder')}
+                />
+              )}
+              {!!filterComponents && filterComponents({ loading: store.loading })}
+              {!isEmpty(store.assetTypes) && canChangeType && (
                 <Select
-                  data={categoriesSelectData}
-                  onChange={handleOnChangeCategory}
-                  value={categoryFilter}
+                  data-cypress-id="search-asset-type-selector"
+                  data={store.assetTypes}
+                  value={store.assetType}
+                  onChange={handleOnTypeChange}
                   placeholder={t('labels.resourceTypes')}
                   disabled={store.loading}
                   skipFlex
                 />
               )}
+              {allowStatusChange && (
+                <Select
+                  data={[
+                    { label: t('labels.assetStatusPublished'), value: 'published' },
+                    { label: t('labels.assetStatusDraft'), value: 'draft' },
+                  ]}
+                  onChange={onStatusChange}
+                  value={assetStatus}
+                  placeholder={t('labels.assetState')}
+                  disabled={store.loading}
+                  skipFlex
+                />
+              )}
+              {multiCategorySections.includes(categoryProp?.key) &&
+                categoryProp.key !== 'leebrary-shared' && (
+                  <Select
+                    data={categoriesSelectData}
+                    onChange={handleOnChangeCategory}
+                    value={categoryFilter}
+                    placeholder={t('labels.resourceTypes')}
+                    disabled={store.loading}
+                    skipFlex
+                  />
+                )}
+            </Stack>
+            {canChangeLayout && (
+              <Box skipFlex>
+                <RadioGroup
+                  data={listLayouts}
+                  variant="icon"
+                  size="xs"
+                  value={store.layout}
+                  onChange={(e) => {
+                    setStoreValue('layout', e);
+                  }}
+                />
+              </Box>
+            )}
           </Stack>
-          {canChangeLayout && (
-            <Box skipFlex>
-              <RadioGroup
-                data={listLayouts}
-                variant="icon"
-                size="xs"
-                value={store.layout}
-                onChange={(e) => {
-                  setStoreValue('layout', e);
-                }}
-              />
-            </Box>
-          )}
-        </Stack>
-
+        }
+      >
         {/* PAGINATED LIST ········· */}
         <Stack
+          ref={scrollRef}
           fullHeight
           style={{
             marginTop: !isEmbedded && headerOffset,
             width: listWidth,
             transition: 'width 0.3s ease',
             padding: '0 24px',
+            overflow: 'auto',
           }}
         >
           <Box
@@ -961,7 +961,7 @@ function AssetList({
             />
           </Drawer>
         </Box>
-      </Stack>
+      </TotalLayoutContainer>
       <PermissionsDataDrawer
         size={720}
         hasBack={false}

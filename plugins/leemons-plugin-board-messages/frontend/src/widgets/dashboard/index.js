@@ -1,3 +1,4 @@
+import { Box } from '@bubbles-ui/components';
 import { BannerMessage, ModalMessage } from '@board-messages/components';
 import { addViewRequest, getActiveRequest } from '@board-messages/request';
 import { useLayout } from '@layout/context';
@@ -50,7 +51,16 @@ function Dashboard({ program }) {
 
   if (!activeMessage) return null;
 
-  return <BannerMessage message={activeMessage} />;
+  return (
+    <Box
+      sx={(theme) => ({
+        paddingTop: theme.spacing[6],
+        paddingBottom: theme.spacing[6],
+      })}
+    >
+      <BannerMessage message={activeMessage} />;
+    </Box>
+  );
 }
 
 Dashboard.propTypes = {

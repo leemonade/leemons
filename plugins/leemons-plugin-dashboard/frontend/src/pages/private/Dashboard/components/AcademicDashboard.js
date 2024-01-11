@@ -102,12 +102,12 @@ export default function AcademicDashboard({ session }) {
   // RENDER
 
   const widgets = React.useCallback(
-    ({ Component, key }) => (
+    ({ Component, key, properties }) => (
       <Box
         key={key}
         sx={(theme) => ({
-          paddingTop: theme.spacing[6],
-          paddingBottom: theme.spacing[6],
+          paddingTop: properties.noPadding ? 0 : theme.spacing[6],
+          paddingBottom: properties.noPadding ? 0 : theme.spacing[6],
         })}
       >
         <Component program={store.selectedProgram} session={session} />
