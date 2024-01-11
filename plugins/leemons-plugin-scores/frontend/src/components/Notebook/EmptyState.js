@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, createStyles, Paragraph, Title } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
+import propTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useLayout } from '@layout/context';
@@ -36,18 +37,14 @@ function useEmptyStateLocalizations(isStudent) {
   const key = `notebook.${isStudent ? 'noCourseSelected' : 'noClassSelected'}`;
   const [, translations] = useTranslateLoader(prefixPN(key));
 
-  const labels = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN(key));
-
-      return data;
+      return _.get(res, prefixPN(key));
     }
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 export function EmptyState({ isStudent }) {
   const { theme } = useLayout();
@@ -64,5 +61,9 @@ export function EmptyState({ isStudent }) {
     </Box>
   );
 }
+
+EmptyState.propTypes = {
+  isStudent: propTypes.bool,
+};
 
 export default EmptyState;

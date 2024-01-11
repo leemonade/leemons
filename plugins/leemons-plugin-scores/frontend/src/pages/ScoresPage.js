@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Notebook from '@scores/components/Notebook';
-import { Box, createStyles } from '@bubbles-ui/components';
+import {
+  TotalLayoutContainer,
+  Stack,
+  TotalLayoutStepContainer,
+  Box,
+  createStyles,
+} from '@bubbles-ui/components';
 import { Filters } from '../components/ScoresPage/Filters';
 import { Header } from '../components/ScoresPage/Header';
 
@@ -27,15 +33,30 @@ export default function ScoresPage() {
   /*
     --- State ---
   */
-  const [filters, setFilters] = React.useState({});
+  const [filters, setFilters] = useState({});
+  const [localFilters, setLocalFilters] = React.useState({});
+
+  const scrollRef = useRef();
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.headerContainer}>
-        <Header variant={'scoresPage'} />
-        <Filters onChange={setFilters} />
-      </Box>
-      <Notebook filters={filters} />
-    </Box>
+    <TotalLayoutContainer scrollRef={scrollRef} Header={<Header variant={'scoresPage'} />}>
+      <Stack
+        justifyContent="center"
+        ref={scrollRef}
+        style={{ overflow: 'auto', position: 'relative' }}
+      >
+        <TotalLayoutStepContainer>
+          <Box className={classes.headerContainer}>
+            <Filters onChange={setFilters} />
+            <Notebook
+              filters={filters}
+              localFilters={localFilters}
+              setLocalFilters={setLocalFilters}
+              scrollRef={scrollRef}
+            />
+          </Box>
+        </TotalLayoutStepContainer>
+      </Stack>
+    </TotalLayoutContainer>
   );
 }

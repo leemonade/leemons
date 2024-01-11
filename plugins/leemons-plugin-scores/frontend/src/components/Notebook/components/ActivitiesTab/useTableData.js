@@ -15,22 +15,19 @@ function useSelectedClasses(filters) {
     { enabled: !!filters.program }
   );
 
-  const selectedClasses = React.useMemo(() => {
+  return React.useMemo(() => {
     if (!sessionClasses) {
       return [];
     }
 
-    const classesMatchingFilters = sessionClasses
+    return sessionClasses
       .filter(
         (klass) =>
           (klass.subject.subject === filters.subject || klass.subject.id === filters.subject) &&
           (!filters.group || klass.groups.id === filters.group)
       )
       .map((klass) => klass.id);
-
-    return classesMatchingFilters;
   }, [sessionClasses, filters]);
-  return selectedClasses;
 }
 
 function useActivities(activities) {
@@ -110,7 +107,7 @@ function useGrades(assignableInstances) {
   });
 
   const cache = useCache();
-  const grades = React.useMemo(
+  return React.useMemo(
     () =>
       cache(
         'grades',
@@ -118,7 +115,6 @@ function useGrades(assignableInstances) {
       ),
     [evaluationSystem?.scales]
   );
-  return grades;
 }
 
 function usePeriodData({ filters, localFilters }) {
@@ -153,9 +149,9 @@ function usePeriodData({ filters, localFilters }) {
   const isLoading = !hasActivities
     ? false
     : isLoadingSearchAssignableInstances ||
-      isLoadingStudentsData ||
-      assignableInstancesAreLoading ||
-      !selectedClasses?.length;
+    isLoadingStudentsData ||
+    assignableInstancesAreLoading ||
+    !selectedClasses?.length;
 
   const activitiesData = useParsedActivities(
     isLoading,

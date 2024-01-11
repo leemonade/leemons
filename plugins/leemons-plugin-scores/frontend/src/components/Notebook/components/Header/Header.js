@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { Box, Button, createStyles } from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
+import { Box, createStyles } from '@bubbles-ui/components';
+import propTypes from 'prop-types';
 import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 
 import _ from 'lodash';
@@ -15,39 +15,22 @@ const useStyles = createStyles((theme, { isStudent }) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing[2],
-    backgroundColor: isStudent
-      ? theme.other.global.background.color.surface.muted
-      : theme.colors.interactive03h,
-    padding: isStudent ? '16px 48px' : `${theme.spacing[3]}px ${theme.spacing[5]}px`,
+    padding: isStudent ? '16px 48px' : `${theme.spacing[3]}px 0px`,
   },
   title: {
     span: isStudent
       ? {
-          color: theme.other.global.content.color.text.default,
-          ...theme.other.global.content.typo.heading.lg,
-        }
+        color: theme.other.global.content.color.text.default,
+        ...theme.other.global.content.typo.heading.lg,
+      }
       : {},
     flex: 1,
   },
 }));
 
-function useHeaderLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('notebook.header'));
-
-  return useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      return _.get(res, prefixPN('notebook.header'));
-    }
-
-    return {};
-  }, [translations]);
-}
-
 export function onScoresDownload(extension) {
   let timer;
-
+  const downloadScoresError = 'scores::download-scores-error';
   const onClearTimer = () => {
     clearTimeout(timer);
 
@@ -57,19 +40,19 @@ export function onScoresDownload(extension) {
   const onError = ({ args: [e] }) => {
     addErrorAlert(`Error downloading scores report ${e.message}`);
 
-    removeAction('scores::download-scores-error', onError);
+    removeAction(downloadScoresError, onError);
   };
 
   addAction('scores::downloaded-intercepted', onClearTimer);
-  addAction('scores::download-scores-error', onError);
+  addAction(downloadScoresError, onError);
 
   fireEvent('scores::download-scores', extension);
   timer = setTimeout(() => {
-    fireEvent('scores::download-scores-error', new Error('timeout'));
+    fireEvent(downloadScoresError, new Error('timeout'));
   }, 1000);
 }
 
-export default function Header({ filters = {}, variant, allowDownload, isStudent }) {
+export default function Header({ filters = {}, variant, isStudent }) {
   /*
     --- Styles ---
   */
@@ -78,7 +61,6 @@ export default function Header({ filters = {}, variant, allowDownload, isStudent
   /*
   --- Localizations ---
   */
-  const labels = useHeaderLocalizations();
 
   /*
   --- Data fetching ---
@@ -89,28 +71,12 @@ export default function Header({ filters = {}, variant, allowDownload, isStudent
   return (
     <Box className={classes.root}>
       <Box className={classes.title}>{title}</Box>
-      {allowDownload && (
-        <>
-          <Button
-            variant="outline"
-            size="sm"
-            position="center"
-            leftIcon={<DownloadIcon />}
-            onClick={() => onScoresDownload('xlsx')}
-          >
-            {labels.export} excel
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            position="center"
-            leftIcon={<DownloadIcon />}
-            onClick={() => onScoresDownload('csv')}
-          >
-            {labels.export} csv
-          </Button>
-        </>
-      )}
     </Box>
   );
 }
+
+Header.propTypes = {
+  filters: propTypes.object,
+  variant: propTypes.string,
+  isStudent: propTypes.bool,
+};

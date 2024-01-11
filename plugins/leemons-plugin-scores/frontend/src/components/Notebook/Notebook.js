@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Box, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
+import propTypes from 'prop-types';
 import _, { isEmpty } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -9,7 +10,7 @@ import ActivitiesTab from './components/ActivitiesTab';
 import { EmptyState } from './EmptyState';
 import StudentActivities from '../StudentScoresPage/StudentActivities';
 
-const useNotebookStyles = createStyles((theme) => ({
+const useNotebookStyles = createStyles(() => ({
   root: {
     width: '100%',
     boxSizing: 'border-box',
@@ -25,24 +26,26 @@ const useNotebookStyles = createStyles((theme) => ({
 
 function useNotebookLocalizations(key) {
   const [, translations] = useTranslateLoader(prefixPN(key));
-
-  const labels = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN(key));
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN(key));
     }
 
     return {};
   }, [translations]);
-
-  return labels;
 }
 
-export default function Notebook({ filters, isStudent, klasses }) {
+export default function Notebook({
+  filters,
+  localFilters,
+  setLocalFilters,
+  isStudent,
+  klasses,
+  scrollRef,
+}) {
   const { classes } = useNotebookStyles();
 
   const key = isStudent ? 'notebook.students' : 'notebook.tabs';
@@ -58,16 +61,24 @@ export default function Notebook({ filters, isStudent, klasses }) {
       {isStudent ? (
         <StudentActivities klasses={klasses} filters={filters} labels={labels} />
       ) : (
-        <Tabs className={classes.tabHeader}>
-          <TabPanel label={labels.activities.title} className={classes.tabPanel}>
-            <ActivitiesTab
-              key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
-              filters={filters}
-              labels={labels.activities}
-            />
-          </TabPanel>
-        </Tabs>
+        <ActivitiesTab
+          key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
+          filters={filters}
+          labels={labels.activities}
+          localFilters={localFilters}
+          setLocalFilters={setLocalFilters}
+          scrollRef={scrollRef}
+        />
       )}
     </Box>
   );
 }
+
+Notebook.propTypes = {
+  filters: propTypes.object,
+  localFilters: propTypes.object,
+  setLocalFilters: propTypes.func,
+  isStudent: propTypes.bool,
+  klasses: propTypes.array,
+  scrollRef: propTypes.any,
+};

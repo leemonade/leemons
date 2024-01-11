@@ -28,11 +28,9 @@ export default function PeriodsPage() {
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('periods.alerts'));
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, prefixPN('periods.alerts'));
     }
 
     return {};
@@ -73,7 +71,6 @@ export default function PeriodsPage() {
         }}
         requiredFields={['center', 'program']}
       />
-
       <PeriodList
         onRemove={(period, onSuccess, onError) =>
           mutate(

@@ -1,8 +1,8 @@
-import { Box, Loader } from '@bubbles-ui/components';
+import { Box, Loader, Stack } from '@bubbles-ui/components';
 import React from 'react';
 
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-
+import propTypes from 'prop-types';
 import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import { EmptyState } from './EmptyState';
@@ -119,8 +119,13 @@ function getStudentsScores({ activitiesData, grades, isLoading, period, class: k
   }));
 }
 
-export default function ActivitiesTab({ filters, labels }) {
-  const [localFilters, setLocalFilters] = React.useState({});
+export default function ActivitiesTab({
+  filters,
+  localFilters,
+  setLocalFilters,
+  labels,
+  scrollRef,
+}) {
   const { activitiesData, grades, isLoading } = useTableData({ filters, localFilters });
   const { mutateAsync } = useScoresMutation();
 
@@ -130,12 +135,14 @@ export default function ActivitiesTab({ filters, labels }) {
   useExcelDownloadHandler({ activitiesData, grades, filters, programData, subjectData });
 
   return (
-    <Box style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    // <Stack style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Stack direction="column" fullHeight>
       <Filters
         onChange={setLocalFilters}
         period={filters?.period}
         labels={labels?.filters}
         isPeriodSubmitted={activitiesData?.isPeriodSubmitted}
+        scrollRef={scrollRef}
         onSubmitEvaluationReport={() => {
           try {
             const scores = getStudentsScores({
@@ -168,7 +175,17 @@ export default function ActivitiesTab({ filters, labels }) {
           }
         }}
       />
+      <div>{JSON.stringify(programData)}</div>
+
       {renderView({ isLoading, activitiesData, grades, filters, labels })}
-    </Box>
+    </Stack>
   );
 }
+
+ActivitiesTab.propTypes = {
+  filters: propTypes.object,
+  localFilters: propTypes.object,
+  setLocalFilters: propTypes.func,
+  labels: propTypes.object,
+  scrollRef: propTypes.any,
+};

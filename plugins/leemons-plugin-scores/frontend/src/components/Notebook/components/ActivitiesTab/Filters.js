@@ -2,22 +2,21 @@ import React, { useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
-  Button,
   createStyles,
-  ProSwitch,
+  Switch,
   SearchInput,
   Select,
   Text,
-  Tooltip,
+  TotalLayoutFooterContainer,
+  Stack,
 } from '@bubbles-ui/components';
-import { ListEditIcon } from '@bubbles-ui/icons/outline';
 import _, { isFunction } from 'lodash';
-import { CutStarIcon } from '@bubbles-ui/icons/solid';
-
+import propTypes from 'prop-types';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useLayout } from '@layout/context';
+import { ScoresFooter } from '@scores/components/ScoresFooter';
 
 const useStyles = createStyles((theme) => ({
   filters: {
@@ -134,7 +133,14 @@ function useEvaluationReportModal({ labels: _labels, onConfirm }) {
   );
 }
 
-export function Filters({ onChange, labels, period, onSubmitEvaluationReport, isPeriodSubmitted }) {
+export function Filters({
+  onChange,
+  labels,
+  period,
+  onSubmitEvaluationReport,
+  isPeriodSubmitted,
+  scrollRef,
+}) {
   const { classes, theme, cx } = useStyles();
   const { control, watch, setValue } = useForm({
     defaultValues: {
@@ -174,92 +180,96 @@ export function Filters({ onChange, labels, period, onSubmitEvaluationReport, is
   React.useEffect(() => setValue('filterBy', 'student'), [isFinalEvaluation]);
 
   return (
-    <Box className={classes.filters}>
-      <Box className={classes.leftFilters}>
-        <Box className={cx(classes.leftFilters, classes.leftFiltersGroup)}>
+    <Stack direction="column">
+      <Box className={classes.filters}>
+        <Box className={classes.leftFilters}>
+          <Box className={cx(classes.leftFilters, classes.leftFiltersGroup)}>
+            {!isFinalEvaluation && (
+              <Controller
+                control={control}
+                name="filterBy"
+                render={({ field }) => (
+                  <>
+                    <Select
+                      placeholder={labels?.filterBy?.placeholder}
+                      style={{ width: `${filterByLength + 5}ch` }}
+                      data={filterBy}
+                      ariaLabel={labels?.filterBy?.placeholder}
+                      {...field}
+                    />
+                  </>
+                )}
+              />
+            )}
+            <Controller
+              control={control}
+              name="search"
+              render={({ field }) => {
+                const filterByValue = watch('filterBy');
+                return (
+                  <SearchInput
+                    wait={300}
+                    placeholder={labels?.search
+                      ?.replace(
+                        '{{filterBy}}',
+                        filterBy.find((item) => item.value === filterByValue).label
+                      )
+                      ?.replace(
+                        '{{filterBy.toLowerCase}}',
+                        filterBy.find((item) => item.value === filterByValue).label.toLowerCase()
+                      )}
+                    {...field}
+                  />
+                );
+              }}
+            />
+          </Box>
           {!isFinalEvaluation && (
             <Controller
               control={control}
-              name="filterBy"
+              name="showNonCalificables"
               render={({ field }) => (
-                <>
-                  <Select
-                    placeholder={labels?.filterBy?.placeholder}
-                    style={{ width: `${filterByLength + 5}ch` }}
-                    data={filterBy}
-                    ariaLabel={labels?.filterBy?.placeholder}
+                <Box>
+                  <Switch
+                    size="xs"
+                    color={theme.colors.interactive01}
+                    label={labels?.nonCalificables}
                     {...field}
+                    checked={field.value}
                   />
-                </>
+                </Box>
               )}
             />
           )}
-          <Controller
-            control={control}
-            name="search"
-            render={({ field }) => {
-              const filterByValue = watch('filterBy');
-              return (
-                <SearchInput
-                  wait={300}
-                  placeholder={labels?.search
-                    ?.replace(
-                      '{{filterBy}}',
-                      filterBy.find((item) => item.value === filterByValue).label
-                    )
-                    ?.replace(
-                      '{{filterBy.toLowerCase}}',
-                      filterBy.find((item) => item.value === filterByValue).label.toLowerCase()
-                    )}
-                  {...field}
-                />
-              );
-            }}
-          />
+          {/* <Switch size="md" label="Asessment criteria" /> */}
         </Box>
-        {!isFinalEvaluation && (
-          <Controller
-            control={control}
-            name="showNonCalificables"
-            render={({ field }) => (
-              <Box sx={{ height: 20 }}>
-                <ProSwitch
-                  icon={<CutStarIcon height={12} />}
-                  size="md"
-                  color={theme.colors.interactive01}
-                  label={labels?.nonCalificables}
-                  {...field}
-                  checked={field.value}
-                />
-              </Box>
-            )}
+      </Box>
+      <TotalLayoutFooterContainer
+        fixed
+        noFlex
+        scrollRef={scrollRef}
+        rightZone={
+          <ScoresFooter
+            allowDownload
+            showEvaluationReport={showEvaluationReport}
+            evaluationReportLabels={evaluationReportLabels}
+            evaluationType={evaluationType}
+            isPeriodSubmitted={isPeriodSubmitted}
+            showEvaluationReportModal={showEvaluationReportModal}
           />
-        )}
-        {/* <Switch size="md" label="Asessment criteria" /> */}
-      </Box>
-
-      <Box className={classes.rightSection}>
-        {showEvaluationReport ? (
-          <Button size="sm" rightIcon={<ListEditIcon />} onClick={showEvaluationReportModal}>
-            {evaluationReportLabels?.[evaluationType]?.label}
-          </Button>
-        ) : (
-          <Tooltip
-            label={
-              evaluationReportLabels?.evaluation?.disabledTooltip[
-                isPeriodSubmitted ? 'submittedPeriod' : 'invalidPeriod'
-              ]
-            }
-            position="left"
-          >
-            <Button size="sm" rightIcon={<ListEditIcon />} disabled>
-              {evaluationReportLabels?.[evaluationType]?.label}
-            </Button>
-          </Tooltip>
-        )}
-      </Box>
-    </Box>
+        }
+      />
+    </Stack>
   );
 }
+
+Filters.propTypes = {
+  onChange: propTypes.func,
+  labels: propTypes.object,
+  period: propTypes.object,
+  onSubmitEvaluationReport: propTypes.func,
+  isPeriodSubmitted: propTypes.bool,
+  scrollRef: propTypes.any,
+};
 
 export default Filters;

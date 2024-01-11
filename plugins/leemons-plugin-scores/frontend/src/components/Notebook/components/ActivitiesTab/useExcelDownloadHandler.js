@@ -11,7 +11,7 @@ import { useRoles } from '@assignables/components/Ongoing/AssignmentList/compone
 function useExcelLabels() {
   const [, translations] = useTranslateLoader(prefixPN('excel'));
 
-  const excelLabels = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return _.get(res, prefixPN('excel'));
@@ -19,7 +19,6 @@ function useExcelLabels() {
 
     return {};
   }, [translations]);
-  return excelLabels;
 }
 export function useExcelDownloadHandler({
   activitiesData,
