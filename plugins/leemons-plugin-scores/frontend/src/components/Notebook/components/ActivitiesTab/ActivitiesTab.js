@@ -175,8 +175,6 @@ export default function ActivitiesTab({
           }
         }}
       />
-      <div>{JSON.stringify(programData)}</div>
-
       {renderView({ isLoading, activitiesData, grades, filters, labels })}
     </Stack>
   );

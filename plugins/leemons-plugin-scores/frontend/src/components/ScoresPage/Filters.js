@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import {
@@ -135,11 +136,23 @@ function useSelectedClass({ classes, control, classID }) {
   }, [selectedClassId, classes]);
 }
 
-function useSelectedPeriod({ periods, control, selectedClass, finalLabel }) {
+function useSelectedPeriod({ periods, control, selectedClass, finalLabel, setValue }) {
+  const currentDate = new Date();
+  const currentPeriod = periods.find((p) => {
+    const periodStartDate = new Date(p.startDate);
+    const periodEndDate = new Date(p.endDate);
+    return periodStartDate <= currentDate && currentDate <= periodEndDate;
+  });
   const [periodSelected, startDate, endDate] = useWatch({
     control,
     name: ['period', 'startDate', 'endDate'],
   });
+  React.useEffect(() => {
+    if (currentPeriod) {
+      setValue('period', currentPeriod.id);
+    }
+  }, [setValue, currentPeriod]);
+
 
   const period = Array.isArray(periodSelected) ? periodSelected[0] : periodSelected;
 
@@ -153,7 +166,7 @@ function useSelectedPeriod({ periods, control, selectedClass, finalLabel }) {
     };
   }
 
-  // eslint-disable-next-line eqeqeq
+  // eslint-disable-next-line
   let selectedPeriod = periods.find((p) => p.id == period);
 
   if (period === 'final') {
@@ -339,21 +352,20 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
   const centers = getCentersWithToken();
   const { classes, cx } = useFiltersStyles({ classID, showProgramSelect });
   const localizations = useFiltersLocalizations();
-  const { control, watch } = useForm();
+  const { control, watch, setValue } = useForm();
   const programId = watch('program');
   const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({
     program: programId,
   });
-
   const selectedClass = useSelectedClass({ classes: classesData, control, classID });
   const { periods } = usePeriods({ selectedClass, classes: classesData });
   const periodTypes = usePeriodTypes();
-
   const selectedPeriod = useSelectedPeriod({
     periods,
     control,
     selectedClass,
     finalLabel: localizations?.period?.final,
+    setValue,
   });
 
   // Emit onChange
@@ -366,11 +378,11 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
         group: selectedClass?.groups?.id,
         startDate: selectedPeriod.startDate,
         endDate: selectedPeriod.endDate,
-
         class: selectedClass,
         isCustom: selectedPeriod.isCustom,
       });
     }
+
   }, [JSON.stringify(selectedClass), JSON.stringify(selectedPeriod)]);
 
   return (
@@ -447,7 +459,6 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
               if (!valueExists) {
                 field.onChange(null);
               }
-
               return (
                 <Select
                   ariaLabel={localizations.period?.label}
