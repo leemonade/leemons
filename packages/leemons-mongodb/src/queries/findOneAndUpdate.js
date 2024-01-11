@@ -38,7 +38,7 @@ function findOneAndUpdate({
       if (!options.hasOwnProperty('new')) {
         options.new = true;
       }
-      if (autoDeploymentID) {
+      if (autoDeploymentID && !options?.disableAutoDeploy) {
         conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
       }

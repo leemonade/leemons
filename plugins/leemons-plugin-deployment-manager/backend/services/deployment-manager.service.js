@@ -130,6 +130,22 @@ module.exports = () => ({
         return emit(ctx);
       },
     },
+    changeDeploymentDomains: {
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+        }
+        if (!ctx.params.domains) {
+          throw new LeemonsError(ctx, { message: 'Need ctx.params.domains' });
+        }
+        const domains = _.map(ctx.params.domains, (domain) => new URL(domain).hostname);
+        return ctx.db.Deployment.findOneAndUpdate(
+          { id: ctx.meta.deploymentID },
+          { domains },
+          { disableAutoDeploy: true }
+        );
+      },
+    },
   },
 
   created() {
