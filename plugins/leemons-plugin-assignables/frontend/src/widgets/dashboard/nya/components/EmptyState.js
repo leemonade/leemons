@@ -7,9 +7,9 @@ import EmptyStatePicture from '@assignables/assets/EmptyState.png';
 const useEmptyStateStyles = createStyles((theme) => ({
   root: {
     width: '100%',
-    height: 328,
+    height: 100, // 328,
     borderRadius: theme.spacing[1],
-    backgroundColor: theme.colors.uiBackground02,
+    // backgroundColor: theme.colors.uiBackground02,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

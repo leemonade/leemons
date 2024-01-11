@@ -3,7 +3,14 @@ import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
-import { Box, createStyles, LoadingOverlay, TabPanel, Tabs } from '@bubbles-ui/components';
+import {
+  Box,
+  createStyles,
+  LoadingOverlay,
+  TabPanel,
+  Tabs,
+  TotalLayoutContainer,
+} from '@bubbles-ui/components';
 // TODO: ClassroomHeaderBar, HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
 import { ClassroomHeaderBar, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
@@ -88,6 +95,9 @@ const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar
     marginLeft: theme.spacing[5],
     width: '300px',
   },
+  widgets: {
+    height: 'calc(100% - 80px)',
+  },
 }));
 
 export default function ClassDashboard({ session }) {
@@ -103,11 +113,14 @@ export default function ClassDashboard({ session }) {
     haveScrollBar: false,
   });
 
-  const { classes: styles } = Styles({
-    hideRightSide: true, // store.hideRightSide,
-    haveScrollBar: store.haveScrollBar,
-    hideStudents: store.hideStudents,
-  });
+  const { classes: styles } = Styles(
+    {
+      hideRightSide: true, // store.hideRightSide,
+      haveScrollBar: store.haveScrollBar,
+      hideStudents: store.hideStudents,
+    },
+    { name: 'ClassDashboard' }
+  );
   const [t] = useTranslateLoader(prefixPN('classDashboard'));
   const { id } = useParams();
   const isStudent = useIsStudent();
@@ -226,12 +239,6 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
 
-      let height = headerRef?.current?.clientHeight || 0;
-      if (tabsRef?.current) {
-        const el = tabsRef.current.querySelector('&>div >div');
-        height += el.clientHeight || 0;
-      }
-
       if (properties.label === 'academic-portfolio.tabDetail.label' && store.hideStudents) {
         return null;
       }
@@ -241,9 +248,7 @@ export default function ClassDashboard({ session }) {
           label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
           key={key}
         >
-          <Box style={{ height: `calc(100vh - ${height}px)`, overflow: 'auto' }}>
-            <Component {...properties} classe={store.class} session={session} />
-          </Box>
+          <Component {...properties} classe={store.class} session={session} />
         </TabPanel>
       );
     },
@@ -304,84 +309,61 @@ export default function ClassDashboard({ session }) {
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
-      <Box className={styles.leftSide}>
-        <Box className={styles.classBar} ref={headerRef}>
-          <ClassroomHeaderBar
-            labels={{
-              chat: t('chat'),
-              schedule: t('schedule'),
-              virtualClassroom: t('virtualClassroom'),
-            }}
-            onVirtualClassroomOpen={onVirtualClassroomOpen}
-            classRoom={{
-              schedule: store.class?.schedule,
-              address: store.class?.address,
-              virtual_classroom: store.class?.virtualUrl,
-              teacher: mainTeacher?.user,
-            }}
-            showChat
-            onChat={() => {
-              hooks.fireEvent('chat:onRoomOpened', store.room);
-              store.chatOpened = true;
-              render();
-            }}
-            locale={locale}
-            leftSide={
-              <Box>
-                <HeaderDropdown
-                  value={store.class}
-                  data={store.classesSelect}
-                  onChange={changeClass}
-                />
-              </Box>
-            }
-            rightSide={
-              <>
-                {!store.loading ? (
-                  <ZoneWidgets zone="dashboard.class.header-bar">{classHeader}</ZoneWidgets>
-                ) : null}
-              </>
-            }
-          />
-        </Box>
-
-        {/*
-        <Stack alignItems="center" className={styles.header}>
-          <Box
-            className={styles.image}
-            style={store.class.image ? { backgroundImage: `url("${store.class.image}")` } : {}}
-          >
-            {store.class.color || store.class.icon ? (
-              <Box
-                style={store.class.color ? { backgroundColor: store.class.color } : {}}
-                className={styles.imageColorIcon}
-              >
-                {store.class.icon ? (
-                  <Box className={styles.imageIcon}>
-                    <ImageLoader src={store.class.icon} strokeCurrent fillCurrent />
-                  </Box>
-                ) : null}
-              </Box>
-            ) : null}
+      <TotalLayoutContainer
+        Header={
+          <Box className={styles.classBar}>
+            <ClassroomHeaderBar
+              labels={{
+                chat: t('chat'),
+                schedule: t('schedule'),
+                virtualClassroom: t('virtualClassroom'),
+              }}
+              onVirtualClassroomOpen={onVirtualClassroomOpen}
+              classRoom={{
+                schedule: store.class?.schedule,
+                address: store.class?.address,
+                virtual_classroom: store.class?.virtualUrl,
+                teacher: mainTeacher?.user,
+              }}
+              showChat
+              onChat={() => {
+                hooks.fireEvent('chat:onRoomOpened', store.room);
+                store.chatOpened = true;
+                render();
+              }}
+              locale={locale}
+              leftSide={
+                <Box>
+                  <HeaderDropdown
+                    value={store.class}
+                    data={store.classesSelect}
+                    onChange={changeClass}
+                  />
+                </Box>
+              }
+              rightSide={
+                <>
+                  {!store.loading ? (
+                    <ZoneWidgets zone="dashboard.class.header-bar">{classHeader}</ZoneWidgets>
+                  ) : null}
+                </>
+              }
+            />
           </Box>
-          <Box className={styles.headerName}>
-            <Select data={store.classesSelect} value={store.class.id} onChange={changeClass} />
-          </Box>
-        </Stack>
-        */}
+        }
+      >
         {!store.loading ? (
-          <Box ref={tabsRef} className={styles.widgets}>
+          <Box className={styles.widgets}>
             <ZoneWidgets
               zone="dashboard.class.tabs"
               onGetZone={onGetZone}
               container={
                 <Tabs
-                  id="class-dashboard-tabs"
+                  fullHeight
                   onChange={(key) => {
                     store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
                     render();
                   }}
-                  style={{ width: '100%' }}
                 />
               }
             >
@@ -389,52 +371,22 @@ export default function ClassDashboard({ session }) {
             </ZoneWidgets>
           </Box>
         ) : null}
-      </Box>
+      </TotalLayoutContainer>
       {!store.loading ? (
-        <>
-          <ChatDrawer
-            onClose={() => {
-              hooks.fireEvent('chat:closeDrawer');
-              store.chatOpened = false;
-              render();
-            }}
-            opened={store.chatOpened}
-            onRoomLoad={(room) => {
-              store.room = room;
-              render();
-            }}
-            room={`academic-portfolio.room.class.${store.idLoaded}`}
-          />
-        </>
+        <ChatDrawer
+          onClose={() => {
+            hooks.fireEvent('chat:closeDrawer');
+            store.chatOpened = false;
+            render();
+          }}
+          opened={store.chatOpened}
+          onRoomLoad={(room) => {
+            store.room = room;
+            render();
+          }}
+          room={`academic-portfolio.room.class.${store.idLoaded}`}
+        />
       ) : null}
-      {/*
-      {!store.hideStudents ? (
-        <Box className={styles.rightSide}>
-          {store.rightWidgetSelect ? (
-            store.rightWidgetSelect.length > 1 ? (
-              <Tabs
-                onChange={(e) => {
-                  store.selectedRightTab = store.rightWidgetSelect[e].value;
-                  render();
-                }}
-              >
-                {store.rightWidgetSelect.map(({ label, id: tabId }) => (
-                  <TabPanel label={label} id={tabId} key={tabId} />
-                ))}
-              </Tabs>
-            ) : null
-          ) : null}
-
-          <Box className={styles.rightSidewidgetsContainer}>
-            {!store.loading ? (
-              <ZoneWidgets zone="dashboard.class.right-tabs" onGetZone={onGetRightZone}>
-                {classRightTabs}
-              </ZoneWidgets>
-            ) : null}
-          </Box>
-        </Box>
-      ) : null}
-      */}
     </>
   );
 }

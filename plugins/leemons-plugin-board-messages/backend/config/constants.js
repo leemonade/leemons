@@ -50,6 +50,9 @@ const widgets = {
       zoneKey: `assignables.class.ongoing`,
       key: `${permissionsPrefix}.class-dashboard`,
       url: 'class-dashboard/index',
+      properties: {
+        noPadding: true,
+      },
     },
   ],
 };

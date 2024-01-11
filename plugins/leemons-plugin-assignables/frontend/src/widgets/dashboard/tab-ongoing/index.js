@@ -10,7 +10,7 @@ function TabOngoing(props) {
       <Box
         key={key}
         sx={(theme) => ({
-          padding: theme.spacing[6],
+          padding: properties.noPadding ? 0 : theme.spacing[6],
         })}
       >
         <Component {...properties} {...props} />

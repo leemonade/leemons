@@ -1,6 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { Box, ContextContainer, createStyles, PageContainer } from '@bubbles-ui/components';
+import {
+  Box,
+  ContextContainer,
+  createStyles,
+  PageContainer,
+  TotalLayoutContainer,
+} from '@bubbles-ui/components';
 // TODO: HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
 import { useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
@@ -21,6 +27,7 @@ const Styles = createStyles((theme) => ({
   },
   content: {
     backgroundColor: '#F8F9FB',
+    overflow: 'auto',
   },
   programSelectorContainer: {
     position: 'relative',
@@ -42,6 +49,7 @@ export default function AcademicDashboard({ session }) {
   const history = useHistory();
   const { classes: styles } = Styles();
   const [t] = useTranslateLoader(prefixPN('dashboard'));
+  const scrollRef = React.useRef();
 
   async function selectProgram(program) {
     store.selectedProgram = find(store.programs, { id: program.id });
@@ -138,36 +146,34 @@ export default function AcademicDashboard({ session }) {
   }));
 
   return (
-    <>
-      <Box
-        sx={() => ({
-          // paddingRight: store.selectedProgram ? rightZoneWidth : 0,
-        })}
-      >
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
         <Box className={styles.header}>
           <ProgramBarSelector onChange={selectProgram} />
         </Box>
+      }
+    >
+      <Box ref={scrollRef} className={styles.content}>
+        <PageContainer
+          sx={(theme) => ({
+            paddingTop: theme.spacing[2],
+            maxWidth: '100%',
+          })}
+        >
+          <Box>
+            {store.selectedProgram ? (
+              <>
+                {/* -- LEFT ZONE -- */}
+                <ZoneWidgets zone="dashboard.program.left">{widgets}</ZoneWidgets>
+              </>
+            ) : null}
+          </Box>
+        </PageContainer>
+      </Box>
 
-        <ContextContainer className={styles.content} fullHeight>
-          <PageContainer
-            sx={(theme) => ({
-              paddingTop: theme.spacing[2],
-              maxWidth: '100%',
-            })}
-          >
-            <Box>
-              {store.selectedProgram ? (
-                <>
-                  {/* -- LEFT ZONE -- */}
-                  <ZoneWidgets zone="dashboard.program.left">{widgets}</ZoneWidgets>
-                </>
-              ) : null}
-            </Box>
-          </PageContainer>
-        </ContextContainer>
-
-        {/* -- RIGHT ZONE -- */}
-        {/* store.selectedProgram ? (
+      {/* -- RIGHT ZONE -- */}
+      {/* store.selectedProgram ? (
           <Paper
             sx={(theme) => ({
               position: 'fixed',
@@ -187,8 +193,7 @@ export default function AcademicDashboard({ session }) {
             </ZoneWidgets>
           </Paper>
         ) : null */}
-      </Box>
-    </>
+    </TotalLayoutContainer>
   );
 }
 
