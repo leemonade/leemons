@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { isFunction } from 'lodash';
-import { Box, FileIcon, Stack, Button } from '@bubbles-ui/components';
+import { Box, FileIcon, Stack, Button, TotalLayoutContainer } from '@bubbles-ui/components';
 import {
   AssetBookmarkIcon,
   AssetPathIcon,
@@ -70,73 +70,77 @@ const LibraryDetail = ({
         className={cx(classes.root, classes.wrapper, { [classes.show]: showDrawer })}
         style={style}
       >
-        <Stack direction="column" fullHeight>
-          {toolbar && (
-            <Box>
-              <LibraryDetailToolbar
-                {...events}
-                item={asset}
-                toolbarItems={toolbarItems}
-                open={open}
-                labels={labels}
-                onCloseDrawer={onCloseDrawer}
-              />
-            </Box>
-          )}
-
-          <LibraryDetailPlayer
-            {...{ ...asset, fileExtension }}
-            labels={labels}
-            variant={variant}
-            variantTitle={variantTitle}
-            titleActionButton={titleActionButton}
-            fileIcon={
-              {
-                bookmark: (
-                  <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                    <AssetBookmarkIcon />
-                  </Box>
-                ),
-                path: (
-                  <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                    <AssetPathIcon />
-                  </Box>
-                ),
-                task: (
-                  <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                    <AssetTaskIcon />
-                  </Box>
-                ),
-                curriculum: (
-                  <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
-                    <PluginCurriculumIcon />
-                  </Box>
-                ),
-              }[variant] || (
-                <FileIcon
-                  size={64}
-                  fileExtension={asset?.fileExtension}
-                  fileType={asset?.fileType || variant}
-                  color={'#B9BEC4'}
-                  hideExtension
+        <TotalLayoutContainer
+          Header={
+            <>
+              {toolbar && (
+                <LibraryDetailToolbar
+                  {...events}
+                  item={asset}
+                  toolbarItems={toolbarItems}
+                  open={open}
+                  labels={labels}
+                  onCloseDrawer={onCloseDrawer}
                 />
-              )
-            }
-          />
-          <LibraryDetailContent
-            {...asset}
-            asset={asset}
-            excludeMetadatas={excludeMetadatas}
-            variantIcon={variantIcon}
-            variantTitle={variantTitle}
-            variant={variant}
-            labels={labels}
-            metadataComponent={metadataComponent}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            handleTabChange={handleTabChange}
-          />
-        </Stack>
+              )}
+            </>
+          }
+        >
+          <Stack direction="column" fullHeight style={{ overflow: 'auto' }}>
+            <LibraryDetailPlayer
+              {...{ ...asset, fileExtension }}
+              labels={labels}
+              variant={variant}
+              variantTitle={variantTitle}
+              titleActionButton={titleActionButton}
+              fileIcon={
+                {
+                  bookmark: (
+                    <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
+                      <AssetBookmarkIcon />
+                    </Box>
+                  ),
+                  path: (
+                    <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
+                      <AssetPathIcon />
+                    </Box>
+                  ),
+                  task: (
+                    <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
+                      <AssetTaskIcon />
+                    </Box>
+                  ),
+                  curriculum: (
+                    <Box style={{ fontSize: 64, lineHeight: 1, color: '#B9BEC4' }}>
+                      <PluginCurriculumIcon />
+                    </Box>
+                  ),
+                }[variant] || (
+                  <FileIcon
+                    size={64}
+                    fileExtension={asset?.fileExtension}
+                    fileType={asset?.fileType || variant}
+                    color={'#B9BEC4'}
+                    hideExtension
+                  />
+                )
+              }
+            />
+            <LibraryDetailContent
+              {...asset}
+              asset={asset}
+              excludeMetadatas={excludeMetadatas}
+              variantIcon={variantIcon}
+              variantTitle={variantTitle}
+              variant={variant}
+              labels={labels}
+              metadataComponent={metadataComponent}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              handleTabChange={handleTabChange}
+            />
+          </Stack>
+        </TotalLayoutContainer>
       </Stack>
       {activeTab === 'tab2' && isTeacher && (
         <Box className={classes.canAccessFooter}>
