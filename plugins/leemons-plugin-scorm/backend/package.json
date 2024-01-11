@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-scorm",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Leemons scorm plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -20,18 +20,18 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/academic-portfolio": "0.0.45",
+    "@leemons/academic-portfolio": "0.0.46",
     "@leemons/cache": "0.0.41",
     "@leemons/common": "0.0.41",
-    "@leemons/deployment-manager": "0.0.45",
+    "@leemons/deployment-manager": "0.0.46",
     "@leemons/error": "0.0.41",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.45",
-    "@leemons/mongodb-helpers": "0.0.45",
+    "@leemons/mongodb": "0.0.46",
+    "@leemons/mongodb-helpers": "0.0.46",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multi-events": "0.0.45",
-    "@leemons/multilanguage": "0.0.45",
-    "@leemons/permissions": "0.0.45",
+    "@leemons/multi-events": "0.0.46",
+    "@leemons/multilanguage": "0.0.46",
+    "@leemons/permissions": "0.0.46",
     "@leemons/validator": "0.0.41",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
