@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-dashboard",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Leemons dashboard plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",

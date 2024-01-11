@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-common",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Leemons common plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",

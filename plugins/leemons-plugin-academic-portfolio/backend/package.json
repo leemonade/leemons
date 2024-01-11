@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-academic-portfolio",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Leemons academic portfolio plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",

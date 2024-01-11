@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-curriculum",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Leemons curriculum plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
