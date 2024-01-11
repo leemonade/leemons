@@ -6,13 +6,13 @@ import {
   Badge,
   Box,
   ContextContainer,
+  createStyles,
   ImageLoader,
   PageContainer,
   Paper,
   Stack,
   Text,
   Title,
-  createStyles,
 } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
@@ -27,6 +27,7 @@ import { cloneDeep, forEach, map, times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
 import SkeletonDashboardLoader from './SkeletonDashboardLoader';
 
@@ -92,7 +93,7 @@ Icon.propTypes = {
   size: PropTypes.string,
 };
 
-export default function AdminDashboard({ session }) {
+function AdminDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
     isAcademicMode: false,
@@ -214,6 +215,7 @@ export default function AdminDashboard({ session }) {
       ramUsed = (ramUsed / store.pc.mem.total) * 100;
     }
   }
+
   // if (store.loading) return <LoadingOverlay visible />;
 
   function goProgram(program) {
@@ -528,30 +530,30 @@ export default function AdminDashboard({ session }) {
             {/* --- DISCO --- */}
             {store.pc?.diskLayout
               ? store.pc.diskLayout.map((disk, i) => (
-                <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
-                  <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                    <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
-                  </Box>
-                  <Box sx={() => ({ width: '100%' })}>
-                    <Box>
-                      <Text color="primary" strong>
-                        {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
-                      </Text>
+                  <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+                    <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                      <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
                     </Box>
-                    {disk.name ? <PCValue text={t('name')} value={disk.name} /> : null}
-                    {disk.type ? <PCValue text={t('type')} value={disk.type} /> : null}
-                    {disk.size ? (
-                      <PCValue text={t('space')} value={bytesToSize(disk.size)} />
-                    ) : null}
-                    {store.pc.fsSize ? (
-                      <PCValue
-                        text={t('used')}
-                        value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
-                      />
-                    ) : null}
-                  </Box>
-                </Stack>
-              ))
+                    <Box sx={() => ({ width: '100%' })}>
+                      <Box>
+                        <Text color="primary" strong>
+                          {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
+                        </Text>
+                      </Box>
+                      {disk.name ? <PCValue text={t('name')} value={disk.name} /> : null}
+                      {disk.type ? <PCValue text={t('type')} value={disk.type} /> : null}
+                      {disk.size ? (
+                        <PCValue text={t('space')} value={bytesToSize(disk.size)} />
+                      ) : null}
+                      {store.pc.fsSize ? (
+                        <PCValue
+                          text={t('used')}
+                          value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
+                        />
+                      ) : null}
+                    </Box>
+                  </Stack>
+                ))
               : null}
 
             {/* --- INTERNET --- */}
@@ -586,3 +588,16 @@ export default function AdminDashboard({ session }) {
 AdminDashboard.propTypes = {
   session: PropTypes.object,
 };
+
+export default function AdminDashboardPage(props) {
+  const history = useHistory();
+  const deploymentConfig = useDeploymentConfig({ pluginName: 'dashboard', ignoreVersion: true });
+
+  if (typeof deploymentConfig === 'undefined') {
+    return null;
+  }
+  if (deploymentConfig?.adminDashboardUrl) {
+    history.push(deploymentConfig.adminDashboardUrl);
+  }
+  return <AdminDashboard {...props} />;
+}
