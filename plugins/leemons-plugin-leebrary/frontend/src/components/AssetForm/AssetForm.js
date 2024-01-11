@@ -486,20 +486,22 @@ const AssetForm = ({
                   />
                 )}
 
-                <Controller
-                  control={control}
-                  name="color"
-                  render={({ field }) => (
-                    <ColorInput
-                      label={labels.color}
-                      placeholder={placeholders.color}
-                      useHsl
-                      compact={false}
-                      manual={false}
-                      {...field}
-                    />
-                  )}
-                />
+                <Box style={{ width: 160 }}>
+                  <Controller
+                    control={control}
+                    name="color"
+                    render={({ field }) => (
+                      <ColorInput
+                        label={labels.color}
+                        placeholder={placeholders.color}
+                        useHsl
+                        compact={false}
+                        manual={false}
+                        {...field}
+                      />
+                    )}
+                  />
+                </Box>
               </ContextContainer>
             ) : null}
           </ContextContainer>

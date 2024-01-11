@@ -4,7 +4,6 @@ import { noop } from 'lodash';
 import {
   Box,
   Button,
-  DropdownButton,
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
@@ -12,6 +11,7 @@ import {
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import FinalDropdown from './FinalDropdown';
 
 export default function DetailInstructions({
   t,
@@ -36,21 +36,6 @@ export default function DetailInstructions({
     setIsDirty(true);
     if (await validate()) {
       onSave();
-    }
-  }
-
-  async function handleOnPublish() {
-    console.log('handleOnPublish');
-    setIsDirty(true);
-    if (await validate()) {
-      onPublish();
-    }
-  }
-
-  async function handleOnAssign() {
-    setIsDirty(true);
-    if (await validate()) {
-      onAssign();
     }
   }
 
@@ -83,16 +68,14 @@ export default function DetailInstructions({
                 </Button>
               ) : null}
 
-              <DropdownButton
-                data={[
-                  { label: t('onlyPublish'), onClick: handleOnPublish },
-                  { label: t('publishAndAssign'), onClick: handleOnAssign },
-                ]}
-                loading={store.saving === 'publish'}
-                disabled={store.saving}
-              >
-                {t('finish')}
-              </DropdownButton>
+              <FinalDropdown
+                t={t}
+                form={form}
+                store={store}
+                setIsDirty={setIsDirty}
+                onAssign={onAssign}
+                onPublish={onPublish}
+              />
             </>
           }
         />

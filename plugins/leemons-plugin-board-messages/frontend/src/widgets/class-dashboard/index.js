@@ -1,3 +1,4 @@
+import { Box } from '@bubbles-ui/components';
 import { BannerMessage } from '@board-messages/components';
 import { getActiveRequest } from '@board-messages/request';
 import { getCentersWithToken } from '@users/session';
@@ -25,7 +26,15 @@ function ClassDashboard({ classe }) {
 
   if (!activeMessage) return null;
 
-  return <BannerMessage message={activeMessage} />;
+  return (
+    <Box
+      sx={(theme) => ({
+        padding: theme.spacing[6],
+      })}
+    >
+      <BannerMessage message={activeMessage} />;
+    </Box>
+  );
 }
 
 ClassDashboard.propTypes = {

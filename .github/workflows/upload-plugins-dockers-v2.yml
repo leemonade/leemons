@@ -118,6 +118,8 @@ jobs:
           git -C private-plugins config user.email "<>"
           git -C private-plugins add -A
           git -C private-plugins commit -m 'chore: version bump'
+
+          git -C private-plugins push origin :refs/tags/"$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
           git -C private-plugins tag "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
           git -C private-plugins push origin "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
 

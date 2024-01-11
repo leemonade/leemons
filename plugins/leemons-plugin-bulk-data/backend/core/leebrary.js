@@ -72,7 +72,7 @@ async function updateLibrary({ file, config: { assets, programs, users }, ctx })
           const subjectId = programs[programKey]?.subjects[subjectKey]?.id;
 
           if (subjectId) {
-            asset.subjects = [{ subject: subjectId, level: 'beginner' }];
+            asset.subjects = [subjectId];
             asset.program = programs[programKey]?.id;
 
             return ctx.call(

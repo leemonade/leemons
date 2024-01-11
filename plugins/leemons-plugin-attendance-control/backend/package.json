@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-attendance-control",
-  "version": "1.0.4",
+  "version": "1.0.15",
   "description": "Leemons attendance control plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,17 +21,17 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.41",
-    "@leemons/menu-builder": "0.0.41",
+    "@leemons/deployment-manager": "0.0.51",
+    "@leemons/menu-builder": "0.0.51",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.41",
-    "@leemons/mongodb-helpers": "0.0.41",
+    "@leemons/mongodb": "0.0.51",
+    "@leemons/mongodb-helpers": "0.0.51",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multi-events": "0.0.41",
-    "@leemons/multilanguage": "0.0.41",
-    "@leemons/permissions": "0.0.41",
+    "@leemons/multi-events": "0.0.51",
+    "@leemons/multilanguage": "0.0.51",
+    "@leemons/permissions": "0.0.51",
     "@leemons/validator": "0.0.41",
-    "@leemons/widgets": "0.0.41",
+    "@leemons/widgets": "0.0.52",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"

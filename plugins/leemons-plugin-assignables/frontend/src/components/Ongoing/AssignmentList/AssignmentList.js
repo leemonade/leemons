@@ -53,7 +53,6 @@ export default function AssignmentList({
   titleComponent,
   filters: filtersProps,
   defaultFilters = null,
-
   withoutLayout,
   ...props
 }) {
@@ -90,7 +89,7 @@ export default function AssignmentList({
     [labels, archived]
   );
 
-  const { classes } = useAssignmentListStyles();
+  const { classes } = useAssignmentListStyles({}, { name: 'AssignmentList' });
 
   const tabPane = useCallback(
     (tab) => (

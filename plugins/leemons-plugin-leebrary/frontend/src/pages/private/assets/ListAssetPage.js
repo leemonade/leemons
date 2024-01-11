@@ -26,10 +26,6 @@ const ListPageStyles = createStyles((theme) => ({
     display: 'flex',
     flex: 1,
     minHeight: '100%',
-    paddingTop: theme.spacing[5],
-    paddingBottom: theme.spacing[5],
-    paddingLeft: theme.spacing[8],
-    paddingRight: theme.spacing[8],
   },
 }));
 
@@ -39,7 +35,6 @@ const ListAssetPage = () => {
   const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
-  // const [subjectProgram, setSubjectProgram] = useState(null);
 
   const [mediaAssetType, setMediaAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
@@ -80,13 +75,6 @@ const ListAssetPage = () => {
     const type = query.get('type');
     const _activeTab = query.get('activeTab');
     const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
-    // const program = query.get('program');
-
-    // if (isEmpty(program)) {
-    //   setSubjectProgram('');
-    // } else if (program !== subjectProgram) {
-    //   setSubjectProgram(program);
-    // }
 
     if (displayPublic !== showPublic) {
       setShowPublic(displayPublic);
@@ -275,10 +263,6 @@ const ListAssetPage = () => {
     props.searchInProvider = false;
   }
 
-  // if (category?.key.startsWith('leebrary-subject')) {
-  //   props.programs = subjectProgram;
-  // }
-
   // Publish & Draft filters allowed
   if (
     (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') &&
@@ -287,7 +271,7 @@ const ListAssetPage = () => {
     return (
       <Box
         className={classes.original}
-        sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
+        sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: 'auto' })}
       >
         <AssetList
           {...props}
@@ -318,7 +302,7 @@ const ListAssetPage = () => {
   return !isNil(categories) && !isEmpty(categories) ? (
     <Box
       className={classes.original}
-      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
+      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: 'auto' })}
     >
       <AssetList
         {...props}

@@ -9,6 +9,7 @@ const LibraryDetailToolbarStyles = createStyles((theme) => ({
     gap: pxToRem(8),
     backgroundColor: theme.colors.mainWhite,
     width: '100%',
+    minHeight: 72,
   },
   button: {
     transition: 'transform 0.2s ease-out',

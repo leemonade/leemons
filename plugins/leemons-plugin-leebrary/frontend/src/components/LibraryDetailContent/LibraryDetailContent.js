@@ -84,8 +84,9 @@ const LibraryDetailContent = ({
     setActiveTab(key);
   };
   return (
-    <Box className={classes.root}>
+    <>
       <Tabs
+        fullHeight
         panelColor="default"
         centerGrow
         className={classes.tab}
@@ -226,7 +227,7 @@ const LibraryDetailContent = ({
           </Paper>
         </Box>
       )} */}
-    </Box>
+    </>
   );
 };
 

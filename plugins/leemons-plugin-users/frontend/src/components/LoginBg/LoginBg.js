@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { Box, HeroBg, Logo, Paragraph, Text, Stack, ImageLoader } from '@bubbles-ui/components';
 import { LoginBgStyles } from './LoginBg.styles';
 
 export const LOGIN_BG_DEFAULT_PROPS = {
-  backgroundColor: '#F0F5FC',
-  foregroundColor: '#FFFFFF',
+  backgroundColor: '#F8F9FB',
+  foregroundColor: '#F8F9FB',
   containerColor: '#FFFFFF',
+  accentColor: '#E2FF7A',
   fillColor: 'none',
   dobleQuoted: true,
-  accentColor: null,
   logoUrl: '',
   logoWidth: 140,
 };
@@ -57,10 +57,12 @@ const LoginBg = ({
       <HeroBg
         {...props}
         size="x-md"
-        style={{ backgroundColor, color: foregroundColor }}
-        accentColor={!isEmpty(accentColor) ? accentColor : undefined}
+        style={{ backgroundColor, color: 'F8F9FB' }} // foregroundColor
+        // accentColor={!isEmpty(accentColor) ? accentColor : undefined}
         containerColor={!isEmpty(containerColor) ? containerColor : undefined}
         fillColor={!isEmpty(fillColor) ? fillColor : undefined}
+        accentColor={'#E2FF7A'}
+        // containerColor={'#F8F9FB'}
       />
       <Box className={classes.content}>
         {!isEmpty(logoUrl) ? (

@@ -172,10 +172,8 @@ module.exports = function ({
             });
 
             return await innerEvent.handler(ctx).then(async (data) => {
-              if (data?.err) {
-                if (_.isFunction(onError)) {
-                  await onError(ctx, data.err);
-                }
+              if (data?.err && _.isFunction(onError)) {
+                await onError(ctx, data.err);
               }
               return data;
             });

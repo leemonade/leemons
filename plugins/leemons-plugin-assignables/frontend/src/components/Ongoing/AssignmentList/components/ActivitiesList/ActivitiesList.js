@@ -295,9 +295,9 @@ export default function ActivitiesList({ filters, subjectFullLength = true }) {
       <Box
         sx={(theme) => ({
           width: '100%',
-          height: 328,
+          height: 200, // 328,
           borderRadius: theme.spacing[1],
-          backgroundColor: theme.colors.uiBackground02,
+          // backgroundColor: theme.colors.uiBackground02,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',

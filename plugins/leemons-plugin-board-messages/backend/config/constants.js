@@ -45,11 +45,17 @@ const widgets = {
       zoneKey: 'dashboard.program.left',
       key: `${permissionsPrefix}.dashboard`,
       url: 'dashboard/index',
+      properties: {
+        noPadding: true,
+      },
     },
     {
       zoneKey: `assignables.class.ongoing`,
       key: `${permissionsPrefix}.class-dashboard`,
       url: 'class-dashboard/index',
+      properties: {
+        noPadding: true,
+      },
     },
   ],
 };

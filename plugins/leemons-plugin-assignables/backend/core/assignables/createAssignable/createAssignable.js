@@ -20,11 +20,9 @@ const { publishAssignable } = require('../publishAssignable');
  */
 async function createAsset({ asset, role, subjects, published, ctx }) {
   const assetProgram = subjects?.length ? subjects[0].program : null;
-  const assetSubjects = subjects?.length
-    ? subjects.map(({ subject, level }) => ({ subject, level }))
-    : null;
+  const assetSubjects = subjects?.length ? subjects.map((subject) => subject.subject) : null;
 
-  return await ctx.tx.call('leebrary.assets.add', {
+  return ctx.tx.call('leebrary.assets.add', {
     asset: {
       ...pick(asset, ['cover', 'color', 'name', 'tagline', 'description', 'tags', 'indexable']),
       program: assetProgram,
