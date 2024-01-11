@@ -14,7 +14,7 @@ async function adminDashboard({ config, ctx }) {
   const [_instances, assignables, roles] = await Promise.all([
     ctx.tx.db.Instances.find({}).select(['id', 'assignable']).lean(),
     ctx.tx.db.Assignables.find({}).select(['id', 'role']).lean(),
-    ctx.tx.db.Roles.find({}).select(['id', 'name']).lean(),
+    ctx.tx.db.Roles.find({}).select(['id', 'name', 'icon']).lean(),
   ]);
 
   const instances = [];
@@ -25,6 +25,7 @@ async function adminDashboard({ config, ctx }) {
   _.forEach(roles, (role) => {
     const inst = {
       roleName: `assignables.roles.${role.name}`,
+      roleIcon: role.icon,
       instances: [],
     };
 
