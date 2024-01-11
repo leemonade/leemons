@@ -1595,9 +1595,9 @@
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
 "@bubbles-ui/calendars@dev":
-  version "1.2.105"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.105.tgz#fb8ba393bda29a685101c1cd95201fb0becfaf6f"
-  integrity sha512-T7zY6C+XBT8sEY6VQTvYschOSOyNruWIr0s7QNUCRjg7OUNqn842C46y56IMWwjqM/umcYG5yEGjD42zrHoRBQ==
+  version "1.2.106"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/calendars/-/calendars-1.2.106.tgz#e827247188ebe2a5a901860f7843d2ee17a91f87"
+  integrity sha512-QYCg7iNjoZOQMT9aeKIenlR0Tasvh3rK76EADFZzyCCzFYpq2kw1HcEr4paGKaV5QT0eh6qVKaB6zsR2Uzk30w==
   dependencies:
     colord "^2.9.2"
     dom-helpers "^5.2.1"
@@ -1609,11 +1609,11 @@
     rrule "^2.6.8"
 
 "@bubbles-ui/components@dev":
-  version "1.2.105"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.105.tgz#627b738dfdd49089c23f271549d8fccec140c8e6"
-  integrity sha512-aW9/PZ5jziOuRJsT9PLH0xQ5b0f2nimcQIfLzH4B+gmgEOBqkiuKhLxs8dBz9yzfojccLLxNyW/X107U9LxCzQ==
+  version "1.2.106"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/components/-/components-1.2.106.tgz#e133252fec2e4b1bcf2a5f30383077e8e901b4bd"
+  integrity sha512-RlrzjZttTrvXw31zx+qDsirq+H4em0ab3cZyEOu3LLXM+7ABZQvxIbsi4wnONMJUs88HrT7FV+8GuinEERhDqg==
   dependencies:
-    "@bubbles-ui/icons" "^1.2.105"
+    "@bubbles-ui/icons" "^1.2.106"
     "@emotion/react" "^11.10.0"
     "@heroicons/react" "^1.0.5"
     "@hookform/resolvers" "^3.3.2"
@@ -1649,9 +1649,9 @@
     zod "^3.22.4"
 
 "@bubbles-ui/editors@dev":
-  version "1.2.105"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.105.tgz#302df07d5c198a875ebec33b2325cec43bf5c0a7"
-  integrity sha512-oDHZvdawfx4hamMrHMhZKofxQnhA2JrGA7Mc6puGPgrtGvWTO8CtLqIpPbTN4PFDgbNpQBDeiDQWMS0po+mGrA==
+  version "1.2.106"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/editors/-/editors-1.2.106.tgz#bed18a22786d4a7d4281d2e076e7e8f0ddc6cd93"
+  integrity sha512-ehBSuwkEbJlXBeTmiyZNPcMiefrKXUp68le2bU9iBUeEEuAK/vbLmRaPuPaKQFow3MZzemC/0w/t6O/nT+g2gQ==
   dependencies:
     "@tiptap/extension-character-count" "2.1.12"
     "@tiptap/extension-code-block-lowlight" "2.1.12"
@@ -1685,9 +1685,9 @@
     styled-icons "^10.45.0"
 
 "@bubbles-ui/extras@dev":
-  version "1.2.105"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/extras/-/extras-1.2.105.tgz#dbbd9c2fecaeb80fd1c028281f6ca19f22493a30"
-  integrity sha512-seUJvyDKzuL5Gw1r6H9pbluuPQy4XFJbUuY014Ir/K4KTGd4dnPj9z+EZAIkHw1laUh0WMAvxxIvdyDadRzDcA==
+  version "1.2.106"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/extras/-/extras-1.2.106.tgz#7811918f3807f27628cb077db21ff3fcec7f030a"
+  integrity sha512-KhcWCfEYSGGPsuXDoDpzj+i1D68PeRcTTQTplPlHbuMHx+7fp9ZCRHoPe6AM4hphUd56AliaprolYuLODAGUCA==
   dependencies:
     "@yaireo/tagify" "^4.9.4"
     lodash "^4.17.21"
@@ -1695,15 +1695,15 @@
     simplebar-react "^2.3.6"
     swiper "^8.1.4"
 
-"@bubbles-ui/icons@^1.2.105", "@bubbles-ui/icons@dev":
-  version "1.2.105"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.105.tgz#a9a42f801812592a5312a6447d47c495696044b8"
-  integrity sha512-0UokEJ6kEefY7MVcVsNM0NJYujwU3vdlv1GoPKfqODRFe2o8LntcpWgZRZj2VWdaSwxHhYEVvobypJBST6UihQ==
+"@bubbles-ui/icons@^1.2.106", "@bubbles-ui/icons@dev":
+  version "1.2.106"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/icons/-/icons-1.2.106.tgz#7e0b0f05530271bfefeae0841a61989c6d1d15c3"
+  integrity sha512-7T/dh60CfY77c3+JwjNf25t6XadV4MOdxO4WJ+ktBXjp73n7FUcp1N08VXlXfYdyZ+TwyG75XMIEDK/peL0gAA==
 
 "@bubbles-ui/leemons@dev":
-  version "1.2.105"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.105.tgz#666c326bb58ffc3746c4917b7ed20eb75ca76c0b"
-  integrity sha512-FK3cE7DTMF4kE7CEfF/9+pMt2YXourBM92LbFsievXqyRzTsBEfCMI0DKNpcGOGUXOeWO7IrFQR2MWD7RoXHtA==
+  version "1.2.106"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/leemons/-/leemons-1.2.106.tgz#d7033137750dfcfb11d828575e99941a4284e3c9"
+  integrity sha512-8Vy6C7wC05Jqkmfejy40Em346BR6tbW8u2BVO+SPAZu5xXxacPpZimnqraGajVfIks9FsxkFN2JEohQDOSWOXg==
   dependencies:
     "@leemonade/rjsf-core" "^3.0.0"
     "@rjsf/core" "^3.2.1"
@@ -1725,9 +1725,9 @@
     uuid "^8.3.2"
 
 "@bubbles-ui/notifications@dev":
-  version "1.2.105"
-  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.105.tgz#4f5aedc7717d949e706cf3b47136ab846bc6479d"
-  integrity sha512-daGfPDmF9QN392rBaPX5QafUFJlEIzqBivV2aV4yUE/mt53X1aaeZJLd92NIBZt1Od7y7/NFlbsortnJ61gK/A==
+  version "1.2.106"
+  resolved "https://registry.yarnpkg.com/@bubbles-ui/notifications/-/notifications-1.2.106.tgz#2a4a61177a8d5136491c08331455a64aedbab1e9"
+  integrity sha512-HaLqeJmKgmxLFnwpljZGHHZ3DjTA6a7JqFaSggul+fLzbdmQ5kLK4Mav8QI2sPV0P1uvrNN4+YGX1IbFIt8rcg==
   dependencies:
     "@mantine/notifications" "5.5.5"
     lodash "^4.17.21"
@@ -16947,9 +16947,9 @@ safe-buffer@5.2.1, safe-buffer@>=5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, 
   integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
 
 safe-regex-test@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/safe-regex-test/-/safe-regex-test-1.0.1.tgz#207369b445fd007e534864635b28b2ae7b105783"
-  integrity sha512-Y5NejJTTliTyY4H7sipGqY+RX5P87i3F7c4Rcepy72nq+mNLhIsD0W4c7kEmduMDQCSqtPsXPlSTsFhh2LQv+g==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/safe-regex-test/-/safe-regex-test-1.0.2.tgz#3ba32bdb3ea35f940ee87e5087c60ee786c3f6c5"
+  integrity sha512-83S9w6eFq12BBIJYvjMux6/dkirb8+4zJRA9cxNBVb7Wq5fJBW+Xze48WqR8pxua7bDuAaaAxtVVd4Idjp1dBQ==
   dependencies:
     call-bind "^1.0.5"
     get-intrinsic "^1.2.2"
