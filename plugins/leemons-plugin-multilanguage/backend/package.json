@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-multilanguage",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Leemons multilanguage plugins",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
