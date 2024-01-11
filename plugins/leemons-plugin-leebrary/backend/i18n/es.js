@@ -99,7 +99,7 @@ module.exports = {
             program: 'Seleccionar...',
             course: 'Seleccionar...',
             subject: 'Seleccionar...',
-            addSubject: 'Añadir asignatura',
+            addSubject: 'Añadir',
             level: 'Seleccionar...',
           },
           errorMessages: {

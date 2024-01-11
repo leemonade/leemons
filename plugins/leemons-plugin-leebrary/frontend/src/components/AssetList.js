@@ -692,8 +692,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-          ? t('cardToolbar.pin')
-          : false,
+        ? t('cardToolbar.pin')
+        : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -779,7 +779,17 @@ function AssetList({
           skipFlex
           spacing={5}
           padding={isEmbedded ? 0 : 5}
-          style={isEmbedded ? { flex: 0, alignItems: 'end' } : childNotEmbeddedStyles}
+          style={
+            isEmbedded
+              ? {
+                  flex: 0,
+                  alignItems: 'end',
+                  padding: '16px 24px',
+                  height: '72px',
+                  backgroundColor: 'white',
+                }
+              : childNotEmbeddedStyles
+          }
         >
           <Stack fullWidth spacing={5}>
             {canSearch && (
@@ -852,6 +862,7 @@ function AssetList({
             marginTop: !isEmbedded && headerOffset,
             width: listWidth,
             transition: 'width 0.3s ease',
+            padding: '0 24px',
           }}
         >
           <Box
@@ -869,6 +880,8 @@ function AssetList({
               <Box
                 sx={(theme) => ({
                   paddingBottom: theme.spacing[5],
+                  backgroundColor: '#f7f8fa',
+                  width: '100%',
                 })}
               >
                 <PaginatedList
