@@ -126,7 +126,11 @@ export default function ActivitiesTab({
   labels,
   scrollRef,
 }) {
-  const { activitiesData, grades, isLoading } = useTableData({ filters, localFilters });
+  const {
+    activitiesData,
+    grades,
+    isLoading: isLoadingTable,
+  } = useTableData({ filters, localFilters });
   const { mutateAsync } = useScoresMutation();
 
   const { data: programData } = useProgramDetail(filters?.program, { enabled: !!filters?.program });
@@ -148,7 +152,7 @@ export default function ActivitiesTab({
             const scores = getStudentsScores({
               activitiesData,
               grades,
-              isLoading,
+              isLoadingTable,
               period: filters?.period,
               class: filters?.class,
               labels: labels?.periodSubmission,
@@ -175,7 +179,7 @@ export default function ActivitiesTab({
           }
         }}
       />
-      {renderView({ isLoading, activitiesData, grades, filters, labels })}
+      {renderView({ isLoadingTable, activitiesData, grades, filters, labels })}
     </Stack>
   );
 }
