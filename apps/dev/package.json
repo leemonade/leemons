@@ -17,7 +17,7 @@
   },
   "leemons": {},
   "dependencies": {
-    "@leemons/runner": "0.0.45",
+    "@leemons/runner": "0.0.46",
     "colord": "^2.9.3",
     "dotenv": "^16.0.3",
     "leemons-plugin-academic-calendar": "1.0.5",
