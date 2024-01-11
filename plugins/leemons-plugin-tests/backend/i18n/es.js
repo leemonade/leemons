@@ -202,6 +202,12 @@ module.exports = {
     instructionsForTeacherLabel: 'Instrucciones para el profesor',
     instructionsForStudentLabel: 'Instrucciones para el alumno',
     instructions: 'Instrucciones',
+    statement: 'Enunciado',
+    evaluationCriteria: 'Criterios de evaluación',
+    enableCurriculum: 'Habilitar curriculum',
+    addCustomObjectives: 'Añadir objetivos personalizados',
+    addInstructions: 'Añadir instrucciones',
+    other: 'Otros',
   },
   testsDetail: {
     assign: 'Asignar test',

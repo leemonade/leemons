@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
-  Stack,
   Button,
-  DropdownButton,
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
@@ -13,6 +11,7 @@ import Curriculum from '@tasks/components/TaskSetupPage/components/Curriculum';
 import Objectives from '@tasks/components/TaskSetupPage/components/Objectives';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { find, map, noop } from 'lodash';
+import FinalDropdown from './FinalDropdown';
 
 export default function DetailEvaluation({
   t,
@@ -27,7 +26,7 @@ export default function DetailEvaluation({
   onAssign = noop,
   onPrev = noop,
 }) {
-  const [isDirty, setIsDirty] = React.useState(false);
+  const [, setIsDirty] = React.useState(false);
   const formValues = form.watch();
   const validate = async () => form.trigger(['instructionsForTeachers', 'instructionsForStudents']);
 
@@ -36,6 +35,7 @@ export default function DetailEvaluation({
 
   const subjects = store.subjectsByProgram[programId];
   const subject = find(subjects, { value: subjectIds?.[0]?.subject });
+
 
   // ························································
   // HANDLERS
@@ -51,20 +51,6 @@ export default function DetailEvaluation({
     setIsDirty(true);
     if (await validate()) {
       onNext();
-    }
-  }
-
-  async function handleOnPublish() {
-    setIsDirty(true);
-    if (await validate()) {
-      onPublish();
-    }
-  }
-
-  async function handleOnAssign() {
-    setIsDirty(true);
-    if (await validate()) {
-      onAssign();
     }
   }
 
@@ -97,16 +83,14 @@ export default function DetailEvaluation({
                 </Button>
               ) : null}
               {isLastStep ? (
-                <DropdownButton
-                  data={[
-                    { label: t('onlyPublish'), action: handleOnPublish },
-                    { label: t('publishAndAssign'), action: handleOnAssign },
-                  ]}
-                  loading={store.saving === 'publish'}
-                  disabled={store.saving}
-                >
-                  {t('finish')}
-                </DropdownButton>
+                <FinalDropdown
+                  t={t}
+                  form={form}
+                  store={store}
+                  setIsDirty={setIsDirty}
+                  onAssign={onAssign}
+                  onPublish={onPublish}
+                />
               ) : (
                 <Button
                   rightIcon={<ChevRightIcon height={20} width={20} />}
