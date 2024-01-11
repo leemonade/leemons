@@ -26,10 +26,6 @@ const ListPageStyles = createStyles((theme) => ({
     display: 'flex',
     flex: 1,
     minHeight: '100%',
-    paddingTop: theme.spacing[5],
-    paddingBottom: theme.spacing[5],
-    paddingLeft: theme.spacing[8],
-    paddingRight: theme.spacing[8],
   },
 }));
 
@@ -39,7 +35,6 @@ const ListAssetPage = () => {
   const { classes } = ListPageStyles({});
   const [currentAsset, setCurrentAsset] = useState(asset);
   const [searchCriteria, setSearchCriteria] = useState('');
-  // const [subjectProgram, setSubjectProgram] = useState(null);
 
   const [mediaAssetType, setMediaAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
@@ -276,7 +271,7 @@ const ListAssetPage = () => {
     return (
       <Box
         className={classes.original}
-        sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
+        sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: 'auto' })}
       >
         <AssetList
           {...props}
@@ -307,7 +302,7 @@ const ListAssetPage = () => {
   return !isNil(categories) && !isEmpty(categories) ? (
     <Box
       className={classes.original}
-      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: '100%' })}
+      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: 'auto' })}
     >
       <AssetList
         {...props}

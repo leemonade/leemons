@@ -10,6 +10,7 @@ import {
   Button,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  DropdownButton,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
@@ -18,6 +19,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { getQuestionBankRequest } from '../../../../request';
 import DetailQuestionsFilters from './DetailQuestionsFilters';
 import DetailQuestionsSelect from './DetailQuestionsSelect';
+import FinalDropdown from './FinalDropdown';
 
 export default function DetailQuestions({
   form,
@@ -27,6 +29,9 @@ export default function DetailQuestions({
   onNext = noop,
   onPrev = noop,
   onSave = noop,
+  onPublish = noop,
+  onAssign = noop,
+  isLastStep,
 }) {
   const [isDirty, setIsDirty] = React.useState(false);
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -200,14 +205,25 @@ export default function DetailQuestions({
                 </Button>
               ) : null}
 
-              <Button
-                rightIcon={<ChevRightIcon height={20} width={20} />}
-                onClick={handleOnNext}
-                disabled={store.saving}
-                loading={store.saving === 'publish'}
-              >
-                {t(getNextButtonLabel())}
-              </Button>
+              {isLastStep && !isNil(store.questionsFiltered) ? (
+                <FinalDropdown
+                  t={t}
+                  form={form}
+                  store={store}
+                  setIsDirty={setIsDirty}
+                  onAssign={onAssign}
+                  onPublish={onPublish}
+                />
+              ) : (
+                <Button
+                  rightIcon={<ChevRightIcon height={20} width={20} />}
+                  onClick={handleOnNext}
+                  disabled={store.saving}
+                  loading={store.saving === 'publish'}
+                >
+                  {t(getNextButtonLabel())}
+                </Button>
+              )}
             </>
           }
         />
@@ -267,4 +283,5 @@ DetailQuestions.propTypes = {
   onSave: PropTypes.func,
   stepName: PropTypes.string,
   scrollRef: PropTypes.any,
+  isLastStep: PropTypes.bool,
 };

@@ -67,7 +67,6 @@ export default function Edit() {
       await saveTestRequest({ ...toSend, type: 'learn', published: false });
 
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests/draft');
     } catch (error) {
       addErrorAlert(error);
     }
@@ -217,6 +216,11 @@ export default function Edit() {
     return t('pageTitleEdit');
   };
 
+  const hasOptionalSteps = () => {
+    const { config = {} } = formValues;
+    return Object.values(config).some((value) => value);
+  };
+
   const stepsContent = React.useMemo(() => {
     const { config = {} } = formValues;
     const result = [
@@ -267,6 +271,9 @@ export default function Edit() {
         onSave={saveAsDraft}
         onNext={nextStep}
         onPrev={prevStep}
+        onPublish={saveAsPublish}
+        onAssign={() => saveAsPublish(true)}
+        isLastStep={!hasOptionalSteps()}
       />,
     ];
 
@@ -283,6 +290,8 @@ export default function Edit() {
           onPublish={saveAsPublish}
           onAssign={() => saveAsPublish(true)}
           onPrev={prevStep}
+          onNext={nextStep}
+          isLastStep={!config.hasResources && !config.hasInstructions}
         />
       );
     }
@@ -303,7 +312,7 @@ export default function Edit() {
       );
     }
     return result;
-  }, [form, formValues, t, store, scrollRef]);
+  }, [form, formValues, t, store, scrollRef, hasOptionalSteps]);
 
   // ························································
   // RENDER

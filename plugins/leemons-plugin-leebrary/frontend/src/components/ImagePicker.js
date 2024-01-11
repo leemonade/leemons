@@ -106,6 +106,7 @@ const ImagePicker = ({
         onSelect={handleOnSelectAsset}
         categories={['media-files']}
         onlyCreateImages
+        filters={{ type: 'image' }}
       />
     </Box>
   );

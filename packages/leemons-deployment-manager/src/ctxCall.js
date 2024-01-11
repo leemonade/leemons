@@ -10,6 +10,10 @@ async function ctxCall(
   opts = null,
   { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall } = {}
 ) {
+  if (_.isObject(params) && params.hasOwnProperty('ctx')) {
+    delete params.ctx;
+  }
+
   let actionName = _actionName;
   if (_.isObject(actionName)) {
     actionName = actionName.action.name;

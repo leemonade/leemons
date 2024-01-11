@@ -94,7 +94,7 @@ export function List({ variant, query, filters, onSelect }) {
       {variant === 'cards' && <CardList items={items} onSelect={onSelect} />}
       <Box className={classes.pager}>
         <Pager
-          withSize
+          withSize={false}
           withControls
           page={page}
           sizes={[30, 60, 90]}

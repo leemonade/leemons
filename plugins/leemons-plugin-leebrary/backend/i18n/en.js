@@ -48,9 +48,6 @@ module.exports = {
         programAndSubjects: 'Program and subjects',
         selectPlaceholder: 'Select one...',
         tags: 'Tags',
-        course: 'Course',
-        programAndSubjects: 'Program and subjects',
-        selectPlaceholder: 'Select one...',
         addTag: 'Add tag',
         browseFile: 'Click to browse your files',
         advancedConfig: 'Advanced config',
@@ -110,7 +107,7 @@ module.exports = {
             course: 'Select...',
             subject: 'Select...',
             level: 'Select...',
-            addSubject: 'Add subject',
+            addSubject: 'Add',
           },
           errorMessages: {
             program: {

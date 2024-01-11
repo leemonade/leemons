@@ -69,7 +69,6 @@ async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx 
       ctx.tx.call('users.profiles.removeCustomPermissionsByName', {
         profileId,
         permissions: _.map(permissions, 'permissionName'),
-        ctx,
       })
     );
   });
@@ -79,7 +78,6 @@ async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx 
         roleId,
         permissionNames: _.map(permissions, 'permissionName'),
         removeCustomPermissions: true,
-        ctx,
       })
     );
   });

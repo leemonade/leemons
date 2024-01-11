@@ -9,8 +9,7 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-// import Curriculum from '@tasks/components/TaskSetupPage/components/Curriculum';
-// import Objectives from '@tasks/components/TaskSetupPage/components/Objectives';
+
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -89,7 +88,7 @@ export default function DetailContent({
     >
       <Box>
         <ContextContainer>
-          <ContextContainer title="Enunciado">
+          <ContextContainer title={t('statement')}>
             <Controller
               control={form.control}
               name="statement"
@@ -105,31 +104,27 @@ export default function DetailContent({
           </ContextContainer>
 
           {formValues.subjects?.length > 0 && (
-            <ContextContainer title="Criterios de evaluación">
+            <ContextContainer title={t('evaluationCriteria')}>
               <Stack direction="column">
                 <Controller
                   control={form.control}
                   name="config.hasCurriculum"
                   render={({ field }) => (
-                    <Switch {...field} checked={field.value} label="Habilitar Curriculum" />
+                    <Switch {...field} checked={field.value} label={t('enableCurriculum')} />
                   )}
                 />
                 <Controller
                   control={form.control}
                   name="config.hasObjectives"
                   render={({ field }) => (
-                    <Switch
-                      {...field}
-                      checked={field.value}
-                      label="Habilitar objetivos personalizados"
-                    />
+                    <Switch {...field} checked={field.value} label={t('addCustomObjectives')} />
                   )}
                 />
               </Stack>
             </ContextContainer>
           )}
 
-          <ContextContainer title="Otros">
+          <ContextContainer title={t('other')}>
             <Stack direction="column">
               {/*
               <Controller
@@ -144,12 +139,12 @@ export default function DetailContent({
                 control={form.control}
                 name="config.hasInstructions"
                 render={({ field }) => (
-                  <Switch {...field} checked={field.value} label="Añadir instrucciones" />
+                  <Switch {...field} checked={field.value} label={t('addInstructions')} />
                 )}
               />
             </Stack>
           </ContextContainer>
-          {/* 
+          {/*
           <ContextContainer title={t('curriculum')} subtitle={subject ? subject.label : null}>
             <Curriculum
               program={form.getValues('program')}

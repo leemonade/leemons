@@ -5,11 +5,11 @@ import { HeaderDropdown } from '@bubbles-ui/leemons';
 
 import { useStore } from '@common';
 import _, { find, isNil, map, noop } from 'lodash';
-import { getSessionConfig, updateSessionConfig } from '@users/session';
-import { getUserProgramsRequest } from '@academic-portfolio/request';
+import { getCentersWithToken, getSessionConfig, updateSessionConfig } from '@users/session';
+import { getUserProgramsRequest, listProgramsRequest } from '@academic-portfolio/request';
 import { useProgramBarSelectorStyles } from './ProgramBarSelector.styles';
 
-export function ProgramBarSelector({ onChange = noop, children }) {
+export function ProgramBarSelector({ onChange = noop, isAdmin, children }) {
   const { classes } = useProgramBarSelectorStyles();
   const [store, render] = useStore({
     loading: true,
@@ -29,8 +29,17 @@ export function ProgramBarSelector({ onChange = noop, children }) {
   // FIRST LOAD
 
   async function init() {
-    const { programs } = await getUserProgramsRequest();
-    store.programs = _.map(programs, (program) => ({
+    let _programs = [];
+    if (isAdmin) {
+      const centers = getCentersWithToken();
+      const response = await listProgramsRequest({ page: 0, size: 9999, center: centers[0]?.id });
+      _programs = response.data?.items || [];
+    } else {
+      const { programs } = await getUserProgramsRequest();
+      _programs = programs;
+    }
+
+    store.programs = _.map(_programs, (program) => ({
       ...program,
       imageUrl: leemons.apiUrl + program.imageUrl,
     }));
@@ -83,6 +92,7 @@ export function ProgramBarSelector({ onChange = noop, children }) {
 ProgramBarSelector.propTypes = {
   children: PropTypes.node,
   onChange: PropTypes.func,
+  isAdmin: PropTypes.bool,
 };
 
 export default ProgramBarSelector;
