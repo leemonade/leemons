@@ -230,20 +230,22 @@ export default function DetailQuestionsBanks({
               <Box>
                 <Table columns={tableColumns} data={tableItems} />
               </Box>
-              <Stack fullWidth justifyContent="center">
-                <Pager
-                  page={store.pagination?.page || 0}
-                  totalPages={store.pagination?.totalPages || 0}
-                  size={store.size}
-                  withSize={false}
-                  onChange={(val) => onPageChange(val - 1)}
-                  onSizeChange={onPageSizeChange}
-                  labels={{
-                    show: t('show'),
-                    goTo: t('goTo'),
-                  }}
-                />
-              </Stack>
+              {store.pagination?.totalPages > 1 && (
+                <Stack fullWidth justifyContent="center">
+                  <Pager
+                    page={store.pagination?.page || 0}
+                    totalPages={store.pagination?.totalPages || 0}
+                    size={store.size}
+                    withSize={false}
+                    onChange={(val) => onPageChange(val - 1)}
+                    onSizeChange={onPageSizeChange}
+                    labels={{
+                      show: t('show'),
+                      goTo: t('goTo'),
+                    }}
+                  />
+                </Stack>
+              )}
             </>
           ) : (
             <>
