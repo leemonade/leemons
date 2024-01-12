@@ -23,12 +23,13 @@ import { useLocale, useStore } from '@common';
 import { useLayout } from '@layout/context';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import loadable from '@loadable/component';
+import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import tKeys from '@multilanguage/helpers/tKeys';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { PackageManagerService } from '@package-manager/services';
-import { getCentersWithToken } from '@users/session';
+import { currentProfileIsAdmin, getCentersWithToken } from '@users/session';
 import hooks from 'leemons-hooks';
 import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
@@ -38,6 +39,7 @@ import { useHistory } from 'react-router-dom';
 import ReactToPrint from 'react-to-print';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
+import { useUserProfile } from '@users/hooks';
 
 function academicCalendarImport(component) {
   return loadable(() =>
@@ -54,11 +56,11 @@ function Calendar({ session }) {
   });
 
   const calendarRef = useRef();
+  const userIsAdmin = currentProfileIsAdmin();
 
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const { theme } = useLayout();
 
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
@@ -392,6 +394,15 @@ function Calendar({ session }) {
     <Box style={{ display: 'flex', width: '100%', height: '100%' }}>
       <Box style={{ width: '250px' }}>
         <CalendarSubNavFilters
+          topZone={
+            <>
+              {!userIsAdmin ? (
+                <Box noFlex style={{ maxWidth: 250, flex: 'none' }}>
+                  <ProgramBarSelector onChange={init} clear />
+                </Box>
+              ) : null}
+            </>
+          }
           style={{ position: 'static' }}
           // lightMode={!theme.useDarkMode}
           // drawerColor={theme.menuDrawerColor}

@@ -9,7 +9,7 @@ import { getCentersWithToken, getSessionConfig, updateSessionConfig } from '@use
 import { getUserProgramsRequest, listProgramsRequest } from '@academic-portfolio/request';
 import { useProgramBarSelectorStyles } from './ProgramBarSelector.styles';
 
-export function ProgramBarSelector({ onChange = noop, isAdmin, children }) {
+export function ProgramBarSelector({ onChange = noop, isAdmin, children, clear }) {
   const { classes } = useProgramBarSelectorStyles();
   const [store, render] = useStore({
     loading: true,
@@ -73,6 +73,18 @@ export function ProgramBarSelector({ onChange = noop, isAdmin, children }) {
     init();
   }, []);
 
+  if (clear) {
+    return (
+      <HeaderDropdown
+        value={store.selectedProgram}
+        data={store.programsSelect}
+        withSearchInput={false}
+        readOnly={store.programsSelect?.length <= 1}
+        onChange={selectProgram}
+      />
+    );
+  }
+
   return (
     <Box className={classes.root}>
       <Box style={{ maxWidth: 320, flex: 'none' }}>
@@ -93,6 +105,7 @@ ProgramBarSelector.propTypes = {
   children: PropTypes.node,
   onChange: PropTypes.func,
   isAdmin: PropTypes.bool,
+  clear: PropTypes.bool,
 };
 
 export default ProgramBarSelector;

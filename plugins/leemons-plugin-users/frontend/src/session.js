@@ -89,6 +89,17 @@ export function currentProfileIsSuperAdmin() {
   return false;
 }
 
+export function currentProfileIsAdmin() {
+  const data = getCookieToken(true);
+  if (data.profile) {
+    const profile = _.find(data.profiles, {
+      id: _.isString(data.profile) ? data.profile : data.profile?.id,
+    });
+    return profile?.sysName === 'admin';
+  }
+  return false;
+}
+
 export function getCentersWithToken() {
   const token = getCookieToken(true);
   return _.isString(token) ? null : token?.centers;
