@@ -444,7 +444,7 @@ const AssetForm = ({
                         )}
                         onChangeRaw={(e) => {
                           if (e.length > 0) {
-                            if (!program) setValue('program', e[0].program);
+                            if (!program) setValue('program', e[0].programId);
                           } else if (program) setValue('program', null);
                         }}
                         error={error}
