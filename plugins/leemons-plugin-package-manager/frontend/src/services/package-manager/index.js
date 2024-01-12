@@ -13,7 +13,7 @@ function removePluginByNPM(name) {
 }
 
 async function isPluginInstalled(name) {
-  const { data } = await infoPluginRequest(name);
+  const data = await infoPluginRequest(name);
   return !!data;
 }
 

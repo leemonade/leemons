@@ -37,9 +37,9 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ReactToPrint from 'react-to-print';
+import { useUserProfile } from '@users/hooks';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
-import { useUserProfile } from '@users/hooks';
 
 function academicCalendarImport(component) {
   return loadable(() =>
@@ -616,7 +616,7 @@ function Calendar({ session }) {
                   <Box>
                     <Text color="primary" size="xl">
                       {t('programCalendar')}
-                      {store.scheduleCenter[store.center.id].config.program.abbreviation}
+                      {store.scheduleCenter[store.center.id].config.program.abbreviation ?? ''}
                     </Text>
                   </Box>
                   <Stack spacing={8}>
@@ -655,13 +655,15 @@ function Calendar({ session }) {
                   </Stack>
                 </Stack>
               </Box>
-              <AcademicCalendar
-                config={store.scheduleCenter[store.center.id].config}
-                course={
-                  store.academicCalendarCourse ||
-                  store.scheduleCenter[store.center.id]?.allCourses[0]?.id
-                }
-              />
+              {!!AcademicCalendar && (
+                <AcademicCalendar
+                  config={store.scheduleCenter[store.center.id].config}
+                  course={
+                    store.academicCalendarCourse ||
+                    store.scheduleCenter[store.center.id]?.allCourses[0]?.id
+                  }
+                />
+              )}
               <PrintCalendar
                 config={store.scheduleCenter[store.center.id].config}
                 course={
