@@ -83,7 +83,6 @@ export default function DetailBasic({
 
 DetailBasic.propTypes = {
   advancedConfig: PropTypes.object,
-  advancedConfig: PropTypes.object,
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func,
