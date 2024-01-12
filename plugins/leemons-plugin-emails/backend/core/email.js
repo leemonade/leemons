@@ -400,7 +400,7 @@ class Email {
       // console.log('--> transporters length:', transporters.length);
       // console.log('--> index:', index);
       const receipts = {
-        from: from || 'dev@leemons.io',
+        from: from || 'no-reply@leemons.io',
         to,
       };
 
