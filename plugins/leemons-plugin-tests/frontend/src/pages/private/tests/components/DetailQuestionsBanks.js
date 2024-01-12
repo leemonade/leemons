@@ -235,7 +235,7 @@ export default function DetailQuestionsBanks({
                   page={store.pagination?.page || 0}
                   totalPages={store.pagination?.totalPages || 0}
                   size={store.size}
-                  withSize={true}
+                  withSize={false}
                   onChange={(val) => onPageChange(val - 1)}
                   onSizeChange={onPageSizeChange}
                   labels={{

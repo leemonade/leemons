@@ -160,6 +160,7 @@ export default function Detail(p) {
           icon={<QuestionBankIcon width={23} height={23} />}
           title={getTitle()}
           formTitlePlaceholder={formValues.name}
+          onCancel={() => history.goBack()}
         />
       }
     >
