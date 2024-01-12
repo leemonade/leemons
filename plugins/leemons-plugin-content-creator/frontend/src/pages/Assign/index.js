@@ -5,10 +5,16 @@ import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import Form from '@assignables/components/Assignment/Form';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import { assignDocumentRequest, getDocumentRequest } from '@content-creator/request';
+import { assignDocumentRequest } from '@content-creator/request';
+import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
 
 export default function Assign() {
+  const history = useHistory();
+  const params = useParams();
+
   const [t] = useTranslateLoader(prefixPN('contentCreatorAssign'));
+
+  const { data: assignable, isLoading } = useAssignables({ id: params.id });
 
   const [store, render] = useStore({
     loading: false,
@@ -17,9 +23,6 @@ export default function Assign() {
       metadata: {},
     },
   });
-
-  const history = useHistory();
-  const params = useParams();
 
   async function send({ value: taskInstanceData }) {
     store.loading = true;
@@ -37,27 +40,13 @@ export default function Assign() {
     render();
   }
 
-  async function init() {
-    try {
-      const { document } = await getDocumentRequest(params.id);
-      store.document = document;
-      render();
-    } catch (error) {
-      addErrorAlert(error);
-    }
-  }
-
-  React.useEffect(() => {
-    if (params?.id && !store.document) init();
-  }, [params]);
-
   return (
     <Form
-      loading={store.loading}
+      loading={store.loading ?? isLoading}
       onSubmit={send}
       showInstructions
       showMessageForStudents
-      assignable={store.document}
+      assignable={assignable}
       evaluationType="none"
       evaluationTypes={['nonEvaluable']}
     />
