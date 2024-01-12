@@ -774,8 +774,8 @@ function AssetList({
             ref={childRef}
             fullWidth
             skipFlex
-            spacing={5}
-            padding={isEmbedded ? 0 : 5}
+            spacing={4}
+            padding={isEmbedded ? 0 : 4}
             style={
               isEmbedded
                 ? {
@@ -788,7 +788,7 @@ function AssetList({
                 : childNotEmbeddedStyles
             }
           >
-            <Stack fullWidth spacing={5}>
+            <Stack fullWidth spacing={4}>
               {canSearch && (
                 <SearchInput
                   variant={isEmbedded ? 'default' : 'filled'}
