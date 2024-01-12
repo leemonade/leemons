@@ -161,6 +161,7 @@ module.exports = {
         programs,
         subjects,
         onlyShared,
+        categoryFilter,
       } = ctx.params;
 
       const trueValues = ['true', true, '1', 1];
@@ -177,7 +178,7 @@ module.exports = {
 
       if (!_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category)) {
         assets = await getByCriteria({
-          category,
+          category: categoryFilter,
           criteria,
           type,
           indexable: true,
@@ -332,11 +333,19 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { criteria, type, published, preferCurrent, showPublic, providerQuery, category } =
-        ctx.params;
+      const {
+        criteria,
+        type,
+        published,
+        preferCurrent,
+        showPublic,
+        providerQuery,
+        categoryFilter,
+        category,
+      } = ctx.params;
 
       const _providerQuery = JSON.parse(providerQuery || null);
-      const _category = category === 'undefined' ? null : category;
+      const _category = category || categoryFilter === 'undefined' ? null : categoryFilter;
       const assetPublished = ['true', true, '1', 1].includes(published);
       const displayPublic = ['true', true, '1', 1].includes(showPublic);
       const _preferCurrent = ['true', true, '1', 1].includes(preferCurrent);

@@ -58,7 +58,6 @@ export default function Detail(p) {
       render();
       await saveQuestionBankRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests/questions-banks/draft');
     } catch (error) {
       addErrorAlert(error);
     }
@@ -161,6 +160,7 @@ export default function Detail(p) {
           icon={<QuestionBankIcon width={23} height={23} />}
           title={getTitle()}
           formTitlePlaceholder={formValues.name}
+          onCancel={() => history.goBack()}
         />
       }
     >

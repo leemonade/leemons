@@ -27,9 +27,8 @@ async function saveDocument({ data: _data, ctx }) {
     },
     role: 'content-creator',
     statement: data.introductoryText || '',
-    subjects: _.map(data.subjects, ({ level, subject }) => ({
-      level,
-      subject,
+    subjects: _.map(data.subjects, (id) => ({
+      subject: id,
       program: data.program,
     })),
     gradable: false,

@@ -75,7 +75,7 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
       menuItems={menuItems}
       variant="questionBank"
       variantTitle={t('questionBank')}
-      variantIcon={<QuestionBankIcon />}
+      variantIcon={<QuestionBankIcon width={18} height={18} />}
       className={classes.root}
     />
   );

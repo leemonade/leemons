@@ -54,8 +54,8 @@ export default function DetailQuestionForm({
   }
 
   function handleOnSave() {
-    form.handleSubmit((data) => {
-      onSave(data);
+    form.handleSubmit(() => {
+      onSave();
     })();
   }
 

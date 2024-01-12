@@ -262,10 +262,11 @@ function AssetList({
         multiCategorySections.includes(categoryProp?.key) &&
         categoryProp?.key !== 'leebrary-shared'
       ) {
-        if (!categoryFilter || categoryFilter === 'all') delete query.category;
-        else {
+        delete query.category;
+        const activateCategoryFilter = categoryFilter && categoryFilter !== 'all';
+        if (activateCategoryFilter) {
           const chosenCategory = find(store.categories, { key: categoryFilter });
-          if (chosenCategory) query.category = chosenCategory.id;
+          if (chosenCategory) query.categoryFilter = chosenCategory.id;
         }
       }
 
@@ -774,8 +775,8 @@ function AssetList({
             ref={childRef}
             fullWidth
             skipFlex
-            spacing={5}
-            padding={isEmbedded ? 0 : 5}
+            spacing={4}
+            padding={isEmbedded ? 0 : 4}
             style={
               isEmbedded
                 ? {
@@ -788,7 +789,7 @@ function AssetList({
                 : childNotEmbeddedStyles
             }
           >
-            <Stack fullWidth spacing={5}>
+            <Stack fullWidth spacing={4}>
               {canSearch && (
                 <SearchInput
                   variant={isEmbedded ? 'default' : 'filled'}

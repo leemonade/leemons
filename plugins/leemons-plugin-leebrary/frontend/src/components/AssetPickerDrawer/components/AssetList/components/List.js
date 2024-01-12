@@ -87,23 +87,26 @@ export function List({ variant, query, filters, onSelect }) {
       </Box>
     );
   }
+
   return (
     <Box className={classes.root}>
       {variant === 'rows' && <RowList items={items} onSelect={onSelect} />}
       {variant === 'thumbnails' && <ThumbnailList items={items} onSelect={onSelect} />}
       {variant === 'cards' && <CardList items={items} onSelect={onSelect} />}
-      <Box className={classes.pager}>
-        <Pager
-          withSize={false}
-          withControls
-          page={page}
-          sizes={[30, 60, 90]}
-          totalPages={totalPages}
-          size={size}
-          onSizeChange={setSize}
-          onChange={setPage}
-        />
-      </Box>
+      {totalPages > 1 && (
+        <Box className={classes.pager}>
+          <Pager
+            withSize={false}
+            withControls
+            page={page}
+            sizes={[30, 60, 90]}
+            totalPages={totalPages}
+            size={size}
+            onSizeChange={setSize}
+            onChange={setPage}
+          />
+        </Box>
+      )}
     </Box>
   );
 }

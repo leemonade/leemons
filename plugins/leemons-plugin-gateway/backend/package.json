@@ -20,8 +20,8 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.51",
-    "@leemons/mongodb": "0.0.51",
+    "@leemons/deployment-manager": "0.0.52",
+    "@leemons/mongodb": "0.0.52",
     "ioredis": "^5.3.2",
     "jaeger-client": "^3.19.0",
     "moleculer": "^0.14.26",

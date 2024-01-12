@@ -9,12 +9,9 @@ import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
 import { apiSessionMiddleware } from '../globalContext';
 
-function getJWTToken() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('jwtToken');
-}
+const params = new URLSearchParams(window.location.search);
+const jwtToken = params.get('jwtToken'); // reemplace 'myParam' con el nombre de su parámetro
 
-const jwtToken = getJWTToken();
 if (jwtToken) {
   Cookies.set('token', jwtToken);
 }
@@ -73,22 +70,7 @@ function getUserToken(data) {
 }
 
 export function getCookieToken(onlyCookie) {
-  let token = null;
-  const _jwtToken = getJWTToken();
-
-  if (_jwtToken) {
-    token = _jwtToken;
-  } else {
-    token = Cookies.get('token');
-  }
-
-  if (!token) {
-    const domain = /:\/\/([^\/]+)/.exec(window.location.href)[1];
-    const subdomain = domain.split('.')[0];
-    token = Cookies.get(`token_${subdomain}`);
-    Cookies.set('token', token);
-    Cookies.remove(`token_${subdomain}`);
-  }
+  let token = Cookies.get('token');
 
   try {
     token = JSON.parse(token);
@@ -110,7 +92,9 @@ export function currentProfileIsSuperAdmin() {
 export function currentProfileIsAdmin() {
   const data = getCookieToken(true);
   if (data.profile) {
-    const profile = _.find(data.profiles, { id: data.profile });
+    const profile = _.find(data.profiles, {
+      id: _.isString(data.profile) ? data.profile : data.profile?.id,
+    });
     return profile?.sysName === 'admin';
   }
   return false;
