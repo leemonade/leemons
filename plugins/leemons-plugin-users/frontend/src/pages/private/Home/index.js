@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import constants from '@users/constants';
 import { logoutSession } from '@users/session';
 import { goSelectProfilePage } from '@users/navigate';
@@ -7,6 +7,10 @@ import { useHistory } from 'react-router-dom';
 
 function Home() {
   const history = useHistory();
+
+  useEffect(() => {
+    history.push('/private/dashboard');
+  }, []);
 
   // console.log(getCentersWithToken());
 
