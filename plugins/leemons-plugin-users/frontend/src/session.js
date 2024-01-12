@@ -9,9 +9,12 @@ import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
 import { apiSessionMiddleware } from '../globalContext';
 
-const params = new URLSearchParams(window.location.search);
-const jwtToken = params.get('jwtToken'); // reemplace 'myParam' con el nombre de su parámetro
+function getJWTToken() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('jwtToken');
+}
 
+const jwtToken = getJWTToken();
 if (jwtToken) {
   Cookies.set('token', jwtToken);
 }
@@ -70,7 +73,22 @@ function getUserToken(data) {
 }
 
 export function getCookieToken(onlyCookie) {
-  let token = Cookies.get('token');
+  let token = null;
+  const _jwtToken = getJWTToken();
+
+  if (_jwtToken) {
+    token = _jwtToken;
+  } else {
+    token = Cookies.get('token');
+  }
+
+  if (!token) {
+    const domain = /:\/\/([^\/]+)/.exec(window.location.href)[1];
+    const subdomain = domain.split('.')[0];
+    token = Cookies.get(`token_${subdomain}`);
+    Cookies.set('token', token);
+    Cookies.remove(`token_${subdomain}`);
+  }
 
   try {
     token = JSON.parse(token);
