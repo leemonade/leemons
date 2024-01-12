@@ -13,7 +13,7 @@ async function getFileUrl({ fileID, provider, uri, segment, isPublic = false, ct
     const authTokens = ctx.meta.authorization;
     const urlSuffixSegment = segment ? `/${segment}` : '';
     const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
-    return `http://localhost:8080/api/v1/leebrary/file/${
+    return `${process.env.API_URL}/api/v1/leebrary/file/${
       isPublic ? 'public/' : ''
     }${fileID}${urlSuffixSegment}${authParam}`;
   }
