@@ -161,6 +161,7 @@ module.exports = {
         programs,
         subjects,
         onlyShared,
+        categoryFilter,
       } = ctx.params;
 
       const trueValues = ['true', true, '1', 1];
@@ -177,7 +178,7 @@ module.exports = {
 
       if (!_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category)) {
         assets = await getByCriteria({
-          category,
+          category: categoryFilter,
           criteria,
           type,
           indexable: true,

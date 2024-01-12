@@ -262,10 +262,11 @@ function AssetList({
         multiCategorySections.includes(categoryProp?.key) &&
         categoryProp?.key !== 'leebrary-shared'
       ) {
-        if (!categoryFilter || categoryFilter === 'all') delete query.category;
-        else {
+        delete query.category;
+        const activateCategoryFilter = categoryFilter && categoryFilter !== 'all';
+        if (activateCategoryFilter) {
           const chosenCategory = find(store.categories, { key: categoryFilter });
-          if (chosenCategory) query.category = chosenCategory.id;
+          if (chosenCategory) query.categoryFilter = chosenCategory.id;
         }
       }
 
