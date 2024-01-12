@@ -58,7 +58,6 @@ export default function Detail(p) {
       render();
       await saveQuestionBankRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push('/private/tests/questions-banks/draft');
     } catch (error) {
       addErrorAlert(error);
     }
