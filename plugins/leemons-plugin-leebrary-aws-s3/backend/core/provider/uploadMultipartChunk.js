@@ -16,15 +16,20 @@ async function uploadMultipartChunk({ file, partNumber, buffer, path, ctx } = {}
 
   const { s3, config } = await getS3AndConfig({ ctx });
 
-  const res = await s3
-    .uploadPart({
-      Body: buffer,
-      Bucket: config.bucket,
-      Key,
-      PartNumber: String(partNumber),
-      UploadId: multipartConfig.uploadId,
-    })
-    .promise();
+  try {
+    const res = await s3
+      .uploadPart({
+        Body: buffer,
+        Bucket: config.bucket,
+        Key,
+        PartNumber: String(partNumber),
+        UploadId: multipartConfig.uploadId,
+      })
+      .promise();
+  } catch (e) {
+    console.log('Error in multipart chunk', config, e);
+    throw e;
+  }
 
   const eQuery = { fileId: file.id, partNumber };
   const eSave = { fileId: file.id, partNumber, etag: res.ETag };
