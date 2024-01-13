@@ -52,7 +52,7 @@ module.exports = {
     getCoverUrl: {
       handler(ctx) {
         // * To implement: Esto deberia de hacerse en un paquete de leebrary para gastar menos recursos
-        return `/api/leebrary/img/${ctx.params.assetId}`;
+        return `${process.env.API_URL}/api/leebrary/img/${ctx.params.assetId}`;
       },
     },
     exists: {

@@ -21,7 +21,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
-import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, uniqBy } from 'lodash';
+import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, noop, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -227,7 +227,6 @@ function AssetList({
     setStoreValue('page', 1);
     setStoreValue('assets', []);
     queryClient.invalidateQueries(allAssetsKey);
-    queryClient.refetchQueries();
 
     try {
       const query = {

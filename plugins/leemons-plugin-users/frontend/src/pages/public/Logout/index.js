@@ -12,6 +12,12 @@ export default function Logout({ session }) {
   React.useEffect(() => {
     if (deploymentConfig !== undefined && session) {
       Cookies.remove('token');
+      const domain = /:\/\/([^/]+)/.exec(window.location.href)[1];
+      const subdomain = domain.split('.')[0];
+      if (Cookies.get(`token_${subdomain}`)) {
+        Cookies.remove(`token_${subdomain}`);
+      }
+
       if (deploymentConfig?.externalLogoutUrl && session.isSuperAdmin) {
         window.location.replace(deploymentConfig?.externalLogoutUrl);
       } else {

@@ -11,7 +11,7 @@ function useAssets({ ids, filters, ...options }) {
   });
 
   const queryFn = useCallback(
-    () => getAssetsByIds(ids, filters).then((r) => r.assets),
+    () => getAssetsByIds(ids, filters).then((r) => r.assets ?? []),
     [ids, filters]
   );
 

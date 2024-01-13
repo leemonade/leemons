@@ -36,6 +36,17 @@ export function getPublicFileUrl(fileID, segment) {
   return getFileUrl(fileID, segment, true);
 }
 
+export function isValidURL(url, checkAuthorization) {
+  const urlPattern =
+    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
+
+  if (checkAuthorization && url.indexOf('authorization=') < 0) {
+    return false;
+  }
+
+  return urlPattern.test(url) ? true : 'Invalid URL';
+}
+
 export function prepareAsset(assetFromApi, isPublished = true) {
   if (assetFromApi.prepared && assetFromApi.original) {
     return assetFromApi;
@@ -78,7 +89,7 @@ export function prepareAsset(assetFromApi, isPublished = true) {
       asset.cover = getFileUrl(asset.cover.id);
     } else if (asset.cover instanceof File) {
       asset.cover = URL.createObjectURL(asset.cover);
-    } else if (isString(asset.cover)) {
+    } else if (isString(asset.cover) && !isValidURL(asset.cover, true)) {
       asset.cover = getFileUrl(asset.cover);
     }
   }
@@ -96,12 +107,6 @@ export function prepareAsset(assetFromApi, isPublished = true) {
   }
 
   return asset;
-}
-
-export function isValidURL(url) {
-  const urlPattern =
-    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
-  return urlPattern.test(url) ? true : 'Invalid URL';
 }
 
 export function isImageFile(file) {

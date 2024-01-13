@@ -6,7 +6,7 @@ export default function LocaleCreator({ addLocale }) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
-    const response = await fetch('/api/v1/multilanguage/locale', {
+    const response = await fetch(`${leemons.apiUrl}/api/v1/multilanguage/locale`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
