@@ -90,6 +90,8 @@ module.exports = {
           password: ctx.params.password,
           ctx,
         });
+
+        ctx.$statusCode = 200;
         return { status: 200, user };
       }
       throw validator.error;
@@ -116,6 +118,8 @@ module.exports = {
           password: ctx.params.password,
           ctx,
         });
+
+        ctx.$statusCode = 200;
         return { status: 200, user };
       }
       throw validator.error;
@@ -138,15 +142,14 @@ module.exports = {
       if (validator.validate(ctx.params)) {
         try {
           await usersService.recover({ email: ctx.params.email, ctx });
-          return { status: 200, message: 'Email sent' };
         } catch (e) {
-          console.error(e);
           // Always send 200 so hackers can't know if the email exists
-          return { status: 200, code: e.code, message: 'Email sent' };
         }
-      } else {
-        throw validator.error;
+
+        ctx.meta.$statusCode = 200;
+        return { status: 200, message: 'Email sent' };
       }
+      throw validator.error;
     },
   },
   loginRest: {
