@@ -10,7 +10,7 @@ const { getS3AndConfig } = require('./getS3AndConfig');
  * @param {MoleculerContext} params.ctx - The Moleculer context, used to interact with the database.
  * @returns {Promise<Boolean>} Returns a promise that resolves to true when the upload is successfully completed.
  */
-async function finishMultipart({ file, path, ctx } = {}) {
+async function finishMultipart({ file, path, etags: _etags, ctx } = {}) {
   let Key = file.uri;
   const query = { fileId: file?.id };
 
@@ -19,10 +19,15 @@ async function finishMultipart({ file, path, ctx } = {}) {
     Key += `/${path}`;
   }
 
-  const [multipartConfig, etags] = await Promise.all([
+  const [multipartConfig, etags2] = await Promise.all([
     ctx.tx.db.MultipartUploads.findOne(query).lean(),
     ctx.tx.db.MultipartEtag.find(query).lean(),
   ]);
+
+  let etags = etags2;
+  if (_etags) {
+    etags = _.map(_etags, (etag, index) => ({ etag, partNumber: index + 1 }));
+  }
 
   if (!multipartConfig) {
     throw new Error('No started multipart upload for this file');

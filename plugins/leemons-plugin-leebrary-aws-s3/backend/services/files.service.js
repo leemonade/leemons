@@ -18,6 +18,7 @@ const {
   remove,
   clone,
 } = require('../core/provider');
+const { getUploadChunkUrls } = require('../core/provider/getUploadChunkUrls');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -32,6 +33,14 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    getUploadChunkUrls: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        payload.file = payload.file ?? payload.dbfile;
+
+        return getUploadChunkUrls(payload);
+      },
+    },
     abortMultipart: {
       handler(ctx) {
         const payload = { ...ctx.params, ctx };

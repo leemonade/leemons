@@ -18,8 +18,41 @@ async function abort(dbfile) {
   });
 }
 
-async function sendChunk(dbfile, chunk, partNumber, path, retry = 0) {
+async function sendChunk(dbfile, chunk, partNumber, path, uploadUrl, onProgress, retry = 0) {
   try {
+    if (uploadUrl) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.upload.addEventListener('progress', (data) => {
+          const progress = Math.round((data.loaded * 100) / data.total);
+          onProgress(progress);
+        });
+
+        xhr.open('PUT', uploadUrl);
+
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            // retrieving the ETag parameter from the HTTP headers
+            const ETag = xhr.getResponseHeader('ETag');
+
+            if (ETag) {
+              resolve(JSON.parse(ETag));
+            }
+          }
+        };
+
+        xhr.onerror = (error) => {
+          reject(error);
+        };
+
+        xhr.onabort = () => {
+          reject(new Error('Upload canceled by user'));
+        };
+
+        xhr.send(chunk);
+      });
+    }
     const formData = new FormData();
     formData.append(
       'body',
@@ -39,8 +72,9 @@ async function sendChunk(dbfile, chunk, partNumber, path, retry = 0) {
       method: 'POST',
     });
   } catch (e) {
+    console.error('error', e);
     if (retry < maxRetry) {
-      return sendChunk(dbfile, chunk, partNumber, path, retry + 1);
+      return sendChunk(dbfile, chunk, partNumber, path, uploadUrl, onProgress, retry + 1);
     }
     throw e;
   }
@@ -55,9 +89,37 @@ async function sendAllChunksInOrder(jsfile, dbfile, onProgress) {
     percentageCompleted: 0,
     remainingChunks: nChunks,
   });
+
+  const { urls } = await leemons.api('v1/leebrary/file/multipart/chunk/urls', {
+    allAgents: true,
+    body: {
+      fileId: dbfile.id,
+      nChunks,
+      path: jsfile.name,
+    },
+    method: 'POST',
+  });
+
+  const etags = [];
+
   for (let i = 0; i < nChunks; i++) {
     const offset = i * chunksSize;
-    await sendChunk(dbfile, jsfile.slice(offset, offset + chunksSize), i + 1, jsfile.name);
+    const etag = await sendChunk(
+      dbfile,
+      jsfile.slice(offset, offset + chunksSize),
+      i + 1,
+      jsfile.name,
+      urls?.length ? urls[i] : null,
+      (progress) => {
+        onProgress({
+          totalChunks: nChunks,
+          currentChunk: i,
+          percentageCompleted: 100 - ((nChunks - (i + 1)) / nChunks) * 100,
+          remainingChunks: nChunks - i,
+        });
+      }
+    );
+    etags.push(etag);
     onProgress({
       totalChunks: nChunks,
       currentChunk: i,
@@ -65,6 +127,8 @@ async function sendAllChunksInOrder(jsfile, dbfile, onProgress) {
       remainingChunks: nChunks - (i + 1),
     });
   }
+
+  return etags;
 }
 
 async function createNewMultipartFileUpload(jsfile, { filePaths, pathsInfo, isFolder, name } = {}) {
@@ -82,12 +146,13 @@ async function createNewMultipartFileUpload(jsfile, { filePaths, pathsInfo, isFo
   });
 }
 
-async function finishMultipartFileUpload(dbfile, path) {
+async function finishMultipartFileUpload(dbfile, path, etags) {
   return leemons.api('v1/leebrary/file/multipart/finish', {
     allAgents: true,
     body: {
       fileId: dbfile.id,
       path,
+      etags,
     },
     method: 'POST',
   });
@@ -153,26 +218,30 @@ async function uploadFileAsMultipart(jsfile, { onProgress = () => {}, name } = {
       let oldper = 0;
       for (let i = 0; i < filesToUpload.length; i++) {
         const currentFileSize = filesToUpload[i].size;
-        await sendAllChunksInOrder(filesToUpload[i], dbfile, ({ percentageCompleted }) => {
-          const filePercentageOnSize = (currentFileSize / totalSize) * 100;
-          let totalPercentageSize = (percentageCompleted / 100) * filePercentageOnSize;
+        const etags = await sendAllChunksInOrder(
+          filesToUpload[i],
+          dbfile,
+          ({ percentageCompleted }) => {
+            const filePercentageOnSize = (currentFileSize / totalSize) * 100;
+            let totalPercentageSize = (percentageCompleted / 100) * filePercentageOnSize;
 
-          if (percentageCompleted === 100) {
-            oldper += totalPercentageSize;
-            totalPercentageSize = 0;
+            if (percentageCompleted === 100) {
+              oldper += totalPercentageSize;
+              totalPercentageSize = 0;
+            }
+
+            onProgress({
+              state: 'uploading',
+              totalFiles: filesToUpload.length,
+              totalSize,
+              currentFileSize,
+              currentFilePercentageCompleted: percentageCompleted.toFixed(2),
+              percentageCompleted: oldper + totalPercentageSize,
+              currentFile: i + 1,
+            });
           }
-
-          onProgress({
-            state: 'uploading',
-            totalFiles: filesToUpload.length,
-            totalSize,
-            currentFileSize,
-            currentFilePercentageCompleted: percentageCompleted.toFixed(2),
-            percentageCompleted: oldper + totalPercentageSize,
-            currentFile: i + 1,
-          });
-        });
-        await finishMultipartFileUpload(dbfile, filesToUpload[i].name);
+        );
+        await finishMultipartFileUpload(dbfile, filesToUpload[i].name, etags);
       }
 
       return dbfile.id;

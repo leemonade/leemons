@@ -23,8 +23,10 @@ function UploadingFileModal({ opened, title, info }) {
       </Box>
       {value?.state === 'uploading' ? (
         <Progress
-          value={value?.percentageCompleted}
-          label={`${value?.percentageCompleted.toFixed(2)}%`}
+          value={value?.percentageCompleted > 100 ? 100 : value?.percentageCompleted}
+          label={`${
+            value?.percentageCompleted > 100 ? 100 : value?.percentageCompleted.toFixed(2)
+          }%`}
           size="xl"
           radius="xl"
         />
