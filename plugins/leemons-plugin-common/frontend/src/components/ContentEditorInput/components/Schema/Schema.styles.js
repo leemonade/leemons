@@ -1,17 +1,21 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const SchemaStyles = createStyles((theme, { isSchemaOpened }) => {
+export const SchemaStyles = createStyles((theme, { isSchemaOpened, compact }) => {
   const globalTheme = theme.other.global;
+  const borderParams = '1px solid #DDE1E6';
   return {
     schemaContainer: {
-      minWidth: isSchemaOpened ? 125 : 40,
-      maxWidth: isSchemaOpened ? 300 : 40,
+      minWidth: isSchemaOpened ? 125 : 44,
+      maxWidth: isSchemaOpened ? 300 : 44,
       flex: 1,
       position: 'relative',
       transition: 'all 0.2s',
       overflow: 'hidden',
       backgroundColor: 'white',
-      top: 32,
+      top: compact ? 0 : 32,
+      // border: borderParams,
+      borderRight: borderParams,
+      marginBottom: 2,
     },
     schemaTranslate: {
       transform: !isSchemaOpened && 'translateX(calc(-100% + 40px))',
@@ -22,15 +26,16 @@ export const SchemaStyles = createStyles((theme, { isSchemaOpened }) => {
     },
     schemaHeader: {
       paddingBlock: 16,
-      paddingLeft: isSchemaOpened ? 32 : 10,
+      paddingLeft: isSchemaOpened ? 24 : 10,
       paddingRight: isSchemaOpened ? 16 : 10,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
+      borderBottom: isSchemaOpened ? borderParams : 'none',
     },
     schema: {
       paddingBlock: 24,
-      paddingLeft: 32,
+      paddingLeft: 16,
       paddingRight: 40,
       display: 'flex',
       flexDirection: 'column',

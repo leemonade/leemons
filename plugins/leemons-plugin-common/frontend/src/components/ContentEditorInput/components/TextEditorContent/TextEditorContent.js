@@ -35,13 +35,15 @@ const TextEditorContent = ({
   editorLabels,
   openLibraryModal,
   canExpand,
+  compact,
+  fullWidth: _fullWidth,
   ...props
 }) => {
   const setSchema = useContentEditorStore((state) => state.setSchema);
-  const [fullWidth, setFullWidth] = React.useState(false);
+  const [fullWidth, setFullWidth] = React.useState(_fullWidth);
 
   const { classes, cx } = TextEditorContentStyles(
-    { editorStyles, fullWidth },
+    { editorStyles, fullWidth, compact },
     { name: 'TextEditorContent' }
   );
 

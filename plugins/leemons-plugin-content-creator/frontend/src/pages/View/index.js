@@ -1,15 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Box,
+  Stack,
   LoadingOverlay,
   Button,
   createStyles,
   ActivityAccordion,
   ActivityAccordionPanel,
   HtmlText,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
+import ActivityHeader from '@assignables/components/ActivityHeader/index';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useLocale } from '@common';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import { useParams, useHistory } from 'react-router-dom';
@@ -17,7 +21,6 @@ import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
@@ -56,10 +59,8 @@ function useDocumentData({ id, user }) {
     instance,
     assignable,
     asset,
-
     classData,
     coverUrl,
-
     isLoading:
       (assignationIsLoading && instancesIsLoading) || classDataIsLoading || assignableIsLoading,
   };
@@ -80,20 +81,19 @@ const useDocumentViewStyles = createStyles((theme) => ({
 }));
 
 export default function DocumentView() {
+  const scrollRef = useRef();
   const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
-  const locale = useLocale();
   const history = useHistory();
-  const { classes, theme } = useDocumentViewStyles();
+  const { theme } = useDocumentViewStyles();
 
   // ----------------------------------------------------------------------
   // SETTINGS
   const { id, user } = useParams();
 
-  const { classData, asset, coverUrl, instance, assignable, assignation, isLoading } =
-    useDocumentData({
-      id,
-      user,
-    });
+  const { instance, assignable, assignation, isLoading } = useDocumentData({
+    id,
+    user,
+  });
   const nextActivityUrl = useNextActivityUrl(assignation);
 
   const { mutateAsync } = useStudentAssignationMutation();
@@ -109,81 +109,101 @@ export default function DocumentView() {
   }
 
   return (
-    <ActivityContainer
-      header={{
-        title: asset?.name,
-        subtitle: classData?.name,
-        icon: classData?.icon,
-        color: classData?.color,
-        image: coverUrl,
-      }}
-      deadline={
-        instance?.dates?.deadline && {
-          deadline:
-            instance?.dates?.deadline instanceof Date
-              ? instance?.dates?.deadline
-              : new Date(instance?.dates?.deadline),
-          locale,
-        }
-      }
-      collapsed
-    >
-      <>
-        {!!instance?.metadata?.statement && (
-          <ActivityAccordion defaultValue="instructions">
-            <ActivityAccordionPanel
-              itemValue="instructions"
-              label={t('instructions')}
-              icon={
-                <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
-              }
-            >
-              <Box
-                sx={(th) => ({
-                  padding: th.other.global.spacing.padding.sm,
-                  paddingLeft: 25,
-                })}
-              >
-                <HtmlText>{instance?.metadata?.statement}</HtmlText>
-              </Box>
-            </ActivityAccordionPanel>
-          </ActivityAccordion>
-        )}
-        <ContentEditorInput
-          useSchema
-          schemaLabel={t('schemaLabel')}
-          labels={{
-            format: t('formatLabel'),
-          }}
-          value={assignable?.content}
-          openLibraryModal={false}
-          readOnly
+    <TotalLayoutContainer
+      ref={scrollRef}
+      Header={
+        <ActivityHeader
+          instance={instance}
+          showClass
+          showRole
+          showEvaluationType
+          showTime
+          showDeadline
         />
-        <Box className={classes.buttonContainer}>
-          {nextActivityUrl ? (
-            <Button
-              rightIcon={<ChevRightIcon />}
-              onClick={() =>
-                updateTimestamps('end').then(() => {
-                  history.push(nextActivityUrl);
-                })
+      }
+    >
+      <Stack justifyContent="center" ref={scrollRef} style={{ overflow: 'auto' }}>
+        <TotalLayoutStepContainer
+          clean
+          Footer={
+            <TotalLayoutFooterContainer
+              scrollRef={scrollRef}
+              rightZone={
+                <Box>
+                  {nextActivityUrl ? (
+                    <Button
+                      rightIcon={<ChevRightIcon />}
+                      onClick={() =>
+                        updateTimestamps('end').then(() => {
+                          history.push(nextActivityUrl);
+                        })
+                      }
+                    >
+                      {t('nextActivity')}
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() =>
+                        updateTimestamps('end').then(() => {
+                          history.push('/private/assignables/ongoing');
+                        })
+                      }
+                    >
+                      {t('markRead')}
+                    </Button>
+                  )}
+                </Box>
               }
+              fixed
+            />
+          }
+        >
+          {!!instance?.metadata?.statement && (
+            <ActivityAccordion
+              defaultValue="instructions"
+              style={{
+                backgroundColor: 'white',
+                borderRadiusBottomLeft: 0,
+                borderRadiusBottomRight: 0,
+                borderBottom: '1px solid #DDE1E6',
+              }}
             >
-              {t('nextActivity')}
-            </Button>
-          ) : (
-            <Button
-              onClick={() =>
-                updateTimestamps('end').then(() => {
-                  history.push('/private/assignables/ongoing');
-                })
-              }
-            >
-              {t('markRead')}
-            </Button>
+              <ActivityAccordionPanel
+                itemValue="instructions"
+                compact
+                label={t('instructions')}
+                icon={
+                  <AlertInformationCircleIcon
+                    color={theme.other.global.content.color.icon.default}
+                  />
+                }
+              >
+                <Box
+                  sx={(th) => ({
+                    padding: th.other.global.spacing.padding.sm,
+                    paddingLeft: 32,
+                  })}
+                >
+                  <HtmlText>{instance?.metadata?.statement}</HtmlText>
+                </Box>
+              </ActivityAccordionPanel>
+            </ActivityAccordion>
           )}
-        </Box>
-      </>
-    </ActivityContainer>
+          <ContentEditorInput
+            useSchema
+            compact
+            fullWidth
+            schemaLabel={t('schemaLabel')}
+            labels={{
+              format: t('formatLabel'),
+            }}
+            value={assignable?.content}
+            openLibraryModal={false}
+            readOnly
+          />
+          {/* <Introduction instance={module} /> */}
+        </TotalLayoutStepContainer>
+      </Stack>
+    </TotalLayoutContainer>
   );
 }

@@ -144,7 +144,7 @@ export default function AssignmentList({
       }
     >
       <Stack justifyContent="center" fullWidth>
-        <TotalLayoutStepContainer clean stepName={labels.title}>
+        <TotalLayoutStepContainer clean fullWidth stepName={labels.title}>
           {View}
         </TotalLayoutStepContainer>
       </Stack>

@@ -1,9 +1,7 @@
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
+/* eslint-disable consistent-return */
 import { Box, ImageLoader, TotalLayoutHeader } from '@bubbles-ui/components';
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider } from 'react-hook-form';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
@@ -13,22 +11,22 @@ import Timer from './components/Timer/Timer';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
 import useTotalLayoutStyles from './TotalLayout.style';
 import CloseButtons from './components/CloseButtons/CloseButtons';
+import {
+  ACTIVIY_HEADER_PROP_TYPES,
+  ACTIVIY_HEADER_DEFAULT_PROPS,
+} from './ActivityHeader.constants';
 
 export default function ActivityHeader({
   instance,
-
   action,
   showClass,
   showRole,
   showEvaluationType,
   showTime,
   showDeadline,
-
   showCloseButtons,
   allowEditDeadline,
 }) {
-  const form = useForm();
-  console.log('instance');
   /*
     === Activity data ===
   */
@@ -113,3 +111,7 @@ export default function ActivityHeader({
     </FormProvider>
   );
 }
+
+ActivityHeader.propTypes = ACTIVIY_HEADER_PROP_TYPES;
+ActivityHeader.defaultProps = ACTIVIY_HEADER_DEFAULT_PROPS;
+ActivityHeader.displayName = 'ActivityHeader';

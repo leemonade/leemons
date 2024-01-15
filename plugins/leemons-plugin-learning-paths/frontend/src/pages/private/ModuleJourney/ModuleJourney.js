@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useModuleData } from '@learning-paths/components/ModuleDashboard/ModuleDashboard';
 import {
   TotalLayoutContainer,
@@ -11,7 +11,6 @@ import {
 import ActivityHeader from '@assignables/components/ActivityHeader/index';
 import { sortBy } from 'lodash';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Link } from 'react-router-dom/cjs/react-router-dom';
 import { Introduction } from './steps/Introduction';
 
 const ModuleJourney = () => {
@@ -56,7 +55,7 @@ const ModuleJourney = () => {
               scrollRef={scrollRef}
               rightZone={
                 <Link to={handleButtonUrl()}>
-                  <Button>Siguiente actividad</Button>
+                  <Button>TODO: Siguiente actividad</Button>
                 </Link>
               }
               fixed
