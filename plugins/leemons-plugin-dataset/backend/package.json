@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-dataset",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Leemons dataset plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,14 +21,14 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.52",
+    "@leemons/deployment-manager": "0.0.53",
     "@leemons/error": "0.0.41",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.52",
-    "@leemons/mongodb-helpers": "0.0.52",
+    "@leemons/mongodb": "0.0.53",
+    "@leemons/mongodb-helpers": "0.0.53",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multilanguage": "0.0.52",
-    "@leemons/permissions": "0.0.52",
+    "@leemons/multilanguage": "0.0.53",
+    "@leemons/permissions": "0.0.53",
     "@leemons/utils": "0.0.41",
     "@leemons/validator": "0.0.41",
     "jaeger-client": "^3.19.0",

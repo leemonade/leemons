@@ -16,7 +16,7 @@ async function getConfig({ ctx } = {}) {
   ) {
     configs = [
       {
-        id: 'aws-ses',
+        id: 'leebrary-aws-s3',
         deploymentID: ctx.meta.deploymentID,
         bucket: process.env.AWS_S3_BUCKET,
         region: process.env.AWS_REGION,
