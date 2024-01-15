@@ -12,7 +12,6 @@ import {
 const EvaluationCard = ({ instance, variantTitle, variantIcon, localizations }) => {
   const { color } = instance.asset;
   const { classes } = EvaluationCardStyles({ color });
-
   return (
     <Box className={classes.root}>
       <Box className={classes.wrapper}>

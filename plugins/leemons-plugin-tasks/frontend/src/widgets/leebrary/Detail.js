@@ -76,7 +76,7 @@ const Detail = ({ asset, onRefresh, ...props }) => {
     openConfirmationModal({
       onConfirm: () => {
         setAppLoading(true);
-        handleClick(`POST://tasks/tasks/${asset.providerData.id}/duplicate`, 'api', () => {
+        handleClick(`POST://v1/tasks/tasks/${asset.providerData.id}/duplicate`, 'api', () => {
           addSuccessAlert('Task duplicated');
           setAppLoading(false);
           onRefresh();
@@ -89,7 +89,7 @@ const Detail = ({ asset, onRefresh, ...props }) => {
     openDeleteConfirmationModal({
       onConfirm: () => {
         setAppLoading(true);
-        handleClick(`DELETE://tasks/tasks/${asset.providerData.id}`, 'api', () => {
+        handleClick(`DELETE://v1/tasks/tasks/${asset.providerData.id}`, 'api', () => {
           addSuccessAlert('Task deleted');
           setAppLoading(false);
           onRefresh();

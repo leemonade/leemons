@@ -1,6 +1,7 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { Box, ImageLoader, Select, Text } from '@bubbles-ui/components';
+import { Box, Select, Text, AvatarSubject } from '@bubbles-ui/components';
 import React from 'react';
+import propTypes from 'prop-types';
 
 export function SubjectItem({ subject, isValueComponent, ...props }) {
   if (!subject) {
@@ -19,30 +20,12 @@ export function SubjectItem({ subject, isValueComponent, ...props }) {
           width: isValueComponent && '22ch',
         })}
       >
-        <Box
-          sx={() => ({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: 20,
-            minHeight: 20,
-            maxWidth: 20,
-            maxHeight: 20,
-            borderRadius: '50%',
-            backgroundColor: subject?.color,
-          })}
-        >
-          <ImageLoader
-            sx={() => ({
-              borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
-            })}
-            forceImage
-            width={16}
-            height={16}
-            src={typeof subject?.icon === 'string' ? subject.icon : getClassIcon({ subject })}
-          />
-        </Box>
+        <AvatarSubject
+          color={subject?.color}
+          icon={typeof subject?.icon === 'string' ? subject.icon : getClassIcon({ subject })}
+          size={'md'}
+          altText={subject?.label}
+        />
         <Text truncated>{subject.label}</Text>
       </Box>
     </Box>
@@ -78,3 +61,14 @@ export function SelectSubject({ data, value, onChange, ...props }) {
     />
   );
 }
+
+SubjectItem.propTypes = {
+  subject: propTypes.object,
+  isValueComponent: propTypes.bool,
+};
+
+SelectSubject.propTypes = {
+  data: propTypes.arrayOf(propTypes.object),
+  value: propTypes.string,
+  onChange: propTypes.func,
+};

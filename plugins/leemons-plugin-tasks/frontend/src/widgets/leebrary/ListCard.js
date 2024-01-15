@@ -9,7 +9,7 @@ import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
-import _ from 'lodash';
+import _, { noop } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '../../helpers/prefixPN';
@@ -22,7 +22,7 @@ const ListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ...props }) => {
+const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...props }) => {
   const history = useHistory();
   const {
     openConfirmationModal,
@@ -59,10 +59,10 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ..
   // ·········································································
   // HANDLERS
 
-  const handleClick = (url, target = 'self', callback) => {
+  const handleClick = (url, target = 'self', callback = noop) => {
     if (target === 'self') {
       history.push(url);
-      return typeof callback === 'function' && callback('redirected', url);
+      return callback('redirected', url);
     }
 
     if (target === 'api') {
@@ -72,7 +72,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ..
           method,
           allAgents: true,
         })
-        .then((v) => typeof callback === 'function' && callback(v));
+        .then((v) => callback(v));
     }
 
     return null;
@@ -126,7 +126,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ..
             openConfirmationModal({
               onConfirm: () => {
                 setAppLoading(true);
-                handleClick(`POST://tasks/tasks/${taskId}/duplicate`, 'api', () => {
+                handleClick(`POST://v1/tasks/tasks/${taskId}/duplicate`, 'api', () => {
                   addSuccessAlert('Task duplicated');
                   setAppLoading(false);
                   onRefresh();
@@ -146,7 +146,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => { }, ..
             openDeleteConfirmationModal({
               onConfirm: () => {
                 setAppLoading(true);
-                handleClick(`DELETE://tasks/tasks/${taskId}`, 'api', () => {
+                handleClick(`DELETE://v1/tasks/tasks/${taskId}`, 'api', () => {
                   addSuccessAlert('Task deleted');
                   setAppLoading(false);
                   onRefresh();

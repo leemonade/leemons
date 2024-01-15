@@ -21,7 +21,6 @@ export default function ActivityCarousel({
   const isStudentDashboard = location.pathname.includes('private/dashboard/class');
 
   const swiperProps = {
-    // watchOverflow: true,
     selectable: true,
     deselectable: false,
     disableSelectedStyles: true,
@@ -43,8 +42,8 @@ export default function ActivityCarousel({
     },
     slideStyles: {
       height: 'auto',
-      minWidth: isTeacher ? '532px !important' : '264px !important',
-      maxWidth: isTeacher ? '532px !important' : '330px !important',
+      minWidth: isTeacher ? '468px !important' : '264px !important',
+      maxWidth: isTeacher ? '468px !important' : '330px !important',
     },
   };
 

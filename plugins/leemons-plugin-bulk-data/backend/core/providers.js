@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 const { isEmpty, isNil } = require('lodash');
+const chalk = require('chalk');
 const importProviders = require('./bulk/providers');
 
 async function initProviders({ file, ctx }) {
@@ -19,11 +20,15 @@ async function initProviders({ file, ctx }) {
       !isEmpty(providers.storage.accessKey) &&
       !isEmpty(providers.storage.secretAccessKey)
     ) {
-      await ctx.call('mqtt-aws-iot.socket.setConfig', {
-        region: providers.iot.region || euCentralOneRegion,
-        accessKeyId: providers.iot.accessKey,
-        secretAccessKey: providers.iot.secretAccessKey,
-      });
+      try {
+        await ctx.call('mqtt-aws-iot.socket.setConfig', {
+          region: providers.iot.region || euCentralOneRegion,
+          accessKeyId: providers.iot.accessKey,
+          secretAccessKey: providers.iot.secretAccessKey,
+        });
+      } catch (err) {
+        ctx.logger.error(chalk`{red.bold BULK} Error setting MQTT AWS IOT config: ${err.message}`);
+      }
     }
 
     // ·····································
@@ -40,11 +45,16 @@ async function initProviders({ file, ctx }) {
         accessKey: providers.storage.accessKey,
         secretAccessKey: providers.storage.secretAccessKey,
       };
-
-      await ctx.call('leebrary.settings.setProviderConfig', {
-        providerName: storageProvider,
-        config: storageConfig,
-      });
+      try {
+        await ctx.call('leebrary.settings.setProviderConfig', {
+          providerName: storageProvider,
+          config: storageConfig,
+        });
+      } catch (err) {
+        ctx.logger.error(
+          chalk`{red.bold BULK} Error setting storage provider config: ${err.message}`
+        );
+      }
     }
 
     // ·····································
@@ -61,11 +71,16 @@ async function initProviders({ file, ctx }) {
         accessKey: providers.email.accessKey,
         secretAccessKey: providers.email.secretAccessKey,
       };
-
-      await ctx.call('emails.email.addProvider', {
-        providerName: emailProvider,
-        config: emailConfig,
-      });
+      try {
+        await ctx.call('emails.email.addProvider', {
+          providerName: emailProvider,
+          config: emailConfig,
+        });
+      } catch (err) {
+        ctx.logger.error(
+          chalk`{red.bold BULK} Error setting email provider config: ${err.message}`
+        );
+      }
     }
 
     if (
@@ -84,10 +99,16 @@ async function initProviders({ file, ctx }) {
         pass: providers.email.smtpPass,
       };
 
-      await ctx.call('emails.email.addProvider', {
-        providerName: smtpEmailProvider,
-        config: emailConfig,
-      });
+      try {
+        await ctx.call('emails.email.addProvider', {
+          providerName: smtpEmailProvider,
+          config: emailConfig,
+        });
+      } catch (err) {
+        ctx.logger.error(
+          chalk`{red.bold BULK} Error setting email provider config: ${err.message}`
+        );
+      }
     }
 
     return providers;

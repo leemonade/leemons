@@ -36,14 +36,7 @@ export function findNearestFloorScore(score, scales) {
   return nearestScore;
 }
 
-export default function ScoreFeedback({
-  score,
-  program,
-  instance,
-  isFeedback,
-  totalActivities,
-  submitedActivities,
-}) {
+export default function ScoreFeedback({ score, program, instance, isFeedback }) {
   const evaluationSystem = useProgramEvaluationSystem(program);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
   const [, translations] = useTranslateLoader([prefixPN('assignmentForm'), prefixPN('ongoing')]);
@@ -56,7 +49,6 @@ export default function ScoreFeedback({
   }, [translations]);
   const [calificationType, setCalificationType] = useState(null);
   const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
-  const isModule = instance?.assignable?.role === 'learningpaths.module';
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
     const activityTypeLocale = {
@@ -132,13 +124,6 @@ export default function ScoreFeedback({
               </Box>
             </Box>
             <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
-            {isModule && (
-              <Box className={classes.containerArrow}>
-                <Text
-                  className={classes.submitedNumber}
-                >{`(${submitedActivities}/${totalActivities} ${localizations?.ongoing?.activities.toLowerCase()})`}</Text>
-              </Box>
-            )}
           </Box>
         </>
       ) : (

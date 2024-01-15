@@ -37,8 +37,8 @@ export default function EvaluationsCarousel({
     },
     slideStyles: {
       height: 'auto',
-      maxWidth: '532px',
-      minWidth: '532px',
+      maxWidth: '468px',
+      minWidth: '468px',
     },
   };
 

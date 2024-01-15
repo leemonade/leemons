@@ -6,7 +6,7 @@ const webpackConfig = require('./webpack.config');
 const { parseWebpackMessage } = require('./parseWebpackMessage');
 
 module.exports = async function startDevServer({ app, build, alias, publicFiles }) {
-  const config = webpackConfig({ app, build, alias, publicFiles, isDev: true });
+  const config = webpackConfig({ app, build, alias, publicFiles, isDev: true, lazy: true });
   const devServerOptions = config.devServer;
 
   let compiler;

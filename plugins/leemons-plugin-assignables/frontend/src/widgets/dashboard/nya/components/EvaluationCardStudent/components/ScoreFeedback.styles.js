@@ -19,9 +19,9 @@ const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
 
   return {
     root: {
-      height: pxToRem(212),
+      height: pxToRem(194),
       maxWidth: pxToRem(160),
-      minWidth: pxToRem(160),
+      minWidth: pxToRem(125),
       backgroundColor: cardEvaluation.background.color.top,
       display: 'flex',
       flexDirection: 'column',
@@ -37,7 +37,6 @@ const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
       height: '100%',
       width: '100%',
       gap: pxToRem(8),
-      marginTop: pxToRem(16),
     },
     containerNumber: {
       display: 'flex',
