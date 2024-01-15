@@ -7,16 +7,19 @@ const EvaluationCardStyles = createStyles((theme, { color }) => {
     root: {
       borderRadius: cardEvaluation.border.radius.sm,
       border: `${cardEvaluation.border.width.sm} solid ${cardEvaluation.border.color.subtle}`,
-      minHeight: pxToRem(212),
-      maxHeight: pxToRem(212),
-      maxWidth: pxToRem(536),
-      minWidth: pxToRem(488),
+      minHeight: pxToRem(194),
+      maxHeight: pxToRem(194),
+      maxWidth: pxToRem(488),
+      minWidth: pxToRem(400),
       overflow: 'hidden',
       display: 'flex',
+      flexWrap: 'inherit',
+
       justifyContent: 'space-between',
       '&:hover': {
         boxShadow: getCardShadow.boxShadow,
       },
+      backgroundColor: cardEvaluation.background.color.default,
     },
     wrapper: {
       display: 'flex',
@@ -25,7 +28,7 @@ const EvaluationCardStyles = createStyles((theme, { color }) => {
     color: {
       backgroundColor: color,
       width: 4,
-      height: pxToRem(212),
+      height: pxToRem(194),
     },
   };
 });

@@ -6,8 +6,7 @@ const EvaluationCardBodyStyles = createStyles((theme) => {
     root: {
       minHeight: '100%',
       minWidth: pxToRem(324),
-      maxWidth: pxToRem(372),
-      width: 372,
+      maxWidth: pxToRem(362),
       padding: `${cardEvaluation.spacing.padding.horizontal.md} ${cardEvaluation.spacing.padding.vertical.md}`,
       backgroundColor: cardEvaluation.background.color.default,
       position: 'relative',

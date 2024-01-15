@@ -30,7 +30,6 @@ export default function EvaluationCardStudent({ assignation }) {
   const { classes } = useEvaluationCardStyles({ color });
   const dateDelivered =
     instance?.dates?.deadline && new Date(instance?.dates?.deadline).toLocaleDateString();
-
   if (!assignation) return <EvaluationCardSkeleton />;
   return (
     <Link
@@ -64,8 +63,6 @@ export default function EvaluationCardStudent({ assignation }) {
             isCalificable={instance.requiresScoring}
             score={instance.requiresScoring && score}
             instance={instance}
-            totalActivities={10}
-            submitedActivities={5}
           />
         </Box>
       </Box>

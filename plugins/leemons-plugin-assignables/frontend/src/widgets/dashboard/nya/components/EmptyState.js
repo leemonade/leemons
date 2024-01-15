@@ -9,7 +9,6 @@ const useEmptyStateStyles = createStyles((theme) => ({
     width: '100%',
     height: 120, // 328,
     borderRadius: theme.spacing[1],
-    // backgroundColor: theme.colors.uiBackground02,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
