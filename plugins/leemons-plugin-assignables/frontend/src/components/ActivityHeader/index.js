@@ -1,7 +1,6 @@
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
-import { Box, ImageLoader, TotalLayoutHeader } from '@bubbles-ui/components';
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Box, ImageLoader, TotalLayoutHeader } from '@bubbles-ui/components';
 
 import { FormProvider, useForm } from 'react-hook-form';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -21,14 +20,16 @@ export default function ActivityHeader({
   showClass,
   showRole,
   showEvaluationType,
-  showTime,
+  showStartDate,
   showDeadline,
+  showDateTime,
+
+  showTime,
 
   showCloseButtons,
   allowEditDeadline,
 }) {
   const form = useForm();
-  console.log('instance');
   /*
     === Activity data ===
   */
@@ -103,7 +104,9 @@ export default function ActivityHeader({
             <Timer instance={instance} hidden={!showTime} />
             <DateComponent
               instance={instance}
-              hidden={!showDeadline}
+              showDeadline={showDeadline}
+              showStartDate={showStartDate}
+              showTime={showDateTime}
               allowEdit={!!allowEditDeadline}
             />
           </Box>
@@ -113,3 +116,17 @@ export default function ActivityHeader({
     </FormProvider>
   );
 }
+
+ActivityHeader.propTypes = {
+  instance: PropTypes.object,
+  action: PropTypes.string,
+  showClass: PropTypes.bool,
+  showRole: PropTypes.bool,
+  showEvaluationType: PropTypes.bool,
+  showStartDate: PropTypes.bool,
+  showDeadline: PropTypes.bool,
+  showDateTime: PropTypes.bool,
+  showTime: PropTypes.bool,
+  showCloseButtons: PropTypes.bool,
+  allowEditDeadline: PropTypes.bool,
+};

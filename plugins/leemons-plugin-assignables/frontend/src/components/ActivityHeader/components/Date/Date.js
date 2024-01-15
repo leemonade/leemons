@@ -82,20 +82,36 @@ function DateEditor({ target, opened, onCancel, onChange, start, deadline }) {
   );
 }
 
-export default function DateComponent({ instance, hidden, allowEdit }) {
+DateEditor.propTypes = {
+  target: PropTypes.object,
+  opened: PropTypes.bool,
+  onCancel: PropTypes.func,
+  onChange: PropTypes.func,
+  start: PropTypes.string,
+  deadline: PropTypes.string,
+};
+
+export default function DateComponent({
+  instance,
+  showDeadline,
+  showStartDate,
+  showTime,
+  allowEdit,
+}) {
   const { start, deadline } = instance?.dates ?? {};
   const [isEditing, setIsEditing] = useState(false);
   const ref = useRef();
   const { mutateAsync } = useMutateAssignableInstance();
 
+  const [t] = useTranslateLoader(prefixPN('dates'));
+
   const { dashboardLocalizations } = useTaskOngoingListLocalizations();
 
   const { classes } = useDateStyles();
 
-  if (!deadline || hidden) {
+  if (!deadline || (!showDeadline && !showStartDate)) {
     return null;
   }
-  console.log('dashboard', dashboardLocalizations);
 
   return (
     <DateEditor
@@ -109,7 +125,7 @@ export default function DateComponent({ instance, hidden, allowEdit }) {
         };
 
         try {
-          await mutateAsync({ id: instance.id, dates: newDates });
+          await mutateAsync({ id: instance?.id, dates: newDates });
 
           addSuccessAlert(dashboardLocalizations[type].messages.success);
         } catch (e) {
@@ -120,12 +136,40 @@ export default function DateComponent({ instance, hidden, allowEdit }) {
       }}
       target={
         <Box className={classes.root} ref={ref}>
-          <Box className={classes.icon}>
-            <PluginCalendarIcon width={18} height={18} />
-          </Box>
-          <Box className={classes.text}>
-            <LocaleDate date={deadline} options={{ dateStyle: 'short' }} />
-          </Box>
+          {showStartDate && (
+            <Box className={classes.date}>
+              <Box className={classes.icon}>
+                <PluginCalendarIcon width={18} height={18} />
+              </Box>
+              <Box className={classes.text}>
+                {`${t('start')}: `}
+                <LocaleDate
+                  date={start}
+                  options={{
+                    dateStyle: 'short',
+                    timeStyle: showTime ? 'short' : undefined,
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
+          {showDeadline && (
+            <Box className={classes.date}>
+              <Box className={classes.icon}>
+                <PluginCalendarIcon width={18} height={18} />
+              </Box>
+              <Box className={classes.text}>
+                {!!showStartDate && `${t('deadline')}: `}
+                <LocaleDate
+                  date={deadline}
+                  options={{
+                    dateStyle: 'short',
+                    timeStyle: showTime ? 'short' : undefined,
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
           {!!allowEdit && (
             <ActionButton icon={<EditIcon />} size="sm" onClick={() => setIsEditing(true)} />
           )}
@@ -137,8 +181,11 @@ export default function DateComponent({ instance, hidden, allowEdit }) {
 
 DateComponent.propTypes = {
   instance: PropTypes.shape({
+    id: PropTypes.string,
     dates: PropTypes.shape({ deadline: PropTypes.string }),
   }),
-  hidden: PropTypes.bool,
+  showDeadline: PropTypes.bool,
+  showStartDate: PropTypes.bool,
+  showTime: PropTypes.bool,
   allowEdit: PropTypes.bool,
 };
