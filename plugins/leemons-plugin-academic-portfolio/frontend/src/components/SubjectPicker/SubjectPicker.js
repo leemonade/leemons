@@ -29,7 +29,7 @@ export function SubjectPicker({
   });
 
   const { programs, courses, subjects, selectedSubjects } = useDataForSubjectPicker({
-    subjects: assignable?.subjects || value,
+    subjects: assignable?.subjects,
     control: form.control,
   });
 
@@ -40,7 +40,7 @@ export function SubjectPicker({
 
   useEffect(() => {
     onChangeRaw(selectedSubjects);
-  }, [selectedSubjects]);
+  }, [JSON.stringify(selectedSubjects)]);
 
   const { classes } = useSubjectPickerStyles();
 
