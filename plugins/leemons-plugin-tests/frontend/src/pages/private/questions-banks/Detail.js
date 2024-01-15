@@ -139,17 +139,6 @@ export default function Detail(p) {
     },
   });
 
-  React.useEffect(() => {
-    const subscription = form.watch(() => {
-      debounce(async () => {
-        store.isValid = await form.trigger();
-        render();
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   if (store.loading) return <LoadingOverlay visible />;
 
   return (
