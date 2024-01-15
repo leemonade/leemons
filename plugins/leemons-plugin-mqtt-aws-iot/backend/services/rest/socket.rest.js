@@ -22,10 +22,6 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.DISABLE_AUTO_INIT === 'true')
-        throw new LeemonsError(ctx, {
-          message: 'We are in leemons sass mode, you can`t get this data',
-        });
       const credentials = await createCredentialsForUserSession({ ctx });
       return { status: 200, credentials };
     },
