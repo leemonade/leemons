@@ -17,7 +17,7 @@ function createTemp({ readStream, contentType }) {
         reject(err);
       }
 
-      let dataToWrite = readStream;
+      let dataToWrite = readStream?.type === 'Buffer' ? Buffer.from(readStream) : readStream;
 
       if (isReadableStream(dataToWrite)) {
         dataToWrite = await streamToBuffer(dataToWrite);
