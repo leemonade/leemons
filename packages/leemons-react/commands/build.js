@@ -10,8 +10,6 @@ const getBuildDir = require('../src/paths/getBuildDir');
 const getBasePath = require('../src/paths/getBasePath');
 
 module.exports = async function buildFront({ app, build, output, base }) {
-  process.env.NODE_ENV = 'production';
-
   const env = await generateEnv('.env', false);
   Object.keys(env).forEach((key) => {
     process.env[key] = env[key];

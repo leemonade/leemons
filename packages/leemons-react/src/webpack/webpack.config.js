@@ -16,6 +16,7 @@ module.exports = function webpackConfig({
   alias,
   publicFiles,
   isDev = process.env.NODE_ENV !== 'production',
+  lazy,
   useDebug = process.env.DEBUG,
 }) {
   const isProduction = !isDev;
@@ -56,7 +57,6 @@ module.exports = function webpackConfig({
               // Pending further investigation:
               // https://github.com/terser-js/terser/issues/120
               inline: 2,
-
             },
             mangle: {
               safari10: true,
@@ -230,17 +230,17 @@ module.exports = function webpackConfig({
       useDebug && new BundleAnalyzerPlugin({ analyzerMode: 'disabled' }),
       useDebug && new webpack.debug.ProfilingPlugin(),
       isProduction &&
-      new MiniCssExtractPlugin({
-        // Options similar to the same options in webpackOptions.output
-        // both options are optional
-        filename: 'static/css/[name].[contenthash:8].css',
-        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-      }),
+        new MiniCssExtractPlugin({
+          // Options similar to the same options in webpackOptions.output
+          // both options are optional
+          filename: 'static/css/[name].[contenthash:8].css',
+          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+        }),
       // new LoadablePlugin({ filename: 'stats.json', writeToDisk: true }),
       publicFiles?.length &&
-      new CopyPlugin({
-        patterns: [...publicFiles],
-      }),
+        new CopyPlugin({
+          patterns: [...publicFiles],
+        }),
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
@@ -248,7 +248,7 @@ module.exports = function webpackConfig({
     ignoreWarnings: [/Failed to parse source map/],
     experiments: {
       cacheUnaffected: true,
-      lazyCompilation: isDev,
+      lazyCompilation: isDev && lazy,
     },
     stats: false,
     infrastructureLogging: {
