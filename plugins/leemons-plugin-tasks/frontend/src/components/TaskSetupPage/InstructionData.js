@@ -20,16 +20,18 @@ function useDefaultValues() {
   const { getValues } = useObservableContext();
 
   return useMemo(() => {
-    const [instructionsForTeachers, instructionsForStudents, resources] = getValues([
+    const [instructionsForTeachers, instructionsForStudents, resources, duration] = getValues([
       'sharedData.instructionsForTeachers',
       'sharedData.instructionsForStudents',
       'sharedData.resources',
+      'sharedData.duration',
     ]);
 
     return {
       instructionsForTeachers,
       instructionsForStudents,
       resources,
+      duration,
     };
   }, []);
 }
