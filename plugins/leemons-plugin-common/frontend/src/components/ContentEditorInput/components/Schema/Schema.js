@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, TextClamp, FileItemDisplay } from '@bubbles-ui/components';
 import { ComputerKeyboardNextIcon } from '@bubbles-ui/icons/outline';
 import { SchemaStyles } from './Schema.styles';
@@ -11,6 +11,9 @@ export const Schema = ({ schemaLabel, compact }) => {
   const isSchemaOpened = useContentEditorStore((state) => state.isSchemaOpened);
   const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
 
+  useEffect(() => {
+    setIsSchemaOpened(true);
+  }, []);
   const { classes } = SchemaStyles({ isSchemaOpened, compact }, { name: 'ContentEditor-Schema' });
 
   const scrollElementIntoView = (element) => {

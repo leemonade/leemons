@@ -95,7 +95,6 @@ export default function DateComponent({ instance, hidden, allowEdit }) {
   if (!deadline || hidden) {
     return null;
   }
-  console.log('dashboard', dashboardLocalizations);
 
   return (
     <DateEditor

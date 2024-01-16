@@ -46,7 +46,6 @@ const TextEditorContent = ({
     { editorStyles, fullWidth, compact },
     { name: 'TextEditorContent' }
   );
-
   return (
     <>
       {canExpand && (
@@ -56,6 +55,7 @@ const TextEditorContent = ({
           </IconButton>
         </Box>
       )}
+
       <TextEditor
         {...props}
         placeholder={placeholder}

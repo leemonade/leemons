@@ -110,7 +110,7 @@ export default function DocumentView() {
 
   return (
     <TotalLayoutContainer
-      ref={scrollRef}
+      scrollRef={scrollRef}
       Header={
         <ActivityHeader
           instance={instance}
@@ -160,7 +160,6 @@ export default function DocumentView() {
         >
           {!!instance?.metadata?.statement && (
             <ActivityAccordion
-              defaultValue="instructions"
               style={{
                 backgroundColor: 'white',
                 borderRadiusBottomLeft: 0,

@@ -76,6 +76,7 @@ export const SchemaStyles = createStyles((theme, { isSchemaOpened, compact }) =>
       transition: 'transform 300ms',
       minHeight: 20,
       minWidth: 20,
+      marginLeft: !isSchemaOpened && 6,
     },
     schemaElement: {
       cursor: 'pointer',
