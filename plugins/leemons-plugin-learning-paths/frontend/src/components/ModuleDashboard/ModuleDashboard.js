@@ -1,7 +1,16 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, createStyles, Loader } from '@bubbles-ui/components';
+import {
+  Box,
+  createStyles,
+  Loader,
+  Stack,
+  TabPanel,
+  Tabs,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+} from '@bubbles-ui/components';
 import { capitalize, get, head, map, sortBy, tail } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
@@ -11,17 +20,11 @@ import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@learning-paths/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-// TODO: import from @feedback plugin ???
-import { ActivityContainer } from '@assignables/components/ActivityContainer';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import useClassData from '@assignables/hooks/useClassDataQuery';
-import { getMultiClassData } from '@assignables/helpers/getClassData';
-import Sidebar from '@tasks/components/Student/TaskDetail/components/Sidebar/Sidebar';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import ActivityHeader from '@assignables/components/ActivityHeader';
 import { DashboardCard } from './components/DashboardCard';
-import { useHeaderDataForPreview, useModuleDataForPreview } from './helpers/previewHooks';
+import { useModuleDataForPreview } from './helpers/previewHooks';
 
 export function useModuleDashboardLocalizations() {
   // key is string
@@ -165,42 +168,6 @@ export function useModuleData(id) {
   };
 }
 
-function useHeaderData(module) {
-  const { assignable, dates, alwaysAvailable } = module ?? {};
-  const { asset, roleDetails, role } = assignable ?? {};
-  const { name } = asset ?? {};
-
-  const preparedAsset = prepareAsset(asset ?? {});
-  const roleLocalizations = useRolesLocalizations([role]);
-
-  const { data: classesData } = useClassData(module, {}, { multiSubject: true });
-  const { icon, color } = getMultiClassData({});
-
-  return {
-    header: {
-      title: name,
-
-      icon: classesData?.length > 1 ? icon : classesData?.[0]?.icon,
-      color: classesData?.length > 1 ? color : classesData?.[0]?.color,
-      image: preparedAsset?.cover ?? null,
-      subjects: classesData,
-      activityType: {
-        icon: roleDetails?.icon,
-        type: capitalize(get(roleLocalizations, `${role}.singular`)),
-      },
-      activityDates: alwaysAvailable
-        ? null
-        : {
-          startLabel: 'Desde',
-          endLabel: 'Hasta',
-          hourLabel: 'Hora',
-          startDate: new Date(dates?.start),
-          endDate: new Date(dates?.deadline),
-        },
-    },
-  };
-}
-
 function useBlockedActivities({ activities, assignationsById }) {
   const isStudent = useIsStudent();
 
@@ -226,20 +193,6 @@ function useBlockedActivities({ activities, assignationsById }) {
   }, [activities, assignationsById, isStudent]);
 }
 
-export const useModuleDashboardBodyStyles = createStyles((theme, { marginTop }) => ({
-  sidebarContainer: {
-    minWidth: 280,
-    maxWidth: 280,
-  },
-  sidebar: {
-    width: 280,
-    position: 'absolute',
-    height: `calc(100% - ${marginTop})`,
-    right: 0,
-    top: marginTop,
-  },
-}));
-
 export function ModuleDashboardBody({
   classes,
   localizations,
@@ -247,55 +200,42 @@ export function ModuleDashboardBody({
   activitiesById,
   assignationsById,
   module,
-  marginTop,
   preview,
 }) {
-  const { classes: sidebarClasses } = useModuleDashboardBodyStyles({ marginTop });
   const [t] = useTranslateLoader(prefixPN('moduleJourney'));
   const moduleColor = module?.assignable?.asset?.color;
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
   const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   return (
-    <Box className={classes.body}>
-      <Box className={classes.rootContainer}>
-        {/* <Text className={classes.sectionHeader}>{localizations?.activities}</Text>
-        {!!module?.metadata?.statement && <HtmlText>{module?.metadata?.statement}</HtmlText>} */}
-        <Box className={classes.activitiesList}>
-          <DashboardCard
-            introductionCard
-            assetNumber={t('introduction')}
-            statement={module?.metadata?.statement}
-            cover={module?.assignable?.asset?.cover}
-            localizations={localizations}
-            emptyIcon={module?.assignable?.roleDetails?.icon}
-            fileType={module?.assignable?.roleDetails?.name}
-            introductionLink={introductionLink}
-          />
-          {sortBy(
-            activities?.map((activity, index) => ({
-              comp: (
-                <DashboardCard
-                  isBlocked={!!blockedActivities[activity?.id]}
-                  localizations={localizations}
-                  activity={activitiesById[activity?.id]}
-                  assignation={assignationsById[activity?.id]}
-                  key={activity?.id}
-                  preview={preview}
-                  assetNumber={index + 1}
-                  moduleColor={moduleColor}
-                />
-              ),
-              createdAt: activitiesById[activity?.id].createdAt,
-            })),
-            'createdAt'
-          ).map((a) => a.comp)}
-        </Box>
-      </Box>
-      <Box className={sidebarClasses.sidebarContainer}>
-        <Box className={sidebarClasses.sidebar}>
-          <Sidebar assignation={{ instance: module }} labels={localizations} show />
-        </Box>
-      </Box>
+    <Box className={classes.activitiesList}>
+      <DashboardCard
+        introductionCard
+        assetNumber={t('introduction')}
+        statement={module?.metadata?.statement}
+        cover={module?.assignable?.asset?.cover}
+        localizations={localizations}
+        emptyIcon={module?.assignable?.roleDetails?.icon}
+        fileType={module?.assignable?.roleDetails?.name}
+        introductionLink={introductionLink}
+      />
+      {sortBy(
+        activities?.map((activity, index) => ({
+          comp: (
+            <DashboardCard
+              isBlocked={!!blockedActivities[activity?.id]}
+              localizations={localizations}
+              activity={activitiesById[activity?.id]}
+              assignation={assignationsById[activity?.id]}
+              key={activity?.id}
+              preview={preview}
+              assetNumber={index + 1}
+              moduleColor={moduleColor}
+            />
+          ),
+          createdAt: activitiesById[activity?.id].createdAt,
+        })),
+        'createdAt'
+      ).map((a) => a.comp)}
     </Box>
   );
 }
@@ -325,8 +265,6 @@ export function ModuleDashboard({ id, preview }) {
   }, []);
 
   const localizations = useModuleDashboardLocalizations();
-  const headersData = preview ? useHeaderDataForPreview(module) : useHeaderData(module);
-
   const { classes } = useModuleDashboardStyles();
 
   if (isLoading) {
@@ -334,23 +272,26 @@ export function ModuleDashboard({ id, preview }) {
   }
 
   return (
-    <Box className={classes.root}>
-      <ActivityContainer {...headersData}>
-        <ModuleDashboardBody
-          activities={activities}
-          activitiesById={activitiesById}
-          assignationsById={assignationsById}
-          classes={classes}
-          localizations={localizations}
-          module={module}
-          preview={preview}
-        />
-      </ActivityContainer>
-    </Box>
+    <TotalLayoutContainer
+      Header={<ActivityHeader instance={module} showStartDate showDeadline showDateTime />}
+    >
+      <Box sx={{ overflow: 'auto' }}>
+        <Tabs fullHeight fullWidth usePaddedLayout>
+          <TabPanel label={localizations?.activities}>
+            <Box sx={{ padding: '30px 0 30px 0' }}>
+              <ModuleDashboardBody
+                activities={activities}
+                activitiesById={activitiesById}
+                assignationsById={assignationsById}
+                classes={classes}
+                localizations={localizations}
+                module={module}
+                preview={preview}
+              />
+            </Box>
+          </TabPanel>
+        </Tabs>
+      </Box>
+    </TotalLayoutContainer>
   );
 }
-
-ModuleDashboard.propTypes = {
-  id: PropTypes.string,
-  preview: PropTypes.bool,
-};
