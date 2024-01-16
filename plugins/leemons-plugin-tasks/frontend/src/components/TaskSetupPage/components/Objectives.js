@@ -13,6 +13,7 @@ export default function Objectives({ form, name, label, required }) {
     control,
     formState: { errors },
   } = form ?? localForm;
+  const curriculumObjectives = form.watch(name);
 
   const columns = useMemo(() => [
     {
@@ -34,9 +35,8 @@ export default function Objectives({ form, name, label, required }) {
             {...field}
             columns={columns}
             editable
-            // TODO: TRANSLATE: Required error label
-            error={errors.objectives && 'This field is required'}
-            data={field.value || []}
+            error={errors.objectives && tableInputLabels.required}
+            data={curriculumObjectives || []}
             labels={tableInputLabels}
             renderActionButton={({ disabled, onAdd }) => (
               <Button

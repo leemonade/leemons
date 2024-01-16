@@ -1,13 +1,9 @@
 // Libraries
 import {
-  Box,
   Button,
   ContextContainer,
-  createStyles,
-  Stack,
   Switch,
   DropdownButton,
-  SegmentedControl,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
@@ -17,45 +13,24 @@ import { noop, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-
-// Leemons plugins
-import useSubjects from '@assignables/components/Assignment/AssignStudents/hooks/useSubjects';
-
-// Local files
 import { useObservableContext } from '@common/context/ObservableContext';
-import Attachments from './components/Attachments';
-import Curriculum from './components/Curriculum';
-import Objectives from './components/Objectives';
+
 import Submissions from './components/Submissions';
 import StatementImage from './components/StatementImage';
 import Development from './components/Development';
 
-const ContentDataStyles = createStyles((theme) => ({
-  tabPane: {
-    paddingTop: theme.spacing[5],
-    paddingLeft: theme.spacing[5],
-    paddingBottom: theme.spacing[5],
-  },
-}));
-
 function useDefaultValues() {
   const { getValues } = useObservableContext();
+  const hasDevelopment = getValues('sharedData.metadata.development')?.length > 0;
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    const sharedData = { ...getValues('sharedData') };
+    sharedData.metadata = { ...sharedData.metadata, hasDevelopment };
+    return {
       gradable: false,
-      ...getValues('sharedData'),
-    }),
-    []
-  );
-}
-
-function useSubjectsWrapper() {
-  const { useWatch } = useObservableContext();
-
-  const subjects = useWatch({ name: 'sharedData.subjects' });
-
-  return useSubjects({ subjects }, false);
+      ...sharedData,
+    };
+  }, []);
 }
 
 function ContentData({
@@ -73,20 +48,19 @@ function ContentData({
   loading,
   setLoading,
   t,
+  config,
   ...props
 }) {
   const { useWatch, getValues, setValue } = useObservableContext();
   const isExpress = !!useWatch({ name: 'isExpress' });
+  const [isLastStep, setIsLastStep] = React.useState(isExpress);
 
   // ·······························································
   // FORM
 
-  const { classes } = ContentDataStyles();
-
-  const [curriculumTab, setCurriculumTab] = React.useState(0);
-
   const defaultValues = useDefaultValues();
   const formData = useForm({ defaultValues });
+
   const {
     control,
     handleSubmit,
@@ -94,8 +68,33 @@ function ContentData({
     formState: { errors, isDirty },
   } = formData;
 
+  // MANAGE OPTIONAL FIELDS -------------------------------------------------
   const hasDevelopment = watch('metadata.hasDevelopment');
-  const subjects = useSubjectsWrapper();
+  const hasInstructions = watch('metadata.hasInstructions');
+  const hasAttachments = watch('metadata.hasAttachments');
+  const hasCurriculum = watch('metadata.hasCurriculum');
+  const hasCustomObjectives = watch('metadata.hasCustomObjectives');
+
+  function amITheLastStep() {
+    return !!(!hasInstructions && !hasAttachments && !hasCurriculum && !hasCustomObjectives);
+  }
+
+  useEffect(() => {
+    config?.setValue('hasInstructions', hasInstructions);
+    setIsLastStep(amITheLastStep());
+  }, [hasInstructions]);
+  useEffect(() => {
+    config?.setValue('hasAttachments', hasAttachments);
+    setIsLastStep(amITheLastStep());
+  }, [hasAttachments]);
+  useEffect(() => {
+    config?.setValue('hasCurriculum', hasCurriculum);
+    setIsLastStep(amITheLastStep());
+  }, [hasCurriculum]);
+  useEffect(() => {
+    config?.setValue('hasCustomObjectives', hasCustomObjectives);
+    setIsLastStep(amITheLastStep());
+  }, [hasCustomObjectives]);
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
@@ -199,7 +198,6 @@ function ContentData({
 
   // ---------------------------------------------------------------
   // COMPONENT
-
   return (
     <FormProvider {...formData}>
       <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
@@ -228,7 +226,7 @@ function ContentData({
                   >
                     {t('common.save')}
                   </Button>
-                  {isExpress ? (
+                  {isExpress || isLastStep ? (
                     <DropdownButton
                       data={[
                         { label: labels.buttonPublish, onClick: handleOnPublish },
@@ -254,9 +252,9 @@ function ContentData({
             />
           }
         >
-          <ContextContainer {...props} divided>
-            <ContextContainer divided>
-              <ContextContainer title={labels?.statementAndDevelopmentTitle}>
+          <ContextContainer {...props}>
+            <ContextContainer>
+              <ContextContainer title={labels?.statement}>
                 <StatementImage labels={labels} />
                 <Controller
                   control={control}
@@ -265,13 +263,16 @@ function ContentData({
                     <TextEditorInput {...field} label={labels.statement} error={errors.statement} />
                   )}
                 />
-                <Controller
-                  control={control}
-                  name="metadata.hasDevelopment"
-                  render={({ field }) => (
-                    <Switch {...field} label={labels.development} checked={field.value} />
-                  )}
-                />
+
+                {!isExpress && (
+                  <Controller
+                    control={control}
+                    name="metadata.hasDevelopment"
+                    render={({ field }) => (
+                      <Switch {...field} label={labels.development} checked={field.value} />
+                    )}
+                  />
+                )}
                 {!isExpress && hasDevelopment && (
                   <Development
                     label={labels.development}
@@ -281,50 +282,48 @@ function ContentData({
                 )}
               </ContextContainer>
 
-              <ContextContainer title={labels?.attachmentsTitle}>
-                <Attachments labels={labels} />
-              </ContextContainer>
-
-              {!isExpress && !!subjects.length && (
-                <ContextContainer title={labels.subjects}>
-                  {subjects?.length > 1 && (
-                    <SegmentedControl
-                      data={subjects?.map((subject, i) => ({ value: i, label: subject.label }))}
-                      value={`${curriculumTab}`}
-                      onChange={(value) => setCurriculumTab(Number(value))}
-                    />
-                  )}
-
-                  {
-                    <Box className={classes.tabPane}>
-                      <ContextContainer>
-                        <Controller
-                          control={control}
-                          name="program"
-                          render={({ field: { value: program } }) => (
-                            <Curriculum
-                              addLabel={labels?.addFromCurriculum}
-                              program={program}
-                              subjects={subjects[curriculumTab]?.value}
-                              name={`curriculum.${subjects[curriculumTab]?.value}.curriculum`}
-                              type="curriculum"
-                            />
-                          )}
-                        />
-                        <Objectives
-                          name={`curriculum.${subjects[curriculumTab]?.value}.objectives`}
-                          label={labels.objectives || ''}
-                          error={errors.objectives}
-                        />
-                      </ContextContainer>
-                    </Box>
-                  }
-                </ContextContainer>
-              )}
-
               <ContextContainer title={labels?.submission?.title} style={{ marginBottom: 20 }}>
                 <Submissions labels={labels} errorMessages={errorMessages} />
               </ContextContainer>
+
+              {!isExpress && (
+                <ContextContainer title={labels.evaluation}>
+                  <Controller
+                    control={control}
+                    name="metadata.hasCurriculum"
+                    disabled
+                    render={({ field }) => (
+                      <Switch {...field} label={labels.enableCurriculum} checked={field.value} />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="metadata.hasCustomObjectives"
+                    render={({ field }) => (
+                      <Switch {...field} label={labels.addCustomObjectives} checked={field.value} />
+                    )}
+                  />
+                </ContextContainer>
+              )}
+
+              {!isExpress && (
+                <ContextContainer title={labels.other}>
+                  <Controller
+                    control={control}
+                    name="metadata.hasAttachments"
+                    render={({ field }) => (
+                      <Switch {...field} label={labels.addResources} checked={field.value} />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="metadata.hasInstructions"
+                    render={({ field }) => (
+                      <Switch {...field} label={labels.addInstructions} checked={field.value} />
+                    )}
+                  />
+                </ContextContainer>
+              )}
             </ContextContainer>
           </ContextContainer>
         </TotalLayoutStepContainer>
@@ -355,6 +354,9 @@ ContentData.propTypes = {
   loading: PropTypes.any,
   setLoading: PropTypes.func,
   t: PropTypes.func,
+  config: PropTypes.shape({
+    setValue: PropTypes.func,
+  }),
 };
 
 // eslint-disable-next-line import/prefer-default-export
