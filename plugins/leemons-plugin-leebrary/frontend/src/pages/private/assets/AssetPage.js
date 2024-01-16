@@ -193,7 +193,6 @@ const AssetPage = () => {
 
         if (editing) assetData.id = params.id;
 
-
         const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key);
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
@@ -202,7 +201,6 @@ const AssetPage = () => {
           editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
         );
         queryClient.invalidateQueries(allAssetsKey);
-        queryClient.refetchQueries();
 
         // Redirects to the correspnding category page
         if (response.asset?.fileType === 'bookmark')
