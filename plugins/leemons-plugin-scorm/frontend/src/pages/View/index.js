@@ -1,3 +1,10 @@
+// {/* <Box
+// sx={{
+//   'div div:nth-child(2)': {
+//     overflow: 'hidden',
+//   },
+// }}
+// > */}
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -16,7 +23,6 @@ import {
 } from '@bubbles-ui/components';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 // TODO: import from @feedback plugin maybe?
-import { ActivityContainer } from '@assignables/components/ActivityContainer';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@scorm/helpers';
@@ -111,7 +117,7 @@ export const useViewStyles = createStyles((theme) => ({
     borderTop: '1px solid #BAC2D0',
     padding: 10,
   },
-  bottomBarContainer: {
+  progressBottomBarContainer: {
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
@@ -124,7 +130,7 @@ export const useViewStyles = createStyles((theme) => ({
 
 function useOnScormComplete({ updateTimestamps, nextActivityUrl, moduleId, LatestCommit }) {
   const [t] = useTranslateLoader(prefixPN('scormView'));
-  const { openConfirmationModal } = useLayout();
+  // const { openConfirmationModal } = useLayout();
   const history = useHistory();
 
   // const showSubmissionModal = async (progress) => {
@@ -337,7 +343,7 @@ export default function View() {
               </ActivityAccordionPanel>
             </ActivityAccordion>
           )}
-          {/* <ScormRender scormPackage={scormPackage} state={state} onSetValue={onSetValue} /> */}
+          <ScormRender scormPackage={scormPackage} state={state} onSetValue={onSetValue} />
         </TotalLayoutStepContainer>
       </Stack>
     </TotalLayoutContainer>
