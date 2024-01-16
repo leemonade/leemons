@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { forIn, isEmpty, map } from 'lodash';
 import {
   Box,
+  Switch,
   Button,
   ContextContainer,
-  InputWrapper,
   ListInput,
   Select,
   TotalLayoutStepContainer,
@@ -13,7 +13,7 @@ import {
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
@@ -37,6 +37,7 @@ export default function DetailQuestionForm({
   });
 
   const form = useForm({ defaultValues });
+  const properties = form.watch('properties');
   const type = form.watch('type');
 
   function handleOnSaveQuestion() {
@@ -66,51 +67,51 @@ export default function DetailQuestionForm({
   }, [type, form, t]);
 
   return (
-    <TotalLayoutStepContainer
-      stepName={stepName}
-      Footer={
-        <TotalLayoutFooterContainer
-          fixed
-          scrollRef={scrollRef}
-          leftZone={
-            <Button
-              variant="outline"
-              leftIcon={<ChevLeftIcon height={20} width={20} />}
-              onClick={onCancel}
-            >
-              {t('returnToList')}
-            </Button>
-          }
-          rightZone={
-            <>
-              {!isPublished ? (
-                <Button
-                  variant="link"
-                  onClick={handleOnSave}
-                  disabled={store.saving || !type}
-                  loading={store.saving === 'draft'}
-                >
-                  {t('saveDraft')}
-                </Button>
-              ) : null}
-              <Button disabled={!type} onClick={handleOnSaveQuestion}>
-                {t('saveQuestion')}
+    <FormProvider {...form}>
+      <TotalLayoutStepContainer
+        stepName={stepName}
+        Footer={
+          <TotalLayoutFooterContainer
+            fixed
+            scrollRef={scrollRef}
+            leftZone={
+              <Button
+                variant="outline"
+                leftIcon={<ChevLeftIcon height={20} width={20} />}
+                onClick={onCancel}
+              >
+                {t('returnToList')}
               </Button>
-            </>
-          }
-        />
-      }
-    >
-      <Box style={{ marginBottom: 20 }}>
-        <ContextContainer title={t('questionDetail')}>
-          <Box style={{ width: '230px' }}>
-            <ContextContainer fullWidth direction="row">
-              <Controller
-                control={form.control}
-                name="type"
-                rules={{ required: t('typeRequired') }}
-                render={({ field }) => (
-                  <Box style={{ width: '100%' }}>
+            }
+            rightZone={
+              <>
+                {!isPublished ? (
+                  <Button
+                    variant="link"
+                    onClick={handleOnSave}
+                    disabled={store.saving || !type}
+                    loading={store.saving === 'draft'}
+                  >
+                    {t('saveDraft')}
+                  </Button>
+                ) : null}
+                <Button variant="outline" disabled={!type} onClick={handleOnSaveQuestion}>
+                  {t('saveQuestion')}
+                </Button>
+              </>
+            }
+          />
+        }
+      >
+        <Box style={{ marginBottom: 20 }}>
+          <ContextContainer title={t('questionDetail')}>
+            <Box>
+              <ContextContainer fullWidth direction="row">
+                <Controller
+                  control={form.control}
+                  name="type"
+                  rules={{ required: t('typeRequired') }}
+                  render={({ field }) => (
                     <Select
                       required
                       data={questionTypes}
@@ -118,16 +119,27 @@ export default function DetailQuestionForm({
                       label={t('typeLabel')}
                       {...field}
                     />
-                  </Box>
-                )}
-              />
-            </ContextContainer>
-          </Box>
-          {type ? (
-            <ContextContainer divided>
-              <ContextContainer>
-                <ContextContainer fullWidth direction="row">
-                  {categoryData && categoryData.length ? (
+                  )}
+                />
+                {type ? (
+                  <Controller
+                    control={form.control}
+                    name="level"
+                    render={({ field }) => (
+                      <SelectLevelsOfDifficulty
+                        error={form.formState.errors.level}
+                        label={t('levelLabel')}
+                        {...field}
+                      />
+                    )}
+                  />
+                ) : null}
+              </ContextContainer>
+            </Box>
+            {type ? (
+              <>
+                {categoryData?.length ? (
+                  <ContextContainer fullWidth direction="row">
                     <Controller
                       control={form.control}
                       name="category"
@@ -150,22 +162,8 @@ export default function DetailQuestionForm({
                         </Box>
                       )}
                     />
-                  ) : null}
-
-                  <Controller
-                    control={form.control}
-                    name="level"
-                    render={({ field }) => (
-                      <Box style={{ width: '230px' }}>
-                        <SelectLevelsOfDifficulty
-                          error={form.formState.errors.level}
-                          label={t('levelLabel')}
-                          {...field}
-                        />
-                      </Box>
-                    )}
-                  />
-                </ContextContainer>
+                  </ContextContainer>
+                ) : null}
 
                 <Controller
                   control={form.control}
@@ -173,11 +171,11 @@ export default function DetailQuestionForm({
                   render={({ field }) => (
                     <Box style={{ width: '484px' }}>
                       <TagsAutocomplete
+                        {...field}
                         pluginName="tests"
                         type="tests.questionBanks"
                         label={t('tagsLabel')}
                         labels={{ addButton: t('addTag') }}
-                        {...field}
                       />
                     </Box>
                   )}
@@ -196,40 +194,47 @@ export default function DetailQuestionForm({
                     />
                   )}
                 />
-
                 {type !== 'map' ? (
-                  <Controller
-                    control={form.control}
-                    name="questionImage"
-                    render={({ field }) => (
-                      <InputWrapper label={t('questionImage')}>
-                        <ImagePicker {...field} />
-                      </InputWrapper>
-                    )}
-                  />
+                  <>
+                    <Controller
+                      control={form.control}
+                      name="properties.hasCover"
+                      render={({ field }) => (
+                        <Switch {...field} checked={field.value} label="Imagen destacada" />
+                      )}
+                    />
+                    {properties?.hasCover ? (
+                      <Controller
+                        control={form.control}
+                        name="questionImage"
+                        render={({ field }) => <ImagePicker {...field} />}
+                      />
+                    ) : null}
+                  </>
                 ) : null}
 
                 {QuestionComponent}
 
-                <Controller
-                  control={form.control}
-                  name="clues"
-                  render={({ field }) => (
-                    <ListInput
-                      canAdd={isEmpty(field.value)}
-                      addButtonLabel={t('addClue')}
-                      label={t('cluesLabel')}
-                      description={t('cluesDescription')}
-                      {...field}
-                    />
-                  )}
-                />
-              </ContextContainer>
-            </ContextContainer>
-          ) : null}
-        </ContextContainer>
-      </Box>
-    </TotalLayoutStepContainer>
+                {/* CLUES ---------------------------------------- */}
+                <ContextContainer title={t('cluesLabel')} description={t('cluesDescription')}>
+                  <Controller
+                    control={form.control}
+                    name="clues"
+                    render={({ field }) => (
+                      <ListInput
+                        canAdd={isEmpty(field.value)}
+                        addButtonLabel={t('addClue')}
+                        {...field}
+                      />
+                    )}
+                  />
+                </ContextContainer>
+              </>
+            ) : null}
+          </ContextContainer>
+        </Box>
+      </TotalLayoutStepContainer>
+    </FormProvider>
   );
 }
 

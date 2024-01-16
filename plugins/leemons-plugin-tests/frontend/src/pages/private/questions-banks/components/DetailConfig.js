@@ -112,40 +112,6 @@ export default function DetailConfig({
       }
     >
       <ContextContainer>
-        {/*
-        <Controller
-          control={form.control}
-          name="program"
-          // rules={{ required: t('programRequired') }}
-          render={({ field }) => (
-            <Select
-              // required
-              error={isDirty ? form.formState.errors.program : null}
-              label={t('programLabel')}
-              data={cStore.programsData || []}
-              autoSelectOneOption
-              {...field}
-            />
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="subjects"
-          // rules={{ required: t('subjectRequired') }}
-          render={({ field }) => (
-            <MultiSelect
-              // required
-              error={isDirty ? form.formState.errors.subjects : null}
-              label={t('subjectLabel')}
-              disabled={!program}
-              data={cStore.subjectsByProgram[program] || []}
-              autoSelectOneOption
-              {...field}
-            />
-          )}
-        />
-        */}
         <Controller
           control={form.control}
           name="categories"

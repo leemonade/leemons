@@ -95,6 +95,7 @@ module.exports = {
     actionsHeader: 'Actions',
     markersRequired: 'You must mark at least one item',
     markersNeedResponseInAllItems: 'A text must be added to all elements',
+    cancel: 'Cancel',
   },
   questionImageModal: {
     createNumbering: 'Create numbering',

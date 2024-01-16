@@ -35,7 +35,6 @@ export default function Detail(p) {
   // ----------------------------------------------------------------------
   // SETTINGS
 
-  const debounce = useDebouncedCallback(1000);
   const [store, render] = useStore({
     loading: true,
     isNew: false,
@@ -54,10 +53,13 @@ export default function Detail(p) {
 
   async function saveAsDraft() {
     try {
-      store.saving = 'duplicate';
+      store.saving = 'draft';
       render();
-      await saveQuestionBankRequest({ ...formValues, published: false });
+      const { questionBank } = await saveQuestionBankRequest({ ...formValues, published: false });
       addSuccessAlert(t('savedAsDraft'));
+      if (store.isNew) {
+        history.push(`/private/tests/questions-banks/${questionBank.id}`);
+      }
     } catch (error) {
       addErrorAlert(error);
     }
@@ -67,7 +69,7 @@ export default function Detail(p) {
 
   async function saveAsPublish() {
     try {
-      store.saving = 'edit';
+      store.saving = 'publish';
       render();
       await saveQuestionBankRequest({ ...formValues, published: true });
       addSuccessAlert(t('published'));
@@ -99,13 +101,13 @@ export default function Detail(p) {
             deletedAt,
             createdAt,
             updatedAt,
-            ...props
+            ...qbank
           },
         } = await getQuestionBankRequest(params.id);
-        if (props.questions.length > 0) {
+        if (qbank.questions.length > 0) {
           store.currentStep = 3;
         }
-        form.reset(props);
+        form.reset(qbank);
       }
       store.idLoaded = params.id;
       store.loading = false;
@@ -153,29 +155,6 @@ export default function Detail(p) {
         />
       }
     >
-      {/*
-        <AdminPageHeader
-          values={{
-            // eslint-disable-next-line no-nested-ternary
-            title: formValues.name
-              ? formValues.name
-              : store.isNew
-                ? t('pageTitleNew', { name: '' })
-                : t('pageTitle', { name: '' }),
-          }}
-          buttons={{
-            duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            edit: store.isValid && !store.isNew ? t('publish') : undefined,
-          }}
-          icon={<PluginTestIcon />}
-          variant="teacher"
-          onEdit={() => saveAsPublish()}
-          onDuplicate={() => saveAsDraft()}
-          loading={store.saving}
-          onResize={handleOnHeaderResize}
-        />
-*/}
-
       <VerticalStepperContainer
         scrollRef={scrollRef}
         currentStep={
@@ -183,7 +162,6 @@ export default function Detail(p) {
         }
         data={[
           { label: t('basic'), status: 'OK' },
-          { label: t('config'), status: 'OK' },
           { label: t('questions'), status: 'OK' },
         ]}
         onChangeActiveIndex={setStep}
@@ -204,26 +182,14 @@ export default function Detail(p) {
             onSave={saveAsDraft}
           />
         )}
-        {store.currentStep === 1 && (
-          <DetailConfig
-            t={t}
-            form={form}
-            store={store}
-            scrollRef={scrollRef}
-            stepName={t('config')}
-            onPrev={() => setStep(0)}
-            onNext={() => setStep(2)}
-            onSave={saveAsDraft}
-          />
-        )}
-        {store.currentStep === 2 || store.currentStep === 3 ? (
+        {store.currentStep === 1 || store.currentStep === 2 ? (
           <DetailQuestions
             t={t}
             form={form}
             store={store}
             scrollRef={scrollRef}
             stepName={t('questions')}
-            onPrev={() => setStep(1)}
+            onPrev={() => setStep(0)}
             onPublish={saveAsPublish}
             onSave={saveAsDraft}
           />

@@ -13,7 +13,8 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
@@ -81,7 +82,7 @@ export default function DetailQuestions({
   function tryHandler(handler = noop) {
     qStore.trySend = true;
     qRender();
-    if (questions && questions.length) {
+    if (questions?.length) {
       handler();
     }
   }
@@ -155,7 +156,7 @@ export default function DetailQuestions({
               ) : null}
               <Button
                 onClick={() => tryHandler(onPublish)}
-                disabled={store.saving}
+                disabled={store.saving || !questions?.length}
                 loading={store.saving === 'publish'}
               >
                 {t('publish')}
@@ -167,7 +168,7 @@ export default function DetailQuestions({
     >
       <Box>
         <ContextContainer title={t('questionList')}>
-          {questions && questions.length ? (
+          {questions?.length ? (
             <Table
               columns={tableHeaders}
               data={map(questions, (question, i) => ({
@@ -194,29 +195,6 @@ export default function DetailQuestions({
             </Alert>
           ) : null}
         </ContextContainer>
-
-        {/* 
-        <Stack alignItems="center" justifyContent="space-between">
-          <Button
-            variant="light"
-            leftIcon={<ChevLeftIcon height={20} width={20} />}
-            onClick={onPrev}
-          >
-            {t('previous')}
-          </Button>
-          <Button
-            onClick={() => {
-              qStore.trySend = true;
-              qRender();
-              if (questions && questions.length) {
-                onNext();
-              }
-            }}
-          >
-            {t('publish')}
-          </Button>
-        </Stack>
-        */}
       </Box>
     </TotalLayoutStepContainer>
   );

@@ -94,6 +94,7 @@ module.exports = {
     actionsHeader: 'Acciones',
     markersRequired: 'Marcar un elemento como mínimo',
     markersNeedResponseInAllItems: 'Añadir un texto a todos los elementos',
+    cancel: 'Cancelar',
   },
   questionImageModal: {
     createNumbering: 'Crear numeración',
