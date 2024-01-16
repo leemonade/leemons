@@ -5,6 +5,7 @@ module.exports = {
     edit: 'Edit',
     accept: 'Accept',
     cancel: 'Cancel',
+    required: 'Required field',
   },
   methodology: {
     directInstruction: 'Direct Instruction',
@@ -154,11 +155,13 @@ module.exports = {
           statement: 'Statement',
           development: 'Development',
           statementAndDevelopmentTitle: 'Statement and development',
-          objectives: 'Custom objectives',
-          curriculum: 'Curriculum',
           content: 'Content',
-          assessmentCriteria: 'Assessment criteria',
-          addFromCurriculum: 'Add from curriculum',
+          evaluation: 'Evaluation',
+          other: 'Other',
+          addCustomObjectives: 'Add custom objectives',
+          enableCurriculum: 'Enable Curriculum',
+          addInstructions: 'Add instructions',
+          addResources: 'Add resources',
           buttonNext: 'Next',
           buttonPrev: 'Previous',
           submission: {
@@ -179,10 +182,8 @@ module.exports = {
               required: 'Required field',
             },
           },
-          attachmentsTitle: 'Resources',
+
           supportImage: 'Support image',
-          searchFromLibrary: 'Search in library',
-          searchFromLibraryDocsAndMedia: 'Add documents and media',
         },
         errorMessages: {
           statement: {
@@ -191,7 +192,7 @@ module.exports = {
         },
       },
       instructionData: {
-        step_label: 'Instructions',
+        step_label: 'Resources and Instructions',
         labels: {
           title: 'Instructions',
           forTeacher: 'Instructions for Teacher',
@@ -200,11 +201,31 @@ module.exports = {
           buttonPublish: 'Only publish',
           buttonPublishAndAssign: 'Publish and assign',
           buttonPrev: 'Previous',
+          attachmentsTitle: 'Resources',
+          searchFromLibrary: 'Search in library',
+          searchFromLibraryDocsAndMedia: 'Add documents and media',
+          addResource: 'Add resource',
+          resourceLastUpdate: 'Last update',
         },
         placeholders: {
           forTeacher: 'Help other teachers approach this exercise with a few simple instructions.',
           forStudent:
             'Here it is possible to include extra information to help the student perform the exercise better.',
+        },
+      },
+      evaluationData: {
+        step_label: 'Evaluation',
+        labels: {
+          title: 'Evaluation',
+          buttonNext: 'Next',
+          buttonPrev: 'Previous',
+          buttonPublish: 'Only publish',
+          buttonPublishAndAssign: 'Publish and assign',
+          objectives: 'Custom objectives',
+          curriculum: 'Curriculum',
+          add: 'Add',
+          assessmentCriteria: 'Assessment criteria',
+          subjects: 'Asignaturas',
         },
       },
       publishData: {

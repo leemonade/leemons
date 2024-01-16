@@ -1,29 +1,30 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { uniqBy, map } from 'lodash';
 import {
   Box,
   Button,
   createStyles,
   useResizeObserver,
   useViewportSize,
+  SortableList,
 } from '@bubbles-ui/components';
-// TODO: import from @library plugin
-import { LibraryCardEmbed, AssetListDrawer } from '@leebrary/components';
-import { uniqBy, map } from 'lodash';
+import PropTypes from 'prop-types';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { AssetListDrawer } from '@leebrary/components';
+
+import { AttachmentItem } from './AttchmentItem';
 
 const styles = createStyles((theme) => ({
   attachmentContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing[5],
+    gap: 2,
   },
 }));
 
-export default function Attachments({ labels }) {
+function Attachments({ setValue, getValues, labels }) {
   /*
     --- Drawer state ---
   */
@@ -40,11 +41,6 @@ export default function Attachments({ labels }) {
   const { width: viewportWidth } = useViewportSize();
   const [boxRef, rect] = useResizeObserver();
   const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
-
-  /*
-    --- Form ---
-  */
-  const { setValue, getValues } = useFormContext();
 
   /*
     --- Resources state ---
@@ -65,6 +61,13 @@ export default function Attachments({ labels }) {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    setValue('resources', map(resources, 'id'), {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  }, [resources]);
 
   /*
     --- Styles ---
@@ -108,22 +111,12 @@ export default function Attachments({ labels }) {
   return (
     <>
       <Box className={classes?.attachmentContainer}>
-        {resources.map((asset) => (
-          <LibraryCardEmbed
-            asset={{ ...asset, title: asset.name, image: asset.cover }}
-            key={asset.id}
-            actionIcon={
-              <Box
-                sx={{ cursor: 'pointer' }}
-                onClick={() => {
-                  onAssetRemove(asset);
-                }}
-              >
-                <RemoveIcon />
-              </Box>
-            }
-          />
-        ))}
+        <SortableList
+          value={resources}
+          onChange={setResources}
+          itemRender={AttachmentItem}
+          onRemove={onAssetRemove}
+        />
       </Box>
       <Box ref={boxRef}>
         <form
@@ -140,7 +133,7 @@ export default function Attachments({ labels }) {
           }}
         >
           <Button variant="link" onClick={toggleDrawer} leftIcon={<AddCircleIcon />}>
-            {labels?.searchFromLibraryDocsAndMedia}
+            {labels?.addResource}
           </Button>
           <AssetListDrawer
             opened={showAssetDrawer}
@@ -161,3 +154,12 @@ export default function Attachments({ labels }) {
     </>
   );
 }
+
+Attachments.propTypes = {
+  setValue: PropTypes.func,
+  getValues: PropTypes.func,
+  labels: PropTypes.any,
+};
+
+export default Attachments;
+export { Attachments };
