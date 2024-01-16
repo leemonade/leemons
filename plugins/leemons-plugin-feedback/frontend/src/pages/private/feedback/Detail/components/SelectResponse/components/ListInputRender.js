@@ -11,7 +11,7 @@ import {
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListInputRender({ t, withImages, addItem, value, ...props }) {

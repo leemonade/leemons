@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import {
   Box,
   Title,

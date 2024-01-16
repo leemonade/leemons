@@ -16,7 +16,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { useStore } from '@common';
 import { forEach, isArray, isString, map } from 'lodash';

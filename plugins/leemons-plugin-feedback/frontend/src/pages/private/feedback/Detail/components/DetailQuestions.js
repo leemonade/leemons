@@ -12,13 +12,13 @@ import {
   Stack,
   TableInput,
   Textarea,
-  Title,
   DropdownButton,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import DetailQuestionForm from '@feedback/pages/private/feedback/Detail/components/DetailQuestionForm';

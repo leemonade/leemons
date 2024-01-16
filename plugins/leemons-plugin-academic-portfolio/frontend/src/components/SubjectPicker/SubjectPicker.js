@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { findIndex, noop, uniq } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { ActionButton, Box, Button, InputWrapper, Select, Table } from '@bubbles-ui/components';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { Container } from '@assignables/components/Assignment/components/Container';
 import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
 import { useSubjectPickerStyles } from './SubjectPicker.styles';

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { HtmlText, InputWrapper, TableInput, Textarea, Button } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import useTableInputLabels from '../../../helpers/useTableInputLabels';
 
 export default function Objectives({ form, name, label, required }) {
