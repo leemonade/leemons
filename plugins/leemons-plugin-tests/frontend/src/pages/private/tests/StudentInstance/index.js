@@ -10,8 +10,11 @@ import {
   Paragraph,
   Stack,
   Text,
+  TotalLayoutContainer,
   VerticalStepper,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
+import { forEach, intersectionBy, isString } from 'lodash';
 import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @feedback plugin maybe?
 import { ActivityContainer } from '@assignables/components/ActivityContainer';
@@ -22,9 +25,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { getCentersWithToken } from '@users/session';
 import dayjs from 'dayjs';
-import { forEach, intersectionBy, isString } from 'lodash';
 import React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
+import ActivityHeader from '@assignables/components/ActivityHeader';
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
@@ -35,13 +38,13 @@ import { StudentInstanceStyles } from './StudentInstance.style';
 import { TestStyles } from './TestStyles.style';
 import Development from './components/Development';
 import QuestionList from './components/QuestionList';
-import Resume from './components/Resume';
 import { calculeInfoValues } from './helpers/calculeInfoValues';
 import { getConfigByInstance } from './helpers/getConfigByInstance';
 import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
 
 function StudentInstance() {
   const locale = useLocale();
+  const scrollRef = React.useRef();
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
     loading: true,
@@ -70,6 +73,7 @@ function StudentInstance() {
   async function onStartQuestions() {
     const { timestamps } = await setInstanceTimestampRequest(params.id, 'start', getUserId());
     store.timestamps = timestamps;
+    store.assignation.timestamps = timestamps;
     render();
   }
 
@@ -248,12 +252,24 @@ function StudentInstance() {
 
   const verticalStepperProps = React.useMemo(() => {
     if (store.instance) {
-      const commonProps = { styles, classes, t, store, render, cx, prevStep, nextStep, goToStep };
+      const commonProps = {
+        styles,
+        classes,
+        t,
+        store,
+        render,
+        cx,
+        prevStep,
+        nextStep,
+        goToStep,
+        scrollRef,
+      };
       const steps = [];
 
       const curriculumValues = getIfCurriculumSubjectsHaveValues(
         intersectionBy(store.instance.assignable.subjects, store.instance.subjects, 'subject')
       );
+      /*
       if (
         // store.instance?.assignable?.asset?.description ||
         store.instance?.assignable?.statement ||
@@ -267,6 +283,8 @@ function StudentInstance() {
           component: <Resume {...commonProps} />,
         });
       }
+
+       */
       const testProps = { onStartQuestions };
 
       steps.push({
@@ -321,6 +339,134 @@ function StudentInstance() {
       window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank', 'noopener');
     else history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
   };
+
+  return (
+    <>
+      <TotalLayoutContainer
+        scrollRef={scrollRef}
+        Header={
+          <ActivityHeader
+            instance={store.assignation.instance}
+            assignation={store.assignation}
+            showClass
+            showRole
+            showEvaluationType
+            showTime
+            showDeadline
+          />
+        }
+      >
+        <VerticalStepperContainer
+          {...verticalStepperProps}
+          currentStep={store.currentStep}
+          onChangeActiveIndex={(e) => {
+            store.currentStep = e;
+            render();
+          }}
+          scrollRef={scrollRef}
+        >
+          {verticalStepperProps.data[store.currentStep]
+            ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
+                isFirstStep: !store.currentStep,
+              })
+            : null}
+        </VerticalStepperContainer>
+      </TotalLayoutContainer>
+      <Modal
+        title={t('finishTestModalTitle')}
+        opened={store.showFinishModal}
+        onClose={() => {}}
+        centerTitle
+        centered
+        withCloseButton={false}
+        closeOnEscape={false}
+        closeOnClickOutside={false}
+        size={480}
+      >
+        <Box className={styles.howItWorksModalContainer}>
+          <Text
+            dangerouslySetInnerHTML={{
+              __html: t('finishTestModalDescription'),
+            }}
+          />
+        </Box>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          {store.modalMode === 1 ? (
+            <Stack justifyContent="space-between">
+              {store.isModule ? (
+                <Button variant="light" compact onClick={goToModuleDashboard}>
+                  {t('modulesDashboard')}
+                </Button>
+              ) : (
+                <Button variant="light" compact onClick={goToOnGoing}>
+                  {t('pendingActivities')}
+                </Button>
+              )}
+              <Button compact onClick={goToResults}>
+                {t('viewResults')}
+              </Button>
+            </Stack>
+          ) : null}
+          {store.modalMode === 2 ? (
+            <Stack fullWidth justifyContent="space-between">
+              <Button
+                variant="light"
+                rightIcon={<ExpandDiagonalIcon />}
+                compact
+                onClick={() => goToResults(null, true)}
+              >
+                {t('viewResults')}
+              </Button>
+              <Link to={store.nextActivityUrl}>
+                <Button rightIcon={<ChevronRightIcon />} compact>
+                  {t('nextActivity')}
+                </Button>
+              </Link>
+            </Stack>
+          ) : null}
+        </Box>
+      </Modal>
+      <Modal
+        title={t('finishForceTestModalTitle')}
+        opened={store.showForceFinishModal}
+        onClose={closeForceFinishModal}
+        withCloseButton={false}
+        closeOnEscape={false}
+        closeOnClickOutside={false}
+      >
+        <Box className={styles.howItWorksModalContainer}>
+          <Paragraph
+            dangerouslySetInnerHTML={{
+              __html: t('finishForceTestModalDescription'),
+            }}
+          />
+        </Box>
+        <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+          <Stack fullWidth justifyContent="space-between">
+            <Button
+              variant="link"
+              onClick={() => {
+                store.showForceFinishModal = false;
+                render();
+                history.push(`/private/assignables/ongoing`);
+              }}
+            >
+              {t('activitiesInCourse')}
+            </Button>
+            <Button
+              onClick={() => {
+                store.showForceFinishModal = false;
+                render();
+                history.push(`/private/tests/result/${params.id}/${getUserId()}`);
+              }}
+            >
+              {t('reviewResults')}
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
+    </>
+  );
 
   return (
     <ActivityContainer

@@ -59,7 +59,7 @@ export const TestStyles = createStyles((theme) => ({
     paddingRight: theme.spacing[5],
     paddingTop: theme.spacing[4],
     paddingBottom: theme.spacing[4],
-    backgroundColor: theme.colors.uiBackground02,
+    backgroundColor: theme.other.global.background.color.surface.muted,
   },
   resumeBoxWithBorder: {
     border: `1px solid ${theme.colors.ui01}`,
@@ -83,13 +83,13 @@ export const TestStyles = createStyles((theme) => ({
   resumeNumber: {
     color: theme.colors.text01,
     fontSize: 32,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   resumeLabel: {
     ...getFontProductive(),
     color: theme.colors.text01,
     fontSize: theme.fontSizes[1],
-    textAlign: 'left',
+    textAlign: 'center',
   },
   weightColorRed: {
     strong: {
