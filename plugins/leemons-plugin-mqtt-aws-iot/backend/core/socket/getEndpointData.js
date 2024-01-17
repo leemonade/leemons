@@ -11,7 +11,11 @@ async function getEndpointData({ ctx }) {
       if (endpointDateEnd && endpointDateEnd > now) {
         endpoint = null;
       }
-      if (endpoint) return resolve(endpoint);
+      if (endpoint) {
+        resolve(endpoint);
+        return;
+      }
+
       const iot = await getIot({ ctx });
       iot.describeEndpoint({ endpointType: 'iot:Data-ATS' }, (err, data) => {
         if (!err) {

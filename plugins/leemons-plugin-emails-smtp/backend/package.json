@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-emails-smtp",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Leemons emails plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,12 +21,12 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.53",
+    "@leemons/deployment-manager": "0.0.54",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.53",
-    "@leemons/mongodb-helpers": "0.0.53",
+    "@leemons/mongodb": "0.0.54",
+    "@leemons/mongodb-helpers": "0.0.54",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multilanguage": "0.0.53",
+    "@leemons/multilanguage": "0.0.54",
     "jaeger-client": "^3.19.0",
     "moleculer": "^0.14.26",
     "nodemailer": "^6.9.4",

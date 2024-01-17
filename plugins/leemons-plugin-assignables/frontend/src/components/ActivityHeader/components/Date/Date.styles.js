@@ -7,8 +7,19 @@ export const useDateStyles = createStyles((theme) => {
     root: {
       display: 'flex',
       flexDirection: 'row',
-      gap: globalTheme.spacing.gap.sm,
       alignItems: 'center',
+      '> *': {
+        '&:not(:last-child)': {
+          borderRight: '1px solid #DDE1E6',
+        },
+        '&:last-child': {
+          paddingRight: 0,
+        },
+        '&:first-child': {
+          paddingLeft: 0,
+        },
+        padding: globalTheme.spacing.padding.xsm,
+      },
     },
     icon: {
       display: 'flex',
@@ -21,6 +32,12 @@ export const useDateStyles = createStyles((theme) => {
     text: {
       fontSize: { ...globalTheme.content.typoMobile.body['sm--bold'] },
       color: globalTheme.content.color.text.default,
+    },
+    date: {
+      display: 'flex',
+      flexDirection: 'row',
+      gap: globalTheme.spacing.gap.sm,
+      alignItems: 'center',
     },
   };
 });

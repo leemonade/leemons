@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 import { forEach } from 'lodash';
 import {
   Box,
-  Checkbox,
+  Button,
   ContextContainer,
-  InputWrapper,
+  Switch,
   ListInput,
   ListItem,
   NumberInput,
-  Paper,
   Stack,
 } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { Controller } from 'react-hook-form';
 import { ListInputRender } from './components/ListInputRender';
 import { ListItemValueRender } from './components/ListItemValueRender';
@@ -22,33 +22,28 @@ export function SelectResponse({ form, t, multi }) {
   const withImages = form.watch('properties.withImages');
   const maxResponses = form.watch('properties.maxResponses');
   const minResponses = form.watch('properties.minResponses');
+  const [showInput, setShowInput] = React.useState(false);
 
   return (
-    <ContextContainer>
-      <InputWrapper
-        required
-        label={t('responsesLabel')}
-        description={
-          <Box>
-            <Box style={{ alignSelf: 'flex-end' }}>
-              <Controller
-                control={form.control}
-                shouldUnregister
-                name="properties.withImages"
-                render={({ field }) => (
-                  <Checkbox
-                    checked={field.value}
-                    disabled={responses?.length}
-                    error={form.formState.errors.properties?.withImages}
-                    label={t('withImagesLabel')}
-                    {...field}
-                  />
-                )}
-              />
-            </Box>
-          </Box>
-        }
-      >
+    <ContextContainer title={`${t('responsesLabel')} *`}>
+      <Box>
+        <Controller
+          control={form.control}
+          shouldUnregister
+          name="properties.withImages"
+          render={({ field }) => (
+            <Switch
+              {...field}
+              checked={field.value}
+              disabled={responses?.length}
+              error={form.formState.errors.properties?.withImages}
+              label={t('withImagesLabel')}
+            />
+          )}
+        />
+      </Box>
+
+      <Box>
         <Controller
           control={form.control}
           name="properties.responses"
@@ -77,35 +72,50 @@ export function SelectResponse({ form, t, multi }) {
             },
           }}
           render={({ field }) => (
-            <ListInput
-              {...field}
-              error={form.formState.errors.properties?.responses}
-              inputRender={<ListInputRender t={t} withImages={withImages} />}
-              listRender={
-                <ListItem
-                  itemContainerRender={({ children }) => (
-                    <Paper
-                      fullWidth
-                      sx={(theme) => ({
-                        marginTop: theme.spacing[2],
-                        marginBottom: theme.spacing[2],
-                        width: '100%',
-                      })}
-                    >
+            <>
+              <ListInput
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  setShowInput(false);
+                }}
+                error={form.formState.errors.properties?.responses}
+                inputRender={
+                  <ListInputRender
+                    t={t}
+                    withImages={withImages}
+                    onCancel={() => setShowInput(false)}
+                  />
+                }
+                hideInput={!showInput}
+                withInputBorder
+                withItemBorder
+                listRender={
+                  <ListItem
+                    itemContainerRender={({ children }) => (
                       <Stack alignItems="center" fullWidth>
                         {children}
                       </Stack>
-                    </Paper>
-                  )}
-                  itemValueRender={<ListItemValueRender t={t} withImages={withImages} />}
-                />
-              }
-              hideAddButton
-              canAdd
-            />
+                    )}
+                    itemValueRender={<ListItemValueRender t={t} withImages={withImages} />}
+                  />
+                }
+                hideAddButton
+                canAdd
+              />
+              {!showInput ? (
+                <Button
+                  variant="link"
+                  onClick={() => setShowInput(true)}
+                  leftIcon={<AddCircleIcon />}
+                >
+                  {t('addResponse')}
+                </Button>
+              ) : null}
+            </>
           )}
         />
-      </InputWrapper>
+      </Box>
       {multi ? (
         <Box>
           <Stack spacing={4} style={{ width: 450 }}>
@@ -158,4 +168,5 @@ export function SelectResponse({ form, t, multi }) {
 SelectResponse.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  multi: PropTypes.bool,
 };

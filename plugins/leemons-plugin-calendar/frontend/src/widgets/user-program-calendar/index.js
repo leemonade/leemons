@@ -10,7 +10,7 @@ import {
   Stack,
   Title,
 } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

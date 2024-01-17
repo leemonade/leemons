@@ -84,6 +84,7 @@ export function getCookieToken(onlyCookie) {
 
   const domain = /:\/\/([^/]+)/.exec(window.location.href)[1];
   const subdomain = domain.split('.')[0];
+  const domainWithOutSubdomain = domain.split('.').slice(1).join('.');
   if (!token) {
     token = Cookies.get(`token_${subdomain}`);
 
@@ -93,7 +94,9 @@ export function getCookieToken(onlyCookie) {
   }
 
   if (Cookies.get(`token_${subdomain}`)) {
-    Cookies.remove(`token_${subdomain}`);
+    Cookies.remove(`token_${subdomain}`, {
+      domain: `.${domainWithOutSubdomain}`,
+    });
   }
 
   try {

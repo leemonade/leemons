@@ -1,5 +1,5 @@
 import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import BranchBlockPreview from '@curriculum/bubbles-components/BranchBlockPreview';
 import { values } from 'lodash';
 import PropTypes from 'prop-types';

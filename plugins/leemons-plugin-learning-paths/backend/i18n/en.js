@@ -14,18 +14,20 @@ module.exports = {
   moduleSetup: {
     header: {
       title: 'New module',
+      editTitle: 'Edit module',
       buttons: {
         save: 'Save draft',
       },
     },
     tabs: {
       basicData: 'Basic data',
-      structure: 'Structure',
+      structure: 'Learning path',
       resources: 'Resources',
     },
     buttons: {
       next: 'Next',
       previous: 'Previous',
+      saveDraft: 'Save draft',
       publishOptions: 'Publish options',
       publish: 'Publish',
       publishAndAssign: 'Publish and assign',

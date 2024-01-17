@@ -1,7 +1,6 @@
-/* eslint-disable consistent-return */
-import { Box, ImageLoader, TotalLayoutHeader } from '@bubbles-ui/components';
 import React, { useMemo } from 'react';
-import { FormProvider, form } from 'react-hook-form';
+import { Box, ImageLoader, TotalLayoutHeader } from '@bubbles-ui/components';
+import { FormProvider, useForm } from 'react-hook-form';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
@@ -22,11 +21,15 @@ export default function ActivityHeader({
   showClass,
   showRole,
   showEvaluationType,
-  showTime,
+  showStartDate,
   showDeadline,
+  showDateTime,
+  showTime,
   showCloseButtons,
   allowEditDeadline,
+  onTimeout: noop,
 }) {
+  const form = useForm();
   /*
     === Activity data ===
   */
@@ -101,7 +104,9 @@ export default function ActivityHeader({
             <Timer instance={instance} hidden={!showTime} />
             <DateComponent
               instance={instance}
-              hidden={!showDeadline}
+              showDeadline={showDeadline}
+              showStartDate={showStartDate}
+              showTime={showDateTime}
               allowEdit={!!allowEditDeadline}
             />
           </Box>

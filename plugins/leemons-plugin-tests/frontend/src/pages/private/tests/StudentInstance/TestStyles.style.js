@@ -59,7 +59,7 @@ export const TestStyles = createStyles((theme) => ({
     paddingRight: theme.spacing[5],
     paddingTop: theme.spacing[4],
     paddingBottom: theme.spacing[4],
-    backgroundColor: theme.colors.uiBackground02,
+    backgroundColor: theme.other.global.background.color.surface.muted,
   },
   resumeBoxWithBorder: {
     border: `1px solid ${theme.colors.ui01}`,
@@ -83,13 +83,13 @@ export const TestStyles = createStyles((theme) => ({
   resumeNumber: {
     color: theme.colors.text01,
     fontSize: 32,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   resumeLabel: {
     ...getFontProductive(),
     color: theme.colors.text01,
     fontSize: theme.fontSizes[1],
-    textAlign: 'left',
+    textAlign: 'center',
   },
   weightColorRed: {
     strong: {
@@ -254,8 +254,6 @@ export const TestStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[4],
   },
   questionResponseImageContainer: {
-    border: '1px solid',
-    borderColor: theme.colors.ui01,
     borderRadius: 4,
     overflow: 'hidden',
     cursor: 'pointer',
@@ -268,6 +266,32 @@ export const TestStyles = createStyles((theme) => ({
   questionResponseImageContainerSelected: {
     borderColor: theme.colors.interactive01d,
     backgroundColor: theme.colors.interactive01v1,
+  },
+  questionResponseNumber: {
+    width: 24,
+    height: 24,
+    borderRadius: 2,
+    flex: 'none!important',
+    border: '1px solid',
+    borderColor: theme.other.global.border.color.line.muted,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: theme.spacing[4],
+  },
+  questionResponseNumberImage: {
+    width: 24,
+    height: 24,
+    borderRadius: 2,
+    flex: 'none!important',
+    border: '1px solid',
+    borderColor: theme.other.global.border.color.line.muted,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    left: theme.spacing[2],
+    top: theme.spacing[2],
   },
   questionResponseImageTextContent: {
     paddingTop: theme.spacing[3],
@@ -303,7 +327,7 @@ export const TestStyles = createStyles((theme) => ({
     top: -1,
     width: 'calc(100% + 2px)',
     height: 'calc(100% + 2px)',
-    backgroundColor: theme.colors.uiBackground01,
+    backgroundColor: theme.other.global.background.color.disabled,
     zIndex: 1,
     opacity: 0.5,
     cursor: 'not-allowed',

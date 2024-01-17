@@ -43,6 +43,7 @@ async function dataForReturnFile({
   }
 
   const { bytesStart, bytesEnd, readParams } = handleReadParams({ file, start, end });
+
   const readStream = await handleReadStream({
     file,
     path,

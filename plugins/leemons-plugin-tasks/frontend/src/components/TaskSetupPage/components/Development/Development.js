@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Box, InputWrapper, TableInput, Button } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { TextEditorInput, TextEditorViewer } from '@common/components';
 import useTableInputLabels from '@tasks/helpers/useTableInputLabels';
 

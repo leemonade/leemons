@@ -17,6 +17,7 @@ const { dataForReturnFile } = require('../../core/files');
 const { uploadMultipartChunk } = require('../../core/files/uploadMultipartChunk');
 const { createTemp } = require('../../core/files/upload/createTemp');
 const { getByIds } = require('../../core/assets/getByIds');
+const { getUploadChunkUrls } = require('../../core/files/getUploadChunkUrls/getUploadChunkUrls');
 
 const getFileRest = async ({ ctx, payload }) => {
   const { id, download, onlyPublic } = payload;
@@ -120,6 +121,18 @@ module.exports = {
       const payload = { ...ctx.params, ctx };
       const data = await newMultipart(payload);
       return { status: 200, ...data };
+    },
+  },
+  getUploadChunkUrlsRest: {
+    rest: {
+      method: 'POST',
+      path: '/multipart/chunk/urls',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const payload = { ...ctx.params, ctx };
+      const urls = await getUploadChunkUrls(payload);
+      return { status: 200, urls };
     },
   },
   uploadMultipartChunkRest: {

@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, COLORS, HtmlText, ImageLoader, Text } from '@bubbles-ui/components';
+import { Box, COLORS, Text } from '@bubbles-ui/components';
+import { htmlToText } from '@common';
 
 export default function QuestionTitle(props) {
   const { styles, question, store, cx, t } = props;
+
+  console.log('props', props);
 
   let classNameQuestionTitle = styles.questionTitle;
   if (store.embedded) {
@@ -16,14 +19,13 @@ export default function QuestionTitle(props) {
     null: null,
   };
 
+  console.log(question.question);
+
   return (
     <Box className={classNameQuestionTitle}>
-      <Box className={styles.questionTitleIcon}>
-        <ImageLoader className="stroke-current" src={'/public/tests/question.svg'} />
-      </Box>
       <Box className={styles.questionTitleText}>
-        <Text size="md" role="productive" color="primary" strong>
-          <HtmlText>{question.question}</HtmlText>
+        <Text size="lg" role="productive" color="primary" strong>
+          {props.index + 1}. {htmlToText(question.question)}
         </Text>
       </Box>
       {store.embedded && store.viewMode ? (

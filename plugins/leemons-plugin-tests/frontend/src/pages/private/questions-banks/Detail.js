@@ -6,7 +6,6 @@ import {
   LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutHeader,
-  useDebouncedCallback,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
 // TODO: import from @common plugin
@@ -18,8 +17,8 @@ import { useLayout } from '@layout/context';
 import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
-import DetailConfig from './components/DetailConfig';
 import DetailQuestions from './components/DetailQuestions';
+import { isEmpty } from 'lodash';
 
 export default function Detail(p) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
@@ -35,7 +34,6 @@ export default function Detail(p) {
   // ----------------------------------------------------------------------
   // SETTINGS
 
-  const debounce = useDebouncedCallback(1000);
   const [store, render] = useStore({
     loading: true,
     isNew: false,
@@ -49,15 +47,34 @@ export default function Detail(p) {
   const form = useForm();
   const formValues = form.watch();
 
+  const prepareDataToSave = () => {
+    const qbank = formValues;
+    // Clear questions clues
+    qbank.questions = qbank.questions.map((question) => {
+      const newQuestion = { ...question };
+      if (isEmpty(newQuestion.clues)) {
+        newQuestion.clues = [];
+      } else {
+        newQuestion.clues = [{ value: newQuestion.clues[0].value ?? newQuestion.clues[0] }];
+      }
+      return newQuestion;
+    });
+    return qbank;
+  };
+
   // ························································
   // DATA STORE HANDLERS
 
   async function saveAsDraft() {
     try {
-      store.saving = 'duplicate';
+      store.saving = 'draft';
       render();
-      await saveQuestionBankRequest({ ...formValues, published: false });
+      const body = prepareDataToSave();
+      const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
       addSuccessAlert(t('savedAsDraft'));
+      if (store.isNew) {
+        history.push(`/private/tests/questions-banks/${questionBank.id}`);
+      }
     } catch (error) {
       addErrorAlert(error);
     }
@@ -67,9 +84,10 @@ export default function Detail(p) {
 
   async function saveAsPublish() {
     try {
-      store.saving = 'edit';
+      store.saving = 'publish';
       render();
-      await saveQuestionBankRequest({ ...formValues, published: true });
+      const body = prepareDataToSave();
+      await saveQuestionBankRequest({ ...body, published: true });
       addSuccessAlert(t('published'));
       history.push('/private/tests/questions-banks');
     } catch (error) {
@@ -99,13 +117,27 @@ export default function Detail(p) {
             deletedAt,
             createdAt,
             updatedAt,
-            ...props
+            ...qbank
           },
         } = await getQuestionBankRequest(params.id);
-        if (props.questions.length > 0) {
-          store.currentStep = 3;
+
+        if (qbank.questions.length > 0) {
+          store.currentStep = 1;
+
+          // Clear questions clues
+          qbank.questions = qbank.questions.map((question) => {
+            const newQuestion = { ...question };
+            if (isEmpty(newQuestion.clues)) {
+              newQuestion.clues = [];
+            } else if (Object.keys(newQuestion.clues[0]).length === 0) {
+              newQuestion.clues = [];
+            } else {
+              newQuestion.clues = [newQuestion.clues[0].value];
+            }
+            return newQuestion;
+          });
         }
-        form.reset(props);
+        form.reset(qbank);
       }
       store.idLoaded = params.id;
       store.loading = false;
@@ -139,17 +171,6 @@ export default function Detail(p) {
     },
   });
 
-  React.useEffect(() => {
-    const subscription = form.watch(() => {
-      debounce(async () => {
-        store.isValid = await form.trigger();
-        render();
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   if (store.loading) return <LoadingOverlay visible />;
 
   return (
@@ -164,37 +185,11 @@ export default function Detail(p) {
         />
       }
     >
-      {/*
-        <AdminPageHeader
-          values={{
-            // eslint-disable-next-line no-nested-ternary
-            title: formValues.name
-              ? formValues.name
-              : store.isNew
-                ? t('pageTitleNew', { name: '' })
-                : t('pageTitle', { name: '' }),
-          }}
-          buttons={{
-            duplicate: formValues.name && !formValues.published ? t('saveDraft') : undefined,
-            edit: store.isValid && !store.isNew ? t('publish') : undefined,
-          }}
-          icon={<PluginTestIcon />}
-          variant="teacher"
-          onEdit={() => saveAsPublish()}
-          onDuplicate={() => saveAsDraft()}
-          loading={store.saving}
-          onResize={handleOnHeaderResize}
-        />
-*/}
-
       <VerticalStepperContainer
         scrollRef={scrollRef}
-        currentStep={
-          store.currentStep === 2 && formValues.questions?.length ? 3 : store.currentStep
-        }
+        currentStep={store.currentStep}
         data={[
           { label: t('basic'), status: 'OK' },
-          { label: t('config'), status: 'OK' },
           { label: t('questions'), status: 'OK' },
         ]}
         onChangeActiveIndex={setStep}
@@ -215,26 +210,14 @@ export default function Detail(p) {
             onSave={saveAsDraft}
           />
         )}
-        {store.currentStep === 1 && (
-          <DetailConfig
-            t={t}
-            form={form}
-            store={store}
-            scrollRef={scrollRef}
-            stepName={t('config')}
-            onPrev={() => setStep(0)}
-            onNext={() => setStep(2)}
-            onSave={saveAsDraft}
-          />
-        )}
-        {store.currentStep === 2 || store.currentStep === 3 ? (
+        {store.currentStep === 1 || store.currentStep === 2 ? (
           <DetailQuestions
             t={t}
             form={form}
             store={store}
             scrollRef={scrollRef}
             stepName={t('questions')}
-            onPrev={() => setStep(1)}
+            onPrev={() => setStep(0)}
             onPublish={saveAsPublish}
             onSave={saveAsDraft}
           />

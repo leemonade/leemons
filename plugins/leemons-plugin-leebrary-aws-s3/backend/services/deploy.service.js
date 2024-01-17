@@ -27,6 +27,7 @@ module.exports = () => ({
         image: 'https://cdn.worldvectorlogo.com/logos/aws-glacier.svg',
         supportedMethods: {
           uploadMultipartChunk: true,
+          getUploadChunkUrls: true,
           finishMultipart: true,
           abortMultipart: true,
           getS3AndConfig: true,

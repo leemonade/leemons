@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isEmpty, isNil } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { TotalLayoutContainer, TotalLayoutHeader } from '@bubbles-ui/components';
 // TODO: import from @feedback plugin maybe?
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
@@ -11,7 +12,13 @@ import { unflatten, useProcessTextEditor, useQuery, useSearchParams, useStore } 
 import { ObservableContextProvider, useObservableContext } from '@common/context/ObservableContext';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { BasicData, ContentData, InstructionData, Setup } from '../../../components/TaskSetupPage';
+import {
+  BasicData,
+  ContentData,
+  InstructionData,
+  EvaluationData,
+  Setup,
+} from '../../../components/TaskSetupPage';
 import { prefixPN } from '../../../helpers';
 import saveTaskRequest from '../../../request/task/saveTask';
 import publishTaskRequest from '../../../request/task/publishTask';
@@ -89,8 +96,35 @@ TaskSetupHeader.propTypes = {
 function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, setLoading }) {
   const { useWatch } = useObservableContext();
   const isExpress = !!useWatch({ name: 'isExpress' });
+  const sharedData = useWatch({ name: 'sharedData' });
 
-  const steps = useMemo(() => ['basicData', 'contentData', 'instructionData'], []);
+  const defaultConfigValues = {
+    hasInstructions: false,
+    hasAttachments: false,
+    hasCurriculum: false,
+    hasCustomObjectives: false,
+    hasDevelopment: false,
+  };
+
+  const config = useForm({ defaultValues: defaultConfigValues });
+  const configValues = config.watch();
+
+  useEffect(() => {
+    if (sharedData?.metadata) {
+      config.reset({
+        hasInstructions: sharedData.metadata.hasInstructions,
+        hasAttachments: sharedData.metadata.hasAttachments,
+        hasCurriculum: sharedData.metadata.hasCurriculum,
+        hasCustomObjectives: sharedData.metadata.hasCustomObjectives,
+        hasDevelopment: sharedData.metadata.hasDevelopment,
+      });
+    }
+  }, [sharedData]);
+
+  const steps = useMemo(
+    () => ['basicData', 'contentData', 'evaluationData', 'instructionData'],
+    []
+  );
   const completedSteps = useMemo(
     () => store.currentTask?.metadata?.visitedSteps?.map((step) => steps.indexOf(step)) || [],
     []
@@ -101,12 +135,25 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
       return null;
     }
 
-    const { basicData, contentData, instructionData } = labels;
+    const { basicData, contentData, instructionData, evaluationData } = labels;
 
     if (contentData) {
       contentData.labels.buttonPublish = instructionData?.labels?.buttonPublish;
       contentData.labels.buttonPublishAndAssign = instructionData?.labels?.buttonNext;
     }
+
+    // const showAttachmentsAndInstructions =
+    //   !isExpress && (sharedData?.metadata?.hasInstructions || sharedData?.metadata?.hasAttachments);
+
+    // const showEvaluation =
+    //   !isExpress &&
+    //   (sharedData?.metadata?.hasCurriculum || sharedData?.metadata?.hasCustomObjectives);
+
+    const showAttachmentsAndInstructions =
+      !isExpress && (configValues.hasInstructions || configValues.hasAttachments);
+
+    const showEvaluation =
+      !isExpress && (configValues.hasCurriculum || configValues.hasCustomObjectives);
 
     return {
       editable: isEmpty(store.currentTask),
@@ -147,11 +194,32 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
               loading={loading}
               setLoading={setLoading}
               t={t}
+              config={config}
             />
           ),
           status: 'OK',
         },
-        !isExpress && {
+
+        showEvaluation && {
+          label: evaluationData.step_label,
+          content: (
+            <EvaluationData
+              useObserver={useSaveObserver}
+              {...evaluationData}
+              stepName={evaluationData.step_label}
+              scrollRef={scrollRef}
+              loading={loading}
+              setLoading={setLoading}
+              t={t}
+              showCurriculum={configValues.hasCurriculum}
+              showCustomObjectives={configValues.hasCustomObjectives}
+              isLastStep={!configValues.hasAttachments && !configValues.hasInstructions}
+            />
+          ),
+          status: 'OK',
+        },
+
+        showAttachmentsAndInstructions && {
           label: instructionData.step_label,
           content: (
             <InstructionData
@@ -162,13 +230,23 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
               loading={loading}
               setLoading={setLoading}
               t={t}
+              showAttachments={configValues.hasAttachments}
+              showInstructions={configValues.hasInstructions}
             />
           ),
           status: 'OK',
         },
       ].filter(Boolean),
     };
-  }, [store.currentTask, completedSteps, store.currentTask, labels, useSaveObserver, isExpress]);
+  }, [
+    store.currentTask,
+    completedSteps,
+    labels,
+    useSaveObserver,
+    isExpress,
+    configValues,
+    sharedData,
+  ]);
 }
 
 function TaskSetup() {
@@ -199,13 +277,13 @@ function TaskSetup() {
       const body = {
         gradable: false,
         ...values,
-        // TODO: Esto debe establecerse en el Config
+
         subjects: values?.subjects?.map((subject) => ({
           program,
           subject,
           curriculum: curriculum && {
-            objectives: curriculum[subject.subject]?.objectives?.map(({ objective }) => objective),
-            curriculum: curriculum[subject.subject]?.curriculum?.map((item) => item.curriculum),
+            objectives: curriculum[subject]?.objectives?.map(({ objective }) => objective),
+            curriculum: curriculum[subject]?.curriculum?.map((item) => item.curriculum),
           },
         })),
       };

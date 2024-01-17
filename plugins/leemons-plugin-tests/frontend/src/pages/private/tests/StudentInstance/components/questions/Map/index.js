@@ -5,7 +5,6 @@ import { find, forEach, isNumber } from 'lodash';
 import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
 import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
-import { ButtonNavigation } from '../../ButtonNavigation';
 import { QuestionImage } from '../../../../../../../components/QuestionImage';
 import Responses from './Responses';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
@@ -14,15 +13,6 @@ import { htmlToText } from '../../../helpers/htmlToText';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast, cx } = props;
-
-  const currentResponses = store.questionResponses[question.id].properties?.responses || [];
-
-  let allSelectsUsed = true;
-  forEach(question.properties.markers.list, (response, index) => {
-    if (!currentResponses.includes(index)) {
-      allSelectsUsed = false;
-    }
-  });
 
   function nextStep() {
     if (!store.viewMode) saveQuestion();
@@ -61,10 +51,9 @@ export default function Index(props) {
     <>
       {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
 
-      <QuestionNoteClues {...props} />
-
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
+        <QuestionNoteClues {...props} />
         <Box className={styles.mapImageContainer}>
           <QuestionImage
             src={question.properties.image}
@@ -97,12 +86,6 @@ export default function Index(props) {
           </Alert>
         </Box>
       ) : null}
-
-      <ButtonNavigation
-        {...props}
-        nextStep={nextStep}
-        nextLabel={isLast ? t('finishButton') : allSelectsUsed ? t('nextButton') : t('skipButton')}
-      />
     </>
   );
 }

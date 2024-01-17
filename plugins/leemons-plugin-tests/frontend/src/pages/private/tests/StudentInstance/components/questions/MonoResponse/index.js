@@ -2,18 +2,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack } from '@bubbles-ui/components';
-import { isNumber } from 'lodash';
 import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import QuestionImage from '../../QuestionImage';
 import Responses from './Responses';
-import { ButtonNavigation } from '../../ButtonNavigation';
 import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast } = props;
-
-  const currentResponseIndex = store.questionResponses?.[question.id].properties?.response;
 
   function nextStep() {
     if (!store.viewMode) saveQuestion();
@@ -25,29 +21,13 @@ export default function Index(props) {
     showNotResponsedWarning = store.questionResponses[question.id].status === null;
   }
 
-  let nextLabel = null;
-  if (store.config.canOmitQuestions) {
-    nextLabel = isNumber(currentResponseIndex) ? t('nextButton') : t('skipButton');
-  } else {
-    nextLabel = t('nextButton');
-  }
-  if (isLast) {
-    nextLabel = t('finishButton');
-  }
-
-  let disableNext = !store.config.canOmitQuestions;
-  if (isNumber(currentResponseIndex)) {
-    disableNext = false;
-  }
-
   return (
     <>
       {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
 
-      <QuestionNoteClues {...props} />
-
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
+        <QuestionNoteClues {...props} />
         {!question.withImages && question.questionImage?.cover ? (
           <>
             <Stack fullWidth spacing={4}>
@@ -66,13 +46,6 @@ export default function Index(props) {
           </>
         )}
       </Box>
-
-      <ButtonNavigation
-        {...props}
-        nextStep={nextStep}
-        nextLabel={nextLabel}
-        disableNext={disableNext}
-      />
     </>
   );
 }

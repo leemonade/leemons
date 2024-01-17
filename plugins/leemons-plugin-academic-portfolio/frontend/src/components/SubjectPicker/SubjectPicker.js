@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { findIndex, noop, uniq } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { ActionButton, Box, Button, InputWrapper, Select, Table } from '@bubbles-ui/components';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { Container } from '@assignables/components/Assignment/components/Container';
 import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
 import { useSubjectPickerStyles } from './SubjectPicker.styles';
@@ -29,7 +29,7 @@ export function SubjectPicker({
   });
 
   const { programs, courses, subjects, selectedSubjects } = useDataForSubjectPicker({
-    subjects: assignable?.subjects || value,
+    subjects: assignable?.subjects,
     control: form.control,
   });
 
@@ -40,9 +40,16 @@ export function SubjectPicker({
 
   useEffect(() => {
     onChangeRaw(selectedSubjects);
-  }, [selectedSubjects]);
+  }, [JSON.stringify(selectedSubjects)]);
 
   const { classes } = useSubjectPickerStyles();
+
+  const isDisabled = useMemo(() => {
+    if (onlyOneSubject) {
+      return selectedSubjects?.length;
+    }
+    return false;
+  }, [onlyOneSubject, selectedSubjects]);
 
   const onSubmit = ({ selectedSubjects, ...newSubject }) => {
     const newSelectedSubjects = [newSubject?.subject, ...selectedSubjects];
@@ -78,7 +85,7 @@ export function SubjectPicker({
               label={localizations?.program}
               placeholder={localizations?.placeholder}
               data={programs}
-              disabled={!programs?.length}
+              disabled={!programs?.length || isDisabled}
             />
           )}
         />
@@ -94,7 +101,7 @@ export function SubjectPicker({
                 label={localizations?.course}
                 placeholder={localizations?.placeholder}
                 data={courses}
-                disabled={!courses?.length}
+                disabled={!courses?.length || isDisabled}
               />
             )}
           />
@@ -109,7 +116,7 @@ export function SubjectPicker({
               label={localizations?.subject}
               placeholder={localizations?.placeholder}
               data={subjects}
-              disabled={!subjects?.length}
+              disabled={!subjects?.length || isDisabled}
             />
           )}
         />

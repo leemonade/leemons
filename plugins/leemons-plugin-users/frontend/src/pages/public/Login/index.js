@@ -162,15 +162,22 @@ export default function Login() {
       );
       // }
     } catch (err) {
+      console.log('error', err);
       if (err.message === 'exceeded-login-attempts') {
         setFormStatus('unknown-error');
         setFormError(tCommon('exceededLoginAttempts'));
-      } else if (_.isObject(err) && err.httpStatusCode === 401) {
+      } else if (
+        (_.isObject(err) && err.httpStatusCode === 401) ||
+        err?.message === 'Credentials do not match'
+      ) {
         setFormStatus('error-match');
         setFormError(t('form_error'));
       } else if (_.isObject(err) && err.httpStatusCode === 500) {
         setFormStatus('unknown-error');
         setFormError(tCommon('unknown_error'));
+      } else {
+        setFormStatus('unknown-error');
+        setFormError(err.message);
       }
     }
   };

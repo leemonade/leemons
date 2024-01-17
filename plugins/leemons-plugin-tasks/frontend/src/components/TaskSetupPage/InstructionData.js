@@ -1,10 +1,9 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { isFunction, noop, uniq } from 'lodash';
+import { noop, uniq } from 'lodash';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
-  Stack,
   ContextContainer,
   Button,
   DropdownButton,
@@ -15,19 +14,24 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { useObservableContext } from '@common/context/ObservableContext';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
+import { Attachments } from './components/Attachments';
 
 function useDefaultValues() {
   const { getValues } = useObservableContext();
 
   return useMemo(() => {
-    const [instructionsForTeachers, instructionsForStudents] = getValues([
+    const [instructionsForTeachers, instructionsForStudents, resources, duration] = getValues([
       'sharedData.instructionsForTeachers',
       'sharedData.instructionsForStudents',
+      'sharedData.resources',
+      'sharedData.duration',
     ]);
 
     return {
       instructionsForTeachers,
       instructionsForStudents,
+      resources,
+      duration,
     };
   }, []);
 }
@@ -46,6 +50,8 @@ function InstructionData({
   stepName,
   scrollRef,
   t,
+  showAttachments,
+  showInstructions,
   ...props
 }) {
   // ·······························································
@@ -57,8 +63,9 @@ function InstructionData({
     control,
     handleSubmit,
     formState: { errors, isDirty },
+    getValues: getLocaleFormValues,
+    setValue: setLocaleFormValue,
   } = useForm({ defaultValues });
-
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
   const onSubmit = useCallback(
@@ -215,52 +222,65 @@ function InstructionData({
         }
       >
         <Box style={{ marginBottom: 20 }}>
-          <ContextContainer {...props} divided>
-            <ContextContainer title={labels.title}>
-              <Box>
-                <Controller
-                  control={control}
-                  name="instructionsForTeachers"
-                  render={({ field }) => (
-                    <TextEditorInput
-                      {...field}
-                      label={labels.forTeacher}
-                      placeholder={placeholders.forTeacher}
-                      help={helps.forTeacher}
-                      error={errors.instructionsForTeachers}
-                    />
-                  )}
+          <ContextContainer {...props}>
+            {showAttachments && (
+              <ContextContainer title={labels.attachmentsTitle}>
+                <Attachments
+                  labels={labels}
+                  setValue={setLocaleFormValue}
+                  getValues={getLocaleFormValues}
                 />
-              </Box>
-              <Box>
-                <Controller
-                  control={control}
-                  name="instructionsForStudents"
-                  render={({ field }) => (
-                    <TextEditorInput
-                      {...field}
-                      label={labels.forStudent}
-                      placeholder={placeholders.forStudent}
-                      help={helps.forStudent}
-                      error={errors.instructionsForStudents}
+              </ContextContainer>
+            )}
+            {showInstructions && (
+              <>
+                <ContextContainer title={labels.title}>
+                  <Box>
+                    <Controller
+                      control={control}
+                      name="instructionsForTeachers"
+                      render={({ field }) => (
+                        <TextEditorInput
+                          {...field}
+                          label={labels.forTeacher}
+                          placeholder={placeholders.forTeacher}
+                          help={helps.forTeacher}
+                          error={errors.instructionsForTeachers}
+                        />
+                      )}
                     />
-                  )}
-                />
-              </Box>
-            </ContextContainer>
-            <ContextContainer>
-              <Controller
-                control={control}
-                name="duration"
-                render={({ field }) => (
-                  <TimeUnitsInput
-                    {...field}
-                    label={labels.recommendedDuration}
-                    error={errors.recommendedDuration}
+                  </Box>
+                  <Box>
+                    <Controller
+                      control={control}
+                      name="instructionsForStudents"
+                      render={({ field }) => (
+                        <TextEditorInput
+                          {...field}
+                          label={labels.forStudent}
+                          placeholder={placeholders.forStudent}
+                          help={helps.forStudent}
+                          error={errors.instructionsForStudents}
+                        />
+                      )}
+                    />
+                  </Box>
+                </ContextContainer>
+                <ContextContainer>
+                  <Controller
+                    control={control}
+                    name="duration"
+                    render={({ field }) => (
+                      <TimeUnitsInput
+                        {...field}
+                        label={labels.recommendedDuration}
+                        error={errors.recommendedDuration}
+                      />
+                    )}
                   />
-                )}
-              />
-            </ContextContainer>
+                </ContextContainer>
+              </>
+            )}
           </ContextContainer>
         </Box>
       </TotalLayoutStepContainer>
@@ -292,6 +312,8 @@ InstructionData.propTypes = {
   loading: PropTypes.any,
   setLoading: PropTypes.func,
   t: PropTypes.func,
+  showAttachments: PropTypes.bool,
+  showInstructions: PropTypes.bool,
 };
 
 // eslint-disable-next-line import/prefer-default-export

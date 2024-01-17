@@ -1,8 +1,17 @@
 const { LeemonsError } = require('@leemons/error');
+const https = require('https');
 const { finishProviderMultipart: handleProviderMultipart } = require('./handleProviderMultipart');
 const { getMetadataObject } = require('../upload/getMetadataObject');
 const { dataForReturnFile } = require('../dataForReturnFile');
 const { createTemp } = require('../upload/createTemp');
+
+function getStream(url) {
+  return new Promise((resolve) => {
+    https.get(url, (stream) => {
+      resolve(stream);
+    });
+  });
+}
 
 /**
  * Finishes multipart upload for a file by handling the provider process and getting
@@ -14,19 +23,23 @@ const { createTemp } = require('../upload/createTemp');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<boolean>} Returns true when finished.
  */
-async function finishMultipart({ fileId, path, ctx }) {
+async function finishMultipart({ fileId, path, etags, ctx }) {
   const file = await ctx.tx.db.Files.findOne({ id: fileId }).lean();
   if (!file) throw new LeemonsError(ctx, { message: 'No file found' });
 
   // Finish provider multipart process
   if (file.provider !== 'sys') {
-    await handleProviderMultipart({ file, path, ctx });
+    await handleProviderMultipart({ file, path, etags, ctx });
   }
 
   // Get metadata for the file and update it in DB
   if (!file.isFolder) {
-    const { contentType, readStream } = await dataForReturnFile({ id: fileId, ctx });
-    const temp = await createTemp({ readStream, contentType });
+    const { contentType, readStream } = await dataForReturnFile({
+      id: fileId,
+      ctx,
+      forceStream: false,
+    });
+    const temp = await createTemp({ readStream: await getStream(readStream), contentType });
 
     const { metadata } = await getMetadataObject({
       filePath: temp.path,
@@ -39,4 +52,5 @@ async function finishMultipart({ fileId, path, ctx }) {
 
   return true;
 }
+
 module.exports = { finishMultipart };

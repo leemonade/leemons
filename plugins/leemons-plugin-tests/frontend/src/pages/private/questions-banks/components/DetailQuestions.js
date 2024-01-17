@@ -13,7 +13,8 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
@@ -52,11 +53,17 @@ export default function DetailQuestions({
   }
 
   function onSaveQuestions(question) {
-    const currentQuestions = form.getValues('questions') || [];
-    if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
-      currentQuestions[qStore.questionIndex] = question;
+    const cleanQuestion = question;
+    if (cleanQuestion.clues?.[0] === undefined) {
+      cleanQuestion.clues = [];
     } else {
-      currentQuestions.push(question);
+      cleanQuestion.clues = [{ value: cleanQuestion.clues[0] }];
+    }
+    const currentQuestions = form.getValues('questions') ?? [];
+    if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
+      currentQuestions[qStore.questionIndex] = cleanQuestion;
+    } else {
+      currentQuestions.push(cleanQuestion);
     }
     form.setValue('questions', currentQuestions);
     onCancel();
@@ -81,7 +88,7 @@ export default function DetailQuestions({
   function tryHandler(handler = noop) {
     qStore.trySend = true;
     qRender();
-    if (questions && questions.length) {
+    if (questions?.length) {
       handler();
     }
   }
@@ -155,7 +162,7 @@ export default function DetailQuestions({
               ) : null}
               <Button
                 onClick={() => tryHandler(onPublish)}
-                disabled={store.saving}
+                disabled={store.saving || !questions?.length}
                 loading={store.saving === 'publish'}
               >
                 {t('publish')}
@@ -167,15 +174,21 @@ export default function DetailQuestions({
     >
       <Box>
         <ContextContainer title={t('questionList')}>
-          {questions && questions.length ? (
+          {questions?.length ? (
             <Table
               columns={tableHeaders}
               data={map(questions, (question, i) => ({
                 ...getQuestionForTable(question, t),
                 actions: (
                   <Stack justifyContent="end" fullWidth>
-                    <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
-                    <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
+                    <ActionButton
+                      icon={<EditWriteIcon width={18} height={18} />}
+                      onClick={() => editQuestion(i)}
+                    />
+                    <ActionButton
+                      icon={<DeleteBinIcon width={18} height={18} />}
+                      onClick={() => deleteQuestion(i)}
+                    />
                   </Stack>
                 ),
               }))}
@@ -194,29 +207,6 @@ export default function DetailQuestions({
             </Alert>
           ) : null}
         </ContextContainer>
-
-        {/* 
-        <Stack alignItems="center" justifyContent="space-between">
-          <Button
-            variant="light"
-            leftIcon={<ChevLeftIcon height={20} width={20} />}
-            onClick={onPrev}
-          >
-            {t('previous')}
-          </Button>
-          <Button
-            onClick={() => {
-              qStore.trySend = true;
-              qRender();
-              if (questions && questions.length) {
-                onNext();
-              }
-            }}
-          >
-            {t('publish')}
-          </Button>
-        </Stack>
-        */}
       </Box>
     </TotalLayoutStepContainer>
   );
