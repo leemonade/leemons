@@ -94,6 +94,7 @@ module.exports = {
     markRead: 'Mark as read',
     nextActivity: 'Next activity',
     type: 'Document',
+    instructions: 'Instructions',
   },
   contentCreatorAssign: {
     assign: 'Assign as task',

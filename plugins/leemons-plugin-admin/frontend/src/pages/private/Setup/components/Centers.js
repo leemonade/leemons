@@ -15,8 +15,7 @@ import {
   Title,
   createStyles,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, EditIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, EditWriteIcon as EditIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';

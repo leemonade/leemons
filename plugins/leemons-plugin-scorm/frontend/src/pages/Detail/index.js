@@ -229,7 +229,7 @@ export default function Detail() {
           />
         }
       >
-        <Stack key="step-1" justifyContent="center">
+        <Stack key="step-1" ref={scrollRef} justifyContent="center" style={{ overflow: 'auto' }}>
           <BasicData
             advancedConfig={{
               alwaysOpen: false,

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { uniqBy, map } from 'lodash';
 import {
   Box,
   Button,
@@ -7,12 +8,11 @@ import {
   useViewportSize,
   SortableList,
 } from '@bubbles-ui/components';
-// TODO: import from @library plugin
-import { AssetListDrawer } from '@leebrary/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { uniqBy, map } from 'lodash';
+import PropTypes from 'prop-types';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { AssetListDrawer } from '@leebrary/components';
 
 import { AttachmentItem } from './AttchmentItem';
 
@@ -24,7 +24,7 @@ const styles = createStyles((theme) => ({
   },
 }));
 
-export default function Attachments({ setValue, getValues, labels }) {
+function Attachments({ setValue, getValues, labels }) {
   /*
     --- Drawer state ---
   */
@@ -155,4 +155,11 @@ export default function Attachments({ setValue, getValues, labels }) {
   );
 }
 
+Attachments.propTypes = {
+  setValue: PropTypes.func,
+  getValues: PropTypes.func,
+  labels: PropTypes.any,
+};
+
+export default Attachments;
 export { Attachments };

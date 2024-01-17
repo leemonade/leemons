@@ -205,10 +205,12 @@ module.exports = {
     async authenticate(ctx, route, req) {
       let { authorization } = req.headers;
       if (!authorization) authorization = req.query.authorization;
-      try {
-        authorization = JSON.parse(authorization);
-      } catch (e) {
-        // Nothing
+      if (authorization) {
+        try {
+          authorization = JSON.parse(authorization);
+        } catch (e) {
+          // Nothing
+        }
       }
       ctx.meta.authorization = authorization;
     },

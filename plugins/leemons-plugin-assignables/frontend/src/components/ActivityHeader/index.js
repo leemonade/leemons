@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { Box, ImageLoader, TotalLayoutHeader, Stack } from '@bubbles-ui/components';
 
 import { FormProvider, useForm } from 'react-hook-form';
@@ -10,13 +9,16 @@ import CalificationTypeDisplay from './components/CalificationTypeDisplay/Califi
 import DateComponent from './components/Date/Date';
 import Timer from './components/Timer/Timer';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import useTotalLayoutStyles from './TotalLayout.style';
+import useTotalLayoutStyles from './index.style';
 import CloseButtons from './components/CloseButtons/CloseButtons';
 import StatusBadge from './components/StatusBadge/StatusBadge';
+import {
+  ACTIVIY_HEADER_PROP_TYPES,
+  ACTIVIY_HEADER_DEFAULT_PROPS,
+} from './ActivityHeader.constants';
 
 export default function ActivityHeader({
   instance,
-
   action,
   showClass,
   showRole,
@@ -24,11 +26,10 @@ export default function ActivityHeader({
   showStartDate,
   showDeadline,
   showDateTime,
-
   showTime,
-
   showCloseButtons,
   allowEditDeadline,
+  onTimeout: noop,
 }) {
   const form = useForm();
   /*
@@ -130,16 +131,6 @@ export default function ActivityHeader({
   );
 }
 
-ActivityHeader.propTypes = {
-  instance: PropTypes.object,
-  action: PropTypes.string,
-  showClass: PropTypes.bool,
-  showRole: PropTypes.bool,
-  showEvaluationType: PropTypes.bool,
-  showStartDate: PropTypes.bool,
-  showDeadline: PropTypes.bool,
-  showDateTime: PropTypes.bool,
-  showTime: PropTypes.bool,
-  showCloseButtons: PropTypes.bool,
-  allowEditDeadline: PropTypes.bool,
-};
+ActivityHeader.propTypes = ACTIVIY_HEADER_PROP_TYPES;
+ActivityHeader.defaultProps = ACTIVIY_HEADER_DEFAULT_PROPS;
+ActivityHeader.displayName = 'ActivityHeader';

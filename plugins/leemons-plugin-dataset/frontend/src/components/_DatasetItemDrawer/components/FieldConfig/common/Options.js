@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { forEach, get, map } from 'lodash';
 import { Controller } from 'react-hook-form';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { Box, Button, Col, Grid, SortableList, Text, TextInput } from '@bubbles-ui/components';
 import DatasetItemDrawerContext from '../../../context/DatasetItemDrawerContext';
 

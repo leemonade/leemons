@@ -18,7 +18,7 @@ async function getUserQuestionResponses({ instance, userAgent, ctx }) {
       instance,
       userAgent,
     },
-    columns: ['question', 'clues', 'properties', 'status', 'points'],
+    columns: ['question', 'clues', 'cluesTypes', 'properties', 'status', 'points'],
     ctx,
   });
 

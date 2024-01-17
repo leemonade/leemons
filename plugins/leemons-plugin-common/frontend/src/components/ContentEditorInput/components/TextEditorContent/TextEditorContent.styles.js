@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-const TextEditorContentStyles = createStyles((theme, { editorStyles, fullWidth }) => {
+const TextEditorContentStyles = createStyles((theme, { editorStyles, fullWidth, compact }) => {
   const globalTheme = theme.other.global;
   const pageWidth = '928px';
 
@@ -42,8 +42,8 @@ const TextEditorContentStyles = createStyles((theme, { editorStyles, fullWidth }
     },
     editorContainer: {
       position: 'relative',
-      paddingBlock: 32,
-      paddingInline: 24,
+      paddingBlock: compact ? 0 : 32,
+      paddingInline: compact ? 0 : 24,
       backgroundColor: theme.other.global.background.color.surface.subtle,
       flex: 1,
       overflowY: 'auto',

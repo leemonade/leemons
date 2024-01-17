@@ -9,6 +9,34 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
     height: isFirstStep ? 'calc(25vh)' : 60,
     position: 'relative',
   },
+  iconText: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing[2],
+    color: theme.other.global.content.color.text.default,
+    fontSize: 12,
+    paddingRight: theme.spacing[2],
+    paddingLeft: theme.spacing[2],
+  },
+  headerSubject: {
+    paddingRight: theme.spacing[4],
+  },
+  instructionsIcon: {
+    color: '#878D96',
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing[2],
+  },
+  instructions: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  divider: {
+    width: 1,
+    height: 24,
+    backgroundColor: theme.other.divider.background.color.default,
+  },
   mainContent: {
     display: 'flex',
     height: isFirstStep ? 'calc(75vh)' : 'calc(100% - 60px)',
@@ -34,7 +62,6 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
     maxWidth: theme.breakpoints.sm,
   },
   loremIpsum: {
-    paddingTop: 16,
     width: '100%',
     paddingBottom: theme.spacing[12],
   },
@@ -87,7 +114,6 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   },
   limitedWidthStep: {
     width: '100%',
-    maxWidth: theme.breakpoints.sm,
   },
   preDoing: {
     width: '100%',

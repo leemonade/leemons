@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const useActivityTypeStyles = createStyles((theme) => {
+const useActivityTypeStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
@@ -22,8 +22,9 @@ export const useActivityTypeStyles = createStyles((theme) => {
     text: {
       fontSize: { ...globalTheme.content.typoMobile.body['sm--bold'] },
       color: globalTheme.content.color.text.default,
+      textWrap: 'nowrap',
     },
   };
 });
 
-export default useActivityTypeStyles;
+export { useActivityTypeStyles };
