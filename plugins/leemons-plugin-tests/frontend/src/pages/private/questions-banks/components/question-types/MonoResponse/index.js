@@ -1,41 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { find, findIndex, forEach } from 'lodash';
+import { find, findIndex, forEach, capitalize } from 'lodash';
 import {
   Box,
-  Checkbox,
+  Switch,
   ContextContainer,
-  InputWrapper,
   ListInput,
   ListItem,
-  Paper,
+  Button,
   Stack,
+  Text,
 } from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { ViewOffIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { ListInputRender } from './components/ListInputRender';
-import { ListItemValueRender } from './components/ListItemValueRender';
+import { ListItemRender } from './components/ListItemRender';
 
 // eslint-disable-next-line import/prefer-default-export
-export function MonoResponse({ form, t }) {
+export function MonoResponse({ form: _form, t }) {
+  const form = useFormContext() ?? _form;
   const withImages = form.watch('withImages');
-  const explanationInResponses = form.watch('properties.explanationInResponses');
-  const splits = t('responsesDescription').split('{{icon}}');
-  const responsesDescription = [
-    splits[0],
-    <Box
-      key={2}
-      sx={(theme) => ({
-        display: 'inline',
-        fontSize: theme.fontSizes[3],
-        verticalAlign: 'middle',
-      })}
-    >
-      <ViewOffIcon />
-    </Box>,
-    splits[1],
-  ];
+  const properties = form.watch('properties');
+  const [showInput, setShowInput] = React.useState(false);
 
   function toggleHideOnHelp(item) {
     const data = form.getValues('properties.responses');
@@ -61,125 +48,122 @@ export function MonoResponse({ form, t }) {
 
   return (
     <ContextContainer>
-      <InputWrapper label={t('explanationLabel')}>
+      <ContextContainer title={`${capitalize(t('explanationLabel'))} *`}>
         <Controller
           control={form.control}
           name="properties.explanationInResponses"
           render={({ field }) => (
-            <Checkbox
+            <Switch
+              {...field}
               checked={field.value}
               label={t('includeExplanationToEveryAnswerLabel')}
-              {...field}
             />
           )}
         />
-        {!explanationInResponses ? (
-          <Controller
-            control={form.control}
-            name="properties.explanation"
-            render={({ field }) => <TextEditorInput {...field} />}
-          />
-        ) : null}
-      </InputWrapper>
-      <InputWrapper
-        required
-        label={t('responsesLabel')}
-        description={
-          <Box>
-            <Box style={{ alignSelf: 'flex-end' }}>
-              <Controller
-                control={form.control}
-                name="withImages"
-                render={({ field }) => (
-                  <Checkbox
-                    checked={field.value}
-                    error={form.formState.errors.withImages}
-                    label={t('withImagesLabel')}
-                    {...field}
-                  />
-                )}
-              />
-            </Box>
-            {responsesDescription}
-          </Box>
-        }
-      >
+      </ContextContainer>
+      {!properties?.explanationInResponses ? (
         <Controller
           control={form.control}
-          name="properties.responses"
-          rules={{
-            required: t('typeRequired'),
-            validate: (a) => {
-              if (withImages) {
-                let needImages = false;
-                forEach(a, ({ value: { image } }) => {
-                  if (!image) {
-                    needImages = true;
-                  }
-                });
-                if (needImages) return t('needImages');
-              } else if (explanationInResponses) {
-                let error = false;
-                forEach(a, ({ value: { response, explanation } }) => {
-                  if (!response || !explanation) {
-                    error = true;
-                  }
-                });
-                if (error) return t('needExplanationAndResponse');
-              } else {
-                let error = false;
-                forEach(a, ({ value: { response } }) => {
-                  if (!response) {
-                    error = true;
-                  }
-                });
-                if (error) return t('needResponse');
-              }
-              const item = find(a, { value: { isCorrectResponse: true } });
-              return item ? true : t('errorMarkGoodResponse');
-            },
-          }}
-          render={({ field }) => {
-            let canSetHelp = true;
-            forEach(field.value, ({ value: { hideOnHelp } }) => {
-              if (hideOnHelp) canSetHelp = false;
-            });
-            return (
+          name="properties.explanation"
+          render={({ field }) => <TextEditorInput {...field} />}
+        />
+      ) : null}
+      <ContextContainer title={`${t('responsesLabel')} *`} spacing={0}>
+        <Controller
+          control={form.control}
+          name="withImages"
+          render={({ field }) => (
+            <Switch {...field} checked={field.value} label={t('withImagesLabel')} />
+          )}
+        />
+        <Controller
+          control={form.control}
+          name="properties.hasClues"
+          render={({ field }) => (
+            <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
+          )}
+        />
+      </ContextContainer>
+      <Text color="primary" strong>
+        {t('responsesDescription')}
+      </Text>
+      <Controller
+        control={form.control}
+        name="properties.responses"
+        rules={{
+          required: t('typeRequired'),
+          validate: (a) => {
+            if (withImages) {
+              let needImages = false;
+              forEach(a, ({ value: { image } }) => {
+                if (!image) {
+                  needImages = true;
+                }
+              });
+              if (needImages) return t('needImages');
+            } else if (properties?.explanationInResponses) {
+              let error = false;
+              forEach(a, ({ value: { response, explanation } }) => {
+                if (!response || !explanation) {
+                  error = true;
+                }
+              });
+              if (error) return t('needExplanationAndResponse');
+            } else {
+              let error = false;
+              forEach(a, ({ value: { response } }) => {
+                if (!response) {
+                  error = true;
+                }
+              });
+              if (error) return t('needResponse');
+            }
+            const item = find(a, { value: { isCorrectResponse: true } });
+            return item ? true : t('errorMarkGoodResponse');
+          },
+        }}
+        render={({ field }) => {
+          let canSetHelp = true;
+          forEach(field.value, ({ value: { hideOnHelp } }) => {
+            if (hideOnHelp) canSetHelp = false;
+          });
+          return (
+            <Box>
               <ListInput
                 {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  setShowInput(false);
+                }}
+                hideInput={!showInput}
+                withItemBorder
+                withInputBorder
                 error={form.formState.errors.properties?.responses}
                 inputRender={
                   <ListInputRender
                     t={t}
-                    useExplanation={explanationInResponses}
+                    useExplanation={properties?.explanationInResponses}
                     withImages={withImages}
+                    onCancel={() => setShowInput(false)}
                   />
                 }
                 listRender={
                   <ListItem
                     itemContainerRender={({ children }) => (
-                      <Paper
-                        fullWidth
-                        sx={(theme) => ({
-                          marginTop: theme.spacing[2],
-                          marginBottom: theme.spacing[2],
-                          width: '100%',
-                        })}
-                      >
-                        <Stack alignItems={explanationInResponses ? 'top' : 'center'} fullWidth>
-                          {children}
-                        </Stack>
-                      </Paper>
+                      <Stack alignItems="center" fullWidth>
+                        {children}
+                      </Stack>
                     )}
                     itemValueRender={
-                      <ListItemValueRender
+                      <ListItemRender
                         t={t}
                         canSetHelp={canSetHelp}
-                        useExplanation={explanationInResponses}
+                        useExplanation={properties?.explanationInResponses}
                         withImages={withImages}
                         toggleHideOnHelp={toggleHideOnHelp}
                         changeCorrectResponse={changeCorrectResponse}
                         showEye={field?.value?.length > 2}
+                        // showEye
                       />
                     }
                   />
@@ -187,10 +171,19 @@ export function MonoResponse({ form, t }) {
                 hideAddButton
                 canAdd
               />
-            );
-          }}
-        />
-      </InputWrapper>
+              {!showInput ? (
+                <Button
+                  variant="link"
+                  onClick={() => setShowInput(true)}
+                  leftIcon={<AddCircleIcon />}
+                >
+                  {t('addResponse')}
+                </Button>
+              ) : null}
+            </Box>
+          );
+        }}
+      />
     </ContextContainer>
   );
 }

@@ -1,43 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Title } from '@bubbles-ui/components';
-import { ViewOffIcon } from '@bubbles-ui/icons/outline';
+import { ViewOffIcon } from '@bubbles-ui/icons/solid';
 import { numberToEncodedLetter } from '@common';
 
 // eslint-disable-next-line import/prefer-default-export
-export function ListItemValueRender({
-  canSetHelp,
-  item,
-  toggleHideOnHelp,
-  markers,
-  showEye,
-  index,
-}) {
+export function ListItemValueRender({ item, markers, showEye, index }) {
   return (
     <Box sx={() => ({ width: '100%' })}>
-      <Stack fullWidth alignItems="start" justifyContent="start">
+      <Stack fullWidth alignItems="center">
         <Box
           sx={(theme) => ({
             marginRight: theme.spacing[5],
-            marginTop: theme.spacing[1],
           })}
         >
           <Title order={6}>
             {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
           </Title>
         </Box>
-        {showEye && (canSetHelp || (!canSetHelp && item.hideOnHelp)) ? (
+        {showEye && item.hideOnHelp ? (
           <Box
             sx={(theme) => ({
               marginRight: theme.spacing[5],
               marginTop: theme.spacing[1],
-              fontSize: theme.fontSizes[4],
-              cursor: 'pointer',
-              color: item.hideOnHelp ? theme.colors.interactive01 : theme.colors.text06,
+              color: theme.other.global.content.color.icon.default,
             })}
-            onClick={() => toggleHideOnHelp(item)}
           >
-            <ViewOffIcon />
+            <ViewOffIcon width={18} height={18} />
           </Box>
         ) : null}
 

@@ -18,8 +18,9 @@ import {
   EditorLeftAlignIcon,
   EditorRightAlignIcon,
   EditorCenterAlignIcon,
+  AddCircleIcon,
 } from '@bubbles-ui/icons/solid';
-import { RemoveIcon, AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { isFunction } from 'lodash';
 import { useTextEditor } from '@bubbles-ui/editors';
 import { prepareAsset } from '../../helpers/prepareAsset';

@@ -16,11 +16,13 @@ import {
   useTree,
 } from '@bubbles-ui/components';
 import {
-  AddCircleIcon,
   DuplicateIcon,
   PluginSettingsIcon,
   RemoveIcon,
 } from '@bubbles-ui/icons/outline';
+import {
+  AddCircleIcon,
+} from '@bubbles-ui/icons/solid';
 // TODO: import from @common plugin
 
 import { AdminPageHeader } from '@bubbles-ui/leemons';

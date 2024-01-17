@@ -64,9 +64,11 @@ export default function Edit() {
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
 
-      await saveTestRequest({ ...toSend, type: 'learn', published: false });
-
+      const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: false });
       addSuccessAlert(t('savedAsDraft'));
+      if (store.isNew) {
+        history.push(`/private/tests/${test.id}`);
+      }
     } catch (error) {
       addErrorAlert(error);
     }

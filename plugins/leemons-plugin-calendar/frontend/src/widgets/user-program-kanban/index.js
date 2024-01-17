@@ -11,7 +11,7 @@ import {
   Text,
 } from '@bubbles-ui/components';
 import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { KanbanTaskCard } from '@calendar/components';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';

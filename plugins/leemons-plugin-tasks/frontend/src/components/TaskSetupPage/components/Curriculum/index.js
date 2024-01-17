@@ -4,7 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { Button, InputWrapper, Stack } from '@bubbles-ui/components';
 import { CurriculumSelectContentsModal } from '@curriculum/components/CurriculumSelectContentsModal';
 import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { listCurriculumsByProgramRequest } from '@curriculum/request';
 
 function useCurriculum(program) {

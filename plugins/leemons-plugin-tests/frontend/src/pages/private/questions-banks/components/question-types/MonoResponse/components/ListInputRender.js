@@ -1,21 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  InputWrapper,
   Box,
   Button,
   ContextContainer,
-  Paper,
   Stack,
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
-import { TextEditorInput } from '@bubbles-ui/editors';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { capitalize } from 'lodash';
 
 // eslint-disable-next-line import/prefer-default-export
-export function ListInputRender({ t, withImages, useExplanation, addItem, value, ...props }) {
+export function ListInputRender({
+  t,
+  withImages,
+  useExplanation,
+  addItem,
+  value,
+  onCancel,
+  ...props
+}) {
   const [store, render] = useStore(value || { useButton: true });
 
   function emit() {
@@ -88,80 +95,82 @@ export function ListInputRender({ t, withImages, useExplanation, addItem, value,
     render();
   }
 
-  const Container = store.useButton ? Paper : Box;
+  // const Container = store.useButton ? Paper : Box;
 
   if (withImages) {
     return (
-      <Box>
-        <Container fullWidth>
-          <ContextContainer>
-            <Stack fullWidth spacing={4}>
-              <Box>
-                <ImagePicker value={store.image} onChange={onChangeImage} />
-              </Box>
-              <Box>
-                <Textarea
-                  label={t('caption')}
-                  value={store.imageDescription}
-                  onChange={onChangeImageDescription}
-                />
-              </Box>
-            </Stack>
-            {useExplanation ? (
-              <Box>
-                <TextEditorInput
-                  value={store.explanation}
-                  label={t('explanationLabel')}
-                  onChange={onChangeExplanation}
-                  error={store.dirty && !store.explanation ? t('explanationRequired') : null}
-                />
-              </Box>
-            ) : null}
-            {store.useButton ? (
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                <Button variant="link" leftIcon={<AddCircleIcon />} onClick={add}>
-                  {t('addResponse')}
-                </Button>
-              </Box>
-            ) : null}
-          </ContextContainer>
-        </Container>
-      </Box>
-    );
-  }
-
-  return (
-    <Box>
-      <Container fullWidth>
-        <ContextContainer>
-          <Box>
-            <TextInput
-              value={store.response}
-              label={t('responseLabel')}
-              onChange={onChangeResponse}
-              error={store.dirty && !store.response ? t('responseRequired') : null}
-            />
+      <ContextContainer>
+        <Box>
+          <InputWrapper label="Imagen *">
+            <ImagePicker value={store.image} onChange={onChangeImage} />
+          </InputWrapper>
+        </Box>
+        <Stack fullWidth spacing={4}>
+          <Box noFlex={useExplanation}>
+            <Box style={{ width: useExplanation ? 250 : '100%' }}>
+              <TextInput
+                label={t('caption')}
+                value={store.imageDescription}
+                onChange={onChangeImageDescription}
+              />
+            </Box>
           </Box>
           {useExplanation ? (
             <Box>
-              <TextEditorInput
+              <TextInput
                 value={store.explanation}
-                label={t('explanationLabel')}
+                label={`${capitalize(t('explanationLabel'))} *`}
                 onChange={onChangeExplanation}
                 error={store.dirty && !store.explanation ? t('explanationRequired') : null}
               />
             </Box>
           ) : null}
-          {store.useButton ? (
-            <Box>
-              <Button variant="link" onClick={add} leftIcon={<AddCircleIcon />}>
-                {t('addResponse')}
-              </Button>
-            </Box>
-          ) : null}
-        </ContextContainer>
-      </Container>
-    </Box>
+        </Stack>
+        {store.useButton ? (
+          <Stack justifyContent="end" spacing={4}>
+            <Button variant="link" onClick={onCancel}>
+              {t('cancel')}
+            </Button>
+            <Button variant="outline" onClick={add}>
+              {t('saveResponse')}
+            </Button>
+          </Stack>
+        ) : null}
+      </ContextContainer>
+    );
+  }
+
+  return (
+    <ContextContainer>
+      <Box>
+        <TextInput
+          value={store.response}
+          label={`${t('responseLabel')} *`}
+          onChange={onChangeResponse}
+          error={store.dirty && !store.response ? t('responseRequired') : null}
+        />
+      </Box>
+      {useExplanation ? (
+        <Box>
+          <Textarea
+            value={store.explanation}
+            label={`${capitalize(t('explanationLabel'))} *`}
+            onChange={onChangeExplanation}
+            error={store.dirty && !store.explanation ? t('explanationRequired') : null}
+          />
+        </Box>
+      ) : null}
+      {store.useButton ? (
+        <Stack justifyContent="end" spacing={4}>
+          <Button variant="link" onClick={onCancel}>
+            {t('cancel')}
+          </Button>
+          <Button variant="outline" onClick={add}>
+            {t('saveResponse')}
+          </Button>
+        </Stack>
+      ) : null}
+    </ContextContainer>
   );
 }
 
@@ -172,4 +181,5 @@ ListInputRender.propTypes = {
   onChange: PropTypes.func,
   addItem: PropTypes.func,
   value: PropTypes.any,
+  onCancel: PropTypes.func,
 };

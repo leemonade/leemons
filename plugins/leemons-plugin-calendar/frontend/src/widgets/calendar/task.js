@@ -22,8 +22,13 @@ import {
   TextInput,
   Textarea,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon, EditorListBulletsIcon, PluginKanbanIcon } from '@bubbles-ui/icons/solid';
+import { PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
+import {
+  AddCircleIcon,
+  DeleteBinIcon,
+  EditorListBulletsIcon,
+  PluginKanbanIcon,
+} from '@bubbles-ui/icons/solid';
 import prefixPN from '@calendar/helpers/prefixPN';
 import { listKanbanColumnsRequest } from '@calendar/request';
 import { useLocale, useStore } from '@common';

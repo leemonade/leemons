@@ -12,8 +12,7 @@ import {
   Title,
 } from '@bubbles-ui/components';
 import { CalendarNewEventModal } from '@bubbles-ui/leemons';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon, EditWriteIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import ColorBall from '@academic-calendar/components/ColorBall';
 import { useLayout } from '@layout/context';

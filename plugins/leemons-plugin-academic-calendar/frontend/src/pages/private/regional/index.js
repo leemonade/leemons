@@ -11,7 +11,8 @@ import {
   Paper,
   useResizeObserver,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
