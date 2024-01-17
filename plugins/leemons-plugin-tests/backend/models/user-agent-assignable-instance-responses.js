@@ -29,6 +29,9 @@ const schema = new mongoose.Schema(
     clues: {
       type: Number,
     },
+    cluesTypes: {
+      type: mongoose.Schema.Types.Mixed,
+    },
     // ok | ko | null
     status: {
       type: String,

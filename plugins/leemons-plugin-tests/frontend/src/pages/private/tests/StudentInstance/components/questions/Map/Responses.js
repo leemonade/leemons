@@ -13,9 +13,12 @@ export default function Responses(props) {
 
   const clue = React.useMemo(
     () =>
-      find(getQuestionClues(question, store.questionResponses[question.id].clues, store.config), {
-        type: 'hide-response',
-      }),
+      find(
+        getQuestionClues(question, store.questionResponses[question.id].cluesTypes, store.config),
+        {
+          type: 'hide-response',
+        }
+      ),
     [question, store.questionResponses[question.id].clues]
   );
 
@@ -145,11 +148,6 @@ export default function Responses(props) {
           {clued ? (
             <>
               <Box className={styles.disableResponseBg} />
-              <Box
-                className={cx(styles.disableResponseIcon, styles.disableResponseIconWithOutImage)}
-              >
-                <ImageLoader src={`/public/tests/clue-on.svg`} />
-              </Box>
             </>
           ) : null}
           <Select

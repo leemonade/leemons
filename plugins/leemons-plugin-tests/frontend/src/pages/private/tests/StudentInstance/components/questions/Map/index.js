@@ -51,10 +51,9 @@ export default function Index(props) {
     <>
       {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
 
-      <QuestionNoteClues {...props} />
-
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
+        <QuestionNoteClues {...props} />
         <Box className={styles.mapImageContainer}>
           <QuestionImage
             src={question.properties.image}

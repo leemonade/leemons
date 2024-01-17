@@ -392,19 +392,25 @@ function StudentInstance() {
         </Box>
         <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
           {store.modalMode === 1 ? (
-            <Stack justifyContent="space-between">
+            <Stack fullWidth justifyContent="space-between">
               {store.isModule ? (
-                <Button variant="light" compact onClick={goToModuleDashboard}>
-                  {t('modulesDashboard')}
-                </Button>
+                <Box>
+                  <Button variant="light" compact onClick={goToModuleDashboard}>
+                    {t('modulesDashboard')}
+                  </Button>
+                </Box>
               ) : (
-                <Button variant="light" compact onClick={goToOnGoing}>
-                  {t('pendingActivities')}
-                </Button>
+                <Box>
+                  <Button variant="light" compact onClick={goToOnGoing}>
+                    {t('pendingActivities')}
+                  </Button>
+                </Box>
               )}
-              <Button compact onClick={goToResults}>
-                {t('viewResults')}
-              </Button>
+              <Box>
+                <Button compact onClick={goToResults}>
+                  {t('viewResults')}
+                </Button>
+              </Box>
             </Stack>
           ) : null}
           {store.modalMode === 2 ? (

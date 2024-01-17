@@ -1,6 +1,6 @@
 import React, { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Box, HorizontalStepperContainer } from '@bubbles-ui/components';
+import { VerticalStepperContainer, TotalLayoutContainer } from '@bubbles-ui/components';
 
 import { fireEvent } from 'leemons-hooks';
 import { get, isFunction, omit } from 'lodash';
@@ -28,12 +28,12 @@ export function useTabs({ localizations }) {
         label: localizations?.basicData,
       },
       {
-        id: 'resources',
-        label: localizations?.resources,
-      },
-      {
         id: 'structure',
         label: localizations?.structure,
+      },
+      {
+        id: 'resources',
+        label: localizations?.resources,
       },
     ],
     [localizations]
@@ -57,8 +57,8 @@ export function useModuleSetupLocalizations() {
 
 const stepsRenderers = {
   basicData: <BasicData />,
-  resources: <Resources />,
   structure: <StructureData />,
+  resources: <Resources />,
 };
 
 const eventBase = 'plugin.learning-paths.modules.edit';
@@ -118,17 +118,17 @@ function prepareAssignable(sharedData) {
   };
 }
 
-function prepareSharedData(module) {
+function prepareSharedData(moduleData) {
   return {
-    id: module.id,
+    id: moduleData.id,
     basicData: {
-      ...omit(module.asset, 'file'),
-      subjects: module?.subjects,
-      program: module?.subjects?.[0]?.program,
+      ...omit(moduleData.asset, 'file'),
+      subjects: moduleData?.subjects,
+      program: moduleData?.subjects?.[0]?.program,
     },
     state: {
-      activities: module.submission.activities,
-      resources: module.resources,
+      activities: moduleData.submission.activities,
+      resources: moduleData.resources,
     },
   };
 }
@@ -238,7 +238,7 @@ function useModuleInitialization() {
     isInitialFetch.current = true;
   }, [id]);
 
-  const { data: module } = useAssignables({
+  const { data: moduleData } = useAssignables({
     id,
     enabled: !!(id && isInitialFetch),
     withFiles: true,
@@ -246,17 +246,19 @@ function useModuleInitialization() {
   });
 
   useEffect(() => {
-    if (isInitialFetch.current && module) {
+    if (isInitialFetch.current && moduleData) {
       isInitialFetch.current = false;
 
-      updateSharedData(prepareSharedData(module));
+      updateSharedData(prepareSharedData(moduleData));
     }
-  }, [module]);
+  }, [moduleData]);
 }
 
 export function ModuleSetup() {
   const localizations = useModuleSetupLocalizations();
   const tabs = useTabs({ localizations: localizations?.tabs });
+  const scrollRef = React.useRef();
+  const history = useHistory();
 
   useModuleInitialization();
 
@@ -271,28 +273,36 @@ export function ModuleSetup() {
     setCurrentStep((step) => (step > minStep ? step - 1 : step));
   };
 
+  const onCancel = () => {
+    history.goBack();
+  };
+
+  const onSave = () => {
+    fireEvent(`${eventBase}.onSaveDraft`);
+  };
+
   const renderer = useStepRenderer({
     step: currentStep,
     tabs,
-    props: { localizations, onNextStep, onPrevStep },
+    props: { localizations, onNextStep, onPrevStep, onSave, scrollRef },
   });
 
   useEventHandler({ localizations });
 
   return (
-    <Box sx={{ position: 'relative' }}>
-      <HorizontalStepperContainer
-        Header={<Header localizations={localizations?.header} />}
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={<Header localizations={localizations?.header} onCancel={onCancel} />}
+    >
+      <VerticalStepperContainer
         data={tabs}
+        scrollRef={scrollRef}
         allowVisitedStepClick
         currentStep={currentStep}
         onStepClick={(step) => setCurrentStep(step)}
-        stickyAt={0}
-        contentPadding={0}
-        fullHeight
       >
         {renderer}
-      </HorizontalStepperContainer>
-    </Box>
+      </VerticalStepperContainer>
+    </TotalLayoutContainer>
   );
 }

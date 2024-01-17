@@ -1,16 +1,12 @@
-import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-
-import { Box, PageHeader } from '@bubbles-ui/components';
-import { PluginLearningPathsIcon } from '@bubbles-ui/icons/outline';
-
-import { fireEvent } from 'leemons-hooks';
-
+import PropTypes from 'prop-types';
+import { noop } from 'lodash';
+import { TotalLayoutHeader } from '@bubbles-ui/components';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
+import { ModuleCardIcon } from '@learning-paths/components/ModuleCardIcon';
 import addAction from '../../helpers/addAction';
 
-// eslint-disable-next-line import/prefer-default-export
-export function Header({ localizations }) {
+function Header({ localizations, onCancel = noop }) {
   const [sharedData] = useModuleSetupContext();
   const [isLoading, setIsLoading] = useState(false);
   const eventBase = 'plugin.learning-paths.modules.edit';
@@ -22,26 +18,36 @@ export function Header({ localizations }) {
     [setIsLoading]
   );
 
-  const title = sharedData?.basicData?.name || localizations?.title;
+  const title = sharedData?.id ? localizations?.editTitle : localizations?.title;
+
+  /*
+<PageHeader
+  values={{
+    title,
+  }}
+  icon={<PluginLearningPathsIcon />}
+  buttons={{
+    cancel: localizations?.buttons?.save,
+  }}
+  loading={isLoading ? 'cancel' : undefined}
+  onCancel={() => fireEvent('plugin.learning-paths.modules.edit.onSaveDraft')}
+  fullWidth
+/>
+*/
 
   return (
-    <Box>
-      <PageHeader
-        values={{
-          title,
-        }}
-        icon={<PluginLearningPathsIcon />}
-        buttons={{
-          cancel: localizations?.buttons?.save,
-        }}
-        loading={isLoading ? 'cancel' : undefined}
-        onCancel={() => fireEvent('plugin.learning-paths.modules.edit.onSaveDraft')}
-        fullWidth
-      />
-    </Box>
+    <TotalLayoutHeader
+      title={title}
+      formTitlePlaceholder={sharedData?.basicData?.name}
+      icon={<ModuleCardIcon width={24} height={24} />}
+      onCancel={onCancel}
+    />
   );
 }
 
 Header.propTypes = {
   localizations: PropTypes.object,
+  onCancel: PropTypes.func,
 };
+
+export { Header };

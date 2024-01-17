@@ -25,10 +25,9 @@ export default function Index(props) {
     <>
       {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
 
-      <QuestionNoteClues {...props} />
-
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
+        <QuestionNoteClues {...props} />
         {!question.withImages && question.questionImage?.cover ? (
           <>
             <Stack fullWidth spacing={4}>
