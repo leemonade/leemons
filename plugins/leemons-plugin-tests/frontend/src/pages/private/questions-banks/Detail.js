@@ -47,6 +47,21 @@ export default function Detail(p) {
   const form = useForm();
   const formValues = form.watch();
 
+  const prepareDataToSave = () => {
+    const qbank = formValues;
+    // Clear questions clues
+    qbank.questions = qbank.questions.map((question) => {
+      const newQuestion = { ...question };
+      if (isEmpty(newQuestion.clues)) {
+        newQuestion.clues = [];
+      } else {
+        newQuestion.clues = [{ value: newQuestion.clues[0].value ?? newQuestion.clues[0] }];
+      }
+      return newQuestion;
+    });
+    return qbank;
+  };
+
   // ························································
   // DATA STORE HANDLERS
 
@@ -54,7 +69,8 @@ export default function Detail(p) {
     try {
       store.saving = 'draft';
       render();
-      const { questionBank } = await saveQuestionBankRequest({ ...formValues, published: false });
+      const body = prepareDataToSave();
+      const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
       addSuccessAlert(t('savedAsDraft'));
       if (store.isNew) {
         history.push(`/private/tests/questions-banks/${questionBank.id}`);
@@ -70,7 +86,8 @@ export default function Detail(p) {
     try {
       store.saving = 'publish';
       render();
-      await saveQuestionBankRequest({ ...formValues, published: true });
+      const body = prepareDataToSave();
+      await saveQuestionBankRequest({ ...body, published: true });
       addSuccessAlert(t('published'));
       history.push('/private/tests/questions-banks');
     } catch (error) {
