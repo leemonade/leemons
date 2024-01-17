@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text } from '@bubbles-ui/components';
 import { filter } from 'lodash';
+import { Alert, Box } from '@bubbles-ui/components';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionNoteClues(props) {
@@ -9,7 +9,7 @@ export default function QuestionNoteClues(props) {
   const clues = React.useMemo(
     () =>
       filter(
-        getQuestionClues(question, store.questionResponses?.[question.id].clues, store.config),
+        getQuestionClues(question, store.questionResponses?.[question.id].cluesTypes, store.config),
         {
           type: 'note',
         }
@@ -19,6 +19,11 @@ export default function QuestionNoteClues(props) {
 
   if (clues.length) {
     return clues.map((clue, index) => (
+      <Box key={index} sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+        <Alert severity="info" title={t('hint')} closeable={false}>
+          {clue.text}
+        </Alert>
+        {/*
       <Box key={index} className={styles.questionClueCard}>
         <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
           <Text size="md" color="primary">
@@ -28,7 +33,8 @@ export default function QuestionNoteClues(props) {
         <Text size="md" color="tertiary" role="productive">
           {clue.text}
         </Text>
-        {/* <Box className={styles.questionCluePerson} /> */}
+      </Box>
+  */}
       </Box>
     ));
   }

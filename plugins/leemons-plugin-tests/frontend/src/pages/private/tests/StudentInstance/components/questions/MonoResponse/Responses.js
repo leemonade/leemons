@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, HtmlText, ImageLoader, Stack, Text } from '@bubbles-ui/components';
+import { Box, HtmlText, ImageLoader, Radio, Stack, Text } from '@bubbles-ui/components';
 import { LeebraryImage } from '@leebrary/components';
 import { numberToEncodedLetter } from '@common';
 import { find } from 'lodash';
@@ -14,9 +14,12 @@ export default function Responses(props) {
 
   const clue = React.useMemo(
     () =>
-      find(getQuestionClues(question, store.questionResponses?.[question.id].clues, store.config), {
-        type: 'hide-response',
-      }),
+      find(
+        getQuestionClues(question, store.questionResponses?.[question.id].cluesTypes, store.config),
+        {
+          type: 'hide-response',
+        }
+      ),
     [question, store.questionResponses?.[question.id].clues]
   );
 
@@ -106,6 +109,7 @@ export default function Responses(props) {
         {clued ? (
           <>
             <Box className={classDisableBg} />
+            {/*
             <Box className={classDisableIcon}>
               <ImageLoader src={`/public/tests/clue-on.svg`} />
             </Box>
@@ -114,6 +118,7 @@ export default function Responses(props) {
                 <ImageLoader src={`/public/tests/hint-image.svg`} />
               </Box>
             ) : null}
+            */}
           </>
         ) : null}
 
@@ -127,6 +132,9 @@ export default function Responses(props) {
               }
             >
               <LeebraryImage className={styles.questionResponseImage} src={response.image} />
+              <Box className={styles.questionResponseNumberImage}>
+                {numberToEncodedLetter(index + 1)}
+              </Box>
             </Box>
             <Box
               className={
@@ -156,8 +164,16 @@ export default function Responses(props) {
           </>
         ) : (
           <Box>
-            <Stack fullWidth>
-              {numberToEncodedLetter(index + 1)}.
+            <Stack fullWidth alignItems="center">
+              <Radio
+                checked={
+                  index === currentResponseIndex || (store.viewMode && response.isCorrectResponse)
+                }
+                noRootPadding
+              />
+              <Box className={styles.questionResponseNumber}>
+                {numberToEncodedLetter(index + 1)}
+              </Box>
               <Box sx={(theme) => ({ paddingLeft: theme.spacing[1] })}>{response.response}</Box>
             </Stack>
             {explanation ? (

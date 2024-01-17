@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, COLORS, ImageLoader, Text } from '@bubbles-ui/components';
-import { forEach, keyBy } from 'lodash';
+import { Box, COLORS, Select, Text } from '@bubbles-ui/components';
+import { forEach, isArray, keyBy } from 'lodash';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
   const { styles, cx, t, store, render, question, saveQuestion } = props;
 
   const usedClues = store.questionResponses?.[question.id].clues;
-  const clues = React.useMemo(() => getQuestionClues(question, 9999, store.config), [question]);
+  const usedCluesTypes = store.questionResponses?.[question.id].cluesTypes;
+  const clues = React.useMemo(
+    () => getQuestionClues(question, usedCluesTypes || null, store.config),
+    [question]
+  );
   const cluesConfigByType = React.useMemo(
     () => keyBy(store.config.clues, 'type'),
     [store.config.clues]
@@ -28,10 +32,16 @@ export default function QuestionValue(props) {
     }
   });
 
-  function useClue() {
+  function useClue(type) {
     if (!store.viewMode) {
       if (clues.length > store.questionResponses[question.id].clues) {
         store.questionResponses[question.id].clues += 1;
+        if (!isArray(store.questionResponses[question.id].cluesTypes)) {
+          store.questionResponses[question.id].cluesTypes = [];
+        }
+        if (store.questionResponses[question.id].cluesTypes.indexOf(type) === -1) {
+          store.questionResponses[question.id].cluesTypes.push(type);
+        }
         saveQuestion();
       }
       render();
@@ -48,63 +58,97 @@ export default function QuestionValue(props) {
     return null;
   }
 
+  const selectData = [];
+  if (clues?.length) {
+    forEach(clues, (clue) => {
+      const lessPoints =
+        store.questionsInfo.perQuestion * (cluesConfigByType[clue.type].value / 100);
+      selectData.push({
+        label: `${t(`clue${clue.type}`)} (-${lessPoints.toFixed(2)} ${t('pts')})`,
+        value: clue.type,
+        disabled: usedCluesTypes?.indexOf(clue.type) >= 0,
+      });
+    });
+  }
+
   return (
-    <Box className={styles.questionValueContainer}>
-      <Box>
-        {!store.embedded ? (
-          <Text size="xs" color="secondary">
-            {t('theQuestionValueIs')}
-          </Text>
-        ) : null}
-      </Box>
-      <Box style={{ display: 'flex' }}>
+    <Box
+      sx={(theme) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: `1px solid ${theme.other.divider.background.color.default}`,
+        paddingBottom: theme.spacing[4],
+        marginBottom: theme.spacing[4],
+      })}
+    >
+      <Box style={{ display: 'flex', alignItems: 'center' }}>
         {/* -- Question value -- */}
 
-        {!store.embedded
-          ? usedCluesObj.map((clObj) => (
-              <Box className={styles.questionValueCard}>
-                <Box>
-                  <Text
-                    size="md"
-                    sx={(theme) => ({
-                      color: theme.colors.fatic01,
-                    })}
-                  >
-                    {clObj.points}
-                  </Text>
-                </Box>
-                <Text size="xs" color="primary">
-                  {t('clueN', { number: clObj.index + 1 })}
-                </Text>
-              </Box>
-            ))
-          : null}
-
         {!store.embedded ? (
-          <Box className={styles.questionValueCard}>
-            <Box>
-              <Text
-                size="md"
-                sx={(theme) => ({
-                  color: store.viewMode
-                    ? colorByStatus[store.questionResponses[question.id].status]
-                    : theme.colors.fatic02,
-                })}
-              >
-                {store.viewMode
-                  ? store.questionResponses[question.id].points
-                  : (store.questionsInfo.perQuestion - clueLessPoints).toFixed(2)}
-              </Text>
-            </Box>
+          <Box>
+            <Text
+              strong
+              sx={(theme) => ({
+                color: store.viewMode
+                  ? colorByStatus[store.questionResponses[question.id].status]
+                  : theme.colors.fatic02,
+              })}
+            >
+              +
+              {store.viewMode
+                ? store.questionResponses[question.id].points
+                : (store.questionsInfo.perQuestion - clueLessPoints).toFixed(2)}
+            </Text>{' '}
             <Text size="xs" color="primary">
               {t('pointsInTotal')}
             </Text>
           </Box>
         ) : null}
 
-        {/* -- Question clues -- */}
-        {clues.length ? (
-          <Box className={cx(styles.questionValueCard, styles.questionCluesCard)}>
+        {!store.embedded
+          ? usedCluesObj.map((clObj) => (
+              <>
+                <Box
+                  sx={(theme) => ({
+                    width: 1,
+                    height: 26,
+                    backgroundColor: theme.other.divider.background.color.default,
+                    marginLeft: theme.spacing[4],
+                    marginRight: theme.spacing[4],
+                  })}
+                />
+                <Box>
+                  <Text
+                    strong
+                    sx={(theme) => ({
+                      color: theme.colors.fatic01,
+                    })}
+                  >
+                    {clObj.points}
+                  </Text>{' '}
+                  <Text size="xs" color="primary">
+                    {t('clueN', { number: clObj.index + 1 })}
+                  </Text>
+                </Box>
+              </>
+            ))
+          : null}
+      </Box>
+      {/* -- Question clues -- */}
+      {clues.length ? (
+        <>
+          {selectData?.length ? (
+            <Select
+              style={{ width: 200 }}
+              placeholder={t('askForAHint')}
+              data={selectData}
+              onChange={useClue}
+            />
+          ) : null}
+          {/* <Box className={cx(styles.questionValueCard, styles.questionCluesCard)}>
+
+
             {clues.map((value, index) => (
               <Box key={index} className={styles.questionClueIcon}>
                 <ImageLoader src={`/public/tests/clue-${index < usedClues ? 'off' : 'on'}.svg`} />
@@ -116,9 +160,11 @@ export default function QuestionValue(props) {
                 {t('askForAHint')}
               </Button>
             ) : null}
+
           </Box>
-        ) : null}
-      </Box>
+          */}
+        </>
+      ) : null}
     </Box>
   );
 }

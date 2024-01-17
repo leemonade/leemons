@@ -96,6 +96,7 @@ module.exports = {
     markRead: 'Marcar como leído',
     nextActivity: 'Siguiente actividad',
     type: 'Documento',
+    instructions: 'Instrucciones',
   },
   contentCreatorAssign: {
     assign: 'Asignar como tarea',

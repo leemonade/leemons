@@ -21,6 +21,7 @@ const ContentEditorInput = ({
   editorStyles,
   Footer,
   toolbarPortal,
+  compact,
   ...props
 }) => {
   const editorLabels = useEditorLabels();
@@ -58,7 +59,7 @@ const ContentEditorInput = ({
 
   return (
     <Box className={classes.root}>
-      {useSchema && <Schema schemaLabel={schemaLabel} />}
+      {useSchema && <Schema schemaLabel={schemaLabel} compact={compact} />}
       <Box className={classes.textEditorContainer}>
         <TextEditorContent
           {...props}
@@ -67,6 +68,7 @@ const ContentEditorInput = ({
           useSchema={useSchema}
           editorLabels={editorLabels}
           toolbarPortal={toolbarPortal}
+          compact={compact}
         >
           {children}
         </TextEditorContent>

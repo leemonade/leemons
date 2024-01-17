@@ -62,7 +62,6 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
     maxWidth: theme.breakpoints.sm,
   },
   loremIpsum: {
-    paddingTop: 16,
     width: '100%',
     paddingBottom: theme.spacing[12],
   },
@@ -115,7 +114,6 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   },
   limitedWidthStep: {
     width: '100%',
-    maxWidth: theme.breakpoints.sm,
   },
   preDoing: {
     width: '100%',

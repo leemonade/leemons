@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, ImageLoader, Text } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import useActivityTypeStyles from './ActivityType.styles';
+import { useActivityTypeStyles } from './ActivityType.styles';
 
 export default function ActivityTypeDisplay({ assignable, hidden }) {
   const rolesLocalizations = useRolesLocalizations([assignable?.role]);
-
   const icon = assignable?.roleDetails?.icon;
   const name = rolesLocalizations?.[assignable?.role];
 

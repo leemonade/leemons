@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const useActivityTypeStyles = createStyles((theme) => {
+const useActivityTypeStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
@@ -27,4 +27,4 @@ export const useActivityTypeStyles = createStyles((theme) => {
   };
 });
 
-export default useActivityTypeStyles;
+export { useActivityTypeStyles };

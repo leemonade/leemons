@@ -43,15 +43,16 @@ export default function Index() {
   // ························································
   // DATA STORE HANDLERS
 
-  async function saveAsDraft(redirect = false) {
+  async function saveAsDraft() {
     try {
       store.saving = 'draft';
       render();
-      await saveFeedbackRequest({ ...formValues, published: false });
+      const body = { ...formValues };
+      delete body.roleDetails;
+
+      const { feedback } = await saveFeedbackRequest({ ...body, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      if (redirect) {
-        history.push('/private/feedback/draft');
-      }
+      history.push(`/private/feedback/${feedback.id}`);
     } catch (error) {
       addErrorAlert(error);
     }
@@ -63,7 +64,9 @@ export default function Index() {
     try {
       store.saving = 'publish';
       render();
-      const { feedback } = await saveFeedbackRequest({ ...formValues, published: true });
+      const body = formValues;
+      delete body.roleDetails;
+      const { feedback } = await saveFeedbackRequest({ ...body, published: true });
       addSuccessAlert(t('published'));
       if (goAssign) {
         history.push(`/private/feedback/assign/${feedback.id}`);
@@ -96,6 +99,7 @@ export default function Index() {
             deletedAt,
             createdAt,
             updatedAt,
+            roleDetails,
             ...feedback
           },
         } = await getFeedbackRequest(params.id);
@@ -171,9 +175,7 @@ export default function Index() {
     >
       <VerticalStepperContainer
         scrollRef={scrollRef}
-        currentStep={
-          store.currentStep === 1 && formValues.questions?.length ? 2 : store.currentStep
-        }
+        currentStep={store.currentStep}
         data={[
           { label: t('basic'), status: 'OK' },
           { label: t('questions'), status: 'OK' },

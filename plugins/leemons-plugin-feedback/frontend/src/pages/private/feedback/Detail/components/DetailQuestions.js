@@ -17,8 +17,8 @@ import {
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import DetailQuestionForm from '@feedback/pages/private/feedback/Detail/components/DetailQuestionForm';
@@ -99,8 +99,14 @@ export default function DetailQuestions({
         goodQuestion: question,
         actions: (
           <Stack justifyContent="end" fullWidth>
-            <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
-            <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
+            <ActionButton
+              icon={<EditWriteIcon width={18} height={18} />}
+              onClick={() => editQuestion(i)}
+            />
+            <ActionButton
+              icon={<DeleteBinIcon width={18} height={18} />}
+              onClick={() => deleteQuestion(i)}
+            />
           </Stack>
         ),
       })),
@@ -243,7 +249,7 @@ export default function DetailQuestions({
         {questions && questions.length ? (
           <TableInput
             labels={{}}
-            showHeaders={false}
+            canAdd={false}
             removable={false}
             editable={false}
             columns={tableHeaders}
@@ -263,6 +269,7 @@ export default function DetailQuestions({
             {form.formState.errors.questions?.message}
           </Alert>
         ) : null}
+        <Box></Box>
       </ContextContainer>
     </TotalLayoutStepContainer>
   );
