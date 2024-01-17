@@ -6,7 +6,7 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, isNumber } from 'lodash';
 import MonoResponse from './questions/MonoResponse';
 import Map from './questions/Map';
@@ -26,8 +26,6 @@ export default function Question(props) {
   if (store.embedded) {
     className = cx(className, classes.loremIpsumEmbedded);
   }
-
-  console.log('props.isFirstStep', props.isFirstStep);
 
   const showFirstButton = !props.isFirstStep && (!store.embedded || (store.embedded && index > 0));
 
@@ -88,7 +86,7 @@ export default function Question(props) {
                 <Button
                   position="left"
                   variant={isLastButton ? null : 'outline'}
-                  rightIcon={<ChevronRightIcon />}
+                  rightIcon={<ChevRightIcon />}
                   rounded
                   compact
                   onClick={props.nextStep}
@@ -102,7 +100,7 @@ export default function Question(props) {
           leftZone={
             <>
               {showFirstButton ? (
-                <Button variant="outline" leftIcon={<ChevronLeftIcon />} onClick={props.prevStep}>
+                <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={props.prevStep}>
                   {t('prev')}
                 </Button>
               ) : null}

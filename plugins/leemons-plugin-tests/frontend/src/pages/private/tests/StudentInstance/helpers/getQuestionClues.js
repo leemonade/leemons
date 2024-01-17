@@ -10,9 +10,9 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues.js`
  */
 
-const { forEach, isNumber, isString } = require('lodash');
+const { forEach, isNumber, isString, filter, isArray } = require('lodash');
 
-function getQuestionClues(question, limit, config) {
+function getQuestionClues(question, types, config) {
   let clues = [];
   const hideResponses = [];
   const notes = [];
@@ -69,8 +69,11 @@ function getQuestionClues(question, limit, config) {
     });
   }
 
-  if (isNumber(limit)) {
-    return clues.slice(0, limit);
+  if (isArray(types) || typeof types === 'undefined') {
+    return filter(clues, (clue) => {
+      if (typeof types === 'undefined') return false;
+      return types.includes(clue.type);
+    });
   }
   return clues;
 }
