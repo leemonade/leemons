@@ -10,7 +10,7 @@ import CalificationTypeDisplay from './components/CalificationTypeDisplay/Califi
 import DateComponent from './components/Date/Date';
 import Timer from './components/Timer/Timer';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import useTotalLayoutStyles from './TotalLayout.style';
+import useTotalLayoutStyles from './index.style';
 import CloseButtons from './components/CloseButtons/CloseButtons';
 
 export default function ActivityHeader({

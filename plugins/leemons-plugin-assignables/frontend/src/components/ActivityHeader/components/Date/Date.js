@@ -136,40 +136,43 @@ export default function DateComponent({
       }}
       target={
         <Box className={classes.root} ref={ref}>
-          {showStartDate && (
-            <Box className={classes.date}>
-              <Box className={classes.icon}>
-                <PluginCalendarIcon width={18} height={18} />
+          <Box className={classes.dates}>
+            {showStartDate && (
+              <Box className={classes.date}>
+                <Box className={classes.icon}>
+                  <PluginCalendarIcon width={18} height={18} />
+                </Box>
+                <Box className={classes.text}>
+                  {`${t('start')}: `}
+                  <LocaleDate
+                    date={start}
+                    options={{
+                      dateStyle: 'short',
+                      timeStyle: showTime ? 'short' : undefined,
+                    }}
+                  />
+                </Box>
               </Box>
-              <Box className={classes.text}>
-                {`${t('start')}: `}
-                <LocaleDate
-                  date={start}
-                  options={{
-                    dateStyle: 'short',
-                    timeStyle: showTime ? 'short' : undefined,
-                  }}
-                />
+            )}
+            {showDeadline && (
+              <Box className={classes.date}>
+                <Box className={classes.icon}>
+                  <PluginCalendarIcon width={18} height={18} />
+                </Box>
+                <Box className={classes.text}>
+                  {!!showStartDate && `${t('deadline')}: `}
+                  <LocaleDate
+                    date={deadline}
+                    options={{
+                      dateStyle: 'short',
+                      timeStyle: showTime ? 'short' : undefined,
+                    }}
+                  />
+                </Box>
               </Box>
-            </Box>
-          )}
-          {showDeadline && (
-            <Box className={classes.date}>
-              <Box className={classes.icon}>
-                <PluginCalendarIcon width={18} height={18} />
-              </Box>
-              <Box className={classes.text}>
-                {!!showStartDate && `${t('deadline')}: `}
-                <LocaleDate
-                  date={deadline}
-                  options={{
-                    dateStyle: 'short',
-                    timeStyle: showTime ? 'short' : undefined,
-                  }}
-                />
-              </Box>
-            </Box>
-          )}
+            )}
+          </Box>
+
           {!!allowEdit && (
             <ActionButton icon={<EditIcon />} size="sm" onClick={() => setIsEditing(true)} />
           )}
