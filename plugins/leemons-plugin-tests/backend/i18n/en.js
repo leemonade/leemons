@@ -258,17 +258,17 @@ module.exports = {
     instructions: 'Instructions',
     howItWorks: 'How it works?',
     timeLimit1: 'You have',
-    timeLimit2: 'to complete the test.',
+    timeLimit2: 'to complete the activity.',
     withoutPause1: 'You cannot pause',
-    withoutPause2: 'the test once it has started.',
+    withoutPause2: 'the activity once it has started.',
     withoutPause: 'Without pause',
     noTimeLimit: 'No time limit',
     limitedTime: 'Limited time',
     limitedTimeDescription:
-      'Once started you have {time} to finish the test, if the time ends before you answer all the questions, only the questions answered up to the moment of the interruption will be scored.',
+      'Once you have started you have {time} to finish this activity, you must submit it before the end of this time.',
     canNotStop: 'The test cannot be paused',
     canNotStopDescription:
-      'If you exit the application with the test in progress, the test will be terminated, scoring only the questions answered up to the moment of interruption. If an error occurs in the system and you are expelled from the test, you will be able to notify it and if your error is verified you will be able to retake the test.',
+      'If you exit the application with the activity in progress, the activity will be terminated and the last submission saved before the moment of interruption will be automatically sent. If an error occurs in the system and you are kicked out of the activity, you must report it in order to rectify the error.',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',
