@@ -6,16 +6,36 @@ function Header({ classes, className, cx, title, avg, total, color }) {
   return (
     <Box className={cx(classes.resultSection, className)}>
       <Box>
-        <Text color="primary" size="md">
+        <Text
+          sx={(theme) => ({
+            ...theme.other.global.content.typo.heading['xsm--semiBold'],
+            fontSize: '12px',
+            lineHeight: '16px',
+          })}
+        >
           {title}
         </Text>
       </Box>
       <Box>
-        <Text color={color} size="md" strong>
+        <Text
+          sx={(theme) => ({
+            ...theme.other.global.content.typo.heading['xsm--semiBold'],
+            fontSize: '12px',
+            lineHeight: '16px',
+          })}
+        >
           {Math.trunc(avg)}%
         </Text>
         &nbsp;
-        <Text size="md">({total})</Text>
+        <Text
+          sx={(theme) => ({
+            ...theme.other.global.content.typo.heading['xsm--semiBold'],
+            fontSize: '12px',
+            lineHeight: '16px',
+          })}
+        >
+          ({total})
+        </Text>
       </Box>
     </Box>
   );

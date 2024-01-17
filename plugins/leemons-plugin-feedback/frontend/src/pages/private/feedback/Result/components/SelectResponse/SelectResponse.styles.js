@@ -6,8 +6,7 @@ const SelectResponseStyles = createStyles((theme) => ({
     height: '100vh',
   },
   container: {
-    padding: 36,
-    paddingTop: 16,
+    padding: '24px 20px',
     backgroundColor: 'white',
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,
@@ -30,7 +29,7 @@ const SelectResponseStyles = createStyles((theme) => ({
   },
   percentageBar: {
     height: '100%',
-    backgroundColor: theme.colors.text02,
+    backgroundColor: theme.other.global.border.color.positive.muted || 'red',
     borderRadius: 4,
   },
 }));
