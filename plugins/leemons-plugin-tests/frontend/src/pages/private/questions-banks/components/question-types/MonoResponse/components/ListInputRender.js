@@ -101,7 +101,7 @@ export function ListInputRender({
     return (
       <ContextContainer>
         <Box>
-          <InputWrapper label="Imagen *">
+          <InputWrapper label={`${t('imageLabel')} *`}>
             <ImagePicker value={store.image} onChange={onChangeImage} />
           </InputWrapper>
         </Box>

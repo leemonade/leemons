@@ -1,18 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box,
-  Text,
-  HtmlText,
-  InputWrapper,
-  Radio,
-  Stack,
-  ListItem,
-  ImageLoader,
-  useTheme,
-} from '@bubbles-ui/components';
+import { Box, Text, Radio, Stack, ImageLoader, useTheme } from '@bubbles-ui/components';
 import { ViewOffIcon } from '@bubbles-ui/icons/solid';
-import ImagePicker from '@leebrary/components/ImagePicker';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
