@@ -8,8 +8,10 @@ export const ACTIVIY_HEADER_PROP_TYPES = {
   showClass: propTypes.bool,
   showRole: propTypes.bool,
   showEvaluationType: propTypes.bool,
+  showStartDate: propTypes.bool,
   showTime: propTypes.bool,
   showDeadline: propTypes.bool,
   showCloseButtons: propTypes.bool,
   allowEditDeadline: propTypes.bool,
+  onTimeout: propTypes.func,
 };
