@@ -256,17 +256,17 @@ module.exports = {
     instructions: 'Instrucciones',
     howItWorks: '¿Cómo funciona?',
     timeLimit1: 'Tienes',
-    timeLimit2: 'para hacer el test',
+    timeLimit2: 'para hacer la actividad',
     withoutPause: 'Sin pausa',
     withoutPause1: 'No puedes pausar',
-    withoutPause2: 'el test una vez empezado',
+    withoutPause2: 'la actividad una vez empezada',
     noTimeLimit: 'Sin límite de tiempo',
     limitedTime: 'Tiempo limitado',
     limitedTimeDescription:
-      'Una vez comenzado tienes {time} para finalizar el test, si el tiempo acaba antes de que contestes a todas las preguntas, puntuarán solo las preguntas contestadas hasta el momento de la interrupción.',
-    canNotStop: 'La prueba no se puede pausar',
+      'Una vez comenzado tienes {time} para finalizar esta actividad, deberás hacer la entrega antes de que este tiempo termine.',
+    canNotStop: 'La actividad no se puede pausar',
     canNotStopDescription:
-      'Si sales de la aplicación con la prueba en proceso, esta se dará por finalizada, puntuando solo las preguntas contestadas hasta el momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la prueba, podrás notificarlo y en caso de que tu error sea comprobado podrás volver a realizar la prueba.',
+      'Si sales de la aplicación con la actividad en proceso, esta se dará por finalizada y se enviará automáticamente la última entrega guardada antes del momento de la interrupción. Si se produce algún error en el sistema y te expulsa de la actividad, deberás notificarlo para subsanar el error.',
   },
   studentInstance: {
     multiSubject: 'Multi-Asignatura',
