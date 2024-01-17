@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Textarea } from '@bubbles-ui/components';
 import QuestionButtons from '../questions/QuestionButtons';
 
 const OpenResponse = (props) => {
-  const { t, question, defaultValue } = props;
-  const [responseValue, setResponseValue] = useState('');
+  const { t, question, defaultValue, setCurrentValue, currentValue } = props;
 
   React.useEffect(() => {
-    setResponseValue(defaultValue);
+    setCurrentValue(defaultValue);
   }, [defaultValue, question]);
 
   return (
@@ -20,10 +19,10 @@ const OpenResponse = (props) => {
         showCounter
         counterLabels={{}}
         minRows={5}
-        value={responseValue}
-        onChange={setResponseValue}
+        value={currentValue}
+        onChange={setCurrentValue}
       />
-      <QuestionButtons {...props} value={responseValue} />
+      {/* <QuestionButtons {...props} value={currentValue} /> */}
     </Box>
   );
 };
@@ -32,6 +31,8 @@ OpenResponse.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
   defaultValue: PropTypes.any,
+  setCurrentValue: PropTypes.func,
+  currentValue: PropTypes.any,
 };
 
 export default OpenResponse;

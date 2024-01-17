@@ -5,8 +5,7 @@ import QuestionButtons from '../questions/QuestionButtons';
 import LikertResponseStyles from './LikertResponse.styles';
 
 const LikertResponse = (props) => {
-  const { question, defaultValue } = props;
-  const [selectedValue, setSelectedValue] = useState(null);
+  const { question, defaultValue, setCurrentValue, currentValue } = props;
   const { classes } = LikertResponseStyles({}, { name: 'LikertResponse' });
 
   const getLabelPosition = (index, maxLabels) => {
@@ -16,8 +15,8 @@ const LikertResponse = (props) => {
   };
 
   const handleSelectValue = (value) => {
-    if (value !== selectedValue) setSelectedValue(value);
-    else if (value === selectedValue) setSelectedValue(null);
+    if (value !== currentValue) setCurrentValue(value);
+    else if (value === currentValue) setCurrentValue(null);
   };
 
   const renderNumbers = () => {
@@ -29,11 +28,11 @@ const LikertResponse = (props) => {
           <Box
             className={classes.numberElement}
             sx={(theme) =>
-              i === selectedValue
+              i === currentValue
                 ? {
-                    border: `1px solid ${theme.colors.interactive01d}`,
-                    backgroundColor: theme.colors.interactive01v1,
-                  }
+                  border: `1px solid ${theme.colors.interactive01d}`,
+                  backgroundColor: theme.colors.interactive01v1,
+                }
                 : {}
             }
             onClick={() => handleSelectValue(i)}
@@ -54,7 +53,7 @@ const LikertResponse = (props) => {
   };
 
   React.useEffect(() => {
-    setSelectedValue(defaultValue);
+    setCurrentValue(defaultValue);
   }, [defaultValue, question]);
 
   return (
@@ -62,7 +61,7 @@ const LikertResponse = (props) => {
       <Stack fullWidth spacing={1}>
         {renderNumbers()}
       </Stack>
-      <QuestionButtons {...props} value={selectedValue} />
+      {/* <QuestionButtons {...props} value={currentValue} /> */}
     </Box>
   );
 };
@@ -71,6 +70,8 @@ LikertResponse.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
   defaultValue: PropTypes.any,
+  setCurrentValue: PropTypes.func,
+  currentValue: PropTypes.any,
 };
 
 export default LikertResponse;

@@ -4,10 +4,13 @@ const WelcomeCardStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.mainWhite,
     borderRadius: 8,
-    maxWidth: 768,
+    // maxWidth: 768,
     width: '100%',
-    marginTop: 45,
     padding: 24,
+  },
+  image: {
+    width: '100%',
+    height: 'auto',
   },
 }));
 

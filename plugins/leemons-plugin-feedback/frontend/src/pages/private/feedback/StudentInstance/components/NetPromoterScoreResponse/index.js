@@ -5,26 +5,25 @@ import QuestionButtons from '../questions/QuestionButtons';
 import NetPromoterScoreResponseStyles from './NetPromoterScoreResponse.styles';
 
 const NetPromoterScoreResponse = (props) => {
-  const { question, defaultValue } = props;
-  const [selectedValue, setSelectedValue] = useState('');
+  const { question, defaultValue, setCurrentValue, currentValue } = props;
   const { classes } = NetPromoterScoreResponseStyles({}, { name: 'NetPromoterScoreResponse' });
 
   const renderNumbers = () => {
     const numberElements = [];
     for (let i = 0; i < 11; i++) {
       numberElements.push(
-        <Box>
+        <Box key={i}>
           <Box
             className={classes.numberElement}
             sx={(theme) =>
-              i === selectedValue
+              i === currentValue
                 ? {
-                    border: `1px solid ${theme.colors.interactive01d}`,
-                    backgroundColor: theme.colors.interactive01v1,
-                  }
+                  border: `1px solid ${theme.colors.interactive01d}`,
+                  backgroundColor: theme.colors.interactive01v1,
+                }
                 : {}
             }
-            onClick={() => setSelectedValue(i)}
+            onClick={() => setCurrentValue(i)}
           >
             <Text color="primary" role="productive">
               {i}
@@ -37,7 +36,7 @@ const NetPromoterScoreResponse = (props) => {
   };
 
   React.useEffect(() => {
-    setSelectedValue(defaultValue);
+    setCurrentValue(defaultValue);
   }, [defaultValue, question]);
 
   return (
@@ -53,7 +52,7 @@ const NetPromoterScoreResponse = (props) => {
           {question.properties.veryLikely}
         </Text>
       </Stack>
-      <QuestionButtons {...props} value={selectedValue} />
+      {/* <QuestionButtons {...props} value={currentValue} /> */}
     </Box>
   );
 };
@@ -62,6 +61,8 @@ NetPromoterScoreResponse.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
   defaultValue: PropTypes.any,
+  setCurrentValue: PropTypes.func,
+  currentValue: PropTypes.any,
 };
 
 export default NetPromoterScoreResponse;

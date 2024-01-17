@@ -57,31 +57,35 @@ function QuestionsCard({
   feedback,
   instance,
   instanceId,
-  defaultValues,
+  // defaultValues,
   userId,
   modalMode,
   nextActivityUrl,
+  state,
+  setState,
+  onNext,
+  onPrev,
 }) {
   const { classes } = Styles({ viewMode });
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
-  const [store, render] = useStore({
-    maxIndex: 0,
-    currentIndex: 0,
-    values: defaultValues || {},
-  });
+  // const [store, render] = useStore({
+  //   maxIndex: 0,
+  //   currentIndex: 0,
+  //   values: defaultValues || {},
+  // });
 
   const moduleId = instance?.metadata?.module?.id;
   const isModule = !!moduleId;
   const moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
 
-  const question = feedback.questions[store.currentIndex];
+  const question = feedback.questions[state.currentIndex];
 
   const history = useHistory();
 
-  const isLast = React.useMemo(
-    () => feedback.questions.length - 1 === store.currentIndex,
-    [feedback, store.currentIndex]
-  );
+  // const isLast = React.useMemo(
+  //   () => feedback.questions.length - 1 === state.currentIndex,
+  //   [feedback, state.currentIndex]
+  // );
 
   const goToOnGoing = (e, openInNewTab = false) => {
     if (openInNewTab) window.open('/private/assignables/ongoing', 'AssignablesOngoing', 'noopener');
@@ -99,27 +103,24 @@ function QuestionsCard({
     if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
   };
 
-  async function onNext(value) {
-    store.values[question.id] = value;
-    if (!viewMode) setQuestionResponseRequest(question.id, instanceId, value);
+  // async function onNext(value) {
+  //   setState('responses', { ...state.responses, [question.id]: value });
+  //   if (!viewMode) setQuestionResponseRequest(question.id, instanceId, value);
 
-    if (!isLast) {
-      store.currentIndex++;
-      if (store.currentIndex > store.maxIndex) {
-        store.maxIndex = store.currentIndex;
-      }
-    } else {
-      if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
-      store.showFinishModal = true;
-    }
+  //   if (!isLast) {
+  //     setState('currentIndex', state.currentIndex + 1);
+  //     if (state.currentIndex > state.maxIndex) {
+  //       setState('maxIndex', state.currentIndex);
+  //     }
+  //   } else {
+  //     if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
+  //     setState('showFinishModal', true);
+  //   }
+  // }
 
-    render();
-  }
-
-  function onPrev() {
-    store.currentIndex--;
-    render();
-  }
+  // function onPrev() {
+  //   setState('currentIndex', state.currentIndex - 1);
+  // }
 
   if (!translations) return null;
 
@@ -140,35 +141,35 @@ function QuestionsCard({
         ) : (
           <Box className={classes.headerText}>
             <Text size="sm" stronger>
-              {t('nQuestion', { n: store.currentIndex + 1 })}
+              {t('nQuestion', { n: state.currentIndex + 1 })}
             </Text>
             &nbsp;
             {question.required ? <Text role="productive">{t('questionRequired')}</Text> : null}
           </Box>
         )}
 
-        <HeaderProgressBar current={store.maxIndex} max={feedback.questions.length} />
+        <HeaderProgressBar current={state.maxIndex} max={feedback.questions.length} />
       </Box>
       {question ? (
         <Box className={classes.questionCard}>
           <QuestionTitle
             t={t}
             viewMode={viewMode}
-            currentValue={store.currentValue}
+            currentValue={state.currentValue}
             question={question}
           />
           <Box className={classes.questionContainer}>
             {React.cloneElement(questionsByType[question.type], {
               question,
               feedback,
-              currentIndex: store.currentIndex,
+              currentIndex: state.currentIndex,
               onNext,
               onPrev,
               viewMode,
-              defaultValue: store.values[question.id],
+              currentValue: state.currentValue,
+              defaultValue: state.responses[question.id],
               setCurrentValue: (e) => {
-                store.currentValue = e;
-                render();
+                setState('currentValue', e);
               },
               t,
             })}
@@ -177,7 +178,7 @@ function QuestionsCard({
       ) : null}
       <Modal
         title={t('finishModal')}
-        opened={store.showFinishModal}
+        opened={state.showFinishModal}
         onClose={() => {}}
         centerTitle
         centered
@@ -272,6 +273,10 @@ QuestionsCard.propTypes = {
   returnToTable: PropTypes.func,
   modalMode: PropTypes.number,
   nextActivityUrl: PropTypes.any,
+  state: PropTypes.any,
+  setState: PropTypes.func,
+  onNext: PropTypes.func,
+  onPrev: PropTypes.func,
 };
 
 export default QuestionsCard;

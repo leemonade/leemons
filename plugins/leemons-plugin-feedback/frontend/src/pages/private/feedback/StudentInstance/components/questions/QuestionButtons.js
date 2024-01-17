@@ -28,7 +28,7 @@ function QuestionButtons({ t, viewMode, feedback, question, value, currentIndex,
 
   return (
     <Stack
-      sx={(theme) => ({ marginTop: theme.spacing[6] })}
+      // sx={(theme) => ({ marginTop: theme.spacing[6] })}
       fullWidth
       justifyContent="space-between"
     >
