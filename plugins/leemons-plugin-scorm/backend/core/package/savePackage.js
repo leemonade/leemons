@@ -1,6 +1,7 @@
-const _ = require('lodash');
-const { validateSavePackage, savePackageSchema } = require('../../validations/forms');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
+
+const { validateSavePackage, savePackageSchema } = require('../../validations/forms');
 
 /**
  * Saves a package.
@@ -45,8 +46,7 @@ async function savePackage({ scormData, ctx }) {
     },
     role: 'scorm',
     statement: '',
-    subjects: _.map(data.subjects, ({ level, subject }) => ({
-      level,
+    subjects: _.map(data.subjects, (subject) => ({
       subject,
       program: data.program,
     })),
