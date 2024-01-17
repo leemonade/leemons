@@ -116,7 +116,6 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   )}
                 />
               </ContextContainer>
-
               <Controller
                 control={form.control}
                 name="tags"
@@ -132,7 +131,6 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   </Box>
                 )}
               />
-
               <Controller
                 control={form.control}
                 name="question"
@@ -146,7 +144,6 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   />
                 )}
               />
-
               {type !== 'map' ? (
                 <Controller
                   control={form.control}
@@ -158,7 +155,6 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   )}
                 />
               ) : null}
-
               {type
                 ? React.cloneElement(questionComponents[type], {
                     form,

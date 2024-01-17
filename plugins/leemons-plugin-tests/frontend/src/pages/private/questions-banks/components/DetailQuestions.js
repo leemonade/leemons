@@ -14,7 +14,7 @@ import {
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
@@ -53,11 +53,17 @@ export default function DetailQuestions({
   }
 
   function onSaveQuestions(question) {
-    const currentQuestions = form.getValues('questions') || [];
-    if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
-      currentQuestions[qStore.questionIndex] = question;
+    const cleanQuestion = question;
+    if (cleanQuestion.clues?.[0] === undefined) {
+      cleanQuestion.clues = [];
     } else {
-      currentQuestions.push(question);
+      cleanQuestion.clues = [{ value: cleanQuestion.clues[0] }];
+    }
+    const currentQuestions = form.getValues('questions') ?? [];
+    if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
+      currentQuestions[qStore.questionIndex] = cleanQuestion;
+    } else {
+      currentQuestions.push(cleanQuestion);
     }
     form.setValue('questions', currentQuestions);
     onCancel();
@@ -175,8 +181,14 @@ export default function DetailQuestions({
                 ...getQuestionForTable(question, t),
                 actions: (
                   <Stack justifyContent="end" fullWidth>
-                    <ActionButton icon={<EditIcon />} onClick={() => editQuestion(i)} />
-                    <ActionButton icon={<RemoveIcon />} onClick={() => deleteQuestion(i)} />
+                    <ActionButton
+                      icon={<EditWriteIcon width={18} height={18} />}
+                      onClick={() => editQuestion(i)}
+                    />
+                    <ActionButton
+                      icon={<DeleteBinIcon width={18} height={18} />}
+                      onClick={() => deleteQuestion(i)}
+                    />
                   </Stack>
                 ),
               }))}

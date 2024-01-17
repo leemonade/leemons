@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { forIn, isEmpty, map } from 'lodash';
+import { forIn, isArray, isEmpty, map, get } from 'lodash';
 import {
   Box,
+  Stack,
   Switch,
   Button,
   ContextContainer,
-  ListInput,
+  Text,
+  MultiSelect,
   Select,
+  Textarea,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
@@ -15,9 +18,16 @@ import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { ViewOffIcon } from '@bubbles-ui/icons/solid';
 import { TagsAutocomplete } from '@common';
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import { questionComponents, questionTypeT } from './QuestionForm';
+
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const RESPONSES_KEYS = {
+  'mono-response': 'responses',
+  map: 'markers.list',
+};
 
 export default function DetailQuestionForm({
   t,
@@ -39,6 +49,27 @@ export default function DetailQuestionForm({
   const form = useForm({ defaultValues });
   const properties = form.watch('properties');
   const type = form.watch('type');
+  const responseKey = RESPONSES_KEYS[type];
+
+  const rightAnswerSelected = React.useMemo(() => {
+    if (type === 'map') return true;
+    return properties?.responses?.some((item) => item?.value?.isCorrectResponse);
+  }, [type]);
+
+  const answerChoices = React.useMemo(() => {
+    const answers = get(properties, responseKey, []);
+    if (isEmpty(answers)) return [];
+
+    let useLetters = true;
+    if (type === 'map' && properties?.markers?.type === 'numbering') {
+      useLetters = false;
+    }
+    return map(answers, (item, index) => ({
+      value: index,
+      label: useLetters ? LETTERS[index] : `${index + 1}`,
+      disabled: type === 'map' ? item?.value?.hideOnHelp : item?.value?.isCorrectResponse,
+    }));
+  }, [JSON.stringify(properties), type]);
 
   function handleOnSaveQuestion() {
     form.handleSubmit((data) => {
@@ -50,6 +81,22 @@ export default function DetailQuestionForm({
     form.handleSubmit((data) => {
       onSave(data);
     })();
+  }
+
+  function handleHideOnHelp(index) {
+    const data = get(properties, responseKey, []);
+
+    if (index && !isEmpty(data)) {
+      // loop through responses and set hideOnHelp to true only on index
+      for (let i = 0; i < data.length; i++) {
+        if (type === 'map') {
+          data[i].hideOnHelp = i === Number(index);
+        } else {
+          data[i].value.hideOnHelp = i === Number(index);
+        }
+      }
+      form.setValue(`properties.${responseKey}`, data);
+    }
   }
 
   const categoryData = map(categories, (category, index) => ({
@@ -65,6 +112,41 @@ export default function DetailQuestionForm({
       t,
     });
   }, [type, form, t]);
+
+  const hideOptionsHelp = React.useMemo(() => {
+    if (!rightAnswerSelected) return t('hideOptionNoRightAnswer');
+
+    const parts = t('hideOptionsHelp').split('{{icon}}');
+    return [
+      parts[0],
+      <Box
+        key={2}
+        sx={(theme) => ({
+          display: 'inline',
+          fontSize: theme.fontSizes[3],
+          verticalAlign: 'middle',
+        })}
+      >
+        <ViewOffIcon />
+      </Box>,
+      parts[1],
+    ];
+  }, [t, rightAnswerSelected]);
+
+  const answersHidden = React.useMemo(() => {
+    const answers = get(properties, responseKey, []);
+    if (type === 'map') {
+      return answers
+        .map((item, index) => (item?.hideOnHelp ? index : -1))
+        .filter((item) => item >= 0)[0];
+    }
+
+    return answers
+      .map((item, index) => (item?.value?.hideOnHelp ? index : -1))
+      .filter((item) => item >= 0)[0];
+  }, [get(properties, responseKey), type]);
+
+  const hasEnoughAnswers = get(properties, responseKey, []).length >= 3;
 
   return (
     <FormProvider {...form}>
@@ -200,7 +282,7 @@ export default function DetailQuestionForm({
                       control={form.control}
                       name="properties.hasCover"
                       render={({ field }) => (
-                        <Switch {...field} checked={field.value} label="Imagen destacada" />
+                        <Switch {...field} checked={field.value} label={t('hasCoverLabel')} />
                       )}
                     />
                     {properties?.hasCover ? (
@@ -216,19 +298,33 @@ export default function DetailQuestionForm({
                 {QuestionComponent}
 
                 {/* CLUES ---------------------------------------- */}
-                <ContextContainer title={t('cluesLabel')} description={t('cluesDescription')}>
-                  <Controller
-                    control={form.control}
-                    name="clues"
-                    render={({ field }) => (
-                      <ListInput
-                        canAdd={isEmpty(field.value)}
-                        addButtonLabel={t('addClue')}
-                        {...field}
-                      />
-                    )}
-                  />
-                </ContextContainer>
+                {properties?.hasClues ? (
+                  <ContextContainer title={t('cluesLabel')} description={t('cluesDescription')}>
+                    <Controller
+                      control={form.control}
+                      name="clues[0]"
+                      render={({ field }) => (
+                        <Textarea
+                          {...field}
+                          value={field.value?.value ? field.value.value : field.value}
+                          disabled={!rightAnswerSelected || !hasEnoughAnswers}
+                        />
+                      )}
+                    />
+                    <Stack direction="column" spacing={2}>
+                      <Box style={{ width: 200 }}>
+                        <Select
+                          label={t('hideOptionsLabel')}
+                          value={answersHidden}
+                          data={answerChoices}
+                          disabled={!rightAnswerSelected || !hasEnoughAnswers}
+                          onChange={handleHideOnHelp}
+                        />
+                      </Box>
+                      <Text size="xs">{hideOptionsHelp}</Text>
+                    </Stack>
+                  </ContextContainer>
+                ) : null}
               </>
             ) : null}
           </ContextContainer>

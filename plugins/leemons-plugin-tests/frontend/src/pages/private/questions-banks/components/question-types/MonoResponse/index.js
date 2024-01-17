@@ -13,7 +13,6 @@ import {
 } from '@bubbles-ui/components';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { ViewOffIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { ListInputRender } from './components/ListInputRender';
 import { ListItemRender } from './components/ListItemRender';
@@ -24,22 +23,6 @@ export function MonoResponse({ form: _form, t }) {
   const withImages = form.watch('withImages');
   const properties = form.watch('properties');
   const [showInput, setShowInput] = React.useState(false);
-
-  const splits = t('responsesDescription').split('{{icon}}');
-  const responsesDescription = [
-    splits[0],
-    <Box
-      key={2}
-      sx={(theme) => ({
-        display: 'inline',
-        fontSize: theme.fontSizes[3],
-        verticalAlign: 'middle',
-      })}
-    >
-      <ViewOffIcon />
-    </Box>,
-    splits[1],
-  ];
 
   function toggleHideOnHelp(item) {
     const data = form.getValues('properties.responses');
@@ -65,7 +48,7 @@ export function MonoResponse({ form: _form, t }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title={capitalize(t('explanationLabel'))}>
+      <ContextContainer title={`${capitalize(t('explanationLabel'))} *`}>
         <Controller
           control={form.control}
           name="properties.explanationInResponses"
@@ -85,7 +68,7 @@ export function MonoResponse({ form: _form, t }) {
           render={({ field }) => <TextEditorInput {...field} />}
         />
       ) : null}
-      <ContextContainer title={t('responsesLabel')}>
+      <ContextContainer title={`${t('responsesLabel')} *`} spacing={0}>
         <Controller
           control={form.control}
           name="withImages"
@@ -93,9 +76,16 @@ export function MonoResponse({ form: _form, t }) {
             <Switch {...field} checked={field.value} label={t('withImagesLabel')} />
           )}
         />
+        <Controller
+          control={form.control}
+          name="properties.hasClues"
+          render={({ field }) => (
+            <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
+          )}
+        />
       </ContextContainer>
       <Text color="primary" strong>
-        Primero añade las respuestas y después selecciona la respuesta correcta pulsando el circulo.
+        {t('responsesDescription')}
       </Text>
       <Controller
         control={form.control}
@@ -173,6 +163,7 @@ export function MonoResponse({ form: _form, t }) {
                         toggleHideOnHelp={toggleHideOnHelp}
                         changeCorrectResponse={changeCorrectResponse}
                         showEye={field?.value?.length > 2}
+                        // showEye
                       />
                     }
                   />
@@ -193,32 +184,6 @@ export function MonoResponse({ form: _form, t }) {
           );
         }}
       />
-
-      {/*
-      <InputWrapper
-        required
-        label={t('responsesLabel')}
-        description={
-          <Box>
-            <Box style={{ alignSelf: 'flex-end' }}>
-              <Controller
-                control={form.control}
-                name="withImages"
-                render={({ field }) => (
-                  <Checkbox
-                    checked={field.value}
-                    error={form.formState.errors.withImages}
-                    label={t('withImagesLabel')}
-                    {...field}
-                  />
-                )}
-              />
-            </Box>
-            {responsesDescription}
-          </Box>
-        }
-      >
-      */}
     </ContextContainer>
   );
 }

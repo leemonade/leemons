@@ -46,7 +46,7 @@ export function SubjectPicker({
 
   const isDisabled = useMemo(() => {
     if (onlyOneSubject) {
-      return !selectedSubjects?.length;
+      return selectedSubjects?.length;
     }
     return false;
   }, [onlyOneSubject, selectedSubjects]);

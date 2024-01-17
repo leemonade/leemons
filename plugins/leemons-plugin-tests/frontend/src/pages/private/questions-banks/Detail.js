@@ -6,7 +6,6 @@ import {
   LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutHeader,
-  useDebouncedCallback,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
 // TODO: import from @common plugin
@@ -18,8 +17,8 @@ import { useLayout } from '@layout/context';
 import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
-import DetailConfig from './components/DetailConfig';
 import DetailQuestions from './components/DetailQuestions';
+import { isEmpty } from 'lodash';
 
 export default function Detail(p) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
@@ -104,8 +103,22 @@ export default function Detail(p) {
             ...qbank
           },
         } = await getQuestionBankRequest(params.id);
+
         if (qbank.questions.length > 0) {
-          store.currentStep = 3;
+          store.currentStep = 1;
+
+          // Clear questions clues
+          qbank.questions = qbank.questions.map((question) => {
+            const newQuestion = { ...question };
+            if (isEmpty(newQuestion.clues)) {
+              newQuestion.clues = [];
+            } else if (Object.keys(newQuestion.clues[0]).length === 0) {
+              newQuestion.clues = [];
+            } else {
+              newQuestion.clues = [newQuestion.clues[0].value];
+            }
+            return newQuestion;
+          });
         }
         form.reset(qbank);
       }
@@ -157,9 +170,7 @@ export default function Detail(p) {
     >
       <VerticalStepperContainer
         scrollRef={scrollRef}
-        currentStep={
-          store.currentStep === 2 && formValues.questions?.length ? 3 : store.currentStep
-        }
+        currentStep={store.currentStep}
         data={[
           { label: t('basic'), status: 'OK' },
           { label: t('questions'), status: 'OK' },

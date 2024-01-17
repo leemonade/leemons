@@ -127,7 +127,7 @@ export function ListInputRender({
           ) : null}
         </Stack>
         {store.useButton ? (
-          <Stack justifyContent="end">
+          <Stack justifyContent="end" spacing={4}>
             <Button variant="link" onClick={onCancel}>
               {t('cancel')}
             </Button>
@@ -161,7 +161,7 @@ export function ListInputRender({
         </Box>
       ) : null}
       {store.useButton ? (
-        <Stack justifyContent="end">
+        <Stack justifyContent="end" spacing={4}>
           <Button variant="link" onClick={onCancel}>
             {t('cancel')}
           </Button>
