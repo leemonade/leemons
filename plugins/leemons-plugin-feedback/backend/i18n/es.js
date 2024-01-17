@@ -136,6 +136,7 @@ module.exports = {
   },
   feedbackResult: {
     feedback: 'Encuesta',
+    evaluation: 'Evaluación',
     generalInformation: 'Información general',
     question: 'Pregunta {i}',
     started: 'Comenzadas',
@@ -159,6 +160,10 @@ module.exports = {
     optionPlaceholder: 'Opción',
     closeFeedback: 'Cerrar',
     archiveFeedback: 'Archivar',
+    instanceOpen: 'Abierta',
+    instanceClosed: 'Cerrada',
+    instanceArchived: 'Archivada',
+    insteanceProgrammed: 'Programada',
     closeAction: {
       closedFeedback: 'Encuesta cerrada',
       errorClosingFeedback: 'Error cerrando encuesta',

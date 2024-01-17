@@ -10,12 +10,12 @@ import {
   Box,
   Button,
   Stack,
-  Switch,
   Text,
   TextClamp,
   ContextContainer,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -30,12 +30,11 @@ import {
 } from '@bubbles-ui/icons/outline';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { addErrorAlert } from '@layout/alert';
 import { createDatasheet } from '@feedback/helpers/createDatasheet';
-import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
 import ActivityHeader from '@assignables/components/ActivityHeader/index';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 
-import dayjs from 'dayjs';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
@@ -59,14 +58,13 @@ export default function Result() {
   });
   const [accordionState, setAccordionState] = React.useState(['info']);
 
-  const { mutateAsync } = useMutateAssignableInstance();
-
-  const { classes } = ResultStyles({}, { name: 'Result' });
-
   const isTeacher = useIsTeacher();
   const history = useHistory();
   const params = useParams();
   const scrollRef = useRef();
+
+  const { data: dynamicInstance } = useInstances({ id: params.id });
+  const { classes } = ResultStyles({}, { name: 'Result' });
 
   async function init() {
     try {
@@ -173,44 +171,6 @@ export default function Result() {
     });
   }
 
-  const onCloseFeedback = async (closed) => {
-    const newDates = {
-      closed: closed ? new Date() : null,
-    };
-    if (dayjs(store.instance.dates.close).isBefore(dayjs())) {
-      newDates.close = null;
-    }
-    try {
-      await mutateAsync({ id: store.instanceId, dates: newDates });
-      addSuccessAlert(closed ? t('closeAction.closedFeedback') : t('closeAction.openedFeedback'));
-    } catch (e) {
-      addErrorAlert(
-        closed ? t('closeAction.errorClosingFeedback') : t('closeAction.errorOpeningFeedback')
-      );
-    }
-  };
-
-  const onArchiveFeedback = async (archived) => {
-    const newDates = {
-      archived: archived ? new Date() : null,
-      // TODO: Do not close if not closable
-      closed: archived && !store.instance.dates.deadline ? new Date() : undefined,
-    };
-
-    try {
-      await mutateAsync({ id: store.instanceId, dates: newDates });
-      addSuccessAlert(
-        archived ? t('archiveAction.archivedFeedback') : t('archiveAction.unarchiedFeedback')
-      );
-    } catch (e) {
-      addErrorAlert(
-        archived
-          ? t('archiveAction.errorArchivingFeedback')
-          : t('archiveAction.errorUnarchivingFeedback')
-      );
-    }
-  };
-
   React.useEffect(() => {
     if (params.id) init();
   }, [params.id]);
@@ -222,51 +182,49 @@ export default function Result() {
       scrollRef={scrollRef}
       Header={
         <ActivityHeader
-          instance={store?.instance}
+          instance={dynamicInstance}
           showClass
           showRole
           showEvaluationType
           showTime
           showDeadline
+          action={t('evaluation')}
+          showCloseButtons={isTeacher}
+          allowEditDeadline={isTeacher}
         />
       }
     >
       <Stack justifyContent="center" ref={scrollRef} style={{ overflow: 'auto' }}>
-        <TotalLayoutStepContainer>
-          <Stack direction="column" >
-            {isTeacher && (
-              <Stack justifyContent="space-between" className={classes.teacherActions}>
-                <Stack spacing={5}>
-                  <Switch
-                    label={t('closeFeedback')}
-                    checked={store.instanceState.isClosed}
-                    onChange={onCloseFeedback}
-                  />
-                  <Switch
-                    label={t('archiveFeedback')}
-                    checked={store.instanceState.isArchived}
-                    onChange={onArchiveFeedback}
-                  />
-                </Stack>
-                <Stack spacing={3} alignItems="center">
-                  <Button
-                    variant="outline"
-                    rightIcon={<DownloadIcon />}
-                    onClick={() => downloadDatasheet('csv')}
-                  >
-                    CSV
-                  </Button>
+        <TotalLayoutStepContainer
+          Footer={
+            isTeacher && (
+              <TotalLayoutFooterContainer
+                fixed
+                scrollRef={scrollRef}
+                rightZone={
+                  <>
+                    <Button
+                      variant="outline"
+                      rightIcon={<DownloadIcon />}
+                      onClick={() => downloadDatasheet('csv')}
+                    >
+                      CSV
+                    </Button>
 
-                  <Button
-                    variant="outline"
-                    rightIcon={<DownloadIcon />}
-                    onClick={() => downloadDatasheet('xls')}
-                  >
-                    XLS
-                  </Button>
-                </Stack>
-              </Stack>
-            )}
+                    <Button
+                      variant="outline"
+                      rightIcon={<DownloadIcon />}
+                      onClick={() => downloadDatasheet('xls')}
+                    >
+                      XLS
+                    </Button>
+                  </>
+                }
+              />
+            )
+          }
+        >
+          <Stack direction="column">
             <ContextContainer title={t('responsesTitleLabel')} style={{ gap: '16px' }}>
               <ActivityAccordion
                 multiple
@@ -323,7 +281,6 @@ export default function Result() {
       </Stack>
     </TotalLayoutContainer>
   );
-  //   <Stack justifyContent="center" fullWidth className={classes.root}>
   //     <Stack direction="column" spacing={4} className={classes.container}>
   //       {isTeacher && (
   //         <Stack justifyContent="space-between">

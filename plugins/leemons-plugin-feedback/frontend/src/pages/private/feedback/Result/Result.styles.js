@@ -4,7 +4,13 @@ const ResultStyles = createStyles((theme) => ({
   teacherActions: {
     marginBottom: 16,
   },
-
+  headerTitleContainer: {
+    font: 'inherit',
+  },
+  headerTitleText: { marginRight: 8 },
+  headerTitleIcon: {
+    color: theme.colors.text05,
+  },
   generalInformation: {
     paddingBlock: 24,
     paddingInline: 20,
@@ -38,6 +44,10 @@ const ResultStyles = createStyles((theme) => ({
       borderRadius: '4px ',
       backgroundColor: 'transparent ',
       padding: '2px 8px',
+      height: '18px',
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
     },
   },
   badgeText: {

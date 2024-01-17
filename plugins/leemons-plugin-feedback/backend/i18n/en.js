@@ -136,6 +136,7 @@ module.exports = {
   },
   feedbackResult: {
     feedback: 'Feedback',
+    evaluation: 'Evaluation',
     generalInformation: 'General information',
     question: 'Question {i}',
     started: 'Started',
@@ -159,6 +160,10 @@ module.exports = {
     optionPlaceholder: 'Option',
     closeFeedback: 'Close',
     archiveFeedback: 'Archive',
+    instanceOpen: 'Open',
+    instanceClosed: 'Closed',
+    instanceArchived: 'Archived',
+    instanceProgrammed: 'Programmed',
     closeAction: {
       closedFeedback: 'Feedback closed',
       errorClosingFeedback: 'Error closing feedback',
