@@ -15,6 +15,7 @@ import CloseButtons from './components/CloseButtons/CloseButtons';
 
 export default function ActivityHeader({
   instance,
+  assignation,
 
   action,
   showClass,
@@ -28,6 +29,8 @@ export default function ActivityHeader({
 
   showCloseButtons,
   allowEditDeadline,
+
+  onTimeout: noop,
 }) {
   const form = useForm();
   /*
@@ -119,6 +122,7 @@ export default function ActivityHeader({
 
 ActivityHeader.propTypes = {
   instance: PropTypes.object,
+  assignation: PropTypes.object,
   action: PropTypes.string,
   showClass: PropTypes.bool,
   showRole: PropTypes.bool,
@@ -129,4 +133,5 @@ ActivityHeader.propTypes = {
   showTime: PropTypes.bool,
   showCloseButtons: PropTypes.bool,
   allowEditDeadline: PropTypes.bool,
+  onTimeout: PropTypes.func,
 };

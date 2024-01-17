@@ -1,35 +1,55 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, ImageLoader, Modal, Paragraph, Text, Title } from '@bubbles-ui/components';
+import {
+  Alert,
+  Box,
+  Button,
+  ContextContainer,
+  HtmlText,
+  Text,
+  Title,
+  TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
+} from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import * as duration from 'dayjs/plugin/duration';
-import { getLocaleDuration, LocaleDuration } from '@common';
-import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import { useSession } from '@users/session';
-import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 
-import { find } from 'lodash';
+import { find, map } from 'lodash';
+import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
+import { Instructions } from '@tests/pages/private/tests/StudentInstance/components/Instructions';
 import InfoCard from './InfoCard';
 
 dayjs.extend(duration);
 export default function Development(props) {
-  const session = useSession();
-  const [showModal, setShowModal] = React.useState(false);
-  const { classes, styles, cx, t, store, nextStep, prevStep, onStartQuestions } = props;
+  const { styles, cx, t, store, nextStep, onStartQuestions } = props;
 
-  const durationSeconds = React.useMemo(() => {
-    if (store.instance?.duration) {
-      const [value, unit] = store.instance.duration.split(' ');
-      return dayjs.duration({ [unit]: value }).asSeconds();
+  const canStart = React.useMemo(() => {
+    if (store.instance.dates?.start) {
+      const now = new Date();
+      const start = new Date(store.instance.dates.start);
+      if (now < start) {
+        return false;
+      }
     }
-    return null;
-  }, [store.instance]);
+    return true;
+  }, [store.instance.dates?.start]);
 
   let clueEl = null;
+  let clueText = null;
   const cluePer = find(store.config.clues, (cl) => cl.canUse);
 
   if (cluePer) {
     const cluePoints = store.questionsInfo.perQuestionNumber * (cluePer.value / 100);
+    clueText =
+      cluePer.value !== 0
+        ? t('clueWithPer', {
+            per: cluePer.value,
+            points: `-${cluePoints.toFixed(2)}`,
+          })
+        : t('clueWithoutPer');
     clueEl = (
       <Box className={styles.resumeBoxContainer}>
         <InfoCard
@@ -37,212 +57,229 @@ export default function Development(props) {
           icon="/public/tests/hint.png"
           styles={styles}
           withRedColor={cluePer.value !== 0}
-          label={
-            cluePer.value !== 0
-              ? t('clueWithPer', {
-                  per: cluePer.value,
-                  points: `-${cluePoints.toFixed(2)}`,
-                })
-              : t('clueWithoutPer')
-          }
+          label={clueText}
         />
       </Box>
     );
   }
 
-  return (
-    <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
-      <Box
-        sx={(theme) => ({
-          marginBottom: theme.spacing[6],
-          textAlign: 'center',
-        })}
-      >
-        <Text role="productive" size="xs" color="soft">
-          {t('test')}
-        </Text>
-        <Title order={2}>{t('instructionsForTest')}</Title>
-      </Box>
+  const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
 
-      <Box className={styles.resumeBoxContainer}>
-        <InfoCard
-          cx={cx}
-          styles={styles}
-          number={store.questionsInfo.questions}
-          label={t('questions')}
+  const curriculumValues = useCurriculumVisibleValues({ assignation: store.assignation });
+  const subjects = useClassesSubjects(store.instance.classes);
+
+  let curriculum = null;
+  if (curriculumValues.length && curriculumValues[0]?.curriculum?.curriculum) {
+    curriculum = curriculumValues[0].curriculum.curriculum;
+  }
+
+  return (
+    <TotalLayoutStepContainer
+      stepName={t('development')}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={props.scrollRef}
+          rightZone={
+            <Button
+              rightIcon={<ChevRightIcon />}
+              disabled={!canStart}
+              onClick={() => {
+                nextStep();
+                onStartQuestions();
+              }}
+            >
+              {t('makeTheTest')}
+            </Button>
+          }
         />
-        <InfoCard
-          cx={cx}
-          styles={styles}
-          number={store.questionsInfo.perQuestion}
-          label={t('perQuestion')}
-        />
-        {store.questionsInfo.minPoints !== 0 ? (
+      }
+    >
+      <ContextContainer spacing={8}>
+        {!canStart ? (
+          <Alert closeable={false} title={t('activityNotAvailable')}>
+            {t('informationStart', {
+              date: `${dayjs(store.instance.dates.start).format('L ')}`,
+              hour: `${dayjs(store.instance.dates.start).format('HH:mm ')}`,
+            })}
+          </Alert>
+        ) : null}
+
+        {store.instance?.assignable?.statement ? (
+          <ContextContainer title={t('resume')}>
+            <HtmlText>{store.instance.assignable.statement}</HtmlText>
+          </ContextContainer>
+        ) : null}
+
+        <Instructions instance={store.instance} />
+
+        <Box className={styles.resumeBoxContainer}>
           <InfoCard
             cx={cx}
             styles={styles}
-            number={store.questionsInfo.minPoints}
-            label={t('minScore')}
+            number={store.questionsInfo.questions}
+            label={t('questions')}
           />
-        ) : null}
-        <InfoCard
-          cx={cx}
-          styles={styles}
-          number={store.questionsInfo.totalPoints}
-          label={t('maxScore')}
-        />
-        <InfoCard
-          cx={cx}
-          styles={styles}
-          number={store.questionsInfo.minToApprove}
-          label={t('minToApprove')}
-        />
-      </Box>
+          <InfoCard
+            cx={cx}
+            styles={styles}
+            number={store.questionsInfo.perQuestion}
+            label={t('perQuestion')}
+          />
+          {store.questionsInfo.minPoints !== 0 ? (
+            <InfoCard
+              cx={cx}
+              styles={styles}
+              number={store.questionsInfo.minPoints}
+              label={t('minScore')}
+            />
+          ) : null}
+          <InfoCard
+            cx={cx}
+            styles={styles}
+            number={store.questionsInfo.totalPoints}
+            label={t('maxScore')}
+          />
+          <InfoCard
+            cx={cx}
+            styles={styles}
+            number={store.questionsInfo.minToApprove}
+            label={t('minToApprove')}
+          />
+        </Box>
 
-      <Box className={styles.resumeBoxContainer}>
-        <InfoCard
-          cx={cx}
-          icon="/public/tests/blank-questions.png"
-          styles={styles}
-          withRedColor={
-            !store.config.canOmitQuestions || (store.config.canOmitQuestions && store.config.omit)
-          }
-          label={
-            // eslint-disable-next-line no-nested-ternary
-            store.config.canOmitQuestions
-              ? store.config.omit
-                ? t('blankQuestionsScores', {
-                    per: store.config.omit,
-                    points: store.questionsInfo.perOmitQuestion,
-                  })
-                : t('blankQuestions')
-              : t('noBlankQuestions')
-          }
-        />
-      </Box>
+        <ContextContainer title={t('penalties')}>
+          <Box sx={() => ({ marginLeft: 20 })}>
+            <ul style={{ listStyle: 'disc' }}>
+              <li>
+                <Text>
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: store.config.canOmitQuestions
+                        ? store.config.omit
+                          ? t('blankQuestionsScores', {
+                              per: store.config.omit,
+                              points: store.questionsInfo.perOmitQuestion,
+                            })
+                          : t('blankQuestions')
+                        : t('noBlankQuestions'),
+                    }}
+                  />
+                </Text>
+              </li>
+              <li>
+                <Text>
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: store.config.wrong
+                        ? t('errorQuestions', {
+                            per: store.config.wrong,
+                            points: store.questionsInfo.perErrorQuestion,
+                          })
+                        : t('noErrorQuestions'),
+                    }}
+                  />
+                </Text>
+              </li>
+              {clueText ? (
+                <li>
+                  <Text>
+                    <span dangerouslySetInnerHTML={{ __html: clueText }} />
+                  </Text>
+                </li>
+              ) : null}
+            </ul>
+          </Box>
+        </ContextContainer>
 
-      <Box className={styles.resumeBoxContainer}>
-        <InfoCard
-          cx={cx}
-          icon="/public/tests/error-questions.png"
-          styles={styles}
-          withRedColor={store.config.wrong}
-          label={
-            store.config.wrong
-              ? t('errorQuestions', {
-                  per: store.config.wrong,
-                  points: store.questionsInfo.perErrorQuestion,
-                })
-              : t('noErrorQuestions')
-          }
-        />
-      </Box>
-
-      {clueEl}
-
-      <Box className={styles.timeLimitContainer}>
-        <Title order={5}>{t('beforeStart')}</Title>
-        <Box className={styles.timeLimitContent}>
-          <Box className={styles.timeLimitInfo}>
-            <Box>
-              <Box sx={() => ({ position: 'relative', height: '24px', marginBottom: '24px' })}>
-                <ImageLoader className="stroke-current" src={'/public/tests/clock.svg'} />
-              </Box>
-              <Title order={4}>
-                {durationSeconds ? <LocaleDuration seconds={durationSeconds} /> : t('noTimeLimit')}
-              </Title>
-            </Box>
-            {durationSeconds ? (
-              <Box>
-                <Box sx={() => ({ position: 'relative', height: '32px', marginBottom: '16px' })}>
-                  <ImageLoader className="stroke-current" src={'/public/tests/pause.svg'} />
+        {curriculum ||
+        (!!store.instance.assignable.subjects[0].curriculum.objectives &&
+          !!store.instance.assignable.subjects[0].curriculum.objectives?.length) ? (
+          <ContextContainer title={t('curriculum')}>
+            {curriculum ? (
+              <Box sx={tabPanelStyle}>
+                <Box>
+                  <CurriculumListContents value={curriculum} subjects={map(subjects, 'id')} />
                 </Box>
-                <Title order={4}>{t('withoutPause')}</Title>
               </Box>
             ) : null}
+            {!!store.instance.assignable.subjects[0].curriculum.objectives &&
+            !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
+              <Box sx={tabPanelStyle}>
+                <Box>
+                  <Title color="primary" order={5}>
+                    {t('objectives')}
+                  </Title>
+                  {/* TODO: Use react lists */}
+                  <HtmlText>
+                    {`
+                      <ul>
+                      ${store.instance.assignable.subjects[0].curriculum.objectives
+                        ?.map(
+                          ({ objective }) =>
+                            `<li>
+                            ${objective}
+                          </li>`
+                        )
+                        ?.join('')}
+                      </ul>
+                    `}
+                  </HtmlText>
+                </Box>
+              </Box>
+            ) : null}
+          </ContextContainer>
+        ) : null}
+      </ContextContainer>
+
+      <Box className={styles.timeLimitContainer}>
+        {/*
+        <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
+          <Box className={styles.resumeBoxContainer}>
+            <InfoCard
+              cx={cx}
+              icon="/public/tests/blank-questions.png"
+              styles={styles}
+              withRedColor={
+                !store.config.canOmitQuestions ||
+                (store.config.canOmitQuestions && store.config.omit)
+              }
+              label={
+                // eslint-disable-next-line no-nested-ternary
+                store.config.canOmitQuestions
+                  ? store.config.omit
+                    ? t('blankQuestionsScores', {
+                        per: store.config.omit,
+                        points: store.questionsInfo.perOmitQuestion,
+                      })
+                    : t('blankQuestions')
+                  : t('noBlankQuestions')
+              }
+            />
           </Box>
-          {/* <img className={styles.timeLimitImage} src="/public/tests/ninaBrazoLevantado.png" /> */}
-          {durationSeconds ? (
-            <Box
-              sx={() => ({
-                position: 'absolute',
-                bottom: '0px',
-                width: '100%',
-                textAlign: 'center',
-              })}
-            >
-              <Button
-                position="right"
-                variant="link"
-                rightIcon={<AlertInformationCircleIcon />}
-                rounded
-                compact
-                onClick={() => setShowModal(true)}
-              >
-                {t('howItWorks')}
-              </Button>
-            </Box>
-          ) : null}
-        </Box>
 
-        <Box className={classes.continueButton}>
-          <Button
-            position="right"
-            variant="light"
-            leftIcon={<ChevronLeftIcon />}
-            rounded
-            compact
-            onClick={prevStep}
-          >
-            {t('prev')}
-          </Button>
+          <Box className={styles.resumeBoxContainer}>
+            <InfoCard
+              cx={cx}
+              icon="/public/tests/error-questions.png"
+              styles={styles}
+              withRedColor={store.config.wrong}
+              label={
+                store.config.wrong
+                  ? t('errorQuestions', {
+                      per: store.config.wrong,
+                      points: store.questionsInfo.perErrorQuestion,
+                    })
+                  : t('noErrorQuestions')
+              }
+            />
+          </Box>
 
-          <Button
-            position="left"
-            rightIcon={<ChevronRightIcon />}
-            rounded
-            compact
-            onClick={() => {
-              nextStep();
-              onStartQuestions();
-            }}
-          >
-            {t('makeTheTest')}
-          </Button>
+          {clueEl}
         </Box>
+        */}
       </Box>
-      <Modal title={t('howItWorks')} opened={showModal} onClose={() => setShowModal(false)}>
-        <Box className={styles.howItWorksModalContainer}>
-          <Title order={5} sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
-            {t('limitedTime')}
-          </Title>
-          <Paragraph
-            dangerouslySetInnerHTML={{
-              __html: t('limitedTimeDescription', {
-                time: getLocaleDuration({ seconds: durationSeconds }, session),
-              }),
-            }}
-          />
-
-          <Title
-            order={5}
-            sx={(theme) => ({
-              marginTop: theme.spacing[6],
-              marginBottom: theme.spacing[2],
-            })}
-          >
-            {t('canNotStop')}
-          </Title>
-          <Paragraph
-            dangerouslySetInnerHTML={{
-              __html: t('canNotStopDescription', {
-                time: getLocaleDuration({ seconds: durationSeconds }, session),
-              }),
-            }}
-          />
-        </Box>
-      </Modal>
-    </Box>
+    </TotalLayoutStepContainer>
   );
 }
 
