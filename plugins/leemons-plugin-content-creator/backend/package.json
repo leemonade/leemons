@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-content-creator",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "Leemons content creator plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
