@@ -156,12 +156,10 @@ const LibraryPageContent = () => {
           {/* LIST ASSETS ························································ */}
           <Route path={cleanPath(`${path}/:category/list`)}>
             <ListAssetPage />
-            {/* <div>SOY CATEGORY / LIST</div> */}
           </Route>
 
           <Route path={cleanPath(`${path}/:category/:id/list`)}>
             <ListAssetPage />
-            {/* <div>SOY CATEGORY / ID / LIST</div> */}
           </Route>
 
           {/* DEFAULT exact path={path} */}

@@ -81,7 +81,6 @@ async function byCriteria({
   let nothingFound = false;
 
   if (pinned) {
-    published = 'all';
     preferCurrent = false;
   }
 

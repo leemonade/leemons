@@ -167,24 +167,28 @@ module.exports = {
       const trueValues = ['true', true, '1', 1];
 
       let assets;
-      const assetPublished = trueValues.includes(published);
+      const publishedStatus = published === 'all' ? published : published === 'published';
       const displayPublic = trueValues.includes(showPublic);
       const searchProvider = trueValues.includes(searchInProvider);
+      const preferCurrentValue = trueValues.includes(preferCurrent);
       const _onlyShared = trueValues.includes(onlyShared);
       const parsedRoles = JSON.parse(roles || null) || [];
       const _providerQuery = JSON.parse(providerQuery || null);
       const _programs = JSON.parse(programs || null);
       const _subjects = JSON.parse(subjects || null);
 
-      if (!_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category)) {
+      const shouldSerachByCriteria =
+        !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
+
+      if (shouldSerachByCriteria) {
         assets = await getByCriteria({
           category: categoryFilter,
           criteria,
           type,
           indexable: true,
-          published: assetPublished,
+          published: publishedStatus,
           showPublic: displayPublic,
-          preferCurrent,
+          preferCurrent: preferCurrentValue,
           roles: parsedRoles,
           searchInProvider: searchProvider,
           providerQuery: _providerQuery,
@@ -198,9 +202,9 @@ module.exports = {
       } else {
         assets = await getByCategory({
           categoryId: category,
-          published: assetPublished,
+          published: publishedStatus,
           indexable: true,
-          preferCurrent,
+          preferCurrent: preferCurrentValue,
           showPublic: displayPublic,
           roles: parsedRoles,
           searchInProvider: searchProvider,
@@ -214,7 +218,7 @@ module.exports = {
         });
       }
 
-      // TODO: Temporary solution. The previous if statement is assuming the single category filtering only
+      // TODO: Temporary solution
       if (parsedRoles?.length === 1 && parsedRoles[0] === 'owner') {
         assets = assets.filter((asset) => asset.role === 'owner');
       }
@@ -346,7 +350,8 @@ module.exports = {
 
       const _providerQuery = JSON.parse(providerQuery || null);
       const _category = category || categoryFilter === 'undefined' ? null : categoryFilter;
-      const assetPublished = ['true', true, '1', 1].includes(published);
+      const publishedStatus = published === 'all' ? published : published === 'published';
+      // const assetPublished = ['true', true, '1', 1].includes(published);
       const displayPublic = ['true', true, '1', 1].includes(showPublic);
       const _preferCurrent = ['true', true, '1', 1].includes(preferCurrent);
 
@@ -356,7 +361,7 @@ module.exports = {
         type,
         pinned: true,
         indexable: true,
-        published: assetPublished,
+        published: publishedStatus,
         showPublic: displayPublic,
         preferCurrent: _preferCurrent,
         providerQuery: _providerQuery,
