@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, Button, Table } from '@bubbles-ui/components';
+import { Box, Button, Table, ContextContainer } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 
 import { get, head, map, uniq } from 'lodash';
@@ -89,20 +89,23 @@ export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, on
   });
 
   return (
-    <Box sx={() => ({ width: 550 })}>
-      <Table
-        columns={columns}
-        data={parsedActivities}
-        sortable={parsedActivities?.length > 1}
-        labels={{ add: '' }}
-        headerStyles={{ display: 'none' }}
-        onChangeData={({ newData }) => onActivityChange(map(newData, 'original'))}
-      />
-      {/* TRANSLATE */}
-      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
-        {localizations?.buttons?.new}
-      </Button>
-    </Box>
+    <ContextContainer title={localizations?.moduleComposer?.title}>
+      <Box sx={() => ({ width: '50%', minWidth: 550 })}>
+        <Table
+          columns={columns}
+          data={parsedActivities}
+          sortable={parsedActivities?.length > 1}
+          labels={{ add: '' }}
+          headerStyles={{ display: 'none' }}
+          onChangeData={({ newData }) => onActivityChange(map(newData, 'original'))}
+        />
+      </Box>
+      <Box>
+        <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
+          {localizations?.buttons?.new}
+        </Button>
+      </Box>
+    </ContextContainer>
   );
 }
 

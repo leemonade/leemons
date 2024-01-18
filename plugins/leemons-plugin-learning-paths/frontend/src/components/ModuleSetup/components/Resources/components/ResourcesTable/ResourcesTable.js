@@ -2,7 +2,14 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
-import { Box, Button, FileIcon, Table, ActionButton } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  FileIcon,
+  Table,
+  ActionButton,
+  ContextContainer,
+} from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { concat, get, keyBy, map } from 'lodash';
@@ -118,19 +125,23 @@ export function ResourcesTable({ localizations, onRemoveAsset, onAssetChange, on
   const parsedResources = useParseResources({ assets, localizations, onRemove: onRemoveAsset });
 
   return (
-    <Box sx={() => ({ width: 550 })}>
-      <Table
-        columns={columns}
-        data={parsedResources}
-        sortable={parsedResources?.length > 1}
-        labels={{ add: '' }}
-        headerStyles={{ display: 'none' }}
-        onChangeData={({ newData }) => onAssetChange(map(newData, 'id'))}
-      />
-      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
-        {localizations?.steps?.resourcesData?.buttons?.new}
-      </Button>
-    </Box>
+    <ContextContainer title={localizations?.moduleComposer?.title}>
+      <Box sx={() => ({ width: '50%', minWidth: 550 })}>
+        <Table
+          columns={columns}
+          data={parsedResources}
+          sortable={parsedResources?.length > 1}
+          labels={{ add: '' }}
+          headerStyles={{ display: 'none' }}
+          onChangeData={({ newData }) => onAssetChange(map(newData, 'id'))}
+        />
+      </Box>
+      <Box>
+        <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
+          {localizations?.steps?.resourcesData?.buttons?.new}
+        </Button>
+      </Box>
+    </ContextContainer>
   );
 }
 

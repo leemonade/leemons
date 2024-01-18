@@ -119,17 +119,19 @@ export function StructureData({
                 {_localizations?.buttons?.saveDraft}
               </Button>
               <Tooltip
-                label={localizations?.buttons?.tooltips?.disabledNotResources}
+                label={localizations?.buttons?.tooltips?.disabledNotActivities}
                 disabled={get(sharedData, ACTIVITIES_KEY, [])?.length > 1}
               >
-                <Button
-                  onClick={() => onNextStep()}
-                  rightIcon={<ChevRightIcon />}
-                  disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
-                  loading={isLoading}
-                >
-                  {_localizations?.buttons?.next}
-                </Button>
+                <Box>
+                  <Button
+                    onClick={() => onNextStep()}
+                    rightIcon={<ChevRightIcon />}
+                    disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
+                    loading={isLoading}
+                  >
+                    {_localizations?.buttons?.next}
+                  </Button>
+                </Box>
               </Tooltip>
             </>
           }

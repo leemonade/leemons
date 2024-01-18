@@ -69,7 +69,7 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
   const { classes } = useResourcesStyles();
   return (
     <TotalLayoutStepContainer
-      stepName={localizations?.tabs?.structure}
+      stepName={localizations?.tabs?.resources}
       Footer={
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
