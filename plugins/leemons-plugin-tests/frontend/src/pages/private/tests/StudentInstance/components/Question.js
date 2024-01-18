@@ -75,10 +75,15 @@ export default function Question(props) {
 
   return (
     <TotalLayoutStepContainer
-      stepName={t('questions')}
+      fullWidth={!!store.viewMode}
+      noMargin={!!store.viewMode}
+      hasFooter={!!store.viewMode}
+      footerPadding={store.viewMode ? 0 : undefined}
+      stepName={store.viewMode ? '' : t('questions')}
       Footer={
         <TotalLayoutFooterContainer
-          fixed
+          fixed={!store.viewMode}
+          showFooterBorder={store.viewMode}
           scrollRef={props.scrollRef}
           rightZone={
             <>

@@ -16,7 +16,10 @@ async function modifyCTX(
   ctx,
   {
     getDeploymentIdInCall = false,
-    dontGetDeploymentIDOnActionCall = ['deployment-manager.addManualDeploymentRest'],
+    dontGetDeploymentIDOnActionCall = [
+      'deployment-manager.addManualDeploymentRest',
+      'deployment-manager.reloadAllDeploymentsRest',
+    ],
   } = {}
 ) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
@@ -71,6 +74,7 @@ module.exports = function ({
   checkIfCanCallMe = true,
   getDeploymentIdInCall = false,
   dontGetDeploymentIDOnActionCall = [
+    'deployment-manager.reloadAllDeploymentsRest',
     'deployment-manager.addManualDeploymentRest',
     'gateway.dropDBRest',
     'v1.client-manager.protected.newFreemiumClient',

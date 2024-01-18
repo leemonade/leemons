@@ -424,7 +424,7 @@ module.exports = {
     undefined: 'No definido',
     question: 'Pregunta',
     result: 'Resultado',
-    showInTests: 'Ver en el tests',
+    showInTests: 'Detalle de respuestas ',
     feedbackForStudent: 'Comentario para el estudiante',
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',
@@ -436,5 +436,9 @@ module.exports = {
     chatTeacherDescription: '¿Quieres escribir alguna observación?',
     chatButtonStudent: 'Escribe a tu alumno',
     chatButtonTeacher: 'Escribe a tu profesor',
+    student: 'Estudiante',
+    responses: 'Respuestas',
+    saveAndSendFeedback: 'Guardar y enviar comentario',
+    returnToTable: 'Volver a la tabla',
   },
 };

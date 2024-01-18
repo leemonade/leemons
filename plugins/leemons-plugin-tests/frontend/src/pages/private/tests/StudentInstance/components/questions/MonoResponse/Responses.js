@@ -132,9 +132,11 @@ export default function Responses(props) {
               }
             >
               <LeebraryImage className={styles.questionResponseImage} src={response.image} />
-              <Box className={styles.questionResponseNumberImage}>
-                {numberToEncodedLetter(index + 1)}
-              </Box>
+              {store.viewMode ? null : (
+                <Box className={styles.questionResponseNumberImage}>
+                  {numberToEncodedLetter(index + 1)}
+                </Box>
+              )}
             </Box>
             <Box
               className={
@@ -143,8 +145,9 @@ export default function Responses(props) {
                   : styles.questionResponseImageTextContent
               }
             >
-              {response.imageDescription ? (
+              {response.imageDescription || store.viewMode ? (
                 <Text color="primary" role="productive" size="md">
+                  {store.viewMode ? `${numberToEncodedLetter(index + 1)}. ` : null}
                   {response.imageDescription}
                 </Text>
               ) : null}
@@ -165,16 +168,28 @@ export default function Responses(props) {
         ) : (
           <Box>
             <Stack fullWidth alignItems="center">
-              <Radio
-                checked={
-                  index === currentResponseIndex || (store.viewMode && response.isCorrectResponse)
-                }
-                noRootPadding
-              />
-              <Box className={styles.questionResponseNumber}>
-                {numberToEncodedLetter(index + 1)}
+              {!store.viewMode ? (
+                <Radio
+                  checked={
+                    index === currentResponseIndex || (store.viewMode && response.isCorrectResponse)
+                  }
+                  noRootPadding
+                />
+              ) : null}
+
+              {!store.viewMode ? (
+                <Box
+                  sx={(theme) => ({ marginLeft: store.viewMode ? 0 : theme.spacing[4] })}
+                  className={styles.questionResponseNumber}
+                >
+                  {numberToEncodedLetter(index + 1)}
+                </Box>
+              ) : null}
+
+              <Box sx={(theme) => ({ paddingLeft: theme.spacing[1] })}>
+                {store.viewMode ? `${numberToEncodedLetter(index + 1)}. ` : null}
+                {response.response}
               </Box>
-              <Box sx={(theme) => ({ paddingLeft: theme.spacing[1] })}>{response.response}</Box>
             </Stack>
             {explanation ? (
               <Box className={classExplanation}>
