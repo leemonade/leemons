@@ -10,7 +10,7 @@ module.exports = {
     navbar: {
       title: 'Biblioteca',
       subjects: 'Asignaturas',
-      sharedWithMe: 'Compartido conmigo',
+      sharedWithMe: 'Compartidos conmigo',
       quickAccess: 'Favoritos',
       recent: 'Recientes',
       uploadButton: 'Nuevo',

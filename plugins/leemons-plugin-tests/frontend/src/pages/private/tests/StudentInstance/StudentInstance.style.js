@@ -63,7 +63,6 @@ export const StudentInstanceStyles = createStyles((theme, { isFirstStep }) => ({
   },
   loremIpsum: {
     width: '100%',
-    paddingBottom: theme.spacing[12],
   },
   loremIpsumEmbedded: {
     paddingLeft: theme.spacing[0],

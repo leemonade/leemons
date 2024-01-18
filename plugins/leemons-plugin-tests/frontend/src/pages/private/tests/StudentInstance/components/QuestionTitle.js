@@ -6,8 +6,6 @@ import { htmlToText } from '@common';
 export default function QuestionTitle(props) {
   const { styles, question, store, cx, t } = props;
 
-  console.log('props', props);
-
   let classNameQuestionTitle = styles.questionTitle;
   if (store.embedded) {
     classNameQuestionTitle = cx(classNameQuestionTitle, styles.questionTitleEmbedded);
@@ -19,34 +17,32 @@ export default function QuestionTitle(props) {
     null: null,
   };
 
-  console.log(question.question);
-
   return (
     <Box className={classNameQuestionTitle}>
       <Box className={styles.questionTitleText}>
-        <Text size="lg" role="productive" color="primary" strong>
+        <Text size={store.viewMode ? 'sm' : 'lg'} role="productive" color="primary" strong>
           {props.index + 1}. {htmlToText(question.question)}
         </Text>
       </Box>
       {store.embedded && store.viewMode ? (
         <Box className={cx(styles.questionValueCard, styles.questionValueCardEmbedded)}>
           <Box>
-            <Text
-              size="md"
-              sx={(theme) => ({
-                color: store.viewMode
-                  ? colorByStatus[store.questionResponses?.[question.id].status]
-                  : theme.colors.fatic02,
-              })}
-            >
-              {store.viewMode
-                ? store.questionResponses?.[question.id].points
-                : store.questionsInfo.perQuestion}
+            <Text style={{ whiteSpace: 'nowrap' }}>
+              <span
+                style={{
+                  color: store.viewMode
+                    ? colorByStatus[store.questionResponses?.[question.id].status]
+                    : COLORS.fatic02,
+                }}
+              >
+                {store.viewMode
+                  ? store.questionResponses?.[question.id].points.toFixed(2)
+                  : store.questionsInfo.perQuestion}
+              </span>{' '}
+              {t('pointsInTotal')}
             </Text>
           </Box>
-          <Text size="xs" color="primary">
-            {t('pointsInTotal')}
-          </Text>
+          <Text size="xs" color="primary"></Text>
         </Box>
       ) : null}
     </Box>

@@ -167,7 +167,8 @@ module.exports = {
       const trueValues = ['true', true, '1', 1];
 
       let assets;
-      const publishedStatus = published === 'all' ? published : published === 'published';
+      const publishedStatus =
+        published === 'all' ? published : [...trueValues, 'published'].includes(published);
       const displayPublic = trueValues.includes(showPublic);
       const searchProvider = trueValues.includes(searchInProvider);
       const preferCurrentValue = trueValues.includes(preferCurrent);

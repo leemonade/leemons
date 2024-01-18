@@ -83,8 +83,8 @@ const categories = [
         iconSvg: '/public/leebrary/media-files.svg',
         activeIconSvg: '/public/leebrary/media-files.svg',
         label: {
-          en: 'Media files',
-          es: 'Archivos multimedia',
+          en: 'Resources',
+          es: 'Recursos',
         },
       },
       permissions: [

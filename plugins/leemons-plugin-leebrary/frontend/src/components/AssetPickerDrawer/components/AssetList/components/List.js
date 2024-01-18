@@ -62,11 +62,6 @@ export function List({ variant, query, filters, onSelect }) {
   const totalCount = assets?.length ?? 0;
   const totalPages = Math.ceil(totalCount / size);
   const assetsToLoad = assets?.slice((page - 1) * size, page * size) ?? [];
-  console.group('Load AssetList');
-  console.log('totalCount:', totalCount);
-  console.log('totalPages:', totalPages);
-  console.log('assetsToLoad:', assetsToLoad);
-  console.groupEnd();
 
   const { data: assetsData, isLoading: isLoadingData } = useAssets({
     ids: map(assetsToLoad, 'asset'),

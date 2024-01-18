@@ -27,20 +27,25 @@ export const ResultStyles = createStyles((theme) => ({
     flexDirection: 'column',
     gap: theme.spacing[2],
   },
-  firstTableHeader: {
-    paddingLeft: `${theme.spacing[6]}px !important`,
-  },
+  firstTableHeader: {},
   tableHeader: {
-    backgroundColor: theme.colors.interactive03h,
     paddingBottom: theme.spacing[2],
     paddingTop: theme.spacing[6],
     paddingLeft: theme.spacing[5],
+    borderBottom: `1px solid ${theme.other.table.border.color.default}`,
+  },
+  tableHeaderResults: {
+    paddingBottom: theme.spacing[2],
+    paddingTop: theme.spacing[6],
+    paddingLeft: theme.spacing[5],
+    borderBottom: `1px solid ${theme.other.table.border.color.default}`,
+    textAlign: 'center',
   },
   tableCell: {
     paddingLeft: theme.spacing[4],
     paddingRight: theme.spacing[4],
-    paddingTop: theme.spacing[5],
-    paddingBottom: theme.spacing[5],
+    paddingTop: theme.spacing[2],
+    paddingBottom: theme.spacing[2],
   },
   showTestBar: {
     backgroundColor: theme.colors.uiBackground01,
