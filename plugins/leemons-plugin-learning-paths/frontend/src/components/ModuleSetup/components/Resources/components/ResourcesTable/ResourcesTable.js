@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
-import { Box, Button, FileIcon, Table } from '@bubbles-ui/components';
+import { Box, Button, FileIcon, Table, ActionButton } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { AddIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { concat, get, keyBy, map } from 'lodash';
 import { useCache } from '@common';
 import { ResourceRenderer } from '../../../StructureData/components/ModuleComposer/components/ResourceRenderer';
@@ -98,7 +98,10 @@ function useParseResources({ assets, onRemove, localizations }) {
               />
             ),
             actions: (
-              <DeleteBinIcon style={{ cursor: 'pointer' }} onClick={() => onRemove(asset.id)} />
+              <ActionButton
+                onClick={() => onRemove(asset.id)}
+                icon={<DeleteBinIcon width={18} height={18} />}
+              />
             ),
           };
         })
@@ -115,15 +118,16 @@ export function ResourcesTable({ localizations, onRemoveAsset, onAssetChange, on
   const parsedResources = useParseResources({ assets, localizations, onRemove: onRemoveAsset });
 
   return (
-    <Box>
+    <Box sx={() => ({ width: 550 })}>
       <Table
         columns={columns}
         data={parsedResources}
         sortable={parsedResources?.length > 1}
         labels={{ add: '' }}
+        headerStyles={{ display: 'none' }}
         onChangeData={({ newData }) => onAssetChange(map(newData, 'id'))}
       />
-      <Button variant="link" leftIcon={<AddIcon />} onClick={onSelectAsset}>
+      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
         {localizations?.steps?.resourcesData?.buttons?.new}
       </Button>
     </Box>

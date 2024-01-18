@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Button, Text, createStyles } from '@bubbles-ui/components';
-import { AddIcon, PluginLearningPathsIcon } from '@bubbles-ui/icons/outline';
+import { PluginLearningPathsIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 
 export const useEmptyStateStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -41,7 +42,7 @@ export function EmptyState({ onSelectAsset, localizations }) {
       <PluginLearningPathsIcon className={classes.icon} width={140} height="auto" />
       <Text className={classes.title}>{localizations?.emptyState?.title}</Text>
       <Text className={classes.description}>{localizations?.emptyState?.description}</Text>
-      <Button variant="link" leftIcon={<AddIcon />} onClick={onSelectAsset}>
+      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
         {localizations?.buttons?.new}
       </Button>
     </Box>

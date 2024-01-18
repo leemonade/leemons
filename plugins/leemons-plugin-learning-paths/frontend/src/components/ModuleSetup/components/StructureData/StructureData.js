@@ -5,23 +5,22 @@ import {
   Box,
   Button,
   createStyles,
-  DropdownButton,
   Tooltip,
-  useResizeObserver,
-  useViewportSize,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { v4 as uuidv4 } from 'uuid';
 import { fireEvent } from 'leemons-hooks';
-import { cloneDeep, get, set, without } from 'lodash';
+import { cloneDeep, get, noop, set, without } from 'lodash';
 import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
 import { addErrorAlert } from '@layout/alert';
 import addAction from '@learning-paths/components/ModuleSetup/helpers/addAction';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
-import { useHistory } from 'react-router-dom';
 import { EmptyState } from './components/EmptyState';
 import { ModuleComposer } from './components/ModuleComposer';
+import { EVENT_BASE, ACTIVITIES_KEY } from '../../constants';
 
 export const useStructureDataStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -64,33 +63,32 @@ function useOnSave() {
   );
 }
 
-export function StructureData({ localizations: _localizations, onPrevStep }) {
+export function StructureData({
+  localizations: _localizations,
+  scrollRef,
+  onPrevStep = noop,
+  onNextStep = noop,
+  onSave = noop,
+}) {
   useOnSave();
   const [isLoading, setIsLoading] = useState(false);
-  const eventBase = 'plugin.learning-paths.modules.edit';
 
   useEffect(
     () =>
-      addAction(`${eventBase}.onSave`, () => {
+      addAction(`${EVENT_BASE}.onSave`, () => {
         setIsLoading(true);
       }),
     [setIsLoading]
   );
 
   useEffect(
-    () => addAction(`${eventBase}.onSave.finished`, () => setIsLoading(false)),
+    () => addAction(`${EVENT_BASE}.onSave.finished`, () => setIsLoading(false)),
     [setIsLoading]
   );
-
-  const history = useHistory();
 
   const localizations = _localizations?.steps?.structureData;
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const [sharedData, setSharedData] = useModuleSetupContext();
-
-  const { width: viewportWidth } = useViewportSize();
-  const [boxRef, rect] = useResizeObserver();
-  const drawerSize = useMemo(() => Math.max(viewportWidth / 2, 500), [viewportWidth, rect]);
 
   const assignablesRoles = useRoles();
 
@@ -104,12 +102,44 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
   const { classes } = useStructureDataStyles();
 
   return (
-    <Box>
-      <Box className={classes.content} ref={boxRef}>
+    <TotalLayoutStepContainer
+      stepName={_localizations?.tabs?.structure}
+      Footer={
+        <TotalLayoutFooterContainer
+          scrollRef={scrollRef}
+          fixed
+          leftZone={
+            <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={onPrevStep}>
+              {_localizations?.buttons?.previous}
+            </Button>
+          }
+          rightZone={
+            <>
+              <Button variant="link" onClick={onSave} disabled={isLoading}>
+                {_localizations?.buttons?.saveDraft}
+              </Button>
+              <Tooltip
+                label={localizations?.buttons?.tooltips?.disabledNotResources}
+                disabled={get(sharedData, ACTIVITIES_KEY, [])?.length > 1}
+              >
+                <Button
+                  onClick={() => onNextStep()}
+                  rightIcon={<ChevRightIcon />}
+                  disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
+                  loading={isLoading}
+                >
+                  {_localizations?.buttons?.next}
+                </Button>
+              </Tooltip>
+            </>
+          }
+        />
+      }
+    >
+      <Box>
         <AssetPickerDrawer
           layout="rows"
           opened={showAssetDrawer}
-          size={drawerSize}
           shadow
           categories={selectableCategories}
           onClose={() => setShowAssetDrawer(0)}
@@ -120,8 +150,8 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
               const { providerData } = asset;
 
               setSharedData((data) =>
-                set(cloneDeep(data), 'state.activities', [
-                  ...get(data, 'state.activities', []),
+                set(cloneDeep(data), ACTIVITIES_KEY, [
+                  ...get(data, ACTIVITIES_KEY, []),
                   {
                     activity: providerData?.id,
                     default: {
@@ -135,10 +165,10 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
             setShowAssetDrawer(0);
           }}
         />
-        {get(sharedData, 'state.activities', [])?.length ? (
+        {get(sharedData, ACTIVITIES_KEY, [])?.length ? (
           <ModuleComposer
             onActivityChange={(newActivities) =>
-              setSharedData((data) => set(cloneDeep(data), 'state.activities', newActivities))
+              setSharedData((data) => set(cloneDeep(data), ACTIVITIES_KEY, newActivities))
             }
             onSelectAsset={() => setShowAssetDrawer(1)}
             onRemoveAsset={(id) =>
@@ -157,17 +187,18 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
           <EmptyState onSelectAsset={() => setShowAssetDrawer(1)} localizations={localizations} />
         )}
       </Box>
+      {/*
       <Box className={classes.buttons}>
         <Button variant="link" leftIcon={<ChevLeftIcon />} onClick={onPrevStep}>
           {_localizations?.buttons?.previous}
         </Button>
         <Tooltip
           label={_localizations?.buttons?.tooltips?.disabledNotResources}
-          disabled={get(sharedData, 'state.activities', [])?.length > 1}
+          disabled={get(sharedData, ACTIVITIES_KEY, [])?.length > 1}
         >
           <Box>
             <DropdownButton
-              disabled={get(sharedData, 'state.activities', [])?.length < 2}
+              disabled={get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
               loading={isLoading}
               data={[
                 {
@@ -199,13 +230,18 @@ export function StructureData({ localizations: _localizations, onPrevStep }) {
               {_localizations?.buttons?.publishOptions}
             </DropdownButton>
           </Box>
+          
         </Tooltip>
       </Box>
-    </Box>
+      */}
+    </TotalLayoutStepContainer>
   );
 }
 
 StructureData.propTypes = {
   localizations: PropTypes.object,
   onPrevStep: PropTypes.func,
+  onNextStep: PropTypes.func,
+  onSave: PropTypes.func,
+  scrollRef: PropTypes.any,
 };

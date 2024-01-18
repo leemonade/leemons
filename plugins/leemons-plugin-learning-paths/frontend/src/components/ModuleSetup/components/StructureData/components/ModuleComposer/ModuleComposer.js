@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Button, Table } from '@bubbles-ui/components';
-import { AddIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 
 import { get, head, map, uniq } from 'lodash';
 
@@ -89,16 +89,17 @@ export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, on
   });
 
   return (
-    <Box>
+    <Box sx={() => ({ width: 550 })}>
       <Table
         columns={columns}
         data={parsedActivities}
         sortable={parsedActivities?.length > 1}
         labels={{ add: '' }}
+        headerStyles={{ display: 'none' }}
         onChangeData={({ newData }) => onActivityChange(map(newData, 'original'))}
       />
       {/* TRANSLATE */}
-      <Button variant="link" leftIcon={<AddIcon />} onClick={onSelectAsset}>
+      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
         {localizations?.buttons?.new}
       </Button>
     </Box>
