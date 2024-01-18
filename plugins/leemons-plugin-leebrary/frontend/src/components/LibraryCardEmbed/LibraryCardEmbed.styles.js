@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-export const LibraryCardEmbedStyles = createStyles(
+const LibraryCardEmbedStyles = createStyles(
   (theme, { showPlayer, fullScreenMode, color, variant, fileType }) => {
     const isMedia = variant === 'media';
     const isVideo = fileType === 'video';
@@ -8,16 +8,20 @@ export const LibraryCardEmbedStyles = createStyles(
     return {
       root: {
         backgroundColor: theme.colors.mainWhite,
-        width: 'auto',
-        minWidth: 420,
+        width: '100%',
+        minHeight: 60,
+        display: 'flex',
+        justifyContent: 'flex-end',
       },
       cardWrapper: {
-        borderRadius: 4,
-        border: `2px solid ${theme.colors.ui02}`,
+        borderBottom: `2px solid ${theme.colors.ui02}`,
+        width: '100%',
+        minWidth: 440,
+        paddingLeft: 4,
       },
       imagePlaceholder: {
-        width: 172,
-        height: 156,
+        maxWidth: 72,
+        maxHeight: 52,
         backgroundColor: theme.colors.interactive03h,
         display: 'flex',
         justifyContent: 'end',
@@ -25,30 +29,27 @@ export const LibraryCardEmbedStyles = createStyles(
         paddingBottom: pxToRem(16),
         paddingRight: pxToRem(16),
       },
-      color: {
-        backgroundColor: color,
-        height: 8,
-        width: '100%',
-        borderTopRightRadius: 2,
+      imageStyles: {
+        borderRadius: 4,
       },
       content: {
         height: 'auto',
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'center',
       },
       header: {
         display: 'flex',
-        alignItems: 'center',
-        paddingInline: pxToRem(12),
-        gap: pxToRem(16),
+        flexDirection: 'column',
+        alignContent: 'center',
       },
       title: {
-        flex: 1,
-        fontWeight: 600,
+        paddingLeft: pxToRem(16),
+        ...theme.other.table.content.typo.md,
       },
       description: {
-        padding: pxToRem(16),
-        flex: 1,
+        paddingLeft: pxToRem(16),
+        ...theme.other.table.content.typo.md,
       },
       footer: {
         paddingLeft: pxToRem(16),
@@ -65,6 +66,15 @@ export const LibraryCardEmbedStyles = createStyles(
         },
         cursor: 'pointer',
       },
+      fileTypeButtonContainer: {
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        marginLeft: 16,
+        marginRight: 16,
+      },
     };
   }
 );
+
+export { LibraryCardEmbedStyles };

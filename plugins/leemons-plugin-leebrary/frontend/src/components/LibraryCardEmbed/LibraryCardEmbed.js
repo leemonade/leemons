@@ -11,8 +11,13 @@ import {
   useElementSize,
 } from '@bubbles-ui/components';
 import { capitalize, isEmpty, isFunction } from 'lodash';
-import { ControlsPlayIcon } from '@bubbles-ui/icons/solid';
-import { DownloadIcon, OpenIcon } from '@bubbles-ui/icons/outline';
+// import { ControlsPlayIcon } from '@bubbles-ui/icons/solid';
+import {
+  DownloadIcon,
+  OpenIcon,
+  SearchPlusIcon,
+  CursorPlayerIcon,
+} from '@bubbles-ui/icons/outline';
 // TODO: AssetPlayer comes from @common
 import { AssetPlayer } from '@bubbles-ui/leemons';
 import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
@@ -33,60 +38,95 @@ const LibraryCardEmbed = ({ asset, variant, labels, onDownload, actionIcon, ...p
   const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [fullScreenMode, setFullScreenMode] = useState(false);
-
-  const { title, name, description, image, cover, color, fileType, metadata, url, icon } = asset;
+  const { title, name, updatedAt, image, cover, color, fileType, metadata, url, icon } = asset;
+  const { classes, cx } = LibraryCardEmbedStyles(
+    { showPlayer, fullScreenMode, color, variant, fileType },
+    { name: 'LibraryCardEmbed' }
+  );
 
   const renderVariantButton = () => {
-    const isMedia = variant === 'media';
-    const isBookmark = ['bookmark', 'ur'].includes(fileType) || variant === 'bookmark';
+    // const isMedia = variant === 'media';
+    const isMedia = true;
+    const isBookmark = ['bookmark', 'url'].includes(fileType) || variant === 'bookmark';
     const isVideo = fileType === 'video';
     const isAudio = fileType === 'audio';
+    const isImage = fileType === 'image';
 
     if (actionIcon) {
       return <Box style={{ marginBlock: 4 }}>{actionIcon}</Box>;
     }
-    if (isMedia) {
-      if (!isVideo && !isAudio) {
-        return (
+    if (isImage) {
+      return (
+        <Box className={classes.fileTypeButtonContainer}>
           <IconButton
             style={{ marginBlock: 4 }}
-            icon={<DownloadIcon height={13} width={13} />}
+            icon={<SearchPlusIcon height={24} width={24} />}
             rounded
             onClick={() => {
               isFunction(onDownload) ? onDownload(asset) : window.open(url);
             }}
           />
+        </Box>
+      );
+    }
+    if (isMedia) {
+      if (!isVideo && !isAudio) {
+        return (
+          <Box className={classes.fileTypeButtonContainer}>
+            <IconButton
+              style={{ marginBlock: 4 }}
+              icon={<DownloadIcon height={13} width={13} />}
+              rounded
+              onClick={() => {
+                isFunction(onDownload) ? onDownload(asset) : window.open(url);
+              }}
+            />
+          </Box>
         );
       }
       return (
-        <IconButton
-          style={{ backgroundColor: COLORS.interactive01, marginBlock: 4 }}
-          icon={
-            isAudio || isVideo ? (
-              <ControlsPlayIcon height={13} width={13} style={{ color: 'white' }} />
-            ) : (
-              <DownloadIcon height={13} width={13} />
-            )
-          }
-          rounded
-          onClick={() => {
-            setShowPlayer(true);
-            setIsPlaying(true);
-          }}
-        />
-      );
-    }
-    if (isBookmark)
-      return (
-        <Box className={classes.bookmarkButton} onClick={() => window.open(url)}>
+        <Box className={classes.fileTypeButtonContainer}>
           <IconButton
-            style={{ marginBlock: 4 }}
-            icon={<OpenIcon height={13} width={13} />}
+            // style={{ backgroundColor: COLORS.interactive01, marginBlock: 4 }}
+            icon={
+              isAudio || isVideo ? (
+                <CursorPlayerIcon height={13} width={13} />
+              ) : (
+                <DownloadIcon height={13} width={13} />
+              )
+            }
             rounded
+            onClick={() => {
+              setShowPlayer(true);
+              setIsPlaying(true);
+            }}
           />
-          <Text>{labels.link}</Text>
         </Box>
       );
+    }
+    if (isBookmark) {
+      return (
+        <Box className={classes.fileTypeButtonContainer} onClick={() => window.open(url)}>
+          <IconButton
+            style={{ marginBlock: 4 }}
+            icon={<OpenIcon height={18} width={18} />}
+            rounded
+          />
+        </Box>
+      );
+    }
+    return (
+      <Box className={classes.fileTypeButtonContainer}>
+        <IconButton
+          style={{ marginBlock: 4 }}
+          icon={<DownloadIcon height={13} width={13} />}
+          rounded
+          onClick={() => {
+            isFunction(onDownload) ? onDownload(asset) : window.open(url);
+          }}
+        />
+      </Box>
+    );
   };
 
   const getMediaRatio = () => {
@@ -109,8 +149,7 @@ const LibraryCardEmbed = ({ asset, variant, labels, onDownload, actionIcon, ...p
   const getMediaHeight = () => {
     if (!rootRef.current) return;
     const mediaRatio = getMediaRatio();
-    const mediaHeight = width / mediaRatio;
-    return mediaHeight;
+    return width / mediaRatio;
   };
 
   useEffect(() => {
@@ -119,21 +158,25 @@ const LibraryCardEmbed = ({ asset, variant, labels, onDownload, actionIcon, ...p
     });
   }, []);
 
-  const { classes, cx } = LibraryCardEmbedStyles(
-    { showPlayer, fullScreenMode, color, variant, fileType },
-    { name: 'LibraryCardEmbed' }
-  );
   return (
     <Box ref={rootRef} className={classes.root}>
       {!showPlayer ? (
-        <Stack className={classes.cardWrapper} justifyContent="start" fullWidth>
-          <Box style={{ width: image || cover ? COVER_WIDTH : 'auto' }}>
+        <Stack className={classes.cardWrapper} justifyContent="space-between" fullWidth>
+          <Box
+            style={{
+              width: image || cover ? 72 : 'auto',
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '8px 4px',
+            }}
+          >
             {image || cover ? (
               <ImageLoader
                 src={image || cover}
-                width={COVER_WIDTH}
-                height={'100%'}
-                radius={'2px 0px 0px 2px'}
+                width={72}
+                height={58}
+                radius={4}
+                imageStyles={classes.imageStyles}
               />
             ) : (
               <Box className={classes.imagePlaceholder}>
@@ -151,19 +194,19 @@ const LibraryCardEmbed = ({ asset, variant, labels, onDownload, actionIcon, ...p
             className={classes.content}
             style={{ width: image || cover ? `calc(100% - ${COVER_WIDTH}px)` : '100%' }}
           >
-            <Box className={classes.color} />
+            {/* <Box className={classes.color} /> */}
             <Box className={classes.header}>
-              <Text size="md" className={classes.title}>
-                {title || name}
-              </Text>
-              {renderVariantButton()}
-            </Box>
-            <Box className={classes.description}>
-              <TextClamp>
-                <Text role="productive">{description}</Text>
+              <TextClamp lines={1}>
+                <Text size="md" className={classes.title}>
+                  {title || name}
+                </Text>
               </TextClamp>
+              <Text className={classes.description}>
+                {`last update: ${new Date(updatedAt).toLocaleDateString()}`}
+              </Text>
             </Box>
-            <Box className={classes.footer}>
+
+            {/* <Box className={classes.footer}>
               <FileIcon
                 size={13}
                 fileType={variant === 'bookmark' ? 'bookmark' : fileType}
@@ -181,8 +224,9 @@ const LibraryCardEmbed = ({ asset, variant, labels, onDownload, actionIcon, ...p
                   </Box>
                 </Stack>
               )}
-            </Box>
+            </Box> */}
           </Box>
+          {renderVariantButton()}
         </Stack>
       ) : (
         <AssetPlayer asset={asset} playing={isPlaying} controlBar framed />

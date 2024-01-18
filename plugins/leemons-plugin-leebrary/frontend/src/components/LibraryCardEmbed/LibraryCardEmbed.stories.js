@@ -1,4 +1,5 @@
 import React from 'react';
+import { Paper } from '@bubbles-ui/components';
 import { LibraryCardEmbed } from './LibraryCardEmbed';
 import { URL_ASSET } from '../LibraryCard/mock/data';
 import {
@@ -21,9 +22,11 @@ export default {
   },
 };
 
-const Template = ({ useOnDownload, ...props }) => {
-  return <LibraryCardEmbed {...props} onDownload={useOnDownload ? props.onDownload : undefined} />;
-};
+const Template = ({ useOnDownload, ...props }) => (
+  <Paper color="solid">
+    <LibraryCardEmbed {...props} onDownload={useOnDownload ? props.onDownload : undefined} />
+  </Paper>
+);
 
 export const Playground = Template.bind({});
 

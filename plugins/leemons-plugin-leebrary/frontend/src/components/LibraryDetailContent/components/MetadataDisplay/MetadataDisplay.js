@@ -12,7 +12,7 @@ import prefixPn from '../../../../helpers/prefixPN';
 
 const MetadataDisplay = ({ metadata, onCopy }) => {
   const [data, setData] = useState();
-  const fileSizeMB = metadata?.file?.size / 1024;
+  const fileSizeMB = metadata?.file?.size / 1024 / 1024;
   const fileSizeDocument = metadata?.fileType === 'document' && metadata?.metadata[0]?.value;
   const getImageDimensions = () => {
     const dataObject = {};
@@ -116,7 +116,7 @@ const MetadataDisplay = ({ metadata, onCopy }) => {
             </Box>
             <Box>
               <Text className={classes.title}>{`${t('size')}: `}</Text>
-              <Text className={classes.value}>{`${fileSizeMB.toFixed(2)} Mb`}</Text>
+              <Text className={classes.value}>{`${fileSizeMB.toFixed(2)} MB`}</Text>
             </Box>
           </Box>
         )}

@@ -100,6 +100,7 @@ export const URL_ASSET = {
     { fullName: 'Will Teacher' },
     { fullName: 'Tony Stark' },
   ],
+  updatedAt: '2022-02-04T16:26:31.485Z',
 };
 
 export const TASK_ASSET = {
