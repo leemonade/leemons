@@ -36,7 +36,7 @@ export default function QuestionTitle(props) {
                 }}
               >
                 {store.viewMode
-                  ? store.questionResponses?.[question.id].points
+                  ? store.questionResponses?.[question.id].points.toFixed(2)
                   : store.questionsInfo.perQuestion}
               </span>{' '}
               {t('pointsInTotal')}

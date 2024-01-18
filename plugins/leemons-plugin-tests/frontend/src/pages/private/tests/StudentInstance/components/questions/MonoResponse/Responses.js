@@ -81,9 +81,11 @@ export default function Responses(props) {
       if (response.isCorrectResponse) {
         iconToShow = '/public/tests/question-done.svg';
         classContainer = cx(classContainer, styles.questionResponseImageContainerDone);
+        classExplanation = cx(classExplanation, styles.textExplanationWhite);
       } else if (index === currentResponseIndex) {
         iconToShow = '/public/tests/question-wrong.svg';
         classContainer = cx(classContainer, styles.questionResponseImageContainerWrong);
+        classExplanation = cx(classExplanation, styles.textExplanationWhite);
       } else {
         classContainer = cx(classContainer, styles.questionResponseRemovePadding);
         classExplanation = cx(classExplanation, styles.textExplanationRemovePadding);
@@ -152,14 +154,7 @@ export default function Responses(props) {
                 </Text>
               ) : null}
               {explanation ? (
-                <Box className={classExplanation}>
-                  <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
-                    <Text role="productive" size="xs" color="primary">
-                      {response.isCorrectResponse
-                        ? t('correctResponse').toUpperCase()
-                        : t('explanation').toUpperCase()}
-                    </Text>
-                  </Box>
+                <Box sx={(theme) => ({ marginTop: theme.spacing[2] })} className={classExplanation}>
                   <HtmlText>{explanation}</HtmlText>
                 </Box>
               ) : null}
@@ -186,20 +181,18 @@ export default function Responses(props) {
                 </Box>
               ) : null}
 
-              <Box sx={(theme) => ({ paddingLeft: theme.spacing[1] })}>
+              <Box
+                sx={(theme) => ({
+                  paddingLeft: theme.spacing[1],
+                  paddingTop: store.viewMode ? theme.spacing[1] : 0,
+                })}
+              >
                 {store.viewMode ? `${numberToEncodedLetter(index + 1)}. ` : null}
                 {response.response}
               </Box>
             </Stack>
             {explanation ? (
               <Box className={classExplanation}>
-                <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
-                  <Text role="productive" size="xs" color="primary">
-                    {response.isCorrectResponse
-                      ? t('correctResponse').toUpperCase()
-                      : t('explanation').toUpperCase()}
-                  </Text>
-                </Box>
                 <HtmlText>{explanation}</HtmlText>
               </Box>
             ) : null}

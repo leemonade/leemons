@@ -375,11 +375,11 @@ export const TestStyles = createStyles((theme) => ({
     position: 'relative',
   },
   questionResponseImageContainerDone: {
-    borderColor: theme.colors.fatic02,
+    borderColor: 'transparent',
     backgroundColor: theme.colors.fatic02v0,
   },
   questionResponseImageContainerWrong: {
-    borderColor: theme.colors.fatic01,
+    borderColor: 'transparent',
     backgroundColor: theme.colors.fatic01v0,
   },
   questionViewModeIcon: {
@@ -393,6 +393,7 @@ export const TestStyles = createStyles((theme) => ({
   questionResponseImageContainerViewMode: {
     cursor: 'default',
     paddingLeft: 48,
+    border: '1px solid #DDE1E6',
   },
   questionResponseImageContainerViewModeWithImages: {
     paddingLeft: theme.spacing[3],
@@ -437,13 +438,14 @@ export const TestStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[3],
   },
   textExplanation: {
-    border: '2px solid',
-    borderColor: theme.colors.interactive03h,
-    backgroundColor: theme.colors.uiBackground04,
+    backgroundColor: '#F8F9FB',
     borderRadius: theme.spacing[1],
-    padding: theme.spacing[4],
+    padding: theme.spacing[2],
     marginTop: theme.spacing[5],
     marginLeft: -36,
+  },
+  textExplanationWhite: {
+    backgroundColor: 'white',
   },
   textExplanationRemovePadding: {
     marginLeft: 0,
