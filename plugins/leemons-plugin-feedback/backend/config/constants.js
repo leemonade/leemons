@@ -25,7 +25,7 @@ const menuItems = [
       iconSvg: '/public/feedback/menu-icon-active.svg',
       activeIconSvg: '/public/feedback/menu-icon-active.svg',
       label: {
-        en: 'Feedback',
+        en: 'Surveys',
         es: 'Encuestas',
       },
     },
@@ -65,8 +65,8 @@ const menuItems = [
       parentKey: `${permissionsPrefix}.feedback`,
       url: '/private/feedback/new',
       label: {
-        en: 'New feedback',
-        es: 'Nuevo encuesta',
+        en: 'New survey',
+        es: 'Nueva encuesta',
       },
     },
     permissions: [
@@ -89,15 +89,15 @@ const assignableRoles = [
       creatable: true,
       createUrl: '/private/feedback/new',
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
-      pluralName: { en: 'feedbacks', es: 'encuestas' },
-      singularName: { en: 'feedback', es: 'encuesta' },
+      pluralName: { en: 'surveys', es: 'encuestas' },
+      singularName: { en: 'survey', es: 'encuesta' },
       order: 5,
       menu: {
         item: {
           iconSvg: '/public/feedback/menu-icon.svg',
           activeIconSvg: '/public/feedback/menu-icon-active.svg',
           label: {
-            en: 'Feedback',
+            en: 'Surveys',
             es: 'Encuestas',
           },
         },
