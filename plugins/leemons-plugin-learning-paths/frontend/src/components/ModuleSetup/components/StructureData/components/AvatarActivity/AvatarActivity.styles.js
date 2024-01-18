@@ -8,7 +8,7 @@ export const useAvatarActivityStyles = createStyles((theme, { activityColor }) =
     alignItems: 'center',
     position: 'absolute',
     background: activityColor || theme.other.global.background.color.surface.emphasis,
-    borderRadius: theme.radius.md,
+    borderRadius: theme.other.avatar.border.radius.md,
 
     bottom: theme.spacing[1],
     left: theme.spacing[1],
@@ -23,7 +23,8 @@ export const useAvatarActivityStyles = createStyles((theme, { activityColor }) =
   cover: {
     position: 'relative',
     border: `1px solid ${theme.other.global.border.color.line.muted}`,
-    borderRadius: theme.other.global.border.radius.sm,
+    borderRadius: theme.other.avatar.border.radius.md,
+    overflow: 'hidden',
   },
   coverFallback: {
     width: 40,

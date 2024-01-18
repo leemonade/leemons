@@ -280,6 +280,7 @@ module.exports = {
     notSubmitted: 'No entregada',
     noLimit: 'Sin límite de tiempo',
     blocked: 'Bloqueada',
+    archived: 'Archivada',
   },
   teacher_actions: {
     sendReminder: 'Enviar recordatorio',

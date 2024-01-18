@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import { ActionButton } from '@bubbles-ui/components';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { ResourceRenderer } from '../components/ResourceRenderer';
 
 export default function useParseActivities({ activities, localizations, onRemove }) {
@@ -15,7 +16,12 @@ export default function useParseActivities({ activities, localizations, onRemove
             localizations={localizations}
           />
         ),
-        actions: <DeleteBinIcon style={{ cursor: 'pointer' }} onClick={() => onRemove(id)} />,
+        actions: (
+          <ActionButton
+            onClick={() => onRemove(id)}
+            icon={<DeleteBinIcon width={18} height={18} />}
+          />
+        ),
         original,
       })),
     [activities, localizations]

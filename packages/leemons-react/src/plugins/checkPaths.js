@@ -11,6 +11,7 @@ module.exports = async function checkPaths({ plugin }) {
     routers: {
       public: await fileExists(path.resolve(plugin.path, 'Public.js')),
       private: await fileExists(path.resolve(plugin.path, 'Private.js')),
+      protected: await fileExists(path.resolve(plugin.path, 'Protected.js')),
     },
     public: await folderExists(path.resolve(plugin.path, 'public')),
     hooks: await fileExists(path.resolve(plugin.path, 'globalHooks.js')),

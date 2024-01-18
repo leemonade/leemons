@@ -38,11 +38,11 @@ const ListAssetPage = () => {
 
   const [mediaAssetType, setMediaAssetType] = useState('');
   const [showPublic, setShowPublic] = useState(false);
-  const [showPublished, setShowPublished] = useState(true);
+  const [showPublished, setShowPublished] = useState('published');
   const history = useHistory();
   const params = useParams();
   const query = useQuery();
-  const [activeStatus, setActiveStatus] = useState(query.get('activeTab') || 'published');
+  const [activeStatus, setActiveStatus] = useState(query.get('activeTab') || 'all');
   const location = useLocation();
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
@@ -100,7 +100,7 @@ const ListAssetPage = () => {
     }
 
     if (isEmpty(_activeTab)) {
-      setActiveStatus('published');
+      setActiveStatus('all');
     } else if (_activeTab !== activeStatus) {
       setActiveStatus(_activeTab);
     }
@@ -265,7 +265,9 @@ const ListAssetPage = () => {
 
   // Publish & Draft filters allowed
   if (
-    (category?.key?.startsWith('assignables.') || category?.key === 'tests-questions-banks') &&
+    (category?.key?.startsWith('assignables.') ||
+      category?.key === 'tests-questions-banks' ||
+      multiCategorySections.includes(category?.key)) &&
     category?.key !== 'assignables.scorm'
   ) {
     return (
@@ -288,12 +290,12 @@ const ListAssetPage = () => {
           onShowPublic={handleOnShowPublic}
           assetType={mediaAssetType}
           pinned={category?.key === 'pins'}
-          onLoading={setLoading}
-          published={activeStatus === 'published'}
           variant="embedded"
+          onLoading={setLoading}
+          published={activeStatus}
+          activeStatus={activeStatus}
           allowStatusChange={true}
           onStatusChange={handleOnPublishingStatusChange}
-          assetStatus={activeStatus}
         />
       </Box>
     );
@@ -311,7 +313,6 @@ const ListAssetPage = () => {
         asset={currentAsset}
         search={searchCriteria}
         layout="grid"
-        published={showPublished}
         showPublic={showPublic}
         onSelectItem={handleOnSelectItem}
         onEditItem={handleOnEditItem}
@@ -322,6 +323,7 @@ const ListAssetPage = () => {
         pinned={category?.key === 'pins'}
         onLoading={setLoading}
         variant="embedded"
+        published={'published'}
       />
     </Box>
   ) : null;

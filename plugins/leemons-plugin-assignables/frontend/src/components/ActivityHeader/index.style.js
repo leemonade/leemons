@@ -14,6 +14,7 @@ const useTotalLayoutStyles = createStyles((theme) => {
       height: 24,
       display: 'flex',
       flexDirection: 'row',
+      textWrap: 'nowrap',
       '> *': {
         '&:not(:last-child)': {
           borderRight: '1px solid #DDE1E6',

@@ -13,7 +13,6 @@ export function AvatarActivity({ activity }) {
   const activityTypeIcon = activity.roleDetails.icon;
 
   const preparedAsset = prepareAsset(activity?.asset);
-
   const iconIsUrl = isString(activityTypeIcon);
 
   const { classes } = useAvatarActivityStyles({ activityColor });

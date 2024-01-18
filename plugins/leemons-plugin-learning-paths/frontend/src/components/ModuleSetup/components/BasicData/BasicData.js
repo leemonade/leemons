@@ -1,12 +1,16 @@
-import PropTypes from 'prop-types';
 import React, { useCallback, useEffect } from 'react';
-
-import { Box, Button, Loader, createStyles } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+import {
+  Button,
+  Loader,
+  createStyles,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-
+import { noop } from 'lodash';
 import { fireEvent } from 'leemons-hooks';
 import { useForm, useWatch } from 'react-hook-form';
-
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import { AssetFormInput } from '@leebrary/components';
 import addAction from '../../helpers/addAction';
@@ -94,7 +98,7 @@ export const useBasicDataStyles = createStyles((theme) => {
   };
 });
 
-export function BasicData({ localizations, onNextStep }) {
+export function BasicData({ localizations, scrollRef, onNextStep = noop, onSave = noop }) {
   const [sharedData] = useModuleSetupContext();
   const form = useForm({ defaultValues: sharedData?.basicData ?? {} });
 
@@ -114,36 +118,47 @@ export function BasicData({ localizations, onNextStep }) {
   }
 
   return (
-    <Box>
-      <Box className={classes.form}>
-        <AssetFormInput
-          form={form}
-          advancedConfig={advancedConfig}
-          errorMessages={localizations?.steps?.basicData?.errors}
-          category="assignables.learningpaths.module"
-          tagsPluginName="learning-paths"
-          preview
-        />
-      </Box>
-
-      <Box className={classes.buttons}>
-        <Button
-          onClick={() =>
-            onSubmit()
-              .then(onNextStep)
-              .catch(() => { })
+    <TotalLayoutStepContainer
+      stepName={localizations?.tabs?.basicData}
+      Footer={
+        <TotalLayoutFooterContainer
+          scrollRef={scrollRef}
+          fixed
+          rightZone={
+            <>
+              <Button variant="link" onClick={onSave}>
+                {localizations?.buttons?.saveDraft}
+              </Button>
+              <Button
+                onClick={() =>
+                  onSubmit()
+                    .then(onNextStep)
+                    .catch(() => {})
+                }
+                rightIcon={<ChevRightIcon />}
+              >
+                {localizations?.buttons?.next}
+              </Button>
+            </>
           }
-          rightIcon={<ChevRightIcon />}
-          variant="outline"
-        >
-          {localizations?.buttons?.next}
-        </Button>
-      </Box>
-    </Box>
+        />
+      }
+    >
+      <AssetFormInput
+        form={form}
+        advancedConfig={advancedConfig}
+        errorMessages={localizations?.steps?.basicData?.errors}
+        category="assignables.learningpaths.module"
+        tagsPluginName="learning-paths"
+        preview
+      />
+    </TotalLayoutStepContainer>
   );
 }
 
 BasicData.propTypes = {
   localizations: PropTypes.object,
-  onNextStep: PropTypes.func.isRequired,
+  onNextStep: PropTypes.func,
+  onSave: PropTypes.func,
+  scrollRef: PropTypes.object,
 };

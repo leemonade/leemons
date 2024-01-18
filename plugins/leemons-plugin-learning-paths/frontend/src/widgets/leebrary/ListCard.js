@@ -164,7 +164,6 @@ const useListCardStyles = createStyles((theme, { single }) => ({
 
 function ListCard({ asset, single, onRefresh = () => {}, onShare = () => {}, ...props }) {
   const localizations = useListCardLocalizations();
-
   const menuItems = useListCardMenuItems({ localizations, asset, onRefresh, onShare });
 
   const { classes } = useListCardStyles({ single });
@@ -172,7 +171,7 @@ function ListCard({ asset, single, onRefresh = () => {}, onShare = () => {}, ...
   return (
     <LibraryCard
       className={classes.root}
-      asset={asset}
+      asset={{ ...asset, fileType: 'module' }}
       menuItems={menuItems}
       variant="task"
       variantIcon={<ModuleCardIcon />}

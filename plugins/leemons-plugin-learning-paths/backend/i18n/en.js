@@ -14,25 +14,27 @@ module.exports = {
   moduleSetup: {
     header: {
       title: 'New module',
+      editTitle: 'Edit module',
       buttons: {
         save: 'Save draft',
       },
     },
     tabs: {
       basicData: 'Basic data',
-      structure: 'Structure',
+      structure: 'Learning path',
       resources: 'Resources',
     },
     buttons: {
       next: 'Next',
       previous: 'Previous',
+      saveDraft: 'Save draft',
       publishOptions: 'Publish options',
       publish: 'Publish',
       publishAndAssign: 'Publish and assign',
       publishAndShare: 'Publish and share',
 
       tooltips: {
-        disabledNotResources: 'Add two or more activities to publish',
+        disabledNotActivities: 'Add two or more activities to continue',
       },
     },
     steps: {
@@ -51,11 +53,11 @@ module.exports = {
           new: 'New resource',
         },
         emptyState: {
-          title: "¡Let's start creating!",
-          description:
-            'Add Resources to the library and sort them as you want them to appear to the student.',
+          title: 'Additional learning resources',
+          description: 'You can select additional resources to deepen the subject (optional)',
         },
         moduleComposer: {
+          title: 'Resource list',
           columns: {
             resource: 'Resource',
             actions: 'Actions',
@@ -73,11 +75,12 @@ module.exports = {
           new: 'New activity',
         },
         emptyState: {
-          title: "¡Let's start creating!",
+          title: 'Activity list',
           description:
-            'Add activities to the library and sort them as you want them to appear to the student.',
+            'Select activities from your library to create a personalised learning path.',
         },
         moduleComposer: {
+          title: 'Activity list',
           columns: {
             resource: 'Activity',
             type: 'Type',

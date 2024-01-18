@@ -1,6 +1,13 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, ImageLoader, Text, TextClamp, createStyles } from '@bubbles-ui/components';
+import {
+  Box,
+  ImageLoader,
+  Text,
+  TextClamp,
+  createStyles,
+  getBoxShadowFromToken,
+} from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { usePickerCategories } from '@leebrary/components/AssetPickerDrawer/hooks/usePickerCategories';
 import { keyBy } from 'lodash';
@@ -9,34 +16,46 @@ import { keyBy } from 'lodash';
 
 export const useItemStyles = createStyles((theme, { color }) => {
   const globalTheme = theme.other.global;
-
+  const { cardEvaluation } = theme.other;
+  const getCardShadow = getBoxShadowFromToken(cardEvaluation.shadow.hover[0]);
   return {
     root: {
       width: '100%',
       padding: globalTheme.spacing.padding.xsm,
       borderWidth: globalTheme.border.width.sm,
       borderStyle: 'solid',
-      borderColor: globalTheme.border.color.line.default,
+      borderColor: globalTheme.border.color.line.muted,
+      borderRadius: globalTheme.border.radius.md,
+      background: globalTheme.background.color.surface.default,
 
       display: 'flex',
       alignItems: 'center',
-      gap: globalTheme.spacing.padding.lg,
+      gap: globalTheme.spacing.padding.md,
 
       cursor: 'pointer',
+      '&:hover': {
+        boxShadow: getCardShadow.boxShadow,
+      },
     },
-    image: { width: 78, height: 78, position: 'relative' },
-    // TODO: Add token color
-    thumbnail: { background: '#D9D9D9', width: '100%', height: '100%', minWidth: 78 },
+    image: { width: 50, height: 50, position: 'relative' },
+    thumbnail: {
+      background: '#D9D9D9',
+      width: '100%',
+      height: '100%',
+      minWidth: 50,
+      borderRadius: globalTheme.border.radius.md,
+      overflow: 'hidden',
+    },
     icon: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      width: 32,
-      height: 32,
+      width: 22,
+      height: 22,
       background: color,
       position: 'absolute',
-      left: 8,
-      bottom: 8,
+      left: 6,
+      bottom: 6,
       borderRadius: globalTheme.border.radius.md,
     },
     iconImage: {
@@ -48,14 +67,14 @@ export const useItemStyles = createStyles((theme, { color }) => {
     },
     body: {},
     name: {
-      ...globalTheme.content.typo.body.lg,
-      color: globalTheme.content.color.text.primary,
+      ...globalTheme.content.typo.body['md--bold'],
+      color: globalTheme.content.color.text.default,
     },
   };
 });
 
 export function Item({ asset, onSelect }) {
-  const { classes } = useItemStyles({ color: asset.color });
+  const { classes } = useItemStyles({ color: asset.color }, { name: 'AssetList-Item' });
 
   const categories = usePickerCategories();
   const categoriesByKey = useMemo(() => keyBy(categories, 'id'), [categories]);
@@ -67,7 +86,7 @@ export function Item({ asset, onSelect }) {
       <Box className={classes.image}>
         <Box className={classes.thumbnail}>
           {!!preparedAsset?.cover && (
-            <ImageLoader src={preparedAsset.cover} width={78} height={78} />
+            <ImageLoader bordered radius={4} src={preparedAsset.cover} width={50} height={50} />
           )}
         </Box>
         <Box className={classes.icon}>
@@ -81,9 +100,14 @@ export function Item({ asset, onSelect }) {
         </Box>
       </Box>
       <Box className={classes.body}>
-        <TextClamp maxLines={2} lines={2}>
+        <TextClamp maxLines={1} lines={1}>
           <Text className={classes.name}>{asset.name}</Text>
         </TextClamp>
+        {asset?.description ? (
+          <TextClamp maxLines={1} lines={1}>
+            <Text>{asset.description}</Text>
+          </TextClamp>
+        ) : null}
       </Box>
     </Box>
   );

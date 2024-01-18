@@ -131,10 +131,11 @@ const ScormListCard = ({ asset, selected, onRefresh, ...props }) => {
   return (
     <LibraryCard
       {...props}
-      asset={asset}
+      asset={{ ...asset, fileType: 'assignables.scorm' }}
       menuItems={menuItems}
       variant="scorm"
       variantTitle="SCORM"
+      variantIcon={<ScormCardIcon width={18} height={18} />}
       className={classes.root}
     />
   );

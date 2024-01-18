@@ -296,6 +296,7 @@ module.exports = {
       assetStatus: 'Estado',
       assetStatusPublished: 'Publicado',
       assetStatusDraft: 'Borrador',
+      assetStatusAll: 'Todos los estados',
       detail: 'Detalle',
       permissions: 'Permisos',
       instructions: 'Instrucciones',

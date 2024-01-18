@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NSPStatisticsStyles from '@feedback/pages/private/feedback/Result/components/NPSStatistics/styles';
-import { Badge, Box, Col, getFontExpressive, Grid, Stack, Text } from '@bubbles-ui/components';
+import { Box, Col, Grid, Stack, Text } from '@bubbles-ui/components';
 import { Header } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/Header';
 import { PointBar } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/PointBar';
 
@@ -13,17 +13,27 @@ function NPSStatistics({ question, responses, t }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
-        <Text role="productive" stronger size="sm" color="primary">
+        <Text
+          sx={(theme) => ({
+            ...theme.other.global.content.typo.heading['xsm--semiBold'],
+            fontSize: '12px',
+            lineHeight: '16px',
+          })}
+        >
           {t('responses', { n: responses.totalValues || 0 })}
         </Text>
-        <Badge
+        <Text
           color="stroke"
           size="lg"
           closable={false}
-          labelStyles={{ ...getFontExpressive('16px', 500) }}
+          sx={(theme) => ({
+            ...theme.other.global.content.typo.heading.xsm,
+            fontSize: '12px',
+            lineHeight: '16px',
+          })}
         >
           {t('npsScore', { n: Math.trunc(responses.nps?.points || 0) })}
-        </Badge>
+        </Text>
       </Box>
       <Box className={classes.content}>
         <Grid gutter={8} columns={11}>
@@ -77,14 +87,6 @@ function NPSStatistics({ question, responses, t }) {
             ))}
           </Grid>
         </Box>
-        <Stack
-          sx={(theme) => ({ marginTop: theme.spacing[4] })}
-          fullWidth
-          justifyContent="space-between"
-        >
-          <Text>{question.properties.notLikely}</Text>
-          <Text>{question.properties.veryLikely}</Text>
-        </Stack>
       </Box>
     </Box>
   );
