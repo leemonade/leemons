@@ -24,10 +24,9 @@ const LibraryCardEmbedStyles = createStyles(
         minWidth: 72,
         maxHeight: 58,
         minHeight: 58,
+        borderRadius: 4,
         backgroundColor: theme.colors.interactive03h,
-        display: 'flex',
-        justifyContent: 'end',
-        alignItems: 'end',
+        overflow: 'hidden',
       },
       imageStyles: {
         borderRadius: 4,

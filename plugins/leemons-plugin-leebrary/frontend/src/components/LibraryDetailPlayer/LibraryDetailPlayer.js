@@ -37,7 +37,15 @@ const LibraryDetailPlayer = ({
   return (
     <Box className={classes.root} data-cypress-id="library-detail-player">
       <Box className={classes.color} />
-      <AssetPlayer height={200} width={496} asset={asset} hideURLInfo viewPDF={false} compact />
+      <AssetPlayer
+        height={200}
+        width={496}
+        asset={asset}
+        hideURLInfo
+        viewPDF={false}
+        compact
+        useAspectRatio={false}
+      />
     </Box>
   );
 };

@@ -50,6 +50,7 @@ const LibraryCardEmbed = ({
     { showPlayer, fullScreenMode, color, variant, fileType },
     { name: 'LibraryCardEmbed' }
   );
+  // Lógica de apertura de assets
   const openInNewTab = (assetId) => {
     const isFile = variant === 'file';
     const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
@@ -63,6 +64,7 @@ const LibraryCardEmbed = ({
     }
     window.open(`/protected/leebrary/player/${assetId}`, '_blank', 'noopener,noreferrer');
   };
+  // Lógica de iconos parte derecha
   const renderVariantButton = () => {
     const isMedia = category.key === 'media-files';
     const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
@@ -150,8 +152,9 @@ const LibraryCardEmbed = ({
     () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} />,
     [icon, variantIcon, fileType]
   );
+  console.log(asset);
   return (
-    <Box ref={rootRef} className={classes.root} onClick={() => openInNewTab(asset?.id)}>
+    <Box ref={rootRef} className={classes.root} onClick={() => openInNewTab(asset?.original?.id)}>
       {!showPlayer ? (
         <Stack className={classes.cardWrapper} justifyContent="space-between" fullWidth>
           <Box
@@ -179,7 +182,7 @@ const LibraryCardEmbed = ({
             className={classes.content}
             style={{ width: image || cover ? `calc(100% - ${COVER_WIDTH}px)` : '100%' }}
           >
-            <Box className={classes.header}>
+            <Box className={classes.header} style={{ paddingLeft: image || cover ? null : 12 }}>
               <TextClamp lines={1}>
                 <Text size="md" className={classes.title}>
                   {title || name}
