@@ -14,10 +14,14 @@ const AssetEmbedList = ({ assignation }) => {
   const [store, setStoreValue] = useAssetListStore(initialState);
 
   async function getResources(ids) {
+    setStoreValue('isAssetsLoading', true);
     const response = await getAssetsByIdsRequest(ids, { showPublic: true, indexable: 0 });
 
     const preparedData = response?.assets?.map((asset) => prepareAsset(asset));
     setStoreValue('assets', preparedData);
+    if (Array.isArray(preparedData)) {
+      setStoreValue('isAssetsLoading', false);
+    }
   }
   const { data: categoriesData } = useCategories();
 
@@ -47,6 +51,7 @@ const AssetEmbedList = ({ assignation }) => {
             isCreationPreview={false}
             isEmbeddedList={true}
             variant={'embedded'}
+            assetsLoading={store.isAssetsLoading}
           />
         ))}
     </Box>
@@ -61,17 +66,3 @@ AssetEmbedList.defaultProps = {
 };
 
 export { AssetEmbedList };
-/*
-  {
-          <CardWrapper
-          {...asset}
-          isEmbedded={true}
-          key={asset.id}
-          category={
-            store.categories.find((category) => category.id === asset.category) || {
-              key: 'media-file',
-            }
-          }
-        /> 
-      }
-*/

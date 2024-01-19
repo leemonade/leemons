@@ -161,6 +161,7 @@ const CardWrapper = ({
           cover: getCoverUrl(asset.cover || asset.file),
         }}
         menuItems={menuItems}
+        category={category}
         variant={variant}
         className={classes.root}
         embedded={isEmbedded}

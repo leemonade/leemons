@@ -20,7 +20,7 @@ import {
 import { AssetPlayer } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
 import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
@@ -36,9 +36,11 @@ const LibraryCardEmbed = ({
   labels,
   onDownload,
   actionIcon,
+  category,
   ...props
 }) => {
   const { ref: rootRef } = useElementSize();
+  const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -48,14 +50,27 @@ const LibraryCardEmbed = ({
     { showPlayer, fullScreenMode, color, variant, fileType },
     { name: 'LibraryCardEmbed' }
   );
-
+  const openInNewTab = (assetId) => {
+    const isFile = variant === 'file';
+    const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
+    if (isBookmark) {
+      window.open(url);
+      return;
+    }
+    if (isFile) {
+      history.push(url);
+      return;
+    }
+    window.open(`/protected/leebrary/player/${assetId}`, '_blank', 'noopener,noreferrer');
+  };
   const renderVariantButton = () => {
-    // const isMedia = variant === 'media';
-    const isMedia = true;
-    const isBookmark = ['bookmark', 'url'].includes(fileType) || variant === 'bookmark';
+    const isMedia = category.key === 'media-files';
+    const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
     const isVideo = fileType === 'video';
     const isAudio = fileType === 'audio';
     const isImage = fileType === 'image';
+    const isFile = fileType === 'file';
+    const isContentCreator = category?.key === 'assignables.content-creator';
 
     if (actionIcon) {
       return <Box style={{ marginBlock: 4 }}>{actionIcon}</Box>;
@@ -63,12 +78,34 @@ const LibraryCardEmbed = ({
     if (isImage) {
       return (
         <Box className={classes.fileTypeButtonContainer}>
-          <SearchPlusIcon height={18} width={18} color={'#0C1F22'} />
+          <SearchPlusIcon height={22} width={22} color={'#0C1F22'} />
+        </Box>
+      );
+    }
+    if (isBookmark || isContentCreator) {
+      return (
+        <Box className={classes.fileTypeButtonContainer}>
+          <OpenIcon height={18} width={18} color={'#0C1F22'} />
         </Box>
       );
     }
     if (isMedia) {
-      if (!isVideo && !isAudio) {
+      if (!isVideo && !isAudio && !isBookmark && !isFile && !isContentCreator) {
+        return (
+          <Box className={classes.fileTypeButtonContainer}>
+            <DownloadIcon height={18} width={18} color={'#0C1F22'} />
+          </Box>
+        );
+      }
+
+      if (isFile) {
+        if (asset?.fileExtension === 'pdf') {
+          return (
+            <Box className={classes.fileTypeButtonContainer}>
+              <OpenIcon height={18} width={18} color={'#0C1F22'} />
+            </Box>
+          );
+        }
         return (
           <Box className={classes.fileTypeButtonContainer}>
             <DownloadIcon height={18} width={18} color={'#0C1F22'} />
@@ -94,15 +131,10 @@ const LibraryCardEmbed = ({
         </Box>
       );
     }
-    if (isBookmark) {
-      return (
-        <Box className={classes.fileTypeButtonContainer} onClick={() => window.open(url)}>
-          <OpenIcon height={18} width={18} color={'#0C1F22'} />
-        </Box>
-      );
-    }
+
     return (
       <Box className={classes.fileTypeButtonContainer}>
+        hello
         <DownloadIcon height={18} width={18} color={'#0C1F22'} />
       </Box>
     );
@@ -113,60 +145,57 @@ const LibraryCardEmbed = ({
       setFullScreenMode(!!document.fullscreenElement);
     });
   }, []);
-  // console.log(fileType);
+
   const MemoizedEmptyCover = useMemo(
     () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} />,
     [icon, variantIcon, fileType]
   );
-
   return (
-    <Link to={url} style={{ textDecoration: 'none' }}>
-      <Box ref={rootRef} className={classes.root}>
-        {!showPlayer ? (
-          <Stack className={classes.cardWrapper} justifyContent="space-between" fullWidth>
-            <Box
-              style={{
-                width: image || cover ? 72 : 'auto',
-                display: 'flex',
-                justifyContent: 'center',
-                padding: '4px 8px',
-                marginLeft: '8px',
-              }}
-            >
-              {image || cover ? (
-                <ImageLoader
-                  src={image || cover}
-                  width={72}
-                  height={58}
-                  radius={4}
-                  imageStyles={classes.imageStyles}
-                />
-              ) : (
-                <Box className={classes.imagePlaceholder}>{MemoizedEmptyCover}</Box>
-              )}
-            </Box>
-            <Box
-              className={classes.content}
-              style={{ width: image || cover ? `calc(100% - ${COVER_WIDTH}px)` : '100%' }}
-            >
-              <Box className={classes.header}>
-                <TextClamp lines={1}>
-                  <Text size="md" className={classes.title}>
-                    {title || name}
-                  </Text>
-                </TextClamp>
-                <Text className={classes.description}>
-                  {`${t('lastUpdate')}: ${new Date(updatedAt).toLocaleDateString()}`}
+    <Box ref={rootRef} className={classes.root} onClick={() => openInNewTab(asset?.id)}>
+      {!showPlayer ? (
+        <Stack className={classes.cardWrapper} justifyContent="space-between" fullWidth>
+          <Box
+            style={{
+              width: 72,
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '4px 8px',
+              marginLeft: '8px',
+            }}
+          >
+            {image || cover ? (
+              <ImageLoader
+                src={image || cover}
+                width={72}
+                height={58}
+                radius={4}
+                imageStyles={classes.imageStyles}
+              />
+            ) : (
+              <Box className={classes.imagePlaceholder}>{MemoizedEmptyCover}</Box>
+            )}
+          </Box>
+          <Box
+            className={classes.content}
+            style={{ width: image || cover ? `calc(100% - ${COVER_WIDTH}px)` : '100%' }}
+          >
+            <Box className={classes.header}>
+              <TextClamp lines={1}>
+                <Text size="md" className={classes.title}>
+                  {title || name}
                 </Text>
-              </Box>
+              </TextClamp>
+              <Text className={classes.description}>
+                {`${t('lastUpdate')}: ${new Date(updatedAt).toLocaleDateString()}`}
+              </Text>
             </Box>
-            {renderVariantButton()}
-          </Stack>
-        ) : (
-          <AssetPlayer asset={asset} playing={isPlaying} controlBar framed />
-        )}
-      </Box>
-    </Link>
+          </Box>
+          {renderVariantButton()}
+        </Stack>
+      ) : (
+        <AssetPlayer asset={asset} playing={isPlaying} controlBar framed />
+      )}
+    </Box>
   );
 };
 
