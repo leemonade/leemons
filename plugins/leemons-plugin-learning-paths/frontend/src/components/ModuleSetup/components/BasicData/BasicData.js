@@ -8,12 +8,12 @@ import {
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { noop } from 'lodash';
 import { fireEvent } from 'leemons-hooks';
 import { useForm, useWatch } from 'react-hook-form';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import { AssetFormInput } from '@leebrary/components';
 import addAction from '../../helpers/addAction';
-import { noop } from 'lodash';
 
 const advancedConfig = {
   alwaysOpen: true,

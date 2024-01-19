@@ -34,7 +34,7 @@ import { updateStatus } from '@scorm/request/assignation';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { useLocale } from '@common';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import { useLayout } from '@layout/context';
 import { isEmpty, isEqual } from 'lodash';

@@ -164,15 +164,6 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      if (process.env.NODE_ENV !== 'production') {
-        if (!_.isArray(ctx.params.students)) {
-          ctx.params.teachers = [];
-        }
-        ctx.params.teachers.push({
-          teacher: ctx.meta.userSession.userAgents[0].id,
-          type: 'teacher',
-        });
-      }
       const classes = await addTeachersClassesUnderNodeTree({
         nodeTypes: ctx.params.nodeTypes,
         nodeType: ctx.params.nodeType,

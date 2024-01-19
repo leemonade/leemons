@@ -42,6 +42,7 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
       overflowY: 'auto',
       paddingLeft: globalTheme.spacing.padding.xlg,
       paddingRight: globalTheme.spacing.padding.xlg,
+      height: '100%',
     },
   };
 });
@@ -77,7 +78,7 @@ export function AssetPickerDrawer({
   onlyImages,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
-  const { classes } = useAssetPickerDrawerStyles();
+  const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
 
   return (
     <Drawer

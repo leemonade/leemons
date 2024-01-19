@@ -25,8 +25,8 @@ const menuItems = [
       iconSvg: '/public/content-creator/menu-icon-active.svg',
       activeIconSvg: '/public/content-creator/menu-icon-active.svg',
       label: {
-        en: 'Content creator',
-        es: 'Creador de contenidos',
+        en: 'Documents',
+        es: 'Documentos',
       },
     },
     permissions: [
@@ -97,8 +97,8 @@ const assignableRoles = [
           iconSvg: '/public/content-creator/menu-icon-active.svg',
           activeIconSvg: '/public/content-creator/menu-icon-active.svg',
           label: {
-            en: 'Content creator',
-            es: 'Creador de contenidos',
+            en: 'Documents',
+            es: 'Documentos',
           },
         },
         permissions: [

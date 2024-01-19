@@ -12,7 +12,7 @@ export function SubjectPicker({
   assignable,
   localizations,
   value,
-  onChange,
+  onChange = noop,
   onChangeRaw = noop,
   error,
   hideSectionHeaders,
@@ -51,8 +51,8 @@ export function SubjectPicker({
     return false;
   }, [onlyOneSubject, selectedSubjects]);
 
-  const onSubmit = ({ selectedSubjects, ...newSubject }) => {
-    const newSelectedSubjects = [newSubject?.subject, ...selectedSubjects];
+  const onSubmit = ({ selectedSubjects: data, ...newSubject }) => {
+    const newSelectedSubjects = [newSubject?.subject, ...data];
     form.setValue('selectedSubjects', uniq(newSelectedSubjects));
     onChange(newSelectedSubjects);
 
@@ -131,7 +131,12 @@ export function SubjectPicker({
           data={selectedSubjects.map((subject) => ({
             ...subject,
             course: subject?.course ?? '-',
-            action: <ActionButton icon={<DeleteBinIcon />} onClick={() => onRemove(subject)} />,
+            action: (
+              <ActionButton
+                icon={<DeleteBinIcon width={18} height={18} />}
+                onClick={() => onRemove(subject)}
+              />
+            ),
           }))}
           columns={[
             {

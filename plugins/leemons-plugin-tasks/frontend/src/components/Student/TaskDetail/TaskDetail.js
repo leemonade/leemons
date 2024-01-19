@@ -1,20 +1,19 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
-import { unflatten, useLocale } from '@common';
+import { unflatten } from '@common';
 import _, { map } from 'lodash';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { Loader } from '@bubbles-ui/components';
-// TODO: import from @feedback plugin maybe?
-import { ActivityContainer } from '@assignables/components/ActivityContainer';
+import { Loader, TotalLayoutContainer } from '@bubbles-ui/components';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
-import Steps from './components/Steps';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import StepContainer from './components/StepContainer/StepContainer';
 
 function useTaskDetailLocalizations() {
   const [, translations] = useTranslateLoader([
@@ -121,14 +120,12 @@ function useTaskPreviewData({ id, localizations }) {
 }
 
 export default function TaskDetail({ id, student, preview }) {
+  const scrollRef = useRef();
   const localizations = useTaskDetailLocalizations();
-  const locale = useLocale();
-
-  const [isFirstStep, setIsFirstStep] = React.useState(true);
 
   const useData = useMemo(() => (preview ? useTaskPreviewData : useTaskData), [preview]);
 
-  const { assignation, instance, classData, asset, coverUrl, isLoading } = useData({
+  const { assignation, instance, isLoading } = useData({
     id,
     user: student,
     localizations,
@@ -139,32 +136,18 @@ export default function TaskDetail({ id, student, preview }) {
   }
 
   return (
-    <ActivityContainer
-      header={{
-        title: asset?.name,
-        subtitle: classData?.name,
-        icon: classData?.icon,
-        color: classData?.color,
-        image: coverUrl,
-      }}
-      deadline={
-        instance?.dates?.deadline && {
-          label: localizations?.activityContainer?.deadline?.label,
-          deadline:
-            instance?.dates?.deadline instanceof Date
-              ? instance?.dates?.deadline
-              : new Date(instance?.dates?.deadline),
-          locale,
-        }
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <ActivityHeader instance={instance} showClass showDeadline showEvaluationType showRole />
       }
-      collapsed={!isFirstStep}
     >
-      <Steps
+      <StepContainer
+        scrollRef={scrollRef}
         preview={preview || assignation?.timestamps?.end}
         assignation={assignation}
-        localizations={localizations}
-        setIsFirstStep={setIsFirstStep}
+        instance={instance}
       />
-    </ActivityContainer>
+    </TotalLayoutContainer>
   );
 }

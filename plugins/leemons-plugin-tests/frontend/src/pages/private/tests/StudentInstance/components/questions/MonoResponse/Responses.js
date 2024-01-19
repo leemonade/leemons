@@ -81,9 +81,11 @@ export default function Responses(props) {
       if (response.isCorrectResponse) {
         iconToShow = '/public/tests/question-done.svg';
         classContainer = cx(classContainer, styles.questionResponseImageContainerDone);
+        classExplanation = cx(classExplanation, styles.textExplanationWhite);
       } else if (index === currentResponseIndex) {
         iconToShow = '/public/tests/question-wrong.svg';
         classContainer = cx(classContainer, styles.questionResponseImageContainerWrong);
+        classExplanation = cx(classExplanation, styles.textExplanationWhite);
       } else {
         classContainer = cx(classContainer, styles.questionResponseRemovePadding);
         classExplanation = cx(classExplanation, styles.textExplanationRemovePadding);
@@ -132,9 +134,11 @@ export default function Responses(props) {
               }
             >
               <LeebraryImage className={styles.questionResponseImage} src={response.image} />
-              <Box className={styles.questionResponseNumberImage}>
-                {numberToEncodedLetter(index + 1)}
-              </Box>
+              {store.viewMode ? null : (
+                <Box className={styles.questionResponseNumberImage}>
+                  {numberToEncodedLetter(index + 1)}
+                </Box>
+              )}
             </Box>
             <Box
               className={
@@ -143,20 +147,14 @@ export default function Responses(props) {
                   : styles.questionResponseImageTextContent
               }
             >
-              {response.imageDescription ? (
+              {response.imageDescription || store.viewMode ? (
                 <Text color="primary" role="productive" size="md">
+                  {store.viewMode ? `${numberToEncodedLetter(index + 1)}. ` : null}
                   {response.imageDescription}
                 </Text>
               ) : null}
               {explanation ? (
-                <Box className={classExplanation}>
-                  <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
-                    <Text role="productive" size="xs" color="primary">
-                      {response.isCorrectResponse
-                        ? t('correctResponse').toUpperCase()
-                        : t('explanation').toUpperCase()}
-                    </Text>
-                  </Box>
+                <Box sx={(theme) => ({ marginTop: theme.spacing[2] })} className={classExplanation}>
                   <HtmlText>{explanation}</HtmlText>
                 </Box>
               ) : null}
@@ -165,26 +163,36 @@ export default function Responses(props) {
         ) : (
           <Box>
             <Stack fullWidth alignItems="center">
-              <Radio
-                checked={
-                  index === currentResponseIndex || (store.viewMode && response.isCorrectResponse)
-                }
-                noRootPadding
-              />
-              <Box className={styles.questionResponseNumber}>
-                {numberToEncodedLetter(index + 1)}
+              {!store.viewMode ? (
+                <Radio
+                  checked={
+                    index === currentResponseIndex || (store.viewMode && response.isCorrectResponse)
+                  }
+                  noRootPadding
+                />
+              ) : null}
+
+              {!store.viewMode ? (
+                <Box
+                  sx={(theme) => ({ marginLeft: store.viewMode ? 0 : theme.spacing[4] })}
+                  className={styles.questionResponseNumber}
+                >
+                  {numberToEncodedLetter(index + 1)}
+                </Box>
+              ) : null}
+
+              <Box
+                sx={(theme) => ({
+                  paddingLeft: theme.spacing[1],
+                  paddingTop: store.viewMode ? theme.spacing[1] : 0,
+                })}
+              >
+                {store.viewMode ? `${numberToEncodedLetter(index + 1)}. ` : null}
+                {response.response}
               </Box>
-              <Box sx={(theme) => ({ paddingLeft: theme.spacing[1] })}>{response.response}</Box>
             </Stack>
             {explanation ? (
               <Box className={classExplanation}>
-                <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
-                  <Text role="productive" size="xs" color="primary">
-                    {response.isCorrectResponse
-                      ? t('correctResponse').toUpperCase()
-                      : t('explanation').toUpperCase()}
-                  </Text>
-                </Box>
                 <HtmlText>{explanation}</HtmlText>
               </Box>
             ) : null}

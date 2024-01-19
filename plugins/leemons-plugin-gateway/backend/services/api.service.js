@@ -31,7 +31,17 @@ module.exports = {
   name: 'gateway',
   mixins: [
     ApiGateway,
-    LeemonsDeploymentManagerMixin({ checkIfCanCallMe: false, getDeploymentIdInCall: true }),
+    LeemonsDeploymentManagerMixin({
+      checkIfCanCallMe: false,
+      getDeploymentIdInCall: true,
+      dontGetDeploymentIDOnActionCall: [
+        'deployment-manager.reloadAllDeploymentsRest',
+        'deployment-manager.addManualDeploymentRest',
+        'gateway.dropDBRest',
+        'v1.client-manager.protected.newFreemiumClient',
+        'v1.client-manager.protected.isSubdomainInUse',
+      ],
+    }),
   ],
 
   actions: {

@@ -81,6 +81,7 @@ function AssetList({
   pageSize,
   pageSizes,
   published,
+  activeStatus,
   onSearch,
   pinned,
   paperProps,
@@ -94,7 +95,6 @@ function AssetList({
   filterComponents,
   allowStatusChange,
   allowCategoryFilter,
-  assetStatus,
   onStatusChange = () => {},
   onSelectItem = () => {},
   onEditItem = () => {},
@@ -748,7 +748,7 @@ function AssetList({
           </Box>
         ),
       }));
-    return [{ label: 'Todos los tipos', value: 'all' }, ...filteredCategories];
+    return [{ label: t('labels.allResourceTypes'), value: 'all' }, ...filteredCategories];
   }, [allowCategoryFilter, store.categories]);
 
   // ·········································································
@@ -812,19 +812,6 @@ function AssetList({
                   skipFlex
                 />
               )}
-              {allowStatusChange && (
-                <Select
-                  data={[
-                    { label: t('labels.assetStatusPublished'), value: 'published' },
-                    { label: t('labels.assetStatusDraft'), value: 'draft' },
-                  ]}
-                  onChange={onStatusChange}
-                  value={assetStatus}
-                  placeholder={t('labels.assetState')}
-                  disabled={store.loading}
-                  skipFlex
-                />
-              )}
               {multiCategorySections.includes(categoryProp?.key) &&
                 categoryProp.key !== 'leebrary-shared' && (
                   <Select
@@ -836,6 +823,20 @@ function AssetList({
                     skipFlex
                   />
                 )}
+              {allowStatusChange && (
+                <Select
+                  data={[
+                    { label: t('labels.assetStatusAll'), value: 'all' },
+                    { label: t('labels.assetStatusPublished'), value: 'published' },
+                    { label: t('labels.assetStatusDraft'), value: 'draft' },
+                  ]}
+                  onChange={onStatusChange}
+                  value={activeStatus}
+                  placeholder={t('labels.assetStatus')}
+                  disabled={store.loading}
+                  skipFlex
+                />
+              )}
             </Stack>
             {canChangeLayout && (
               <Box skipFlex>
@@ -994,13 +995,12 @@ AssetList.defaultProps = {
   canChangeType: true,
   canSearch: true,
   variant: 'full',
-  published: true,
+  published: 'published',
   showPublic: false,
   pinned: false,
   preferCurrent: true,
   canShowPublicToggle: true,
   paperProps: { color: 'none', shadow: 'none', padding: 0 },
-  allowCategoryChange: false,
   allowStatusChange: false,
 };
 AssetList.propTypes = {
@@ -1026,7 +1026,8 @@ AssetList.propTypes = {
   page: PropTypes.number,
   pageSize: PropTypes.number,
   pageSizes: PropTypes.array,
-  published: PropTypes.bool,
+  published: PropTypes.string,
+  activeStatus: PropTypes.string,
   pinned: PropTypes.bool,
   canShowPublicToggle: PropTypes.bool,
   paperProps: PropTypes.object,
@@ -1042,7 +1043,6 @@ AssetList.propTypes = {
   filters: PropTypes.any,
   filterComponents: PropTypes.any,
   allowStatusChange: PropTypes.bool,
-  assetStatus: PropTypes.string,
   onStatusChange: PropTypes.func,
   allowCategoryFilter: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
 };

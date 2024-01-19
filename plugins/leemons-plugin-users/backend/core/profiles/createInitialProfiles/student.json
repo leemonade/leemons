@@ -2,111 +2,83 @@
   "permissions": [
     {
       "permissionName": "users.users",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "users.user-data",
-      "actionNames": [
-        "admin"
-      ]
+      "actionNames": ["admin"]
     },
     {
       "permissionName": "users.centers",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "dataset.dataset",
-      "actionNames": [
-        "create"
-      ]
+      "actionNames": ["create"]
     },
     {
       "permissionName": "calendar.calendar",
-      "actionNames": [
-        "admin"
-      ]
+      "actionNames": ["admin"]
     },
     {
       "permissionName": "timetable.config",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "timetable.timetable",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "curriculum.curriculum",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "leebrary.library",
-      "actionNames": [
-        "update"
-      ]
+      "actionNames": ["update"]
     },
     {
       "permissionName": "grades.rules",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "grades.evaluations",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "grades.promotions",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "grades.dependencies",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "tests.tests",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "tests.questionsBanks",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "assignables.activities",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "assignables.ongoing",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
     },
     {
       "permissionName": "assignables.history",
-      "actionNames": [
-        "view"
-      ]
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "content-creator.creator",
+      "actionNames": ["view", "update", "create", "delete"]
+    },
+    {
+      "permissionName": "calendar.menu.kanban",
+      "actionNames": ["view"]
     }
   ],
   "name": "Estudiante",

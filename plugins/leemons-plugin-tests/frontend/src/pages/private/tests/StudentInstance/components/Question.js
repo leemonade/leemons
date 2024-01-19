@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box,
   Button,
+  ProgressBottomBar,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
@@ -75,10 +76,15 @@ export default function Question(props) {
 
   return (
     <TotalLayoutStepContainer
-      stepName={t('questions')}
+      fullWidth={!!store.viewMode}
+      noMargin={!!store.viewMode}
+      hasFooter={!!store.viewMode}
+      footerPadding={store.viewMode ? 0 : undefined}
+      stepName={store.viewMode ? '' : t('questions')}
       Footer={
         <TotalLayoutFooterContainer
-          fixed
+          fixed={!store.viewMode}
+          showFooterBorder={store.viewMode}
           scrollRef={props.scrollRef}
           rightZone={
             <>
@@ -89,7 +95,10 @@ export default function Question(props) {
                   rightIcon={<ChevRightIcon />}
                   rounded
                   compact
-                  onClick={props.nextStep}
+                  onClick={() => {
+                    if (!store.viewMode) props.saveQuestion();
+                    props.nextStep();
+                  }}
                   disabled={disableNext}
                 >
                   {store.embedded ? t('nextButton') : nextLabel || t('next')}
@@ -106,7 +115,17 @@ export default function Question(props) {
               ) : null}
             </>
           }
-        />
+        >
+          <Box sx={() => ({ display: 'flex', justifyContent: 'center' })}>
+            <Box sx={() => ({ maxWidth: '280px', width: '100%' })}>
+              <ProgressBottomBar
+                size="md"
+                labelTop={`${index + 1} / ${store.questions.length}`}
+                value={((index + 1) / store.questions.length) * 100}
+              />
+            </Box>
+          </Box>
+        </TotalLayoutFooterContainer>
       }
     >
       <Box className={className}>
@@ -126,6 +145,7 @@ Question.propTypes = {
   prevStep: PropTypes.func,
   nextStep: PropTypes.func,
   isFirstStep: PropTypes.bool,
+  saveQuestion: PropTypes.func,
   question: PropTypes.any,
   render: PropTypes.func,
   index: PropTypes.number,

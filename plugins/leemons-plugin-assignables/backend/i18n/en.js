@@ -271,7 +271,7 @@ module.exports = {
     late: 'Late',
     completed: 'Completed',
     ongoing: 'Ongoing',
-    opened: 'Opened',
+    opened: 'Open',
     notOpened: 'Not opened',
     assigned: 'Scheduled',
     notStarted: 'Not started',
@@ -283,6 +283,7 @@ module.exports = {
     notSubmitted: 'Not submitted',
     noLimit: 'No time limit',
     blocked: 'Blocked',
+    archived: 'Archived',
   },
   teacher_actions: {
     sendReminder: 'Send reminder',

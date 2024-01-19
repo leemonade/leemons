@@ -22,7 +22,7 @@ import useAssignations from '@assignables/hooks/assignations/useAssignationsQuer
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';

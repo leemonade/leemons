@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Box, ImageLoader, TotalLayoutHeader } from '@bubbles-ui/components';
+import { Box, ImageLoader, TotalLayoutHeader, Stack } from '@bubbles-ui/components';
+
 import { FormProvider, useForm } from 'react-hook-form';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
@@ -8,8 +9,9 @@ import CalificationTypeDisplay from './components/CalificationTypeDisplay/Califi
 import DateComponent from './components/Date/Date';
 import Timer from './components/Timer/Timer';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import useTotalLayoutStyles from './TotalLayout.style';
+import useTotalLayoutStyles from './index.style';
 import CloseButtons from './components/CloseButtons/CloseButtons';
+import StatusBadge from './components/StatusBadge/StatusBadge';
 import {
   ACTIVIY_HEADER_PROP_TYPES,
   ACTIVIY_HEADER_DEFAULT_PROPS,
@@ -51,7 +53,12 @@ export default function ActivityHeader({
   */
   const title = useMemo(() => {
     if (action) {
-      return action;
+      return (
+        <Stack alignItems="center" spacing={4} sx={{ font: 'inherit' }}>
+          <span>{action}</span>
+          <StatusBadge instance={instance} />
+        </Stack>
+      );
     }
 
     if (isModuleActivity) {
@@ -59,7 +66,14 @@ export default function ActivityHeader({
     }
 
     return assignable?.asset?.name;
-  }, [action, assignable?.asset?.name, data?.assignable?.asset?.name, isModuleActivity]);
+  }, [
+    action,
+    assignable?.asset?.name,
+    data?.assignable?.asset?.name,
+    isModuleActivity,
+    instance?.dates,
+    instance?.alwaysAvailable,
+  ]);
 
   const subtitle = useMemo(() => {
     if (action || isModuleActivity) {

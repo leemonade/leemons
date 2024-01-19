@@ -10,19 +10,25 @@ export default function OpenResponse(props) {
 
   const renderQuestions = () => {
     const { withImages } = question.properties;
-    const questions = question.properties.responses.map(({ value }, index) => {
+    return question.properties.responses.map(({ value }, index) => {
       const responseValue = withImages ? value.imageDescription : value.response;
       const isLast = index === question.properties.responses.length - 1;
 
       return (
-        <Box key={index} className={classes.question} style={{ marginBottom: !isLast && 40 }}>
+        <Box key={index} className={classes.question} style={{ marginBottom: !isLast && 12 }}>
           {withImages && <LeebraryImage src={value.image.id} className={classes.questionImage} />}
           <Box style={{ width: '100%' }}>
             <Stack fullWidth alignItems="flex-end" skipFlex>
               <Text role="productive" color="primary" style={{ display: 'block', flex: 1 }}>
                 {responseValue}
               </Text>
-              <Stack skipFlex spacing={6} alignItems="flex-end">
+              <Stack
+                skipFlex
+                spacing={6}
+                alignItems="flex-end"
+                justifyContent="space-between"
+                style={{ width: 109 }}
+              >
                 <Text color="quartiary">{responses.value?.[index] || 0} resp.</Text>
                 <Text color="quartiary" size="md" strong>
                   {Math.trunc(responses.percentages?.[index] || 0)}%
@@ -42,7 +48,6 @@ export default function OpenResponse(props) {
         </Box>
       );
     });
-    return questions;
   };
 
   return (

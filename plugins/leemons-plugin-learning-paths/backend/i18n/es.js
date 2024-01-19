@@ -34,7 +34,7 @@ module.exports = {
       publishAndShare: 'Publicar y compartir',
 
       tooltips: {
-        disabledNotResources: 'Añade dos o más actividades para publicar',
+        disabledNotActivities: 'Añade dos o más actividades para continuar',
       },
     },
     steps: {
@@ -53,11 +53,12 @@ module.exports = {
           new: 'Nuevo recurso',
         },
         emptyState: {
-          title: '¡Empecemos a crear!',
+          title: 'Recursos adicionales de aprendizaje',
           description:
-            'Añade recursos de la biblioteca y ordénalos según desees que le aparezcan al estudiante.',
+            'Puedes seleccionar recursos adicionales para profundizar en la materia (opcional)',
         },
         moduleComposer: {
+          title: 'Recursos adicionales de aprendizaje',
           columns: {
             resource: 'Recurso',
             actions: 'Acciones',
@@ -75,11 +76,12 @@ module.exports = {
           new: 'Nueva actividad',
         },
         emptyState: {
-          title: '¡Empecemos a crear!',
+          title: 'Listado de actividades',
           description:
-            'Añade actividades a la biblioteca y ordénalas según desees que le aparezcan al estudiante.',
+            'Selecciona actividades de tu biblioteca para crear un itinerario personalizado.',
         },
         moduleComposer: {
+          title: 'Listado de actividades',
           columns: {
             resource: 'Actividad',
             type: 'Tipo',

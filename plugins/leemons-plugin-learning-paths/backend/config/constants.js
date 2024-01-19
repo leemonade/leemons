@@ -29,7 +29,7 @@ const menuItems = [
       iconSvg: '/public/learning-paths/menu-icon.svg',
       activeIconSvg: '/public/learning-paths/menu-icon.svg',
       label: {
-        es: 'Recorridos educativos',
+        es: 'Itinerarios de aprendizaje',
         en: 'Learning paths',
       },
     },

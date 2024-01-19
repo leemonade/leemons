@@ -8,6 +8,12 @@ export const useDateStyles = createStyles((theme) => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+      gap: globalTheme.spacing.gap.sm,
+    },
+    dates: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
       '> *': {
         '&:not(:last-child)': {
           borderRight: '1px solid #DDE1E6',

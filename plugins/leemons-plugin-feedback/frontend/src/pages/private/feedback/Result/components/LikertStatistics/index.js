@@ -1,33 +1,33 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
-import NSPStatisticsStyles from '@feedback/pages/private/feedback/Result/components/NPSStatistics/styles';
 import { Badge, Box, Col, Grid, Text } from '@bubbles-ui/components';
 import { PointBar } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/PointBar';
 
-function LikertStatistics({ question, responses, t }) {
-  const { classes, cx } = NSPStatisticsStyles();
-  const columns = [...new Array(question.properties.maxLabels).keys()];
+import LikertStatisticsStyles from './styles';
 
-  const averageColor = React.useMemo(() => {
-    const mid = (question.properties.maxLabels + 1) / 2;
-    if (responses.avg < mid - 0.5) return 'error';
-    if (responses.avg > mid + 0.5) return 'success';
-    return 'warning';
-  }, [question.properties.maxLabels, responses.avg]);
+function LikertStatistics({ question, responses, t }) {
+  const { classes, cx } = LikertStatisticsStyles();
+  const columns = [...new Array(question.properties.maxLabels).keys()];
 
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
-        <Text role="productive" stronger size="sm" color="primary">
+        <Text
+          sx={(theme) => ({
+            ...theme.other.global.content.typo.heading['xsm--semiBold'],
+            fontSize: '12px',
+            lineHeight: '16px',
+          })}
+        >
           {t('responses', { n: responses.totalValues || 0 })}
         </Text>
-        <Badge color="stroke" size="lg" closable={false}>
-          <Text size="md" color="primary">
-            {t('average')}
+        <Badge size="xs" closable={false} className={classes.badge}>
+          <Text size="xs" className={classes.badgeText}>
+            {t('average').toUpperCase()}
           </Text>
           &nbsp;
-          <Text size="md" color={averageColor}>
+          <Text size="xs" className={classes.badgeText}>
             {responses.avg
               ? responses.avg % 1 === 0
                 ? responses.avg
@@ -36,7 +36,7 @@ function LikertStatistics({ question, responses, t }) {
           </Text>
         </Badge>
       </Box>
-      <Box className={classes.content}>
+      <Box>
         <Grid gutter={16} columns={question.properties.maxLabels}>
           {columns.map((index) => (
             <Col key={index} span={1}>
@@ -45,15 +45,15 @@ function LikertStatistics({ question, responses, t }) {
                 cx={cx}
                 percentage={Math.trunc(responses.percentages?.[index] || 0)}
                 bottomText={index + 1}
-                total={responses.value?.[index] || 0}
-                label={question.properties[`likertLabel${index}`]}
-                color={
-                  index + 1 < (question.properties.maxLabels + 1) / 2
-                    ? 'fatic01'
-                    : index + 1 > (question.properties.maxLabels + 1) / 2
-                    ? 'fatic02'
-                    : 'fatic03'
-                }
+                // label={question.properties[`likertLabel${index}`]}
+                // color={
+                //   index + 1 < (question.properties.maxLabels + 1) / 2
+                //     ? 'fatic01'
+                //     : index + 1 > (question.properties.maxLabels + 1) / 2
+                //     ? 'fatic02'
+                //     : 'fatic03'
+                // }
+                colorFullToken="theme.other.global.border.color.positive.muted"
               />
             </Col>
           ))}

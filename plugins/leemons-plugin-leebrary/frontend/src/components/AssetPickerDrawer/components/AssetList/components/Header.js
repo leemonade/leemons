@@ -6,7 +6,7 @@ import { isArray, keyBy, map, pick, sortBy } from 'lodash';
 
 export const useHeaderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
-  
+
   return {
     root: {
       position: 'sticky',
@@ -14,9 +14,6 @@ export const useHeaderStyles = createStyles((theme) => {
       display: 'flex',
       flexDirection: 'row',
       gap: globalTheme.spacing.padding.md,
-      '& *': {
-        flexGrow: 1,
-      },
       paddingTop: globalTheme.spacing.padding.lg,
       paddingBottom: globalTheme.spacing.padding.md,
       backgroundColor: theme.other.core.color.neutral['50'],
@@ -63,7 +60,7 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
 
   useEffect(() => onChange?.({ category, search }), [category, search]);
 
-  const { classes } = useHeaderStyles({}, { name: 'AssetListHeader' });
+  const { classes } = useHeaderStyles({}, { name: 'AssetList-Header' });
 
   return (
     <Box className={classes.root}>
@@ -77,12 +74,14 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
           onChange={setCategory}
         />
       )}
-      <SearchInput
-        placeholder={localizations?.search?.placeholder}
-        label={localizations?.search?.label}
-        value={search}
-        onChange={(newSearch) => setSearch(newSearch)}
-      />
+      <Box style={{ flexGrow: 1 }}>
+        <SearchInput
+          placeholder={localizations?.search?.placeholder}
+          label={localizations?.search?.label}
+          value={search}
+          onChange={(newSearch) => setSearch(newSearch)}
+        />
+      </Box>
     </Box>
   );
 }

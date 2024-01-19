@@ -1,4 +1,4 @@
-const { flattenDeep, forEach, findIndex, escapeRegExp } = require('lodash');
+const { uniqBy, flattenDeep, forEach, findIndex, escapeRegExp } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
 const getRolePermissions = require('../helpers/getRolePermissions');
@@ -105,7 +105,7 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
       }
     });
 
-    return results;
+    return uniqBy(results, 'asset');
   } catch (e) {
     ctx.logger.error(e);
     throw new LeemonsError(ctx, {

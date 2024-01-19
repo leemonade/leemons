@@ -424,7 +424,7 @@ module.exports = {
     undefined: 'Undefined',
     question: 'Question',
     result: 'Result',
-    showInTests: 'Show in the tests',
+    showInTests: 'Detail of responses',
     feedbackForStudent: 'Feedback for student',
     sendFeedback: 'Send feedback',
     feedbackRequired: 'Feedback required',
@@ -436,5 +436,9 @@ module.exports = {
     chatTeacherDescription: 'Would you like to write a comment?',
     chatButtonStudent: 'Write to your student',
     chatButtonTeacher: 'Write to your teacher',
+    student: 'Student',
+    responses: 'Responses',
+    saveAndSendFeedback: 'Save and send feedback',
+    returnToTable: 'Return to table',
   },
 };

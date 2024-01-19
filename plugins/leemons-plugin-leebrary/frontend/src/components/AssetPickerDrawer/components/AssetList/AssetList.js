@@ -10,14 +10,19 @@ export const useAssetListStyles = createStyles((theme) => {
   return {
     root: {
       display: 'flex',
+      flex: 1,
       flexDirection: 'column',
       // gap: globalTheme.spacing.gap.xlg,
-      minHeight: '100%',
+      height: '100%',
+      width: '100%',
       zIndex: 0,
     },
     list: {
       zIndex: 0,
-      minHeight: '100%',
+      display: 'flex',
+      flex: 1,
+      height: '100%',
+      width: '100%',
     },
   };
 });

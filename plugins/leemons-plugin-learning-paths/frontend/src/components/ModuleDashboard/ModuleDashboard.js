@@ -20,7 +20,7 @@ import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@learning-paths/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/components/Steps/Steps';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { DashboardCard } from './components/DashboardCard';

@@ -312,6 +312,7 @@ module.exports = {
       assetStatus: 'State',
       assetStatusPublished: 'Published',
       assetStatusDraft: 'Draft',
+      assetStatusAll: 'All statuses',
     },
     cardToolbar: {
       edit: 'Edit',
