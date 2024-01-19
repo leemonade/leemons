@@ -11,9 +11,13 @@ import {
 import ActivityHeader from '@assignables/components/ActivityHeader/index';
 import { sortBy } from 'lodash';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN } from '@tasks/helpers';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { Introduction } from './steps/Introduction';
 
 const ModuleJourney = () => {
+  const [t] = useTranslateLoader([prefixPN('task_realization.buttons')]);
   const isTeacher = useIsTeacher();
   const { id } = useParams();
   const scrollRef = useRef();
@@ -55,7 +59,7 @@ const ModuleJourney = () => {
               scrollRef={scrollRef}
               rightZone={
                 <Link to={handleButtonUrl()}>
-                  <Button>TODO: Siguiente actividad</Button>
+                  <Button rightIcon={<ChevRightIcon />}>{t('nextActivity')}</Button>
                 </Link>
               }
               fixed
