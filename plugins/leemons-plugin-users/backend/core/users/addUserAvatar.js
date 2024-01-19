@@ -7,15 +7,23 @@ async function addUserAvatar({ user, avatar, ctx }) {
   if (avatar) assetData.cover = avatar;
   let asset;
   if (user.avatarAsset) {
-    asset = await ctx.tx.call('leebrary.assets.update', {
-      data: { ...assetData, id: user.avatarAsset },
-      published: true,
-    });
+    asset = await ctx.tx.call(
+      'leebrary.assets.update',
+      {
+        data: { ...assetData, id: user.avatarAsset },
+        published: true,
+      },
+      { meta: { ...ctx.meta, userSession: { ...user } } }
+    );
   } else {
-    asset = await ctx.tx.call('leebrary.assets.add', {
-      asset: assetData,
-      published: true,
-    });
+    asset = await ctx.tx.call(
+      'leebrary.assets.add',
+      {
+        asset: assetData,
+        published: true,
+      },
+      { meta: { ...ctx.meta, userSession: { ...user } } }
+    );
   }
 
   const coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: asset.id });

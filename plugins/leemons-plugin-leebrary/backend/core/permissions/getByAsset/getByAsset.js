@@ -17,25 +17,26 @@ async function getByAsset({ assetId, ctx }) {
     const { userSession } = ctx.meta;
     const getAllItemsForTheUserAgentHasPermissionsByType =
       'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType';
+
     const [permissions, canView, canEdit, canAssign] = await Promise.all([
       ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent: userSession.userAgents,
         query: { permissionName: getAssetPermissionName({ assetId, ctx }) },
       }),
       ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
-        userAgentId: userSession.userAgents,
+        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
         type: ctx.prefixPN('asset.can-view'),
         ignoreOriginalTarget: true,
         item: assetId,
       }),
       ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
-        userAgentId: userSession.userAgents,
+        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
         type: ctx.prefixPN('asset.can-edit'),
         ignoreOriginalTarget: true,
         item: assetId,
       }),
       ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
-        userAgentId: userSession.userAgents,
+        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
         type: ctx.prefixPN('asset.can-assign'),
         ignoreOriginalTarget: true,
         item: assetId,
