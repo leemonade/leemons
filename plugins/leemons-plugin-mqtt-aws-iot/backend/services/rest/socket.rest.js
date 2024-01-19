@@ -33,7 +33,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.DISABLE_AUTO_INIT === 'true')
+      if (process.env.DISABLE_AUTO_INIT === 'true' && process.env.ENVIRONMENT !== 'local')
         throw new LeemonsError(ctx, {
           message: 'We are in leemons sass mode, this endpoint is disabled for protection',
         });
@@ -57,7 +57,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.DISABLE_AUTO_INIT === 'true')
+      if (process.env.DISABLE_AUTO_INIT === 'true' && process.env.ENVIRONMENT !== 'local')
         throw new LeemonsError(ctx, {
           message: 'We are in leemons sass mode, this endpoint is disabled for protection',
         });
