@@ -16,6 +16,7 @@ export default function useAssignations({
   const assignationsQueries = query ?? queries ?? [];
 
   const queryKey = assignationsGetKey({
+    id: query,
     ids: assignationsQueries,
     details: !!details,
     throwOnMissing: !!throwOnMissing,
@@ -36,11 +37,9 @@ export default function useAssignations({
     modificationTrend: 'frequently',
   });
 
-  const queryData = useQuery({
+  return useQuery({
     queryKey,
     queryFn,
     ...options,
   });
-
-  return queryData;
 }

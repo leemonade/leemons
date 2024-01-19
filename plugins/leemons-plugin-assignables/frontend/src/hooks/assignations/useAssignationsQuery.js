@@ -1,4 +1,5 @@
 import { useQueries } from '@tanstack/react-query';
+import { getAssignationKey } from '@scorm/request/hooks/keys/assignation';
 import getAssignation from '../../requests/assignations/getAssignation';
 
 export default function useAssignations(instances, details = true, { enabled = true }) {
@@ -7,7 +8,7 @@ export default function useAssignations(instances, details = true, { enabled = t
   const queries = useQueries({
     queries:
       _instances?.map(({ instance, user }) => ({
-        queryKey: ['assignations', { instance, user, details }],
+        queryKey: getAssignationKey({ instance, user, details }),
         queryFn: () => getAssignation({ id: instance, user, details }),
         enabled,
       })) || [],
