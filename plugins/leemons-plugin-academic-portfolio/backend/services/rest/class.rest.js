@@ -256,15 +256,6 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      if (process.env.NODE_ENV !== 'production') {
-        if (!_.isArray(ctx.params.teachers)) {
-          ctx.params.teachers = [];
-        }
-        ctx.params.teachers.push({
-          teacher: ctx.meta.userSession.userAgents[0].id,
-          type: 'teacher',
-        });
-      }
       const _class = await addClassTeachersMany({ data: ctx.params, ctx });
       return { status: 200, class: _class };
     },
