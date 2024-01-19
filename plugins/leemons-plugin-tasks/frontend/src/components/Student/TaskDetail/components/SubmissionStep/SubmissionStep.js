@@ -9,7 +9,7 @@ import {
   Box,
   Alert,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import Link from './components/Link/Link';
@@ -24,6 +24,8 @@ function SubmissionStep({
   preview,
   onPrevStep,
   onNextStep,
+
+  hasNextActivity,
 }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.submission_step'));
   const [buttonsT] = useTranslateLoader(prefixPN('task_realization.buttons'));
@@ -51,6 +53,7 @@ function SubmissionStep({
           rightZone={
             <Button
               loading={isLoading}
+              rightIcon={hasNextActivity ? <ChevRightIcon /> : null}
               onClick={async () => {
                 setIsLoading(true);
                 await onNextStep();
@@ -58,7 +61,7 @@ function SubmissionStep({
               }}
               disabled={!submission || preview}
             >
-              {buttonsT('submit')}
+              {hasNextActivity ? buttonsT('nextActivity') : buttonsT('submit')}
             </Button>
           }
         />
@@ -99,6 +102,8 @@ SubmissionStep.propTypes = {
   preview: PropTypes.bool,
   onPrevStep: PropTypes.func.isRequired,
   onNextStep: PropTypes.func.isRequired,
+
+  hasNextActivity: PropTypes.bool,
 };
 
 export default SubmissionStep;
