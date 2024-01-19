@@ -1,10 +1,10 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/mongodb": "0.0.55"
+    "@leemons/mongodb": "0.0.56"
   },
   "name": "@leemons/mongodb-helpers",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
