@@ -101,16 +101,12 @@
       "actionNames": ["admin"]
     },
     {
-      "permissionName": "scores.periods",
+      "permissionName": "scores.reviewer",
       "actionNames": ["admin"]
     },
     {
       "permissionName": "scores.scoresMenu",
       "actionNames": ["view"]
-    },
-    {
-      "permissionName": "academic-calendar.config",
-      "actionNames": ["admin"]
     }
   ],
   "name": "Admin",
