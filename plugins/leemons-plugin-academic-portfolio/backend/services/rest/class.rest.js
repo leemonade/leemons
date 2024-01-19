@@ -230,12 +230,6 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      if (process.env.NODE_ENV !== 'production') {
-        if (!_.isArray(ctx.params.students)) {
-          ctx.params.students = [];
-        }
-        ctx.params.students.push(ctx.meta.userSession.userAgents[0].id);
-      }
       const _class = await addClassStudentsMany({ data: ctx.params, ctx });
       return { status: 200, class: _class };
     },
