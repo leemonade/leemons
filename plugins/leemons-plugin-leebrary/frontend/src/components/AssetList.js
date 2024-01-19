@@ -616,7 +616,6 @@ function AssetList({
 
   const offsets = childRef.current?.getBoundingClientRect() || childRect;
   const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
-
   const listProps = useMemo(() => {
     if (!showThumbnails && store.layout === 'grid') {
       return {
@@ -633,6 +632,7 @@ function AssetList({
               realCategory={categoryProp}
               published={published}
               isEmbedded={isEmbedded}
+              isEmbeddedList={false}
               onRefresh={reloadAssets}
               onDuplicate={handleOnDuplicate}
               onDelete={handleOnDelete}
@@ -694,8 +694,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-        ? t('cardToolbar.pin')
-        : false,
+          ? t('cardToolbar.pin')
+          : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -779,12 +779,12 @@ function AssetList({
             style={
               isEmbedded
                 ? {
-                    flex: 0,
-                    alignItems: 'end',
-                    padding: '16px 24px',
-                    height: '72px',
-                    backgroundColor: 'white',
-                  }
+                  flex: 0,
+                  alignItems: 'end',
+                  padding: '16px 24px',
+                  height: '72px',
+                  backgroundColor: 'white',
+                }
                 : childNotEmbeddedStyles
             }
           >

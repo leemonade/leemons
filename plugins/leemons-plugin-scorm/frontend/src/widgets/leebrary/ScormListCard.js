@@ -22,7 +22,7 @@ const ScormCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const ScormListCard = ({ asset, selected, onRefresh, ...props }) => {
+const ScormListCard = ({ asset, selected, onRefresh, embedded, isEmbeddedList, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('scormCard'));
   const { classes } = ScormCardStyles({ selected });
   const {
@@ -127,7 +127,6 @@ const ScormListCard = ({ asset, selected, onRefresh, ...props }) => {
 
     return items;
   }, [asset, t]);
-
   return (
     <LibraryCard
       {...props}
@@ -137,6 +136,8 @@ const ScormListCard = ({ asset, selected, onRefresh, ...props }) => {
       variantTitle="SCORM"
       variantIcon={<ScormCardIcon width={18} height={18} />}
       className={classes.root}
+      embedded={embedded}
+      isEmbededList={isEmbeddedList}
     />
   );
 };
@@ -146,6 +147,8 @@ ScormListCard.propTypes = {
   variant: PropTypes.string,
   selected: PropTypes.bool,
   onRefresh: PropTypes.func,
+  isEmbeddedList: PropTypes.bool,
+  embedded: PropTypes.bool,
 };
 
 export default ScormListCard;

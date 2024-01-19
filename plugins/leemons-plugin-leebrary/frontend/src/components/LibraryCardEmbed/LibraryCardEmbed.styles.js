@@ -14,10 +14,9 @@ const LibraryCardEmbedStyles = createStyles(
         justifyContent: 'flex-end',
       },
       cardWrapper: {
-        borderBottom: `2px solid ${theme.colors.ui02}`,
+        borderBottom: `1px solid #DDE1E6`,
         width: '100%',
         minWidth: 440,
-        paddingLeft: 4,
       },
       imagePlaceholder: {
         maxWidth: 72,
@@ -28,6 +27,7 @@ const LibraryCardEmbedStyles = createStyles(
         alignItems: 'end',
         paddingBottom: pxToRem(16),
         paddingRight: pxToRem(16),
+        marginLeft: pxToRem(8),
       },
       imageStyles: {
         borderRadius: 4,

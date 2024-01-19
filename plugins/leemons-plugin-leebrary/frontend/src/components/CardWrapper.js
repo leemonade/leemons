@@ -41,6 +41,7 @@ const CardWrapper = ({
   category,
   realCategory,
   isEmbedded,
+  isEmbeddedList,
   single,
   onRefresh,
   onDuplicate,
@@ -56,11 +57,9 @@ const CardWrapper = ({
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
-
   const [t] = useTranslateLoader(prefixPN('list'));
   const history = useHistory();
   const { classes } = CardWrapperStyles({ selected });
-
   const menuItems = React.useMemo(() => {
     const items = [];
 
@@ -135,7 +134,6 @@ const CardWrapper = ({
   const Component = useMemo(() => {
     let componentToRender = LibraryCard;
     const componentOwner = category?.componentOwner || category?.pluginOwner;
-
     if (category?.listCardComponent && componentOwner) {
       try {
         componentToRender = dynamicImport(componentOwner, category.listCardComponent);
@@ -153,11 +151,6 @@ const CardWrapper = ({
     assetsLoading,
   ]);
 
-  // const _asset = asset;
-  // if (realCategory?.key !== 'pins') {
-  //   delete _asset.programName;
-  // }
-
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props} style={{ display: 'flex', gap: 32 }}>
       <Component
@@ -171,6 +164,7 @@ const CardWrapper = ({
         variant={variant}
         className={classes.root}
         embedded={isEmbedded}
+        isEmbeddedList={isEmbeddedList}
         onRefresh={onRefresh}
         onShare={onShare}
         single={single}
@@ -194,6 +188,7 @@ CardWrapper.propTypes = {
   variant: PropTypes.string,
   category: PropTypes.any,
   isEmbedded: PropTypes.bool,
+  isEmbeddedList: PropTypes.bool,
   single: PropTypes.bool,
   locale: PropTypes.string,
   onDuplicate: PropTypes.func,

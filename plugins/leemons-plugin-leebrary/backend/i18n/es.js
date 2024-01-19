@@ -356,5 +356,6 @@ module.exports = {
     dimensions: 'Dimensiones',
     format: 'Formato',
     duration: 'Duración',
+    lastUpdate: 'Última actualización',
   },
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { isNil } from 'lodash';
 import { Box } from '@bubbles-ui/components';
+import { LibraryCardEmbed } from '../LibraryCardEmbed';
 import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
 import { LibraryCardCover } from '../LibraryCardCover';
 import { LibraryCardFooter } from '../LibraryCardFooter';
@@ -28,6 +29,8 @@ const LibraryCard = ({
   fullHeight,
   excludeMetadatas,
   isLoading,
+  embedded,
+  isEmbededList,
   isCreationPreview,
   onPin,
   onUnpin,
@@ -35,10 +38,12 @@ const LibraryCard = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
+  if (isEmbededList) {
+    return <LibraryCardEmbed asset={asset} />;
+  }
   if (isLoading) {
     return <LibraryCardSkeleton />;
   }
-
   return (
     <Box
       data-cypress-id={`libraryCard-${asset.id}`}

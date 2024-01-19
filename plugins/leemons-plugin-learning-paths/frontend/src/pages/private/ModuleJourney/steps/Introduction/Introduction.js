@@ -3,9 +3,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@learning-paths/helpers/prefixPN';
 import { Text, Box } from '@bubbles-ui/components';
 import { htmlToText } from '@learning-paths/components/ModuleDashboard/helpers/htmlToText';
+import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { INTRODUCTION_PROP_TYPES, INTRODUCTION_DEFAULT_PROPS } from './Introduction.constants';
 import { introductionStyles } from './Introduction.styles';
-import { Resources } from './components/Resources';
 
 const Introduction = ({ instance }) => {
   const { classes } = introductionStyles();
@@ -21,7 +21,9 @@ const Introduction = ({ instance }) => {
       <Box>
         <Text className={classes.title}>{t('resources')}</Text>
       </Box>
-      <Resources assignation={{ instance }} />
+      <Box className={classes.resources}>
+        <AssetEmbedList assignation={{ instance }} />
+      </Box>
     </Box>
   );
 };
