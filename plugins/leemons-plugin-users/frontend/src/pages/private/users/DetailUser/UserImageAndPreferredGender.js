@@ -78,9 +78,7 @@ function UserImageAndPreferredGender({ t, user, session, form, isEditMode }) {
       setLoading(true);
       const { data } = await updateUserImageRequest(user.id, file);
 
-      // TODO! Temporary solution, consult with CTO
       form.setValue('user.avatar', `${data.avatar}?t=${Date.now()}`);
-
       addSuccessAlert(t('imageUpdated'));
       setLoading(false);
     } catch (e) {

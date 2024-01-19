@@ -1,7 +1,7 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@learning-paths/helpers/prefixPN';
-import { Text, Box } from '@bubbles-ui/components';
+import { Text, Box, ContextContainer } from '@bubbles-ui/components';
 import { htmlToText } from '@learning-paths/components/ModuleDashboard/helpers/htmlToText';
 import { INTRODUCTION_PROP_TYPES, INTRODUCTION_DEFAULT_PROPS } from './Introduction.constants';
 import { introductionStyles } from './Introduction.styles';
@@ -10,18 +10,19 @@ import { Resources } from './components/Resources';
 const Introduction = ({ instance }) => {
   const { classes } = introductionStyles();
   const [t] = useTranslateLoader([prefixPN('moduleJourney')]);
+
   return (
     <Box className={classes.root}>
-      <Box>
-        <Text className={classes.title}>{t('introduction')}</Text>
-      </Box>
-      <Box>
-        <Text className={classes.introduction}>{htmlToText(instance?.metadata?.statement)}</Text>
-      </Box>
-      <Box>
-        <Text className={classes.title}>{t('resources')}</Text>
-      </Box>
-      <Resources assignation={{ instance }} />
+      {!!instance?.metadata?.statement && (
+        <ContextContainer title={t('introduction')}>
+          <Text className={classes.introduction}>{htmlToText(instance?.metadata?.statement)}</Text>
+        </ContextContainer>
+      )}
+      {!!instance?.assignable?.resources?.length && (
+        <ContextContainer title={t('resources')}>
+          <Resources assignation={{ instance }} />
+        </ContextContainer>
+      )}
     </Box>
   );
 };

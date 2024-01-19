@@ -16,6 +16,7 @@ async function getResources(ids) {
 const Resources = ({ assignation }) => {
   const { classes } = resourceStyles();
   const [resources] = useApi(getResources, assignation?.instance?.assignable?.resources);
+
   return (
     <Box>
       {resources &&
