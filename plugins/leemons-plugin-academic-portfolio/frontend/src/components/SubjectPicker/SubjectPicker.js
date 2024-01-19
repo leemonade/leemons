@@ -12,7 +12,7 @@ export function SubjectPicker({
   assignable,
   localizations,
   value,
-  onChange,
+  onChange = noop,
   onChangeRaw = noop,
   error,
   hideSectionHeaders,
