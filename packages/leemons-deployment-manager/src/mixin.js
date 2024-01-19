@@ -98,7 +98,9 @@ module.exports = function ({
     hooks: {
       after: {
         '*': function (ctx, res) {
-          ctx.meta.$statusCode = 200;
+          if (ctx.meta.$statusCode !== 307) {
+            ctx.meta.$statusCode = 200;
+          }
           return res;
         },
       },
