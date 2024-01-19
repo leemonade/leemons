@@ -119,7 +119,6 @@ module.exports = {
           ctx,
         });
 
-        ctx.$statusCode = 200;
         return { status: 200, user };
       }
       throw validator.error;

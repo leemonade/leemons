@@ -96,6 +96,12 @@ module.exports = function ({
       },
     },
     hooks: {
+      after: {
+        '*': function (ctx, res) {
+          ctx.meta.$statusCode = 200;
+          return res;
+        },
+      },
       before: {
         '*': [
           async function (ctx) {
