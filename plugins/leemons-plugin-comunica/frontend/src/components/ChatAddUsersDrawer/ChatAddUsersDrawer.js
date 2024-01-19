@@ -156,7 +156,7 @@ function ChatAddUsersDrawer({
   store.userAgents = _.filter(store.allUserAgents, ({ id }) => !currentUserIds.includes(id));
 
   return (
-    <Drawer opened={opened} size={430} close={false} empty>
+    <Drawer opened={opened} size={400} close={false} empty>
       <Box className={classes.wrapper}>
         <Box className={classes.header}>
           <Button
