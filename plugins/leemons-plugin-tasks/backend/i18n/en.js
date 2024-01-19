@@ -369,6 +369,54 @@ module.exports = {
   viewMore: 'View more',
   viewLess: 'View less',
   task_realization: {
+    steps: {
+      introduction: 'Introduction',
+      development: 'Development',
+      submission: 'Submission',
+    },
+    introduction_step: {
+      statement: 'Statement',
+      resources: 'Resources',
+
+      not_opened: {
+        title: 'Activity not available',
+        description: 'This activity will be available on {date} at {time}.',
+      },
+    },
+    development_step: {
+      instructions: 'Instructions',
+      development: 'Development',
+    },
+    buttons: {
+      previous: 'Previous',
+      next: 'Next',
+      finish: 'Finish',
+      submit: 'Submit',
+      save: 'Save',
+      nextActivity: 'Next activity',
+    },
+    submission_step: {
+      instructions: 'Instructions',
+
+      notfinished_title: 'Activity not finished',
+      notfinished_message:
+        'Remember to submit the assignment by clicking on the submit button at the bottom.',
+    },
+
+    submission_file: {
+      title: 'Format and valid size',
+      format: 'Format',
+      size: 'Size',
+      upload_title: 'Click to upload a new file',
+      upload_subtitle: 'or drag and drop here',
+      errorAlert: `Error uploading file {fileName}: {error}`,
+    },
+    submission_link: {
+      title: 'Link',
+      label: 'Link',
+      placeholder: 'Enter link...',
+    },
+
     confirmation_modal: {
       title: 'Tasks finished',
       description: 'Your task has been successfuly submitted',
@@ -388,24 +436,12 @@ module.exports = {
         label: 'Submission',
       },
     },
-    buttons: {
-      previous: 'Previous',
-      next: 'Next',
-      finish: 'Finish',
-      submit: 'Submit',
-      save: 'Save',
-      nextActivity: 'Next activity',
-    },
+
     sidebar: {
       resources: 'Resources',
       team: 'Your team',
     },
-    steps: {
-      statement: 'Statement',
-      presentation: 'Presentation',
-      development: 'Development',
-      submission: 'Submission',
-    },
+
     statement_step: {
       statement: 'Statement',
       presentation: 'Presentation',
@@ -416,9 +452,7 @@ module.exports = {
         assessmentCriteria: 'Assessment criteria',
       },
     },
-    development_step: {
-      development: 'Development',
-    },
+
     submission_step: {
       submission_type: {
         file: {

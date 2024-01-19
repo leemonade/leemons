@@ -359,6 +359,53 @@ module.exports = {
   viewMore: 'Ver más',
   viewLess: 'Ver menos',
   task_realization: {
+    steps: {
+      introduction: 'Introducción',
+      development: 'Desarrollo',
+      submission: 'Entrega',
+    },
+    introduction_step: {
+      statement: 'Enunciado',
+      resources: 'Recursos',
+
+      not_opened: {
+        title: 'Actividad no disponible',
+        description: 'Esta actividad estará disponible el día {date} a las {time}.',
+      },
+    },
+    development_step: {
+      instructions: 'Instrucciones',
+      development: 'Desarrollo',
+    },
+    buttons: {
+      previous: 'Anterior',
+      next: 'Siguiente',
+      finish: 'Finalizar',
+      submit: 'Entregar',
+      save: 'Guardar',
+      nextActivity: 'Siguiente actividad',
+    },
+    submission_step: {
+      instructions: 'Instrucciones',
+
+      notfinished_title: 'Actividad no finalizada',
+      notfinished_message:
+        'Recuerda que para entregar la tarea debes pulsar el botón entregar en la parte inferior.',
+    },
+    submission_file: {
+      title: 'Formato y tamaño admitido',
+      format: 'Formato',
+      size: 'Tamaño',
+      upload_title: 'Click para buscar un archivo nuevo',
+      upload_subtitle: 'o arrastrar aquí desde el ordenador',
+      errorAlert: `Error al subir archivo {fileName}: {error}`,
+    },
+    submission_link: {
+      title: 'Enlace',
+      label: 'Enlace',
+      placeholder: 'Añadir el enlace...',
+    },
+
     confirmation_modal: {
       title: 'Tarea finalizada',
       description: 'Tu tarea ha sido enviada con éxito',
@@ -378,23 +425,10 @@ module.exports = {
         label: 'Entrega',
       },
     },
-    buttons: {
-      previous: 'Anterior',
-      next: 'Siguiente',
-      finish: 'Finalizar',
-      submit: 'Entregar',
-      save: 'Guardar',
-      nextActivity: 'Siguiente actividad',
-    },
+
     sidebar: {
       resources: 'Recursos',
       team: 'Tu equipo',
-    },
-    steps: {
-      statement: 'Enunciado',
-      presentation: 'Presentación',
-      development: 'Desarrollo',
-      submission: 'Entrega',
     },
     statement_step: {
       statement: 'Enunciado',
@@ -406,47 +440,7 @@ module.exports = {
         assessmentCriteria: 'Criterios de evaluación',
       },
     },
-    development_step: {
-      development: 'Desarrollo',
-    },
-    submission_step: {
-      submission_type: {
-        file: {
-          uploadTitle: 'Click para buscar archivo',
-          uploadSubtitle: 'O arrastra el archivo aquí',
-          errorMessage: {
-            title: 'Error',
-            message: 'El archivo ha sido rechazado',
-          },
-          errorAlert: 'El archivo {{fileName}} ha sido rechazado: {{error}}',
-          upload: 'Subir',
-        },
-        link: {
-          link: 'Enlace de la entrega',
-          invalidURL: 'El enlace no es válido',
-        },
-      },
-      submission_state: {
-        error: {
-          title: 'Error',
-          message: 'Ha habido algún error al guardar, por favor, vuelve a intentarlo.',
-        },
-        loading: {
-          title: 'Guardando',
-          message: 'Guardando los cambios...',
-        },
-        submitted: {
-          title: 'Guardada',
-          message: 'Entrega guardada con éxito',
-        },
-        notSubmitted: {
-          title: 'Atención',
-          message:
-            'Ahora puedes guardar la tarea y entregarla más tarde (cuidado si la tarea tiene tiempo límite) o entregarla inmediatamente pulsando en el botón de "Entregar".',
-        },
-      },
-      submission: 'Entrega',
-    },
+
     limitedTimeAlert: {
       beforeStart: 'Antes de empezar',
       noTimeLimit: 'Sin límite de tiempo',
