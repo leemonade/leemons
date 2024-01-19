@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-scores",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Leemons scores plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
