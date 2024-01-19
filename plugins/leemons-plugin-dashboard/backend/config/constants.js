@@ -11,8 +11,8 @@ const menuItems = [
       activeIconSvg: '/public/dashboard/menu-icon.svg',
       url: '/private/dashboard',
       label: {
-        en: 'Dashboard',
-        es: 'Panel de control',
+        en: 'Home',
+        es: 'Inicio',
       },
     },
   },

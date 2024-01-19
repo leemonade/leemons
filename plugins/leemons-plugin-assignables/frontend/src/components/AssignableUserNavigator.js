@@ -6,15 +6,7 @@ import { useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { filter, isString, keyBy, map } from 'lodash';
-import {
-  Box,
-  COLORS,
-  createStyles,
-  ImageLoader,
-  Stack,
-  Text,
-  TextClamp,
-} from '@bubbles-ui/components';
+import { Box, createStyles, ImageLoader, Stack, Text, TextClamp } from '@bubbles-ui/components';
 import getClassData from '@assignables/helpers/getClassData';
 import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
 import SelectUserAgent from '@users/components/SelectUserAgent';
@@ -49,7 +41,12 @@ const Styles = createStyles((theme, { color }) => ({
   },
 }));
 
-export default function AssignableUserNavigator({ value, instance, onChange = () => {} }) {
+export default function AssignableUserNavigator({
+  value,
+  instance,
+  onlySelect,
+  onChange = () => {},
+}) {
   const [t, translations] = useTranslateLoader(prefixPN('userNavigator'));
   const [store, render] = useStore({
     loading: true,
@@ -145,76 +142,99 @@ export default function AssignableUserNavigator({ value, instance, onChange = ()
 
   return (
     <Box
-      sx={(theme) => ({
-        backgroundColor: theme.colors.uiBackground01,
-        borderRadius: '16px',
-        padding: theme.spacing[4],
-        position: 'relative',
-      })}
+      sx={(theme) =>
+        !onlySelect
+          ? {
+              backgroundColor: theme.colors.uiBackground01,
+              borderRadius: '16px',
+              padding: theme.spacing[4],
+              position: 'relative',
+            }
+          : {}
+      }
     >
-      <Box
-        sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'column',
-          gap: theme.spacing[4],
-        })}
-      >
-        <TextClamp lines={1}>
-          <Text size="lg" strong color="primary">
-            {taskHeaderProps.title}
-          </Text>
-        </TextClamp>
+      {!onlySelect ? (
         <Box
           sx={(theme) => ({
             display: 'flex',
-            alignItems: 'center',
-            gap: theme.spacing[2],
+            flexDirection: 'column',
+            gap: theme.spacing[4],
           })}
         >
-          <Box className={style.colorIcon}>
-            <ImageLoader className={style.icon} src={taskHeaderProps.icon} height={14} width={14} />
+          <TextClamp lines={1}>
+            <Text size="lg" strong color="primary">
+              {taskHeaderProps.title}
+            </Text>
+          </TextClamp>
+          <Box
+            sx={(theme) => ({
+              display: 'flex',
+              alignItems: 'center',
+              gap: theme.spacing[2],
+            })}
+          >
+            <Box className={style.colorIcon}>
+              <ImageLoader
+                className={style.icon}
+                src={taskHeaderProps.icon}
+                height={14}
+                width={14}
+              />
+            </Box>
+            <Text strong color="primary">
+              {taskHeaderProps.subtitle}
+            </Text>
           </Box>
-          <Text strong color="primary">
-            {taskHeaderProps.subtitle}
-          </Text>
         </Box>
-      </Box>
-      <Box sx={(theme) => ({ marginTop: theme.spacing[6], marginBottom: theme.spacing[4] })}>
+      ) : null}
+
+      <Box
+        sx={(theme) =>
+          !onlySelect
+            ? {
+                marginTop: theme.spacing[6],
+                marginBottom: theme.spacing[4],
+              }
+            : null
+        }
+      >
         <SelectUserAgent value={value} users={store.selectUsers} onChange={changeSelectedUser} />
       </Box>
-      <Stack fullWidth justifyContent="space-between" alignItems="center">
-        <Text role="productive" size="xs">
-          {t('student')} {value ? currIndx + 1 : 0}/{store.userAgents?.length || 0}
-        </Text>
-        <Stack>
-          {currIndx > 0 ? (
-            <Box
-              onClick={() => onChange(store.userAgents[currIndx - 1].id)}
-              sx={(theme) => ({
-                fontSize: theme.fontSizes[4],
-                cursor: 'pointer',
-                padding: theme.spacing[2],
-              })}
-            >
-              <ChevLeftIcon />
-            </Box>
-          ) : null}
+      {!onlySelect ? (
+        <Stack fullWidth justifyContent="space-between" alignItems="center">
+          <Text role="productive" size="xs">
+            {t('student')} {value ? currIndx + 1 : 0}/{store.userAgents?.length || 0}
+          </Text>
+          <Stack>
+            {currIndx > 0 ? (
+              <Box
+                onClick={() => onChange(store.userAgents[currIndx - 1].id)}
+                sx={(theme) => ({
+                  fontSize: theme.fontSizes[4],
+                  cursor: 'pointer',
+                  padding: theme.spacing[2],
+                })}
+              >
+                <ChevLeftIcon />
+              </Box>
+            ) : null}
 
-          {currIndx + 1 < store.userAgents?.length ? (
-            <Box
-              onClick={() => onChange(store.userAgents[currIndx + 1].id)}
-              sx={(theme) => ({
-                cursor: 'pointer',
-                fontSize: theme.fontSizes[4],
-                padding: theme.spacing[2],
-                marginLeft: theme.spacing[2],
-              })}
-            >
-              <ChevRightIcon />
-            </Box>
-          ) : null}
+            {currIndx + 1 < store.userAgents?.length ? (
+              <Box
+                onClick={() => onChange(store.userAgents[currIndx + 1].id)}
+                sx={(theme) => ({
+                  cursor: 'pointer',
+                  fontSize: theme.fontSizes[4],
+                  padding: theme.spacing[2],
+                  marginLeft: theme.spacing[2],
+                })}
+              >
+                <ChevRightIcon />
+              </Box>
+            ) : null}
+          </Stack>
         </Stack>
-      </Stack>
+      ) : null}
     </Box>
   );
 }

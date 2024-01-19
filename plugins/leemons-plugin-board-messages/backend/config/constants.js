@@ -9,8 +9,8 @@ const permissions = [
     permissionName: permissionNames.boardMessages,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
     localizationName: {
-      es: 'Mensajes personales',
-      en: 'Board messages',
+      es: 'Tablón de anuncios',
+      en: 'Notice board',
     },
   },
 ];
@@ -25,8 +25,8 @@ const menuItems = [
       iconSvg: '/public/board-messages/menu-icon.svg',
       activeIconSvg: '/public/board-messages/menu-icon-active.svg',
       label: {
-        es: 'Mensajes personales',
-        en: 'Board messages',
+        es: 'Tablón de anuncios',
+        en: 'Notice board',
       },
     },
     permissions: [

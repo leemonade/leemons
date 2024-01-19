@@ -111,6 +111,22 @@
     {
       "permissionName": "scores.notebook",
       "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "content-creator.creator",
+      "actionNames": ["view", "update", "create", "delete", "admin"]
+    },
+    {
+      "permissionName": "scorm.creator",
+      "actionNames": ["view", "update", "create", "delete", "admin"]
+    },
+    {
+      "permissionName": "calendar.menu.kanban",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "learning-paths.modules",
+      "actionNames": ["view", "update", "create", "delete", "admin"]
     }
   ],
   "name": "Docente",

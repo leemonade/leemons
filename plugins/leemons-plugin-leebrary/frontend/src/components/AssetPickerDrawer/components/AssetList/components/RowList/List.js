@@ -22,13 +22,13 @@ export const useListStyles = createStyles((theme) => {
 });
 
 export function RowList({ items, onSelect }) {
-  const { classes } = useListStyles();
+  const { classes } = useListStyles({}, { name: 'AssetList-List' });
 
   return (
     <Box className={classes.root}>
       <Box className={classes.list}>
-        {items.map((item) => (
-          <Item key={item.id} asset={item} onSelect={onSelect} />
+        {items.map((item, index) => (
+          <Item key={`${item.id}-${index}`} asset={item} onSelect={onSelect} />
         ))}
       </Box>
     </Box>

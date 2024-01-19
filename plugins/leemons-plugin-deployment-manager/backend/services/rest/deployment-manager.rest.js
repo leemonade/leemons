@@ -13,6 +13,7 @@ const { checkIfManualPasswordIsGood } = require('@leemons/deployment-manager');
 const { updateDeploymentConfig } = require('../../core/deployments/updateDeploymentConfig');
 const { addDeployment } = require('../../core/deployments/addDeployment');
 const { isDomainInUse } = require('../../core/deployments/isDomainInUse');
+const { reloadAllDeployments } = require('../../core/auto-init/reload-all-deployments');
 /** @type {ServiceSchema} */
 module.exports = {
   getConfigRest: {
@@ -203,6 +204,17 @@ module.exports = {
         return addDeployment({ ctx, broker: this.broker, ...ctx.params });
       }
       throw validator.error;
+    },
+  },
+  reloadAllDeploymentsRest: {
+    dontCreateTransactionOnCallThisFunction: true,
+    rest: {
+      method: 'POST',
+      path: '/reload-all-deployments',
+    },
+    async handler(ctx) {
+      checkIfManualPasswordIsGood({ ctx });
+      await reloadAllDeployments(this.broker);
     },
   },
 };

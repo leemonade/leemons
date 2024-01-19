@@ -25,7 +25,13 @@ export default function OpenResponse(props) {
   return (
     <Stack spacing={2} direction="column" fullWidth>
       <Box style={{ padding: 24, paddingBottom: 0 }}>
-        <Text role="productive" size="xs" color="primary" stronger>
+        <Text
+          sx={(theme) => ({
+            ...theme.other.global.content.typo.heading['xsm--semiBold'],
+            fontSize: '12px',
+            lineHeight: '16px',
+          })}
+        >
           {t('responses', { n: responses.totalValues || 0 })}
         </Text>
       </Box>
@@ -45,7 +51,11 @@ export default function OpenResponse(props) {
                 totalPages === 1 && index === store.visibleResponses.length - 1 && 8,
             }}
           >
-            <Text role="productive" color="primary">
+            <Text
+              sx={(theme) => ({
+                ...theme.other.global.content.typo.heading.xsm,
+              })}
+            >
               {value}
             </Text>
           </Box>

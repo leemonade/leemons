@@ -136,7 +136,7 @@ const menuItems = [
       parentKey: `${permissionsPrefix}.tests`,
       url: '/private/tests/questions-banks',
       label: {
-        en: 'Questions banks',
+        en: 'Question banks',
         es: 'Bancos de preguntas',
       },
     },
@@ -219,7 +219,7 @@ const libraryQuestionBankCategory = {
       iconSvg: '/public/tests/qb-menu-icon.svg',
       activeIconSvg: '/public/tests/qb-menu-icon.svg',
       label: {
-        en: 'Questions Banks',
+        en: 'Question Banks',
         es: 'Bancos de preguntas',
       },
     },

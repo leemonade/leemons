@@ -3,7 +3,7 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
-import { Box, Loader, Pager, createStyles } from '@bubbles-ui/components';
+import { Box, Stack, Loader, Pager, createStyles } from '@bubbles-ui/components';
 
 import SearchEmpty from '@leebrary/components/SearchEmpty';
 import prefixPN from '@leebrary/helpers/prefixPN';
@@ -20,6 +20,8 @@ export const useListStyles = createStyles((theme) => {
   return {
     root: {
       display: 'flex',
+      flex: 1,
+      width: '100%',
       flexDirection: 'column',
       paddingBottom: globalTheme.spacing.padding.xlg,
       gap: globalTheme.spacing.padding.lg,
@@ -52,20 +54,21 @@ export function useAssetList(query, options) {
 }
 
 export function List({ variant, query, filters, onSelect }) {
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(30);
+
   const { assets, isLoading: isLoadingList } = useAssetList(query, filters);
 
+  const totalCount = assets?.length ?? 0;
+  const totalPages = Math.ceil(totalCount / size);
+  const assetsToLoad = assets?.slice((page - 1) * size, page * size) ?? [];
+
   const { data: assetsData, isLoading: isLoadingData } = useAssets({
-    ids: map(assets, 'asset'),
-    enabled: !!assets?.length,
+    ids: map(assetsToLoad, 'asset'),
+    enabled: totalCount > 0,
   });
 
   const isLoading = isLoadingList || (!!assets?.length && isLoadingData);
-
-  const [page, setPage] = useState(1);
-  const [size, setSize] = useState(30);
-  const totalCount = assetsData?.length;
-  const totalPages = Math.ceil(totalCount / size);
-  const items = assetsData?.slice((page - 1) * size, page * size) || [];
 
   const [t] = useTranslateLoader(prefixPN('list'));
   const { classes } = useListStyles({}, { name: 'AssetListList' });
@@ -82,17 +85,19 @@ export function List({ variant, query, filters, onSelect }) {
   }
   if (!assets?.length || !assetsData?.length) {
     return (
-      <Box className={classes.root}>
-        <SearchEmpty t={t} />
-      </Box>
+      <Stack fullWidth justifyContent="center" alignItems="center">
+        <Box style={{ marginBottom: 100 }}>
+          <SearchEmpty t={t} />
+        </Box>
+      </Stack>
     );
   }
 
   return (
     <Box className={classes.root}>
-      {variant === 'rows' && <RowList items={items} onSelect={onSelect} />}
-      {variant === 'thumbnails' && <ThumbnailList items={items} onSelect={onSelect} />}
-      {variant === 'cards' && <CardList items={items} onSelect={onSelect} />}
+      {variant === 'rows' && <RowList items={assetsData} onSelect={onSelect} />}
+      {variant === 'thumbnails' && <ThumbnailList items={assetsData} onSelect={onSelect} />}
+      {variant === 'cards' && <CardList items={assetsData} onSelect={onSelect} />}
       {totalPages > 1 && (
         <Box className={classes.pager}>
           <Pager

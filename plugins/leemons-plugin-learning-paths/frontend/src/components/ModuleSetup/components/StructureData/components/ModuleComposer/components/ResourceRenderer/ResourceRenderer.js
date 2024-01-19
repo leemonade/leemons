@@ -22,12 +22,12 @@ export const useResourceRendererStyles = createStyles((theme) => {
       justifyContent: 'start',
     },
     activityName: {
-      ...globalTheme.content.typo.body.sm,
+      ...globalTheme.content.typo.body['md--bold'],
+      color: globalTheme.content.color.text.default,
     },
     lastUpdate: {
-      ...globalTheme.content.typoMobile.caption,
-      lineHeight: '16px',
-      color: globalTheme.content.color.text.subtle,
+      ...globalTheme.content.typo.body.sm,
+      color: globalTheme.content.color.text.muted,
     },
   };
 });
@@ -42,7 +42,17 @@ export function ResourceRenderer({ activity, localizations }) {
           <Text className={classes.activityName}>{activity.asset.name}</Text>
         </TextClamp>
         <Text className={classes.lastUpdate}>
-          {localizations?.lastUpdate}: <LocaleDate date={activity.updatedAt || null} />
+          {localizations?.lastUpdate}:{' '}
+          <LocaleDate
+            date={activity.updatedAt || null}
+            options={{
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+            }}
+          />
         </Text>
       </Box>
     </Box>

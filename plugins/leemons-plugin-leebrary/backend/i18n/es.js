@@ -10,7 +10,7 @@ module.exports = {
     navbar: {
       title: 'Biblioteca',
       subjects: 'Asignaturas',
-      sharedWithMe: 'Compartido conmigo',
+      sharedWithMe: 'Compartidos conmigo',
       quickAccess: 'Favoritos',
       recent: 'Recientes',
       uploadButton: 'Nuevo',
@@ -296,6 +296,7 @@ module.exports = {
       assetStatus: 'Estado',
       assetStatusPublished: 'Publicado',
       assetStatusDraft: 'Borrador',
+      assetStatusAll: 'Todos los estados',
       detail: 'Detalle',
       permissions: 'Permisos',
       instructions: 'Instrucciones',
