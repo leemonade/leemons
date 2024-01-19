@@ -119,8 +119,6 @@ function File({ assignation, preview }) {
 
   const submissionData = assignation?.instance?.assignable?.submission?.data ?? {};
 
-  submissionData.multipleFiles = true;
-
   const { names: extensionNames, format: extensionFormat } = useMemo(() => ({
     names: Object.keys(submissionData.extensions).map((key) => key.replace(/^([^.])/, '.$1')),
     format: Object.values(submissionData.extensions),
