@@ -38,6 +38,7 @@ function ChatButton({ room, onClick }) {
   return (
     <Box className={classes.root} onClick={onClick}>
       <PluginComunicaIcon />
+      eooo
       {room?.unreadMessages ? <Box className={classes.unread}>{room.unreadMessages}</Box> : null}
     </Box>
   );

@@ -214,6 +214,7 @@ async function addClass({ data, ctx }) {
       parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
       name: 'roomCard.class',
       subName: roomData.name,
+      icon: '/public/academic-portfolio/class-icon.svg',
     });
 
     [classe] = await getClassesProgramInfo({
