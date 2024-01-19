@@ -79,6 +79,26 @@
     {
       "permissionName": "calendar.menu.kanban",
       "actionNames": ["view"]
+    },
+    {
+      "permissionName": "scores.scoresMenu",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "scores.scores",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-portfolio.programs",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-portfolio.subjects",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-calendar.config",
+      "actionNames": ["view"]
     }
   ],
   "name": "Estudiante",

@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-leebrary-aws-s3",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Leemons Library AWS S3 plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
