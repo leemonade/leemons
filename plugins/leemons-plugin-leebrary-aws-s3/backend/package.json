@@ -31,6 +31,7 @@
     "@leemons/utils": "0.0.41",
     "aws-sdk": "^2.1438.0",
     "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
     "moleculer": "^0.14.26"
   },
   "engines": {

@@ -6,10 +6,7 @@ import pMinDelay from 'p-min-delay';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
-const Logout = loadable(() => pMinDelay(import('./src/pages/public/Logout'), 1000));
-
 const Home = loadable(() => pMinDelay(import('./src/pages/private/Home'), 1000));
-const SelectProfile = loadable(() => pMinDelay(import('./src/pages/private/SelectProfile'), 1000));
 const UserData = loadable(() => pMinDelay(import('./src/pages/private/UserData'), 1000));
 const Welcome = loadable(() => pMinDelay(import('./src/pages/private/Welcome'), 1000));
 const SocketTest = loadable(() => pMinDelay(import('./src/pages/private/SocketTest'), 1000));
@@ -48,9 +45,6 @@ export default function Private() {
 
   return (
     <Switch>
-      <Route path={`${path}/logout`}>
-        <Logout session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
       <Route path={`${path}/home`}>
         <Home session={session} fallback={<LoadingOverlay visible />} />
       </Route>
@@ -65,9 +59,6 @@ export default function Private() {
       </Route>
       <Route path={`${path}/language`}>
         <ChangeLanguage session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/select-profile`}>
-        <SelectProfile session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/user-data`}>
         <UserData session={session} fallback={<LoadingOverlay visible />} />

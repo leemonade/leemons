@@ -272,14 +272,6 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
               noEventsInRange: (
                 <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[12] })}>
                   <Title order={2}>{tc('empty')}</Title>
-                  <Box sx={(theme) => ({ display: 'flex', marginTop: theme.spacing[12] })}>
-                    <ImageLoader
-                      src={'/public/calendar/no-events.png'}
-                      imageStyles={{ margin: '0px auto' }}
-                      width={300}
-                      height={240}
-                    />
-                  </Box>
                 </Box>
               ),
             }}

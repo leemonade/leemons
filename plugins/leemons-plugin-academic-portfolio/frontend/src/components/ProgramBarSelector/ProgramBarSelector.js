@@ -9,8 +9,18 @@ import { getCentersWithToken, getSessionConfig, updateSessionConfig } from '@use
 import { getUserProgramsRequest, listProgramsRequest } from '@academic-portfolio/request';
 import { useProgramBarSelectorStyles } from './ProgramBarSelector.styles';
 
+function prepareImageUrl(url) {
+  if (!url) {
+    return null;
+  }
+  if (url.startsWith('http')) {
+    return url;
+  }
+  return `${leemons.apiUrl}${url}`;
+}
+
 export function ProgramBarSelector({ onChange = noop, isAdmin, children, clear }) {
-  const { classes } = useProgramBarSelectorStyles();
+  const { classes } = useProgramBarSelectorStyles({}, { name: 'ProgramBarSelector' });
   const [store, render] = useStore({
     loading: true,
   });
@@ -41,7 +51,7 @@ export function ProgramBarSelector({ onChange = noop, isAdmin, children, clear }
 
     store.programs = _.map(_programs, (program) => ({
       ...program,
-      imageUrl: leemons.apiUrl + program.imageUrl,
+      imageUrl: prepareImageUrl(program.imageUrl),
     }));
 
     store.programsSelect = map(store.programs, (program) => ({

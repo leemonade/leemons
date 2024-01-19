@@ -54,7 +54,7 @@ export function Provider({ children }) {
       session &&
       centers &&
       centers.length &&
-      location.pathname !== '/private/users/select-profile' &&
+      location.pathname !== '/protected/users/select-profile' &&
       store.enabled
     ) {
       store.showButton = true;
