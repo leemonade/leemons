@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { RadioGroup } from '@bubbles-ui/components';
+import { CheckBoxGroup } from '@bubbles-ui/components';
 
 export function CurriculumFieldsPicker({ curriculumFields, onChange, value }) {
   const data = React.useMemo(
@@ -13,7 +13,7 @@ export function CurriculumFieldsPicker({ curriculumFields, onChange, value }) {
     [curriculumFields, value]
   );
 
-  return <RadioGroup data={data} checked={value} onChange={onChange} direction="column" />;
+  return <CheckBoxGroup data={data} checked={value} onChange={onChange} direction="column" />;
 }
 CurriculumFieldsPicker.propTypes = {
   curriculumFields: PropTypes.arrayOf({
@@ -23,3 +23,4 @@ CurriculumFieldsPicker.propTypes = {
   value: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func,
 };
+export default CurriculumFieldsPicker;
