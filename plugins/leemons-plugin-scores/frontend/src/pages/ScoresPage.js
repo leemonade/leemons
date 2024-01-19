@@ -45,9 +45,9 @@ export default function ScoresPage() {
         ref={scrollRef}
         style={{ overflow: 'auto', position: 'relative' }}
       >
-        <TotalLayoutStepContainer>
+        <TotalLayoutStepContainer fullWidth>
           <Box className={classes.headerContainer}>
-            <Filters onChange={setFilters} />
+            <Filters showProgramSelect onChange={setFilters} />
             <Notebook
               filters={filters}
               localFilters={localFilters}

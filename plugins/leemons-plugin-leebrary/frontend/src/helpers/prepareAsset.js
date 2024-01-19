@@ -14,16 +14,16 @@ export function getFileUrl(fileID, segment, isPublic = false) {
     return '';
   }
 
+  if (fileID.startsWith('http')) {
+    return fileID;
+  }
+
   let authTokens = getAuthorizationTokenForAllCenters();
   if (isEmpty(JSON.parse(authTokens))) {
     const userToken = getCookieToken();
     authTokens = JSON.stringify([userToken]);
   }
   const urlSuffixSegment = segment ? `/${segment}` : '';
-
-  if (fileID.startsWith('http')) {
-    return fileID;
-  }
 
   const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
