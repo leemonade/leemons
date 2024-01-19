@@ -12,16 +12,14 @@ function CurriculumRender({ instance, showCurriculum }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.statement_step.curriculum'));
   const [multiSubjectT] = useTranslateLoader(assignablesPrefixPN('userNavigator'));
 
-  const [selectedSubject, setSelectedSubject] = React.useState('multisubject');
-
   const subjects = useClassesSubjects(instance.classes);
   const subjectsData = useMemo(
-    () => [
-      { label: multiSubjectT('multiSubject'), value: 'multisubject' },
-      ...subjects.map((subject) => ({ label: subject.name, value: subject.id })),
-    ],
+    () => subjects.map((subject) => ({ label: subject.name, value: subject.id })),
     [subjects, multiSubjectT]
   );
+
+  const [selectedSubject, setSelectedSubject] = React.useState(subjectsData[0]?.value);
+
   const selectedSubjectsCurriculum = useMemo(() => {
     if (selectedSubject === 'multisubject') {
       return instance?.assignable?.subjects?.flatMap((subject) => subject.curriculum);
@@ -41,9 +39,11 @@ function CurriculumRender({ instance, showCurriculum }) {
   return (
     <ContextContainer title={t('title')}>
       <Stack direction="column" spacing={'xl'}>
-        <Box sx={{ maxWidth: 250 }}>
-          <Select data={subjectsData} onChange={setSelectedSubject} value={selectedSubject} />
-        </Box>
+        {subjectsData?.length > 1 && (
+          <Box sx={{ maxWidth: 250 }}>
+            <Select data={subjectsData} onChange={setSelectedSubject} value={selectedSubject} />
+          </Box>
+        )}
 
         {!!selectedSubject &&
           !!showCurriculum?.custom &&
