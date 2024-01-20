@@ -1,21 +1,24 @@
 import React from 'react';
-import { Box } from '@bubbles-ui/components';
+import { Box, LoadingOverlay } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
+import { AssetPlayer } from '@bubbles-ui/leemons';
 import { useAssets } from '../../../request/hooks/queries/useAssets';
 
 function PlayerPage() {
   const { assetId } = useParams();
-  const { data: asset } = useAssets({
+  const { data: assets, isLoading } = useAssets({
     ids: [assetId],
     filters: {
       showPublic: true,
       indexable: false,
     },
   });
-  console.log(asset);
-  // TODO: Traerse el detalle del assetID, y renderizar el player
 
-  return <Box>Aquí debería ir un AssetPlayer para reproducir el AssetID: {assetId}</Box>;
+  if (isLoading) {
+    return <LoadingOverlay visible />;
+  }
+
+  return <Box>{assets?.length && <AssetPlayer asset={assets[0]} />}</Box>;
 }
 
 export default PlayerPage;

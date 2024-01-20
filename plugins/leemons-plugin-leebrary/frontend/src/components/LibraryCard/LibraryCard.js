@@ -39,7 +39,10 @@ const LibraryCard = ({
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
+  const { classes, cx } = LibraryCardStyles(
+    { shadow, isCreationPreview, fullHeight },
+    { name: 'LibraryCard' }
+  );
   if (isLoading) {
     return isEmbeddedList ? <LibraryCardEmbedSkeleton /> : <LibraryCardSkeleton />;
   }

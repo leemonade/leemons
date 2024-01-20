@@ -35,23 +35,9 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
     { showPlayer, fullScreenMode, color, variant, fileType },
     { name: 'LibraryCardEmbed' }
   );
-  // Lógica de apertura de assets
-  const openInNewTab = (assetId) => {
-    const isFile = variant === 'file';
-    const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
-    if (isBookmark) {
-      window.open(url);
-      return;
-    }
-    if (isFile) {
-      history.push(url);
-      return;
-    }
-    window.open(`/protected/leebrary/play/${assetId}`, '_blank', 'noopener,noreferrer');
-  };
 
   const isPlayable = React.useMemo(() => {
-    const playableFileExtensions = ['mp4', 'webm', 'mp3'];
+    const playableFileExtensions = ['mov', 'qt', 'mp4', 'webm', 'mp3'];
     const playableMedia = ['video', 'audio'];
     return (
       playableFileExtensions.includes(asset.fileExtension) ||
@@ -93,6 +79,27 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
     return getIconForFileType();
   };
 
+  const openInNewTab = () => {
+    const isFile = variant === 'file';
+    const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
+    if (isBookmark) {
+      window.open(url);
+      return;
+    }
+
+    if (['document', 'file'].includes(fileType) && url) {
+      window.open(url);
+      return;
+    }
+
+    if (isFile) {
+      window.open(getFileUrl(asset.file?.id || asset.original.file?.id || asset.original.file));
+      return;
+    }
+
+    window.open(`/protected/leebrary/play/${asset.id}`, '_blank', 'noopener,noreferrer');
+  };
+
   const handlePlayAsset = () => {
     if (isPlayable) {
       setShowPlayer(true);
@@ -100,7 +107,7 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
     } else if (fileType === 'image') {
       setIsPlaying(true);
     } else {
-      openInNewTab(asset?.original?.id);
+      openInNewTab();
     }
   };
 
@@ -119,6 +126,31 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
     ? { url: asset.url, fileType: asset.mediaType ?? fileType }
     : {};
 
+  const dimensions = React.useMemo(() => {
+    if (!isPlayable || fileType === 'bookmark') return {};
+
+    let mediaDimensions = {};
+    (asset.metadata || []).reduce((prev, curr) => {
+      let result = {};
+      if (curr.label.toLowerCase() === 'height') {
+        result = { ...prev, height: parseInt(curr.value) };
+      }
+      if (curr.label.toLowerCase() === 'width') {
+        result = { ...prev, width: parseInt(curr.value) };
+      }
+      mediaDimensions = result;
+      return result;
+    }, mediaDimensions);
+
+    const { width: mWidth, height: mHeight } = mediaDimensions;
+    const ratio = mWidth / mHeight;
+
+    // Calculate the min width between 75% of the document width and mWidth
+    const minWidth = Math.min(window.innerWidth * 0.75, mWidth);
+    const minHeight = minWidth / ratio;
+    return { with: minWidth, height: minHeight };
+  }, [asset, isPlayable, fileType]);
+
   return (
     <Box className={classes.root}>
       {isPlayable && isPlaying ? (
@@ -127,7 +159,8 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
             asset={{ ...asset, ...getAssetPlayableProps }}
             playing
             controlBar
-            useAspectRatio
+            useAspectRatio={fileType === 'bookmark'}
+            {...dimensions}
           />
         </Modal>
       ) : null}
