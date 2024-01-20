@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-xapi",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Leemons xapi plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
