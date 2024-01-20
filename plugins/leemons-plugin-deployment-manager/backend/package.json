@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-deployment-manager",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Leemons deployment manager plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
