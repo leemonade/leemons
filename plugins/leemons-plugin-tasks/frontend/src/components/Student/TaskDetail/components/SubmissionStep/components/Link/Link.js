@@ -26,6 +26,18 @@ function useUpdateSubmission({ assignation, value, updateSubmissionState }) {
     }
 
     updateSubmissionState.setLoading();
+
+    if (value) {
+      try {
+        // eslint-disable-next-line no-new
+        new URL(value);
+      } catch (_) {
+        updateSubmissionState.setFailed();
+
+        return;
+      }
+    }
+
     mutateAsync({
       instance: assignation.instance.id,
       student: assignation.user,

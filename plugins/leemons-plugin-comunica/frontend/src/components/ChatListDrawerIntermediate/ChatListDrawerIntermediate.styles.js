@@ -9,7 +9,7 @@ export const ChatListDrawerIntermediateStyles = createStyles((theme) => ({
     height: '100%',
     justifyContent: 'start',
     borderLeft: `1px solid ${theme.colors.ui01}`,
-    width: 430,
+    width: 400,
     flexDirection: 'column',
   },
   header: {

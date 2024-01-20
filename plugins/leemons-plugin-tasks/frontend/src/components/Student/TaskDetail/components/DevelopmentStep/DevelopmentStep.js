@@ -24,6 +24,8 @@ function DevelopmentStep({
   preview,
   onNextStep,
   onPrevStep,
+
+  hasNextActivity,
 }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.development_step'));
   const [buttonsT] = useTranslateLoader(prefixPN('task_realization.buttons'));
@@ -61,7 +63,7 @@ function DevelopmentStep({
           rightZone={
             <Button
               variant={assignable?.submission ? 'outline' : 'primary'}
-              rightIcon={!!assignable?.submission && <ChevRightIcon />}
+              rightIcon={!!assignable?.submission || (hasNextActivity && <ChevRightIcon />)}
               loading={isLoading}
               disabled={!!preview && !assignable?.submission}
               onClick={async () => {
@@ -73,7 +75,9 @@ function DevelopmentStep({
                 setIsLoading(false);
               }}
             >
-              {assignable?.submission ? buttonsT('next') : buttonsT('finish')}
+              {!!assignable?.submission && buttonsT('next')}
+              {!hasNextActivity && !assignable?.submission && buttonsT('finish')}
+              {!!hasNextActivity && !assignable?.submission && buttonsT('nextActivity')}
             </Button>
           }
         />

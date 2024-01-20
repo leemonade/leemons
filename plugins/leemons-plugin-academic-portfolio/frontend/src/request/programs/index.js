@@ -63,8 +63,6 @@ async function updateProgram(_body) {
       if (body.image.id) {
         body.image = body.image.cover?.id;
       } else {
-        console.log('BODY', body);
-        console.log('BODY', body.image.name);
         body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
       }
     }

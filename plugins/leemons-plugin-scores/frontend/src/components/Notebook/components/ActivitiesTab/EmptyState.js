@@ -47,7 +47,7 @@ function useEmptyStateLocalizations() {
 
 export function EmptyState() {
   const { theme } = useLayout();
-  const { classes } = useEmptyStateStyles({});
+  const { classes } = useEmptyStateStyles({}, { name: 'Scores-EmptyState' });
 
   const labels = useEmptyStateLocalizations();
 

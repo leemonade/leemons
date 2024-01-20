@@ -247,6 +247,7 @@ export function Filters({
       <TotalLayoutFooterContainer
         fixed
         noFlex
+        fullWidth
         scrollRef={scrollRef}
         rightZone={
           <ScoresFooter

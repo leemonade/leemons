@@ -36,7 +36,7 @@ jobs:
         run: yarn install
 
       - name: 🏗️ Build frontend
-        run: PORT=3000 API_URL=https://api.${{ secrets.DOMAIN }} yarn --cwd apps/dev leemonsFront build -m ../..
+        run: NODE_ENV=production PORT=3000 API_URL=https://api.${{ secrets.DOMAIN }} yarn --cwd apps/dev leemonsFront build -m ../..
 
       - name: 🚀 Upload to S3
         run: aws s3 sync ./apps/dev/build s3://${{ secrets.DOMAIN }}

@@ -449,7 +449,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
               !store.canOpenIntermediateDrawer &&
               store.intermediateRooms.length))
         }
-        size={430}
+        size={400}
         close={false}
         empty
       >

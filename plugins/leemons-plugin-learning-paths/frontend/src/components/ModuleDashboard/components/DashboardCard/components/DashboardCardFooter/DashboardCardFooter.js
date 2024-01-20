@@ -140,9 +140,14 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
     }
     if (!allowFeedback && !requiresScoring) {
       return (
-        <Link to={activityUrl}>
-          <Button size="sm">{localizations?.buttons?.review}</Button>
-        </Link>
+        <Box className={classes.buttonContainer}>
+          <EvaluationStateDisplay state={false} />
+          <Link to={activityUrl}>
+            <Button variant="outline" style={{ paddingLeft: '40px', paddingRight: '40px' }}>
+              {localizations?.buttons?.review}
+            </Button>
+          </Link>
+        </Box>
       );
     }
     if (isFinishedButNotGraded) {

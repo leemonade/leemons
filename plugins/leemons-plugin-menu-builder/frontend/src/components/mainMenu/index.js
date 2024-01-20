@@ -125,7 +125,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
         id: 'menu-2',
         label: t('switchProfile'),
         order: 1,
-        url: '/private/users/select-profile',
+        url: '/protected/users/select-profile',
         window: 'BLANK',
         disabled: null,
       });
@@ -152,7 +152,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
         id: 'menu-5',
         label: t('logout'),
         order: 4,
-        url: '/private/users/logout',
+        url: '/protected/users/logout',
         window: 'BLANK',
         disabled: null,
       }

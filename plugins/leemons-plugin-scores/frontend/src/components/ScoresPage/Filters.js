@@ -153,7 +153,6 @@ function useSelectedPeriod({ periods, control, selectedClass, finalLabel, setVal
     }
   }, [setValue, currentPeriod]);
 
-
   const period = Array.isArray(periodSelected) ? periodSelected[0] : periodSelected;
 
   if (period === 'custom') {
@@ -357,6 +356,7 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
   const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({
     program: programId,
   });
+
   const selectedClass = useSelectedClass({ classes: classesData, control, classID });
   const { periods } = usePeriods({ selectedClass, classes: classesData });
   const periodTypes = usePeriodTypes();
@@ -382,7 +382,6 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
         isCustom: selectedPeriod.isCustom,
       });
     }
-
   }, [JSON.stringify(selectedClass), JSON.stringify(selectedPeriod)]);
 
   return (

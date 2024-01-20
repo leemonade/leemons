@@ -30,7 +30,7 @@ const permissions = [
     actions: ['view'],
     localizationName: {
       es: 'Evaluaciones',
-      en: 'Scores',
+      en: 'Evaluations',
     },
   },
   {
@@ -38,7 +38,7 @@ const permissions = [
     actions: ['view'],
     localizationName: {
       es: 'Evaluaciones (menú)',
-      en: 'Scores (menu)',
+      en: 'Evaluations (menu)',
     },
   },
   {
@@ -62,7 +62,7 @@ const menuItems = [
       iconSvg: '/public/scores/menu-icon.svg',
       activeIconSvg: '/public/scores/menu-icon.svg',
       label: {
-        en: 'Scores',
+        en: 'Evaluations',
         es: 'Evaluaciones',
       },
     },
@@ -116,7 +116,7 @@ const menuItems = [
       parentKey: 'scores.scores',
       url: '/private/scores/notebook/review',
       label: {
-        en: 'Final grades',
+        en: 'Final scores',
         es: 'Notas finales',
       },
     },

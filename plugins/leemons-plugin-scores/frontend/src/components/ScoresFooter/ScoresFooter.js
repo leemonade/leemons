@@ -12,14 +12,14 @@ const useStyles = createStyles((theme, { isStudent }) => ({
     display: 'flex',
     alignItems: 'center',
     gap: theme.spacing[2],
-    padding: isStudent ? '16px 48px' : `${theme.spacing[3]}px ${theme.spacing[5]}px`,
+    // padding: isStudent ? '16px 48px' : `${theme.spacing[3]}px ${theme.spacing[5]}px`,
   },
   title: {
     span: isStudent
       ? {
-        color: theme.other.global.content.color.text.default,
-        ...theme.other.global.content.typo.heading.lg,
-      }
+          color: theme.other.global.content.color.text.default,
+          ...theme.other.global.content.typo.heading.lg,
+        }
       : {},
     flex: 1,
   },
@@ -91,7 +91,7 @@ const ScoresFooter = ({
         <Tooltip
           label={
             evaluationReportLabels?.evaluation?.disabledTooltip[
-            isPeriodSubmitted ? 'submittedPeriod' : 'invalidPeriod'
+              isPeriodSubmitted ? 'submittedPeriod' : 'invalidPeriod'
             ]
           }
           position="left"

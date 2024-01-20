@@ -1,4 +1,4 @@
-import { Box, createStyles, Stack } from '@bubbles-ui/components';
+import { Box, createStyles, Stack, LoadingOverlay } from '@bubbles-ui/components';
 import { LoginProfileSelector } from '@users/components/LoginProfileSelector';
 import { useStore } from '@common';
 import { LayoutContext } from '@layout/context/layout';
@@ -37,6 +37,7 @@ const PageStyles = createStyles((theme) => ({
 export default function SelectProfile({ session }) {
   const [store, render] = useStore({
     loading: false,
+    initLoading: true,
     selectedProfile: null,
     selectedCenter: null,
     loginWithProfile: false,
@@ -121,7 +122,7 @@ export default function SelectProfile({ session }) {
         center.profiles.push(store.superProfile);
       });
       if (!store.centers.length) {
-        handleOnSubmit({
+        await handleOnSubmit({
           profile: store.superProfile.id,
         });
       }
@@ -133,6 +134,8 @@ export default function SelectProfile({ session }) {
         remember: true,
       };
     }
+
+    store.initLoading = false;
     render();
   }
 
@@ -175,6 +178,9 @@ export default function SelectProfile({ session }) {
 
   const { classes } = PageStyles();
 
+  if (store.initLoading) {
+    return <LoadingOverlay visible />;
+  }
   return (
     <HeroBgLayout>
       <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>

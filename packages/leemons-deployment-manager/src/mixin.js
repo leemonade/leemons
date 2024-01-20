@@ -96,6 +96,14 @@ module.exports = function ({
       },
     },
     hooks: {
+      after: {
+        '*': function (ctx, res) {
+          if (ctx.meta.$statusCode !== 307) {
+            ctx.meta.$statusCode = 200;
+          }
+          return res;
+        },
+      },
       before: {
         '*': [
           async function (ctx) {

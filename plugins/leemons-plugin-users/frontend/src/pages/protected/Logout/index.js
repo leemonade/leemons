@@ -4,6 +4,7 @@ import constants from '@users/constants';
 import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
 import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { LoadingOverlay } from '@bubbles-ui/components';
 
 export default function Logout({ session }) {
   const history = useHistory();
@@ -27,5 +28,5 @@ export default function Logout({ session }) {
     }
   }, [deploymentConfig, session]);
 
-  return null;
+  return <LoadingOverlay visible />;
 }

@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-gateway",
-  "version": "1.0.20",
+  "version": "1.0.23",
   "description": "Leemons gateway plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -20,8 +20,8 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.56",
-    "@leemons/mongodb": "0.0.56",
+    "@leemons/deployment-manager": "0.0.60",
+    "@leemons/mongodb": "0.0.60",
     "ioredis": "^5.3.2",
     "jaeger-client": "^3.19.0",
     "moleculer": "^0.14.26",

@@ -37,6 +37,10 @@
       "actionNames": ["view"]
     },
     {
+      "permissionName": "academic-calendar.config",
+      "actionNames": ["view"]
+    },
+    {
       "permissionName": "timetable.config",
       "actionNames": ["view"]
     },
@@ -101,8 +105,8 @@
       "actionNames": ["view"]
     },
     {
-      "permissionName": "scores.periods",
-      "actionNames": ["view"]
+      "permissionName": "scores.reviewer",
+      "actionNames": ["admin"]
     },
     {
       "permissionName": "scores.scoresMenu",

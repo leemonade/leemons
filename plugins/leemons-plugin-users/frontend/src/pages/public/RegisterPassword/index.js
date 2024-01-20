@@ -24,7 +24,9 @@ const PageStyles = createStyles((theme) => ({
 
 export default function RegisterPassword() {
   useSession({
-    redirectTo: _.isString(getCookieToken(true)) ? 'private/users/select-profile' : constants.base,
+    redirectTo: _.isString(getCookieToken(true))
+      ? 'protected/users/select-profile'
+      : constants.base,
     redirectIfFound: true,
   });
 
