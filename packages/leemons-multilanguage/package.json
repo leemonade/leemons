@@ -1,12 +1,12 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/mongodb-helpers": "0.0.58",
+    "@leemons/mongodb-helpers": "0.0.59",
     "@leemons/service-name-parser": "0.0.41",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/multilanguage",
-  "version": "0.0.58",
+  "version": "0.0.59",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
