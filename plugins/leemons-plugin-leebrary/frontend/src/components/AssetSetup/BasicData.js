@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useMemo, useState, useContext } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ContextContainer, TotalLayoutStepContainer, InputWrapper } from '@bubbles-ui/components';
 import { TagsAutocomplete, unflatten } from '@common';
@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import LibraryContext from '../../context/LibraryContext';
 import prefixPN from '../../helpers/prefixPN';
-import AssetFormInput from '../AssetFormInput';
+import { AssetFormInput } from '../AssetFormInput';
 
 const BasicData = ({
   advancedConfig,

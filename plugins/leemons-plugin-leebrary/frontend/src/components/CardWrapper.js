@@ -54,6 +54,7 @@ const CardWrapper = ({
   locale,
   assetsLoading,
   isCreationPreview,
+  style = {},
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
@@ -152,7 +153,7 @@ const CardWrapper = ({
   ]);
 
   return !isNil(category) && !isEmpty(asset) ? (
-    <Box key={key} {...props} style={{ display: 'flex', gap: 32 }}>
+    <Box key={key} {...props} style={{ display: 'flex', gap: 32, ...style }}>
       <Component
         isCreationPreview={isCreationPreview}
         asset={{
@@ -202,6 +203,7 @@ CardWrapper.propTypes = {
   assetsLoading: PropTypes.bool,
   realCategory: PropTypes.any,
   isCreationPreview: PropTypes.bool,
+  style: PropTypes.object,
 };
 
 export { CardWrapper };

@@ -15,6 +15,7 @@ import { uniqBy, map } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import { PluginLeebraryIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import ImagePicker from '@leebrary/components/ImagePicker';
 
 const styles = createStyles((theme) => ({
   attachmentContainer: {
@@ -61,9 +62,9 @@ export default function StatementImage({ labels }) {
         const newAssets = await getAssetsByIds(formResources, { public: true });
 
         const assets = uniqBy([...savedAssets.assets, ...newAssets.assets], 'id');
-        const preparedAssets = assets?.map(prepareAsset);
-        if (preparedAssets?.length) {
-          setResources(preparedAssets);
+
+        if (assets?.length) {
+          setResources(map(assets, 'file.id'));
         }
       }
     })();
@@ -74,42 +75,24 @@ export default function StatementImage({ labels }) {
   */
   const { classes } = styles();
 
-  const onAssetSelect = useCallback(
-    (asset) => {
-      let newResources;
-      setResources((currentResources) => {
-        newResources = uniqBy([...currentResources, prepareAsset(asset)], 'id');
-
-        return newResources;
-      });
-      onDrawerClose();
-      setValue('metadata.leebrary.statementImage', map(newResources, 'id'), {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-    },
-    [setResources]
-  );
-
-  const onAssetRemove = useCallback(
-    (asset) => {
-      let newResources;
-      setResources((currentResources) => {
-        newResources = currentResources.filter((resource) => resource.id !== asset.id);
-        return newResources;
-      });
-      setValue('metadata.leebrary.statementImage', map(newResources, 'id'), {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-    },
-
-    [setResources]
-  );
+  const onAssetSelect = (asset) => {
+    const value = asset ? [asset] : [];
+    setResources(map(value, 'file.id'));
+    setValue('metadata.leebrary.statementImage', map(value, 'id'), {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
 
   /*
     --- Render ---
   */
+
+  return (
+    <InputWrapper label={labels?.supportImage}>
+      <ImagePicker onChange={onAssetSelect} value={resources[0]} returnAsset />
+    </InputWrapper>
+  );
 
   if (resources?.length) {
     return (

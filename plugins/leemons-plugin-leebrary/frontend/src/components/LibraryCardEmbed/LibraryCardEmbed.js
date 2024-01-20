@@ -2,50 +2,35 @@ import React, { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Stack,
+  ModalZoom,
   ImageLoader,
   Text,
+  Modal,
   TextClamp,
-  FileIcon,
-  COLORS,
-  useElementSize,
+  ActionButton,
   CardEmptyCover,
 } from '@bubbles-ui/components';
-import {
-  DownloadIcon,
-  OpenIcon,
-  SearchPlusIcon,
-  CursorPlayerIcon,
-} from '@bubbles-ui/icons/outline';
+import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbles-ui/icons/solid';
 // TODO: AssetPlayer comes from @common
 import { AssetPlayer } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
+import { LocaleDate } from '@common';
+import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
 import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
   LIBRARY_CARD_EMBED_PROP_TYPES,
 } from './LibraryCardEmbed.constants';
 
-const COVER_WIDTH = 160;
-
-const LibraryCardEmbed = ({
-  asset,
-  variant,
-  variantIcon,
-  labels,
-  onDownload,
-  actionIcon,
-  category,
-  ...props
-}) => {
-  const { ref: rootRef } = useElementSize();
+const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [fullScreenMode, setFullScreenMode] = useState(false);
-  const { title, name, updatedAt, image, cover, color, fileType, metadata, url, icon } = asset;
+  const { title, name, updatedAt, image, cover, color, fileType, url, icon } = asset;
   const { classes } = LibraryCardEmbedStyles(
     { showPlayer, fullScreenMode, color, variant, fileType },
     { name: 'LibraryCardEmbed' }
@@ -62,84 +47,61 @@ const LibraryCardEmbed = ({
       history.push(url);
       return;
     }
-    window.open(`/protected/leebrary/player/${assetId}`, '_blank', 'noopener,noreferrer');
+    window.open(`/protected/leebrary/play/${assetId}`, '_blank', 'noopener,noreferrer');
   };
-  // Lógica de iconos parte derecha
-  const renderVariantButton = () => {
-    const isMedia = category.key === 'media-files';
-    const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
-    const isVideo = fileType === 'video';
-    const isAudio = fileType === 'audio';
-    const isImage = fileType === 'image';
-    const isFile = fileType === 'file';
-    const isContentCreator = category?.key === 'assignables.content-creator';
 
-    if (actionIcon) {
-      return <Box style={{ marginBlock: 4 }}>{actionIcon}</Box>;
-    }
-    if (isImage) {
-      return (
-        <Box className={classes.fileTypeButtonContainer}>
-          <SearchPlusIcon height={22} width={22} color={'#0C1F22'} />
-        </Box>
-      );
-    }
-    if (isBookmark || isContentCreator) {
-      return (
-        <Box className={classes.fileTypeButtonContainer}>
-          <OpenIcon height={18} width={18} color={'#0C1F22'} />
-        </Box>
-      );
-    }
-    if (isMedia) {
-      if (!isVideo && !isAudio && !isBookmark && !isFile && !isContentCreator) {
-        return (
-          <Box className={classes.fileTypeButtonContainer}>
-            <DownloadIcon height={18} width={18} color={'#0C1F22'} />
-          </Box>
-        );
-      }
-
-      if (isFile) {
-        if (asset?.fileExtension === 'pdf') {
-          return (
-            <Box className={classes.fileTypeButtonContainer}>
-              <OpenIcon height={18} width={18} color={'#0C1F22'} />
-            </Box>
-          );
-        }
-        return (
-          <Box className={classes.fileTypeButtonContainer}>
-            <DownloadIcon height={18} width={18} color={'#0C1F22'} />
-          </Box>
-        );
-      }
-      return (
-        <Box className={classes.fileTypeButtonContainer}>
-          <Box
-            icon={
-              isAudio || isVideo ? (
-                <CursorPlayerIcon height={18} width={18} color={'#0C1F22'} />
-              ) : (
-                <DownloadIcon height={18} width={18} color={'#0C1F22'} />
-              )
-            }
-            rounded
-            onClick={() => {
-              setShowPlayer(true);
-              setIsPlaying(true);
-            }}
-          />
-        </Box>
-      );
-    }
-
+  const isPlayable = React.useMemo(() => {
+    const playableFileExtensions = ['mp4', 'webm', 'mp3'];
+    const playableMedia = ['video', 'audio'];
     return (
-      <Box className={classes.fileTypeButtonContainer}>
-        hello
-        <DownloadIcon height={18} width={18} color={'#0C1F22'} />
-      </Box>
+      playableFileExtensions.includes(asset.fileExtension) ||
+      playableMedia.includes(asset.mediaType)
     );
+  }, [asset]);
+
+  // Lógica de iconos parte derecha
+  const getIconForFileType = () => {
+    const iconProps = { height: 18, width: 18 };
+    switch (fileType) {
+      case 'image':
+        return <SearchPlusIcon {...iconProps} />;
+      case 'bookmark':
+        if (['video', 'audio'].includes(asset.mediaType)) {
+          return <CursorPlayerIcon {...iconProps} />;
+        }
+        return <OpenIcon {...iconProps} />;
+      case 'assignables.content-creator':
+        return <OpenIcon {...iconProps} />;
+      case 'file':
+        if (asset?.fileExtension === 'pdf') {
+          return <OpenIcon {...iconProps} />;
+        }
+        return <DownloadIcon {...iconProps} />;
+      case 'video':
+      case 'audio':
+        if (isPlayable) return <CursorPlayerIcon {...iconProps} />;
+        return <DownloadIcon {...iconProps} />;
+      default:
+        return <DownloadIcon {...iconProps} />;
+    }
+  };
+
+  const renderVariantIcon = () => {
+    if (actionIcon) {
+      return actionIcon;
+    }
+    return getIconForFileType();
+  };
+
+  const handlePlayAsset = () => {
+    if (isPlayable) {
+      setShowPlayer(true);
+      setIsPlaying(true);
+    } else if (fileType === 'image') {
+      setIsPlaying(true);
+    } else {
+      openInNewTab(asset?.original?.id);
+    }
   };
 
   useEffect(() => {
@@ -152,52 +114,83 @@ const LibraryCardEmbed = ({
     () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} />,
     [icon, variantIcon, fileType]
   );
-  console.log(asset);
+
+  const getAssetPlayableProps = isPlayable
+    ? { url: asset.url, fileType: asset.mediaType ?? fileType }
+    : {};
+
   return (
-    <Box ref={rootRef} className={classes.root} onClick={() => openInNewTab(asset?.original?.id)}>
-      {!showPlayer ? (
-        <Stack className={classes.cardWrapper} justifyContent="space-between" fullWidth>
-          <Box
-            style={{
-              width: 72,
-              display: 'flex',
-              justifyContent: 'center',
-              padding: '4px 8px',
-              marginLeft: '8px',
-            }}
-          >
-            {image || cover ? (
-              <ImageLoader
-                src={image || cover}
-                width={72}
-                height={58}
-                radius={4}
-                imageStyles={classes.imageStyles}
-              />
-            ) : (
-              <Box className={classes.imagePlaceholder}>{MemoizedEmptyCover}</Box>
-            )}
-          </Box>
-          <Box
-            className={classes.content}
-            style={{ width: image || cover ? `calc(100% - ${COVER_WIDTH}px)` : '100%' }}
-          >
-            <Box className={classes.header} style={{ paddingLeft: image || cover ? null : 12 }}>
-              <TextClamp lines={1}>
-                <Text size="md" className={classes.title}>
-                  {title || name}
-                </Text>
-              </TextClamp>
-              <Text className={classes.description}>
-                {`${t('lastUpdate')}: ${new Date(updatedAt).toLocaleDateString()}`}
-              </Text>
-            </Box>
-          </Box>
-          {renderVariantButton()}
-        </Stack>
-      ) : (
-        <AssetPlayer asset={asset} playing={isPlaying} controlBar framed />
+    <Box className={classes.root}>
+      {isPlayable && isPlaying ? (
+        <Modal opened={showPlayer} onClose={() => setShowPlayer(false)} size="75%">
+          <AssetPlayer
+            asset={{ ...asset, ...getAssetPlayableProps }}
+            playing
+            controlBar
+            useAspectRatio
+          />
+        </Modal>
+      ) : null}
+
+      {fileType === 'image' && (
+        <ModalZoom hideButton opened={isPlaying} onClose={() => setIsPlaying(false)}>
+          <ImageLoader src={image || cover} width={500} height="auto" />
+        </ModalZoom>
       )}
+
+      <Stack alignItems="center" fullWidth spacing={4}>
+        <Box
+          noFlex
+          style={{
+            width: 72,
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '4px 8px',
+            marginLeft: '8px',
+          }}
+        >
+          {image || cover ? (
+            <ImageLoader
+              src={image || cover}
+              width={72}
+              height={58}
+              radius={4}
+              imageStyles={classes.imageStyles}
+            />
+          ) : (
+            <Box className={classes.imagePlaceholder}>{MemoizedEmptyCover}</Box>
+          )}
+        </Box>
+
+        <Stack direction="column" fullWidth>
+          <Box style={{ width: '100%' }}>
+            <TextClamp lines={1}>
+              <Text size="md" className={classes.title}>
+                {title || name}
+              </Text>
+            </TextClamp>
+          </Box>
+          <Box>
+            <Text>
+              {`${t('lastUpdate')}: `}
+              <LocaleDate
+                date={updatedAt}
+                options={{
+                  year: '2-digit',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }}
+              />
+            </Text>
+          </Box>
+        </Stack>
+
+        <Box noFlex>
+          <ActionButton onClick={handlePlayAsset} icon={renderVariantIcon()} />
+        </Box>
+      </Stack>
     </Box>
   );
 };

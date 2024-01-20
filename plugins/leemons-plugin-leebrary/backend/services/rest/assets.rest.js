@@ -255,6 +255,7 @@ module.exports = {
         published, // not used within getByIds()
         ctx,
       });
+
       if (onlyPinned) {
         assets = assets.filter((asset) => asset.pinned);
       }

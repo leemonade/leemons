@@ -6,7 +6,6 @@ import { htmlToText } from '@learning-paths/components/ModuleDashboard/helpers/h
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { INTRODUCTION_PROP_TYPES, INTRODUCTION_DEFAULT_PROPS } from './Introduction.constants';
 import { introductionStyles } from './Introduction.styles';
-import { Resources } from './components/Resources';
 
 const Introduction = ({ instance }) => {
   const { classes } = introductionStyles();
@@ -22,7 +21,6 @@ const Introduction = ({ instance }) => {
       {!!instance?.assignable?.resources?.length && (
         <ContextContainer title={t('resources')}>
           <AssetEmbedList assignation={{ instance }} />
-          <Resources assignation={{ instance }} />
         </ContextContainer>
       )}
     </Box>

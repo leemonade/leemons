@@ -149,7 +149,13 @@ async function add({
 
   if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
     promises.push(
-      addBookmark({ url: assetData.url, iconUrl: assetData.icon, asset: newAsset, ctx })
+      addBookmark({
+        url: assetData.url,
+        mediaType: assetData.mediaType,
+        iconUrl: assetData.icon,
+        asset: newAsset,
+        ctx,
+      })
     );
   }
 

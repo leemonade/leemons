@@ -1,68 +1,82 @@
 import React, { useEffect } from 'react';
-import { getAssetsByIdsRequest } from '@leebrary/request';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useAssetListStore } from '@leebrary/hooks/useAssetListStore';
-import { Box } from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
+import { useAssets } from '@leebrary/request/hooks/queries/useAssets';
 import propTypes from 'prop-types';
 import useCategories from '@leebrary/request/hooks/queries/useCategories';
 import { CardWrapper } from './CardWrapper';
 
-const AssetEmbedList = ({ assignation }) => {
-  const initialState = {
-    assets: [],
-  };
-  const [store, setStoreValue] = useAssetListStore(initialState);
+const useStyles = createStyles((theme, { width }) => ({
+  root: {
+    width,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  item: {
+    borderBottom: `1px solid ${theme.other.divider.background.color.default}`,
+    minHeight: 66,
+  },
+}));
 
-  async function getResources(ids) {
-    setStoreValue('isAssetsLoading', true);
-    const response = await getAssetsByIdsRequest(ids, { showPublic: true, indexable: 0 });
+const AssetEmbedList = ({ assignation, width }) => {
+  const [assetIds, setAssetIds] = React.useState([]);
 
-    const preparedData = response?.assets?.map((asset) => prepareAsset(asset));
-    setStoreValue('assets', preparedData);
-    if (Array.isArray(preparedData)) {
-      setStoreValue('isAssetsLoading', false);
-    }
-  }
+  const { data: assetsData, isLoading } = useAssets({
+    ids: assetIds,
+    filters: {
+      showPublic: true,
+      indexable: false,
+    },
+    enabled: assetIds.length > 0,
+  });
   const { data: categoriesData } = useCategories();
 
+  const { classes } = useStyles({ width }, { name: 'AssetEmbedList' });
+
+  function pickAsset(assetId) {
+    return assetsData?.find((asset) => asset.id === assetId) || {};
+  }
+
   useEffect(() => {
-    getResources(assignation?.instance?.assignable?.resources);
-  }, [assignation]);
-  useEffect(() => {
-    if (categoriesData) {
-      setStoreValue('categories', categoriesData);
+    if (assignation?.instance?.assignable?.resources) {
+      setAssetIds(assignation?.instance?.assignable?.resources);
     }
-  }, [categoriesData]);
+  }, [assignation]);
 
   return (
-    <Box>
-      {!!store?.assets?.length &&
-        store.assets.map((asset) => (
-          <CardWrapper
-            {...asset}
-            isEmbedded={true}
-            item={asset}
-            key={asset.id}
-            category={
-              store.categories.find((category) => category.id === asset.category) || {
-                key: 'media-file',
-              }
-            }
-            isCreationPreview={false}
-            isEmbeddedList={true}
-            variant={'embedded'}
-            assetsLoading={store.isAssetsLoading}
-          />
-        ))}
+    <Box className={classes.root}>
+      {assetIds.length > 0
+        ? assetIds.map((assetId) => (
+            <Box className={classes.item} key={assetId}>
+              <CardWrapper
+                {...pickAsset(assetId)}
+                isEmbedded={true}
+                item={pickAsset(assetId)}
+                category={
+                  categoriesData?.find(
+                    (category) => category.id === pickAsset(assetId).category
+                  ) || {
+                    key: 'media-file',
+                  }
+                }
+                isCreationPreview={false}
+                isEmbeddedList={true}
+                variant={'embedded'}
+                assetsLoading={isLoading}
+              />
+            </Box>
+          ))
+        : null}
     </Box>
   );
 };
 
 AssetEmbedList.propTypes = {
   assignation: propTypes.object,
+  width: propTypes.number,
 };
 AssetEmbedList.defaultProps = {
   assignation: {},
+  width: 440,
 };
 
 export { AssetEmbedList };

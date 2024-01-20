@@ -8,7 +8,7 @@ import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
 import { LibraryCardBody } from '../LibraryCardBody';
-import LibraryCardEmbedSkeleton from '../LibraryCardEmbed/LibraryCardEmbdedSkeleton';
+import { LibraryCardEmbedSkeleton } from '../LibraryCardEmbed/LibraryCardEmbdedSkeleton';
 
 const LibraryCard = ({
   asset,
@@ -45,7 +45,7 @@ const LibraryCard = ({
   }
   if (isEmbeddedList) {
     return (
-      <Box>
+      <Box data-cypress-id={`libraryCard-${asset.id}`} sx={(theme) => ({ width: '100%' })}>
         <LibraryCardEmbed asset={asset} category={category} />
       </Box>
     );

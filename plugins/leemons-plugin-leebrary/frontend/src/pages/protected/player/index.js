@@ -5,7 +5,13 @@ import { useAssets } from '../../../request/hooks/queries/useAssets';
 
 function PlayerPage() {
   const { assetId } = useParams();
-  const { data: asset } = useAssets({ ids: [assetId] });
+  const { data: asset } = useAssets({
+    ids: [assetId],
+    filters: {
+      showPublic: true,
+      indexable: false,
+    },
+  });
   console.log(asset);
   // TODO: Traerse el detalle del assetID, y renderizar el player
 

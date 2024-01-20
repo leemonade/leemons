@@ -6,6 +6,7 @@ export const useSubjectPickerStyles = createStyles((theme) => {
   return {
     subjectPicker: {
       maxWidth: 684,
+      width: '100%',
       display: 'flex',
       flexDirection: 'row',
       gap: globalTheme.spacing.padding.md,
