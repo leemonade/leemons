@@ -52,17 +52,23 @@ const ModuleJourney = () => {
       ref={scrollRef}
       Header={<ActivityHeader instance={module} showClass showDeadline />}
     >
-      <Stack justifyContent="center" ref={scrollRef} style={{ overflow: 'auto' }}>
+      <Stack
+        justifyContent="center"
+        ref={scrollRef}
+        style={{ overflow: 'auto' }}
+        fullWidth
+        fullHeight
+      >
         <TotalLayoutStepContainer
           Footer={
             <TotalLayoutFooterContainer
+              fixed
               scrollRef={scrollRef}
               rightZone={
                 <Link to={handleButtonUrl()}>
                   <Button rightIcon={<ChevRightIcon />}>{t('nextActivity')}</Button>
                 </Link>
               }
-              fixed
             />
           }
         >

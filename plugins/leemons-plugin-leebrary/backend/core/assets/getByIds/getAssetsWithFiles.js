@@ -39,6 +39,7 @@ async function getAssetsWithFiles({ assets, assetsIds, ctx }) {
       asset.url = bookmark.url;
       asset.icon = find(files, { id: bookmark.icon });
       asset.fileType = 'bookmark';
+      asset.mediaType = bookmark.mediaType ?? 'webpage';
       asset.metadata = [];
     }
 

@@ -14,7 +14,7 @@ export default function Private() {
 
   return (
     <Switch>
-      <Route path={`${path}/player/:assetId`}>
+      <Route path={`${path}/play/:assetId`}>
         <PlayerPage session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>

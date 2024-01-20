@@ -7,6 +7,7 @@ import { set, uniq } from 'lodash';
 import {
   Box,
   Button,
+  ContextContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
@@ -194,24 +195,26 @@ export default function Form({
                   )}
                 />
               )}
-              <Controller
-                name="subjects"
-                control={control}
-                rules={{
-                  required: true,
-                  minLength: 1,
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <SubjectPicker
-                    {...field}
-                    error={error}
-                    assignable={assignable}
-                    localizations={localizations?.subjects}
-                    hideSectionHeaders={hideSectionHeaders}
-                    onlyOneSubject={onlyOneSubject}
-                  />
-                )}
-              />
+              <Box mb={30}>
+                <Controller
+                  name="subjects"
+                  control={control}
+                  rules={{
+                    required: true,
+                    minLength: 1,
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <SubjectPicker
+                      {...field}
+                      error={error}
+                      assignable={assignable}
+                      localizations={localizations?.subjects}
+                      hideSectionHeaders={hideSectionHeaders}
+                      onlyOneSubject={onlyOneSubject}
+                    />
+                  )}
+                />
+              </Box>
               <Controller
                 name="students"
                 control={control}

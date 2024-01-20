@@ -11,11 +11,12 @@ const { validateAddBookmark } = require('../../validations/forms');
  * @param {string} params.url - The URL of the bookmark.
  * @param {string} params.iconUrl - The URL of the icon for the bookmark.
  * @param {Object} params.asset - The asset associated with the bookmark.
+ * @param {string} params.mediaType - The media type of the bookmark.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<object>} The created bookmark.
  * @throws {Error} If there is an error downloading the icon.
  */
-async function add({ url, iconUrl, asset, ctx }) {
+async function add({ url, mediaType, iconUrl, asset, ctx }) {
   await validateAddBookmark({ url, iconUrl, assetId: asset?.id });
 
   // ··········································································
@@ -36,7 +37,7 @@ async function add({ url, iconUrl, asset, ctx }) {
     }
   }
 
-  return ctx.tx.db.Bookmarks.create({ url, asset: asset.id, icon });
+  return ctx.tx.db.Bookmarks.create({ url, mediaType, asset: asset.id, icon });
 }
 
 module.exports = { add };

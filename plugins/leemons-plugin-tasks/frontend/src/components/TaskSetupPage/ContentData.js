@@ -1,5 +1,6 @@
 // Libraries
 import {
+  Box,
   Button,
   ContextContainer,
   Switch,
@@ -253,7 +254,7 @@ function ContentData({
           }
         >
           <ContextContainer {...props}>
-            <ContextContainer>
+            <Box mb={20}>
               <ContextContainer title={labels?.statement}>
                 <StatementImage labels={labels} />
                 <Controller
@@ -287,7 +288,7 @@ function ContentData({
               </ContextContainer>
 
               {!isExpress && (
-                <ContextContainer title={labels.evaluation}>
+                <ContextContainer title={labels.evaluation} spacing={0}>
                   <Controller
                     control={control}
                     name="metadata.hasCurriculum"
@@ -307,7 +308,7 @@ function ContentData({
               )}
 
               {!isExpress && (
-                <ContextContainer title={labels.other}>
+                <ContextContainer title={labels.other} spacing={0}>
                   <Controller
                     control={control}
                     name="metadata.hasAttachments"
@@ -324,7 +325,7 @@ function ContentData({
                   />
                 </ContextContainer>
               )}
-            </ContextContainer>
+            </Box>
           </ContextContainer>
         </TotalLayoutStepContainer>
       </form>

@@ -226,6 +226,12 @@ const AssetForm = ({
           if (!isEmpty(metadata.image)) {
             setValue('cover', metadata.image);
           }
+
+          if (!isEmpty(metadata.video)) {
+            setValue('mediaType', 'video');
+          } else if (!isEmpty(metadata.audio)) {
+            setValue('mediaType', 'audio');
+          }
         }
         setChecking(false);
       } catch (err) {

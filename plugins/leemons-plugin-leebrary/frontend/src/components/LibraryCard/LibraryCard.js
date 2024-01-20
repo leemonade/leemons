@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { isNil } from 'lodash';
 import { Box } from '@bubbles-ui/components';
+import { LibraryCardEmbed } from '../LibraryCardEmbed';
 import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
 import { LibraryCardCover } from '../LibraryCardCover';
 import { LibraryCardFooter } from '../LibraryCardFooter';
 import { LibraryCardStyles } from './LibraryCard.styles';
 import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
 import { LibraryCardBody } from '../LibraryCardBody';
+import { LibraryCardEmbedSkeleton } from '../LibraryCardEmbed/LibraryCardEmbdedSkeleton';
 
 const LibraryCard = ({
   asset,
@@ -28,6 +30,9 @@ const LibraryCard = ({
   fullHeight,
   excludeMetadatas,
   isLoading,
+  embedded,
+  isEmbeddedList,
+  category,
   isCreationPreview,
   onPin,
   onUnpin,
@@ -36,9 +41,15 @@ const LibraryCard = ({
   const [isHovered, setIsHovered] = useState(false);
   const { classes, cx } = LibraryCardStyles({ shadow, fullHeight }, { name: 'LibraryCard' });
   if (isLoading) {
-    return <LibraryCardSkeleton />;
+    return isEmbeddedList ? <LibraryCardEmbedSkeleton /> : <LibraryCardSkeleton />;
   }
-
+  if (isEmbeddedList) {
+    return (
+      <Box data-cypress-id={`libraryCard-${asset.id}`} sx={(theme) => ({ width: '100%' })}>
+        <LibraryCardEmbed asset={asset} category={category} />
+      </Box>
+    );
+  }
   return (
     <Box
       data-cypress-id={`libraryCard-${asset.id}`}

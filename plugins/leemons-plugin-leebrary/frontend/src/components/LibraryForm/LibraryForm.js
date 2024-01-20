@@ -150,6 +150,7 @@ const LibraryForm = ({
         'cover',
         'program',
         'subjects',
+        'mediaType',
       ];
       const values = getValues(valueNames);
       valueNames.forEach((valueName, index) => {
@@ -203,7 +204,7 @@ const LibraryForm = ({
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
-  const validateUrl = async () => await trigger('url', { shouldFocus: true });
+  const validateUrl = async () => trigger('url', { shouldFocus: true });
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
@@ -212,6 +213,11 @@ const LibraryForm = ({
         const url = bookmarkUrl;
         const result = await getUrlMetadataRequest(url);
         const metadata = result.metas;
+
+        console.group('handleCheckUrl');
+        console.log('url:', url);
+        console.log('metadata:', metadata);
+        console.groupEnd();
 
         if (!isEmpty(metadata)) {
           setUrlMetadata(metadata);
@@ -424,64 +430,6 @@ const LibraryForm = ({
               />
             ) : null}
           </ContextContainer>
-          {(!advancedConfigMode && !advancedConfig?.fileToRight) ||
-          (advancedConfigMode && advancedConfig?.fileToRight) ? (
-            <>
-              {!isImage && (
-                <>
-                  {advancedConfigMode ? (
-                    <InputWrapper label={labels.featuredImage}>
-                      <Box sx={(theme) => ({ display: 'flex', gap: theme.spacing[2] })}>
-                        <TextInput
-                          style={{ width: '100%' }}
-                          value={store.coverName}
-                          readonly
-                          onClick={() => setShowAssetDrawer(true)}
-                        />
-                        <ActionButton
-                          color="primary"
-                          size="md"
-                          icon={<CloudUploadIcon />}
-                          onClick={() => setShowAssetDrawer(true)}
-                        />
-                      </Box>
-                    </InputWrapper>
-                  ) : (
-                    <ContextContainer
-                      subtitle={labels.featuredImage}
-                      description={
-                        type === LIBRARY_FORM_TYPES.BOOKMARKS && descriptions?.featuredImage
-                      }
-                    >
-                      <Stack direction="row" spacing={3}>
-                        {!coverFile && (
-                          <Button variant={'outline'} onClick={() => setShowAssetDrawer(true)}>
-                            {labels.search}
-                          </Button>
-                        )}
-                        <Controller
-                          control={control}
-                          name="cover"
-                          render={({ field: { ref, value, ...field } }) => (
-                            <ImagePreviewInput
-                              labels={{
-                                changeImage: labels.changeImage,
-                                uploadButton: labels.uploadButton,
-                              }}
-                              previewURL={getCoverUrl(value)}
-                              // previewURL={value}
-                              value={''}
-                              {...field}
-                            />
-                          )}
-                        />
-                      </Stack>
-                    </ContextContainer>
-                  )}
-                </>
-              )}
-            </>
-          ) : null}
 
           {children || null}
 
@@ -515,8 +463,8 @@ const LibraryForm = ({
                           {...field}
                           value={_.map(field.value || [], 'subject')}
                           onChange={(e) => {
-                            console.log('field.value', field.value);
-                            console.log('Hola?', e);
+                            // console.log('field.value', field.value);
+                            // console.log('Hola?', e);
                           }}
                           onChangeRaw={(e) => {
                             if (e.length > 0) {

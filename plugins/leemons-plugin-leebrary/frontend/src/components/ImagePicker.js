@@ -18,6 +18,7 @@ const ImagePicker = ({
   onChange = noop,
   readonly,
   disabled,
+  returnAsset,
   ...props
 }) => {
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -66,7 +67,7 @@ const ImagePicker = ({
   const handleOnSelectAsset = (item) => {
     const preparedAsset = prepareAsset(item);
     setAssetUrl(preparedAsset.cover);
-    onChange(preparedAsset.original.cover.id);
+    onChange(returnAsset ? item : preparedAsset.original.cover.id);
     setShowAssetDrawer(false);
   };
 
@@ -76,7 +77,7 @@ const ImagePicker = ({
   return (
     <Box {...{ styles, className }}>
       <Stack direction="row" spacing={3}>
-        {!assetUrl && !readonly && !disabled && (
+        {!assetUrl && !readonly && !disabled ? (
           <Button
             variant={'link'}
             leftIcon={<PluginLeebraryIcon height={18} width={18} />}
@@ -84,7 +85,7 @@ const ImagePicker = ({
           >
             {formLabels.search}
           </Button>
-        )}
+        ) : null}
         <ImagePreviewInput
           labels={{
             changeImage: formLabels.changeImage,
@@ -120,6 +121,7 @@ ImagePicker.defaultProps = {
   },
   creatable: true,
   modal: false,
+  returnAsset: false,
 };
 ImagePicker.propTypes = {
   labels: PropTypes.shape({
@@ -135,6 +137,7 @@ ImagePicker.propTypes = {
   className: PropTypes.string,
   creatable: PropTypes.bool,
   modal: PropTypes.bool,
+  returnAsset: PropTypes.bool,
 };
 
 export { ImagePicker };

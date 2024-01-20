@@ -24,6 +24,9 @@ const bookmarksSchema = new mongoose.Schema(
       // ref: 'plugins_leebrary::files'
       type: String,
     },
+    mediaType: {
+      type: String,
+    },
   },
   {
     timestamps: true,

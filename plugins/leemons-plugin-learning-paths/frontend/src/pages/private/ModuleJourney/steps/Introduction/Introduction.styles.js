@@ -14,6 +14,10 @@ const introductionStyles = createStyles((theme) => {
     introduction: {
       ...global.content.typo.heading['sm--medium'],
     },
+    resources: {
+      maxWidth: pxToRem(440),
+      minWidth: pxToRem(440),
+    },
   };
 });
 
