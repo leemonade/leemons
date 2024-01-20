@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-leebrary-aws-s3",
-  "version": "1.0.11",
+  "version": "1.0.13",
   "description": "Leemons Library AWS S3 plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -22,15 +22,16 @@
   "dependencies": {
     "@jest/globals": "^29.7.0",
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.57",
+    "@leemons/deployment-manager": "0.0.59",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.57",
-    "@leemons/mongodb-helpers": "0.0.57",
-    "@leemons/multilanguage": "0.0.57",
-    "@leemons/testing": "0.0.57",
+    "@leemons/mongodb": "0.0.59",
+    "@leemons/mongodb-helpers": "0.0.59",
+    "@leemons/multilanguage": "0.0.59",
+    "@leemons/testing": "0.0.59",
     "@leemons/utils": "0.0.41",
     "aws-sdk": "^2.1438.0",
     "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
     "moleculer": "^0.14.26"
   },
   "engines": {

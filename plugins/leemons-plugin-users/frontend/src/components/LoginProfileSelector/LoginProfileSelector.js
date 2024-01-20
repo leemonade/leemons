@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
+import _ from 'lodash';
 import {
   Box,
   Button,
@@ -11,7 +12,6 @@ import {
   Select,
 } from '@bubbles-ui/components';
 import { LoginProfileSelectorStyles } from './LoginProfileSelector.styles';
-import _ from 'lodash';
 
 export const LOGIN_PROFILE_SELECTOR_DEFAULT_PROPS = {
   labels: { title: '', description: '', help: '', remember: '', login: '' },
@@ -26,11 +26,14 @@ export const LOGIN_PROFILE_SELECTOR_PROP_TYPES = {
     help: PropTypes.string,
     remember: PropTypes.string,
     login: PropTypes.string,
+    centerPlaceholder: PropTypes.string,
   }),
-  errorMessages: PropTypes.shape({ profile: PropTypes.any }),
+  errorMessages: PropTypes.any,
   centers: PropTypes.any,
   onSubmit: PropTypes.func,
   loading: PropTypes.bool,
+  defaultValues: PropTypes.any,
+  className: PropTypes.string,
 };
 
 const LoginProfileSelector = ({
@@ -46,8 +49,6 @@ const LoginProfileSelector = ({
   const [profileCenters, setProfileCenters] = React.useState([]);
   const { classes, cx } = LoginProfileSelectorStyles({}, { name: 'LoginProfileSelector' });
 
-  const profiles = getProfiles();
-
   function getProfiles() {
     const profiles = [];
     _.forEach(centers, (center) => {
@@ -56,10 +57,10 @@ const LoginProfileSelector = ({
     return _.uniqBy(profiles, 'id');
   }
 
+  const profiles = getProfiles();
+
   function getProfileCenters(profileId) {
-    const _centers = _.filter(centers, (center) => {
-      return !!_.find(center.profiles, { id: profileId });
-    });
+    const _centers = _.filter(centers, (center) => !!_.find(center.profiles, { id: profileId }));
     return _centers.map((center) => ({
       value: center.id,
       label: center.name,
@@ -87,14 +88,14 @@ const LoginProfileSelector = ({
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const profilesData = React.useMemo(() => {
-    return profiles.map((profile) => {
-      return {
+  const profilesData = React.useMemo(
+    () =>
+      profiles.map((profile) => ({
         value: profile.id,
         label: profile.name,
-      };
-    });
-  }, [profiles]);
+      })),
+    [profiles]
+  );
 
   const selectedProfile = _.find(profiles, { id: watch('profile') });
 

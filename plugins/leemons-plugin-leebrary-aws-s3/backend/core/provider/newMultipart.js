@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const mime = require('mime-types');
 const { getS3AndConfig } = require('./getS3AndConfig');
 
 /**
@@ -24,6 +25,7 @@ async function newMultipart({ file, filePaths, ctx } = {}) {
           .createMultipartUpload({
             Bucket: config.bucket,
             Key: `${Key}/${path}`,
+            ContentType: mime.lookup(_.last(path.split('.'))) || 'application/octet-stream', // Añade el Content-Type
           })
           .promise()
       )
@@ -45,6 +47,7 @@ async function newMultipart({ file, filePaths, ctx } = {}) {
     .createMultipartUpload({
       Bucket: config.bucket,
       Key,
+      ContentType: mime.lookup(file.extension) || 'application/octet-stream', // Añade el Content-Type
     })
     .promise();
 

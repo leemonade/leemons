@@ -33,7 +33,7 @@ export default function Login() {
   useSession({
     redirectTo: (history) => {
       history.push(
-        _.isString(getCookieToken(true)) ? '/private/users/select-profile' : '/private/dashboard'
+        _.isString(getCookieToken(true)) ? '/protected/users/select-profile' : '/private/dashboard'
       );
     },
     redirectIfFound: true,
@@ -158,7 +158,7 @@ export default function Login() {
 
              */
       history.push(
-        _.isString(response.jwtToken) ? '/private/users/select-profile' : '/private/dashboard'
+        _.isString(response.jwtToken) ? '/protected/users/select-profile' : '/private/dashboard'
       );
       // }
     } catch (err) {

@@ -10,7 +10,7 @@ const RegisterPassword = loadable(() =>
 );
 const Recover = loadable(() => pMinDelay(import('./src/pages/public/Recover'), 1000));
 const Reset = loadable(() => pMinDelay(import('./src/pages/public/Reset'), 1000));
-const Logout = loadable(() => pMinDelay(import('./src/pages/public/Logout'), 1000));
+const Logout = loadable(() => pMinDelay(import('./src/pages/protected/Logout'), 1000));
 
 export default function Public() {
   const { path } = useRouteMatch();

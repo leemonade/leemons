@@ -1,3 +1,4 @@
+const { last } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const { getRelatedAssets } = require('./getRelatedAssets');
 const { handleIsPublic } = require('./handleIsPublic');
@@ -17,7 +18,7 @@ const { handleUserPermissions } = require('./handleUserPermissions');
 async function getByFile({ fileId, checkPermissions = true, onlyPublic, ctx }) {
   try {
     const assetsIds = await getRelatedAssets({ fileId, ctx });
-    const assetId = assetsIds[0];
+    const assetId = last(assetsIds);
 
     if (onlyPublic) {
       const isPublic = await handleIsPublic({ assetId, ctx });

@@ -58,7 +58,6 @@ export async function getSession({ req }) {
 
 const fetcher = () => async () => {
   const result = await leemons.api('v1/users/users');
-  // result.user.avatar = leemons.apiUrl + result.user.avatar;
   if (!result.user.avatar.startsWith(leemons.apiUrl)) {
     result.user.avatar = leemons.apiUrl + result.user.avatar;
   }

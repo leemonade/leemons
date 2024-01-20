@@ -24,7 +24,7 @@ export function goRegisterPage(history, returnUrl) {
 }
 
 export function goSelectProfilePage(history, returnUrl) {
-  const uri = '/private/users/select-profile';
+  const uri = '/protected/users/select-profile';
   return returnUrl === true ? uri : history.push(uri);
 }
 
