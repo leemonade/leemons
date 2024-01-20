@@ -227,7 +227,7 @@ function AssetList({
     setStoreValue('page', 1);
     setStoreValue('assets', []);
     queryClient.invalidateQueries(allAssetsKey);
-
+    queryClient.refetchQueries();
     try {
       const query = {
         providerQuery: _filters ? JSON.stringify(_filters) : null,
@@ -694,8 +694,8 @@ function AssetList({
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-          ? t('cardToolbar.pin')
-          : false,
+        ? t('cardToolbar.pin')
+        : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -779,12 +779,12 @@ function AssetList({
             style={
               isEmbedded
                 ? {
-                  flex: 0,
-                  alignItems: 'end',
-                  padding: '16px 24px',
-                  height: '72px',
-                  backgroundColor: 'white',
-                }
+                    flex: 0,
+                    alignItems: 'end',
+                    padding: '16px 24px',
+                    height: '72px',
+                    backgroundColor: 'white',
+                  }
                 : childNotEmbeddedStyles
             }
           >
