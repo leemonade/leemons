@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-families-emergency-numbers",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Leemons families emergency numbers plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
