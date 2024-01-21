@@ -4,8 +4,6 @@ import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssign
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import { useHistory } from 'react-router-dom';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import IntroductionStep from '../IntroductionStep/IntroductionStep';
 import DevelopmentStep from '../DevelopmentStep/DevelopmentStep';
 import { useUpdateTimestamps } from '../../__DEPRECATED__components/Steps/Steps';
@@ -41,8 +39,6 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
   const [currentStep, setCurrentStep] = React.useState(0);
   const history = useHistory();
 
-  const nextActivityUrl = useNextActivityUrl(assignation);
-
   /*
     === Handle student timestamps ===
   */
@@ -61,11 +57,7 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
       try {
         await updateTimestamp('end');
 
-        if (nextActivityUrl) {
-          history.push(nextActivityUrl);
-        } else {
-          history.push('/private/assignables/ongoing');
-        }
+        history.push(`/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution`);
       } catch (e) {}
     }
   };
@@ -95,7 +87,6 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
           onNextStep={onNextStep}
           onPrevStep={onPrevStep}
           isLastStep={currentStep >= steps.length - 1}
-          hasNextActivity={!!nextActivityUrl}
         />
       )}
     </VerticalStepperContainer>

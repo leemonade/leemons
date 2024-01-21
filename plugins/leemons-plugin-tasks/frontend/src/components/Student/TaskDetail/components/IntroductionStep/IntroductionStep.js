@@ -15,6 +15,7 @@ import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import dayjs from 'dayjs';
+import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import useIntroductionStepStyles from './IntroductionStep.styles';
 import CurriculumRender from './components/CurriculumRender/CurriculumRender';
 
@@ -41,14 +42,6 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
     === Resources ===
   */
   const resources = assignable?.resources;
-  const { data: resourcesAssets } = useAssets({
-    ids: resources,
-    filters: {
-      indexable: false,
-      showPublic: true,
-    },
-    enabled: !!resources,
-  });
 
   /*
     === Handle activity dates ===
@@ -103,19 +96,10 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
           </ContextContainer>
         )}
 
-        {!!resourcesAssets?.length && (
+        {!!resources?.length && (
           <Box>
             <ContextContainer title={t('resources')}>
-              TODO: Add new component
-              <ul>
-                {resourcesAssets.map((asset) => (
-                  <li key={asset.id}>
-                    <a href={asset.url} target="_blank" rel="noopener noreferrer">
-                      {asset.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <AssetEmbedList assets={resources} />
             </ContextContainer>
           </Box>
         )}

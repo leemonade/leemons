@@ -3,7 +3,7 @@ import { Box, ActivityAccordion, ActivityAccordionPanel } from '@bubbles-ui/comp
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/outline';
-import styles from '../../Correction.style';
+import styles from '../../components/LinkSubmission/LinkSubmission.style';
 
 function TypeNotFound({ labels }) {
   return <Box>{labels?.types?.notFound?.notFound}</Box>;

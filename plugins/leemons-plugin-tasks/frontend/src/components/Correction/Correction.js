@@ -1,229 +1,342 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useFormContext } from 'react-hook-form';
-import _ from 'lodash';
-import { Box, Button, Text } from '@bubbles-ui/components';
+import { isNil, map } from 'lodash';
+import { useHistory } from 'react-router-dom';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import {
+  Box,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  Stack,
+  ContextContainer,
+  NumberInput,
+  VerticalContainer,
+  Text,
+  Select,
+  Tabs,
+  TabPanel,
+  Button,
+} from '@bubbles-ui/components';
+import { TextEditorInput } from '@common';
+import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { CorrectionStyles } from './Correction.style';
-import Submission from './components/Submission';
-import { prefixPN } from '../../helpers';
-import SubjectTabs from './components/SubjectTabs';
-import Accordion from './components/Accordion';
+import { useUserAgentsInfo } from '@users/hooks';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { SubjectItemDisplay } from '@academic-portfolio/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN } from '@tasks/helpers';
+import hooks from 'leemons-hooks';
+import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
+import { addSuccessAlert } from '@layout/alert';
+import ConditionalInput from '../Inputs/ConditionalInput';
+import LinkSubmission from './components/LinkSubmission/LinkSubmission';
 
-function getActivityType(instance) {
-  const { gradable, allowFeedback, requiresScoring } = instance;
-  if (gradable) {
-    return 'calificable';
-  }
-  if (!gradable && requiresScoring) {
-    return 'evaluable';
-  }
-  if (allowFeedback && !requiresScoring) {
-    return 'noPunctuationEvaluable';
-  }
-  return '';
-}
-
-export default function Correction({ assignation, instance, loading }) {
-  /*
-    --- UI informative hooks ---
-  */
-  const [loadingButton, setLoadingButton] = useState(null);
-  const isLoading = (key) => loadingButton === key;
-  const setLoading = (key) => {
-    setLoadingButton((l) => {
-      if (l === key) {
-        return null;
-      }
-      return key;
-    });
-  };
-  const showSaveButtons = !(!instance.requiresScoring && instance.allowFeedback);
-
-  /*
-    --- State ---
-  */
-  const [subjectSelected, setSubjectSelected] = useState(null);
-
-  /*
-    --- Form Hooks ---
-  */
-  const { handleSubmit, setValue } = useFormContext();
-
-  useEffect(() => {
-    if (!assignation) {
-      return;
-    }
-
-    const grades = assignation.grades || [];
-    const mainGrades = grades.filter(({ type }) => type === 'main');
-    const gradesObject = mainGrades.reduce((acc, { subject, grade, feedback }) => {
-      acc[subject] = { score: grade, feedback };
-      return acc;
-    }, {});
-
-    setValue(assignation.user, gradesObject);
-    // reset({ ...empty, ...gradesObject });
-  }, [assignation]);
-
-  /*
-    --- Translate Hooks ---
-  */
-  const [, translations] = useTranslateLoader(prefixPN('task_correction'));
-  const labels = useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('task_correction'));
-
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return data;
-    }
-
-    return {};
-  }, [translations]);
-
-  /*
-    --- Evaluation Systems Hooks ---
-  */
-  const evaluationSystem = useProgramEvaluationSystem(assignation?.instance);
-
-  const scoreInputProps = useMemo(() => {
-    if (!evaluationSystem) {
+function useLetterEvaluationData({ evaluationSystem }) {
+  return useMemo(() => {
+    if (evaluationSystem?.type !== 'letter') {
       return null;
     }
 
-    return {
-      showLetters: evaluationSystem.type === 'letter',
-      acceptCustom: evaluationSystem.type === 'letter' ? 'text' : 'number',
-      grades: evaluationSystem.scales.map((scale) => ({
-        score: scale.number,
-        letter: scale.letter,
-      })),
-      tags: evaluationSystem.tags,
-      evaluation: evaluationSystem.id,
-    };
+    return evaluationSystem.scales
+      .map((scale) => ({
+        label: scale.letter,
+        value: scale.number,
+      }))
+      .sort((a, b) => a.value - b.value);
   }, [evaluationSystem]);
+}
 
-  /*
-    --- Handlers ---
-  */
+function useOnEvaluationChange({ form, instance, assignation, subject }) {
+  const { requiresScoring } = instance ?? {};
+  const { score: _score, feedback: _feedback, showFeedback } = useWatch({ control: form.control });
+
+  const score = isNil(_score) ? null : Number(_score);
+  const feedback = !showFeedback || isNil(_feedback) ? null : _feedback;
+
+  const previousScore = useMemo(
+    () => assignation?.grades?.find((grade) => grade.type === 'main' && grade.subject === subject),
+    [assignation?.grades, subject]
+  );
+
   const { mutateAsync } = useStudentAssignationMutation();
 
-  const onSave = (sendToStudent, key) => async (data) => {
-    if (loadingButton) {
-      return;
-    }
+  /*
+    === Save new score ===
+  */
+  const onSave = ({ visibleToStudent }) => {
+    const { score, feedback, showFeedback } = form.getValues();
 
-    setLoading(key);
-
-    try {
-      const student = assignation.user;
-      const grade = data[student][subjectSelected];
-
+    if (subject && (!isNil(score) || !requiresScoring)) {
       const gradeObj = {
-        subject: subjectSelected,
-        grade: grade.score,
-        feedback: grade.feedback,
+        subject,
+        grade: isNil(score) ? null : Number(score),
+        feedback: showFeedback ? feedback : null,
         type: 'main',
-        visibleToStudent: sendToStudent,
+        visibleToStudent: !!visibleToStudent,
       };
 
-      if (assignation.instance.requiresScoring && _.isNil(grade.score)) {
-        throw new Error('The score is required');
-      }
-
-      // TODO: Do something with sendToStudent
-      await mutateAsync({
-        instance: assignation.instance.id,
-        student,
+      return mutateAsync({
+        instance: instance.id,
+        student: assignation.user,
         grades: [gradeObj],
       });
-
-      if (sendToStudent) {
-        addSuccessAlert(labels.saveAndSendMessage);
-      } else {
-        addSuccessAlert(labels?.saveMessage);
-      }
-    } catch (e) {
-      addErrorAlert(labels?.saveError?.replace('{{error}}', e.message));
-    } finally {
-      setLoading(key);
     }
   };
 
+  useEffect(() => {
+    if (
+      subject &&
+      (!isNil(score) || !requiresScoring) &&
+      (score !== previousScore.score || feedback !== previousScore.feedback)
+    ) {
+      const gradeObj = {
+        subject,
+        grade: score,
+        feedback,
+        type: 'main',
+        visibleToStudent: false,
+      };
+
+      mutateAsync({ instance: instance.id, student: assignation.user, grades: [gradeObj] });
+    }
+  }, [score, feedback]);
+
   /*
-    --- Render ---
+    === Update score ===
   */
-  const { classes, theme } = CorrectionStyles();
+  useEffect(() => {
+    const gradeObj = previousScore;
+    const { grade, feedback: savedFeedback } = gradeObj;
+
+    if (!isNil(grade) && grade !== score) {
+      form.setValue('score', grade);
+    }
+
+    if (savedFeedback !== feedback) {
+      form.setValue('feedback', savedFeedback);
+      if (savedFeedback) {
+        form.setValue('showFeedback', true);
+      }
+    }
+  }, [previousScore]);
+
+  return onSave;
+}
+
+function CorrectionSubjectTab({ assignation, instance, subject }) {
+  const [t] = useTranslateLoader(prefixPN('task_correction.teacher'));
+  const form = useForm();
+
+  const [loading, setLoading] = useState(false);
+
+  const evaluationSystem = useProgramEvaluationSystem(instance);
+  const data = useLetterEvaluationData({ evaluationSystem });
+
+  const publish = useOnEvaluationChange({ form, instance, assignation, subject });
 
   return (
-    <>
-      <Box className={classes.mainContent}>
-        <Box className={classes.type}>
-          <Text color="secondary">{labels?.types?.[getActivityType(instance)] || ''}</Text>
-          {instance?.gradable ? (
-            <StarIcon
-              style={{
-                color: theme.colors.text02,
-              }}
-            />
-          ) : (
-            <CutStarIcon
-              style={{
-                color: theme.colors.text02,
-              }}
-            />
-          )}
-        </Box>
-        <Submission assignation={assignation} labels={labels.submission} />
-        <SubjectTabs
-          assignation={assignation}
-          instance={instance}
-          loading={loading}
-          onChange={(s) => setSubjectSelected(s)}
-        >
-          <Accordion
-            classes={classes}
-            evaluationSystem={evaluationSystem}
-            labels={labels}
-            instance={instance}
-            user={assignation?.user}
-            assignationId={assignation.id}
-            scoreInputProps={scoreInputProps}
+    <ContextContainer title={t('evaluation')} spacing={8}>
+      {!!instance?.requiresScoring && (
+        <Box sx={{ maxWidth: 212 }}>
+          <Controller
+            name="score"
+            control={form.control}
+            render={({ field }) => {
+              if (evaluationSystem?.type === 'number') {
+                return (
+                  <NumberInput
+                    {...field}
+                    label={t('score_placeholder')}
+                    min={evaluationSystem?.minScale?.number}
+                    max={evaluationSystem?.maxScale?.number}
+                  />
+                );
+              }
+              return (
+                <Select
+                  {...field}
+                  searchable
+                  data={data}
+                  label={t('score_label')}
+                  placeholder={t('score_placeholder')}
+                />
+              );
+            }}
           />
-        </SubjectTabs>
-      </Box>
-      {showSaveButtons && (
-        <Box className={classes?.mainButtons}>
-          <Button
-            variant="outline"
-            loading={isLoading('save')}
-            disabled={loadingButton && !isLoading('save')}
-            onClick={handleSubmit(onSave(false, 'save'))}
-          >
-            {labels?.save}
-          </Button>
-          <Button
-            loading={isLoading('saveAndSend')}
-            disabled={loadingButton && !isLoading('saveAndSend')}
-            onClick={handleSubmit(onSave(true, 'saveAndSend'))}
-          >
-            {labels?.saveAndSend}
-          </Button>
         </Box>
       )}
-    </>
+      {!!instance?.allowFeedback && (
+        <Controller
+          name="showFeedback"
+          control={form.control}
+          render={({ field: showFeedbackField }) => (
+            <Controller
+              name="feedback"
+              control={form.control}
+              render={({ field }) => (
+                <ConditionalInput
+                  {...showFeedbackField}
+                  checked={!!showFeedbackField.value}
+                  label={t('add_feedback')}
+                  render={() => <TextEditorInput {...field} />}
+                />
+              )}
+            />
+          )}
+        />
+      )}
+      <Stack justifyContent="end" spacing={4}>
+        <Button
+          variant="link"
+          onClick={() => {
+            const room = `assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`;
+            hooks.fireEvent('chat:onRoomOpened', room);
+          }}
+          rightIcon={<PluginComunicaIcon />}
+        >
+          {t('comunica')}
+        </Button>
+        <Button
+          loading={loading}
+          onClick={async () => {
+            setLoading(true);
+            try {
+              await publish({ visibleToStudent: true });
+              addSuccessAlert(t('publish_success'));
+            } finally {
+              setLoading(false);
+            }
+          }}
+          rightIcon={<SendMessageIcon />}
+        >
+          {t('publish')}
+        </Button>
+      </Stack>
+    </ContextContainer>
+  );
+}
+
+CorrectionSubjectTab.propTypes = {
+  assignation: PropTypes.object.isRequired,
+  instance: PropTypes.object.isRequired,
+  subject: PropTypes.string.isRequired,
+};
+
+export default function Correction({ assignation, instance }) {
+  const [t] = useTranslateLoader(prefixPN('task_correction.teacher'));
+  const scrollRef = useRef();
+  const history = useHistory();
+
+  const subjects = useClassesSubjects(instance?.classes);
+
+  const submission = useMemo(
+    () => map(assignation?.metadata?.submission, 'id'),
+    [assignation?.metadata?.submission]
+  );
+
+  const { data: userAgentInfo } = useUserAgentsInfo(assignation?.user, {
+    select: (users) => users?.[0] ?? null,
+  });
+  const onChangeUser = (user) => {
+    if (user) {
+      history.push(`/private/tasks/correction/${instance?.id}/${user ?? null}`);
+    }
+  };
+
+  return (
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <ActivityHeader
+          instance={instance}
+          showClass
+          showRole
+          showEvaluationType
+          showDeadline
+          action={t('evaluation')}
+        />
+      }
+    >
+      <VerticalContainer
+        scrollRef={scrollRef}
+        leftZone={
+          <>
+            <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
+              <Text>{t('student')}</Text>
+            </Box>
+            <AssignableUserNavigator
+              onlySelect
+              onChange={onChangeUser}
+              value={assignation.user}
+              instance={instance}
+            />
+          </>
+        }
+      >
+        <TotalLayoutStepContainer
+          stepName={
+            userAgentInfo?.user
+              ? `${userAgentInfo.user.name ?? ''} ${userAgentInfo.user.surnames ?? ''}`
+              : null
+          }
+        >
+          <Stack direction="column" spacing={8}>
+            {instance?.assignable?.submission?.type === 'File' && (
+              <Box>
+                <ContextContainer title={t('submission')}>
+                  <AssetEmbedList assets={submission} />
+                </ContextContainer>
+              </Box>
+            )}
+            {instance?.assignable?.submission?.type === 'Link' && (
+              <Box>
+                <ContextContainer title={t('submission')}>
+                  <LinkSubmission assignation={assignation} />
+                </ContextContainer>
+              </Box>
+            )}
+
+            <Box>
+              {subjects?.length === 1 && (
+                <CorrectionSubjectTab
+                  assignation={assignation}
+                  instance={instance}
+                  subject={subjects[0].id}
+                />
+              )}
+
+              {subjects?.length > 1 && (
+                <Tabs>
+                  {subjects.map((subject) => (
+                    <TabPanel
+                      key={subject.id}
+                      label={<SubjectItemDisplay subjectsIds={[subject.id]} />}
+                    >
+                      <ContextContainer
+                        sx={(theme) => ({ marginTop: theme.other.global.spacing.padding.lg })}
+                      >
+                        <CorrectionSubjectTab
+                          assignation={assignation}
+                          instance={instance}
+                          subject={subject.id}
+                        />
+                      </ContextContainer>
+                    </TabPanel>
+                  ))}
+                </Tabs>
+              )}
+            </Box>
+          </Stack>
+        </TotalLayoutStepContainer>
+      </VerticalContainer>
+    </TotalLayoutContainer>
   );
 }
 
 Correction.propTypes = {
-  assignation: PropTypes.object,
-  instance: PropTypes.object,
-  loading: PropTypes.bool,
+  assignation: PropTypes.object.isRequired,
+  instance: PropTypes.object.isRequired,
 };
