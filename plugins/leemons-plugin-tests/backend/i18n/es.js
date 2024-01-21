@@ -440,5 +440,7 @@ module.exports = {
     responses: 'Respuestas',
     saveAndSendFeedback: 'Guardar y enviar comentario',
     returnToTable: 'Volver a la tabla',
+    nextActivity: 'Siguiente actividad',
+    goToModule: 'Dashboard del modulo',
   },
 };

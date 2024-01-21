@@ -17,18 +17,19 @@ import {
   Title,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
   VerticalContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
+import { ChevRightIcon, PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+import { useSearchParams, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import hooks from 'leemons-hooks';
 import { find, forEach, map, orderBy } from 'lodash';
-import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { useHistory, useParams, Link } from 'react-router-dom';
 
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
@@ -43,6 +44,7 @@ import {
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getFeedbackRequest,
@@ -70,9 +72,13 @@ export default function Result() {
   const [accordionState, setAccordionState] = React.useState([]);
   const [accordionGraphState, setAccordionGraphState] = React.useState(['1']);
 
+  const nextActivityUrl = useNextActivityUrl(store.assignation);
+
   const levels = useLevelsOfDifficulty();
   const history = useHistory();
   const params = useParams();
+  const searchParams = useSearchParams();
+  const fromTest = useMemo(() => searchParams.has('fromTest'), []);
 
   function getUserId() {
     if (params.user) return params.user;
@@ -454,7 +460,29 @@ export default function Result() {
             </Box>
           }
         >
-          <TotalLayoutStepContainer>
+          <TotalLayoutStepContainer
+            Footer={
+              fromTest &&
+              !!store.instance?.metadata?.module && (
+                <TotalLayoutFooterContainer
+                  fixed
+                  scrollRef={scrollRef}
+                  rightZone={
+                    <Link
+                      to={
+                        nextActivityUrl ??
+                        `/private/learning-paths/modules/dashboard/${store.instance?.metadata?.module?.id}`
+                      }
+                    >
+                      <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
+                        {nextActivityUrl ? t('nextActivity') : t('goToModule')}
+                      </Button>
+                    </Link>
+                  }
+                />
+              )
+            }
+          >
             {params.user && !store.loading ? (
               <Box>
                 <Box className={styles.header}>
@@ -464,7 +492,10 @@ export default function Result() {
                   </Text>
                 </Box>
                 <Box className={styles.content}>
-                  <EvaluationFeedback assignation={store.assignation} />
+                  <EvaluationFeedback
+                    assignation={store.assignation}
+                    subject={store?.instance?.subjects?.[0]?.subject}
+                  />
 
                   {store.isTeacher ? (
                     <>
@@ -493,17 +524,6 @@ export default function Result() {
                   ) : null}
 
                   <Stack justifyContent="end" spacing={2}>
-                    <Button
-                      variant="link"
-                      leftIcon={<PluginComunicaIcon />}
-                      onClick={() => {
-                        hooks.fireEvent('chat:onRoomOpened', store.room);
-                        store.chatOpened = true;
-                        render();
-                      }}
-                    >
-                      {store.isTeacher ? t('chatButtonStudent') : t('chatButtonTeacher')}
-                    </Button>
                     {store.isTeacher && canShowFeedback ? (
                       <Button leftIcon={<SendMessageIcon />} onClick={() => sendFeedback()}>
                         {t('saveAndSendFeedback')}
