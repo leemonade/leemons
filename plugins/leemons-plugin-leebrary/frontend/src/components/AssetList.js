@@ -21,12 +21,21 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
-import { find, forEach, isArray, isEmpty, isFunction, isNil, isString, noop, uniqBy } from 'lodash';
+import {
+  find,
+  forEach,
+  isArray,
+  isEmpty,
+  isEqual,
+  isFunction,
+  isNil,
+  isString,
+  pickBy,
+  uniqBy,
+} from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
-import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
 
 import { getPageItems } from '../helpers/getPageItems';
 import prefixPN from '../helpers/prefixPN';
@@ -114,7 +123,6 @@ function AssetList({
 
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
-  const queryClient = useQueryClient();
   const scrollRef = React.useRef();
 
   const multiCategorySections = ['pins', 'leebrary-recent', 'leebrary-shared']; // TODO save this in a constants file
@@ -139,7 +147,7 @@ function AssetList({
     searchCriteria: searchProp,
     stateFilter: null,
   };
-
+  const lastQuery = React.useRef(null);
   const [store, setStoreValue] = useAssetListStore(initialState);
 
   const [t, translations] = useTranslateLoader(prefixPN('list'));
@@ -226,8 +234,23 @@ function AssetList({
     setStoreValue('asset', null);
     setStoreValue('page', 1);
     setStoreValue('assets', []);
-    queryClient.invalidateQueries(allAssetsKey);
-    queryClient.refetchQueries();
+
+    if (
+      isEqual(
+        { categoryId, criteria, type, _filters: pickBy(_filters, (obj) => !isNil(obj)) },
+        lastQuery.current
+      )
+    ) {
+      return;
+    }
+
+    lastQuery.current = {
+      categoryId,
+      criteria,
+      type,
+      _filters: pickBy(_filters, (obj) => !isNil(obj)),
+    };
+
     try {
       const query = {
         providerQuery: _filters ? JSON.stringify(_filters) : null,
