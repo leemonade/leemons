@@ -106,6 +106,7 @@ const ImagePicker = ({
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
         categories={['media-files']}
+        acceptedFileTypes={['image/*']}
         onlyCreateImages
         filters={{ type: 'image' }}
       />
