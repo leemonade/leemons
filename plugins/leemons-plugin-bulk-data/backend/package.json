@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-bulk-data",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Leemons bulk data plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,12 +21,12 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.61",
+    "@leemons/deployment-manager": "0.0.62",
     "@leemons/error": "0.0.41",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.61",
+    "@leemons/mongodb": "0.0.62",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multi-events": "0.0.61",
+    "@leemons/multi-events": "0.0.62",
     "async-promise-pool": "^1.0.6",
     "chalk": "^4.1.1",
     "jaeger-client": "^3.19.0",
