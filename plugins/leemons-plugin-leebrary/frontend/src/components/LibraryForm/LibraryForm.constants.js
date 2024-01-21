@@ -65,4 +65,7 @@ export const LIBRARY_FORM_PROP_TYPES = {
   editing: PropTypes.bool,
   hideTitle: PropTypes.bool,
   drawerLayout: PropTypes.bool,
+  categories: PropTypes.arrayOf(PropTypes.string),
+  acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
+  hideCover: PropTypes.bool,
 };

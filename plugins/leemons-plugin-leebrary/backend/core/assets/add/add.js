@@ -152,7 +152,7 @@ async function add({
       addBookmark({
         url: assetData.url,
         mediaType: assetData.mediaType,
-        iconUrl: assetData.icon,
+        // iconUrl: assetData.icon,
         asset: newAsset,
         ctx,
       })

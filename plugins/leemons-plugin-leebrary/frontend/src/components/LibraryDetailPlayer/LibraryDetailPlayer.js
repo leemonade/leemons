@@ -1,13 +1,11 @@
 import React from 'react';
-import { OpenIcon } from '@bubbles-ui/icons/outline';
-import { ActionButton, Box, TextClamp, Title } from '@bubbles-ui/components';
-// TODO: AssetPlayer comes from @common
-import { AssetPlayer } from '@bubbles-ui/leemons';
+import { Box } from '@bubbles-ui/components';
 import { LibraryDetailPlayerStyles } from './LibraryDetailPlayer.styles';
 import {
   LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS,
   LIBRARY_DETAIL_PLAYER_PROP_TYPES,
 } from './LibraryDetailPlayer.constants';
+import { AssetPlayer } from '../AssetPlayer';
 
 const LibraryDetailPlayer = ({
   name,

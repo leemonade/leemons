@@ -54,7 +54,7 @@ export default function DetailQuestionForm({
   const rightAnswerSelected = React.useMemo(() => {
     if (type === 'map') return true;
     return properties?.responses?.some((item) => item?.value?.isCorrectResponse);
-  }, [type]);
+  }, [type, properties?.responses]);
 
   const answerChoices = React.useMemo(() => {
     const answers = get(properties, responseKey, []);
@@ -147,6 +147,11 @@ export default function DetailQuestionForm({
   }, [get(properties, responseKey), type]);
 
   const hasEnoughAnswers = get(properties, responseKey, []).length >= 3;
+
+  console.group('DetailQuestionForm');
+  console.log('rightAnswerSelected:', rightAnswerSelected);
+  console.log('hasEnoughAnswers:', hasEnoughAnswers);
+  console.groupEnd();
 
   return (
     <FormProvider {...form}>

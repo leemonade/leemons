@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ContextContainer, Paper, Stack } from '@bubbles-ui/components';
-// TODO: AssetPlayer comes from @common
-import { AssetPlayer } from '@bubbles-ui/leemons';
 import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { LocaleDuration } from '@common/LocaleDate';
@@ -12,6 +10,7 @@ import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, removeFileRequest, uploadFilesRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
 import { ImagePicker } from '../../../components/ImagePicker';
+import { AssetPlayer } from '@leebrary/components/AssetPlayer';
 
 export default function TestPage() {
   const [items, setItems] = useState([]);

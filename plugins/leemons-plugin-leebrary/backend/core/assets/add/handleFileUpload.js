@@ -20,15 +20,19 @@ const { uploadFromSource } = require('../../files/helpers/uploadFromSource');
 async function handleFileUpload({ file, cover, assetName, ctx }) {
   let newFile = null;
   let coverFile = null;
-  if (!isEmpty(file)) {
-    newFile = await uploadFromSource({ source: file, name: assetName, ctx });
-    if (newFile?.type?.indexOf('image') === 0) {
-      coverFile = newFile;
+  try {
+    if (!isEmpty(file)) {
+      newFile = await uploadFromSource({ source: file, name: assetName, ctx });
+      if (newFile?.type?.indexOf('image') === 0) {
+        coverFile = newFile;
+      }
     }
-  }
 
-  if (!coverFile && !isEmpty(cover)) {
-    coverFile = await uploadFromSource({ source: cover, name: assetName, ctx });
+    if (!coverFile && !isEmpty(cover)) {
+      coverFile = await uploadFromSource({ source: cover, name: assetName, ctx });
+    }
+  } catch (error) {
+    ctx.logger.error(error);
   }
   return { newFile, coverFile };
 }

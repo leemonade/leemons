@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { Box, TextClamp, FileItemDisplay } from '@bubbles-ui/components';
-import { ComputerKeyboardNextIcon } from '@bubbles-ui/icons/outline';
+import { Box, TextClamp, FileItemDisplay, Title } from '@bubbles-ui/components';
+import { ComputerKeyboardNextIcon } from '@bubbles-ui/icons/solid';
 import { SchemaStyles } from './Schema.styles';
 import { SCHEMA_DEFAULT_PROPS, SCHEMA_PROP_TYPES } from './Schema.constants';
 import { useContentEditorStore } from '../../context/ContentEditorInput.context';
@@ -38,7 +38,9 @@ export const Schema = ({ schemaLabel, compact }) => {
     <Box className={classes.schemaContainer}>
       <Box className={classes.schemaTranslate}>
         <Box className={classes.schemaHeader}>
-          <Box className={classes.schemaLabel}>{schemaLabel}</Box>
+          <Box className={classes.schemaLabel}>
+            <Title order={3}>{schemaLabel}</Title>
+          </Box>
           <ComputerKeyboardNextIcon
             className={classes.arrowIcon}
             height={20}

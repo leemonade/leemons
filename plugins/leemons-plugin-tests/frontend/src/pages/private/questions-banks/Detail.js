@@ -2,6 +2,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
+import { isEmpty } from 'lodash';
 import {
   LoadingOverlay,
   TotalLayoutContainer,
@@ -18,7 +19,6 @@ import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 import DetailBasic from './components/DetailBasic';
 import DetailQuestions from './components/DetailQuestions';
-import { isEmpty } from 'lodash';
 
 export default function Detail(p) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
@@ -50,7 +50,7 @@ export default function Detail(p) {
   const prepareDataToSave = () => {
     const qbank = formValues;
     // Clear questions clues
-    qbank.questions = qbank.questions.map((question) => {
+    qbank.questions = qbank.questions?.map((question) => {
       const newQuestion = { ...question };
       if (isEmpty(newQuestion.clues)) {
         newQuestion.clues = [];

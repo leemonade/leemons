@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, isNil, isString, trim } = require('lodash');
+const { isEmpty, trim } = require('lodash');
 const got = require('got');
 const { metascraper } = require('../../shared');
 
@@ -23,7 +23,7 @@ const { metascraper } = require('../../shared');
  * @returns {Promise<[Object, string]>} The handled bookmark data as a tuple [data, cover].
  */
 async function handleBookmarkData({ data, cover, ctx }) {
-  if (isString(data.url) && !isEmpty(data.url) && (isNil(data.icon) || isEmpty(data.icon))) {
+  if (isEmpty(data.name) && data?.url?.startsWith('http')) {
     try {
       const response = await got(data.url);
       const { body: html } = response;

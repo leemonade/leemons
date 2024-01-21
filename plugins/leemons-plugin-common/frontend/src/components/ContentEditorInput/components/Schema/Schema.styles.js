@@ -15,6 +15,7 @@ export const SchemaStyles = createStyles((theme, { isSchemaOpened, compact }) =>
       top: compact ? 0 : 32,
       // border: borderParams,
       borderRight: borderParams,
+      borderTop: !compact && borderParams,
       marginBottom: 2,
     },
     schemaTranslate: {

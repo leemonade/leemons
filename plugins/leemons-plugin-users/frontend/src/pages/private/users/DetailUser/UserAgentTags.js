@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, InputWrapper, TagsInput } from '@bubbles-ui/components';
+import { Col, Grid, Title, TagsInput } from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
 import { getUserAgentDetailForPageRequest } from '../../../../request';
 
@@ -18,7 +18,7 @@ function UserAgentTags({ t, userAgent, form, isEditMode }) {
   return (
     <Grid columns={100}>
       <Col span={35}>
-        <InputWrapper label={t('tags')} />
+        <Title order={3}>{t('tags')}</Title>
       </Col>
       <Col span={65}>
         <Controller

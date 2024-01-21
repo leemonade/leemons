@@ -109,8 +109,10 @@ export const LibraryBubbleMenu = ({
           active={data.align === 'right'}
         />
       </Box>
-      {/* Format */}
+      {/* Format ----------------------- */}
+      {/* 
       <Box className={classes.iconGroup}>
+        
         <ActionButton
           label={labels.embed?.toUpperCase()}
           style={actionButtonStyles}
@@ -130,6 +132,7 @@ export const LibraryBubbleMenu = ({
           active={data.display === 'player'}
         />
       </Box>
+      */}
       {/* Actions */}
       <Box className={classes.iconGroup}>
         <ActionButton

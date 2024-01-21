@@ -166,7 +166,7 @@ export default function Index({ isNew, readOnly }) {
             title={isNew ? t('titleNew') : t('titleEdit')}
             icon={
               <Stack justifyContent="center" alignItems="center">
-                <AssetDocumentIcon width={24} height={24} color={'#878D96'} />
+                <AssetDocumentIcon width={24} height={24} />
               </Stack>
             }
             formTitlePlaceholder={formValues.name || t('detailPage.documentTitlePlaceholder')}

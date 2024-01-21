@@ -25,6 +25,7 @@ import { isFunction } from 'lodash';
 import { useTextEditor } from '@bubbles-ui/editors';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { AssetListDrawer } from '../AssetListDrawer';
+import { AssetPickerDrawer } from '../AssetPickerDrawer';
 
 export const LIBRARY_MODAL_DEFAULT_PROPS = {
   labels: {
@@ -82,11 +83,6 @@ const LibraryModal = ({
   const openLibraryDrawer = !openLibraryModal;
   const [showAssetDrawer, setShowAssetDrawer] = useState(openLibraryDrawer);
   const [asset, setAsset] = useState(currentTool.data.asset);
-  const [assetType, setAssetType] = useState('');
-
-  // SIZE ·····················································
-  const { width: viewportWidth } = useViewportSize();
-  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
 
   const {
     control,
@@ -136,7 +132,6 @@ const LibraryModal = ({
         });
     } else {
       setAsset(preparedAsset);
-      setAssetType('');
     }
     setShowAssetDrawer(false);
   };
@@ -236,18 +231,14 @@ const LibraryModal = ({
         </Box>
       )}
 
-      <AssetListDrawer
+      <AssetPickerDrawer
         creatable
-        canChangeType
+        layout="rows"
         opened={showAssetDrawer}
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
-        size={drawerSize}
         shadow
-        assetType={assetType}
-        onTypeChange={setAssetType}
-        onlyThumbnails={false}
-        allowChangeCategories={['bookmarks', 'media-files']}
+        categories={['bookmarks', 'media-files']}
         itemMinWidth={250}
       />
     </Box>

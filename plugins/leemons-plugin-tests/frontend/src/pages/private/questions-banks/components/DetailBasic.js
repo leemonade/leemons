@@ -6,7 +6,6 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import { LocaleDate } from '@common';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import AssetFormInput from '@leebrary/components/AssetFormInput';
 
@@ -22,7 +21,7 @@ export default function DetailBasic({
 }) {
   const formValues = form.watch();
 
-  const validate = async () => form.trigger(['name', 'program', 'subjects']);
+  const validate = async () => form.trigger(['name']);
 
   const handleOnNext = async () => {
     if (await validate()) {

@@ -75,6 +75,7 @@ export function AssetPickerDrawer({
   onClose,
   onSelect,
   onlyCreateImages,
+  acceptedFileTypes,
   onlyImages,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
@@ -109,6 +110,7 @@ export function AssetPickerDrawer({
                 localizations={localizations}
                 onSelect={onSelect}
                 onlyCreateImages={onlyCreateImages}
+                acceptedFileTypes={acceptedFileTypes}
               />
             </TabPanel>
           </Tabs>

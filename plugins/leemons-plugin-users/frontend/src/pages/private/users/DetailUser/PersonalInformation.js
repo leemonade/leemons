@@ -14,6 +14,7 @@ import {
   TextInput,
   PasswordInput,
   Modal,
+  Title,
 } from '@bubbles-ui/components';
 import { EMAIL_REGEX } from '@users/components/LoginForm';
 import { Controller, useForm } from 'react-hook-form';
@@ -78,7 +79,7 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
   return (
     <Grid columns={100}>
       <Col span={35}>
-        <InputWrapper label={t('personalInformationLabel')} />
+        <Title order={3}>{t('personalInformationLabel')}</Title>
       </Col>
       <Col span={65}>
         <ContextContainer>

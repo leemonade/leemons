@@ -304,7 +304,6 @@ function AssetList({
       clearAssetLoading();
       addErrorAlert(getErrorMessage(err));
     }
-    return null;
   }
 
   async function loadAsset(id, forceLoad) {

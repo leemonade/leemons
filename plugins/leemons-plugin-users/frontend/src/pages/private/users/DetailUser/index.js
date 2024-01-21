@@ -8,6 +8,10 @@ import {
   Stack,
   Title,
   useResizeObserver,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+  TotalLayoutHeader,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -90,17 +94,17 @@ function DetailUser({
     return results;
   }
 
-  function selectCenter(centerId) {
-    const center = find(store.centers, { value: centerId });
+  function selectCenter(id) {
+    const center = find(store.centers, { value: id });
     store.profiles = center ? center.profiles : [];
-    store.center = centerId;
+    store.center = id;
     store.profile = null;
     store.userAgent = null;
     render();
   }
 
-  function selectProfile(profileId) {
-    store.profile = profileId;
+  function selectProfile(id) {
+    store.profile = id;
     store.userAgent = find(
       store.userAgents,
       (userAgent) => userAgent.center.id === store.center && userAgent.profile.id === store.profile
@@ -235,13 +239,11 @@ function DetailUser({
     form.handleSubmit(async (formData) => {
       try {
         const toSend = { ...formData };
-        if (store.userAgent) {
-          if (store.datasetFormActions && store.datasetFormActions.isLoaded()) {
-            await store.datasetFormActions.submit();
-            if (store.datasetFormActions.getErrors().length) return null;
-            toSend.dataset = store.datasetFormActions.getValues();
-            store.dataset.value = toSend.dataset;
-          }
+        if (store.userAgent && store.datasetFormActions && store.datasetFormActions.isLoaded()) {
+          await store.datasetFormActions.submit();
+          if (store.datasetFormActions.getErrors().length) return null;
+          toSend.dataset = store.datasetFormActions.getValues();
+          store.dataset.value = toSend.dataset;
         }
 
         const promises = [

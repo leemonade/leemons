@@ -66,18 +66,23 @@ const AssetForm = ({
   form,
   onlyImages,
   hideTitle,
+  hideCover,
   advancedConfig,
   hideSubmit,
   onChange = noop,
   ContentExtraFields = null,
   editing,
   drawerLayout,
+  acceptedFileTypes,
+  categories,
 }) => {
   const [store, render] = useStore({
     programs: null,
     showAdvancedConfig: !!asset?.program,
   });
-  const [isImage, setIsImage] = useState(onlyImages);
+  const [isImage, setIsImage] = useState(
+    onlyImages || (categories?.length && categories[0] === 'media-files')
+  );
   const [checking, setChecking] = useState(false);
   const [urlMetadata, setUrlMetadata] = useState({});
   const [coverAsset, setCoverAsset] = useState(null);
@@ -291,7 +296,7 @@ const AssetForm = ({
                         single
                         initialFiles={value ? flatten([value]) : []}
                         inputWrapperProps={{ error: errors.file }}
-                        accept={onlyImages ? ['image/*'] : undefined}
+                        accept={onlyImages ? ['image/*'] : acceptedFileTypes}
                       />
                     )}
                   />
@@ -373,7 +378,7 @@ const AssetForm = ({
               </ContextContainer>
             )}
             <ContextContainer title={labels.presentation}>
-              {!isImage && (
+              {!isImage && !hideCover && (
                 <ImagePicker
                   labels={labels}
                   value={coverFile?.id ? coverFile?.id : coverFile}

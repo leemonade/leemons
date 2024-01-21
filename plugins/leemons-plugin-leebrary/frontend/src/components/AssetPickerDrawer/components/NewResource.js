@@ -23,7 +23,7 @@ export const useNewResourceStyles = createStyles((theme) => {
   };
 });
 
-export function NewResource({ onlyCreateImages, onSelect }) {
+export function NewResource({ categories: creatableCategories, acceptedFileTypes, onSelect }) {
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const categories = usePickerCategories();
   const categoriesByKey = useMemo(() => keyBy(categories, 'key'), [categories]);
@@ -84,13 +84,19 @@ export function NewResource({ onlyCreateImages, onSelect }) {
   // TODO: Add other categories creation form
   // v - category.key === 'media-files'
 
+  const onlyCreateMediaFiles =
+    creatableCategories.length === 1 && creatableCategories[0] === 'media-files';
+
   return (
     <Box className={classes.root}>
       <AssetForm
-        {...(onlyCreateImages ? { onlyImages: true, hideTitle: true } : {})}
+        {...(onlyCreateMediaFiles ? { hideTitle: true } : {})}
         {...formLabels}
+        acceptedFileTypes={acceptedFileTypes}
+        categories={creatableCategories}
         onSubmit={handleOnSubmit}
         drawerLayout
+        hideCover
       />
       <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </Box>
@@ -99,6 +105,13 @@ export function NewResource({ onlyCreateImages, onSelect }) {
 
 NewResource.propTypes = {
   localizations: PropTypes.object,
-  onlyCreateImages: PropTypes.bool,
   onSelect: PropTypes.func,
+  categories: PropTypes.arrayOf(PropTypes.string),
+  acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
+};
+
+NewResource.defaultProps = {
+  localizations: null,
+  categories: ['media-files'],
+  acceptedFileTypes: ['image/*', 'audio/*', 'video/*', 'application/pdf'],
 };

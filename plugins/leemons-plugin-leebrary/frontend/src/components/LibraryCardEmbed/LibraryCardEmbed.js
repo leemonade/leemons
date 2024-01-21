@@ -11,11 +11,8 @@ import {
   CardEmptyCover,
 } from '@bubbles-ui/components';
 import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbles-ui/icons/solid';
-// TODO: AssetPlayer comes from @common
-import { AssetPlayer } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
-import { useHistory } from 'react-router-dom';
 import { LocaleDate } from '@common';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
@@ -23,9 +20,9 @@ import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
   LIBRARY_CARD_EMBED_PROP_TYPES,
 } from './LibraryCardEmbed.constants';
+import { AssetPlayer } from '../AssetPlayer';
 
 const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category }) => {
-  const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);

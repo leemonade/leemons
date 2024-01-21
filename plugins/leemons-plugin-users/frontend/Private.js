@@ -33,7 +33,9 @@ const CreateUsers = loadable(() =>
 const ImportUsers = loadable(() =>
   pMinDelay(import('./src/pages/private/users/ImportUsers'), 1000)
 );
-const DetailUser = loadable(() => pMinDelay(import('./src/pages/private/users/DetailUser'), 1000));
+const DetailUser = loadable(() =>
+  pMinDelay(import('./src/pages/private/users/DetailUser/UserDetail'), 1000)
+);
 
 const UserDataDatasetValues = loadable(() =>
   pMinDelay(import('./src/pages/private/UserDataDatasetValues'), 1000)

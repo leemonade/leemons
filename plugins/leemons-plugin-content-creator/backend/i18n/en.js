@@ -11,6 +11,7 @@ module.exports = {
     previous: 'Back',
     cancel: 'Cancel',
     back: 'Back',
+    schemaLabel: 'Schema',
     documentTitlePlaceHolder: 'Write the document name...',
     cancelModalTitle: 'Cancel document',
     cancelModalDescription: 'Do you want to cancel the document?',

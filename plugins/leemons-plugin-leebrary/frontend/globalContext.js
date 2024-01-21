@@ -8,6 +8,9 @@ import {
 import { useTextEditor } from '@common/context';
 import { LibraryTool } from '@leebrary/components';
 import libraryProcessor from '@leebrary/helpers/libraryProcessor';
+import { pdfjs } from 'react-pdf';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 export function Provider({ children }) {
   const { setTextEditorTool, textEditorTools, setTextEditorProcessor, textEditorProcessors } =

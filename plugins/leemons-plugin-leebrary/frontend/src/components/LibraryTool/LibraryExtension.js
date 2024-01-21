@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { mergeAttributes, Node, ReactNodeViewRenderer } from '@bubbles-ui/editors';
-import { getAuthorizationTokenForAllCenters } from '@users/session';
-import { isEmpty, keys } from 'lodash';
+import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { isEmpty, isString, keys } from 'lodash';
 import { LibraryPlayer } from './LibraryPlayer';
 import { AUDIO_ASSET, IMAGE_ASSET, URL_ASSET, VIDEO_ASSET } from './mock/data';
 
@@ -12,20 +12,25 @@ const ASSET_KEYS = keys({
   ...URL_ASSET,
   processed: true,
   fileExtension: '',
+  fileId: '',
+  coverId: '',
+  mediaType: '',
 });
 
-function appendAuthorizationToUrl(url) {
-  if (!url || url === 'null' || url === 'undefined') {
-    return undefined;
+function prepareURL(asset) {
+  const { fileType, fileExtension } = asset;
+  if (fileType === 'bookmark') {
+    return asset.url;
   }
+  let assetUrl = '';
+  if (['document', 'file'].includes(fileType) && isString(fileExtension)) {
+    assetUrl = getFileUrl(asset.fileId);
+  }
+  return assetUrl;
+}
 
-  const authTokens = getAuthorizationTokenForAllCenters();
-
-  const _url = new URL(url.startsWith('http') ? url : leemons.apiUrl + url);
-
-  _url.searchParams.set('authorization', authTokens);
-
-  return _url.href;
+function prepareCoverURL(asset) {
+  return getFileUrl(asset.coverId || asset.fileId);
 }
 
 export const LibraryExtension = Node.create({
@@ -56,6 +61,9 @@ export const LibraryExtension = Node.create({
 
           return {
             ...cleanAsset,
+            fileId: asset.fileId ?? asset.file?.id ?? asset.file,
+            coverId: asset.coverId ?? asset.original?.cover?.id ?? asset.cover?.id,
+            mediaType: asset.mediaType || cleanAsset.mediaType,
             tags: JSON.stringify(cleanAsset.tags || []),
             metadata: JSON.stringify(cleanAsset.metadata || []),
           };
@@ -65,7 +73,7 @@ export const LibraryExtension = Node.create({
         default: '100%',
       },
       display: {
-        default: 'card',
+        default: 'player',
       },
       align: {
         default: 'left',
@@ -91,13 +99,16 @@ export const LibraryExtension = Node.create({
           }, {});
 
           if (!isEmpty(asset)) {
-            asset.url = appendAuthorizationToUrl(asset.url);
-            asset.cover = appendAuthorizationToUrl(asset.cover);
+            asset.coverId = asset.coverId ?? asset.original?.cover?.id;
+            asset.fileId = asset.fileId ?? asset.file?.id;
             asset.tags = asset.tags ? JSON.parse(asset.tags) : [];
             asset.metadata = asset.metadata ? JSON.parse(asset.metadata) : [];
             asset.fileType = asset.fileType || asset.filetype;
             asset.fileExtension =
               asset.fileExtension ?? asset.fileextension ?? asset.file?.extension;
+            asset.mediaType = asset.mediaType ?? asset.mediatype;
+            asset.url = prepareURL(asset);
+            asset.cover = prepareCoverURL(asset);
             element.setAttribute('asset', JSON.stringify(asset));
           }
 
