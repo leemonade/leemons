@@ -114,7 +114,7 @@ export default function ActivityHeader({
           <ClassroomDisplay instance={instance} hidden={!showClass} />
           <Box className={classes.activityMetadata}>
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
-            <CalificationTypeDisplay assignable={assignable} hidden={!showEvaluationType} />
+            <CalificationTypeDisplay instance={instance} hidden={!showEvaluationType} />
             <Timer instance={instance} hidden={!showTime} />
             <DateComponent
               instance={instance}
