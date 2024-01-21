@@ -1,6 +1,6 @@
 {
   "name": "@leemons/widgets",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@leemons/error": "0.0.41",
-    "@leemons/mongodb-helpers": "0.0.60",
+    "@leemons/mongodb-helpers": "0.0.61",
     "lodash": "^4.17.21"
   }
 }
