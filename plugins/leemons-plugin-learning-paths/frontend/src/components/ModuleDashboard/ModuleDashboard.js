@@ -1,17 +1,17 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import {
   Box,
   createStyles,
   Loader,
-  Stack,
   TabPanel,
   Tabs,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
+  ContextContainer,
+  Paper,
 } from '@bubbles-ui/components';
-import { capitalize, get, head, map, sortBy, tail } from 'lodash';
+import { get, head, map, sortBy, tail } from 'lodash';
 
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
@@ -23,6 +23,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import ActivityHeader from '@assignables/components/ActivityHeader';
+import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { DashboardCard } from './components/DashboardCard';
 import { useModuleDataForPreview } from './helpers/previewHooks';
 
@@ -290,6 +291,17 @@ export function ModuleDashboard({ id, preview }) {
               />
             </Box>
           </TabPanel>
+          {!!module?.assignable?.resources?.length && (
+            <TabPanel label={localizations?.resources}>
+              <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
+                <Box>
+                  <Paper>
+                    <AssetEmbedList assets={module?.assignable?.resources} />
+                  </Paper>
+                </Box>
+              </ContextContainer>
+            </TabPanel>
+          )}
         </Tabs>
       </Box>
     </TotalLayoutContainer>
