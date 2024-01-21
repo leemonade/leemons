@@ -36,7 +36,14 @@ export function findNearestFloorScore(score, scales) {
   return nearestScore;
 }
 
-export default function ScoreFeedback({ score, program, instance, isFeedback }) {
+export default function ScoreFeedback({
+  score,
+  program,
+  instance,
+  isFeedback,
+  hideBadge,
+  fullSize,
+}) {
   const evaluationSystem = useProgramEvaluationSystem(program);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
   const [, translations] = useTranslateLoader([prefixPN('assignmentForm'), prefixPN('ongoing')]);
@@ -99,10 +106,10 @@ export default function ScoreFeedback({ score, program, instance, isFeedback }) 
     getInstanceTypeLocale(instance);
   }, [instance, calificationType, setCalificationType]);
 
-  const { classes } = useScoreFeedbackStyles({ color });
+  const { classes } = useScoreFeedbackStyles({ color, fullSize });
   return (
     <Box className={classes.root}>
-      {calificationType && (
+      {calificationType && !hideBadge && (
         <Badge closable={false} size="xs" className={classes.calificationBadge}>
           <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
         </Badge>

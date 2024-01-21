@@ -7,6 +7,8 @@ export const SCOREFEEDBACK_PROP_TYPES = {
   isFeedback: PropTypes.bool,
   totalActivities: PropTypes.number,
   submitedActivities: PropTypes.number,
+  hideBadge: PropTypes.bool,
+  fullSize: PropTypes.bool,
 };
 
 export const SCOREFEEDBACK_DEFAULT_PROPS = {
@@ -16,4 +18,6 @@ export const SCOREFEEDBACK_DEFAULT_PROPS = {
   isFeedback: false,
   totalActivities: 0,
   submitedActivities: 0,
+  hideBadge: false,
+  fullSize: false,
 };

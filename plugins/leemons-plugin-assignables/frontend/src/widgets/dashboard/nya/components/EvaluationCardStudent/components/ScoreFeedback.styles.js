@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
+const useScoreFeedbackStyles = createStyles((theme, { color: _c, fullSize }) => {
   const { cardEvaluation, badge, global } = theme.other;
   let color;
   switch (_c) {
@@ -19,9 +19,9 @@ const useScoreFeedbackStyles = createStyles((theme, { color: _c }) => {
 
   return {
     root: {
-      height: pxToRem(194),
-      maxWidth: pxToRem(160),
-      minWidth: pxToRem(125),
+      height: fullSize ? '100%' : pxToRem(194),
+      maxWidth: fullSize ? '100%' : pxToRem(160),
+      minWidth: fullSize ? '100%' : pxToRem(125),
       backgroundColor: cardEvaluation.background.color.top,
       display: 'flex',
       flexDirection: 'column',
