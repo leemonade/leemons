@@ -10,7 +10,6 @@ import {
   ContextContainer,
   HtmlText,
   ImageLoader,
-  ScoreFeedback,
   Stack,
   Switch,
   Table,
@@ -43,6 +42,7 @@ import {
 } from '@bubbles-ui/icons/solid';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ActivityHeader from '@assignables/components/ActivityHeader';
+import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getFeedbackRequest,
@@ -82,8 +82,6 @@ export default function Result() {
   function onChangeUser(e) {
     if (e) {
       history.push(`/private/tests/result/${params.id}/${e}`);
-    } else {
-      history.push(`/private/tests/result/${params.id}`);
     }
   }
 
@@ -466,29 +464,7 @@ export default function Result() {
                   </Text>
                 </Box>
                 <Box className={styles.content}>
-                  <ScoreFeedback
-                    calification={{
-                      minimumGrade: store.evaluationSystem.minScaleToPromote.number,
-                      grade: userNote,
-                      label: scale.letter,
-                      showOnlyLabel: false,
-                    }}
-                  >
-                    <Stack
-                      fullWidth
-                      fullHeight
-                      direction="column"
-                      justifyContent="center"
-                      style={{
-                        padding: 24,
-                      }}
-                    >
-                      <Text size="md" role="productive" strong>
-                        Test
-                      </Text>
-                      <Title order={3}>{store.instance.assignable.asset.name}</Title>
-                    </Stack>
-                  </ScoreFeedback>
+                  <EvaluationFeedback assignation={store.assignation} />
 
                   {store.isTeacher ? (
                     <>
@@ -528,7 +504,7 @@ export default function Result() {
                     >
                       {store.isTeacher ? t('chatButtonStudent') : t('chatButtonTeacher')}
                     </Button>
-                    {canShowFeedback ? (
+                    {store.isTeacher && canShowFeedback ? (
                       <Button leftIcon={<SendMessageIcon />} onClick={() => sendFeedback()}>
                         {t('saveAndSendFeedback')}
                       </Button>
