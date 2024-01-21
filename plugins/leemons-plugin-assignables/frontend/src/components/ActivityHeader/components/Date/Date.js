@@ -147,8 +147,12 @@ export default function DateComponent({
                   <LocaleDate
                     date={start}
                     options={{
-                      dateStyle: 'short',
-                      timeStyle: showTime ? 'short' : undefined,
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+
+                      hour: showTime ? '2-digit' : undefined,
+                      minute: showTime ? '2-digit' : undefined,
                     }}
                   />
                 </Box>
@@ -164,8 +168,12 @@ export default function DateComponent({
                   <LocaleDate
                     date={deadline}
                     options={{
-                      dateStyle: 'short',
-                      timeStyle: showTime ? 'short' : undefined,
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+
+                      hour: showTime ? '2-digit' : undefined,
+                      minute: showTime ? '2-digit' : undefined,
                     }}
                   />
                 </Box>
