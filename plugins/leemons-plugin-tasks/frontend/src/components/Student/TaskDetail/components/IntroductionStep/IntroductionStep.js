@@ -9,6 +9,7 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   Alert,
+  ModalZoom,
 } from '@bubbles-ui/components';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
@@ -86,13 +87,19 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
               <HtmlText>{assignable?.statement}</HtmlText>
             </ContextContainer>
 
-            {!!previewAsset && <ImageLoader src={previewAsset.url} width={300} height={150} />}
+            {!!previewAsset && (
+              <ModalZoom>
+                <ImageLoader src={previewAsset.url} width={300} height={150} />
+              </ModalZoom>
+            )}
           </Box>
         )}
 
         {!assignable?.statement && !!previewAsset && (
           <ContextContainer title={t('statement')}>
-            <ImageLoader src={previewAsset.url} width={300} height={150} />
+            <ModalZoom>
+              <ImageLoader src={previewAsset.url} width={300} height={150} />
+            </ModalZoom>
           </ContextContainer>
         )}
 

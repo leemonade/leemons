@@ -90,7 +90,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
     if (
       subject &&
       (!isNil(score) || !requiresScoring) &&
-      (score !== previousScore.score || feedback !== previousScore.feedback)
+      (score !== previousScore?.score || feedback !== previousScore?.feedback)
     ) {
       const gradeObj = {
         subject,
@@ -109,7 +109,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
   */
   useEffect(() => {
     const gradeObj = previousScore;
-    const { grade, feedback: savedFeedback } = gradeObj;
+    const { grade, feedback: savedFeedback } = gradeObj ?? {};
 
     if (!isNil(grade) && grade !== score) {
       form.setValue('score', grade);
