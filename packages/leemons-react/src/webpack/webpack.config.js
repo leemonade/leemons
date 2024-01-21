@@ -111,6 +111,7 @@ module.exports = function webpackConfig({
         'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),
         '@tanstack/react-query': path.resolve(require.resolve('@tanstack/react-query'), '..'),
         '@loadable/component': path.resolve(require.resolve('@loadable/component')),
+        'leemons-hooks': path.resolve(require.resolve('leemons-hooks')),
       },
     },
     module: {
