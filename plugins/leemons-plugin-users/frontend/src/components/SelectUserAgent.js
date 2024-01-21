@@ -22,11 +22,11 @@ import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
 // ES: El componente para el componente MultiSelect de valores seleccionados
-export function SelectUserAgentValueComponent({ onRemove, value, ...props }) {
+export function SelectUserAgentValueComponent({ onRemove, value, clearable, ...props }) {
   return (
     <Stack sx={(theme) => ({ paddingRight: theme.spacing[1] })}>
       <UserDisplayItem {...props} variant="inline" />
-      {onRemove ? (
+      {onRemove && clearable ? (
         <Box>
           <ActionButton icon={<RemoveIcon />} onClick={(event) => onRemove(event, value)} />
         </Box>
@@ -54,6 +54,7 @@ const SelectUserAgent = forwardRef(
       valueComponent: ValueComponent = SelectUserAgentValueComponent,
       value: inputValue = [],
       onChange = () => {},
+      clearable = true,
       ...props
     },
     ref
@@ -184,8 +185,9 @@ const SelectUserAgent = forwardRef(
                   rol: userAgents[0].profile.name,
                   center: userAgents[0].center.name,
                   value: userAgents[0].id,
-                  label: `${userAgents[0].user.name}${userAgents[0].user.surnames ? ` ${userAgents[0].user.surnames}` : ''
-                    }`,
+                  label: `${userAgents[0].user.name}${
+                    userAgents[0].user.surnames ? ` ${userAgents[0].user.surnames}` : ''
+                  }`,
                 };
               }
             }
@@ -300,7 +302,9 @@ const SelectUserAgent = forwardRef(
         searchable
         onSearchChange={usersData ? undefined : search}
         itemComponent={(p) => <ItemComponent {...p} {...itemRenderProps} />}
-        valueComponent={(p) => <ValueComponent {...p} {...valueRenderProps} />}
+        valueComponent={(p) => (
+          <ValueComponent {...p} {...valueRenderProps} clearable={clearable} />
+        )}
         multiple={maxSelectedValues !== 1}
         data={toData}
         // EN: The value can be an array or a single value (string), so convert it to an array
@@ -330,11 +334,13 @@ SelectUserAgent.propTypes = {
   valueComponent: PropTypes.any,
   selectedUsers: PropTypes.any,
   selectedUserAgents: PropTypes.any,
+  clearable: PropTypes.bool,
 };
 
 SelectUserAgentValueComponent.propTypes = {
   onRemove: PropTypes.func,
   value: PropTypes.string,
+  clearable: PropTypes.bool,
 };
 
 export { SelectUserAgent };
