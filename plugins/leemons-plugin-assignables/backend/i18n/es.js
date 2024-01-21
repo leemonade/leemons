@@ -421,4 +421,10 @@ module.exports = {
       collaborations: 'Colaboraciones',
     },
   },
+
+  evaluationFeedbackComponent: {
+    contactTeacher: 'Hablar con mi profesor',
+    contactStudent: 'Hablar con el estudiante',
+    feedback: 'Feedback',
+  },
 };

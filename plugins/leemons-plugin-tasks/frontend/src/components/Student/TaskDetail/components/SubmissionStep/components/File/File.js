@@ -41,7 +41,11 @@ function useUploadFiles({ files, updateFiles, t }) {
         try {
           const {
             asset: { id },
-          } = await newAssetRequest({ name: file.name, file: file.File }, null, 'media-files');
+          } = await newAssetRequest(
+            { name: file.name, file: file.File, public: true, indexable: false },
+            null,
+            'media-files'
+          );
 
           previousFiles.current.push({ id: file.id, leebraryId: id });
           updateFile({ updateFiles, id: file.id, status: 'success', leebraryId: id });

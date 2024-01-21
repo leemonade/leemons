@@ -17,7 +17,7 @@ const useStyles = createStyles((theme, { width }) => ({
   },
 }));
 
-const AssetEmbedList = ({ assignation, width }) => {
+const AssetEmbedList = ({ assets, width }) => {
   const [assetIds, setAssetIds] = React.useState([]);
 
   const { data: assetsData, isLoading } = useAssets({
@@ -37,10 +37,10 @@ const AssetEmbedList = ({ assignation, width }) => {
   }
 
   useEffect(() => {
-    if (assignation?.instance?.assignable?.resources) {
-      setAssetIds(assignation?.instance?.assignable?.resources);
+    if (assets?.length) {
+      setAssetIds(assets);
     }
-  }, [assignation]);
+  }, [assets]);
 
   return (
     <Box className={classes.root}>
@@ -71,11 +71,11 @@ const AssetEmbedList = ({ assignation, width }) => {
 };
 
 AssetEmbedList.propTypes = {
-  assignation: propTypes.object,
+  assets: propTypes.arrayOf(propTypes.string),
   width: propTypes.number,
 };
 AssetEmbedList.defaultProps = {
-  assignation: {},
+  assets: [],
   width: 440,
 };
 

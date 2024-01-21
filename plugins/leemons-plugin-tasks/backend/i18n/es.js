@@ -384,6 +384,7 @@ module.exports = {
       submit: 'Entregar',
       save: 'Guardar',
       nextActivity: 'Siguiente actividad',
+      goToModule: 'Dashboard del módulo',
     },
     submission_step: {
       instructions: 'Instrucciones',
@@ -457,6 +458,34 @@ module.exports = {
     },
   },
   task_correction: {
+    student: {
+      submitted_alert: {
+        title: 'Tarea entregada con éxito',
+        message: 'Aquí tienes más información sobre tu tarea.',
+      },
+      pending_evaluation_alert: {
+        title: 'Pendiente de evaluación',
+        message: 'En cuanto sea evaluada recibirás una notificación.',
+      },
+
+      submission: 'Entregable',
+      activity_summary: 'Resumen de la actividad',
+      statement: 'Enunciado',
+      curriculum: 'Currículum',
+      development: 'Desarrollo',
+    },
+    teacher: {
+      evaluation: 'Evaluación',
+      student: 'Estudiante',
+      submission: 'Entregable',
+      score_label: 'Puntuación',
+      score_placeholder: 'Selecciona la puntuación',
+      add_feedback: 'Dar feedback cualitativo al estudiante sobre su desempeño en esta actividad',
+      comunica: 'Hablar con el estudiante',
+      publish: 'Guardar y enviar feedback',
+      publish_success: 'Evaluación enviada al estudiante',
+    },
+
     chatDescription: '¿Quieres hacer alguna consulta sobre esta evaluación?',
     chatTeacherDescription: '¿Quieres escribir alguna observación?',
     chatButtonStudent: 'Escribe a tu alumno',

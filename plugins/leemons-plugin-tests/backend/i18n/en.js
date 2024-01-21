@@ -440,5 +440,7 @@ module.exports = {
     responses: 'Responses',
     saveAndSendFeedback: 'Save and send feedback',
     returnToTable: 'Return to table',
+    nextActivity: 'Next activity',
+    goToModule: 'Module dashboard',
   },
 };

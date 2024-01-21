@@ -9,12 +9,14 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   Alert,
+  ModalZoom,
 } from '@bubbles-ui/components';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import dayjs from 'dayjs';
+import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import useIntroductionStepStyles from './IntroductionStep.styles';
 import CurriculumRender from './components/CurriculumRender/CurriculumRender';
 
@@ -41,14 +43,6 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
     === Resources ===
   */
   const resources = assignable?.resources;
-  const { data: resourcesAssets } = useAssets({
-    ids: resources,
-    filters: {
-      indexable: false,
-      showPublic: true,
-    },
-    enabled: !!resources,
-  });
 
   /*
     === Handle activity dates ===
@@ -93,29 +87,26 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
               <HtmlText>{assignable?.statement}</HtmlText>
             </ContextContainer>
 
-            {!!previewAsset && <ImageLoader src={previewAsset.url} width={300} height={150} />}
+            {!!previewAsset && (
+              <ModalZoom>
+                <ImageLoader src={previewAsset.url} width={300} height={150} />
+              </ModalZoom>
+            )}
           </Box>
         )}
 
         {!assignable?.statement && !!previewAsset && (
           <ContextContainer title={t('statement')}>
-            <ImageLoader src={previewAsset.url} width={300} height={150} />
+            <ModalZoom>
+              <ImageLoader src={previewAsset.url} width={300} height={150} />
+            </ModalZoom>
           </ContextContainer>
         )}
 
-        {!!resourcesAssets?.length && (
+        {!!resources?.length && (
           <Box>
             <ContextContainer title={t('resources')}>
-              TODO: Add new component
-              <ul>
-                {resourcesAssets.map((asset) => (
-                  <li key={asset.id}>
-                    <a href={asset.url} target="_blank" rel="noopener noreferrer">
-                      {asset.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <AssetEmbedList assets={resources} />
             </ContextContainer>
           </Box>
         )}

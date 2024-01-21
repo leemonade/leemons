@@ -394,6 +394,7 @@ module.exports = {
       submit: 'Submit',
       save: 'Save',
       nextActivity: 'Next activity',
+      goToModule: 'Module dashboard',
     },
     submission_step: {
       instructions: 'Instructions',
@@ -453,43 +454,6 @@ module.exports = {
       },
     },
 
-    submission_step: {
-      submission_type: {
-        file: {
-          uploadTitle: 'Click to upload a file',
-          uploadSubtitle: 'Or drag it here',
-          errorMessage: {
-            title: 'Error',
-            message: 'The file could not be uploaded',
-          },
-          errorAlert: 'The file {{fileName}} was rejected: {{error}}',
-          upload: 'Upload',
-        },
-        link: {
-          link: 'Submission link',
-          invalidURL: 'The URL is invalid',
-        },
-      },
-      submission_state: {
-        error: {
-          title: 'Error',
-          message: 'The changes could not be saved: {{error}}',
-        },
-        loading: {
-          title: 'Saving',
-          message: 'Saving changes...',
-        },
-        submitted: {
-          title: 'Submitted',
-          message: 'That task has been submitted',
-        },
-        notSubmitted: {
-          title: 'Not submitted',
-          message: 'That task has not been submitted yet',
-        },
-      },
-      submission: 'Submission',
-    },
     limitedTimeAlert: {
       beforeStart: 'Before beginning',
       noTimeLimit: 'Without time limit',
@@ -506,6 +470,34 @@ module.exports = {
     },
   },
   task_correction: {
+    student: {
+      submitted_alert: {
+        title: 'Activity submitted successfully',
+        message: 'Here you have more information about your activity',
+      },
+      pending_evaluation_alert: {
+        title: 'Pending evaluation.',
+        message: 'When the teacher evaluates your activity, you will receive a notification',
+      },
+
+      submission: 'Submission',
+      activity_summary: 'Activity summary',
+      statement: 'Statement',
+      curriculum: 'Curriculum',
+      development: 'Development',
+    },
+    teacher: {
+      evaluation: 'Evaluation',
+      student: 'Student',
+      submission: 'Submission',
+      score_label: 'Grade',
+      score_placeholder: 'Select a grade',
+      add_feedback: 'Add feedback to the student about his performance in this activity',
+      comunica: 'Chat with the student',
+      publish: 'Save and send feedback',
+      publish_success: 'Evaluation sent to student',
+    },
+
     chatDescription: 'Do you have any questions about this evaluation?',
     chatTeacherDescription: 'Would you like to write a comment?',
     chatButtonStudent: 'Write to your student',

@@ -36,6 +36,7 @@ const gradesSchema = new mongoose.Schema(
     },
     feedback: {
       type: String,
+      default: null,
     },
     visibleToStudent: {
       type: Boolean,

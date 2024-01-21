@@ -198,7 +198,12 @@ export default function AssignableUserNavigator({
             : null
         }
       >
-        <SelectUserAgent value={value} users={store.selectUsers} onChange={changeSelectedUser} />
+        <SelectUserAgent
+          value={value}
+          users={store.selectUsers}
+          onChange={changeSelectedUser}
+          clearable={false}
+        />
       </Box>
       {!onlySelect ? (
         <Stack fullWidth justifyContent="space-between" alignItems="center">

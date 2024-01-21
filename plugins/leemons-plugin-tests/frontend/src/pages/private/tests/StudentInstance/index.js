@@ -100,8 +100,9 @@ function StudentInstance() {
     if (store.viewMode) {
       history.push(`/private/tests/result/${params.id}/${getUserId()}`);
     } else {
-      store.showFinishModal = true;
+      // store.showFinishModal = true;
       const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+      history.push(`/private/tests/result/${params.id}/${getUserId()}?fromTest`);
       store.timestamps = timestamps;
       render();
     }
@@ -472,137 +473,6 @@ function StudentInstance() {
         </Box>
       </Modal>
     </>
-  );
-
-  return (
-    <ActivityContainer
-      collapsed={!store.isFirstStep}
-      header={taskHeaderProps}
-      deadline={
-        store.instance.dates.deadline
-          ? { label: t('delivery'), locale, deadline: new Date(store.instance.dates.deadline) }
-          : null
-      }
-    >
-      <>
-        <Box className={classes.mainContent}>
-          <Box className={classes.verticalStepper}>
-            <Box className={classes.verticalStepperContent}>
-              <VerticalStepper
-                {...verticalStepperProps}
-                currentStep={store.currentStep}
-                onChangeActiveIndex={(e) => {
-                  store.currentStep = e;
-                  render();
-                }}
-              />
-            </Box>
-          </Box>
-          <Box className={classes.pages}>
-            <Box className={classes.pagesContent}>
-              {verticalStepperProps.data[store.currentStep]
-                ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                    isFirstStep: !store.currentStep,
-                  })
-                : null}
-            </Box>
-          </Box>
-        </Box>
-        <Modal
-          title={t('finishTestModalTitle')}
-          opened={store.showFinishModal}
-          onClose={() => {}}
-          centerTitle
-          centered
-          withCloseButton={false}
-          closeOnEscape={false}
-          closeOnClickOutside={false}
-          size={480}
-        >
-          <Box className={styles.howItWorksModalContainer}>
-            <Text
-              dangerouslySetInnerHTML={{
-                __html: t('finishTestModalDescription'),
-              }}
-            />
-          </Box>
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            {store.modalMode === 1 ? (
-              <Stack justifyContent="space-between">
-                {store.isModule ? (
-                  <Button variant="light" compact onClick={goToModuleDashboard}>
-                    {t('modulesDashboard')}
-                  </Button>
-                ) : (
-                  <Button variant="light" compact onClick={goToOnGoing}>
-                    {t('pendingActivities')}
-                  </Button>
-                )}
-                <Button compact onClick={goToResults}>
-                  {t('viewResults')}
-                </Button>
-              </Stack>
-            ) : null}
-            {store.modalMode === 2 ? (
-              <Stack fullWidth justifyContent="space-between">
-                <Button
-                  variant="light"
-                  rightIcon={<ExpandDiagonalIcon />}
-                  compact
-                  onClick={() => goToResults(null, true)}
-                >
-                  {t('viewResults')}
-                </Button>
-                <Link to={store.nextActivityUrl}>
-                  <Button rightIcon={<ChevronRightIcon />} compact>
-                    {t('nextActivity')}
-                  </Button>
-                </Link>
-              </Stack>
-            ) : null}
-          </Box>
-        </Modal>
-        <Modal
-          title={t('finishForceTestModalTitle')}
-          opened={store.showForceFinishModal}
-          onClose={closeForceFinishModal}
-          withCloseButton={false}
-          closeOnEscape={false}
-          closeOnClickOutside={false}
-        >
-          <Box className={styles.howItWorksModalContainer}>
-            <Paragraph
-              dangerouslySetInnerHTML={{
-                __html: t('finishForceTestModalDescription'),
-              }}
-            />
-          </Box>
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-            <Stack fullWidth justifyContent="space-between">
-              <Button
-                variant="link"
-                onClick={() => {
-                  store.showForceFinishModal = false;
-                  render();
-                  history.push(`/private/assignables/ongoing`);
-                }}
-              >
-                {t('activitiesInCourse')}
-              </Button>
-              <Button
-                onClick={() => {
-                  store.showForceFinishModal = false;
-                  render();
-                  history.push(`/private/tests/result/${params.id}/${getUserId()}`);
-                }}
-              >
-                {t('reviewResults')}
-              </Button>
-            </Stack>
-          </Box>
-        </Modal>
-      </>
-    </ActivityContainer>
   );
 }
 

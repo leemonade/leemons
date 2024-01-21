@@ -6,11 +6,11 @@ import {
 } from '@assignables/hooks/useEvaluationType';
 import getEvaluationTypesIcons from '@assignables/helpers/getEvaluationTypesIcons';
 import { Box, Text } from '@bubbles-ui/components';
-import useCalificationTypeDisplay from './CalificationTypeDisplay.style';
+import { useCalificationTypeDisplay } from './CalificationTypeDisplay.style';
 
-export default function CalificationTypeDisplay({ assignable, hidden }) {
+export default function CalificationTypeDisplay({ instance, hidden }) {
   const localizations = useEvaluationTypeLocalizations();
-  const evaluationType = useEvaluationType(assignable ?? {});
+  const evaluationType = useEvaluationType(instance ?? {});
   const icons = getEvaluationTypesIcons();
   const Icon = icons[evaluationType];
 
@@ -33,6 +33,6 @@ export default function CalificationTypeDisplay({ assignable, hidden }) {
 }
 
 CalificationTypeDisplay.propTypes = {
-  assignable: PropTypes.object,
+  instance: PropTypes.object,
   hidden: PropTypes.bool,
 };
