@@ -20,7 +20,7 @@ const Introduction = ({ instance }) => {
       )}
       {!!instance?.assignable?.resources?.length && (
         <ContextContainer title={t('resources')}>
-          <AssetEmbedList assignation={{ instance }} />
+          <AssetEmbedList assets={instance?.assignable?.resources} />
         </ContextContainer>
       )}
     </Box>
