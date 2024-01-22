@@ -35,6 +35,7 @@ async function processDevelopment({ values, store, processTextEditor }) {
   const force = !!store.currentTask?.published;
 
   const developments = values?.metadata?.development;
+
   if (developments?.length || store.currentTask?.metadata?.development?.length) {
     const length = Math.max(
       developments?.length ?? 0,

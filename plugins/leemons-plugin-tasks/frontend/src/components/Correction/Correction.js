@@ -145,7 +145,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
             name="score"
             control={form.control}
             render={({ field }) => {
-              if (evaluationSystem?.type === 'number') {
+              if (evaluationSystem?.type === 'numeric') {
                 return (
                   <NumberInput
                     {...field}
