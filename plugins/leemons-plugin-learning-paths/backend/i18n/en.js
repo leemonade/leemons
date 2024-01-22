@@ -113,7 +113,7 @@ module.exports = {
       assign: 'Assign',
       duplicate: 'Duplicate',
       delete: 'Delete',
-      share: 'Share',
+      share: 'Permissions',
     },
     duplicate: {
       title: 'Duplicate module',

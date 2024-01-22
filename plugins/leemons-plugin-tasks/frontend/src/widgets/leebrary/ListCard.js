@@ -2,19 +2,19 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
-// TODO: import from @library plugin
 import { LibraryCard } from '@leebrary/components';
-
-import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import _, { noop } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '../../helpers/prefixPN';
-import { TaskIcon } from '../../components/Icons/TaskIcon';
+import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
+import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { ExpressTaskIcon } from '../../components/Icons/ExpressTaskIcon';
+import { TaskIcon } from '../../components/Icons/TaskIcon';
+import { prefixPN } from '../../helpers/prefixPN';
 
 const ListCardStyles = createStyles((theme, { single }) => ({
   root: {
@@ -87,25 +87,14 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
     if (asset?.id) {
       const taskId = asset.providerData?.id;
 
-      items.push({
-        icon: <ViewOnIcon />,
-        children: menuLabels.view,
-        onClick: (e) => {
-          e.stopPropagation();
-          handleClick(`/private/tasks/library/view/${taskId}`);
-        },
-      });
-      if (asset.editable) {
-        items.push({
-          icon: <EditWriteIcon />,
-          children: menuLabels.edit,
-          onClick: (e) => {
-            e.stopPropagation();
-            handleClick(`/private/tasks/library/edit/${taskId}`);
-          },
-        });
-      }
-
+      // items.push({
+      //   icon: <ViewOnIcon />,
+      //   children: menuLabels.view,
+      //   onClick: (e) => {
+      //     e.stopPropagation();
+      //     handleClick(`/private/tasks/library/view/${taskId}`);
+      //   },
+      // });
       if (asset.assignable && asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
@@ -116,7 +105,16 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
           },
         });
       }
-
+      if (asset.editable) {
+        items.push({
+          icon: <EditIcon />,
+          children: menuLabels.edit,
+          onClick: (e) => {
+            e.stopPropagation();
+            handleClick(`/private/tasks/library/edit/${taskId}`);
+          },
+        });
+      }
       if (asset.duplicable && asset.providerData) {
         items.push({
           icon: <DuplicateIcon />,
@@ -139,7 +137,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
 
       if (asset.deleteable) {
         items.push({
-          icon: <DeleteBinIcon />,
+          icon: <DeleteIcon />,
           children: menuLabels.delete,
           onClick: (e) => {
             e.stopPropagation();
