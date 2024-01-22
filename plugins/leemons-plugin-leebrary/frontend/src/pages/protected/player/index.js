@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, LoadingOverlay } from '@bubbles-ui/components';
 import { useParams } from 'react-router-dom';
-import { useAssets } from '../../../request/hooks/queries/useAssets';
 import { AssetPlayer } from '@leebrary/components/AssetPlayer';
+import { useAssets } from '../../../request/hooks/queries/useAssets';
 
 function PlayerPage() {
   const { assetId } = useParams();

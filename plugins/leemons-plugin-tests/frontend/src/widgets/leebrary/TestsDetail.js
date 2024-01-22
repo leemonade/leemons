@@ -25,7 +25,6 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
 
   // ·········································································
   // HANDLERS
-
   if (asset?.id) {
     if (asset.editable) {
       toolbarItems.edit = t('edit');
@@ -38,6 +37,12 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
     }
     if (asset.duplicable) {
       toolbarItems.duplicate = t('duplicate');
+    }
+    if (asset.pinned === false) {
+      toolbarItems.pin = t('pin');
+    }
+    if (asset.pinned === true) {
+      toolbarItems.unpin = t('unpin');
     }
     // duplicateRequest
   }

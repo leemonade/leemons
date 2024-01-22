@@ -26,6 +26,12 @@ const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
+    if (asset.pinned === false) {
+      toolbarItems.pin = t('pin');
+    }
+    if (asset.pinned === true) {
+      toolbarItems.unpin = t('unpin');
+    }
   }
 
   // ·········································································

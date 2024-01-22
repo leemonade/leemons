@@ -251,6 +251,8 @@ module.exports = {
     hints: 'Pistas',
     yes: 'Si',
     no: 'No',
+    pin: 'Marcar como favorito',
+    unpin: 'Quitar de favorito',
   },
   instructions: {
     instructions: 'Instrucciones',
