@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-timetable",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Leemons timetable plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
