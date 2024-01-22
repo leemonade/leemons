@@ -149,16 +149,16 @@ function UserClassesSwiperWidget({ program }) {
             !classe.groups || classe.groups.isAlone
               ? null
               : classe.groups
-              ? classe.groups.abbreviation
-              : null;
+                ? classe.groups.abbreviation
+                : null;
           const course =
             !classe.groups || classe.groups.isAlone
               ? null
               : isArray(classe.courses)
-              ? t('multiCourse')
-              : classe.courses
-              ? getCourseName(classe.courses)
-              : null;
+                ? t('multiCourse')
+                : classe.courses
+                  ? getCourseName(classe.courses)
+                  : null;
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
@@ -191,7 +191,7 @@ function UserClassesSwiperWidget({ program }) {
                     }
                     className={styles.image}
                   >
-                    {nameFirstLetters}
+                    {!imageStyle && nameFirstLetters}
                   </Box>
                   {classe.color || classe.icon ? (
                     <Box

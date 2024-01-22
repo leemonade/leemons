@@ -3,15 +3,17 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components/LibraryCard';
-import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { prefixPN } from '@scorm/helpers';
 import { deletePackageRequest, duplicatePackageRequest } from '@scorm/request';
-import { CardVariantIcon, ScormCardIcon } from '@scorm/components/icons';
+import { ScormCardIcon } from '@scorm/components/icons';
+import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
+import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 
 const ScormCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -38,26 +40,16 @@ const ScormListCard = ({ asset, selected, onRefresh, embedded, isEmbeddedList, .
     const items = [];
 
     if (asset?.id) {
-      if (asset.providerData?.published) {
-        items.push({
-          icon: <ViewOnIcon />,
-          children: t('view'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/scorm/preview/${asset.providerData.id}`);
-          },
-        });
-      }
-      if (asset.editable) {
-        items.push({
-          icon: <EditWriteIcon />,
-          children: t('edit'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/scorm/${asset.providerData.id}`);
-          },
-        });
-      }
+      // if (asset.providerData?.published) {
+      //   items.push({
+      //     icon: <ViewOnIcon />,
+      //     children: t('view'),
+      //     onClick: (e) => {
+      //       e.stopPropagation();
+      //       history.push(`/private/scorm/preview/${asset.providerData.id}`);
+      //     },
+      //   });
+      // }
       if (asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
@@ -65,6 +57,16 @@ const ScormListCard = ({ asset, selected, onRefresh, embedded, isEmbeddedList, .
           onClick: (e) => {
             e.stopPropagation();
             history.push(`/private/scorm/assign/${asset.providerData.id}`);
+          },
+        });
+      }
+      if (asset.editable) {
+        items.push({
+          icon: <EditIcon />,
+          children: t('edit'),
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/scorm/${asset.providerData.id}`);
           },
         });
       }
@@ -96,7 +98,7 @@ const ScormListCard = ({ asset, selected, onRefresh, embedded, isEmbeddedList, .
       }
       if (asset.deleteable) {
         items.push({
-          icon: <DeleteBinIcon />,
+          icon: <DeleteIcon />,
           children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();

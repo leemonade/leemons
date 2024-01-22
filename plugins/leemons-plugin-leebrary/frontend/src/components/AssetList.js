@@ -718,16 +718,16 @@ function AssetList({
 
   const toolbarItems = useMemo(
     () => ({
+      share: store.asset?.shareable ? t('cardToolbar.share') : false,
       edit: store.asset?.editable ? t('cardToolbar.edit') : false,
       duplicate: store.asset?.duplicable ? t('cardToolbar.duplicate') : false,
       download: store.asset?.downloadable ? t('cardToolbar.download') : false,
       delete: store.asset?.deleteable ? t('cardToolbar.delete') : false,
-      share: store.asset?.shareable ? t('cardToolbar.share') : false,
       pin: store.asset?.pinned
         ? false
         : store.asset?.pinneable && published
-        ? t('cardToolbar.pin')
-        : false,
+          ? t('cardToolbar.pin')
+          : false,
       unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     }),
@@ -811,12 +811,12 @@ function AssetList({
             style={
               isEmbedded
                 ? {
-                    flex: 0,
-                    alignItems: 'end',
-                    padding: '16px 24px',
-                    height: '72px',
-                    backgroundColor: 'white',
-                  }
+                  flex: 0,
+                  alignItems: 'end',
+                  padding: '16px 24px',
+                  height: '72px',
+                  backgroundColor: 'white',
+                }
                 : childNotEmbeddedStyles
             }
           >

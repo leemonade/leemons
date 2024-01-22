@@ -1,20 +1,8 @@
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import { createStyles } from '@bubbles-ui/components';
-import {
-  AssignIcon,
-  DeleteBinIcon,
-  DuplicateIcon,
-  ShareIcon,
-  ViewOnIcon,
-} from '@bubbles-ui/icons/outline';
-// TODO: import from @library plugin
 import { LibraryCard } from '@leebrary/components';
-
 import { get } from 'lodash';
-
-import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { unflatten } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -22,6 +10,11 @@ import duplicateModuleRequest from '@learning-paths/requests/duplicateModule';
 import removeModuleRequest from '@learning-paths/requests/removeModule';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ModuleCardIcon } from '@learning-paths/components/ModuleCardIcon';
+import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
+import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 
 export function useListCardLocalizations() {
   const keys = ['assignables.roles.learningpaths.module.singular', 'learning-paths.libraryCard'];
@@ -57,22 +50,6 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
   return useMemo(
     () =>
       [
-        !!editable && {
-          icon: <EditWriteIcon />,
-          children: localizations?.menuItems?.edit,
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/learning-paths/modules/${id}/edit`);
-          },
-        },
-        {
-          icon: <ViewOnIcon />,
-          children: localizations?.menuItems?.view,
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/learning-paths/modules/${id}/view`);
-          },
-        },
         {
           icon: <AssignIcon />,
           children: localizations?.menuItems?.assign,
@@ -81,6 +58,31 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
             history.push(`/private/learning-paths/modules/${id}/assign`);
           },
         },
+        !!isOwner && {
+          icon: <ShareIcon />,
+          children: localizations?.menuItems?.share,
+          onClick: () => {
+            onShare(asset);
+          },
+        },
+
+        !!editable && {
+          icon: <EditIcon />,
+          children: localizations?.menuItems?.edit,
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/learning-paths/modules/${id}/edit`);
+          },
+        },
+        // {
+        //   icon: <ViewOnIcon />,
+        //   children: localizations?.menuItems?.view,
+        //   onClick: (e) => {
+        //     e.stopPropagation();
+        //     history.push(`/private/learning-paths/modules/${id}/view`);
+        //   },
+        // },
+
         canDuplicate && {
           icon: <DuplicateIcon />,
           children: localizations?.menuItems?.duplicate,
@@ -108,7 +110,7 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
           },
         },
         !!deleteable && {
-          icon: <DeleteBinIcon />,
+          icon: <DeleteIcon />,
           children: localizations?.menuItems?.delete,
           onClick: () => {
             openDeleteConfirmationModal({
@@ -131,13 +133,6 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
                 }
               },
             })();
-          },
-        },
-        !!isOwner && {
-          icon: <ShareIcon />,
-          children: localizations?.menuItems?.share,
-          onClick: () => {
-            onShare(asset);
           },
         },
       ].filter(Boolean),

@@ -114,7 +114,7 @@ module.exports = {
       assign: 'Asignar',
       duplicate: 'Duplicar',
       delete: 'Eliminar',
-      share: 'Compartir',
+      share: 'Permisos',
     },
     duplicate: {
       title: 'Duplicar módulo',
