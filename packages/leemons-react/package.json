@@ -1,6 +1,6 @@
 {
   "name": "@leemons/react",
-  "version": "0.0.52",
+  "version": "0.0.53",
   "bin": {
     "leemonsFront": "bin/leemonsFront.js"
   },

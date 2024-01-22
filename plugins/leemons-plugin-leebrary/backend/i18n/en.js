@@ -266,6 +266,11 @@ module.exports = {
       confirm: 'Confirm',
       cancel: 'Back',
     },
+    common: {
+      labels: {
+        processingImage: 'Processing image',
+      },
+    },
   },
   list: {
     show: 'Show',
