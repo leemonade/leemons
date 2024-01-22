@@ -191,6 +191,13 @@ function AssetList({
     },
   });
 
+  useEffect(() => {
+    console.log('isLoading', isLoading);
+  }, [isLoading]);
+  useEffect(() => {
+    console.log('store.loading', store.loading);
+  }, [store.loading]);
+
   // ·········································································
   // DATA PROCESSING
 
@@ -237,7 +244,13 @@ function AssetList({
 
     if (
       isEqual(
-        { categoryId, criteria, type, _filters: pickBy(_filters, (obj) => !isNil(obj)) },
+        {
+          categoryId,
+          criteria,
+          type,
+          activeStatus,
+          _filters: pickBy(_filters, (obj) => !isNil(obj)),
+        },
         lastQuery.current
       )
     ) {
