@@ -28,7 +28,7 @@ async function getReadStream({ key: Key, start = -1, end = -1, forceStream = tru
   }
 
   // Generate a presigned URL for the S3 object
-  const signedUrlExpireSeconds = 60 * 5;
+  const signedUrlExpireSeconds = 24 * 60 * 60;
 
   return s3.getSignedUrl('getObject', {
     ...params,
