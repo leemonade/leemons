@@ -5,16 +5,15 @@ import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components/LibraryCard';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import {
-  DownloadIcon,
-  DuplicateIcon,
-  PluginAssignmentsIcon,
-  ShareSocialIcon,
-} from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useHistory } from 'react-router-dom';
 import prefixPN from '../helpers/prefixPN';
 import { getCoverUrl, prepareAsset, resolveAssetType } from '../helpers/prepareAsset';
+import { ShareIcon } from './LibraryDetailToolbar/icons/ShareIcon';
+import { DownloadIcon } from './LibraryDetailToolbar/icons/DownloadIcon';
+import { AssignIcon } from './LibraryDetailToolbar/icons/AssignIcon';
+import { EditIcon } from './LibraryDetailToolbar/icons/EditIcon';
+import { DuplicateIcon } from './LibraryDetailToolbar/icons/DuplicateIcon';
+import { DeleteIcon } from './LibraryDetailToolbar/icons/DeleteIcon';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
@@ -65,9 +64,37 @@ const CardWrapper = ({
     const items = [];
 
     if (asset?.id) {
+      items.push({
+        icon: <AssignIcon />,
+        children: t('cardToolbar.covertToTask'),
+        onClick: (e) => {
+          e.stopPropagation();
+          history.push(`/private/tasks/library/create?from=leebrary&asset=${asset.id}`);
+        },
+      });
+      if (asset.shareable) {
+        items.push({
+          icon: <ShareIcon />,
+          children: t('cardToolbar.share'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
+          },
+        });
+      }
+      if (asset.downloadable) {
+        items.push({
+          icon: <DownloadIcon />,
+          children: t('cardToolbar.download'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onDownload(asset);
+          },
+        });
+      }
       if (asset.editable) {
         items.push({
-          icon: <EditWriteIcon />,
+          icon: <EditIcon />,
           children: t('cardToolbar.edit'),
           onClick: (e) => {
             e.stopPropagation();
@@ -86,44 +113,13 @@ const CardWrapper = ({
         });
       }
 
-      items.push({
-        icon: <PluginAssignmentsIcon />,
-        children: t('cardToolbar.covertToTask'),
-        onClick: (e) => {
-          e.stopPropagation();
-          history.push(`/private/tasks/library/create?from=leebrary&asset=${asset.id}`);
-        },
-      });
-
-      if (asset.downloadable) {
-        items.push({
-          icon: <DownloadIcon />,
-          children: t('cardToolbar.download'),
-          onClick: (e) => {
-            e.stopPropagation();
-            onDownload(asset);
-          },
-        });
-      }
-
       if (asset.deleteable) {
         items.push({
-          icon: <DeleteBinIcon />,
+          icon: <DeleteIcon />,
           children: t('cardToolbar.delete'),
           onClick: (e) => {
             e.stopPropagation();
             onDelete(asset);
-          },
-        });
-      }
-
-      if (asset.shareable) {
-        items.push({
-          icon: <ShareSocialIcon />,
-          children: t('cardToolbar.share'),
-          onClick: (e) => {
-            e.stopPropagation();
-            onShare(asset);
           },
         });
       }
