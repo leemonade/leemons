@@ -349,6 +349,8 @@ module.exports = {
     assign: 'Asignar',
     delete: 'Eliminar',
     duplicate: 'Duplicar',
+    pin: 'Marcar como favorito',
+    unpin: 'Quitar de favorito',
   },
   variant: 'Tarea',
   expressVariant: 'Tarea express',

@@ -359,6 +359,8 @@ module.exports = {
     assign: 'Assign',
     delete: 'Delete',
     duplicate: 'Duplicate',
+    pin: 'Mark as favorite',
+    unpin: 'Unmark as favorite',
   },
   variant: 'Task',
   expressVariant: 'Express Task',

@@ -253,6 +253,8 @@ module.exports = {
     hints: 'Hints',
     yes: 'Yes',
     no: 'No',
+    pin: 'Mark as favorite',
+    unpin: 'Unmark as favorite',
   },
   instructions: {
     instructions: 'Instructions',
