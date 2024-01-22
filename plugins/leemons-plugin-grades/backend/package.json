@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-grades",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "Leemons grades plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
