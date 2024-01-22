@@ -33,6 +33,7 @@ const ScoresBasicTable = ({
   const { ref: tableRef } = useElementSize(null);
   const [value, setValue] = useState(_value);
   const useNumbers = !grades.some((grade) => grade.letter);
+
   const [expandedColumn, setExpandedColumn] = useState(_expandedColumn);
   const [overFlowLeft, setOverFlowLeft] = useState(false);
   const [overFlowRight, setOverFlowRight] = useState(false);
@@ -59,16 +60,29 @@ const ScoresBasicTable = ({
 
   const getCompletionPercentage = (activityId, isExpanded) => {
     const activities = isExpanded ? expandedData.value : value;
-    const studentsWithActivity = activities.filter((student) => {
-      return student.activities.find((activity) => activity?.id === activityId);
-    });
+    const studentsWithActivity = activities.filter((student) =>
+      student.activities.find((activity) => activity?.id === activityId)
+    );
     const completionPercentage = Math.trunc(
       (studentsWithActivity.length / activities.length) * 100
     );
     return `${completionPercentage}%`;
   };
 
-  const findGradeLetter = (score) => grades.find(({ number }) => number === score)?.letter;
+  const findGradeLetter = (score) => {
+    let nearestGrade = grades[0];
+    let nearestDifference = Math.abs(nearestGrade.number - score);
+
+    grades.forEach((grade) => {
+      const difference = Math.abs(grade.number - score);
+      if (difference < nearestDifference) {
+        nearestDifference = difference;
+        nearestGrade = grade;
+      }
+    });
+
+    return nearestGrade.letter;
+  };
 
   const getActivities = (studentActivities, studentId) => {
     const activitiesObject = {};
@@ -111,14 +125,11 @@ const ScoresBasicTable = ({
     return 'error';
   };
 
-  const getActivitiesPeriod = () => {
-    return `${new Date(from).toLocaleDateString(locale)} - ${new Date(to).toLocaleDateString(
-      locale
-    )}`;
-  };
+  const getActivitiesPeriod = () =>
+    `${new Date(from).toLocaleDateString(locale)} - ${new Date(to).toLocaleDateString(locale)}`;
 
-  const getRightBodyContent = () => {
-    return value.map(({ id, activities: studentActivities, customScore, allowCustomChange }) => {
+  const getRightBodyContent = () =>
+    value.map(({ id, activities: studentActivities, customScore, allowCustomChange }) => {
       const avgScore = getAvgScore(studentActivities);
       return (
         <Box key={id} className={classes.contentRow}>
@@ -144,7 +155,6 @@ const ScoresBasicTable = ({
         </Box>
       );
     });
-  };
 
   const getColumns = () => {
     const columns = [];
@@ -159,18 +169,16 @@ const ScoresBasicTable = ({
           </Text>
         </Box>
       ),
-      Cell: ({ value }) => {
-        return (
-          <Box className={classes.studentsCells}>
-            <UserDisplayItem
-              name={value.name}
-              surnames={value.surname}
-              avatar={value.image}
-              noBreak
-            />
-          </Box>
-        );
-      },
+      Cell: ({ value }) => (
+        <Box className={classes.studentsCells}>
+          <UserDisplayItem
+            name={value.name}
+            surnames={value.surname}
+            avatar={value.image}
+            noBreak
+          />
+        </Box>
+      ),
     });
     activities.forEach((activity) => {
       const completionPercentage = getCompletionPercentage(activity.id);
@@ -188,22 +196,20 @@ const ScoresBasicTable = ({
             type={activity.type}
           />
         ),
-        Cell: ({ value, row, column, ...others }) => {
-          return (
-            <ScoreCell
-              value={value.score}
-              noActivity={labels.noActivity}
-              allowChange={activity.allowChange}
-              isSubmitted={value.isSubmitted}
-              grades={grades}
-              row={row}
-              column={column}
-              setValue={setValue}
-              onDataChange={onDataChange}
-              onOpen={onOpen}
-            />
-          );
-        },
+        Cell: ({ value, row, column, ...others }) => (
+          <ScoreCell
+            value={value.score}
+            noActivity={labels.noActivity}
+            allowChange={activity.allowChange}
+            isSubmitted={value.isSubmitted}
+            grades={grades}
+            row={row}
+            column={column}
+            setValue={setValue}
+            onDataChange={onDataChange}
+            onOpen={onOpen}
+          />
+        ),
       });
       if (activity.expandable && expandedColumn === activity.id) {
         columns.push(
@@ -232,24 +238,22 @@ const ScoresBasicTable = ({
                 position === 'last'
                   ? { boxShadow: 'inset -10px 0px 6px -6px rgba(0,0,0,0.10)' }
                   : { boxShadow: 'none' },
-              Cell: ({ value, row, column }) => {
-                return (
-                  <ScoreCell
-                    value={value.score}
-                    noActivity={labels.noActivity}
-                    allowChange={expandedActivity.allowChange}
-                    isSubmitted={value.isSubmitted}
-                    grades={grades}
-                    row={row}
-                    column={column}
-                    isExpanded={true}
-                    setValue={setValue}
-                    onDataChange={onDataChange}
-                    position={position}
-                    onOpen={onOpen}
-                  />
-                );
-              },
+              Cell: ({ value, row, column }) => (
+                <ScoreCell
+                  value={value.score}
+                  noActivity={labels.noActivity}
+                  allowChange={expandedActivity.allowChange}
+                  isSubmitted={value.isSubmitted}
+                  grades={grades}
+                  row={row}
+                  column={column}
+                  isExpanded={true}
+                  setValue={setValue}
+                  onDataChange={onDataChange}
+                  position={position}
+                  onOpen={onOpen}
+                />
+              ),
             };
           })
         );
