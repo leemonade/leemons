@@ -6,7 +6,7 @@ import Bar from './Bar';
 import useGradesGraphStyles from './GradesGraph.styles';
 
 function extrapolateScoresToNearestScale({ scores, grades }) {
-  return scores.map((score) => {
+  return scores?.map((score) => {
     let nearestGrade = grades[0];
     let difference = Math.abs(score.score - nearestGrade.number);
 
