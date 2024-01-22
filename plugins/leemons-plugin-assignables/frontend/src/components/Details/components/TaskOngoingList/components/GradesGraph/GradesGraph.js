@@ -5,21 +5,45 @@ import { ResponsiveBar } from '@nivo/bar';
 import Bar from './Bar';
 import useGradesGraphStyles from './GradesGraph.styles';
 
+function extrapolateScoresToNearestScale({ scores, grades }) {
+  return scores.map((score) => {
+    let nearestGrade = grades[0];
+    let difference = Math.abs(score.score - nearestGrade.number);
+
+    grades.forEach((grade) => {
+      const currentDifference = Math.abs(score.score - grade.number);
+      if (currentDifference < difference) {
+        nearestGrade = grade;
+        difference = currentDifference;
+      }
+    });
+
+    return { ...score, score: nearestGrade.number };
+  });
+}
+
 export default function GradesGraph({ grades, minimumGrade, scores, students, labels }) {
   const { classes, theme } = useGradesGraphStyles();
 
   const [barWidth, setBarWidth] = React.useState(0);
+
+  const normalizedScores = useMemo(
+    () => extrapolateScoresToNearestScale({ scores, grades }),
+    [grades, scores]
+  );
 
   const data = useMemo(
     () =>
       grades?.map((grade) => ({
         value: grade.number,
         label: grade?.letter ?? grade?.number,
-        studentCount: scores.filter((score) => score.score === grade.number).length,
+        studentCount: normalizedScores.filter((score) => score.score === grade.number).length,
         percentage:
-          (scores.filter((score) => score.score === grade.number).length / students.length) * 100,
+          (normalizedScores.filter((score) => score.score === grade.number).length /
+            students.length) *
+          100,
       })) ?? [],
-    [grades, scores]
+    [grades, normalizedScores]
   );
 
   return (
