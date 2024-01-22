@@ -163,7 +163,8 @@ const LibraryDetailContent = ({
                             variant="inline"
                             size="md"
                             alt={user?.name}
-                            name={user?.fullName}
+                            name={user?.name}
+                            surnames={user?.surnames}
                             image={user.avatar}
                           />
                         </Box>
