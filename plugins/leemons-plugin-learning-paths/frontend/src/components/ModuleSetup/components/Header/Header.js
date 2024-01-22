@@ -34,11 +34,12 @@ function Header({ localizations, onCancel = noop }) {
   fullWidth
 />
 */
-
   return (
     <TotalLayoutHeader
       title={title}
-      formTitlePlaceholder={sharedData?.basicData?.name}
+      formTitlePlaceholder={
+        sharedData?.basicData?.name ? sharedData.basicData.name : localizations?.subtitlePlaceholder
+      }
       icon={<ModuleCardIcon width={24} height={24} />}
       onCancel={onCancel}
     />

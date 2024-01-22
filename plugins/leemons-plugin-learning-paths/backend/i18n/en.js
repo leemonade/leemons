@@ -15,6 +15,8 @@ module.exports = {
     header: {
       title: 'New module',
       editTitle: 'Edit module',
+      subtitlePlaceholder: 'Module title',
+
       buttons: {
         save: 'Save draft',
       },

@@ -155,7 +155,6 @@ export default function Index({ isNew, readOnly }) {
     },
   ];
   // #endregion
-
   return (
     <FormProvider {...form}>
       <LoadingOverlay visible={tLoading || query?.isLoading} />
@@ -169,7 +168,7 @@ export default function Index({ isNew, readOnly }) {
                 <AssetDocumentIcon width={24} height={24} />
               </Stack>
             }
-            formTitlePlaceholder={formValues.name || t('detailPage.documentTitlePlaceholder')}
+            formTitlePlaceholder={formValues.name ? formValues.name : t('documentTitlePlaceHolder')}
             onCancel={handleOnCancel}
             compact
             mainActionLabel={readOnly ? t('back') : t('cancel')}

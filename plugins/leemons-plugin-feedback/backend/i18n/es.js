@@ -14,6 +14,7 @@ module.exports = {
     subjectRequired: 'Campo necesario',
     pageTitle: 'Editando encuesta',
     pageTitleNew: 'Nueva encuesta',
+    pageSubHeaderPlaceholder: 'Título de la encuesta',
     saveDraft: 'Guardar borrador',
     publish: 'Solo publicar',
     publishAndAssign: 'Publicar y asignar',
