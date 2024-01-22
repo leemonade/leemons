@@ -191,13 +191,6 @@ function AssetList({
     },
   });
 
-  useEffect(() => {
-    console.log('isLoading', isLoading);
-  }, [isLoading]);
-  useEffect(() => {
-    console.log('store.loading', store.loading);
-  }, [store.loading]);
-
   // ·········································································
   // DATA PROCESSING
 
@@ -249,11 +242,13 @@ function AssetList({
           criteria,
           type,
           activeStatus,
+          storeAssets: store.assets.length,
           _filters: pickBy(_filters, (obj) => !isNil(obj)),
         },
         lastQuery.current
       )
     ) {
+      clearAssetLoading();
       return;
     }
 
@@ -261,6 +256,8 @@ function AssetList({
       categoryId,
       criteria,
       type,
+      activeStatus,
+      storeAssets: store.assets.length,
       _filters: pickBy(_filters, (obj) => !isNil(obj)),
     };
 
