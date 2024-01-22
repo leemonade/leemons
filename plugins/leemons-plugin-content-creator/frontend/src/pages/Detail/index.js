@@ -23,6 +23,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
+import { useProcessTextEditor } from '@common';
 
 const validators = [
   z.object({
@@ -42,7 +43,8 @@ export default function Index({ isNew, readOnly }) {
   const scrollRef = React.useRef(null);
   const history = useHistory();
   const params = useParams();
-  const query = useDocument({ id: params.id, isNew });
+  const processTextEditor = useProcessTextEditor();
+  const { data: document, isLoading: documentIsLoading } = useDocument({ id: params.id, isNew });
   const mutation = useMutateDocument();
   const toolbarRef = React.useRef();
   const form = useForm({
@@ -83,8 +85,14 @@ export default function Index({ isNew, readOnly }) {
   const handleMutations = async ({ publishing, assigning }) => {
     const isValidStep = await form.trigger();
     if (!isValidStep) return;
+
     setIsLoading(true);
-    const documentToSave = { ...formValues, published: publishing };
+
+    const processedContent = await processTextEditor(formValues.content, document?.content, {
+      force: document?.published,
+    });
+
+    const documentToSave = { ...formValues, content: processedContent, published: publishing };
 
     if (!isNew) documentToSave.id = params.id;
     mutation.mutate(
@@ -108,7 +116,7 @@ export default function Index({ isNew, readOnly }) {
 
   const handleDynamicTitle = (value) => {
     form.setValue('content', value);
-    if (!query.data?.name) {
+    if (!document?.name) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
         parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
@@ -124,15 +132,15 @@ export default function Index({ isNew, readOnly }) {
   useEffect(() => {
     if (isNew) form.reset();
     else {
-      form.setValue('name', query.data?.name);
-      form.setValue('content', query.data?.content);
-      form.setValue('description', query.data?.description);
-      form.setValue('color', query.data?.color || null);
-      form.setValue('cover', query.data?.cover || null);
-      form.setValue('program', query.data?.program || null);
-      form.setValue('subjects', query.data?.subjects || null);
+      form.setValue('name', document?.name);
+      form.setValue('content', document?.content);
+      form.setValue('description', document?.description);
+      form.setValue('color', document?.color || null);
+      form.setValue('cover', document?.cover || null);
+      form.setValue('program', document?.program || null);
+      form.setValue('subjects', document?.subjects || null);
     }
-  }, [query.data]);
+  }, [document]);
 
   useEffect(() => {
     if (formValues.content) {
@@ -156,14 +164,20 @@ export default function Index({ isNew, readOnly }) {
   ];
   // #endregion
 
+  function getTitle() {
+    if (readOnly) return null;
+    if (isNew) return t('titleNew');
+    return t('titleEdit');
+  }
+
   return (
     <FormProvider {...form}>
-      <LoadingOverlay visible={tLoading || query?.isLoading} />
+      <LoadingOverlay visible={tLoading || documentIsLoading} />
       <TotalLayoutContainer
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={isNew ? t('titleNew') : t('titleEdit')}
+            title={getTitle()}
             icon={
               <Stack justifyContent="center" alignItems="center">
                 <AssetDocumentIcon width={24} height={24} />
@@ -174,7 +188,7 @@ export default function Index({ isNew, readOnly }) {
             compact
             mainActionLabel={readOnly ? t('back') : t('cancel')}
           >
-            <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>
+            {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
         }
       >

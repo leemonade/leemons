@@ -11,6 +11,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import { useQueryClient } from '@tanstack/react-query';
 import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
+import { readAndCompressImage } from 'browser-image-resizer';
 import {
   TotalLayout,
   TotalLayoutHeader,
@@ -171,8 +172,21 @@ const AssetPage = () => {
     setLoading(true);
 
     try {
+      const body = { ...formValues };
       if (category?.key !== 'bookmarks') {
-        file = await uploadFileAsMultipart(formValues.file, {
+        if (body.file.type.startsWith('image')) {
+          const fileName = body.file.name;
+          const resizedImage = await readAndCompressImage(body.file, {
+            quality: 0.8,
+            maxWidth: 800,
+            maxHeight: 600,
+            debug: true,
+          });
+          body.file = resizedImage;
+          body.file.name = fileName;
+        }
+        setUploadingFileInfo({ state: t('common.labels.processingImage') });
+        file = await uploadFileAsMultipart(body.file, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
           },
@@ -181,7 +195,7 @@ const AssetPage = () => {
       }
 
       try {
-        const assetData = { ...formValues, cover, file };
+        const assetData = { ...body, cover, file };
         const needsOldCover = isImage
           ? form.formState.dirtyFields.file
           : form.formState.dirtyFields.cover;
@@ -217,7 +231,7 @@ const AssetPage = () => {
 
   const handlePlublishAndAssign = async () => {
     await handlePublish();
-    console.log('REDIRECCIÓN A ASIGNAR');
+    // console.log('REDIRECCIÓN A ASIGNAR');
   };
   // #endregion
 

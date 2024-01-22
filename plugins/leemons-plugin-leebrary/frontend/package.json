@@ -17,6 +17,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@loadable/component": "^5.15.2",
     "@tanstack/react-query": "^4.35.3",
+    "browser-image-resizer": "^2.4.1",
     "framer-motion": "^10.16.4",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
@@ -26,9 +27,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
-    "react-router-dom": "^5.3.3",
-    "react-player": "^2.9.0",
     "react-pdf": "7.7.0",
+    "react-player": "^2.9.0",
+    "react-router-dom": "^5.3.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {
