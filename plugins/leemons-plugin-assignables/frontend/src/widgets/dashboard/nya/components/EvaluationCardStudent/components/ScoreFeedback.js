@@ -91,8 +91,8 @@ export default function ScoreFeedback({
   const grade = React.useMemo(() => {
     if (isLetterType) {
       return {
-        letter: findNearestFloorScore(Number(score), scales).letter,
-        description: findNearestFloorScore(Number(score), scales).description,
+        letter: findNearestFloorScore(Number(score), scales)?.letter,
+        description: findNearestFloorScore(Number(score), scales)?.description,
       };
     }
     const isInteger = score % 1 === 0;

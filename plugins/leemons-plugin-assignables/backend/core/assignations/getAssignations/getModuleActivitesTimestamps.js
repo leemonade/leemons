@@ -64,9 +64,30 @@ async function getDatesByChildAssignation({ childAssignationsIds, childAssignati
   return datesByChildAssignation;
 }
 
-function returnData({ assignationsData, activitiesPerInstance, datesByChildAssignation }) {
+async function getGradesByChildAssignation({ childAssignationsIds, childAssignationsById, ctx }) {
+  const grades = await ctx.db.Grades.find({ assignation: childAssignationsIds, type: 'main' })
+    .select({ _id: false, assignation: 1, grade: 1 })
+    .lean();
+
+  const gradesByChildAssignation = new Map();
+  grades.forEach(({ assignation, grade }) => {
+    const { instance, user } = childAssignationsById[assignation][0];
+    const key = `instance.${instance}.user.${user}`;
+    gradesByChildAssignation.set(key, [...(gradesByChildAssignation.get(key) ?? []), grade]);
+  });
+
+  return gradesByChildAssignation;
+}
+
+function returnData({
+  assignationsData,
+  activitiesPerInstance,
+  datesByChildAssignation,
+  gradesByChildAssignation,
+}) {
   const datesData = {};
   const completion = {};
+  const gradesData = {};
 
   assignationsData.forEach(({ instance, user, id }) => {
     const activities = activitiesPerInstance[instance];
@@ -91,6 +112,19 @@ function returnData({ assignationsData, activitiesPerInstance, datesByChildAssig
       datesObj.start = endDate;
     }
 
+    const grades = activities.flatMap(
+      (activity) => gradesByChildAssignation.get(`instance.${activity}.user.${user}`) ?? []
+    );
+
+    const gradeAvg = grades.reduce((avgGrade, grade) => avgGrade + grade, 0) / grades.length;
+
+    gradesData[id] = [
+      {
+        grade: gradeAvg,
+        type: 'main',
+      },
+    ];
+
     completion[id] = {
       started: dates.filter((date) => date.start).length,
       completed: dates.filter((date) => date.end).length,
@@ -99,7 +133,7 @@ function returnData({ assignationsData, activitiesPerInstance, datesByChildAssig
     datesData[id] = datesObj;
   });
 
-  return { dates: datesData, completion };
+  return { dates: datesData, completion, grades: gradesData };
 }
 
 async function getModuleActivitiesTimestamps({ assignationsData, ctx }) {
@@ -121,7 +155,18 @@ async function getModuleActivitiesTimestamps({ assignationsData, ctx }) {
     ctx,
   });
 
-  return returnData({ assignationsData, activitiesPerInstance, datesByChildAssignation });
+  const gradesByChildAssignation = await getGradesByChildAssignation({
+    childAssignationsIds,
+    childAssignationsById,
+    ctx,
+  });
+
+  return returnData({
+    assignationsData,
+    activitiesPerInstance,
+    datesByChildAssignation,
+    gradesByChildAssignation,
+  });
 }
 
 module.exports = { getModuleActivitiesTimestamps };

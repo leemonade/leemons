@@ -1,5 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
+const { defaultsDeep } = require('lodash');
 const { checkPermissions } = require('./checkPermissions');
 const { getClassesWithSubject } = require('./getClassesWithSubject');
 const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
@@ -7,7 +8,6 @@ const { findAssignationDates } = require('./findAssignationDates');
 const { findInstanceDates } = require('./findInstanceDates');
 const { getGrades } = require('./getGrades');
 const { getAssignationStatus } = require('./getAssignationStatus');
-const { defaultsDeep } = require('lodash');
 const { getModuleActivitiesTimestamps } = require('./getModuleActivitesTimestamps');
 
 async function getAssignations({
@@ -99,7 +99,7 @@ async function getAssignations({
   const [
     classes,
     relatedAssignations,
-    { dates: moduleActivitiesTimestamps, completion },
+    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades },
     timestamps,
     dates,
     grades,
@@ -138,7 +138,7 @@ async function getAssignations({
       relatedAssignableInstances: {
         before: relatedAssignations[assignation.id] || [],
       },
-      grades: grades[assignation.id] || [],
+      grades: grades[assignation.id] || moduleGrades[assignation.id] || [],
       timestamps: timestamps[assignation.id] || {},
 
       chatKeys,
