@@ -192,11 +192,11 @@ export default function Development(props) {
           </Box>
         </ContextContainer>
 
-        {curriculum ||
+        {curriculum?.length ||
         (!!store.instance.assignable.subjects[0].curriculum.objectives &&
           !!store.instance.assignable.subjects[0].curriculum.objectives?.length) ? (
           <ContextContainer title={t('curriculum')}>
-            {curriculum ? (
+            {curriculum?.length ? (
               <Box sx={tabPanelStyle}>
                 <Box>
                   <CurriculumListContents value={curriculum} subjects={map(subjects, 'id')} />
