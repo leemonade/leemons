@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-assignables",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "description": "Leemons assignables plugin",
   "main": "index.js",
   "license": "MIT",
