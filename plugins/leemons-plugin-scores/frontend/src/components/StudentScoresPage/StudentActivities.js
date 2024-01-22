@@ -21,6 +21,7 @@ import { useScores } from '@scores/requests/hooks/queries';
 import _, { capitalize, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
+import getNearestScale from '@scorm/helpers/getNearestScale';
 import EmptyState from '../Notebook/components/ActivitiesTab/EmptyState';
 
 function ClassIcon({ class: klass, dropdown = false }) {
@@ -184,7 +185,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
   const getLetterScore = (score) => {
     if (!evaluationSystem) return null;
     if (!useLetterScore) return null;
-    return evaluationSystem.scales.find((scale) => scale.number === score)?.letter;
+
+    return getNearestScale({ grade: score, evaluationSystem });
   };
 
   const getAverageScore = (klass, classActivities) => {
@@ -192,7 +194,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce((total, next) => total + next.score.number, 0) /
-      classActivities.length || 0;
+        classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 

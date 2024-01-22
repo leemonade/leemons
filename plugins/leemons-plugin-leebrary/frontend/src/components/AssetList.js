@@ -237,10 +237,18 @@ function AssetList({
 
     if (
       isEqual(
-        { categoryId, criteria, type, _filters: pickBy(_filters, (obj) => !isNil(obj)) },
+        {
+          categoryId,
+          criteria,
+          type,
+          activeStatus,
+          storeAssets: store.assets.length,
+          _filters: pickBy(_filters, (obj) => !isNil(obj)),
+        },
         lastQuery.current
       )
     ) {
+      clearAssetLoading();
       return;
     }
 
@@ -248,6 +256,8 @@ function AssetList({
       categoryId,
       criteria,
       type,
+      activeStatus,
+      storeAssets: store.assets.length,
       _filters: pickBy(_filters, (obj) => !isNil(obj)),
     };
 

@@ -254,7 +254,7 @@ module.exports = {
           // Redirect to external URL
           ctx.meta.$statusCode = 307;
           ctx.meta.$responseHeaders = {
-            'Cache-Control': 'max-age=300',
+            'Cache-Control': 'max-age=86400',
           };
           ctx.meta.$location = readStream;
           return;
