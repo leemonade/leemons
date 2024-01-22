@@ -30,4 +30,7 @@ module.exports = {
     nothingFoundMessage: 'Nothing found',
     tooltip: 'Find in menu',
   },
+  labels: {
+    new: 'New',
+  },
 };

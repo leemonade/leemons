@@ -319,6 +319,7 @@ export default function Result() {
 
   const accordion = [];
   const accordionGraph = [];
+
   if (graphData.data.length && graphData.selectables.length) {
     accordionGraph.push(
       <ActivityAccordionPanel
@@ -484,12 +485,6 @@ export default function Result() {
           >
             {params.user && !store.loading ? (
               <Box>
-                <Box className={styles.header}>
-                  <Text role="productive">
-                    {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
-                    {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
-                  </Text>
-                </Box>
                 <Box className={styles.content}>
                   <EvaluationFeedback
                     onChatClick={() => {

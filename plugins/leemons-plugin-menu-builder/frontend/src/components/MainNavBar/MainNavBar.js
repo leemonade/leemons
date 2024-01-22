@@ -102,10 +102,10 @@ const MainNavBar = ({
 
   // ························································
   // RENDER
-
   const navBarItems = useMemo(
     () =>
       menuData.map((item, index) => {
+        const onlyOneChildrenCollection = item.children && item.children.length === 1;
         const isSubItemActive =
           item.children.length > 0
             ? item.children.find((child) => child?.id === activeSubItem?.id)
@@ -116,6 +116,7 @@ const MainNavBar = ({
         return (
           <NavItem
             {...item}
+            url={onlyOneChildrenCollection ? item.children[0].url : item.url}
             key={`navItem--${index}`}
             isCollapsed={!hovered}
             id={item.id}
