@@ -1,27 +1,11 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Box, InputWrapper, TableInput, Button } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { TextEditorInput, TextEditorViewer } from '@common/components';
-import useTableInputLabels from '@tasks/helpers/useTableInputLabels';
+import { InputWrapper } from '@bubbles-ui/components';
+import { TextEditorInput } from '@common/components';
 
-export default function Development({ name, label, placeholder, required }) {
-  const tableInputLabels = useTableInputLabels();
-
+export default function Development({ name, label, required }) {
   const { control } = useFormContext();
-
-  const columns = useMemo(() => [
-    {
-      Header: '',
-      accessor: 'development',
-      input: {
-        node: <TextEditorInput placeholder={placeholder} />,
-        rules: { required: true },
-      },
-      valueRender: (value) => <TextEditorViewer>{value}</TextEditorViewer>,
-    },
-  ]);
 
   return (
     <InputWrapper label={label}>
@@ -30,28 +14,12 @@ export default function Development({ name, label, placeholder, required }) {
         name={name}
         rules={{ validate: (value) => !required || value?.length > 0 }}
         render={({ field, fieldState: { error } }) => (
-          <Box style={{ marginRight: 5 }}>
-            <TableInput
-              {...field}
-              columns={columns}
-              editable
-              resetOnAdd
-              // TRANSLATE: Required error label
-              error={error && 'This field is required'}
-              data={field.value || []}
-              labels={tableInputLabels}
-              renderActionButton={({ disabled, onAdd }) => (
-                <Button
-                  variant="link"
-                  leftIcon={<AddCircleIcon />}
-                  disabled={disabled}
-                  onClick={onAdd}
-                >
-                  {tableInputLabels.add}
-                </Button>
-              )}
-            />
-          </Box>
+          <TextEditorInput
+            {...field}
+            error={error && 'This field is required'}
+            value={field.value?.[0] ? field.value[0].development : null}
+            onChange={(value) => field.onChange(value ? [{ development: value }] : [])}
+          />
         )}
       />
     </InputWrapper>
