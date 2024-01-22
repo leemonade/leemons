@@ -7,6 +7,8 @@ const { findAssignationDates } = require('./findAssignationDates');
 const { findInstanceDates } = require('./findInstanceDates');
 const { getGrades } = require('./getGrades');
 const { getAssignationStatus } = require('./getAssignationStatus');
+const { defaultsDeep } = require('lodash');
+const { getModuleActivitiesTimestamps } = require('./getModuleActivitesTimestamps');
 
 async function getAssignations({
   assignationsIds,
@@ -69,6 +71,7 @@ async function getAssignations({
   promises.push(getClassesWithSubject({ instancesIds, ctx }));
 
   promises.push(getRelatedAssignationsTimestamps({ assignationsData, ctx }));
+  promises.push(getModuleActivitiesTimestamps({ assignationsData, ctx }));
 
   promises.push(findAssignationDates({ assignationsIds: ids, ctx }));
   promises.push(findInstanceDates({ instances: instancesIds, ctx }));
@@ -93,25 +96,43 @@ async function getAssignations({
     );
   }
 
-  const [classes, relatedAssignations, timestamps, dates, grades, instances] = await Promise.all(
-    promises
-  );
+  const [
+    classes,
+    relatedAssignations,
+    { dates: moduleActivitiesTimestamps, completion },
+    timestamps,
+    dates,
+    grades,
+    instances,
+  ] = await Promise.all(promises);
   return assignationsData.map((assignation) => {
     const chatKeys = classes[assignation.instance].subjectsIds.map(
       (subject) =>
         `assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
     );
 
+    // Add module child activities timestamps to the assignation timestamps
+    defaultsDeep(timestamps, moduleActivitiesTimestamps);
+
     const status = getAssignationStatus({
       dates: dates[assignation.instance] || {},
       timestamps: timestamps[assignation.id] || {},
     });
 
+    let metadata = JSON.parse(assignation.metadata || null);
+
+    if (completion[assignation.id]) {
+      metadata = {
+        completion: completion[assignation.id],
+        ...metadata,
+      };
+    }
+
     // Returns the assignationObject
     return {
       ...assignation,
       classes: JSON.parse(assignation.classes || null),
-      metadata: JSON.parse(assignation.metadata || null),
+      metadata,
       instance: instances?.[assignation.instance] || assignation.instance,
 
       relatedAssignableInstances: {
