@@ -180,7 +180,7 @@ export default function Detail(p) {
         <TotalLayoutHeader
           icon={<QuestionBankIcon width={23} height={23} />}
           title={getTitle()}
-          formTitlePlaceholder={formValues.name}
+          formTitlePlaceholder={formValues.name ? formValues.name : t('headerTitlePlaceholder')}
           onCancel={() => history.goBack()}
         />
       }

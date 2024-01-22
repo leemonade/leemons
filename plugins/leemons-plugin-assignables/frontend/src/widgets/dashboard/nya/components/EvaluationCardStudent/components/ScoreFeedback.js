@@ -44,6 +44,16 @@ export default function ScoreFeedback({
   hideBadge,
   fullSize,
 }) {
+  let arrowPosition = 'equal';
+
+  if (/([0,3,6]|[a,d])$/.test(instance.id)) {
+    arrowPosition = 'equal';
+  } else if (/([1,4,7,9]|[b,e])$/.test(instance.id)) {
+    arrowPosition = 'better';
+  } else if (/([2,5,8]|[c,f])$/.test(instance.id)) {
+    arrowPosition = 'bad';
+  }
+
   const evaluationSystem = useProgramEvaluationSystem(program);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
   const [, translations] = useTranslateLoader([prefixPN('assignmentForm'), prefixPN('ongoing')]);
@@ -127,7 +137,7 @@ export default function ScoreFeedback({
                 </TextClamp>
               )}
               <Box className={classes.containerArrow}>
-                <ArrowComponent state={'better'} />
+                <ArrowComponent state={arrowPosition} />
               </Box>
             </Box>
             <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>

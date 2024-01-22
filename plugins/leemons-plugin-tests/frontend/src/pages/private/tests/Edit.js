@@ -330,7 +330,7 @@ export default function Edit() {
         <TotalLayoutHeader
           icon={<TestIcon width={23} height={23} />}
           title={getTitle()}
-          formTitlePlaceholder={formValues.name}
+          formTitlePlaceholder={formValues.name ? formValues.name : t('headerTitlePlaceholder')}
           onCancel={() => history.goBack()}
         />
       }

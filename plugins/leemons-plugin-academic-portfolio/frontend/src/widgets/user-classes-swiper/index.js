@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import {
   Box,
   createStyles,
-  ImageLoader,
   Loader,
   Stack,
   Text,
   TextClamp,
+  AvatarSubject,
 } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import { useStore } from '@common';
@@ -193,28 +193,10 @@ function UserClassesSwiperWidget({ program }) {
                   >
                     {!imageStyle && nameFirstLetters}
                   </Box>
+
                   {classe.color || classe.icon ? (
-                    <Box
-                      style={classe.color ? { backgroundColor: classe.color } : {}}
-                      className={styles.colorIcon}
-                    >
-                      {getClassIcon(classe) ? (
-                        <Box className={styles.icon}>
-                          <ImageLoader
-                            height="12px"
-                            width="12px"
-                            imageStyles={{
-                              width: 12,
-                              position: 'absolute',
-                              left: '50%',
-                              top: '50%',
-                              transform: 'translate(-50%, -50%)',
-                            }}
-                            src={getClassIcon(classe)}
-                            forceImage
-                          />
-                        </Box>
-                      ) : null}
+                    <Box className={styles.colorIcon}>
+                      <AvatarSubject color={classe.color} icon={getClassIcon(classe)} size="md" />
                     </Box>
                   ) : null}
                 </Box>
