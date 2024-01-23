@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-emails-aws-ses",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "description": "Leemons emails plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
