@@ -262,10 +262,10 @@ export function ModuleDashboard({ id, preview }) {
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, moduleAssignation);
   useEffect(() => {
-    if (isStudent) {
+    if (isStudent && moduleAssignation?.id) {
       updateTimestamps('open');
     }
-  }, []);
+  }, [moduleAssignation?.id]);
 
   const localizations = useModuleDashboardLocalizations();
   const { classes } = useModuleDashboardStyles();
