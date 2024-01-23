@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-deployment-manager",
-  "version": "1.0.31",
+  "version": "1.0.32",
   "description": "Leemons deployment manager plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -20,10 +20,10 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.67",
+    "@leemons/deployment-manager": "0.0.68",
     "@leemons/error": "0.0.41",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.67",
+    "@leemons/mongodb": "0.0.68",
     "@leemons/service-name-parser": "0.0.41",
     "@leemons/transactions": "0.0.41",
     "@leemons/utils": "0.0.41",
