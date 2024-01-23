@@ -23,6 +23,16 @@ async function getModulesChildActivitiesIds({ assignations, ctx }) {
   );
 }
 
+async function getInstancesRequiresScoring({ activitiesPerInstance, ctx }) {
+  const instances = await ctx.tx.db.Instances.find({
+    id: Object.values(activitiesPerInstance).flat(),
+  })
+    .select({ requiresScoring: 1, id: 1, _id: 0 })
+    .lean();
+
+  return Object.fromEntries(instances.map((instance) => [instance.id, instance.requiresScoring]));
+}
+
 async function getChildActivitiesData({ assignations, activitiesPerInstance, ctx }) {
   const childAssignationsQuery = assignations
     .filter((assignation) => activitiesPerInstance[assignation.instance])
@@ -66,17 +76,69 @@ async function getDatesByChildAssignation({ childAssignationsIds, childAssignati
 
 async function getGradesByChildAssignation({ childAssignationsIds, childAssignationsById, ctx }) {
   const grades = await ctx.db.Grades.find({ assignation: childAssignationsIds, type: 'main' })
-    .select({ _id: false, assignation: 1, grade: 1 })
+    .select({ _id: false, assignation: 1, grade: 1, subject: 1 })
     .lean();
 
   const gradesByChildAssignation = new Map();
-  grades.forEach(({ assignation, grade }) => {
+  grades.forEach(({ assignation, grade, subject }) => {
     const { instance, user } = childAssignationsById[assignation][0];
     const key = `instance.${instance}.user.${user}`;
-    gradesByChildAssignation.set(key, [...(gradesByChildAssignation.get(key) ?? []), grade]);
+    gradesByChildAssignation.set(key, [
+      ...(gradesByChildAssignation.get(key) ?? []),
+      { grade, subject },
+    ]);
   });
 
   return gradesByChildAssignation;
+}
+
+async function getSubjectsByChildAssignation({ activitiesPerInstance, ctx }) {
+  const classes = await ctx.tx.db.Classes.find({
+    assignableInstance: Object.values(activitiesPerInstance).flat(),
+  })
+    .select({ _id: false, assignableInstance: 1, class: 1 })
+    .lean();
+
+  const classesByInstance = groupBy(classes, 'assignableInstance');
+
+  const classesIds = uniq(map(classes, 'class'));
+
+  const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+    ids: classesIds,
+    withProgram: false,
+    withTeachers: false,
+    noSearchChildren: true,
+    noSearchParents: true,
+  });
+
+  const subjectsByClass = {};
+
+  classesData.forEach((classData) => {
+    const {
+      subject: { id: subject },
+      id,
+    } = classData;
+
+    if (!subjectsByClass[id]) {
+      subjectsByClass[id] = new Set([subject]);
+    } else {
+      subjectsByClass[id].add(subject);
+    }
+  });
+
+  const subjectsByInstance = new Map();
+
+  Object.keys(classesByInstance).forEach((instance) => {
+    const subjects = [];
+
+    classesByInstance[instance].forEach(({ class: classId }) => {
+      subjects.push(...subjectsByClass[classId]);
+    });
+
+    subjectsByInstance.set(instance, uniq(subjects));
+  });
+
+  return subjectsByInstance;
 }
 
 function returnData({
@@ -84,10 +146,13 @@ function returnData({
   activitiesPerInstance,
   datesByChildAssignation,
   gradesByChildAssignation,
+  subjectsByChildAssignation,
+  activitiesRequiresScoring,
 }) {
   const datesData = {};
   const completion = {};
   const gradesData = {};
+  const status = {};
 
   assignationsData.forEach(({ instance, user, id }) => {
     const activities = activitiesPerInstance[instance];
@@ -95,6 +160,10 @@ function returnData({
     if (!activities) {
       return;
     }
+
+    /*
+      === Dates ===
+    */
 
     const dates = activities.map(
       (activity) => datesByChildAssignation.get(`instance.${activity}.user.${user}`) ?? {}
@@ -112,11 +181,17 @@ function returnData({
       datesObj.start = endDate;
     }
 
+    datesData[id] = datesObj;
+
+    /*
+      === Grades ===
+    */
+
     const grades = activities.flatMap(
       (activity) => gradesByChildAssignation.get(`instance.${activity}.user.${user}`) ?? []
     );
 
-    const gradeAvg = grades.reduce((avgGrade, grade) => avgGrade + grade, 0) / grades.length;
+    const gradeAvg = grades.reduce((avgGrade, { grade }) => avgGrade + grade, 0) / grades.length;
 
     gradesData[id] = [
       {
@@ -125,21 +200,59 @@ function returnData({
       },
     ];
 
+    /*
+      === Completion ===
+    */
+
     completion[id] = {
       started: dates.filter((date) => date.start).length,
       completed: dates.filter((date) => date.end).length,
       total: activities.length,
     };
-    datesData[id] = datesObj;
+
+    /*
+      === Status ===
+    */
+    status[id] = activities.map((activity) => {
+      const _grades = gradesByChildAssignation.get(`instance.${activity}.user.${user}`) ?? [];
+      const _dates = datesByChildAssignation.get(`instance.${activity}.user.${user}`) ?? {};
+      const subjects = subjectsByChildAssignation.get(activity) ?? [];
+      const requiresScoring = activitiesRequiresScoring[activity] ?? false;
+
+      return {
+        instance: activity,
+
+        started: !!_dates.start,
+        completed: !!_dates.end,
+        total: activities.length,
+
+        evaluatedCount: _grades.length,
+        expectedEvaluations: requiresScoring ? subjects.length : 0,
+        fullyEvaluated: requiresScoring ? _grades.length === subjects.length : true,
+
+        gradeAvg: requiresScoring
+          ? _grades.reduce((avgGrade, { grade }) => avgGrade + grade, 0) / subjects.length
+          : null,
+      };
+    });
   });
 
-  return { dates: datesData, completion, grades: gradesData };
+  return { dates: datesData, completion, grades: gradesData, status };
 }
 
 async function getModuleActivitiesTimestamps({ assignationsData, ctx }) {
   const assignations = assignationsData.map(({ instance, user }) => ({ instance, user }));
 
-  const activitiesPerInstance = await getModulesChildActivitiesIds({ assignations, ctx });
+  const activitiesPerInstance = await getModulesChildActivitiesIds({
+    assignations,
+    ctx,
+  });
+
+  const activitiesRequiresScoring = await getInstancesRequiresScoring({
+    activitiesPerInstance,
+    ctx,
+  });
+
   const childAssignations = await getChildActivitiesData({
     assignations,
     activitiesPerInstance,
@@ -161,11 +274,18 @@ async function getModuleActivitiesTimestamps({ assignationsData, ctx }) {
     ctx,
   });
 
+  const subjectsByChildAssignation = await getSubjectsByChildAssignation({
+    activitiesPerInstance,
+    ctx,
+  });
+
   return returnData({
     assignationsData,
     activitiesPerInstance,
     datesByChildAssignation,
     gradesByChildAssignation,
+    subjectsByChildAssignation,
+    activitiesRequiresScoring,
   });
 }
 

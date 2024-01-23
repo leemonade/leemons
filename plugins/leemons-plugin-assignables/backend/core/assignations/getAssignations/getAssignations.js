@@ -99,7 +99,7 @@ async function getAssignations({
   const [
     classes,
     relatedAssignations,
-    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades },
+    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades, status: moduleStatus },
     timestamps,
     dates,
     grades,
@@ -121,9 +121,10 @@ async function getAssignations({
 
     let metadata = JSON.parse(assignation.metadata || null);
 
-    if (completion[assignation.id]) {
+    if (completion[assignation.id] || moduleStatus[assignation.id]) {
       metadata = {
-        completion: completion[assignation.id],
+        completion: completion[assignation.id] ?? null,
+        moduleStatus: moduleStatus[assignation.id] ?? null,
         ...metadata,
       };
     }
