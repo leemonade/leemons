@@ -48,7 +48,7 @@ module.exports = {
     time: 'Time',
     event: 'Event',
     empty: 'There are no events',
-    classes: 'Classes',
+    classes: 'Subjects',
     weekSchedule: 'Weekly schedule',
     course: 'Course',
     attendanceControl: 'Go to the subject dashboard',

@@ -48,7 +48,7 @@ module.exports = {
     time: 'Hora',
     event: 'Evento',
     empty: 'No hay eventos',
-    classes: 'Clases',
+    classes: 'Asignaturas',
     weekSchedule: 'Horario semanal',
     course: 'Curso',
     attendanceControl: 'Ir al dashboard de la asignatura',
