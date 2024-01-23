@@ -25,7 +25,7 @@ function onAcademicPortfolioUpdateClass({
       };
 
       if (icon) {
-        config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', icon.id);
+        config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: icon.id });
       }
 
       await ctx.tx.call('calendar.calendar.update', {

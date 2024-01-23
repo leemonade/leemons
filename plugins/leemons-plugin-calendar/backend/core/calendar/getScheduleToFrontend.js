@@ -54,6 +54,8 @@ async function getScheduleToFrontend({ ctx }) {
       allCourses = allCourses.concat(classCourses);
     });
 
+    allCourses = _.compact(allCourses);
+
     if (config) config.program = program;
 
     classes = _.filter(classes, ({ schedule }) => schedule && schedule.length);
@@ -89,6 +91,7 @@ async function getScheduleToFrontend({ ctx }) {
       const classCourses = _.isArray(classe.courses) ? classe.courses : [classe.courses];
       const cIds = _.map(classCourses, 'id');
       courses = courses.concat(classCourses);
+      courses = _.compact(courses);
       _.forEach(cIds, (cId) => {
         if (!_.isObject(configByCourse[cId])) {
           configByCourse[cId] = {

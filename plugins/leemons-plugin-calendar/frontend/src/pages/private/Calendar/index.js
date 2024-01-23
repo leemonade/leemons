@@ -5,7 +5,6 @@ import { BigCalendar } from '@bubbles-ui/calendars';
 import {
   Box,
   IconButton,
-  ImageLoader,
   LoadingOverlay,
   Select,
   Stack,
@@ -20,7 +19,6 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import { useLocale, useStore } from '@common';
-import { useLayout } from '@layout/context';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import loadable from '@loadable/component';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
@@ -37,7 +35,6 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ReactToPrint from 'react-to-print';
-import { useUserProfile } from '@users/hooks';
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
@@ -419,6 +416,7 @@ function Calendar({ session }) {
             centers: t('centers'),
             closeTooltip: t('close'),
           }}
+          pageValue={store.activePage}
           pages={[
             { label: t('calendar'), value: 'calendar' },
             { label: t('schedule'), value: 'schedule' },
