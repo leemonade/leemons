@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { findIndex, noop, uniq } from 'lodash';
+import { findIndex, isString, noop, uniq } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   ActionButton,
@@ -16,6 +16,27 @@ import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
 import { useSubjectPickerStyles } from './SubjectPicker.styles';
 
+function useSelectInitialSubjects({ selectInitialSubjects, assignable, form }) {
+  const subjects = assignable?.subjects;
+  const subjectsIds = useMemo(() => {
+    if (subjects?.length) {
+      return subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    if (
+      selectInitialSubjects &&
+      subjectsIds.length &&
+      !form.getValues('selectedSubjects')?.length &&
+      !form.formState.isDirty
+    ) {
+      form.setValue('selectedSubjects', subjectsIds);
+    }
+  }, [subjectsIds]);
+}
+
 export function SubjectPicker({
   assignable,
   localizations,
@@ -25,6 +46,7 @@ export function SubjectPicker({
   error,
   hideSectionHeaders,
   onlyOneSubject,
+  selectInitialSubjects,
   ...props
 }) {
   const form = useForm({
@@ -40,6 +62,8 @@ export function SubjectPicker({
     subjects: assignable?.subjects,
     control: form.control,
   });
+
+  useSelectInitialSubjects({ selectInitialSubjects, assignable, form });
 
   useEffect(() => {
     form.setValue('selectedSubjects', value || []);
@@ -216,6 +240,7 @@ SubjectPicker.propTypes = {
   error: PropTypes.any,
   hideSectionHeaders: PropTypes.bool,
   onlyOneSubject: PropTypes.bool,
+  selectInitialSubjects: PropTypes.bool,
 };
 
 export default SubjectPicker;
