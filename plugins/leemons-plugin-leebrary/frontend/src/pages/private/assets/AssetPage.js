@@ -174,7 +174,11 @@ const AssetPage = () => {
     try {
       const body = { ...formValues };
       if (category?.key !== 'bookmarks') {
-        if (body.file.type.startsWith('image')) {
+        if (
+          body.file.type.startsWith('image') &&
+          body.file.type.indexOf('/gif') < 0 &&
+          body.file.type.indexOf('/svg') < 0
+        ) {
           const fileName = body.file.name;
           const resizedImage = await readAndCompressImage(body.file, {
             quality: 0.8,

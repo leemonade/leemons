@@ -22,7 +22,7 @@ module.exports = {
       add: 'Añadir',
     },
     groups: {
-      title: '¿Quién lo realizará?',
+      title: 'Estudiantes',
       options: {
         class: 'Clase existente',
         customGroup: 'Grupo personalizado',
@@ -66,7 +66,7 @@ module.exports = {
       },
     },
     dates: {
-      title: '¿Cuándo se realizará?',
+      title: 'Plazo de realización',
       optionsInput: {
         label: 'Plazo de tiempo',
         options: {

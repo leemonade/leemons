@@ -16,7 +16,7 @@ import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
 import { useSubjectPickerStyles } from './SubjectPicker.styles';
 
-function useSelectInitialSubjects({ selectInitialSubjects, assignable, form }) {
+function useSelectInitialSubjects({ selectInitialSubjects, assignable, form, onChange }) {
   const subjects = assignable?.subjects;
   const subjectsIds = useMemo(() => {
     if (subjects?.length) {
@@ -32,7 +32,8 @@ function useSelectInitialSubjects({ selectInitialSubjects, assignable, form }) {
       !form.getValues('selectedSubjects')?.length &&
       !form.formState.isDirty
     ) {
-      form.setValue('selectedSubjects', subjectsIds);
+      form.setValue('selectedSubjects', subjectsIds, { shouldDirty: true });
+      onChange(subjectsIds);
     }
   }, [subjectsIds]);
 }
@@ -63,7 +64,7 @@ export function SubjectPicker({
     control: form.control,
   });
 
-  useSelectInitialSubjects({ selectInitialSubjects, assignable, form });
+  useSelectInitialSubjects({ selectInitialSubjects, assignable, form, onChange });
 
   useEffect(() => {
     form.setValue('selectedSubjects', value || []);
