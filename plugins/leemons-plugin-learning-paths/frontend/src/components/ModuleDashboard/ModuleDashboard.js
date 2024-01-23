@@ -209,16 +209,18 @@ export function ModuleDashboardBody({
   const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   return (
     <Box className={classes.activitiesList}>
-      <DashboardCard
-        introductionCard
-        assetNumber={t('introduction')}
-        statement={module?.metadata?.statement}
-        cover={module?.assignable?.asset?.cover}
-        localizations={localizations}
-        emptyIcon={module?.assignable?.roleDetails?.icon}
-        fileType={module?.assignable?.roleDetails?.name}
-        introductionLink={introductionLink}
-      />
+      {!!(module?.metadata?.statement || module?.assignable?.resources?.length) && (
+        <DashboardCard
+          introductionCard
+          assetNumber={t('introduction')}
+          statement={module?.metadata?.statement}
+          cover={module?.assignable?.asset?.cover}
+          localizations={localizations}
+          emptyIcon={module?.assignable?.roleDetails?.icon}
+          fileType={module?.assignable?.roleDetails?.name}
+          introductionLink={introductionLink}
+        />
+      )}
       {sortBy(
         activities?.map((activity, index) => ({
           comp: (
