@@ -22,7 +22,7 @@ module.exports = {
       add: 'Add',
     },
     groups: {
-      title: '¿Who will perform?',
+      title: 'Students',
       options: {
         class: 'Existing class',
         customGroup: 'Custom group',
@@ -66,7 +66,7 @@ module.exports = {
       },
     },
     dates: {
-      title: '¿When will occur?',
+      title: 'Timespan',
       optionsInput: {
         label: 'Timespan',
         options: {
