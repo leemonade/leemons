@@ -1,8 +1,8 @@
-export default async function setScores(scores) {
+export default async function setScores({ scores, instances }) {
   try {
     await leemons.api(`v1/scores/scores`, {
       method: 'PATCH',
-      body: { scores },
+      body: { scores, instances },
     });
 
     return true;

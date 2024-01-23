@@ -32,6 +32,7 @@ import hooks from 'leemons-hooks';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { addSuccessAlert } from '@layout/alert';
 import { ChatDrawer } from '@comunica/components';
+import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import LinkSubmission from './components/LinkSubmission/LinkSubmission';
 
@@ -140,6 +141,19 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
   const data = useLetterEvaluationData({ evaluationSystem });
 
   const publish = useOnEvaluationChange({ form, instance, assignation, subject });
+
+  if (instance.dates.evaluationClosed) {
+    return (
+      <EvaluationFeedback
+        assignation={assignation}
+        onChatClick={() => {
+          hooks.fireEvent('chat:onRoomOpened', room);
+          setChatOpened(true);
+        }}
+        subject={subject}
+      />
+    );
+  }
 
   return (
     <ContextContainer title={t('evaluation')} spacing={8}>

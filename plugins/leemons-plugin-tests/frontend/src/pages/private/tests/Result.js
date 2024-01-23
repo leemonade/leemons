@@ -496,7 +496,7 @@ export default function Result() {
                     subject={store?.instance?.subjects?.[0]?.subject}
                   />
 
-                  {store.isTeacher ? (
+                  {store.isTeacher && !store.instance.dates.evaluationClosed ? (
                     <>
                       <Switch
                         label={t('feedbackForStudent')}

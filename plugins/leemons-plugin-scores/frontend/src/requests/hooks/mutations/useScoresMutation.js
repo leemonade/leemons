@@ -6,7 +6,7 @@ export default function useScoresMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ scores }) => setScores(scores),
+    mutationFn: ({ scores, instances }) => setScores({ scores, instances }),
     onSuccess: () => {
       queryClient.invalidateQueries(allScoresKey);
     },
