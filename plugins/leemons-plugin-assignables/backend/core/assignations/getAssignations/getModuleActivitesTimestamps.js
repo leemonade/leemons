@@ -170,7 +170,7 @@ function returnData({
     );
 
     const startDate = minBy(dates, 'start')?.start ?? null;
-    const endDate = maxBy(dates, 'end')?.end ?? null;
+    const endDate = dates.some((date) => !date?.end) ? null : maxBy(dates, 'end')?.end;
 
     const datesObj = {};
 
@@ -178,7 +178,7 @@ function returnData({
       datesObj.start = startDate;
     }
     if (endDate) {
-      datesObj.start = endDate;
+      datesObj.end = endDate;
     }
 
     datesData[id] = datesObj;
