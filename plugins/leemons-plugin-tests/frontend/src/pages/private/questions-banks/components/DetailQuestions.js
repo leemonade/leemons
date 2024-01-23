@@ -10,11 +10,11 @@ import {
   Stack,
   Table,
   Text,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon, EditIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon, EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
@@ -105,6 +105,12 @@ export default function DetailQuestions({
         onCancel={onCancel}
         defaultValues={qStore.newQuestion ? {} : qStore.question}
         categories={categories}
+        onAddCategory={(newCategory) => {
+          form.setValue('categories', [
+            ...(form.getValues('categories') || []),
+            { value: newCategory },
+          ]);
+        }}
         store={store}
       />
     );
