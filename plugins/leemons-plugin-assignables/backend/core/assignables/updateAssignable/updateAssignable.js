@@ -104,6 +104,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
         file: file?.id || file,
         id: currentAssignable.asset.id,
         public: true,
+        subjects: object.subjects?.length ? object.subjects : null,
       },
       upgrade: true,
       published: false,
