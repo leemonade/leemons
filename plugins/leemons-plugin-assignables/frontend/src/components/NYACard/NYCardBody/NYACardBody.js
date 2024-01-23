@@ -128,7 +128,7 @@ const NYACardBody = ({
             value={activitiesPercentage}
             size={'md'}
             color={'#F39C12'}
-            labelLeft={`Progreso: ${activitiesPercentage}%`}
+            labelLeft={`Progreso: ${Math.floor(activitiesPercentage)}%`}
             labelRight={`(${submitedActivities}/${totalActivities} ${activitiesLocale})`}
           />
         </Box>

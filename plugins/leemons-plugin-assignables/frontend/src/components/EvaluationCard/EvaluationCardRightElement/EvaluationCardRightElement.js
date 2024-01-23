@@ -21,7 +21,7 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
     instance?.students?.forEach((student) => {
       const activities = student?.metadata?.moduleStatus;
 
-      activities.forEach((activityStatus) => {
+      activities?.forEach((activityStatus) => {
         if (activityStatus.completed) {
           activitiesCompleted.push(activityStatus.instance);
         }
