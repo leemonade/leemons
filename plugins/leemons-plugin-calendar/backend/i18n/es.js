@@ -1,5 +1,5 @@
 module.exports = {
-  classes: 'Clases',
+  classes: 'Asignaturas',
   programs: 'Programas',
   event: 'Evento',
   task: 'Tarea',
