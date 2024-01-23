@@ -243,7 +243,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
       activity.classes.includes(klass.id)
     );
     return classActivitiesRaw.map((activity) => {
-      const percentage = (100 / classActivitiesRaw.length).toFixed(0);
+      const percentage = (100 / classActivitiesRaw.length)?.toFixed(0);
       const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
       const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
         .replace(':id', activity.id)
@@ -284,6 +284,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
         filteredClasses.map((klass) => {
           const classActivities = getClassActivities(filteredActivities, klass);
           const averageScore = getAverageScore(klass, classActivities);
+
           return (
             <ScoreFronstage
               key={klass.id}
@@ -292,6 +293,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
               label={labels.averageScore}
               image={getClassImage(klass)}
               icon={getClassIcon(klass)}
+              color={klass.color}
               score={averageScore}
               values={classActivities}
               maxGrade={evaluationSystem?.maxScale.number}
