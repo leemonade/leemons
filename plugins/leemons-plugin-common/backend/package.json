@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-common",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Leemons common plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.65",
+    "@leemons/deployment-manager": "0.0.66",
     "@leemons/error": "0.0.41",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.65",
-    "@leemons/mongodb-helpers": "0.0.65",
+    "@leemons/mongodb": "0.0.66",
+    "@leemons/mongodb-helpers": "0.0.66",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multilanguage": "0.0.65",
+    "@leemons/multilanguage": "0.0.66",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",

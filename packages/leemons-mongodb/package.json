@@ -1,7 +1,7 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.65",
+    "@leemons/deployment-manager": "0.0.66",
     "@leemons/error": "0.0.41",
     "@leemons/lrn": "0.0.41",
     "@leemons/service-name-parser": "0.0.41",
@@ -11,7 +11,7 @@
     "mongoose": "7.5.2"
   },
   "name": "@leemons/mongodb",
-  "version": "0.0.65",
+  "version": "0.0.66",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
