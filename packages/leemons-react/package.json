@@ -42,7 +42,7 @@
     "react-refresh": "^0.14.0",
     "react-router-dom": "^5.3.3",
     "terser-webpack-plugin": "^5.3.9",
-    "leemons-hooks": "^0.0.33"
+    "leemons-hooks": "^0.0.32"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
