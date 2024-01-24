@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { SubjectItemDisplayStyles } from './SubjectItemDisplay.styles';
 import { useProgramDetail, useSubjects } from '../../hooks';
 import {
@@ -10,15 +12,15 @@ import {
 import { getMultiSubjectData } from '../../helpers/getMultiSubjectData';
 
 const SubjectItemDisplay = ({ subjectsIds, programId }) => {
+  const [t] = useTranslateLoader(prefixPN('userClassesSwiperWidget'));
   const [subjectData, setSubjectData] = useState(null);
   const [programName, setProgramName] = useState(null);
   const { classes } = SubjectItemDisplayStyles();
   const labelsMultiSubject = {
-    subjectName: 'Multiasignatura',
-    groupName: 'Multiasignatura',
-    name: 'Multiasignatura',
+    subjectName: t('multiSubject'),
+    groupName: t('multiSubject'),
+    name: t('multiSubject'),
   };
-
   const preparedSubject = useSubjects(subjectsIds, {
     enabled: Array.isArray(subjectsIds) && subjectsIds?.length === 1,
   });
