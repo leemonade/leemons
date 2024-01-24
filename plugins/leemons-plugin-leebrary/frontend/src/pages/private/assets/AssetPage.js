@@ -302,8 +302,6 @@ const AssetPage = () => {
   ];
   // #endregion
 
-  console.log('totalLayoutProps', totalLayoutProps);
-
   return (
     <>
       <FormProvider {...form}>
