@@ -240,24 +240,26 @@ const AssetPage = () => {
   // #endregion
 
   // #region * HEADER --------------------------------------------------------
-  const getAssetTitleAndIcon = () => {
+  const getAssetInfoHeader = () => {
     const editing = params.id?.length;
     if (category?.key === 'bookmarks')
       return {
         title: editing ? t('basicData.bookmark.titleEdit') : t('basicData.bookmark.titleNew'),
         icon: <AssetBookmarkIcon width={24} height={24} color={'#878D96'} />,
+        placeHolder: t('basicData.placeholders.bookmarkName'),
       };
     return {
       title: editing ? t('basicData.header.titleEdit') : t('basicData.header.titleNew'),
       icon: <AssetMediaIcon width={24} height={24} color={'#878D96'} />,
+      placeHolder: t('basicData.placeholders.name'),
     };
   };
 
   const buildHeader = () => (
     <TotalLayoutHeader
-      title={getAssetTitleAndIcon().title}
-      icon={getAssetTitleAndIcon().icon}
-      formTitlePlaceholder={formValues.name || t('basicData.placeholders.name')}
+      title={getAssetInfoHeader().title}
+      icon={getAssetInfoHeader().icon}
+      formTitlePlaceholder={formValues.name || getAssetInfoHeader().placeHolder}
       onSave={form.handleSubmit(handlePlublishAndAssign)}
       onCancel={handleOnCancel}
     />

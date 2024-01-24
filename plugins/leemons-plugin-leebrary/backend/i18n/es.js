@@ -124,6 +124,7 @@ module.exports = {
       placeholders: {
         tagsInput: 'Escribe aquí las etiquetas y pulsa intro',
         name: 'Título del recurso',
+        bookmarkName: 'Título del marcador',
         tagline: 'Subtítulo',
         tags: 'Etiquetas',
         description: 'Descripción del recurso',
