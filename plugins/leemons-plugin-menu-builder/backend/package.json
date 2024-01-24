@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-menu-builder",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "description": "Leemons menu builder plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
