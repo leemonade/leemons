@@ -217,7 +217,7 @@ module.exports = {
     addCustomObjectives: 'Añadir objetivos personalizados',
     addInstructions: 'Añadir instrucciones',
     other: 'Otros',
-    headerTitlePlaceholder: 'Título del Test',
+    headerTitlePlaceholder: 'Título del test',
   },
   testsDetail: {
     assign: 'Asignar test',

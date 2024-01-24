@@ -541,6 +541,7 @@ module.exports = {
   userClassesSwiperWidget: {
     multiCourse: 'Multi-course',
     subjects: 'Subjects',
+    multiSubject: 'Multisubject',
   },
   tabDetail: {
     label: 'Classroom',

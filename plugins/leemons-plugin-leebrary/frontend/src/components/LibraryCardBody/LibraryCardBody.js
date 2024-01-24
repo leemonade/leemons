@@ -55,7 +55,12 @@ const LibraryCardBody = ({
 
   useEffect(() => {
     if (isArray(subjects)) {
-      const subjectIds = subjects.map((s) => s.subject);
+      let subjectIds;
+      if (isArray(subjects) && typeof subjects[0] === 'string') {
+        subjectIds = subjects;
+      } else {
+        subjectIds = subjects.map((s) => s.subject);
+      }
       setSubjectData(subjectIds);
     } else if (!isArray(subjects) && subjects?.name) {
       setSubjectData(subjects);

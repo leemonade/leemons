@@ -1,6 +1,6 @@
 {
   "name": "@leemons/runner",
-  "version": "0.0.69",
+  "version": "0.0.70",
   "description": "",
   "main": "lib/index.js",
   "bin": {
@@ -31,6 +31,6 @@
     "kleur": "^4.1.5",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
-    "@leemons/mongodb": "0.0.69"
+    "@leemons/mongodb": "0.0.70"
   }
 }
