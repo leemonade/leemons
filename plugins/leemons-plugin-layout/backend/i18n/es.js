@@ -2,11 +2,12 @@ module.exports = {
   modals: {
     title: {
       delete: 'Confirmar eliminación',
-      confirm: 'Importante',
+      confirm: 'Confirmar duplicar',
     },
     description: {
       delete: 'El ítem será borrado, ¿deseas proceder?',
-      confirm: '¿Deseas continuar?',
+      confirm:
+        'Al duplicar se creará una copia de este ítem, pero se perderá la configuración de permisos.',
     },
     buttons: {
       cancel: 'Cancelar',
