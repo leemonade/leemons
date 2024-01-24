@@ -219,7 +219,7 @@ module.exports = {
     addCustomObjectives: 'Add custom objectives',
     addInstructions: 'Add instructions',
     other: 'Other',
-    headerTitlePlaceholder: 'Test Title',
+    headerTitlePlaceholder: 'Test title',
   },
   testsDetail: {
     assign: 'Assign test',

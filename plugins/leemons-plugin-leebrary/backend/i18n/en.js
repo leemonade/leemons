@@ -137,6 +137,7 @@ module.exports = {
       placeholders: {
         tagsInput: 'Write your tags here and press enter',
         name: 'Resource Title',
+        bookmarkName: 'Bookmark title',
         tagline: 'Resource tagline',
         tags: 'Resource tags',
         url: 'Webpage link',

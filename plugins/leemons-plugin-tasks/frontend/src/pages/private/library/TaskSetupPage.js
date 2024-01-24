@@ -72,7 +72,7 @@ function useHeaderLabels(t) {
 
   return useMemo(
     () => ({
-      title: isNil(taskName) || isEmpty(taskName) ? t('title') : taskName,
+      title: isNil(taskName) || isEmpty(taskName) ? t('subTitle') : taskName,
     }),
     [t, taskName]
   );
