@@ -110,21 +110,22 @@ export const LibraryBubbleMenu = ({
         />
       </Box>
       {/* Format ----------------------- */}
-      {/* 
+
       <Box className={classes.iconGroup}>
-        
         <ActionButton
           label={labels.embed?.toUpperCase()}
           style={actionButtonStyles}
           onClick={() => handleChangeData({ display: 'embed' })}
           active={data.display === 'embed'}
         />
+        {/*
         <ActionButton
           label={labels.card?.toUpperCase()}
           style={actionButtonStyles}
           onClick={() => handleChangeData({ display: 'card' })}
           active={data.display === 'card'}
         />
+        */}
         <ActionButton
           label={labels.player?.toUpperCase()}
           style={actionButtonStyles}
@@ -132,7 +133,7 @@ export const LibraryBubbleMenu = ({
           active={data.display === 'player'}
         />
       </Box>
-      */}
+
       {/* Actions */}
       <Box className={classes.iconGroup}>
         <ActionButton

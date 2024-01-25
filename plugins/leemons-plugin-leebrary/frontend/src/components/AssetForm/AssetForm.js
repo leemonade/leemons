@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import _, { flatten, isEmpty, isFunction, isNil, noop } from 'lodash';
+import _, { flatten, isEmpty, isFunction, isNil, noop, toLower } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
@@ -236,6 +236,11 @@ const AssetForm = ({
             setValue('mediaType', 'video');
           } else if (!isEmpty(metadata.audio)) {
             setValue('mediaType', 'audio');
+          } else if (
+            toLower(metadata.publisher) === 'youtube' ||
+            metadata.url?.startsWidth('https://www.youtube')
+          ) {
+            setValue('mediaType', 'video');
           }
         }
         setChecking(false);
