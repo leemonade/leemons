@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isFunction, groupBy, isEmpty } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
+import { isFunction, groupBy, isEmpty, cloneDeep } from 'lodash';
 import {
   Box,
   Button,
@@ -81,7 +81,7 @@ const LibraryNavbar = ({
     isFunction(onNav) && onNav(category);
   };
 
-  // TODO: this is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
+  // This is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
   const contentAssetsKeys = [
     'bookmarks',
     'media-files',
@@ -108,7 +108,7 @@ const LibraryNavbar = ({
               opened={programsDropdownInfo?.[programId].dropdownOpen}
               onClick={() => {
                 setProgramsDropdownInfo((current) => {
-                  const updatedPrograms = { ...current };
+                  const updatedPrograms = cloneDeep(current);
                   updatedPrograms[programId].dropdownOpen =
                     !updatedPrograms[programId].dropdownOpen;
                   return updatedPrograms;
@@ -122,7 +122,7 @@ const LibraryNavbar = ({
                 >
                   {subjectsByProgram[programId].map((subject) => (
                     <Box
-                      key={JSON.stringify(subject)}
+                      key={subject.id}
                       onClick={() => onNavSubject(subject, programId)}
                       sx={(theme) => ({
                         display: 'flex',

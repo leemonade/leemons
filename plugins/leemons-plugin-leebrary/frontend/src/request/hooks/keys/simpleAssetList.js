@@ -5,10 +5,16 @@ export const allSimpleAssetListKey = [
   },
 ];
 
-export const getSimpleAssetListKey = (query) => [
+export const allGetSimpleAssetListKey = [
   {
     ...allSimpleAssetListKey[0],
     action: 'get',
-    query,
+  },
+];
+
+export const getSimpleAssetListKey = (query) => [
+  {
+    ...allGetSimpleAssetListKey[0],
+    ...query,
   },
 ];

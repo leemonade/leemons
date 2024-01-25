@@ -30,7 +30,10 @@ import {
   pinAssetRequest,
   unpinAssetRequest,
 } from '@leebrary/request';
-import { getSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
+import {
+  allGetSimpleAssetListKey,
+  getSimpleAssetListKey,
+} from '@leebrary/request/hooks/keys/simpleAssetList';
 
 import prefixPN from '../helpers/prefixPN';
 import { CardDetailWrapper } from './CardDetailWrapper';
@@ -39,6 +42,7 @@ import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
+import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 
 // HELPERS
 function getLocale(session) {
@@ -114,7 +118,6 @@ const AssetList = ({
 
   const queryClient = useQueryClient();
   const assetListQuery = useMemo(() => {
-    setPage(1);
     const waitForAcademicFilters = allowAcademicFilter && !academicFilters;
     if (!category || waitForAcademicFilters) return null;
 
@@ -163,11 +166,15 @@ const AssetList = ({
     enabled: !!assetListQuery,
   });
 
-  const { items: currentPageAssets } = getPageItems({
-    data: assetList,
-    page: page - 1,
-    size: pageSize,
-  });
+  const { items: currentPageAssets } = useMemo(
+    () =>
+      getPageItems({
+        data: assetList,
+        page: page - 1,
+        size: pageSize,
+      }),
+    [assetList, page, pageSize]
+  );
 
   const {
     data: assetsDetails,
@@ -203,12 +210,21 @@ const AssetList = ({
         ),
       }));
     return [{ label: t('labels.resourceTypes'), value: 'all' }, ...filteredCategories];
-  }, [allowCategoryFilter, categories]);
+  }, [allowCategoryFilter, categories, t]);
 
   const getMediaTypeSelectData = useMemo(() => {
     if (!mediaTypes?.length) return null;
     return [{ label: t('labels.resourceTypes'), value: 'all' }, ...mediaTypes];
-  }, [mediaTypes]);
+  }, [mediaTypes, t]);
+
+  const getStatusSelectData = useMemo(() => {
+    if (!allowStatusFilter) return null;
+    return [
+      { label: t('labels.assetStatusAll'), value: 'all' },
+      { label: t('labels.assetStatusPublished'), value: 'published' },
+      { label: t('labels.assetStatusDraft'), value: 'draft' },
+    ];
+  }, [allowStatusFilter, t]);
 
   const getEmptyState = () => {
     if (searchCriteriaDebounced && !isEmpty(searchCriteriaDebounced)) {
@@ -269,7 +285,7 @@ const AssetList = ({
       unpin: selectedAsset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     };
-  }, [selectedAsset, category]);
+  }, [selectedAsset, category, t]);
 
   // -------------------------------------------------------------------------------------
   // FUNCTIONS FOR USER ACTIONS
@@ -307,7 +323,8 @@ const AssetList = ({
     try {
       await pinAssetRequest(item.id);
       // It is needed to invalidate all queries here as the effect needs to be seen in every section of the library
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries(allGetSimpleAssetListKey);
+      queryClient.invalidateQueries(allGetAssetsKey);
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -317,7 +334,8 @@ const AssetList = ({
     try {
       await unpinAssetRequest(item.id);
       // It is needed to invalidate all queries here as the effect needs to be seen in every section of the library
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries(allGetSimpleAssetListKey);
+      queryClient.invalidateQueries(allGetAssetsKey);
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -368,11 +386,17 @@ const AssetList = ({
   }
 
   function handleRefresh() {
-    queryClient.invalidateQueries();
+    queryClient.invalidateQueries(allGetSimpleAssetListKey);
+    queryClient.invalidateQueries(allGetAssetsKey);
   }
 
   // -------------------------------------------------------------------------------------
   // EFFECTS
+
+  // Every new query should reset the page to one.
+  useEffect(() => {
+    setPage(1);
+  }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
 
   useEffect(() => {
     if (!assetsDetailsAreLoading) {
@@ -386,14 +410,9 @@ const AssetList = ({
 
   // If needed, the selected asset must be fetched. When the user pastes a url with a valid open parameter the asset must be loaded
   useEffect(() => {
-    if (!asset) {
-      setSelectedAsset(null);
-      return;
-    }
-
     if (asset?.id) {
       setSelectedAsset(asset);
-    } else if (typeof asset === 'string') {
+    } else if (typeof asset === 'string' && asset.length) {
       const loadedAsset = find(pageAssetsData?.items, { id: asset });
       if (loadedAsset) setSelectedAsset(loadedAsset);
     } else {
@@ -489,7 +508,7 @@ const AssetList = ({
             onUnpin={handleOnUnpin}
             onDownload={handleOnDownload}
             locale={locale}
-            assetsLoading={cardDetailIsLoading} // todo delay it using a state: cardDetailIsLoading
+            assetsLoading={cardDetailIsLoading}
           />
         </Box>
       ),
@@ -555,11 +574,7 @@ const AssetList = ({
             )}
             {allowStatusFilter && (
               <Select
-                data={[
-                  { label: t('labels.assetStatusAll'), value: 'all' },
-                  { label: t('labels.assetStatusPublished'), value: 'published' },
-                  { label: t('labels.assetStatusDraft'), value: 'draft' },
-                ]}
+                data={getStatusSelectData}
                 onChange={onStatusChange}
                 value={statusFilter}
                 placeholder={t('labels.assetStatus')}
@@ -723,6 +738,7 @@ AssetList.propTypes = {
   filterComponents: PropTypes.array,
   onEditItem: PropTypes.func,
   filters: PropTypes.object,
+  allowAcademicFilter: PropTypes.bool,
   forgetAssetToOpen: PropTypes.func,
 };
 

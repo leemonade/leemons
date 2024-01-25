@@ -7,7 +7,7 @@ import { getAssetsRequest } from '@leebrary/request';
 import { getSimpleAssetListKey } from '../keys/simpleAssetList';
 
 function useSimpleAssetList({ query, ...options }) {
-  const queryKey = getSimpleAssetListKey({ query });
+  const queryKey = getSimpleAssetListKey(query);
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'frequently',
   });

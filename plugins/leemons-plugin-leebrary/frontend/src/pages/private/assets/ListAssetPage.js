@@ -78,7 +78,7 @@ const ListAssetPage = () => {
         setMediaTypesArray([...types]);
       });
     }
-  }, [category]);
+  }, [category?.id, category?.key]);
 
   // Set the states passed to AssetList to serve as parameters for the request according to the URL query params
   useEffect(() => {
