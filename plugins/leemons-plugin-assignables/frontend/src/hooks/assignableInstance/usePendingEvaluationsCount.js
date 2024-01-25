@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { difference } from 'lodash';
 import { useMemo } from 'react';
 

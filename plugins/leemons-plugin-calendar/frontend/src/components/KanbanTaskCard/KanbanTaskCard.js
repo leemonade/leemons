@@ -1,3 +1,5 @@
+/* eslint-disable sonarjs/cognitive-complexity */
+/* eslint-disable import/prefer-default-export */
 import React, { useMemo } from 'react';
 import {
   AvatarsGroup,
@@ -9,8 +11,6 @@ import {
   TextClamp,
 } from '@bubbles-ui/components';
 import _, { filter, find, map } from 'lodash';
-// TODO: import LibraryCardDeadline from plugin @leebrary
-// import { LibraryCardDeadline } from '../../../../leebrary/src/components/LibraryCardDeadline';
 import ClassroomItemDisplay from '@academic-portfolio/components/ClassroomItemDisplay/ClassroomItemDisplay';
 import assignablePrefixPN from '@assignables/helpers/prefixPN';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -23,29 +23,13 @@ import { useSession } from '@users/session';
 import getUserFullName from '@users/helpers/getUserFullName';
 import getActivityType from '@assignables/helpers/getActivityType';
 import { KanbanTaskCardStyles } from './KanbanTaskCard.styles';
+import {
+  KANBAN_TASK_CARD_PROP_TYPES,
+  KANBAN_TASK_CARD_DEFAULT_PROPS,
+  emptyPixel,
+} from './KanbanTaskCard.constants';
 
-const emptyPixel =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-
-export const KANBAN_TASK_CARD_DEFAULT_PROPS = {
-  onClick: () => {},
-};
-export const KANBAN_TASK_CARD_PROP_TYPES = {};
-
-const ProgressBar = ({ value }) => {
-  const { classes, cx } = KanbanTaskCardStyles({ progress: value });
-  return (
-    <Box className={classes.progress}>
-      {parseInt(value)}%
-      <Box className={classes.progressOut}>
-        <Box className={classes.progressIn} />
-      </Box>
-    </Box>
-  );
-};
-
-const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
-  const session = useSession();
+const getClassIds = (value, config) => {
   const classIds = [];
   if (value.uniqClasses) {
     value.uniqClasses.forEach((id) => {
@@ -55,15 +39,24 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
       }
     });
   }
+  return classIds;
+};
+
+const getCalendar = (value, config) => find(config.calendars, { id: value.calendar });
+
+const KanbanTaskCard = ({ value, config, onClick, labels }) => {
+  const session = useSession();
+  const classIds = getClassIds(value, config);
+
   const { classes: classesNya } = NYACardBodyStyles({}, { name: 'NYACardBody' });
-  const calendar = find(config.calendars, { id: value.calendar });
+  const calendar = getCalendar(value, config);
   if (!calendar) return null;
 
   const isFromInstance = !!value?.data?.instanceId;
 
   const { image } = value;
 
-  const { classes, cx } = KanbanTaskCardStyles({
+  const { classes } = KanbanTaskCardStyles({
     classIds,
     bgColor: value.bgColor || calendar.bgColor,
     titleMargin:
@@ -216,44 +209,6 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
           </Box>
         ) : null}
       </Box>
-
-      {/*
-      <Box className={classes.bottomSection}>
-        <Box className={classes.bottomSectionBg} />
-        <Box className={classes.bottomSectionContent}>
-
-          <Box className={classes.avatar}>
-            {!isFromInstance || (isFromInstance && (!avatar.image || !avatar.icon)) ? (
-              <Box
-                sx={(theme) => ({ display: 'inline-block', zIndex: 2, verticalAlign: 'middle' })}
-              >
-                <Avatar mx="auto" size="sm" {...avatar} />
-              </Box>
-            ) : null}
-
-            {avatar.image && avatarNoImage.icon ? (
-              <Box
-                sx={(theme) => ({
-                  display: 'inline-block',
-                  marginLeft: -theme.spacing[2],
-                  verticalAlign: 'middle',
-                })}
-              >
-                <Avatar mx="auto" size="sm" {...avatarNoImage} />
-              </Box>
-            ) : null}
-            {value.calendarName ? (
-              <Paragraph size="xs" sx={(theme) => ({ marginLeft: theme.spacing[2], marginTop: 0 })}>
-                {value.uniqClasses.length > 1 && !isFromInstance
-                  ? `(${value.uniqClasses.length})`
-                  : value.calendarName}
-              </Paragraph>
-            ) : null}
-          </Box>
-
-        </Box>
-      </Box>
-      */}
     </Box>
   );
 };
