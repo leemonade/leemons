@@ -1,48 +1,29 @@
-/* eslint-disable no-unreachable */
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useParams, useLocation, useHistory } from 'react-router-dom';
+import { isEmpty, uniqBy } from 'lodash';
+
+import { addErrorAlert } from '@layout/alert';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { Box, createStyles } from '@bubbles-ui/components';
-import { isEmpty, isNil } from 'lodash';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
-import { AssetList } from '../../../components/AssetList';
+import { useRequestErrorMessage } from '@common';
+import prepareAssetType from '@leebrary/helpers/prepareAssetType';
+import { AssetList } from '@leebrary/components';
+import { getAssetTypesRequest } from '@leebrary/request';
+
 import LibraryContext from '../../../context/LibraryContext';
-import { VIEWS } from '../library/Library.constants';
+
+// HELPERS
 
 function useQuery() {
   const { search } = useLocation();
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
-const ListPageStyles = createStyles((theme) => ({
-  tabPane: {
-    display: 'flex',
-    flex: 1,
-    height: '100%',
-    paddingTop: theme.spacing[5],
-    paddingBottom: theme.spacing[5],
-  },
-  original: {
-    display: 'flex',
-    flex: 1,
-    minHeight: '100%',
-  },
-}));
-
 const ListAssetPage = () => {
-  const { setView, view, categories, asset, setAsset, category, selectCategory, setLoading } =
-    useContext(LibraryContext);
-  const { classes } = ListPageStyles({});
-  const [currentAsset, setCurrentAsset] = useState(asset);
-  const [searchCriteria, setSearchCriteria] = useState('');
-
-  const [mediaAssetType, setMediaAssetType] = useState('');
-  const [showPublic, setShowPublic] = useState(false);
-  const [showPublished, setShowPublished] = useState('published');
-  const history = useHistory();
+  const { categories, asset, setAsset, category, selectCategory } = useContext(LibraryContext);
   const params = useParams();
-  const query = useQuery();
-  const [activeStatus, setActiveStatus] = useState(query.get('activeTab') || 'all');
+  const urlQuery = useQuery();
+  const history = useHistory();
   const location = useLocation();
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
@@ -50,283 +31,219 @@ const ListAssetPage = () => {
     // hideProgramSelect: isStudent,
     useLabels: false,
   });
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  // ·········································································
+  const [searchCriteria, setSearchCriteria] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [mediaTypeFilter, setMediaTypeFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [mediaTypesArray, setMediaTypesArray] = useState([]);
+
+  // --------------------------------------------------------------------------------------------
+  // METHODS
+
+  async function loadAssetTypes(categoryId) {
+    try {
+      const response = await getAssetTypesRequest(categoryId);
+      return uniqBy(
+        response.types?.map((type) => ({
+          label: prepareAssetType(type),
+          value: prepareAssetType(type, false),
+        })),
+        'value'
+      );
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+      return [];
+    }
+  }
+
+  // --------------------------------------------------------------------------------------------
   // EFFECTS
 
+  // Set the context category when the url changes according to the URL category param
   useEffect(() => {
-    setCurrentAsset(asset);
-  }, [JSON.stringify(asset)]);
-
-  useEffect(() => {
-    if (view !== VIEWS.LIST) setView(VIEWS.LIST);
-
     if (!isEmpty(params?.category) && category?.key !== params?.category) {
       selectCategory(params?.category);
       if (category) {
-        setCurrentAsset(null);
+        setAsset(null);
       }
     }
-  }, [JSON.stringify(params), JSON.stringify(category), JSON.stringify(view)]);
+  }, [params, category]);
 
+  // Get the media types for media assets
   useEffect(() => {
-    const assetId = query.get('open');
-    const criteria = query.get('search');
-    const type = query.get('type');
-    const _activeTab = query.get('activeTab');
-    const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
-
-    if (displayPublic !== showPublic) {
-      setShowPublic(displayPublic);
+    if (category?.key === 'media-files') {
+      loadAssetTypes(category?.id).then((types) => {
+        setMediaTypesArray([...types]);
+      });
     }
+  }, [category?.id, category?.key]);
 
-    if (!assetId || isEmpty(assetId)) {
-      setCurrentAsset(null);
-      setAsset(null);
-    } else if (asset?.id !== assetId) {
-      setCurrentAsset(assetId);
-    }
+  // Set the states passed to AssetList to serve as parameters for the request according to the URL query params
+  useEffect(() => {
+    setAsset(urlQuery.get('open'));
+    setSearchCriteria(urlQuery.get('search') || '');
+    setStatusFilter(urlQuery.get('status') || 'all');
+    setMediaTypeFilter(urlQuery.get('media-type') || 'all');
+    setCategoryFilter(urlQuery.get('category-filter') || 'all');
+  }, [urlQuery]);
 
-    if (isEmpty(criteria)) {
-      setSearchCriteria('');
-    } else if (criteria !== searchCriteria) {
-      setSearchCriteria(criteria);
-    }
+  const manageQueryParams = ({
+    searchCreteriaToFilterBy: searchCriteriaToFilterBy,
+    categoryToFilterBy,
+    mediaTypeToFilterBy,
+    statusToFilterBy,
+    assetToOpenId,
+  }) => {
+    const search = urlQuery.get('search');
+    const _categoryFilter = urlQuery.get('category-filter');
+    const mediaType = urlQuery.get('media-type');
+    const status = urlQuery.get('status');
+    const open = urlQuery.get('open');
+    const result = [];
 
-    if (isEmpty(type)) {
-      setMediaAssetType('');
-    } else if (type !== mediaAssetType) {
-      setMediaAssetType(type);
-    }
+    // Get current params and keep them in the url in order to combine filters
+    if (search && typeof searchCriteriaToFilterBy !== 'string') result.push(`search=${search}`);
+    if (_categoryFilter && !categoryToFilterBy) result.push(`category-filter=${_categoryFilter}`);
+    if (mediaType && !mediaTypeToFilterBy) result.push(`media-type=${mediaType}`);
+    if (status && !statusToFilterBy) result.push(`status=${status}`);
+    if (open && !assetToOpenId) result.push(`open=${open}`);
 
-    if (isEmpty(_activeTab)) {
-      setActiveStatus('all');
-    } else if (_activeTab !== activeStatus) {
-      setActiveStatus(_activeTab);
-    }
-  }, [query, asset]);
+    // Add new params or modify existent ones.
+    if (searchCriteriaToFilterBy) result.push(`search=${searchCriteriaToFilterBy}`);
+    if (categoryToFilterBy) result.push(`category-filter=${categoryToFilterBy}`);
+    if (mediaTypeToFilterBy) result.push(`media-type=${mediaTypeToFilterBy}`);
+    if (statusToFilterBy) result.push(`status=${statusToFilterBy}`);
+    if (assetToOpenId && assetToOpenId !== 'forgetAsset') result.push(`open=${assetToOpenId}`);
 
-  // ·········································································
-  // LABELS & STATIC
-
-  const getQueryParams = useCallback(
-    (
-      {
-        includeSearch,
-        includeOpen,
-        includeType,
-        includePublic,
-        includePublished,
-        includeActiveTab,
-      },
-      suffix
-    ) => {
-      const open = query.get('open');
-      const search = query.get('search');
-      const type = query.get('type');
-      const _activeTab = query.get('activeTab');
-      const displayPublic = [1, '1', true, 'true'].includes(query.get('showPublic'));
-      const result = [];
-
-      if (!isEmpty(open) && includeOpen) {
-        result.push(`open=${open}`);
-      }
-      if (!isEmpty(search) && includeSearch) {
-        result.push(`search=${search}`);
-      }
-      if (!isEmpty(_activeTab) && includeActiveTab) {
-        result.push(`activeTab=${_activeTab}`);
-      }
-
-      if (!isEmpty(type) && includeType) {
-        result.push(`type=${type}`);
-      }
-
-      if (includePublic) {
-        result.push(`showPublic=${displayPublic}`);
-      }
-
-      if (includePublished) {
-        result.push(`published=${showPublished}`);
-      }
-
-      if (!isEmpty(suffix)) {
-        result.push(suffix);
-      }
-
-      return result.join('&');
-    },
-    [query, activeStatus]
-  );
-
-  // ·········································································
-  // HANDLERS
-
-  const handleOnSelectItem = (item) => {
-    history.push(
-      `${location.pathname}?${getQueryParams(
-        {
-          includeSearch: true,
-          includeType: true,
-          includePublic: true,
-          includePublished: true,
-          includeActiveTab: true,
-        },
-        `open=${item.id}`
-      )}`
-    );
+    return result.join('&');
   };
+
+  // --------------------------------------------------------------------------------------------
+  // HANDLERS
 
   const handleOnEditItem = (item) => {
     history.push(`/private/leebrary/edit/${item.id}`);
   };
 
-  const handleOnSearch = (criteria) => {
-    if (!isEmpty(criteria)) {
-      history.push(
-        `${location.pathname}?${getQueryParams(
-          {
-            includeType: true,
-            includePublic: true,
-            includePublished: true,
-            includeActiveTab: true,
-          },
-          `search=${criteria}`
-        )}`
-      );
-    } else {
-      history.push(
-        `${location.pathname}?${getQueryParams({
-          includeType: true,
-          includePublic: true,
-          includePublished: true,
-          includeActiveTab: true,
-        })}`
-      );
+  // This filter is only appliable to multi-category sections (recent, favs, shared)
+  const handleCategoryFilterChange = (categoryToFilterBy) => {
+    setCategoryFilter(categoryToFilterBy);
+    history.push(`${location.pathname}?${manageQueryParams({ categoryToFilterBy })}`);
+  };
+
+  const handleStatusChange = (statusToFilterBy) => {
+    setStatusFilter(statusToFilterBy);
+    history.push(`${location.pathname}?${manageQueryParams({ statusToFilterBy })}`);
+  };
+
+  const handleSearchByCriteria = (searchCriteriaToFilterBy) => {
+    setSearchCriteria(searchCriteriaToFilterBy);
+    history.push(`${location.pathname}?${manageQueryParams({ searchCriteriaToFilterBy })}`);
+  };
+
+  const handleMediaTypeChange = (mediaTypeToFilterBy) => {
+    setMediaTypeFilter(mediaTypeToFilterBy);
+    history.push(`${location.pathname}?${manageQueryParams({ mediaTypeToFilterBy })}`);
+  };
+
+  const handleOnSelectItem = (item) => {
+    setAsset(item);
+    history.push(`${location.pathname}?${manageQueryParams({ assetToOpenId: item.id })}`);
+  };
+
+  const handleUnselectItem = () => {
+    history.push(`${location.pathname}?${manageQueryParams({ assetToOpenId: 'forgetAsset' })}`);
+  };
+
+  // --------------------------------------------------------------------------------------------
+  // SET ASSET LIST PROPS ACCORDING TO TYPE OF CATEGORY
+
+  const propsAndFiltersByCategory = useMemo(() => {
+    let props = {};
+    const isMultiCategorySection = ['pins', 'leebrary-shared', 'leebrary-recent'].includes(
+      category?.key
+    );
+    const isAssignable = category?.key?.startsWith('assignables.');
+    const isStaticAssignable = ['assignables.content-creator', 'assignables.scorm'].includes(
+      category?.key
+    );
+
+    // ACADEMIC FILTERS
+    if (
+      ((isMultiCategorySection && category?.key !== 'leebrary-shared') ||
+        (isAssignable && !isStaticAssignable)) &&
+      isTeacher
+    ) {
+      props = academicFilters;
+      props.allowAcademicFilter = true;
     }
-  };
+    if ((isStudent && category?.key === 'pins') || (isAssignable && !isStaticAssignable)) {
+      props = academicFilters;
+      props.allowAcademicFilter = true;
+    }
 
-  const handleOnShowPublic = (value) => {
-    history.push(
-      `${location.pathname}?${getQueryParams(
-        { includeType: true, includePublished: true, includeSearch: true, includeActiveTab: true },
-        `showPublic=${value}`
-      )}`
-    );
-  };
+    // STATUS FILTER
+    if (
+      (isAssignable ||
+        category?.key === 'tests-questions-banks' ||
+        ['leebrary-recent', 'pins'].includes(category?.key)) &&
+      category?.key !== 'assignables.scorm' &&
+      !isStudent
+    ) {
+      props.allowStatusFilter = true;
+      props.statusFilter = statusFilter;
+      props.onStatusChange = handleStatusChange;
+    }
 
-  const handleOnTypeChange = (type) => {
-    history.push(
-      `${location.pathname}?${getQueryParams(
-        {
-          includeSearch: true,
-          includePublic: true,
-          includePublished: true,
-          includeActiveTab: true,
-        },
-        `type=${type}`
-      )}`
-    );
-  };
+    // CATEGORY FILTER (not tested in shared with me yet)
+    if (isMultiCategorySection && category?.key !== 'leebrary-shared') {
+      props.allowCategoryFilter = true;
+      props.categoryFilter = categoryFilter;
+      props.onCategoryFilter = handleCategoryFilterChange;
+    }
 
-  const handleOnPublishingStatusChange = (tab) => {
-    history.push(
-      `${location.pathname}?${getQueryParams(
-        {
-          includeSearch: true,
-          includePublic: true,
-          includePublished: true,
-        },
-        `activeTab=${tab}`
-      )}`
-    );
-  };
+    // MEDIA TYPE FILTER
+    if (category?.key === 'media-files') {
+      props.allowMediaTypeFilter = true;
+      props.mediaTypes = mediaTypesArray;
+      props.mediaTypeFilter = mediaTypeFilter;
+      props.onMediaTypeChange = handleMediaTypeChange;
+    }
 
-  // ·········································································
-  // RENDER
+    // DON'T SEARCH IN PROVIDER PROP
+    if ((category?.key === 'media-files' || category?.key === 'bookmarks') && isTeacher) {
+      props.searchInProvider = false;
+    }
 
-  let props = {};
-  const multiCategorySections = ['pins', 'leebrary-shared', 'leebrary-recent'];
-  const staticAssignables = ['assignables.content-creator', 'assignables.scorm'];
+    return props;
+  }, [
+    category,
+    isTeacher,
+    isStudent,
+    statusFilter,
+    categoryFilter,
+    mediaTypeFilter,
+    academicFilters,
+  ]);
 
-  if (
-    (multiCategorySections.includes(category?.key) ||
-      (category?.key?.startsWith('assignables.') && !staticAssignables.includes(category?.key))) &&
-    (isTeacher || isStudent)
-  ) {
-    props = academicFilters;
-    props.canChangeType = false;
-  }
-
-  if ((category?.key === 'media-files' || category?.key === 'bookmarks') && isTeacher) {
-    // props = academicFilters; // TODO: implement
-    props.searchInProvider = false;
-  }
-
-  // Publish & Draft filters allowed
-  if (
-    (category?.key?.startsWith('assignables.') ||
-      category?.key === 'tests-questions-banks' ||
-      multiCategorySections.includes(category?.key)) &&
-    category?.key !== 'assignables.scorm'
-  ) {
-    return (
-      <Box
-        className={classes.original}
-        sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: 'auto' })}
-      >
-        <AssetList
-          {...props}
-          category={category}
-          categories={categories}
-          asset={currentAsset}
-          search={searchCriteria}
-          layout="grid"
-          showPublic={showPublic}
-          onSelectItem={handleOnSelectItem}
-          onEditItem={handleOnEditItem}
-          onSearch={handleOnSearch}
-          onTypeChange={handleOnTypeChange}
-          onShowPublic={handleOnShowPublic}
-          assetType={mediaAssetType}
-          pinned={category?.key === 'pins'}
-          variant="embedded"
-          onLoading={setLoading}
-          published={activeStatus}
-          activeStatus={activeStatus}
-          allowStatusChange={true}
-          onStatusChange={handleOnPublishingStatusChange}
-        />
-      </Box>
-    );
-  }
-
-  return !isNil(categories) && !isEmpty(categories) ? (
-    <Box
-      className={classes.original}
-      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02, height: 'auto' })}
-    >
+  return (
+    <div>
       <AssetList
-        {...props}
+        {...propsAndFiltersByCategory}
         category={category}
         categories={categories}
-        asset={currentAsset}
-        search={searchCriteria}
-        layout="grid"
-        showPublic={showPublic}
-        onSelectItem={handleOnSelectItem}
+        asset={asset}
+        onSelect={handleOnSelectItem}
+        allowSearchByCriteria
+        searchCriteria={searchCriteria}
+        onSearch={handleSearchByCriteria}
         onEditItem={handleOnEditItem}
-        onSearch={handleOnSearch}
-        onTypeChange={handleOnTypeChange}
-        onShowPublic={handleOnShowPublic}
-        assetType={mediaAssetType}
-        pinned={category?.key === 'pins'}
-        onLoading={setLoading}
-        variant="embedded"
-        published={'published'}
+        forgetAssetToOpen={handleUnselectItem}
       />
-    </Box>
-  ) : null;
+    </div>
+  );
 };
 
 export { ListAssetPage };
