@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-layout",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "Leemons layout plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",

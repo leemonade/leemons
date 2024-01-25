@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-mqtt-aws-iot",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "Leemons mqtt aws iot plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
