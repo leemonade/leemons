@@ -43,7 +43,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
       getUserProfilesRequest(),
       getPlatformName(),
     ]);
-    console.log('name', name, profiles);
     store.platformName = name;
     if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       store.onlyOneProfile = true;
