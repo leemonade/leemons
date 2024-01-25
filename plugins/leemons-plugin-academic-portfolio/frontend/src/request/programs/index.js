@@ -30,6 +30,14 @@ async function detailProgram(id, withClasses = false) {
   });
 }
 
+async function getProgramsPublicInfo(programsIds) {
+  return leemons.api(`v1/academic-portfolio/programs/publicInfo`, {
+    allAgents: true,
+    method: 'POST',
+    body: { ids: JSON.stringify(programsIds) },
+  });
+}
+
 async function getUserPrograms() {
   return leemons.api(`v1/academic-portfolio/programs/user`, {
     allAgents: true,
@@ -99,4 +107,5 @@ export {
   getUserPrograms,
   getProgramEvaluationSystem,
   addStudentsToClassesUnderNodeTree,
+  getProgramsPublicInfo,
 };
