@@ -5,6 +5,8 @@ import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, createStyles } from '@bubbles-ui/components';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import NYACard from '@assignables/components/NYACard';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@learning-paths/helpers/prefixPN';
 
 function useUserModules({ class: klass, program }) {
   const isTeacher = useIsTeacher();
@@ -50,9 +52,25 @@ export const useModulesTabStyles = createStyles((theme) => {
 });
 
 export default function ModulesTab({ classe: { id: klass, program } }) {
+  const [t] = useTranslateLoader(prefixPN('emptyState'));
   const { data: modules, isLoading } = useUserModules({ class: klass, program });
   const { classes } = useModulesTabStyles();
   const isTeacher = useIsTeacher();
+
+  if (Array.isArray(modules) && modules?.length === 0) {
+    return (
+      <Box
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'grid',
+          placeContent: 'center',
+        }}
+      >
+        {t('description')}
+      </Box>
+    );
+  }
 
   return (
     <Box className={classes.root}>

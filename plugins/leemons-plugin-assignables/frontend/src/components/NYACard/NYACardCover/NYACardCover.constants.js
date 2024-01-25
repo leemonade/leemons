@@ -8,9 +8,8 @@ export const NYACARD_COVER_DEFAULT_PROPS = {
   fileIcon: null,
   variantIcon: null,
   fileType: null,
-  totalActivities: 0,
-  submitedActivities: 0,
   localizations: {},
+  instance: null,
 };
 export const NYACARD_COVER_PROP_TYPES = {
   name: PropTypes.string,
@@ -19,11 +18,10 @@ export const NYACARD_COVER_PROP_TYPES = {
   color: PropTypes.string,
   blur: PropTypes.number,
   fileIcon: PropTypes.node,
-  totalActivities: PropTypes.number,
-  submitedActivities: PropTypes.number,
   parentHovered: PropTypes.bool,
   dashboard: PropTypes.bool,
   isNew: PropTypes.bool,
   badge: PropTypes.string,
   localizations: PropTypes.shape({}),
+  instance: PropTypes.shape({}),
 };
