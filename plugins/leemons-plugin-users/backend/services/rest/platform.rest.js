@@ -4,9 +4,19 @@
  */
 /** @type {ServiceSchema} */
 
-const { getTheme, getLocales, getDefaultLocale } = require('../../core/platform');
+const { getTheme, getLocales, getDefaultLocale, getName } = require('../../core/platform');
 
 module.exports = {
+  getPlatformNameRest: {
+    rest: {
+      path: '/name',
+      method: 'GET',
+    },
+    async handler(ctx) {
+      const name = await getName({ ctx });
+      return { status: 200, name };
+    },
+  },
   getThemeRest: {
     rest: {
       path: '/theme',
