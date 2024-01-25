@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import {
   LoadingOverlay,
@@ -33,15 +33,21 @@ const validators = [
   }),
 ];
 
+function useQuery() {
+  const { search } = useLocation();
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
+  const params = useParams();
+  const urlQuery = useQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(Number(urlQuery.get('step')) || 0);
   const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
   const history = useHistory();
-  const params = useParams();
   const query = useDocument({ id: params.id, isNew });
   const mutation = useMutateDocument();
   const toolbarRef = React.useRef();
@@ -93,10 +99,17 @@ export default function Index({ isNew, readOnly }) {
         onSuccess: (data) => {
           addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
           setIsLoading(false);
-          if (assigning)
+          if (!publishing) {
+            history.push(
+              `/private/content-creator/${data.document.assignable}/edit?step=${activeStep}`
+            );
+          }
+
+          if (assigning) {
             history.push(`/private/content-creator/${data.document.assignable}/assign`);
-          else if (publishing && !assigning)
+          } else if (publishing && !assigning) {
             history.push('/private/leebrary/assignables.content-creator/list');
+          }
         },
         onError: (e) => {
           addErrorAlert(e);

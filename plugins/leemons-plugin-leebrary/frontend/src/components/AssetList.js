@@ -1,65 +1,46 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-nested-ternary */
+import React, { useEffect, useMemo, useState } from 'react';
+import { find, forEach, isArray, isEmpty, isNil } from 'lodash';
+import { useQueryClient } from '@tanstack/react-query';
+import PropTypes from 'prop-types';
 import {
+  Select,
   Box,
   ImageLoader,
-  LoadingOverlay,
-  PaginatedList,
-  RadioGroup,
-  SearchInput,
-  Select,
   Stack,
+  SearchInput,
   useDebouncedValue,
   useResizeObserver,
-  Drawer,
+  LoadingOverlay,
   TotalLayoutContainer,
+  PaginatedList,
+  Drawer,
 } from '@bubbles-ui/components';
-import { LayoutHeadlineIcon, LayoutModuleIcon } from '@bubbles-ui/icons/solid';
 import { LibraryItem } from '@leebrary/components/LibraryItem';
-import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
-import {
-  find,
-  forEach,
-  isArray,
-  isEmpty,
-  isEqual,
-  isFunction,
-  isNil,
-  isString,
-  pickBy,
-  uniqBy,
-} from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
-
-import { getPageItems } from '../helpers/getPageItems';
-import prefixPN from '../helpers/prefixPN';
-import { prepareAsset } from '../helpers/prepareAsset';
-import { prepareAssetType } from '../helpers/prepareAssetType';
+import { useLayout } from '@layout/context';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
+import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
+import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
+import getPageItems from '@leebrary/helpers/getPageItems';
 import {
   deleteAssetRequest,
   duplicateAssetRequest,
-  getAssetsByIdsRequest,
-  getAssetsRequest,
-  getAssetTypesRequest,
-  listCategoriesRequest,
   pinAssetRequest,
   unpinAssetRequest,
-} from '../request';
-import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
-import { AssetThumbnail } from './AssetThumbnail';
+} from '@leebrary/request';
+import { getSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
+
+import prefixPN from '../helpers/prefixPN';
 import { CardDetailWrapper } from './CardDetailWrapper';
 import { CardWrapper } from './CardWrapper';
 import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
-import { useAssetListStore } from '../hooks/useAssetListStore';
-import { useAssets as useAssetsDetail } from '../request/hooks/queries/useAssets';
+import { prepareAsset } from '../helpers/prepareAsset';
+import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
 
+// HELPERS
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
 }
@@ -71,283 +52,227 @@ function getOwner(asset) {
   return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
 }
 
-function AssetList({
-  category: categoryProp,
-  categories: categoriesProp,
-  asset: assetProp,
-  assetType: assetTypeProp,
-  search: searchProp,
-  layout: layoutProp,
-  showPublic: showPublicProp,
-  programs,
-  subjects,
-  canChangeLayout,
-  canChangeType,
-  canSearch,
-  variant,
-  onlyThumbnails,
-  page: pageProp,
-  pageSize,
-  pageSizes,
-  published,
-  activeStatus,
+const AssetList = ({
+  categories = [],
+  category,
+  asset,
+  onSelect,
+  allowSearchByCriteria,
+  searchCriteria,
   onSearch,
-  pinned,
-  paperProps,
-  emptyComponent,
-  itemMinWidth,
-  searchEmptyComponent,
-  preferCurrent,
-  searchInProvider,
-  roles,
-  filters,
-  filterComponents,
-  allowStatusChange,
+  allowStatusFilter,
+  statusFilter,
+  onStatusChange,
   allowCategoryFilter,
-  onStatusChange = () => {},
-  onSelectItem = () => {},
-  onEditItem = () => {},
-  onTypeChange = () => {},
-  onLoading = () => {},
-}) {
-  const [cardDetailIsLoading, setCardDetailIsLoading] = React.useState(false);
-  if (categoryProp?.key?.includes('leebrary-subject')) {
-    // eslint-disable-next-line no-param-reassign
-    subjects = isArray(categoryProp.id) ? categoryProp.id : [categoryProp.id];
-  }
-
-  const location = useLocation();
-
-  const isPinsRoute = location.pathname.includes('pins');
-  const [categoryFilter, setCategoryFilter] = React.useState(null);
-
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-
-  const scrollRef = React.useRef();
-
-  const multiCategorySections = ['pins', 'leebrary-recent', 'leebrary-shared']; // TODO save this in a constants file
-
-  const initialState = {
-    loading: true,
-    category: categoryProp,
-    categories: categoriesProp,
-    categoryFilter: null,
-    layout: layoutProp,
-    asset: assetProp,
-    page: pageProp || 1,
-    size: pageSize,
-    editingAsset: null,
-    assets: [],
-    assetTypes: [],
-    assetType: assetTypeProp,
-    openDetail: false,
-    isDetailOpened: false,
-    pageAssetsData: {},
-    showPublic: showPublicProp,
-    searchCriteria: searchProp,
-    stateFilter: null,
-  };
-  const lastQuery = React.useRef(null);
-  const [store, setStoreValue] = useAssetListStore(initialState);
-
+  categoryFilter,
+  onCategoryFilter,
+  allowMediaTypeFilter,
+  mediaTypes,
+  mediaTypeFilter,
+  onMediaTypeChange,
+  onEditItem,
+  allowAcademicFilter,
+  filterComponents,
+  filters: academicFilters,
+  forgetAssetToOpen,
+}) => {
+  // Setup && States
+  const session = useSession();
+  const locale = getLocale(session);
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [containerRef, containerRect] = useResizeObserver();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const [itemToShare, setItemToShare] = React.useState(null);
+  const [tempSearchCriteria, setTempSearchCriteria] = useState(searchCriteria);
+  const [searchCriteriaDebounced] = useDebouncedValue(tempSearchCriteria, 300);
+  const [pageAssetsData, setPageAssetsData] = useState(null);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  const [cardDetailIsLoading, setCardDetailIsLoading] = React.useState(false);
+
+  const detailLabels = useMemo(() => {
+    if (!isEmpty(translations)) {
+      const items = unflatten(translations.items);
+      return items.leebrary.list.labels;
+    }
+    return {};
+  }, [JSON.stringify(translations)]);
+
+  const scrollRef = React.useRef();
   const [childRef, childRect] = useResizeObserver();
+
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
-  const [searchDebounced] = useDebouncedValue(store.searchCriteria, 300);
-  const session = useSession();
-  const locale = getLocale(session);
-  const showThumbnails = useMemo(
-    () => onlyThumbnails && store.category?.key === 'media-files',
-    [onlyThumbnails, store.category]
-  );
 
-  const isEmbedded = useMemo(() => variant === 'embedded', [variant]);
+  // -------------------------------------------------------------------------------------
+  // QUERY HOOKS
+
+  const queryClient = useQueryClient();
+  const assetListQuery = useMemo(() => {
+    setPage(1);
+    const waitForAcademicFilters = allowAcademicFilter && !academicFilters;
+    if (!category || waitForAcademicFilters) return null;
+
+    const query = {
+      providerQuery: academicFilters ? JSON.stringify(academicFilters) : null,
+      criteria: searchCriteria || '',
+      pinned: category?.key === 'pins',
+      category: category?.id,
+      published: allowStatusFilter ? statusFilter : true,
+      showPublic: category?.key === 'pins',
+      preferCurrent: true,
+    };
+
+    if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
+
+    if (category?.key.startsWith('leebrary-subject')) {
+      delete query.category;
+      const subjects = isArray(category.id) ? category.id : [category.id];
+      query.subjects = JSON.stringify(subjects);
+    }
+
+    // HANDLE MULTI-CATEGORY SECTIONS
+    if (category?.key === 'leebrary-shared') {
+      delete query.category;
+      query.onlyShared = true;
+    }
+    if (category?.key === 'leebrary-recent') {
+      query.roles = JSON.stringify(['owner']);
+      delete query.category;
+      if (categoryFilter !== 'all') {
+        query.categoryFilter = find(categories, { key: categoryFilter })?.id;
+      }
+    }
+    if (category?.key === 'pins') {
+      delete query.category;
+      if (categoryFilter !== 'all') {
+        query.categoryFilter = find(categories, { key: categoryFilter })?.id;
+      }
+    }
+
+    return query;
+  }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
+
+  const { data: assetList, isLoading: assetListIsLoading } = useSimpleAssetList({
+    query: assetListQuery,
+    enabled: !!assetListQuery,
+  });
 
   const { items: currentPageAssets } = getPageItems({
-    data: store.assets,
-    page: store.page - 1,
-    size: store.size,
+    data: assetList,
+    page: page - 1,
+    size: pageSize,
   });
 
   const {
-    data: assetsDetail,
-    isLoading,
-    isError,
-  } = useAssetsDetail({
-    ids: currentPageAssets.map((item) => item.asset),
+    data: assetsDetails,
+    isLoading: assetsDetailsAreLoading,
+    isError: assetsDetailsError,
+  } = useAssetsDetails({
+    ids: currentPageAssets?.map((item) => item.asset),
     filters: {
-      published,
-      showPublic: !pinned ? store.showPublic : true,
-      onlyPinned: isPinsRoute,
+      published: allowStatusFilter ? statusFilter : true,
+      showPublic: category?.key === 'pins',
+      onlyPinned: category?.key === 'pins',
     },
     options: {
-      enabled: !isEmpty(store.assets) && !store.loading,
+      enabled: !isEmpty(assetList) && !assetListIsLoading,
     },
   });
 
-  // ·········································································
-  // DATA PROCESSING
+  // -------------------------------------------------------------------------------------
+  // DATA GETTERS
 
-  async function loadCategories(selectedCategoryKey) {
-    const result = await listCategoriesRequest();
-    const items = result.map((data) => ({
-      ...data,
-      icon: data.menuItem.iconSvg,
-      name: data.menuItem.label,
-    }));
-    store.categories = items;
-    setStoreValue('categories', items);
-    if (!isEmpty(selectedCategoryKey))
-      setStoreValue('category', find(items, { key: selectedCategoryKey }));
-  }
-
-  async function loadAssetTypes(categoryId) {
-    try {
-      const response = await getAssetTypesRequest(categoryId);
-      const types = uniqBy(
-        response.types.map((type) => ({
-          label: prepareAssetType(type),
-          value: prepareAssetType(type, false),
-        })),
-        'value'
-      );
-      setStoreValue('assetTypes', types);
-    } catch (err) {
-      addErrorAlert(getErrorMessage(err));
-    }
-  }
-
-  function clearAssetLoading(delay = 500) {
-    setTimeout(() => {
-      setStoreValue('loading', false);
-    }, delay);
-  }
-
-  async function loadAllAssetsIds(categoryId, criteria = '', type = '', _filters = null) {
-    setStoreValue('loading', true);
-    setStoreValue('asset', null);
-    setStoreValue('page', 1);
-    setStoreValue('assets', []);
-
-    if (
-      isEqual(
-        {
-          categoryId,
-          criteria,
-          type,
-          activeStatus,
-          storeAssets: store.assets.length,
-          _filters: pickBy(_filters, (obj) => !isNil(obj)),
-        },
-        lastQuery.current
+  const getCategoriesSelectData = useMemo(() => {
+    const filteredCategories = categories
+      ?.filter((item) =>
+        Array.isArray(allowCategoryFilter) ? allowCategoryFilter.includes(item.key) : true
       )
-    ) {
-      clearAssetLoading();
-      return;
+      .map((item) => ({
+        value: item.key,
+        label: item.name,
+        icon: (
+          <Box style={{ height: 16, marginBottom: 5 }}>
+            <ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} />
+          </Box>
+        ),
+      }));
+    return [{ label: t('labels.resourceTypes'), value: 'all' }, ...filteredCategories];
+  }, [allowCategoryFilter, categories]);
+
+  const getMediaTypeSelectData = useMemo(() => {
+    if (!mediaTypes?.length) return null;
+    return [{ label: t('labels.resourceTypes'), value: 'all' }, ...mediaTypes];
+  }, [mediaTypes]);
+
+  const getEmptyState = () => {
+    if (searchCriteriaDebounced && !isEmpty(searchCriteriaDebounced)) {
+      return <SearchEmpty t={t} />;
     }
 
-    lastQuery.current = {
-      categoryId,
-      criteria,
-      type,
-      activeStatus,
-      storeAssets: store.assets.length,
-      _filters: pickBy(_filters, (obj) => !isNil(obj)),
+    return <ListEmpty t={t} isRecentPage={category?.key === 'leebrary-recent'} />;
+  };
+
+  // -------------------------------------------------------------------------------------
+  // DRAWER HANDLERS & TOOLBAR
+
+  const showDrawer = useMemo(() => {
+    if (!assetListIsLoading && !isNil(selectedAsset) && !isEmpty(selectedAsset)) {
+      setIsDrawerOpen(true);
+    } else {
+      setIsDrawerOpen(false);
+    }
+
+    return !assetListIsLoading && !isNil(selectedAsset) && !isEmpty(selectedAsset);
+  }, [assetListIsLoading, selectedAsset, isDetailOpen]);
+
+  const toggleDetail = (val) => {
+    if (!val) {
+      setTimeout(() => {
+        setIsDetailOpen(val);
+      }, 10);
+    } else {
+      setTimeout(() => {
+        setIsDetailOpen(val);
+      }, 500);
+    }
+  };
+
+  useEffect(() => {
+    toggleDetail(showDrawer);
+  }, [showDrawer]);
+
+  useEffect(() => {
+    if (!isNil(selectedAsset) && !isEmpty(selectedAsset)) {
+      toggleDetail(true);
+    }
+  }, [selectedAsset]);
+
+  const toolbarItems = useMemo(() => {
+    const published = allowStatusFilter ? statusFilter : true;
+
+    return {
+      edit: selectedAsset?.editable ? t('cardToolbar.edit') : false,
+      duplicate: selectedAsset?.duplicable ? t('cardToolbar.duplicate') : false,
+      download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
+      delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
+      share: selectedAsset?.shareable ? t('cardToolbar.share') : false,
+      pin:
+        !selectedAsset?.pinned && selectedAsset?.pinneable && published
+          ? t('cardToolbar.pin')
+          : false,
+      unpin: selectedAsset?.pinned ? t('cardToolbar.unpin') : false,
+      toggle: t('cardToolbar.toggle'),
     };
+  }, [selectedAsset, category]);
 
-    try {
-      const query = {
-        providerQuery: _filters ? JSON.stringify(_filters) : null,
-        category: categoryId,
-        criteria,
-        type,
-        published,
-        showPublic: !pinned ? store.showPublic : true,
-        pinned,
-        preferCurrent,
-        searchInProvider,
-        subjects: JSON.stringify(subjects ? (isArray(subjects) ? subjects : [subjects]) : null),
-        programs: JSON.stringify(programs ? (isArray(programs) ? programs : [programs]) : null),
-        roles: JSON.stringify(roles || []),
-      };
-
-      if (categoryProp?.key?.includes('leebrary-subject')) {
-        delete query.category;
-      }
-      if (categoryProp?.key === 'leebrary-shared') {
-        delete query.category;
-        query.onlyShared = true;
-      }
-
-      if (categoryProp?.key === 'leebrary-recent') {
-        query.roles = JSON.stringify(['owner']);
-      }
-
-      // TODO: Category filter should apply to leebrary-shared section as well
-      if (
-        multiCategorySections.includes(categoryProp?.key) &&
-        categoryProp?.key !== 'leebrary-shared'
-      ) {
-        delete query.category;
-        const activateCategoryFilter = categoryFilter && categoryFilter !== 'all';
-        if (activateCategoryFilter) {
-          const chosenCategory = find(store.categories, { key: categoryFilter });
-          if (chosenCategory) query.categoryFilter = chosenCategory.id;
-        }
-      }
-
-      const response = await getAssetsRequest(query);
-
-      const results = response?.assets || [];
-      setStoreValue('assets', uniqBy(results, 'asset'));
-      if (isEmpty(results)) {
-        setStoreValue('pageAssetsData', []);
-      }
-      clearAssetLoading();
-    } catch (err) {
-      clearAssetLoading();
-      addErrorAlert(getErrorMessage(err));
-    }
-  }
-
-  async function loadAsset(id, forceLoad) {
-    try {
-      const item = find(store.pageAssetsData.items, { id });
-
-      if (item && !forceLoad) {
-        setStoreValue('asset', prepareAsset(item, published));
-      } else {
-        const response = await getAssetsByIdsRequest([id]);
-        if (!isEmpty(response?.assets)) {
-          const value = response.assets[0];
-
-          setStoreValue('asset', prepareAsset(value, published));
-
-          if (forceLoad && item) {
-            const index = store.pageAssetsData.items.findIndex((i) => i.id === id);
-
-            const newItems = [...store.pageAssetsData.items];
-            newItems[index] = value;
-            setStoreValue('pageAssetsData', { ...store.pageAssetsData, items: newItems });
-          }
-        } else {
-          setStoreValue('asset', null);
-        }
-      }
-    } catch (err) {
-      addErrorAlert(getErrorMessage(err));
-    }
-  }
-
-  function reloadAssets() {
-    loadAllAssetsIds(store.category?.id, searchDebounced, store.assetType, filters);
-  }
+  // -------------------------------------------------------------------------------------
+  // FUNCTIONS FOR USER ACTIONS
 
   async function duplicateAsset(id) {
     setAppLoading(true);
@@ -356,7 +281,7 @@ function AssetList({
       if (response?.asset) {
         setAppLoading(false);
         addSuccessAlert(t('labels.duplicateSuccess'));
-        reloadAssets();
+        queryClient.invalidateQueries(getSimpleAssetListKey({ query: assetListQuery }));
       }
     } catch (err) {
       setAppLoading(false);
@@ -370,8 +295,8 @@ function AssetList({
       await deleteAssetRequest(id);
       setAppLoading(false);
       addSuccessAlert(t('labels.removeSuccess'));
-      setStoreValue('asset', null);
-      reloadAssets();
+      setSelectedAsset(null);
+      queryClient.invalidateQueries(getSimpleAssetListKey({ query: assetListQuery }));
     } catch (err) {
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -381,206 +306,139 @@ function AssetList({
   async function pinAsset(item) {
     try {
       await pinAssetRequest(item.id);
-      loadAsset(item.id, true);
+      // It is needed to invalidate all queries here as the effect needs to be seen in every section of the library
+      queryClient.invalidateQueries();
     } catch (err) {
-      setAppLoading(false);
+      addErrorAlert(getErrorMessage(err));
     }
   }
 
   async function unpinAsset(item) {
     try {
       await unpinAssetRequest(item.id);
-      loadAsset(item.id, true);
+      // It is needed to invalidate all queries here as the effect needs to be seen in every section of the library
+      queryClient.invalidateQueries();
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
   }
 
-  // ·········································································
-  // EFFECTS
-
-  useEffect(() => {
-    setStoreValue('size', pageSize);
-  }, [JSON.stringify(pageSize)]);
-  useEffect(() => {
-    setStoreValue('page', pageProp || 1);
-  }, [JSON.stringify(pageProp)]);
-  useEffect(() => {
-    setStoreValue('layout', layoutProp);
-  }, [JSON.stringify(layoutProp)]);
-  useEffect(() => {
-    setStoreValue('categories', categoriesProp);
-  }, [JSON.stringify(categoriesProp)]);
-  useEffect(() => {
-    setStoreValue('assetType', assetTypeProp);
-  }, [JSON.stringify(assetTypeProp)]);
-  useEffect(() => {
-    setStoreValue('showPublic', showPublicProp);
-  }, [JSON.stringify(showPublicProp)]);
-
-  useEffect(() => {
-    onLoading(store.loading);
-  }, [store.loading]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setTimeout(() => {
-        if (!store.loading) setCardDetailIsLoading(false);
-      }, 1000);
-    } else {
-      setCardDetailIsLoading(true);
-    }
-  }, [isLoading, store.loading]);
-
-  useEffect(() => {
-    if (assetsDetail && !isEmpty(assetsDetail)) {
-      const paginated = getPageItems({
-        data: store.assets,
-        page: store.page - 1,
-        size: store.size,
-      });
-
-      paginated.items = assetsDetail || [];
-      forEach(paginated.items, (item) => {
-        if (item.file?.metadata?.indexOf('pathsInfo')) {
-          item.file.metadata = JSON.parse(item.file.metadata);
-          delete item.file.metadata.pathsInfo;
-          item.file.metadata = JSON.stringify(item.file.metadata);
-        }
-      });
-      paginated.page += 1;
-      setStoreValue('pageAssetsData', paginated);
-    } else {
-      setStoreValue('pageAssetsData', []);
-    }
-  }, [assetsDetail, isError]);
-
-  useEffect(() => {
-    if (!isEmpty(assetProp?.id) && assetProp.id !== store.asset?.id) {
-      setStoreValue('asset', assetProp);
-    } else if (isString(assetProp) && assetProp !== store.asset?.id) {
-      loadAsset(assetProp);
-    } else {
-      setStoreValue('asset', null);
-    }
-  }, [JSON.stringify(assetProp)]);
-
-  useEffect(() => {
-    // Setea la store.category en base al categoryProp
-    // Si store.categories está vacío carga las categorías con loadCategories
-    if (categoryProp?.id === null || !isEmpty(categoryProp?.id)) {
-      setStoreValue('category', categoryProp);
-    } else if (isString(categoryProp) && isEmpty(store.categories)) {
-      loadCategories(categoryProp);
-    } else if (isString(categoryProp) && !isEmpty(store.categories)) {
-      setStoreValue('category', find(store.categories, { key: categoryProp }));
-    }
-  }, [JSON.stringify(categoryProp), store.categories]);
-
-  useEffect(() => {
-    if (!isEmpty(store.category?.id)) {
-      loadAssetTypes(store.category.id);
-    } else {
-      setStoreValue('assetTypes', null);
-    }
-  }, [store.category, JSON.stringify(categoryProp)]);
-
-  useEffect(() => {
-    if (store.assetTypes && !isEmpty(store.assetTypes) && store.assetTypes[0].value !== '') {
-      const label = t('labels.allResourceTypes');
-
-      if (label !== t('labels.allResourceTypes')) {
-        setStoreValue('assetTypes', [{ label, value: '' }, ...store.assetTypes]);
-      }
-    }
-  }, [store.assetTypes, t]);
-
-  useEffect(() => {
-    if (isFunction(onSearch)) onSearch(searchDebounced);
-  }, [searchDebounced]);
-
-  useEffect(() => {
-    if (
-      !isEmpty(store.category?.id) ||
-      pinned ||
-      multiCategorySections.includes(store.category?.key)
-    ) {
-      loadAllAssetsIds(store.category?.id, searchProp, store.assetType, filters);
-    }
-  }, [
-    searchProp,
-    store.category,
-    store.assetType,
-    pinned,
-    filters,
-    published,
-    categoryFilter,
-    // JSON.stringify(categoryProp),
-    // store.showPublic,
-  ]);
-
-  // ·········································································
+  // -------------------------------------------------------------------------------------
   // HANDLERS
 
-  function handleOnSelect(item) {
-    if (store.isDetailOpened) {
-      setStoreValue('isDetailOpened', false);
+  const handleOnSelect = (item) => {
+    if (isDrawerOpen) {
+      setIsDetailOpen(false);
     } else {
-      setStoreValue('isDetailOpened', true);
+      setIsDetailOpen(true);
     }
-    onSelectItem(item);
-  }
+    onSelect(item);
+  };
 
-  function handleOnDelete(item) {
-    openDeleteConfirmationModal({
-      onConfirm: () => deleteAsset(item.id),
-    })();
-  }
-
-  function handleOnDuplicate(item) {
+  const handleOnDuplicate = (item) => {
     openConfirmationModal({
       onConfirm: () => duplicateAsset(item.id),
     })();
-  }
+  };
 
-  function handleOnEdit(item) {
-    setStoreValue('asset', item);
+  const handleOnDelete = (item) => {
+    openDeleteConfirmationModal({
+      onConfirm: () => deleteAsset(item.id),
+    })();
+  };
+
+  const handleOnEdit = (item) => {
     onEditItem(item);
-  }
+  };
 
-  function handleOnShare(item) {
-    setStoreValue('sharingItem', item);
-  }
+  const handleOnShare = (item) => {
+    setItemToShare(item);
+  };
 
   function handleOnPin(item) {
     pinAsset(item);
   }
 
-  function handleOnUnpin(item) {
+  const handleOnUnpin = (item) => {
     unpinAsset(item);
-  }
+  };
 
   function handleOnDownload(item) {
     window.open(item.url, '_blank', 'noopener');
   }
 
-  function handleOnTypeChange(type) {
-    if (isEmbedded) {
-      setStoreValue('assetType', type);
+  function handleRefresh() {
+    queryClient.invalidateQueries();
+  }
+
+  // -------------------------------------------------------------------------------------
+  // EFFECTS
+
+  useEffect(() => {
+    if (!assetsDetailsAreLoading) {
+      setTimeout(() => {
+        if (!assetListIsLoading) setCardDetailIsLoading(false);
+      }, 1000);
+    } else {
+      setCardDetailIsLoading(true);
+    }
+  }, [assetListIsLoading, assetsDetailsAreLoading]);
+
+  // If needed, the selected asset must be fetched. When the user pastes a url with a valid open parameter the asset must be loaded
+  useEffect(() => {
+    if (!asset) {
+      setSelectedAsset(null);
+      return;
     }
 
-    onTypeChange(type);
-  }
+    if (asset?.id) {
+      setSelectedAsset(asset);
+    } else if (typeof asset === 'string') {
+      const loadedAsset = find(pageAssetsData?.items, { id: asset });
+      if (loadedAsset) setSelectedAsset(loadedAsset);
+    } else {
+      setSelectedAsset(null);
+    }
+  }, [asset, pageAssetsData]);
 
-  function handleOnChangeCategory(value) {
-    setCategoryFilter(value);
-  }
+  // OnSearch: Wait for the debounced search critera and then call the onSearch function
+  useEffect(() => {
+    onSearch(searchCriteriaDebounced);
+  }, [searchCriteriaDebounced]);
 
-  // ·········································································
-  // LABELS & STATIC
+  // SET THE DATA PASSED TO THE PAGINATED LIST COMPONENT
+  useEffect(() => {
+    if (assetsDetails && !isEmpty(assetsDetails)) {
+      const paginated = getPageItems({
+        data: assetList,
+        page: page - 1,
+        size: pageSize,
+      });
 
-  const columns = useMemo(
-    () => [
+      paginated.items = assetsDetails || [];
+      forEach(paginated.items, (item) => {
+        if (item.file?.metadata?.indexOf('pathsInfo')) {
+          // eslint-disable-next-line no-param-reassign
+          item.file.metadata = JSON.parse(item.file.metadata);
+          // eslint-disable-next-line no-param-reassign
+          delete item.file.metadata.pathsInfo;
+          // eslint-disable-next-line no-param-reassign
+          item.file.metadata = JSON.stringify(item.file.metadata);
+        }
+      });
+      paginated.page += 1;
+      setPageAssetsData({ ...paginated });
+    } else {
+      setPageAssetsData(null);
+    }
+  }, [assetsDetails, assetsDetailsError]);
+
+  // -------------------------------------------------------------------------------------
+  // PAGE STYLES & PAGINATED LIST PROPS
+
+  const columns = useMemo(() => {
+    const published = allowStatusFilter ? statusFilter : true;
+    return [
       {
         Header: t('tableLabels.name'),
         accessor: 'name',
@@ -596,205 +454,53 @@ function AssetList({
         accessor: 'updated',
         valueRender: (_, row) => <LocaleDate date={row.updatedAt} />,
       },
-    ],
-    [t]
-  );
+    ];
+  }, [t, allowStatusFilter]);
 
   const cardVariant = useMemo(() => {
-    const categoryKey = store.category?.key;
+    const categoryKey = category?.key;
     return categoryKey === 'bookmarks' ? 'bookmark' : 'media';
-  }, [store.category]);
-
-  const showDrawer = useMemo(() => {
-    if (!store.loading && !isNil(store.asset) && !isEmpty(store.asset)) {
-      setIsDrawerOpen(true);
-    } else {
-      setIsDrawerOpen(false);
-    }
-
-    return !store.loading && !isNil(store.asset) && !isEmpty(store.asset);
-  }, [store.loading, store.asset, store.isDetailOpened]);
-
-  const toggleDetail = useCallback(
-    (val) => {
-      if (!val) {
-        setTimeout(() => {
-          setStoreValue('isDetailOpened', val);
-        }, 10);
-        setTimeout(() => {
-          setStoreValue('openDetail', val);
-        }, 200); // 200
-      } else {
-        setTimeout(() => {
-          setStoreValue('isDetailOpened', val);
-        }, 500); // 500
-        setTimeout(() => {
-          setStoreValue('openDetail', val);
-        }, 10);
-      }
-    },
-    [setStoreValue]
-  );
-
-  useEffect(() => {
-    toggleDetail(showDrawer);
-  }, [showDrawer]);
-
-  useEffect(() => {
-    if (!isNil(store.asset) && !isEmpty(store.asset)) {
-      toggleDetail(true);
-    }
-  }, [store.asset]);
+  }, [category]);
 
   const offsets = childRef.current?.getBoundingClientRect() || childRect;
   const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
-  const listProps = useMemo(() => {
-    if (!showThumbnails && store.layout === 'grid') {
-      return {
-        itemRender: (p) => (
-          <Box>
-            <CardWrapper
-              {...p}
-              variant={cardVariant || 'media'}
-              category={
-                store.categories.find((category) => category.id === p.item.original.category) || {
-                  key: 'media-file',
-                }
-              }
-              realCategory={categoryProp}
-              published={published}
-              isEmbedded={isEmbedded}
-              isEmbeddedList={false}
-              onRefresh={reloadAssets}
-              onDuplicate={handleOnDuplicate}
-              onDelete={handleOnDelete}
-              onEdit={handleOnEdit}
-              onShare={handleOnShare}
-              onPin={handleOnPin}
-              onUnpin={handleOnUnpin}
-              onDownload={handleOnDownload}
-              locale={locale}
-              assetsLoading={cardDetailIsLoading}
-            />
-          </Box>
-        ),
-        itemMinWidth: '300px',
-        staticColumnWidth: true,
-        margin: 16,
-        spacing: 4,
-        paperProps: { shadow: 'none', padding: 0 },
-      };
-    }
-
-    if (showThumbnails && store.layout === 'grid') {
-      return {
-        itemRender: (p) => <AssetThumbnail {...p} />,
-        itemMinWidth: store.category?.key === 'media-files' ? 300 : itemMinWidth,
-        margin: 16,
-        spacing: 4,
-        paperProps: { shadow: 'none', padding: 4 },
-      };
-    }
-
-    return { paperProps };
-  }, [
-    store.layout,
-    store.category,
-    store.categories,
-    store.pageAssetsData.items,
-    categoryProp,
-    isEmbedded,
-    showThumbnails,
-    cardDetailIsLoading,
-  ]);
-
-  const listLayouts = useMemo(
-    () => [
-      { value: 'grid', icon: <LayoutModuleIcon /> },
-      { value: 'table', icon: <LayoutHeadlineIcon /> },
-    ],
-    []
-  );
-
-  const toolbarItems = useMemo(
+  const paginatedListProps = useMemo(
     () => ({
-      edit: store.asset?.editable ? t('cardToolbar.edit') : false,
-      duplicate: store.asset?.duplicable ? t('cardToolbar.duplicate') : false,
-      download: store.asset?.downloadable ? t('cardToolbar.download') : false,
-      delete: store.asset?.deleteable ? t('cardToolbar.delete') : false,
-      share: store.asset?.shareable ? t('cardToolbar.share') : false,
-      pin: store.asset?.pinned
-        ? false
-        : store.asset?.pinneable && published
-        ? t('cardToolbar.pin')
-        : false,
-      unpin: store.asset?.pinned ? t('cardToolbar.unpin') : false,
-      toggle: t('cardToolbar.toggle'),
+      itemRender: (p) => (
+        <Box>
+          <CardWrapper
+            {...p}
+            variant={cardVariant}
+            category={
+              categories?.find((_category) => _category.id === p.item.original.category) || {
+                key: 'media-file',
+              }
+            }
+            realCategory={category}
+            published={allowStatusFilter ? statusFilter : true}
+            isEmbedded={true}
+            isEmbeddedList={false}
+            onRefresh={handleRefresh}
+            onDuplicate={handleOnDuplicate}
+            onDelete={handleOnDelete}
+            onEdit={handleOnEdit}
+            onShare={handleOnShare}
+            onPin={handleOnPin}
+            onUnpin={handleOnUnpin}
+            onDownload={handleOnDownload}
+            locale={locale}
+            assetsLoading={cardDetailIsLoading} // todo delay it using a state: cardDetailIsLoading
+          />
+        </Box>
+      ),
+      itemMinWidth: '300px',
+      staticColumnWidth: true,
+      margin: 16,
+      spacing: 4,
+      paperProps: { shadow: 'none', padding: 0 },
     }),
-    [store.asset, store.category, JSON.stringify(translations)]
+    [category, categories, pageAssetsData?.items, cardDetailIsLoading]
   );
-
-  const detailLabels = useMemo(() => {
-    if (!isEmpty(translations)) {
-      const items = unflatten(translations.items);
-      return items.leebrary.list.labels;
-    }
-    return {};
-  }, [JSON.stringify(translations)]);
-
-  const getEmptyState = () => {
-    if (searchDebounced && !isEmpty(searchDebounced)) {
-      return searchEmptyComponent || emptyComponent || <SearchEmpty t={t} />;
-    }
-
-    return (
-      emptyComponent || <ListEmpty t={t} isRecentPage={categoryProp?.key === 'leebrary-recent'} />
-    );
-  };
-
-  const listWidth = useMemo(
-    () =>
-      // if (store.openDetail && showDrawer) {
-      //   return `calc(100% - ${DRAWER_WIDTH}px)`;
-      // }
-
-      // if (showDrawer) {
-      //   return `calc(100% - 50px)`;
-      // }
-
-      '100%',
-    [store.openDetail, showDrawer]
-  );
-
-  const categoriesSelectData = useMemo(() => {
-    const filteredCategories = store.categories
-      ?.filter((item) =>
-        Array.isArray(allowCategoryFilter) ? allowCategoryFilter.includes(item.key) : true
-      )
-      .map((item) => ({
-        value: item.key,
-        label: item.name,
-        icon: (
-          <Box style={{ height: 16, marginBottom: 5 }}>
-            <ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} />
-          </Box>
-        ),
-      }));
-    return [{ label: t('labels.allResourceTypes'), value: 'all' }, ...filteredCategories];
-  }, [allowCategoryFilter, store.categories]);
-
-  // ·········································································
-  // RENDER
-
-  const childNotEmbeddedStyles = {
-    flex: 0,
-    alignItems: 'end',
-    width: containerRect.width,
-    top: containerRect.top,
-    position: 'fixed',
-    zIndex: 101,
-    backgroundColor: '#fff',
-  };
 
   return (
     <>
@@ -807,81 +513,59 @@ function AssetList({
             fullWidth
             skipFlex
             spacing={4}
-            padding={isEmbedded ? 0 : 4}
-            style={
-              isEmbedded
-                ? {
-                    flex: 0,
-                    alignItems: 'end',
-                    padding: '16px 24px',
-                    height: '72px',
-                    backgroundColor: 'white',
-                  }
-                : childNotEmbeddedStyles
-            }
+            padding={0}
+            style={{
+              flex: 0,
+              alignItems: 'end',
+              padding: '16px 24px',
+              height: '72px',
+              backgroundColor: 'white',
+            }}
           >
-            <Stack fullWidth spacing={4}>
-              {canSearch && (
-                <SearchInput
-                  variant={isEmbedded ? 'default' : 'filled'}
-                  onChange={(e) => {
-                    setStoreValue('searchCriteria', e);
-                  }}
-                  value={store.searchCriteria}
-                  disabled={store.loading}
-                  placeholder={t('labels.searchPlaceholder')}
-                />
-              )}
-              {!!filterComponents && filterComponents({ loading: store.loading })}
-              {!isEmpty(store.assetTypes) && canChangeType && (
-                <Select
-                  data-cypress-id="search-asset-type-selector"
-                  data={store.assetTypes}
-                  value={store.assetType}
-                  onChange={handleOnTypeChange}
-                  placeholder={t('labels.resourceTypes')}
-                  disabled={store.loading}
-                  skipFlex
-                />
-              )}
-              {multiCategorySections.includes(categoryProp?.key) &&
-                categoryProp.key !== 'leebrary-shared' && (
-                  <Select
-                    data={categoriesSelectData}
-                    onChange={handleOnChangeCategory}
-                    value={categoryFilter}
-                    placeholder={t('labels.resourceTypes')}
-                    disabled={store.loading}
-                    skipFlex
-                  />
-                )}
-              {allowStatusChange && (
-                <Select
-                  data={[
-                    { label: t('labels.assetStatusAll'), value: 'all' },
-                    { label: t('labels.assetStatusPublished'), value: 'published' },
-                    { label: t('labels.assetStatusDraft'), value: 'draft' },
-                  ]}
-                  onChange={onStatusChange}
-                  value={activeStatus}
-                  placeholder={t('labels.assetStatus')}
-                  disabled={store.loading}
-                  skipFlex
-                />
-              )}
-            </Stack>
-            {canChangeLayout && (
-              <Box skipFlex>
-                <RadioGroup
-                  data={listLayouts}
-                  variant="icon"
-                  size="xs"
-                  value={store.layout}
-                  onChange={(e) => {
-                    setStoreValue('layout', e);
-                  }}
-                />
-              </Box>
+            {/* FILTERS ········· */}
+            {allowSearchByCriteria && (
+              <SearchInput
+                placeholder={t('labels.searchPlaceholder')}
+                value={searchCriteria}
+                onChange={(value) => setTempSearchCriteria(value)}
+                disabled={assetListIsLoading || assetsDetailsAreLoading}
+              />
+            )}
+            {!!filterComponents && filterComponents({ loading: assetListIsLoading })}
+            {!isEmpty(mediaTypes) && allowMediaTypeFilter && (
+              <Select
+                data-cypress-id="search-asset-type-selector"
+                data={getMediaTypeSelectData}
+                value={mediaTypeFilter}
+                onChange={onMediaTypeChange}
+                placeholder={t('labels.resourceTypes')}
+                disabled={assetListIsLoading || assetsDetailsAreLoading}
+                skipFlex
+              />
+            )}
+            {allowCategoryFilter && (
+              <Select
+                data={getCategoriesSelectData}
+                onChange={onCategoryFilter}
+                value={categoryFilter}
+                placeholder={t('labels.resourceTypes')}
+                disabled={assetListIsLoading || assetsDetailsAreLoading}
+                skipFlex
+              />
+            )}
+            {allowStatusFilter && (
+              <Select
+                data={[
+                  { label: t('labels.assetStatusAll'), value: 'all' },
+                  { label: t('labels.assetStatusPublished'), value: 'published' },
+                  { label: t('labels.assetStatusDraft'), value: 'draft' },
+                ]}
+                onChange={onStatusChange}
+                value={statusFilter}
+                placeholder={t('labels.assetStatus')}
+                disabled={assetListIsLoading || assetsDetailsAreLoading}
+                skipFlex
+              />
             )}
           </Stack>
         }
@@ -891,8 +575,7 @@ function AssetList({
           ref={scrollRef}
           fullHeight
           style={{
-            marginTop: !isEmbedded && headerOffset,
-            width: listWidth,
+            width: ' 100%',
             transition: 'width 0.3s ease',
             padding: '0 24px',
             overflow: 'auto',
@@ -902,14 +585,17 @@ function AssetList({
             sx={(theme) => ({
               flex: 1,
               position: 'relative',
-              marginTop: theme.spacing[5],
-              paddingRight: !isEmbedded && theme.spacing[5],
-              paddingLeft: !isEmbedded && theme.spacing[5],
+              marginTop: 24,
+              paddingRight: theme.spacing[5],
+              paddingLeft: theme.spacing[5],
             })}
           >
-            <LoadingOverlay visible={store.loading} overlayOpacity={0} style={{ height: '100%' }} />
-
-            {!store.loading && !isEmpty(store.assets) && (
+            <LoadingOverlay
+              visible={assetListIsLoading}
+              overlayOpacity={0}
+              style={{ height: '100%' }}
+            />
+            {!isEmpty(assetList) && pageAssetsData?.items?.length && (
               <Box
                 sx={(theme) => ({
                   paddingBottom: theme.spacing[5],
@@ -919,32 +605,32 @@ function AssetList({
               >
                 <PaginatedList
                   data-cypress-id="paginated-asset-list"
-                  {...store.pageAssetsData}
-                  {...listProps}
-                  paperProps={paperProps}
+                  {...pageAssetsData}
+                  {...paginatedListProps}
+                  paperProps={{ color: 'none', shadow: 'none', padding: 0 }}
                   selectable
-                  selected={store.asset}
+                  selected={selectedAsset}
                   columns={columns}
-                  loading={isLoading}
-                  layout={store.layout}
-                  page={store.page}
-                  size={store.size}
-                  sizes={pageSizes}
+                  loading={assetsDetailsAreLoading}
+                  layout="grid"
+                  page={page}
+                  size={pageSize}
+                  sizes={[12, 18, 24]}
                   labels={{
                     show: t('show'),
                     goTo: t('goTo'),
                   }}
                   onSelect={handleOnSelect}
-                  onPageChange={(e) => {
-                    setStoreValue('page', e);
+                  onPageChange={(value) => {
+                    setPage(value);
                   }}
-                  onSizeChange={(e) => {
-                    setStoreValue('size', e);
+                  onSizeChange={(value) => {
+                    setPageSize(value);
                   }}
                 />
               </Box>
             )}
-            {!store.loading && isEmpty(store.assets) && !isLoading && (
+            {!assetListIsLoading && isEmpty(assetList) && !assetsDetailsAreLoading && (
               <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 {getEmptyState()}
               </Stack>
@@ -973,22 +659,25 @@ function AssetList({
             }}
           >
             <CardDetailWrapper
-              category={store.category || {}}
-              asset={store.asset}
+              category={category || {}}
+              asset={selectedAsset}
               labels={detailLabels}
               variant={cardVariant}
-              open={store.isDetailOpened}
+              open={isDrawerOpen}
               toolbarItems={toolbarItems}
-              onToggle={() => toggleDetail(!store.isDetailOpened)}
+              onToggle={() => toggleDetail(!isDrawerOpen)}
               onDuplicate={handleOnDuplicate}
               onDelete={handleOnDelete}
               onEdit={handleOnEdit}
               onShare={handleOnShare}
               onPin={handleOnPin}
               onUnpin={handleOnUnpin}
-              onRefresh={reloadAssets}
+              onRefresh={handleRefresh}
               onDownload={handleOnDownload}
-              onCloseDrawer={() => setIsDrawerOpen(false)}
+              onCloseDrawer={() => {
+                forgetAssetToOpen();
+                setIsDrawerOpen(false);
+              }}
               onOpenDrawer={() => setIsDrawerOpen(true)}
               locale={locale}
             />
@@ -998,86 +687,44 @@ function AssetList({
       <PermissionsDataDrawer
         size={720}
         hasBack={false}
-        opened={!!store.sharingItem}
-        asset={store.sharingItem}
+        opened={!!itemToShare}
+        asset={itemToShare}
         sharing={true}
         onNext={() => {
-          loadAsset(store.sharingItem.id, true);
-          setStoreValue('sharingItem', null);
+          setItemToShare(false);
+          handleRefresh();
         }}
         onClose={() => {
-          setStoreValue('sharingItem', null);
+          setItemToShare(false);
         }}
       />
     </>
   );
-}
-
-AssetList.defaultProps = {
-  layout: 'grid',
-  searchable: true,
-  category: 'media-files',
-  categories: [],
-  itemMinWidth: 300,
-  search: '',
-  page: 1,
-  pageSize: 12,
-  pageSizes: [12, 18, 24],
-  canChangeLayout: false,
-  canChangeType: true,
-  canSearch: true,
-  variant: 'full',
-  published: 'published',
-  showPublic: false,
-  pinned: false,
-  preferCurrent: true,
-  canShowPublicToggle: true,
-  paperProps: { color: 'none', shadow: 'none', padding: 0 },
-  allowStatusChange: false,
 };
+
 AssetList.propTypes = {
-  category: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  layout: PropTypes.oneOf(['grid', 'table']),
-  searchable: PropTypes.bool,
+  categories: PropTypes.array,
+  category: PropTypes.object,
   asset: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  categories: PropTypes.arrayOf(PropTypes.object),
-  search: PropTypes.string,
-  assetType: PropTypes.string,
-  onSelectItem: PropTypes.func,
-  onEditItem: PropTypes.func,
+  onSelect: PropTypes.func,
+  allowSearchByCriteria: PropTypes.bool,
+  searchCriteria: PropTypes.string,
   onSearch: PropTypes.func,
-  onTypeChange: PropTypes.func,
-  onShowPublic: PropTypes.func,
-  showPublic: PropTypes.bool,
-  itemMinWidth: PropTypes.number,
-  canChangeLayout: PropTypes.bool,
-  canChangeType: PropTypes.bool,
-  canSearch: PropTypes.bool,
-  onlyThumbnails: PropTypes.bool,
-  variant: PropTypes.oneOf(['full', 'embedded']),
-  page: PropTypes.number,
-  pageSize: PropTypes.number,
-  pageSizes: PropTypes.array,
-  published: PropTypes.string,
-  activeStatus: PropTypes.string,
-  pinned: PropTypes.bool,
-  canShowPublicToggle: PropTypes.bool,
-  paperProps: PropTypes.object,
-  emptyComponent: PropTypes.element,
-  searchEmptyComponent: PropTypes.element,
-  onLoaded: PropTypes.func,
-  onLoading: PropTypes.func,
-  preferCurrent: PropTypes.bool,
-  searchInProvider: PropTypes.bool,
-  roles: PropTypes.arrayOf(PropTypes.string),
-  programs: PropTypes.array,
-  subjects: PropTypes.array,
-  filters: PropTypes.any,
-  filterComponents: PropTypes.any,
-  allowStatusChange: PropTypes.bool,
+  allowStatusFilter: PropTypes.bool,
+  statusFilter: PropTypes.string,
   onStatusChange: PropTypes.func,
-  allowCategoryFilter: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
+  allowCategoryFilter: PropTypes.oneOfType([PropTypes.bool, PropTypes.array]),
+  categoryFilter: PropTypes.string,
+  onCategoryFilter: PropTypes.func,
+  allowMediaTypeFilter: PropTypes.bool,
+  mediaTypes: PropTypes.array,
+  mediaTypeFilter: PropTypes.string,
+  onMediaTypeChange: PropTypes.func,
+  filterComponents: PropTypes.array,
+  onEditItem: PropTypes.func,
+  filters: PropTypes.object,
+  forgetAssetToOpen: PropTypes.func,
 };
 
-export { AssetList };
 export default AssetList;
+export { AssetList };

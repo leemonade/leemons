@@ -352,8 +352,8 @@ module.exports = {
 
       const _providerQuery = JSON.parse(providerQuery || null);
       const _category = category || categoryFilter === 'undefined' ? null : categoryFilter;
-      const publishedStatus = published === 'all' ? published : published === 'published';
-      // const assetPublished = ['true', true, '1', 1].includes(published);
+      const publishedStatus =
+        published === 'all' ? published : ['true', true, '1', 1, 'published'].includes(published);
       const displayPublic = ['true', true, '1', 1].includes(showPublic);
       const _preferCurrent = ['true', true, '1', 1].includes(preferCurrent);
 
