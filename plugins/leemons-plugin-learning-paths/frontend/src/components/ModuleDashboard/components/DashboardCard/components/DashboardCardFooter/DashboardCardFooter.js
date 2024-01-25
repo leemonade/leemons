@@ -254,14 +254,17 @@ const DashboardCardFooter = ({
   introductionLink,
   evaluationInfo,
 }) => {
-  console.log('activity', activity);
   const { classes } = useDashboardCardFooterStyles();
+  const isTeacher = useIsTeacher();
+
   if (introductionLink && localizations) {
     return (
       <Box className={classes.root}>
         <Box className={classes.buttonFull}>
           <Link to={introductionLink}>
-            <Button style={{ width: '100%' }}>{localizations?.buttons?.review}</Button>
+            <Button fullWidth variant={isTeacher ? 'outline' : 'primary'}>
+              {localizations?.buttons?.review}
+            </Button>
           </Link>
         </Box>
       </Box>
