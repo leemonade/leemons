@@ -14,14 +14,13 @@ import {
   Switch,
   Table,
   Text,
-  Title,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
   VerticalContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevRightIcon, PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+import { ChevRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import { useSearchParams, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -29,7 +28,7 @@ import prefixPN from '@tests/helpers/prefixPN';
 import hooks from 'leemons-hooks';
 import { find, forEach, map, orderBy } from 'lodash';
 import React, { useMemo } from 'react';
-import { useHistory, useParams, Link } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
@@ -320,6 +319,7 @@ export default function Result() {
 
   const accordion = [];
   const accordionGraph = [];
+
   if (graphData.data.length && graphData.selectables.length) {
     accordionGraph.push(
       <ActivityAccordionPanel
@@ -485,19 +485,18 @@ export default function Result() {
           >
             {params.user && !store.loading ? (
               <Box>
-                <Box className={styles.header}>
-                  <Text role="productive">
-                    {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
-                    {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
-                  </Text>
-                </Box>
                 <Box className={styles.content}>
                   <EvaluationFeedback
+                    onChatClick={() => {
+                      hooks.fireEvent('chat:onRoomOpened', store.room);
+                      store.chatOpened = true;
+                      render();
+                    }}
                     assignation={store.assignation}
                     subject={store?.instance?.subjects?.[0]?.subject}
                   />
 
-                  {store.isTeacher ? (
+                  {store.isTeacher && !store.instance.dates.evaluationClosed ? (
                     <>
                       <Switch
                         label={t('feedbackForStudent')}

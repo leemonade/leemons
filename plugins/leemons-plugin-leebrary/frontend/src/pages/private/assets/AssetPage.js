@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
-import { isEmpty, find, isString } from 'lodash';
+import _, { find, isEmpty, isString } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
@@ -11,15 +11,17 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import { useQueryClient } from '@tanstack/react-query';
 import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
+import { readAndCompressImage } from 'browser-image-resizer';
 import {
+  AssetBookmarkIcon,
+  AssetMediaIcon,
   TotalLayout,
   TotalLayoutHeader,
   useTotalLayout,
-  AssetMediaIcon,
-  AssetBookmarkIcon,
 } from '@bubbles-ui/components';
 import { useRequestErrorMessage } from '@common';
 
+import imageUrlToFile from '@leebrary/helpers/imageUrlToFile';
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
 import { prepareAsset } from '../../../helpers/prepareAsset';
@@ -164,15 +166,51 @@ const AssetPage = () => {
 
   const handlePublish = async () => {
     const editing = params.id?.length > 0;
-    const { cover } = formValues;
+    let { cover } = formValues;
     const requestMethod = editing ? updateAssetRequest : newAssetRequest;
     let file;
-    const isImage = formValues.file?.type.indexOf('image') === 0;
+
     setLoading(true);
 
+    if (cover && _.isString(cover) && cover.startsWith('http') && category?.key === 'bookmarks') {
+      setUploadingFileInfo({
+        state: 'init',
+      });
+      formValues.cover = await imageUrlToFile(cover);
+      const resizedImage = await readAndCompressImage(formValues.cover, {
+        quality: 0.8,
+        maxWidth: 800,
+        maxHeight: 600,
+        debug: true,
+      });
+      formValues.cover = resizedImage;
+      formValues.cover.name = 'cover';
+      cover = resizedImage;
+      cover.name = 'cover';
+    }
+
+    const isImage = formValues.file?.type.indexOf('image') === 0;
+
     try {
+      const body = { ...formValues };
       if (category?.key !== 'bookmarks') {
-        file = await uploadFileAsMultipart(formValues.file, {
+        if (
+          body.file.type.startsWith('image') &&
+          body.file.type.indexOf('/gif') < 0 &&
+          body.file.type.indexOf('/svg') < 0
+        ) {
+          const fileName = body.file.name;
+          const resizedImage = await readAndCompressImage(body.file, {
+            quality: 0.8,
+            maxWidth: 800,
+            maxHeight: 600,
+            debug: true,
+          });
+          body.file = resizedImage;
+          body.file.name = fileName;
+        }
+        setUploadingFileInfo({ state: t('common.labels.processingImage') });
+        file = await uploadFileAsMultipart(body.file, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
           },
@@ -181,7 +219,7 @@ const AssetPage = () => {
       }
 
       try {
-        const assetData = { ...formValues, cover, file };
+        const assetData = { ...body, cover, file };
         const needsOldCover = isImage
           ? form.formState.dirtyFields.file
           : form.formState.dirtyFields.cover;
@@ -193,7 +231,11 @@ const AssetPage = () => {
 
         if (editing) assetData.id = params.id;
 
-        const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key);
+        const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key, {
+          onProgress: (info) => {
+            setUploadingFileInfo(info);
+          },
+        });
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
         setLoading(false);
@@ -217,29 +259,31 @@ const AssetPage = () => {
 
   const handlePlublishAndAssign = async () => {
     await handlePublish();
-    console.log('REDIRECCIÓN A ASIGNAR');
+    // console.log('REDIRECCIÓN A ASIGNAR');
   };
   // #endregion
 
   // #region * HEADER --------------------------------------------------------
-  const getAssetTitleAndIcon = () => {
+  const getAssetInfoHeader = () => {
     const editing = params.id?.length;
     if (category?.key === 'bookmarks')
       return {
         title: editing ? t('basicData.bookmark.titleEdit') : t('basicData.bookmark.titleNew'),
         icon: <AssetBookmarkIcon width={24} height={24} color={'#878D96'} />,
+        placeHolder: t('basicData.placeholders.bookmarkName'),
       };
     return {
       title: editing ? t('basicData.header.titleEdit') : t('basicData.header.titleNew'),
       icon: <AssetMediaIcon width={24} height={24} color={'#878D96'} />,
+      placeHolder: t('basicData.placeholders.name'),
     };
   };
 
   const buildHeader = () => (
     <TotalLayoutHeader
-      title={getAssetTitleAndIcon().title}
-      icon={getAssetTitleAndIcon().icon}
-      formTitlePlaceholder={formValues.name || t('basicData.placeholders.name')}
+      title={getAssetInfoHeader().title}
+      icon={getAssetInfoHeader().icon}
+      formTitlePlaceholder={formValues.name || getAssetInfoHeader().placeHolder}
       onSave={form.handleSubmit(handlePlublishAndAssign)}
       onCancel={handleOnCancel}
     />

@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-menu-builder",
-  "version": "1.0.27",
+  "version": "1.0.34",
   "description": "Leemons menu builder plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,14 +21,14 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.63",
+    "@leemons/deployment-manager": "0.0.70",
     "@leemons/error": "0.0.41",
-    "@leemons/menu-builder": "0.0.63",
+    "@leemons/menu-builder": "0.0.70",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.63",
-    "@leemons/mongodb-helpers": "0.0.63",
+    "@leemons/mongodb": "0.0.70",
+    "@leemons/mongodb-helpers": "0.0.70",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multilanguage": "0.0.63",
+    "@leemons/multilanguage": "0.0.70",
     "@leemons/validator": "0.0.41",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",

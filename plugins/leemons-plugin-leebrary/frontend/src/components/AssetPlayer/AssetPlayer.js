@@ -355,7 +355,7 @@ const AssetPlayer = ({
           )
         ) : (
           <>
-            {media.isImage && (
+            {media.isImage && !canPlay && (
               <Box className={classes.coverWrapper}>
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
@@ -365,6 +365,11 @@ const AssetPlayer = ({
                 <ModalZoom canPlay={canPlay}>
                   <ImageLoader height="100%" src={cover} alt={name} />
                 </ModalZoom>
+              </Box>
+            )}
+            {media.isImage && canPlay && (
+              <Box className={classes.coverWrapper}>
+                <ImageLoader height="100%" src={cover} alt={name} />
               </Box>
             )}
             {media.isURL && (

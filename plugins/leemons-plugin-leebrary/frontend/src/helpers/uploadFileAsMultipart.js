@@ -178,7 +178,7 @@ async function getZipFiles(jsfile) {
 }
 
 async function uploadFileAsMultipart(jsfile, { onProgress = () => {}, name } = {}) {
-  if (jsfile instanceof File) {
+  if (jsfile instanceof File || jsfile instanceof Blob) {
     const isFolder = jsfile.name?.endsWith('.zip');
     const filePaths = [];
     const pathsInfo = {};

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { isArray } = require('lodash');
+const { isArray, map } = require('lodash');
 const { validateUpdateClass } = require('../../validations/forms');
 const { existKnowledgeInProgram } = require('../knowledges/existKnowledgeInProgram');
 const { add: addKnowledge } = require('./knowledge/add');
@@ -25,6 +25,7 @@ const { getProgramCourses } = require('../programs/getProgramCourses');
 const {
   addComunicaRoomsBetweenStudentsAndTeachers,
 } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
+const { add: addCourse } = require('./course/add');
 
 async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
@@ -120,7 +121,12 @@ async function updateClass({ data, ctx }) {
       throw new LeemonsError(ctx, { message: 'course not in program' });
     }
     const courses = isArray(course) ? course : [course];
-    promises.push(setToAllClassesWithSubject({ subject: nClass.subject, course: courses, ctx }));
+    promises.push(
+      Promise.all([
+        Promise.all(map(courses, (c) => addCourse({ class: nClass.id, course: c, ctx }))),
+        setToAllClassesWithSubject({ subject: nClass.subject, course: courses, ctx }),
+      ])
+    );
   }
 
   if (_.isNull(goodGroup) || goodGroup) await removeGroupByClass({ classIds: nClass.id, ctx });
@@ -228,6 +234,7 @@ async function updateClass({ data, ctx }) {
       parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
       name: 'roomCard.class',
       subName: roomData.name,
+      icon: '/public/academic-portfolio/class-icon.svg',
     });
   } catch (e) {
     // Nothing

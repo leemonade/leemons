@@ -31,6 +31,8 @@ import { prefixPN } from '@tasks/helpers';
 import hooks from 'leemons-hooks';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { addSuccessAlert } from '@layout/alert';
+import { ChatDrawer } from '@comunica/components';
+import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import LinkSubmission from './components/LinkSubmission/LinkSubmission';
 
@@ -131,11 +133,27 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
   const form = useForm();
 
   const [loading, setLoading] = useState(false);
+  const [chatOpened, setChatOpened] = useState(false);
+
+  const room = `assignables.subject|${subject}.assignation|${assignation?.id}.userAgent|${assignation?.user}`;
 
   const evaluationSystem = useProgramEvaluationSystem(instance);
   const data = useLetterEvaluationData({ evaluationSystem });
 
   const publish = useOnEvaluationChange({ form, instance, assignation, subject });
+
+  if (instance.dates.evaluationClosed) {
+    return (
+      <EvaluationFeedback
+        assignation={assignation}
+        onChatClick={() => {
+          hooks.fireEvent('chat:onRoomOpened', room);
+          setChatOpened(true);
+        }}
+        subject={subject}
+      />
+    );
+  }
 
   return (
     <ContextContainer title={t('evaluation')} spacing={8}>
@@ -192,8 +210,8 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
         <Button
           variant="link"
           onClick={() => {
-            const room = `assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`;
             hooks.fireEvent('chat:onRoomOpened', room);
+            setChatOpened(true);
           }}
           rightIcon={<PluginComunicaIcon />}
         >
@@ -215,6 +233,19 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           {t('publish')}
         </Button>
       </Stack>
+
+      {!loading ? (
+        <>
+          <ChatDrawer
+            onClose={() => {
+              hooks.fireEvent('chat:closeDrawer');
+              setChatOpened(false);
+            }}
+            opened={chatOpened}
+            room={room}
+          />
+        </>
+      ) : null}
     </ContextContainer>
   );
 }

@@ -103,6 +103,7 @@ module.exports = {
     hideOptionsHelp: 'Hidden option are identified by the icon {{icon}}',
     hasCoverLabel: 'Feature image',
     hideOptionNoRightAnswer: 'You must select the right answer first',
+    headerTitlePlaceholder: 'Question bank title',
   },
   questionImageModal: {
     createNumbering: 'Create numbering',
@@ -218,6 +219,7 @@ module.exports = {
     addCustomObjectives: 'Add custom objectives',
     addInstructions: 'Add instructions',
     other: 'Other',
+    headerTitlePlaceholder: 'Test title',
   },
   testsDetail: {
     assign: 'Assign test',

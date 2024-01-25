@@ -124,6 +124,7 @@ module.exports = {
       placeholders: {
         tagsInput: 'Escribe aquí las etiquetas y pulsa intro',
         name: 'Título del recurso',
+        bookmarkName: 'Título del marcador',
         tagline: 'Subtítulo',
         tags: 'Etiquetas',
         description: 'Descripción del recurso',
@@ -253,6 +254,11 @@ module.exports = {
       confirm: 'Confirmar',
       cancel: 'Atrás',
     },
+    common: {
+      labels: {
+        processingImage: 'Procesando imagen',
+      },
+    },
   },
   list: {
     show: 'Mostrar',
@@ -306,7 +312,7 @@ module.exports = {
       duplicate: 'Duplicar',
       download: 'Descargar',
       delete: 'Eliminar',
-      share: 'Compartir',
+      share: 'Permisos',
       assign: 'Asignar',
       pin: 'Marcar como favorito',
       unpin: 'Quitar de favorito',

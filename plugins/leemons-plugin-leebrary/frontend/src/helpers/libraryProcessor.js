@@ -22,6 +22,8 @@ async function newAssetForTextEditor(props) {
     url,
     cover: preparedAsset.cover,
     id: preparedAsset.id,
+    fileid: duplicatedAsset.file?.id || duplicatedAsset.file,
+    coverid: duplicatedAsset.cover?.id,
     processed: true,
   };
 }
@@ -31,7 +33,8 @@ function propsToObject(propsStr) {
   const propsObj = Object.fromEntries(
     propsArray
       .map((propTuple) => propTuple.split('='))
-      .map(([key, value]) => {
+      .map(([key, ..._value]) => {
+        const value = _value.join('=');
         if (value.startsWith('"')) {
           return [key, value.substring(1, value.length - 1)];
         }

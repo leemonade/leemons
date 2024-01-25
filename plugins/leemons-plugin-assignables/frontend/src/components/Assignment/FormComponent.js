@@ -211,6 +211,7 @@ export default function Form({
                       localizations={localizations?.subjects}
                       hideSectionHeaders={hideSectionHeaders}
                       onlyOneSubject={onlyOneSubject}
+                      selectInitialSubjects
                     />
                   )}
                 />

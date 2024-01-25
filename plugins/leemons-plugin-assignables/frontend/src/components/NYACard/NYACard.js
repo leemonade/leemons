@@ -477,8 +477,6 @@ const NYACard = ({
             variantTitle={preparedInstance?.assignable?.role}
             topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
             isTeacherSyllabus={isTeacherSyllabus}
-            totalActivities={10}
-            submitedActivities={5}
             localizations={localizations}
             instance={preparedInstance}
           />
@@ -489,8 +487,8 @@ const NYACard = ({
             instance={preparedInstance}
             classroom={preparedInstance?.classes}
             locale={locale}
-            totalActivities={10}
-            submitedActivities={5}
+            totalActivities={instance.metadata?.completion?.total ?? 1}
+            submitedActivities={instance.metadata?.completion?.completed ?? 0}
             showSubject={showSubject}
             isTeacherSyllabus={isTeacherSyllabus}
           />

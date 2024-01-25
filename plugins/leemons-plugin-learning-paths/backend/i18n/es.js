@@ -15,6 +15,7 @@ module.exports = {
     header: {
       title: 'Nuevo módulo',
       editTitle: 'Editar módulo',
+      subtitlePlaceholder: 'Título del módulo',
       buttons: {
         save: 'Guardar borrador',
       },
@@ -114,7 +115,7 @@ module.exports = {
       assign: 'Asignar',
       duplicate: 'Duplicar',
       delete: 'Eliminar',
-      share: 'Compartir',
+      share: 'Permisos',
     },
     duplicate: {
       title: 'Duplicar módulo',
@@ -189,5 +190,8 @@ module.exports = {
   moduleJourney: {
     introduction: 'Introducción',
     resources: 'Recursos',
+  },
+  emptyState: {
+    description: 'No hay ningún módulo asignado',
   },
 };

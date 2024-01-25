@@ -17,7 +17,7 @@ import {
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useSearchParams } from '@common';
 
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { isEmpty } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -30,12 +30,17 @@ import EvaluationFeedback from '@assignables/components/EvaluationFeedback/Evalu
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { ChatDrawer } from '@comunica/components';
+import hooks from 'leemons-hooks';
 import CurriculumRender from '../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender';
 import { useStudentCorrectionStyles } from './StudentCorrection.style';
 import { TextIcon } from '../../assets/images/TextIcon';
 import LinkSubmission from '../Correction/components/LinkSubmission/LinkSubmission';
 
 function SubjectTab({ assignation, subject, t }) {
+  const [chatOpened, setChatOpened] = useState(false);
+  const room = `assignables.subject|${subject}.assignation|${assignation?.id}.userAgent|${assignation?.user}`;
+
   const isEvaluated = useMemo(
     () =>
       !!assignation?.grades?.find((grade) => grade.type === 'main' && grade.subject === subject),
@@ -50,7 +55,27 @@ function SubjectTab({ assignation, subject, t }) {
     );
   }
 
-  return <EvaluationFeedback assignation={assignation} subject={subject} />;
+  return (
+    <>
+      <EvaluationFeedback
+        assignation={assignation}
+        subject={subject}
+        onChatClick={() => {
+          hooks.fireEvent('chat:openDrawer', { room });
+          setChatOpened(true);
+        }}
+      />
+
+      <ChatDrawer
+        onClose={() => {
+          hooks.fireEvent('chat:closeDrawer');
+          setChatOpened(false);
+        }}
+        opened={chatOpened}
+        room={room}
+      />
+    </>
+  );
 }
 
 export default function StudentCorrection({ assignation }) {

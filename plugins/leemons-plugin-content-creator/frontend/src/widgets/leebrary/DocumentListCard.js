@@ -4,14 +4,17 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
 import { DocumentIcon } from '@content-creator/components';
+import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
+import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { OpenIcon } from '@bubbles-ui/icons/solid';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -43,21 +46,11 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
 
     if (asset.providerData?.published) {
       items.push({
-        icon: <ViewOnIcon />,
+        icon: <OpenIcon />,
         children: t('view'),
         onClick: (e) => {
           e.stopPropagation();
           history.push(`/private/content-creator/${asset.providerData.id}/view`);
-        },
-      });
-    }
-    if (asset.editable) {
-      items.push({
-        icon: <EditWriteIcon />,
-        children: t('edit'),
-        onClick: (e) => {
-          e.stopPropagation();
-          history.push(`/private/content-creator/${asset.providerData.id}/edit`);
         },
       });
     }
@@ -71,6 +64,17 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
         },
       });
     }
+    if (asset.editable) {
+      items.push({
+        icon: <EditIcon />,
+        children: t('edit'),
+        onClick: (e) => {
+          e.stopPropagation();
+          history.push(`/private/content-creator/${asset.providerData.id}/edit`);
+        },
+      });
+    }
+
     if (asset.duplicable && asset.providerData) {
       items.push({
         icon: <DuplicateIcon />,
@@ -95,7 +99,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
     }
     if (asset.deleteable) {
       items.push({
-        icon: <DeleteBinIcon />,
+        icon: <DeleteIcon />,
         children: t('delete'),
         onClick: (e) => {
           e.stopPropagation();

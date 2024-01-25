@@ -165,7 +165,7 @@ function getDashboardURL(assignation) {
   const finished = isFinished(assignation);
 
   if (moduleId) {
-    return `/private/learning-paths/modules/dashboard/${instance.id}`;
+    return `/private/learning-paths/modules/dashboard/${moduleId}`;
   }
 
   if (!finished || (!instance.requiresScoring && !instance.allowFeedback)) {

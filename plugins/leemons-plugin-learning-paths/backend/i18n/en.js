@@ -15,6 +15,8 @@ module.exports = {
     header: {
       title: 'New module',
       editTitle: 'Edit module',
+      subtitlePlaceholder: 'Module title',
+
       buttons: {
         save: 'Save draft',
       },
@@ -113,7 +115,7 @@ module.exports = {
       assign: 'Assign',
       duplicate: 'Duplicate',
       delete: 'Delete',
-      share: 'Share',
+      share: 'Permissions',
     },
     duplicate: {
       title: 'Duplicate module',
@@ -188,5 +190,8 @@ module.exports = {
   moduleJourney: {
     introduction: 'Introduction',
     resources: 'Resources',
+  },
+  emptyState: {
+    description: 'There is no module assigned',
   },
 };

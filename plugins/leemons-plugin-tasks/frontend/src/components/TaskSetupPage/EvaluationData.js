@@ -193,7 +193,7 @@ function EvaluationData({
           <ContextContainer {...props}>
             <ContextContainer style={{ width: '212px' }}>
               <SubjectSelect
-                labels={{ subject: 'Asignatura hardcoded' }}
+                labels={{ subject: t('setup.configData.labels.subject') }}
                 subjectIds={subjects}
                 value={selectedSubject}
                 onChange={setSelectedSubject}

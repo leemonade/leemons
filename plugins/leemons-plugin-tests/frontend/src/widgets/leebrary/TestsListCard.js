@@ -6,14 +6,16 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import { AssignIcon, DuplicateIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { useHistory } from 'react-router-dom';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { deleteTestRequest, duplicateRequest } from '../../request';
+import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
+import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { TestIcon } from '../../components/Icons/TestIcon';
+import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -40,26 +42,16 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
     const items = [];
 
     if (asset?.id) {
-      if (asset.providerData?.published) {
-        items.push({
-          icon: <ViewOnIcon />,
-          children: t('view'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/tests/detail/${asset.providerData.id}`);
-          },
-        });
-      }
-      if (asset.editable) {
-        items.push({
-          icon: <EditWriteIcon />,
-          children: t('edit'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/tests/${asset.providerData.id}`);
-          },
-        });
-      }
+      // if (asset.providerData?.published) {
+      //   items.push({
+      //     icon: <ViewOnIcon />,
+      //     children: t('view'),
+      //     onClick: (e) => {
+      //       e.stopPropagation();
+      //       history.push(`/private/tests/detail/${asset.providerData.id}`);
+      //     },
+      //   });
+      // }
       if (asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
@@ -67,6 +59,16 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
           onClick: (e) => {
             e.stopPropagation();
             history.push(`/private/tests/assign/${asset.providerData.id}`);
+          },
+        });
+      }
+      if (asset.editable) {
+        items.push({
+          icon: <EditIcon />,
+          children: t('edit'),
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/tests/${asset.providerData.id}`);
           },
         });
       }
@@ -96,7 +98,7 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
 
       if (asset.deleteable) {
         items.push({
-          icon: <DeleteBinIcon />,
+          icon: <DeleteIcon />,
           children: 'Delete',
           onClick: (e) => {
             e.stopPropagation();

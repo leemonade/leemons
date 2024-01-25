@@ -23,6 +23,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
+import { useProcessTextEditor } from '@common';
 
 const validators = [
   z.object({
@@ -40,7 +41,6 @@ function useQuery() {
 
 export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
-  const params = useParams();
   const urlQuery = useQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
@@ -48,7 +48,12 @@ export default function Index({ isNew, readOnly }) {
   const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
   const history = useHistory();
-  const query = useDocument({ id: params.id, isNew });
+  const params = useParams();
+  const processTextEditor = useProcessTextEditor();
+  const { data: documentData, isLoading: documentIsLoading } = useDocument({
+    id: params.id,
+    isNew,
+  });
   const mutation = useMutateDocument();
   const toolbarRef = React.useRef();
   const form = useForm({
@@ -89,8 +94,14 @@ export default function Index({ isNew, readOnly }) {
   const handleMutations = async ({ publishing, assigning }) => {
     const isValidStep = await form.trigger();
     if (!isValidStep) return;
+
     setIsLoading(true);
-    const documentToSave = { ...formValues, published: publishing };
+
+    const processedContent = await processTextEditor(formValues.content, documentData?.content, {
+      force: documentData?.published,
+    });
+
+    const documentToSave = { ...formValues, content: processedContent, published: publishing };
 
     if (!isNew) documentToSave.id = params.id;
     mutation.mutate(
@@ -121,7 +132,7 @@ export default function Index({ isNew, readOnly }) {
 
   const handleDynamicTitle = (value) => {
     form.setValue('content', value);
-    if (!query.data?.name) {
+    if (!documentData?.name) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
         parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
@@ -137,15 +148,15 @@ export default function Index({ isNew, readOnly }) {
   useEffect(() => {
     if (isNew) form.reset();
     else {
-      form.setValue('name', query.data?.name);
-      form.setValue('content', query.data?.content);
-      form.setValue('description', query.data?.description);
-      form.setValue('color', query.data?.color || null);
-      form.setValue('cover', query.data?.cover || null);
-      form.setValue('program', query.data?.program || null);
-      form.setValue('subjects', query.data?.subjects || null);
+      form.setValue('name', documentData?.name);
+      form.setValue('content', documentData?.content);
+      form.setValue('description', documentData?.description);
+      form.setValue('color', documentData?.color || null);
+      form.setValue('cover', documentData?.cover || null);
+      form.setValue('program', documentData?.program || null);
+      form.setValue('subjects', documentData?.subjects || null);
     }
-  }, [query.data]);
+  }, [documentData]);
 
   useEffect(() => {
     if (formValues.content) {
@@ -169,25 +180,30 @@ export default function Index({ isNew, readOnly }) {
   ];
   // #endregion
 
+  function getTitle() {
+    if (readOnly) return null;
+    if (isNew) return t('titleNew');
+    return t('titleEdit');
+  }
   return (
     <FormProvider {...form}>
-      <LoadingOverlay visible={tLoading || query?.isLoading} />
+      <LoadingOverlay visible={tLoading || documentIsLoading} />
       <TotalLayoutContainer
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={isNew ? t('titleNew') : t('titleEdit')}
+            title={getTitle()}
             icon={
               <Stack justifyContent="center" alignItems="center">
                 <AssetDocumentIcon width={24} height={24} />
               </Stack>
             }
-            formTitlePlaceholder={formValues.name || t('detailPage.documentTitlePlaceholder')}
+            formTitlePlaceholder={formValues.name ? formValues.name : t('documentTitlePlaceHolder')}
             onCancel={handleOnCancel}
             compact
             mainActionLabel={readOnly ? t('back') : t('cancel')}
           >
-            <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>
+            {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
         }
       >

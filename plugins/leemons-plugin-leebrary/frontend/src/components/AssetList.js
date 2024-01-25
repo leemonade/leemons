@@ -34,6 +34,7 @@ import {
   allGetSimpleAssetListKey,
   getSimpleAssetListKey,
 } from '@leebrary/request/hooks/keys/simpleAssetList';
+import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 
 import prefixPN from '../helpers/prefixPN';
 import { CardDetailWrapper } from './CardDetailWrapper';
@@ -42,7 +43,6 @@ import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
-import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 
 // HELPERS
 function getLocale(session) {

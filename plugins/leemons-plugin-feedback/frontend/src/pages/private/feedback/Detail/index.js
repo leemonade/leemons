@@ -7,8 +7,8 @@ import {
   TotalLayoutHeader,
   useDebouncedCallback,
   VerticalStepperContainer,
+  AssetFeedbackIcon,
 } from '@bubbles-ui/components';
-import { PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
 // TODO: fix this import from @common plugin
 import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
@@ -166,9 +166,9 @@ export default function Index() {
       scrollRef={scrollRef}
       Header={
         <TotalLayoutHeader
-          icon={<PluginFeedbackIcon width={23} height={23} />}
+          icon={<AssetFeedbackIcon />}
           title={getTitle()}
-          formTitlePlaceholder={formValues.name}
+          formTitlePlaceholder={formValues.name ? formValues.name : t('pageSubHeaderPlaceholder')}
           onCancel={() => history.goBack()}
         />
       }

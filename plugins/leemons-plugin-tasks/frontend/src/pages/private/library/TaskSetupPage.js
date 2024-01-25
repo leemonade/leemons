@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import { isArray, isEmpty, isNil } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { TotalLayoutContainer, TotalLayoutHeader } from '@bubbles-ui/components';
-// TODO: import from @feedback plugin maybe?
-import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
+import {
+  TotalLayoutContainer,
+  TotalLayoutHeader,
+  AssetTaskIcon,
+  Stack,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { unflatten, useProcessTextEditor, useQuery, useSearchParams, useStore } from '@common';
@@ -69,7 +72,7 @@ function useHeaderLabels(t) {
 
   return useMemo(
     () => ({
-      title: isNil(taskName) || isEmpty(taskName) ? t('title') : taskName,
+      title: isNil(taskName) || isEmpty(taskName) ? t('subTitle') : taskName,
     }),
     [t, taskName]
   );
@@ -81,7 +84,11 @@ function TaskSetupHeader({ t, store }) {
 
   return (
     <TotalLayoutHeader
-      icon={<PluginAssignmentsIcon />}
+      icon={
+        <Stack justifyContent="center" alignItems="center">
+          <AssetTaskIcon />
+        </Stack>
+      }
       title={t(!isEmpty(store?.currentTask) ? 'edit_title' : 'title')}
       formTitlePlaceholder={headerLabels.title}
       onCancel={() => history.goBack()}

@@ -8,7 +8,7 @@ import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
 import { htmlToText } from '@common';
 import { NYACARD_BODY_PROP_TYPES, NYACARD_BODY_DEFAULT_PROPS } from './NYACardBody.constants';
 import { NYACardBodyStyles } from './NYACardBody.styles';
-import { getDeadlineData } from '../../../helpers/getDeadlineData'
+import { getDeadlineData } from '../../../helpers/getDeadlineData';
 
 const NYACardBody = ({
   description,
@@ -38,12 +38,16 @@ const NYACardBody = ({
   const activitiesPercentage = hasProgressBar && (submitedActivities / totalActivities) * 100;
   const getDescription = () => {
     if (instance?.assignable?.role === 'feedback') {
-      return instance?.assignable?.instructionsForStudents ? htmlToText(instance?.assignable?.instructionsForStudents) : description;
+      return instance?.assignable?.instructionsForStudents
+        ? htmlToText(instance?.assignable?.instructionsForStudents)
+        : description;
     }
     if (instance?.assignable?.role === 'task' || instance?.assignable?.role === 'test') {
-      return instance?.assignable?.statement ? htmlToText(instance?.assignable?.statement) : description;
+      return instance?.assignable?.statement
+        ? htmlToText(instance?.assignable?.statement)
+        : description;
     }
-    return description
+    return description;
   };
   const cardDescription = getDescription();
 
@@ -62,14 +66,21 @@ const NYACardBody = ({
     getInstanceTypeLocale(instance);
   }, [instance]);
   const title = props.name ? props.name : null;
-  const isModule = instance?.assignable?.role === 'learningpaths.module'
+  const isModule = instance?.assignable?.role === 'learningpaths.module';
   const newLocale = localizations?.new?.toUpperCase();
 
-  const deadLineLocales = localizations?.deadline
-  const activitiesLocale = localizations?.ongoing?.activities.toLowerCase()
+  const deadLineLocales = localizations?.deadline;
+  const activitiesLocale = localizations?.ongoing?.activities.toLowerCase();
 
-  const formattedDeadline = getDeadlineData(instance?.deadlineProps?.deadline, instance?.dates?.visualization, deadLineLocales);
-  const deadlineColors = getColorByDateRange(instance?.deadlineProps?.deadline, instance?.dates?.visualization);
+  const formattedDeadline = getDeadlineData(
+    instance?.deadlineProps?.deadline,
+    instance?.dates?.visualization,
+    deadLineLocales
+  );
+  const deadlineColors = getColorByDateRange(
+    instance?.deadlineProps?.deadline,
+    instance?.dates?.visualization
+  );
   return (
     <Box className={classes.root}>
       <Box className={classes.header}>
@@ -102,16 +113,26 @@ const NYACardBody = ({
           </TextClamp>
         )}
       </Box>
-      <Box className={classes.subject} >
+      <Box className={classes.subject}>
         <ClassroomItemDisplay classroomIds={classroom} showSubject={showSubject} />
       </Box>
       <Box className={classes.deadline}>
         <Text className={classes.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
-        <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>{formattedDeadline.status}</Text>
+        <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>
+          {formattedDeadline.status}
+        </Text>
       </Box>
-      {activitiesPercentage && isModule && !isTeacherSyllabus && <Box className={classes.progress}>
-        <ProgressColorBar value={activitiesPercentage} size={'md'} color={'#F39C12'} labelLeft={`Progreso: ${activitiesPercentage}%`} labelRight={`(${submitedActivities}/${totalActivities} ${activitiesLocale})`} />
-      </Box>}
+      {!!activitiesPercentage && isModule && !isTeacherSyllabus && (
+        <Box className={classes.progress}>
+          <ProgressColorBar
+            value={activitiesPercentage}
+            size={'md'}
+            color={'#F39C12'}
+            labelLeft={`Progreso: ${Math.floor(activitiesPercentage)}%`}
+            labelRight={`(${submitedActivities}/${totalActivities} ${activitiesLocale})`}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

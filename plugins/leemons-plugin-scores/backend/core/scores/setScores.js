@@ -18,9 +18,27 @@ function removeScoresQuery(scores) {
   );
 }
 
-module.exports = async function setScores({ scores, ctx }) {
+module.exports = async function setScores({ scores, instances, ctx }) {
   await removeScores({ ...removeScoresQuery(scores), ctx });
   // TODO: Verify userSession is allowed to save scores (already published or not)
+
+  const isPublishing = scores.some((score) => score.published);
+
+  if (isPublishing) {
+    const date = new Date();
+    const promises = instances.map((instance) =>
+      ctx.tx.call('assignables.assignableInstances.updateAssignableInstance', {
+        assignableInstance: {
+          id: instance,
+          dates: { evaluationClosed: date },
+        },
+        onlyAddDates: true,
+      })
+    );
+
+    await Promise.all(promises);
+  }
+
   await ctx.tx.db.Scores.insertMany(
     scores.map((score) => ({
       ...score,

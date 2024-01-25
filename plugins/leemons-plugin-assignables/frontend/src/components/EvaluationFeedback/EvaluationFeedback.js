@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Box, Button, HtmlText, ContextContainer } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, HtmlText, Stack } from '@bubbles-ui/components';
 import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import ScoreFeedback from '@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback';
 import { useClassesSubjects, useIsTeacher } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
+import { noop } from 'lodash';
 
-function EvaluationFeedback({ assignation, subject }) {
+function EvaluationFeedback({ assignation, subject, onChatClick = noop }) {
   const [t] = useTranslateLoader(prefixPN('evaluationFeedbackComponent'));
   const { instance } = assignation ?? {};
   const subjects = useClassesSubjects(assignation?.instance?.classes);
@@ -43,7 +44,12 @@ function EvaluationFeedback({ assignation, subject }) {
               <HtmlText>{score?.feedback}</HtmlText>
             </Box>
           ) : (
-            <Button variant="link" leftIcon={<PluginComunicaIcon />} sx={{ alignSelf: 'end' }}>
+            <Button
+              variant="link"
+              leftIcon={<PluginComunicaIcon />}
+              sx={{ alignSelf: 'end' }}
+              onClick={onChatClick}
+            >
               {t(isTeacher ? 'contactStudent' : 'contactTeacher')}
             </Button>
           )}
@@ -65,7 +71,7 @@ function EvaluationFeedback({ assignation, subject }) {
         {!!score?.feedback && (
           <Box>
             <Stack fullWidth justifyContent="end">
-              <Button variant="link" leftIcon={<PluginComunicaIcon />}>
+              <Button variant="link" leftIcon={<PluginComunicaIcon />} onClick={onChatClick}>
                 {t(isTeacher ? 'contactStudent' : 'contactTeacher')}
               </Button>
             </Stack>
@@ -84,6 +90,8 @@ EvaluationFeedback.propTypes = {
     }),
     grades: PropTypes.arrayOf(PropTypes.shape({})),
   }),
+  onChatClick: PropTypes.func,
+  subject: PropTypes.any,
 };
 
 export default EvaluationFeedback;

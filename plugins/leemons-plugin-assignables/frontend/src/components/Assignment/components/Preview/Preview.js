@@ -21,6 +21,12 @@ export default function Preview({ assignable, localizations }) {
     classes: uniq(values?.students?.value?.flatMap((group) => group.group)),
     ...values?.evaluation?.evaluation,
     dates: values?.dates?.dates,
+    metadata: {
+      completion: {
+        total: assignable?.submission?.activities?.length,
+        completed: Math.ceil(Math.max((assignable?.submission?.activities?.length ?? 0) / 4, 1)),
+      },
+    },
   };
 
   return (

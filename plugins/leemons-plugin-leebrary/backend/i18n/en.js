@@ -137,6 +137,7 @@ module.exports = {
       placeholders: {
         tagsInput: 'Write your tags here and press enter',
         name: 'Resource Title',
+        bookmarkName: 'Bookmark title',
         tagline: 'Resource tagline',
         tags: 'Resource tags',
         url: 'Webpage link',
@@ -266,6 +267,11 @@ module.exports = {
       confirm: 'Confirm',
       cancel: 'Back',
     },
+    common: {
+      labels: {
+        processingImage: 'Processing image',
+      },
+    },
   },
   list: {
     show: 'Show',
@@ -319,7 +325,7 @@ module.exports = {
       duplicate: 'Duplicate',
       download: 'Download',
       delete: 'Delete',
-      share: 'Share',
+      share: 'Permissions',
       assign: 'Assign',
       pin: 'Mark as favorite',
       unpin: 'Remove from favorites',

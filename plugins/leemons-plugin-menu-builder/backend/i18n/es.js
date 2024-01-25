@@ -30,4 +30,7 @@ module.exports = {
     nothingFoundMessage: 'No hay coincidencias',
     tooltip: 'Buscar en el menu',
   },
+  labels: {
+    new: 'Nuevo',
+  },
 };

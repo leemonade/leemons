@@ -34,9 +34,10 @@ function getDiff(oldObject, newObject) {
  * @param {string} options.type
  * @param {string} options.instance
  * @param {{[string]: Date}} options.dates
+ * @param {boolean} options.onlyAddDates
  * @param {object} ctx
  */
-async function updateDates({ type, instance, dates, ctx }) {
+async function updateDates({ type, instance, dates, onlyAddDates, ctx }) {
   if (!type || !instance || !dates) {
     throw new LeemonsError(ctx, {
       message: 'Cannot update dates: type, instance and dates are required',
@@ -47,7 +48,7 @@ async function updateDates({ type, instance, dates, ctx }) {
   const currentDates = await getDates({ type, instance, ctx });
   const { added, deleted, updated } = getDiff(currentDates, dates);
 
-  if (deleted.length || updated.length) {
+  if ((deleted.length && !onlyAddDates) || updated.length) {
     await unregisterDates({ type, instance, name: updated, ctx });
     // await unregisterDates({ type, instance, name: deleted.concat(updated), ctx });
   }

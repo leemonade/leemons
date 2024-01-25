@@ -51,7 +51,7 @@ module.exports = {
         gradedBy: ctx.meta.userSession.userAgents[0].id,
         published: score.published || false,
       }));
-      await setScores({ scores, ctx });
+      await setScores({ scores, instances: ctx.params.instances, ctx });
       return { status: 200, message: 'Scores set' };
     },
   },
