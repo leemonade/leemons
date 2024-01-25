@@ -33,7 +33,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
         if (courseDates) {
           const cour = _.find(config.program.courses, { id });
           const courseName = cour.name ? cour.name : `${t('course')} ${cour.index}`;
-          const courseNameProgram = `${courseName} - ${config.program.abbreviation}`;
+          const courseNameProgram = `${courseName} - ${config.program.name}`;
           events.push({
             allDay: true,
             title: translate(`{-_start_-}: ${courseNameProgram}`),
@@ -148,7 +148,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
         if (substagesDates && Object.keys(substagesDates).length) {
           _.forEach(Object.keys(substagesDates), (key) => {
             const substage = _.find(config.program.substages, { id: key });
-            const substageName = `${substage.name} - ${config.program.abbreviation}`;
+            const substageName = `${substage.name} - ${config.program.name}`;
             events.push({
               allDay: true,
               title: translate(`{-_start_-}: ${substageName}`),
