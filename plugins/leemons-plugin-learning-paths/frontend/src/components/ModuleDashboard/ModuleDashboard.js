@@ -297,8 +297,8 @@ export function ModuleDashboard({ id, preview }) {
             <TabPanel label={localizations?.resources}>
               <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
                 <Box>
-                  <Paper>
-                    <AssetEmbedList assets={module?.assignable?.resources} />
+                  <Paper sx={{ padding: '36px', width: '100%' }}>
+                    <AssetEmbedList assets={module?.assignable?.resources} width={720} />
                   </Paper>
                 </Box>
               </ContextContainer>
