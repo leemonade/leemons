@@ -253,7 +253,7 @@ function Calendar({ session }) {
       store.schedule.showCourseSelect = false;
     }
     store.schedule.courseData = _.map(schedule.courses, (course) => ({
-      label: getCourseName(course),
+      label: `${getCourseName(course)}`,
       value: course.id,
     }));
 
@@ -350,7 +350,9 @@ function Calendar({ session }) {
       const mainTeacher = _.find(classe.teachers, { type: 'main-teacher' }).teacher;
       store.activeSchedule = {
         id: classe.id,
-        title: `${classe.subject.name} - ${classe.groups?.abbreviation || ''}`,
+        title: `${classe.subject.name} - ${classe.groups?.abbreviation || ''}`
+          .replace('- -auto-', '')
+          .replace('-auto-', ''),
         dateRange: [e.start, e.end],
         period: t('everyWeekInWorkdays'),
         classGroup: `${classe.program.name} - ${t('group')} ${classe.groups.abbreviation}`,
