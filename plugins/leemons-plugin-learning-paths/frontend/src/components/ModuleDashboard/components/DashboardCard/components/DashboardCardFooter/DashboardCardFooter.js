@@ -109,7 +109,9 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   return (
     <Box className={classes.buttonFull}>
       <Link to={assignablesURL}>
-        <Button fullWidth>{localizations?.buttons?.review}</Button>
+        <Button fullWidth variant={isNoEvaluable ? 'outline' : 'primary'}>
+          {localizations?.buttons?.review}
+        </Button>
       </Link>
     </Box>
   );
