@@ -151,7 +151,7 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
   );
 
   const activityType = getActivityType(value?.instanceData?.instance || {});
-
+  const isModule = value?.instanceData?.instance?.assignable?.role === 'learningpaths.module';
   return (
     <Box
       className={classes.root}
@@ -159,7 +159,7 @@ const KanbanTaskCard = ({ value, config, onClick, labels, ...props }) => {
       onClick={() => onClick(value)}
     >
       <Box className={classes.topSection}>
-        {activityType && (
+        {activityType && !isModule && (
           <Badge
             sx={(theme) => ({ marginBottom: theme.spacing[3] })}
             closable={false}
