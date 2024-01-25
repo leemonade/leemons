@@ -191,4 +191,7 @@ module.exports = {
     introduction: 'Introducción',
     resources: 'Recursos',
   },
+  emptyState: {
+    description: 'No hay ningún módulo asignado',
+  },
 };

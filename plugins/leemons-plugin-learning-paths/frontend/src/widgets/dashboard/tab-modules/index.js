@@ -6,6 +6,8 @@ import { Box, createStyles, useTheme } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import NYACard from '@assignables/components/NYACard';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@learning-paths/helpers/prefixPN';
 
 function useUserModules({ class: klass, program }) {
   const isTeacher = useIsTeacher();
@@ -39,20 +41,18 @@ function useSwiperProps() {
           spaceBetween: theme.spacing[4],
         },
         [theme.breakpoints.sm]: {
-          slidesPerView: 2,
+          slidesPerView: 3,
           spaceBetween: theme.spacing[4],
         },
         [theme.breakpoints.lg]: {
-          slidesPerView: 3,
+          slidesPerView: 4,
           spaceBetween: theme.spacing[4],
         },
       },
       slideStyles: {
         height: 'auto',
-        // paddingTop: '24px',
-        // paddingBottom: '24px',
-        // minWidth: '264px !important',
-        // maxWidth: '320px !important',
+        minWidth: '264px !important',
+        maxWidth: '320px !important',
       },
     }),
     [theme]
@@ -95,8 +95,23 @@ export const useModulesTabStyles = createStyles((theme) => {
 });
 
 export default function ModulesTab({ classe: { id: klass, program } }) {
+  const [t] = useTranslateLoader(prefixPN('emptyState'));
   const { data: modules, isLoading } = useUserModules({ class: klass, program });
   const { classes } = useModulesTabStyles();
+  if (Array.isArray(modules) && modules?.length === 0) {
+    return (
+      <Box
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'grid',
+          placeContent: 'center',
+        }}
+      >
+        {t('description')}
+      </Box>
+    );
+  }
 
   return (
     <Box className={classes.root}>{!isLoading && <ActivitiesCarousel modules={modules} />}</Box>

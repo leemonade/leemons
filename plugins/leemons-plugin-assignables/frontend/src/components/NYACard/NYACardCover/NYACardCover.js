@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { isNil } from 'lodash';
 import { Box, COLORS, ImageLoader, CardEmptyCover, Text } from '@bubbles-ui/components';
+import { usePendingEvaluationsCount } from '@assignables/hooks/assignableInstance/usePendingEvaluationsCount';
 import { NYACardCoverStyles } from './NYACardCover.styles';
 import { NYACARD_COVER_DEFAULT_PROPS, NYACARD_COVER_PROP_TYPES } from './NYACardCover.constants';
 
@@ -13,12 +14,13 @@ const NYACardCover = ({
   variantIcon,
   variantTitle,
   topColor,
-  assignable,
   isTeacherSyllabus,
-  totalActivities,
-  submitedActivities,
   localizations,
+  instance,
 }) => {
+  const { moduleTotal, pendingEvaluationActivitiesCount } = usePendingEvaluationsCount({
+    instance,
+  });
   const { classes } = NYACardCoverStyles(
     { color: topColor, height, parentHovered },
     { name: 'NYACardCover' }
@@ -41,8 +43,8 @@ const NYACardCover = ({
         <Box className={classes.color} />
         <Box className={classes.commonContainer}>
           <Box>
-            <Text className={classes.submitedNumber}>{submitedActivities}</Text>
-            <Text className={classes.separator}>/{totalActivities}</Text>
+            <Text className={classes.submitedNumber}>{pendingEvaluationActivitiesCount}</Text>
+            <Text className={classes.separator}>/{moduleTotal}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>
             <Text className={classes.pendingLabel}>

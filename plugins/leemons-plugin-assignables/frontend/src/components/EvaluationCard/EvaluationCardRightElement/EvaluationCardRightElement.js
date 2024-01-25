@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Badge, Text, ProgressRing } from '@bubbles-ui/components';
-import { difference } from 'lodash';
+import { usePendingEvaluationsCount } from '@assignables/hooks/assignableInstance/usePendingEvaluationsCount';
 import { EvaluationCardRightElementStyles } from './EvaluationCardRightElement.styles';
 import { getActivityType } from '../../../helpers/getActivityType';
 import {
@@ -13,27 +13,9 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
   const [notModuleData, setNotModuleData] = useState({});
   const isModule = instance?.assignable?.role === 'learningpaths.module';
   const { classes } = EvaluationCardRightElementStyles();
-  const moduleTotal = instance?.assignable?.submission?.activities?.length;
-  const pendingEvaluationActivitesCount = useMemo(() => {
-    const activitiesCompleted = [];
-    const activitiesFullyEvaluated = [];
-
-    instance?.students?.forEach((student) => {
-      const activities = student?.metadata?.moduleStatus;
-
-      activities?.forEach((activityStatus) => {
-        if (activityStatus.completed) {
-          activitiesCompleted.push(activityStatus.instance);
-        }
-
-        if (activityStatus.fullyEvaluated) {
-          activitiesFullyEvaluated.push(activityStatus.instance);
-        }
-      });
-    });
-
-    return difference(activitiesCompleted, activitiesFullyEvaluated).length ?? 0;
-  }, [instance?.students]);
+  const { moduleTotal, pendingEvaluationActivitiesCount } = usePendingEvaluationsCount({
+    instance,
+  });
 
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
@@ -80,7 +62,7 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
       {isModule ? (
         <Box className={classes.commonContainer}>
           <Box>
-            <Text className={classes.submitedNumber}>{pendingEvaluationActivitesCount}</Text>
+            <Text className={classes.submitedNumber}>{pendingEvaluationActivitiesCount}</Text>
             <Text className={classes.separator}>/{moduleTotal}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>
