@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { isNil, difference } from 'lodash';
+import { isNil } from 'lodash';
 import { Box, COLORS, ImageLoader, CardEmptyCover, Text } from '@bubbles-ui/components';
+import { usePendingEvaluationsCount } from '@assignables/hooks/assignableInstance/usePendingEvaluationsCount';
 import { NYACardCoverStyles } from './NYACardCover.styles';
 import { NYACARD_COVER_DEFAULT_PROPS, NYACARD_COVER_PROP_TYPES } from './NYACardCover.constants';
 
@@ -17,27 +18,9 @@ const NYACardCover = ({
   localizations,
   instance,
 }) => {
-  const moduleTotal = instance.assignable?.submission?.activities?.length;
-  const pendingEvaluationActivitesCount = useMemo(() => {
-    const activitiesCompleted = [];
-    const activitiesFullyEvaluated = [];
-
-    instance?.students?.forEach((student) => {
-      const activities = student?.metadata?.moduleStatus;
-
-      activities?.forEach((activityStatus) => {
-        if (activityStatus.completed) {
-          activitiesCompleted.push(activityStatus.instance);
-        }
-
-        if (activityStatus.fullyEvaluated) {
-          activitiesFullyEvaluated.push(activityStatus.instance);
-        }
-      });
-    });
-
-    return difference(activitiesCompleted, activitiesFullyEvaluated).length ?? 0;
-  }, [instance?.students]);
+  const { moduleTotal, pendingEvaluationActivitiesCount } = usePendingEvaluationsCount({
+    instance,
+  });
   const { classes } = NYACardCoverStyles(
     { color: topColor, height, parentHovered },
     { name: 'NYACardCover' }
@@ -60,7 +43,7 @@ const NYACardCover = ({
         <Box className={classes.color} />
         <Box className={classes.commonContainer}>
           <Box>
-            <Text className={classes.submitedNumber}>{pendingEvaluationActivitesCount}</Text>
+            <Text className={classes.submitedNumber}>{pendingEvaluationActivitiesCount}</Text>
             <Text className={classes.separator}>/{moduleTotal}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>
