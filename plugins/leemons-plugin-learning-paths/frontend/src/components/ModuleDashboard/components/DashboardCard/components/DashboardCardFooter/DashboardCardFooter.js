@@ -67,6 +67,7 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   const { assignable, id } = activity;
   const { roleDetails } = assignable;
   const { classes } = useDashboardCardFooterStyles();
+  const isNoEvaluable = !activity.requiresScoring;
   const assignablesURL = (roleDetails.dashboardURL || '/private/assignables/details/:id').replace(
     ':id',
     id
@@ -84,7 +85,7 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
     );
   }
 
-  if (evaluationInfo?.state === 'someDeliveredButNotAll') {
+  if (evaluationInfo?.state === 'someDeliveredButNotAll' && !isNoEvaluable) {
     return (
       <Box className={classes.buttonFull}>
         <Link to={assignablesURL}>
@@ -106,9 +107,11 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   }
 
   return (
-    <Link to={assignablesURL}>
-      <Button size="sm">{localizations?.buttons?.review}</Button>
-    </Link>
+    <Box className={classes.buttonFull}>
+      <Link to={assignablesURL}>
+        <Button fullWidth>{localizations?.buttons?.review}</Button>
+      </Link>
+    </Box>
   );
 }
 
@@ -249,6 +252,7 @@ const DashboardCardFooter = ({
   introductionLink,
   evaluationInfo,
 }) => {
+  console.log('activity', activity);
   const { classes } = useDashboardCardFooterStyles();
   if (introductionLink && localizations) {
     return (
