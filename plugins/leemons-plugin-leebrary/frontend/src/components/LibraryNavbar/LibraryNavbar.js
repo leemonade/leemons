@@ -39,7 +39,7 @@ const LibraryNavbar = ({
   const [showUpload, setShowUpload] = useState(false);
   const [programsDropdownInfo, setProgramsDropdownInfo] = useState(null);
 
-  const getProbramsInfo = async () => {
+  const getProgramsInfo = async () => {
     const response = await getProgramsPublicInfoRequest(subjects?.map((item) => item.program));
 
     if (!isEmpty(response?.programs)) {
@@ -57,7 +57,7 @@ const LibraryNavbar = ({
 
   useEffect(() => {
     if (subjects?.length) {
-      getProbramsInfo();
+      getProgramsInfo();
     }
   }, [subjects]);
 
