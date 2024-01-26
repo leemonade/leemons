@@ -44,16 +44,16 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       return items;
     }
 
-    if (asset.providerData?.published) {
-      items.push({
-        icon: <OpenIcon />,
-        children: t('view'),
-        onClick: (e) => {
-          e.stopPropagation();
-          history.push(`/private/content-creator/${asset.providerData.id}/view`);
-        },
-      });
-    }
+    // if (asset.providerData?.published) {
+    //   items.push({
+    //     icon: <OpenIcon />,
+    //     children: t('view'),
+    //     onClick: (e) => {
+    //       e.stopPropagation();
+    //       history.push(`/private/content-creator/${asset.providerData.id}/view`);
+    //     },
+    //   });
+    // }
     if (asset.providerData?.published) {
       items.push({
         icon: <AssignIcon />,

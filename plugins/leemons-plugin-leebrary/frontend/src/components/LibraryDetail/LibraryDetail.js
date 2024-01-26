@@ -56,8 +56,6 @@ const LibraryDetail = ({
   }, [open]);
 
   const { classes, cx } = LibraryDetailStyles({ drawer, open }, { name: 'LibraryDetail' });
-
-  // const { fileExtension } = asset;
   const fileExtension = asset?.fileExtension;
   return (
     <Box
