@@ -88,7 +88,12 @@ const AssetForm = ({
   const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [boxRef, rect] = useResizeObserver();
-  const isTeacher = useIsTeacher();
+
+  function getSubjectsValue(subjectValue) {
+    return _.map(subjectValue || [], (subject) =>
+      _.isString(subject) ? subject : subject?.subject
+    );
+  }
 
   // ························································
   // FORM SETUP
@@ -105,6 +110,8 @@ const AssetForm = ({
     subjects: asset?.subjects || null,
   };
 
+  const formForAsset = useForm({ defaultValues });
+
   const {
     control,
     handleSubmit,
@@ -113,7 +120,7 @@ const AssetForm = ({
     setValue,
     getValues,
     formState: { errors },
-  } = form ?? useForm({ defaultValues });
+  } = form || formForAsset;
 
   const formValues = watch();
   const coverFile = watch('cover');
@@ -434,8 +441,6 @@ const AssetForm = ({
             {store.programs && !store.alwaysOpen ? (
               <Switch
                 onChange={(e) => {
-                  setValue('program', null);
-                  setValue('subjects', null);
                   store.showAdvancedConfig = e;
                   render();
                 }}
@@ -451,11 +456,10 @@ const AssetForm = ({
                 control={control}
                 rules={store.subjectRequired}
                 render={({ field, fieldState: { error } }) => (
+                  // <Box>{JSON.stringify(field.value)}</Box>
                   <SubjectPicker
                     {...field}
-                    value={_.map(field.value || [], (subject) =>
-                      _.isString(subject) ? subject : subject.subject
-                    )}
+                    value={getSubjectsValue(field.value)}
                     onChangeRaw={(e) => {
                       if (e.length > 0) {
                         if (!program) setValue('program', e[0].programId);
