@@ -89,12 +89,6 @@ const AssetForm = ({
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [boxRef, rect] = useResizeObserver();
 
-  function getSubjectsValue(subjectValue) {
-    return _.map(subjectValue || [], (subject) =>
-      _.isString(subject) ? subject : subject?.subject
-    );
-  }
-
   // ························································
   // FORM SETUP
 
@@ -456,10 +450,11 @@ const AssetForm = ({
                 control={control}
                 rules={store.subjectRequired}
                 render={({ field, fieldState: { error } }) => (
-                  // <Box>{JSON.stringify(field.value)}</Box>
                   <SubjectPicker
                     {...field}
-                    value={getSubjectsValue(field.value)}
+                    value={_.map(field.value || [], (subject) =>
+                      _.isString(subject) ? subject : subject?.subject
+                    )}
                     onChangeRaw={(e) => {
                       if (e.length > 0) {
                         if (!program) setValue('program', e[0].programId);
