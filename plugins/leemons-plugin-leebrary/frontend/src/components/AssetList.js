@@ -188,7 +188,6 @@ const AssetList = ({
   });
 
   function handleRefresh() {
-    console.log('REFRESHING desde la card con función de la biblioteca');
     queryClient.invalidateQueries(allGetSimpleAssetListKey);
     queryClient.invalidateQueries(allGetAssetsKey);
     setIsDrawerOpen(false);
