@@ -1,5 +1,6 @@
-const { difference } = require('lodash/array');
-const { useMemo } = require('react');
+/* eslint-disable import/prefer-default-export */
+import { difference } from 'lodash';
+import { useMemo } from 'react';
 
 function usePendingEvaluationsCount({ instance }) {
   const moduleTotal = useMemo(
