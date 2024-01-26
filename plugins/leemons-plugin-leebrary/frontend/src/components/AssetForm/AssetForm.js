@@ -88,7 +88,6 @@ const AssetForm = ({
   const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [boxRef, rect] = useResizeObserver();
-  const isTeacher = useIsTeacher();
 
   // ························································
   // FORM SETUP
@@ -105,6 +104,8 @@ const AssetForm = ({
     subjects: asset?.subjects || null,
   };
 
+  const formForAsset = useForm({ defaultValues });
+
   const {
     control,
     handleSubmit,
@@ -113,7 +114,7 @@ const AssetForm = ({
     setValue,
     getValues,
     formState: { errors },
-  } = form ?? useForm({ defaultValues });
+  } = form || formForAsset;
 
   const formValues = watch();
   const coverFile = watch('cover');
@@ -434,8 +435,6 @@ const AssetForm = ({
             {store.programs && !store.alwaysOpen ? (
               <Switch
                 onChange={(e) => {
-                  setValue('program', null);
-                  setValue('subjects', null);
                   store.showAdvancedConfig = e;
                   render();
                 }}
@@ -454,7 +453,7 @@ const AssetForm = ({
                   <SubjectPicker
                     {...field}
                     value={_.map(field.value || [], (subject) =>
-                      _.isString(subject) ? subject : subject.subject
+                      _.isString(subject) ? subject : subject?.subject
                     )}
                     onChangeRaw={(e) => {
                       if (e.length > 0) {
