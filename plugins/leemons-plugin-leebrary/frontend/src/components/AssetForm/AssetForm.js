@@ -431,55 +431,51 @@ const AssetForm = ({
               />
             </ContextContainer>
 
-            {isTeacher ? (
-              <>
-                {store.programs && !store.alwaysOpen ? (
-                  <Switch
-                    onChange={(e) => {
-                      setValue('program', null);
-                      setValue('subjects', null);
-                      store.showAdvancedConfig = e;
-                      render();
-                    }}
-                    disabled={store.alwaysOpen}
-                    checked={store.alwaysOpen ? true : store.showAdvancedConfig}
-                    label={labels.advancedConfig}
-                  />
-                ) : null}
+            {store.programs && !store.alwaysOpen ? (
+              <Switch
+                onChange={(e) => {
+                  setValue('program', null);
+                  setValue('subjects', null);
+                  store.showAdvancedConfig = e;
+                  render();
+                }}
+                disabled={store.alwaysOpen}
+                checked={store.alwaysOpen ? true : store.showAdvancedConfig}
+                label={labels.advancedConfig}
+              />
+            ) : null}
 
-                {store.showAdvancedConfig ? (
-                  <Controller
-                    name="subjects"
-                    control={control}
-                    rules={store.subjectRequired}
-                    render={({ field, fieldState: { error } }) => (
-                      <SubjectPicker
-                        {...field}
-                        value={_.map(field.value || [], (subject) =>
-                          _.isString(subject) ? subject : subject.subject
-                        )}
-                        onChangeRaw={(e) => {
-                          if (e.length > 0) {
-                            if (!program) setValue('program', e[0].programId);
-                          } else if (program) setValue('program', null);
-                        }}
-                        error={error}
-                        assignable={{}}
-                        localizations={{
-                          title: labels?.programAndSubjects,
-                          program: labels?.program,
-                          subject: labels?.subjectSelects?.labels?.subject,
-                          add: labels?.subjectSelects?.placeholders?.addSubject,
-                          course: labels?.course,
-                          placeholder: labels?.selectPlaceholder,
-                        }}
-                        hideSectionHeaders={false}
-                        onlyOneSubject={store.maxOneSubject}
-                      />
+            {store.showAdvancedConfig ? (
+              <Controller
+                name="subjects"
+                control={control}
+                rules={store.subjectRequired}
+                render={({ field, fieldState: { error } }) => (
+                  <SubjectPicker
+                    {...field}
+                    value={_.map(field.value || [], (subject) =>
+                      _.isString(subject) ? subject : subject.subject
                     )}
+                    onChangeRaw={(e) => {
+                      if (e.length > 0) {
+                        if (!program) setValue('program', e[0].programId);
+                      } else if (program) setValue('program', null);
+                    }}
+                    error={error}
+                    assignable={{}}
+                    localizations={{
+                      title: labels?.programAndSubjects,
+                      program: labels?.program,
+                      subject: labels?.subjectSelects?.labels?.subject,
+                      add: labels?.subjectSelects?.placeholders?.addSubject,
+                      course: labels?.course,
+                      placeholder: labels?.selectPlaceholder,
+                    }}
+                    hideSectionHeaders={false}
+                    onlyOneSubject={store.maxOneSubject}
                   />
-                ) : null}
-              </>
+                )}
+              />
             ) : null}
 
             {store.showAdvancedConfig ? (

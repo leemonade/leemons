@@ -181,13 +181,20 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const programsInfo = await programsByIds({ ids: JSON.parse(ctx.params.ids), ctx });
-      const programsIdsAndNames = {};
-      programsInfo.forEach((program) => {
-        programsIdsAndNames[program.id] = program.name;
+      const programsInfo = await programsByIds({
+        ids: JSON.parse(ctx.params.ids),
+        ctx,
       });
 
-      return { status: 200, data: programsIdsAndNames };
+      const publicInfo = programsInfo.map((program) => ({
+        courses: program.courses,
+        id: program.id,
+        maxNumberOfCourses: program.maxNumberOfCourses,
+        moreThanOneAcademicYear: program.moreThanOneAcademicYear,
+        name: program.name,
+      }));
+
+      return { status: 200, programs: publicInfo };
     },
   },
   programHasCoursesRest: {

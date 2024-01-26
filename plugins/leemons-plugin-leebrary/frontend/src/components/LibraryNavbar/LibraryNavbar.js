@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@bubbles-ui/components';
-import { getProgramsNamesRequest } from '@leebrary/request';
+import { getProgramsPublicInfoRequest } from '@academic-portfolio/request';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { CloudUploadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 
@@ -39,15 +39,17 @@ const LibraryNavbar = ({
   const [showUpload, setShowUpload] = useState(false);
   const [programsDropdownInfo, setProgramsDropdownInfo] = useState(null);
 
-  const callGetProgramsNames = async () => {
-    const response = await getProgramsNamesRequest({
-      programsIds: subjects?.map((item) => item.program),
-    });
+  const getProgramsInfo = async () => {
+    const response = await getProgramsPublicInfoRequest(subjects?.map((item) => item.program));
 
-    if (!isEmpty(response?.data)) {
+    if (!isEmpty(response?.programs)) {
       const programsInfo = {};
-      Object.keys(response.data).forEach((programId) => {
-        programsInfo[programId] = { name: response.data[programId], dropdownOpen: false };
+
+      response.programs.forEach(({ id, name }) => {
+        programsInfo[id] = {
+          name,
+          dropdownOpen: false,
+        };
       });
       setProgramsDropdownInfo(programsInfo);
     }
@@ -55,7 +57,7 @@ const LibraryNavbar = ({
 
   useEffect(() => {
     if (subjects?.length) {
-      callGetProgramsNames();
+      getProgramsInfo();
     }
   }, [subjects]);
 
