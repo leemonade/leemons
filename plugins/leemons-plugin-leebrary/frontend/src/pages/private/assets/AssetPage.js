@@ -63,7 +63,7 @@ const AssetPage = () => {
     cover: asset?.cover || null,
     url: asset?.url || null,
     program: asset?.program || null,
-    subjects: asset?.subjects || null,
+    subjects: asset?.subjects?.map((subject) => subject?.subject) || null,
     tags: asset?.tags || [],
   });
 
