@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { find, forEach, isArray, isEmpty, isNil } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { find, forEach, isArray, isEmpty } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import {
@@ -84,13 +84,13 @@ const AssetList = ({
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const [itemToShare, setItemToShare] = React.useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [itemToShare, setItemToShare] = useState(null);
   const [tempSearchCriteria, setTempSearchCriteria] = useState(searchCriteria);
   const [searchCriteriaDebounced] = useDebouncedValue(tempSearchCriteria, 300);
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
-  const [cardDetailIsLoading, setCardDetailIsLoading] = React.useState(false);
+  const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
 
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -100,7 +100,7 @@ const AssetList = ({
     return {};
   }, [JSON.stringify(translations)]);
 
-  const scrollRef = React.useRef();
+  const scrollRef = useRef();
   const [childRef, childRect] = useResizeObserver();
 
   const {
@@ -192,6 +192,15 @@ const AssetList = ({
     queryClient.invalidateQueries(allGetAssetsKey);
     setIsDrawerOpen(false);
   }
+
+  // Invalidate all queries when the component unmounts
+  useEffect(
+    () => () => {
+      queryClient.invalidateQueries(allGetSimpleAssetListKey);
+      queryClient.invalidateQueries(allGetAssetsKey);
+    },
+    []
+  );
 
   // -------------------------------------------------------------------------------------
   // DATA GETTERS
