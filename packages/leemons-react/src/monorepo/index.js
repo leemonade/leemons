@@ -41,7 +41,7 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
   await copyFileWithSquirrelly(
     path.resolve(templateDir, 'contexts', 'apiURL.squirrelly'),
     path.resolve(outputDir, 'contexts', 'apiURL.js'),
-    { apiUrl: process.env.API_URL }
+    { apiUrl: process.env.API_URL, allOriginsUrl: process.env.ALL_ORIGINS_URL }
   );
 
   const modified = await saveLockFile(outputDir, plugins);
