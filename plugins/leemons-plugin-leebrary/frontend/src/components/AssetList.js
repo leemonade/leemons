@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { find, forEach, isArray, isEmpty, isNil } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { find, forEach, isArray, isEmpty } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import {
@@ -30,10 +30,7 @@ import {
   pinAssetRequest,
   unpinAssetRequest,
 } from '@leebrary/request';
-import {
-  allGetSimpleAssetListKey,
-  getSimpleAssetListKey,
-} from '@leebrary/request/hooks/keys/simpleAssetList';
+import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
 import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 
 import prefixPN from '../helpers/prefixPN';
@@ -87,14 +84,13 @@ const AssetList = ({
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const [itemToShare, setItemToShare] = React.useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [itemToShare, setItemToShare] = useState(null);
   const [tempSearchCriteria, setTempSearchCriteria] = useState(searchCriteria);
   const [searchCriteriaDebounced] = useDebouncedValue(tempSearchCriteria, 300);
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
-  const [cardDetailIsLoading, setCardDetailIsLoading] = React.useState(false);
+  const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
 
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -104,7 +100,7 @@ const AssetList = ({
     return {};
   }, [JSON.stringify(translations)]);
 
-  const scrollRef = React.useRef();
+  const scrollRef = useRef();
   const [childRef, childRect] = useResizeObserver();
 
   const {
@@ -120,7 +116,6 @@ const AssetList = ({
   const assetListQuery = useMemo(() => {
     const waitForAcademicFilters = allowAcademicFilter && !academicFilters;
     if (!category || waitForAcademicFilters) return null;
-
     const query = {
       providerQuery: academicFilters ? JSON.stringify(academicFilters) : null,
       criteria: searchCriteria || '',
@@ -192,6 +187,21 @@ const AssetList = ({
     },
   });
 
+  function handleRefresh() {
+    queryClient.invalidateQueries(allGetSimpleAssetListKey);
+    queryClient.invalidateQueries(allGetAssetsKey);
+    setIsDrawerOpen(false);
+  }
+
+  // Invalidate all queries when the component unmounts
+  useEffect(
+    () => () => {
+      queryClient.invalidateQueries(allGetSimpleAssetListKey);
+      queryClient.invalidateQueries(allGetAssetsKey);
+    },
+    []
+  );
+
   // -------------------------------------------------------------------------------------
   // DATA GETTERS
 
@@ -209,12 +219,12 @@ const AssetList = ({
           </Box>
         ),
       }));
-    return [{ label: t('labels.resourceTypes'), value: 'all' }, ...filteredCategories];
+    return [{ label: t('labels.allResourceTypes'), value: 'all' }, ...filteredCategories];
   }, [allowCategoryFilter, categories, t]);
 
   const getMediaTypeSelectData = useMemo(() => {
     if (!mediaTypes?.length) return null;
-    return [{ label: t('labels.resourceTypes'), value: 'all' }, ...mediaTypes];
+    return [{ label: t('labels.allResourceTypes'), value: 'all' }, ...mediaTypes];
   }, [mediaTypes, t]);
 
   const getStatusSelectData = useMemo(() => {
@@ -236,38 +246,6 @@ const AssetList = ({
 
   // -------------------------------------------------------------------------------------
   // DRAWER HANDLERS & TOOLBAR
-
-  const showDrawer = useMemo(() => {
-    if (!assetListIsLoading && !isNil(selectedAsset) && !isEmpty(selectedAsset)) {
-      setIsDrawerOpen(true);
-    } else {
-      setIsDrawerOpen(false);
-    }
-
-    return !assetListIsLoading && !isNil(selectedAsset) && !isEmpty(selectedAsset);
-  }, [assetListIsLoading, selectedAsset, isDetailOpen]);
-
-  const toggleDetail = (val) => {
-    if (!val) {
-      setTimeout(() => {
-        setIsDetailOpen(val);
-      }, 10);
-    } else {
-      setTimeout(() => {
-        setIsDetailOpen(val);
-      }, 500);
-    }
-  };
-
-  useEffect(() => {
-    toggleDetail(showDrawer);
-  }, [showDrawer]);
-
-  useEffect(() => {
-    if (!isNil(selectedAsset) && !isEmpty(selectedAsset)) {
-      toggleDetail(true);
-    }
-  }, [selectedAsset]);
 
   const toolbarItems = useMemo(() => {
     const published = allowStatusFilter ? statusFilter : true;
@@ -297,7 +275,7 @@ const AssetList = ({
       if (response?.asset) {
         setAppLoading(false);
         addSuccessAlert(t('labels.duplicateSuccess'));
-        queryClient.invalidateQueries(getSimpleAssetListKey({ query: assetListQuery }));
+        handleRefresh();
       }
     } catch (err) {
       setAppLoading(false);
@@ -312,7 +290,7 @@ const AssetList = ({
       setAppLoading(false);
       addSuccessAlert(t('labels.removeSuccess'));
       setSelectedAsset(null);
-      queryClient.invalidateQueries(getSimpleAssetListKey({ query: assetListQuery }));
+      handleRefresh();
     } catch (err) {
       setAppLoading(false);
       addErrorAlert(getErrorMessage(err));
@@ -345,12 +323,8 @@ const AssetList = ({
   // HANDLERS
 
   const handleOnSelect = (item) => {
-    if (isDrawerOpen) {
-      setIsDetailOpen(false);
-    } else {
-      setIsDetailOpen(true);
-    }
     onSelect(item);
+    setIsDrawerOpen(true);
   };
 
   const handleOnDuplicate = (item) => {
@@ -366,6 +340,7 @@ const AssetList = ({
   };
 
   const handleOnEdit = (item) => {
+    setIsDrawerOpen(false);
     onEditItem(item);
   };
 
@@ -385,11 +360,6 @@ const AssetList = ({
     window.open(item.url, '_blank', 'noopener');
   }
 
-  function handleRefresh() {
-    queryClient.invalidateQueries(allGetSimpleAssetListKey);
-    queryClient.invalidateQueries(allGetAssetsKey);
-  }
-
   // -------------------------------------------------------------------------------------
   // EFFECTS
 
@@ -397,6 +367,10 @@ const AssetList = ({
   useEffect(() => {
     setPage(1);
   }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
+
+  useEffect(() => {
+    setIsDrawerOpen(false);
+  }, [category]);
 
   useEffect(() => {
     if (!assetsDetailsAreLoading) {
@@ -408,7 +382,7 @@ const AssetList = ({
     }
   }, [assetListIsLoading, assetsDetailsAreLoading]);
 
-  // If needed, the selected asset must be fetched. When the user pastes a url with a valid open parameter the asset must be loaded
+  // If needed, the selected asset must be fetched. When the user pastes a url with an asset id as the open parameter the asset must be loaded
   useEffect(() => {
     if (asset?.id) {
       setSelectedAsset(asset);
@@ -680,7 +654,7 @@ const AssetList = ({
               variant={cardVariant}
               open={isDrawerOpen}
               toolbarItems={toolbarItems}
-              onToggle={() => toggleDetail(!isDrawerOpen)}
+              onToggle={() => setIsDrawerOpen(!isDrawerOpen)}
               onDuplicate={handleOnDuplicate}
               onDelete={handleOnDelete}
               onEdit={handleOnEdit}

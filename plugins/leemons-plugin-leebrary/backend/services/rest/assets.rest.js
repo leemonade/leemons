@@ -183,7 +183,7 @@ module.exports = {
 
       if (shouldSerachByCriteria) {
         assets = await getByCriteria({
-          category: categoryFilter,
+          category: category || categoryFilter,
           criteria,
           type,
           indexable: true,

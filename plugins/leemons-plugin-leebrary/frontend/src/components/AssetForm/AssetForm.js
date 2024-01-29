@@ -239,7 +239,7 @@ const AssetForm = ({
             setValue('mediaType', 'audio');
           } else if (
             toLower(metadata.publisher) === 'youtube' ||
-            metadata.url?.startsWidth('https://www.youtube')
+            metadata.url?.startsWith('https://www.youtube')
           ) {
             setValue('mediaType', 'video');
           }

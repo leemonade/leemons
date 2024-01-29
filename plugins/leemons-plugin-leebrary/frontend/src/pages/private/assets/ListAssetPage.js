@@ -27,10 +27,7 @@ const ListAssetPage = () => {
   const location = useLocation();
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
-  const academicFilters = useAcademicFiltersForAssetList({
-    // hideProgramSelect: isStudent,
-    useLabels: false,
-  });
+  const academicFilters = useAcademicFiltersForAssetList({ useLabels: false });
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [searchCriteria, setSearchCriteria] = useState('');
@@ -63,7 +60,22 @@ const ListAssetPage = () => {
 
   // Set the context category when the url changes according to the URL category param
   useEffect(() => {
-    if (!isEmpty(params?.category) && category?.key !== params?.category) {
+    const currentCategoryName = category?.key.startsWith('leebrary-subject')
+      ? 'leebrary-subject'
+      : category?.key;
+
+    let navigateFromOneSubjectToAnother = false;
+    if (currentCategoryName === 'leebrary-subject' && currentCategoryName === params?.category) {
+      const urlSegments = location.pathname.split('/');
+      const categoryIndex = urlSegments.findIndex((segment) => segment === params.category);
+      const segmentAfterCategory = urlSegments[categoryIndex + 1] || null;
+      navigateFromOneSubjectToAnother =
+        category?.key.replace('leebrary-subject:', '') !== segmentAfterCategory;
+    }
+    if (
+      !isEmpty(params?.category) &&
+      (currentCategoryName !== params?.category || navigateFromOneSubjectToAnother)
+    ) {
       selectCategory(params?.category);
       if (category) {
         setAsset(null);
@@ -83,14 +95,14 @@ const ListAssetPage = () => {
   // Set the states passed to AssetList to serve as parameters for the request according to the URL query params
   useEffect(() => {
     setAsset(urlQuery.get('open'));
-    setSearchCriteria(urlQuery.get('search') || '');
+    setSearchCriteria(urlQuery.get('search'));
     setStatusFilter(urlQuery.get('status') || 'all');
     setMediaTypeFilter(urlQuery.get('media-type') || 'all');
     setCategoryFilter(urlQuery.get('category-filter') || 'all');
   }, [urlQuery]);
 
   const manageQueryParams = ({
-    searchCreteriaToFilterBy: searchCriteriaToFilterBy,
+    searchCriteriaToFilterBy,
     categoryToFilterBy,
     mediaTypeToFilterBy,
     statusToFilterBy,
