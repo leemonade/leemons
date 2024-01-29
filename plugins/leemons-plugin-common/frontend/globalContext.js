@@ -7,9 +7,11 @@ export function Provider({ children }) {
   const [textEditorTools, setTextEditorTools] = useState({});
   const [textEditorProcessors, setTextEditorProcessors] = useState({});
 
-  const setTextEditorTool = (name, tool, props) => {
+  const setTextEditorTool = (newTools) => {
     const tools = { ...textEditorTools };
-    tools[name] = { tool, props };
+    newTools.forEach((item) => {
+      tools[item.name] = { tool: item.tool, props: item.props };
+    });
     setTextEditorTools(tools);
   };
 

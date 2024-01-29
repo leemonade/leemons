@@ -16,14 +16,16 @@ import {
   DropdownButton,
   AssetDocumentIcon,
 } from '@bubbles-ui/components';
+import { ColorTool } from '@bubbles-ui/editors';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { BasicData } from '@leebrary/components';
+import { BasicData, LibraryTool } from '@leebrary/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import { useProcessTextEditor } from '@common';
+import { useProcessTextEditor, useTextEditor } from '@common';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
 
 const validators = [
   z.object({
@@ -60,6 +62,9 @@ export default function Index({ isNew, readOnly }) {
     resolver: zodResolver(validators[activeStep]),
   });
   const formValues = useWatch({ control: form.control });
+
+  const { setTextEditorTool } = useTextEditor();
+  const editorLabels = useEditorLabels();
 
   // ··································································
   // HANDLERS
@@ -165,6 +170,17 @@ export default function Index({ isNew, readOnly }) {
       setDisableNext(true);
     }
   }, [formValues.content]);
+
+  useEffect(() => {
+    setTextEditorTool([
+      { name: 'library', tool: <LibraryTool />, props: { labels: editorLabels.libraryTool } },
+      {
+        name: 'library2',
+        tool: <ColorTool />,
+        props: { swatches: ['#fff', '#00ff00', '#000'], label: 'editorLabels.libraryTool' },
+      },
+    ]);
+  }, []);
 
   // #region * FOOTER ACTIONS ------------------------------------------------
   const footerActionsLabels = {

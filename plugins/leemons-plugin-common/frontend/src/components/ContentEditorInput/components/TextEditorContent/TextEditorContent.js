@@ -46,6 +46,7 @@ const TextEditorContent = ({
     { editorStyles, fullWidth, compact },
     { name: 'TextEditorContent' }
   );
+
   return (
     <>
       {canExpand && (
@@ -81,7 +82,7 @@ const TextEditorContent = ({
           {leemonsTools.map((item, i) =>
             React.cloneElement(item.tool, {
               key: item.tool.id || `t-${i}`,
-              ...editorLabels.libraryTool,
+              ...item.props,
               alignLabels: editorLabels.textAlignTool,
               openLibraryModal,
             })
