@@ -277,8 +277,6 @@ const AssetForm = ({
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
-  console.log('formValues.program', formValues?.program);
-
   return (
     <Box ref={boxRef}>
       <form autoComplete="off">
