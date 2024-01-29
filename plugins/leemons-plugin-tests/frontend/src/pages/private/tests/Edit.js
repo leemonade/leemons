@@ -63,6 +63,7 @@ export default function Edit() {
 
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      toSend.cover = toSend.cover?.id ?? toSend.cover;
 
       const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: false });
       addSuccessAlert(t('savedAsDraft'));
@@ -82,6 +83,8 @@ export default function Edit() {
       render();
       const { subjects, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      toSend.cover = toSend.cover?.id ?? toSend.cover;
+
       const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: true });
       addSuccessAlert(t('published'));
       if (redictToAssign) {
