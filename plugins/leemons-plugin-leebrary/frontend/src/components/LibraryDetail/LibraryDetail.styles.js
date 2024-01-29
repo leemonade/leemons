@@ -19,6 +19,7 @@ const LibraryDetailStyles = createStyles((theme, { drawer, open }) => {
       // transform: 'translateX(100%)',
       // transition: 'transform 0.2s ease-in',
     },
+    layoutContainer: { overflow: 'auto', backgroundColor: 'white' },
     show: {
       // transform: 'translateX(0)',
       // transition: 'transform 0.2s ease-out',

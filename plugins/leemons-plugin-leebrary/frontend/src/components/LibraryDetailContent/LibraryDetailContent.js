@@ -102,7 +102,7 @@ const LibraryDetailContent = ({
                 subjectsIds.length > 0 &&
                 subjectsIds?.map((subject, index) => (
                   <Box key={index} className={classes.subjectItem}>
-                    <SubjectItemDisplay subjectsIds={[subject.subject]} programId={program} />
+                    <SubjectItemDisplay subjectsIds={[subject?.subject]} programId={program} />
                   </Box>
                 ))}
             </Box>
@@ -195,39 +195,6 @@ const LibraryDetailContent = ({
           </TabPanel>
         )}
       </Tabs>
-      {/* {variant === 'bookmark' && (
-        <Box
-          sx={(theme) => ({ padding: theme.spacing[2], backgroundColor: theme.colors.mainWhite })}
-        >
-          <Paper bordered padding={2} radius="sm" shadow="none" fullWidth>
-            <Stack fullWidth spacing={2}>
-              <Box skipFlex>
-                <ImageLoader src={icon} height={20} width={20} radius={4} />
-              </Box>
-              <Box>
-                <Stack direction="column" display="grid">
-                  <Text size="xs" strong>
-                    {getDomain(url)}
-                  </Text>
-                  <Text size="xs" role="productive" truncated>
-                    {url}
-                  </Text>
-                </Stack>
-              </Box>
-              <Box skipFlex>
-                <ActionButton
-                  icon={<DuplicateIcon height={16} width={16} onClick={handleCopy} />}
-                  tooltip={
-                    clipboard.copied
-                      ? props.labels?.copied || 'Copied'
-                      : props.labels?.copy || 'Copy'
-                  }
-                />
-              </Box>
-            </Stack>
-          </Paper>
-        </Box>
-      )} */}
     </>
   );
 };

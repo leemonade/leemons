@@ -84,7 +84,7 @@ const LibraryDetail = ({
             </>
           }
         >
-          <Stack direction="column" fullHeight style={{ overflow: 'auto' }}>
+          <Stack direction="column" fullHeight className={classes.layoutContainer}>
             <LibraryDetailPlayer
               {...{ ...asset, fileExtension }}
               labels={labels}
