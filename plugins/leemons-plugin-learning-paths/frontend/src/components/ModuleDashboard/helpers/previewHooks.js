@@ -8,6 +8,21 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { capitalize, get, keyBy, map, mapValues } from 'lodash';
 import { useEffect, useMemo } from 'react';
 
+function useSubjectsData(module) {
+  const { assignable } = module || {};
+  const subjects = map(assignable?.subjects, 'subject') ?? [];
+
+  const { data: subjectsDetails } = useSubjectDetails(subjects);
+
+  return subjectsDetails?.map((subject) => ({
+    id: subject.id,
+    name: subject.name,
+    subjectName: subject.name,
+    icon: getClassIcon({ subject }),
+    color: subject.color,
+    customGroup: false,
+  }));
+}
 export function useModuleDataForPreview(id) {
   const {
     data: module,
@@ -20,6 +35,8 @@ export function useModuleDataForPreview(id) {
     () => map(module?.submission?.activities, 'activity'),
     [module?.submission?.activities]
   );
+  const subjectsIds = map(module?.subjects, 'subject');
+  const { data: subjectsData } = useSubjectDetails(subjectsIds);
 
   const {
     data: activities,
@@ -62,6 +79,7 @@ export function useModuleDataForPreview(id) {
   return {
     module: { assignable: module },
     moduleAssignation: null,
+    subjectsData,
     activitiesById,
     activities:
       module?.submission?.activities?.map((activity) => ({ id: activity.activity })) ?? [],
@@ -71,21 +89,6 @@ export function useModuleDataForPreview(id) {
     isError: isModuleError || isActivitiesError,
     errors,
   };
-}
-
-function useSubjectsData(module) {
-  const { assignable } = module || {};
-  const subjects = map(assignable?.subjects, 'subject') ?? [];
-  const { data: subjectsDetails } = useSubjectDetails(subjects);
-
-  return subjectsDetails?.map((subject) => ({
-    id: subject.id,
-    name: subject.name,
-    subjectName: subject.name,
-    icon: getClassIcon({ subject }),
-    color: subject.color,
-    customGroup: false,
-  }));
 }
 
 export function useHeaderDataForPreview(module) {

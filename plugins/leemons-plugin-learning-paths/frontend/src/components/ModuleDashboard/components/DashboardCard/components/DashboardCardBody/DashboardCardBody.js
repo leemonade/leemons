@@ -43,7 +43,7 @@ const DashboardCardBody = ({ activity, statement, assetNumber }) => {
   useEffect(() => {
     getInstanceTypeLocale(activity);
   }, [activity]);
-  const subjectIds = [activity?.subjects?.[0]?.subject];
+  const subjectIds = [activity?.assignable?.subjects?.[0]?.subject];
   return (
     <Box className={classes.root}>
       {calificationType && (

@@ -49,17 +49,18 @@ export function useStudentState({ assignation = {} }) {
 
 function PreviewActions({ activity, localizations }) {
   const { id, roleDetails } = activity?.assignable ?? {};
-
+  const { classes } = useDashboardCardFooterStyles();
   const url = roleDetails.previewUrl?.replace(':id', id);
-
   if (!url) {
     return null;
   }
 
   return (
-    <Link to={url}>
-      <Button size="sm">{localizations?.buttons?.preview}</Button>
-    </Link>
+    <Box className={classes.buttonFull}>
+      <Link to={url}>
+        <Button fullWidth>{localizations?.buttons?.preview}</Button>
+      </Link>
+    </Box>
   );
 }
 
@@ -255,15 +256,14 @@ const DashboardCardFooter = ({
   evaluationInfo,
 }) => {
   const { classes } = useDashboardCardFooterStyles();
-  const isTeacher = useIsTeacher();
 
-  if (introductionLink && localizations) {
+  if (introductionLink) {
     return (
       <Box className={classes.root}>
         <Box className={classes.buttonFull}>
           <Link to={introductionLink}>
-            <Button fullWidth variant={isTeacher ? 'outline' : 'primary'}>
-              {localizations?.buttons?.review}
+            <Button style={{ width: '100%' }}>
+              {preview ? localizations?.buttons?.preview : localizations?.buttons?.review}
             </Button>
           </Link>
         </Box>

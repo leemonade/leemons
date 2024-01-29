@@ -46,7 +46,7 @@ const ModuleJourney = () => {
     }
     return activityUrl;
   };
-
+  console.log('module on ModuleJourney', module);
   return (
     <TotalLayoutContainer
       ref={scrollRef}

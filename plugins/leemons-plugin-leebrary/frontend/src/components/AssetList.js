@@ -128,7 +128,7 @@ const AssetList = ({
 
     if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
 
-    if (category?.key.startsWith('leebrary-subject')) {
+    if (category?.key?.startsWith('leebrary-subject')) {
       delete query.category;
       const subjects = isArray(category.id) ? category.id : [category.id];
       query.subjects = JSON.stringify(subjects);
@@ -396,7 +396,7 @@ const AssetList = ({
 
   // OnSearch: Wait for the debounced search critera and then call the onSearch function
   useEffect(() => {
-    onSearch(searchCriteriaDebounced);
+    // onSearch(searchCriteriaDebounced);
   }, [searchCriteriaDebounced]);
 
   // SET THE DATA PASSED TO THE PAGINATED LIST COMPONENT

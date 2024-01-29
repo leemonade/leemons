@@ -36,10 +36,15 @@ const DashboardCard = ({
           statement={statement}
           emptyIcon={emptyIcon}
           fileType={fileType}
+          introductionCard={introductionCard}
         />
         <Box className={classes.content}>
           <DashboardCardBody statement={statement} assetNumber={assetNumber} />
-          <DashboardCardFooter localizations={localizations} introductionLink={introductionLink} />
+          <DashboardCardFooter
+            localizations={localizations}
+            introductionLink={introductionLink}
+            preview={preview}
+          />
         </Box>
       </Box>
     );
@@ -68,6 +73,7 @@ const DashboardCard = ({
     <Box className={classes.root}>
       <DashboardCardCover
         asset={preparedAsset}
+        introductionCard={false}
         assetNumber={assetNumber}
         assignation={assignation}
         score={activity.requiresScoring && score}
@@ -76,6 +82,7 @@ const DashboardCard = ({
         instance={activity}
         moduleColor={moduleColor}
         evaluationInfo={evaluationData}
+        fileType={activity?.assignable?.role}
       />
       <Box className={classes.content}>
         <DashboardCardBody activity={activity} />

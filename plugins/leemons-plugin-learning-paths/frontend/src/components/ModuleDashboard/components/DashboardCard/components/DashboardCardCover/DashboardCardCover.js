@@ -22,6 +22,7 @@ const DashboardCardCover = ({
   fileType,
   moduleColor,
   evaluationInfo,
+  introductionCard,
 }) => {
   const { classes } = DashboardCardCoverStyles({ moduleColor });
   const [t] = useTranslateLoader(prefixPN('dashboard'));
@@ -80,7 +81,7 @@ const DashboardCardCover = ({
       </Box>
     );
   }
-  if (!cover && fileType) {
+  if (!cover && fileType && introductionCard) {
     return (
       <Box className={classes.root}>
         {MemoizedEmptyCoverIntroduction}
@@ -88,8 +89,6 @@ const DashboardCardCover = ({
       </Box>
     );
   }
-
-  const assetType = instance?.assignable?.roleDetails?.name;
 
   const MemoizedEmptyCoverAsset = useMemo(
     () => (
@@ -104,14 +103,14 @@ const DashboardCardCover = ({
               }}
               width={24}
               height={24}
-              src={asset?.cover}
+              src={emptyIcon}
             />
           </Box>
         }
-        fileType={assetType}
+        fileType={fileType}
       />
     ),
-    [asset, assetType]
+    [fileType]
   );
   const { grades } = assignation;
   const isGradeAssigned =
@@ -131,7 +130,7 @@ const DashboardCardCover = ({
           />
         </Box>
       )}
-      {!isGradeAssigned && <ImageLoader src={asset?.cover} height={144} />}
+      {!isGradeAssigned && asset?.cover && <ImageLoader src={asset?.cover} height={144} />}
       {!isGradeAssigned && !asset?.cover && MemoizedEmptyCoverAsset}
       <Box className={classes.orderLabel}>{assetNumber}</Box>
     </Box>
