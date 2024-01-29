@@ -27,26 +27,28 @@ const DashboardCard = ({
 }) => {
   const isTeacher = useIsTeacher();
   const { classes } = useDashboardCardStyles();
-  if (introductionCard) {
+  if (introductionCard && introductionLink) {
     return (
-      <Box className={classes.root}>
-        <DashboardCardCover
-          cover={getFileUrl(cover)}
-          assetNumber={assetNumber}
-          statement={statement}
-          emptyIcon={emptyIcon}
-          fileType={fileType}
-          introductionCard={introductionCard}
-        />
-        <Box className={classes.content}>
-          <DashboardCardBody statement={statement} assetNumber={assetNumber} />
-          <DashboardCardFooter
-            localizations={localizations}
-            introductionLink={introductionLink}
-            preview={preview}
+      !!statement && (
+        <Box className={classes.root}>
+          <DashboardCardCover
+            cover={getFileUrl(cover)}
+            assetNumber={assetNumber}
+            statement={statement}
+            emptyIcon={emptyIcon}
+            fileType={fileType}
+            introductionCard={introductionCard}
           />
+          <Box className={classes.content}>
+            <DashboardCardBody statement={statement} assetNumber={assetNumber} />
+            <DashboardCardFooter
+              localizations={localizations}
+              introductionLink={introductionLink}
+              preview={preview}
+            />
+          </Box>
         </Box>
-      </Box>
+      )
     );
   }
   const { assignable } = activity;

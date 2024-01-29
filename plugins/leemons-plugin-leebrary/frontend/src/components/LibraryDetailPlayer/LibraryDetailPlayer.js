@@ -37,20 +37,12 @@ const LibraryDetailPlayer = ({
   const isAssetPlayerContent =
     ['video', 'audio', 'pdf', 'image', 'bookmark', 'url', 'link'].includes(asset?.fileType) ||
     fileExtension === 'pdf';
-  const handleOpenPreview = (role) => {
-    if (!role) return;
-    const rolePaths = {
-      'content-creator': `/private/content-creator/${providerData?.id}/view`,
-      tests: `/private/${role}/detail/${providerData?.id}`,
-      scorm: `/private/${role}/preview/${providerData.id}`,
-      feedback: `/private/${role}/preview/${providerData.id}`,
-      task: `/private/tasks/library/view/${providerData.id}`,
-      'learningpaths.module': `/private/learning-paths/modules/${providerData.id}/view`,
-    };
-    const path = rolePaths[role];
-    if (path) {
-      return window.open(path, '_blank', 'noopener');
+  const previewUrl = providerData?.roleDetails.previewUrl?.replace(':id', providerData?.id);
+  const handleOpenPreview = () => {
+    if (!previewUrl) {
+      return;
     }
+    return window.open(previewUrl, '_blank', 'noopener');
   };
 
   const { classes } = LibraryDetailPlayerStyles(
@@ -71,7 +63,7 @@ const LibraryDetailPlayer = ({
           useAspectRatio={false}
         />
       ) : (
-        <Box className={classes.activityContainer} onClick={() => handleOpenPreview(assetRole)}>
+        <Box className={classes.activityContainer} onClick={() => handleOpenPreview()}>
           {assetRole && (
             <Box className={classes.buttonIcon}>
               <ButtonIcon fileType="document" />

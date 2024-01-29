@@ -58,7 +58,9 @@ function PreviewActions({ activity, localizations }) {
   return (
     <Box className={classes.buttonFull}>
       <Link to={url}>
-        <Button fullWidth>{localizations?.buttons?.preview}</Button>
+        <Button fullWidth variant="outline">
+          {localizations?.buttons?.preview}
+        </Button>
       </Link>
     </Box>
   );
