@@ -121,7 +121,7 @@ function useParsedActivities({ activities, components, localizations, onConfig }
           <></>
         ),
       })),
-    [activities, components]
+    [activities, components, localizations]
   );
 }
 
