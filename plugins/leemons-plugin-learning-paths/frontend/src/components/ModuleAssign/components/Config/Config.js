@@ -107,6 +107,7 @@ function useParsedActivities({ activities, components, localizations, onConfig }
         ),
         time: (
           <TimeInput
+            sx={{ minWidth: 123 }}
             icon={<TimeClockCircleIcon />}
             clearable
             value={timeState?.[id]}
