@@ -155,7 +155,10 @@ module.exports = {
         },
 
         onError(req, res, err) {
-          const response = { ...err, message: err.message };
+          let response = { ...err, message: err.message };
+          if (err.data) {
+            response = { ...response, ...err.data };
+          }
           res.setHeader('Content-Type', 'application/json');
           res.writeHead(err.httpStatusCode || err.code || 500);
           res.end(JSON.stringify(response));
