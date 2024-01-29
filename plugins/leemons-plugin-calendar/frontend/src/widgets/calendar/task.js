@@ -10,17 +10,13 @@ import {
   Checkbox,
   Col,
   ContextContainer,
-  Divider,
   Grid,
-  ImageLoader,
   InputWrapper,
   LoadingOverlay,
   MultiSelect,
   Select,
-  Text,
-  TextClamp,
-  TextInput,
   Textarea,
+  TextInput,
 } from '@bubbles-ui/components';
 import { PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
 import {
@@ -181,6 +177,7 @@ export default function Task({ event, form, classes, disabled, allProps }) {
           <Box>
             <NYACard instance={store.assignation || store.instance} showSubject />
           </Box>
+          {/*
           {store.subjectData ? (
             <>
               <Box className={classes.divider}>
@@ -209,6 +206,7 @@ export default function Task({ event, form, classes, disabled, allProps }) {
               </InputWrapper>
             </>
           ) : null}
+          */}
         </Box>
       );
     }
@@ -242,7 +240,6 @@ export default function Task({ event, form, classes, disabled, allProps }) {
           </Grid>
         </Box>
       ) : null}
-
       {!disabled || (disabled && subtask && subtask.length) ? (
         <Box>
           <Grid columns={100} gutter={0}>
@@ -304,7 +301,6 @@ export default function Task({ event, form, classes, disabled, allProps }) {
           </Grid>
         </Box>
       ) : null}
-
       {classCalendars &&
       classCalendars.length &&
       (!disabled || (disabled && formClasses && formClasses.length)) ? (
@@ -333,7 +329,6 @@ export default function Task({ event, form, classes, disabled, allProps }) {
           </Grid>
         </Box>
       ) : null}
-
       {columnsData && (!disabled || (disabled && form.getValues('column'))) ? (
         <Box>
           <Grid columns={100} gutter={0}>

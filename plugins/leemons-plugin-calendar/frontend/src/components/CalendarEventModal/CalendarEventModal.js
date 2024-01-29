@@ -91,14 +91,14 @@ const CalendarEventModal = (props) => {
     form: _form,
   } = props;
 
-  if (defaultValues?.type === 'plugins.calendar.task') {
+  if (defaultValues?.type === 'calendar.task') {
     if (isNil(defaultValues?.data?.hideInCalendar)) {
       if (isNil(defaultValues.data)) defaultValues.data = {};
       defaultValues.data.hideInCalendar = true;
     }
   }
 
-  const form = _form ? _form : useForm({ defaultValues });
+  const form = _form || useForm({ defaultValues });
   const {
     watch,
     control,
@@ -122,7 +122,7 @@ const CalendarEventModal = (props) => {
 
   React.useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-      if (value.type === 'plugins.calendar.task') {
+      if (value.type === 'calendar.task') {
         if (name === 'type') {
           setValue('data.hideInCalendar', true);
         }
@@ -181,7 +181,7 @@ const CalendarEventModal = (props) => {
     >
       <Box
         sx={(theme) => ({
-          //padding: theme.spacing[4],
+          // padding: theme.spacing[4],
           // paddingTop: theme.spacing[12],
           marginLeft: -theme.spacing[4],
           marginRight: -theme.spacing[4],
@@ -214,7 +214,7 @@ const CalendarEventModal = (props) => {
           />
 
           {/*
-          {disabled && type === 'plugins.calendar.task' && taskColumn ? (
+          {disabled && type === 'calendar.task' && taskColumn ? (
             <Grid columns={100} gutter={0}>
               <Col span={10} className={classes.icon} />
               <Col span={90}>
@@ -240,25 +240,24 @@ const CalendarEventModal = (props) => {
                         closable={false}
                       />
                     );
-                  } else {
-                    return (
-                      <RadioGroup
-                        {...field}
-                        disabled={disabled}
-                        variant="icon"
-                        direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
-                        fullWidth
-                        error={get(errors, 'type')}
-                        data={selectData.eventTypes}
-                      />
-                    );
                   }
+                  return (
+                    <RadioGroup
+                      {...field}
+                      disabled={disabled}
+                      variant="icon"
+                      direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
+                      fullWidth
+                      error={get(errors, 'type')}
+                      data={selectData.eventTypes}
+                    />
+                  );
                 }}
               />
             </Box>
           ) : null}
 
-          {!disabled && type === 'plugins.calendar.task' ? (
+          {!disabled && type === 'calendar.task' ? (
             <Box
               sx={(theme) => ({ marginBottom: -theme.spacing[3], paddingTop: theme.spacing[3] })}
             >
@@ -366,8 +365,7 @@ const CalendarEventModal = (props) => {
 
           {(!hideCalendarField && disabled) ||
           ((isNew || (!isNew && isOwner)) &&
-            (type !== 'plugins.calendar.task' ||
-              (type === 'plugins.calendar.task' && !hideInCalendar))) ? (
+            (type !== 'calendar.task' || (type === 'calendar.task' && !hideInCalendar))) ? (
             <>
               <Box className={classes.divider}>
                 <Divider />

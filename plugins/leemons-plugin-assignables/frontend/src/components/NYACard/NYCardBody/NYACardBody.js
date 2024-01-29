@@ -32,7 +32,6 @@ const NYACardBody = ({
   ...props
 }) => {
   const { classes } = NYACardBodyStyles({ fullHeight }, { name: 'NYACardBody' });
-  // const [isFav, setIsFav] = useState(pinned);
   const [calificationType, setCalificationType] = useState(null);
   const hasProgressBar = totalActivities && totalActivities > 0;
   const activitiesPercentage = hasProgressBar && (submitedActivities / totalActivities) * 100;
@@ -90,7 +89,7 @@ const NYACardBody = ({
               <Text className={classes.draftText}>{newLocale}</Text>
             </Badge>
           )}
-          {calificationType && (
+          {calificationType && !isModule && (
             <Badge closable={false} size="xs" className={classes.calificationBadge}>
               <Text className={classes.draftText}>{calificationType?.toUpperCase()}</Text>
             </Badge>

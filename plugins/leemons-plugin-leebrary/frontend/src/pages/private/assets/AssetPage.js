@@ -10,7 +10,8 @@ import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import { useQueryClient } from '@tanstack/react-query';
-import { allAssetsKey } from '@leebrary/request/hooks/keys/assets';
+import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
+import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import { readAndCompressImage } from 'browser-image-resizer';
 import {
   AssetBookmarkIcon,
@@ -239,10 +240,11 @@ const AssetPage = () => {
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
         setLoading(false);
+        queryClient.invalidateQueries(allGetSimpleAssetListKey);
+        queryClient.invalidateQueries(allGetAssetsKey);
         addSuccessAlert(
           editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
         );
-        queryClient.invalidateQueries(allAssetsKey);
 
         // Redirects to the correspnding category page
         if (response.asset?.fileType === 'bookmark')
