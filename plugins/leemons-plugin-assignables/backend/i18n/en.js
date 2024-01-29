@@ -88,12 +88,12 @@ module.exports = {
         },
         startDate: {
           label: 'Start date',
-          placeholder: 'Type the date',
+          placeholder: 'Select date',
           error: 'Pick a start date',
         },
         deadline: {
           label: 'Deadline',
-          placeholder: 'Type the date',
+          placeholder: 'Select date',
           error: 'Pick a deadline',
         },
         bothDatesError: 'Pick a start date and deadline',
