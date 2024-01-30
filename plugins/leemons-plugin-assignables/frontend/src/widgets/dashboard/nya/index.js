@@ -4,12 +4,12 @@ import { Box } from '@bubbles-ui/components';
 
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { useIsStudent } from '@academic-portfolio/hooks';
-import { Header, ActivityCarousel, EvaluationsCarousel } from './components';
+import { ActivityCarousel, EvaluationsCarousel, Header } from './components';
 import {
-  useNyaStyles,
+  useEvaluatedActivities,
   useNyaActivities,
   useNyaLocalizations,
-  useEvaluatedActivities,
+  useNyaStyles,
 } from './hooks';
 
 export default function NYA({ classe, program }) {

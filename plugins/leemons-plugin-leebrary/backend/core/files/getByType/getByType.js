@@ -12,6 +12,7 @@ const { prepareQuery } = require('./prepareQuery');
  * @returns {Promise<Array>} The queried files with parsed metadata.
  */
 async function getByType({ type, files, columns, ctx }) {
+  if (!files.length) return [];
   const query = prepareQuery(type, files);
   const items = await ctx.tx.db.Files.find(query).select(columns).lean();
   return items.map(parseMetadata);

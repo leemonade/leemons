@@ -1,5 +1,5 @@
 function imageUrlToFile(url) {
-  return fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+  return fetch(`${leemons.allOriginsUrl}/get?url=${encodeURIComponent(url)}`)
     .then((response) => {
       if (response.ok) return response.json();
       throw new Error('Network response was not ok.');

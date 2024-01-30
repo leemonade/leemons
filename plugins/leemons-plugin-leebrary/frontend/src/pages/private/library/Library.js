@@ -141,7 +141,7 @@ const LibraryPageContent = () => {
           )}
         </Box>
       )}
-      <Box style={{ overflowY: 'scroll' }}>
+      <Box>
         <Switch>
           {/* NEW ASSET ·························································· */}
           <Route path={cleanPath(`${path}/:category/new`)}>

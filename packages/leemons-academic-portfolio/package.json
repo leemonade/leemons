@@ -1,11 +1,11 @@
 {
   "devDependencies": {},
   "dependencies": {
-    "@leemons/mongodb-helpers": "0.0.70",
+    "@leemons/mongodb-helpers": "0.0.71",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/academic-portfolio",
-  "version": "0.0.70",
+  "version": "0.0.71",
   "description": "",
   "main": "src/index.js",
   "keywords": [],

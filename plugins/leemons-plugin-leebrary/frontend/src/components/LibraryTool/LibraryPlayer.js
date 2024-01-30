@@ -61,6 +61,7 @@ const LibraryPlayer = ({
           width={isFloating ? '100%' : width}
           framed={!['image'].includes(asset.fileType)}
           canPlay={readOnly}
+          showPlayButton={readOnly}
           useAudioCard
         />
       );
