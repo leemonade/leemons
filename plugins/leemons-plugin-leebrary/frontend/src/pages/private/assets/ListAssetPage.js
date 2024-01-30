@@ -1,15 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
-import { isEmpty, uniqBy } from 'lodash';
+import { isEmpty } from 'lodash';
 
-import { addErrorAlert } from '@layout/alert';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { useRequestErrorMessage } from '@common';
-import prepareAssetType from '@leebrary/helpers/prepareAssetType';
-import { AssetList } from '@leebrary/components';
-import { getAssetTypesRequest } from '@leebrary/request';
 
+import { AssetList } from '@leebrary/components';
+import loadMediaTypes from '@leebrary/helpers/loadMediaTypes';
 import LibraryContext from '../../../context/LibraryContext';
 
 // HELPERS
@@ -28,32 +25,12 @@ const ListAssetPage = () => {
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
   const academicFilters = useAcademicFiltersForAssetList({ useLabels: false });
-  const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [searchCriteria, setSearchCriteria] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [mediaTypeFilter, setMediaTypeFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [mediaTypesArray, setMediaTypesArray] = useState([]);
-
-  // --------------------------------------------------------------------------------------------
-  // METHODS
-
-  async function loadAssetTypes(categoryId) {
-    try {
-      const response = await getAssetTypesRequest(categoryId);
-      return uniqBy(
-        response.types?.map((type) => ({
-          label: prepareAssetType(type),
-          value: prepareAssetType(type, false),
-        })),
-        'value'
-      );
-    } catch (err) {
-      addErrorAlert(getErrorMessage(err));
-      return [];
-    }
-  }
 
   // --------------------------------------------------------------------------------------------
   // EFFECTS
@@ -86,7 +63,7 @@ const ListAssetPage = () => {
   // Get the media types for media assets
   useEffect(() => {
     if (category?.key === 'media-files') {
-      loadAssetTypes(category?.id).then((types) => {
+      loadMediaTypes(category?.id).then((types) => {
         setMediaTypesArray([...types]);
       });
     }

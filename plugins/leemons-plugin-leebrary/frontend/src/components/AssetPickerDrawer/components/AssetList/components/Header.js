@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import { isArray, keyBy, map, pick, sortBy } from 'lodash';
 import { Box, SearchInput, Select, createStyles } from '@bubbles-ui/components';
 import { usePickerCategories } from '@leebrary/components/AssetPickerDrawer/hooks/usePickerCategories';
-import { isArray, keyBy, map, pick, sortBy } from 'lodash';
+import loadMediaTypes from '@leebrary/helpers/loadMediaTypes';
 
 export const useHeaderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -25,6 +26,8 @@ export const useHeaderStyles = createStyles((theme) => {
 export function Header({ localizations, categories: categoriesToUse, onChange }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(null);
+  const [mediaTypes, setMediaTypes] = useState([]);
+  const [mediaTypeFilter, setMediaTypeFilter] = useState('all');
 
   const categories = usePickerCategories();
 
@@ -58,15 +61,38 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
     }
   }, [resourcesData]);
 
-  useEffect(() => onChange?.({ category, search }), [category, search]);
+  useEffect(
+    () => onChange?.({ category, search, type: mediaTypeFilter }),
+    [category, search, mediaTypeFilter]
+  );
 
   const { classes } = useHeaderStyles({}, { name: 'AssetList-Header' });
+
+  // ----------------------------------------------------------------------------------
+  // MEDIA TYPES FILTER
+
+  useEffect(() => {
+    const categoryIsMediaFiles = categoriesByKey?.['media-files']?.id === category;
+
+    if (categoryIsMediaFiles) {
+      loadMediaTypes(categoriesByKey?.['media-files']?.id).then((types) => {
+        setMediaTypes([...types]);
+      });
+    } else {
+      setMediaTypes([]);
+    }
+  }, [category]);
+
+  const mediaTypeSelectData = useMemo(() => {
+    if (!mediaTypes?.length) return null;
+    return [{ label: localizations?.mediaType?.allTypes || 'FOO', value: 'all' }, ...mediaTypes];
+  }, [mediaTypes, localizations]);
 
   return (
     <Box className={classes.root}>
       {resourcesData?.length > 1 && (
         <Select
-          key="select"
+          key="select-category"
           placeholder={localizations?.resources?.placeholder}
           label={localizations?.resources?.label}
           data={resourcesData}
@@ -74,6 +100,18 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
           onChange={setCategory}
         />
       )}
+
+      {mediaTypes?.length > 1 && (
+        <Select
+          key="select-media-type"
+          placeholder={localizations?.mediaType?.placeholder || 'FOO'}
+          label={localizations?.mediaType?.label || 'FOO'}
+          data={mediaTypeSelectData}
+          value={mediaTypeFilter}
+          onChange={setMediaTypeFilter}
+        />
+      )}
+
       <Box style={{ flexGrow: 1 }}>
         <SearchInput
           placeholder={localizations?.search?.placeholder}
