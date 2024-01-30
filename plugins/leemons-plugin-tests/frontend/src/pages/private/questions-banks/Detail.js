@@ -73,7 +73,7 @@ export default function Detail(p) {
       const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
       addSuccessAlert(t('savedAsDraft'));
       if (store.isNew) {
-        history.push(`/private/tests/questions-banks/${questionBank.id}`);
+        history.replace(`/private/tests/questions-banks/${questionBank.id}`);
       }
     } catch (error) {
       addErrorAlert(error);
