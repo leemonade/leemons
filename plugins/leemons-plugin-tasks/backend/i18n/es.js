@@ -56,7 +56,8 @@ module.exports = {
     draft: 'Borrador',
   },
   task_setup_page: {
-    title: 'Crear nueva tarea',
+    title: 'Nueva tarea',
+    subTitle: 'Título de la tarea',
     edit_title: 'Editar tarea',
     common: {
       select_center: 'Seleccionar centro',

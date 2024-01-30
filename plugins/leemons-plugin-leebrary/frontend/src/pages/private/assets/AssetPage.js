@@ -217,29 +217,30 @@ const AssetPage = () => {
 
   const handlePlublishAndAssign = async () => {
     await handlePublish();
-    console.log('REDIRECCIÓN A ASIGNAR');
   };
   // #endregion
 
   // #region * HEADER --------------------------------------------------------
-  const getAssetTitleAndIcon = () => {
+  const getAssetHeaderData = () => {
     const editing = params.id?.length;
     if (category?.key === 'bookmarks')
       return {
         title: editing ? t('basicData.bookmark.titleEdit') : t('basicData.bookmark.titleNew'),
+        subTitle: t('basicData.bookmark.subTitle'),
         icon: <AssetBookmarkIcon width={24} height={24} color={'#878D96'} />,
       };
     return {
       title: editing ? t('basicData.header.titleEdit') : t('basicData.header.titleNew'),
+      subTitle: t('basicData.header.subTitle'),
       icon: <AssetMediaIcon width={24} height={24} color={'#878D96'} />,
     };
   };
 
   const buildHeader = () => (
     <TotalLayoutHeader
-      title={getAssetTitleAndIcon().title}
-      icon={getAssetTitleAndIcon().icon}
-      formTitlePlaceholder={formValues.name || t('basicData.placeholders.name')}
+      title={getAssetHeaderData().title}
+      icon={getAssetHeaderData().icon}
+      formTitlePlaceholder={formValues.name || getAssetHeaderData().subTitle}
       onSave={form.handleSubmit(handlePlublishAndAssign)}
       onCancel={handleOnCancel}
     />

@@ -72,7 +72,7 @@ function useHeaderLabels(t) {
 
   return useMemo(
     () => ({
-      title: isNil(taskName) || isEmpty(taskName) ? t('title') : taskName,
+      title: isNil(taskName) || isEmpty(taskName) ? t('subTitle') : taskName,
     }),
     [t, taskName]
   );
@@ -81,7 +81,6 @@ function useHeaderLabels(t) {
 function TaskSetupHeader({ t, store }) {
   const headerLabels = useHeaderLabels(t);
   const history = useHistory();
-
   return (
     <TotalLayoutHeader
       icon={

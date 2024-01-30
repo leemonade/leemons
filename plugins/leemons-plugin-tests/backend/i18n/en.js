@@ -103,7 +103,7 @@ module.exports = {
     hideOptionsHelp: 'Hidden option are identified by the icon {{icon}}',
     hasCoverLabel: 'Feature image',
     hideOptionNoRightAnswer: 'You must select the right answer first',
-    headerTitlePlaceholder: 'Question bank title',
+    headerTitlePlaceholder: 'Questions bank title',
   },
   questionImageModal: {
     createNumbering: 'Create numbering',

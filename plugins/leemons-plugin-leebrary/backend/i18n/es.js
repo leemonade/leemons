@@ -33,10 +33,12 @@ module.exports = {
         titleEdit: 'Editar recurso',
         back: 'Volver',
         presentation: 'Presentación',
+        subTitle: 'Título del recurso',
       },
       bookmark: {
         titleNew: 'Nuevo marcador',
         titleEdit: 'Editar marcador',
+        subTitle: 'Título del marcador',
       },
       labels: {
         content: 'Contenido',
