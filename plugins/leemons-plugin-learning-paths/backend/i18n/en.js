@@ -117,18 +117,6 @@ module.exports = {
       delete: 'Delete',
       share: 'Permissions',
     },
-    duplicate: {
-      title: 'Duplicate module',
-      message: 'Are you sure you want to delete the module {{name}}?',
-      success: 'The module {{name}} has been duplicated',
-      error: 'The module {{name}} could not be duplicated',
-    },
-    delete: {
-      title: 'Delete module',
-      message: 'Are you sure you want to delete the module {{name}}?',
-      success: 'The module {{name}} has been deleted',
-      error: 'The module {{name}} could not be deleted',
-    },
   },
   assignation: {
     steps: {
