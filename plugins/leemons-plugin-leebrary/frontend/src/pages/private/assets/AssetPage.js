@@ -194,33 +194,39 @@ const AssetPage = () => {
 
     try {
       const body = { ...formValues };
-      if (category?.key !== 'bookmarks') {
+      if (category?.key !== 'bookmarks' && !body.file?.id) {
+        console.log('1');
         if (
           body.file.type.startsWith('image') &&
           body.file.type.indexOf('/gif') < 0 &&
           body.file.type.indexOf('/svg') < 0
         ) {
           const fileName = body.file.name;
+
           const resizedImage = await readAndCompressImage(body.file, {
             quality: 0.8,
             maxWidth: 800,
             maxHeight: 600,
             debug: true,
           });
+
           body.file = resizedImage;
           body.file.name = fileName;
         }
         setUploadingFileInfo({ state: t('common.labels.processingImage') });
+
         file = await uploadFileAsMultipart(body.file, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
           },
         });
+
         setUploadingFileInfo(null);
       }
 
       try {
-        const assetData = { ...body, cover, file };
+        const assetData = { ...body, cover, file: body.file?.id ?? file };
+        console.log('file', file);
         const needsOldCover = isImage
           ? form.formState.dirtyFields.file
           : form.formState.dirtyFields.cover;
@@ -237,6 +243,7 @@ const AssetPage = () => {
             setUploadingFileInfo(info);
           },
         });
+        console.log('PASAMOS LA REQUEST');
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
         setLoading(false);
@@ -251,10 +258,12 @@ const AssetPage = () => {
           history.push('/private/leebrary/bookmarks/list');
         else history.push('/private/leebrary/media-files/list');
       } catch (err) {
+        console.log('err', err);
         setLoading(false);
         addErrorAlert(getErrorMessage(err));
       }
     } catch (e) {
+      console.log('e', e);
       setUploadingFileInfo(null);
     }
   };
