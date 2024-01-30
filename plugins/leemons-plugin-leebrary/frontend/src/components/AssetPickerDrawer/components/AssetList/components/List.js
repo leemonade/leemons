@@ -36,16 +36,21 @@ export const useListStyles = createStyles((theme) => {
 });
 
 export function useAssetList(query, options) {
+  const verifiedQuery = {
+    category: query.category,
+    criteria: query.search || '',
+    showPublic: true,
+    published: true,
+  };
+  if (query.type && query.type !== 'all') verifiedQuery.type = query.type;
+
   const { data: assets, isLoading } = useQuery({
     // TODO: Add a good queryKey
     queryKey: ['assetPickerDrawer.assets', query, options],
     queryFn: () =>
       getAssetsRequest({
         ...options,
-        category: query.category,
-        criteria: query.search || '',
-        showPublic: true,
-        published: true,
+        ...verifiedQuery,
       }),
     select: (data) => data.assets,
   });

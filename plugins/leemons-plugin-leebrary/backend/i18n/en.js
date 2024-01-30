@@ -353,6 +353,11 @@ module.exports = {
         label: 'Categories',
         placeholder: 'Select a category',
       },
+      mediaType: {
+        label: 'Resource types',
+        placeholder: 'Select a resource type',
+        allTypes: 'All types',
+      },
     },
   },
   admin: {

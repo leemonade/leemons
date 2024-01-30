@@ -340,6 +340,11 @@ module.exports = {
         label: 'Categorías',
         placeholder: 'Seleccionar categoría',
       },
+      mediaType: {
+        label: 'Tipos de recurso',
+        placeholder: 'Seleccionar tipo',
+        allTypes: 'Todos los tipos',
+      },
     },
   },
   admin: {
