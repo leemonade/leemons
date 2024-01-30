@@ -103,6 +103,8 @@ async function updateAssignable({ assignable, published = false, ctx }) {
         ..._.defaults(object.asset, currentAssignable.asset),
         file: file?.id || file,
         id: currentAssignable.asset.id,
+        public: true,
+        subjects: object.subjects?.length ? object.subjects : null,
       },
       upgrade: true,
       published: false,

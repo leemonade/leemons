@@ -1,25 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { forIn, isArray, isEmpty, map, get } from 'lodash';
+import { forIn, get, isEmpty, map } from 'lodash';
 import {
   Box,
-  Stack,
-  Switch,
   Button,
   ContextContainer,
-  Text,
-  MultiSelect,
   Select,
+  Stack,
+  Switch,
+  Text,
   Textarea,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { ViewOffIcon } from '@bubbles-ui/icons/solid';
-import { TagsAutocomplete } from '@common';
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import { questionComponents, questionTypeT } from './QuestionForm';
 
@@ -39,6 +37,7 @@ export default function DetailQuestionForm({
   onSaveQuestion,
   defaultValues,
   categories,
+  onAddCategory,
   onCancel,
 }) {
   const questionTypes = [];
@@ -225,33 +224,40 @@ export default function DetailQuestionForm({
             </Box>
             {type ? (
               <>
-                {categoryData?.length ? (
-                  <ContextContainer fullWidth direction="row">
-                    <Controller
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <Box style={{ width: '230px' }}>
-                          <Select
-                            data={categoryData}
-                            error={form.formState.errors.category}
-                            label={t('categoryLabel')}
-                            {...field}
-                            onChange={(e) => {
-                              const item = categoryData[e];
-                              if (item) {
-                                field.onChange(item.value);
-                              } else {
-                                field.onChange(e);
-                              }
-                            }}
-                          />
-                        </Box>
-                      )}
-                    />
-                  </ContextContainer>
-                ) : null}
+                <ContextContainer fullWidth direction="row">
+                  <Controller
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <Box style={{ width: '230px' }}>
+                        <Select
+                          {...field}
+                          data={categoryData}
+                          searchable
+                          creatable
+                          getCreateLabel={(value) => `+ ${value}`}
+                          withinPortal={true}
+                          onCreate={(v) => {
+                            onAddCategory(v);
+                            field.onChange(categoryData.length);
+                          }}
+                          error={form.formState.errors.category}
+                          label={t('categoryLabel')}
+                          onChange={(e) => {
+                            const item = categoryData[e];
+                            if (item) {
+                              field.onChange(item.value);
+                            } else {
+                              field.onChange(e);
+                            }
+                          }}
+                        />
+                      </Box>
+                    )}
+                  />
+                </ContextContainer>
 
+                {/*
                 <Controller
                   control={form.control}
                   name="tags"
@@ -267,6 +273,7 @@ export default function DetailQuestionForm({
                     </Box>
                   )}
                 />
+                */}
 
                 <Controller
                   control={form.control}
@@ -350,4 +357,5 @@ DetailQuestionForm.propTypes = {
   stepName: PropTypes.string,
   scrollRef: PropTypes.object,
   isPublished: PropTypes.bool,
+  onAddCategory: PropTypes.func,
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Badge, Text, ProgressRing } from '@bubbles-ui/components';
+import { usePendingEvaluationsCount } from '@assignables/hooks/assignableInstance/usePendingEvaluationsCount';
 import { EvaluationCardRightElementStyles } from './EvaluationCardRightElement.styles';
 import { getActivityType } from '../../../helpers/getActivityType';
 import {
@@ -12,8 +13,10 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
   const [notModuleData, setNotModuleData] = useState({});
   const isModule = instance?.assignable?.role === 'learningpaths.module';
   const { classes } = EvaluationCardRightElementStyles();
-  const moduleTotal = instance?.assignment?.total;
-  const moduleSubmited = instance?.assignment?.submission;
+  const { moduleTotal, pendingEvaluationActivitiesCount } = usePendingEvaluationsCount({
+    instance,
+  });
+
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
     const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
@@ -59,7 +62,7 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
       {isModule ? (
         <Box className={classes.commonContainer}>
           <Box>
-            <Text className={classes.submitedNumber}>{moduleSubmited}</Text>
+            <Text className={classes.submitedNumber}>{pendingEvaluationActivitiesCount}</Text>
             <Text className={classes.separator}>/{moduleTotal}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>

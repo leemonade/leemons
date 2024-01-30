@@ -61,8 +61,8 @@ export const LibraryExtension = Node.create({
 
           return {
             ...cleanAsset,
-            fileId: asset.fileId ?? asset.file?.id ?? asset.file,
-            coverId: asset.coverId ?? asset.original?.cover?.id ?? asset.cover?.id,
+            fileId: asset.fileid ?? asset.fileId ?? asset.file?.id ?? asset.file,
+            coverId: asset.coverid ?? asset.coverId ?? asset.original?.cover?.id ?? asset.cover?.id,
             mediaType: asset.mediaType || cleanAsset.mediaType,
             tags: JSON.stringify(cleanAsset.tags || []),
             metadata: JSON.stringify(cleanAsset.metadata || []),
@@ -99,8 +99,8 @@ export const LibraryExtension = Node.create({
           }, {});
 
           if (!isEmpty(asset)) {
-            asset.coverId = asset.coverId ?? asset.original?.cover?.id;
-            asset.fileId = asset.fileId ?? asset.file?.id;
+            asset.coverId = asset.coverid ?? asset.coverId ?? asset.original?.cover?.id;
+            asset.fileId = asset.fileid ?? asset.fileId ?? asset.file?.id;
             asset.tags = asset.tags ? JSON.parse(asset.tags) : [];
             asset.metadata = asset.metadata ? JSON.parse(asset.metadata) : [];
             asset.fileType = asset.fileType || asset.filetype;

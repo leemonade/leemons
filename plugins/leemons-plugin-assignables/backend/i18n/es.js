@@ -22,7 +22,7 @@ module.exports = {
       add: 'Añadir',
     },
     groups: {
-      title: '¿Quién lo realizará?',
+      title: 'Estudiantes',
       options: {
         class: 'Clase existente',
         customGroup: 'Grupo personalizado',
@@ -66,7 +66,7 @@ module.exports = {
       },
     },
     dates: {
-      title: '¿Cuándo se realizará?',
+      title: 'Plazo de realización',
       optionsInput: {
         label: 'Plazo de tiempo',
         options: {
@@ -88,12 +88,12 @@ module.exports = {
         },
         startDate: {
           label: 'Fecha de inicio',
-          placeholder: 'Introduce la fecha',
+          placeholder: 'Seleccionar fecha',
           error: 'Selecciona una fecha de inicio',
         },
         deadline: {
           label: 'Fecha de fin',
-          placeholder: 'Introduce la fecha',
+          placeholder: 'Seleccionar fecha',
           error: 'Selecciona una fecha de fin',
         },
         bothDatesError: 'Selecciona una fecha de inicio y fin',

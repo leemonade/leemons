@@ -73,7 +73,7 @@ export const SchemaStyles = createStyles((theme, { isSchemaOpened, compact }) =>
     arrowIcon: {
       color: globalTheme.content.color.secondary.default,
       cursor: 'pointer',
-      transform: isSchemaOpened && 'rotate(-180deg)',
+      transform: !isSchemaOpened && 'rotate(-180deg)',
       transition: 'transform 300ms',
       minHeight: 20,
       minWidth: 20,

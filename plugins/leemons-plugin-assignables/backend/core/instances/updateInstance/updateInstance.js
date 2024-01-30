@@ -41,7 +41,7 @@ const updatableFields = [
  * @throws {LeemonsError} Throws an error if no changes are detected.
  * @returns {Object} The updated assignable instance object.
  */
-async function updateInstance({ assignableInstance, propagateRelated, ctx }) {
+async function updateInstance({ assignableInstance, propagateRelated, onlyAddDates, ctx }) {
   const { id, relatedAssignables, ...assignableInstanceObj } = assignableInstance;
 
   if (keys(omit(assignableInstanceObj, updatableFields)).length) {
@@ -91,6 +91,7 @@ async function updateInstance({ assignableInstance, propagateRelated, ctx }) {
       type: 'assignableInstance',
       instance: id,
       dates: object.dates,
+      onlyAddDates,
       ctx,
     });
   }

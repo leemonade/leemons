@@ -5,6 +5,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import propTypes from 'prop-types';
 import { useProgramDetail, useSubjectDetails } from '@academic-portfolio/hooks';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
+import { map } from 'lodash';
 import { EmptyState } from './EmptyState';
 import { Filters } from './Filters';
 import { ScoresTable } from './ScoresTable';
@@ -158,7 +159,7 @@ export default function ActivitiesTab({
               labels: labels?.periodSubmission,
             });
 
-            mutateAsync({ scores })
+            mutateAsync({ scores, instances: map(activitiesData.activities, 'id') })
               .then(() =>
                 addSuccessAlert(
                   labels?.periodSubmission?.success?.replace(

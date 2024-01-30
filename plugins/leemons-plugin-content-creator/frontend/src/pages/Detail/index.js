@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import {
   LoadingOverlay,
@@ -23,6 +23,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
+import { useProcessTextEditor } from '@common';
 
 const validators = [
   z.object({
@@ -33,16 +34,26 @@ const validators = [
   }),
 ];
 
+function useUrlQuery() {
+  const { search } = useLocation();
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
+  const urlQuery = useUrlQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(Number(urlQuery.get('step')) || 0);
   const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
   const history = useHistory();
   const params = useParams();
-  const query = useDocument({ id: params.id, isNew });
+  const processTextEditor = useProcessTextEditor();
+  const { data: documentData, isLoading: documentIsLoading } = useDocument({
+    id: params.id,
+    isNew,
+  });
   const mutation = useMutateDocument();
   const toolbarRef = React.useRef();
   const form = useForm({
@@ -83,8 +94,14 @@ export default function Index({ isNew, readOnly }) {
   const handleMutations = async ({ publishing, assigning }) => {
     const isValidStep = await form.trigger();
     if (!isValidStep) return;
+
     setIsLoading(true);
-    const documentToSave = { ...formValues, published: publishing };
+
+    const processedContent = await processTextEditor(formValues.content, documentData?.content, {
+      force: documentData?.published,
+    });
+
+    const documentToSave = { ...formValues, content: processedContent, published: publishing };
 
     if (!isNew) documentToSave.id = params.id;
     mutation.mutate(
@@ -93,10 +110,17 @@ export default function Index({ isNew, readOnly }) {
         onSuccess: (data) => {
           addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
           setIsLoading(false);
-          if (assigning)
+          if (!publishing) {
+            history.replace(
+              `/private/content-creator/${data.document.assignable}/edit?step=${activeStep}`
+            );
+          }
+
+          if (assigning) {
             history.push(`/private/content-creator/${data.document.assignable}/assign`);
-          else if (publishing && !assigning)
+          } else if (publishing && !assigning) {
             history.push('/private/leebrary/assignables.content-creator/list');
+          }
         },
         onError: (e) => {
           addErrorAlert(e);
@@ -108,7 +132,7 @@ export default function Index({ isNew, readOnly }) {
 
   const handleDynamicTitle = (value) => {
     form.setValue('content', value);
-    if (!query.data?.name) {
+    if (!documentData?.name) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
         parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
@@ -124,15 +148,15 @@ export default function Index({ isNew, readOnly }) {
   useEffect(() => {
     if (isNew) form.reset();
     else {
-      form.setValue('name', query.data?.name);
-      form.setValue('content', query.data?.content);
-      form.setValue('description', query.data?.description);
-      form.setValue('color', query.data?.color || null);
-      form.setValue('cover', query.data?.cover || null);
-      form.setValue('program', query.data?.program || null);
-      form.setValue('subjects', query.data?.subjects || null);
+      form.setValue('name', documentData?.name);
+      form.setValue('content', documentData?.content);
+      form.setValue('description', documentData?.description);
+      form.setValue('color', documentData?.color || null);
+      form.setValue('cover', documentData?.cover || null);
+      form.setValue('program', documentData?.program || null);
+      form.setValue('subjects', documentData?.subjects || null);
     }
-  }, [query.data]);
+  }, [documentData]);
 
   useEffect(() => {
     if (formValues.content) {
@@ -155,14 +179,20 @@ export default function Index({ isNew, readOnly }) {
     },
   ];
   // #endregion
+
+  function getTitle() {
+    if (readOnly) return null;
+    if (isNew) return t('titleNew');
+    return t('titleEdit');
+  }
   return (
     <FormProvider {...form}>
-      <LoadingOverlay visible={tLoading || query?.isLoading} />
+      <LoadingOverlay visible={tLoading || documentIsLoading} />
       <TotalLayoutContainer
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={isNew ? t('titleNew') : t('titleEdit')}
+            title={getTitle()}
             icon={
               <Stack justifyContent="center" alignItems="center">
                 <AssetDocumentIcon width={24} height={24} />
@@ -173,7 +203,7 @@ export default function Index({ isNew, readOnly }) {
             compact
             mainActionLabel={readOnly ? t('back') : t('cancel')}
           >
-            <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>
+            {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
         }
       >

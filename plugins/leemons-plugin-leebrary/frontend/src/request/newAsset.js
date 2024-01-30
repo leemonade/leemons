@@ -2,7 +2,7 @@ import { isString } from 'lodash';
 import { uploadFileAsMultipart } from '../helpers/uploadFileAsMultipart';
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function newAsset(assetData, categoryId, categoryKey) {
+async function newAsset(assetData, categoryId, categoryKey, { onProgress = () => {} } = {}) {
   const { file, cover, ...data } = assetData;
   const formData = {};
 
@@ -19,8 +19,11 @@ async function newAsset(assetData, categoryId, categoryKey) {
     }
   }
 
-  if (categoryKey === 'bookmarks' && cover) {
-    formData.cover = cover;
+  if (categoryKey === 'bookmarks') {
+    if (cover && isString(cover)) formData.cover = cover;
+    if (cover?.name) {
+      formData.cover = await uploadFileAsMultipart(cover, { onProgress, name: cover.name });
+    }
   }
 
   if (categoryId) {

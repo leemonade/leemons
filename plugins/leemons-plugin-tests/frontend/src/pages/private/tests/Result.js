@@ -44,6 +44,7 @@ import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
+import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getFeedbackRequest,
@@ -304,15 +305,35 @@ export default function Result() {
 
   async function sendFeedback(fromSwitch, remove) {
     store.feedbackError = false;
-    if (!htmlToText(store.feedback).trim()) {
-      store.feedbackError = true;
+
+    const originalGrade = store.assignation.grades[0];
+    const currentGrade = originalGrade ?? {
+      subject: store.instance.subjects[0].subject,
+      type: 'main',
+      grade: null,
+      feedback: null,
+      visibleToStudent: true,
+    };
+
+    if (remove || !htmlToText(store.feedback).trim()) {
+      currentGrade.feedback = null;
     } else {
-      try {
-        await setFeedbackRequest(store.instance.id, getUserId(), remove ? '' : store.feedback);
-        if (!fromSwitch) addSuccessAlert(t('feedbackDone'));
-      } catch (e) {
-        addErrorAlert(e);
+      currentGrade.feedback = store.feedback;
+    }
+
+    try {
+      if ((currentGrade.feedback && !remove) || !!originalGrade) {
+        await updateStudentRequest({
+          instance: store.instance.id,
+          student: store.assignation.user,
+          grades: [currentGrade],
+        });
       }
+      if (!fromSwitch) {
+        addSuccessAlert(t('feedbackDone'));
+      }
+    } catch (e) {
+      addErrorAlert(e);
     }
     render();
   }
@@ -496,7 +517,7 @@ export default function Result() {
                     subject={store?.instance?.subjects?.[0]?.subject}
                   />
 
-                  {store.isTeacher ? (
+                  {store.isTeacher && !store.instance.dates.evaluationClosed ? (
                     <>
                       <Switch
                         label={t('feedbackForStudent')}

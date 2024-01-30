@@ -25,7 +25,7 @@ function parseStudentsData({ studentsData, values: _values, scores, isSubmitted 
 
 function parseStudentsGrades({ assignableInstances, filters }) {
   return assignableInstances.reduce((studentsValues, activity) => {
-    activity.students.forEach((student) => {
+    activity.students?.forEach((student) => {
       const grade = student.grades.find((g) => g.type === 'main' && g.subject === filters.subject);
 
       // eslint-disable-next-line no-param-reassign
@@ -57,8 +57,7 @@ export function sortByStudentName(values) {
       return surnameCompare;
     }
 
-    const nameCompare = a.name.localeCompare(b.name);
-    return nameCompare;
+    return a.name.localeCompare(b.name);
   });
 }
 

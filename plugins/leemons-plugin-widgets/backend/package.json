@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-widgets",
-  "version": "1.0.28",
+  "version": "1.0.35",
   "description": "Leemons widgets plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.64",
+    "@leemons/deployment-manager": "0.0.71",
     "@leemons/error": "0.0.41",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.64",
-    "@leemons/mongodb-helpers": "0.0.64",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/mongodb-helpers": "0.0.71",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multi-events": "0.0.64",
+    "@leemons/multi-events": "0.0.71",
     "@leemons/validator": "0.0.41",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",

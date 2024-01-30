@@ -39,20 +39,16 @@ function useFiltersLocalizations() {
   const key = prefixPN('studentScoresPage.filters');
   const [, translations] = useTranslateLoader(key);
 
-  const localizations = React.useMemo(() => {
+  return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, key);
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, key);
     }
 
     return {};
   }, [translations]);
-
-  return localizations;
 }
 
 function useSelectedPeriod({ periods, control, program, selectedCourse, finalLabel }) {
@@ -165,7 +161,7 @@ function PickDate({ control, name, localizations }) {
             minDate={minDate}
             maxDate={maxDate}
             disabled={name === 'endDate' && !minDate}
-            label={localizations?.[name]?.label}
+            // label={localizations?.[name]?.label}
             placeholder={localizations?.[name]?.placeholder}
           />
         );
@@ -228,7 +224,7 @@ export function Filters({ onChange, setKlasses }) {
             name="class"
             render={({ field }) => (
               <Select
-                label={localizations.course?.label}
+                // label={localizations.course?.label}
                 placeholder={localizations.course?.placeholder}
                 data={courses}
                 autoSelectOneOption
@@ -272,7 +268,7 @@ export function Filters({ onChange, setKlasses }) {
 
               return (
                 <Select
-                  label={localizations.period?.label}
+                  // label={localizations.period?.label}
                   placeholder={localizations.period?.placeholder}
                   data={data}
                   {...field}

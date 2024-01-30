@@ -56,7 +56,9 @@ const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
         <TextClamp lines={1}>
           <Text color={compact ? 'primary' : 'muted'} role="productive" size="xs">
             {classData?.subjectName}
-            {!!compact && ` - ${classData?.groupName} ${programNames}`}
+            {!!compact &&
+              (classData?.groupName || programNames) &&
+              ` - ${classData?.groupName} ${programNames}`}
           </Text>
         </TextClamp>
         {!compact && (

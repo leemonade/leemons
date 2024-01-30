@@ -209,16 +209,18 @@ export function ModuleDashboardBody({
   const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   return (
     <Box className={classes.activitiesList}>
-      <DashboardCard
-        introductionCard
-        assetNumber={t('introduction')}
-        statement={module?.metadata?.statement}
-        cover={module?.assignable?.asset?.cover}
-        localizations={localizations}
-        emptyIcon={module?.assignable?.roleDetails?.icon}
-        fileType={module?.assignable?.roleDetails?.name}
-        introductionLink={introductionLink}
-      />
+      {!!(module?.metadata?.statement || module?.assignable?.resources?.length) && (
+        <DashboardCard
+          introductionCard
+          assetNumber={t('introduction')}
+          statement={module?.metadata?.statement}
+          cover={module?.assignable?.asset?.cover}
+          localizations={localizations}
+          emptyIcon={module?.assignable?.roleDetails?.icon}
+          fileType={module?.assignable?.roleDetails?.name}
+          introductionLink={introductionLink}
+        />
+      )}
       {sortBy(
         activities?.map((activity, index) => ({
           comp: (
@@ -260,10 +262,10 @@ export function ModuleDashboard({ id, preview }) {
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, moduleAssignation);
   useEffect(() => {
-    if (isStudent) {
+    if (isStudent && moduleAssignation?.id) {
       updateTimestamps('open');
     }
-  }, []);
+  }, [moduleAssignation?.id]);
 
   const localizations = useModuleDashboardLocalizations();
   const { classes } = useModuleDashboardStyles();
@@ -295,8 +297,8 @@ export function ModuleDashboard({ id, preview }) {
             <TabPanel label={localizations?.resources}>
               <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
                 <Box>
-                  <Paper>
-                    <AssetEmbedList assets={module?.assignable?.resources} />
+                  <Paper sx={{ padding: '36px', width: '100%' }}>
+                    <AssetEmbedList assets={module?.assignable?.resources} width={720} />
                   </Paper>
                 </Box>
               </ContextContainer>

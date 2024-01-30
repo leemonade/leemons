@@ -139,6 +139,7 @@ module.exports = {
       placeholders: {
         tagsInput: 'Write your tags here and press enter',
         name: 'Resource Title',
+        bookmarkName: 'Bookmark title',
         tagline: 'Resource tagline',
         tags: 'Resource tags',
         url: 'Webpage link',
@@ -267,6 +268,11 @@ module.exports = {
       description: 'Do you want to cancel?',
       confirm: 'Confirm',
       cancel: 'Back',
+    },
+    common: {
+      labels: {
+        processingImage: 'Processing image',
+      },
     },
   },
   list: {

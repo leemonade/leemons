@@ -5,15 +5,18 @@ import prefixPN from '@menu-builder/helpers/prefixPN';
 import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getUserCentersRequest, getUserProfilesRequest } from '@users/request';
-import { currentProfileIsSuperAdmin, useSession } from '@users/session';
+import { currentProfileIsAdmin, currentProfileIsSuperAdmin, useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
+import getPlatformName from '@users/request/getPlatformName';
 import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {
   const session = useSession();
   if (session) session.isSuperAdmin = currentProfileIsSuperAdmin();
+  if (session) session.isAdmin = currentProfileIsAdmin();
+
   const [t] = useTranslateLoader(prefixPN('sessionMenu'));
   const [ts] = useTranslateLoader(prefixPN('spotlight'));
   const [store, render] = useStore({
@@ -35,10 +38,12 @@ export default function MainMenu({ subNavWidth, ...props }) {
   // LOAD INITIAT DATA
 
   async function load() {
-    const [{ centers }, { profiles }] = await Promise.all([
+    const [{ centers }, { profiles }, { name }] = await Promise.all([
       getUserCentersRequest(),
       getUserProfilesRequest(),
+      getPlatformName(),
     ]);
+    store.platformName = name;
     if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       store.onlyOneProfile = true;
       store.centerName = centers[0].name;
@@ -120,43 +125,43 @@ export default function MainMenu({ subNavWidth, ...props }) {
       });
     }
 
+    result.push({
+      id: 'menu-4',
+      label: t('emailPreference'),
+      order: 1,
+      url: '/private/emails/preference',
+      window: 'SELF',
+      disabled: null,
+    });
+
+    result.push({
+      id: 'menu-3',
+      label: t('changeLanguage'),
+      order: 2,
+      url: '/private/users/language',
+      window: 'SELF',
+      disabled: null,
+    });
+
     if (!store.onlyOneProfile) {
       result.push({
         id: 'menu-2',
         label: t('switchProfile'),
-        order: 1,
+        order: 3,
         url: '/protected/users/select-profile',
         window: 'BLANK',
         disabled: null,
       });
     }
 
-    result.push(
-      {
-        id: 'menu-3',
-        label: t('changeLanguage'),
-        order: 2,
-        url: '/private/users/language',
-        window: 'SELF',
-        disabled: null,
-      },
-      {
-        id: 'menu-4',
-        label: t('emailPreference'),
-        order: 3,
-        url: '/private/emails/preference',
-        window: 'SELF',
-        disabled: null,
-      },
-      {
-        id: 'menu-5',
-        label: t('logout'),
-        order: 4,
-        url: '/protected/users/logout',
-        window: 'BLANK',
-        disabled: null,
-      }
-    );
+    result.push({
+      id: 'menu-5',
+      label: t('logout'),
+      order: 4,
+      url: '/protected/users/logout',
+      window: 'BLANK',
+      disabled: null,
+    });
 
     return result;
   }, [t, store, session]);
@@ -180,7 +185,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
         useRouter
         useSpotlight={!session?.isSuperAdmin}
         spotlightLabel={ts('tooltip')}
-        navTitle={navTitle}
+        navTitle={session.isAdmin ? store.platformName : navTitle}
         session={{
           ...session,
           name: session?.name ?? '',

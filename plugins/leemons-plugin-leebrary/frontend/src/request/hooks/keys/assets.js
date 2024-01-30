@@ -5,10 +5,16 @@ export const allAssetsKey = [
   },
 ];
 
-export const getAssetsKey = (ids, filters) => [
+export const allGetAssetsKey = [
   {
     ...allAssetsKey[0],
     action: 'get',
+  },
+];
+
+export const getAssetsKey = (ids, filters) => [
+  {
+    ...allGetAssetsKey[0],
     ids,
     filters,
   },

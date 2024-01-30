@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import _, { flatten, isEmpty, isFunction, isNil, noop } from 'lodash';
+import _, { flatten, isEmpty, isFunction, isNil, noop, toLower } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
@@ -88,7 +88,6 @@ const AssetForm = ({
   const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [boxRef, rect] = useResizeObserver();
-  const isTeacher = useIsTeacher();
 
   // ························································
   // FORM SETUP
@@ -105,6 +104,8 @@ const AssetForm = ({
     subjects: asset?.subjects || null,
   };
 
+  const formForAsset = useForm({ defaultValues });
+
   const {
     control,
     handleSubmit,
@@ -113,7 +114,7 @@ const AssetForm = ({
     setValue,
     getValues,
     formState: { errors },
-  } = form ?? useForm({ defaultValues });
+  } = form || formForAsset;
 
   const formValues = watch();
   const coverFile = watch('cover');
@@ -236,6 +237,11 @@ const AssetForm = ({
             setValue('mediaType', 'video');
           } else if (!isEmpty(metadata.audio)) {
             setValue('mediaType', 'audio');
+          } else if (
+            toLower(metadata.publisher) === 'youtube' ||
+            metadata.url?.startsWith('https://www.youtube')
+          ) {
+            setValue('mediaType', 'video');
           }
         }
         setChecking(false);
@@ -426,55 +432,49 @@ const AssetForm = ({
               />
             </ContextContainer>
 
-            {isTeacher ? (
-              <>
-                {store.programs && !store.alwaysOpen ? (
-                  <Switch
-                    onChange={(e) => {
-                      setValue('program', null);
-                      setValue('subjects', null);
-                      store.showAdvancedConfig = e;
-                      render();
-                    }}
-                    disabled={store.alwaysOpen}
-                    checked={store.alwaysOpen ? true : store.showAdvancedConfig}
-                    label={labels.advancedConfig}
-                  />
-                ) : null}
+            {store.programs && !store.alwaysOpen ? (
+              <Switch
+                onChange={(e) => {
+                  store.showAdvancedConfig = e;
+                  render();
+                }}
+                disabled={store.alwaysOpen}
+                checked={store.alwaysOpen ? true : store.showAdvancedConfig}
+                label={labels.advancedConfig}
+              />
+            ) : null}
 
-                {store.showAdvancedConfig ? (
-                  <Controller
-                    name="subjects"
-                    control={control}
-                    rules={store.subjectRequired}
-                    render={({ field, fieldState: { error } }) => (
-                      <SubjectPicker
-                        {...field}
-                        value={_.map(field.value || [], (subject) =>
-                          _.isString(subject) ? subject : subject.subject
-                        )}
-                        onChangeRaw={(e) => {
-                          if (e.length > 0) {
-                            if (!program) setValue('program', e[0].programId);
-                          } else if (program) setValue('program', null);
-                        }}
-                        error={error}
-                        assignable={{}}
-                        localizations={{
-                          title: labels?.programAndSubjects,
-                          program: labels?.program,
-                          subject: labels?.subjectSelects?.labels?.subject,
-                          add: labels?.subjectSelects?.placeholders?.addSubject,
-                          course: labels?.course,
-                          placeholder: labels?.selectPlaceholder,
-                        }}
-                        hideSectionHeaders={false}
-                        onlyOneSubject={store.maxOneSubject}
-                      />
+            {store.showAdvancedConfig ? (
+              <Controller
+                name="subjects"
+                control={control}
+                rules={store.subjectRequired}
+                render={({ field, fieldState: { error } }) => (
+                  <SubjectPicker
+                    {...field}
+                    value={_.map(field.value || [], (subject) =>
+                      _.isString(subject) ? subject : subject?.subject
                     )}
+                    onChangeRaw={(e) => {
+                      if (e.length > 0) {
+                        if (!program) setValue('program', e[0].programId);
+                      } else if (program) setValue('program', null);
+                    }}
+                    error={error}
+                    assignable={{}}
+                    localizations={{
+                      title: labels?.programAndSubjects,
+                      program: labels?.program,
+                      subject: labels?.subjectSelects?.labels?.subject,
+                      add: labels?.subjectSelects?.placeholders?.addSubject,
+                      course: labels?.course,
+                      placeholder: labels?.selectPlaceholder,
+                    }}
+                    hideSectionHeaders={false}
+                    onlyOneSubject={store.maxOneSubject}
                   />
-                ) : null}
-              </>
+                )}
+              />
             ) : null}
 
             {store.showAdvancedConfig ? (

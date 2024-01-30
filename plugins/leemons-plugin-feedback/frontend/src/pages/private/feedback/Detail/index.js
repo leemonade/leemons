@@ -52,7 +52,7 @@ export default function Index() {
 
       const { feedback } = await saveFeedbackRequest({ ...body, published: false });
       addSuccessAlert(t('savedAsDraft'));
-      history.push(`/private/feedback/${feedback.id}`);
+      history.replace(`/private/feedback/${feedback.id}`);
     } catch (error) {
       addErrorAlert(error);
     }

@@ -10,6 +10,7 @@ import UploadingFileModal from '@leebrary/components/UploadingFileModal';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { newAssetRequest } from '@leebrary/request';
 import { addErrorAlert } from '@layout/alert';
+import { readAndCompressImage } from 'browser-image-resizer';
 import { usePickerCategories } from '../hooks/usePickerCategories';
 
 export const useNewResourceStyles = createStyles((theme) => {
@@ -54,9 +55,25 @@ export function NewResource({ categories: creatableCategories, acceptedFileTypes
 
   const handleOnSubmit = async (data) => {
     try {
-      const uploadedFile = await uploadFileAsMultipart(data.file, {
+      const body = { ...data };
+      if (
+        body.file.type.startsWith('image') &&
+        body.file.type.indexOf('/gif') < 0 &&
+        body.file.type.indexOf('/svg') < 0
+      ) {
+        const fileName = body.file.name;
+        const resizedImage = await readAndCompressImage(body.file, {
+          quality: 0.8,
+          maxWidth: 800,
+          maxHeight: 600,
+          debug: true,
+        });
+        body.file = resizedImage;
+        body.file.name = fileName;
+      }
+      setUploadingFileInfo({ state: t('common.labels.processingImage') });
+      const uploadedFile = await uploadFileAsMultipart(body.file, {
         onProgress: (info) => {
-          // console.log(info);
           setUploadingFileInfo(info);
         },
       });
@@ -64,7 +81,7 @@ export function NewResource({ categories: creatableCategories, acceptedFileTypes
 
       try {
         const { asset } = await newAssetRequest(
-          { ...data, file: uploadedFile },
+          { ...body, file: uploadedFile },
           null,
           'media-files'
         );

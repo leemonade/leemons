@@ -9,11 +9,15 @@ const _ = require('lodash');
 
 const { LeemonsError } = require('@leemons/error');
 
+const { defaultsDeep } = require('lodash');
 const { getStatus } = require('./getStatus');
 const { getDates } = require('../../dates');
 const {
   getUserPermissionMultiple,
 } = require('../../permissions/instances/users/getUserPermissionMultiple');
+const {
+  getModuleActivitiesTimestamps,
+} = require('../../assignations/getAssignations/getModuleActivitesTimestamps');
 
 /**
  * Retrieves the status of multiple instances.
@@ -104,6 +108,11 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
     .select(['id', 'instance', 'user'])
     .lean();
 
+  const { dates: modulesDates } = await getModuleActivitiesTimestamps({
+    assignationsData: assignationsFound,
+    ctx,
+  });
+
   const assignationsObject = assignationsFound.reduce(
     (obj, assignation) => ({ ...obj, [assignation.id]: assignation }),
     {}
@@ -119,7 +128,7 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
       ctx,
     }).then((assignationDates) => {
       Object.entries(assignationDates).map(([id, datesObject]) =>
-        _.set(assignationsObject, `${id}.timestamps`, datesObject)
+        _.set(assignationsObject, `${id}.timestamps`, defaultsDeep(datesObject, modulesDates[id]))
       );
     })
   );

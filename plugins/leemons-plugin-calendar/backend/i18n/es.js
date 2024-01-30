@@ -1,5 +1,5 @@
 module.exports = {
-  classes: 'Clases',
+  classes: 'Asignaturas',
   programs: 'Programas',
   event: 'Evento',
   task: 'Tarea',
@@ -48,7 +48,7 @@ module.exports = {
     time: 'Hora',
     event: 'Evento',
     empty: 'No hay eventos',
-    classes: 'Clases',
+    classes: 'Asignaturas',
     weekSchedule: 'Horario semanal',
     course: 'Curso',
     attendanceControl: 'Ir al dashboard de la asignatura',

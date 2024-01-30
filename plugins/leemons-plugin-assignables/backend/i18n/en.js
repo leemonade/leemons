@@ -22,7 +22,7 @@ module.exports = {
       add: 'Add',
     },
     groups: {
-      title: '¿Who will perform?',
+      title: 'Students',
       options: {
         class: 'Existing class',
         customGroup: 'Custom group',
@@ -66,7 +66,7 @@ module.exports = {
       },
     },
     dates: {
-      title: '¿When will occur?',
+      title: 'Timespan',
       optionsInput: {
         label: 'Timespan',
         options: {
@@ -88,12 +88,12 @@ module.exports = {
         },
         startDate: {
           label: 'Start date',
-          placeholder: 'Type the date',
+          placeholder: 'Select date',
           error: 'Pick a start date',
         },
         deadline: {
           label: 'Deadline',
-          placeholder: 'Type the date',
+          placeholder: 'Select date',
           error: 'Pick a deadline',
         },
         bothDatesError: 'Pick a start date and deadline',

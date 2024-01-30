@@ -176,9 +176,10 @@ async function getCalendarsToFrontend({ ctx }) {
   const ownerCalendarIds = _.map(ownerItems, 'item');
   const ownerCalendars = _.filter(
     calendars,
-    (calendar) => ownerCalendarIds.indexOf(calendar.id) >= 0
+    (calendar) =>
+      ownerCalendarIds.indexOf(calendar.id) >= 0 &&
+      calendar.section === 'users.calendar.user_section'
   );
-
   const finalCalendarsIds = [];
   const finalCalendars = [];
 

@@ -128,7 +128,7 @@ const StudentActivitiesStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'end',
     gap: 24,
-    backgroundColor: theme.other.global.background.color.surface.subtle,
+    // backgroundColor: theme.other.global.background.color.surface.subtle,
     paddingInline: 48,
     paddingBlock: 16,
   },
@@ -194,7 +194,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce((total, next) => total + next.score.number, 0) /
-        classActivities.length || 0;
+      classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 
@@ -243,7 +243,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
       activity.classes.includes(klass.id)
     );
     return classActivitiesRaw.map((activity) => {
-      const percentage = (100 / classActivitiesRaw.length).toFixed(0);
+      const percentage = (100 / classActivitiesRaw.length)?.toFixed(0);
       const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
       const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
         .replace(':id', activity.id)
@@ -284,6 +284,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
         filteredClasses.map((klass) => {
           const classActivities = getClassActivities(filteredActivities, klass);
           const averageScore = getAverageScore(klass, classActivities);
+
           return (
             <ScoreFronstage
               key={klass.id}
@@ -292,6 +293,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
               label={labels.averageScore}
               image={getClassImage(klass)}
               icon={getClassIcon(klass)}
+              color={klass.color}
               score={averageScore}
               values={classActivities}
               maxGrade={evaluationSystem?.maxScale.number}
@@ -321,7 +323,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     <Box className={classes.root}>
       <Box className={classes.filters}>
         <Select
-          label={labels.subject.label}
+          // label={labels.subject.label}
           placeholder={labels.subject.placeholder}
           data={klasses.map((klass) => {
             const klassName =
@@ -340,7 +342,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
           clearable={labels.type.clear}
         />
         <Select
-          label={labels.type.label}
+          // label={labels.type.label}
           placeholder={labels.type.placeholder}
           data={roles}
           value={localFilters.type}

@@ -45,7 +45,7 @@ export default function ScoresPage() {
         ref={scrollRef}
         style={{ overflow: 'auto', position: 'relative' }}
       >
-        <TotalLayoutStepContainer>
+        <TotalLayoutStepContainer fullWidth>
           <Box className={classes.root}>
             <Box className={classes.headerContainer}>
               <Filters onChange={setFilters} setKlasses={setKlasses} />
