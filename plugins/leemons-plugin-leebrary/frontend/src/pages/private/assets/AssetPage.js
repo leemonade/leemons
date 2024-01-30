@@ -195,7 +195,6 @@ const AssetPage = () => {
     try {
       const body = { ...formValues };
       if (category?.key !== 'bookmarks' && !body.file?.id) {
-        console.log('1');
         if (
           body.file.type.startsWith('image') &&
           body.file.type.indexOf('/gif') < 0 &&
@@ -226,7 +225,6 @@ const AssetPage = () => {
 
       try {
         const assetData = { ...body, cover, file: body.file?.id ?? file };
-        console.log('file', file);
         const needsOldCover = isImage
           ? form.formState.dirtyFields.file
           : form.formState.dirtyFields.cover;
@@ -243,7 +241,6 @@ const AssetPage = () => {
             setUploadingFileInfo(info);
           },
         });
-        console.log('PASAMOS LA REQUEST');
         const response = await getAssetRequest(newAsset.id);
         setAsset(prepareAsset(response.asset));
         setLoading(false);
@@ -258,19 +255,16 @@ const AssetPage = () => {
           history.push('/private/leebrary/bookmarks/list');
         else history.push('/private/leebrary/media-files/list');
       } catch (err) {
-        console.log('err', err);
         setLoading(false);
         addErrorAlert(getErrorMessage(err));
       }
     } catch (e) {
-      console.log('e', e);
       setUploadingFileInfo(null);
     }
   };
 
   const handlePlublishAndAssign = async () => {
     await handlePublish();
-    // console.log('REDIRECCIÓN A ASIGNAR');
   };
   // #endregion
 
