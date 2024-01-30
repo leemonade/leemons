@@ -1,6 +1,6 @@
 {
   "name": "leemons-plugin-families-emergency-numbers",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "Leemons families emergency numbers plugin",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
@@ -21,14 +21,14 @@
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.70",
+    "@leemons/deployment-manager": "0.0.71",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.70",
-    "@leemons/mongodb-helpers": "0.0.70",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/mongodb-helpers": "0.0.71",
     "@leemons/mqtt": "0.0.41",
-    "@leemons/multi-events": "0.0.70",
-    "@leemons/multilanguage": "0.0.70",
-    "@leemons/permissions": "0.0.70",
+    "@leemons/multi-events": "0.0.71",
+    "@leemons/multilanguage": "0.0.71",
+    "@leemons/permissions": "0.0.71",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"

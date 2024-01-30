@@ -1,4 +1,13 @@
-const { isEmpty, map, intersection, flattenDeep, compact, uniq, escapeRegExp } = require('lodash');
+const {
+  isEmpty,
+  map,
+  intersection,
+  flattenDeep,
+  compact,
+  uniq,
+  escapeRegExp,
+  concat,
+} = require('lodash');
 
 const { byProvider: getByProvider } = require('../byProvider');
 /**
@@ -84,22 +93,35 @@ async function getProviderAssets({
   }
 
   const [assetsFound, byTags] = await Promise.all([
-    ctx.tx.db.Assets.find(query).select('id').lean(),
+    ctx.tx.db.Assets.find(query).select(['id']).lean(),
     ctx.tx.call('common.tags.getTagsValueByPartialTags', {
       values: criteria,
       type: ctx.prefixPN(''),
     }),
   ]);
 
+  let byTagsFiltered;
+
+  if (byTags?.length && categoryId) {
+    const byTagsQuery = { id: byTags, category: categoryId, indexable };
+    byTagsFiltered = await ctx.tx.db.Assets.find(byTagsQuery).select(['id']).lean();
+    byTagsFiltered = map(byTagsFiltered, 'id');
+  } else {
+    byTagsFiltered = byTags;
+  }
+
   const matches = map(assetsFound, 'id');
+
   // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
   // EN: If there are resources, we must apply a previous filter as an intersection
   if (isEmpty(criteria)) {
     assets = matches;
   } else if (!isEmpty(assets)) {
-    assets = intersection(matches, compact(uniq(flattenDeep(byTags))));
+    const assetsByTags = intersection(assets, compact(uniq(flattenDeep(byTagsFiltered))));
+    const assetsByDBMatches = intersection(assets, matches);
+    assets = compact(uniq(assetsByTags.concat(assetsByDBMatches)));
   } else {
-    assets = compact(uniq(matches.concat(flattenDeep(byTags))));
+    assets = compact(uniq(matches.concat(flattenDeep(byTagsFiltered))));
   }
 
   nothingFound = assets.length === 0;

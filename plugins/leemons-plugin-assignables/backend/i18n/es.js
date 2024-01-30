@@ -88,12 +88,12 @@ module.exports = {
         },
         startDate: {
           label: 'Fecha de inicio',
-          placeholder: 'Introduce la fecha',
+          placeholder: 'Seleccionar fecha',
           error: 'Selecciona una fecha de inicio',
         },
         deadline: {
           label: 'Fecha de fin',
-          placeholder: 'Introduce la fecha',
+          placeholder: 'Seleccionar fecha',
           error: 'Selecciona una fecha de fin',
         },
         bothDatesError: 'Selecciona una fecha de inicio y fin',

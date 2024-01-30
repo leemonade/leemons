@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import {
   LoadingOverlay,
@@ -34,17 +34,26 @@ const validators = [
   }),
 ];
 
+function useUrlQuery() {
+  const { search } = useLocation();
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
+  const urlQuery = useUrlQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(Number(urlQuery.get('step')) || 0);
   const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
   const history = useHistory();
   const params = useParams();
   const processTextEditor = useProcessTextEditor();
-  const { data: document, isLoading: documentIsLoading } = useDocument({ id: params.id, isNew });
+  const { data: documentData, isLoading: documentIsLoading } = useDocument({
+    id: params.id,
+    isNew,
+  });
   const mutation = useMutateDocument();
   const toolbarRef = React.useRef();
   const form = useForm({
@@ -88,8 +97,8 @@ export default function Index({ isNew, readOnly }) {
 
     setIsLoading(true);
 
-    const processedContent = await processTextEditor(formValues.content, document?.content, {
-      force: document?.published,
+    const processedContent = await processTextEditor(formValues.content, documentData?.content, {
+      force: documentData?.published,
     });
 
     const documentToSave = { ...formValues, content: processedContent, published: publishing };
@@ -101,10 +110,17 @@ export default function Index({ isNew, readOnly }) {
         onSuccess: (data) => {
           addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
           setIsLoading(false);
-          if (assigning)
+          if (!publishing) {
+            history.replace(
+              `/private/content-creator/${data.document.assignable}/edit?step=${activeStep}`
+            );
+          }
+
+          if (assigning) {
             history.push(`/private/content-creator/${data.document.assignable}/assign`);
-          else if (publishing && !assigning)
+          } else if (publishing && !assigning) {
             history.push('/private/leebrary/assignables.content-creator/list');
+          }
         },
         onError: (e) => {
           addErrorAlert(e);
@@ -116,7 +132,7 @@ export default function Index({ isNew, readOnly }) {
 
   const handleDynamicTitle = (value) => {
     form.setValue('content', value);
-    if (!document?.name) {
+    if (!documentData?.name) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
         parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
@@ -132,15 +148,15 @@ export default function Index({ isNew, readOnly }) {
   useEffect(() => {
     if (isNew) form.reset();
     else {
-      form.setValue('name', document?.name);
-      form.setValue('content', document?.content);
-      form.setValue('description', document?.description);
-      form.setValue('color', document?.color || null);
-      form.setValue('cover', document?.cover || null);
-      form.setValue('program', document?.program || null);
-      form.setValue('subjects', document?.subjects || null);
+      form.setValue('name', documentData?.name);
+      form.setValue('content', documentData?.content);
+      form.setValue('description', documentData?.description);
+      form.setValue('color', documentData?.color || null);
+      form.setValue('cover', documentData?.cover || null);
+      form.setValue('program', documentData?.program || null);
+      form.setValue('subjects', documentData?.subjects || null);
     }
-  }, [document]);
+  }, [documentData]);
 
   useEffect(() => {
     if (formValues.content) {

@@ -67,6 +67,7 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   const { assignable, id } = activity;
   const { roleDetails } = assignable;
   const { classes } = useDashboardCardFooterStyles();
+  const isNoEvaluable = !activity.requiresScoring;
   const assignablesURL = (roleDetails.dashboardURL || '/private/assignables/details/:id').replace(
     ':id',
     id
@@ -84,7 +85,7 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
     );
   }
 
-  if (evaluationInfo?.state === 'someDeliveredButNotAll') {
+  if (evaluationInfo?.state === 'someDeliveredButNotAll' && !isNoEvaluable) {
     return (
       <Box className={classes.buttonFull}>
         <Link to={assignablesURL}>
@@ -106,9 +107,13 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   }
 
   return (
-    <Link to={assignablesURL}>
-      <Button size="sm">{localizations?.buttons?.review}</Button>
-    </Link>
+    <Box className={classes.buttonFull}>
+      <Link to={assignablesURL}>
+        <Button fullWidth variant={isNoEvaluable ? 'outline' : 'primary'}>
+          {localizations?.buttons?.review}
+        </Button>
+      </Link>
+    </Box>
   );
 }
 
@@ -250,12 +255,16 @@ const DashboardCardFooter = ({
   evaluationInfo,
 }) => {
   const { classes } = useDashboardCardFooterStyles();
+  const isTeacher = useIsTeacher();
+
   if (introductionLink && localizations) {
     return (
       <Box className={classes.root}>
         <Box className={classes.buttonFull}>
           <Link to={introductionLink}>
-            <Button style={{ width: '100%' }}>{localizations?.buttons?.review}</Button>
+            <Button fullWidth variant={isTeacher ? 'outline' : 'primary'}>
+              {localizations?.buttons?.review}
+            </Button>
           </Link>
         </Box>
       </Box>

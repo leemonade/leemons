@@ -119,8 +119,8 @@ const LibraryTool = ({
           labels={labels}
           alignLabels={alignLabels}
           bubbleMenu={bubbleMenu}
-        />,
-        { offset: [0, -40] }
+        />
+        // { offset: [0, -40] }
       );
     } else {
       closeBubbleMenu();

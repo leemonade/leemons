@@ -125,43 +125,43 @@ export default function MainMenu({ subNavWidth, ...props }) {
       });
     }
 
+    result.push({
+      id: 'menu-4',
+      label: t('emailPreference'),
+      order: 1,
+      url: '/private/emails/preference',
+      window: 'SELF',
+      disabled: null,
+    });
+
+    result.push({
+      id: 'menu-3',
+      label: t('changeLanguage'),
+      order: 2,
+      url: '/private/users/language',
+      window: 'SELF',
+      disabled: null,
+    });
+
     if (!store.onlyOneProfile) {
       result.push({
         id: 'menu-2',
         label: t('switchProfile'),
-        order: 1,
+        order: 3,
         url: '/protected/users/select-profile',
         window: 'BLANK',
         disabled: null,
       });
     }
 
-    result.push(
-      {
-        id: 'menu-3',
-        label: t('changeLanguage'),
-        order: 2,
-        url: '/private/users/language',
-        window: 'SELF',
-        disabled: null,
-      },
-      {
-        id: 'menu-4',
-        label: t('emailPreference'),
-        order: 3,
-        url: '/private/emails/preference',
-        window: 'SELF',
-        disabled: null,
-      },
-      {
-        id: 'menu-5',
-        label: t('logout'),
-        order: 4,
-        url: '/protected/users/logout',
-        window: 'BLANK',
-        disabled: null,
-      }
-    );
+    result.push({
+      id: 'menu-5',
+      label: t('logout'),
+      order: 4,
+      url: '/protected/users/logout',
+      window: 'BLANK',
+      disabled: null,
+    });
 
     return result;
   }, [t, store, session]);

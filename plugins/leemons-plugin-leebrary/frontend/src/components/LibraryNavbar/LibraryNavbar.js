@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isFunction, groupBy, isEmpty } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
+import { isFunction, groupBy, isEmpty, cloneDeep } from 'lodash';
 import {
   Box,
   Button,
@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@bubbles-ui/components';
-import { getProgramsNamesRequest } from '@leebrary/request';
+import { getProgramsPublicInfoRequest } from '@academic-portfolio/request';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { CloudUploadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 
@@ -39,15 +39,17 @@ const LibraryNavbar = ({
   const [showUpload, setShowUpload] = useState(false);
   const [programsDropdownInfo, setProgramsDropdownInfo] = useState(null);
 
-  const callGetProgramsNames = async () => {
-    const response = await getProgramsNamesRequest({
-      programsIds: subjects?.map((item) => item.program),
-    });
+  const getProgramsInfo = async () => {
+    const response = await getProgramsPublicInfoRequest(subjects?.map((item) => item.program));
 
-    if (!isEmpty(response?.data)) {
+    if (!isEmpty(response?.programs)) {
       const programsInfo = {};
-      Object.keys(response.data).forEach((programId) => {
-        programsInfo[programId] = { name: response.data[programId], dropdownOpen: false };
+
+      response.programs.forEach(({ id, name }) => {
+        programsInfo[id] = {
+          name,
+          dropdownOpen: false,
+        };
       });
       setProgramsDropdownInfo(programsInfo);
     }
@@ -55,7 +57,7 @@ const LibraryNavbar = ({
 
   useEffect(() => {
     if (subjects?.length) {
-      callGetProgramsNames();
+      getProgramsInfo();
     }
   }, [subjects]);
 
@@ -81,7 +83,7 @@ const LibraryNavbar = ({
     isFunction(onNav) && onNav(category);
   };
 
-  // TODO: this is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
+  // This is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
   const contentAssetsKeys = [
     'bookmarks',
     'media-files',
@@ -89,69 +91,80 @@ const LibraryNavbar = ({
     'assignables.content-creator',
   ];
 
-  const getSubjectsDropdown = () => {
+  const getSubjectsDropdown = useCallback(() => {
     const subjectsByProgram = groupBy(subjects, 'program');
     return (
       <>
-        {Object.keys(subjectsByProgram).map((programId) => (
-          <NavbarItem
-            key={'student-subjects'}
-            icon={'/public/leebrary/program.svg'}
-            label={programsDropdownInfo?.[programId].name}
-            loading={loading}
-            selected={false}
-            canOpen
-            opened={programsDropdownInfo?.[programId].dropdownOpen}
-            onClick={() => {
-              setProgramsDropdownInfo((current) => {
-                const updatedPrograms = { ...current };
-                updatedPrograms[programId].dropdownOpen = !updatedPrograms[programId].dropdownOpen;
-                return updatedPrograms;
-              });
-            }}
-          >
-            <ScrollArea style={{ maxWidth: '100%' }}>
-              <Box key={`program-${programId}`} style={{ padding: '0 0 0 16px', marginInline: 8 }}>
-                {subjectsByProgram[programId].map((subject) => (
-                  <Box
-                    key={JSON.stringify(subject)}
-                    onClick={() => onNavSubject(subject, programId)}
-                    sx={(theme) => ({
-                      display: 'flex',
-                      position: 'relative',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      padding: `8px`,
-                      cursor: 'pointer',
-                      backgroundColor:
-                        selectedCategory === subject.id && theme.other.core.color.primary['200'],
-                      '&:hover': {
-                        backgroundColor:
-                          selectedCategory !== subject.id && theme.other.core.color.primary['100'],
-                      },
-                      borderLeft: '1px solid #dde1e6',
-                    })}
-                  >
+        {Object.keys(subjectsByProgram).map((programId) => {
+          const isProgramSelected = subjectsByProgram[programId].some(
+            (subject) => subject.id === selectedCategory
+          );
+          return (
+            <NavbarItem
+              key={'student-subjects'}
+              icon={'/public/leebrary/program.svg'}
+              label={programsDropdownInfo?.[programId].name}
+              loading={loading}
+              selected={isProgramSelected && !programsDropdownInfo?.[programId].dropdownOpen}
+              canOpen
+              opened={programsDropdownInfo?.[programId].dropdownOpen}
+              onClick={() => {
+                setProgramsDropdownInfo((current) => {
+                  const updatedPrograms = cloneDeep(current);
+                  updatedPrograms[programId].dropdownOpen =
+                    !updatedPrograms[programId].dropdownOpen;
+                  return updatedPrograms;
+                });
+              }}
+            >
+              <ScrollArea style={{ maxWidth: '100%' }}>
+                <Box
+                  key={`program-${programId}`}
+                  style={{ padding: '0 0 0 16px', marginInline: 8 }}
+                >
+                  {subjectsByProgram[programId].map((subject) => (
                     <Box
+                      key={subject.id}
+                      onClick={() => onNavSubject(subject, programId)}
                       sx={(theme) => ({
-                        position: 'absolute',
-                        left: '-1px',
-                        width: 3,
-                        height: '100%',
+                        display: 'flex',
+                        position: 'relative',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        padding: `8px`,
+                        cursor: 'pointer',
                         backgroundColor:
-                          selectedCategory === subject.id && theme.other.core.color.primary['300'],
+                          selectedCategory === subject.id && theme.other.core.color.primary['200'],
+                        '&:hover': {
+                          backgroundColor:
+                            selectedCategory !== subject.id &&
+                            theme.other.core.color.primary['100'],
+                        },
+                        borderLeft: '1px solid #dde1e6',
                       })}
-                    />
-                    <SubjectItemDisplay subjectsIds={[subject.id]} />
-                  </Box>
-                ))}
-              </Box>
-            </ScrollArea>
-          </NavbarItem>
-        ))}
+                    >
+                      <Box
+                        sx={(theme) => ({
+                          position: 'absolute',
+                          left: '-1px',
+                          width: 3,
+                          height: '100%',
+                          backgroundColor:
+                            selectedCategory === subject.id &&
+                            theme.other.core.color.primary['300'],
+                        })}
+                      />
+                      <SubjectItemDisplay subjectsIds={[subject.id]} />
+                    </Box>
+                  ))}
+                </Box>
+              </ScrollArea>
+            </NavbarItem>
+          );
+        })}
       </>
     );
-  };
+  }, [programsDropdownInfo, selectedCategory, subjects, loading]);
 
   const renderNavbarItems = useCallback(
     ({ callback, typeOfItem, onlyCreatable = false, ignoreSelected = false }) => {
@@ -234,12 +247,14 @@ const LibraryNavbar = ({
             label={labels.recent}
             onClick={() => onNavHandler({ key: 'leebrary-recent' })}
             selected={selectedCategory === 'leebrary-recent'}
+            loading={loading}
           />
           <NavbarItem
             icon={'/public/leebrary/favorite.svg'}
             label={labels.quickAccess}
             onClick={() => onNavHandler(null)}
             selected={selectedCategory === 'pins'}
+            loading={loading}
           />
           {showSharedWithMe ? (
             <NavbarItem

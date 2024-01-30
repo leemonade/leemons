@@ -210,7 +210,6 @@ module.exports = {
       const payload = { ...ctx.params };
       payload.onlyPublic = true;
       payload.forceStream = true;
-      console.log('PASANDO POR LA ACTION!!!');
       return getFileRest({ ctx, payload });
     },
   },
