@@ -117,18 +117,6 @@ module.exports = {
       delete: 'Eliminar',
       share: 'Permisos',
     },
-    duplicate: {
-      title: 'Duplicar módulo',
-      message: '¿Seguro que quiere duplicar el módulo {{name}}?',
-      success: 'El módulo {{name}} ha sido duplicado',
-      error: 'El módulo {{name}} no ha podido ser duplicado',
-    },
-    delete: {
-      title: 'Eliminar módulo',
-      message: '¿Seguro que quiere eliminar el módulo {{name}}?',
-      success: 'El módulo {{name}} ha sido eliminado',
-      error: 'El módulo {{name}} no ha podido ser eliminado',
-    },
   },
   assignation: {
     steps: {

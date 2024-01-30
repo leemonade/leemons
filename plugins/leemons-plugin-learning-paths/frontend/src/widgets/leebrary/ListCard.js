@@ -88,8 +88,6 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
           children: localizations?.menuItems?.duplicate,
           onClick: () => {
             openConfirmationModal({
-              title: localizations?.duplicate?.title,
-              description: localizations?.duplicate?.message?.replace('{{name}}', name),
               onConfirm: async () => {
                 setAppLoading(true);
                 try {
@@ -114,8 +112,6 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
           children: localizations?.menuItems?.delete,
           onClick: () => {
             openDeleteConfirmationModal({
-              title: localizations?.delete?.title,
-              description: localizations?.delete?.message?.replace('{{name}}', name),
               onConfirm: async () => {
                 setAppLoading(true);
                 try {
