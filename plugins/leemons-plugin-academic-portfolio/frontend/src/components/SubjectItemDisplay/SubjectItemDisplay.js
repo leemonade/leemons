@@ -40,6 +40,8 @@ const SubjectItemDisplay = ({ subjectsIds, programId }) => {
       typeof subjectsIds[0] === 'string'
     ) {
       setSubjectData(preparedSubject?.data?.[0]);
+    } else if (subjectData !== null) {
+      setSubjectData(null);
     }
     if (!isArray(subjectsIds) && subjectsIds?.name)
       setSubjectData({
@@ -49,7 +51,9 @@ const SubjectItemDisplay = ({ subjectsIds, programId }) => {
       });
   }, [isMultiSubjectCase, preparedSubject.data, subjectsIds]);
   useEffect(() => {
-    if (programData) {
+    if (!programId) {
+      setProgramName(null);
+    } else if (programData) {
       setProgramName(programData?.name);
     } else if (typeof programId === 'string' && !programId.includes('lrn:')) {
       setProgramName(programId);
