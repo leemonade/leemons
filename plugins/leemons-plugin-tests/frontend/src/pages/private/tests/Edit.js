@@ -68,7 +68,7 @@ export default function Edit() {
       const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: false });
       addSuccessAlert(t('savedAsDraft'));
       if (store.isNew) {
-        history.push(`/private/tests/${test.id}`);
+        history.replace(`/private/tests/${test.id}`);
       }
     } catch (error) {
       addErrorAlert(error);

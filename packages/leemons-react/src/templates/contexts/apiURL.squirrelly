@@ -3,3 +3,9 @@ export const apiUrl = "{{it.apiUrl}}";
 {{#else}}
 export const apiUrl = window.location.origin;
 {{/if}}
+
+{{@if(it.allOriginsUrl)}}
+export const allOriginsUrl = "{{it.allOriginsUrl}}";
+{{#else}}
+export const allOriginsUrl = "https://api.allorigins.win";
+{{/if}}
