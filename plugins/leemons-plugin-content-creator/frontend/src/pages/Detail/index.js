@@ -146,8 +146,7 @@ export default function Index({ isNew, readOnly }) {
   // INITIAL DATA HANDLER
 
   useEffect(() => {
-    // Temporary fix. There's a discrepancy between how multiple subjects and their corresponding programs are stored.
-    // It appears these tags were not intended to support multiple programs. Needs to be updated.
+    // Temporary fix. It won't be needed to solved the program if the Suject Picker limits the options to one program
     let solvedProgram;
     if (documentData?.subjects?.length) {
       solvedProgram = documentData?.subjects[0].program;
