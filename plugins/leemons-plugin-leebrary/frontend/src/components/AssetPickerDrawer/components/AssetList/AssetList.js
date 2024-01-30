@@ -33,7 +33,12 @@ export function AssetList({ variant, localizations, categories, filters, onSelec
 
   return (
     <Box className={classes.root}>
-      <Header localizations={localizations?.filters} categories={categories} onChange={setQuery} />
+      <Header
+        localizations={localizations?.filters}
+        categories={categories}
+        onChange={setQuery}
+        onlyImages={filters?.type === 'image'}
+      />
       <Box className={classes.list}>
         <List variant={variant} query={query} filters={filters} onSelect={onSelect} />
       </Box>

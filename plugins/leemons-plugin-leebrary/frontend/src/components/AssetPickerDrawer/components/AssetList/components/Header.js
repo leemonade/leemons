@@ -23,7 +23,7 @@ export const useHeaderStyles = createStyles((theme) => {
   };
 });
 
-export function Header({ localizations, categories: categoriesToUse, onChange }) {
+export function Header({ localizations, categories: categoriesToUse, onChange, onlyImages }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(null);
   const [mediaTypes, setMediaTypes] = useState([]);
@@ -74,7 +74,7 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
   useEffect(() => {
     const categoryIsMediaFiles = categoriesByKey?.['media-files']?.id === category;
 
-    if (categoryIsMediaFiles) {
+    if (categoryIsMediaFiles && !onlyImages) {
       loadMediaTypes(categoriesByKey?.['media-files']?.id).then((types) => {
         setMediaTypes([...types]);
       });
@@ -85,7 +85,7 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
 
   const mediaTypeSelectData = useMemo(() => {
     if (!mediaTypes?.length) return null;
-    return [{ label: localizations?.mediaType?.allTypes || 'FOO', value: 'all' }, ...mediaTypes];
+    return [{ label: localizations?.mediaType?.allTypes, value: 'all' }, ...mediaTypes];
   }, [mediaTypes, localizations]);
 
   return (
@@ -104,8 +104,8 @@ export function Header({ localizations, categories: categoriesToUse, onChange })
       {mediaTypes?.length > 1 && (
         <Select
           key="select-media-type"
-          placeholder={localizations?.mediaType?.placeholder || 'FOO'}
-          label={localizations?.mediaType?.label || 'FOO'}
+          placeholder={localizations?.mediaType?.placeholder}
+          label={localizations?.mediaType?.label}
           data={mediaTypeSelectData}
           value={mediaTypeFilter}
           onChange={setMediaTypeFilter}
@@ -128,4 +128,5 @@ Header.propTypes = {
   localizations: PropTypes.object,
   categories: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func,
+  onlyImages: PropTypes.bool,
 };
