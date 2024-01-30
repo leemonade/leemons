@@ -81,7 +81,6 @@ function useHeaderLabels(t) {
 function TaskSetupHeader({ t, store }) {
   const headerLabels = useHeaderLabels(t);
   const history = useHistory();
-
   return (
     <TotalLayoutHeader
       icon={

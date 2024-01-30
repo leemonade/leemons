@@ -12,7 +12,7 @@ module.exports = {
     cancel: 'Cancel',
     back: 'Back',
     schemaLabel: 'Schema',
-    documentTitlePlaceHolder: 'Title of the document',
+    documentTitlePlaceHolder: 'Document title',
     cancelModalTitle: 'Cancel document',
     cancelModalDescription: 'Do you want to cancel the document?',
     cancelModalConfirm: 'Confirm',

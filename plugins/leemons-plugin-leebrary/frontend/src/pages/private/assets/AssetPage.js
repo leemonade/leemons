@@ -274,11 +274,13 @@ const AssetPage = () => {
     if (category?.key === 'bookmarks')
       return {
         title: editing ? t('basicData.bookmark.titleEdit') : t('basicData.bookmark.titleNew'),
+        subTitle: t('basicData.bookmark.subTitle'),
         icon: <AssetBookmarkIcon width={24} height={24} color={'#878D96'} />,
         placeHolder: t('basicData.placeholders.bookmarkName'),
       };
     return {
       title: editing ? t('basicData.header.titleEdit') : t('basicData.header.titleNew'),
+      subTitle: t('basicData.header.subTitle'),
       icon: <AssetMediaIcon width={24} height={24} color={'#878D96'} />,
       placeHolder: t('basicData.placeholders.name'),
     };
