@@ -1,30 +1,34 @@
 const _ = require('lodash');
 const { getPluginNameFromCTX } = require('@leemons/service-name-parser');
+const Moleculer = require('moleculer');
 
 function errorMessage(message) {
   return `[LeemonsError] - ${message}`;
 }
 
-class LeemonsError extends Error {
+class LeemonsError extends Moleculer.Errors.MoleculerError {
   constructor(ctx, { message, httpStatusCode, customCode, allowedPermissions, ...rest }) {
     if (!ctx) throw new Error(errorMessage('ctx field is required'));
     if (!ctx.service || !ctx.service.name)
       throw new Error(errorMessage('ctx must be a valid moleculer context'));
     if (!message) throw new Error(errorMessage('message field is required'));
 
-    if (httpStatusCode) {
-      ctx.meta.$statusCode = httpStatusCode;
-    }
+    const data = {
+      pluginName: getPluginNameFromCTX(ctx),
+      pluginVersion: ctx.service.version,
+      httpStatusCode,
+      code: customCode,
+      allowedPermissions,
+    };
 
-    super(message);
+    if (httpStatusCode) {
+      super(message, httpStatusCode, 'LEEMONS_ERROR', data);
+    } else {
+      super(message, 400, 'LEEMONS_ERROR', data);
+    }
     _.forIn(rest, (value, key) => {
       this[key] = value;
     });
-    this.pluginName = getPluginNameFromCTX(ctx);
-    this.pluginVersion = ctx.service.version;
-    this.httpStatusCode = httpStatusCode;
-    this.allowedPermissions = allowedPermissions;
-    this.code = customCode;
   }
 }
 

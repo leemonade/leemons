@@ -40,14 +40,10 @@ export default function Private() {
 
       {/* TEACHER VIEW */}
       <Route path={`${path}/library/edit/:id`}>
-        <SetupTask
-          key={query.has('fromNew') ? 'create' : 'edit'}
-          session={session}
-          fallback={<LoadingOverlay visible />}
-        />
+        <SetupTask session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/library/create`}>
-        <SetupTask key="create" session={session} fallback={<LoadingOverlay visible />} />
+        <SetupTask session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/library/view/:id`}>
         <UserDetails session={session} fallback={<LoadingOverlay visible />} preview />

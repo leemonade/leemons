@@ -109,6 +109,7 @@ export default function DetailContent({
                 <Controller
                   control={form.control}
                   name="config.hasCurriculum"
+                  disabled
                   render={({ field }) => (
                     <Switch {...field} checked={field.value} label={t('enableCurriculum')} />
                   )}
