@@ -46,6 +46,9 @@ const categoriesSchema = new mongoose.Schema(
     listItemComponent: {
       type: String,
     },
+    playerComponent: {
+      type: String,
+    },
     detailComponent: {
       type: String,
     },
