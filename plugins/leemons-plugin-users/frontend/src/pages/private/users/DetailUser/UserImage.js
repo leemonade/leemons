@@ -1,11 +1,12 @@
+import React, { useState } from 'react';
 import { Avatar, Stack, Box, createStyles, ModalZoom } from '@bubbles-ui/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import SocketIoService from '@mqtt-socket-io/service';
 import { updateUserImageRequest } from '@users/request';
-import { useLayout } from '@layout/context';
+
+import { UploadingFileModal } from '@leebrary/components';
 import PropTypes from 'prop-types';
-import React from 'react';
 import getUserFullName from '../../../../helpers/getUserFullName';
 
 const Styles = createStyles((theme) => ({
@@ -37,8 +38,8 @@ const Styles = createStyles((theme) => ({
 function UserImage({ t, user, session, form, isEditMode }) {
   const isMe = user.id === session?.id;
   const [, , , getErrorMessage] = useRequestErrorMessage();
+  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
   const { classes: styles } = Styles({}, { name: 'UserImage' });
-  const { setLoading } = useLayout();
 
   const avatar = form.watch('user.avatar');
 
@@ -51,12 +52,11 @@ function UserImage({ t, user, session, form, isEditMode }) {
 
   async function saveImage(file) {
     try {
-      setLoading(true);
-      const { data } = await updateUserImageRequest(user.id, file);
+      const { data } = await updateUserImageRequest(user.id, file, setUploadingFileInfo);
+      setUploadingFileInfo(null);
 
       form.setValue('user.avatar', `${data.avatar}?t=${Date.now()}`);
       addSuccessAlert(t('imageUpdated'));
-      setLoading(false);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -76,18 +76,21 @@ function UserImage({ t, user, session, form, isEditMode }) {
   }
 
   return (
-    <Stack>
-      <Box sx={() => ({ display: 'flex', position: 'relative' })}>
-        {isEditMode || isMe ? (
-          <Box className={styles.imageOver} onClick={selectImage}>
-            {t('changeAvatar')}
-          </Box>
-        ) : null}
-        <ModalZoom>
-          <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
-        </ModalZoom>
-      </Box>
-    </Stack>
+    <>
+      <Stack>
+        <Box sx={() => ({ display: 'flex', position: 'relative' })}>
+          {isEditMode || isMe ? (
+            <Box className={styles.imageOver} onClick={selectImage}>
+              {t('changeAvatar')}
+            </Box>
+          ) : null}
+          <ModalZoom>
+            <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+          </ModalZoom>
+        </Box>
+      </Stack>
+      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
+    </>
   );
 }
 
