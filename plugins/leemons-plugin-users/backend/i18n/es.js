@@ -325,6 +325,7 @@ module.exports = {
     save: 'Guardar',
     cancel: 'Cancelar',
     success: 'Idioma cambiado',
+    error: 'Error al cambiar el idioma: {error}',
   },
   importUsers: {
     title: 'Importar usuarios',
