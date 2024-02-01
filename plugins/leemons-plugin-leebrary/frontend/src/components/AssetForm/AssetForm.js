@@ -147,20 +147,17 @@ const AssetForm = ({
     render();
   }
 
-  const setAssetColorToSubjectColor = useCallback(
-    (subjectsFromPicker) => {
-      if (!subjectsFromPicker?.length) {
-        setValue('color', null);
-      }
-      if (subjectsFromPicker.length === 1) {
-        setValue('color', subjectsFromPicker[0].color);
-      }
-      if (subjectsFromPicker.length > 1) {
-        setValue('color', '#878D96');
-      }
-    },
-    [formValues?.subjects]
-  );
+  const setAssetColorToSubjectColor = (subjectsFromPicker) => {
+    if (!subjectsFromPicker?.length) {
+      setValue('color', null);
+    }
+    if (subjectsFromPicker.length === 1) {
+      setValue('color', subjectsFromPicker[0].color);
+    }
+    if (subjectsFromPicker.length > 1) {
+      setValue('color', '#878D96');
+    }
+  };
 
   useEffect(() => {
     if (!isNullish(asset) && isEmpty(asset?.id)) {
