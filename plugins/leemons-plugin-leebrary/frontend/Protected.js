@@ -8,8 +8,9 @@ import { goLoginPage } from '@users/navigate';
 
 const PlayerPage = loadable(() => pMinDelay(import('./src/pages/protected/player'), 1000));
 
-export default function Private() {
+export default function Protected() {
   const { path } = useRouteMatch();
+
   const session = useSession({ redirectTo: goLoginPage });
 
   return (

@@ -40,17 +40,16 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
     asset?.providerData?.id
   );
   const handleOpenPreview = () => {
-    if (!previewUrl) {
-      return;
+    if (previewUrl) {
+      window.open(previewUrl, '_blank', 'noopener');
     }
-    return window.open(previewUrl, '_blank', 'noopener');
   };
   const handleOpenPdf = () => {
     if (isPDF) {
       window.open('https://google.com', '_blank', 'noopener');
     }
   };
-
+  const isPDFOrGotAssetRole = assetRole || isPDF;
   return (
     <Box className={classes.root} data-cypress-id="library-detail-player" onClick={handleOpenPdf}>
       <Box className={classes.color} />
@@ -58,12 +57,11 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
         <AssetPlayer {...libraryProps} />
       ) : (
         <Box className={classes.activityContainer} onClick={() => handleOpenPreview()}>
-          {assetRole ||
-            (isPDF && (
-              <Box className={classes.buttonIcon}>
-                <ButtonIcon fileType="document" />
-              </Box>
-            ))}
+          {isPDFOrGotAssetRole && (
+            <Box className={classes.buttonIcon}>
+              <ButtonIcon fileType="document" />
+            </Box>
+          )}
           {asset?.cover ? (
             <ImageLoader src={asset?.cover} height={200} width={496} />
           ) : (

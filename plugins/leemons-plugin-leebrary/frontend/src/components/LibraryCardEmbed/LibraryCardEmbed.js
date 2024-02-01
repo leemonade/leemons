@@ -2,10 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Stack,
-  ModalZoom,
   ImageLoader,
   Text,
-  Modal,
   TextClamp,
   ActionButton,
   CardEmptyCover,
@@ -20,21 +18,28 @@ import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
   LIBRARY_CARD_EMBED_PROP_TYPES,
 } from './LibraryCardEmbed.constants';
-import { AssetPlayer } from '../AssetPlayer';
 
 const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category }) => {
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const [showPlayer, setShowPlayer] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [fullScreenMode, setFullScreenMode] = useState(false);
   const { title, name, updatedAt, image, cover, color, fileType, url, icon } = asset;
   const { classes } = LibraryCardEmbedStyles(
     { showPlayer, fullScreenMode, color, variant, fileType },
     { name: 'LibraryCardEmbed' }
   );
-
   const isPlayable = React.useMemo(() => {
-    const playableFileExtensions = ['mov', 'qt', 'mp4', 'webm', 'mp3'];
+    const playableFileExtensions = [
+      'mov',
+      'qt',
+      'mp4',
+      'webm',
+      'mp3',
+      'mpga',
+      'ogg',
+      'wav',
+      'mpeg',
+    ];
     const playableMedia = ['video', 'audio'];
     return (
       playableFileExtensions.includes(asset.fileExtension) ||
@@ -53,7 +58,7 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
           return <CursorPlayerIcon {...iconProps} />;
         }
         return <OpenIcon {...iconProps} />;
-      case 'assignables.content-creator':
+      case 'content-creator':
         return <OpenIcon {...iconProps} />;
       case 'file':
         if (asset?.fileExtension === 'pdf') {
@@ -84,7 +89,7 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
       return;
     }
 
-    if (['document', 'file'].includes(fileType) && url) {
+    if (['document', 'file'].includes(fileType) && asset?.fileExtension !== 'pdf' && url) {
       window.open(url);
       return;
     }
@@ -98,14 +103,14 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
   };
 
   const handlePlayAsset = () => {
-    if (isPlayable) {
-      setShowPlayer(true);
-      setIsPlaying(true);
-    } else if (fileType === 'image') {
-      setIsPlaying(true);
-    } else {
-      openInNewTab();
-    }
+    // if (isPlayable) {
+    //   setShowPlayer(true);
+    //   setIsPlaying(true);
+    // } else if (fileType === 'image') {
+    //   setIsPlaying(true);
+    // } else {
+    openInNewTab();
+    // }
   };
 
   useEffect(() => {
@@ -115,7 +120,7 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
   }, []);
 
   const MemoizedEmptyCover = useMemo(
-    () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} />,
+    () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} height={72} />,
     [icon, variantIcon, fileType]
   );
 
@@ -150,7 +155,7 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
 
   return (
     <Box className={classes.root}>
-      {isPlayable && isPlaying ? (
+      {/* {isPlayable && isPlaying ? (
         <Modal opened={showPlayer} onClose={() => setShowPlayer(false)} size="75%">
           <AssetPlayer
             asset={{ ...asset, ...getAssetPlayableProps }}
@@ -160,13 +165,13 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
             {...dimensions}
           />
         </Modal>
-      ) : null}
+      ) : null} */}
 
-      {fileType === 'image' && (
+      {/* {fileType === 'image' && (
         <ModalZoom hideButton opened={isPlaying} onClose={() => setIsPlaying(false)}>
           <ImageLoader src={image || cover} width={500} height="auto" />
         </ModalZoom>
-      )}
+      )} */}
 
       <Stack alignItems="center" fullWidth spacing={4}>
         <Box

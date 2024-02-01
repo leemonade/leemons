@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, CardEmptyCover, ImageLoader } from '@bubbles-ui/components';
 import propTypes from 'prop-types';
+import loadable from '@loadable/component';
 import { AssetPlayer } from './AssetPlayer/AssetPlayer';
 import { ButtonIcon } from './AssetPlayer/components/ButtonIcon';
 
@@ -9,29 +10,44 @@ function dynamicImport(pluginName, component) {
     import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
   );
 }
-const AssetPlayerWrapper = ({ asset, viewPDF, detailMode, category }) => {
+const AssetPlayerWrapper = ({ asset, category }) => {
+  const [isCustomPlayer, setIsCustomPlayer] = useState(false);
   let Component = AssetPlayer;
-  let modeProps;
+
+  const getMultimediaProps = () => {
+    if (asset?.fileType === 'audio') {
+      return {
+        useAudioCard: true,
+      };
+    }
+    if (asset?.fileType === 'video') {
+      return {
+        width: 500,
+        height: 'auto',
+      };
+    }
+    if (asset?.fileType === 'pdf') {
+      return {
+        viewPDF: true,
+      };
+    }
+    if (asset?.fileType === 'image') {
+      return {
+        width: 500,
+        height: 'auto',
+      };
+    }
+    return {};
+  };
   const componentOwner = category?.componentOwner || category?.pluginOwner;
   if (category?.detailComponent && componentOwner) {
     try {
       Component = dynamicImport(componentOwner, category?.detailComponent);
+      setIsCustomPlayer(true);
     } catch (e) {
       //
     }
   }
-  if (detailMode) {
-    modeProps = {
-      height: 200,
-      width: 496,
-      asset,
-      hideURLInfo: true,
-      viewPDF: false,
-      compact: true,
-      useAspectRatio: false,
-    };
-  }
-
   const assetRole = asset?.providerData?.role;
 
   const fileExtension = asset?.fileExtension;
@@ -43,20 +59,23 @@ const AssetPlayerWrapper = ({ asset, viewPDF, detailMode, category }) => {
     asset?.providerData?.id
   );
   const handleOpenPreview = () => {
-    if (!previewUrl) {
-      return;
+    if (previewUrl) {
+      window.open(previewUrl, '_blank', 'noopener');
     }
-    return window.open(previewUrl, '_blank', 'noopener');
   };
+
   return (
-    <Box className={classes.root} data-cypress-id="library-detail-player">
-      <Box className={classes.color} />
+    <Box
+      data-cypress-id="library-detail-player"
+      style={{ display: 'grid', placeContent: 'center', width: '100%', height: '100vh' }}
+    >
+      <Box />
       {isAssetPlayerContent ? (
-        <Component {...modeProps} />
+        <Component asset={asset} {...(!isCustomPlayer && getMultimediaProps())} />
       ) : (
-        <Box className={classes.activityContainer} onClick={() => handleOpenPreview()}>
+        <Box onClick={() => handleOpenPreview()}>
           {assetRole && (
-            <Box className={classes.buttonIcon}>
+            <Box>
               <ButtonIcon fileType="document" />
             </Box>
           )}
