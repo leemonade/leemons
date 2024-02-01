@@ -4,7 +4,7 @@ import {
   LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS,
   LIBRARY_DETAIL_PLAYER_PROP_TYPES,
 } from './LibraryDetailPlayer.constants';
-import { AssetPlayerWrapper } from '../AssetPlayerWrapper';
+import { AssetPlayerLibraryWrapper } from './AssetPlayerLibraryWrapper';
 
 const LibraryDetailPlayer = ({
   name,
@@ -32,7 +32,7 @@ const LibraryDetailPlayer = ({
     providerData,
     color,
   };
-  return <AssetPlayerWrapper asset={asset} viewPDF detailMode />;
+  return <AssetPlayerLibraryWrapper asset={asset} />;
 };
 
 LibraryDetailPlayer.defaultProps = LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS;

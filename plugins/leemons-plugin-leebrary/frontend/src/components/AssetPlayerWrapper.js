@@ -1,52 +1,8 @@
 import React from 'react';
-import {
-  Box,
-  createStyles,
-  getFontExpressive,
-  pxToRem,
-  CardEmptyCover,
-  ImageLoader,
-} from '@bubbles-ui/components';
+import { Box, CardEmptyCover, ImageLoader } from '@bubbles-ui/components';
 import propTypes from 'prop-types';
-import loadable from '@loadable/component';
 import { AssetPlayer } from './AssetPlayer/AssetPlayer';
 import { ButtonIcon } from './AssetPlayer/components/ButtonIcon';
-
-const AssetPlayerWrapperStyles = createStyles((theme, { color, assetRole }) => ({
-  root: {
-    ...getFontExpressive(theme.fontSizes['2']),
-  },
-  color: {
-    backgroundColor: color,
-    height: pxToRem(4),
-    width: '100%',
-  },
-  titleRow: {
-    display: 'flex',
-    alignItems: 'baseline',
-    padding: `${pxToRem(16)} ${pxToRem(16)} ${pxToRem(10)} ${pxToRem(16)}`,
-    gap: pxToRem(16),
-    backgroundColor: theme.colors.mainWhite,
-  },
-  title: {
-    fontWeight: 600,
-    flex: 1,
-  },
-  buttonIcon: {
-    position: 'absolute',
-    zIndex: 10,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    pointerEvents: 'none',
-  },
-  activityContainer: {
-    width: 496,
-    height: 200,
-    position: 'relative',
-    cursor: assetRole ? 'pointer' : 'no-drop',
-  },
-}));
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
@@ -70,17 +26,14 @@ const AssetPlayerWrapper = ({ asset, viewPDF, detailMode, category }) => {
       width: 496,
       asset,
       hideURLInfo: true,
-      viewPDF,
+      viewPDF: false,
       compact: true,
       useAspectRatio: false,
     };
   }
 
   const assetRole = asset?.providerData?.role;
-  const { classes } = AssetPlayerWrapperStyles(
-    { color: asset?.color, assetRole },
-    { name: 'LibraryDetailPlayer' }
-  );
+
   const fileExtension = asset?.fileExtension;
   const isAssetPlayerContent =
     ['video', 'audio', 'pdf', 'image', 'bookmark', 'url', 'link'].includes(asset?.fileType) ||
