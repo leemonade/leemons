@@ -33,10 +33,12 @@ module.exports = {
         titleEdit: 'Editar recurso',
         back: 'Volver',
         presentation: 'Presentación',
+        subTitle: 'Título del recurso',
       },
       bookmark: {
         titleNew: 'Nuevo marcador',
         titleEdit: 'Editar marcador',
+        subTitle: 'Título del marcador',
       },
       labels: {
         content: 'Contenido',
@@ -337,6 +339,11 @@ module.exports = {
       resources: {
         label: 'Categorías',
         placeholder: 'Seleccionar categoría',
+      },
+      mediaType: {
+        label: 'Tipos de recurso',
+        placeholder: 'Seleccionar tipo',
+        allTypes: 'Todos los tipos',
       },
     },
   },

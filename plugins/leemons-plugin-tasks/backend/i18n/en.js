@@ -55,7 +55,7 @@ module.exports = {
     draft: 'Draft',
   },
   task_setup_page: {
-    title: 'Create new task',
+    title: 'New task',
     subTitle: 'Task title',
     edit_title: 'Edit task',
     common: {

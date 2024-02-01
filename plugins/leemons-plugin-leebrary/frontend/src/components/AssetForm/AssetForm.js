@@ -202,6 +202,13 @@ const AssetForm = ({
     onChange(formValues);
   }, [formValues]);
 
+  useEffect(() => {
+    if (formValues?.subjects?.length && !store.showAdvancedConfig) {
+      store.showAdvancedConfig = true;
+      render();
+    }
+  }, [formValues?.subjects]);
+
   // ························································
   // HANDLERS
 

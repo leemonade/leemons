@@ -64,6 +64,8 @@ const LibraryCardBody = ({
       setSubjectData(subjectIds);
     } else if (!isArray(subjects) && subjects?.name) {
       setSubjectData(subjects);
+    } else if (subjectData !== null) {
+      setSubjectData(null);
     }
   }, [subjects]);
 

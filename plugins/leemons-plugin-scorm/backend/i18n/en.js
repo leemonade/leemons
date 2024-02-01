@@ -64,9 +64,9 @@ module.exports = {
     shared: 'Shared',
   },
   scormSetup: {
-    titleNew: 'NEW SCORM PACKAGE',
-    titleEdit: 'EDIT SCORM PACKAGE',
-    scormTitlePlaceholder: 'New score package title',
+    titleNew: 'NEW SCORM',
+    titleEdit: 'EDIT SCORM',
+    scormTitlePlaceholder: 'SCORM title',
     description:
       'To import a SCORM package, it needs to be zipped up (.zip) and needs to have a <strong>imsmanifest.xml</strong> file which describes the course and its content.',
     fileFormatError:

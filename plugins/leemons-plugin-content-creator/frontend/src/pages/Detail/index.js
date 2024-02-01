@@ -146,6 +146,11 @@ export default function Index({ isNew, readOnly }) {
   // INITIAL DATA HANDLER
 
   useEffect(() => {
+    // Temporary fix. It won't be needed to solved the program if the Suject Picker limits the options to one program
+    let solvedProgram;
+    if (documentData?.subjects?.length) {
+      solvedProgram = documentData?.subjects[0].program;
+    }
     if (isNew) form.reset();
     else {
       form.setValue('name', documentData?.name);
@@ -153,8 +158,8 @@ export default function Index({ isNew, readOnly }) {
       form.setValue('description', documentData?.description);
       form.setValue('color', documentData?.color || null);
       form.setValue('cover', documentData?.cover || null);
-      form.setValue('program', documentData?.program || null);
-      form.setValue('subjects', documentData?.subjects || null);
+      form.setValue('program', documentData?.program || solvedProgram || null);
+      form.setValue('subjects', documentData?.subjects?.map((subject) => subject.subject) || null);
     }
   }, [documentData]);
 

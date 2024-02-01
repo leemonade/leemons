@@ -48,6 +48,10 @@ export default function Index() {
       store.saving = 'draft';
       render();
       const body = { ...formValues };
+      // Only for drafts allow missing required properties
+      if (!body.thanksMessage) delete body.thanksMessage;
+      if (!body.questions?.length) delete body.questions;
+
       delete body.roleDetails;
 
       const { feedback } = await saveFeedbackRequest({ ...body, published: false });
