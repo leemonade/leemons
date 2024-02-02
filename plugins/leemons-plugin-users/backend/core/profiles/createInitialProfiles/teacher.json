@@ -121,10 +121,6 @@
       "actionNames": ["view", "update", "create", "delete", "admin"]
     },
     {
-      "permissionName": "scorm.creator",
-      "actionNames": ["view", "update", "create", "delete", "admin"]
-    },
-    {
       "permissionName": "calendar.menu.kanban",
       "actionNames": ["view"]
     },
