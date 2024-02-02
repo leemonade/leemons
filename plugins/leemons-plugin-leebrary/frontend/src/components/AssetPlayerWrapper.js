@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Box, CardEmptyCover, ImageLoader } from '@bubbles-ui/components';
+import React, { useMemo } from 'react';
+import { Box } from '@bubbles-ui/components';
 import propTypes from 'prop-types';
 import loadable from '@loadable/component';
 import { AssetPlayer } from './AssetPlayer/AssetPlayer';
-import { ButtonIcon } from './AssetPlayer/components/ButtonIcon';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
@@ -11,9 +10,6 @@ function dynamicImport(pluginName, component) {
   );
 }
 const AssetPlayerWrapper = ({ asset, category }) => {
-  const [isCustomPlayer, setIsCustomPlayer] = useState(false);
-  let Component = AssetPlayer;
-
   const getMultimediaProps = () => {
     if (asset?.fileType === 'audio') {
       return {
@@ -29,6 +25,7 @@ const AssetPlayerWrapper = ({ asset, category }) => {
     if (asset?.fileType === 'pdf') {
       return {
         viewPDF: true,
+        width: '100%',
       };
     }
     if (asset?.fileType === 'image') {
@@ -39,53 +36,27 @@ const AssetPlayerWrapper = ({ asset, category }) => {
     }
     return {};
   };
-  const componentOwner = category?.componentOwner || category?.pluginOwner;
-  if (category?.detailComponent && componentOwner) {
-    try {
-      Component = dynamicImport(componentOwner, category?.detailComponent);
-      setIsCustomPlayer(true);
-    } catch (e) {
-      //
-    }
-  }
-  const assetRole = asset?.providerData?.role;
 
-  const fileExtension = asset?.fileExtension;
-  const isAssetPlayerContent =
-    ['video', 'audio', 'pdf', 'image', 'bookmark', 'url', 'link'].includes(asset?.fileType) ||
-    fileExtension === 'pdf';
-  const previewUrl = asset?.providerData?.roleDetails.previewUrl?.replace(
-    ':id',
-    asset?.providerData?.id
-  );
-  const handleOpenPreview = () => {
-    if (previewUrl) {
-      window.open(previewUrl, '_blank', 'noopener');
+  const Component = useMemo(() => {
+    let componentToRender = AssetPlayer;
+    const componentOwner = category?.componentOwner || category?.pluginOwner;
+    if (componentOwner !== 'leebrary' && category?.playerComponent && componentOwner) {
+      try {
+        componentToRender = dynamicImport(componentOwner, category.playerComponent);
+      } catch (e) {
+        //
+      }
     }
-  };
+
+    return componentToRender;
+  }, [category]);
 
   return (
     <Box
       data-cypress-id="library-detail-player"
       style={{ display: 'grid', placeContent: 'center', width: '100%', height: '100vh' }}
     >
-      <Box />
-      {isAssetPlayerContent ? (
-        <Component asset={asset} {...(!isCustomPlayer && getMultimediaProps())} />
-      ) : (
-        <Box onClick={() => handleOpenPreview()}>
-          {assetRole && (
-            <Box>
-              <ButtonIcon fileType="document" />
-            </Box>
-          )}
-          {asset?.cover ? (
-            <ImageLoader src={asset?.cover} height={200} width={496} />
-          ) : (
-            <CardEmptyCover fileType={assetRole} icon={asset?.fileIcon} height={199} />
-          )}
-        </Box>
-      )}
+      <Component asset={asset} {...getMultimediaProps()} />
     </Box>
   );
 };

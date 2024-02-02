@@ -46,7 +46,7 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
   };
   const handleOpenPdf = () => {
     if (isPDF) {
-      window.open('https://google.com', '_blank', 'noopener');
+      window.open(`/protected/leebrary/play/${asset.id}`, '_blank', 'noopener,noreferrer');
     }
   };
   const isPDFOrGotAssetRole = assetRole || isPDF;

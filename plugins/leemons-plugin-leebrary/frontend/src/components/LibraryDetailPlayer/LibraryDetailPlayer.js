@@ -19,6 +19,7 @@ const LibraryDetailPlayer = ({
   fileExtension,
   titleActionButton,
   providerData,
+  id,
   ...props
 }) => {
   const asset = {
@@ -31,6 +32,7 @@ const LibraryDetailPlayer = ({
     url,
     providerData,
     color,
+    id,
   };
   return <AssetPlayerLibraryWrapper asset={asset} />;
 };
