@@ -58,17 +58,17 @@ export default function SelectProfile({ session }) {
     try {
       store.loading = true;
       render();
-      const _pro = [];
+      const userProfiles = [];
       if (store.superProfile) {
-        _pro.push(store.superProfile);
+        userProfiles.push(store.superProfile);
       }
       _.forEach(store.centers, (cen) => {
         _.forEach(cen.profiles, (pro) => {
-          _pro.push({ ...pro, centerId: cen.id });
+          userProfiles.push({ ...pro, centerId: cen.id });
         });
       });
 
-      const profiles = _.uniqBy(_pro, 'id');
+      const profiles = _.uniqBy(userProfiles, 'id');
       const profile = find(profiles, { id: data.profile });
 
       if (data.remember) {
@@ -105,28 +105,55 @@ export default function SelectProfile({ session }) {
     }
   }
 
+  /**
+   * This function initializes the profile selection process
+   */
   async function init() {
+    // Sets the layout state to not private and profile not checked
     setLayoutState({ ...layoutState, private: false, profileChecked: false });
+    // Fetches centers, remembered login, and user token concurrently
     const [{ centers }, { profile, center }, userToken] = await Promise.all([
       getUserCentersRequest(),
       getRememberLoginRequest(getCookieToken()),
       leemons.api(`v1/users/users`),
     ]);
 
-    store.centers = centers;
+    // Filters out denied profiles from each center and removes centers with no allowed profiles
+    const deniedProfiles = deploymentConfig?.deny?.profiles || [];
+    const processedCenters = centers.map((centre) => ({
+      ...centre,
+      profiles: centre.profiles.filter(
+        (userProfile) => !deniedProfiles.includes(userProfile.sysName)
+      ),
+    }));
+
+    // Updates the store with the processed centers
+    store.centers = processedCenters;
+
+    // If the user is a super admin, fetch super profiles and add them to each center
     if (userToken?.user?.isSuperAdmin) {
       const { profiles } = await getUserProfilesRequest();
       store.superProfile = _.find(profiles, { sysName: 'super' });
 
-      _.forEach(store.centers, (center) => {
-        center.profiles.push(store.superProfile);
+      _.forEach(store.centers, (centre) => {
+        centre.profiles.push(store.superProfile);
       });
-      if (!store.centers.length) {
+
+      // Filters centers to only include those with profiles
+      store.centers = store.centers.filter((centre) => centre.profiles.length > 0);
+
+      // Automatically submits the profile if there's only one option
+      if (
+        !store.centers.length ||
+        (store.centers.length === 1 && store.centers[0].profiles.length === 1)
+      ) {
+        const profileToSubmit = store.centers[0].profiles[0].id || store.superProfile.id;
         await handleOnSubmit({
-          profile: store.superProfile.id,
+          profile: profileToSubmit,
         });
       }
     }
+    // Sets default values if a profile and center are remembered
     if (profile && center) {
       store.defaultValues = {
         profile: profile.id,
@@ -135,6 +162,7 @@ export default function SelectProfile({ session }) {
       };
     }
 
+    // Marks initialization as complete and triggers a re-render
     store.initLoading = false;
     render();
   }
