@@ -648,7 +648,11 @@ const AssetList = ({
             }}
           >
             <CardDetailWrapper
-              category={category || {}}
+              category={
+                category?.id && !category?.key.startsWith('leebrary-subject')
+                  ? category
+                  : categories?.find((_category) => _category?.id === selectedAsset?.category)
+              }
               asset={selectedAsset}
               labels={detailLabels}
               variant={cardVariant}
