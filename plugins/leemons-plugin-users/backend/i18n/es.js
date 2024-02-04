@@ -232,6 +232,7 @@ module.exports = {
   create_users: {
     male: 'Hombre',
     female: 'Mujer',
+    other: 'Otro',
     pageTitle: 'Crear usuarios',
     centerLabel: 'Centro',
     centersLabel: 'Centros',
@@ -309,6 +310,7 @@ module.exports = {
   userDetailModal: {
     male: 'Hombre',
     female: 'Mujer',
+    other: 'Otro',
     personalInformation: 'Información personal',
     badges: 'Etiquetas',
     email: 'Email',
