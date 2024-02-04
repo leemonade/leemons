@@ -173,7 +173,7 @@ export default function Index({ isNew, readOnly }) {
 
   // #region * FOOTER ACTIONS ------------------------------------------------
   const footerActionsLabels = {
-    dropdownLabel: 'Finalizar',
+    dropdownLabel: t('finish'),
   };
 
   const footerFinalActionsAndLabels = [
@@ -280,6 +280,8 @@ export default function Index({ isNew, readOnly }) {
                           {t('saveDraft')}
                         </Button>
                         <DropdownButton
+                          chevronUp
+                          width="auto"
                           data={footerFinalActionsAndLabels}
                           loading={isLoading}
                           disabled={isLoading}

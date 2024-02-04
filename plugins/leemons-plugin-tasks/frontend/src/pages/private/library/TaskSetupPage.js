@@ -146,7 +146,7 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
 
     if (contentData) {
       contentData.labels.buttonPublish = instructionData?.labels?.buttonPublish;
-      contentData.labels.buttonPublishAndAssign = instructionData?.labels?.buttonNext;
+      contentData.labels.buttonPublishAndAssign = instructionData?.labels?.buttonPublishAndAssign;
     }
 
     const showAttachmentsAndInstructions =
