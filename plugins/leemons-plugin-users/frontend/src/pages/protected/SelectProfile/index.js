@@ -147,7 +147,7 @@ export default function SelectProfile({ session }) {
         !store.centers.length ||
         (store.centers.length === 1 && store.centers[0].profiles.length === 1)
       ) {
-        const profileToSubmit = store.centers[0].profiles[0].id || store.superProfile.id;
+        const profileToSubmit = store.centers[0]?.profiles[0].id || store.superProfile.id;
         await handleOnSubmit({
           profile: profileToSubmit,
         });
