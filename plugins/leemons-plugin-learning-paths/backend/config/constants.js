@@ -132,6 +132,7 @@ const assignableRoles = [
       componentOwner: 'learning-paths',
       listCardComponent: 'ListCard',
       detailComponent: 'Detail',
+      type: 'activity',
     },
   },
 ];

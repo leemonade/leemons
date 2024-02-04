@@ -52,12 +52,17 @@ const categoriesSchema = new mongoose.Schema(
     detailComponent: {
       type: String,
     },
-    // Array (stringlificado) de plugins que pueden añadir assets a esta categoria.
+    // Array (stringified) of plugins that can add assets to this category.
     canUse: {
       type: String,
     },
     order: {
       type: Number,
+    },
+    type: {
+      type: String,
+      default: 'resource',
+      enum: ['activity', 'resource'],
     },
   },
   {

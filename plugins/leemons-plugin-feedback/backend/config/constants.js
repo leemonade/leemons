@@ -112,6 +112,7 @@ const assignableRoles = [
       componentOwner: 'feedback',
       listCardComponent: 'FeedbackListCard',
       detailComponent: 'FeedbackDetail',
+      type: 'activity',
     },
   },
 ];
