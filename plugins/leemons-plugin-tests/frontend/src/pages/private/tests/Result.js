@@ -301,7 +301,7 @@ export default function Result() {
     const currentGrade = originalGrade ?? {
       subject: store.instance.subjects[0].subject,
       type: 'main',
-      grade: null,
+      grade: store.evaluationSystem?.minScale.number,
       feedback: null,
       visibleToStudent: true,
     };
@@ -320,6 +320,9 @@ export default function Result() {
           grades: [currentGrade],
         });
       }
+
+      store.assignation.grades = [currentGrade];
+
       if (!fromSwitch) {
         addSuccessAlert(t('feedbackDone'));
       }
@@ -604,155 +607,4 @@ export default function Result() {
       ) : null}
     </>
   );
-
-  /*
-return (
-  <ContextContainer
-    sx={(theme) => ({
-      backgroundColor: theme.colors.uiBackground02,
-      paddingBottom: theme.spacing[12],
-      overflow: 'auto',
-    })}
-    fullHeight
-    fullWidth
-  >
-    <Box
-      sx={(theme) => ({
-        width: '100%',
-        maxWidth: theme.breakpoints.lg,
-        paddingLeft: isTeacher ? 0 : theme.spacing[8],
-        paddingRight: theme.spacing[5],
-      })}
-    >
-      <Box className={styles.container}>
-        {isTeacher ? (
-          <Box className={styles.leftContent}>
-            <AssignableUserNavigator
-              onlySelect
-              onChange={onChangeUser}
-              value={params.user}
-              instance={store.instance || params.id}
-            />
-          </Box>
-        ) : null}
-        {params.user && !store.loading ? (
-          <Box
-            className={cx(
-              styles.rightContent,
-              isTeacher ? styles.rightContentTeacher : null
-            )}
-          >
-            <Box className={styles.header}>
-              <Text role="productive">
-                {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
-                {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
-              </Text>
-            </Box>
-            <Box className={styles.content}>
-              <ScoreFeedback
-                calification={{
-                  minimumGrade: store.evaluationSystem.minScaleToPromote.number,
-                  grade: userNote,
-                  label: scale.letter,
-                  showOnlyLabel: false,
-                }}
-              >
-                <Stack
-                  fullWidth
-                  fullHeight
-                  direction="column"
-                  justifyContent="center"
-                  style={{
-                    padding: 24,
-                  }}
-                >
-                  <Text size="md" role="productive" strong>
-                    Test
-                  </Text>
-                  <Title order={3}>{store.instance.assignable.asset.name}</Title>
-                </Stack>
-              </ScoreFeedback>
-
-              <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
-                {accordion}
-              </ActivityAccordion>
-              {isTeacher && !store.room ? (
-                <Box
-                  sx={(theme) => ({
-                    display: 'flex',
-                    justifyContent: 'end',
-                    marginTop: theme.spacing[4],
-                  })}
-                >
-                  <Button
-                    onClick={() => {
-                      if (!accordionState.includes('2')) {
-                        setAccordionState([...accordionState, '2']);
-                      } else {
-                        sendFeedback();
-                      }
-                    }}
-                    rightIcon={<SendMessageIcon />}
-                  >
-                    {t('sendFeedback')}
-                  </Button>
-                </Box>
-              ) : null}
-            </Box>
-            <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
-              <ContextContainer alignItems="center">
-                <Text size="md" color="primary" strong>
-                  {isTeacher ? t('chatTeacherDescription') : t('chatDescription')}
-                </Text>
-                <Box>
-                  <Button
-                    rounded
-                    rightIcon={<PluginComunicaIcon />}
-                    onClick={() => {
-                      hooks.fireEvent('chat:onRoomOpened', store.room);
-                      store.chatOpened = true;
-                      render();
-                    }}
-                  >
-                    {isTeacher ? t('chatButtonStudent') : t('chatButtonTeacher')}
-                  </Button>
-                </Box>
-              </ContextContainer>
-            </Box>
-          </Box>
-        ) : null}
-      </Box>
-    </Box>
-
-
-    {!store.loading ? (
-      <>
-        <ChatDrawer
-          onClose={() => {
-            hooks.fireEvent('chat:closeDrawer');
-            store.chatOpened = false;
-            render();
-          }}
-          opened={store.chatOpened}
-          onRoomLoad={(room) => {
-            store.room = room;
-            render();
-          }}
-          onMessage={() => {
-            store.room.unreadMessages += 1;
-            render();
-          }}
-          onMessagesMarkAsRead={() => {
-            store.room.unreadMessages = 0;
-            render();
-          }}
-          room={`assignables.subject|${store?.instance?.subjects?.[0]?.subject}.assignation|${
-            store.assignation.id
-          }.userAgent|${getUserId()}`}
-        />
-      </>
-    ) : null}
-  </ContextContainer>
-);
-*/
 }
