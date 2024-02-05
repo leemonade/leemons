@@ -1,9 +1,12 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { keys, isEmpty } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import { useTextEditor } from '@common/context';
 import { useEditorLabels } from '@common/hooks/useEditorLabels';
-import { ContentEditorInputStyles } from './ContentEditorInput.styles';
+import { LibraryTool } from '@leebrary/components';
+import libraryProcessor from '@leebrary/helpers/libraryProcessor';
+import { MathTool } from '@content-creator/components';
+import mathProcessor from '@content-creator/helpers/mathProcessor';
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
   CONTENT_EDITOR_INPUT_PROP_TYPES,
@@ -11,6 +14,7 @@ import {
 import { Schema } from './components/Schema/Schema';
 import { TextEditorContent } from './components/TextEditorContent/TextEditorContent';
 import { useContentEditorStore } from './context/ContentEditorInput.context';
+import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 
 const ContentEditorInput = ({
   toolbars,
@@ -27,21 +31,37 @@ const ContentEditorInput = ({
   const editorLabels = useEditorLabels();
   const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
 
-  const { textEditorTools } = useTextEditor();
+  const { setTextEditorTool, textEditorTools, setTextEditorProcessor } = useTextEditor();
 
-  const leemonsTools = useMemo(() => {
+  useEffect(() => {
+    setTextEditorTool([
+      { id: 'library', tool: <LibraryTool /> },
+      { id: 'math', tool: <MathTool /> },
+    ]);
+
+    setTextEditorProcessor([
+      { id: 'library', processor: libraryProcessor },
+      { id: 'math', processor: mathProcessor },
+    ]);
+  }, []);
+
+  const leemonsTools = () => {
     const tools = [];
 
     if (textEditorTools) {
       keys(textEditorTools).forEach((key) => {
         if (textEditorTools[key].tool && toolbars[key]) {
-          tools.push({ id: key, tool: textEditorTools[key].tool });
+          tools.push({
+            id: key,
+            tool: textEditorTools[key].tool,
+            props: textEditorTools[key].props,
+          });
         }
       });
     }
 
     return tools;
-  }, [toolbars, textEditorTools]);
+  };
 
   // ··································································
   // STYLES
@@ -63,7 +83,7 @@ const ContentEditorInput = ({
       <Box className={classes.textEditorContainer}>
         <TextEditorContent
           {...props}
-          leemonsTools={leemonsTools}
+          leemonsTools={leemonsTools()}
           toolbars={toolbars}
           useSchema={useSchema}
           editorLabels={editorLabels}

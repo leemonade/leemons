@@ -10,6 +10,7 @@ export const DEFAULT_TOOLBARS = {
   formulation: false,
   link: true,
   library: true,
+  math: true,
 };
 
 export const TEXT_EDITOR_INPUT_DEFAULT_PROPS = {

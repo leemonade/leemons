@@ -7,19 +7,24 @@ export function Provider({ children }) {
   const [textEditorTools, setTextEditorTools] = useState({});
   const [textEditorProcessors, setTextEditorProcessors] = useState({});
 
-  const setTextEditorTool = (name, tool, props) => {
-    const tools = { ...textEditorTools };
-    tools[name] = { tool, props };
+  const setTextEditorTool = (newTools) => {
+    const tools = textEditorTools;
+    _.forEach(newTools, (tool) => {
+      tools[tool.id] = { tool: tool.tool, props: tool.props };
+    });
     setTextEditorTools(tools);
   };
 
-  const setTextEditorProcessor = (name, processor) => {
-    if (typeof processor !== 'function') {
-      throw new Error('The processor must be a function');
-    }
+  const setTextEditorProcessor = (newProcessor) => {
+    const processors = newProcessor;
 
-    const processors = { ...textEditorProcessors };
-    processors[name] = processor;
+    _.forEach(newProcessor, (processor) => {
+      if (typeof processor.processor !== 'function') {
+        throw new Error('The processor must be a function');
+      }
+      processors[processor.id] = processor.processor;
+    });
+
     setTextEditorProcessors(processors);
   };
 
