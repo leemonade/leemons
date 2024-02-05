@@ -4,7 +4,7 @@ import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbl
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import { LocaleDate } from '@common';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+// import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
 import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
@@ -69,30 +69,26 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category, a
     return getIconForFileType();
   };
 
-  const openInNewTab = () => {
-    const isFile = variant === 'file';
-    const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
-    if (isBookmark) {
-      window.open(url);
-      return;
-    }
+  // const openInNewTab = () => {
+  //   const isFile = variant === 'file';
+  //   const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
+  //   if (isBookmark) {
+  //     window.open(url);
+  //     return;
+  //   }
 
-    if (['document', 'file'].includes(fileType) && asset?.fileExtension !== 'pdf' && url) {
-      window.open(url);
-      return;
-    }
+  //   if (['document', 'file'].includes(fileType) && asset?.fileExtension !== 'pdf' && url) {
+  //     window.open(url);
+  //     return;
+  //   }
 
-    if (isFile) {
-      window.open(getFileUrl(asset.file?.id || asset.original.file?.id || asset.original.file));
-      return;
-    }
+  //   if (isFile) {
+  //     window.open(getFileUrl(asset.file?.id || asset.original.file?.id || asset.original.file));
+  //     return;
+  //   }
 
-    window.open(`/protected/leebrary/play/${asset.id}`, '_blank', 'noopener,noreferrer');
-  };
-
-  const handlePlayAsset = () => {
-    openInNewTab();
-  };
+  //   window.open(`/protected/leebrary/play/${asset.id}`, '_blank', 'noopener,noreferrer');
+  // };
 
   const MemoizedEmptyCover = useMemo(
     () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} height={72} />,
@@ -104,7 +100,8 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category, a
   }
 
   return (
-    <Box className={classes.root} onClick={handlePlayAsset}>
+    // <Box className={classes.root} onClick={handlePlayAsset}>
+    <Box className={classes.root}>
       <Stack alignItems="center" fullWidth spacing={4}>
         <Box
           noFlex

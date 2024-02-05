@@ -98,6 +98,7 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
       }}
       metadataComponent={<AssetMetadataContentCreator metadata={asset} />}
       variant="document"
+      isEmbedded={props.variant === 'embedded'}
       variantTitle={t('document')}
       toolbarItems={toolbarItems}
       titleActionButton={

@@ -24,7 +24,6 @@ function PlayerPage() {
   if (isLoading && isCategoriesLoading) {
     return <LoadingOverlay visible />;
   }
-
   return (
     <Box>
       {assets?.length && category && <AssetPlayerWrapper asset={assets[0]} category={category} />}

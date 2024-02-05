@@ -1,19 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
-import {
-  Badge,
-  Box,
-  Stack,
-  Text,
-  useClipboard,
-  Tabs,
-  TabPanel,
-  pxToRem,
-  UserDisplayItem,
-} from '@bubbles-ui/components';
+import { Box, Text, useClipboard, Tabs, TabPanel, UserDisplayItem } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
 import {
@@ -21,7 +10,7 @@ import {
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
 } from './LibraryDetailContent.constants';
 import prefixPN from '../../helpers/prefixPN';
-import { MetadataDisplay } from './components/MetadataDisplay';
+import { DetailContent } from './components/DetailContent/DetailContent';
 
 const LibraryDetailContent = ({
   description,
@@ -45,6 +34,7 @@ const LibraryDetailContent = ({
   asset,
   activeTab,
   setActiveTab,
+  isEmbedded,
   onCopy = () => {},
   // eslint-disable-next-line no-unused-vars
   ...props
@@ -83,6 +73,31 @@ const LibraryDetailContent = ({
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
+
+  const DetailContentComponent = (
+    <DetailContent
+      name={name}
+      description={description}
+      subjectsIds={subjectsIds}
+      program={program}
+      metadataComponent={metadataComponent}
+      handleCopy={handleCopy}
+      tags={tags}
+      metadata={metadata}
+      icon={icon}
+      fileType={fileType}
+      fileExtension={fileExtension}
+      variant={variant}
+      variantIcon={variantIcon}
+      variantTitle={variantTitle}
+      file={file}
+      url={url}
+      classes={classes}
+    />
+  );
+  if (variant === 'embedded' || isEmbedded) {
+    return DetailContentComponent;
+  }
   return (
     <>
       <Tabs
@@ -94,58 +109,7 @@ const LibraryDetailContent = ({
         onChange={handleTabChange}
       >
         <TabPanel label={detailLabels?.detail} key="tab1">
-          <Box className={classes.tabPanel}>
-            {name && <Text className={classes.title}>{name}</Text>}
-            {description && <Text className={classes.description}>{description}</Text>}
-            <Box style={{ marginTop: 24, marginBottom: 24 }}>
-              {Array.isArray(subjectsIds) &&
-                subjectsIds.length > 0 &&
-                subjectsIds?.map((subject, index) => (
-                  <Box key={index} className={classes.subjectItem}>
-                    <SubjectItemDisplay subjectsIds={[subject?.subject]} programId={program} />
-                  </Box>
-                ))}
-            </Box>
-            <Stack
-              direction="column"
-              className={classes.lowerContent}
-              styles={{ marginTop: !name || !description ? pxToRem(24) : 0 }}
-            >
-              {metadataComponent || (
-                <MetadataDisplay
-                  metadata={{
-                    metadata,
-                    icon,
-                    fileType,
-                    fileExtension,
-                    variant,
-                    variantIcon,
-                    variantTitle,
-                    file,
-                    url,
-                    name,
-                  }}
-                  onCopy={handleCopy}
-                />
-              )}
-            </Stack>
-            {tags?.length > 0 && (
-              <Box className={classes.tags}>
-                <Box className={classes.tagsContainer}>
-                  {tags.map((tag, index) => (
-                    <Box key={`${tag} ${index}`}>
-                      <Badge
-                        label={tag}
-                        size="md"
-                        closable={false}
-                        className={classes.labelBadge}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              </Box>
-            )}
-          </Box>
+          {DetailContentComponent}
         </TabPanel>
         <TabPanel label={detailLabels?.permissions} key="tab2">
           <Box className={classes.tabPanelPermissions}>

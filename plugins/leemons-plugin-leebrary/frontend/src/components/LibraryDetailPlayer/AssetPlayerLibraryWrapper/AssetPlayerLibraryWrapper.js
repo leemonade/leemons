@@ -12,9 +12,10 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
   const assetRole = asset?.providerData?.role;
   const fileExtension = asset?.fileExtension;
   const isPDF = fileExtension === 'pdf';
-
+  const fileTypeCondition = asset?.fileType === 'document' || asset?.fileType === 'application';
+  const isDocumentButNotPDF = fileTypeCondition && !isPDF;
   const { classes } = AssetPlayerLibraryWrapperStyles(
-    { color: asset?.color, assetRole, isPDF },
+    { color: asset?.color, assetRole, isPDF, isDocumentButNotPDF },
     { name: 'LibraryDetailPlayer' }
   );
   const libraryProps = {
@@ -35,7 +36,7 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
     'url',
     'link',
   ].includes(asset?.fileType);
-  const previewUrl = asset?.providerData?.roleDetails.previewUrl?.replace(
+  const previewUrl = asset?.providerData?.roleDetails?.previewUrl?.replace(
     ':id',
     asset?.providerData?.id
   );
@@ -47,6 +48,9 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
   const handleOpenPdf = () => {
     if (isPDF) {
       window.open(`/protected/leebrary/play/${asset.id}`, '_blank', 'noopener,noreferrer');
+    }
+    if (isDocumentButNotPDF) {
+      window.open(asset.url, '_blank', 'noopener');
     }
   };
   const isPDFOrGotAssetRole = assetRole || isPDF;
@@ -60,6 +64,11 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
           {isPDFOrGotAssetRole && (
             <Box className={classes.buttonIcon}>
               <ButtonIcon fileType="document" />
+            </Box>
+          )}
+          {isDocumentButNotPDF && (
+            <Box className={classes.buttonIcon}>
+              <ButtonIcon fileType="file" />
             </Box>
           )}
           {asset?.cover ? (

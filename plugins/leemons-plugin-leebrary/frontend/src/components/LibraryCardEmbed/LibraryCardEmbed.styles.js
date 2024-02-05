@@ -4,6 +4,7 @@ const LibraryCardEmbedStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.mainWhite,
     minHeight: 66,
+    cursor: 'pointer',
     '&:hover': {
       backgroundColor: '#F7F8FA',
     },

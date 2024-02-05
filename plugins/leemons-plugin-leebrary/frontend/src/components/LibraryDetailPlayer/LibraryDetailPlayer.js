@@ -19,6 +19,7 @@ const LibraryDetailPlayer = ({
   fileExtension,
   titleActionButton,
   providerData,
+  isEmbedded,
   id,
   ...props
 }) => {

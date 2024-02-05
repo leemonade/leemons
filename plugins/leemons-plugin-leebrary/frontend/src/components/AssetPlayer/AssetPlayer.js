@@ -2,7 +2,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
 import { isFunction } from 'lodash';
-import { Box, ImageLoader, Text, ModalZoom, TextClamp } from '@bubbles-ui/components';
+import {
+  Box,
+  ImageLoader,
+  Text,
+  ModalZoom,
+  TextClamp,
+  CardEmptyCover,
+} from '@bubbles-ui/components';
 import { AssetPlayerStyles } from './AssetPlayer.styles';
 import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
 import { ProgressBar } from './components/ProgressBar';
@@ -74,7 +81,6 @@ const AssetPlayer = ({
       fileType = 'image';
     }
   }
-
   const playerRef = useRef(null);
   const rootRef = useRef(null);
   const [showPlayer, setShowPlayer] = useState(false);
@@ -348,7 +354,15 @@ const AssetPlayer = ({
                       <ButtonIcon fileType={'video'} />
                     </Box>
                   )}
-                  {cover && <ImageLoader height="100%" src={cover} alt={name} />}
+                  {cover ? (
+                    <ImageLoader height="100%" src={cover} alt={name} />
+                  ) : (
+                    <CardEmptyCover
+                      fileType={asset?.fileType}
+                      icon={asset?.fileIcon}
+                      height={199}
+                    />
+                  )}
                 </Box>
               )}
             </Box>
