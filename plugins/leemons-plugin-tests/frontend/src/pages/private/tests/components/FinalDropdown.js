@@ -31,6 +31,8 @@ export default function FinalDropdown({
 
   return (
     <DropdownButton
+      chevronUp
+      width="auto"
       data={[
         { label: t('onlyPublish'), onClick: handleOnPublish },
         { label: t('publishAndAssign'), onClick: handleOnAssign },

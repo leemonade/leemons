@@ -36,7 +36,6 @@ export default function DetailEvaluation({
   const subjects = store.subjectsByProgram[programId];
   const subject = find(subjects, { value: subjectIds?.[0]?.subject });
 
-
   // ························································
   // HANDLERS
 

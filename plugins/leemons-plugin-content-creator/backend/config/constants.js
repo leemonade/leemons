@@ -114,6 +114,7 @@ const assignableRoles = [
       listCardComponent: 'DocumentListCard',
       detailComponent: 'DocumentDetail',
       playerComponent: 'DocumentPlayer',
+      type: 'resource',
     },
   },
 ];
