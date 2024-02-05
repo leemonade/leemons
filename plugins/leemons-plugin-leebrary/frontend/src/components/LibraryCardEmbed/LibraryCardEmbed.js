@@ -1,13 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import {
-  Box,
-  Stack,
-  ImageLoader,
-  Text,
-  TextClamp,
-  ActionButton,
-  CardEmptyCover,
-} from '@bubbles-ui/components';
+import React, { useMemo } from 'react';
+import { Box, Stack, ImageLoader, Text, TextClamp, CardEmptyCover } from '@bubbles-ui/components';
 import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
@@ -18,16 +10,12 @@ import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
   LIBRARY_CARD_EMBED_PROP_TYPES,
 } from './LibraryCardEmbed.constants';
+import { LibraryCardEmbedSkeleton } from './LibraryCardEmbdedSkeleton';
 
-const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category }) => {
+const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category, assetsLoading }) => {
   const [t] = useTranslateLoader(prefixPN('assetsList'));
-  const [showPlayer, setShowPlayer] = useState(false);
-  const [fullScreenMode, setFullScreenMode] = useState(false);
-  const { title, name, updatedAt, image, cover, color, fileType, url, icon } = asset;
-  const { classes } = LibraryCardEmbedStyles(
-    { showPlayer, fullScreenMode, color, variant, fileType },
-    { name: 'LibraryCardEmbed' }
-  );
+  const { title, name, updatedAt, image, cover, fileType, url, icon } = asset;
+  const { classes } = LibraryCardEmbedStyles({}, { name: 'LibraryCardEmbed' });
   const isPlayable = React.useMemo(() => {
     const playableFileExtensions = [
       'mov',
@@ -103,76 +91,20 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
   };
 
   const handlePlayAsset = () => {
-    // if (isPlayable) {
-    //   setShowPlayer(true);
-    //   setIsPlaying(true);
-    // } else if (fileType === 'image') {
-    //   setIsPlaying(true);
-    // } else {
     openInNewTab();
-    // }
   };
-
-  useEffect(() => {
-    document.addEventListener('fullscreenchange', () => {
-      setFullScreenMode(!!document.fullscreenElement);
-    });
-  }, []);
 
   const MemoizedEmptyCover = useMemo(
     () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} height={72} />,
     [icon, variantIcon, fileType]
   );
 
-  const getAssetPlayableProps = isPlayable
-    ? { url: asset.url, fileType: asset.mediaType ?? fileType }
-    : {};
-
-  const dimensions = React.useMemo(() => {
-    if (!isPlayable || fileType === 'bookmark') return {};
-
-    let mediaDimensions = {};
-    (asset.metadata || []).reduce((prev, curr) => {
-      let result = {};
-      if (curr.label.toLowerCase() === 'height') {
-        result = { ...prev, height: parseInt(curr.value) };
-      }
-      if (curr.label.toLowerCase() === 'width') {
-        result = { ...prev, width: parseInt(curr.value) };
-      }
-      mediaDimensions = result;
-      return result;
-    }, mediaDimensions);
-
-    const { width: mWidth, height: mHeight } = mediaDimensions;
-    const ratio = mWidth / mHeight;
-
-    // Calculate the min width between 75% of the document width and mWidth
-    const minWidth = Math.min(window.innerWidth * 0.75, mWidth);
-    const minHeight = minWidth / ratio;
-    return { with: minWidth, height: minHeight };
-  }, [asset, isPlayable, fileType]);
+  if (assetsLoading) {
+    return <LibraryCardEmbedSkeleton />;
+  }
 
   return (
-    <Box className={classes.root}>
-      {/* {isPlayable && isPlaying ? (
-        <Modal opened={showPlayer} onClose={() => setShowPlayer(false)} size="75%">
-          <AssetPlayer
-            asset={{ ...asset, ...getAssetPlayableProps }}
-            playing
-            controlBar
-            useAspectRatio={fileType === 'bookmark'}
-            {...dimensions}
-          />
-        </Modal>
-      ) : null} */}
-
-      {/* {fileType === 'image' && (
-        <ModalZoom hideButton opened={isPlaying} onClose={() => setIsPlaying(false)}>
-          <ImageLoader src={image || cover} width={500} height="auto" />
-        </ModalZoom>
-      )} */}
-
+    <Box className={classes.root} onClick={handlePlayAsset}>
       <Stack alignItems="center" fullWidth spacing={4}>
         <Box
           noFlex
@@ -221,9 +153,8 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category })
             </Text>
           </Box>
         </Stack>
-
-        <Box noFlex>
-          <ActionButton onClick={handlePlayAsset} icon={renderVariantIcon()} />
+        <Box noFlex className={classes.variantIcon}>
+          {renderVariantIcon()}
         </Box>
       </Stack>
     </Box>
