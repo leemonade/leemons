@@ -9,6 +9,7 @@ import {
   ScriptsTool,
   LinkTool,
   ButtonGroup,
+  CodeTool,
 } from '@bubbles-ui/editors';
 import { ExpandDiagonalIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
 import { Box, IconButton } from '@bubbles-ui/components';
@@ -75,6 +76,7 @@ const TextEditorContent = ({
         {toolbars.align && <TextAlignTool labels={editorLabels.textAlignTool} />}
         {toolbars.list && <ListIndentTool labels={editorLabels.listIndentTool} />}
         {toolbars.formulation && <ScriptsTool labels={editorLabels.scriptsTool} />}
+        {<CodeTool labels={editorLabels.codeTool} />}
 
         <ButtonGroup>
           {toolbars.link && <LinkTool {...editorLabels.linkTool} />}
