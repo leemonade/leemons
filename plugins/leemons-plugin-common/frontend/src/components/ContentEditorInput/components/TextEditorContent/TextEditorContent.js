@@ -82,6 +82,7 @@ const TextEditorContent = ({
             React.cloneElement(item.tool, {
               key: item.tool.id || `t-${i}`,
               ...editorLabels.libraryTool,
+              ...item.tool.props,
               alignLabels: editorLabels.textAlignTool,
               openLibraryModal,
             })
