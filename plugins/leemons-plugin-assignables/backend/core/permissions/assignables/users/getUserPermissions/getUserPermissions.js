@@ -1,10 +1,9 @@
-const { escapeRegExp, uniq, map, groupBy, difference } = require('lodash');
+const { uniq, map, groupBy, difference, pick, entries } = require('lodash');
 
 const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
-const { getPermissionName } = require('../../helpers/getPermissionName');
 const { getTeacherPermissions } = require('../getTeacherPermissions');
 
-const { getParentPermissions } = require('./getParentPermissions');
+const { assignableActions } = require('../../../../../config/constants');
 
 /**
  * Retrieves the user permissions based on the given assignables and context.
@@ -28,38 +27,19 @@ async function getUserPermissions({ assignables, ctx }) {
     );
   }
 
-  const query = {
-    $or: assignablesIds.map((id) => ({
-      permissionName: { $regex: escapeRegExp(getPermissionName({ id, ctx })), $options: 'i' },
-    })),
-  };
-
-  const [permissions, canAssignPerms, parentPermissions] = await Promise.all([
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
-      userAgent: ctx.meta.userSession.userAgents,
-      query,
-    }),
-    ctx.tx.call('users.permissions.getAllItemsForTheUserAgentHasPermissionsByType', {
-      userAgentId: map(ctx.meta.userSession.userAgents, 'id'),
-      type: 'leebrary.asset.can-assign',
-      ignoreOriginalTarget: true,
-      item: assetsIds,
-    }),
-    getParentPermissions({ ids: assignablesIds, ctx }),
-  ]);
+  const assetsPermissions = await ctx.tx.call('leebrary.permissions.getByAssets', {
+    assets: assetsIds,
+    showPublic: true,
+    ctx,
+  });
 
   const directPermissions = Object.fromEntries(
-    permissions
-      .map(({ permissionName, actionNames }) => [
-        /\.assignable\.(?<id>[^@]+@(\d+\.){2}\d+)/.exec(permissionName).groups.id,
-        actionNames,
-      ])
-      .concat(
-        canAssignPerms.flatMap((id) =>
-          assignablesByAsset[id].map(({ id: assignableId }) => [assignableId, ['view']])
-        )
-      )
-      .concat(parentPermissions)
+    assetsPermissions.flatMap(({ asset, permissions }) => {
+      const actions = entries(pick(permissions, assignableActions))
+        .filter(([, value]) => !!value)
+        .map(([action]) => action);
+      return assignablesByAsset[asset].map(({ id }) => [id, actions]);
+    })
   );
 
   const assignablesWithoutPermissions = difference(assignablesIds, Object.keys(directPermissions));

@@ -13,6 +13,7 @@ const { getServiceModels } = require('../models');
 const { pluginName } = require('../config/constants');
 const restActions = require('./rest/permissions.rest');
 const { set } = require('../core/permissions/set');
+const { getByAssets } = require('../core/permissions/getByAssets');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -32,6 +33,18 @@ module.exports = {
     set: {
       handler(ctx) {
         return set({ ...ctx.params, ctx });
+      },
+    },
+    getByAssets: {
+      async handler(ctx) {
+        const permissions = await getByAssets({
+          assetIds: ctx.params.assets,
+          onlyShared: ctx.params.onlyShared,
+          showPublic: ctx.params.showPublic,
+          ctx,
+        });
+
+        return permissions;
       },
     },
   },
