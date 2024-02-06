@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isArray, isEmpty, isNil } from 'lodash';
+import { isArray, isEmpty, isNil, isString } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
@@ -277,14 +277,18 @@ function TaskSetup() {
         gradable: false,
         ...values,
 
-        subjects: values?.subjects?.map((subject) => ({
-          program,
-          subject,
-          curriculum: curriculum && {
-            objectives: curriculum[subject]?.objectives?.map(({ objective }) => objective),
-            curriculum: curriculum[subject]?.curriculum?.map((item) => item.curriculum),
-          },
-        })),
+        subjects: values?.subjects?.map((subject) =>
+          isString(subject)
+            ? {
+                program,
+                subject,
+                curriculum: curriculum && {
+                  objectives: curriculum[subject]?.objectives?.map(({ objective }) => objective),
+                  curriculum: curriculum[subject]?.curriculum?.map((item) => item.curriculum),
+                },
+              }
+            : subject
+        ),
       };
 
       let messageKey = 'create_done';
@@ -389,6 +393,7 @@ function TaskSetup() {
     (async () => {
       if (!isEmpty(id)) {
         store.currentTask = await getTask(id);
+
         render();
       } else if (!isEmpty(asset)) {
         const assetData = await getAsset(asset);
