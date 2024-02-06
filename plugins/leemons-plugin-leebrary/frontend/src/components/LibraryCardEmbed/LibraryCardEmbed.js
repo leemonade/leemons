@@ -4,7 +4,6 @@ import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbl
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import { LocaleDate } from '@common';
-// import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
 import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
@@ -12,9 +11,9 @@ import {
 } from './LibraryCardEmbed.constants';
 import { LibraryCardEmbedSkeleton } from './LibraryCardEmbdedSkeleton';
 
-const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category, assetsLoading }) => {
+const LibraryCardEmbed = ({ asset, variantIcon, actionIcon, assetsLoading }) => {
   const [t] = useTranslateLoader(prefixPN('assetsList'));
-  const { title, name, updatedAt, image, cover, fileType, url, icon } = asset;
+  const { title, name, updatedAt, image, cover, fileType, icon } = asset;
   const { classes } = LibraryCardEmbedStyles({}, { name: 'LibraryCardEmbed' });
   const isPlayable = React.useMemo(() => {
     const playableFileExtensions = [
@@ -69,27 +68,6 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category, a
     return getIconForFileType();
   };
 
-  // const openInNewTab = () => {
-  //   const isFile = variant === 'file';
-  //   const isBookmark = ['bookmark', 'url'].includes(fileType) || category?.key === 'bookmarks';
-  //   if (isBookmark) {
-  //     window.open(url);
-  //     return;
-  //   }
-
-  //   if (['document', 'file'].includes(fileType) && asset?.fileExtension !== 'pdf' && url) {
-  //     window.open(url);
-  //     return;
-  //   }
-
-  //   if (isFile) {
-  //     window.open(getFileUrl(asset.file?.id || asset.original.file?.id || asset.original.file));
-  //     return;
-  //   }
-
-  //   window.open(`/protected/leebrary/play/${asset.id}`, '_blank', 'noopener,noreferrer');
-  // };
-
   const MemoizedEmptyCover = useMemo(
     () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} height={72} />,
     [icon, variantIcon, fileType]
@@ -100,7 +78,6 @@ const LibraryCardEmbed = ({ asset, variant, variantIcon, actionIcon, category, a
   }
 
   return (
-    // <Box className={classes.root} onClick={handlePlayAsset}>
     <Box className={classes.root}>
       <Stack alignItems="center" fullWidth spacing={4}>
         <Box

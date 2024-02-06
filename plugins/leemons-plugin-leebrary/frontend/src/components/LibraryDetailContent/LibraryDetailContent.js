@@ -99,67 +99,63 @@ const LibraryDetailContent = ({
     return DetailContentComponent;
   }
   return (
-    <>
-      <Tabs
-        fullHeight
-        panelColor="default"
-        centerGrow
-        className={classes.tab}
-        activeKey={activeTab}
-        onChange={handleTabChange}
-      >
-        <TabPanel label={detailLabels?.detail} key="tab1">
-          {DetailContentComponent}
-        </TabPanel>
-        <TabPanel label={detailLabels?.permissions} key="tab2">
-          <Box className={classes.tabPanelPermissions}>
-            <Box>
-              <Text
-                className={classes.title}
-              >{`${detailLabels?.permissions} (${canAccess?.length})`}</Text>
-              <Box styles={{ paddingBottom: 1000 }}>
-                {canAccessData?.length > 0 && (
-                  <Box className={classes.canAccessContainer}>
-                    {canAccessData.map((user, index) => (
-                      <Box key={index} className={classes.canAccessItem}>
-                        <Box className={classes.avatarWrapper}>
-                          <UserDisplayItem
-                            variant="inline"
-                            size="md"
-                            alt={user?.name}
-                            name={user?.name}
-                            surnames={user?.surnames}
-                            image={user.avatar}
-                          />
-                        </Box>
-                        <Box>
-                          <Text className={classes.canAccessText}>
-                            {Array.isArray(user.permissions) && t(`${user?.permissions[0]}`)}
-                          </Text>
-                        </Box>
+    <Tabs
+      fullHeight
+      panelColor="default"
+      centerGrow
+      className={classes.tab}
+      activeKey={activeTab}
+      onChange={handleTabChange}
+    >
+      <TabPanel label={detailLabels?.detail} key="tab1">
+        {DetailContentComponent}
+      </TabPanel>
+      <TabPanel label={detailLabels?.permissions} key="tab2">
+        <Box className={classes.tabPanelPermissions}>
+          <Box>
+            <Text
+              className={classes.title}
+            >{`${detailLabels?.permissions} (${canAccess?.length})`}</Text>
+            <Box styles={{ paddingBottom: 1000 }}>
+              {canAccessData?.length > 0 && (
+                <Box className={classes.canAccessContainer}>
+                  {canAccessData.map((user, index) => (
+                    <Box key={index} className={classes.canAccessItem}>
+                      <Box className={classes.avatarWrapper}>
+                        <UserDisplayItem
+                          variant="inline"
+                          size="md"
+                          alt={user?.name}
+                          name={user?.name}
+                          surnames={user?.surnames}
+                          image={user.avatar}
+                        />
                       </Box>
-                    ))}
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          </Box>
-        </TabPanel>
-        {isTeacher && isAssetWithInstuctions && (
-          <TabPanel label={detailLabels?.instructions} key="tab3">
-            <Box className={classes.tabPanel}>
-              {asset.instructionsForTeachers ? (
-                asset.instructionsForTeachers
-              ) : (
-                <>
-                  <Text>Este asset no tiene instrucciones para profesores aún.</Text>
-                </>
+                      <Box>
+                        <Text className={classes.canAccessText}>
+                          {Array.isArray(user.permissions) && t(`${user?.permissions[0]}`)}
+                        </Text>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
               )}
             </Box>
-          </TabPanel>
-        )}
-      </Tabs>
-    </>
+          </Box>
+        </Box>
+      </TabPanel>
+      {isTeacher && isAssetWithInstuctions && (
+        <TabPanel label={detailLabels?.instructions} key="tab3">
+          <Box className={classes.tabPanel}>
+            {asset.instructionsForTeachers ? (
+              asset.instructionsForTeachers
+            ) : (
+              <Text>{detailLabels.emptyInstructions}</Text>
+            )}
+          </Box>
+        </TabPanel>
+      )}
+    </Tabs>
   );
 };
 

@@ -29,8 +29,8 @@ const DetailContent = ({
     <Box style={{ marginTop: 24, marginBottom: 24 }}>
       {Array.isArray(subjectsIds) &&
         subjectsIds.length > 0 &&
-        subjectsIds?.map((subject, index) => (
-          <Box key={index} className={classes.subjectItem}>
+        subjectsIds?.map((subject) => (
+          <Box key={subject?.subject} className={classes.subjectItem}>
             <SubjectItemDisplay subjectsIds={[subject?.subject]} programId={program} />
           </Box>
         ))}

@@ -14,7 +14,6 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-import { OpenIcon } from '@bubbles-ui/icons/solid';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -44,16 +43,6 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       return items;
     }
 
-    // if (asset.providerData?.published) {
-    //   items.push({
-    //     icon: <OpenIcon />,
-    //     children: t('view'),
-    //     onClick: (e) => {
-    //       e.stopPropagation();
-    //       history.push(`/private/content-creator/${asset.providerData.id}/view`);
-    //     },
-    //   });
-    // }
     if (asset.providerData?.published) {
       items.push({
         icon: <AssignIcon />,

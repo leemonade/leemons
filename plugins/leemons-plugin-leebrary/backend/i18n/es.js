@@ -308,6 +308,7 @@ module.exports = {
       detail: 'Detalle',
       permissions: 'Permisos',
       instructions: 'Instrucciones',
+      emptyInstructions: 'Este recurso no tiene instrucciones para los docentes todavía.',
     },
     cardToolbar: {
       edit: 'Editar',
