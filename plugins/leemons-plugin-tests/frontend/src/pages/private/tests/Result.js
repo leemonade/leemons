@@ -45,6 +45,7 @@ import ActivityHeader from '@assignables/components/ActivityHeader';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getFeedbackRequest,
@@ -80,6 +81,8 @@ export default function Result() {
   const searchParams = useSearchParams();
   const fromTest = useMemo(() => searchParams.has('fromTest'), []);
 
+  const isTeacher = useIsTeacher();
+
   function getUserId() {
     if (params.user) return params.user;
     return null;
@@ -88,16 +91,6 @@ export default function Result() {
   function onChangeUser(e) {
     if (e) {
       history.push(`/private/tests/result/${params.id}/${e}`);
-    }
-  }
-
-  async function getIfTeacher() {
-    try {
-      const { feedback } = await getFeedbackRequest(params.id, getUserId());
-      store.isTeacher = feedback.isTeacher;
-      render();
-    } catch (error) {
-      addErrorAlert(error);
     }
   }
 
@@ -110,16 +103,16 @@ export default function Result() {
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
-      const [{ evaluationSystem }, { questions }, { responses }, { timestamps }, { feedback }] =
+      const [{ evaluationSystem }, { questions }, { responses }, { timestamps }] =
         await Promise.all([
           getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
           getQuestionByIdsRequest(store.instance.metadata.questions, { categories: true }),
           getUserQuestionResponsesRequest(params.id, getUserId()),
           setInstanceTimestampRequest(params.id, 'open', getUserId()),
-          getFeedbackRequest(store.instance.id, getUserId()),
         ]);
-      store.isTeacher = feedback.isTeacher;
-      store.feedback = feedback.feedback;
+
+      const score = store.assignation.grades?.[0] ?? {};
+      store.feedback = score.feedback ?? null;
       if (store.feedback) {
         setCanShowFeedback(true);
       }
@@ -165,8 +158,6 @@ export default function Result() {
       (store.idLoaded !== params?.id || store.userLoaded !== params?.user)
     ) {
       init();
-    } else {
-      getIfTeacher();
     }
   }, [params]);
 
@@ -310,7 +301,7 @@ export default function Result() {
     const currentGrade = originalGrade ?? {
       subject: store.instance.subjects[0].subject,
       type: 'main',
-      grade: null,
+      grade: store.evaluationSystem?.minScale.number,
       feedback: null,
       visibleToStudent: true,
     };
@@ -329,6 +320,9 @@ export default function Result() {
           grades: [currentGrade],
         });
       }
+
+      store.assignation.grades = [currentGrade];
+
       if (!fromSwitch) {
         addSuccessAlert(t('feedbackDone'));
       }
@@ -368,7 +362,7 @@ export default function Result() {
   }
 
   // if (!store.room) {
-  if (store.isTeacher || (!store.isTeacher && store.feedback)) {
+  if (isTeacher || store.feedback) {
     accordion.push(
       <ActivityAccordionPanel
         key={3}
@@ -380,7 +374,7 @@ export default function Result() {
           </Box>
         }
       >
-        {store.isTeacher ? (
+        {isTeacher ? (
           <Box sx={(theme) => ({ padding: theme.spacing[6] })}>
             <TextEditorInput
               value={store.feedback}
@@ -465,7 +459,7 @@ export default function Result() {
           scrollRef={scrollRef}
           leftZone={
             <Box>
-              {store.isTeacher ? (
+              {isTeacher ? (
                 <>
                   <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
                     <Text>{t('student')}</Text>
@@ -517,7 +511,7 @@ export default function Result() {
                     subject={store?.instance?.subjects?.[0]?.subject}
                   />
 
-                  {store.isTeacher && !store.instance.dates.evaluationClosed ? (
+                  {isTeacher && !store.instance.dates.evaluationClosed ? (
                     <>
                       <Switch
                         label={t('feedbackForStudent')}
@@ -544,7 +538,7 @@ export default function Result() {
                   ) : null}
 
                   <Stack justifyContent="end" spacing={2}>
-                    {store.isTeacher && canShowFeedback ? (
+                    {isTeacher && canShowFeedback ? (
                       <Button leftIcon={<SendMessageIcon />} onClick={() => sendFeedback()}>
                         {t('saveAndSendFeedback')}
                       </Button>
@@ -560,7 +554,7 @@ export default function Result() {
                     </ActivityAccordion>
                   </ContextContainer>
 
-                  {store.instance?.showCorrectAnswers || store.isTeacher ? (
+                  {store.instance?.showCorrectAnswers || isTeacher ? (
                     <ContextContainer
                       titleRightZone={
                         <Button variant="link" onClick={toggleQuestionMode}>
@@ -613,155 +607,4 @@ export default function Result() {
       ) : null}
     </>
   );
-
-  /*
-return (
-  <ContextContainer
-    sx={(theme) => ({
-      backgroundColor: theme.colors.uiBackground02,
-      paddingBottom: theme.spacing[12],
-      overflow: 'auto',
-    })}
-    fullHeight
-    fullWidth
-  >
-    <Box
-      sx={(theme) => ({
-        width: '100%',
-        maxWidth: theme.breakpoints.lg,
-        paddingLeft: store.isTeacher ? 0 : theme.spacing[8],
-        paddingRight: theme.spacing[5],
-      })}
-    >
-      <Box className={styles.container}>
-        {store.isTeacher ? (
-          <Box className={styles.leftContent}>
-            <AssignableUserNavigator
-              onlySelect
-              onChange={onChangeUser}
-              value={params.user}
-              instance={store.instance || params.id}
-            />
-          </Box>
-        ) : null}
-        {params.user && !store.loading ? (
-          <Box
-            className={cx(
-              styles.rightContent,
-              store.isTeacher ? styles.rightContentTeacher : null
-            )}
-          >
-            <Box className={styles.header}>
-              <Text role="productive">
-                {store.instance.gradable ? t('gradable') : t('notGradable')}{' '}
-                {store.instance.gradable ? <StarIcon /> : <CutStarIcon />}
-              </Text>
-            </Box>
-            <Box className={styles.content}>
-              <ScoreFeedback
-                calification={{
-                  minimumGrade: store.evaluationSystem.minScaleToPromote.number,
-                  grade: userNote,
-                  label: scale.letter,
-                  showOnlyLabel: false,
-                }}
-              >
-                <Stack
-                  fullWidth
-                  fullHeight
-                  direction="column"
-                  justifyContent="center"
-                  style={{
-                    padding: 24,
-                  }}
-                >
-                  <Text size="md" role="productive" strong>
-                    Test
-                  </Text>
-                  <Title order={3}>{store.instance.assignable.asset.name}</Title>
-                </Stack>
-              </ScoreFeedback>
-
-              <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
-                {accordion}
-              </ActivityAccordion>
-              {store.isTeacher && !store.room ? (
-                <Box
-                  sx={(theme) => ({
-                    display: 'flex',
-                    justifyContent: 'end',
-                    marginTop: theme.spacing[4],
-                  })}
-                >
-                  <Button
-                    onClick={() => {
-                      if (!accordionState.includes('2')) {
-                        setAccordionState([...accordionState, '2']);
-                      } else {
-                        sendFeedback();
-                      }
-                    }}
-                    rightIcon={<SendMessageIcon />}
-                  >
-                    {t('sendFeedback')}
-                  </Button>
-                </Box>
-              ) : null}
-            </Box>
-            <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
-              <ContextContainer alignItems="center">
-                <Text size="md" color="primary" strong>
-                  {store.isTeacher ? t('chatTeacherDescription') : t('chatDescription')}
-                </Text>
-                <Box>
-                  <Button
-                    rounded
-                    rightIcon={<PluginComunicaIcon />}
-                    onClick={() => {
-                      hooks.fireEvent('chat:onRoomOpened', store.room);
-                      store.chatOpened = true;
-                      render();
-                    }}
-                  >
-                    {store.isTeacher ? t('chatButtonStudent') : t('chatButtonTeacher')}
-                  </Button>
-                </Box>
-              </ContextContainer>
-            </Box>
-          </Box>
-        ) : null}
-      </Box>
-    </Box>
-
-
-    {!store.loading ? (
-      <>
-        <ChatDrawer
-          onClose={() => {
-            hooks.fireEvent('chat:closeDrawer');
-            store.chatOpened = false;
-            render();
-          }}
-          opened={store.chatOpened}
-          onRoomLoad={(room) => {
-            store.room = room;
-            render();
-          }}
-          onMessage={() => {
-            store.room.unreadMessages += 1;
-            render();
-          }}
-          onMessagesMarkAsRead={() => {
-            store.room.unreadMessages = 0;
-            render();
-          }}
-          room={`assignables.subject|${store?.instance?.subjects?.[0]?.subject}.assignation|${
-            store.assignation.id
-          }.userAgent|${getUserId()}`}
-        />
-      </>
-    ) : null}
-  </ContextContainer>
-);
-*/
 }

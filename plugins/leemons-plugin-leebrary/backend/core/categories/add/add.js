@@ -18,8 +18,37 @@ const { LeemonsError } = require('@leemons/error');
 const { exists } = require('../exists');
 const { categoriesMenu } = require('../../../config/constants');
 
+async function saveLocalizations({ key, data, ctx }) {
+  const plural = data.pluralName;
+  const singular = data.singularName;
+
+  return Promise.all([
+    ctx.tx.call('multilanguage.common.addManyByKey', {
+      key: ctx.prefixPN(`categories.${key}.plural`),
+      data: plural,
+    }),
+    ctx.tx.call('multilanguage.common.addManyByKey', {
+      key: ctx.prefixPN(`categories.${key}.singular`),
+      data: singular,
+    }),
+  ]);
+}
+
+async function createMenuItem({ menu, key, ctx }) {
+  const menuItem = {
+    removed: menu.removed,
+    item: { ...menu.item, key, order: menu.order ?? menu.item.order },
+    permissions: menu.permissions,
+  };
+  await ctx.tx.call('menu-builder.menuItem.addItemsFromPlugin', {
+    itemsData: menuItem,
+    shouldWait: false,
+    menuKey: categoriesMenu.key,
+  });
+}
+
 async function add({ data, ctx }) {
-  const { menu, ...categoryData } = data;
+  const { menu, pluralName, singularName, ...categoryData } = data;
   if (isEmpty(categoryData.key)) {
     throw new LeemonsError(ctx, {
       message: 'Category `key` is required',
@@ -45,17 +74,11 @@ async function add({ data, ctx }) {
       });
     }
 
-    // Add Menu item
-    const menuItem = {
-      removed: menu.removed,
-      item: { ...menu.item, key: categoryData.key, order: menu.order ?? categoryData.order },
-      permissions: menu.permissions,
-    };
-    await ctx.tx.call('menu-builder.menuItem.addItemsFromPlugin', {
-      itemsData: menuItem,
-      shouldWait: false,
-      menuKey: categoriesMenu.key,
-    });
+    await Promise.all([
+      createMenuItem({ key: categoryData.key, menu, ctx }),
+      saveLocalizations({ key: categoryData.key, data: { pluralName, singularName }, ctx }),
+    ]);
+
     return newCategory?.toObject() ?? newCategory;
   } catch (e) {
     ctx.logger.error(e);

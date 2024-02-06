@@ -40,7 +40,7 @@ function EvaluationFeedback({ assignation, subject, onChatClick = noop }) {
             />
           </Box>
           {score?.feedback ? (
-            <Box sx={{ overflow: 'auto' }}>
+            <Box sx={{ overflow: 'auto', width: '100%' }}>
               <HtmlText>{score?.feedback}</HtmlText>
             </Box>
           ) : (

@@ -4,7 +4,7 @@ import { Box, Text, TextClamp } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import prefixPN from '@content-creator/helpers/prefixPN';
-import getH1Content from '@content-creator/helpers/getH1Content';
+import extractH1AndH2Content from '@content-creator/helpers/extractH1AndH2Content';
 import { AssetMetadataContentCreatorStyles } from './AssetMetadataContentCreator.styles';
 import {
   ASSET_METADATA_CONTENT_CREATOR_DEFAULT_PROPS,
@@ -23,13 +23,13 @@ const AssetMetadataContentCreator = ({ metadata }) => {
   const { data: documentData } = useDocument({
     id: metadata?.providerData?.id,
   });
-  const getH1 = (document) => {
+  const getH1andH2 = (document) => {
     if (documentData) {
-      return getH1Content(document.content);
+      return extractH1AndH2Content(document.content);
     }
     return [];
   };
-  const h1Content = getH1(documentData);
+  const h1andH2Content = getH1andH2(documentData);
 
   if (!metadata) return null;
 
@@ -40,12 +40,12 @@ const AssetMetadataContentCreator = ({ metadata }) => {
         <Text className={classes.typologyName}>{`${t('type')}`}</Text>
       </Box>
       <Box className={classes.box}>
-        {!!h1Content && h1Content.length > 0 && (
+        {!!h1andH2Content && h1andH2Content.length > 0 && (
           <Box>
             <Text className={classes.value}>{`${t('schemaLabel')}: `}</Text>
-            {h1Content.map((h1, index) => (
+            {h1andH2Content.map((node, index) => (
               <TextClamp lines={1} key={index}>
-                <Text className={classes.h1Header}>{h1}</Text>
+                <Text className={classes.h1Header}>{node}</Text>
               </TextClamp>
             ))}
           </Box>

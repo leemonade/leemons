@@ -1,8 +1,4 @@
-const { escapeRegExp } = require('lodash');
-
-const { getPermissionName } = require('../../helpers/getPermissionName');
-const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
-const { getTeacherPermission } = require('../getTeacherPermission');
+const { getUserPermissions } = require('../getUserPermissions');
 
 /**
  * Retrieves the user permissions based on the assignable ID and context.
@@ -13,33 +9,16 @@ const { getTeacherPermission } = require('../getTeacherPermission');
  * @return {Promise<Object>} A promise that resolves to an object containing the user's role and actions.
  */
 async function getUserPermission({ assignableId, ctx }) {
-  const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-    userAgent: ctx.meta.userSession.userAgents,
-    query: {
-      permissionName: { $regex: escapeRegExp(getPermissionName({ id: assignableId, ctx })) },
-    },
-  });
+  const assignable = await ctx.tx.db.Assignables.findOne({ id: assignableId })
+    .select({
+      id: 1,
+      asset: 1,
+    })
+    .lean();
 
-  if (!permissions.length) {
-    const teacherPermissions = await getTeacherPermission({ assignableId, ctx });
+  const permissions = await getUserPermissions({ assignables: [assignable], ctx });
 
-    permissions.push(...teacherPermissions);
-  }
-
-  if (!permissions.length) {
-    // TODO: Return no permissions (for the demo everything is public)
-    return {
-      role: 'viewer',
-      actions: ['view'],
-    };
-  }
-
-  const userActions = permissions[0].actionNames;
-
-  return {
-    role: getRoleMatchingActions({ actions: userActions }),
-    actions: userActions,
-  };
+  return permissions[assignableId] ?? { role: 'viewer', actions: ['view'] };
 }
 
 module.exports = { getUserPermission };

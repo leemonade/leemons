@@ -125,6 +125,7 @@ export function useParsedActivities(
       })),
       value: values,
       isPeriodSubmitted,
+      hideCustom: !!filters.period.isCustom,
     };
 
     return cache('tableData', tableData);

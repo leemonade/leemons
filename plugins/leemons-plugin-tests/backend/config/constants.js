@@ -233,6 +233,8 @@ const libraryQuestionBankCategory = {
   },
   listCardComponent: 'QuestionsBanksListCard',
   detailComponent: 'QuestionsBanksDetail',
+  pluralName: { en: 'questions banks', es: 'bancos de preguntas' },
+  singularName: { en: 'questions bank', es: 'banco de preguntas' },
 };
 
 module.exports = {
