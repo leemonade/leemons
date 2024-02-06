@@ -14,7 +14,7 @@ import {
 } from '@bubbles-ui/components';
 import { SettingsIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
-import { addSuccessAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
@@ -71,7 +71,9 @@ export default function ChangeLanguage({ session }) {
   });
 
   async function save() {
-    await updateUserRequest(session.id, { locale: store.locale });
+    await updateUserRequest(session.id, { locale: store.locale }).catch((e) =>
+      addErrorAlert(t('error', { error: e?.message ?? e }))
+    );
   }
 
   return (

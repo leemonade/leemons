@@ -202,6 +202,7 @@ const assignableRoles = [
       componentOwner: 'tests',
       listCardComponent: 'TestsListCard',
       detailComponent: 'TestsDetail',
+      type: 'activity',
     },
   },
 ];

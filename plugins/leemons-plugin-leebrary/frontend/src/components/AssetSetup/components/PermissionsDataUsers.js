@@ -65,7 +65,7 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
         },
         editable: false,
         valueRender: (val) => <UserDisplayItem {...val} variant="inline" size="xs" />,
-        style: { width: '20%' },
+        style: { width: '60%' },
       },
       {
         Header: 'Role',
@@ -98,17 +98,6 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
 
   return (
     <ContextContainer padded={false} spacing={0}>
-      {/* {!editMode ? (
-        <Box>
-           <Title order={5}>{t('permissionsData.labels.addUsers')}</Title>
-          <Paragraph>{t('permissionsData.labels.addUsersDescription')}</Paragraph> 
-        </Box>
-      ) : (
-        <Box>
-          <Title order={5}>{t('permissionsData.labels.editAddUsers')}</Title>
-        </Box>
-      )} */}
-
       {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
           data={value}
@@ -116,9 +105,9 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
           columns={USERS_COLUMNS}
           labels={USER_LABELS}
           showHeaders={false}
-          forceShowInputs={false}
           sortable={false}
-          editable={false}
+          forceShowInputs={!editMode}
+          editable={!editMode}
           removable={true}
           onBeforeAdd={checkIfUserIsAdded}
           resetOnAdd

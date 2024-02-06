@@ -229,6 +229,8 @@ function ContentData({
                   </Button>
                   {isExpress || isLastStep ? (
                     <DropdownButton
+                      chevronUp
+                      width="auto"
                       data={[
                         { label: labels.buttonPublish, onClick: handleOnPublish },
                         { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
@@ -254,7 +256,7 @@ function ContentData({
           }
         >
           <ContextContainer {...props}>
-            <Box mb={20}>
+            <ContextContainer style={{ marginBottom: 20 }}>
               <ContextContainer title={labels?.statement}>
                 <StatementImage labels={labels} />
                 <Controller
@@ -283,7 +285,7 @@ function ContentData({
                 )}
               </ContextContainer>
 
-              <ContextContainer title={labels?.submission?.title} style={{ marginBottom: 20 }}>
+              <ContextContainer title={labels?.submission?.title}>
                 <Submissions labels={labels} errorMessages={errorMessages} />
               </ContextContainer>
 
@@ -325,7 +327,7 @@ function ContentData({
                   />
                 </ContextContainer>
               )}
-            </Box>
+            </ContextContainer>
           </ContextContainer>
         </TotalLayoutStepContainer>
       </form>

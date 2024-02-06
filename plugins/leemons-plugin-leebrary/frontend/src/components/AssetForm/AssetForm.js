@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import _, { flatten, isEmpty, isFunction, isNil, noop, toLower } from 'lodash';
+import { flatten, isEmpty, isFunction, isNil, noop, toLower, map, isString } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
-import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
 import {
   Box,
@@ -143,10 +142,22 @@ const AssetForm = ({
         }
       }
       const { programs } = await getUserProgramsRequest();
-      store.programs = _.map(programs, (item) => ({ label: item.name, value: item.id }));
+      store.programs = map(programs, (item) => ({ label: item.name, value: item.id }));
     }
     render();
   }
+
+  const setAssetColorToSubjectColor = (subjectsFromPicker) => {
+    if (!subjectsFromPicker?.length) {
+      setValue('color', null);
+    }
+    if (subjectsFromPicker.length === 1) {
+      setValue('color', subjectsFromPicker[0].color);
+    }
+    if (subjectsFromPicker.length > 1) {
+      setValue('color', '#878D96');
+    }
+  };
 
   useEffect(() => {
     if (!isNullish(asset) && isEmpty(asset?.id)) {
@@ -459,10 +470,11 @@ const AssetForm = ({
                 render={({ field, fieldState: { error } }) => (
                   <SubjectPicker
                     {...field}
-                    value={_.map(field.value || [], (subject) =>
-                      _.isString(subject) ? subject : subject?.subject
+                    value={map(field.value || [], (subject) =>
+                      isString(subject) ? subject : subject?.subject
                     )}
                     onChangeRaw={(e) => {
+                      setAssetColorToSubjectColor(e);
                       if (e.length > 0) {
                         if (!program) setValue('program', e[0].programId);
                       } else if (program) setValue('program', null);
@@ -504,18 +516,25 @@ const AssetForm = ({
                   />
                 )}
 
-                <Box style={{ width: 160 }}>
+                <Box>
                   <Controller
                     control={control}
                     name="color"
                     render={({ field }) => (
                       <ColorInput
+                        {...field}
                         label={labels.color}
                         placeholder={placeholders.color}
                         useHsl
                         compact={false}
                         manual={false}
-                        {...field}
+                        disabled={formValues.subjects?.length}
+                        contentStyle={{ width: 190 }}
+                        clearable
+                        onChange={(inputValue) => {
+                          if (!inputValue) setValue('color', null);
+                          else setValue('color', inputValue);
+                        }}
                       />
                     )}
                   />

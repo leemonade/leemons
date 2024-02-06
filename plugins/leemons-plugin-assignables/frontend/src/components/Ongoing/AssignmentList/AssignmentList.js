@@ -126,7 +126,7 @@ export default function AssignmentList({
           ))}
         </Tabs>
       ) : (
-        <Paper>{tabPane(tabs['0'])}</Paper>
+        <Paper shadow="none">{tabPane(tabs['0'])}</Paper>
       ),
     [tabs, tabPane]
   );
