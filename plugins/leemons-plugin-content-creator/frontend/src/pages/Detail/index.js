@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
@@ -34,14 +34,14 @@ const validators = [
   }),
 ];
 
-function useQuery() {
+function useUrlQuery() {
   const { search } = useLocation();
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
 export default function Index({ isNew, readOnly }) {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
-  const urlQuery = useQuery();
+  const urlQuery = useUrlQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
   const [activeStep, setActiveStep] = useState(Number(urlQuery.get('step')) || 0);
@@ -111,7 +111,7 @@ export default function Index({ isNew, readOnly }) {
           addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
           setIsLoading(false);
           if (!publishing) {
-            history.push(
+            history.replace(
               `/private/content-creator/${data.document.assignable}/edit?step=${activeStep}`
             );
           }
@@ -146,6 +146,11 @@ export default function Index({ isNew, readOnly }) {
   // INITIAL DATA HANDLER
 
   useEffect(() => {
+    // Temporary fix. It won't be needed to solved the program if the Suject Picker limits the options to one program
+    let solvedProgram;
+    if (documentData?.subjects?.length) {
+      solvedProgram = documentData?.subjects[0].program;
+    }
     if (isNew) form.reset();
     else {
       form.setValue('name', documentData?.name);
@@ -153,8 +158,8 @@ export default function Index({ isNew, readOnly }) {
       form.setValue('description', documentData?.description);
       form.setValue('color', documentData?.color || null);
       form.setValue('cover', documentData?.cover || null);
-      form.setValue('program', documentData?.program || null);
-      form.setValue('subjects', documentData?.subjects || null);
+      form.setValue('program', documentData?.program || solvedProgram || null);
+      form.setValue('subjects', documentData?.subjects?.map((subject) => subject.subject) || null);
     }
   }, [documentData]);
 
@@ -168,7 +173,7 @@ export default function Index({ isNew, readOnly }) {
 
   // #region * FOOTER ACTIONS ------------------------------------------------
   const footerActionsLabels = {
-    dropdownLabel: 'Finalizar',
+    dropdownLabel: t('finish'),
   };
 
   const footerFinalActionsAndLabels = [
@@ -275,6 +280,8 @@ export default function Index({ isNew, readOnly }) {
                           {t('saveDraft')}
                         </Button>
                         <DropdownButton
+                          chevronUp
+                          width="auto"
                           data={footerFinalActionsAndLabels}
                           loading={isLoading}
                           disabled={isLoading}

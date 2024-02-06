@@ -11,7 +11,7 @@ import {
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { unflatten, useProcessTextEditor, useQuery, useSearchParams, useStore } from '@common';
+import { unflatten, useProcessTextEditor, useQuery, useStore } from '@common';
 import { ObservableContextProvider, useObservableContext } from '@common/context/ObservableContext';
 import { getAssetsByIdsRequest } from '@leebrary/request';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -81,7 +81,6 @@ function useHeaderLabels(t) {
 function TaskSetupHeader({ t, store }) {
   const headerLabels = useHeaderLabels(t);
   const history = useHistory();
-
   return (
     <TotalLayoutHeader
       icon={
@@ -147,15 +146,8 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
 
     if (contentData) {
       contentData.labels.buttonPublish = instructionData?.labels?.buttonPublish;
-      contentData.labels.buttonPublishAndAssign = instructionData?.labels?.buttonNext;
+      contentData.labels.buttonPublishAndAssign = instructionData?.labels?.buttonPublishAndAssign;
     }
-
-    // const showAttachmentsAndInstructions =
-    //   !isExpress && (sharedData?.metadata?.hasInstructions || sharedData?.metadata?.hasAttachments);
-
-    // const showEvaluation =
-    //   !isExpress &&
-    //   (sharedData?.metadata?.hasCurriculum || sharedData?.metadata?.hasCustomObjectives);
 
     const showAttachmentsAndInstructions =
       !isExpress && (configValues.hasInstructions || configValues.hasAttachments);
@@ -258,7 +250,6 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
 }
 
 function TaskSetup() {
-  const searchParams = useSearchParams();
   const [t, translations] = useTranslateLoader(prefixPN('task_setup_page'));
   const [labels, setLabels] = useState(null);
   const [loading, setLoading] = useState(null);
@@ -302,8 +293,6 @@ function TaskSetup() {
         messageKey = 'update_done';
       }
 
-      const isCreating = searchParams.has('fromNew') || !store?.currentTask?.id;
-
       const {
         task: { fullId },
       } = await saveTaskRequest(store?.currentTask?.id, body);
@@ -316,11 +305,11 @@ function TaskSetup() {
 
       addSuccessAlert(t(`common.${messageKey}`));
 
-      history.push(
-        redirectTo === 'library'
-          ? '/private/leebrary/assignables.task/list?activeTab=draft'
-          : `/private/tasks/library/edit/${fullId}${isCreating ? '?fromNew' : ''}`
-      );
+      if (redirectTo === 'library') {
+        history.push('/private/leebrary/assignables.task/list');
+      } else {
+        history.replace(`/private/tasks/library/edit/${fullId}`);
+      }
 
       emitEvent('taskSaved');
     } catch (e) {
@@ -418,7 +407,7 @@ function TaskSetup() {
   }, [id]);
 
   useEffect(() => {
-    if (translations && translations.items) {
+    if (translations?.items) {
       const res = unflatten(translations.items);
       const data = res.tasks.task_setup_page.setup;
       setLabels(data);

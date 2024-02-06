@@ -193,6 +193,8 @@ export default function DetailQuestions({
                 </Button>
               ) : null}
               <DropdownButton
+                chevronUp
+                width="auto"
                 data={[
                   { label: t('publish'), onClick: () => tryHandler(onPublish) },
                   { label: t('publishAndAssign'), onClick: () => tryHandler(onAssign) },

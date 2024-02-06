@@ -113,6 +113,8 @@ const assignableRoles = [
       componentOwner: 'content-creator',
       listCardComponent: 'DocumentListCard',
       detailComponent: 'DocumentDetail',
+      playerComponent: 'DocumentPlayer',
+      type: 'resource',
     },
   },
 ];

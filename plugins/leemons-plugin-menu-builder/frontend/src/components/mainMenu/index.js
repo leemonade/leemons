@@ -10,6 +10,7 @@ import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import getPlatformName from '@users/request/getPlatformName';
+import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {
@@ -30,25 +31,55 @@ export default function MainMenu({ subNavWidth, ...props }) {
   const sessionId = React.useRef(session?.id);
   const forceReload = React.useRef(false);
 
+  const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
+
   const reloadMenu = () => {
     setLoadMenu(true);
   };
 
   // ························································
-  // LOAD INITIAT DATA
+  // LOAD INITIAL DATA
 
+  /**
+   * Asynchronously loads initial data required for the menu.
+   * It fetches user centers, profiles, and the platform name concurrently.
+   * Then, it filters out denied profiles based on the deployment configuration.
+   * If there's only one center with less than two profiles and less than two profiles in total,
+   * it sets the store to indicate there's only one profile available.
+   */
   async function load() {
+    // Fetch user centers, profiles, and platform name concurrently
     const [{ centers }, { profiles }, { name }] = await Promise.all([
       getUserCentersRequest(),
       getUserProfilesRequest(),
       getPlatformName(),
     ]);
+    // Retrieve denied profiles from deployment configuration
+    const deniedProfiles = deploymentConfig?.deny?.profiles || [];
+    // Filter centers to exclude denied profiles
+    const filteredCenters = centers.map((center) => ({
+      ...center,
+      profiles: center.profiles.filter((profile) => !deniedProfiles.includes(profile.sysName)),
+    }));
+    // Filter profiles to exclude denied profiles
+    const filteredProfiles = profiles.filter(
+      (profile) => !deniedProfiles.includes(profile.sysName)
+    );
+
+    // Store the platform name in the store
     store.platformName = name;
-    if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
+
+    // Check if there's only one profile available and update the store accordingly
+    if (
+      filteredCenters.length === 1 &&
+      filteredCenters[0].profiles.length < 2 &&
+      filteredProfiles.length < 2
+    ) {
       store.onlyOneProfile = true;
-      store.centerName = centers[0].name;
-      render();
+      store.centerName = filteredCenters[0].name;
     }
+    // Trigger a re-render
+    render();
   }
 
   SocketIoService.useOn('USER_CHANGE_LOCALE', () => {
@@ -67,8 +98,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
   });
 
   useEffect(() => {
-    load();
-  }, []);
+    if (deploymentConfig !== undefined) load();
+  }, [deploymentConfig]);
 
   useEffect(() => {
     setLoadMenu(true);
@@ -125,46 +156,46 @@ export default function MainMenu({ subNavWidth, ...props }) {
       });
     }
 
+    result.push({
+      id: 'menu-4',
+      label: t('emailPreference'),
+      order: 1,
+      url: '/private/emails/preference',
+      window: 'SELF',
+      disabled: null,
+    });
+
+    result.push({
+      id: 'menu-3',
+      label: t('changeLanguage'),
+      order: 2,
+      url: '/private/users/language',
+      window: 'SELF',
+      disabled: null,
+    });
+
     if (!store.onlyOneProfile) {
       result.push({
         id: 'menu-2',
         label: t('switchProfile'),
-        order: 1,
+        order: 3,
         url: '/protected/users/select-profile',
         window: 'BLANK',
         disabled: null,
       });
     }
 
-    result.push(
-      {
-        id: 'menu-3',
-        label: t('changeLanguage'),
-        order: 2,
-        url: '/private/users/language',
-        window: 'SELF',
-        disabled: null,
-      },
-      {
-        id: 'menu-4',
-        label: t('emailPreference'),
-        order: 3,
-        url: '/private/emails/preference',
-        window: 'SELF',
-        disabled: null,
-      },
-      {
-        id: 'menu-5',
-        label: t('logout'),
-        order: 4,
-        url: '/protected/users/logout',
-        window: 'BLANK',
-        disabled: null,
-      }
-    );
+    result.push({
+      id: 'menu-5',
+      label: t('logout'),
+      order: 4,
+      url: '/protected/users/logout',
+      window: 'BLANK',
+      disabled: null,
+    });
 
     return result;
-  }, [t, store, session]);
+  }, [t, store.onlyOneProfile, session]);
 
   if (!session) return null;
 

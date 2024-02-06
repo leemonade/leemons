@@ -291,6 +291,8 @@ export default function Detail() {
                 scrollRef={scrollRef}
                 rightZone={
                   <DropdownButton
+                    chevronUp
+                    width="auto"
                     data={footerFinalActionsAndLabels}
                     loading={store.loading}
                     disabled={store.loading}

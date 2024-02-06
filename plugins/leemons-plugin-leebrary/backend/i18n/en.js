@@ -33,10 +33,12 @@ module.exports = {
         titleEdit: 'Edit resource',
         back: 'Back',
         presentation: 'Presentation',
+        subTitle: 'Resource title',
       },
       bookmark: {
         titleNew: 'New bookmark',
         titleEdit: 'Edit bookmark',
+        subTitle: 'Bookmark title',
       },
       labels: {
         content: 'Content',
@@ -319,6 +321,7 @@ module.exports = {
       assetStatusPublished: 'Published',
       assetStatusDraft: 'Draft',
       assetStatusAll: 'All statuses',
+      emptyInstructions: 'This asset does not have any instructions fot teachers yet.',
     },
     cardToolbar: {
       edit: 'Edit',
@@ -350,6 +353,11 @@ module.exports = {
       resources: {
         label: 'Categories',
         placeholder: 'Select a category',
+      },
+      mediaType: {
+        label: 'Resource types',
+        placeholder: 'Select a resource type',
+        allTypes: 'All types',
       },
     },
   },

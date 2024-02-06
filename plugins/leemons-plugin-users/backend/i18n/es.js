@@ -232,6 +232,7 @@ module.exports = {
   create_users: {
     male: 'Hombre',
     female: 'Mujer',
+    other: 'Otro',
     pageTitle: 'Crear usuarios',
     centerLabel: 'Centro',
     centersLabel: 'Centros',
@@ -309,6 +310,7 @@ module.exports = {
   userDetailModal: {
     male: 'Hombre',
     female: 'Mujer',
+    other: 'Otro',
     personalInformation: 'Información personal',
     badges: 'Etiquetas',
     email: 'Email',
@@ -325,6 +327,7 @@ module.exports = {
     save: 'Guardar',
     cancel: 'Cancelar',
     success: 'Idioma cambiado',
+    error: 'Error al cambiar el idioma: {error}',
   },
   importUsers: {
     title: 'Importar usuarios',

@@ -28,7 +28,7 @@ module.exports =
           ctx.meta.userSession = user;
           return;
         }
-      } else {
+      } else if (_.isArray(ctx.meta.authorization) && ctx.meta.authorization.length) {
         ctx.meta.authorization = _.compact(ctx.meta.authorization);
         const user = await ctx.tx.call('users.auth.detailForJWT', {
           jwtToken: ctx.meta.authorization[0],

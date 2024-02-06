@@ -22,7 +22,9 @@ export function useSubjectsForSubjectPicker({ subjects }) {
   return React.useMemo(
     () =>
       uniqBy(
-        map(subjectDetails, (subject) => pick(subject, ['id', 'name', 'program', 'course'])),
+        map(subjectDetails, (subject) =>
+          pick(subject, ['id', 'name', 'program', 'course', 'color'])
+        ),
         'id'
       ) || [],
     [subjectDetails]

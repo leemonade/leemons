@@ -209,9 +209,7 @@ export function ModuleDashboardBody({
       ? subjectsData[0].color
       : 'rgb(135, 141, 150)';
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
-  const introductionLink = preview
-    ? `/private/learning-paths/modules/journey/${module?.assignable?.id}/preview`
-    : `/private/learning-paths/modules/journey/${module?.id}`;
+  const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   return (
     <Box className={classes.activitiesList}>
       {!!(module?.metadata?.statement || module?.assignable?.resources?.length) && (

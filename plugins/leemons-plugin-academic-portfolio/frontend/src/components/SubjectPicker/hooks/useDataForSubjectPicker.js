@@ -51,7 +51,7 @@ export function useDataForSubjectPicker({ subjects, control }) {
         filter(programsData, (programData) => programsHavingAvailableSubject.has(programData.id)),
         (p) => ({ label: p.name, value: p.id })
       ),
-    [programsData]
+    [programsData, programsHavingAvailableSubject]
   );
 
   const courses = useMemo(() => {
@@ -90,6 +90,7 @@ export function useDataForSubjectPicker({ subjects, control }) {
           program: subjectProgram?.name,
           course: subjectCourse?.name,
           subject: subject?.name,
+          color: subject?.color,
         };
       }),
     [selectedSubjects, programsData, subjectsData]

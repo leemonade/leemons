@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
-import { apiUrl as API_URL } from './apiURL';
+import { apiUrl as API_URL, allOriginsUrl as ALL_ORIGINS_URL } from './apiURL';
 
 const context = createContext();
 
@@ -160,8 +160,8 @@ class LeemonsApi {
       ctx.middlewares[i] = true;
       const next = middlewares[i + 1]
         ? () => this.#callMiddleware(middlewares, i + 1, ctx)
-        : () => { };
-      const middleware = middlewares[i] ? middlewares[i] : () => { };
+        : () => {};
+      const middleware = middlewares[i] ? middlewares[i] : () => {};
       await middleware(ctx, next);
       await next();
     }
@@ -226,6 +226,7 @@ export function Provider({ children }) {
   }, []);
 
   let apiUrl = API_URL;
+  const allOriginsUrl = ALL_ORIGINS_URL;
 
   if (window.customEnv?.apiUrl) {
     apiUrl = window.customEnv.apiUrl;
@@ -237,6 +238,7 @@ export function Provider({ children }) {
       log: console,
       version: '1.0.0',
       apiUrl,
+      allOriginsUrl,
     },
   });
 

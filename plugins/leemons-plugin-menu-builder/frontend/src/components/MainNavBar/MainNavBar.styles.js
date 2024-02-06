@@ -66,6 +66,9 @@ export const MainNavBarStyles = createStyles((theme, { itemWidth, isCollapsed })
       gap: 12,
       alignItems: 'center',
       justifyContent: 'flex-start',
+      '> *': {
+        flex: '1 0',
+      },
     },
   };
 });

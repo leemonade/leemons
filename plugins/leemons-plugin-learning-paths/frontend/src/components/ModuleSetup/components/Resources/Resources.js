@@ -86,6 +86,8 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
               </Button>
 
               <DropdownButton
+                chevronUp
+                width="auto"
                 disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
                 loading={isLoading}
                 data={[

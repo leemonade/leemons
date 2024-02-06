@@ -14,7 +14,7 @@ module.exports = {
     subjectRequired: 'Field required',
     pageTitle: 'Editing feedback',
     pageTitleNew: 'New feedback',
-    pageSubHeaderPlaceholder: 'Title of the survey',
+    pageSubHeaderPlaceholder: 'Feedback title',
     saveDraft: 'Save as draft',
     publish: 'Only publish',
     publishAndAssign: 'Publish and assign',

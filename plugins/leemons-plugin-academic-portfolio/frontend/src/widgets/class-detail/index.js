@@ -98,6 +98,7 @@ function ClassDetailWidget({ classe }) {
             styleRow={{ cursor: 'pointer' }}
             columns={tableHeaders}
             data={data.teachers}
+            selectable
           />
         </Box>
       </Box>
@@ -116,6 +117,7 @@ function ClassDetailWidget({ classe }) {
             styleRow={{ cursor: 'pointer' }}
             columns={tableHeaders}
             data={data.students}
+            selectable
           />
         </Box>
       </Box>

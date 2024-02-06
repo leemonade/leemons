@@ -55,11 +55,10 @@ const schema = new mongoose.Schema(
     status: {
       type: String,
     },
-    // masculino, femenino
+    // 'male', 'female', 'other'
     gender: {
       type: String,
       required: true,
-      enum: ['male', 'female'],
     },
   },
   {

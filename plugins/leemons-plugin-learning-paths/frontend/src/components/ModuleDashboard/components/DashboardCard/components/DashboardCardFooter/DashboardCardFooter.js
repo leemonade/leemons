@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Box, Text, ImageLoader, Button } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
@@ -15,6 +16,7 @@ import {
 } from './DashboardCardFooter.constants';
 
 dayjs.extend(durationPlugin);
+
 export function useStudentState({ assignation = {} }) {
   if (!assignation) {
     return {};
@@ -58,11 +60,18 @@ function PreviewActions({ activity, localizations }) {
   return (
     <Box className={classes.buttonFull}>
       <Link to={url}>
-        <Button fullWidth>{localizations?.buttons?.preview}</Button>
+        <Button fullWidth variant="outline">
+          {localizations?.buttons?.preview}
+        </Button>
       </Link>
     </Box>
   );
 }
+
+PreviewActions.propTypes = {
+  activity: PropTypes.object,
+  localizations: PropTypes.object,
+};
 
 function TeacherActions({ activity, localizations, evaluationInfo }) {
   const { assignable, id } = activity;
@@ -117,6 +126,12 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
     </Box>
   );
 }
+
+TeacherActions.propTypes = {
+  activity: PropTypes.object,
+  localizations: PropTypes.object,
+  evaluationInfo: PropTypes.object,
+};
 
 function StudentActions({ isBlocked, activity, assignation, localizations }) {
   const { classes } = useDashboardCardFooterStyles();
@@ -209,6 +224,13 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
   );
 }
 
+StudentActions.propTypes = {
+  isBlocked: PropTypes.bool,
+  activity: PropTypes.object,
+  assignation: PropTypes.object,
+  localizations: PropTypes.object,
+};
+
 function Actions({ isBlocked, activity, assignation, localizations, preview, evaluationInfo }) {
   const isTeacher = useIsTeacher();
   const isStudent = useIsStudent();
@@ -242,6 +264,15 @@ function Actions({ isBlocked, activity, assignation, localizations, preview, eva
 
   return <></>;
 }
+
+Actions.propTypes = {
+  isBlocked: PropTypes.bool,
+  activity: PropTypes.object,
+  assignation: PropTypes.object,
+  localizations: PropTypes.object,
+  preview: PropTypes.bool,
+  evaluationInfo: PropTypes.object,
+};
 
 const DashboardCardFooter = ({
   isBlocked,

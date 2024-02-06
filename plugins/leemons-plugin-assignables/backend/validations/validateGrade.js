@@ -14,7 +14,7 @@ const gradeValidationObject = {
       type: 'string',
     },
     grade: {
-      type: 'number',
+      type: ['number', 'null'],
     },
     gradedBy: {
       type: 'string',

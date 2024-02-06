@@ -2,12 +2,9 @@ import {
   Box,
   Button,
   ContextContainer,
-  Divider,
-  PageContainer,
   Select,
   Stack,
   Title,
-  useResizeObserver,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
@@ -37,8 +34,6 @@ import {
 } from '../../../../request';
 import PersonalInformation from './PersonalInformation';
 import UserAgentTags from './UserAgentTags';
-import UserDataset from './UserDataset';
-import UserImageAndPreferredGender from './UserImageAndPreferredGender';
 import UserImage from './UserImage';
 import UserPreferredGender from './UserPreferredGender';
 
@@ -400,6 +395,7 @@ function DetailUser({
         >
           <ContextContainer>
             <ContextContainer divided>
+              {/* 
               <UserPreferredGender
                 t={t}
                 user={store.user}
@@ -407,6 +403,7 @@ function DetailUser({
                 form={form}
                 isEditMode={store.isEditMode}
               />
+              */}
               <PersonalInformation
                 t={t}
                 user={store.user}

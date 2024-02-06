@@ -33,10 +33,12 @@ module.exports = {
         titleEdit: 'Editar recurso',
         back: 'Volver',
         presentation: 'Presentación',
+        subTitle: 'Título del recurso',
       },
       bookmark: {
         titleNew: 'Nuevo marcador',
         titleEdit: 'Editar marcador',
+        subTitle: 'Título del marcador',
       },
       labels: {
         content: 'Contenido',
@@ -306,6 +308,7 @@ module.exports = {
       detail: 'Detalle',
       permissions: 'Permisos',
       instructions: 'Instrucciones',
+      emptyInstructions: 'Este recurso no tiene instrucciones para los docentes todavía.',
     },
     cardToolbar: {
       edit: 'Editar',
@@ -337,6 +340,11 @@ module.exports = {
       resources: {
         label: 'Categorías',
         placeholder: 'Seleccionar categoría',
+      },
+      mediaType: {
+        label: 'Tipos de recurso',
+        placeholder: 'Seleccionar tipo',
+        allTypes: 'Todos los tipos',
       },
     },
   },

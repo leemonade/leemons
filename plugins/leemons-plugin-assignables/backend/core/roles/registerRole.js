@@ -64,10 +64,13 @@ async function registerRole({ role: name, ctx, ...data }) {
       'detailComponent',
       'componentOwner',
       'menu',
+      'type',
     ]),
     // provider: data.provider ?? 'leebrary-assignables',
     provider: data.provider ?? 'assignables',
   };
+  category.type = category.type || 'activity';
+
   validateRole(role);
 
   const roleExists = await checkIfRoleExists({ name, ctx });

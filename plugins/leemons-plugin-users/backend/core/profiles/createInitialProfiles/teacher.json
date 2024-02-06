@@ -105,10 +105,6 @@
       "actionNames": ["view"]
     },
     {
-      "permissionName": "scores.reviewer",
-      "actionNames": ["admin"]
-    },
-    {
       "permissionName": "scores.scoresMenu",
       "actionNames": ["view"]
     },
@@ -121,16 +117,16 @@
       "actionNames": ["view", "update", "create", "delete", "admin"]
     },
     {
-      "permissionName": "scorm.creator",
-      "actionNames": ["view", "update", "create", "delete", "admin"]
-    },
-    {
       "permissionName": "calendar.menu.kanban",
       "actionNames": ["view"]
     },
     {
       "permissionName": "learning-paths.modules",
       "actionNames": ["view", "update", "create", "delete", "admin"]
+    },
+    {
+      "permissionName": "attendance-control.attendance",
+      "actionNames": ["view", "admin"]
     }
   ],
   "name": "Docente",

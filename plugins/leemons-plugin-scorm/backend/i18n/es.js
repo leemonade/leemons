@@ -68,7 +68,7 @@ module.exports = {
   scormSetup: {
     titleNew: 'NUEVO SCORM',
     titleEdit: 'EDITAR SCORM',
-    scormTitlePlaceholder: 'Título del nuevo SCORM',
+    scormTitlePlaceholder: 'Título del SCORM',
     description:
       'Para importar un contenido SCORM, debe estar comprimido (.zip) y debe tener un archivo <strong>imsmanifest.xml</strong> que describa el curso y su contenido.',
     addFile: 'Subir archivo zip',

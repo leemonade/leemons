@@ -27,9 +27,8 @@ export function getFileUrl(fileID, segment, isPublic = false) {
 
   const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
-  return `${leemons.apiUrl}/api/v1/leebrary/file/${
-    isPublic ? 'public/' : ''
-  }${fileID}${urlSuffixSegment}${authParam}`;
+  return `${leemons.apiUrl}/api/v1/leebrary/file/${isPublic ? 'public/' : ''
+    }${fileID}${urlSuffixSegment}${authParam}`;
 }
 
 export function getPublicFileUrl(fileID, segment) {
@@ -48,7 +47,7 @@ export function isValidURL(url, checkAuthorization) {
 }
 
 export function prepareAsset(assetFromApi, isPublished = true) {
-  if (assetFromApi.prepared && assetFromApi.original) {
+  if (assetFromApi?.prepared && assetFromApi?.original) {
     return assetFromApi;
   }
   const asset = { ...assetFromApi, original: assetFromApi, prepared: true };

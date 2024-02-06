@@ -33,6 +33,7 @@ const LibraryDetail = ({
   excludeMetadatas,
   onCloseDrawer,
   metadataComponent,
+  isEmbedded,
   ...events
 }) => {
   const [showDrawer, setShowDrawer] = useState(open);
@@ -79,18 +80,21 @@ const LibraryDetail = ({
                   open={open}
                   labels={labels}
                   onCloseDrawer={onCloseDrawer}
+                  variant={variant}
+                  isEmbedded={isEmbedded}
                 />
               )}
             </>
           }
         >
-          <Stack direction="column" fullHeight style={{ overflow: 'auto' }}>
+          <Stack direction="column" fullHeight className={classes.layoutContainer}>
             <LibraryDetailPlayer
               {...{ ...asset, fileExtension }}
               labels={labels}
               variant={variant}
               variantTitle={variantTitle}
               titleActionButton={titleActionButton}
+              isEmbedded={isEmbedded}
               fileIcon={
                 {
                   bookmark: (
@@ -136,6 +140,7 @@ const LibraryDetail = ({
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               handleTabChange={handleTabChange}
+              isEmbedded={isEmbedded}
             />
           </Stack>
         </TotalLayoutContainer>
