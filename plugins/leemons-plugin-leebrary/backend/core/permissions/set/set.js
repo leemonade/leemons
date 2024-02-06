@@ -2,6 +2,7 @@
 /* eslint-disable no-await-in-loop */
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const { map } = require('lodash');
 const { validateSetPermissions } = require('../../validations/forms');
 const { getByIds } = require('../../assets/getByIds');
 const { update: updateAsset } = require('../../assets/update');
@@ -10,6 +11,7 @@ const { checkIfRolesExist } = require('./checkIfRolesExist');
 const { handleAddPermissionsToUserAgent } = require('./handleAddPermissionsToUserAgent');
 const { handleAddPermissionsToAsset } = require('./handleAddPermissionsToAsset');
 const { handleRemoveMissingPermissions } = require('./handleRemoveMissingPermissions');
+const { omit } = require('lodash');
 
 /**
  * Set permissions/roles for userAgents to access a specified assetID
@@ -57,7 +59,13 @@ async function set({ assetId, isPublic, permissions, canAccess, deleteMissing, c
     _.forEach(assetIds, async (id) => {
       if (isPublic || assetsDataById[id].public) {
         updatePromises.push(
-          updateAsset({ data: { ...assetsDataById[id], public: isPublic }, ctx })
+          updateAsset({
+            data: {
+              ...omit(assetsDataById[id], ['subjects']),
+              public: isPublic,
+            },
+            ctx,
+          })
         );
       }
     });
