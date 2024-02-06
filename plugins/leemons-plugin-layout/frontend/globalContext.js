@@ -19,6 +19,8 @@ import PrivateLayout from './src/components/PrivateLayout';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
 import prefixPN from './src/helpers/prefixPN';
 
+const CONFIRM_DESCRIPTION = 'Do you want to continue?';
+
 function LayoutWrapper({ isPrivate, children }) {
   if (isPrivate) {
     return <PrivateLayout>{children}</PrivateLayout>;
@@ -33,55 +35,71 @@ LayoutWrapper.propTypes = {
 
 function useLayoutProviderModals() {
   const modals = useModals();
-  const [t] = useTranslateLoader(prefixPN('modals'));
+  const [t, translations] = useTranslateLoader(prefixPN('modals'));
 
   const openConfirmationModal = useCallback(
     ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
-      () =>
-        modals.openConfirmModal({
-          title: title || t('title.confirm'),
+      () => {
+        if (!translations?.items || Object.keys(translations.items).length === 0) return null;
+        return modals.openConfirmModal({
+          title: title ?? t('title.confirm', { 'title.confirm': 'Confirm action' }),
           children: isString(description) ? (
             <Paragraph
               sx={(theme) => ({
                 paddingBottom: theme.spacing[5],
               })}
-              dangerouslySetInnerHTML={{ __html: description || t('description.confirm') }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  description ??
+                  t('description.confirm', {
+                    'description.confirm': CONFIRM_DESCRIPTION,
+                  }),
+              }}
             />
           ) : (
-            description || t('description.confirm')
+            description ?? t('description.confirm', { 'description.confirm': CONFIRM_DESCRIPTION })
           ),
           labels: {
-            confirm: labels?.confirm || t('buttons.confirm'),
-            cancel: labels?.cancel || t('buttons.cancel'),
+            confirm: labels?.confirm ?? t('buttons.confirm', { 'buttons.confirm': 'Confirm' }),
+            cancel: labels?.cancel ?? t('buttons.cancel', { 'buttons.cancel': 'Cancel' }),
           },
           onCancel,
           onConfirm,
-        }),
-    [modals, t]
+        });
+      },
+    [modals, t, translations]
   );
 
   const openDeleteConfirmationModal = useCallback(
     ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
-      () =>
-        modals.openConfirmModal({
-          title: title || t('title.delete', { 'title.delete': 'Esta muriendo' }),
+      () => {
+        if (!translations?.items || Object.keys(translations.items).length === 0) return null;
+        return modals.openConfirmModal({
+          title: title ?? t('title.delete', { 'title.delete': 'Deleting' }),
           children: (
             <Paragraph
               sx={(theme) => ({
                 paddingBottom: theme.spacing[5],
               })}
-              dangerouslySetInnerHTML={{ __html: description || t('description.delete') }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  description ??
+                  t('description.delete', {
+                    'description.delete': 'Do you want to delete this item?',
+                  }),
+              }}
             />
           ),
           labels: {
-            confirm: labels?.confirm || t('buttons.confirm'),
-            cancel: labels?.cancel || t('buttons.cancel'),
+            confirm: labels?.confirm ?? t('buttons.confirm', { 'buttons.confirm': 'Confirm' }),
+            cancel: labels?.cancel ?? t('buttons.cancel', { 'buttons.cancel': 'Cancel' }),
           },
           confirmProps: { color: 'fatic' },
           onCancel,
           onConfirm,
-        }),
-    [modals, t]
+        });
+      },
+    [modals, t, translations]
   );
 
   return {

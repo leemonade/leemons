@@ -6,6 +6,7 @@
 
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
+const { LeemonsError } = require('@leemons/error');
 const { updateStudent } = require('../../core/assignments/updateStudent');
 
 /** @type {ServiceSchema} */
@@ -35,11 +36,10 @@ module.exports = {
           instance,
         };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return {
-          status: 400,
+        throw new LeemonsError(ctx, {
           message: e.message,
-        };
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -62,11 +62,10 @@ module.exports = {
           data,
         };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return {
-          status: 400,
+        throw new LeemonsError(ctx, {
           message: e.message,
-        };
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -87,11 +86,10 @@ module.exports = {
           updated,
         };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return {
-          status: 400,
+        throw new LeemonsError(ctx, {
           message: e.message,
-        };
+          httpStatusCode: 400,
+        });
       }
     },
   },

@@ -1,3 +1,4 @@
+const { LeemonsError } = require('@leemons/error');
 const { LeemonsValidator } = require('@leemons/validator');
 
 function getTagsRouterActions({ middlewares } = {}) {
@@ -24,8 +25,8 @@ function getTagsRouterActions({ middlewares } = {}) {
           const data = await ctx.tx.call('common.tags.listTags', { page, size, query });
           return { status: 200, data };
         }
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: validator.error };
+
+        throw new LeemonsError(ctx, { message: validator.error, httpStatusCode: 400 });
       },
     },
   };
