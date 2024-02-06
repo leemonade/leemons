@@ -10,7 +10,6 @@ const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
 const { getManyWithLocale, getKeyStartsWith } = require('../../core/localization');
 const { resolveLocales } = require('../../core/locale');
-const { LeemonsError } = require('@leemons/error');
 
 async function get({ ctx }) {
   const { keys = null, keysStartsWith = null, locale } = ctx.params;
@@ -145,8 +144,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
     async handler(ctx) {
       ctx.params.locale = await resolveLocales({ ctx });
-      const result = await get({ ctx });
-      return result;
+      return await get({ ctx });
     },
   },
   getRest: {
