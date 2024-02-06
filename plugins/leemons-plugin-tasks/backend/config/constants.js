@@ -195,7 +195,7 @@ const assignableRoles = [
       teacherDetailUrl: '/',
       studentDetailUrl: '/private/tasks/student-detail/:id/:user',
       evaluationDetailUrl: '/private/tasks/correction/:id/:user',
-      previewUrl: '/private/tasks/library/:id/view',
+      previewUrl: '/private/tasks/library/view/:id',
       creatable: true,
       createUrl: '/private/tasks/library/create',
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'

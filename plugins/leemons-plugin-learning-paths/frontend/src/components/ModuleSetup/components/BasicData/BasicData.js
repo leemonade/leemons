@@ -20,7 +20,7 @@ const advancedConfig = {
   fileToRight: true,
   colorToRight: true,
   program: { show: true, required: false },
-  subjects: { show: true, required: true, showLevel: true, maxOne: false },
+  subjects: { show: true, required: false, showLevel: true, maxOne: false },
 };
 
 function useOnSave({ onSubmit }) {

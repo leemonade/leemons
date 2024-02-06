@@ -2,8 +2,7 @@ import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 const LibraryDetailContentStyles = createStyles((theme) => ({
   root: {
-    // ...getFontExpressive(theme.fontSizes['2']),
-    // flex: 1,
+    backgroundColor: theme.other.core.color.white,
   },
   lowerContent: {
     flex: 1,

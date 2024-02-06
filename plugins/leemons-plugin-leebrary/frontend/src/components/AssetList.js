@@ -423,7 +423,7 @@ const AssetList = ({
 
   // OnSearch: Wait for the debounced search critera and then call the onSearch function
   useEffect(() => {
-    onSearch(searchCriteriaDebounced);
+    // onSearch(searchCriteriaDebounced);
   }, [searchCriteriaDebounced]);
 
   // SET THE DATA PASSED TO THE PAGINATED LIST COMPONENT
