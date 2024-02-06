@@ -9,8 +9,7 @@ import { capitalize, get, keyBy, map, mapValues } from 'lodash';
 import { useEffect, useMemo } from 'react';
 
 function useSubjectsData(module) {
-  const { assignable } = module || {};
-  const subjects = useMemo(() => useClassesSubjects(assignable?.subjects), [assignable?.subjects]);
+  const subjects = useClassesSubjects(module?.classes);
 
   const { data: subjectsDetails } = useSubjectDetails(subjects);
 
