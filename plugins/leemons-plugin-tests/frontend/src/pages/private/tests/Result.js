@@ -362,7 +362,7 @@ export default function Result() {
   }
 
   // if (!store.room) {
-  if (isTeacher || (!isTeacher && store.feedback)) {
+  if (isTeacher || store.feedback) {
     accordion.push(
       <ActivityAccordionPanel
         key={3}
