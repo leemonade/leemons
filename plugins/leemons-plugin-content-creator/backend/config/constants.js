@@ -90,8 +90,8 @@ const assignableRoles = [
       order: 1,
       createUrl: '/private/content-creator/new',
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
-      pluralName: { en: 'contents', es: 'contenidos' },
-      singularName: { en: 'content', es: 'contenido' },
+      pluralName: { en: 'documents', es: 'documentos' },
+      singularName: { en: 'document', es: 'documento' },
       menu: {
         item: {
           iconSvg: '/public/content-creator/menu-icon-active.svg',

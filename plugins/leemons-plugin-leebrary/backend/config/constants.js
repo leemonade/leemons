@@ -94,6 +94,8 @@ const categories = [
         },
       ],
     },
+    pluralName: { en: 'resources', es: 'recursos' },
+    singularName: { en: 'resource', es: 'recurso' },
   },
   {
     key: CATEGORIES.BOOKMARKS,
@@ -118,6 +120,8 @@ const categories = [
         },
       ],
     },
+    pluralName: { en: 'bookmarks', es: 'marcadores' },
+    singularName: { en: 'bookmark', es: 'marcador' },
   },
 ];
 
