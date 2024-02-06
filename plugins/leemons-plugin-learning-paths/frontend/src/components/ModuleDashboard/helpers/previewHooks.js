@@ -1,5 +1,5 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { useSubjectDetails } from '@academic-portfolio/hooks';
+import { useClassesSubjects, useSubjectDetails } from '@academic-portfolio/hooks';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
@@ -8,6 +8,24 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { capitalize, get, keyBy, map, mapValues } from 'lodash';
 import { useEffect, useMemo } from 'react';
 
+function useSubjectsData(module) {
+  const subjects = useClassesSubjects(module?.classes);
+
+  const { data: subjectsDetails } = useSubjectDetails(subjects);
+
+  return useMemo(
+    () =>
+      subjectsDetails?.map((subject) => ({
+        id: subject.id,
+        name: subject.name,
+        subjectName: subject.name,
+        icon: getClassIcon({ subject }),
+        color: subject.color,
+        customGroup: false,
+      })),
+    [subjectsDetails]
+  );
+}
 export function useModuleDataForPreview(id) {
   const {
     data: module,
@@ -20,6 +38,8 @@ export function useModuleDataForPreview(id) {
     () => map(module?.submission?.activities, 'activity'),
     [module?.submission?.activities]
   );
+  const subjectsIds = useMemo(() => map(module?.subjects, 'subject'), [module?.subjects]);
+  const { data: subjectsData } = useSubjectDetails(subjectsIds);
 
   const {
     data: activities,
@@ -62,6 +82,7 @@ export function useModuleDataForPreview(id) {
   return {
     module: { assignable: module },
     moduleAssignation: null,
+    subjectsData,
     activitiesById,
     activities:
       module?.submission?.activities?.map((activity) => ({ id: activity.activity })) ?? [],
@@ -71,21 +92,6 @@ export function useModuleDataForPreview(id) {
     isError: isModuleError || isActivitiesError,
     errors,
   };
-}
-
-function useSubjectsData(module) {
-  const { assignable } = module || {};
-  const subjects = map(assignable?.subjects, 'subject') ?? [];
-  const { data: subjectsDetails } = useSubjectDetails(subjects);
-
-  return subjectsDetails?.map((subject) => ({
-    id: subject.id,
-    name: subject.name,
-    subjectName: subject.name,
-    icon: getClassIcon({ subject }),
-    color: subject.color,
-    customGroup: false,
-  }));
 }
 
 export function useHeaderDataForPreview(module) {

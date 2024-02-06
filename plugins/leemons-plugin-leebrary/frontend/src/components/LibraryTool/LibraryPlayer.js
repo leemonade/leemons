@@ -4,6 +4,7 @@ import { isEmpty } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import { NodeViewWrapper } from '@bubbles-ui/editors';
 import { LibraryCardEmbed, LibraryCard } from '@leebrary/components';
+import { AssetPlayerWrapperCCreator } from './AssetPlayerWrapperCCreator';
 import { AssetPlayer } from '../AssetPlayer';
 
 export const LIBRARY_PLAYER_DISPLAYS = ['card', 'player'];
@@ -56,7 +57,7 @@ const LibraryPlayer = ({
 
     if (display === 'player') {
       return (
-        <AssetPlayer
+        <AssetPlayerWrapperCCreator
           asset={asset}
           width={isFloating ? '100%' : width}
           framed={!['image'].includes(asset.fileType)}

@@ -86,6 +86,7 @@ const assignableRoles = [
       studentDetailUrl: '/private/content-creator/view/:id/:user',
       evaluationDetailUrl: '/private/content-creator/view/:id/:user',
       dashboardUrl: '/private/content-creator/view/:id',
+      previewUrl: '/private/content-creator/:id/view',
       creatable: true,
       order: 1,
       createUrl: '/private/content-creator/new',

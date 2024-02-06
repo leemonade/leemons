@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -8,16 +8,18 @@ import {
   Button,
   ContextContainer,
   ImageLoader,
-  PageContainer,
+  Stack,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  TotalLayoutHeader,
+  AssetTestIcon,
 } from '@bubbles-ui/components';
-// TODO: import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
-import { ChevronRightIcon, PluginTestIcon } from '@bubbles-ui/icons/outline';
+import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, keyBy } from 'lodash';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
@@ -32,8 +34,9 @@ import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstan
 export default function Detail() {
   const [t, t1V] = useTranslateLoader(prefixPN('testsDetail'));
   const [t2, t2V] = useTranslateLoader(prefixPN('questionsBanksDetail'));
-  const { classes: styles, cx } = ResultStyles({}, { name: 'Detail' });
+  const { classes: styles } = ResultStyles({}, { name: 'Detail' });
   const levels = useLevelsOfDifficulty(true);
+  const scrollRef = useRef();
 
   const [store, render] = useStore({
     loading: true,
@@ -211,36 +214,50 @@ export default function Detail() {
   }
 
   return (
-    <ContextContainer
-      sx={(theme) => ({
-        backgroundColor: theme.colors.uiBackground02,
-        paddingBottom: theme.spacing[12],
-        overflow: 'auto',
-      })}
-      fullHeight
-      fullWidth
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          title={store.test?.name}
+          cancelable={false}
+          icon={<AssetTestIcon />}
+          direction="row"
+        >
+          <Box style={{ display: 'flex', gap: 16 }}>
+            <Button variant="outline" onClick={() => goEditPage()}>
+              {t('edit')}
+            </Button>
+            <Button variant="primary" onClick={() => goAssignPage()}>
+              {t('assign')}
+            </Button>
+          </Box>
+        </TotalLayoutHeader>
+      }
     >
-      <AdminPageHeader
-        values={{
-          title: store.test?.name,
-        }}
-        buttons={{
-          duplicate: t('edit'),
-          edit: t('assign'),
-        }}
-        icon={<PluginTestIcon />}
-        variant="teacher"
-        onDuplicate={() => goEditPage()}
-        onEdit={() => goAssignPage()}
-      />
-
-      <PageContainer noFlex>
-        <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-          <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
-            {accordion}
-          </ActivityAccordion>
-        </Box>
-      </PageContainer>
-    </ContextContainer>
+      <Stack
+        justifyContent="center"
+        ref={scrollRef}
+        style={{ overflow: 'auto' }}
+        fullWidth
+        fullHeight
+      >
+        <TotalLayoutStepContainer>
+          <ContextContainer
+            sx={(theme) => ({
+              paddingBottom: theme.spacing[12],
+              overflow: 'auto',
+            })}
+            fullHeight
+            fullWidth
+          >
+            <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
+              <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
+                {accordion}
+              </ActivityAccordion>
+            </Box>
+          </ContextContainer>
+        </TotalLayoutStepContainer>
+      </Stack>
+    </TotalLayoutContainer>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { LibraryDetail } from '@leebrary/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -98,6 +99,7 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
       }}
       metadataComponent={<AssetMetadataContentCreator metadata={asset} />}
       variant="document"
+      isEmbedded={props.variant === 'embedded'}
       variantTitle={t('document')}
       toolbarItems={toolbarItems}
       titleActionButton={
@@ -119,6 +121,7 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
 DocumentDetail.propTypes = {
   asset: PropTypes.any,
   onRefresh: PropTypes.func,
+  variant: PropTypes.string,
 };
 
 export default DocumentDetail;

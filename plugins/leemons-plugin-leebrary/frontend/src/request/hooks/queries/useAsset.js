@@ -10,7 +10,7 @@ function useAsset({ id, ...options }) {
     modificationTrend: 'frequently',
   });
 
-  const queryFn = useCallback(() => getAsset(id).then((r) => r.assets ?? []), [id]);
+  const queryFn = useCallback(() => getAsset(id).then((r) => r.asset ?? {}), [id]);
 
   return useQuery({
     ...options,

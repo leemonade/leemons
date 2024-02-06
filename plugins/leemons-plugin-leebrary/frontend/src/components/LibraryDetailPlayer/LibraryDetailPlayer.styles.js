@@ -1,6 +1,6 @@
 import { createStyles, pxToRem, getFontExpressive } from '@bubbles-ui/components';
 
-const LibraryDetailPlayerStyles = createStyles((theme, { color }) => ({
+const LibraryDetailPlayerStyles = createStyles((theme, { color, assetRole }) => ({
   root: {
     ...getFontExpressive(theme.fontSizes['2']),
   },
@@ -19,6 +19,20 @@ const LibraryDetailPlayerStyles = createStyles((theme, { color }) => ({
   title: {
     fontWeight: 600,
     flex: 1,
+  },
+  buttonIcon: {
+    position: 'absolute',
+    zIndex: 10,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    pointerEvents: 'none',
+  },
+  activityContainer: {
+    width: 496,
+    height: 200,
+    position: 'relative',
+    cursor: assetRole ? 'pointer' : 'no-drop',
   },
 }));
 
