@@ -24,8 +24,8 @@ const DetailContent = ({
   classes,
 }) => (
   <Box className={classes.tabPanel}>
-    {name && <Text className={classes.title}>{name}</Text>}
-    {description && <Text className={classes.description}>{description}</Text>}
+    {!!name && <Text className={classes.title}>{name}</Text>}
+    {!!description && <Text className={classes.description}>{description}</Text>}
     <Box style={{ marginTop: 24, marginBottom: 24 }}>
       {Array.isArray(subjectsIds) &&
         subjectsIds.length > 0 &&

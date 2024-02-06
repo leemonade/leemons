@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
 import { ButtonIcon } from '@leebrary/components/AssetPlayer/components/ButtonIcon';
 import { AssetPlayer } from '@leebrary/components/AssetPlayer';
@@ -27,15 +27,10 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
     compact: true,
     useAspectRatio: false,
   };
-  const isAssetPlayerContent = [
-    'video',
-    'audio',
-    'pdf',
-    'image',
-    'bookmark',
-    'url',
-    'link',
-  ].includes(asset?.fileType);
+  const isAssetPlayerContent = useMemo(
+    () => ['video', 'audio', 'pdf', 'image', 'bookmark', 'url', 'link'].includes(asset?.fileType),
+    [asset?.fileType]
+  );
   const previewUrl = asset?.providerData?.roleDetails?.previewUrl?.replace(
     ':id',
     asset?.providerData?.id
