@@ -8,7 +8,7 @@
  */
 function getParentAssignables({ ids, ctx }) {
   if (!ids.length) {
-    return {};
+    return [];
   }
   return ctx.tx.db.Assignables.find({
     $or: ids.map((id) => ({
