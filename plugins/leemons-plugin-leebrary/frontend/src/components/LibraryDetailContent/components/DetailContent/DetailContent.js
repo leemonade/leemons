@@ -61,8 +61,8 @@ const DetailContent = ({
     {tags?.length > 0 && (
       <Box className={classes.tags}>
         <Box className={classes.tagsContainer}>
-          {tags.map((tag, index) => (
-            <Box key={`${tag} ${index}`}>
+          {tags.map((tag) => (
+            <Box key={tag}>
               <Badge label={tag} size="md" closable={false} className={classes.labelBadge} />
             </Box>
           ))}
