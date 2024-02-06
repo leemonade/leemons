@@ -171,7 +171,7 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
                 fileToRight: true,
                 colorToRight: true,
                 program: { show: true, required: false },
-                subjects: { show: true, required: true, showLevel: true, maxOne: false },
+                subjects: { show: true, required: false, showLevel: true, maxOne: false },
               }}
               useObserver={useSaveObserver}
               stepName={basicData.step_label}
