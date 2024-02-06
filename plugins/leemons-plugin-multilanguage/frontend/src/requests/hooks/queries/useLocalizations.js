@@ -31,11 +31,11 @@ function getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
       // cache: {
       //   ttl: 1000 * 60 * 60, // 1h
       // },
-      body: {
+      body: JSON.stringify({
         keys: _keys,
         keysStartsWith: _keysStartsWith,
         locale,
-      },
+      }),
     });
 }
 
