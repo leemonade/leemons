@@ -119,7 +119,7 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
     >
       <Box>
         <AssetPickerDrawer
-          layout="cards"
+          layout="rows"
           categories={['media-files', 'bookmarks', 'assignables.content-creator']}
           creatable
           onClose={() => setShowAssetDrawer(false)}
