@@ -207,7 +207,7 @@ function useOngoingData({ query, page, size, subjectFullLength }) {
   const originalOrder = useMemo(() => {
     const order = {};
 
-    instances.forEach((instance, i) => {
+    instances?.forEach((instance, i) => {
       order[instance] = i;
     });
 
@@ -224,7 +224,7 @@ function useOngoingData({ query, page, size, subjectFullLength }) {
   const orderedInstancesData = useMemo(() => {
     const sortedData = [];
 
-    instancesData.forEach((instance) => {
+    instancesData?.forEach((instance) => {
       sortedData[originalOrder[instance.instance?.id || instance.id]] = instance;
     });
 
