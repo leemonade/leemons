@@ -61,6 +61,7 @@ const AssetPlayer = ({
   compact,
   useAspectRatio,
   showPlayButton,
+  ccMode,
   ...props
 }) => {
   const {
@@ -137,6 +138,8 @@ const AssetPlayer = ({
 
     return mHeight / mWidth;
   }, [metadata, fileType]);
+
+  const fullScreenRatio = window.innerHeight / window.innerWidth;
 
   // ··································································
   // METHODS
@@ -223,6 +226,7 @@ const AssetPlayer = ({
       const isFullScreen = !!document.fullscreenElement;
       setFullScreenMode(isFullScreen);
     });
+
     return () => {
       if (rootRef.current) rootRef.current.removeEventListener('fullscreenchange');
     };
@@ -250,7 +254,7 @@ const AssetPlayer = ({
       styles,
       viewPDF,
       canPlay,
-      mediaRatio,
+      mediaRatio: fullScreenMode ? fullScreenRatio : mediaRatio,
       showPlayer,
       useAudioCard,
       fullScreenMode,
@@ -343,13 +347,15 @@ const AssetPlayer = ({
                 />
               )}
               {(!showPlayer || media.isAudio) && (
-                <Box className={classes.coverWrapper} onClick={handleInitPlay}>
+                <Box className={classes.coverWrapper} onClick={() => handleInitPlay()}>
                   {showPlayButton && (
                     <Box
                       className={classes.buttonIcon}
                       onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
+                        if (ccMode) handleInitPlay();
+                        console.log('🚀 ~ ccMode:', ccMode);
+                        // e.stopPropagation();
+                        // e.preventDefault();
                       }}
                     >
                       <ButtonIcon fileType={'video'} />
@@ -361,7 +367,7 @@ const AssetPlayer = ({
                     <CardEmptyCover
                       fileType={asset?.fileType}
                       icon={asset?.fileIcon}
-                      height={199}
+                      height={rootRef?.current?.clientHeight}
                     />
                   )}
                 </Box>

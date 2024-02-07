@@ -20,7 +20,13 @@ const AssetPlayerWrapperCCreator = ({
     canPlay,
     showPlayButton,
     useAudioCard,
+    ccMode: true,
   };
+  if (asset?.fileType === 'video') {
+    CCreatorProps.compact = true;
+    CCreatorProps.useAspectRatio = true;
+    CCreatorProps.mediaMaxHeight = 400;
+  }
   return <AssetPlayer {...CCreatorProps} />;
 };
 
