@@ -93,6 +93,7 @@ const AssetPlayer = ({
   const [seekValue, setSeekValue] = useState(0);
   const [isPlaying, setIsPlaying] = useState(playing);
   const [fullScreenMode, setFullScreenMode] = useState(fullScreen);
+  const [openImageZoom, setOpenImageZoom] = useState(false);
   const [mediaVolume, setMediaVolume] = useState(volume || 1);
   const [t] = useTranslateLoader(prefixPN('pdfPlayer'));
   const pdfLabels = {
@@ -397,10 +398,17 @@ const AssetPlayer = ({
               <Box className={classes.coverWrapper}>
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
-                    <ButtonIcon fileType={'image'} />
+                    <ButtonIcon
+                      fileType={'image'}
+                      onClick={() => ccMode && setOpenImageZoom(true)}
+                    />
                   </Box>
                 )}
-                <ModalZoom canPlay={canPlay}>
+                <ModalZoom
+                  canPlay={!ccMode && canPlay}
+                  opened={openImageZoom}
+                  onClose={() => setOpenImageZoom(false)}
+                >
                   <ImageLoader height="100%" src={cover} alt={name} />
                 </ModalZoom>
               </Box>
