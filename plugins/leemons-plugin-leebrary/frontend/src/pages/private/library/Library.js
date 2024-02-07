@@ -27,6 +27,7 @@ const LibraryPageContent = () => {
   const { newAsset, category, loading, setAsset, setCategories, categories } =
     useContext(LibraryContext);
   const [, translations] = useTranslateLoader(prefixPN('home'));
+  const [t, translationsCategories] = useTranslateLoader(prefixPN('categories'));
   const history = useHistory();
   const isStudent = useIsStudent();
   const [settings, setSettings] = useState({ hasPins: false, loadingPins: true });
@@ -48,12 +49,19 @@ const LibraryPageContent = () => {
     }
 
     setCategories(
-      result.map((data) => ({
-        ...data,
-        icon: data.menuItem.iconSvg,
-        name: data.menuItem.label,
-        creatable: [1, '1', true, 'true'].includes(data.creatable),
-      }))
+      result.map((data) => {
+        const pluralName = t(`${data.key}.plural`);
+        const singularName = t(`${data.key}.singular`);
+
+        return {
+          ...data,
+          icon: data.menuItem.iconSvg,
+          name: data.menuItem.label,
+          pluralName,
+          singularName,
+          creatable: [1, '1', true, 'true'].includes(data.creatable),
+        };
+      })
     );
 
     setSettings({ hasPins: settingsResult.hasPins, loadingPins: false });
@@ -73,8 +81,10 @@ const LibraryPageContent = () => {
   }, [history.location.pathname]);
 
   useEffect(() => {
-    if (isStudent !== null) getCategories();
-  }, [isStudent]);
+    if (isStudent !== null && translationsCategories) {
+      getCategories();
+    }
+  }, [isStudent, translationsCategories]);
 
   const navbarLabels = useMemo(() => {
     if (!isEmpty(translations)) {

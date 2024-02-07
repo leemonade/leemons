@@ -32,10 +32,11 @@ const LibraryDetailToolbar = ({
   onUnpin,
   onCloseDrawer,
   toolbarItems,
+  variant,
+  isEmbedded,
   ...props
 }) => {
   const { classes } = LibraryDetailToolbarStyles({}, { name: 'LibraryDetailToolbar' });
-
   // const handleView = () => {
   //   if (isFunction(onView)) {
   //     onView(item);
@@ -91,6 +92,27 @@ const LibraryDetailToolbar = ({
   };
   const canShowLoveIcon = toolbarItems.pin || toolbarItems.unpin;
   const canShowFirstSetOfIcons = toolbarItems.share || toolbarItems.assign || toolbarItems.download;
+  const isEmbeddedVariant = variant === 'embedded' || isEmbedded;
+  if (isEmbeddedVariant) {
+    return (
+      <Box className={classes.root} data-cypress-id="library-detail-toolbar">
+        <Stack className={classes.buttons}>
+          <Box className={classes.leftContainer}>
+            {toolbarItems.download && (
+              <ActionButton
+                data-cypress-id="library-detail-toolbar-download"
+                icon={<DownloadIcon height={20} width={20} />}
+                onClick={handleDownload}
+                tooltip={toolbarItems.download}
+                className={classes.button}
+              />
+            )}
+          </Box>
+          <ActionButton icon={<RemoveIcon height={18} width={18} />} onClick={onCloseDrawer} />
+        </Stack>
+      </Box>
+    );
+  }
   return (
     <Box className={classes.root} data-cypress-id="library-detail-toolbar">
       <Stack className={classes.buttons}>

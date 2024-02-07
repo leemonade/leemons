@@ -48,7 +48,6 @@ export function SubjectPicker({
   hideSectionHeaders,
   onlyOneSubject,
   selectInitialSubjects,
-  ...props
 }) {
   const form = useForm({
     defaultValues: {
@@ -85,7 +84,10 @@ export function SubjectPicker({
   }, [onlyOneSubject, selectedSubjects]);
 
   const onSubmit = ({ selectedSubjects: data, ...newSubject }) => {
-    const newSelectedSubjects = [newSubject?.subject, ...data];
+    if (!newSubject?.subject) {
+      return null;
+    }
+    const newSelectedSubjects = [newSubject?.subject ?? [], ...data];
     form.setValue('selectedSubjects', uniq(newSelectedSubjects));
     onChange(newSelectedSubjects);
 

@@ -1,9 +1,13 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 const LibraryCardEmbedStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.mainWhite,
     minHeight: 66,
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#F7F8FA',
+    },
   },
   imagePlaceholder: {
     maxWidth: 72,
@@ -19,6 +23,9 @@ const LibraryCardEmbedStyles = createStyles((theme) => ({
   },
   title: {
     ...theme.other.global.content.typo.body['md--bold'],
+  },
+  variantIcon: {
+    marginRight: pxToRem(8),
   },
 }));
 

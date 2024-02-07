@@ -86,12 +86,13 @@ const assignableRoles = [
       studentDetailUrl: '/private/content-creator/view/:id/:user',
       evaluationDetailUrl: '/private/content-creator/view/:id/:user',
       dashboardUrl: '/private/content-creator/view/:id',
+      previewUrl: '/private/content-creator/:id/view',
       creatable: true,
       order: 1,
       createUrl: '/private/content-creator/new',
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
-      pluralName: { en: 'contents', es: 'contenidos' },
-      singularName: { en: 'content', es: 'contenido' },
+      pluralName: { en: 'documents', es: 'documentos' },
+      singularName: { en: 'document', es: 'documento' },
       menu: {
         item: {
           iconSvg: '/public/content-creator/menu-icon-active.svg',

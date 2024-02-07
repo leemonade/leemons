@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import _, { cloneDeep, sortBy } from 'lodash';
+import _, { cloneDeep, sortBy, isNil } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { GotFeedbackIcon } from './GotFeedbackIcon';
@@ -124,7 +124,7 @@ export default function ScoreFeedback({
           <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
         </Badge>
       )}
-      {!!score && !isFeedback ? (
+      {!isNil(score) && !isFeedback ? (
         <>
           <Box className={classes.containerGrade}>
             <Box className={classes.containerNumber}>

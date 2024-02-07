@@ -22,6 +22,7 @@ const assignableRoles = [
       teacherDetailUrl: '/private/scorm/detail/:id',
       studentDetailUrl: '/private/scorm/view/:id/:user',
       evaluationDetailUrl: '/private/scorm/result/:id/:user',
+      previewUrl: '/private/scorm/preview/:id',
       creatable: true,
       createUrl: '/private/scorm/new',
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'

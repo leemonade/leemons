@@ -4,6 +4,7 @@
  */
 /** @type {ServiceSchema} */
 
+const { LeemonsError } = require('@leemons/error');
 const { getAll, add } = require('../../core/locale');
 
 module.exports = {
@@ -18,8 +19,7 @@ module.exports = {
         if (locale) return { locale };
         return { message: 'Locale already exists' };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },
@@ -33,8 +33,7 @@ module.exports = {
         const locales = await getAll({ ctx });
         return { locales };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },

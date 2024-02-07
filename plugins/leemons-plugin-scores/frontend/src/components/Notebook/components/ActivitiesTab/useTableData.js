@@ -149,9 +149,9 @@ function usePeriodData({ filters, localFilters }) {
   const isLoading = !hasActivities
     ? false
     : isLoadingSearchAssignableInstances ||
-    isLoadingStudentsData ||
-    assignableInstancesAreLoading ||
-    !selectedClasses?.length;
+      isLoadingStudentsData ||
+      assignableInstancesAreLoading ||
+      !selectedClasses?.length;
 
   const activitiesData = useParsedActivities(
     isLoading,

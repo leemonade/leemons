@@ -4,6 +4,7 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -32,8 +33,7 @@ module.exports = {
         return { status: 200, providers };
       } catch (e) {
         console.error(e);
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },
@@ -58,8 +58,7 @@ module.exports = {
         return { status: 200, email };
       } catch (e) {
         console.error(e);
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },
@@ -83,9 +82,7 @@ module.exports = {
         const email = await ctx.tx.call('users.platform.setEmail', { value: ctx.params.email });
         return { status: 200, email };
       } catch (e) {
-        console.error(e);
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },

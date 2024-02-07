@@ -8,6 +8,7 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const { LeemonsError } = require('@leemons/error');
 const organizationService = require('../../core/organization');
 
 /** @type {ServiceSchema} */
@@ -37,9 +38,7 @@ module.exports = {
           organization,
         };
       } catch (e) {
-        console.error(e);
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },
@@ -68,9 +67,7 @@ module.exports = {
           status: 200,
         };
       } catch (e) {
-        console.error(e);
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },
@@ -87,9 +84,7 @@ module.exports = {
           jsonTheme,
         };
       } catch (e) {
-        console.error(e);
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },

@@ -1,8 +1,16 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
-import { isFunction, isNil } from 'lodash';
-import { Box, ImageLoader, Text, COLORS, ModalZoom, TextClamp } from '@bubbles-ui/components';
+import { isFunction } from 'lodash';
+import {
+  Box,
+  ImageLoader,
+  Text,
+  ModalZoom,
+  TextClamp,
+  CardEmptyCover,
+} from '@bubbles-ui/components';
 import { AssetPlayerStyles } from './AssetPlayer.styles';
 import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
 import { ProgressBar } from './components/ProgressBar';
@@ -74,7 +82,6 @@ const AssetPlayer = ({
       fileType = 'image';
     }
   }
-
   const playerRef = useRef(null);
   const rootRef = useRef(null);
   const [showPlayer, setShowPlayer] = useState(false);
@@ -149,7 +156,7 @@ const AssetPlayer = ({
   };
 
   const onEventHandler = (event, eventInfo) => {
-    if (isFunction(event)) event(eventInfo);
+    if (isFunction(event) && eventInfo) event(eventInfo);
   };
 
   const handleOnProgress = (played, playedSeconds) => {
@@ -348,7 +355,15 @@ const AssetPlayer = ({
                       <ButtonIcon fileType={'video'} />
                     </Box>
                   )}
-                  {cover && <ImageLoader height="100%" src={cover} alt={name} />}
+                  {cover ? (
+                    <ImageLoader height="100%" src={cover} alt={name} />
+                  ) : (
+                    <CardEmptyCover
+                      fileType={asset?.fileType}
+                      icon={asset?.fileIcon}
+                      height={199}
+                    />
+                  )}
                 </Box>
               )}
             </Box>
@@ -369,7 +384,14 @@ const AssetPlayer = ({
             )}
             {media.isImage && canPlay && (
               <Box className={classes.coverWrapper}>
-                <ImageLoader height="100%" src={cover} alt={name} />
+                {showPlayButton && (
+                  <Box className={classes.buttonIcon}>
+                    <ButtonIcon fileType={'image'} />
+                  </Box>
+                )}
+                <ModalZoom canPlay={canPlay}>
+                  <ImageLoader height="100%" src={cover} alt={name} />
+                </ModalZoom>
               </Box>
             )}
             {media.isURL && (

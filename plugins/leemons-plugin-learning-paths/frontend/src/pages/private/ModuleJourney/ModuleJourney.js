@@ -21,8 +21,7 @@ const ModuleJourney = () => {
   const isTeacher = useIsTeacher();
   const { id } = useParams();
   const scrollRef = useRef();
-  const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
-    useModuleData(id);
+  const { module, moduleAssignation, activitiesById } = useModuleData(id);
 
   const orderedActivities = sortBy(activitiesById, 'createdAt');
   const assignablesURL = (

@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// TODO: import from @library
 import { LibraryDetail } from '@leebrary/components';
-
 import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
@@ -12,7 +10,6 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
 import { AssetMetadataFeedback } from '../../components/AssetMetadataFeedback';
-// import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const FeedbackDetail = ({ asset, onRefresh, ...props }) => {
   const history = useHistory();

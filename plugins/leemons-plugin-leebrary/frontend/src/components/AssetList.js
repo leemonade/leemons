@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+/* eslint-disable no-param-reassign */
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { find, forEach, isArray, isEmpty } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
@@ -32,7 +33,8 @@ import {
 } from '@leebrary/request';
 import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
 import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
-
+import LibraryContext from '@leebrary/context/LibraryContext';
+import { useHistory } from 'react-router-dom';
 import prefixPN from '../helpers/prefixPN';
 import { CardDetailWrapper } from './CardDetailWrapper';
 import { CardWrapper } from './CardWrapper';
@@ -40,6 +42,7 @@ import { ListEmpty } from './ListEmpty';
 import { SearchEmpty } from './SearchEmpty';
 import { prepareAsset } from '../helpers/prepareAsset';
 import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
+import { NewLibraryCardButton } from './NewLibraryCardButton/NewLibraryCardButton';
 
 // HELPERS
 function getLocale(session) {
@@ -52,6 +55,17 @@ function getOwner(asset) {
   )[0];
   return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
 }
+
+const RECENT_CATEGORY = 'leebrary-recent';
+const SHARED_CATEGORY = 'leebrary-shared';
+const SUBJECT_CATEGORY = 'leebrary-subject';
+const PINS_CATEGORY = 'pins';
+const NOT_CREATABLE_CATEGORIES = [
+  PINS_CATEGORY,
+  RECENT_CATEGORY,
+  SHARED_CATEGORY,
+  SUBJECT_CATEGORY,
+];
 
 const AssetList = ({
   categories = [],
@@ -83,7 +97,7 @@ const AssetList = ({
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
+  const [pageSize, setPageSize] = useState(12 - 1); // 11 is the default number of items per page when the NEW button is enabled
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [itemToShare, setItemToShare] = useState(null);
   const [tempSearchCriteria, setTempSearchCriteria] = useState(searchCriteria);
@@ -109,6 +123,9 @@ const AssetList = ({
     setLoading: setAppLoading,
   } = useLayout();
 
+  const { newAsset } = useContext(LibraryContext);
+  const history = useHistory();
+
   // -------------------------------------------------------------------------------------
   // QUERY HOOKS
 
@@ -119,34 +136,34 @@ const AssetList = ({
     const query = {
       providerQuery: academicFilters ? JSON.stringify(academicFilters) : null,
       criteria: searchCriteria || '',
-      pinned: category?.key === 'pins',
+      pinned: category?.key === PINS_CATEGORY,
       category: category?.id,
       published: allowStatusFilter ? statusFilter : true,
-      showPublic: category?.key === 'pins',
+      showPublic: category?.key === PINS_CATEGORY,
       preferCurrent: true,
     };
 
     if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
 
-    if (category?.key?.startsWith('leebrary-subject')) {
+    if (category?.key?.startsWith(SUBJECT_CATEGORY)) {
       delete query.category;
       const subjects = isArray(category.id) ? category.id : [category.id];
       query.subjects = JSON.stringify(subjects);
     }
 
     // HANDLE MULTI-CATEGORY SECTIONS
-    if (category?.key === 'leebrary-shared') {
+    if (category?.key === SHARED_CATEGORY) {
       delete query.category;
       query.onlyShared = true;
     }
-    if (category?.key === 'leebrary-recent') {
+    if (category?.key === RECENT_CATEGORY) {
       query.roles = JSON.stringify(['owner']);
       delete query.category;
       if (categoryFilter !== 'all') {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
       }
     }
-    if (category?.key === 'pins') {
+    if (category?.key === PINS_CATEGORY) {
       delete query.category;
       if (categoryFilter !== 'all') {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
@@ -179,8 +196,8 @@ const AssetList = ({
     ids: currentPageAssets?.map((item) => item.asset),
     filters: {
       published: allowStatusFilter ? statusFilter : true,
-      showPublic: category?.key === 'pins',
-      onlyPinned: category?.key === 'pins',
+      showPublic: category?.key === PINS_CATEGORY,
+      onlyPinned: category?.key === PINS_CATEGORY,
     },
     options: {
       enabled: !isEmpty(assetList) && !assetListIsLoading,
@@ -241,7 +258,7 @@ const AssetList = ({
       return <SearchEmpty t={t} />;
     }
 
-    return <ListEmpty t={t} isRecentPage={category?.key === 'leebrary-recent'} />;
+    return <ListEmpty t={t} isRecentPage={category?.key === RECENT_CATEGORY} />;
   };
 
   // -------------------------------------------------------------------------------------
@@ -360,6 +377,16 @@ const AssetList = ({
     window.open(item.url, '_blank', 'noopener');
   }
 
+  function handleOnNew() {
+    if (!isEmpty(category?.createUrl)) {
+      const newURL = new URL(category.createUrl, window?.location);
+      newURL.searchParams.set('from', 'leebrary');
+      history.push(newURL.href.substring(newURL.origin.length));
+    } else {
+      newAsset(null, category);
+    }
+  }
+
   // -------------------------------------------------------------------------------------
   // EFFECTS
 
@@ -396,35 +423,62 @@ const AssetList = ({
 
   // OnSearch: Wait for the debounced search critera and then call the onSearch function
   useEffect(() => {
-    onSearch(searchCriteriaDebounced);
+    // onSearch(searchCriteriaDebounced);
   }, [searchCriteriaDebounced]);
 
   // SET THE DATA PASSED TO THE PAGINATED LIST COMPONENT
   useEffect(() => {
+    // Determine if a new item should be inserted based on the category not being in the NOT_CREATABLE_CATEGORIES list
+    const shouldInsertNewItem = !NOT_CREATABLE_CATEGORIES.some((catKey) =>
+      category?.key.startsWith(catKey)
+    );
+
+    // If there are asset details and they are not empty, proceed to paginate and manipulate the data
     if (assetsDetails && !isEmpty(assetsDetails)) {
+      // Paginate the asset list based on the current page, page size, and include a flag for new item
       const paginated = getPageItems({
         data: assetList,
         page: page - 1,
         size: pageSize,
+        includeNewItem: true,
       });
 
+      // Replace paginated items with the asset details
       paginated.items = assetsDetails || [];
+
+      // Iterate over each item to clean up the metadata by removing 'pathsInfo' if it exists
       forEach(paginated.items, (item) => {
         if (item.file?.metadata?.indexOf('pathsInfo')) {
-          // eslint-disable-next-line no-param-reassign
-          item.file.metadata = JSON.parse(item.file.metadata);
-          // eslint-disable-next-line no-param-reassign
-          delete item.file.metadata.pathsInfo;
-          // eslint-disable-next-line no-param-reassign
-          item.file.metadata = JSON.stringify(item.file.metadata);
+          item.file.metadata = JSON.parse(item.file.metadata); // Parse the metadata string into an object
+          delete item.file.metadata.pathsInfo; // Remove the 'pathsInfo' property
+          item.file.metadata = JSON.stringify(item.file.metadata); // Convert the metadata back into a string
         }
       });
+
+      // Increment the page number to account for the pagination offset
       paginated.page += 1;
+
+      // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
+      if (shouldInsertNewItem && !paginated.items.some((item) => item.action === 'new')) {
+        paginated.items.unshift({ action: 'new' });
+      }
+
+      // Update the state with the paginated data
       setPageAssetsData({ ...paginated });
+    } else if (shouldInsertNewItem) {
+      // If there are no asset details but a new item should be inserted, create a minimal structure for it
+      setPageAssetsData({
+        items: [{ action: 'new' }], // Only item is the 'new' action item
+        page: 0, // Starting at the first page
+        size: 1, // Only one item in size
+        totalCount: 1, // Total count is one
+        totalPages: 1, // Only one page in total
+      });
     } else {
+      // If no conditions are met, set the page assets data to null
       setPageAssetsData(null);
     }
-  }, [assetsDetails, assetsDetailsError]);
+  }, [assetsDetails, assetsDetailsError, category?.key]);
 
   // -------------------------------------------------------------------------------------
   // PAGE STYLES & PAGINATED LIST PROPS
@@ -461,29 +515,33 @@ const AssetList = ({
     () => ({
       itemRender: (p) => (
         <Box>
-          <CardWrapper
-            {...p}
-            variant={cardVariant}
-            category={
-              categories?.find((_category) => _category.id === p.item.original.category) || {
-                key: 'media-file',
+          {p?.item?.original?.action === 'new' ? (
+            <NewLibraryCardButton categoryLabel={category?.singularName} onClick={handleOnNew} />
+          ) : (
+            <CardWrapper
+              {...p}
+              variant={cardVariant}
+              category={
+                categories?.find((_category) => _category.id === p.item.original.category) || {
+                  key: 'media-file',
+                }
               }
-            }
-            realCategory={category}
-            published={allowStatusFilter ? statusFilter : true}
-            isEmbedded={true}
-            isEmbeddedList={false}
-            onRefresh={handleRefresh}
-            onDuplicate={handleOnDuplicate}
-            onDelete={handleOnDelete}
-            onEdit={handleOnEdit}
-            onShare={handleOnShare}
-            onPin={handleOnPin}
-            onUnpin={handleOnUnpin}
-            onDownload={handleOnDownload}
-            locale={locale}
-            assetsLoading={cardDetailIsLoading}
-          />
+              realCategory={category}
+              published={allowStatusFilter ? statusFilter : true}
+              isEmbedded={true}
+              isEmbeddedList={false}
+              onRefresh={handleRefresh}
+              onDuplicate={handleOnDuplicate}
+              onDelete={handleOnDelete}
+              onEdit={handleOnEdit}
+              onShare={handleOnShare}
+              onPin={handleOnPin}
+              onUnpin={handleOnUnpin}
+              onDownload={handleOnDownload}
+              locale={locale}
+              assetsLoading={cardDetailIsLoading}
+            />
+          )}
         </Box>
       ),
       itemMinWidth: '300px',
@@ -584,7 +642,7 @@ const AssetList = ({
               overlayOpacity={0}
               style={{ height: '100%' }}
             />
-            {!isEmpty(assetList) && pageAssetsData?.items?.length && (
+            {pageAssetsData?.items?.length && (
               <Box
                 sx={(theme) => ({
                   paddingBottom: theme.spacing[5],
@@ -649,7 +707,7 @@ const AssetList = ({
           >
             <CardDetailWrapper
               category={
-                category?.id && !category?.key.startsWith('leebrary-subject')
+                category?.id && !category?.key.startsWith(SUBJECT_CATEGORY)
                   ? category
                   : categories?.find((_category) => _category?.id === selectedAsset?.category)
               }

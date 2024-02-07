@@ -38,9 +38,13 @@ export function useColumns({ localizations }) {
 
 function useSelectedResources() {
   const [sharedData] = useModuleSetupContext();
-  const { resources } = sharedData.state;
 
   const cache = useCache();
+
+  const resources = useMemo(
+    () => sharedData?.state?.resources?.map((resource) => resource?.id ?? resource) ?? [],
+    [sharedData.state.resources]
+  );
 
   const { data: nonIndexableAssets } = useAssets({
     ids: resources,
@@ -76,7 +80,7 @@ function useParseResources({ assets, onRemove, localizations }) {
     () =>
       resources
         .map((resource) => {
-          const asset = assets[resource];
+          const asset = assets[resource?.id ?? resource];
 
           if (!asset) {
             return null;

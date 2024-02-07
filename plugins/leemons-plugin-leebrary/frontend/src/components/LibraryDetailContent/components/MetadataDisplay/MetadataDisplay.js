@@ -52,15 +52,35 @@ const MetadataDisplay = ({ metadata, onCopy }) => {
     return dataObject;
   };
 
+  const getAudioData = () => {
+    const dataObject = {};
+    if (metadata?.fileType === 'audio') {
+      const labels = ['Size', 'Format', 'Duration', 'Width', 'Height', 'Bitrate'];
+      metadata.metadata.forEach((item) => {
+        if (labels.includes(item.label)) {
+          dataObject[item.label.toLowerCase()] = item.value;
+        }
+      });
+    }
+    return dataObject;
+  };
+
   useEffect(() => {
-    if (metadata?.fileType === 'image') {
-      setData(getImageDimensions());
-    }
-    if (metadata?.fileType === 'video') {
-      setData(getVideoData());
-    }
-    if (metadata?.fileType === 'bookmark') {
-      setData({ url: metadata?.url, name: metadata.name });
+    switch (metadata?.fileType) {
+      case 'image':
+        setData(getImageDimensions());
+        break;
+      case 'video':
+        setData(getVideoData());
+        break;
+      case 'bookmark':
+        setData({ url: metadata?.url, name: metadata.name });
+        break;
+      case 'audio':
+        setData(getAudioData());
+        break;
+      default:
+        break;
     }
   }, [metadata]);
 
@@ -133,6 +153,26 @@ const MetadataDisplay = ({ metadata, onCopy }) => {
             <Box>
               <Text className={classes.title}>{`${t('size')}: `}</Text>
               <Text className={classes.value}>{`${fileSizeDocument}`}</Text>
+            </Box>
+          </Box>
+        )}
+        {metadata?.fileType === 'audio' && (
+          <Box>
+            <Box>
+              <Text className={classes.title}>{`${t('duration')}: `}</Text>
+              <Text className={classes.value}>{`${data?.duration}`}</Text>
+            </Box>
+            <Box>
+              <Text className={classes.title}>{`${t('dimensions')}: `}</Text>
+              <Text className={classes.value}>{`${data?.width} x ${data?.height}`}</Text>
+            </Box>
+            <Box>
+              <Text className={classes.title}>{`${t('size')}: `}</Text>
+              <Text className={classes.value}>{`${data?.size}`}</Text>
+            </Box>
+            <Box>
+              <Text className={classes.title}>{`${t('format')}: `}</Text>
+              <Text className={classes.value}>{`${data?.format}`}</Text>
             </Box>
           </Box>
         )}

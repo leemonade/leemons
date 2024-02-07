@@ -65,6 +65,8 @@ async function registerRole({ role: name, ctx, ...data }) {
       'componentOwner',
       'menu',
       'type',
+      'pluralName',
+      'singularName',
     ]),
     // provider: data.provider ?? 'leebrary-assignables',
     provider: data.provider ?? 'assignables',
