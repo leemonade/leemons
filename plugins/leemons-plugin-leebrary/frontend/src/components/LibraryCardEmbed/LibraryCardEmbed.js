@@ -111,21 +111,25 @@ const LibraryCardEmbed = ({ asset, variantIcon, actionIcon, assetsLoading }) => 
               </Text>
             </TextClamp>
           </Box>
-          <Box>
-            <Text>
-              {`${t('lastUpdate')}: `}
-              <LocaleDate
-                date={updatedAt}
-                options={{
-                  year: '2-digit',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                }}
-              />
-            </Text>
-          </Box>
+          {updatedAt && (
+            <Box>
+              <Text>
+                {`${t('lastUpdate')}: `}
+                {
+                  <LocaleDate
+                    date={updatedAt}
+                    options={{
+                      year: '2-digit',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }}
+                  />
+                }
+              </Text>
+            </Box>
+          )}
         </Stack>
         <Box noFlex className={classes.variantIcon}>
           {renderVariantIcon()}
