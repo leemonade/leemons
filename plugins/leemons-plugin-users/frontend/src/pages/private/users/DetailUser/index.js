@@ -8,10 +8,6 @@ import {
   Stack,
   Title,
   useResizeObserver,
-  TotalLayoutContainer,
-  TotalLayoutStepContainer,
-  TotalLayoutFooterContainer,
-  TotalLayoutHeader,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';

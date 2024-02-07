@@ -1,8 +1,7 @@
 import React from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@learning-paths/helpers/prefixPN';
-import { Text, Box, ContextContainer } from '@bubbles-ui/components';
-import { htmlToText } from '@learning-paths/components/ModuleDashboard/helpers/htmlToText';
+import { HtmlText, Box, ContextContainer } from '@bubbles-ui/components';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { INTRODUCTION_PROP_TYPES, INTRODUCTION_DEFAULT_PROPS } from './Introduction.constants';
 import { introductionStyles } from './Introduction.styles';
@@ -15,7 +14,7 @@ const Introduction = ({ instance }) => {
     <Box className={classes.root}>
       {!!instance?.metadata?.statement && (
         <ContextContainer title={t('introduction')}>
-          <Text className={classes.introduction}>{htmlToText(instance?.metadata?.statement)}</Text>
+          <HtmlText className={classes.introduction}>{instance?.metadata?.statement}</HtmlText>
         </ContextContainer>
       )}
       {!!instance?.assignable?.resources?.length && (

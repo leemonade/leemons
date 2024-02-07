@@ -86,6 +86,7 @@ const assignableRoles = [
       studentDetailUrl: '/private/feedback/student/:id/:user',
       evaluationDetailUrl: '/private/feedback/result/:id/:user',
       dashboardUrl: '/private/feedback/result/:id',
+      previewUrl: '/private/feedback/preview/:id',
       creatable: true,
       createUrl: '/private/feedback/new',
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
@@ -112,6 +113,7 @@ const assignableRoles = [
       componentOwner: 'feedback',
       listCardComponent: 'FeedbackListCard',
       detailComponent: 'FeedbackDetail',
+      type: 'activity',
     },
   },
 ];

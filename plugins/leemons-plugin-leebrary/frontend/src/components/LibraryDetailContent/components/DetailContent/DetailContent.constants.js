@@ -1,0 +1,41 @@
+import propTypes from 'prop-types';
+
+export const DETAIL_CONTENT_PROP_TYPES = {
+  name: propTypes.string,
+  description: propTypes.string,
+  subjectsIds: propTypes.arrayOf(propTypes.string),
+  program: propTypes.string,
+  metadataComponent: propTypes.elementType,
+  handleCopy: propTypes.func,
+  tags: propTypes.arrayOf(propTypes.string),
+  metadata: propTypes.object,
+  icon: propTypes.string,
+  fileType: propTypes.string,
+  fileExtension: propTypes.string,
+  variant: propTypes.string,
+  variantIcon: propTypes.string,
+  variantTitle: propTypes.string,
+  file: propTypes.object,
+  url: propTypes.string,
+  classes: propTypes.object,
+};
+
+export const DETAIL_CONTENT_DEFAULT_PROPS = {
+  name: '',
+  description: '',
+  subjectsIds: [],
+  program: '',
+  metadataComponent: null,
+  handleCopy: () => {},
+  tags: [],
+  metadata: {},
+  icon: '',
+  fileType: '',
+  fileExtension: '',
+  variant: '',
+  variantIcon: '',
+  variantTitle: '',
+  file: {},
+  url: '',
+  classes: {},
+};

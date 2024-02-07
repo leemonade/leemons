@@ -165,6 +165,8 @@ function EvaluationData({
                 </Button>
                 {isLastStep ? (
                   <DropdownButton
+                    chevronUp
+                    width="auto"
                     data={[
                       { label: labels.buttonPublish, onClick: handleOnPublish },
                       { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },

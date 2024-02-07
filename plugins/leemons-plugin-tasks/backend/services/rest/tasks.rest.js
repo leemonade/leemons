@@ -6,6 +6,7 @@
 const _ = require('lodash');
 
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsError } = require('@leemons/error');
 const create = require('../../core/task/create');
 const update = require('../../core/task/update');
 const { get } = require('../../core/task/get');
@@ -45,8 +46,10 @@ module.exports = {
         };
       } catch (error) {
         ctx.logger.error(error.message);
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: error.message };
+        throw new LeemonsError(ctx, {
+          message: error.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -66,8 +69,10 @@ module.exports = {
           task,
         };
       } catch (error) {
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: error.message };
+        throw new LeemonsError(ctx, {
+          message: error.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -100,8 +105,10 @@ module.exports = {
           task,
         };
       } catch (error) {
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: error.message };
+        throw new LeemonsError(ctx, {
+          message: error.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -120,11 +127,10 @@ module.exports = {
           task,
         };
       } catch (error) {
-        ctx.meta.$statusCode = 400;
-        return {
-          status: 400,
-          error: error.message,
-        };
+        throw new LeemonsError(ctx, {
+          message: error.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -145,11 +151,10 @@ module.exports = {
           ...deleted,
         };
       } catch (error) {
-        ctx.meta.$statusCode = 400;
-        return {
-          status: 400,
-          error: error.message,
-        };
+        throw new LeemonsError(ctx, {
+          message: error.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -170,11 +175,10 @@ module.exports = {
           published,
         };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return {
-          status: 400,
-          error: e.message,
-        };
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
@@ -202,11 +206,10 @@ module.exports = {
           tasks,
         };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return {
-          status: 400,
-          error: e.message,
-        };
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

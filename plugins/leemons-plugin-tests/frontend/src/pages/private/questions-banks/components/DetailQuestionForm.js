@@ -147,11 +147,6 @@ export default function DetailQuestionForm({
 
   const hasEnoughAnswers = get(properties, responseKey, []).length >= 3;
 
-  console.group('DetailQuestionForm');
-  console.log('rightAnswerSelected:', rightAnswerSelected);
-  console.log('hasEnoughAnswers:', hasEnoughAnswers);
-  console.groupEnd();
-
   return (
     <FormProvider {...form}>
       <TotalLayoutStepContainer

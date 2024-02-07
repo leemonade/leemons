@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   ActionButton,
   ActivityAccordion,
@@ -12,16 +12,19 @@ import {
   PageContainer,
   Stack,
   Table,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  TotalLayoutHeader,
+  AssetFeedbackIcon,
 } from '@bubbles-ui/components';
 // TODO: fix this import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
-import { ChevronRightIcon, EditIcon, PluginFeedbackIcon } from '@bubbles-ui/icons/outline';
+import { ChevronRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import { getFeedbackRequest } from '@feedback/request';
 import { map } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
@@ -59,6 +62,7 @@ export default function Preview() {
   const [tP, t1V] = useTranslateLoader(prefixPN('feedbackPreview'));
   const [tD, t2V] = useTranslateLoader(prefixPN('feedbackDetail'));
   const { classes, cx } = PreviewPageStyles({}, { name: 'FeedbackPreview' });
+  const scrollRef = useRef();
 
   const [store, render] = useStore({
     loading: true,
@@ -201,93 +205,128 @@ export default function Preview() {
   };
 
   return (
-    <ContextContainer
-      sx={(theme) => ({
-        backgroundColor: theme.colors.uiBackground02,
-        paddingBottom: theme.spacing[12],
-        overflow: 'auto',
-      })}
-      fullHeight
-      fullWidth
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          title={store.feedback?.name}
+          cancelable={false}
+          icon={<AssetFeedbackIcon />}
+          direction="row"
+        >
+          <Box style={{ display: 'flex', gap: 16 }}>
+            <Button variant="outline" onClick={() => goEditPage()}>
+              {tP('edit')}
+            </Button>
+            <Button variant="primary" onClick={() => goAssignPage()}>
+              {tP('assign')}
+            </Button>
+          </Box>
+        </TotalLayoutHeader>
+      }
     >
-      <AdminPageHeader
-        values={{
-          title: store.feedback?.name,
-        }}
-        buttons={{
-          duplicate: tP('edit'),
-          edit: tP('assign'),
-        }}
-        icon={<PluginFeedbackIcon />}
-        variant="teacher"
-        onDuplicate={() => goEditPage()}
-        onEdit={() => goAssignPage()}
-      />
-      <PageContainer noFlex>
-        <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-          <ActivityAccordion
-            state={store.statusAccordion}
-            onChange={(e) => {
-              store.statusAccordion = e;
-              render();
-            }}
+      <Stack
+        justifyContent="center"
+        ref={scrollRef}
+        style={{ overflow: 'auto' }}
+        fullWidth
+        fullHeight
+      >
+        <TotalLayoutStepContainer>
+          <ContextContainer
+            sx={(theme) => ({
+              // backgroundColor: theme.colors.uiBackground02,
+              paddingBottom: theme.spacing[12],
+              overflow: 'auto',
+            })}
+            fullHeight
+            fullWidth
           >
-            <ActivityAccordionPanel
-              label={tP('questions')}
-              rightSection={
-                <Box>
-                  <Badge
-                    label={store.feedback?.questions?.length}
-                    size="md"
-                    color="stroke"
-                    closable={false}
-                  />
-                </Box>
-              }
-              icon={
-                <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-                  <ImageLoader
-                    className="stroke-current"
-                    src={'/public/feedback/questions-icon.svg'}
-                  />
-                </Box>
-              }
-            >
-              <Box>
-                {store.useQuestionMode ? (
-                  <Box>
-                    <QuestionsCard
-                      viewMode
-                      returnToTable={toggleQuestionMode}
-                      feedback={store.feedback}
-                      defaultValues={{}}
-                    />
-                  </Box>
-                ) : (
-                  <>
-                    <Box className={classes.showTestBar}>
-                      <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
-                        {tP('showPreview')}
-                      </Button>
+            {/* <AdminPageHeader
+          values={{
+            title: store.feedback?.name,
+          }}
+          buttons={{
+            duplicate: tP('edit'),
+            edit: tP('assign'),
+          }}
+          icon={<PluginFeedbackIcon />}
+          variant="teacher"
+          onDuplicate={() => goEditPage()}
+          onEdit={() => goAssignPage()}
+        /> */}
+            <PageContainer noFlex>
+              <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
+                <ActivityAccordion
+                  state={store.statusAccordion}
+                  onChange={(e) => {
+                    store.statusAccordion = e;
+                    render();
+                  }}
+                >
+                  <ActivityAccordionPanel
+                    label={tP('questions')}
+                    rightSection={
+                      <Box>
+                        <Badge
+                          label={store.feedback?.questions?.length}
+                          size="md"
+                          color="stroke"
+                          closable={false}
+                        />
+                      </Box>
+                    }
+                    icon={
+                      <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+                        <ImageLoader
+                          className="stroke-current"
+                          src={'/public/feedback/questions-icon.svg'}
+                        />
+                      </Box>
+                    }
+                  >
+                    <Box>
+                      {store.useQuestionMode ? (
+                        <Box>
+                          <QuestionsCard
+                            viewMode
+                            returnToTable={toggleQuestionMode}
+                            feedback={store.feedback}
+                            defaultValues={{}}
+                          />
+                        </Box>
+                      ) : (
+                        <>
+                          <Box className={classes.showTestBar}>
+                            <Button
+                              rounded
+                              rightIcon={<ChevronRightIcon />}
+                              onClick={toggleQuestionMode}
+                            >
+                              {tP('showPreview')}
+                            </Button>
+                          </Box>
+                          <Table
+                            columns={tableHeaders}
+                            data={map(store.feedback?.questions, (question) => ({
+                              ...getQuestionForTable(question, tD),
+                              actions: (
+                                <Stack justifyContent="end" fullWidth>
+                                  <ActionButton icon={<EditIcon />} onClick={editQuestion} />
+                                </Stack>
+                              ),
+                            }))}
+                          />
+                        </>
+                      )}
                     </Box>
-                    <Table
-                      columns={tableHeaders}
-                      data={map(store.feedback?.questions, (question) => ({
-                        ...getQuestionForTable(question, tD),
-                        actions: (
-                          <Stack justifyContent="end" fullWidth>
-                            <ActionButton icon={<EditIcon />} onClick={editQuestion} />
-                          </Stack>
-                        ),
-                      }))}
-                    />
-                  </>
-                )}
+                  </ActivityAccordionPanel>
+                </ActivityAccordion>
               </Box>
-            </ActivityAccordionPanel>
-          </ActivityAccordion>
-        </Box>
-      </PageContainer>
-    </ContextContainer>
+            </PageContainer>
+          </ContextContainer>
+        </TotalLayoutStepContainer>
+      </Stack>
+    </TotalLayoutContainer>
   );
 }

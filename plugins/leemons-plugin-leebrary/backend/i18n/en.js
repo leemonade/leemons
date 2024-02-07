@@ -284,6 +284,7 @@ module.exports = {
     viewer: 'Viewer',
     editor: 'Editor',
     assigner: 'Assigner',
+    new: 'New {label}',
     tableLabels: {
       name: 'Name',
       owner: 'Owner',
@@ -321,6 +322,7 @@ module.exports = {
       assetStatusPublished: 'Published',
       assetStatusDraft: 'Draft',
       assetStatusAll: 'All statuses',
+      emptyInstructions: 'This asset does not have any instructions fot teachers yet.',
     },
     cardToolbar: {
       edit: 'Edit',

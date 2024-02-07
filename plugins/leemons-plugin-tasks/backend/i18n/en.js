@@ -166,7 +166,7 @@ module.exports = {
           buttonNext: 'Next',
           buttonPrev: 'Previous',
           submission: {
-            title: 'Evaluation',
+            title: 'Submissions',
             gradable: 'Gradable',
             checkDescription: 'This task requires the submission of a file, document or link.',
             type: 'Type of submission',

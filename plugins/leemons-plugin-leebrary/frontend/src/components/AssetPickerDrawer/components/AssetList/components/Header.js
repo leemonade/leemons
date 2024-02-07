@@ -46,11 +46,12 @@ export function Header({ localizations, categories: categoriesToUse, onChange, o
           label: filteredCategory.menuItem.label,
           value: filteredCategory.id,
           order: filteredCategory.order,
+          type: filteredCategory.type,
           icon: filteredCategory.menuItem.iconSvg.startsWith('/api')
             ? `${leemons.apiUrl}${filteredCategory.menuItem.iconSvg}`
             : filteredCategory.menuItem.iconSvg,
         })),
-        'order'
+        ['type', 'order']
       ),
     [filteredCategories]
   );

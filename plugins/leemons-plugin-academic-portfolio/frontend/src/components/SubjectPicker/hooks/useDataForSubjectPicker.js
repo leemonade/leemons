@@ -90,6 +90,7 @@ export function useDataForSubjectPicker({ subjects, control }) {
           program: subjectProgram?.name,
           course: subjectCourse?.name,
           subject: subject?.name,
+          color: subject?.color,
         };
       }),
     [selectedSubjects, programsData, subjectsData]

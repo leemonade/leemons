@@ -4,6 +4,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPn from '@learning-paths/helpers/prefixPN';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { htmlToText } from '@learning-paths/components/ModuleDashboard/helpers/htmlToText';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { useDashboardCardBodyStyles } from './DashboardCardBody.styles';
 import {
   DASHBOARD_CARD_BODY_DEFAULT_PROPS,
@@ -43,7 +44,10 @@ const DashboardCardBody = ({ activity, statement, assetNumber }) => {
   useEffect(() => {
     getInstanceTypeLocale(activity);
   }, [activity]);
-  const subjectIds = [activity?.subjects?.[0]?.subject];
+  const subjects = useClassesSubjects(activity?.classes);
+  const subjectIds = subjects?.map((subject) => subject?.id) ?? [
+    activity?.assignable?.subjects?.[0]?.subject,
+  ];
   return (
     <Box className={classes.root}>
       {calificationType && (

@@ -86,6 +86,8 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
               </Button>
 
               <DropdownButton
+                chevronUp
+                width="auto"
                 disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
                 loading={isLoading}
                 data={[
@@ -122,8 +124,16 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
           creatable
           onClose={() => setShowAssetDrawer(false)}
           onSelect={(asset) => {
+            const isAssignable = asset.assignable;
             setSharedData((data) =>
-              set(cloneDeep(data), RESOURCES_KEY, uniq([...get(data, RESOURCES_KEY, []), asset.id]))
+              set(
+                cloneDeep(data),
+                RESOURCES_KEY,
+                uniq([
+                  ...get(data, RESOURCES_KEY, []),
+                  isAssignable ? { id: asset.id, duplicate: false } : asset.id,
+                ])
+              )
             );
             setShowAssetDrawer(false);
           }}

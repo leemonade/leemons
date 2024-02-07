@@ -4,6 +4,7 @@ module.exports = {
     titleEdit: 'EDITAR DOCUMENTO',
     saveDraft: 'Guardar borrador',
     savedAsDraft: 'Guardado como borrador',
+    finish: 'Finalizar',
     publish: 'Publicar',
     published: 'Publicado',
     publishAndAssign: 'Publicar y Asignar',

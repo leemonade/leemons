@@ -1,11 +1,10 @@
+/* eslint-disable consistent-return */
 import React from 'react';
-import { Box } from '@bubbles-ui/components';
-import { LibraryDetailPlayerStyles } from './LibraryDetailPlayer.styles';
 import {
   LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS,
   LIBRARY_DETAIL_PLAYER_PROP_TYPES,
 } from './LibraryDetailPlayer.constants';
-import { AssetPlayer } from '../AssetPlayer';
+import { AssetPlayerLibraryWrapper } from './AssetPlayerLibraryWrapper';
 
 const LibraryDetailPlayer = ({
   name,
@@ -19,6 +18,9 @@ const LibraryDetailPlayer = ({
   fileType,
   fileExtension,
   titleActionButton,
+  providerData,
+  isEmbedded,
+  id,
   ...props
 }) => {
   const asset = {
@@ -29,23 +31,11 @@ const LibraryDetailPlayer = ({
     fileExtension,
     metadata,
     url,
+    providerData,
+    color,
+    id,
   };
-
-  const { classes } = LibraryDetailPlayerStyles({ color }, { name: 'LibraryDetailPlayer' });
-  return (
-    <Box className={classes.root} data-cypress-id="library-detail-player">
-      <Box className={classes.color} />
-      <AssetPlayer
-        height={200}
-        width={496}
-        asset={asset}
-        hideURLInfo
-        viewPDF={false}
-        compact
-        useAspectRatio={false}
-      />
-    </Box>
-  );
+  return <AssetPlayerLibraryWrapper asset={asset} />;
 };
 
 LibraryDetailPlayer.defaultProps = LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS;

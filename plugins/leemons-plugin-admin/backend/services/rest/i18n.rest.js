@@ -6,6 +6,7 @@
 
 const path = require('path');
 const fs = require('fs/promises');
+const { LeemonsError } = require('@leemons/error');
 
 module.exports = {
   getLangRest: {
@@ -25,8 +26,7 @@ module.exports = {
         ctx.meta.$statusCode = 200;
         return { status: 200, data: { [lang]: { [page]: locale[page] } } };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },

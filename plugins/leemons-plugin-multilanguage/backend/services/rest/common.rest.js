@@ -7,6 +7,7 @@
 const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsError } = require('@leemons/error');
 const { getManyWithLocale, getKeyStartsWith } = require('../../core/localization');
 const { resolveLocales } = require('../../core/locale');
 
@@ -75,8 +76,10 @@ async function get({ ctx }) {
 
   // Validate body
   if (!validator.validate(ctx.params)) {
-    ctx.meta.$statusCode = 400;
-    return { status: 400, error: validator.error };
+    throw new LeemonsError(ctx, {
+      httpStatusCode: 400,
+      message: validator.error,
+    });
   }
 
   const cacheKey = `multilanguage:common:get:${JSON.stringify({
@@ -141,7 +144,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
     async handler(ctx) {
       ctx.params.locale = await resolveLocales({ ctx });
-      return get({ ctx });
+      return await get({ ctx });
     },
   },
   getRest: {

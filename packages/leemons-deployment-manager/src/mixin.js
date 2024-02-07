@@ -4,13 +4,13 @@ const {
   getPluginNameFromServiceName,
   getPluginNameWithVersionIfHaveFromServiceName,
 } = require('@leemons/service-name-parser');
-const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
 const { isCoreService } = require('./isCoreService');
 const { getDeploymentID } = require('./getDeploymentID');
 const { ctxCall } = require('./ctxCall');
 
-const actionCallCache = {};
 const actionCanCache = {};
+
+const CONTROLLED_HTTP_STATUS_CODE = [307];
 
 async function modifyCTX(
   ctx,
@@ -98,7 +98,7 @@ module.exports = function ({
     hooks: {
       after: {
         '*': function (ctx, res) {
-          if (ctx.meta.$statusCode !== 307) {
+          if (!CONTROLLED_HTTP_STATUS_CODE.includes(ctx.meta.$statusCode)) {
             ctx.meta.$statusCode = 200;
           }
           return res;
@@ -109,38 +109,37 @@ module.exports = function ({
           async function (ctx) {
             await modifyCTX(ctx, { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall });
 
-            if (checkIfCanCallMe) {
-              // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
-              // sin comprobar nada, ya que intenta lanzar un evento y los eventos tienen su propia seguridad
-              if (
-                !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
-                !ctx.action.name.includes('leemonsMongoDBRollback') &&
-                !ctx.action.name.startsWith('gateway.') &&
-                !ctx.callerPlugin.startsWith('gateway')
-              ) {
-                if (!isCoreService(ctx.caller) && !isCoreService(ctx.action.name)) {
-                  if (!ctx.meta.relationshipID)
-                    throw new LeemonsError(ctx, { message: 'relationshipID is required' });
+            // Si se esta intentando llamar al action leemonsDeploymentManagerEvent || leemonsMongoDBRollback lo dejamos pasar
+            // sin comprobar nada, ya que intenta lanzar un evento y los eventos tienen su propia seguridad
+            if (
+              checkIfCanCallMe &&
+              !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
+              !ctx.action.name.includes('leemonsMongoDBRollback') &&
+              !ctx.action.name.startsWith('gateway.') &&
+              !ctx.callerPlugin.startsWith('gateway') &&
+              !isCoreService(ctx.caller) &&
+              !isCoreService(ctx.action.name)
+            ) {
+              if (!ctx.meta.relationshipID)
+                throw new LeemonsError(ctx, { message: 'relationshipID is required' });
 
-                  if (!actionCanCache.hasOwnProperty(ctx.meta.deploymentID)) {
-                    actionCanCache[ctx.meta.deploymentID] = [];
-                  }
+              if (!actionCanCache.hasOwnProperty(ctx.meta.deploymentID)) {
+                actionCanCache[ctx.meta.deploymentID] = [];
+              }
 
-                  const cacheKey = ctx.caller + ctx.action.name + ctx.meta.relationshipID;
-                  if (actionCanCache[ctx.meta.deploymentID].indexOf(cacheKey) === -1) {
-                    let hasTransaction = false;
-                    if (ctx.meta.transactionID) hasTransaction = true;
-                    await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
-                      fromService: ctx.caller,
-                      toAction: ctx.action.name,
-                      relationshipID: ctx.meta.relationshipID,
-                    });
-                    if (ctx.meta.transactionID && !hasTransaction) {
-                      delete ctx.meta.transactionID;
-                    }
-                    actionCanCache[ctx.meta.deploymentID].push(cacheKey);
-                  }
+              const cacheKey = ctx.caller + ctx.action.name + ctx.meta.relationshipID;
+              if (actionCanCache[ctx.meta.deploymentID].indexOf(cacheKey) === -1) {
+                let hasTransaction = false;
+                if (ctx.meta.transactionID) hasTransaction = true;
+                await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
+                  fromService: ctx.caller,
+                  toAction: ctx.action.name,
+                  relationshipID: ctx.meta.relationshipID,
+                });
+                if (ctx.meta.transactionID && !hasTransaction) {
+                  delete ctx.meta.transactionID;
                 }
+                actionCanCache[ctx.meta.deploymentID].push(cacheKey);
               }
             }
           },

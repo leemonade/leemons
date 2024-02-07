@@ -10,6 +10,7 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const { LeemonsError } = require('@leemons/error');
 const settingsService = require('../../core/settings');
 
 /** @type {ServiceSchema} */
@@ -90,8 +91,7 @@ module.exports = {
           const settings = await settingsService.findOne({ ctx });
           return { status: 200, settings };
         } catch (e) {
-          ctx.meta.$statusCode = 400;
-          return { status: 400, error: e.message };
+          throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
         }
       } else {
         throw validator.error;
@@ -120,8 +120,7 @@ module.exports = {
         const langs = await settingsService.getLanguages({ ctx });
         return { status: 200, langs };
       } catch (e) {
-        ctx.meta.$statusCode = 400;
-        return { status: 400, error: e.message };
+        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
       }
     },
   },
