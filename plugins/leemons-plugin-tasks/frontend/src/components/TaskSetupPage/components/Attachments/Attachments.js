@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { uniqBy, map } from 'lodash';
-import { Box, Button, createStyles, useResizeObserver, SortableList } from '@bubbles-ui/components';
+import { Box, Button, createStyles, SortableList } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
@@ -27,10 +27,6 @@ function Attachments({ setValue, getValues, labels }) {
     () => setShowAssetDrawer((showDrawer) => !showDrawer),
     [setShowAssetDrawer]
   );
-  /*
-    --- Sizings ---
-  */
-  const [boxRef] = useResizeObserver();
 
   /*
     --- Resources state ---
@@ -108,7 +104,7 @@ function Attachments({ setValue, getValues, labels }) {
           onRemove={onAssetRemove}
         />
       </Box>
-      <Box ref={boxRef}>
+      <Box>
         <form
           onSubmit={(e) => {
             // EN: Added to prevent the event from bubbling up to the parent form
