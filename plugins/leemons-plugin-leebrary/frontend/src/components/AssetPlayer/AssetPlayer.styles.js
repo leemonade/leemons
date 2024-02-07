@@ -33,6 +33,7 @@ const AssetPlayerStyles = createStyles(
       showPlayer,
       canPlay,
       useAudioCard,
+      ccMode,
     }
   ) => {
     const framedProps = !media.isPDF ? getFramedProps(framed, theme) : {};
@@ -72,7 +73,7 @@ const AssetPlayerStyles = createStyles(
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        pointerEvents: 'none',
+        pointerEvents: (!ccMode && 'none') || 'auto',
       },
       coverShadow: {
         position: 'absolute',

@@ -260,6 +260,7 @@ const AssetPlayer = ({
       fullScreenMode,
       useAspectRatio,
       framed,
+      ccMode,
     },
     { name: 'AssetPlayer' }
   );
@@ -347,18 +348,15 @@ const AssetPlayer = ({
                 />
               )}
               {(!showPlayer || media.isAudio) && (
-                <Box className={classes.coverWrapper} onClick={() => handleInitPlay()}>
+                <Box className={classes.coverWrapper} onClick={() => !ccMode && handleInitPlay()}>
                   {showPlayButton && (
-                    <Box
-                      className={classes.buttonIcon}
-                      onClick={(e) => {
-                        if (ccMode) handleInitPlay();
-                        console.log('🚀 ~ ccMode:', ccMode);
-                        // e.stopPropagation();
-                        // e.preventDefault();
-                      }}
-                    >
-                      <ButtonIcon fileType={'video'} />
+                    <Box className={classes.buttonIcon}>
+                      <ButtonIcon
+                        fileType={'video'}
+                        onClick={(e) => {
+                          if (ccMode) handleInitPlay();
+                        }}
+                      />
                     </Box>
                   )}
                   {cover ? (
