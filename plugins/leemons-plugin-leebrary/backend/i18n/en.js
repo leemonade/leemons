@@ -387,4 +387,9 @@ module.exports = {
     duration: 'Duration',
     lastUpdate: 'Last update',
   },
+  pdfPlayer: {
+    pageLabel: 'Page',
+    paginatorLabel: '/',
+    schemaLabel: 'Schema',
+  },
 };

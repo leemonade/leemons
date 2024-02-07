@@ -11,12 +11,14 @@ import {
   TextClamp,
   CardEmptyCover,
 } from '@bubbles-ui/components';
-import { AssetPlayerStyles } from './AssetPlayer.styles';
-import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
-import { ProgressBar } from './components/ProgressBar';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '../../helpers/prefixPN';
 import { AudioCardPlayer } from './components/AudioCardPlayer';
 import { PDFPlayer } from './components/PDFPlayer';
 import { ButtonIcon } from './components/ButtonIcon';
+import { ProgressBar } from './components/ProgressBar';
+import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
+import { AssetPlayerStyles } from './AssetPlayer.styles';
 
 const format = (seconds) => {
   const date = new Date(seconds * 1000);
@@ -55,7 +57,6 @@ const AssetPlayer = ({
   canPlay,
   hideURLInfo,
   useAudioCard,
-  pdfLabels,
   useSchema,
   viewPDF,
   compact,
@@ -93,6 +94,12 @@ const AssetPlayer = ({
   const [isPlaying, setIsPlaying] = useState(playing);
   const [fullScreenMode, setFullScreenMode] = useState(fullScreen);
   const [mediaVolume, setMediaVolume] = useState(volume || 1);
+  const [t] = useTranslateLoader(prefixPN('pdfPlayer'));
+  const pdfLabels = {
+    pageLabel: t('pageLabel'),
+    paginatorLabel: t('paginatorLabel'),
+    schemaLabel: t('schemaLabel'),
+  };
 
   const media = useMemo(() => {
     let result = {
