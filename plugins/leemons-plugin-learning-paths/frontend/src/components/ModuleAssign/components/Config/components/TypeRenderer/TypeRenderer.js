@@ -18,7 +18,7 @@ export function TypeRenderer({ id, localizations, defaultValue }) {
 
   return (
     <Switch
-      label={localizations.mandatory}
+      label={localizations?.mandatory}
       value={value === 'blocking'}
       onChange={(checked) => {
         onChange(checked ? 'blocking' : 'optional');
