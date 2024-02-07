@@ -183,15 +183,15 @@ const AssetForm = ({
   }, [JSON.stringify(advancedConfig)]);
 
   useEffect(() => {
+    const isImageType = isImageFile(assetFile);
     if (!isEmpty(assetFile)) {
-      const isImageType = isImageFile(assetFile);
       setIsImage(isImageType);
       if (isEmpty(formValues.name)) {
         setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
       }
-      if (isImageType) {
-        // setValue('cover', null);
-      }
+    }
+    if (isImageType) {
+      setValue('cover', assetFile);
     }
   }, [assetFile]);
 
