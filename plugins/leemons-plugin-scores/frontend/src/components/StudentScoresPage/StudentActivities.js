@@ -243,6 +243,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
       activity.classes.includes(klass.id)
     );
     return classActivitiesRaw.map((activity) => {
+      const gotDeadline = activity?.dates?.deadline;
+      if (!!gotDeadline && new Date(gotDeadline) < new Date()) return null;
       const percentage = (100 / classActivitiesRaw.length)?.toFixed(0);
       const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
       const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
@@ -284,6 +286,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
         filteredClasses.map((klass) => {
           const classActivities = getClassActivities(filteredActivities, klass);
           const averageScore = getAverageScore(klass, classActivities);
+          console.log(classActivities);
           return (
             <ScoreFronstage
               key={klass.id}
