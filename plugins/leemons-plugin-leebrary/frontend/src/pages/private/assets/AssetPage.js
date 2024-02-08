@@ -55,7 +55,7 @@ const AssetPage = () => {
     }
   }, [params, asset, categories, category]);
 
-  // #region * INITIAL STEP VALUES -------------------------------------------
+  // INITIAL STEP VALUES -------------------------------------------
   const getInitialValues = () => ({
     file: asset?.file || null,
     name: asset?.name || '',
@@ -135,22 +135,67 @@ const AssetPage = () => {
     ],
     [category, asset, params]
   );
-  // #endregion
 
-  // #region * INIT FORM ----------------------------------------------------
+  // INIT FORM ----------------------------------------------------
   const form = useForm({
     defaultValues: initialStepsInfo[totalLayoutProps.activeStep]?.initialValues,
     resolver: zodResolver(initialStepsInfo[totalLayoutProps.activeStep]?.validationSchema),
   });
   const formValues = form.watch();
 
-  // Edit: If an asset is passed the form resets to load initial values
+  // Edit: If an asset is passed, the form resets to load initial values
   React.useEffect(() => {
     form.reset(initialStepsInfo[totalLayoutProps.activeStep]?.initialValues);
   }, [asset]);
-  // #endregion
 
-  // #region * HANDLERS -------------------------------------------------------
+  // HELPER FUNCTIONS --------------------------------------------------------
+
+  async function resolveAssetCover({
+    categoryName,
+    isEditing,
+    isImageResource,
+    resizingOptions = {
+      quality: 0.8,
+      maxWidth: 800,
+      maxHeight: 600,
+      debug: true,
+    },
+  }) {
+    const coverIsAUrl = isString(formValues.cover) && formValues.cover?.startsWith('http');
+
+    const isBookmarkWithValidCover = coverIsAUrl && categoryName === 'bookmarks';
+    if (isBookmarkWithValidCover && !isEditing) {
+      const coverFile = await imageUrlToFile(formValues.cover);
+      const resizedImage = await readAndCompressImage(coverFile, resizingOptions);
+      formValues.cover = resizedImage;
+      formValues.cover.name = 'cover';
+      return;
+    }
+
+    const needsNewCover = !formValues.file?.id;
+    const needsResizing =
+      isImageResource &&
+      formValues.file.type.indexOf('/gif') < 0 &&
+      formValues.file.type.indexOf('/svg') < 0;
+    if (isImageResource && needsNewCover) {
+      formValues.cover = null;
+
+      if (needsResizing) {
+        const fileName = formValues.file.name;
+        const resizedImage = await readAndCompressImage(formValues.file, resizingOptions);
+        formValues.file = resizedImage;
+        formValues.file.name = fileName;
+      }
+      return;
+    }
+
+    // If any other field but the cover is updated we'll need the original cover value for any media-file or bookmark.
+    if (coverIsAUrl) {
+      formValues.cover = asset?.original?.cover?.id;
+    }
+  }
+
+  // HANDLERS -------------------------------------------------------
   const handleOnCancel = () => {
     const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
     if (formHasBeenTouched) {
@@ -167,73 +212,49 @@ const AssetPage = () => {
 
   const handlePublish = async () => {
     const editing = params.id?.length > 0;
-    let { cover } = formValues;
     const requestMethod = editing ? updateAssetRequest : newAssetRequest;
+    const isImageResource = formValues.file?.type.indexOf('image') === 0;
     let file;
+    let cover;
 
     setLoading(true);
+    await resolveAssetCover({ categoryName: category?.key, isEditing: editing, isImageResource });
 
-    if (cover && _.isString(cover) && cover.startsWith('http') && category?.key === 'bookmarks') {
-      setUploadingFileInfo({
-        state: 'init',
-      });
-      formValues.cover = await imageUrlToFile(cover);
-      const resizedImage = await readAndCompressImage(formValues.cover, {
-        quality: 0.8,
-        maxWidth: 800,
-        maxHeight: 600,
-        debug: true,
-      });
-      formValues.cover = resizedImage;
-      formValues.cover.name = 'cover';
-      cover = resizedImage;
-      cover.name = 'cover';
-    }
-
-    const isImage = formValues.file?.type.indexOf('image') === 0;
-
+    // DEFINE/UPLOAD FINAL FILE & COVER FILES
     try {
-      const body = { ...formValues };
-      if (category?.key !== 'bookmarks' && !body.file?.id) {
-        if (
-          body.file.type.startsWith('image') &&
-          body.file.type.indexOf('/gif') < 0 &&
-          body.file.type.indexOf('/svg') < 0
-        ) {
-          const fileName = body.file.name;
-
-          const resizedImage = await readAndCompressImage(body.file, {
-            quality: 0.8,
-            maxWidth: 800,
-            maxHeight: 600,
-            debug: true,
-          });
-
-          body.file = resizedImage;
-          body.file.name = fileName;
-        }
+      const needsToUploadNewFile = !formValues.file?.id;
+      if (category?.key !== 'bookmarks' && needsToUploadNewFile) {
         setUploadingFileInfo({ state: t('common.labels.processingImage') });
-
-        file = await uploadFileAsMultipart(body.file, {
+        file = await uploadFileAsMultipart(formValues.file, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
           },
         });
-
         setUploadingFileInfo(null);
+      } else {
+        file = formValues.file;
       }
 
+      const bookmarkOldCover = asset?.original?.cover || null;
+      const bookmarkNeedsNewCover = bookmarkOldCover
+        ? bookmarkOldCover?.id !== formValues.cover
+        : !isEmpty(formValues.cover);
+
+      if (category?.key === 'bookmarks' && bookmarkNeedsNewCover) {
+        setUploadingFileInfo({ state: t('common.labels.processingImage') });
+        cover = await uploadFileAsMultipart(formValues.cover, {
+          onProgress: (info) => {
+            setUploadingFileInfo(info);
+          },
+        });
+        setUploadingFileInfo(null);
+      } else {
+        cover = formValues.cover?.id ?? formValues.cover;
+      }
+
+      // REQUEST
       try {
-        const assetData = { ...body, cover, file: body.file?.id ?? file };
-        const needsOldCover = isImage
-          ? form.formState.dirtyFields.file
-          : form.formState.dirtyFields.cover;
-
-        // If Cover doesn't change, set it to the original value
-        if (isString(cover) && cover.indexOf('http') === 0 && asset && needsOldCover) {
-          assetData.cover = asset.original?.cover?.id;
-        }
-
+        const assetData = { ...formValues, cover, file };
         if (editing) assetData.id = params.id;
 
         const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key, {
@@ -250,15 +271,17 @@ const AssetPage = () => {
           editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
         );
 
-        // Redirects to the correspnding category page
-        if (response.asset?.fileType === 'bookmark')
-          history.push('/private/leebrary/bookmarks/list');
-        else history.push('/private/leebrary/media-files/list');
+        history.push(
+          `/private/leebrary/${
+            response.asset?.fileType === 'bookmark' ? 'bookmarks' : 'media-files'
+          }/list`
+        );
       } catch (err) {
         setLoading(false);
         addErrorAlert(getErrorMessage(err));
       }
     } catch (e) {
+      setLoading(false);
       setUploadingFileInfo(null);
     }
   };
@@ -266,9 +289,8 @@ const AssetPage = () => {
   const handlePlublishAndAssign = async () => {
     await handlePublish();
   };
-  // #endregion
 
-  // #region * HEADER --------------------------------------------------------
+  // HEADER --------------------------------------------------------
   const getAssetInfoHeader = () => {
     const editing = params.id?.length;
     if (category?.key === 'bookmarks')
@@ -295,9 +317,8 @@ const AssetPage = () => {
       onCancel={handleOnCancel}
     />
   );
-  // #endregion
 
-  // #region * FOOTER ACTIONS ------------------------------------------------
+  // FOOTER ACTIONS ------------------------------------------------
   const footerActionsLabels = {
     back: 'Anterior',
     save: 'Guardar borrador',
@@ -309,7 +330,6 @@ const AssetPage = () => {
     { label: 'Publicar', action: handlePublish },
     { label: 'Publicar y asignar', action: handlePlublishAndAssign },
   ];
-  // #endregion
 
   return (
     <>

@@ -163,8 +163,6 @@ export function resolveAssetType(file, type, asset) {
   const resolvedFileType = ['audio', 'video', 'image', 'bookmark'].includes(fileType)
     ? fileType
     : defaultType;
-  const finalFileType =
-    resolvedFileType === 'file' && fileExtension ? fileExtension.toUpperCase() : resolvedFileType;
 
   return { fileType: resolvedFileType, fileExtension };
 }

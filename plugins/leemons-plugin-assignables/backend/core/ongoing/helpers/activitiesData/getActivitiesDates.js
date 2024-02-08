@@ -27,7 +27,7 @@ async function getActivitiesDates({ instances, assignations, filters, ctx }) {
   const assignationNames = [];
 
   if (status || progress) {
-    instanceNames.push('start', 'deadline', 'closed');
+    instanceNames.push('start', 'deadline', 'closed', 'visualization');
 
     if (progress) {
       assignationNames.push('start', 'end');
@@ -46,7 +46,7 @@ async function getActivitiesDates({ instances, assignations, filters, ctx }) {
   }
 
   if (studentCanSee) {
-    instanceNames.push('visibility', 'start');
+    instanceNames.push('visualization', 'start');
   }
 
   const dates = await ctx.tx.db.Dates.find({

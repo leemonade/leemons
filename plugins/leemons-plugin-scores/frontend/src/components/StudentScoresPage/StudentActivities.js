@@ -161,8 +161,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
     finished: true,
     finished_$gt: filters.startDate,
     finished_$lt: filters.endDate,
+    visible: true,
   });
-  const { assignableInstances: activities, isLoading: activitiesIsLoading } = useActivities(data);
   const { isLoading: assignationsAreLoading, data: assignationsData } = useAssignations({
     queries: data ? data.map((instance) => ({ instance, user })) : [],
     details: true,
@@ -170,6 +170,14 @@ export default function StudentActivities({ klasses, filters, labels }) {
     enabled: !!data?.length,
     placeholderData: [],
   });
+
+  const activities = useMemo(
+    () =>
+      assignationsData
+        .filter((assignation) => assignation.finished)
+        .map((assignation) => assignation.instance),
+    [assignationsData]
+  );
 
   const evaluationSystem = useProgramEvaluationSystem(filters.program, {
     enabled: assignationsData?.length > 0,
@@ -194,7 +202,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce((total, next) => total + next.score.number, 0) /
-      classActivities.length || 0;
+        classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 
@@ -262,7 +270,6 @@ export default function StudentActivities({ klasses, filters, labels }) {
   const renderScores = () => {
     if (
       searchAssignableLoading ||
-      activitiesIsLoading ||
       assignationsAreLoading ||
       scoresIsLoading ||
       (assignationsData?.length > 0 && !evaluationSystem)

@@ -59,13 +59,13 @@ function filterByFinished(query, closed, deadline) {
   return false;
 }
 
-function filterByVisible(query, start, visibility, now) {
-  // EN: If no visibility date is set, it is assumed that the instance is visible when started.
+function filterByVisible(query, start, visualization, now) {
+  // EN: If no visualization date is set, it is assumed that the instance is visible when started.
   // ES: Si no se establece una fecha de visibilidad, se asume que la instancia es visible cuando se inicia.
   return (
-    (query.visible && visibility && dayjs(visibility).isAfter(now)) ||
-    (query.visible && !visibility && start && dayjs(start).isAfter(now)) ||
-    (query.visible === false && visibility && !dayjs(visibility).isAfter(now)) ||
+    (query.visible && visualization && dayjs(visualization).isAfter(now)) ||
+    (query.visible && !visualization && start && dayjs(start).isAfter(now)) ||
+    (query.visible === false && visualization && !dayjs(visualization).isAfter(now)) ||
     (query.visible === false && start && !dayjs(start).isAfter(now))
   );
 }
@@ -75,7 +75,7 @@ function filterInstancesWithDates(query, _instancesWithDates) {
   const now = dayjs();
 
   Object.entries(instancesWithDates).forEach(
-    ([instanceId, { start, closed, archived, visualization: visibility, deadline }]) => {
+    ([instanceId, { start, closed, archived, visualization, deadline }]) => {
       if (filterByDeadline(query, deadline, now)) {
         delete instancesWithDates[instanceId];
         return;
@@ -101,7 +101,7 @@ function filterInstancesWithDates(query, _instancesWithDates) {
         return;
       }
 
-      if (filterByVisible(query, start, visibility, now)) {
+      if (filterByVisible(query, start, visualization, now)) {
         delete instancesWithDates[instanceId];
       }
     }

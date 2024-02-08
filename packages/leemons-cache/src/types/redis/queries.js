@@ -1,14 +1,26 @@
 const { isEmpty } = require('lodash');
 
 function generateKey(key, pluginName) {
-  return `${pluginName}.${key}`;
+  return `{plugin.${pluginName}}.${key}`;
 }
 
 function cleanKey(key, pluginName) {
-  return key.replace(new RegExp(`^${pluginName}\\.`), '');
+  return key.replace(new RegExp(`^\\{plugin\\.${pluginName}\\}\\.`), '');
 }
 
-module.exports = function queries(client) {
+module.exports = function queries(client, { isCluster }) {
+  const listKeys = async (pattern) => {
+    if (isCluster) {
+      const allKeys = await Promise.all(
+        client.shards.map(async (shard) => shard.master.client.keys(pattern))
+      );
+
+      return Array.from(new Set(allKeys.flat()));
+    }
+
+    return client.keys(pattern);
+  };
+
   return (pluginName) => ({
     get: async (key) => {
       const value = await client.get(generateKey(key, pluginName));
@@ -74,7 +86,7 @@ module.exports = function queries(client) {
     deleteMany: async (keys) => client.del(keys.map((key) => generateKey(key, pluginName))),
     deleteByPrefix: async (prefix) => {
       const _prefix = generateKey(prefix.replaceAll('*', '\\*'), pluginName);
-      const keys = await client.keys(`${_prefix}*`);
+      const keys = await listKeys(`${_prefix}*`);
 
       if (isEmpty(keys)) {
         return 0;
