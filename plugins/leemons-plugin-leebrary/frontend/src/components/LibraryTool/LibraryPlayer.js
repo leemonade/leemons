@@ -50,6 +50,8 @@ const LibraryPlayer = ({
           <LibraryCardEmbed
             asset={asset}
             variant={asset.fileType === 'bookmark' ? 'bookmark' : 'media'}
+            canPlay={readOnly}
+            ccMode
           />
         </Box>
       );
