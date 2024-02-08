@@ -143,7 +143,7 @@ export default function AssignmentList({
         />
       }
     >
-      <Stack justifyContent="center" fullWidth>
+      <Stack justifyContent="center" fullWidth sx={{ overflow: 'auto' }}>
         <TotalLayoutStepContainer clean stepName={labels.title} fullWidth>
           {View}
         </TotalLayoutStepContainer>

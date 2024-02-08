@@ -146,6 +146,16 @@ module.exports = () => ({
         );
       },
     },
+    getDeployment: {
+      async handler(ctx) {
+        if (!ctx.meta.deploymentID) {
+          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+        }
+        return ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }, undefined, {
+          disableAutoDeploy: true,
+        }).lean();
+      },
+    },
   },
 
   created() {

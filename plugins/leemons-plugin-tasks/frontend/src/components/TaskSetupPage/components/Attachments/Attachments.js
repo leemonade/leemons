@@ -1,22 +1,15 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { uniqBy, map } from 'lodash';
-import {
-  Box,
-  Button,
-  createStyles,
-  useResizeObserver,
-  useViewportSize,
-  SortableList,
-} from '@bubbles-ui/components';
+import { Box, Button, createStyles, SortableList } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { AssetListDrawer } from '@leebrary/components';
+import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
 
 import { AttachmentItem } from './AttchmentItem';
 
-const styles = createStyles((theme) => ({
+const styles = createStyles(() => ({
   attachmentContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -28,19 +21,12 @@ function Attachments({ setValue, getValues, labels }) {
   /*
     --- Drawer state ---
   */
-  const [assetType, setAssetType] = useState('');
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const onDrawerClose = useCallback(() => setShowAssetDrawer(false), [setShowAssetDrawer]);
   const toggleDrawer = useCallback(
     () => setShowAssetDrawer((showDrawer) => !showDrawer),
     [setShowAssetDrawer]
   );
-  /*
-    --- Sizings ---
-  */
-  const { width: viewportWidth } = useViewportSize();
-  const [boxRef, rect] = useResizeObserver();
-  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
 
   /*
     --- Resources state ---
@@ -118,7 +104,7 @@ function Attachments({ setValue, getValues, labels }) {
           onRemove={onAssetRemove}
         />
       </Box>
-      <Box ref={boxRef}>
+      <Box>
         <form
           onSubmit={(e) => {
             // EN: Added to prevent the event from bubbling up to the parent form
@@ -135,19 +121,14 @@ function Attachments({ setValue, getValues, labels }) {
           <Button variant="link" onClick={toggleDrawer} leftIcon={<AddCircleIcon />}>
             {labels?.addResource}
           </Button>
-          <AssetListDrawer
+          <AssetPickerDrawer
             opened={showAssetDrawer}
+            layout="rows"
+            categories={['bookmarks', 'media-files']}
             creatable
-            size={drawerSize}
-            shadow={drawerSize <= 720}
-            assetType={assetType}
-            canChangeType
-            onTypeChange={setAssetType}
-            onSelect={onAssetSelect}
             onClose={onDrawerClose}
-            onlyThumbnails={false}
-            allowChangeCategories={['bookmarks', 'media-files']}
-            itemMinWidth={250}
+            onSelect={onAssetSelect}
+            shadow
           />
         </form>
       </Box>

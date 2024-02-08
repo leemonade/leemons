@@ -1,14 +1,16 @@
 const _ = require('lodash');
 const { getPluginNameFromCTX } = require('@leemons/service-name-parser');
 const nodeCache = require('./types/node');
-const redisCache = require('./types/redis');
+const { redisCache, getClientConfig } = require('./types/redis');
 
 let nodeCacheInstance;
 let redisCacheInstance;
 
 async function modifyCTX(ctx, { redis }) {
   const pluginName = getPluginNameFromCTX(ctx);
-  const redisConfig = redis || process.env.CACHE_REDIS_URI || null;
+
+  const redisConfig = getClientConfig(redis);
+
   if (redisConfig) {
     if (!redisCacheInstance) {
       redisCacheInstance = await redisCache(redisConfig);
