@@ -8,7 +8,16 @@ import {
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { OtherOptions } from '@assignables/components/Assignment/components/OtherOptions';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
-import { Box, Button, Divider, Loader, createStyles } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  ContextContainer,
+  Button,
+  Divider,
+  TotalLayoutFooterContainer,
+  createStyles,
+  LoadingOverlay,
+} from '@bubbles-ui/components';
 import { map } from 'lodash';
 import AssignConfig from '@tests/components/AssignConfig';
 import { useStore } from '@common';
@@ -48,7 +57,7 @@ async function init({ assignable, store, render }) {
   }
 }
 
-export default function AssignmentDrawer({ assignable, value, onSave }) {
+export default function AssignmentDrawer({ assignable, value, onSave, scrollRef }) {
   const form = useForm({ defaultValues: value });
   const localizations = useFormLocalizations();
   const [store, render] = useStore();
@@ -78,62 +87,65 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
   );
 
   if (!store?.test?.id) {
-    return <Loader />;
+    return <LoadingOverlay visible />;
   }
 
   return (
     <Box>
       <FormProvider {...form}>
-        <Layout
-          onlyContent
-          buttonsComponent={
-            <Box className={classes.buttons}>
-              <Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>
-            </Box>
-          }
-        >
-          <Controller
-            control={form.control}
-            name="assignConfig"
-            render={({ field }) => (
-              <AssignConfig
-                {...field}
-                test={store.test}
-                configs={store.configs}
-                defaultValues={field.value}
-                t={t}
-                hideButtons
+        <Box style={{ paddingBottom: 80 }}>
+          <ContextContainer divided padded>
+            <Controller
+              control={form.control}
+              name="assignConfig"
+              render={({ field }) => (
+                <AssignConfig
+                  {...field}
+                  test={store.test}
+                  configs={store.configs}
+                  defaultValues={field.value}
+                  t={t}
+                  hideButtons
+                />
+              )}
+            />
+            <Box>
+              <Controller
+                control={form.control}
+                name="evaluation"
+                render={({ field }) => (
+                  <EvaluationType
+                    {...field}
+                    assignable={assignable}
+                    evaluationTypes={['calificable', 'punctuable']}
+                    localizations={localizations?.evaluation}
+                  />
+                )}
               />
-            )}
-          />
-          <Divider />
-          <Controller
-            control={form.control}
-            name="evaluation"
-            render={({ field }) => (
-              <EvaluationType
-                {...field}
-                assignable={assignable}
-                evaluationTypes={['calificable', 'punctuable']}
-                localizations={localizations?.evaluation}
-              />
-            )}
-          />
 
-          <Controller
-            control={form.control}
-            name="others"
-            render={({ field, fieldState: { error } }) => (
-              <OtherOptions
-                {...field}
-                error={error}
-                assignable={assignable}
-                localizations={localizations?.others}
-                showResponses
+              <Controller
+                control={form.control}
+                name="others"
+                render={({ field, fieldState: { error } }) => (
+                  <OtherOptions
+                    {...field}
+                    error={error}
+                    assignable={assignable}
+                    localizations={localizations?.others}
+                    showResponses
+                  />
+                )}
               />
-            )}
-          />
-        </Layout>
+            </Box>
+          </ContextContainer>
+        </Box>
+        <TotalLayoutFooterContainer
+          fixed
+          style={{ right: 0 }}
+          scrollRef={scrollRef}
+          width={400}
+          rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+        />
       </FormProvider>
     </Box>
   );

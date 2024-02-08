@@ -165,6 +165,7 @@ module.exports = {
     passwordMatch: 'Las contraseñas no coinciden',
     tokenError:
       'El código para configurar la contraseña ha caducado o no es valido, contactar con el centro.',
+    passwordSet: 'Contraseña establecida con éxito',
   },
   recover: {
     title: 'He olvidado mi contraseña',
@@ -186,6 +187,7 @@ module.exports = {
     resetPassword: 'Restablecer contraseña',
     returnLogin: 'Volver al login',
     passwordRequired: 'Contraseña necesaria',
+    passwordSet: 'Contraseña establecida con éxito',
   },
   selectProfile: {
     title: 'Hola, {name}',
