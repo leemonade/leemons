@@ -293,7 +293,6 @@ export default function StudentActivities({ klasses, filters, labels }) {
         filteredClasses.map((klass) => {
           const classActivities = getClassActivities(filteredActivities, klass);
           const averageScore = getAverageScore(klass, classActivities);
-          console.log(classActivities);
           return (
             <ScoreFronstage
               key={klass.id}
