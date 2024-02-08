@@ -136,9 +136,9 @@ export default function ScoreFeedback({
                   <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
                 </TextClamp>
               )}
-              <Box className={classes.containerArrow}>
+              {/* <Box className={classes.containerArrow}>
                 <ArrowComponent state={arrowPosition} />
-              </Box>
+              </Box> */}
             </Box>
             <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
           </Box>
