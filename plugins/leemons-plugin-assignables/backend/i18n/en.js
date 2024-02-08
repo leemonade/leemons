@@ -425,6 +425,13 @@ module.exports = {
     },
   },
 
+  evaluation: {
+    timeoutAlert: {
+      title: 'Maximum time reached',
+      message:
+        'the time limit set for this activity has been reached. The last delivery or questions answered have been sent automatically.',
+    },
+  },
   evaluationFeedbackComponent: {
     contactTeacher: 'Chat with my teacher',
     contactStudent: 'Chat with the student',
