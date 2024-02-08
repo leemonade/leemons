@@ -162,6 +162,10 @@ function useOngoingQuery(filters) {
       q.sort = filters?.sort;
     }
 
+    if (isStudent) {
+      q.studentCanSee = true;
+    }
+
     return q;
   }, [filters, sessionConfig?.program, isStudent]);
 }

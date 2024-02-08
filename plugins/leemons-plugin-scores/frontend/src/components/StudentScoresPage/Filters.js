@@ -178,6 +178,7 @@ export function Filters({ onChange, setKlasses }) {
     enabled: !!program,
   });
   const { data: classesData } = useProgramClasses(program, { enabled: !!program });
+
   const courses = React.useMemo(
     () => programDetails?.courses.map((course) => ({ value: course.id, label: course.name })),
     [programDetails]
@@ -225,7 +226,14 @@ export function Filters({ onChange, setKlasses }) {
   }, [JSON.stringify(selectedCourse), JSON.stringify(selectedPeriod)]);
 
   React.useEffect(() => {
-    if (classesData) setKlasses(classesData.filter((klass) => klass.courses.id === selectedCourse));
+    if (classesData)
+      setKlasses(
+        classesData.filter((klass) =>
+          Array.isArray(klass.courses)
+            ? klass.courses.some((course) => course.id === selectedCourse)
+            : klass.courses.id === selectedCourse
+        )
+      );
   }, [JSON.stringify(classesData), selectedCourse]);
 
   return (

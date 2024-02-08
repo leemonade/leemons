@@ -12,6 +12,20 @@ const kleur = require('kleur');
 const { execSync } = require('child_process');
 const { mongoose } = require('@leemons/mongodb');
 
+// Register Babel for JSX files
+require('@babel/register')({
+  presets: ['@babel/preset-env', '@babel/preset-react'],
+  ignore: [
+    (filename) => {
+      // Ignorar archivos dentro de node_modules
+      if (filename.includes('/node_modules/')) {
+        return true; // Ignorar
+      }
+      return !filename.endsWith('.jsx');
+    },
+  ],
+});
+
 const stopSignals = [
   'SIGHUP',
   'SIGINT',
