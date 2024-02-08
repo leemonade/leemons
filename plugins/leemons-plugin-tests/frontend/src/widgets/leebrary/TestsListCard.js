@@ -14,6 +14,7 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { TestIcon } from '../../components/Icons/TestIcon';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
@@ -26,7 +27,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
+const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { classes } = ListCardStyles({ selected });
   const {
@@ -52,6 +53,16 @@ const TestsListCard = ({ asset, selected, onRefresh, ...props }) => {
       //     },
       //   });
       // }
+      if (asset.shareable) {
+        items.push({
+          icon: <ShareIcon />,
+          children: t('share'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
+          },
+        });
+      }
       if (asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
@@ -141,6 +152,7 @@ TestsListCard.propTypes = {
   variant: PropTypes.string,
   selected: PropTypes.bool,
   onRefresh: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default TestsListCard;

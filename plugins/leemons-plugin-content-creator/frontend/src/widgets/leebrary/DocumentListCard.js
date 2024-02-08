@@ -13,6 +13,7 @@ import { DocumentIcon } from '@content-creator/components';
 import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
@@ -24,7 +25,7 @@ const DocumentCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
+const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('documentCard'));
   const { classes } = DocumentCardStyles({ selected });
   const {
@@ -41,6 +42,17 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
 
     if (!asset?.id) {
       return items;
+    }
+
+    if (asset.shareable) {
+      items.push({
+        icon: <ShareIcon />,
+        children: t('share'),
+        onClick: (e) => {
+          e.stopPropagation();
+          onShare(asset);
+        },
+      });
     }
 
     if (asset.providerData?.published) {
@@ -130,6 +142,7 @@ DocumentListCard.propTypes = {
   variant: PropTypes.string,
   selected: PropTypes.bool,
   onRefresh: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default DocumentListCard;

@@ -12,7 +12,7 @@ import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import AssetMetadataTest from '@tests/components/AssetMetadataTest/AssetMetadataTest';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
-const TestsDetail = ({ asset, onRefresh, ...props }) => {
+const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const {
@@ -26,6 +26,9 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
   // ·········································································
   // HANDLERS
   if (asset?.id) {
+    if (asset.shareable) {
+      toolbarItems.share = t('share');
+    }
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
@@ -53,6 +56,10 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
 
   const handleEdit = () => {
     history.push(`/private/tests/${asset.providerData.id}`);
+  };
+
+  const handleOnShare = () => {
+    onShare(asset);
   };
 
   const handleDelete = () => {
@@ -137,6 +144,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
       onDelete={handleDelete}
       onAssign={handleAssign}
       onDuplicate={handleDuplicate}
+      onShare={handleOnShare}
     />
   );
 };
@@ -144,6 +152,7 @@ const TestsDetail = ({ asset, onRefresh, ...props }) => {
 TestsDetail.propTypes = {
   asset: PropTypes.any,
   onRefresh: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default TestsDetail;
