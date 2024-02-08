@@ -173,7 +173,6 @@ function PickDate({ control, name, localizations }) {
 export function Filters({ onChange, setKlasses }) {
   const { classes, cx } = useFiltersStyles();
   const localizations = useFiltersLocalizations();
-  const { control, watch } = useForm();
   const { program } = getSessionConfig();
   const { data: programDetails } = useProgramDetail(program, {
     enabled: !!program,
@@ -184,6 +183,20 @@ export function Filters({ onChange, setKlasses }) {
     () => programDetails?.courses.map((course) => ({ value: course.id, label: course.name })),
     [programDetails]
   );
+  // const courses = [
+  //   {
+  //     value:
+  //       'lrn:local:academic-portfolio:local:659408f8731bf11b6e1c524e:Groups:65940b3c7833fb3b467733b9',
+  //     label: '5',
+  //   },
+  // ];
+
+  const defaultCourseValue = courses?.length === 1 ? courses[0].value : undefined;
+  const { control, watch } = useForm({
+    defaultValues: {
+      class: defaultCourseValue,
+    },
+  });
   const selectedCourse = watch('class');
   const { periods } = useMatchingAcademicCalendarPeriods({
     classes: classesData,
@@ -204,9 +217,9 @@ export function Filters({ onChange, setKlasses }) {
       onChange({
         period: selectedPeriod,
         program,
+        control,
         startDate: selectedPeriod.startDate,
         endDate: selectedPeriod.endDate,
-
         isCustom: selectedPeriod.isCustom,
       });
     }
@@ -227,19 +240,20 @@ export function Filters({ onChange, setKlasses }) {
     <Box className={classes.root}>
       <Box className={classes.inputsContainer}>
         <Box className={cx(classes.inputs, classes.widthContainer)}>
-          <Controller
-            control={control}
-            name="class"
-            render={({ field }) => (
-              <Select
-                // label={localizations.course?.label}
-                placeholder={localizations.course?.placeholder}
-                data={courses}
-                autoSelectOneOption
-                {...field}
-              />
-            )}
-          />
+          {courses?.length > 1 && (
+            <Controller
+              control={control}
+              name="class"
+              render={({ field }) => (
+                <Select
+                  placeholder={localizations.course?.placeholder}
+                  data={courses}
+                  autoSelectOneOption
+                  {...field}
+                />
+              )}
+            />
+          )}
           <Controller
             control={control}
             name="period"
@@ -267,7 +281,7 @@ export function Filters({ onChange, setKlasses }) {
               const valueExists =
                 !field.value ||
                 field.value === 'custom' ||
-                // eslint-disable-next-line eqeqeq
+                // eslint-disable-next-line
                 !!data.find((d) => d.value == field.value);
 
               if (!valueExists) {
