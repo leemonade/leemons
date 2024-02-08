@@ -105,6 +105,7 @@ const MainNavBar = ({
   const navBarItems = useMemo(
     () =>
       menuData.map((item, index) => {
+        console.log('item:', item);
         const onlyOneChildrenCollection = item.children && item.children.length === 1;
         const isSubItemActive =
           item.children.length > 0
