@@ -335,7 +335,7 @@ module.exports = {
       unpin: 'Remove from favorites',
       toggle: 'Toggle',
       open: 'Open',
-      covertToTask: 'Convert to task',
+      covertToTask: 'Assign',
     },
   },
   pickerDrawer: {

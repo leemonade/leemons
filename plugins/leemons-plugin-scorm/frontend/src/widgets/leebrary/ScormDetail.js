@@ -13,7 +13,7 @@ import { deletePackageRequest, duplicatePackageRequest } from '@scorm/request';
 import { CardVariantIcon } from '@scorm/components/icons';
 import { AssetMetadataScorm } from '@scorm/components/AssetMetadataScorm';
 
-const ScormDetail = ({ asset, onRefresh, ...props }) => {
+const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('scormCard'));
   const {
@@ -40,6 +40,14 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
     if (asset.duplicable) {
       toolbarItems.duplicate = t('duplicate');
     }
+    if (asset.pinneable) {
+      if (asset.pinned === false) {
+        toolbarItems.pin = t('pin');
+      }
+      if (asset.pinned === true) {
+        toolbarItems.unpin = t('unpin');
+      }
+    }
     // if (asset.shareable) {
     //   toolbarItems.share = t('share');
     // }
@@ -51,6 +59,14 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
 
   const handleEdit = () => {
     history.push(`/private/scorm/${asset.providerData.id}`);
+  };
+
+  const handleOnPin = () => {
+    onPin(asset);
+  };
+
+  const handleOnUnpin = () => {
+    onUnpin(asset);
   };
 
   const handleDelete = () => {
@@ -116,6 +132,8 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
       onDelete={handleDelete}
       onAssign={handleAssign}
       onDuplicate={handleDuplicate}
+      onPin={handleOnPin}
+      onUnpin={handleOnUnpin}
     />
   );
 };
@@ -123,6 +141,8 @@ const ScormDetail = ({ asset, onRefresh, ...props }) => {
 ScormDetail.propTypes = {
   asset: PropTypes.any,
   onRefresh: PropTypes.func,
+  onPin: PropTypes.func,
+  onUnpin: PropTypes.func,
 };
 
 export default ScormDetail;

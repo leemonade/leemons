@@ -111,6 +111,8 @@ module.exports = {
     open: 'Open',
     duplicate: 'Duplicate',
     duplicated: 'Duplicated',
+    pin: 'Mark as favorite',
+    unpin: 'Unmark as favorite',
   },
   feedbackAssign: {
     assign: 'Assign feedback',

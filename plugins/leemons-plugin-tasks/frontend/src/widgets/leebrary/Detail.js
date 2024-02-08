@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// TODO: import from @library plugin
 import { LibraryDetail } from '@leebrary/components';
 import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

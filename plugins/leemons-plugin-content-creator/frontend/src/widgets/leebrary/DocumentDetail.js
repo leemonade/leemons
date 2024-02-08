@@ -12,7 +12,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
 
-const DocumentDetail = ({ asset, onRefresh, ...props }) => {
+const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
   const {
@@ -39,10 +39,24 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
     if (asset.duplicable) {
       toolbarItems.duplicate = t('duplicate');
     }
-    // if (asset.shareable) {
-    //   toolbarItems.share = t('share');
-    // }
+    if (asset.pinneable) {
+      if (asset.pinned === false) {
+        toolbarItems.pin = t('pin');
+      }
+      if (asset.pinned === true) {
+        toolbarItems.unpin = t('unpin');
+      }
+    }
   }
+
+  function handleOnPin(item) {
+    onPin(item);
+  }
+
+  const handleOnUnpin = (item) => {
+    onUnpin(item);
+  };
+
 
   const handleView = () => {
     history.push(`/private/content-creator/${asset.providerData.id}/view`);
@@ -85,7 +99,7 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
   };
 
   const handleAssign = () => {
-    history.push(`/private/content-creator/assign/${asset.providerData.id}`);
+    history.push(`/private/content-creator/${asset.providerData.id}/assign`);
   };
 
   // ·········································································
@@ -113,6 +127,8 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
       onEdit={handleEdit}
       onDelete={handleDelete}
       onAssign={handleAssign}
+      onPin={handleOnPin}
+      onUnpin={handleOnUnpin}
       onDuplicate={handleDuplicate}
     />
   );
@@ -122,6 +138,8 @@ DocumentDetail.propTypes = {
   asset: PropTypes.any,
   onRefresh: PropTypes.func,
   variant: PropTypes.string,
+  onPin: PropTypes.func,
+  onUnpin: PropTypes.func,
 };
 
 export default DocumentDetail;
