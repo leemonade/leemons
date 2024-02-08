@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { mergeAttributes, Node, ReactNodeViewRenderer } from '@bubbles-ui/editors';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { isEmpty, isString, keys } from 'lodash';
+import _, { isEmpty, isString, keys } from 'lodash';
 import { LibraryPlayer } from './LibraryPlayer';
 import { AUDIO_ASSET, IMAGE_ASSET, URL_ASSET, VIDEO_ASSET } from './mock/data';
 
@@ -23,14 +23,21 @@ function prepareURL(asset) {
     return asset.url;
   }
   let assetUrl = '';
-  if (['document', 'file'].includes(fileType) && isString(fileExtension)) {
+  if (['document', 'file', 'video', 'audio'].includes(fileType) && isString(fileExtension)) {
     assetUrl = getFileUrl(asset.fileId);
   }
+
   return assetUrl;
 }
 
 function prepareCoverURL(asset) {
-  return getFileUrl(asset.coverId || asset.fileId);
+  if (asset.fileType.startsWith('image')) {
+    return getFileUrl(asset.coverId || asset.fileId);
+  }
+  if (asset.coverId) {
+    return getFileUrl(asset.coverId);
+  }
+  return null;
 }
 
 export const LibraryExtension = Node.create({
@@ -99,8 +106,17 @@ export const LibraryExtension = Node.create({
           }, {});
 
           if (!isEmpty(asset)) {
-            asset.coverId = asset.coverid ?? asset.coverId ?? asset.original?.cover?.id;
-            asset.fileId = asset.fileid ?? asset.fileId ?? asset.file?.id;
+            const coverIdOptions = _.compact([
+              asset.coverid,
+              asset.coverId,
+              asset.original?.cover?.id,
+            ]).filter((id) => id !== 'undefined');
+            asset.coverId = coverIdOptions.length > 0 ? coverIdOptions[0] : undefined;
+
+            const fileIdOptions = _.compact([asset.fileid, asset.fileId, asset.file?.id]).filter(
+              (id) => id !== 'undefined'
+            );
+            asset.fileId = fileIdOptions.length > 0 ? fileIdOptions[0] : undefined;
             asset.tags = asset.tags ? JSON.parse(asset.tags) : [];
             asset.metadata = asset.metadata ? JSON.parse(asset.metadata) : [];
             asset.fileType = asset.fileType || asset.filetype;

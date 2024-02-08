@@ -77,7 +77,9 @@ module.exports = {
         public: isPublic,
         ctx: { ...ctx, callerPlugin: ctx.prefixPN('') },
       });
-      return { status: 200, asset };
+      const finalAsset = await prepareAsset({ rawAsset: asset, ctx });
+
+      return { status: 200, asset: finalAsset };
     },
   },
   myRest: {

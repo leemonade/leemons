@@ -51,6 +51,7 @@ const LibraryPlayer = ({
             asset={asset}
             variant={asset.fileType === 'bookmark' ? 'bookmark' : 'media'}
             canPlay={readOnly}
+            handleClickCCreator={() => window.open(asset.url, '_blank', 'noopener')}
             ccMode
           />
         </Box>
