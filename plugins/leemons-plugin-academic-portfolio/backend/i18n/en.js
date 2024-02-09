@@ -562,4 +562,8 @@ module.exports = {
     edit: 'Edit subject',
     save: 'Save subject',
   },
+
+  common: {
+    defaultGroupName: 'Default group',
+  },
 };
