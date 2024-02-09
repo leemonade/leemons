@@ -142,7 +142,7 @@ export function SelectClass({
           }
           return a.disabled ? 1 : -1;
         }),
-    [availableClasses, value?.classes]
+    [availableClasses, value?.classes, localizations?.studentsCount]
   );
 
   const { classes } = useSelectClassStyles();
