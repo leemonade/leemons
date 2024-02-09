@@ -11,6 +11,7 @@ import { useIsTeacher } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useCategories from '@leebrary/request/hooks/queries/useCategories';
+import { categoryChecker } from '@leebrary/helpers/categoryChecker';
 import { LibraryDetailContent } from '../LibraryDetailContent';
 import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
 import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
@@ -60,18 +61,7 @@ const LibraryDetail = ({
 
   const { classes, cx } = LibraryDetailStyles({ drawer, open }, { name: 'LibraryDetail' });
   const fileExtension = asset?.fileExtension;
-  const categoryChecker = useCallback(
-    (categoriesData, assetData) => {
-      const assetCategory = assetData?.category;
-      const categoryExist = categoriesData?.find((category) => category.id === assetCategory);
-      if (categoryExist) {
-        const categorySelected = categoriesData.find((category) => category.id === assetCategory);
-        return categorySelected?.key === 'media-files' || categorySelected?.key === 'bookmarks';
-      }
-      return false;
-    },
-    [asset]
-  );
+
   const canShowPermissionsButton = categoryChecker(categories, asset);
   return (
     <Box
