@@ -1,23 +1,10 @@
-import { Box, createStyles, Title, TotalLayoutHeader } from '@bubbles-ui/components';
+import { TotalLayoutHeader } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import propTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN as _prefixPN } from '@scores/helpers';
 import _ from 'lodash';
 import React, { useMemo } from 'react';
-
-const useHeaderStyles = createStyles((theme) => ({
-  root: {
-    paddingLeft: theme.spacing[5],
-    paddingTop: theme.spacing[5],
-    paddingBottom: theme.spacing[5],
-    // maxWidth: 750,
-    backgroundColor: 'white',
-  },
-  title: {
-    // marginBottom: theme.spacing[5],
-  },
-}));
 
 function useHeaderLocalizations({ prefixPN, variant }) {
   const prefix = prefixPN || _prefixPN;
@@ -36,7 +23,6 @@ function useHeaderLocalizations({ prefixPN, variant }) {
 }
 
 export function Header({ prefixPN, variant }) {
-  const { classes } = useHeaderStyles();
   const localizations = useHeaderLocalizations({ prefixPN, variant });
 
   return (

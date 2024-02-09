@@ -54,10 +54,8 @@ async function handleFilesDuplication({ filesToDuplicate, cover, newAsset, categ
   // If the new asset doesn't have a cover, assign the first file in the newFiles array to the newAsset.file
   // eslint-disable-next-line sonarjs/no-collapsible-if
   if (!_.isEmpty(newFiles)) {
-    if (newAsset.cover) {
-      // eslint-disable-next-line no-param-reassign
-      [newAsset.file] = newFiles;
-    }
+    // eslint-disable-next-line no-param-reassign
+    [newAsset.file] = newFiles;
   }
 
   return newAsset;

@@ -1,4 +1,13 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles, keyframes } from '@bubbles-ui/components';
+
+const blink = keyframes({
+  '0%': {
+    opacity: 0,
+  },
+  '100%': {
+    opacity: 1,
+  },
+});
 
 export const useTimerStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -20,7 +29,12 @@ export const useTimerStyles = createStyles((theme) => {
     },
     text: {
       fontSize: { ...globalTheme.content.typoMobile.body['sm--bold'] },
+    },
+    texColor: {
       color: globalTheme.content.color.text.default,
+    },
+    blinkText: {
+      animation: `${blink} 0.5s linear infinite alternate`,
     },
   };
 });

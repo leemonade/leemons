@@ -34,7 +34,13 @@ export function UserButton({
     const isChildrenActive = child.id === subItemActive?.id;
     const hasOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
     return (
-      <LinkWrapper useRouter={useRouter} url={child.url} id={child.id} key={`itemLink--${index}`}>
+      <LinkWrapper
+        useRouter={useRouter}
+        url={child.url}
+        window={child.window}
+        id={child.id}
+        key={`itemLink--${index}`}
+      >
         <Box
           className={isChildrenActive ? classes.childrenContainerActive : classes.childrenContainer}
         >

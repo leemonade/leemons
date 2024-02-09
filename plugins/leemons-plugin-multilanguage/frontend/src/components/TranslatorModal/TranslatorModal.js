@@ -109,7 +109,7 @@ const TranslatorModal = ({
 
       {alert}
 
-      <Drawer opened={opened} onClose={handleClose} size={715} close={labels.close} noOverlay>
+      <Drawer opened={opened} onClose={handleClose} size={725} close={labels.close} noOverlay>
         <ContextContainer title={labels.title} description={labels.description} divided>
           {children}
           {/* ACTION BUTTONS */}

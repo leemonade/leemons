@@ -45,6 +45,10 @@ module.exports = function queries(client, { isCluster }) {
     getMany: async (keys) => {
       const _keys = keys.map((key) => generateKey(key, pluginName));
 
+      if (!keys.length) {
+        return {};
+      }
+
       const values = await client.mGet(_keys);
 
       const result = {};

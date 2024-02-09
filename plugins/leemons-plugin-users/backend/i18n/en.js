@@ -165,6 +165,7 @@ module.exports = {
     passwordPlaceholder: 'Your password',
     passwordMatch: 'Passwords not match',
     tokenError: 'The code to set the password has expired or is not valid, contact your center.',
+    passwordSet: 'Password set successfully',
   },
   recover: {
     title: 'Forgot my password',
@@ -186,6 +187,7 @@ module.exports = {
     resetPassword: 'Reset password',
     returnLogin: 'Return to login',
     passwordRequired: 'Password required',
+    passwordSet: 'Password set successfully',
   },
   selectProfile: {
     title: 'Hi {name}',
