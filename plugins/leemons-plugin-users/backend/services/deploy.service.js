@@ -6,14 +6,13 @@
 const path = require('path');
 const _ = require('lodash');
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { addLocalesDeploy } = require('@leemons/multilanguage');
 const { hasKey, setKey } = require('@leemons/mongodb-helpers');
 const { addPermissionsDeploy } = require('@leemons/permissions');
 const { addMenuItemsDeploy } = require('@leemons/menu-builder');
 const { addWidgetZonesDeploy } = require('@leemons/widgets');
-const { getEmailTypes } = require('@leemons/emails');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const {
   updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
@@ -31,81 +30,7 @@ const {
 const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
-const recoverEmail = require('../emails/recoverPassword');
-const resetPassword = require('../emails/resetPassword');
-const welcomeEmail = require('../emails/welcome');
-const newProfileAdded = require('../emails/newProfileAdded');
-
-async function initEmails({ ctx }) {
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-recover-password',
-    language: 'es',
-    subject: 'Recuperar contraseña',
-    html: recoverEmail.es,
-    type: getEmailTypes().active,
-  });
-
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-recover-password',
-    language: 'en',
-    subject: 'Recover password',
-    html: recoverEmail.en,
-    type: getEmailTypes().active,
-  });
-
-  ctx.tx.emit('init-email-recover-password');
-
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-reset-password',
-    language: 'es',
-    subject: 'Su contraseña fue restablecida',
-    html: resetPassword.es,
-    type: getEmailTypes().active,
-  });
-
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-reset-password',
-    language: 'en',
-    subject: 'Your password was reset',
-    html: resetPassword.en,
-    type: getEmailTypes().active,
-  });
-
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-welcome',
-    language: 'es',
-    subject: 'Bienvenida',
-    html: welcomeEmail.es,
-    type: getEmailTypes().active,
-  });
-
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-welcome',
-    language: 'en',
-    subject: 'Welcome',
-    html: welcomeEmail.en,
-    type: getEmailTypes().active,
-  });
-
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-new-profile-added',
-    language: 'es',
-    subject: 'Nuevo perfil',
-    html: newProfileAdded.es,
-    type: getEmailTypes().active,
-  });
-
-  await ctx.tx.call('emails.email.addIfNotExist', {
-    templateName: 'user-new-profile-added',
-    language: 'en',
-    subject: 'New profile',
-    html: newProfileAdded.en,
-    type: getEmailTypes().active,
-  });
-
-  ctx.tx.emit('init-email-reset-password');
-  ctx.tx.emit('init-emails');
-}
+const { initEmails } = require('../core/deploy/initEmails');
 
 const initDataset = async ({ ctx }) => {
   if (!(await hasKey(ctx.tx.db.KeyValue, 'dataset-locations'))) {
