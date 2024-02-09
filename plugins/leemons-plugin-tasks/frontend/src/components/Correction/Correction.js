@@ -88,24 +88,6 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
     }
   };
 
-  useEffect(() => {
-    if (
-      subject &&
-      (!isNil(score) || !requiresScoring) &&
-      (score !== previousScore?.score || feedback !== previousScore?.feedback)
-    ) {
-      const gradeObj = {
-        subject,
-        grade: score,
-        feedback,
-        type: 'main',
-        visibleToStudent: false,
-      };
-
-      mutateAsync({ instance: instance.id, student: assignation.user, grades: [gradeObj] });
-    }
-  }, [score, feedback]);
-
   /*
     === Update score ===
   */
@@ -336,6 +318,7 @@ export default function Correction({ assignation, instance }) {
                   assignation={assignation}
                   instance={instance}
                   subject={subjects[0].id}
+                  key={`${assignation?.id}-${subjects[0].id}`}
                 />
               )}
 
@@ -343,7 +326,7 @@ export default function Correction({ assignation, instance }) {
                 <Tabs>
                   {subjects.map((subject) => (
                     <TabPanel
-                      key={subject.id}
+                      key={`${assignation?.id}-${subject.id}`}
                       label={<SubjectItemDisplay subjectsIds={[subject.id]} />}
                     >
                       <ContextContainer

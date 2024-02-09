@@ -259,7 +259,7 @@ const DetailDrawer = ({
 
   const { classes: styles } = DetailDrawerStyles({}, { name: 'DetailDrawer' });
   return (
-    <Drawer opened={open} onClose={onClose} size={720}>
+    <Drawer opened={open} onClose={onClose} size={725}>
       <form onSubmit={handleSubmit(saveMessageConfig)}>
         <Box className={styles.root}>
           <Box className={styles.header}>

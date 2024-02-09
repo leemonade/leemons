@@ -20,6 +20,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { useStore } from '@common';
 import { canResetRequest, resetRequest } from '@users/request';
+import { addSuccessAlert } from '@layout/alert';
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -80,7 +81,10 @@ export default function Reset() {
   const onSubmit = async (data) => {
     try {
       await resetRequest(getToken(), data.password);
-      goLoginPage(history);
+      addSuccessAlert(t('passwordSet'));
+      setTimeout(() => {
+        goLoginPage(history);
+      }, 700);
     } catch (err) {
       store.cantReset = true;
       render();

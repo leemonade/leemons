@@ -541,6 +541,11 @@ const PermissionsData = ({
                 </Box> */}
               </TabPanel>
               <TabPanel label={`${t('permissionsData.labels.addUsersTab')}`} key="tab2">
+                <Box className={classesStyles.alertContainer}>
+                  <Alert severity="info" closeable={false}>
+                    {t('permissionsData.labels.addUserAlert')}
+                  </Alert>
+                </Box>
                 <Select
                   sx={(theme) => ({ marginTop: theme.spacing[4], width: 270 })}
                   label={t('permissionsData.labels.shareTab')}
@@ -548,11 +553,6 @@ const PermissionsData = ({
                   value={store.shareType}
                   onChange={onChangeShareType}
                 />
-                <Box className={classesStyles.alertContainer}>
-                  <Alert severity="info" closeable={false}>
-                    {t('permissionsData.labels.addUserAlert')}
-                  </Alert>
-                </Box>
 
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   {store.shareType === 'centers' ? (
