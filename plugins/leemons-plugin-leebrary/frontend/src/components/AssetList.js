@@ -487,7 +487,7 @@ const AssetList = ({
   // Set data for the PaginatedList component and pagination settings
   useEffect(() => {
     const shouldInsertNewItem = !NOT_CREATABLE_CATEGORIES.some((catKey) =>
-      category?.key.startsWith(catKey)
+      category?.key?.startsWith(catKey)
     );
     if (shouldInsertNewItem) setPageSize(11);
     else setPageSize(12);

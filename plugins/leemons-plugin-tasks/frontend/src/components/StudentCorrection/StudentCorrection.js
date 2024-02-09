@@ -32,6 +32,7 @@ import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { ChatDrawer } from '@comunica/components';
 import hooks from 'leemons-hooks';
+import TimeoutAlert from '@assignables/components/EvaluationFeedback/TimeoutAlert';
 import CurriculumRender from '../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender';
 import { useStudentCorrectionStyles } from './StudentCorrection.style';
 import { TextIcon } from '../../assets/images/TextIcon';
@@ -150,6 +151,15 @@ export default function StudentCorrection({ assignation }) {
         >
           <Box className={classes.root}>
             <Stack direction="column" spacing="xl">
+              {params.has('fromTimeout') && (
+                <TimeoutAlert
+                  onClose={() => {
+                    params.delete('fromTimeout');
+
+                    history.replace({ search: params.toString() });
+                  }}
+                />
+              )}
               {params.has('fromExecution') && (
                 <Alert
                   severity="success"

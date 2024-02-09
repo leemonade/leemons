@@ -124,14 +124,15 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
           creatable
           onClose={() => setShowAssetDrawer(false)}
           onSelect={(asset) => {
-            const isAssignable = asset.assignable;
+            const isContentCreator = asset?.providerData?.role === 'content-creator';
+
             setSharedData((data) =>
               set(
                 cloneDeep(data),
                 RESOURCES_KEY,
                 uniq([
                   ...get(data, RESOURCES_KEY, []),
-                  isAssignable ? { id: asset.id, duplicate: false } : asset.id,
+                  isContentCreator ? { id: asset.id, duplicate: false } : asset.id,
                 ])
               )
             );
