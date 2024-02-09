@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { Box } from '@bubbles-ui/components';
@@ -42,6 +42,7 @@ const LibraryPlayer = ({
   const selfRef = useRef({});
   const isWidthNum = /^\d+$/.test(width);
   const widthProp = isWidthNum ? `${width}px` : width;
+  const viewMode = useMemo(() => window.location.href.includes('view'), []); // TODO: review readOnly and check the reason that it is not working on view mode
 
   const getDisplay = () => {
     if (display === 'embed') {
@@ -50,6 +51,9 @@ const LibraryPlayer = ({
           <LibraryCardEmbed
             asset={asset}
             variant={asset.fileType === 'bookmark' ? 'bookmark' : 'media'}
+            canPlay={viewMode}
+            handleClickCCreator={() => window.open(asset.url, '_blank', 'noopener')}
+            ccMode
           />
         </Box>
       );
@@ -61,7 +65,7 @@ const LibraryPlayer = ({
           asset={asset}
           width={isFloating ? '100%' : width}
           framed={!['image'].includes(asset.fileType)}
-          canPlay={readOnly}
+          canPlay={readOnly || viewMode}
           showPlayButton={readOnly}
           useAudioCard
         />
