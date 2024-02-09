@@ -103,6 +103,10 @@ const AssetPlayerStyles = createStyles(
           transform: 'translateY(2px)',
         },
       },
+      pdfContainer: {
+        display: 'grid',
+        overflow: 'hidden',
+      },
       playIcon: {
         color: 'white',
       },

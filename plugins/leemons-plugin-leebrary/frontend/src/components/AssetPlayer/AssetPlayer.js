@@ -456,7 +456,9 @@ const AssetPlayer = ({
             )}
             {media.isPDF ? (
               viewPDF ? (
-                <PDFPlayer pdf={url} labels={pdfLabels} useSchema={useSchema} />
+                <Box className={classes.pdfContainer}>
+                  <PDFPlayer pdf={url} labels={pdfLabels} useSchema={useSchema} />
+                </Box>
               ) : (
                 <Box className={classes.pdfCover}>
                   <Box className={classes.buttonIcon} onClick={openPdfHandler}>
