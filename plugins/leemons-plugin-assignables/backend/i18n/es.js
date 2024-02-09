@@ -422,6 +422,14 @@ module.exports = {
     },
   },
 
+  evaluation: {
+    timeoutAlert: {
+      title: 'Tiempo máximo alcanzado',
+      message:
+        'el tiempo límite establecido para esta actividad ha sido alcanzado. La última entrega o preguntas respondidas han sido enviadas automáticamente.',
+    },
+  },
+
   evaluationFeedbackComponent: {
     contactTeacher: 'Hablar con mi profesor',
     contactStudent: 'Hablar con el estudiante',

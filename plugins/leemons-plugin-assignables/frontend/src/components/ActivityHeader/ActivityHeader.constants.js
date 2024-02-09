@@ -10,6 +10,7 @@ export const ACTIVIY_HEADER_PROP_TYPES = {
   showEvaluationType: propTypes.bool,
   showStartDate: propTypes.bool,
   showTime: propTypes.bool,
+  showCountdown: propTypes.bool,
   showDeadline: propTypes.bool,
   showCloseButtons: propTypes.bool,
   allowEditDeadline: propTypes.bool,
