@@ -15,6 +15,7 @@ import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Dele
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 // import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { useIsStudent } from '@academic-portfolio/hooks';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -26,6 +27,7 @@ const DocumentCardStyles = createStyles((theme, { selected }) => ({
 }));
 
 const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
+  const isStudent = useIsStudent();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
   const { classes } = DocumentCardStyles({ selected });
   const {
@@ -55,7 +57,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
     //   });
     // }
 
-    if (asset.providerData?.published) {
+    if (asset.providerData?.published && !isStudent) {
       items.push({
         icon: <AssignIcon />,
         children: t('assign'),

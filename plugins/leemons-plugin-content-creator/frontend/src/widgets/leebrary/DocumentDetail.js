@@ -11,8 +11,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
+import { useIsStudent } from '@academic-portfolio/hooks';
 
 const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
+  const isStudent = useIsStudent();
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
   const {
@@ -32,7 +34,7 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
-    if (asset.providerData?.published) {
+    if (asset.providerData?.published && !isStudent) {
       toolbarItems.assign = t('assign');
     }
     if (asset.duplicable) {
@@ -62,7 +64,6 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
   // const handleOnShare = () => {
   //   onShare(asset);
   // };
-
 
   const handleView = () => {
     history.push(`/private/content-creator/${asset.providerData.id}/view`);
@@ -125,9 +126,9 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       titleActionButton={
         asset?.providerData?.published
           ? {
-            icon: <ViewOnIcon height={16} width={16} />,
-            onClick: handleView,
-          }
+              icon: <ViewOnIcon height={16} width={16} />,
+              onClick: handleView,
+            }
           : null
       }
       onEdit={handleEdit}
@@ -136,7 +137,7 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       onPin={handleOnPin}
       onUnpin={handleOnUnpin}
       onDuplicate={handleDuplicate}
-    // onShare={handleOnShare}
+      // onShare={handleOnShare}
     />
   );
 };
