@@ -691,7 +691,7 @@ const AssetList = ({
               </Box>
             )}
             {!assetListIsLoading && isEmpty(assetList) && !assetsDetailsAreLoading && (
-              <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
+              <Stack justifyContent="center" alignItems="center" fullWidth>
                 {getEmptyState()}
               </Stack>
             )}
