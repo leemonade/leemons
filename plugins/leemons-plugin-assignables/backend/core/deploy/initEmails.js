@@ -2,7 +2,7 @@ const { getEmailTypes } = require('@leemons/emails');
 const { render } = require('@react-email/components');
 
 const NewAssignation = require('../../emails/UserNewAssignation.jsx');
-const rememberActivity = require('../../emails/userAssignationRemember');
+const RememberAssignation = require('../../emails/UserRemenberAssignation.jsx');
 const rememberActivityTimeout = require('../../emails/userRememberAssignationTimeout');
 const userWeekly = require('../../emails/userWeekly');
 
@@ -29,7 +29,7 @@ async function initEmails({ ctx }) {
     templateName: 'user-assignation-remember',
     language: 'es',
     subject: 'Recordatorio de actividad',
-    html: rememberActivity.es,
+    html: render(RememberAssignation.default({ locale: 'es' })),
     type: getEmailTypes().active,
   });
 
@@ -37,7 +37,7 @@ async function initEmails({ ctx }) {
     templateName: 'user-assignation-remember',
     language: 'en',
     subject: 'Activity reminder',
-    html: rememberActivity.en,
+    html: render(RememberAssignation.default({ locale: 'en' })),
     type: getEmailTypes().active,
   });
 

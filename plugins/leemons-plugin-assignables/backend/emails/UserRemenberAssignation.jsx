@@ -17,14 +17,14 @@ import ActivityCard from './ActivityCard.jsx';
 
 const messages = {
   en: {
-    title: 'You have new pending activities',
+    title: 'Pending activity reminder',
     actionText:
       "This information may have changed, always check your current activities so you don't miss anything.",
     buttonText: 'Review my activities',
     noActionText: 'You can change your email preferences from your user account.',
   },
   es: {
-    title: 'Tienes nuevas actividades pendientes',
+    title: 'Recordatorio de actividad pendiente',
     actionText:
       'Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.',
     buttonText: 'Revisar mis actividades',
