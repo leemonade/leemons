@@ -125,24 +125,22 @@ export default function ScoreFeedback({
         </Badge>
       )}
       {!isNil(score) && !isFeedback ? (
-        <>
-          <Box className={classes.containerGrade}>
-            <Box className={classes.containerNumber}>
-              <Text className={classes.gradeNumber}>
-                {isLetterType ? grade.letter : grade.integer}
-              </Text>
-              {grade.decimals && (
-                <TextClamp lines={2}>
-                  <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
-                </TextClamp>
-              )}
-              <Box className={classes.containerArrow}>
+        <Box className={classes.containerGrade}>
+          <Box className={classes.containerNumber}>
+            <Text className={classes.gradeNumber}>
+              {isLetterType ? grade.letter : grade.integer}
+            </Text>
+            {grade.decimals && (
+              <TextClamp lines={2}>
+                <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
+              </TextClamp>
+            )}
+            {/* <Box className={classes.containerArrow}>
                 <ArrowComponent state={arrowPosition} />
-              </Box>
-            </Box>
-            <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
+              </Box> */}
           </Box>
-        </>
+          <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
+        </Box>
       ) : (
         <>
           <Badge closable={false} size="xs" className={classes.calificationBadge}>

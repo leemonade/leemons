@@ -3,7 +3,7 @@ const { createClient, createCluster } = require('redis');
 const queries = require('./queries');
 
 function getDefaultClientConfig() {
-  return {
+  const config = {
     url: process.env.CACHE_REDIS_URI,
     cluster: process.env.CACHE_REDIS_CLUSTER?.toLowerCase() === 'true',
 
@@ -12,6 +12,12 @@ function getDefaultClientConfig() {
     name: process.env.CACHE_REDIS_NAME,
     database: process.env.CACHE_REDIS_DATABASE,
   };
+
+  if (!config.url) {
+    return null;
+  }
+
+  return config;
 }
 
 module.exports.getClientConfig = function getClientConfig(_config) {
@@ -20,6 +26,11 @@ module.exports.getClientConfig = function getClientConfig(_config) {
   if (!config) {
     config = getDefaultClientConfig();
   }
+
+  if (!config) {
+    return null;
+  }
+
   if (_.isString(config)) {
     return { url: config };
   }

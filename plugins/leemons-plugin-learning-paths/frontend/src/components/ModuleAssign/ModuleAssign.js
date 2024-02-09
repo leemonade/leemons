@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Form from '@assignables/components/Assignment/Form';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { Loader } from '@bubbles-ui/components';
+import { LoadingOverlay } from '@bubbles-ui/components';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
 import { useModuleAssignLocalizations } from './useModuleAssignLocalizations';
 import SetupStep from './SetupStep';
@@ -14,7 +14,7 @@ export function ModuleAssign({ id }) {
   const formDefaultValue = useWatch({ name: 'assignationForm.raw' });
 
   if (isLoading) {
-    return <Loader />;
+    return <LoadingOverlay />;
   }
 
   return (

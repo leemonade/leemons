@@ -82,7 +82,7 @@ const TranslateOptions = () => {
           {messages.translateOptionsHelpLabel}
         </Text>
       </Stack>
-      <Drawer opened={opened} onClose={() => setOpened(false)} size={715} close>
+      <Drawer opened={opened} onClose={() => setOpened(false)} size={725} close>
         <Title order={4}>{messages.translateOptionsModalTitle}</Title>
         <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
           <Text>{messages.translateOptionsModalDescription}</Text>

@@ -46,6 +46,7 @@ import EvaluationFeedback from '@assignables/components/EvaluationFeedback/Evalu
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import TimeoutAlert from '@assignables/components/EvaluationFeedback/TimeoutAlert';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getFeedbackRequest,
@@ -79,7 +80,9 @@ export default function Result() {
   const history = useHistory();
   const params = useParams();
   const searchParams = useSearchParams();
+
   const fromTest = useMemo(() => searchParams.has('fromTest'), []);
+  const fromTimeout = searchParams.has('fromTimeout');
 
   const isTeacher = useIsTeacher();
 
@@ -501,6 +504,14 @@ export default function Result() {
             {params.user && !store.loading ? (
               <Box>
                 <Box className={styles.content}>
+                  {fromTimeout && (
+                    <TimeoutAlert
+                      onClose={() => {
+                        searchParams.delete('fromTimeout');
+                        history.replace({ search: searchParams.toString() });
+                      }}
+                    />
+                  )}
                   <EvaluationFeedback
                     onChatClick={() => {
                       hooks.fireEvent('chat:onRoomOpened', store.room);

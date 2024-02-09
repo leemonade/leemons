@@ -24,6 +24,7 @@ import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import { useProcessTextEditor } from '@common';
+import { useIsStudent } from '@academic-portfolio/hooks';
 
 const validators = [
   z.object({
@@ -40,6 +41,7 @@ function useUrlQuery() {
 }
 
 export default function Index({ isNew, readOnly }) {
+  const isStudent = useIsStudent();
   const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
   const urlQuery = useUrlQuery();
   const [isLoading, setIsLoading] = useState(false);
@@ -183,6 +185,10 @@ export default function Index({ isNew, readOnly }) {
       onClick: () => handleMutations({ publishing: true, assigning: true }),
     },
   ];
+  const footerFinalActionsAndLabelsFiltered = isStudent
+    ? [footerFinalActionsAndLabels[0]]
+    : footerFinalActionsAndLabels;
+
   // #endregion
 
   function getTitle() {
@@ -282,7 +288,7 @@ export default function Index({ isNew, readOnly }) {
                         <DropdownButton
                           chevronUp
                           width="auto"
-                          data={footerFinalActionsAndLabels}
+                          data={footerFinalActionsAndLabelsFiltered}
                           loading={isLoading}
                           disabled={isLoading}
                         >

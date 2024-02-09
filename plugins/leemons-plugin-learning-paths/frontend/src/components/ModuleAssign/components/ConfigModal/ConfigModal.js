@@ -1,10 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Drawer, Loader, Text, createStyles } from '@bubbles-ui/components';
-import loadable from '@loadable/component';
+import {
+  Box,
+  Alert,
+  Drawer,
+  LoadingOverlay,
+  Title,
+  ActionButton,
+  createStyles,
+  TotalLayoutContainer,
+  Stack,
+} from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
 import { get } from 'lodash';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 // useLocalizations
 
@@ -50,6 +60,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
   const [opened, setOpened] = useState(false);
   const { setValue, useWatch } = useModuleAssignContext();
   const stateKey = `state.activities.${activityId}`;
+  const scrollRef = React.useRef(null);
 
   const roleLocalizations = useRolesLocalizations([role]);
 
@@ -59,12 +70,6 @@ export function ConfigModal({ assignable, components, localizations, activityId,
     }
 
     return components[role] || null;
-
-    // const [, pluginName] = roleDetails.plugin.split('.');
-
-    // return loadable(() =>
-    //   import(`@leemons/plugins/${pluginName}/src/widgets/assignables/AssignmentDrawer.js`)
-    // );
   }, [role]);
 
   const rawValue = useWatch({
@@ -85,34 +90,62 @@ export function ConfigModal({ assignable, components, localizations, activityId,
   return (
     // TRANSLATE
     <Drawer
-      opened={opened}
-      onClose={onClose}
+      empty
       shadow
-      size={600}
-      contentPadding={0}
       trapFocus
       withOverlay
-      header={
-        <Text className={classes.drawerHeader}>{`${localizations?.steps?.setup?.action}: ${get(roleLocalizations, `${role}.singular`) || ''
-          }`}</Text>
-      }
+      opened={opened}
+      onClose={onClose}
+      size={400}
+      contentPadding={0}
+      close={false}
     >
-      <ConfigModalErrorBoundary>
-        <Component
-          fallback={<Loader />}
-          assignable={assignable}
-          value={rawValue}
-          onSave={({ config, raw }) => {
-            setValue(`${stateKey}.config`, config);
-            setValue(`${stateKey}.raw`, raw);
-            onClose();
-          }}
-        />
-      </ConfigModalErrorBoundary>
+      <TotalLayoutContainer
+        clean
+        scrollRef={scrollRef}
+        Header={
+          <Stack
+            fullWidth
+            justifyContent="space-between"
+            alignItems="center"
+            style={{
+              padding: `0 16px 0 24px`,
+              height: 70,
+            }}
+          >
+            <Title order={3}>{`${localizations?.steps?.setup?.action}: ${
+              get(roleLocalizations, `${role}.singular`) || ''
+            }`}</Title>
+            <Box>
+              <ActionButton icon={<RemoveIcon />} onClick={onClose} />
+            </Box>
+          </Stack>
+        }
+      >
+        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflow: 'auto' }}>
+          <ConfigModalErrorBoundary>
+            <Component
+              fallback={<LoadingOverlay />}
+              scrollRef={scrollRef}
+              assignable={assignable}
+              value={rawValue}
+              onSave={({ config, raw }) => {
+                setValue(`${stateKey}.config`, config);
+                setValue(`${stateKey}.raw`, raw);
+                onClose();
+              }}
+            />
+          </ConfigModalErrorBoundary>
+        </Stack>
+      </TotalLayoutContainer>
     </Drawer>
   );
 }
 
 ConfigModal.propTypes = {
   assignable: PropTypes.object,
+  components: PropTypes.object,
+  localizations: PropTypes.object,
+  activityId: PropTypes.string,
+  onClose: PropTypes.func,
 };
