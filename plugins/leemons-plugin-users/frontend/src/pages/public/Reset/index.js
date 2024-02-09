@@ -20,7 +20,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { useStore } from '@common';
 import { canResetRequest, resetRequest } from '@users/request';
-import { addSuccessAlert } from '@layout/alert';
+import { useNotifications } from '@bubbles-ui/notifications';
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -39,6 +39,7 @@ export default function Reset() {
   const t = tLoader(prefixPN('reset'), translations);
 
   const history = useHistory();
+  const notifications = useNotifications();
 
   function getToken() {
     const query = new URLSearchParams(window.location.search);
@@ -81,10 +82,17 @@ export default function Reset() {
   const onSubmit = async (data) => {
     try {
       await resetRequest(getToken(), data.password);
-      addSuccessAlert(t('passwordSet'));
+
+      notifications.showNotification({
+        id: new Date().getTime(),
+        title: t('passwordSet'),
+        severity: 'success',
+        autoClose: 5000,
+      });
+
       setTimeout(() => {
         goLoginPage(history);
-      }, 700);
+      }, 1000);
     } catch (err) {
       store.cantReset = true;
       render();

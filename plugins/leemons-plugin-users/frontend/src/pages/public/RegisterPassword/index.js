@@ -10,7 +10,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import constants from '@users/constants';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
-import { addSuccessAlert } from '@layout/alert';
+import { useNotifications } from '@bubbles-ui/notifications';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { canRegisterPasswordRequest, registerPasswordRequest } from '../../../request';
 
@@ -39,6 +39,7 @@ export default function RegisterPassword() {
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('registerPassword') });
   const t = tLoader(prefixPN('registerPassword'), translations);
+  const notifications = useNotifications();
 
   function getToken() {
     const query = new URLSearchParams(window.location.search);
@@ -77,10 +78,17 @@ export default function RegisterPassword() {
         token: getToken(),
         password,
       });
-      addSuccessAlert(t('passwordSet'));
+
+      notifications.showNotification({
+        id: new Date().getTime(),
+        title: t('passwordSet'),
+        severity: 'success',
+        autoClose: 5000,
+      });
+
       setTimeout(() => {
         goLoginPage(history);
-      }, 700);
+      }, 1000);
     } catch (e) {
       setFormError(e.message);
     }
