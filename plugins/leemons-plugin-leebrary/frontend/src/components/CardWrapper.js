@@ -64,7 +64,7 @@ const CardWrapper = ({
     const items = [];
 
     if (asset?.id) {
-      if (!asset?.fileType === 'bookmark') {
+      if (asset?.fileType !== 'bookmark') {
         items.push({
           icon: <AssignIcon />,
           children: t('cardToolbar.covertToTask'),
