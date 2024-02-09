@@ -322,7 +322,7 @@ module.exports = {
       unpin: 'Quitar de favorito',
       toggle: 'Cerrar',
       open: 'Abrir',
-      covertToTask: 'Convertir a tarea',
+      covertToTask: 'Asignar',
     },
   },
   pickerDrawer: {

@@ -4,6 +4,7 @@ import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components';
 import { get } from 'lodash';
 import { unflatten } from '@common';
+import propTypes from 'prop-types';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import duplicateModuleRequest from '@learning-paths/requests/duplicateModule';
@@ -14,7 +15,7 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 
 export function useListCardLocalizations() {
   const keys = ['assignables.roles.learningpaths.module.singular', 'learning-paths.libraryCard'];
@@ -34,7 +35,7 @@ export function useListCardLocalizations() {
   }, [translations]);
 }
 
-function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
+function useListCardMenuItems({ asset, localizations, onRefresh }) {
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
@@ -58,13 +59,13 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
             history.push(`/private/learning-paths/modules/${id}/assign`);
           },
         },
-        !!isOwner && {
-          icon: <ShareIcon />,
-          children: localizations?.menuItems?.share,
-          onClick: () => {
-            onShare(asset);
-          },
-        },
+        // !!isOwner && {
+        //   icon: <ShareIcon />,
+        //   children: localizations?.menuItems?.share,
+        //   onClick: () => {
+        //     onShare(asset);
+        //   },
+        // },
 
         !!editable && {
           icon: <EditIcon />,
@@ -153,9 +154,9 @@ const useListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-function ListCard({ asset, single, onRefresh = () => {}, onShare = () => {}, ...props }) {
+function ListCard({ asset, single, onRefresh = () => {}, ...props }) {
   const localizations = useListCardLocalizations();
-  const menuItems = useListCardMenuItems({ localizations, asset, onRefresh, onShare });
+  const menuItems = useListCardMenuItems({ localizations, asset, onRefresh });
 
   const { classes } = useListCardStyles({ single });
 
@@ -170,5 +171,12 @@ function ListCard({ asset, single, onRefresh = () => {}, onShare = () => {}, ...
     />
   );
 }
+
+ListCard.propTypes = {
+  asset: propTypes.object.isRequired,
+  single: propTypes.bool,
+  onRefresh: propTypes.func,
+  onShare: propTypes.func,
+};
 
 export default ListCard;
