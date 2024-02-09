@@ -10,85 +10,14 @@ const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets
 const { addPermissionsDeploy } = require('@leemons/permissions');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getEmailTypes } = require('@leemons/emails');
 
 const { menuItems, widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
-const newActivity = require('../emails/userCreateAssignation');
-const rememberActivity = require('../emails/userAssignationRemember');
-const rememberActivityTimeout = require('../emails/userRememberAssignationTimeout');
-const userWeekly = require('../emails/userWeekly');
 const { afterAddClassTeacher } = require('../core/events/afterAddClassTeacher');
 const { afterRemoveClassesTeachers } = require('../core/events/afterRemoveClassesTeachers');
 const { sendRememberEmails } = require('../core/events/sendRememberEmail');
 const { sendWeeklyEmails } = require('../core/events/sendWeeklyEmail');
-
-async function initEmails(ctx) {
-  const emailsServiceAddIfNotExists = 'emails.email.addIfNotExist';
-
-  await ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-create-assignation',
-    language: 'es',
-    subject: 'Nueva actividad',
-    html: newActivity.es,
-    type: getEmailTypes().active,
-  });
-  await ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-create-assignation',
-    language: 'en',
-    subject: 'New activity',
-    html: newActivity.en,
-    type: getEmailTypes().active,
-  });
-  ctx.tx.emit('init-email-recover-password');
-
-  await ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-assignation-remember',
-    language: 'es',
-    subject: 'Recordatorio de actividad',
-    html: rememberActivity.es,
-    type: getEmailTypes().active,
-  });
-  ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-assignation-remember',
-    language: 'en',
-    subject: 'Activity reminder',
-    html: rememberActivity.en,
-    type: getEmailTypes().active,
-  });
-
-  ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-remember-assignation-timeout',
-    language: 'es',
-    subject: 'Esta actividad finaliza pronto',
-    html: rememberActivityTimeout.es,
-    type: getEmailTypes().active,
-  });
-  ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-remember-assignation-timeout',
-    language: 'en',
-    subject: 'This activity ends soon',
-    html: rememberActivityTimeout.en,
-    type: getEmailTypes().active,
-  });
-
-  ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-weekly-resume',
-    language: 'es',
-    subject: 'Aquí tienes tus actividades pendientes',
-    html: userWeekly.es,
-    type: getEmailTypes().active,
-  });
-  ctx.tx.call(emailsServiceAddIfNotExists, {
-    templateName: 'user-weekly-resume',
-    language: 'en',
-    subject: 'Have a look to your pending activities',
-    html: userWeekly.en,
-    type: getEmailTypes().active,
-  });
-
-  ctx.tx.emit('init-emails');
-}
+const { initEmails } = require('../core/deploy/initEmails');
 
 // TODO: Implement cron job for sending emails
 
@@ -149,7 +78,7 @@ module.exports = {
       });
 
       // Email Templates
-      await initEmails(ctx);
+      await initEmails({ ctx });
 
       // Register as a library provider
       await ctx.tx.call('leebrary.providers.register', {

@@ -1,16 +1,17 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { AlarmClockIcon } from '@bubbles-ui/icons/outline';
 import dayjs from 'dayjs';
 import dayjsDuration from 'dayjs/plugin/duration';
 import { Box, Text } from '@bubbles-ui/components';
 import { padStart } from 'lodash';
-import useTimerStyles from './Timer.styles';
+import { useTimerStyles } from './Timer.styles';
+import Countdown from './components/Countdown/Countdown';
 
 dayjs.extend(dayjsDuration);
 
-export default function Timer({ instance, hidden }) {
-  const duration = useMemo(() => {
+function useDuration(instance) {
+  return useMemo(() => {
     if (!instance?.duration) {
       return null;
     }
@@ -19,12 +20,19 @@ export default function Timer({ instance, hidden }) {
     const dur = dayjs.duration(time, unit);
 
     return {
+      duration: dur,
       hours: Math.floor(dur.asHours()),
       minutes: Math.round(dur.minutes()),
     };
   }, [instance?.duration]);
+}
 
-  const { classes } = useTimerStyles();
+export default function Timer({ assignation, instance, hidden, onTimeout, showCountdown }) {
+  const startDate = dayjs(assignation?.timestamps?.start ?? null);
+  const timeStarted = startDate.isValid();
+  const duration = useDuration(instance);
+
+  const { classes, cx } = useTimerStyles();
 
   if (!duration || hidden) {
     return null;
@@ -35,16 +43,33 @@ export default function Timer({ instance, hidden }) {
       <Box className={classes.icon}>
         <AlarmClockIcon width={18} height={18} />
       </Box>
-      <Text className={classes.text}>
-        {padStart(duration.hours, 2, '0')}:{padStart(duration.minutes, 2, '0')}
-      </Text>
+      {timeStarted && showCountdown ? (
+        <Countdown
+          assignation={assignation}
+          instance={instance}
+          duration={duration.duration}
+          onTimeout={onTimeout}
+        />
+      ) : (
+        <Text className={cx(classes.text, classes.textColor)}>
+          {padStart(duration.hours, 2, '0')}:{padStart(duration.minutes, 2, '0')}:
+          {padStart(duration.seconds, 2, '0')}
+        </Text>
+      )}
     </Box>
   );
 }
 
 Timer.propTypes = {
+  assignation: PropTypes.shape({
+    timestamps: PropTypes.shape({
+      start: PropTypes.string,
+    }),
+  }),
   instance: PropTypes.shape({
     duration: PropTypes.string,
   }),
   hidden: PropTypes.bool,
+  showCountdown: PropTypes.bool,
+  onTimeout: PropTypes.func,
 };

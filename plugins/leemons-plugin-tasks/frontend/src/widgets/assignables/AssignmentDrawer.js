@@ -1,13 +1,18 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Layout } from '@assignables/components/Assignment/components/Layout';
 import {
   EvaluationType,
   evaluationTypes,
 } from '@assignables/components/Assignment/components/EvaluationType';
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
-import { Box, Button, createStyles } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  createStyles,
+  TotalLayoutFooterContainer,
+  ContextContainer,
+} from '@bubbles-ui/components';
 
 // useLocalizations
 
@@ -19,10 +24,9 @@ export const useAssignmentDrawerStyles = createStyles(() => ({
   },
 }));
 
-export default function AssignmentDrawer({ assignable, value, onSave }) {
+export default function AssignmentDrawer({ assignable, value, onSave, scrollRef }) {
   const form = useForm({ defaultValues: value });
   const localizations = useFormLocalizations();
-  const { classes } = useAssignmentDrawerStyles();
 
   const onSubmit = useCallback(
     form.handleSubmit((values) =>
@@ -41,14 +45,15 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
   return (
     <Box>
       <FormProvider {...form}>
-        <Layout
-          onlyContent
-          buttonsComponent={
-            <Box className={classes.buttons}>
-              <Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>
-            </Box>
-          }
-        >
+        <TotalLayoutFooterContainer
+          fixed
+          style={{ right: 0 }}
+          scrollRef={scrollRef}
+          width={400}
+          rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+        />
+
+        <ContextContainer padded>
           <Controller
             control={form.control}
             name="evaluation"
@@ -61,7 +66,7 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
               />
             )}
           />
-        </Layout>
+        </ContextContainer>
       </FormProvider>
     </Box>
   );
@@ -73,4 +78,5 @@ AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,
   onSave: PropTypes.func,
   value: PropTypes.object,
+  scrollRef: PropTypes.object,
 };

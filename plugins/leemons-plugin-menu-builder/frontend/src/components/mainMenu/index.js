@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useMemo } from 'react';
 import { Spotlight } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getMenu } from '@menu-builder/helpers';
@@ -8,7 +9,6 @@ import { getUserCentersRequest, getUserProfilesRequest } from '@users/request';
 import { currentProfileIsAdmin, currentProfileIsSuperAdmin, useSession } from '@users/session';
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
 import getPlatformName from '@users/request/getPlatformName';
 import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
 import { MainNavBar } from '../MainNavBar';
@@ -31,7 +31,18 @@ export default function MainMenu({ subNavWidth, ...props }) {
   const sessionId = React.useRef(session?.id);
   const forceReload = React.useRef(false);
 
-  const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
+  const deploymentConfig = useDeploymentConfig({ ignoreVersion: true });
+  const userConfig = useMemo(() => {
+    let config;
+    if (deploymentConfig) {
+      Object.keys(deploymentConfig).forEach((key) => {
+        if (key.includes('.users')) {
+          config = deploymentConfig[key];
+        }
+      });
+    }
+    return config;
+  }, [deploymentConfig]);
 
   const reloadMenu = () => {
     setLoadMenu(true);
@@ -54,8 +65,10 @@ export default function MainMenu({ subNavWidth, ...props }) {
       getUserProfilesRequest(),
       getPlatformName(),
     ]);
+
     // Retrieve denied profiles from deployment configuration
-    const deniedProfiles = deploymentConfig?.deny?.profiles || [];
+    const deniedProfiles = userConfig?.deny?.profiles || [];
+
     // Filter centers to exclude denied profiles
     const filteredCenters = centers.map((center) => ({
       ...center,
@@ -71,12 +84,12 @@ export default function MainMenu({ subNavWidth, ...props }) {
 
     // Check if there's only one profile available and update the store accordingly
     if (
-      filteredCenters.length === 1 &&
-      filteredCenters[0].profiles.length < 2 &&
+      filteredCenters.length < 2 &&
+      (!filteredCenters[0]?.profiles || filteredCenters[0]?.profiles.length < 2) &&
       filteredProfiles.length < 2
     ) {
       store.onlyOneProfile = true;
-      store.centerName = filteredCenters[0].name;
+      store.centerName = filteredCenters[0]?.name;
     }
     // Trigger a re-render
     render();
@@ -98,8 +111,8 @@ export default function MainMenu({ subNavWidth, ...props }) {
   });
 
   useEffect(() => {
-    if (deploymentConfig !== undefined) load();
-  }, [deploymentConfig]);
+    if (userConfig !== undefined) load();
+  }, [userConfig]);
 
   useEffect(() => {
     setLoadMenu(true);
@@ -147,7 +160,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     const result = [];
     if (!session?.isSuperAdmin) {
       result.push({
-        id: 'menu-1',
+        id: 'menu-0',
         label: t('accountInfo'),
         order: 0,
         url: '/private/users/detail',
@@ -157,7 +170,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     }
 
     result.push({
-      id: 'menu-4',
+      id: 'menu-1',
       label: t('emailPreference'),
       order: 1,
       url: '/private/emails/preference',
@@ -166,7 +179,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     });
 
     result.push({
-      id: 'menu-3',
+      id: 'menu-2',
       label: t('changeLanguage'),
       order: 2,
       url: '/private/users/language',
@@ -176,10 +189,21 @@ export default function MainMenu({ subNavWidth, ...props }) {
 
     if (!store.onlyOneProfile) {
       result.push({
-        id: 'menu-2',
+        id: 'menu-3',
         label: t('switchProfile'),
         order: 3,
         url: '/protected/users/select-profile',
+        window: 'NEW',
+        disabled: null,
+      });
+    }
+
+    if (deploymentConfig?.helpdeskUrl) {
+      result.push({
+        id: 'menu-helpdesk',
+        label: t('helpdesk'),
+        order: 4,
+        url: deploymentConfig?.helpdeskUrl,
         window: 'BLANK',
         disabled: null,
       });
@@ -188,9 +212,9 @@ export default function MainMenu({ subNavWidth, ...props }) {
     result.push({
       id: 'menu-5',
       label: t('logout'),
-      order: 4,
+      order: 5,
       url: '/protected/users/logout',
-      window: 'BLANK',
+      window: 'NEW',
       disabled: null,
     });
 

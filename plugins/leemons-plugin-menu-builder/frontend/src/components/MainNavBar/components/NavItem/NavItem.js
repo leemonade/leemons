@@ -65,7 +65,12 @@ const NavItem = ({
       const isChildrenActive = child.id === subItemActive?.id;
       const hasChildOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
       return (
-        <LinkWrapper useRouter={useRouter} url={child.url} key={`itemId--${index}`}>
+        <LinkWrapper
+          useRouter={useRouter}
+          url={child.url}
+          window={child.window}
+          key={`itemId--${index}`}
+        >
           <Box className={classes.itemContainer}>
             <TextClamp lines={2}>
               <Text className={isChildrenActive ? classes.linkActive : classes.link}>
@@ -81,7 +86,7 @@ const NavItem = ({
 
   return (
     <AnimatePresence>
-      <LinkWrapper useRouter={useRouter} url={url} id={id} key="LinkChild">
+      <LinkWrapper useRouter={useRouter} url={url} window={window} id={id} key="LinkChild">
         <UnstyledButton
           onClick={() => handleOpenChildren(id)}
           className={isActive ? classes.controlActive : classes.control}

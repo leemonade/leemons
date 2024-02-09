@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   TotalLayoutStepContainer,
@@ -37,7 +38,8 @@ function onAssign(id, { assignationForm, state: { activities, time, type } }) {
 
   return assignModuleRequest(id, assignationObject);
 }
-export default function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
+
+function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
   const history = useHistory();
   const { getValues, setValue, useWatch } = useModuleAssignContext();
   const assignButtonIsLoading = useWatch({ name: 'assignButtonIsLoading' });
@@ -84,3 +86,13 @@ export default function SetupStep({ onPrevStep, scrollRef, id, localizations, as
     </TotalLayoutStepContainer>
   );
 }
+
+SetupStep.propTypes = {
+  id: PropTypes.string,
+  onPrevStep: PropTypes.func,
+  scrollRef: PropTypes.object,
+  localizations: PropTypes.object,
+  assignable: PropTypes.object,
+};
+
+export default SetupStep;

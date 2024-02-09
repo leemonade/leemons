@@ -10,6 +10,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import constants from '@users/constants';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
+import { addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { canRegisterPasswordRequest, registerPasswordRequest } from '../../../request';
 
@@ -76,7 +77,10 @@ export default function RegisterPassword() {
         token: getToken(),
         password,
       });
-      goLoginPage(history);
+      addSuccessAlert(t('passwordSet'));
+      setTimeout(() => {
+        goLoginPage(history);
+      }, 700);
     } catch (e) {
       setFormError(e.message);
     }

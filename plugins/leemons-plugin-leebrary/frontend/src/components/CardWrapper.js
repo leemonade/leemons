@@ -64,14 +64,16 @@ const CardWrapper = ({
     const items = [];
 
     if (asset?.id) {
-      items.push({
-        icon: <AssignIcon />,
-        children: t('cardToolbar.covertToTask'),
-        onClick: (e) => {
-          e.stopPropagation();
-          history.push(`/private/tasks/library/create?from=leebrary&asset=${asset.id}`);
-        },
-      });
+      if (asset?.fileType !== 'bookmark') {
+        items.push({
+          icon: <AssignIcon />,
+          children: t('cardToolbar.covertToTask'),
+          onClick: (e) => {
+            e.stopPropagation();
+            history.push(`/private/tasks/library/create?from=leebrary&asset=${asset.id}`);
+          },
+        });
+      }
       if (asset.shareable) {
         items.push({
           icon: <ShareIcon />,

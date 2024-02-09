@@ -52,7 +52,7 @@ async function saveResources({ resources, leebraryResources, ctx }) {
     duplicatedResources = await Promise.all(
       resources.map(async (resource) => {
         const id = resource?.id ?? resource;
-        const shouldDuplicate = resource?.duplicate ?? false;
+        const shouldDuplicate = resource?.duplicate ?? true;
 
         if (!shouldDuplicate) {
           return id;

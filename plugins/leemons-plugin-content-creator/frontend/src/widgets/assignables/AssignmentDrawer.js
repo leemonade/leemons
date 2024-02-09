@@ -1,10 +1,15 @@
 import React, { useCallback } from 'react';
-
+import PropTypes from 'prop-types';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { Instructions } from '@assignables/components/Assignment/components/Instructions';
-import { Layout } from '@assignables/components/Assignment/components/Layout';
-import { Box, Button, createStyles } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  createStyles,
+  ContextContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {
@@ -14,13 +19,11 @@ export const useAssignmentDrawerStyles = createStyles(() => ({
   },
 }));
 
-export default function AssignmentDrawer({ value, onSave }) {
+export default function AssignmentDrawer({ value, onSave, scrollRef }) {
   const localizations = useFormLocalizations();
   const form = useForm({
     defaultValues: value,
   });
-
-  const { classes } = useAssignmentDrawerStyles();
 
   const onSubmit = useCallback(
     form.handleSubmit((values) =>
@@ -38,22 +41,30 @@ export default function AssignmentDrawer({ value, onSave }) {
 
   return (
     <FormProvider {...form}>
-      <Layout
-        onlyContent
-        buttonsComponent={
-          <Box className={classes.buttons}>
-            <Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>
-          </Box>
-        }
-      >
-        <Controller
-          control={form.control}
-          name="instructions"
-          render={({ field }) => (
-            <Instructions {...field} localizations={localizations?.instructions} hideDivider />
-          )}
-        />
-      </Layout>
+      <Box>
+        <ContextContainer padded>
+          <Controller
+            control={form.control}
+            name="instructions"
+            render={({ field }) => (
+              <Instructions {...field} localizations={localizations?.instructions} hideDivider />
+            )}
+          />
+        </ContextContainer>
+      </Box>
+      <TotalLayoutFooterContainer
+        fixed
+        style={{ right: 0 }}
+        scrollRef={scrollRef}
+        width={400}
+        rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+      />
     </FormProvider>
   );
 }
+
+AssignmentDrawer.propTypes = {
+  value: PropTypes.object,
+  onSave: PropTypes.func,
+  scrollRef: PropTypes.object,
+};

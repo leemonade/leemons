@@ -124,7 +124,7 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
   const { classes } = SearchUserDrawerStyles({}, { name: 'SearchUserDrawer' });
   const noUsers = !users || !users.length;
   return (
-    <Drawer opened={opened} size={715} {...props} back="Back">
+    <Drawer opened={opened} size={725} {...props} back="Back">
       <Stack direction="column" fullWidth fullHeight spacing={4}>
         <Stack spacing={4} skipFlex>
           <StarIcon height={24} width={24} />

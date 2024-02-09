@@ -4,6 +4,7 @@ module.exports = {
     accountInfo: 'Account info',
     switchProfile: 'Switch profile',
     logout: 'Logout',
+    helpdesk: 'Help Center',
     changeLanguage: 'Change language',
     emailPreference: 'Email preference',
   },
