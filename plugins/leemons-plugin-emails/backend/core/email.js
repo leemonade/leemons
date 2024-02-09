@@ -290,9 +290,10 @@ class Email {
     context.__from = from;
     context.__to = to;
     context.__platformName = 'Leemons';
-    context.__logoWidth = width ? `${width}px` : 'auto';
+    context.__logoWidth = width ? `${width}px` : '155px';
     context.__logoUrl =
-      logo || 'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/email-logo.png';
+      logo ||
+      'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/Group_4_1_54d7c2cd36.png';
 
     // Compile email with data
     email.subject = Sqrl.render(email.subject, context);

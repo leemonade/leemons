@@ -25,12 +25,16 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/register": "^7.23.7",
+    "@leemons/mongodb": "0.0.71",
     "args": "^5.0.3",
     "dotenv": "^16.0.3",
     "glob": "^10.2.7",
     "kleur": "^4.1.5",
     "lodash": "^4.17.21",
-    "moleculer": "^0.14.26",
-    "@leemons/mongodb": "0.0.71"
+    "moleculer": "^0.14.26"
   }
 }

@@ -430,7 +430,7 @@ const AssetList = ({
   useEffect(() => {
     // Determine if a new item should be inserted based on the category not being in the NOT_CREATABLE_CATEGORIES list
     const shouldInsertNewItem = !NOT_CREATABLE_CATEGORIES.some((catKey) =>
-      category?.key.startsWith(catKey)
+      category?.key?.startsWith(catKey)
     );
 
     // If there are asset details and they are not empty, proceed to paginate and manipulate the data

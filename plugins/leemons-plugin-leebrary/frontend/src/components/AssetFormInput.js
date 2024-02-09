@@ -97,6 +97,7 @@ const AssetFormInput = ({
           <Box sx={(theme) => ({ width: '100%', paddingRight: theme.spacing[5] })}>
             {formComponent}
           </Box>
+
           <Box sx={() => ({ minWidth: 264, maxWidth: 264 })} noFlex>
             <ContextContainer title={formLabels?.labels?.preview}>
               <CardWrapper

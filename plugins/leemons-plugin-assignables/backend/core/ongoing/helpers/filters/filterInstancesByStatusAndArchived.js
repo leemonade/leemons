@@ -10,7 +10,7 @@ function filterInstancesByStatusAndArchived({ instances, filters, dates, hideNon
   let filteredInstances = instances;
   const datesPerInstance = dates.instances;
 
-  // EN: Filter instances by visibility date for students
+  // EN: Filter instances by visualization date for students
   // ES: Filtrar instancias por fecha de visibilidad para estudiantes
   if (hideNonVisible) {
     filteredInstances = filteredInstances.filter((instance) => {

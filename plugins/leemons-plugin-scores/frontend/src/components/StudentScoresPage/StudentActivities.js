@@ -22,7 +22,7 @@ import _, { capitalize, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import getNearestScale from '@scorm/helpers/getNearestScale';
-import EmptyState from '../Notebook/components/ActivitiesTab/EmptyState';
+import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
 
 function ClassIcon({ class: klass, dropdown = false }) {
   return (
@@ -161,8 +161,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
     finished: true,
     finished_$gt: filters.startDate,
     finished_$lt: filters.endDate,
+    visible: true,
   });
-  const { assignableInstances: activities, isLoading: activitiesIsLoading } = useActivities(data);
   const { isLoading: assignationsAreLoading, data: assignationsData } = useAssignations({
     queries: data ? data.map((instance) => ({ instance, user })) : [],
     details: true,
@@ -170,6 +170,14 @@ export default function StudentActivities({ klasses, filters, labels }) {
     enabled: !!data?.length,
     placeholderData: [],
   });
+
+  const activities = useMemo(
+    () =>
+      assignationsData
+        .filter((assignation) => assignation.finished)
+        .map((assignation) => assignation.instance),
+    [assignationsData]
+  );
 
   const evaluationSystem = useProgramEvaluationSystem(filters.program, {
     enabled: assignationsData?.length > 0,
@@ -194,7 +202,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce((total, next) => total + next.score.number, 0) /
-      classActivities.length || 0;
+        classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 
@@ -221,7 +229,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
   const filterActivities = () => {
     const classesIds = [];
     const filteredActivities = [];
-    activities.forEach((activity) => {
+    activities?.forEach((activity) => {
       if (!activity.requiresScoring) return;
       // Filters non-calificable activities except when the filter is set to TRUE
       if (!!activity.gradable || localFilters.seeNonCalificable) {
@@ -243,6 +251,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
       activity.classes.includes(klass.id)
     );
     return classActivitiesRaw.map((activity) => {
+      const gotDeadline = activity?.dates?.deadline;
+      if (!!gotDeadline && new Date(gotDeadline) < new Date()) return null;
       const percentage = (100 / classActivitiesRaw.length)?.toFixed(0);
       const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
       const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
@@ -262,7 +272,6 @@ export default function StudentActivities({ klasses, filters, labels }) {
   const renderScores = () => {
     if (
       searchAssignableLoading ||
-      activitiesIsLoading ||
       assignationsAreLoading ||
       scoresIsLoading ||
       (assignationsData?.length > 0 && !evaluationSystem)
@@ -284,7 +293,6 @@ export default function StudentActivities({ klasses, filters, labels }) {
         filteredClasses.map((klass) => {
           const classActivities = getClassActivities(filteredActivities, klass);
           const averageScore = getAverageScore(klass, classActivities);
-
           return (
             <ScoreFronstage
               key={klass.id}
@@ -298,6 +306,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
               values={classActivities}
               maxGrade={evaluationSystem?.maxScale.number}
               minGrade={evaluationSystem?.minScaleToPromote.number}
+              subjectColor={klass.color}
             />
           );
         })
@@ -323,7 +332,6 @@ export default function StudentActivities({ klasses, filters, labels }) {
     <Box className={classes.root}>
       <Box className={classes.filters}>
         <Select
-          // label={labels.subject.label}
           placeholder={labels.subject.placeholder}
           data={klasses.map((klass) => {
             const klassName =
@@ -342,7 +350,6 @@ export default function StudentActivities({ klasses, filters, labels }) {
           clearable={labels.type.clear}
         />
         <Select
-          // label={labels.type.label}
           placeholder={labels.type.placeholder}
           data={roles}
           value={localFilters.type}
