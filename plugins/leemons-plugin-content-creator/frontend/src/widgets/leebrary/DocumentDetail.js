@@ -11,8 +11,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
+import { useIsStudent } from '@academic-portfolio/hooks';
 
 const DocumentDetail = ({ asset, onRefresh, ...props }) => {
+  const isStudent = useIsStudent();
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
   const {
@@ -33,7 +35,7 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
-    if (asset.providerData?.published) {
+    if (asset.providerData?.published && !isStudent) {
       toolbarItems.assign = t('assign');
     }
     if (asset.duplicable) {
