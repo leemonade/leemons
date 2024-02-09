@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { isFunction } from 'lodash';
 import { Box, FileIcon, Stack, Button, TotalLayoutContainer } from '@bubbles-ui/components';
 import {
@@ -10,6 +10,7 @@ import {
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
+import useCategories from '@leebrary/request/hooks/queries/useCategories';
 import { LibraryDetailContent } from '../LibraryDetailContent';
 import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
 import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
@@ -40,6 +41,8 @@ const LibraryDetail = ({
   const [activeTab, setActiveTab] = useState('tab1');
   const isTeacher = useIsTeacher();
   const [t] = useTranslateLoader(prefixPN('list'));
+  const { data: categories } = useCategories();
+  console.log(categories);
   const handleShare = () => {
     if (isFunction(events?.onShare)) {
       events?.onShare(asset);
@@ -58,6 +61,19 @@ const LibraryDetail = ({
 
   const { classes, cx } = LibraryDetailStyles({ drawer, open }, { name: 'LibraryDetail' });
   const fileExtension = asset?.fileExtension;
+  const categoryChecker = useCallback(
+    (categoriesData, assetData) => {
+      const assetCategory = assetData?.category;
+      const categoryExist = categoriesData?.find((category) => category.id === assetCategory);
+      if (categoryExist) {
+        const categorySelected = categoriesData.find((category) => category.id === assetCategory);
+        return categorySelected?.key === 'media-files' || categorySelected?.key === 'bookmarks';
+      }
+      return false;
+    },
+    [asset]
+  );
+  const canShowPermissionsButton = categoryChecker(categories, asset);
   return (
     <Box
       style={{ position: 'absolute', height: '100%', width: '100%' }}
@@ -145,7 +161,7 @@ const LibraryDetail = ({
           </Stack>
         </TotalLayoutContainer>
       </Stack>
-      {activeTab === 'tab2' && isTeacher && (
+      {activeTab === 'tab2' && isTeacher && canShowPermissionsButton && (
         <Box className={classes.canAccessFooter}>
           <Button
             variant="outline"

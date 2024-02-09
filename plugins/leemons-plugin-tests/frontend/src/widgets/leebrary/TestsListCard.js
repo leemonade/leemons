@@ -14,7 +14,7 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { TestIcon } from '../../components/Icons/TestIcon';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
@@ -53,16 +53,16 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
       //     },
       //   });
       // }
-      if (asset.shareable) {
-        items.push({
-          icon: <ShareIcon />,
-          children: t('share'),
-          onClick: (e) => {
-            e.stopPropagation();
-            onShare(asset);
-          },
-        });
-      }
+      // if (asset.shareable) {
+      //   items.push({
+      //     icon: <ShareIcon />,
+      //     children: t('share'),
+      //     onClick: (e) => {
+      //       e.stopPropagation();
+      //       onShare(asset);
+      //     },
+      //   });
+      // }
       if (asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,

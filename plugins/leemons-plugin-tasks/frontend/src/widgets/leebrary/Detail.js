@@ -44,9 +44,9 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
 
   if (asset?.id) {
     toolbarItems.view = t('view');
-    if (asset.shareable) {
-      toolbarItems.share = t('share');
-    }
+    // if (asset.shareable) {
+    //   toolbarItems.share = t('share');
+    // }
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
@@ -71,9 +71,9 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
     history.push(`/private/tasks/library/view/${asset.providerData.id}`);
   };
 
-  const handleOnShare = () => {
-    onShare(asset);
-  };
+  // const handleOnShare = () => {
+  //   onShare(asset);
+  // };
 
   const handleEdit = () => {
     history.push(`/private/tasks/library/edit/${asset.providerData.id}`);
@@ -145,7 +145,7 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
       onEdit={handleEdit}
       onDuplicate={handleDuplicate}
       onAssign={handleAssign}
-      onShare={handleOnShare}
+    // onShare={handleOnShare}
     />
   );
 };

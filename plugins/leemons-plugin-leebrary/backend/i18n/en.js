@@ -322,7 +322,7 @@ module.exports = {
       assetStatusPublished: 'Published',
       assetStatusDraft: 'Draft',
       assetStatusAll: 'All statuses',
-      emptyInstructions: 'This asset does not have any instructions fot teachers yet.',
+      emptyInstructions: 'This asset does not have any instructions for teachers yet.',
     },
     cardToolbar: {
       edit: 'Edit',

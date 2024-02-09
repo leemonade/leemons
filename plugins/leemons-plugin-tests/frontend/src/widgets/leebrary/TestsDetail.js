@@ -26,9 +26,9 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
   // ·········································································
   // HANDLERS
   if (asset?.id) {
-    if (asset.shareable) {
-      toolbarItems.share = t('share');
-    }
+    // if (asset.shareable) {
+    //   toolbarItems.share = t('share');
+    // }
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
@@ -58,9 +58,9 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
     history.push(`/private/tests/${asset.providerData.id}`);
   };
 
-  const handleOnShare = () => {
-    onShare(asset);
-  };
+  // const handleOnShare = () => {
+  //   onShare(asset);
+  // };
 
   const handleDelete = () => {
     openDeleteConfirmationModal({
@@ -144,7 +144,7 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
       onDelete={handleDelete}
       onAssign={handleAssign}
       onDuplicate={handleDuplicate}
-      onShare={handleOnShare}
+    // onShare={handleOnShare}
     />
   );
 };

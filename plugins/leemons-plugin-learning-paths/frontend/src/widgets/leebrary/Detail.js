@@ -15,10 +15,10 @@ import { useListCardLocalizations } from './ListCard';
 
 function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
   const { id, published } = asset?.providerData ?? {};
-  const name = asset?.name;
-  const role = asset?.role;
+  // const name = asset?.name;
+  // const role = asset?.role;
 
-  const isOwner = role === 'owner';
+  // const isOwner = role === 'owner';
 
   const localizations = useListCardLocalizations();
   const [t] = useTranslateLoader(prefixPN('libraryCard.menuItems'));
@@ -47,9 +47,9 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
       toolbarItems.duplicate = t('duplicate');
     }
 
-    if (isOwner) {
-      toolbarItems.share = t('share');
-    }
+    // if (isOwner) {
+    //   toolbarItems.share = t('share');
+    // }
     if (asset.pinneable) {
       if (asset.pinned === false) {
         toolbarItems.pin = t('pin');
