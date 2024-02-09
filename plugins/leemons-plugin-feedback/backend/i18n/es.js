@@ -111,6 +111,8 @@ module.exports = {
     open: 'Abrir',
     duplicate: 'Duplicar',
     duplicated: 'Duplicado',
+    pin: 'Marcar como favorito',
+    unpin: 'Quitar de favorito',
   },
   feedbackAssign: {
     assign: 'Asignar encuesta',

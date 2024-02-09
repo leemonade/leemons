@@ -117,7 +117,7 @@ const LibraryDetailToolbar = ({
     <Box className={classes.root} data-cypress-id="library-detail-toolbar">
       <Stack className={classes.buttons}>
         <Box className={classes.leftContainer}>
-          {/* {toolbarItems.view && (
+          {/* {toolbarItems.assign && (
             <ActionButton
               icon={<ViewOnIcon height={20} width={20} />}
               onClick={handleView}
@@ -167,7 +167,6 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
-
           {toolbarItems.delete && (
             <ActionButton
               icon={<DeleteIcon height={20} width={20} />}
@@ -177,7 +176,6 @@ const LibraryDetailToolbar = ({
             />
           )}
           {canShowLoveIcon && <Divider orientation="vertical" />}
-
           {toolbarItems.pin && (
             <ActionButton
               icon={<LoveIcon height={24} width={24} />}

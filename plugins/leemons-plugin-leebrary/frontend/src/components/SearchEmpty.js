@@ -6,7 +6,14 @@ import { useLayout } from '@layout/context';
 const SearchEmpty = ({ t }) => {
   const { theme } = useLayout();
   return (
-    <Stack alignItems="center" justifyContent="center" direction="column" spacing={5}>
+    <Stack
+      alignItems="center"
+      justifyContent="center"
+      fullHeight
+      fullWidth
+      direction="column"
+      spacing={5}
+    >
       <Box style={{ maxWidth: 350, textAlign: 'center' }}>
         <Title order={3}>{t('labels.searchListEmpty')}</Title>
       </Box>

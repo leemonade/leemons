@@ -120,7 +120,7 @@ async function getSubjectDetails(subject) {
       method: 'GET',
     });
   }
-  return leemons.api(`v1/academic-portfolio/subjects/${subject}`, {
+  return leemons.api(`v1/academic-portfolio/subjects?id=${subject}`, {
     allAgents: true,
     method: 'GET',
   });

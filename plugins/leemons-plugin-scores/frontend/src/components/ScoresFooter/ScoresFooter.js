@@ -83,23 +83,10 @@ const ScoresFooter = ({
           </Button>
         </>
       )}
-      {showEvaluationReport ? (
+      {!!showEvaluationReport && (
         <Button size="sm" rightIcon={<ListEditIcon />} onClick={showEvaluationReportModal}>
           {evaluationReportLabels?.[evaluationType]?.label}
         </Button>
-      ) : (
-        <Tooltip
-          label={
-            evaluationReportLabels?.evaluation?.disabledTooltip[
-              isPeriodSubmitted ? 'submittedPeriod' : 'invalidPeriod'
-            ]
-          }
-          position="left"
-        >
-          <Button size="sm" rightIcon={<ListEditIcon />} disabled>
-            {evaluationReportLabels?.[evaluationType]?.label}
-          </Button>
-        </Tooltip>
       )}
     </Box>
   );

@@ -67,6 +67,8 @@ const DashboardCardCover = ({
     const percentage = Math.round((totalStudentsFinished / totalStudents) * 100);
     return (
       <Box className={classes.commonContainer}>
+        <Box className={classes.color} />
+
         <ProgressRing
           rootColor={'#DDE1E6'}
           sections={[{ value: percentage, color: '#307AE8' }]}

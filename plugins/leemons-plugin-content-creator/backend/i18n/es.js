@@ -81,6 +81,8 @@ module.exports = {
     duplicated: 'Duplicado',
     share: 'Compartir',
     shared: 'Compartido',
+    pin: 'Marcar como favorito',
+    unpin: 'Quitar de favorito',
   },
   contentCreatorDetail: {
     titlePlaceholder: 'Escribe el nombre del documento...',

@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
 import { useIsStudent } from '@academic-portfolio/hooks';
 
-const DocumentDetail = ({ asset, onRefresh, ...props }) => {
+const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
   const isStudent = useIsStudent();
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
@@ -27,7 +27,6 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
 
   // ·········································································
   // HANDLERS
-
   if (asset?.id) {
     if (asset.editable) {
       toolbarItems.edit = t('edit');
@@ -44,7 +43,27 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
     // if (asset.shareable) {
     //   toolbarItems.share = t('share');
     // }
+    if (asset.pinneable) {
+      if (asset.pinned === false) {
+        toolbarItems.pin = t('pin');
+      }
+      if (asset.pinned === true) {
+        toolbarItems.unpin = t('unpin');
+      }
+    }
   }
+
+  function handleOnPin(item) {
+    onPin(item);
+  }
+
+  const handleOnUnpin = (item) => {
+    onUnpin(item);
+  };
+
+  // const handleOnShare = () => {
+  //   onShare(asset);
+  // };
 
   const handleView = () => {
     history.push(`/private/content-creator/${asset.providerData.id}/view`);
@@ -87,7 +106,7 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
   };
 
   const handleAssign = () => {
-    history.push(`/private/content-creator/assign/${asset.providerData.id}`);
+    history.push(`/private/content-creator/${asset.providerData.id}/assign`);
   };
 
   // ·········································································
@@ -107,15 +126,18 @@ const DocumentDetail = ({ asset, onRefresh, ...props }) => {
       titleActionButton={
         asset?.providerData?.published
           ? {
-            icon: <ViewOnIcon height={16} width={16} />,
-            onClick: handleView,
-          }
+              icon: <ViewOnIcon height={16} width={16} />,
+              onClick: handleView,
+            }
           : null
       }
       onEdit={handleEdit}
       onDelete={handleDelete}
       onAssign={handleAssign}
+      onPin={handleOnPin}
+      onUnpin={handleOnUnpin}
       onDuplicate={handleDuplicate}
+      // onShare={handleOnShare}
     />
   );
 };
@@ -124,6 +146,9 @@ DocumentDetail.propTypes = {
   asset: PropTypes.any,
   onRefresh: PropTypes.func,
   variant: PropTypes.string,
+  onPin: PropTypes.func,
+  onUnpin: PropTypes.func,
+  // onShare: PropTypes.func,
 };
 
 export default DocumentDetail;
