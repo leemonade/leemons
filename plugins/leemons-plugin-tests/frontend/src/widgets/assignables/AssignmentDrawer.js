@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Layout } from '@assignables/components/Assignment/components/Layout';
 import {
   EvaluationType,
   evaluationTypes,
@@ -10,10 +9,8 @@ import { OtherOptions } from '@assignables/components/Assignment/components/Othe
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import {
   Box,
-  Stack,
   ContextContainer,
   Button,
-  Divider,
   TotalLayoutFooterContainer,
   createStyles,
   LoadingOverlay,
@@ -61,7 +58,6 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
   const form = useForm({ defaultValues: value });
   const localizations = useFormLocalizations();
   const [store, render] = useStore();
-  const { classes } = useAssignmentDrawerStyles();
   const [t] = useTranslateLoader(prefixPN('testAssign'));
 
   useEffect(() => {
@@ -170,4 +166,5 @@ AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,
   onSave: PropTypes.func,
   value: PropTypes.object,
+  scrollRef: PropTypes.object,
 };

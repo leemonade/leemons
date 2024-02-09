@@ -27,7 +27,6 @@ export const useAssignmentDrawerStyles = createStyles(() => ({
 export default function AssignmentDrawer({ assignable, value, onSave, scrollRef }) {
   const form = useForm({ defaultValues: value });
   const localizations = useFormLocalizations();
-  const { classes } = useAssignmentDrawerStyles();
 
   const onSubmit = useCallback(
     form.handleSubmit((values) =>
@@ -79,4 +78,5 @@ AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,
   onSave: PropTypes.func,
   value: PropTypes.object,
+  scrollRef: PropTypes.object,
 };
