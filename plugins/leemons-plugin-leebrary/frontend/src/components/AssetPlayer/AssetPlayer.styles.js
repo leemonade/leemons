@@ -73,7 +73,7 @@ const AssetPlayerStyles = createStyles(
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        pointerEvents: (!ccMode && 'none') || 'auto',
+        pointerEvents: ccMode && !canPlay ? 'auto' : 'none',
       },
       coverShadow: {
         position: 'absolute',

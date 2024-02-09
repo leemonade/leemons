@@ -197,7 +197,7 @@ const AssetPlayer = ({
   };
 
   const handleInitPlay = () => {
-    if (!canPlay) return;
+    if (!canPlay && !ccMode) return;
     setShowPlayer(true);
     setIsPlaying(true);
   };
@@ -356,13 +356,16 @@ const AssetPlayer = ({
                 />
               )}
               {(!showPlayer || media.isAudio) && (
-                <Box className={classes.coverWrapper} onClick={() => !ccMode && handleInitPlay()}>
+                <Box
+                  className={classes.coverWrapper}
+                  onClick={() => (!ccMode || canPlay) && handleInitPlay()}
+                >
                   {showPlayButton && (
                     <Box className={classes.buttonIcon}>
                       <ButtonIcon
                         fileType={'video'}
                         onClick={(e) => {
-                          if (ccMode) handleInitPlay();
+                          if (ccMode && !canPlay) handleInitPlay();
                         }}
                       />
                     </Box>
@@ -386,10 +389,19 @@ const AssetPlayer = ({
               <Box className={classes.coverWrapper}>
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
-                    <ButtonIcon fileType={'image'} />
+                    <ButtonIcon
+                      fileType={'image'}
+                      onClick={() => {
+                        if (ccMode && !canPlay) setOpenImageZoom(true);
+                      }}
+                    />
                   </Box>
                 )}
-                <ModalZoom canPlay={canPlay}>
+                <ModalZoom
+                  canPlay={!ccMode || canPlay}
+                  opened={openImageZoom}
+                  onClose={() => setOpenImageZoom(false)}
+                >
                   <ImageLoader height="100%" src={cover} alt={name} />
                 </ModalZoom>
               </Box>
@@ -398,14 +410,11 @@ const AssetPlayer = ({
               <Box className={classes.coverWrapper}>
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
-                    <ButtonIcon
-                      fileType={'image'}
-                      onClick={() => ccMode && setOpenImageZoom(true)}
-                    />
+                    <ButtonIcon fileType={'image'} />
                   </Box>
                 )}
                 <ModalZoom
-                  canPlay={!ccMode && canPlay}
+                  canPlay={!ccMode || canPlay}
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
