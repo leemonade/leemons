@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const { last } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { getResetConfig } = require('./getResetConfig');
@@ -41,7 +42,7 @@ async function reset({ token, password, ctx }) {
       });
 
       const response = await r.json();
-      console.log('response', response);
+
       if (!r.ok) {
         throw new LeemonsError(ctx, {
           message: response.message,
@@ -50,7 +51,9 @@ async function reset({ token, password, ctx }) {
       }
 
       setPassword = false;
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   let toUpdate = {};
@@ -70,6 +73,7 @@ async function reset({ token, password, ctx }) {
     })
   ) {
     const hostname = await getHostname({ ctx });
+
     await ctx.tx.call('emails.email.sendAsEducationalCenter', {
       to: config.user.email,
       templateName: 'user-reset-password',
