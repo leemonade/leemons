@@ -42,8 +42,8 @@ const PermissionsDataStyles = createStyles((theme) => ({
     },
   },
   alertContainer: {
-    marginTop: pxToRem(16),
-    marginBottom: pxToRem(32),
+    marginTop: pxToRem(32),
+    marginBottom: pxToRem(16),
   },
   footer: {
     position: 'absolute',
