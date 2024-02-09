@@ -42,7 +42,6 @@ const LibraryDetail = ({
   const isTeacher = useIsTeacher();
   const [t] = useTranslateLoader(prefixPN('list'));
   const { data: categories } = useCategories();
-  console.log(categories);
   const handleShare = () => {
     if (isFunction(events?.onShare)) {
       events?.onShare(asset);
