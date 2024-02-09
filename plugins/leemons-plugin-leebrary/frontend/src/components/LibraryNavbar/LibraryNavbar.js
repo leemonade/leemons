@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { isFunction, groupBy, isEmpty, cloneDeep, noop, capitalize } from 'lodash';
+import { groupBy, isEmpty, cloneDeep, noop, capitalize } from 'lodash';
 import {
   Box,
   Button,
