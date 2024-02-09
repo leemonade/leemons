@@ -58,6 +58,53 @@ function getOwner(asset) {
   return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
 }
 
+function handlePaginationAndDetailsLoad({
+  assetList,
+  pageSize,
+  shouldInsertNewItem,
+  assetsDetails,
+  page,
+}) {
+  const paginated = getPageItems({
+    data: assetList,
+    page: page - 1,
+    size: pageSize,
+    includeNewItem: true,
+  });
+
+  // Replace the list of asset ids for the detail of the assets when loaded + clean the metadata
+  if (assetsDetails && !isEmpty(assetsDetails)) {
+    paginated.items = assetsDetails;
+    forEach(paginated.items, (item) => {
+      if (item.file?.metadata?.indexOf('pathsInfo')) {
+        item.file.metadata = JSON.parse(item.file.metadata);
+        delete item.file.metadata.pathsInfo;
+        item.file.metadata = JSON.stringify(item.file.metadata);
+      }
+    });
+  }
+
+  // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
+  if (shouldInsertNewItem && !paginated.items.some((item) => item.action === 'new')) {
+    paginated.items.unshift({ action: 'new' });
+  }
+  return paginated;
+}
+
+function handlePaginationAndEmptyAssetList({ shouldInsertNewItem }) {
+  // Minimal structure where there are no assets to show but it's a creatable category
+  if (shouldInsertNewItem) {
+    return {
+      items: [{ action: 'new' }],
+      page: 0,
+      size: 1,
+      totalCount: 1,
+      totalPages: 1,
+    };
+  }
+  return null;
+}
+
 const RECENT_CATEGORY = 'leebrary-recent';
 const SHARED_CATEGORY = 'leebrary-shared';
 const SUBJECT_CATEGORY = 'leebrary-subject';
@@ -189,11 +236,7 @@ const AssetList = ({
     [assetList, page, pageSize]
   );
 
-  const {
-    data: assetsDetails,
-    isLoading: assetsDetailsAreLoading,
-    isError: assetsDetailsError,
-  } = useAssetsDetails({
+  const { data: assetsDetails, isLoading: assetsDetailsAreLoading } = useAssetsDetails({
     ids: currentPageAssets?.map((item) => item.asset),
     filters: {
       published: allowStatusFilter ? statusFilter : true,
@@ -404,7 +447,8 @@ const AssetList = ({
     setPage(1);
   }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
 
-  // DELETE operations should calculate the current page the user is seeing
+  // DELETE operations may leave the current page empty
+  // Page is set to the last valid page if the current page isn't
   useEffect(() => {
     if (lastNotEmptyPage) {
       setPage(lastNotEmptyPage);
@@ -417,9 +461,7 @@ const AssetList = ({
 
   useEffect(() => {
     if (!assetsDetailsAreLoading) {
-      setTimeout(() => {
-        if (!assetListIsLoading) setCardDetailIsLoading(false);
-      }, 1000);
+      if (!assetListIsLoading) setCardDetailIsLoading(false);
     } else {
       setCardDetailIsLoading(true);
     }
@@ -450,49 +492,20 @@ const AssetList = ({
     if (shouldInsertNewItem) setPageSize(11);
     else setPageSize(12);
 
-    if (assetsDetails && !isEmpty(assetsDetails)) {
-      const paginated = getPageItems({
-        data: assetList,
-        page: page - 1,
-        size: pageSize,
-        includeNewItem: true,
+    if (assetList?.length) {
+      const paginated = handlePaginationAndDetailsLoad({
+        assetList,
+        pageSize,
+        shouldInsertNewItem,
+        assetsDetails,
+        page,
       });
-
-      // Replace the list of asset ids for the detail of those assets
-      paginated.items = assetsDetails || [];
-
-      // Clean up the metadata
-      forEach(paginated.items, (item) => {
-        if (item.file?.metadata?.indexOf('pathsInfo')) {
-          item.file.metadata = JSON.parse(item.file.metadata);
-          delete item.file.metadata.pathsInfo;
-          item.file.metadata = JSON.stringify(item.file.metadata);
-        }
-      });
-
-      // Account for the pagination offset
-      paginated.page += 1;
-
-      // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
-      if (shouldInsertNewItem && !paginated.items.some((item) => item.action === 'new')) {
-        paginated.items.unshift({ action: 'new' });
-      }
-
       setPageAssetsData({ ...paginated });
-    } else if (shouldInsertNewItem && !assetList?.length) {
-      // Minimal structure where there are no assets to show but it's a creatable category
-      setPageAssetsData({
-        items: [{ action: 'new' }],
-        page: 0,
-        size: 1,
-        totalCount: 1,
-        totalPages: 1,
-      });
     } else {
-      setPageAssetsData(null);
+      const emptyData = handlePaginationAndEmptyAssetList({ shouldInsertNewItem });
+      setPageAssetsData(emptyData);
     }
-  }, [assetsDetails, assetsDetailsError, category?.key]);
-
+  }, [assetList, assetsDetails, assetsDetailsAreLoading, category?.key]);
   // -------------------------------------------------------------------------------------
   // PAGE STYLES & PAGINATED LIST PROPS
 
@@ -671,7 +684,6 @@ const AssetList = ({
                   selectable
                   selected={selectedAsset}
                   columns={columns}
-                  loading={assetsDetailsAreLoading}
                   layout="grid"
                   page={page}
                   size={pageSize}
