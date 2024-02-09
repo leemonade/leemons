@@ -119,16 +119,14 @@ export default function AssignConfig({
         return true;
       }
       let good = true;
-      if (f.level && f.level.length > 0) {
-        if (!f.level.includes(question.level)) {
-          good = false;
-        }
+      if (f.level?.length > 0 && !f.level.includes(question.level)) {
+        good = false;
       }
-      if (f.categories && f.categories.length > 0) {
-        if (!f.categories.includes(question.category)) {
-          good = false;
-        }
+
+      if (f.categories?.length > 0 && !f.categories.includes(question.category)) {
+        good = false;
       }
+
       return good;
     });
   }
@@ -182,11 +180,14 @@ export default function AssignConfig({
 
   return (
     <TotalLayoutStepContainer
+      fullWidth={hideButtons}
+      clean={hideButtons}
+      noMargin={hideButtons}
       Footer={
-        <TotalLayoutFooterContainer
-          fixed
-          leftZone={
-            !hideButtons && (
+        !hideButtons && (
+          <TotalLayoutFooterContainer
+            fixed
+            leftZone={
               <Button
                 compact
                 variant="outline"
@@ -203,10 +204,8 @@ export default function AssignConfig({
               >
                 {t('prev')}
               </Button>
-            )
-          }
-          rightZone={
-            !hideButtons && (
+            }
+            rightZone={
               <Button
                 loading={loading}
                 onClick={() => {
@@ -224,16 +223,15 @@ export default function AssignConfig({
               >
                 {t('assign')}
               </Button>
-            )
-          }
-        />
+            }
+          />
+        )
       }
     >
       <Box>
         <ContextContainer divided>
           <ContextContainer>
             <Title order={3}>{t('configTitle')}</Title>
-
             <Text size="md">
               {t('totalQuestions', { n: test.questions.length })}
               {useAllQuestions || (!useAllQuestions && nQuestions) ? (
@@ -253,9 +251,7 @@ export default function AssignConfig({
                 />
               ) : null}
             </Text>
-
             <Text>{t('configDescription')}</Text>
-
             <Box>
               <InputWrapper
                 description={
@@ -334,7 +330,6 @@ export default function AssignConfig({
                   </Box>,
                 ]
               : null}
-
             <Alert variant="block" title={t('defaultRules.title')} closeable={false}>
               <ul>
                 <li>- {t('defaultRules.canOmit')}</li>
@@ -344,7 +339,6 @@ export default function AssignConfig({
               <br />
               {t('defaultRules.useAdvanced')}
             </Alert>
-
             <Title order={4}>{t('advancedSettings')}</Title>
             <Controller
               control={form.control}
@@ -354,9 +348,8 @@ export default function AssignConfig({
                 <Switch checked={field.value} {...field} label={t('allowAdvancedSettings')} />
               )}
             />
-
             {useAdvancedSettings ? (
-              <Paper>
+              <Paper shadow="none" bordered>
                 <ContextContainer>
                   <Controller
                     control={form.control}
@@ -510,6 +503,7 @@ export default function AssignConfig({
 }
 
 AssignConfig.propTypes = {
+  loading: PropTypes.bool,
   test: PropTypes.object,
   t: PropTypes.func,
   onBack: PropTypes.func,
@@ -518,4 +512,6 @@ AssignConfig.propTypes = {
   configs: PropTypes.any,
   defaultValues: PropTypes.any,
   hideButtons: PropTypes.bool,
+  onSave: PropTypes.func,
+  onPrevStep: PropTypes.func,
 };
