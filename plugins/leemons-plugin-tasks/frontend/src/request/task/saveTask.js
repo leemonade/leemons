@@ -15,9 +15,7 @@ export default async function saveTaskRequest(taskId, task) {
 
   if (cover instanceof File) {
     formData[assetCoverPropertyName] = await uploadFileAsMultipart(cover, { name: cover.name });
-  } else if (typeof cover === 'string') {
-    formData[assetCoverPropertyName] = cover;
-  } else if (_.isNull(cover)) {
+  } else if (_.isString(cover) || _.isNull(cover)) {
     formData[assetCoverPropertyName] = cover;
   }
 
