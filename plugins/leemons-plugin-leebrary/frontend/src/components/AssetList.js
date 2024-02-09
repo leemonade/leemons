@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { find, forEach, isArray, isEmpty } from 'lodash';
+import { find, forEach, isArray, isEmpty, noop } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import {
@@ -44,7 +44,9 @@ import { prepareAsset } from '../helpers/prepareAsset';
 import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
 import { NewLibraryCardButton } from './NewLibraryCardButton/NewLibraryCardButton';
 
+// -------------------------------------------------------------------------------------
 // HELPERS
+
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
 }
@@ -74,7 +76,7 @@ const AssetList = ({
   onSelect,
   allowSearchByCriteria,
   searchCriteria,
-  onSearch,
+  onSearch = noop,
   allowStatusFilter,
   statusFilter,
   onStatusChange,
@@ -91,13 +93,12 @@ const AssetList = ({
   filters: academicFilters,
   forgetAssetToOpen,
 }) => {
-  // Setup && States
   const session = useSession();
   const locale = getLocale(session);
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12 - 1); // 11 is the default number of items per page when the NEW button is enabled
+  const [pageSize, setPageSize] = useState(12);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [itemToShare, setItemToShare] = useState(null);
   const [tempSearchCriteria, setTempSearchCriteria] = useState(searchCriteria);
@@ -203,6 +204,14 @@ const AssetList = ({
       enabled: !isEmpty(assetList) && !assetListIsLoading,
     },
   });
+
+  const lastNotEmptyPage = useMemo(() => {
+    const currentPage = page;
+
+    if (currentPageAssets?.length) return currentPage;
+    if (currentPage > 1) return currentPage - 1;
+    return null;
+  }, [currentPageAssets, page]);
 
   function handleRefresh() {
     queryClient.invalidateQueries(allGetSimpleAssetListKey);
@@ -395,6 +404,13 @@ const AssetList = ({
     setPage(1);
   }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
 
+  // DELETE operations should calculate the current page the user is seeing
+  useEffect(() => {
+    if (lastNotEmptyPage) {
+      setPage(lastNotEmptyPage);
+    }
+  }, [lastNotEmptyPage]);
+
   useEffect(() => {
     setIsDrawerOpen(false);
   }, [category]);
@@ -423,19 +439,18 @@ const AssetList = ({
 
   // OnSearch: Wait for the debounced search critera and then call the onSearch function
   useEffect(() => {
-    // onSearch(searchCriteriaDebounced);
+    onSearch(searchCriteriaDebounced);
   }, [searchCriteriaDebounced]);
 
-  // SET THE DATA PASSED TO THE PAGINATED LIST COMPONENT
+  // Set data for the PaginatedList component and pagination settings
   useEffect(() => {
-    // Determine if a new item should be inserted based on the category not being in the NOT_CREATABLE_CATEGORIES list
     const shouldInsertNewItem = !NOT_CREATABLE_CATEGORIES.some((catKey) =>
       category?.key.startsWith(catKey)
     );
+    if (shouldInsertNewItem) setPageSize(11);
+    else setPageSize(12);
 
-    // If there are asset details and they are not empty, proceed to paginate and manipulate the data
     if (assetsDetails && !isEmpty(assetsDetails)) {
-      // Paginate the asset list based on the current page, page size, and include a flag for new item
       const paginated = getPageItems({
         data: assetList,
         page: page - 1,
@@ -443,19 +458,19 @@ const AssetList = ({
         includeNewItem: true,
       });
 
-      // Replace paginated items with the asset details
+      // Replace the list of asset ids for the detail of those assets
       paginated.items = assetsDetails || [];
 
-      // Iterate over each item to clean up the metadata by removing 'pathsInfo' if it exists
+      // Clean up the metadata
       forEach(paginated.items, (item) => {
         if (item.file?.metadata?.indexOf('pathsInfo')) {
-          item.file.metadata = JSON.parse(item.file.metadata); // Parse the metadata string into an object
-          delete item.file.metadata.pathsInfo; // Remove the 'pathsInfo' property
-          item.file.metadata = JSON.stringify(item.file.metadata); // Convert the metadata back into a string
+          item.file.metadata = JSON.parse(item.file.metadata);
+          delete item.file.metadata.pathsInfo;
+          item.file.metadata = JSON.stringify(item.file.metadata);
         }
       });
 
-      // Increment the page number to account for the pagination offset
+      // Account for the pagination offset
       paginated.page += 1;
 
       // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
@@ -463,19 +478,17 @@ const AssetList = ({
         paginated.items.unshift({ action: 'new' });
       }
 
-      // Update the state with the paginated data
       setPageAssetsData({ ...paginated });
-    } else if (shouldInsertNewItem) {
-      // If there are no asset details but a new item should be inserted, create a minimal structure for it
+    } else if (shouldInsertNewItem && !assetList?.length) {
+      // Minimal structure where there are no assets to show but it's a creatable category
       setPageAssetsData({
-        items: [{ action: 'new' }], // Only item is the 'new' action item
-        page: 0, // Starting at the first page
-        size: 1, // Only one item in size
-        totalCount: 1, // Total count is one
-        totalPages: 1, // Only one page in total
+        items: [{ action: 'new' }],
+        page: 0,
+        size: 1,
+        totalCount: 1,
+        totalPages: 1,
       });
     } else {
-      // If no conditions are met, set the page assets data to null
       setPageAssetsData(null);
     }
   }, [assetsDetails, assetsDetailsError, category?.key]);
