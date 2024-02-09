@@ -148,4 +148,5 @@ AssetPickerDrawer.propTypes = {
   filters: PropTypes.object,
   onlyCreateImages: PropTypes.bool,
   onlyImages: PropTypes.bool,
+  acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
 };
