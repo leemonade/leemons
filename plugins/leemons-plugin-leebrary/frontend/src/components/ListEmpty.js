@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Text, ImageLoader } from '@bubbles-ui/components';
+import { Stack, Text, ImageLoader, Box } from '@bubbles-ui/components';
 import { useLayout } from '@layout/context';
 
 const ListEmpty = ({ t, isRecentPage }) => {
@@ -14,7 +14,7 @@ const ListEmpty = ({ t, isRecentPage }) => {
       fullWidth
       fullHeight
     >
-      <Stack direction="column" style={{ maxWidth: 400, textAlign: 'center' }}>
+      <Box style={{ maxWidth: 350, textAlign: 'center' }}>
         <Text size="md" color="soft">
           {isRecentPage ? t('labels.recentListEmpty') : t('labels.listEmpty')}
         </Text>
@@ -23,7 +23,7 @@ const ListEmpty = ({ t, isRecentPage }) => {
             {t('labels.recentListEmptyDescription')}
           </Text>
         )}
-      </Stack>
+      </Box>
       {theme.usePicturesEmptyStates && (
         <ImageLoader src="/public/leebrary/empty.png" height={200} />
       )}

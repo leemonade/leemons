@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import _ from 'lodash';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTeacherClassesOfSubject from './useTeacherClassesOfSubject';
 
 function difference(...arr) {
@@ -12,6 +14,7 @@ function difference(...arr) {
 // ES: Obtiene todas las clases de una asignatura del profesor agrupadas por grupo si hay suficientes alumnos compartidos
 export default function useGroupedClasses(subjects, disableGrouping = false) {
   const classes = useTeacherClassesOfSubject(subjects);
+  const [t] = useTranslateLoader(prefixPN('common'));
 
   return useMemo(() => {
     if (!classes?.length) {
@@ -55,7 +58,10 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
         const groupNonAssignableStudents = _.uniq(group.flatMap((c) => c.nonAssignableStudents));
 
         acc.push({
-          label: group[0].class.c.groups?.abbreviation,
+          label:
+            group[0].class.c.groups?.abbreviation === '-auto-'
+              ? t('defaultGroupName')
+              : group[0].class.c.groups?.abbreviation,
           type: 'group',
           id,
           students: groupStudents,
@@ -90,5 +96,5 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
       assignableStudents: _.uniq(groups.flatMap((c) => c.assignableStudents)),
       nonAssignableStudents: studentsNotPresentInAllSubjects,
     };
-  }, [classes]);
+  }, [classes, t]);
 }

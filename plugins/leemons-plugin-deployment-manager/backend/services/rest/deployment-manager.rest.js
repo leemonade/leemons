@@ -108,6 +108,10 @@ module.exports = {
         return result;
       }
 
+      if (!config.helpdeskUrl && String(process.env.HELPDESK_URL).startsWith('http')) {
+        config.helpdeskUrl = process.env.HELPDESK_URL;
+      }
+
       return config;
     },
   },

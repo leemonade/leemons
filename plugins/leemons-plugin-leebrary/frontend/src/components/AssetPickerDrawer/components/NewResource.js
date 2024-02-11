@@ -81,7 +81,7 @@ export function NewResource({ categories: creatableCategories, acceptedFileTypes
 
       try {
         const { asset } = await newAssetRequest(
-          { ...body, file: uploadedFile },
+          { ...body, file: uploadedFile, indexable: false },
           null,
           'media-files'
         );

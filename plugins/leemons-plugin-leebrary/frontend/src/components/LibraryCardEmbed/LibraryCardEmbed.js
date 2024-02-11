@@ -11,7 +11,15 @@ import {
 } from './LibraryCardEmbed.constants';
 import { LibraryCardEmbedSkeleton } from './LibraryCardEmbdedSkeleton';
 
-const LibraryCardEmbed = ({ asset, variantIcon, actionIcon, assetsLoading }) => {
+const LibraryCardEmbed = ({
+  asset,
+  variantIcon,
+  actionIcon,
+  assetsLoading,
+  canPlay,
+  ccMode,
+  handleClickCCreator,
+}) => {
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const { title, name, updatedAt, image, cover, fileType, icon } = asset;
   const { classes } = LibraryCardEmbedStyles({}, { name: 'LibraryCardEmbed' });
@@ -37,6 +45,10 @@ const LibraryCardEmbed = ({ asset, variantIcon, actionIcon, assetsLoading }) => 
   // Lógica de iconos parte derecha
   const getIconForFileType = () => {
     const iconProps = { height: 18, width: 18 };
+
+    if (ccMode)
+      return <DownloadIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+
     switch (fileType) {
       case 'image':
         return <SearchPlusIcon {...iconProps} />;
@@ -78,7 +90,7 @@ const LibraryCardEmbed = ({ asset, variantIcon, actionIcon, assetsLoading }) => 
   }
 
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} onClick={() => ccMode && canPlay && handleClickCCreator()}>
       <Stack alignItems="center" fullWidth spacing={4}>
         <Box
           noFlex
@@ -111,21 +123,25 @@ const LibraryCardEmbed = ({ asset, variantIcon, actionIcon, assetsLoading }) => 
               </Text>
             </TextClamp>
           </Box>
-          <Box>
-            <Text>
-              {`${t('lastUpdate')}: `}
-              <LocaleDate
-                date={updatedAt}
-                options={{
-                  year: '2-digit',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                }}
-              />
-            </Text>
-          </Box>
+          {updatedAt && (
+            <Box>
+              <Text>
+                {`${t('lastUpdate')}: `}
+                {
+                  <LocaleDate
+                    date={updatedAt}
+                    options={{
+                      year: '2-digit',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }}
+                  />
+                }
+              </Text>
+            </Box>
+          )}
         </Stack>
         <Box noFlex className={classes.variantIcon}>
           {renderVariantIcon()}

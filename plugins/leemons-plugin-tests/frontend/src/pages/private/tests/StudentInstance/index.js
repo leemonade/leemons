@@ -28,6 +28,9 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import ActivityHeader from '@assignables/components/ActivityHeader';
+import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
+import { useQueryClient } from '@tanstack/react-query';
+import { allAssignationsGetKey } from '@assignables/requests/hooks/keys/assignations';
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
@@ -42,6 +45,15 @@ import { calculeInfoValues } from './helpers/calculeInfoValues';
 import { getConfigByInstance } from './helpers/getConfigByInstance';
 import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
 
+const setInstanceTimestamp = (queryClient) => async (instance, key, user) => {
+  const result = await setInstanceTimestampRequest(instance, key, user);
+
+  queryClient.invalidateQueries({
+    queryKey: allAssignationsGetKey,
+  });
+  return result;
+};
+
 function StudentInstance() {
   const locale = useLocale();
   const scrollRef = React.useRef();
@@ -55,6 +67,9 @@ function StudentInstance() {
     viewMode: false,
     modalMode: 1,
   });
+
+  const queryClient = useQueryClient();
+  const updateTimestamp = setInstanceTimestamp(queryClient);
 
   const { classes: styles } = TestStyles({}, { name: 'Tests' });
   const { classes, cx } = StudentInstanceStyles(
@@ -71,7 +86,7 @@ function StudentInstance() {
   }
 
   async function onStartQuestions() {
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'start', getUserId());
+    const { timestamps } = await updateTimestamp(params.id, 'start', getUserId());
     store.timestamps = timestamps;
     store.assignation.timestamps = timestamps;
     render();
@@ -101,7 +116,7 @@ function StudentInstance() {
       history.push(`/private/tests/result/${params.id}/${getUserId()}`);
     } else {
       // store.showFinishModal = true;
-      const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+      const { timestamps } = await updateTimestamp(params.id, 'end', getUserId());
       history.push(`/private/tests/result/${params.id}/${getUserId()}?fromTest`);
       store.timestamps = timestamps;
       render();
@@ -124,7 +139,7 @@ function StudentInstance() {
           }),
           getQuestionByIdsRequest(store.instance.metadata.questions),
           getUserQuestionResponsesRequest(params.id, getUserId()),
-          setInstanceTimestampRequest(params.id, 'open', getUserId()),
+          updateTimestamp(params.id, 'open', getUserId()),
         ]);
       if (store.assignation.finished) store.viewMode = true;
       store.questionResponses = responses;
@@ -170,7 +185,7 @@ function StudentInstance() {
 
   async function forceFinishTest() {
     store.showForceFinishModal = true;
-    const { timestamps } = await setInstanceTimestampRequest(params.id, 'end', getUserId());
+    const { timestamps } = await updateTimestamp(params.id, 'end', getUserId());
     store.timestamps = timestamps;
     render();
   }
@@ -194,62 +209,17 @@ function StudentInstance() {
     }
   }
 
-  React.useEffect(() => {
-    if (store.timeout) clearTimeout(store.timeout);
-    if (
-      !store.showForceFinishModal &&
-      !store.viewMode &&
-      store.instance &&
-      store.instance.duration &&
-      store.timestamps.start
-    ) {
-      const [value, unit] = store.instance.duration.split(' ');
-      const now = new Date();
-      const endDate = new Date(store.timestamps.start);
-      endDate.setSeconds(endDate.getSeconds() + dayjs.duration({ [unit]: value }).asSeconds());
-      const diff = endDate.getTime() - now.getTime();
-      if (diff > 0) {
-        store.timeout = setTimeout(() => {
-          forceFinishTest();
-        }, diff);
-      } else {
-        forceFinishTest();
-      }
-    }
-  }, [store.timestamps, store.instance]);
+  const { data: assignation } = useAssignations({
+    query: {
+      instance: params.id,
+      user: getUserId(),
+    },
+    fetchInstance: true,
+  });
 
   React.useEffect(() => {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
   }, [params, translations]);
-
-  const taskHeaderProps = React.useMemo(() => {
-    if (store.instance) {
-      return {
-        title: store.instance.assignable.asset.name,
-        subtitle: store.class.name,
-        icon: store.class.icon,
-        color: store.class.color,
-        image: store.instance.assignable.asset.cover
-          ? getFileUrl(
-              isString(store.instance.assignable.asset.cover)
-                ? store.instance.assignable.asset.cover
-                : store.instance.assignable.asset.cover.id
-            )
-          : null,
-        /*
-        styles: {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: store.isFirstStep && '50%',
-          borderRadius: store.isFirstStep ? '16px 16px 0 0' : 0,
-          backgroundColor: store.isFirstStep ? COLORS.uiBackground01 : COLORS.uiBackground02,
-        },
-        */
-      };
-    }
-    return {};
-  }, [store.instance, store.class, store.isFirstStep]);
 
   const verticalStepperProps = React.useMemo(() => {
     if (store.instance) {
@@ -335,10 +305,17 @@ function StudentInstance() {
     history.push(store.moduleDashboardUrl);
   };
 
-  const goToResults = (e, openInNewTab = false) => {
+  const goToResults = (e, openInNewTab = false, fromTimeout = false) => {
     if (openInNewTab)
-      window.open(`/private/tests/result/${params?.id}/${getUserId()}`, '_blank', 'noopener');
-    else history.push(`/private/tests/result/${params?.id}/${getUserId()}`);
+      window.open(
+        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? '?fromTimeout' : ''}`,
+        '_blank',
+        'noopener'
+      );
+    else
+      history.push(
+        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? '?fromTimeout' : ''}`
+      );
   };
 
   return (
@@ -347,13 +324,14 @@ function StudentInstance() {
         scrollRef={scrollRef}
         Header={
           <ActivityHeader
-            instance={store.assignation.instance}
-            assignation={store.assignation}
+            instance={assignation?.instance}
+            assignation={assignation}
             showClass
             showRole
             showEvaluationType
-            showTime
+            showCountdown
             showDeadline
+            onTimeout={() => goToResults(null, false, true)}
           />
         }
       >

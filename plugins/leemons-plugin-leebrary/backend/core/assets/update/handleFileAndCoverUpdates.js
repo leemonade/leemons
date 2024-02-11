@@ -27,26 +27,26 @@ async function handleFileAndCoverUpdates({
   const cover = assetData.cover || assetData.coverFile;
   const filesToRemove = [];
   let newFile;
-  let coverFile;
+  let newCoverFile;
 
   if (fileNeedsUpdate && !isEmpty(file)) {
     newFile = await uploadFromSource({ source: file, name: assetData.name, ctx });
 
     if (newFile?.type?.indexOf('image') === 0) {
-      coverFile = newFile;
-      filesToRemove.push(cover);
+      newCoverFile = newFile;
     }
 
     await addFiles({ fileId: newFile.id, assetId, ctx });
+    filesToRemove.push(currentAsset.file.id);
     delete updateObject.file;
   }
 
-  if (coverNeedsUpdate && !coverFile && !isEmpty(cover)) {
-    coverFile = await uploadFromSource({ source: cover, name: assetData.name, ctx });
+  if (coverNeedsUpdate && !newCoverFile && !isEmpty(cover)) {
+    newCoverFile = await uploadFromSource({ source: cover, name: assetData.name, ctx });
   }
 
-  if (coverFile?.id) {
-    updateObject.cover = coverFile.id;
+  if (newCoverFile?.id) {
+    updateObject.cover = newCoverFile.id;
   }
 
   // ES: En caso de que no hayan cambio en los archivos, los dejamos establecidos con su valor actual
@@ -55,11 +55,11 @@ async function handleFileAndCoverUpdates({
     newFile = currentAsset.file;
   }
 
-  if (!coverFile && !coverNeedsUpdate) {
-    coverFile = currentAsset.cover;
+  if (!newCoverFile && !coverNeedsUpdate) {
+    newCoverFile = currentAsset.cover;
   }
 
-  return { newFile, coverFile, toUpdate: updateObject, filesToRemove };
+  return { newFile, coverFile: newCoverFile, toUpdate: updateObject, filesToRemove };
 }
 
 module.exports = { handleFileAndCoverUpdates };

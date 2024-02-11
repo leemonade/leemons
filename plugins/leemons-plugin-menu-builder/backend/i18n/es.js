@@ -4,6 +4,7 @@ module.exports = {
     accountInfo: 'Información de la cuenta',
     switchProfile: 'Cambiar perfil',
     logout: 'Cerrar sesión',
+    helpdesk: 'Centro de ayuda',
     changeLanguage: 'Cambiar idioma',
     emailPreference: 'Preferencias de correo',
   },

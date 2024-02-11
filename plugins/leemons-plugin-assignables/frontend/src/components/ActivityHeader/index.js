@@ -4,6 +4,7 @@ import { Box, ImageLoader, TotalLayoutHeader, Stack } from '@bubbles-ui/componen
 import { FormProvider, useForm } from 'react-hook-form';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import { noop } from 'lodash';
 import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
 import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
 import DateComponent from './components/Date/Date';
@@ -18,6 +19,7 @@ import {
 } from './ActivityHeader.constants';
 
 export default function ActivityHeader({
+  assignation,
   instance,
   action,
   showClass,
@@ -27,9 +29,10 @@ export default function ActivityHeader({
   showDeadline,
   showDateTime,
   showTime,
+  showCountdown,
   showCloseButtons,
   allowEditDeadline,
-  onTimeout: noop,
+  onTimeout = noop,
 }) {
   const form = useForm();
   /*
@@ -115,7 +118,13 @@ export default function ActivityHeader({
           <Box className={classes.activityMetadata}>
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
             <CalificationTypeDisplay instance={instance} hidden={!showEvaluationType} />
-            <Timer instance={instance} hidden={!showTime} />
+            <Timer
+              assignation={assignation}
+              instance={instance}
+              hidden={!showTime && !showCountdown}
+              showCountdown={showCountdown}
+              onTimeout={onTimeout}
+            />
             <DateComponent
               instance={instance}
               showDeadline={showDeadline}

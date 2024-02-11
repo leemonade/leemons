@@ -11,12 +11,14 @@ import {
   TextClamp,
   CardEmptyCover,
 } from '@bubbles-ui/components';
-import { AssetPlayerStyles } from './AssetPlayer.styles';
-import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
-import { ProgressBar } from './components/ProgressBar';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '../../helpers/prefixPN';
 import { AudioCardPlayer } from './components/AudioCardPlayer';
 import { PDFPlayer } from './components/PDFPlayer';
 import { ButtonIcon } from './components/ButtonIcon';
+import { ProgressBar } from './components/ProgressBar';
+import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
+import { AssetPlayerStyles } from './AssetPlayer.styles';
 
 const format = (seconds) => {
   const date = new Date(seconds * 1000);
@@ -55,12 +57,12 @@ const AssetPlayer = ({
   canPlay,
   hideURLInfo,
   useAudioCard,
-  pdfLabels,
   useSchema,
   viewPDF,
   compact,
   useAspectRatio,
   showPlayButton,
+  ccMode,
   ...props
 }) => {
   const {
@@ -91,7 +93,14 @@ const AssetPlayer = ({
   const [seekValue, setSeekValue] = useState(0);
   const [isPlaying, setIsPlaying] = useState(playing);
   const [fullScreenMode, setFullScreenMode] = useState(fullScreen);
+  const [openImageZoom, setOpenImageZoom] = useState(false);
   const [mediaVolume, setMediaVolume] = useState(volume || 1);
+  const [t] = useTranslateLoader(prefixPN('pdfPlayer'));
+  const pdfLabels = {
+    pageLabel: t('pageLabel'),
+    paginatorLabel: t('paginatorLabel'),
+    schemaLabel: t('schemaLabel'),
+  };
 
   const media = useMemo(() => {
     let result = {
@@ -137,6 +146,8 @@ const AssetPlayer = ({
 
     return mHeight / mWidth;
   }, [metadata, fileType]);
+
+  const fullScreenRatio = window.innerHeight / window.innerWidth;
 
   // ··································································
   // METHODS
@@ -186,7 +197,7 @@ const AssetPlayer = ({
   };
 
   const handleInitPlay = () => {
-    if (!canPlay) return;
+    if (!canPlay && !ccMode) return;
     setShowPlayer(true);
     setIsPlaying(true);
   };
@@ -223,6 +234,7 @@ const AssetPlayer = ({
       const isFullScreen = !!document.fullscreenElement;
       setFullScreenMode(isFullScreen);
     });
+
     return () => {
       if (rootRef.current) rootRef.current.removeEventListener('fullscreenchange');
     };
@@ -250,12 +262,13 @@ const AssetPlayer = ({
       styles,
       viewPDF,
       canPlay,
-      mediaRatio,
+      mediaRatio: fullScreenMode ? fullScreenRatio : mediaRatio,
       showPlayer,
       useAudioCard,
       fullScreenMode,
       useAspectRatio,
       framed,
+      ccMode,
     },
     { name: 'AssetPlayer' }
   );
@@ -343,16 +356,18 @@ const AssetPlayer = ({
                 />
               )}
               {(!showPlayer || media.isAudio) && (
-                <Box className={classes.coverWrapper} onClick={handleInitPlay}>
+                <Box
+                  className={classes.coverWrapper}
+                  onClick={() => (!ccMode || canPlay) && handleInitPlay()}
+                >
                   {showPlayButton && (
-                    <Box
-                      className={classes.buttonIcon}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                      }}
-                    >
-                      <ButtonIcon fileType={'video'} />
+                    <Box className={classes.buttonIcon}>
+                      <ButtonIcon
+                        fileType={'video'}
+                        onClick={(e) => {
+                          if (ccMode && !canPlay) handleInitPlay();
+                        }}
+                      />
                     </Box>
                   )}
                   {cover ? (
@@ -361,7 +376,7 @@ const AssetPlayer = ({
                     <CardEmptyCover
                       fileType={asset?.fileType}
                       icon={asset?.fileIcon}
-                      height={199}
+                      height={rootRef?.current?.clientHeight}
                     />
                   )}
                 </Box>
@@ -374,10 +389,19 @@ const AssetPlayer = ({
               <Box className={classes.coverWrapper}>
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
-                    <ButtonIcon fileType={'image'} />
+                    <ButtonIcon
+                      fileType={'image'}
+                      onClick={() => {
+                        if (ccMode && !canPlay) setOpenImageZoom(true);
+                      }}
+                    />
                   </Box>
                 )}
-                <ModalZoom canPlay={canPlay}>
+                <ModalZoom
+                  canPlay={!ccMode || canPlay}
+                  opened={openImageZoom}
+                  onClose={() => setOpenImageZoom(false)}
+                >
                   <ImageLoader height="100%" src={cover} alt={name} />
                 </ModalZoom>
               </Box>
@@ -389,7 +413,11 @@ const AssetPlayer = ({
                     <ButtonIcon fileType={'image'} />
                   </Box>
                 )}
-                <ModalZoom canPlay={canPlay}>
+                <ModalZoom
+                  canPlay={!ccMode || canPlay}
+                  opened={openImageZoom}
+                  onClose={() => setOpenImageZoom(false)}
+                >
                   <ImageLoader height="100%" src={cover} alt={name} />
                 </ModalZoom>
               </Box>
@@ -437,7 +465,9 @@ const AssetPlayer = ({
             )}
             {media.isPDF ? (
               viewPDF ? (
-                <PDFPlayer pdf={url} labels={pdfLabels} useSchema={useSchema} />
+                <Box className={classes.pdfContainer}>
+                  <PDFPlayer pdf={url} labels={pdfLabels} useSchema={useSchema} />
+                </Box>
               ) : (
                 <Box className={classes.pdfCover}>
                   <Box className={classes.buttonIcon} onClick={openPdfHandler}>

@@ -6,7 +6,7 @@ Filters
   Opened (open date) ✅
   Closed (close date) ✅
   Archived (archive date) ✅
-  Visibility (Visibility date) ✅
+  Visibility (visualization date) ✅
   Subjects (Classes object in assignations) ✅
   Classes (Classes object in assignations) ✅
   Graded (Grades object in assignations)
@@ -18,7 +18,7 @@ Estudiante Sort
 2º Corregidas pero no vistas su corrección ❌
 3º Terminan pronto (Siempre y cuando no hayan sido entregadas) [En el NYA nunca se ven las entregadas] ✅
 4º Fecha start ✅
-5º Fecha visibility (Si no han sido ya abiertas) ✅
+5º Fecha visualization (Si no han sido ya abiertas) ✅
 
 Teacher Sort
 // 1º Corregidas
@@ -26,7 +26,7 @@ Teacher Sort
 2º Fecha Cierre ✅
 2º Fecha Deadline ✅
 3º Fecha start ✅
-4º Fecha visibility ✅
+4º Fecha visualization ✅
 
  */
 
@@ -52,10 +52,8 @@ async function searchInstances({ query, ctx }) {
 
   const { isTeacher } = activitiesByProfile;
 
-  let {
-    assignableInstances: assignableInstancesFound,
-    assignations: assignationsFound,
-  } = activitiesByProfile;
+  let { assignableInstances: assignableInstancesFound, assignations: assignationsFound } =
+    activitiesByProfile;
 
   if (!isTeacher) {
     if (!assignationsFound?.length) {
@@ -154,39 +152,30 @@ async function searchInstances({ query, ctx }) {
       {}
     );
     if (isTeacher) {
-      const instancesGroupedByDependencies = instances.reduce(
-        (groups, instance) => {
-          if (
-            !instance.relatedAssignableInstances?.before?.length ||
-            !instance.relatedAssignableInstances?.before?.some(
-              (before) => instancesObject[before.id]
-            )
-          ) {
-            return [
-              ...groups,
-              getInstanceGroup(
-                instancesObject[instance.id],
-                instancesObject
-              ).reverse(),
-            ];
-          }
+      const instancesGroupedByDependencies = instances.reduce((groups, instance) => {
+        if (
+          !instance.relatedAssignableInstances?.before?.length ||
+          !instance.relatedAssignableInstances?.before?.some((before) => instancesObject[before.id])
+        ) {
+          return [
+            ...groups,
+            getInstanceGroup(instancesObject[instance.id], instancesObject).reverse(),
+          ];
+        }
 
-          return groups;
-        },
-        []
-      );
+        return groups;
+      }, []);
 
       if (!query.sortBySeverity) {
         // EN: Sort by activity dependency and assignation dates
         // ES: Filtrar por dependencia de actividad y por fechas de asignación
 
-        const sortedInstancesGroupedByDependencies =
-          instancesGroupedByDependencies.sort((a, b) => {
-            const aMinCreationDate = a[a.length - 1].created_at;
-            const bMinCreationDate = b[b.length - 1].created_at;
+        const sortedInstancesGroupedByDependencies = instancesGroupedByDependencies.sort((a, b) => {
+          const aMinCreationDate = a[a.length - 1].created_at;
+          const bMinCreationDate = b[b.length - 1].created_at;
 
-            return bMinCreationDate - aMinCreationDate;
-          });
+          return bMinCreationDate - aMinCreationDate;
+        });
 
         const sortedInstances = sortedInstancesGroupedByDependencies.flat();
 
@@ -215,7 +204,7 @@ async function searchInstances({ query, ctx }) {
                 'closed',
                 'deadline',
                 'start',
-                'visibility',
+                'visualization',
               ]),
               'id'
             ),
@@ -223,13 +212,7 @@ async function searchInstances({ query, ctx }) {
           );
         }
         return map(
-          sortByDates(instancesToSort, [
-            'close',
-            'closed',
-            'deadline',
-            'start',
-            'visibility',
-          ]),
+          sortByDates(instancesToSort, ['close', 'closed', 'deadline', 'start', 'visualization']),
           'id'
         );
       }
@@ -262,59 +245,50 @@ async function searchInstances({ query, ctx }) {
           {}
         );
 
-        let assignationsGroupedByDependencies = instances.reduce(
-          (groups, instance) => {
-            // EN: If its the first on the dependency tree, or the previous ones does not exists in the conext
-            // ES: Si es la primera en el árbol de dependencias, o las anteriores no existen en el contexto
-            if (
-              !instance.relatedAssignableInstances?.before?.length ||
-              !instance.relatedAssignableInstances?.before?.some(
-                (before) => instancesObject[before.id]
-              )
-            ) {
-              return [
-                ...groups,
-                getInstanceGroup(instancesObject[instance.id], instancesObject),
-              ];
+        let assignationsGroupedByDependencies = instances.reduce((groups, instance) => {
+          // EN: If its the first on the dependency tree, or the previous ones does not exists in the conext
+          // ES: Si es la primera en el árbol de dependencias, o las anteriores no existen en el contexto
+          if (
+            !instance.relatedAssignableInstances?.before?.length ||
+            !instance.relatedAssignableInstances?.before?.some(
+              (before) => instancesObject[before.id]
+            )
+          ) {
+            return [...groups, getInstanceGroup(instancesObject[instance.id], instancesObject)];
+          }
+
+          return groups;
+        }, []);
+
+        assignationsGroupedByDependencies = assignationsGroupedByDependencies.map((group) => ({
+          group,
+          ...group.reduce((datesObj, instance) => {
+            const newDates = {};
+
+            if (!instance.dates) {
+              return datesObj;
             }
 
-            return groups;
-          },
-          []
-        );
-
-        assignationsGroupedByDependencies =
-          assignationsGroupedByDependencies.map((group) => ({
-            group,
-            ...group.reduce((datesObj, instance) => {
-              const newDates = {};
-
-              if (!instance.dates) {
-                return datesObj;
+            Object.entries(instance.dates).forEach(([name, date]) => {
+              if (!datesObj[name] || datesObj[name] > date) {
+                newDates[name] = date;
               }
+            });
 
-              Object.entries(instance.dates).forEach(([name, date]) => {
-                if (!datesObj[name] || datesObj[name] > date) {
-                  newDates[name] = date;
-                }
-              });
+            return {
+              ...datesObj,
+              ...newDates,
+            };
+          }, {}),
+        }));
 
-              return {
-                ...datesObj,
-                ...newDates,
-              };
-            }, {}),
-          }));
+        const groupsSortedByDates = sortByDates(assignationsGroupedByDependencies, [
+          'deadline',
+          'start',
+          'visualization',
+        ]);
 
-        const groupsSortedByDates = sortByDates(
-          assignationsGroupedByDependencies,
-          ['deadline', 'start', 'visualization']
-        );
-
-        const sortedInstances = map(
-          map(groupsSortedByDates, 'group').flat(),
-          'id'
-        );
+        const sortedInstances = map(map(groupsSortedByDates, 'group').flat(), 'id');
 
         if (query?.limit) {
           return take(sortedInstances, query.limit);
@@ -356,8 +330,7 @@ async function searchInstances({ query, ctx }) {
             }
 
             return instance?.relatedAssignableInstances.before.every(
-              (relation) =>
-                assignationDates[assignationsByInstance[relation.id]?.id]?.end
+              (relation) => assignationDates[assignationsByInstance[relation.id]?.id]?.end
             );
           })
           .map((instance) => ({
@@ -375,13 +348,7 @@ async function searchInstances({ query, ctx }) {
           });
 
         if (newAssignations.length > 0) {
-          sorted.push(
-            ...sortByDates(newAssignations, [
-              'deadline',
-              'start',
-              'visualization',
-            ])
-          );
+          sorted.push(...sortByDates(newAssignations, ['deadline', 'start', 'visualization']));
         }
 
         // EN: Sort next the non finished but opened activities
@@ -403,23 +370,13 @@ async function searchInstances({ query, ctx }) {
 
         if (nonFinishedAssignations.length > 0) {
           sorted.push(
-            ...sortByDates(nonFinishedAssignations, [
-              'deadline',
-              'start',
-              'visualization',
-            ])
+            ...sortByDates(nonFinishedAssignations, ['deadline', 'start', 'visualization'])
           );
         }
 
         // EN: Sort non-new activities
         // ES: Ordena las actividades no nuevas
-        sorted.push(
-          ...sortByDates(assignationsLeft, [
-            'deadline',
-            'start',
-            'visualization',
-          ])
-        );
+        sorted.push(...sortByDates(assignationsLeft, ['deadline', 'start', 'visualization']));
 
         if (query.limit) {
           return take(map(sorted, 'instance'), query.limit);

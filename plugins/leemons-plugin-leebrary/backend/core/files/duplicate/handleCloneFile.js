@@ -20,7 +20,7 @@ async function handleCloneFile({ fromFile, providerName, ctx }) {
     delete toCreate.id;
     delete toCreate._id;
 
-    newFile = await ctx.tx.db.Files.create(toCreate);
+    newFile = await ctx.tx.db.Files.create(toCreate).then((doc) => doc.toObject());
     urlData.provider = providerName;
     urlData.uri = await ctx.tx.call(`${providerName}.files.clone`, {
       itemFrom: fromFile,

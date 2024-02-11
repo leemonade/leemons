@@ -13,6 +13,7 @@ import { useSubjectDetails } from '@academic-portfolio/hooks';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import ActivityHeader from '@assignables/components/ActivityHeader';
+import { useHistory } from 'react-router-dom';
 import StepContainer from './components/StepContainer/StepContainer';
 
 function useTaskDetailLocalizations() {
@@ -122,6 +123,7 @@ function useTaskPreviewData({ id, localizations }) {
 export default function TaskDetail({ id, student, preview }) {
   const scrollRef = useRef();
   const localizations = useTaskDetailLocalizations();
+  const history = useHistory();
 
   const useData = useMemo(() => (preview ? useTaskPreviewData : useTaskData), [preview]);
 
@@ -139,7 +141,20 @@ export default function TaskDetail({ id, student, preview }) {
     <TotalLayoutContainer
       scrollRef={scrollRef}
       Header={
-        <ActivityHeader instance={instance} showClass showDeadline showEvaluationType showRole />
+        <ActivityHeader
+          assignation={assignation}
+          instance={instance}
+          showClass
+          showDeadline
+          showEvaluationType
+          showRole
+          showCountdown
+          onTimeout={() =>
+            history.push(
+              `/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution&fromTimeout`
+            )
+          }
+        />
       }
     >
       <StepContainer
