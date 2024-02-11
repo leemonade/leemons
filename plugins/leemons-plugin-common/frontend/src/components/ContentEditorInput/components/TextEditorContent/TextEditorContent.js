@@ -76,7 +76,6 @@ const TextEditorContent = ({
         {toolbars.align && <TextAlignTool labels={editorLabels.textAlignTool} />}
         {toolbars.list && <ListIndentTool labels={editorLabels.listIndentTool} />}
         {toolbars.formulation && <ScriptsTool labels={editorLabels.scriptsTool} />}
-        {<CodeTool labels={editorLabels.codeTool} />}
 
         <ButtonGroup>
           {toolbars.link && <LinkTool {...editorLabels.linkTool} />}

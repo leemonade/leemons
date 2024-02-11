@@ -1,73 +1,120 @@
 /* eslint-disable import/prefer-default-export */
 import {
   mergeAttributes,
+  Mark,
+  InputRule,
   Node,
   ReactNodeViewRenderer,
   MathBlockComponent,
 } from '@bubbles-ui/editors';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { isEmpty, isString, keys } from 'lodash';
-import { MathPlayer } from './MathPlayer';
 
-const ASSET_KEYS = keys({
-  processed: true,
-  fileExtension: '',
-  fileId: '',
-  coverId: '',
-  mediaType: '',
-});
+export const MathExtension = Mark.create({
+  name: 'math',
 
-function prepareURL(asset) {
-  const { fileType, fileExtension } = asset;
-  if (fileType === 'bookmark') {
-    return asset.url;
-  }
-  let assetUrl = '';
-  if (['document', 'file'].includes(fileType) && isString(fileExtension)) {
-    assetUrl = getFileUrl(asset.fileId);
-  }
-  return assetUrl;
-}
-
-function prepareCoverURL(asset) {
-  return getFileUrl(asset.coverId || asset.fileId);
-}
-
-export const MathExtension = Node.create({
-  name: 'math', // unique name for the Node
-  group: 'inline', // belongs to the 'block' group of extensions
-  inline: true,
-  content: 'text*',
-  exitable: true,
-  selectable: true, // so we can select the Card
-  draggable: true, // so we can drag the Card
-  atom: true, // is a single unit
+  addOptions() {
+    return {
+      HTMLAttributes: {},
+    };
+  },
 
   parseHTML() {
     return [
       {
-        tag: 'math',
+        tag: 'span',
+        getAttrs: (element) => {
+          // Get a specific attribute
+          element.getAttribute('data-latex');
+        },
       },
     ];
   },
-  renderHTML({ HTMLAttributes }) {
-    return ['math', mergeAttributes(HTMLAttributes), 0];
+  addAttributes() {
+    return {
+      latex: {
+        default: '',
+        parseHTML: (element) => element.getAttribute('data-latex'),
+        renderHTML: (attributes) => ({
+          'data-latex': attributes.latex,
+        }),
+      },
+      math: {
+        default: 'true',
+        parseHTML: (element) => element.getAttribute('data-math'),
+        renderHTML: (attributes) => ({
+          'data-math': attributes.math,
+        }),
+      },
+      view: {
+        default: 'latex',
+        parseHTML: (element) => element.getAttribute('data-view'),
+        renderHTML: (attributes) => ({
+          'data-view': attributes.view,
+        }),
+      },
+    };
+  },
+  onUpdate: ({ editor }) => {
+    const { state } = editor;
+    const { selection, doc } = state;
+    console.log('🚀 ~ doc:', doc);
+    console.log('🚀 ~ selection:', selection);
+    const from = selection.$from.pos;
+    const to = selection.$to.pos;
+    console.log('🚀 ~ rangeHasMark:', doc.rangeHasMark(from, to, doc.type.schema.marks.math));
+    const spanNode = doc.nodesBetween(from, to, (node) => {
+      console.log('🚀 ~ spanNode ~ node:', node);
+      console.log('🚀 ~ spanNode ~ node.type.name:', node.type.name);
+      if (node.type.name === 'paragraph') {
+        const parent = node.parent;
+        console.log('🚀 ~ spanNode ~ parent:', parent);
+        if (parent && parent.type.name === 'math') {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    if (spanNode && spanNode.length > 0) {
+      const latexContent = spanNode[0].textContent;
+      editor.commands.updateAttributes('math', { latex: latexContent });
+    }
+  },
+
+  renderHTML({ node, HTMLAttributes }) {
+    let latex = 'x';
+    if (node?.attrs?.latex && typeof node?.attrs?.latex === 'string') {
+      latex = node.attrs.latex;
+    }
+    return [
+      'span',
+      mergeAttributes(HTMLAttributes, {
+        'data-type': this.name,
+      }),
+      latex,
+    ];
   },
 
   addCommands() {
     return {
       setMath:
-        (attributes) =>
+        () =>
         ({ commands }) =>
-          commands.insertContent([{ type: this.name, attrs: attributes }]),
+          commands.setMark(this.name),
+      toggleMath:
+        () =>
+        ({ commands }) =>
+          commands.toggleMark(this.name),
       unsetMath:
         () =>
         ({ commands }) =>
-          commands.deleteSelection(),
+          commands.unsetMark(this.name),
     };
   },
 
-  addNodeView() {
-    return ReactNodeViewRenderer(MathBlockComponent);
+  addKeyboardShortcuts() {
+    return {
+      'Mod-b': () => this.editor.commands.toggleBold(),
+      'Mod-B': () => this.editor.commands.toggleBold(),
+    };
   },
 });
