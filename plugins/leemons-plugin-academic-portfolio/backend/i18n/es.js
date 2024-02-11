@@ -563,4 +563,8 @@ module.exports = {
     edit: 'Editar asignatura',
     save: 'Guardar asignatura',
   },
+
+  common: {
+    defaultGroupName: 'Grupo por defecto',
+  },
 };

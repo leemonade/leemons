@@ -4,28 +4,24 @@ import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { List } from './components/List';
 
-export const useAssetListStyles = createStyles((theme) => {
-  const globalTheme = theme.other.global;
-
-  return {
-    root: {
-      display: 'flex',
-      flex: 1,
-      flexDirection: 'column',
-      // gap: globalTheme.spacing.gap.xlg,
-      height: '100%',
-      width: '100%',
-      zIndex: 0,
-    },
-    list: {
-      zIndex: 0,
-      display: 'flex',
-      flex: 1,
-      height: '100%',
-      width: '100%',
-    },
-  };
-});
+export const useAssetListStyles = createStyles(() => ({
+  root: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    // gap: globalTheme.spacing.gap.xlg,
+    height: '100%',
+    width: '100%',
+    zIndex: 0,
+  },
+  list: {
+    zIndex: 0,
+    display: 'flex',
+    flex: 1,
+    height: '100%',
+    width: '100%',
+  },
+}));
 
 export function AssetList({ variant, localizations, categories, filters, onSelect }) {
   const { classes } = useAssetListStyles({}, { name: 'AssetList' });

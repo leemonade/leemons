@@ -17,6 +17,10 @@ import { VIEWS } from './Library.constants';
 const AssetPage = loadable(() => import('../assets/AssetPage'));
 const ListAssetPage = loadable(() => import('../assets/ListAssetPage'));
 
+const CATEGORY_LEEBRARY_SUBJECT = 'leebrary-subject';
+const CATEGORY_LEEBRARY_SHARED = 'leebrary-shared';
+const CATEGORY_LEEBRARY_RECENT = 'leebrary-recent';
+
 function cleanPath(path) {
   return path.replace('//', '/');
 }
@@ -193,7 +197,7 @@ const LibraryPage = () => {
   const history = useHistory();
 
   function getSelectedCategory() {
-    if (window.location.pathname.includes('leebrary-subject')) {
+    if (window.location.pathname.includes(CATEGORY_LEEBRARY_SUBJECT)) {
       return window.location.pathname
         .replace('/private/leebrary/leebrary-subject/', '')
         .replace('/list/', '');
@@ -217,7 +221,7 @@ const LibraryPage = () => {
   const selectCategory = useCallback(
     (key) => {
       if (
-        key === 'leebrary-subject' &&
+        key === CATEGORY_LEEBRARY_SUBJECT &&
         category?.key !== `leebrary-subject:${getSelectedCategory()}`
       ) {
         setCategory({
@@ -226,10 +230,10 @@ const LibraryPage = () => {
         });
       } else if (key === 'pins' && category?.key !== 'pins') {
         setCategory({ key: 'pins', id: null });
-      } else if (key === 'leebrary-shared' && category?.key !== 'leebrary-shared') {
-        setCategory({ key: 'leebrary-shared', id: null });
-      } else if (key === 'leebrary-recent' && category?.key !== 'leebrary-recent') {
-        setCategory({ key: 'leebrary-recent', id: null });
+      } else if (key === CATEGORY_LEEBRARY_SHARED && category?.key !== CATEGORY_LEEBRARY_SHARED) {
+        setCategory({ key: CATEGORY_LEEBRARY_SHARED, id: null });
+      } else if (key === CATEGORY_LEEBRARY_RECENT && category?.key !== CATEGORY_LEEBRARY_RECENT) {
+        setCategory({ key: CATEGORY_LEEBRARY_RECENT, id: null });
       } else {
         const item = find(categories, { key });
         if (!isEmpty(item) && item.key !== category?.key) {

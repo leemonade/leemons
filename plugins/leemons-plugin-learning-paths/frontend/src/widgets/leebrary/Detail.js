@@ -13,12 +13,12 @@ import { prefixPN } from '@learning-paths/helpers';
 import { AssetMetadataModule } from '@learning-paths/components/AssetMetadataModule';
 import { useListCardLocalizations } from './ListCard';
 
-function Details({ asset, onRefresh, onShare, ...props }) {
+function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
   const { id, published } = asset?.providerData ?? {};
-  const name = asset?.name;
-  const role = asset?.role;
+  // const name = asset?.name;
+  // const role = asset?.role;
 
-  const isOwner = role === 'owner';
+  // const isOwner = role === 'owner';
 
   const localizations = useListCardLocalizations();
   const [t] = useTranslateLoader(prefixPN('libraryCard.menuItems'));
@@ -47,8 +47,16 @@ function Details({ asset, onRefresh, onShare, ...props }) {
       toolbarItems.duplicate = t('duplicate');
     }
 
-    if (isOwner) {
-      toolbarItems.share = t('share');
+    // if (isOwner) {
+    //   toolbarItems.share = t('share');
+    // }
+    if (asset.pinneable) {
+      if (asset.pinned === false) {
+        toolbarItems.pin = t('pin');
+      }
+      if (asset.pinned === true) {
+        toolbarItems.unpin = t('unpin');
+      }
     }
   }
 
@@ -61,6 +69,14 @@ function Details({ asset, onRefresh, onShare, ...props }) {
 
   const handleAssign = () => {
     history.push(`/private/learning-paths/modules/${id}/assign`);
+  };
+
+  const handleOnPin = () => {
+    onPin(asset);
+  };
+
+  const handleOnUnpin = () => {
+    onUnpin(asset);
   };
 
   const handleDuplicate = () => {
@@ -124,6 +140,8 @@ function Details({ asset, onRefresh, onShare, ...props }) {
       onDuplicate={handleDuplicate}
       onAssign={handleAssign}
       onShare={onShare}
+      onPin={handleOnPin}
+      onUnpin={handleOnUnpin}
     />
   );
 }
@@ -131,6 +149,9 @@ function Details({ asset, onRefresh, onShare, ...props }) {
 Details.propTypes = {
   asset: PropTypes.object,
   onRefresh: PropTypes.func,
+  onShare: PropTypes.func,
+  onPin: PropTypes.func,
+  onUnpin: PropTypes.func,
 };
 
 export default Details;

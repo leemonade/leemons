@@ -13,7 +13,9 @@ import { DocumentIcon } from '@content-creator/components';
 import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { useIsStudent } from '@academic-portfolio/hooks';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -25,6 +27,7 @@ const DocumentCardStyles = createStyles((theme, { selected }) => ({
 }));
 
 const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
+  const isStudent = useIsStudent();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
   const { classes } = DocumentCardStyles({ selected });
   const {
@@ -43,7 +46,18 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       return items;
     }
 
-    if (asset.providerData?.published) {
+    // if (asset.shareable) {
+    //   items.push({
+    //     icon: <ShareIcon />,
+    //     children: t('share'),
+    //     onClick: (e) => {
+    //       e.stopPropagation();
+    //       onShare(asset);
+    //     },
+    //   });
+    // }
+
+    if (asset.providerData?.published && !isStudent) {
       items.push({
         icon: <AssignIcon />,
         children: t('assign'),
@@ -130,6 +144,7 @@ DocumentListCard.propTypes = {
   variant: PropTypes.string,
   selected: PropTypes.bool,
   onRefresh: PropTypes.func,
+  // onShare: PropTypes.func,
 };
 
 export default DocumentListCard;
