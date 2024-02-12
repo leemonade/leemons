@@ -362,6 +362,7 @@ module.exports = {
     duplicate: 'Duplicate',
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
+    share: 'Share',
   },
   variant: 'Task',
   expressVariant: 'Express Task',

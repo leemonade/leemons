@@ -255,6 +255,7 @@ module.exports = {
     no: 'No',
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
+    share: 'Compartir',
   },
   instructions: {
     instructions: 'Instrucciones',

@@ -221,35 +221,6 @@ function StudentInstance() {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
   }, [params, translations]);
 
-  const taskHeaderProps = React.useMemo(() => {
-    if (store.instance) {
-      return {
-        title: store.instance.assignable.asset.name,
-        subtitle: store.class.name,
-        icon: store.class.icon,
-        color: store.class.color,
-        image: store.instance.assignable.asset.cover
-          ? getFileUrl(
-              isString(store.instance.assignable.asset.cover)
-                ? store.instance.assignable.asset.cover
-                : store.instance.assignable.asset.cover.id
-            )
-          : null,
-        /*
-        styles: {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: store.isFirstStep && '50%',
-          borderRadius: store.isFirstStep ? '16px 16px 0 0' : 0,
-          backgroundColor: store.isFirstStep ? COLORS.uiBackground01 : COLORS.uiBackground02,
-        },
-        */
-      };
-    }
-    return {};
-  }, [store.instance, store.class, store.isFirstStep]);
-
   const verticalStepperProps = React.useMemo(() => {
     if (store.instance) {
       const commonProps = {

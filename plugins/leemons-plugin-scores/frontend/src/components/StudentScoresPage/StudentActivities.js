@@ -183,6 +183,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     enabled: assignationsData?.length > 0,
   });
   const useLetterScore = useMemo(() => evaluationSystem?.type !== 'numeric', [evaluationSystem]);
+
   const { data: scores, isLoading: scoresIsLoading } = useScores({
     students: [user],
     classes: map(klasses, 'id'),
@@ -194,7 +195,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (!evaluationSystem) return null;
     if (!useLetterScore) return null;
 
-    return getNearestScale({ grade: score, evaluationSystem });
+    return getNearestScale({ grade: score, evaluationSystem }).letter;
   };
 
   const getAverageScore = (klass, classActivities) => {
@@ -293,6 +294,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
         filteredClasses.map((klass) => {
           const classActivities = getClassActivities(filteredActivities, klass);
           const averageScore = getAverageScore(klass, classActivities);
+
           return (
             <ScoreFronstage
               key={klass.id}

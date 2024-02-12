@@ -7,7 +7,7 @@ module.exports = function installDeps(dir) {
     if (stderr) {
       stderr.on('data', (e) => {
         const message = e.toString();
-        if (!message.startsWith('warning')) {
+        if (!message.startsWith('warning') && !message.includes('DeprecationWarning')) {
           reject(new Error(message));
         }
       });

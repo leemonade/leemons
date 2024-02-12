@@ -322,7 +322,7 @@ module.exports = {
       unpin: 'Quitar de favorito',
       toggle: 'Cerrar',
       open: 'Abrir',
-      covertToTask: 'Convertir a tarea',
+      covertToTask: 'Asignar',
     },
   },
   pickerDrawer: {
@@ -373,5 +373,10 @@ module.exports = {
     format: 'Formato',
     duration: 'Duración',
     lastUpdate: 'Última actualización',
+  },
+  pdfPlayer: {
+    pageLabel: 'Página',
+    paginatorLabel: '/',
+    schemaLabel: 'Esquema',
   },
 };

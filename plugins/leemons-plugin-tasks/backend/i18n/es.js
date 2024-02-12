@@ -353,6 +353,7 @@ module.exports = {
     duplicate: 'Duplicar',
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
+    share: 'Compartir',
   },
   variant: 'Tarea',
   expressVariant: 'Tarea express',

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { isFunction, groupBy, isEmpty, cloneDeep } from 'lodash';
+import { groupBy, isEmpty, cloneDeep, noop, capitalize } from 'lodash';
 import {
   Box,
   Button,
@@ -27,10 +27,10 @@ const LibraryNavbar = ({
   subjects,
   showSharedWithMe,
   onNavShared,
-  onNav,
+  onNav = noop,
   onNavSubject,
-  onFile,
-  onNew,
+  onFile = noop,
+  onNew = noop,
   useNewCreateButton = true,
   loading,
   isStudent,
@@ -62,7 +62,7 @@ const LibraryNavbar = ({
   }, [subjects]);
 
   const onFileHandler = (e) => {
-    isFunction(onFile) && onFile(e);
+    onFile(e);
     setShowUpload(false);
     setTimeout(() => {
       setShowUpload(true);
@@ -71,7 +71,7 @@ const LibraryNavbar = ({
   };
 
   const onNewHandler = (category) => {
-    isFunction(onNew) && onNew(category);
+    onNew(category);
     setShowUpload(false);
     setTimeout(() => {
       setShowUpload(true);
@@ -80,7 +80,7 @@ const LibraryNavbar = ({
   };
 
   const onNavHandler = (category) => {
-    isFunction(onNav) && onNav(category);
+    onNav(category);
   };
 
   // This is a temporary fix, categories should bring a property to know if it is a content asset or an activity asset from backend.
@@ -173,7 +173,7 @@ const LibraryNavbar = ({
           .filter((item) => item.creatable === true)
           .map((category) => ({
             icon: category.icon,
-            label: category.name,
+            label: capitalize(category.singularName ?? category.name),
             onClick: () => {
               callback(category);
             },

@@ -6,7 +6,7 @@ import { ControlsPlayIcon } from '@bubbles-ui/icons/solid';
 import { ButtonIconStyles } from './ButtonIcon.styles';
 import { BUTTONICON_DEFAULT_PROPS, BUTTONICON_PROP_TYPES } from './ButtonIcon.constants';
 
-const ButtonIcon = ({ fileType }) => {
+const ButtonIcon = ({ fileType, onClick }) => {
   const { classes } = ButtonIconStyles({});
   const fileTypeIcon = {
     image: (
@@ -28,6 +28,7 @@ const ButtonIcon = ({ fileType }) => {
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (onClick) onClick(e);
       }}
     >
       <Box>{fileType && fileTypeIcon[fileType]}</Box>

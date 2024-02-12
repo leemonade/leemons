@@ -116,6 +116,8 @@ module.exports = {
       duplicate: 'Duplicate',
       delete: 'Delete',
       share: 'Permissions',
+      pin: 'Mark as favorite',
+      unpin: 'Unmark as favorite',
     },
   },
   assignation: {

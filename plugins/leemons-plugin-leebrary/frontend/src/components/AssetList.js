@@ -312,10 +312,8 @@ const AssetList = ({
 
     return <ListEmpty t={t} isRecentPage={category?.key === RECENT_CATEGORY} />;
   };
-
   // -------------------------------------------------------------------------------------
   // DRAWER HANDLERS & TOOLBAR
-
   const toolbarItems = useMemo(() => {
     const published = allowStatusFilter ? statusFilter : true;
 
@@ -325,6 +323,7 @@ const AssetList = ({
       download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
       delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
       share: selectedAsset?.shareable ? t('cardToolbar.share') : false,
+      assign: selectedAsset?.assignable ? t('cardToolbar.assign') : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
           ? t('cardToolbar.pin')
@@ -400,6 +399,10 @@ const AssetList = ({
     openConfirmationModal({
       onConfirm: () => duplicateAsset(item.id),
     })();
+  };
+
+  const handleOnAssign = (item) => {
+    history.push(`/private/tasks/library/create?from=leebrary&asset=${item.id}`);
   };
 
   const handleOnDelete = (item) => {
@@ -732,7 +735,7 @@ const AssetList = ({
           >
             <CardDetailWrapper
               category={
-                category?.id && !category?.key.startsWith(SUBJECT_CATEGORY)
+                category?.id && !category?.key?.startsWith(SUBJECT_CATEGORY)
                   ? category
                   : categories?.find((_category) => _category?.id === selectedAsset?.category)
               }
@@ -750,6 +753,7 @@ const AssetList = ({
               onUnpin={handleOnUnpin}
               onRefresh={handleRefresh}
               onDownload={handleOnDownload}
+              onAssign={handleOnAssign}
               onCloseDrawer={() => {
                 forgetAssetToOpen();
                 setIsDrawerOpen(false);
