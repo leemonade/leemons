@@ -375,7 +375,10 @@ module.exports = {
     title: 'Uploading file',
     fileOf: 'Uploading file {currentFile} of {totalFiles} - {currentFilePercentageCompleted}%',
     init: 'Starting file upload',
+    finalize: 'Finalizing file upload',
     unzip: 'Preparing zip for upload',
+    processingImage: 'Processing image',
+    finalizing: 'Finalizing...',
   },
   assetsList: {
     published: 'Published',

@@ -24,20 +24,23 @@ function UploadingFileModal({ opened, title, info }) {
     }
   }, [info]);
 
+  const getProgressLabel = () => {
+    if (value?.state === 'finalize') return t('finalizing');
+    return `${value?.percentageCompleted > 100 ? 100 : value?.percentageCompleted?.toFixed(2)}%`;
+  };
+
   return (
     <Modal title={title || t('title')} opened={opened} onClose={() => {}} withCloseButton={false}>
       <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
         <Text role="productive">
-          {value?.state !== 'uploading' ? t(value?.state) : t('fileOf', value)}
+          {value?.state === 'uploading' ? t('fileOf', value) : t(value?.state)}
         </Text>
       </Box>
-      {value?.state === 'uploading' ? (
+      {value?.state === 'uploading' || value?.state === 'finalize' ? (
         <Progress
           classNames={classes}
           value={value?.percentageCompleted > 100 ? 100 : value?.percentageCompleted}
-          label={`${
-            value?.percentageCompleted > 100 ? 100 : value?.percentageCompleted.toFixed(2)
-          }%`}
+          label={getProgressLabel()}
           size="xl"
           radius="xl"
         />
