@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Section, Row, Column, Button, Container, Img, Text, Hr } from '@react-email/components';
+import { Section, Row, Column, Button, Container, Img, Text } from '@react-email/components';
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
 import ActivityCard from './ActivityCard.jsx';
 
