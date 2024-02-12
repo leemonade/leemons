@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --watch --coverage",
     "lint": "eslint services",
-    "email:dev": "email dev"
+    "email:dev": "EMAIL_DEV=true email dev"
   },
   "dependencies": {
     "@hokify/agenda": "^6.3.0",

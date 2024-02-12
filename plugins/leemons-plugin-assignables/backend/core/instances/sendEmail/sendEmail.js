@@ -75,37 +75,47 @@ async function sendEmail({
         avatarUrl = `${hostnameApi || hostname}${avatarUrl}`;
       }
 
+      let coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', {
+        assetId: instance.assignable.asset.id,
+      });
+      if (isString(coverUrl) && !coverUrl.startsWith('http')) {
+        coverUrl = `${hostnameApi || hostname}${coverUrl}`;
+      }
+
+      const context = {
+        instance: {
+          ...instance,
+          assignable: {
+            ...instance.assignable,
+            asset: {
+              ...instance.assignable.asset,
+              color: instance.assignable.asset.color || '#D9DCE0',
+              url: coverUrl,
+            },
+          },
+        },
+        classes,
+        classColor,
+        btnUrl: `${hostname}/private/assignables/ongoing`,
+        subjectIconUrl: null,
+        taskDate: date,
+        userSession: {
+          ...userSession,
+          avatarUrl,
+        },
+      };
+
+      context.debugObject = JSON.stringify({
+        userSession: context.userSession,
+        instance: context.instance,
+      });
+
       try {
         await ctx.tx.call('emails.email.sendAsEducationalCenter', {
           to: userAgent.user.email,
           templateName: isReminder ? 'user-assignation-remember' : 'user-create-assignation',
           language: userAgent.user.locale,
-          context: {
-            instance: {
-              ...instance,
-              assignable: {
-                ...instance.assignable,
-                asset: {
-                  ...instance.assignable.asset,
-                  color: instance.assignable.asset.color || '#D9DCE0',
-                  url:
-                    (hostnameApi || hostname) +
-                    (await ctx.tx.call('leebrary.assets.getCoverUrl', {
-                      assetId: instance.assignable.asset.id,
-                    })),
-                },
-              },
-            },
-            classes,
-            classColor,
-            btnUrl: `${hostname}/private/assignables/ongoing`,
-            subjectIconUrl: null,
-            taskDate: date,
-            userSession: {
-              ...userSession,
-              avatarUrl,
-            },
-          },
+          context,
           centerId: userAgent.center.id,
         });
 

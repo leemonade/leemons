@@ -1,14 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Section, Row, Column, Button, Container, Img, Text, Hr } from '@react-email/components';
+import { Section, Row, Column, Button, Container, Img, Text } from '@react-email/components';
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
 import ActivityCard from './ActivityCard.jsx';
+import { DEV_PROPS, PROD_PROPS, PROP_TYPES } from './UserNewAssignation.jsx';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 
 const messages = {
   en: {
-    title: 'You have new pending activities.',
+    title: 'Pending activity reminder.',
     actionText:
       "This information may have changed, always check your current activities so you don't miss anything.",
     buttonText: 'Review my activities',
@@ -16,7 +16,7 @@ const messages = {
       'If you do not wish to receive this communication, remember that you can change your email preferences from your user account.',
   },
   es: {
-    title: 'Tienes nuevas actividades pendientes.',
+    title: 'Recordatorio de actividad pendiente.',
     actionText:
       'Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.',
     buttonText: 'Revisar mis actividades',
@@ -25,15 +25,15 @@ const messages = {
   },
 };
 
-const UserNewAssignation = ({
-  locale = 'en',
-  ifMessage = '{{ @if (it.instance.messageToAssignees) }}',
-  ifAvatar = '{{ @if (it.userSession.avatarUrl) }}',
-  elseIf = '{{ #else }}',
-  endIf = '{{ /if }}',
-  userFullname = '{{it.userSession.name}} {{it.userSession.surnames}}',
-  avatarUrl = '{{it.userSession.avatarUrl}}',
-  messageToAssignees = '{{* it.instance.messageToAssignees}}',
+const UserRememberAssignation = ({
+  locale,
+  ifMessage,
+  ifAvatar,
+  elseIf,
+  endIf,
+  userFullname,
+  avatarUrl,
+  messageToAssignees,
 } = {}) => {
   const previewText = `[Leemons] ${messages[locale].title}`;
 
@@ -78,42 +78,7 @@ const UserNewAssignation = ({
   );
 };
 
-export const DEV_PROPS = {
-  locale: 'en',
-  ifMessage: null,
-  ifAvatar: null,
-  elseIf: null,
-  endIf: null,
-  userFullname: 'Antonio Gonzalvez',
-  avatarUrl: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50',
-  messageToAssignees:
-    'This module is about describing people in the context of an informal conversation. You will begin by listening to the audio of a conversation and answering a fill-in-the-blanks quiz. Finally, you will complete a writing exercise to practice describing people.',
-};
+UserRememberAssignation.defaultProps = IS_DEV_MODE ? DEV_PROPS : PROD_PROPS;
+UserRememberAssignation.propTypes = PROP_TYPES;
 
-export const PROD_PROPS = {
-  locale: 'en',
-  ifMessage: '{{ @if (it.instance.messageToAssignees) }}',
-  ifAvatar: '{{ @if (it.userSession.avatarUrl) }}',
-  elseIf: '{{ #else }}',
-  endIf: '{{ /if }}',
-  userFullname: '{{it.userSession.name}} {{it.userSession.surnames}}',
-  avatarUrl: '{{it.userSession.avatarUrl}}',
-  messageToAssignees: '{{* it.instance.messageToAssignees}}',
-};
-
-export const PROP_TYPES = {
-  locale: PropTypes.string,
-  ifMessage: PropTypes.string,
-  ifAvatar: PropTypes.string,
-  elseIf: PropTypes.string,
-  endIf: PropTypes.string,
-  userFullname: PropTypes.string,
-  avatarUrl: PropTypes.string,
-  messageToAssignees: PropTypes.string,
-};
-
-UserNewAssignation.defaultProps = IS_DEV_MODE ? DEV_PROPS : PROD_PROPS;
-
-UserNewAssignation.propTypes = PROP_TYPES;
-
-export default UserNewAssignation;
+export default UserRememberAssignation;

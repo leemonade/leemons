@@ -2,7 +2,7 @@ const { getEmailTypes } = require('@leemons/emails');
 const { render } = require('@react-email/components');
 
 const NewAssignation = require('../../emails/UserNewAssignation.jsx');
-const RememberAssignation = require('../../emails/UserRemenberAssignation.jsx');
+const RememberAssignation = require('../../emails/UserRememberAssignation.jsx');
 const rememberActivityTimeout = require('../../emails/userRememberAssignationTimeout');
 const userWeekly = require('../../emails/userWeekly');
 
