@@ -1,7 +1,5 @@
 const { LeemonsError } = require('@leemons/error');
-
 const { getInstances } = require('../getInstances');
-const { getActivityEvaluationType } = require('../../helpers/getActivityEvaluationType');
 
 /**
  * @async
@@ -25,10 +23,6 @@ async function getInstance({ id, relatedAssignableInstances, details, ctx }) {
     });
 
     const [instance] = instances;
-    if (instance) {
-      instance.type = getActivityEvaluationType(instance);
-    }
-
     return instance;
   } catch (e) {
     ctx.logger.error(e);

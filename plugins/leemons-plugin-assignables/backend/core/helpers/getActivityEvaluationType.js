@@ -1,6 +1,6 @@
 const { isEqual } = require('lodash');
 
-function getActivityEvaluationType(activity) {
+function getActivityEvaluationType(instance) {
   const evaluationTypes = {
     calificable: {
       gradable: true,
@@ -25,9 +25,9 @@ function getActivityEvaluationType(activity) {
   };
 
   const typeValues = {
-    requiresScoring: !!activity.requiresScoring,
-    allowFeedback: !!activity.allowFeedback,
-    gradable: !!activity.gradable,
+    requiresScoring: !!instance.requiresScoring,
+    allowFeedback: !!instance.allowFeedback,
+    gradable: !!instance.gradable,
   };
 
   return Object.fromEntries(
