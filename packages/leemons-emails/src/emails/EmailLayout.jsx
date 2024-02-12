@@ -63,7 +63,7 @@ function EmailLayout({ locale, previewText, title, logoUrl, logoWidth, platformN
     <Html>
       <Head>
         {[400, 500].map((weight, index) => (
-          <React.Fragment key={index}>
+          <React.Fragment key={weight}>
             <Font
               fontFamily="Albert Sans"
               fallbackFontFamily="Verdana"
