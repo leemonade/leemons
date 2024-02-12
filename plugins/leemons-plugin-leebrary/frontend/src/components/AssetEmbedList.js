@@ -55,7 +55,7 @@ const AssetEmbedList = ({ assets, width }) => {
     ids: assetIds,
     filters: {
       showPublic: true,
-      indexable: false,
+      indexable: null,
     },
     enabled: assetIds.length > 0,
   });
@@ -67,8 +67,13 @@ const AssetEmbedList = ({ assets, width }) => {
     return assetsData?.find((asset) => asset.id === assetId) || {};
   }
   const handleOnSelect = (item) => {
-    setSelectedAsset(item);
-    setIsDrawerOpen(true);
+    setIsDrawerOpen(false); // Siempre cierra el drawer primero
+
+    // Establece el activo seleccionado y luego abre el drawer después de un breve retraso
+    setTimeout(() => {
+      setSelectedAsset(item);
+      setIsDrawerOpen(true);
+    }, 100); // Un retraso de 100ms suele ser suficiente para este propósito
   };
   useEffect(() => {
     if (assets?.length) {
@@ -98,7 +103,10 @@ const AssetEmbedList = ({ assets, width }) => {
               isEmbeddedList={true}
               variant={'embedded'}
               assetsLoading={isLoading}
-              onClick={() => handleOnSelect(pickAsset(assetId))}
+              onClick={() => {
+
+                handleOnSelect(pickAsset(assetId))
+              }}
             />
           </Box>
         ))
