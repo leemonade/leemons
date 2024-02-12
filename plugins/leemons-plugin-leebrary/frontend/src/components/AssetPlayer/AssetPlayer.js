@@ -95,6 +95,7 @@ const AssetPlayer = ({
   const [fullScreenMode, setFullScreenMode] = useState(fullScreen);
   const [openImageZoom, setOpenImageZoom] = useState(false);
   const [mediaVolume, setMediaVolume] = useState(volume || 1);
+  const [assetHeight, setAssetHeight] = useState(0);
   const [t] = useTranslateLoader(prefixPN('pdfPlayer'));
   const pdfLabels = {
     pageLabel: t('pageLabel'),
@@ -234,6 +235,7 @@ const AssetPlayer = ({
       const isFullScreen = !!document.fullscreenElement;
       setFullScreenMode(isFullScreen);
     });
+    setAssetHeight(rootRef.current.clientHeight);
 
     return () => {
       if (rootRef.current) rootRef.current.removeEventListener('fullscreenchange');
@@ -376,7 +378,7 @@ const AssetPlayer = ({
                     <CardEmptyCover
                       fileType={asset?.fileType}
                       icon={asset?.fileIcon}
-                      height={rootRef?.current?.clientHeight}
+                      height={assetHeight}
                     />
                   )}
                 </Box>

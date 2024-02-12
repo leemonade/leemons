@@ -63,6 +63,7 @@ const AssetPlayerStyles = createStyles(
         right: 0,
         pointerEvents: showPlayer && 'none',
         userSelect: 'none',
+        height: '100%',
       },
       reactPlayer: {
         backgroundColor: 'black',

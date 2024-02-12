@@ -5,7 +5,6 @@ import { Box } from '@bubbles-ui/components';
 import { NodeViewWrapper } from '@bubbles-ui/editors';
 import { LibraryCardEmbed, LibraryCard } from '@leebrary/components';
 import { AssetPlayerWrapperCCreator } from './AssetPlayerWrapperCCreator';
-import { AssetPlayer } from '../AssetPlayer';
 
 export const LIBRARY_PLAYER_DISPLAYS = ['card', 'player'];
 export const LIBRARY_PLAYER_ALIGNS = ['left', 'center', 'right'];
