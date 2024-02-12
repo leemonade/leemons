@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Section, Row, Column, Container, Img, Text, Link, Hr } from '@react-email/components';
+import { Section, Row, Column, Container, Img, Text } from '@react-email/components';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 
