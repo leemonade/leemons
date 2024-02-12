@@ -220,6 +220,7 @@ module.exports = {
     addInstructions: 'Add instructions',
     other: 'Other',
     headerTitlePlaceholder: 'Test title',
+    cancel: 'Cancel'
   },
   testsDetail: {
     assign: 'Assign test',
@@ -414,7 +415,6 @@ module.exports = {
       canOmit: 'Questions may be omitted and do not detract from the score.',
       errorQuestions: 'Wrong questions do not detract from the score',
       canClue: 'Hints may be used (if available) and their use does not detract from the score.',
-      useAdvanced:
         'If you wish to change this default setting, use the advanced configuration option below.',
     },
   },

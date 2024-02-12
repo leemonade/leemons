@@ -25,6 +25,7 @@ module.exports = {
       back: 'Back',
       close: 'Close',
       title: 'Library',
+      cancel: 'Cancel',
     },
     basicData: {
       header: {

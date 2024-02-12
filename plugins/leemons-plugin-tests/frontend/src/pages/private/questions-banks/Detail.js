@@ -182,6 +182,7 @@ export default function Detail(p) {
           title={getTitle()}
           formTitlePlaceholder={formValues.name ? formValues.name : t('headerTitlePlaceholder')}
           onCancel={() => history.goBack()}
+          mainActionLabel={t('cancel')}
         />
       }
     >

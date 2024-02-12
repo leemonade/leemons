@@ -335,6 +335,7 @@ export default function Edit() {
           title={getTitle()}
           formTitlePlaceholder={formValues.name ? formValues.name : t('headerTitlePlaceholder')}
           onCancel={() => history.goBack()}
+          mainActionLabel={t('cancel')}
         />
       }
     >

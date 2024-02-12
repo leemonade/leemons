@@ -218,6 +218,7 @@ module.exports = {
     addInstructions: 'Añadir instrucciones',
     other: 'Otros',
     headerTitlePlaceholder: 'Título del test',
+    cancel: 'Cancelar',
   },
   testsDetail: {
     assign: 'Asignar test',

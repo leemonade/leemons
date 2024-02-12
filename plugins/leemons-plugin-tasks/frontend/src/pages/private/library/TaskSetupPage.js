@@ -91,6 +91,7 @@ function TaskSetupHeader({ t, store }) {
       title={t(!isEmpty(store?.currentTask) ? 'edit_title' : 'title')}
       formTitlePlaceholder={headerLabels.title}
       onCancel={() => history.goBack()}
+      mainActionLabel={t('cancel')}
     />
   );
 }
