@@ -212,7 +212,8 @@ export default function Index({ isNew, readOnly }) {
             formTitlePlaceholder={formValues.name ? formValues.name : t('documentTitlePlaceHolder')}
             onCancel={handleOnCancel}
             compact
-            mainActionLabel={readOnly ? t('back') : t('cancel')}
+            mainActionLabel={t('cancel')}
+            cancelable={!readOnly}
           >
             {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
