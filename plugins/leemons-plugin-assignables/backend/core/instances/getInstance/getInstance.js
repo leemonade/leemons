@@ -1,6 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
-
 const { getInstances } = require('../getInstances');
+
 /**
  * @async
  * @function getInstance
@@ -22,7 +22,8 @@ async function getInstance({ id, relatedAssignableInstances, details, ctx }) {
       ctx,
     });
 
-    return instances[0];
+    const [instance] = instances;
+    return instance;
   } catch (e) {
     ctx.logger.error(e);
     throw new LeemonsError(ctx, { message: e.message });

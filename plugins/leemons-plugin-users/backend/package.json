@@ -8,7 +8,7 @@
     "ci": "jest --watch",
     "test": "jest --coverage",
     "lint": "eslint services",
-    "email:dev": "email dev"
+    "email:dev": "EMAIL_DEV=true email dev"
   },
   "keywords": [
     "microservices",

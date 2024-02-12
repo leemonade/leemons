@@ -1,4 +1,5 @@
 const { diffHours } = require('@leemons/utils');
+const { isString } = require('lodash');
 /**
  * Sends an email with the instance details.
  *
@@ -49,10 +50,7 @@ async function sendEmail({
       const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
       if (instance.dates.deadline) {
         const date1 = new Date(instance.dates.deadline);
-        const dateTimeFormat2 = new Intl.DateTimeFormat(
-          userAgent.user.locale,
-          options1
-        );
+        const dateTimeFormat2 = new Intl.DateTimeFormat(userAgent.user.locale, options1);
         date = dateTimeFormat2.format(date1);
       }
 
@@ -65,48 +63,59 @@ async function sendEmail({
             ? (hostname || ctx.request.header.origin) +
             leemons.getPlugin('leebrary').services.assets.getCoverUrl(classes[0].subject.icon.id)
             : null;
-
        */
 
       let classColor = '#67728E';
       if (classes.length === 1) {
         classColor = classes[0].color;
       }
+
+      let avatarUrl = userSession?.avatar;
+      if (isString(avatarUrl) && !avatarUrl.startsWith('http')) {
+        avatarUrl = `${hostnameApi || hostname}${avatarUrl}`;
+      }
+
+      let coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', {
+        assetId: instance.assignable.asset.id,
+      });
+      if (isString(coverUrl) && !coverUrl.startsWith('http')) {
+        coverUrl = `${hostnameApi || hostname}${coverUrl}`;
+      }
+
+      const context = {
+        instance: {
+          ...instance,
+          assignable: {
+            ...instance.assignable,
+            asset: {
+              ...instance.assignable.asset,
+              color: instance.assignable.asset.color || '#D9DCE0',
+              url: coverUrl,
+            },
+          },
+        },
+        classes,
+        classColor,
+        btnUrl: `${hostname}/private/assignables/ongoing`,
+        subjectIconUrl: null,
+        taskDate: date,
+        userSession: {
+          ...userSession,
+          avatarUrl,
+        },
+      };
+
+      context.debugObject = JSON.stringify({
+        userSession: context.userSession,
+        instance: context.instance,
+      });
+
       try {
         await ctx.tx.call('emails.email.sendAsEducationalCenter', {
           to: userAgent.user.email,
-          templateName: isReminder
-            ? 'user-assignation-remember'
-            : 'user-create-assignation',
+          templateName: isReminder ? 'user-assignation-remember' : 'user-create-assignation',
           language: userAgent.user.locale,
-          context: {
-            instance: {
-              ...instance,
-              assignable: {
-                ...instance.assignable,
-                asset: {
-                  ...instance.assignable.asset,
-                  color: instance.assignable.asset.color || '#D9DCE0',
-                  url:
-                    (hostnameApi || hostname) +
-                    (await ctx.tx.call('leebrary.assets.getCoverUrl', {
-                      assetId: instance.assignable.asset.id,
-                    })),
-                },
-              },
-            },
-            classes,
-            classColor,
-            btnUrl: `${hostname}/private/assignables/ongoing`,
-            subjectIconUrl: null,
-            taskDate: date,
-            userSession: {
-              ...userSession,
-              avatarUrl: userSession.avatar
-                ? (hostnameApi || hostname) + userSession.avatar
-                : null,
-            },
-          },
+          context,
           centerId: userAgent.center.id,
         });
 

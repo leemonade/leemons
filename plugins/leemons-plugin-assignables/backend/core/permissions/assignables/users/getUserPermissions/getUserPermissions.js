@@ -40,7 +40,7 @@ async function getUserPermissions({ assignables, ctx }) {
     return {};
   }
 
-  if (!ctx.meta.userSession.userAgents.length) {
+  if (!ctx.meta?.userSession?.userAgents?.length) {
     return Object.fromEntries(
       assignablesIds.map((id) => [
         id,
