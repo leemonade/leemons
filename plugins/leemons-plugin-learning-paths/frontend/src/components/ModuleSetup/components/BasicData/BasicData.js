@@ -102,11 +102,13 @@ export function BasicData({ localizations, scrollRef, onNextStep = noop, onSave 
   const [sharedData] = useModuleSetupContext();
   const form = useForm({ defaultValues: sharedData?.basicData ?? {} });
 
+  // When sharedData.basicData brings data from the server it will be updated
+  // Otherwise this is only used to handle the title changes and all fields are set in the sharedData.basicData object on submit
   useEffect(() => {
-    form.reset(sharedData?.basicData ?? {});
+    Object.keys(sharedData?.basicData ?? {}).forEach((key) => {
+      form.setValue(key, sharedData.basicData[key]);
+    });
   }, [sharedData?.basicData]);
-
-  const { classes } = useBasicDataStyles();
 
   const onSubmit = useOnSubmit({ handleSubmit: form.handleSubmit });
   useOnSave({ onSubmit });
