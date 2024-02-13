@@ -364,6 +364,9 @@ module.exports = {
     fileOf: 'Subiendo archivo {currentFile} de {totalFiles} - {currentFilePercentageCompleted}%',
     init: 'Iniciando subida',
     unzip: 'Preparando zip para la subida',
+    finalize: 'Finalizando subida',
+    processingImage: 'Procesando imagen',
+    finalizing: 'Finalizando...',
   },
   assetsList: {
     published: 'Publicados',
