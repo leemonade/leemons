@@ -178,16 +178,16 @@ const AssetList = ({
 
   // For not student users, a default filter is applied in the recent view in order to only show activity assets
   // If this behavior is not needed anymore, remove this extra filters and don't make any distinction between users
-  const resolveRecentSectionDefaultFilters = useCallback(() => {
+  const resolveRecentSectionDefaultFilter = useCallback(() => {
     let resolvedCategoriesFilter;
     if (categoryFilter === 'all' && !isStudent) {
       const contentAssignables = ['assignables.scorm', 'assignables.content-creator'];
-      const activityFilter = categories
+      const activityAssetsFilter = categories
         ?.filter(
-          (cat) => cat.key?.startsWith('assignables') && !contentAssignables.includes(cat.key)
+          (item) => item.key?.startsWith('assignables') && !contentAssignables.includes(item.key)
         )
-        .map((cat) => cat.id);
-      resolvedCategoriesFilter = JSON.stringify(activityFilter);
+        .map((item) => item.id);
+      resolvedCategoriesFilter = JSON.stringify(activityAssetsFilter);
     }
 
     return resolvedCategoriesFilter || null;
@@ -229,7 +229,7 @@ const AssetList = ({
       if (categoryFilter !== 'all') {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
       } else {
-        query.categoriesFilter = resolveRecentSectionDefaultFilters(query);
+        query.categoriesFilter = resolveRecentSectionDefaultFilter(query);
       }
     }
     if (category?.key === PINS_CATEGORY) {
