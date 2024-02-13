@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import prepareAsset, { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import { useIsTeacher, useClassesSubjects } from '@academic-portfolio/hooks';
 import { useDashboardCardStyles } from './DashboardCard.styles';
 import { DashboardCardCover } from './components/DashboardCardCover';
 import { DashboardCardBody } from './components/DashboardCardBody';
@@ -23,7 +23,6 @@ const DashboardCard = ({
   introductionLink,
   emptyIcon,
   fileType,
-  moduleColor,
 }) => {
   const isTeacher = useIsTeacher();
   const { classes } = useDashboardCardStyles();
@@ -55,8 +54,8 @@ const DashboardCard = ({
   const { asset, role, roleDetails } = assignable;
   const preparedAsset = prepareAsset(asset);
   const evaluationData = getOngoingInfo({ instance: activity });
-
   const rolesLocalizations = useRolesLocalizations([role]);
+  const subjects = useClassesSubjects(activity?.classes);
 
   const score = React.useMemo(() => {
     if (isTeacher) {
@@ -82,12 +81,12 @@ const DashboardCard = ({
         program={activity?.subjects?.[0]?.program}
         isCalificable={activity.requiresScoring}
         instance={activity}
-        moduleColor={moduleColor}
         evaluationInfo={evaluationData}
         fileType={activity?.assignable?.role}
+        subjects={subjects}
       />
       <Box className={classes.content}>
-        <DashboardCardBody activity={activity} />
+        <DashboardCardBody activity={activity} subjects={subjects} />
         <DashboardCardFooter
           isBlocked={isBlocked}
           activity={activity}
