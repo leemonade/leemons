@@ -112,6 +112,7 @@ export default function DetailQuestions({
           ]);
         }}
         store={store}
+        scrollRef={scrollRef}
       />
     );
   }
