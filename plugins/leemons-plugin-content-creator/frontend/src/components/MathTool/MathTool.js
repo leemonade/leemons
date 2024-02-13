@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Button, useTextEditor } from '@bubbles-ui/editors';
 import { MathExtension } from './MathExtension';
 import { MathIcon } from './MathIcon';
@@ -8,16 +8,11 @@ export const MATH_TOOL_DEFAULT_PROPS = {
 };
 
 const MathTool = ({ label, ...props }) => {
-  const { editor, readOnly, toolModalOpen, currentTool } = useTextEditor();
+  const { editor, readOnly } = useTextEditor();
 
   const handleOnClick = () => {
     editor.chain().focus().setMath().run();
   };
-
-  const mathModalOpened = useMemo(
-    () => currentTool.type === 'math' && toolModalOpen,
-    [currentTool, toolModalOpen]
-  );
 
   if (readOnly) return null;
   return (
@@ -26,7 +21,7 @@ const MathTool = ({ label, ...props }) => {
         {...props}
         label={label}
         icon={<MathIcon height={20} width={20} />}
-        actived={mathModalOpened || editor?.isActive('math')}
+        actived={editor?.isActive('math')}
         onClick={handleOnClick}
       />
     </>

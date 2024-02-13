@@ -4,7 +4,7 @@ import { NodeViewWrapper } from '@bubbles-ui/editors';
 import katex from 'katex';
 import { MathPlayerStyles } from './MathPlayer.styles';
 
-const MathPlayer = ({ node }) => {
+const MathPlayer = ({ node, editor }) => {
   const [view, setView] = useState('latex');
   const { classes } = MathPlayerStyles({});
   const { latex } = node.attrs;
@@ -32,7 +32,7 @@ const MathPlayer = ({ node }) => {
     // Don't remove this setView. Without it, the editor will not register the changes in latex formulas
     setView('formula');
 
-    if (currentRef) {
+    if (currentRef && editor && editor.isEditable) {
       currentRef.addEventListener('focus', handleFocus, true);
     }
 
@@ -49,7 +49,7 @@ const MathPlayer = ({ node }) => {
     };
 
     const currentRef = editorRef.current;
-    if (currentRef) {
+    if (currentRef && editor && editor.isEditable) {
       currentRef.addEventListener('input', handleChange, true); // Use capture phase for blur
     }
 
@@ -92,6 +92,7 @@ const MathPlayer = ({ node }) => {
 
 MathPlayer.propTypes = {
   node: PropTypes.object.isRequired,
+  editor: PropTypes.object.isRequired,
 };
 
 export { MathPlayer };

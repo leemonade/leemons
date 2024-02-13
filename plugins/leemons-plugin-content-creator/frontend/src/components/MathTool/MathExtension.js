@@ -73,7 +73,7 @@ export const MathExtension = Node.create({
         }),
       },
       view: {
-        default: 'formula',
+        default: 'latex',
         parseHTML: (element) => element.getAttribute('data-view'),
         renderHTML: (attributes) => ({
           'data-view': attributes.view,
@@ -95,14 +95,6 @@ export const MathExtension = Node.create({
         (attributes) =>
         ({ commands }) =>
           commands.insertContent([{ type: this.name, attrs: attributes }]),
-      toggleMath:
-        () =>
-        ({ commands }) =>
-          commands.toggleMark(this.name),
-      unsetMath:
-        () =>
-        ({ commands }) =>
-          commands.unsetMark(this.name),
     };
   },
 
