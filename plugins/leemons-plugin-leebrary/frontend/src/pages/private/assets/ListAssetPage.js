@@ -187,7 +187,7 @@ const ListAssetPage = () => {
 
     // CATEGORY FILTER (not implemented in 'Shared with me' section yet)
     if (isMultiCategorySection && category?.key !== 'leebrary-shared') {
-      if (!isStudent) {
+      if (!isStudent && category?.key === 'leebrary-recent') {
         // We show only activities in the 'Recent' section when the user is not a student
         // If this behavior is not needed anymore simply pass true
         const activityCategories = categories
