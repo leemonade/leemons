@@ -6,16 +6,13 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { getSessionConfig } from '@users/session';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
     paddingInline: 48,
-  },
-  widthContainer: {
-    width: 750,
   },
   inputsContainer: {
     display: 'flex',
@@ -28,8 +25,8 @@ const useFiltersStyles = createStyles((theme) => ({
     marginTop: theme.spacing[1],
     gap: theme.spacing[5],
     alignItems: 'center',
+    minWidth: 200,
     '& > *': {
-      maxWidth: `calc(50% - ${theme.spacing[5] / 2}px)`, // 50% - inputs.gap
       flexGrow: 1,
     },
   },
@@ -171,7 +168,7 @@ function PickDate({ control, name, localizations }) {
 }
 
 export function Filters({ onChange, setKlasses }) {
-  const { classes, cx } = useFiltersStyles();
+  const { classes } = useFiltersStyles();
   const localizations = useFiltersLocalizations();
   const { program } = getSessionConfig();
   const { data: programDetails } = useProgramDetail(program, {
@@ -183,20 +180,15 @@ export function Filters({ onChange, setKlasses }) {
     () => programDetails?.courses.map((course) => ({ value: course.id, label: course.name })),
     [programDetails]
   );
-  // const courses = [
-  //   {
-  //     value:
-  //       'lrn:local:academic-portfolio:local:659408f8731bf11b6e1c524e:Groups:65940b3c7833fb3b467733b9',
-  //     label: '5',
-  //   },
-  // ];
 
-  const defaultCourseValue = courses?.length === 1 ? courses[0].value : undefined;
-  const { control, watch } = useForm({
-    defaultValues: {
-      class: defaultCourseValue,
-    },
-  });
+  const { control, watch, setValue } = useForm({});
+
+  useEffect(() => {
+    if (courses?.length === 1) {
+      setValue('class', courses[0].value);
+    }
+  }, [courses?.[0]?.value]);
+
   const selectedCourse = watch('class');
   const { periods } = useMatchingAcademicCalendarPeriods({
     classes: classesData,
@@ -239,7 +231,7 @@ export function Filters({ onChange, setKlasses }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.inputsContainer}>
-        <Box className={cx(classes.inputs, classes.widthContainer)}>
+        <Box className={classes.inputs}>
           {courses?.length > 1 && (
             <Controller
               control={control}
