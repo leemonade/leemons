@@ -1,37 +1,65 @@
 /* eslint-disable import/prefer-default-export */
-import {
-  mergeAttributes,
-  Mark,
-  InputRule,
-  Node,
-  ReactNodeViewRenderer,
-  MathBlockComponent,
-} from '@bubbles-ui/editors';
+import { mergeAttributes, InputRule, Node, ReactNodeViewRenderer } from '@bubbles-ui/editors';
+import { MathPlayer } from './MathPlayer';
 
-export const MathExtension = Mark.create({
+export const MathExtension = Node.create({
   name: 'math',
-
-  addOptions() {
-    return {
-      HTMLAttributes: {},
-    };
-  },
+  group: 'inline',
+  inline: true,
+  atom: true,
 
   parseHTML() {
     return [
       {
-        tag: 'span',
-        getAttrs: (element) => {
-          // Get a specific attribute
-          element.getAttribute('data-latex');
-        },
+        tag: `span[data-type="${this.name}"]`,
       },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'span',
+      mergeAttributes(HTMLAttributes, {
+        'data-type': this.name,
+      }),
+    ];
+  },
+
+  addInputRules() {
+    return [
+      new InputRule({
+        find: /\$([^\s])([^$]*)\$$/,
+        handler: (props) => {
+          if (props.match[1].startsWith('$')) {
+            return;
+          }
+          let latex = props.match[1] + props.match[2];
+          latex = latex.trim();
+          const content = [
+            {
+              type: 'math',
+              attrs: { latex, math: 'true', view: 'formula' },
+            },
+          ];
+          props
+            .chain()
+            .insertContentAt(
+              {
+                from: props.range.from,
+                to: props.range.to,
+              },
+              content,
+              { updateSelection: true }
+            )
+            .run();
+        },
+      }),
     ];
   },
   addAttributes() {
     return {
       latex: {
-        default: '',
+        default: 'E=mc^2',
         parseHTML: (element) => element.getAttribute('data-latex'),
         renderHTML: (attributes) => ({
           'data-latex': attributes.latex,
@@ -45,61 +73,28 @@ export const MathExtension = Mark.create({
         }),
       },
       view: {
-        default: 'latex',
+        default: 'formula',
         parseHTML: (element) => element.getAttribute('data-view'),
         renderHTML: (attributes) => ({
           'data-view': attributes.view,
         }),
       },
+      id: {
+        default: '',
+        parseHTML: (element) => element.getAttribute('data-id'),
+        renderHTML: (attributes) => ({
+          'data-id': attributes.id,
+        }),
+      },
     };
-  },
-  onUpdate: ({ editor }) => {
-    const { state } = editor;
-    const { selection, doc } = state;
-    console.log('🚀 ~ doc:', doc);
-    console.log('🚀 ~ selection:', selection);
-    const from = selection.$from.pos;
-    const to = selection.$to.pos;
-    console.log('🚀 ~ rangeHasMark:', doc.rangeHasMark(from, to, doc.type.schema.marks.math));
-    const spanNode = doc.nodesBetween(from, to, (node) => {
-      console.log('🚀 ~ spanNode ~ node:', node);
-      console.log('🚀 ~ spanNode ~ node.type.name:', node.type.name);
-      if (node.type.name === 'paragraph') {
-        const parent = node.parent;
-        console.log('🚀 ~ spanNode ~ parent:', parent);
-        if (parent && parent.type.name === 'math') {
-          return true;
-        }
-      }
-      return false;
-    });
-
-    if (spanNode && spanNode.length > 0) {
-      const latexContent = spanNode[0].textContent;
-      editor.commands.updateAttributes('math', { latex: latexContent });
-    }
-  },
-
-  renderHTML({ node, HTMLAttributes }) {
-    let latex = 'x';
-    if (node?.attrs?.latex && typeof node?.attrs?.latex === 'string') {
-      latex = node.attrs.latex;
-    }
-    return [
-      'span',
-      mergeAttributes(HTMLAttributes, {
-        'data-type': this.name,
-      }),
-      latex,
-    ];
   },
 
   addCommands() {
     return {
       setMath:
-        () =>
+        (attributes) =>
         ({ commands }) =>
-          commands.setMark(this.name),
+          commands.insertContent([{ type: this.name, attrs: attributes }]),
       toggleMath:
         () =>
         ({ commands }) =>
@@ -111,10 +106,7 @@ export const MathExtension = Mark.create({
     };
   },
 
-  addKeyboardShortcuts() {
-    return {
-      'Mod-b': () => this.editor.commands.toggleBold(),
-      'Mod-B': () => this.editor.commands.toggleBold(),
-    };
+  addNodeView() {
+    return ReactNodeViewRenderer(MathPlayer);
   },
 });

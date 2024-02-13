@@ -1,84 +1,91 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
-import { Box } from '@bubbles-ui/components';
 import { NodeViewWrapper } from '@bubbles-ui/editors';
+import katex from 'katex';
+import { MathPlayerStyles } from './MathPlayer.styles';
 
-export const MATH_PLAYER_DISPLAYS = ['card', 'player'];
-export const MATH_PLAYER_ALIGNS = ['left', 'center', 'right'];
+const MathPlayer = ({ node }) => {
+  const [view, setView] = useState('latex');
+  const { classes } = MathPlayerStyles({});
+  const { latex } = node.attrs;
 
-export const MATH_PLAYER_DEFAULT_PROPS = {
-  node: {
-    attrs: {
-      asset: null,
-      width: '100%',
-      display: 'card',
-      align: 'left',
-    },
-  },
-};
-
-export const MATH_PLAYER_PROP_TYPES = {
-  node: PropTypes.shape({
-    attrs: PropTypes.shape({
-      asset: PropTypes.any,
-      width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      display: PropTypes.oneOf(MATH_PLAYER_DISPLAYS),
-      align: PropTypes.oneOf(MATH_PLAYER_ALIGNS),
-      readOnly: PropTypes.bool,
-      isFloating: PropTypes.bool,
-    }),
-  }),
-};
-
-const MathPlayer = ({
-  node: {
-    attrs: { asset, width, display, align, isFloating, readOnly },
-  },
-}) => {
-  const selfRef = useRef({});
-  const isWidthNum = /^\d+$/.test(width);
-  const widthProp = isWidthNum ? `${width}px` : width;
-
-  const getDisplay = () => {
-    if (display === 'embed') {
-      return <Box style={{ width: isFloating ? '100%' : widthProp }}>Input</Box>;
-    }
-
-    return <Box style={{ width: isFloating ? '100%' : widthProp, userSelect: 'none' }}>Input</Box>;
-  };
+  const wrapperRef = useRef(null);
+  const editorRef = useRef(null);
 
   useEffect(() => {
-    if (!selfRef.current || !selfRef.current.parentNode) return;
-    const { parentNode } = selfRef.current;
+    const handleFocus = (e) => {
+      setView('latex');
+    };
 
-    parentNode.style.maxWidth = isFloating ? width : '100%';
-    parentNode.style.float = isFloating && (align === 'left' || 'right') ? align : 'none';
-  }, [width, align, isFloating]);
+    const handleBlur = (e) => {
+      setView('formula');
+    };
+
+    const currentRef = wrapperRef.current;
+    if (currentRef) {
+      currentRef.addEventListener('focus', handleFocus, true); // Use capture phase for focus
+      currentRef.addEventListener('blur', handleBlur, true); // Use capture phase for blur
+    }
+    // Don't remove this setView. Without it, the editor will not register the changes in latex formulas
+    setView('formula');
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('focus', handleFocus, true);
+        currentRef.removeEventListener('blur', handleBlur, true);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleChange = () => {
+      node.attrs = { ...node.attrs, latex: editorRef.current.innerHTML };
+    };
+
+    const currentRef = editorRef.current;
+    if (currentRef) {
+      currentRef.addEventListener('input', handleChange, true); // Use capture phase for blur
+    }
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('input', handleChange, true);
+      }
+    };
+  }, []);
+
+  const formatText = useMemo(() => {
+    try {
+      return katex.renderToString(`${latex}`);
+    } catch (e) {
+      return latex;
+    }
+  }, [latex]);
+
+  const content = useMemo(
+    () =>
+      view !== 'latex' ? (
+        <span contentEditable={true} dangerouslySetInnerHTML={{ __html: formatText }}></span>
+      ) : (
+        <span contentEditable={true} ref={editorRef}>
+          {latex}
+        </span>
+      ),
+    [latex, formatText, view]
+  );
 
   return (
-    <NodeViewWrapper className="math-extension" data-drag-handle ref={selfRef}>
-      {!asset || isEmpty(asset) ? (
-        <div>No Asset found</div>
-      ) : (
-        <Box
-          style={{
-            display: !isFloating && 'flex',
-            justifyContent: !isFloating && align,
-            marginTop: !isFloating && 20,
-            marginBottom: !isFloating && 20,
-            marginLeft: ['left'].includes(align) ? 0 : 20,
-            marginRight: ['right'].includes(align) ? 0 : 20,
-          }}
-        >
-          {getDisplay()}
-        </Box>
-      )}
+    <NodeViewWrapper
+      ref={wrapperRef}
+      className={view === 'latex' ? classes.wrapperLatex : classes.wrapperMath}
+    >
+      <div>{content}</div>
     </NodeViewWrapper>
   );
 };
 
-MathPlayer.propTypes = MATH_PLAYER_PROP_TYPES;
-MathPlayer.defaultProps = MATH_PLAYER_DEFAULT_PROPS;
+MathPlayer.propTypes = {
+  node: PropTypes.object.isRequired,
+};
 
 export { MathPlayer };
