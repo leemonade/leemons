@@ -117,9 +117,10 @@ export default function ScoreFeedback({
   }, [instance, calificationType, setCalificationType]);
 
   const { classes } = useScoreFeedbackStyles({ color, fullSize });
+
   return (
     <Box className={classes.root}>
-      {calificationType && !hideBadge && (
+      {!!calificationType && !hideBadge && (
         <Badge closable={false} size="xs" className={classes.calificationBadge}>
           <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
         </Badge>
@@ -130,7 +131,7 @@ export default function ScoreFeedback({
             <Text className={classes.gradeNumber}>
               {isLetterType ? grade.letter : grade.integer}
             </Text>
-            {grade.decimals && (
+            {!isNil(grade.decimals) && (
               <TextClamp lines={2}>
                 <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
               </TextClamp>
