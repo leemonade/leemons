@@ -245,8 +245,7 @@ const AssetPlayer = ({
 
   useEffect(() => setFullScreenMode(fullScreen), [fullScreen]);
   useEffect(() => setIsPlaying(playing), [playing]);
-  useEffect(() => setMediaVolume(volume), [volume]);
-  useEffect(() => setMediaVolume(volume), [media]);
+  useEffect(() => setMediaVolume(volume), [volume, media]);
 
   useEffect(() => {
     document.body.addEventListener('keydown', toggleOnSpaceBar);

@@ -36,7 +36,6 @@ const AssetEmbedList = ({ assets, width }) => {
   const session = useSession();
   const locale = getLocale(session);
 
-
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -87,29 +86,28 @@ const AssetEmbedList = ({ assets, width }) => {
     <Box className={classes.root}>
       {assetIds.length > 0
         ? assetIds.map((assetId) => (
-          <Box className={classes.item} key={assetId}>
-            <CardWrapper
-              {...pickAsset(assetId)}
-              isEmbedded={true}
-              item={pickAsset(assetId)}
-              category={
-                categoriesData?.find(
-                  (category) => category.id === pickAsset(assetId).category
-                ) || {
-                  key: 'media-file',
+            <Box className={classes.item} key={assetId}>
+              <CardWrapper
+                {...pickAsset(assetId)}
+                isEmbedded={true}
+                item={pickAsset(assetId)}
+                category={
+                  categoriesData?.find(
+                    (category) => category.id === pickAsset(assetId).category
+                  ) || {
+                    key: 'media-file',
+                  }
                 }
-              }
-              isCreationPreview={false}
-              isEmbeddedList={true}
-              variant={'embedded'}
-              assetsLoading={isLoading}
-              onClick={() => {
-
-                handleOnSelect(pickAsset(assetId))
-              }}
-            />
-          </Box>
-        ))
+                isCreationPreview={false}
+                isEmbeddedList={true}
+                variant={'embedded'}
+                assetsLoading={isLoading}
+                onClick={() => {
+                  handleOnSelect(pickAsset(assetId));
+                }}
+              />
+            </Box>
+          ))
         : null}
       <Box
         sx={() => ({
