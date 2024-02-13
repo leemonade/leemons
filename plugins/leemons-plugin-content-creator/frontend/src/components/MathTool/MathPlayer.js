@@ -13,26 +13,32 @@ const MathPlayer = ({ node }) => {
   const editorRef = useRef(null);
 
   useEffect(() => {
-    const handleFocus = (e) => {
-      setView('latex');
-    };
-
-    const handleBlur = (e) => {
-      setView('formula');
-    };
-
     const currentRef = wrapperRef.current;
-    if (currentRef) {
-      currentRef.addEventListener('focus', handleFocus, true); // Use capture phase for focus
-      currentRef.addEventListener('blur', handleBlur, true); // Use capture phase for blur
-    }
+
+    const handleBlur = () => {
+      setView('formula');
+      if (currentRef) {
+        currentRef.removeEventListener('blur', handleBlur, true);
+      }
+    };
+    const handleFocus = () => {
+      setView('latex');
+      currentRef.focus();
+      if (currentRef) {
+        setTimeout(() => currentRef.addEventListener('blur', handleBlur, true), 300);
+      }
+    };
+
     // Don't remove this setView. Without it, the editor will not register the changes in latex formulas
     setView('formula');
+
+    if (currentRef) {
+      currentRef.addEventListener('focus', handleFocus, true);
+    }
 
     return () => {
       if (currentRef) {
         currentRef.removeEventListener('focus', handleFocus, true);
-        currentRef.removeEventListener('blur', handleBlur, true);
       }
     };
   }, []);

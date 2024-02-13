@@ -25,7 +25,7 @@ const MathTool = ({ label, ...props }) => {
       <Button
         {...props}
         label={label}
-        icon={<MathIcon height={16} width={16} />}
+        icon={<MathIcon height={20} width={20} />}
         actived={mathModalOpened || editor?.isActive('math')}
         onClick={handleOnClick}
       />
