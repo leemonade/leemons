@@ -50,6 +50,8 @@ const gradesSchema = new mongoose.Schema(
   }
 );
 
+gradesSchema.index({ deploymentID: 1, assignation: 1, subject: 1, type: 1 }, { unique: true });
+
 const gradesModel = newModel(mongoose.connection, 'v1::assignables_Grades', gradesSchema);
 
 module.exports = { gradesSchema, gradesModel };
