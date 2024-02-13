@@ -25,6 +25,7 @@ module.exports = {
       back: 'Volver',
       close: 'Cerrar',
       title: 'Biblioteca',
+      cancel: 'Cancelar',
     },
     basicData: {
       header: {

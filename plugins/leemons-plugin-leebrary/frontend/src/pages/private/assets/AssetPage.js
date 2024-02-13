@@ -315,6 +315,7 @@ const AssetPage = () => {
       formTitlePlaceholder={formValues.name || getAssetInfoHeader().placeHolder}
       onSave={form.handleSubmit(handlePlublishAndAssign)}
       onCancel={handleOnCancel}
+      mainActionLabel={t('header.cancel')}
     />
   );
 
