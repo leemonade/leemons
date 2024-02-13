@@ -174,6 +174,7 @@ export default function Index() {
           title={getTitle()}
           formTitlePlaceholder={formValues.name ? formValues.name : t('pageSubHeaderPlaceholder')}
           onCancel={() => history.goBack()}
+          mainActionLabel={t('cancel')}
         />
       }
     >

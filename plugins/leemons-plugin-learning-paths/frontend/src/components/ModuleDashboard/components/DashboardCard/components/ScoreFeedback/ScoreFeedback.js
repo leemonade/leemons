@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import _, { cloneDeep, sortBy } from 'lodash';
+import _, { cloneDeep, isNil, sortBy } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { GotFeedbackIcon } from './GotFeedbackIcon';
@@ -84,7 +84,7 @@ const ScoreFeedback = ({ score, program, instance, isFeedback }) => {
           <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
         </Badge>
       )}
-      {!!score && !isFeedback ? (
+      {!isNil(score) && !isFeedback ? (
         <>
           <Box className={classes.containerGrade}>
             <Box className={classes.containerNumber}>
@@ -96,9 +96,9 @@ const ScoreFeedback = ({ score, program, instance, isFeedback }) => {
                   <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
                 </TextClamp>
               )}
-              <Box className={classes.containerArrow}>
+              {/* <Box className={classes.containerArrow}>
                 <ArrowComponent state={'better'} />
-              </Box>
+              </Box> */}
             </Box>
             <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
           </Box>

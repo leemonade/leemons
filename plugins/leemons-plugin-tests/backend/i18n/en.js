@@ -220,6 +220,7 @@ module.exports = {
     addInstructions: 'Add instructions',
     other: 'Other',
     headerTitlePlaceholder: 'Test title',
+    cancel: 'Cancel',
   },
   testsDetail: {
     assign: 'Assign test',
