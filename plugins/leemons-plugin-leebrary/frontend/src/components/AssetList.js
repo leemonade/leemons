@@ -660,7 +660,11 @@ const AssetList = ({
                 onChange={onStatusChange}
                 value={statusFilter}
                 placeholder={t('labels.assetStatus')}
-                disabled={assetListIsLoading || assetsDetailsAreLoading}
+                disabled={
+                  assetListIsLoading ||
+                  assetsDetailsAreLoading ||
+                  ['media-files', 'bookmarks'].includes(categoryFilter)
+                }
                 skipFlex
               />
             )}
