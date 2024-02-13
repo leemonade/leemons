@@ -71,21 +71,19 @@ export function NewResource({ categories: creatableCategories, acceptedFileTypes
         body.file = resizedImage;
         body.file.name = fileName;
       }
-      setUploadingFileInfo({ state: t('common.labels.processingImage') });
       const uploadedFile = await uploadFileAsMultipart(body.file, {
         onProgress: (info) => {
           setUploadingFileInfo(info);
         },
       });
-      setUploadingFileInfo(null);
-
+      setUploadingFileInfo({ state: 'finalize' });
       try {
         const { asset } = await newAssetRequest(
           { ...body, file: uploadedFile, indexable: false },
           null,
           'media-files'
         );
-
+        setUploadingFileInfo(null);
         onSelect(asset);
       } catch (err) {
         addErrorAlert(getErrorMessage(err));

@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Container, Head, Html, Preview, Link, Text } from '@react-email/components';
-import EmailLayout from './EmailLayout.jsx';
+import { Button, Container, Link, Text } from '@react-email/components';
+import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
+
+const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
+const PLATFORM_NAME = '{{it.__platformName}}';
 
 const messages = {
   en: {
-    title: 'Welcome to {{it.__platformName}}',
+    title: `Welcome to ${IS_DEV_MODE ? 'Leemons' : PLATFORM_NAME}!`,
     actionText: 'Click on the following link to create your password and access your account:',
     buttonText: 'Set up account',
     infoText: 'This link will expire in {{it.expDays}} days and can only be used once.',
@@ -14,7 +17,7 @@ const messages = {
     noActionText: 'If you did not make this request, you can safely ignore this email.',
   },
   es: {
-    title: 'Te damos la bienvenida a {{it.__platformName}}',
+    title: `Te damos la bienvenida a ${IS_DEV_MODE ? 'Leemons' : PLATFORM_NAME}!`,
     actionText: 'Haz click en el siguiente enlace para crear tu contraseña y acceder a tu cuenta:',
     buttonText: 'Configurar cuenta',
     infoText: 'Este enlace caducará en {{it.expDays}} días y sólo puede utilizarse una vez.',
@@ -24,41 +27,52 @@ const messages = {
   },
 };
 
-const Welcome = ({ locale = 'en' } = {}) => {
+const Welcome = ({ locale = 'en', url = '{{it.url}}' } = {}) => {
   const previewText = `[Leemons] ${messages[locale].title}`;
 
   return (
-    <Html>
-      <Head />
-      <Preview>{previewText}</Preview>
-      <EmailLayout title={messages[locale].title}>
-        <Container className="text-center mt-4">
-          <Text className="text-sm font-bold leading-4">{messages[locale].actionText}</Text>
-          <Button
-            href="{{it.url}}"
-            className="bg-[#B4E600] py-2 px-4 my-2 rounded text-black text-[12px] no-underline text-center"
-          >
-            {messages[locale].buttonText}
-          </Button>
-          <Text className="text-xs leading-4">{messages[locale].infoText}</Text>
-        </Container>
+    <EmailLayout previewText={previewText} title={messages[locale].title}>
+      <Container className="text-center">
+        <span className="text-[16px] font-medium leading-6 block mt-4">
+          {messages[locale].actionText}
+        </span>
+        <Button
+          href={url}
+          className="bg-[#B4E600] py-3 px-4 mt-8 mb-6 rounded text-black text-[14px] no-underline text-center"
+        >
+          {messages[locale].buttonText}
+        </Button>
+        <Text className="text-[14px] leading-5">{messages[locale].infoText}</Text>
+      </Container>
 
-        <Container className="bg-white text-center px-4 pb-4 rounded-lg mt-4">
-          <Text className="text-xs">{messages[locale].alternativeActionText}</Text>
-          <Link href="{{it.url}}" className="text-sm underline break-all">
-            {'{{it.url}}'}
-          </Link>
-        </Container>
-        <Container className="text-center mt-2">
-          <Text className="text-xs">{messages[locale].noActionText}</Text>
-        </Container>
-      </EmailLayout>
-    </Html>
+      <Container className="bg-white text-center px-4 pb-4 rounded-lg">
+        <Text className="text-[14px] leading-5">{messages[locale].alternativeActionText}</Text>
+        <Link href={url} className="text-[14px] leading-5 underline break-all">
+          {url}
+        </Link>
+      </Container>
+      <Container className="text-center mt-2">
+        <Text className="text-[14px] leading-5">{messages[locale].noActionText}</Text>
+      </Container>
+    </EmailLayout>
   );
 };
 
+const DEV_PROPS = {
+  locale: 'en',
+  url: 'https://k12school.leemons.dev/users/register-password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Imxybjpsb2NhbDp1c2Vyczpsb2NhbDo2NWM3NmZmZDQyZDQ3YjVkZGQ5NzE3YzY6VXNlcnM6NjVjNzliYTA1N2JhZWE4NzU1YWIyOTcwIiwiY29kZSI6InJzblBYUSIsImlhdCI6MTcwNzU4MDMyMCwiZXhwIjoxNzA3NjY2NzIwfQ.46OHTPJyXIGSFLHPedKWoIZnEkjRBVKp7kpVOEk6Oek',
+};
+
+const PROD_PROPS = {
+  locale: 'en',
+  url: '{{it.url}}',
+};
+
+Welcome.defaultProps = IS_DEV_MODE ? DEV_PROPS : PROD_PROPS;
+
 Welcome.propTypes = {
   locale: PropTypes.string,
+  url: PropTypes.string,
 };
 
 export default Welcome;

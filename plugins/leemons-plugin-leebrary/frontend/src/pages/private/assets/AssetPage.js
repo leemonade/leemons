@@ -165,6 +165,7 @@ const AssetPage = () => {
 
     const isBookmarkWithValidCover = coverIsAUrl && categoryName === 'bookmarks';
     if (isBookmarkWithValidCover && !isEditing) {
+      setUploadingFileInfo({ state: 'processingImage' });
       const coverFile = await imageUrlToFile(formValues.cover);
       const resizedImage = await readAndCompressImage(coverFile, resizingOptions);
       formValues.cover = resizedImage;
@@ -224,7 +225,6 @@ const AssetPage = () => {
     try {
       const needsToUploadNewFile = !formValues.file?.id;
       if (category?.key !== 'bookmarks' && needsToUploadNewFile) {
-        setUploadingFileInfo({ state: t('common.labels.processingImage') });
         file = await uploadFileAsMultipart(formValues.file, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
@@ -241,7 +241,6 @@ const AssetPage = () => {
         : !isEmpty(formValues.cover);
 
       if (category?.key === 'bookmarks' && bookmarkNeedsNewCover) {
-        setUploadingFileInfo({ state: t('common.labels.processingImage') });
         cover = await uploadFileAsMultipart(formValues.cover, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
@@ -278,6 +277,7 @@ const AssetPage = () => {
         );
       } catch (err) {
         setLoading(false);
+        setUploadingFileInfo(null);
         addErrorAlert(getErrorMessage(err));
       }
     } catch (e) {
@@ -315,6 +315,7 @@ const AssetPage = () => {
       formTitlePlaceholder={formValues.name || getAssetInfoHeader().placeHolder}
       onSave={form.handleSubmit(handlePlublishAndAssign)}
       onCancel={handleOnCancel}
+      mainActionLabel={t('header.cancel')}
     />
   );
 

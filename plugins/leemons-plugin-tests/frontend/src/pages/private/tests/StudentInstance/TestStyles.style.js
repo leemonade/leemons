@@ -252,7 +252,7 @@ export const TestStyles = createStyles((theme) => ({
     position: 'relative',
   },
   questionResponseImageContainerSelected: {
-    borderColor: theme.colors.interactive01d,
+    border: `1px solid ${theme.other.global.border.color.line.subtle}`,
     backgroundColor: theme.colors.interactive01v1,
   },
   questionResponseNumber: {

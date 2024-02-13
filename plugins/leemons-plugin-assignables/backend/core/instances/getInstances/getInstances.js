@@ -10,6 +10,7 @@ const { getRelatedInstances } = require('./getRelatedInstances');
 const { findDates } = require('./findDates');
 const { getAssignationsData } = require('./getAssignationsData');
 const { getInstancesSubjects } = require('./getInstancesSubjects');
+const { getActivityEvaluationType } = require('../../helpers/getActivityEvaluationType');
 
 /**
  * @async
@@ -117,6 +118,7 @@ async function getInstances({
       curriculum: instance.curriculum,
       metadata: instance.metadata,
       relatedAssignableInstances: instance.relatedAssignableInstances,
+      type: getActivityEvaluationType(instance),
     };
 
     // EN: Hide custom group name to students (if checked)

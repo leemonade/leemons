@@ -59,7 +59,7 @@ module.exports = {
     title: 'Nueva tarea',
     subTitle: 'Título de la tarea',
     edit_title: 'Editar tarea',
-    subTitle: 'Título de la tarea',
+    cancel: 'Cancelar',
     common: {
       select_center: 'Seleccionar centro',
       create_done: 'Tarea creada con éxito',

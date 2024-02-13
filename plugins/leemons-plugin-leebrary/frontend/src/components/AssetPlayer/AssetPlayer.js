@@ -122,6 +122,7 @@ const AssetPlayer = ({
         isURL: false,
       };
     }
+    setShowPlayer(false);
     return result;
   }, [fileType, mediaType]);
 
@@ -244,7 +245,7 @@ const AssetPlayer = ({
 
   useEffect(() => setFullScreenMode(fullScreen), [fullScreen]);
   useEffect(() => setIsPlaying(playing), [playing]);
-  useEffect(() => setMediaVolume(volume), [volume]);
+  useEffect(() => setMediaVolume(volume), [volume, media]);
 
   useEffect(() => {
     document.body.addEventListener('keydown', toggleOnSpaceBar);
@@ -274,7 +275,6 @@ const AssetPlayer = ({
     },
     { name: 'AssetPlayer' }
   );
-
   return (
     <Box className={classes.rootWrapper}>
       <Box className={classes.root} ref={rootRef}>

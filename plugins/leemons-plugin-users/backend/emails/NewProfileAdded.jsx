@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Head, Html, Preview, Text } from '@react-email/components';
-import EmailLayout from './EmailLayout.jsx';
+import { Container, Text } from '@react-email/components';
+import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
 
 const messages = {
   en: {
@@ -20,19 +20,17 @@ const NewProfileAdded = ({ locale = 'en' } = {}) => {
   const previewText = `[Leemons] ${messages[locale].title}`;
 
   return (
-    <Html>
-      <Head />
-      <Preview>{previewText}</Preview>
-      <EmailLayout title={messages[locale].title}>
-        <Container className="text-center mt-4">
-          <Text className="text-sm font-bold leading-4">{messages[locale].actionText}</Text>
-        </Container>
+    <EmailLayout previewText={previewText} title={messages[locale].title}>
+      <Container className="text-center">
+        <span className="text-[16px] font-medium leading-6 block mt-4">
+          {messages[locale].actionText}
+        </span>
+      </Container>
 
-        <Container className="text-center mt-2">
-          <Text className="text-xs">{messages[locale].noActionText}</Text>
-        </Container>
-      </EmailLayout>
-    </Html>
+      <Container className="text-center mt-2">
+        <Text className="text-[14px] leading-5">{messages[locale].noActionText}</Text>
+      </Container>
+    </EmailLayout>
   );
 };
 
