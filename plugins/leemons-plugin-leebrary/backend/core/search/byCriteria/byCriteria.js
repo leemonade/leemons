@@ -51,9 +51,10 @@ async function byCriteria({
   onlyShared,
   programs: _programs,
   subjects: _subjects,
+  categoriesFilter,
   ctx,
 }) {
-  let published = _published;
+  const published = _published;
   let preferCurrent = _preferCurrent;
   let providerQuery = _providerQuery;
   let programs = _programs;
@@ -92,6 +93,7 @@ async function byCriteria({
     ({ assets, nothingFound } = await getProviderAssets({
       assets,
       categoryId,
+      categoriesFilter,
       criteria,
       indexable,
       nothingFound,

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { find, forEach, isArray, isEmpty, noop } from 'lodash';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { cloneDeep, find, forEach, isArray, isEmpty, noop } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import {
@@ -16,12 +16,13 @@ import {
   PaginatedList,
   Drawer,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@leebrary/components/LibraryItem';
+import { useIsStudent } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
 import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
 import getPageItems from '@leebrary/helpers/getPageItems';
@@ -153,6 +154,7 @@ const AssetList = ({
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
+  const isStudent = useIsStudent();
 
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -174,6 +176,23 @@ const AssetList = ({
   const { newAsset } = useContext(LibraryContext);
   const history = useHistory();
 
+  // For not student users, a default filter is applied in the recent view in order to only show activity assets
+  // If this behavior is not needed anymore, remove this extra filters and don't make any distinction between users
+  const resolveRecentSectionDefaultFilters = useCallback(() => {
+    let resolvedCategoriesFilter;
+    if (categoryFilter === 'all' && !isStudent) {
+      const contentAssignables = ['assignables.scorm', 'assignables.content-creator'];
+      const activityFilter = categories
+        ?.filter(
+          (cat) => cat.key?.startsWith('assignables') && !contentAssignables.includes(cat.key)
+        )
+        .map((cat) => cat.id);
+      resolvedCategoriesFilter = JSON.stringify(activityFilter);
+    }
+
+    return resolvedCategoriesFilter || null;
+  }, [isStudent, categories, categoryFilter]);
+
   // -------------------------------------------------------------------------------------
   // QUERY HOOKS
 
@@ -193,13 +212,13 @@ const AssetList = ({
 
     if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
 
+    // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key?.startsWith(SUBJECT_CATEGORY)) {
       delete query.category;
       const subjects = isArray(category.id) ? category.id : [category.id];
       query.subjects = JSON.stringify(subjects);
     }
 
-    // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key === SHARED_CATEGORY) {
       delete query.category;
       query.onlyShared = true;
@@ -209,6 +228,8 @@ const AssetList = ({
       delete query.category;
       if (categoryFilter !== 'all') {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
+      } else {
+        query.categoriesFilter = resolveRecentSectionDefaultFilters(query);
       }
     }
     if (category?.key === PINS_CATEGORY) {

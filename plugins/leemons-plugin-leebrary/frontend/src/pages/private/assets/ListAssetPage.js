@@ -186,9 +186,21 @@ const ListAssetPage = () => {
       props.onStatusChange = handleStatusChange;
     }
 
-    // CATEGORY FILTER (not tested in shared with me yet)
+    // CATEGORY FILTER (not implemented in 'Shared with me' section yet)
     if (isMultiCategorySection && category?.key !== 'leebrary-shared') {
-      props.allowCategoryFilter = true;
+      if (!isStudent) {
+        // We show only activities in the 'Recent' section when the user is not a student
+        // If this behaviour is not needed anymore simply pass true
+        const activityCategories = [
+          'assignables.task',
+          'assignables.tests',
+          'assignables.feedback',
+          'assignables.learningpaths.module',
+        ];
+        props.allowCategoryFilter = activityCategories;
+      } else {
+        props.allowCategoryFilter = true;
+      }
       props.categoryFilter = categoryFilter;
       props.onCategoryFilter = handleCategoryFilterChange;
     }
