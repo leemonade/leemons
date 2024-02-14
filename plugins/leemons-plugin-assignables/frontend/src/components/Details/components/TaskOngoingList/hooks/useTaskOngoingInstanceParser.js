@@ -50,6 +50,7 @@ function getGradesGraphData(evaluationSystem, students) {
 }
 
 function getStatusGraphData(students) {
+  const [t] = useTranslateLoader(prefixPN('activity_status'));
   if (!students) {
     return null;
   }
@@ -57,20 +58,20 @@ function getStatusGraphData(students) {
   const status = [
     {
       id: 'opened',
-      label: 'Abierta',
+      label: t('opened'),
       icon: <OpenIcon />,
 
       studentCount: students.filter((student) => student.status >= 0).length,
     },
     {
       id: 'started',
-      label: 'Empezada',
+      label: t('started'),
       icon: <TimeClockCircleIcon />,
       studentCount: students.filter((student) => student.status >= 1).length,
     },
     {
       id: 'submitted',
-      label: 'Entregada',
+      label: t('submitted'),
       icon: <CheckCircleIcon />,
       studentCount: students.filter((student) => student.status >= 2).length,
     },

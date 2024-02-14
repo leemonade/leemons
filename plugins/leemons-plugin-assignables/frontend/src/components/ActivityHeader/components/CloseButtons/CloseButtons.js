@@ -141,13 +141,13 @@ export default function CloseButtons({ instance, hidden }) {
   return (
     <Stack>
       <Switch
-        label="Cerrar"
+        label={t('close')}
         disabled={!alwaysAvailable || archived}
         checked={!!closed || !!deadlinePassed}
         onChange={onCloseTask({ instance, t, mutateAsync })}
       />
       <Switch
-        label="Archivar"
+        label={t('archive')}
         checked={!!archived}
         onChange={onArchiveTask({
           instance,
