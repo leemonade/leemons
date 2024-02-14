@@ -28,28 +28,49 @@ const getOngoingStatusAsNumber = (student) => {
   return -1;
 };
 
-const getEvaluatedCounter = (allStatuses) => {
-  const totalStudents = allStatuses?.length;
+const getEvaluatedCounter = ({ students, subjects, allStatuses }) => {
+  const totalStudents = students?.length;
+
   const totalStudentsFinished = allStatuses.filter((status) => status === 0).length;
-  return { totalStudents, totalStudentsFinished };
+
+  const totalStudentsEvaluated = students.filter((student) => {
+    const { grades } = student;
+
+    const mainGrades = grades.filter((grade) => grade.type === 'main');
+    return mainGrades?.length >= subjects?.length;
+  }).length;
+  return { totalStudents, totalStudentsEvaluated, totalStudentsFinished };
 };
-const getOngoingState = ({ students }) => {
+
+const getOngoingState = ({ students, subjects }) => {
   const allStatuses = [];
 
   students.forEach((student) => {
     allStatuses.push(student.status);
   });
 
-  if (allStatuses.includes(0) && allStatuses.some((status) => status !== 0)) {
-    const evaluatedCount = getEvaluatedCounter(allStatuses);
+  const evaluatedCount = getEvaluatedCounter({ students, subjects, allStatuses });
+
+  if (
+    evaluatedCount.totalStudentsFinished > 0 &&
+    evaluatedCount.totalStudentsFinished < evaluatedCount.totalStudents
+  ) {
     return { state: 'someDeliveredButNotAll', ...evaluatedCount };
   }
-  if (allStatuses.every((status) => status === 0)) {
+
+  if (evaluatedCount.totalStudentsEvaluated >= evaluatedCount.totalStudents) {
     return { state: 'allEvaluated' };
   }
-  if (!allStatuses.some((status) => status === 0)) {
+
+  if (evaluatedCount.totalStudentsEvaluated > 0) {
+    return { state: 'someEvaluated', ...evaluatedCount };
+  }
+
+  if (allStatuses.some((status) => status === 2)) {
     return { state: 'openedButNotStarted' };
   }
+
+  return null;
 };
 
 const getOngoingInfo = ({ instance }) => {
@@ -57,13 +78,14 @@ const getOngoingInfo = ({ instance }) => {
     return null;
   }
   const students = instance.students.map((student) => ({
+    student,
     finished: student.finished,
     grades: student.grades,
     id: student.user,
     status: getOngoingStatusAsNumber(student),
   }));
 
-  return getOngoingState({ students });
+  return getOngoingState({ students, subjects: instance.subjects });
 };
 
 export default getOngoingInfo;

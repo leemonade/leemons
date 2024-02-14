@@ -29,7 +29,9 @@ const DashboardCardCover = ({
   const subjectColor = isMultiSubject ? 'rgb(135, 141, 150)' : subjects[0]?.color;
   const { classes } = DashboardCardCoverStyles({ subjectColor });
   const [t] = useTranslateLoader(prefixPN('dashboard'));
-  const isSomethingEvaluable = evaluationInfo?.state === 'someDeliveredButNotAll';
+  const isSomethingEvaluable = ['someEvaluated', 'someDeliveredButNotAll'].includes(
+    evaluationInfo?.state
+  );
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -56,6 +58,30 @@ const DashboardCardCover = ({
     ),
     [emptyIcon]
   );
+
+  const MemoizedEmptyCoverAsset = useMemo(
+    () => (
+      <CardEmptyCover
+        icon={
+          <Box style={{ position: 'relative' }}>
+            <ImageLoader
+              style={{
+                width: 24,
+                height: 24,
+                position: 'relative',
+              }}
+              width={24}
+              height={24}
+              src={emptyIcon}
+            />
+          </Box>
+        }
+        fileType={fileType}
+      />
+    ),
+    [fileType]
+  );
+
   if (cover) {
     return (
       <Box className={classes.root}>
@@ -94,28 +120,6 @@ const DashboardCardCover = ({
     );
   }
 
-  const MemoizedEmptyCoverAsset = useMemo(
-    () => (
-      <CardEmptyCover
-        icon={
-          <Box style={{ position: 'relative' }}>
-            <ImageLoader
-              style={{
-                width: 24,
-                height: 24,
-                position: 'relative',
-              }}
-              width={24}
-              height={24}
-              src={emptyIcon}
-            />
-          </Box>
-        }
-        fileType={fileType}
-      />
-    ),
-    [fileType]
-  );
   const { grades } = assignation;
   const isGradeAssigned = !isNil(
     Array.isArray(grades) && grades.length >= 1 && grades[0].grade !== null ? grades[0].grade : null
