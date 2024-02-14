@@ -1,13 +1,13 @@
 import { getCustomNamesRange } from '../../../helpers';
 
-export default function addConditionalFormatting(ws) {
+export default function addConditionalFormatting(ws, { labels }) {
   const scoresRules = [
     {
       type: 'expression',
       formulae: [
-        `${
-          getCustomNamesRange({ ws, name: 'types', rowFixed: true }).split(':')[0]
-        }<>"calificable"`,
+        `${getCustomNamesRange({ ws, name: 'types', rowFixed: true }).split(':')[0]}<>"${
+          labels.calificable
+        }"`,
       ],
       style: {
         fill: {

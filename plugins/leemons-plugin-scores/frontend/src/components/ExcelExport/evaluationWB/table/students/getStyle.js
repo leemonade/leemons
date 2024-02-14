@@ -1,7 +1,7 @@
 import { addCustomName } from '../../../helpers';
 
 /* eslint-disable no-param-reassign */
-export default function getStyle({ tableData, ws }) {
+export default function getStyle({ tableData, ws, labels }) {
   return (cell, { relRow: row, relCol: col, row: absoluteRow, col: absoluteCol }) => {
     const border = {};
 
@@ -71,7 +71,7 @@ export default function getStyle({ tableData, ws }) {
 
     if (isCalculatedScoreCel) {
       cell.value = {
-        formula: `IFERROR(SUMPRODUCT(scores_${row},weights,--(types="calificable")),0)`,
+        formula: `IFERROR(SUMPRODUCT(scores_${row},weights,--(types="${labels.calificable}")),0)`,
         result: cell.value || 0,
       };
 
