@@ -124,18 +124,8 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
       .map((result) => result.value)
   );
 
-  const behaviorChanged = !isEqual(items, commonServiceLocalizations.items);
-
-  if (behaviorChanged) {
-    console.error('[getLocalizations behavior changed]:', {
-      items,
-      commonServiceLocalizations: commonServiceLocalizations.items,
-    });
-  }
-
   return {
     items: merge(items, commonServiceLocalizations.items),
-    behaviorChanged,
   };
 }
 
