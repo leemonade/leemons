@@ -31,7 +31,6 @@ export default function QuestionValue(props) {
       clueLessPoints += lessPoints;
     }
   });
-
   function useClue(type) {
     if (!store.viewMode) {
       if (clues.length > store.questionResponses[question.id].clues) {
@@ -41,6 +40,12 @@ export default function QuestionValue(props) {
         }
         if (store.questionResponses[question.id].cluesTypes.indexOf(type) === -1) {
           store.questionResponses[question.id].cluesTypes.push(type);
+          if (type === 'hide-response') {
+            const questionIndex = store.questions.findIndex((q) => q.id === question.id);
+            if (questionIndex !== -1) {
+              store.questions[questionIndex].properties.markers.canShowHintMarker = true;
+            }
+          }
         }
         saveQuestion();
       }
@@ -108,31 +113,31 @@ export default function QuestionValue(props) {
 
         {!store.embedded
           ? usedCluesObj.map((clObj) => (
-              <>
-                <Box
+            <>
+              <Box
+                sx={(theme) => ({
+                  width: 1,
+                  height: 26,
+                  backgroundColor: theme.other.divider.background.color.default,
+                  marginLeft: theme.spacing[4],
+                  marginRight: theme.spacing[4],
+                })}
+              />
+              <Box>
+                <Text
+                  strong
                   sx={(theme) => ({
-                    width: 1,
-                    height: 26,
-                    backgroundColor: theme.other.divider.background.color.default,
-                    marginLeft: theme.spacing[4],
-                    marginRight: theme.spacing[4],
+                    color: theme.colors.fatic01,
                   })}
-                />
-                <Box>
-                  <Text
-                    strong
-                    sx={(theme) => ({
-                      color: theme.colors.fatic01,
-                    })}
-                  >
-                    {clObj.points}
-                  </Text>{' '}
-                  <Text size="xs" color="primary">
-                    {t('clueN', { number: clObj.index + 1 })}
-                  </Text>
-                </Box>
-              </>
-            ))
+                >
+                  {clObj.points}
+                </Text>{' '}
+                <Text size="xs" color="primary">
+                  {t('clueN', { number: clObj.index + 1 })}
+                </Text>
+              </Box>
+            </>
+          ))
           : null}
       </Box>
       {/* -- Question clues -- */}

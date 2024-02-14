@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, colord, COLORS, createStyles } from '@bubbles-ui/components';
@@ -34,29 +35,30 @@ export function QuestionImage({ src, markers, values, clue }) {
       <LeebraryImage className={classes.image} src={src} />
       {markers && markers.list
         ? markers.list.map((marker, index) => {
-            let { backgroundColor } = markers;
-            if (values) {
-              backgroundColor = index === values[index] ? COLORS.fatic02 : COLORS.fatic01;
-            }
+          let { backgroundColor } = markers;
+          if (values) {
+            backgroundColor = index === values[index] ? COLORS.fatic02 : COLORS.fatic01;
+          }
 
-            if (clue) {
-              backgroundColor = clue.indexs.includes(index) ? COLORS.fatic03 : backgroundColor;
-            }
+          if (clue) {
+            backgroundColor = clue.indexs.includes(index) ? COLORS.fatic03 : backgroundColor;
+          }
+          if (!markers?.canShowHintMarker && marker.hideOnHelp) return null;
 
-            return (
-              <Box
-                key={index}
-                className={classes.marker}
-                style={{
-                  top: marker.top,
-                  left: marker.left,
-                  backgroundColor,
-                }}
-              >
-                {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
-              </Box>
-            );
-          })
+          return (
+            <Box
+              key={index}
+              className={classes.marker}
+              style={{
+                top: marker.top,
+                left: marker.left,
+                backgroundColor,
+              }}
+            >
+              {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
+            </Box>
+          );
+        })
         : null}
     </Box>
   );
