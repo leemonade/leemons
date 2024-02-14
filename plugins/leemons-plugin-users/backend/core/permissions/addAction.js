@@ -25,7 +25,7 @@ async function addAction({ permissionName, actionName, ctx }) {
       message: `Already exist the permission '${permissionName}' with the action '${actionName}'`,
     });
 
-  ctx.logger.info(`Adding action '${actionName}' for permission '${permissionName}'`);
+  ctx.logger.debug(`Adding action '${actionName}' for permission '${permissionName}'`);
   const permissionActionDoc = await ctx.tx.db.PermissionAction.create({
     permissionName,
     actionName,

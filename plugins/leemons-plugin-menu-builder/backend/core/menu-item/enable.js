@@ -37,7 +37,7 @@ async function enable({ menuKey = constants.mainMenuKey, key, ctx }) {
       { new: true, lean: true }
     );
 
-    ctx.logger.info(`Enabled menu item "${key}" of menu "${menuKey}"`);
+    ctx.logger.debug(`Enabled menu item "${key}" of menu "${menuKey}"`);
 
     return menuItem;
   }

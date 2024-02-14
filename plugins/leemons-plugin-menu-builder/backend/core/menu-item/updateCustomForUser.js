@@ -56,7 +56,7 @@ async function updateCustomForUser({ menuKey, key, label, description, ctx, ...d
 
   await Promise.all(promises);
 
-  ctx.logger.info(`Updated custom menu item "${key}" from menu "${menuKey}"`);
+  ctx.logger.debug(`Updated custom menu item "${key}" from menu "${menuKey}"`);
 
   return true;
 }

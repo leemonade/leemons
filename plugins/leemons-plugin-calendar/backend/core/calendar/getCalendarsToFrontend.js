@@ -313,53 +313,6 @@ async function getCalendarsToFrontend({ ctx }) {
   });
 
   programIds = _.uniq(programIds);
-
-  /*
-      console.time('9');
-      const [programs, isAcademic, ...calendarConfigs] = await Promise.all([
-        leemons
-          .getPlugin('academic-portfolio')
-          .services.programs.programsByIds(programIds, { transacting }),
-        leemons
-          .getPlugin('academic-portfolio')
-          .services.config.userSessionIsAcademic(userSession, { transacting }),
-        ..._.map(programIds, (programId) =>
-          leemons.getPlugin('academic-calendar').services.config.getConfig(programId, { transacting })
-        ),
-      ]);
-      console.timeEnd('9');
-
-      console.time('10');
-
-      let courses = [];
-      if (isAcademic) {
-        let classes = await Promise.all(
-          _.map(programs, (program) =>
-            leemons
-              .getPlugin('academic-portfolio')
-              .services.classes.listSessionClasses(
-                userSession,
-                { program: program.id },
-                { transacting }
-              )
-          )
-        );
-        classes = _.flatten(classes);
-        _.forEach(classes, (classe) => {
-          if (_.isArray(classe.courses)) {
-            courses = courses.concat(classe.courses);
-          } else {
-            courses.push(classe.courses);
-          }
-        });
-
-        courses = _.uniqBy(courses, 'id');
-      }
-
-
-    console.timeEnd('10');
-    */
-
   const permissionNames = [];
 
   _.forEach(result.events, (event) => {

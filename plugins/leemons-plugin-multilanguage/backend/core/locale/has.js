@@ -10,22 +10,12 @@ const { validateLocaleCode, validateLocaleCodeArray } = require('../../validatio
  * @returns {Promise<boolean>} if the locale exists
  */
 async function has({ code, ctx }) {
-  let start;
-  let end;
-
   // Validates the code and returns it in lowercase
-  start = performance.now();
   const _code = validateLocaleCode(code);
-  end = performance.now();
-  console.log(`Execution time for validating locale code: ${end - start} ms`);
 
   try {
     // Get if there is at least 1 locale with the given code
-    start = performance.now();
-    const result = (await ctx.tx.db.Locales.countDocuments({ code: _code })) > 0;
-    end = performance.now();
-    console.log(`Execution time for checking locale existence: ${end - start} ms`);
-    return result;
+    return (await ctx.tx.db.Locales.countDocuments({ code: _code })) > 0;
   } catch (e) {
     ctx.logger.debug(e.message);
     throw new Error('An error occurred while creating the locale');
@@ -41,20 +31,15 @@ async function has({ code, ctx }) {
  * @returns {Promise<Object<string, boolean>>} An array with the locales that exists
  */
 async function hasMany({ codes, ctx }) {
-  let start;
-  let end;
-
   // Validates the code and returns them lowercased
   const _codes = validateLocaleCodeArray(codes);
 
   try {
     // Find the locales that exists in the database
-    start = performance.now();
 
     let existingLocales = await ctx.tx.db.Locales.find({ code: _codes })
       .select(['id', 'code'])
       .lean();
-    end = performance.now();
 
     existingLocales = existingLocales.map((locale) => locale.code);
 

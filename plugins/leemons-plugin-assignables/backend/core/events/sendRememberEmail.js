@@ -141,7 +141,7 @@ async function sendRememberEmails({ ctx }) {
             centerId: userAgentByIds[assignation.user].center.id,
           })
           .then(async () => {
-            ctx.logger.log(
+            ctx.logger.debug(
               `Email remember assignation sended to ${userAgentByIds[assignation.user].user.email}`
             );
             await ctx.tx.db.Assignations.updateOne(
@@ -157,6 +157,7 @@ async function sendRememberEmails({ ctx }) {
       }
     });
     await Promise.all(assignationPromises);
+    ctx.logger.info('[Remember email] Emails sended');
   } else {
     ctx.logger.info('[Remember email] Nothing to send');
   }

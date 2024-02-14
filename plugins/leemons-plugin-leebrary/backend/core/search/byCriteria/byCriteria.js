@@ -136,8 +136,6 @@ async function byCriteria({
       ctx,
     });
   } catch (e) {
-    ctx.logger.log(e);
-
     throw new LeemonsError(ctx, {
       message: `Failed to find asset with query: ${e.message}`,
       httpStatusCode: 500,

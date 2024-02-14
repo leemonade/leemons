@@ -34,7 +34,7 @@ async function removeAll({ menuKey, ctx }) {
 
   await Promise.all(promises);
 
-  ctx.logger.info(`Deleted all menu items of menu "${menuKey}"`);
+  ctx.logger.debug(`Deleted all menu items of menu "${menuKey}"`);
 
   return true;
 }

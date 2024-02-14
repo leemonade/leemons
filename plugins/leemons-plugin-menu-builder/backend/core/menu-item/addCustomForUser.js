@@ -84,7 +84,7 @@ async function addCustomForUser({ label, description, ctx, ...data }) {
 
   const [menuItem] = await Promise.all(promises);
 
-  ctx.logger.info(`Added custom menu item "${data.key}" to menu "${data.menuKey}"`);
+  ctx.logger.debug(`Added custom menu item "${data.key}" to menu "${data.menuKey}"`);
 
   return menuItem;
 }
