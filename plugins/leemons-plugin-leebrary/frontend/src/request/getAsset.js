@@ -1,5 +1,6 @@
-async function getAsset(assetId) {
-  return leemons.api(`v1/leebrary/assets/${assetId}`, {
+async function getAsset(assetId, showPublic) {
+  const showPublicQuery = typeof showPublic === 'boolean' ? `?showPublic=${showPublic}` : '';
+  return leemons.api(`v1/leebrary/assets/${assetId}${showPublicQuery}`, {
     allAgents: true,
     method: 'GET',
   });

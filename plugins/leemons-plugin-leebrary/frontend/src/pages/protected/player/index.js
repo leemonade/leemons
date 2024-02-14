@@ -12,6 +12,7 @@ function PlayerPage() {
   const { assetId } = useParams();
   const { data: asset, isLoading } = useAsset({
     id: assetId,
+    showPublic: true,
   });
   const category = useMemo(
     () => categories?.find((cat) => cat.id === asset?.category) || {},

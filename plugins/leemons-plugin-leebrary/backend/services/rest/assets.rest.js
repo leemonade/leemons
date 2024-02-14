@@ -93,7 +93,6 @@ module.exports = {
       return { status: 200, assets };
     },
   },
-  // ! xapi ? middleware?
   getRest: {
     rest: {
       path: '/:id',
@@ -101,11 +100,14 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { id: assetId } = ctx.params;
+      // Use showPublic=true as a query param to retrieve both public or private assets.
+      const { id: assetId, showPublic } = ctx.params;
+      const parsedShowPublic = showPublic ? JSON.parse(showPublic) : false;
       const [asset] = await getByIds({
         ids: assetId,
         withFiles: true,
         checkPermissions: true,
+        showPublic: parsedShowPublic,
         ctx,
       });
 
