@@ -21,11 +21,13 @@ const DashboardCardCover = ({
   cover,
   emptyIcon,
   fileType,
-  moduleColor,
   evaluationInfo,
   introductionCard,
+  subjects,
 }) => {
-  const { classes } = DashboardCardCoverStyles({ moduleColor });
+  const isMultiSubject = Array.isArray(subjects) && subjects?.length > 1;
+  const subjectColor = isMultiSubject ? 'rgb(135, 141, 150)' : subjects[0]?.color;
+  const { classes } = DashboardCardCoverStyles({ subjectColor });
   const [t] = useTranslateLoader(prefixPN('dashboard'));
   const isSomethingEvaluable = evaluationInfo?.state === 'someDeliveredButNotAll';
   const MemoizedEmptyCoverIntroduction = useMemo(
@@ -69,7 +71,6 @@ const DashboardCardCover = ({
     return (
       <Box className={classes.commonContainer}>
         <Box className={classes.color} />
-
         <ProgressRing
           rootColor={'#DDE1E6'}
           sections={[{ value: percentage, color: '#307AE8' }]}
