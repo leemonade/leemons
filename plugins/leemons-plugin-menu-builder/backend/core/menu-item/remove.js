@@ -37,7 +37,7 @@ async function remove({ menuKey, key, ctx }) {
 
   await Promise.all(promises);
 
-  ctx.logger.info(`Deleted menu item "${key}" of menu "${menuKey}"`);
+  ctx.logger.debug(`Deleted menu item "${key}" of menu "${menuKey}"`);
 
   return true;
 }

@@ -73,7 +73,7 @@ async function addMany({ ctx, locales }) {
     // Return the new locales
     const addedLocalesDoc = await ctx.tx.db.Locales.create(newLocales);
     const addedLocales = addedLocalesDoc.toObject();
-    ctx.logger.info(
+    ctx.logger.debug(
       `New locales added: ${newLocales
         .map((locale) => `${locale.code} | ${locale.name}`)
         .join(', ')}`

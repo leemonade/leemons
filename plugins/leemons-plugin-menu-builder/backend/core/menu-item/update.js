@@ -129,7 +129,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
 
   const [menuItem] = await Promise.all(promises);
 
-  ctx.logger.info(
+  ctx.logger.debug(
     `Updated menu item "${key}" of menu "${menuKey}" to "${data.key}" of menu "${data.menuKey}"`
   );
 

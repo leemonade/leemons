@@ -119,7 +119,7 @@ async function sendEmail({
           centerId: userAgent.center.id,
         });
 
-        ctx.logger.log(`Email enviado a ${userAgent.user.email}`);
+        ctx.logger.debug(`Email enviado a ${userAgent.user.email}`);
       } catch (error) {
         ctx.logger.error(error);
       }

@@ -49,7 +49,7 @@ async function update({ id, name, type, description, center, permissions, ctx })
   if (!(await manyPermissionsHasManyActions({ data: dataToCheckPermissions, ctx })))
     throw new Error(`One or more permissions or his actions not exist`);
 
-  ctx.logger.info(`Updating role '${name}'`);
+  ctx.logger.debug(`Updating role '${name}'`);
   const [role, roleCenter] = await Promise.all([
     ctx.tx.db.Roles.findByIdAndUpdate(id, { name, type, description }, { lean: true, new: true }),
     ctx.tx.db.RoleCenter.findOne({ role: id }).lean(),

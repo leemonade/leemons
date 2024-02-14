@@ -27,7 +27,7 @@ async function add({ key, permissions, ctx }) {
     });
   }
 
-  ctx.logger.info(`Added menu "${key}"`);
+  ctx.logger.debug(`Added menu "${key}"`);
 
   return menu;
 }

@@ -36,7 +36,14 @@ async function modifyCTX(
     await getDeploymentID(ctx);
   }
 
-  ctx.logger = console;
+  ctx.logger = {
+    ...console,
+    debug: (...params) => {
+      if (process.env.DEBUG === 'true') {
+        console.debug(...params);
+      }
+    },
+  };
 
   ctx.prefixPN = function (string) {
     return `${getPluginNameFromServiceName(ctx.service.name)}${string ? '.' : ''}${string || ''}`;

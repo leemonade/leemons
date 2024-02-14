@@ -19,7 +19,7 @@ async function update({ ctx, ...data }) {
       message: `Permission '${data.permissionName}' for plugin '${ctx.callerPlugin}' not exists`,
     });
 
-  ctx.logger.info(`Updating permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
+  ctx.logger.debug(`Updating permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
   await ctx.tx.db.PermissionAction.deleteMany({ permissionName: data.permissionName });
 
   await addActionMany({ permissionName: data.permissionName, actionNames: data.actions, ctx });

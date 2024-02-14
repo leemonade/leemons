@@ -17,7 +17,7 @@ async function remove({ permissionName, ctx }) {
       message: `Permission '${permissionName}' for plugin '${ctx.callerPlugin}' not exists`,
     });
 
-  ctx.logger.info(`Deleting permission '${permissionName}' for plugin '${ctx.callerPlugin}'`);
+  ctx.logger.debug(`Deleting permission '${permissionName}' for plugin '${ctx.callerPlugin}'`);
   const promises = [
     ctx.tx.db.Permissions.deleteOne({
       permissionName,
