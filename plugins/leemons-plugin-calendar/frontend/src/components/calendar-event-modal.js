@@ -224,7 +224,6 @@ function NewCalendarEventModal({
         }));
         ref.current.components = {};
         forEach(ref.current.eventTypes, (eventType) => {
-          console.log('eventType.pluginName', eventType.pluginName, eventType.url);
           ref.current.components[eventType.key] = dynamicImport(
             `${eventType.pluginName}`,
             eventType.url
