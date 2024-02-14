@@ -1,4 +1,3 @@
-const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
 const { loadLocalizations } = require('./helpers/loadLocalizations');
 
 module.exports = function LeemonsMultilanguageMixin({
@@ -8,9 +7,6 @@ module.exports = function LeemonsMultilanguageMixin({
 } = {}) {
   return {
     name: '',
-    mixins: !this.metadata?.mixins.LeemonsMultiEventsMixin
-      ? [LeemonsMultiEventsMixin({ ctxKeyValueModelName })]
-      : [],
     metadata: {
       mixins: {
         LeemonsMultilanguageMixin: true,
@@ -30,7 +26,6 @@ module.exports = function LeemonsMultilanguageMixin({
         autoLRN: true,
         autoDeploymentID: true,
       })[ctxKeyValueModelName];
-
       await loadLocalizations.call(this, { KeyValuesModel, locales, i18nPath });
     },
   };
