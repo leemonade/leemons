@@ -14,7 +14,7 @@ function TabCalendarWidget(props) {
             padding: theme.spacing[6],
           })}
         >
-          <Component {...properties} {...props} inTab={true} />
+          <Component {...properties} {...props} inTab={false} />
         </Box>
       )}
     </ZoneWidgets>
