@@ -123,10 +123,6 @@
     {
       "permissionName": "learning-paths.modules",
       "actionNames": ["view", "update", "create", "delete", "admin"]
-    },
-    {
-      "permissionName": "attendance-control.attendance",
-      "actionNames": ["view", "admin"]
     }
   ],
   "name": "Docente",
