@@ -26,7 +26,7 @@ const DashboardCardCover = ({
   subjects,
 }) => {
   const isMultiSubject = Array.isArray(subjects) && subjects?.length > 1;
-  const subjectColor = isMultiSubject ? 'rgb(135, 141, 150)' : subjects[0]?.color;
+  const subjectColor = isMultiSubject ? 'rgb(135, 141, 150)' : subjects?.[0]?.color;
   const { classes } = DashboardCardCoverStyles({ subjectColor });
   const [t] = useTranslateLoader(prefixPN('dashboard'));
   const isSomethingEvaluable = ['someEvaluated', 'someDeliveredButNotAll'].includes(
