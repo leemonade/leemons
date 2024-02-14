@@ -109,8 +109,9 @@ export default function DetailQuestionForm({
     return React.cloneElement(questionComponents[type], {
       form,
       t,
+      scrollRef,
     });
-  }, [type, form, t]);
+  }, [type, form, t, scrollRef]);
 
   const hideOptionsHelp = React.useMemo(() => {
     if (!rightAnswerSelected) return t('hideOptionNoRightAnswer');
