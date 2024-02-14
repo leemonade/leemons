@@ -27,7 +27,7 @@ const keyValueSchema = new mongoose.Schema(
   }
 );
 
-keyValueSchema.index({ deploymentID: 1, key: 1 }, { unique: true });
+// keyValueSchema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
 function getKeyValueModel({ modelName }) {
   return newModel(mongoose.connection, modelName, keyValueSchema);
