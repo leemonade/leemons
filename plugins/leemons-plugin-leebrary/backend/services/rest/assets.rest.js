@@ -164,6 +164,7 @@ module.exports = {
         subjects,
         onlyShared,
         categoryFilter,
+        categoriesFilter,
       } = ctx.params;
 
       const trueValues = ['true', true, '1', 1];
@@ -179,6 +180,7 @@ module.exports = {
       const _providerQuery = JSON.parse(providerQuery || null);
       const _programs = JSON.parse(programs || null);
       const _subjects = JSON.parse(subjects || null);
+      const _categoriesFilter = JSON.parse(categoriesFilter || null); // added to filter by multiple categories
 
       const shouldSerachByCriteria =
         !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
@@ -200,6 +202,7 @@ module.exports = {
           onlyShared: _onlyShared,
           sortBy: 'updated_at',
           sortDirection: 'desc',
+          categoriesFilter: _categoriesFilter,
           ctx,
         });
       } else {
