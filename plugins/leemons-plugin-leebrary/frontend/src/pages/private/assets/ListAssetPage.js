@@ -151,24 +151,23 @@ const ListAssetPage = () => {
 
   const propsAndFiltersByCategory = useMemo(() => {
     let props = {};
+    const contentAssignables = ['assignables.scorm', 'assignables.content-creator'];
     const isMultiCategorySection = ['pins', 'leebrary-shared', 'leebrary-recent'].includes(
       category?.key
     );
     const isAssignable = category?.key?.startsWith('assignables.');
-    const isStaticAssignable = ['assignables.content-creator', 'assignables.scorm'].includes(
-      category?.key
-    );
+    const isContentAssignable = contentAssignables.includes(category?.key);
 
     // ACADEMIC FILTERS
     if (
       ((isMultiCategorySection && category?.key !== 'leebrary-shared') ||
-        (isAssignable && !isStaticAssignable)) &&
+        (isAssignable && !isContentAssignable)) &&
       isTeacher
     ) {
       props = academicFilters;
       props.allowAcademicFilter = true;
     }
-    if ((isStudent && category?.key === 'pins') || (isAssignable && !isStaticAssignable)) {
+    if ((isStudent && category?.key === 'pins') || (isAssignable && !isContentAssignable)) {
       props = academicFilters;
       props.allowAcademicFilter = true;
     }
@@ -186,9 +185,20 @@ const ListAssetPage = () => {
       props.onStatusChange = handleStatusChange;
     }
 
-    // CATEGORY FILTER (not tested in shared with me yet)
+    // CATEGORY FILTER (not implemented in 'Shared with me' section yet)
     if (isMultiCategorySection && category?.key !== 'leebrary-shared') {
-      props.allowCategoryFilter = true;
+      if (!isStudent && category?.key === 'leebrary-recent') {
+        // We show only activities in the 'Recent' section when the user is not a student
+        // If this behavior is not needed anymore simply pass true
+        const activityCategories = categories
+          ?.filter(
+            (item) => item.key?.startsWith('assignables') && !contentAssignables.includes(item.key)
+          )
+          .map((item) => item.key);
+        props.allowCategoryFilter = activityCategories;
+      } else {
+        props.allowCategoryFilter = true;
+      }
       props.categoryFilter = categoryFilter;
       props.onCategoryFilter = handleCategoryFilterChange;
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
   InputWrapper,
@@ -21,6 +21,7 @@ export function ListInputRender({
   addItem,
   value,
   onCancel,
+  scrollRef,
   ...props
 }) {
   const [store, render] = useStore(value || { useButton: true });
@@ -95,7 +96,17 @@ export function ListInputRender({
     render();
   }
 
-  // const Container = store.useButton ? Paper : Box;
+  // Manage scroll and focus
+  const answerInputRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollRef?.current && answerInputRef.current) {
+      const { top } = answerInputRef.current.getBoundingClientRect();
+      const containerTop = scrollRef.current.getBoundingClientRect().top;
+
+      scrollRef.current.scrollTop += top - containerTop;
+    }
+  }, [value, scrollRef]);
 
   if (withImages) {
     return (
@@ -109,6 +120,7 @@ export function ListInputRender({
           <Box noFlex={useExplanation}>
             <Box style={{ width: useExplanation ? 250 : '100%' }}>
               <TextInput
+                ref={answerInputRef}
                 label={t('caption')}
                 value={store.imageDescription}
                 onChange={onChangeImageDescription}
@@ -144,6 +156,7 @@ export function ListInputRender({
     <ContextContainer>
       <Box>
         <TextInput
+          ref={answerInputRef}
           value={store.response}
           label={`${t('responseLabel')} *`}
           onChange={onChangeResponse}
@@ -182,4 +195,5 @@ ListInputRender.propTypes = {
   addItem: PropTypes.func,
   value: PropTypes.any,
   onCancel: PropTypes.func,
+  scrollRef: PropTypes.object,
 };

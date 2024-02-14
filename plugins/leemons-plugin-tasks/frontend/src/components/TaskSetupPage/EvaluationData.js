@@ -82,6 +82,41 @@ function EvaluationData({
     [getValues, setValue]
   );
 
+  useEffect(() => {
+    const f = (event) => {
+      if (event === 'saveTask') {
+        form.handleSubmit(
+          (data) => {
+            onSubmit(data);
+            emitEvent('saveData');
+          },
+          () => {
+            emitEvent('saveTaskFailed');
+          }
+        )();
+      } else if (event === 'saveTaskFailed') {
+        setLoading(null);
+      } else if (event === 'saveStep') {
+        if (!form.formState.isDirty) {
+          emitEvent('stepSaved');
+        } else {
+          form.handleSubmit(
+            (data) => {
+              onSubmit(data);
+              emitEvent('stepSaved');
+            },
+            () => {
+              emitEvent('saveStepFailed');
+            }
+          )();
+        }
+      }
+    };
+    subscribe(f);
+
+    return () => unsubscribe(f);
+  }, [form.formState.isDirty, onSubmit, emitEvent, form.handleSubmit, subscribe, unsubscribe]);
+
   // ·······························································
   // HANDLERS
 
@@ -168,7 +203,10 @@ function EvaluationData({
                     chevronUp
                     width="auto"
                     data={[
-                      { label: labels.buttonPublish, onClick: handleOnPublish },
+                      {
+                        label: labels.buttonPublish,
+                        onClick: handleOnPublish,
+                      },
                       { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
                     ]}
                     loading={loading === 'publish'}
@@ -191,7 +229,7 @@ function EvaluationData({
           />
         }
       >
-        {subjects?.length && (
+        {!!subjects?.length && (
           <ContextContainer {...props}>
             <ContextContainer style={{ width: '212px' }}>
               <SubjectSelect

@@ -312,6 +312,19 @@ const mixin = ({
   models,
 }) => ({
   name: '',
+  metadata: {
+    mixins: {
+      LeemonsMongoDBMixin: true,
+    },
+    LeemonsMongoDBMixin: {
+      models: ({ ctx, ...options }) =>
+        getDBModels({
+          ...options,
+          ctx,
+          models,
+        }),
+    },
+  },
   actions: {
     leemonsMongoDBRollback: {
       async handler(ctx) {

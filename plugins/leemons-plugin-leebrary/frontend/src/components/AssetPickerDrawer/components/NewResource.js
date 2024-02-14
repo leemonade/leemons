@@ -79,7 +79,7 @@ export function NewResource({ categories: creatableCategories, acceptedFileTypes
       setUploadingFileInfo({ state: 'finalize' });
       try {
         const { asset } = await newAssetRequest(
-          { ...body, file: uploadedFile, indexable: false },
+          { ...body, file: uploadedFile },
           null,
           'media-files'
         );

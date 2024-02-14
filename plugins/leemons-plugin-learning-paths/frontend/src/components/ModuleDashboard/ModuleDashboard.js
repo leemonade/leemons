@@ -204,10 +204,6 @@ export function ModuleDashboardBody({
   subjectsData,
 }) {
   const [t] = useTranslateLoader(prefixPN('moduleJourney'));
-  const moduleColor =
-    Array.isArray(subjectsData) && subjectsData.length === 1
-      ? subjectsData[0].color
-      : 'rgb(135, 141, 150)';
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
   const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   return (
@@ -236,7 +232,6 @@ export function ModuleDashboardBody({
               key={activity?.id}
               preview={preview}
               assetNumber={index + 1}
-              moduleColor={moduleColor}
             />
           ),
           createdAt: activitiesById[activity?.id].createdAt,
@@ -260,15 +255,8 @@ ModuleDashboardBody.propTypes = {
 };
 
 export function ModuleDashboard({ id, preview }) {
-  const {
-    module,
-    moduleAssignation,
-    activities,
-    activitiesById,
-    assignationsById,
-    isLoading,
-    subjectsData,
-  } = preview ? useModuleDataForPreview(id) : useModuleData(id);
+  const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
+    preview ? useModuleDataForPreview(id) : useModuleData(id);
 
   const isStudent = useIsStudent();
   const { mutateAsync } = useStudentAssignationMutation();
@@ -301,7 +289,6 @@ export function ModuleDashboard({ id, preview }) {
                 classes={classes}
                 localizations={localizations}
                 module={module}
-                subjectsData={subjectsData}
                 preview={preview}
               />
             </Box>
