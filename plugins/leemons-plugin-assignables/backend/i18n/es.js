@@ -178,6 +178,8 @@ module.exports = {
     students: 'Estudiantes',
     califications: 'Puntuaciones',
     passed: 'Aprobado',
+    close: 'Cerrar',
+    archive: 'Archivar',
     closeAction: {
       verbs: {
         opening: 'Empezando',
