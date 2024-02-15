@@ -6,7 +6,7 @@ function imageUrlToFile(url) {
     })
     .then(
       (data) =>
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           const img = document.createElement('img');
           img.src = data.contents;
           img.onload = () => {
