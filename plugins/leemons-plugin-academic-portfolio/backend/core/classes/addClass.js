@@ -231,7 +231,7 @@ async function addClass({ data, ctx }) {
       );
     }
 
-    await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
+    // await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
     return (await classByIds({ ids: nClass.id, ctx }))[0];
   } catch (e) {
