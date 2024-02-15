@@ -5,7 +5,7 @@ import { forEach, isArray, keyBy } from 'lodash';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
-  const { styles, cx, t, store, render, question, saveQuestion } = props;
+  const { t, store, render, question, saveQuestion } = props;
 
   const usedClues = store.questionResponses?.[question.id].clues;
   const usedCluesTypes = store.questionResponses?.[question.id].cluesTypes;
@@ -66,10 +66,11 @@ export default function QuestionValue(props) {
   const selectData = [];
   if (clues?.length) {
     forEach(clues, (clue) => {
+      const clueType = `clue${clue.type}`;
       const lessPoints =
         store.questionsInfo.perQuestion * (cluesConfigByType[clue.type].value / 100);
       selectData.push({
-        label: `${t(`clue${clue.type}`)} (-${lessPoints.toFixed(2)} ${t('pts')})`,
+        label: `${t(clueType)} (-${lessPoints.toFixed(2)} ${t('pts')})`,
         value: clue.type,
         disabled: usedCluesTypes?.indexOf(clue.type) >= 0,
       });
@@ -113,31 +114,31 @@ export default function QuestionValue(props) {
 
         {!store.embedded
           ? usedCluesObj.map((clObj) => (
-            <>
-              <Box
-                sx={(theme) => ({
-                  width: 1,
-                  height: 26,
-                  backgroundColor: theme.other.divider.background.color.default,
-                  marginLeft: theme.spacing[4],
-                  marginRight: theme.spacing[4],
-                })}
-              />
-              <Box>
-                <Text
-                  strong
+              <>
+                <Box
                   sx={(theme) => ({
-                    color: theme.colors.fatic01,
+                    width: 1,
+                    height: 26,
+                    backgroundColor: theme.other.divider.background.color.default,
+                    marginLeft: theme.spacing[4],
+                    marginRight: theme.spacing[4],
                   })}
-                >
-                  {clObj.points}
-                </Text>{' '}
-                <Text size="xs" color="primary">
-                  {t('clueN', { number: clObj.index + 1 })}
-                </Text>
-              </Box>
-            </>
-          ))
+                />
+                <Box>
+                  <Text
+                    strong
+                    sx={(theme) => ({
+                      color: theme.colors.fatic01,
+                    })}
+                  >
+                    {clObj.points}
+                  </Text>{' '}
+                  <Text size="xs" color="primary">
+                    {t('clueN', { number: clObj.index + 1 })}
+                  </Text>
+                </Box>
+              </>
+            ))
           : null}
       </Box>
       {/* -- Question clues -- */}
@@ -151,23 +152,6 @@ export default function QuestionValue(props) {
               onChange={useClue}
             />
           ) : null}
-          {/* <Box className={cx(styles.questionValueCard, styles.questionCluesCard)}>
-
-
-            {clues.map((value, index) => (
-              <Box key={index} className={styles.questionClueIcon}>
-                <ImageLoader src={`/public/tests/clue-${index < usedClues ? 'off' : 'on'}.svg`} />
-              </Box>
-            ))}
-
-            {!store.viewMode ? (
-              <Button variant="link" onClick={useClue}>
-                {t('askForAHint')}
-              </Button>
-            ) : null}
-
-          </Box>
-          */}
         </>
       ) : null}
     </Box>
@@ -175,16 +159,9 @@ export default function QuestionValue(props) {
 }
 
 QuestionValue.propTypes = {
-  classes: PropTypes.any,
-  styles: PropTypes.any,
   t: PropTypes.any,
-  cx: PropTypes.any,
   question: PropTypes.any,
   store: PropTypes.any,
-  prevStep: PropTypes.func,
   render: PropTypes.func,
-  nextStep: PropTypes.func,
-  isFirstStep: PropTypes.bool,
-  index: PropTypes.number,
   saveQuestion: PropTypes.func,
 };
