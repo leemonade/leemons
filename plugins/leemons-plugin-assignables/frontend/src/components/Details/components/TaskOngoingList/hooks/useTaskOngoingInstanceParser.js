@@ -50,7 +50,7 @@ function getGradesGraphData(evaluationSystem, students) {
 }
 
 function getStatusGraphData(students, activityStatusLabels) {
-  if (!students) {
+  if (!students || !activityStatusLabels) {
     return null;
   }
 
