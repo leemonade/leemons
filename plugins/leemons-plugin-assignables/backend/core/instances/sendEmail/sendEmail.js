@@ -1,5 +1,35 @@
 const { diffHours } = require('@leemons/utils');
 const { isString } = require('lodash');
+
+async function getCoverAndAvatarUrls({ ctx, instance, userSession, hostname, hostnameApi }) {
+  const { deploymentID } = ctx.meta;
+
+  let avatarUrl = userSession?.avatar;
+  let coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', {
+    assetId: instance.assignable.asset.id,
+  });
+
+  if (isString(avatarUrl)) {
+    if (!avatarUrl.startsWith('http')) {
+      avatarUrl = `${hostnameApi || hostname}${avatarUrl}`;
+    }
+    const avatarUrlObj = new URL(avatarUrl);
+    avatarUrlObj.searchParams.append('deploymentID', deploymentID);
+    avatarUrl = avatarUrlObj.toString();
+  }
+
+  if (isString(coverUrl)) {
+    if (!coverUrl.startsWith('http')) {
+      coverUrl = `${hostnameApi || hostname}${coverUrl}`;
+    }
+    const coverUrlObj = new URL(coverUrl);
+    coverUrlObj.searchParams.append('deploymentID', deploymentID);
+    coverUrl = coverUrlObj.toString();
+  }
+
+  return { avatarUrl, coverUrl };
+}
+
 /**
  * Sends an email with the instance details.
  *
@@ -70,17 +100,13 @@ async function sendEmail({
         classColor = classes[0].color;
       }
 
-      let avatarUrl = userSession?.avatar;
-      if (isString(avatarUrl) && !avatarUrl.startsWith('http')) {
-        avatarUrl = `${hostnameApi || hostname}${avatarUrl}`;
-      }
-
-      let coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', {
-        assetId: instance.assignable.asset.id,
+      const { avatarUrl, coverUrl } = await getCoverAndAvatarUrls({
+        ctx,
+        instance,
+        userSession,
+        hostname,
+        hostnameApi,
       });
-      if (isString(coverUrl) && !coverUrl.startsWith('http')) {
-        coverUrl = `${hostnameApi || hostname}${coverUrl}`;
-      }
 
       const context = {
         instance: {
