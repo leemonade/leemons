@@ -9,6 +9,10 @@ import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
+import usePeriodTypes from '../ScoresPage/Filters/hooks/usePeriodTypes';
+import useSelectedPeriod from '../ScoresPage/Filters/hooks/useSelectedPeriod';
+import PickDate from '../ScoresPage/Filters/components/PickDate';
+import useAcademicCalendarDates from '../ScoresPage/Filters/hooks/useAcademicCalendarDates';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
@@ -48,128 +52,9 @@ function useFiltersLocalizations() {
   }, [translations]);
 }
 
-function useSelectedPeriod({ periods, control, program, selectedCourse, finalLabel }) {
-  const [periodSelected, startDate, endDate] = useWatch({
-    control,
-    name: ['period', 'startDate', 'endDate'],
-  });
-
-  const period = Array.isArray(periodSelected) ? periodSelected[0] : periodSelected;
-
-  if (period === 'custom') {
-    return {
-      selected: period,
-      isCustom: true,
-      isComplete: startDate && endDate,
-      startDate,
-      endDate,
-    };
-  }
-
-  // eslint-disable-next-line eqeqeq
-  let selectedPeriod = periods.find((p) => p.id == period);
-
-  if (period === 'final') {
-    const academicPeriods = periods.filter((p) => p?.periods);
-
-    const periodsInFinal = academicPeriods.map((p) => p?.periods?.[program]?.[selectedCourse]);
-
-    selectedPeriod = {
-      startDate: academicPeriods[0]?.startDate,
-      endDate: academicPeriods[academicPeriods.length - 1]?.endDate,
-      id: 'final',
-      name: finalLabel,
-      program,
-      selectedCourse,
-      type: 'academic-calendar',
-      realPeriods: periodsInFinal,
-      periods: academicPeriods,
-    };
-  } else if (selectedPeriod) {
-    if (selectedPeriod.periods && selectedCourse) {
-      selectedPeriod = {
-        ..._.omit(selectedPeriod, ['id', 'programs', 'courses', 'periods']),
-        program,
-        course: selectedCourse,
-        id: selectedPeriod.periods[program][selectedCourse],
-        type: 'academic-calendar',
-      };
-    } else {
-      selectedPeriod = {
-        ..._.omit(selectedPeriod, ['programs', 'courses']),
-        program,
-        course: selectedCourse || null,
-        type: 'scores',
-      };
-    }
-  }
-
-  return {
-    selected: period,
-    period: selectedPeriod,
-    isComplete: !!selectedPeriod,
-    startDate: selectedPeriod?.startDate,
-    endDate: selectedPeriod?.endDate,
-  };
-}
-
-function usePeriodTypes() {
-  const [, translations] = useTranslateLoader(prefixPN('periodTypes'));
-
-  return React.useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      return _.get(res, prefixPN('periodTypes'));
-    }
-
-    return {};
-  }, [translations]);
-}
-
-function PickDate({ control, name, localizations }) {
-  const opposite = name === 'endDate' ? 'startDate' : 'endDate';
-
-  const savedDate = useWatch({ control, name: opposite });
-  const date = new Date(savedDate);
-
-  const minDate =
-    name === 'endDate' && date.getTime() ? new Date(date.setDate(date.getDate() + 1)) : undefined;
-  const maxDate =
-    name === 'startDate' && date.getTime() ? new Date(date.setDate(date.getDate() - 1)) : undefined;
-
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => {
-        if (name === 'endDate' && field.value && !minDate) {
-          field.onChange(null);
-        }
-
-        if (name === 'endDate' && !field.value && minDate) {
-          const newDate = new Date();
-          newDate.setDate(minDate.getDate() + 1);
-          field.onChange(newDate);
-        }
-
-        return (
-          <DatePicker
-            {...field}
-            minDate={minDate}
-            maxDate={maxDate}
-            disabled={name === 'endDate' && !minDate}
-            // label={localizations?.[name]?.label}
-            placeholder={localizations?.[name]?.placeholder}
-          />
-        );
-      }}
-    />
-  );
-}
-
 export function Filters({ onChange, setKlasses }) {
   const { classes } = useFiltersStyles();
-  const localizations = useFiltersLocalizations();
+  const [t] = useTranslateLoader(prefixPN('studentScoresPage.filters'));
   const { program } = getSessionConfig();
   const { data: programDetails } = useProgramDetail(program, {
     enabled: !!program,
@@ -190,6 +75,12 @@ export function Filters({ onChange, setKlasses }) {
   }, [courses?.[0]?.value]);
 
   const selectedCourse = watch('class');
+
+  const { startDate, endDate } = useAcademicCalendarDates({
+    control,
+    selectedClass: { program, courses: { id: selectedCourse } },
+  });
+
   const { periods } = useMatchingAcademicCalendarPeriods({
     classes: classesData,
     filters: { program, course: selectedCourse },
@@ -200,7 +91,7 @@ export function Filters({ onChange, setKlasses }) {
     control,
     program,
     selectedCourse,
-    finalLabel: localizations?.period?.final,
+    finalLabel: t('period.final'),
   });
 
   // Emit onChange
@@ -238,7 +129,7 @@ export function Filters({ onChange, setKlasses }) {
               name="class"
               render={({ field }) => (
                 <Select
-                  placeholder={localizations.course?.placeholder}
+                  placeholder={t('course.placeholder')}
                   data={courses}
                   autoSelectOneOption
                   {...field}
@@ -258,14 +149,14 @@ export function Filters({ onChange, setKlasses }) {
                 })),
                 {
                   value: 'custom',
-                  label: localizations?.period?.custom,
+                  label: t('period.custom'),
                 },
               ];
 
               if (data.some((period) => period.group === periodTypes?.academicCalendar)) {
                 data.push({
                   value: 'final',
-                  label: localizations?.period?.final,
+                  label: t('period.final'),
                   group: periodTypes?.academicCalendar,
                 });
               }
@@ -283,7 +174,7 @@ export function Filters({ onChange, setKlasses }) {
               return (
                 <Select
                   // label={localizations.period?.label}
-                  placeholder={localizations.period?.placeholder}
+                  placeholder={t('period.placeholder')}
                   data={data}
                   {...field}
                 />
@@ -293,8 +184,8 @@ export function Filters({ onChange, setKlasses }) {
         </Box>
         {selectedPeriod.selected === 'custom' && (
           <Box className={classes.inputs}>
-            <PickDate control={control} name="startDate" localizations={localizations} />
-            <PickDate control={control} name="endDate" localizations={localizations} />
+            <PickDate control={control} name="startDate" defaultValue={startDate} />
+            <PickDate control={control} name="endDate" defaultValue={endDate} />
           </Box>
         )}
       </Box>
