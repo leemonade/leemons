@@ -208,7 +208,12 @@ module.exports = {
         hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
       }
 
-      const data = await usersService.detailForPage({ userId: ctx.params.id, ctx });
+      const user = await usersService.detailForPage({ userId: ctx.params.id, ctx });
+      const data = {
+        ...(user ?? {}),
+        user: _.omit(user?.user, ['password', 'token', '__v']),
+        userAgents: user?.userAgents?.map((userAgent) => _.omit(userAgent, ['user'])),
+      };
 
       // Comprobamos si se tienen como contactos
       if (!hasPermission) {
