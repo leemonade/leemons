@@ -5,9 +5,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import usePeriodTypes from '../hooks/usePeriodTypes';
 
-export default function SelectPeriod({ periods, ...field }) {
+function usePeriodsData({ periods, t }) {
   const periodTypes = usePeriodTypes();
-  const [t] = useTranslateLoader(prefixPN('scoresPage.filters.period'));
 
   const data = [
     ...(periods?.map((period) => ({
@@ -28,18 +27,23 @@ export default function SelectPeriod({ periods, ...field }) {
       group: periodTypes?.academicCalendar,
     });
   }
+  return data;
+}
 
-  const valueExists =
-    !field.value ||
-    field.value === 'custom' ||
-    // eslint-disable-next-line eqeqeq
-    !!data.find((d) => d.value == field.value);
+export default function SelectPeriod({ periods, ...field }) {
+  const [t] = useTranslateLoader(prefixPN('scoresPage.filters.period'));
+  const data = usePeriodsData({ periods, t });
 
-  if (!valueExists) {
-    field.onChange(null);
-  }
-
-  return <Select ariaLabel={t('label')} placeholder={t('placeholder')} data={data} {...field} />;
+  return (
+    <Select
+      {...field}
+      ariaLabel={t('label')}
+      placeholder={t('placeholder')}
+      data={data}
+      autoSelectOneOption={!field.disabled && data.length === 1}
+      cleanOnMissingValue
+    />
+  );
 }
 
 SelectPeriod.propTypes = {

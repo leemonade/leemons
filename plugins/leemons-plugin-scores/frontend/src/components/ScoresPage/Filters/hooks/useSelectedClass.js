@@ -8,7 +8,7 @@ export default function useSelectedClass({ classes, control, classID }) {
     defaultValue: null,
   });
 
-  const selectedClassId = classID || selectedClass?.[0];
+  const selectedClassId = classID || selectedClass;
 
   return React.useMemo(() => {
     if (!selectedClassId || !classes?.length) {

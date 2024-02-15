@@ -3,7 +3,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import React from 'react';
 import { Controller, useWatch } from 'react-hook-form';
 
-export default function PickDate({ control, name }) {
+export default function PickDate({ control, name, defaultValue }) {
   const opposite = name === 'endDate' ? 'startDate' : 'endDate';
 
   const [t] = useTranslateLoader('scores.scoresPage');
@@ -19,12 +19,19 @@ export default function PickDate({ control, name }) {
     <Controller
       name={name}
       control={control}
-      render={({ field }) => {
-        if (name === 'endDate' && field.value && !minDate) {
+      render={({ field, fieldState: { isDirty } }) => {
+        let isDefaultValue = field.value?.getTime() === defaultValue;
+
+        if (!isDefaultValue && !isDirty) {
+          field.onChange(new Date(defaultValue));
+          isDefaultValue = true;
+        }
+
+        if (!isDefaultValue && name === 'endDate' && field.value && !minDate) {
           field.onChange(null);
         }
 
-        if (name === 'endDate' && !field.value && minDate) {
+        if (!isDefaultValue && name === 'endDate' && !field.value && minDate) {
           const newDate = new Date();
           newDate.setDate(minDate.getDate() + 1);
           field.onChange(newDate);

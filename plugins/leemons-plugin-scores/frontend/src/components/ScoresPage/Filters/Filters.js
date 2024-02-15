@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Box, Select, Title } from '@bubbles-ui/components';
+import { Box, Title } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
 import _ from 'lodash';
 
@@ -11,13 +11,15 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { getCentersWithToken } from '@users/session';
 
+import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 import useFiltersStyles from './Filerts.styles';
-import ClassItem from './components/ClassItem';
 import PickDate from './components/PickDate';
+import SelectPeriod from './components/SelectPeriod';
 import usePeriods from './hooks/usePeriods';
 import useSelectedClass from './hooks/useSelectedClass';
 import useSelectedPeriod from './hooks/useSelectedPeriod';
-import SelectPeriod from './components/SelectPeriod';
+import useOnChange from './hooks/useOnChange';
+import useAcademicCalendarDates from './hooks/useAcademicCalendarDates';
 
 export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
   const [t] = useTranslateLoader(prefixPN('scoresPage.filters'));
@@ -40,21 +42,9 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
     setValue,
   });
 
-  // Emit onChange
-  React.useEffect(() => {
-    if (selectedClass && selectedPeriod.isComplete) {
-      onChange({
-        period: selectedPeriod,
-        program: selectedClass?.program,
-        subject: selectedClass?.subject?.id,
-        group: selectedClass?.groups?.id,
-        startDate: selectedPeriod.startDate,
-        endDate: selectedPeriod.endDate,
-        class: selectedClass,
-        isCustom: selectedPeriod.isCustom,
-      });
-    }
-  }, [JSON.stringify(selectedClass), JSON.stringify(selectedPeriod)]);
+  const { startDate, endDate } = useAcademicCalendarDates({ control, selectedClass });
+
+  useOnChange(selectedClass, selectedPeriod, onChange);
 
   return (
     <Box>
@@ -80,15 +70,16 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
               control={control}
               name="class"
               render={({ field }) => (
-                <Select
+                <SelectSubject
                   ariaLabel={t('class.label')}
                   placeholder={t('class.placeholder')}
                   data={classesData?.map((klass) => ({
+                    ...klass.subject,
                     value: klass.id,
-                    c: klass,
+                    label: klass.groups.isAlone
+                      ? klass.subject?.name
+                      : `${klass.subject.name} - ${klass.groups.name}`,
                   }))}
-                  itemComponent={({ c, ...item }) => <ClassItem class={c} dropdown {...item} />}
-                  valueComponent={({ c, ...item }) => <ClassItem class={c} {...item} />}
                   disabled={dataIsLoading || !programId}
                   autoSelectOneOption
                   {...field}
@@ -96,17 +87,18 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
               )}
             />
           ) : null}
-
           <Controller
             control={control}
             name="period"
-            render={({ field }) => <SelectPeriod {...field} periods={periods} t={t} />}
+            render={({ field }) => (
+              <SelectPeriod {...field} periods={periods} t={t} disabled={!selectedClass} />
+            )}
           />
         </Box>
         {selectedPeriod.selected === 'custom' && (
           <Box className={classes.inputs}>
-            <PickDate control={control} name="startDate" />
-            <PickDate control={control} name="endDate" />
+            <PickDate control={control} name="startDate" defaultValue={startDate} />
+            <PickDate control={control} name="endDate" defaultValue={endDate} />
           </Box>
         )}
       </Box>
