@@ -10,6 +10,7 @@
   },
   "extends": [
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
     "plugin:sonarjs/recommended",
     "airbnb-base",
     "prettier"
@@ -39,6 +40,7 @@
   },
   "plugins": [
     "react",
+    "react-hooks",
     "sonarjs",
     "import",
     "prettier"
@@ -47,11 +49,10 @@
     "radix": "off",
     "no-plusplus": "off",
     "no-unused-vars": "warn",
-    "no-underscore-dangle": "off",
-    "react/react-in-jsx-scope": "off",
     "import/no-dynamic-requires": "off",
-    "import/prefer-default-export": "warn",
     "import/no-extraneous-dependencies": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-underscore-dangle": "off",
     "prettier/prettier": [
       2,
       {},
@@ -60,6 +61,7 @@
       }
     ],
     "import/no-names-as-default": "off",
+    "import/prefer-default-export": "warn",
     "import/no-unresolved": [
       2,
       {
