@@ -7,7 +7,7 @@ import {
   Box,
   createStyles,
 } from '@bubbles-ui/components';
-import { Filters } from '../components/ScoresPage/Filters';
+import Filters from '@scores/components/ScoresPage/Filters/Filters';
 import { Header } from '../components/ScoresPage/Header';
 
 const useStyles = createStyles((theme) => ({
