@@ -38,11 +38,10 @@ export function QuestionImage({ src, markers, values, clue }) {
             if (values) {
               backgroundColor = index === values[index] ? COLORS.fatic02 : COLORS.fatic01;
             }
-
             if (clue) {
               backgroundColor = clue.indexs.includes(index) ? COLORS.fatic03 : backgroundColor;
             }
-
+            if (!markers?.canShowHintMarker && marker.hideOnHelp) return null;
             return (
               <Box
                 key={index}
@@ -68,6 +67,8 @@ QuestionImage.propTypes = {
     type: PropTypes.string,
     backgroundColor: PropTypes.string,
     list: PropTypes.any,
+    canShowHintMarker: PropTypes.bool,
+    hideOnHelp: PropTypes.bool,
   }).isRequired,
   values: PropTypes.any,
   clue: PropTypes.any,
