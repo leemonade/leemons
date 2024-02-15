@@ -203,16 +203,14 @@ export function SubjectPicker({
             />
           </Box>
           <Box noFlex>
-            {
-              <Button
-                leftIcon={<AddCircleIcon />}
-                variant="link"
-                onClick={form.handleSubmit(onSubmit)}
-                disabled={isDisabled}
-              >
-                {localizations?.add}
-              </Button>
-            }
+            <Button
+              leftIcon={<AddCircleIcon />}
+              variant="link"
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={isDisabled}
+            >
+              {localizations?.add}
+            </Button>
           </Box>
         </Stack>
       </InputWrapper>
