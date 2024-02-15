@@ -46,7 +46,6 @@ export default function Index(props) {
     const text = htmlToText(question.properties.explanation);
     if (text) explanation = question.properties.explanation;
   }
-
   return (
     <>
       {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
@@ -64,7 +63,6 @@ export default function Index(props) {
             clue={clue}
           />
         </Box>
-
         {explanation ? (
           <Box className={cx(styles.textExplanation, styles.textExplanationRemovePadding)}>
             <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
@@ -75,7 +73,6 @@ export default function Index(props) {
             <HtmlText>{explanation}</HtmlText>
           </Box>
         ) : null}
-
         <Responses {...props} />
       </Box>
 

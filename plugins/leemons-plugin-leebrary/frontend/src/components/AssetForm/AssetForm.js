@@ -497,7 +497,7 @@ const AssetForm = ({
             ) : null}
 
             {store.showAdvancedConfig ? (
-              <ContextContainer title="Otros">
+              <ContextContainer title={labels?.other}>
                 {children || null}
                 {useTags && (
                   <Controller

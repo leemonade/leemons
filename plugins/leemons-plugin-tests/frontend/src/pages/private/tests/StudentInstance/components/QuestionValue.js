@@ -5,8 +5,8 @@ import { forEach, isArray, keyBy } from 'lodash';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
-  const [selectedClue, setSelectedClue] = useState(null);
-  const { styles, cx, t, store, render, question, saveQuestion } = props;
+  const { t, store, render, question, saveQuestion } = props;
+
   const usedClues = store.questionResponses?.[question.id].clues;
   const usedCluesTypes = store.questionResponses?.[question.id].cluesTypes;
   const clues = useMemo(
@@ -44,6 +44,12 @@ export default function QuestionValue(props) {
         }
         if (store.questionResponses[question.id].cluesTypes.indexOf(type) === -1) {
           store.questionResponses[question.id].cluesTypes.push(type);
+          if (type === 'hide-response') {
+            const questionIndex = store.questions.findIndex((q) => q.id === question.id);
+            if (questionIndex !== -1) {
+              store.questions[questionIndex].properties.markers.canShowHintMarker = true;
+            }
+          }
         }
         saveQuestion();
       }
@@ -64,10 +70,11 @@ export default function QuestionValue(props) {
   const selectData = [];
   if (clues?.length) {
     forEach(clues, (clue) => {
+      const clueType = `clue${clue.type}`;
       const lessPoints =
         store.questionsInfo.perQuestion * (cluesConfigByType[clue.type].value / 100);
       selectData.push({
-        label: `${t(`clue${clue.type}`)} (-${lessPoints.toFixed(2)} ${t('pts')})`,
+        label: `${t(clueType)} (-${lessPoints.toFixed(2)} ${t('pts')})`,
         value: clue.type,
         disabled: usedCluesTypes?.indexOf(clue.type) >= 0,
       });
@@ -153,23 +160,6 @@ export default function QuestionValue(props) {
               }}
             />
           ) : null}
-          {/* <Box className={cx(styles.questionValueCard, styles.questionCluesCard)}>
-
-
-            {clues.map((value, index) => (
-              <Box key={index} className={styles.questionClueIcon}>
-                <ImageLoader src={`/public/tests/clue-${index < usedClues ? 'off' : 'on'}.svg`} />
-              </Box>
-            ))}
-
-            {!store.viewMode ? (
-              <Button variant="link" onClick={useClue}>
-                {t('askForAHint')}
-              </Button>
-            ) : null}
-
-          </Box>
-          */}
         </>
       ) : null}
     </Box>
@@ -177,16 +167,9 @@ export default function QuestionValue(props) {
 }
 
 QuestionValue.propTypes = {
-  classes: PropTypes.any,
-  styles: PropTypes.any,
   t: PropTypes.any,
-  cx: PropTypes.any,
   question: PropTypes.any,
   store: PropTypes.any,
-  prevStep: PropTypes.func,
   render: PropTypes.func,
-  nextStep: PropTypes.func,
-  isFirstStep: PropTypes.bool,
-  index: PropTypes.number,
   saveQuestion: PropTypes.func,
 };
