@@ -369,7 +369,7 @@ module.exports = {
   },
   testAssign: {
     pageTitle: 'Assign Test:',
-    assign: 'Assignar',
+    assign: 'Assign',
     config: 'Config',
     next: 'Continue',
     prev: 'Previous',
