@@ -5,6 +5,7 @@ import { forEach, isArray, keyBy } from 'lodash';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
+  const [selectedClue, setSelectedClue] = useState(null);
   const { t, store, render, question, saveQuestion } = props;
 
   const usedClues = store.questionResponses?.[question.id].clues;
