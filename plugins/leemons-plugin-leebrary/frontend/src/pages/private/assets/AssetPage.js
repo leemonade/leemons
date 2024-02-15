@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
-import _, { find, isEmpty, isString } from 'lodash';
+import { find, isEmpty, isString } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
@@ -12,7 +12,6 @@ import { useLayout } from '@layout/context';
 import { useQueryClient } from '@tanstack/react-query';
 import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
 import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
-import { readAndCompressImage } from 'browser-image-resizer';
 import {
   AssetBookmarkIcon,
   AssetMediaIcon,
@@ -23,6 +22,7 @@ import {
 import { useRequestErrorMessage } from '@common';
 
 import imageUrlToFile from '@leebrary/helpers/imageUrlToFile';
+import compressImage from '@leebrary/helpers/compressImage';
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
 import { prepareAsset } from '../../../helpers/prepareAsset';
@@ -150,42 +150,29 @@ const AssetPage = () => {
 
   // HELPER FUNCTIONS --------------------------------------------------------
 
-  async function resolveAssetCover({
-    categoryName,
-    isEditing,
-    isImageResource,
-    resizingOptions = {
-      quality: 0.8,
-      maxWidth: 800,
-      maxHeight: 600,
-      debug: true,
-    },
-  }) {
+  async function resolveAssetCover({ categoryName, isEditing, isImageResource }) {
     const coverIsAUrl = isString(formValues.cover) && formValues.cover?.startsWith('http');
 
     const isBookmarkWithValidCover = coverIsAUrl && categoryName === 'bookmarks';
     if (isBookmarkWithValidCover && !isEditing) {
       setUploadingFileInfo({ state: 'processingImage' });
       const coverFile = await imageUrlToFile(formValues.cover);
-      const resizedImage = await readAndCompressImage(coverFile, resizingOptions);
-      formValues.cover = resizedImage;
-      formValues.cover.name = 'cover';
+      const finalImage = await compressImage({ file: coverFile });
+      formValues.cover = finalImage;
       return;
     }
 
     const needsNewCover = !formValues.file?.id;
-    const needsResizing =
+    const couldNeedCompression =
       isImageResource &&
       formValues.file.type.indexOf('/gif') < 0 &&
       formValues.file.type.indexOf('/svg') < 0;
     if (isImageResource && needsNewCover) {
       formValues.cover = null;
 
-      if (needsResizing) {
-        const fileName = formValues.file.name;
-        const resizedImage = await readAndCompressImage(formValues.file, resizingOptions);
-        formValues.file = resizedImage;
-        formValues.file.name = fileName;
+      if (couldNeedCompression) {
+        const finalImage = await compressImage({ file: formValues.file });
+        formValues.file = finalImage;
       }
       return;
     }
