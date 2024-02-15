@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, COLORS, Select, Text } from '@bubbles-ui/components';
 import { forEach, isArray, keyBy } from 'lodash';
@@ -9,10 +9,13 @@ export default function QuestionValue(props) {
 
   const usedClues = store.questionResponses?.[question.id].clues;
   const usedCluesTypes = store.questionResponses?.[question.id].cluesTypes;
-  const clues = React.useMemo(
+  const clues = useMemo(
     () => getQuestionClues(question, usedCluesTypes || null, store.config),
     [question]
   );
+  useEffect(() => {
+    setSelectedClue(null); // Resetea el valor seleccionado al cambiar de pregunta
+  }, [question.id]); // Dependencia en el ID de la pregunta
   const cluesConfigByType = React.useMemo(
     () => keyBy(store.config.clues, 'type'),
     [store.config.clues]
@@ -31,7 +34,8 @@ export default function QuestionValue(props) {
       clueLessPoints += lessPoints;
     }
   });
-  function useClue(type) {
+
+  function handleUseClue(type) {
     if (!store.viewMode) {
       if (clues.length > store.questionResponses[question.id].clues) {
         store.questionResponses[question.id].clues += 1;
@@ -149,7 +153,11 @@ export default function QuestionValue(props) {
               style={{ width: 200 }}
               placeholder={t('askForAHint')}
               data={selectData}
-              onChange={useClue}
+              value={selectedClue}
+              onChange={(value) => {
+                handleUseClue(value);
+                setSelectedClue(value); // Actualiza el estado local al seleccionar una nueva opción
+              }}
             />
           ) : null}
         </>
