@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { find, forEach, isArray, isEmpty, noop } from 'lodash';
+import { cloneDeep, find, forEach, isArray, isEmpty, noop } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import {
@@ -66,7 +66,7 @@ function handlePaginationAndDetailsLoad({
   assetsDetails,
   page,
 }) {
-  const paginated = getPageItems({
+  const paginatedObject = getPageItems({
     data: assetList,
     page: page - 1,
     size: pageSize,
@@ -75,8 +75,8 @@ function handlePaginationAndDetailsLoad({
 
   // Replace the list of asset ids for the detail of the assets when loaded + clean the metadata
   if (assetsDetails && !isEmpty(assetsDetails)) {
-    paginated.items = assetsDetails;
-    forEach(paginated.items, (item) => {
+    paginatedObject.items = cloneDeep(assetsDetails);
+    forEach(paginatedObject.items, (item) => {
       if (item.file?.metadata?.indexOf('pathsInfo')) {
         item.file.metadata = JSON.parse(item.file.metadata);
         delete item.file.metadata.pathsInfo;
@@ -86,10 +86,10 @@ function handlePaginationAndDetailsLoad({
   }
 
   // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
-  if (shouldInsertNewItem && !paginated.items.some((item) => item.action === 'new')) {
-    paginated.items.unshift({ action: 'new' });
+  if (shouldInsertNewItem && !paginatedObject.items.some((item) => item.action === 'new')) {
+    paginatedObject.items.unshift({ action: 'new' });
   }
-  return paginated;
+  return paginatedObject;
 }
 
 function handlePaginationAndEmptyAssetList({ shouldInsertNewItem }) {
@@ -327,12 +327,10 @@ const AssetList = ({
   }, [allowStatusFilter, t]);
 
   const getEmptyState = () => {
-    if (!NOT_CREATABLE_CATEGORIES.includes(category?.key)) {
-      return null;
-    }
     if (searchCriteriaDebounced && !isEmpty(searchCriteriaDebounced)) {
       return <SearchEmpty t={t} />;
     }
+
     return <ListEmpty t={t} isRecentPage={category?.key === RECENT_CATEGORY} />;
   };
   // -------------------------------------------------------------------------------------
@@ -355,6 +353,31 @@ const AssetList = ({
       toggle: t('cardToolbar.toggle'),
     };
   }, [selectedAsset, category, t]);
+
+  // -------------------------------------------------------------------------------------
+  // EMPTY STATE
+
+  const userIsFilteringOrSearching = useCallback(() => {
+    const isSearchingByCriteria = searchCriteriaDebounced?.length > 0;
+    const isFilteringByStatus = statusFilter?.length && statusFilter !== 'all';
+    const isFilteringByAcademicFilters = academicFilters && academicFilters?.program?.length > 0;
+    const isFilteringByMediaType = mediaTypeFilter?.length && mediaTypeFilter !== 'all';
+    const isFiltering =
+      isFilteringByStatus || isFilteringByAcademicFilters || isFilteringByMediaType;
+
+    return isSearchingByCriteria || isFiltering;
+  }, [statusFilter, academicFilters, mediaTypeFilter, searchCriteriaDebounced]);
+
+  const showEmptyState = useMemo(() => {
+    const isNotCreatable = NOT_CREATABLE_CATEGORIES.includes(category?.key);
+    const isNotLoading = !assetListIsLoading;
+    if (isNotLoading && isEmpty(assetList)) {
+      if (isNotCreatable) return true;
+
+      return userIsFilteringOrSearching();
+    }
+    return false;
+  }, [assetListIsLoading, assetList, category?.key, userIsFilteringOrSearching]);
 
   // -------------------------------------------------------------------------------------
   // FUNCTIONS FOR USER ACTIONS
@@ -512,26 +535,38 @@ const AssetList = ({
 
   // Set data for the PaginatedList component and pagination settings
   useEffect(() => {
-    const shouldInsertNewItem = !NOT_CREATABLE_CATEGORIES.some((catKey) =>
-      category?.key?.startsWith(catKey)
-    );
-    if (shouldInsertNewItem) setPageSize(11);
-    else setPageSize(12);
+    if (!assetListIsLoading) {
+      const searchingOrFiltering = userIsFilteringOrSearching();
+      const shouldInsertNewItem =
+        !NOT_CREATABLE_CATEGORIES.some((catKey) => category?.key?.startsWith(catKey)) &&
+        !searchingOrFiltering;
 
-    if (assetList?.length) {
-      const paginated = handlePaginationAndDetailsLoad({
-        assetList,
-        pageSize,
-        shouldInsertNewItem,
-        assetsDetails,
-        page,
-      });
-      setPageAssetsData({ ...paginated });
-    } else {
-      const emptyData = handlePaginationAndEmptyAssetList({ shouldInsertNewItem });
-      setPageAssetsData(emptyData);
+      if (shouldInsertNewItem) setPageSize(11);
+      else setPageSize(12);
+
+      if (assetList?.length) {
+        const paginated = handlePaginationAndDetailsLoad({
+          assetList,
+          pageSize,
+          shouldInsertNewItem,
+          assetsDetails,
+          page,
+        });
+        setPageAssetsData(cloneDeep(paginated));
+      } else {
+        const emptyData = handlePaginationAndEmptyAssetList({ shouldInsertNewItem });
+        setPageAssetsData(cloneDeep(emptyData));
+      }
     }
-  }, [assetList, assetsDetails, assetsDetailsAreLoading, category?.key]);
+  }, [
+    assetList,
+    assetListIsLoading,
+    assetsDetails,
+    assetsDetailsAreLoading,
+    category?.key,
+    userIsFilteringOrSearching,
+  ]);
+
   // -------------------------------------------------------------------------------------
   // PAGE STYLES & PAGINATED LIST PROPS
 
@@ -732,13 +767,8 @@ const AssetList = ({
                 />
               </Box>
             )}
-            {!assetListIsLoading && isEmpty(assetList) && !assetsDetailsAreLoading && (
-              <Stack
-                justifyContent="center"
-                alignItems="center"
-                fullWidth
-                fullHeight={NOT_CREATABLE_CATEGORIES.includes(category?.key)}
-              >
+            {showEmptyState && (
+              <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 {getEmptyState()}
               </Stack>
             )}
