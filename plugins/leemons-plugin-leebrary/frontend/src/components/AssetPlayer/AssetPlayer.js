@@ -102,7 +102,6 @@ const AssetPlayer = ({
     paginatorLabel: t('paginatorLabel'),
     schemaLabel: t('schemaLabel'),
   };
-
   const media = useMemo(() => {
     let result = {
       isPlayable: fileType === 'video' || fileType === 'audio',
@@ -409,7 +408,7 @@ const AssetPlayer = ({
               </Box>
             )}
             {media.isImage && canPlay && (
-              <Box className={classes.coverWrapper}>
+              <Box className={classes.coverWrapper} onClick={() => setOpenImageZoom(!openImageZoom)}>
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
                     <ButtonIcon fileType={'image'} />
@@ -420,7 +419,7 @@ const AssetPlayer = ({
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <ImageLoader height="100%" src={cover} alt={name} />
+                  <ImageLoader height={openImageZoom ? '100%' : '200px'} src={cover} alt={name} />
                 </ModalZoom>
               </Box>
             )}
