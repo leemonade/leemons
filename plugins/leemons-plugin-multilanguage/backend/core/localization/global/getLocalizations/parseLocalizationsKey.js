@@ -18,8 +18,7 @@ const { clone } = require('lodash');
 
 function parseLocalizationsKey(key) {
   const splittedKey = key.split('.');
-  const plugin = splittedKey[0];
-  splittedKey.shift();
+  const plugin = splittedKey.shift();
 
   const parentSplittedKey = clone(splittedKey);
   parentSplittedKey.pop();

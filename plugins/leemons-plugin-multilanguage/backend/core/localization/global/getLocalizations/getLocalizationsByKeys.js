@@ -17,7 +17,9 @@ const { parseLocalizationsKey } = require('./parseLocalizationsKey');
 async function getLocalizationsByKeys({ keys, locale, ctx }) {
   const parsedKeys = keys.map(parseLocalizationsKey);
   const plugins = uniq(map(parsedKeys, 'plugin'));
-  const keyPaths = parsedKeys.map(({ keyPath }) => `value.${keyPath}`);
+  const keyPaths = parsedKeys
+    .filter(({ keyPath }) => keyPath)
+    .map(({ keyPath }) => `value.${keyPath}`);
 
   const keysFound = await ctx.db.Globals.find({ plugin: { $in: plugins }, locale })
     .select(['plugin', ...keyPaths])
