@@ -13,7 +13,7 @@ module.exports = {
       clear: 'Clear',
     },
     errorMessages: {
-      invalidSchedule: 'The class must have a duration',
+      invalidSchedule: 'The class cannot end before it starts',
       invalidDates: 'The finish time must be later than the start time',
     },
     placeholders: {

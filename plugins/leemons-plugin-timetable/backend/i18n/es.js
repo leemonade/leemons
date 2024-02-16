@@ -13,7 +13,7 @@ module.exports = {
       clear: 'Limpiar',
     },
     errorMessages: {
-      invalidSchedule: 'La clase debe tener una duración',
+      invalidSchedule: 'La clase no puede terminar antes de su comienzo',
       invalidDates: 'La hora de salida debe ser posterior a la hora de entrada',
     },
     placeholders: {
