@@ -327,10 +327,12 @@ const AssetList = ({
   }, [allowStatusFilter, t]);
 
   const getEmptyState = () => {
+    if (!NOT_CREATABLE_CATEGORIES.includes(category?.key)) {
+      return null;
+    }
     if (searchCriteriaDebounced && !isEmpty(searchCriteriaDebounced)) {
       return <SearchEmpty t={t} />;
     }
-
     return <ListEmpty t={t} isRecentPage={category?.key === RECENT_CATEGORY} />;
   };
   // -------------------------------------------------------------------------------------
@@ -731,7 +733,12 @@ const AssetList = ({
               </Box>
             )}
             {!assetListIsLoading && isEmpty(assetList) && !assetsDetailsAreLoading && (
-              <Stack justifyContent="center" alignItems="center" fullWidth>
+              <Stack
+                justifyContent="center"
+                alignItems="center"
+                fullWidth
+                fullHeight={NOT_CREATABLE_CATEGORIES.includes(category?.key)}
+              >
                 {getEmptyState()}
               </Stack>
             )}
