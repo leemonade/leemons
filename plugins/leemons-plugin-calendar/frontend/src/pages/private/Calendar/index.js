@@ -277,6 +277,7 @@ function Calendar({ session }) {
     store.schedule.calendarConfig = store.schedule.selectedCourse
       ? schedule.calendarConfigByCourse[store.schedule.selectedCourse.id]
       : schedule.calendarConfig;
+
     store.schedule.sections = [
       {
         sectionName: t('classes'),
@@ -298,11 +299,22 @@ function Calendar({ session }) {
       },
     ];
 
-    store.schedule.events = getClassScheduleAsEvents(
+    const [scheduleEvents, crossDayEvents] = getClassScheduleAsEvents(
       store.schedule.sections[0].calendars,
       store.schedule.breaks,
       { firstDayOfWeek: 1 }
     );
+    store.schedule.events = scheduleEvents;
+    store.schedule.calendarConfig.timeslotHeight = 100;
+
+    // Force to show all days and slots
+    if (crossDayEvents) {
+      store.schedule.calendarConfig.weekDays = [0, 1, 2, 3, 4, 5, 6];
+      store.schedule.calendarConfig.maxHour = '23:59';
+      store.schedule.calendarConfig.maxHourDate = new Date().setHours(23, 59, 59, 999);
+      store.schedule.calendarConfig.minHour = '00:00';
+      store.schedule.calendarConfig.minHourDate = new Date().setHours(0, 0, 0, 0);
+    }
   }
 
   async function reloadCalendar() {
@@ -367,6 +379,8 @@ function Calendar({ session }) {
         },
         classroom: classe.virtualUrl,
         location: classe.address,
+        startDate: event.start,
+        endDate: event.end,
       };
       render();
     }
@@ -443,11 +457,12 @@ function Calendar({ session }) {
           onChange={(event) => {
             if (store.activePage === 'schedule') {
               store.schedule.sections = event;
-              store.schedule.events = getClassScheduleAsEvents(
+              const [scheduleEvents] = getClassScheduleAsEvents(
                 store.schedule.sections[0].calendars,
                 store.schedule.breaks,
                 { firstDayOfWeek: 1 }
               );
+              store.schedule.events = scheduleEvents;
               render();
             } else {
               store.centersDataById[store.center.id].sections = event;
@@ -575,7 +590,7 @@ function Calendar({ session }) {
               minHour={store.schedule.calendarConfig.minHour}
               maxHour={store.schedule.calendarConfig.maxHour}
               timeslots={2}
-              timeslotHeight={100}
+              timeslotHeight={store.schedule.calendarConfig.timeslotHeight}
               hideAllDayCells={true}
               forceBgColorToEvents={true}
               locale={locale}

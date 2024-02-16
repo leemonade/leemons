@@ -11,6 +11,8 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
   const day = curr.getDay();
   const first = curr.getDate() - day;
 
+  let crossDayEvents = false;
+
   _.forEach(classes, (classe) => {
     if (classe.showEvents) {
       const title = `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
@@ -21,13 +23,15 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
       _.forEach(classe.schedule, (schedule, i) => {
         function getDates(dayWeek) {
           curr = new Date();
+          const diffHours = schedule.end.split(':')[0] - schedule.start.split(':')[0];
           curr.setDate(first + dayWeek);
           const start = new Date(curr);
-          const end = new Date(curr);
+          const end = diffHours >= 0 ? new Date(curr) : new Date(curr.setDate(curr.getDate() + 1));
           const startSplit = schedule.start.split(':');
           const endSplit = schedule.end.split(':');
           start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0, 0);
           end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 0, 0);
+
           return {
             start,
             end,
@@ -37,7 +41,6 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
         const { dayWeek } = schedule;
 
         const { start, end } = getDates(dayWeek);
-
         const newEvent = {
           id: `${classe.id}-${i}`,
           title,
@@ -45,6 +48,8 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
           start,
           end,
           originalEvent: {
+            start: start,
+            end: end,
             title,
             bgColor: classe.color,
             borderColor: classe.color,
@@ -58,19 +63,41 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
           },
         };
 
-        events.push(newEvent);
+        function pushEvent(event, startDate, endDate) {
+          if (startDate.toDateString() !== endDate.toDateString()) {
+            // Create the first event ending at 23:59 on the start day
+            const endOfStartDay = new Date(startDate);
+            endOfStartDay.setHours(23, 59, 59, 999);
+            events.push({
+              ...event,
+              end: endOfStartDay,
+            });
+
+            // Create the second event starting at 00:00 on the next day of the start day
+            const startOfNextDay = new Date(endDate);
+            startOfNextDay.setHours(0, 0, 0, 0);
+            events.push({
+              ...event,
+              start: startOfNextDay,
+            });
+
+            crossDayEvents = true;
+          } else {
+            // Original logic for pushing a single event
+            events.push({
+              ...event,
+              start: startDate,
+              end: endDate,
+            });
+          }
+        }
+
+        pushEvent(newEvent, start, end);
         const { start: s1, end: e1 } = getDates(dayWeek - 7);
-        events.push({
-          ...newEvent,
-          start: s1,
-          end: e1,
-        });
+        pushEvent(newEvent, s1, e1);
+
         const { start: s2, end: e2 } = getDates(dayWeek + 7);
-        events.push({
-          ...newEvent,
-          start: s2,
-          end: e2,
-        });
+        pushEvent(newEvent, s2, e2);
       });
     }
   });
@@ -117,5 +144,5 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
       });
     });
   }
-  return events;
+  return [events, crossDayEvents];
 }
