@@ -22,10 +22,11 @@ function updateFile({ updateFiles, id, status, leebraryId }) {
 }
 
 function useUploadFiles({ files, updateFiles, t }) {
+  const [status, setStatus] = useState({});
   useEffect(() => {
     files.forEach(async (file) => {
       if (!file.status && !file.leebraryId) {
-        updateFile({ updateFiles, id: file.id, status: 'loading' });
+        setStatus((s) => ({ ...s, [file.id]: 'loading' }));
         try {
           const {
             asset: { id },
@@ -35,9 +36,10 @@ function useUploadFiles({ files, updateFiles, t }) {
             'media-files'
           );
 
-          updateFile({ updateFiles, id: file.id, status: 'success', leebraryId: id });
+          updateFile({ updateFiles, id: file.id, leebraryId: id });
+          setStatus((s) => ({ ...s, [file.id]: 'success' }));
         } catch (error) {
-          updateFile({ updateFiles, id: file.id, status: 'error' });
+          setStatus((s) => ({ ...s, [file.id]: 'error' }));
 
           const errorMessage = t('errorAlert', {
             fileName: error.file.name,
@@ -48,6 +50,8 @@ function useUploadFiles({ files, updateFiles, t }) {
       }
     });
   }, [files]);
+
+  return status;
 }
 
 function useUpdateSubmission({ assignation, value }) {
@@ -105,8 +109,16 @@ function File({ assignation, preview }) {
 
   const [value, setValue] = useState(initialFiles);
 
-  useUploadFiles({ files: value || [], updateFiles: setValue, t });
+  const status = useUploadFiles({ files: value || [], updateFiles: setValue, t });
   useUpdateSubmission({ assignation, value });
+
+  useEffect(() => {
+    const newFiles = value.map((file) => ({
+      ...file,
+      status: status[file?.File?.id] || status[file.id] || file.status,
+    }));
+    setValue(newFiles);
+  }, [status]);
 
   const submissionData = assignation?.instance?.assignable?.submission?.data ?? {};
 
