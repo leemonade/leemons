@@ -1,18 +1,16 @@
 import { useProgramDetail } from '@academic-portfolio/hooks';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { Box, createStyles, DatePicker, Select } from '@bubbles-ui/components';
-import { unflatten } from '@common';
+import { Box, createStyles, Select } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { getSessionConfig } from '@users/session';
-import _ from 'lodash';
-import React, { useEffect } from 'react';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
-import usePeriodTypes from '../ScoresPage/Filters/hooks/usePeriodTypes';
 import useSelectedPeriod from '../ScoresPage/Filters/hooks/useSelectedPeriod';
 import PickDate from '../ScoresPage/Filters/components/PickDate';
 import useAcademicCalendarDates from '../ScoresPage/Filters/hooks/useAcademicCalendarDates';
+import SelectPeriod from '../ScoresPage/Filters/components/SelectPeriod';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
@@ -36,22 +34,6 @@ const useFiltersStyles = createStyles((theme) => ({
   },
 }));
 
-function useFiltersLocalizations() {
-  const key = prefixPN('studentScoresPage.filters');
-  const [, translations] = useTranslateLoader(key);
-
-  return React.useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return _.get(res, key);
-    }
-
-    return {};
-  }, [translations]);
-}
-
 export function Filters({ onChange, setKlasses }) {
   const { classes } = useFiltersStyles();
   const [t] = useTranslateLoader(prefixPN('studentScoresPage.filters'));
@@ -66,32 +48,25 @@ export function Filters({ onChange, setKlasses }) {
     [programDetails]
   );
 
-  const { control, watch, setValue } = useForm({});
-
-  useEffect(() => {
-    if (courses?.length === 1) {
-      setValue('class', courses[0].value);
-    }
-  }, [courses?.[0]?.value]);
+  const { control, watch } = useForm({});
 
   const selectedCourse = watch('class');
-
-  const { startDate, endDate } = useAcademicCalendarDates({
-    control,
-    selectedClass: { program, courses: { id: selectedCourse } },
-  });
 
   const { periods } = useMatchingAcademicCalendarPeriods({
     classes: classesData,
     filters: { program, course: selectedCourse },
   });
-  const periodTypes = usePeriodTypes();
   const selectedPeriod = useSelectedPeriod({
     periods,
     control,
     program,
     selectedCourse,
     finalLabel: t('period.final'),
+  });
+
+  const { startDate, endDate } = useAcademicCalendarDates({
+    control,
+    selectedClass: { program, courses: { id: selectedCourse } },
   });
 
   // Emit onChange
@@ -123,63 +98,38 @@ export function Filters({ onChange, setKlasses }) {
     <Box className={classes.root}>
       <Box className={classes.inputsContainer}>
         <Box className={classes.inputs}>
-          {courses?.length > 1 && (
-            <Controller
-              control={control}
-              name="class"
-              render={({ field }) => (
+          <Controller
+            control={control}
+            name="class"
+            render={({ field }) => {
+              if (!courses?.length) {
+                return null;
+              }
+
+              if (courses?.length === 1) {
+                if (!field.value) {
+                  field.onChange(courses[0].value);
+                }
+                return null;
+              }
+
+              return (
                 <Select
                   placeholder={t('course.placeholder')}
                   data={courses}
                   autoSelectOneOption
                   {...field}
                 />
-              )}
-            />
-          )}
+              );
+            }}
+          />
+
           <Controller
             control={control}
             name="period"
-            render={({ field }) => {
-              const data = [
-                ...periods.map((period) => ({
-                  value: period.id,
-                  label: period.name,
-                  group: period.group,
-                })),
-                {
-                  value: 'custom',
-                  label: t('period.custom'),
-                },
-              ];
-
-              if (data.some((period) => period.group === periodTypes?.academicCalendar)) {
-                data.push({
-                  value: 'final',
-                  label: t('period.final'),
-                  group: periodTypes?.academicCalendar,
-                });
-              }
-
-              const valueExists =
-                !field.value ||
-                field.value === 'custom' ||
-                // eslint-disable-next-line
-                !!data.find((d) => d.value == field.value);
-
-              if (!valueExists) {
-                field.onChange(null);
-              }
-
-              return (
-                <Select
-                  // label={localizations.period?.label}
-                  placeholder={t('period.placeholder')}
-                  data={data}
-                  {...field}
-                />
-              );
-            }}
+            render={({ field }) => (
+              <SelectPeriod {...field} periods={periods} t={t} disabled={!selectedCourse} />
+            )}
           />
         </Box>
         {selectedPeriod.selected === 'custom' && (
