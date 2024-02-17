@@ -100,7 +100,7 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
     if (room.attached) {
       result.attached = (
         <ImageLoader
-          src="/public/assets/svgs/attached.svg"
+          src="/public/comunica/attached.svg"
           forceImage
           width={size * 0.2142}
           height={size * 0.2142}
