@@ -194,7 +194,7 @@ export default function Result() {
         />
       }
     >
-      <Stack justifyContent="center" ref={scrollRef} style={{ overflow: 'auto' }}>
+      <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: 'auto' }}>
         <TotalLayoutStepContainer
           Footer={
             isTeacher && (

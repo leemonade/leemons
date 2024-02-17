@@ -356,7 +356,7 @@ function ChatDrawer({
             </Box>
           }
         >
-          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflow: 'auto' }}>
+          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
             <TotalLayoutStepContainer
               fullWidth
               clean
@@ -402,56 +402,54 @@ function ChatDrawer({
               }
             >
               <Box className={classes.messages}>
-                {store.messages &&
-                  store.messages.map((message, index) => {
-                    const comp = [];
-                    let forceUserImage = false;
-                    const day = new Date(message.createdAt).toLocaleDateString(locale, {
-                      weekday: 'short',
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    });
-                    if (index === 0 || store.lastDay !== day) {
-                      store.lastDay = day;
-                      forceUserImage = true;
-                      comp.push(
-                        <Box className={classes.date} key={`date-${index}`}>
-                          <Badge label={day} closable={false} size="md" />
-                        </Box>
-                      );
-                    }
+                {store.messages?.map((message, index) => {
+                  const comp = [];
+                  let forceUserImage = false;
+                  const day = new Date(message.createdAt).toLocaleDateString(locale, {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  });
+                  if (index === 0 || store.lastDay !== day) {
+                    store.lastDay = day;
+                    forceUserImage = true;
                     comp.push(
-                      <Box
-                        key={message.id}
-                        sx={(theme) => ({
-                          marginTop:
-                            index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
-                              ? theme.spacing[4]
-                              : 0,
-                        })}
-                      >
-                        <ChatMessage
-                          showUser={
-                            forceUserImage || index === 0
-                              ? true
-                              : store.messages[index - 1].userAgent !== message.userAgent
-                          }
-                          isTeacher={
-                            store.userAgentsById?.[message.userAgent]?.profile?.sysName ===
-                            'teacher'
-                          }
-                          isAdmin={
-                            store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
-                          }
-                          isOwn={message.userAgent === store.userAgent}
-                          user={store.userAgentsById?.[message.userAgent]?.user}
-                          message={{ ...message.message, date: message.createdAt }}
-                        />
+                      <Box className={classes.date} key={`date-${index}`}>
+                        <Badge label={day} closable={false} size="md" />
                       </Box>
                     );
-                    return comp;
-                  })}
+                  }
+                  comp.push(
+                    <Box
+                      key={message.id}
+                      sx={(theme) => ({
+                        marginTop:
+                          index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
+                            ? theme.spacing[4]
+                            : 0,
+                      })}
+                    >
+                      <ChatMessage
+                        showUser={
+                          forceUserImage || index === 0
+                            ? true
+                            : store.messages[index - 1].userAgent !== message.userAgent
+                        }
+                        isTeacher={
+                          store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'teacher'
+                        }
+                        isAdmin={
+                          store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
+                        }
+                        isOwn={message.userAgent === store.userAgent}
+                        user={store.userAgentsById?.[message.userAgent]?.user}
+                        message={{ ...message.message, date: message.createdAt }}
+                      />
+                    </Box>
+                  );
+                  return comp;
+                })}
               </Box>
             </TotalLayoutStepContainer>
           </Stack>

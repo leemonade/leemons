@@ -16,8 +16,6 @@ import {
   Title,
   useDebouncedCallback,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
-  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { FilterIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
 import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';

@@ -97,7 +97,7 @@ function ChatListDrawerIntermediate({
           </Box>
         }
       >
-        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflow: 'auto' }}>
+        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
           <TotalLayoutStepContainer fullWidth clean noMargin>
             {rooms.map((r) => (
               <ChatListDrawerItem key={r.id} t={t} room={r} onClick={() => onClickRoom(r)} />

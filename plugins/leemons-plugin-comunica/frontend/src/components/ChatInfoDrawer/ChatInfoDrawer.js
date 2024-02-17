@@ -1,3 +1,6 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 import {
   ActionButton,
   Box,
@@ -8,7 +11,6 @@ import {
   TextInput,
   UserDisplayItem,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import { ChevDownIcon, ChevronLeftIcon, ChevUpIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon, DeleteBinIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
@@ -22,9 +24,6 @@ import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
 import { getCentersWithToken } from '@users/session';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
 import { ChatInfoDrawerStyles } from './ChatInfoDrawer.styles';
 
 const usersToShow = 7;
@@ -293,7 +292,7 @@ function ChatInfoDrawer({
             </Box>
           }
         >
-          <Box className={classes.wrapper}>
+          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
             <Box className={classes.content}>
               {!room || (room?.isAdmin && room?.type === 'group') ? (
                 <Box className={classes.name}>
@@ -388,17 +387,21 @@ function ChatInfoDrawer({
             {!room || (room?.isAdmin && room?.type === 'group') ? (
               <Box className={classes.buttonActions}>
                 {room ? (
-                  <Button onClick={removeRoom} variant="outline">
+                  <Button onClick={removeRoom} variant="link">
                     {t('remove')}
                   </Button>
                 ) : null}
 
-                <Button disabled={saveDisabled} onClick={room ? updateName : createGroup}>
+                <Button
+                  variant="outline"
+                  disabled={saveDisabled}
+                  onClick={room ? updateName : createGroup}
+                >
                   {t('save')}
                 </Button>
               </Box>
             ) : null}
-          </Box>
+          </Stack>
         </TotalLayoutContainer>
       </Drawer>
       <ChatAddUsersDrawer

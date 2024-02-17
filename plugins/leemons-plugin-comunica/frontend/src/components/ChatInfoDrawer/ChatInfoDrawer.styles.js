@@ -30,8 +30,6 @@ export const ChatInfoDrawerStyles = createStyles((theme) => ({
   },
   content: {
     padding: theme.spacing[5],
-    flex: 1,
-    overflowY: 'auto',
   },
   participants: {
     marginTop: theme.spacing[5],
