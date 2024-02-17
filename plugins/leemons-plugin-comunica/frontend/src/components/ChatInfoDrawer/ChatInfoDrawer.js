@@ -1,14 +1,17 @@
 import {
   ActionButton,
   Box,
+  Stack,
   Button,
   Drawer,
   Switch,
   TextInput,
   UserDisplayItem,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import { ChevDownIcon, ChevronLeftIcon, ChevUpIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, DeleteBinIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
@@ -36,6 +39,7 @@ function ChatInfoDrawer({
 }) {
   const { classes } = ChatInfoDrawerStyles({}, { name: 'ChatDrawer' });
   const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
+  const scrollRef = React.useRef();
 
   const [store, render] = useStore({
     showMembers: false,
@@ -268,120 +272,134 @@ function ChatInfoDrawer({
   return (
     <>
       <Drawer opened={opened} size={400} close={false} empty>
-        <Box className={classes.wrapper}>
-          <Box className={classes.header}>
-            <Button
-              variant="link"
-              color="secondary"
-              onClick={beforeReturn}
-              leftIcon={<ChevronLeftIcon width={12} height={12} />}
-            >
-              {t('return')}
-            </Button>
-            <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
-          </Box>
-          <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
-            <RoomHeader onImageChange={onImageChange} t={t} room={headerRoom} />
-          </Box>
-          <Box className={classes.content}>
-            {!room || (room?.isAdmin && room?.type === 'group') ? (
-              <Box className={classes.name}>
-                <TextInput
-                  required
-                  label={t('groupName')}
-                  error={store.nameError ? t('nameRequired') : null}
-                  value={store.name}
-                  onChange={onNameChange}
-                />
-              </Box>
-            ) : null}
-
-            <Switch checked={!!store.attached} onChange={toggleAttached} label={t('setRoom')} />
-            <Switch checked={!!store.muted} onChange={toggleMute} label={t('muteRoom')} />
-            {store.programConfig?.teachersCanDisableSubjectsRooms &&
-            room?.type === 'academic-portfolio.class' &&
-            room?.isAdmin ? (
-              <Switch
-                checked={!!store.adminDisableMessages}
-                onChange={toggleAdminDisableMessages}
-                label={t('adminDisableMessages')}
-              />
-            ) : null}
-
-            <Box className={classes.participants}>
-              {t('participants')} ({store.nNoDeletedAgents})
-            </Box>
-            {store.userAgents?.map((item) => (
-              <Box key={item.userAgent.id} className={classes.userInfo}>
-                <UserDisplayItem {...item.userAgent.user} size="xs" />
-                {/* eslint-disable-next-line no-nested-ternary */}
-                {item.isAdmin ? (
-                  <Box className={classes.userAdmin}>{t('admin')}</Box>
-                ) : !room || room?.isAdmin ? (
-                  <Box className={classes.adminIcons}>
-                    {room &&
-                    (!store.programConfig ||
-                      item.adminMuted ||
-                      store.programConfig.teachersCanMuteStudents) ? (
-                      <Box
-                        className={
-                          item.adminMuted ? classes.userMuteIconActive : classes.userMuteIcon
-                        }
-                      >
-                        <ActionButton
-                          onClick={() => muteAdminUserFromRoom(item.userAgent)}
-                          icon={<VolumeControlOffIcon width={16} height={16} />}
-                        />
-                      </Box>
-                    ) : null}
-
-                    {room?.type === 'group' ? (
-                      <Box className={classes.userRemove}>
-                        <ActionButton
-                          color="phatic"
-                          onClick={() => deleteUserFromRoom(item.userAgent)}
-                          icon={<DeleteBinIcon width={16} height={16} />}
-                        />
-                      </Box>
-                    ) : null}
-                  </Box>
-                ) : null}
-              </Box>
-            ))}
-            {headerRoom?.userAgents.length > usersToShow ? (
-              <Box onClick={toggleShowAllMembers} className={classes.showAll}>
-                {store.showAllMembers ? (
-                  <>
-                    <ChevUpIcon /> {t('showLess')}
-                  </>
-                ) : (
-                  <>
-                    <ChevDownIcon /> {t('showAll')}
-                  </>
-                )}
-              </Box>
-            ) : null}
-
-            {!room || (room?.isAdmin && room?.type === 'group') ? (
-              <Box onClick={openAddUsers} className={classes.showAll}>
-                + {t('addNewUsers')}
-              </Box>
-            ) : null}
-          </Box>
-          {!room || (room?.isAdmin && room?.type === 'group') ? (
-            <Box className={classes.buttonActions}>
-              {room ? (
-                <Button onClick={removeRoom} variant="outline">
-                  {t('remove')}
+        <TotalLayoutContainer
+          scrollRef={scrollRef}
+          Header={
+            <Box className={classes.headerWrapper}>
+              <Box className={classes.header}>
+                <Button
+                  variant="link"
+                  color="secondary"
+                  onClick={beforeReturn}
+                  leftIcon={<ChevronLeftIcon width={12} height={12} />}
+                >
+                  {t('return')}
                 </Button>
+                <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+              </Box>
+              <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
+                <RoomHeader onImageChange={onImageChange} t={t} room={headerRoom} />
+              </Box>
+            </Box>
+          }
+        >
+          <Box className={classes.wrapper}>
+            <Box className={classes.content}>
+              {!room || (room?.isAdmin && room?.type === 'group') ? (
+                <Box className={classes.name}>
+                  <TextInput
+                    required
+                    label={t('groupName')}
+                    error={store.nameError ? t('nameRequired') : null}
+                    value={store.name}
+                    onChange={onNameChange}
+                  />
+                </Box>
               ) : null}
 
-              <Button disabled={saveDisabled} onClick={room ? updateName : createGroup}>
-                {t('save')}
-              </Button>
+              <Switch checked={!!store.attached} onChange={toggleAttached} label={t('setRoom')} />
+              <Switch checked={!!store.muted} onChange={toggleMute} label={t('muteRoom')} />
+              {store.programConfig?.teachersCanDisableSubjectsRooms &&
+              room?.type === 'academic-portfolio.class' &&
+              room?.isAdmin ? (
+                <Switch
+                  checked={!!store.adminDisableMessages}
+                  onChange={toggleAdminDisableMessages}
+                  label={t('adminDisableMessages')}
+                />
+              ) : null}
+
+              <Box className={classes.participants}>
+                {t('participants')} ({store.nNoDeletedAgents})
+              </Box>
+              {store.userAgents?.map((item) => (
+                <Box key={item.userAgent.id} className={classes.userInfo}>
+                  <UserDisplayItem {...item.userAgent.user} size="xs" />
+                  {/* eslint-disable-next-line no-nested-ternary */}
+                  {item.isAdmin ? (
+                    <Box className={classes.userAdmin}>{t('admin')}</Box>
+                  ) : !room || room?.isAdmin ? (
+                    <Box className={classes.adminIcons}>
+                      {room &&
+                      (!store.programConfig ||
+                        item.adminMuted ||
+                        store.programConfig.teachersCanMuteStudents) ? (
+                        <Box
+                          className={
+                            item.adminMuted ? classes.userMuteIconActive : classes.userMuteIcon
+                          }
+                        >
+                          <ActionButton
+                            onClick={() => muteAdminUserFromRoom(item.userAgent)}
+                            icon={<VolumeControlOffIcon width={16} height={16} />}
+                          />
+                        </Box>
+                      ) : null}
+
+                      {room?.type === 'group' ? (
+                        <Box className={classes.userRemove}>
+                          <ActionButton
+                            color="phatic"
+                            onClick={() => deleteUserFromRoom(item.userAgent)}
+                            icon={<DeleteBinIcon width={16} height={16} />}
+                          />
+                        </Box>
+                      ) : null}
+                    </Box>
+                  ) : null}
+                </Box>
+              ))}
+              {headerRoom?.userAgents.length > usersToShow ? (
+                <Box onClick={toggleShowAllMembers} className={classes.showAll}>
+                  {store.showAllMembers ? (
+                    <>
+                      <ChevUpIcon /> {t('showLess')}
+                    </>
+                  ) : (
+                    <>
+                      <ChevDownIcon /> {t('showAll')}
+                    </>
+                  )}
+                </Box>
+              ) : null}
+
+              {!room || (room?.isAdmin && room?.type === 'group') ? (
+                <Box mt={10}>
+                  <Button
+                    variant="link"
+                    onClick={openAddUsers}
+                    leftIcon={<AddCircleIcon width={16} height={16} />}
+                  >
+                    {t('addNewUsers')}
+                  </Button>
+                </Box>
+              ) : null}
             </Box>
-          ) : null}
-        </Box>
+            {!room || (room?.isAdmin && room?.type === 'group') ? (
+              <Box className={classes.buttonActions}>
+                {room ? (
+                  <Button onClick={removeRoom} variant="outline">
+                    {t('remove')}
+                  </Button>
+                ) : null}
+
+                <Button disabled={saveDisabled} onClick={room ? updateName : createGroup}>
+                  {t('save')}
+                </Button>
+              </Box>
+            ) : null}
+          </Box>
+        </TotalLayoutContainer>
       </Drawer>
       <ChatAddUsersDrawer
         room={headerRoom}

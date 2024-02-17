@@ -1,4 +1,10 @@
-import { Box, createStyles, useDebouncedCallback } from '@bubbles-ui/components';
+import {
+  Box,
+  createStyles,
+  getBoxShadowFromToken,
+  getFocusDefaultBorder,
+  useDebouncedCallback,
+} from '@bubbles-ui/components';
 import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
 import { useNotifications } from '@bubbles-ui/notifications';
 import { useStore } from '@common';
@@ -20,26 +26,40 @@ export const ContextButtonStyles = createStyles((theme) => ({
   root: {
     position: 'fixed',
     zIndex: 55,
-    bottom: theme.spacing[7],
-    right: theme.spacing[7],
+    bottom: 85, // hasFooter ? 16 : 16
+    right: 14,
+    '@media (min-width: 1280px)': {
+      bottom: 16,
+      right: 14,
+    },
   },
   chatBullet: {
-    width: 56,
-    height: 56,
+    width: 44,
+    height: 44,
     backgroundColor: theme.other.global.background.color.primary.default,
     borderRadius: '50%',
     cursor: 'pointer',
+    '&:focus-visible': {
+      backgroundColor: theme.other.button.background.color.primary.hover,
+      ...getFocusDefaultBorder(theme),
+      outline: 'none',
+    },
     '&:hover': {
-      backgroundColor: theme.other.global.background.color.primary.emphasis,
+      backgroundColor: theme.other.button.background.color.primary.hover,
+      ...getBoxShadowFromToken(theme.other.button.shadow.hover),
+    },
+    '&:active': {
+      backgroundColor: theme.other.button.background.color.primary.pressed,
+      boxShadow: 'none',
     },
   },
   chatIcon: {
     position: 'absolute',
     left: '50%',
     top: '50%',
-    width: 32,
-    height: 29,
-    color: 'white',
+    width: 24,
+    height: 24,
+    color: theme.other.button.content.color.primary.default,
     transform: 'translate(-50%, -50%)',
   },
   unreadMessages: {
@@ -49,18 +69,19 @@ export const ContextButtonStyles = createStyles((theme) => ({
     transform: 'translate(-50%, -50%)',
     textAlign: 'center',
     display: 'inline-flex',
-    color: theme.other.global.background.color.primary.emphasis,
+    color: 'white',
     ...theme.other.global.content.typoMobile.body['lg--bold'],
     '&:after': {
       position: 'absolute',
       left: '50%',
       top: '50%',
       transform: 'translate(-50%, -50%)',
-      backgroundColor: 'white',
+      backgroundColor: theme.other.button.content.color.primary.default,
       display: 'block',
       content: '""',
       width: 22,
-      height: 16,
+      height: 22,
+      borderRadius: 999,
       zIndex: -1,
     },
   },
@@ -254,7 +275,9 @@ function ContextButton({ onShowDrawerChange }) {
     <>
       <Box className={classes.root}>
         <Box className={classes.chatBullet} onClick={toggleDrawer}>
-          <CommentIcon className={classes.chatIcon} />
+          {!store.unreadMessages && !store.config?.muted && (
+            <CommentIcon className={classes.chatIcon} />
+          )}
           {store.unreadMessages && !store.config?.muted ? (
             <Box className={classes.unreadMessages}>
               {store.unreadMessages > 99 ? '+99' : store.unreadMessages}

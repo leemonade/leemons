@@ -1,7 +1,17 @@
 import React from 'react';
 import _ from 'lodash';
-import { ActionButton, Box, Button, Drawer, Popover } from '@bubbles-ui/components';
-import { ChevronLeftIcon, PluginSettingsIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import {
+  Menu,
+  ActionButton,
+  Box,
+  Stack,
+  Button,
+  Drawer,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+} from '@bubbles-ui/components';
+import { ChevronLeftIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';
 import PropTypes from 'prop-types';
 import getRoomParsed from '@comunica/helpers/getRoomParsed';
 import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
@@ -21,6 +31,7 @@ function ChatListDrawerIntermediate({
   onClose = () => {},
 }) {
   const { classes } = ChatListDrawerIntermediateStyles({}, { name: 'ChatListDrawerIntermediate' });
+  const scrollRef = React.useRef(null);
 
   async function toggleAttached() {
     await RoomService.toggleRoomAttached(_room.key);
@@ -53,45 +64,48 @@ function ChatListDrawerIntermediate({
   }, [room]);
 
   return (
-    <>
-      <Drawer opened={opened} size={400} close={false} empty>
-        <Box className={classes.wrapper}>
-          <Box className={classes.header}>
-            <Button
-              variant="link"
-              color="secondary"
-              onClick={onReturn}
-              leftIcon={<ChevronLeftIcon width={12} height={12} />}
-            >
-              {t('return')}
-            </Button>
-            <Box className={classes.headerRight}>
-              <Popover
-                target={
-                  <ActionButton
-                    onClick={onClose}
-                    icon={<PluginSettingsIcon width={16} height={16} />}
-                  />
-                }
+    <Drawer opened={opened} size={400} close={false} empty>
+      <TotalLayoutContainer
+        scrollRef={scrollRef}
+        Header={
+          <Box className={classes.headerWrapper}>
+            <Box className={classes.header}>
+              <Button
+                variant="link"
+                color="secondary"
+                onClick={onReturn}
+                leftIcon={<ChevronLeftIcon width={12} height={12} />}
               >
-                <Box className={classes.config}>
-                  <Button onClick={toggleAttached} fullWidth variant="light" color="secondary">
-                    {room?.attached ? t('unsetRoom') : t('setRoom')}
-                  </Button>
-                </Box>
-              </Popover>
-              <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+                {t('return')}
+              </Button>
+              <Box className={classes.headerRight}>
+                <Menu
+                  control={
+                    <ActionButton icon={<SettingMenuVerticalIcon width={16} height={16} />} />
+                  }
+                  items={[
+                    {
+                      children: room?.attached ? t('unsetRoom') : t('setRoom'),
+                      onClick: toggleAttached,
+                    },
+                  ]}
+                ></Menu>
+                <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+              </Box>
             </Box>
+            <RoomHeader t={t} room={room} />
           </Box>
-          <RoomHeader t={t} room={room} />
-          <Box className={classes.itemsList}>
+        }
+      >
+        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflow: 'auto' }}>
+          <TotalLayoutStepContainer fullWidth clean noMargin>
             {rooms.map((r) => (
               <ChatListDrawerItem key={r.id} t={t} room={r} onClick={() => onClickRoom(r)} />
             ))}
-          </Box>
-        </Box>
-      </Drawer>
-    </>
+          </TotalLayoutStepContainer>
+        </Stack>
+      </TotalLayoutContainer>
+    </Drawer>
   );
 }
 

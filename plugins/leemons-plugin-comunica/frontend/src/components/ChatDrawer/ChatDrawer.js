@@ -1,14 +1,18 @@
 import {
   ActionButton,
   Badge,
+  Menu,
   Box,
+  Stack,
   Button,
   ChatMessage,
   Drawer,
   IconButton,
-  Popover,
   Textarea,
   useDebouncedCallback,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import {
   ChevronLeftIcon,
@@ -16,6 +20,7 @@ import {
   RemoveIcon,
   SendMessageIcon,
 } from '@bubbles-ui/icons/outline';
+import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';
 import { useLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
@@ -73,21 +78,6 @@ function ChatDrawer({
       createdAt: new Date(message.createdAt),
     }));
     store.userAgentsById = _.keyBy(_.map(store.room.userAgents, 'userAgent'), 'id');
-    /*
-            const { userAgents } = await getUserAgentsInfoRequest(map(store.room.userAgents, 'userAgent'), {
-              withProfile: true,
-            });
-            const roomUserAgentsById = keyBy(store.room.userAgents, 'userAgent');
-            store.userAgents = map(userAgents, (userAgent) => ({
-              ...userAgent.user,
-              id: userAgent.id,
-              profile: userAgent.profile.id,
-              roomDeleted: roomUserAgentsById[userAgent.id].deleted,
-            }));
-            store.userAgentsById = keyBy(store.userAgents, 'id');
-            const profiles = uniqBy(userAgents, 'profile.id');
-            store.profiles = map(profiles, 'profile');
-            */
 
     render();
     onRoomLoad(store.room);
@@ -114,6 +104,7 @@ function ChatDrawer({
 
   function toggleInfo() {
     store.showInfo = !store.showInfo;
+    console.log(store.room, store.showInfo);
     render();
   }
 
@@ -305,145 +296,175 @@ function ChatDrawer({
     canWrite = false;
   }
 
+  const menuItems = React.useMemo(() => {
+    const m = [
+      {
+        children: store.room?.muted ? t('unmuteRoom') : t('muteRoom'),
+        onClick: toggleMute,
+      },
+      {
+        children: store.room?.attached ? t('unsetRoom') : t('setRoom'),
+        onClick: toggleAttached,
+      },
+      {
+        children: t('information'),
+        onClick: toggleInfo,
+      },
+    ];
+    return m;
+  }, [store.room?.muted, store.room?.attached, t]);
+
   return (
     <>
       <Drawer opened={opened} size={400} close={false} empty>
-        <Box className={classes.wrapper}>
-          <Box className={classes.header}>
-            {_.isFunction(onReturn) ? (
-              <Button
-                variant="link"
-                color="secondary"
-                onClick={() => {
-                  if (_.isFunction(onReturn)) onReturn();
-                }}
-                leftIcon={<ChevronLeftIcon width={12} height={12} />}
-              >
-                {td('return')}
-              </Button>
-            ) : (
-              <Box></Box>
-            )}
-
-            <Box className={classes.headerRight}>
-              <Popover
-                target={
-                  <ActionButton
-                    onClick={onClose}
-                    icon={<PluginSettingsIcon width={16} height={16} />}
-                  />
-                }
-              >
-                <Box className={classes.config}>
-                  <Button onClick={toggleMute} fullWidth variant="light" color="secondary">
-                    {store.room?.muted ? t('unmuteRoom') : t('muteRoom')}
-                  </Button>
-                  <Button onClick={toggleAttached} fullWidth variant="light" color="secondary">
-                    {store.room?.attached ? t('unsetRoom') : t('setRoom')}
-                  </Button>
-                  <Button onClick={toggleInfo} fullWidth variant="light" color="secondary">
-                    {t('information')}
-                  </Button>
-                </Box>
-              </Popover>
-
-              <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
-            </Box>
-          </Box>
-          {store.room ? (
-            <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
-              <RoomHeader t={td} room={store.room} />
-            </Box>
-          ) : null}
-          <Box ref={scrollRef} className={classes.messages}>
-            {store.messages &&
-              store.messages.map((message, index) => {
-                const comp = [];
-                let forceUserImage = false;
-                const day = new Date(message.createdAt).toLocaleDateString(locale, {
-                  weekday: 'short',
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                });
-                if (index === 0 || store.lastDay !== day) {
-                  store.lastDay = day;
-                  forceUserImage = true;
-                  comp.push(
-                    <Box className={classes.date} key={`date-${index}`}>
-                      <Badge label={day} closable={false} size="md" />
-                    </Box>
-                  );
-                }
-                comp.push(
-                  <Box
-                    key={message.id}
-                    sx={(theme) => ({
-                      marginTop:
-                        index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
-                          ? theme.spacing[4]
-                          : 0,
-                    })}
+        <TotalLayoutContainer
+          scrollRef={scrollRef}
+          Header={
+            <Box className={classes.headerWrapper}>
+              <Box className={classes.header}>
+                {_.isFunction(onReturn) ? (
+                  <Button
+                    variant="link"
+                    color="secondary"
+                    onClick={() => {
+                      if (_.isFunction(onReturn)) onReturn();
+                    }}
+                    leftIcon={<ChevronLeftIcon width={12} height={12} />}
                   >
-                    <ChatMessage
-                      showUser={
-                        forceUserImage || index === 0
-                          ? true
-                          : store.messages[index - 1].userAgent !== message.userAgent
-                      }
-                      isTeacher={
-                        store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'teacher'
-                      }
-                      isAdmin={
-                        store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
-                      }
-                      isOwn={message.userAgent === store.userAgent}
-                      user={store.userAgentsById?.[message.userAgent]?.user}
-                      message={{ ...message.message, date: message.createdAt }}
-                    />
-                  </Box>
-                );
-                return comp;
-              })}
-          </Box>
-          {canWrite ? (
-            <Box className={classes.sendMessage}>
-              <Textarea
-                value={store.newMessage}
-                minRows={1}
-                name="message"
-                placeholder={t('writeNewMessage')}
-                className={classes.textarea}
-                onKeyPress={(e) => {
-                  if (e.code === 'Enter' || e.charCode === 13) {
-                    sendMessage();
-                    e.stopPropagation();
-                    e.preventDefault();
-                  }
-                }}
-                onChange={(e) => {
-                  store.newMessage = e;
-                  render();
-                }}
-              />
-              <IconButton
-                onClick={sendMessage}
-                icon={<SendMessageIcon />}
-                color="primary"
-                rounded
-              />
+                    {td('return')}
+                  </Button>
+                ) : (
+                  <Box></Box>
+                )}
+
+                <Box className={classes.headerRight}>
+                  <Menu
+                    control={
+                      <ActionButton icon={<SettingMenuVerticalIcon width={16} height={16} />} />
+                    }
+                    items={menuItems}
+                  ></Menu>
+
+                  <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+                </Box>
+              </Box>
+              {store.room ? (
+                <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
+                  <RoomHeader t={td} room={store.room} />
+                </Box>
+              ) : null}
             </Box>
-          ) : null}
-        </Box>
+          }
+        >
+          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflow: 'auto' }}>
+            <TotalLayoutStepContainer
+              fullWidth
+              clean
+              noMargin
+              scrollRef={scrollRef}
+              Footer={
+                !!canWrite && (
+                  <TotalLayoutFooterContainer
+                    scrollRef={scrollRef}
+                    width={400}
+                    style={{ right: 0 }}
+                    fixed
+                    clean
+                  >
+                    <Box className={classes.sendMessage}>
+                      <Textarea
+                        value={store.newMessage}
+                        autosize={false}
+                        name="message"
+                        placeholder={t('writeNewMessage')}
+                        className={classes.textarea}
+                        textareaStyles={{ height: 40 }}
+                        onKeyPress={(e) => {
+                          if (e.code === 'Enter' || e.charCode === 13) {
+                            sendMessage();
+                            e.stopPropagation();
+                            e.preventDefault();
+                          }
+                        }}
+                        onChange={(e) => {
+                          store.newMessage = e;
+                          render();
+                        }}
+                      />
+                      <IconButton
+                        onClick={sendMessage}
+                        icon={<SendMessageIcon />}
+                        color="primary"
+                      />
+                    </Box>
+                  </TotalLayoutFooterContainer>
+                )
+              }
+            >
+              <Box className={classes.messages}>
+                {store.messages &&
+                  store.messages.map((message, index) => {
+                    const comp = [];
+                    let forceUserImage = false;
+                    const day = new Date(message.createdAt).toLocaleDateString(locale, {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    });
+                    if (index === 0 || store.lastDay !== day) {
+                      store.lastDay = day;
+                      forceUserImage = true;
+                      comp.push(
+                        <Box className={classes.date} key={`date-${index}`}>
+                          <Badge label={day} closable={false} size="md" />
+                        </Box>
+                      );
+                    }
+                    comp.push(
+                      <Box
+                        key={message.id}
+                        sx={(theme) => ({
+                          marginTop:
+                            index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
+                              ? theme.spacing[4]
+                              : 0,
+                        })}
+                      >
+                        <ChatMessage
+                          showUser={
+                            forceUserImage || index === 0
+                              ? true
+                              : store.messages[index - 1].userAgent !== message.userAgent
+                          }
+                          isTeacher={
+                            store.userAgentsById?.[message.userAgent]?.profile?.sysName ===
+                            'teacher'
+                          }
+                          isAdmin={
+                            store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
+                          }
+                          isOwn={message.userAgent === store.userAgent}
+                          user={store.userAgentsById?.[message.userAgent]?.user}
+                          message={{ ...message.message, date: message.createdAt }}
+                        />
+                      </Box>
+                    );
+                    return comp;
+                  })}
+              </Box>
+            </TotalLayoutStepContainer>
+          </Stack>
+        </TotalLayoutContainer>
       </Drawer>
-      {store.room ? (
+      {!!store.room && (
         <ChatInfoDrawer
           room={store.room}
           opened={store.showInfo}
           onReturn={toggleInfo}
           onClose={closeInfo}
         />
-      ) : null}
+      )}
     </>
   );
 }
