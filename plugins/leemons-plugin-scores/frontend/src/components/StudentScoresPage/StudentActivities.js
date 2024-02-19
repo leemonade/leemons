@@ -1,58 +1,18 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
-import prefixPN from '@assignables/helpers/prefixPN';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import {
-  Box,
-  ImageLoader,
-  Loader,
-  ScoreFronstage,
-  Select,
-  Switch,
-  createStyles,
-} from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { Box, Loader, ScoreFronstage, Select, Switch, createStyles } from '@bubbles-ui/components';
 import { useScores } from '@scores/requests/hooks/queries';
-import _, { capitalize, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import getNearestScale from '@scorm/helpers/getNearestScale';
+import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
+import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
 import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
-
-function ClassIcon({ class: klass, dropdown = false }) {
-  return (
-    <Box
-      sx={() => ({
-        position: dropdown ? 'static' : 'absolute',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: 26,
-        minHeight: 26,
-        maxWidth: 26,
-        maxHeight: 26,
-        borderRadius: '50%',
-        backgroundColor: klass?.color,
-      })}
-    >
-      <ImageLoader
-        sx={() => ({
-          borderRadius: 0,
-          filter: 'brightness(0) invert(1)',
-        })}
-        forceImage
-        width={16}
-        height={16}
-        src={getClassIcon(klass)}
-      />
-    </Box>
-  );
-}
 
 function LoadingState() {
   return (
@@ -71,54 +31,7 @@ function LoadingState() {
   );
 }
 
-function useActivities(activities) {
-  const previousResult = React.useRef([]);
-
-  const {
-    data: assignableInstances,
-    isLoading,
-    isRefetching,
-  } = useInstances({
-    ids: activities || [],
-    enabled: !!activities?.length,
-  });
-
-  if (isRefetching || isLoading) {
-    return {
-      assignableInstances: previousResult.current,
-      isLoading: isRefetching || isLoading,
-    };
-  }
-
-  previousResult.current = assignableInstances;
-  return {
-    assignableInstances,
-    isLoading,
-  };
-}
-
-function useRoles() {
-  const [, translations] = useTranslateLoader(prefixPN('roles'));
-
-  return React.useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('roles'));
-
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return Object.entries(data).map(([key, value]) => ({
-        label: capitalize(value.singular),
-        plural: capitalize(value.plural),
-        value: key,
-      }));
-    }
-
-    return [];
-  }, [translations]);
-}
-
-const StudentActivitiesStyles = createStyles((theme) => ({
+const StudentActivitiesStyles = createStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -333,7 +246,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.filters}>
-        <Select
+        <SelectSubject
           placeholder={labels.subject.placeholder}
           data={klasses.map((klass) => {
             const klassName =
@@ -341,10 +254,9 @@ export default function StudentActivities({ klasses, filters, labels }) {
                 ? `${klass.subject.name} - ${klass.groups.name}`
                 : klass.subject.name;
             return {
+              ...klass.subject,
               value: klass.id,
-              c: klass,
               label: klassName,
-              icon: <ClassIcon class={klass} dropdown />,
             };
           })}
           value={localFilters.subject}

@@ -42,7 +42,7 @@ async function addUserBulk({
     user = await ctx.tx.db.Users.findOne({ email: userData.email }).lean();
   }
   let isNewUser = false;
-  console.log('user', user);
+
   if (!user) {
     user = await ctx.tx.db.Users.create({
       ...userData,
@@ -50,8 +50,6 @@ async function addUserBulk({
       password: password ? await encryptPassword(password) : undefined,
     });
     user = user.toObject();
-    await setUserForRegisterPassword({ userId: user.id, ctx });
-    await sendWelcomeEmailToUser({ user, ctx });
     isNewUser = true;
   } else if (id) {
     await ctx.tx.db.Users.updateOne(
@@ -72,10 +70,7 @@ async function addUserBulk({
     undefined,
     { excludeDeleted: false }
   ).lean();
-  console.log('userAgent', userAgent, {
-    user: user.id,
-    role,
-  });
+
   if (!userAgent) {
     await checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx });
     userAgent = await ctx.tx.db.UserAgent.create({
@@ -106,6 +101,8 @@ async function addUserBulk({
 
   if (isNewUser) {
     await addUserAvatar({ user: { ...user, userAgents: [userAgent] }, avatar, ctx });
+    await setUserForRegisterPassword({ userId: user.id, ctx });
+    await sendWelcomeEmailToUser({ user, ctx });
   }
 
   if (tags && _.isArray(tags) && tags.length) {
@@ -120,7 +117,7 @@ async function addUserBulk({
     pluginName: 'calendar',
   });
 
-  if (calendarPluginExists) {
+  if (userAgent && calendarPluginExists) {
     await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
   return user;

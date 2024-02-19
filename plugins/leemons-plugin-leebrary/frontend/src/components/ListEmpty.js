@@ -5,6 +5,7 @@ import { useLayout } from '@layout/context';
 
 const ListEmpty = ({ t, isRecentPage }) => {
   const { theme } = useLayout();
+
   return (
     <Stack
       alignItems="center"
@@ -14,7 +15,7 @@ const ListEmpty = ({ t, isRecentPage }) => {
       fullWidth
       fullHeight
     >
-      <Box style={{ maxWidth: 350, textAlign: 'center' }}>
+      <Stack direction="column" style={{ maxWidth: 350, textAlign: 'center' }}>
         <Text size="md" color="soft">
           {isRecentPage ? t('labels.recentListEmpty') : t('labels.listEmpty')}
         </Text>
@@ -23,7 +24,7 @@ const ListEmpty = ({ t, isRecentPage }) => {
             {t('labels.recentListEmptyDescription')}
           </Text>
         )}
-      </Box>
+      </Stack>
       {theme.usePicturesEmptyStates && (
         <ImageLoader src="/public/leebrary/empty.png" height={200} />
       )}

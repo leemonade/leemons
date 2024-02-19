@@ -2,12 +2,11 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 
 const path = require('path');
-const { addLocalesDeploy } = require('@leemons/multilanguage');
-const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 
@@ -16,6 +15,10 @@ module.exports = () => ({
   name: 'emails-aws-ses.deploy',
   version: 1,
   mixins: [
+    LeemonsMultilanguageMixin({
+      locales: ['es', 'en'],
+      i18nPath: path.resolve(__dirname, `../i18n/`),
+    }),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
@@ -29,25 +32,6 @@ module.exports = () => ({
         name: 'Amazon SES',
         image: '/public/emails-aws-ses/aws.png',
       });
-      // Locales
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        locale: ['es', 'en'],
-        i18nPath: path.resolve(__dirname, `../i18n/`),
-        ctx,
-      });
     },
-    'multilanguage.newLocale': async (ctx) => {
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        locale: ctx.params.code,
-        i18nPath: path.resolve(__dirname, `../i18n/`),
-        ctx,
-      });
-      return null;
-    },
-  },
-  created() {
-    // mongoose.connect(process.env.MONGO_URI);
   },
 });

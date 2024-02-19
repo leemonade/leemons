@@ -178,6 +178,8 @@ module.exports = {
     students: 'Students',
     califications: 'Califications',
     passed: 'Pass',
+    close: 'Close',
+    archive: 'Archive',
     closeAction: {
       verbs: {
         opening: 'opening',
@@ -417,8 +419,8 @@ module.exports = {
     subjectLabel: 'Subjects',
     program: 'Program...',
     subject: 'Subject...',
-    allPrograms: 'All the programs',
-    allSubjects: 'All the subjects',
+    allPrograms: 'All programs',
+    allSubjects: 'All subjects',
     subectGroups: {
       mySubjects: 'My subjects',
       collaborations: 'Collaborations',

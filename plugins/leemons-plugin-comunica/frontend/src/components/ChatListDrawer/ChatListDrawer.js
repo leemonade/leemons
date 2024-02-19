@@ -1,7 +1,12 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import {
   ActionButton,
   Box,
+  Stack,
+  Menu,
   Button,
   CheckBoxGroup,
   Drawer,
@@ -10,8 +15,10 @@ import {
   TextInput,
   Title,
   useDebouncedCallback,
+  TotalLayoutContainer,
 } from '@bubbles-ui/components';
-import { FilterIcon, PluginSettingsIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
+import { FilterIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
+import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
 import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
@@ -27,9 +34,6 @@ import prefixPN from '@comunica/helpers/prefixPN';
 import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
 import { RoomService } from '../../RoomService';
 import ChatDrawer from '../ChatDrawer/ChatDrawer';
 import { ChatListDrawerStyles } from './ChatListDrawer.styles';
@@ -42,8 +46,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   const [store, render] = useStore({ rooms: [], intermediateRooms: [] });
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
-
-  function onKim() {}
+  const scrollRef = React.useRef(null);
 
   async function onMutedChanged(muted) {
     await RoomService.saveConfig({ muted });
@@ -438,6 +441,22 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
     if (store.centerConfig?.enableStudentsCreateGroups) canAddGroup = true;
   }
 
+  const menuItems = React.useMemo(() => {
+    const m = [
+      {
+        children: t('newChat'),
+        onClick: newChat,
+      },
+    ];
+    if (canAddGroup) {
+      m.push({
+        children: t('newGroup'),
+        onClick: newGroup,
+      });
+    }
+    return m;
+  }, [canAddGroup, t]);
+
   return (
     <>
       <Drawer
@@ -453,80 +472,80 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
         close={false}
         empty
       >
-        <Box className={classes.wrapper}>
-          <Box className={classes.header}>
-            {/* <ActionButton onClick={onKim} icon={<PluginKimIcon width={16} height={16} />} />
-             */}
-            <Box></Box>
-            <Box className={classes.headerRight}>
-              <Switch label={t('focus')} checked={store.config?.muted} onChange={onMutedChanged} />
-              <Popover
-                target={
-                  <ActionButton
-                    onClick={onClose}
-                    icon={<PluginSettingsIcon width={16} height={16} />}
-                  />
-                }
-              >
-                <Box className={classes.config}>
-                  <Button onClick={newChat} fullWidth variant="light" color="secondary">
-                    {t('newChat')}
-                  </Button>
-                  {canAddGroup ? (
-                    <Button onClick={newGroup} fullWidth variant="light" color="secondary">
-                      {t('newGroup')}
-                    </Button>
-                  ) : null}
+        <TotalLayoutContainer
+          scrollRef={scrollRef}
+          Header={
+            <Box className={classes.headerWrapper}>
+              <Box className={classes.header}>
+                <Box>
+                  <Title order={3}>{t('myConversations')}</Title>
                 </Box>
-              </Popover>
-              <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+                <Box className={classes.headerRight}>
+                  <Switch
+                    label={t('focus')}
+                    checked={store.config?.muted}
+                    onChange={onMutedChanged}
+                  />
+                  <Menu
+                    control={
+                      <ActionButton icon={<SettingMenuVerticalIcon width={16} height={16} />} />
+                    }
+                    items={menuItems}
+                  />
+
+                  <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+                </Box>
+              </Box>
+
+              <Box className={classes.input}>
+                <TextInput
+                  value={store.nameFilter}
+                  onChange={onChangeNameFilter}
+                  placeholder={t('search')}
+                  icon={<SearchIcon width={16} height={16} />}
+                  rightSection={
+                    store.roomTypes ? (
+                      <Popover
+                        target={<ActionButton icon={<FilterIcon width={16} height={16} />} />}
+                      >
+                        <Box className={classes.filterContainer}>
+                          <CheckBoxGroup
+                            orientation="vertical"
+                            direction="column"
+                            onChange={onChangeTypeFilters}
+                            data={store.roomTypes.map((type) => ({
+                              label: t(type?.replace(/\./g, '_')),
+                              value: type,
+                              checked: store.typeFilters?.includes(type),
+                            }))}
+                          />
+                        </Box>
+                        <Box className={classes.filterClean}>
+                          <Button variant="outline" onClick={cleanTypesFilter} fullWidth size="sm">
+                            {t('clean')}
+                          </Button>
+                        </Box>
+                      </Popover>
+                    ) : null
+                  }
+                />
+              </Box>
             </Box>
-          </Box>
-          <Box className={classes.title}>
-            <Title order={3}>{t('myConversations')}</Title>
-          </Box>
-          <Box className={classes.input}>
-            <TextInput
-              value={store.nameFilter}
-              onChange={onChangeNameFilter}
-              placeholder={t('search')}
-              icon={<SearchIcon width={16} height={16} />}
-              rightSection={
-                store.roomTypes ? (
-                  <Popover target={<ActionButton icon={<FilterIcon width={16} height={16} />} />}>
-                    <Box className={classes.filterContainer}>
-                      <CheckBoxGroup
-                        orientation="vertical"
-                        direction="column"
-                        onChange={onChangeTypeFilters}
-                        data={store.roomTypes.map((type) => ({
-                          label: t(type?.replace(/\./g, '_')),
-                          value: type,
-                          checked: store.typeFilters?.includes(type),
-                        }))}
-                      />
-                    </Box>
-                    <Box className={classes.filterClean}>
-                      <Button onClick={cleanTypesFilter} fullWidth size="sm">
-                        {t('clean')}
-                      </Button>
-                    </Box>
-                  </Popover>
-                ) : null
-              }
-            />
-          </Box>
-          <Box className={classes.listItems}>
-            {store.rooms.map((room) => (
-              <ChatListDrawerItem
-                key={room.id}
-                t={t}
-                room={room}
-                onClick={() => onClickRoom(room)}
-              />
-            ))}
-          </Box>
-        </Box>
+          }
+        >
+          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
+            <Box className={classes.listItems}>
+              {store.rooms.map((room) => (
+                <ChatListDrawerItem
+                  key={room.id}
+                  t={t}
+                  room={room}
+                  onClick={() => onClickRoom(room)}
+                />
+              ))}
+            </Box>
+          </Stack>
+        </TotalLayoutContainer>
       </Drawer>
 
       {store.intermediateRooms.map((room, index) => {

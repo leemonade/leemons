@@ -12,7 +12,6 @@ const { exists: assetExists } = require('../../exists');
  */
 async function handleExistence({ fileId, assetId, ctx }) {
   if (!(await fileExists({ fileId, ctx }))) {
-    ctx.logger.info('ERROR fileId:', fileId);
     throw new LeemonsError(ctx, { message: 'File not found', httpStatusCode: 422 });
   }
 

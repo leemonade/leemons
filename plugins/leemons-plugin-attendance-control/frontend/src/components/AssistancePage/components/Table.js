@@ -12,7 +12,6 @@ import {
   TextInput,
   Tooltip,
   UserDisplayItem,
-  createStyles,
 } from '@bubbles-ui/components';
 import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
 import { CommentIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
@@ -21,7 +20,7 @@ import { addAction, fireEvent, removeAction } from 'leemons-hooks';
 
 import { generateAssistancesWB } from '@attendance-control/components/ExcelExport/assistencesWB';
 import { getFile } from '@attendance-control/components/ExcelExport/helpers/workbook/getFile';
-import { CommonTableStyles } from '@scores/components/Tables/ScoresBasicTable/ScoresBasicTable.styles.js';
+import { ScoresBasicTableStyles } from '@scores/components/Tables/ScoresBasicTable/ScoresBasicTable.styles';
 import { useLocale, useStore } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getUserAgentsInfoRequest } from '@users/request';
@@ -29,26 +28,12 @@ import _ from 'lodash';
 import React from 'react';
 import AttendanceControlDrawer from '../../attendance-control-drawer';
 
-const useTableStyles = createStyles((theme) => ({
-  root: {
-    width: '100%',
-    boxSizing: 'border-box',
-    transition: 'width 0.3s ease-in-out',
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  tabHeader: {
-    flex: 1,
-  },
-}));
-
 export default function Table({ sessions, classe, onSave }) {
   const [store, render] = useStore();
   const locale = useLocale();
   const [t, , , tLoading] = useTranslateLoader(prefixPN('attendanceControlTable'));
 
-  const { classes } = CommonTableStyles({ overFlowRight: true }, { name: 'CommonTable' });
+  const { classes } = ScoresBasicTableStyles({ overFlowRight: true }, { name: 'CommonTable' });
 
   async function filter() {
     store.filteredData = _.cloneDeep(store.data);

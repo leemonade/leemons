@@ -14,7 +14,7 @@ export const ChatListDrawerItemStyles = createStyles((theme, { type }) => {
       gap: theme.spacing[4],
       cursor: 'pointer',
       '&:hover': {
-        backgroundColor: theme.other.global.background.color.surface.subtle,
+        backgroundColor: theme.other.global.background.color.surface.muted,
       },
     },
     itemTitleContainer: {

@@ -228,7 +228,7 @@ module.exports = {
         acceptButton: 'Accept',
         cancelButton: 'Cancel',
         updateButton: 'Update',
-        saveFooterButton: 'Guardar',
+        saveFooterButton: 'Save',
         permissionsSuccess: 'Permissions successfully established',
         shareSuccess: 'Resource successfully shared',
         shareCenters: 'Search centers',

@@ -68,8 +68,8 @@ export default function writeStudentsWithActivities({ ws, tableData, labels, ini
     ws,
     array: contentArray,
     initialPosition,
-    getStyle: getStyle({ tableData, ws }),
+    getStyle: getStyle({ tableData, ws, labels }),
   });
 
-  addConditionalFormatting(ws);
+  addConditionalFormatting(ws, { labels });
 }

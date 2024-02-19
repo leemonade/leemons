@@ -46,6 +46,7 @@ export const ResultStyles = createStyles((theme) => ({
     paddingRight: theme.spacing[4],
     paddingTop: theme.spacing[2],
     paddingBottom: theme.spacing[2],
+    maxWidth: '438px',
   },
   showTestBar: {
     backgroundColor: theme.colors.uiBackground01,

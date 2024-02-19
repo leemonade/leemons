@@ -55,7 +55,7 @@ async function removeCustomForUser({ menuKey, key, ctx }) {
 
   await Promise.all(promises);
 
-  ctx.logger.info(`Remove custom menu item "${key}" from menu "${menuKey}"`);
+  ctx.logger.debug(`Remove custom menu item "${key}" from menu "${menuKey}"`);
 
   return true;
 }

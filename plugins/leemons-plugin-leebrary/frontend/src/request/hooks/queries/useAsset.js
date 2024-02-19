@@ -4,13 +4,13 @@ import { useCallback } from 'react';
 import getAsset from '@leebrary/request/getAsset';
 import { getAssetsKey } from '../keys/assets';
 
-function useAsset({ id, ...options }) {
+function useAsset({ id, showPublic, ...options }) {
   const queryKey = getAssetsKey({ id });
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'frequently',
   });
 
-  const queryFn = useCallback(() => getAsset(id).then((r) => r.asset ?? {}), [id]);
+  const queryFn = useCallback(() => getAsset(id, showPublic).then((r) => r.asset ?? {}), [id]);
 
   return useQuery({
     ...options,

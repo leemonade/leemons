@@ -207,6 +207,7 @@ export function SubjectPicker({
               leftIcon={<AddCircleIcon />}
               variant="link"
               onClick={form.handleSubmit(onSubmit)}
+              disabled={isDisabled}
             >
               {localizations?.add}
             </Button>

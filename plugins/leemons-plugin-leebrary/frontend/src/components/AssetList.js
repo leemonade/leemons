@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { find, forEach, isArray, isEmpty, noop } from 'lodash';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { cloneDeep, find, forEach, isArray, isEmpty, noop } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import {
@@ -16,12 +16,13 @@ import {
   PaginatedList,
   Drawer,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@leebrary/components/LibraryItem';
+import { useIsStudent } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
 import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
 import getPageItems from '@leebrary/helpers/getPageItems';
@@ -65,7 +66,7 @@ function handlePaginationAndDetailsLoad({
   assetsDetails,
   page,
 }) {
-  const paginated = getPageItems({
+  const paginatedObject = getPageItems({
     data: assetList,
     page: page - 1,
     size: pageSize,
@@ -74,8 +75,8 @@ function handlePaginationAndDetailsLoad({
 
   // Replace the list of asset ids for the detail of the assets when loaded + clean the metadata
   if (assetsDetails && !isEmpty(assetsDetails)) {
-    paginated.items = assetsDetails;
-    forEach(paginated.items, (item) => {
+    paginatedObject.items = cloneDeep(assetsDetails);
+    forEach(paginatedObject.items, (item) => {
       if (item.file?.metadata?.indexOf('pathsInfo')) {
         item.file.metadata = JSON.parse(item.file.metadata);
         delete item.file.metadata.pathsInfo;
@@ -85,10 +86,10 @@ function handlePaginationAndDetailsLoad({
   }
 
   // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
-  if (shouldInsertNewItem && !paginated.items.some((item) => item.action === 'new')) {
-    paginated.items.unshift({ action: 'new' });
+  if (shouldInsertNewItem && !paginatedObject.items.some((item) => item.action === 'new')) {
+    paginatedObject.items.unshift({ action: 'new' });
   }
-  return paginated;
+  return paginatedObject;
 }
 
 function handlePaginationAndEmptyAssetList({ shouldInsertNewItem }) {
@@ -153,6 +154,7 @@ const AssetList = ({
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
+  const isStudent = useIsStudent();
 
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -174,6 +176,23 @@ const AssetList = ({
   const { newAsset } = useContext(LibraryContext);
   const history = useHistory();
 
+  // For not student users, a default filter is applied in the recent view in order to only show activity assets
+  // If this behavior is not needed anymore, remove this extra filters and don't make any distinction between users
+  const resolveRecentSectionDefaultFilter = useCallback(() => {
+    let resolvedCategoriesFilter;
+    if (categoryFilter === 'all' && !isStudent) {
+      const contentAssignables = ['assignables.scorm', 'assignables.content-creator'];
+      const activityAssetsFilter = categories
+        ?.filter(
+          (item) => item.key?.startsWith('assignables') && !contentAssignables.includes(item.key)
+        )
+        .map((item) => item.id);
+      resolvedCategoriesFilter = JSON.stringify(activityAssetsFilter);
+    }
+
+    return resolvedCategoriesFilter || null;
+  }, [isStudent, categories, categoryFilter]);
+
   // -------------------------------------------------------------------------------------
   // QUERY HOOKS
 
@@ -193,13 +212,13 @@ const AssetList = ({
 
     if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
 
+    // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key?.startsWith(SUBJECT_CATEGORY)) {
       delete query.category;
       const subjects = isArray(category.id) ? category.id : [category.id];
       query.subjects = JSON.stringify(subjects);
     }
 
-    // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key === SHARED_CATEGORY) {
       delete query.category;
       query.onlyShared = true;
@@ -209,6 +228,8 @@ const AssetList = ({
       delete query.category;
       if (categoryFilter !== 'all') {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
+      } else {
+        query.categoriesFilter = resolveRecentSectionDefaultFilter(query);
       }
     }
     if (category?.key === PINS_CATEGORY) {
@@ -332,6 +353,31 @@ const AssetList = ({
       toggle: t('cardToolbar.toggle'),
     };
   }, [selectedAsset, category, t]);
+
+  // -------------------------------------------------------------------------------------
+  // EMPTY STATE
+
+  const userIsFilteringOrSearching = useCallback(() => {
+    const isSearchingByCriteria = searchCriteriaDebounced?.length > 0;
+    const isFilteringByStatus = statusFilter?.length && statusFilter !== 'all';
+    const isFilteringByAcademicFilters = academicFilters && academicFilters?.program?.length > 0;
+    const isFilteringByMediaType = mediaTypeFilter?.length && mediaTypeFilter !== 'all';
+    const isFiltering =
+      isFilteringByStatus || isFilteringByAcademicFilters || isFilteringByMediaType;
+
+    return isSearchingByCriteria || isFiltering;
+  }, [statusFilter, academicFilters, mediaTypeFilter, searchCriteriaDebounced]);
+
+  const showEmptyState = useMemo(() => {
+    const isNotCreatable = NOT_CREATABLE_CATEGORIES.includes(category?.key);
+    const isNotLoading = !assetListIsLoading;
+    if (isNotLoading && isEmpty(assetList)) {
+      if (isNotCreatable) return true;
+
+      return userIsFilteringOrSearching();
+    }
+    return false;
+  }, [assetListIsLoading, assetList, category?.key, userIsFilteringOrSearching]);
 
   // -------------------------------------------------------------------------------------
   // FUNCTIONS FOR USER ACTIONS
@@ -489,26 +535,38 @@ const AssetList = ({
 
   // Set data for the PaginatedList component and pagination settings
   useEffect(() => {
-    const shouldInsertNewItem = !NOT_CREATABLE_CATEGORIES.some((catKey) =>
-      category?.key?.startsWith(catKey)
-    );
-    if (shouldInsertNewItem) setPageSize(11);
-    else setPageSize(12);
+    if (!assetListIsLoading) {
+      const searchingOrFiltering = userIsFilteringOrSearching();
+      const shouldInsertNewItem =
+        !NOT_CREATABLE_CATEGORIES.some((catKey) => category?.key?.startsWith(catKey)) &&
+        !searchingOrFiltering;
 
-    if (assetList?.length) {
-      const paginated = handlePaginationAndDetailsLoad({
-        assetList,
-        pageSize,
-        shouldInsertNewItem,
-        assetsDetails,
-        page,
-      });
-      setPageAssetsData({ ...paginated });
-    } else {
-      const emptyData = handlePaginationAndEmptyAssetList({ shouldInsertNewItem });
-      setPageAssetsData(emptyData);
+      if (shouldInsertNewItem) setPageSize(11);
+      else setPageSize(12);
+
+      if (assetList?.length) {
+        const paginated = handlePaginationAndDetailsLoad({
+          assetList,
+          pageSize,
+          shouldInsertNewItem,
+          assetsDetails,
+          page,
+        });
+        setPageAssetsData(cloneDeep(paginated));
+      } else {
+        const emptyData = handlePaginationAndEmptyAssetList({ shouldInsertNewItem });
+        setPageAssetsData(cloneDeep(emptyData));
+      }
     }
-  }, [assetList, assetsDetails, assetsDetailsAreLoading, category?.key]);
+  }, [
+    assetList,
+    assetListIsLoading,
+    assetsDetails,
+    assetsDetailsAreLoading,
+    category?.key,
+    userIsFilteringOrSearching,
+  ]);
+
   // -------------------------------------------------------------------------------------
   // PAGE STYLES & PAGINATED LIST PROPS
 
@@ -639,7 +697,11 @@ const AssetList = ({
                 onChange={onStatusChange}
                 value={statusFilter}
                 placeholder={t('labels.assetStatus')}
-                disabled={assetListIsLoading || assetsDetailsAreLoading}
+                disabled={
+                  assetListIsLoading ||
+                  assetsDetailsAreLoading ||
+                  ['media-files', 'bookmarks'].includes(categoryFilter)
+                }
                 skipFlex
               />
             )}
@@ -705,8 +767,8 @@ const AssetList = ({
                 />
               </Box>
             )}
-            {!assetListIsLoading && isEmpty(assetList) && !assetsDetailsAreLoading && (
-              <Stack justifyContent="center" alignItems="center" fullWidth>
+            {showEmptyState && (
+              <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 {getEmptyState()}
               </Stack>
             )}

@@ -309,7 +309,7 @@ async function sendWeeklyEmails({ ctx }) {
           centerId: userAgent.center.id,
         })
         .then(() => {
-          ctx.logger.log(`Weekly email sended to ${userAgent.user.email}`);
+          ctx.logger.debug(`Weekly email sended to ${userAgent.user.email}`);
         })
         .catch((e) => {
           ctx.logger.error(e);

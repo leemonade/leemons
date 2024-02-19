@@ -95,11 +95,14 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
     const gradeObj = previousScore;
     const { grade, feedback: savedFeedback } = gradeObj ?? {};
 
-    if (!isNil(grade) && grade !== score) {
+    const gradeIsDirty = form.getFieldState('grade').isDirty;
+    const feedbackIsDirty = form.getFieldState('feedback').isDirty;
+
+    if (!gradeIsDirty && !isNil(grade) && grade !== score) {
       form.setValue('score', grade);
     }
 
-    if (savedFeedback !== feedback) {
+    if (!feedbackIsDirty && savedFeedback !== feedback) {
       form.setValue('feedback', savedFeedback);
       if (savedFeedback) {
         form.setValue('showFeedback', true);

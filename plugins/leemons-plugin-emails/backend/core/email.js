@@ -193,7 +193,7 @@ class Email {
                                       ); */
     }
 
-    ctx.logger.info(
+    ctx.logger.debug(
       `Adding email template Name: ${templateName} Language: ${language} Type: ${type}`
     );
     const emailTemplateDetailDoc = await ctx.tx.db.EmailTemplateDetail.create({

@@ -38,6 +38,7 @@ const { byProvider: getByProvider } = require('../byProvider');
 async function getProviderAssets({
   assets: _assets,
   categoryId,
+  categoriesFilter,
   criteria,
   indexable,
   nothingFound: _nothingFound,
@@ -88,6 +89,10 @@ async function getProviderAssets({
     query.id = assetIds;
   }
 
+  if (categoriesFilter?.length) {
+    query.category = categoriesFilter;
+  }
+  // A specific category overrides the multi-category filter
   if (categoryId) {
     query.category = categoryId;
   }

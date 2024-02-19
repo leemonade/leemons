@@ -192,9 +192,9 @@ export default function Development(props) {
           </Box>
         </ContextContainer>
 
-        {curriculum?.length ||
-        (!!store.instance.assignable.subjects[0].curriculum.objectives &&
-          !!store.instance.assignable.subjects[0].curriculum.objectives?.length) ? (
+        {!!curriculum?.length ||
+        (!!store.instance.assignable.subjects[0]?.curriculum.objectives &&
+          !!store.instance.assignable.subjects[0]?.curriculum.objectives?.length) ? (
           <ContextContainer title={t('curriculum')}>
             {curriculum?.length ? (
               <Box sx={tabPanelStyle}>
@@ -203,8 +203,8 @@ export default function Development(props) {
                 </Box>
               </Box>
             ) : null}
-            {!!store.instance.assignable.subjects[0].curriculum.objectives &&
-            !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
+            {!!store.instance.assignable.subjects[0]?.curriculum.objectives &&
+            !!store.instance.assignable.subjects[0]?.curriculum.objectives?.length ? (
               <Box sx={tabPanelStyle}>
                 <Box>
                   <Title color="primary" order={5}>
@@ -214,7 +214,7 @@ export default function Development(props) {
                   <HtmlText>
                     {`
                       <ul>
-                      ${store.instance.assignable.subjects[0].curriculum.objectives
+                      ${store.instance.assignable.subjects[0]?.curriculum.objectives
                         ?.map(
                           ({ objective }) =>
                             `<li>

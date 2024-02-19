@@ -83,7 +83,7 @@ async function addPermissionsToUserAgent({
       })
     );
   } catch (e) {
-    ctx.logger.info(`Cannot assign custom permissions to UserAgent ${userAgent}: ${e.message}`);
+    ctx.logger.error(`Cannot assign custom permissions to UserAgent ${userAgent}: ${e.message}`);
   }
   return result;
 }

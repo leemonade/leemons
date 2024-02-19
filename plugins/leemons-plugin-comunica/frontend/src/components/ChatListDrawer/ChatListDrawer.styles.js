@@ -19,26 +19,30 @@ export const ChatListDrawerStyles = createStyles((theme) => ({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.mainWhite,
     zIndex: 2,
+    minHeight: 72,
+  },
+  headerWrapper: {
+    backgroundColor: 'white',
+    paddingBottom: theme.spacing[1],
   },
   headerRight: {
     display: 'flex',
     justifyContent: 'end',
     alignItems: 'center',
+    width: '100%',
     gap: theme.spacing[2],
   },
   title: {
     paddingLeft: theme.spacing[7],
     paddingRight: theme.spacing[7],
-    paddingBottom: theme.spacing[6],
+    paddingBottom: theme.spacing[4],
   },
   input: {
     paddingLeft: theme.spacing[4],
     paddingRight: theme.spacing[4],
     paddingBottom: theme.spacing[4],
   },
-  listItems: {
-    overflowY: 'auto',
-  },
+  listItems: {},
   filterContainer: {
     padding: theme.spacing[4],
   },

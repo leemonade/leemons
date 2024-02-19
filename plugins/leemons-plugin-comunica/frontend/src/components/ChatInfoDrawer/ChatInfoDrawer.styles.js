@@ -22,11 +22,14 @@ export const ChatInfoDrawerStyles = createStyles((theme) => ({
     button: {
       color: theme.other.buttonAction.content.color.primary.default,
     },
+    minHeight: 72,
+  },
+  headerWrapper: {
+    backgroundColor: 'white',
+    paddingBottom: theme.spacing[3],
   },
   content: {
     padding: theme.spacing[5],
-    flex: 1,
-    overflowY: 'auto',
   },
   participants: {
     marginTop: theme.spacing[5],

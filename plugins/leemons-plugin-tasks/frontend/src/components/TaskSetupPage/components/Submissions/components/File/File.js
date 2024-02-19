@@ -19,13 +19,13 @@ export default function File({ labels }) {
   } = useFormContext();
   return (
     <ContextContainer>
-      <Controller
+      {/* <Controller
         control={control}
         name="data.multipleFiles"
         render={({ field }) => (
           <Checkbox {...field} checked={field.value} label={labels?.multiFile} />
         )}
-      />
+      /> */}
       <Controller
         control={control}
         name="data.extensions"

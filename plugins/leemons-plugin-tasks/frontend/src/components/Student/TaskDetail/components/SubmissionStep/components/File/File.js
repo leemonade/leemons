@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, ContextContainer, FileUpload, Text, useDebouncedValue } from '@bubbles-ui/components';
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
-import { isEqual } from 'lodash';
-import { addErrorAlert } from '@layout/alert';
+import { differenceBy, isArray, isEqual, sortBy } from 'lodash';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { v4 } from 'uuid';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -22,19 +22,7 @@ function updateFile({ updateFiles, id, status, leebraryId }) {
 }
 
 function useUploadFiles({ files, updateFiles, t }) {
-  const initialUploadedFiles = useMemo(() => files.filter((file) => !!file.leebraryId), []);
-  const previousFiles = useRef(initialUploadedFiles);
-
   useEffect(() => {
-    const deletedFiles = previousFiles.current.filter(
-      (file) => !files.find((f) => f.id === file.id)
-    );
-
-    deletedFiles.forEach((file) => {
-      previousFiles.current = previousFiles.current.filter((f) => f.id !== file.id);
-      deleteAssetRequest(file.leebraryId).catch((e) => addErrorAlert({ message: e.message }));
-    });
-
     files.forEach(async (file) => {
       if (!file.status && !file.leebraryId) {
         updateFile({ updateFiles, id: file.id, status: 'loading' });
@@ -47,7 +35,6 @@ function useUploadFiles({ files, updateFiles, t }) {
             'media-files'
           );
 
-          previousFiles.current.push({ id: file.id, leebraryId: id });
           updateFile({ updateFiles, id: file.id, status: 'success', leebraryId: id });
         } catch (error) {
           updateFile({ updateFiles, id: file.id, status: 'error' });
@@ -155,11 +142,27 @@ function File({ assignation, preview }) {
             accept={extensionFormat}
             maxSize={submissionData.maxSize ? submissionData.maxSize * 1024 * 1024 : undefined}
             disabled={!!preview}
-            onChange={(newFiles) => {
+            onChange={(_newFiles) => {
               setValue((files) => {
+                const newFiles = isArray(_newFiles) ? _newFiles : [_newFiles];
+
                 if (isEqual(newFiles, files)) {
                   return files;
                 }
+
+                const deletedFiles = differenceBy(
+                  sortBy(files, 'id'),
+                  sortBy(newFiles, 'id'),
+                  'id'
+                );
+
+                deletedFiles.forEach((file) => {
+                  if (file.leebraryId) {
+                    deleteAssetRequest(file.leebraryId)
+                      .catch((e) => addErrorAlert({ message: e.message }))
+                      .then(() => addSuccessAlert(`deleted ${file.name} - ${file.leebraryId}`));
+                  }
+                });
 
                 return (Array.isArray(newFiles) ? newFiles : [newFiles]).map((file) => ({
                   id: v4(),
@@ -167,6 +170,7 @@ function File({ assignation, preview }) {
                   path: file.path,
                   File: file,
                   status: file.status,
+                  leebraryId: file.leebraryId,
                 }));
               });
             }}

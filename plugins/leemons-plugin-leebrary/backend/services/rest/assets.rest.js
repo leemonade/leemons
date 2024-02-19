@@ -93,7 +93,6 @@ module.exports = {
       return { status: 200, assets };
     },
   },
-  // ! xapi ? middleware?
   getRest: {
     rest: {
       path: '/:id',
@@ -101,11 +100,14 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { id: assetId } = ctx.params;
+      // Use showPublic=true as a query param to retrieve both public or private assets.
+      const { id: assetId, showPublic } = ctx.params;
+      const parsedShowPublic = showPublic ? JSON.parse(showPublic) : false;
       const [asset] = await getByIds({
         ids: assetId,
         withFiles: true,
         checkPermissions: true,
+        showPublic: parsedShowPublic,
         ctx,
       });
 
@@ -164,6 +166,7 @@ module.exports = {
         subjects,
         onlyShared,
         categoryFilter,
+        categoriesFilter,
       } = ctx.params;
 
       const trueValues = ['true', true, '1', 1];
@@ -179,6 +182,7 @@ module.exports = {
       const _providerQuery = JSON.parse(providerQuery || null);
       const _programs = JSON.parse(programs || null);
       const _subjects = JSON.parse(subjects || null);
+      const _categoriesFilter = JSON.parse(categoriesFilter || null); // added to filter by multiple categories
 
       const shouldSerachByCriteria =
         !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
@@ -200,6 +204,7 @@ module.exports = {
           onlyShared: _onlyShared,
           sortBy: 'updated_at',
           sortDirection: 'desc',
+          categoriesFilter: _categoriesFilter,
           ctx,
         });
       } else {
