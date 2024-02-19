@@ -117,7 +117,7 @@ const ListCard = ({
       if (asset.assignable && asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
-          children: menuLabels.assign,
+          children: menuLabels?.assign,
           onClick: (e) => {
             e.stopPropagation();
             handleClick(`/private/tasks/library/assign/${taskId}`);
@@ -127,7 +127,7 @@ const ListCard = ({
       if (asset.editable) {
         items.push({
           icon: <EditIcon />,
-          children: menuLabels.edit,
+          children: menuLabels?.edit,
           onClick: (e) => {
             e.stopPropagation();
             handleClick(`/private/tasks/library/edit/${taskId}`);
@@ -137,7 +137,7 @@ const ListCard = ({
       if (asset.duplicable && asset.providerData) {
         items.push({
           icon: <DuplicateIcon />,
-          children: menuLabels.duplicate,
+          children: menuLabels?.duplicate,
           onClick: (e) => {
             e.stopPropagation();
             openConfirmationModal({
@@ -157,7 +157,7 @@ const ListCard = ({
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: menuLabels.delete,
+          children: menuLabels?.delete,
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({

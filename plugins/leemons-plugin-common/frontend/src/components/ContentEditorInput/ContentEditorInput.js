@@ -6,7 +6,6 @@ import { useEditorLabels } from '@common/hooks/useEditorLabels';
 import { LibraryTool } from '@leebrary/components';
 import libraryProcessor from '@leebrary/helpers/libraryProcessor';
 import { MathTool } from '@content-creator/components';
-import mathProcessor from '@content-creator/helpers/mathProcessor';
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
   CONTENT_EDITOR_INPUT_PROP_TYPES,
@@ -39,10 +38,7 @@ const ContentEditorInput = ({
       { id: 'math', tool: <MathTool /> },
     ]);
 
-    setTextEditorProcessor([
-      { id: 'library', processor: libraryProcessor },
-      { id: 'math', processor: mathProcessor },
-    ]);
+    setTextEditorProcessor([{ id: 'library', processor: libraryProcessor }]);
   }, []);
 
   const leemonsTools = () => {
