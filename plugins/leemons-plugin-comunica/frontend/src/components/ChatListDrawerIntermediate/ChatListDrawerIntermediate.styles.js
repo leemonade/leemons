@@ -17,11 +17,15 @@ export const ChatListDrawerIntermediateStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.mainWhite,
     zIndex: 2,
     button: {
       color: theme.other.buttonAction.content.color.primary.default,
     },
+    minHeight: 72,
+  },
+  headerWrapper: {
+    backgroundColor: 'white',
+    paddingBottom: theme.spacing[3],
   },
   headerRight: {
     display: 'flex',
@@ -46,8 +50,5 @@ export const ChatListDrawerIntermediateStyles = createStyles((theme) => ({
     paddingRight: theme.spacing[4],
     paddingBottom: theme.spacing[4],
   },
-  itemsList: {
-    marginTop: theme.spacing[6],
-    overflowY: 'auto',
-  },
+  itemsList: {},
 }));

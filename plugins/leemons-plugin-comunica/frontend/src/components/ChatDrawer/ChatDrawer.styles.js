@@ -22,12 +22,14 @@ export const ChatDrawerStyles = createStyles((theme) => ({
     button: {
       color: theme.other.buttonAction.content.color.primary.default,
     },
+    minHeight: 72,
+  },
+  headerWrapper: {
+    backgroundColor: 'white',
+    paddingBottom: theme.spacing[3],
   },
   messages: {
-    backgroundColor: theme.colors.ui03,
-    flex: 1,
     padding: 16,
-    overflowY: 'auto',
   },
   date: {
     alignItems: 'center',

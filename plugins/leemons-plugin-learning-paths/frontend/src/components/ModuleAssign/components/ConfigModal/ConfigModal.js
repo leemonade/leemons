@@ -122,7 +122,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
           </Stack>
         }
       >
-        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflow: 'auto' }}>
+        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
           <ConfigModalErrorBoundary>
             <Component
               fallback={<LoadingOverlay />}

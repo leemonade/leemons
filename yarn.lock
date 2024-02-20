@@ -2812,129 +2812,6 @@
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
-"@leemons/cache@0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@leemons/cache/-/cache-0.0.40.tgz#acd9123139980dccfbb951c224bcee06c9096401"
-  integrity sha512-4/yi9CbIotV/S7mcuVpVmaDmB9T9/PwxcjB48r5TK0aS78i05Yl5JVswOAdz8oicU4MytZUVjCgPz1FtnBNdHw==
-  dependencies:
-    "@leemons/service-name-parser" "0.0.39"
-    lodash "^4.17.21"
-    node-cache "^5.1.2"
-    redis "^4.6.10"
-
-"@leemons/deployment-manager@0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@leemons/deployment-manager/-/deployment-manager-0.0.44.tgz#995145631d8d0ead59294ca5a5aa0886ab927641"
-  integrity sha512-3f5I0kBl/pA0X9A98UTzZRwmCuRkiJ2OmwZEhjdPeib3BCjGeW2HgAEmDC3IiW6tyM24fK1MhO5YehS8k3E6mA==
-  dependencies:
-    "@leemons/error" "0.0.41"
-    "@leemons/service-name-parser" "0.0.41"
-    lodash "^4.17.21"
-
-"@leemons/error@0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@leemons/error/-/error-0.0.40.tgz#a8c386a47d851cdae34099d6b87346045ede613e"
-  integrity sha512-ABxhFPB4bonrBG578OQHofBbkO0t/PMutWd/DnkDJvj/9AQsk32qsuFWHVnrFIGMoY/gGzZz9rGBVmsMW8sKUw==
-  dependencies:
-    "@leemons/service-name-parser" "0.0.39"
-    lodash "^4.17.21"
-
-"@leemons/menu-builder@0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@leemons/menu-builder/-/menu-builder-0.0.44.tgz#2a5f51a564245ec3224c30b2a6702dfeb64aaa04"
-  integrity sha512-DOI7Ko48RdLUln1rl+u1uZ/m5FpGRwjQBjCxf99rRzJq8fHU8ulQD18zV+ECjuoZRGVDX4rPh0yZRwPTr0uo+w==
-  dependencies:
-    "@leemons/mongodb-helpers" "0.0.44"
-    lodash "^4.17.21"
-
-"@leemons/middlewares@0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@leemons/middlewares/-/middlewares-0.0.40.tgz#50acadebf96738a65cdb0bb964ceaf89c7440017"
-  integrity sha512-KeBgnwwfScEVo7ucxBvGomZv+RqgHNbHKjXJN8Z/97juYHQlFjQntqkRODdW2iYOqTexOQBWLXDLJ+ln4rnoPA==
-  dependencies:
-    "@leemons/error" "0.0.40"
-    "@leemons/service-name-parser" "0.0.39"
-    lodash "^4.17.21"
-
-"@leemons/mongodb-helpers@0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@leemons/mongodb-helpers/-/mongodb-helpers-0.0.44.tgz#6f5cc589b6d0ff342428d57f011308ff18732df1"
-  integrity sha512-ZzcEsyvIgtH6L4X0hU0OMuvRdpOl7mSLSY4/knQgc5N51d5giLXNImdc/2V1OxHW2TT/VcefnDGnpYAEomiowg==
-  dependencies:
-    "@leemons/mongodb" "0.0.44"
-
-"@leemons/mongodb@0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@leemons/mongodb/-/mongodb-0.0.44.tgz#c59d3f03c63f5db59194c9dc2f35ab7600c6d65e"
-  integrity sha512-b1n0/dpNcbFVc3PFMzZbDBfUW6axA0ookDVLOBga1tOqcTs+KRzce0XBtXojpn1l/SgWGZ6s1ZnkWdpF8ff03w==
-  dependencies:
-    "@leemons/deployment-manager" "0.0.44"
-    "@leemons/error" "0.0.41"
-    "@leemons/lrn" "0.0.41"
-    "@leemons/service-name-parser" "0.0.41"
-    "@leemons/transactions" "0.0.41"
-    lodash "^4.17.21"
-    mongodb "6.1.0"
-    mongoose "7.5.2"
-
-"@leemons/mqtt@0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@leemons/mqtt/-/mqtt-0.0.40.tgz#ea1c6ebb7425d5fe810084b7a89cb6d3e0df6737"
-  integrity sha512-woqY2V5WiVHVMcsrm72WEb0dy5pSOKADg9gwjxDJCSjYhouKiaZ4EEspJ5H9sewHH42QYhOQXVvk7k91r2bkoA==
-  dependencies:
-    "@leemons/error" "0.0.40"
-    lodash "^4.17.21"
-
-"@leemons/multi-events@0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@leemons/multi-events/-/multi-events-0.0.44.tgz#a09c7bcc26d247e1a8acdd8bb5468e822bcfcdd9"
-  integrity sha512-qWWU76TIALoLS6hhYyVzSn3YX/hpx2Nd1GdrLIzAqtotrCCEYV59hx8fFWYngudKnPilH63sg/iV4UJvSAf7Rw==
-  dependencies:
-    "@leemons/error" "0.0.41"
-    "@leemons/mongodb-helpers" "0.0.44"
-    "@leemons/utils" "0.0.41"
-    lodash "^4.17.21"
-
-"@leemons/multilanguage@0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@leemons/multilanguage/-/multilanguage-0.0.44.tgz#cc5168cc2c0077594d5ace2371da4047d217278f"
-  integrity sha512-QvtMEktUmdzI2mwzbeUye3TVGxtezGBa9dxqa4Q1LCxEvEXjpmNCPIkuwyRgoyh2jTcu1j+xdgAOe+Kj/Sa3eg==
-  dependencies:
-    "@leemons/mongodb-helpers" "0.0.44"
-    "@leemons/service-name-parser" "0.0.41"
-    lodash "^4.17.21"
-
-"@leemons/permissions@0.0.44":
-  version "0.0.44"
-  resolved "https://registry.yarnpkg.com/@leemons/permissions/-/permissions-0.0.44.tgz#bc21845727bd6771f8a075ac218d423b81d4652b"
-  integrity sha512-3e6StgS+3uvHu71VOWovyK0/isZeKEmwhWrTRQDkJX/xZjHAKzGVthrak4TOzTLdaKv/R+1TwSEUNBbtb2m27A==
-  dependencies:
-    "@leemons/mongodb-helpers" "0.0.44"
-
-"@leemons/service-name-parser@0.0.39":
-  version "0.0.39"
-  resolved "https://registry.yarnpkg.com/@leemons/service-name-parser/-/service-name-parser-0.0.39.tgz#97c8e70ae1cd5a9473f56029a483921345dd464b"
-  integrity sha512-YTyddy7uLOVjjL4e6GVludXh6fOhNox7APbrVXZfqM2vCarRlQnSrsXj4Y4VM+I/bwl69V2ViLzqoR1VgtfmvQ==
-
-"@leemons/utils@0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@leemons/utils/-/utils-0.0.40.tgz#8b105e49fa8f100de07e9c268ef6022ded9d0512"
-  integrity sha512-6+TUk2moBK9UK939041Lg4Bb6OgCcCG/L7MuP7MKtOxxWw8JUd6FMpQvlJew7Na125hkn4U1kMfYeSqocMGhWA==
-  dependencies:
-    dotenv "^16.3.1"
-    fs-extra "^11.1.1"
-    lodash "^4.17.21"
-
-"@leemons/validator@0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@leemons/validator/-/validator-0.0.40.tgz#3307e3853b50b35650eee61d19ae49562286678f"
-  integrity sha512-LRxYeGjmBm4n9wLYOTrpKalw79aMWLYStwj84b3oCAmndeanLV97yIimmrvQQP2JNcmYO6tywwM6foJ2LNi/uA==
-  dependencies:
-    ajv "^8.12.0"
-    ajv-formats "^2.1.1"
-    ajv-keywords "^5.1.0"
-    lodash "^4.17.21"
-
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
@@ -10598,6 +10475,11 @@ eslint-plugin-prettier@^4.2.1:
   integrity sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==
   dependencies:
     prettier-linter-helpers "^1.0.0"
+
+eslint-plugin-react-hooks@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.6.0.tgz#4c3e697ad95b77e93f8646aaa1630c1ba607edd3"
+  integrity sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==
 
 eslint-plugin-react@^7.32.2:
   version "7.33.2"

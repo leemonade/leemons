@@ -180,9 +180,10 @@ async function addClass({ data, ctx }) {
       subName += ` - ${classe.groups?.abbreviation}`;
     }
     const roomData = {
-      name: `${classe.subject.name} ${subName}`,
+      name: classe.subject.name,
+      // name: `${classe.subject.name} ${subName}`,
       type: ctx.prefixPN('class.group'),
-      // subName,
+      subName,
       bgColor: classe.subject.color,
       image: null,
       icon: '/public/academic-portfolio/subject-icon.svg',
@@ -212,8 +213,8 @@ async function addClass({ data, ctx }) {
       type: ctx.prefixPN('class'),
       key: ctx.prefixPN(`room.class.${nClass.id}`),
       parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
-      name: 'roomCard.class',
-      subName: roomData.name,
+      // name: 'roomCard.class',
+      //subName: roomData.name,
       icon: '/public/academic-portfolio/class-icon.svg',
     });
 
@@ -231,7 +232,7 @@ async function addClass({ data, ctx }) {
       );
     }
 
-    await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
+    // await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
     return (await classByIds({ ids: nClass.id, ctx }))[0];
   } catch (e) {

@@ -12,7 +12,9 @@ async function getUserDatasetInfo({ userId, ctx }) {
     );
     jsonSchema = compileJsonSchema;
     jsonUI = compileJsonUI;
-  } catch (e) {}
+  } catch (e) {
+    console.error(`Error getting user dataset info for locale "${ctx.meta.userSession.locale}"`, e);
+  }
   const value = await ctx.tx.call('dataset.dataset.getValues', {
     locationName: 'user-data',
     pluginName: 'users',

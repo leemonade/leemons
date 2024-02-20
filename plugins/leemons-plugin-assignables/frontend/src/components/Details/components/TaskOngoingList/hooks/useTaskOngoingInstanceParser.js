@@ -49,28 +49,28 @@ function getGradesGraphData(evaluationSystem, students) {
   };
 }
 
-function getStatusGraphData(students) {
-  if (!students) {
+function getStatusGraphData(students, activityStatusLabels) {
+  if (!students || !activityStatusLabels) {
     return null;
   }
 
   const status = [
     {
       id: 'opened',
-      label: 'Abierta',
+      label: activityStatusLabels?.opened,
       icon: <OpenIcon />,
 
       studentCount: students.filter((student) => student.status >= 0).length,
     },
     {
       id: 'started',
-      label: 'Empezada',
+      label: activityStatusLabels?.started,
       icon: <TimeClockCircleIcon />,
       studentCount: students.filter((student) => student.status >= 1).length,
     },
     {
       id: 'submitted',
-      label: 'Entregada',
+      label: activityStatusLabels?.submitted,
       icon: <CheckCircleIcon />,
       studentCount: students.filter((student) => student.status >= 2).length,
     },
@@ -96,20 +96,23 @@ export default function useTaskOngoingInstanceParser(instance) {
     prefixPN('activity_deadline_header'),
     prefixPN('multiSubject'),
     prefixPN('dates'),
+    prefixPN('activity_status'),
   ]);
 
-  const { multiSubjectLabel, deadlineHeaderLabels, datesLabels } = useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      return {
-        deadlineHeaderLabels: _.get(res, prefixPN('activity_deadline_header')),
-        multiSubjectLabel: _.get(res, prefixPN('multiSubject')),
-        datesLabels: _.get(res, prefixPN('dates')),
-      };
-    }
+  const { multiSubjectLabel, deadlineHeaderLabels, datesLabels, activityStatusLabels } =
+    useMemo(() => {
+      if (translations && translations.items) {
+        const res = unflatten(translations.items);
+        return {
+          deadlineHeaderLabels: _.get(res, prefixPN('activity_deadline_header')),
+          multiSubjectLabel: _.get(res, prefixPN('multiSubject')),
+          datesLabels: _.get(res, prefixPN('dates')),
+          activityStatusLabels: _.get(res, prefixPN('activity_status')),
+        };
+      }
 
-    return {};
-  }, [translations]);
+      return {};
+    }, [translations]);
 
   const classData = useClassData(instance.classes, {
     multiSubject: multiSubjectLabel,
@@ -139,7 +142,7 @@ export default function useTaskOngoingInstanceParser(instance) {
       labels: deadlineHeaderLabels,
     },
 
-    leftScoresBar: getStatusGraphData(students),
+    leftScoresBar: getStatusGraphData(students, activityStatusLabels),
     // TODO: UPDATE
     rightScoresBar: getGradesGraphData(evaluationSystem, students),
   };

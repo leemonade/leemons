@@ -9,13 +9,13 @@ import {
   TotalLayoutHeader,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import Filters from '@scores/components/ScoresPage/Filters';
 import React from 'react';
 import { TestIcon } from '@tests/components/Icons/TestIcon';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@attendance-control/helpers/prefixPN';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { onScoresDownload } from '@scores/components/Notebook/components/Header/Header';
+import Filters from '@scores/components/ScoresPage/Filters/Filters';
 
 const useStyles = createStyles((theme) => ({
   root: {
