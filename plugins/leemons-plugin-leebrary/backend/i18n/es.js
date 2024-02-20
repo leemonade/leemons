@@ -13,6 +13,7 @@ module.exports = {
       sharedWithMe: 'Compartidos conmigo',
       quickAccess: 'Favoritos',
       recent: 'Recientes',
+      teacherRecent: 'Actividades Recientes',
       uploadButton: 'Nuevo',
       createNewTitle: 'Crear nuevo',
       uploadTitle: 'Subir archivo',

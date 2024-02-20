@@ -244,7 +244,7 @@ const LibraryNavbar = ({
           ) : null}
           <NavbarItem
             icon={'/public/leebrary/recent.svg'}
-            label={labels.recent}
+            label={isStudent ? labels.recent : labels.teacherRecent}
             onClick={() => onNavHandler({ key: 'leebrary-recent' })}
             selected={selectedCategory === 'leebrary-recent'}
             loading={loading}
