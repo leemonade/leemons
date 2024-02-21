@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components/lib';
 
-const ClassroomPickerItemStyles = createStyles((theme, { canRemove }) => {
+const ClassroomPickerItemStyles = createStyles((theme, { canRemove, isCollisionDetected }) => {
   const { cardAssignments } = theme.other;
   return {
     root: {
@@ -27,8 +27,12 @@ const ClassroomPickerItemStyles = createStyles((theme, { canRemove }) => {
     containerSchedule: {
       display: 'flex',
       justifyContent: 'flex-end',
+      alignItems: 'center',
       gap: 8,
       flexWrap: 'wrap',
+    },
+    collisionIcon: {
+      color: theme.other.core.color.danger['500'],
     },
   };
 });

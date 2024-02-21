@@ -4,8 +4,8 @@ import propTypes from 'prop-types';
 import { Chip } from './components/Chip';
 import { ChipsContainerStyles } from './ChipsContainer.styles';
 
-const ChipsContainer = ({ subjects, chipsToShow }) => {
-  const { classes } = ChipsContainerStyles({}, { name: 'ChipsContainer' });
+const ChipsContainer = ({ subjects, chipsToShow, isCollisionDetected }) => {
+  const { classes } = ChipsContainerStyles({ isCollisionDetected }, { name: 'ChipsContainer' });
   const containerRef = useRef(null);
   const chipRefs = useRef(subjects.map(() => React.createRef()));
   const [hiddenChips, setHiddenChips] = useState(new Array(subjects.length).fill(false));
@@ -65,6 +65,7 @@ const ChipsContainer = ({ subjects, chipsToShow }) => {
           subject={subject}
           ref={chipRefs.current[index]}
           isHidden={hiddenChips[index]}
+          isCollisionDetected={isCollisionDetected}
         />
       ))}
       {hiddenCount > 0 && (
@@ -91,6 +92,7 @@ const ChipsContainer = ({ subjects, chipsToShow }) => {
 ChipsContainer.propTypes = {
   subjects: propTypes.arrayOf(propTypes.string),
   chipsToShow: propTypes.number,
+  isCollisionDetected: propTypes.bool,
 };
 
 export { ChipsContainer };
