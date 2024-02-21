@@ -4,6 +4,8 @@ import { Box, Text, Popover } from '@bubbles-ui/components';
 // import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { AlertWarningTriangleIcon, CheckIcon } from '@bubbles-ui/icons/solid';
 import { ChevronDownIcon } from '@bubbles-ui/icons/outline';
+// import useTranslateLoader from '@multilanguage/useTranslateLoader';
+// import prefixPN from '../../helpers/prefixPN';
 import {
   CLASSROOM_PICKER_DEFAULT_PROPS,
   CLASSROOM_PICKER_PROP_TYPES,
@@ -17,11 +19,15 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
   const [subjectsList, setSubjectsList] = useState([]);
   const [contentWidth, setContentWidth] = useState('auto');
   const [isOpen, setIsOpen] = useState(false);
-  const [collisionItems, setCollisionItems] = useState([]);
+  const [hasCollisions, setHasCollisions] = useState(false);
+  const [collisionError, setCollisionError] = useState(false);
   const { classes } = ClassroomPickerStyles({ contentWidth, isOpen }, { name: 'ClassroomPicker' });
   const targetRef = useRef(null);
   const contentRef = useRef(null);
+
+  // const [t] = useTranslateLoader(prefixPN('classroomPicker'));
   // const { data: classesData } = useProgramClasses(programId, { enabled: !!programId });
+
   useEffect(() => {
     const adjustContentWidth = () => {
       if (targetRef.current) {
@@ -33,8 +39,26 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
     window.addEventListener('resize', adjustContentWidth);
     return () => window.removeEventListener('resize', adjustContentWidth);
   }, []);
-  const handleTransformData = (data) =>
-    data.map((item) => {
+
+  function convertTimeToMinutes(time) {
+    if (!time) return 0;
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  function checkCollision(schedule1, schedule2) {
+    const dayMatch = schedule1.day === schedule2.day;
+    const start1 = convertTimeToMinutes(schedule1.start);
+    const end1 = convertTimeToMinutes(schedule1.end);
+    const start2 = convertTimeToMinutes(schedule2.start);
+    const end2 = convertTimeToMinutes(schedule2.end);
+    const timeOverlap = start1 < end2 && end1 > start2;
+
+    return dayMatch && timeOverlap;
+  }
+
+  const handleTransformData = (dataClasses) =>
+    dataClasses.map((item, index, array) => {
       const allDays = [
         'monday',
         'tuesday',
@@ -45,6 +69,7 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
         'sunday',
       ];
       const dayAbbreviations = {
+        // cambiar valores a variables de texto
         monday: 'Mo',
         tuesday: 'Tu',
         wednesday: 'We',
@@ -62,6 +87,20 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
         }
         return acc;
       }, {});
+
+      const collideWith = array.reduce((acc, currentItem, currentIndex) => {
+        if (index !== currentIndex) {
+          item.schedule.forEach((itemSchedule) => {
+            currentItem.schedule.forEach((currentItemSchedule) => {
+              if (checkCollision(itemSchedule, currentItemSchedule)) {
+                setHasCollisions(true);
+                acc.push(currentItem.id);
+              }
+            });
+          });
+        }
+        return acc;
+      }, []);
 
       const scheduleArray = Object.entries(scheduleMap).map(([key, days]) => {
         const [start, end] = key.split('-');
@@ -93,11 +132,11 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
           daysStr += `${tempArray[0]}`;
         }
 
-        // Remove trailing comma if exists
         daysStr = daysStr.endsWith(', ') ? daysStr.slice(0, -2) : daysStr;
 
         return `${daysStr}, ${start}-${end}`;
       });
+
       return {
         value: item?.id,
         label: item?.subject?.name,
@@ -105,117 +144,22 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
         subjectColor: item?.subject?.color,
         subjectIcon: item?.subject?.icon,
         schedule: scheduleArray,
+        collideWith,
       };
     });
+
+  useEffect(() => {
+    if (subjectsList.some((item) => item.collideWith.length > 0)) {
+      setCollisionError(true);
+    } else {
+      setCollisionError(false);
+    }
+  }, [subjectsList]);
 
   useEffect(() => {
     const transformedData = handleTransformData(data);
     setSubjects(transformedData);
   }, [data]);
-
-  // const updateSubjects = (newSubjectsParam, number) => {
-  //   let modifiedSubjects = [...newSubjectsParam];
-  //   if (
-  //     modifiedSubjects.length >= 1 &&
-  //     !modifiedSubjects.some((subject) => subject.value === 'all')
-  //   ) {
-  //     const selectAll = {
-  //       value: 'all',
-  //       label: `All Subjects (${number})`,
-  //       subjectName: `All Subjects (${number})`,
-  //       subjectColor: 'rgb(180, 230, 0)',
-  //       subjectIcon: <CheckIcon />,
-  //       schedule: [],
-  //     };
-  //     setSubjects([selectAll, ...modifiedSubjects]);
-  //   } else if (modifiedSubjects.some((subject) => subject.value === 'all')) {
-  //     const allIndex = modifiedSubjects.findIndex((subject) => subject.value === 'all');
-  //     if (allIndex !== -1) {
-  //       modifiedSubjects = modifiedSubjects.map((subject, index) =>
-  //         index === allIndex
-  //           ? {
-  //               ...subject,
-  //               label: `All Subjects (${number - 1})`,
-  //               subjectName: `All Subjects (${number - 1})`,
-  //             }
-  //           : subject
-  //       );
-  //     }
-  //     if (modifiedSubjects.some((subject) => subject.value === 'all') && number - 1 === 0) {
-  //       modifiedSubjects = modifiedSubjects.filter((subject) => subject.value !== 'all');
-  //       setSubjects([]);
-  //       return;
-  //     }
-  //     setSubjects(modifiedSubjects);
-  //   }
-  // };
-  function convertTimeToMinutes(time) {
-    if (!time) return 0;
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  }
-  function timeRangesOverlap(start1, end1, start2, end2) {
-    const s1 = convertTimeToMinutes(start1);
-    const e1 = convertTimeToMinutes(end1);
-    const s2 = convertTimeToMinutes(start2);
-    const e2 = convertTimeToMinutes(end2);
-    return s1 < e2 && e1 > s2;
-  }
-  useEffect(() => {
-    if (true) {
-      const newCollisionItems = new Set();
-
-      subjects.forEach((subject) => {
-        subjectsList.forEach((listSubject) => {
-          subject.schedule.forEach((subjectScheduleStr) => {
-            listSubject.schedule.forEach((listSubjectScheduleStr) => {
-              // Encontrar la última coma para separar los días de las horas
-              const lastCommaIndexSubject = subjectScheduleStr.lastIndexOf(', ');
-              const lastCommaIndexListSubject = listSubjectScheduleStr.lastIndexOf(', ');
-
-              // Extraer los días y las horas de los horarios
-              const subjectDaysStr = subjectScheduleStr.substring(0, lastCommaIndexSubject);
-              const subjectTime = subjectScheduleStr.substring(lastCommaIndexSubject + 2);
-              const listSubjectDaysStr = listSubjectScheduleStr.substring(
-                0,
-                lastCommaIndexListSubject
-              );
-              const listSubjectTime = listSubjectScheduleStr.substring(
-                lastCommaIndexListSubject + 2
-              );
-
-              // Convertir los días en arrays para compararlos
-              const subjectDaysArray = subjectDaysStr.split(', ');
-              const listSubjectDaysArray = listSubjectDaysStr.split(', ');
-
-              // Comprobar si hay algún día que coincida
-              const collisionDay = subjectDaysArray.some((day) =>
-                listSubjectDaysArray.includes(day)
-              );
-
-              if (collisionDay) {
-                // Convertir las horas en rangos para compararlos
-                const [subjectStart, subjectEnd] = subjectTime
-                  .split('-')
-                  .map((time) => time.trim());
-                const [listSubjectStart, listSubjectEnd] = listSubjectTime
-                  .split('-')
-                  .map((time) => time.trim());
-
-                // Comprobar si hay colisión en las horas
-                if (timeRangesOverlap(subjectStart, subjectEnd, listSubjectStart, listSubjectEnd)) {
-                  newCollisionItems.add(subject.value);
-                }
-              }
-            });
-          });
-        });
-      });
-
-      // Actualizar el estado con los nuevos elementos que colisionan
-      setCollisionItems([...newCollisionItems]);
-    }
-  }, [allowCollisions, subjectsList, subjects]);
 
   const handleSelectSubject = (subject) => {
     setSubjectsList((prevState) => [...prevState, subject]);
@@ -232,16 +176,6 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
 
   return (
     <Box>
-      {/* <Select
-        placeHolder={subjects.length > 0 ? 'Select subject ' : 'No more subjects available'}
-        data={subjects}
-        valueComponent={(item) => <ClassroomPickerItem {...item} />}
-        itemComponent={(item) => (
-          <Box onClick={() => handleSelectSubject(item)}>
-            <ClassroomPickerItem {...item} />
-          </Box>
-        )}
-      /> */}
       <Popover
         target={
           <Box ref={targetRef} className={classes.popoverButton}>
@@ -259,15 +193,13 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
         onChange={() => setIsOpen(!isOpen)}
       >
         <Box ref={contentRef} className={classes.popoverContent}>
-          {!allowCollisions && collisionItems?.length > 0 && (
+          {!allowCollisions && collisionError && (
             <Box className={classes.collisionContainer}>
               <AlertWarningTriangleIcon className={classes.collisionIcon} />
-              <Text className={classes.collisionLabel}>
-                {`Some subjects are not compatible: ${collisionItems?.length}`}
-              </Text>
+              <Text className={classes.collisionLabel}>{`Some subjects are not compatible`}</Text>
             </Box>
           )}
-          {subjects?.length > 1 ? (
+          {!hasCollisions && subjects?.length > 1 ? (
             <Box className={classes.allSubjectsContainer} onClick={() => handleSelectAllSubjects()}>
               <Box className={classes.allSubjectsCircle}>
                 <CheckIcon width={12} height={12} />
@@ -278,7 +210,10 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
             </Box>
           ) : null}
           {subjects.map((subject) => {
-            const collisionDetected = !allowCollisions && collisionItems?.includes(subject.value);
+            const collisionDetected =
+              !allowCollisions &&
+              hasCollisions &&
+              subjectsList.some((listItem) => subject?.collideWith?.includes(listItem.value));
             return (
               <Box
                 key={subject.value}
@@ -296,5 +231,6 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
 };
 
 ClassroomPicker.defaultProps = CLASSROOM_PICKER_DEFAULT_PROPS;
+ClassroomPicker.propTypes = CLASSROOM_PICKER_PROP_TYPES;
 
 export { ClassroomPicker };

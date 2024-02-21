@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components/lib';
 
-const ClassroomPickerItemStyles = createStyles((theme, { canRemove, isCollisionDetected }) => {
+const ClassroomPickerItemStyles = createStyles((theme, { canRemove }) => {
   const { cardAssignments } = theme.other;
   return {
     root: {

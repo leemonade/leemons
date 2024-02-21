@@ -1,10 +1,10 @@
 import React from 'react';
 import propTypes from 'prop-types';
-import { Box, AvatarSubject, Text, IconButton } from '@bubbles-ui/components';
+import { Box, AvatarSubject, Text, IconButton, ChipsContainer } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import { BlockIcon } from '@bubbles-ui/icons/solid';
 import { noop } from 'lodash';
-import { ChipsContainer } from '../../ChipsContainer';
+// import { ChipsContainer } from '../../ChipsContainer';
 import { ClassroomPickerItemStyles } from './ClassroomPickerItem.styles';
 
 const ClassroomPickerItem = ({

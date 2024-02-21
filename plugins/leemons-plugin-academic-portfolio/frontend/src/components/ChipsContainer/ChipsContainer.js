@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Box, Text, HoverCard } from '@bubbles-ui/components';
+import { Box, Text, HoverCard, Chip } from '@bubbles-ui/components';
 import propTypes from 'prop-types';
-import { Chip } from './components/Chip';
 import { ChipsContainerStyles } from './ChipsContainer.styles';
 
 const ChipsContainer = ({ subjects, chipsToShow, isCollisionDetected }) => {
@@ -10,7 +9,7 @@ const ChipsContainer = ({ subjects, chipsToShow, isCollisionDetected }) => {
   const chipRefs = useRef(subjects.map(() => React.createRef()));
   const [hiddenChips, setHiddenChips] = useState(new Array(subjects.length).fill(false));
 
-  const moreChipRef = useRef(null); // Referencia para el chip de "más..."
+  const moreChipRef = useRef(null);
   const getHiddenSubjectsLabel = () => subjects.filter((_, index) => hiddenChips[index]);
   const updateVisibleChips = () => {
     if (typeof chipsToShow === 'number') {
