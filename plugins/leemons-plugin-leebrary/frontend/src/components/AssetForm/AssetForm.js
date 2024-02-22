@@ -407,6 +407,7 @@ const AssetForm = ({
                   labels={labels}
                   value={coverFile?.id ? coverFile?.id : coverFile}
                   onChange={handleOnSelectAsset}
+                  isPickingACover
                 />
               )}
               <Controller

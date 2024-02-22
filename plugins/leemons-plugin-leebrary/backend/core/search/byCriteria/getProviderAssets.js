@@ -47,6 +47,7 @@ async function getProviderAssets({
   providerQuery,
   published,
   searchInProvider,
+  hideCoverAssets,
   ctx,
 }) {
   let providerAssets = null;
@@ -95,6 +96,10 @@ async function getProviderAssets({
   // A specific category overrides the multi-category filter
   if (categoryId) {
     query.category = categoryId;
+  }
+
+  if (hideCoverAssets) {
+    query.isCover = false;
   }
 
   const [assetsFound, byTags] = await Promise.all([

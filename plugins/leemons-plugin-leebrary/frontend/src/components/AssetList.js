@@ -16,7 +16,6 @@ import {
   PaginatedList,
   Drawer,
 } from '@bubbles-ui/components';
-import { useIsStudent } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import { useLayout } from '@layout/context';
@@ -154,7 +153,6 @@ const AssetList = ({
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
-  const isStudent = useIsStudent();
 
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -175,23 +173,6 @@ const AssetList = ({
 
   const { newAsset } = useContext(LibraryContext);
   const history = useHistory();
-
-  // For not student users, a default filter is applied in the recent view in order to only show activity assets
-  // If this behavior is not needed anymore, remove this extra filters and don't make any distinction between users
-  const resolveRecentSectionDefaultFilter = useCallback(() => {
-    let resolvedCategoriesFilter;
-    if (categoryFilter === 'all' && !isStudent) {
-      const contentAssignables = ['assignables.scorm', 'assignables.content-creator'];
-      const activityAssetsFilter = categories
-        ?.filter(
-          (item) => item.key?.startsWith('assignables') && !contentAssignables.includes(item.key)
-        )
-        .map((item) => item.id);
-      resolvedCategoriesFilter = JSON.stringify(activityAssetsFilter);
-    }
-
-    return resolvedCategoriesFilter || null;
-  }, [isStudent, categories, categoryFilter]);
 
   // -------------------------------------------------------------------------------------
   // QUERY HOOKS
@@ -225,11 +206,10 @@ const AssetList = ({
     }
     if (category?.key === RECENT_CATEGORY) {
       query.roles = JSON.stringify(['owner']);
+      query.hideCoverAssets = true;
       delete query.category;
       if (categoryFilter !== 'all') {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
-      } else {
-        query.categoriesFilter = resolveRecentSectionDefaultFilter(query);
       }
     }
     if (category?.key === PINS_CATEGORY) {

@@ -167,6 +167,7 @@ module.exports = {
         onlyShared,
         categoryFilter,
         categoriesFilter,
+        hideCoverAssets,
       } = ctx.params;
 
       const trueValues = ['true', true, '1', 1];
@@ -177,6 +178,7 @@ module.exports = {
       const displayPublic = trueValues.includes(showPublic);
       const searchProvider = trueValues.includes(searchInProvider);
       const preferCurrentValue = trueValues.includes(preferCurrent);
+      const _hideCoverAssets = trueValues.includes(hideCoverAssets);
       const _onlyShared = trueValues.includes(onlyShared);
       const parsedRoles = JSON.parse(roles || null) || [];
       const _providerQuery = JSON.parse(providerQuery || null);
@@ -205,6 +207,7 @@ module.exports = {
           sortBy: 'updated_at',
           sortDirection: 'desc',
           categoriesFilter: _categoriesFilter,
+          hideCoverAssets: _hideCoverAssets,
           ctx,
         });
       } else {

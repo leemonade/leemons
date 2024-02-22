@@ -52,6 +52,7 @@ async function byCriteria({
   programs: _programs,
   subjects: _subjects,
   categoriesFilter,
+  hideCoverAssets,
   ctx,
 }) {
   const published = _published;
@@ -102,6 +103,7 @@ async function byCriteria({
       providerQuery,
       published,
       searchInProvider,
+      hideCoverAssets,
       ctx,
     }));
 
