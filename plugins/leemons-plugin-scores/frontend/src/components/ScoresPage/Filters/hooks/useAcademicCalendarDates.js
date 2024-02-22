@@ -10,12 +10,19 @@ export default function useAcademicCalendarDates({ selectedClass }) {
     enabled: !!program,
   });
 
+  if (!academicCalendar || !courseId) {
+    return {};
+  }
+
   const { startDate, endDate } = academicCalendar?.courseDates?.[courseId] ?? {};
 
   return isSingleCourse
     ? {
-        startDate: startDate?.getTime(),
-        endDate: endDate?.getTime(),
+        startDate: startDate?.getTime() ?? null,
+        endDate: endDate?.getTime() ?? null,
       }
-    : {};
+    : {
+        startDate: null,
+        endDate: null,
+      };
 }
