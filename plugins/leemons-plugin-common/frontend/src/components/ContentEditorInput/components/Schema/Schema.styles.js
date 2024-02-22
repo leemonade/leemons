@@ -3,6 +3,7 @@ import { createStyles } from '@bubbles-ui/components';
 export const SchemaStyles = createStyles((theme, { isSchemaOpened, compact }) => {
   const globalTheme = theme.other.global;
   const borderParams = '1px solid #DDE1E6';
+
   return {
     schemaContainer: {
       minWidth: isSchemaOpened ? 125 : 44,
@@ -61,14 +62,20 @@ export const SchemaStyles = createStyles((theme, { isSchemaOpened, compact }) =>
       transition: 'max-width 300ms',
       overflow: 'hidden',
     },
-    title: {
+    titleOne: {
       color: globalTheme.content.color.text.muted,
       ...globalTheme.content.typo.heading.sm,
     },
-    subtitle: {
+    titleTwo: {
       color: globalTheme.content.color.text.muted,
       ...globalTheme.content.typo.heading.xsm,
       paddingLeft: 8,
+      fontSize: 16,
+    },
+    titleThree: {
+      color: globalTheme.content.color.text.muted,
+      ...globalTheme.content.typo.heading.xsm,
+      paddingLeft: 16,
     },
     arrowIcon: {
       color: globalTheme.content.color.secondary.default,

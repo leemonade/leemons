@@ -34,6 +34,12 @@ export const Schema = ({ schemaLabel, compact }) => {
     selection.addRange(range);
   };
 
+  const levelStyles = {
+    1: 'titleOne',
+    2: 'titleTwo',
+    3: 'titleThree',
+  };
+
   return (
     <Box className={classes.schemaContainer}>
       <Box className={classes.schemaTranslate}>
@@ -76,7 +82,8 @@ export const Schema = ({ schemaLabel, compact }) => {
                 ) : (
                   <TextClamp lines={1}>
                     <Box
-                      className={classes[`${element.attrs?.level === 1 ? 'title' : 'subtitle'}`]}
+                      // className={classes[`${element.attrs?.level === 1 ? 'title' : 'subtitle'}`]}
+                      className={classes[levelStyles[element.attrs?.level]]}
                     >
                       {schemaElementName}
                     </Box>
