@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Button, TextInput, FileUpload } from '@bubbles-ui/components';
-import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
 
 export default function FileUploader() {
   const defaultValues = {
@@ -71,7 +71,7 @@ export default function FileUploader() {
         rules={{ required: 'Required Field' }}
         render={({ field: { onChange, ...field } }) => (
           <FileUpload
-            icon={<CloudUploadIcon height={32} />}
+            icon={<DownloadIcon height={32} />}
             title="Click to browse your file"
             subtitle="or drop here a file from your computer"
             multiple
