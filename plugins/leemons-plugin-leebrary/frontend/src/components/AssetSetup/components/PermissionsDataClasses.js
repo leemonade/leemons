@@ -57,8 +57,9 @@ function ClassItem({ class: klass, ...props }) {
             src={getClassIcon(klass)}
           />
         </Box>
-        <Text>{`${klass.subject.name}${klass?.groups?.name ? ` - ${klass.groups.name}` : ''
-          }`}</Text>
+        <Text>{`${klass.subject.name}${
+          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+        }`}</Text>
       </Box>
     </Box>
   );
@@ -133,7 +134,7 @@ const PermissionsDataClasses = ({
     () =>
       classes?.map((klass) => ({
         value: klass.id,
-        label: klass.groups.isAlone
+        label: klass.groups?.isAlone
           ? klass.subject.name
           : `${klass.subject.name} - ${klass.groups.name}`,
         ...klass,

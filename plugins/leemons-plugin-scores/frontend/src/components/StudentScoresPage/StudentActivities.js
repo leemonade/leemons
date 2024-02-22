@@ -249,8 +249,9 @@ export default function StudentActivities({ klasses, filters, labels }) {
         <SelectSubject
           placeholder={labels.subject.placeholder}
           data={klasses.map((klass) => {
+            const isGroupAlone = !klass.groups || klass.groups.isAlone;
             const klassName =
-              !klass.groups.isAlone && klass.groups?.name
+              !isGroupAlone && klass.groups?.name
                 ? `${klass.subject.name} - ${klass.groups.name}`
                 : klass.subject.name;
             return {
