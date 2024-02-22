@@ -15,7 +15,7 @@ async function modifyCTX(ctx, { redis }) {
     if (!redisCacheInstance) {
       redisCacheInstance = await redisCache(redisConfig);
     }
-    ctx.cache = redisCacheInstance(pluginName);
+    ctx.cache = redisCacheInstance({ pluginName, ctx });
   } else {
     if (!nodeCacheInstance) {
       nodeCacheInstance = nodeCache();

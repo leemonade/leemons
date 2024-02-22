@@ -43,7 +43,9 @@ export default function useLocalizations({ keys, keysStartsWith, locale, ...opti
   const queryKey = localizationsGetKey({ keys, keysStartsWith, locale });
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: 'lazy',
+    cachingStrategy: 'cacheable',
+    refetchFrequency: ['none'],
   });
 
   const { data, error } = useQuery({

@@ -15,13 +15,14 @@
 async function loadLocalizations({ localizations, plugin, ctx }) {
   const locales = Object.keys(localizations);
 
-  const promises = locales.map((locale) =>
+  const promises = locales.flatMap((locale) => [
     ctx.db.Globals.findOneAndUpdate(
       { plugin, locale },
       { value: localizations[locale] },
       { upsert: true }
-    )
-  );
+    ),
+    ctx.cache.deleteByPrefix('localizations.global-'),
+  ]);
 
   await Promise.all(promises);
 

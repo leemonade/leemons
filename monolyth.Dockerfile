@@ -29,9 +29,9 @@ RUN rm -rf plugins/*/frontend
 RUN rm -rf private-plugins/*/frontend
 
 # # install node deps
-RUN yarn
 RUN yarn --cwd ./apps/dev install --production
 RUN yarn --cwd ./apps/dev add nats jaeger-client --production
+RUN yarn --production
 
 EXPOSE 3000
 
