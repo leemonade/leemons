@@ -4,13 +4,14 @@ import { Box, Button, ContextContainer, Paper, Stack } from '@bubbles-ui/compone
 import { useLayout } from '@layout/context';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import { LocaleDuration } from '@common/LocaleDate';
-import { TextEditorInput } from '@common/components/TextEditorInput';
+import { TextEditorInput } from '@bubbles-ui/editors';
+
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
+import { AssetPlayer } from '@leebrary/components/AssetPlayer';
 import selectFile from '../../../helpers/selectFile';
 import { listAllMyFilesRequest, removeFileRequest, uploadFilesRequest } from '../../../request';
 import IconByMimeType from '../../../components/IconByMimeType';
 import { ImagePicker } from '../../../components/ImagePicker';
-import { AssetPlayer } from '@leebrary/components/AssetPlayer';
 
 export default function TestPage() {
   const [items, setItems] = useState([]);

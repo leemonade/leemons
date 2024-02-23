@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { InputWrapper } from '@bubbles-ui/components';
-import { TextEditorInput } from '@common/components';
+import { TextEditorInput } from '@bubbles-ui/editors';
 
 export default function Development({ name, label, required }) {
   const { control } = useFormContext();
