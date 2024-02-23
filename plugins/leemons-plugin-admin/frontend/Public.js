@@ -6,9 +6,9 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { UserRedirect } from './src/components/UserRedirect';
 import { LocaleContainer } from './src/components/LocaleContainer';
 
-const Welcome = loadable(() => pMinDelay(import('./src/pages/public/Welcome'), 1000));
-const Signup = loadable(() => pMinDelay(import('./src/pages/public/Signup'), 1000));
-const Login = loadable(() => pMinDelay(import('./src/pages/public/Login'), 1000));
+const Welcome = loadable(() => pMinDelay(import('./src/pages/public/Welcome'), 500));
+const Signup = loadable(() => pMinDelay(import('./src/pages/public/Signup'), 500));
+const Login = loadable(() => pMinDelay(import('./src/pages/public/Login'), 500));
 
 // ----------------------------------------------------------------------------
 // PUBLIC ROUTES

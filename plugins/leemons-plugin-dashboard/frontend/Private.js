@@ -6,10 +6,8 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Dashboard = loadable(() => pMinDelay(import('./src/pages/private/Dashboard'), 1000));
-const ClassDashboard = loadable(() =>
-  pMinDelay(import('./src/pages/private/ClassDashboard'), 1000)
-);
+const Dashboard = loadable(() => pMinDelay(import('./src/pages/private/Dashboard'), 500));
+const ClassDashboard = loadable(() => pMinDelay(import('./src/pages/private/ClassDashboard'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

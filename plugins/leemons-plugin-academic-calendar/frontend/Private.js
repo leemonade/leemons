@@ -7,10 +7,10 @@ import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
 const RegionalCalendars = loadable(() =>
-  pMinDelay(import('./src/pages/private/regional/index'), 1000)
+  pMinDelay(import('./src/pages/private/regional/index'), 500)
 );
 const ProgramCalendars = loadable(() =>
-  pMinDelay(import('./src/pages/private/program/index'), 1000)
+  pMinDelay(import('./src/pages/private/program/index'), 500)
 );
 
 export default function Private() {

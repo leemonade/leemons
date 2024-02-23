@@ -6,14 +6,14 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Welcome = loadable(() => pMinDelay(import('./src/pages/private/WelcomePage'), 1000));
-const Profiles = loadable(() => pMinDelay(import('./src/pages/private/ProfilesPage'), 1000));
-const Tree = loadable(() => pMinDelay(import('./src/pages/private/TreePage'), 1000));
+const Welcome = loadable(() => pMinDelay(import('./src/pages/private/WelcomePage'), 500));
+const Profiles = loadable(() => pMinDelay(import('./src/pages/private/ProfilesPage'), 500));
+const Tree = loadable(() => pMinDelay(import('./src/pages/private/TreePage'), 500));
 const ProgramList = loadable(() =>
-  pMinDelay(import('./src/pages/private/programs/ProgramList'), 1000)
+  pMinDelay(import('./src/pages/private/programs/ProgramList'), 500)
 );
 const SubjectList = loadable(() =>
-  pMinDelay(import('./src/pages/private/subjects/SubjectList'), 1000)
+  pMinDelay(import('./src/pages/private/subjects/SubjectList'), 500)
 );
 
 export default function Private() {

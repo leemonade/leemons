@@ -6,10 +6,10 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const DocumentList = loadable(() => pMinDelay(import('./src/pages/List'), 1000));
-const DocumentDetail = loadable(() => pMinDelay(import('./src/pages/Detail'), 1000));
-const DocumentAssign = loadable(() => pMinDelay(import('./src/pages/Assign'), 1000));
-const DocumentView = loadable(() => pMinDelay(import('./src/pages/View'), 1000));
+const DocumentList = loadable(() => pMinDelay(import('./src/pages/List'), 500));
+const DocumentDetail = loadable(() => pMinDelay(import('./src/pages/Detail'), 500));
+const DocumentAssign = loadable(() => pMinDelay(import('./src/pages/Assign'), 500));
+const DocumentView = loadable(() => pMinDelay(import('./src/pages/View'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

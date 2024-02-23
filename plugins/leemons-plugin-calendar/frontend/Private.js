@@ -6,17 +6,17 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Calendar = loadable(() => pMinDelay(import('./src/pages/private/Calendar'), 1000));
-const Kanban = loadable(() => pMinDelay(import('./src/pages/private/Kanban'), 1000));
+const Calendar = loadable(() => pMinDelay(import('./src/pages/private/Calendar'), 500));
+const Kanban = loadable(() => pMinDelay(import('./src/pages/private/Kanban'), 500));
 
 const CalendarConfigList = loadable(() =>
-  pMinDelay(import('./src/pages/private/config/CalendarConfigList'), 1000)
+  pMinDelay(import('./src/pages/private/config/CalendarConfigList'), 500)
 );
 const CalendarConfigDetail = loadable(() =>
-  pMinDelay(import('./src/pages/private/config/CalendarConfigDetail'), 1000)
+  pMinDelay(import('./src/pages/private/config/CalendarConfigDetail'), 500)
 );
 const CalendarConfigCalendar = loadable(() =>
-  pMinDelay(import('./src/pages/private/config/CalendarConfigCalendar'), 1000)
+  pMinDelay(import('./src/pages/private/config/CalendarConfigCalendar'), 500)
 );
 
 export default function Private() {
