@@ -55,7 +55,8 @@ export const TextEditorInput = ({
 }) => {
   const editorLabels = useEditorLabels();
   const uuid = useId();
-  const { textEditorTools } = useTextEditor();
+  const { textEditorTools, setEditorDefault } = useTextEditor();
+  setEditorDefault();
 
   const leemonsTools = useMemo(() => {
     const tools = [];

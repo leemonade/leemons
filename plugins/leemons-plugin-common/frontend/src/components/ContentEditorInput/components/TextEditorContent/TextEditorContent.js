@@ -9,6 +9,7 @@ import {
   ScriptsTool,
   LinkTool,
   ButtonGroup,
+  CodeTool,
 } from '@bubbles-ui/editors';
 import { ExpandDiagonalIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
 import { Box, IconButton } from '@bubbles-ui/components';
@@ -82,6 +83,7 @@ const TextEditorContent = ({
             React.cloneElement(item.tool, {
               key: item.tool.id || `t-${i}`,
               ...editorLabels.libraryTool,
+              ...item.tool.props,
               alignLabels: editorLabels.textAlignTool,
               openLibraryModal,
             })
