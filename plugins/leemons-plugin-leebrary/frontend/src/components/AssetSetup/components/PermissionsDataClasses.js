@@ -65,6 +65,20 @@ function ClassItem({ class: klass, ...props }) {
   );
 }
 
+ClassItem.propTypes = {
+  class: PropTypes.shape({
+    id: PropTypes.number,
+    subject: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    groups: PropTypes.shape({
+      name: PropTypes.string,
+      isAlone: PropTypes.bool,
+    }),
+    color: PropTypes.string,
+  }),
+};
+
 const PermissionsDataClasses = ({
   roles,
   value: _value,
