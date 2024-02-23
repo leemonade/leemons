@@ -97,12 +97,14 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
             )}
           />
         </Box>
-        {selectedPeriod.selected === 'custom' && (
-          <Box className={classes.inputs}>
-            <PickDate control={control} name="startDate" defaultValue={startDate} />
-            <PickDate control={control} name="endDate" defaultValue={endDate} />
-          </Box>
-        )}
+        {selectedPeriod.selected === 'custom' &&
+          startDate !== undefined &&
+          endDate !== undefined && (
+            <Box className={classes.inputs}>
+              <PickDate control={control} name="startDate" defaultValue={startDate} />
+              <PickDate control={control} name="endDate" defaultValue={endDate} />
+            </Box>
+          )}
       </Box>
     </Box>
   );
