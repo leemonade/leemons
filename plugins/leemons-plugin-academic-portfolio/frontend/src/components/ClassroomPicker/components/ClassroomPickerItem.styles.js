@@ -1,15 +1,16 @@
 import { createStyles } from '@bubbles-ui/components/lib';
 
-const ClassroomPickerItemStyles = createStyles((theme, { canRemove }) => {
+const ClassroomPickerItemStyles = createStyles((theme, { canRemove, isCollisionDetected }) => {
   const { cardAssignments } = theme.other;
   return {
     root: {
       display: 'flex',
       justifyContent: 'space-between',
-      cursor: 'pointer',
+      cursor: !canRemove && !isCollisionDetected && 'pointer',
       padding: '8px',
       '&:hover': {
-        backgroundColor: canRemove ? 'rgb(247, 248, 250)' : theme.other.core.color.primary['100'],
+        backgroundColor:
+          canRemove || isCollisionDetected ? 'transparent' : theme.other.core.color.primary['100'],
       },
     },
     containerSubject: {

@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
-// import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { Box, Text, Popover } from '@bubbles-ui/components';
-// import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import React, { useEffect, useState } from 'react';
+import { noop } from 'lodash';
+import { Box, Text, Popover, InputWrapper, UnstyledButton } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon, CheckIcon } from '@bubbles-ui/icons/solid';
 import { ChevronDownIcon } from '@bubbles-ui/icons/outline';
-// import useTranslateLoader from '@multilanguage/useTranslateLoader';
-// import prefixPN from '../../helpers/prefixPN';
+import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '../../helpers/prefixPN';
 import {
   CLASSROOM_PICKER_DEFAULT_PROPS,
   CLASSROOM_PICKER_PROP_TYPES,
@@ -13,140 +13,27 @@ import {
 import { ClassroomPickerItem } from './components/ClassroomPickerItem';
 import { ClassroomPickerList } from '../ClassroomPickerList';
 import { ClassroomPickerStyles } from './ClassroomPicker.styles';
+import { transformData } from './helpers';
 
-const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
+const ClassroomPicker = ({
+  label,
+  error,
+  value,
+  programId,
+  data,
+  onChange = noop,
+  allowCollisions = false,
+}) => {
+  const [transformedData, setTransformedData] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [subjectsList, setSubjectsList] = useState([]);
-  const [contentWidth, setContentWidth] = useState('auto');
   const [isOpen, setIsOpen] = useState(false);
   const [hasCollisions, setHasCollisions] = useState(false);
   const [collisionError, setCollisionError] = useState(false);
-  const { classes } = ClassroomPickerStyles({ contentWidth, isOpen }, { name: 'ClassroomPicker' });
-  const targetRef = useRef(null);
-  const contentRef = useRef(null);
+  const { classes, cx } = ClassroomPickerStyles({ isOpen }, { name: 'ClassroomPicker' });
 
-  // const [t] = useTranslateLoader(prefixPN('classroomPicker'));
-  // const { data: classesData } = useProgramClasses(programId, { enabled: !!programId });
-
-  useEffect(() => {
-    const adjustContentWidth = () => {
-      if (targetRef.current) {
-        const width = `${targetRef.current.offsetWidth}px`;
-        setContentWidth(width);
-      }
-    };
-    adjustContentWidth();
-    window.addEventListener('resize', adjustContentWidth);
-    return () => window.removeEventListener('resize', adjustContentWidth);
-  }, []);
-
-  function convertTimeToMinutes(time) {
-    if (!time) return 0;
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  }
-
-  function checkCollision(schedule1, schedule2) {
-    const dayMatch = schedule1.day === schedule2.day;
-    const start1 = convertTimeToMinutes(schedule1.start);
-    const end1 = convertTimeToMinutes(schedule1.end);
-    const start2 = convertTimeToMinutes(schedule2.start);
-    const end2 = convertTimeToMinutes(schedule2.end);
-    const timeOverlap = start1 < end2 && end1 > start2;
-
-    return dayMatch && timeOverlap;
-  }
-
-  const handleTransformData = (dataClasses) =>
-    dataClasses.map((item, index, array) => {
-      const allDays = [
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-        'saturday',
-        'sunday',
-      ];
-      const dayAbbreviations = {
-        // cambiar valores a variables de texto
-        monday: 'Mo',
-        tuesday: 'Tu',
-        wednesday: 'We',
-        thursday: 'Th',
-        friday: 'Fr',
-        saturday: 'Sa',
-        sunday: 'Su',
-      };
-      const scheduleMap = item.schedule.reduce((acc, { day, start, end }) => {
-        const key = `${start}-${end}`;
-        if (!acc[key]) {
-          acc[key] = [day];
-        } else {
-          acc[key].push(day);
-        }
-        return acc;
-      }, {});
-
-      const collideWith = array.reduce((acc, currentItem, currentIndex) => {
-        if (index !== currentIndex) {
-          item.schedule.forEach((itemSchedule) => {
-            currentItem.schedule.forEach((currentItemSchedule) => {
-              if (checkCollision(itemSchedule, currentItemSchedule)) {
-                setHasCollisions(true);
-                acc.push(currentItem.id);
-              }
-            });
-          });
-        }
-        return acc;
-      }, []);
-
-      const scheduleArray = Object.entries(scheduleMap).map(([key, days]) => {
-        const [start, end] = key.split('-');
-        const sortedDays = days.sort((a, b) => allDays.indexOf(a) - allDays.indexOf(b));
-        const daysAbbreviated = sortedDays.map((day) => dayAbbreviations[day]);
-
-        let daysStr = '';
-        let lastDayIndex = -2;
-        let tempArray = [];
-
-        daysAbbreviated.forEach((day, index) => {
-          const currentIndex = allDays.indexOf(sortedDays[index]);
-          if (lastDayIndex + 1 === currentIndex) {
-            tempArray.push(day);
-          } else {
-            if (tempArray.length > 1) {
-              daysStr += `${tempArray[0]} - ${tempArray[tempArray.length - 1]}, `;
-            } else if (tempArray.length === 1) {
-              daysStr += `${tempArray[0]}, `;
-            }
-            tempArray = [day];
-          }
-          lastDayIndex = currentIndex;
-        });
-
-        if (tempArray.length > 1) {
-          daysStr += `${tempArray[0]} - ${tempArray[tempArray.length - 1]}`;
-        } else if (tempArray.length === 1) {
-          daysStr += `${tempArray[0]}`;
-        }
-
-        daysStr = daysStr.endsWith(', ') ? daysStr.slice(0, -2) : daysStr;
-
-        return `${daysStr}, ${start}-${end}`;
-      });
-
-      return {
-        value: item?.id,
-        label: item?.subject?.name,
-        subjectName: item?.subject?.name,
-        subjectColor: item?.subject?.color,
-        subjectIcon: item?.subject?.icon,
-        schedule: scheduleArray,
-        collideWith,
-      };
-    });
+  const [t] = useTranslateLoader(prefixPN('classroomPicker'));
+  const { data: classesData } = useProgramClasses(programId, { enabled: !data && !!programId });
 
   useEffect(() => {
     if (subjectsList.some((item) => item.collideWith.length > 0)) {
@@ -157,76 +44,114 @@ const ClassroomPicker = ({ programId, data, allowCollisions = false }) => {
   }, [subjectsList]);
 
   useEffect(() => {
-    const transformedData = handleTransformData(data);
-    setSubjects(transformedData);
-  }, [data]);
+    const { data: dataTransformed, hasCollisions: collisions } = transformData(
+      data ?? classesData ?? []
+    );
+    setTransformedData(dataTransformed);
+    setHasCollisions(collisions);
+  }, [classesData, data]);
+
+  useEffect(() => {
+    setSubjects(transformedData.filter((item) => !value.includes(item.value)));
+    setSubjectsList(transformedData.filter((item) => value.includes(item.value)));
+  }, [transformedData, value]);
 
   const handleSelectSubject = (subject) => {
-    setSubjectsList((prevState) => [...prevState, subject]);
+    const newSubjectsList = [...subjectsList, subject];
+    setSubjectsList(newSubjectsList);
     setSubjects((prevState) => prevState.filter((item) => item.value !== subject.value));
+    setIsOpen(false);
+    onChange(newSubjectsList.map((item) => item.value));
   };
   const handleSelectAllSubjects = () => {
-    setSubjectsList((prevState) => [...prevState, ...subjects]);
+    const newSubjectsList = [...subjectsList, ...subjects];
+    setSubjectsList(newSubjectsList);
     setSubjects([]);
+    setIsOpen(false);
+    onChange(newSubjectsList.map((item) => item.value));
   };
   const handleRemoveSubjectFromList = (subject) => {
-    setSubjects((prevState) => [...prevState, subject]);
-    setSubjectsList((prevState) => prevState.filter((item) => item.value !== subject.value));
+    const newSubjects = [...subjects, subject];
+    const newSubjectsList = subjectsList.filter((item) => item.value !== subject.value);
+    setSubjects(newSubjects);
+    setSubjectsList(newSubjectsList);
+    onChange(newSubjectsList.map((item) => item.value));
   };
 
+  const disabled = (!data && !programId) || subjects.length === 0;
+
   return (
-    <Box>
+    <InputWrapper label={label} error={error}>
       <Popover
+        offset={5}
         target={
-          <Box ref={targetRef} className={classes.popoverButton}>
+          <UnstyledButton
+            disabled={disabled}
+            onClick={() => setIsOpen(!isOpen)}
+            className={cx(classes.unstyledButton, classes.popoverButton, {
+              [classes.disabled]: disabled,
+            })}
+          >
             <Text className={classes.popoverButtonText}>
-              {subjects.length > 0 ? 'Select subject ' : 'No more subjects available'}
+              {subjects.length > 0 ? `${t('selectSubject')} ` : t('noMore')}
             </Text>
-            <ChevronDownIcon height={12} width={12} className={classes.chevronIcon} />
-          </Box>
+            <ChevronDownIcon height={8} width={8} className={classes.chevronIcon} />
+          </UnstyledButton>
         }
         closeOnEscape
-        disabled={subjects.length === 0}
+        width="target"
         shadow="none"
         withinPortal
         closeOnClickOutside
-        onChange={() => setIsOpen(!isOpen)}
+        onChange={setIsOpen}
+        opened={isOpen}
       >
-        <Box ref={contentRef} className={classes.popoverContent}>
-          {!allowCollisions && collisionError && (
-            <Box className={classes.collisionContainer}>
-              <AlertWarningTriangleIcon className={classes.collisionIcon} />
-              <Text className={classes.collisionLabel}>{`Some subjects are not compatible`}</Text>
-            </Box>
-          )}
-          {!hasCollisions && subjects?.length > 1 ? (
-            <Box className={classes.allSubjectsContainer} onClick={() => handleSelectAllSubjects()}>
-              <Box className={classes.allSubjectsCircle}>
-                <CheckIcon width={12} height={12} />
+        {(!!data || !!classesData) && (
+          <Box className={classes.popoverContent}>
+            {!allowCollisions && collisionError && (
+              <Box className={classes.collisionContainer}>
+                <AlertWarningTriangleIcon className={classes.collisionIcon} />
+                <Text className={classes.collisionLabel}>{t('collision')}</Text>
               </Box>
-              <Text
-                className={classes.allSubjectsLabel}
-              >{`All Subjects (${subjects?.length})`}</Text>
-            </Box>
-          ) : null}
-          {subjects.map((subject) => {
-            const collisionDetected =
-              !allowCollisions &&
-              hasCollisions &&
-              subjectsList.some((listItem) => subject?.collideWith?.includes(listItem.value));
-            return (
-              <Box
-                key={subject.value}
-                onClick={() => !collisionDetected && handleSelectSubject(subject)}
+            )}
+            {!hasCollisions && subjects?.length > 1 && (
+              <UnstyledButton
+                className={cx(classes.unstyledButton, classes.allSubjectsContainer)}
+                onClick={() => handleSelectAllSubjects()}
               >
-                <ClassroomPickerItem {...subject} isCollisionDetected={collisionDetected} />
-              </Box>
-            );
-          })}
-        </Box>
+                <Box className={classes.allSubjectsCircle}>
+                  <CheckIcon width={12} height={12} />
+                </Box>
+                <Text className={classes.allSubjectsLabel}>{`${t('allSubjects')} (${
+                  subjects?.length
+                })`}</Text>
+              </UnstyledButton>
+            )}
+            {subjects.map((subject) => {
+              const collisionDetected =
+                !allowCollisions &&
+                hasCollisions &&
+                subjectsList.some((listItem) => subject?.collideWith?.includes(listItem.value));
+              return (
+                <UnstyledButton
+                  disabled={collisionDetected}
+                  className={cx(classes.unstyledButton, {
+                    [classes.simpleDisabled]: collisionDetected,
+                  })}
+                  key={subject.value}
+                  onClick={() => !collisionDetected && handleSelectSubject(subject)}
+                >
+                  <ClassroomPickerItem {...subject} isCollisionDetected={collisionDetected} />
+                </UnstyledButton>
+              );
+            })}
+          </Box>
+        )}
       </Popover>
-      <ClassroomPickerList subjects={subjectsList} onRemove={handleRemoveSubjectFromList} />
-    </Box>
+      <Box mt={8}>
+        <ClassroomPickerList subjects={subjectsList} onRemove={handleRemoveSubjectFromList} />
+      </Box>
+    </InputWrapper>
   );
 };
 

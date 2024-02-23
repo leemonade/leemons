@@ -38,6 +38,8 @@ async function removeByClass({ classIds, soft, ctx }) {
   _.forEach(classeIds, (classId) => {
     const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
     const teacherIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
+    // TODO: Add this when comunica V2 is released
+    /*
     _.forEach(studentIds, (studentId) => {
       promisesRemoveUserAgentsFromRooms.push(
         ctx.tx.call('comunica.room.removeUserAgents', {
@@ -46,6 +48,7 @@ async function removeByClass({ classIds, soft, ctx }) {
         })
       );
     });
+    */
   });
 
   await Promise.all(promisesRemoveUserAgentsFromRooms);

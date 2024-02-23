@@ -5,7 +5,7 @@ import { ClassroomPickerItem } from '../ClassroomPicker/components/ClassroomPick
 
 const ClassroomPickerList = ({ subjects, onRemove }) => (
   <Box>
-    {!!subjects.length &&
+    {subjects?.length > 0 &&
       subjects.map((subject) => (
         <ClassroomPickerItem
           {...subject}
