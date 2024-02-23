@@ -148,9 +148,10 @@ const PermissionsDataClasses = ({
     () =>
       classes?.map((klass) => ({
         value: klass.id,
-        label: klass.groups?.isAlone
-          ? klass.subject.name
-          : `${klass.subject.name} - ${klass.groups.name}`,
+        label:
+          !klass.groups || klass.groups?.isAlone
+            ? klass.subject.name
+            : `${klass.subject.name} - ${klass.groups.name}`,
         ...klass,
       })) ?? [],
     [classes]
