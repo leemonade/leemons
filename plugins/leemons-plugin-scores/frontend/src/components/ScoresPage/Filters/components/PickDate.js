@@ -1,6 +1,7 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { DatePicker } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import React from 'react';
 import { Controller, useWatch } from 'react-hook-form';
 
 export default function PickDate({ control, name, defaultValue }) {
@@ -51,3 +52,9 @@ export default function PickDate({ control, name, defaultValue }) {
     />
   );
 }
+
+PickDate.propTypes = {
+  control: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  defaultValue: PropTypes.number,
+};

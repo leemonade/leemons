@@ -260,6 +260,8 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
     if (!hasWarnings) {
       warnings = null;
     }
+
+    ctx.cache.deleteByPrefix(`multilanguage:common:get:${ctx.meta.deploymentID}`);
     // #endregion
 
     return {

@@ -17,7 +17,7 @@ import {
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
-import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
+import { DownloadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import _, { isEmpty, isFunction, isNil } from 'lodash';
@@ -284,7 +284,7 @@ const LibraryForm = ({
                     rules={{ required: errorMessages.file?.required || 'Field required' }}
                     render={({ field: { ref, value, ...field } }) => (
                       <FileUpload
-                        icon={<CloudUploadIcon height={32} width={32} />}
+                        icon={<DownloadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
                         errorMessage={{

@@ -162,7 +162,7 @@ export default function Login() {
       );
       // }
     } catch (err) {
-      console.log('error', err);
+      console.error('error', err);
       if (err.message === 'exceeded-login-attempts') {
         setFormStatus('unknown-error');
         setFormError(tCommon('exceededLoginAttempts'));

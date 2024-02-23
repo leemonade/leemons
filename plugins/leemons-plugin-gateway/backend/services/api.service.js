@@ -38,6 +38,7 @@ module.exports = {
         'deployment-manager.reloadAllDeploymentsRest',
         'deployment-manager.addManualDeploymentRest',
         'gateway.dropDBRest',
+        'gateway.statusRest',
         'v1.client-manager.protected.newFreemiumClient',
         'v1.client-manager.protected.isSubdomainInUse',
       ],
@@ -70,10 +71,6 @@ module.exports = {
         mergeParams: true,
         authentication: false,
         authorization: false,
-        aliases: {
-          // -- Gateway (Finish) --
-          'GET /status': 'gateway.status',
-        },
       },
       {
         path: '/api',
@@ -98,7 +95,6 @@ module.exports = {
 
         aliases: {
           // -- Gateway (Finish) --
-          'GET status': 'gateway.status',
           'POST database/drop': 'gateway.dropDBRest',
         },
 

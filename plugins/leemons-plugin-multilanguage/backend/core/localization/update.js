@@ -103,6 +103,8 @@ async function setKey({ key, data, isPrivate, ctx }) {
 
     // #endregion
 
+    ctx.cache.deleteByPrefix(`multilanguage:common:get:${ctx.meta.deploymentID}`);
+
     return {
       items: updatedLocalizations,
       count: updatedLocalizations.length,
@@ -176,6 +178,8 @@ async function setMany({ data, isPrivate, ctx }) {
     }
 
     // #endregion
+
+    ctx.cache.deleteByPrefix(`multilanguage:common:get:${ctx.meta.deploymentID}`);
 
     return {
       items: modifiedLocalizations,

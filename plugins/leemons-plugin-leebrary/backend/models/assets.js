@@ -51,6 +51,10 @@ const assetsSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    isCover: {
+      type: Boolean,
+      default: false,
+    },
     center: {
       type: String,
     },
