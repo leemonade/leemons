@@ -10,6 +10,7 @@ import {
   TotalLayoutContainer,
   TotalLayoutHeader,
   VerticalStepperContainer,
+  Stack,
 } from '@bubbles-ui/components';
 
 import { unflatten } from '@common';
@@ -117,9 +118,19 @@ export default function FormWithLayout({ assignable, children, ...props }) {
         />
       }
     >
-      <VerticalStepperContainer scrollRef={scrollRef} data={steps} currentStep={currentStep}>
-        {StepComponent}
-      </VerticalStepperContainer>
+      {!steps?.length ? (
+        <Stack
+          sx={{ backgroundColor: '#f8f9fb', overflow: 'auto' }}
+          justifyContent="center"
+          ref={scrollRef}
+        >
+          {StepComponent}
+        </Stack>
+      ) : (
+        <VerticalStepperContainer scrollRef={scrollRef} data={steps} currentStep={currentStep}>
+          {StepComponent}
+        </VerticalStepperContainer>
+      )}
     </TotalLayoutContainer>
   );
 }

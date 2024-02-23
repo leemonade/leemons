@@ -36,6 +36,10 @@ module.exports = {
         presentation: 'Presentación',
         subTitle: 'Título del recurso',
       },
+      footer: {
+        finish: 'Finalizar',
+        publish: 'Publicar',
+      },
       bookmark: {
         titleNew: 'Nuevo marcador',
         titleEdit: 'Editar marcador',
