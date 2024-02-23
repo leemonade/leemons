@@ -57,12 +57,27 @@ function ClassItem({ class: klass, ...props }) {
             src={getClassIcon(klass)}
           />
         </Box>
-        <Text>{`${klass.subject.name}${klass?.groups?.name ? ` - ${klass.groups.name}` : ''
-          }`}</Text>
+        <Text>{`${klass.subject.name}${
+          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+        }`}</Text>
       </Box>
     </Box>
   );
 }
+
+ClassItem.propTypes = {
+  class: PropTypes.shape({
+    id: PropTypes.number,
+    subject: PropTypes.shape({
+      name: PropTypes.string,
+    }),
+    groups: PropTypes.shape({
+      name: PropTypes.string,
+      isAlone: PropTypes.bool,
+    }),
+    color: PropTypes.string,
+  }),
+};
 
 const PermissionsDataClasses = ({
   roles,
@@ -133,9 +148,10 @@ const PermissionsDataClasses = ({
     () =>
       classes?.map((klass) => ({
         value: klass.id,
-        label: klass.groups.isAlone
-          ? klass.subject.name
-          : `${klass.subject.name} - ${klass.groups.name}`,
+        label:
+          !klass.groups || klass.groups?.isAlone
+            ? klass.subject.name
+            : `${klass.subject.name} - ${klass.groups.name}`,
         ...klass,
       })) ?? [],
     [classes]
