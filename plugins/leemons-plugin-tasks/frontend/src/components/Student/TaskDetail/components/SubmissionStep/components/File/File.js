@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, ContextContainer, FileUpload, Text, useDebouncedValue } from '@bubbles-ui/components';
-import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { differenceBy, isArray, isEqual, sortBy } from 'lodash';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { v4 } from 'uuid';
@@ -132,7 +132,7 @@ function File({ assignation, preview }) {
         </Box>
         <Box sx={{ maxWidth: 610 }}>
           <FileUpload
-            icon={<CloudUploadIcon height={32} width={32} />}
+            icon={<DownloadIcon height={32} width={32} />}
             title={t('upload_title')}
             subtitle={t('upload_subtitle')}
             hideUploadButton

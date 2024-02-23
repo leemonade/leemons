@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useMemo } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { FileUpload } from '@bubbles-ui/components';
-import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { deleteAssetRequest, newAssetRequest, listCategoriesRequest } from '@leebrary/request';
 import { useApi } from '@common';
 import { addErrorAlert } from '@layout/alert';
@@ -69,7 +69,7 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
   return (
     <>
       <FileUpload
-        icon={<CloudUploadIcon height={32} width={32} />}
+        icon={<DownloadIcon height={32} width={32} />}
         title={labels?.uploadTitle}
         subtitle={labels?.uploadSubtitle}
         errorMessage={{
