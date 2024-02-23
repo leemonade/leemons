@@ -24,7 +24,12 @@ export const useNewResourceStyles = createStyles((theme) => {
   };
 });
 
-export function NewResource({ categories: creatableCategories, acceptedFileTypes, onSelect }) {
+export function NewResource({
+  categories: creatableCategories,
+  acceptedFileTypes,
+  onSelect,
+  isPickingACover,
+}) {
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const categories = usePickerCategories();
   const categoriesByKey = useMemo(() => keyBy(categories, 'key'), [categories]);
@@ -73,7 +78,7 @@ export function NewResource({ categories: creatableCategories, acceptedFileTypes
       setUploadingFileInfo({ state: 'finalize' });
       try {
         const { asset } = await newAssetRequest(
-          { ...body, file: uploadedFile },
+          { ...body, file: uploadedFile, isCover: !!isPickingACover },
           null,
           'media-files'
         );
@@ -117,6 +122,7 @@ NewResource.propTypes = {
   onSelect: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.string),
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
+  isPickingACover: PropTypes.bool,
 };
 
 NewResource.defaultProps = {

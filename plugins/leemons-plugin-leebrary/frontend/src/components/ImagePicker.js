@@ -123,6 +123,7 @@ ImagePicker.defaultProps = {
   creatable: true,
   modal: false,
   returnAsset: false,
+  isPickingACover: false,
 };
 ImagePicker.propTypes = {
   labels: PropTypes.shape({
@@ -139,6 +140,7 @@ ImagePicker.propTypes = {
   creatable: PropTypes.bool,
   modal: PropTypes.bool,
   returnAsset: PropTypes.bool,
+  isPickingACover: PropTypes.bool,
 };
 
 export { ImagePicker };
