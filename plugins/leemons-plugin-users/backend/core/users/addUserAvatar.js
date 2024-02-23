@@ -1,10 +1,22 @@
 async function addUserAvatar({ user, avatar, ctx }) {
+  if (avatar?.startsWith('http')) {
+    return {
+      ...user,
+      avatar,
+    };
+  }
+
   const assetData = {
     indexable: false,
     public: true,
     name: `user-${user.id}`,
+    cover: null,
   };
-  if (avatar) assetData.cover = avatar;
+
+  if (avatar) {
+    assetData.cover = avatar;
+  }
+
   let asset;
   if (user.avatarAsset) {
     asset = await ctx.tx.call(
