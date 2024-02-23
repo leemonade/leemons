@@ -17,7 +17,7 @@ import {
   TotalLayoutFooterContainer,
   useResizeObserver,
 } from '@bubbles-ui/components';
-import { CloudUploadIcon, CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
