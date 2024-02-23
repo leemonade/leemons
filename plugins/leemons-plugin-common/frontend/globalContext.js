@@ -1,14 +1,23 @@
 import { TextEditorContext, TextEditorProvider } from '@common/context';
+import { LibraryTool } from '@leebrary/components';
+import libraryProcessor from '@leebrary/helpers/libraryProcessor';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
 
+const DEFAULT_TOOLS = {
+  library: { tool: <LibraryTool /> },
+};
+const DEFAULT_PROCESSORS = {
+  library: { processor: libraryProcessor },
+};
+
 export function Provider({ children }) {
-  const [textEditorTools, setTextEditorTools] = useState({});
-  const [textEditorProcessors, setTextEditorProcessors] = useState({});
+  const [textEditorTools, setTextEditorTools] = useState(DEFAULT_TOOLS);
+  const [textEditorProcessors, setTextEditorProcessors] = useState(DEFAULT_PROCESSORS);
 
   const setTextEditorTool = (newTools) => {
-    const tools = textEditorTools;
+    const tools = _.cloneDeep(textEditorTools);
     _.forEach(newTools, (tool) => {
       tools[tool.id] = { tool: tool.tool, props: tool.props };
     });
@@ -16,7 +25,7 @@ export function Provider({ children }) {
   };
 
   const setTextEditorProcessor = (newProcessor) => {
-    const processors = newProcessor;
+    const processors = _.cloneDeep(newProcessor);
 
     _.forEach(newProcessor, (processor) => {
       if (typeof processor.processor !== 'function') {
@@ -28,12 +37,18 @@ export function Provider({ children }) {
     setTextEditorProcessors(processors);
   };
 
+  const setEditorDefault = () => {
+    setTextEditorTools(() => DEFAULT_TOOLS);
+    setTextEditorProcessors(() => DEFAULT_PROCESSORS);
+  };
+
   const values = useMemo(
     () => ({
       textEditorTools,
       setTextEditorTool,
       textEditorProcessors,
       setTextEditorProcessor,
+      setEditorDefault,
     }),
     [textEditorTools]
   );

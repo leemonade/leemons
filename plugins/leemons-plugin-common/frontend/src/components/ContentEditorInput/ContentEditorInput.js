@@ -30,15 +30,10 @@ const ContentEditorInput = ({
   const editorLabels = useEditorLabels();
   const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
 
-  const { setTextEditorTool, textEditorTools, setTextEditorProcessor } = useTextEditor();
+  const { setTextEditorTool, textEditorTools } = useTextEditor();
 
   useEffect(() => {
-    setTextEditorTool([
-      { id: 'library', tool: <LibraryTool /> },
-      { id: 'math', tool: <MathTool /> },
-    ]);
-
-    setTextEditorProcessor([{ id: 'library', processor: libraryProcessor }]);
+    setTextEditorTool([{ id: 'math', tool: <MathTool /> }]);
   }, []);
 
   const leemonsTools = () => {
