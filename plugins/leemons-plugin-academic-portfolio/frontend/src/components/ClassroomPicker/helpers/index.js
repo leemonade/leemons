@@ -1,3 +1,5 @@
+import { capitalize } from 'lodash';
+
 function convertTimeToMinutes(time) {
   if (!time) return 0;
   const [hours, minutes] = time.split(':').map(Number);
@@ -15,31 +17,34 @@ function checkCollision(schedule1, schedule2) {
   return dayMatch && timeOverlap;
 }
 
-const transformData = (dataClasses) => {
+const transformData = (dataClasses, locale = 'en') => {
   let hasCollisions = false;
-  const data = dataClasses.map((item, index, array) => {
-    const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    const dayAbbreviations = {
-      // cambiar valores a variables de texto
-      monday: 'Mo',
-      tuesday: 'Tu',
-      wednesday: 'We',
-      thursday: 'Th',
-      friday: 'Fr',
-      saturday: 'Sa',
-      sunday: 'Su',
-    };
-    const scheduleMap = item.schedule.reduce((acc, { day, start, end }) => {
+
+  const localeDays = [...Array(7).keys()].map((dayIndex) =>
+    new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(
+      new Date(Date.UTC(2021, 5, dayIndex + 6))
+    )
+  );
+  const allDays = localeDays.map((day) => day.toLowerCase());
+  const dayAbbreviations = allDays.reduce((acc, day, i) => {
+    acc[day] = capitalize(day.substring(0, 2));
+    return acc;
+  }, {});
+
+  const getScheduleMap = (item) =>
+    item.schedule.reduce((acc, { dayWeek, start, end }) => {
       const key = `${start}-${end}`;
+      const dayName = allDays[dayWeek];
       if (!acc[key]) {
-        acc[key] = [day];
+        acc[key] = [dayName];
       } else {
-        acc[key].push(day);
+        acc[key].push(dayName);
       }
       return acc;
     }, {});
 
-    const collideWith = array.reduce((acc, currentItem, currentIndex) => {
+  const getCollisions = (array, item, index) =>
+    array.reduce((acc, currentItem, currentIndex) => {
       if (index !== currentIndex) {
         item.schedule.forEach((itemSchedule) => {
           currentItem.schedule.forEach((currentItemSchedule) => {
@@ -53,7 +58,8 @@ const transformData = (dataClasses) => {
       return acc;
     }, []);
 
-    const scheduleArray = Object.entries(scheduleMap).map(([key, days]) => {
+  const getScheduleArray = (scheduleMap) =>
+    Object.entries(scheduleMap).map(([key, days]) => {
       const [start, end] = key.split('-');
       const sortedDays = days.sort((a, b) => allDays.indexOf(a) - allDays.indexOf(b));
       const daysAbbreviated = sortedDays.map((day) => dayAbbreviations[day]);
@@ -87,6 +93,12 @@ const transformData = (dataClasses) => {
 
       return `${daysStr}, ${start}-${end}`;
     });
+
+  const data = dataClasses.map((item, index, array) => {
+    const scheduleMap = getScheduleMap(item);
+    const collideWith = getCollisions(array, item, index);
+
+    const scheduleArray = getScheduleArray(scheduleMap);
 
     return {
       value: item?.id,

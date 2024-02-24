@@ -14,6 +14,7 @@ import { ClassroomPickerItem } from './components/ClassroomPickerItem';
 import { ClassroomPickerList } from '../ClassroomPickerList';
 import { ClassroomPickerStyles } from './ClassroomPicker.styles';
 import { transformData } from './helpers';
+import { useLocale } from '@common';
 
 const ClassroomPicker = ({
   label,
@@ -31,7 +32,7 @@ const ClassroomPicker = ({
   const [hasCollisions, setHasCollisions] = useState(false);
   const [collisionError, setCollisionError] = useState(false);
   const { classes, cx } = ClassroomPickerStyles({ isOpen }, { name: 'ClassroomPicker' });
-
+  const locale = useLocale();
   const [t] = useTranslateLoader(prefixPN('classroomPicker'));
   const { data: classesData } = useProgramClasses(programId, { enabled: !data && !!programId });
 
@@ -45,11 +46,12 @@ const ClassroomPicker = ({
 
   useEffect(() => {
     const { data: dataTransformed, hasCollisions: collisions } = transformData(
-      data ?? classesData ?? []
+      data ?? classesData ?? [],
+      locale
     );
     setTransformedData(dataTransformed);
     setHasCollisions(collisions);
-  }, [classesData, data]);
+  }, [classesData, data, locale]);
 
   useEffect(() => {
     setSubjects(transformedData.filter((item) => !value.includes(item.value)));

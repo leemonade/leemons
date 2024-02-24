@@ -38,7 +38,7 @@ const UserNewAssignation = ({
   const previewText = `[Leemons] ${messages[locale].title}`;
 
   return (
-    <EmailLayout previewText={previewText} title={messages[locale].title}>
+    <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>
       <Container className="text-center">
         {ifMessage}
         <Text className="text-[14px] leading-5 mb-2">{messageToAssignees}</Text>
