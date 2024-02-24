@@ -30,24 +30,31 @@ async function login({ email, password, ctx }) {
 
   if (!userP.password) {
     if (process.env.EXTERNAL_IDENTITY_URL) {
-      // Is no error its done
-      const r = await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          deploymentID: ctx.meta.deploymentID,
-          manualPassword: process.env.MANUAL_PASSWORD,
-        }),
-      });
-      const response = await r.json();
-      if (!r.ok) {
+      try {
+        // Is no error its done
+        const r = await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            deploymentID: ctx.meta.deploymentID,
+            manualPassword: process.env.MANUAL_PASSWORD,
+          }),
+        });
+        const response = await r.json();
+        if (!r.ok) {
+          throw new LeemonsError(ctx, {
+            message: response.message,
+            httpStatusCode: 401,
+          });
+        }
+      } catch (e) {
         throw new LeemonsError(ctx, {
-          message: response.message,
-          httpStatusCode: 401,
+          message: 'Cannot connect to external identity',
+          httpStatusCode: 500,
         });
       }
     } else {
