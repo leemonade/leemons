@@ -70,6 +70,7 @@ export default function Login() {
       const response = await getUserProfileTokenRequest(profiles[0].id, jwtToken);
       return { ...response.jwtToken, profile: profiles[0] };
     }
+
     if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
       const response = await getUserCenterProfileTokenRequest(
         centers[0].id,
@@ -77,8 +78,10 @@ export default function Login() {
         jwtToken
       );
       await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
+
       return response.jwtToken;
     }
+
     return jwtToken;
   };
 
@@ -94,7 +97,12 @@ export default function Login() {
 
     Cookies.set('token', jwtToken);
     hooks.fireEvent('user:cookie:session:change');
-    history.push(_.isString(jwtToken) ? '/protected/users/select-profile' : '/private/dashboard');
+
+    const redirectUrl = _.isString(jwtToken)
+      ? '/protected/users/select-profile'
+      : '/private/dashboard';
+
+    history.push(redirectUrl);
   };
 
   const handleLoginError = (err) => {
