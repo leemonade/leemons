@@ -248,18 +248,20 @@ export default function StudentActivities({ klasses, filters, labels }) {
       <Box className={classes.filters}>
         <SelectSubject
           placeholder={labels.subject.placeholder}
-          data={klasses.map((klass) => {
-            const isGroupAlone = !klass.groups || klass.groups.isAlone;
-            const klassName =
-              !isGroupAlone && klass.groups?.name
-                ? `${klass.subject.name} - ${klass.groups.name}`
-                : klass.subject.name;
-            return {
-              ...klass.subject,
-              value: klass.id,
-              label: klassName,
-            };
-          })}
+          data={
+            klasses?.map((klass) => {
+              const isGroupAlone = !klass.groups || klass.groups.isAlone;
+              const klassName =
+                !isGroupAlone && klass.groups?.name
+                  ? `${klass.subject.name} - ${klass.groups.name}`
+                  : klass.subject.name;
+              return {
+                ...klass.subject,
+                value: klass.id,
+                label: klassName,
+              };
+            }) ?? []
+          }
           value={localFilters.subject}
           onChange={(value) => handleFilterOnChange('subject', value)}
           clearable={labels.type.clear}
