@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     // ref: plugins_calendar::calendars
     calendar: {
@@ -27,6 +25,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ calendar: 1, program: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ program: 1, deploymentID: 1, isDeleted: 1 });
 
 const programCalendarModel = newModel(mongoose.connection, 'v1::calendar_programCalendar', schema);
 

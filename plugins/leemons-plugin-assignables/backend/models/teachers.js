@@ -6,17 +6,14 @@ const teachersSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     assignableInstance: {
       type: String,
       required: true,
-      index: true,
     },
     teacher: {
       type: String,
@@ -32,6 +29,9 @@ const teachersSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+teachersSchema.index({ teacher: 1, deploymentID: 1, isDeleted: 1 });
+teachersSchema.index({ assignableInstance: 1, deploymentID: 1, isDeleted: 1 });
 
 const teachersModel = newModel(mongoose.connection, 'v1::assignables_Teachers', teachersSchema);
 

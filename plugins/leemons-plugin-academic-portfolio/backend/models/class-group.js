@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     class: {
       type: String,
@@ -27,6 +25,10 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ class: 1, group: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ class: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const classGroupModel = newModel(mongoose.connection, 'v1::academic-portfolio_ClassGroup', schema);
 

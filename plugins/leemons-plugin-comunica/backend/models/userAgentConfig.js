@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     userAgent: {
       type: String,
@@ -31,6 +29,8 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ userAgent: 1, deploymentID: 1, isDeleted: 1 });
 
 const userAgentConfigModel = newModel(mongoose.connection, 'v1::comunica_UserAgentConfig', schema);
 

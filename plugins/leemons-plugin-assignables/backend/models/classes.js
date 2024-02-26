@@ -6,12 +6,10 @@ const classesSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     assignableInstance: {
       type: String,
@@ -28,6 +26,11 @@ const classesSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+classesSchema.index({ assignableInstance: 1, deploymentID: 1, isDeleted: 1 });
+classesSchema.index({ assignableInstance: 1, class: 1, deploymentID: 1, isDeleted: 1 });
+classesSchema.index({ assignable: 1, deploymentID: 1, isDeleted: 1 });
+classesSchema.index({ class: 1, deploymentID: 1, isDeleted: 1 });
 
 const classesModel = newModel(mongoose.connection, 'v1::assignables_Classes', classesSchema);
 

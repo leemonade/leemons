@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     userAgent: {
       // ref: 'users_UserAgent',
@@ -21,16 +19,13 @@ const schema = new mongoose.Schema(
     permissionName: {
       type: String,
       required: true,
-      index: true,
     },
     actionName: {
       type: String,
       required: true,
-      index: true,
     },
     target: {
       type: String,
-      index: true,
     },
     role: {
       // ref: 'users_Roles',
@@ -46,6 +41,27 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ actionName: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ userAgent: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ userAgent: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ permissionName: 1, userAgent: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({
+  permissionName: 1,
+  userAgent: 1,
+  role: 1,
+  target: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
+schema.index({
+  permissionName: 1,
+  userAgent: 1,
+  role: 1,
+  center: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 
 const userAgentPermissionModel = newModel(
   mongoose.connection,

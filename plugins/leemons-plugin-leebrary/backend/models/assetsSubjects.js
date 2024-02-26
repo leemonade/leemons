@@ -6,12 +6,10 @@ const assetsSubjectsSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     asset: {
@@ -31,6 +29,10 @@ const assetsSubjectsSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+assetsSubjectsSchema.index({ asset: 1, deploymentID: 1, isDeleted: 1 });
+assetsSubjectsSchema.index({ subject: 1, deploymentID: 1, isDeleted: 1 });
+assetsSubjectsSchema.index({ asset: 1, subject: 1, deploymentID: 1, isDeleted: 1 });
 
 const assetsSubjectsModel = newModel(
   mongoose.connection,

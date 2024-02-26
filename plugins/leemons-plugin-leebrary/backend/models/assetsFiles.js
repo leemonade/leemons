@@ -6,12 +6,10 @@ const assetsFilesSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     asset: {
@@ -27,6 +25,10 @@ const assetsFilesSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+assetsFilesSchema.index({ asset: 1, deploymentID: 1, isDeleted: 1 });
+assetsFilesSchema.index({ file: 1, deploymentID: 1, isDeleted: 1 });
+assetsFilesSchema.index({ asset: 1, file: 1, deploymentID: 1, isDeleted: 1 });
 
 const assetsFilesModel = newModel(
   mongoose.connection,

@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     group: {
       type: String,
@@ -29,6 +27,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ group: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, deploymentID: 1, isDeleted: 1 });
 
 const groupRoleModel = newModel(mongoose.connection, 'v1::users_GroupRole', schema);
 

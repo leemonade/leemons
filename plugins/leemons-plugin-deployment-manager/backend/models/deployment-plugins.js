@@ -6,12 +6,10 @@ const deploymentPluginsSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     pluginName: {
       type: String,
@@ -29,6 +27,8 @@ const deploymentPluginsSchema = new mongoose.Schema(
 );
 
 deploymentPluginsSchema.index({ deploymentID: 1, pluginName: 1 }, { unique: true });
+
+deploymentPluginsSchema.index({ deploymentID: 1, pluginName: 1, isDeleted: 1 }, { unique: true });
 
 const deploymentPluginsModel = newModel(
   mongoose.connection,
