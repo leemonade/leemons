@@ -17,31 +17,104 @@ function checkCollision(schedule1, schedule2) {
   return dayMatch && timeOverlap;
 }
 
-const transformData = (dataClasses, locale = 'en') => {
-  let hasCollisions = false;
+const localeWeekDaysCache = {};
+
+function getLocaleWeekDays(locale = 'en') {
+  if (localeWeekDaysCache[locale]) {
+    return localeWeekDaysCache[locale];
+  }
 
   const localeDays = [...Array(7).keys()].map((dayIndex) =>
     new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(
       new Date(Date.UTC(2021, 5, dayIndex + 6))
     )
   );
-  const allDays = localeDays.map((day) => day.toLowerCase());
-  const dayAbbreviations = allDays.reduce((acc, day, i) => {
+  const weekDays = localeDays.map((day) => day.toLowerCase());
+  const weekDaysAbbreviations = weekDays.reduce((acc, day, i) => {
     acc[day] = capitalize(day.substring(0, 2));
     return acc;
   }, {});
 
-  const getScheduleMap = (item) =>
-    item.schedule.reduce((acc, { dayWeek, start, end }) => {
-      const key = `${start}-${end}`;
-      const dayName = allDays[dayWeek];
-      if (!acc[key]) {
-        acc[key] = [dayName];
+  const result = { weekDays, weekDaysAbbreviations };
+  localeWeekDaysCache[locale] = result;
+
+  return result;
+}
+
+function getScheduleMap(schedule, weekDaysLocalized, locale = 'en') {
+  let weekDays = weekDaysLocalized;
+
+  if (!weekDays) {
+    const locales = getLocaleWeekDays(locale);
+    weekDays = locales.weekDays;
+  }
+
+  return schedule.reduce((acc, { dayWeek, start, end }) => {
+    const key = `${start}-${end}`;
+    const dayName = weekDays[dayWeek];
+    if (!acc[key]) {
+      acc[key] = [dayName];
+    } else {
+      acc[key].push(dayName);
+    }
+    return acc;
+  }, {});
+}
+
+function getScheduleArray(
+  schedule,
+  weekDaysLocalized,
+  weekDaysAbbreviationsLocalized,
+  locale = 'en'
+) {
+  const weekDays = weekDaysLocalized || getLocaleWeekDays(locale).weekDays;
+  const weekDaysAbbreviations =
+    weekDaysAbbreviationsLocalized || getLocaleWeekDays(locale).weekDaysAbbreviations;
+
+  const scheduleMap = getScheduleMap(schedule, weekDays, locale);
+
+  const formatDaysString = (tempArray) => {
+    if (tempArray.length > 1) {
+      return `${tempArray[0]} - ${tempArray[tempArray.length - 1]}`;
+    }
+    return `${tempArray[0]}`;
+  };
+
+  return Object.entries(scheduleMap).map(([key, days]) => {
+    const [start, end] = key.split('-');
+    const sortedDays = days.sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b));
+    const daysAbbreviated = sortedDays.map((day) => weekDaysAbbreviations[day]);
+
+    let daysStr = '';
+    let lastDayIndex = -2;
+    let tempArray = [];
+
+    daysAbbreviated.forEach((day, i) => {
+      const currentIndex = weekDays.indexOf(sortedDays[i]);
+      if (lastDayIndex + 1 === currentIndex) {
+        tempArray.push(day);
       } else {
-        acc[key].push(dayName);
+        if (tempArray.length) {
+          daysStr = `${daysStr}${formatDaysString(tempArray)}, `;
+        }
+        tempArray = [day];
       }
-      return acc;
-    }, {});
+      lastDayIndex = currentIndex;
+    });
+
+    if (tempArray.length) {
+      daysStr += formatDaysString(tempArray);
+    }
+
+    daysStr = daysStr.endsWith(', ') ? daysStr.slice(0, -2) : daysStr;
+
+    return `${daysStr}, ${start}-${end}`;
+  });
+}
+
+const transformData = (dataClasses, locale = 'en') => {
+  let hasCollisions = false;
+  const { weekDays, weekDaysAbbreviations } = getLocaleWeekDays(locale);
 
   const getCollisions = (array, item, index) =>
     array.reduce((acc, currentItem, currentIndex) => {
@@ -58,47 +131,9 @@ const transformData = (dataClasses, locale = 'en') => {
       return acc;
     }, []);
 
-  const getScheduleArray = (scheduleMap) =>
-    Object.entries(scheduleMap).map(([key, days]) => {
-      const [start, end] = key.split('-');
-      const sortedDays = days.sort((a, b) => allDays.indexOf(a) - allDays.indexOf(b));
-      const daysAbbreviated = sortedDays.map((day) => dayAbbreviations[day]);
-
-      let daysStr = '';
-      let lastDayIndex = -2;
-      let tempArray = [];
-
-      daysAbbreviated.forEach((day, i) => {
-        const currentIndex = allDays.indexOf(sortedDays[i]);
-        if (lastDayIndex + 1 === currentIndex) {
-          tempArray.push(day);
-        } else {
-          if (tempArray.length > 1) {
-            daysStr += `${tempArray[0]} - ${tempArray[tempArray.length - 1]}, `;
-          } else if (tempArray.length === 1) {
-            daysStr += `${tempArray[0]}, `;
-          }
-          tempArray = [day];
-        }
-        lastDayIndex = currentIndex;
-      });
-
-      if (tempArray.length > 1) {
-        daysStr += `${tempArray[0]} - ${tempArray[tempArray.length - 1]}`;
-      } else if (tempArray.length === 1) {
-        daysStr += `${tempArray[0]}`;
-      }
-
-      daysStr = daysStr.endsWith(', ') ? daysStr.slice(0, -2) : daysStr;
-
-      return `${daysStr}, ${start}-${end}`;
-    });
-
   const data = dataClasses.map((item, index, array) => {
-    const scheduleMap = getScheduleMap(item);
     const collideWith = getCollisions(array, item, index);
-
-    const scheduleArray = getScheduleArray(scheduleMap);
+    const scheduleArray = getScheduleArray(item.schedule, weekDays, weekDaysAbbreviations, locale);
 
     return {
       value: item?.id,
@@ -114,4 +149,4 @@ const transformData = (dataClasses, locale = 'en') => {
   return { data, hasCollisions };
 };
 
-export { transformData };
+export { transformData, getLocaleWeekDays, getScheduleArray };
