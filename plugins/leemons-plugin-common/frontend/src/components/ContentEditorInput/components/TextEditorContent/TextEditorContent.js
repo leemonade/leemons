@@ -82,8 +82,8 @@ const TextEditorContent = ({
           {leemonsTools.map((item, i) =>
             React.cloneElement(item.tool, {
               key: item.tool.id || `t-${i}`,
-              ...editorLabels.libraryTool,
               ...item.tool.props,
+              ...editorLabels.libraryTool,
               alignLabels: editorLabels.textAlignTool,
               openLibraryModal,
             })
