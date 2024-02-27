@@ -144,17 +144,17 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const classesIds = [];
     const filteredActivities = [];
     activities?.forEach((activity) => {
-      if (!activity.requiresScoring) return;
+      if (!activity.requiresScoring || activity?.metadata?.module?.type === 'module') return;
+
       // Filters non-calificable activities except when the filter is set to TRUE
-      if (!!activity.gradable || localFilters.seeNonCalificable) {
-        // If type is selected, filters activities matching type
-        if (
-          !localFilters.type ||
-          (localFilters.type && localFilters.type === activity.assignable.role)
-        ) {
-          classesIds.push(...activity.classes);
-          filteredActivities.push(activity);
-        }
+      // If type is selected, filters activities matching type
+      if (
+        (activity.gradable || localFilters.seeNonCalificable) &&
+        (!localFilters.type ||
+          (localFilters.type && localFilters.type === activity.assignable.role))
+      ) {
+        classesIds.push(...activity.classes);
+        filteredActivities.push(activity);
       }
     });
     return { filteredActivities, classesIds };
@@ -247,7 +247,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     <Box className={classes.root}>
       <Box className={classes.filters}>
         <SelectSubject
-          placeholder={labels.subject.placeholder}
+          placeholder={labels?.subject?.placeholder}
           data={
             klasses?.map((klass) => {
               const isGroupAlone = !klass.groups || klass.groups.isAlone;
