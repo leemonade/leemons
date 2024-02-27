@@ -181,6 +181,10 @@ const ScoresBasicTable = ({
       ),
     });
     activities.forEach((activity) => {
+      const isDeadlineFinished = activity.deadline
+        ? new Date(activity.deadline) < new Date()
+        : true;
+
       const completionPercentage = getCompletionPercentage(activity.id);
       columns.push({
         accessor: activity.id,
@@ -202,6 +206,7 @@ const ScoresBasicTable = ({
             noActivity={labels.noActivity}
             allowChange={activity.allowChange}
             isSubmitted={value.isSubmitted}
+            isClosed={isDeadlineFinished}
             grades={grades}
             row={row}
             column={column}

@@ -17,9 +17,9 @@ function updateModuleAssignationDates({ assignations, dates }) {
       );
 
       datesToReturn.assignations[assignation.id] = {
-        open: assignationsDates[0].open,
-        start: assignationsDates[0].start,
-        end: assignationsDates.every((date) => date.end) ? assignationsDates[0].end : null,
+        open: assignationsDates[0]?.open ?? null,
+        start: assignationsDates[0]?.start ?? null,
+        end: assignationsDates.every((date) => date?.end) ? assignationsDates[0]?.end : null,
         ...dates.assignations[assignation.id],
       };
     }
