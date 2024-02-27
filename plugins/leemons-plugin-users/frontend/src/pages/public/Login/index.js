@@ -1,3 +1,6 @@
+import React, { useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import _ from 'lodash';
 import { Box, createStyles, Stack } from '@bubbles-ui/components';
 import { LoginForm } from '@users/components/LoginForm';
 import tLoader from '@multilanguage/helpers/tLoader';
@@ -15,9 +18,6 @@ import {
 import { getCookieToken, useSession } from '@users/session';
 import Cookies from 'js-cookie';
 import hooks from 'leemons-hooks';
-import _ from 'lodash';
-import React, { useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { getUserCenterProfileTokenRequest, getUserCentersRequest } from '../../../request';
 
 const PageStyles = createStyles((theme) => ({
@@ -28,6 +28,8 @@ const PageStyles = createStyles((theme) => ({
     maxWidth: 330,
   },
 }));
+
+const UNKNOWN_ERROR = 'unknown-error';
 
 export default function Login() {
   useSession({
@@ -48,8 +50,79 @@ export default function Login() {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('login') });
   const t = tLoader(prefixPN('login'), translations);
 
-  // ····················································································
-  // HANDLERS
+  const handleProfileAndCenter = async (profile, center, jwtToken) => {
+    if (profile.sysName === 'admin') {
+      const response = await getUserProfileTokenRequest(profile.id, jwtToken);
+      return { ...response.jwtToken, profile };
+    }
+    const response = await getUserCenterProfileTokenRequest(center.id, profile.id, jwtToken);
+    await hooks.fireEvent('user:change:profile', profile);
+    return response.jwtToken;
+  };
+
+  const handleNoProfileAndCenter = async (jwtToken) => {
+    const [{ centers }, { profiles }] = await Promise.all([
+      getUserCentersRequest(jwtToken),
+      getUserProfilesRequest(jwtToken),
+    ]);
+
+    if (profiles.length === 1 && profiles[0].sysName === 'admin') {
+      const response = await getUserProfileTokenRequest(profiles[0].id, jwtToken);
+      return { ...response.jwtToken, profile: profiles[0] };
+    }
+
+    if (centers.length === 1 && centers[0].profiles.length === 1 && profiles.length === 1) {
+      const response = await getUserCenterProfileTokenRequest(
+        centers[0].id,
+        centers[0].profiles[0].id,
+        jwtToken
+      );
+      await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
+
+      return response.jwtToken;
+    }
+
+    return jwtToken;
+  };
+
+  const handleLoginSuccess = async (token) => {
+    let jwtToken;
+    const { profile, center } = await getRememberLoginRequest(token);
+
+    if (profile && center) {
+      jwtToken = await handleProfileAndCenter(profile, center, token);
+    } else {
+      jwtToken = await handleNoProfileAndCenter(token);
+    }
+
+    Cookies.set('token', jwtToken);
+    hooks.fireEvent('user:cookie:session:change');
+
+    const redirectUrl = _.isString(jwtToken)
+      ? '/protected/users/select-profile'
+      : '/private/dashboard';
+
+    history.push(redirectUrl);
+  };
+
+  const handleLoginError = (err) => {
+    if (err.message === 'exceeded-login-attempts') {
+      setFormStatus(UNKNOWN_ERROR);
+      setFormError(tCommon('exceededLoginAttempts'));
+    } else if (
+      (_.isObject(err) && err.httpStatusCode === 401) ||
+      err?.message === 'Credentials do not match'
+    ) {
+      setFormStatus('error-match');
+      setFormError(t('form_error'));
+    } else if (_.isObject(err) && err.httpStatusCode === 500) {
+      setFormStatus(UNKNOWN_ERROR);
+      setFormError(tCommon('unknown_error'));
+    } else {
+      setFormStatus(UNKNOWN_ERROR);
+      setFormError(err.message);
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -57,133 +130,12 @@ export default function Login() {
       setFormError(null);
       window.sessionStorage.setItem('boardMessagesModalId', null);
       const response = await loginRequest(data);
-
-      try {
-        /*
-                if (response?.user?.isSuperAdmin) {
-                  const { profiles } = await getUserProfilesRequest(response.jwtToken);
-                  if (profiles && !_.isEmpty(profiles)) {
-                    const { jwtToken } = await getUserProfileTokenRequest(
-                      profiles[0].id,
-                      response.jwtToken
-                    );
-
-                    response.jwtToken = { ...jwtToken, profile: profiles[0] };
-                  }
-                } else {
-
-                 */
-        // ES: Comprobamos si tiene recordado un perfil
-        // EN: Check if has remember a profile
-        const { profile, center } = await getRememberLoginRequest(response.jwtToken);
-
-        if (profile && center) {
-          try {
-            if (profile.sysName === 'admin') {
-              const { jwtToken } = await getUserProfileTokenRequest(profile.id, response.jwtToken);
-
-              response.jwtToken = { ...jwtToken, profile };
-            } else {
-              // ES: Si lo tiene sacamos el token para dicho centro y perfil
-              // EN: If has, get the token for that center and profile
-              const { jwtToken } = await getUserCenterProfileTokenRequest(
-                center.id,
-                profile.id,
-                response.jwtToken
-              );
-
-              await hooks.fireEvent('user:change:profile', profile);
-              response.jwtToken = jwtToken;
-            }
-          } catch (er) {
-            // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
-            // EN: If not has, get all the profiles that has access to do login
-            const { centers } = await getUserCentersRequest(response.jwtToken);
-            // Si solo tiene un perfil hacemos login automaticamente con ese
-            if (centers.length === 1 && centers[0].profiles.length === 1) {
-              const { jwtToken } = await getUserCenterProfileTokenRequest(
-                centers[0].id,
-                centers[0].profiles[0].id,
-                response.jwtToken
-              );
-
-              await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
-              response.jwtToken = jwtToken;
-            }
-          }
-        } else {
-          // ES: Si no lo tiene sacamos todos los perfiles a los que tiene acceso para hacer login
-          // EN: If not has, get all the profiles that has access to do login
-          const [{ centers }, { profiles }] = await Promise.all([
-            getUserCentersRequest(response.jwtToken),
-            getUserProfilesRequest(response.jwtToken),
-          ]);
-
-          // Si solo tiene un perfil (aun que este en muchos centros) y este es el de admin entramos como todos los centros a la vez
-          if (profiles.length === 1 && profiles[0].sysName === 'admin') {
-            const { jwtToken } = await getUserProfileTokenRequest(
-              profiles[0].id,
-              response.jwtToken
-            );
-
-            response.jwtToken = { ...jwtToken, profile: profiles[0] };
-          } else if (
-            centers.length === 1 &&
-            centers[0].profiles.length === 1 &&
-            profiles.length === 1
-          ) {
-            // Si solo tiene un perfil hacemos login automaticamente con ese
-            const { jwtToken } = await getUserCenterProfileTokenRequest(
-              centers[0].id,
-              centers[0].profiles[0].id,
-              response.jwtToken
-            );
-
-            await hooks.fireEvent('user:change:profile', centers[0].profiles[0]);
-            response.jwtToken = jwtToken;
-          }
-        }
-        // }
-      } catch (e) {
-        throw e;
-      }
-
-      // Finalmente metemos el token
-      Cookies.set('token', response.jwtToken);
-      hooks.fireEvent('user:cookie:session:change');
-
-      /* if (response.user.isSuperAdmin) {
-              history.push('/private/admin/setup');
-            } else {
-
-             */
-      history.push(
-        _.isString(response.jwtToken) ? '/protected/users/select-profile' : '/private/dashboard'
-      );
-      // }
+      await handleLoginSuccess(response?.jwtToken);
     } catch (err) {
       console.error('error', err);
-      if (err.message === 'exceeded-login-attempts') {
-        setFormStatus('unknown-error');
-        setFormError(tCommon('exceededLoginAttempts'));
-      } else if (
-        (_.isObject(err) && err.httpStatusCode === 401) ||
-        err?.message === 'Credentials do not match'
-      ) {
-        setFormStatus('error-match');
-        setFormError(t('form_error'));
-      } else if (_.isObject(err) && err.httpStatusCode === 500) {
-        setFormStatus('unknown-error');
-        setFormError(tCommon('unknown_error'));
-      } else {
-        setFormStatus('unknown-error');
-        setFormError(err.message);
-      }
+      handleLoginError(err);
     }
   };
-
-  // ····················································································
-  // LITERALS
 
   const labels = useMemo(
     () => ({
@@ -215,9 +167,6 @@ export default function Login() {
     }),
     [tCommon]
   );
-
-  // ····················································································
-  // STYLES
 
   const { classes } = PageStyles();
 

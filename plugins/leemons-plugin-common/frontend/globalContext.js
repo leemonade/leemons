@@ -1,26 +1,45 @@
 import { TextEditorContext, TextEditorProvider } from '@common/context';
+import { LibraryTool } from '@leebrary/components';
+import libraryProcessor from '@leebrary/helpers/libraryProcessor';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
 
-export function Provider({ children }) {
-  const [textEditorTools, setTextEditorTools] = useState({});
-  const [textEditorProcessors, setTextEditorProcessors] = useState({});
+const DEFAULT_TOOLS = {
+  library: { tool: <LibraryTool /> },
+};
+const DEFAULT_PROCESSORS = {
+  library: { processor: libraryProcessor },
+};
 
-  const setTextEditorTool = (name, tool, props) => {
-    const tools = { ...textEditorTools };
-    tools[name] = { tool, props };
+export function Provider({ children }) {
+  const [textEditorTools, setTextEditorTools] = useState(DEFAULT_TOOLS);
+  const [textEditorProcessors, setTextEditorProcessors] = useState(DEFAULT_PROCESSORS);
+
+  const setTextEditorTool = (newTools) => {
+    const tools = _.cloneDeep(textEditorTools);
+    _.forEach(newTools, (tool) => {
+      tools[tool.id] = { tool: tool.tool, props: tool.props };
+    });
     setTextEditorTools(tools);
   };
 
-  const setTextEditorProcessor = (name, processor) => {
-    if (typeof processor !== 'function') {
-      throw new Error('The processor must be a function');
-    }
+  const setTextEditorProcessor = (newProcessor) => {
+    const processors = _.cloneDeep(newProcessor);
 
-    const processors = { ...textEditorProcessors };
-    processors[name] = processor;
+    _.forEach(newProcessor, (processor) => {
+      if (typeof processor.processor !== 'function') {
+        throw new Error('The processor must be a function');
+      }
+      processors[processor.id] = processor.processor;
+    });
+
     setTextEditorProcessors(processors);
+  };
+
+  const setEditorDefault = () => {
+    setTextEditorTools(() => DEFAULT_TOOLS);
+    setTextEditorProcessors(() => DEFAULT_PROCESSORS);
   };
 
   const values = useMemo(
@@ -29,6 +48,7 @@ export function Provider({ children }) {
       setTextEditorTool,
       textEditorProcessors,
       setTextEditorProcessor,
+      setEditorDefault,
     }),
     [textEditorTools]
   );

@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     permissionName: {
       type: String,
@@ -27,6 +25,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ permissionName: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ permissionName: 1, pluginName: 1, deploymentID: 1, isDeleted: 1 });
 
 const permissionsModel = newModel(mongoose.connection, 'v1::users_Permissions', schema);
 

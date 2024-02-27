@@ -6,11 +6,11 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const HomePage = loadable(() => pMinDelay(import('./src/pages/private/library/Library'), 1000));
-const TestPage = loadable(() => pMinDelay(import('./src/pages/private/test'), 1000));
-const UploadPage = loadable(() => pMinDelay(import('./src/pages/private/test/upload'), 1000));
+const HomePage = loadable(() => pMinDelay(import('./src/pages/private/library/Library'), 500));
+const TestPage = loadable(() => pMinDelay(import('./src/pages/private/test'), 500));
+const UploadPage = loadable(() => pMinDelay(import('./src/pages/private/test/upload'), 500));
 const TestPermissionsPage = loadable(() =>
-  pMinDelay(import('./src/pages/private/test/PermissionsData'), 1000)
+  pMinDelay(import('./src/pages/private/test/PermissionsData'), 500)
 );
 
 export default function Private() {

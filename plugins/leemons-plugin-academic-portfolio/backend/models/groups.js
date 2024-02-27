@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     name: {
       type: String,
@@ -49,6 +47,13 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ program: 1, type: 1, isAlone: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ program: 1, type: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ program: 1, type: 1, abbreviation: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, program: 1, type: 1, abbreviation: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, type: 1, deploymentID: 1, isDeleted: 1 });
 
 const groupsModel = newModel(mongoose.connection, 'v1::academic-portfolio_Groups', schema);
 

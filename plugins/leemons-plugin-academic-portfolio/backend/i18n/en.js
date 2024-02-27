@@ -566,4 +566,19 @@ module.exports = {
   common: {
     defaultGroupName: 'Default group',
   },
+  classroomPicker: {
+    and: 'and',
+    more: 'more',
+    monday: 'Mo',
+    tuesday: 'Tu',
+    wednesday: 'We',
+    thursday: 'Th',
+    friday: 'Fr',
+    saturday: 'Sa',
+    sunday: 'Su',
+    selectSubject: 'Select subject',
+    noMore: 'No more subjects available',
+    collision: 'Some subjects are not compatible',
+    allSubjects: 'All subjects',
+  },
 };

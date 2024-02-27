@@ -17,7 +17,7 @@ import {
   TabPanel,
   Button,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@common';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';

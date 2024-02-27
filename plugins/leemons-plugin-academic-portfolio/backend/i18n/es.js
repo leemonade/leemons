@@ -567,4 +567,19 @@ module.exports = {
   common: {
     defaultGroupName: 'Grupo por defecto',
   },
+  classroomPicker: {
+    and: 'y',
+    more: 'más',
+    monday: 'Lu',
+    tuesday: 'Ma',
+    wednesday: 'Mi',
+    thursday: 'Ju',
+    friday: 'Vi',
+    saturday: 'Sa',
+    sunday: 'Do',
+    selectSubject: 'Seleccionar asignatura',
+    noMore: 'No hay más asignaturas disponibles',
+    collision: 'Algunas asignaturas no son compatibles',
+    allSubjects: 'Todas las asignaturas',
+  },
 };

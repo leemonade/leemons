@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     fromUserAgent: {
       // ref: 'users_UserAgent',
@@ -56,6 +54,28 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({
+  fromUserAgent: 1,
+  toUserAgent: 1,
+  pluginName: 1,
+  target: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
+
+schema.index({
+  fromUserAgent: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
+
+schema.index({
+  fromUserAgent: 1,
+  toUserAgent: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 
 const userAgentContactsModel = newModel(mongoose.connection, 'v1::users_UserAgentContacts', schema);
 

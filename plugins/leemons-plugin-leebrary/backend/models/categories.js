@@ -6,12 +6,10 @@ const categoriesSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     key: {
@@ -70,6 +68,9 @@ const categoriesSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+categoriesSchema.index({ key: 1, deploymentID: 1, isDeleted: 1 });
+categoriesSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const categoriesModel = newModel(mongoose.connection, 'v1::leebrary_Categories', categoriesSchema);
 

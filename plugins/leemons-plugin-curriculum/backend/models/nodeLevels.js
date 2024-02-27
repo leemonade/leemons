@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     name: {
@@ -40,6 +38,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ curriculum: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const nodeLevelsModel = newModel(mongoose.connection, 'v1::curriculum_nodeLevels', schema);
 

@@ -7,20 +7,20 @@ import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 
 const FeedbackDetail = loadable(() =>
-  pMinDelay(import('./src/pages/private/feedback/Detail'), 1000)
+  pMinDelay(import('./src/pages/private/feedback/Detail'), 500)
 );
 
-const FeedbackList = loadable(() => pMinDelay(import('./src/pages/private/feedback/List'), 1000));
+const FeedbackList = loadable(() => pMinDelay(import('./src/pages/private/feedback/List'), 500));
 
 const FeedbackAssign = loadable(() =>
-  pMinDelay(import('./src/pages/private/feedback/Assign'), 1000)
+  pMinDelay(import('./src/pages/private/feedback/Assign'), 500)
 );
 const StudentInstance = loadable(() =>
-  pMinDelay(import('./src/pages/private/feedback/StudentInstance'), 1000)
+  pMinDelay(import('./src/pages/private/feedback/StudentInstance'), 500)
 );
-const Result = loadable(() => pMinDelay(import('./src/pages/private/feedback/Result'), 1000));
+const Result = loadable(() => pMinDelay(import('./src/pages/private/feedback/Result'), 500));
 
-const Preview = loadable(() => pMinDelay(import('./src/pages/private/feedback/Preview'), 1000));
+const Preview = loadable(() => pMinDelay(import('./src/pages/private/feedback/Preview'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

@@ -8,7 +8,7 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@common/components';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { noop, uniq } from 'lodash';
 import PropTypes from 'prop-types';

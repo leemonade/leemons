@@ -5,13 +5,11 @@ const schema = new mongoose.Schema(
     id: {
       type: String,
       required: true,
-      unique: true,
       index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     key: {
@@ -47,6 +45,9 @@ const schema = new mongoose.Schema(
 );
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
+
+schema.index({ deploymentID: 1, isDeleted: 1, id: 1 });
+schema.index({ deploymentID: 1, isDeleted: 1, key: 1 });
 
 const calendarsModel = newModel(mongoose.connection, 'v1::calendar_calendars', schema);
 

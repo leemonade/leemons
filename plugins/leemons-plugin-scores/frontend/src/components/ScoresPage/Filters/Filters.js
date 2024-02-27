@@ -23,7 +23,8 @@ import useAcademicCalendarDates from './hooks/useAcademicCalendarDates';
 
 export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
   const [t] = useTranslateLoader(prefixPN('scoresPage.filters'));
-  const { control, watch, setValue } = useForm();
+  const form = useForm();
+  const { control, watch, setValue } = form;
   const { classes, cx } = useFiltersStyles({ classID, showProgramSelect });
 
   const centers = getCentersWithToken();
@@ -105,8 +106,8 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
           startDate !== undefined &&
           endDate !== undefined && (
             <Box className={classes.inputs}>
-              <PickDate control={control} name="startDate" defaultValue={startDate} />
-              <PickDate control={control} name="endDate" defaultValue={endDate} />
+              <PickDate form={form} name="startDate" defaultValue={startDate} />
+              <PickDate form={form} name="endDate" defaultValue={endDate} />
             </Box>
           )}
       </Box>

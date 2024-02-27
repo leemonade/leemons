@@ -7,8 +7,8 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Details = loadable(() => pMinDelay(import('./src/components/Details'), 1000));
-const Ongoing = loadable(() => pMinDelay(import('./src/components/Ongoing'), 1000));
+const Details = loadable(() => pMinDelay(import('./src/components/Details'), 500));
+const Ongoing = loadable(() => pMinDelay(import('./src/components/Ongoing'), 500));
 
 export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });

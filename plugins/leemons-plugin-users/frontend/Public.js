@@ -6,11 +6,11 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import Login from './src/pages/public/Login';
 
 const RegisterPassword = loadable(() =>
-  pMinDelay(import('./src/pages/public/RegisterPassword'), 1000)
+  pMinDelay(import('./src/pages/public/RegisterPassword'), 500)
 );
-const Recover = loadable(() => pMinDelay(import('./src/pages/public/Recover'), 1000));
-const Reset = loadable(() => pMinDelay(import('./src/pages/public/Reset'), 1000));
-const Logout = loadable(() => pMinDelay(import('./src/pages/protected/Logout'), 1000));
+const Recover = loadable(() => pMinDelay(import('./src/pages/public/Recover'), 500));
+const Reset = loadable(() => pMinDelay(import('./src/pages/public/Reset'), 500));
+const Logout = loadable(() => pMinDelay(import('./src/pages/protected/Logout'), 500));
 
 export default function Public() {
   const { path } = useRouteMatch();

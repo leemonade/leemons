@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     key: {
       type: String,
@@ -67,6 +65,9 @@ const schema = new mongoose.Schema(
 );
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
+
+schema.index({ key: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const roomModel = newModel(mongoose.connection, 'v1::comunica_Room', schema);
 
