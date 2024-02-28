@@ -262,7 +262,7 @@ module.exports = {
   },
   instructions: {
     instructions: 'Instructions',
-    howItWorks: 'How it works?',
+    howItWorks: 'More information',
     timeLimit1: 'You have',
     timeLimit2: 'to complete the activity.',
     withoutPause1: 'You cannot pause',
