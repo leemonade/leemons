@@ -313,7 +313,6 @@ module.exports = {
     timeLimit1: 'Tienes',
     timeLimit2: 'para hacer el test',
     noTimeLimit: 'Sin límite de tiempo',
-    makeTheTest: 'Hacer el test',
     howItWorks: '¿Cómo funciona?',
     limitedTime: 'Tiempo limitado',
     limitedTimeDescription:
