@@ -2,6 +2,7 @@ import { Alert, Box, Text, createStyles } from '@bubbles-ui/components';
 import { flatMap, uniq } from 'lodash';
 import React from 'react';
 import { useWatch } from 'react-hook-form';
+import propTypes from 'prop-types';
 
 const useSelectedStudentsInfoStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -56,3 +57,10 @@ export default function SelectedStudentsInfo({ control, value, availableClasses,
     </Alert>
   );
 }
+
+SelectedStudentsInfo.propTypes = {
+  control: propTypes.any,
+  value: propTypes.any,
+  availableClasses: propTypes.array,
+  localizations: propTypes.any,
+};

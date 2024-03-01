@@ -66,7 +66,7 @@ module.exports = {
       },
     },
     dates: {
-      title: 'Timespan',
+      title: 'Completion deadline',
       optionsInput: {
         label: 'Timespan',
         options: {

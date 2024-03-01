@@ -19,7 +19,10 @@ const useGroupPickerStyles = createStyles((theme) => ({
     gap: theme.other.global.spacing.gap.lg,
   },
   content: {
-    marginLeft: theme.other.global.spacing.padding.xlg,
+    // marginLeft: theme.other.global.spacing.padding.xlg,
+  },
+  classSelector: {
+    width: '50%',
   },
 }));
 
@@ -81,7 +84,7 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
           name="type"
           control={control}
           render={({ field }) => (
-            <Box>
+            <Box className={classes.classSelector}>
               <Select {...field} data={optionsData} />
             </Box>
           )}
