@@ -299,11 +299,7 @@ module.exports = {
       removeSuccess: 'Asset successfully removed',
       pinnedSuccess: 'Asset successfully pinned',
       unpinnedSuccess: 'Asset successfully unpinned',
-      listEmpty: 'No items found',
-      listEmptyDescription:
-        'Thanks to Leemons Libraries, teachers can manage assignments, tests, and sessions. Both teachers and students can create and share multimedia files and save their favorite web pages.',
-      recentListEmpty: "You haven't created any item in the library.",
-      recentListEmptyDescription: 'The most recent items will appear here.',
+
       searchListEmpty: 'No items found with this search criteria',
       searchListEmptyDescription:
         'Try searching by keywords (tags) or type in more general information and then use the filters to refine the search.',
@@ -337,6 +333,82 @@ module.exports = {
       toggle: 'Toggle',
       open: 'Open',
       covertToTask: 'Assign',
+    },
+    emptyStates: {
+      title: 'There are no {category} yet',
+      'media-files': {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create a {singularCategory}.',
+        description:
+          'Start uploading your media files (images, PDFs, audios, videos...) by clicking {CTA}',
+
+        help: 'And if you need help, access {CTA}',
+      },
+      bookmarks: {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create a {singularCategory}.',
+        description:
+          'A bookmark is a shortcut to a web page that you are interested in keeping handy. Create your first bookmark by copying the web address of the site and clicking {CTA}',
+        help: 'And if you need help, access {CTA}',
+      },
+      pins: {
+        helpCTA: 'How to manage favorites.',
+        description:
+          'Click on the heart icon on the card of any library item to highlight it in this section and have it handy.',
+        help: 'And if you need help, access {CTA}',
+      },
+      'leebrary-shared': {
+        descriptionCTA: 'New',
+        description:
+          'When another user shares a content, resource or activity with you, it will appear highlighted in this section. You have not been shared anything yet but you can start by creating your own materials by clicking the {CTA} button in the upper left area.',
+      },
+      'leebrary-recent': {
+        descriptionCTA: 'New',
+        description:
+          'Here you will find the latest items in the library. Start by clicking the {CTA} button in the top left corner to upload a resource, create a bookmark or a task, or write content and they will appear in this section.',
+      },
+      'assignables.content-creator': {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create {pluralCategory}.',
+        description:
+          'In Leemons, you can create your own documents with content for students. Create your first document by clicking {CTA}',
+        help: 'And if you need help, access {CTA}',
+      },
+      'assignables.task': {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create {pluralCategory}.',
+        description:
+          'Tasks are activities that you can assign to your students to apply what they have learned in a practical way or to demonstrate their knowledge. Create your first task by clicking {CTA}',
+        help: 'And if you need help, access {CTA}',
+      },
+      'tests-questions-banks': {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create {pluralCategory}.',
+        description:
+          'Question banks are the basis for creating assessment tests, you can group your materials by topics in different banks where you classify them by categories and difficulty. Create your first bank by clicking {CTA}',
+        help: 'And if you want to know how they work in detail, access {CTA}',
+      },
+      'assignables.tests': {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create {singularCategory}.',
+        description:
+          'A test is a set of questions selected from a question bank and serves to evaluate knowledge. Create your first test by clicking {CTA}',
+        help: 'And if you want to know how they work in detail, access {CTA}',
+      },
+      'assignables.feedback': {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create {pluralCategory}.',
+        description:
+          'With surveys, you can find out the satisfaction level of your students, request feedback on content, tasks, etc... and view the results in a super useful report. Create your first survey by clicking {CTA}',
+        help: 'And if you want to know how they work in detail, access {CTA}',
+      },
+      'assignables.learningpaths.module': {
+        descriptionCTA: 'New {singularCategory}.',
+        helpCTA: 'How to create {pluralCategory}.',
+        description:
+          'A module is a learning situation that has several stages (a content, test, task...) and that must be carried out consecutively. To create a module, you must first upload or create the contents and activities that comprise it. Start now by clicking {CTA}',
+        help: 'And if you want to know how they work in detail, access {CTA}',
+      },
     },
   },
   pickerDrawer: {
