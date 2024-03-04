@@ -262,7 +262,7 @@ function EvaluationData({
               )} */}
 
             {showCustomObjectives && (
-              <ContextContainer title={labels.objectives}>
+              <ContextContainer>
                 <Objectives form={form} name={objectiveName} labels={labels} />
               </ContextContainer>
             )}
