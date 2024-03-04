@@ -28,8 +28,18 @@ import {
   setProfiles,
   updateSettings,
 } from './settings';
-import { createKnowledge, listKnowledges, updateKnowledge } from './knowledges';
-import { createSubjectType, listSubjectTypes, updateSubjectType } from './subjectTypes';
+import {
+  createKnowledgeArea,
+  listKnowledgeAreas,
+  updateKnowledgeArea,
+  deleteKnowledgeArea,
+} from './knowledges';
+import {
+  createSubjectType,
+  listSubjectTypes,
+  updateSubjectType,
+  deleteSubjectType,
+} from './subjectTypes';
 
 import {
   addStudentsToClass,
@@ -87,13 +97,18 @@ export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
 export const classByIdsRequest = classByIds;
 
-export const createKnowledgeRequest = createKnowledge;
-export const listKnowledgesRequest = listKnowledges;
-export const updateKnowledgeRequest = updateKnowledge;
+export const createKnowledgeRequest = createKnowledgeArea;
+export const listKnowledgesRequest = listKnowledgeAreas;
+export const updateKnowledgeRequest = updateKnowledgeArea;
+export const createKnowledgeAreaRequest = createKnowledgeArea;
+export const updateKnowledgeAreaRequest = updateKnowledgeArea;
+export const listKnowledgeAreasRequest = listKnowledgeAreas;
+export const deleteKnowledgeAreaRequest = deleteKnowledgeArea;
 
 export const createSubjectTypeRequest = createSubjectType;
 export const listSubjectTypesRequest = listSubjectTypes;
 export const updateSubjectTypeRequest = updateSubjectType;
+export const deleteSubjectTypeRequest = deleteSubjectType;
 
 export const getProgramTreeRequest = getProgramTree;
 export const listProgramsRequest = listPrograms;

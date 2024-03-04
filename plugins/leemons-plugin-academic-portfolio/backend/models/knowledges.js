@@ -23,11 +23,13 @@ const schema = new mongoose.Schema(
     },
     color: {
       type: String,
-      required: true,
     },
     icon: {
       type: String,
-      required: true,
+    },
+    center: {
+      // ref: 'plugins_users::centers',
+      type: String,
     },
     program: {
       // ref: 'plugins_academic-portfolio::programs',

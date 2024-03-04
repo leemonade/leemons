@@ -29,6 +29,81 @@ module.exports = {
       btn: 'Crear árbol',
     },
   },
+  subjectTypes_page: {
+    header: {
+      title: 'Tipos de Asignatura',
+      cancel: 'Cancelar',
+      centerSelectPlaceholder: 'Selecciona un centro',
+    },
+    table: {
+      headers: { name: 'Nombre' },
+      labels: {
+        linkToReferenceGroup: 'Vincular a Grupo de Referencia',
+        linkedToReferenceGroup: 'Vinculado a Grupo de Referencia',
+        notLinkedToReferenceGroup: 'No vinculado',
+        add: 'Añadir',
+        remove: 'Eliminar (habilitado sólo para no utilizados)',
+        edit: 'Editar',
+        accept: 'Aceptar',
+        cancel: 'Cancelar',
+      },
+    },
+    alerts: {
+      success: {
+        add: 'Tipo de Asignatura creado con éxito.',
+        update: 'Tipo de Asignatura actualizado con éxito.',
+        delete: 'Tipo de Asignatora eliminado con éxito.',
+      },
+      failure: {
+        add: 'No se ha podido crear el Tipo de asignatura. ',
+        update: 'No se ha podido actualizar el Tipo de asignatura. ',
+        delete: 'No se ha podido eliminar el Tipo de Asignatura. ',
+      },
+    },
+    errors: {
+      requiredField: 'Campo requerido',
+    },
+    emptyState: {
+      text: 'Crea un tipo de asignatura. Solo ingresa el nombre y presiona añadir en el formulario de arriba.',
+      altText: 'Añade tu primer tipo de asignatura.',
+    },
+  },
+  knowledgeAreas_page: {
+    header: {
+      title: 'Áreas de Conocimiento',
+      cancel: 'Cancelar',
+      centerSelectPlaceholder: 'Selecciona un centro',
+    },
+    table: {
+      headers: { name: 'Nombre', alias: 'Alias' },
+      labels: {
+        add: 'Añadir',
+        remove: 'Eliminar (habilitado sólo para no utilizadas)',
+        edit: 'Editar',
+        accept: 'Aceptar',
+        cancel: 'Cancelar',
+      },
+    },
+    alerts: {
+      success: {
+        add: 'Área de Conocimiento creada con éxito.',
+        update: 'Área de Conocimiento actualizada con éxito.',
+        delete: 'Área de Conocimiento eliminada con éxito.',
+      },
+      failure: {
+        add: 'No se ha podido crear el Área de Conocimiento. ',
+        update: 'No se ha podido actualizar el Área de Conocimiento. ',
+        delete: 'No se ha podido eliminar el Área de Conocimiento. ',
+      },
+    },
+    errors: {
+      requiredField: 'Campo requerido',
+    },
+    emptyState: {
+      text: 'Crea un Área de Conocimiento. Solo ingresa el nombre, el alias y presiona añadir en el formulario de arriba.',
+      altText: 'Añade tu primer Área de Conocimiento.',
+    },
+  },
   programs_page: {
     page_title: 'Programas formativos',
     page_description:

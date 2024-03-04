@@ -17,19 +17,29 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    groupVisibility: {
-      type: Boolean,
-      required: true,
-    },
-    program: {
-      // ref: 'plugins_academic-portfolio::programs',
+    center: {
+      // ref: 'plugins_users::centers',
       type: String,
+    },
+    createsReferenceGroup: {
+      // A flag indicating whether subjects of this type will create a reference group
+      type: Boolean,
+      default: false,
     },
     credits_course: {
       type: Number,
     },
     credits_program: {
       type: Number,
+    },
+    groupVisibility: {
+      // Outdated?
+      type: Boolean,
+      required: true,
+    },
+    program: {
+      // OUTDATED ref: 'plugins_academic-portfolio::programs',
+      type: String,
     },
   },
   {

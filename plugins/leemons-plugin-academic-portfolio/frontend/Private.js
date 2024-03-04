@@ -9,6 +9,8 @@ import { goLoginPage } from '@users/navigate';
 const Welcome = loadable(() => pMinDelay(import('./src/pages/private/WelcomePage'), 500));
 const Profiles = loadable(() => pMinDelay(import('./src/pages/private/ProfilesPage'), 500));
 const Tree = loadable(() => pMinDelay(import('./src/pages/private/TreePage'), 500));
+const SubjectTypes = loadable(() => pMinDelay(import('./src/pages/private/SubjectTypesPage')));
+const KnowledgeAreas = loadable(() => pMinDelay(import('./src/pages/private/KnowledgeAreasPage')));
 const ProgramList = loadable(() =>
   pMinDelay(import('./src/pages/private/programs/ProgramList'), 500)
 );
@@ -36,6 +38,12 @@ export default function Private() {
       </Route>
       <Route path={`${path}/tree`}>
         <Tree session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/subject-types`}>
+        <SubjectTypes session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/knowledge-areas`}>
+        <KnowledgeAreas session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>
   );

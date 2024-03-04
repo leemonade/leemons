@@ -6,9 +6,14 @@ const { saveManagers } = require('../managers/saveManagers');
 async function addKnowledge({ data: _data, ctx }) {
   await validateAddKnowledge({ data: _data, ctx });
   const { subjects, managers, ...data } = _data;
-  const knowledgeDoc = await ctx.tx.db.Knowledges.create(data);
-  const knowledge = knowledgeDoc.toObject();
-  await saveManagers({ userAgents: managers, type: 'knowledge', relationship: knowledge.id, ctx });
+  const knowledgeAreaDoc = await ctx.tx.db.Knowledges.create(data);
+  const knowledgeArea = knowledgeAreaDoc.toObject();
+  await saveManagers({
+    userAgents: managers,
+    type: 'knowledge',
+    relationship: knowledgeArea.id,
+    ctx,
+  });
   if (subjects && subjects.length) {
     const classes = await ctx.tx.db.Class.find({
       subject: subjects,
@@ -17,12 +22,12 @@ async function addKnowledge({ data: _data, ctx }) {
     await updateClassMany({
       data: {
         ids: map(classes, 'id'),
-        knowledge: knowledge.id,
+        knowledge: knowledgeArea.id,
       },
       ctx,
     });
   }
-  return knowledge;
+  return knowledgeArea;
 }
 
 module.exports = { addKnowledge };

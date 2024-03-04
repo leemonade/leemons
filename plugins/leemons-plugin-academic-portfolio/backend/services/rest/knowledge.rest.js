@@ -11,6 +11,7 @@ const {
 } = require('@leemons/middlewares');
 
 const { addKnowledge, updateKnowledge, listKnowledges } = require('../../core/knowledges');
+const { removeKnowledgeArea } = require('../../core/knowledges/removeKnowledgeArea');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -76,20 +77,43 @@ module.exports = {
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
           program: { type: 'string' },
+          center: { type: 'string' },
         },
-        required: ['page', 'size', 'program'],
+        required: ['page', 'size'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const { page, size, program } = ctx.params;
+        const { page, size, center } = ctx.params;
         const data = await listKnowledges({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
-          program,
+          center,
+          ctx,
         });
         return { status: 200, data };
       }
       throw validator.error;
+    },
+  },
+  deleteSubjectTypeRest: {
+    rest: {
+      path: '/:id',
+      method: 'DELETE',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'delete'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { id, soft } = ctx.params;
+      const data = await removeKnowledgeArea({ id, soft, ctx });
+      return { status: 200, data };
     },
   },
 };

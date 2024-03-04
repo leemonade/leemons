@@ -30,6 +30,81 @@ module.exports = {
       btn: 'Create your tree',
     },
   },
+  subjectTypes_page: {
+    header: {
+      title: 'Subject Types',
+      cancel: 'Cancel',
+      centerSelectPlaceholder: 'Select a center',
+    },
+    table: {
+      headers: { name: 'Name' },
+      labels: {
+        linkToReferenceGroup: 'Link to Reference Group',
+        linkedToReferenceGroup: 'Linked to Reference Group',
+        notLinkedToReferenceGroup: 'Not linked',
+        add: 'Add',
+        remove: 'Remove (enabled only for unused)',
+        edit: 'Edit',
+        accept: 'Accept',
+        cancel: 'Cancel',
+      },
+    },
+    alerts: {
+      success: {
+        add: 'Subject Type created successfully.',
+        update: 'Subject Type updated successfully.',
+        delete: 'Subject Type deleted successfully.',
+      },
+      failure: {
+        add: 'Could not create the Subject Type. ',
+        update: 'Could not update the Subject Type. ',
+        delete: 'Could not delete the Subject Type. ',
+      },
+    },
+    errors: {
+      requiredField: 'Required field',
+    },
+    emptyState: {
+      text: 'Create a subject type. Just enter the name and press add on the form above.',
+      altText: 'Add your first subject type.',
+    },
+  },
+  knowledgeAreas_page: {
+    header: {
+      title: 'Knowledge Areas',
+      cancel: 'Cancel',
+      centerSelectPlaceholder: 'Select a center',
+    },
+    table: {
+      headers: { name: 'Name', alias: 'Alias' },
+      labels: {
+        add: 'Add',
+        remove: 'Remove (enabled only for unused)',
+        edit: 'Edit',
+        accept: 'Accept',
+        cancel: 'Cancel',
+      },
+    },
+    alerts: {
+      success: {
+        add: 'Knowledge Area created successfully.',
+        update: 'Knowledge Area updated successfully.',
+        delete: 'Knowledge Area deleted successfully.',
+      },
+      failure: {
+        add: 'Could not create the Knowledge Area. ',
+        update: 'Could not update the Knowledge Area. ',
+        delete: 'Could not delete the Knowledge Area. ',
+      },
+    },
+    errors: {
+      requiredField: 'Required field',
+    },
+    emptyState: {
+      text: 'Create a Knowledge Area. Just enter the name, the alias, and press add on the form above.',
+      altText: 'Add your first Knowledge Area.',
+    },
+  },
   programs_page: {
     page_title: 'Learning programs',
     page_description:
