@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { uniq } from 'lodash';
 import NYACard from '@assignables/components/NYACard';
+import { HtmlText } from '@bubbles-ui/components';
 import { Container } from '../Container';
 
 export default function Preview({ assignable, localizations }) {
@@ -16,6 +17,11 @@ export default function Preview({ assignable, localizations }) {
       asset: {
         ...assignable?.asset,
         name: values?.title ?? assignable?.asset?.name,
+        description: values?.instructions ? (
+          <HtmlText>{values?.instructions}</HtmlText>
+        ) : (
+          assignable?.asset?.description
+        ),
       },
     },
     classes: uniq(values?.students?.value?.flatMap((group) => group.group)),

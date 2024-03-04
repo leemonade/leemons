@@ -118,6 +118,7 @@ export default function Form({
   showMessageForStudents,
   showReport,
   showResponses,
+  stepName,
 
   scrollRef,
 
@@ -174,6 +175,7 @@ export default function Form({
               }
             />
           }
+          stepName={stepName}
         >
           <Box className={classes.root}>
             <Box className={classes.leftColumn}>
@@ -320,4 +322,5 @@ Form.propTypes = {
   showMessageForStudents: PropTypes.bool,
   showReport: PropTypes.bool,
   showResponses: PropTypes.bool,
+  stepName: PropTypes.string,
 };
