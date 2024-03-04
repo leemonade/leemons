@@ -120,7 +120,7 @@ export default function Login() {
       setFormError(tCommon('unknown_error'));
     } else {
       setFormStatus(UNKNOWN_ERROR);
-      setFormError(err.message);
+      setFormError(err.message || tCommon('unknown_error'));
     }
   };
 
