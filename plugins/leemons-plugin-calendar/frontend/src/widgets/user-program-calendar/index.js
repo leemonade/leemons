@@ -16,6 +16,7 @@ import { listSessionClassesRequest } from '@academic-portfolio/request';
 import hooks from 'leemons-hooks';
 import { getCalendarsToFrontendRequest } from '../../request';
 import useTransformEvent from '../../helpers/useTransformEvent';
+import EmptyState from './components/EmptyState/EmptyState';
 
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
@@ -204,8 +205,6 @@ function UserProgramCalendar({
     openEventModal();
   };
 
-  // if (store.loading) return null;
-
   return (
     <Box className={styles.root}>
       {!inTab ? (
@@ -230,7 +229,9 @@ function UserProgramCalendar({
           </Box>
         </Stack>
       ) : null}
-      {!store.loading ? (
+
+      {!store.loading && !store.filteredEvents.length && <EmptyState />}
+      {!store.loading && !!store.filteredEvents.length && (
         <Box className={styles.calendarContainer}>
           <EventModal
             centerToken={store.centers[0].token}
@@ -277,9 +278,8 @@ function UserProgramCalendar({
             showToolbarPeriodSelector={showToolbarPeriodSelector}
           />
         </Box>
-      ) : (
-        <Loader />
       )}
+      {store.loading && <Loader />}
     </Box>
   );
 }
