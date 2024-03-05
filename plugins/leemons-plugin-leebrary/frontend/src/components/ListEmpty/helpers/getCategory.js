@@ -10,5 +10,13 @@ export function getCategory({ category, t }) {
     return { ...category, pluralName: t('sharedWithMe').toLowerCase() };
   }
 
+  if (category?.key?.startsWith('leebrary-subject')) {
+    return {
+      ...category,
+      key: 'leebrary-subject',
+      pluralName: t('subjects').toLowerCase(),
+    };
+  }
+
   return category ?? {};
 }
