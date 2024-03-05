@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Stack, Text, ImageLoader, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@leebrary/helpers';
+import { RenderTextWithCTAs } from '@common/components';
 import { useImage } from './hooks/useImage';
 import { useListEmptyStyles } from './ListEmpty.styles';
-import { RenderTextWithCTAs } from './components/RenderTextWithCTAs';
 import { getCategory } from './helpers/getCategory';
 
 function ListEmpty({ t, category }) {
@@ -30,18 +30,30 @@ function ListEmpty({ t, category }) {
             {t(`emptyStates.title`, { category: pluralName })}
           </Text>
           <RenderTextWithCTAs
-            text={`emptyStates.${categoryKey}.description`}
-            cta={`emptyStates.${categoryKey}.descriptionCTA`}
-            URL={category.createUrl ?? '/private/leebrary/media-files/new'}
-            replacers={{ singularCategory: singularName, pluralCategory: pluralName }}
             t={t}
+            text={`emptyStates.${categoryKey}.description`}
+            replacers={{
+              singularCategory: singularName,
+              pluralCategory: pluralName,
+              CTA: {
+                type: 'linkT',
+                url: category.createUrl ?? '/private/leebrary/media-files/new',
+                value: `emptyStates.${categoryKey}.descriptionCTA`,
+              },
+            }}
           />
           <RenderTextWithCTAs
-            text={`emptyStates.${categoryKey}.help`}
-            cta={`emptyStates.${categoryKey}.helpCTA`}
-            URL={'https://leemons.io/academy'}
-            replacers={{ singularCategory: singularName, pluralCategory: pluralName }}
             t={t}
+            text={`emptyStates.${categoryKey}.help`}
+            replacers={{
+              singularCategory: singularName,
+              pluralCategory: pluralName,
+              CTA: {
+                type: 'linkT',
+                url: 'https://leemons.io/academy',
+                value: `emptyStates.${categoryKey}.helpCTA`,
+              },
+            }}
           />
         </Stack>
       </Stack>
