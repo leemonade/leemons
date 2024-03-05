@@ -55,7 +55,7 @@ export function EmptyState() {
                   CTA: {
                     type: 'linkT',
                     value: 'helpCenter.cta',
-                    url: leemons.HELPDESK_URL,
+                    url: 'https://www.leemons.io/leemons-academy',
                   },
                 }}
               />
@@ -77,7 +77,7 @@ export function EmptyState() {
                   CTA: {
                     type: 'linkT',
                     value: 'leebrary.cta',
-                    url: leemons.HELPDESK_URL,
+                    url: 'https://www.leemons.io/leemons-academy',
                   },
                 }}
               />
@@ -139,7 +139,7 @@ export function EmptyState() {
                 CTA: {
                   type: 'linkT',
                   value: 'helpCenter.cta',
-                  url: leemons.HELPDESK_URL,
+                  url: 'https://www.leemons.io/leemons-academy',
                 },
               }}
             />

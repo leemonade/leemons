@@ -22,7 +22,11 @@ export function EmptyState() {
           text="description"
           replacers={{
             newCTA: { type: 'linkT', value: 'newCTA' },
-            menuCTA: { type: 'linkT', value: 'menuCTA', url: leemons.HELPDESK_URL },
+            menuCTA: {
+              type: 'linkT',
+              value: 'menuCTA',
+              url: 'https://www.leemons.io/leemons-academy',
+            },
           }}
         />
       </Stack>

@@ -50,7 +50,7 @@ function ListEmpty({ t, category }) {
               pluralCategory: pluralName,
               CTA: {
                 type: 'linkT',
-                url: 'https://leemons.io/academy',
+                url: 'https://www.leemons.io/leemons-academy',
                 value: `emptyStates.${categoryKey}.helpCTA`,
               },
             }}
