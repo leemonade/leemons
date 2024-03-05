@@ -356,7 +356,7 @@ module.exports = {
       },
       'leebrary-subject': {
         description:
-          'Cuando tus profesores compartan recursos de clase contigo aparecerán en estás carpetas. También puedes almacenar tu contenido en esta carpeta etiquetándolos con una asignatura.',
+          'Cuando tus profesores compartan recursos de clase contigo aparecerán en estas carpetas. También puedes almacenar tu contenido en esta carpeta etiquetándolos con una asignatura.',
         help: 'Y si necesitas ayuda accede a {CTA}',
         helpCTA: 'Cómo etiquetar contenidos',
       },

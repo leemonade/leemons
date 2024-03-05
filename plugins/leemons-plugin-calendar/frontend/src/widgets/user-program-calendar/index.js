@@ -230,15 +230,17 @@ function UserProgramCalendar({
         </Stack>
       ) : null}
 
-      {!store.loading && !store.filteredEvents.length && <EmptyState />}
+      {!store.loading && !store.filteredEvents?.length && <EmptyState onNewEvent={onNewEvent} />}
+      {!store.loading && (
+        <EventModal
+          centerToken={store.centers[0].token}
+          event={store.selectedEvent}
+          close={toggleEventModal}
+          classCalendars={store.calendarFilters}
+        />
+      )}
       {!store.loading && !!store.filteredEvents.length && (
         <Box className={styles.calendarContainer}>
-          <EventModal
-            centerToken={store.centers[0].token}
-            event={store.selectedEvent}
-            close={toggleEventModal}
-            classCalendars={store.calendarFilters}
-          />
           <BigCalendar
             style={{ height: '100%' }}
             currentView="agenda"
