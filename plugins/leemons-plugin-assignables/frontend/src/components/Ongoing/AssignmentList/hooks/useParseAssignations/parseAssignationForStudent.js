@@ -57,6 +57,7 @@ function useProgressLocalizations() {
 export function Progress({ assignation, isBlocked }) {
   const { instance } = assignation;
   const { classes } = instance;
+  const isModule = instance.metadata?.module?.type === 'module';
 
   const labels = useProgressLocalizations();
 
@@ -65,7 +66,7 @@ export function Progress({ assignation, isBlocked }) {
 
   const { requiresScoring, allowFeedback } = instance;
 
-  const isEvaluable = requiresScoring || allowFeedback;
+  const isEvaluable = !isModule && (requiresScoring || allowFeedback);
   // TODO: Add if has any feedback when only allowFeedback
   const hasAllGrades = React.useMemo(
     () =>
