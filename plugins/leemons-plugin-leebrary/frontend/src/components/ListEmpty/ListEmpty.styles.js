@@ -14,7 +14,6 @@ export const useListEmptyStyles = createStyles((theme) => ({
     ...theme.other.global.content.typo.body.lg,
     textAlign: 'center',
   },
-  cta: {
-    fontWeight: 600,
-  },
 }));
+
+export default useListEmptyStyles;
