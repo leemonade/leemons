@@ -154,6 +154,7 @@ module.exports = {
     addTag: 'Add',
     previous: 'Previous',
     continue: 'Continue',
+    next: 'Next',
     onlyPublish: 'Only publish',
     publishAndAssign: 'Publish and assign',
     questionsBank: 'Questions Bank',

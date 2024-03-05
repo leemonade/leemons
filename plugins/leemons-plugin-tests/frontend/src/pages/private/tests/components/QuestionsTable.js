@@ -78,37 +78,35 @@ export default function QuestionsTable({
   const tableItems = React.useMemo(
     () =>
       questions && questions.length
-        ? map(questions, (item) => {
-            return {
-              ...getQuestionForTable(item, t2, styles),
-              check: (
-                <Checkbox
-                  checked={value ? value.includes(item.id) : false}
-                  onChange={() => {
-                    const index = value.indexOf(item.id);
-                    if (index >= 0) {
-                      value.splice(index, 1);
-                    } else {
-                      value.push(item.id);
-                    }
+        ? map(questions, (item) => ({
+            ...getQuestionForTable(item, t2, styles),
+            check: (
+              <Checkbox
+                checked={value ? value.includes(item.id) : false}
+                onChange={() => {
+                  const index = value.indexOf(item.id);
+                  if (index >= 0) {
+                    value.splice(index, 1);
+                  } else {
+                    value.push(item.id);
+                  }
 
-                    onChange(value);
-                  }}
+                  onChange(value);
+                }}
+              />
+            ),
+            actions: () => (
+              <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
+                <ActionButton
+                  as={Link}
+                  target="_blank"
+                  to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
+                  tooltip={t('view')}
+                  icon={<ExpandDiagonalIcon />}
                 />
-              ),
-              actions: () => (
-                <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
-                  <ActionButton
-                    as={Link}
-                    target="_blank"
-                    to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
-                    tooltip={t('view')}
-                    icon={<ExpandDiagonalIcon />}
-                  />
-                </Box>
-              ),
-            };
-          })
+              </Box>
+            ),
+          }))
         : [],
     [t, questions, value]
   );

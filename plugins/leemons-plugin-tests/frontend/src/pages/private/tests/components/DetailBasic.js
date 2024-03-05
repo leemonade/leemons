@@ -59,7 +59,7 @@ export default function DetailBasic({
                 disabled={store.saving}
                 loading={store.saving === 'publish'}
               >
-                {t('continue')}
+                {t('next')}
               </Button>
             </>
           }

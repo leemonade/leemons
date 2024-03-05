@@ -97,7 +97,7 @@ export default function DetailEvaluation({
                   disabled={store.saving}
                   loading={store.saving === 'publish'}
                 >
-                  {t('continue')}
+                  {t('next')}
                 </Button>
               )}
             </>

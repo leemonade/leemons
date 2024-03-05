@@ -171,9 +171,9 @@ export default function DetailQuestions({
 
   const getNextButtonLabel = () => {
     if (!isNil(store.questionsFiltered)) {
-      return reorderMode ? 'continue' : 'assignSelectedQuestions';
+      return reorderMode ? 'next' : 'assignSelectedQuestions';
     }
-    return 'continue';
+    return 'next';
   };
 
   return (
@@ -284,4 +284,6 @@ DetailQuestions.propTypes = {
   stepName: PropTypes.string,
   scrollRef: PropTypes.any,
   isLastStep: PropTypes.bool,
+  onPublish: PropTypes.func,
+  onAssign: PropTypes.func,
 };

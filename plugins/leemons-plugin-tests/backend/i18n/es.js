@@ -153,6 +153,7 @@ module.exports = {
     addTag: 'Añadir',
     previous: 'Anterior',
     continue: 'Continuar',
+    next: 'Siguiente',
     onlyPublish: 'Solo publicar',
     publishAndAssign: 'Publicar y asignar',
     questionsBank: 'Banco de preguntas',
