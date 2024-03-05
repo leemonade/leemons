@@ -27,7 +27,12 @@ function ListEmpty({ t, category }) {
         </Box>
         <Stack direction="column" spacing={4} sx={{ maxWidth: 502 }}>
           <Text color="primary" className={cx(classes.text, classes.title)}>
-            {t(`emptyStates.title`, { category: pluralName })}
+            {t(
+              categoryKey === 'leebrary-subject'
+                ? `emptyStates.${categoryKey}.title`
+                : `emptyStates.title`,
+              { category: pluralName }
+            )}
           </Text>
           <RenderTextWithCTAs
             t={t}

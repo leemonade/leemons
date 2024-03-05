@@ -368,6 +368,7 @@ module.exports = {
           'Here you will find the latest items in the library. Start by clicking the {CTA} button in the top left corner to upload a resource, create a bookmark or a task, or write content and they will appear in this section.',
       },
       'leebrary-subject': {
+        title: 'There is no content for your subjects yet',
         description:
           'When your teachers share class resources with you, they will appear in these folders. You can also store your content in this folder by tagging them with a subject.',
         help: 'And if you need help, access {CTA}',

@@ -20,3 +20,5 @@ export function getCategory({ category, t }) {
 
   return category ?? {};
 }
+
+export default getCategory;

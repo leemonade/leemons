@@ -185,10 +185,10 @@ export async function parseAssignationForStudentView(assignation, labels, option
 
   const commonData = await parseAssignationForCommonView(instance, labels, options);
 
-  const blockingActivitiesById = options.blockingActivities;
-  const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
+  // const blockingActivitiesById = options.blockingActivities;
+  // const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
 
-  const isBlocked = blockingActivities.some((id) => !blockingActivitiesById?.[id]?.finished);
+  const isBlocked = false; // blockingActivities.some((id) => !blockingActivitiesById?.[id]?.finished);
 
   return {
     ...commonData,

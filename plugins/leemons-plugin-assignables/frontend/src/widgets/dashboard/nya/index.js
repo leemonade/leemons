@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ContextContainer, Button } from '@bubbles-ui/components';
+import { Box, ContextContainer, Button, Loader } from '@bubbles-ui/components';
 
 import { Link } from 'react-router-dom';
 import useClassData from '@assignables/hooks/useClassDataQuery';
@@ -27,7 +27,16 @@ export default function NYA({ classe, program }) {
   const evaluationsClassData = useClassData(evaluations.activities, localizations);
   const { classes } = useNyaStyles();
 
-  const isEmpty = isStudent ? !activities?.length && !evaluations?.length : !activities?.length;
+  const isEmpty = isStudent
+    ? activities.count === 0 && evaluations.count === 0
+    : activities.count === 0;
+  const isLoading = isStudent
+    ? activities.isLoading || evaluations.isLoading
+    : activities.isLoading;
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   if (isEmpty) {
     return (
