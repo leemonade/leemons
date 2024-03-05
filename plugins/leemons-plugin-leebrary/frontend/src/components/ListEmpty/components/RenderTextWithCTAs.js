@@ -22,6 +22,8 @@ export function RenderTextWithCTAs({ t, text, cta, replacers, URL }) {
                 href={URL}
                 key={index}
                 className={cx(classes.text, classes.cta)}
+                target={isExternal ? '_blank' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
               >
                 {t(cta, replacers)}
               </Anchor>
