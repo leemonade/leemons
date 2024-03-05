@@ -29,12 +29,7 @@ export * from './useBeforeUnload';
 export * from './context';
 export * from './share';
 export * from './hashObject';
-
-function htmlToText(html) {
-  const el = document.createElement('div');
-  el.innerHTML = html;
-  return el.innerText;
-}
+export * from './htmlToText';
 
 export {
   formWithTheme,
@@ -43,5 +38,4 @@ export {
   unflatten,
   useRequestErrorMessage,
   getRequestErrorMessage,
-  htmlToText,
 };

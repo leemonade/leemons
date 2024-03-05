@@ -3,7 +3,7 @@ import { Box, Text, TextClamp, Badge } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPn from '@learning-paths/helpers/prefixPN';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { htmlToText } from '@learning-paths/components/ModuleDashboard/helpers/htmlToText';
+import { htmlToText } from '@common';
 import { useDashboardCardBodyStyles } from './DashboardCardBody.styles';
 import {
   DASHBOARD_CARD_BODY_DEFAULT_PROPS,

@@ -21,7 +21,7 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import { useSearchParams, useStore } from '@common';
+import { useSearchParams, useStore, htmlToText } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -58,7 +58,6 @@ import {
 import { ResultStyles } from './Result.style';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
-import { htmlToText } from './StudentInstance/helpers/htmlToText';
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('testResult'));

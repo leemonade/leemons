@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, HtmlText, ImageLoader, Radio, Stack, Text } from '@bubbles-ui/components';
 import { LeebraryImage } from '@leebrary/components';
-import { numberToEncodedLetter } from '@common';
+import { numberToEncodedLetter, htmlToText } from '@common';
 import { find } from 'lodash';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
-import { htmlToText } from '../../../helpers/htmlToText';
 
 export default function Responses(props) {
   const { styles, question, store, render, cx, t } = props;

@@ -3,13 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { find, forEach, isNumber } from 'lodash';
 import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
+import { htmlToText } from '@common';
 import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import { QuestionImage } from '../../../../../../../components/QuestionImage';
 import Responses from './Responses';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
-import { htmlToText } from '../../../helpers/htmlToText';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast, cx } = props;
