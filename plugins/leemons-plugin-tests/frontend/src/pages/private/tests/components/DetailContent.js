@@ -14,6 +14,7 @@ import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller } from 'react-hook-form';
+// import Objectives from '@tasks/components/TaskSetupPage/components/Objectives';
 
 export default function DetailContent({
   t,
@@ -97,6 +98,8 @@ export default function DetailContent({
                   required
                   error={isDirty ? form.formState.errors.statement : null}
                   label={t('statementLabel')}
+                  placeholder={t('statementPlaceholder')}
+                  editorStyles={{ height: '64px' }}
                   {...field}
                 />
               )}
@@ -127,15 +130,14 @@ export default function DetailContent({
 
           <ContextContainer title={t('other')}>
             <Stack direction="column">
-              {/*
               <Controller
                 control={form.control}
                 name="config.hasResources"
                 render={({ field }) => (
-                  <Switch {...field} checked={field.value} label="Añadir recursos" />
+                  <Switch {...field} checked={field.value} label={t('addResourcesLabel')} />
                 )}
               />
-              */}
+
               <Controller
                 control={form.control}
                 name="config.hasInstructions"
@@ -145,8 +147,8 @@ export default function DetailContent({
               />
             </Stack>
           </ContextContainer>
-          {/*
-          <ContextContainer title={t('curriculum')} subtitle={subject ? subject.label : null}>
+
+          {/* <ContextContainer title={t('curriculum')} subtitle={subject ? subject.label : null}>
             <Curriculum
               program={form.getValues('program')}
               subjects={_.map(form.getValues('subjects'), 'subject')}
@@ -154,14 +156,13 @@ export default function DetailContent({
               control={form.control}
               addLabel={t('addFromCurriculum')}
             />
-          </ContextContainer>
+          </ContextContainer> */}
 
-          <Objectives
+          {/* <Objectives
             form={form}
             name={`curriculum.objectives`}
             label={t('objectivesCurriculum')}
-          />
-          */}
+          /> */}
         </ContextContainer>
       </Box>
     </TotalLayoutStepContainer>
