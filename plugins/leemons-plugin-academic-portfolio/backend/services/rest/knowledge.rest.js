@@ -10,7 +10,11 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { addKnowledge, updateKnowledge, listKnowledges } = require('../../core/knowledges');
+const {
+  addKnowledgeArea,
+  updateKnowledgeArea,
+  listKnowledgeAreas,
+} = require('../../core/knowledges');
 const { removeKnowledgeArea } = require('../../core/knowledges/removeKnowledgeArea');
 
 /** @type {ServiceSchema} */
@@ -31,7 +35,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const knowledge = await addKnowledge({ data: ctx.params, ctx });
+      const knowledge = await addKnowledgeArea({ data: ctx.params, ctx });
       return { status: 200, knowledge };
     },
   },
@@ -51,7 +55,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const knowledge = await updateKnowledge({ data: ctx.params, ctx });
+      const knowledge = await updateKnowledgeArea({ data: ctx.params, ctx });
       return { status: 200, knowledge };
     },
   },
@@ -84,7 +88,7 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         const { page, size, center } = ctx.params;
-        const data = await listKnowledges({
+        const data = await listKnowledgeAreas({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           center,

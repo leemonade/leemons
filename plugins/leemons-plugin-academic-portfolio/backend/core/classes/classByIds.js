@@ -85,7 +85,7 @@ async function classByIds({
     originalGroups,
   ] = await Promise.all([
     ctx.tx.db.SubjectTypes.find({ id: _.map(classes, 'subjectType') }).lean(),
-    ctx.tx.db.Knowledges.find({ id: _.map(knowledges, 'knowledge') }).lean(),
+    ctx.tx.db.KnowledgeAreas.find({ id: _.map(knowledges, 'knowledge') }).lean(),
     subjectByIds({ ids: _.map(classes, 'subject'), ctx }),
     ctx.tx.db.Groups.find({ id: _.map(substages, 'substage') }).lean(),
     ctx.tx.db.Groups.find({ id: _.map(courses, 'course') }).lean(),

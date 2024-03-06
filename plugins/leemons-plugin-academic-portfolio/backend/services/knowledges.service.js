@@ -10,7 +10,7 @@ const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/knowledge.rest');
-const { addKnowledge } = require('../core/knowledges');
+const { addKnowledgeArea } = require('../core/knowledges');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -29,7 +29,7 @@ module.exports = {
     ...restActions,
     addKnowledge: {
       handler(ctx) {
-        return addKnowledge({ ...ctx.params, ctx });
+        return addKnowledgeArea({ ...ctx.params, ctx });
       },
     },
   },

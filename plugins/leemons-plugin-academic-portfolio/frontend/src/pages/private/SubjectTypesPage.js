@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Select,
   TableInput,
   TextInput,
-  Checkbox,
+  Button,
+  ContextContainer,
   TotalLayoutContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
@@ -14,6 +15,7 @@ import {
   Stack,
   Box,
 } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useUserCenters } from '@users/hooks';
 import {
@@ -29,18 +31,16 @@ import SubjectTypesEmptyState from '@academic-portfolio/components/SubjectTypesE
 const SubjectTypesPage = () => {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('subjectTypes_page'));
   const [subjectTypes, setSubjectTypes] = useState([]);
-  const [centerValue, setCenterValue] = useState('');
+  const [selectedCenter, setSelectedCenter] = useState('');
   const [showEmptyState, setShowEmptyState] = useState(false);
   const history = useHistory();
   const queryClient = useQueryClient();
-  const [canLinkToReferenceGroup, setCanLinkToReferenceGroup] = useState(true);
   const { data: userCenters, isLoading: centersLoading } = useUserCenters();
   const { mutate: createSubjectType, isLoading: isCreateLoading } = useCreateSubjectType();
   const { mutate: updateSubjectType, isLoading: isUpdateLoading } = useUpdateSubjectType();
   const { mutate: deleteSubjectType, isLoading: isDeleteLoading } = useDeleteSubjectType();
-
-  const referenceGroupRef = useRef();
   const scrollRef = useRef();
+  const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
 
   // INIT & EFFECTS ------------------------------------------------------------------------------------------------ ||
 
@@ -49,43 +49,12 @@ const SubjectTypesPage = () => {
     [userCenters]
   );
   const { data: subjectTypesQuery, isLoading: subjectTypesLoading } = useSubjectTypes({
-    center: centerValue,
-    options: { enabled: centerValue?.length > 0 },
+    center: selectedCenter,
+    options: { enabled: selectedCenter?.length > 0 },
   });
 
-  useEffect(() => {
-    if (subjectTypesQuery?.length) {
-      const referenceGroupLink = subjectTypesQuery.filter((item) => item.createsReferenceGroup)[0];
-      if (referenceGroupLink) {
-        referenceGroupRef.current = { enablerValue: referenceGroupLink.id };
-      }
-      setSubjectTypes([...subjectTypesQuery]);
-      if (showEmptyState) setShowEmptyState(false);
-    } else {
-      setSubjectTypes([]);
-      if (!showEmptyState) setShowEmptyState(true);
-      if (!canLinkToReferenceGroup) setCanLinkToReferenceGroup(true);
-    }
-  }, [subjectTypesQuery]);
-
-  useEffect(() => {
-    if (subjectTypes?.length) {
-      const roleIsTakenAlready = subjectTypes.some(
-        (subjectType) => subjectType.createsReferenceGroup
-      );
-      setCanLinkToReferenceGroup(!roleIsTakenAlready);
-    }
-  }, [subjectTypes]);
-
-  // **Activated for the center Select to automatically pick a center when first loaded
-  useEffect(() => {
-    if (centersData?.length) {
-      setCenterValue(centersData[0].value);
-    }
-  }, [centersData]);
-
   const isLoading = useMemo(() => {
-    const waitForSubjectTypesList = centerValue?.length > 0 && subjectTypesLoading;
+    const waitForSubjectTypesList = selectedCenter?.length > 0 && subjectTypesLoading;
     return (
       tLoading ||
       centersLoading ||
@@ -95,7 +64,7 @@ const SubjectTypesPage = () => {
       isDeleteLoading
     );
   }, [
-    centerValue,
+    selectedCenter,
     subjectTypesLoading,
     centersLoading,
     isCreateLoading,
@@ -104,65 +73,72 @@ const SubjectTypesPage = () => {
     tLoading,
   ]);
 
+  useEffect(() => {
+    if (subjectTypesQuery?.length) {
+      setSubjectTypes([...subjectTypesQuery]);
+      setShowEmptyState(false);
+    } else if (!subjectTypesQuery?.length && dataFetched) {
+      setShowEmptyState(true);
+    }
+  }, [subjectTypesQuery, dataFetched]);
+
+  useEffect(() => {
+    if (!isLoading && selectedCenter?.length > 0) {
+      setDataFetched(true);
+    }
+  }, [isLoading, selectedCenter]);
+
+  // **For the center Select to automatically pick a center when first loaded
+  useEffect(() => {
+    if (centersData?.length) {
+      setSelectedCenter(centersData[0].value);
+    }
+  }, [centersData]);
+
   // TABLE SETUP  ------------------------------------------------------------------------------------------ ||
 
-  const tableInputForm = useForm();
-  const checkboxObserver = tableInputForm.watch('createsReferenceGroup');
+  const form = useForm();
 
   const tableInputColumns = useMemo(
     () => [
       {
-        Header: t('table.headers.name'),
+        Header: t('labels.type'),
         accessor: 'name',
         input: {
           node: <TextInput required />,
           rules: { required: t('errors.requiredField') },
         },
+        style: { paddingLeft: 10, width: 232 },
       },
       {
-        accessor: 'createsReferenceGroup',
+        Header: t('labels.description'),
+        accessor: 'description',
         input: {
-          node: (
-            <Checkbox
-              ref={referenceGroupRef}
-              label={t('table.labels.linkToReferenceGroup')}
-              checked={!!checkboxObserver}
-            />
-          ),
-          disabled: !canLinkToReferenceGroup,
-          useDynamicEnabling: !canLinkToReferenceGroup,
-          enablerProperty: 'id',
+          node: <TextInput />,
         },
-        valueRender: (value) => {
-          if (value) return t('table.labels.linkedToReferenceGroup');
-          return t('table.labels.notLinkedToReferenceGroup');
-        },
+        style: { paddingLeft: 10 },
       },
     ],
-    [checkboxObserver, canLinkToReferenceGroup, t]
+    [t]
   );
 
   // HANDLERS ---------------------------------------------------------------------------------------------- ||
 
-  const handleOnBeforeAdd = async () => {
+  const onSubmit = async (data) => {
     if (showEmptyState) setShowEmptyState(false);
-  };
-
-  const handleAdd = async () => {
-    const name = tableInputForm.getValues('name');
-    const createsReferenceGroup = !!tableInputForm.getValues('createsReferenceGroup');
-    const center = centerValue;
+    const { name, description } = data;
+    const center = selectedCenter;
 
     createSubjectType(
       {
         name,
-        createsReferenceGroup,
+        description: description?.length ? description : null,
         center,
-        groupVisibility: createsReferenceGroup,
       },
       {
         onSuccess: () => {
           addSuccessAlert(t('alerts.success.add'));
+          form.reset();
         },
         onError: (e) => {
           addErrorAlert(e);
@@ -177,8 +153,7 @@ const SubjectTypesPage = () => {
       id,
       center,
       name: newItem.name,
-      createsReferenceGroup: !!newItem.createsReferenceGroup,
-      groupVisibility: !!newItem.createsReferenceGroup,
+      description: newItem.description,
     };
     updateSubjectType(mutationObject, {
       onSuccess: () => {
@@ -193,11 +168,11 @@ const SubjectTypesPage = () => {
   const handleOnRemove = async (index) => {
     const itemToRemove = subjectTypes[index];
     deleteSubjectType(
-      { center: centerValue, subjectTypeId: itemToRemove?.id, soft: false },
+      { center: selectedCenter, subjectTypeId: itemToRemove?.id, soft: false },
       {
         onSuccess: () => {
           addSuccessAlert(t('alerts.success.delete'));
-          queryClient.invalidateQueries(centerValue);
+          queryClient.invalidateQueries(selectedCenter);
         },
         onError: (e) => {
           addErrorAlert(e);
@@ -221,9 +196,9 @@ const SubjectTypesPage = () => {
               data={centersData}
               placeholder={t('header.centerSelectPlaceholder')}
               onChange={(value) => {
-                setCenterValue(value);
+                setSelectedCenter(value);
               }}
-              value={centerValue}
+              value={selectedCenter}
             />
           </TotalLayoutHeader>
         }
@@ -234,36 +209,75 @@ const SubjectTypesPage = () => {
           fullwidth
           sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb' }}
         >
-          {centerValue?.length > 0 && (
+          {selectedCenter?.length > 0 && (
             <TotalLayoutStepContainer>
-              <TableInput
-                columns={tableInputColumns}
-                onAdd={handleAdd}
-                labels={{
-                  add: t('table.labels.add'),
-                  remove: t('table.labels.remove'),
-                  edit: t('table.labels.edit'),
-                  accept: t('table.labels.accept'),
-                  cancel: t('table.labels.cancel'),
-                }}
-                resetOnAdd
-                editable
-                removable
-                unique
-                sortable={false}
-                data={subjectTypes}
-                form={tableInputForm}
-                onUpdate={handleOnUpdate}
-                onRemove={handleOnRemove}
-                onBeforeAdd={handleOnBeforeAdd}
-              />
-              {showEmptyState && (
-                <Box sx={{ justifySelf: 'center' }}>
-                  <SubjectTypesEmptyState
-                    labels={{ text: t('emptyState.text'), altText: t('emptyState.altText') }}
-                  />
-                </Box>
-              )}
+              <ContextContainer noFlex spacing={2}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <ContextContainer gap={2} direction="row" alignItems="center">
+                    <Box sx={{ width: 216, minHeight: 88 }}>
+                      <Controller
+                        control={form.control}
+                        name="name"
+                        rules={{ required: t('errors.requiredField') }}
+                        render={({ field }) => (
+                          <TextInput
+                            {...field}
+                            onBlur={() => {
+                              form.clearErrors('name');
+                            }}
+                            required
+                            label={t('labels.name')}
+                            error={form.formState.errors.name}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box sx={{ width: 216, minHeight: 88 }}>
+                      <Controller
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <TextInput {...field} label={t('labels.description')} />
+                        )}
+                      />
+                    </Box>
+                    <Box noFlex sx={{ marginTop: 8 }}>
+                      <Button variant="link" leftIcon={<AddCircleIcon />} type="submit">
+                        {t('labels.add')}
+                      </Button>
+                    </Box>
+                  </ContextContainer>
+                </form>
+
+                {!showEmptyState ? (
+                  <Box>
+                    <TableInput
+                      columns={tableInputColumns}
+                      labels={{
+                        add: t('labels.add'),
+                        remove: t('labels.remove'),
+                        edit: t('labels.edit'),
+                        accept: t('labels.accept'),
+                        cancel: t('labels.cancel'),
+                      }}
+                      canAdd={false}
+                      editable
+                      removable
+                      unique
+                      sortable={false}
+                      data={subjectTypes}
+                      onUpdate={handleOnUpdate}
+                      onRemove={handleOnRemove}
+                    />
+                  </Box>
+                ) : (
+                  <Box sx={{ justifySelf: 'center' }}>
+                    <SubjectTypesEmptyState
+                      labels={{ text: t('emptyState.text'), altText: t('emptyState.altText') }}
+                    />
+                  </Box>
+                )}
+              </ContextContainer>
             </TotalLayoutStepContainer>
           )}
         </Stack>

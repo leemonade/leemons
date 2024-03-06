@@ -213,7 +213,7 @@ function validateSubstagesFormat({ programData, substages, ctx }) {
   });
 }
 
-const addKnowledgeSchema = {
+const addKnowledgeAreaSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
@@ -227,12 +227,12 @@ const addKnowledgeSchema = {
     subjects: arrayStringSchema,
     managers: arrayStringSchema,
   },
-  required: ['name', 'abbreviation'],
+  required: ['name', 'abbreviation', 'center'],
   additionalProperties: false,
 };
 
-async function validateAddKnowledge({ data, ctx }) {
-  const validator = new LeemonsValidator(addKnowledgeSchema);
+async function validateAddKnowledgeArea({ data, ctx }) {
+  const validator = new LeemonsValidator(addKnowledgeAreaSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
@@ -247,34 +247,19 @@ async function validateAddKnowledge({ data, ctx }) {
     throw new LeemonsError(ctx, { message: 'Unable to find the specified center.' });
   }
 
-  // ES: Comprobamos si el programa puede tener areas de conocimiento OUTDATED
-  // if (!program.haveKnowledge) {
-  //   throw new LeemonsError(ctx, { message: 'The program does not have knowledges' });
-  // }
-
-  // if (program.maxKnowledgeAbbreviation) {
-  //   // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
-  //   if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
-  //     throw new LeemonsError(ctx, {
-  //       message: 'The knowledge abbreviation is longer than the specified length',
-  //     });
-  // }
-
-  // ES: Comprobamos si el nobre del conocimiento es solo numeros  OUTDATED
-  // if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-  //   throw new LeemonsError(ctx, { message: 'The knowledge abbreviation must be only numbers' });
-
   // ES: Comprobamos si el área de conocimiento ya existe
-  const existentKnowledgeArea = await ctx.tx.db.Knowledges.countDocuments({
+  const existentKnowledgeAreas = await ctx.tx.db.KnowledgeAreas.countDocuments({
     abbreviation: data.abbreviation,
     center: data.center,
   });
 
-  if (existentKnowledgeArea)
-    throw new LeemonsError(ctx, { message: 'A knowledge area with the same alias already exists' });
+  if (existentKnowledgeAreas)
+    throw new LeemonsError(ctx, {
+      message: 'A knowledge area with the same abbreviation already exists at this center.',
+    });
 }
 
-const updateKnowledgeSchema = {
+const updateKnowledgeAreaSchema = {
   type: 'object',
   properties: {
     id: stringSchema,
@@ -291,57 +276,37 @@ const updateKnowledgeSchema = {
   additionalProperties: false,
 };
 
-async function validateUpdateKnowledge({ data, ctx }) {
-  const validator = new LeemonsValidator(updateKnowledgeSchema);
+async function validateUpdateKnowledgeArea({ data, ctx }) {
+  const validator = new LeemonsValidator(updateKnowledgeAreaSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const _knowledgeArea = await ctx.tx.db.Knowledges.findOne({ id: data.id }).lean();
+  const _knowledgeArea = await ctx.tx.db.KnowledgeAreas.findOne({ id: data.id }).lean();
   if (!_knowledgeArea) {
     throw new LeemonsError(ctx, { message: 'The knowledge area does not exist' });
   }
 
-  // const [program] = await programsByIds({ ids: _knowledgeArea.program, ctx });
-
-  // if (!program) {
-  //   throw new LeemonsError(ctx, { message: 'The program does not exist' });
-  // }
-
-  // ES: Comprobamos si el programa puede tener areas de conocimiento
-  // if (!program.haveKnowledge) {
-  //   throw new LeemonsError(ctx, { message: 'The program does not have knowledges' });
-  // }
-
-  // if (program.maxKnowledgeAbbreviation) {
-  //   // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
-  //   if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
-  //     throw new LeemonsError(ctx, {
-  //       message: 'The knowledge abbreviation is longer than the specified length',
-  //     });
-  // }
-
-  // ES: Comprobamos si el nobre del conocimiento es solo numeros
-  // if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-  //   throw new LeemonsError(ctx, { message: 'The knowledge abbreviation must be only numbers' });
-
   // ES: Comprobamos si el conocimiento ya existe en ese centro
-  const knowledge = await ctx.tx.db.Knowledges.countDocuments({
+  const existentKnowledgeAreas = await ctx.tx.db.KnowledgeAreas.countDocuments({
     id: { $ne: data.id },
     abbreviation: data.abbreviation,
     center: data.center,
   });
 
-  if (knowledge) throw new LeemonsError(ctx, { message: 'The knowledge already exists' });
+  if (existentKnowledgeAreas)
+    throw new LeemonsError(ctx, {
+      message: 'A knowledge area with the same abbreviation already exists at this center.',
+    });
 }
 
 const addSubjectTypeSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
+    description: stringSchemaNullable,
     center: stringSchema,
-    createsReferenceGroup: booleanSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
     subjects: arrayStringSchema,
@@ -349,7 +314,7 @@ const addSubjectTypeSchema = {
     program: stringSchema, // Outdated?
     groupVisibility: booleanSchema, // Outdated?
   },
-  required: ['name', 'groupVisibility', 'center'],
+  required: ['name', 'center'],
   additionalProperties: false,
 };
 
@@ -369,22 +334,16 @@ async function validateAddSubjectType({ data, ctx }) {
     throw new LeemonsError(ctx, { message: 'Unable to find the specified center.' });
   }
 
-  const validationQuery = {
-    center: data.center,
-    $or: [
-      { name: data.name },
-      ...(data.createsReferenceGroup ? [{ createsReferenceGroup: true }] : []),
-    ],
-  };
-
   // ES: Comprobamos que no exista ya el subject type
   // EN: Verify that a subject type with the same name does not already exist in that center
-  const existingEntriesCount = await ctx.tx.db.SubjectTypes.countDocuments(validationQuery);
+  const existingEntriesCount = await ctx.tx.db.SubjectTypes.countDocuments({
+    center: data.center,
+    name: data.name,
+  });
 
   if (existingEntriesCount > 0)
     throw new LeemonsError(ctx, {
-      message:
-        'The specified name for the Subject Type is already in use, or an attempt is being made to set more than one Subject Type with the "createsReferenceGroup" attribute to true.',
+      message: 'The specified name for the Subject Type is already in use at this center.',
     });
 }
 
@@ -393,14 +352,14 @@ const updateSubjectTypeSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
+    description: stringSchema,
     groupVisibility: booleanSchema,
-    createsReferenceGroup: booleanSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
     managers: arrayStringSchema,
     center: stringSchema,
   },
-  required: ['id', 'name', 'groupVisibility', 'center'],
+  required: ['id', 'name', 'center'],
   additionalProperties: false,
 };
 
@@ -426,7 +385,7 @@ async function validateUpdateSubjectType({ data, ctx }) {
 
   if (subjectTypeCount)
     throw new LeemonsError(ctx, {
-      message: 'The specified name for the Subject Type is already in use.',
+      message: 'The specified name for the Subject Type is already in use at this center.',
     });
 }
 
@@ -1293,12 +1252,12 @@ module.exports = {
   validateUpdateGroup,
   validateUpdateCycle,
   validateUpdateCourse,
-  validateAddKnowledge,
+  validateAddKnowledgeArea,
   validateUpdateProgram,
   validateUpdateSubject,
   validateDuplicateGroup,
   validateAddSubjectType,
-  validateUpdateKnowledge,
+  validateUpdateKnowledgeArea,
   validateUpdateClassMany,
   validateSubstagesFormat,
   validateAddClassStudents,

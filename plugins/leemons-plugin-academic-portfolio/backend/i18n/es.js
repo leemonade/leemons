@@ -35,18 +35,16 @@ module.exports = {
       cancel: 'Cancelar',
       centerSelectPlaceholder: 'Selecciona un centro',
     },
-    table: {
-      headers: { name: 'Nombre' },
-      labels: {
-        linkToReferenceGroup: 'Vincular a Grupo de Referencia',
-        linkedToReferenceGroup: 'Vinculado a Grupo de Referencia',
-        notLinkedToReferenceGroup: 'No vinculado',
-        add: 'Añadir',
-        remove: 'Eliminar (habilitado sólo para no utilizados)',
-        edit: 'Editar',
-        accept: 'Aceptar',
-        cancel: 'Cancelar',
-      },
+    labels: {
+      add: 'Añadir',
+      remove: 'Eliminar',
+      edit: 'Editar',
+      accept: 'Aceptar',
+      cancel: 'Cancelar',
+      name: 'Nombre',
+      description: 'Descripción',
+      type: 'Tipo',
+      actions: 'Acciones',
     },
     alerts: {
       success: {
@@ -74,15 +72,16 @@ module.exports = {
       cancel: 'Cancelar',
       centerSelectPlaceholder: 'Selecciona un centro',
     },
-    table: {
-      headers: { name: 'Nombre', alias: 'Alias' },
-      labels: {
-        add: 'Añadir',
-        remove: 'Eliminar (habilitado sólo para no utilizadas)',
-        edit: 'Editar',
-        accept: 'Aceptar',
-        cancel: 'Cancelar',
-      },
+    labels: {
+      add: 'Añadir',
+      remove: 'Eliminar',
+      edit: 'Editar',
+      accept: 'Aceptar',
+      cancel: 'Cancelar',
+      name: 'Nombre',
+      abbreviation: 'Abreviatura',
+      area: 'Area',
+      actions: 'Acciones',
     },
     alerts: {
       success: {
@@ -100,7 +99,7 @@ module.exports = {
       requiredField: 'Campo requerido',
     },
     emptyState: {
-      text: 'Crea un Área de Conocimiento. Solo ingresa el nombre, el alias y presiona añadir en el formulario de arriba.',
+      text: 'Crea un Área de Conocimiento. Solo ingresa el nombre, la abreviatura y presiona añadir en el formulario de arriba.',
       altText: 'Añade tu primer Área de Conocimiento.',
     },
   },

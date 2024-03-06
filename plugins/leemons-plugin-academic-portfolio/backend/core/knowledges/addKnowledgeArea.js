@@ -1,12 +1,12 @@
 const { map } = require('lodash');
-const { validateAddKnowledge } = require('../../validations/forms');
+const { validateAddKnowledgeArea } = require('../../validations/forms');
 const { updateClassMany } = require('../classes/updateClassMany');
 const { saveManagers } = require('../managers/saveManagers');
 
-async function addKnowledge({ data: _data, ctx }) {
-  await validateAddKnowledge({ data: _data, ctx });
+async function addKnowledgeArea({ data: _data, ctx }) {
+  await validateAddKnowledgeArea({ data: _data, ctx });
   const { subjects, managers, ...data } = _data;
-  const knowledgeAreaDoc = await ctx.tx.db.Knowledges.create(data);
+  const knowledgeAreaDoc = await ctx.tx.db.KnowledgeAreas.create(data);
   const knowledgeArea = knowledgeAreaDoc.toObject();
   await saveManagers({
     userAgents: managers,
@@ -30,4 +30,4 @@ async function addKnowledge({ data: _data, ctx }) {
   return knowledgeArea;
 }
 
-module.exports = { addKnowledge };
+module.exports = { addKnowledgeArea };

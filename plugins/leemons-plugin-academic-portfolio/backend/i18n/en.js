@@ -36,18 +36,16 @@ module.exports = {
       cancel: 'Cancel',
       centerSelectPlaceholder: 'Select a center',
     },
-    table: {
-      headers: { name: 'Name' },
-      labels: {
-        linkToReferenceGroup: 'Link to Reference Group',
-        linkedToReferenceGroup: 'Linked to Reference Group',
-        notLinkedToReferenceGroup: 'Not linked',
-        add: 'Add',
-        remove: 'Remove (enabled only for unused)',
-        edit: 'Edit',
-        accept: 'Accept',
-        cancel: 'Cancel',
-      },
+    labels: {
+      add: 'Add',
+      remove: 'Remove',
+      edit: 'Edit',
+      accept: 'Accept',
+      cancel: 'Cancel',
+      name: 'Name',
+      description: 'Description',
+      type: 'Type',
+      actions: 'Actions',
     },
     alerts: {
       success: {
@@ -75,15 +73,16 @@ module.exports = {
       cancel: 'Cancel',
       centerSelectPlaceholder: 'Select a center',
     },
-    table: {
-      headers: { name: 'Name', alias: 'Alias' },
-      labels: {
-        add: 'Add',
-        remove: 'Remove (enabled only for unused)',
-        edit: 'Edit',
-        accept: 'Accept',
-        cancel: 'Cancel',
-      },
+    labels: {
+      add: 'Add',
+      remove: 'Remove',
+      edit: 'Edit',
+      accept: 'Accept',
+      cancel: 'Cancel',
+      name: 'Name',
+      abbreviation: 'Abbreviation',
+      area: 'Area',
+      actions: 'Actions',
     },
     alerts: {
       success: {
@@ -101,7 +100,7 @@ module.exports = {
       requiredField: 'Required field',
     },
     emptyState: {
-      text: 'Create a Knowledge Area. Just enter the name, the alias, and press add on the form above.',
+      text: 'Create a Knowledge Area. Just enter the name, the abbreviation, and press add on the form above.',
       altText: 'Add your first Knowledge Area.',
     },
   },

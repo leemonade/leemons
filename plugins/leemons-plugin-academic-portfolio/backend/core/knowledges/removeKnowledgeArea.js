@@ -7,7 +7,7 @@
  * @returns {Promise<boolean>} The promise that resolves to true if an entry was deleted.
  */
 async function removeKnowledgeArea({ id, soft, ctx }) {
-  const result = await ctx.tx.db.Knowledges.deleteOne({ id }, { soft });
+  const result = await ctx.tx.db.KnowledgeAreas.deleteOne({ id }, { soft });
   return result.deletedCount > 0;
 }
 

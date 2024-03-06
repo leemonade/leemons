@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Select,
   TableInput,
   TextInput,
+  Button,
+  ContextContainer,
   TotalLayoutContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
@@ -13,22 +15,23 @@ import {
   Stack,
   Box,
 } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useUserCenters } from '@users/hooks';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import SubjectTypesEmptyState from '@academic-portfolio/components/SubjectTypesEmptyState';
-import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
 import {
   useCreateKnowledgeArea,
   useDeleteKnowledgeArea,
   useUpdateKnowledgeArea,
 } from '@academic-portfolio/hooks/mutations/useMutateKnowledgeArea';
+import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import SubjectTypesEmptyState from '@academic-portfolio/components/SubjectTypesEmptyState';
 
 const KnowledgeAreasPage = () => {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('knowledgeAreas_page'));
   const [knowledgeAreas, setKnowledgeAreas] = useState([]);
-  const [centerValue, setCenterValue] = useState('');
+  const [selectedCenter, setSelectedCenter] = useState('');
   const [showEmptyState, setShowEmptyState] = useState(false);
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -37,6 +40,7 @@ const KnowledgeAreasPage = () => {
   const { mutate: updateKnowledgeArea, isLoading: isUpdateLoading } = useUpdateKnowledgeArea();
   const { mutate: deleteKnowledgeArea, isLoading: isDeleteLoading } = useDeleteKnowledgeArea();
   const scrollRef = useRef();
+  const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
 
   // INIT & EFFECTS ------------------------------------------------------------------------------------------------ ||
 
@@ -45,39 +49,22 @@ const KnowledgeAreasPage = () => {
     [userCenters]
   );
   const { data: knowledgeAreasQuery, isLoading: knowledgeAreasLoading } = useKnowledgeAreas({
-    center: centerValue,
-    options: { enabled: centerValue?.length > 0 },
+    center: selectedCenter,
+    options: { enabled: selectedCenter?.length > 0 },
   });
 
-  useEffect(() => {
-    if (knowledgeAreasQuery?.length) {
-      setKnowledgeAreas([...knowledgeAreasQuery]);
-      if (showEmptyState) setShowEmptyState(false);
-    } else {
-      setKnowledgeAreas([]);
-      if (!showEmptyState) setShowEmptyState(true);
-    }
-  }, [knowledgeAreasQuery]);
-
-  // **Activated for the center Select to automatically pick a center when first loaded
-  useEffect(() => {
-    if (centersData?.length) {
-      setCenterValue(centersData[0].value);
-    }
-  }, [centersData]);
-
   const isLoading = useMemo(() => {
-    const waitForSubjectTypesList = centerValue?.length > 0 && knowledgeAreasLoading;
+    const waitForKnowledgeAreasList = selectedCenter?.length > 0 && knowledgeAreasLoading;
     return (
       tLoading ||
       areCentersLoading ||
-      waitForSubjectTypesList ||
+      waitForKnowledgeAreasList ||
       isCreateLoading ||
       isUpdateLoading ||
       isDeleteLoading
     );
   }, [
-    centerValue,
+    selectedCenter,
     knowledgeAreasLoading,
     areCentersLoading,
     isCreateLoading,
@@ -86,27 +73,51 @@ const KnowledgeAreasPage = () => {
     tLoading,
   ]);
 
+  useEffect(() => {
+    if (knowledgeAreasQuery?.length) {
+      setKnowledgeAreas([...knowledgeAreasQuery]);
+      setShowEmptyState(false);
+    } else if (!knowledgeAreasQuery?.length && dataFetched) {
+      setShowEmptyState(true);
+    }
+  }, [knowledgeAreasQuery, dataFetched]);
+
+  useEffect(() => {
+    if (!isLoading && selectedCenter?.length > 0) {
+      setDataFetched(true);
+    }
+  }, [isLoading, selectedCenter]);
+
+  // **For the center Select to automatically pick a center when first loaded
+  useEffect(() => {
+    if (centersData?.length) {
+      setSelectedCenter(centersData[0].value);
+    }
+  }, [centersData]);
+
   // TABLE SETUP  ------------------------------------------------------------------------------------------ ||
 
-  const tableInputForm = useForm();
+  const form = useForm();
 
   const tableInputColumns = useMemo(
     () => [
       {
-        Header: t('table.headers.name'),
+        Header: t('labels.name'),
         accessor: 'name',
         input: {
           node: <TextInput required />,
           rules: { required: t('errors.requiredField') },
         },
+        style: { paddingLeft: 10, width: 232 },
       },
       {
-        Header: t('table.headers.alias'),
+        Header: t('labels.abbreviation'),
         accessor: 'abbreviation',
         input: {
           node: <TextInput required />,
           rules: { required: t('errors.requiredField') },
         },
+        style: { paddingLeft: 10 },
       },
     ],
     [t]
@@ -114,14 +125,10 @@ const KnowledgeAreasPage = () => {
 
   // HANDLERS ---------------------------------------------------------------------------------------------- ||
 
-  const handleOnBeforeAdd = async () => {
+  const onSubmit = async (data) => {
     if (showEmptyState) setShowEmptyState(false);
-  };
-
-  const handleAdd = async () => {
-    const name = tableInputForm.getValues('name');
-    const abbreviation = tableInputForm.getValues('abbreviation');
-    const center = centerValue;
+    const { name, abbreviation } = data;
+    const center = selectedCenter;
 
     createKnowledgeArea(
       {
@@ -132,6 +139,7 @@ const KnowledgeAreasPage = () => {
       {
         onSuccess: () => {
           addSuccessAlert(t('alerts.success.add'));
+          form.reset();
         },
         onError: (e) => {
           addErrorAlert(e);
@@ -161,11 +169,11 @@ const KnowledgeAreasPage = () => {
   const handleOnRemove = async (index) => {
     const itemToRemove = knowledgeAreas[index];
     deleteKnowledgeArea(
-      { center: centerValue, knowledgeAreaId: itemToRemove?.id, soft: false },
+      { center: selectedCenter, knowledgeAreaId: itemToRemove?.id, soft: false },
       {
         onSuccess: () => {
           addSuccessAlert(t('alerts.success.delete'));
-          queryClient.invalidateQueries(centerValue);
+          queryClient.invalidateQueries(selectedCenter);
         },
         onError: (e) => {
           addErrorAlert(e);
@@ -185,14 +193,13 @@ const KnowledgeAreasPage = () => {
             onCancel={() => history.goBack()}
             mainActionLabel={t('header.cancel')}
           >
-            {' '}
             <Select
               data={centersData}
               placeholder={t('header.centerSelectPlaceholder')}
               onChange={(value) => {
-                setCenterValue(value);
+                setSelectedCenter(value);
               }}
-              value={centerValue}
+              value={selectedCenter}
             />
           </TotalLayoutHeader>
         }
@@ -203,36 +210,88 @@ const KnowledgeAreasPage = () => {
           fullwidth
           sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb' }}
         >
-          {centerValue?.length > 0 && (
+          {selectedCenter?.length > 0 && (
             <TotalLayoutStepContainer>
-              <TableInput
-                columns={tableInputColumns}
-                onAdd={handleAdd}
-                labels={{
-                  add: t('table.labels.add'),
-                  remove: t('table.labels.remove'),
-                  edit: t('table.labels.edit'),
-                  accept: t('table.labels.accept'),
-                  cancel: t('table.labels.cancel'),
-                }}
-                resetOnAdd
-                editable
-                removable
-                unique
-                sortable={false}
-                data={knowledgeAreas}
-                form={tableInputForm}
-                onUpdate={handleOnUpdate}
-                onRemove={handleOnRemove}
-                onBeforeAdd={handleOnBeforeAdd}
-              />
-              {showEmptyState && (
-                <Box sx={{ justifySelf: 'center' }}>
-                  <SubjectTypesEmptyState
-                    labels={{ text: t('emptyState.text'), altText: t('emptyState.altText') }}
-                  />
-                </Box>
-              )}
+              <ContextContainer noFlex spacing={2}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <ContextContainer gap={2} direction="row" alignItems="center">
+                    <Box noFlex sx={{ width: 216, minHeight: 88 }}>
+                      <Controller
+                        control={form.control}
+                        name="name"
+                        rules={{
+                          required: t('errors.requiredField'),
+                        }}
+                        render={({ field }) => (
+                          <TextInput
+                            {...field}
+                            required
+                            label={t('labels.name')}
+                            error={form.formState.errors.name}
+                            onBlur={() => {
+                              form.clearErrors('name');
+                            }}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box noFlex sx={{ width: 216, minHeight: 88 }}>
+                      <Controller
+                        control={form.control}
+                        name="abbreviation"
+                        rules={{
+                          required: t('errors.requiredField'),
+                        }}
+                        render={({ field }) => (
+                          <TextInput
+                            {...field}
+                            required
+                            label={t('labels.abbreviation')}
+                            error={form.formState.errors.abbreviation}
+                            onBlur={() => {
+                              form.clearErrors('abbreviation');
+                            }}
+                          />
+                        )}
+                      />
+                    </Box>
+                    <Box noFlex sx={{ marginTop: 8 }}>
+                      <Button variant="link" leftIcon={<AddCircleIcon />} type="submit">
+                        {t('labels.add')}
+                      </Button>
+                    </Box>
+                  </ContextContainer>
+                </form>
+
+                {!showEmptyState ? (
+                  <Box>
+                    <TableInput
+                      columns={tableInputColumns}
+                      labels={{
+                        add: t('labels.add'),
+                        remove: t('labels.remove'),
+                        edit: t('labels.edit'),
+                        accept: t('labels.accept'),
+                        cancel: t('labels.cancel'),
+                      }}
+                      canAdd={false}
+                      editable
+                      removable
+                      unique
+                      sortable={false}
+                      data={knowledgeAreas}
+                      onUpdate={handleOnUpdate}
+                      onRemove={handleOnRemove}
+                    />
+                  </Box>
+                ) : (
+                  <Box sx={{ justifySelf: 'center' }}>
+                    <SubjectTypesEmptyState
+                      labels={{ text: t('emptyState.text'), altText: t('emptyState.altText') }}
+                    />
+                  </Box>
+                )}
+              </ContextContainer>
             </TotalLayoutStepContainer>
           )}
         </Stack>

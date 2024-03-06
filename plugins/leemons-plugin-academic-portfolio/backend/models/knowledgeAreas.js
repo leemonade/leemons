@@ -51,6 +51,10 @@ schema.index({ program: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ abbreviation: 1, program: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ id: 1, abbreviation: 1, program: 1, deploymentID: 1, isDeleted: 1 });
 
-const knowledgesModel = newModel(mongoose.connection, 'v1::academic-portfolio_Knowledges', schema);
+const knowledgeAreasModel = newModel(
+  mongoose.connection,
+  'v1::academic-portfolio_KnowledgeAreas',
+  schema
+);
 
-module.exports = { knowledgesModel };
+module.exports = { knowledgeAreasModel };

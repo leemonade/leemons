@@ -15,14 +15,12 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+    },
     center: {
       // ref: 'plugins_users::centers',
       type: String,
-    },
-    createsReferenceGroup: {
-      // A flag indicating whether subjects of this type will create a reference group
-      type: Boolean,
-      default: false,
     },
     credits_course: {
       type: Number,
@@ -34,6 +32,7 @@ const schema = new mongoose.Schema(
       // Outdated?
       type: Boolean,
       required: true,
+      default: false,
     },
     program: {
       // OUTDATED ref: 'plugins_academic-portfolio::programs',
