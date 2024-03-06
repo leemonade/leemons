@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { noop } from 'lodash';
+import { useLocale } from '@common';
 import { Box, Text, Popover, InputWrapper, UnstyledButton } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon, CheckIcon } from '@bubbles-ui/icons/solid';
 import { ChevronDownIcon } from '@bubbles-ui/icons/outline';
@@ -14,7 +15,6 @@ import { ClassroomPickerItem } from './components/ClassroomPickerItem';
 import { ClassroomPickerList } from '../ClassroomPickerList';
 import { ClassroomPickerStyles } from './ClassroomPicker.styles';
 import { transformData } from './helpers';
-import { useLocale } from '@common';
 
 const ClassroomPicker = ({
   label,

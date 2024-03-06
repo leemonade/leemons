@@ -29,10 +29,10 @@ export function useProcessTextEditor() {
 
   return React.useCallback(
     async (html, oldHtml, props) =>
-      processors.reduce(
-        async (prevProcessorHTML, processor) => processor(await prevProcessorHTML, oldHtml, props),
-        html
-      ),
+      processors.reduce(async (prevProcessorHTML, processor) => {
+        const processorFunction = processor?.processor ?? processor;
+        return processorFunction(await prevProcessorHTML, oldHtml, props);
+      }, html),
     [processors]
   );
 }

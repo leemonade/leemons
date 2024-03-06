@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     program: {
       // ref: 'plugins_academic-portfolio::programs',
@@ -53,6 +51,13 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ subject: 1, program: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ subject: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ program: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ class: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ program: 1, id: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const classModel = newModel(mongoose.connection, 'v1::academic-portfolio_Class', schema);
 

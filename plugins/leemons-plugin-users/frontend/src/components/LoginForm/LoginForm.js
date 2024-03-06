@@ -81,7 +81,11 @@ const LoginForm = ({
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <ContextContainer title={labels.title} {...props} data-cypress-id="loginForm">
-        {formError && <Alert severity="error">{formError}</Alert>}
+        {formError && (
+          <Alert severity="error" closeable={false}>
+            {formError}
+          </Alert>
+        )}
 
         <Controller
           name="email"

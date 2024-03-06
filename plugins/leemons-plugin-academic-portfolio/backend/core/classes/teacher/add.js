@@ -56,6 +56,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   try {
     await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
       userAgentId: teacher,
+      throwIfExists: false,
       data: {
         permissionName: `academic-portfolio.program-profile.inside.${program.id}-${teacherProfileId}`,
         actionNames: ['view'],

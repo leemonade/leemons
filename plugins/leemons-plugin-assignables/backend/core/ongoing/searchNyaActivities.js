@@ -21,6 +21,7 @@ const { sortInstancesByDates, applyOffsetAndLimit } = require('./helpers/sorts')
 const filterByBlockedActivities = require('./helpers/filters/filterByBlockedActivities');
 const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
 const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
+const { updateModuleAssignationDates } = require('./helpers/helpers/updateModuleAssignationDates');
 
 /**
  * This function is used to search for NYA (Need Your Attention) activities for teachers.
@@ -117,7 +118,7 @@ async function searchStudentNyaActivities({ query, ctx }) {
   });
   let instances = map(assignations, 'instance');
 
-  const dates = await getActivitiesDates({
+  let dates = await getActivitiesDates({
     assignations,
     instances,
     filters: {
@@ -143,7 +144,9 @@ async function searchStudentNyaActivities({ query, ctx }) {
     dates,
   });
 
-  instances = groupInstancesInModules({ instances, modules });
+  instances = groupInstancesInModules({ instances, modules, dates });
+
+  dates = updateModuleAssignationDates({ assignations, dates });
 
   assignations = filterAssignationsByInstance({ assignations, instances });
 

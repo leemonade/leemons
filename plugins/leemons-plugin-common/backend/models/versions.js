@@ -40,6 +40,10 @@ const schema = new mongoose.Schema(
   }
 );
 
+schema.index({ uuid: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ uuid: 1, published: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ uuid: 1, major: 1, minor: 1, patch: 1, deploymentID: 1, isDeleted: 1 });
+
 const versionsModel = newModel(mongoose.connection, 'v1::common_Versions', schema);
 
 module.exports = { versionsModel };

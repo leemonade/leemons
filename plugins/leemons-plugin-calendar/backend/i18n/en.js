@@ -210,4 +210,21 @@ module.exports = {
   tabCalendar: {
     label: 'Calendar',
   },
+
+  emptyState: {
+    calendar: {
+      title: 'No events yet',
+      description:
+        'Click on the top right area of this section the option {newCTA} to create an appointment or reminder. If you want to know all the power of the Leemons Calendar, visit the section {menuCTA} in Leemons Academy.',
+      newCTA: '+ New event',
+      menuCTA: 'Calendar',
+    },
+    kanban: {
+      title: 'No tasks yet',
+      description:
+        'Click on the top right area of this section the option {newCTA} to create an action card. To learn more about the possibilities of agile learning management, visit the section {menuCTA} in Leemons Academy.',
+      newCTA: '+ New task',
+      menuCTA: 'Kanban',
+    },
+  },
 };

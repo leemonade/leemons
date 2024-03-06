@@ -100,6 +100,7 @@ function handlePaginationAndEmptyAssetList({ shouldInsertNewItem }) {
       size: 1,
       totalCount: 1,
       totalPages: 1,
+      isEmpty: true,
     };
   }
   return null;
@@ -311,7 +312,7 @@ const AssetList = ({
       return <SearchEmpty t={t} />;
     }
 
-    return <ListEmpty t={t} isRecentPage={category?.key === RECENT_CATEGORY} />;
+    return null;
   };
   // -------------------------------------------------------------------------------------
   // DRAWER HANDLERS & TOOLBAR
@@ -348,16 +349,13 @@ const AssetList = ({
     return isSearchingByCriteria || isFiltering;
   }, [statusFilter, academicFilters, mediaTypeFilter, searchCriteriaDebounced]);
 
-  const showEmptyState = useMemo(() => {
-    const isNotCreatable = NOT_CREATABLE_CATEGORIES.includes(category?.key);
+  const showFilteringEmptyState = useMemo(() => {
     const isNotLoading = !assetListIsLoading;
     if (isNotLoading && isEmpty(assetList)) {
-      if (isNotCreatable) return true;
-
       return userIsFilteringOrSearching();
     }
     return false;
-  }, [assetListIsLoading, assetList, category?.key, userIsFilteringOrSearching]);
+  }, [assetListIsLoading, assetList, userIsFilteringOrSearching]);
 
   // -------------------------------------------------------------------------------------
   // FUNCTIONS FOR USER ACTIONS
@@ -747,7 +745,16 @@ const AssetList = ({
                 />
               </Box>
             )}
-            {showEmptyState && (
+            {!showFilteringEmptyState &&
+              (!!pageAssetsData?.isEmpty || !pageAssetsData?.items?.length) && (
+                <ListEmpty
+                  t={t}
+                  isRecentPage={category?.key === RECENT_CATEGORY}
+                  category={category}
+                  key={category?.key}
+                />
+              )}
+            {showFilteringEmptyState && (
               <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 {getEmptyState()}
               </Stack>

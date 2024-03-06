@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     // ref: plugins_users::user-agent
     userAgent: {
@@ -30,6 +28,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ userAgent: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ userAgent: 1, column: 1, deploymentID: 1, isDeleted: 1 });
 
 const kanbanEventOrdersModel = newModel(
   mongoose.connection,

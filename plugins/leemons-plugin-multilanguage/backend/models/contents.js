@@ -6,22 +6,18 @@ const contentsSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     key: {
       type: String,
       required: true,
-      index: true,
     },
     locale: {
       type: String,
       required: true,
-      index: true,
     },
     value: {
       type: String,
@@ -33,6 +29,8 @@ const contentsSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+contentsSchema.index({ key: 1, locale: 1, deploymentID: 1, isDeleted: 1 });
 
 const contentsModel = newModel(mongoose.connection, 'v1::multilanguage_Contents', contentsSchema);
 

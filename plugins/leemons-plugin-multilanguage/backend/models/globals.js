@@ -6,27 +6,22 @@ const globalsSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     plugin: {
       type: String,
       required: true,
-      index: true,
     },
     version: {
       type: Number,
       required: true,
-      index: true,
     },
     locale: {
       type: String,
       required: true,
-      index: true,
     },
     value: {
       type: mongoose.Schema.Types.Mixed,
@@ -38,6 +33,8 @@ const globalsSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+globalsSchema.index({ plugin: 1, locale: 1, isDeleted: 1 });
 
 const globalsModel = newModel(mongoose.connection, 'v1::multilanguage_Globals', globalsSchema);
 

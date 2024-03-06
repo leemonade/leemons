@@ -19,6 +19,8 @@ const ImagePicker = ({
   readonly,
   disabled,
   returnAsset,
+  acceptedFileTypes,
+  objectFit,
   ...props
 }) => {
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -96,6 +98,7 @@ const ImagePicker = ({
           readonly={readonly}
           disabled={disabled}
           noPicker
+          objectFit={objectFit}
         />
       </Stack>
 
@@ -106,7 +109,7 @@ const ImagePicker = ({
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
         categories={['media-files']}
-        acceptedFileTypes={['image/*']}
+        acceptedFileTypes={acceptedFileTypes}
         onlyCreateImages
         filters={{ type: 'image' }}
       />
@@ -124,6 +127,7 @@ ImagePicker.defaultProps = {
   modal: false,
   returnAsset: false,
   isPickingACover: false,
+  acceptedFileTypes: ['image/*'],
 };
 ImagePicker.propTypes = {
   labels: PropTypes.shape({
@@ -141,6 +145,8 @@ ImagePicker.propTypes = {
   modal: PropTypes.bool,
   returnAsset: PropTypes.bool,
   isPickingACover: PropTypes.bool,
+  acceptedFileTypes: PropTypes.array,
+  objectFit: PropTypes.string,
 };
 
 export { ImagePicker };

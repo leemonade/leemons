@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     name: {
       type: String,
@@ -64,6 +62,9 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, name: 1 }, { unique: true });
 schema.index({ deploymentID: 1, uri: 1 }, { unique: true });
+
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ name: 1, deploymentID: 1, isDeleted: 1 });
 
 const centersModel = newModel(mongoose.connection, 'v1::users_Centers', schema);
 

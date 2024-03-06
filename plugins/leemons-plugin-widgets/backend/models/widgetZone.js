@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     key: {
@@ -30,6 +28,7 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
 const widgetZoneModel = newModel(mongoose.connection, 'v1::widgets_widgetZone', schema);

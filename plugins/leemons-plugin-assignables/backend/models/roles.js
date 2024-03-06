@@ -6,12 +6,10 @@ const rolesSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     name: {
       type: String,
@@ -46,6 +44,7 @@ const rolesSchema = new mongoose.Schema(
 );
 
 rolesSchema.index({ deploymentID: 1, name: 1 }, { unique: true });
+rolesSchema.index({ name: 1, deploymentID: 1, isDeleted: 1 });
 
 const rolesModel = newModel(mongoose.connection, 'v1::assignables_Roles', rolesSchema);
 

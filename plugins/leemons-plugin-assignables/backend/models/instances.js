@@ -6,18 +6,14 @@ const instancesSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
-
     assignable: {
       type: String,
       required: true,
-      index: true,
     },
     alwaysAvailable: {
       type: Boolean,
@@ -83,6 +79,10 @@ const instancesSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+instancesSchema.index({ id: 1, addNewClassStudents: 1, deploymentID: 1, isDeleted: 1 });
+instancesSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
+instancesSchema.index({ id: 1, 'metadata.module.type': 1, deploymentID: 1, isDeleted: 1 });
 
 const instancesModel = newModel(mongoose.connection, 'v1::assignables_Instances', instancesSchema);
 

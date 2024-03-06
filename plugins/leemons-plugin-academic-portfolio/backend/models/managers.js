@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     // Id of type
     relationship: {
@@ -31,6 +29,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ relationship: 1, type: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ relationship: 1, deploymentID: 1, isDeleted: 1 });
 
 const managersModel = newModel(mongoose.connection, 'v1::academic-portfolio_Managers', schema);
 
