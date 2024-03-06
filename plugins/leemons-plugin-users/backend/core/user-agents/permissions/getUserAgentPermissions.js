@@ -37,7 +37,7 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
   const cache = await ctx.cache.getMany(cacheKeys);
 
   if (Object.keys(cache).length) {
-    return cache[Object.keys(cache)[0]];
+    return Object.keys(cache).reduce((acc, key) => [...acc, ...cache[key]], []);
   }
 
   const query = { ..._query, userAgent: _.map(_userAgents, 'id') };
@@ -80,7 +80,10 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
   _.map(_userAgents, (_userAgent, index) => {
     const userAgentId = _userAgent.id;
 
-    const permissions = _.filter(responses, { userAgent: userAgentId });
+    const permissions = _.filter(
+      responses,
+      (response) => !response.userAgent || response.userAgent === userAgentId
+    );
 
     _.map(permissions, (response) => {
       response.actionNames = _.uniq(response.actionNames);
