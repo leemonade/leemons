@@ -30,7 +30,9 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
   const cacheKeys = _.map(
     _userAgents,
     (_userAgent) =>
-      `users:permissions:${_userAgent.id}:getUserAgentPermissions:${JSON.stringify(_query)}`
+      `users:permissions:${_userAgent?.id ?? _userAgent}:getUserAgentPermissions:${JSON.stringify(
+        _query
+      )}`
   );
   const cache = await ctx.cache.getMany(cacheKeys);
 

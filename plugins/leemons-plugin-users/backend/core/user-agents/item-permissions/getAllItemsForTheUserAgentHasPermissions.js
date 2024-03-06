@@ -14,9 +14,9 @@ async function getAllItemsForTheUserAgentHasPermissions({
   const cacheKeys = _.map(
     _userAgents,
     (_userAgent) =>
-      `users:permissions:${_userAgent}:getAllItemsForTheUserAgentHasPermissions:${JSON.stringify(
-        query
-      )}`
+      `users:permissions:${
+        _userAgent?.id ?? _userAgent
+      }:getAllItemsForTheUserAgentHasPermissions:${JSON.stringify(query)}`
   );
   const cache = await ctx.cache.getMany(cacheKeys);
 
