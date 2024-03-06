@@ -6,6 +6,7 @@ module.exports = {
     accept: 'Accept',
     cancel: 'Cancel',
     required: 'Required field',
+    actions: 'Actions',
   },
   methodology: {
     directInstruction: 'Direct Instruction',
@@ -225,9 +226,13 @@ module.exports = {
           buttonPublishAndAssign: 'Publish and assign',
           objectives: 'Custom objectives',
           curriculum: 'Curriculum',
-          add: 'Add',
+          add: 'Add objective',
+          numberHeader: 'Nº',
+          objectiveHeader: 'Objective',
           assessmentCriteria: 'Assessment criteria',
           subjects: 'Asignaturas',
+          inputLabel: 'Enter custom objective',
+          inputPlaceholder: 'Objective...',
         },
       },
       publishData: {
