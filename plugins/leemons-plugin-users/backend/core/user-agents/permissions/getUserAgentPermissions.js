@@ -77,24 +77,24 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
       center: null,
     });
   }
+  _.map(_userAgents, (_userAgent, index) => {
+    const userAgentId = _userAgent.id;
 
-  _.map(responses, (response) => {
-    response.actionNames = _.uniq(response.actionNames);
-    delete response.actionName;
-    delete response.userAgent;
-    delete response.created_at;
-    delete response.updated_at;
-    delete response.createdAt;
-    delete response.updatedAt;
-    delete response._id;
+    const permissions = _.filter(responses, { userAgent: userAgentId });
+
+    _.map(permissions, (response) => {
+      response.actionNames = _.uniq(response.actionNames);
+      delete response.actionName;
+      delete response.userAgent;
+      delete response.created_at;
+      delete response.updated_at;
+      delete response.createdAt;
+      delete response.updatedAt;
+      delete response._id;
+    });
+
+    ctx.cache.set(cacheKeys[index], permissions, 86400);
   });
-
-  await Promise.all(
-    _.map(
-      cacheKeys,
-      (key) => ctx.cache.set(key, responses, 86400) // 1 dia
-    )
-  );
 
   return responses;
 }
