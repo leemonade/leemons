@@ -130,6 +130,8 @@ module.exports = {
   testsEdit: {
     gradableLabel: 'Evaluable',
     programLabel: 'Programa',
+    courseLabel: 'Curso',
+    programPlaceholder: 'Seleccionar ...',
     programRequired: 'Campo necesario',
     subjectLabel: 'Asignatura',
     subjectRequired: 'Campo necesario',

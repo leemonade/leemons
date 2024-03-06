@@ -20,7 +20,6 @@ export default function DetailBasic({
 }) {
   const formValues = form.watch();
   const validate = async () => form.trigger(['name']);
-
   const handleOnNext = async () => {
     if (await validate()) {
       onNext();

@@ -11,8 +11,9 @@ import {
   Table,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
+  Select,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon, ChevRightIcon, OpenIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
@@ -20,6 +21,8 @@ import _, { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useDataForSubjectPicker } from '@academic-portfolio/components/SubjectPicker/hooks/useDataForSubjectPicker';
+import { Controller } from 'react-hook-form';
 import { listQuestionsBanksRequest } from '../../../../request';
 
 export default function DetailQuestionsBanks({
@@ -38,9 +41,18 @@ export default function DetailQuestionsBanks({
     page: 0,
     size: 10,
   });
+  const [selectedSubject, setSelectedSubject] = React.useState(null);
   const formValues = form.watch();
   const questionBank = form.watch('questionBank');
   const subjects = form.watch('subjects');
+  const {
+    programs,
+    courses,
+    subjects: allSubjects,
+  } = useDataForSubjectPicker({
+    subjects: subjects || [],
+    control: form.control,
+  });
 
   const validate = async () => form.trigger(['questionBank']);
 
@@ -57,14 +69,19 @@ export default function DetailQuestionsBanks({
       onSave();
     }
   }
-
+  // "lrn:local:academic-portfolio:local:65d364266cf4674152845275:Subjects:65d365f657481836d62c45c5"
+  // "lrn:local:academic-portfolio:local:65d364266cf4674152845275:Subjects:65d365f657481836d62c45c5"
   async function listQuestionsBanks() {
+    const subjetsToUse = subjects.length >= 1 ? subjects : selectedSubject ? [selectedSubject] : [];
     try {
       const { data } = await listQuestionsBanksRequest({
+        includeAgnosticsQB: true,
         page: store.page,
         size: store.size,
         published: true,
-        subjects: _.map(subjects, (subject) => (_.isString(subject) ? subject : subject.subject)),
+        subjects: _.map(subjetsToUse, (subject) =>
+          _.isString(subject) ? subject : subject.subject
+        ),
       });
 
       if (questionBank) {
@@ -104,6 +121,12 @@ export default function DetailQuestionsBanks({
     load();
   }, []);
 
+  React.useEffect(() => {
+    if (selectedSubject) {
+      load();
+    }
+  }, [selectedSubject]);
+
   const tableColumns = React.useMemo(
     () => [
       {
@@ -114,11 +137,12 @@ export default function DetailQuestionsBanks({
       {
         Header: t('nameHeader'),
         accessor: 'name',
+        style: { width: '350px' },
       },
       {
         Header: t('nQuestionsHeader'),
         accessor: 'nQuestions',
-        style: { width: 150, textAlign: 'center' },
+        style: { textAlign: 'center' },
         // eslint-disable-next-line react/prop-types
         Cell: ({ value }) => (
           <Stack justifyContent="center" fullWidth>
@@ -141,7 +165,7 @@ export default function DetailQuestionsBanks({
       {
         Header: t('actionsHeader'),
         accessor: 'actions',
-        style: { width: 100, textAlign: 'center' },
+        style: { textAlign: 'center' },
       },
     ],
     [t]
@@ -172,7 +196,7 @@ export default function DetailQuestionsBanks({
             target="_blank"
             to={`/private/tests/questions-banks/${item.id}`}
             tooltip={t('view')}
-            icon={<ExpandDiagonalIcon />}
+            icon={<OpenIcon width={20} height={20} color={'#2F463F'} />}
           />
         </Stack>
       ),
@@ -224,7 +248,72 @@ export default function DetailQuestionsBanks({
       <Box>
         <ContextContainer title={t('questionsBanksDescription')}>
           <InputWrapper error={isDirty ? form.formState.errors.questionBank : null} />
-
+          {/* <SubjectPicker /> */}
+          <Stack
+            fullWidth
+            style={{
+              width: '100%',
+              display: 'flex',
+              gap: 16,
+              alignItems: 'end',
+            }}
+          >
+            <Box>
+              <Controller
+                control={form.control}
+                name="program"
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    cleanOnMissingValue
+                    label={t('programLabel')}
+                    placeholder={t('programPlaceholder')}
+                    data={programs}
+                    disabled={!programs?.length || !!subjects?.length}
+                  />
+                )}
+              />
+            </Box>
+            {courses !== null && (
+              <Box>
+                <Controller
+                  control={form.control}
+                  name="course"
+                  shouldUnregister
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      cleanOnMissingValue
+                      label={t('courseLabel')}
+                      placeholder={t('programPlaceholder')}
+                      data={courses}
+                      disabled={!!subjects?.length}
+                    />
+                  )}
+                />
+              </Box>
+            )}
+            <Box>
+              <Controller
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    cleanOnMissingValue
+                    label={t('subjectLabel')}
+                    placeholder={t('programPlaceholder')}
+                    data={allSubjects}
+                    disabled={!!subjects?.length}
+                    onChange={(selected) => {
+                      setSelectedSubject(selected);
+                      field.onChange(selected);
+                    }}
+                  />
+                )}
+              />
+            </Box>
+          </Stack>
           {tableItems.length ? (
             <>
               <Box>
