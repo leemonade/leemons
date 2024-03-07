@@ -2,6 +2,11 @@
 
 ## [1.0.0](https://github.com/leemonade/leemons/compare/0.0.4...1.0.0) (2024-03-07)
 
+### ⚠ BREAKING CHANGES
+
+* **core:** Migrated from SQL to Mongoose.
+* **core:** Migrated to microservices with MoleculerJS.
+* New license
 
 ### Features
 
@@ -123,7 +128,6 @@
 * **users:** Create `useUserDetails` hook and do some data sanitization ([9dad24a](https://github.com/leemonade/leemons/commit/9dad24a4f02cf647c394ef3687487d626a8fb569)), closes [#228](https://github.com/leemonade/leemons/issues/228)
 * **Users:** Enhance hostname retrieval and error handling ([a9e33b5](https://github.com/leemonade/leemons/commit/a9e33b581f58488dde0598b7ddc6a6512f1a3295))
 * **users:** Remode unnecesary admin permissions. ([a060381](https://github.com/leemonade/leemons/commit/a060381a8213875c377ee778bcd04092a4c2e923))
-
 
 ### Bug Fixes
 
@@ -363,7 +367,7 @@
 * **Upload:** Include the file ContentType in the MultipartUpload ([208f4dc](https://github.com/leemonade/leemons/commit/208f4dcbb6ce40f3ef5d3e1937f9d3936ea3ecbb))
 * Use apiUrl for returned url ([7aaeaec](https://github.com/leemonade/leemons/commit/7aaeaec206ae704e96bcab2643a131f703a5379f))
 * Use default null on grades model, feedback prop ([feca308](https://github.com/leemonade/leemons/commit/feca308ee46694aa41ec293f04fdd6ba983ad23a))
-* Use deployment account to send emails and no-reply@leemons.io as default email ([3f7d643](https://github.com/leemonade/leemons/commit/3f7d643b4968f964eaefd3757541455648f77b80))
+* Use deployment account to send emails and <no-reply@leemons.io> as default email ([3f7d643](https://github.com/leemonade/leemons/commit/3f7d643b4968f964eaefd3757541455648f77b80))
 * Use fullWidth in TotalLayoutStepContainer ([9b7816b](https://github.com/leemonade/leemons/commit/9b7816b1c42572fcbb4bb0b1e53f0bb79ede59ce))
 * Use production build in github workflow ([4a020ae](https://github.com/leemonade/leemons/commit/4a020aef25566ed195074924f9aec0e05df062aa))
 * **useClassesSwiperWidget:** If prograim image exist, don't show letters ([53d3229](https://github.com/leemonade/leemons/commit/53d3229df75ea2a93913854c5d5a3b6dbca661c6))
@@ -379,13 +383,11 @@
 * **users:** Return concatenated cache in getUserAgentPermissions ([90549be](https://github.com/leemonade/leemons/commit/90549be8f837ab43355a6ab321ed5e64228dfb77))
 * **users:** Show login form error when no error message is received from back ([14743a1](https://github.com/leemonade/leemons/commit/14743a17cbd05c2575aff2f33a91016abeedd1e2))
 
-
 ### Miscellaneous Chores
 
 * Merge branch 'microservices/dev' ([5e50111](https://github.com/leemonade/leemons/commit/5e501116ed3b2dbd6b34f913be46e2568fdd7945))
 
 ## [0.0.4](https://github.com/leemonade/leemons/compare/0.0.3...0.0.4) (2023-08-31)
-
 
 ### Features
 
@@ -431,7 +433,6 @@
 * **users:** Disable/Enable users. ([4abfb39](https://github.com/leemonade/leemons/commit/4abfb3992354fddbed3e0afc61f8b8d4dabdd7b8))
 * **users:** Modified user list design to differentiate deactivated users ([0f1f593](https://github.com/leemonade/leemons/commit/0f1f593d914ef3f2136028bf27d19eea2fc0b7b9))
 * **users:** New users list ([fb0b5fa](https://github.com/leemonade/leemons/commit/fb0b5fa0f1fee22c31d13671b90f79b9bef6b760))
-
 
 ### Bug Fixes
 
