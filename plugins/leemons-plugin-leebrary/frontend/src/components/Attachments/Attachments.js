@@ -27,7 +27,6 @@ function Attachments({ setValue, getValues, labels }) {
     () => setShowAssetDrawer((showDrawer) => !showDrawer),
     [setShowAssetDrawer]
   );
-
   /*
     --- Resources state ---
   */

@@ -160,6 +160,7 @@ module.exports = {
     statementPlaceholder: 'Add the statement text here',
     addResourcesLabel: 'Add resources',
     resources: 'Resources',
+    instructions: 'Instructions',
     resoucesAndInstructions: 'Resources and instructions',
     onlyPublish: 'Only publish',
     publishAndAssign: 'Publish and assign',

@@ -154,6 +154,10 @@ const saveTestSchema = {
         type: 'string',
       },
     },
+    resources: {
+      type: 'array',
+      items: stringSchema,
+    },
     config: {
       type: 'object',
       additionalProperties: true,

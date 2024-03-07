@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import {
-  Box,
   Button,
   ContextContainer,
   TotalLayoutStepContainer,
@@ -11,6 +10,7 @@ import {
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { Attachments } from '@leebrary/components';
 import FinalDropdown from './FinalDropdown';
 
 export default function DetailInstructions({
@@ -19,6 +19,8 @@ export default function DetailInstructions({
   store,
   stepName,
   scrollRef,
+  hasResources,
+  hasInstructions,
   onSave = noop,
   onPublish = noop,
   onAssign = noop,
@@ -38,6 +40,10 @@ export default function DetailInstructions({
       onSave();
     }
   }
+
+  const attachmentsLabels = {
+    addResource: t('addResourcesLabel'),
+  };
 
   return (
     <TotalLayoutStepContainer
@@ -81,32 +87,43 @@ export default function DetailInstructions({
         />
       }
     >
-      <Box>
-        <ContextContainer>
-          <Controller
-            control={form.control}
-            name="instructionsForTeachers"
-            render={({ field }) => (
-              <TextEditorInput
-                error={isDirty ? form.formState.errors.instructionsForTeachers : null}
-                label={t('instructionsForTeacherLabel')}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            control={form.control}
-            name="instructionsForStudents"
-            render={({ field }) => (
-              <TextEditorInput
-                error={isDirty ? form.formState.errors.instructionsForStudents : null}
-                label={t('instructionsForStudentLabel')}
-                {...field}
-              />
-            )}
-          />
-        </ContextContainer>
-      </Box>
+      <ContextContainer>
+        {hasResources && (
+          <ContextContainer title={hasInstructions && hasResources ? t('resources') : ''}>
+            <Attachments
+              labels={attachmentsLabels}
+              setValue={form.setValue}
+              getValues={form.getValues}
+            />
+          </ContextContainer>
+        )}
+        {hasInstructions && (
+          <ContextContainer title={hasInstructions && hasResources ? t('instructions') : ''}>
+            <Controller
+              control={form.control}
+              name="instructionsForTeachers"
+              render={({ field }) => (
+                <TextEditorInput
+                  error={isDirty ? form.formState.errors.instructionsForTeachers : null}
+                  label={t('instructionsForTeacherLabel')}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="instructionsForStudents"
+              render={({ field }) => (
+                <TextEditorInput
+                  error={isDirty ? form.formState.errors.instructionsForStudents : null}
+                  label={t('instructionsForStudentLabel')}
+                  {...field}
+                />
+              )}
+            />
+          </ContextContainer>
+        )}
+      </ContextContainer>
     </TotalLayoutStepContainer>
   );
 }
@@ -121,4 +138,6 @@ DetailInstructions.propTypes = {
   stepName: PropTypes.string,
   scrollRef: PropTypes.any,
   store: PropTypes.any,
+  hasInstructions: PropTypes.bool,
+  hasResources: PropTypes.bool,
 };

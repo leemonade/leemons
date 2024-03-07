@@ -13,8 +13,8 @@ import {
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { useObservableContext } from '@common/context/ObservableContext';
+import { Attachments } from '@leebrary/components';
 import TimeUnitsInput from '../Inputs/TimeUnitsInput';
-import { Attachments } from './components/Attachments';
 
 function useDefaultValues() {
   const { getValues } = useObservableContext();

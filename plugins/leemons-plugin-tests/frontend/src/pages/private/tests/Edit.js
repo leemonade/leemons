@@ -307,6 +307,8 @@ export default function Edit() {
           t={t}
           form={form}
           store={store}
+          hasResources={config.hasResources}
+          hasInstructions={config.hasInstructions}
           stepName={t(getInstructionsLabelKey())}
           scrollRef={scrollRef}
           onSave={saveAsDraft}

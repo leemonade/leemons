@@ -159,6 +159,7 @@ module.exports = {
     statementPlaceholder: 'Añadir aquí el texto del enunciado',
     addResourcesLabel: 'Añadir recursos',
     resources: 'Recursos',
+    instructions: 'Instrucciones',
     resoucesAndInstructions: 'Recursos e instrucciones',
     onlyPublish: 'Solo publicar',
     publishAndAssign: 'Publicar y asignar',
