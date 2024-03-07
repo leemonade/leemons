@@ -397,6 +397,49 @@ module.exports = {
       submitted: 'Submitted',
       startActivity: 'Start activity',
     },
+    emptyState: {
+      title: 'Welcome!',
+      teacher: {
+        title: 'There is no information to show here yet',
+        description1:
+          'In this dashboard, you will soon find information about the activities and tasks you have assigned to your students, the planning calendar, or your agile task manager.',
+        description2: 'Meanwhile, to get started, we recommend the following actions:',
+        helpCenter: {
+          title: 'Visit the help center',
+          description:
+            'At {CTA}, you will find useful information to make the most of the platform.',
+          cta: 'Leemons Academy',
+        },
+        leebrary: {
+          title: 'Upload resources',
+          description:
+            'In the {CTA}, you can upload content and create materials and activities for your classes.',
+          cta: 'Leemons Library',
+        },
+        comunica: {
+          title: 'Say “Hello”',
+          description:
+            'Below you have a green balloon, click it to open Comunica, and greet your students in the chat.',
+        },
+      },
+      student: {
+        title: 'There is no information to show here yet',
+        description1:
+          'In this dashboard, you will soon find information about the activities and tasks assigned to you by your teachers, your delivery calendar, or your agile task manager.',
+        description2: 'Meanwhile, to get started, we recommend the following actions:',
+        helpCenter: {
+          title: 'Visit the help center',
+          description:
+            'At {CTA}, you will find useful information to make the most of the platform.',
+          cta: 'Leemons Academy',
+        },
+        comunica: {
+          title: 'Say “Hello”',
+          description:
+            'Below you have a green balloon, click it to open Comunica, and greet your classmates and teachers in the chat.',
+        },
+      },
+    },
   },
   pagination: {
     show: 'Show',

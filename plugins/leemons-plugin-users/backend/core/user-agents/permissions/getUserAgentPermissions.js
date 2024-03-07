@@ -30,12 +30,14 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
   const cacheKeys = _.map(
     _userAgents,
     (_userAgent) =>
-      `users:permissions:${_userAgent.id}:getUserAgentPermissions:${JSON.stringify(_query)}`
+      `users:permissions:${_userAgent?.id ?? _userAgent}:getUserAgentPermissions:${JSON.stringify(
+        _query
+      )}`
   );
   const cache = await ctx.cache.getMany(cacheKeys);
 
   if (Object.keys(cache).length) {
-    return cache[Object.keys(cache)[0]];
+    return Object.keys(cache).reduce((acc, key) => [...acc, ...cache[key]], []);
   }
 
   const query = { ..._query, userAgent: _.map(_userAgents, 'id') };
@@ -75,24 +77,27 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
       center: null,
     });
   }
+  _.map(_userAgents, (_userAgent, index) => {
+    const userAgentId = _userAgent.id;
 
-  _.map(responses, (response) => {
-    response.actionNames = _.uniq(response.actionNames);
-    delete response.actionName;
-    delete response.userAgent;
-    delete response.created_at;
-    delete response.updated_at;
-    delete response.createdAt;
-    delete response.updatedAt;
-    delete response._id;
+    const permissions = _.filter(
+      responses,
+      (response) => !response.userAgent || response.userAgent === userAgentId
+    );
+
+    _.map(permissions, (response) => {
+      response.actionNames = _.uniq(response.actionNames);
+      delete response.actionName;
+      delete response.userAgent;
+      delete response.created_at;
+      delete response.updated_at;
+      delete response.createdAt;
+      delete response.updatedAt;
+      delete response._id;
+    });
+
+    ctx.cache.set(cacheKeys[index], permissions, 86400);
   });
-
-  await Promise.all(
-    _.map(
-      cacheKeys,
-      (key) => ctx.cache.set(key, responses, 86400) // 1 dia
-    )
-  );
 
   return responses;
 }

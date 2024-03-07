@@ -4,7 +4,7 @@ export const MAIN_NAV_BAR_DEFAULT_PROPS = {
   isLoading: false,
   useSpotlight: true,
   logoUrl: '',
-  navTitle: 'leemons for developers',
+  navTitle: 'Leemons LXP',
   spotlightLabel: 'Search',
   session: null,
   sessionMenu: null,

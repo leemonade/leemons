@@ -406,6 +406,49 @@ module.exports = {
       submitted: 'Entregada',
       startActivity: 'Empezar actividad',
     },
+    emptyState: {
+      title: '¡Te damos la bienvenida!',
+      teacher: {
+        title: 'Aún no hay información para mostrar aquí',
+        description1:
+          'En este panel de control podrás encontrar muy pronto información sobre las actividades y tareas que has asignado a tus estudiantes, el calendario de planificación o tu gestor ágil de tareas.',
+        description2: 'Mientras tanto y para empezar, te recomendamos las siguientes acciones:',
+        helpCenter: {
+          title: 'Visitar el centro de ayuda',
+          description:
+            'En {CTA} encontrarás información de utilidad para sacar todo el partido a la plataforma.',
+          cta: 'Leemons Academy',
+        },
+        leebrary: {
+          title: 'Subir recursos',
+          description:
+            'En la {CTA} podrás subir contenidos y crear materiales y actividades para tus clases.',
+          cta: 'Biblioteca de Leemons',
+        },
+        comunica: {
+          title: 'Decir “Hola”',
+          description:
+            'Abajo tienes un globito verde, púlsalo para abrir Comunica, y saludar a tus estudiantes en el chat.',
+        },
+      },
+      student: {
+        title: 'Aún no hay información para mostrar aquí',
+        description1:
+          'En este panel de control podrás encontrar muy pronto información sobre las actividades y tareas que te han asignado tus profesores, tu calendario de entregas o tu gestor ágil de tareas.',
+        description2: 'Mientras tanto y para empezar, te recomendamos las siguientes acciones:',
+        helpCenter: {
+          title: 'Visitar el centro de ayuda',
+          description:
+            'En {CTA} encontrarás información de utilidad para sacar todo el partido a la plataforma.',
+          cta: 'Leemons Academy',
+        },
+        comunica: {
+          title: 'Decir “Hola”',
+          description:
+            'Abajo tienes un globito verde, púlsalo para abrir Comunica, y saludar a tus compañeros y profesores en el chat.',
+        },
+      },
+    },
   },
   pagination: {
     show: 'Mostrar',

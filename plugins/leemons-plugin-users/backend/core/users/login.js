@@ -52,6 +52,13 @@ async function login({ email, password, ctx }) {
           });
         }
       } catch (e) {
+        if (e.message === 'invalid-credentials') {
+          throw new LeemonsError(ctx, {
+            message: 'Credentials do not match',
+            httpStatusCode: 401,
+          });
+        }
+
         throw new LeemonsError(ctx, {
           message: 'Cannot connect to external identity',
           httpStatusCode: 500,
