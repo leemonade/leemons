@@ -1,0 +1,25 @@
+{
+  "name": "leemons-plugin-admin-frontend-react",
+  "version": "1.0.0",
+  "main": "Public.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/leemons": "dev",
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/editors": "dev",
+    "@bubbles-ui/icons": "dev",
+    "@loadable/component": "^5.15.2",
+    "country-region-data": "^3.0.0",
+    "prop-types": "^15.7.2",
+    "js-cookie": "^2.2.1",
+    "leemons-hooks": "0.0.32",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.8.5",
+    "react-router-dom": "^5.3.3",
+    "react-simple-i18n": "^1.4.0-beta.0",
+    "p-min-delay": "^4.0.2"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,40 @@
+{
+  "name": "leemons-plugin-leebrary-aws-s3",
+  "version": "1.0.25",
+  "description": "Leemons Library AWS S3 plugin",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
+    "test": "jest --watch --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer",
+    "leemons"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.25.0",
+    "jest": "^27.5.1",
+    "jest-cli": "^27.5.1"
+  },
+  "dependencies": {
+    "@jest/globals": "^29.7.0",
+    "@leemons/cache": "0.0.41",
+    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/middlewares": "0.0.41",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/mongodb-helpers": "0.0.71",
+    "@leemons/multilanguage": "0.0.71",
+    "@leemons/testing": "0.0.71",
+    "@leemons/utils": "0.0.41",
+    "aws-sdk": "^2.1438.0",
+    "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
+    "moleculer": "^0.14.26"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  }
+}

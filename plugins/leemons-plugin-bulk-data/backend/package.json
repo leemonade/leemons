@@ -1,0 +1,43 @@
+{
+  "name": "leemons-plugin-bulk-data",
+  "version": "1.0.32",
+  "description": "Leemons bulk data plugin",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "jest": "29.7.0",
+    "jest-cli": "29.7.0"
+  },
+  "dependencies": {
+    "@leemons/cache": "0.0.41",
+    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/error": "0.0.41",
+    "@leemons/middlewares": "0.0.41",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/mqtt": "0.0.41",
+    "@leemons/multi-events": "0.0.71",
+    "async-promise-pool": "^1.0.6",
+    "chalk": "^4.1.1",
+    "jaeger-client": "^3.19.0",
+    "lodash": "^4.17.21",
+    "mime": "^3.0.0",
+    "moleculer": "^0.14.26",
+    "showdown": "^2.1.0",
+    "temp": "^0.9.4",
+    "xlsx-import": "^2.4.4"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  }
+}

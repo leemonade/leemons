@@ -1,0 +1,57 @@
+name: DEV Upload plugins dockers
+"on":
+  workflow_call:
+    inputs:
+      NPM_TAG:
+        required: true
+        type: string
+      IMAGE_TAG:
+        required: true
+        type: string
+      AWS_REGION:
+        required: true
+        type: string
+      GIT_BRANCH:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCOUNT_ID:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
+
+      - name: 🔧 Download latest commit
+        run: |
+          git fetch origin ${{ inputs.GIT_BRANCH }}
+          git checkout ${{ inputs.GIT_BRANCH }}
+          git pull origin ${{ inputs.GIT_BRANCH }}
+
+      - name: 🔧 Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.AWS_REGION }}
+      - name: 🔧 Set up AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: 🔧 Set up docker caching layer
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: 🔧 Change package versions
+        run: bash scripts/change_plugins_version.sh ./packages ${{ inputs.NPM_TAG }}
+      - name: 🔧 Compile all dockers
+        run: bash scripts/build_dockers_by_folder.sh ./plugins ./private-plugins ./private-plugins
+      - name: 🔧 Upload all dockers to ECR
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} IMAGE_TAG=${{ inputs.IMAGE_TAG }} bash scripts/push_dockers_to_aws_by_folder.sh ./plugins ./private-plugins

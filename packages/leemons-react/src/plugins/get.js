@@ -6,15 +6,14 @@ module.exports = async function get({ app }) {
   try {
     const packageJSON = await fs.readJSON(path.resolve(app, 'package.json'));
     const plugins = [];
-
     if (packageJSON.dependencies) {
       plugins.push(
         ...Object.keys(packageJSON.dependencies)
           .map((name) => {
             try {
               // Get those dependencies called 'leemons-plugin-*'
-              if (name.startsWith(`leemons-plugin-`) || name.startsWith(`leemons-provider-`)) {
-                const pluginPath = path.dirname(require.resolve(`${name}/frontend/package.json`));
+              if (name.includes(`leemons-plugin-`) && name.includes(`frontend-react`)) {
+                const pluginPath = path.dirname(require.resolve(`${name}/package.json`));
                 const isPlugin = name.startsWith(`leemons-plugin-`);
                 const prefix = isPlugin ? 'plugin' : 'provider';
                 return {
@@ -29,7 +28,6 @@ module.exports = async function get({ app }) {
           })
           .filter(Boolean)
       );
-
       return plugins;
     }
 

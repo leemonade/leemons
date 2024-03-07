@@ -1,0 +1,139 @@
+{
+  "permissions": [
+    {
+      "permissionName": "users.users",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "users.user-data",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "users.centers",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "users.profiles",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "dataset.dataset",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "calendar.calendar",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "academic-portfolio.portfolio",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "academic-portfolio.programs",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "academic-portfolio.profiles",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "academic-portfolio.subjects",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "academic-portfolio.tree",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "timetable.config",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "timetable.timetable",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "curriculum.curriculum",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "curriculum.curriculum-menu",
+      "actionNames": [
+        "view"
+      ]
+    },
+    {
+      "permissionName": "leebrary.library",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "grades.rules",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "grades.evaluations",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "grades.promotions",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "grades.dependencies",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "scores.reviewer",
+      "actionNames": [
+        "admin"
+      ]
+    },
+    {
+      "permissionName": "scores.scoresMenu",
+      "actionNames": [
+        "view"
+      ]
+    }
+  ],
+  "name": "Admin",
+  "description": "Profile for platform administrators",
+  "indexable": true
+}

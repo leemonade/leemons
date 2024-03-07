@@ -8,7 +8,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const LoadablePlugin = require('@loadable/webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = function webpackConfig({
@@ -17,6 +16,7 @@ module.exports = function webpackConfig({
   alias,
   publicFiles,
   isDev = process.env.NODE_ENV !== 'production',
+  lazy,
   useDebug = process.env.DEBUG,
 }) {
   const isProduction = !isDev;
@@ -47,7 +47,6 @@ module.exports = function webpackConfig({
           terserOptions: {
             compress: {
               ecma: 5,
-              warnings: false,
               // Disabled because of an issue with Uglify breaking seemingly valid code:
               // https://github.com/facebook/create-react-app/issues/2376
               // Pending further investigation:
@@ -106,11 +105,13 @@ module.exports = function webpackConfig({
       symlinks: false,
       alias: {
         ...alias,
+        chalk: path.resolve(require.resolve('chalk'), '..'),
         react: path.resolve(require.resolve('react'), '..'),
         'react-dom': path.resolve(require.resolve('react-dom'), '..'),
         'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),
         '@tanstack/react-query': path.resolve(require.resolve('@tanstack/react-query'), '..'),
         '@loadable/component': path.resolve(require.resolve('@loadable/component')),
+        'leemons-hooks': path.resolve(require.resolve('leemons-hooks')),
       },
     },
     module: {
@@ -227,20 +228,20 @@ module.exports = function webpackConfig({
         template: path.resolve(__dirname, '../templates', isDev ? 'dev.html' : 'prod.html'),
       }),
       isDev && new ReactRefreshWebpackPlugin(),
-      useDebug && new BundleAnalyzerPlugin(),
+      useDebug && new BundleAnalyzerPlugin({ analyzerMode: 'disabled' }),
       useDebug && new webpack.debug.ProfilingPlugin(),
       isProduction &&
-      new MiniCssExtractPlugin({
-        // Options similar to the same options in webpackOptions.output
-        // both options are optional
-        filename: 'static/css/[name].[contenthash:8].css',
-        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-      }),
-      new LoadablePlugin({ filename: 'stats.json', writeToDisk: true }),
+        new MiniCssExtractPlugin({
+          // Options similar to the same options in webpackOptions.output
+          // both options are optional
+          filename: 'static/css/[name].[contenthash:8].css',
+          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+        }),
+      // new LoadablePlugin({ filename: 'stats.json', writeToDisk: true }),
       publicFiles?.length &&
-      new CopyPlugin({
-        patterns: [...publicFiles],
-      }),
+        new CopyPlugin({
+          patterns: [...publicFiles],
+        }),
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
@@ -248,13 +249,15 @@ module.exports = function webpackConfig({
     ignoreWarnings: [/Failed to parse source map/],
     experiments: {
       cacheUnaffected: true,
-      lazyCompilation: isDev,
+      lazyCompilation: isDev && lazy,
     },
     stats: false,
     infrastructureLogging: {
       level: 'none',
     },
   };
+
+  console.log('webpack ready!');
 
   return config;
 };

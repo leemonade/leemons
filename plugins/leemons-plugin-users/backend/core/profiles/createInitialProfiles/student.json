@@ -1,0 +1,107 @@
+{
+  "permissions": [
+    {
+      "permissionName": "users.users",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "users.user-data",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "users.centers",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "dataset.dataset",
+      "actionNames": ["create"]
+    },
+    {
+      "permissionName": "calendar.calendar",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "timetable.config",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "timetable.timetable",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "curriculum.curriculum",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "leebrary.library",
+      "actionNames": ["update"]
+    },
+    {
+      "permissionName": "grades.rules",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "grades.evaluations",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "grades.promotions",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "grades.dependencies",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "tests.tests",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "tests.questionsBanks",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "assignables.activities",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "assignables.ongoing",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "assignables.history",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "content-creator.creator",
+      "actionNames": ["view", "update", "create", "delete"]
+    },
+    {
+      "permissionName": "calendar.menu.kanban",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "scores.scoresMenu",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "scores.scores",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-portfolio.programs",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-portfolio.subjects",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-calendar.config",
+      "actionNames": ["view"]
+    }
+  ],
+  "name": "Estudiante",
+  "description": "Profile for students",
+  "indexable": true
+}

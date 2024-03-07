@@ -10,24 +10,45 @@
   },
   "extends": [
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:sonarjs/recommended",
     "airbnb-base",
     "prettier"
   ],
-  "parser": "babel-eslint",
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "babelrc": false,
+      "configFile": false,
+      "presets": [
+        "@babel/preset-env"
+      ],
+      "plugins": [
+        "@babel/plugin-syntax-jsx"
+      ]
+    },
+    "ecmaVersion": 2020,
     "ecmaFeatures": {
       "jsx": true
-    },
-    "ecmaVersion": 12,
-    "sourceType": "module"
+    }
   },
   "plugins": [
     "react",
+    "react-hooks",
+    "sonarjs",
     "import",
     "prettier"
   ],
   "rules": {
+    "radix": "off",
     "no-plusplus": "off",
+    "no-unused-vars": "warn",
     "import/no-dynamic-requires": "off",
     "import/no-extraneous-dependencies": "off",
     "react/react-in-jsx-scope": "off",
@@ -40,6 +61,7 @@
       }
     ],
     "import/no-names-as-default": "off",
+    "import/prefer-default-export": "warn",
     "import/no-unresolved": [
       2,
       {
@@ -47,11 +69,11 @@
           "@academic-calendar",
           "@academic-portfolio",
           "@admin",
-          "@assets",
           "@assignables",
           "@attendance-control",
           "@board-messages",
           "@calendar",
+          "@client-manager",
           "@common",
           "@comunica",
           "@content-creator",
@@ -62,6 +84,7 @@
           "@emails-aws-ses",
           "@emails-smtp",
           "@families",
+          "@families-emergency-numbers",
           "@feedback",
           "@fundae",
           "@grades",
@@ -69,8 +92,6 @@
           "@learning-paths",
           "@leebrary",
           "@leebrary-aws-s3",
-          "@leebrary-tasks",
-          "@leebrary-tests",
           "@menu-builder",
           "@mqtt-aws-iot",
           "@mqtt-socket-io",

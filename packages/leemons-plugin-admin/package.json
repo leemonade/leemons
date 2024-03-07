@@ -1,9 +1,0 @@
-{
-  "name": "leemons-plugin-admin",
-  "version": "0.0.1",
-  "main": "lib/index.js",
-  "license": "MIT",
-  "dependencies": {
-    "colord": "2.9.3"
-  }
-}

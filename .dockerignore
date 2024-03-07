@@ -1,2 +1,7 @@
-node_modules
-.git
+**/node_modules
+plugins/**/frontend
+plugins/**/backend/coverage/lcov-report
+plugins/leemons-plugin-leebrary/backend/files
+
+private-plugins/**/frontend
+private-plugins/**/backend/coverage/lcov-report

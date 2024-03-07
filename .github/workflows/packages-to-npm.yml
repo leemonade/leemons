@@ -1,0 +1,49 @@
+name: Publish packages to NPM
+on:
+  workflow_call:
+    inputs:
+      NPM_TAG:
+        required: true
+        type: string
+      GIT_BRANCH:
+        required: true
+        type: string
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: 🔧 Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: 🔧 Patch and publish to NPM
+        run: NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} NPM_TAG=${{ inputs.NPM_TAG }} bash scripts/patch_publish.sh ./packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🔧 Check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$(if git status | grep "nothing to commit"; then echo "false"; else echo "true"; fi)
+
+      - name: 🚀 Git push
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git fetch origin ${{ inputs.GIT_BRANCH }}
+          git checkout ${{ inputs.GIT_BRANCH }}
+          git add .
+          git commit -m 'chore: version bump'
+          git push origin ${{ inputs.GIT_BRANCH }}

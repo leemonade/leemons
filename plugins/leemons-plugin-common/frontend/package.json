@@ -1,0 +1,24 @@
+{
+  "name": "leemons-plugin-common-frontend-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/editors": "dev",
+    "@bubbles-ui/icons": "dev",
+    "@bubbles-ui/leemons": "dev",
+    "@loadable/component": "^5.15.2",
+    "@tanstack/react-query": "^4.35.3",
+    "dayjs": "^1.11.2",
+    "lodash": "^4.17.21",
+    "object-hash": "^3.0.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.1",
+    "react-router-dom": "^5.3.3",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {}
+}

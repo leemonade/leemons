@@ -1,0 +1,71 @@
+name: Get packages and plugins modified
+on:
+  workflow_call:
+    inputs:
+      tag_pattern:
+        required: true
+        type: string
+    outputs:
+      packages:
+        description: "Modified packages"
+        value: ${{ jobs.publish.outputs.packages }}
+      plugins:
+        description: "Modified plugins"
+        value: ${{ jobs.publish.outputs.plugins }}
+      private-plugins:
+        description: "Modified private plugins"
+        value: ${{ jobs.publish.outputs.private-plugins }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.packages.outputs.packages }}
+      plugins: ${{ steps.plugins.outputs.plugins }}
+      private-plugins: ${{ steps.private-plugins.outputs.plugins }}
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
+
+      - name: 🔧 Get last tag
+        run: echo "LAST_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
+
+      - name: 🔧 Get current tag
+        run: echo "CURRENT_TAG=$(git tag -l '${{ inputs.tag_pattern }}' | sort -V | tail -n 1 | head -n 1)" >> "$GITHUB_ENV"
+
+      - name: 🔧 Get last tag private-plugins submodule commit id
+        run: echo "LAST_SUBMODULE_COMMIT=513155cf431f85d305b3114e8a5939cde38c9fa8" >> "$GITHUB_ENV"
+
+      - name: 🔧 Get current tag private-plugins submodule commit id
+        run: echo "CURRENT_SUBMODULE_COMMIT=$(git ls-tree $CURRENT_TAG private-plugins | cut -d' ' -f3 | cut -f1)" >> "$GITHUB_ENV"
+
+      - name: 🔧 Get packages files
+        id: packages
+        run: echo "packages=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^packages/' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Get plugins files
+        id: plugins
+        run: echo "plugins=$(git diff --name-only $CURRENT_TAG $LAST_TAG | grep '^plugins/.*/backend' | cut -d/ -f2 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: ls-submodule
+        run: echo $(ls private-plugins)
+
+      - name: git diff
+        run: git -C private-plugins diff --name-only $CURRENT_SUBMODULE_COMMIT $LAST_SUBMODULE_COMMIT
+
+      - name: 🔧 Get private-plugins files
+        id: private-plugins
+        run: echo "plugins=$(git -C private-plugins diff --name-only $CURRENT_SUBMODULE_COMMIT $LAST_SUBMODULE_COMMIT | grep '^.*/backend' | cut -d/ -f1 | sort | uniq | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Log plugins
+        run: echo "${{ steps.plugins.outputs.plugins }}"
+
+      - name: 🔧 Log private plugins
+        run: echo "${{ steps.private-plugins.outputs.plugins }}"
+
+      - name: 🔧 Log packages
+        run: echo "${{ steps.packages.outputs.packages }}"

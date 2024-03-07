@@ -8,7 +8,8 @@ module.exports = function generateAliases(dir, plugins) {
   return plugins.reduce(
     (obj, plugin) => ({
       ...obj,
-      [`@${plugin.name}`]: path.resolve(dir, 'plugins', plugin.name, 'src'),
+      [`@${plugin.name.replace('-frontend-react-private', '').replace('-frontend-react', '')}`]:
+        path.resolve(dir, 'plugins', plugin.name, 'src'),
     }),
     { ...globalAliases }
   );

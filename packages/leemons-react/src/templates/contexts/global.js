@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
-import { apiUrl as API_URL } from './apiURL';
+import { apiUrl as API_URL, allOriginsUrl as ALL_ORIGINS_URL } from './apiURL';
 
 const context = createContext();
 
@@ -33,7 +33,7 @@ class LeemonsApi {
       new Promise((resolve, reject) => {
         this.apiWaitToFinish[waitKey].waiting++;
         const check = () => {
-          if (this.apiWaitToFinish[waitKey].finish) {
+          if (this.apiWaitToFinish[waitKey]?.finish) {
             const { isError } = this.apiWaitToFinish[waitKey];
             const response = _.cloneDeep(this.apiWaitToFinish[waitKey].response);
             this.apiWaitToFinish[waitKey].waiting--;
@@ -51,7 +51,7 @@ class LeemonsApi {
     this.removeWhenNoWaits = (waitKey) => {
       let times = 0;
       const check = () => {
-        if (this.apiWaitToFinish[waitKey].finish && !this.apiWaitToFinish[waitKey].waiting) {
+        if (this.apiWaitToFinish[waitKey]?.finish && !this.apiWaitToFinish[waitKey]?.waiting) {
           delete this.apiWaitToFinish[waitKey];
         } else if (times < 60) {
           times++;
@@ -64,7 +64,7 @@ class LeemonsApi {
     };
   }
 
-  api = async (url, options) => {
+  api = async (url, options = {}) => {
     const ctx = { url, options, middlewares: [] };
     let waitKey = null;
     try {
@@ -226,6 +226,7 @@ export function Provider({ children }) {
   }, []);
 
   let apiUrl = API_URL;
+  const allOriginsUrl = ALL_ORIGINS_URL;
 
   if (window.customEnv?.apiUrl) {
     apiUrl = window.customEnv.apiUrl;
@@ -237,6 +238,7 @@ export function Provider({ children }) {
       log: console,
       version: '1.0.0',
       apiUrl,
+      allOriginsUrl,
     },
   });
 

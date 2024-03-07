@@ -10,8 +10,8 @@
     "@bubbles-ui/components": "dev",
     "@loadable/component": "^5.0.0",
     "p-min-delay": "^4.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "@tanstack/react-query": "^4.16.1",
     "@tanstack/react-query-devtools": "^4.16.1"
   }

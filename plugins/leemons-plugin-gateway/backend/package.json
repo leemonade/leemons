@@ -1,0 +1,41 @@
+{
+  "name": "leemons-plugin-gateway",
+  "version": "1.0.35",
+  "description": "Leemons gateway plugin",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "jest": "29.7.0",
+    "jest-cli": "29.7.0"
+  },
+  "dependencies": {
+    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/mongodb": "0.0.71",
+    "ioredis": "^5.3.2",
+    "jaeger-client": "^3.19.0",
+    "moleculer": "^0.14.26",
+    "moleculer-web": "^0.10.5"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./services",
+    "roots": [
+      "../test"
+    ]
+  }
+}

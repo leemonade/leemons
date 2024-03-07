@@ -1,3 +1,4 @@
+const { generateEnv } = require('@leemons/utils');
 const getAppDir = require('../src/paths/getAppDir');
 const getPlugins = require('../src/plugins');
 const generateMonorepo = require('../src/monorepo');
@@ -7,11 +8,8 @@ const generatePublicFolders = require('../src/plugins/generatePublicFolders');
 const buildApp = require('../src/webpack/build');
 const getBuildDir = require('../src/paths/getBuildDir');
 const getBasePath = require('../src/paths/getBasePath');
-const { generateEnv } = require('../../leemons-utils/lib/env');
 
 module.exports = async function buildFront({ app, build, output, base }) {
-  process.env.NODE_ENV = 'production';
-
   const env = await generateEnv('.env', false);
   Object.keys(env).forEach((key) => {
     process.env[key] = env[key];
@@ -22,7 +20,12 @@ module.exports = async function buildFront({ app, build, output, base }) {
   const buildDir = getBuildDir(build);
   const basePath = getBasePath(base);
 
-  const plugins = await getPlugins({ app: appDir });
+  const pluginsRaw = await getPlugins({ app: appDir });
+  const plugins = pluginsRaw.map((plugin) => ({
+    ...plugin,
+    name: plugin.name.replace('-frontend-react-private', '').replace('-frontend-react', ''),
+  }));
+
   const publicFiles = await generatePublicFolders(outputDir, plugins);
   const alias = generateAlias(outputDir, plugins);
 

@@ -1,0 +1,85 @@
+name: Publish packages to NPM
+on:
+  workflow_call:
+    outputs:
+      packages:
+        description: "Modified packages"
+        value: ${{ jobs.publish.outputs.packages }}
+    inputs:
+      PACKAGES:
+        required: true
+        type: string
+      NPM_TAG:
+        required: true
+        type: string
+      GIT_BRANCH:
+        required: true
+        type: string
+      GIT_TAG:
+        required: true
+        type: string
+    secrets:
+      NPM_TOKEN:
+        required: true
+      GH_PAT:
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.packages.outputs.packages }}
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
+
+      - name: 🔧 Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+
+      # Sube la version path de todos los packages que han sido modificados y publica la version en npm
+      # @return package_name|package_version
+      - name: 🔧 Patch and publish to NPM
+        id: packages
+        run: echo "packages=$(NODE_AUTH_TOKEN=${{ secrets.NPM_TOKEN }} NPM_TAG=${{ inputs.NPM_TAG }} bash scripts/patch_publish_v2.sh ${{ inputs.PACKAGES }})" >> $GITHUB_OUTPUT
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Subimos los cambios al repositorio
+      - name: 🔧 Check for modified files in private-plugins
+        id: git-check-private
+        run: echo "modified=$(if git -C private-plugins status | grep 'nothing to commit' > /dev/null; then echo false; else echo true; fi)" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Check for modified files
+        id: git-check
+        run: echo "modified=$(if git status | grep 'nothing to commit' > /dev/null; then echo false; else echo true; fi)" >> $GITHUB_OUTPUT
+
+      - name: 🚀 Git push private-plugins
+        if: steps.git-check-private.outputs.modified == 'true'
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git -C private-plugins config user.name "GitHub Actions Bot"
+          git -C private-plugins config user.email "<>"
+
+          git -C private-plugins add -A
+          git -C private-plugins commit -m 'chore: version bump'
+          git -C private-plugins tag "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
+          git -C private-plugins push origin "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
+
+      - name: 🚀 Git push
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git fetch origin ${{ inputs.GIT_BRANCH }}
+          git checkout ${{ inputs.GIT_BRANCH }}
+          git add -A
+          git commit -m 'chore: version bump'
+          git push origin ${{ inputs.GIT_BRANCH }}

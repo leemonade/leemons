@@ -1,0 +1,148 @@
+name: Upload plugins dockers
+on:
+  workflow_call:
+    outputs:
+      plugins_versions:
+        description: "leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1..."
+        value: ${{ jobs.upload.outputs.plugins_versions }}
+    inputs:
+      PACKAGES:
+        required: true
+        type: string
+      PLUGINS:
+        required: true
+        type: string
+      PRIVATE_PLUGINS:
+        required: true
+        type: string
+      AWS_REGION:
+        required: true
+        type: string
+      GIT_BRANCH:
+        required: true
+        type: string
+      GIT_TAG:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCOUNT_ID:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      GH_PAT:
+        required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    outputs:
+      plugins_versions: ${{ steps.plugins_versions.outputs.plugins_versions }}
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
+
+      - name: 🔧 Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.AWS_REGION }}
+
+      - name: 🔧 Set up AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: 🔧 Set up docker caching layer
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+
+      - name: 🔧 Log plugins
+        run: echo "${{ inputs.PLUGINS }}"
+
+      - name: 🔧 Log private plugins
+        run: echo "${{ inputs.PRIVATE_PLUGINS }}"
+
+      # Actualiza los plugins con las nuevas versiones de los packages y también sube una version patch a todos los plugins implicados
+      # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
+      - name: 🔧 Change package versions in plugins and change plugins versions
+        id: plugins_versions
+        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh 'plugins' '${{ inputs.PACKAGES }}' '${{ inputs.PLUGINS }}')" >> $GITHUB_OUTPUT
+
+      # Actualiza los plugins privados con las nuevas versiones de los packages y también sube una version patch a todos los plugins implicados
+      # @return leemons-plugin-tests|1.0.1,leemons-plugin-academic-calendar|1.0.1
+      - name: 🔧 Change package versions in plugins and change plugins versions
+        id: private_plugins_versions
+        run: echo "plugins_versions=$(bash scripts/change_plugins_version_v2.sh 'private-plugins' '${{ inputs.PACKAGES }}' '${{ inputs.PRIVATE_PLUGINS }}')" >> $GITHUB_OUTPUT
+
+      # Compila todos los dockers de los plugins modificados
+      - name: 🔧 Compile all plugins dockers
+        run: bash scripts/build_dockers_by_names_versions.sh -d plugins "${{ steps.plugins_versions.outputs.plugins_versions }}"
+
+      # Compila todos los dockers de los plugins privados modificados
+      - name: 🔧 Compile all private plugins dockers
+        run: bash scripts/build_dockers_by_names_versions.sh -d private-plugins -p private "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
+
+      # Tagea con la propia version del plugin todas las imagenes y las publica en ecr
+      - name: 🔧 Upload all dockers to ECR
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh -d plugins "${{ steps.plugins_versions.outputs.plugins_versions }}"
+
+      - name: 🔧 Upload all private dockers to ECR
+        run: AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ inputs.AWS_REGION }} bash scripts/push_dockers_to_aws_by_folder_v2.sh -d private-plugins -p private "${{ steps.private_plugins_versions.outputs.plugins_versions }}"
+
+      # Subimos los cambios de las versiones de los plugins privados
+      - name: 🔧 Checkout to latest submodule version
+        run: git submodule update --init
+
+      - name: Check git status (private)
+        run: git -C private-plugins status
+
+      - name: Check git status
+        run: git status
+
+      - name: 🔧 Check for modified files
+        id: private-git-check
+        run: echo "modified=$(if git -C private-plugins status | grep 'nothing to commit' > /dev/null; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Log private plugins versions
+        run: echo "${{ steps.private-git-check.outputs.modified }}"
+
+      - name: 🚀 Git push private-plugins submodule
+        if: steps.private-git-check.outputs.modified == 'true'
+        run: |
+          git -C private-plugins config user.name "GitHub Actions Bot"
+          git -C private-plugins config user.email "<>"
+          git -C private-plugins add -A
+          git -C private-plugins commit -m 'chore: version bump'
+
+          git -C private-plugins push origin :refs/tags/"$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
+          git -C private-plugins tag "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
+          git -C private-plugins push origin "$(echo "${{ inputs.GIT_TAG }}" | sed "s/refs\/tags\///g")"
+
+      - name: 🔧 Check for modified files
+        id: git-check
+        run: echo "modified=$(if git status | grep 'nothing to commit' > /dev/null; then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
+
+      - name: 🔧 Log plugins versions
+        run: git status
+
+      - name: 🔧 Log plugins versions
+        run: echo "${{ steps.git-check.outputs.modified }}"
+
+      - name: 🚀 Git push
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git fetch origin ${{ inputs.GIT_BRANCH }}
+          git stash
+          git checkout ${{ inputs.GIT_BRANCH }}
+          git stash apply
+          git add -A
+          git commit -m 'chore: version bump'
+          git push origin ${{ inputs.GIT_BRANCH }}

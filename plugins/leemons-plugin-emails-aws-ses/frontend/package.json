@@ -1,0 +1,15 @@
+{
+  "name": "leemons-plugin-emails-aws-ses-frontend-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "lodash": "^4.17.21",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.1"
+  },
+  "devDependencies": {}
+}

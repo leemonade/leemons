@@ -1,0 +1,47 @@
+{
+  "name": "leemons-plugin-emails-smtp",
+  "version": "1.0.31",
+  "description": "Leemons emails plugin",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "jest": "29.7.0",
+    "jest-cli": "29.7.0"
+  },
+  "dependencies": {
+    "@leemons/cache": "0.0.41",
+    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/middlewares": "0.0.41",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/mongodb-helpers": "0.0.71",
+    "@leemons/mqtt": "0.0.41",
+    "@leemons/multilanguage": "0.0.71",
+    "jaeger-client": "^3.19.0",
+    "moleculer": "^0.14.26",
+    "nodemailer": "^6.9.4",
+    "nodemailer-html-to-text": "^3.2.0",
+    "nodemailer-plugin-inline-base64": "^2.1.1"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./services",
+    "roots": [
+      "../test"
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "leemons-plugin-mqtt-aws-iot",
+  "version": "1.0.35",
+  "description": "Leemons mqtt aws iot plugin",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
+    "start": "moleculer-runner --env services/**/*.service.js",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services"
+  },
+  "keywords": [
+    "microservices",
+    "moleculer"
+  ],
+  "author": "",
+  "devDependencies": {
+    "aws-iot-device-sdk": "^2.2.12",
+    "aws-sdk": "^2.1463.0",
+    "eslint": "^8.50.0",
+    "jest": "29.7.0",
+    "jest-cli": "29.7.0"
+  },
+  "dependencies": {
+    "@leemons/cache": "0.0.41",
+    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/error": "0.0.41",
+    "@leemons/middlewares": "0.0.41",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/mongodb-helpers": "0.0.71",
+    "@leemons/multi-events": "0.0.71",
+    "@leemons/multilanguage": "0.0.71",
+    "@leemons/permissions": "0.0.71",
+    "@leemons/utils": "0.0.41",
+    "@leemons/validator": "0.0.41",
+    "@leemons/widgets": "0.0.72",
+    "aws-iot-device-sdk": "^2.2.12",
+    "aws-sdk": "^2.1463.0",
+    "jaeger-client": "^3.19.0",
+    "lodash": "^4.17.21",
+    "moleculer": "^0.14.26"
+  },
+  "engines": {
+    "node": ">= 16.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./services",
+    "roots": [
+      "../test"
+    ]
+  }
+}

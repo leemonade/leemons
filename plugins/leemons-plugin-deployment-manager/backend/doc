@@ -1,0 +1,25 @@
+Tablas
+Define que plugins tiene el depoyment y que version
+deployment-plugins
+
+deploymentID
+pluginName
+pluginVersion
+
+deployment-plugins-relationship
+deploymentID
+fromPluginName
+toPluginName
+actions [
+serviceName.actionName
+]
+
+
+
+
+
+cuando se haga un ctx.call tenemos que consuktar a deployment-manager si nostros como plugin usuarios tenemos acceso a
+llamar al plugin test a la accion X, esa misma llamada nos tiene que devolver la id de la relacion la cual tenemos que
+mandandar en el payload/meta a test
+test cuando reciba la llamada tiene que sabiendo que el que le llama es usuarios y que el es test comprobar usando la id
+de la relacion que le han mandado que usuarios es quien dice ser y que tiene acceso al action en cuestion

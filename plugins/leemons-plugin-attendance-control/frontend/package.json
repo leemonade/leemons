@@ -1,0 +1,20 @@
+{
+  "name": "leemons-plugin-attendance-control-frontend-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/icons": "dev",
+    "@loadable/component": "^5.15.2",
+    "exceljs": "^4.3.0",
+    "leemons-hooks": "0.0.32",
+    "lodash": "^4.17.21",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.3",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {}
+}

@@ -1,18 +1,26 @@
-FROM node:16-alpine
-RUN apk update && apk --no-cache --virtual build-dependencies add \
-    python3 \
-    make \
-    g++
-WORKDIR /leemons
-COPY ./package.json ./package.json
-COPY ./yarn.lock ./yarn.lock
-COPY ./packages ./packages
-COPY ./examples/docker ./app
-RUN yarn install --production \
-    && apk del build-dependencies
-WORKDIR /leemons/app
-RUN rm -f ./.env
-RUN rm -rf ./logs
-RUN printf "cd /leemons/app \nyarn start & \nwait -n \nexit $?" >> /leemons/runner.sh
-CMD [ "sh", "/leemons/runner.sh" ]
-EXPOSE 8080
+FROM node:20-alpine
+
+RUN apk add --update python3
+
+ARG PLUGIN_NAME
+ARG PATH_NAME
+
+ARG PLUGIN_PATH=./${PATH_NAME}/leemons-plugin-${PLUGIN_NAME}/backend
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY ${PLUGIN_PATH}/package.json ./
+RUN yarn install --production
+RUN yarn add @leemons/runner@dev nats jaeger-client --production
+
+RUN mkdir /temp
+RUN cp package.json yarn.lock /temp
+
+COPY ${PLUGIN_PATH}/ ./
+
+RUN cp /temp/package.json /temp/yarn.lock .
+
+EXPOSE 3000
+
+CMD ["yarn", "leemons-runner"]

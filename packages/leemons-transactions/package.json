@@ -1,0 +1,25 @@
+{
+  "name": "@leemons/transactions",
+  "version": "0.0.41",
+  "description": "",
+  "main": "src/index.js",
+  "keywords": [],
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {}
+}

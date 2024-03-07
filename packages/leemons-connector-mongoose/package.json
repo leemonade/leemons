@@ -1,9 +1,0 @@
-{
-  "name": "leemons-connector-mongoose",
-  "version": "0.0.1",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "mongoose": "^6.0.13"
-  }
-}

@@ -1,0 +1,21 @@
+{
+  "name": "leemons-plugin-dashboard-frontend-react",
+  "version": "1.0.0",
+  "main": "Public.js",
+  "license": "MIT",
+  "dependencies": {
+    "@bubbles-ui/leemons": "dev",
+    "@bubbles-ui/components": "dev",
+    "@bubbles-ui/extras": "dev",
+    "@bubbles-ui/icons": "dev",
+    "react-content-loader": "^6.2.0",
+    "@loadable/component": "^5.15.2",
+    "lodash": "^4.17.21",
+    "p-min-delay": "^4.0.2",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.3"
+  },
+  "devDependencies": {}
+}

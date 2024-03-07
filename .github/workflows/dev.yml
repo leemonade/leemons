@@ -1,0 +1,27 @@
+name: DEV Publish packages & publish dockers
+on:
+  push:
+    tags:
+      - "*.*.*-mdev"
+
+jobs:
+  publish_packages_to_npm:
+    name: DEV - Bump packages to NPM
+    uses: ./.github/workflows/packages-to-npm.yml
+    secrets: inherit
+    with:
+      NPM_TAG: dev
+      GIT_BRANCH: microservices/dev
+  build_and_publish_dockers:
+    name: DEV - Build and publish dockers
+    needs: publish_packages_to_npm
+    uses: ./.github/workflows/upload-plugins-dockers.yml
+    secrets:
+      AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+    with:
+      AWS_REGION: eu-west-1
+      IMAGE_TAG: dev
+      GIT_BRANCH: microservices/dev
+      NPM_TAG: dev

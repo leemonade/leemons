@@ -1,0 +1,42 @@
+name: Compile frontend and upload it to S3
+on:
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      DOMAIN:
+        required: true
+      GH_PAT:
+        required: true
+    inputs:
+      AWS_REGION:
+        type: string
+        required: true
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: "true"
+          token: ${{secrets.GH_PAT}}
+
+      - name: 🔧 Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.AWS_REGION }}
+          role-to-assume: arn:aws:iam::010458872731:role/upload-front
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🏗️ Build frontend
+        run: NODE_ENV=production PORT=3000 API_URL=https://api.${{ secrets.DOMAIN }} yarn --cwd apps/dev leemonsFront build -m ../..
+
+      - name: 🚀 Upload to S3
+        run: aws s3 sync ./apps/dev/build s3://${{ secrets.DOMAIN }}
