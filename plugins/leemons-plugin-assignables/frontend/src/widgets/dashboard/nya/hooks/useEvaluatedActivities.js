@@ -24,6 +24,6 @@ export default function useEvaluatedActivities({ program, class: klass }) {
   return {
     activities,
     isLoading,
-    count: activities?.length ?? null,
+    count: evaluatedActivities?.length ?? null,
   };
 }

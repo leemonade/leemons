@@ -354,6 +354,13 @@ module.exports = {
         description:
           'Podrás encontrar aquí los últimos elementos de la biblioteca. Comienza pulsando en el botón {CTA} en la zona superior izquierda para subir un recurso, crear un marcador o una tarea o redactar un contenido y aparecerán en esta sección.',
       },
+      'leebrary-subject': {
+        title: 'Aún no hay contenido de tus asignaturas',
+        description:
+          'Cuando tus profesores compartan recursos de clase contigo aparecerán en estas carpetas. También puedes almacenar tu contenido en esta carpeta etiquetándolos con una asignatura.',
+        help: 'Y si necesitas ayuda accede a {CTA}',
+        helpCTA: 'Cómo etiquetar contenidos',
+      },
       'assignables.content-creator': {
         descriptionCTA: 'Crea un {singularCategory}.',
         helpCTA: 'Cómo crear {pluralCategory}.',

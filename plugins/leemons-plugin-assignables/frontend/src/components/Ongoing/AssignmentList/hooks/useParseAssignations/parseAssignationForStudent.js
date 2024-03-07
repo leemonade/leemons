@@ -57,6 +57,7 @@ function useProgressLocalizations() {
 export function Progress({ assignation, isBlocked }) {
   const { instance } = assignation;
   const { classes } = instance;
+  const isModule = instance.metadata?.module?.type === 'module';
 
   const labels = useProgressLocalizations();
 
@@ -65,7 +66,7 @@ export function Progress({ assignation, isBlocked }) {
 
   const { requiresScoring, allowFeedback } = instance;
 
-  const isEvaluable = requiresScoring || allowFeedback;
+  const isEvaluable = !isModule && (requiresScoring || allowFeedback);
   // TODO: Add if has any feedback when only allowFeedback
   const hasAllGrades = React.useMemo(
     () =>
@@ -184,10 +185,10 @@ export async function parseAssignationForStudentView(assignation, labels, option
 
   const commonData = await parseAssignationForCommonView(instance, labels, options);
 
-  const blockingActivitiesById = options.blockingActivities;
-  const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
+  // const blockingActivitiesById = options.blockingActivities;
+  // const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
 
-  const isBlocked = blockingActivities.some((id) => !blockingActivitiesById?.[id]?.finished);
+  const isBlocked = false; // blockingActivities.some((id) => !blockingActivitiesById?.[id]?.finished);
 
   return {
     ...commonData,

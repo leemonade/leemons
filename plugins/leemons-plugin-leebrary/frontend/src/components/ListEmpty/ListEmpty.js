@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Stack, Text, ImageLoader, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@leebrary/helpers';
+import { RenderTextWithCTAs } from '@common/components';
 import { useImage } from './hooks/useImage';
 import { useListEmptyStyles } from './ListEmpty.styles';
-import { RenderTextWithCTAs } from './components/RenderTextWithCTAs';
 import { getCategory } from './helpers/getCategory';
 
 function ListEmpty({ t, category }) {
@@ -27,21 +27,38 @@ function ListEmpty({ t, category }) {
         </Box>
         <Stack direction="column" spacing={4} sx={{ maxWidth: 502 }}>
           <Text color="primary" className={cx(classes.text, classes.title)}>
-            {t(`emptyStates.title`, { category: pluralName })}
+            {t(
+              categoryKey === 'leebrary-subject'
+                ? `emptyStates.${categoryKey}.title`
+                : `emptyStates.title`,
+              { category: pluralName }
+            )}
           </Text>
           <RenderTextWithCTAs
-            text={`emptyStates.${categoryKey}.description`}
-            cta={`emptyStates.${categoryKey}.descriptionCTA`}
-            URL={category.createUrl ?? '/private/leebrary/media-files/new'}
-            replacers={{ singularCategory: singularName, pluralCategory: pluralName }}
             t={t}
+            text={`emptyStates.${categoryKey}.description`}
+            replacers={{
+              singularCategory: singularName,
+              pluralCategory: pluralName,
+              CTA: {
+                type: 'linkT',
+                url: category.createUrl ?? '/private/leebrary/media-files/new',
+                value: `emptyStates.${categoryKey}.descriptionCTA`,
+              },
+            }}
           />
           <RenderTextWithCTAs
-            text={`emptyStates.${categoryKey}.help`}
-            cta={`emptyStates.${categoryKey}.helpCTA`}
-            URL={'https://leemons.io/academy'}
-            replacers={{ singularCategory: singularName, pluralCategory: pluralName }}
             t={t}
+            text={`emptyStates.${categoryKey}.help`}
+            replacers={{
+              singularCategory: singularName,
+              pluralCategory: pluralName,
+              CTA: {
+                type: 'linkT',
+                url: 'https://www.leemons.io/leemons-academy',
+                value: `emptyStates.${categoryKey}.helpCTA`,
+              },
+            }}
           />
         </Stack>
       </Stack>

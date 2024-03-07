@@ -1,12 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const useListEmptyStyles = createStyles((theme) => ({
-  root: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-  },
+export const useEmptyStateStyles = createStyles((theme) => ({
   title: {
     ...theme.other.global.content.typo.heading.lg,
   },
@@ -16,4 +10,4 @@ export const useListEmptyStyles = createStyles((theme) => ({
   },
 }));
 
-export default useListEmptyStyles;
+export default useEmptyStateStyles;
