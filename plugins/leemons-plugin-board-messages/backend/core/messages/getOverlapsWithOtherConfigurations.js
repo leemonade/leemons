@@ -17,7 +17,7 @@ async function getOverlapsWithOtherConfigurations({ item: _item, ctx }) {
   const query = {
     zone: item.zone,
     status: ['published', 'programmed'],
-    $not: { $or: [{ endDate: { $lt: item.startDate } }, { startDate: { $gt: item.endDate } }] },
+    $nor: [{ endDate: { $lt: item.startDate } }, { startDate: { $gt: item.endDate } }],
   };
   if (item.id) {
     query.id = { $ne: item.id };

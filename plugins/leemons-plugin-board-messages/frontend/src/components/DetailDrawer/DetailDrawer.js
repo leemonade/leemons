@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { omit, isArray, isString } from 'lodash';
+import { Controller, useForm } from 'react-hook-form';
 import {
-  ActionButton,
   Alert,
   Box,
   Button,
@@ -15,25 +16,27 @@ import {
   TextInput,
   TimeInput,
 } from '@bubbles-ui/components';
-import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
-import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import { Controller, useForm } from 'react-hook-form';
-import { DatePicker } from '@common';
 import { TextEditorInput } from '@bubbles-ui/editors';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
+import { DatePicker } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { saveRequest } from '@board-messages/request';
-import isArray from 'lodash/isArray';
 import { getUserPrograms } from '@academic-portfolio/request/programs';
-import { AssetListDrawer } from '@leebrary/components';
-import isString from 'lodash/isString';
-import { DETAIL_DRAWER_DEFAULT_PROPS, DETAIL_DRAWER_PROP_TYPES } from './DetailDrawer.constants';
+import {
+  DETAIL_DRAWER_DEFAULT_PROPS,
+  DETAIL_DRAWER_PROP_TYPES,
+  MESSAGE_ZONES,
+} from './DetailDrawer.constants';
 import { DetailDrawerStyles } from './DetailDrawer.styles';
 import modal from '../../../public/modal.svg';
 import dashboard from '../../../public/dashboard.svg';
 import { SelectItem } from './components/SelectItem';
 import { getOverlapsRequest } from '../../request';
+
+const HALF_WIDTH = 'calc(50% - 10px)';
 
 const DetailDrawer = ({
   open,
@@ -55,16 +58,16 @@ const DetailDrawer = ({
     // asset: '',
     url: '',
     textUrl: '',
-    zone: isTeacher ? 'class-dashboard' : 'modal',
+    zone: isTeacher ? MESSAGE_ZONES.CLASSROOM_DASHBOARD : MESSAGE_ZONES.MODAL,
     publicationType: 'immediately',
     startDate: new Date(),
     endDate: null,
     isUnpublished: currentMessage.status === 'unpublished',
     ...currentMessage,
   };
+
   const [programs, setPrograms] = useState([]);
   const [classes, setClasses] = useState([]);
-  const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const [overWriteMessages, setOverWriteMessages] = useState(false);
   const [overlaps, setOverlaps] = useState([]);
   const {
@@ -73,9 +76,9 @@ const DetailDrawer = ({
     watch,
     setValue,
     reset,
-    getValues,
     formState: { errors },
   } = useForm({ defaultValues });
+
   const publicationType = watch('publicationType');
   const centersValue = watch('centers');
   const programsValue = watch('programs');
@@ -83,10 +86,10 @@ const DetailDrawer = ({
   const startDateValue = watch('startDate');
   const endDateValue = watch('endDate');
   const urlValue = watch('url');
-  const assetValue = watch('asset');
   const textUrlValue = watch('textUrl');
   const zoneValue = watch('zone');
-  const formValues = getValues();
+  const formValues = watch();
+
   const formatData = useMemo(() => {
     let data = [];
     if (!isTeacher) {
@@ -99,7 +102,24 @@ const DetailDrawer = ({
   }, [isTeacher, labels]);
 
   const saveMessageConfig = async (values) => {
-    const message = {
+    const fieldsToOmit = ['isUnpublished', 'totalClicks', 'totalViews', 'owner', 'userOwner'];
+    if (!isNew) {
+      fieldsToOmit.push(
+        '__v',
+        '_id',
+        'updated_at',
+        'created_at',
+        'deleted_at',
+        'updatedAt',
+        'createdAt',
+        'deletedAt',
+        'deleted',
+        'isDeleted',
+        'deploymentID'
+      );
+    }
+
+    const payload = {
       ...values,
       centers: isArray(values.centers) ? values.centers : [values.centers],
       status:
@@ -108,22 +128,17 @@ const DetailDrawer = ({
           : 'published',
       unpublishConflicts: overWriteMessages,
     };
-    delete message.isUnpublished;
-    delete message.totalClicks;
-    delete message.totalViews;
-    delete message.owner;
-    delete message.userOwner;
+
+    const message = omit(payload, fieldsToOmit);
+    message.asset =
+      message.asset?.original?.cover?.id ??
+      message.asset?.cover?.id ??
+      message.asset?.cover ??
+      message.asset;
+
     if (!message.url) message.url = null;
     if (!message.textUrl) message.textUrl = null;
-    if (!isNew) {
-      delete message.updated_at;
-      delete message.created_at;
-      delete message.deleted_at;
-      delete message.updatedAt;
-      delete message.createdAt;
-      delete message.deletedAt;
-      delete message.deleted;
-    }
+
     try {
       await saveRequest(message);
       addSuccessAlert(isNew ? labels.success : labels.updateSuccess);
@@ -177,26 +192,6 @@ const DetailDrawer = ({
     valueToChange.setMinutes(value.getMinutes());
     valueToChange.setHours(value.getHours());
     setValue(type, valueToChange);
-  };
-
-  const isValidUrl = (urlString) => {
-    let url;
-    try {
-      url = new URL(urlString);
-    } catch (_) {
-      return labels?.form?.urlValidError;
-    }
-    const isValid = url.protocol === 'http:' || url.protocol === 'https:';
-    return isValid ? true : labels?.form?.urlValidError;
-  };
-
-  const handleOnCloseAssetDrawer = () => {
-    setShowAssetDrawer(false);
-  };
-
-  const handleOnSelectAsset = (item) => {
-    setValue('asset', isString(item.cover) ? item.original : item);
-    setShowAssetDrawer(false);
   };
 
   const getOverlaps = async () => {
@@ -258,6 +253,13 @@ const DetailDrawer = ({
     publicationType,
   ]);
 
+  const buttonLabel = React.useMemo(() => {
+    if (isNew) {
+      return overlaps.length ? labels.save : labels.create;
+    }
+    return labels.update;
+  }, [isNew, overlaps.length, labels]);
+
   const { classes: styles } = DetailDrawerStyles({}, { name: 'DetailDrawer' });
   return (
     <Drawer opened={open} onClose={onClose} size={725}>
@@ -282,9 +284,9 @@ const DetailDrawer = ({
               rules={{ required: labels?.form?.internalNameError }}
               render={({ field }) => (
                 <TextInput
+                  {...field}
                   label={labels.internalName}
                   placeholder={labels.internalNamePlaceholder}
-                  {...field}
                   required
                   error={errors.internalName}
                 />
@@ -295,7 +297,7 @@ const DetailDrawer = ({
           <Box>
             <Text className={styles.subtitle}>{labels.toWho}</Text>
           </Box>
-          <Box className={styles.inputRow} style={{ width: isTeacher && 'calc(50% - 10px)' }}>
+          <Box className={styles.inputRow} style={{ width: isTeacher && HALF_WIDTH }}>
             <Controller
               control={control}
               name="centers"
@@ -342,7 +344,7 @@ const DetailDrawer = ({
                   label={labels.profile}
                   placeholder={labels.profilePlaceholder}
                   {...field}
-                  style={{ width: 'calc(50% - 10px)' }}
+                  style={{ width: HALF_WIDTH }}
                 />
               )}
             />
@@ -359,7 +361,7 @@ const DetailDrawer = ({
                     label={labels.subjects}
                     placeholder={labels.subjectsPlaceholder}
                     {...field}
-                    style={{ width: 'calc(50% - 10px)' }}
+                    style={{ width: HALF_WIDTH }}
                     valueComponent={(item) => (
                       <SelectItem {...item} isValueComponent subject={item.subject} />
                     )}
@@ -401,21 +403,11 @@ const DetailDrawer = ({
             />
           </Box>
           <Box>
-            <Box sx={(theme) => ({ display: 'flex', gap: theme.spacing[2] })}>
-              <TextInput
-                style={{ width: '100%' }}
-                value={assetValue?.name}
-                readonly
-                onClick={() => setShowAssetDrawer(true)}
-              />
-              <ActionButton
-                color="primary"
-                size="md"
-                icon={<CloudUploadIcon />}
-                onClick={() => setShowAssetDrawer(true)}
-                label={labels.uploadImage}
-              />
-            </Box>
+            <Controller
+              control={control}
+              name="asset"
+              render={({ field }) => <ImagePicker {...field} />}
+            />
           </Box>
           <Box className={styles.inputRow}>
             <Controller
@@ -423,7 +415,6 @@ const DetailDrawer = ({
               name="url"
               rules={{
                 required: textUrlValue && labels?.form?.urlError,
-                validate: urlValue && ((value) => isValidUrl(value)),
               }}
               render={({ field }) => (
                 <TextInput
@@ -570,21 +561,10 @@ const DetailDrawer = ({
             <Button variant="outline" onClick={onClose}>
               {labels.cancel}
             </Button>
-            <Button type="submit">
-              {isNew ? (overlaps.length ? labels.save : labels.create) : labels.update}
-            </Button>
+            <Button type="submit">{buttonLabel}</Button>
           </Box>
         </Box>
       </form>
-      <AssetListDrawer
-        opened={showAssetDrawer}
-        onClose={handleOnCloseAssetDrawer}
-        size={720}
-        shadow
-        onSelect={handleOnSelectAsset}
-        creatable
-        onlyCreateImages
-      />
     </Drawer>
   );
 };

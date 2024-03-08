@@ -32,7 +32,7 @@ function ClassDashboard({ classe }) {
         padding: theme.spacing[6],
       })}
     >
-      <BannerMessage message={activeMessage} />;
+      <BannerMessage message={activeMessage} />
     </Box>
   );
 }
