@@ -39,8 +39,6 @@ function ClassDashboard({ classe }) {
 
 ClassDashboard.propTypes = {
   classe: PropTypes.object,
-  session: PropTypes.object,
-  inTab: PropTypes.bool,
 };
 
 export default ClassDashboard;

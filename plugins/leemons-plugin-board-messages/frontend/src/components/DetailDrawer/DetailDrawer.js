@@ -9,13 +9,11 @@ import {
   Button,
   Checkbox,
   ContextContainer,
-  Divider,
   Drawer,
   MultiSelect,
   RadioGroup,
   Select,
   Switch,
-  Text,
   Title,
   TextInput,
   TimeInput,
@@ -46,6 +44,8 @@ import { getOverlapsRequest } from '../../request';
 
 const DRAWER_WIDTH = 576;
 const HALF_WIDTH = 'calc(50% - 10px)';
+
+const ValueComponent = (props) => <SelectItem {...props} isValueComponent />;
 
 const DetailDrawer = ({
   open,
@@ -409,12 +409,8 @@ const DetailDrawer = ({
                               placeholder={labels.subjectsPlaceholder}
                               {...field}
                               style={{ width: HALF_WIDTH }}
-                              valueComponent={(item) => (
-                                <SelectItem {...item} isValueComponent subject={item.subject} />
-                              )}
-                              itemComponent={(item) => (
-                                <SelectItem {...item} subject={item.subject} />
-                              )}
+                              valueComponent={ValueComponent}
+                              itemComponent={SelectItem}
                             />
                           )}
                         />

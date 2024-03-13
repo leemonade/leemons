@@ -22,7 +22,6 @@ import {
   MESSAGES_TABLES_DEFAULT_PROPS,
   MESSAGES_TABLES_PROP_TYPES,
 } from './MessagesTable.constants';
-import { MessagesTableStyles } from './MessagesTable.styles';
 
 const useMessagesColumns = (labels) =>
   useMemo(
@@ -269,7 +268,6 @@ const MessagesTable = ({
     zIndex: 10,
   };
 
-  const { classes: styles } = MessagesTableStyles({}, { name: 'MessagesTable' });
   return (
     <ContextContainer padded>
       <Filters

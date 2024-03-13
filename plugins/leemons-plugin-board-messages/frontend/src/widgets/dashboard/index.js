@@ -65,9 +65,6 @@ function Dashboard({ program }) {
 
 Dashboard.propTypes = {
   program: PropTypes.object,
-  classe: PropTypes.object,
-  session: PropTypes.object,
-  inTab: PropTypes.bool,
 };
 
 export default Dashboard;
