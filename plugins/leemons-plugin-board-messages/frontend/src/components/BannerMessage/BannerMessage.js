@@ -16,8 +16,6 @@ const BannerMessage = ({ message }) => {
 
     if (message.url?.startsWith('http')) {
       window.open(message.url, '_blank', 'noopener');
-    } else {
-      eval(message.url); // eslint-disable-line no-eval
     }
   };
 
