@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { unflatten } from '@common';
-import { NumberInput, Select, Stack, InputWrapper, Box } from '@bubbles-ui/components';
+import { NumberInput, Select, Stack, InputWrapper } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get } from 'lodash';
 import { prefixPN } from '../../../helpers/prefixPN';
@@ -104,4 +104,6 @@ export default function TimeUnitsInput({ onChange, value: userValue, min, max, .
 TimeUnitsInput.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.number,
+  min: PropTypes.number,
+  max: PropTypes.number,
 };

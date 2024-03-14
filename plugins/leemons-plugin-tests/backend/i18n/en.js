@@ -185,7 +185,8 @@ module.exports = {
     questionsDescriptionReorder:
       'You can now modify the order in which the student will answer the questions. Drag and drop the questions to reorder them.',
     questionBank: 'Question Bank: {name}',
-    nQuestions: '({n} questions)',
+    nQuestions: 'This test contains {n} questions',
+    questionBankMethodSelection: 'Selection method',
     questionFiltersDescription1:
       'The system allows, by default, automatic filtering by question type, category and level.',
     questionFiltersDescription2:
@@ -194,6 +195,7 @@ module.exports = {
     useAllQuestions: 'Select questions manually',
     addType: 'Add type',
     levelLabel: 'Level',
+    selectionCounter: 'The selection contains {n} questions',
     categoriesLabel: 'Categories',
     addLevel: 'Add level',
     all: 'All',
@@ -229,6 +231,14 @@ module.exports = {
     evaluationCriteria: 'Evaluation Criteria',
     enableCurriculum: 'Enable curriculum',
     addCustomObjectives: 'Add custom objectives',
+    customQuestionSelection: 'Custom question selection',
+    randomQuestions: 'Random',
+    filteredQuestions: 'Filtered',
+    manualQuestions: 'Manual',
+    generate: 'Generate',
+    selectorManualCounter: '{n} of {x} questions selected',
+    questionsSelected: 'Selected',
+    allQuestions: 'All',
     addInstructions: 'Add instructions',
     other: 'Other',
     headerTitlePlaceholder: 'Test title',

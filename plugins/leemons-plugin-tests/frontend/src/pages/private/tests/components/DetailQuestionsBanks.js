@@ -83,7 +83,6 @@ export default function DetailQuestionsBanks({
           _.isString(subject) ? subject : subject.subject
         ),
       });
-
       if (questionBank) {
         const found = find(data.items, { id: questionBank });
         if (!found) {

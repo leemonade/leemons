@@ -1,4 +1,4 @@
-import { ActionButton, Box, Checkbox, Table, TableInput } from '@bubbles-ui/components';
+import { ActionButton, Box, Checkbox, Table, TableInput, Text } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -6,6 +6,7 @@ import { keyBy, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 import { ResultStyles } from '../Result.style';
 
@@ -17,12 +18,13 @@ export default function QuestionsTable({
   hideOpenIcon,
   withStyle = false,
   hideCheckbox = false,
+  questionBank,
 }) {
   // eslint-disable-next-line prefer-const
   let { classes: styles, cx } = ResultStyles({}, { name: 'QuestionsTable' });
   const [t] = useTranslateLoader(prefixPN('testsEdit'));
   const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
-
+  const levels = useLevelsOfDifficulty();
   if (!withStyle) styles = {};
 
   const tableHeaders = React.useMemo(() => {
@@ -32,7 +34,6 @@ export default function QuestionsTable({
         Header: (
           <Box>
             <Checkbox
-              checked={value.length === questions.length}
               onChange={() => {
                 const allCheck = value.length === questions.length;
                 if (allCheck) {
@@ -64,7 +65,26 @@ export default function QuestionsTable({
         accessor: 'type',
         className: styles.tableHeader,
       },
+      {
+        Header: t('levelLabel'),
+        accessor: 'level',
+        className: styles.tableHeader,
+        valueRender: (levelName) => {
+          const findLevelName = levels?.find((l) => l.value === levelName);
+          return findLevelName?.label;
+        },
+      },
+      {
+        Header: 'Categoría',
+        accessor: 'category',
+        className: styles.tableHeader,
+        valueRender: (categoryId) => {
+          const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
+          return findCategoryLabel?.value;
+        },
+      },
     ]);
+
     if (!hideOpenIcon) {
       result.push({
         Header: t('actionsHeader'),

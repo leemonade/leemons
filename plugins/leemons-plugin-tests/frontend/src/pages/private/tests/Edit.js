@@ -149,7 +149,7 @@ export default function Edit() {
       store.loading = false;
       render();
     } catch (error) {
-      addErrorAlert(error);
+      // addErrorAlert(error);
     }
   }
 
@@ -220,10 +220,9 @@ export default function Edit() {
     if (store.isNew) return t('pageTitleNew');
     return t('pageTitleEdit');
   };
-
   const hasOptionalSteps = () => {
     const { config = {} } = formValues;
-    return Object.values(config).some((value) => value);
+    return config.hasInstructions || config.hasResources;
   };
 
   const stepsContent = React.useMemo(() => {
