@@ -38,17 +38,15 @@ export default function DetailQuestions({
   const [isDirty, setIsDirty] = React.useState(false);
   const [customChoice, setCustomChoice] = React.useState(false);
   const [radioSelection, setRadioSelection] = React.useState(null);
-  const [finalQuestions, setFinalQuestions] = React.useState([]);
-  const [questionBank, setQuestionBank] = React.useState([]);
+  const [randomQuestions, setRandomQuestions] = React.useState([]);
+  const [filteredQuestions, setFilteredQuestions] = React.useState([]);
+  const [manualQuestions, setManualQuestions] = React.useState([]);
   const [questionsFiltered, setQuestionsFiltered] = React.useState([]);
+  const [questionBank, setQuestionBank] = React.useState([]);
   const formValues = form.watch();
   const isNewTest = store?.isNew;
   const filtersValue = 'filters.nQuestions';
   const nQuestionsSelector = form.watch(filtersValue);
-  const filters = form.watch('filters');
-  const filtersForm = useForm({
-    defaultValues: filters,
-  });
 
   const customOptions = React.useMemo(
     () => [
@@ -69,7 +67,14 @@ export default function DetailQuestions({
   );
 
   useEffect(() => {
-    if (!customChoice && questionBank?.questions && isNewTest && !finalQuestions) {
+    if (
+      !customChoice &&
+      questionBank?.questions &&
+      isNewTest &&
+      !randomQuestions &&
+      !filteredQuestions &&
+      !manualQuestions
+    ) {
       const currentQuestions = form.getValues('questions');
       const questionIds = questionBank.questions?.map((q) => q.id);
       if (JSON.stringify(currentQuestions) !== JSON.stringify(questionBank.questions)) {
@@ -84,14 +89,14 @@ export default function DetailQuestions({
       }
     }
     if (radioSelection === 'filteredQuestions') {
-      if (finalQuestions?.length > 0 && isNewTest) {
+      if (filteredQuestions?.length > 0 && isNewTest) {
         const currentQuestions = form.getValues('questions');
-        const finalQuestionIds = finalQuestions?.map((q) => q.id);
+        const finalQuestionIds = filteredQuestions?.map((q) => q.id);
         if (JSON.stringify(currentQuestions) !== JSON.stringify(finalQuestionIds)) {
           form.setValue('questions', finalQuestionIds);
         }
-      } else if (finalQuestions?.length === 0 && isNewTest) {
-        setFinalQuestions(questionBank.questions);
+      } else if (filteredQuestions?.length === 0 && isNewTest) {
+        setFilteredQuestions(questionBank.questions);
         const currentQuestions = form.getValues('questions');
         const questionBankQuestionIds = questionBank.questions?.map((q) => q.id);
         if (JSON.stringify(currentQuestions) !== JSON.stringify(questionBankQuestionIds)) {
@@ -101,27 +106,67 @@ export default function DetailQuestions({
     }
 
     if (radioSelection === 'manualQuestions' && isNewTest) {
-      setFinalQuestions(questionBank.questions);
-    }
-    if (!isNewTest && questionBank.questions) {
-      const matchedQuestions = formValues.questions
-        .map((questionId) => questionBank.questions?.find((q) => q.id === questionId))
-        .filter((question) => question !== undefined);
-
-      if (JSON.stringify(matchedQuestions) !== JSON.stringify(finalQuestions)) {
-        setFinalQuestions(matchedQuestions);
-      }
+      setManualQuestions(questionBank.questions);
     }
   }, [
     questionBank,
     form,
     radioSelection,
-    finalQuestions,
+    manualQuestions,
+    filteredQuestions,
+    randomQuestions,
     customChoice,
     isNewTest,
     formValues.questions,
     filtersValue,
   ]);
+
+  useEffect(() => {
+    if (radioSelection === 'randomQuestions') {
+      if (!isNewTest) {
+        const currentQuestions = form.getValues('questions');
+        const randomQuestionsIds = questionBank?.questions?.map((q) => q.id);
+        if (JSON.stringify(currentQuestions) !== JSON.stringify(randomQuestionsIds)) {
+          setRandomQuestions(questionBank.questions);
+          return form.setValue('questions', randomQuestionsIds);
+        }
+      }
+      if (!randomQuestions.length && isNewTest) {
+        form.setValue('questions', []);
+      } else if (randomQuestions.length) {
+        form.setValue(
+          'questions',
+          randomQuestions.map((q) => q.id)
+        );
+      }
+    }
+    if (radioSelection === 'filteredQuestions' && !!filteredQuestions?.length) {
+      if (!isNewTest) {
+        const currentQuestions = form.getValues('questions');
+        const finalQuestionIds = filteredQuestions?.map((q) => q.id);
+        if (JSON.stringify(currentQuestions) !== JSON.stringify(finalQuestionIds)) {
+          return form.setValue('questions', finalQuestionIds);
+        }
+      }
+      form.setValue(
+        'questions',
+        filteredQuestions.map((q) => q.id)
+      );
+    }
+    if (radioSelection === 'manualQuestions' && !!manualQuestions?.length) {
+      if (!isNewTest) {
+        const currentQuestions = form.getValues('questions');
+        const finalQuestionIds = manualQuestions?.map((q) => q.id);
+        if (JSON.stringify(currentQuestions) !== JSON.stringify(finalQuestionIds)) {
+          return form.setValue('questions', finalQuestionIds);
+        }
+      }
+      form.setValue(
+        'questions',
+        manualQuestions.map((q) => q.id)
+      );
+    }
+  }, [radioSelection, questionBank.questions]);
 
   useEffect(() => {
     // Establecer el estado del Switch basado en formValues.config.personalization
@@ -134,6 +179,20 @@ export default function DetailQuestions({
       setRadioSelection(formValues.config.customChoice);
     }
   }, [formValues.config]);
+
+  useEffect(() => {
+    if (!isNewTest && questionBank.questions) {
+      const matchedQuestions = formValues.questions
+        .map((questionId) => questionBank.questions?.find((q) => q.id === questionId))
+        .filter((question) => question !== undefined);
+
+      if (JSON.stringify(matchedQuestions) !== JSON.stringify(questionBank.questions)) {
+        setRandomQuestions(matchedQuestions);
+        setFilteredQuestions(matchedQuestions);
+        setManualQuestions(matchedQuestions);
+      }
+    }
+  }, []);
 
   // ···························································
   // INITIAL DATA PROCESSING
@@ -184,18 +243,22 @@ export default function DetailQuestions({
     const selectedQuestionIds = selectedQuestions.map((question) => question.id);
     form.setValue('questions', selectedQuestionIds);
     setQuestionsFiltered(selectedQuestions);
-    setFinalQuestions(selectedQuestions);
+    setRandomQuestions(selectedQuestions);
   };
 
   const handleOnSave = () => {
     if (!customChoice) {
-      form.setValue('questions', questionBank.questions);
-
-      onSave();
+      form.setValue(
+        'questions',
+        questionBank.questions?.map((q) => q.id)
+      );
     } else {
       onSave();
     }
   };
+
+  const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
+  const RandomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
 
   return (
     <TotalLayoutStepContainer
@@ -309,8 +372,9 @@ export default function DetailQuestions({
                     form={form}
                     questionBank={questionBank}
                     classes={classes}
-                    finalQuestions={finalQuestions}
-                    setFinalQuestions={setFinalQuestions}
+                    filteredQuestions={filteredQuestions}
+                    setFilteredQuestions={setFilteredQuestions}
+                    isNewTest={isNewTest}
                   />
                 )}
                 {radioSelection === 'manualQuestions' && (
@@ -319,32 +383,34 @@ export default function DetailQuestions({
                     form={form}
                     questionBank={questionBank}
                     classes={classes}
-                    finalQuestions={finalQuestions}
-                    setFinalQuestions={setFinalQuestions}
+                    manualQuestions={manualQuestions}
                   />
                 )}
                 <Box>
-                  {finalQuestions &&
-                    finalQuestions.length > 0 &&
-                    radioSelection !== 'manualQuestions' && (
-                      <Controller
-                        key={4}
-                        control={form.control}
-                        name="questions"
-                        render={({ field }) => (
-                          <QuestionsTable
-                            questions={finalQuestions}
-                            forceSortable
-                            value={field.value}
-                            onChange={(e) => field.onChange(e)}
-                            questionBank={questionBank}
-                            reorderMode={true}
-                            hideCheckbox
-                            hideOpenIcon
-                          />
-                        )}
-                      />
-                    )}
+                  {(randomQuestions &&
+                    randomQuestions.length > 0 &&
+                    radioSelection !== 'manualQuestions') ||
+                  (filteredQuestions &&
+                    filteredQuestions.length > 0 &&
+                    radioSelection !== 'manualQuestions') ? (
+                    <Controller
+                      key={4}
+                      control={form.control}
+                      name="questions"
+                      render={({ field }) => (
+                        <QuestionsTable
+                          questions={filteredQuestionsActive ?? RandomQuestionsActive}
+                          forceSortable
+                          value={field.value}
+                          onChange={(e) => field.onChange(e)}
+                          questionBank={questionBank}
+                          reorderMode={true}
+                          hideCheckbox
+                          hideOpenIcon
+                        />
+                      )}
+                    />
+                  ) : null}
                 </Box>
               </Box>
             </ContextContainer>

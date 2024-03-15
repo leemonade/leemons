@@ -158,7 +158,7 @@ module.exports = {
     next: 'Siguiente',
     statementPlaceholder: 'Añadir aquí el texto del enunciado',
     addResourcesLabel: 'Añadir recursos',
-    resources: 'Recursos',
+    resources: 'Recursos de apoyo',
     instructions: 'Instrucciones',
     resoucesAndInstructions: 'Recursos e instrucciones',
     onlyPublish: 'Solo publicar',

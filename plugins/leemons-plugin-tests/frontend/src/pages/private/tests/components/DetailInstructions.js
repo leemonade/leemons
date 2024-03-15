@@ -6,6 +6,7 @@ import {
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  Box,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller } from 'react-hook-form';
@@ -87,15 +88,17 @@ export default function DetailInstructions({
         />
       }
     >
-      <ContextContainer>
+      <Box>
         {hasResources && (
-          <ContextContainer title={hasInstructions && hasResources ? t('resources') : ''}>
-            <Attachments
-              labels={attachmentsLabels}
-              setValue={form.setValue}
-              getValues={form.getValues}
-            />
-          </ContextContainer>
+          <Box style={{ marginBottom: 24 }}>
+            <ContextContainer title={hasInstructions && hasResources ? t('resources') : ''}>
+              <Attachments
+                labels={attachmentsLabels}
+                setValue={form.setValue}
+                getValues={form.getValues}
+              />
+            </ContextContainer>
+          </Box>
         )}
         {hasInstructions && (
           <ContextContainer title={hasInstructions && hasResources ? t('instructions') : ''}>
@@ -123,7 +126,7 @@ export default function DetailInstructions({
             />
           </ContextContainer>
         )}
-      </ContextContainer>
+      </Box>
     </TotalLayoutStepContainer>
   );
 }

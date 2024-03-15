@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, ContextContainer, MultiSelect, Text } from '@bubbles-ui/components';
 import { Controller } from 'react-hook-form';
-import { map } from 'lodash';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 
 const FilteredQuestionsGenerator = ({
@@ -10,8 +9,9 @@ const FilteredQuestionsGenerator = ({
   form,
   questionBank,
   classes,
-  finalQuestions,
-  setFinalQuestions,
+  filteredQuestions,
+  setFilteredQuestions,
+  isNewTest,
 }) => {
   const useAllQuestions = form.watch('useAllQuestions');
   const selectedCategories = form.watch('filters.categories');
@@ -19,24 +19,31 @@ const FilteredQuestionsGenerator = ({
   const levels = useLevelsOfDifficulty();
 
   useEffect(() => {
-    const filteredQuestions = questionBank.questions?.filter((question) => {
+    const filteredQuestionsTemp = questionBank.questions?.filter((question) => {
       const matchesCategory = selectedCategories?.length
         ? selectedCategories.includes(question.category)
         : true;
       const matchesLevel = selectedLevel?.length ? selectedLevel.includes(question.level) : true;
       return matchesCategory && matchesLevel;
     });
-    setFinalQuestions(filteredQuestions);
-  }, [selectedCategories, selectedLevel, questionBank.questions, setFinalQuestions]);
+    setFilteredQuestions(filteredQuestionsTemp);
+    form.setValue('questions', filteredQuestionsTemp?.map((question) => question.id) || []);
+  }, [selectedCategories, selectedLevel, questionBank.questions, setFilteredQuestions, isNewTest]);
 
-  const categoriesData = map(questionBank.categories, (category) => ({
-    value: category.id,
-    label: category.value,
-  }));
+  const categoriesData = React.useMemo(() => {
+    if (questionBank?.categories) {
+      return questionBank.categories.map((category) => ({
+        value: category.id,
+        label: category.value,
+      }));
+    }
+    return [];
+  }, [questionBank?.categories]);
+
   const isMoreThanOneQuestionSelected =
-    finalQuestions?.length > 1
-      ? t('selectionCounter', { n: finalQuestions?.length })
-      : t('selectionCounter', { n: finalQuestions?.length }).slice(0, -1);
+    filteredQuestions?.length > 1
+      ? t('selectionCounter', { n: filteredQuestions?.length })
+      : t('selectionCounter', { n: filteredQuestions?.length }).slice(0, -1);
   return (
     <Box>
       {!useAllQuestions ? (
@@ -45,7 +52,6 @@ const FilteredQuestionsGenerator = ({
             <Controller
               control={form.control}
               name="filters.categories"
-              shouldUnregister
               render={({ field }) => (
                 <Box className={classes?.containerMultiSelect}>
                   <MultiSelect
@@ -61,7 +67,6 @@ const FilteredQuestionsGenerator = ({
             <Controller
               control={form.control}
               name="filters.level"
-              shouldUnregister
               render={({ field }) => (
                 <Box className={classes?.containerMultiSelect}>
                   <MultiSelect
@@ -90,8 +95,9 @@ FilteredQuestionsGenerator.propTypes = {
   questionBank: PropTypes.object,
   classes: PropTypes.object,
   store: PropTypes.object,
-  finalQuestions: PropTypes.array,
-  setFinalQuestions: PropTypes.func,
+  filteredQuestions: PropTypes.array,
+  setFilteredQuestions: PropTypes.func,
+  isNewTest: PropTypes.bool,
 };
 
 export { FilteredQuestionsGenerator };

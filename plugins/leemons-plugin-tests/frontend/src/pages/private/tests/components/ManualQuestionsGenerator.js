@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import QuestionsTable from './QuestionsTable';
 
-const ManualQuestionsGenerator = ({ t, form, questionBank, finalQuestions }) => {
+const ManualQuestionsGenerator = ({ t, form, questionBank, manualQuestions }) => {
   const [allQuestions, setAllQuestions] = useState([]);
 
   useEffect(() => {
@@ -14,7 +14,6 @@ const ManualQuestionsGenerator = ({ t, form, questionBank, finalQuestions }) => 
   const handleSelectionChange = (selectedIds) => {
     form.setValue('questions', selectedIds);
   };
-  console.log('finalQuestions in ManualQuestionsGenerator', finalQuestions);
   return (
     <Box>
       <Title order={4} style={{ visibility: questions.length > 0 ? 'visible' : 'hidden' }}>
@@ -51,7 +50,7 @@ const ManualQuestionsGenerator = ({ t, form, questionBank, finalQuestions }) => 
             name="questions"
             render={({ field }) => (
               <QuestionsTable
-                questions={finalQuestions}
+                questions={manualQuestions}
                 forceSortable
                 value={field.value}
                 onChange={(e) => field.onChange(e)}
@@ -73,8 +72,7 @@ ManualQuestionsGenerator.propTypes = {
   form: propTypes.object.isRequired,
   questionBank: propTypes.array.isRequired,
   classes: propTypes.object.isRequired,
-  finalQuestions: propTypes.array.isRequired,
-  setFinalQuestions: propTypes.func.isRequired,
+  manualQuestions: propTypes.array.isRequired,
 };
 
 ManualQuestionsGenerator.defaultProps = {
@@ -83,7 +81,6 @@ ManualQuestionsGenerator.defaultProps = {
   questionBank: [],
   classes: {},
   finalQuestions: [],
-  setFinalQuestions: () => {},
 };
 
 export { ManualQuestionsGenerator };

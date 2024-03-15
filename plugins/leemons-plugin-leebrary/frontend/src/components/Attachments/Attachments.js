@@ -95,14 +95,6 @@ function Attachments({ setValue, getValues, labels }) {
 
   return (
     <>
-      <Box className={classes?.attachmentContainer}>
-        <SortableList
-          value={resources}
-          onChange={setResources}
-          itemRender={AttachmentItem}
-          onRemove={onAssetRemove}
-        />
-      </Box>
       <Box>
         <form
           onSubmit={(e) => {
@@ -130,6 +122,14 @@ function Attachments({ setValue, getValues, labels }) {
             shadow
           />
         </form>
+      </Box>
+      <Box className={classes?.attachmentContainer}>
+        <SortableList
+          value={resources}
+          onChange={setResources}
+          itemRender={AttachmentItem}
+          onRemove={onAssetRemove}
+        />
       </Box>
     </>
   );

@@ -26,6 +26,8 @@ export default function QuestionsTable({
   const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const levels = useLevelsOfDifficulty();
   if (!withStyle) styles = {};
+  const allChecked =
+    value.length === questions?.length && value.length !== 0 && questions?.length !== 0;
 
   const tableHeaders = React.useMemo(() => {
     let result = [];
@@ -34,6 +36,7 @@ export default function QuestionsTable({
         Header: (
           <Box>
             <Checkbox
+              checked={allChecked}
               onChange={() => {
                 const allCheck = value.length === questions.length;
                 if (allCheck) {
@@ -158,4 +161,8 @@ QuestionsTable.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.array,
   reorderMode: PropTypes.bool,
+  hideOpenIcon: PropTypes.bool,
+  withStyle: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
+  questionBank: PropTypes.object,
 };

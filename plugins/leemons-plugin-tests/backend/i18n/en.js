@@ -159,7 +159,7 @@ module.exports = {
     next: 'Next',
     statementPlaceholder: 'Add the statement text here',
     addResourcesLabel: 'Add resources',
-    resources: 'Resources',
+    resources: 'Resources and support',
     instructions: 'Instructions',
     resoucesAndInstructions: 'Resources and instructions',
     onlyPublish: 'Only publish',

@@ -93,6 +93,19 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
           <ContextContainer divided padded>
             <Controller
               control={form.control}
+              name="evaluation"
+              render={({ field }) => (
+                <EvaluationType
+                  {...field}
+                  assignable={assignable}
+                  evaluationTypes={['calificable', 'punctuable']}
+                  localizations={localizations?.evaluation}
+                  onDrawer
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
               name="assignConfig"
               render={({ field }) => (
                 <AssignConfig
@@ -106,20 +119,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
               )}
             />
             <Box>
-              <Controller
-                control={form.control}
-                name="evaluation"
-                render={({ field }) => (
-                  <EvaluationType
-                    {...field}
-                    assignable={assignable}
-                    evaluationTypes={['calificable', 'punctuable']}
-                    localizations={localizations?.evaluation}
-                  />
-                )}
-              />
-
-              <Controller
+              {/* <Controller
                 control={form.control}
                 name="others"
                 render={({ field, fieldState: { error } }) => (
@@ -131,7 +131,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
                     showResponses
                   />
                 )}
-              />
+              /> */}
             </Box>
           </ContextContainer>
         </Box>
