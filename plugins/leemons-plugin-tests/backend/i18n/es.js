@@ -260,7 +260,7 @@ module.exports = {
   },
   instructions: {
     instructions: 'Instrucciones',
-    howItWorks: '¿Cómo funciona?',
+    howItWorks: 'Más información',
     timeLimit1: 'Tienes',
     timeLimit2: 'para hacer la actividad',
     withoutPause: 'Sin pausa',
