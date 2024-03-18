@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Stack, PageContainer, Box } from '@bubbles-ui/components';
+import { Switch, Stack, PageContainer } from '@bubbles-ui/components';
 import { ConditionalInputStyles } from './ConditionalInput.styles';
 
 export default function ConditionalInput({
