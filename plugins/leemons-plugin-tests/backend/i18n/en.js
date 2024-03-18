@@ -226,6 +226,7 @@ module.exports = {
     contentLabel: 'Content',
     instructionsForTeacherLabel: 'Instructions for teacher',
     instructionsForStudentLabel: 'Instructions for student',
+    recommendedDuration: 'Recommended duration',
     instructions: 'Instructions',
     statement: 'Statement',
     evaluationCriteria: 'Evaluation Criteria',

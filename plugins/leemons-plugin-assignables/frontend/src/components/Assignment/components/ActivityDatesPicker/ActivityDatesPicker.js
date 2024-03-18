@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { Box, RadioGroup, Checkbox, createStyles } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
-import TimeUnitsInput from '@tasks/components/Inputs/TimeUnitsInput';
+import TimeUnitsInput from '@common/components/TimeUnitsInput';
 import { Container } from '../Container';
 import { PeriodPicker } from './PeriodPicker';
 

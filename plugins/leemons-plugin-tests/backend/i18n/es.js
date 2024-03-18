@@ -224,6 +224,7 @@ module.exports = {
     contentLabel: 'Contenido',
     instructionsForTeacherLabel: 'Instrucciones para el profesor',
     instructionsForStudentLabel: 'Instrucciones para el alumno',
+    recommendedDuration: 'Duración recomendada',
     instructions: 'Instrucciones',
     statement: 'Enunciado',
     evaluationCriteria: 'Criterios de evaluación',

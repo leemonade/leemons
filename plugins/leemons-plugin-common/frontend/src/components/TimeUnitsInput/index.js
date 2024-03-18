@@ -4,11 +4,11 @@ import { unflatten } from '@common';
 import { NumberInput, Select, Stack, InputWrapper } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get } from 'lodash';
-import { prefixPN } from '../../../helpers/prefixPN';
+import prefixPN from '../../helpers/prefixPN';
 
 export function useTimeUnitsInputLocalizations() {
   // key is string
-  const key = prefixPN('assignment_form.timeUnits');
+  const key = prefixPN('timeUnits');
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
@@ -72,11 +72,12 @@ export default function TimeUnitsInput({ onChange, value: userValue, min, max, .
     <InputWrapper {...props}>
       <Stack direction="row" spacing={5}>
         <NumberInput
-          sx={{ maxWidth: 80 }}
+          sx={{ maxWidth: 142 }}
           value={value}
           onChange={(v) => handleChange(v, units)}
           min={min}
           max={max}
+          customDesign
         />
         <Select
           value={units}

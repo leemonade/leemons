@@ -107,6 +107,7 @@ export default function Edit() {
       getUserProgramsRequest(),
       listSessionClassesRequest(),
     ]);
+
     store.subjects = uniqBy(map(classes, 'subject'), 'id');
     store.subjectsByProgram = groupBy(
       map(store.subjects, (item) => ({

@@ -43,8 +43,13 @@ export default function DetailQuestionsBanks({
   });
   const [selectedSubject, setSelectedSubject] = React.useState(null);
   const formValues = form.watch();
+
   const questionBank = form.watch('questionBank');
   const subjects = form.watch('subjects');
+  const subjectsRaw = form.watch('subjectsRaw');
+  const courseIdRaw = subjectsRaw?.[0]?.courseId || '';
+  const programIdRaw = subjectsRaw?.[0]?.programId || '';
+  const idRaw = subjectsRaw?.[0]?.id || '';
   const {
     programs,
     courses,
@@ -202,6 +207,14 @@ export default function DetailQuestionsBanks({
     }));
   }, [t, store.pagination, questionBank]);
 
+  React.useEffect(() => {
+    if (subjectsRaw?.length > 0 && formValues.subjects?.length > 0) {
+      form.setValue('program', programIdRaw);
+      form.setValue('course', courseIdRaw);
+      form.setValue('subject', idRaw);
+    }
+  }, [subjectsRaw]);
+
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
@@ -247,7 +260,6 @@ export default function DetailQuestionsBanks({
       <Box>
         <ContextContainer title={t('questionsBanksDescription')}>
           <InputWrapper error={isDirty ? form.formState.errors.questionBank : null} />
-          {/* <SubjectPicker /> */}
           <Stack
             fullWidth
             style={{
@@ -265,6 +277,7 @@ export default function DetailQuestionsBanks({
                   <Select
                     {...field}
                     cleanOnMissingValue
+                    defaultValue={programIdRaw}
                     label={t('programLabel')}
                     placeholder={t('programPlaceholder')}
                     data={programs}
@@ -283,6 +296,7 @@ export default function DetailQuestionsBanks({
                     <Select
                       {...field}
                       cleanOnMissingValue
+                      defaultValue={courseIdRaw}
                       label={t('courseLabel')}
                       placeholder={t('programPlaceholder')}
                       data={courses}
@@ -300,6 +314,7 @@ export default function DetailQuestionsBanks({
                   <Select
                     {...field}
                     cleanOnMissingValue
+                    defaultValue={idRaw}
                     label={t('subjectLabel')}
                     placeholder={t('programPlaceholder')}
                     data={allSubjects}

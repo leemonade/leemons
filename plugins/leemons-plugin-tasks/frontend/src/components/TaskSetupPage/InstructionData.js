@@ -14,7 +14,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { useObservableContext } from '@common/context/ObservableContext';
 import { Attachments } from '@leebrary/components';
-import TimeUnitsInput from '../Inputs/TimeUnitsInput';
+import TimeUnitsInput from '@common/components/TimeUnitsInput';
 
 function useDefaultValues() {
   const { getValues } = useObservableContext();

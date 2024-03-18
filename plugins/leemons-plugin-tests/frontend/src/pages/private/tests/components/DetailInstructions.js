@@ -12,6 +12,7 @@ import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { Attachments } from '@leebrary/components';
+import TimeUnitsInput from '@common/components/TimeUnitsInput';
 import FinalDropdown from './FinalDropdown';
 
 export default function DetailInstructions({
@@ -126,6 +127,21 @@ export default function DetailInstructions({
             />
           </ContextContainer>
         )}
+        <ContextContainer>
+          <Box style={{ marginTop: 24, marginBottom: 24 }}>
+            <Controller
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <TimeUnitsInput
+                  {...field}
+                  label={t('recommendedDuration')}
+                  error={isDirty ? t('recommendedDuration') : null}
+                />
+              )}
+            />
+          </Box>
+        </ContextContainer>
       </Box>
     </TotalLayoutStepContainer>
   );
