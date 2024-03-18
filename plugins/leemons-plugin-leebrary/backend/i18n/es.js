@@ -57,6 +57,7 @@ module.exports = {
         tags: 'Etiquetas',
         addTag: 'Añadir',
         changeImage: 'Cambiar imagen',
+        removeButton: 'Borrar',
         uploadButton: 'Subir imagen',
         browseFile: 'Click para buscar un archivo',
         advancedConfig: 'Configuración avanzada',

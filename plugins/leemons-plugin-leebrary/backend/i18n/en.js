@@ -62,6 +62,7 @@ module.exports = {
         subjects: 'Subjects',
         dropFile: 'or drop a computer file here',
         changeImage: 'Change image',
+        removeButton: 'Remove',
         uploadButton: 'Upload image',
         search: 'Search from library',
         submitForm: 'Add to library',
