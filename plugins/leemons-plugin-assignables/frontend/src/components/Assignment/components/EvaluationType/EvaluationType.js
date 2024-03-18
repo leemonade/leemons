@@ -52,6 +52,10 @@ export const useEvaluationTypeStyles = createStyles((theme) => ({
     flexDirection: 'column',
     gap: theme.other.global.spacing.padding.xlg,
   },
+  selectType: {
+    maxWidth: 200,
+    minWidth: 200,
+  },
 }));
 
 export function EvaluationType({
@@ -116,12 +120,14 @@ export function EvaluationType({
           name="type"
           control={control}
           render={({ field }) => (
-            <Select
-              {...field}
-              label={localizations?.typeInput?.label}
-              placeholder={localizations?.typeInput?.placeholder}
-              data={types}
-            />
+            <Box className={classes.selectType}>
+              <Select
+                {...field}
+                label={localizations?.typeInput?.label}
+                placeholder={localizations?.typeInput?.placeholder}
+                data={types}
+              />
+            </Box>
           )}
         />
 
