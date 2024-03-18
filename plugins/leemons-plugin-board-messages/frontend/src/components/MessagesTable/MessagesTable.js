@@ -1,12 +1,14 @@
+import React, { useMemo, useState } from 'react';
+import { omit, noop } from 'lodash';
+import { Box, Button, ContextContainer, PaginatedList } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { getUserPrograms } from '@academic-portfolio/request/programs';
-import { Box, PaginatedList } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { listProfilesRequest } from '@users/request';
 import getUserCenters from '@users/request/getUserCenters';
 import { getCentersWithToken, useSession } from '@users/session';
-import React, { useMemo, useState } from 'react';
 import { listRequest, saveRequest } from '../../request';
 import { Filters } from '../Filters';
 import { ActionItem } from './components/ActionItem';
@@ -20,7 +22,6 @@ import {
   MESSAGES_TABLES_DEFAULT_PROPS,
   MESSAGES_TABLES_PROP_TYPES,
 } from './MessagesTable.constants';
-import { MessagesTableStyles } from './MessagesTable.styles';
 
 const useMessagesColumns = (labels) =>
   useMemo(
@@ -69,7 +70,8 @@ const DEFAULT_VALUES = {
 const MessagesTable = ({
   labels,
   shouldReload,
-  openEditDrawer,
+  onEdit = noop,
+  onNew = noop,
   centers,
   setCenters,
   profiles,
@@ -170,21 +172,29 @@ const MessagesTable = ({
 
   const archiveMessage = async (message) => {
     const isArchiving = message.status !== 'archived';
-    const messageToSave = { ...message, status: isArchiving ? 'archived' : 'unpublished' };
-    delete messageToSave.isUnpublished;
-    delete messageToSave.totalClicks;
-    delete messageToSave.totalViews;
-    delete messageToSave.owner;
-    delete messageToSave.userOwner;
-    if (!message.url) messageToSave.url = null;
-    if (!message.textUrl) messageToSave.textUrl = null;
-    delete messageToSave.updated_at;
-    delete messageToSave.created_at;
-    delete messageToSave.deleted_at;
-    delete messageToSave.updatedAt;
-    delete messageToSave.createdAt;
-    delete messageToSave.deletedAt;
-    delete messageToSave.deleted;
+    const propsToOmit = [
+      'isUnpublished',
+      'totalClicks',
+      'totalViews',
+      'owner',
+      'userOwner',
+      'updated_at',
+      'created_at',
+      'deleted_at',
+      'updatedAt',
+      'createdAt',
+      'deletedAt',
+      'deleted',
+    ];
+
+    if (!message.url) propsToOmit.push('url');
+    if (!message.textUrl) propsToOmit.push('textUrl');
+
+    const messageToSave = omit(
+      { ...message, status: isArchiving ? 'archived' : 'unpublished' },
+      propsToOmit
+    );
+
     try {
       await saveRequest(messageToSave);
       addSuccessAlert(isArchiving ? labels.archivedSuccess : labels.unarchivedSuccess);
@@ -229,7 +239,7 @@ const MessagesTable = ({
         <ActionItem
           labels={labels.actions}
           status={message.status}
-          onEdit={openEditDrawer}
+          onEdit={onEdit}
           onArchive={archiveMessage}
           message={message}
           isOwner={isOwner}
@@ -258,9 +268,8 @@ const MessagesTable = ({
     zIndex: 10,
   };
 
-  const { classes: styles } = MessagesTableStyles({}, { name: 'MessagesTable' });
   return (
-    <Box className={styles.root}>
+    <ContextContainer padded>
       <Filters
         labels={labels}
         centers={centers}
@@ -270,10 +279,20 @@ const MessagesTable = ({
         setFilters={setFilters}
         onlyArchived={onlyArchived}
       />
+
+      {!onlyArchived && (
+        <Box>
+          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNew}>
+            {labels.new}
+          </Button>
+        </Box>
+      )}
+
       {messagesData.length < 1 && !loading ? (
         <EmptyState label={labels.emptyState} />
       ) : (
         <PaginatedList
+          hidePaper
           columns={columns}
           items={messagesData}
           loading={loading}
@@ -285,12 +304,11 @@ const MessagesTable = ({
           selectable={false}
         />
       )}
-    </Box>
+    </ContextContainer>
   );
 };
 
 MessagesTable.defaultProps = MESSAGES_TABLES_DEFAULT_PROPS;
 MessagesTable.propTypes = MESSAGES_TABLES_PROP_TYPES;
 
-// eslint-disable-next-line import/prefer-default-export
 export { MessagesTable };

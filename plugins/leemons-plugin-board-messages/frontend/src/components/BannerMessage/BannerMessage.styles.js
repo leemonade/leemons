@@ -20,6 +20,7 @@ export const BannerMessageStyles = createStyles((theme) => {
       display: 'flex',
       ...getBoxShadowFromToken(globalTheme.shadow[200]),
       border: `4px solid ${globalTheme.border.color.line['default--reverse']}`,
+      backgroundColor: 'white',
     },
     contentWrapper: {
       display: 'flex',

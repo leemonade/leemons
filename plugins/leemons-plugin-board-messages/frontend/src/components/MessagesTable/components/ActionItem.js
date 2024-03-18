@@ -1,25 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ActionButton } from '@bubbles-ui/components';
+import { Stack, ActionButton } from '@bubbles-ui/components';
 import { EditWriteIcon, ArchiveIcon } from '@bubbles-ui/icons/solid';
 
 const ActionItem = ({ labels, status, onEdit, onArchive, message, isOwner }) => (
-  <Box style={{ display: 'flex', gap: 4 }}>
+  <Stack spacing={2}>
     <ActionButton
-      icon={<EditWriteIcon />}
-      variant="transparent"
+      icon={<EditWriteIcon width={18} height={18} />}
       tooltip={labels.edit}
       onClick={() => onEdit(message)}
       disabled={!isOwner}
     />
     <ActionButton
-      icon={<ArchiveIcon />}
-      variant="transparent"
+      icon={<ArchiveIcon width={18} height={18} />}
       tooltip={status === 'archived' ? labels.unarchive : labels.archive}
       onClick={() => onArchive(message)}
       disabled={status !== 'unpublished' && status !== 'completed' && status !== 'archived'}
     />
-  </Box>
+  </Stack>
 );
 
 ActionItem.propTypes = {
