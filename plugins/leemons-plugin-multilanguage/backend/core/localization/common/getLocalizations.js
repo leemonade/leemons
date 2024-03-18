@@ -74,7 +74,7 @@ async function getLocalizations({ ctx }) {
     });
   }
 
-  const cacheKey = `multilanguage:common:get:${JSON.stringify({
+  const cacheKey = `multilanguage:common:get:${ctx.meta.deploymentID}${JSON.stringify({
     keys,
     locale,
     keysStartsWith,
@@ -83,7 +83,7 @@ async function getLocalizations({ ctx }) {
 
   if (cache) {
     // TODO: Ver por que peta lo cacheado en la pagina de http://localhost:8080/private/dashboard/class/2dd89ae1-a795-402c-808c-9951f130f51a?type=all&sort=assignation&query=&progress=all
-    // return { items: cache };
+    return { items: cache };
   }
   const localizations = [];
 

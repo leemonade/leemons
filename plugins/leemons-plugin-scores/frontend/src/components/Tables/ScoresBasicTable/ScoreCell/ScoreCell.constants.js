@@ -10,4 +10,5 @@ export const SCORES_CELL_PROP_TYPES = {
       letter: PropTypes.string,
     })
   ),
+  isClosed: PropTypes.bool,
 };

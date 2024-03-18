@@ -6,11 +6,9 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const FamiliesList = loadable(() => pMinDelay(import('./src/pages/private/FamiliesList'), 1000));
-const FamilyDetail = loadable(() => pMinDelay(import('./src/pages/private/FamilyDetail'), 1000));
-const FamiliesConfig = loadable(() =>
-  pMinDelay(import('./src/pages/private/FamiliesConfig'), 1000)
-);
+const FamiliesList = loadable(() => pMinDelay(import('./src/pages/private/FamiliesList'), 500));
+const FamilyDetail = loadable(() => pMinDelay(import('./src/pages/private/FamilyDetail'), 500));
+const FamiliesConfig = loadable(() => pMinDelay(import('./src/pages/private/FamiliesConfig'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

@@ -100,12 +100,52 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
   const promises = [];
 
   if (keys) {
-    promises.push(getLocalizationsByKeys({ keys, locale, ctx: globalCTX }));
+    const cacheKey = `localizations.global-${JSON.stringify({ service: 'global', keys, locale })}`;
+
+    const cacheResult = await ctx.cache.get(cacheKey);
+
+    if (cacheResult) {
+      promises.push(cacheResult);
+    } else {
+      promises.push(
+        getLocalizationsByKeys({ keys, locale, ctx: globalCTX }).then((result) => {
+          ctx.cache.set(cacheKey, result);
+          return result;
+        })
+      );
+    }
   }
 
   if (keysStartsWith) {
-    promises.push(getLocalizationsByKeysStartsWith({ keysStartsWith, locale, ctx: globalCTX }));
+    const cacheKey = `localizations.global-${JSON.stringify({
+      service: 'global',
+      keysStartsWith,
+      locale,
+    })}`;
+
+    const cacheResult = await ctx.cache.get(cacheKey);
+
+    if (cacheResult) {
+      promises.push(cacheResult);
+    } else {
+      promises.push(
+        getLocalizationsByKeysStartsWith({ keysStartsWith, locale, ctx: globalCTX }).then(
+          (result) => {
+            ctx.cache.set(cacheKey, result);
+            return result;
+          }
+        )
+      );
+    }
   }
+
+  const span = ctx.startSpan('getCommonLocalizations', {
+    tags: {
+      keys,
+      keysStartsWith,
+      locale,
+    },
+  });
 
   const commonServiceLocalizations = await getCommonLocalizations({
     ctx: {
@@ -117,6 +157,8 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
       },
     },
   });
+
+  ctx.finishSpan(span);
 
   const items = merge(
     ...(await Promise.allSettled(promises))

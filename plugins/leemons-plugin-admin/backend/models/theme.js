@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     tokens: {
@@ -23,6 +21,8 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const themeModel = newModel(mongoose.connection, 'v1::admin_Theme', schema);
 

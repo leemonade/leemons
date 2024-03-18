@@ -5,7 +5,6 @@ const transactionSchema = new mongoose.Schema(
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     active: {
       type: Boolean,
@@ -35,6 +34,11 @@ const transactionSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+transactionSchema.index({
+  _id: 1,
+  deploymentID: 1,
+});
 
 let Transaction = null;
 if (mongoose.connection.models.hasOwnProperty('transaction_Transaction')) {

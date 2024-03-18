@@ -8,13 +8,13 @@ import "./global.css";
 // Plugins imports
 {{ @each(it.plugins) => plugin }}
 {{ @if(plugin.routers.public) }}
-const {{ plugin.name | clear | capitalize }}Public = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Public'), 1000));
+const {{ plugin.name | clear | capitalize }}Public = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Public'), 500));
 {{ /if }}
 {{ @if(plugin.routers.private) }}
-const {{ plugin.name | clear | capitalize }}Private = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Private'), 1000));
+const {{ plugin.name | clear | capitalize }}Private = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Private'), 500));
 {{ /if }}
 {{ @if(plugin.routers.protected) }}
-const {{ plugin.name | clear | capitalize }}Protected = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Protected'), 1000));
+const {{ plugin.name | clear | capitalize }}Protected = loadable(() => pMinDelay(import('@{{ plugin.name }}/../Protected'), 500));
 {{ /if }}
 {{ @if(plugin.hooks) }}
 import use{{ plugin.name | clear | capitalize }} from '@{{ plugin.name }}/../globalHooks';

@@ -7,12 +7,10 @@ const multipartUploadsSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     fileId: {
       type: String,
@@ -31,6 +29,8 @@ const multipartUploadsSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+multipartUploadsSchema.index({ fileId: 1, deploymentID: 1, isDeleted: 1 });
 
 const multipartUploadsModel = newModel(
   mongoose.connection,

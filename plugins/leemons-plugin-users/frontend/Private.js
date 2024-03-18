@@ -6,39 +6,31 @@ import pMinDelay from 'p-min-delay';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
-const Home = loadable(() => pMinDelay(import('./src/pages/private/Home'), 1000));
-const UserData = loadable(() => pMinDelay(import('./src/pages/private/UserData'), 1000));
-const Welcome = loadable(() => pMinDelay(import('./src/pages/private/Welcome'), 1000));
-const SocketTest = loadable(() => pMinDelay(import('./src/pages/private/SocketTest'), 1000));
-const ChangeLanguage = loadable(() =>
-  pMinDelay(import('./src/pages/private/ChangeLanguage'), 1000)
-);
+const Home = loadable(() => pMinDelay(import('./src/pages/private/Home'), 500));
+const UserData = loadable(() => pMinDelay(import('./src/pages/private/UserData'), 500));
+const Welcome = loadable(() => pMinDelay(import('./src/pages/private/Welcome'), 500));
+const SocketTest = loadable(() => pMinDelay(import('./src/pages/private/SocketTest'), 500));
+const ChangeLanguage = loadable(() => pMinDelay(import('./src/pages/private/ChangeLanguage'), 500));
 
 const ListProfiles = loadable(() =>
-  pMinDelay(import('./src/pages/private/profiles/ListProfiles'), 1000)
+  pMinDelay(import('./src/pages/private/profiles/ListProfiles'), 500)
 );
 const DetailProfile = loadable(() =>
-  pMinDelay(import('./src/pages/private/profiles/DetailProfile'), 1000)
+  pMinDelay(import('./src/pages/private/profiles/DetailProfile'), 500)
 );
 
-const ListRoles = loadable(() => pMinDelay(import('./src/pages/private/roles/ListRoles'), 1000));
-const DetailRoles = loadable(() =>
-  pMinDelay(import('./src/pages/private/roles/DetailRoles'), 1000)
-);
+const ListRoles = loadable(() => pMinDelay(import('./src/pages/private/roles/ListRoles'), 500));
+const DetailRoles = loadable(() => pMinDelay(import('./src/pages/private/roles/DetailRoles'), 500));
 
-const ListUsers = loadable(() => pMinDelay(import('./src/pages/private/users/ListUsers'), 1000));
-const CreateUsers = loadable(() =>
-  pMinDelay(import('./src/pages/private/users/CreateUsers'), 1000)
-);
-const ImportUsers = loadable(() =>
-  pMinDelay(import('./src/pages/private/users/ImportUsers'), 1000)
-);
+const ListUsers = loadable(() => pMinDelay(import('./src/pages/private/users/ListUsers'), 500));
+const CreateUsers = loadable(() => pMinDelay(import('./src/pages/private/users/CreateUsers'), 500));
+const ImportUsers = loadable(() => pMinDelay(import('./src/pages/private/users/ImportUsers'), 500));
 const DetailUser = loadable(() =>
-  pMinDelay(import('./src/pages/private/users/DetailUser/UserDetail'), 1000)
+  pMinDelay(import('./src/pages/private/users/DetailUser/UserDetail'), 500)
 );
 
 const UserDataDatasetValues = loadable(() =>
-  pMinDelay(import('./src/pages/private/UserDataDatasetValues'), 1000)
+  pMinDelay(import('./src/pages/private/UserDataDatasetValues'), 500)
 );
 
 export default function Private() {

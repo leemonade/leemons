@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { createClient, createCluster } = require('redis');
-const queries = require('./queries');
+const { getActionNameFromCTX } = require('@leemons/service-name-parser');
+const createQueries = require('./queries');
 
 function getDefaultClientConfig() {
   const config = {
@@ -48,6 +49,36 @@ module.exports.getClientConfig = function getClientConfig(_config) {
   };
 };
 
+function tracingWrapper(f, ctx) {
+  return (...params) => {
+    if (!ctx?.span) {
+      return f(...params);
+    }
+
+    const span = ctx.broker.tracer.startSpan(`redis ${f.name}`, {
+      parentSpan: ctx.span,
+      type: 'cache',
+      service: 'redis',
+      tags: {
+        params,
+        action: getActionNameFromCTX(ctx),
+        method: f.name,
+      },
+    });
+
+    return f(...params)
+      .then((res) => {
+        span.finish();
+        return res;
+      })
+      .catch((error) => {
+        span.setError(error);
+        span.finish();
+        throw error;
+      });
+  };
+}
+
 module.exports.redisCache = async function redisCache(config) {
   let client;
 
@@ -73,5 +104,13 @@ module.exports.redisCache = async function redisCache(config) {
 
   await client.connect();
 
-  return queries(client, { isCluster: config.cluster });
+  const queries = createQueries(client, { isCluster: config.cluster });
+
+  return ({ pluginName, ctx }) => {
+    const queriesObject = queries(pluginName);
+
+    return Object.fromEntries(
+      Object.entries(queriesObject).map(([key, f]) => [key, tracingWrapper(f, ctx)])
+    );
+  };
 };

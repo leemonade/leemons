@@ -18,7 +18,7 @@ import {
   useResizeObserver,
   useViewportSize,
 } from '@bubbles-ui/components';
-import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
+import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import SelectSubjects from '@leebrary/components/SelectSubjects';
@@ -322,7 +322,7 @@ const LibraryDrawerForm = ({
                     rules={{ required: errorMessages.file?.required || 'Field required' }}
                     render={({ field: { ref, value, ...field } }) => (
                       <FileUpload
-                        icon={<CloudUploadIcon height={32} width={32} />}
+                        icon={<DownloadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
                         errorMessage={{
@@ -469,7 +469,7 @@ const LibraryDrawerForm = ({
                         <ActionButton
                           color="primary"
                           size="md"
-                          icon={<CloudUploadIcon />}
+                          icon={<DownloadIcon />}
                           onClick={() => setShowAssetDrawer(true)}
                         />
                       </Box>

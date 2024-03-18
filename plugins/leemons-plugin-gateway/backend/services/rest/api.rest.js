@@ -8,12 +8,12 @@
 const { mongoose } = require('@leemons/mongodb');
 
 module.exports = {
-  status: {
+  statusRest: {
     rest: {
       method: 'GET',
       path: '/status',
     },
-    async handler(ctx) {
+    async handler() {
       return { status: 200, timestamp: new Date() };
     },
   },

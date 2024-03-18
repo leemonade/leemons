@@ -290,11 +290,7 @@ module.exports = {
       removeSuccess: 'Recurso eliminado con éxito',
       pinnedSuccess: 'Recurso anclado con éxito',
       unpinnedSuccess: 'Recurso desanclado con éxito',
-      listEmpty: 'No hay ningún ítem disponible',
-      listEmptyDescription:
-        'Gracias a las Bibliotecas de Leemons, los docentes pueden gestionar tareas, tests, sesiones... y tanto docentes como estudiantes crear y compartir archivos multi-media y guardar sus páginas web favoritas.',
-      recentListEmpty: 'Aún no has creado ítems de biblioteca recientes.',
-      recentListEmptyDescription: 'Aquí aparecerán los ítems más recientes.',
+
       searchListEmpty: 'No hay ningún ítem disponible con tus criterios de búsqueda',
       searchListEmptyDescription:
         'Prueba a buscar por palabras clave (tags) o a escribir un término más genérico y luego utiliza los filtros para refinar tu búsqueda.',
@@ -328,6 +324,89 @@ module.exports = {
       toggle: 'Cerrar',
       open: 'Abrir',
       covertToTask: 'Asignar',
+    },
+
+    emptyStates: {
+      title: 'Aún no hay {category}',
+      'media-files': {
+        descriptionCTA: 'Crea un {singularCategory}.',
+        helpCTA: 'Cómo crear un {singularCategory}.',
+        description:
+          'Comienza a cargar tus archivos multimedia (imágenes, PDFs, audios, videos...) pulsando {CTA}',
+        help: 'Y si necesitas ayuda, accede a {CTA}',
+      },
+      bookmarks: {
+        descriptionCTA: 'Crea un {singularCategory}.',
+        helpCTA: 'Cómo crear un {singularCategory}.',
+        description:
+          'Un marcador es un acceso directo a una página web que te interesa tener a mano. Crea tu primer marcador copiando la dirección web del sitio y pulsando {CTA}',
+        help: 'Y si necesitas ayuda, accede a {CTA}',
+      },
+      pins: {
+        helpCTA: 'Cómo gestionar favoritos.',
+        description:
+          'Pulsa en el icono corazón en la tarjeta de cualquier elemento de la biblioteca para destacarlo en esta sección y tenerlo a mano.',
+        help: 'Y si necesitas ayuda, accede a {CTA}',
+      },
+      'leebrary-shared': {
+        descriptionCTA: 'Nuevo',
+        description:
+          'Cuando otro usuario comparta contigo un contenido, recurso o actividad aparecerá destacado en esta sección. Aún no te han compartido nada pero puedes empezar creando tus propios materiales pulsando en el botón {CTA} en la zona superior izquierda.',
+      },
+      'leebrary-recent': {
+        descriptionCTA: 'Nuevo',
+        description:
+          'Podrás encontrar aquí los últimos elementos de la biblioteca. Comienza pulsando en el botón {CTA} en la zona superior izquierda para subir un recurso, crear un marcador o una tarea o redactar un contenido y aparecerán en esta sección.',
+      },
+      'leebrary-subject': {
+        title: 'Aún no hay contenido de tus asignaturas',
+        description:
+          'Cuando tus profesores compartan recursos de clase contigo aparecerán en estas carpetas. También puedes almacenar tu contenido en esta carpeta etiquetándolos con una asignatura.',
+        help: 'Y si necesitas ayuda accede a {CTA}',
+        helpCTA: 'Cómo etiquetar contenidos',
+      },
+      'assignables.content-creator': {
+        descriptionCTA: 'Crea un {singularCategory}.',
+        helpCTA: 'Cómo crear {pluralCategory}.',
+        description:
+          'En Leemons puedes crear tus propios documentos con contenido para los estudiantes. Crea tu primer documento pulsando {CTA}',
+        help: 'Y si necesitas ayuda, accede a {CTA}',
+      },
+      'assignables.task': {
+        descriptionCTA: 'Crea una {singularCategory}.',
+        helpCTA: 'Cómo crear {pluralCategory}.',
+        description:
+          'Las tareas son actividades que puedes asignar tus estudiantes para que apliquen lo que han aprendido de forma práctica o demuestren sus conocimientos. Crea tu primera tarea pulsando {CTA}',
+        help: 'Y si necesitas ayuda, accede a {CTA}',
+      },
+      'tests-questions-banks': {
+        descriptionCTA: 'Crea un {singularCategory}.',
+        helpCTA: 'Cómo crear {pluralCategory}.',
+        description:
+          'Los bancos de preguntas son la base para crear test de evaluación, puedes agrupar tus materiales por temas en diferentes bancos donde clasificarlas por categorías y dificultad. Crea tu primer banco pulsando {CTA}',
+        help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
+      },
+      'assignables.tests': {
+        descriptionCTA: 'Crea un {singularCategory}.',
+        helpCTA: 'Cómo crear {singularCategory}.',
+        description:
+          'Un test es un conjunto de cuestiones seleccionadas dentro de un banco de preguntas y sirven para evaluar el conocimiento. Crea tu primer test pulsando {CTA}',
+        help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
+      },
+      'assignables.feedback': {
+        descriptionCTA: 'Crea una {singularCategory}.',
+        helpCTA: 'Cómo crear {pluralCategory}.',
+        description:
+          'Con las encuestas podrás conocer el grado de satisfacción de tus estudiantes, solicitar feedback sobre contenido, tareas, etc... y visualizar los resultados en un informe super útil. Crea tu primera encuesta pulsando {CTA}',
+        help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
+      },
+      'assignables.learningpaths.module': {
+        descriptionCTA: 'Crea un {singularCategory}.',
+        helpCTA: 'Cómo crear {pluralCategory}.',
+        description:
+          'Un módulo es una situación de aprendizaje que tiene varias etapas (un contenido, un test, una tarea...) y que deben realizarse de forma consecutiva. Para crear un módulo deberás subir o crear antes los contenidos y actividades que lo componen. Empieza ya pulsando {CTA}',
+        help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
+      },
     },
   },
   pickerDrawer: {

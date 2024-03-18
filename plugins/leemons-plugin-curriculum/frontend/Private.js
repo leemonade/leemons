@@ -6,13 +6,9 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const AddCurriculum = loadable(() => pMinDelay(import('./src/pages/private/AddCurriculum'), 1000));
-const CurriculumView = loadable(() =>
-  pMinDelay(import('./src/pages/private/CurriculumView'), 1000)
-);
-const ListCurriculum = loadable(() =>
-  pMinDelay(import('./src/pages/private/ListCurriculum'), 1000)
-);
+const AddCurriculum = loadable(() => pMinDelay(import('./src/pages/private/AddCurriculum'), 500));
+const CurriculumView = loadable(() => pMinDelay(import('./src/pages/private/CurriculumView'), 500));
+const ListCurriculum = loadable(() => pMinDelay(import('./src/pages/private/ListCurriculum'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

@@ -5,6 +5,7 @@ async function filterAssignationsByProgress({
   dates,
   filters,
   instanceSubjectsProgramsAndClasses,
+  includeNonEvaluableChildren,
   ctx,
 }) {
   const { progress: desiredProgress } = filters;
@@ -19,6 +20,7 @@ async function filterAssignationsByProgress({
     dates,
     assignations,
     instanceSubjectsProgramsAndClasses,
+    includeNonEvaluableChildren,
     ctx,
   });
 

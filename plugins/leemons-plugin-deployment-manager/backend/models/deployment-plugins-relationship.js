@@ -6,12 +6,10 @@ const deploymentPluginsRelationshipSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     fromPluginName: {
       type: String,
@@ -34,6 +32,19 @@ deploymentPluginsRelationshipSchema.index(
   { deploymentID: 1, fromPluginName: 1, toPluginName: 1 },
   { unique: true }
 );
+
+deploymentPluginsRelationshipSchema.index({ pluginName: 1, deploymentID: 1, isDeleted: 1 });
+deploymentPluginsRelationshipSchema.index({
+  fromPluginName: 1,
+  toPluginName: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
+deploymentPluginsRelationshipSchema.index({
+  domains: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 
 const deploymentPluginsRelationshipModel = newModel(
   mongoose.connection,

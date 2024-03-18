@@ -14,7 +14,7 @@ import {
 } from '@bubbles-ui/components';
 import { getProgramsPublicInfoRequest } from '@academic-portfolio/request';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { CloudUploadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { DownloadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 
 import { LibraryNavbarItem as NavbarItem } from './LibraryNavbarItem';
 import { LibraryNavbarStyles } from './LibraryNavbar.styles';
@@ -287,7 +287,7 @@ const LibraryNavbar = ({
               <Button
                 size={'sm'}
                 fullWidth
-                rightIcon={<CloudUploadIcon />}
+                rightIcon={<DownloadIcon />}
                 onClick={() => setIsExpanded(true)}
               >
                 {labels.uploadButton}
@@ -333,7 +333,7 @@ const LibraryNavbar = ({
                 {showUpload && (
                   <Box className={classes.fileUpload}>
                     <FileUpload
-                      icon={<CloudUploadIcon height={32} width={32} />}
+                      icon={<DownloadIcon height={32} width={32} />}
                       title={labels.fileUploadTitle}
                       subtitle={labels.fileUploadSubtitle}
                       hideUploadButton

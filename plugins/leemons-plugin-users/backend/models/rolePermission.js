@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     role: {
       // ref: 'users_Roles',
@@ -40,6 +38,12 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, permissionName: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ permissionName: 1, target: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, permissionName: 1, target: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, isCustom: 1, deploymentID: 1, isDeleted: 1 });
 
 const rolePermissionModel = newModel(mongoose.connection, 'v1::users_RolePermission', schema);
 

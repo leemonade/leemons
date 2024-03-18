@@ -23,7 +23,8 @@ import useAcademicCalendarDates from './hooks/useAcademicCalendarDates';
 
 export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
   const [t] = useTranslateLoader(prefixPN('scoresPage.filters'));
-  const { control, watch, setValue } = useForm();
+  const form = useForm();
+  const { control, watch, setValue } = form;
   const { classes, cx } = useFiltersStyles({ classID, showProgramSelect });
 
   const centers = getCentersWithToken();
@@ -74,13 +75,17 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
                   ariaLabel={t('class.label')}
                   placeholder={t('class.placeholder')}
                   data={
-                    classesData?.map((klass) => ({
-                      ...klass.subject,
-                      value: klass.id,
-                      label: klass.groups.isAlone
-                        ? klass.subject?.name
-                        : `${klass.subject.name} - ${klass.groups.name}`,
-                    })) ?? []
+                    classesData?.map((klass) => {
+                      const isGroupAlone = !klass.groups || klass.groups.isAlone;
+
+                      return {
+                        ...klass.subject,
+                        value: klass.id,
+                        label: isGroupAlone
+                          ? klass.subject?.name
+                          : `${klass.subject.name} - ${klass.groups.name}`,
+                      };
+                    }) ?? []
                   }
                   disabled={dataIsLoading || !programId}
                   autoSelectOneOption
@@ -97,12 +102,14 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
             )}
           />
         </Box>
-        {selectedPeriod.selected === 'custom' && (
-          <Box className={classes.inputs}>
-            <PickDate control={control} name="startDate" defaultValue={startDate} />
-            <PickDate control={control} name="endDate" defaultValue={endDate} />
-          </Box>
-        )}
+        {selectedPeriod.selected === 'custom' &&
+          startDate !== undefined &&
+          endDate !== undefined && (
+            <Box className={classes.inputs}>
+              <PickDate form={form} name="startDate" defaultValue={startDate} />
+              <PickDate form={form} name="endDate" defaultValue={endDate} />
+            </Box>
+          )}
       </Box>
     </Box>
   );

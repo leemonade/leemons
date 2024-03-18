@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     zoneKey: {
@@ -32,6 +30,10 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ key: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ zoneKey: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ zoneKey: 1, key: 1, deploymentID: 1, isDeleted: 1 });
 
 const widgetItemProfilesModel = newModel(
   mongoose.connection,

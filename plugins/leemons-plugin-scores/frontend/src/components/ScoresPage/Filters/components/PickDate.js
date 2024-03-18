@@ -1,13 +1,14 @@
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { DatePicker } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import React from 'react';
 import { Controller, useWatch } from 'react-hook-form';
 
-export default function PickDate({ control, name, defaultValue }) {
+export default function PickDate({ form, name, defaultValue }) {
   const opposite = name === 'endDate' ? 'startDate' : 'endDate';
 
   const [t] = useTranslateLoader('scores.scoresPage');
-  const savedDate = useWatch({ control, name: opposite });
+  const savedDate = useWatch({ control: form.control, name: opposite });
   const date = new Date(savedDate);
 
   const minDate =
@@ -15,23 +16,20 @@ export default function PickDate({ control, name, defaultValue }) {
   const maxDate =
     name === 'startDate' && date.getTime() ? new Date(date.setDate(date.getDate() - 1)) : undefined;
 
+  useEffect(() => {
+    form.setValue(name, new Date(defaultValue));
+  }, [form.setValue, name, defaultValue]);
+
   return (
     <Controller
       name={name}
-      control={control}
-      render={({ field, fieldState: { isDirty } }) => {
-        let isDefaultValue = field.value?.getTime() === defaultValue;
-
-        if (!isDefaultValue && !isDirty) {
-          field.onChange(new Date(defaultValue));
-          isDefaultValue = true;
-        }
-
-        if (!isDefaultValue && name === 'endDate' && field.value && !minDate) {
+      control={form.control}
+      render={({ field }) => {
+        if (name === 'endDate' && field.value && minDate === null) {
           field.onChange(null);
         }
 
-        if (!isDefaultValue && name === 'endDate' && !field.value && minDate) {
+        if (name === 'endDate' && field.value === null && minDate) {
           const newDate = new Date();
           newDate.setDate(minDate.getDate() + 1);
           field.onChange(newDate);
@@ -42,7 +40,7 @@ export default function PickDate({ control, name, defaultValue }) {
             {...field}
             minDate={minDate}
             maxDate={maxDate}
-            disabled={name === 'endDate' && !minDate}
+            disabled={name === 'endDate' && !form.getValues(opposite)}
             ariaLabel={t(`${name}.label`)}
             placeholder={t(`${name}.placeholder`)}
           />
@@ -51,3 +49,9 @@ export default function PickDate({ control, name, defaultValue }) {
     />
   );
 }
+
+PickDate.propTypes = {
+  form: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  defaultValue: PropTypes.number,
+};

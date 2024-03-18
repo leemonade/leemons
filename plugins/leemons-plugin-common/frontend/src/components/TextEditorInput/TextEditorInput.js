@@ -29,10 +29,10 @@ export function useProcessTextEditor() {
 
   return React.useCallback(
     async (html, oldHtml, props) =>
-      processors.reduce(
-        async (prevProcessorHTML, processor) => processor(await prevProcessorHTML, oldHtml, props),
-        html
-      ),
+      processors.reduce(async (prevProcessorHTML, processor) => {
+        const processorFunction = processor?.processor ?? processor;
+        return processorFunction(await prevProcessorHTML, oldHtml, props);
+      }, html),
     [processors]
   );
 }
@@ -55,7 +55,8 @@ export const TextEditorInput = ({
 }) => {
   const editorLabels = useEditorLabels();
   const uuid = useId();
-  const { textEditorTools } = useTextEditor();
+  const { textEditorTools, setEditorDefault } = useTextEditor();
+  setEditorDefault();
 
   const leemonsTools = useMemo(() => {
     const tools = [];

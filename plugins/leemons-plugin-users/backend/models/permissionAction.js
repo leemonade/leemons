@@ -6,22 +6,18 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     permissionName: {
       type: String,
       required: true,
-      index: true,
     },
     actionName: {
       type: String,
       required: true,
-      index: true,
     },
   },
   {
@@ -29,6 +25,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ permissionName: 1, actionName: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ permissionName: 1, deploymentID: 1, isDeleted: 1 });
 
 const permissionActionModel = newModel(mongoose.connection, 'v1::users_PermissionAction', schema);
 

@@ -48,7 +48,8 @@ export function Filters({ onChange, setKlasses }) {
     [programDetails]
   );
 
-  const { control, watch } = useForm({});
+  const form = useForm({});
+  const { control, watch } = form;
 
   const selectedCourse = watch('class');
 
@@ -132,12 +133,14 @@ export function Filters({ onChange, setKlasses }) {
             )}
           />
         </Box>
-        {selectedPeriod.selected === 'custom' && (
-          <Box className={classes.inputs}>
-            <PickDate control={control} name="startDate" defaultValue={startDate} />
-            <PickDate control={control} name="endDate" defaultValue={endDate} />
-          </Box>
-        )}
+        {selectedPeriod.selected === 'custom' &&
+          startDate !== undefined &&
+          endDate !== undefined && (
+            <Box className={classes.inputs}>
+              <PickDate form={form} name="startDate" defaultValue={startDate} />
+              <PickDate form={form} name="endDate" defaultValue={endDate} />
+            </Box>
+          )}
       </Box>
     </Box>
   );

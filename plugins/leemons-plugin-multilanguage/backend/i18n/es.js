@@ -100,4 +100,8 @@ module.exports = {
     },
     selectionRequired: 'Es necesario seleccionar una opción',
   },
+  chips: {
+    and: 'y',
+    more: 'más',
+  },
 };

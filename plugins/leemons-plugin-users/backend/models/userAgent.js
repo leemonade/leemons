@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     user: {
       // ref: 'users_Users',
@@ -40,6 +38,13 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, user: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ user: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ user: 1, profile: 1, deploymentID: 1, isDeleted: 1 });
 
 const userAgentModel = newModel(mongoose.connection, 'v1::users_UserAgent', schema);
 

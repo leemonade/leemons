@@ -6,12 +6,10 @@ const bookmarksSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     asset: {
@@ -33,6 +31,9 @@ const bookmarksSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+bookmarksSchema.index({ asset: 1, deploymentID: 1, isDeleted: 1 });
+bookmarksSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const bookmarksModel = newModel(mongoose.connection, 'v1::leebrary_Bookmarks', bookmarksSchema);
 

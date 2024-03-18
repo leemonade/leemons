@@ -6,7 +6,6 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
@@ -46,6 +45,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ item: 1, type: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ item: 1, userAgentId: 1, deploymentID: 1, isDeleted: 1 });
 
 const itemPermissionsModel = newModel(mongoose.connection, 'v1::users_ItemPermissions', schema);
 

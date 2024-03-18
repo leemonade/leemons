@@ -73,9 +73,7 @@ const LibraryTool = ({
   } = useTextEditor();
 
   const handleOnChange = (content) => {
-    // console.log('>>> LibraryTool > onSetContent:', content);
     if (content.asset) {
-      // editor?.chain().focus().extendMarkRange('library').setContent(content).run();
       editor.chain().focus().setLibrary(content).run();
     }
 
@@ -84,7 +82,6 @@ const LibraryTool = ({
 
   const handleOnEdit = () => {
     const content = editor.getAttributes('library');
-    // console.log('>>> LibraryTool > handleOnEdit:', content);
     editToolData(
       'library',
       !isEmpty(content) ? content : currentTool.data,
@@ -120,7 +117,6 @@ const LibraryTool = ({
           alignLabels={alignLabels}
           bubbleMenu={bubbleMenu}
         />
-        // { offset: [0, -40] }
       );
     } else {
       closeBubbleMenu();

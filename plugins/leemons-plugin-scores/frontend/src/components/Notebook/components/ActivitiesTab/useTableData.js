@@ -73,25 +73,19 @@ function useStudents(assignableInstances) {
 }
 
 function useFilteredAssignableInstances({ assignableInstances, filters }) {
-  return assignableInstances.filter((assignableInstance) => {
-    if (
-      filters.filterBy === 'activity' &&
-      filters.search?.length &&
-      !assignableInstance.assignable.asset.name.toLowerCase().includes(filters.search.toLowerCase())
-    ) {
-      return false;
-    }
-
-    if (!assignableInstance.requiresScoring) {
-      return false;
-    }
-
-    if (!filters.showNonCalificables && !assignableInstance.gradable) {
-      return false;
-    }
-
-    return true;
-  });
+  return assignableInstances.filter(
+    (assignableInstance) =>
+      !(
+        (filters.filterBy === 'activity' &&
+          filters.search?.length &&
+          !assignableInstance.assignable.asset.name
+            .toLowerCase()
+            .includes(filters.search.toLowerCase())) ||
+        !assignableInstance.requiresScoring ||
+        (!filters.showNonCalificables && !assignableInstance.gradable) ||
+        assignableInstance?.metadata?.module?.type === 'module'
+      )
+  );
 }
 
 function useGrades(assignableInstances) {

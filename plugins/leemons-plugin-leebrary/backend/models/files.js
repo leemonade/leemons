@@ -11,12 +11,10 @@ const filesSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     provider: {
@@ -55,6 +53,10 @@ const filesSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+filesSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
+filesSchema.index({ id: 1, type: 1, deploymentID: 1, isDeleted: 1 });
+filesSchema.index({ fromUser: 1, deploymentID: 1, isDeleted: 1 });
 
 const filesModel = newModel(mongoose.connection, 'v1::leebrary_Files', filesSchema);
 

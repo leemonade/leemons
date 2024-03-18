@@ -31,7 +31,7 @@ const Welcome = ({ locale = 'en', url = '{{it.url}}' } = {}) => {
   const previewText = `[Leemons] ${messages[locale].title}`;
 
   return (
-    <EmailLayout previewText={previewText} title={messages[locale].title}>
+    <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>
       <Container className="text-center">
         <span className="text-[16px] font-medium leading-6 block mt-4">
           {messages[locale].actionText}

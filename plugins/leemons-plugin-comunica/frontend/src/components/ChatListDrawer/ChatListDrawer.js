@@ -35,7 +35,7 @@ import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
 import { RoomService } from '../../RoomService';
-import ChatDrawer from '../ChatDrawer/ChatDrawer';
+import { ChatDrawer } from '../ChatDrawer/ChatDrawer';
 import { ChatListDrawerStyles } from './ChatListDrawer.styles';
 
 function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = () => {} }) {
@@ -487,6 +487,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
                     onChange={onMutedChanged}
                   />
                   <Menu
+                    width={180}
                     control={
                       <ActionButton icon={<SettingMenuVerticalIcon width={16} height={16} />} />
                     }

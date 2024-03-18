@@ -6,7 +6,7 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const Reports = loadable(() => pMinDelay(import('./src/pages/private/reports'), 1000));
+const Reports = loadable(() => pMinDelay(import('./src/pages/private/reports'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

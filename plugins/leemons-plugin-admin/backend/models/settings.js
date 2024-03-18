@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     //
     configured: {
@@ -31,6 +29,8 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const settingsModel = newModel(mongoose.connection, 'v1::admin_Settings', schema);
 

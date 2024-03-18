@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     program: {
       type: String,
@@ -27,6 +25,10 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ center: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ program: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const programCenterModel = newModel(
   mongoose.connection,

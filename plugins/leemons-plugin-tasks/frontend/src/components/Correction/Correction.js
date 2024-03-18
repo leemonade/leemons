@@ -17,7 +17,7 @@ import {
   TabPanel,
   Button,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@common';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
@@ -206,12 +206,14 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           loading={loading}
           onClick={async () => {
             setLoading(true);
-            try {
-              await publish({ visibleToStudent: true });
-              addSuccessAlert(t('publish_success'));
-            } finally {
-              setLoading(false);
-            }
+            setTimeout(async () => {
+              try {
+                await publish({ visibleToStudent: true });
+                addSuccessAlert(t('publish_success'));
+              } finally {
+                setLoading(false);
+              }
+            }, 100);
           }}
           rightIcon={<SendMessageIcon />}
         >

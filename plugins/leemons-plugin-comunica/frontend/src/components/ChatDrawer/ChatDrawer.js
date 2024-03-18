@@ -339,6 +339,7 @@ function ChatDrawer({
 
                 <Box className={classes.headerRight}>
                   <Menu
+                    width={140}
                     control={
                       <ActionButton icon={<SettingMenuVerticalIcon width={16} height={16} />} />
                     }

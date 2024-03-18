@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     role: {
       // ref: 'users_Roles',
@@ -29,6 +27,11 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ center: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ center: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const roleCenterModel = newModel(mongoose.connection, 'v1::users_RoleCenter', schema);
 

@@ -18,7 +18,8 @@ import {
 import { CloudUploadIcon } from '@bubbles-ui/icons/outline';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import { Controller, useForm } from 'react-hook-form';
-import { DatePicker, TextEditorInput } from '@common';
+import { DatePicker } from '@common';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';

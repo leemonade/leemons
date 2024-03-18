@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     room: {
       type: String,
@@ -44,6 +42,8 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ room: 1, userAgent: 1, deploymentID: 1, isDeleted: 1 });
 
 const roomMessagesUnReadModel = newModel(
   mongoose.connection,

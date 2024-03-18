@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     actionName: {
       type: String,
@@ -28,6 +26,8 @@ const schema = new mongoose.Schema(
 );
 
 schema.index({ deploymentID: 1, actionName: 1 }, { unique: true });
+
+schema.index({ deploymentID: 1, actionName: 1, isDeleted: 1 });
 
 const actionsModel = newModel(mongoose.connection, 'v1::users_Actions', schema);
 

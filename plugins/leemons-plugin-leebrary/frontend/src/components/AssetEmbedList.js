@@ -56,7 +56,9 @@ const AssetEmbedList = ({ assets, width }) => {
       showPublic: true,
       indexable: null,
     },
-    enabled: assetIds.length > 0,
+    options: {
+      enabled: assetIds.length > 0,
+    },
   });
   const { data: categoriesData } = useCategories();
 

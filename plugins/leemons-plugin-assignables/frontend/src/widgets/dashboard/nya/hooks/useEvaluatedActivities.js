@@ -1,23 +1,21 @@
+import useSearchEvaluatedActivities from '@assignables/requests/hooks/queries/useSearchEvaluatedActivities';
 import { useIsStudent } from '@academic-portfolio/hooks';
-import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
 import useActivitiesByProfile from './useActivitiesByProfile';
-// EN: This hook only works for students, as the teachers doesn't have a progreso.
-// ES: Este hook solo funciona para estudiantes, porque los profes no tienen progreso.
+
+// This hook only works for students, as the teachers doesn't have activities itself
 export default function useEvaluatedActivities({ program, class: klass }) {
   const enabled = useIsStudent();
 
   const { data: evaluatedActivities, isLoading: evaluatedActivitiesAreLoading } =
-    useSearchOngoingActivities(
+    useSearchEvaluatedActivities(
       {
         limit: 9,
-        progress: 'evaluated',
-        // TODO: Sort by evaluation date
-        sort: 'assignation',
         programs: program && JSON.stringify([program]),
         classes: klass && JSON.stringify([klass]),
       },
       { enabled, select: (results) => results.items }
     );
+
   const { data: activities, isLoading: activitiesAreLoading } =
     useActivitiesByProfile(evaluatedActivities);
 
@@ -26,6 +24,6 @@ export default function useEvaluatedActivities({ program, class: klass }) {
   return {
     activities,
     isLoading,
-    count: activities?.length ?? null,
+    count: evaluatedActivities?.length ?? null,
   };
 }
