@@ -77,7 +77,7 @@ export function EmptyState() {
                   CTA: {
                     type: 'linkT',
                     value: 'leebrary.cta',
-                    url: 'https://www.leemons.io/leemons-academy',
+                    url: '/private/leebrary',
                   },
                 }}
               />
