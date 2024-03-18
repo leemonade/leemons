@@ -36,6 +36,10 @@ module.exports = {
         presentation: 'Presentation',
         subTitle: 'Resource title',
       },
+      footer: {
+        finish: 'Finish',
+        publish: 'Publish',
+      },
       bookmark: {
         titleNew: 'New bookmark',
         titleEdit: 'Edit bookmark',
