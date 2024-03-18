@@ -82,6 +82,7 @@ export default function Development(props) {
           scrollRef={props.scrollRef}
           rightZone={
             <Button
+              variant="outline"
               rightIcon={<ChevRightIcon />}
               disabled={!canStart}
               onClick={() => {
@@ -89,7 +90,7 @@ export default function Development(props) {
                 onStartQuestions();
               }}
             >
-              {t('makeTheTest')}
+              {t('nextButton')}
             </Button>
           }
         />

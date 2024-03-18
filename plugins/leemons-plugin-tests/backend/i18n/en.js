@@ -314,7 +314,6 @@ module.exports = {
     withoutPause2: 'the test once it has started.',
     withoutPause: 'Without pause',
     noTimeLimit: 'No time limit',
-    makeTheTest: 'Start test',
     howItWorks: 'How does it works?',
     limitedTime: 'Limited time',
     limitedTimeDescription:
