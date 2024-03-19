@@ -32,6 +32,10 @@ module.exports = {
       },
     },
     getRole: {
+      rest: {
+        path: '/:role',
+        method: 'GET',
+      },
       handler(ctx) {
         return getRole({ ...ctx.params, ctx });
       },

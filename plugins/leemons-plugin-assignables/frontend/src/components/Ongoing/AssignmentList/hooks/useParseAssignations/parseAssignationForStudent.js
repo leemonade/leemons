@@ -163,13 +163,14 @@ function getDashboardURL(assignation) {
 
   const moduleId = instance?.metadata?.module?.id;
 
+  const isEvaluable = instance.requiresScoring || instance.allowFeedback;
   const finished = isFinished(assignation);
 
   if (moduleId) {
     return `/private/learning-paths/modules/dashboard/${moduleId}`;
   }
 
-  if (!finished || (!instance.requiresScoring && !instance.allowFeedback)) {
+  if (!finished || (!isEvaluable && !roleDetails.evaluationDetailUrl)) {
     return roleDetails.studentDetailUrl
       .replace(':id', instance.id)
       .replace(':user', assignation.user);

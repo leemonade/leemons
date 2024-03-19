@@ -27,6 +27,7 @@ import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssign
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
+import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
 
 function useDocumentData({ id, user }) {
   const { data: assignation, isLoading: assignationIsLoading } = useAssignations(
@@ -123,8 +124,7 @@ export default function DocumentView() {
       }
     >
       <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: 'auto' }}>
-        <TotalLayoutStepContainer
-          clean
+        <TotalLayoutStepContainerWithAccordion
           Footer={
             <TotalLayoutFooterContainer
               scrollRef={scrollRef}
@@ -157,37 +157,18 @@ export default function DocumentView() {
               fixed
             />
           }
+          accordion={
+            !!instance?.metadata?.statement && {
+              title: t('instructions'),
+              icon: (
+                <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
+              ),
+              children: <HtmlText>{instance?.metadata?.statement}</HtmlText>,
+            }
+          }
+          noHorizontalPadding
+          noVerticalPadding
         >
-          {!!instance?.metadata?.statement && (
-            <ActivityAccordion
-              style={{
-                backgroundColor: 'white',
-                borderRadiusBottomLeft: 0,
-                borderRadiusBottomRight: 0,
-                borderBottom: '1px solid #DDE1E6',
-              }}
-            >
-              <ActivityAccordionPanel
-                itemValue="instructions"
-                compact
-                label={t('instructions')}
-                icon={
-                  <AlertInformationCircleIcon
-                    color={theme.other.global.content.color.icon.default}
-                  />
-                }
-              >
-                <Box
-                  sx={(th) => ({
-                    padding: th.other.global.spacing.padding.sm,
-                    paddingLeft: 32,
-                  })}
-                >
-                  <HtmlText>{instance?.metadata?.statement}</HtmlText>
-                </Box>
-              </ActivityAccordionPanel>
-            </ActivityAccordion>
-          )}
           <ContentEditorInput
             useSchema
             compact
@@ -200,7 +181,7 @@ export default function DocumentView() {
             openLibraryModal={false}
             readOnly
           />
-        </TotalLayoutStepContainer>
+        </TotalLayoutStepContainerWithAccordion>
       </Stack>
     </TotalLayoutContainer>
   );

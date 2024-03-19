@@ -14,8 +14,8 @@ import useTotalLayoutStyles from './index.style';
 import CloseButtons from './components/CloseButtons/CloseButtons';
 import StatusBadge from './components/StatusBadge/StatusBadge';
 import {
-  ACTIVIY_HEADER_PROP_TYPES,
-  ACTIVIY_HEADER_DEFAULT_PROPS,
+  ACTIVITY_HEADER_PROP_TYPES,
+  ACTIVITY_HEADER_DEFAULT_PROPS,
 } from './ActivityHeader.constants';
 
 export default function ActivityHeader({
@@ -30,6 +30,7 @@ export default function ActivityHeader({
   showDateTime,
   showTime,
   showCountdown,
+  showStatusBadge,
   showCloseButtons,
   allowEditDeadline,
   onTimeout = noop,
@@ -55,34 +56,42 @@ export default function ActivityHeader({
     === Presentation ===
   */
   const title = useMemo(() => {
+    let response = null;
+
+    if (isModuleActivity) {
+      response = data?.assignable?.asset?.name;
+    }
+
     if (action) {
+      response = action;
+    }
+
+    if ((action || showStatusBadge) && response) {
       return (
         <Stack alignItems="center" spacing={4} sx={{ font: 'inherit' }}>
-          <span>{action}</span>
+          <span>{response}</span>
           <StatusBadge instance={instance} />
         </Stack>
       );
     }
 
-    if (isModuleActivity) {
-      return data?.assignable?.asset?.name;
-    }
-
-    return assignable?.asset?.name;
-  }, [
-    action,
-    assignable?.asset?.name,
-    data?.assignable?.asset?.name,
-    isModuleActivity,
-    instance?.dates,
-    instance?.alwaysAvailable,
-  ]);
+    return response;
+  }, [action, data?.assignable?.asset?.name, isModuleActivity, instance, showStatusBadge]);
 
   const subtitle = useMemo(() => {
-    if (action || isModuleActivity) {
-      return assignable?.asset?.name;
+    const response = assignable?.asset?.name;
+
+    if (!title && showStatusBadge) {
+      return (
+        <Stack alignItems="center" spacing={4} sx={{ font: 'inherit' }}>
+          <span>{response}</span>
+          <StatusBadge instance={instance} />
+        </Stack>
+      );
     }
-  }, [action, isModuleActivity, assignable?.asset?.name]);
+
+    return response;
+  }, [title, assignable?.asset?.name, instance, showStatusBadge]);
 
   const { classes } = useTotalLayoutStyles();
 
@@ -140,6 +149,6 @@ export default function ActivityHeader({
   );
 }
 
-ActivityHeader.propTypes = ACTIVIY_HEADER_PROP_TYPES;
-ActivityHeader.defaultProps = ACTIVIY_HEADER_DEFAULT_PROPS;
+ActivityHeader.propTypes = ACTIVITY_HEADER_PROP_TYPES;
+ActivityHeader.defaultProps = ACTIVITY_HEADER_DEFAULT_PROPS;
 ActivityHeader.displayName = 'ActivityHeader';

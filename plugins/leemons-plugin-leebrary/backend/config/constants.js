@@ -226,6 +226,44 @@ const widgets = {
   ],
 };
 
+const assignableRoles = [
+  {
+    role: 'leebrary.asset',
+    options: {
+      teacherDetailUrl: '/',
+      studentDetailUrl: '/private/leebrary/activities/student-detail/:id/:user',
+      evaluationDetailUrl: '/private/leebrary/activities/correction/:id/:user',
+      creatable: false,
+      // createUrl: '/private/leebrary/media-files/new',
+      canUse: [],
+      pluralName: { en: 'assets', es: 'recursos' },
+      singularName: { en: 'asset', es: 'recurso' },
+      menu: {
+        removed: true,
+        item: {
+          iconSvg: '/public/leebrary/media-files.svg',
+          activeIconSvg: '/public/leebrary/media-files.svg',
+          label: {
+            en: 'Resources',
+            es: 'Recursos',
+          },
+        },
+        permissions: [
+          {
+            permissionName: permissionNames.library,
+            actionNames: ['view', 'admin'],
+          },
+        ],
+      },
+
+      componentOwner: 'leebrary',
+      listCardComponent: 'ListCard',
+      detailComponent: 'Detail',
+      type: 'resource',
+    },
+  },
+];
+
 module.exports = {
   roles,
   assetRoles,
@@ -242,4 +280,6 @@ module.exports = {
   CATEGORIES,
   permissionSeparator: '(ASSET_ID)',
   widgets,
+
+  assignableRoles,
 };

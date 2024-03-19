@@ -469,21 +469,14 @@ module.exports = {
     },
   },
   task_correction: {
+    action: 'feedback',
     student: {
-      submitted_alert: {
-        title: 'Tarea entregada con éxito',
-        message: 'Aquí tienes más información sobre tu tarea.',
-      },
-      pending_evaluation_alert: {
-        title: 'Pendiente de evaluación',
-        message: 'En cuanto sea evaluada recibirás una notificación.',
-      },
-
       submission: 'Entregable',
       activity_summary: 'Resumen de la actividad',
       statement: 'Enunciado',
       curriculum: 'Currículum',
       development: 'Desarrollo',
+      resources: 'Recursos',
     },
     teacher: {
       evaluation: 'Evaluación',

@@ -13,7 +13,6 @@ import {
 } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import { get } from 'lodash';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 // useLocalizations
@@ -114,7 +113,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
             }}
           >
             <Title order={3}>{`${localizations?.steps?.setup?.action}: ${
-              get(roleLocalizations, `${role}.singular`) || ''
+              roleLocalizations[role]?.singular || ''
             }`}</Title>
             <Box>
               <ActionButton icon={<RemoveIcon />} onClick={onClose} />

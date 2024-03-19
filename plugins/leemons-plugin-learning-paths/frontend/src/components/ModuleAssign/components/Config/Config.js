@@ -114,15 +114,16 @@ function useParsedActivities({ activities, components, localizations, onConfig }
             onChange={(newValue) => setValue(`state.time.${id}`, newValue)}
           />
         ),
-        actions: components[activity.role] ? (
-          <Box sx={{ cursor: 'pointer' }}>
-            <PluginSettingsIcon onClick={() => onConfig({ activity, id })} />
-          </Box>
-        ) : (
-          <></>
-        ),
+        actions:
+          components[activity.role] && !components[activity.role].disabled?.(activity) ? (
+            <Box sx={{ cursor: 'pointer' }}>
+              <PluginSettingsIcon onClick={() => onConfig({ activity, id })} />
+            </Box>
+          ) : (
+            <></>
+          ),
       })),
-    [activities, components, localizations]
+    [activities, components, localizations, onConfig, setValue, timeState]
   );
 }
 

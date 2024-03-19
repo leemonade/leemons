@@ -16,6 +16,7 @@ import setPermissions from './setPermissions';
 import unpinAsset from './unpinAsset';
 import updateAsset from './updateAsset';
 import uploadFiles from './uploadFiles';
+import assignAsset from './assignAsset';
 
 export const getProvidersRequest = getProviders;
 export const removeFileRequest = removeFile;
@@ -35,3 +36,5 @@ export const getAssetTypesRequest = getAssetTypes;
 export const pinAssetRequest = pinAsset;
 export const unpinAssetRequest = unpinAsset;
 export const hasPinsRequest = hasPins;
+
+export const assignAssetRequest = assignAsset;

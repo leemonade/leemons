@@ -15,8 +15,8 @@ const possibleStatus = {
 };
 
 const useStatus = ({ instance }) => {
-  const { start, deadline, archived, closed } = instance.dates;
-  const { alwaysAvailable } = instance;
+  const { start, deadline, archived, closed } = instance?.dates ?? {};
+  const { alwaysAvailable } = instance ?? {};
 
   return useMemo(() => {
     const now = dayjs();

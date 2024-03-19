@@ -480,21 +480,14 @@ module.exports = {
     },
   },
   task_correction: {
+    action: 'feedback',
     student: {
-      submitted_alert: {
-        title: 'Activity submitted successfully',
-        message: 'Here you have more information about your activity',
-      },
-      pending_evaluation_alert: {
-        title: 'Pending evaluation.',
-        message: 'When the teacher evaluates your activity, you will receive a notification',
-      },
-
       submission: 'Submission',
       activity_summary: 'Activity summary',
       statement: 'Statement',
       curriculum: 'Curriculum',
       development: 'Development',
+      resources: 'Resources',
     },
     teacher: {
       evaluation: 'Evaluation',

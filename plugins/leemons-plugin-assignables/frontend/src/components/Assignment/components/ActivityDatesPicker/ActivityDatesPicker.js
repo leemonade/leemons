@@ -43,7 +43,7 @@ function useOnChange({ control, onChange }) {
       maxTime: maxTimeToggle ? maxTime : null,
       raw: { type, dates, hideFromCalendar, maxTimeToggle, maxTime },
     });
-  }, [type, dates, hideFromCalendar, maxTimeToggle, maxTime]);
+  }, [type, dates, hideFromCalendar, maxTimeToggle, maxTime, onChange]);
 }
 
 export function ActivityDatesPicker({
@@ -53,6 +53,7 @@ export function ActivityDatesPicker({
   error,
   hideSectionHeaders,
   hideMaxTime,
+  hideShowInCalendar,
 }) {
   const options = React.useMemo(
     () => [
@@ -110,7 +111,7 @@ export function ActivityDatesPicker({
             />
           )}
           <Box className={classes.switchContainer}>
-            {type !== 'alwaysAvailable' && (
+            {type !== 'alwaysAvailable' && !hideShowInCalendar && (
               <Controller
                 name="hideFromCalendar"
                 control={control}
@@ -165,4 +166,5 @@ ActivityDatesPicker.propTypes = {
   error: PropTypes.any,
   hideSectionHeaders: PropTypes.bool,
   hideMaxTime: PropTypes.bool,
+  hideShowInCalendar: PropTypes.bool,
 };

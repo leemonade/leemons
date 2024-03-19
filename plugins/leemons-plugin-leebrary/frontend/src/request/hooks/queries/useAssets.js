@@ -5,7 +5,7 @@ import pMinDelay from 'p-min-delay';
 import getAssetsByIds from '@leebrary/request/getAssetsByIds';
 import { getAssetsKey } from '../keys/assets';
 
-function useAssets({ ids, filters, ...options }) {
+function useAssets({ ids, filters, timeout = 1000, ...options }) {
   const queryKey = getAssetsKey({ ids, filters });
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'frequently',
@@ -15,9 +15,9 @@ function useAssets({ ids, filters, ...options }) {
     () =>
       pMinDelay(
         getAssetsByIds(ids, filters).then((r) => r.assets ?? []),
-        1000
+        timeout
       ),
-    [ids, filters]
+    [ids, filters, timeout]
   );
 
   return useQuery({

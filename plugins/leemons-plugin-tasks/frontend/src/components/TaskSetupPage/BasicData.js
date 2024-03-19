@@ -214,13 +214,13 @@ function BasicData({
       }
     >
       <ContextContainer divided>
-        <Controller
+        {/* <Controller
           name="express"
           control={formData.control}
           render={({ field }) => (
             <Switch label="Tarea express" disabled={!!taskId} checked={!!field.value} {...field} />
           )}
-        />
+        /> */}
         <AssetFormInput
           form={formData}
           {...{ labels, placeholders, helps, errorMessages }}

@@ -104,7 +104,6 @@ module.exports = {
       description: 'Instrucciones para la consulta del contenido',
       editor: {
         placeholder: 'Puedes especificar la mejor manera de consultar este contenido...',
-        help: 'Información de apoyo visible en la tarjeta de asignación (ver vista previa)',
       },
     },
     evaluation: {
@@ -150,6 +149,7 @@ module.exports = {
         label: 'Título',
         placeholder: 'Escribe el título',
       },
+      thumbnail: 'Imagen destacada',
     },
     preview: {
       title: 'Vista previa',
@@ -472,7 +472,21 @@ module.exports = {
     timeoutAlert: {
       title: 'Tiempo máximo alcanzado',
       message:
-        'el tiempo límite establecido para esta actividad ha sido alcanzado. La última entrega o preguntas respondidas han sido enviadas automáticamente.',
+        'El tiempo límite establecido para esta actividad ha sido alcanzado. La última entrega o preguntas respondidas han sido enviadas automáticamente.',
+    },
+    submitted_alert: {
+      title: 'Actividad entregada con éxito',
+      message: 'Aquí tienes más información sobre tu actividad.',
+    },
+    pending_evaluation_alert: {
+      title: 'Pendiente de evaluación',
+      message: 'En cuanto sea evaluada recibirás una notificación.',
+    },
+    not_submitted_alert: {
+      title: 'Tarea no entregada',
+    },
+    finished_alert: {
+      title: 'Actividad finalizada',
     },
   },
 

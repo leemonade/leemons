@@ -21,8 +21,13 @@ async function getLocalizationsByKeys({ keys, locale, ctx }) {
     .filter(({ keyPath }) => keyPath)
     .map(({ keyPath }) => `value.${keyPath}`);
 
+  const filteredKeyPaths = keyPaths.filter(
+    (keyPath) =>
+      !keyPaths.some((otherKeyPath) => otherKeyPath !== keyPath && keyPath.startsWith(otherKeyPath))
+  );
+
   const keysFound = await ctx.db.Globals.find({ plugin: { $in: plugins }, locale })
-    .select(['plugin', ...keyPaths])
+    .select(['plugin', ...filteredKeyPaths])
     .lean();
 
   const keysFoundByPlugin = {};
