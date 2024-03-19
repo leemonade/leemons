@@ -9,10 +9,10 @@ function onAcademicPortfolioAddClassTeacher({
   return new Promise(async (resolve) => {
     try {
       // console.log('Vamos ha añadir profesor a calendario clase');
-      const promises = [ctx.tx.db.ClassCalendar.findOne({ class: classId }).lean()];
+      const promises = [ctx.db.ClassCalendar.findOne({ class: classId }).lean()];
 
       promises.push(
-        ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
+        ctx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
           key: ctx.prefixPN(`class.${classId}`),
           userAgentId: teacher,
           actionName: type === 'main-teacher' ? 'owner' : 'view',
@@ -22,7 +22,7 @@ function onAcademicPortfolioAddClassTeacher({
       const [classCalendar] = await Promise.all(promises);
 
       try {
-        await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
+        await ctx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
           key: ctx.prefixPN(`program.${classCalendar.program}`),
           userAgentId: teacher,
           actionName: 'view',
@@ -30,10 +30,11 @@ function onAcademicPortfolioAddClassTeacher({
       } catch (e) {
         // console.error(e);
       }
-      resolve();
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
+    } finally {
+      resolve();
     }
   });
 }
