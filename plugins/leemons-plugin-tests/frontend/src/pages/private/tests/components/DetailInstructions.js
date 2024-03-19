@@ -132,11 +132,16 @@ export default function DetailInstructions({
             <Controller
               control={form.control}
               name="duration"
+              rules={{
+                required: t('recommendedDuration'),
+                min: { value: 1, message: t('recommendedDuration') },
+              }}
               render={({ field }) => (
                 <TimeUnitsInput
                   {...field}
                   label={t('recommendedDuration')}
                   error={isDirty ? t('recommendedDuration') : null}
+                  min={1}
                 />
               )}
             />

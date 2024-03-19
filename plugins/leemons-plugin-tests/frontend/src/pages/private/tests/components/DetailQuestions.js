@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isNil, noop } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import {
   Box,
   Text,
@@ -106,7 +106,14 @@ export default function DetailQuestions({
     }
 
     if (radioSelection === 'manualQuestions' && isNewTest) {
-      setManualQuestions(questionBank.questions);
+      if (manualQuestions.length === 0) {
+        const currentQuestions = form.getValues('questions');
+        const questionBankQuestionIds = questionBank.questions?.map((q) => q.id);
+        if (JSON.stringify(currentQuestions) !== JSON.stringify(questionBankQuestionIds)) {
+          return form.setValue('questions', questionBankQuestionIds);
+        }
+        return setManualQuestions(questionBank.questions);
+      }
     }
   }, [
     questionBank,
@@ -123,15 +130,14 @@ export default function DetailQuestions({
 
   useEffect(() => {
     if (radioSelection === 'randomQuestions') {
-      if (!isNewTest) {
+      if (!isNewTest && questionBank?.questions) {
         const currentQuestions = form.getValues('questions');
-        const randomQuestionsIds = questionBank?.questions?.map((q) => q.id);
-        if (JSON.stringify(currentQuestions) !== JSON.stringify(randomQuestionsIds)) {
-          setRandomQuestions(questionBank.questions);
-          return form.setValue('questions', randomQuestionsIds);
-        }
+        const randomQuestionsIds =
+          questionBank?.questions?.filter((q) => currentQuestions.includes(q.id)) || [];
+        return setRandomQuestions(randomQuestionsIds);
+        // return form.setValue('questions', randomQuestionsIds);
       }
-      if (!randomQuestions.length && isNewTest) {
+      if (randomQuestions.length === 0 && isNewTest) {
         form.setValue('questions', []);
       } else if (randomQuestions.length) {
         form.setValue(
@@ -169,12 +175,10 @@ export default function DetailQuestions({
   }, [radioSelection, questionBank.questions]);
 
   useEffect(() => {
-    // Establecer el estado del Switch basado en formValues.config.personalization
     if (formValues.config && formValues.config.personalization !== undefined) {
       setCustomChoice(formValues.config.personalization);
     }
 
-    // Establecer el RadioButton seleccionado basado en formValues.config.customChoice
     if (formValues.config && formValues.config.customChoice) {
       setRadioSelection(formValues.config.customChoice);
     }
@@ -259,7 +263,6 @@ export default function DetailQuestions({
 
   const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
   const RandomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
-
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
@@ -384,6 +387,7 @@ export default function DetailQuestions({
                     questionBank={questionBank}
                     classes={classes}
                     manualQuestions={manualQuestions}
+                    setManualQuestions={setManualQuestions}
                   />
                 )}
                 <Box>

@@ -4,7 +4,13 @@ import propTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import QuestionsTable from './QuestionsTable';
 
-const ManualQuestionsGenerator = ({ t, form, questionBank, manualQuestions }) => {
+const ManualQuestionsGenerator = ({
+  t,
+  form,
+  questionBank,
+  manualQuestions,
+  setManualQuestions,
+}) => {
   const [allQuestions, setAllQuestions] = useState([]);
 
   useEffect(() => {
@@ -12,11 +18,15 @@ const ManualQuestionsGenerator = ({ t, form, questionBank, manualQuestions }) =>
   }, [questionBank]);
   const questions = form.watch('questions');
   const handleSelectionChange = (selectedIds) => {
+    if (selectedIds.length === 0) {
+      return form.setValue('questions', []);
+    }
+    setManualQuestions(allQuestions.filter((q) => selectedIds.includes(q.id)));
     form.setValue('questions', selectedIds);
   };
   return (
     <Box>
-      <Title order={4} style={{ visibility: questions.length > 0 ? 'visible' : 'hidden' }}>
+      <Title order={4} style={{ visibility: questions?.length > 0 ? 'visible' : 'hidden' }}>
         {t('selectorManualCounter', {
           n: questions.length,
           x: allQuestions?.length,
@@ -25,7 +35,7 @@ const ManualQuestionsGenerator = ({ t, form, questionBank, manualQuestions }) =>
       <Tabs position="left">
         <TabPanel label={t('allQuestions')}>
           <Controller
-            key={4}
+            key={3}
             control={form.control}
             name="questions"
             render={({ field }) => (
@@ -47,7 +57,7 @@ const ManualQuestionsGenerator = ({ t, form, questionBank, manualQuestions }) =>
           <Controller
             key={4}
             control={form.control}
-            name="questions"
+            name="config.manualQuestions"
             render={({ field }) => (
               <QuestionsTable
                 questions={manualQuestions}
@@ -73,6 +83,7 @@ ManualQuestionsGenerator.propTypes = {
   questionBank: propTypes.array.isRequired,
   classes: propTypes.object.isRequired,
   manualQuestions: propTypes.array.isRequired,
+  setManualQuestions: propTypes.func.isRequired,
 };
 
 ManualQuestionsGenerator.defaultProps = {
@@ -81,6 +92,7 @@ ManualQuestionsGenerator.defaultProps = {
   questionBank: [],
   classes: {},
   finalQuestions: [],
+  setFinalQuestions: () => {},
 };
 
 export { ManualQuestionsGenerator };

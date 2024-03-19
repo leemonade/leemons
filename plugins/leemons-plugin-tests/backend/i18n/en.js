@@ -185,7 +185,7 @@ module.exports = {
     questionsDescriptionReorder:
       'You can now modify the order in which the student will answer the questions. Drag and drop the questions to reorder them.',
     questionBank: 'Question Bank: {name}',
-    nQuestions: 'This test contains {n} questions',
+    nQuestions: 'This Question bank contains {n} questions',
     questionBankMethodSelection: 'Selection method',
     questionFiltersDescription1:
       'The system allows, by default, automatic filtering by question type, category and level.',

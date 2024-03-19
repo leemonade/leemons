@@ -74,7 +74,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
           curriculum: Object.fromEntries(
             (values.evaluation.curriculum || []).map((category) => [category, true])
           ),
-          showCorrectAnswers: !values.others.hideResponses,
+          showCorrectAnswers: !values.others?.hideResponses,
           metadata: values?.assignConfig,
         },
         raw: values,
@@ -139,7 +139,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
           fixed
           style={{ right: 0 }}
           scrollRef={scrollRef}
-          width={400}
+          width={680}
           rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
         />
       </FormProvider>

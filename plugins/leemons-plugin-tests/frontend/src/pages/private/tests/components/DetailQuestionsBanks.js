@@ -213,7 +213,7 @@ export default function DetailQuestionsBanks({
       form.setValue('course', courseIdRaw);
       form.setValue('subject', idRaw);
     }
-  }, [subjectsRaw]);
+  }, [subjectsRaw, programs]);
 
   return (
     <TotalLayoutStepContainer
