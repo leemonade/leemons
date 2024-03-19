@@ -97,7 +97,7 @@ const AttachmentItem = React.forwardRef(
             })}
           >
             <ActionButton
-              icon={<DeleteBinIcon width={24} height={24} color={'#2F463F'} />}
+              icon={<DeleteBinIcon width={24} height={24} color="#2F463F" />}
               onClick={removeItem}
               tooltip={removeLabel}
               useAria={useAria}

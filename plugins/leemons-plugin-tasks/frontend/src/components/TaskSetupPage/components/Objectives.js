@@ -34,6 +34,7 @@ export default function Objectives({ form, name, label, labels, required }) {
         id: index + 1,
       }))
     : [];
+
   const addNewObjective = () => {
     const updatedObjectives = [
       ...(curriculumObjectivesExists ? curriculumObjectives : []),

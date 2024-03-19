@@ -9,11 +9,9 @@ const EmptyStateStyles = createStyles((theme) => {
       borderRadius: 8,
       height: 400,
       width: '100%',
-      backgroundColor: globalTheme.background.color.surface.subtle,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      color: globalTheme.content.color.primary.emphasis,
       ...globalTheme.content.typo.body.md,
     },
   };

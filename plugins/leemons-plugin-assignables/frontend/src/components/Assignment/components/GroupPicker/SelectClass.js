@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Loader, Switch, createStyles, RadioGroup, Checkbox } from '@bubbles-ui/components';
+import { Box, Loader, createStyles, RadioGroup, Checkbox } from '@bubbles-ui/components';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { SelectUserAgent } from '@users/components';
@@ -217,15 +217,27 @@ export function SelectClass({
         localizations={localizations}
       />
 
-      {/* <Controller
+      <Controller
         name="autoAssign"
         control={control}
         render={({ field }) => (
           <Checkbox {...field} checked={field.value} label={localizations?.autoAssignStudents} />
         )}
-      /> */}
+      />
     </Box>
   );
 }
+
+SelectClass.propTypes = {
+  control: PropTypes.object,
+  onChange: PropTypes.func,
+  value: PropTypes.object,
+  availableClasses: PropTypes.array,
+  localizations: PropTypes.object,
+  assignableStudents: PropTypes.array,
+  studentProfile: PropTypes.object,
+  groupedClassesWithSelectedSubjects: PropTypes.object,
+  error: PropTypes.bool,
+};
 
 export default SelectClass;
