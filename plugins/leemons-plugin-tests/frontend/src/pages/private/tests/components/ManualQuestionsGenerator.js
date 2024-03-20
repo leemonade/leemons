@@ -12,15 +12,23 @@ const ManualQuestionsGenerator = ({
   setManualQuestions,
 }) => {
   const [allQuestions, setAllQuestions] = useState([]);
+  const formValues = form.watch();
 
   useEffect(() => {
     setAllQuestions(questionBank.questions);
+    if (formValues?.config?.manualQuestions?.length > 0) {
+      setManualQuestions(
+        questionBank?.questions?.filter((q) => formValues.config.manualQuestions.includes(q.id))
+      );
+      form.setValue('questions', formValues.config.manualQuestions);
+    }
   }, [questionBank]);
   const questions = form.watch('questions');
   const handleSelectionChange = (selectedIds) => {
     if (selectedIds.length === 0) {
       return form.setValue('questions', []);
     }
+    form.setValue('config.manualQuestions', selectedIds);
     setManualQuestions(allQuestions.filter((q) => selectedIds.includes(q.id)));
     form.setValue('questions', selectedIds);
   };

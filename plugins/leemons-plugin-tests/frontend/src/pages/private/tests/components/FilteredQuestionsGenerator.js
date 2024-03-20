@@ -19,6 +19,8 @@ const FilteredQuestionsGenerator = ({
   const levels = useLevelsOfDifficulty();
 
   useEffect(() => {
+    form.setValue('config.filteredQuestions.level', selectedLevel);
+    form.setValue('config.filteredQuestions.categories', selectedCategories);
     const filteredQuestionsTemp = questionBank.questions?.filter((question) => {
       const matchesCategory = selectedCategories?.length
         ? selectedCategories.includes(question.category)

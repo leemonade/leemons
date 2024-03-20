@@ -67,112 +67,38 @@ export default function DetailQuestions({
   );
 
   useEffect(() => {
-    if (
-      !customChoice &&
-      questionBank?.questions &&
-      isNewTest &&
-      !randomQuestions &&
-      !filteredQuestions &&
-      !manualQuestions
-    ) {
-      const currentQuestions = form.getValues('questions');
+    if (!questionBank.questions) return;
+    if (formValues.config.customChoice === null || formValues.config.customChoice === undefined) {
       const questionIds = questionBank.questions?.map((q) => q.id);
-      if (JSON.stringify(currentQuestions) !== JSON.stringify(questionBank.questions)) {
-        form.setValue('questions', questionIds);
+      form.setValue('questions', questionIds);
+    } else if (formValues.config.customChoice === 'randomQuestions') {
+      if (formValues.config.randomQuestions?.selectedQuestions && !randomQuestions?.length) {
+        const selectedQuestionsIds = formValues.config.randomQuestions.selectedQuestions;
+        form.setValue('questions', selectedQuestionsIds);
+        const selectedQuestionsData = questionBank.questions?.filter((question) =>
+          selectedQuestionsIds.includes(question.id)
+        );
+        setRandomQuestions(selectedQuestionsData);
       }
-    }
-    if (questionBank && isNewTest) {
-      const currentNQuestions = form.getValues(filtersValue);
-      const questionBankNQuestions = questionBank?.questions?.length ?? 0;
-      if (currentNQuestions !== questionBankNQuestions) {
-        form.setValue(filtersValue, questionBankNQuestions);
-      }
-    }
-    if (radioSelection === 'filteredQuestions') {
-      if (filteredQuestions?.length > 0 && isNewTest) {
-        const currentQuestions = form.getValues('questions');
-        const finalQuestionIds = filteredQuestions?.map((q) => q.id);
-        if (JSON.stringify(currentQuestions) !== JSON.stringify(finalQuestionIds)) {
-          form.setValue('questions', finalQuestionIds);
-        }
-      } else if (filteredQuestions?.length === 0 && isNewTest) {
-        setFilteredQuestions(questionBank.questions);
-        const currentQuestions = form.getValues('questions');
-        const questionBankQuestionIds = questionBank.questions?.map((q) => q.id);
-        if (JSON.stringify(currentQuestions) !== JSON.stringify(questionBankQuestionIds)) {
-          form.setValue('questions', questionBankQuestionIds);
-        }
-      }
-    }
-
-    if (radioSelection === 'manualQuestions' && isNewTest) {
-      if (manualQuestions.length === 0) {
-        const currentQuestions = form.getValues('questions');
-        const questionBankQuestionIds = questionBank.questions?.map((q) => q.id);
-        if (JSON.stringify(currentQuestions) !== JSON.stringify(questionBankQuestionIds)) {
-          return form.setValue('questions', questionBankQuestionIds);
-        }
-        return setManualQuestions(questionBank.questions);
-      }
-    }
-  }, [
-    questionBank,
-    form,
-    radioSelection,
-    manualQuestions,
-    filteredQuestions,
-    randomQuestions,
-    customChoice,
-    isNewTest,
-    formValues.questions,
-    filtersValue,
-  ]);
-
-  useEffect(() => {
-    if (radioSelection === 'randomQuestions') {
-      if (!isNewTest && questionBank?.questions) {
-        const currentQuestions = form.getValues('questions');
-        const randomQuestionsIds =
-          questionBank?.questions?.filter((q) => currentQuestions.includes(q.id)) || [];
-        return setRandomQuestions(randomQuestionsIds);
-        // return form.setValue('questions', randomQuestionsIds);
-      }
-      if (randomQuestions.length === 0 && isNewTest) {
-        form.setValue('questions', []);
-      } else if (randomQuestions.length) {
+      if (randomQuestions.length > 0) {
         form.setValue(
           'questions',
-          randomQuestions.map((q) => q.id)
+          randomQuestions?.map((q) => q.id)
         );
       }
-    }
-    if (radioSelection === 'filteredQuestions' && !!filteredQuestions?.length) {
-      if (!isNewTest) {
-        const currentQuestions = form.getValues('questions');
-        const finalQuestionIds = filteredQuestions?.map((q) => q.id);
-        if (JSON.stringify(currentQuestions) !== JSON.stringify(finalQuestionIds)) {
-          return form.setValue('questions', finalQuestionIds);
-        }
+      if (!formValues?.config?.randomQuestions?.selectedQuestions) {
+        form.setValue('questions', []);
       }
-      form.setValue(
-        'questions',
-        filteredQuestions.map((q) => q.id)
-      );
-    }
-    if (radioSelection === 'manualQuestions' && !!manualQuestions?.length) {
-      if (!isNewTest) {
-        const currentQuestions = form.getValues('questions');
-        const finalQuestionIds = manualQuestions?.map((q) => q.id);
-        if (JSON.stringify(currentQuestions) !== JSON.stringify(finalQuestionIds)) {
-          return form.setValue('questions', finalQuestionIds);
-        }
+    } else if (formValues.config.customChoice === 'filteredQuestions') {
+      if (
+        formValues.config.filteredQuestions?.level ||
+        formValues.config.filteredQuestions?.categories
+      ) {
+        form.setValue('filters.level', formValues.config.filteredQuestions.level);
+        form.setValue('filters.categories', formValues.config.filteredQuestions.categories);
       }
-      form.setValue(
-        'questions',
-        manualQuestions.map((q) => q.id)
-      );
     }
-  }, [radioSelection, questionBank.questions]);
+  }, [questionBank, radioSelection]);
 
   useEffect(() => {
     if (formValues.config && formValues.config.personalization !== undefined) {
@@ -183,20 +109,6 @@ export default function DetailQuestions({
       setRadioSelection(formValues.config.customChoice);
     }
   }, [formValues.config]);
-
-  useEffect(() => {
-    if (!isNewTest && questionBank.questions) {
-      const matchedQuestions = formValues.questions
-        .map((questionId) => questionBank.questions?.find((q) => q.id === questionId))
-        .filter((question) => question !== undefined);
-
-      if (JSON.stringify(matchedQuestions) !== JSON.stringify(questionBank.questions)) {
-        setRandomQuestions(matchedQuestions);
-        setFilteredQuestions(matchedQuestions);
-        setManualQuestions(matchedQuestions);
-      }
-    }
-  }, []);
 
   // ···························································
   // INITIAL DATA PROCESSING
@@ -233,8 +145,11 @@ export default function DetailQuestions({
   const getNextButtonLabel = () => 'next';
 
   const generateQuestions = () => {
+    if (!nQuestionsSelector) {
+      return;
+    }
     const totalQuestions = questionBank.questions;
-    const questionsToSelect = nQuestionsSelector;
+    const questionsToSelect = nQuestionsSelector ?? nQuestions;
     const selectedQuestions = [];
 
     while (selectedQuestions.length < questionsToSelect) {
@@ -248,6 +163,7 @@ export default function DetailQuestions({
     form.setValue('questions', selectedQuestionIds);
     setQuestionsFiltered(selectedQuestions);
     setRandomQuestions(selectedQuestions);
+    form.setValue('config.randomQuestions.selectedQuestions', [...selectedQuestionIds]);
   };
 
   const handleOnSave = () => {
@@ -263,6 +179,7 @@ export default function DetailQuestions({
 
   const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
   const RandomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
+
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
