@@ -33,6 +33,8 @@ export default function DetailQuestions({
   onAssign = noop,
   isLastStep,
   store,
+  isNewQBankSelected,
+  setIsNewQBankSelected,
 }) {
   const { classes } = DetailQuestionsStyles();
   const [isDirty, setIsDirty] = React.useState(false);
@@ -126,6 +128,13 @@ export default function DetailQuestions({
   }
 
   React.useEffect(() => {
+    if (isNewQBankSelected) {
+      form.setValue('config.personalization', false);
+      form.setValue('config.customChoice', null);
+      form.setValue('config.manualQuestions', undefined);
+      form.setValue('config.filteredQuestions', undefined);
+      form.setValue('config.randomQuestions', undefined);
+    }
     load();
   }, []);
 
@@ -145,9 +154,6 @@ export default function DetailQuestions({
   const getNextButtonLabel = () => 'next';
 
   const generateQuestions = () => {
-    if (!nQuestionsSelector) {
-      return;
-    }
     const totalQuestions = questionBank.questions;
     const questionsToSelect = nQuestionsSelector ?? nQuestions;
     const selectedQuestions = [];
@@ -354,4 +360,6 @@ DetailQuestions.propTypes = {
   onAssign: PropTypes.func,
   onPublish: PropTypes.func,
   store: PropTypes.object,
+  isNewQBankSelected: PropTypes.bool,
+  setIsNewQBankSelected: PropTypes.func,
 };

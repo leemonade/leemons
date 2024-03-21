@@ -37,7 +37,7 @@ export default function Edit() {
 
   // ························································
   // SETTINGS
-
+  const [isNewQBankSelected, setIsNewQBankSelected] = React.useState(false);
   const [store, render] = useStore({
     loading: true,
     saving: null,
@@ -260,6 +260,8 @@ export default function Edit() {
         t={t}
         form={form}
         store={store}
+        isNewQBankSelected={isNewQBankSelected}
+        setIsNewQBankSelected={setIsNewQBankSelected}
         stepName={t('questionsBank')}
         scrollRef={scrollRef}
         onSave={saveAsDraft}
@@ -271,6 +273,8 @@ export default function Edit() {
         t={t}
         form={form}
         store={store}
+        isNewQBankSelected={isNewQBankSelected}
+        setIsNewQBankSelected={setIsNewQBankSelected}
         stepName={t('questionsStepName')}
         scrollRef={scrollRef}
         onSave={saveAsDraft}

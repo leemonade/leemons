@@ -33,6 +33,8 @@ export default function DetailQuestionsBanks({
   onNext,
   onPrev,
   onSave,
+  isNewQBankSelected,
+  setIsNewQBankSelected,
 }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [isDirty, setIsDirty] = React.useState(false);
@@ -58,7 +60,6 @@ export default function DetailQuestionsBanks({
     subjects: subjects || [],
     control: form.control,
   });
-
   const validate = async () => form.trigger(['questionBank']);
 
   async function handleOnNext() {
@@ -74,10 +75,14 @@ export default function DetailQuestionsBanks({
       onSave();
     }
   }
-  // "lrn:local:academic-portfolio:local:65d364266cf4674152845275:Subjects:65d365f657481836d62c45c5"
-  // "lrn:local:academic-portfolio:local:65d364266cf4674152845275:Subjects:65d365f657481836d62c45c5"
+
   async function listQuestionsBanks() {
-    const subjetsToUse = subjects.length >= 1 ? subjects : selectedSubject ? [selectedSubject] : [];
+    let subjetsToUse = [];
+    if (subjects.length >= 1) {
+      subjetsToUse = subjects;
+    } else if (selectedSubject) {
+      subjetsToUse = [selectedSubject];
+    }
     try {
       const { data } = await listQuestionsBanksRequest({
         includeAgnosticsQB: true,
@@ -186,6 +191,9 @@ export default function DetailQuestionsBanks({
           checked={item.id === questionBank}
           onChange={(checked) => {
             if (checked) {
+              if (questionBank && questionBank !== item.id) {
+                setIsNewQBankSelected(true);
+              }
               form.setValue('questionBank', item.id);
               form.setValue('filters', null);
               form.setValue('questions', []);
