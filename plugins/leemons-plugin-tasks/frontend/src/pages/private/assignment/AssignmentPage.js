@@ -48,6 +48,7 @@ export default function AssignmentPage() {
   }, [id]);
 
   const handleAssignment = async ({ value }) => {
+    console.log('🚀 ~ handleAssignment ~ value:', value);
     try {
       setLoading(true);
       await createInstanceRequest(id, value);

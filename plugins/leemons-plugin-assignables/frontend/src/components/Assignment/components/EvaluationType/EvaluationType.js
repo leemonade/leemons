@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createStyles, Box, Select } from '@bubbles-ui/components';
+import { createStyles, Box, Select, Checkbox } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { Container } from '../Container';
@@ -31,7 +31,7 @@ export const evaluationTypes = {
 };
 
 function useOnChange({ control, onChange }) {
-  const { type, showCurriculum, curriculum } = useWatch({ control });
+  const { type, showCurriculum, curriculum, chatroom } = useWatch({ control });
 
   React.useEffect(() => {
     if (typeof onChange !== 'function') {
@@ -41,9 +41,10 @@ function useOnChange({ control, onChange }) {
     onChange({
       evaluation: evaluationTypes[type],
       curriculum: showCurriculum ? curriculum ?? [] : [],
-      raw: { type, showCurriculum, curriculum },
+      raw: { type, showCurriculum, curriculum, chatroom },
+      chatroom,
     });
-  }, [type, showCurriculum, curriculum]);
+  }, [type, showCurriculum, curriculum, chatroom]);
 }
 
 export const useEvaluationTypeStyles = createStyles((theme) => ({
@@ -98,6 +99,7 @@ export function EvaluationType({
   const { control } = useForm({
     defaultValues: {
       type: evaluationTypesToUse?.[0] || 'calificable',
+      chatroom: false,
       ...value?.raw,
     },
   });
@@ -128,6 +130,14 @@ export function EvaluationType({
                 data={types}
               />
             </Box>
+          )}
+        />
+
+        <Controller
+          name="chatroom"
+          control={control}
+          render={({ field }) => (
+            <Checkbox {...field} checked={field.value} label={localizations?.chatroom} />
           )}
         />
 

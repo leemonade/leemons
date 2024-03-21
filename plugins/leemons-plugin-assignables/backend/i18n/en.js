@@ -123,6 +123,7 @@ module.exports = {
         },
       },
       showCurriculum: 'Show curriculum',
+      chatroom: 'Create chatroom for this assignable',
     },
     others: {
       title: 'Other options',

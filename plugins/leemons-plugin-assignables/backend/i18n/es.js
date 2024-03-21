@@ -123,6 +123,7 @@ module.exports = {
         },
       },
       showCurriculum: 'Mostrar curriculum',
+      chatroom: 'Crear una sala de chat para esta asignación',
     },
     others: {
       title: 'Otras opciones',

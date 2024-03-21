@@ -10,6 +10,7 @@ import {
   ContextContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
+  Switch,
 } from '@bubbles-ui/components';
 
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
@@ -24,6 +25,7 @@ import Presentation from './components/Presentation/Presentation';
 import Preview from './components/Preview/Preview';
 
 function onSubmitFunc(onSubmit, evaluationType, values) {
+  console.log('🚀 ~ onSubmitFunc ~ values:', values);
   const allowedTypes = ['auto', 'manual', 'none'];
   const finalEvaluationType = allowedTypes.includes(evaluationType) ? evaluationType : 'manual';
 
@@ -53,6 +55,7 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
     curriculum: Object.fromEntries(
       (values.evaluation.curriculum || []).map((category) => [category, true])
     ),
+    chatroom: values.evaluation.chatroom,
 
     /*
       === Others ===
