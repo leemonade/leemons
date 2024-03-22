@@ -111,7 +111,7 @@ export function EvaluationType({
   return (
     <Container
       title={localizations?.title}
-      description={!onDrawer && localizations?.description}
+      // description={!onDrawer && localizations?.description}
       hidden={hidden}
       hideSectionHeaders={hideSectionHeaders}
       hideDivider={hideDivider}

@@ -100,7 +100,9 @@ export default function Assign() {
       <AssignConfig
         stepName={t('config')}
         defaultValues={store.data.metadata}
+        data={store.rawData}
         test={store.test}
+        assignable={store.assignable}
         configs={store.configs}
         loading={store.loading}
         t={t}

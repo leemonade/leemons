@@ -10,19 +10,23 @@ const ManualQuestionsGenerator = ({
   questionBank,
   manualQuestions,
   setManualQuestions,
+  assignmentMode,
+  assignmentQuestions,
 }) => {
   const [allQuestions, setAllQuestions] = useState([]);
   const formValues = form.watch();
 
   useEffect(() => {
-    setAllQuestions(questionBank.questions);
+    setAllQuestions(questionBank.questions ?? assignmentQuestions);
     if (formValues?.config?.manualQuestions?.length > 0) {
       setManualQuestions(
-        questionBank?.questions?.filter((q) => formValues.config.manualQuestions.includes(q.id))
+        assignmentMode
+          ? assignmentQuestions.filter((q) => formValues.config.manualQuestions.includes(q.id))
+          : questionBank?.questions?.filter((q) => formValues.config.manualQuestions.includes(q.id))
       );
       form.setValue('questions', formValues.config.manualQuestions);
     }
-  }, [questionBank]);
+  }, [questionBank, assignmentMode, assignmentQuestions]);
   const questions = form.watch('questions');
   const handleSelectionChange = (selectedIds) => {
     if (selectedIds.length === 0) {
@@ -36,7 +40,7 @@ const ManualQuestionsGenerator = ({
     <Box>
       <Title order={4} style={{ visibility: questions?.length > 0 ? 'visible' : 'hidden' }}>
         {t('selectorManualCounter', {
-          n: questions.length,
+          n: questions?.length,
           x: allQuestions?.length,
         })}
       </Title>
@@ -92,6 +96,8 @@ ManualQuestionsGenerator.propTypes = {
   classes: propTypes.object.isRequired,
   manualQuestions: propTypes.array.isRequired,
   setManualQuestions: propTypes.func.isRequired,
+  assignmentMode: propTypes.bool,
+  assignmentQuestions: propTypes.array,
 };
 
 ManualQuestionsGenerator.defaultProps = {
@@ -101,6 +107,8 @@ ManualQuestionsGenerator.defaultProps = {
   classes: {},
   finalQuestions: [],
   setFinalQuestions: () => {},
+  assignmentMode: false,
+  assignmentQuestions: [],
 };
 
 export { ManualQuestionsGenerator };

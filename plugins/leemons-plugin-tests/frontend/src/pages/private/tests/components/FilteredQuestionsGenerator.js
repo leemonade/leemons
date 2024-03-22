@@ -12,6 +12,8 @@ const FilteredQuestionsGenerator = ({
   filteredQuestions,
   setFilteredQuestions,
   isNewTest,
+  assignmentMode,
+  assignmentQuestions,
 }) => {
   const useAllQuestions = form.watch('useAllQuestions');
   const selectedCategories = form.watch('filters.categories');
@@ -21,13 +23,25 @@ const FilteredQuestionsGenerator = ({
   useEffect(() => {
     form.setValue('config.filteredQuestions.level', selectedLevel);
     form.setValue('config.filteredQuestions.categories', selectedCategories);
-    const filteredQuestionsTemp = questionBank.questions?.filter((question) => {
-      const matchesCategory = selectedCategories?.length
-        ? selectedCategories.includes(question.category)
-        : true;
-      const matchesLevel = selectedLevel?.length ? selectedLevel.includes(question.level) : true;
-      return matchesCategory && matchesLevel;
-    });
+    const filteredQuestionsTemp = assignmentMode
+      ? assignmentQuestions.filter((question) => {
+          const matchesCategory = selectedCategories?.length
+            ? selectedCategories.includes(question.category)
+            : true;
+          const matchesLevel = selectedLevel?.length
+            ? selectedLevel.includes(question.level)
+            : true;
+          return matchesCategory && matchesLevel;
+        })
+      : questionBank.questions?.filter((question) => {
+          const matchesCategory = selectedCategories?.length
+            ? selectedCategories.includes(question.category)
+            : true;
+          const matchesLevel = selectedLevel?.length
+            ? selectedLevel.includes(question.level)
+            : true;
+          return matchesCategory && matchesLevel;
+        });
     setFilteredQuestions(filteredQuestionsTemp);
     form.setValue('questions', filteredQuestionsTemp?.map((question) => question.id) || []);
   }, [selectedCategories, selectedLevel, questionBank.questions, setFilteredQuestions, isNewTest]);
@@ -48,45 +62,45 @@ const FilteredQuestionsGenerator = ({
       : t('selectionCounter', { n: filteredQuestions?.length }).slice(0, -1);
   return (
     <Box>
-      {!useAllQuestions ? (
-        <Box>
-          <ContextContainer key={2} direction="row">
-            <Controller
-              control={form.control}
-              name="filters.categories"
-              render={({ field }) => (
-                <Box className={classes?.containerMultiSelect}>
-                  <MultiSelect
-                    placeholder={t('all')}
-                    label={t('categoriesLabel')}
-                    data={categoriesData}
-                    onChange={(e) => field.onChange(e)}
-                    {...field}
-                  />
-                </Box>
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="filters.level"
-              render={({ field }) => (
-                <Box className={classes?.containerMultiSelect}>
-                  <MultiSelect
-                    placeholder={t('all')}
-                    label={t('levelLabel')}
-                    data={levels}
-                    onChange={(e) => field.onChange(e)}
-                    {...field}
-                  />
-                </Box>
-              )}
-            />
-          </ContextContainer>
-          <Box className={classes.selectedCounter}>
-            <Text>{isMoreThanOneQuestionSelected}</Text>
-          </Box>
+      {/* {!useAllQuestions ? ( */}
+      <Box>
+        <ContextContainer key={2} direction="row">
+          <Controller
+            control={form.control}
+            name="filters.categories"
+            render={({ field }) => (
+              <Box className={classes?.containerMultiSelect}>
+                <MultiSelect
+                  placeholder={t('all')}
+                  label={t('categoriesLabel')}
+                  data={categoriesData}
+                  onChange={(e) => field.onChange(e)}
+                  {...field}
+                />
+              </Box>
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="filters.level"
+            render={({ field }) => (
+              <Box className={classes?.containerMultiSelect}>
+                <MultiSelect
+                  placeholder={t('all')}
+                  label={t('levelLabel')}
+                  data={levels}
+                  onChange={(e) => field.onChange(e)}
+                  {...field}
+                />
+              </Box>
+            )}
+          />
+        </ContextContainer>
+        <Box className={classes.selectedCounter}>
+          <Text>{isMoreThanOneQuestionSelected}</Text>
         </Box>
-      ) : null}
+      </Box>
+      {/* ) : null} */}
     </Box>
   );
 };
@@ -100,6 +114,18 @@ FilteredQuestionsGenerator.propTypes = {
   filteredQuestions: PropTypes.array,
   setFilteredQuestions: PropTypes.func,
   isNewTest: PropTypes.bool,
+  assignmentMode: PropTypes.bool,
+  assignmentQuestions: PropTypes.array,
+};
+
+FilteredQuestionsGenerator.defaultProps = {
+  questionBank: {},
+  classes: {},
+  store: {},
+  filteredQuestions: [],
+  setFilteredQuestions: () => {},
+  isNewTest: false,
+  assignmentMode: false,
 };
 
 export { FilteredQuestionsGenerator };

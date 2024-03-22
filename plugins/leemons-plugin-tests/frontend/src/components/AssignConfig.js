@@ -14,17 +14,74 @@ import {
   Select,
   Stack,
   Switch,
+  Chip,
   TableInput,
   Text,
   TextInput,
   Title,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
+  createStyles,
+  RadioGroup,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { filter, forEach, includes, isArray, isFunction, map, omit } from 'lodash';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
+import Preview from '@assignables/components/Assignment/components/Preview/Preview';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@tests/helpers/prefixPN';
+import { RandomQuestionsGenerator } from '@tests/pages/private/tests/components/RandomQuestionsGenerator';
+import QuestionsTable from '@tests/pages/private/tests/components/QuestionsTable';
+import { FilteredQuestionsGenerator } from '@tests/pages/private/tests/components/FilteredQuestionsGenerator';
+import { ManualQuestionsGenerator } from '@tests/pages/private/tests/components/ManualQuestionsGenerator';
+
+const AssignConfigStyles = createStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: theme.other.global.spacing.gap.xlg, // 24
+    zIndex: 0,
+    paddingBottom: 10,
+  },
+  leftColumn: {
+    width: 928 - 266 - 24 * 2, // leftColumn + rightColumn
+    '@media (min-width: 1920px)': {
+      width: 1400 - 266 - 24 * 2,
+    },
+  },
+  rightColumn: {
+    minWidth: 266,
+    height: 480,
+  },
+  totalQuestions: {
+    width: 'fit-content',
+  },
+  listElements: {
+    listStyleType: 'disc',
+    marginLeft: theme.spacing.md,
+    paddingTop: 12,
+  },
+  radioGroupContainer: {
+    marginLeft: 24,
+  },
+  counterContainer: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    gap: 8,
+  },
+  selectedCounter: {
+    color: theme.other.chip.content.color.default,
+    backgroundColor: theme.other.core.color.neutral['100'],
+    borderRadius: 4,
+    display: 'block',
+    width: 'fit-content',
+    padding: 10,
+    ...theme.other.global.content.typo.heading.xsm,
+    marginTop: 24,
+    marginBottom: 8,
+  },
+}));
 
 function useOnChange({ onChange, control }) {
   const formValues = useWatch({
@@ -60,6 +117,8 @@ export default function AssignConfig({
   onSend,
   onChange,
   hideButtons,
+  assignable,
+  data,
 }) {
   let defaultValues = {
     clues: [
@@ -75,17 +134,26 @@ export default function AssignConfig({
       defaultValues.questions = dv.questions;
     }
   }
-
+  const [t2] = useTranslateLoader(prefixPN('testsEdit'));
+  const [radioSelection, setRadioSelection] = React.useState(null);
+  const [randomQuestions, setRandomQuestions] = React.useState([]);
+  const [filteredQuestions, setFilteredQuestions] = React.useState([]);
+  const [manualQuestions, setManualQuestions] = React.useState([]);
+  const { classes } = AssignConfigStyles();
   const form = useForm({ defaultValues });
+  const previewForm = useForm({ defaultValues: data });
   const useAllQuestions = form.watch('useAllQuestions');
   const nQuestions = form.watch('nQuestions');
-  const questions = form.watch('questions');
+  // const questions = form.watch('questions');
   const settings = form.watch('settings');
   const settingsAsPreset = form.watch('settingsAsPreset');
   const useAdvancedSettings = form.watch('useAdvancedSettings');
   const canOmitQuestions = form.watch('canOmitQuestions');
   const allowClues = form.watch('allowClues');
   const clues = form.watch('clues');
+  const filtersValue = 'filters.nQuestions';
+  const nQuestionsSelector = form.watch(filtersValue);
+  // console.log('formValues', form.watch());
 
   useOnChange({ onChange, control: form.control });
 
@@ -112,40 +180,14 @@ export default function AssignConfig({
     };
   }, [test, _levels]);
 
-  function getQuestionsApplyingFilters() {
-    const f = form.getValues();
-    return filter(test.questions, (question) => {
-      if (!f || f.useAllQuestions) {
-        return true;
-      }
-      let good = true;
-      if (f.level?.length > 0 && !f.level.includes(question.level)) {
-        good = false;
-      }
-
-      if (f.categories?.length > 0 && !f.categories.includes(question.category)) {
-        good = false;
-      }
-
-      return good;
-    });
-  }
-
-  function recalculeQuestions() {
-    form.setValue('questions', getQuestionsApplyingFilters());
-  }
-
   React.useEffect(() => {
-    recalculeQuestions();
-  }, []);
-
-  React.useEffect(() => {
-    const subscription = form.watch((data, { name }) => {
-      if (name !== 'questions') recalculeQuestions();
-    });
-
-    return () => subscription.unsubscribe();
-  });
+    if (useAllQuestions) {
+      form.setValue(
+        'questions',
+        test.questions.map((q) => q.id)
+      );
+    }
+  }, [useAllQuestions]);
 
   const cluesData = map(clues, (clue, index) => ({
     ...clue,
@@ -177,6 +219,58 @@ export default function AssignConfig({
       />
     ),
   }));
+
+  const customOptions = React.useMemo(
+    () => [
+      {
+        value: 'randomQuestions',
+        help: t2('randomQuestions'),
+      },
+      {
+        value: 'filteredQuestions',
+        help: t2('filteredQuestions'),
+      },
+      {
+        value: 'manualQuestions',
+        help: t2('manualQuestions'),
+      },
+    ],
+    [t2]
+  );
+
+  const advancedConfigOptions = React.useMemo(
+    () => [
+      {
+        value: 'new',
+        label: t('newConfig'),
+      },
+      {
+        value: 'existing',
+        label: t('existingConfig'),
+      },
+    ],
+    [t]
+  );
+
+  const generateQuestions = () => {
+    const totalQuestions = test?.questions;
+    const questionsToSelect = nQuestionsSelector ?? totalQuestions.length;
+    const selectedQuestions = [];
+    while (selectedQuestions.length < questionsToSelect) {
+      const randomIndex = Math.floor(Math.random() * totalQuestions.length);
+      const question = totalQuestions[randomIndex];
+      if (!selectedQuestions.map((q) => q?.id).includes(question?.id)) {
+        selectedQuestions.push(question);
+      }
+    }
+    const selectedQuestionIds = selectedQuestions.map((question) => question.id);
+    form.setValue('questions', selectedQuestionIds);
+    setRandomQuestions(selectedQuestions);
+    form.setValue('config.randomQuestions.selectedQuestions', [...selectedQuestionIds]);
+  };
+
+  const randomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
+  const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
 
   return (
     <TotalLayoutStepContainer
@@ -228,275 +322,378 @@ export default function AssignConfig({
         )
       }
     >
-      <Box>
-        <ContextContainer divided>
-          <ContextContainer>
-            <Title order={3}>{t('configTitle')}</Title>
-            <Text size="md">
-              {t('totalQuestions', { n: test.questions.length })}
-              {useAllQuestions || (!useAllQuestions && nQuestions) ? (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: ` (${t('requirementsQuestions', {
-                      n: `<span style="color: ${
-                        // eslint-disable-next-line no-nested-ternary
-                        useAllQuestions
-                          ? COLORS.fatic02
-                          : questions.length < nQuestions
-                          ? COLORS.fatic01
-                          : COLORS.fatic02
-                      }">${questions?.length}</span>`,
-                    })})`,
-                  }}
-                />
-              ) : null}
-            </Text>
-            <Text>{t('configDescription')}</Text>
-            <Box>
-              <InputWrapper
-                description={
-                  <Controller
-                    control={form.control}
-                    name="useAllQuestions"
-                    render={({ field }) => (
-                      <Checkbox {...field} label={t('useAllQuestions')} checked={field.value} />
-                    )}
-                  />
-                }
-              >
-                {!useAllQuestions ? (
-                  <Controller
-                    control={form.control}
-                    name="nQuestions"
-                    shouldUnregister
-                    rules={{
-                      required: t('nQuestionsRequired'),
-                      min: {
-                        value: 1,
-                        message: t('minOneQuestion'),
-                      },
-                      validate: () => {
-                        if (nQuestions > questions.length) {
-                          return t('noRequiredQuestions');
-                        }
-                        return true;
-                      },
-                    }}
-                    render={({ field }) => (
-                      <NumberInput
-                        label={t('nOfQuestions')}
-                        required
-                        error={form.formState.errors.nQuestions}
-                        {...field}
-                      />
-                    )}
-                  />
-                ) : null}
-              </InputWrapper>
-            </Box>
-            {!useAllQuestions
-              ? [
-                  datas.categories.length > 0 ? (
-                    <Box key={2}>
-                      <Controller
-                        control={form.control}
-                        name="categories"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <MultiSelect
-                            placeholder={t('all')}
-                            label={t('categoriesLabel')}
-                            data={datas.categories}
-                            {...field}
-                          />
-                        )}
-                      />
-                    </Box>
-                  ) : null,
-                  <Box key={3}>
+      <Box className={classes.root}>
+        <Box className={classes.leftColumn}>
+          <ContextContainer divided>
+            <ContextContainer>
+              <Title order={3}>{t('configTitle')}</Title>
+              <Box className={classes.totalQuestions}>
+                <Chip subject={t('totalQuestions', { n: test.questions.length })} />
+              </Box>
+              <Box>
+                <InputWrapper
+                  description={
                     <Controller
                       control={form.control}
-                      name="level"
-                      shouldUnregister
+                      name="useAllQuestions"
                       render={({ field }) => (
-                        <MultiSelect
-                          placeholder={t('all')}
-                          label={t('levelLabel')}
-                          data={datas.levels}
+                        <Switch
+                          {...field}
+                          label={t('customQuestionSelection')}
+                          checked={field.value}
+                          onChange={() => {
+                            form.setValue('useAllQuestions', !field.value);
+                          }}
+                        />
+                      )}
+                    />
+                  }
+                >
+                  {useAllQuestions && (
+                    <Box>
+                      <Box className={classes.radioGroupContainer}>
+                        <Controller
+                          control={form.control}
+                          name="customChoices"
+                          render={({ field }) => (
+                            <RadioGroup
+                              {...field}
+                              value={radioSelection}
+                              label={t2('customChoicesLabel')}
+                              className={classes.radioGroup}
+                              placeholder={t2('customChoicesPlaceholder')}
+                              data={customOptions}
+                              onChange={(option) => {
+                                form.setValue('config.customChoice', option);
+                                return setRadioSelection(option);
+                              }}
+                            />
+                          )}
+                        />
+                        {radioSelection === 'randomQuestions' && (
+                          <RandomQuestionsGenerator
+                            t={t2}
+                            form={form}
+                            nQuestions={test?.questions?.length || 0}
+                            classes={classes}
+                            generateQuestions={generateQuestions}
+                          />
+                        )}
+                        {radioSelection === 'filteredQuestions' && (
+                          <FilteredQuestionsGenerator
+                            t={t2}
+                            form={form}
+                            questionBank={test.questionBank}
+                            assignmentQuestions={test?.questions || []}
+                            classes={classes}
+                            assignmentMode
+                            filteredQuestions={filteredQuestions}
+                            setFilteredQuestions={setFilteredQuestions}
+                            isNewTest={false}
+                          />
+                        )}
+                        {radioSelection === 'manualQuestions' && (
+                          <ManualQuestionsGenerator
+                            t={t2}
+                            form={form}
+                            questionBank={test.questionBank}
+                            assignmentMode
+                            assignmentQuestions={test?.questions || []}
+                            manualQuestions={manualQuestions}
+                            setManualQuestions={setManualQuestions}
+                          />
+                        )}
+                        {(radioSelection === 'randomQuestions' && randomQuestions.length > 0) ||
+                        (radioSelection === 'filteredQuestions' && filteredQuestions.length > 0) ? (
+                          <Controller
+                            control={form.control}
+                            name="questions"
+                            render={({ field }) => (
+                              <QuestionsTable
+                                questions={randomQuestionsActive ?? filteredQuestionsActive ?? []}
+                                forceSortable
+                                value={field.value}
+                                onChange={(e) => field.onChange(e)}
+                                questionBank={test.questionBank}
+                                reorderMode={true}
+                                hideCheckbox
+                                hideOpenIcon
+                              />
+                            )}
+                          />
+                        ) : null}
+                      </Box>
+                    </Box>
+                  )}
+                  {/* {useAllQuestions ? (
+                    <Controller
+                      control={form.control}
+                      name="nQuestions"
+                      shouldUnregister
+                      rules={{
+                        required: t('nQuestionsRequired'),
+                        min: {
+                          value: 1,
+                          message: t('minOneQuestion'),
+                        },
+                        validate: () => {
+                          if (nQuestions > questions.length) {
+                            return t('noRequiredQuestions');
+                          }
+                          return true;
+                        },
+                      }}
+                      render={({ field }) => (
+                        <NumberInput
+                          label={t('nOfQuestions')}
+                          required
+                          error={form.formState.errors.nQuestions}
                           {...field}
                         />
                       )}
                     />
-                  </Box>,
-                ]
-              : null}
-            <Alert variant="block" title={t('defaultRules.title')} closeable={false}>
-              <ul>
-                <li>- {t('defaultRules.canOmit')}</li>
-                <li>- {t('defaultRules.errorQuestions')}</li>
-                <li>- {t('defaultRules.canClue')}</li>
-              </ul>
-              <br />
-              {t('defaultRules.useAdvanced')}
-            </Alert>
-            <Title order={4}>{t('advancedSettings')}</Title>
-            <Controller
-              control={form.control}
-              name="useAdvancedSettings"
-              shouldUnregister
-              render={({ field }) => (
-                <Switch checked={field.value} {...field} label={t('allowAdvancedSettings')} />
-              )}
-            />
-            {useAdvancedSettings ? (
-              <Paper shadow="none" bordered>
-                <ContextContainer>
-                  <Controller
-                    control={form.control}
-                    name="settings"
-                    shouldUnregister
-                    render={({ field }) => (
-                      <Select
-                        data={[
-                          { label: t('new'), value: 'new' },
-                          ...map(configs, (config) => ({ value: config.id, label: config.name })),
-                        ]}
-                        {...field}
-                        label={t('useSettings')}
-                      />
-                    )}
-                  />
-
-                  {settings === 'new' ? (
-                    <>
-                      <Controller
-                        control={form.control}
-                        name="settingsAsPreset"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <Switch checked={field.value} {...field} label={t('settingsAsPreset')} />
-                        )}
-                      />
-                      {settingsAsPreset ? (
+                  ) : null} */}
+                </InputWrapper>
+              </Box>
+              {/* {useAllQuestions
+                ? [
+                    datas.categories.length > 0 ? (
+                      <Box key={2}>
                         <Controller
                           control={form.control}
-                          name="presetName"
+                          name="categories"
                           shouldUnregister
                           render={({ field }) => (
-                            <TextInput checked={field.value} {...field} label={t('presetName')} />
+                            <MultiSelect
+                              placeholder={t('all')}
+                              label={t('categoriesLabel')}
+                              data={datas.categories}
+                              {...field}
+                            />
                           )}
                         />
-                      ) : null}
+                      </Box>
+                    ) : null,
+                    <Box key={3}>
                       <Controller
                         control={form.control}
-                        name="wrong"
+                        name="level"
                         shouldUnregister
                         render={({ field }) => (
-                          <Select
-                            description={t('wrongAnswerDescription')}
-                            data={[
-                              { label: t('wrongAnswerDoNotScore'), value: 0 },
-                              { label: t('wrongAnswerPercentage', { number: 25 }), value: 25 },
-                              { label: t('wrongAnswerPercentage', { number: 50 }), value: 50 },
-                              { label: t('wrongAnswerPercentage', { number: 100 }), value: 100 },
-                            ]}
+                          <MultiSelect
+                            placeholder={t('all')}
+                            label={t('levelLabel')}
+                            data={datas.levels}
                             {...field}
-                            label={t('wrongAnswerLabel')}
                           />
                         )}
                       />
-                      <InputWrapper
-                        label={t('unansweredLabel')}
-                        description={
-                          <Controller
-                            control={form.control}
-                            name="canOmitQuestions"
-                            shouldUnregister
-                            render={({ field }) => (
-                              <Switch
-                                checked={field.value}
-                                {...field}
-                                label={t('unansweredDescriptions')}
-                              />
-                            )}
-                          />
-                        }
-                      >
-                        {canOmitQuestions ? (
-                          <Controller
-                            control={form.control}
-                            name="omit"
-                            shouldUnregister
-                            render={({ field }) => (
-                              <Select
-                                description={t('unansweredDescription2')}
-                                data={[
-                                  { label: t('wrongAnswerDoNotScore'), value: 0 },
-                                  { label: t('wrongAnswerPercentage', { number: 25 }), value: 25 },
-                                  { label: t('wrongAnswerPercentage', { number: 50 }), value: 50 },
-                                  {
-                                    label: t('wrongAnswerPercentage', { number: 100 }),
-                                    value: 100,
-                                  },
-                                ]}
-                                {...field}
-                              />
-                            )}
-                          />
-                        ) : null}
-                      </InputWrapper>
+                    </Box>,
+                  ]
+                : null} */}
 
-                      <InputWrapper
-                        label={t('clues')}
-                        description={
+              <Title order={4}>{t('executionRules')}</Title>
+              <Alert
+                variant="block"
+                severity="warning"
+                title={t('defaultRules.alert')}
+                closeable={false}
+              >
+                <Text>{t('defaultRules.title')}</Text>
+                <ul className={classes.listElements}>
+                  <li> {t('defaultRules.canOmit')}</li>
+                  <li> {t('defaultRules.errorQuestions')}</li>
+                  <li> {t('defaultRules.canClue')}</li>
+                </ul>
+                {/* {t('defaultRules.useAdvanced')} */}
+              </Alert>
+              <Controller
+                control={form.control}
+                name="useAdvancedSettings"
+                shouldUnregister
+                render={({ field }) => (
+                  <Switch checked={field.value} {...field} label={t('allowAdvancedSettings')} />
+                )}
+              />
+              {useAdvancedSettings ? (
+                <Box>
+                  <ContextContainer>
+                    <Controller
+                      control={form.control}
+                      name="settings"
+                      shouldUnregister
+                      render={({ field }) => {
+                        <RadioGroup
+                          {...field}
+                          value={radioSelection}
+                          label={t2('customChoicesLabel')}
+                          className={classes.radioGroup}
+                          placeholder={t2('customChoicesPlaceholder')}
+                          data={customOptions}
+                        />;
+                      }}
+                    />
+                    <Controller
+                      control={form.control}
+                      name="settings"
+                      shouldUnregister
+                      render={({ field }) => (
+                        <RadioGroup
+                          // data={[
+                          //   { label: t('new'), value: 'new' },
+                          //   ...map(configs, (config) => ({ value: config.id, label: config.name })),
+                          // ]}
+                          data={advancedConfigOptions}
+                          {...field}
+                        />
+                      )}
+                    />
+                    {settings === 'new' ? (
+                      <>
+                        <Controller
+                          control={form.control}
+                          name="settingsAsPreset"
+                          shouldUnregister
+                          render={({ field }) => (
+                            <Switch
+                              checked={field.value}
+                              {...field}
+                              label={t('settingsAsPreset')}
+                            />
+                          )}
+                        />
+                        {settingsAsPreset ? (
                           <Controller
                             control={form.control}
-                            name="allowClues"
+                            name="presetName"
                             shouldUnregister
                             render={({ field }) => (
-                              <Switch checked={field.value} {...field} label={t('allowClues')} />
-                            )}
-                          />
-                        }
-                      >
-                        {allowClues ? (
-                          <Controller
-                            control={form.control}
-                            name="clues"
-                            shouldUnregister
-                            render={({ field }) => (
-                              <TableInput
-                                forceSortable={true}
-                                disabled={true}
-                                columns={[
-                                  {
-                                    Header: t('clueCanUse'),
-                                    accessor: 'canUseCheck',
-                                  },
-                                  {
-                                    Header: t('clueType'),
-                                    accessor: 'name',
-                                  },
-                                  {
-                                    Header: t('clueReduction'),
-                                    accessor: 'select',
-                                  },
-                                ]}
-                                {...field}
-                                data={cluesData}
-                                labels={{}}
-                              />
+                              <TextInput checked={field.value} {...field} label={t('presetName')} />
                             )}
                           />
                         ) : null}
-                      </InputWrapper>
-                    </>
-                  ) : null}
-                </ContextContainer>
-              </Paper>
-            ) : null}
+                        <Controller
+                          control={form.control}
+                          name="wrong"
+                          shouldUnregister
+                          render={({ field }) => (
+                            <Select
+                              description={t('wrongAnswerDescription')}
+                              data={[
+                                { label: t('wrongAnswerDoNotScore'), value: 0 },
+                                { label: t('wrongAnswerPercentage', { number: 25 }), value: 25 },
+                                { label: t('wrongAnswerPercentage', { number: 50 }), value: 50 },
+                                { label: t('wrongAnswerPercentage', { number: 100 }), value: 100 },
+                              ]}
+                              {...field}
+                              label={t('wrongAnswerLabel')}
+                            />
+                          )}
+                        />
+                        <InputWrapper
+                          label={t('unansweredLabel')}
+                          description={
+                            <Controller
+                              control={form.control}
+                              name="canOmitQuestions"
+                              shouldUnregister
+                              render={({ field }) => (
+                                <Switch
+                                  checked={field.value}
+                                  {...field}
+                                  label={t('unansweredDescriptions')}
+                                />
+                              )}
+                            />
+                          }
+                        >
+                          {canOmitQuestions ? (
+                            <Controller
+                              control={form.control}
+                              name="omit"
+                              shouldUnregister
+                              render={({ field }) => (
+                                <Select
+                                  description={t('unansweredDescription2')}
+                                  data={[
+                                    { label: t('wrongAnswerDoNotScore'), value: 0 },
+                                    {
+                                      label: t('wrongAnswerPercentage', { number: 25 }),
+                                      value: 25,
+                                    },
+                                    {
+                                      label: t('wrongAnswerPercentage', { number: 50 }),
+                                      value: 50,
+                                    },
+                                    {
+                                      label: t('wrongAnswerPercentage', { number: 100 }),
+                                      value: 100,
+                                    },
+                                  ]}
+                                  {...field}
+                                />
+                              )}
+                            />
+                          ) : null}
+                        </InputWrapper>
+
+                        <InputWrapper
+                          label={t('clues')}
+                          description={
+                            <Controller
+                              control={form.control}
+                              name="allowClues"
+                              shouldUnregister
+                              render={({ field }) => (
+                                <Switch checked={field.value} {...field} label={t('allowClues')} />
+                              )}
+                            />
+                          }
+                        >
+                          {allowClues ? (
+                            <Controller
+                              control={form.control}
+                              name="clues"
+                              shouldUnregister
+                              render={({ field }) => (
+                                <TableInput
+                                  forceSortable={true}
+                                  disabled={true}
+                                  columns={[
+                                    {
+                                      Header: t('clueCanUse'),
+                                      accessor: 'canUseCheck',
+                                    },
+                                    {
+                                      Header: t('clueType'),
+                                      accessor: 'name',
+                                    },
+                                    {
+                                      Header: t('clueReduction'),
+                                      accessor: 'select',
+                                    },
+                                  ]}
+                                  {...field}
+                                  data={cluesData}
+                                  labels={{}}
+                                />
+                              )}
+                            />
+                          ) : null}
+                        </InputWrapper>
+                      </>
+                    ) : null}
+                  </ContextContainer>
+                </Box>
+              ) : null}
+            </ContextContainer>
           </ContextContainer>
-        </ContextContainer>
+        </Box>
+        <Box className={classes.rightColumn}>
+          <FormProvider {...previewForm}>
+            <Preview assignable={assignable} localizations={{ preview: { title: t('preview') } }} />
+          </FormProvider>
+        </Box>
       </Box>
     </TotalLayoutStepContainer>
   );
@@ -514,4 +711,6 @@ AssignConfig.propTypes = {
   hideButtons: PropTypes.bool,
   onSave: PropTypes.func,
   onPrevStep: PropTypes.func,
+  assignable: PropTypes.object,
+  data: PropTypes.object,
 };

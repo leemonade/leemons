@@ -34,7 +34,6 @@ export default function DetailQuestions({
   isLastStep,
   store,
   isNewQBankSelected,
-  setIsNewQBankSelected,
 }) {
   const { classes } = DetailQuestionsStyles();
   const [isDirty, setIsDirty] = React.useState(false);

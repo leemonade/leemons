@@ -30,6 +30,7 @@ module.exports = {
       },
       noStudentsError:
         'No se encuentran estudiantes para las asignaturas seleccionadas. Añade o quita asignaturas para continuar.',
+      classSelectLabel: 'Tipo de selección',
       class: {
         studentsCount: 'estudiantes coincidentes',
         autoAssignStudents: 'Asignar automáticamente a nuevos estudiantes',
@@ -72,7 +73,7 @@ module.exports = {
         options: {
           alwaysAvailable: 'Cualquier momento',
           fixed: 'Con plazo de tiempo',
-          session: 'Sesión en directo',
+          session: 'Sesión en de asignatura',
         },
       },
       hideFromCalendar: 'Ocultar del calendario hasta la fecha/hora de inicio',
