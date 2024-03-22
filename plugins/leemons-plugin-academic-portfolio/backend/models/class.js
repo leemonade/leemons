@@ -45,6 +45,12 @@ const schema = new mongoose.Schema(
     virtualUrl: {
       type: String,
     },
+    alias: {
+      type: String,
+    },
+    classroomId: {
+      type: String,
+    },
   },
   {
     timestamps: true,

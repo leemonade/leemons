@@ -28,7 +28,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
+          'academic-portfolio.subject-types': {
             actions: ['admin', 'create'],
           },
         },
@@ -48,7 +48,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
+          'academic-portfolio.subject-types': {
             actions: ['admin', 'update'],
           },
         },
@@ -68,7 +68,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
+          'academic-portfolio.subject-types': {
             actions: ['admin', 'view'],
           },
         },
@@ -107,7 +107,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
+          'academic-portfolio.subject-types': {
             actions: ['admin', 'delete'],
           },
         },

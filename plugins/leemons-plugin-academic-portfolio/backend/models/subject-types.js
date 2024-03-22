@@ -35,7 +35,7 @@ const schema = new mongoose.Schema(
       default: false,
     },
     program: {
-      // OUTDATED ref: 'plugins_academic-portfolio::programs',
+      // Outdated? ref: 'plugins_academic-portfolio::programs',
       type: String,
     },
   },

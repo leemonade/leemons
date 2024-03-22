@@ -29,6 +29,9 @@ const schema = new mongoose.Schema(
     icon: {
       type: String,
     },
+    color: {
+      type: String,
+    },
   },
   {
     timestamps: true,

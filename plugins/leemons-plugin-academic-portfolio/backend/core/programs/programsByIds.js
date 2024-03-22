@@ -10,10 +10,23 @@ const { getProgramCycles } = require('./getProgramCycles');
 const { listClasses } = require('../classes/listClasses');
 const { getClassesProgramInfo } = require('../classes/listSessionClasses');
 
-async function programsByIds({ ids, onlyProgram, withClasses = false, ctx }) {
+// In order to know hwat knowledge areas or subject types are being used by the program subjects,
+// we cannot check the program anymore. We search for this information in the class
+const getUsedKnowledgeAreas = (classes) => {
+  if (!classes) return [];
+  return _.uniqBy(_.compact(_.flatMap(classes, 'knowledges')), 'id');
+};
+
+const getUsedSubjectTypes = (classes) => {
+  if (!classes) return [];
+  return _.uniq(_.compact(classes.map((classItem) => classItem.subjectType)));
+};
+
+async function programsByIds({ ids, onlyProgram, withClasses = false, showArchived, ctx }) {
+  const queriesOptions = showArchived ? { excludeDeleted: false } : {};
   const { userSession } = ctx.meta;
   if (onlyProgram) {
-    return ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
+    return ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }, '', queriesOptions).lean();
   }
 
   const [
@@ -22,19 +35,19 @@ async function programsByIds({ ids, onlyProgram, withClasses = false, ctx }) {
     substages,
     courses,
     groups,
-    knowledges,
+    // knowledges,
     subjects,
-    subjectTypes,
+    // subjectTypes,
     cycles,
   ] = await Promise.all([
-    ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
-    ctx.tx.db.ProgramCenter.find({ program: _.isArray(ids) ? ids : [ids] }).lean(),
-    getProgramSubstages({ ids, ctx }),
-    getProgramCourses({ ids, ctx }),
-    getProgramGroups({ ids, ctx }),
-    getProgramKnowledges({ ids, ctx }),
-    getProgramSubjects({ ids, ctx }),
-    getProgramSubjectTypes({ ids, ctx }),
+    ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }, '', queriesOptions).lean(),
+    ctx.tx.db.ProgramCenter.find({ program: _.isArray(ids) ? ids : [ids] }, queriesOptions).lean(),
+    getProgramSubstages({ ids, options: queriesOptions, ctx }),
+    getProgramCourses({ ids, options: queriesOptions, ctx }),
+    getProgramGroups({ ids, options: queriesOptions, ctx }),
+    // getProgramKnowledges({ ids, ctx }), // Program does not know about knowledge areas. It just knows if it uses or not. The subject and class know about that.
+    getProgramSubjects({ ids, options: queriesOptions, ctx }),
+    // getProgramSubjectTypes({ ids, ctx }), // Program does not know about subject types. It just knows if it uses or not. The subject and class know about that.
     getProgramCycles({ ids, ctx }),
   ]);
 
@@ -69,9 +82,9 @@ async function programsByIds({ ids, onlyProgram, withClasses = false, ctx }) {
   const groupsByProgram = _.groupBy(groups, 'program');
   const coursesByProgram = _.groupBy(courses, 'program');
   const substageByProgram = _.groupBy(substages, 'program');
-  const knowledgesByProgram = _.groupBy(knowledges, 'program');
+  // const knowledgesByProgram = _.groupBy(knowledges, 'program');
   const subjectsByProgram = _.groupBy(subjects, 'program');
-  const subjectTypesByProgram = _.groupBy(subjectTypes, 'program');
+  // const subjectTypesByProgram = _.groupBy(subjectTypes, 'program');
   const centersByProgram = _.groupBy(programCenter, 'program');
   const cyclesByProgram = _.groupBy(cycles, 'program');
 
@@ -81,15 +94,18 @@ async function programsByIds({ ids, onlyProgram, withClasses = false, ctx }) {
 
   return programs.map((program, i) => ({
     ...program,
+    hasKnowledgeAreas: program.haveKnowledge,
     image: imagesById ? imagesById[program.image] : program.image,
     treeTypeNodes: treeTypes[i],
     classes,
     centers: centersByProgram[program.id] ? _.map(centersByProgram[program.id], 'center') : [],
     groups: groupsByProgram[program.id] ? groupsByProgram[program.id] : [],
     courses: coursesByProgram[program.id] ? _.orderBy(coursesByProgram[program.id], 'index') : [],
-    knowledges: knowledgesByProgram[program.id] ? knowledgesByProgram[program.id] : [],
+    // knowledges: knowledgesByProgram[program.id] ? knowledgesByProgram[program.id] : [],
+    knowledgeAreas: getUsedKnowledgeAreas(classes),
     subjects: subjectsByProgram[program.id] ? subjectsByProgram[program.id] : [],
-    subjectTypes: subjectTypesByProgram[program.id] ? subjectTypesByProgram[program.id] : [],
+    // subjectTypes: subjectTypesByProgram[program.id] ? subjectTypesByProgram[program.id] : [],
+    subjectTypes: getUsedSubjectTypes(classes),
     substages: substageByProgram[program.id]
       ? _.filter(substageByProgram[program.id], ({ number }) => _.isNil(number))
       : [],

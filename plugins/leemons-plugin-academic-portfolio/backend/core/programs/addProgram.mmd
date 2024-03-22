@@ -1,0 +1,40 @@
+flowchart TD
+    A[Start] --> B[Set Default Values]
+    B --> C{Data Validation}
+    C -->|Valid| D{Have Substages Per Course?}
+    C -->|Invalid| Z[End with Error]
+    D -->|Yes| E[Check Use Default Substages]
+    D -->|No| J
+    E -->|Yes| F[Generate Default Substages]
+    E -->|No| I1[Validate Substages Format]
+    F --> I1
+    I1 --> H{Custom Substages?}
+    H -->|Yes| I[Add Custom Substages]
+    H -->|No| J
+    I --> J[Create Program Document]
+    J --> K[Add Image Asset]
+    K --> L{Array of Substages?}
+    L -->|Yes| M[Add Substages in DB.Groups]
+    L -->|No| N[Add Program to Centers]
+    M --> N
+    N --> O{More than one Course?}
+    O -->|Yes| P[Loop Through Courses]
+    O -->|No| Q[Add Single Course, set isAlone to true]
+    P --> R[Create Each Course]
+    Q --> R
+    R --> U[Update Next Course Index]
+    U --> S[More than one group?]
+    S -->|No| T[Add Group, set isAlone to true]
+    S -->|Yes| W{Cycles Array?}
+    T --> W{Cycles Array?}
+    W -->|Yes| X[Create Cycles in DB]
+    W --> Z[Emit After-Add-Program Event]
+    X --> Z
+    Z --> A1[Enable Menu Items]
+    A1 --> B1[Return Program]
+    B1 --> C1[End]
+
+    subgraph R1[Loop Through Courses]
+        direction TB
+        P --> R
+    end

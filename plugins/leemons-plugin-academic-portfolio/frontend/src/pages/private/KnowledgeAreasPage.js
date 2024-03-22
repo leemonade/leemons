@@ -14,6 +14,7 @@ import {
   LoadingOverlay,
   Stack,
   Box,
+  InputWrapper,
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -200,6 +201,7 @@ const KnowledgeAreasPage = () => {
                 setSelectedCenter(value);
               }}
               value={selectedCenter}
+              sx={{ width: 262 }}
             />
           </TotalLayoutHeader>
         }
@@ -214,7 +216,7 @@ const KnowledgeAreasPage = () => {
             <TotalLayoutStepContainer>
               <ContextContainer noFlex spacing={2}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <ContextContainer gap={2} direction="row" alignItems="center">
+                  <ContextContainer direction="row" alignItems="start">
                     <Box noFlex sx={{ width: 216, minHeight: 88 }}>
                       <Controller
                         control={form.control}
@@ -231,6 +233,7 @@ const KnowledgeAreasPage = () => {
                             onBlur={() => {
                               form.clearErrors('name');
                             }}
+                            placeholder={t('placeholders.name')}
                           />
                         )}
                       />
@@ -251,15 +254,16 @@ const KnowledgeAreasPage = () => {
                             onBlur={() => {
                               form.clearErrors('abbreviation');
                             }}
+                            placeholder={t('placeholders.abbreviation')}
                           />
                         )}
                       />
                     </Box>
-                    <Box noFlex sx={{ marginTop: 8 }}>
+                    <InputWrapper showEmptyLabel>
                       <Button variant="link" leftIcon={<AddCircleIcon />} type="submit">
                         {t('labels.add')}
                       </Button>
-                    </Box>
+                    </InputWrapper>
                   </ContextContainer>
                 </form>
 
@@ -273,6 +277,7 @@ const KnowledgeAreasPage = () => {
                         edit: t('labels.edit'),
                         accept: t('labels.accept'),
                         cancel: t('labels.cancel'),
+                        actionHeader: t('labels.actions'),
                       }}
                       canAdd={false}
                       editable

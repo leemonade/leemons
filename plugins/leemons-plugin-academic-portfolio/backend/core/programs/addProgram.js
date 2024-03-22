@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const { programsByIds } = require('./programsByIds');
 const { validateAddProgram, validateSubstagesFormat } = require('../../validations/forms');
 const { addSubstage } = require('../substages/addSubstage');
@@ -6,6 +7,116 @@ const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
 const { addCycle } = require('../cycle/addCycle');
 const { addGroup } = require('../groups/addGroup');
+const { addNextGroupIndex } = require('../groups');
+
+function getReferenceGroupsNames(
+  format,
+  groupsAmount,
+  digits,
+  customNameFormat,
+  ctx,
+  prefixWhenCustom = ''
+) {
+  // Validate the format to ensure it's one of the allowed values
+  if (format !== 'alphabetical' && format !== 'numerical' && format !== 'custom') {
+    throw new LeemonsError(ctx, { message: 'Invalid format name in Reference Groups creation.' });
+  }
+  const names = [];
+  if (format === 'alphabetical') {
+    for (let i = 0; i < groupsAmount; i++) {
+      const letter = String.fromCharCode(65 + (i % 26));
+      const repeats = Math.floor(i / 26);
+      names.push(`${prefixWhenCustom}${'A'.repeat(repeats)}${letter}`);
+    }
+  } else if (format === 'numerical') {
+    for (let i = 1; i <= groupsAmount; i++) {
+      names.push(`${prefixWhenCustom}${i.toString().padStart(digits, '0')}`);
+    }
+  } else if (format === 'custom') {
+    // Ensure it's safe for the function to call itself
+    if (customNameFormat !== 'alphabetical' && customNameFormat !== 'numerical') {
+      throw new LeemonsError(ctx, {
+        message: 'Invalid custom name format in Reference Groups creation.',
+      });
+    }
+    return getReferenceGroupsNames(
+      customNameFormat,
+      groupsAmount,
+      digits,
+      '',
+      ctx,
+      prefixWhenCustom
+    );
+  }
+
+  return names;
+}
+
+async function handleReferenceGroups(programData, program, ctx) {
+  const promises = [];
+  const { nameFormat, digits, customNameFormat, prefix, ...groupsPerCourse } =
+    programData.referenceGroups;
+  let index = 0;
+
+  if (groupsPerCourse.groupsForAllCourses) {
+    const groupsNames = getReferenceGroupsNames(
+      nameFormat,
+      groupsPerCourse.groupsForAllCourses,
+      digits,
+      customNameFormat,
+      ctx,
+      prefix || ''
+    );
+    for (let i = 0; i < groupsPerCourse.groupsForAllCourses; i++) {
+      index++;
+      promises.push(
+        addGroup({
+          data: {
+            name: groupsNames[i],
+            abbreviation: groupsNames[i],
+            program: program.id,
+          },
+          index,
+          ctx,
+        })
+      );
+    }
+    promises.push(addNextGroupIndex({ program: program.id, index, ctx }));
+  } else {
+    Object.keys(groupsPerCourse).forEach((key) => {
+      const groupsAmount = groupsPerCourse[key];
+      const groupsCourse = parseInt(key.replace('groupsForCourse', ''));
+      const groupsNames = getReferenceGroupsNames(
+        nameFormat,
+        groupsAmount,
+        digits,
+        customNameFormat,
+        ctx,
+        prefix || ''
+      );
+      for (let i = 0; i < groupsAmount; i++) {
+        index++;
+        promises.push(
+          addGroup({
+            data: {
+              name: groupsNames[i],
+              abbreviation: groupsNames[i],
+              program: program.id,
+              metadata: {
+                course: groupsCourse,
+              },
+            },
+            index,
+            ctx,
+          })
+        );
+      }
+    });
+    promises.push(addNextGroupIndex({ program: program.id, index, ctx }));
+  }
+
+  await Promise.all(promises);
+}
 
 async function addProgram({ data, userSession, ctx }) {
   if (!data.maxSubstageAbbreviationIsOnlyNumbers) {
@@ -22,14 +133,17 @@ async function addProgram({ data, userSession, ctx }) {
     image,
     substages: _substages,
     customSubstages,
-    names,
+    // names, // old, used to set the course names individually
+    coursesName, // new, course name that comes from a library
     coursesOffset,
     cycles,
     ...programData
   } = data;
+
   let substages = _substages;
-  // ES: Si se ha marcado que hay substages y usar los valores por defecto generamos los substages
-  if (programData.haveSubstagesPerCourse) {
+
+  // *Funcionalidad legacy para setear substages individualmente por curso pudiendo usar nomenclatura por defecto o custom
+  if (programData.hasSubstagesPerCourse) {
     if (programData.useDefaultSubstagesName) {
       substages = [];
       programData.maxSubstageAbbreviation = 5;
@@ -75,8 +189,9 @@ async function addProgram({ data, userSession, ctx }) {
     { new: true, lean: true }
   );
 
+  // ES: Creamos las substages
   if (_.isArray(substages)) {
-    // ES: Generamos los substages
+    // TODO: Por que aquí es diferente a cursos donde index = i + 1. Verificar que se puede unificar y hacerlo.
     await Promise.all(
       _.map(substages, (substage, index) =>
         addSubstage({ ...substage, program: program.id, index, ctx })
@@ -84,7 +199,7 @@ async function addProgram({ data, userSession, ctx }) {
     );
   }
 
-  // ES: Añadimos el programa a los centros
+  // ES: Añadimos la relación programa-centro
   await Promise.all(
     _.map(centers, (center) =>
       ctx.tx.db.ProgramCenter.create({
@@ -94,9 +209,10 @@ async function addProgram({ data, userSession, ctx }) {
     )
   );
 
-  // ES: Creamos los cursos del programa
-  const promises = [];
+  const coursesAndGroupsPromises = [];
 
+  // *OLD IMPLEMENTATION: Add Program Courses
+  /*
   const coursesNames = names || [];
   const offset = coursesOffset || 0;
 
@@ -131,18 +247,6 @@ async function addProgram({ data, userSession, ctx }) {
     );
   }
 
-  if (program.useOneStudentGroup) {
-    await addGroup({
-      data: {
-        name: '-auto-',
-        abbreviation: '-auto-',
-        program: program.id,
-        isAlone: true,
-      },
-      ctx,
-    });
-  }
-
   promises.push(
     addNextCourseIndex({
       program: program.id,
@@ -150,19 +254,104 @@ async function addProgram({ data, userSession, ctx }) {
       ctx,
     })
   );
+*/
 
-  await Promise.all(promises);
+  // *NEW IMPLEMENTATION: Add Program Courses
+  const offset = coursesOffset || 0;
+  if (programData.courses?.length) {
+    programData.courses?.forEach(({ index, minCredits, maxCredits, seats }) => {
+      const courseIndex = index + offset;
+
+      coursesAndGroupsPromises.push(
+        addCourse({
+          data: {
+            program: program.id,
+            // number: data.courseCredits ? data.courseCredits : 0,
+            name: `${coursesName} ${courseIndex}`,
+            metadata: { minCredits, maxCredits, seats },
+          },
+          index: courseIndex,
+          ctx,
+        })
+      );
+    });
+  } else {
+    // De momento no se considera que un programa de un sólo curso especifíque créditos mínimos y máximos para su único curso.
+    coursesAndGroupsPromises.push(
+      addCourse({
+        data: {
+          program: program.id,
+          number: programData.credits || 0,
+          name: `${coursesName} ${1 + offset}`,
+          isAlone: true,
+        },
+        index: 1 + offset,
+        ctx,
+      })
+    );
+  }
+
+  coursesAndGroupsPromises.push(
+    addNextCourseIndex({
+      program: program.id,
+      index: programData.courses?.length || 1 + offset,
+      ctx,
+    })
+  );
+
+  //* OLD default group creation (no groups were being created when using more than one group of students)
+  // if (program.useOneStudentGroup) {
+  //   await addGroup({
+  //     data: {
+  //       name: '-auto-',
+  //       abbreviation: '-auto-',
+  //       program: program.id,
+  //       isAlone: true,
+  //     },
+  //     ctx,
+  //   });
+  // }
+
+  // *NEW IMPLEMENTATION: Add Program Groups. If there are any Reference groups they're added now
+  if (!_.isEmpty(programData.referenceGroups)) {
+    await handleReferenceGroups(programData, program, ctx);
+    // Store the groups setup and inital data in case of need later while updating (not the case currently)
+    program = await ctx.tx.db.Programs.findOneAndUpdate(
+      { id: program.id },
+      {
+        groupsMetadata: { ...programData.referenceGroups },
+      },
+      { new: true, lean: true }
+    );
+  } else {
+    // TODO: Ver si es realmente necesario. De serlo, crearlo siempre ya que hay casos de clases de programa con grupos de referencia que no se asocian a ninguno.
+    coursesAndGroupsPromises.push(
+      addGroup({
+        data: {
+          name: '-auto-',
+          abbreviation: '-auto-',
+          program: program.id,
+          isAlone: true,
+        },
+        ctx,
+      })
+    );
+    await Promise.all(coursesAndGroupsPromises);
+  }
 
   const _program = (await programsByIds({ ids: [program.id], ctx }))[0];
 
   if (cycles?.length && _program.courses?.length) {
     const coursesByIndex = _.keyBy(_program.courses, 'index');
     const cyclePromises = [];
+
     _.forEach(cycles, (cycle) => {
       const cycleCourses = [];
+
       _.forEach(cycle.courses, (c) => {
         cycleCourses.push(coursesByIndex[c].id);
       });
+
       cyclePromises.push(
         addCycle({
           data: {
@@ -174,6 +363,7 @@ async function addProgram({ data, userSession, ctx }) {
         })
       );
     });
+
     await Promise.all(cyclePromises);
   }
 

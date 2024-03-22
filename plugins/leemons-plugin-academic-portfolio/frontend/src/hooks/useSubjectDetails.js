@@ -1,11 +1,11 @@
 import { getSubjectDetails } from '@academic-portfolio/request/subjects';
 import { useQuery } from '@tanstack/react-query';
 
-export default function useSubjectDetails(subjectId, { enabled = true } = {}) {
+export default function useSubjectDetails(subjectId, { enabled = true } = {}, withClasses = false) {
   return useQuery(
     ['subjectDetail', { subject: subjectId }],
     async () => {
-      const response = await getSubjectDetails(subjectId);
+      const response = await getSubjectDetails(subjectId, withClasses);
 
       if (Array.isArray(subjectId) && Array.isArray(response.data)) {
         const detailsById = response.data.reduce(

@@ -3,6 +3,8 @@ const permissionsPrefix = 'academic-portfolio';
 const permissionNames = {
   portfolio: `${permissionsPrefix}.portfolio`,
   profiles: `${permissionsPrefix}.profiles`,
+  subjectTypes: `${permissionsPrefix}.subject-types`,
+  knowledgeAreas: `${permissionsPrefix}.knowledge-areas`,
   programs: `${permissionsPrefix}.programs`,
   subjects: `${permissionsPrefix}.subjects`,
   tree: `${permissionsPrefix}.tree`,
@@ -13,6 +15,22 @@ const permissions = [
     permissionName: permissionNames.portfolio,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
     localizationName: { es: 'Portfolio Académico', en: 'Academic Portfolio' },
+  },
+  {
+    permissionName: permissionNames.subjectTypes,
+    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    localizationName: {
+      es: 'Portfolio Académico - Tipos de Asignatura',
+      en: 'Academic Portfolio - Subject Types',
+    },
+  },
+  {
+    permissionName: permissionNames.knowledgeAreas,
+    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    localizationName: {
+      es: 'Portfolio Académico - Areas de Conocimiento',
+      en: 'Academic Portfolio - Knowledge Areas',
+    },
   },
   {
     permissionName: permissionNames.programs,
@@ -61,6 +79,42 @@ const permissionsBundles = {
     },
     delete: {
       permission: permissionNames.portfolio,
+      actions: ['delete', 'admin'],
+    },
+  },
+  subjectTypes: {
+    create: {
+      permission: permissionNames.subjectTypes,
+      actions: ['create', 'admin'],
+    },
+    view: {
+      permission: permissionNames.subjectTypes,
+      actions: ['view', 'admin'],
+    },
+    update: {
+      permission: permissionNames.subjectTypes,
+      actions: ['update', 'admin'],
+    },
+    delete: {
+      permission: permissionNames.subjectTypes,
+      actions: ['delete', 'admin'],
+    },
+  },
+  knowledgeAreas: {
+    create: {
+      permission: permissionNames.knowledgeAreas,
+      actions: ['create', 'admin'],
+    },
+    view: {
+      permission: permissionNames.knowledgeAreas,
+      actions: ['view', 'admin'],
+    },
+    update: {
+      permission: permissionNames.knowledgeAreas,
+      actions: ['update', 'admin'],
+    },
+    delete: {
+      permission: permissionNames.knowledgeAreas,
       actions: ['delete', 'admin'],
     },
   },
@@ -197,11 +251,51 @@ const menuItems = [
       },
     ],
   },
+  // Subject Types
+  {
+    item: {
+      key: 'subject-types',
+      order: 3,
+      parentKey: `${permissionsPrefix}.portfolio`,
+      url: '/private/academic-portfolio/subject-types',
+      label: {
+        en: 'Subject Types',
+        es: 'Tipos de Asignaturas',
+      },
+      disabled: true,
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.subjectTypes,
+        actionNames: ['admin'],
+      },
+    ],
+  },
+  // Knowledge Areas
+  {
+    item: {
+      key: 'knowledge-areas',
+      order: 4,
+      parentKey: `${permissionsPrefix}.portfolio`,
+      url: '/private/academic-portfolio/knowledge-areas',
+      label: {
+        en: 'Knowledge Areas',
+        es: 'Areas de Conocimiento',
+      },
+      disabled: true,
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.knowledgeAreas,
+        actionNames: ['admin'],
+      },
+    ],
+  },
   // Learning Program
   {
     item: {
       key: 'programs',
-      order: 3,
+      order: 5,
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/programs',
       label: {
@@ -221,7 +315,7 @@ const menuItems = [
   {
     item: {
       key: 'subjects',
-      order: 4,
+      order: 6,
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/subjects',
       label: {
@@ -241,7 +335,7 @@ const menuItems = [
   {
     item: {
       key: 'tree',
-      order: 5,
+      order: 7,
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/tree',
       label: {

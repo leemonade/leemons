@@ -2,14 +2,21 @@ import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { isString } from 'lodash';
 
 async function listSubjects({ page, size, program, course }) {
-  return leemons.api(
-    `v1/academic-portfolio/subjects/subject?page=${page}&size=${size}&program=${program}&course=${course}`,
-    {
-      waitToFinish: true,
-      allAgents: true,
-      method: 'GET',
-    }
-  );
+  const params = new URLSearchParams({
+    page,
+    size,
+    program,
+  });
+
+  if (course !== undefined) {
+    params.append('course', course);
+  }
+
+  return leemons.api(`v1/academic-portfolio/subjects/subject?${params.toString()}`, {
+    waitToFinish: true,
+    allAgents: true,
+    method: 'GET',
+  });
 }
 
 async function createSubject(body) {
@@ -113,14 +120,13 @@ async function listSubjectCreditsForProgram(program) {
   });
 }
 
-async function getSubjectDetails(subject) {
-  if (Array.isArray(subject)) {
-    return leemons.api(`v1/academic-portfolio/subjects?ids=${JSON.stringify(subject)}`, {
-      allAgents: true,
-      method: 'GET',
-    });
-  }
-  return leemons.api(`v1/academic-portfolio/subjects?id=${subject}`, {
+async function getSubjectDetails(subject, withClasses = false) {
+  const isSubjectArray = Array.isArray(subject);
+  const subjectParam = isSubjectArray ? `ids=${JSON.stringify(subject)}` : `id=${subject}`;
+  const classParam = withClasses ? '&withClasses=true' : '';
+  const endpoint = `v1/academic-portfolio/subjects?${subjectParam}${classParam}`;
+
+  return leemons.api(endpoint, {
     allAgents: true,
     method: 'GET',
   });

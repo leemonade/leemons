@@ -12,6 +12,7 @@ import {
   TotalLayoutHeader,
   TotalLayoutStepContainer,
   LoadingOverlay,
+  InputWrapper,
   Stack,
   Box,
 } from '@bubbles-ui/components';
@@ -193,6 +194,7 @@ const SubjectTypesPage = () => {
             mainActionLabel={t('header.cancel')}
           >
             <Select
+              sx={{ width: 262 }}
               data={centersData}
               placeholder={t('header.centerSelectPlaceholder')}
               onChange={(value) => {
@@ -213,7 +215,7 @@ const SubjectTypesPage = () => {
             <TotalLayoutStepContainer>
               <ContextContainer noFlex spacing={2}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <ContextContainer gap={2} direction="row" alignItems="center">
+                  <ContextContainer direction="row" alignItems="start">
                     <Box sx={{ width: 216, minHeight: 88 }}>
                       <Controller
                         control={form.control}
@@ -228,6 +230,7 @@ const SubjectTypesPage = () => {
                             required
                             label={t('labels.name')}
                             error={form.formState.errors.name}
+                            placeholder={t('placeholders.name')}
                           />
                         )}
                       />
@@ -237,15 +240,19 @@ const SubjectTypesPage = () => {
                         control={form.control}
                         name="description"
                         render={({ field }) => (
-                          <TextInput {...field} label={t('labels.description')} />
+                          <TextInput
+                            {...field}
+                            label={t('labels.description')}
+                            placeholder={t('placeholders.description')}
+                          />
                         )}
                       />
                     </Box>
-                    <Box noFlex sx={{ marginTop: 8 }}>
+                    <InputWrapper showEmptyLabel>
                       <Button variant="link" leftIcon={<AddCircleIcon />} type="submit">
                         {t('labels.add')}
                       </Button>
-                    </Box>
+                    </InputWrapper>
                   </ContextContainer>
                 </form>
 
@@ -259,6 +266,7 @@ const SubjectTypesPage = () => {
                         edit: t('labels.edit'),
                         accept: t('labels.accept'),
                         cancel: t('labels.cancel'),
+                        actionHeader: t('labels.actions'),
                       }}
                       canAdd={false}
                       editable

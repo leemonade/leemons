@@ -131,16 +131,22 @@ module.exports = {
           center: { type: ['string'] },
         },
         required: ['page', 'size'],
-        additionalProperties: false,
+        additionalProperties: true,
       });
 
       if (validator.validate(ctx.params)) {
-        const { page, size, center, ...options } = ctx.params;
+        const { page, size, center } = ctx.params;
+        let bringOnlyArchived = false;
+
+        if ('archived' in ctx.params) {
+          bringOnlyArchived = true;
+        }
+
         const data = await listPrograms({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           center,
-          ...options,
+          bringOnlyArchived,
           ctx,
         });
         return { status: 200, data };
@@ -165,9 +171,14 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
+      const truthyValues = ['true', true];
+      const _withClasses = truthyValues.includes(ctx.params.withClasses);
+      const _showArchived = truthyValues.includes(ctx.params.showArchived);
+
       const [program] = await programsByIds({
         ids: ctx.params.id,
-        withClasses: ctx.params.withClasses,
+        withClasses: _withClasses,
+        showArchived: _showArchived,
         ctx,
       });
       if (!program) throw new LeemonsError(ctx, { message: 'Program not found' });

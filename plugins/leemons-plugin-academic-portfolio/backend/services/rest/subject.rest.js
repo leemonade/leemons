@@ -179,13 +179,14 @@ module.exports = {
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
           program: { type: 'string' },
-          course: { type: 'string' },
+          course: { type: 'string' }, // Stringified array, even for one
         },
         required: ['page', 'size'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
         const { page, size, program, course } = ctx.params;
+
         const data = await listSubjects({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
@@ -198,7 +199,27 @@ module.exports = {
       throw validator.error;
     },
   },
-  subjectsRest: {
+  // ???
+  // subjectsRest: {
+  //   rest: {
+  //     path: '/',
+  //     method: 'GET',
+  //   },
+  //   middlewares: [LeemonsMiddlewareAuthenticated()],
+  //   async handler(ctx) {
+  //     let { id } = ctx.params;
+  //     if (!id) {
+  //       const { ids } = ctx.params;
+  //       id = JSON.parse(ids || null);
+  //     }
+  //     const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
+  //     if (ctx.params.id) {
+  //       return { status: 200, data: data && data[0] };
+  //     }
+  //     return { status: 200, data };
+  //   },
+  // },
+  subjectsByIdsRest: {
     rest: {
       path: '/',
       method: 'GET',
@@ -210,26 +231,11 @@ module.exports = {
         const { ids } = ctx.params;
         id = JSON.parse(ids || null);
       }
-      const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
-      if (ctx.params.id) {
-        return { status: 200, data: data && data[0] };
-      }
-      return { status: 200, data };
-    },
-  },
-  subjectByIdsRest: {
-    rest: {
-      path: '/',
-      method: 'GET',
-    },
-    middlewares: [LeemonsMiddlewareAuthenticated()],
-    async handler(ctx) {
-      let { id } = ctx.params;
-      if (!id) {
-        const { ids } = ctx.params;
-        id = JSON.parse(ids || null);
-      }
-      const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
+      const data = await subjectByIds({
+        ids: Array.isArray(id) ? id : [id],
+        withClasses: ctx.params.withClasses,
+        ctx,
+      });
       if (ctx.params.id) {
         return { status: 200, data: data && data[0] };
       }

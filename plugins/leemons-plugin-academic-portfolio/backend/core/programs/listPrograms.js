@@ -3,10 +3,11 @@ const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const { LeemonsError } = require('@leemons/error');
 const { getUserProgramIds } = require('./getUserProgramIds');
 
-async function listPrograms({ page, size, center, ctx }) {
+async function listPrograms({ page, size, center, filters = {}, bringOnlyArchived, ctx }) {
+  const queriesOptions = bringOnlyArchived ? { excludeDeleted: false } : {};
   const [profile, programCenter] = await Promise.all([
     ctx.tx.call('users.profiles.getProfileSysName'),
-    ctx.tx.db.ProgramCenter.find({ center }).lean(),
+    ctx.tx.db.ProgramCenter.find({ center }, '', queriesOptions).lean(),
   ]);
 
   if (!['teacher', 'student', 'admin', 'super'].includes(profile)) {
@@ -24,7 +25,8 @@ async function listPrograms({ page, size, center, ctx }) {
     model: ctx.tx.db.Programs,
     page,
     size,
-    query: { id: programIds },
+    query: { ...filters, id: programIds },
+    options: queriesOptions,
   });
 
   const images = await ctx.tx.call('leebrary.assets.getByIds', {
@@ -39,6 +41,10 @@ async function listPrograms({ page, size, center, ctx }) {
     image: imagesById[program.image],
     centers: centersByProgram[program.id] ? _.map(centersByProgram[program.id], 'center') : [],
   }));
+
+  if (bringOnlyArchived) {
+    results.items = results.items.filter((program) => program.isDeleted);
+  }
   return results;
 }
 

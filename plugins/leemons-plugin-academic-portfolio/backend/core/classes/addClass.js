@@ -4,23 +4,18 @@ const { isArray, map } = require('lodash');
 const { validateAddClass } = require('../../validations/forms');
 const { add: addKnowledge } = require('./knowledge/add');
 const { add: addSubstage } = require('./substage/add');
-const { add: addTeacher } = require('./teacher/add');
 const { add: addCourse } = require('./course/add');
 const { add: addGroup } = require('./group/add');
-const { existKnowledgeInProgram } = require('../knowledges/existKnowledgeInProgram');
 const { existSubstageInProgram } = require('../substages/existSubstageInProgram');
 const { existCourseInProgram } = require('../courses/existCourseInProgram');
 const { existGroupInProgram } = require('../groups/existGroupInProgram');
 const { classByIds } = require('./classByIds');
 const { processScheduleForClass } = require('./processScheduleForClass');
-const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { getClassesProgramInfo } = require('./listSessionClasses');
-const {
-  addComunicaRoomsBetweenStudentsAndTeachers,
-} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
+const { knowledgeAreaExistsInCenter } = require('../knowledges');
 
 async function addClass({ data, ctx }) {
   try {
@@ -31,6 +26,8 @@ async function addClass({ data, ctx }) {
     const program = await ctx.tx.db.Programs.findOne({ id: data.program })
       .select(['id', 'name', 'useOneStudentGroup'])
       .lean();
+    let programCenterId = await ctx.tx.db.ProgramCenter.findOne({ program: program.id }).lean();
+    programCenterId = programCenterId?.center;
 
     if (program.useOneStudentGroup) {
       const group = await ctx.tx.db.Groups.findOne({
@@ -44,7 +41,18 @@ async function addClass({ data, ctx }) {
     }
 
     // eslint-disable-next-line prefer-const
-    let { course, group, knowledge, substage, teachers, schedule, image, icon, ...rest } = data;
+    const {
+      course: _course,
+      group,
+      knowledge: knowledgeArea,
+      substage,
+      teachers,
+      schedule,
+      image,
+      icon,
+      ...rest
+    } = data;
+    let course = _course;
 
     if (!goodGroup && group) {
       goodGroup = group;
@@ -91,21 +99,23 @@ async function addClass({ data, ctx }) {
     // ES: Añadimos todas las relaciones de la clase
     const promises = [];
 
-    if (knowledge) {
-      // ES: Comprobamos que todos los conocimientos existen y pertenecen al programa
-      if (!(await existKnowledgeInProgram({ id: knowledge, program: nClass.program, ctx }))) {
-        throw new LeemonsError(ctx, { message: 'knowledge not in program' });
+    if (knowledgeArea) {
+      // ES: Comprobamos que todos los conocimientos existen y pertenecen al centro
+      if (
+        !(await knowledgeAreaExistsInCenter({ id: knowledgeArea, center: programCenterId, ctx }))
+      ) {
+        throw new LeemonsError(ctx, { message: 'The knowledge area does not exist in Center.' });
       }
-      promises.push(addKnowledge({ class: nClass.id, knowledge, ctx }));
+      promises.push(addKnowledge({ class: nClass.id, knowledge: knowledgeArea, ctx }));
     }
     if (substage) {
       // ES: Comprobamos que todos los substages existen y pertenecen al programa
       if (!(await existSubstageInProgram({ id: substage, program: nClass.program, ctx }))) {
-        throw new LeemonsError(ctx, { message: 'substage not in program' });
+        throw new LeemonsError(ctx, { message: 'The substage does not exist in Program.' });
       }
       const substages = _.isArray(substage) ? substage : [substage];
-      _.forEach(substages, (sub) => {
-        promises.push(addSubstage({ class: nClass.id, substage: sub, ctx }));
+      _.forEach(substages, (id) => {
+        promises.push(addSubstage({ class: nClass.id, substage: id, ctx }));
       });
     }
     if (!course) {
@@ -121,7 +131,7 @@ async function addClass({ data, ctx }) {
       promises.push(
         Promise.all([
           Promise.all(map(courses, (c) => addCourse({ class: nClass.id, course: c, ctx }))),
-          setToAllClassesWithSubject({ subject: nClass.subject, course: courses, ctx }),
+          // Old to update all classes: setToAllClassesWithSubject({ subject: nClass.subject, course: courses, ctx }),
         ])
       );
     }
@@ -144,6 +154,9 @@ async function addClass({ data, ctx }) {
       promises.push(addGroup({ class: nClass.id, group: goodGroup, ctx }));
     }
 
+    //* Old: En la nueva implementación no se dará el caso en el que nuevas clases se creen usando asignaturas existentes
+    //* de manera que no es necesario actualizar. Actualizaciones de la subject se harán con un update
+    /*
     // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
     promises.push(
       ctx.tx.db.Class.updateMany(
@@ -151,6 +164,10 @@ async function addClass({ data, ctx }) {
         { subjectType: nClass.subjectType, color: nClass.color }
       )
     );
+
+    // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
+    promises.push(changeBySubject({ subjectId: nClass.subject, knowledge: knowledgeArea, ctx }));
+    */
 
     promises.push(
       ctx.tx.call('users.permissions.addItem', {
@@ -164,9 +181,6 @@ async function addClass({ data, ctx }) {
       })
     );
 
-    // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
-    promises.push(changeBySubject({ subjectId: nClass.subject, knowledge, ctx }));
-
     if (schedule) {
       promises.push(processScheduleForClass({ schedule, classId: nClass.id, ctx }));
     }
@@ -175,6 +189,7 @@ async function addClass({ data, ctx }) {
 
     let classe = (await classByIds({ ids: nClass.id, ctx }))[0];
 
+    // Comunica set up
     let subName = program.name;
     if (classe.groups?.abbreviation && classe.groups?.abbreviation !== '-auto-') {
       subName += ` - ${classe.groups?.abbreviation}`;
@@ -186,8 +201,9 @@ async function addClass({ data, ctx }) {
       subName,
       bgColor: classe.subject.color,
       image: null,
-      icon: '/public/academic-portfolio/subject-icon.svg',
+      icon: '/public/academic-portfolio/subject-icon.svg', // Default
       program: data.program,
+      center: programCenterId,
       metadata: {
         iconIsUrl: true,
       },
@@ -226,18 +242,26 @@ async function addClass({ data, ctx }) {
 
     await ctx.tx.emit('after-add-class', { class: classe });
 
+    //* OLD: Teachers are not currently being set in the moment of creation of the class
+    /*
     if (teachers) {
       await Promise.all(
         _.map(teachers, ({ teacher, type }) => addTeacher({ class: nClass.id, teacher, type, ctx }))
       );
     }
+    */
 
+    //* Previously commented room
     // await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
     return (await classByIds({ ids: nClass.id, ctx }))[0];
   } catch (e) {
-    console.error(e);
-    return false;
+    if (e instanceof LeemonsError) throw e;
+    else
+      throw new LeemonsError(ctx, {
+        message: e.message ?? 'Something went wrong',
+        httpStatusCode: 400,
+      });
   }
 }
 

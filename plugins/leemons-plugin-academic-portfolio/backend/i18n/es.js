@@ -46,6 +46,10 @@ module.exports = {
       type: 'Tipo',
       actions: 'Acciones',
     },
+    placeholders: {
+      name: 'Nombre del tipo...',
+      description: 'Escribe una descripción...',
+    },
     alerts: {
       success: {
         add: 'Tipo de Asignatura creado con éxito.',
@@ -82,6 +86,10 @@ module.exports = {
       abbreviation: 'Abreviatura',
       area: 'Area',
       actions: 'Acciones',
+    },
+    placeholders: {
+      name: 'Nombre del area...',
+      abbreviation: 'Alias o abreviatura...',
     },
     alerts: {
       success: {

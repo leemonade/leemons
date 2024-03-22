@@ -7,7 +7,6 @@ import { useSubjectsForSubjectPicker } from './useSubjectsForSubjectPicker';
 export function useDataForSubjectPicker({ subjects, control }) {
   const subjectsData = useSubjectsForSubjectPicker({ subjects });
   const programsData = useProgramsForSubjectPicker({ subjects: subjectsData });
-
   /*
     --- Selected data ---
   */
@@ -36,10 +35,14 @@ export function useDataForSubjectPicker({ subjects, control }) {
     [subjectsDataOmittingSelected]
   );
 
-  const coursesHavingAvailableSubject = useMemo(
-    () => new Set(map(subjectsDataOmittingSelected, 'course')),
-    [subjectsDataOmittingSelected]
-  );
+  const coursesHavingAvailableSubject = useMemo(() => {
+    const _courses = [];
+    subjectsDataOmittingSelected.forEach((subject) => {
+      if (subject?.course) _courses.push(...subject.course);
+    });
+
+    return new Set(_courses);
+  }, [subjectsDataOmittingSelected]);
 
   /*
     --- Get available data ---
@@ -67,9 +70,14 @@ export function useDataForSubjectPicker({ subjects, control }) {
   }, [selectedProgram?.courses]);
 
   const subjectsMatching = useMemo(() => {
-    const subjectFilter = selectedProgram?.hasCourses ? { program, course } : { program };
+    let subjectsFiltered = subjectsDataOmittingSelected.filter(
+      (subject) => subject?.program === program
+    );
+    if (selectedProgram?.hasCourses) {
+      subjectsFiltered = subjectsFiltered.filter((subject) => subject?.course?.includes(course));
+    }
 
-    return map(filter(subjectsDataOmittingSelected, subjectFilter), (subject) => ({
+    return map(subjectsFiltered, (subject) => ({
       label: subject.name,
       value: subject.id,
     }));

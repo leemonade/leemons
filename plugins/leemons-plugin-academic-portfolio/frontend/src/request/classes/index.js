@@ -17,13 +17,23 @@ async function listClasses({ page, size, program }) {
 }
 
 async function listSubjectClasses({ page, size, subject }) {
-  return leemons.api(
-    `v1/academic-portfolio/classes/subjects/class?page=${page}&size=${size}&subject=${subject}`,
-    {
-      allAgents: true,
-      method: 'GET',
-    }
-  );
+  if (isString(subject)) {
+    return leemons.api(
+      `v1/academic-portfolio/classes/subjects/class?page=${page}&size=${size}&subject=${subject}`,
+      {
+        allAgents: true,
+        method: 'GET',
+      }
+    );
+  }
+
+  // Form multiple subjects classes retrival
+  const body = { page, size, subjects: subject };
+  return leemons.api(`v1/academic-portfolio/classes/subjects/multiple`, {
+    allAgents: true,
+    method: 'POST',
+    body,
+  });
 }
 
 async function listStudentClasses({ page, size, student }) {

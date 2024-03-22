@@ -47,6 +47,10 @@ module.exports = {
       type: 'Type',
       actions: 'Actions',
     },
+    placeholders: {
+      name: 'Type name...',
+      description: 'Write a description...',
+    },
     alerts: {
       success: {
         add: 'Subject Type created successfully.',
@@ -83,6 +87,10 @@ module.exports = {
       abbreviation: 'Abbreviation',
       area: 'Area',
       actions: 'Actions',
+    },
+    placeholders: {
+      name: 'Area name...',
+      abbreviation: 'Alias or abbreviation...',
     },
     alerts: {
       success: {
