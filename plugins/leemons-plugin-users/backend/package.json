@@ -19,7 +19,7 @@
     "eslint": "^8.50.0",
     "jest": "29.7.0",
     "jest-cli": "29.7.0",
-    "react-email": "2.0.0"
+    "react-email": "2.1.0"
   },
   "dependencies": {
     "@jest/globals": "^29.7.0",
