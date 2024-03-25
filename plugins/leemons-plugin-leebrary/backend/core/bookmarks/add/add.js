@@ -33,7 +33,7 @@ async function add({ url, mediaType, iconUrl, asset, ctx }) {
       icon = iconFile?.id;
     } catch (e) {
       ctx.logger.error('ERROR: downloading icon:', iconUrl);
-      ctx.logger.log('Despite the error, continue creating Asset ...');
+      ctx.logger.debug('Despite the error, continue creating Asset ...');
     }
   }
 

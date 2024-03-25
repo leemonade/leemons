@@ -78,7 +78,6 @@ function RoomHeader({ room, t, onImageChange }) {
               )}
             </Box>
           ) : null}
-
           {room.metadata?.headerSubName || room.subName ? (
             <Box className={classes.subNameContainer}>
               {subNameIcon}

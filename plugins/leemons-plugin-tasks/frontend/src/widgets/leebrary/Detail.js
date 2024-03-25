@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// TODO: import from @library plugin
 import { LibraryDetail } from '@leebrary/components';
 import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -11,7 +10,7 @@ import { useLayout } from '@layout/context';
 import { prefixPN } from '@tasks/helpers';
 import AssetMetadataTask from '@tasks/components/AssetMetadataTask/AssetMetadataTask';
 
-const Detail = ({ asset, onRefresh, ...props }) => {
+const Detail = ({ asset, onRefresh, onShare, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('cardMenu'));
   const {
@@ -45,7 +44,9 @@ const Detail = ({ asset, onRefresh, ...props }) => {
 
   if (asset?.id) {
     toolbarItems.view = t('view');
-
+    // if (asset.shareable) {
+    //   toolbarItems.share = t('share');
+    // }
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
@@ -69,6 +70,10 @@ const Detail = ({ asset, onRefresh, ...props }) => {
   const handleView = () => {
     history.push(`/private/tasks/library/view/${asset.providerData.id}`);
   };
+
+  // const handleOnShare = () => {
+  //   onShare(asset);
+  // };
 
   const handleEdit = () => {
     history.push(`/private/tasks/library/edit/${asset.providerData.id}`);
@@ -140,12 +145,15 @@ const Detail = ({ asset, onRefresh, ...props }) => {
       onEdit={handleEdit}
       onDuplicate={handleDuplicate}
       onAssign={handleAssign}
+    // onShare={handleOnShare}
     />
   );
 };
 
 Detail.propTypes = {
   asset: PropTypes.any,
+  onShare: PropTypes.func,
+  onRefresh: PropTypes.func,
 };
 
 export default Detail;

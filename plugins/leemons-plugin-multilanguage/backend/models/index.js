@@ -6,6 +6,7 @@ const models = {
   ...require('./common'),
   ...require('./locales'),
   ...require('./contents'),
+  ...require('./globals'),
 };
 
 module.exports = {
@@ -15,6 +16,7 @@ module.exports = {
       Common: models.commonModel,
       Locales: models.localesModel,
       Contents: models.contentsModel,
+      Globals: models.globalsModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::multilanguage_KeyValue' }),
     };
   },

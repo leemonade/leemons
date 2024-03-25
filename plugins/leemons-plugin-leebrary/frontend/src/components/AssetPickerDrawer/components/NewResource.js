@@ -9,8 +9,8 @@ import prefixPN from '@leebrary/helpers/prefixPN';
 import UploadingFileModal from '@leebrary/components/UploadingFileModal';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { newAssetRequest } from '@leebrary/request';
+import compressImage from '@leebrary/helpers/compressImage';
 import { addErrorAlert } from '@layout/alert';
-import { readAndCompressImage } from 'browser-image-resizer';
 import { usePickerCategories } from '../hooks/usePickerCategories';
 
 export const useNewResourceStyles = createStyles((theme) => {
@@ -24,8 +24,13 @@ export const useNewResourceStyles = createStyles((theme) => {
   };
 });
 
-export function NewResource({ categories: creatableCategories, acceptedFileTypes, onSelect }) {
-  const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
+export function NewResource({
+  categories: creatableCategories,
+  acceptedFileTypes,
+  onSelect,
+  isPickingACover,
+}) {
+  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const categories = usePickerCategories();
   const categoriesByKey = useMemo(() => keyBy(categories, 'key'), [categories]);
   const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
@@ -61,31 +66,23 @@ export function NewResource({ categories: creatableCategories, acceptedFileTypes
         body.file.type.indexOf('/gif') < 0 &&
         body.file.type.indexOf('/svg') < 0
       ) {
-        const fileName = body.file.name;
-        const resizedImage = await readAndCompressImage(body.file, {
-          quality: 0.8,
-          maxWidth: 800,
-          maxHeight: 600,
-          debug: true,
-        });
-        body.file = resizedImage;
-        body.file.name = fileName;
+        const compressedImage = await compressImage({ file: body.file });
+        body.file = compressedImage;
       }
-      setUploadingFileInfo({ state: t('common.labels.processingImage') });
+
       const uploadedFile = await uploadFileAsMultipart(body.file, {
         onProgress: (info) => {
           setUploadingFileInfo(info);
         },
       });
-      setUploadingFileInfo(null);
-
+      setUploadingFileInfo({ state: 'finalize' });
       try {
         const { asset } = await newAssetRequest(
-          { ...body, file: uploadedFile, indexable: false },
+          { ...body, file: uploadedFile, isCover: !!isPickingACover },
           null,
           'media-files'
         );
-
+        setUploadingFileInfo(null);
         onSelect(asset);
       } catch (err) {
         addErrorAlert(getErrorMessage(err));
@@ -125,6 +122,7 @@ NewResource.propTypes = {
   onSelect: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.string),
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
+  isPickingACover: PropTypes.bool,
 };
 
 NewResource.defaultProps = {

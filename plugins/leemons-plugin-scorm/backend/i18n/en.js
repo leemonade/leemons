@@ -62,6 +62,8 @@ module.exports = {
     duplicated: 'Duplicated',
     share: 'Share',
     shared: 'Shared',
+    pin: 'Mark as favorite',
+    unpin: 'Unmark as favorite',
   },
   scormSetup: {
     titleNew: 'NEW SCORM',

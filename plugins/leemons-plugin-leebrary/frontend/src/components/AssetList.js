@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { find, forEach, isArray, isEmpty } from 'lodash';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { cloneDeep, find, forEach, isArray, isEmpty, noop } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import {
@@ -16,12 +16,12 @@ import {
   PaginatedList,
   Drawer,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@leebrary/components/LibraryItem';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
+import { LibraryItem } from '@leebrary/components/LibraryItem';
 import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
 import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
 import getPageItems from '@leebrary/helpers/getPageItems';
@@ -44,7 +44,9 @@ import { prepareAsset } from '../helpers/prepareAsset';
 import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
 import { NewLibraryCardButton } from './NewLibraryCardButton/NewLibraryCardButton';
 
+// -------------------------------------------------------------------------------------
 // HELPERS
+
 function getLocale(session) {
   return session ? session.locale : navigator?.language || 'en';
 }
@@ -54,6 +56,54 @@ function getOwner(asset) {
     person.permissions.includes('owner')
   )[0];
   return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
+}
+
+function handlePaginationAndDetailsLoad({
+  assetList,
+  pageSize,
+  shouldInsertNewItem,
+  assetsDetails,
+  page,
+}) {
+  const paginatedObject = getPageItems({
+    data: assetList,
+    page: page - 1,
+    size: pageSize,
+    includeNewItem: true,
+  });
+
+  // Replace the list of asset ids for the detail of the assets when loaded + clean the metadata
+  if (assetsDetails && !isEmpty(assetsDetails)) {
+    paginatedObject.items = cloneDeep(assetsDetails);
+    forEach(paginatedObject.items, (item) => {
+      if (item.file?.metadata?.indexOf('pathsInfo')) {
+        item.file.metadata = JSON.parse(item.file.metadata);
+        delete item.file.metadata.pathsInfo;
+        item.file.metadata = JSON.stringify(item.file.metadata);
+      }
+    });
+  }
+
+  // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
+  if (shouldInsertNewItem && !paginatedObject.items.some((item) => item.action === 'new')) {
+    paginatedObject.items.unshift({ action: 'new' });
+  }
+  return paginatedObject;
+}
+
+function handlePaginationAndEmptyAssetList({ shouldInsertNewItem }) {
+  // Minimal structure where there are no assets to show but it's a creatable category
+  if (shouldInsertNewItem) {
+    return {
+      items: [{ action: 'new' }],
+      page: 0,
+      size: 1,
+      totalCount: 1,
+      totalPages: 1,
+      isEmpty: true,
+    };
+  }
+  return null;
 }
 
 const RECENT_CATEGORY = 'leebrary-recent';
@@ -74,7 +124,7 @@ const AssetList = ({
   onSelect,
   allowSearchByCriteria,
   searchCriteria,
-  onSearch,
+  onSearch = noop,
   allowStatusFilter,
   statusFilter,
   onStatusChange,
@@ -91,13 +141,12 @@ const AssetList = ({
   filters: academicFilters,
   forgetAssetToOpen,
 }) => {
-  // Setup && States
   const session = useSession();
   const locale = getLocale(session);
   const [t, translations] = useTranslateLoader(prefixPN('list'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12 - 1); // 11 is the default number of items per page when the NEW button is enabled
+  const [pageSize, setPageSize] = useState(12);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [itemToShare, setItemToShare] = useState(null);
   const [tempSearchCriteria, setTempSearchCriteria] = useState(searchCriteria);
@@ -145,19 +194,20 @@ const AssetList = ({
 
     if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
 
+    // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key?.startsWith(SUBJECT_CATEGORY)) {
       delete query.category;
       const subjects = isArray(category.id) ? category.id : [category.id];
       query.subjects = JSON.stringify(subjects);
     }
 
-    // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key === SHARED_CATEGORY) {
       delete query.category;
       query.onlyShared = true;
     }
     if (category?.key === RECENT_CATEGORY) {
       query.roles = JSON.stringify(['owner']);
+      query.hideCoverAssets = true;
       delete query.category;
       if (categoryFilter !== 'all') {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
@@ -188,11 +238,7 @@ const AssetList = ({
     [assetList, page, pageSize]
   );
 
-  const {
-    data: assetsDetails,
-    isLoading: assetsDetailsAreLoading,
-    isError: assetsDetailsError,
-  } = useAssetsDetails({
+  const { data: assetsDetails, isLoading: assetsDetailsAreLoading } = useAssetsDetails({
     ids: currentPageAssets?.map((item) => item.asset),
     filters: {
       published: allowStatusFilter ? statusFilter : true,
@@ -203,6 +249,14 @@ const AssetList = ({
       enabled: !isEmpty(assetList) && !assetListIsLoading,
     },
   });
+
+  const lastNotEmptyPage = useMemo(() => {
+    const currentPage = page;
+
+    if (currentPageAssets?.length) return currentPage;
+    if (currentPage > 1) return currentPage - 1;
+    return null;
+  }, [currentPageAssets, page]);
 
   function handleRefresh() {
     queryClient.invalidateQueries(allGetSimpleAssetListKey);
@@ -258,12 +312,10 @@ const AssetList = ({
       return <SearchEmpty t={t} />;
     }
 
-    return <ListEmpty t={t} isRecentPage={category?.key === RECENT_CATEGORY} />;
+    return null;
   };
-
   // -------------------------------------------------------------------------------------
   // DRAWER HANDLERS & TOOLBAR
-
   const toolbarItems = useMemo(() => {
     const published = allowStatusFilter ? statusFilter : true;
 
@@ -273,6 +325,7 @@ const AssetList = ({
       download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
       delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
       share: selectedAsset?.shareable ? t('cardToolbar.share') : false,
+      assign: selectedAsset?.assignable ? t('cardToolbar.assign') : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
           ? t('cardToolbar.pin')
@@ -281,6 +334,28 @@ const AssetList = ({
       toggle: t('cardToolbar.toggle'),
     };
   }, [selectedAsset, category, t]);
+
+  // -------------------------------------------------------------------------------------
+  // EMPTY STATE
+
+  const userIsFilteringOrSearching = useCallback(() => {
+    const isSearchingByCriteria = searchCriteriaDebounced?.length > 0;
+    const isFilteringByStatus = statusFilter?.length && statusFilter !== 'all';
+    const isFilteringByAcademicFilters = academicFilters && academicFilters?.program?.length > 0;
+    const isFilteringByMediaType = mediaTypeFilter?.length && mediaTypeFilter !== 'all';
+    const isFiltering =
+      isFilteringByStatus || isFilteringByAcademicFilters || isFilteringByMediaType;
+
+    return isSearchingByCriteria || isFiltering;
+  }, [statusFilter, academicFilters, mediaTypeFilter, searchCriteriaDebounced]);
+
+  const showFilteringEmptyState = useMemo(() => {
+    const isNotLoading = !assetListIsLoading;
+    if (isNotLoading && isEmpty(assetList)) {
+      return userIsFilteringOrSearching();
+    }
+    return false;
+  }, [assetListIsLoading, assetList, userIsFilteringOrSearching]);
 
   // -------------------------------------------------------------------------------------
   // FUNCTIONS FOR USER ACTIONS
@@ -350,6 +425,10 @@ const AssetList = ({
     })();
   };
 
+  const handleOnAssign = (item) => {
+    history.push(`/private/tasks/library/create?from=leebrary&asset=${item.id}`);
+  };
+
   const handleOnDelete = (item) => {
     openDeleteConfirmationModal({
       onConfirm: () => deleteAsset(item.id),
@@ -395,15 +474,21 @@ const AssetList = ({
     setPage(1);
   }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
 
+  // DELETE operations may leave the current page empty
+  // Page is set to the last valid page if the current page isn't
+  useEffect(() => {
+    if (lastNotEmptyPage) {
+      setPage(lastNotEmptyPage);
+    }
+  }, [lastNotEmptyPage]);
+
   useEffect(() => {
     setIsDrawerOpen(false);
   }, [category]);
 
   useEffect(() => {
     if (!assetsDetailsAreLoading) {
-      setTimeout(() => {
-        if (!assetListIsLoading) setCardDetailIsLoading(false);
-      }, 1000);
+      if (!assetListIsLoading) setCardDetailIsLoading(false);
     } else {
       setCardDetailIsLoading(true);
     }
@@ -423,62 +508,42 @@ const AssetList = ({
 
   // OnSearch: Wait for the debounced search critera and then call the onSearch function
   useEffect(() => {
-    // onSearch(searchCriteriaDebounced);
+    onSearch(searchCriteriaDebounced);
   }, [searchCriteriaDebounced]);
 
-  // SET THE DATA PASSED TO THE PAGINATED LIST COMPONENT
+  // Set data for the PaginatedList component and pagination settings
   useEffect(() => {
-    // Determine if a new item should be inserted based on the category not being in the NOT_CREATABLE_CATEGORIES list
-    const shouldInsertNewItem = !NOT_CREATABLE_CATEGORIES.some((catKey) =>
-      category?.key?.startsWith(catKey)
-    );
+    if (!assetListIsLoading) {
+      const searchingOrFiltering = userIsFilteringOrSearching();
+      const shouldInsertNewItem =
+        !NOT_CREATABLE_CATEGORIES.some((catKey) => category?.key?.startsWith(catKey)) &&
+        !searchingOrFiltering;
 
-    // If there are asset details and they are not empty, proceed to paginate and manipulate the data
-    if (assetsDetails && !isEmpty(assetsDetails)) {
-      // Paginate the asset list based on the current page, page size, and include a flag for new item
-      const paginated = getPageItems({
-        data: assetList,
-        page: page - 1,
-        size: pageSize,
-        includeNewItem: true,
-      });
+      if (shouldInsertNewItem) setPageSize(11);
+      else setPageSize(12);
 
-      // Replace paginated items with the asset details
-      paginated.items = assetsDetails || [];
-
-      // Iterate over each item to clean up the metadata by removing 'pathsInfo' if it exists
-      forEach(paginated.items, (item) => {
-        if (item.file?.metadata?.indexOf('pathsInfo')) {
-          item.file.metadata = JSON.parse(item.file.metadata); // Parse the metadata string into an object
-          delete item.file.metadata.pathsInfo; // Remove the 'pathsInfo' property
-          item.file.metadata = JSON.stringify(item.file.metadata); // Convert the metadata back into a string
-        }
-      });
-
-      // Increment the page number to account for the pagination offset
-      paginated.page += 1;
-
-      // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
-      if (shouldInsertNewItem && !paginated.items.some((item) => item.action === 'new')) {
-        paginated.items.unshift({ action: 'new' });
+      if (assetList?.length) {
+        const paginated = handlePaginationAndDetailsLoad({
+          assetList,
+          pageSize,
+          shouldInsertNewItem,
+          assetsDetails,
+          page,
+        });
+        setPageAssetsData(cloneDeep(paginated));
+      } else {
+        const emptyData = handlePaginationAndEmptyAssetList({ shouldInsertNewItem });
+        setPageAssetsData(cloneDeep(emptyData));
       }
-
-      // Update the state with the paginated data
-      setPageAssetsData({ ...paginated });
-    } else if (shouldInsertNewItem) {
-      // If there are no asset details but a new item should be inserted, create a minimal structure for it
-      setPageAssetsData({
-        items: [{ action: 'new' }], // Only item is the 'new' action item
-        page: 0, // Starting at the first page
-        size: 1, // Only one item in size
-        totalCount: 1, // Total count is one
-        totalPages: 1, // Only one page in total
-      });
-    } else {
-      // If no conditions are met, set the page assets data to null
-      setPageAssetsData(null);
     }
-  }, [assetsDetails, assetsDetailsError, category?.key]);
+  }, [
+    assetList,
+    assetListIsLoading,
+    assetsDetails,
+    assetsDetailsAreLoading,
+    category?.key,
+    userIsFilteringOrSearching,
+  ]);
 
   // -------------------------------------------------------------------------------------
   // PAGE STYLES & PAGINATED LIST PROPS
@@ -610,7 +675,11 @@ const AssetList = ({
                 onChange={onStatusChange}
                 value={statusFilter}
                 placeholder={t('labels.assetStatus')}
-                disabled={assetListIsLoading || assetsDetailsAreLoading}
+                disabled={
+                  assetListIsLoading ||
+                  assetsDetailsAreLoading ||
+                  ['media-files', 'bookmarks'].includes(categoryFilter)
+                }
                 skipFlex
               />
             )}
@@ -658,7 +727,6 @@ const AssetList = ({
                   selectable
                   selected={selectedAsset}
                   columns={columns}
-                  loading={assetsDetailsAreLoading}
                   layout="grid"
                   page={page}
                   size={pageSize}
@@ -677,7 +745,16 @@ const AssetList = ({
                 />
               </Box>
             )}
-            {!assetListIsLoading && isEmpty(assetList) && !assetsDetailsAreLoading && (
+            {!showFilteringEmptyState &&
+              (!!pageAssetsData?.isEmpty || !pageAssetsData?.items?.length) && (
+                <ListEmpty
+                  t={t}
+                  isRecentPage={category?.key === RECENT_CATEGORY}
+                  category={category}
+                  key={category?.key}
+                />
+              )}
+            {showFilteringEmptyState && (
               <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
                 {getEmptyState()}
               </Stack>
@@ -707,7 +784,7 @@ const AssetList = ({
           >
             <CardDetailWrapper
               category={
-                category?.id && !category?.key.startsWith(SUBJECT_CATEGORY)
+                category?.id && !category?.key?.startsWith(SUBJECT_CATEGORY)
                   ? category
                   : categories?.find((_category) => _category?.id === selectedAsset?.category)
               }
@@ -725,6 +802,7 @@ const AssetList = ({
               onUnpin={handleOnUnpin}
               onRefresh={handleRefresh}
               onDownload={handleOnDownload}
+              onAssign={handleOnAssign}
               onCloseDrawer={() => {
                 forgetAssetToOpen();
                 setIsDrawerOpen(false);

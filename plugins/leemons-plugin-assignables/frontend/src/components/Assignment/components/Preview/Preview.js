@@ -1,9 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { uniq } from 'lodash';
 import NYACard from '@assignables/components/NYACard';
-import { Box } from '@bubbles-ui/components';
 import { Container } from '../Container';
 
 export default function Preview({ assignable, localizations }) {
@@ -13,6 +12,7 @@ export default function Preview({ assignable, localizations }) {
   const instance = {
     assignable: {
       ...assignable,
+      role: assignable?.role ?? assignable?.roleDetails?.name,
       asset: {
         ...assignable?.asset,
         name: values?.title ?? assignable?.asset?.name,
@@ -35,3 +35,8 @@ export default function Preview({ assignable, localizations }) {
     </Container>
   );
 }
+
+Preview.propTypes = {
+  assignable: propTypes.object,
+  localizations: propTypes.object,
+};

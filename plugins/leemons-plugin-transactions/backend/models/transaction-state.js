@@ -5,7 +5,6 @@ const transactionStateSchema = new mongoose.Schema(
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     transaction: {
       type: mongoose.ObjectId,
@@ -31,9 +30,11 @@ const transactionStateSchema = new mongoose.Schema(
   }
 );
 
+transactionStateSchema.index({ deploymentID: 1, transaction: 1 });
+
 let TransactionState = null;
 if (mongoose.connection.models.hasOwnProperty('transaction_TransactionState')) {
-  TransactionState = mongoose.connection.models['transaction_TransactionState'];
+  TransactionState = mongoose.connection.models.transaction_TransactionState;
 } else {
   TransactionState = mongoose.connection.model(
     'transaction_TransactionState',

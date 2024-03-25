@@ -1,21 +1,20 @@
 import { useProgramDetail } from '@academic-portfolio/hooks';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { Box, createStyles, DatePicker, Select } from '@bubbles-ui/components';
-import { unflatten } from '@common';
+import { Box, createStyles, Select } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { getSessionConfig } from '@users/session';
-import _ from 'lodash';
 import React from 'react';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
+import useSelectedPeriod from '../ScoresPage/Filters/hooks/useSelectedPeriod';
+import PickDate from '../ScoresPage/Filters/components/PickDate';
+import useAcademicCalendarDates from '../ScoresPage/Filters/hooks/useAcademicCalendarDates';
+import SelectPeriod from '../ScoresPage/Filters/components/SelectPeriod';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
     paddingInline: 48,
-  },
-  widthContainer: {
-    width: 750,
   },
   inputsContainer: {
     display: 'flex',
@@ -28,151 +27,16 @@ const useFiltersStyles = createStyles((theme) => ({
     marginTop: theme.spacing[1],
     gap: theme.spacing[5],
     alignItems: 'center',
+    minWidth: 200,
     '& > *': {
-      maxWidth: `calc(50% - ${theme.spacing[5] / 2}px)`, // 50% - inputs.gap
       flexGrow: 1,
     },
   },
 }));
 
-function useFiltersLocalizations() {
-  const key = prefixPN('studentScoresPage.filters');
-  const [, translations] = useTranslateLoader(key);
-
-  return React.useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return _.get(res, key);
-    }
-
-    return {};
-  }, [translations]);
-}
-
-function useSelectedPeriod({ periods, control, program, selectedCourse, finalLabel }) {
-  const [periodSelected, startDate, endDate] = useWatch({
-    control,
-    name: ['period', 'startDate', 'endDate'],
-  });
-
-  const period = Array.isArray(periodSelected) ? periodSelected[0] : periodSelected;
-
-  if (period === 'custom') {
-    return {
-      selected: period,
-      isCustom: true,
-      isComplete: startDate && endDate,
-      startDate,
-      endDate,
-    };
-  }
-
-  // eslint-disable-next-line eqeqeq
-  let selectedPeriod = periods.find((p) => p.id == period);
-
-  if (period === 'final') {
-    const academicPeriods = periods.filter((p) => p?.periods);
-
-    const periodsInFinal = academicPeriods.map((p) => p?.periods?.[program]?.[selectedCourse]);
-
-    selectedPeriod = {
-      startDate: academicPeriods[0]?.startDate,
-      endDate: academicPeriods[academicPeriods.length - 1]?.endDate,
-      id: 'final',
-      name: finalLabel,
-      program,
-      selectedCourse,
-      type: 'academic-calendar',
-      realPeriods: periodsInFinal,
-      periods: academicPeriods,
-    };
-  } else if (selectedPeriod) {
-    if (selectedPeriod.periods && selectedCourse) {
-      selectedPeriod = {
-        ..._.omit(selectedPeriod, ['id', 'programs', 'courses', 'periods']),
-        program,
-        course: selectedCourse,
-        id: selectedPeriod.periods[program][selectedCourse],
-        type: 'academic-calendar',
-      };
-    } else {
-      selectedPeriod = {
-        ..._.omit(selectedPeriod, ['programs', 'courses']),
-        program,
-        course: selectedCourse || null,
-        type: 'scores',
-      };
-    }
-  }
-
-  return {
-    selected: period,
-    period: selectedPeriod,
-    isComplete: !!selectedPeriod,
-    startDate: selectedPeriod?.startDate,
-    endDate: selectedPeriod?.endDate,
-  };
-}
-
-function usePeriodTypes() {
-  const [, translations] = useTranslateLoader(prefixPN('periodTypes'));
-
-  return React.useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      return _.get(res, prefixPN('periodTypes'));
-    }
-
-    return {};
-  }, [translations]);
-}
-
-function PickDate({ control, name, localizations }) {
-  const opposite = name === 'endDate' ? 'startDate' : 'endDate';
-
-  const savedDate = useWatch({ control, name: opposite });
-  const date = new Date(savedDate);
-
-  const minDate =
-    name === 'endDate' && date.getTime() ? new Date(date.setDate(date.getDate() + 1)) : undefined;
-  const maxDate =
-    name === 'startDate' && date.getTime() ? new Date(date.setDate(date.getDate() - 1)) : undefined;
-
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => {
-        if (name === 'endDate' && field.value && !minDate) {
-          field.onChange(null);
-        }
-
-        if (name === 'endDate' && !field.value && minDate) {
-          const newDate = new Date();
-          newDate.setDate(minDate.getDate() + 1);
-          field.onChange(newDate);
-        }
-
-        return (
-          <DatePicker
-            {...field}
-            minDate={minDate}
-            maxDate={maxDate}
-            disabled={name === 'endDate' && !minDate}
-            // label={localizations?.[name]?.label}
-            placeholder={localizations?.[name]?.placeholder}
-          />
-        );
-      }}
-    />
-  );
-}
-
 export function Filters({ onChange, setKlasses }) {
-  const { classes, cx } = useFiltersStyles();
-  const localizations = useFiltersLocalizations();
+  const { classes } = useFiltersStyles();
+  const [t] = useTranslateLoader(prefixPN('studentScoresPage.filters'));
   const { program } = getSessionConfig();
   const { data: programDetails } = useProgramDetail(program, {
     enabled: !!program,
@@ -183,32 +47,27 @@ export function Filters({ onChange, setKlasses }) {
     () => programDetails?.courses.map((course) => ({ value: course.id, label: course.name })),
     [programDetails]
   );
-  // const courses = [
-  //   {
-  //     value:
-  //       'lrn:local:academic-portfolio:local:659408f8731bf11b6e1c524e:Groups:65940b3c7833fb3b467733b9',
-  //     label: '5',
-  //   },
-  // ];
 
-  const defaultCourseValue = courses?.length === 1 ? courses[0].value : undefined;
-  const { control, watch } = useForm({
-    defaultValues: {
-      class: defaultCourseValue,
-    },
-  });
+  const form = useForm({});
+  const { control, watch } = form;
+
   const selectedCourse = watch('class');
+
   const { periods } = useMatchingAcademicCalendarPeriods({
     classes: classesData,
     filters: { program, course: selectedCourse },
   });
-  const periodTypes = usePeriodTypes();
   const selectedPeriod = useSelectedPeriod({
     periods,
     control,
     program,
     selectedCourse,
-    finalLabel: localizations?.period?.final,
+    finalLabel: t('period.final'),
+  });
+
+  const { startDate, endDate } = useAcademicCalendarDates({
+    control,
+    selectedClass: { program, courses: { id: selectedCourse } },
   });
 
   // Emit onChange
@@ -239,72 +98,49 @@ export function Filters({ onChange, setKlasses }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.inputsContainer}>
-        <Box className={cx(classes.inputs, classes.widthContainer)}>
-          {courses?.length > 1 && (
-            <Controller
-              control={control}
-              name="class"
-              render={({ field }) => (
-                <Select
-                  placeholder={localizations.course?.placeholder}
-                  data={courses}
-                  autoSelectOneOption
-                  {...field}
-                />
-              )}
-            />
-          )}
+        <Box className={classes.inputs}>
           <Controller
             control={control}
-            name="period"
+            name="class"
             render={({ field }) => {
-              const data = [
-                ...periods.map((period) => ({
-                  value: period.id,
-                  label: period.name,
-                  group: period.group,
-                })),
-                {
-                  value: 'custom',
-                  label: localizations?.period?.custom,
-                },
-              ];
-
-              if (data.some((period) => period.group === periodTypes?.academicCalendar)) {
-                data.push({
-                  value: 'final',
-                  label: localizations?.period?.final,
-                  group: periodTypes?.academicCalendar,
-                });
+              if (!courses?.length) {
+                return null;
               }
 
-              const valueExists =
-                !field.value ||
-                field.value === 'custom' ||
-                // eslint-disable-next-line
-                !!data.find((d) => d.value == field.value);
-
-              if (!valueExists) {
-                field.onChange(null);
+              if (courses?.length === 1) {
+                if (!field.value) {
+                  field.onChange(courses[0].value);
+                }
+                return null;
               }
 
               return (
                 <Select
-                  // label={localizations.period?.label}
-                  placeholder={localizations.period?.placeholder}
-                  data={data}
+                  placeholder={t('course.placeholder')}
+                  data={courses}
+                  autoSelectOneOption
                   {...field}
                 />
               );
             }}
           />
+
+          <Controller
+            control={control}
+            name="period"
+            render={({ field }) => (
+              <SelectPeriod {...field} periods={periods} t={t} disabled={!selectedCourse} />
+            )}
+          />
         </Box>
-        {selectedPeriod.selected === 'custom' && (
-          <Box className={classes.inputs}>
-            <PickDate control={control} name="startDate" localizations={localizations} />
-            <PickDate control={control} name="endDate" localizations={localizations} />
-          </Box>
-        )}
+        {selectedPeriod.selected === 'custom' &&
+          startDate !== undefined &&
+          endDate !== undefined && (
+            <Box className={classes.inputs}>
+              <PickDate form={form} name="startDate" defaultValue={startDate} />
+              <PickDate form={form} name="endDate" defaultValue={endDate} />
+            </Box>
+          )}
       </Box>
     </Box>
   );

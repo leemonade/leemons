@@ -550,7 +550,10 @@ export default function Result() {
 
                   <Stack justifyContent="end" spacing={2}>
                     {isTeacher && canShowFeedback ? (
-                      <Button leftIcon={<SendMessageIcon />} onClick={() => sendFeedback()}>
+                      <Button
+                        leftIcon={<SendMessageIcon />}
+                        onClick={() => setTimeout(() => sendFeedback(), 100)}
+                      >
                         {t('saveAndSendFeedback')}
                       </Button>
                     ) : null}

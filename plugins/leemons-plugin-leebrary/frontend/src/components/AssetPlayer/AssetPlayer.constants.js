@@ -27,6 +27,7 @@ export const ASSET_PLAYER_DEFAULT_PROPS = {
   compact: false,
   useAspectRatio: true,
   showPlayButton: true,
+  ccMode: false,
 };
 export const ASSET_PLAYER_PROP_TYPES = {
   asset: PropTypes.any,
@@ -56,4 +57,5 @@ export const ASSET_PLAYER_PROP_TYPES = {
   compact: PropTypes.bool,
   useAspectRatio: PropTypes.bool,
   showPlayButton: PropTypes.bool,
+  ccMode: PropTypes.bool,
 };

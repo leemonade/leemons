@@ -3,6 +3,7 @@ const { rollbackTransaction } = require('@leemons/transactions');
 const { LeemonsError } = require('@leemons/error');
 const { ObjectId } = require('mongoose').Types;
 const { getActionNameFromCTX } = require('@leemons/service-name-parser');
+const { Query } = require('mongoose');
 const { create } = require('./queries/create');
 const { find } = require('./queries/find');
 const { findById } = require('./queries/findById');
@@ -20,6 +21,60 @@ const { save } = require('./queries/save');
 const { createTransactionIDIfNeed } = require('./queries/helpers/createTransactionIDIfNeed');
 const { insertMany } = require('./queries/insertMany');
 
+function tracingWrapper(f, modelParams) {
+  const { ctx } = modelParams;
+
+  return (...params) => {
+    if (!ctx?.span) {
+      return f(modelParams)(...params);
+    }
+    const span = ctx.broker.tracer.startSpan(`mongoose ${f.name}`, {
+      parentSpan: ctx.span,
+      service: 'mongoose',
+      type: 'mongoose',
+      tags: {
+        model: modelParams.model.modelName,
+        action: getActionNameFromCTX(ctx),
+        method: f.name,
+        params,
+      },
+    });
+
+    const response = f(modelParams)(...params);
+
+    // Check if is a mongoose query
+    if (response instanceof Query) {
+      // Logic to handle mongoose query object
+      const oldExec = response.exec;
+      response.exec = (op) =>
+        oldExec
+          .call(response, op)
+          .then((res) => {
+            span.finish();
+            return res;
+          })
+          .catch((error) => {
+            span.setError(error);
+            span.finish();
+            throw error;
+          });
+
+      return response;
+    }
+
+    return response
+      .then((res) => {
+        ctx.finishSpan(span);
+        return res;
+      })
+      .catch((error) => {
+        span.setError(error);
+        ctx.finishSpan(span);
+        throw error;
+      });
+  };
+}
+
 function getModelActions({
   model,
   modelKey,
@@ -31,7 +86,7 @@ function getModelActions({
   ctx,
 }) {
   return {
-    save: save({
+    save: tracingWrapper(save, {
       model,
       modelKey,
       ignoreTransaction,
@@ -41,7 +96,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    create: create({
+    create: tracingWrapper(create, {
       model,
       modelKey,
       ignoreTransaction,
@@ -51,7 +106,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    find: find({
+    find: tracingWrapper(find, {
       model,
       modelKey,
       ignoreTransaction,
@@ -61,7 +116,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findById: findById({
+    findById: tracingWrapper(findById, {
       model,
       modelKey,
       ignoreTransaction,
@@ -71,7 +126,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findOne: findOne({
+    findOne: tracingWrapper(findOne, {
       model,
       modelKey,
       ignoreTransaction,
@@ -81,7 +136,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findByIdAndDelete: findByIdAndDelete({
+    findByIdAndDelete: tracingWrapper(findByIdAndDelete, {
       model,
       modelKey,
       ignoreTransaction,
@@ -91,7 +146,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findByIdAndRemove: findByIdAndDelete({
+    findByIdAndRemove: tracingWrapper(findByIdAndDelete, {
       model,
       modelKey,
       ignoreTransaction,
@@ -101,7 +156,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findOneAndDelete: findOneAndDelete({
+    findOneAndDelete: tracingWrapper(findOneAndDelete, {
       model,
       modelKey,
       ignoreTransaction,
@@ -111,7 +166,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findOneAndRemove: findOneAndDelete({
+    findOneAndRemove: tracingWrapper(findOneAndDelete, {
       model,
       modelKey,
       ignoreTransaction,
@@ -121,7 +176,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findByIdAndUpdate: findByIdAndUpdate({
+    findByIdAndUpdate: tracingWrapper(findByIdAndUpdate, {
       model,
       modelKey,
       ignoreTransaction,
@@ -131,7 +186,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    findOneAndUpdate: findOneAndUpdate({
+    findOneAndUpdate: tracingWrapper(findOneAndUpdate, {
       model,
       modelKey,
       ignoreTransaction,
@@ -144,7 +199,7 @@ function getModelActions({
     findOneAndReplace: () => {
       throw new Error('findOneAndReplace not implemented');
     },
-    updateOne: updateOne({
+    updateOne: tracingWrapper(updateOne, {
       model,
       modelKey,
       ignoreTransaction,
@@ -154,7 +209,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    updateMany: updateMany({
+    updateMany: tracingWrapper(updateMany, {
       model,
       modelKey,
       ignoreTransaction,
@@ -164,7 +219,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    deleteOne: deleteOne({
+    deleteOne: tracingWrapper(deleteOne, {
       model,
       modelKey,
       ignoreTransaction,
@@ -174,7 +229,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    deleteMany: deleteMany({
+    deleteMany: tracingWrapper(deleteMany, {
       model,
       modelKey,
       ignoreTransaction,
@@ -184,7 +239,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    countDocuments: countDocuments({
+    countDocuments: tracingWrapper(countDocuments, {
       model,
       modelKey,
       ignoreTransaction,
@@ -194,7 +249,7 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
-    insertMany: insertMany({
+    insertMany: tracingWrapper(insertMany, {
       model,
       modelKey,
       ignoreTransaction,
@@ -312,6 +367,19 @@ const mixin = ({
   models,
 }) => ({
   name: '',
+  metadata: {
+    mixins: {
+      LeemonsMongoDBMixin: true,
+    },
+    LeemonsMongoDBMixin: {
+      models: ({ ctx, ...options }) =>
+        getDBModels({
+          ...options,
+          ctx,
+          models,
+        }),
+    },
+  },
   actions: {
     leemonsMongoDBRollback: {
       async handler(ctx) {

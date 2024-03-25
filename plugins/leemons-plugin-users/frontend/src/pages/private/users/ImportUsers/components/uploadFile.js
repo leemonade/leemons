@@ -1,5 +1,5 @@
 import { Box, Button, ContextContainer, FileUpload, NumberInput } from '@bubbles-ui/components';
-import { CloudUploadIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import _ from 'lodash';
@@ -107,7 +107,7 @@ export function UploadFile({ t, center, profile }) {
     >
       {!store.file ? (
         <FileUpload
-          icon={<CloudUploadIcon height={32} width={32} />}
+          icon={<DownloadIcon height={32} width={32} />}
           title={t('browseFile')}
           subtitle={t('dropFile')}
           hideUploadButton

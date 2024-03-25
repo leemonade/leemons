@@ -101,7 +101,6 @@ export default function Responses(props) {
                 : index + 1}
             </Text>
           </Box>
-
           {clued ? (
             <Box className={cx(styles.mapViewContent, styles.mapViewContentClue)}>
               {question.properties.markers.list[index].response}

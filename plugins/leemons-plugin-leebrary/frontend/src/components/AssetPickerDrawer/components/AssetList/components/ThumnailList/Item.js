@@ -3,7 +3,7 @@ import prepareAsset from '@leebrary/helpers/prepareAsset';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const ITEM_WIDTH = 216;
+const ITEM_WIDTH = 208;
 const ITEM_HEIGHT = 170;
 
 export const useItemStyles = createStyles((theme, { color }) => {

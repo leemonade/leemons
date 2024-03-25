@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Container, Head, Html, Preview, Text } from '@react-email/components';
-import EmailLayout from './EmailLayout.jsx';
+import { Button, Container, Text } from '@react-email/components';
+import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
 
 const messages = {
   en: {
@@ -24,25 +24,23 @@ const ResetPasword = ({ locale = 'en' } = {}) => {
   const previewText = `[Leemons] ${messages[locale].title}`;
 
   return (
-    <Html>
-      <Head />
-      <Preview>{previewText}</Preview>
-      <EmailLayout title={messages[locale].title}>
-        <Container className="text-center mt-4">
-          <Text className="text-sm font-bold leading-4">{messages[locale].actionText}</Text>
-          <Button
-            href="{{it.loginUrl}}"
-            className="bg-[#B4E600] py-2 px-4 my-2 rounded text-black text-[12px] no-underline text-center"
-          >
-            {messages[locale].buttonText}
-          </Button>
-        </Container>
+    <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>
+      <Container className="text-center">
+        <span className="text-[16px] font-medium leading-6 block mt-4">
+          {messages[locale].actionText}
+        </span>
+        <Button
+          href="{{it.loginUrl}}"
+          className="bg-[#B4E600] py-3 px-4 mt-10 mb-6 rounded text-black text-[14px] no-underline text-center"
+        >
+          {messages[locale].buttonText}
+        </Button>
+      </Container>
 
-        <Container className="text-center mt-2">
-          <Text className="text-xs">{messages[locale].noActionText}</Text>
-        </Container>
-      </EmailLayout>
-    </Html>
+      <Container className="text-center mt-2">
+        <Text className="text-[14px] leading-5">{messages[locale].noActionText}</Text>
+      </Container>
+    </EmailLayout>
   );
 };
 

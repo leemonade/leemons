@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     profile: {
       type: String,
@@ -29,6 +27,10 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ profile: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ profile: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ role: 1, deploymentID: 1, isDeleted: 1 });
 
 const profileRoleModel = newModel(mongoose.connection, 'v1::users_ProfileRole', schema);
 

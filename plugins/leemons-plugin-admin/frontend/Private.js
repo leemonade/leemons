@@ -6,7 +6,7 @@ import pMinDelay from 'p-min-delay';
 import { LocaleContainer } from './src/components/LocaleContainer';
 import { UserRedirect } from './src/components/UserRedirect';
 
-const Setup = loadable(() => pMinDelay(import('./src/pages/private/Setup'), 1000));
+const Setup = loadable(() => pMinDelay(import('./src/pages/private/Setup'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

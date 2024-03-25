@@ -37,9 +37,10 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
         classesData[klass.id] = {
           id: klass.id,
           subject: klass.subject.id,
-          fullName: klass.groups.isAlone
-            ? klass.subject.name
-            : `${klass.subject.name} - ${klass.groups.name}`,
+          fullName:
+            !klass.groups || klass.groups?.isAlone
+              ? klass.subject.name
+              : `${klass.subject.name} - ${klass.groups.name}`,
           icon: klass.subject.icon,
           color: klass.color,
         };

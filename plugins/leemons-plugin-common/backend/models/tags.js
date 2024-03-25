@@ -16,10 +16,12 @@ const schema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
+      index: 1,
     },
     tag: {
       type: String,
       required: true,
+      index: 1,
     },
     value: {
       type: String,

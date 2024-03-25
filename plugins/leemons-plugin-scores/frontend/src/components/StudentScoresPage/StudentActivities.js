@@ -1,58 +1,18 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
-import prefixPN from '@assignables/helpers/prefixPN';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import {
-  Box,
-  ImageLoader,
-  Loader,
-  ScoreFronstage,
-  Select,
-  Switch,
-  createStyles,
-} from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { Box, Loader, ScoreFronstage, Select, Switch, createStyles } from '@bubbles-ui/components';
 import { useScores } from '@scores/requests/hooks/queries';
-import _, { capitalize, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import getNearestScale from '@scorm/helpers/getNearestScale';
+import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
+import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
 import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
-
-function ClassIcon({ class: klass, dropdown = false }) {
-  return (
-    <Box
-      sx={() => ({
-        position: dropdown ? 'static' : 'absolute',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: 26,
-        minHeight: 26,
-        maxWidth: 26,
-        maxHeight: 26,
-        borderRadius: '50%',
-        backgroundColor: klass?.color,
-      })}
-    >
-      <ImageLoader
-        sx={() => ({
-          borderRadius: 0,
-          filter: 'brightness(0) invert(1)',
-        })}
-        forceImage
-        width={16}
-        height={16}
-        src={getClassIcon(klass)}
-      />
-    </Box>
-  );
-}
 
 function LoadingState() {
   return (
@@ -71,54 +31,7 @@ function LoadingState() {
   );
 }
 
-function useActivities(activities) {
-  const previousResult = React.useRef([]);
-
-  const {
-    data: assignableInstances,
-    isLoading,
-    isRefetching,
-  } = useInstances({
-    ids: activities || [],
-    enabled: !!activities?.length,
-  });
-
-  if (isRefetching || isLoading) {
-    return {
-      assignableInstances: previousResult.current,
-      isLoading: isRefetching || isLoading,
-    };
-  }
-
-  previousResult.current = assignableInstances;
-  return {
-    assignableInstances,
-    isLoading,
-  };
-}
-
-function useRoles() {
-  const [, translations] = useTranslateLoader(prefixPN('roles'));
-
-  return React.useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('roles'));
-
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return Object.entries(data).map(([key, value]) => ({
-        label: capitalize(value.singular),
-        plural: capitalize(value.plural),
-        value: key,
-      }));
-    }
-
-    return [];
-  }, [translations]);
-}
-
-const StudentActivitiesStyles = createStyles((theme) => ({
+const StudentActivitiesStyles = createStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -183,6 +96,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     enabled: assignationsData?.length > 0,
   });
   const useLetterScore = useMemo(() => evaluationSystem?.type !== 'numeric', [evaluationSystem]);
+
   const { data: scores, isLoading: scoresIsLoading } = useScores({
     students: [user],
     classes: map(klasses, 'id'),
@@ -194,15 +108,17 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (!evaluationSystem) return null;
     if (!useLetterScore) return null;
 
-    return getNearestScale({ grade: score, evaluationSystem });
+    return getNearestScale({ grade: score, evaluationSystem }).letter;
   };
 
   const getAverageScore = (klass, classActivities) => {
     const periodScore = scores.find((score) => score.class === klass.id)?.grade;
     if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
-      classActivities.reduce((total, next) => total + next.score.number, 0) /
-        classActivities.length || 0;
+      classActivities.reduce(
+        (total, next) => total + (next?.score?.number ?? evaluationSystem.minScale.number),
+        0
+      ) / classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
   };
 
@@ -213,7 +129,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     if (!activityAssignation) return {};
     const date = activityAssignation.timestamps.end
       ? new Date(activityAssignation.timestamps.end)
-      : labels.notDelivered;
+      : labels?.notDelivered;
     const grade =
       activityAssignation.grades.find((assignationGrade) => assignationGrade.subject === klassId)
         ?.grade || 0;
@@ -230,43 +146,59 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const classesIds = [];
     const filteredActivities = [];
     activities?.forEach((activity) => {
-      if (!activity.requiresScoring) return;
+      if (!activity.requiresScoring || activity?.metadata?.module?.type === 'module') return;
+
       // Filters non-calificable activities except when the filter is set to TRUE
-      if (!!activity.gradable || localFilters.seeNonCalificable) {
-        // If type is selected, filters activities matching type
-        if (
-          !localFilters.type ||
-          (localFilters.type && localFilters.type === activity.assignable.role)
-        ) {
-          classesIds.push(...activity.classes);
-          filteredActivities.push(activity);
-        }
+      // If type is selected, filters activities matching type
+      if (
+        (activity.gradable || localFilters.seeNonCalificable) &&
+        (!localFilters.type ||
+          (localFilters.type && localFilters.type === activity.assignable.role))
+      ) {
+        classesIds.push(...activity.classes);
+        filteredActivities.push(activity);
       }
     });
     return { filteredActivities, classesIds };
   };
 
-  const getClassActivities = (filteredActivities, klass) => {
+  const getClassActivities = (filteredActivities, klass, evaluationSystem) => {
     const classActivitiesRaw = filteredActivities.filter((activity) =>
       activity.classes.includes(klass.id)
     );
-    return classActivitiesRaw.map((activity) => {
-      const gotDeadline = activity?.dates?.deadline;
-      if (!!gotDeadline && new Date(gotDeadline) < new Date()) return null;
-      const percentage = (100 / classActivitiesRaw.length)?.toFixed(0);
-      const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
-      const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
-        .replace(':id', activity.id)
-        .replace(':user', user);
-      return {
-        title: activity.assignable.asset.name,
-        score: { number: activityScore, letter: getLetterScore(activityScore) },
-        percentage,
-        date: activityDate,
-        nonCalificable: !activity.gradable,
-        onClick: () => window.open(activityURL, '_blank', 'noopener'),
-      };
-    });
+    return classActivitiesRaw
+      .map((activity) => {
+        const percentage = (100 / classActivitiesRaw.length)?.toFixed(0);
+        const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
+
+        const gotDeadline =
+          activityDate instanceof Date
+            ? activityDate
+            : activity?.dates?.closed ?? activity?.dates?.deadline;
+        if (!!gotDeadline && new Date(gotDeadline) > new Date()) return null;
+
+        let score = activityScore;
+
+        if (score < evaluationSystem.minScale.number) {
+          score = evaluationSystem.minScale.number;
+        } else if (score > evaluationSystem.maxScale.number) {
+          score = evaluationSystem.maxScale.number;
+        }
+
+        const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
+          .replace(':id', activity.id)
+          .replace(':user', user);
+        return {
+          id: activity.id,
+          title: activity.assignable.asset.name,
+          score: { number: score, letter: getLetterScore(activityScore) },
+          percentage,
+          date: activityDate,
+          nonCalificable: !activity.gradable,
+          onClick: () => window.open(activityURL, '_blank', 'noopener'),
+        };
+      })
+      .filter(Boolean);
   };
 
   const renderScores = () => {
@@ -282,7 +214,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
 
     const { filteredActivities, classesIds } = filterActivities();
     const uniqueClassesIds = [...new Set(classesIds)];
-    const filteredClasses = klasses.filter((klass) =>
+    const filteredClasses = klasses?.filter((klass) =>
       localFilters.subject
         ? localFilters.subject === klass.id && uniqueClassesIds.includes(klass.id)
         : uniqueClassesIds.includes(klass.id)
@@ -291,14 +223,15 @@ export default function StudentActivities({ klasses, filters, labels }) {
     setRenderedScores(
       filteredClasses && filteredClasses.length ? (
         filteredClasses.map((klass) => {
-          const classActivities = getClassActivities(filteredActivities, klass);
+          const classActivities = getClassActivities(filteredActivities, klass, evaluationSystem);
           const averageScore = getAverageScore(klass, classActivities);
+
           return (
             <ScoreFronstage
               key={klass.id}
               title={klass.subject.name}
               subtitle={klass.groups.name}
-              label={labels.averageScore}
+              label={labels?.averageScore}
               image={getClassImage(klass)}
               icon={getClassIcon(klass)}
               color={klass.color}
@@ -331,34 +264,36 @@ export default function StudentActivities({ klasses, filters, labels }) {
   return (
     <Box className={classes.root}>
       <Box className={classes.filters}>
-        <Select
-          placeholder={labels.subject.placeholder}
-          data={klasses.map((klass) => {
-            const klassName =
-              !klass.groups.isAlone && klass.groups?.name
-                ? `${klass.subject.name} - ${klass.groups.name}`
-                : klass.subject.name;
-            return {
-              value: klass.id,
-              c: klass,
-              label: klassName,
-              icon: <ClassIcon class={klass} dropdown />,
-            };
-          })}
+        <SelectSubject
+          placeholder={labels?.subject?.placeholder}
+          data={
+            klasses?.map((klass) => {
+              const isGroupAlone = !klass.groups || klass.groups.isAlone;
+              const klassName =
+                !isGroupAlone && klass.groups?.name
+                  ? `${klass.subject.name} - ${klass.groups.name}`
+                  : klass.subject.name;
+              return {
+                ...klass.subject,
+                value: klass.id,
+                label: klassName,
+              };
+            }) ?? []
+          }
           value={localFilters.subject}
           onChange={(value) => handleFilterOnChange('subject', value)}
-          clearable={labels.type.clear}
+          clearable={labels?.type?.clear}
         />
         <Select
-          placeholder={labels.type.placeholder}
+          placeholder={labels?.type?.placeholder}
           data={roles}
           value={localFilters.type}
           onChange={(value) => handleFilterOnChange('type', value)}
-          clearable={labels.type.clear}
+          clearable={labels?.type?.clear}
         />
         <Box className={classes.switchContainer}>
           <Switch
-            label={labels.seeNonCalificable}
+            label={labels?.seeNonCalificable}
             value={localFilters.seeNonCalificable}
             onChange={(value) => handleFilterOnChange('seeNonCalificable', value)}
           />

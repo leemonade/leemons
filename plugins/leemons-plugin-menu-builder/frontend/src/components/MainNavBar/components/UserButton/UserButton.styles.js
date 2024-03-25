@@ -49,8 +49,8 @@ export const UserButttonStyles = createStyles((theme, { opened }) => {
       position: 'absolute',
       bottom: 49,
       width: '100%',
-      maxHeight: 220,
-      overflowY: 'scroll',
+      maxHeight: 260,
+      overflowY: 'auto',
       boxShadow:
         '0px 10px 36px 0px rgba(26, 32, 43, 0.16), 0px 2px 0px 0px rgba(221, 225, 230, 0.24)',
     },

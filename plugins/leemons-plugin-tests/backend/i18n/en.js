@@ -1,6 +1,6 @@
 module.exports = {
   questionsBanksList: {
-    pageTitle: 'Questions Banks List',
+    pageTitle: 'Question Banks List',
     nameHeader: 'Name',
     nQuestionsHeader: 'Questions',
     levelHeader: 'Level',
@@ -25,7 +25,7 @@ module.exports = {
     subjectLabel: 'Subject',
     subjectRequired: 'Field required',
     pageTitle: 'Editing question bank',
-    pageTitleNew: 'New questions bank',
+    pageTitleNew: 'New question bank',
     saveDraft: 'Save as draft',
     publish: 'Publish',
     finish: 'Finish',
@@ -58,12 +58,12 @@ module.exports = {
     questionImage: 'Add featured image',
     responsesLabel: 'Answers',
     responseLabel: 'Answer',
-    errorMarkGoodResponse: 'You must mark a good response',
+    errorMarkGoodResponse: 'You must mark a correct response',
     needImages: 'Answers must have images',
-    needExplanationAndResponse: 'All answers need a text and an explanation',
+    needExplanationAndResponse: 'All answers require a text and an explanation',
     needResponse: 'Answers must have a text',
     responsesDescription:
-      'First add the answers and then select the correct answer by clicking on the circle.',
+      'First, add the answers, then select the correct one by clicking on the circle.',
     addResponse: 'Add answer',
     responseRequired: 'Field required',
     explanationRequired: 'Field required',
@@ -88,7 +88,7 @@ module.exports = {
     addMap: 'Add map',
     itemsLabel: 'Answers',
     itemsDescriptionBeforeMap:
-      'Once you have added the number stickers to the image you can include the names',
+      'Once you have added the number stickers to the image, you can include the names',
     itemsDescription:
       'Mark ({{icon}}) the item that will be solved when the user requests a hint (you can set the hint mode in the assignment section).',
     createNumbering: 'Create numbering',
@@ -100,7 +100,7 @@ module.exports = {
     markersNeedResponseInAllItems: 'A text must be added to all elements',
     cancel: 'Cancel',
     hideOptionsLabel: 'Hide options',
-    hideOptionsHelp: 'Hidden option are identified by the icon {{icon}}',
+    hideOptionsHelp: 'Hidden options are identified by the icon {{icon}}',
     hasCoverLabel: 'Feature image',
     hideOptionNoRightAnswer: 'You must select the right answer first',
     headerTitlePlaceholder: 'Questions bank title',
@@ -220,6 +220,7 @@ module.exports = {
     addInstructions: 'Add instructions',
     other: 'Other',
     headerTitlePlaceholder: 'Test title',
+    cancel: 'Cancel',
   },
   testsDetail: {
     assign: 'Assign test',
@@ -257,6 +258,7 @@ module.exports = {
     no: 'No',
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
+    share: 'Share',
   },
   instructions: {
     instructions: 'Instructions',
@@ -269,10 +271,10 @@ module.exports = {
     noTimeLimit: 'No time limit',
     limitedTime: 'Limited time',
     limitedTimeDescription:
-      'Once you have started you have {time} to finish this activity, you must submit it before the end of this time.',
+      'Once started, you have {time} to complete this activity and must submit it before time runs out.',
     canNotStop: 'The test cannot be paused',
     canNotStopDescription:
-      'If you exit the application with the activity in progress, the activity will be terminated and the last submission saved before the moment of interruption will be automatically sent. If an error occurs in the system and you are kicked out of the activity, you must report it in order to rectify the error.',
+      'Exiting the application during an activity will terminate it. The last saved submission before interruption will be sent automatically. If you are expelled due to a system error, report it for resolution.',
   },
   studentInstance: {
     multiSubject: 'Multi-Subject',
@@ -283,7 +285,6 @@ module.exports = {
     prev: 'Previous',
     curriculum: 'Curriculum',
     next: 'Continue',
-    askForAHint: 'Ask for a hint...',
     'cluehide-response': 'Hide option',
     cluenote: 'Text track',
     pts: 'pts',
@@ -303,7 +304,7 @@ module.exports = {
     maxScore: 'Maximum score',
     importantInformation: 'Important information',
     informationOnlyView: 'This test is in "query only" mode',
-    informationStart: 'The starting date to be able to perform this test is: {date}',
+    informationStart: 'The start date to take this test is: {date}',
     minToApprove: 'Points to approve',
     beforeStart: 'To be considered',
     penalties: 'Penalties',
@@ -313,8 +314,8 @@ module.exports = {
     withoutPause2: 'the test once it has started.',
     withoutPause: 'Without pause',
     noTimeLimit: 'No time limit',
-    makeTheTest: 'Make the test',
-    howItWorks: 'How it works?',
+    makeTheTest: 'Start test',
+    howItWorks: 'How does it works?',
     limitedTime: 'Limited time',
     limitedTimeDescription:
       'Once started you have {time} to finish the test, if the time ends before you answer all the questions, only the questions answered up to the moment of the interruption will be scored.',
@@ -367,7 +368,7 @@ module.exports = {
   },
   testAssign: {
     pageTitle: 'Assign Test:',
-    assign: 'Assignar',
+    assign: 'Assign',
     config: 'Config',
     next: 'Continue',
     prev: 'Previous',

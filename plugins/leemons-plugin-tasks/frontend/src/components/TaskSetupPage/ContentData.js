@@ -8,7 +8,7 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@common/components';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { noop, uniq } from 'lodash';
 import PropTypes from 'prop-types';
@@ -75,6 +75,7 @@ function ContentData({
   const hasAttachments = watch('metadata.hasAttachments');
   const hasCurriculum = watch('metadata.hasCurriculum');
   const hasCustomObjectives = watch('metadata.hasCustomObjectives');
+  const hasSubjects = !!watch('subjects')?.length;
 
   function amITheLastStep() {
     return !!(!hasInstructions && !hasAttachments && !hasCurriculum && !hasCustomObjectives);
@@ -289,7 +290,7 @@ function ContentData({
                 <Submissions labels={labels} errorMessages={errorMessages} />
               </ContextContainer>
 
-              {!isExpress && (
+              {!isExpress && hasSubjects && (
                 <ContextContainer title={labels.evaluation} spacing={0}>
                   <Controller
                     control={control}

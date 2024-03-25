@@ -6,10 +6,8 @@ import pMinDelay from 'p-min-delay';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
-const Logout = loadable(() => pMinDelay(import('./src/pages/protected/Logout'), 1000));
-const SelectProfile = loadable(() =>
-  pMinDelay(import('./src/pages/protected/SelectProfile'), 1000)
-);
+const Logout = loadable(() => pMinDelay(import('./src/pages/protected/Logout'), 500));
+const SelectProfile = loadable(() => pMinDelay(import('./src/pages/protected/SelectProfile'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();

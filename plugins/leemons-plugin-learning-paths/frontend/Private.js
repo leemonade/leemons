@@ -11,20 +11,20 @@ import { useSearchParams } from '@common';
 import { useSession } from '@users/session';
 import { ModuleJourney } from '@learning-paths/pages/private/ModuleJourney/ModuleJourney';
 
-const Library = loadable(() => pMinDelay(import('./src/pages/private/Library'), 1000));
+const Library = loadable(() => pMinDelay(import('./src/pages/private/Library'), 500));
 const ModuleSetupPage = loadable(() =>
-  pMinDelay(import('./src/pages/private/ModuleSetupPage'), 1000)
+  pMinDelay(import('./src/pages/private/ModuleSetupPage'), 500)
 );
 const ModuleAssignPage = loadable(() =>
-  pMinDelay(import('./src/pages/private/ModuleAssignPage'), 1000)
+  pMinDelay(import('./src/pages/private/ModuleAssignPage'), 500)
 );
 
 const ModuleDashboardPage = loadable(() =>
-  pMinDelay(import('./src/pages/private/ModuleDashboardPage'), 1000)
+  pMinDelay(import('./src/pages/private/ModuleDashboardPage'), 500)
 );
 
 const ModuleJourneyPage = loadable(() =>
-  pMinDelay(import('./src/pages/private/ModuleJourney/ModuleJourney'), 1000)
+  pMinDelay(import('./src/pages/private/ModuleJourney/ModuleJourney'), 500)
 );
 
 function Fallback() {

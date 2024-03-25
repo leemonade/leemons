@@ -1,7 +1,7 @@
 {
   "name": "leemons-monorepo",
   "description": "The powerful, flexible, friendly Learning Experience Platform you're waiting for",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "license": "MIT",
   "private": true,
   "repository": {
@@ -49,6 +49,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-sonarjs": "^0.21.0",
     "husky": "^8.0.3",
     "npm-check": "^6.0.1",

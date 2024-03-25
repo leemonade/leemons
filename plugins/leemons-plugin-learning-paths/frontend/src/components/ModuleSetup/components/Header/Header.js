@@ -42,6 +42,7 @@ function Header({ localizations, onCancel = noop }) {
       }
       icon={<ModuleCardIcon width={24} height={24} />}
       onCancel={onCancel}
+      mainActionLabel={localizations?.cancel}
     />
   );
 }

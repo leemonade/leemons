@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, ImageLoader, CardEmptyCover, ProgressRing, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@learning-paths/helpers/prefixPN';
+import { isNil } from 'lodash';
 import {
   DASHBOARD_CARD_COVER_DEFAULT_PROPS,
   DASHBOARD_CARD_COVER_PROP_TYPES,
@@ -20,13 +21,17 @@ const DashboardCardCover = ({
   cover,
   emptyIcon,
   fileType,
-  moduleColor,
   evaluationInfo,
   introductionCard,
+  subjects,
 }) => {
-  const { classes } = DashboardCardCoverStyles({ moduleColor });
+  const isMultiSubject = Array.isArray(subjects) && subjects?.length > 1;
+  const subjectColor = isMultiSubject ? 'rgb(135, 141, 150)' : subjects?.[0]?.color;
+  const { classes } = DashboardCardCoverStyles({ subjectColor });
   const [t] = useTranslateLoader(prefixPN('dashboard'));
-  const isSomethingEvaluable = evaluationInfo?.state === 'someDeliveredButNotAll';
+  const isSomethingEvaluable = ['someEvaluated', 'someDeliveredButNotAll'].includes(
+    evaluationInfo?.state
+  );
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -53,42 +58,6 @@ const DashboardCardCover = ({
     ),
     [emptyIcon]
   );
-  if (cover) {
-    return (
-      <Box className={classes.root}>
-        <ImageLoader src={cover} height={144} />
-        <Box className={classes.orderLabel}>{assetNumber}</Box>
-      </Box>
-    );
-  }
-  if (isSomethingEvaluable) {
-    const totalStudents = evaluationInfo?.totalStudents;
-    const totalStudentsFinished = evaluationInfo?.totalStudentsFinished;
-    const percentage = Math.round((totalStudentsFinished / totalStudents) * 100);
-    return (
-      <Box className={classes.commonContainer}>
-        <ProgressRing
-          rootColor={'#DDE1E6'}
-          sections={[{ value: percentage, color: '#307AE8' }]}
-          label={
-            <Box className={classes.labelPercentage}>
-              <Text className={classes.textPercentage}>{`${percentage}%`}</Text>
-            </Box>
-          }
-        />
-        <Text>{`(${totalStudentsFinished}/${totalStudents} ${t('students')})`}</Text>
-        <Box className={classes.orderLabel}>{assetNumber}</Box>
-      </Box>
-    );
-  }
-  if (!cover && fileType && introductionCard) {
-    return (
-      <Box className={classes.root}>
-        {MemoizedEmptyCoverIntroduction}
-        <Box className={classes.orderLabel}>{assetNumber}</Box>
-      </Box>
-    );
-  }
 
   const MemoizedEmptyCoverAsset = useMemo(
     () => (
@@ -112,11 +81,49 @@ const DashboardCardCover = ({
     ),
     [fileType]
   );
+
+  if (cover) {
+    return (
+      <Box className={classes.root}>
+        <ImageLoader src={cover} height={144} />
+        <Box className={classes.orderLabel}>{assetNumber}</Box>
+      </Box>
+    );
+  }
+  if (isSomethingEvaluable) {
+    const totalStudents = evaluationInfo?.totalStudents;
+    const totalStudentsFinished = evaluationInfo?.totalStudentsFinished;
+    const percentage = Math.round((totalStudentsFinished / totalStudents) * 100);
+    return (
+      <Box className={classes.commonContainer}>
+        <Box className={classes.color} />
+        <ProgressRing
+          rootColor={'#DDE1E6'}
+          sections={[{ value: percentage, color: '#307AE8' }]}
+          label={
+            <Box className={classes.labelPercentage}>
+              <Text className={classes.textPercentage}>{`${percentage}%`}</Text>
+            </Box>
+          }
+        />
+        <Text>{`(${totalStudentsFinished}/${totalStudents} ${t('students')})`}</Text>
+        <Box className={classes.orderLabel}>{assetNumber}</Box>
+      </Box>
+    );
+  }
+  if (!cover && fileType && introductionCard) {
+    return (
+      <Box className={classes.root}>
+        {MemoizedEmptyCoverIntroduction}
+        <Box className={classes.orderLabel}>{assetNumber}</Box>
+      </Box>
+    );
+  }
+
   const { grades } = assignation;
-  const isGradeAssigned =
-    Array.isArray(grades) && grades.length >= 1 && grades[0].grade !== null
-      ? grades[0].grade
-      : null;
+  const isGradeAssigned = !isNil(
+    Array.isArray(grades) && grades.length >= 1 && grades[0].grade !== null ? grades[0].grade : null
+  );
   return (
     <Box className={classes.root}>
       <Box className={classes.color} />

@@ -38,10 +38,7 @@ export function QuestionImage({ src, markers, values, clue }) {
             if (values) {
               backgroundColor = index === values[index] ? COLORS.fatic02 : COLORS.fatic01;
             }
-
-            if (clue) {
-              backgroundColor = clue.indexs.includes(index) ? COLORS.fatic03 : backgroundColor;
-            }
+            const opacity = markers.canShowHintMarker && marker.hideOnHelp ? 0.5 : 1;
 
             return (
               <Box
@@ -51,6 +48,7 @@ export function QuestionImage({ src, markers, values, clue }) {
                   top: marker.top,
                   left: marker.left,
                   backgroundColor,
+                  opacity,
                 }}
               >
                 {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
@@ -68,6 +66,8 @@ QuestionImage.propTypes = {
     type: PropTypes.string,
     backgroundColor: PropTypes.string,
     list: PropTypes.any,
+    canShowHintMarker: PropTypes.bool,
+    hideOnHelp: PropTypes.bool,
   }).isRequired,
   values: PropTypes.any,
   clue: PropTypes.any,

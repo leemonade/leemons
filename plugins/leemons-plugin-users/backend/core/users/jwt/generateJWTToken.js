@@ -6,10 +6,11 @@ const { getJWTPrivateKey } = require('./getJWTPrivateKey');
  * @public
  * @static
  * @param {object} payload
- * @return {string} JWT Token
+ * @return {Promise<string>} JWT Token
  * */
 async function generateJWTToken({ payload, ctx }) {
-  return jwt.sign(payload, await getJWTPrivateKey({ ctx }), {
+  const token = await getJWTPrivateKey({ ctx });
+  return jwt.sign(payload, token, {
     expiresIn: 60 * 60 * 24,
   }); // 1 day
 }

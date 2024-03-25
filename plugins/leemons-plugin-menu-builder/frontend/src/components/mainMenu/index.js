@@ -178,14 +178,14 @@ export default function MainMenu({ subNavWidth, ...props }) {
       disabled: null,
     });
 
-    result.push({
-      id: 'menu-2',
-      label: t('changeLanguage'),
-      order: 2,
-      url: '/private/users/language',
-      window: 'SELF',
-      disabled: null,
-    });
+    // result.push({
+    //   id: 'menu-2',
+    //   label: t('changeLanguage'),
+    //   order: 2,
+    //   url: '/private/users/language',
+    //   window: 'SELF',
+    //   disabled: null,
+    // });
 
     if (!store.onlyOneProfile) {
       result.push({

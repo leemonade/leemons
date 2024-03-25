@@ -1,15 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box,
-  Button,
-  createStyles,
-  ImageLoader,
-  Loader,
-  Stack,
-  Title,
-} from '@bubbles-ui/components';
+import { Box, Button, createStyles, Loader, Stack, Title } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -19,12 +11,12 @@ import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDB
 import { getCentersWithToken } from '@users/session';
 import * as _ from 'lodash';
 import { find, forEach, keyBy, map } from 'lodash';
-import { useHistory } from 'react-router-dom';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
 import hooks from 'leemons-hooks';
 import { getCalendarsToFrontendRequest } from '../../request';
 import useTransformEvent from '../../helpers/useTransformEvent';
+import EmptyState from './components/EmptyState/EmptyState';
 
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
@@ -46,7 +38,14 @@ const Styles = createStyles((theme, { inTab }) => ({
   },
 }));
 
-function UserProgramCalendar({ program, classe, session, inTab }) {
+function UserProgramCalendar({
+  program,
+  classe,
+  session,
+  inTab,
+  showToolbarToggleWeekend,
+  showToolbarPeriodSelector,
+}) {
   const { classes: styles } = Styles({ inTab });
   const [store, render] = useStore({
     loading: true,
@@ -55,8 +54,6 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
   const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
   const [tc] = useTranslateLoader(prefixPN('calendar'));
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
-
-  const history = useHistory();
 
   function getEvents() {
     const events = [];
@@ -208,8 +205,6 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
     openEventModal();
   };
 
-  // if (store.loading) return null;
-
   return (
     <Box className={styles.root}>
       {!inTab ? (
@@ -235,14 +230,17 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
         </Stack>
       ) : null}
 
-      {!store.loading ? (
+      {!store.loading && !store.filteredEvents?.length && <EmptyState onNewEvent={onNewEvent} />}
+      {!store.loading && (
+        <EventModal
+          centerToken={store.centers[0].token}
+          event={store.selectedEvent}
+          close={toggleEventModal}
+          classCalendars={store.calendarFilters}
+        />
+      )}
+      {!store.loading && !!store.filteredEvents.length && (
         <Box className={styles.calendarContainer}>
-          <EventModal
-            centerToken={store.centers[0].token}
-            event={store.selectedEvent}
-            close={toggleEventModal}
-            classCalendars={store.calendarFilters}
-          />
           <BigCalendar
             style={{ height: '100%' }}
             currentView="agenda"
@@ -278,11 +276,12 @@ function UserProgramCalendar({ program, classe, session, inTab }) {
             locale={session?.locale}
             showToolbarAddButton={false}
             showToolbarViewSwitcher={false}
+            showToolbarToggleWeekend={showToolbarToggleWeekend}
+            showToolbarPeriodSelector={showToolbarPeriodSelector}
           />
         </Box>
-      ) : (
-        <Loader />
       )}
+      {store.loading && <Loader />}
     </Box>
   );
 }
@@ -292,6 +291,8 @@ UserProgramCalendar.propTypes = {
   classe: PropTypes.object,
   session: PropTypes.object,
   inTab: PropTypes.bool,
+  showToolbarToggleWeekend: PropTypes.bool,
+  showToolbarPeriodSelector: PropTypes.bool,
 };
 
 export default UserProgramCalendar;

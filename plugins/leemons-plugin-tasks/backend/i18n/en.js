@@ -58,6 +58,7 @@ module.exports = {
     title: 'New task',
     subTitle: 'Task title',
     edit_title: 'Edit task',
+    cancel: 'Cancel',
     common: {
       select_center: 'Select center',
       create_done: 'Task created',
@@ -362,6 +363,7 @@ module.exports = {
     duplicate: 'Duplicate',
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
+    share: 'Share',
   },
   variant: 'Task',
   expressVariant: 'Express Task',

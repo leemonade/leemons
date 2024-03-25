@@ -88,6 +88,11 @@ async function markEventCalledAndCallIfCan({
 
 module.exports = ({ ctxKeyValueModelName = 'KeyValue' } = {}) => ({
   name: '',
+  metadata: {
+    mixins: {
+      LeemonsMultiEventsMixin: true,
+    },
+  },
   merged(schema) {
     _.forIn(schema.multiEvents, ({ events, type = 'on', handler }) => {
       _.forEach(events, (event) => {

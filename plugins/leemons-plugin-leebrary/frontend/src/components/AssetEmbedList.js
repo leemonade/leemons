@@ -36,7 +36,6 @@ const AssetEmbedList = ({ assets, width }) => {
   const session = useSession();
   const locale = getLocale(session);
 
-
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -55,9 +54,11 @@ const AssetEmbedList = ({ assets, width }) => {
     ids: assetIds,
     filters: {
       showPublic: true,
-      indexable: false,
+      indexable: null,
     },
-    enabled: assetIds.length > 0,
+    options: {
+      enabled: assetIds.length > 0,
+    },
   });
   const { data: categoriesData } = useCategories();
 
@@ -67,8 +68,13 @@ const AssetEmbedList = ({ assets, width }) => {
     return assetsData?.find((asset) => asset.id === assetId) || {};
   }
   const handleOnSelect = (item) => {
-    setSelectedAsset(item);
-    setIsDrawerOpen(true);
+    setIsDrawerOpen(false); // Siempre cierra el drawer primero
+
+    // Establece el activo seleccionado y luego abre el drawer después de un breve retraso
+    setTimeout(() => {
+      setSelectedAsset(item);
+      setIsDrawerOpen(true);
+    }, 100); // Un retraso de 100ms suele ser suficiente para este propósito
   };
   useEffect(() => {
     if (assets?.length) {
@@ -82,26 +88,28 @@ const AssetEmbedList = ({ assets, width }) => {
     <Box className={classes.root}>
       {assetIds.length > 0
         ? assetIds.map((assetId) => (
-          <Box className={classes.item} key={assetId}>
-            <CardWrapper
-              {...pickAsset(assetId)}
-              isEmbedded={true}
-              item={pickAsset(assetId)}
-              category={
-                categoriesData?.find(
-                  (category) => category.id === pickAsset(assetId).category
-                ) || {
-                  key: 'media-file',
+            <Box className={classes.item} key={assetId}>
+              <CardWrapper
+                {...pickAsset(assetId)}
+                isEmbedded={true}
+                item={pickAsset(assetId)}
+                category={
+                  categoriesData?.find(
+                    (category) => category.id === pickAsset(assetId).category
+                  ) || {
+                    key: 'media-file',
+                  }
                 }
-              }
-              isCreationPreview={false}
-              isEmbeddedList={true}
-              variant={'embedded'}
-              assetsLoading={isLoading}
-              onClick={() => handleOnSelect(pickAsset(assetId))}
-            />
-          </Box>
-        ))
+                isCreationPreview={false}
+                isEmbeddedList={true}
+                variant={'embedded'}
+                assetsLoading={isLoading}
+                onClick={() => {
+                  handleOnSelect(pickAsset(assetId));
+                }}
+              />
+            </Box>
+          ))
         : null}
       <Box
         sx={() => ({

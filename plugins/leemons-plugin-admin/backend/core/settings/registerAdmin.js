@@ -11,14 +11,14 @@ const update = require('./update');
 async function registerAdmin({ email, password, locale, ctx, ...user }) {
   const currentSettings = await findOne({ ctx });
   if (currentSettings && currentSettings.status !== STATUS.LOCALIZED) {
-    console.log('- El super admin ya esta registrado');
+    ctx.logger.debug('- El super admin ya esta registrado');
     throw new LeemonsError(ctx, { message: 'Super Admin already registered' });
   }
 
-  console.log('- Añadimos el perfil de super admin');
+  ctx.logger.debug('- Añadimos el perfil de super admin');
   const profile = await ctx.tx.call('users.profiles.saveBySysName', profileSettings);
 
-  console.log('- Mandamos a añadir el usuario');
+  ctx.logger.debug('- Mandamos a añadir el usuario');
   const u = await ctx.tx.call('users.users.add', {
     email,
     password,
@@ -31,7 +31,7 @@ async function registerAdmin({ email, password, locale, ctx, ...user }) {
     roles: [profile.role],
   });
 
-  console.log('- Usuario creado', u);
+  ctx.logger.debug('- Usuario creado', u);
 
   return update({
     ...(currentSettings || {}),

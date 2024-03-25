@@ -35,9 +35,48 @@ const { byProvider: getByProvider } = require('../byProvider');
  * @returns {Promise<Object>} - Returns an object containing the retrieved assets and a flag indicating if no assets were found.
  */
 
+function buildQueryObject({
+  indexable,
+  criteria,
+  assetIds,
+  pinned,
+  categoriesFilter,
+  categoryId,
+  hideCoverAssets,
+}) {
+  const query = {
+    indexable,
+  };
+  if (criteria) {
+    query.$or = [
+      { name: { $regex: escapeRegExp(criteria), $options: 'i' } },
+      { tagline: { $regex: escapeRegExp(criteria), $options: 'i' } },
+      { description: { $regex: escapeRegExp(criteria), $options: 'i' } },
+    ];
+  }
+
+  if (!isEmpty(assetIds) || pinned) {
+    query.id = assetIds;
+  }
+
+  if (categoriesFilter?.length) {
+    query.category = categoriesFilter;
+  }
+  // A specific category overrides the multi-category filter
+  if (categoryId) {
+    query.category = categoryId;
+  }
+
+  if (hideCoverAssets) {
+    query.isCover = false;
+  }
+  return query;
+}
+
 async function getProviderAssets({
   assets: _assets,
   categoryId,
+  categoriesFilter,
   criteria,
   indexable,
   nothingFound: _nothingFound,
@@ -46,6 +85,7 @@ async function getProviderAssets({
   providerQuery,
   published,
   searchInProvider,
+  hideCoverAssets,
   ctx,
 }) {
   let providerAssets = null;
@@ -70,27 +110,17 @@ async function getProviderAssets({
   if (providerAssets?.length === 0) {
     return { assets, nothingFound };
   }
-
-  const query = {
-    indexable,
-  };
-
-  if (criteria) {
-    query.$or = [
-      { name: { $regex: escapeRegExp(criteria), $options: 'i' } },
-      { tagline: { $regex: escapeRegExp(criteria), $options: 'i' } },
-      { description: { $regex: escapeRegExp(criteria), $options: 'i' } },
-    ];
-  }
-
   const assetIds = providerAssets || assets;
-  if (!isEmpty(assetIds) || pinned) {
-    query.id = assetIds;
-  }
 
-  if (categoryId) {
-    query.category = categoryId;
-  }
+  const query = buildQueryObject({
+    indexable,
+    criteria,
+    assetIds,
+    pinned,
+    categoriesFilter,
+    categoryId,
+    hideCoverAssets,
+  });
 
   const [assetsFound, byTags] = await Promise.all([
     ctx.tx.db.Assets.find(query).select(['id']).lean(),

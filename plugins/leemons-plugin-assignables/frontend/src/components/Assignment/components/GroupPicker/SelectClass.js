@@ -142,7 +142,7 @@ export function SelectClass({
           }
           return a.disabled ? 1 : -1;
         }),
-    [availableClasses, value?.classes]
+    [availableClasses, value?.classes, localizations?.studentsCount]
   );
 
   const { classes } = useSelectClassStyles();
@@ -217,13 +217,13 @@ export function SelectClass({
         localizations={localizations}
       />
 
-      <Controller
+      {/* <Controller
         name="autoAssign"
         control={control}
         render={({ field }) => (
           <Checkbox {...field} checked={field.value} label={localizations?.autoAssignStudents} />
         )}
-      />
+      /> */}
     </Box>
   );
 }

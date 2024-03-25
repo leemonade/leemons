@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     fromProfile: {
       // ref: 'users_Profiles',
@@ -29,6 +27,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ fromProfile: 1, toProfile: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ fromProfile: 1, deploymentID: 1, isDeleted: 1 });
 
 const profileContactsModel = newModel(mongoose.connection, 'v1::users_ProfileContacts', schema);
 

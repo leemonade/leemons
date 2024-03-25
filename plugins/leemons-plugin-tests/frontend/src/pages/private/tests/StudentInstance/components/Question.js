@@ -34,6 +34,7 @@ export default function Question(props) {
   const showLastButton = !store.embedded || (store.embedded && !isLastButton);
 
   const currentResponseIndex = store.questionResponses?.[props.question.id].properties?.response;
+  let allSelectsUsed = false;
 
   let nextLabel = null;
   if (store.config.canOmitQuestions) {
@@ -54,7 +55,7 @@ export default function Question(props) {
 
     const currentResponses = store.questionResponses[props.question.id].properties?.responses || [];
 
-    let allSelectsUsed = true;
+    allSelectsUsed = true;
     forEach(props.question.properties.markers.list, (response, i) => {
       if (!currentResponses.includes(i)) {
         allSelectsUsed = false;
@@ -70,7 +71,7 @@ export default function Question(props) {
   }
 
   let disableNext = !store.config.canOmitQuestions;
-  if (isNumber(currentResponseIndex)) {
+  if (isNumber(currentResponseIndex) || allSelectsUsed) {
     disableNext = false;
   }
 

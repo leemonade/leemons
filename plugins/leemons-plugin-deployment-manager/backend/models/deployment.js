@@ -6,7 +6,6 @@ const deploymentSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     name: {
       type: String,
@@ -25,6 +24,9 @@ const deploymentSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+deploymentSchema.index({ id: 1, isDeleted: 1 });
+deploymentSchema.index({ domains: 1, isDeleted: 1 });
 
 const deploymentModel = newModel(
   mongoose.connection,

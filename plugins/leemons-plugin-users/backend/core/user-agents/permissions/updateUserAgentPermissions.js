@@ -82,13 +82,12 @@ async function updateUserAgentPermissions({ userAgentIds, ctx }) {
     }
     await Promise.all(
       _.map(userAgentIds, (_userAgent) =>
-        ctx.cache.deleteByPrefix(`users:permissions:${_userAgent}`)
+        ctx.cache.deleteByPrefix(`users:permissions:${_userAgent?.id ?? _userAgent}`)
       )
     );
     return results;
   }
 
-  await ctx.cache.deleteByPrefix(`users:permissions:${userAgentIds}`);
   return _updateUserAgentPermissions({ userAgentId: userAgentIds, ctx });
 }
 

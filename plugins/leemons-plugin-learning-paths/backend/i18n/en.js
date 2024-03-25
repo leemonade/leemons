@@ -16,6 +16,7 @@ module.exports = {
       title: 'New module',
       editTitle: 'Edit module',
       subtitlePlaceholder: 'Module title',
+      cancel: 'Cancel',
 
       buttons: {
         save: 'Save draft',
@@ -116,6 +117,8 @@ module.exports = {
       duplicate: 'Duplicate',
       delete: 'Delete',
       share: 'Permissions',
+      pin: 'Mark as favorite',
+      unpin: 'Unmark as favorite',
     },
   },
   assignation: {

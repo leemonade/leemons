@@ -77,6 +77,7 @@ export function AssetPickerDrawer({
   onlyCreateImages,
   acceptedFileTypes,
   onlyImages,
+  isPickingACover,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
   const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
@@ -111,6 +112,7 @@ export function AssetPickerDrawer({
                 onSelect={onSelect}
                 onlyCreateImages={onlyCreateImages}
                 acceptedFileTypes={acceptedFileTypes}
+                isPickingACover={isPickingACover}
               />
             </TabPanel>
           </Tabs>
@@ -148,4 +150,6 @@ AssetPickerDrawer.propTypes = {
   filters: PropTypes.object,
   onlyCreateImages: PropTypes.bool,
   onlyImages: PropTypes.bool,
+  acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
+  isPickingACover: PropTypes.bool,
 };

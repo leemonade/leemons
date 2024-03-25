@@ -23,7 +23,7 @@ const { processFinalAsset } = require('./processFinalAsset');
  * @param {boolean} [params.checkPins] - Flag to check pins (default: true)
  * @param {boolean} [params.checkPermissions] - Flag to check permissions
  * @param {boolean} [params.indexable]- Flag to check if assets are indexable
- * @param {boolean} [params.showPublic] - Flag to show public assets
+ * @param {boolean} [params.showPublic] - Flag to include public assets in the response
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Array<LibraryAsset>>} - Returns an array of assets
  */

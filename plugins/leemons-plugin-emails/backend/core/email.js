@@ -193,7 +193,7 @@ class Email {
                                       ); */
     }
 
-    ctx.logger.info(
+    ctx.logger.debug(
       `Adding email template Name: ${templateName} Language: ${language} Type: ${type}`
     );
     const emailTemplateDetailDoc = await ctx.tx.db.EmailTemplateDetail.create({
@@ -290,10 +290,10 @@ class Email {
     context.__from = from;
     context.__to = to;
     context.__platformName = 'Leemons';
-    context.__logoWidth = width ? `${width}px` : '155px';
+    context.__logoWidth = width ? `${width}px` : '224px';
     context.__logoUrl =
       logo ||
-      'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/Group_4_1_54d7c2cd36.png';
+      'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/logo_leemons_407d9548b9.png';
 
     // Compile email with data
     email.subject = Sqrl.render(email.subject, context);

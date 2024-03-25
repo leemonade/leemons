@@ -6,7 +6,7 @@ import { LoadingOverlay } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const PlayerPage = loadable(() => pMinDelay(import('./src/pages/protected/player'), 1000));
+const PlayerPage = loadable(() => pMinDelay(import('./src/pages/protected/player'), 500));
 
 export default function Protected() {
   const { path } = useRouteMatch();

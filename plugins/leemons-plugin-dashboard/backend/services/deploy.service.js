@@ -3,10 +3,10 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 
 const path = require('path');
-const { addLocalesDeploy } = require('@leemons/multilanguage');
+const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
 const { addPermissionsDeploy } = require('@leemons/permissions');
 const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
 const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
@@ -20,6 +20,10 @@ module.exports = () => ({
   name: 'dashboard.deploy',
   version: 1,
   mixins: [
+    LeemonsMultilanguageMixin({
+      locales: ['es', 'en'],
+      i18nPath: path.resolve(__dirname, `../i18n/`),
+    }),
     LeemonsMultiEventsMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
@@ -46,24 +50,6 @@ module.exports = () => ({
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
-
-      // Locales
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        locale: ['es', 'en'],
-        i18nPath: path.resolve(__dirname, `../i18n/`),
-        ctx,
-      });
-    },
-
-    'multilanguage.newLocale': async (ctx) => {
-      await addLocalesDeploy({
-        keyValueModel: ctx.tx.db.KeyValue,
-        locale: ctx.params.code,
-        i18nPath: path.resolve(__dirname, `../i18n/`),
-        ctx,
-      });
-      return null;
     },
 
     // Permissions
@@ -74,8 +60,5 @@ module.exports = () => ({
         ctx,
       });
     },
-  },
-  created() {
-    // mongoose.connect(process.env.MONGO_URI);
   },
 });

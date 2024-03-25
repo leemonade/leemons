@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { find, findIndex, forEach, capitalize } from 'lodash';
 import {
@@ -18,7 +18,7 @@ import { ListInputRender } from './components/ListInputRender';
 import { ListItemRender } from './components/ListItemRender';
 
 // eslint-disable-next-line import/prefer-default-export
-export function MonoResponse({ form: _form, t }) {
+export function MonoResponse({ form: _form, t, scrollRef }) {
   const form = useFormContext() ?? _form;
   const withImages = form.watch('withImages');
   const properties = form.watch('properties');
@@ -45,6 +45,14 @@ export function MonoResponse({ form: _form, t }) {
       form.setValue('properties.responses', data);
     }
   }
+
+  const monoResponseAnwsersMargin = useMemo(() => {
+    if (!properties?.hasClues) {
+      if (withImages) return { marginBottom: 120 };
+      return { marginBottom: 40 };
+    }
+    return {};
+  }, [properties?.hasClues, withImages]);
 
   return (
     <ContextContainer>
@@ -128,7 +136,7 @@ export function MonoResponse({ form: _form, t }) {
             if (hideOnHelp) canSetHelp = false;
           });
           return (
-            <Box>
+            <Box sx={monoResponseAnwsersMargin}>
               <ListInput
                 {...field}
                 onChange={(e) => {
@@ -145,6 +153,7 @@ export function MonoResponse({ form: _form, t }) {
                     useExplanation={properties?.explanationInResponses}
                     withImages={withImages}
                     onCancel={() => setShowInput(false)}
+                    scrollRef={scrollRef}
                   />
                 }
                 listRender={
@@ -191,4 +200,5 @@ export function MonoResponse({ form: _form, t }) {
 MonoResponse.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  scrollRef: PropTypes.object,
 };

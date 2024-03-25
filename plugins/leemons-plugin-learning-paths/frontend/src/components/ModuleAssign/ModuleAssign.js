@@ -27,6 +27,7 @@ export function ModuleAssign({ id }) {
       onSubmit={(values) => {
         setValue('assignationForm', values);
       }}
+      onlyOneSubject
       defaultValues={formDefaultValue}
     >
       <SetupStep

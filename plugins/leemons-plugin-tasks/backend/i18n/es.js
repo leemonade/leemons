@@ -59,7 +59,7 @@ module.exports = {
     title: 'Nueva tarea',
     subTitle: 'Título de la tarea',
     edit_title: 'Editar tarea',
-    subTitle: 'Título de la tarea',
+    cancel: 'Cancelar',
     common: {
       select_center: 'Seleccionar centro',
       create_done: 'Tarea creada con éxito',
@@ -353,6 +353,7 @@ module.exports = {
     duplicate: 'Duplicar',
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
+    share: 'Compartir',
   },
   variant: 'Tarea',
   expressVariant: 'Tarea express',

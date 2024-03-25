@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Container, Head, Html, Preview, Link, Text } from '@react-email/components';
-import EmailLayout from './EmailLayout.jsx';
+import { Button, Container, Link, Text } from '@react-email/components';
+import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
 
 const messages = {
   en: {
@@ -28,32 +28,30 @@ const RecoverPassword = ({ locale = 'en' } = {}) => {
   const previewText = `[Leemons] ${messages[locale].title}`;
 
   return (
-    <Html>
-      <Head />
-      <Preview>{previewText}</Preview>
-      <EmailLayout title={messages[locale].title}>
-        <Container className="text-center mt-4">
-          <Text className="text-sm font-bold leading-4">{messages[locale].actionText}</Text>
-          <Button
-            href="{{it.resetUrl}}"
-            className="bg-[#B4E600] py-2 px-4 my-2 rounded text-black text-[12px] no-underline text-center"
-          >
-            {messages[locale].buttonText}
-          </Button>
-          <Text className="text-xs leading-4">{messages[locale].infoText}</Text>
-        </Container>
+    <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>
+      <Container className="text-center">
+        <span className="text-[16px] font-medium leading-6 block mt-4">
+          {messages[locale].actionText}
+        </span>
+        <Button
+          href="{{it.resetUrl}}"
+          className="bg-[#B4E600] py-3 px-4 mt-8 mb-6 rounded text-black text-[14px] no-underline text-center"
+        >
+          {messages[locale].buttonText}
+        </Button>
+        <Text className="text-[14px] leading-4">{messages[locale].infoText}</Text>
+      </Container>
 
-        <Container className="bg-white text-center px-4 pb-4 rounded-lg mt-4">
-          <Text className="text-xs">{messages[locale].alternativeActionText}</Text>
-          <Link href="{{it.resetUrl}}" className="text-sm underline break-all">
-            {'{{it.resetUrl}}'}
-          </Link>
-        </Container>
-        <Container className="text-center mt-2">
-          <Text className="text-xs">{messages[locale].noActionText}</Text>
-        </Container>
-      </EmailLayout>
-    </Html>
+      <Container className="bg-white text-center px-4 pb-4 rounded-lg mt-4">
+        <Text className="text-[14px]">{messages[locale].alternativeActionText}</Text>
+        <Link href="{{it.resetUrl}}" className="text-sm underline break-all">
+          {'{{it.resetUrl}}'}
+        </Link>
+      </Container>
+      <Container className="text-center mt-2">
+        <Text className="text-[14px] leading-5">{messages[locale].noActionText}</Text>
+      </Container>
+    </EmailLayout>
   );
 };
 

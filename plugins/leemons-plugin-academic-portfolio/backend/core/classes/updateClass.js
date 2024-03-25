@@ -22,10 +22,8 @@ const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubj
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
 const { getProgramCourses } = require('../programs/getProgramCourses');
-const {
-  addComunicaRoomsBetweenStudentsAndTeachers,
-} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 const { add: addCourse } = require('./course/add');
+// const { addComunicaRoomsBetweenStudentsAndTeachers } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
@@ -176,7 +174,7 @@ async function updateClass({ data, ctx }) {
 
   await ctx.tx.emit('after-update-class', { class: classe });
 
-  await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
+  // await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
   try {
     let subName = program.name;

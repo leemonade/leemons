@@ -6,19 +6,19 @@ import pMinDelay from 'p-min-delay';
 import React from 'react';
 import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 
-const TestsList = loadable(() => pMinDelay(import('./src/pages/private/tests/List'), 1000));
-const TestsEdit = loadable(() => pMinDelay(import('./src/pages/private/tests/Edit'), 1000));
-const TestsAssign = loadable(() => pMinDelay(import('./src/pages/private/tests/Assign'), 1000));
-const TestsDetail = loadable(() => pMinDelay(import('./src/pages/private/tests/Detail'), 1000));
-const TestsResult = loadable(() => pMinDelay(import('./src/pages/private/tests/Result'), 1000));
+const TestsList = loadable(() => pMinDelay(import('./src/pages/private/tests/List'), 500));
+const TestsEdit = loadable(() => pMinDelay(import('./src/pages/private/tests/Edit'), 500));
+const TestsAssign = loadable(() => pMinDelay(import('./src/pages/private/tests/Assign'), 500));
+const TestsDetail = loadable(() => pMinDelay(import('./src/pages/private/tests/Detail'), 500));
+const TestsResult = loadable(() => pMinDelay(import('./src/pages/private/tests/Result'), 500));
 const QuestionBanksList = loadable(() =>
-  pMinDelay(import('./src/pages/private/questions-banks/List'), 1000)
+  pMinDelay(import('./src/pages/private/questions-banks/List'), 500)
 );
 const QuestionBankDetail = loadable(() =>
-  pMinDelay(import('./src/pages/private/questions-banks/Detail'), 1000)
+  pMinDelay(import('./src/pages/private/questions-banks/Detail'), 500)
 );
 const StudentInstance = loadable(() =>
-  pMinDelay(import('./src/pages/private/tests/StudentInstance/index'), 1000)
+  pMinDelay(import('./src/pages/private/tests/StudentInstance/index'), 500)
 );
 
 export default function Private() {

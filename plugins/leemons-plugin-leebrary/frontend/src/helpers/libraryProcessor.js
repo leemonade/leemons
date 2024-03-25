@@ -23,7 +23,7 @@ async function newAssetForTextEditor(props) {
     cover: preparedAsset.cover,
     id: preparedAsset.id,
     fileid: duplicatedAsset.file?.id || duplicatedAsset.file,
-    coverid: duplicatedAsset.cover?.id,
+    coverid: duplicatedAsset.cover?.id || duplicatedAsset.original.cover?.id,
     processed: true,
   };
 }

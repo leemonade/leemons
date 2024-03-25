@@ -25,7 +25,7 @@ async function remove({ key, ctx }) {
     removeAll({ menuKey: key, ctx }),
   ]);
 
-  ctx.logger.info(`Deleted menu "${key}"`);
+  ctx.logger.debug(`Deleted menu "${key}"`);
 
   return true;
 }

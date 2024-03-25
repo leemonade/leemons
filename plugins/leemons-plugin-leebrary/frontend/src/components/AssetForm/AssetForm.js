@@ -17,7 +17,7 @@ import {
   TotalLayoutFooterContainer,
   useResizeObserver,
 } from '@bubbles-ui/components';
-import { CloudUploadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
+import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
@@ -309,7 +309,7 @@ const AssetForm = ({
                     render={({ field: { ref, value, ...field } }) => (
                       <FileUpload
                         {...field}
-                        icon={<CloudUploadIcon height={32} width={32} />}
+                        icon={<DownloadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
                         errorMessage={{
@@ -376,7 +376,7 @@ const AssetForm = ({
                       render={({ field: { ref, value, ...field } }) => (
                         <FileUpload
                           {...field}
-                          icon={<CloudUploadIcon height={32} width={32} />}
+                          icon={<DownloadIcon height={32} width={32} />}
                           title={labels.browseFile}
                           subtitle={labels.dropFile}
                           errorMessage={{
@@ -407,6 +407,7 @@ const AssetForm = ({
                   labels={labels}
                   value={coverFile?.id ? coverFile?.id : coverFile}
                   onChange={handleOnSelectAsset}
+                  isPickingACover
                 />
               )}
               <Controller
@@ -497,7 +498,7 @@ const AssetForm = ({
             ) : null}
 
             {store.showAdvancedConfig ? (
-              <ContextContainer title="Otros">
+              <ContextContainer title={labels?.other}>
                 {children || null}
                 {useTags && (
                   <Controller

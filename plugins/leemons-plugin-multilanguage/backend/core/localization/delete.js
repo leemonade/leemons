@@ -127,6 +127,8 @@ async function deleteAll({ key = null, locale = null, isPrivate, ctx }) {
   }
 
   try {
+    ctx.cache.deleteByPrefix(`multilanguage:common:get:${ctx.meta.deploymentID}`);
+
     return (
       await getLocalizationModelFromCTXAndIsPrivate({
         isPrivate,

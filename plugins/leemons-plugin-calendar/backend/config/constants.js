@@ -207,6 +207,8 @@ module.exports = {
         url: 'tab-calendar/index',
         properties: {
           label: `${permissionsPrefix}.tabCalendar.label`,
+          showToolbarToggleWeekend: false,
+          showToolbarPeriodSelector: false,
         },
       },
     ],

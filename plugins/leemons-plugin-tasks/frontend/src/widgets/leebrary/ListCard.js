@@ -12,6 +12,7 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { ExpressTaskIcon } from '../../components/Icons/ExpressTaskIcon';
 import { TaskIcon } from '../../components/Icons/TaskIcon';
 import { prefixPN } from '../../helpers/prefixPN';
@@ -22,7 +23,15 @@ const ListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...props }) => {
+const ListCard = ({
+  asset,
+  selected,
+  embedded,
+  single,
+  onShare,
+  onRefresh = () => {},
+  ...props
+}) => {
   const history = useHistory();
   const {
     openConfirmationModal,
@@ -95,10 +104,20 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       //     handleClick(`/private/tasks/library/view/${taskId}`);
       //   },
       // });
+      // if (asset.shareable) {
+      //   items.push({
+      //     icon: <ShareIcon />,
+      //     children: menuLabels.share,
+      //     onClick: (e) => {
+      //       e.stopPropagation();
+      //       onShare(asset);
+      //     },
+      //   });
+      // }
       if (asset.assignable && asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
-          children: menuLabels.assign,
+          children: menuLabels?.assign,
           onClick: (e) => {
             e.stopPropagation();
             handleClick(`/private/tasks/library/assign/${taskId}`);
@@ -108,7 +127,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       if (asset.editable) {
         items.push({
           icon: <EditIcon />,
-          children: menuLabels.edit,
+          children: menuLabels?.edit,
           onClick: (e) => {
             e.stopPropagation();
             handleClick(`/private/tasks/library/edit/${taskId}`);
@@ -118,7 +137,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       if (asset.duplicable && asset.providerData) {
         items.push({
           icon: <DuplicateIcon />,
-          children: menuLabels.duplicate,
+          children: menuLabels?.duplicate,
           onClick: (e) => {
             e.stopPropagation();
             openConfirmationModal({
@@ -138,7 +157,7 @@ const ListCard = ({ asset, selected, embedded, single, onRefresh = () => {}, ...
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: menuLabels.delete,
+          children: menuLabels?.delete,
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
@@ -189,6 +208,7 @@ ListCard.propTypes = {
   embedded: PropTypes.bool,
   onRefresh: PropTypes.func,
   single: PropTypes.bool,
+  onShare: PropTypes.func,
 };
 
 export default ListCard;

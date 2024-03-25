@@ -27,8 +27,9 @@ export function getFileUrl(fileID, segment, isPublic = false) {
 
   const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
 
-  return `${leemons.apiUrl}/api/v1/leebrary/file/${isPublic ? 'public/' : ''
-    }${fileID}${urlSuffixSegment}${authParam}`;
+  return `${leemons.apiUrl}/api/v1/leebrary/file/${
+    isPublic ? 'public/' : ''
+  }${fileID}${urlSuffixSegment}${authParam}`;
 }
 
 export function getPublicFileUrl(fileID, segment) {

@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     asset: {
       type: String,
@@ -61,6 +59,12 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ asset: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ id: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ asset: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({ 'submission.activities.activity': 1, deploymentID: 1, isDeleted: 1 });
 
 const assignablesModel = newModel(mongoose.connection, 'v1::assignables_Assignables', schema);
 

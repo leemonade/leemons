@@ -1,7 +1,7 @@
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
 import { UserDisplayItem } from '@bubbles-ui/components';
-import { LocaleDate, LocaleDuration, unflatten, useStore } from '@common';
+import { LocaleDuration, unflatten } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -17,7 +17,6 @@ import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationS
 import getNearestScale from '@scorm/helpers/getNearestScale';
 import prefixPN from '../../../../../helpers/prefixPN';
 import getActions from './getActions';
-import getStatus from './getStatus';
 
 function useUserAgentsInfo(students) {
   const users = students.map((student) => student.user);
@@ -48,7 +47,7 @@ function useStudentData(students) {
         userAgentIsDisabled: userAgent.disabled,
       };
     });
-  }, [students, userAgentsInfoMulti.data]);
+  }, [students, userAgentsInfoMulti.data, userAgentsInfoMulti.isSuccess]);
 }
 
 function getStudentAverageScore(studentData) {
@@ -68,27 +67,11 @@ function getStudentAverageScore(studentData) {
   return (scoresAvgObject.total / scoresAvgObject.count).toFixed(2);
 }
 
-export default function useParseStudents(instance, statusLabels) {
-  const students = useStudentData(instance?.students);
-  const subjects = useClassesSubjects(instance?.classes);
-  const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
-  const evaluationSystem = useProgramEvaluationSystem(instance, { enabled: !!instance });
-
+function useReminderModal({ localizations, instance }) {
   const { openConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  const localizations = useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      // EN: Modify the data object here
-      // ES: Modifica el objeto data aquí
-      return _.get(res, prefixPN('teacher_actions'));
-    }
-
-    return {};
-  }, [translations]);
-
-  async function reminder({ user }) {
+  return ({ user }) =>
     openConfirmationModal({
       title: localizations.sendReminder,
       onConfirm: async () => {
@@ -103,7 +86,26 @@ export default function useParseStudents(instance, statusLabels) {
         }
       },
     })();
-  }
+}
+
+export default function useParseStudents(instance) {
+  const students = useStudentData(instance?.students);
+  const subjects = useClassesSubjects(instance?.classes);
+  const [, translations] = useTranslateLoader(prefixPN('teacher_actions'));
+  const evaluationSystem = useProgramEvaluationSystem(instance, { enabled: !!instance });
+
+  const localizations = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      // EN: Modify the data object here
+      // ES: Modifica el objeto data aquí
+      return _.get(res, prefixPN('teacher_actions'));
+    }
+
+    return {};
+  }, [translations]);
+
+  const openConfirmSendReminder = useReminderModal({ localizations, instance });
 
   return useMemo(() => {
     if (!instance?.students?.length) {
@@ -132,11 +134,11 @@ export default function useParseStudents(instance, statusLabels) {
             '-'
           ),
         actions: getActions(student, instance, localizations, subjects, {
-          reminder,
+          reminder: openConfirmSendReminder,
           score: scale?.letter ?? scale?.number,
         }),
         userInfo: student.userInfo,
       };
     });
-  }, [students, subjects]);
+  }, [students, subjects, localizations, evaluationSystem, instance, openConfirmSendReminder]);
 }

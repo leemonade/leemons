@@ -17,7 +17,7 @@ import {
   TabPanel,
   Button,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@common';
+import { TextEditorInput } from '@bubbles-ui/editors';
 import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
@@ -95,11 +95,14 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
     const gradeObj = previousScore;
     const { grade, feedback: savedFeedback } = gradeObj ?? {};
 
-    if (!isNil(grade) && grade !== score) {
+    const gradeIsDirty = form.getFieldState('grade').isDirty;
+    const feedbackIsDirty = form.getFieldState('feedback').isDirty;
+
+    if (!gradeIsDirty && !isNil(grade) && grade !== score) {
       form.setValue('score', grade);
     }
 
-    if (savedFeedback !== feedback) {
+    if (!feedbackIsDirty && savedFeedback !== feedback) {
       form.setValue('feedback', savedFeedback);
       if (savedFeedback) {
         form.setValue('showFeedback', true);
@@ -203,12 +206,14 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           loading={loading}
           onClick={async () => {
             setLoading(true);
-            try {
-              await publish({ visibleToStudent: true });
-              addSuccessAlert(t('publish_success'));
-            } finally {
-              setLoading(false);
-            }
+            setTimeout(async () => {
+              try {
+                await publish({ visibleToStudent: true });
+                addSuccessAlert(t('publish_success'));
+              } finally {
+                setLoading(false);
+              }
+            }, 100);
           }}
           rightIcon={<SendMessageIcon />}
         >

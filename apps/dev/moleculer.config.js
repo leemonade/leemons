@@ -115,9 +115,9 @@ module.exports = {
   registry: {
     // Define balancing strategy. More info: https://moleculer.services/docs/0.14/balancing.html
     // Available values: "RoundRobin", "Random", "CpuUsage", "Latency", "Shard"
-    strategy: 'RoundRobin',
+    strategy: 'Latency',
     // Enable local action call preferring. Always call the local action instance if available.
-    preferLocal: false,
+    preferLocal: true,
   },
 
   // Settings of Circuit Breaker. More info: https://moleculer.services/docs/0.14/fault-tolerance.html#Circuit-Breaker
@@ -175,15 +175,15 @@ module.exports = {
 
   // Enable built-in tracing function. More info: https://moleculer.services/docs/0.14/tracing.html
   tracing: {
-    enabled: true,
+    enabled: !!(process.env.JAEGER_ENDPOINT || process.env.JAEGER_HOST),
     exporter: {
       type: 'Jaeger',
       options: {
-        endpoint: null,
-        host: process.env.JAEGER_HOST,
-        port: process.env.JAEGER_PORT,
+        endpoint: process.env.JAEGER_ENDPOINT ?? null,
+        host: process.env.JAEGER_HOST ?? null,
+        port: process.env.JAEGER_PORT ?? null,
         sampler: {
-          type: 'Const',
+          type: 'const',
           options: {},
         },
         tracerOptions: {},

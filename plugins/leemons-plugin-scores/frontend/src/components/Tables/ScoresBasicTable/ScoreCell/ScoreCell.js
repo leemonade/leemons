@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, Select, IconButton, useClickOutside } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { isFunction, isNil } from 'lodash';
 import { ScoreCellStyles } from './ScoreCell.styles';
 import { SCORES_CELL_DEFAULT_PROPS, SCORES_CELL_PROP_TYPES } from './ScoreCell.constants';
-import { isFunction, isNil } from 'lodash';
 
 const ScoreCell = ({
-  value,
+  value: _value,
   noActivity,
   allowChange,
   isSubmitted,
+  isClosed,
   grades,
   row,
   column,
@@ -22,6 +23,14 @@ const ScoreCell = ({
   const useNumbers = !grades.some((grade) => grade.letter);
   const [inputContainer, setInputContainer] = useState();
   const selectRef = useClickOutside(() => setIsEditing(false), null, [inputContainer]);
+
+  let value = _value;
+
+  if (value < grades[0].number) {
+    value = grades[0].number;
+  } else if (value > grades[grades.length - 1].number) {
+    value = grades[grades.length - 1].number;
+  }
 
   const renderValue = (value) => {
     if (isNil(value)) return '-';
@@ -46,8 +55,8 @@ const ScoreCell = ({
     const columnId = isCustom ? column : column.id;
 
     isFunction(setValue) &&
-      setValue((oldValue) => {
-        const newValue = oldValue.map((student) => {
+      setValue((oldValue) =>
+        oldValue.map((student) => {
           if (student.id !== rowId) return student;
           const newStudentActivities = student.activities.map((activity) => {
             if (activity.id !== columnId) return activity;
@@ -57,19 +66,26 @@ const ScoreCell = ({
             return activity;
           });
           return { ...student, activities: newStudentActivities };
-        });
-        return newValue;
-      });
+        })
+      );
     isFunction(onDataChange) && onDataChange({ rowId, columnId, value: score });
   };
 
   const renderInputCell = () => {
-    if (!isSubmitted && !isCustom)
+    if (!isSubmitted && !isCustom) {
+      if (!isClosed) {
+        return (
+          <Text color="soft" role="productive">
+            -
+          </Text>
+        );
+      }
       return (
         <Text color="soft" role="productive">
           {noActivity}
         </Text>
       );
+    }
 
     const data = grades.map(({ letter, number }) => letter || number.toString());
 

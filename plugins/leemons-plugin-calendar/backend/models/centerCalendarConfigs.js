@@ -6,12 +6,10 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     // ref: plugins_users::centers
     center: {
@@ -27,6 +25,9 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+schema.index({ deploymentID: 1, isDeleted: 1, center: 1 });
+schema.index({ deploymentID: 1, isDeleted: 1, config: 1 });
 
 const centerCalendarConfigsModel = newModel(
   mongoose.connection,

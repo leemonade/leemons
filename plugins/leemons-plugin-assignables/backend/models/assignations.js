@@ -6,12 +6,10 @@ const assignationsSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     deploymentID: {
       type: String,
       required: true,
-      index: true,
     },
     instance: {
       type: String,
@@ -47,6 +45,11 @@ const assignationsSchema = new mongoose.Schema(
     minimize: false,
   }
 );
+
+assignationsSchema.index({ instance: 1, user: 1, deploymentID: 1, isDeleted: 1 });
+assignationsSchema.index({ instance: 1, deploymentID: 1, isDeleted: 1 });
+assignationsSchema.index({ user: 1, deploymentID: 1, isDeleted: 1 });
+assignationsSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const assignationsModel = newModel(
   mongoose.connection,

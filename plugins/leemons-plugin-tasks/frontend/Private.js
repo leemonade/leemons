@@ -8,19 +8,19 @@ import { goLoginPage } from '@users/navigate';
 import { useSearchParams } from '@common';
 
 const AssignmentPage = loadable(() =>
-  pMinDelay(import('./src/pages/private/assignment/AssignmentPage'), 1000)
+  pMinDelay(import('./src/pages/private/assignment/AssignmentPage'), 500)
 );
-const Welcome = loadable(() => pMinDelay(import('./src/pages/private/welcome/WelcomePage'), 1000));
-const Library = loadable(() => pMinDelay(import('./src/pages/private/library/LibraryPage'), 1000));
+const Welcome = loadable(() => pMinDelay(import('./src/pages/private/welcome/WelcomePage'), 500));
+const Library = loadable(() => pMinDelay(import('./src/pages/private/library/LibraryPage'), 500));
 const SetupTask = loadable(() =>
-  pMinDelay(import('./src/pages/private/library/TaskSetupPage'), 1000)
+  pMinDelay(import('./src/pages/private/library/TaskSetupPage'), 500)
 );
 const Profiles = loadable(() =>
-  pMinDelay(import('./src/pages/private/profiles/ProfilesPage'), 1000)
+  pMinDelay(import('./src/pages/private/profiles/ProfilesPage'), 500)
 );
-const UserDetails = loadable(() => pMinDelay(import('./src/pages/private/student/Details'), 1000));
+const UserDetails = loadable(() => pMinDelay(import('./src/pages/private/student/Details'), 500));
 const Correction = loadable(() =>
-  pMinDelay(import('./src/pages/private/assignment/Correction'), 1000)
+  pMinDelay(import('./src/pages/private/assignment/Correction'), 500)
 );
 
 export default function Private() {
