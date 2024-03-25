@@ -6,6 +6,7 @@ const {
   getLocalizationModelFromCTXAndIsPrivate,
 } = require('./getLocalizationModelFromCTXAndIsPrivate');
 const localesFunctions = require('../locale');
+const { commonNamespace } = require('../../helpers/cacheKeys');
 /**
  * Sets the value of a locale, if this does not exists, it creates it
  * @param {Object} params
@@ -103,7 +104,9 @@ async function setKey({ key, data, isPrivate, ctx }) {
 
     // #endregion
 
-    ctx.cache.deleteByPrefix(`multilanguage:common:get:${ctx.meta.deploymentID}`);
+    ctx.cache.deleteByNamespace(commonNamespace, (cacheKey) =>
+      cacheKey.startsWith(`${commonNamespace}:${ctx.meta.deploymentID}`)
+    );
 
     return {
       items: updatedLocalizations,
@@ -179,7 +182,9 @@ async function setMany({ data, isPrivate, ctx }) {
 
     // #endregion
 
-    ctx.cache.deleteByPrefix(`multilanguage:common:get:${ctx.meta.deploymentID}`);
+    ctx.cache.deleteByNamespace(commonNamespace, (cacheKey) =>
+      cacheKey.startsWith(`${commonNamespace}:${ctx.meta.deploymentID}`)
+    );
 
     return {
       items: modifiedLocalizations,

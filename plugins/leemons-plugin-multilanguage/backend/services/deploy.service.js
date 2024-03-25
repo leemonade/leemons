@@ -12,6 +12,7 @@ const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
+const { commonNamespace, globalNamespace } = require('../helpers/cacheKeys');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -23,7 +24,9 @@ module.exports = () => ({
       i18nPath: path.resolve(__dirname, `../i18n/`),
     }),
     LeemonsMiddlewaresMixin(),
-    LeemonsCacheMixin(),
+    LeemonsCacheMixin({
+      namespaces: [commonNamespace, globalNamespace],
+    }),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),

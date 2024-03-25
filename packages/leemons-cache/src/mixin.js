@@ -24,7 +24,7 @@ async function modifyCTX(ctx, { redis }) {
   }
 }
 
-module.exports = ({ redis } = {}) => ({
+module.exports = ({ redis, namespaces } = {}) => ({
   name: '',
   hooks: {
     before: {
@@ -51,5 +51,16 @@ module.exports = ({ redis } = {}) => ({
           },
         });
     });
+  },
+
+  async started() {
+    if (namespaces?.length) {
+      const ctx = { service: this };
+      await modifyCTX(ctx, {
+        redis,
+      });
+
+      await Promise.all(namespaces.map((namespace) => ctx.cache.registerNamespace({ namespace })));
+    }
   },
 });

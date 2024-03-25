@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { findPermissionsCacheKey } = require('../../helpers/cacheKeys');
 
 /**
  * @public
@@ -6,7 +7,7 @@ const _ = require('lodash');
  * @return {Promise<any>}
  * */
 async function find({ params, ctx }) {
-  const cacheKey = `users:permissions:find:${JSON.stringify(params)}`;
+  const cacheKey = findPermissionsCacheKey({ ctx, query: params });
   const cache = await ctx.cache.get(cacheKey);
   if (cache) return cache;
 

@@ -31,6 +31,7 @@ const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
 const { initEmails } = require('../core/deploy/initEmails');
+const { permissionsNamespace } = require('../helpers/cacheKeys');
 
 const initDataset = async ({ ctx }) => {
   if (!(await hasKey(ctx.tx.db.KeyValue, 'dataset-locations'))) {
@@ -67,7 +68,9 @@ module.exports = {
       locales: ['en', 'es'],
       i18nPath: path.resolve(__dirname, `../i18n/`),
     }),
-    LeemonsCacheMixin(),
+    LeemonsCacheMixin({
+      namespaces: [permissionsNamespace],
+    }),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
