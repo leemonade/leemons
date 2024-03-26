@@ -218,7 +218,9 @@ module.exports = {
     },
     async handler(ctx) {
       checkIfManualPasswordIsGood({ ctx });
-      await reloadAllDeployments(this.broker);
+      const { ids } = ctx.params;
+      const count = await reloadAllDeployments(this.broker, ids);
+      return { count };
     },
   },
 };
