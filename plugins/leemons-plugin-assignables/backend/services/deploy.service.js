@@ -10,6 +10,7 @@ const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets
 const { addPermissionsDeploy } = require('@leemons/permissions');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsEmailsMixin } = require('@leemons/emails');
 
 const { menuItems, widgets, permissions } = require('../config/constants');
 const { getServiceModels } = require('../models');
@@ -17,13 +18,15 @@ const { afterAddClassTeacher } = require('../core/events/afterAddClassTeacher');
 const { afterRemoveClassesTeachers } = require('../core/events/afterRemoveClassesTeachers');
 const { sendRememberEmails } = require('../core/events/sendRememberEmail');
 const { sendWeeklyEmails } = require('../core/events/sendWeeklyEmail');
-const { initEmails } = require('../core/deploy/initEmails');
+const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
+
+const SERVICE_NAME = 'assignables.deploy';
 
 // TODO: Implement cron job for sending emails
 
 /** @type {import('moleculer').ServiceSchema} */
 module.exports = {
-  name: 'assignables.deploy',
+  name: SERVICE_NAME,
   version: 1,
   mixins: [
     LeemonsMultilanguageMixin({
@@ -36,6 +39,7 @@ module.exports = {
     }),
     LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
+    LeemonsEmailsMixin(),
   ],
   multiEvents: [
     {
@@ -65,16 +69,11 @@ module.exports = {
     },
   ],
   events: {
-    /*
-                                              New Deployment or plugin installation
-                                            */
+    /* -- New Deployment or plugin installation -- */
     'deployment-manager.install': async (ctx) => {
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
-
-      // Email Templates
-      await initEmails({ ctx });
 
       // Register as a library provider
       await ctx.tx.call('leebrary.providers.register', {
@@ -85,9 +84,7 @@ module.exports = {
         },
       });
     },
-    /*
-                                              --- Academic Portfolio ---
-                                            */
+    /* --- Academic Portfolio --- */
     'academic-portfolio.after-add-class-teacher': async (ctx) => {
       await afterAddClassTeacher({ ...ctx.params, ctx });
     },
@@ -131,13 +128,13 @@ module.exports = {
           {
             actionName,
           },
-          { caller: 'assignables.deploy', meta: { deploymentID: deploymentId } }
+          { caller: SERVICE_NAME, meta: { deploymentID: deploymentId } }
         );
         return this.broker.call(
           manager.actionToCall,
           {},
           {
-            caller: 'assignables.deploy',
+            caller: SERVICE_NAME,
             meta: { deploymentID: deploymentId, relationshipID: manager.relationshipID },
           }
         );
@@ -157,5 +154,11 @@ module.exports = {
 
     await agenda.every('0 * * * *', 'assignables_sendRememberEmails');
     await agenda.every('0 10 * * *', 'assignables_sendWeeklyEmails');
+  },
+  async started() {
+    const emailTemplates = renderEmailTemplates();
+    await this.initEmailTemplates(emailTemplates);
+
+    this.logger.info('Email templates initialized');
   },
 };
