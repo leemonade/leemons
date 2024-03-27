@@ -497,7 +497,7 @@ class Email {
   }) {
     try {
       const receipts = {
-        from: from || 'no-reply@leemons.io',
+        from: from || 'Leemons <no-reply@leemons.io>',
         to,
       };
 
@@ -584,7 +584,7 @@ class Email {
         message: `There is no template with the name ${templateName}`,
       });
     }
-    const emailDetail = await findAtContextDB.EmailTemplateDetail.findOne(
+    return findAtContextDB.EmailTemplateDetail.findOne(
       {
         template: template.id,
         language,
@@ -592,8 +592,6 @@ class Email {
       },
       ['id', 'subject', 'html']
     ).lean();
-    console.log('emailDetail', emailDetail);
-    return emailDetail;
   }
 }
 
