@@ -61,21 +61,25 @@ const SubjectForm = ({
       return classesData?.map((item) => ({
         referenceGroup: `${item.groups?.name}::${item.groups.id}`,
         classroomId: item?.classroomId,
-        availableSeats: item?.seats,
-        course: isArray(item?.courses) ? item.courses((_course) => _course.id) : item.courses.id,
+        seats: item?.seats,
+        course: isArray(item?.courses)
+          ? item.courses.map((_course) => _course.id)
+          : item.courses?.id,
+        id: item?.id,
+        alias: null,
       }));
     }
     setDisableReferenceGroups(true);
-    return classesData.map(({ classroomId, seats, alias }) => ({
+    return classesData.map(({ classroomId, seats, alias, id }) => ({
       classroomId,
-      availableSeats: seats,
+      seats,
       alias,
+      id,
     }));
   }
 
   // DATA FOR SELECT INPUTS ---------------------------------------------------------------------------------||
 
-  // TODO: Make a ready-to-use select component out of every use memo here
   // Knowledge Areas select
   const { data: knowledgeAreasQuery, isLoading: areKnowledgeAreasLoading } = useKnowledgeAreas({
     center: program?.centers[0],
@@ -136,24 +140,25 @@ const SubjectForm = ({
 
   useEffect(() => {
     if (isEditing && subject) {
-      const fields = [
-        'name',
-        'internalId',
-        'color',
-        'icon',
-        'image',
-        'knowledgeArea',
-        'subjectType',
-        'courses',
-        'substage',
-      ];
+      const fields = ['name', 'internalId', 'color', 'image', 'icon', 'substage', 'credits'];
       fields.forEach((field) => {
         form.setValue(field, subject[field]);
       });
 
+      form.setValue('subjectType', subject.subjectType?.id);
+      form.setValue('knowledgeArea', subject.knowledgeArea?.id);
+
       const classrooms = transformClassesData(subject.classes);
       form.setValue('classrooms', classrooms);
-      console.log('classrooms', classrooms);
+
+      if (Array.isArray(subject.courses)) {
+        form.setValue(
+          'courses',
+          subject.courses.map((course) => course.id)
+        );
+      } else if (subject.courses) {
+        form.setValue('courses', subject.courses.id);
+      }
     }
   }, [isEditing, subject]);
 
@@ -173,7 +178,7 @@ const SubjectForm = ({
                 <TextInput
                   {...field}
                   label={'Name 🌎'}
-                  placeholder={'Name 🌎'}
+                  placeholder={'Name... 🌎'}
                   error={formState.errors.name}
                   required
                   sx={{ width: 216 }}
@@ -186,8 +191,8 @@ const SubjectForm = ({
                 control={control}
                 rules={{
                   required: 'This field is required 🌎',
-                  maxLength: { value: 3, message: 'ID must be a maximum of 3 digits' },
-                  pattern: { value: /^[0-9]+$/, message: 'ID must be numeric' },
+                  maxLength: { value: 3, message: 'ID must be a maximum of 3 digits 🌎' },
+                  pattern: { value: /^[0-9]+$/, message: 'ID must be numeric 🌎' },
                 }}
                 render={({ field, fieldState }) => (
                   <TextInput
@@ -256,7 +261,7 @@ const SubjectForm = ({
                       data={knowledgeAreasSelectData}
                       label={'Área de conocimiento 🌎'}
                       sx={{ width: 216 }}
-                      placeholder={'Selecciona un área...🌎'}
+                      placeholder={'Selecciona un área... 🌎'}
                       error={fieldState.error}
                       required
                     />
@@ -327,6 +332,7 @@ const SubjectForm = ({
                       placeholder={'Elije uno o varios cursos...🌎'}
                       error={fieldState.error}
                       required
+                      autoSelectOneOption
                     />
                   );
                 }
@@ -358,6 +364,7 @@ const SubjectForm = ({
                   placeholder={'Subetapa...🌎'}
                   error={fieldState.error}
                   required
+                  autoSelectOneOption
                 />
               )}
             />
@@ -371,8 +378,7 @@ const SubjectForm = ({
             control={control}
             rules={{
               validate: (value) =>
-                (Array.isArray(value) && value.length > 0) ||
-                'At least one classroom with seats availability is needed 🌎',
+                (Array.isArray(value) && value.length > 0) || 'At least one classroom is needed 🌎',
             }}
             render={({ field, fieldState }) => (
               <InputWrapper error={fieldState.error?.message}>
@@ -380,7 +386,11 @@ const SubjectForm = ({
                   <Stack direction="column" spacing={4}>
                     <Switch
                       label={'Esta asignatura no pertenece a un Grupo de Referencia 🌎'}
-                      onChange={(val) => setDisableReferenceGroups(val)}
+                      onChange={(val) => {
+                        form.setValue('classrooms', []);
+                        setDisableReferenceGroups(val);
+                      }}
+                      checked={disableReferenceGroups}
                     />
                     {disableReferenceGroups ? (
                       <ClassroomsSetup {...field} />

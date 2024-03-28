@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, isBoolean, isEmpty, omit } from 'lodash';
 import {
@@ -12,6 +12,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import {
   useCreateProgram,
   useUpdateProgram,
+  useUpdateProgramConfiguration,
 } from '@academic-portfolio/hooks/mutations/useMutateProgram';
 import LoadingFormState from './LoadingFormState';
 import AddProgramForm from './AddProgramForm';
@@ -102,14 +103,24 @@ import UpdateProgramForm from './UpdateProgramForm';
 }
     */
 
-const ProgramSetupDrawer = ({ isOpen, setIsOpen, centerId, program, isEditing, setIsEditing }) => {
+const ProgramSetupDrawer = ({
+  isOpen,
+  setIsOpen,
+  centerId,
+  program,
+  isEditing,
+  setIsEditing,
+  localizations,
+}) => {
   const [activeComponent, setActiveComponent] = useState(0);
   const [setupData, setSetupData] = useState(null);
   const { mutate: createProgram, isLoading: isCreateProgramLoading } = useCreateProgram();
   const { mutate: updateProgram, isLoading: isUpdateProgramLoading } = useUpdateProgram();
+  const { mutate: updateProgramConfiguration } = useUpdateProgramConfiguration();
+
   const scrollRef = useRef();
 
-  // HANDLERS & HELPER FUNCTIONS ·······························································||
+  // HANDLERS & FUNCTIONS ······································································||
   const handleOnCancel = () => {
     setActiveComponent(0);
     if (isEditing) setIsEditing(false);
@@ -134,8 +145,6 @@ const ProgramSetupDrawer = ({ isOpen, setIsOpen, centerId, program, isEditing, s
       } else {
         body.referenceGroups = formData.referenceGroups;
       }
-    } else {
-      body.useOneStudentGroup = true;
     }
     return body;
   };
@@ -157,73 +166,82 @@ const ProgramSetupDrawer = ({ isOpen, setIsOpen, centerId, program, isEditing, s
   const handleCourses = (formData, _body) => {
     const body = cloneDeep(_body);
     const { courses, seatsPerCourse } = formData;
-    const sameSeatsAllCourses = !!seatsPerCourse.all;
+    const sameSeatsAllCourses = !!seatsPerCourse?.all;
 
     if (courses?.length) {
       body.courses = courses.map((course) => ({
         ...course,
-        seats: sameSeatsAllCourses ? seatsPerCourse.all : seatsPerCourse[course.index],
+        seats: sameSeatsAllCourses ? seatsPerCourse.all : seatsPerCourse?.[course.index],
       }));
+      body.seatsForAllCourses = sameSeatsAllCourses ? seatsPerCourse.all : null;
     } else {
       // default course for programs with only one course
-      body.courses = [{ index: 1, minCredits: null, maxCredits: null, seats: seatsPerCourse.all }];
+      body.courses = [{ index: 1, minCredits: null, maxCredits: null }];
+      if (setupData?.referenceGroups) {
+        body.courses[0].seats = seatsPerCourse.all;
+        body.seatsForAllCourses = seatsPerCourse.all;
+      }
     }
 
     return body;
   };
 
-  const constructRequestBody = (formData) => {
+  const constructRequestBody = ({ formData, isEditingConfig }) => {
     let body = {
       name: formData.name,
       abbreviation: formData.abbreviation,
       color: formData.color,
       image: formData.image,
-      centers: [centerId],
-      substages: formData.substages || [],
       numberOfSubstages: formData.substages?.length || 0,
       evaluationSystem: formData.evaluationSystem,
-      haveKnowledge: setupData.knowledgeAreas,
-      hasSubjectTypes: setupData.subjectTypes,
-      useCustomSubjectIds: setupData.customSubjectIds,
       hideStudentsToStudents: !!formData.hideStudentsFromEachOther,
-      useAutoAssignment: !!formData.autoAsignment,
-      cycles: formData.cycles?.length
-        ? formData.cycles.map(({ name, courses }) => ({ name, courses }))
-        : [],
-      sequentialCourses: isBoolean(setupData.sequentialCourses)
-        ? setupData.sequentialCourses
-        : true,
+      useAutoAssignment: !!formData.autoAssignment,
       moreThanOneAcademicYear: isBoolean(setupData.sequentialCourses)
         ? !setupData.sequentialCourses
         : false,
-      coursesName: 'Curso 🌎', //! TODO - library to get the course name??
       maxNumberOfCourses: formData.courses?.length || 1,
-      courses: formData.courses || [], // TODO we also specify seats in programs of ony one course
+      substages: formData.substages || [],
+      coursesName: 'Curso 🌎', //! TODO - library to get the course name??
     };
-
     body = handleCredits(formData, body);
-    body = handleReferenceGroups(formData, body);
     body = handleCourses(formData, body);
+    body = handleReferenceGroups(formData, body);
+    body.cycles = formData.cycles?.length
+      ? formData.cycles.map(({ name, courses, index }) => ({ name, courses, index }))
+      : [];
+
+    if (!isEditingConfig) {
+      body.centers = [centerId];
+      body.haveKnowledge = setupData.knowledgeAreas;
+      body.hasSubjectTypes = setupData.subjectTypes;
+      body.useCustomSubjectIds = setupData.customSubjectIds;
+      body.sequentialCourses = isBoolean(setupData.sequentialCourses)
+        ? setupData.sequentialCourses
+        : true;
+      body.moreThanOneAcademicYear = isBoolean(setupData.sequentialCourses)
+        ? !setupData.sequentialCourses
+        : false;
+    }
 
     return body;
   };
 
   const handleOnAdd = (formData) => {
-    const body = constructRequestBody(formData);
-    console.log('body', body);
+    const body = constructRequestBody({ formData, isEditingConfig: false });
 
     createProgram(body, {
       onSuccess: () => {
-        addSuccessAlert('Programa creado con éxito 🌎');
+        addSuccessAlert(localizations?.alerts.success.add);
         handleOnCancel();
       },
       onError: (e) => {
-        addErrorAlert(e);
+        console.error(e);
+        addErrorAlert(localizations?.alerts.failure.add);
       },
     });
   };
 
-  const handleOnEdit = (formData) => {
+  const handleOnSimpleEdit = (formData) => {
     let body = {
       ...formData,
       id: program.id,
@@ -232,11 +250,36 @@ const ProgramSetupDrawer = ({ isOpen, setIsOpen, centerId, program, isEditing, s
 
     updateProgram(body, {
       onSuccess: () => {
-        addSuccessAlert('Programa actualizado con éxito 🌎');
+        addSuccessAlert(localizations?.alerts.success.update);
         handleOnCancel();
       },
       onError: (e) => {
-        addErrorAlert(e);
+        console.error(e);
+        addErrorAlert(localizations?.alerts.failure.update);
+      },
+    });
+  };
+
+  const getSubstagesToRemove = (substages) =>
+    program.substages?.filter(
+      (originalSubstage) => !substages.some((substage) => substage.id === originalSubstage.id)
+    ) || [];
+
+  const handleOnEditConfiguration = (formData) => {
+    let body = {
+      ...constructRequestBody({ formData, isEditingConfig: true }),
+      id: program.id,
+    };
+    body.substagesToRemove = getSubstagesToRemove(formData.substages);
+
+    updateProgramConfiguration(body, {
+      onSuccess: () => {
+        addSuccessAlert(localizations?.alerts.success.update);
+        handleOnCancel();
+      },
+      onError: (e) => {
+        console.error(e);
+        addErrorAlert(localizations?.alerts.failure.update);
       },
     });
   };
@@ -248,8 +291,9 @@ const ProgramSetupDrawer = ({ isOpen, setIsOpen, centerId, program, isEditing, s
         scrollRef={scrollRef}
         onCancel={handleOnCancel}
         onSetup={handleSetup}
+        localizations={localizations}
       />,
-      <LoadingFormState key="load-form" />,
+      <LoadingFormState key="load-form" localizations={localizations} />,
       <AddProgramForm
         key="add-form"
         scrollRef={scrollRef}
@@ -258,10 +302,29 @@ const ProgramSetupDrawer = ({ isOpen, setIsOpen, centerId, program, isEditing, s
         centerId={centerId}
         onSubmit={handleOnAdd}
         drawerIsLoading={isCreateProgramLoading}
+        localizations={localizations}
+        programUnderEdit={isEditing ? program : null}
+        onUpdate={handleOnEditConfiguration}
       />,
     ],
-    [setupData]
+    [setupData, localizations, isEditing, program]
   );
+
+  // EFFECTS ······································································||
+  useEffect(() => {
+    if (isEditing && !program?.students?.length) {
+      const setupObject = {
+        moreThanOneCourse: program.courses?.length > 1,
+        hasSubstages: program.substages?.length > 0,
+        referenceGroups: program.groups?.length > 0,
+        creditsSystem: !!program.credits,
+        durationInHours: !program.credits && program.totalHours,
+        sequentialCourses: program.sequentialCourses,
+        hasCycles: program.cycles?.length > 0,
+      };
+      setSetupData(setupObject);
+    }
+  }, [isEditing, program]);
 
   return (
     <Drawer opened={isOpen} close={false} size={728} empty>
@@ -270,19 +333,25 @@ const ProgramSetupDrawer = ({ isOpen, setIsOpen, centerId, program, isEditing, s
         scrollRef={scrollRef}
         Header={
           <Header
-            localizations={{ title: 'Nuevo Programa 🌎', close: 'Cerrar 🌎' }}
+            localizations={{
+              title: localizations?.programDrawer.title,
+              close: localizations?.labels.cancel,
+            }}
             onClose={handleOnCancel}
           />
         }
       >
         <Stack ref={scrollRef} sx={{ padding: 24, overflowY: 'auto', overflowX: 'hidden' }}>
           <TotalLayoutStepContainer clean>
-            {!isEditing ? (
-              creationFlowComponents[activeComponent]
-            ) : (
+            {!isEditing && creationFlowComponents[activeComponent]}
+            {isEditing &&
+              !program?.subjects?.length &&
+              creationFlowComponents[creationFlowComponents.length - 1]}
+
+            {isEditing && program?.subjects?.length > 0 && (
               <UpdateProgramForm
                 program={program}
-                onSubmit={handleOnEdit}
+                onSubmit={handleOnSimpleEdit}
                 drawerIsLoading={isUpdateProgramLoading}
               />
             )}
@@ -300,6 +369,7 @@ ProgramSetupDrawer.propTypes = {
   program: PropTypes.object,
   setIsEditing: PropTypes.func,
   isEditing: PropTypes.bool,
+  localizations: PropTypes.object,
 };
 
 export default ProgramSetupDrawer;

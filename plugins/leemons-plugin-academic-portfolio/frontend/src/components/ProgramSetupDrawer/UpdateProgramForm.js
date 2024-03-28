@@ -57,7 +57,7 @@ const UpdateProgramForm = ({
       setValue('credits', program.credits);
       setValue('hoursPerCredit', program.hoursPerCredit);
       setValue('totalHours', program.totalHours);
-      setValue('useAutoAssignment', program.useAutoAssignment);
+      setValue('autoAssignment', program.useAutoAssignment);
     }
   }, [program]);
 

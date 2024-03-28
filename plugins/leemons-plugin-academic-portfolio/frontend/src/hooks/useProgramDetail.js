@@ -5,7 +5,8 @@ export default function useProgramDetail(
   programId,
   { enabled = true } = {},
   withClasses,
-  showArchived
+  showArchived,
+  withStudentsAndTeachers
 ) {
   const programIds = Array.isArray(programId) ? programId : [programId];
 
@@ -13,7 +14,12 @@ export default function useProgramDetail(
     queries: programIds.map((id) => ({
       queryKey: ['programDetail', { program: id }],
       queryFn: async () => {
-        const response = await detailProgramRequest(id, withClasses, showArchived);
+        const response = await detailProgramRequest(
+          id,
+          withClasses,
+          showArchived,
+          withStudentsAndTeachers
+        );
 
         return response.program;
       },

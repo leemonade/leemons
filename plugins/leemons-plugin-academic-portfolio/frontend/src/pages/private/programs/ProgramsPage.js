@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUserCenters } from '@users/hooks';
 import {
@@ -13,12 +13,11 @@ import {
   Tabs,
   TabPanel,
   Box,
-  ActionButton,
   ContextContainer,
   Button,
   ImageLoader,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, RestoreIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 
@@ -29,9 +28,10 @@ import ProgramSetupDrawer from '@academic-portfolio/components/ProgramSetupDrawe
 import { useArchiveProgram } from '@academic-portfolio/hooks/mutations/useMutateProgram';
 import { getCenterProgramsKey } from '@academic-portfolio/hooks/keys/centerPrograms';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
+import { unflatten } from '@common';
 
 const ProgramsPage = () => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('knowledgeAreas_page'));
+  const [t, translations, , tLoading] = useTranslateLoader(prefixPN('programs_page'));
   const [selectedCenter, setSelectedCenter] = useState('');
   const [activeTab, setActiveTab] = useState('0');
   const [showEmptyState, setShowEmptyState] = useState(false);
@@ -39,17 +39,16 @@ const ProgramsPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const history = useHistory();
-  const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
+  const { data: centersQuery, isLoading: areCentersLoading } = useUserCenters();
   const { mutate: archiveProgram, loading: isArchiveProgramLoading } = useArchiveProgram();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
 
   // SET UP ------------------------------------------------------------------------------------------------ ||
-
   const centersData = useMemo(
-    () => userCenters?.map((center) => ({ value: center?.id, label: center?.name })),
-    [userCenters]
+    () => centersQuery?.map((center) => ({ value: center?.id, label: center?.name })),
+    [centersQuery]
   );
 
   const queryFilters = useMemo(() => {
@@ -68,8 +67,8 @@ const ProgramsPage = () => {
   });
 
   const isLoading = useMemo(
-    () => areCentersLoading || areProgramsLoading,
-    [areCentersLoading, areProgramsLoading]
+    () => areCentersLoading || areProgramsLoading || tLoading,
+    [areCentersLoading, areProgramsLoading, tLoading]
   );
 
   const programsIds = useMemo(() => {
@@ -78,6 +77,15 @@ const ProgramsPage = () => {
     }
     return [];
   }, [programsQuery]);
+
+  const localizations = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return res['academic-portfolio']?.programs_page;
+    }
+
+    return {};
+  }, [translations]);
 
   // EFFECTS ------------------------------------------------------------------------------------------------ ||
 
@@ -122,7 +130,7 @@ const ProgramsPage = () => {
         onSuccess: () => {
           const queryKey = getCenterProgramsKey(selectedCenter);
           queryClient.invalidateQueries(queryKey);
-          addSuccessAlert('Programa borrado con éxito 🌎');
+          addSuccessAlert(t('alerts.success.add'));
         },
         onError: (e) => {
           const queryKey = getCenterProgramsKey(selectedCenter);
@@ -142,10 +150,12 @@ const ProgramsPage = () => {
         onEdit={handleOnEdit}
         onArchive={handleArchive}
         isShowingArchivedPrograms={activeTab === '1'}
+        labels={localizations?.labels}
       />
     );
-  }, [activeTab, programsIds, handleOnEdit, handleArchive]);
+  }, [activeTab, programsIds, handleOnEdit, handleArchive, localizations]);
 
+  if (!translations) return null;
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -153,9 +163,9 @@ const ProgramsPage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={'Programs Educativos 🌎' || t('header.title')}
+            title={t('page_title')}
             onCancel={() => history.goBack()}
-            mainActionLabel={'Cancelar 🌎' || t('header.cancel')}
+            mainActionLabel={t('labels.cancel')}
             compact
             icon={
               <Stack justifyContent="center" alignItems="center">
@@ -170,7 +180,7 @@ const ProgramsPage = () => {
           >
             <Select
               data={centersData}
-              placeholder={'Select a center 🌎' || t('header.centerSelectPlaceholder')}
+              placeholder={t('common.select_center')}
               onChange={(value) => {
                 setSelectedCenter(value);
               }}
@@ -184,38 +194,41 @@ const ProgramsPage = () => {
           ref={scrollRef}
           justifyContent="center"
           fullwidth
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb' }}
+          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', paddingTop: 24 }}
         >
-          <TotalLayoutStepContainer stepName="Program name here 🌎" clean>
+          <TotalLayoutStepContainer
+            stepName={centersQuery?.find((item) => item.id === selectedCenter)?.name}
+            clean
+          >
             <Tabs
               tabPanelListStyle={{ backgroundColor: 'white' }}
               fullHeight
               onChange={(activeT) => setActiveTab(activeT)}
             >
-              <TabPanel label="Publicados 🌎">
+              <TabPanel label={t('labels.publishedPrograms')}>
                 {!showEmptyState ? (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
                     <Box sx={{ justifySelf: 'start', width: 160, height: 40 }}>
                       <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-                        {t('labels.add')}
+                        {t('labels.addNewProgram')}
                       </Button>
                     </Box>
                     {ProgramsDetailTableToRender}
                   </ContextContainer>
                 ) : (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <EmptyState onClick={handleOnAdd} />
+                    <EmptyState onClick={handleOnAdd} localizations={localizations} />
                   </ContextContainer>
                 )}
               </TabPanel>
-              <TabPanel label="Archivados 🌎">
+              <TabPanel label={t('labels.archivedPrograms')}>
                 {!showEmptyState ? (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
                     {ProgramsDetailTableToRender}
                   </ContextContainer>
                 ) : (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <EmptyState onClick={handleOnAdd} />
+                    <EmptyState onClick={handleOnAdd} localizations={localizations} archivedView />
                   </ContextContainer>
                 )}
               </TabPanel>
@@ -230,6 +243,7 @@ const ProgramsPage = () => {
         setIsEditing={setIsEditing}
         isEditing={isEditing}
         program={selectedProgram}
+        localizations={localizations}
       />
     </>
   );

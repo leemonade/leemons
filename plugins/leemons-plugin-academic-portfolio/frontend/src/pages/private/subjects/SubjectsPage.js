@@ -25,6 +25,7 @@ import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterProg
 import SubjectSetupDrawer from '@academic-portfolio/components/SubjectSetupDrawer/SubjectSetupDrawer';
 import SubjectsDetailTable from '@academic-portfolio/components/SubjectsDetailTable';
 import useProgramSubjects from '@academic-portfolio/hooks/queries/useProgramSubjects';
+import { EmptyState } from '@academic-portfolio/components/EmptyState';
 
 const SubjectPage = () => {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('knowledgeAreas_page'));
@@ -70,7 +71,7 @@ const SubjectPage = () => {
     return {};
   }, [activeTab]);
 
-  const { data: subjectsQuery, isLoading: areSubjectsLoading } = useProgramSubjects({
+  const { data: subjectsQuery } = useProgramSubjects({
     program: selectedProgram,
     queryFilters,
     options: { enabled: selectedProgram?.length > 0 },
@@ -84,26 +85,26 @@ const SubjectPage = () => {
   }, [subjectsQuery]);
 
   const isLoading = useMemo(
-    () => areCentersLoading || areCenterProgramsLoading || areSubjectsLoading,
-    [areCentersLoading, areCenterProgramsLoading, areSubjectsLoading]
+    () => areCentersLoading || areCenterProgramsLoading,
+    [areCentersLoading, areCenterProgramsLoading]
   );
 
   // EFFECTS ------------------------------------------------------------------------------------------------ ||
 
   // Manage loading and emtpy state when no ce
   useEffect(() => {
-    if (centerProgramsQuery?.length) {
+    if (subjectsQuery?.length) {
       setShowEmptyState(false);
-    } else if (!centerProgramsQuery?.length && dataFetched) {
+    } else if (!subjectsQuery?.length && dataFetched) {
       setShowEmptyState(true);
     }
-  }, [centerProgramsQuery, dataFetched]);
+  }, [subjectsQuery, dataFetched]);
 
   useEffect(() => {
-    if (!isLoading && selectedCenter?.length > 0) {
+    if (!isLoading && selectedProgram?.length > 0) {
       setDataFetched(true);
     }
-  }, [isLoading, selectedCenter]);
+  }, [isLoading, selectedProgram]);
 
   // **For the center Select to automatically pick a center when first loaded
   useEffect(() => {
@@ -127,11 +128,14 @@ const SubjectPage = () => {
 
   const handleOnEdit = (detailedSubject) => {
     setSelectedSubject(cloneDeep(detailedSubject));
-    console.log('addDrawerIsOpen', addDrawerIsOpen);
-    console.log('isEditing', isEditing);
     setAddDrawerIsOpen(true);
     setIsEditing(true);
   };
+
+  const SubjectDetailsTableToRender = useMemo(
+    () => <SubjectsDetailTable subjectIds={subjectIds} onEdit={handleOnEdit} />,
+    [subjectIds, handleOnEdit]
+  );
 
   return (
     <>
@@ -182,9 +186,12 @@ const SubjectPage = () => {
           ref={scrollRef}
           justifyContent="center"
           fullwidth
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb' }}
+          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', paddingTop: 24 }}
         >
-          <TotalLayoutStepContainer stepName="Program name here 🌎" clean>
+          <TotalLayoutStepContainer
+            stepName={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name}
+            clean
+          >
             <Tabs
               tabPanelListStyle={{ backgroundColor: 'white' }}
               fullHeight
@@ -198,14 +205,11 @@ const SubjectPage = () => {
                         {'Nueva asignatura 🌎'}
                       </Button>
                     </Box>
-                    <SubjectsDetailTable subjectIds={subjectIds} onEdit={handleOnEdit} />
+                    {SubjectDetailsTableToRender}
                   </ContextContainer>
                 ) : (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <div>SOY UN EMPTY STATE! 🎉</div>
-                    <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-                      {t('labels.add')}
-                    </Button>
+                    <EmptyState onClick={handleOnAdd} />
                   </ContextContainer>
                 )}
               </TabPanel>
@@ -242,6 +246,7 @@ const SubjectPage = () => {
         isEditing={isEditing}
         programId={selectedProgram}
         subject={selectedSubject}
+        allSubjectIds={subjectIds} // temporary for us to be able to reset the query, todo: update hook
       />
     </>
   );

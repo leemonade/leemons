@@ -8,11 +8,16 @@ import {
 } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
 
+// * Nuevo formato de coursos para el backend, un array de cursos
+// maxCourses === courses.length
+// Anteriormente todos los cursos se seteaban con la misma cantidad de creditos coursesCredits y no se especificaban seats
+// Ahora usaremos este array para que cada curso tenga sus propios seats, min y max credits,
+
 const blankCourse = { minCredits: null, maxCredits: null };
 
 const CoursesSetup = ({
   onChange,
-  labels = {},
+  localizations = {},
   value,
   showCredits = false,
   maxNumberOfCredits = 0,
@@ -21,14 +26,18 @@ const CoursesSetup = ({
   const [maxCreditsDebounced] = useDebouncedValue(maxNumberOfCredits, 300);
   const form = useForm();
 
-  // * Nuevo formato de coursos para el backend, un array de cursos
-  // maxCourses === courses.length
-  // Anteriormente todos los cursos se seteaban con la misma cantidad de creditos coursesCredits y no se especificaban seats
-  // Ahora usaremos este array para que cada curso tenga sus propios seats, min y max credits,
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.programDrawer?.addProgramForm?.coursesSetup;
+  }, [localizations]);
 
   useEffect(() => {
     if (value?.length > 0) {
-      setCoursesData([...value]); // A efectos prácticos el array siempre está ordenado, otherwise order by the index property
+      const orderedCourses = [...value].sort((a, b) => a.index - b.index);
+      setCoursesData(orderedCourses);
+      if (form.getValues('coursesAmount') !== orderedCourses?.length) {
+        form.setValue('coursesAmount', orderedCourses.length);
+      }
     } else {
       const defaultValues = Array.from({ length: 2 }, (_, i) => ({ index: i + 1, ...blankCourse }));
       onChange(defaultValues);
@@ -65,14 +74,14 @@ const CoursesSetup = ({
   const tableInputColumns = useMemo(
     () => [
       {
-        Header: 'Curso 🌎',
+        Header: formLabels?.course,
         accessor: 'index',
         style: { width: 140, paddingLeft: 10 },
         editable: false,
-        valueRender: (indexValue) => `Curso ${indexValue} 🌎`,
+        valueRender: (indexValue) => `${formLabels?.course} ${indexValue}`,
       },
       {
-        Header: 'Créditos mínimos 🌎',
+        Header: formLabels?.minCredits,
         accessor: 'minCredits',
         input: {
           node: <NumberInput />,
@@ -81,7 +90,7 @@ const CoursesSetup = ({
         style: { width: 270, paddingLeft: 10, display: !showCredits && 'hidden' },
       },
       {
-        Header: 'Créditos máximos 🌎',
+        Header: formLabels?.maxCredits,
         accessor: 'maxCredits',
         input: {
           node: <NumberInput />,
@@ -91,7 +100,7 @@ const CoursesSetup = ({
         valueRender: (maxCreditsValue) => (!showCredits ? '--' : maxCreditsValue),
       },
     ],
-    [labels, maxNumberOfCredits, showCredits]
+    [localizations, maxNumberOfCredits, showCredits]
   );
 
   return (
@@ -110,7 +119,7 @@ const CoursesSetup = ({
               } else {
                 form.setError('coursesAmount', {
                   type: 'manual',
-                  message: 'Must have at least 2 courses 🌎',
+                  message: formLabels?.mustHaveAtLeastTwoCourses,
                 });
               }
             }}
@@ -124,11 +133,11 @@ const CoursesSetup = ({
       <TableInput
         columns={tableInputColumns}
         labels={{
-          add: labels?.add,
-          remove: labels?.remove,
-          edit: labels?.edit,
-          accept: labels?.accept,
-          cancel: labels?.cancel,
+          add: localizations?.labels?.add,
+          remove: localizations?.labels?.remove,
+          edit: localizations?.labels?.edit,
+          accept: localizations?.labels?.accept,
+          cancel: localizations?.labels?.cancel,
         }}
         canAdd={false}
         removable={false}
@@ -146,7 +155,7 @@ const CoursesSetup = ({
 
 CoursesSetup.propTypes = {
   onChange: PropTypes.func,
-  labels: PropTypes.object,
+  localizations: PropTypes.object,
   value: PropTypes.arrayOf(PropTypes.object),
   showCredits: PropTypes.bool,
   maxNumberOfCredits: PropTypes.number,

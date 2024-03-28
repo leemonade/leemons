@@ -28,6 +28,7 @@ const addProgramSchema = {
     evaluationSystem: stringSchema,
     useOneStudentGroup: booleanSchema,
     hideStudentsToStudents: booleanSchema,
+    seatsForAllCourses: integerSchemaNullable,
     cycles: {
       type: 'array',
       items: {
@@ -213,7 +214,7 @@ const updateProgramSchema = {
     treeType: integerSchema,
     managers: arrayStringSchema,
     hideStudentsToStudents: booleanSchema,
-    totalHours: numberSchema,
+    totalHours: integerSchemaNullable,
     hoursPerCredit: integerSchemaNullable,
     useAutoAssignment: booleanSchema,
   },
@@ -506,7 +507,7 @@ async function validateAddGroup({ data, ctx }) {
     const group = await ctx.tx.db.Groups.countDocuments({ program: data.program, type: 'group' });
     if (group)
       throw new LeemonsError(ctx, {
-        message: 'This program configured as one group, you can´t add a new group',
+        message: 'This program configured as one group, you cannot add a new group',
       });
   }
 
@@ -703,7 +704,7 @@ const addSubjectSchema = {
     name: stringSchema,
     program: stringSchema,
     credits: numberSchema,
-    course: stringSchemaNullable,
+    course: { type: 'string' },
     internalId: stringSchema,
     image: {
       type: ['string', 'object'],
@@ -781,10 +782,12 @@ const updateSubjectSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
-    credits: numberSchema,
+    credits: integerSchemaNullable,
     subjectType: stringSchema,
-    knowledge: stringSchemaNullable,
+    knowledgeArea: stringSchemaNullable,
     color: stringSchemaNullable,
+    course: { type: 'string' },
+    internalId: stringSchemaNullable,
     image: {
       type: ['string', 'object'],
       nullable: true,
@@ -793,6 +796,7 @@ const updateSubjectSchema = {
       type: ['string', 'object'],
       nullable: true,
     },
+    substage: stringSchemaNullable,
   },
   required: ['id'],
   additionalProperties: false,
@@ -814,6 +818,7 @@ async function validateUpdateSubject({ data, ctx }) {
   if (!validator.validate(_data)) {
     throw validator.error;
   }
+  const parsedCourses = data.course ? JSON.parse(data.course) : null;
 
   if (internalId) {
     const validator2 = new LeemonsValidator(updateSubjectInternalIdSchema);
@@ -822,21 +827,30 @@ async function validateUpdateSubject({ data, ctx }) {
       throw validator2.error;
     }
 
-    const subject = await ctx.tx.db.Subjects.findOne({ id: data.id }).select(['program']).lean();
+    // All internal id have an unique format for all subjects in all programs
+    // const subject = await ctx.tx.db.Subjects.findOne({ id: data.id }).select(['program']).lean();
+    // await validateInternalIdHasGoodFormat({
+    //   program: subject.program,
+    //   internalId: data.internalId,
+    //   ctx,
+    // });
 
-    await validateInternalIdHasGoodFormat({
-      program: subject.program,
-      internalId: data.internalId,
-      ctx,
-    });
+    if (data.internalId?.length) {
+      const maxInternalIdLength = 3;
+      if (data.internalId.length > maxInternalIdLength) {
+        throw new LeemonsError(ctx, {
+          message: 'The Internal ID should have a maximum of 3 digits.',
+        });
+      }
 
-    await validateUniquenessOfInternalId({
-      program: subject.program,
-      compiledInternalId:
-        (data.course ? await getCourseIndex({ course: data.course, ctx }) : '') + data.internalId,
-      subject: data.id,
-      ctx,
-    });
+      const compiledInternalId = await getCompiledInternalId(parsedCourses, data.internalId, ctx);
+
+      await validateUniquenessOfInternalId({
+        program: data.program,
+        compiledInternalId,
+        ctx,
+      });
+    }
   }
 }
 
@@ -924,11 +938,17 @@ const addClassSchema = {
     },
     group: stringSchemaNullable,
     subject: stringSchema,
-    subjectType: stringSchema,
-    knowledge: stringSchemaNullable,
+    subjectType: stringSchemaNullable,
+    knowledgeArea: stringSchemaNullable,
     color: stringSchema,
     virtualUrl: stringSchemaNullable,
     address: stringSchemaNullable,
+    classWithoutGroupId: {
+      type: 'string',
+      minLength: 3,
+      maxLength: 3,
+      nullable: true,
+    },
     icon: {
       type: ['string', 'object'],
       nullable: true,
@@ -1230,6 +1250,8 @@ const updateClassSchema = {
         additionalProperties: true,
       },
     },
+    classroomId: stringSchemaNullable,
+    alias: stringSchemaNullable,
   },
   required: ['id'],
   additionalProperties: false,
@@ -1286,8 +1308,9 @@ const addCycleSchema = {
     name: stringSchema,
     program: stringSchema,
     courses: arrayStringSchema,
+    index: integerSchema,
   },
-  required: ['name', 'program', 'courses'],
+  required: ['name', 'program', 'courses', 'index'],
   additionalProperties: false,
 };
 

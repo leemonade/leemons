@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
-import { useProgramDetail } from '@academic-portfolio/hooks';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { Table, Stack, ActionButton } from '@bubbles-ui/components';
 import { ArchiveIcon, EditWriteIcon, RestoreIcon } from '@bubbles-ui/icons/solid';
+
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { useProgramDetail } from '@academic-portfolio/hooks';
 
 const ProgramsDetailTable = ({
   programsIds,
@@ -17,33 +19,34 @@ const ProgramsDetailTable = ({
     programsIds,
     { enabled: programsIds?.length > 0 },
     false,
-    isShowingArchivedPrograms
+    isShowingArchivedPrograms,
+    true
   );
 
   const tableColumns = useMemo(
     () => [
       {
-        Header: 'PROGRAM 🌎' || labels?.program,
+        Header: labels?.program,
         accessor: 'name',
       },
       {
-        Header: 'CYCLES 🌎' || labels?.cycles,
+        Header: labels?.cycles,
         accessor: 'cycles',
       },
       {
-        Header: 'SUBSTAGES 🌎' || labels?.substages,
+        Header: labels?.substages,
         accessor: 'substages',
       },
       {
-        Header: 'SUBJECTS 🌎' || labels?.subjects,
+        Header: labels?.subjects,
         accessor: 'subjects',
       },
       {
-        Header: 'STUDENTS 🌎' || labels?.students,
+        Header: labels?.students,
         accessor: 'students',
       },
       {
-        Header: 'ACTIONS 🌎',
+        Header: labels?.actions,
         accessor: 'actions',
         style: { width: 100, textAlign: 'center' },
       },
@@ -63,16 +66,20 @@ const ProgramsDetailTable = ({
         cycles: program?.cycles?.length,
         substages: program?.substages?.length,
         subjects: program?.subjects?.length,
+        students: program?.students?.length,
         actions: (
           <Stack justifyContent="end" fullWidth>
             <ActionButton
-              tooltip="Editar 🌎"
+              tooltip={labels?.edit}
               onClick={() => onEdit(program)}
               icon={<EditWriteIcon width={18} height={18} />}
             />
-            <ActionButton tooltip="Duplicar 🌎" icon={<DuplicateIcon width={18} height={18} />} />
             <ActionButton
-              tooltip={isShowingArchivedPrograms ? 'Restaurar 🌎' : 'Archivar 🌎'}
+              tooltip={labels?.duplicate}
+              icon={<DuplicateIcon width={18} height={18} />}
+            />
+            <ActionButton
+              tooltip={isShowingArchivedPrograms ? labels?.restore : labels?.archive}
               icon={
                 !isShowingArchivedPrograms ? (
                   <ArchiveIcon width={18} height={18} onClick={() => onArchive(program)} />
@@ -90,9 +97,9 @@ const ProgramsDetailTable = ({
       }));
     }
     return [];
-  }, [programsQueries]);
+  }, [programsQueries, labels]);
 
-  if (isLoading) return null;
+  if (isLoading || isEmpty(labels)) return null;
   return <Table columns={tableColumns} data={programsData} />;
 };
 

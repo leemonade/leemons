@@ -19,6 +19,7 @@ import {
   updateProgram,
   getProgramsPublicInfo,
   removeProgram,
+  updateProgramConfiguration,
 } from './programs';
 import { updateCycle } from './cycles';
 import {
@@ -117,6 +118,8 @@ export const haveProgramsRequest = havePrograms;
 export const detailProgramRequest = detailProgram;
 export const createProgramRequest = createProgram;
 export const updateProgramRequest = updateProgram;
+export const updateProgramConfigurationRequest = updateProgramConfiguration;
+
 export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;
 export const removeProgramRequest = removeProgram;

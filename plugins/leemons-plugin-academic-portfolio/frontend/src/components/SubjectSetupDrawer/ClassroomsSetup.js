@@ -39,9 +39,13 @@ const ClassroomsSetup = ({ onChange, value }) => {
 
   useEffect(() => {
     if (value?.length) {
+      const sortedClassrooms = [...value].sort((a, b) =>
+        a.classWithoutGroupId?.localeCompare(b.classWithoutGroupId)
+      );
+
       const currentClassrooms = form.getValues('classrooms');
       if (JSON.stringify(value) !== JSON.stringify(currentClassrooms)) {
-        form.setValue('classrooms', value);
+        form.setValue('classrooms', sortedClassrooms);
       }
       if (classroomsAmount !== value.length) {
         form.setValue('classroomsAmount', value.length);
@@ -50,7 +54,7 @@ const ClassroomsSetup = ({ onChange, value }) => {
   }, [value]);
 
   const validate = async (index) => {
-    const fieldName = `classrooms.${index}.availableSeats`;
+    const fieldName = `classrooms.${index}.seats`;
     const isValid = await form.trigger(fieldName);
 
     if (isValid) {
@@ -59,7 +63,7 @@ const ClassroomsSetup = ({ onChange, value }) => {
     }
     form.setError(fieldName, {
       type: 'manual',
-      message: 'This field is required 🌎',
+      message: 'This field is needed for the classroom to be added 🌎',
     });
     return false;
   };
@@ -69,6 +73,9 @@ const ClassroomsSetup = ({ onChange, value }) => {
 
     if (validClassroom) {
       const formClassrooms = form.getValues('classrooms');
+      if (formClassrooms[index]) {
+        formClassrooms[index].classWithoutGroupId = `${(index + 1).toString().padStart(3, '0')}`;
+      }
       onChange([...formClassrooms]);
     }
   };
@@ -106,12 +113,12 @@ const ClassroomsSetup = ({ onChange, value }) => {
               <th className={classes.aulaTh}>
                 <Text size="xs" role="productive" color="primary" strong>
                   Aula
-                </Text>{' '}
+                </Text>
                 🌎
               </th>
               <th className={classes.th}>
                 <Text size="xs" role="productive" color="primary" strong>
-                  {'Plazas disponibles 🌎' + '*'}
+                  {`Plazas disponibles 🌎*`}
                 </Text>
               </th>
               <th className={classes.th}>
@@ -128,12 +135,15 @@ const ClassroomsSetup = ({ onChange, value }) => {
           </thead>
           <tbody>
             {[...Array(classroomsAmount)].map((_, index) => (
-              <tr key={index}>
+              <tr key={`classrom-${index}`}>
                 <td className={classes.td}>
-                  <Text placeholder="Aula 🌎">{`${(index + 1).toString().padStart(3, '0')}`}</Text>
+                  <Text>
+                    {value[index]?.classWithoutGroupId ||
+                      `${(index + 1).toString().padStart(3, '0')}`}
+                  </Text>
                 </td>
                 <Controller
-                  name={`classrooms.${index}.availableSeats`}
+                  name={`classrooms.${index}.seats`}
                   control={form.control}
                   rules={{
                     required: 'This field is required 🌎',

@@ -33,13 +33,16 @@ async function havePrograms() {
   });
 }
 
-async function detailProgram(id, withClasses, showArchived) {
+async function detailProgram(id, withClasses, showArchived, withStudentsAndTeachers) {
   const queryParams = new URLSearchParams();
   if (typeof withClasses === 'boolean') {
     queryParams.append('withClasses', withClasses);
   }
   if (typeof showArchived === 'boolean') {
     queryParams.append('showArchived', showArchived);
+  }
+  if (typeof withStudentsAndTeachers === 'boolean') {
+    queryParams.append('withStudentsAndTeachers', withStudentsAndTeachers);
   }
 
   return leemons.api(`v1/academic-portfolio/programs/${id}?${queryParams.toString()}`, {
@@ -99,6 +102,23 @@ async function updateProgram(_body) {
   });
 }
 
+async function updateProgramConfiguration(_body) {
+  const body = cloneDeep(_body);
+  if (body.image && !isString(body.image)) {
+    if (body.image.id) {
+      body.image = body.image.cover?.id;
+    } else {
+      body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
+    }
+  }
+
+  return leemons.api('v1/academic-portfolio/programs/config', {
+    allAgents: true,
+    method: 'PUT',
+    body,
+  });
+}
+
 async function addStudentsToClassesUnderNodeTree(body) {
   return leemons.api('v1/academic-portfolio/programs/add-students-to-classes-under-node-tree', {
     allAgents: true,
@@ -139,4 +159,5 @@ export {
   addStudentsToClassesUnderNodeTree,
   getProgramsPublicInfo,
   removeProgram,
+  updateProgramConfiguration,
 };

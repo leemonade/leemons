@@ -1,21 +1,18 @@
-import { createSubjectRequest } from '@academic-portfolio/request';
+import { createSubjectRequest, updateSubjectRequest } from '@academic-portfolio/request';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProgramSubjectsKey } from '../keys/programSubjects';
 
-// import { getCenterProgramsKey } from '../keys/centerPrograms';
+export function useUpdateSubject() {
+  const queryClient = useQueryClient();
 
-// export function useUpdateProgram() {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: async (props) => updateProgramRequest(props),
-//     onSuccess: (data) => {
-//       // Invaidate subject-types query for that center
-//       const queryKey = getSubjectTypesKey(data.subjectType.center);
-//       queryClient.invalidateQueries(queryKey);
-//     },
-//   });
-// }
+  return useMutation({
+    mutationFn: async (props) => updateSubjectRequest(props),
+    onSuccess: (data) => {
+      const queryKey = getProgramSubjectsKey(data.subject?.program);
+      queryClient.invalidateQueries(queryKey);
+    },
+  });
+}
 
 export function useCreateSubject() {
   const queryClient = useQueryClient();

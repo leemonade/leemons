@@ -28,6 +28,7 @@ const {
   addStudentsToClassesUnderNodeTree,
   getUserPrograms,
   getProgramEvaluationSystem,
+  updateProgramConfiguration,
 } = require('../../core/programs');
 
 /** @type {ServiceSchema} */
@@ -116,6 +117,27 @@ module.exports = {
       return { status: 200, program };
     },
   },
+  updateProgramConfiguration: {
+    rest: {
+      path: '/config',
+      method: 'PUT',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'update'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const program = await updateProgramConfiguration({ data: ctx.params, ctx });
+      return { status: 200, program };
+    },
+  },
+
   listProgramRest: {
     rest: {
       path: '/',
@@ -174,11 +196,13 @@ module.exports = {
       const truthyValues = ['true', true];
       const _withClasses = truthyValues.includes(ctx.params.withClasses);
       const _showArchived = truthyValues.includes(ctx.params.showArchived);
+      const _withStudentsAndTeachers = truthyValues.includes(ctx.params.withStudentsAndTeachers);
 
       const [program] = await programsByIds({
         ids: ctx.params.id,
         withClasses: _withClasses,
         showArchived: _showArchived,
+        withStudentsAndTeachers: _withStudentsAndTeachers,
         ctx,
       });
       if (!program) throw new LeemonsError(ctx, { message: 'Program not found' });

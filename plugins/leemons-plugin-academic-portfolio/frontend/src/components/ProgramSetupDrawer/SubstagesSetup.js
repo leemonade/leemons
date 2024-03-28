@@ -11,17 +11,23 @@ import {
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 
-const SubstagesSetup = ({ onChange, labels = {}, value }) => {
+const SubstagesSetup = ({ onChange, localizations = {}, value }) => {
   const [substages, setSubstages] = useState([]);
   const form = useForm();
+
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.programDrawer?.addProgramForm?.substagesSetup;
+  }, [localizations]);
 
   useEffect(() => {
     if (value?.length > 0) {
       setSubstages([
-        ...value.map(({ name, abbreviation }, i) => ({
+        ...value.map(({ name, abbreviation, id, index }) => ({
           name,
           abbreviation,
-          index: i + 1,
+          id,
+          index,
         })),
       ]);
     } else {
@@ -34,11 +40,8 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
     if (isValid) {
       const name = form.getValues('substageName');
       const abbreviation = form.getValues('substageAbbreviation');
-      const cleanSubstages = substages.map(({ name: _name, abbreviation: _abbreviation }) => ({
-        name: _name,
-        abbreviation: _abbreviation,
-      }));
-      onChange([...cleanSubstages, { name, abbreviation }]);
+      const index = substages.length + 1;
+      onChange([...substages, { name, abbreviation, index }]);
     }
   };
 
@@ -46,12 +49,13 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
     () => [
       {
         accessor: 'index',
+        editable: false,
       },
       {
         accessor: 'name',
         input: {
           node: <TextInput required />,
-          rules: { required: 'Required Field 🌎' },
+          rules: { required: localizations?.programDrawer?.requiredField },
         },
       },
       {
@@ -61,7 +65,7 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
         },
       },
     ],
-    [labels]
+    [localizations]
   );
 
   return (
@@ -71,14 +75,14 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
           <Controller
             control={form.control}
             name="substageName"
-            rules={{ required: 'Required Field 🌎' }}
+            rules={{ required: localizations?.programDrawer?.requiredField }}
             render={({ field }) => (
               <TextInput
                 {...field}
                 required
-                label={'Nombre 🌎'}
+                label={formLabels?.name}
                 error={form.formState.errors.substageName}
-                placeholder={'Añadir texto... 🌎'}
+                placeholder={formLabels?.addTextPlaceholder}
               />
             )}
           />
@@ -88,13 +92,17 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
             control={form.control}
             name="substageAbbreviation"
             render={({ field }) => (
-              <TextInput {...field} label={'Abreviatura 🌎'} placeholder={'Añadir texto... 🌎'} />
+              <TextInput
+                {...field}
+                label={formLabels?.abbreviation}
+                placeholder={formLabels?.addTextPlaceholder}
+              />
             )}
           />
         </Box>
         <InputWrapper showEmptyLabel>
           <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onAdd}>
-            {'Añadir 🌎'}
+            {formLabels?.add}
           </Button>
         </InputWrapper>
       </ContextContainer>
@@ -104,11 +112,11 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
           <TableInput
             columns={tableInputColumns}
             labels={{
-              add: labels?.add,
-              remove: labels?.remove,
-              edit: labels?.edit,
-              accept: labels?.accept,
-              cancel: labels?.cancel,
+              add: localizations?.labels?.add,
+              remove: localizations?.labels?.remove,
+              edit: localizations?.labels?.edit,
+              accept: localizations?.labels?.accept,
+              cancel: localizations?.labels?.cancel,
             }}
             canAdd={false}
             editable
@@ -117,7 +125,8 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
             data={substages}
             showHeaders={false}
             onChange={(data) => {
-              const updateObject = data.map(({ name, abbreviation }) => ({ name, abbreviation }));
+              const updateObject = [...data].map((item, i) => ({ ...item, index: i + 1 }));
+
               onChange(updateObject);
             }}
           />
@@ -129,7 +138,7 @@ const SubstagesSetup = ({ onChange, labels = {}, value }) => {
 
 SubstagesSetup.propTypes = {
   onChange: PropTypes.func,
-  labels: PropTypes.object,
+  localizations: PropTypes.object,
   value: PropTypes.arrayOf(PropTypes.object),
 };
 

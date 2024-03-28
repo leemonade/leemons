@@ -51,6 +51,9 @@ const schema = new mongoose.Schema(
     classroomId: {
       type: String,
     },
+    classWithoutGroupId: {
+      type: String,
+    },
   },
   {
     timestamps: true,

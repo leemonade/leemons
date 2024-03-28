@@ -26,8 +26,14 @@ const areCoursesAdjacent = (selectedCourses) => {
 // * Cycles shape: { courses, name }
 // En el backend cycles espera un array de ciclos con un valor courses: un array de strings indicando el indíce del curs
 
-const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
+const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} }) => {
   const [cyclesData, setCyclesData] = useState([]);
+
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.programDrawer?.addProgramForm?.cyclesSetup;
+  }, [localizations]);
+
   const coursesData = useMemo(
     () =>
       programCourses?.map((item) => ({
@@ -46,12 +52,12 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
       if (!Array.isArray(data.cycleCourses) || !data.cycleCourses.length) {
         errors.cycleCourses = {
           type: 'required',
-          message: 'Courses are required 🌎',
+          message: formLabels?.coursesRequired,
         };
       } else if (!areCoursesAdjacent(data.cycleCourses)) {
         errors.cycleCourses = {
           type: 'adjacency',
-          message: 'Courses must be adjacent 🌎',
+          message: formLabels?.coursesMustBeAdjacent,
         };
       } else {
         values.cycleCourses = data.cycleCourses;
@@ -60,7 +66,7 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
       if (!data.cycleName) {
         errors.cycleName = {
           type: 'required',
-          message: 'Cycle name is required 🌎',
+          message: `${formLabels?.cycleName} es requerido`,
         };
       } else {
         values.cycleName = data.cycleName;
@@ -77,29 +83,34 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
 
   useEffect(() => {
     if (value?.length > 0) {
-      setCyclesData([
-        ...value.map(({ name, courses }, i) => ({
-          name,
-          courses,
-          index: i + 1,
-        })),
-      ]);
+      const sortedValue = [
+        ...value
+          .map(({ name, courses, index }) => ({
+            name,
+            courses,
+            index,
+          }))
+          .sort((a, b) => a.index - b.index),
+      ];
+      setCyclesData(sortedValue);
     } else {
       setCyclesData([]);
     }
   }, [value]);
 
   useEffect(() => {
-    const updatedCyclesData = cyclesData
-      .map((cycle) => {
-        const updatedCourses = cycle?.courses?.filter((courseIndex) =>
-          programCourses.some((programCourse) => programCourse.index === courseIndex)
-        );
-        return { ...cycle, courses: updatedCourses };
-      })
-      .filter((cycle) => cycle.courses.length > 0);
+    if (cyclesData?.length) {
+      const updatedCyclesData = cyclesData
+        .map((cycle) => {
+          const updatedCourses = cycle?.courses?.filter((courseIndex) =>
+            programCourses.some((programCourse) => programCourse.index === courseIndex)
+          );
+          return { ...cycle, courses: updatedCourses };
+        })
+        .filter((cycle) => cycle.courses.length > 0);
 
-    onChange(updatedCyclesData);
+      onChange(updatedCyclesData.map((item, i) => ({ ...item, index: i + 1 })));
+    }
   }, [programCourses]);
 
   // HANDLERS ················································································································ ||
@@ -109,13 +120,10 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
     if (isValid) {
       const name = form.getValues('cycleName');
       let courses = form.getValues('cycleCourses');
+      const index = cyclesData.length + 1;
       courses = courses.sort((a, b) => a - b);
 
-      const cleanOldCycles = cyclesData.map(({ name: _name, courses: _courses }) => ({
-        name: _name,
-        courses: _courses,
-      }));
-      onChange([...cleanOldCycles, { name, courses }]);
+      onChange([...cyclesData, { name, courses, index }]);
     }
   };
 
@@ -143,11 +151,11 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
               <TextInput
                 {...field}
                 required
-                label={'Nombre del ciclo 🌎'}
+                label={formLabels?.cycleName}
                 error={
                   fieldState.error ? fieldState.error.message : form.formState.errors.cycleName
                 }
-                placeholder={'Añadir texto... 🌎'}
+                placeholder={formLabels?.addTextPlaceholder}
               />
             )}
           />
@@ -160,8 +168,8 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
               <MultiSelect
                 {...field}
                 required
-                label={'Cursos 🌎'}
-                placeholder={'Seleccionar cursos... 🌎'}
+                label={formLabels?.cycleCourses}
+                placeholder={formLabels?.selectCoursesPlacehodler}
                 data={coursesData}
                 error={
                   fieldState.error ? fieldState.error.message : form.formState.errors.cycleCourses
@@ -172,7 +180,7 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
         </Box>
         <InputWrapper showEmptyLabel>
           <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onAdd}>
-            {'Añadir 🌎'}
+            {formLabels?.add}
           </Button>
         </InputWrapper>
       </ContextContainer>
@@ -182,20 +190,22 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
           <TableInput
             columns={tableInputColumns}
             labels={{
-              add: labels?.add,
-              remove: labels?.remove,
-              edit: labels?.edit,
-              accept: labels?.accept,
-              cancel: labels?.cancel,
+              add: localizations?.labels?.add,
+              remove: localizations?.labels?.remove,
+              edit: localizations?.labels?.edit,
+              accept: localizations?.labels?.accept,
+              cancel: localizations?.labels?.cancel,
             }}
             canAdd={false}
             removable
             data={cyclesData}
             showHeaders={false}
             onChange={(data) => {
-              const updateObject = data.map(({ name, courses }) => ({ name, courses }));
+              const updateObject = [...data].map((item, i) => ({ ...item, index: i + 1 }));
               onChange(updateObject);
             }}
+            // onRemove={onRemove}
+            // onSort={onSort}
           />
         </Box>
       )}
@@ -205,7 +215,7 @@ const CyclesSetup = ({ onChange, value, programCourses = [], labels = {} }) => {
 
 CyclesSetup.propTypes = {
   onChange: PropTypes.func,
-  labels: PropTypes.object,
+  localizations: PropTypes.object,
   value: PropTypes.arrayOf(PropTypes.object),
   programCourses: PropTypes.array.isRequired,
 };

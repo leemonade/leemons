@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
+import { cloneDeep } from 'lodash';
 import {
   Select,
   TableInput,
   ContextContainer,
   TextInput,
-  NumberInput,
+  Stack,
   InputWrapper,
   Button,
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { cloneDeep } from 'lodash';
 
 const ReferenceGroupsClassroomsSetup = ({
   onChange,
@@ -46,11 +46,7 @@ const ReferenceGroupsClassroomsSetup = ({
       {
         Header: 'Id de aula 🌎',
         accessor: 'classroomId',
-        style: { width: 196 },
-      },
-      {
-        Header: 'Plazas disponibles 🌎',
-        accessor: 'availableSeats',
+        style: { width: 240 },
       },
     ],
     []
@@ -80,7 +76,7 @@ const ReferenceGroupsClassroomsSetup = ({
     }
   }, [groupsSelectData]);
 
-  // Reset the classrooms to create when not multicourses subjects change the picked course
+  // Reset the classrooms to create when no multi-courses subjects change the selected course
   useEffect(() => {
     if (!isMultiCourse) {
       const courseIds = selectedCourses.map((course) => course.id);
@@ -90,6 +86,12 @@ const ReferenceGroupsClassroomsSetup = ({
       if (classroomsNotMatchingCourses) {
         onChange([]);
       }
+    } else {
+      const updatedValue = [];
+      value?.forEach((c) => {
+        updatedValue.push({ ...c, course: cloneDeep(selectedCourses) });
+      });
+      onChange([...updatedValue]);
     }
   }, [selectedCourses]);
 
@@ -147,27 +149,7 @@ const ReferenceGroupsClassroomsSetup = ({
           name="classroomId"
           control={form.control}
           render={({ field }) => (
-            <TextInput {...field} label="Id de aula 🌎" placeholder="Id...🌎" sx={{ width: 168 }} />
-          )}
-        />
-        <Controller
-          name="availableSeats"
-          control={form.control}
-          rules={{
-            required: 'This field is required 🌎',
-            validate: (val) => val >= 1 || 'Value cannot be less than 1 🌎',
-          }}
-          render={({ field, fieldState }) => (
-            <NumberInput
-              {...field}
-              label="Plazas disponible 🌎"
-              min={1}
-              placeholder="Número de plazas 🌎"
-              sx={{ width: 168 }}
-              onBlur={() => form.clearErrors()}
-              error={fieldState.error?.message}
-              required
-            />
+            <TextInput {...field} label="Id de aula 🌎" placeholder="Id...🌎" sx={{ width: 192 }} />
           )}
         />
         <InputWrapper showEmptyLabel>
@@ -178,22 +160,24 @@ const ReferenceGroupsClassroomsSetup = ({
       </ContextContainer>
 
       {classroomsData?.length > 0 && (
-        <TableInput
-          columns={tableInputColumns}
-          labels={{
-            add: labels?.add,
-            remove: labels?.remove,
-            edit: labels?.edit,
-            accept: labels?.accept,
-            cancel: labels?.cancel,
-          }}
-          data={classroomsData}
-          removable
-          onRemove={handleOnRemove}
-          editable={false}
-          sortable={false}
-          canAdd={false}
-        />
+        <Stack fullWidth>
+          <TableInput
+            columns={tableInputColumns}
+            labels={{
+              add: labels?.add,
+              remove: labels?.remove,
+              edit: labels?.edit,
+              accept: labels?.accept,
+              cancel: labels?.cancel,
+            }}
+            data={classroomsData}
+            removable
+            onRemove={handleOnRemove}
+            editable={false}
+            sortable={false}
+            canAdd={false}
+          />
+        </Stack>
       )}
     </>
   );

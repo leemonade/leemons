@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
+import { isEmpty, noop, omit } from 'lodash';
 import {
   ContextContainer,
   Title,
@@ -42,8 +43,12 @@ const AddProgramForm = ({
   onSubmit,
   centerId,
   drawerIsLoading,
+  localizations,
+  programUnderEdit = {},
+  onUpdate = noop,
 }) => {
   const { classes } = useAddProgramFormStyles();
+  const isEditing = useMemo(() => !isEmpty(programUnderEdit), [programUnderEdit]);
   const form = useForm();
   const { control, formState, setValue, watch } = form;
   const { hoursPerCredit, credits, courses } = watch();
@@ -53,24 +58,94 @@ const AddProgramForm = ({
     return parseInt(hoursPerCredit) * parseInt(credits);
   }, [hoursPerCredit, credits]);
 
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.programDrawer?.addProgramForm;
+  }, [localizations]);
+
+  const getSeats = () => {
+    if (programUnderEdit.seatsForAllCourses) {
+      return { all: programUnderEdit.seatsForAllCourses };
+    }
+    const result = {};
+    programUnderEdit.courses?.forEach((course) => {
+      result[course.index] = course.metadata.seats;
+    });
+    return result;
+  };
+
+  useEffect(() => {
+    if (!isEmpty(programUnderEdit)) {
+      setValue('name', programUnderEdit.name);
+      setValue('abbreviation', programUnderEdit.abbreviation);
+      setValue('color', programUnderEdit.color);
+      setValue('image', programUnderEdit.image);
+      setValue('evaluationSystem', programUnderEdit.evaluationSystem);
+      setValue('hideStudentsFromEachOther', programUnderEdit.hideStudentsToStudents);
+      setValue('autoAssignment', programUnderEdit.useAutoAssignment);
+
+      setValue('seatsPerCourse', getSeats());
+
+      if (setupData.creditsSystem) {
+        setValue('credits', programUnderEdit.credits);
+        setValue('hoursPerCredit', programUnderEdit.hoursPerCredit);
+      }
+      if (setupData.durationInHours) {
+        setValue('totalHours', programUnderEdit.totalHours);
+      }
+      if (setupData.hasSubstages) {
+        setValue('substages', programUnderEdit.substages);
+      }
+      if (setupData.hasCycles) {
+        const formattedCycles = programUnderEdit.cycles?.map(
+          ({ courses: _courses, name, index }) => {
+            const coursesIndex = _courses?.map(
+              (courseId) => programUnderEdit.courses.find((c) => c.id === courseId)?.index
+            );
+            return { name, courses: coursesIndex, index };
+          }
+        );
+        setValue('cycles', formattedCycles);
+      }
+
+      if (setupData.referenceGroups) {
+        const { groupsForAllCourses } = programUnderEdit.groupsMetadata;
+        if (groupsForAllCourses) {
+          setValue('referenceGroups', {
+            ...omit(programUnderEdit.groupsMetadata, 'groupsForAllCourses'),
+            groupsForCourse1: groupsForAllCourses,
+          });
+        } else {
+          setValue('referenceGroups', programUnderEdit.groupsMetadata);
+        }
+      }
+
+      const formattedCourses = programUnderEdit.courses?.map(({ index, metadata }) => ({
+        ...metadata,
+        index,
+      }));
+      setValue('courses', formattedCourses);
+    }
+  }, [programUnderEdit]);
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
+    <form onSubmit={form.handleSubmit(isEditing ? onUpdate : onSubmit)}>
       <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
         {/* SECTION: BASIC DATA */}
         <ContextContainer direction="column" spacing={4}>
-          <Title className={classes.title}>{'Basic Data 🌎'}</Title>
+          <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
           <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{'Presentation 🌎'}</Title>
+            <Title className={classes.sectionTitle}>{formLabels?.basicData?.presentation}</Title>
             <Stack className={classes.horizontalInputsContainer}>
               <Controller
                 control={control}
                 name="name"
-                rules={{ required: 'Required field 🌎' }}
+                rules={{ required: localizations?.programDrawer?.requiredField }}
                 render={({ field }) => (
                   <TextInput
                     {...field}
-                    label={'Name 🌎'}
-                    placeholder={'Name 🌎'}
+                    label={formLabels?.basicData?.name}
+                    placeholder={formLabels?.basicData?.name}
                     error={formState.errors.name}
                     required
                     sx={{ width: 216 }}
@@ -81,14 +156,14 @@ const AddProgramForm = ({
                 control={control}
                 name="abbreviation"
                 rules={{
-                  required: 'Required field 🌎',
-                  maxLength: { value: 8, message: 'Max 8 characters 🌎' },
+                  required: localizations?.programDrawer?.requiredField,
+                  maxLength: { value: 8, message: formLabels?.basicData?.validation?.abbreviation },
                 }}
                 render={({ field }) => (
                   <TextInput
                     {...field}
-                    label={'Abbreviation 🌎'}
-                    placeholder={'Abbreviation 🌎'}
+                    label={formLabels?.basicData?.abbreviation}
+                    placeholder={formLabels?.basicData?.abbreviation}
                     error={formState.errors.abbreviation}
                     required
                     sx={{ width: 216 }}
@@ -98,12 +173,12 @@ const AddProgramForm = ({
               <Controller
                 control={control}
                 name="color"
-                rules={{ required: 'Required field 🌎' }}
+                rules={{ required: localizations?.programDrawer?.requiredField }}
                 render={({ field }) => (
                   <ColorInput
                     {...field}
-                    label={'Color 🌎'}
-                    placeholder={'Color 🌎'}
+                    label={formLabels?.basicData?.color}
+                    placeholder={formLabels?.basicData?.color}
                     useHsl
                     compact={false}
                     manual={false}
@@ -117,7 +192,7 @@ const AddProgramForm = ({
               control={control}
               name="image"
               render={({ field }) => (
-                <InputWrapper label="Featured image 🌎">
+                <InputWrapper label={formLabels?.basicData?.featuredImage}>
                   <ImagePicker {...field} />
                 </InputWrapper>
               )}
@@ -126,19 +201,19 @@ const AddProgramForm = ({
 
           {/* REGLAS ACADÉMICAS */}
           <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{'Academic Rules 🌎'}</Title>
+            <Title className={classes.sectionTitle}>{formLabels?.academicRules?.title}</Title>
             <Controller
               name="evaluationSystem"
               control={control}
               rules={{
-                required: 'Required field 🌎',
+                required: localizations?.programDrawer?.requiredField,
               }}
               render={({ field, fieldState }) => (
                 <EvaluationsSelect
                   {...field}
                   center={centerId}
                   sx={{ width: 216 }}
-                  placeholder={'Selecciona un sistema... 🌎'}
+                  placeholder={formLabels?.academicRules?.selectSystem}
                   error={fieldState.error}
                 />
               )}
@@ -149,7 +224,9 @@ const AddProgramForm = ({
           {(setupData?.creditsSystem || setupData?.durationInHours) && (
             <ContextContainer noFlex spacing={4}>
               <Title className={classes.sectionTitle}>
-                {setupData?.durationInHours ? 'Duration 🌎' : 'Duration and Credits 🌎'}
+                {setupData?.durationInHours
+                  ? formLabels?.durationAndCredits?.titleOnlyDuration
+                  : formLabels?.durationAndCredits?.titleWithCredits}
               </Title>
               {setupData?.creditsSystem && (
                 <Stack className={classes.horizontalInputsContainer}>
@@ -157,36 +234,38 @@ const AddProgramForm = ({
                     <Controller
                       name="hoursPerCredit"
                       control={control}
-                      rules={{ required: 'Required field 🌎' }}
+                      rules={{ required: localizations?.programDrawer?.requiredField }}
                       render={({ field, fieldState }) => (
                         <NumberInput
                           {...field}
                           min={1}
-                          label={'Hours per credit 🌎'}
+                          label={formLabels?.durationAndCredits?.hoursPerCredit}
                           sx={{ width: 216 }}
-                          placeholder={'hours 🌎'}
                           error={fieldState.error?.message}
+                          placeholder={formLabels?.durationAndCredits?.hoursPlaceholder}
                         />
                       )}
                     />
                     <Controller
                       name="credits"
                       control={control}
-                      rules={{ required: 'Required field 🌎' }}
+                      rules={{ required: localizations?.programDrawer?.requiredField }}
                       render={({ field, fieldState }) => (
                         <NumberInput
                           {...field}
-                          label={'Nº of credits 🌎'}
+                          label={formLabels?.durationAndCredits?.numberOfCredits}
                           min={1}
                           sx={{ width: 216 }}
-                          placeholder={'hours 🌎'}
                           error={fieldState.error?.message}
+                          placeholder={formLabels?.durationAndCredits?.totalCreditsPlaceholder}
                         />
                       )}
                     />
                   </Stack>
                   <Text sx={{ alignSelf: 'end', padding: 12 }}>
-                    {totalHours ? `${totalHours} total hours 🌎` : ''}
+                    {totalHours
+                      ? `${totalHours} ${formLabels?.durationAndCredits?.totalHours}`
+                      : ''}
                   </Text>
                 </Stack>
               )}
@@ -194,14 +273,14 @@ const AddProgramForm = ({
                 <Controller
                   name="totalHours"
                   control={control}
-                  rules={{ required: 'Required field 🌎' }}
+                  rules={{ required: localizations?.programDrawer?.requiredField }}
                   render={({ field, fieldState }) => (
                     <NumberInput
                       {...field}
                       min={1}
-                      label={'Durations (hours) 🌎'}
+                      label={formLabels?.durationAndCredits?.durationInHours}
                       sx={{ width: 216 }}
-                      placeholder={'Total hours 🌎'}
+                      placeholder={formLabels?.durationAndCredits?.totalHoursPlaceholder}
                       error={fieldState.error?.message}
                     />
                   )}
@@ -214,17 +293,19 @@ const AddProgramForm = ({
         {/* SECTION: TEMPORAL STRUCTURE */}
         {(setupData?.hasSubstages || setupData?.moreThanOneCourse) && (
           <ContextContainer direction="column" spacing={4}>
-            <Title className={classes.title}>{'Temporal Structure 🌎 '}</Title>
+            <Title className={classes.title}>{formLabels?.temporalStructure?.title}</Title>
             {setupData?.hasSubstages && (
               <ContextContainer noFlex spacing={4}>
-                <Title className={classes.sectionTitle}>{'Course substages 🌎'}</Title>
+                <Title className={classes.sectionTitle}>
+                  {formLabels?.temporalStructure?.courseSubstages}
+                </Title>
                 <Controller
                   name="substages"
                   control={control}
-                  rules={{ required: 'Required field 🌎' }}
+                  rules={{ required: localizations?.programDrawer?.requiredField }}
                   render={({ field }) => (
                     <InputWrapper error={formState.errors.substages}>
-                      <SubstagesSetup {...field} />
+                      <SubstagesSetup {...field} localizations={localizations} />
                     </InputWrapper>
                   )}
                 />
@@ -233,11 +314,13 @@ const AddProgramForm = ({
             {setupData?.moreThanOneCourse && (
               <>
                 <ContextContainer noFlex spacing={4}>
-                  <Title className={classes.sectionTitle}>{'Courses 🌎'}</Title>
+                  <Title className={classes.sectionTitle}>
+                    {formLabels?.temporalStructure?.courses}
+                  </Title>
                   <Controller
                     name="courses"
                     control={control}
-                    rules={{ required: 'Required field 🌎' }}
+                    rules={{ required: localizations?.programDrawer?.requiredField }}
                     render={({ field }) => (
                       <CoursesSetup
                         {...field}
@@ -246,18 +329,27 @@ const AddProgramForm = ({
                         onChange={(data) => {
                           setValue('courses', data);
                         }}
+                        localizations={localizations}
                       />
                     )}
                   />
                 </ContextContainer>
                 {setupData?.hasCycles && (
                   <ContextContainer noFlex spacing={4}>
-                    <Title className={classes.sectionTitle}>{'Cycles 🌎'}</Title>
+                    <Title className={classes.sectionTitle}>
+                      {formLabels?.temporalStructure?.cycles}
+                    </Title>
                     <Controller
                       name="cycles"
                       control={control}
-                      rules={{ required: 'Required field 🌎' }}
-                      render={({ field }) => <CyclesSetup {...field} programCourses={courses} />}
+                      rules={{ required: localizations?.programDrawer?.requiredField }}
+                      render={({ field }) => (
+                        <CyclesSetup
+                          {...field}
+                          programCourses={courses}
+                          localizations={localizations}
+                        />
+                      )}
                     />
                   </ContextContainer>
                 )}
@@ -267,40 +359,49 @@ const AddProgramForm = ({
         )}
 
         {/* SECTION: GROUPS SETUP */}
-        <ContextContainer direction="column" spacing={4}>
-          <Title className={classes.title}>{'Configuración de Aulas 🌎'}</Title>
-          <ContextContainer noFlex spacing={4}>
-            {setupData?.referenceGroups && (
+        {setupData?.referenceGroups && (
+          <ContextContainer direction="column" spacing={4}>
+            <Title className={classes.title}>{formLabels?.classConfiguration}</Title>
+            <ContextContainer noFlex spacing={4}>
               <>
-                <Title className={classes.sectionTitle}>{'Reference Groups 🌎'}</Title>
+                <Title className={classes.sectionTitle}>{formLabels?.referenceGroups}</Title>
                 <Controller
                   name="referenceGroups"
                   control={control}
-                  rules={{ required: 'Required field 🌎' }}
+                  rules={{ required: localizations?.programDrawer?.requiredField }}
                   render={({ field }) => (
                     <ReferenceGroupsSetup
                       {...field}
                       programCourses={courses}
                       coursesAreSequential={setupData?.sequentialCourses}
+                      localizations={localizations}
                     />
                   )}
                 />
               </>
-            )}
-            <Controller
-              name="seatsPerCourse"
-              control={control}
-              rules={{ required: 'Required field 🌎' }}
-              render={({ field }) => <SeatsPerCourseSetup {...field} courses={courses} />}
-            />
+
+              <Controller
+                name="seatsPerCourse"
+                control={control}
+                rules={{ required: localizations?.programDrawer?.requiredField }}
+                render={({ field }) => (
+                  <SeatsPerCourseSetup
+                    {...field}
+                    courses={courses}
+                    localizations={localizations}
+                    sequentialCourses={setupData?.sequentialCourses}
+                  />
+                )}
+              />
+            </ContextContainer>
           </ContextContainer>
-        </ContextContainer>
+        )}
 
         {/* SECTION: OTHERS */}
         <ContextContainer sx={{ marginDown: 100 }} direction="column" spacing={4}>
-          <Title className={classes.title}>{'Others 🌎'}</Title>
+          <Title className={classes.title}>{localizations?.programDrawer?.others}</Title>
           <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{'Privacy 🌎'}</Title>
+            <Title className={classes.sectionTitle}>{formLabels?.privacy}</Title>
             <Controller
               name="hideStudentsFromEachOther"
               control={control}
@@ -308,25 +409,21 @@ const AddProgramForm = ({
                 <Checkbox
                   checked={value || false}
                   {...field}
-                  label={
-                    'Los alumnos no pueden verse entre sí (esta opción deshabilita las opciones de chat entre alumnos) 🌎'
-                  }
+                  label={formLabels?.hideStudentsFromEachOther}
                 />
               )}
             />
           </ContextContainer>
           <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{'Automatic assignment 🌎'}</Title>
+            <Title className={classes.sectionTitle}>{formLabels?.automaticAssignment}</Title>
             <Controller
-              name="autoAsignment"
+              name="autoAssignment"
               control={control}
               render={({ field: { value, ref, ...field } }) => (
                 <Checkbox
                   checked={value || false}
                   {...field}
-                  label={
-                    'Todos los nuevos alumnos matriculados en el programa son asignados automáticamente en todas las tareas previamente asignadas (podrás personalizarlo en cada asignación, pero esta será la opción por defecto). 🌎'
-                  }
+                  label={formLabels?.autoAssignmentDescription}
                 />
               )}
             />
@@ -336,9 +433,9 @@ const AddProgramForm = ({
       <FooterContainer scrollRef={scrollRef}>
         <Stack justifyContent={'space-between'} fullWidth>
           <Button variant="outline" type="button" onClick={onCancel} loading={drawerIsLoading}>
-            {'Cancel 🌎'}
+            {formLabels?.cancel}
           </Button>
-          <Button type="submit">{'Create Program 🌎'}</Button>
+          <Button type="submit">{formLabels?.createProgram}</Button>
         </Stack>
       </FooterContainer>
     </form>
@@ -350,8 +447,11 @@ AddProgramForm.propTypes = {
   setupData: PropTypes.object,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
+  onUpdate: PropTypes.func,
   centerId: PropTypes.string,
   drawerIsLoading: PropTypes.bool,
+  localizations: PropTypes.object.isRequired,
+  programUnderEdit: PropTypes.object,
 };
 
 export default AddProgramForm;

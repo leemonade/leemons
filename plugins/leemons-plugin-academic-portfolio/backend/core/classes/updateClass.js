@@ -36,16 +36,16 @@ async function updateClass({ data, ctx }) {
     .select(['id', 'name', 'useOneStudentGroup'])
     .lean();
 
-  if (program.useOneStudentGroup) {
-    const group = await ctx.tx.db.Groups.findOne({
-      isAlone: true,
-      type: 'group',
-      program: program.id,
-    })
-      .select('column')
-      .lean();
-    goodGroup = group.id;
-  }
+  // if (program.useOneStudentGroup) {
+  //   const group = await ctx.tx.db.Groups.findOne({
+  //     isAlone: true,
+  //     type: 'group',
+  //     program: program.id,
+  //   })
+  //     .select('column')
+  //     .lean();
+  //   goodGroup = group.id;
+  // }
 
   // eslint-disable-next-line prefer-const
   let { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } = data;
@@ -80,14 +80,18 @@ async function updateClass({ data, ctx }) {
   const promises = [];
   // ES: Añadimos todas las relaciones de la clase
 
-  if (_.isNull(knowledge) || knowledge) await removeKnowledgeByClass({ classIds: nClass.id, ctx });
-  if (knowledge) {
-    // ES: Comprobamos que todos los conocimientos existen y pertenecen al programa
-    if (!(await existKnowledgeInProgram({ id: knowledge, program: nClass.program, ctx }))) {
-      throw new LeemonsError(ctx, { message: 'knowledge not in program' });
-    }
-    promises.push(addKnowledge({ class: nClass.id, knowledge, ctx }));
-  }
+  //*OLD Knowledge area se cambia a nivel de subject, dentro de updateSubject Se actualizan todas las clases
+  // if (_.isNull(knowledge) || knowledge) await removeKnowledgeByClass({ classIds: nClass.id, ctx });
+  // if (knowledge) {
+  //   // ES: Comprobamos que todos los conocimientos existen y pertenecen al programa
+  //   if (!(await existKnowledgeInProgram({ id: knowledge, program: nClass.program, ctx }))) {
+  //     throw new LeemonsError(ctx, { message: 'knowledge not in program' });
+  //   }
+  //   promises.push(addKnowledge({ class: nClass.id, knowledge, ctx }));
+  // }
+  //*OLD Esto sería válido si el knowledgeArea se actualizara para una sóla clase en edición aislada de la misma. No es el caso. KnowledgeArea se cambia a nivel de asignatura
+  // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
+  // promises.push(changeBySubject({ subjectId: nClass.subject, knowledge, ctx }));
 
   if (_.isNull(substage) || substage) await removeSubstageByClass({ classIds: nClass.id, ctx });
   if (substage) {
@@ -150,16 +154,14 @@ async function updateClass({ data, ctx }) {
       _.map(teachers, ({ teacher, type }) => addTeacher({ class: nClass.id, teacher, type, ctx }))
     );
 
+  //*OLD Esto es válido si el subjectType se puede cambian para una clase en la edición aislada de clase. No es el caso. SubjectType se cambia a nivel de asignatura
   // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
-  promises.push(
-    ctx.tx.db.Class.updateMany(
-      { subject: nClass.subject },
-      { subjectType: nClass.subjectType, color: nClass.color }
-    )
-  );
-
-  // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
-  promises.push(changeBySubject({ subjectId: nClass.subject, knowledge, ctx }));
+  // promises.push(
+  //   ctx.tx.db.Class.updateMany(
+  //     { subject: nClass.subject },
+  //     { subjectType: nClass.subjectType, color: nClass.color }
+  //   )
+  // );
 
   promises.push(await processScheduleForClass({ schedule, classId: nClass.id, ctx }));
 

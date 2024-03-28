@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { isBoolean } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -25,29 +25,36 @@ const useFormSetupStyles = createStyles((theme) => ({
   },
 }));
 
-const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
+const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
   const { classes } = useFormSetupStyles();
-  const { watch, setValue, clearErrors, control, formState, handleSubmit } = useForm();
+  const { watch, control, formState, handleSubmit } = useForm();
   const { moreThanOneCourse, sequentialCourses, creditsSystem } = watch();
 
   return (
     <ContextContainer direction="column" spacing={8}>
       <form onSubmit={handleSubmit(onSetup)}>
         <ContextContainer noFlex spacing={4}>
-          <Title className={classes.title}>{'Personalización 🌎'}</Title>
+          <Title className={classes.title}>
+            {localizations?.programDrawer?.wizardForm?.customization}
+          </Title>
           <ContextContainer noFlex alignItems="start">
-            <Title className={classes.sectionTitle}>{'Estructura temporal 🌎'}</Title>
+            <Title className={classes.sectionTitle}>
+              {localizations?.programDrawer?.wizardForm?.temporalStructure}
+            </Title>
             <Controller
               name="moreThanOneCourse"
               control={control}
-              rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+              rules={{
+                validate: (value) =>
+                  isBoolean(value) || localizations?.programDrawer?.requiredField,
+              }}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  label="¿Este programa tiene varios cursos? 🌎"
+                  label={localizations?.programDrawer?.wizardForm?.doesItHaveMoreThanOneCourse}
                   data={[
-                    { label: 'Si 🌎', value: true },
-                    { label: 'No 🌎', value: false },
+                    { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                    { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                   ]}
                   error={formState.errors.moreThanOneCourse}
                 />
@@ -58,14 +65,17 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
                 <Controller
                   name="sequentialCourses"
                   control={control}
-                  rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+                  rules={{
+                    validate: (value) =>
+                      isBoolean(value) || localizations?.programDrawer?.requiredField,
+                  }}
                   render={({ field }) => (
                     <RadioGroup
                       {...field}
-                      label="¿Es necesario terminar un curso para comenzar el siguiente? 🌎"
+                      label={localizations?.programDrawer?.wizardForm?.doesItHaveSequentialCourses}
                       data={[
-                        { label: 'Si 🌎', value: true },
-                        { label: 'No 🌎', value: false },
+                        { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                        { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                       ]}
                       error={formState.errors.sequentialCourses}
                     />
@@ -78,14 +88,17 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
                 <Controller
                   name="hasCycles"
                   control={control}
-                  rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+                  rules={{
+                    validate: (value) =>
+                      isBoolean(value) || localizations?.programDrawer?.requiredField,
+                  }}
                   render={({ field }) => (
                     <RadioGroup
                       {...field}
-                      label="¿Se agrupan esos cursos en ciclos educativos? 🌎"
+                      label={localizations?.programDrawer?.wizardForm?.doesItHaveCycles}
                       data={[
-                        { label: 'Si 🌎', value: true },
-                        { label: 'No 🌎', value: false },
+                        { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                        { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                       ]}
                       error={formState.errors.hasCycles}
                     />
@@ -96,14 +109,17 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
             <Controller
               name="hasSubstages"
               control={control}
-              rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+              rules={{
+                validate: (value) =>
+                  isBoolean(value) || localizations?.programDrawer?.requiredField,
+              }}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  label="¿Hay subetapas de evaluación? (por ejemplo, trimestres o semestres) 🌎"
+                  label={localizations?.programDrawer?.wizardForm?.doesItHaveSubstages}
                   data={[
-                    { label: 'Si 🌎', value: true },
-                    { label: 'No 🌎', value: false },
+                    { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                    { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                   ]}
                   error={formState.errors.hasSubstagesPerCourse}
                 />
@@ -111,18 +127,23 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
             />
           </ContextContainer>
           <ContextContainer noFlex alignItems="start">
-            <Title className={classes.sectionTitle}>{'Asignaturas o grupos 🌎'}</Title>
+            <Title className={classes.sectionTitle}>
+              {localizations?.programDrawer?.classroomsAndGroups}
+            </Title>
             <Controller
               name="knowledgeAreas"
               control={control}
-              rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+              rules={{
+                validate: (value) =>
+                  isBoolean(value) || localizations?.programDrawer?.requiredField,
+              }}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  label="¿Existen áreas de conocimiento que agrupen asignaturas? 🌎"
+                  label={localizations?.programDrawer?.wizardForm?.doesItHaveKnowledgeAreas}
                   data={[
-                    { label: 'Si 🌎', value: true },
-                    { label: 'No 🌎', value: false },
+                    { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                    { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                   ]}
                   error={formState.errors.knowledgeAreas}
                 />
@@ -131,14 +152,17 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
             <Controller
               name="subjectTypes"
               control={control}
-              rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+              rules={{
+                validate: (value) =>
+                  isBoolean(value) || localizations?.programDrawer?.requiredField,
+              }}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  label="¿Existen tipologías de asignaturas? (Troncal, Optativa, Libre configuración...) 🌎"
+                  label={localizations?.programDrawer?.wizardForm?.doesItHaveSubjectTypes}
                   data={[
-                    { label: 'Si 🌎', value: true },
-                    { label: 'No 🌎', value: false },
+                    { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                    { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                   ]}
                   error={formState.errors.subjectTypes}
                 />
@@ -147,14 +171,17 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
             <Controller
               name="customSubjectIds"
               control={control}
-              rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+              rules={{
+                validate: (value) =>
+                  isBoolean(value) || localizations?.programDrawer?.requiredField,
+              }}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  label="¿Necesitas establecer un ID (número de identificación) personalizado para cada asignatura? 🌎"
+                  label={localizations?.programDrawer?.wizardForm?.doItsSubjectsHaveAnUniqueId}
                   data={[
-                    { label: 'Si 🌎', value: true },
-                    { label: 'No 🌎', value: false },
+                    { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                    { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                   ]}
                   error={formState.errors.customSubjectIds}
                 />
@@ -163,14 +190,17 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
             <Controller
               name="referenceGroups"
               control={control}
-              rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+              rules={{
+                validate: (value) =>
+                  isBoolean(value) || localizations?.programDrawer?.requiredField,
+              }}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  label="¿Necesitas crear Grupos de Referencia que compartan asignaturas? (por ejemplo, 2ºA, 2ºB...) 🌎"
+                  label={localizations?.programDrawer?.wizardForm?.doesItHaveReferenceGroups}
                   data={[
-                    { label: 'Si 🌎', value: true },
-                    { label: 'No 🌎', value: false },
+                    { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                    { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                   ]}
                   error={formState.errors.referenceGroups}
                 />
@@ -178,18 +208,21 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
             />
           </ContextContainer>
           <ContextContainer noFlex alignItems="start">
-            <Title className={classes.sectionTitle}>{'Otros 🌎'}</Title>
+            <Title className={classes.sectionTitle}>{localizations?.programDrawer.others}</Title>
             <Controller
               name="creditsSystem"
               control={control}
-              rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+              rules={{
+                validate: (value) =>
+                  isBoolean(value) || localizations?.programDrawer?.requiredField,
+              }}
               render={({ field }) => (
                 <RadioGroup
                   {...field}
-                  label="¿Necesitas usar un sistema oficial de créditos? 🌎"
+                  label={localizations?.programDrawer?.wizardForm?.doesItHaveOfficialCredits}
                   data={[
-                    { label: 'Si 🌎', value: true },
-                    { label: 'No 🌎', value: false },
+                    { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                    { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                   ]}
                   error={formState.errors.creditsSystem}
                 />
@@ -199,14 +232,19 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
               <Controller
                 name="durationInHours"
                 control={control}
-                rules={{ validate: (value) => isBoolean(value) || 'Campo requerido 🌎' }}
+                rules={{
+                  validate: (value) =>
+                    isBoolean(value) || localizations?.programDrawer?.requiredField,
+                }}
                 render={({ field }) => (
                   <RadioGroup
                     {...field}
-                    label="¿Necesitas definir una duración total en horas para verificar el progreso? (sin créditos) 🌎"
+                    label={
+                      localizations?.programDrawer?.wizardForm?.doesItHaveADefinedAmountOfHours
+                    }
                     data={[
-                      { label: 'Si 🌎', value: true },
-                      { label: 'No 🌎', value: false },
+                      { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
+                      { label: localizations?.programDrawer?.wizardForm?.no, value: false },
                     ]}
                     error={formState.errors.durationInHours}
                   />
@@ -217,9 +255,9 @@ const FormSetup = ({ scrollRef, onCancel, onSetup }) => {
           <FooterContainer scrollRef={scrollRef}>
             <Stack justifyContent={'space-between'} fullWidth>
               <Button variant="outline" type="button" onClick={onCancel}>
-                {'Cancelar 🌎'}
+                {localizations?.labels.cancel}
               </Button>
-              <Button type="submit">{'Guardar 🌎'}</Button>
+              <Button type="submit">{localizations?.programDrawer?.save}</Button>
             </Stack>
           </FooterContainer>
         </ContextContainer>
@@ -232,6 +270,7 @@ FormSetup.propTypes = {
   scrollRef: PropTypes.any,
   onCancel: PropTypes.func,
   onSetup: PropTypes.func,
+  localizations: PropTypes.object,
 };
 
 export default FormSetup;

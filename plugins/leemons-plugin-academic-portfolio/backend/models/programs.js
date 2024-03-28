@@ -148,6 +148,9 @@ const schema = new mongoose.Schema(
     groupsMetadata: {
       type: mongoose.Schema.Types.Mixed,
     },
+    seatsForAllCourses: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

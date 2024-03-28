@@ -29,22 +29,22 @@ async function addClass({ data, ctx }) {
     let programCenterId = await ctx.tx.db.ProgramCenter.findOne({ program: program.id }).lean();
     programCenterId = programCenterId?.center;
 
-    if (program.useOneStudentGroup) {
-      const group = await ctx.tx.db.Groups.findOne({
-        isAlone: true,
-        type: 'group',
-        program: program.id,
-      })
-        .select(['id'])
-        .lean();
-      goodGroup = group.id;
-    }
+    // if (program.useOneStudentGroup) {
+    //   const group = await ctx.tx.db.Groups.findOne({
+    //     isAlone: true,
+    //     type: 'group',
+    //     program: program.id,
+    //   })
+    //     .select(['id'])
+    //     .lean();
+    //   goodGroup = group.id;
+    // }
 
     // eslint-disable-next-line prefer-const
     const {
       course: _course,
       group,
-      knowledge: knowledgeArea,
+      knowledgeArea,
       substage,
       teachers,
       schedule,
@@ -154,8 +154,7 @@ async function addClass({ data, ctx }) {
       promises.push(addGroup({ class: nClass.id, group: goodGroup, ctx }));
     }
 
-    //* Old: En la nueva implementación no se dará el caso en el que nuevas clases se creen usando asignaturas existentes
-    //* de manera que no es necesario actualizar. Actualizaciones de la subject se harán con un update
+    //* De ser necesario hacer este tipo de actualizaciones descomentar esto
     /*
     // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
     promises.push(

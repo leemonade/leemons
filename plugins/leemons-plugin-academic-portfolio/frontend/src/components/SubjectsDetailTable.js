@@ -5,32 +5,21 @@ import { Table, Stack, ActionButton } from '@bubbles-ui/components';
 import { ArchiveIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 
-import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 
 const SubjectsDetailTable = ({ subjectIds, labels, onEdit }) => {
-  const { data: subjectsClassesQuery, isLoading: areSubjectsClassesLoading } = useSubjectClasses(
-    subjectIds,
-    {
-      enabled: subjectIds?.length > 0,
-    }
-  );
-
-  // TODO BACKEND: FIX THE SUBJECT DETAIL QUERY
   const { data: subjectsDetailQuery, isLoading: isSubjectsDetailLoading } = useSubjectDetails(
     subjectIds,
     { enabled: subjectIds?.length > 0 },
     true
   );
 
-  console.log('subjectsDetailQuery', subjectsDetailQuery);
-
   const getSubjectClassesString = (classes) => {
     const subjectWithReferenceGroups = classes?.some((classItem) => !isEmpty(classItem.groups));
     if (subjectWithReferenceGroups) {
-      return classes.map((classItem) => classItem.groups.abbreviation).join(', ');
+      return classes?.map((classItem) => classItem.groups.abbreviation).join(', ');
     }
-    return classes.map((_, index) => String(index + 1).padStart(3, '0')).join(', ');
+    return classes?.map((_, index) => String(index + 1).padStart(3, '0')).join(', ');
   };
 
   const getCoursesTextToShow = (courses) => {
@@ -43,49 +32,55 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit }) => {
     return coursesText;
   };
 
+  const addUniqueCourse = (_class, allClassesCourses) => {
+    // The courses field of a class might be an array when they are tagged with subjects that allow multple courses
+    if (Array.isArray(_class.courses)) {
+      _class.courses.forEach((course) => {
+        if (!allClassesCourses.find((c) => c.id === course.id)) {
+          allClassesCourses.push(course);
+        }
+      });
+    } else if (
+      _class.courses &&
+      !allClassesCourses.find((course) => course.id === _class.courses.id)
+    ) {
+      allClassesCourses.push(_class.courses);
+    }
+  };
+
   const subjectClassesData = useMemo(() => {
     const processedSubjects = {};
 
-    if (subjectsClassesQuery?.length) {
-      subjectsClassesQuery.forEach((item) => {
-        const { subject, courses, substages, subjectType, knowledges } = item;
-        if (!processedSubjects[subject._id]) {
-          processedSubjects[subject._id] = {
-            name: subject.name,
-            id: subject.id,
-            courses,
-            // Currently only one substage can be asociated, but it could change
-            substages,
-            subjectType,
-            classes: [item],
-            color: subject.color,
-            knowledgeArea: knowledges?.id,
-            subjectValueForCourses: subject.course,
-            image: subject.image,
-            icon: subject.image,
-          };
-        } else {
-          processedSubjects[subject._id].classes.push(item);
-        }
+    if (subjectsDetailQuery?.length) {
+      subjectsDetailQuery.forEach((_subject) => {
+        const { classes } = _subject;
+        const allClassesCourses = [];
+        classes.forEach((_class) => addUniqueCourse(_class, allClassesCourses));
+
+        const knowledgeArea = classes?.reduce((acc, curr) => curr.knowledges || acc, null);
+        const subjectType = classes?.reduce((acc, curr) => curr.subjectType || acc, null);
+        const substage = classes?.reduce((acc, curr) => curr.substages || acc, null);
+
+        processedSubjects[_subject.id] = {
+          ..._subject,
+          substage,
+          knowledgeArea,
+          subjectType,
+          courses: allClassesCourses,
+        };
       });
 
       return Object.values(processedSubjects);
     }
     return [];
-  }, [subjectsClassesQuery]);
+  }, [subjectsDetailQuery]);
 
   const handleOnEdit = (item) => {
-    // TODO backend needs to bring the internal id object
-    // TODO backend needs to bring the credits of the subject
-
     const subjectAndItsClassesForSubjectForm = {
-      ...omit(item, ['subjectValueForCourses', 'substages', 'classes']),
-      substage: item.substages.length ? item.substages[0].id : 'all',
-      subjectType: item.subjectType?.id || null,
-      courses: item.subjectValueForCourses,
-      image: item.image?.url || null,
-      icon: item.image?.url || null,
-      classes: item.classes,
+      ...omit(item, ['course', 'substages']),
+      substage: item.substage?.length ? item.substage[0].id : 'all',
+      image: item.image || null,
+      icon: item.icon || null,
     };
 
     onEdit(subjectAndItsClassesForSubjectForm);
@@ -93,7 +88,7 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit }) => {
 
   const tableData = useMemo(() => {
     if (subjectClassesData?.length) {
-      return subjectClassesData.map((item) => ({
+      return subjectClassesData?.map((item) => ({
         ...item,
         actions: (
           <Stack justifyContent="end" fullWidth>
@@ -124,7 +119,7 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit }) => {
       },
       {
         Header: 'Subetapas 🌎' || labels?.substages,
-        accessor: 'substages',
+        accessor: 'substage',
         valueRender: (substagesValue) =>
           substagesValue?.length ? substagesValue[0].abbreviation : 'Curso completo 🌎', // Only one substage per subject currently
       },
@@ -147,7 +142,7 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit }) => {
     [labels]
   );
 
-  if (areSubjectsClassesLoading) return null;
+  if (isSubjectsDetailLoading) return null;
   return <Table columns={tableColumns} data={tableData} />;
 };
 

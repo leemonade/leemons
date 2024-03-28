@@ -1,12 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { ContextContainer, Text, Stack, Title, NumberInput, Switch } from '@bubbles-ui/components';
 import { isEmpty } from 'lodash';
 
-const SeatsPerCourseSetup = ({ courses, onChange, value, labels }) => {
+const SeatsPerCourseSetup = ({ courses, onChange, value, localizations, sequentialCourses }) => {
   const [differentSeatsPerCourse, setDifferentSeatsPerCourse] = useState(false);
   const form = useForm();
+
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.programDrawer?.addProgramForm?.seatsPerCourseSetup;
+  }, [localizations]);
 
   // HANDLERS AND FUNCTIONS ··············································································||
   const handleDefaultValues = (_courses, switchOn) => {
@@ -40,7 +45,8 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, labels }) => {
           form.setValue(key, val);
         }
       });
-      if (Object.keys(value).length > 1 && !differentSeatsPerCourse) {
+
+      if (Object.keys(value).length > 1) {
         setDifferentSeatsPerCourse(true);
       }
     } else {
@@ -75,13 +81,13 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, labels }) => {
   }, [courses, value, differentSeatsPerCourse]);
 
   return (
-    <ContextContainer>
-      {courses?.length > 0 && (
+    <ContextContainer spacing={4}>
+      <Title sx={(theme) => theme.other.score.content.typo.lg}>{formLabels?.offeredSeats}</Title>
+      {courses?.length > 1 && sequentialCourses && (
         <>
-          <Title sx={(theme) => theme.other.score.content.typo.lg}>{'Plazas Ofertadas 🌎'}</Title>
           <Switch
-            value={differentSeatsPerCourse}
-            label={labels?.differentSeatsPerCourse || 'Las plazas varían segun el curso 🌎'}
+            checked={differentSeatsPerCourse}
+            label={formLabels?.seatsVaryByCourse}
             onChange={(val) => {
               setDifferentSeatsPerCourse(val);
               handleDefaultValues(courses, val);
@@ -91,11 +97,11 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, labels }) => {
           {differentSeatsPerCourse &&
             courses?.map((course) => (
               <Stack key={`course-${course.index}-seats`} alignItems="center" spacing={4}>
-                <Text sx={{ width: 100 }}>{`Course ${course.index}🌎`}</Text>
+                <Text sx={{ width: 100 }}>{`${formLabels?.course} ${course.index}`}</Text>
                 <Controller
                   name={`${course.index}`}
                   defaultValue={1}
-                  rules={{ required: 'This field is required 🌎' }}
+                  rules={{ required: localizations?.programDrawer?.requiredField }}
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <NumberInput
@@ -118,11 +124,11 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, labels }) => {
       )}
       {!differentSeatsPerCourse && (
         <Stack alignItems="center" spacing={4}>
-          <Text sx={{ width: 100 }}>{'Nº de plazas🌎'}</Text>
+          <Text sx={{ width: 100 }}>{formLabels?.numberOfSeats}</Text>
           <Controller
             name="all"
             control={form.control}
-            rules={{ required: 'This field is required 🌎' }}
+            rules={{ required: localizations?.programDrawer?.requiredField }}
             render={({ field, fieldState }) => (
               <NumberInput
                 {...field}
@@ -147,8 +153,9 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, labels }) => {
 SeatsPerCourseSetup.propTypes = {
   courses: PropTypes.array,
   onChange: PropTypes.func,
-  labels: PropTypes.object,
+  localizations: PropTypes.object,
   value: PropTypes.object,
+  sequentialCourses: PropTypes.bool,
 };
 
 export default SeatsPerCourseSetup;

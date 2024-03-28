@@ -33,23 +33,26 @@ export const useEmptyStateStyles = createStyles((theme) => {
   };
 });
 
-export function EmptyState({ onClick, localizations = {} }) {
+export function EmptyState({ onClick, localizations = {}, archivedView }) {
   const { classes } = useEmptyStateStyles();
 
   return (
-    <ContextContainer title={localizations?.emptyState?.title}>
+    <ContextContainer title={localizations?.emptyStates?.title || ''}>
       <Box className={classes.container}>
         <ContextContainer padded alignItems="center">
           <Box style={{ textAlign: 'center', width: '80%' }}>
             <Text className={classes.description}>
-              {localizations?.emptyState?.description || 'asdfasdfad asholal jhl ruia  ad af '}
+              {!archivedView && localizations?.emptyStates?.noProgramsCreated}
+              {archivedView && localizations?.emptyStates?.noProgramsArchived}
             </Text>
           </Box>
-          <Box>
-            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onClick}>
-              {localizations?.buttons?.new}
-            </Button>
-          </Box>
+          {!archivedView && (
+            <Box>
+              <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onClick}>
+                {localizations?.labels?.addNewProgram}
+              </Button>
+            </Box>
+          )}
         </ContextContainer>
       </Box>
     </ContextContainer>
@@ -59,4 +62,5 @@ export function EmptyState({ onClick, localizations = {} }) {
 EmptyState.propTypes = {
   onClick: PropTypes.func,
   localizations: PropTypes.object,
+  archivedView: PropTypes.bool,
 };

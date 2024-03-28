@@ -191,10 +191,9 @@ async function addProgram({ data, userSession, ctx }) {
 
   // ES: Creamos las substages
   if (_.isArray(substages)) {
-    // TODO: Por que aquí es diferente a cursos donde index = i + 1. Verificar que se puede unificar y hacerlo.
     await Promise.all(
       _.map(substages, (substage, index) =>
-        addSubstage({ ...substage, program: program.id, index, ctx })
+        addSubstage({ ...substage, program: program.id, index: index + 1, ctx })
       )
     );
   }
@@ -276,7 +275,7 @@ async function addProgram({ data, userSession, ctx }) {
       );
     });
   } else {
-    // De momento no se considera que un programa de un sólo curso especifíque créditos mínimos y máximos para su único curso.
+    //* OLD ahora el front end siempre manda un curso al menos, especificando sillas pero con min y max creditos a null
     coursesAndGroupsPromises.push(
       addCourse({
         data: {
@@ -323,21 +322,23 @@ async function addProgram({ data, userSession, ctx }) {
       },
       { new: true, lean: true }
     );
-  } else {
-    // TODO: Ver si es realmente necesario. De serlo, crearlo siempre ya que hay casos de clases de programa con grupos de referencia que no se asocian a ninguno.
-    coursesAndGroupsPromises.push(
-      addGroup({
-        data: {
-          name: '-auto-',
-          abbreviation: '-auto-',
-          program: program.id,
-          isAlone: true,
-        },
-        ctx,
-      })
-    );
-    await Promise.all(coursesAndGroupsPromises);
   }
+
+  //*OLD: En la nueva implementación se dan casos nuevos donde a partir de una misma asignatura se crean dos clases que usarían el grupo "-auto-"
+  //* Eso genera errores. Parece no afectar el hecho de que no haya un grupo auto
+  // coursesAndGroupsPromises.push(
+  //   addGroup({
+  //     data: {
+  //       name: '-auto-',
+  //       abbreviation: '-auto-',
+  //       program: program.id,
+  //       isAlone: true,
+  //     },
+  //     ctx,
+  //   })
+  // );
+
+  await Promise.all(coursesAndGroupsPromises);
 
   const _program = (await programsByIds({ ids: [program.id], ctx }))[0];
 
@@ -379,4 +380,4 @@ async function addProgram({ data, userSession, ctx }) {
   return _program;
 }
 
-module.exports = { addProgram };
+module.exports = { addProgram, handleReferenceGroups };

@@ -27,17 +27,25 @@ import { isEmpty } from 'lodash';
 const ReferenceGroupsSetup = ({
   onChange,
   value,
-  labels = {},
+  localizations,
   programCourses,
   coursesAreSequential,
 }) => {
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.programDrawer?.addProgramForm?.referenceGroupsSetup;
+  }, [localizations]);
+
   const nameFormatData = useMemo(
     () => [
-      { label: 'Letras (A, B, C) 🌎', value: 'alphabetical' },
-      { label: 'Números (1, 2, 3, 4) 🌎', value: 'numerical' },
-      { label: 'Personalizado  🌎', value: 'custom' },
+      {
+        label: formLabels?.nameFormatOptions?.alphabetical,
+        value: 'alphabetical',
+      },
+      { label: formLabels?.nameFormatOptions?.numerical, value: 'numerical' },
+      { label: formLabels?.nameFormatOptions?.custom, value: 'custom' },
     ],
-    [labels]
+    [formLabels]
   );
   const form = useForm();
   const { nameFormat, digits, prefix, customNameFormat } = form.watch();
@@ -159,7 +167,7 @@ const ReferenceGroupsSetup = ({
           render={({ field }) => (
             <Select
               {...field}
-              label={'Formato de nombre 🌎'}
+              label={formLabels?.nameFormat}
               data={nameFormatData}
               sx={{ width: nameFormat === 'custom' ? 280 + 8 : 216 }}
               onChange={(val) => {
@@ -170,7 +178,7 @@ const ReferenceGroupsSetup = ({
           )}
         />
         {nameFormat === 'custom' && (
-          <InputWrapper label={'Prefijo 🌎'}>
+          <InputWrapper label={formLabels?.prefix}>
             <Stack spacing={2}>
               <Controller
                 control={form.control}
@@ -178,7 +186,7 @@ const ReferenceGroupsSetup = ({
                 render={({ field }) => (
                   <TextInput
                     {...field}
-                    placeholder="Prefijo..."
+                    placeholder={formLabels?.prefixPlaceholder}
                     sx={{ width: 100 }}
                     onChange={(val) => {
                       form.setValue('prefix', val);
@@ -194,7 +202,7 @@ const ReferenceGroupsSetup = ({
                   <Select
                     {...field}
                     data={nameFormatData.filter((item) => item.value !== 'custom')}
-                    placeholder="Seleciona un formato..."
+                    placeholder={formLabels?.nameFormatPlaceholder}
                     sx={{ width: 180 }}
                     onChange={(val) => {
                       form.setValue('customNameFormat', val);
@@ -213,7 +221,7 @@ const ReferenceGroupsSetup = ({
             render={({ field }) => (
               <NumberInput
                 {...field}
-                label={'Digitos 🌎'}
+                label={formLabels?.digits}
                 defaultValue={1}
                 min={1}
                 customDesign
@@ -228,12 +236,12 @@ const ReferenceGroupsSetup = ({
         )}
       </Stack>
       <ContextContainer>
-        <Title sx={(theme) => theme.other.score.content.typo.lg}>{'Grupos Ofertados 🌎'}</Title>
+        <Title sx={(theme) => theme.other.score.content.typo.lg}>{formLabels?.offeredGroups}</Title>
         {coursesAreSequential &&
           programCourses?.length > 0 &&
           programCourses?.map(({ index }) => (
             <Stack key={`groupsForCourse${index}`} alignItems="center" spacing={4}>
-              <Text sx={{ width: 86 }}>{`Course ${index} 🌎`}</Text>
+              <Text sx={{ width: 86 }}>{`${formLabels?.course} ${index}`}</Text>
               <Controller
                 control={form.control}
                 name={`groupsForCourse${index}`}
@@ -283,7 +291,7 @@ const ReferenceGroupsSetup = ({
 
 ReferenceGroupsSetup.propTypes = {
   onChange: PropTypes.func,
-  labels: PropTypes.object,
+  localizations: PropTypes.object,
   value: PropTypes.arrayOf(PropTypes.object),
   programCourses: PropTypes.array.isRequired,
   coursesAreSequential: PropTypes.bool,
