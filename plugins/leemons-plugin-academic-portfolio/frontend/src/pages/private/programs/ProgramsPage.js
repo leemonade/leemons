@@ -113,6 +113,7 @@ const ProgramsPage = () => {
 
   // HANDLERS ------------------------------------------------------------------------------------------------ ||
   const handleOnAdd = () => {
+    setSelectedProgram(null);
     if (isEditing) setIsEditing(false);
     if (!addDrawerIsOpen) setAddDrawerIsOpen(true);
   };

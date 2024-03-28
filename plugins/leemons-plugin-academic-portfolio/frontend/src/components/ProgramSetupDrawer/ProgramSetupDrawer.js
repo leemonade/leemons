@@ -135,7 +135,7 @@ const ProgramSetupDrawer = ({
   const handleReferenceGroups = (formData, _body) => {
     const body = cloneDeep(_body);
 
-    if (!isEmpty(formData.referenceGroups)) {
+    if (setupData.referenceGroups && !isEmpty(formData.referenceGroups)) {
       const groups = formData.referenceGroups;
       if (!setupData.sequentialCourses && setupData.moreThanOneCourse) {
         body.referenceGroups = {
@@ -228,6 +228,7 @@ const ProgramSetupDrawer = ({
 
   const handleOnAdd = (formData) => {
     const body = constructRequestBody({ formData, isEditingConfig: false });
+    console.log('body', body);
 
     createProgram(body, {
       onSuccess: () => {
@@ -283,6 +284,8 @@ const ProgramSetupDrawer = ({
       },
     });
   };
+
+  console.log('program', program);
 
   const creationFlowComponents = useMemo(
     () => [
