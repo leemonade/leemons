@@ -1,45 +1,56 @@
+const SYS_PROFILE_NAMES = {
+  TEACHER: 'teacher',
+  STUDENT: 'student',
+  PARENT: 'parent',
+  ADMIN: 'admin',
+};
+const PLUGIN_NAME = 'users';
+const PUBLIC_ROUTE = `public/${PLUGIN_NAME}`;
+const PRIVATE_ROUTE = `private/${PLUGIN_NAME}`;
+const USERS_PERMISSION_NAME = `${PLUGIN_NAME}.users`;
+
 module.exports = {
   // Time in minutes
   timeForRecoverPassword: 15,
   daysForRegisterPassword: 30,
   // All users always have this permission
   basicPermission: {
-    permissionName: 'users.any',
+    permissionName: `${PLUGIN_NAME}.any`,
     actionName: 'view',
   },
   defaultPermissions: [
     {
-      permissionName: 'users.centers',
+      permissionName: `${PLUGIN_NAME}.centers`,
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Centros', en: 'Centers' },
     },
     {
-      permissionName: 'users.user-data',
+      permissionName: `${PLUGIN_NAME}.user-data`,
       actions: ['view', 'update', 'delete', 'admin'],
       localizationName: { es: 'Datos del usuario', en: 'User data' },
     },
     {
-      permissionName: 'users.users',
+      permissionName: USERS_PERMISSION_NAME,
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Usuarios', en: 'Users' },
     },
     {
-      permissionName: 'users.profiles',
+      permissionName: `${PLUGIN_NAME}.profiles`,
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Perfiles', en: 'Profiles' },
     },
     {
-      permissionName: 'users.import',
+      permissionName: `${PLUGIN_NAME}.import`,
       actions: ['view', 'update', 'admin'],
       localizationName: { es: 'Importar', en: 'Import' },
     },
     {
-      permissionName: 'users.roles',
+      permissionName: `${PLUGIN_NAME}.roles`,
       actions: ['view', 'update', 'create', 'delete', 'admin'],
       localizationName: { es: 'Roles', en: 'Roles' },
     },
     {
-      permissionName: 'users.enabledisable',
+      permissionName: `${PLUGIN_NAME}.enabledisable`,
       actions: ['create', 'delete', 'admin'],
       localizationName: { es: 'Activar/Desactivar', en: 'Enable/Disable' },
     },
@@ -63,34 +74,34 @@ module.exports = {
         en: 'Adds additional data common to all users',
       },
       locationName: 'user-data',
-      pluginName: 'users',
+      pluginName: PLUGIN_NAME,
     },
   ],
   url: {
     base: 'users',
     frontend: {
-      login: 'public/users/login',
-      reset: 'public/users/reset',
-      recover: 'public/users/recover',
-      register: 'public/users/register',
-      authLogin: 'public/users/auth/login',
-      authLogout: 'public/users/auth/logout',
+      login: `${PUBLIC_ROUTE}/login`,
+      reset: `${PUBLIC_ROUTE}/reset`,
+      recover: `${PUBLIC_ROUTE}/recover`,
+      register: `${PUBLIC_ROUTE}/register`,
+      authLogin: `${PUBLIC_ROUTE}/auth/login`,
+      authLogout: `${PUBLIC_ROUTE}/auth/logout`,
     },
     backend: {
-      login: 'users/user/login',
-      recover: 'users/user/recover',
+      login: `${PLUGIN_NAME}/user/login`,
+      recover: `${PLUGIN_NAME}/user/recover`,
     },
   },
   widgets: {
-    zones: [{ key: 'users.user-detail' }],
+    zones: [{ key: `${PLUGIN_NAME}.user-detail` }],
   },
   menuItems: [
     {
       item: {
         key: 'users',
         order: 100,
-        iconSvg: '/public/users/menu-icon.svg',
-        activeIconSvg: '/public/users/menu-icon.svg',
+        iconSvg: `/${PUBLIC_ROUTE}/menu-icon.svg`,
+        activeIconSvg: `/${PUBLIC_ROUTE}/menu-icon.svg`,
         label: {
           en: 'Users',
           es: 'Usuarios',
@@ -98,7 +109,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'users.users',
+          permissionName: USERS_PERMISSION_NAME,
           actionNames: ['admin'],
         },
       ],
@@ -107,8 +118,8 @@ module.exports = {
       item: {
         key: 'roles-list',
         order: 1,
-        parentKey: 'users.users',
-        url: '/private/users/roles/list',
+        parentKey: USERS_PERMISSION_NAME,
+        url: `/${PRIVATE_ROUTE}/roles/list`,
         label: {
           en: 'Roles',
           es: 'Roles',
@@ -116,7 +127,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'users.roles',
+          permissionName: `${PLUGIN_NAME}.roles`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -125,8 +136,8 @@ module.exports = {
       item: {
         key: 'profile-list',
         order: 1,
-        parentKey: 'users.users',
-        url: '/private/users/profiles/list',
+        parentKey: USERS_PERMISSION_NAME,
+        url: `/${PRIVATE_ROUTE}/profiles/list`,
         label: {
           en: 'Profiles',
           es: 'Perfiles',
@@ -134,7 +145,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'users.profiles',
+          permissionName: `${PLUGIN_NAME}.profiles`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -142,9 +153,9 @@ module.exports = {
     {
       item: {
         key: 'user-data',
-        parentKey: 'users.users',
+        parentKey: USERS_PERMISSION_NAME,
         order: 2,
-        url: '/private/users/user-data',
+        url: `/${PRIVATE_ROUTE}/user-data`,
         label: {
           en: 'User data',
           es: 'Datos del usuario',
@@ -152,7 +163,7 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'users.user-data',
+          permissionName: `${PLUGIN_NAME}.user-data`,
           actionNames: ['view', 'admin'],
         },
       ],
@@ -161,8 +172,8 @@ module.exports = {
       item: {
         key: 'users-list',
         order: 3,
-        parentKey: 'users.users',
-        url: '/private/users/list',
+        parentKey: USERS_PERMISSION_NAME,
+        url: `/${PRIVATE_ROUTE}/list`,
         label: {
           en: 'Users list',
           es: 'Listado de usuarios',
@@ -170,10 +181,13 @@ module.exports = {
       },
       permissions: [
         {
-          permissionName: 'users.users',
+          permissionName: USERS_PERMISSION_NAME,
           actionNames: ['admin'],
         },
       ],
     },
   ],
+  VERSION: 1,
+  PLUGIN_NAME,
+  SYS_PROFILE_NAMES,
 };

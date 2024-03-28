@@ -8,7 +8,7 @@ function checkIfManualPasswordIsGood({ ctx }) {
   }
   if (ctx.params.manualPassword !== process.env.MANUAL_PASSWORD) {
     throw new LeemonsError(ctx, {
-      message: 'Bad password',
+      message: 'Wrong password',
     });
   }
 

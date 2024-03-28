@@ -14,6 +14,7 @@ const { updateDeploymentConfig } = require('../../core/deployments/updateDeploym
 const { addDeployment } = require('../../core/deployments/addDeployment');
 const { isDomainInUse } = require('../../core/deployments/isDomainInUse');
 const { reloadAllDeployments } = require('../../core/auto-init/reload-all-deployments');
+const { getDeploymentInfo } = require('../../core/deployments/getDeploymentInfo');
 /** @type {ServiceSchema} */
 module.exports = {
   getConfigRest: {
@@ -179,10 +180,10 @@ module.exports = {
         oneOf: [{ required: ['deploymentID'] }, { required: ['domains'] }],
         additionalProperties: false,
       });
-      if (validator.validate(ctx.params)) {
-        await updateDeploymentConfig({ ...ctx.params, ctx });
+      if (!validator.validate(ctx.params)) {
+        throw validator.error;
       }
-      throw validator.error;
+      return updateDeploymentConfig({ ...ctx.params, ctx });
     },
   },
   addManualDeploymentRest: {
@@ -218,9 +219,21 @@ module.exports = {
     },
     async handler(ctx) {
       checkIfManualPasswordIsGood({ ctx });
-      const { ids } = ctx.params;
-      const count = await reloadAllDeployments(this.broker, ids);
+      const { ids, reloadRelations } = ctx.params;
+      const count = await reloadAllDeployments({ broker: this.broker, ids, reloadRelations });
       return { count };
+    },
+  },
+  deploymentInfoRest: {
+    dontCreateTransactionOnCallThisFunction: true,
+    rest: {
+      method: 'POST',
+      path: '/deployment-info',
+    },
+    async handler(ctx) {
+      checkIfManualPasswordIsGood({ ctx });
+      const { id } = ctx.params;
+      return getDeploymentInfo({ id });
     },
   },
 };

@@ -78,7 +78,25 @@ module.exports = () => ({
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
-        // TODO: Crear transaccion
+
+        const { pluginNames, relationship } = ctx.params ?? {};
+
+        if (pluginNames) {
+          this.logger.info('- Init Deployment - SavePlugins');
+          await ctx.call(
+            'deployment-manager.savePlugins',
+            _.map(_.uniq(pluginNames), (pluginName) => ({
+              pluginName,
+              pluginVersion: 1,
+            }))
+          );
+        }
+
+        if (relationship) {
+          this.logger.info('- Init Deployment - SavePluginsRelationships');
+          await ctx.call('deployment-manager.savePluginsRelationships', relationship);
+        }
+
         ctx.meta.transactionID = await newTransaction(ctx);
         ctx.meta.initDeploymentProcessNumber = randomString();
         await ctx.call('deployment-manager.emit', {
@@ -167,17 +185,20 @@ module.exports = () => ({
       setTimeout(async () => {
         try {
           if (process.env.DISABLE_AUTO_INIT !== 'true') {
-            console.info('- Auto init -');
+            this.logger.info('- Auto init -');
             await autoInit(this.broker);
-            console.info('- Auto init finished -');
+            this.logger.info('- Auto init finished -');
           }
           if (process.env.RELOAD_ALL_DEPLOYMENTS_ON_INIT === 'true') {
-            console.info('- Reload all deployments -');
-            await reloadAllDeployments(this.broker);
-            console.info('- Reload all deployments finished -');
+            this.logger.info('- Reload all deployments -');
+            await reloadAllDeployments({
+              broker: this.broker,
+              reloadRelations: String(process.env.RELOAD_ALL_RELATIONS_ON_INIT) === 'true',
+            });
+            this.logger.info('- Reload all deployments finished -');
           }
         } catch (e) {
-          console.error('- Auto init error -', e);
+          this.logger.error('- Auto init error -', e);
         }
       }, 10000);
     },

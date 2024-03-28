@@ -1,6 +1,6 @@
 {
-  "name": "@leemons/common",
-  "version": "0.0.41",
+  "name": "@leemons/cronjobs",
+  "version": "0.0.1",
   "description": "",
   "main": "src/index.js",
   "keywords": [],
@@ -23,6 +23,6 @@
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {
-    "@leemons/validator": "0.0.41"
+    "@hokify/agenda": "^6.3.0"
   }
 }

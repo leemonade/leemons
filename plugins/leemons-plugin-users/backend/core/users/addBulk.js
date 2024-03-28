@@ -19,22 +19,20 @@ const {
 const {
   addCenterProfilePermissionToUserAgents,
 } = require('../user-agents/addCenterProfilePermissionToUserAgents');
+const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsByProfileToUser');
 
-async function addUserBulk({
-  role,
-  id,
-  tags,
-  password,
-  birthdate,
-  avatar,
-  // eslint-disable-next-line camelcase
-  created_at,
-  createdAt,
-  dataset,
-  profile,
-  ctx,
-  ...userData
-}) {
+/**
+ * Function to handle the creation or update of a user.
+ *
+ * @param {Object} params The parameters for creating or updating a user.
+ * @param {string} [params.id] The ID of the user to update. If not provided, a new user will be created.
+ * @param {Object} params.userData The data of the user.
+ * @param {Date} params.birthdate The birthdate of the user.
+ * @param {string} params.password The password of the user.
+ * @param {MoleculerContext} params.ctx The Moleculer's context.
+ * @returns {Promise<Object>} An object containing the user and a flag indicating if it's a new user.
+ */
+async function handleUserCreationOrUpdate({ id, userData, birthdate, password, ctx }) {
   let user = null;
   if (id) {
     user = await ctx.tx.db.Users.findOne({ id }).lean();
@@ -60,8 +58,21 @@ async function addUserBulk({
       }
     );
   }
-  if (dataset) await setUserDatasetInfo({ userId: user.id, value: dataset, ctx });
+  return { user, isNewUser };
+}
 
+/**
+ * Function to handle the creation or restoration of a user agent.
+ *
+ * @param {Object} params The parameters for creating or restoring a user agent.
+ * @param {Object} params.user The user object.
+ * @param {Object} params.role The role object.
+ * @param {Object} params.isNewUser The flag to indicate if the user is new.
+ * @param {UserProfile} params.profile The profile object.
+ * @param {MoleculerContext} params.ctx The Moleculer's context.
+ * @returns {Promise<Object>} The created or restored user agent object.
+ */
+async function handleUserAgent({ user, role, isNewUser, profile, ctx }) {
   let userAgent = await ctx.tx.db.UserAgent.findOne(
     {
       user: user.id,
@@ -81,8 +92,10 @@ async function addUserBulk({
     userAgent = userAgent.toObject();
     await addCenterProfilePermissionToUserAgents({ userAgentIds: userAgent.id, ctx });
     // ES: Si no tenia el perfil y no es nuevo usuario, le mandamos el email
+    // EN: If the user didn't have the profile and it's not a new user, we send the email
     if (!isNewUser) {
       await sendNewProfileAddedEmailToUser({ user, profile, ctx });
+      await sendActivationEmailsByProfileToUser({ user, profile, ctx });
     }
   } else if (userAgent.isDeleted) {
     userAgent = await ctx.tx.db.UserAgent.findOneAndUpdate(
@@ -98,6 +111,51 @@ async function addUserBulk({
     );
     await ctx.tx.emit('user-agent.restore', { userAgent });
   }
+  return userAgent;
+}
+
+/**
+ * Adds a user.
+ *
+ * @param {Object} params The parameters for adding a user.
+ * @param {string} params.role The role of the user.
+ * @param {string} params.id The ID of the user.
+ * @param {Array<string>} params.tags The tags associated with the user.
+ * @param {string} params.password The password for the user.
+ * @param {Date} params.birthdate The birthdate of the user.
+ * @param {string} params.avatar The avatar URL of the user.
+ * @param {Date} params.createdAt The creation date of the user.
+ * @param {any} params.dataset The dataset information of the user.
+ * @param {UserProfile} params.profile The profile object of the user.
+ * @param {MoleculerContext} params.ctx The Moleculer's context.
+ * @returns {Promise<Object>} The newly added user object.
+ */
+async function addUser({
+  role,
+  id,
+  tags,
+  password,
+  birthdate,
+  avatar,
+  createdAt,
+  dataset,
+  profile,
+  ctx,
+  ...userData
+}) {
+  const { user, isNewUser } = await handleUserCreationOrUpdate({
+    id,
+    userData: _.omit(userData, ['created_at']),
+    birthdate,
+    password,
+    ctx,
+  });
+
+  if (dataset) {
+    await setUserDatasetInfo({ userId: user.id, value: dataset, ctx });
+  }
+
+  const userAgent = await handleUserAgent({ user, role, isNewUser, profile, ctx });
 
   if (isNewUser) {
     await addUserAvatar({ user: { ...user, userAgents: [userAgent] }, avatar, ctx });
@@ -123,6 +181,21 @@ async function addUserBulk({
   return user;
 }
 
+/**
+ * @typedef {Object} AddUsersBulkData
+ *
+ * @property {string} center - The center ID.
+ * @property {string} profile - The profile ID.
+ * @property {Array.<{email: string, tags?: string[]}>} users - The list of users to add.
+ */
+
+/**
+ * Adds multiple users in bulk.
+ * @param {Object} params - The parameters.
+ * @param {AddUsersBulkData} params.data - The data for adding users in bulk.
+ * @param {MoleculerContext} params.ctx - The Moleculer's context.
+ * @returns {Promise<any[]>} - The list of users added.
+ */
 async function addBulk({ data, ctx }) {
   const { center, profile, users } = data;
   validateAddUsersBulkForm(data);
@@ -135,7 +208,7 @@ async function addBulk({ data, ctx }) {
 
   return Promise.all(
     _.map(users, (user) =>
-      addUserBulk({
+      addUser({
         role: role.id,
         ...user,
         locale: user.locale || _center.locale || locale,

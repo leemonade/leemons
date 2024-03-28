@@ -2,6 +2,8 @@ const fetch = require('node-fetch');
 const { LeemonsError } = require('@leemons/error');
 const { encryptPassword } = require('./bcrypt/encryptPassword');
 const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
+const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsByProfileToUser');
+const { profiles: getUserProfiles } = require('./profiles');
 
 async function registerPassword({ token, password, ctx }) {
   const config = await getRegisterPasswordConfig({ token, ctx });
@@ -56,9 +58,10 @@ async function registerPassword({ token, password, ctx }) {
 
   await ctx.tx.db.UserRegisterPassword.deleteOne({ id: config.recoveryId });
 
-  // if (leemons.getPlugin('emails')) {
-  //   // TODO Mandar algun email si se quiere cuando el usuario haya seteado su contraseña del todo
-  // }
+  if (setPassword) {
+    const profiles = await getUserProfiles({ user: user.id, ctx });
+    profiles.map((profile) => sendActivationEmailsByProfileToUser({ user, profile, ctx }));
+  }
 
   return user;
 }

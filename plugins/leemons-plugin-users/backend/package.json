@@ -25,6 +25,7 @@
     "@jest/globals": "^29.7.0",
     "@leemons/cache": "0.0.41",
     "@leemons/common": "0.0.41",
+    "@leemons/cronjobs": "0.0.1",
     "@leemons/deployment-manager": "0.0.71",
     "@leemons/emails": "0.0.54",
     "@leemons/error": "0.0.41",

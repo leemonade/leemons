@@ -159,6 +159,6 @@ module.exports = {
     const emailTemplates = renderEmailTemplates();
     await this.initEmailTemplates(emailTemplates);
 
-    this.logger.info('Email templates initialized');
+    this.logger.debug('Email templates initialized');
   },
 };
