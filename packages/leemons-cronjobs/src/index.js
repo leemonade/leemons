@@ -53,7 +53,7 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
 
                 CronJob.schedule(when, jobName, {
                   ...params,
-                  deploymentID,
+                  deploymentID: deploymentID ?? params.deploymentID,
                 });
               },
               every: (interval, jobName, params = {}) => {
@@ -63,7 +63,7 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
 
                 CronJob.every(interval, jobName, {
                   ...params,
-                  deploymentID,
+                  deploymentID: deploymentID ?? params.deploymentID,
                 });
               },
             };

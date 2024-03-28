@@ -60,7 +60,7 @@ const {
 } = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
 const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUserAgentContactIds');
 const { PLUGIN_NAME, VERSION } = require('../config/constants');
-const { jobs, JOBS } = require('../core/deploy/jobs');
+const { jobs } = require('./jobs/users.jobs');
 
 /** @type {ServiceSchema} */
 module.exports = {

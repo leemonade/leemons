@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { CronJobs } = require('../deploy/jobs');
 
 /**
  * Sends the profile activation guides emails to the user.
@@ -23,8 +22,7 @@ async function sendActivationEmailsByProfileToUser({ user, profile, ctx }) {
 
     if (emailsByprofile.length) {
       emailsByprofile.forEach((email) => {
-        const jobName = `${prefix}:${email.job}`;
-        ctx.cronJob.schedule(process.env.RECATCH_EMAILS_DELAY ?? email.when, jobName, {
+        ctx.cronJob.schedule(process.env.RECATCH_EMAILS_DELAY ?? email.when, email.job, {
           to: user.email,
           language: user.locale ?? 'en',
           platformUrl,
