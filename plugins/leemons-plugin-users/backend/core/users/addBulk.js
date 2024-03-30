@@ -35,17 +35,23 @@ async function addUserBulk({
   ctx,
   ...userData
 }) {
+  let { email } = userData;
+  if (email?.indexOf('@')) {
+    email = email.toLowerCase().trim();
+  }
+
   let user = null;
   if (id) {
     user = await ctx.tx.db.Users.findOne({ id }).lean();
   } else {
-    user = await ctx.tx.db.Users.findOne({ email: userData.email }).lean();
+    user = await ctx.tx.db.Users.findOne({ email }).lean();
   }
   let isNewUser = false;
 
   if (!user) {
     user = await ctx.tx.db.Users.create({
       ...userData,
+      email,
       birthdate,
       password: password ? await encryptPassword(password) : undefined,
     });
@@ -56,6 +62,7 @@ async function addUserBulk({
       { id },
       {
         ...userData,
+        email,
         birthdate,
       }
     );

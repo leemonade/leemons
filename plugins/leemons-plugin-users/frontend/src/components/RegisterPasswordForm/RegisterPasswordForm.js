@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
 import { Alert, Box, Button, ContextContainer, PasswordInput } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
-import { RegisterPasswordFormStyles } from './RegisterPasswordForm.styles';
+import { PASSWORD_POLICIES, PasswordChecklist } from '../PasswordChecklist';
 
 export const REGISTER_PASSWORD_FORM_DEFAULT_PROPS = {
   labels: {
@@ -27,12 +28,11 @@ const RegisterPasswordForm = ({
   errorMessages,
   formError,
   onSubmit,
-  onValidationError,
   loading,
+  onValidationError,
   useRouter,
-  ...props
 }) => {
-  const { classes, cx } = RegisterPasswordFormStyles({});
+  const [passwordIsValid, setPasswordIsValid] = useState(false);
 
   const {
     watch,
@@ -47,7 +47,7 @@ const RegisterPasswordForm = ({
   return (
     <form
       onSubmit={handleSubmit((e) => {
-        if (e.password === e.repeatPassword) {
+        if (passwordIsValid && e.password === e.repeatPassword) {
           onSubmit(e);
         }
       })}
@@ -65,19 +65,39 @@ const RegisterPasswordForm = ({
           control={control}
           rules={{
             required: errorMessages.password?.required,
+            validate: {
+              password: (value) => {
+                if (value.length < PASSWORD_POLICIES.MIN_LENGTH) {
+                  return errorMessages.password?.minLength;
+                }
+                return true;
+              },
+            },
           }}
           render={({ field }) => (
-            <PasswordInput
-              label={labels.password}
-              placeholder={placeholders.password}
-              error={
-                isSubmitted && password !== repeatPassword
-                  ? errorMessages.passwordMatch
-                  : errors.password
-              }
-              required
-              {...field}
-            />
+            <Box>
+              <PasswordInput
+                {...field}
+                required
+                label={labels.password}
+                placeholder={placeholders.password}
+                error={
+                  isSubmitted && password !== repeatPassword
+                    ? errorMessages.passwordMatch
+                    : errors.password
+                }
+              />
+              {(!isEmpty(field.value) || !!errors.password) && (
+                <Box style={{ marginTop: 10, display: passwordIsValid ? 'none' : 'block' }}>
+                  <PasswordChecklist
+                    labels={labels.checkList}
+                    value={field.value}
+                    valueAgain={watch('confirmPassword')}
+                    onChange={setPasswordIsValid}
+                  />
+                </Box>
+              )}
+            </Box>
           )}
         />
 
@@ -105,7 +125,7 @@ const RegisterPasswordForm = ({
         </Box>
 
         <Box>
-          <Button loading={loading} loaderPosition="right" type="submit" fullWidth>
+          <Button loading={loading} type="submit" fullWidth>
             {labels.setPassword}
           </Button>
         </Box>
@@ -122,6 +142,12 @@ RegisterPasswordForm.propTypes = {
     password: PropTypes.string,
     repeatPassword: PropTypes.string,
     setPassword: PropTypes.string,
+    checkList: PropTypes.shape({
+      minLength: PropTypes.string,
+      specialChar: PropTypes.string,
+      number: PropTypes.string,
+      capital: PropTypes.string,
+    }),
   }),
   placeholders: PropTypes.shape({
     repeatPassword: PropTypes.string,
@@ -135,6 +161,8 @@ RegisterPasswordForm.propTypes = {
   formError: PropTypes.string,
   loading: PropTypes.bool,
   onSubmit: PropTypes.func,
+  onValidationError: PropTypes.func,
+  useRouter: PropTypes.func,
 };
 
 export { RegisterPasswordForm };

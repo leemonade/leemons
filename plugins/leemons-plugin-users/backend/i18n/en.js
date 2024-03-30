@@ -166,6 +166,13 @@ module.exports = {
     passwordMatch: 'Passwords not match',
     tokenError: 'The code to set the password has expired or is not valid, contact your center.',
     passwordSet: 'Password set successfully',
+    checkList: {
+      minLength: 'Password has at least {n} characters.',
+      specialChar: 'Password has special characters.',
+      number: 'Password has a number.',
+      capital: 'Password has a capital letter.',
+      match: 'Passwords match.',
+    },
   },
   recover: {
     title: 'Forgot my password',

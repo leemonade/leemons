@@ -1,27 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
-import { Alert, Box, createStyles, Stack } from '@bubbles-ui/components';
+import { Alert, createStyles } from '@bubbles-ui/components';
 import { RegisterPasswordForm } from '@users/components/RegisterPasswordForm';
 import { getCookieToken, useSession } from '@users/session';
 import { goLoginPage, goRecoverPage } from '@users/navigate';
-import HeroBgLayout from '@users/layout/heroBgLayout';
 import prefixPN from '@users/helpers/prefixPN';
 import constants from '@users/constants';
 import useTranslate from '@multilanguage/useTranslate';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { useNotifications } from '@bubbles-ui/notifications';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { AuthLayout } from '@users/layout/AuthLayout';
+import { AuthContainer } from '@users/components/AuthContainer';
 import { canRegisterPasswordRequest, registerPasswordRequest } from '../../../request';
-
-const PageStyles = createStyles((theme) => ({
-  root: {
-    padding: theme.spacing[7],
-  },
-  content: {
-    maxWidth: 330,
-  },
-}));
 
 export default function RegisterPassword() {
   useSession({
@@ -104,6 +96,13 @@ export default function RegisterPassword() {
       password: t('password'),
       repeatPassword: t('repeatPassword'),
       setPassword: t('setPassword'),
+      checkList: {
+        minLength: t('checkList.minLength'),
+        specialChar: t('checkList.specialChar'),
+        number: t('checkList.number'),
+        capital: t('checkList.capital'),
+        match: t('checkList.match'),
+      },
     }),
     [t]
   );
@@ -128,29 +127,25 @@ export default function RegisterPassword() {
   // ····················································································
   // STYLES
 
-  const { classes } = PageStyles();
-
   return (
-    <HeroBgLayout>
-      <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
-        <Box className={classes.content}>
-          {formStatus === 'not-can' ? (
-            <Alert severity="error" closeable={false}>
-              {t('tokenError')}
-            </Alert>
-          ) : (
-            <RegisterPasswordForm
-              labels={labels}
-              placeholders={placeholders}
-              errorMessages={errorMessages}
-              recoverUrl={goRecoverPage(history, true)}
-              onSubmit={onSubmit}
-              loading={formStatus === 'loading'}
-              formError={formError}
-            />
-          )}
-        </Box>
-      </Stack>
-    </HeroBgLayout>
+    <AuthLayout>
+      <AuthContainer>
+        {formStatus === 'not-can' ? (
+          <Alert severity="error" closeable={false}>
+            {t('tokenError')}
+          </Alert>
+        ) : (
+          <RegisterPasswordForm
+            labels={labels}
+            placeholders={placeholders}
+            errorMessages={errorMessages}
+            recoverUrl={goRecoverPage(history, true)}
+            onSubmit={onSubmit}
+            loading={formStatus === 'loading'}
+            formError={formError}
+          />
+        )}
+      </AuthContainer>
+    </AuthLayout>
   );
 }

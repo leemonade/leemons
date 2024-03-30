@@ -7,8 +7,9 @@ import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslate from '@multilanguage/useTranslate';
 import prefixPN from '@users/helpers/prefixPN';
-import HeroBgLayout from '@users/layout/heroBgLayout';
 import { goRecoverPage } from '@users/navigate';
+import { AuthLayout } from '@users/layout/AuthLayout';
+import { AuthContainer } from '@users/components/AuthContainer';
 import {
   getRememberLoginRequest,
   getUserProfilesRequest,
@@ -171,20 +172,18 @@ export default function Login() {
   const { classes } = PageStyles();
 
   return (
-    <HeroBgLayout>
-      <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
-        <Box className={classes.content}>
-          <LoginForm
-            labels={labels}
-            placeholders={placeholders}
-            errorMessages={errorMessages}
-            recoverUrl={goRecoverPage(history, true)}
-            onSubmit={onSubmit}
-            loading={formStatus === 'loading'}
-            formError={formError}
-          />
-        </Box>
-      </Stack>
-    </HeroBgLayout>
+    <AuthLayout>
+      <AuthContainer spacing={0}>
+        <LoginForm
+          labels={labels}
+          placeholders={placeholders}
+          errorMessages={errorMessages}
+          recoverUrl={goRecoverPage(history, true)}
+          onSubmit={onSubmit}
+          loading={formStatus === 'loading'}
+          formError={formError}
+        />
+      </AuthContainer>
+    </AuthLayout>
   );
 }
