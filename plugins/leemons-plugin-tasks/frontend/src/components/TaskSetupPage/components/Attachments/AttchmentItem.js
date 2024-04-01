@@ -20,7 +20,15 @@ const AttachmentItem = React.forwardRef(
         }}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
-        sx={() => ({ display: 'flex', alignItems: 'center', width: 470, height: 60 })}
+        sx={(theme) => ({
+          display: 'flex',
+          alignItems: 'center',
+          width: 470,
+          height: 60,
+          borderBottomWidth: 1,
+          borderBottomStyle: 'solid',
+          borderBottomColor: theme.other.table.border.color.default,
+        })}
       >
         <Stack fullWidth fullHeight alignItems="center" justifyContent="center">
           <Box
@@ -91,7 +99,7 @@ const AttachmentItem = React.forwardRef(
             })}
           >
             <ActionButton
-              icon={<DeleteBinIcon />}
+              icon={<DeleteBinIcon width={24} height={24} color="#2F463F" />}
               onClick={removeItem}
               tooltip={removeLabel}
               useAria={useAria}

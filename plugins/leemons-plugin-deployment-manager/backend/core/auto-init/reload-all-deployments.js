@@ -1,7 +1,8 @@
 const { deploymentModel } = require('../../models/deployment');
 
-async function reloadAllDeployments(broker) {
-  const deployments = await deploymentModel.find({}).lean();
+async function reloadAllDeployments(broker, deploymentIds = []) {
+  const query = deploymentIds.length ? { id: deploymentIds } : {};
+  const deployments = await deploymentModel.find(query).lean();
 
   for (let i = 0, l = deployments.length; i < l; i++) {
     // We simulate that the store tells us to start this deploymentID.
@@ -14,6 +15,8 @@ async function reloadAllDeployments(broker) {
       }
     );
   }
+
+  return deployments.length;
 }
 
 module.exports = { reloadAllDeployments };

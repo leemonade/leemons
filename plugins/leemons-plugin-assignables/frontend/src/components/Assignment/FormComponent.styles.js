@@ -12,7 +12,10 @@ const useFormComponentStyles = createStyles((theme) => {
       paddingBottom: 10,
     },
     leftColumn: {
-      maxWidth: 928 - 266 - 24 * 2, // leftColumn + rightColumn
+      width: 928 - 266 - 24 * 2, // leftColumn + rightColumn
+      '@media (min-width: 1920px)': {
+        width: 1400 - 266 - 24 * 2,
+      },
     },
     rightColumn: {
       minWidth: 266,

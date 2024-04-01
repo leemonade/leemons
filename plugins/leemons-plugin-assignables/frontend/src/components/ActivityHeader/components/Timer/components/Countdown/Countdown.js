@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 import { Text } from '@bubbles-ui/components';
 
-import { padStart } from 'lodash';
 import useCountdown from 'react-countdown-hook';
 import dayjs from 'dayjs';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import { useTimerStyles } from '../../Timer.styles';
+import { millisecondsToTime } from '../../helpers/millisecondsToTime';
 
 const useCountdownRemainingTime = ({ assignation, duration }) =>
   useMemo(() => {
@@ -26,14 +26,6 @@ const useCountdownRemainingTime = ({ assignation, duration }) =>
 
     return endDate.diff(dayjs(), 'milliseconds');
   }, [assignation?.timestamps?.start, duration?.asSeconds()]);
-
-function millisecondsToTime(milliseconds) {
-  const seconds = Math.trunc(milliseconds / 1000) % 60;
-  const minutes = Math.trunc(milliseconds / 1000 / 60) % 60;
-  const hours = Math.trunc(milliseconds / 1000 / 60 / 60);
-
-  return `${padStart(hours, 2, '0')}:${padStart(minutes, 2, '0')}:${padStart(seconds, 2, '0')}`;
-}
 
 function useCountdownColor({ total, remaining }) {
   const percentage = remaining / (total ?? 1);

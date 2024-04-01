@@ -66,7 +66,7 @@ module.exports = {
       },
     },
     dates: {
-      title: 'Timespan',
+      title: 'Completion deadline',
       optionsInput: {
         label: 'Timespan',
         options: {
@@ -132,8 +132,9 @@ module.exports = {
         placeholder: 'Type the date',
         error: 'Pick a date',
       },
-      notifyStudents: 'Notify students',
-      messageForStudents: 'Message for students',
+      notifyStudents: 'Notify students by email',
+      messageForStudents: 'Write the email',
+      notifyPlaceholder: 'Add the statement text here',
       hideResponses: 'Hide the answers of the activity once it is finished.',
       hideReport: 'Hide the results report.',
     },

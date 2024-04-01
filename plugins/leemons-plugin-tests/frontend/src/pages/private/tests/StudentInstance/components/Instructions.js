@@ -14,7 +14,7 @@ import {
   Modal,
   Paragraph,
   Text,
-  Title,
+  Stack,
 } from '@bubbles-ui/components';
 import { useSession } from '@users/session';
 
@@ -102,35 +102,26 @@ function Instructions({ instance }) {
         </>
       </ContextContainer>
       <Modal title={t('howItWorks')} opened={showModal} onClose={() => setShowModal(false)}>
-        <Box className={classes.howItWorksModalContainer}>
-          <Title order={5} sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
-            {t('limitedTime')}
-          </Title>
-          <Paragraph
-            dangerouslySetInnerHTML={{
-              __html: t('limitedTimeDescription', {
-                time: getLocaleDuration({ seconds: durationSeconds }, session),
-              }),
-            }}
-          />
-
-          <Title
-            order={5}
-            sx={(theme) => ({
-              marginTop: theme.spacing[6],
-              marginBottom: theme.spacing[2],
-            })}
-          >
-            {t('canNotStop')}
-          </Title>
-          <Paragraph
-            dangerouslySetInnerHTML={{
-              __html: t('canNotStopDescription', {
-                time: getLocaleDuration({ seconds: durationSeconds }, session),
-              }),
-            }}
-          />
-        </Box>
+        <Stack spacing="xl" direction="column">
+          <ContextContainer title={t('limitedTime')}>
+            <Paragraph
+              dangerouslySetInnerHTML={{
+                __html: t('limitedTimeDescription', {
+                  time: getLocaleDuration({ seconds: durationSeconds }, session),
+                }),
+              }}
+            />
+          </ContextContainer>
+          <ContextContainer title={t('canNotStop')}>
+            <Paragraph
+              dangerouslySetInnerHTML={{
+                __html: t('canNotStopDescription', {
+                  time: getLocaleDuration({ seconds: durationSeconds }, session),
+                }),
+              }}
+            />
+          </ContextContainer>
+        </Stack>
       </Modal>
     </>
   );

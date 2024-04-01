@@ -36,6 +36,10 @@ module.exports = {
         presentation: 'Presentación',
         subTitle: 'Título del recurso',
       },
+      footer: {
+        finish: 'Finalizar',
+        publish: 'Publicar',
+      },
       bookmark: {
         titleNew: 'Nuevo marcador',
         titleEdit: 'Editar marcador',
@@ -53,6 +57,7 @@ module.exports = {
         tags: 'Etiquetas',
         addTag: 'Añadir',
         changeImage: 'Cambiar imagen',
+        removeButton: 'Borrar',
         uploadButton: 'Subir imagen',
         browseFile: 'Click para buscar un archivo',
         advancedConfig: 'Configuración avanzada',

@@ -32,15 +32,13 @@ function ClassDashboard({ classe }) {
         padding: theme.spacing[6],
       })}
     >
-      <BannerMessage message={activeMessage} />;
+      <BannerMessage message={activeMessage} />
     </Box>
   );
 }
 
 ClassDashboard.propTypes = {
   classe: PropTypes.object,
-  session: PropTypes.object,
-  inTab: PropTypes.bool,
 };
 
 export default ClassDashboard;

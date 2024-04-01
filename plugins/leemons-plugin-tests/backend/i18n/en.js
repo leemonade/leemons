@@ -262,7 +262,7 @@ module.exports = {
   },
   instructions: {
     instructions: 'Instructions',
-    howItWorks: 'How it works?',
+    howItWorks: 'More information',
     timeLimit1: 'You have',
     timeLimit2: 'to complete the activity.',
     withoutPause1: 'You cannot pause',
@@ -314,7 +314,6 @@ module.exports = {
     withoutPause2: 'the test once it has started.',
     withoutPause: 'Without pause',
     noTimeLimit: 'No time limit',
-    makeTheTest: 'Start test',
     howItWorks: 'How does it works?',
     limitedTime: 'Limited time',
     limitedTimeDescription:

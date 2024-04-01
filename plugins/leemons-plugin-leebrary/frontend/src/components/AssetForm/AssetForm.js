@@ -526,8 +526,6 @@ const AssetForm = ({
                         {...field}
                         label={labels.color}
                         placeholder={placeholders.color}
-                        useHsl
-                        compact={false}
                         manual={false}
                         disabled={formValues.subjects?.length}
                         contentStyle={{ width: 190 }}
