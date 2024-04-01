@@ -5,6 +5,7 @@ const {
 } = require('./getAutoDeploymentIDIfCanIFNotThrowError');
 const { isCoreService } = require('./isCoreService');
 const { validateInternalPrivateKey } = require('./validateInternalPrivateKey');
+const { customCall } = require('./customCall');
 
 module.exports = {
   LeemonsDeploymentManagerMixin: mixin,
@@ -12,4 +13,5 @@ module.exports = {
   getDeploymentIDFromCTX,
   getAutoDeploymentIDIfCanIFNotThrowError,
   validateInternalPrivateKey,
+  customCall,
 };
