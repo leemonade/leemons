@@ -228,18 +228,4 @@ module.exports = {
     },
   },
 
-  created() {
-    // mongoose.connect(process.env.MONGO_URI);
-  },
-  started() {
-    // Testing cronjob
-    /*
-    this.runScheduled('in 40 seconds', JOBS.FREE.SEND_TEACHER_FIRST_STEPS_GUIDE_EMAIL, {
-      deploymentID: '6601d81b4c347c8690e1c62a',
-      to: 'johan+teacher01@leemons.io',
-      language: 'en',
-      platformUrl: 'https://platform.leemons.io',
-    });
-    */
-  },
 };
