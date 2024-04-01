@@ -28,7 +28,7 @@ module.exports = function LeemonsEmailsMixin({ ctxKeyValueModelName = 'KeyValue'
       },
     },
     created() {
-      this.logger.info('LeemonsEmailsMixin created');
+      this.logger.debug('LeemonsEmailsMixin created');
     },
   };
 };
