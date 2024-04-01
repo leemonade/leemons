@@ -30,7 +30,7 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-const ClassroomsSetup = ({ onChange, value }) => {
+const ClassroomsSetup = ({ onChange, value, formLabels }) => {
   const { classes } = useStyles();
   const form = useForm({
     defaultValues: { classroomsAmount: 0 },
@@ -63,7 +63,7 @@ const ClassroomsSetup = ({ onChange, value }) => {
     }
     form.setError(fieldName, {
       type: 'manual',
-      message: 'This field is needed for the classroom to be added 🌎',
+      message: formLabels?.validation?.requiredField,
     });
     return false;
   };
@@ -89,7 +89,7 @@ const ClassroomsSetup = ({ onChange, value }) => {
           <NumberInput
             {...field}
             min={0}
-            label={'Cantidad 🌎'}
+            label={formLabels?.numberOfClassrooms}
             customDesign
             sx={{ width: 120 }}
             onChange={(val) => {
@@ -112,23 +112,22 @@ const ClassroomsSetup = ({ onChange, value }) => {
             <tr>
               <th className={classes.aulaTh}>
                 <Text size="xs" role="productive" color="primary" strong>
-                  Aula
-                </Text>
-                🌎
-              </th>
-              <th className={classes.th}>
-                <Text size="xs" role="productive" color="primary" strong>
-                  {`Plazas disponibles 🌎*`}
+                  {formLabels?.classrooms}
                 </Text>
               </th>
               <th className={classes.th}>
                 <Text size="xs" role="productive" color="primary" strong>
-                  ID de Aula 🌎
+                  {`${formLabels?.seats || ''}*`}
                 </Text>
               </th>
               <th className={classes.th}>
                 <Text size="xs" role="productive" color="primary" strong>
-                  Alias 🌎
+                  {formLabels?.classroomId}
+                </Text>
+              </th>
+              <th className={classes.th}>
+                <Text size="xs" role="productive" color="primary" strong>
+                  {formLabels?.alias}
                 </Text>
               </th>
             </tr>
@@ -143,14 +142,14 @@ const ClassroomsSetup = ({ onChange, value }) => {
                   name={`classrooms.${index}.seats`}
                   control={form.control}
                   rules={{
-                    required: 'This field is required 🌎',
-                    validate: (val) => val >= 1 || 'Value cannot be less than 1 🌎',
+                    required: formLabels?.validation?.requiredField,
+                    validate: (val) => val >= 1 || formLabels?.validation?.atLeastOneSeat,
                   }}
                   render={({ field, fieldState }) => (
                     <td className={classes.td}>
                       <NumberInput
                         {...field}
-                        placeholder="Plazas disponibles 🌎"
+                        placeholder={formLabels?.seats}
                         min={1}
                         onChange={(val) => {
                           field.onChange(val);
@@ -168,7 +167,7 @@ const ClassroomsSetup = ({ onChange, value }) => {
                     <td className={classes.td}>
                       <TextInput
                         {...field}
-                        placeholder="ID de Aula 🌎"
+                        placeholder={formLabels?.textPlaceholder}
                         onChange={(val) => {
                           field.onChange(val);
                           handleOnChange(index);
@@ -184,7 +183,7 @@ const ClassroomsSetup = ({ onChange, value }) => {
                     <td className={classes.td}>
                       <TextInput
                         {...field}
-                        placeholder="Alias 🌎"
+                        placeholder={formLabels?.textPlaceholder}
                         onChange={(val) => {
                           field.onChange(val);
                           handleOnChange(index);
@@ -205,6 +204,7 @@ const ClassroomsSetup = ({ onChange, value }) => {
 ClassroomsSetup.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array,
+  formLabels: PropTypes.object,
 };
 
 export default ClassroomsSetup;

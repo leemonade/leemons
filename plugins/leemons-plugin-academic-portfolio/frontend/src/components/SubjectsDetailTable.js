@@ -2,16 +2,25 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isEmpty, omit } from 'lodash';
 import { Table, Stack, ActionButton } from '@bubbles-ui/components';
-import { ArchiveIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { ArchiveIcon, EditWriteIcon, RestoreIcon } from '@bubbles-ui/icons/solid';
 
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 
-const SubjectsDetailTable = ({ subjectIds, labels, onEdit }) => {
+const SubjectsDetailTable = ({
+  subjectIds,
+  labels,
+  onEdit,
+  onDuplicate,
+  onArchive,
+  onRestore,
+  isShowingArchivedSubjects,
+}) => {
   const { data: subjectsDetailQuery, isLoading: isSubjectsDetailLoading } = useSubjectDetails(
     subjectIds,
     { enabled: subjectIds?.length > 0 },
-    true
+    true,
+    isShowingArchivedSubjects
   );
 
   const getSubjectClassesString = (classes) => {
@@ -92,49 +101,66 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit }) => {
         ...item,
         actions: (
           <Stack justifyContent="end" fullWidth>
+            {!isShowingArchivedSubjects && (
+              <ActionButton
+                tooltip={labels?.edit}
+                onClick={() => handleOnEdit(item)}
+                icon={<EditWriteIcon width={18} height={18} />}
+              />
+            )}
+            {!isShowingArchivedSubjects && (
+              <ActionButton
+                onClick={() => onDuplicate(item)}
+                tooltip={labels?.duplicate}
+                icon={<DuplicateIcon width={18} height={18} />}
+              />
+            )}
             <ActionButton
-              tooltip="Editar 🌎"
-              onClick={() => handleOnEdit(item)}
-              icon={<EditWriteIcon width={18} height={18} />}
+              tooltip={labels.archive}
+              icon={
+                !isShowingArchivedSubjects ? (
+                  <ArchiveIcon width={18} height={18} onClick={() => onArchive(item)} />
+                ) : (
+                  <RestoreIcon width={18} height={18} onClick={() => console.log('restaurando')} />
+                )
+              }
             />
-            <ActionButton tooltip="Duplicar 🌎" icon={<DuplicateIcon width={18} height={18} />} />
-            <ActionButton tooltip="Archivar 🌎" icon={<ArchiveIcon width={18} height={18} />} />
           </Stack>
         ),
       }));
     }
     return [];
-  }, [subjectClassesData]);
+  }, [subjectClassesData, isShowingArchivedSubjects, labels]);
 
   const tableColumns = useMemo(
     () => [
       {
-        Header: 'Asignatura 🌎' || labels?.subject,
+        Header: labels?.subject,
         accessor: 'name',
       },
       {
-        Header: 'Cursos 🌎' || labels?.courses,
+        Header: labels?.courses,
         accessor: 'courses',
         valueRender: (coursesValue) => getCoursesTextToShow(coursesValue),
       },
       {
-        Header: 'Subetapas 🌎' || labels?.substages,
+        Header: labels?.substages,
         accessor: 'substage',
         valueRender: (substagesValue) =>
-          substagesValue?.length ? substagesValue[0].abbreviation : 'Curso completo 🌎', // Only one substage per subject currently
+          substagesValue?.length ? substagesValue[0].abbreviation : labels.noSubstages, // Only one substage per subject currently
       },
       {
-        Header: 'Aulas 🌎' || labels?.classes,
+        Header: labels?.classrooms,
         accessor: 'classes',
         valueRender: (classesValue) => getSubjectClassesString(classesValue),
       },
       {
-        Header: 'Tipo 🌎' || labels?.type,
+        Header: labels?.type,
         accessor: 'subjectType',
         valueRender: (subjectTypeValue) => subjectTypeValue?.name ?? '',
       },
       {
-        Header: 'ACTIONS',
+        Header: labels?.actions,
         accessor: 'actions',
         style: { width: 100, textAlign: 'center' },
       },
@@ -150,6 +176,10 @@ SubjectsDetailTable.propTypes = {
   subjectIds: PropTypes.array,
   labels: PropTypes.object,
   onEdit: PropTypes.func,
+  isShowingArchivedSubjects: PropTypes.bool,
+  onDuplicate: PropTypes.func,
+  onArchive: PropTypes.func,
+  onRestore: PropTypes.func,
 };
 
 export default SubjectsDetailTable;

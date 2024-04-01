@@ -16,7 +16,7 @@ import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 const ReferenceGroupsClassroomsSetup = ({
   onChange,
   value,
-  labels,
+  formLabels,
   groups,
   selectedCourses,
   isMultiCourse,
@@ -108,7 +108,7 @@ const ReferenceGroupsClassroomsSetup = ({
       if (isReferenceGroupUsed) {
         form.setError('referenceGroup', {
           type: 'manual',
-          message: 'This reference group is already being used. Please select another one.',
+          message: formLabels?.validation?.referenceGroupAlreadyInUse,
         });
       } else {
         onChange([...(value || []), newItem]);
@@ -128,15 +128,15 @@ const ReferenceGroupsClassroomsSetup = ({
         <Controller
           name="referenceGroup"
           rules={{
-            required: 'This field is required 🌎',
+            required: formLabels?.validation?.requiredField,
           }}
           control={form.control}
           render={({ field, fieldState }) => (
             <Select
               {...field}
-              label="Grupo de Referencia 🌎"
+              label={formLabels?.referenceGroup}
               data={groupsSelectData}
-              placeholder="Selecciona uno... 🌎"
+              placeholder={formLabels?.referenceGroupPlaceholder}
               sx={{ width: 168 }}
               onBlur={() => form.clearErrors()}
               error={fieldState.error}
@@ -149,12 +149,17 @@ const ReferenceGroupsClassroomsSetup = ({
           name="classroomId"
           control={form.control}
           render={({ field }) => (
-            <TextInput {...field} label="Id de aula 🌎" placeholder="Id...🌎" sx={{ width: 192 }} />
+            <TextInput
+              {...field}
+              label={formLabels.classroomId}
+              placeholder={formLabels.textPlaceholder}
+              sx={{ width: 192 }}
+            />
           )}
         />
         <InputWrapper showEmptyLabel>
           <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-            {labels?.add || 'ADD 🌎'}
+            {formLabels?.labels?.add}
           </Button>
         </InputWrapper>
       </ContextContainer>
@@ -164,11 +169,11 @@ const ReferenceGroupsClassroomsSetup = ({
           <TableInput
             columns={tableInputColumns}
             labels={{
-              add: labels?.add,
-              remove: labels?.remove,
-              edit: labels?.edit,
-              accept: labels?.accept,
-              cancel: labels?.cancel,
+              add: formLabels?.labels?.add,
+              remove: formLabels?.labels?.remove,
+              edit: formLabels?.labels?.edit,
+              accept: formLabels?.labels?.accept,
+              cancel: formLabels?.labels?.cancel,
             }}
             data={classroomsData}
             removable
@@ -188,7 +193,7 @@ ReferenceGroupsClassroomsSetup.propTypes = {
   value: PropTypes.array,
   groups: PropTypes.array,
   selectedCourses: PropTypes.array,
-  labels: PropTypes.object,
+  formLabels: PropTypes.object,
   isMultiCourse: PropTypes.bool,
   refGroupdisabled: PropTypes.bool,
 };

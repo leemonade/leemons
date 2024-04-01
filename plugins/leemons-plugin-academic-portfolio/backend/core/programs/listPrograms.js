@@ -3,15 +3,17 @@ const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const { LeemonsError } = require('@leemons/error');
 const { getUserProgramIds } = require('./getUserProgramIds');
 
-async function listPrograms({ page, size, center, filters = {}, bringOnlyArchived, ctx }) {
-  const queriesOptions = bringOnlyArchived ? { excludeDeleted: false } : {};
+async function listPrograms({ page, size, center, filters = {}, onlyArchived, ctx }) {
+  const queriesOptions = onlyArchived ? { excludeDeleted: false } : {};
   const [profile, programCenter] = await Promise.all([
     ctx.tx.call('users.profiles.getProfileSysName'),
     ctx.tx.db.ProgramCenter.find({ center }, '', queriesOptions).lean(),
   ]);
 
   if (!['teacher', 'student', 'admin', 'super'].includes(profile)) {
-    throw new LeemonsError(ctx, { message: 'Only teacher|student|admin|super can list programs' });
+    throw new LeemonsError(ctx, {
+      message: 'Only teacher|student|admin|super users can list programs',
+    });
   }
 
   let programIds = _.map(programCenter, 'program');
@@ -42,7 +44,7 @@ async function listPrograms({ page, size, center, filters = {}, bringOnlyArchive
     centers: centersByProgram[program.id] ? _.map(centersByProgram[program.id], 'center') : [],
   }));
 
-  if (bringOnlyArchived) {
+  if (onlyArchived) {
     results.items = results.items.filter((program) => program.isDeleted);
   }
   return results;

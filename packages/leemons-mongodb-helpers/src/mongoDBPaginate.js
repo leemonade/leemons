@@ -1,6 +1,6 @@
-async function mongoDBPaginate({ model, page, size, query, columns, sort }) {
+async function mongoDBPaginate({ model, page, size, query, columns, sort, options = {} }) {
   const queryItems = model
-    .find(query || {})
+    .find(query || {}, '', options)
     .limit(size)
     .skip(page * size);
 

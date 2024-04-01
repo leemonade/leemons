@@ -27,29 +27,27 @@ export const useEmptyStateStyles = createStyles((theme) => {
     container: {
       border: `2px dashed ${globalTheme.border.color.line.subtle}`,
       width: '50%',
-      minWidth: 500,
-      marginTop: 10,
+      height: 136,
+      minWidth: 450,
+      padding: 16,
     },
   };
 });
 
-export function EmptyState({ onClick, localizations = {}, archivedView }) {
+export function EmptyState({ onClick, Icon, title, description, actionLabel, noAction }) {
   const { classes } = useEmptyStateStyles();
 
   return (
-    <ContextContainer title={localizations?.emptyStates?.title || ''}>
+    <ContextContainer title={title || ''}>
       <Box className={classes.container}>
         <ContextContainer padded alignItems="center">
           <Box style={{ textAlign: 'center', width: '80%' }}>
-            <Text className={classes.description}>
-              {!archivedView && localizations?.emptyStates?.noProgramsCreated}
-              {archivedView && localizations?.emptyStates?.noProgramsArchived}
-            </Text>
+            <Text className={classes.description}>{description || ''}</Text>
           </Box>
-          {!archivedView && (
+          {!noAction && (
             <Box>
-              <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onClick}>
-                {localizations?.labels?.addNewProgram}
+              <Button variant="link" leftIcon={Icon} onClick={onClick}>
+                {actionLabel}
               </Button>
             </Box>
           )}
@@ -61,6 +59,9 @@ export function EmptyState({ onClick, localizations = {}, archivedView }) {
 
 EmptyState.propTypes = {
   onClick: PropTypes.func,
-  localizations: PropTypes.object,
-  archivedView: PropTypes.bool,
+  noAction: PropTypes.bool,
+  description: PropTypes.string,
+  title: PropTypes.string,
+  actionLabel: PropTypes.string,
+  Icon: PropTypes.node,
 };

@@ -43,6 +43,7 @@ const SubjectForm = ({
   onSubmit,
   drawerIsLoading,
   subject,
+  localizations,
 }) => {
   const { classes } = useSubjectFormStyles();
   const form = useForm();
@@ -51,10 +52,29 @@ const SubjectForm = ({
   const [disableReferenceGroups, setDisableReferenceGroups] = useState(false);
   const coursesFormValue = form.watch('courses');
 
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.drawer;
+  }, [localizations]);
+
   const programReferenceGroups = useMemo(
-    () => program?.groups.filter((group) => group.name !== '-auto-'),
+    () => program?.groups.filter((group) => group.name !== '-auto-'), // Previous implementation, this check is not needed anymore. Reference groups = program.groups
     [program]
   );
+
+  const subjectWithPeopleEnrolled = useMemo(() => {
+    if (!isEmpty(subject)) {
+      return subject.classes.some((classItem) => {
+        const hasStudents = classItem.students?.length > 0;
+        const hasTeachers = classItem.teachers?.length > 0;
+        return hasStudents || hasTeachers;
+      });
+    }
+    return false;
+  }, [subject]);
+
+  console.log('subjectWithPeopleEnrolled', subjectWithPeopleEnrolled);
+  console.log('subject', subject);
 
   function transformClassesData(classesData) {
     if (classesData.every((e) => e.groups)) {
@@ -81,7 +101,7 @@ const SubjectForm = ({
   // DATA FOR SELECT INPUTS ---------------------------------------------------------------------------------||
 
   // Knowledge Areas select
-  const { data: knowledgeAreasQuery, isLoading: areKnowledgeAreasLoading } = useKnowledgeAreas({
+  const { data: knowledgeAreasQuery } = useKnowledgeAreas({
     center: program?.centers[0],
     options: { enabled: program?.centers[0]?.length > 0 },
   });
@@ -98,7 +118,7 @@ const SubjectForm = ({
   }, [knowledgeAreasQuery]);
 
   // SubjectTypes select
-  const { data: subjectTypesQuery, isLoading: areSubjectTypesLoading } = useSubjectTypes({
+  const { data: subjectTypesQuery } = useSubjectTypes({
     center: program?.centers[0],
     options: { enabled: program?.centers[0]?.length > 0 },
   });
@@ -165,20 +185,20 @@ const SubjectForm = ({
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
-        <Title className={classes.title}>{'Basic Data 🌎'}</Title>
+        <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
 
         <ContextContainer noFlex spacing={6}>
-          <Title className={classes.sectionTitle}>{'Presentation 🌎'}</Title>
+          <Title className={classes.sectionTitle}>{formLabels?.basicData?.presentation}</Title>
           <Stack className={classes.horizontalInputsContainer}>
             <Controller
               name="name"
               control={control}
-              rules={{ required: 'Required field 🌎' }}
+              rules={{ required: formLabels?.requiredField }}
               render={({ field }) => (
                 <TextInput
                   {...field}
-                  label={'Name 🌎'}
-                  placeholder={'Name... 🌎'}
+                  label={formLabels?.basicData?.name}
+                  placeholder={formLabels?.textPlaceholder}
                   error={formState.errors.name}
                   required
                   sx={{ width: 216 }}
@@ -190,15 +210,21 @@ const SubjectForm = ({
                 name="internalId"
                 control={control}
                 rules={{
-                  required: 'This field is required 🌎',
-                  maxLength: { value: 3, message: 'ID must be a maximum of 3 digits 🌎' },
-                  pattern: { value: /^[0-9]+$/, message: 'ID must be numeric 🌎' },
+                  required: formLabels?.requiredField,
+                  maxLength: {
+                    value: 3,
+                    message: formLabels?.validation?.internalIdMaxLength,
+                  },
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: formLabels?.validation?.internalIdFormat,
+                  },
                 }}
                 render={({ field, fieldState }) => (
                   <TextInput
                     {...field}
-                    label={'ID único (numérico, 3 digitos) 🌎'}
-                    placeholder={'ID único  🌎'}
+                    label={formLabels?.basicData?.internalId}
+                    placeholder={formLabels?.textPlaceholder}
                     error={fieldState.error?.message}
                     required
                     sx={{ width: 232 }}
@@ -210,12 +236,12 @@ const SubjectForm = ({
             <Controller
               name="color"
               control={control}
-              rules={{ required: 'Required field 🌎' }}
+              rules={{ required: formLabels?.requiredField }}
               render={({ field }) => (
                 <ColorInput
                   {...field}
-                  label={'Color 🌎'}
-                  placeholder={'Color 🌎'}
+                  label={formLabels?.basicData?.color}
+                  placeholder={'#000000'}
                   useHsl
                   compact={false}
                   manual={false}
@@ -229,7 +255,7 @@ const SubjectForm = ({
             name="image"
             control={control}
             render={({ field }) => (
-              <InputWrapper label="Image 🌎">
+              <InputWrapper label={formLabels?.basicData?.featuredImage}>
                 <ImagePicker {...field} />
               </InputWrapper>
             )}
@@ -238,8 +264,8 @@ const SubjectForm = ({
             name="icon"
             control={control}
             render={({ field }) => (
-              <InputWrapper label="Icon 🌎">
-                <ImagePicker {...field} />
+              <InputWrapper label={formLabels?.basicData?.icon}>
+                <ImagePicker {...field} objectFit="contain" acceptedFileTypes={['image/svg+xml']} />
               </InputWrapper>
             )}
           />
@@ -247,22 +273,22 @@ const SubjectForm = ({
 
         {(program?.hasKnowledgeAreas || program?.hasSubjectTypes || program?.credits) && (
           <ContextContainer noFlex spacing={6}>
-            <Title className={classes.sectionTitle}>{'Características 🌎'}</Title>
+            <Title className={classes.sectionTitle}>{formLabels?.features?.title}</Title>
             <Stack className={classes.horizontalInputsContainer}>
               {program?.hasKnowledgeAreas && (
                 <Controller
                   name="knowledgeArea"
                   control={control}
                   rules={{
-                    required: 'Required field 🌎',
+                    required: formLabels?.requiredField,
                   }}
                   render={({ field, fieldState }) => (
                     <Select
                       {...field}
                       data={knowledgeAreasSelectData}
-                      label={'Área de conocimiento 🌎'}
+                      label={formLabels?.features?.knowledgeArea}
                       sx={{ width: 216 }}
-                      placeholder={'Selecciona un área... 🌎'}
+                      placeholder={formLabels?.features?.knowledgeAreaPlaceholder}
                       error={fieldState.error}
                       required
                     />
@@ -274,15 +300,15 @@ const SubjectForm = ({
                   name="subjectType"
                   control={control}
                   rules={{
-                    required: 'Required field 🌎',
+                    required: formLabels?.requiredField,
                   }}
                   render={({ field, fieldState }) => (
                     <Select
                       {...field}
                       data={subjectTypesSelectData}
-                      label={'Tipo 🌎'}
+                      label={formLabels?.features?.type}
                       sx={{ width: 216 }}
-                      placeholder={'Selecciona un tipo...🌎'}
+                      placeholder={formLabels?.features?.typePlaceholder}
                       error={fieldState.error}
                       required
                     />
@@ -294,15 +320,15 @@ const SubjectForm = ({
                   name="credits"
                   control={control}
                   rules={{
-                    required: 'Required field 🌎',
+                    required: formLabels?.requiredField,
                   }}
                   render={({ field, fieldState }) => (
                     <NumberInput
                       {...field}
-                      label={'Nº de créditos 🌎'}
+                      label={formLabels?.features?.numberOfCredits}
                       min={0}
                       sx={{ width: 216 }}
-                      placeholder={'Créditos...🌎'}
+                      placeholder={formLabels?.features?.numberOfCreditsPlaceholder}
                       error={fieldState.error}
                       required
                     />
@@ -313,112 +339,144 @@ const SubjectForm = ({
           </ContextContainer>
         )}
 
-        <ContextContainer noFlex spacing={6}>
-          <Title className={classes.sectionTitle}>{'Oferta 🌎'}</Title>
-          <Stack className={classes.horizontalInputsContainer}>
-            <Controller
-              name="courses"
-              control={control}
-              rules={{
-                required: 'Required field 🌎',
-              }}
-              render={({ field, fieldState }) => {
-                if (program?.sequentialCourses) {
-                  return (
+        {(!isEditing || (isEditing && !subjectWithPeopleEnrolled)) && (
+          <>
+            <ContextContainer noFlex spacing={6}>
+              <Title className={classes.sectionTitle}>{formLabels?.offer?.title}</Title>
+              <Stack className={classes.horizontalInputsContainer}>
+                <Controller
+                  name="courses"
+                  control={control}
+                  rules={{
+                    required: formLabels?.requiredField,
+                  }}
+                  render={({ field, fieldState }) => {
+                    if (program?.sequentialCourses) {
+                      return (
+                        <Select
+                          {...field}
+                          label={formLabels?.offer?.coursesWhereItIsOffered}
+                          data={coursesSelectData}
+                          sx={{ width: 216 }}
+                          placeholder={formLabels?.offer?.coursesWhereItIsOfferedPlaceholder}
+                          error={fieldState.error}
+                          required
+                          autoSelectOneOption
+                        />
+                      );
+                    }
+                    return (
+                      <MultiSelect
+                        {...field}
+                        label={formLabels?.offer?.coursesWhereItIsOffered}
+                        data={coursesSelectData}
+                        sx={{ width: 216 }}
+                        placeholder={formLabels?.offer?.coursesWhereItIsOfferedPlaceholder}
+                        error={fieldState.error}
+                        required
+                      />
+                    );
+                  }}
+                />
+                <Controller
+                  name="substage"
+                  control={control}
+                  rules={{
+                    required: formLabels?.requiredField,
+                  }}
+                  render={({ field, fieldState }) => (
                     <Select
                       {...field}
-                      label={'Curso donde se ofrece 🌎'}
-                      data={coursesSelectData}
+                      label={formLabels?.offer?.substageWhereItIsOffered}
+                      data={[
+                        { label: localizations?.labels?.noSubstages, value: 'all' },
+                        ...substagesSelectData,
+                      ]}
                       sx={{ width: 216 }}
-                      placeholder={'Elije uno o varios cursos...🌎'}
                       error={fieldState.error}
                       required
                       autoSelectOneOption
+                      placeholder={formLabels?.offer?.substageWhereItIsOfferedPlaceholder}
                     />
-                  );
-                }
-                return (
-                  <MultiSelect
-                    {...field}
-                    label={'Cursos donde se ofrece 🌎'}
-                    data={coursesSelectData}
-                    sx={{ width: 216 }}
-                    placeholder={'Elije uno o varios cursos...🌎'}
-                    error={fieldState.error}
-                    required
-                  />
-                );
-              }}
-            />
-            <Controller
-              name="substage"
-              control={control}
-              rules={{
-                required: 'Required field 🌎',
-              }}
-              render={({ field, fieldState }) => (
-                <Select
-                  {...field}
-                  label={'Subetapa donde se ofrece 🌎'}
-                  data={[{ label: 'Curso completo 🌎', value: 'all' }, ...substagesSelectData]}
-                  sx={{ width: 216 }}
-                  placeholder={'Subetapa...🌎'}
-                  error={fieldState.error}
-                  required
-                  autoSelectOneOption
+                  )}
                 />
-              )}
-            />
-          </Stack>
-        </ContextContainer>
+              </Stack>
+            </ContextContainer>
 
-        <ContextContainer noFlex spacing={4}>
-          <Title className={classes.sectionTitle}>{'Configuración de Aulas 🌎'}</Title>
-          <Controller
-            name="classrooms"
-            control={control}
-            rules={{
-              validate: (value) =>
-                (Array.isArray(value) && value.length > 0) || 'At least one classroom is needed 🌎',
-            }}
-            render={({ field, fieldState }) => (
-              <InputWrapper error={fieldState.error?.message}>
-                {programReferenceGroups?.length ? (
-                  <Stack direction="column" spacing={4}>
-                    <Switch
-                      label={'Esta asignatura no pertenece a un Grupo de Referencia 🌎'}
-                      onChange={(val) => {
-                        form.setValue('classrooms', []);
-                        setDisableReferenceGroups(val);
-                      }}
-                      checked={disableReferenceGroups}
-                    />
-                    {disableReferenceGroups ? (
-                      <ClassroomsSetup {...field} />
+            <ContextContainer noFlex spacing={4}>
+              <Title className={classes.sectionTitle}>{formLabels?.classroomsSetup?.title}</Title>
+              <Controller
+                name="classrooms"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    (Array.isArray(value) && value.length > 0) ||
+                    formLabels?.validation?.atLeastOneClassroom,
+                }}
+                render={({ field, fieldState }) => (
+                  <InputWrapper error={fieldState.error?.message}>
+                    {programReferenceGroups?.length ? (
+                      <Stack direction="column" spacing={4}>
+                        <Switch
+                          label={formLabels?.classroomsSetup?.disableReferenceGroups}
+                          onChange={(val) => {
+                            form.setValue('classrooms', []);
+                            setDisableReferenceGroups(val);
+                          }}
+                          checked={disableReferenceGroups}
+                        />
+                        {disableReferenceGroups ? (
+                          <ClassroomsSetup
+                            {...field}
+                            formLabels={{
+                              ...formLabels?.classroomsSetup,
+                              validation: { ...formLabels?.validation },
+                              labels: { ...localizations?.labels },
+                              textPlaceholder: formLabels.textPlaceholder,
+                            }}
+                          />
+                        ) : (
+                          <ReferenceGroupsClassroomsSetup
+                            {...field}
+                            groups={programReferenceGroups}
+                            selectedCourses={selectedCourses}
+                            isMultiCourse={!program?.sequentialCourses}
+                            refGroupdisabled={!coursesFormValue?.length}
+                            formLabels={{
+                              ...formLabels?.classroomsSetup,
+                              validation: { ...formLabels?.validation },
+                              labels: { ...localizations?.labels },
+                              textPlaceholder: formLabels.textPlaceholder,
+                            }}
+                          />
+                        )}
+                      </Stack>
                     ) : (
-                      <ReferenceGroupsClassroomsSetup
+                      <ClassroomsSetup
                         {...field}
-                        groups={programReferenceGroups}
-                        selectedCourses={selectedCourses}
-                        isMultiCourse={!program?.sequentialCourses}
-                        refGroupdisabled={!coursesFormValue?.length}
+                        formLabels={{
+                          ...formLabels?.classroomsSetup,
+                          validation: { ...formLabels?.validation },
+                          labels: { ...localizations?.labels },
+                          textPlaceholder: formLabels.textPlaceholder,
+                        }}
                       />
                     )}
-                  </Stack>
-                ) : (
-                  <ClassroomsSetup {...field} />
+                  </InputWrapper>
                 )}
-              </InputWrapper>
-            )}
-          />
-        </ContextContainer>
+              />
+            </ContextContainer>
+          </>
+        )}
       </ContextContainer>
       <FooterContainer scrollRef={scrollRef}>
         <Stack justifyContent={'space-between'} fullWidth>
-          <Button variant="outline" type="button" onClick={onCancel} loading={drawerIsLoading}>
-            {'Cancel 🌎'}
+          <Button variant="outline" type="button" onClick={onCancel}>
+            {formLabels?.cancel}
           </Button>
-          <Button type="submit">{'Create Program 🌎'}</Button>
+          <Button type="submit" loading={drawerIsLoading}>
+            {isEditing ? formLabels?.saveChanges : formLabels?.createSubject}
+          </Button>
         </Stack>
       </FooterContainer>
     </form>
@@ -433,6 +491,7 @@ SubjectForm.propTypes = {
   drawerIsLoading: PropTypes.bool,
   isEditing: PropTypes.bool,
   subject: PropTypes.object,
+  localizations: PropTypes.object,
 };
 
 export default SubjectForm;

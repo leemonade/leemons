@@ -1,11 +1,12 @@
 const _ = require('lodash');
 
 // Todo: Make this function subject details.
-async function subjectByIds({ ids, withClasses = false, ctx }) {
+async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
+  const queryOptions = showArchived ? { excludeDeleted: false } : {};
   const [subjects, creditsAndInternalId, classes] = await Promise.all([
-    ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
-    ctx.tx.db.ProgramSubjectsCredits.find({ subject: ids }).lean(),
-    ctx.tx.db.Class.find({ subject: _.isArray(ids) ? ids : [ids] })
+    ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }, '', queryOptions).lean(),
+    ctx.tx.db.ProgramSubjectsCredits.find({ subject: ids }, '', queryOptions).lean(),
+    ctx.tx.db.Class.find({ subject: _.isArray(ids) ? ids : [ids] }, '', queryOptions)
       .select(['id', 'subject', 'subjectType'])
       .lean(),
   ]);
@@ -36,7 +37,7 @@ async function subjectByIds({ ids, withClasses = false, ctx }) {
       creditsAndInternalId.find((item) => item.subject === subject.id)?.internalId || null,
     course: subject.course ? JSON.parse(subject.course) : null, // Old, left there just in case. A subject can have multiple courses
     courses: subject.course ? JSON.parse(subject.course) : null,
-    //OLD color: classesBySubject[subject.id]?.[0]?.color,
+    // OLD color: classesBySubject[subject.id]?.[0]?.color,
     color: subject.color,
     image: imagesById[subject.image],
     icon: iconsById[subject.icon],

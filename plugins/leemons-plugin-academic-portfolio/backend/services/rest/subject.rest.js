@@ -180,18 +180,22 @@ module.exports = {
           size: { type: ['number', 'string'] },
           program: { type: 'string' },
           course: { type: 'string' }, // Stringified array, even for one
+          onlyArchived: { type: 'string' },
         },
         required: ['page', 'size'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const { page, size, program, course } = ctx.params;
+        const { page, size, program, course, onlyArchived } = ctx.params;
+        const truthyValues = ['true', true, '1'];
+        const _onlyArchived = truthyValues.includes(onlyArchived);
 
         const data = await listSubjects({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           program,
           course,
+          onlyArchived: _onlyArchived,
           ctx,
         });
         return { status: 200, data };
@@ -231,9 +235,13 @@ module.exports = {
         const { ids } = ctx.params;
         id = JSON.parse(ids || null);
       }
+      const truthyValues = ['true', true, '1'];
+      const _withClasses = truthyValues.includes(ctx.params.withClasses);
+      const _showArchived = truthyValues.includes(ctx.params.showArchived);
       const data = await subjectByIds({
         ids: Array.isArray(id) ? id : [id],
-        withClasses: ctx.params.withClasses,
+        withClasses: _withClasses,
+        showArchived: _showArchived,
         ctx,
       });
       if (ctx.params.id) {

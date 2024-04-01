@@ -83,6 +83,7 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
 
   useEffect(() => {
     if (value?.length > 0) {
+      form.reset();
       const sortedValue = [
         ...value
           .map(({ name, courses, index }) => ({

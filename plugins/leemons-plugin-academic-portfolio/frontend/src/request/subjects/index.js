@@ -1,7 +1,7 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { isString } from 'lodash';
 
-async function listSubjects({ page, size, program, course }) {
+async function listSubjects({ page, size, program, course, onlyArchived }) {
   const params = new URLSearchParams({
     page,
     size,
@@ -11,6 +11,10 @@ async function listSubjects({ page, size, program, course }) {
   if (course !== undefined) {
     params.append('course', course);
   }
+  if (onlyArchived !== undefined) {
+    params.append('onlyArchived', onlyArchived);
+  }
+  console.log('onlyArchived', onlyArchived);
 
   return leemons.api(`v1/academic-portfolio/subjects/subject?${params.toString()}`, {
     waitToFinish: true,
@@ -120,11 +124,12 @@ async function listSubjectCreditsForProgram(program) {
   });
 }
 
-async function getSubjectDetails(subject, withClasses = false) {
+async function getSubjectDetails(subject, withClasses = false, showArchived = false) {
   const isSubjectArray = Array.isArray(subject);
   const subjectParam = isSubjectArray ? `ids=${JSON.stringify(subject)}` : `id=${subject}`;
   const classParam = withClasses ? '&withClasses=true' : '';
-  const endpoint = `v1/academic-portfolio/subjects?${subjectParam}${classParam}`;
+  const showArchivedParam = showArchived ? '&showArchived=true' : '';
+  const endpoint = `v1/academic-portfolio/subjects?${subjectParam}${classParam}${showArchivedParam}`;
 
   return leemons.api(endpoint, {
     allAgents: true,

@@ -20,6 +20,7 @@ import {
   getProgramsPublicInfo,
   removeProgram,
   updateProgramConfiguration,
+  programHasSubjectHistory,
 } from './programs';
 import { updateCycle } from './cycles';
 import {
@@ -119,6 +120,7 @@ export const detailProgramRequest = detailProgram;
 export const createProgramRequest = createProgram;
 export const updateProgramRequest = updateProgram;
 export const updateProgramConfigurationRequest = updateProgramConfiguration;
+export const programHasSubjectHistoryRequest = programHasSubjectHistory;
 
 export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;

@@ -23,6 +23,7 @@ import {
 } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import SubjectForm from './SubjectForm';
+import { getHasProgramSubjectHistoryKey } from '@academic-portfolio/hooks/keys/programHasSubjectHistory';
 
 const SubjectSetupDrawer = ({
   isOpen,
@@ -31,9 +32,10 @@ const SubjectSetupDrawer = ({
   subject,
   isEditing,
   setIsEditing,
+  localizations,
   allSubjectIds, // temporary for us to be able to reset the details query when updating a subject... for all subjects, shouldn't be like that. TODO: Update hook
 }) => {
-  const { data: programDetail, isLoading: isProgramDetailLoading } = useProgramDetail(programId, {
+  const { data: programDetail } = useProgramDetail(programId, {
     enabled: programId?.length > 0,
   });
 
@@ -41,7 +43,7 @@ const SubjectSetupDrawer = ({
   const { mutateAsync: createClassAsync, isLoading: isCreateClassLoading } = useCreateClass();
   const { mutateAsync: updateSubjectAsync, isLoading: isUpdateSubjectLoading } = useUpdateSubject();
   const { mutateAsync: updateClassAsync, isLoading: isUpdateClassLoading } = useUpdateClass();
-  const { mutateAsync: deleteClassAsync, isLoading: useDeleteLoading } = useDeleteClass();
+  const { mutateAsync: deleteClassAsync } = useDeleteClass();
 
   const queryClient = useQueryClient();
   const scrollRef = useRef();
@@ -201,9 +203,9 @@ const SubjectSetupDrawer = ({
     const courseArray = isArray(courses) ? courses : [courses];
     let subjectsBody = {
       program: programId,
-      name,
+      name: name?.trimEnd(),
       credits,
-      internalId,
+      internalId: internalId?.trimEnd(),
       image,
       icon,
       color,
@@ -247,17 +249,23 @@ const SubjectSetupDrawer = ({
         });
       }
 
-      addSuccessAlert('Subject and classrooms created successfully');
+      addSuccessAlert(
+        !isEditing ? localizations?.alerts?.success?.add : localizations?.alerts?.success?.update
+      );
       setIsOpen(false);
       if (isEditing) {
         setIsEditing(false);
         queryClient.invalidateQueries(['subjectDetail', { subject: allSubjectIds }]);
       }
-      const queryKey = getProgramSubjectsKey(programId);
-      queryClient.invalidateQueries(queryKey);
+      const programSubjectsQueryKey = getProgramSubjectsKey(programId);
+      queryClient.invalidateQueries(programSubjectsQueryKey);
+      const programSubjectsHistoryQueryKey = getHasProgramSubjectHistoryKey(programId);
+      queryClient.invalidateQueries(programSubjectsHistoryQueryKey);
     } catch (error) {
       console.log('error', error);
-      addErrorAlert('Failed to create subject and classrooms 🌎');
+      addErrorAlert(
+        !isEditing ? localizations?.alerts.failure.add : localizations?.alerts.failure.update
+      );
     }
   };
 
@@ -268,7 +276,10 @@ const SubjectSetupDrawer = ({
         scrollRef={scrollRef}
         Header={
           <Header
-            localizations={{ title: 'Nueva Asignatura 🌎', close: 'Cerrar 🌎' }}
+            localizations={{
+              title: isEditing ? localizations?.drawer?.updateTitle : localizations?.drawer?.title,
+              close: localizations?.drawer?.cancel,
+            }}
             onClose={handleOnCancel}
           />
         }
@@ -281,7 +292,8 @@ const SubjectSetupDrawer = ({
                 onCancel={handleOnCancel}
                 onSubmit={handleOnSubmit}
                 program={programDetail}
-                drawerIsLoading={isCreateSubjectLoading}
+                drawerIsLoading={isCreateSubjectLoading || isCreateClassLoading}
+                localizations={localizations}
               />
             ) : (
               <SubjectForm
@@ -289,9 +301,10 @@ const SubjectSetupDrawer = ({
                 onCancel={handleOnCancel}
                 onSubmit={handleOnSubmit}
                 program={programDetail}
-                drawerIsLoading={isUpdateSubjectLoading}
+                drawerIsLoading={isUpdateSubjectLoading || isUpdateClassLoading}
                 subject={subject}
                 isEditing
+                localizations={localizations}
               />
             )}
           </TotalLayoutStepContainer>
@@ -309,6 +322,7 @@ SubjectSetupDrawer.propTypes = {
   setIsEditing: PropTypes.func,
   isEditing: PropTypes.bool,
   allSubjectIds: PropTypes.array,
+  localizations: PropTypes.object,
 };
 
 export default SubjectSetupDrawer;

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { isEmpty, noop, omit } from 'lodash';
@@ -14,8 +14,12 @@ import {
   NumberInput,
   Text,
   Checkbox,
+  Tooltip,
+  TotalLayoutStepContainer,
+  TotalLayoutContainer,
 } from '@bubbles-ui/components';
-import { EvaluationsSelect } from '@grades/components/EvaluationsSelect';
+import { InfoIcon } from '@bubbles-ui/icons/solid';
+import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import FooterContainer from './FooterContainer';
 import SubstagesSetup from './SubstagesSetup';
@@ -23,6 +27,45 @@ import CoursesSetup from './CoursesSetup';
 import CyclesSetup from './CyclesSetup';
 import ReferenceGroupsSetup from './ReferenceGroupsSetup';
 import SeatsPerCourseSetup from './SeatsPerCourseSetup';
+import EvaluationSystemsSelect from './EvaluationSystemSelect';
+import LoadingFormState from './LoadingFormState';
+
+function updateProgressWithLoadingCheck(setProgress, isLoading, onLoadingComplete) {
+  const minDisplayTime = 2700; // Minimum display time
+  const startTime = Date.now();
+  let intervalId;
+
+  setProgress(15);
+
+  const incrementProgressAfterLoad = () => {
+    setProgress(30); // Initial load after fetching data
+    intervalId = setInterval(() => {
+      setProgress((prevProgress) => {
+        const updatedProgress = prevProgress + 2;
+        if (updatedProgress >= 100) {
+          clearInterval(intervalId);
+
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = minDisplayTime - elapsedTime;
+          if (remainingTime > 0) {
+            setTimeout(onLoadingComplete, remainingTime);
+          } else {
+            onLoadingComplete();
+          }
+        }
+        return updatedProgress;
+      });
+    }, 50);
+  };
+
+  if (!isLoading) {
+    incrementProgressAfterLoad();
+  }
+
+  return () => {
+    clearInterval(intervalId);
+  };
+}
 
 const useAddProgramFormStyles = createStyles((theme) => ({
   title: {
@@ -50,6 +93,10 @@ const AddProgramForm = ({
   const { classes } = useAddProgramFormStyles();
   const isEditing = useMemo(() => !isEmpty(programUnderEdit), [programUnderEdit]);
   const form = useForm();
+  const [loadingEvaluationSystems, setLoadingEvaluationSystems] = useState(false);
+  const [showLoadingComponent, setShowLoadingComponent] = useState(!isEditing);
+  const [progress, setProgress] = useState(0);
+
   const { control, formState, setValue, watch } = form;
   const { hoursPerCredit, credits, courses } = watch();
 
@@ -73,6 +120,20 @@ const AddProgramForm = ({
     });
     return result;
   };
+
+  // EFFECTS ··························································································||ﬂG
+
+  useEffect(() => {
+    const handleLoadingComplete = () => {
+      setShowLoadingComponent(false);
+    };
+
+    return updateProgressWithLoadingCheck(
+      setProgress,
+      loadingEvaluationSystems,
+      handleLoadingComplete
+    );
+  }, [loadingEvaluationSystems]);
 
   useEffect(() => {
     if (!isEmpty(programUnderEdit)) {
@@ -129,316 +190,382 @@ const AddProgramForm = ({
   }, [programUnderEdit]);
 
   return (
-    <form onSubmit={form.handleSubmit(isEditing ? onUpdate : onSubmit)}>
-      <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
-        {/* SECTION: BASIC DATA */}
-        <ContextContainer direction="column" spacing={4}>
-          <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
-          <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{formLabels?.basicData?.presentation}</Title>
-            <Stack className={classes.horizontalInputsContainer}>
-              <Controller
-                control={control}
-                name="name"
-                rules={{ required: localizations?.programDrawer?.requiredField }}
-                render={({ field }) => (
-                  <TextInput
-                    {...field}
-                    label={formLabels?.basicData?.name}
-                    placeholder={formLabels?.basicData?.name}
-                    error={formState.errors.name}
-                    required
-                    sx={{ width: 216 }}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="abbreviation"
-                rules={{
-                  required: localizations?.programDrawer?.requiredField,
-                  maxLength: { value: 8, message: formLabels?.basicData?.validation?.abbreviation },
-                }}
-                render={({ field }) => (
-                  <TextInput
-                    {...field}
-                    label={formLabels?.basicData?.abbreviation}
-                    placeholder={formLabels?.basicData?.abbreviation}
-                    error={formState.errors.abbreviation}
-                    required
-                    sx={{ width: 216 }}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="color"
-                rules={{ required: localizations?.programDrawer?.requiredField }}
-                render={({ field }) => (
-                  <ColorInput
-                    {...field}
-                    label={formLabels?.basicData?.color}
-                    placeholder={formLabels?.basicData?.color}
-                    useHsl
-                    compact={false}
-                    manual={false}
-                    contentStyle={{ width: 216 }}
-                    required
-                  />
-                )}
-              />
-            </Stack>
-            <Controller
-              control={control}
-              name="image"
-              render={({ field }) => (
-                <InputWrapper label={formLabels?.basicData?.featuredImage}>
-                  <ImagePicker {...field} />
-                </InputWrapper>
-              )}
+    <TotalLayoutContainer
+      clean
+      scrollRef={scrollRef}
+      Header={
+        <Header
+          localizations={{
+            title: !isEditing
+              ? localizations?.programDrawer.title
+              : localizations?.programDrawer.updateTitle,
+            close: localizations?.labels.cancel,
+          }}
+          onClose={onCancel}
+        />
+      }
+    >
+      <Stack
+        ref={scrollRef}
+        sx={{
+          padding: 24,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          background: showLoadingComponent && '#F8F9FB',
+        }}
+      >
+        <TotalLayoutStepContainer clean>
+          {showLoadingComponent ? (
+            <LoadingFormState
+              key="load-form"
+              description={
+                localizations?.programSetupDrawer?.loadingForm ||
+                'Personalizando las características de tu programa 🌎'
+              }
+              progress={progress}
             />
-          </ContextContainer>
-
-          {/* REGLAS ACADÉMICAS */}
-          <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{formLabels?.academicRules?.title}</Title>
-            <Controller
-              name="evaluationSystem"
-              control={control}
-              rules={{
-                required: localizations?.programDrawer?.requiredField,
-              }}
-              render={({ field, fieldState }) => (
-                <EvaluationsSelect
-                  {...field}
-                  center={centerId}
-                  sx={{ width: 216 }}
-                  placeholder={formLabels?.academicRules?.selectSystem}
-                  error={fieldState.error}
-                />
-              )}
-            />
-          </ContextContainer>
-
-          {/* DURACIÓN Y CRÉDITOS */}
-          {(setupData?.creditsSystem || setupData?.durationInHours) && (
-            <ContextContainer noFlex spacing={4}>
-              <Title className={classes.sectionTitle}>
-                {setupData?.durationInHours
-                  ? formLabels?.durationAndCredits?.titleOnlyDuration
-                  : formLabels?.durationAndCredits?.titleWithCredits}
-              </Title>
-              {setupData?.creditsSystem && (
-                <Stack className={classes.horizontalInputsContainer}>
-                  <Stack className={classes.horizontalInputsContainer}>
-                    <Controller
-                      name="hoursPerCredit"
-                      control={control}
-                      rules={{ required: localizations?.programDrawer?.requiredField }}
-                      render={({ field, fieldState }) => (
-                        <NumberInput
-                          {...field}
-                          min={1}
-                          label={formLabels?.durationAndCredits?.hoursPerCredit}
-                          sx={{ width: 216 }}
-                          error={fieldState.error?.message}
-                          placeholder={formLabels?.durationAndCredits?.hoursPlaceholder}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="credits"
-                      control={control}
-                      rules={{ required: localizations?.programDrawer?.requiredField }}
-                      render={({ field, fieldState }) => (
-                        <NumberInput
-                          {...field}
-                          label={formLabels?.durationAndCredits?.numberOfCredits}
-                          min={1}
-                          sx={{ width: 216 }}
-                          error={fieldState.error?.message}
-                          placeholder={formLabels?.durationAndCredits?.totalCreditsPlaceholder}
-                        />
-                      )}
-                    />
-                  </Stack>
-                  <Text sx={{ alignSelf: 'end', padding: 12 }}>
-                    {totalHours
-                      ? `${totalHours} ${formLabels?.durationAndCredits?.totalHours}`
-                      : ''}
-                  </Text>
-                </Stack>
-              )}
-              {setupData?.durationInHours && (
-                <Controller
-                  name="totalHours"
-                  control={control}
-                  rules={{ required: localizations?.programDrawer?.requiredField }}
-                  render={({ field, fieldState }) => (
-                    <NumberInput
-                      {...field}
-                      min={1}
-                      label={formLabels?.durationAndCredits?.durationInHours}
-                      sx={{ width: 216 }}
-                      placeholder={formLabels?.durationAndCredits?.totalHoursPlaceholder}
-                      error={fieldState.error?.message}
-                    />
-                  )}
-                />
-              )}
-            </ContextContainer>
-          )}
-        </ContextContainer>
-
-        {/* SECTION: TEMPORAL STRUCTURE */}
-        {(setupData?.hasSubstages || setupData?.moreThanOneCourse) && (
-          <ContextContainer direction="column" spacing={4}>
-            <Title className={classes.title}>{formLabels?.temporalStructure?.title}</Title>
-            {setupData?.hasSubstages && (
-              <ContextContainer noFlex spacing={4}>
-                <Title className={classes.sectionTitle}>
-                  {formLabels?.temporalStructure?.courseSubstages}
-                </Title>
-                <Controller
-                  name="substages"
-                  control={control}
-                  rules={{ required: localizations?.programDrawer?.requiredField }}
-                  render={({ field }) => (
-                    <InputWrapper error={formState.errors.substages}>
-                      <SubstagesSetup {...field} localizations={localizations} />
-                    </InputWrapper>
-                  )}
-                />
-              </ContextContainer>
-            )}
-            {setupData?.moreThanOneCourse && (
-              <>
-                <ContextContainer noFlex spacing={4}>
-                  <Title className={classes.sectionTitle}>
-                    {formLabels?.temporalStructure?.courses}
-                  </Title>
-                  <Controller
-                    name="courses"
-                    control={control}
-                    rules={{ required: localizations?.programDrawer?.requiredField }}
-                    render={({ field }) => (
-                      <CoursesSetup
-                        {...field}
-                        showCredits={!!setupData?.creditsSystem}
-                        maxNumberOfCredits={parseInt(credits) || 0}
-                        onChange={(data) => {
-                          setValue('courses', data);
-                        }}
-                        localizations={localizations}
-                      />
-                    )}
-                  />
-                </ContextContainer>
-                {setupData?.hasCycles && (
+          ) : (
+            <form onSubmit={form.handleSubmit(isEditing ? onUpdate : onSubmit)}>
+              <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
+                {/* SECTION: BASIC DATA */}
+                <ContextContainer direction="column" spacing={4}>
+                  <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
                   <ContextContainer noFlex spacing={4}>
                     <Title className={classes.sectionTitle}>
-                      {formLabels?.temporalStructure?.cycles}
+                      {formLabels?.basicData?.presentation}
+                    </Title>
+                    <Stack className={classes.horizontalInputsContainer}>
+                      <Controller
+                        control={control}
+                        name="name"
+                        rules={{ required: localizations?.programDrawer?.requiredField }}
+                        render={({ field }) => (
+                          <TextInput
+                            {...field}
+                            label={formLabels?.basicData?.name}
+                            placeholder={formLabels?.basicData?.name}
+                            error={formState.errors.name}
+                            required
+                            sx={{ width: 216 }}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="abbreviation"
+                        rules={{
+                          required: localizations?.programDrawer?.requiredField,
+                          maxLength: {
+                            value: 8,
+                            message: formLabels?.basicData?.validation?.abbreviation,
+                          },
+                        }}
+                        render={({ field }) => (
+                          <TextInput
+                            {...field}
+                            label={formLabels?.basicData?.abbreviation}
+                            placeholder={formLabels?.basicData?.abbreviation}
+                            error={formState.errors.abbreviation}
+                            required
+                            sx={{ width: 216 }}
+                          />
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="color"
+                        rules={{ required: localizations?.programDrawer?.requiredField }}
+                        render={({ field }) => (
+                          <ColorInput
+                            {...field}
+                            label={formLabels?.basicData?.color}
+                            placeholder={'#000000'}
+                            useHsl
+                            compact={false}
+                            manual={false}
+                            contentStyle={{ width: 216 }}
+                            required
+                          />
+                        )}
+                      />
+                    </Stack>
+                    <Controller
+                      control={control}
+                      name="image"
+                      render={({ field }) => (
+                        <InputWrapper label={formLabels?.basicData?.featuredImage}>
+                          <ImagePicker {...field} />
+                        </InputWrapper>
+                      )}
+                    />
+                  </ContextContainer>
+
+                  {/* REGLAS ACADÉMICAS */}
+                  <ContextContainer noFlex spacing={4}>
+                    <Title className={classes.sectionTitle}>
+                      {formLabels?.academicRules?.title}
                     </Title>
                     <Controller
-                      name="cycles"
+                      name="evaluationSystem"
                       control={control}
-                      rules={{ required: localizations?.programDrawer?.requiredField }}
-                      render={({ field }) => (
-                        <CyclesSetup
+                      rules={{
+                        required: localizations?.programDrawer?.requiredField,
+                      }}
+                      render={({ field, fieldState }) => (
+                        <EvaluationSystemsSelect
                           {...field}
-                          programCourses={courses}
-                          localizations={localizations}
+                          centerId={centerId}
+                          sx={{ width: 216 }}
+                          placeholder={formLabels?.academicRules?.selectSystem}
+                          error={fieldState.error}
+                          setLoadingEvaluationSystems={setLoadingEvaluationSystems}
                         />
                       )}
                     />
                   </ContextContainer>
-                )}
-              </>
-            )}
-          </ContextContainer>
-        )}
 
-        {/* SECTION: GROUPS SETUP */}
-        {setupData?.referenceGroups && (
-          <ContextContainer direction="column" spacing={4}>
-            <Title className={classes.title}>{formLabels?.classConfiguration}</Title>
-            <ContextContainer noFlex spacing={4}>
-              <>
-                <Title className={classes.sectionTitle}>{formLabels?.referenceGroups}</Title>
-                <Controller
-                  name="referenceGroups"
-                  control={control}
-                  rules={{ required: localizations?.programDrawer?.requiredField }}
-                  render={({ field }) => (
-                    <ReferenceGroupsSetup
-                      {...field}
-                      programCourses={courses}
-                      coursesAreSequential={setupData?.sequentialCourses}
-                      localizations={localizations}
-                    />
+                  {/* DURACIÓN Y CRÉDITOS */}
+                  {(setupData?.creditsSystem || setupData?.durationInHours) && (
+                    <ContextContainer noFlex spacing={4}>
+                      <Title className={classes.sectionTitle}>
+                        {setupData?.durationInHours
+                          ? formLabels?.durationAndCredits?.titleOnlyDuration
+                          : formLabels?.durationAndCredits?.titleWithCredits}
+                      </Title>
+                      {setupData?.creditsSystem && (
+                        <Stack className={classes.horizontalInputsContainer}>
+                          <Stack className={classes.horizontalInputsContainer}>
+                            <Controller
+                              name="hoursPerCredit"
+                              control={control}
+                              rules={{ required: localizations?.programDrawer?.requiredField }}
+                              render={({ field, fieldState }) => (
+                                <NumberInput
+                                  {...field}
+                                  min={1}
+                                  label={formLabels?.durationAndCredits?.hoursPerCredit}
+                                  placeholder={formLabels?.durationAndCredits?.hoursPlaceholder}
+                                  sx={{ width: 216 }}
+                                  error={fieldState.error?.message}
+                                />
+                              )}
+                            />
+                            <Controller
+                              name="credits"
+                              control={control}
+                              rules={{ required: localizations?.programDrawer?.requiredField }}
+                              render={({ field, fieldState }) => (
+                                <NumberInput
+                                  {...field}
+                                  label={formLabels?.durationAndCredits?.numberOfCredits}
+                                  min={1}
+                                  sx={{ width: 216 }}
+                                  error={fieldState.error?.message}
+                                  placeholder={
+                                    formLabels?.durationAndCredits?.totalCreditsPlaceholder
+                                  }
+                                />
+                              )}
+                            />
+                          </Stack>
+                          <Text sx={{ alignSelf: 'end', padding: 12 }}>
+                            {totalHours
+                              ? `${totalHours} ${formLabels?.durationAndCredits?.totalHours}`
+                              : ''}
+                          </Text>
+                        </Stack>
+                      )}
+                      {setupData?.durationInHours && (
+                        <Controller
+                          name="totalHours"
+                          control={control}
+                          rules={{ required: localizations?.programDrawer?.requiredField }}
+                          render={({ field, fieldState }) => (
+                            <NumberInput
+                              {...field}
+                              min={1}
+                              label={formLabels?.durationAndCredits?.durationInHours}
+                              sx={{ width: 216 }}
+                              placeholder={formLabels?.durationAndCredits?.totalHoursPlaceholder}
+                              error={fieldState.error?.message}
+                            />
+                          )}
+                        />
+                      )}
+                    </ContextContainer>
                   )}
-                />
-              </>
+                </ContextContainer>
 
-              <Controller
-                name="seatsPerCourse"
-                control={control}
-                rules={{ required: localizations?.programDrawer?.requiredField }}
-                render={({ field }) => (
-                  <SeatsPerCourseSetup
-                    {...field}
-                    courses={courses}
-                    localizations={localizations}
-                    sequentialCourses={setupData?.sequentialCourses}
-                  />
+                {/* SECTION: TEMPORAL STRUCTURE */}
+                {(setupData?.hasSubstages || setupData?.moreThanOneCourse) && (
+                  <ContextContainer direction="column" spacing={4}>
+                    <Title className={classes.title}>{formLabels?.temporalStructure?.title}</Title>
+                    {setupData?.hasSubstages && (
+                      <ContextContainer noFlex spacing={4}>
+                        <Title className={classes.sectionTitle}>
+                          {formLabels?.temporalStructure?.courseSubstages}
+                        </Title>
+                        <Controller
+                          name="substages"
+                          control={control}
+                          rules={{ required: localizations?.programDrawer?.requiredField }}
+                          render={({ field }) => (
+                            <InputWrapper error={formState.errors.substages}>
+                              <SubstagesSetup {...field} localizations={localizations} />
+                            </InputWrapper>
+                          )}
+                        />
+                      </ContextContainer>
+                    )}
+                    {setupData?.moreThanOneCourse && (
+                      <>
+                        <ContextContainer noFlex spacing={4}>
+                          <Title className={classes.sectionTitle}>
+                            {formLabels?.temporalStructure?.courses}
+                          </Title>
+                          <Controller
+                            name="courses"
+                            control={control}
+                            rules={{ required: localizations?.programDrawer?.requiredField }}
+                            render={({ field }) => (
+                              <CoursesSetup
+                                {...field}
+                                showCredits={!!setupData?.creditsSystem}
+                                maxNumberOfCredits={parseInt(credits) || 0}
+                                onChange={(data) => {
+                                  setValue('courses', data);
+                                }}
+                                localizations={localizations}
+                              />
+                            )}
+                          />
+                        </ContextContainer>
+                        {setupData?.hasCycles && (
+                          <ContextContainer noFlex spacing={4}>
+                            <Title className={classes.sectionTitle}>
+                              {formLabels?.temporalStructure?.cycles}
+                            </Title>
+                            <Controller
+                              name="cycles"
+                              control={control}
+                              rules={{ required: localizations?.programDrawer?.requiredField }}
+                              render={({ field }) => (
+                                <CyclesSetup
+                                  {...field}
+                                  programCourses={courses}
+                                  localizations={localizations}
+                                />
+                              )}
+                            />
+                          </ContextContainer>
+                        )}
+                      </>
+                    )}
+                  </ContextContainer>
                 )}
-              />
-            </ContextContainer>
-          </ContextContainer>
-        )}
 
-        {/* SECTION: OTHERS */}
-        <ContextContainer sx={{ marginDown: 100 }} direction="column" spacing={4}>
-          <Title className={classes.title}>{localizations?.programDrawer?.others}</Title>
-          <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{formLabels?.privacy}</Title>
-            <Controller
-              name="hideStudentsFromEachOther"
-              control={control}
-              render={({ field: { value, ref, ...field } }) => (
-                <Checkbox
-                  checked={value || false}
-                  {...field}
-                  label={formLabels?.hideStudentsFromEachOther}
-                />
-              )}
-            />
-          </ContextContainer>
-          <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{formLabels?.automaticAssignment}</Title>
-            <Controller
-              name="autoAssignment"
-              control={control}
-              render={({ field: { value, ref, ...field } }) => (
-                <Checkbox
-                  checked={value || false}
-                  {...field}
-                  label={formLabels?.autoAssignmentDescription}
-                />
-              )}
-            />
-          </ContextContainer>
-        </ContextContainer>
-      </ContextContainer>
-      <FooterContainer scrollRef={scrollRef}>
-        <Stack justifyContent={'space-between'} fullWidth>
-          <Button variant="outline" type="button" onClick={onCancel} loading={drawerIsLoading}>
-            {formLabels?.cancel}
-          </Button>
-          <Button type="submit">{formLabels?.createProgram}</Button>
-        </Stack>
-      </FooterContainer>
-    </form>
+                {/* SECTION: GROUPS SETUP */}
+                {setupData?.referenceGroups && (
+                  <ContextContainer direction="column" spacing={4}>
+                    <Title className={classes.title}>{formLabels?.classConfiguration}</Title>
+                    <ContextContainer noFlex spacing={4}>
+                      <Stack spacing={3} alignItems="center">
+                        <Title className={classes.sectionTitle}>
+                          {formLabels?.referenceGroups}
+                        </Title>
+                        <Tooltip
+                          autoHeight
+                          size="md"
+                          multiline
+                          width={250}
+                          label='Los "grupos de referencia" son aquellos en los que un mismo conjunto de alumnos comparten la mayoría de las asignaturas y un mismo aula.'
+                        >
+                          <Stack>
+                            <InfoIcon width={24} height={24} />
+                          </Stack>
+                        </Tooltip>
+                      </Stack>
+                      <Controller
+                        name="referenceGroups"
+                        control={control}
+                        rules={{ required: localizations?.programDrawer?.requiredField }}
+                        render={({ field }) => (
+                          <ReferenceGroupsSetup
+                            {...field}
+                            programCourses={courses}
+                            coursesAreSequential={setupData?.sequentialCourses}
+                            localizations={localizations}
+                          />
+                        )}
+                      />
+
+                      <Controller
+                        name="seatsPerCourse"
+                        control={control}
+                        rules={{ required: localizations?.programDrawer?.requiredField }}
+                        render={({ field }) => (
+                          <SeatsPerCourseSetup
+                            {...field}
+                            courses={courses}
+                            localizations={localizations}
+                            sequentialCourses={setupData?.sequentialCourses}
+                          />
+                        )}
+                      />
+                    </ContextContainer>
+                  </ContextContainer>
+                )}
+
+                {/* SECTION: OTHERS */}
+                <ContextContainer sx={{ marginDown: 100 }} direction="column" spacing={4}>
+                  <Title className={classes.title}>{localizations?.programDrawer?.others}</Title>
+                  <ContextContainer noFlex spacing={4}>
+                    <Title className={classes.sectionTitle}>{formLabels?.privacy}</Title>
+                    <Controller
+                      name="hideStudentsFromEachOther"
+                      control={control}
+                      render={({ field: { value, ref, ...field } }) => (
+                        <Checkbox
+                          checked={value || false}
+                          {...field}
+                          label={formLabels?.hideStudentsFromEachOther}
+                        />
+                      )}
+                    />
+                  </ContextContainer>
+                  <ContextContainer noFlex spacing={4}>
+                    <Title className={classes.sectionTitle}>
+                      {formLabels?.automaticAssignment}
+                    </Title>
+                    <Controller
+                      name="autoAssignment"
+                      control={control}
+                      render={({ field: { value, ref, ...field } }) => (
+                        <Checkbox
+                          checked={value || false}
+                          {...field}
+                          label={formLabels?.autoAssignmentDescription}
+                        />
+                      )}
+                    />
+                  </ContextContainer>
+                </ContextContainer>
+              </ContextContainer>
+              <FooterContainer scrollRef={scrollRef}>
+                <Stack justifyContent={'space-between'} fullWidth>
+                  <Button variant="outline" type="button" onClick={onCancel}>
+                    {formLabels?.cancel}
+                  </Button>
+                  <Button type="submit" loading={drawerIsLoading}>
+                    {formLabels?.createProgram}
+                  </Button>
+                </Stack>
+              </FooterContainer>
+            </form>
+          )}
+        </TotalLayoutStepContainer>
+      </Stack>
+    </TotalLayoutContainer>
   );
 };
 
@@ -452,6 +579,7 @@ AddProgramForm.propTypes = {
   drawerIsLoading: PropTypes.bool,
   localizations: PropTypes.object.isRequired,
   programUnderEdit: PropTypes.object,
+  onLoadingStateChange: PropTypes.func,
 };
 
 export default AddProgramForm;

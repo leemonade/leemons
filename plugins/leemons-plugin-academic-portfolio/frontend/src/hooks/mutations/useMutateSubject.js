@@ -1,4 +1,8 @@
-import { createSubjectRequest, updateSubjectRequest } from '@academic-portfolio/request';
+import {
+  createSubjectRequest,
+  removeSubjectRequest,
+  updateSubjectRequest,
+} from '@academic-portfolio/request';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProgramSubjectsKey } from '../keys/programSubjects';
 
@@ -26,8 +30,8 @@ export function useCreateSubject() {
   });
 }
 
-// export function useArchiveProgram() {
-//   return useMutation({
-//     mutationFn: async (props) => deleteSubjectTypeRequest(props),
-//   });
-// }
+export function useArchiveSubject() {
+  return useMutation({
+    mutationFn: async (props) => removeSubjectRequest(props),
+  });
+}

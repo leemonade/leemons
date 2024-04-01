@@ -147,6 +147,13 @@ async function removeProgram({ id, soft }) {
   });
 }
 
+async function programHasSubjectHistory({ programId }) {
+  return leemons.api(`v1/academic-portfolio/programs/${programId}/has-subject-history`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 export {
   listPrograms,
   detailProgram,
@@ -160,4 +167,5 @@ export {
   getProgramsPublicInfo,
   removeProgram,
   updateProgramConfiguration,
+  programHasSubjectHistory,
 };

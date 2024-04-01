@@ -1,20 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, isBoolean, isEmpty, omit } from 'lodash';
-import {
-  Drawer,
-  Stack,
-  TotalLayoutStepContainer,
-  TotalLayoutContainer,
-} from '@bubbles-ui/components';
-import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import { Drawer, LoadingOverlay } from '@bubbles-ui/components';
+
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import {
   useCreateProgram,
   useUpdateProgram,
   useUpdateProgramConfiguration,
 } from '@academic-portfolio/hooks/mutations/useMutateProgram';
-import LoadingFormState from './LoadingFormState';
+import useProgramHasSubjectHistory from '@academic-portfolio/hooks/queries/useProgramHasSubjectHistory';
 import AddProgramForm from './AddProgramForm';
 import FormSetup from './AddFormSetup';
 import UpdateProgramForm from './UpdateProgramForm';
@@ -46,19 +41,19 @@ import UpdateProgramForm from './UpdateProgramForm';
         {
             "index": 1,
             "minCredits": 20,
-            "maxCredits": 20
-            "seatsForAllCourseClasses": 12,
+            "maxCredits": 20,
+            "seats": 12,
         },
         {
             "index": 2,
             "minCredits": 20,
             "maxCredits": 20,
-             "seatsForAllCourseClasses": 12,
+             "seats": 12,
         },
         {
             "minCredits": 20,
             "maxCredits": 20,
-            "seatsForAllCourseClasses": 12,
+            "seats": 12,
             "index": 3
         }
     ],
@@ -67,9 +62,10 @@ import UpdateProgramForm from './UpdateProgramForm';
         "digits": null,
         "customNameFormat": null,
         "prefix": null,
-        "groupsForCourse1": 3,
+        "groupsForCourse1": 3, || "groupsForAllCourses: 3"
         "groupsForCourse2": 2,
         "groupsForCourse3": 1,
+
     },
     "hideStudentsFromEachOther": true,
     "autoAsignment": true,
@@ -114,10 +110,15 @@ const ProgramSetupDrawer = ({
 }) => {
   const [activeComponent, setActiveComponent] = useState(0);
   const [setupData, setSetupData] = useState(null);
+  const { data: programHasSubjectHistory, isLoading: isProgramSubjectHistoryLoading } =
+    useProgramHasSubjectHistory({
+      programId: program?.id || '',
+      options: { enabled: program?.id?.length > 0 },
+    });
   const { mutate: createProgram, isLoading: isCreateProgramLoading } = useCreateProgram();
   const { mutate: updateProgram, isLoading: isUpdateProgramLoading } = useUpdateProgram();
-  const { mutate: updateProgramConfiguration } = useUpdateProgramConfiguration();
-
+  const { mutate: updateProgramConfiguration, isLoading: isUpdateProgramConfigurationLoading } =
+    useUpdateProgramConfiguration();
   const scrollRef = useRef();
 
   // HANDLERS & FUNCTIONS ······································································||
@@ -128,7 +129,7 @@ const ProgramSetupDrawer = ({
   };
 
   const handleSetup = (setupObjectData) => {
-    setActiveComponent((current) => current + 2);
+    setActiveComponent((current) => current + 1);
     setSetupData({ ...setupObjectData });
   };
 
@@ -188,8 +189,8 @@ const ProgramSetupDrawer = ({
 
   const constructRequestBody = ({ formData, isEditingConfig }) => {
     let body = {
-      name: formData.name,
-      abbreviation: formData.abbreviation,
+      name: formData.name?.trimEnd(),
+      abbreviation: formData.abbreviation.trimEnd(),
       color: formData.color,
       image: formData.image,
       numberOfSubstages: formData.substages?.length || 0,
@@ -201,7 +202,7 @@ const ProgramSetupDrawer = ({
         : false,
       maxNumberOfCourses: formData.courses?.length || 1,
       substages: formData.substages || [],
-      coursesName: 'Curso 🌎', //! TODO - library to get the course name??
+      coursesName: localizations?.labels?.course || 'Curso ',
     };
     body = handleCredits(formData, body);
     body = handleCourses(formData, body);
@@ -228,7 +229,6 @@ const ProgramSetupDrawer = ({
 
   const handleOnAdd = (formData) => {
     const body = constructRequestBody({ formData, isEditingConfig: false });
-    console.log('body', body);
 
     createProgram(body, {
       onSuccess: () => {
@@ -244,8 +244,9 @@ const ProgramSetupDrawer = ({
 
   const handleOnSimpleEdit = (formData) => {
     let body = {
-      ...formData,
+      ...omit(formData, 'autoAssignment'),
       id: program.id,
+      useAutoAssignment: formData.autoAssignment,
     };
     body = handleCredits(formData, body, program);
 
@@ -267,7 +268,7 @@ const ProgramSetupDrawer = ({
     ) || [];
 
   const handleOnEditConfiguration = (formData) => {
-    let body = {
+    const body = {
       ...constructRequestBody({ formData, isEditingConfig: true }),
       id: program.id,
     };
@@ -285,8 +286,6 @@ const ProgramSetupDrawer = ({
     });
   };
 
-  console.log('program', program);
-
   const creationFlowComponents = useMemo(
     () => [
       <FormSetup
@@ -296,7 +295,6 @@ const ProgramSetupDrawer = ({
         onSetup={handleSetup}
         localizations={localizations}
       />,
-      <LoadingFormState key="load-form" localizations={localizations} />,
       <AddProgramForm
         key="add-form"
         scrollRef={scrollRef}
@@ -304,7 +302,7 @@ const ProgramSetupDrawer = ({
         setupData={setupData}
         centerId={centerId}
         onSubmit={handleOnAdd}
-        drawerIsLoading={isCreateProgramLoading}
+        drawerIsLoading={isCreateProgramLoading || isUpdateProgramConfigurationLoading}
         localizations={localizations}
         programUnderEdit={isEditing ? program : null}
         onUpdate={handleOnEditConfiguration}
@@ -315,7 +313,7 @@ const ProgramSetupDrawer = ({
 
   // EFFECTS ······································································||
   useEffect(() => {
-    if (isEditing && !program?.students?.length) {
+    if (isEditing && !programHasSubjectHistory) {
       const setupObject = {
         moreThanOneCourse: program.courses?.length > 1,
         hasSubstages: program.substages?.length > 0,
@@ -327,40 +325,23 @@ const ProgramSetupDrawer = ({
       };
       setSetupData(setupObject);
     }
-  }, [isEditing, program]);
+  }, [isEditing, program, programHasSubjectHistory]);
 
   return (
     <Drawer opened={isOpen} close={false} size={728} empty>
-      <TotalLayoutContainer
-        clean
-        scrollRef={scrollRef}
-        Header={
-          <Header
-            localizations={{
-              title: localizations?.programDrawer.title,
-              close: localizations?.labels.cancel,
-            }}
-            onClose={handleOnCancel}
-          />
-        }
-      >
-        <Stack ref={scrollRef} sx={{ padding: 24, overflowY: 'auto', overflowX: 'hidden' }}>
-          <TotalLayoutStepContainer clean>
-            {!isEditing && creationFlowComponents[activeComponent]}
-            {isEditing &&
-              !program?.subjects?.length &&
-              creationFlowComponents[creationFlowComponents.length - 1]}
+      <LoadingOverlay visible={isEditing && isProgramSubjectHistoryLoading} />
+      {!isEditing && creationFlowComponents[activeComponent]}
+      {isEditing && !programHasSubjectHistory && creationFlowComponents[1]}
 
-            {isEditing && program?.subjects?.length > 0 && (
-              <UpdateProgramForm
-                program={program}
-                onSubmit={handleOnSimpleEdit}
-                drawerIsLoading={isUpdateProgramLoading}
-              />
-            )}
-          </TotalLayoutStepContainer>
-        </Stack>
-      </TotalLayoutContainer>
+      {isEditing && programHasSubjectHistory > 0 && (
+        <UpdateProgramForm
+          program={program}
+          onSubmit={handleOnSimpleEdit}
+          drawerIsLoading={isUpdateProgramLoading}
+          localizations={localizations}
+          onCancel={handleOnCancel}
+        />
+      )}
     </Drawer>
   );
 };

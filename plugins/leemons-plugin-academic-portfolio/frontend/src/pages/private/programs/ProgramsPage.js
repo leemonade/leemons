@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUserCenters } from '@users/hooks';
 import {
@@ -17,9 +17,12 @@ import {
   Button,
   ImageLoader,
 } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, RedirectIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import { unflatten } from '@common';
+import useCenterEvaluationSystems from '@grades/hooks/queries/useCenterEvaluationSystems';
 
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import ProgramsDetailTable from '@academic-portfolio/components/ProgramsDetailTable';
@@ -28,7 +31,6 @@ import ProgramSetupDrawer from '@academic-portfolio/components/ProgramSetupDrawe
 import { useArchiveProgram } from '@academic-portfolio/hooks/mutations/useMutateProgram';
 import { getCenterProgramsKey } from '@academic-portfolio/hooks/keys/centerPrograms';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
-import { unflatten } from '@common';
 
 const ProgramsPage = () => {
   const [t, translations, , tLoading] = useTranslateLoader(prefixPN('programs_page'));
@@ -38,14 +40,25 @@ const ProgramsPage = () => {
   const [addDrawerIsOpen, setAddDrawerIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
+  const { openConfirmationModal } = useLayout();
   const history = useHistory();
   const { data: centersQuery, isLoading: areCentersLoading } = useUserCenters();
-  const { mutate: archiveProgram, loading: isArchiveProgramLoading } = useArchiveProgram();
+  const { mutate: archiveProgram } = useArchiveProgram();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
 
   // SET UP ------------------------------------------------------------------------------------------------ ||
+  const { data: evaluationSystemsQuery } = useCenterEvaluationSystems({
+    center: selectedCenter,
+    options: { enabled: selectedCenter?.length > 0 },
+  });
+
+  const noEvaluationSystems = useMemo(
+    () => !evaluationSystemsQuery?.length,
+    [evaluationSystemsQuery]
+  );
+
   const centersData = useMemo(
     () => centersQuery?.map((center) => ({ value: center?.id, label: center?.name })),
     [centersQuery]
@@ -115,7 +128,7 @@ const ProgramsPage = () => {
   const handleOnAdd = () => {
     setSelectedProgram(null);
     if (isEditing) setIsEditing(false);
-    if (!addDrawerIsOpen) setAddDrawerIsOpen(true);
+    setAddDrawerIsOpen(true);
   };
 
   const handleOnEdit = (program) => {
@@ -125,21 +138,45 @@ const ProgramsPage = () => {
   };
 
   const handleArchive = (program) => {
-    archiveProgram(
-      { id: program.id, soft: true },
-      {
-        onSuccess: () => {
-          const queryKey = getCenterProgramsKey(selectedCenter);
-          queryClient.invalidateQueries(queryKey);
-          addSuccessAlert(t('alerts.success.add'));
-        },
-        onError: (e) => {
-          const queryKey = getCenterProgramsKey(selectedCenter);
-          queryClient.invalidateQueries(queryKey);
-          addErrorAlert(e);
-        },
-      }
-    );
+    const onConfirm = () =>
+      archiveProgram(
+        { id: program.id, soft: true },
+        {
+          onSuccess: () => {
+            const queryKey = getCenterProgramsKey(selectedCenter);
+            queryClient.invalidateQueries(queryKey);
+            addSuccessAlert(t('alerts.success.delete'));
+          },
+          onError: (e) => {
+            console.error(e);
+            addErrorAlert(t('alerts.failure.delete'));
+          },
+        }
+      );
+
+    openConfirmationModal({
+      title: t('archiveModal.title'),
+      description: t('archiveModal.description', { programName: program.name }),
+      labels: {
+        confirm: t('archiveModal.confirm'),
+        cancel: localizations?.labels?.cancel,
+      },
+      onConfirm,
+    })();
+  };
+
+  const handleDuplicate = (program) => {
+    const onConfirm = () => console.log('duplicating');
+
+    openConfirmationModal({
+      title: t('duplicateModal.title'),
+      description: t('duplicateModal.description', { programName: program.name }),
+      labels: {
+        confirm: t('duplicateModal.confirm'),
+        cancel: localizations?.labels?.cancel,
+      },
+      onConfirm,
+    })();
   };
 
   const ProgramsDetailTableToRender = useMemo(() => {
@@ -150,11 +187,37 @@ const ProgramsPage = () => {
         programsIds={programsIds}
         onEdit={handleOnEdit}
         onArchive={handleArchive}
+        onDuplicate={handleDuplicate}
         isShowingArchivedPrograms={activeTab === '1'}
         labels={localizations?.labels}
       />
     );
-  }, [activeTab, programsIds, handleOnEdit, handleArchive, localizations]);
+  }, [activeTab, programsIds, handleOnEdit, handleArchive, handleDuplicate, localizations]);
+
+  const emtpyStateToRender = useMemo(() => {
+    if (activeTab === '0') {
+      if (noEvaluationSystems) {
+        return (
+          <EmptyState
+            onClick={() => history.push('/private/grades/evaluations')}
+            Icon={<RedirectIcon />}
+            actionLabel={localizations?.emptyStates?.createAcademicRules}
+            description={localizations?.emptyStates?.noAcademicRules}
+          />
+        );
+      }
+
+      return (
+        <EmptyState
+          onClick={handleOnAdd}
+          Icon={<AddCircleIcon />}
+          actionLabel={localizations?.labels?.addNewProgram}
+          description={localizations?.emptyStates?.noProgramsCreated}
+        />
+      );
+    }
+    return <EmptyState description={localizations?.emptyStates?.noProgramsArchived} noAction />;
+  }, [selectedCenter, noEvaluationSystems, activeTab, handleOnAdd, localizations]);
 
   if (!translations) return null;
   return (
@@ -218,7 +281,7 @@ const ProgramsPage = () => {
                   </ContextContainer>
                 ) : (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <EmptyState onClick={handleOnAdd} localizations={localizations} />
+                    {emtpyStateToRender}
                   </ContextContainer>
                 )}
               </TabPanel>
@@ -229,7 +292,7 @@ const ProgramsPage = () => {
                   </ContextContainer>
                 ) : (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <EmptyState onClick={handleOnAdd} localizations={localizations} archivedView />
+                    {emtpyStateToRender}
                   </ContextContainer>
                 )}
               </TabPanel>

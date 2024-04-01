@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep, find } from 'lodash';
+import { cloneDeep } from 'lodash';
 import {
   Select,
   TotalLayoutContainer,
@@ -11,24 +11,31 @@ import {
   Tabs,
   TabPanel,
   Box,
-  ActionButton,
   ContextContainer,
   Button,
   ImageLoader,
 } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { AddCircleIcon, RedirectIcon } from '@bubbles-ui/icons/solid';
 
 import { useUserCenters } from '@users/hooks';
+import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useLayout } from '@layout/context';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import SubjectSetupDrawer from '@academic-portfolio/components/SubjectSetupDrawer/SubjectSetupDrawer';
 import SubjectsDetailTable from '@academic-portfolio/components/SubjectsDetailTable';
 import useProgramSubjects from '@academic-portfolio/hooks/queries/useProgramSubjects';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
+import { useArchiveSubject } from '@academic-portfolio/hooks/mutations/useMutateSubject';
+import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
+import { useQueryClient } from '@tanstack/react-query';
+import { getHasProgramSubjectHistoryKey } from '@academic-portfolio/hooks/keys/programHasSubjectHistory';
 
 const SubjectPage = () => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('knowledgeAreas_page'));
+  const [t, translations, , tLoading] = useTranslateLoader(prefixPN('newSubjectsPage'));
   const [selectedCenter, setSelectedCenter] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('');
   const [activeTab, setActiveTab] = useState('0');
@@ -36,12 +43,24 @@ const SubjectPage = () => {
   const [addDrawerIsOpen, setAddDrawerIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const { openConfirmationModal } = useLayout();
   const history = useHistory();
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
+  const { mutate: archiveSubject } = useArchiveSubject();
+  const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
 
   // SET UP ------------------------------------------------------------------------------------------------ ||
+  const localizations = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return res['academic-portfolio']?.newSubjectsPage;
+    }
+
+    return {};
+  }, [translations]);
+
   const centersData = useMemo(
     () => userCenters?.map((center) => ({ value: center?.id, label: center?.name })),
     [userCenters]
@@ -64,6 +83,8 @@ const SubjectPage = () => {
     return [];
   }, [centerProgramsQuery]);
 
+  const noProgramsCreated = useMemo(() => !centerProgramsQuery?.length, [centerProgramsQuery]);
+
   const queryFilters = useMemo(() => {
     if (activeTab === '1') {
       return { onlyArchived: true };
@@ -73,7 +94,7 @@ const SubjectPage = () => {
 
   const { data: subjectsQuery } = useProgramSubjects({
     program: selectedProgram,
-    queryFilters,
+    filters: queryFilters,
     options: { enabled: selectedProgram?.length > 0 },
   });
 
@@ -91,14 +112,14 @@ const SubjectPage = () => {
 
   // EFFECTS ------------------------------------------------------------------------------------------------ ||
 
-  // Manage loading and emtpy state when no ce
+  // Manage loading and emtpy state
   useEffect(() => {
     if (subjectsQuery?.length) {
       setShowEmptyState(false);
-    } else if (!subjectsQuery?.length && dataFetched) {
+    } else if ((!subjectsQuery?.length || !centerProgramsQuery?.length) && dataFetched) {
       setShowEmptyState(true);
     }
-  }, [subjectsQuery, dataFetched]);
+  }, [centerProgramsQuery, programSelectData, subjectsQuery, dataFetched]);
 
   useEffect(() => {
     if (!isLoading && selectedProgram?.length > 0) {
@@ -132,10 +153,86 @@ const SubjectPage = () => {
     setIsEditing(true);
   };
 
-  const SubjectDetailsTableToRender = useMemo(
-    () => <SubjectsDetailTable subjectIds={subjectIds} onEdit={handleOnEdit} />,
-    [subjectIds, handleOnEdit]
-  );
+  const handleArchive = (subject) => {
+    const onConfirm = () =>
+      archiveSubject(subject.id, {
+        onSuccess: () => {
+          const queryKey = getProgramSubjectsKey(subject.program);
+          queryClient.invalidateQueries(queryKey);
+          const programSubjectsHistoryQueryKey = getHasProgramSubjectHistoryKey(subject.program);
+          queryClient.invalidateQueries(programSubjectsHistoryQueryKey);
+          addSuccessAlert(t('alerts.success.delete'));
+        },
+        onError: (e) => {
+          console.error(e);
+          addErrorAlert(t('alerts.failure.delete'));
+        },
+      });
+
+    openConfirmationModal({
+      title: t('archiveModal.title'),
+      description: t('archiveModal.description', { subjectName: subject.name }),
+      labels: {
+        confirm: t('archiveModal.confirm'),
+        cancel: localizations?.labels?.cancel,
+      },
+      onConfirm,
+    })();
+  };
+
+  const handleDuplicate = (subject) => {
+    const onConfirm = () => console.log('duplicating');
+
+    openConfirmationModal({
+      title: t('duplicateModal.title'),
+      description: t('duplicateModal.description', { subjectName: subject.name }),
+      labels: {
+        confirm: t('duplicateModal.confirm'),
+        cancel: localizations?.labels?.cancel,
+      },
+      onConfirm,
+    })();
+  };
+
+  const SubjectDetailsTableToRender = useMemo(() => {
+    const key = activeTab === '0' ? 'active' : 'archived';
+    return (
+      <SubjectsDetailTable
+        key={key}
+        subjectIds={subjectIds}
+        onEdit={handleOnEdit}
+        onArchive={handleArchive}
+        onDuplicate={handleDuplicate}
+        labels={localizations?.labels}
+        isShowingArchivedSubjects={activeTab === '1'}
+      />
+    );
+  }, [subjectIds, handleOnEdit, activeTab, localizations, handleOnEdit]);
+
+  const emtpyStateToRender = useMemo(() => {
+    if (activeTab === '0') {
+      if (noProgramsCreated) {
+        return (
+          <EmptyState
+            onClick={() => history.push('/private/academic-portfolio/programs')}
+            Icon={<RedirectIcon />}
+            actionLabel={localizations?.emptyStates?.createProgram}
+            description={localizations?.emptyStates?.noProgramsCreated}
+          />
+        );
+      }
+
+      return (
+        <EmptyState
+          onClick={handleOnAdd}
+          Icon={<AddCircleIcon />}
+          actionLabel={localizations?.labels?.addNewSubject}
+          description={localizations?.emptyStates?.noSubjectsCreated}
+        />
+      );
+    }
+    return <EmptyState description={localizations?.emptyStates?.noSubjectsArchived} noAction />;
+  }, [selectedCenter, selectedProgram, noProgramsCreated, activeTab, handleOnAdd, localizations]);
 
   return (
     <>
@@ -144,9 +241,9 @@ const SubjectPage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={'Listado de Asignaturas 🌎' || t('header.title')}
+            title={t('title')}
             onCancel={() => history.goBack()}
-            mainActionLabel={'Cancelar 🌎' || t('header.cancel')}
+            mainActionLabel={t('labels.cancel')}
             compact
             icon={
               <Stack justifyContent="center" alignItems="center">
@@ -162,16 +259,15 @@ const SubjectPage = () => {
             <Stack spacing={4}>
               <Select
                 data={centersData}
-                placeholder={'Select a center 🌎' || t('header.centerSelectPlaceholder')}
                 onChange={(value) => {
                   setSelectedCenter(value);
+                  setSelectedProgram(null);
                 }}
                 value={selectedCenter}
                 sx={{ width: 230 }}
               />
               <Select
                 data={programSelectData}
-                placeholder={'Select a program 🌎' || t('header.centerSelectPlaceholder')}
                 onChange={(value) => {
                   setSelectedProgram(value);
                 }}
@@ -197,41 +293,30 @@ const SubjectPage = () => {
               fullHeight
               onChange={(activeT) => setActiveTab(activeT)}
             >
-              <TabPanel label="Publicados 🌎">
+              <TabPanel label={t('labels.publishedSubjects')}>
                 {!showEmptyState ? (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
                     <Box sx={{ justifySelf: 'start', width: 160, height: 40 }}>
                       <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-                        {'Nueva asignatura 🌎'}
+                        {t('labels.addNewSubject')}
                       </Button>
                     </Box>
                     {SubjectDetailsTableToRender}
                   </ContextContainer>
                 ) : (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <EmptyState onClick={handleOnAdd} />
+                    {emtpyStateToRender}
                   </ContextContainer>
                 )}
               </TabPanel>
-              <TabPanel label="Archivados 🌎">
+              <TabPanel label={t('labels.archivedSubjects')} disabled={noProgramsCreated}>
                 {!showEmptyState ? (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    {/* <ProgramsDetailTable
-                      programsIds={subjectIds}
-                      actions={
-                        <Stack justifyContent="end" fullWidth>
-                          <ActionButton
-                            tooltip="Restaurar 🌎"
-                            icon={<RestoreIcon width={18} height={18} />}
-                          />
-                        </Stack>
-                      }
-                    /> */}
-                    <div>Subjects Table para archivados</div>
+                    {SubjectDetailsTableToRender}
                   </ContextContainer>
                 ) : (
                   <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <div>SOY UN EMPTY STATE FOR ARCHIVED PROGRAMS! 🎉</div>
+                    {emtpyStateToRender}
                   </ContextContainer>
                 )}
               </TabPanel>
@@ -241,6 +326,7 @@ const SubjectPage = () => {
       </TotalLayoutContainer>
       <SubjectSetupDrawer
         isOpen={addDrawerIsOpen}
+        localizations={localizations}
         setIsOpen={setAddDrawerIsOpen}
         setIsEditing={setIsEditing}
         isEditing={isEditing}

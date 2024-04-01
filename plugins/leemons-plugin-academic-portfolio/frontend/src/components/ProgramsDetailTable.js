@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-
-import { Table, Stack, ActionButton } from '@bubbles-ui/components';
+import { Table, Stack, ActionButton, LoadingOverlay } from '@bubbles-ui/components';
 import { ArchiveIcon, EditWriteIcon, RestoreIcon } from '@bubbles-ui/icons/solid';
 
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
@@ -14,6 +13,7 @@ const ProgramsDetailTable = ({
   onEdit,
   onArchive,
   isShowingArchivedPrograms,
+  onDuplicate,
 }) => {
   const programsQueries = useProgramDetail(
     programsIds,
@@ -69,26 +69,27 @@ const ProgramsDetailTable = ({
         students: program?.students?.length,
         actions: (
           <Stack justifyContent="end" fullWidth>
-            <ActionButton
-              tooltip={labels?.edit}
-              onClick={() => onEdit(program)}
-              icon={<EditWriteIcon width={18} height={18} />}
-            />
-            <ActionButton
-              tooltip={labels?.duplicate}
-              icon={<DuplicateIcon width={18} height={18} />}
-            />
+            {!isShowingArchivedPrograms && (
+              <ActionButton
+                tooltip={labels?.edit}
+                onClick={() => onEdit(program)}
+                icon={<EditWriteIcon width={18} height={18} />}
+              />
+            )}
+            {!isShowingArchivedPrograms && (
+              <ActionButton
+                tooltip={labels?.duplicate}
+                onClick={() => onDuplicate(program)}
+                icon={<DuplicateIcon width={18} height={18} />}
+              />
+            )}
             <ActionButton
               tooltip={isShowingArchivedPrograms ? labels?.restore : labels?.archive}
               icon={
                 !isShowingArchivedPrograms ? (
                   <ArchiveIcon width={18} height={18} onClick={() => onArchive(program)} />
                 ) : (
-                  <RestoreIcon
-                    width={18}
-                    height={18}
-                    onClick={() => console.log('restaurando ', program.name)}
-                  />
+                  <RestoreIcon width={18} height={18} onClick={() => console.log('restaurando')} />
                 )
               }
             />
@@ -97,9 +98,9 @@ const ProgramsDetailTable = ({
       }));
     }
     return [];
-  }, [programsQueries, labels]);
+  }, [programsQueries, isShowingArchivedPrograms, labels]);
 
-  if (isLoading || isEmpty(labels)) return null;
+  if (isLoading || isEmpty(labels)) return <LoadingOverlay visible={isLoading} />;
   return <Table columns={tableColumns} data={programsData} />;
 };
 
@@ -108,6 +109,7 @@ ProgramsDetailTable.propTypes = {
   labels: PropTypes.object,
   onEdit: PropTypes.func,
   onArchive: PropTypes.func,
+  onDuplicate: PropTypes.func,
   isShowingArchivedPrograms: PropTypes.bool,
 };
 

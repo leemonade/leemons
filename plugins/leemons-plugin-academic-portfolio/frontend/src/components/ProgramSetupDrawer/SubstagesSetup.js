@@ -22,6 +22,7 @@ const SubstagesSetup = ({ onChange, localizations = {}, value }) => {
 
   useEffect(() => {
     if (value?.length > 0) {
+      form.reset();
       setSubstages([
         ...value.map(({ name, abbreviation, id, index }) => ({
           name,

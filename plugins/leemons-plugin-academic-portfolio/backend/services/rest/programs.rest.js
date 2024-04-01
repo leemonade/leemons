@@ -137,7 +137,6 @@ module.exports = {
       return { status: 200, program };
     },
   },
-
   listProgramRest: {
     rest: {
       path: '/',
@@ -158,17 +157,17 @@ module.exports = {
 
       if (validator.validate(ctx.params)) {
         const { page, size, center } = ctx.params;
-        let bringOnlyArchived = false;
+        let _onlyArchived = false;
 
         if ('archived' in ctx.params) {
-          bringOnlyArchived = true;
+          _onlyArchived = true;
         }
 
         const data = await listPrograms({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           center,
-          bringOnlyArchived,
+          onlyArchived: _onlyArchived,
           ctx,
         });
         return { status: 200, data };
@@ -193,7 +192,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const truthyValues = ['true', true];
+      const truthyValues = ['true', true, '1'];
       const _withClasses = truthyValues.includes(ctx.params.withClasses);
       const _showArchived = truthyValues.includes(ctx.params.showArchived);
       const _withStudentsAndTeachers = truthyValues.includes(ctx.params.withStudentsAndTeachers);
@@ -350,6 +349,30 @@ module.exports = {
     async handler(ctx) {
       const substages = await getProgramSubstages({ ids: ctx.params.id, ctx });
       return { status: 200, substages };
+    },
+  },
+  hasProgramSubjectHistory: {
+    rest: {
+      path: '/:id/has-subject-history',
+      method: 'GET',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'view'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const program = await programsByIds({ ids: ctx.params.id, showArchived: true, ctx });
+      if (program?.length) {
+        const { subjects } = program[0];
+        return { status: 200, data: subjects?.length > 0 };
+      }
+      throw new LeemonsError(ctx, { message: 'Program not found', httpStatusCode: 404 });
     },
   },
   deleteProgramRest: {
