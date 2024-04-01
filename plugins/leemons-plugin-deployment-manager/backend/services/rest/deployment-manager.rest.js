@@ -9,11 +9,12 @@ const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { getPluginNameWithVersionIfHaveFromServiceName } = require('@leemons/service-name-parser');
-const { checkIfManualPasswordIsGood } = require('@leemons/deployment-manager');
+const { validateInternalPrivateKey } = require('@leemons/deployment-manager');
 const { updateDeploymentConfig } = require('../../core/deployments/updateDeploymentConfig');
 const { addDeployment } = require('../../core/deployments/addDeployment');
 const { isDomainInUse } = require('../../core/deployments/isDomainInUse');
 const { reloadAllDeployments } = require('../../core/auto-init/reload-all-deployments');
+
 /** @type {ServiceSchema} */
 module.exports = {
   getConfigRest: {
@@ -146,7 +147,7 @@ module.exports = {
       path: '/is-domain-in-use',
     },
     async handler(ctx) {
-      checkIfManualPasswordIsGood({ ctx });
+      validateInternalPrivateKey({ ctx });
       const validator = new LeemonsValidator({
         type: 'object',
         properties: {
@@ -168,7 +169,7 @@ module.exports = {
       path: '/change-deployment-config',
     },
     async handler(ctx) {
-      checkIfManualPasswordIsGood({ ctx });
+      validateInternalPrivateKey({ ctx });
       const validator = new LeemonsValidator({
         type: 'object',
         properties: {
@@ -192,7 +193,7 @@ module.exports = {
       path: '/add-manual-deployment',
     },
     async handler(ctx) {
-      checkIfManualPasswordIsGood({ ctx });
+      validateInternalPrivateKey({ ctx });
       const validator = new LeemonsValidator({
         type: 'object',
         properties: {
@@ -217,7 +218,7 @@ module.exports = {
       path: '/reload-all-deployments',
     },
     async handler(ctx) {
-      checkIfManualPasswordIsGood({ ctx });
+      validateInternalPrivateKey({ ctx });
       const { ids } = ctx.params;
       const count = await reloadAllDeployments(this.broker, ids);
       return { count };

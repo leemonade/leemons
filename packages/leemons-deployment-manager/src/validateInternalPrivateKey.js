@@ -1,6 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
 
-function checkIfManualPasswordIsGood({ ctx }) {
+function validateInternalPrivateKey({ ctx }) {
   if (!process.env.MANUAL_PASSWORD) {
     throw new LeemonsError(ctx, {
       message: 'Disabled by default specify process.env.MANUAL_PASSWORD to be able to use it.',
@@ -15,4 +15,4 @@ function checkIfManualPasswordIsGood({ ctx }) {
   delete ctx.params.manualPassword;
 }
 
-module.exports = { checkIfManualPasswordIsGood };
+module.exports = { validateInternalPrivateKey };
