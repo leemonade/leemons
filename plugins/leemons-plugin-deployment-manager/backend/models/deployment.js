@@ -18,6 +18,11 @@ const deploymentSchema = new mongoose.Schema(
     config: {
       type: mongoose.Schema.Types.Mixed,
     },
+    type: {
+      type: String,
+      required: true,
+      default: 'free',
+    },
   },
   {
     timestamps: true,

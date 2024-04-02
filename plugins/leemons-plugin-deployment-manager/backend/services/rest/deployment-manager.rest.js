@@ -199,11 +199,12 @@ module.exports = {
         type: 'object',
         properties: {
           name: { type: 'string' },
+          type: { type: 'string' },
           domains: { type: 'array', minItems: 1, items: { type: 'string' } },
           plugins: { type: 'array', minItems: 2, items: { type: 'string' } },
           config: { type: 'object' },
         },
-        required: ['name', 'domains', 'plugins'],
+        required: ['name', 'type', 'domains', 'plugins'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
