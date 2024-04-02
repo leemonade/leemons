@@ -23,7 +23,7 @@ module.exports = {
         'deployment-manager.addManualDeploymentRest',
         'gateway.dropDBRest',
         'gateway.statusRest',
-        'v1.client-manager.protected.newFreemiumClient',
+        'v1.client-manager.protected.newDeployment',
         'v1.client-manager.protected.isSubdomainInUse',
       ],
     }),
