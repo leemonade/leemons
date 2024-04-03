@@ -4,6 +4,15 @@ const { default: RecoverPassword } = require('../../emails/RecoverPassword.jsx')
 const { default: ResetPassword } = require('../../emails/ResetPassword.jsx');
 const { default: Welcome } = require('../../emails/Welcome.jsx');
 const { default: NewProfileAdded } = require('../../emails/NewProfileAdded.jsx');
+const {
+  default: TeacherFirstStepsGuideFree,
+} = require('../../emails/TeacherFirstStepsGuideFree.jsx');
+const {
+  default: TeacherAssignmentsGuideFree,
+} = require('../../emails/TeacherAssigmentsGuideFree.jsx');
+const {
+  default: TeacherEvaluationGuideFree,
+} = require('../../emails/TeacherEvaluationGuideFree.jsx');
 
 function renderEmailTemplates() {
   return [
@@ -61,6 +70,48 @@ function renderEmailTemplates() {
       language: 'en',
       subject: 'New profile',
       html: render(NewProfileAdded({ locale: 'en' })),
+      type: getEmailTypes().active,
+    },
+    {
+      templateName: 'teacher-first-steps-guide-free',
+      language: 'es',
+      subject: 'Guía de primeros pasos',
+      html: render(TeacherFirstStepsGuideFree({ locale: 'es' })),
+      type: getEmailTypes().active,
+    },
+    {
+      templateName: 'teacher-first-steps-guide-free',
+      language: 'en',
+      subject: 'First steps guide',
+      html: render(TeacherFirstStepsGuideFree({ locale: 'en' })),
+      type: getEmailTypes().active,
+    },
+    {
+      templateName: 'teacher-assignments-guide-free',
+      language: 'es',
+      subject: 'Guía de asignaciones',
+      html: render(TeacherAssignmentsGuideFree({ locale: 'es' })),
+      type: getEmailTypes().active,
+    },
+    {
+      templateName: 'teacher-assignments-guide-free',
+      language: 'en',
+      subject: 'Assignments guide',
+      html: render(TeacherAssignmentsGuideFree({ locale: 'en' })),
+      type: getEmailTypes().active,
+    },
+    {
+      templateName: 'teacher-evaluation-guide-free',
+      language: 'es',
+      subject: 'Guía de evaluación',
+      html: render(TeacherEvaluationGuideFree({ locale: 'es' })),
+      type: getEmailTypes().active,
+    },
+    {
+      templateName: 'teacher-evaluation-guide-free',
+      language: 'en',
+      subject: 'Evaluation guide',
+      html: render(TeacherEvaluationGuideFree({ locale: 'en' })),
       type: getEmailTypes().active,
     },
   ];

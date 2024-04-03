@@ -5,10 +5,12 @@
 
 const _ = require('lodash');
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCronJobsMixin } = require('@leemons/cronjobs');
+
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/users.rest');
 
@@ -57,11 +59,13 @@ const {
   getAllItemsForTheUserAgentHasPermissionsByType,
 } = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
 const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUserAgentContactIds');
+const { PLUGIN_NAME, VERSION } = require('../config/constants');
+const { jobs } = require('./jobs/users.jobs');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.users',
-  version: 1,
+  name: `${PLUGIN_NAME}.users`,
+  version: VERSION,
   mixins: [
     LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
@@ -70,6 +74,7 @@ module.exports = {
     }),
     LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
+    LeemonsCronJobsMixin({ jobs }),
   ],
   actions: {
     ...restActions,
@@ -223,7 +228,4 @@ module.exports = {
     },
   },
 
-  created() {
-    // mongoose.connect(process.env.MONGO_URI);
-  },
 };

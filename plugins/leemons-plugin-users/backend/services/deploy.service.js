@@ -5,6 +5,7 @@
 
 const path = require('path');
 const _ = require('lodash');
+
 const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
@@ -110,7 +111,5 @@ module.exports = {
   async started() {
     const emailTemplates = renderEmailTemplates();
     await this.initEmailTemplates(emailTemplates);
-
-    this.logger.info('Email templates initialized');
   },
 };
