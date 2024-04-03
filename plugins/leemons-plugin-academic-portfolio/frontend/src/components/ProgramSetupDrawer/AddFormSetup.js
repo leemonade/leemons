@@ -53,6 +53,7 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
           padding: 24,
           overflowY: 'auto',
           overflowX: 'hidden',
+          marginBottom: 100,
         }}
       >
         <TotalLayoutStepContainer clean>

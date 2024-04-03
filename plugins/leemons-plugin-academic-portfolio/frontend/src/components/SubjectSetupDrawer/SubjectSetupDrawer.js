@@ -52,7 +52,7 @@ const SubjectSetupDrawer = ({
     setIsOpen(false);
   };
 
-  const getClassChanges = (classrooms) => {
+  const getClassChanges = (classrooms, courses) => {
     const classesToUpdate = [];
     const classesToCreate = [];
     const classesToRemove =
@@ -68,6 +68,7 @@ const SubjectSetupDrawer = ({
           ['seats', 'classroomId', 'alias', 'id'].some(
             (field) => classroom[field] !== originalClass[field]
           ) || classroom.referenceGroup?.split('::')[1] !== originalClass.groups?.id;
+
         if (hasChanges) {
           classesToUpdate.push(classroom);
         }
@@ -165,7 +166,7 @@ const SubjectSetupDrawer = ({
         // This information can be found in seatsForAllCourses - The course metadata will also contain the number of seats.
         return programDetail.seatsForAllCourses;
       }
-      return programDetail.courses.find((c) => c.id === courses)?.metadata?.seats;
+      return programDetail.courses.find((c) => c.id === courses[0])?.metadata?.seats;
     };
 
     const finalBodyArray = classrooms.map(
@@ -221,7 +222,8 @@ const SubjectSetupDrawer = ({
         substage,
       });
     }
-    const classesChanges = isEditing ? getClassChanges(classrooms) : {};
+    const classesChanges = isEditing ? getClassChanges(classrooms, courseArray) : {};
+    console.log('classesChanges', classesChanges);
 
     try {
       const mutationFunction = isEditing ? updateSubjectAsync : createSubjectAsync;
@@ -238,7 +240,7 @@ const SubjectSetupDrawer = ({
       if (classesToCreate?.length && subjectResponse?.subject?.id) {
         await handleClassesCreation({
           classrooms: classesToCreate,
-          courses,
+          courses: courseArray,
           subjectType,
           knowledgeArea,
           substage,

@@ -29,6 +29,7 @@ const {
   getUserPrograms,
   getProgramEvaluationSystem,
   updateProgramConfiguration,
+  getAcademicTree,
 } = require('../../core/programs');
 
 /** @type {ServiceSchema} */
@@ -466,6 +467,26 @@ module.exports = {
     async handler(ctx) {
       const evaluationSystem = await getProgramEvaluationSystem({ id: ctx.params.id, ctx });
       return { status: 200, evaluationSystem };
+    },
+  },
+  getProgramAcademicTree: {
+    rest: {
+      path: '/:id/academic-tree',
+      method: 'GET',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'view'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const tree = await getAcademicTree({ programId: ctx.params.id, ctx });
+      return { status: 200, tree };
     },
   },
 };

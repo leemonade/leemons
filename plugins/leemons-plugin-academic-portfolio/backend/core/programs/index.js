@@ -19,6 +19,7 @@ const { havePrograms } = require('./havePrograms');
 const { addProgram } = require('./addProgram');
 const { programHasSequentialCourses } = require('./programHasSequentialCourses');
 const { updateProgramConfiguration } = require('./updateProgramConfiguration');
+const { getAcademicTree } = require('./getAcademicTree');
 
 module.exports = {
   addProgram,
@@ -42,4 +43,5 @@ module.exports = {
   programCanHaveCoursesOrHaveCourses,
   programHasSequentialCourses,
   updateProgramConfiguration,
+  getAcademicTree,
 };

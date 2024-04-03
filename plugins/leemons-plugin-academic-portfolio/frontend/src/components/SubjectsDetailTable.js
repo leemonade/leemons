@@ -127,6 +127,7 @@ const SubjectsDetailTable = ({
                 multiline
                 autoHeight
                 size="md"
+                width={280}
                 label={labels?.cannotArchiveTooltip}
                 disabled={!subjectsHasPeopleEnrolled}
               >
