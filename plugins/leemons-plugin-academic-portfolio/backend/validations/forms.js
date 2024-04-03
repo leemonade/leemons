@@ -986,7 +986,7 @@ const addClassSchema = {
     classroomId: stringSchemaNullable,
     alias: stringSchemaNullable,
   },
-  required: ['program', 'subject'],
+  required: ['program', 'subject', 'seats'],
   additionalProperties: false,
 };
 

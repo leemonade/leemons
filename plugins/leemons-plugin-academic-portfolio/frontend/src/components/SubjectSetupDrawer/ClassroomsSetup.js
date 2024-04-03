@@ -136,7 +136,10 @@ const ClassroomsSetup = ({ onChange, value, formLabels }) => {
             {[...Array(classroomsAmount)].map((_, index) => (
               <tr key={`classrom-${index}`}>
                 <td className={classes.td}>
-                  <Text>{`${(index + 1).toString().padStart(3, '0')}`}</Text>
+                  <Text>
+                    {form.getValues(`classrooms.${index}.classWithoutGroupId`) ||
+                      `${(index + 1).toString().padStart(3, '0')}`}
+                  </Text>
                 </td>
                 <Controller
                   name={`classrooms.${index}.seats`}

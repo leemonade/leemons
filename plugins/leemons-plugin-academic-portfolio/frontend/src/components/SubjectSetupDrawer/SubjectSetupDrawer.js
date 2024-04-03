@@ -14,7 +14,7 @@ import {
   useCreateSubject,
   useUpdateSubject,
 } from '@academic-portfolio/hooks/mutations/useMutateSubject';
-
+import { getHasProgramSubjectHistoryKey } from '@academic-portfolio/hooks/keys/programHasSubjectHistory';
 import { useProgramDetail } from '@academic-portfolio/hooks';
 import {
   useCreateClass,
@@ -23,7 +23,6 @@ import {
 } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import SubjectForm from './SubjectForm';
-import { getHasProgramSubjectHistoryKey } from '@academic-portfolio/hooks/keys/programHasSubjectHistory';
 
 const SubjectSetupDrawer = ({
   isOpen,
@@ -160,11 +159,13 @@ const SubjectSetupDrawer = ({
     if (substage && substage !== 'all') commonBody.substage = substage;
 
     const getClassSeats = () => {
-      // Subject with multiple courses are also covered by this case
       if (programDetail?.seatsForAllCourses) {
+        // When multiple courses are passed, it means the program has non-sequential courses.
+        // Classes that use reference groups in programs of this nature use the same number of seats regardless of the course.
+        // This information can be found in seatsForAllCourses - The course metadata will also contain the number of seats.
         return programDetail.seatsForAllCourses;
       }
-      return courses[0]?.metadata?.seats;
+      return programDetail.courses.find((c) => c.id === courses)?.metadata?.seats;
     };
 
     const finalBodyArray = classrooms.map(
@@ -185,7 +186,6 @@ const SubjectSetupDrawer = ({
 
     await Promise.all(classesCreationPromises);
   };
-
   const handleOnSubmit = async (formData) => {
     const {
       name,

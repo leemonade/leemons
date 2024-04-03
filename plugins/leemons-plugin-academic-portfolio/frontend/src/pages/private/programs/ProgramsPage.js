@@ -28,7 +28,10 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import ProgramsDetailTable from '@academic-portfolio/components/ProgramsDetailTable';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import ProgramSetupDrawer from '@academic-portfolio/components/ProgramSetupDrawer/ProgramSetupDrawer';
-import { useArchiveProgram } from '@academic-portfolio/hooks/mutations/useMutateProgram';
+import {
+  useArchiveProgram,
+  useDuplicateProgram,
+} from '@academic-portfolio/hooks/mutations/useMutateProgram';
 import { getCenterProgramsKey } from '@academic-portfolio/hooks/keys/centerPrograms';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
 
@@ -44,6 +47,7 @@ const ProgramsPage = () => {
   const history = useHistory();
   const { data: centersQuery, isLoading: areCentersLoading } = useUserCenters();
   const { mutate: archiveProgram } = useArchiveProgram();
+  const { mutate: duplicateProgram } = useDuplicateProgram();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
@@ -166,7 +170,19 @@ const ProgramsPage = () => {
   };
 
   const handleDuplicate = (program) => {
-    const onConfirm = () => console.log('duplicating');
+    const onConfirm = () =>
+      duplicateProgram(
+        { programId: program.id },
+        {
+          onSuccess: () => {
+            addSuccessAlert(t('alerts.success.duplicate'));
+          },
+          onError: (e) => {
+            console.error(e);
+            addErrorAlert(t('alerts.failure.duplicate'));
+          },
+        }
+      );
 
     openConfirmationModal({
       title: t('duplicateModal.title'),

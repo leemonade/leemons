@@ -1,7 +1,7 @@
 export const allCenterEvaluationSystemsKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'knowledge-areas',
+    plugin: 'plugin.grades',
+    scope: 'center-evaluation-systems',
   },
 ];
 

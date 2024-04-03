@@ -30,8 +30,10 @@ async function classByIds({
   withTeachers,
   noSearchChildren,
   noSearchParents,
+  showArchived = false,
   ctx,
 }) {
+  const queryOptions = showArchived ? { excludeDeleted: false } : {};
   const [
     classes,
     knowledges,
@@ -43,10 +45,10 @@ async function classByIds({
     _childClasses,
     timeTables,
   ] = await Promise.all([
-    ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
+    ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }, '', queryOptions).lean(),
     getKnowledgeByClass({ class: ids, ctx }),
     getSubstageByClass({ class: ids, ctx }),
-    getCourseByClass({ class: ids, ctx }),
+    getCourseByClass({ class: ids, showArchived, ctx }),
     getGroupByClass({ class: ids, ctx }),
     getTeacherByClass({ class: ids, ctx }),
     getStudentByClass({ class: ids, ctx }),
@@ -101,7 +103,7 @@ async function classByIds({
   ] = await Promise.all([
     ctx.tx.db.SubjectTypes.find({ id: _.map(classes, 'subjectType') }).lean(),
     ctx.tx.db.KnowledgeAreas.find({ id: _.map(knowledges, 'knowledge') }).lean(),
-    subjectByIds({ ids: _.map(classes, 'subject'), ctx }),
+    subjectByIds({ ids: _.map(classes, 'subject'), showArchived, ctx }),
     ctx.tx.db.Groups.find({ id: _.map(substages, 'substage') }).lean(),
     ctx.tx.db.Groups.find({ id: _.map(courses, 'course') }).lean(),
     ctx.tx.db.Groups.find({ id: _.map(groups, 'group') }).lean(),

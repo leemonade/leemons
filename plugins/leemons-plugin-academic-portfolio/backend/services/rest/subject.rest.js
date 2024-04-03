@@ -28,6 +28,8 @@ const {
   listSubjects,
   subjectByIds,
 } = require('../../core/subjects');
+const { duplicateSubjectByIds } = require('../../core/subjects/duplicateSubjectByIds');
+const { duplicateClassesByIds } = require('../../core/classes/duplicateClassesByIds');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -248,6 +250,63 @@ module.exports = {
         return { status: 200, data: data && data[0] };
       }
       return { status: 200, data };
+    },
+  },
+  duplicateSubjectById: {
+    rest: {
+      path: '/:id/duplicate',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create'],
+          },
+        },
+      }),
+    ],
+
+    async handler(ctx) {
+      const validator = new LeemonsValidator({
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          course: { type: 'string' },
+        },
+        required: ['id'],
+        additionalProperties: true,
+      });
+      if (validator.validate(ctx.params)) {
+        const { id } = ctx.params;
+
+        const duplications = await duplicateSubjectByIds({
+          ids: id,
+          preserveName: ctx.params.preserveName,
+          ctx,
+        });
+        const classes = await ctx.tx.db.Class.find({ subject: id }).lean();
+        await duplicateClassesByIds({
+          ids: _.map(classes, 'id'),
+          duplications,
+          students: false,
+          teachers: false,
+          groups: true,
+          courses: true,
+          substages: true,
+          knowledges: true,
+          ctx,
+        });
+        const [subject] = await subjectByIds({
+          ids: Object.values(duplications.subjects)[0].id,
+          withClasses: true,
+          ctx,
+        });
+
+        return { status: 200, subject };
+      }
+      throw validator.error;
     },
   },
 };

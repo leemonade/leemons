@@ -4,13 +4,11 @@ const { duplicateCourseByIds } = require('../courses/duplicateCourseByIds');
 const { duplicateSubjectByIds } = require('../subjects/duplicateSubjectByIds');
 const { duplicateGroupByIds } = require('../groups/duplicateGroupByIds');
 const { duplicateSubstageByIds } = require('../substages/duplicateSubstageByIds');
-const { duplicateKnowledgeByIds } = require('../knowledges/duplicateKnowledgeByIds');
-const { duplicateSubjectTypeByIds } = require('../subject-type/duplicateSubjectTypeByIds');
 const { duplicateProgramCentersByProgramIds } = require('./duplicateProgramCentersByProgramIds');
 const { duplicateProgramConfigsByProgramIds } = require('./duplicateProgramConfigsByProgramIds');
 const { duplicateClassesByIds } = require('../classes/duplicateClassesByIds');
 
-async function duplicateProgramByIds({ ids, ctx }) {
+async function duplicateProgramByIds({ ids, preserveName = false, ctx }) {
   const [rawPrograms, programs, classes] = await Promise.all([
     ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
     programsByIds({ ids: _.isArray(ids) ? ids : [ids], ctx }),
@@ -22,16 +20,13 @@ async function duplicateProgramByIds({ ids, ctx }) {
   let courses = [];
   let subjects = [];
   let substages = [];
-  let knowledges = [];
-  let subjectTypes = [];
   _.forEach(programs, (program) => {
     groups = _.concat(groups, program.groups);
     courses = _.concat(courses, program.courses);
     subjects = _.concat(subjects, program.subjects);
     substages = _.concat(substages, program.substages);
-    knowledges = _.concat(knowledges, program.knowledges);
+
     substages = _.concat(substages, program.customSubstages);
-    subjectTypes = _.concat(subjectTypes, program.subjectTypes);
   });
 
   const duplications = {
@@ -40,8 +35,11 @@ async function duplicateProgramByIds({ ids, ctx }) {
 
   // ES: Empezamos la duplicación de los programas
   const newPrograms = await Promise.all(
-    _.map(rawPrograms, ({ id, ...item }) =>
-      ctx.tx.db.Programs.create(item).then((mongooseDoc) => mongooseDoc.toObject())
+    _.map(rawPrograms, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
+      ctx.tx.db.Programs.create({
+        ...item,
+        name: preserveName ? item.name : `${item.name} 01`,
+      }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 
@@ -50,12 +48,18 @@ async function duplicateProgramByIds({ ids, ctx }) {
     duplications.programs[id] = newPrograms[index];
   });
 
-  await duplicateSubjectTypeByIds({ ids: _.map(subjectTypes, 'id'), duplications, ctx });
-  await duplicateKnowledgeByIds({ ids: _.map(knowledges, 'id'), duplications, ctx });
+  //* Old: no need to duplicate the subject type or knowledge area as it is defined at center level
+  // await duplicateSubjectTypeByIds({ ids: _.map(subjectTypes, 'id'), duplications, ctx });
+  // await duplicateKnowledgeByIds({ ids: _.map(knowledges, 'id'), duplications, ctx });
   await duplicateSubstageByIds({ ids: _.map(substages, 'id'), duplications, ctx });
   await duplicateGroupByIds({ ids: _.map(groups, 'id'), duplications, ctx });
   await duplicateCourseByIds({ ids: _.map(courses, 'id'), duplications, ctx });
-  await duplicateSubjectByIds({ ids: _.map(subjects, 'id'), duplications, ctx });
+  await duplicateSubjectByIds({
+    ids: _.map(subjects, 'id'),
+    duplications,
+    preserveName: true,
+    ctx,
+  });
 
   await duplicateProgramCentersByProgramIds({
     programIds: _.map(programs, 'id'),
@@ -80,10 +84,17 @@ async function duplicateProgramByIds({ ids, ctx }) {
     ctx,
   });
 
-  await ctx.tx.emit('after-duplicate-programs', {
-    programs,
-    duplications: duplications.programs,
-  });
+  const afterAddProgramPromises = [];
+  Object.keys(duplications.programs).forEach((programKey) =>
+    afterAddProgramPromises.push(
+      ctx.tx.emit('after-add-program', {
+        program: duplications.programs[programKey],
+        userSession: ctx.meta.userSession,
+      })
+    )
+  );
+
+  await Promise.all(afterAddProgramPromises);
 
   const newProgramIds = [];
   _.forIn(duplications.programs, ({ id }) => {

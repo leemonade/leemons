@@ -13,7 +13,7 @@ async function duplicateProgramCentersByProgramIds({ programIds, duplications: d
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newProgramCenters = await Promise.all(
-    _.map(programCenter, ({ id, ...item }) =>
+    _.map(programCenter, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
       ctx.tx.db.ProgramCenter.create({
         ...item,
         program:

@@ -15,6 +15,7 @@ import {
   MultiSelect,
   Select,
   Switch,
+  LoadingOverlay,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
@@ -73,9 +74,6 @@ const SubjectForm = ({
     return false;
   }, [subject]);
 
-  console.log('subjectWithPeopleEnrolled', subjectWithPeopleEnrolled);
-  console.log('subject', subject);
-
   function transformClassesData(classesData) {
     if (classesData.every((e) => e.groups)) {
       return classesData?.map((item) => ({
@@ -90,8 +88,9 @@ const SubjectForm = ({
       }));
     }
     setDisableReferenceGroups(true);
-    return classesData.map(({ classroomId, seats, alias, id }) => ({
+    return classesData.map(({ classroomId, seats, alias, id, classWithoutGroupId }) => ({
       classroomId,
+      classWithoutGroupId,
       seats,
       alias,
       id,
@@ -101,7 +100,7 @@ const SubjectForm = ({
   // DATA FOR SELECT INPUTS ---------------------------------------------------------------------------------||
 
   // Knowledge Areas select
-  const { data: knowledgeAreasQuery } = useKnowledgeAreas({
+  const { data: knowledgeAreasQuery, isLoading: areKnowledgeAreasLoading } = useKnowledgeAreas({
     center: program?.centers[0],
     options: { enabled: program?.centers[0]?.length > 0 },
   });
@@ -118,7 +117,7 @@ const SubjectForm = ({
   }, [knowledgeAreasQuery]);
 
   // SubjectTypes select
-  const { data: subjectTypesQuery } = useSubjectTypes({
+  const { data: subjectTypesQuery, isLoading: areSubjectTypesLoading } = useSubjectTypes({
     center: program?.centers[0],
     options: { enabled: program?.centers[0]?.length > 0 },
   });
@@ -149,6 +148,11 @@ const SubjectForm = ({
     }
     return [];
   }, [program]);
+
+  const isLoading = useMemo(
+    () => areKnowledgeAreasLoading || drawerIsLoading || areSubjectTypesLoading,
+    [areKnowledgeAreasLoading, drawerIsLoading, areSubjectTypesLoading]
+  );
 
   // Effects ---------------------------------------------------------------------------------||
   useEffect(() => {
@@ -183,177 +187,196 @@ const SubjectForm = ({
   }, [isEditing, subject]);
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
-        <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
+    <>
+      <LoadingOverlay visible={isLoading} />
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
+          <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
 
-        <ContextContainer noFlex spacing={6}>
-          <Title className={classes.sectionTitle}>{formLabels?.basicData?.presentation}</Title>
-          <Stack className={classes.horizontalInputsContainer}>
-            <Controller
-              name="name"
-              control={control}
-              rules={{ required: formLabels?.requiredField }}
-              render={({ field }) => (
-                <TextInput
-                  {...field}
-                  label={formLabels?.basicData?.name}
-                  placeholder={formLabels?.textPlaceholder}
-                  error={formState.errors.name}
-                  required
-                  sx={{ width: 216 }}
-                />
-              )}
-            />
-            {program?.useCustomSubjectIds && (
+          <ContextContainer noFlex spacing={6}>
+            <Title className={classes.sectionTitle}>{formLabels?.basicData?.presentation}</Title>
+            <Stack className={classes.horizontalInputsContainer}>
               <Controller
-                name="internalId"
+                name="name"
                 control={control}
-                rules={{
-                  required: formLabels?.requiredField,
-                  maxLength: {
-                    value: 3,
-                    message: formLabels?.validation?.internalIdMaxLength,
-                  },
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: formLabels?.validation?.internalIdFormat,
-                  },
-                }}
-                render={({ field, fieldState }) => (
+                rules={{ required: formLabels?.requiredField }}
+                render={({ field }) => (
                   <TextInput
                     {...field}
-                    label={formLabels?.basicData?.internalId}
+                    label={formLabels?.basicData?.name}
                     placeholder={formLabels?.textPlaceholder}
-                    error={fieldState.error?.message}
+                    error={formState.errors.name}
                     required
-                    sx={{ width: 232 }}
-                    disabled={isEditing}
+                    sx={{ width: 216 }}
                   />
                 )}
               />
-            )}
-            <Controller
-              name="color"
-              control={control}
-              rules={{ required: formLabels?.requiredField }}
-              render={({ field }) => (
-                <ColorInput
-                  {...field}
-                  label={formLabels?.basicData?.color}
-                  placeholder={'#000000'}
-                  useHsl
-                  compact={false}
-                  manual={false}
-                  contentStyle={{ width: 200 }}
-                  required
+              {program?.useCustomSubjectIds && (
+                <Controller
+                  name="internalId"
+                  control={control}
+                  rules={{
+                    required: formLabels?.requiredField,
+                    maxLength: {
+                      value: 3,
+                      message: formLabels?.validation?.internalIdMaxLength,
+                    },
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: formLabels?.validation?.internalIdFormat,
+                    },
+                  }}
+                  render={({ field, fieldState }) => (
+                    <TextInput
+                      {...field}
+                      label={formLabels?.basicData?.internalId}
+                      placeholder={formLabels?.textPlaceholder}
+                      error={fieldState.error?.message}
+                      required
+                      sx={{ width: 232 }}
+                      disabled={isEditing}
+                    />
+                  )}
                 />
+              )}
+              <Controller
+                name="color"
+                control={control}
+                rules={{ required: formLabels?.requiredField }}
+                render={({ field }) => (
+                  <ColorInput
+                    {...field}
+                    label={formLabels?.basicData?.color}
+                    placeholder={'#000000'}
+                    useHsl
+                    compact={false}
+                    manual={false}
+                    contentStyle={{ width: 200 }}
+                    required
+                  />
+                )}
+              />
+            </Stack>
+            <Controller
+              name="image"
+              control={control}
+              render={({ field }) => (
+                <InputWrapper label={formLabels?.basicData?.featuredImage}>
+                  <ImagePicker {...field} />
+                </InputWrapper>
               )}
             />
-          </Stack>
-          <Controller
-            name="image"
-            control={control}
-            render={({ field }) => (
-              <InputWrapper label={formLabels?.basicData?.featuredImage}>
-                <ImagePicker {...field} />
-              </InputWrapper>
-            )}
-          />
-          <Controller
-            name="icon"
-            control={control}
-            render={({ field }) => (
-              <InputWrapper label={formLabels?.basicData?.icon}>
-                <ImagePicker {...field} objectFit="contain" acceptedFileTypes={['image/svg+xml']} />
-              </InputWrapper>
-            )}
-          />
-        </ContextContainer>
-
-        {(program?.hasKnowledgeAreas || program?.hasSubjectTypes || program?.credits) && (
-          <ContextContainer noFlex spacing={6}>
-            <Title className={classes.sectionTitle}>{formLabels?.features?.title}</Title>
-            <Stack className={classes.horizontalInputsContainer}>
-              {program?.hasKnowledgeAreas && (
-                <Controller
-                  name="knowledgeArea"
-                  control={control}
-                  rules={{
-                    required: formLabels?.requiredField,
-                  }}
-                  render={({ field, fieldState }) => (
-                    <Select
-                      {...field}
-                      data={knowledgeAreasSelectData}
-                      label={formLabels?.features?.knowledgeArea}
-                      sx={{ width: 216 }}
-                      placeholder={formLabels?.features?.knowledgeAreaPlaceholder}
-                      error={fieldState.error}
-                      required
-                    />
-                  )}
-                />
+            <Controller
+              name="icon"
+              control={control}
+              render={({ field }) => (
+                <InputWrapper label={formLabels?.basicData?.icon}>
+                  <ImagePicker
+                    {...field}
+                    objectFit="contain"
+                    acceptedFileTypes={['image/svg+xml']}
+                  />
+                </InputWrapper>
               )}
-              {program?.hasSubjectTypes && (
-                <Controller
-                  name="subjectType"
-                  control={control}
-                  rules={{
-                    required: formLabels?.requiredField,
-                  }}
-                  render={({ field, fieldState }) => (
-                    <Select
-                      {...field}
-                      data={subjectTypesSelectData}
-                      label={formLabels?.features?.type}
-                      sx={{ width: 216 }}
-                      placeholder={formLabels?.features?.typePlaceholder}
-                      error={fieldState.error}
-                      required
-                    />
-                  )}
-                />
-              )}
-              {program?.credits && (
-                <Controller
-                  name="credits"
-                  control={control}
-                  rules={{
-                    required: formLabels?.requiredField,
-                  }}
-                  render={({ field, fieldState }) => (
-                    <NumberInput
-                      {...field}
-                      label={formLabels?.features?.numberOfCredits}
-                      min={0}
-                      sx={{ width: 216 }}
-                      placeholder={formLabels?.features?.numberOfCreditsPlaceholder}
-                      error={fieldState.error}
-                      required
-                    />
-                  )}
-                />
-              )}
-            </Stack>
+            />
           </ContextContainer>
-        )}
 
-        {(!isEditing || (isEditing && !subjectWithPeopleEnrolled)) && (
-          <>
+          {(program?.hasKnowledgeAreas || program?.hasSubjectTypes || program?.credits) && (
             <ContextContainer noFlex spacing={6}>
-              <Title className={classes.sectionTitle}>{formLabels?.offer?.title}</Title>
+              <Title className={classes.sectionTitle}>{formLabels?.features?.title}</Title>
               <Stack className={classes.horizontalInputsContainer}>
-                <Controller
-                  name="courses"
-                  control={control}
-                  rules={{
-                    required: formLabels?.requiredField,
-                  }}
-                  render={({ field, fieldState }) => {
-                    if (program?.sequentialCourses) {
+                {program?.hasKnowledgeAreas && (
+                  <Controller
+                    name="knowledgeArea"
+                    control={control}
+                    rules={{
+                      required: formLabels?.requiredField,
+                    }}
+                    render={({ field, fieldState }) => (
+                      <Select
+                        {...field}
+                        data={knowledgeAreasSelectData}
+                        label={formLabels?.features?.knowledgeArea}
+                        sx={{ width: 216 }}
+                        placeholder={formLabels?.features?.knowledgeAreaPlaceholder}
+                        error={fieldState.error}
+                        required
+                      />
+                    )}
+                  />
+                )}
+                {program?.hasSubjectTypes && (
+                  <Controller
+                    name="subjectType"
+                    control={control}
+                    rules={{
+                      required: formLabels?.requiredField,
+                    }}
+                    render={({ field, fieldState }) => (
+                      <Select
+                        {...field}
+                        data={subjectTypesSelectData}
+                        label={formLabels?.features?.type}
+                        sx={{ width: 216 }}
+                        placeholder={formLabels?.features?.typePlaceholder}
+                        error={fieldState.error}
+                        required
+                      />
+                    )}
+                  />
+                )}
+                {program?.credits && (
+                  <Controller
+                    name="credits"
+                    control={control}
+                    rules={{
+                      required: formLabels?.requiredField,
+                    }}
+                    render={({ field, fieldState }) => (
+                      <NumberInput
+                        {...field}
+                        label={formLabels?.features?.numberOfCredits}
+                        min={0}
+                        sx={{ width: 216 }}
+                        placeholder={formLabels?.features?.numberOfCreditsPlaceholder}
+                        error={fieldState.error}
+                        required
+                      />
+                    )}
+                  />
+                )}
+              </Stack>
+            </ContextContainer>
+          )}
+
+          {(!isEditing || (isEditing && !subjectWithPeopleEnrolled)) && (
+            <>
+              <ContextContainer noFlex spacing={6}>
+                <Title className={classes.sectionTitle}>{formLabels?.offer?.title}</Title>
+                <Stack className={classes.horizontalInputsContainer}>
+                  <Controller
+                    name="courses"
+                    control={control}
+                    rules={{
+                      required: formLabels?.requiredField,
+                    }}
+                    render={({ field, fieldState }) => {
+                      if (program?.sequentialCourses) {
+                        return (
+                          <Select
+                            {...field}
+                            label={formLabels?.offer?.coursesWhereItIsOffered}
+                            data={coursesSelectData}
+                            sx={{ width: 216 }}
+                            placeholder={formLabels?.offer?.coursesWhereItIsOfferedPlaceholder}
+                            error={fieldState.error}
+                            required
+                            autoSelectOneOption
+                          />
+                        );
+                      }
                       return (
-                        <Select
+                        <MultiSelect
                           {...field}
                           label={formLabels?.offer?.coursesWhereItIsOffered}
                           data={coursesSelectData}
@@ -361,125 +384,113 @@ const SubjectForm = ({
                           placeholder={formLabels?.offer?.coursesWhereItIsOfferedPlaceholder}
                           error={fieldState.error}
                           required
-                          autoSelectOneOption
                         />
                       );
-                    }
-                    return (
-                      <MultiSelect
+                    }}
+                  />
+                  <Controller
+                    name="substage"
+                    control={control}
+                    rules={{
+                      required: formLabels?.requiredField,
+                    }}
+                    render={({ field, fieldState }) => (
+                      <Select
                         {...field}
-                        label={formLabels?.offer?.coursesWhereItIsOffered}
-                        data={coursesSelectData}
+                        label={formLabels?.offer?.substageWhereItIsOffered}
+                        data={[
+                          { label: localizations?.labels?.noSubstages, value: 'all' },
+                          ...substagesSelectData,
+                        ]}
                         sx={{ width: 216 }}
-                        placeholder={formLabels?.offer?.coursesWhereItIsOfferedPlaceholder}
                         error={fieldState.error}
                         required
-                      />
-                    );
-                  }}
-                />
-                <Controller
-                  name="substage"
-                  control={control}
-                  rules={{
-                    required: formLabels?.requiredField,
-                  }}
-                  render={({ field, fieldState }) => (
-                    <Select
-                      {...field}
-                      label={formLabels?.offer?.substageWhereItIsOffered}
-                      data={[
-                        { label: localizations?.labels?.noSubstages, value: 'all' },
-                        ...substagesSelectData,
-                      ]}
-                      sx={{ width: 216 }}
-                      error={fieldState.error}
-                      required
-                      autoSelectOneOption
-                      placeholder={formLabels?.offer?.substageWhereItIsOfferedPlaceholder}
-                    />
-                  )}
-                />
-              </Stack>
-            </ContextContainer>
-
-            <ContextContainer noFlex spacing={4}>
-              <Title className={classes.sectionTitle}>{formLabels?.classroomsSetup?.title}</Title>
-              <Controller
-                name="classrooms"
-                control={control}
-                rules={{
-                  validate: (value) =>
-                    (Array.isArray(value) && value.length > 0) ||
-                    formLabels?.validation?.atLeastOneClassroom,
-                }}
-                render={({ field, fieldState }) => (
-                  <InputWrapper error={fieldState.error?.message}>
-                    {programReferenceGroups?.length ? (
-                      <Stack direction="column" spacing={4}>
-                        <Switch
-                          label={formLabels?.classroomsSetup?.disableReferenceGroups}
-                          onChange={(val) => {
-                            form.setValue('classrooms', []);
-                            setDisableReferenceGroups(val);
-                          }}
-                          checked={disableReferenceGroups}
-                        />
-                        {disableReferenceGroups ? (
-                          <ClassroomsSetup
-                            {...field}
-                            formLabels={{
-                              ...formLabels?.classroomsSetup,
-                              validation: { ...formLabels?.validation },
-                              labels: { ...localizations?.labels },
-                              textPlaceholder: formLabels.textPlaceholder,
-                            }}
-                          />
-                        ) : (
-                          <ReferenceGroupsClassroomsSetup
-                            {...field}
-                            groups={programReferenceGroups}
-                            selectedCourses={selectedCourses}
-                            isMultiCourse={!program?.sequentialCourses}
-                            refGroupdisabled={!coursesFormValue?.length}
-                            formLabels={{
-                              ...formLabels?.classroomsSetup,
-                              validation: { ...formLabels?.validation },
-                              labels: { ...localizations?.labels },
-                              textPlaceholder: formLabels.textPlaceholder,
-                            }}
-                          />
-                        )}
-                      </Stack>
-                    ) : (
-                      <ClassroomsSetup
-                        {...field}
-                        formLabels={{
-                          ...formLabels?.classroomsSetup,
-                          validation: { ...formLabels?.validation },
-                          labels: { ...localizations?.labels },
-                          textPlaceholder: formLabels.textPlaceholder,
-                        }}
+                        autoSelectOneOption
+                        placeholder={formLabels?.offer?.substageWhereItIsOfferedPlaceholder}
                       />
                     )}
-                  </InputWrapper>
-                )}
-              />
-            </ContextContainer>
-          </>
-        )}
-      </ContextContainer>
-      <FooterContainer scrollRef={scrollRef}>
-        <Stack justifyContent={'space-between'} fullWidth>
-          <Button variant="outline" type="button" onClick={onCancel}>
-            {formLabels?.cancel}
-          </Button>
-          <Button type="submit" loading={drawerIsLoading}>
-            {isEditing ? formLabels?.saveChanges : formLabels?.createSubject}
-          </Button>
-        </Stack>
-      </FooterContainer>
-    </form>
+                  />
+                </Stack>
+              </ContextContainer>
+
+              <ContextContainer noFlex spacing={4}>
+                <Title className={classes.sectionTitle}>{formLabels?.classroomsSetup?.title}</Title>
+                <Controller
+                  name="classrooms"
+                  control={control}
+                  rules={{
+                    validate: (value) =>
+                      (Array.isArray(value) && value.length > 0) ||
+                      formLabels?.validation?.atLeastOneClassroom,
+                  }}
+                  render={({ field, fieldState }) => (
+                    <InputWrapper error={fieldState.error?.message}>
+                      {programReferenceGroups?.length ? (
+                        <Stack direction="column" spacing={4}>
+                          <Switch
+                            label={formLabels?.classroomsSetup?.disableReferenceGroups}
+                            onChange={(val) => {
+                              form.setValue('classrooms', []);
+                              setDisableReferenceGroups(val);
+                            }}
+                            checked={disableReferenceGroups}
+                          />
+                          {disableReferenceGroups ? (
+                            <ClassroomsSetup
+                              {...field}
+                              formLabels={{
+                                ...formLabels?.classroomsSetup,
+                                validation: { ...formLabels?.validation },
+                                labels: { ...localizations?.labels },
+                                textPlaceholder: formLabels.textPlaceholder,
+                              }}
+                            />
+                          ) : (
+                            <ReferenceGroupsClassroomsSetup
+                              {...field}
+                              groups={programReferenceGroups}
+                              selectedCourses={selectedCourses}
+                              isMultiCourse={!program?.sequentialCourses}
+                              refGroupdisabled={!coursesFormValue?.length}
+                              formLabels={{
+                                ...formLabels?.classroomsSetup,
+                                validation: { ...formLabels?.validation },
+                                labels: { ...localizations?.labels },
+                                textPlaceholder: formLabels.textPlaceholder,
+                              }}
+                            />
+                          )}
+                        </Stack>
+                      ) : (
+                        <ClassroomsSetup
+                          {...field}
+                          formLabels={{
+                            ...formLabels?.classroomsSetup,
+                            validation: { ...formLabels?.validation },
+                            labels: { ...localizations?.labels },
+                            textPlaceholder: formLabels.textPlaceholder,
+                          }}
+                        />
+                      )}
+                    </InputWrapper>
+                  )}
+                />
+              </ContextContainer>
+            </>
+          )}
+        </ContextContainer>
+        <FooterContainer scrollRef={scrollRef}>
+          <Stack justifyContent={'space-between'} fullWidth>
+            <Button variant="outline" type="button" onClick={onCancel}>
+              {formLabels?.cancel}
+            </Button>
+            <Button type="submit" loading={isLoading}>
+              {isEditing ? formLabels?.saveChanges : formLabels?.createSubject}
+            </Button>
+          </Stack>
+        </FooterContainer>
+      </form>
+    </>
   );
 };
 

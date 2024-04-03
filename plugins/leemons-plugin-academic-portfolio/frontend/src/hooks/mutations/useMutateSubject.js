@@ -1,5 +1,6 @@
 import {
   createSubjectRequest,
+  duplicateSubjectRequest,
   removeSubjectRequest,
   updateSubjectRequest,
 } from '@academic-portfolio/request';
@@ -23,6 +24,18 @@ export function useCreateSubject() {
 
   return useMutation({
     mutationFn: async (props) => createSubjectRequest(props),
+    onSuccess: (data) => {
+      const queryKey = getProgramSubjectsKey(data.subject?.program);
+      queryClient.invalidateQueries(queryKey);
+    },
+  });
+}
+
+export function useDuplicateSubject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (props) => duplicateSubjectRequest(props),
     onSuccess: (data) => {
       const queryKey = getProgramSubjectsKey(data.subject?.program);
       queryClient.invalidateQueries(queryKey);

@@ -83,16 +83,12 @@ const ProgramsDetailTable = ({
                 icon={<DuplicateIcon width={18} height={18} />}
               />
             )}
-            <ActionButton
-              tooltip={isShowingArchivedPrograms ? labels?.restore : labels?.archive}
-              icon={
-                !isShowingArchivedPrograms ? (
-                  <ArchiveIcon width={18} height={18} onClick={() => onArchive(program)} />
-                ) : (
-                  <RestoreIcon width={18} height={18} onClick={() => console.log('restaurando')} />
-                )
-              }
-            />
+            {!isShowingArchivedPrograms && (
+              <ActionButton
+                tooltip={isShowingArchivedPrograms ? labels?.restore : labels?.archive}
+                icon={<ArchiveIcon width={18} height={18} onClick={() => onArchive(program)} />}
+              />
+            )}
           </Stack>
         ),
       }));
@@ -101,7 +97,12 @@ const ProgramsDetailTable = ({
   }, [programsQueries, isShowingArchivedPrograms, labels]);
 
   if (isLoading || isEmpty(labels)) return <LoadingOverlay visible={isLoading} />;
-  return <Table columns={tableColumns} data={programsData} />;
+  return (
+    <Table
+      columns={isShowingArchivedPrograms ? tableColumns.slice(0, -1) : tableColumns}
+      data={programsData}
+    />
+  );
 };
 
 ProgramsDetailTable.propTypes = {

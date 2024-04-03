@@ -150,11 +150,13 @@ module.exports = {
         add: 'Programa creado con éxito.',
         update: 'Programa actualizado con éxito.',
         delete: 'Programa archivado con éxito.',
+        duplicate: 'Programa duplicado con éxito.',
       },
       failure: {
         add: 'No se ha podido crear el Programa. ',
         update: 'No se ha podido actualizar el Programa. ',
         delete: 'No se ha podido archivar el Programa. ',
+        duplicate: 'No se ha podido duplicar el Programa. ',
       },
     },
     programDrawer: {
@@ -163,6 +165,7 @@ module.exports = {
       classroomsAndGroups: 'Asignaturas o grupos',
       requiredField: 'Campo requerido',
       others: 'Otros',
+      loadingForm: 'Personalizando las características de tu programa',
       save: 'Guardar',
       wizardForm: {
         yes: 'Yes',
@@ -258,6 +261,8 @@ module.exports = {
         },
         classConfiguration: 'Configuración de Aulas',
         referenceGroups: 'Grupos de Referencia',
+        referenceGroupsInfo:
+          'Los "grupos de referencia" son aquellos en los que un mismo conjunto de alumnos comparten la mayoría de las asignaturas y un mismo aula.',
         privacy: 'Privacidad',
         hideStudentsFromEachOther:
           'Los alumnos no pueden verse entre sí (esta opción deshabilita las opciones de chat entre alumnos)',
@@ -285,7 +290,7 @@ module.exports = {
     duplicateModal: {
       title: 'Duplicar programa',
       description:
-        'Vas a duplicar el programa "{programName}". La nueva copia no guardará a los alumnos matriculados. Hemos creado una copia del Calendario Académico asociado a este programa pero deberás actualizar las fechas.',
+        'Vas a duplicar el programa "{programName}". La nueva copia no guardará a los alumnos matriculados.',
       confirm: 'Duplicar',
     },
     setup: {
@@ -480,6 +485,8 @@ module.exports = {
       remove: 'Eliminar',
       accept: 'Aceptar',
       add: 'Añadir',
+      cannotArchiveTooltip:
+        'Sólo se pueden archivar asignaturas sin estudiantes matriculados o profesores asociados.',
     },
     drawer: {
       title: 'Nueva asignatura',
@@ -553,11 +560,13 @@ module.exports = {
         add: 'Asignatura creada con éxito.',
         update: 'Asignatura actualizada con éxito.',
         delete: 'Asignatura archivada con éxito.',
+        duplicate: 'Asignatura duplicada con éxito.',
       },
       failure: {
         add: 'No se ha podido crear la Asignatura. ',
         update: 'No se ha podido actualizar la Asignatura. ',
         delete: 'No se ha podido archivar la Asignatura. ',
+        duplicate: 'No se ha podido duplicar la Asignatura. ',
       },
     },
   },

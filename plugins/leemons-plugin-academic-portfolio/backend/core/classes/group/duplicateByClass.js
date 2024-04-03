@@ -12,7 +12,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx }) {
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newItems = await Promise.all(
-    _.map(classGroups, ({ id, ...item }) =>
+    _.map(classGroups, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
       ctx.tx.db.ClassGroup.create({
         ...item,
         class:

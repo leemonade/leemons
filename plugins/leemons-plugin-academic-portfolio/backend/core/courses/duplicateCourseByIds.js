@@ -11,7 +11,7 @@ async function duplicateCourseByIds({ ids, duplications: dup = {}, ctx }) {
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newCourses = await Promise.all(
-    _.map(courses, ({ id, ...item }) =>
+    _.map(courses, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
       ctx.tx.db.Groups.create({
         ...item,
         program:

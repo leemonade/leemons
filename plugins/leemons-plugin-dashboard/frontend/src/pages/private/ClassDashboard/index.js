@@ -232,7 +232,7 @@ export default function ClassDashboard({ session }) {
   }
 
   const mainTeacher = store.class
-    ? find(store.class.teachers, { type: 'main-teacher' }).teacher
+    ? find(store.class.teachers, { type: 'main-teacher' })?.teacher
     : null;
 
   const classTabs = React.useCallback(

@@ -32,6 +32,7 @@ const schema = new mongoose.Schema(
     },
     seats: {
       type: Number,
+      required: true,
     },
     image: {
       type: String,

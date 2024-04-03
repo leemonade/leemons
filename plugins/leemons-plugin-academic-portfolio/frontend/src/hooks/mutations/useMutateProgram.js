@@ -1,5 +1,6 @@
 import {
   createProgramRequest,
+  duplicateProgramRequest,
   removeProgramRequest,
   updateProgramConfigurationRequest,
   updateProgramRequest,
@@ -31,6 +32,21 @@ export function useCreateProgram() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (props) => createProgramRequest(props),
+    onSuccess: (data) => {
+      // Invaidate centerPrograms query
+      const programCenters = data.program?.centers;
+      programCenters?.forEach((centerId) => {
+        const queryKey = getCenterProgramsKey(centerId);
+        queryClient.invalidateQueries(queryKey);
+      });
+    },
+  });
+}
+
+export function useDuplicateProgram() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (props) => duplicateProgramRequest(props),
     onSuccess: (data) => {
       // Invaidate centerPrograms query
       const programCenters = data.program?.centers;

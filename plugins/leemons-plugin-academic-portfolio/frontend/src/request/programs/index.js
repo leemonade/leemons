@@ -154,6 +154,13 @@ async function programHasSubjectHistory({ programId }) {
   });
 }
 
+async function duplicateProgram({ programId }) {
+  return leemons.api(`v1/academic-portfolio/programs/${programId}/duplicate`, {
+    allAgents: true,
+    method: 'POST',
+  });
+}
+
 export {
   listPrograms,
   detailProgram,
@@ -168,4 +175,5 @@ export {
   removeProgram,
   updateProgramConfiguration,
   programHasSubjectHistory,
+  duplicateProgram,
 };

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isEmpty, omit } from 'lodash';
-import { Table, Stack, ActionButton } from '@bubbles-ui/components';
+import { Table, Stack, ActionButton, Tooltip } from '@bubbles-ui/components';
 import { ArchiveIcon, EditWriteIcon, RestoreIcon } from '@bubbles-ui/icons/solid';
 
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
@@ -26,7 +26,10 @@ const SubjectsDetailTable = ({
   const getSubjectClassesString = (classes) => {
     const subjectWithReferenceGroups = classes?.some((classItem) => !isEmpty(classItem.groups));
     if (subjectWithReferenceGroups) {
-      return classes?.map((classItem) => classItem.groups.abbreviation).join(', ');
+      return classes
+        ?.map((classItem) => classItem.groups?.abbreviation)
+        .sort()
+        .join(', ');
     }
     return classes?.map((_, index) => String(index + 1).padStart(3, '0')).join(', ');
   };
@@ -62,7 +65,7 @@ const SubjectsDetailTable = ({
 
     if (subjectsDetailQuery?.length) {
       subjectsDetailQuery.forEach((_subject) => {
-        const { classes } = _subject;
+        const classes = _subject?.classes ?? [];
         const allClassesCourses = [];
         classes.forEach((_class) => addUniqueCourse(_class, allClassesCourses));
 
@@ -97,37 +100,54 @@ const SubjectsDetailTable = ({
 
   const tableData = useMemo(() => {
     if (subjectClassesData?.length) {
-      return subjectClassesData?.map((item) => ({
-        ...item,
-        actions: (
-          <Stack justifyContent="end" fullWidth>
-            {!isShowingArchivedSubjects && (
-              <ActionButton
-                tooltip={labels?.edit}
-                onClick={() => handleOnEdit(item)}
-                icon={<EditWriteIcon width={18} height={18} />}
-              />
-            )}
-            {!isShowingArchivedSubjects && (
-              <ActionButton
-                onClick={() => onDuplicate(item)}
-                tooltip={labels?.duplicate}
-                icon={<DuplicateIcon width={18} height={18} />}
-              />
-            )}
-            <ActionButton
-              tooltip={labels.archive}
-              icon={
-                !isShowingArchivedSubjects ? (
-                  <ArchiveIcon width={18} height={18} onClick={() => onArchive(item)} />
-                ) : (
-                  <RestoreIcon width={18} height={18} onClick={() => console.log('restaurando')} />
-                )
-              }
-            />
-          </Stack>
-        ),
-      }));
+      return subjectClassesData?.map((item) => {
+        let subjectsHasPeopleEnrolled = false;
+        item.classes?.forEach((c) => {
+          if (c.students?.length || c.teachers?.length) subjectsHasPeopleEnrolled = true;
+        });
+        return {
+          ...item,
+          actions: (
+            <Stack justifyContent="end" fullWidth>
+              {!isShowingArchivedSubjects && (
+                <ActionButton
+                  tooltip={labels?.edit}
+                  onClick={() => handleOnEdit(item)}
+                  icon={<EditWriteIcon width={18} height={18} />}
+                />
+              )}
+              {!isShowingArchivedSubjects && (
+                <ActionButton
+                  onClick={() => onDuplicate(item)}
+                  tooltip={labels?.duplicate}
+                  icon={<DuplicateIcon width={18} height={18} />}
+                />
+              )}
+              <Tooltip
+                multiline
+                autoHeight
+                size="md"
+                label={labels?.cannotArchiveTooltip}
+                disabled={!subjectsHasPeopleEnrolled}
+              >
+                <Stack>
+                  <ActionButton
+                    tooltip={isShowingArchivedSubjects ? labels?.restore : labels?.archive}
+                    disabled={subjectsHasPeopleEnrolled}
+                    icon={
+                      !isShowingArchivedSubjects ? (
+                        <ArchiveIcon width={18} height={18} onClick={() => onArchive(item)} />
+                      ) : (
+                        <RestoreIcon width={18} height={18} onClick={() => onRestore(item)} />
+                      )
+                    }
+                  />
+                </Stack>
+              </Tooltip>
+            </Stack>
+          ),
+        };
+      });
     }
     return [];
   }, [subjectClassesData, isShowingArchivedSubjects, labels]);

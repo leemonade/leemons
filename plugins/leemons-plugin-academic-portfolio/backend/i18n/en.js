@@ -150,11 +150,13 @@ module.exports = {
         add: 'Program created successfully.',
         update: 'Program updated successfully.',
         delete: 'Program archived successfully.',
+        duplicate: 'Program duplicated successfully.',
       },
       failure: {
         add: 'The Program could not be created. ',
         update: 'The Program could not be updated. ',
         delete: 'The Program could not be archived. ',
+        duplicate: 'The Program could not be duplicated. ',
       },
     },
     common: {
@@ -172,7 +174,7 @@ module.exports = {
     duplicateModal: {
       title: 'Duplicate program',
       description:
-        'You are going to duplicate the program "{programName}". The new copy will not keep the enrolled students. We have created a copy of the Academic Calendar associated with this program but you will need to update the dates.',
+        'You are going to duplicate the program "{programName}". The new copy will not keep the enrolled students.',
       confirm: 'Duplicate',
     },
     programDrawer: {
@@ -181,6 +183,7 @@ module.exports = {
       classroomsAndGroups: 'Subjects or groups',
       requiredField: 'Required field',
       others: 'Others',
+      loadingForm: 'Customizing your program',
       save: 'Save',
       wizardForm: {
         yes: 'Yes',
@@ -276,6 +279,8 @@ module.exports = {
         },
         classConfiguration: 'Class Configuration',
         referenceGroups: 'Reference Groups',
+        referenceGroupsInfo:
+          'Reference groups are those in which the same set of students share most of the subjects and the same classroom.',
         privacy: 'Privacy',
         hideStudentsFromEachOther:
           'Students cannot see each other (this option disables chat options among students)',
@@ -480,6 +485,7 @@ module.exports = {
       remove: 'Remove',
       accept: 'Accept',
       add: 'Add',
+      cannotArchiveTooltip: 'Only subjects with no students or teachers enrolled can be archived.',
     },
     drawer: {
       title: 'New subject',
@@ -553,11 +559,13 @@ module.exports = {
         add: 'Subject created successfully.',
         update: 'Subject updated successfully.',
         delete: 'Subject archived successfully.',
+        duplicate: 'Subject duplicated successfully.',
       },
       failure: {
         add: 'The Subject could not be created. ',
         update: 'The Subject could not be updated. ',
         delete: 'The Subject could not be archived. ',
+        duplicate: 'The Subject could not be duplicated. ',
       },
     },
   },

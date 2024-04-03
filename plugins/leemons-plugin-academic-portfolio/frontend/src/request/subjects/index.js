@@ -14,7 +14,6 @@ async function listSubjects({ page, size, program, course, onlyArchived }) {
   if (onlyArchived !== undefined) {
     params.append('onlyArchived', onlyArchived);
   }
-  console.log('onlyArchived', onlyArchived);
 
   return leemons.api(`v1/academic-portfolio/subjects/subject?${params.toString()}`, {
     waitToFinish: true,
@@ -92,6 +91,13 @@ async function removeSubject(id) {
   });
 }
 
+async function duplicateSubject(id) {
+  return leemons.api(`v1/academic-portfolio/subjects/${id}/duplicate`, {
+    allAgents: true,
+    method: 'POST',
+  });
+}
+
 async function getSubjectCredits({ program, subject }) {
   return leemons.api(
     `v1/academic-portfolio/subjects/credits?program=${program}&subject=${subject}`,
@@ -147,4 +153,5 @@ export {
   listSubjectCreditsForProgram,
   getSubjectDetails,
   removeSubject,
+  duplicateSubject,
 };

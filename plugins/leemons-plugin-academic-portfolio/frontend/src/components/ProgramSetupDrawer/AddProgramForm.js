@@ -218,10 +218,7 @@ const AddProgramForm = ({
           {showLoadingComponent ? (
             <LoadingFormState
               key="load-form"
-              description={
-                localizations?.programSetupDrawer?.loadingForm ||
-                'Personalizando las características de tu programa 🌎'
-              }
+              description={localizations?.programDrawer?.loadingForm}
               progress={progress}
             />
           ) : (
@@ -478,7 +475,7 @@ const AddProgramForm = ({
                           size="md"
                           multiline
                           width={250}
-                          label='Los "grupos de referencia" son aquellos en los que un mismo conjunto de alumnos comparten la mayoría de las asignaturas y un mismo aula.'
+                          label={formLabels?.referenceGroupsInfo}
                         >
                           <Stack>
                             <InfoIcon width={24} height={24} />

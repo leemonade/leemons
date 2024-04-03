@@ -29,7 +29,10 @@ import SubjectSetupDrawer from '@academic-portfolio/components/SubjectSetupDrawe
 import SubjectsDetailTable from '@academic-portfolio/components/SubjectsDetailTable';
 import useProgramSubjects from '@academic-portfolio/hooks/queries/useProgramSubjects';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
-import { useArchiveSubject } from '@academic-portfolio/hooks/mutations/useMutateSubject';
+import {
+  useArchiveSubject,
+  useDuplicateSubject,
+} from '@academic-portfolio/hooks/mutations/useMutateSubject';
 import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import { useQueryClient } from '@tanstack/react-query';
 import { getHasProgramSubjectHistoryKey } from '@academic-portfolio/hooks/keys/programHasSubjectHistory';
@@ -47,6 +50,7 @@ const SubjectPage = () => {
   const history = useHistory();
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
   const { mutate: archiveSubject } = useArchiveSubject();
+  const { mutate: duplicateSubject } = useDuplicateSubject();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
@@ -181,7 +185,16 @@ const SubjectPage = () => {
   };
 
   const handleDuplicate = (subject) => {
-    const onConfirm = () => console.log('duplicating');
+    const onConfirm = () =>
+      duplicateSubject(subject.id, {
+        onSuccess: () => {
+          addSuccessAlert(t('alerts.success.duplicate'));
+        },
+        onError: (e) => {
+          console.error(e);
+          addErrorAlert(t('alerts.failure.duplicate'));
+        },
+      });
 
     openConfirmationModal({
       title: t('duplicateModal.title'),

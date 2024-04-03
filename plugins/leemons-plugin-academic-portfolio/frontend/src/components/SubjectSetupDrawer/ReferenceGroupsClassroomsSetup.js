@@ -38,13 +38,13 @@ const ReferenceGroupsClassroomsSetup = ({
   const tableInputColumns = React.useMemo(
     () => [
       {
-        Header: 'Grupo de Referencia 🌎',
+        Header: formLabels?.referenceGroup,
         accessor: 'referenceGroup',
         style: { width: 196 },
         valueRender: (val) => val?.split('::')[0],
       },
       {
-        Header: 'Id de aula 🌎',
+        Header: formLabels?.classroomId,
         accessor: 'classroomId',
         style: { width: 240 },
       },
@@ -151,8 +151,8 @@ const ReferenceGroupsClassroomsSetup = ({
           render={({ field }) => (
             <TextInput
               {...field}
-              label={formLabels.classroomId}
-              placeholder={formLabels.textPlaceholder}
+              label={formLabels?.classroomId}
+              placeholder={formLabels?.textPlaceholder}
               sx={{ width: 192 }}
             />
           )}

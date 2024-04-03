@@ -1,7 +1,7 @@
 export const allHasProgramSubjectHistoryKeys = [
   {
     plugin: 'plugin.academic-portfolio',
-    scope: 'knowledge-areas',
+    scope: 'has-program-subject-history',
   },
 ];
 

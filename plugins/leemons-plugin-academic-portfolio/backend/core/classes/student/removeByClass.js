@@ -11,6 +11,7 @@ async function removeByClass({ classIds, soft, ctx }) {
   );
 
   const classStudents = await ctx.tx.db.ClassStudent.find({ class: classeIds }).lean();
+  if (!classStudents?.length) return;
 
   const promisesRemoveUserAgentsFromRooms = [];
   // Remove users from class room

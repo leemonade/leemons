@@ -93,7 +93,11 @@ async function updateSubject({ data, ctx }) {
     ..._data
   } = data;
 
-  let subject = await ctx.tx.db.Subjects.findOneAndUpdate({ id }, _data, { new: true, lean: true });
+  let subject = await ctx.tx.db.Subjects.findOneAndUpdate(
+    { id },
+    { ..._data, color },
+    { new: true, lean: true }
+  );
   const promises = [];
 
   // ES: Añadimos el asset de la imagen

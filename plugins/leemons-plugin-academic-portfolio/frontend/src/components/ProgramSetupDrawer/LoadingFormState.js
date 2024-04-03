@@ -21,7 +21,7 @@ const useStyles = createStyles((theme) => ({
     ...theme.other.global.content.typo.heading['xsm--semiBold'],
   },
   progressBox: {
-    width: '80%',
+    width: 284,
   },
 }));
 

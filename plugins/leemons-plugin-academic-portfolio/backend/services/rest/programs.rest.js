@@ -415,7 +415,11 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const [program] = await duplicateProgramByIds({ ids: ctx.params.id, ctx });
+      const [program] = await duplicateProgramByIds({
+        ids: ctx.params.id,
+        preserveName: ctx.params.preserveName,
+        ctx,
+      });
       return { status: 200, program };
     },
   },

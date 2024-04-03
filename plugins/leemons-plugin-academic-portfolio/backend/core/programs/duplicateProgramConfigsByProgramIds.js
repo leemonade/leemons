@@ -15,7 +15,7 @@ async function duplicateProgramConfigsByProgramIds({ programIds, duplications: d
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newConfigs = await Promise.all(
-    _.map(configs, ({ id, ...item }) => {
+    _.map(configs, ({ id, _id, __v, updatedAt, createdAt, ...item }) => {
       let key = item.key.split('course');
       if (duplications.programs) {
         _.forIn(duplications.programs, (value, oldID) => {

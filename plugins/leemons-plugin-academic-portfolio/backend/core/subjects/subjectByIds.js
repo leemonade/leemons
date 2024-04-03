@@ -47,6 +47,7 @@ async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
   if (withClasses) {
     const detailedClasses = await ctx.tx.call('academic-portfolio.classes.classByIds', {
       ids: classes.map((item) => item.id),
+      showArchived,
     });
     const classesBySubject = _.groupBy(detailedClasses, (item) => item.subject.id);
     finalSubjects = _.map(finalSubjects, (subject) => ({

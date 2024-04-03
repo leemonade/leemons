@@ -5,6 +5,7 @@ import {
   listSubjects,
   removeSubject,
   updateSubject,
+  duplicateSubject,
   updateSubjectCredits,
 } from './subjects';
 import {
@@ -21,6 +22,7 @@ import {
   removeProgram,
   updateProgramConfiguration,
   programHasSubjectHistory,
+  duplicateProgram,
 } from './programs';
 import { updateCycle } from './cycles';
 import {
@@ -78,6 +80,8 @@ export const listSubjectsRequest = listSubjects;
 export const createSubjectRequest = createSubject;
 export const updateSubjectRequest = updateSubject;
 export const removeSubjectRequest = removeSubject;
+export const duplicateSubjectRequest = duplicateSubject;
+
 export const updateSubjectCreditsRequest = updateSubjectCredits;
 export const getSubjectCreditsRequest = getSubjectCredits;
 export const listSubjectCreditsForProgramRequest = listSubjectCreditsForProgram;
@@ -121,6 +125,7 @@ export const createProgramRequest = createProgram;
 export const updateProgramRequest = updateProgram;
 export const updateProgramConfigurationRequest = updateProgramConfiguration;
 export const programHasSubjectHistoryRequest = programHasSubjectHistory;
+export const duplicateProgramRequest = duplicateProgram;
 
 export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;
