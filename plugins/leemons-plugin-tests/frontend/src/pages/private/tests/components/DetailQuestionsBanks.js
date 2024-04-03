@@ -12,6 +12,8 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   Select,
+  Modal,
+  Text,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon, OpenIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
@@ -33,11 +35,12 @@ export default function DetailQuestionsBanks({
   onNext,
   onPrev,
   onSave,
-  isNewQBankSelected,
   setIsNewQBankSelected,
 }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [isDirty, setIsDirty] = React.useState(false);
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [newQuestionBankId, setNewQuestionBankId] = React.useState(null);
   const [store, render] = useStore({
     loading: true,
     page: 0,
@@ -192,11 +195,14 @@ export default function DetailQuestionsBanks({
           onChange={(checked) => {
             if (checked) {
               if (questionBank && questionBank !== item.id) {
+                setNewQuestionBankId(item.id);
                 setIsNewQBankSelected(true);
+                setModalOpen(true);
+              } else {
+                form.setValue('questionBank', item.id);
+                form.setValue('filters', null);
+                form.setValue('questions', []);
               }
-              form.setValue('questionBank', item.id);
-              form.setValue('filters', null);
-              form.setValue('questions', []);
             }
           }}
         />
@@ -224,152 +230,184 @@ export default function DetailQuestionsBanks({
   }, [subjectsRaw, programs]);
 
   return (
-    <TotalLayoutStepContainer
-      stepName={stepName}
-      Footer={
-        <TotalLayoutFooterContainer
-          fixed
-          scrollRef={scrollRef}
-          leftZone={
-            <Button
-              variant="outline"
-              leftIcon={<ChevLeftIcon height={20} width={20} />}
-              onClick={onPrev}
-            >
-              {t('previous')}
-            </Button>
-          }
-          rightZone={
-            <>
-              {!formValues.published ? (
-                <Button
-                  variant="link"
-                  onClick={handleOnSave}
-                  disabled={store.saving}
-                  loading={store.saving === 'draft'}
-                >
-                  {t('saveDraft')}
-                </Button>
-              ) : null}
-
+    <>
+      <TotalLayoutStepContainer
+        stepName={stepName}
+        Footer={
+          <TotalLayoutFooterContainer
+            fixed
+            scrollRef={scrollRef}
+            leftZone={
               <Button
-                rightIcon={<ChevRightIcon height={20} width={20} />}
-                onClick={handleOnNext}
-                disabled={store.saving}
-                loading={store.saving === 'publish'}
+                variant="outline"
+                leftIcon={<ChevLeftIcon height={20} width={20} />}
+                onClick={onPrev}
               >
-                {t('next')}
+                {t('previous')}
               </Button>
-            </>
-          }
-        />
-      }
-    >
-      <Box>
-        <ContextContainer title={t('questionsBanksDescription')}>
-          <InputWrapper error={isDirty ? form.formState.errors.questionBank : null} />
-          <Stack
-            fullWidth
-            style={{
-              width: '100%',
-              display: 'flex',
-              gap: 16,
-              alignItems: 'end',
-            }}
-          >
-            <Box>
-              <Controller
-                control={form.control}
-                name="program"
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    cleanOnMissingValue
-                    defaultValue={programIdRaw}
-                    label={t('programLabel')}
-                    placeholder={t('programPlaceholder')}
-                    data={programs}
-                    disabled={!programs?.length || !!subjects?.length}
-                  />
-                )}
-              />
-            </Box>
-            {courses !== null && (
+            }
+            rightZone={
+              <>
+                {!formValues.published ? (
+                  <Button
+                    variant="link"
+                    onClick={handleOnSave}
+                    disabled={store.saving}
+                    loading={store.saving === 'draft'}
+                  >
+                    {t('saveDraft')}
+                  </Button>
+                ) : null}
+
+                <Button
+                  rightIcon={<ChevRightIcon height={20} width={20} />}
+                  onClick={handleOnNext}
+                  disabled={store.saving}
+                  loading={store.saving === 'publish'}
+                >
+                  {t('next')}
+                </Button>
+              </>
+            }
+          />
+        }
+      >
+        <Box>
+          <ContextContainer title={t('questionsBanksDescription')}>
+            <InputWrapper error={isDirty ? form.formState.errors.questionBank : null} />
+            <Stack
+              fullWidth
+              style={{
+                width: '100%',
+                display: 'flex',
+                gap: 16,
+                alignItems: 'end',
+              }}
+            >
               <Box>
                 <Controller
                   control={form.control}
-                  name="course"
-                  shouldUnregister
+                  name="program"
                   render={({ field }) => (
                     <Select
                       {...field}
                       cleanOnMissingValue
-                      defaultValue={courseIdRaw}
-                      label={t('courseLabel')}
+                      defaultValue={programIdRaw}
+                      label={t('programLabel')}
                       placeholder={t('programPlaceholder')}
-                      data={courses}
-                      disabled={!!subjects?.length}
+                      data={programs}
+                      disabled={!programs?.length || !!subjects?.length}
                     />
                   )}
                 />
               </Box>
-            )}
-            <Box>
-              <Controller
-                control={form.control}
-                name="subject"
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    cleanOnMissingValue
-                    defaultValue={idRaw}
-                    label={t('subjectLabel')}
-                    placeholder={t('programPlaceholder')}
-                    data={allSubjects}
-                    disabled={!!subjects?.length}
-                    onChange={(selected) => {
-                      setSelectedSubject(selected);
-                      field.onChange(selected);
-                    }}
+              {courses !== null && (
+                <Box>
+                  <Controller
+                    control={form.control}
+                    name="course"
+                    shouldUnregister
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        cleanOnMissingValue
+                        defaultValue={courseIdRaw}
+                        label={t('courseLabel')}
+                        placeholder={t('programPlaceholder')}
+                        data={courses}
+                        disabled={!!subjects?.length}
+                      />
+                    )}
                   />
-                )}
-              />
-            </Box>
-          </Stack>
-          {tableItems.length ? (
-            <>
-              <Box>
-                <Table columns={tableColumns} data={tableItems} />
-              </Box>
-              {store.pagination?.totalPages > 1 && (
-                <Stack fullWidth justifyContent="center">
-                  <Pager
-                    page={store.pagination?.page || 0}
-                    totalPages={store.pagination?.totalPages || 0}
-                    size={store.size}
-                    withSize={false}
-                    onChange={(val) => onPageChange(val - 1)}
-                    onSizeChange={onPageSizeChange}
-                    labels={{
-                      show: t('show'),
-                      goTo: t('goTo'),
-                    }}
-                  />
-                </Stack>
+                </Box>
               )}
-            </>
-          ) : (
-            <>
-              {!store.loading ? (
-                <Alert severity="error" closeable={false}>
-                  {t('noQuestionBanks')}
-                </Alert>
-              ) : null}
-            </>
-          )}
-        </ContextContainer>
-      </Box>
-    </TotalLayoutStepContainer>
+              <Box>
+                <Controller
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      cleanOnMissingValue
+                      defaultValue={idRaw}
+                      label={t('subjectLabel')}
+                      placeholder={t('programPlaceholder')}
+                      data={allSubjects}
+                      disabled={!!subjects?.length}
+                      onChange={(selected) => {
+                        setSelectedSubject(selected);
+                        field.onChange(selected);
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+            </Stack>
+            {tableItems.length ? (
+              <>
+                <Box>
+                  <Table columns={tableColumns} data={tableItems} />
+                </Box>
+                {store.pagination?.totalPages > 1 && (
+                  <Stack fullWidth justifyContent="center">
+                    <Pager
+                      page={store.pagination?.page || 0}
+                      totalPages={store.pagination?.totalPages || 0}
+                      size={store.size}
+                      withSize={false}
+                      onChange={(val) => onPageChange(val - 1)}
+                      onSizeChange={onPageSizeChange}
+                      labels={{
+                        show: t('show'),
+                        goTo: t('goTo'),
+                      }}
+                    />
+                  </Stack>
+                )}
+              </>
+            ) : (
+              <>
+                {!store.loading ? (
+                  <Alert severity="error" closeable={false}>
+                    {t('noQuestionBanks')}
+                  </Alert>
+                ) : null}
+              </>
+            )}
+          </ContextContainer>
+        </Box>
+      </TotalLayoutStepContainer>
+      <>
+        <Modal
+          opened={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title={t('changeQBankTitle')}
+          size={'lg'}
+        >
+          <ContextContainer>
+            <Box>
+              <Text>{t('changeQBankDescription')}</Text>
+            </Box>
+            <Stack fullWidth justifyContent="end" spacing={5}>
+              <Button variant="link" onClick={() => setModalOpen(false)}>
+                {t('changeQBankCancel')}
+              </Button>
+
+              <Button
+                onClick={() => {
+                  form.setValue('questionBank', newQuestionBankId);
+                  form.setValue('filters', null);
+                  form.setValue('questions', []);
+                  setModalOpen(false);
+                }}
+              >
+                {t('changeQBankConfirm')}
+              </Button>
+            </Stack>
+          </ContextContainer>
+        </Modal>
+      </>
+    </>
   );
 }
 
@@ -381,4 +419,5 @@ DetailQuestionsBanks.propTypes = {
   onSave: PropTypes.func,
   scrollRef: PropTypes.any,
   stepName: PropTypes.string,
+  setIsNewQBankSelected: PropTypes.func,
 };

@@ -11,13 +11,13 @@ const ManualQuestionsGenerator = ({
   manualQuestions,
   setManualQuestions,
   assignmentMode,
-  assignmentQuestions,
+  assignmentQuestions = [],
 }) => {
   const [allQuestions, setAllQuestions] = useState([]);
   const formValues = form.watch();
 
   useEffect(() => {
-    setAllQuestions(questionBank.questions ?? assignmentQuestions);
+    setAllQuestions(assignmentQuestions.length > 0 ? assignmentQuestions : questionBank.questions);
     if (formValues?.config?.manualQuestions?.length > 0) {
       setManualQuestions(
         assignmentMode
