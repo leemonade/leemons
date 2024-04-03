@@ -21,7 +21,9 @@ function handleNonSequentialCourses({ groups, knowledgeAreas, subjects, classes 
     const groupedSubjectIds = tree.flatMap((group) => group.children.map((subject) => subject.id));
     const ungroupedSubjects = subjects.filter((subject) => !groupedSubjectIds.includes(subject.id));
     tree.push(...ungroupedSubjects.map(({ id, name }) => ({ id, name, type: 'subject' })));
-  } else if (knowledgeAreas.length > 0) {
+    return tree;
+  }
+  if (knowledgeAreas.length > 0) {
     tree = knowledgeAreas.map((knowledgeArea) => ({
       name: knowledgeArea.name,
       abbreviation: knowledgeArea.abbreviation,
@@ -35,8 +37,11 @@ function handleNonSequentialCourses({ groups, knowledgeAreas, subjects, classes 
         )
         .map(({ id, name }) => ({ id, name, type: 'subject' })),
     }));
+    return tree;
   }
-  return tree;
+
+  // Cases when no knowledge areas or groups are used
+  return [...subjects.map(({ id, name }) => ({ id, name, type: 'subject' }))];
 }
 
 function handleSequentialAndSingleCourses({
@@ -93,6 +98,13 @@ function handleSequentialAndSingleCourses({
               .map(({ id, name }) => ({ id, name, type: 'subject' })),
           };
         });
+
+        // For classes with no group (within programs that use reference gorups), list them directly under the course
+        const noGroupClasses = courseClasses.filter((cls) => !cls.groups);
+        const noGroupSubjectIds = noGroupClasses.map((cls) => cls.subject.id);
+        course.noGroupSubjects = subjects
+          .filter((subject) => noGroupSubjectIds.includes(subject.id))
+          .map(({ id, name }) => ({ id, name, type: 'subject' }));
       } else if (courseKnowledgeAreas.length > 0) {
         course.children = courseKnowledgeAreas.map((knowledgeArea) => {
           const knowledgeAreaClasses = courseClasses.filter(
@@ -109,14 +121,9 @@ function handleSequentialAndSingleCourses({
               .map(({ id, name }) => ({ id, name, type: 'subject' })),
           };
         });
+      } else {
+        course.children = subjects.map(({ id, name }) => ({ id, name, type: 'subject' }));
       }
-
-      // For classes with no group (within programs that use reference gorups), list them directly under the course
-      const noGroupClasses = courseClasses.filter((cls) => !cls.groups);
-      const noGroupSubjectIds = noGroupClasses.map((cls) => cls.subject.id);
-      course.noGroupSubjects = subjects
-        .filter((subject) => noGroupSubjectIds.includes(subject.id))
-        .map(({ id, name }) => ({ id, name, type: 'subject' }));
     });
   });
 

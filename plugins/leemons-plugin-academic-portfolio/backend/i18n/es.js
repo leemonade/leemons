@@ -473,7 +473,7 @@ module.exports = {
       classrooms: 'Aulas',
       courses: 'Cursos',
       course: 'Curso',
-      type: 'tipo',
+      type: 'Tipo',
       substages: 'Subetapas',
       noSubstages: 'Curso completo',
       actions: 'Acciones',

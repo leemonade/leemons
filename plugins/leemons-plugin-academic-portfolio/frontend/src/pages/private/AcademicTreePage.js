@@ -21,6 +21,7 @@ import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 
 const AcademicTreePage = () => {
   const [selectedCenter, setSelectedCenter] = useState('');
@@ -51,6 +52,13 @@ const AcademicTreePage = () => {
     }
     return [];
   }, [centerProgramsQuery]);
+
+  const { data: academicTreeQuery, isLoading: isAcademicTreeLoading } = useProgramAcademicTree({
+    programId: selectedProgram,
+    options: { enabled: selectedProgram?.length > 0 },
+  });
+
+  console.log('academicTreeQuery', academicTreeQuery);
 
   return (
     <TotalLayoutContainer
@@ -107,6 +115,7 @@ const AcademicTreePage = () => {
         >
           <div>
             <h3>DATA FROM BACKEND ⬇️⬇️</h3>
+            <p>{JSON.stringify(academicTreeQuery)}</p>
           </div>
         </TotalLayoutStepContainer>
       </Stack>

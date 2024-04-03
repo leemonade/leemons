@@ -23,6 +23,7 @@ import {
   updateProgramConfiguration,
   programHasSubjectHistory,
   duplicateProgram,
+  getProgramAcademicTree,
 } from './programs';
 import { updateCycle } from './cycles';
 import {
@@ -126,6 +127,7 @@ export const updateProgramRequest = updateProgram;
 export const updateProgramConfigurationRequest = updateProgramConfiguration;
 export const programHasSubjectHistoryRequest = programHasSubjectHistory;
 export const duplicateProgramRequest = duplicateProgram;
+export const getProgramAcademicTreeRequest = getProgramAcademicTree;
 
 export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;
