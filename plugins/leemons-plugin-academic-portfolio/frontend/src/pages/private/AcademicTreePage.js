@@ -54,6 +54,13 @@ const AcademicTreePage = () => {
     return [];
   }, [centerProgramsQuery]);
 
+  const { data: academicTreeQuery, isLoading: isAcademicTreeLoading } = useProgramAcademicTree({
+    programId: selectedProgram,
+    options: { enabled: selectedProgram?.length > 0 },
+  });
+
+  console.log('academicTreeQuery', academicTreeQuery);
+
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}

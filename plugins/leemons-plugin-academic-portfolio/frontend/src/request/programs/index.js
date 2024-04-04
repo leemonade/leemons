@@ -8,6 +8,13 @@ async function getProgramTree(programId) {
   });
 }
 
+async function getProgramAcademicTree({ programId }) {
+  return leemons.api(`v1/academic-portfolio/programs/${programId}/academic-tree`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function listPrograms({ page, size, center, onlyArchived }) {
   const queryParams = new URLSearchParams({
     page,
@@ -176,4 +183,5 @@ export {
   updateProgramConfiguration,
   programHasSubjectHistory,
   duplicateProgram,
+  getProgramAcademicTree,
 };
