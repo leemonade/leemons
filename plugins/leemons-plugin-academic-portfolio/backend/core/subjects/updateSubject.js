@@ -81,7 +81,6 @@ async function updateSubject({ data, ctx }) {
   await validateUpdateSubject({ data, ctx });
   let {
     id,
-    course,
     credits,
     internalId,
     subjectType,
@@ -168,8 +167,7 @@ async function updateSubject({ data, ctx }) {
     )
   );
 
-  //* OLD - Para evitar la validación de estudiantes matriculados previamente. Un cambio de curso(s) implicará la eliminación
-  //* del aula o aulas existentes y la creación de una o varias nuevas.
+  //* OLD
   // if (!course) {
   //   const programCourses = await getProgramCourses({ ids: subject.program, ctx });
   //   course = programCourses[0].id;

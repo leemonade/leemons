@@ -14,7 +14,11 @@ function handleNonSequentialCourses({ groups, knowledgeAreas, subjects, classes 
         .filter((subject) =>
           classes.some((cls) => cls.groups?.id === group.id && cls.subject.id === subject.id)
         )
-        .map(({ id, name }) => ({ id, name, type: 'subject' })),
+        .map(({ id, name }) => ({
+          id,
+          name,
+          type: 'subject',
+        })),
     }));
 
     // Subjects with no group are shown at root level

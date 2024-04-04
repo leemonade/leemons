@@ -23,7 +23,9 @@ const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { add: addCourse } = require('./course/add');
-const { addComunicaRoomsBetweenStudentsAndTeachers } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
+const {
+  addComunicaRoomsBetweenStudentsAndTeachers,
+} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
@@ -104,11 +106,6 @@ async function updateClass({ data, ctx }) {
     _.forEach(substages, (sub) => {
       promises.push(addSubstage({ class: nClass.id, substage: sub, ctx }));
     });
-  }
-
-  if (!course) {
-    const programCourses = await getProgramCourses({ ids: nClass.program, ctx });
-    course = programCourses[0].id;
   }
 
   if (_.isNull(course) || course) {

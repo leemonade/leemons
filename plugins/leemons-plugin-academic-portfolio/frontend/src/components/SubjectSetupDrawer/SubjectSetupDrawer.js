@@ -69,8 +69,19 @@ const SubjectSetupDrawer = ({
             (field) => classroom[field] !== originalClass[field]
           ) || classroom.referenceGroup?.split('::')[1] !== originalClass.groups?.id;
 
-        if (hasChanges) {
-          classesToUpdate.push(classroom);
+        let originalCourses = subject.classes?.find((c) => c.id === classroom.id)?.courses;
+        if (!isArray(originalCourses)) originalCourses = [originalCourses];
+        originalCourses = originalCourses.map((course) => course.id);
+        const coursesHaveChanged =
+          JSON.stringify(originalCourses.sort()) !== JSON.stringify(courses.sort());
+
+        console.log('courses', courses);
+        console.log('originalCourses', originalCourses);
+        console.log('coursesHaveChanged', coursesHaveChanged);
+        if (hasChanges || coursesHaveChanged) {
+          const updateClassroom = { ...classroom };
+          if (coursesHaveChanged) updateClassroom.course = courses;
+          classesToUpdate.push(updateClassroom);
         }
       } else {
         classesToCreate.push(classroom);
@@ -107,13 +118,14 @@ const SubjectSetupDrawer = ({
 
   const handleClassesUpdate = async (_classesToUpdate) => {
     const classesToUpdate = _classesToUpdate.map(
-      ({ seats, classroomId, referenceGroup, alias, id, substage }) => {
+      ({ seats, classroomId, referenceGroup, alias, id, substage, course }) => {
         const classBody = {
           id,
           group: referenceGroup ? referenceGroup.split('::')[1] : null,
           seats,
           alias: referenceGroup ? null : alias,
           classroomId: classroomId ?? null,
+          course,
         };
         if (substage) classBody.substage = substage;
         return classBody;
