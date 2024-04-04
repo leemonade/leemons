@@ -17,6 +17,8 @@ const {
   deleteTest,
   save,
   getAssignSavedConfigs,
+  updateAssignSavedConfig,
+  deleteAssignSavedConfig,
   assign,
   duplicate,
   getFeedback,
@@ -167,6 +169,60 @@ module.exports = {
         ctx,
       });
       return { status: 200, configs };
+    },
+  },
+  updateAssignConfigRest: {
+    rest: {
+      method: 'PUT',
+      path: '/assign/configs/:id',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'tests.tests': {
+            actions: ['admin', 'create', 'update'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { name, config, id } = ctx.params;
+
+      await updateAssignSavedConfig({
+        name,
+        config,
+        id,
+        ctx,
+      });
+
+      return { status: 200, updated: true };
+    },
+  },
+  deleteAssignConfigRest: {
+    rest: {
+      method: 'DELETE',
+      path: '/assign/configs/:id',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'tests.tests': {
+            actions: ['admin', 'create', 'update'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { id } = ctx.params;
+
+      await deleteAssignSavedConfig({
+        id,
+        ctx,
+      });
+
+      return { status: 200, deleted: true };
     },
   },
   assignTestRest: {
