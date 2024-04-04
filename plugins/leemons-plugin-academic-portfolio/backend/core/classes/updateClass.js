@@ -2,9 +2,6 @@ const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const { isArray, map } = require('lodash');
 const { validateUpdateClass } = require('../../validations/forms');
-const { existKnowledgeInProgram } = require('../knowledges/existKnowledgeInProgram');
-const { add: addKnowledge } = require('./knowledge/add');
-const { removeByClass: removeKnowledgeByClass } = require('./knowledge/removeByClass');
 const { existSubstageInProgram } = require('../substages/existSubstageInProgram');
 const { add: addSubstage } = require('./substage/add');
 const { removeByClass: removeSubstageByClass } = require('./substage/removeByClass');
@@ -17,11 +14,9 @@ const { add: addTeacher } = require('./teacher/add');
 const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClass');
 const { classByIds } = require('./classByIds');
 const { processScheduleForClass } = require('./processScheduleForClass');
-const { changeBySubject } = require('./knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getClassesProgramInfo } = require('./listSessionClasses');
-const { getProgramCourses } = require('../programs/getProgramCourses');
 const { add: addCourse } = require('./course/add');
 const {
   addComunicaRoomsBetweenStudentsAndTeachers,
@@ -38,19 +33,7 @@ async function updateClass({ data, ctx }) {
     .select(['id', 'name', 'useOneStudentGroup'])
     .lean();
 
-  // if (program.useOneStudentGroup) {
-  //   const group = await ctx.tx.db.Groups.findOne({
-  //     isAlone: true,
-  //     type: 'group',
-  //     program: program.id,
-  //   })
-  //     .select('column')
-  //     .lean();
-  //   goodGroup = group.id;
-  // }
-
-  // eslint-disable-next-line prefer-const
-  let { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } = data;
+  const { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } = data;
 
   if (!goodGroup && group) {
     goodGroup = group;

@@ -75,9 +75,6 @@ const SubjectSetupDrawer = ({
         const coursesHaveChanged =
           JSON.stringify(originalCourses.sort()) !== JSON.stringify(courses.sort());
 
-        console.log('courses', courses);
-        console.log('originalCourses', originalCourses);
-        console.log('coursesHaveChanged', coursesHaveChanged);
         if (hasChanges || coursesHaveChanged) {
           const updateClassroom = { ...classroom };
           if (coursesHaveChanged) updateClassroom.course = courses;
@@ -235,7 +232,6 @@ const SubjectSetupDrawer = ({
       });
     }
     const classesChanges = isEditing ? getClassChanges(classrooms, courseArray) : {};
-    console.log('classesChanges', classesChanges);
 
     try {
       const mutationFunction = isEditing ? updateSubjectAsync : createSubjectAsync;
@@ -276,7 +272,7 @@ const SubjectSetupDrawer = ({
       const programSubjectsHistoryQueryKey = getHasProgramSubjectHistoryKey(programId);
       queryClient.invalidateQueries(programSubjectsHistoryQueryKey);
     } catch (error) {
-      console.log('error', error);
+      console.error('error', error);
       addErrorAlert(
         !isEditing ? localizations?.alerts.failure.add : localizations?.alerts.failure.update
       );
