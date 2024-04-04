@@ -16,11 +16,13 @@ import {
   ContextContainer,
   Button,
   ImageLoader,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import { GroupView } from './components/TreeRightZone/GroupView/GroupView';
 
 const AcademicTreePage = () => {
   const [selectedCenter, setSelectedCenter] = useState('');
@@ -95,21 +97,27 @@ const AcademicTreePage = () => {
         </TotalLayoutHeader>
       }
     >
-      <Stack
-        ref={scrollRef}
-        justifyContent="center"
-        fullwidth
-        sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', paddingTop: 24 }}
+      <VerticalStepperContainer
+        // currentStep={store.currentStep}
+        // data={steps}
+        // onChangeActiveIndex={setStep}
+        scrollRef={scrollRef}
       >
-        <TotalLayoutStepContainer
-          stepName={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name}
-          clean
+        <Stack
+          ref={scrollRef}
+          justifyContent="center"
+          fullwidth
+          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', paddingTop: 24 }}
         >
-          <div>
-            <h3>DATA FROM BACKEND ⬇️⬇️</h3>
-          </div>
-        </TotalLayoutStepContainer>
-      </Stack>
+          <TotalLayoutStepContainer
+            // stepName={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name}
+            // clean
+            stepName="DATA FROM BACKEND" // this will change on every tree item selected
+          >
+            <GroupView />
+          </TotalLayoutStepContainer>
+        </Stack>
+      </VerticalStepperContainer>
     </TotalLayoutContainer>
   );
 };
