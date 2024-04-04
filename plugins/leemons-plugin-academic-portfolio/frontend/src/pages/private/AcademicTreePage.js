@@ -23,9 +23,69 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 
+const TreeView = ({ data, onSubjectClick, level = 0 }) => {
+  // Function to determine if an item should be sorted
+  const shouldSortItem = (item) => item.type === 'cycles' || item.type === 'course';
+
+  // Sort data if the items are of type 'cycles' or 'course' by their 'index'
+  const sortedData = data.sort((a, b) => {
+    // If both items should be sorted, compare their indexes
+    if (shouldSortItem(a) && shouldSortItem(b)) {
+      return a.index - b.index;
+    }
+    // Keep items in their original order if they don't need to be sorted
+    return 0;
+  });
+
+  // Function to format the display name based on the item type and properties
+  const formatDisplayName = (item) => {
+    if (item.type === 'cycles' || item.type === 'course') {
+      return item.type === 'course'
+        ? `${item.type} ${item.index}`
+        : `${item.type} ${item.index} ${item.name || ''}`;
+    }
+    return item.name;
+  };
+
+  const handleClick = (item) => {
+    if (item.type === 'subject' && onSubjectClick) {
+      onSubjectClick(item);
+    }
+  };
+
+  const marginLeft = level * 10;
+
+  return (
+    <ul style={{ marginLeft: `${marginLeft}px` }}>
+      {sortedData.map((item) => (
+        <li
+          key={item.id}
+          onClick={() => handleClick(item)}
+          style={{ cursor: item.type === 'subject' ? 'pointer' : 'default' }}
+        >
+          {formatDisplayName(item)}
+          {/* If the item has children, recursively render them with increased level */}
+          {item.children && (
+            <TreeView data={item.children} onSubjectClick={onSubjectClick} level={level + 1} />
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const SubjectScreen = ({ subject }) => {
+  return (
+    <Stack>
+      <Title></Title>
+    </Stack>
+  );
+};
+
 const AcademicTreePage = () => {
   const [selectedCenter, setSelectedCenter] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
   const scrollRef = useRef();
   const history = useHistory();
@@ -57,6 +117,14 @@ const AcademicTreePage = () => {
     programId: selectedProgram,
     options: { enabled: selectedProgram?.length > 0 },
   });
+
+  const handleSubjectClick = (item) => {
+    console.log('Subject clicked:', item);
+    // Add your logic here
+    setSelectedItem(item);
+  };
+
+  const screenToRender = useMemo(() => {}, []);
 
   console.log('academicTreeQuery', academicTreeQuery);
 
@@ -112,11 +180,15 @@ const AcademicTreePage = () => {
         <TotalLayoutStepContainer
           stepName={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name}
           clean
+          fullWidth
         >
-          <div>
-            <h3>DATA FROM BACKEND ⬇️⬇️</h3>
-            <p>{JSON.stringify(academicTreeQuery)}</p>
-          </div>
+          <Stack spacing={8}>
+            <div>
+              {/* Your existing layout code... */}
+              <TreeView data={academicTreeQuery} onSubjectClick={handleSubjectClick} />
+            </div>
+            <Stack></Stack>
+          </Stack>
         </TotalLayoutStepContainer>
       </Stack>
     </TotalLayoutContainer>
