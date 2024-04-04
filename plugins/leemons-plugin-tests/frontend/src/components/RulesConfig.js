@@ -71,7 +71,17 @@ const RulesConfigStyles = createStyles((theme) => ({
   },
 }));
 
-const RulesConfig = ({ t, loading, configs = [], onSave, onPrevStep, onSend, hideButtons }) => {
+const RulesConfig = ({
+  t,
+  loading,
+  configs = [],
+  onSave,
+  onPrevStep,
+  onSend,
+  hideButtons,
+  onDeleteConfig,
+  onUpdateConfig,
+}) => {
   const { classes } = RulesConfigStyles();
   const [hasTextClue, setHasTextClue] = React.useState(false);
   const [hasHideShowClue, setHasHideShowClue] = React.useState(false);
@@ -85,12 +95,11 @@ const RulesConfig = ({ t, loading, configs = [], onSave, onPrevStep, onSend, hid
   const form = useForm({ defaultValues });
 
   const settingsAsPreset = form.watch('settingsAsPreset');
-  const newOrExistingConfig = form.watch('newOrExistingConfig');
+  const settings = form.watch('settings');
   const useAdvancedSettings = form.watch('useAdvancedSettings');
   const canOmitQuestions = form.watch('canOmitQuestions');
   const allowClues = form.watch('allowClues');
   const clues = form.watch('clues');
-
   const advancedConfigOptions = React.useMemo(
     () => [
       {
@@ -105,6 +114,22 @@ const RulesConfig = ({ t, loading, configs = [], onSave, onPrevStep, onSend, hid
     ],
     [t, configs]
   );
+
+  React.useEffect(() => {
+    if (settings === 'new') {
+      setSelectedConfig(null);
+    }
+  }, [settings]);
+
+  React.useEffect(() => {
+    if (!configs.length) {
+      form.setValue('settings', 'new');
+    } else if (!configs.some((configElem) => configElem.id === selectedConfig)) {
+      setSelectedConfig(null);
+      form.setValue('configSelected', null);
+    }
+  }, [configs]);
+
   if (!clues) {
     return null;
   }
@@ -124,9 +149,18 @@ const RulesConfig = ({ t, loading, configs = [], onSave, onPrevStep, onSend, hid
       form.setValue('clues', _clues);
       form.setValue('omit', _omit);
       form.setValue('wrong', _wrong);
+      form.setValue('configSelected', e);
     }
     setSelectedConfig(e);
   };
+  const handleDeleteConfig = (id) => {
+    onDeleteConfig(id);
+    // setSelectedConfig(null);
+  };
+  const handleUpdateConfig = () => {
+    onUpdateConfig(selectedConfig);
+  };
+
   return (
     <TotalLayoutStepContainer
       fullWidth={false}
@@ -197,12 +231,12 @@ const RulesConfig = ({ t, loading, configs = [], onSave, onPrevStep, onSend, hid
               <Box className={classes.radioGroupContainer}>
                 <Controller
                   control={form.control}
-                  name="newOrExistingConfig"
+                  name="settings"
                   shouldUnregister
                   render={({ field }) => <RadioGroup data={advancedConfigOptions} {...field} />}
                 />
               </Box>
-              {newOrExistingConfig === 'new' ? (
+              {settings === 'new' ? (
                 <>
                   <Box className={classes.advancedInputs}>
                     <Controller
@@ -365,19 +399,23 @@ const RulesConfig = ({ t, loading, configs = [], onSave, onPrevStep, onSend, hid
                   </InputWrapper>
                 </>
               ) : null}
-              {newOrExistingConfig === 'existing' ? (
+              {settings === 'existing' ? (
                 <ContextContainer>
                   <Box className={classes.advancedInputs}>
                     <Controller
                       control={form.control}
-                      name="settings"
+                      name="configSelected"
                       shouldUnregister
                       render={({ field }) => (
                         <Select
                           data={[
-                            ...map(configs, (config) => ({ value: config.id, label: config.name })),
+                            ...map(configs, (config) => ({
+                              value: config.id,
+                              label: config.name,
+                            })),
                           ]}
                           label={t('configs')}
+                          // defaultValue={field.value}
                           {...field}
                           onChange={(e) => {
                             handleConfigChange(e);
@@ -529,22 +567,23 @@ const RulesConfig = ({ t, loading, configs = [], onSave, onPrevStep, onSend, hid
                             )}
                           </Box>
                         </Box>
-                        <Box className={classes.buttons}>
-                          <Button
-                            variant="link"
-                            leftIcon={<DeleteBinIcon width={20} height={20} />}
-                          >
-                            {t('delete')}
-                          </Button>
-                          <Button
-                            variant="link"
-                            leftIcon={<SynchronizeArrowsIcon width={20} height={20} />}
-                          >
-                            {t('update')}
-                          </Button>
-                        </Box>
                       </>
                     ) : null}
+                    <Box className={classes.buttons}>
+                      <Button
+                        variant="link"
+                        leftIcon={<DeleteBinIcon width={20} height={20} />}
+                        onClick={() => handleDeleteConfig(selectedConfig)}
+                      >
+                        {t('delete')}
+                      </Button>
+                      <Button
+                        variant="link"
+                        leftIcon={<SynchronizeArrowsIcon width={20} height={20} />}
+                      >
+                        {t('update')}
+                      </Button>
+                    </Box>
                   </InputWrapper>
                 </>
               )}
@@ -564,6 +603,8 @@ RulesConfig.propTypes = {
   onPrevStep: propTypes.func.isRequired,
   onSend: propTypes.func.isRequired,
   hideButtons: propTypes.bool,
+  onDeleteConfig: propTypes.func,
+  onUpdateConfig: propTypes.func,
 };
 
 export { RulesConfig };

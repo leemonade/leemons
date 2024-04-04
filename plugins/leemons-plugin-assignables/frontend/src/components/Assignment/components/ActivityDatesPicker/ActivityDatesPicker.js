@@ -65,10 +65,10 @@ export function ActivityDatesPicker({
         value: 'fixed',
         label: localizations?.optionsInput?.options?.fixed,
       },
-      {
-        value: 'session',
-        label: localizations?.optionsInput?.options?.session,
-      },
+      // {
+      //   value: 'session',
+      //   label: localizations?.optionsInput?.options?.session,
+      // },
     ],
     [localizations?.optionsInput?.options]
   );

@@ -9,7 +9,13 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import Form from '@assignables/components/Assignment/Form';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
 import { RulesConfig } from '@tests/components/RulesConfig';
-import { assignTestRequest, getAssignConfigsRequest, getTestRequest } from '../../../request';
+import {
+  assignTestRequest,
+  deleteAssignedConfigRequest,
+  getAssignConfigsRequest,
+  getTestRequest,
+  updateAssignedConfigRequest,
+} from '../../../request';
 import AssignConfig from '../../../components/AssignConfig';
 
 export default function Assign() {
@@ -87,6 +93,24 @@ export default function Assign() {
     render();
   }
 
+  async function handleDeleteAssignmentConfig(id) {
+    try {
+      await deleteAssignedConfigRequest(id);
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+    const { configs } = await getAssignConfigsRequest();
+    store.configs = configs;
+    render();
+
+    // store.configs = store.configs.filter((c) => c.id !== id);
+    // render();
+  }
+
+  async function handleUpdateAssignmentConfig(id, name, config) {
+    await updateAssignedConfigRequest({ id, name, config });
+  }
+
   React.useEffect(() => {
     if (params?.id && (!store.test || store.test.id !== params.id)) init();
   }, [params]);
@@ -126,6 +150,8 @@ export default function Assign() {
       <RulesConfig
         stepName={t('rules')}
         defaultValues={store.data.metadata}
+        onDeleteConfig={handleDeleteAssignmentConfig}
+        onUpdateConfig={handleUpdateAssignmentConfig}
         test={store.test}
         assignable={store.assignable}
         data={store.rawData}
