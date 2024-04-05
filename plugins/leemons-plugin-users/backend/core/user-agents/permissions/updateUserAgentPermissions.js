@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { existUserAgent } = require('../existUserAgent');
+const { permissionsNamespace } = require('../../../helpers/cacheKeys');
 
 async function _updateUserAgentPermissions({ userAgentId, ctx }) {
   await existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: true, ctx });
@@ -82,7 +83,13 @@ async function updateUserAgentPermissions({ userAgentIds, ctx }) {
     }
     await Promise.all(
       _.map(userAgentIds, (_userAgent) =>
-        ctx.cache.deleteByPrefix(`users:permissions:${_userAgent?.id ?? _userAgent}`)
+        ctx.cache.deleteByNamespace(
+          permissionsNamespace,
+          (key) =>
+            key.startsWith(
+              `${permissionsNamespace}:${ctx.meta.deploymentID}:${_userAgent?.id ?? _userAgent}`
+            ) ?? true
+        )
       )
     );
     return results;

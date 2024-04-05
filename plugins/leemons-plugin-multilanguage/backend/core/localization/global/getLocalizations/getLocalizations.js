@@ -4,6 +4,7 @@ const { LeemonsValidator } = require('@leemons/validator');
 const { getLocalizations: getCommonLocalizations } = require('../../common/getLocalizations');
 const { getLocalizationsByKeys } = require('./getLocalizationsByKeys');
 const { getLocalizationsByKeysStartsWith } = require('./getLocalizationsByKeysStartsWith');
+const { getGlobalCacheKey } = require('../../../../helpers/cacheKeys');
 
 /**
  * Retrieves localizations based on provided keys or key patterns and locale.
@@ -100,7 +101,7 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
   const promises = [];
 
   if (keys) {
-    const cacheKey = `localizations.global-${JSON.stringify({ service: 'global', keys, locale })}`;
+    const cacheKey = getGlobalCacheKey({ ctx, locale, keys });
 
     const cacheResult = await ctx.cache.get(cacheKey);
 
@@ -117,11 +118,7 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
   }
 
   if (keysStartsWith) {
-    const cacheKey = `localizations.global-${JSON.stringify({
-      service: 'global',
-      keysStartsWith,
-      locale,
-    })}`;
+    const cacheKey = getGlobalCacheKey({ ctx, locale, keysStartsWith });
 
     const cacheResult = await ctx.cache.get(cacheKey);
 
