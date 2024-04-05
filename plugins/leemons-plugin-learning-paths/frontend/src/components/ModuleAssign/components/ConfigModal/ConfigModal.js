@@ -96,7 +96,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
       withOverlay
       opened={opened}
       onClose={onClose}
-      size={400}
+      size={680}
       contentPadding={0}
       close={false}
     >

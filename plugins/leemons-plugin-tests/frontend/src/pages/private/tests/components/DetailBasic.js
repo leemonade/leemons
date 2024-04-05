@@ -19,8 +19,8 @@ export default function DetailBasic({
   advancedConfig,
 }) {
   const formValues = form.watch();
-  const validate = async () => form.trigger(['name']);
 
+  const validate = async () => form.trigger(['name']);
   const handleOnNext = async () => {
     if (await validate()) {
       onNext();
@@ -59,7 +59,7 @@ export default function DetailBasic({
                 disabled={store.saving}
                 loading={store.saving === 'publish'}
               >
-                {t('continue')}
+                {t('next')}
               </Button>
             </>
           }

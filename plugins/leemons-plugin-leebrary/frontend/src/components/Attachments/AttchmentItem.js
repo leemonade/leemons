@@ -20,14 +20,12 @@ const AttachmentItem = React.forwardRef(
         }}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
-        sx={(theme) => ({
+        sx={() => ({
           display: 'flex',
           alignItems: 'center',
           width: 470,
           height: 60,
-          borderBottomWidth: 1,
-          borderBottomStyle: 'solid',
-          borderBottomColor: theme.other.table.border.color.default,
+          borderBottom: '1px solid #E0E0E0',
         })}
       >
         <Stack fullWidth fullHeight alignItems="center" justifyContent="center">

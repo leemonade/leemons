@@ -83,6 +83,24 @@ async function getAssignConfigs() {
   });
 }
 
+async function deleteAssignedConfig(id) {
+  return leemons.api(`v1/tests/tests/assign/configs/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
+async function updateAssignedConfig(id, name, config) {
+  return leemons.api(`v1/tests/tests/assign/configs/${id}`, {
+    allAgents: true,
+    method: 'PUT',
+    body: {
+      name,
+      config,
+    },
+  });
+}
+
 async function getFeedback(instance, user) {
   return leemons.api(`v1/tests/tests/instance/${instance}/feedback/${user}`, {
     allAgents: true,
@@ -123,6 +141,8 @@ export {
   getFeedback,
   setFeedback,
   getAssignConfigs,
+  deleteAssignedConfig,
+  updateAssignedConfig,
   setInstanceTimestamp,
   getUserQuestionResponses,
   setQuestionResponse,

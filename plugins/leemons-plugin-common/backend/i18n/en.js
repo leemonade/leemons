@@ -1,4 +1,9 @@
 module.exports = {
+  timeUnits: {
+    hours: 'hours',
+    minutes: 'minutes',
+    days: 'days',
+  },
   textEditor: {
     headingsTool: {
       label: 'Format',

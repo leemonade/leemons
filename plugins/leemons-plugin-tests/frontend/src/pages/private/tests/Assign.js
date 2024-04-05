@@ -5,11 +5,17 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-// TODO: import from @common plugin
 import Form from '@assignables/components/Assignment/Form';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { assignTestRequest, getAssignConfigsRequest, getTestRequest } from '../../../request';
+import { RulesConfig } from '@tests/components/RulesConfig';
+import {
+  assignTestRequest,
+  getAssignConfigsRequest,
+  getTestRequest,
+  deleteAssignedConfigRequest,
+  updateAssignedConfigRequest,
+} from '../../../request';
 import AssignConfig from '../../../components/AssignConfig';
 
 export default function Assign() {
@@ -83,6 +89,38 @@ export default function Assign() {
     render();
   }
 
+  function onNextStep() {
+    store.currentStep += 1;
+    render();
+  }
+
+  async function handleDeleteAssignmentConfig(id) {
+    try {
+      await deleteAssignedConfigRequest(id);
+      addSuccessAlert(t('deletedConfig'));
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+    const { configs } = await getAssignConfigsRequest();
+    store.configs = configs;
+    render();
+
+    // store.configs = store.configs.filter((c) => c.id !== id);
+    // render();
+  }
+
+  async function handleUpdateAssignmentConfig(id, name, config) {
+    try {
+      await updateAssignedConfigRequest(id, name, config);
+      addSuccessAlert(t('updatedConfig'));
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+    const { configs } = await getAssignConfigsRequest();
+    store.configs = configs;
+    render();
+  }
+
   React.useEffect(() => {
     if (params?.id && (!store.test || store.test.id !== params.id)) init();
   }, [params]);
@@ -100,9 +138,33 @@ export default function Assign() {
       onSubmit={handleAssignment}
     >
       <AssignConfig
-        stepName={t('config')}
+        stepName={t('questions')}
         defaultValues={store.data.metadata}
+        data={store.rawData}
         test={store.test}
+        assignable={store.assignable}
+        configs={store.configs}
+        loading={store.loading}
+        t={t}
+        onSave={(e) => {
+          store.data.metadata = {
+            ...store.data.metadata,
+            ...e,
+          };
+          render();
+        }}
+        onNextStep={() => {
+          onNextStep();
+        }}
+      />
+      <RulesConfig
+        stepName={t('rules')}
+        defaultValues={store.data.metadata}
+        onDeleteConfig={handleDeleteAssignmentConfig}
+        onUpdateConfig={handleUpdateAssignmentConfig}
+        test={store.test}
+        assignable={store.assignable}
+        data={store.rawData}
         configs={store.configs}
         loading={store.loading}
         t={t}

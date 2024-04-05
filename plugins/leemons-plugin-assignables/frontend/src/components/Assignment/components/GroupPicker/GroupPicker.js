@@ -64,7 +64,7 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
     !groupedClassesWithSelectedSubjects?.assignableStudents?.length
   ) {
     return (
-      <Container title={localizations?.title}>
+      <Container>
         <Box className={classes.inline}>
           <Alert severity="error" closeable={false}>
             {localizations?.noStudentsError}
@@ -75,14 +75,14 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
   }
 
   return (
-    <Container title={localizations?.title} hideSectionHeaders={hideSectionHeaders}>
+    <Container>
       <Box className={classes.root}>
         <Controller
           name="type"
           control={control}
           render={({ field }) => (
             <Box className={classes.classSelector}>
-              <Select {...field} data={optionsData} />
+              <Select {...field} data={optionsData} label={localizations?.classSelectLabel} />
             </Box>
           )}
         />

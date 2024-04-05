@@ -23,7 +23,7 @@ const AssetMetadataContentCreatorStyles = createStyles((theme) => ({
   },
   h1Header: {
     display: 'block',
-    padding: `${pxToRem(4)} 0px}`,
+    padding: `${pxToRem(4)} 0px ${pxToRem(2)} 0px}`,
   },
   openIcon: {
     position: 'absolute',

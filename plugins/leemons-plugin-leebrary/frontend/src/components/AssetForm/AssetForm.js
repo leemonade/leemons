@@ -474,10 +474,13 @@ const AssetForm = ({
                     value={map(field.value || [], (subject) =>
                       isString(subject) ? subject : subject?.subject
                     )}
-                    onChangeRaw={(e) => {
-                      setAssetColorToSubjectColor(e);
-                      if (e.length > 0) {
-                        if (!program) setValue('program', e[0].programId);
+                    onChangeRaw={(subjectsRaw) => {
+                      setAssetColorToSubjectColor(subjectsRaw);
+                      if (subjectsRaw.length > 0) {
+                        setValue('subjectsRaw', subjectsRaw);
+                        if (subjectsRaw[0].programId !== program) {
+                          setValue('program', subjectsRaw[0].programId);
+                        }
                       } else if (program) setValue('program', null);
                     }}
                     error={error}

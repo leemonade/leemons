@@ -30,6 +30,7 @@ module.exports = {
       },
       noStudentsError:
         'No student was found for the selected subjects. Add or remove subjects to continue.',
+      classSelectLabel: 'Class selection type',
       class: {
         studentsCount: 'matching students',
         autoAssignStudents: 'Auto-assign new students',

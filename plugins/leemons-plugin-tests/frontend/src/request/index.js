@@ -17,6 +17,8 @@ export {
   getFeedback as getFeedbackRequest,
   setFeedback as setFeedbackRequest,
   getAssignConfigs as getAssignConfigsRequest,
+  deleteAssignedConfig as deleteAssignedConfigRequest,
+  updateAssignedConfig as updateAssignedConfigRequest,
   duplicate as duplicateRequest,
 } from './tests';
 

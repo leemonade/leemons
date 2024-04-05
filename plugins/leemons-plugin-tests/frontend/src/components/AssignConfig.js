@@ -1,30 +1,69 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Alert,
   Box,
   Button,
-  Checkbox,
-  COLORS,
   ContextContainer,
   InputWrapper,
-  MultiSelect,
-  NumberInput,
-  Paper,
-  Select,
-  Stack,
   Switch,
-  TableInput,
-  Text,
-  TextInput,
+  Chip,
   Title,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
+  createStyles,
+  RadioGroup,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { filter, forEach, includes, isArray, isFunction, map, omit } from 'lodash';
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { isArray, isFunction, map, omit } from 'lodash';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@tests/helpers/prefixPN';
+import { RandomQuestionsGenerator } from '@tests/pages/private/tests/components/RandomQuestionsGenerator';
+import QuestionsTable from '@tests/pages/private/tests/components/QuestionsTable';
+import { FilteredQuestionsGenerator } from '@tests/pages/private/tests/components/FilteredQuestionsGenerator';
+import { ManualQuestionsGenerator } from '@tests/pages/private/tests/components/ManualQuestionsGenerator';
+
+const AssignConfigStyles = createStyles((theme, { isDrawer }) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: theme.other.global.spacing.gap.xlg, // 24
+    zIndex: 0,
+    paddingBottom: 10,
+    maxWidth: isDrawer ? '660px' : '100%',
+  },
+
+  totalQuestions: {
+    width: 'fit-content',
+  },
+  listElements: {
+    listStyleType: 'disc',
+    marginLeft: theme.spacing.md,
+    paddingTop: 12,
+  },
+  radioGroupContainer: {
+    marginLeft: 24,
+  },
+  counterContainer: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    gap: 8,
+  },
+  selectedCounter: {
+    color: theme.other.chip.content.color.default,
+    backgroundColor: theme.other.core.color.neutral['100'],
+    borderRadius: 4,
+    display: 'block',
+    width: 'fit-content',
+    padding: 10,
+    ...theme.other.global.content.typo.heading.xsm,
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  advancedInputs: {
+    width: 'fit-content',
+  },
+}));
 
 function useOnChange({ onChange, control }) {
   const formValues = useWatch({
@@ -54,12 +93,12 @@ export default function AssignConfig({
   test,
   t,
   loading,
-  configs = [],
   onSave,
   onPrevStep,
-  onSend,
   onChange,
   hideButtons,
+  onNextStep,
+  isDrawer,
 }) {
   let defaultValues = {
     clues: [
@@ -75,108 +114,65 @@ export default function AssignConfig({
       defaultValues.questions = dv.questions;
     }
   }
-
+  const [t2] = useTranslateLoader(prefixPN('testsEdit'));
+  const [radioSelection, setRadioSelection] = React.useState(null);
+  const [randomQuestions, setRandomQuestions] = React.useState([]);
+  const [filteredQuestions, setFilteredQuestions] = React.useState([]);
+  const [manualQuestions, setManualQuestions] = React.useState([]);
+  const { classes } = AssignConfigStyles({ isDrawer });
   const form = useForm({ defaultValues });
   const useAllQuestions = form.watch('useAllQuestions');
-  const nQuestions = form.watch('nQuestions');
-  const questions = form.watch('questions');
-  const settings = form.watch('settings');
-  const settingsAsPreset = form.watch('settingsAsPreset');
-  const useAdvancedSettings = form.watch('useAdvancedSettings');
-  const canOmitQuestions = form.watch('canOmitQuestions');
-  const allowClues = form.watch('allowClues');
-  const clues = form.watch('clues');
+  const filtersValue = 'filters.nQuestions';
+  const nQuestionsSelector = form.watch(filtersValue);
 
   useOnChange({ onChange, control: form.control });
 
-  const _levels = useLevelsOfDifficulty();
-
-  const datas = React.useMemo(() => {
-    const categories = [];
-    const levels = [];
-    forEach(test.questions, (question) => {
-      if (!includes(categories, question.category)) {
-        categories.push(question.category);
-      }
-      if (!includes(levels, question.level)) {
-        levels.push(question.level);
-      }
-    });
-
-    return {
-      categories: map(
-        filter(test.questionBank.categories, (category) => includes(categories, category.id)),
-        ({ value, id }) => ({ label: value, value: id })
-      ),
-      levels: filter(_levels, (level) => includes(levels, level.value)),
-    };
-  }, [test, _levels]);
-
-  function getQuestionsApplyingFilters() {
-    const f = form.getValues();
-    return filter(test.questions, (question) => {
-      if (!f || f.useAllQuestions) {
-        return true;
-      }
-      let good = true;
-      if (f.level?.length > 0 && !f.level.includes(question.level)) {
-        good = false;
-      }
-
-      if (f.categories?.length > 0 && !f.categories.includes(question.category)) {
-        good = false;
-      }
-
-      return good;
-    });
-  }
-
-  function recalculeQuestions() {
-    form.setValue('questions', getQuestionsApplyingFilters());
-  }
-
   React.useEffect(() => {
-    recalculeQuestions();
-  }, []);
+    if (useAllQuestions) {
+      form.setValue(
+        'questions',
+        test.questions.map((q) => q.id)
+      );
+    }
+  }, [useAllQuestions]);
 
-  React.useEffect(() => {
-    const subscription = form.watch((data, { name }) => {
-      if (name !== 'questions') recalculeQuestions();
-    });
+  const customOptions = React.useMemo(
+    () => [
+      {
+        value: 'randomQuestions',
+        help: t2('randomQuestions'),
+      },
+      {
+        value: 'filteredQuestions',
+        help: t2('filteredQuestions'),
+      },
+      {
+        value: 'manualQuestions',
+        help: t2('manualQuestions'),
+      },
+    ],
+    [t2]
+  );
 
-    return () => subscription.unsubscribe();
-  });
+  const generateQuestions = () => {
+    const totalQuestions = test?.questions;
+    const questionsToSelect = nQuestionsSelector ?? totalQuestions.length;
+    const selectedQuestions = [];
+    while (selectedQuestions.length < questionsToSelect) {
+      const randomIndex = Math.floor(Math.random() * totalQuestions.length);
+      const question = totalQuestions[randomIndex];
+      if (!selectedQuestions.map((q) => q?.id).includes(question?.id)) {
+        selectedQuestions.push(question);
+      }
+    }
+    const selectedQuestionIds = selectedQuestions.map((question) => question.id);
+    form.setValue('questions', selectedQuestionIds);
+    setRandomQuestions(selectedQuestions);
+    form.setValue('config.randomQuestions.selectedQuestions', [...selectedQuestionIds]);
+  };
 
-  const cluesData = map(clues, (clue, index) => ({
-    ...clue,
-    canUseCheck: (
-      <Checkbox
-        checked={clue.canUse}
-        onChange={(e) => {
-          const _clues = form.getValues('clues');
-          _clues[index].canUse = e;
-          form.setValue('clues', _clues);
-        }}
-      />
-    ),
-    select: (
-      <Select
-        data={[
-          { label: t('clueNoImpact'), value: 0 },
-          { label: t('cluePer', { number: 25 }), value: 25 },
-          { label: t('cluePer', { number: 50 }), value: 50 },
-        ]}
-        value={clue.value}
-        onChange={(e) => {
-          const _clues = form.getValues('clues');
-          forEach(_clues, (v, i) => {
-            _clues[i].value = e;
-          });
-          form.setValue('clues', _clues);
-        }}
-      />
-    ),
-  }));
+  const randomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
+  const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
 
   return (
     <TotalLayoutStepContainer
@@ -208,295 +204,126 @@ export default function AssignConfig({
             rightZone={
               <Button
                 loading={loading}
+                rightIcon={<ChevRightIcon height={20} width={20} />}
                 onClick={() => {
-                  form.handleSubmit(({ questions: q, ...filters }) => {
-                    let qs = q;
-                    if (!useAllQuestions) {
-                      qs = q.slice(0, nQuestions);
-                    }
-                    onSend({
-                      questions: map(qs, 'id'),
-                      filters,
-                    });
-                  })();
+                  onNextStep();
                 }}
               >
-                {t('assign')}
+                {t('next')}
               </Button>
             }
           />
         )
       }
     >
-      <Box>
-        <ContextContainer divided>
-          <ContextContainer>
-            <Title order={3}>{t('configTitle')}</Title>
-            <Text size="md">
-              {t('totalQuestions', { n: test.questions.length })}
-              {useAllQuestions || (!useAllQuestions && nQuestions) ? (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: ` (${t('requirementsQuestions', {
-                      n: `<span style="color: ${
-                        // eslint-disable-next-line no-nested-ternary
-                        useAllQuestions
-                          ? COLORS.fatic02
-                          : questions.length < nQuestions
-                          ? COLORS.fatic01
-                          : COLORS.fatic02
-                      }">${questions?.length}</span>`,
-                    })})`,
-                  }}
-                />
-              ) : null}
-            </Text>
-            <Text>{t('configDescription')}</Text>
-            <Box>
-              <InputWrapper
-                description={
-                  <Controller
-                    control={form.control}
-                    name="useAllQuestions"
-                    render={({ field }) => (
-                      <Checkbox {...field} label={t('useAllQuestions')} checked={field.value} />
-                    )}
-                  />
-                }
-              >
-                {!useAllQuestions ? (
-                  <Controller
-                    control={form.control}
-                    name="nQuestions"
-                    shouldUnregister
-                    rules={{
-                      required: t('nQuestionsRequired'),
-                      min: {
-                        value: 1,
-                        message: t('minOneQuestion'),
-                      },
-                      validate: () => {
-                        if (nQuestions > questions.length) {
-                          return t('noRequiredQuestions');
-                        }
-                        return true;
-                      },
-                    }}
-                    render={({ field }) => (
-                      <NumberInput
-                        label={t('nOfQuestions')}
-                        required
-                        error={form.formState.errors.nQuestions}
-                        {...field}
-                      />
-                    )}
-                  />
-                ) : null}
-              </InputWrapper>
-            </Box>
-            {!useAllQuestions
-              ? [
-                  datas.categories.length > 0 ? (
-                    <Box key={2}>
-                      <Controller
-                        control={form.control}
-                        name="categories"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <MultiSelect
-                            placeholder={t('all')}
-                            label={t('categoriesLabel')}
-                            data={datas.categories}
-                            {...field}
-                          />
-                        )}
-                      />
-                    </Box>
-                  ) : null,
-                  <Box key={3}>
+      <Box className={classes.root}>
+        <Box>
+          <ContextContainer divided>
+            <ContextContainer>
+              <Title order={3}>{t('configTitle')}</Title>
+              <Box className={classes.totalQuestions}>
+                <Chip subject={t('totalQuestions', { n: test.questions.length })} />
+              </Box>
+              <Box>
+                <InputWrapper
+                  description={
                     <Controller
                       control={form.control}
-                      name="level"
-                      shouldUnregister
+                      name="useAllQuestions"
                       render={({ field }) => (
-                        <MultiSelect
-                          placeholder={t('all')}
-                          label={t('levelLabel')}
-                          data={datas.levels}
+                        <Switch
                           {...field}
+                          label={t('customQuestionSelection')}
+                          checked={field.value}
+                          onChange={() => {
+                            form.setValue('useAllQuestions', !field.value);
+                          }}
                         />
                       )}
                     />
-                  </Box>,
-                ]
-              : null}
-            <Alert variant="block" title={t('defaultRules.title')} closeable={false}>
-              <ul>
-                <li>- {t('defaultRules.canOmit')}</li>
-                <li>- {t('defaultRules.errorQuestions')}</li>
-                <li>- {t('defaultRules.canClue')}</li>
-              </ul>
-              <br />
-              {t('defaultRules.useAdvanced')}
-            </Alert>
-            <Title order={4}>{t('advancedSettings')}</Title>
-            <Controller
-              control={form.control}
-              name="useAdvancedSettings"
-              shouldUnregister
-              render={({ field }) => (
-                <Switch checked={field.value} {...field} label={t('allowAdvancedSettings')} />
-              )}
-            />
-            {useAdvancedSettings ? (
-              <Paper shadow="none" bordered>
-                <ContextContainer>
-                  <Controller
-                    control={form.control}
-                    name="settings"
-                    shouldUnregister
-                    render={({ field }) => (
-                      <Select
-                        data={[
-                          { label: t('new'), value: 'new' },
-                          ...map(configs, (config) => ({ value: config.id, label: config.name })),
-                        ]}
-                        {...field}
-                        label={t('useSettings')}
-                      />
-                    )}
-                  />
-
-                  {settings === 'new' ? (
-                    <>
-                      <Controller
-                        control={form.control}
-                        name="settingsAsPreset"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <Switch checked={field.value} {...field} label={t('settingsAsPreset')} />
-                        )}
-                      />
-                      {settingsAsPreset ? (
+                  }
+                >
+                  {useAllQuestions && (
+                    <Box>
+                      <Box className={classes.radioGroupContainer}>
                         <Controller
                           control={form.control}
-                          name="presetName"
-                          shouldUnregister
+                          name="customChoices"
                           render={({ field }) => (
-                            <TextInput checked={field.value} {...field} label={t('presetName')} />
+                            <RadioGroup
+                              {...field}
+                              value={radioSelection}
+                              label={t2('customChoicesLabel')}
+                              className={classes.radioGroup}
+                              placeholder={t2('customChoicesPlaceholder')}
+                              data={customOptions}
+                              onChange={(option) => {
+                                form.setValue('config.customChoice', option);
+                                return setRadioSelection(option);
+                              }}
+                            />
                           )}
                         />
-                      ) : null}
-                      <Controller
-                        control={form.control}
-                        name="wrong"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <Select
-                            description={t('wrongAnswerDescription')}
-                            data={[
-                              { label: t('wrongAnswerDoNotScore'), value: 0 },
-                              { label: t('wrongAnswerPercentage', { number: 25 }), value: 25 },
-                              { label: t('wrongAnswerPercentage', { number: 50 }), value: 50 },
-                              { label: t('wrongAnswerPercentage', { number: 100 }), value: 100 },
-                            ]}
-                            {...field}
-                            label={t('wrongAnswerLabel')}
+                        {radioSelection === 'randomQuestions' && (
+                          <RandomQuestionsGenerator
+                            t={t2}
+                            form={form}
+                            nQuestions={test?.questions?.length || 0}
+                            classes={classes}
+                            generateQuestions={generateQuestions}
                           />
                         )}
-                      />
-                      <InputWrapper
-                        label={t('unansweredLabel')}
-                        description={
-                          <Controller
-                            control={form.control}
-                            name="canOmitQuestions"
-                            shouldUnregister
-                            render={({ field }) => (
-                              <Switch
-                                checked={field.value}
-                                {...field}
-                                label={t('unansweredDescriptions')}
-                              />
-                            )}
+                        {radioSelection === 'filteredQuestions' && (
+                          <FilteredQuestionsGenerator
+                            t={t2}
+                            form={form}
+                            questionBank={test.questionBank}
+                            assignmentQuestions={test?.questions || []}
+                            classes={classes}
+                            assignmentMode
+                            filteredQuestions={filteredQuestions}
+                            setFilteredQuestions={setFilteredQuestions}
+                            isNewTest={false}
                           />
-                        }
-                      >
-                        {canOmitQuestions ? (
-                          <Controller
-                            control={form.control}
-                            name="omit"
-                            shouldUnregister
-                            render={({ field }) => (
-                              <Select
-                                description={t('unansweredDescription2')}
-                                data={[
-                                  { label: t('wrongAnswerDoNotScore'), value: 0 },
-                                  { label: t('wrongAnswerPercentage', { number: 25 }), value: 25 },
-                                  { label: t('wrongAnswerPercentage', { number: 50 }), value: 50 },
-                                  {
-                                    label: t('wrongAnswerPercentage', { number: 100 }),
-                                    value: 100,
-                                  },
-                                ]}
-                                {...field}
-                              />
-                            )}
+                        )}
+                        {radioSelection === 'manualQuestions' && (
+                          <ManualQuestionsGenerator
+                            t={t2}
+                            form={form}
+                            questionBank={test.questionBank}
+                            assignmentMode
+                            assignmentQuestions={test?.questions || []}
+                            manualQuestions={manualQuestions}
+                            setManualQuestions={setManualQuestions}
                           />
-                        ) : null}
-                      </InputWrapper>
-
-                      <InputWrapper
-                        label={t('clues')}
-                        description={
+                        )}
+                        {(radioSelection === 'randomQuestions' && randomQuestions.length > 0) ||
+                        (radioSelection === 'filteredQuestions' && filteredQuestions.length > 0) ? (
                           <Controller
                             control={form.control}
-                            name="allowClues"
-                            shouldUnregister
+                            name="questions"
                             render={({ field }) => (
-                              <Switch checked={field.value} {...field} label={t('allowClues')} />
-                            )}
-                          />
-                        }
-                      >
-                        {allowClues ? (
-                          <Controller
-                            control={form.control}
-                            name="clues"
-                            shouldUnregister
-                            render={({ field }) => (
-                              <TableInput
-                                forceSortable={true}
-                                disabled={true}
-                                columns={[
-                                  {
-                                    Header: t('clueCanUse'),
-                                    accessor: 'canUseCheck',
-                                  },
-                                  {
-                                    Header: t('clueType'),
-                                    accessor: 'name',
-                                  },
-                                  {
-                                    Header: t('clueReduction'),
-                                    accessor: 'select',
-                                  },
-                                ]}
-                                {...field}
-                                data={cluesData}
-                                labels={{}}
+                              <QuestionsTable
+                                questions={randomQuestionsActive ?? filteredQuestionsActive ?? []}
+                                forceSortable
+                                value={field.value}
+                                onChange={(e) => field.onChange(e)}
+                                questionBank={test.questionBank}
+                                reorderMode={true}
+                                hideCheckbox
+                                hideOpenIcon
                               />
                             )}
                           />
                         ) : null}
-                      </InputWrapper>
-                    </>
-                  ) : null}
-                </ContextContainer>
-              </Paper>
-            ) : null}
+                      </Box>
+                    </Box>
+                  )}
+                </InputWrapper>
+              </Box>
+            </ContextContainer>
           </ContextContainer>
-        </ContextContainer>
+        </Box>
       </Box>
     </TotalLayoutStepContainer>
   );
@@ -514,4 +341,7 @@ AssignConfig.propTypes = {
   hideButtons: PropTypes.bool,
   onSave: PropTypes.func,
   onPrevStep: PropTypes.func,
+  assignable: PropTypes.object,
+  data: PropTypes.object,
+  onNextStep: PropTypes.func,
 };
