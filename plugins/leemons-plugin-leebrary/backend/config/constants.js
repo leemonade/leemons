@@ -234,7 +234,6 @@ const assignableRoles = [
       studentDetailUrl: '/private/leebrary/activities/student-detail/:id/:user',
       evaluationDetailUrl: '/private/leebrary/activities/correction/:id/:user',
       creatable: false,
-      // createUrl: '/private/leebrary/media-files/new',
       canUse: [],
       pluralName: { en: 'assets', es: 'recursos' },
       singularName: { en: 'asset', es: 'recurso' },
