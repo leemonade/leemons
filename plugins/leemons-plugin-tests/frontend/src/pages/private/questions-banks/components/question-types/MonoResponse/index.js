@@ -56,7 +56,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title={`${capitalize(t('explanationLabel'))} *`}>
+      <ContextContainer title={`${capitalize(t('explanationLabel'))}`}>
         <Controller
           control={form.control}
           name="properties.explanationInResponses"
