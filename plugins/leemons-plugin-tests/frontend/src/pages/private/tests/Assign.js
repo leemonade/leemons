@@ -5,15 +5,15 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-// TODO: import from @common plugin
 import Form from '@assignables/components/Assignment/Form';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
+import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { RulesConfig } from '@tests/components/RulesConfig';
 import {
   assignTestRequest,
-  deleteAssignedConfigRequest,
   getAssignConfigsRequest,
   getTestRequest,
+  deleteAssignedConfigRequest,
   updateAssignedConfigRequest,
 } from '../../../request';
 import AssignConfig from '../../../components/AssignConfig';
@@ -58,12 +58,13 @@ export default function Assign() {
         getAssignConfigsRequest(),
         getAssignablesRequest(params.id, { withFiles: false }),
       ]);
-
+      const coverUrl = test?.cover?.id ? getFileUrl(test.cover.id) : null;
       store.configs = configs;
       store.test = test;
       store.assignable = {
         asset: {
           name: test.name,
+          cover: coverUrl,
         },
         roleDetails,
         subjects: map(test.subjects, (id, i) => ({
