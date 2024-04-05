@@ -2,7 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
 
 function useDeploymentType(options = {}) {
-  const queryKey = 'deploymentType';
+  const queryKey = [
+    {
+      plugin: 'plugin.deployment-manager',
+      scope: 'deploymentType',
+      action: 'get',
+    },
+  ];
 
   const queryFn = async () =>
     leemons.api('deployment-manager/type', {
