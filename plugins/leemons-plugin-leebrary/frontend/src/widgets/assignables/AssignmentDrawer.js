@@ -14,7 +14,6 @@ import { Instructions } from '@assignables/components/Assignment/components/Inst
 import Presentation from '@assignables/components/Assignment/components/Presentation/Presentation';
 import useAsset from '@leebrary/request/hooks/queries/useAsset';
 
-// useLocalizations
 
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {
