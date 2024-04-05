@@ -1,10 +1,15 @@
-/* eslint-disable global-require */
+const { mongoDBPaginate } = require('./mongoDBPaginate');
+const { getKeyValueModel } = require('./key-value/getKeyValueModel');
+const { getKey } = require('./key-value/getKey');
+const { hasKey } = require('./key-value/hasKey');
+const { setKey } = require('./key-value/setKey');
+const { hasKeys } = require('./key-value/hasKeys');
 
 module.exports = {
-  ...require('./mongoDBPaginate'),
-  ...require('./key-value/getKeyValueModel'),
-  ...require('./key-value/getKey'),
-  ...require('./key-value/hasKey'),
-  ...require('./key-value/setKey'),
-  ...require('./key-value/hasKeys'),
+  mongoDBPaginate,
+  getKeyValueModel,
+  getKey,
+  hasKey,
+  setKey,
+  hasKeys,
 };
