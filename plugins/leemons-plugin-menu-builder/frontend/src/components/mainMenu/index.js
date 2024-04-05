@@ -10,7 +10,7 @@ import { currentProfileIsAdmin, currentProfileIsSuperAdmin, useSession } from '@
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import getPlatformName from '@users/request/getPlatformName';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {

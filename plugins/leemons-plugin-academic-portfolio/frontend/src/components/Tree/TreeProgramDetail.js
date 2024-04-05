@@ -11,7 +11,7 @@ import {
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeProgramDetail = ({

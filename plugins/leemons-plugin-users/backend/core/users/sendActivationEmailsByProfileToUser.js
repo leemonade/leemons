@@ -3,9 +3,9 @@ const _ = require('lodash');
 /**
  * Sends the profile activation guides emails to the user.
  *
- * @param {Object} params - The parameters.
+ * @param {Object} params
  * @param {Object} params.user - The user object.
- * @param {UserProfile} params.profile - The profile object.
+ * @param {Profile} params.profile - The profile object.
  * @param {MoleculerContext} params.ctx - The Moleculer's context.
  */
 async function sendActivationEmailsByProfileToUser({ user, profile, ctx }) {

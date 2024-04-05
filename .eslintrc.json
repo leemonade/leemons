@@ -80,6 +80,7 @@
           "@curriculum",
           "@dashboard",
           "@dataset",
+          "@deployment-manager",
           "@emails",
           "@emails-aws-ses",
           "@emails-smtp",

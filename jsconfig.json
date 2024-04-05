@@ -50,6 +50,9 @@
       "@dataset/*": [
         "./plugins/leemons-plugin-dataset/frontend/src/*"
       ],
+      "@deployment-manager/*": [
+        "./plugins/leemons-plugin-deployment-manager/frontend/src/*"
+      ],
       "@emails/*": [
         "./plugins/leemons-plugin-emails/frontend/src/*"
       ],

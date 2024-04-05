@@ -1,17 +1,16 @@
-import { Box, createStyles, Stack, LoadingOverlay } from '@bubbles-ui/components';
+import React, { useContext, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import _, { find, isArray } from 'lodash';
+import { useHistory } from 'react-router-dom';
+import { LoadingOverlay } from '@bubbles-ui/components';
 import { LoginProfileSelector } from '@users/components/LoginProfileSelector';
 import { useStore } from '@common';
 import { LayoutContext } from '@layout/context/layout';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import HeroBgLayout from '@users/layout/heroBgLayout';
 import Cookies from 'js-cookie';
 import hooks from 'leemons-hooks';
-import _, { find, isArray } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useContext, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
 import {
   getRememberLoginRequest,
   getUserCenterProfileTokenRequest,
@@ -22,18 +21,10 @@ import {
   setRememberLoginRequest,
 } from '@users/request';
 import { getCookieToken } from '@users/session';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import { AuthLayout } from '@users/layout/AuthLayout';
+import { AuthContainer } from '@users/components/AuthContainer';
 
-const PageStyles = createStyles((theme) => ({
-  root: {
-    padding: theme.spacing[7],
-  },
-  content: {
-    maxWidth: 330,
-  },
-}));
-
-// Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 export default function SelectProfile({ session }) {
   const [store, render] = useStore({
     loading: false,
@@ -204,28 +195,24 @@ export default function SelectProfile({ session }) {
   // ····················································································
   // STYLES
 
-  const { classes } = PageStyles();
-
   if (store.initLoading) {
     return <LoadingOverlay visible />;
   }
   return (
-    <HeroBgLayout>
-      <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
-        <Box className={classes.content}>
-          {isArray(store.centers) && store.centers.length > 0 && (
-            <LoginProfileSelector
-              labels={labels}
-              errorMessages={errorMessages}
-              centers={store.centers}
-              loading={store.loading}
-              onSubmit={handleOnSubmit}
-              defaultValues={store.defaultValues}
-            />
-          )}
-        </Box>
-      </Stack>
-    </HeroBgLayout>
+    <AuthLayout>
+      <AuthContainer>
+        {isArray(store.centers) && store.centers.length > 0 && (
+          <LoginProfileSelector
+            labels={labels}
+            errorMessages={errorMessages}
+            centers={store.centers}
+            loading={store.loading}
+            onSubmit={handleOnSubmit}
+            defaultValues={store.defaultValues}
+          />
+        )}
+      </AuthContainer>
+    </AuthLayout>
   );
 }
 

@@ -169,9 +169,19 @@ module.exports = () => ({
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
         }
-        return ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }, undefined, {
-          disableAutoDeploy: true,
-        }).lean();
+
+        const deployment = await ctx.db.Deployment.findOne(
+          { id: ctx.meta.deploymentID },
+          undefined,
+          {
+            disableAutoDeploy: true,
+          }
+        ).lean();
+
+        if (deployment) {
+          deployment.type = deployment.type ?? 'free';
+        }
+        return deployment;
       },
     },
   },

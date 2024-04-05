@@ -2,7 +2,11 @@ const { deploymentModel } = require('../../models/deployment');
 
 async function getDeploymentInfo({ id }) {
   const query = id?.length ? { id } : {};
-  return deploymentModel.find(query).lean();
+  const deployment = await deploymentModel.find(query).lean();
+  if (deployment) {
+    deployment.type = deployment.type ?? 'free';
+  }
+  return deployment;
 }
 
 module.exports = {

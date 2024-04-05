@@ -61,6 +61,7 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
  * @param {function} onClose - The function to close the drawer.
  * @param {function} onSelect - The function to select an asset.
  * @param {boolean} onlyCreateImages - Whether to only create images or not.
+ * @param {object} newDataOverride - Override data in asset creation.
  * @return {JSX.Element} The rendered AssetPickerDrawer component.
  */
 export function AssetPickerDrawer({
@@ -78,6 +79,7 @@ export function AssetPickerDrawer({
   acceptedFileTypes,
   onlyImages,
   isPickingACover,
+  newDataOverride,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
   const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
@@ -113,6 +115,7 @@ export function AssetPickerDrawer({
                 onlyCreateImages={onlyCreateImages}
                 acceptedFileTypes={acceptedFileTypes}
                 isPickingACover={isPickingACover}
+                dataOverride={newDataOverride}
               />
             </TabPanel>
           </Tabs>
@@ -152,4 +155,5 @@ AssetPickerDrawer.propTypes = {
   onlyImages: PropTypes.bool,
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
   isPickingACover: PropTypes.bool,
+  newDataOverride: PropTypes.object,
 };

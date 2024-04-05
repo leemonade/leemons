@@ -120,4 +120,5 @@ module.exports = {
   profileSettings,
   STATUS,
   widgets,
+  PLUGIN_NAME: permissionsPrefix,
 };

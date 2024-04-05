@@ -22,7 +22,7 @@ import { useStore } from '@common';
 import { forEach, isArray, isString, map } from 'lodash';
 import { useLayout } from '@layout/context';
 import { TreeClassroomUsersDetail } from '@academic-portfolio/components/Tree/TreeClassroomUsersDetail';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { TreeClassroomDetail } from './TreeClassroomDetail';
 
 const TreeClassDetail = ({
