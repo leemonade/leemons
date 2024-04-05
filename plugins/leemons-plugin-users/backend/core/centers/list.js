@@ -6,10 +6,12 @@ const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
  * List of all centers in platform
  * @private
  * @static
- * @param {number} page - Number of page
- * @param {number} size - Number of items per page
- * @param {boolean|object} withRoles - If return center roles or not
- * @param {any=} transacting -  DB Transaction
+ * @param {Object} params
+ * @param {number} params.page - Number of page
+ * @param {number} params.size - Number of items per page
+ * @param {boolean|object} params.withRoles - If return center roles or not
+ * @param {boolean} params.withLimits - If return center limits or not
+ * @param {MoleculerContext} params.ctx - Context
  * @return {Promise<Center>} Created / Updated role
  * */
 

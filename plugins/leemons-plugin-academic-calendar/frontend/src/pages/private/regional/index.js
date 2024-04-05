@@ -21,7 +21,7 @@ import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
 import React, { useContext } from 'react';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { RegionalConfigDetail } from './components/regionalConfigDetail';
 
 const useStyle = createStyles((theme) => ({

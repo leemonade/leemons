@@ -6,6 +6,7 @@ const {
 const { isCoreService } = require('./isCoreService');
 const { validateInternalPrivateKey } = require('./validateInternalPrivateKey');
 const { customCall } = require('./customCall');
+const { ctxCall } = require('./ctxCall');
 
 module.exports = {
   LeemonsDeploymentManagerMixin: mixin,
@@ -14,4 +15,5 @@ module.exports = {
   getAutoDeploymentIDIfCanIFNotThrowError,
   validateInternalPrivateKey,
   customCall,
+  ctxCall,
 };

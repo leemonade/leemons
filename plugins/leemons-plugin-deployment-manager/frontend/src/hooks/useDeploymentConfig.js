@@ -2,8 +2,7 @@ import _ from 'lodash';
 import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
 
-// eslint-disable-next-line import/prefer-default-export
-export function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
+function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
   const queryKey = 'deploymentConfig';
 
   const queryFn = async () =>
@@ -39,3 +38,5 @@ export function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
 
   return isLoading ? undefined : data || null;
 }
+
+export { useDeploymentConfig };

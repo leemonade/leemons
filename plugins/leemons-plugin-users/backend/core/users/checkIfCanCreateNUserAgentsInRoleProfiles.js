@@ -3,6 +3,16 @@ const { LeemonsError } = require('@leemons/error');
 const { getRolesProfiles } = require('../roles/getRolesProfiles');
 const { getRolesCenters } = require('../roles/getRolesCenters');
 
+/**
+ * Checks if it is possible to create a number of user agents in a specific role profile.
+ *
+ * @param {Object} params
+ * @param {number} params.nUserAgents - The number of user agents to be created.
+ * @param {Object} params.limit - The limit object.
+ * @param {Array} params.rolesProfiles - The roles profiles array.
+ * @param {MoleculerContext} params.ctx - The context object.
+ * @returns {Promise<boolean>} - The result of the check.
+ */
 async function check({ nUserAgents, limit, rolesProfiles, ctx }) {
   if (!limit.unlimited && limit.limit) {
     // Si no es ilimitado tenemos que sacar el numero de usuarios actuales
@@ -22,6 +32,15 @@ async function check({ nUserAgents, limit, rolesProfiles, ctx }) {
   return true;
 }
 
+/**
+ * Checks if it is possible to create a number of user agents in a specific role profile.
+ *
+ * @param {Object} params
+ * @param {number} params.nUserAgents - The number of user agents to be created.
+ * @param {string} params.role - The role associated with a specific profile and center combination.
+ * @param {MoleculerContext} params.ctx - The context object.
+ * @throws {LeemonsError} If the user agent cannot be created.
+ */
 async function checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents, role, ctx }) {
   const _roles = _.isArray(role) ? role : [role];
   const rolesProfiles = await getRolesProfiles({ roleIds: _roles, raw: true, ctx });

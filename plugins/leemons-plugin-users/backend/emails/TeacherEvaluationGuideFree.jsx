@@ -77,7 +77,7 @@ const messages = {
     supportButtonText: 'Centro de soporte',
     step01Title: '1. Crear un banco de preguntas',
     step01Description:
-      '<p>En la versión gratuita de Leemons tienes preguntas de opción múltiple, con imágenes y formato de mapa. Además, puedes añadir pistas a las preguntas para añadir andamiaje a alumnos con dificultades de aprendizaje u otras diversidades.</p><p><span><strong style="color: #FF5470">Importante</strong></span>: Un banco de preguntas no es asignable a un alumno, funciona como un primer paso para crear un test.</p><p>Para crear un nuevo banco de preguntas haz clic en Nuevo QB en la sección correspondiente de la biblioteca o pulsa en el menú Nuevo en cualquier otra sección y elige la misma opción.</p>',
+      '<p>En la versión gratuita de Leemons tienes preguntas de opción múltiple, con imágenes y formato de mapa. Además, puedes añadir pistas a las preguntas para añadir andamiaje a alumnos con dificultades de aprendizaje u otras diversidades.</p><p><span style="color: #FF5470"><strong>Importante</strong></span>: Un banco de preguntas no es asignable a un alumno, funciona como un primer paso para crear un test.</p><p>Para crear un nuevo banco de preguntas haz clic en Nuevo QB en la sección correspondiente de la biblioteca o pulsa en el menú Nuevo en cualquier otra sección y elige la misma opción.</p>',
     step01Description02:
       '<p>En la ventana de creación encontraremos dos secciones: básica y preguntas. En este primer paso, daremos al banco de preguntas un título, una imagen de portada y una descripción. También debemos etiquetarlo con las asignaturas a las que corresponde su contenido.</p><p>A continuación, podremos empezar a crear preguntas.</p>',
     qtype01Title: 'Preguntas monorespuesta',

@@ -4,20 +4,21 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { colord } = require('colord');
-const { getServiceModels } = require('../models');
 
+const { getServiceModels } = require('../models');
 const compileTokens = require('../core/organization/compileTokens');
 const jsonRaw = require('../tokens/tokens.json');
 const restActions = require('./rest/organization.rest');
+const { PLUGIN_NAME } = require('../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'admin.organization',
+  name: `${PLUGIN_NAME}.organization`,
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -40,8 +41,5 @@ module.exports = {
         await compileTokens({ jsonRaw, ctx });
       },
     },
-  },
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
   },
 };

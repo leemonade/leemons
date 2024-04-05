@@ -21,7 +21,7 @@ import {
   setRememberLoginRequest,
 } from '@users/request';
 import { getCookieToken } from '@users/session';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { AuthLayout } from '@users/layout/AuthLayout';
 import { AuthContainer } from '@users/components/AuthContainer';
 

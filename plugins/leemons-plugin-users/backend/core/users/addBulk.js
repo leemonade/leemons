@@ -24,13 +24,13 @@ const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsB
 /**
  * Function to handle the creation or update of a user.
  *
- * @param {Object} params The parameters for creating or updating a user.
- * @param {string} [params.id] The ID of the user to update. If not provided, a new user will be created.
- * @param {Object} params.userData The data of the user.
- * @param {Date} params.birthdate The birthdate of the user.
- * @param {string} params.password The password of the user.
- * @param {MoleculerContext} params.ctx The Moleculer's context.
- * @returns {Promise<Object>} An object containing the user and a flag indicating if it's a new user.
+ * @param {Object} params
+ * @param {string} [params.id] - The ID of the user to update. If not provided, a new user will be created.
+ * @param {Object} params.userData - The data of the user.
+ * @param {Date} params.birthdate - The birthdate of the user.
+ * @param {string} params.password - The password of the user.
+ * @param {MoleculerContext} params.ctx - The Moleculer's context.
+ * @returns {Promise<User>} An object containing the user and a flag indicating if it's a new user.
  */
 async function handleUserCreationOrUpdate({ id, userData, birthdate, password, ctx }) {
   let { email } = userData;
@@ -70,12 +70,12 @@ async function handleUserCreationOrUpdate({ id, userData, birthdate, password, c
 /**
  * Function to handle the creation or restoration of a user agent.
  *
- * @param {Object} params The parameters for creating or restoring a user agent.
- * @param {Object} params.user The user object.
- * @param {Object} params.role The role object.
- * @param {Object} params.isNewUser The flag to indicate if the user is new.
- * @param {UserProfile} params.profile The profile object.
- * @param {MoleculerContext} params.ctx The Moleculer's context.
+ * @param {Object} params
+ * @param {Object} params.user - The user object.
+ * @param {string} params.role - The role associated with a specific profile and center combination.
+ * @param {Boolean} params.isNewUser - The flag to indicate if the user is new.
+ * @param {Profile} params.profile - The profile object.
+ * @param {MoleculerContext} params.ctx - The Moleculer's context.
  * @returns {Promise<Object>} The created or restored user agent object.
  */
 async function handleUserAgent({ user, role, isNewUser, profile, ctx }) {
@@ -97,8 +97,7 @@ async function handleUserAgent({ user, role, isNewUser, profile, ctx }) {
     });
     userAgent = userAgent.toObject();
     await addCenterProfilePermissionToUserAgents({ userAgentIds: userAgent.id, ctx });
-    // ES: Si no tenia el perfil y no es nuevo usuario, le mandamos el email
-    // EN: If the user didn't have the profile and it's not a new user, we send the email
+    // If the user didn't have the profile and it's not a new user, we send the email
     if (!isNewUser) {
       await sendNewProfileAddedEmailToUser({ user, profile, ctx });
       await sendActivationEmailsByProfileToUser({ user, profile, ctx });
@@ -123,17 +122,17 @@ async function handleUserAgent({ user, role, isNewUser, profile, ctx }) {
 /**
  * Adds a user.
  *
- * @param {Object} params The parameters for adding a user.
- * @param {string} params.role The role of the user.
- * @param {string} params.id The ID of the user.
- * @param {Array<string>} params.tags The tags associated with the user.
- * @param {string} params.password The password for the user.
- * @param {Date} params.birthdate The birthdate of the user.
- * @param {string} params.avatar The avatar URL of the user.
- * @param {Date} params.createdAt The creation date of the user.
- * @param {any} params.dataset The dataset information of the user.
- * @param {UserProfile} params.profile The profile object of the user.
- * @param {MoleculerContext} params.ctx The Moleculer's context.
+ * @param {Object} params
+ * @param {string} params.role - The role associated with a specific profile and center combination.
+ * @param {string} params.id - The ID of the user.
+ * @param {Array<string>} params.tags - The tags associated with the user.
+ * @param {string} params.password - The password for the user.
+ * @param {Date} params.birthdate - The birthdate of the user.
+ * @param {string} params.avatar - The avatar URL of the user.
+ * @param {Date} params.createdAt - The creation date of the user.
+ * @param {any} params.dataset - The dataset information of the user.
+ * @param {Profile} params.profile - The profile object of the user.
+ * @param {MoleculerContext} params.ctx - The Moleculer's context.
  * @returns {Promise<Object>} The newly added user object.
  */
 async function addUser({

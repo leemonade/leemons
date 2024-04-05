@@ -6,7 +6,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 
 function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
   const [t] = useTranslateLoader(prefixPN('subjectsDrawer'));

@@ -6,13 +6,19 @@ function validateInternalPrivateKey({ ctx }) {
       message: 'Disabled by default specify process.env.MANUAL_PASSWORD to be able to use it.',
     });
   }
-  if (ctx.params.manualPassword !== process.env.MANUAL_PASSWORD) {
+  if (
+    ![ctx.params.manualPassword, ctx.params.internalPrivateKey, ctx.params.privateKey].includes(
+      process.env.MANUAL_PASSWORD
+    )
+  ) {
     throw new LeemonsError(ctx, {
-      message: 'Wrong password',
+      message: 'Invalid Internal Private Key',
     });
   }
 
   delete ctx.params.manualPassword;
+  delete ctx.params.internalPrivateKey;
+  delete ctx.params.privateKey;
 }
 
 module.exports = { validateInternalPrivateKey };

@@ -31,7 +31,7 @@ import { forEachRight } from 'lodash/collection';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { SubjectsDrawer } from './SubjectsDrawer';
 
 function getGroups({ program, selectGroups, subject }) {
