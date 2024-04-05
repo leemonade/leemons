@@ -2,7 +2,7 @@ const { createAssetsAssignables, ASSET_TYPE, ACTIVITY_TYPE } = require('./create
 
 module.exports = async function createModule({ module, published, ctx }) {
   /*
-    The asset assignment is an special case, so we need to handle it.
+    The asset assignment is a special case, so we need to handle it.
 
     Firstly we need to create an assignable for them, and to change the provided
     activities array with the new id, and change the type back to activitiy
