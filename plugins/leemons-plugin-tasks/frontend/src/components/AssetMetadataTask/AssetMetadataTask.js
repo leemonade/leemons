@@ -8,12 +8,13 @@ import {
 } from './AssetMetadataTask.constants';
 import { TaskIcon } from '../Icons/TaskIcon';
 import { ExpressTaskIcon } from '../Icons/ExpressTaskIcon';
+import { prefixPN } from '../../helpers/prefixPN';
 
 const AssetMetadataTask = ({ metadata }) => {
   const isTaskExpress = metadata?.providerData?.metadata?.express;
   const isDeliverable = !!metadata?.providerData?.submission?.data;
   const statement = metadata?.providerData?.statement;
-  const [t] = useTranslateLoader('tasks');
+  const [t] = useTranslateLoader(prefixPN('library_page'));
   const [fields, setFields] = useState();
   const { classes } = AssetMetadataTaskStyles({}, { name: 'AssetMetadataTask' });
   const getFieldsToRender = (metadataTask) => {
