@@ -1,13 +1,4 @@
 {
-  "devDependencies": {},
-  "dependencies": {
-    "@leemons/mongodb-helpers": "0.0.71",
-    "@leemons/service-name-parser": "0.0.41",
-    "flat": "^5",
-    "lodash": "^4.17.21",
-    "object-hash": "^3.0.0",
-    "uuid": "^9.0.1"
-  },
   "name": "@leemons/multilanguage",
   "version": "0.0.71",
   "description": "",
@@ -29,5 +20,14 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/mongodb-helpers": "0.0.71",
+    "@leemons/service-name-parser": "0.0.41",
+    "flat": "^5",
+    "lodash": "^4.17.21",
+    "object-hash": "^3.0.0",
+    "uuid": "^9.0.1"
+  }
 }

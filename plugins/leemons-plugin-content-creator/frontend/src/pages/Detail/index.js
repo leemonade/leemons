@@ -162,6 +162,7 @@ export default function Index({ isNew, readOnly }) {
       form.setValue('cover', documentData?.cover || null);
       form.setValue('program', documentData?.program || solvedProgram || null);
       form.setValue('subjects', documentData?.subjects?.map((subject) => subject.subject) || null);
+      form.setValue('tags', documentData?.tags);
     }
   }, [documentData]);
 
@@ -243,6 +244,7 @@ export default function Index({ isNew, readOnly }) {
                       <TotalLayoutFooterContainer
                         fixed
                         scrollRef={scrollRef}
+                        width={928}
                         rightZone={
                           <>
                             <Button
@@ -264,7 +266,12 @@ export default function Index({ isNew, readOnly }) {
                 />
               )}
             />,
-            <Stack key="step-2" justifyContent="center">
+            <Stack
+              key="step-2"
+              justifyContent="center"
+              sx={{ backgroundColor: '#f8f9fb', overflow: 'auto' }}
+              ref={scrollRef}
+            >
               <BasicData
                 advancedConfig={{
                   alwaysOpen: false,

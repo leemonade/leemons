@@ -54,6 +54,7 @@ const ImagePicker = ({
         changeImage: data.labels.changeImage || labels.changeImage,
         uploadButton: data.labels.uploadButton || labels.uploadButton,
         search: data.labels.search || labels.search,
+        removeButton: data.labels.removeButton || labels.removeButton,
       };
     }
     return labels;
@@ -75,7 +76,6 @@ const ImagePicker = ({
 
   // ························································
   // RENDER
-
   return (
     <Box {...{ styles, className }}>
       <Stack direction="row" spacing={3}>
@@ -92,11 +92,13 @@ const ImagePicker = ({
           labels={{
             changeImage: formLabels.changeImage,
             uploadButton: formLabels.uploadButton,
+            removeButton: formLabels.removeButton,
           }}
           previewURL={assetUrl}
           onChange={onChange}
           readonly={readonly}
           disabled={disabled}
+          onShowDrawer={setShowAssetDrawer}
           noPicker
           objectFit={objectFit}
         />
@@ -122,6 +124,7 @@ ImagePicker.defaultProps = {
     changeImage: 'Change image',
     uploadButton: 'Upload',
     search: 'Search from library',
+    removeButton: 'Remove',
   },
   creatable: true,
   modal: false,
@@ -134,6 +137,7 @@ ImagePicker.propTypes = {
     changeImage: PropTypes.string,
     uploadButton: PropTypes.string,
     search: PropTypes.string,
+    removeButton: PropTypes.string,
   }),
   readonly: PropTypes.bool,
   disabled: PropTypes.bool,

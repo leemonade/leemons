@@ -1,6 +1,6 @@
 import prefixPN from '@board-messages/helpers/prefixPN';
 import { addClickRequest } from '@board-messages/request';
-import { Box, Button, ImageLoader, Text } from '@bubbles-ui/components';
+import { Box, Button, ImageLoader, Text, Stack } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
 import PropTypes from 'prop-types';
@@ -13,7 +13,10 @@ const BannerMessage = ({ message }) => {
 
   const openLink = () => {
     addClickRequest(message.id);
-    window.open(message.url, '_blank', 'noopener');
+
+    if (message.url?.startsWith('http')) {
+      window.open(message.url, '_blank', 'noopener');
+    }
   };
 
   const stringToHTML = (str) => ({ __html: str });
@@ -34,18 +37,18 @@ const BannerMessage = ({ message }) => {
             </Box>
           )}
           <Box className={classes.contentWrapper}>
-            <Box className={classes.title}>{message.internalName}</Box>
-            <Box
-              className={classes.message}
-              dangerouslySetInnerHTML={stringToHTML(message.message)}
-            />
-            {message.url && (
-              <Box className={classes.link}>
-                <Button variant="link" onClick={openLink}>
-                  {message.textUrl}
-                </Button>
-              </Box>
-            )}
+            <Stack direction="column" fullHeight spacing={5} justifyContent="space-between">
+              <Box className={classes.title}>{message.internalName}</Box>
+              <Box
+                className={classes.message}
+                dangerouslySetInnerHTML={stringToHTML(message.message)}
+              />
+              {message.url && (
+                <Box className={classes.link}>
+                  <Button onClick={openLink}>{message.textUrl}</Button>
+                </Box>
+              )}
+            </Stack>
           </Box>
         </Box>
       </Box>

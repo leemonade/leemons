@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,9 +15,11 @@ import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import {
   AssetBookmarkIcon,
   AssetMediaIcon,
-  TotalLayout,
+  TotalLayoutContainer,
   TotalLayoutHeader,
-  useTotalLayout,
+  TotalLayoutFooterContainer,
+  Button,
+  Stack,
 } from '@bubbles-ui/components';
 import { useRequestErrorMessage } from '@common';
 
@@ -31,19 +33,20 @@ import { UploadingFileModal } from '../../../components/UploadingFileModal';
 
 const AssetPage = () => {
   const { category, categories, selectCategory, setCategory, setAsset, asset } =
-    React.useContext(LibraryContext);
-  const totalLayoutProps = useTotalLayout();
-  const [uploadingFileInfo, setUploadingFileInfo] = React.useState(null);
-  const [loading, setLoading] = React.useState(false);
+    useContext(LibraryContext);
+  const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [t] = useTranslateLoader(prefixPN('assetSetup'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { openConfirmationModal } = useLayout();
   const history = useHistory();
   const params = useParams();
   const queryClient = useQueryClient();
+  const scrollRef = useRef(null);
 
-  // Set Category for Library context
-  React.useEffect(() => {
+  // SET CATEGORY AND LOAD ASSET IF EDITING ------------------------------------------------------------------------
+
+  useEffect(() => {
     if (params) {
       if (!isEmpty(params.category)) selectCategory(params.category);
       const query = {};
@@ -54,40 +57,6 @@ const AssetPage = () => {
       setCategory(item);
     }
   }, [params, asset, categories, category]);
-
-  // INITIAL STEP VALUES -------------------------------------------
-  const getInitialValues = () => ({
-    file: asset?.file || null,
-    name: asset?.name || '',
-    description: asset?.description || '',
-    color: asset?.color || '',
-    cover: asset?.cover || null,
-    url: asset?.url || null,
-    program: asset?.program || null,
-    subjects: asset?.subjects?.map((subject) => subject?.subject) || null,
-    tags: asset?.tags || [],
-  });
-
-  const getValidationSchema = (assetType) => {
-    const zodSchema = {
-      name: z
-        .string({ required_error: t('basicData.errorMessages.name') })
-        .min(1, t('basicData.errorMessages.name')),
-    };
-    if (assetType === 'bookmarks') {
-      zodSchema.url = z
-        .string({ required_error: t('basicData.errorMessages.url') })
-        .min(1, t('basicData.errorMessages.url'));
-    } else {
-      zodSchema.file = z.instanceof(File).or(
-        z.object({
-          name: z.string(),
-          type: z.string(),
-        })
-      );
-    }
-    return z.object(zodSchema);
-  };
 
   const loadAsset = async (id) => {
     try {
@@ -102,53 +71,73 @@ const AssetPage = () => {
       addErrorAlert(getErrorMessage(err));
     }
   };
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (!isEmpty(params.id) && isEmpty(asset)) {
       loadAsset(params.id);
     }
   }, [params, asset]);
 
-  const initialStepsInfo = React.useMemo(
-    () => [
-      {
-        label: '',
-        badge: null,
-        status: null,
-        showStep: true,
-        validationSchema: getValidationSchema(category?.key),
-        initialValues: getInitialValues(),
-        stepComponent: (
-          <BasicData
-            key={t('basicData')}
-            advancedConfig={{
-              alwaysOpen: false,
-              program: { show: true, required: false },
-              subjects: { show: true, required: false, showLevel: true, maxOne: false },
-            }}
-            onSave={setAsset}
-            editing={params.id?.length}
-            isLoading={loading}
-            categoryKey={params.category || ''}
-          />
-        ),
-      },
-    ],
-    [category, asset, params]
-  );
+  // INIT FORM  --------------------------------------------------------------------
 
-  // INIT FORM ----------------------------------------------------
+  const validationSchema = useMemo(() => {
+    const zodSchema = {
+      name: z
+        .string({ required_error: t('basicData.errorMessages.name') })
+        .min(1, t('basicData.errorMessages.name')),
+    };
+    if (category?.key === 'bookmarks') {
+      zodSchema.url = z
+        .string({ required_error: t('basicData.errorMessages.url') })
+        .min(1, t('basicData.errorMessages.url'));
+    } else {
+      zodSchema.file = z.instanceof(File).or(
+        z.object({
+          name: z.string(),
+          type: z.string(),
+        })
+      );
+    }
+    return zodSchema;
+  }, [category, t]);
+
   const form = useForm({
-    defaultValues: initialStepsInfo[totalLayoutProps.activeStep]?.initialValues,
-    resolver: zodResolver(initialStepsInfo[totalLayoutProps.activeStep]?.validationSchema),
+    resolver: zodResolver(z.object(validationSchema)),
   });
   const formValues = form.watch();
 
-  // Edit: If an asset is passed, the form resets to load initial values
-  React.useEffect(() => {
-    form.reset(initialStepsInfo[totalLayoutProps.activeStep]?.initialValues);
+  useEffect(() => {
+    let solvedProgram;
+    if (asset?.subjects?.length) {
+      solvedProgram = asset?.subjects[0].program;
+    }
+    form.setValue('file', asset?.file || null);
+    form.setValue('name', asset?.name);
+    form.setValue('description', asset?.description);
+    form.setValue('color', asset?.color || null);
+    form.setValue('cover', asset?.cover || null);
+    form.setValue('program', asset?.program || solvedProgram || null);
+    form.setValue('subjects', asset?.subjects?.map((subject) => subject.subject) || null);
+    form.setValue('tags', asset?.tags);
+    if (category?.key === 'bookmarks') {
+      form.setValue('url', asset?.url);
+    }
   }, [asset]);
 
-  // HELPER FUNCTIONS --------------------------------------------------------
+  // HANDLERS & FUNCTIONS -------------------------------------------------------
+  const handleOnCancel = () => {
+    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
+    if (formHasBeenTouched) {
+      openConfirmationModal({
+        title: t('cancelModal.title'),
+        description: t('cancelModal.description'),
+        labels: { confim: t('cancelModal.confirm'), cancel: t('cancelModal.cancel') },
+        onConfirm: () => history.goBack(),
+      })();
+    } else {
+      history.goBack();
+    }
+  };
 
   async function resolveAssetCover({ categoryName, isEditing, isImageResource }) {
     const coverIsAUrl = isString(formValues.cover) && formValues.cover?.startsWith('http');
@@ -182,21 +171,6 @@ const AssetPage = () => {
       formValues.cover = asset?.original?.cover?.id;
     }
   }
-
-  // HANDLERS -------------------------------------------------------
-  const handleOnCancel = () => {
-    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
-    if (formHasBeenTouched) {
-      openConfirmationModal({
-        title: t('cancelModal.title'),
-        description: t('cancelModal.description'),
-        labels: { confim: t('cancelModal.confirm'), cancel: t('cancelModal.cancel') },
-        onConfirm: () => history.goBack(),
-      })();
-    } else {
-      history.goBack();
-    }
-  };
 
   const handlePublish = async () => {
     const editing = params.id?.length > 0;
@@ -273,11 +247,7 @@ const AssetPage = () => {
     }
   };
 
-  const handlePlublishAndAssign = async () => {
-    await handlePublish();
-  };
-
-  // HEADER --------------------------------------------------------
+  // HEADER & FOOTER --------------------------------------------------------
   const getAssetInfoHeader = () => {
     const editing = params.id?.length;
     if (category?.key === 'bookmarks')
@@ -295,42 +265,57 @@ const AssetPage = () => {
     };
   };
 
-  const buildHeader = () => (
-    <TotalLayoutHeader
-      title={getAssetInfoHeader().title}
-      icon={getAssetInfoHeader().icon}
-      formTitlePlaceholder={formValues.name || getAssetInfoHeader().placeHolder}
-      onSave={form.handleSubmit(handlePlublishAndAssign)}
-      onCancel={handleOnCancel}
-      mainActionLabel={t('header.cancel')}
-    />
-  );
-
-  // FOOTER ACTIONS ------------------------------------------------
-  const footerActionsLabels = {
-    back: 'Anterior',
-    save: 'Guardar borrador',
-    next: 'Siguiente',
-    dropdownLabel: 'Finalizar',
-  };
-
-  const footerFinalActionsAndLabels = [
-    { label: 'Publicar', action: handlePublish },
-    { label: 'Publicar y asignar', action: handlePlublishAndAssign },
-  ];
-
   return (
     <>
       <FormProvider {...form}>
-        <TotalLayout
-          {...totalLayoutProps}
-          Header={buildHeader}
-          footerActionsLabels={footerActionsLabels}
-          footerFinalActions={footerFinalActionsAndLabels}
-          initialStepsInfo={initialStepsInfo}
-          onCancel={handleOnCancel}
-          isLoading={loading}
-        />
+        <TotalLayoutContainer
+          scrollRef={scrollRef}
+          Header={
+            <TotalLayoutHeader
+              title={getAssetInfoHeader().title}
+              icon={getAssetInfoHeader().icon}
+              formTitlePlaceholder={formValues.name || getAssetInfoHeader().placeHolder}
+              onCancel={handleOnCancel}
+              mainActionLabel={t('header.cancel')}
+            />
+          }
+        >
+          <Stack
+            justifyContent="center"
+            sx={{ backgroundColor: '#f8f9fb', overflow: 'auto' }}
+            ref={scrollRef}
+          >
+            <BasicData
+              key={t('basicData')}
+              advancedConfig={{
+                alwaysOpen: false,
+                program: { show: true, required: false },
+                subjects: { show: true, required: false, showLevel: true, maxOne: false },
+              }}
+              editing={params.id?.length}
+              isLoading={loading}
+              categoryKey={params.category || ''}
+              Footer={
+                <TotalLayoutFooterContainer
+                  fixed
+                  scrollRef={scrollRef}
+                  rightZone={
+                    <Button
+                      onClick={async () => {
+                        const test = await form.trigger();
+                        if (test) {
+                          handlePublish();
+                        }
+                      }}
+                    >
+                      {t('basicData.footer.finish')}
+                    </Button>
+                  }
+                />
+              }
+            />
+          </Stack>
+        </TotalLayoutContainer>
       </FormProvider>
       <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </>

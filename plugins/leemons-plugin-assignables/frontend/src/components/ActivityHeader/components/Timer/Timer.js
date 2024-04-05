@@ -7,6 +7,7 @@ import { Box, Text } from '@bubbles-ui/components';
 import { padStart } from 'lodash';
 import { useTimerStyles } from './Timer.styles';
 import Countdown from './components/Countdown/Countdown';
+import millisecondsToTime from './helpers/millisecondsToTime';
 
 dayjs.extend(dayjsDuration);
 
@@ -52,8 +53,7 @@ export default function Timer({ assignation, instance, hidden, onTimeout, showCo
         />
       ) : (
         <Text className={cx(classes.text, classes.textColor)}>
-          {padStart(duration.hours, 2, '0')}:{padStart(duration.minutes, 2, '0')}:
-          {padStart(duration.seconds, 2, '0')}
+          {millisecondsToTime(duration.duration)}
         </Text>
       )}
     </Box>

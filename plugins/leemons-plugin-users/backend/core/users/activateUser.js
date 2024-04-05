@@ -1,4 +1,6 @@
 const { encryptPassword } = require('./bcrypt/encryptPassword');
+const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsByProfileToUser');
+const { profiles: getUserProfiles } = require('./profiles');
 
 async function activateUser({ userId, password, ctx }) {
   const user = await ctx.tx.db.Users.findOneAndUpdate(
@@ -12,9 +14,9 @@ async function activateUser({ userId, password, ctx }) {
   }).lean();
 
   if (userRegisterPasswordUser) await ctx.tx.db.UserRegisterPassword.deleteOne({ user: userId });
-  // if (leemons.getPlugin('emails')) {
-  //   // TODO Mandar algun email si se quiere cuando el usuario haya seteado su contraseña del todo
-  // }
+
+  const profiles = await getUserProfiles({ user: userId, ctx });
+  profiles.map((profile) => sendActivationEmailsByProfileToUser({ user, profile, ctx }));
 
   return user;
 }

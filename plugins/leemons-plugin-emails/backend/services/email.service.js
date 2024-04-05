@@ -4,14 +4,14 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/email.rest');
 
-const emailService = require('../core/email');
+const EmailService = require('../core/email');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -30,52 +30,52 @@ module.exports = {
     ...restActions,
     add: {
       handler(ctx) {
-        return emailService.add({ ...ctx.params, ctx });
+        return EmailService.add({ ...ctx.params, ctx });
       },
     },
     send: {
       handler(ctx) {
-        return emailService.send({ ...ctx.params });
+        return EmailService.send({ ...ctx.params });
       },
     },
     delete: {
       handler(ctx) {
-        return emailService.delete({ ...ctx.params, ctx });
+        return EmailService.delete({ ...ctx.params, ctx });
       },
     },
     providers: {
       handler(ctx) {
-        return emailService.providers({ ctx });
+        return EmailService.providers({ ctx });
       },
     },
     deleteAll: {
       handler(ctx) {
-        return emailService.deleteAll({ ...ctx.params, ctx });
+        return EmailService.deleteAll({ ...ctx.params, ctx });
       },
     },
     addProvider: {
       handler(ctx) {
-        return emailService.saveProvider({ ...ctx.params, ctx });
+        return EmailService.saveProvider({ ...ctx.params, ctx });
       },
     },
     saveProvider: {
       handler(ctx) {
-        return emailService.saveProvider({ ...ctx.params, ctx });
+        return EmailService.saveProvider({ ...ctx.params, ctx });
       },
     },
     addIfNotExist: {
       handler(ctx) {
-        return emailService.addIfNotExist({ ...ctx.params, ctx });
+        return EmailService.addIfNotExist({ ...ctx.params, ctx });
       },
     },
     sendAsPlatform: {
       handler(ctx) {
-        return emailService.sendAsPlatform({ ...ctx.params, ctx });
+        return EmailService.sendAsPlatform({ ...ctx.params, ctx });
       },
     },
     sendAsEducationalCenter: {
       handler(ctx) {
-        return emailService.sendAsEducationalCenter({ ...ctx.params, ctx });
+        return EmailService.sendAsEducationalCenter({ ...ctx.params, ctx });
       },
     },
   },

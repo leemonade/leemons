@@ -5,6 +5,7 @@
 
 const path = require('path');
 const _ = require('lodash');
+
 const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
@@ -14,6 +15,7 @@ const { addPermissionsDeploy } = require('@leemons/permissions');
 const { addMenuItemsDeploy } = require('@leemons/menu-builder');
 const { addWidgetZonesDeploy } = require('@leemons/widgets');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsEmailsMixin } = require('@leemons/emails');
 const {
   updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
 } = require('../core/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
@@ -30,8 +32,8 @@ const {
 const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
-const { initEmails } = require('../core/deploy/initEmails');
 const { permissionsNamespace } = require('../helpers/cacheKeys');
+const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
 
 const initDataset = async ({ ctx }) => {
   if (!(await hasKey(ctx.tx.db.KeyValue, 'dataset-locations'))) {
@@ -76,6 +78,7 @@ module.exports = {
     }),
     LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
+    LeemonsEmailsMixin(),
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
@@ -97,9 +100,6 @@ module.exports = {
 
       // Dataset Locations
       await initDataset({ ctx });
-
-      // Email Templates
-      await initEmails({ ctx });
     },
     'menu-builder.init-main-menu': async (ctx) => addMenuItems(ctx),
     'deployment-manager.config-change': async (ctx) => addMenuItems(ctx),
@@ -110,5 +110,9 @@ module.exports = {
       await createInitialProfiles({ ctx });
       ctx.tx.emit('init-profiles');
     },
+  },
+  async started() {
+    const emailTemplates = renderEmailTemplates();
+    await this.initEmailTemplates(emailTemplates);
   },
 };
