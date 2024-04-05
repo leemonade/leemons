@@ -73,7 +73,7 @@ module.exports = {
         options: {
           alwaysAvailable: 'Cualquier momento',
           fixed: 'Con plazo de tiempo',
-          session: 'Sesión en de asignatura',
+          session: 'Sesión de asignatura',
         },
       },
       hideFromCalendar: 'Ocultar del calendario hasta la fecha/hora de inicio',
