@@ -13,7 +13,7 @@ async function getActiveUserAgentsCountByProfileSysName({ sysName, ctx }) {
   const profile = await detailBySysName({ sysName, ctx });
 
   if (!profile) {
-    throw new LeemonsError('Profile not found', 404);
+    throw new LeemonsError(ctx, { message: 'Profile not found', httpStatusCode: 404 });
   }
 
   const { role } = await ctx.tx.db.ProfileRole.findOne({ profile: profile.id })
