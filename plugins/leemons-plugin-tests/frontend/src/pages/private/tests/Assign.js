@@ -52,13 +52,13 @@ export default function Assign() {
         getAssignConfigsRequest(),
         getAssignablesRequest(params.id, { withFiles: false }),
       ]);
-      const hasCoverImg = test?.cover?.id ? getFileUrl(test.cover.id) : null;
+      const coverUrl = test?.cover?.id ? getFileUrl(test.cover.id) : null;
       store.configs = configs;
       store.test = test;
       store.assignable = {
         asset: {
           name: test.name,
-          cover: hasCoverImg,
+          cover: coverUrl,
         },
         roleDetails,
         subjects: map(test.subjects, (id, i) => ({
