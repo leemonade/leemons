@@ -151,13 +151,13 @@ async function removeClass(id) {
   });
 }
 
-async function removeStudentFromClass(classId, student) {
+async function removeStudentFromClass({ classId, studentId }) {
   return leemons.api(`v1/academic-portfolio/classes/remove/students`, {
     allAgents: true,
     method: 'POST',
     body: {
       class: classId,
-      student,
+      student: studentId,
     },
   });
 }

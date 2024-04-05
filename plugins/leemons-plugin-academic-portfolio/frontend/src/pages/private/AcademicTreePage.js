@@ -86,6 +86,8 @@ const AcademicTreePage = () => {
   const [selectedProgram, setSelectedProgram] = useState('');
   const [selectedNode, setSelectedNode] = useState(null);
   const [enrollmentDrawerIsOpen, setEnrollmentDrawerIsOpen] = useState(false);
+  const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
+    useState(null);
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
   const scrollRef = useRef();
   const history = useHistory();
@@ -119,14 +121,12 @@ const AcademicTreePage = () => {
   });
 
   const handleSubjectClick = (item) => {
-    setSelectedNode(item);
+    setSelectedNode(cloneDeep(item));
   };
 
   const addParentInfo = (node, parent = null) => {
-    // Assign the parent to the current node
     node.parent = parent;
 
-    // If the node has children, recursively set their parent property
     if (node.children && node.children.length > 0) {
       node.children.forEach((child) => addParentInfo(child, node));
     }
@@ -145,6 +145,14 @@ const AcademicTreePage = () => {
   }, [academicTreeQuery]);
   console.log('parsedTree', parsedTree);
 
+  // FUNCTIONS && HANDLERS ····················································································|
+  const toggleEnrollmentDrawer = (classroomId = null) => {
+    setEnrollmentDrawerIsOpen((prevState) => !prevState);
+    setEnrolllmentDrawerOpenedFromClassroom(classroomId);
+  };
+
+  // RENDER ····················································································|
+
   const viewToRender = useMemo(() => {
     switch (selectedNode?.type) {
       case 'cycle':
@@ -154,9 +162,10 @@ const AcademicTreePage = () => {
       case 'group':
         return (
           <GroupView
-            groupNode={selectedNode}
             scrollRef={scrollRef}
-            setEnrollmentDrawerIsOpen={setEnrollmentDrawerIsOpen}
+            openEnrollmentDrawer={toggleEnrollmentDrawer}
+            groupNode={selectedNode}
+            program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
       case 'knowledgeArea':
@@ -165,7 +174,7 @@ const AcademicTreePage = () => {
         return (
           <SubjectView
             scrollRef={scrollRef}
-            setEnrollmentDrawerIsOpen={setEnrollmentDrawerIsOpen}
+            openEnrollmentDrawer={toggleEnrollmentDrawer}
             subjectNode={selectedNode}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
@@ -175,23 +184,6 @@ const AcademicTreePage = () => {
     }
   }, [selectedNode, centerProgramsQuery, selectedProgram]);
 
-  // FUNCTIONS && HANDLERS ····················································································|
-  const formatedStepTitle = useMemo(() => {
-    const programName = centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name;
-    if (selectedNode) {
-      if (selectedNode.type === 'course') {
-        return `${programName} - ${
-          selectedNode.type.charAt(0).toUpperCase() + selectedNode.type.slice(1)
-        } ${selectedNode.index}`;
-      }
-      if (selectedNode.type === 'group' && selectedNode.metadata?.course) {
-        return `${programName} - ${selectedNode.metadata?.course}º${selectedNode.name}`;
-      }
-      return `${programName} - ${selectedNode.name}`;
-    }
-    return programName;
-  }, [selectedNode, selectedProgram]);
-
   console.log('academicTreeQuery', academicTreeQuery);
 
   return (
@@ -200,9 +192,9 @@ const AcademicTreePage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={'MATRICULACIÓN Y GESTIÓN 🌎'}
+            title={'MATRICULACIÓN Y GESTIÓN 🔫'}
             onCancel={() => history.goBack()}
-            mainActionLabel={'Cancelar 🌎'}
+            mainActionLabel={'Cancelar 🔫'}
             compact
             icon={
               <Stack justifyContent="center" alignItems="center">
@@ -256,17 +248,16 @@ const AcademicTreePage = () => {
           <Stack>
             <TreeView data={parsedTree} onSubjectClick={handleSubjectClick} />
           </Stack>
-          {/* <TotalLayoutStepContainer stepName={formatedStepTitle} clean>
-          {viewToRender}
-        </TotalLayoutStepContainer> */}
           {viewToRender}
         </Stack>
-        {/* </VerticalStepperContainer> */}
       </TotalLayoutContainer>
       <EnrollmentDrawer
+        scrollRef={scrollRef}
         isOpen={enrollmentDrawerIsOpen}
-        setIsOpen={setEnrollmentDrawerIsOpen}
-        classes={[]}
+        closeDrawer={toggleEnrollmentDrawer}
+        selectedNode={selectedNode}
+        centerId={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.center}
+        opensFromClasroom={enrolllmentDrawerOpenedFromClassroom} // classroomId (string)
       />
     </>
   );

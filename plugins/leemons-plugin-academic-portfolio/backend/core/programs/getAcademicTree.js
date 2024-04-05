@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 const { programsByIds } = require('./programsByIds');
 
-function handleNonSequentialCourses({ groups, knowledgeAreas, subjects, classes }) {
+function handleNonSequentialAndSingleCourses({ groups, knowledgeAreas, subjects, classes }) {
   let tree = [];
   if (groups.length > 0) {
     tree = groups.map((group) => ({
@@ -48,7 +48,7 @@ function handleNonSequentialCourses({ groups, knowledgeAreas, subjects, classes 
   return [...subjects.map(({ id, name }) => ({ id, name, type: 'subject' }))];
 }
 
-function handleSequentialAndSingleCourses({
+function handleSequentialAndMultipleCourses({
   cycles,
   courses,
   groups,
@@ -106,9 +106,11 @@ function handleSequentialAndSingleCourses({
         // For classes with no group (within programs that use reference gorups), list them directly under the course
         const noGroupClasses = courseClasses.filter((cls) => !cls.groups);
         const noGroupSubjectIds = noGroupClasses.map((cls) => cls.subject.id);
-        course.noGroupSubjects = subjects
-          .filter((subject) => noGroupSubjectIds.includes(subject.id))
-          .map(({ id, name }) => ({ id, name, type: 'subject' }));
+        course.children.push(
+          ...subjects
+            .filter((subject) => noGroupSubjectIds.includes(subject.id))
+            .map(({ id, name }) => ({ id, name, type: 'subject' }))
+        );
       } else if (courseKnowledgeAreas.length > 0) {
         course.children = courseKnowledgeAreas.map((knowledgeArea) => {
           const knowledgeAreaClasses = courseClasses.filter(
@@ -141,9 +143,9 @@ async function getAcademicTree({ programId, ctx }) {
 
   let tree = [];
   if (!sequentialCourses || courses.length === 1) {
-    tree = handleNonSequentialCourses({ groups, knowledgeAreas, subjects, classes });
+    tree = handleNonSequentialAndSingleCourses({ groups, knowledgeAreas, subjects, classes });
   } else {
-    tree = handleSequentialAndSingleCourses({
+    tree = handleSequentialAndMultipleCourses({
       cycles,
       courses,
       groups,
@@ -153,7 +155,6 @@ async function getAcademicTree({ programId, ctx }) {
     });
   }
 
-  console.log(tree);
   return tree;
 }
 module.exports = { getAcademicTree };

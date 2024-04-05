@@ -1,49 +1,137 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { ContextContainer, Title, Select, Box, Button } from '@bubbles-ui/components';
+import React, { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
+import PropTypes from 'prop-types';
+import { find } from 'lodash';
 
-const EnrollmentTab = ({ classData, setEnrollmentDrawerIsOpen }) => {
+import {
+  ContextContainer,
+  Title,
+  Select,
+  Box,
+  Button,
+  ActionButton,
+  TextInput,
+  Stack,
+} from '@bubbles-ui/components';
+import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
+
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useUserAgentsInfo } from '@users/hooks';
+import { ScheduleInput } from '@timetable/components';
+
+import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
+import { EnrollmentTabStyles } from './EnrollmentTab.styles';
+import StudentsTable from './StudentsTable';
+
+const EnrollmentTab = ({ classData, openEnrollmentDrawer }) => {
+  const { classes } = EnrollmentTabStyles();
   const form = useForm();
+  const queryClient = useQueryClient();
+  const { mutate: removeStudentFromClass } = useRemoveStudentFromClass();
+  const { data: userAgentsInfo } = useUserAgentsInfo(classData?.students || [], {
+    enabled: classData?.students?.length > 0,
+  });
+
+  const handleRemoveStudentFromClass = (userAgentId) => {
+    removeStudentFromClass(
+      { classId: classData.id, studentId: userAgentId },
+      {
+        onSuccess: (result) => {
+          if (result) {
+            queryClient.invalidateQueries(['subjectDetail', { subject: classData.subject.id }]);
+            addSuccessAlert('Estudiante eliminado con éxito 🔫');
+          }
+        },
+        onError: () => {
+          addErrorAlert('No se ha podido eliminar al estudiante del aula. 🔫');
+        },
+      }
+    );
+  };
 
   console.log('classData', classData);
-  if (!classData) return null;
+
+  useEffect(() => {
+    if (classData) {
+      const mainTeacher = find(classData.teachers, { type: 'main-teacher' });
+      form.setValue('mainTeacher', mainTeacher?.teacher);
+      form.setValue('virtualUrl', classData.virtualUrl);
+      form.setValue('address', classData.address);
+      form.setValue('schedule', classData.schedule);
+    }
+  }, [classData]);
+
+  const studentsTableData = useMemo(() => {
+    if (userAgentsInfo?.length) {
+      return userAgentsInfo
+        .filter(({ disabled }) => !disabled)
+        .map((userAgent) => ({
+          ...userAgent.user,
+          actions: (
+            <ActionButton
+              onClick={() => handleRemoveStudentFromClass(userAgent.id)}
+              tooltip={'borrar 🔫'}
+              icon={<DeleteBinIcon width={18} height={18} />}
+            />
+          ),
+        }));
+    }
+    return [];
+  }, [userAgentsInfo]);
+
   return (
     <ContextContainer sx={{ padding: 24 }}>
-      <div>{classData?.courses && 'Course ' + classData?.courses?.index}</div>
-      <div>
-        {classData?.groups?.abbreviation ||
-          'Aula ' + classData?.alias ||
-          classData?.classWithoutGroupId}
-      </div>
       <ContextContainer>
         <Title>{'Docentes 🔫'}</Title>
-        <Controller
-          name="mainTeacher"
-          control={form.control}
-          render={({ field, fieldState }) => <Select />}
-        />
+        <Box className={classes.mainTeacher}>
+          <Controller
+            name="mainTeacher"
+            control={form.control}
+            render={({ field }) => <Select {...field} label={'Profesor principal 🔫'} />}
+          />
+        </Box>
       </ContextContainer>
       <ContextContainer>
         <Title>{'Horarios y ubicación 🔫'}</Title>
+        <Stack spacing={4} fullWidth>
+          <Box className={classes.inlineInputs}>
+            <Controller
+              name="virtualUrl"
+              control={form.control}
+              render={({ field }) => <TextInput {...field} label={'Aula virtual 🔫'} />}
+            />
+          </Box>
+          <Box className={classes.inlineInputs}>
+            <Controller
+              name="address"
+              control={form.control}
+              render={({ field }) => (
+                <TextInput {...field} label={'Dirección o ubicación física del aula 🔫'} />
+              )}
+            />
+          </Box>
+        </Stack>
         <Controller
-          name="mainTeacher"
+          name="schedule"
           control={form.control}
-          render={({ field, fieldState }) => <Select />}
+          render={({ field }) => <ScheduleInput label={'Horario de clase 🔫'} {...field} />}
         />
       </ContextContainer>
       <ContextContainer>
-        <Title>{'Matriculados actualmente 🔫'}</Title>
+        <Title>{`Matriculados actualmente 🔫 (${classData?.students?.length} / ${classData?.seats})`}</Title>
         <Box>
-          <Button onClick={() => setEnrollmentDrawerIsOpen(true)} variant="link">
+          <Button
+            onClick={() => openEnrollmentDrawer(classData?.id)}
+            variant="link"
+            leftIcon={<AddCircleIcon />}
+          >
             {'Matricular Estudiantes 🔫'}
           </Button>
         </Box>
-        <Controller
-          name="mainTeacher"
-          control={form.control}
-          render={({ field, fieldState }) => <Select />}
-        />
+        {classData?.students?.length > 0 && (
+          <StudentsTable data={studentsTableData} showSearchBar />
+        )}
       </ContextContainer>
     </ContextContainer>
   );
@@ -51,7 +139,7 @@ const EnrollmentTab = ({ classData, setEnrollmentDrawerIsOpen }) => {
 
 EnrollmentTab.propTypes = {
   classData: PropTypes.object,
-  setEnrollmentDrawerIsOpen: PropTypes.func,
+  openEnrollmentDrawer: PropTypes.func,
 };
 
 export default EnrollmentTab;

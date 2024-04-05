@@ -2,6 +2,7 @@ import { createStyles } from '@bubbles-ui/components';
 
 const GroupViewStyles = createStyles((theme) => ({
   root: {},
+  content: { backgroundColor: 'white', padding: 24 },
   courseData: {
     // gap: 25,
   },

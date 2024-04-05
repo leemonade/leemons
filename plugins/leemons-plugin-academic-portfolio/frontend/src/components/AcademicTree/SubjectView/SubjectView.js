@@ -1,26 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 
-import {
-  Select,
-  Stack,
-  LoadingOverlay,
-  TotalLayoutStepContainer,
-  TotalLayoutFooterContainer,
-  Tabs,
-  TabPanel,
-  Box,
-  ContextContainer,
-  Button,
-  VerticalStepperContainer,
-} from '@bubbles-ui/components';
+import { LoadingOverlay, TotalLayoutStepContainer, Tabs, TabPanel } from '@bubbles-ui/components';
 import EnrollmentTab from './EnrollmentTab';
 import InfoTab from './InfoTab';
-import EnrollmentDrawer from '../EnrollmentDrawer/EnrollmentDrawer';
 
-const SubjectView = ({ subjectNode, program, scrollRef, setEnrollmentDrawerIsOpen }) => {
-  const [activeTab, setActiveTab] = useState('0');
+const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) => {
   const { data: subjectDetails, isLoading } = useSubjectDetails(
     subjectNode?.id,
     {
@@ -28,10 +14,9 @@ const SubjectView = ({ subjectNode, program, scrollRef, setEnrollmentDrawerIsOpe
     },
     true
   );
-  console.log('subjectDetails', subjectDetails);
 
   // For cases when the subject is the child of a reference group
-  const onlyClassToShow = useMemo(() => {
+  const singleClassToShow = useMemo(() => {
     if (subjectNode?.parent?.type === 'group') {
       return subjectDetails?.classes?.find((cls) => cls.groups?.id === subjectNode?.parent?.id);
     }
@@ -39,39 +24,35 @@ const SubjectView = ({ subjectNode, program, scrollRef, setEnrollmentDrawerIsOpe
   }, [subjectDetails, subjectNode]);
 
   const EnrollmentTabs = useMemo(() => {
-    if (onlyClassToShow) {
+    if (singleClassToShow) {
       return (
         <TabPanel label={'Matriculación 🔫'}>
           <EnrollmentTab
-            classData={onlyClassToShow}
-            setEnrollmentDrawerIsOpen={setEnrollmentDrawerIsOpen}
+            classData={singleClassToShow}
+            openEnrollmentDrawer={openEnrollmentDrawer}
           />
         </TabPanel>
       );
     }
     return subjectDetails?.classes?.map((cls) => (
       <TabPanel key={cls.id} label={cls?.alias ?? cls.classWithoutGroupId}>
-        <EnrollmentTab classData={cls} setEnrollmentDrawerIsOpen={setEnrollmentDrawerIsOpen} />
+        <EnrollmentTab classData={cls} openEnrollmentDrawer={openEnrollmentDrawer} />
       </TabPanel>
     ));
-  }, [subjectDetails, onlyClassToShow]);
+  }, [subjectDetails, singleClassToShow]);
 
   return (
     <TotalLayoutStepContainer
-      stepName={`${program?.name} - ${subjectNode?.name || ''}`}
+      stepName={subjectNode?.name ? `${program?.name} - ${subjectNode?.name}` : program?.name ?? ''}
       clean
       fullWidth
     >
       <LoadingOverlay visible={isLoading} />
-      <Tabs
-        tabPanelListStyle={{ backgroundColor: 'white' }}
-        fullHeight
-        onChange={(activeT) => setActiveTab(activeT)}
-      >
+      <Tabs tabPanelListStyle={{ backgroundColor: 'white' }} fullHeight>
         <TabPanel label={'Información 🔫'}>
           <InfoTab
             subjectDetails={subjectDetails}
-            onlyClassToShow={onlyClassToShow}
+            onlyClassToShow={singleClassToShow}
             subjectNode={subjectNode}
           />
         </TabPanel>
@@ -84,7 +65,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, setEnrollmentDrawerIsOpe
 SubjectView.propTypes = {
   subjectNode: PropTypes.object,
   program: PropTypes.object,
-  setEnrollmentDrawerIsOpen: PropTypes.func,
+  openEnrollmentDrawer: PropTypes.func,
   scrollReff: PropTypes.any,
 };
 
