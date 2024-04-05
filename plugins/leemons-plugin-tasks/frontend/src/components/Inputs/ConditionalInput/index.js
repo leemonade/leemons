@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Stack, PageContainer } from '@bubbles-ui/components';
+import { Switch, Stack, PageContainer, Checkbox } from '@bubbles-ui/components';
 import { ConditionalInputStyles } from './ConditionalInput.styles';
 
 export default function ConditionalInput({
@@ -10,6 +10,7 @@ export default function ConditionalInput({
   onChange,
   initialValue,
   value: userValue,
+  display = 'switch',
   ...props
 }) {
   const { classes } = ConditionalInputStyles();
@@ -36,7 +37,11 @@ export default function ConditionalInput({
 
   return (
     <Stack direction="column" spacing={1}>
-      <Switch {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
+      {display === 'switch' ? (
+        <Switch {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
+      ) : (
+        <Checkbox {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
+      )}
 
       {showOnTrue === show && <PageContainer className={classes.root}>{render()}</PageContainer>}
     </Stack>
@@ -50,4 +55,5 @@ ConditionalInput.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.bool,
   initialValue: PropTypes.bool,
+  display: PropTypes.string,
 };

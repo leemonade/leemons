@@ -83,6 +83,12 @@ export default function Objectives({ form, name, label, labels, required }) {
               label={labels.inputLabel}
               onChange={(e) => setNewObjective(e)}
               placeholder={labels.inputPlaceholder}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && newObjective.trim() !== '') {
+                  addNewObjective();
+                  e.preventDefault(); // Previene la acción por defecto para no enviar un formulario si es que el input está dentro de uno
+                }
+              }}
               sx={() => ({ width: 360 })}
             />
           )}

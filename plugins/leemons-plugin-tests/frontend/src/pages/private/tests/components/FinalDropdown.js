@@ -37,8 +37,8 @@ export default function FinalDropdown({
         { label: t('onlyPublish'), onClick: handleOnPublish },
         { label: t('publishAndAssign'), onClick: handleOnAssign },
       ]}
-      loading={store.saving === 'publish'}
-      disabled={store.saving}
+      // loading={store.saving === 'publish'}
+      // disabled={store.saving}
     >
       {t('finish')}
     </DropdownButton>

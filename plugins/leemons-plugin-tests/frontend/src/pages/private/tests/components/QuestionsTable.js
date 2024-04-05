@@ -1,4 +1,4 @@
-import { ActionButton, Box, Checkbox, Table, TableInput } from '@bubbles-ui/components';
+import { ActionButton, Box, Checkbox, Table, TableInput, Text } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -6,6 +6,7 @@ import { keyBy, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 import { ResultStyles } from '../Result.style';
 
@@ -17,13 +18,16 @@ export default function QuestionsTable({
   hideOpenIcon,
   withStyle = false,
   hideCheckbox = false,
+  questionBank,
 }) {
   // eslint-disable-next-line prefer-const
   let { classes: styles, cx } = ResultStyles({}, { name: 'QuestionsTable' });
   const [t] = useTranslateLoader(prefixPN('testsEdit'));
   const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
-
+  const levels = useLevelsOfDifficulty();
   if (!withStyle) styles = {};
+  const allChecked =
+    value.length === questions?.length && value.length !== 0 && questions?.length !== 0;
 
   const tableHeaders = React.useMemo(() => {
     let result = [];
@@ -32,7 +36,7 @@ export default function QuestionsTable({
         Header: (
           <Box>
             <Checkbox
-              checked={value.length === questions.length}
+              checked={allChecked}
               onChange={() => {
                 const allCheck = value.length === questions.length;
                 if (allCheck) {
@@ -64,7 +68,26 @@ export default function QuestionsTable({
         accessor: 'type',
         className: styles.tableHeader,
       },
+      {
+        Header: t('levelLabel'),
+        accessor: 'level',
+        className: styles.tableHeader,
+        valueRender: (levelName) => {
+          const findLevelName = levels?.find((l) => l.value === levelName);
+          return findLevelName?.label;
+        },
+      },
+      {
+        Header: 'Categoría',
+        accessor: 'category',
+        className: styles.tableHeader,
+        valueRender: (categoryId) => {
+          const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
+          return findCategoryLabel?.value;
+        },
+      },
     ]);
+
     if (!hideOpenIcon) {
       result.push({
         Header: t('actionsHeader'),
@@ -78,37 +101,35 @@ export default function QuestionsTable({
   const tableItems = React.useMemo(
     () =>
       questions && questions.length
-        ? map(questions, (item) => {
-            return {
-              ...getQuestionForTable(item, t2, styles),
-              check: (
-                <Checkbox
-                  checked={value ? value.includes(item.id) : false}
-                  onChange={() => {
-                    const index = value.indexOf(item.id);
-                    if (index >= 0) {
-                      value.splice(index, 1);
-                    } else {
-                      value.push(item.id);
-                    }
+        ? map(questions, (item) => ({
+            ...getQuestionForTable(item, t2, styles),
+            check: (
+              <Checkbox
+                checked={value ? value.includes(item.id) : false}
+                onChange={() => {
+                  const index = value.indexOf(item.id);
+                  if (index >= 0) {
+                    value.splice(index, 1);
+                  } else {
+                    value.push(item.id);
+                  }
 
-                    onChange(value);
-                  }}
+                  onChange(value);
+                }}
+              />
+            ),
+            actions: () => (
+              <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
+                <ActionButton
+                  as={Link}
+                  target="_blank"
+                  to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
+                  tooltip={t('view')}
+                  icon={<ExpandDiagonalIcon />}
                 />
-              ),
-              actions: () => (
-                <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
-                  <ActionButton
-                    as={Link}
-                    target="_blank"
-                    to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
-                    tooltip={t('view')}
-                    icon={<ExpandDiagonalIcon />}
-                  />
-                </Box>
-              ),
-            };
-          })
+              </Box>
+            ),
+          }))
         : [],
     [t, questions, value]
   );
@@ -140,4 +161,8 @@ QuestionsTable.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.array,
   reorderMode: PropTypes.bool,
+  hideOpenIcon: PropTypes.bool,
+  withStyle: PropTypes.bool,
+  hideCheckbox: PropTypes.bool,
+  questionBank: PropTypes.object,
 };

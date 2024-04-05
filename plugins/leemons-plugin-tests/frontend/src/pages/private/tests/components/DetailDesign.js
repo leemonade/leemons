@@ -13,7 +13,7 @@ export default function DetailDesign({ form, t, onNext }) {
   return (
     <ContextContainer>
       <Stack justifyContent="end">
-        <Button onClick={next}>{t('continue')}</Button>
+        <Button onClick={next}>{t('next')}</Button>
       </Stack>
     </ContextContainer>
   );
