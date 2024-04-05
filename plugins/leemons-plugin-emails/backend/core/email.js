@@ -592,7 +592,6 @@ class Email {
       },
       ['id', 'subject', 'html']
     ).lean();
-    console.log('emailDetail', emailDetail);
     return emailDetail;
   }
 }
