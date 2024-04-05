@@ -1,3 +1,5 @@
+const { LeemonsError } = require('@leemons/error');
+
 async function updateAssignSavedConfig({ ctx, name, config, id }) {
   try {
     await ctx.tx.db.AssignSavedConfig.findOneAndUpdate(
@@ -9,11 +11,13 @@ async function updateAssignSavedConfig({ ctx, name, config, id }) {
         name,
         config: JSON.stringify(config),
       }
-    ).lean();
+    );
 
     return true;
   } catch (e) {
-    throw new Error('Error updating config', e.message);
+    throw new LeemonsError(ctx, {
+      message: `Error updating config ${e.message}`,
+    });
   }
 }
 

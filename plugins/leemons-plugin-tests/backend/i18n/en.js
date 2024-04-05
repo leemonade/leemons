@@ -406,7 +406,8 @@ module.exports = {
     update: 'Update',
     assignDone: 'Assignment created successfully',
     configTitle: 'Selection of questions',
-
+    updatedConfig: 'Configuration updated successfully',
+    deletedConfig: 'Configuration deleted successfully',
     advancedSettings: 'Advanced settings',
     executionRules: 'Execution rules',
     allowAdvancedSettings: 'Allow advanced settings',

@@ -115,6 +115,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
                   defaultValues={field.value}
                   t={t}
                   hideButtons
+                  isDrawer={true}
                 />
               )}
             />

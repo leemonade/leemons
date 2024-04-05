@@ -23,13 +23,14 @@ import QuestionsTable from '@tests/pages/private/tests/components/QuestionsTable
 import { FilteredQuestionsGenerator } from '@tests/pages/private/tests/components/FilteredQuestionsGenerator';
 import { ManualQuestionsGenerator } from '@tests/pages/private/tests/components/ManualQuestionsGenerator';
 
-const AssignConfigStyles = createStyles((theme) => ({
+const AssignConfigStyles = createStyles((theme, { isDrawer }) => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
     gap: theme.other.global.spacing.gap.xlg, // 24
     zIndex: 0,
     paddingBottom: 10,
+    maxWidth: isDrawer ? '660px' : '100%',
   },
 
   totalQuestions: {
@@ -97,6 +98,7 @@ export default function AssignConfig({
   onChange,
   hideButtons,
   onNextStep,
+  isDrawer,
 }) {
   let defaultValues = {
     clues: [
@@ -117,7 +119,7 @@ export default function AssignConfig({
   const [randomQuestions, setRandomQuestions] = React.useState([]);
   const [filteredQuestions, setFilteredQuestions] = React.useState([]);
   const [manualQuestions, setManualQuestions] = React.useState([]);
-  const { classes } = AssignConfigStyles();
+  const { classes } = AssignConfigStyles({ isDrawer });
   const form = useForm({ defaultValues });
   const useAllQuestions = form.watch('useAllQuestions');
   const filtersValue = 'filters.nQuestions';

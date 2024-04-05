@@ -96,6 +96,7 @@ export default function Assign() {
   async function handleDeleteAssignmentConfig(id) {
     try {
       await deleteAssignedConfigRequest(id);
+      addSuccessAlert(t('deletedConfig'));
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -108,7 +109,15 @@ export default function Assign() {
   }
 
   async function handleUpdateAssignmentConfig(id, name, config) {
-    await updateAssignedConfigRequest({ id, name, config });
+    try {
+      await updateAssignedConfigRequest(id, name, config);
+      addSuccessAlert(t('updatedConfig'));
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+    const { configs } = await getAssignConfigsRequest();
+    store.configs = configs;
+    render();
   }
 
   React.useEffect(() => {

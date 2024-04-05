@@ -404,6 +404,8 @@ module.exports = {
     prev: 'Anterior',
     delete: 'Borrar',
     update: 'Actualizar',
+    updatedConfig: 'Configuración actualizada correctamente',
+    deletedConfig: 'Configuración borrada correctamente',
     assignDone: 'Asignación creada con éxito',
     configTitle: 'Selección de preguntas',
     configDescription:

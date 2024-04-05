@@ -155,10 +155,11 @@ const RulesConfig = ({
   };
   const handleDeleteConfig = (id) => {
     onDeleteConfig(id);
-    // setSelectedConfig(null);
   };
-  const handleUpdateConfig = () => {
-    onUpdateConfig(selectedConfig);
+  const handleUpdateConfig = (config) => {
+    const selectedConfigtoUpdate = configs.find((c) => c.id === config);
+    const formValues = form.getValues();
+    onUpdateConfig(selectedConfigtoUpdate.id, selectedConfigtoUpdate.name, formValues);
   };
 
   return (
@@ -580,6 +581,7 @@ const RulesConfig = ({
                       <Button
                         variant="link"
                         leftIcon={<SynchronizeArrowsIcon width={20} height={20} />}
+                        onClick={() => handleUpdateConfig(selectedConfig)}
                       >
                         {t('update')}
                       </Button>
