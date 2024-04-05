@@ -4,7 +4,19 @@ import { head } from 'lodash';
 import getAssignations from '@assignables/requests/assignations/getAssignations';
 import { assignationsGetKey } from '../keys/assignations';
 
-// TODO: If details, fetch the instances
+/**
+ * Custom hook to fetch assignations based on provided query parameters.
+ *
+ * @param {Object} params - The parameters for fetching assignations.
+ * @param {{instance: string, user: string} | {id: string}} [params.query] - The query to fetch assignations.
+ * @param {({instance: string, user: string} | {id: string})[]} [params.queries] - The queries to fetch assignations.
+ * @param {boolean} [params.details=true] - Whether to fetch detailed information.
+ * @param {boolean} [params.throwOnMissing=true] - Whether to throw an error if an assignation is missing.
+ * @param {boolean} [params.fetchInstance=false] - Whether to fetch the instance of the assignation.
+ * @param {Object} options - Additional options for the query.
+ * @returns The query object containing the fetched assignations.
+ */
+
 export default function useAssignations({
   query,
   queries,

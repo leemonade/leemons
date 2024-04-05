@@ -35,6 +35,7 @@ import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAss
 import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import LibraryContext from '@leebrary/context/LibraryContext';
 import { useHistory } from 'react-router-dom';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import prefixPN from '../helpers/prefixPN';
 import { CardDetailWrapper } from './CardDetailWrapper';
 import { CardWrapper } from './CardWrapper';
@@ -154,6 +155,7 @@ const AssetList = ({
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
+  const isTeacher = useIsTeacher();
 
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -325,7 +327,7 @@ const AssetList = ({
       download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
       delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
       share: selectedAsset?.shareable ? t('cardToolbar.share') : false,
-      assign: selectedAsset?.assignable ? t('cardToolbar.assign') : false,
+      assign: isTeacher && selectedAsset?.assignable ? t('cardToolbar.assign') : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
           ? t('cardToolbar.pin')
@@ -333,7 +335,7 @@ const AssetList = ({
       unpin: selectedAsset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     };
-  }, [selectedAsset, category, t]);
+  }, [selectedAsset, t, isTeacher, allowStatusFilter, statusFilter]);
 
   // -------------------------------------------------------------------------------------
   // EMPTY STATE
@@ -426,7 +428,7 @@ const AssetList = ({
   };
 
   const handleOnAssign = (item) => {
-    history.push(`/private/tasks/library/create?from=leebrary&asset=${item.id}`);
+    history.push(`/private/leebrary/assign/${item.id}`);
   };
 
   const handleOnDelete = (item) => {

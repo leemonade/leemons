@@ -6,6 +6,7 @@ import { LibraryCard } from '@leebrary/components/LibraryCard';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useHistory } from 'react-router-dom';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import prefixPN from '../helpers/prefixPN';
 import { getCoverUrl, prepareAsset, resolveAssetType } from '../helpers/prepareAsset';
 import { ShareIcon } from './LibraryDetailToolbar/icons/ShareIcon';
@@ -60,17 +61,19 @@ const CardWrapper = ({
   const [t] = useTranslateLoader(prefixPN('list'));
   const history = useHistory();
   const { classes } = CardWrapperStyles({ selected });
+  const isTeacher = useIsTeacher();
+
   const menuItems = React.useMemo(() => {
     const items = [];
 
     if (asset?.id) {
-      if (asset?.fileType !== 'bookmark') {
+      if (isTeacher) {
         items.push({
           icon: <AssignIcon />,
           children: t('cardToolbar.covertToTask'),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/tasks/library/create?from=leebrary&asset=${asset.id}`);
+            history.push(`/private/leebrary/assign/${asset.id}`);
           },
         });
       }
@@ -128,7 +131,7 @@ const CardWrapper = ({
     }
 
     return items;
-  }, [asset, t]);
+  }, [asset, t, isTeacher, history]);
 
   const Component = useMemo(() => {
     let componentToRender = LibraryCard;
@@ -142,13 +145,7 @@ const CardWrapper = ({
     }
 
     return componentToRender;
-  }, [
-    LibraryCard,
-    category?.componentOwner,
-    category?.pluginOwner,
-    category?.listCardComponent,
-    assetsLoading,
-  ]);
+  }, [category?.componentOwner, category?.pluginOwner, category?.listCardComponent]);
 
   return !isNil(category) && !isEmpty(asset) ? (
     <Box key={key} {...props} style={{ display: 'flex', gap: 32, ...style }}>

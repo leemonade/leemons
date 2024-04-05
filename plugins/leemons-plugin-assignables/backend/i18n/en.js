@@ -105,7 +105,6 @@ module.exports = {
       description: 'Instructions for the consult of content',
       editor: {
         placeholder: 'You can specify the best way to consult this content...',
-        help: 'Help information visible in the assignment card (preview view)',
       },
     },
     evaluation: {
@@ -151,6 +150,7 @@ module.exports = {
         label: 'Title',
         placeholder: 'Type the title',
       },
+      thumbnail: 'Thumbnail',
     },
     preview: {
       title: 'Preview',
@@ -476,7 +476,21 @@ module.exports = {
     timeoutAlert: {
       title: 'Maximum time reached',
       message:
-        'the time limit set for this activity has been reached. The last delivery or questions answered have been sent automatically.',
+        'The time limit set for this activity has been reached. The last delivery or questions answered have been sent automatically.',
+    },
+    submitted_alert: {
+      title: 'Activity submitted successfully',
+      message: 'Here you have more information about your activity',
+    },
+    pending_evaluation_alert: {
+      title: 'Pending evaluation.',
+      message: 'When the teacher evaluates your activity, you will receive a notification',
+    },
+    not_submitted_alert: {
+      title: 'Activity not submitted',
+    },
+    finished_alert: {
+      title: 'Activity finished',
     },
   },
   evaluationFeedbackComponent: {

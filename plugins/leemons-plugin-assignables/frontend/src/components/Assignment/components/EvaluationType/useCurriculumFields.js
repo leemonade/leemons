@@ -77,7 +77,7 @@ export function useCustomObjectivesLocalizations() {
     }
 
     return '';
-  });
+  }, [translations, key]);
 }
 
 export function useSelectedCurriculumProperties({
@@ -105,7 +105,7 @@ export function useSelectedCurriculumProperties({
       flattenSelectedValues.map((selectedValue) => {
         const nodeLevelProperty =
           curriculumNodes[selectedValue.node]?.nodeLevelPropertyByPropertyId?.[
-          selectedValue.property
+            selectedValue.property
           ];
 
         const nodeLevel = nodeLevels.find(
@@ -121,20 +121,18 @@ export function useSelectedCurriculumProperties({
       }),
       'id'
     );
-  }, [curriculumNodes, flattenSelectedValues]);
+  }, [curriculumNodes, flattenSelectedValues, curriculum, nodeLevels]);
 
-  React.useEffect(() => {
-    if (customObjectives) {
-      if (!usedProperties?.length || last(usedProperties)?.id !== 'custom') {
-        usedProperties.push({
-          id: 'custom',
-          name: customObjectiveLocalization,
-        });
-      } else {
-        usedProperties[usedProperties.length - 1].name = customObjectiveLocalization;
-      }
+  if (customObjectives) {
+    if (!usedProperties?.length || last(usedProperties)?.id !== 'custom') {
+      usedProperties.push({
+        id: 'custom',
+        name: customObjectiveLocalization,
+      });
+    } else {
+      usedProperties[usedProperties.length - 1].name = customObjectiveLocalization;
     }
-  }, [usedProperties, customObjectives, customObjectiveLocalization]);
+  }
 
   return usedProperties;
 }
@@ -178,7 +176,7 @@ export function useCurriculumVisibleValues({ assignation }) {
       set(store.flatValuesCopy, `${i}.visible`, !!visibleCategories[nodeLevel]);
     });
     render();
-  }, [flatValues, curriculumNodes, visibleCategories]);
+  }, [flatValues, curriculumNodes, visibleCategories, render, store]);
 
   return React.useMemo(() => {
     const includedIds = store.flatValuesCopy
@@ -194,7 +192,7 @@ export function useCurriculumVisibleValues({ assignation }) {
           : [],
       },
     }));
-  }, [store.flatValuesCopy]);
+  }, [store.flatValuesCopy, assignable.subjects, selectedCurriculumValues]);
 }
 
 export function useCurriculumFields({ assignable }) {

@@ -81,6 +81,15 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
       assignable: activity,
     };
 
+    if (activityConfig?.config?.metadata?.isAsset) {
+      // eslint-disable-next-line no-await-in-loop
+      const assignable = await ctx.tx.call('leebrary.assignables.updateForModules', {
+        instance: instanceConfig,
+      });
+
+      instanceConfig.assignable = assignable.id;
+    }
+
     // eslint-disable-next-line no-await-in-loop
     const instanceCreated = await ctx.tx.call(
       'assignables.assignableInstances.createAssignableInstance',
