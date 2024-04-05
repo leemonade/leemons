@@ -23,7 +23,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { allConfig, ignoreVersion } = ctx.params;
+      const { allConfig, ignoreVersion } = ctx.params ?? {};
 
       return getDeploymentConfig({ ignoreVersion, allConfig, ctx });
     },
