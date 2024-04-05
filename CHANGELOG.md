@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.1](https://github.com/leemonade/leemons/compare/1.0.0...1.0.1) (2024-03-19)
+
+
+### Features
+
+* **multilanguage:** Only save one hash if env variable FORCE_RELOAD_I18N is true ([a200e5f](https://github.com/leemonade/leemons/commit/a200e5f692cbd36f91240c69fd944adb3c47a7bf)), closes [#272](https://github.com/leemonade/leemons/issues/272)
+
+
+### Bug Fixes
+
+* **assignables:** Modify NYA empty state to redirect to Leebrary ([0d17c44](https://github.com/leemonade/leemons/commit/0d17c44929c9a38c4ecf380b8cc99f5ab33b2d3f)), closes [#271](https://github.com/leemonade/leemons/issues/271)
+
+
+### Miscellaneous Chores
+
+* Release 1.0.1 ([e75b2c0](https://github.com/leemonade/leemons/commit/e75b2c0027c1ed7044bfd63c16061108f8831c2b))
+
 ## [1.0.0](https://github.com/leemonade/leemons/compare/0.0.4...1.0.0) (2024-03-07)
 
 ### ⚠ BREAKING CHANGES
