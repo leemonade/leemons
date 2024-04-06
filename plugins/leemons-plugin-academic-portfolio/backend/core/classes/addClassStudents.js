@@ -45,8 +45,8 @@ async function addClassStudents({ data, ctx }) {
 
   await Promise.all(promises);
 
-  // const classe = (await classByIds({ ids: data.class, ctx }))[0];
-  // await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
+  const classe = (await classByIds({ ids: data.class, ctx }))[0];
+  await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
   return getClass();
 }

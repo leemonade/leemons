@@ -592,6 +592,7 @@ class Email {
       },
       ['id', 'subject', 'html']
     ).lean();
+    return emailDetail;
   }
 }
 
