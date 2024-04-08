@@ -17,6 +17,14 @@
       "actionNames": ["admin"]
     },
     {
+      "permissionName": "users.enabledisable",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "users.import",
+      "actionNames": ["admin"]
+    },
+    {
       "permissionName": "dataset.dataset",
       "actionNames": ["admin"]
     },
@@ -90,6 +98,10 @@
     },
     {
       "permissionName": "board-messages.board-messages",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "academic-calendar.config",
       "actionNames": ["admin"]
     }
   ],
