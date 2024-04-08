@@ -7,10 +7,12 @@ function errorMessage(message) {
 }
 
 class LeemonsError extends Moleculer.Errors.MoleculerError {
-  constructor(ctx, { message, httpStatusCode, customCode, allowedPermissions, ...rest }) {
+  constructor(
+    ctx,
+    { message, httpStatusCode, customCode, allowedPermissions, ignoreStack, ...rest }
+  ) {
     if (!ctx) throw new Error(errorMessage('ctx field is required'));
-    if (!ctx.service || !ctx.service.name)
-      throw new Error(errorMessage('ctx must be a valid moleculer context'));
+    if (!ctx.service?.name) throw new Error(errorMessage('ctx must be a valid moleculer context'));
     if (!message) throw new Error(errorMessage('message field is required'));
 
     const data = {
@@ -19,6 +21,7 @@ class LeemonsError extends Moleculer.Errors.MoleculerError {
       httpStatusCode,
       code: customCode,
       allowedPermissions,
+      ignoreStack,
     };
 
     if (httpStatusCode) {

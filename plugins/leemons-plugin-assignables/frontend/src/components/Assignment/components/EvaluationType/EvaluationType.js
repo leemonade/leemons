@@ -52,6 +52,10 @@ export const useEvaluationTypeStyles = createStyles((theme) => ({
     flexDirection: 'column',
     gap: theme.other.global.spacing.padding.xlg,
   },
+  selectType: {
+    maxWidth: 200,
+    minWidth: 200,
+  },
 }));
 
 export function EvaluationType({
@@ -63,6 +67,7 @@ export function EvaluationType({
   evaluationTypes: evaluationTypesToUse,
   hideSectionHeaders,
   hideDivider,
+  onDrawer,
 }) {
   const types = React.useMemo(() => {
     const evaluationTypes = [
@@ -106,7 +111,7 @@ export function EvaluationType({
   return (
     <Container
       title={localizations?.title}
-      description={localizations?.description}
+      // description={!onDrawer && localizations?.description}
       hidden={hidden}
       hideSectionHeaders={hideSectionHeaders}
       hideDivider={hideDivider}
@@ -116,12 +121,14 @@ export function EvaluationType({
           name="type"
           control={control}
           render={({ field }) => (
-            <Select
-              {...field}
-              label={localizations?.typeInput?.label}
-              placeholder={localizations?.typeInput?.placeholder}
-              data={types}
-            />
+            <Box className={classes.selectType}>
+              <Select
+                {...field}
+                label={localizations?.typeInput?.label}
+                placeholder={localizations?.typeInput?.placeholder}
+                data={types}
+              />
+            </Box>
           )}
         />
 
@@ -165,4 +172,8 @@ EvaluationType.propTypes = {
   evaluationTypes: PropTypes.arrayOf('string'),
   hideSectionHeaders: PropTypes.bool,
   hideDivider: PropTypes.bool,
+  onDrawer: PropTypes.bool,
+};
+EvaluationType.defaultProps = {
+  onDrawer: false,
 };

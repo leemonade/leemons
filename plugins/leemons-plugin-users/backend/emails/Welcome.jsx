@@ -9,21 +9,28 @@ const PLATFORM_NAME = '{{it.__platformName}}';
 const messages = {
   en: {
     title: `Welcome to ${IS_DEV_MODE ? 'Leemons' : PLATFORM_NAME}!`,
-    actionText: 'Click on the following link to create your password and access your account:',
-    buttonText: 'Set up account',
+    actionText: 'Click on the following link to activate your account and start using Leemons:',
+    buttonText: 'Confirm Account',
     infoText: 'This link will expire in {{it.expDays}} days and can only be used once.',
     alternativeActionText:
       'If the button above doesn’t work, paste this link into your web browser:',
     noActionText: 'If you did not make this request, you can safely ignore this email.',
+    supportText: 'Have you had any problems?',
+    supportContactText: 'Contact our amazing team.',
+    supportButtonText: 'Support Center',
   },
   es: {
     title: `Te damos la bienvenida a ${IS_DEV_MODE ? 'Leemons' : PLATFORM_NAME}!`,
-    actionText: 'Haz click en el siguiente enlace para crear tu contraseña y acceder a tu cuenta:',
-    buttonText: 'Configurar cuenta',
+    actionText:
+      'Haz click en el siguiente enlace para activar tu cuenta y comenzar a usar Leemons:',
+    buttonText: 'Confirmar cuenta',
     infoText: 'Este enlace caducará en {{it.expDays}} días y sólo puede utilizarse una vez.',
     alternativeActionText:
       'Si el botón anterior no funciona, pega este enlace en tu navegador web:',
     noActionText: 'Si no has hecho esta solicitud, puedes ignorar este correo electrónico.',
+    supportText: '¿Has tenido algún problema?',
+    supportContactText: 'Contacta con nuestro increíble equipo.',
+    supportButtonText: 'Centro de soporte',
   },
 };
 
@@ -53,6 +60,16 @@ const Welcome = ({ locale = 'en', url = '{{it.url}}' } = {}) => {
       </Container>
       <Container className="text-center mt-2">
         <Text className="text-[14px] leading-5">{messages[locale].noActionText}</Text>
+      </Container>
+      <Container className="text-center mt-4">
+        <Text className="text-[20px] font-bold">{messages[locale].supportText}</Text>
+        <Text className="text-[14px] leading-5">{messages[locale].supportContactText}</Text>
+        <Button
+          href="https://leemonssupport.zendesk.com"
+          className="py-3 px-4 mb-6 rounded text-black text-[14px] no-underline text-center border border-solid border-black"
+        >
+          {messages[locale].supportButtonText}
+        </Button>
       </Container>
     </EmailLayout>
   );

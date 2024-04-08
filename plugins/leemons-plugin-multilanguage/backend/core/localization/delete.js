@@ -5,6 +5,7 @@ const { Validator } = require('../../validations/localization');
 const {
   getLocalizationModelFromCTXAndIsPrivate,
 } = require('./getLocalizationModelFromCTXAndIsPrivate');
+const { commonNamespace } = require('../../helpers/cacheKeys');
 
 /**
  * Deletes the localization that matches the tuple [key, locale]
@@ -127,7 +128,9 @@ async function deleteAll({ key = null, locale = null, isPrivate, ctx }) {
   }
 
   try {
-    ctx.cache.deleteByPrefix(`multilanguage:common:get:${ctx.meta.deploymentID}`);
+    ctx.cache.deleteByNamespace(commonNamespace, (cacheKey) =>
+      cacheKey.startsWith(`${commonNamespace}:${ctx.meta.deploymentID}`)
+    );
 
     return (
       await getLocalizationModelFromCTXAndIsPrivate({

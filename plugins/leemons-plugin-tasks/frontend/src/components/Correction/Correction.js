@@ -155,6 +155,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                     label={t('score_placeholder')}
                     min={evaluationSystem?.minScale?.number}
                     max={evaluationSystem?.maxScale?.number}
+                    precision={2}
                   />
                 );
               }

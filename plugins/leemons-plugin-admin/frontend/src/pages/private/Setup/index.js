@@ -18,7 +18,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { useHistory } from 'react-router-dom';
 import { Locales } from './components/Locales';
 import { Start } from './components/Start';

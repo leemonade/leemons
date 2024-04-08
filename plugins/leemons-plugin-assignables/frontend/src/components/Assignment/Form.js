@@ -10,6 +10,7 @@ import {
   TotalLayoutContainer,
   TotalLayoutHeader,
   VerticalStepperContainer,
+  Stack,
 } from '@bubbles-ui/components';
 
 import { unflatten } from '@common';
@@ -49,14 +50,17 @@ export default function FormWithLayout({ assignable, children, ...props }) {
   */
   const [currentStep, setCurrentStep] = useState(0);
 
-  const formComponent = (
-    <Form
-      {...props}
-      assignable={assignable}
-      withoutLayout
-      scrollRef={scrollRef}
-      localizations={localizations}
-    />
+  const formComponent = useMemo(
+    () => (
+      <Form
+        {...props}
+        assignable={assignable}
+        withoutLayout
+        scrollRef={scrollRef}
+        localizations={localizations}
+      />
+    ),
+    [props, assignable, scrollRef, localizations]
   );
 
   const steps = useMemo(() => {
@@ -117,9 +121,19 @@ export default function FormWithLayout({ assignable, children, ...props }) {
         />
       }
     >
-      <VerticalStepperContainer scrollRef={scrollRef} data={steps} currentStep={currentStep}>
-        {StepComponent}
-      </VerticalStepperContainer>
+      {!steps?.length ? (
+        <Stack
+          sx={{ backgroundColor: '#f8f9fb', overflow: 'auto' }}
+          justifyContent="center"
+          ref={scrollRef}
+        >
+          {StepComponent}
+        </Stack>
+      ) : (
+        <VerticalStepperContainer scrollRef={scrollRef} data={steps} currentStep={currentStep}>
+          {StepComponent}
+        </VerticalStepperContainer>
+      )}
     </TotalLayoutContainer>
   );
 }
@@ -127,20 +141,5 @@ export default function FormWithLayout({ assignable, children, ...props }) {
 FormWithLayout.propTypes = {
   children: PropTypes.node,
 
-  loading: PropTypes.bool,
-  action: PropTypes.string,
-  assignable: PropTypes.object,
-  buttonsComponent: PropTypes.node,
-  defaultValues: PropTypes.object,
-  evaluationType: PropTypes.oneOf(['manual', 'auto', 'none']).isRequired,
-  evaluationTypes: PropTypes.arrayOf('string'),
-  hideMaxTime: PropTypes.bool,
-  hideSectionHeaders: PropTypes.bool,
-  onlyOneSubject: PropTypes.bool,
-  onSubmit: PropTypes.func,
-  showEvaluation: PropTypes.bool,
-  showInstructions: PropTypes.bool,
-  showMessageForStudents: PropTypes.bool,
-  showReport: PropTypes.bool,
-  showResponses: PropTypes.bool,
+  ...Form.propTypes,
 };

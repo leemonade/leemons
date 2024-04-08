@@ -9,6 +9,8 @@ const { assignTest } = require('./assignTest');
 const { getInstanceFeedback } = require('./getInstanceFeedback');
 const { setInstanceFeedback } = require('./setInstanceFeedback');
 const { getAssignSavedConfigs } = require('./getAssignSavedConfigs');
+const { updateAssignSavedConfig } = require('./updateAssignSavedConfig');
+const { deleteAssignSavedConfig } = require('./deleteAssignSavedConfig');
 const { duplicate } = require('./duplicate');
 
 module.exports = {
@@ -22,6 +24,8 @@ module.exports = {
   list: listTests,
   listTests,
   getAssignSavedConfigs,
+  updateAssignSavedConfig,
+  deleteAssignSavedConfig,
   details: getTestsDetails,
   getTestsDetails,
   save: saveTest,

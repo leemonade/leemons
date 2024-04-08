@@ -28,6 +28,7 @@ async function saveTest({ data, ctx }) {
     instructionsForTeachers: data.instructionsForTeachers,
     instructionsForStudents: data.instructionsForStudents,
     gradable: data.gradable || false,
+    duration: data.duration || '',
     metadata: {
       questionBank: data.questionBank,
       filters: data.filters,

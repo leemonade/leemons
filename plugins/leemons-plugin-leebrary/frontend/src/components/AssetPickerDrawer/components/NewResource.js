@@ -11,6 +11,7 @@ import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { newAssetRequest } from '@leebrary/request';
 import compressImage from '@leebrary/helpers/compressImage';
 import { addErrorAlert } from '@layout/alert';
+import { LIBRARY_FORM_TYPES } from '@leebrary/components/LibraryForm/LibraryForm.constants';
 import { usePickerCategories } from '../hooks/usePickerCategories';
 
 export const useNewResourceStyles = createStyles((theme) => {
@@ -29,6 +30,7 @@ export function NewResource({
   acceptedFileTypes,
   onSelect,
   isPickingACover,
+  dataOverride,
 }) {
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const categories = usePickerCategories();
@@ -51,7 +53,7 @@ export function NewResource({
     return {};
   }, [translations]);
 
-  if (!categoriesByKey['media-files']) {
+  if (!categoriesByKey[LIBRARY_FORM_TYPES.MEDIA_FILES]) {
     return null;
   }
 
@@ -78,9 +80,9 @@ export function NewResource({
       setUploadingFileInfo({ state: 'finalize' });
       try {
         const { asset } = await newAssetRequest(
-          { ...body, file: uploadedFile, isCover: !!isPickingACover },
+          { ...body, file: uploadedFile, isCover: !!isPickingACover, ...dataOverride },
           null,
-          'media-files'
+          LIBRARY_FORM_TYPES.MEDIA_FILES
         );
         setUploadingFileInfo(null);
         onSelect(asset);
@@ -99,7 +101,7 @@ export function NewResource({
   // v - category.key === 'media-files'
 
   const onlyCreateMediaFiles =
-    creatableCategories.length === 1 && creatableCategories[0] === 'media-files';
+    creatableCategories.length === 1 && creatableCategories[0] === LIBRARY_FORM_TYPES.MEDIA_FILES;
 
   return (
     <Box className={classes.root}>
@@ -123,10 +125,12 @@ NewResource.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.string),
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
   isPickingACover: PropTypes.bool,
+  dataOverride: PropTypes.object,
 };
 
 NewResource.defaultProps = {
   localizations: null,
-  categories: ['media-files'],
+  categories: [LIBRARY_FORM_TYPES.MEDIA_FILES],
   acceptedFileTypes: ['image/*', 'audio/*', 'video/*', 'application/pdf'],
+  dataOverride: {},
 };

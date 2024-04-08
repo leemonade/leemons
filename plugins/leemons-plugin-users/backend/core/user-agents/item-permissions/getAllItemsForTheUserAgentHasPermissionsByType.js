@@ -2,6 +2,9 @@
 const _ = require('lodash');
 const { getBaseAllPermissionsQuery } = require('./getBaseAllPermissionsQuery');
 const { find } = require('../../item-permissions/find');
+const {
+  getAllItemsForTheUserAgentHasPermissionsByTypeCacheKey,
+} = require('../../../helpers/cacheKeys');
 
 async function getAllItemsForTheUserAgentHasPermissionsByType({
   userAgentId: _userAgentId,
@@ -38,12 +41,12 @@ async function getAllItemsForTheUserAgentHasPermissionsByType({
 
   const _userAgents = _.isArray(_userAgentId) ? _userAgentId : [_userAgentId];
 
-  const cacheKeys = _.map(
-    _userAgents,
-    (_userAgent) =>
-      `users:permissions:${_userAgent}:getAllItemsForTheUserAgentHasPermissionsByType:${JSON.stringify(
-        query
-      )}`
+  const cacheKeys = _.map(_userAgents, (_userAgent) =>
+    getAllItemsForTheUserAgentHasPermissionsByTypeCacheKey({
+      ctx,
+      userAgent: _userAgent?.id ?? _userAgent,
+      query,
+    })
   );
   const cache = await ctx.cache.getMany(cacheKeys);
 

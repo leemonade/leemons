@@ -28,13 +28,20 @@ async function saveHash({ KeyValuesModel, hashPerLocale }) {
       value,
     });
   } else {
-    const hashesKeys = locales.map((locale) => getHashKey({ locale, hash: hashPerLocale[locale] }));
-
     const $set = {};
 
-    hashesKeys.forEach((key) => {
-      $set[key] = true;
-    });
+    if (process.env.FORCE_RELOAD_I18N === 'true') {
+      locales.forEach((locale) => {
+        $set[`value.${locale}`] = { [hashPerLocale[locale]]: true };
+      });
+    } else {
+      const hashesKeys = locales.map((locale) =>
+        getHashKey({ locale, hash: hashPerLocale[locale] })
+      );
+      hashesKeys.forEach((key) => {
+        $set[key] = true;
+      });
+    }
 
     await KeyValuesModel.updateOne(
       { key: HASH_DOCUMENT_KEY },

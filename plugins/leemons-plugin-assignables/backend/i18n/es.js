@@ -30,6 +30,7 @@ module.exports = {
       },
       noStudentsError:
         'No se encuentran estudiantes para las asignaturas seleccionadas. Añade o quita asignaturas para continuar.',
+      classSelectLabel: 'Tipo de selección',
       class: {
         studentsCount: 'estudiantes coincidentes',
         autoAssignStudents: 'Asignar automáticamente a nuevos estudiantes',
@@ -72,7 +73,7 @@ module.exports = {
         options: {
           alwaysAvailable: 'Cualquier momento',
           fixed: 'Con plazo de tiempo',
-          session: 'Sesión en directo',
+          session: 'Sesión de asignatura',
         },
       },
       hideFromCalendar: 'Ocultar del calendario hasta la fecha/hora de inicio',
@@ -104,7 +105,6 @@ module.exports = {
       description: 'Instrucciones para la consulta del contenido',
       editor: {
         placeholder: 'Puedes especificar la mejor manera de consultar este contenido...',
-        help: 'Información de apoyo visible en la tarjeta de asignación (ver vista previa)',
       },
     },
     evaluation: {
@@ -132,8 +132,9 @@ module.exports = {
         placeholder: 'Introduce la fecha',
         error: 'Selecciona una fecha',
       },
-      notifyStudents: 'Notificar a los estudiantes',
-      messageForStudents: 'Mensaje para los estudiantes',
+      notifyStudents: 'Enviar correo electrónico a los estudiantes',
+      messageForStudents: 'Escribe el correo electronico',
+      notifyPlaceholder: 'Añadir aqui el texto del enunciado',
       hideResponses: 'Ocultar las respuestas de la actividad una vez finalizada.',
       hideReport: 'Ocultar el informe de resultados.',
     },
@@ -149,6 +150,7 @@ module.exports = {
         label: 'Título',
         placeholder: 'Escribe el título',
       },
+      thumbnail: 'Imagen destacada',
     },
     preview: {
       title: 'Vista previa',
@@ -471,7 +473,21 @@ module.exports = {
     timeoutAlert: {
       title: 'Tiempo máximo alcanzado',
       message:
-        'el tiempo límite establecido para esta actividad ha sido alcanzado. La última entrega o preguntas respondidas han sido enviadas automáticamente.',
+        'El tiempo límite establecido para esta actividad ha sido alcanzado. La última entrega o preguntas respondidas han sido enviadas automáticamente.',
+    },
+    submitted_alert: {
+      title: 'Actividad entregada con éxito',
+      message: 'Aquí tienes más información sobre tu actividad.',
+    },
+    pending_evaluation_alert: {
+      title: 'Pendiente de evaluación',
+      message: 'En cuanto sea evaluada recibirás una notificación.',
+    },
+    not_submitted_alert: {
+      title: 'Tarea no entregada',
+    },
+    finished_alert: {
+      title: 'Actividad finalizada',
     },
   },
 

@@ -1,8 +1,8 @@
 import propTypes from 'prop-types';
 
-export const ACTIVIY_HEADER_DEFAULT_PROPS = {};
+export const ACTIVITY_HEADER_DEFAULT_PROPS = {};
 
-export const ACTIVIY_HEADER_PROP_TYPES = {
+export const ACTIVITY_HEADER_PROP_TYPES = {
   instance: propTypes.object,
   action: propTypes.string,
   showClass: propTypes.bool,
@@ -15,4 +15,5 @@ export const ACTIVIY_HEADER_PROP_TYPES = {
   showCloseButtons: propTypes.bool,
   allowEditDeadline: propTypes.bool,
   onTimeout: propTypes.func,
+  showStatusBadge: propTypes.bool,
 };

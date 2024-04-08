@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { createClient, createCluster } = require('redis');
+const Redis = require('ioredis');
 const { getActionNameFromCTX } = require('@leemons/service-name-parser');
 const createQueries = require('./queries');
 
@@ -38,14 +38,6 @@ module.exports.getClientConfig = function getClientConfig(_config) {
   return {
     url: _.get(config, 'url', undefined),
     cluster: !!_.get(config, 'cluster', false),
-    socket: {
-      host: _.get(config, 'host', undefined),
-      port: _.get(config, 'port', undefined),
-    },
-    username: _.get(config, 'username', undefined),
-    password: _.get(config, 'password', undefined),
-    name: _.get(config, 'name', 'leemons-backend-client'),
-    database: _.get(config, 'database', '0'),
   };
 };
 
@@ -82,27 +74,13 @@ function tracingWrapper(f, ctx) {
 module.exports.redisCache = async function redisCache(config) {
   let client;
 
-  if (config.cluster) {
-    client = createCluster({
-      rootNodes: [
-        {
-          url: config.url ?? `redis://${config.host}:${config.port}`,
-        },
-      ],
-      useReplicas: true,
-      defaults: {
-        username: config.username,
-        password: config.password,
-        name: config.name,
-      },
-    });
+  if (!config.cluster) {
+    client = new Redis(config.url);
   } else {
-    client = createClient(config);
+    throw new Error('redis cluster not supported');
   }
 
   client.on('error', (error) => console.error(`Redis Error: ${error.message}`));
-
-  await client.connect();
 
   const queries = createQueries(client, { isCluster: config.cluster });
 

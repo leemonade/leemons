@@ -72,7 +72,10 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
   );
 }
 
-AssignmentDrawer.defaultValues = () => evaluationTypes.calificable;
+AssignmentDrawer.defaultValues = (activity) =>
+  activity.submission ? evaluationTypes.calificable : evaluationTypes.nonEvaluable;
+
+AssignmentDrawer.disabled = (activity) => !activity.submission;
 
 AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,

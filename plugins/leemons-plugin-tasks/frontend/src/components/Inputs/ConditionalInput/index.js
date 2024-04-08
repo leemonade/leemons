@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Stack, PageContainer } from '@bubbles-ui/components';
+import { Switch, Stack, PageContainer, Checkbox } from '@bubbles-ui/components';
+import { ConditionalInputStyles } from './ConditionalInput.styles';
 
 export default function ConditionalInput({
   showOnTrue = true,
@@ -9,8 +10,10 @@ export default function ConditionalInput({
   onChange,
   initialValue,
   value: userValue,
+  display = 'switch',
   ...props
 }) {
+  const { classes } = ConditionalInputStyles();
   const isFirstRender = React.useRef(true);
   const [show, setShow] = useState(userValue || false);
 
@@ -33,10 +36,14 @@ export default function ConditionalInput({
   }, [userValue]);
 
   return (
-    <Stack direction="column" spacing={4}>
-      <Switch {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
+    <Stack direction="column" spacing={1}>
+      {display === 'switch' ? (
+        <Switch {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
+      ) : (
+        <Checkbox {...props} helpPosition={helpPosition} checked={show} onChange={handleChange} />
+      )}
 
-      {showOnTrue === show && <PageContainer>{render()}</PageContainer>}
+      {showOnTrue === show && <PageContainer className={classes.root}>{render()}</PageContainer>}
     </Stack>
   );
 }
@@ -48,4 +55,5 @@ ConditionalInput.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.bool,
   initialValue: PropTypes.bool,
+  display: PropTypes.string,
 };

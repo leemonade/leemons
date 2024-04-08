@@ -2,6 +2,14 @@ const { LeemonsError } = require('@leemons/error');
 const { transformArrayToObject } = require('../permissions/transformArrayToObject');
 const { detail: roleDetail } = require('../roles/detail');
 
+/**
+ * Retrieves a profile by its sysName.
+ *
+ * @param {Object} params
+ * @param {string} params.sysName - The sysName of the profile
+ * @param {Object} params.ctx - The context object
+ * @returns {Promise<Profile>} - The profile object
+ */
 async function detailBySysName({ sysName, ctx }) {
   const profile = await ctx.tx.db.Profiles.findOne({ sysName }).lean();
   if (!profile) {

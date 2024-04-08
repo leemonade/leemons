@@ -34,6 +34,7 @@ export function Container({
   hidden,
   hideDivider,
   hideSectionHeaders,
+  required,
 }) {
   const { classes } = useContainerStyles({ hideDivider });
 
@@ -47,6 +48,7 @@ export function Container({
         <Box className={classes.titleSection}>
           <Title order={3} className={classes.title}>
             {title}
+            {required && <sup>*</sup>}
           </Title>
           {!!description?.length && <Text className={classes.description}>{description}</Text>}
         </Box>
@@ -63,4 +65,8 @@ Container.propTypes = {
   hidden: PropTypes.bool,
   hideDivider: PropTypes.bool,
   hideSectionHeaders: PropTypes.bool,
+};
+
+Container.defaultProps = {
+  required: false,
 };

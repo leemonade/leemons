@@ -29,8 +29,8 @@ const permissions = [
     permissionName: permissionNames.scores,
     actions: ['view'],
     localizationName: {
-      es: 'Evaluaciones',
-      en: 'Evaluations',
+      es: 'Mis Evaluaciones',
+      en: 'My Evaluations',
     },
   },
   {

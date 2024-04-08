@@ -19,7 +19,7 @@ import SelectUserAgent from '@users/components/SelectUserAgent';
 import _, { find, isArray, map } from 'lodash';
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { KnowledgeTable } from '../../../components/KnowledgeTable';
 import { SubjectTypesTable } from '../../../components/SubjectTypesTable';
 import { SubjectsTable } from '../../../components/SubjectsTable';

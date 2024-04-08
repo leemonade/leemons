@@ -84,7 +84,7 @@ module.exports = function ({
     'deployment-manager.reloadAllDeploymentsRest',
     'deployment-manager.addManualDeploymentRest',
     'gateway.dropDBRest',
-    'v1.client-manager.protected.newFreemiumClient',
+    'v1.client-manager.protected.newDeployment',
     'v1.client-manager.protected.isSubdomainInUse',
   ],
 } = {}) {
