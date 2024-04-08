@@ -26,9 +26,8 @@ import { getProfilesRequest } from '@academic-portfolio/request';
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
 
-const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer }) => {
+const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }) => {
   const { classes } = EnrollmentTabStyles();
-  const form = useForm();
   const queryClient = useQueryClient();
   const [teacherProfile, setTeacherProfile] = useState();
   const { mutate: removeStudentFromClass } = useRemoveStudentFromClass();
@@ -47,11 +46,12 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer }) => {
 
   useEffect(() => {
     if (classData) {
-      const mainTeacher = find(classData.teachers, { type: 'main-teacher' });
-      form.setValue('mainTeacher', mainTeacher?.teacher);
-      form.setValue('virtualUrl', classData.virtualUrl);
-      form.setValue('address', classData.address);
-      form.setValue('schedule', classData.schedule);
+      const mainTeacher = classData.teachers?.find((t) => t.type === 'main-teacher');
+      updateForm?.setValue('mainTeacher', mainTeacher?.teacher);
+      updateForm?.setValue('virtualUrl', classData.virtualUrl);
+      updateForm?.setValue('address', classData.address);
+      updateForm?.setValue('schedule', classData.schedule);
+      updateForm?.setValue('id', classData.id);
     }
   }, [classData]);
 
@@ -76,7 +76,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer }) => {
   console.log('classData', classData);
 
   const handleUpdate = () => {
-    const requestBody = form.getValues();
+    const requestBody = updateForm?.getValues();
     console.log('requestBody', requestBody);
   };
 
@@ -105,7 +105,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer }) => {
         <Box className={classes.mainTeacher}>
           <Controller
             name="mainTeacher"
-            control={form.control}
+            control={updateForm?.control}
             render={({ field }) => (
               <SelectUserAgent
                 {...field}
@@ -123,14 +123,14 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer }) => {
           <Box className={classes.inlineInputs}>
             <Controller
               name="virtualUrl"
-              control={form.control}
+              control={updateForm?.control}
               render={({ field }) => <TextInput {...field} label={'Aula virtual 🔫'} />}
             />
           </Box>
           <Box className={classes.inlineInputs}>
             <Controller
               name="address"
-              control={form.control}
+              control={updateForm?.control}
               render={({ field }) => (
                 <TextInput {...field} label={'Dirección o ubicación física del aula 🔫'} />
               )}
@@ -139,7 +139,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer }) => {
         </Stack>
         <Controller
           name="schedule"
-          control={form.control}
+          control={updateForm?.control}
           render={({ field }) => <ScheduleInput label={'Horario de clase 🔫'} {...field} />}
         />
       </ContextContainer>
@@ -166,6 +166,7 @@ EnrollmentTab.propTypes = {
   classData: PropTypes.object,
   openEnrollmentDrawer: PropTypes.func,
   centerId: PropTypes.string.isRequired,
+  updateForm: PropTypes.object,
 };
 
 export default EnrollmentTab;

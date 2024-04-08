@@ -1,26 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep, get } from 'lodash';
-import { useQueryClient } from '@tanstack/react-query';
+import { cloneDeep } from 'lodash';
 import { useUserCenters } from '@users/hooks';
 import {
   Select,
   TotalLayoutContainer,
   TotalLayoutHeader,
   Stack,
-  LoadingOverlay,
-  TotalLayoutStepContainer,
-  Tabs,
-  TabPanel,
-  Box,
-  ContextContainer,
-  Button,
   ImageLoader,
-  VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';

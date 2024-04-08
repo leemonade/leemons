@@ -25,8 +25,6 @@ const {
 async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
 
-  let goodGroup = null;
-
   const cClass = await ctx.tx.db.Class.findOne({ id: data.id }).select(['program']).lean();
 
   const program = await ctx.tx.db.Programs.findOne({ id: cClass.program })
@@ -34,10 +32,6 @@ async function updateClass({ data, ctx }) {
     .lean();
 
   const { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } = data;
-
-  if (!goodGroup && group) {
-    goodGroup = group;
-  }
 
   // ES: Actualizamos la clase
   let nClass = await ctx.tx.db.Class.findOneAndUpdate({ id }, rest, { new: true, lean: true });
@@ -111,21 +105,19 @@ async function updateClass({ data, ctx }) {
     );
   }
 
-  if (_.isNull(goodGroup) || goodGroup) await removeGroupByClass({ classIds: nClass.id, ctx });
-  if (goodGroup) {
+  if (_.isNull(group) || group) await removeGroupByClass({ classIds: nClass.id, ctx });
+  if (group) {
     // ES: Comprobamos que todos los cursos existen y pertenecen al programa
-    if (!(await existGroupInProgram({ id: goodGroup, program: nClass.program, ctx }))) {
+    if (!(await existGroupInProgram({ id: group, program: nClass.program, ctx }))) {
       throw new LeemonsError(ctx, { message: 'group not in program' });
     }
-    if (
-      await isUsedInSubject({ subject: nClass.subject, group: goodGroup, classe: nClass.id, ctx })
-    ) {
+    if (await isUsedInSubject({ subject: nClass.subject, group, classe: nClass.id, ctx })) {
       throw new LeemonsError(ctx, { message: 'group is already used in subject' });
     }
-    promises.push(addGroup({ class: nClass.id, group: goodGroup, ctx }));
+    promises.push(addGroup({ class: nClass.id, group, ctx }));
   }
 
-  if (_.isNull(goodGroup) || teachers) {
+  if (_.isNull(group) || teachers) {
     await removeTeachersByClass({ classIds: nClass.id, ctx });
   }
 
