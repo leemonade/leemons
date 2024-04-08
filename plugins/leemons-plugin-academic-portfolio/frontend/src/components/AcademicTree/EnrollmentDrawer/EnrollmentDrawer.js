@@ -12,8 +12,8 @@ import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header
 import FooterContainer from '@academic-portfolio/components/ProgramSetupDrawer/FooterContainer';
 import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { useEnrollStudentsToClasses } from '@academic-portfolio/hooks/mutations/useMutateClass';
-import StudentsSelectByUserData from './StudentsSelectByUserData';
 import { getProfilesRequest } from '@academic-portfolio/request';
+import StudentsSelectByUserData from './StudentsSelectByUserData';
 
 function distributeStudentsToClasses(classes, selectedStudents) {
   const cannotEnrollClasses = [];
@@ -266,7 +266,7 @@ const EnrollmentDrawer = ({
                 onClick={handleStudentEnrollment}
                 type="button"
                 loading={isLoading}
-                disabled={!selectedStudents?.length}
+                disabled={!selectedStudents?.length || isAddStudentsToClassesLoading}
               >
                 {' Matricular estudiante 🔫'}
               </Button>

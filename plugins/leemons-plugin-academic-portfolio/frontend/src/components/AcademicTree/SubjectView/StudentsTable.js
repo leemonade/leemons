@@ -47,7 +47,7 @@ const StudentsTable = ({ data, showSearchBar }) => {
   return (
     <Stack direction="column" spacing={4}>
       {showSearchBar && <div>SEARCH BAR HERE!!!!! .-- - -- - -- - - -- - -</div>}
-      <Table columns={tableColumns} data={data} />;
+      <Table columns={tableColumns} data={data} />
     </Stack>
   );
 };

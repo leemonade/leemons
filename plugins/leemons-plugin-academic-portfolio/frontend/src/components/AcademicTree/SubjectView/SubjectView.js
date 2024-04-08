@@ -30,6 +30,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
           <EnrollmentTab
             classData={singleClassToShow}
             openEnrollmentDrawer={openEnrollmentDrawer}
+            centerId={program?.center}
           />
         </TabPanel>
       );

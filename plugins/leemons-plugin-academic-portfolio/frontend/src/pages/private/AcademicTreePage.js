@@ -23,9 +23,9 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
-import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
 
 const TreeView = ({ data, onSubjectClick, level = 0 }) => {
   // Function to determine if an item should be sorted
