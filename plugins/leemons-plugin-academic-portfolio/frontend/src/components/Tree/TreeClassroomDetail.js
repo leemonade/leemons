@@ -18,7 +18,7 @@ import { filter, find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 
 const TreeClassroomDetail = ({
   messagesAddUsers,

@@ -7,12 +7,31 @@ const { manyPermissionsHasManyActions } = require('../permissions/manyPermission
 const { addPermissionMany } = require('./addPermissionMany');
 
 /**
+ * A "role" in the leemons context represents a collection of permissions and responsibilities designated to a user or a group of users.
+ *
+ * Roles are pivotal in managing access control within the platform, dictating the actions that users are permitted to
+ * execute based on their assigned roles.
+ *
+ * Each role is associated with a set of permissions that define allowed or denied actions for its holders.
+ * Roles can be linked to specific centers (organizational units), profiles (user types with distinct attributes and permissions),
+ * or be universally applicable across the platform. This system enables efficient and scalable management of user permissions,
+ * allowing administrators to regulate access to different system parts and ensuring users possess only the necessary permissions
+ * for their roles.
+ */
+
+/**
  * Create one role
+ *
  * @private
  * @static
  * @param {Object} params
- * @param {MoleculerContext} params.ctx Moleculer context
- * @param {RoleAdd} params.data
+ * @param {MoleculerContext} params.ctx - Moleculer context
+ * @param {string} params.name - Name of the role
+ * @param {string} params.type - Type of the role
+ * @param {string} [params.description] - Description of the role
+ * @param {string} [params.center] - Center ID
+ * @param {string} [params.profile] - Profile ID
+ * @param {Array<Object>} params.permissions - Permissions
  * @return {Promise<Role>} Created / Updated role
  * */
 async function add({ name, type, description, center, profile, permissions, ctx }) {

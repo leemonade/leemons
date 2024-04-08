@@ -3,14 +3,20 @@ const { LeemonsError } = require('@leemons/error');
 const slugify = require('slugify');
 const existName = require('./existName');
 const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/createNecessaryRolesForProfilesAccordingToCenters');
+const { setLimits } = require('./setLimits');
+
 /**
  * Create one center
  * @private
  * @static
  * @param {Object} params
+ * @param {string} params.id - Unique identifier of the center
+ * @param {string} params.name - Name of the center
+ * @param {string} params.locale - Locale of the center
+ * @param {Array<CenterLimit>} params.limits - Limits of the center
+ * @param {Object} params.centerData - Center data
  * @param {MoleculerContext} params.ctx Moleculer context
- * @param {CenterAdd} params.data
- * @return {Promise<Center>} Created / Updated role
+ * @return {Promise<Center>} Created / Updated center
  * */
 async function add({ id, name, locale, limits, ctx, ...centerData }) {
   if (await existName({ name, id, ctx }))
@@ -50,21 +56,7 @@ async function add({ id, name, locale, limits, ctx, ...centerData }) {
   }
 
   if (limits) {
-    center.limits = await Promise.all(
-      _.map(limits, ({ id, createdAt, updatedAt, deletedAt, ...limit }) =>
-        ctx.tx.db.CenterLimits.findOneAndUpdate(
-          {
-            item: limit.item,
-            center: center.id,
-          },
-          {
-            ...limit,
-            center: center.id,
-          },
-          { upsert: true, new: true, lean: true }
-        )
-      )
-    );
+    center.limits = await setLimits({ limits, centerId: center.id, ctx });
   }
 
   return center;

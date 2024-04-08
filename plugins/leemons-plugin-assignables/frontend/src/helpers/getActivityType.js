@@ -1,6 +1,5 @@
 function getActivityType(instance) {
   const { gradable, allowFeedback, requiresScoring } = instance;
-
   if (gradable) {
     return 'calificable';
   }
@@ -8,7 +7,7 @@ function getActivityType(instance) {
     return 'puntuable';
   }
   if (allowFeedback && !requiresScoring) {
-    return 'no_evaluable';
+    return 'feedback';
   }
   return '';
 }

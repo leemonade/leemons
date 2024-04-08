@@ -42,6 +42,9 @@ const { update } = require('./update');
 const { disable } = require('./disable');
 const { active } = require('./active');
 const { userAgentsAreContacts } = require('./contacts/userAgentsAreContacts');
+const {
+  getActiveUserAgentsCountByProfileSysName,
+} = require('./getActiveUserAgentsCountByProfileSysName');
 
 module.exports = {
   update,
@@ -57,6 +60,7 @@ module.exports = {
   saveDataForUserAgentDatasets,
   getUserAgentByCenterProfile,
   filterUserAgentsByProfileAndCenter,
+  getActiveUserAgentsCountByProfileSysName,
   calendars: {
     addCalendarToUserAgentsIfNeedByUser,
   },

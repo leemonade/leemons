@@ -99,12 +99,13 @@ const LoginForm = ({
           }}
           render={({ field }) => (
             <TextInput
+              {...field}
               data-cypress-id="emailInput"
               label={labels.username}
               placeholder={placeholders.username}
               error={errors.email}
               required
-              {...field}
+              onChange={(e) => field.onChange(e.toLowerCase().trim())}
             />
           )}
         />
@@ -162,7 +163,7 @@ const LoginForm = ({
         */}
 
         <Box>
-          <Button loading={loading} loaderPosition="right" type="submit" fullWidth>
+          <Button loading={loading} type="submit" fullWidth>
             {labels.login}
           </Button>
         </Box>

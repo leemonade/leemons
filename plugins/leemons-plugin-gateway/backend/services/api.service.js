@@ -3,22 +3,6 @@ const { parse } = require('url');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const restActions = require('./rest/api.rest');
 
-// async function dumpCollections(database) {
-//   // Obtener todas las colecciones
-//   const collections = await database.listCollections().toArray();
-
-//   const dump = {};
-
-//   const promises = collections.map(async (collection) => {
-//     const documents = await mongoose.connection.collection(collection.name).find({}).toArray();
-//     dump[collection.name] = documents;
-//   });
-//   await Promise.all(promises);
-
-//   // Escribir el dump en un archivo JSON
-//   await fs.writeFileSync('./dump.json', JSON.stringify(dump, null, 2));
-// }
-
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -26,7 +10,7 @@ const restActions = require('./rest/api.rest');
  * @typedef {import('http').ServerResponse} ServerResponse HTTP Server Response
  * @typedef {import('moleculer-web').ApiSettingsSchema} ApiSettingsSchema API Setting Schema
  */
-// ad
+
 module.exports = {
   name: 'gateway',
   mixins: [
@@ -39,7 +23,7 @@ module.exports = {
         'deployment-manager.addManualDeploymentRest',
         'gateway.dropDBRest',
         'gateway.statusRest',
-        'v1.client-manager.protected.newFreemiumClient',
+        'v1.client-manager.protected.newDeployment',
         'v1.client-manager.protected.isSubdomainInUse',
       ],
     }),

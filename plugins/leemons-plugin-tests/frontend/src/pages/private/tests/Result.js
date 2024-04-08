@@ -32,27 +32,18 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import {
-  CheckBoldIcon,
-  CutStarIcon,
-  RemoveBoldIcon,
-  SlashIcon,
-  StarIcon,
-  StatisticsIcon,
-} from '@bubbles-ui/icons/solid';
+import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import TimeoutAlert from '@assignables/components/EvaluationFeedback/TimeoutAlert';
+import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
-  getFeedbackRequest,
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
-  setFeedbackRequest,
   setInstanceTimestampRequest,
 } from '../../../request';
 import { ResultStyles } from './Result.style';

@@ -131,6 +131,8 @@ export function OtherOptions({
                       <Box className={classes.textEditor}>
                         <TextEditorInput
                           {...field}
+                          placeholder={localizations?.notifyPlaceholder}
+                          editorStyles={{ minHeight: 120 }}
                           toolLabels={{
                             headingsTool: { ...HEADINGS_TOOL_DEFAULT_PROPS?.labels, label: '' },
                           }}

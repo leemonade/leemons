@@ -74,7 +74,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
           curriculum: Object.fromEntries(
             (values.evaluation.curriculum || []).map((category) => [category, true])
           ),
-          showCorrectAnswers: !values.others.hideResponses,
+          showCorrectAnswers: !values.others?.hideResponses,
           metadata: values?.assignConfig,
         },
         raw: values,
@@ -93,6 +93,19 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
           <ContextContainer divided padded>
             <Controller
               control={form.control}
+              name="evaluation"
+              render={({ field }) => (
+                <EvaluationType
+                  {...field}
+                  assignable={assignable}
+                  evaluationTypes={['calificable', 'punctuable']}
+                  localizations={localizations?.evaluation}
+                  onDrawer
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
               name="assignConfig"
               render={({ field }) => (
                 <AssignConfig
@@ -102,24 +115,12 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
                   defaultValues={field.value}
                   t={t}
                   hideButtons
+                  isDrawer={true}
                 />
               )}
             />
             <Box>
-              <Controller
-                control={form.control}
-                name="evaluation"
-                render={({ field }) => (
-                  <EvaluationType
-                    {...field}
-                    assignable={assignable}
-                    evaluationTypes={['calificable', 'punctuable']}
-                    localizations={localizations?.evaluation}
-                  />
-                )}
-              />
-
-              <Controller
+              {/* <Controller
                 control={form.control}
                 name="others"
                 render={({ field, fieldState: { error } }) => (
@@ -131,7 +132,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
                     showResponses
                   />
                 )}
-              />
+              /> */}
             </Box>
           </ContextContainer>
         </Box>
@@ -139,7 +140,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
           fixed
           style={{ right: 0 }}
           scrollRef={scrollRef}
-          width={400}
+          width={680}
           rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
         />
       </FormProvider>

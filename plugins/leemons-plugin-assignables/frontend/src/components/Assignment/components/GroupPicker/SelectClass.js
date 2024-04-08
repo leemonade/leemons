@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Loader, Switch, createStyles, RadioGroup, Checkbox } from '@bubbles-ui/components';
+import { Box, Loader, createStyles, RadioGroup, Checkbox } from '@bubbles-ui/components';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { SelectUserAgent } from '@users/components';
 import { intersection } from 'lodash';
 import { NonAssignableStudents } from './NonAssignableStudents';
-import SelectedStudentsInfo from './SelectedStudentsInfo';
+// import SelectedStudentsInfo from './SelectedStudentsInfo';
 
 const useSelectClassStyles = createStyles((theme) => ({
   root: {
@@ -19,6 +19,9 @@ const useSelectClassStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: theme.other.global.spacing.gap.sm,
+  },
+  radioContainer: {
+    paddingLeft: theme.other.global.spacing.gap.lg,
   },
 }));
 
@@ -153,34 +156,34 @@ export function SelectClass({
 
   return (
     <Box className={classes.root}>
-      <Controller
-        name="classes"
-        control={control}
-        render={({ field }) => (
-          <RadioGroup
-            {...field}
-            direction="column"
-            orientation="vertical"
-            onChange={(newValue) => field.onChange([newValue])}
-            value={field.value?.[0] ?? null}
-            data={
-              data?.map((klass) => ({
-                ...klass,
-                checked: !klass.disabled && field.value?.includes(klass.value),
-              })) || []
-            }
-            error={error && localizations?.error}
-          />
-        )}
-      />
-
+      <Box className={classes.radioContainer}>
+        <Controller
+          name="classes"
+          control={control}
+          render={({ field }) => (
+            <RadioGroup
+              {...field}
+              direction="column"
+              orientation="vertical"
+              onChange={(newValue) => field.onChange([newValue])}
+              value={field.value?.[0] ?? null}
+              data={
+                data?.map((klass) => ({
+                  ...klass,
+                  checked: !klass.disabled && field.value?.includes(klass.value),
+                })) || []
+              }
+              error={error && localizations?.error}
+            />
+          )}
+        />
+      </Box>
       {!!nonAssignableStudents?.length && (
         <NonAssignableStudents
           users={nonAssignableStudents}
           error={localizations?.notAllStudentsAssigned}
         />
       )}
-
       <Controller
         name="showExcluded"
         control={control}
@@ -209,23 +212,33 @@ export function SelectClass({
           />
         )}
       />
-
-      <SelectedStudentsInfo
+      {/* <SelectedStudentsInfo
         control={control}
         value={value}
         availableClasses={availableClasses}
         localizations={localizations}
-      />
-
-      {/* <Controller
+      /> */}
+      <Controller
         name="autoAssign"
         control={control}
         render={({ field }) => (
           <Checkbox {...field} checked={field.value} label={localizations?.autoAssignStudents} />
         )}
-      /> */}
+      />
     </Box>
   );
 }
+
+SelectClass.propTypes = {
+  control: PropTypes.object,
+  onChange: PropTypes.func,
+  value: PropTypes.object,
+  availableClasses: PropTypes.array,
+  localizations: PropTypes.object,
+  assignableStudents: PropTypes.array,
+  studentProfile: PropTypes.object,
+  groupedClassesWithSelectedSubjects: PropTypes.object,
+  error: PropTypes.bool,
+};
 
 export default SelectClass;

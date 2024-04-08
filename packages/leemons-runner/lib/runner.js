@@ -3,13 +3,11 @@ const { ServiceBroker, Utils } = require('moleculer');
 const utils = Utils;
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob').sync;
 const _ = require('lodash');
 const Args = require('args');
 const os = require('os');
 const cluster = require('cluster');
 const kleur = require('kleur');
-const { execSync } = require('child_process');
 const { mongoose } = require('@leemons/mongodb');
 
 // Register Babel for JSX files
@@ -222,7 +220,7 @@ class LeemonsRunner {
 
     try {
       return require.resolve(configPath, resolveOptions);
-    } catch (_) {
+    } catch (e) {
       return null;
     }
   }
@@ -230,11 +228,14 @@ class LeemonsRunner {
   normalizeEnvValue(value) {
     if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
       // Convert to boolean
-      value = value === 'true';
-    } else if (!isNaN(value)) {
-      // Convert to number
-      value = Number(value);
+      return value === 'true';
     }
+
+    if (!Number.isNaN(value)) {
+      // Convert to number
+      return Number(value);
+    }
+
     return value;
   }
 
@@ -304,17 +305,25 @@ class LeemonsRunner {
     this.config = _.defaultsDeep(this.configFile, ServiceBroker.defaultOptions);
     this.config = this.overwriteFromEnv(this.config);
     this.config.errorHandler = (err, params) => {
+      if (err?.data?.ignoreStack) {
+        err.stack = '';
+        delete err.data.ignoreStack;
+      }
+
       if (params.event) {
         return { err, params };
       }
+
       throw err;
     };
 
-    if (this.flags.silent) this.config.logger = false;
+    if (this.flags.silent) {
+      this.config.logger = false;
+    }
 
-    if (this.flags.hot) this.config.hotReload = true;
-
-    // console.log("Merged configuration", this.config);
+    if (this.flags.hot) {
+      this.config.hotReload = true;
+    }
   }
 
   /**
@@ -326,7 +335,7 @@ class LeemonsRunner {
   isDirectory(p) {
     try {
       return fs.lstatSync(p).isDirectory();
-    } catch (_) {
+    } catch (e) {
       // ignore
     }
     return false;
@@ -341,13 +350,13 @@ class LeemonsRunner {
   isServiceFile(p) {
     try {
       return !fs.lstatSync(p).isDirectory();
-    } catch (_) {
+    } catch (e) {
       // ignore
     }
     return false;
   }
 
-  getDependenciesFromPNPM() {
+  getDependenciesFromNPM() {
     const serviceDir = process.env.SERVICEDIR || '';
     const svcDir = path.isAbsolute(serviceDir)
       ? serviceDir
@@ -408,7 +417,7 @@ class LeemonsRunner {
   loadServices() {
     this.watchFolders.length = 0;
     const fileMask = this.flags.mask || '**/*.service.js';
-    const dependencies = this.getDependenciesFromPNPM();
+    const dependencies = this.getDependenciesFromNPM();
     _.forEach(dependencies, (dependency) => {
       if (this.config.logger)
         logger.info(`Loading service (${dependency.name}) from path ${dependency.path}`);
@@ -418,90 +427,6 @@ class LeemonsRunner {
         this.watchFolders.push(dependency.path);
       }
     });
-
-    /*
-                                                            const serviceDir = process.env.SERVICEDIR || "";
-                                                            const svcDir = path.isAbsolute(serviceDir)
-                                                              ? serviceDir
-                                                              : path.resolve(process.cwd(), serviceDir);
-
-
-
-                                                            let patterns = this.servicePaths;
-
-                                                            if (process.env.SERVICES || process.env.SERVICEDIR) {
-                                                              if (this.isDirectory(svcDir) && !process.env.SERVICES) {
-                                                                // Load all services from directory (from subfolders too)
-                                                                this.broker.loadServices(svcDir, fileMask);
-
-                                                                if (this.config.hotReload) {
-                                                                  this.watchFolders.push(svcDir);
-                                                                }
-                                                              } else if (process.env.SERVICES) {
-                                                                // Load services from env list
-                                                                patterns = Array.isArray(process.env.SERVICES)
-                                                                  ? process.env.SERVICES
-                                                                  : process.env.SERVICES.split(",");
-                                                              }
-                                                            }
-
-                                                            if (patterns.length > 0) {
-                                                              let serviceFiles = [];
-
-                                                              patterns
-                                                                .map((s) => s.trim())
-                                                                .forEach((p) => {
-                                                                  const skipping = p[0] == "!";
-                                                                  if (skipping) p = p.slice(1);
-
-                                                                  if (p.startsWith("npm:")) {
-                                                                    // Load NPM module
-                                                                    this.loadNpmModule(p.slice(4));
-                                                                  } else {
-                                                                    let files;
-                                                                    const svcPath = path.isAbsolute(p) ? p : path.resolve(svcDir, p);
-                                                                    // Check is it a directory?
-                                                                    if (this.isDirectory(svcPath)) {
-                                                                      if (this.config.hotReload) {
-                                                                        this.watchFolders.push(svcPath);
-                                                                      }
-                                                                      files = glob(svcPath + "/" + fileMask, { absolute: true });
-                                                                      if (files.length == 0)
-                                                                        return this.broker.logger.warn(
-                                                                          kleur
-                                                                            .yellow()
-                                                                            .bold(
-                                                                              `There is no service files in directory: '${svcPath}'`
-                                                                            )
-                                                                        );
-                                                                    } else if (this.isServiceFile(svcPath)) {
-                                                                      files = [svcPath.replace(/\\/g, "/")];
-                                                                    } else if (this.isServiceFile(svcPath + ".service.js")) {
-                                                                      files = [svcPath.replace(/\\/g, "/") + ".service.js"];
-                                                                    } else {
-                                                                      // Load with glob
-                                                                      files = glob(p, { cwd: svcDir, absolute: true });
-                                                                      if (files.length == 0)
-                                                                        this.broker.logger.warn(
-                                                                          kleur
-                                                                            .yellow()
-                                                                            .bold(`There is no matched file for pattern: '${p}'`)
-                                                                        );
-                                                                    }
-
-                                                                    if (files && files.length > 0) {
-                                                                      if (skipping)
-                                                                        serviceFiles = serviceFiles.filter(
-                                                                          (f) => files.indexOf(f) === -1
-                                                                        );
-                                                                      else serviceFiles.push(...files);
-                                                                    }
-                                                                  }
-                                                                });
-
-                                                              _.uniq(serviceFiles).forEach((f) => this.broker.loadService(f));
-                                                            }
-                                                            */
   }
 
   /**

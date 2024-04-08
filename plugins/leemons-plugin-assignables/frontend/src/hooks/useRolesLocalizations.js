@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common';
-import { escapeRegExp, get } from 'lodash';
+import { escapeRegExp } from 'lodash';
 
 export default function useRolesLocalizations(roles) {
   // key is array

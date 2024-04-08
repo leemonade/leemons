@@ -110,7 +110,7 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: 'Delete',
+          children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({

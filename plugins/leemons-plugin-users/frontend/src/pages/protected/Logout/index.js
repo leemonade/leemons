@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import constants from '@users/constants';
 import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { LoadingOverlay } from '@bubbles-ui/components';
 
 export default function Logout({ session }) {

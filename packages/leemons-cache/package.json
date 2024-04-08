@@ -1,10 +1,11 @@
 {
   "devDependencies": {},
   "dependencies": {
+    "@leemons/lrn": "0.0.41",
     "@leemons/service-name-parser": "0.0.41",
+    "ioredis": "^5.3.2",
     "lodash": "^4.17.21",
-    "node-cache": "^5.1.2",
-    "redis": "^4.6.10"
+    "node-cache": "^5.1.2"
   },
   "name": "@leemons/cache",
   "version": "0.0.41",

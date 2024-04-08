@@ -109,6 +109,7 @@ function prepareAssignable(sharedData) {
       activities: get(sharedData, 'state.activities', []).map((activity) => ({
         activity: activity.activity,
         id: activity.id,
+        type: activity.type,
       })),
     },
     resources: get(sharedData, 'state.resources', []),
@@ -150,7 +151,6 @@ function onSaveDraft({ sharedDataRef, history, localizations }) {
           });
         }
 
-        // TRANSLATE
         addSuccessAlert(localizations?.alert?.saveSuccess);
 
         history.replace(
@@ -251,7 +251,7 @@ function useModuleInitialization() {
 
       updateSharedData(prepareSharedData(moduleData));
     }
-  }, [moduleData]);
+  }, [moduleData, updateSharedData]);
 }
 
 export function ModuleSetup() {

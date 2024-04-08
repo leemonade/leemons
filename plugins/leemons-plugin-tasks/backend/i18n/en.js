@@ -6,6 +6,7 @@ module.exports = {
     accept: 'Accept',
     cancel: 'Cancel',
     required: 'Required field',
+    actions: 'Actions',
   },
   methodology: {
     directInstruction: 'Direct Instruction',
@@ -53,6 +54,14 @@ module.exports = {
     page_title: 'Task Library',
     published: 'Published',
     draft: 'Draft',
+    variant: 'Task',
+    expressVariant: 'Express Task',
+    deliverables: 'Deliverables',
+    yes: 'Yes',
+    no: 'No',
+    statementTitle: 'Statement',
+    viewMore: 'View more',
+    viewLess: 'View less',
   },
   task_setup_page: {
     title: 'New task',
@@ -225,9 +234,13 @@ module.exports = {
           buttonPublishAndAssign: 'Publish and assign',
           objectives: 'Custom objectives',
           curriculum: 'Curriculum',
-          add: 'Add',
+          add: 'Add objective',
+          numberHeader: 'Nº',
+          objectiveHeader: 'Objective',
           assessmentCriteria: 'Assessment criteria',
           subjects: 'Asignaturas',
+          inputLabel: 'Enter custom objective',
+          inputPlaceholder: 'Objective...',
         },
       },
       publishData: {
@@ -475,21 +488,14 @@ module.exports = {
     },
   },
   task_correction: {
+    action: 'feedback',
     student: {
-      submitted_alert: {
-        title: 'Activity submitted successfully',
-        message: 'Here you have more information about your activity',
-      },
-      pending_evaluation_alert: {
-        title: 'Pending evaluation.',
-        message: 'When the teacher evaluates your activity, you will receive a notification',
-      },
-
       submission: 'Submission',
       activity_summary: 'Activity summary',
       statement: 'Statement',
       curriculum: 'Curriculum',
       development: 'Development',
+      resources: 'Resources',
     },
     teacher: {
       evaluation: 'Evaluation',

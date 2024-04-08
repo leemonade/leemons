@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const constants = require('../../../config/constants');
 const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
+const { getUserAgentPermissionsCacheKey } = require('../../../helpers/cacheKeys');
 
 /**
  * Return all user auth permissions
@@ -27,15 +28,13 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
     await updateUserAgentPermissions({ userAgentIds: reloadUserAgents, ctx });
   }
 
-  const cacheKeys = _.map(
-    _userAgents,
-    (_userAgent) =>
-      `users:permissions:${_userAgent.id}:getUserAgentPermissions:${JSON.stringify(_query)}`
+  const cacheKeys = _.map(_userAgents, (_userAgent) =>
+    getUserAgentPermissionsCacheKey({ ctx, userAgent: _userAgent?.id ?? _userAgent, query: _query })
   );
   const cache = await ctx.cache.getMany(cacheKeys);
 
   if (Object.keys(cache).length) {
-    return cache[Object.keys(cache)[0]];
+    return Object.keys(cache).reduce((acc, key) => [...acc, ...cache[key]], []);
   }
 
   const query = { ..._query, userAgent: _.map(_userAgents, 'id') };
@@ -75,9 +74,31 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
       center: null,
     });
   }
+  _.map(_userAgents, (_userAgent, index) => {
+    const userAgentId = _userAgent.id;
 
-  _.map(responses, (response) => {
-    response.actionNames = _.uniq(response.actionNames);
+    const permissions = _.filter(
+      responses,
+      (response) => !response.userAgent || response.userAgent === userAgentId
+    ).map((_response) => {
+      const response = _.cloneDeep(_response);
+
+      response.actionNames = _.uniq(response.actionNames);
+      delete response.actionName;
+      delete response.userAgent;
+      delete response.created_at;
+      delete response.updated_at;
+      delete response.createdAt;
+      delete response.updatedAt;
+      delete response._id;
+
+      return response;
+    });
+
+    ctx.cache.set(cacheKeys[index], permissions, 86400);
+  });
+
+  responses.forEach((response) => {
     delete response.actionName;
     delete response.userAgent;
     delete response.created_at;
@@ -86,13 +107,6 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
     delete response.updatedAt;
     delete response._id;
   });
-
-  await Promise.all(
-    _.map(
-      cacheKeys,
-      (key) => ctx.cache.set(key, responses, 86400) // 1 dia
-    )
-  );
 
   return responses;
 }

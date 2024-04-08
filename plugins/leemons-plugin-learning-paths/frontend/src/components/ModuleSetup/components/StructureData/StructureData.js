@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
-  createStyles,
   Tooltip,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
@@ -14,7 +13,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { fireEvent } from 'leemons-hooks';
 import { cloneDeep, get, noop, set, without } from 'lodash';
 import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
-import { addErrorAlert } from '@layout/alert';
 import addAction from '@learning-paths/components/ModuleSetup/helpers/addAction';
 import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
 import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
@@ -22,33 +20,11 @@ import { EmptyState } from './components/EmptyState';
 import { ModuleComposer } from './components/ModuleComposer';
 import { EVENT_BASE, ACTIVITIES_KEY } from '../../constants';
 
-export const useStructureDataStyles = createStyles((theme) => {
-  const globalTheme = theme.other.global;
+const MEDIA_FILES_CATEGORY = 'media-files';
+const BOOKMARKS_CATEGORY = 'bookmarks';
 
-  return {
-    root: {
-      display: 'flex',
-    },
-    content: {
-      paddingLeft: globalTheme.spacing.padding.xlg,
-      paddingRight: globalTheme.spacing.padding.xlg,
-      paddingTop: globalTheme.spacing.padding.xlg,
-    },
-    buttons: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-
-      borderTop: `1px solid ${globalTheme.border.color.line.muted}`,
-      marginTop: globalTheme.spacing.padding.xlg,
-
-      paddingLeft: globalTheme.spacing.padding.xlg,
-      paddingRight: globalTheme.spacing.padding.xlg,
-      paddingTop: globalTheme.spacing.padding.xlg,
-      paddingBottom: globalTheme.spacing.padding.xlg,
-    },
-  };
-});
+const ACTIVITY_TYPE = 'activity';
+const ASSET_TYPE = 'asset';
 
 function useOnSave() {
   const eventBase = 'plugin.learning-paths.modules.edit';
@@ -92,14 +68,17 @@ export function StructureData({
 
   const assignablesRoles = useRoles();
 
-  const selectableCategories = useMemo(() =>
-    without(
-      assignablesRoles?.map((role) => `assignables.${role?.value}`) ?? [],
-      'assignables.learningpaths.module'
-    )
+  const selectableCategories = useMemo(
+    () => [
+      ...without(
+        assignablesRoles?.map((role) => `assignables.${role?.value}`) ?? [],
+        'assignables.learningpaths.module'
+      ),
+      MEDIA_FILES_CATEGORY,
+      BOOKMARKS_CATEGORY,
+    ],
+    [assignablesRoles]
   );
-
-  const { classes } = useStructureDataStyles();
 
   return (
     <TotalLayoutStepContainer
@@ -146,24 +125,22 @@ export function StructureData({
           categories={selectableCategories}
           onClose={() => setShowAssetDrawer(0)}
           onSelect={(asset) => {
-            if (!asset?.providerData) {
-              addErrorAlert(localizations?.alerts?.error?.nonAssignableAsset);
-            } else {
-              const { providerData } = asset;
+            const { providerData } = asset;
+            const type = providerData ? ACTIVITY_TYPE : ASSET_TYPE;
 
-              setSharedData((data) =>
-                set(cloneDeep(data), ACTIVITIES_KEY, [
-                  ...get(data, ACTIVITIES_KEY, []),
-                  {
-                    activity: providerData?.id,
-                    default: {
-                      type: 'mandatory',
-                    },
-                    id: uuidv4(),
+            setSharedData((data) =>
+              set(cloneDeep(data), ACTIVITIES_KEY, [
+                ...get(data, ACTIVITIES_KEY, []),
+                {
+                  activity: providerData?.id ?? asset?.id,
+                  default: {
+                    type: 'mandatory',
                   },
-                ])
-              );
-            }
+                  id: uuidv4(),
+                  type,
+                },
+              ])
+            );
             setShowAssetDrawer(0);
           }}
         />
@@ -189,56 +166,11 @@ export function StructureData({
           <EmptyState onSelectAsset={() => setShowAssetDrawer(1)} localizations={localizations} />
         )}
       </Box>
-      {/*
-      <Box className={classes.buttons}>
-        <Button variant="link" leftIcon={<ChevLeftIcon />} onClick={onPrevStep}>
-          {_localizations?.buttons?.previous}
-        </Button>
-        <Tooltip
-          label={_localizations?.buttons?.tooltips?.disabledNotResources}
-          disabled={get(sharedData, ACTIVITIES_KEY, [])?.length > 1}
-        >
-          <Box>
-            <DropdownButton
-              disabled={get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
-              loading={isLoading}
-              data={[
-                {
-                  label: _localizations?.buttons?.publish,
-                  onClick: () =>
-                    fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', () =>
-                      history.push(
-                        '/private/leebrary/assignables.learningpaths.module/list?activeTab=published'
-                      )
-                    ),
-                },
-                // {
-                //   label: _localizations?.buttons?.publishAndShare,
-                //   onClick: () =>
-                //     fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', () =>
-                //       alert('Should redirect to share options')
-                //     ),
-                // },
-                {
-                  label: _localizations?.buttons?.publishAndAssign,
-                  onClick: () =>
-                    fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', ({ id }) =>
-                      history.push(`/private/learning-paths/modules/${id}/assign`)
-                    ),
-                },
-              ]}
-              sx={{ '&[data-disabled]': { pointerEvents: 'all' } }}
-            >
-              {_localizations?.buttons?.publishOptions}
-            </DropdownButton>
-          </Box>
-          
-        </Tooltip>
-      </Box>
-      */}
     </TotalLayoutStepContainer>
   );
 }
+
+export default StructureData;
 
 StructureData.propTypes = {
   localizations: PropTypes.object,

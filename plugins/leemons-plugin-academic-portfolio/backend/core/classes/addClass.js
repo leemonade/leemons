@@ -16,6 +16,9 @@ const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { getProgramCourses } = require('../programs/getProgramCourses');
 const { getClassesProgramInfo } = require('./listSessionClasses');
 const { knowledgeAreaExistsInCenter } = require('../knowledges');
+const {
+  addComunicaRoomsBetweenStudentsAndTeachers,
+} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function addClass({ data, ctx }) {
   try {
@@ -228,8 +231,8 @@ async function addClass({ data, ctx }) {
       type: ctx.prefixPN('class'),
       key: ctx.prefixPN(`room.class.${nClass.id}`),
       parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
-      // name: 'roomCard.class',
-      //subName: roomData.name,
+      name: 'roomCard.class',
+      subName: roomData.name,
       icon: '/public/academic-portfolio/class-icon.svg',
     });
 
@@ -252,6 +255,7 @@ async function addClass({ data, ctx }) {
 
     //* Previously commented room
     // await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
+    await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
     return (await classByIds({ ids: nClass.id, ctx }))[0];
   } catch (e) {

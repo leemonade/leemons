@@ -1,15 +1,4 @@
 {
-  "devDependencies": {},
-  "dependencies": {
-    "@leemons/deployment-manager": "0.0.71",
-    "@leemons/error": "0.0.41",
-    "@leemons/lrn": "0.0.41",
-    "@leemons/service-name-parser": "0.0.41",
-    "@leemons/transactions": "0.0.41",
-    "lodash": "^4.17.21",
-    "mongodb": "6.1.0",
-    "mongoose": "7.5.2"
-  },
   "name": "@leemons/mongodb",
   "version": "0.0.71",
   "description": "",
@@ -31,5 +20,16 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/error": "0.0.41",
+    "@leemons/lrn": "0.0.41",
+    "@leemons/service-name-parser": "0.0.41",
+    "@leemons/transactions": "0.0.41",
+    "lodash": "^4.17.21",
+    "mongodb": "6.1.0",
+    "mongoose": "7.5.2"
+  }
 }

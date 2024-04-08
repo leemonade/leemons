@@ -166,6 +166,13 @@ module.exports = {
     tokenError:
       'El código para configurar la contraseña ha caducado o no es valido, contactar con el centro.',
     passwordSet: 'Contraseña establecida con éxito',
+    checkList: {
+      minLength: 'La contraseña tiene al menos {n} caracteres.',
+      specialChar: 'La contraseña tiene caracteres especiales.',
+      number: 'La contraseña tiene un número.',
+      capital: 'La contraseña tiene una letra mayúscula.',
+      match: 'Error al cifrar de nuevo la cartera. La contraseña no cambió.',
+    },
   },
   recover: {
     title: 'He olvidado mi contraseña',

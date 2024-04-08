@@ -111,7 +111,6 @@ export default function Detail() {
       store.currentId = params.id;
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
       const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
-
       store.test = test;
       store.stats = getStats();
       store.test.questionResponses = {};
@@ -125,14 +124,14 @@ export default function Detail() {
       store.test.config = getConfigByInstance();
       store.test.questionsInfo = calculeInfoValues(
         store.test.questions.length,
-        evaluationSystem.maxScale.number,
-        evaluationSystem.minScale.number,
-        evaluationSystem.minScaleToPromote.number
+        evaluationSystem?.maxScale.number,
+        evaluationSystem?.minScale.number,
+        evaluationSystem?.minScaleToPromote.number
       );
       store.evaluationSystem = evaluationSystem;
       render();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       addErrorAlert(error);
     }
   }
