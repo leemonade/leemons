@@ -52,6 +52,11 @@ module.exports = {
         return existName({ ...ctx.params, ctx });
       },
     },
+    existsById: {
+      async handler(ctx) {
+        return existsById({ ...ctx.params, ctx });
+      },
+    },
     setLimits: {
       async handler(ctx) {
         validateInternalPrivateKey({ ctx });
