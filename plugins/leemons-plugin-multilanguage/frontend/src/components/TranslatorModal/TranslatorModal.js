@@ -10,7 +10,7 @@ import {
   ContextContainer,
   Button,
   Text,
-  Drawer,
+  BaseDrawer,
 } from '@bubbles-ui/components';
 import { isString, isFunction } from 'lodash';
 import { TranslatorModalStyles } from './TranslatorModal.styles';
@@ -109,7 +109,7 @@ const TranslatorModal = ({
 
       {alert}
 
-      <Drawer opened={opened} onClose={handleClose} size={725} close={labels.close} noOverlay>
+      <BaseDrawer opened={opened} onClose={handleClose} size={725} close={labels.close} noOverlay>
         <ContextContainer title={labels.title} description={labels.description} divided>
           {children}
           {/* ACTION BUTTONS */}
@@ -124,7 +124,7 @@ const TranslatorModal = ({
             </Stack>
           )}
         </ContextContainer>
-      </Drawer>
+      </BaseDrawer>
     </Box>
   );
 };

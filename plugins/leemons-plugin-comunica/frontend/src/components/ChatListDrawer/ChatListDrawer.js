@@ -9,7 +9,7 @@ import {
   Menu,
   Button,
   CheckBoxGroup,
-  Drawer,
+  BaseDrawer,
   Popover,
   Switch,
   TextInput,
@@ -459,7 +459,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
 
   return (
     <>
-      <Drawer
+      <BaseDrawer
         opened={
           opened &&
           !store.selectedRoom &&
@@ -547,7 +547,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
             </Box>
           </Stack>
         </TotalLayoutContainer>
-      </Drawer>
+      </BaseDrawer>
 
       {store.intermediateRooms.map((room, index) => {
         let open = store.intermediateRooms.length - 1 === index;

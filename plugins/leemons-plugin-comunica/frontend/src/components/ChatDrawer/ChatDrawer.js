@@ -6,7 +6,7 @@ import {
   Stack,
   Button,
   ChatMessage,
-  Drawer,
+  BaseDrawer,
   IconButton,
   Textarea,
   useDebouncedCallback,
@@ -316,7 +316,7 @@ function ChatDrawer({
 
   return (
     <>
-      <Drawer opened={opened} size={400} close={false} empty>
+      <BaseDrawer opened={opened} size={400} close={false} empty>
         <TotalLayoutContainer
           scrollRef={scrollRef}
           Header={
@@ -455,7 +455,7 @@ function ChatDrawer({
             </TotalLayoutStepContainer>
           </Stack>
         </TotalLayoutContainer>
-      </Drawer>
+      </BaseDrawer>
       {!!store.room && (
         <ChatInfoDrawer
           room={store.room}

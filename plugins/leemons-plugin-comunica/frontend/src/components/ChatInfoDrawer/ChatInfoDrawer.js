@@ -6,7 +6,7 @@ import {
   Box,
   Stack,
   Button,
-  Drawer,
+  BaseDrawer,
   Switch,
   TextInput,
   UserDisplayItem,
@@ -266,7 +266,7 @@ function ChatInfoDrawer({
 
   return (
     <>
-      <Drawer opened={opened} size={400} close={false} empty>
+      <BaseDrawer opened={opened} size={400} close={false} empty>
         <TotalLayoutContainer
           scrollRef={scrollRef}
           Header={
@@ -410,7 +410,7 @@ function ChatInfoDrawer({
             </TotalLayoutStepContainer>
           </Stack>
         </TotalLayoutContainer>
-      </Drawer>
+      </BaseDrawer>
       <ChatAddUsersDrawer
         room={headerRoom}
         disabledProfiles={disabledProfiles}
