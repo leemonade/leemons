@@ -112,7 +112,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels }) => {
             <tr>
               <th className={classes.aulaTh}>
                 <Text size="xs" role="productive" color="primary" strong>
-                  {formLabels?.classrooms}
+                  {formLabels?.classroom}
                 </Text>
               </th>
               <th className={classes.th}>

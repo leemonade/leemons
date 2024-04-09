@@ -36,7 +36,7 @@ async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
     internalId:
       creditsAndInternalId.find((item) => item.subject === subject.id)?.internalId || null,
     course: subject.course ? JSON.parse(subject.course) : null, // Old, left there just in case. A subject can have multiple courses
-    courses: subject.course ? JSON.parse(subject.course) : null,
+    courses: subject.course ? JSON.parse(subject.course) : [],
     // OLD color: classesBySubject[subject.id]?.[0]?.color,
     color: subject.color,
     image: imagesById[subject.image],

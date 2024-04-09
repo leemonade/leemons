@@ -19,6 +19,7 @@ export function useProgramsForSubjectPicker({ subjects }) {
       name: program?.name,
       courses: sortBy(program?.courses, 'index').map((course) => pick(course, ['name', 'id'])),
       hasCourses: !(program?.moreThanOneAcademicYear || program?.maxNumberOfCourses === 1),
+      // TODO UPDATE THIS IN BACK & FRONT FOR IT TO BE: activateCoursesSelect: !(!program?.sequentialCourses || program?.maxNumberOfCourses === 1)),
     }));
   }, [data, isLoading]);
 }

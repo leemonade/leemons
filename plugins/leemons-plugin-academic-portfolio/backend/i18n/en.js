@@ -144,6 +144,7 @@ module.exports = {
       archive: 'Archive',
       remove: 'Remove',
       accept: 'Aceptar',
+      info: 'Info',
     },
     alerts: {
       success: {
@@ -265,6 +266,7 @@ module.exports = {
           digitsPlaceholder: 'Digits...',
           offeredGroups: 'Offered Groups',
           course: 'Course',
+          numberOfGroups: 'Nº of groups',
           nameFormatOptions: {
             alphabetical: 'Letters (A, B, C)',
             numerical: 'Numbers (1, 2, 3, 4)',
@@ -485,7 +487,7 @@ module.exports = {
       remove: 'Remove',
       accept: 'Accept',
       add: 'Add',
-      cannotArchiveTooltip: 'Only subjects with no students or teachers enrolled can be archived.',
+      cannotDeleteSubject: 'Only subjects with no students or teachers enrolled can be deleted.',
     },
     drawer: {
       title: 'New subject',
@@ -525,7 +527,7 @@ module.exports = {
       classroomsSetup: {
         title: 'Classrooms Setup',
         numberOfClassrooms: 'Number of classrooms',
-        classrooms: 'Classrooms',
+        classroom: 'Classroom',
         classroomId: 'Classroom ID',
         alias: 'Alias',
         seats: 'Available seats',
@@ -543,10 +545,10 @@ module.exports = {
           'This reference group is already being used. Please select another one.',
       },
     },
-    archiveModal: {
-      title: 'Archive subject',
-      description: 'Are you sure you want to archive the subject "{subjectName}"? ',
-      confirm: 'Archive',
+    deleteModal: {
+      title: 'Delete subject',
+      description: 'Are you sure you want to delete the subject "{subjectName}"? ',
+      confirm: 'Delete',
     },
     duplicateModal: {
       title: 'Duplicate subject',
@@ -558,13 +560,13 @@ module.exports = {
       success: {
         add: 'Subject created successfully.',
         update: 'Subject updated successfully.',
-        delete: 'Subject archived successfully.',
+        delete: 'Subject deleted successfully.',
         duplicate: 'Subject duplicated successfully.',
       },
       failure: {
         add: 'The Subject could not be created. ',
         update: 'The Subject could not be updated. ',
-        delete: 'The Subject could not be archived. ',
+        delete: 'The Subject could not be deleted. ',
         duplicate: 'The Subject could not be duplicated. ',
       },
     },

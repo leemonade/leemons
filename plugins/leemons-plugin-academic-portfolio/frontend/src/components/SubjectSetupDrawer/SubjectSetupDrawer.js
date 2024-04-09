@@ -14,7 +14,6 @@ import {
   useCreateSubject,
   useUpdateSubject,
 } from '@academic-portfolio/hooks/mutations/useMutateSubject';
-import { getHasProgramSubjectHistoryKey } from '@academic-portfolio/hooks/keys/programHasSubjectHistory';
 import { useProgramDetail } from '@academic-portfolio/hooks';
 import {
   useCreateClass,
@@ -269,8 +268,6 @@ const SubjectSetupDrawer = ({
       }
       const programSubjectsQueryKey = getProgramSubjectsKey(programId);
       queryClient.invalidateQueries(programSubjectsQueryKey);
-      const programSubjectsHistoryQueryKey = getHasProgramSubjectHistoryKey(programId);
-      queryClient.invalidateQueries(programSubjectsHistoryQueryKey);
     } catch (error) {
       console.error('error', error);
       addErrorAlert(

@@ -43,7 +43,7 @@ export function useDuplicateSubject() {
   });
 }
 
-export function useArchiveSubject() {
+export function useDeleteSubject() {
   return useMutation({
     mutationFn: async (props) => removeSubjectRequest(props),
   });

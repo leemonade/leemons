@@ -27,7 +27,6 @@ export const useEmptyStateStyles = createStyles((theme) => {
     container: {
       border: `2px dashed ${globalTheme.border.color.line.subtle}`,
       width: '50%',
-      height: 136,
       minWidth: 450,
       padding: 16,
     },
@@ -39,7 +38,7 @@ export function EmptyState({ onClick, Icon, title, description, actionLabel, noA
 
   return (
     <ContextContainer title={title || ''}>
-      <Box className={classes.container}>
+      <Box noFlex className={classes.container}>
         <ContextContainer padded alignItems="center">
           <Box style={{ textAlign: 'center', width: '80%' }}>
             <Text className={classes.description}>{description || ''}</Text>

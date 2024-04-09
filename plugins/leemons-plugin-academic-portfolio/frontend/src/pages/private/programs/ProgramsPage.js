@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { cloneDeep } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
@@ -135,65 +135,74 @@ const ProgramsPage = () => {
     setAddDrawerIsOpen(true);
   };
 
-  const handleOnEdit = (program) => {
-    setSelectedProgram(cloneDeep(program));
-    if (!addDrawerIsOpen) setAddDrawerIsOpen(true);
-    if (!isEditing) setIsEditing(true);
-  };
+  const handleOnEdit = useCallback(
+    (program) => {
+      setSelectedProgram(cloneDeep(program));
+      if (!addDrawerIsOpen) setAddDrawerIsOpen(true);
+      if (!isEditing) setIsEditing(true);
+    },
+    [addDrawerIsOpen, isEditing, setSelectedProgram]
+  );
 
-  const handleArchive = (program) => {
-    const onConfirm = () =>
-      archiveProgram(
-        { id: program.id, soft: true },
-        {
-          onSuccess: () => {
-            const queryKey = getCenterProgramsKey(selectedCenter);
-            queryClient.invalidateQueries(queryKey);
-            addSuccessAlert(t('alerts.success.delete'));
-          },
-          onError: (e) => {
-            console.error(e);
-            addErrorAlert(t('alerts.failure.delete'));
-          },
-        }
-      );
+  const handleArchive = useCallback(
+    (program) => {
+      const onConfirm = () =>
+        archiveProgram(
+          { id: program.id, soft: true },
+          {
+            onSuccess: () => {
+              const queryKey = getCenterProgramsKey(selectedCenter);
+              queryClient.invalidateQueries(queryKey);
+              addSuccessAlert(t('alerts.success.delete'));
+            },
+            onError: (e) => {
+              console.error(e);
+              addErrorAlert(t('alerts.failure.delete'));
+            },
+          }
+        );
 
-    openConfirmationModal({
-      title: t('archiveModal.title'),
-      description: t('archiveModal.description', { programName: program.name }),
-      labels: {
-        confirm: t('archiveModal.confirm'),
-        cancel: localizations?.labels?.cancel,
-      },
-      onConfirm,
-    })();
-  };
+      openConfirmationModal({
+        title: t('archiveModal.title'),
+        description: t('archiveModal.description', { programName: program.name }),
+        labels: {
+          confirm: t('archiveModal.confirm'),
+          cancel: localizations?.labels?.cancel,
+        },
+        onConfirm,
+      })();
+    },
+    [archiveProgram, t, selectedCenter, queryClient, openConfirmationModal, localizations]
+  );
 
-  const handleDuplicate = (program) => {
-    const onConfirm = () =>
-      duplicateProgram(
-        { programId: program.id },
-        {
-          onSuccess: () => {
-            addSuccessAlert(t('alerts.success.duplicate'));
-          },
-          onError: (e) => {
-            console.error(e);
-            addErrorAlert(t('alerts.failure.duplicate'));
-          },
-        }
-      );
+  const handleDuplicate = useCallback(
+    (program) => {
+      const onConfirm = () =>
+        duplicateProgram(
+          { programId: program.id },
+          {
+            onSuccess: () => {
+              addSuccessAlert(t('alerts.success.duplicate'));
+            },
+            onError: (e) => {
+              console.error(e);
+              addErrorAlert(t('alerts.failure.duplicate'));
+            },
+          }
+        );
 
-    openConfirmationModal({
-      title: t('duplicateModal.title'),
-      description: t('duplicateModal.description', { programName: program.name }),
-      labels: {
-        confirm: t('duplicateModal.confirm'),
-        cancel: localizations?.labels?.cancel,
-      },
-      onConfirm,
-    })();
-  };
+      openConfirmationModal({
+        title: t('duplicateModal.title'),
+        description: t('duplicateModal.description', { programName: program.name }),
+        labels: {
+          confirm: t('duplicateModal.confirm'),
+          cancel: localizations?.labels?.cancel,
+        },
+        onConfirm,
+      })();
+    },
+    [duplicateProgram, t, openConfirmationModal, localizations]
+  );
 
   const ProgramsDetailTableToRender = useMemo(() => {
     const key = activeTab === '0' ? 'active' : 'archived';
@@ -233,7 +242,7 @@ const ProgramsPage = () => {
       );
     }
     return <EmptyState description={localizations?.emptyStates?.noProgramsArchived} noAction />;
-  }, [selectedCenter, noEvaluationSystems, activeTab, handleOnAdd, localizations]);
+  }, [noEvaluationSystems, activeTab, handleOnAdd, localizations, history]);
 
   if (!translations) return null;
   return (

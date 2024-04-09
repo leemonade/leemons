@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
 import { isEmpty, noop, omit } from 'lodash';
@@ -34,6 +34,7 @@ function updateProgressWithLoadingCheck(setProgress, isLoading, onLoadingComplet
   const minDisplayTime = 2700; // Minimum display time
   const startTime = Date.now();
   let intervalId;
+  console.log('hello');
 
   setProgress(15);
 
@@ -87,7 +88,7 @@ const AddProgramForm = ({
   centerId,
   drawerIsLoading,
   localizations,
-  programUnderEdit = {},
+  programUnderEdit,
   onUpdate = noop,
 }) => {
   const { classes } = useAddProgramFormStyles();
@@ -96,6 +97,7 @@ const AddProgramForm = ({
   const [loadingEvaluationSystems, setLoadingEvaluationSystems] = useState(false);
   const [showLoadingComponent, setShowLoadingComponent] = useState(!isEditing);
   const [progress, setProgress] = useState(0);
+  console.log('programUnderEdit', programUnderEdit);
 
   const { control, formState, setValue, watch } = form;
   const { hoursPerCredit, credits, courses } = watch();
@@ -110,7 +112,7 @@ const AddProgramForm = ({
     return localizations?.programDrawer?.addProgramForm;
   }, [localizations]);
 
-  const getSeats = () => {
+  const getSeats = useCallback(() => {
     if (programUnderEdit.seatsForAllCourses) {
       return { all: programUnderEdit.seatsForAllCourses };
     }
@@ -119,24 +121,27 @@ const AddProgramForm = ({
       result[course.index] = course.metadata.seats;
     });
     return result;
-  };
+  }, [programUnderEdit]);
 
   // EFFECTS ··························································································||ﬂG
 
   useEffect(() => {
-    const handleLoadingComplete = () => {
-      setShowLoadingComponent(false);
-    };
+    if (isEmpty(programUnderEdit)) {
+      const handleLoadingComplete = () => {
+        setShowLoadingComponent(false);
+      };
 
-    return updateProgressWithLoadingCheck(
-      setProgress,
-      loadingEvaluationSystems,
-      handleLoadingComplete
-    );
-  }, [loadingEvaluationSystems]);
+      return updateProgressWithLoadingCheck(
+        setProgress,
+        loadingEvaluationSystems,
+        handleLoadingComplete
+      );
+    }
+    return () => {};
+  }, [loadingEvaluationSystems, programUnderEdit]);
 
   useEffect(() => {
-    if (!isEmpty(programUnderEdit)) {
+    if (!isEmpty(programUnderEdit) && !isEmpty(setupData)) {
       setValue('name', programUnderEdit.name);
       setValue('abbreviation', programUnderEdit.abbreviation);
       setValue('color', programUnderEdit.color);
@@ -187,7 +192,7 @@ const AddProgramForm = ({
       }));
       setValue('courses', formattedCourses);
     }
-  }, [programUnderEdit]);
+  }, [programUnderEdit, getSeats]);
 
   return (
     <TotalLayoutContainer
@@ -554,7 +559,9 @@ const AddProgramForm = ({
                     {formLabels?.cancel}
                   </Button>
                   <Button type="submit" loading={drawerIsLoading}>
-                    {formLabels?.createProgram}
+                    {isEmpty(programUnderEdit)
+                      ? formLabels?.createProgram
+                      : formLabels?.saveChanges}
                   </Button>
                 </Stack>
               </FooterContainer>

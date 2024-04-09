@@ -2,25 +2,16 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isEmpty, omit } from 'lodash';
 import { Table, Stack, ActionButton, Tooltip } from '@bubbles-ui/components';
-import { ArchiveIcon, EditWriteIcon, RestoreIcon } from '@bubbles-ui/icons/solid';
+import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 
-const SubjectsDetailTable = ({
-  subjectIds,
-  labels,
-  onEdit,
-  onDuplicate,
-  onArchive,
-  onRestore,
-  isShowingArchivedSubjects,
-}) => {
+const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete }) => {
   const { data: subjectsDetailQuery, isLoading: isSubjectsDetailLoading } = useSubjectDetails(
     subjectIds,
     { enabled: subjectIds?.length > 0 },
-    true,
-    isShowingArchivedSubjects
+    true
   );
 
   const getSubjectClassesString = (classes) => {
@@ -109,39 +100,29 @@ const SubjectsDetailTable = ({
           ...item,
           actions: (
             <Stack justifyContent="end" fullWidth>
-              {!isShowingArchivedSubjects && (
-                <ActionButton
-                  tooltip={labels?.edit}
-                  onClick={() => handleOnEdit(item)}
-                  icon={<EditWriteIcon width={18} height={18} />}
-                />
-              )}
-              {!isShowingArchivedSubjects && (
-                <ActionButton
-                  onClick={() => onDuplicate(item)}
-                  tooltip={labels?.duplicate}
-                  icon={<DuplicateIcon width={18} height={18} />}
-                />
-              )}
+              <ActionButton
+                tooltip={labels?.edit}
+                onClick={() => handleOnEdit(item)}
+                icon={<EditWriteIcon width={18} height={18} />}
+              />
+              <ActionButton
+                onClick={() => onDuplicate(item)}
+                tooltip={labels?.duplicate}
+                icon={<DuplicateIcon width={18} height={18} />}
+              />
               <Tooltip
                 multiline
                 autoHeight
                 size="md"
                 width={280}
-                label={labels?.cannotArchiveTooltip}
+                label={labels?.cannotDeleteSubject}
                 disabled={!subjectsHasPeopleEnrolled}
               >
                 <Stack>
                   <ActionButton
-                    tooltip={isShowingArchivedSubjects ? labels?.restore : labels?.archive}
+                    tooltip={labels?.remove}
                     disabled={subjectsHasPeopleEnrolled}
-                    icon={
-                      !isShowingArchivedSubjects ? (
-                        <ArchiveIcon width={18} height={18} onClick={() => onArchive(item)} />
-                      ) : (
-                        <RestoreIcon width={18} height={18} onClick={() => onRestore(item)} />
-                      )
-                    }
+                    icon={<DeleteBinIcon width={18} height={18} onClick={() => onDelete(item)} />}
                   />
                 </Stack>
               </Tooltip>
@@ -151,7 +132,7 @@ const SubjectsDetailTable = ({
       });
     }
     return [];
-  }, [subjectClassesData, isShowingArchivedSubjects, labels]);
+  }, [subjectClassesData, labels]);
 
   const tableColumns = useMemo(
     () => [
@@ -197,10 +178,8 @@ SubjectsDetailTable.propTypes = {
   subjectIds: PropTypes.array,
   labels: PropTypes.object,
   onEdit: PropTypes.func,
-  isShowingArchivedSubjects: PropTypes.bool,
   onDuplicate: PropTypes.func,
-  onArchive: PropTypes.func,
-  onRestore: PropTypes.func,
+  onDelete: PropTypes.func,
 };
 
 export default SubjectsDetailTable;

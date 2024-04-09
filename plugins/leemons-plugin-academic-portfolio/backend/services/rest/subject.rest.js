@@ -90,7 +90,8 @@ module.exports = {
     ],
 
     async handler(ctx) {
-      await deleteSubjectWithClasses({ id: ctx.params.id, ctx });
+      const _soft = ctx.params.soft ? JSON.parse(ctx.params.soft) : undefined;
+      await deleteSubjectWithClasses({ id: ctx.params.id, soft: _soft, ctx });
       return { status: 200 };
     },
   },

@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
-import { find } from 'lodash';
 
 import {
   ContextContainer,
   Title,
-  Select,
   Box,
   Button,
   ActionButton,

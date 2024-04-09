@@ -12,34 +12,30 @@ const StudentsTable = ({ data, showSearchBar }) => {
       {
         Header: ' ',
         accessor: 'avatar',
-        className: 'text-left',
+
         valueRender: (avatar) => <Avatar image={avatar} />,
       },
       {
         Header: 'Apellidos 🔫',
         accessor: 'surnames',
-        className: 'text-left',
       },
       {
         Header: 'Nombre 🔫',
         accessor: 'name',
-        className: 'text-left',
       },
       {
         Header: 'Email 🔫',
         accessor: 'email',
-        className: 'text-left',
       },
       {
         Header: 'Fecha de Nacimiento 🔫',
         accessor: 'birthdate',
-        className: 'text-left',
+
         valueRender: (birthdate) => <LocaleDate date={birthdate} />,
       },
       {
         Header: ' ',
         accessor: 'actions',
-        className: 'text-left',
       },
     ],
     [] // translations here

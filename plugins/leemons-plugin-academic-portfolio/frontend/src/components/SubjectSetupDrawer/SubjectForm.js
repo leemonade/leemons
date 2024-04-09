@@ -16,6 +16,7 @@ import {
   Select,
   Switch,
   LoadingOverlay,
+  Table,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
@@ -23,6 +24,7 @@ import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
 import FooterContainer from '../ProgramSetupDrawer/FooterContainer';
 import ClassroomsSetup from './ClassroomsSetup';
 import ReferenceGroupsClassroomsSetup from './ReferenceGroupsClassroomsSetup';
+import ReadOnlyField from '../common/ReadOnlyField';
 
 const useSubjectFormStyles = createStyles((theme) => ({
   title: {
@@ -53,16 +55,6 @@ const SubjectForm = ({
   const [disableReferenceGroups, setDisableReferenceGroups] = useState(false);
   const coursesFormValue = form.watch('courses');
 
-  const formLabels = useMemo(() => {
-    if (!localizations) return {};
-    return localizations?.drawer;
-  }, [localizations]);
-
-  const programReferenceGroups = useMemo(
-    () => program?.groups.filter((group) => group.name !== '-auto-'), // Previous implementation, this check is not needed anymore. Reference groups = program.groups
-    [program]
-  );
-
   const subjectWithPeopleEnrolled = useMemo(() => {
     if (!isEmpty(subject)) {
       return subject.classes.some((classItem) => {
@@ -73,6 +65,21 @@ const SubjectForm = ({
     }
     return false;
   }, [subject]);
+
+  const allowStructuralEdition = useMemo(
+    () => !isEditing || (isEditing && !subjectWithPeopleEnrolled),
+    [isEditing, subjectWithPeopleEnrolled]
+  );
+
+  const formLabels = useMemo(() => {
+    if (!localizations) return {};
+    return localizations?.drawer;
+  }, [localizations]);
+
+  const programReferenceGroups = useMemo(
+    () => program?.groups.filter((group) => group.name !== '-auto-'), // Previous implementation, this check is not needed anymore. Reference groups = program.groups
+    [program]
+  );
 
   function transformClassesData(classesData) {
     if (classesData.every((e) => e.groups)) {
@@ -96,6 +103,38 @@ const SubjectForm = ({
       id,
     }));
   }
+
+  const classroomsDataForReadOnlyTable = useMemo(() => {
+    let columns = [];
+    let data = [];
+    if (subject?.classes?.every((cls) => cls.groups)) {
+      columns = [
+        {
+          Header: formLabels?.classroomsSetup?.referenceGroup,
+          accessor: 'referenceGroup',
+        },
+        { Header: formLabels?.classroomsSetup?.classroomId, accessor: 'classroomId' },
+      ];
+      data = subject.classes.map((item) => ({
+        referenceGroup: `${item.groups?.name}`,
+        classroomId: item?.classroomId,
+      }));
+    } else if (subject?.classes?.every((cls) => !cls.groups)) {
+      columns = [
+        { Header: formLabels?.classroomsSetup?.classroom, accessor: 'classWithoutGroupId' },
+        { Header: formLabels?.classroomsSetup?.alias, accessor: 'alias' },
+        { Header: formLabels?.classroomsSetup?.classroomId, accessor: 'classroomId' },
+        { Header: formLabels?.classroomsSetup?.seats, accessor: 'seats' },
+      ];
+      data = subject?.classes.map((item) => ({
+        classWithoutGroupId: item?.classWithoutGroupId,
+        alias: item?.alias,
+        classroomId: item?.classroomId,
+        seats: item?.seats,
+      }));
+    }
+    return { columns, data };
+  }, [subject, formLabels]);
 
   // DATA FOR SELECT INPUTS ---------------------------------------------------------------------------------||
 
@@ -193,7 +232,7 @@ const SubjectForm = ({
         <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
           <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
 
-          <ContextContainer noFlex spacing={6}>
+          <ContextContainer noFlex spacing={4}>
             <Title className={classes.sectionTitle}>{formLabels?.basicData?.presentation}</Title>
             <Stack className={classes.horizontalInputsContainer}>
               <Controller
@@ -282,7 +321,7 @@ const SubjectForm = ({
           </ContextContainer>
 
           {(program?.hasKnowledgeAreas || program?.hasSubjectTypes || program?.credits) && (
-            <ContextContainer noFlex spacing={6}>
+            <ContextContainer noFlex spacing={4}>
               <Title className={classes.sectionTitle}>{formLabels?.features?.title}</Title>
               <Stack className={classes.horizontalInputsContainer}>
                 {program?.hasKnowledgeAreas && (
@@ -349,11 +388,11 @@ const SubjectForm = ({
             </ContextContainer>
           )}
 
-          {(!isEditing || (isEditing && !subjectWithPeopleEnrolled)) && (
-            <>
-              <ContextContainer noFlex spacing={6}>
-                <Title className={classes.sectionTitle}>{formLabels?.offer?.title}</Title>
-                <Stack className={classes.horizontalInputsContainer}>
+          <ContextContainer noFlex spacing={4}>
+            <Title className={classes.sectionTitle}>{formLabels?.offer?.title}</Title>
+            <Stack className={classes.horizontalInputsContainer}>
+              {allowStructuralEdition ? (
+                <>
                   <Controller
                     name="courses"
                     control={control}
@@ -410,74 +449,96 @@ const SubjectForm = ({
                       />
                     )}
                   />
+                </>
+              ) : (
+                <Stack direction="column">
+                  <ReadOnlyField
+                    label={formLabels?.offer?.coursesWhereItIsOffered}
+                    value={subject?.courses?.map((crs) => `${crs.index ?? ''}º`)?.join(', ')}
+                  />
+                  <ReadOnlyField
+                    label={formLabels?.offer?.substageWhereItIsOffered}
+                    value={
+                      subject?.substage === 'all'
+                        ? localizations?.labels?.noSubstages
+                        : substagesSelectData.find((ss) => ss.value === subject.substage)?.label
+                    }
+                  />
                 </Stack>
-              </ContextContainer>
+              )}
+            </Stack>
+          </ContextContainer>
 
-              <ContextContainer noFlex spacing={4}>
-                <Title className={classes.sectionTitle}>{formLabels?.classroomsSetup?.title}</Title>
-                <Controller
-                  name="classrooms"
-                  control={control}
-                  rules={{
-                    validate: (value) =>
-                      (Array.isArray(value) && value.length > 0) ||
-                      formLabels?.validation?.atLeastOneClassroom,
-                  }}
-                  render={({ field, fieldState }) => (
-                    <InputWrapper error={fieldState.error?.message}>
-                      {programReferenceGroups?.length ? (
-                        <Stack direction="column" spacing={4}>
-                          <Switch
-                            label={formLabels?.classroomsSetup?.disableReferenceGroups}
-                            onChange={(val) => {
-                              form.setValue('classrooms', []);
-                              setDisableReferenceGroups(val);
-                            }}
-                            checked={disableReferenceGroups}
-                          />
-                          {disableReferenceGroups ? (
-                            <ClassroomsSetup
-                              {...field}
-                              formLabels={{
-                                ...formLabels?.classroomsSetup,
-                                validation: { ...formLabels?.validation },
-                                labels: { ...localizations?.labels },
-                                textPlaceholder: formLabels.textPlaceholder,
-                              }}
-                            />
-                          ) : (
-                            <ReferenceGroupsClassroomsSetup
-                              {...field}
-                              groups={programReferenceGroups}
-                              selectedCourses={selectedCourses}
-                              isMultiCourse={!program?.sequentialCourses}
-                              refGroupdisabled={!coursesFormValue?.length}
-                              formLabels={{
-                                ...formLabels?.classroomsSetup,
-                                validation: { ...formLabels?.validation },
-                                labels: { ...localizations?.labels },
-                                textPlaceholder: formLabels.textPlaceholder,
-                              }}
-                            />
-                          )}
-                        </Stack>
-                      ) : (
-                        <ClassroomsSetup
-                          {...field}
-                          formLabels={{
-                            ...formLabels?.classroomsSetup,
-                            validation: { ...formLabels?.validation },
-                            labels: { ...localizations?.labels },
-                            textPlaceholder: formLabels.textPlaceholder,
+          <ContextContainer noFlex spacing={4}>
+            <Title className={classes.sectionTitle}>{formLabels?.classroomsSetup?.title}</Title>
+            {allowStructuralEdition ? (
+              <Controller
+                name="classrooms"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    (Array.isArray(value) && value.length > 0) ||
+                    formLabels?.validation?.atLeastOneClassroom,
+                }}
+                render={({ field, fieldState }) => (
+                  <InputWrapper error={fieldState.error?.message}>
+                    {programReferenceGroups?.length ? (
+                      <Stack direction="column" spacing={4}>
+                        <Switch
+                          label={formLabels?.classroomsSetup?.disableReferenceGroups}
+                          onChange={(val) => {
+                            form.setValue('classrooms', []);
+                            setDisableReferenceGroups(val);
                           }}
+                          checked={disableReferenceGroups}
                         />
-                      )}
-                    </InputWrapper>
-                  )}
-                />
-              </ContextContainer>
-            </>
-          )}
+                        {disableReferenceGroups ? (
+                          <ClassroomsSetup
+                            {...field}
+                            formLabels={{
+                              ...formLabels?.classroomsSetup,
+                              validation: { ...formLabels?.validation },
+                              labels: { ...localizations?.labels },
+                              textPlaceholder: formLabels.textPlaceholder,
+                            }}
+                          />
+                        ) : (
+                          <ReferenceGroupsClassroomsSetup
+                            {...field}
+                            groups={programReferenceGroups}
+                            selectedCourses={selectedCourses}
+                            isMultiCourse={!program?.sequentialCourses}
+                            refGroupdisabled={!coursesFormValue?.length}
+                            formLabels={{
+                              ...formLabels?.classroomsSetup,
+                              validation: { ...formLabels?.validation },
+                              labels: { ...localizations?.labels },
+                              textPlaceholder: formLabels.textPlaceholder,
+                            }}
+                          />
+                        )}
+                      </Stack>
+                    ) : (
+                      <ClassroomsSetup
+                        {...field}
+                        formLabels={{
+                          ...formLabels?.classroomsSetup,
+                          validation: { ...formLabels?.validation },
+                          labels: { ...localizations?.labels },
+                          textPlaceholder: formLabels.textPlaceholder,
+                        }}
+                      />
+                    )}
+                  </InputWrapper>
+                )}
+              />
+            ) : (
+              <Table
+                columns={classroomsDataForReadOnlyTable?.columns}
+                data={classroomsDataForReadOnlyTable?.data}
+              />
+            )}
+          </ContextContainer>
         </ContextContainer>
         <FooterContainer scrollRef={scrollRef}>
           <Stack justifyContent={'space-between'} fullWidth>

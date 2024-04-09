@@ -38,7 +38,7 @@ export function useDataForSubjectPicker({ subjects, control }) {
   const coursesHavingAvailableSubject = useMemo(() => {
     const _courses = [];
     subjectsDataOmittingSelected.forEach((subject) => {
-      if (subject?.course) _courses.push(...subject.course);
+      if (subject?.courses) _courses.push(...subject.courses);
     });
 
     return new Set(_courses);
@@ -74,7 +74,7 @@ export function useDataForSubjectPicker({ subjects, control }) {
       (subject) => subject?.program === program
     );
     if (selectedProgram?.hasCourses) {
-      subjectsFiltered = subjectsFiltered.filter((subject) => subject?.course?.includes(course));
+      subjectsFiltered = subjectsFiltered.filter((subject) => subject?.courses?.includes(course));
     }
 
     return map(subjectsFiltered, (subject) => ({
@@ -88,7 +88,9 @@ export function useDataForSubjectPicker({ subjects, control }) {
       map(selectedSubjects, (s) => {
         const subject = find(subjectsData, { id: s });
         const subjectProgram = find(programsData, { id: subject?.program });
-        const subjectCourse = find(subjectProgram?.courses, { id: subject?.course });
+        const subjectCourse =
+          subject?.courses?.length === 1 &&
+          find(subjectProgram?.courses, { id: subject?.courses[0] });
 
         return {
           id: s,

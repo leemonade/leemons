@@ -145,6 +145,7 @@ export function SubjectPicker({
     );
     return result;
   }, [courses]);
+  console.log('selectedSubjects', selectedSubjects);
 
   return (
     <ContextContainer title={localizations?.title} spacing={0}>

@@ -579,7 +579,7 @@ export default function TreePage() {
         try {
           store.removing = true;
           render();
-          await removeSubjectRequest(id);
+          await removeSubjectRequest({ id }); // updated just in case
           store.editingItem = null;
           store.duplicateItem = null;
           store.showTreeType = null;

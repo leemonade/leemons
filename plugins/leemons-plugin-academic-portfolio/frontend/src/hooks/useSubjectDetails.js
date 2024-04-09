@@ -20,7 +20,6 @@ export default function useSubjectDetails(
 
         return subjectId.map((subject) => detailsById[subject]);
       }
-
       return response.data;
     },
     { enabled }

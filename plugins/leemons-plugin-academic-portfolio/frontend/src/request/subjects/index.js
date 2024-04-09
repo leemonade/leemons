@@ -84,8 +84,9 @@ async function updateSubjectCredits(body) {
   });
 }
 
-async function removeSubject(id) {
-  return leemons.api(`v1/academic-portfolio/subjects/${id}`, {
+async function removeSubject({ id, soft }) {
+  const queryParams = typeof soft === 'boolean' ? `?soft=${soft}` : '';
+  return leemons.api(`v1/academic-portfolio/subjects/${id}${queryParams}`, {
     allAgents: true,
     method: 'DELETE',
   });

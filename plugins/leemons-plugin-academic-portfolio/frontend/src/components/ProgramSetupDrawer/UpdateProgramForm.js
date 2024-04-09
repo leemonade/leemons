@@ -14,12 +14,14 @@ import {
   NumberInput,
   Text,
   Checkbox,
+  Table,
   TotalLayoutStepContainer,
   TotalLayoutContainer,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
 import FooterContainer from './FooterContainer';
+import ReadOnlyField from '../common/ReadOnlyField';
 
 const useAddProgramFormStyles = createStyles((theme) => ({
   title: {
@@ -36,7 +38,6 @@ const useAddProgramFormStyles = createStyles((theme) => ({
 const UpdateProgramForm = ({
   scrollRef,
   onCancel,
-  setupData,
   onSubmit,
   program,
   drawerIsLoading,
@@ -63,12 +64,64 @@ const UpdateProgramForm = ({
       setValue('abbreviation', program.abbreviation);
       setValue('color', program.color);
       setValue('image', program.image);
-      setValue('credits', program.credits);
-      setValue('hoursPerCredit', program.hoursPerCredit);
+      setValue('useAutoAssignment', program.useAutoAssignment);
       setValue('totalHours', program.totalHours);
-      setValue('autoAssignment', program.useAutoAssignment);
     }
-  }, [program]);
+  }, [program, setValue]);
+
+  console.log('program', program);
+
+  const readOnlySubstagesColumns = [
+    { Header: ' ', accessor: 'index' },
+    { Header: ' ', accessor: 'name' },
+  ];
+
+  const readOnlyCoursesAndCreditsColumns = [
+    { Header: localizations?.labels.course, accessor: 'index' },
+    {
+      Header: localizations?.programDrawer?.addProgramForm.coursesSetup.minCredits,
+      accessor: 'minCredits',
+    },
+    {
+      Header: localizations?.programDrawer?.addProgramForm.coursesSetup.maxCredits,
+      accessor: 'maxCredits',
+    },
+  ];
+
+  const readOnlyCoursesAndGroupsColumns = [
+    { Header: localizations?.labels.course, accessor: 'index' },
+
+    {
+      Header: localizations?.programDrawer?.addProgramForm.referenceGroupsSetup.numberOfGroups,
+      accessor: 'amountOfGroups',
+    },
+    {
+      Header: localizations?.programDrawer?.addProgramForm?.referenceGroupsSetup.nameFormat,
+      accessor: 'groups',
+    },
+    ...(!program?.seatsForAllCourses && !isEmpty(program?.groupsMetadata)
+      ? [
+          {
+            Header: localizations?.programDrawer?.addProgramForm.seatsPerCourseSetup.numberOfSeats,
+            accessor: 'seats',
+          },
+        ]
+      : []),
+  ];
+
+  const readOnlyCyclesColumns = [
+    { Header: ' ', accessor: 'index' },
+    { Header: ' ', accessor: 'name' },
+    {
+      Header: ' ',
+      accessor: 'courses',
+      valueRender: (crsArray) =>
+        program?.courses
+          ?.filter((crs) => crsArray.includes(crs.id))
+          .map((c) => c.index)
+          .join('º, '),
+    },
+  ];
 
   return (
     <TotalLayoutContainer
@@ -94,7 +147,7 @@ const UpdateProgramForm = ({
       >
         <TotalLayoutStepContainer clean>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
+            <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={6}>
               {/* SECTION: BASIC DATA */}
               <ContextContainer direction="column" spacing={4}>
                 <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
@@ -169,47 +222,23 @@ const UpdateProgramForm = ({
                 </ContextContainer>
 
                 {/* DURACIÓN Y CRÉDITOS */}
-                {(program?.credits || setupData?.totalHours) && (
+                {(program?.credits || program?.totalHours) && (
                   <ContextContainer noFlex spacing={6}>
                     <Title className={classes.sectionTitle}>
-                      {setupData?.durationInHours
+                      {program?.durationInHours
                         ? formLabels?.durationAndCredits?.titleOnlyDuration
                         : formLabels?.durationAndCredits?.titleWithCredits}
                     </Title>
                     {program?.credits && (
                       <Stack className={classes.horizontalInputsContainer}>
                         <Stack className={classes.horizontalInputsContainer}>
-                          <Controller
-                            name="hoursPerCredit"
-                            control={control}
-                            rules={{ required: localizations?.programDrawer?.requiredField }}
-                            render={({ field, fieldState }) => (
-                              <NumberInput
-                                {...field}
-                                min={1}
-                                label={formLabels?.durationAndCredits?.hoursPerCredit}
-                                placeholder={formLabels?.durationAndCredits?.hoursPlaceholder}
-                                sx={{ width: 216 }}
-                                error={fieldState.error?.message}
-                              />
-                            )}
+                          <ReadOnlyField
+                            value={program?.hoursPerCredit}
+                            label={formLabels?.durationAndCredits?.hoursPerCredit}
                           />
-                          <Controller
-                            name="credits"
-                            rules={{ required: localizations?.programDrawer?.requiredField }}
-                            control={control}
-                            render={({ field, fieldState }) => (
-                              <NumberInput
-                                {...field}
-                                label={formLabels?.durationAndCredits?.numberOfCredits}
-                                min={1}
-                                sx={{ width: 216 }}
-                                placeholder={
-                                  formLabels?.durationAndCredits?.totalCreditsPlaceholder
-                                }
-                                error={fieldState.error?.message}
-                              />
-                            )}
+                          <ReadOnlyField
+                            value={program?.credits}
+                            label={formLabels?.durationAndCredits?.numberOfCredits}
                           />
                         </Stack>
                         <Text sx={{ alignSelf: 'end', padding: 12 }}>
@@ -238,27 +267,124 @@ const UpdateProgramForm = ({
                 )}
               </ContextContainer>
 
-              <ContextContainer noFlex spacing={6}>
-                <Title className={classes.title}>{localizations?.programDrawer?.others}</Title>
-                <Title className={classes.sectionTitle}>{formLabels?.automaticAssignment}</Title>
-                <Controller
-                  name="useAutoAssignment"
-                  control={control}
-                  render={({ field: { value, ref, ...field } }) => (
-                    <Checkbox
-                      checked={value || false}
-                      {...field}
-                      label={formLabels?.autoAssignmentDescription}
-                    />
+              {(program?.substages?.length > 0 || program?.courses?.length > 0) && (
+                <ContextContainer direction="column" spacing={4}>
+                  <Title className={classes.title}>{formLabels?.temporalStructure?.title}</Title>
+                  {program?.substages?.length > 0 && (
+                    <ContextContainer noFlex spacing={4}>
+                      <Title className={classes.sectionTitle}>
+                        {formLabels?.temporalStructure?.courseSubstages}
+                      </Title>
+                      <Table data={program?.substages || []} columns={readOnlySubstagesColumns} />
+                    </ContextContainer>
                   )}
-                />
-              </ContextContainer>
-              <ContextContainer noFlex spacing={6}>
-                <Text role="productive" color="soft">
-                  {
-                    'Updating options are limited when a program has a history of subjects (active or archived). 🌎'
-                  }
-                </Text>
+                  <ContextContainer noFlex spacing={4}>
+                    <Title className={classes.sectionTitle}>
+                      {formLabels?.temporalStructure?.courses}
+                    </Title>
+                    <Table
+                      data={(program?.courses ?? []).map((crs) => ({
+                        ...crs,
+                        minCredits: crs.metadata?.minCredits || '-',
+                        maxCredits: crs.metadata?.maxCredits || '-',
+                      }))}
+                      columns={readOnlyCoursesAndCreditsColumns}
+                    />
+                  </ContextContainer>
+                  {program?.cycles?.length > 0 && (
+                    <ContextContainer noFlex spacing={4}>
+                      <Title className={classes.sectionTitle}>
+                        {formLabels?.temporalStructure?.cycles}
+                      </Title>
+                      <Table data={program?.cycles || []} columns={readOnlyCyclesColumns} />
+                    </ContextContainer>
+                  )}
+                </ContextContainer>
+              )}
+
+              {program?.groups?.length > 0 && (
+                <ContextContainer direction="column" spacing={4}>
+                  <Title className={classes.title}>{formLabels?.classConfiguration}</Title>
+                  <ContextContainer noFlex spacing={4}>
+                    <Title className={classes.sectionTitle}>
+                      <Title className={classes.sectionTitle}>{formLabels?.referenceGroups}</Title>
+                    </Title>
+                    <ReadOnlyField
+                      label={
+                        localizations?.programDrawer?.addProgramForm?.referenceGroupsSetup
+                          .nameFormat
+                      }
+                      value={
+                        localizations?.programDrawer?.addProgramForm?.referenceGroupsSetup
+                          .nameFormatOptions[program?.groupsMetadata?.nameFormat]
+                      }
+                    />
+                    <Table
+                      data={(program?.courses ?? []).map((crs) => ({
+                        ...crs,
+                        seats: crs.metadata?.seats,
+                        amountOfGroups: program?.groups?.filter(
+                          (group) => group?.metadata.course === crs.index
+                        ).length,
+                        groups: program?.groups
+                          ?.filter((group) => group?.metadata.course === crs.index)
+                          .map((group) => group.name)
+                          .sort()
+                          .join(', '),
+                      }))}
+                      columns={readOnlyCoursesAndGroupsColumns}
+                    />
+
+                    <Title sx={(theme) => theme.other.score.content.typo.lg}>
+                      {
+                        localizations?.programDrawer?.addProgramForm?.seatsPerCourseSetup
+                          .offeredSeats
+                      }
+                    </Title>
+
+                    {program?.seatsForAllCourses ? (
+                      <ReadOnlyField
+                        label={
+                          localizations?.programDrawer?.addProgramForm?.seatsPerCourseSetup
+                            ?.numberOfSeats
+                        }
+                        value={program?.seatsForAllCourses}
+                      />
+                    ) : (
+                      <ReadOnlyField
+                        label={localizations?.labels?.info}
+                        value={
+                          localizations?.programDrawer?.addProgramForm?.seatsPerCourseSetup
+                            .seatsVaryByCourse
+                        }
+                      />
+                    )}
+                  </ContextContainer>
+                </ContextContainer>
+              )}
+
+              <ContextContainer noFlex spacing={4}>
+                <Title className={classes.title}>{localizations?.programDrawer?.others}</Title>
+                <ContextContainer noFlex spacing={4}>
+                  <Title className={classes.sectionTitle}>{formLabels?.privacy}</Title>
+                  <Checkbox
+                    checked={program?.hideStudentsToStudents}
+                    label={formLabels?.hideStudentsFromEachOther}
+                    disabled
+                  />
+                  <Title className={classes.sectionTitle}>{formLabels?.automaticAssignment}</Title>
+                  <Controller
+                    name="useAutoAssignment"
+                    control={control}
+                    render={({ field: { value, ref, ...field } }) => (
+                      <Checkbox
+                        checked={value || false}
+                        {...field}
+                        label={formLabels?.autoAssignmentDescription}
+                      />
+                    )}
+                  />
+                </ContextContainer>
               </ContextContainer>
             </ContextContainer>
 
@@ -281,7 +407,6 @@ const UpdateProgramForm = ({
 
 UpdateProgramForm.propTypes = {
   scrollRef: PropTypes.any,
-  setupData: PropTypes.object,
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   program: PropTypes.object,

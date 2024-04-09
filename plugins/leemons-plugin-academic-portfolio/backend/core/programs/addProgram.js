@@ -275,7 +275,8 @@ async function addProgram({ data, userSession, ctx }) {
       );
     });
   } else {
-    //* OLD ahora el front end siempre manda un curso al menos, especificando sillas pero con min y max creditos a null
+    //* OLD ahora el front end siempre manda un curso al menos, especificando sillas si hay grupos de ref
+    // Programas de un solo urso no especifícan min y max creditos (null)
     coursesAndGroupsPromises.push(
       addCourse({
         data: {

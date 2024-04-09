@@ -8,8 +8,6 @@ import {
   Stack,
   LoadingOverlay,
   TotalLayoutStepContainer,
-  Tabs,
-  TabPanel,
   Box,
   ContextContainer,
   Button,
@@ -30,18 +28,16 @@ import SubjectsDetailTable from '@academic-portfolio/components/SubjectsDetailTa
 import useProgramSubjects from '@academic-portfolio/hooks/queries/useProgramSubjects';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
 import {
-  useArchiveSubject,
+  useDeleteSubject,
   useDuplicateSubject,
 } from '@academic-portfolio/hooks/mutations/useMutateSubject';
 import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import { useQueryClient } from '@tanstack/react-query';
-import { getHasProgramSubjectHistoryKey } from '@academic-portfolio/hooks/keys/programHasSubjectHistory';
 
 const SubjectPage = () => {
   const [t, translations, , tLoading] = useTranslateLoader(prefixPN('newSubjectsPage'));
   const [selectedCenter, setSelectedCenter] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('');
-  const [activeTab, setActiveTab] = useState('0');
   const [showEmptyState, setShowEmptyState] = useState(false);
   const [addDrawerIsOpen, setAddDrawerIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,7 +45,7 @@ const SubjectPage = () => {
   const { openConfirmationModal } = useLayout();
   const history = useHistory();
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
-  const { mutate: archiveSubject } = useArchiveSubject();
+  const { mutate: deleteSubject } = useDeleteSubject();
   const { mutate: duplicateSubject } = useDuplicateSubject();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
@@ -89,16 +85,8 @@ const SubjectPage = () => {
 
   const noProgramsCreated = useMemo(() => !centerProgramsQuery?.length, [centerProgramsQuery]);
 
-  const queryFilters = useMemo(() => {
-    if (activeTab === '1') {
-      return { onlyArchived: true };
-    }
-    return {};
-  }, [activeTab]);
-
   const { data: subjectsQuery } = useProgramSubjects({
     program: selectedProgram,
-    filters: queryFilters,
     options: { enabled: selectedProgram?.length > 0 },
   });
 
@@ -110,8 +98,8 @@ const SubjectPage = () => {
   }, [subjectsQuery]);
 
   const isLoading = useMemo(
-    () => areCentersLoading || areCenterProgramsLoading,
-    [areCentersLoading, areCenterProgramsLoading]
+    () => areCentersLoading || areCenterProgramsLoading || tLoading,
+    [areCentersLoading, areCenterProgramsLoading, tLoading]
   );
 
   // EFFECTS ------------------------------------------------------------------------------------------------ ||
@@ -157,27 +145,29 @@ const SubjectPage = () => {
     setIsEditing(true);
   };
 
-  const handleArchive = (subject) => {
+  const handleOnDelete = (subject) => {
+    // HARD DELETE!
     const onConfirm = () =>
-      archiveSubject(subject.id, {
-        onSuccess: () => {
-          const queryKey = getProgramSubjectsKey(subject.program);
-          queryClient.invalidateQueries(queryKey);
-          const programSubjectsHistoryQueryKey = getHasProgramSubjectHistoryKey(subject.program);
-          queryClient.invalidateQueries(programSubjectsHistoryQueryKey);
-          addSuccessAlert(t('alerts.success.delete'));
-        },
-        onError: (e) => {
-          console.error(e);
-          addErrorAlert(t('alerts.failure.delete'));
-        },
-      });
+      deleteSubject(
+        { id: subject.id, soft: false },
+        {
+          onSuccess: () => {
+            const queryKey = getProgramSubjectsKey(subject.program);
+            queryClient.invalidateQueries(queryKey);
+            addSuccessAlert(t('alerts.success.delete'));
+          },
+          onError: (e) => {
+            console.error(e);
+            addErrorAlert(t('alerts.failure.delete'));
+          },
+        }
+      );
 
     openConfirmationModal({
-      title: t('archiveModal.title'),
-      description: t('archiveModal.description', { subjectName: subject.name }),
+      title: t('deleteModal.title'),
+      description: t('deleteModal.description', { subjectName: subject.name }),
       labels: {
-        confirm: t('archiveModal.confirm'),
+        confirm: t('deleteModal.confirm'),
         cancel: localizations?.labels?.cancel,
       },
       onConfirm,
@@ -207,45 +197,27 @@ const SubjectPage = () => {
     })();
   };
 
-  const SubjectDetailsTableToRender = useMemo(() => {
-    const key = activeTab === '0' ? 'active' : 'archived';
-    return (
-      <SubjectsDetailTable
-        key={key}
-        subjectIds={subjectIds}
-        onEdit={handleOnEdit}
-        onArchive={handleArchive}
-        onDuplicate={handleDuplicate}
-        labels={localizations?.labels}
-        isShowingArchivedSubjects={activeTab === '1'}
-      />
-    );
-  }, [subjectIds, handleOnEdit, activeTab, localizations, handleOnEdit]);
-
   const emtpyStateToRender = useMemo(() => {
-    if (activeTab === '0') {
-      if (noProgramsCreated) {
-        return (
-          <EmptyState
-            onClick={() => history.push('/private/academic-portfolio/programs')}
-            Icon={<RedirectIcon />}
-            actionLabel={localizations?.emptyStates?.createProgram}
-            description={localizations?.emptyStates?.noProgramsCreated}
-          />
-        );
-      }
-
+    if (noProgramsCreated) {
       return (
         <EmptyState
-          onClick={handleOnAdd}
-          Icon={<AddCircleIcon />}
-          actionLabel={localizations?.labels?.addNewSubject}
-          description={localizations?.emptyStates?.noSubjectsCreated}
+          onClick={() => history.push('/private/academic-portfolio/programs')}
+          Icon={<RedirectIcon />}
+          actionLabel={localizations?.emptyStates?.createProgram}
+          description={localizations?.emptyStates?.noProgramsCreated}
         />
       );
     }
-    return <EmptyState description={localizations?.emptyStates?.noSubjectsArchived} noAction />;
-  }, [selectedCenter, selectedProgram, noProgramsCreated, activeTab, handleOnAdd, localizations]);
+
+    return (
+      <EmptyState
+        onClick={handleOnAdd}
+        Icon={<AddCircleIcon />}
+        actionLabel={localizations?.labels?.addNewSubject}
+        description={localizations?.emptyStates?.noSubjectsCreated}
+      />
+    );
+  }, [selectedCenter, selectedProgram, noProgramsCreated, handleOnAdd, localizations]);
 
   return (
     <>
@@ -299,41 +271,27 @@ const SubjectPage = () => {
         >
           <TotalLayoutStepContainer
             stepName={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name}
-            clean
           >
-            <Tabs
-              tabPanelListStyle={{ backgroundColor: 'white' }}
-              fullHeight
-              onChange={(activeT) => setActiveTab(activeT)}
-            >
-              <TabPanel label={t('labels.publishedSubjects')}>
-                {!showEmptyState ? (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <Box sx={{ justifySelf: 'start', width: 160, height: 40 }}>
-                      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-                        {t('labels.addNewSubject')}
-                      </Button>
-                    </Box>
-                    {SubjectDetailsTableToRender}
-                  </ContextContainer>
-                ) : (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
-                    {emtpyStateToRender}
-                  </ContextContainer>
-                )}
-              </TabPanel>
-              <TabPanel label={t('labels.archivedSubjects')} disabled={noProgramsCreated}>
-                {!showEmptyState ? (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
-                    {SubjectDetailsTableToRender}
-                  </ContextContainer>
-                ) : (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
-                    {emtpyStateToRender}
-                  </ContextContainer>
-                )}
-              </TabPanel>
-            </Tabs>
+            {!showEmptyState ? (
+              <ContextContainer>
+                <Box noFlex sx={{ justifySelf: 'start', width: 160, height: 40 }}>
+                  <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
+                    {t('labels.addNewSubject')}
+                  </Button>
+                </Box>
+                {
+                  <SubjectsDetailTable
+                    subjectIds={subjectIds}
+                    onEdit={handleOnEdit}
+                    onDuplicate={handleDuplicate}
+                    onDelete={handleOnDelete}
+                    labels={localizations?.labels}
+                  />
+                }
+              </ContextContainer>
+            ) : (
+              emtpyStateToRender
+            )}
           </TotalLayoutStepContainer>
         </Stack>
       </TotalLayoutContainer>

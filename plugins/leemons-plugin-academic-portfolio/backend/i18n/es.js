@@ -144,6 +144,7 @@ module.exports = {
       restore: 'Restaurar',
       remove: 'Eliminar',
       accept: 'Aceptar',
+      info: 'Info',
     },
     alerts: {
       success: {
@@ -247,6 +248,7 @@ module.exports = {
           digitsPlaceholder: 'Dígitos...',
           offeredGroups: 'Grupos Ofertados',
           course: 'Course',
+          numberOfGroups: 'Nº de grupos',
           nameFormatOptions: {
             alphabetical: 'Letras (A, B, C)',
             numerical: 'Números (1, 2, 3, 4)',
@@ -485,8 +487,8 @@ module.exports = {
       remove: 'Eliminar',
       accept: 'Aceptar',
       add: 'Añadir',
-      cannotArchiveTooltip:
-        'Sólo se pueden archivar asignaturas sin estudiantes matriculados o profesores asociados.',
+      cannotDeleteSubject:
+        'Sólo se pueden eliminar asignaturas sin estudiantes matriculados o profesores asignados.',
     },
     drawer: {
       title: 'Nueva asignatura',
@@ -526,7 +528,7 @@ module.exports = {
       classroomsSetup: {
         title: 'Configuración de aulas',
         numberOfClassrooms: 'Nº de aulas',
-        classrooms: 'Aulas',
+        classroom: 'Aula',
         classroomId: 'ID de Aula',
         alias: 'Alias',
         seats: 'Plazas disponibles',
@@ -544,10 +546,10 @@ module.exports = {
           'This reference group is already being used. Please select another one.',
       },
     },
-    archiveModal: {
-      title: 'Archivar asignatura',
-      description: '¿Estás seguro de que quieres archivar la asignatura "{subjectName}"? ',
-      confirm: 'Archivar',
+    deleteModal: {
+      title: 'Eliminar asignatura',
+      description: '¿Estás seguro de que quieres eliminar la asignatura "{subjectName}"? ',
+      confirm: 'Eliminar',
     },
     duplicateModal: {
       title: 'Duplicar asignatura',
@@ -559,13 +561,13 @@ module.exports = {
       success: {
         add: 'Asignatura creada con éxito.',
         update: 'Asignatura actualizada con éxito.',
-        delete: 'Asignatura archivada con éxito.',
+        delete: 'Asignatura eliminada con éxito.',
         duplicate: 'Asignatura duplicada con éxito.',
       },
       failure: {
         add: 'No se ha podido crear la Asignatura. ',
         update: 'No se ha podido actualizar la Asignatura. ',
-        delete: 'No se ha podido archivar la Asignatura. ',
+        delete: 'No se ha podido eliminar la Asignatura. ',
         duplicate: 'No se ha podido duplicar la Asignatura. ',
       },
     },
