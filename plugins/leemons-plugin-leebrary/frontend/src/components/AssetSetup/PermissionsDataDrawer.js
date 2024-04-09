@@ -19,7 +19,7 @@ const PermissionsDataDrawer = ({
   const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
 
   return (
-    <Drawer
+    <BaseDrawer
       opened={opened}
       back={hasBack ? t('header.back') : null}
       close={t('header.close')}
@@ -34,7 +34,7 @@ const PermissionsDataDrawer = ({
         isDrawer
         drawerTranslations={[t, translations]}
       />
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

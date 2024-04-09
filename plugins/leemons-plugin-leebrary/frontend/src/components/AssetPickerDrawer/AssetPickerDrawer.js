@@ -1,4 +1,4 @@
-import { Box, Drawer, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
+import { Box, BaseDrawer, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -85,7 +85,7 @@ export function AssetPickerDrawer({
   const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
 
   return (
-    <Drawer
+    <BaseDrawer
       position={position}
       opened={!!opened}
       size={size}
@@ -132,7 +132,7 @@ export function AssetPickerDrawer({
           </Box>
         )}
       </Box>
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

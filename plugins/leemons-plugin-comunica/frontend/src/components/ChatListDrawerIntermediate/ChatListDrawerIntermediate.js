@@ -6,7 +6,7 @@ import {
   Box,
   Stack,
   Button,
-  Drawer,
+  BaseDrawer,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
@@ -64,7 +64,7 @@ function ChatListDrawerIntermediate({
   }, [room]);
 
   return (
-    <Drawer opened={opened} size={400} close={false} empty>
+    <BaseDrawer opened={opened} size={400} close={false} empty>
       <TotalLayoutContainer
         scrollRef={scrollRef}
         Header={
@@ -105,7 +105,7 @@ function ChatListDrawerIntermediate({
           </TotalLayoutStepContainer>
         </Stack>
       </TotalLayoutContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

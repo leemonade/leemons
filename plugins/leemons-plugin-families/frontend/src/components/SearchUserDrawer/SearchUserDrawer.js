@@ -5,7 +5,7 @@ import {
   Alert,
   Box,
   Button,
-  Drawer,
+  BaseDrawer,
   Paper,
   Radio,
   RadioGroup,
@@ -124,7 +124,7 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
   const { classes } = SearchUserDrawerStyles({}, { name: 'SearchUserDrawer' });
   const noUsers = !users || !users.length;
   return (
-    <Drawer opened={opened} size={725} {...props} back="Back">
+    <BaseDrawer opened={opened} size={725} {...props} back="Back">
       <Stack direction="column" fullWidth fullHeight spacing={4}>
         <Stack spacing={4} skipFlex>
           <StarIcon height={24} width={24} />
@@ -230,7 +230,7 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
           </Box>
         )}
       </Stack>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

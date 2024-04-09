@@ -9,7 +9,7 @@ import {
   Button,
   Checkbox,
   ContextContainer,
-  Drawer,
+  BaseDrawer,
   MultiSelect,
   RadioGroup,
   Select,
@@ -271,7 +271,7 @@ const DetailDrawer = ({
 
   const { classes: styles } = DetailDrawerStyles({}, { name: 'DetailDrawer' });
   return (
-    <Drawer empty withOverlay close={false} opened={open} onClose={onClose} size={DRAWER_WIDTH}>
+    <BaseDrawer empty withOverlay close={false} opened={open} onClose={onClose} size={DRAWER_WIDTH}>
       <form onSubmit={handleSubmit(saveMessageConfig)}>
         <TotalLayoutContainer
           clean
@@ -604,7 +604,7 @@ const DetailDrawer = ({
           </Stack>
         </TotalLayoutContainer>
       </form>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

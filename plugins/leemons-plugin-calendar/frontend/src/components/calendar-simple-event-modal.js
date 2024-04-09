@@ -1,4 +1,4 @@
-import { Button, Checkbox, Drawer, Radio, Select, TextInput } from '@bubbles-ui/components';
+import { Button, Checkbox, BaseDrawer, Radio, Select, TextInput } from '@bubbles-ui/components';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -271,9 +271,9 @@ export const useCalendarSimpleEventModal = () => {
   return [
     () => setDrawer((d) => !d),
     (data) => (
-      <Drawer opened={drawer}>
+      <BaseDrawer opened={drawer}>
         <CalendarSimpleEventModal {...data} />
-      </Drawer>
+      </BaseDrawer>
     ),
   ];
 };

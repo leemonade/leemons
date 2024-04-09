@@ -14,7 +14,7 @@ import {
   Button,
   ContextContainer,
   createStyles,
-  Drawer,
+  BaseDrawer,
   InputLabel,
   Loader,
   Popover,
@@ -205,7 +205,7 @@ export function AttendanceControlDrawer({
   }, [JSON.stringify(store.attendance), store.classe]);
 
   return (
-    <Drawer size={430} opened={opened} onClose={onClose}>
+    <BaseDrawer size={430} opened={opened} onClose={onClose}>
       {store.loading ? (
         <Loader />
       ) : (
@@ -329,7 +329,7 @@ export function AttendanceControlDrawer({
           </Button>
         </Box>
       ) : null}
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

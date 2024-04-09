@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Col, Divider, Drawer, Grid } from '@bubbles-ui/components';
+import { Box, Button, Col, Divider, BaseDrawer, Grid } from '@bubbles-ui/components';
 import { Name } from './components/Name';
 import { Preview } from './components/Preview';
 import { Centers } from './components/Centers';
@@ -14,25 +14,25 @@ import { DatasetItemDrawerStyles } from './DatasetItemDrawer.styles';
 
 export const DATASET_DATA_TYPES = {
   textField: {
-    type: 'text_field'
+    type: 'text_field',
   },
   richText: {
-    type: 'rich_text'
+    type: 'rich_text',
   },
   number: {
-    type: 'number'
+    type: 'number',
   },
   date: {
-    type: 'date'
+    type: 'date',
   },
   email: {
-    type: 'email'
+    type: 'email',
   },
   phone: {
-    type: 'phone'
+    type: 'phone',
   },
   link: {
-    type: 'link'
+    type: 'link',
   },
   /*
   archive: {
@@ -40,17 +40,17 @@ export const DATASET_DATA_TYPES = {
   },
    */
   multioption: {
-    type: 'multioption'
+    type: 'multioption',
   },
   boolean: {
-    type: 'boolean'
+    type: 'boolean',
   },
   select: {
-    type: 'select'
+    type: 'select',
   },
   user: {
-    type: 'user'
-  }
+    type: 'user',
+  },
 };
 
 export const DATASET_ITEM_DRAWER_DEFAULT_PROPS = {
@@ -109,7 +109,7 @@ export const DATASET_ITEM_DRAWER_DEFAULT_PROPS = {
     permissionsViewLabel: 'View',
     permissionsEditLabel: 'Edit',
     translateOptionsContinueButtonLabel: 'Continue',
-    previewLabel: 'Preview'
+    previewLabel: 'Preview',
   },
   errorMessages: {
     nameRequired: 'Field required',
@@ -118,7 +118,7 @@ export const DATASET_ITEM_DRAWER_DEFAULT_PROPS = {
     booleanShowAsRequired: 'Field required',
     booleanInitialStateRequired: 'Field required',
     localeLabelRequired: 'Field required',
-    optionFieldRequired: 'Field required'
+    optionFieldRequired: 'Field required',
   },
   locales: [],
   selectOptions: {
@@ -128,97 +128,96 @@ export const DATASET_ITEM_DRAWER_DEFAULT_PROPS = {
     fieldBooleanInitialState: [
       {
         label: 'Unselected',
-        value: '-'
+        value: '-',
       },
       {
         label: 'Si',
-        value: 'si'
+        value: 'si',
       },
       {
         label: 'No',
-        value: 'no'
-      }
+        value: 'no',
+      },
     ],
     fieldMultioptionShowAs: [
       {
         label: 'Dropdown',
-        value: 'dropdown'
+        value: 'dropdown',
       },
       {
         label: 'Checkboxs',
-        value: 'checkboxs'
+        value: 'checkboxs',
       },
       {
         label: 'Radio',
-        value: 'radio'
-      }
+        value: 'radio',
+      },
     ],
     fieldBooleanShowAs: [
       {
         label: 'Checkbox',
-        value: 'checkbox'
+        value: 'checkbox',
       },
       {
         label: 'Radio',
-        value: 'radio'
+        value: 'radio',
       },
       {
         label: 'Switcher',
-        value: 'switcher'
-      }
+        value: 'switcher',
+      },
     ],
     fieldTypes: [
       {
         label: 'Field',
-        value: DATASET_DATA_TYPES.textField.type
+        value: DATASET_DATA_TYPES.textField.type,
       },
       {
         label: 'Textarea',
-        value: DATASET_DATA_TYPES.richText.type
+        value: DATASET_DATA_TYPES.richText.type,
       },
       {
         label: 'Number',
-        value: DATASET_DATA_TYPES.number.type
+        value: DATASET_DATA_TYPES.number.type,
       },
       {
         label: 'Date',
-        value: DATASET_DATA_TYPES.date.type
+        value: DATASET_DATA_TYPES.date.type,
       },
       {
         label: 'Email',
-        value: DATASET_DATA_TYPES.email.type
+        value: DATASET_DATA_TYPES.email.type,
       },
       {
         label: 'Phone',
-        value: DATASET_DATA_TYPES.phone.type
+        value: DATASET_DATA_TYPES.phone.type,
       },
       {
         label: 'Link',
-        value: DATASET_DATA_TYPES.link.type
+        value: DATASET_DATA_TYPES.link.type,
       },
       {
         label: 'Multioption',
-        value: DATASET_DATA_TYPES.multioption.type
+        value: DATASET_DATA_TYPES.multioption.type,
       },
       {
         label: 'Boolean',
-        value: DATASET_DATA_TYPES.boolean.type
+        value: DATASET_DATA_TYPES.boolean.type,
       },
       {
         label: 'Select',
-        value: DATASET_DATA_TYPES.select.type
+        value: DATASET_DATA_TYPES.select.type,
       },
       {
         label: 'User',
-        value: DATASET_DATA_TYPES.user.type
-      }
-    ]
+        value: DATASET_DATA_TYPES.user.type,
+      },
+    ],
   },
   opened: false,
   position: 'right',
   size: 1187,
-  onClose: () => {
-  }
+  onClose: () => {},
 };
 export const DATASET_ITEM_DRAWER_PROP_TYPES = {
   messages: PropTypes.object,
@@ -226,7 +225,7 @@ export const DATASET_ITEM_DRAWER_PROP_TYPES = {
   locales: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
-      code: PropTypes.string
+      code: PropTypes.string,
     })
   ),
   defaultLocale: PropTypes.string,
@@ -235,45 +234,45 @@ export const DATASET_ITEM_DRAWER_PROP_TYPES = {
     centers: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
     ),
     fieldTypes: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
     ),
     fieldMultioptionShowAs: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
     ),
     fieldBooleanShowAs: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
     ),
     fieldBooleanInitialState: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
     ),
     userCenters: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
     ),
     userProfiles: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
-    )
+    ),
   }),
   opened: PropTypes.bool,
   position: PropTypes.oneOf(['left', 'right']),
@@ -282,27 +281,27 @@ export const DATASET_ITEM_DRAWER_PROP_TYPES = {
   onSave: PropTypes.func,
   defaultValues: PropTypes.object,
   isSaving: PropTypes.bool,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
 };
 
 const DatasetItemDrawer = ({
-                             loading,
-                             position,
-                             opened,
-                             onClose,
-                             onSave,
-                             size,
-                             defaultValues,
-                             messages,
-                             errorMessages,
-                             selectOptions,
-                             locales,
-                             defaultLocale,
-                             profiles,
-                             isSaving,
-                             formWithTheme,
-                             formT
-                           }) => {
+  loading,
+  position,
+  opened,
+  onClose,
+  onSave,
+  size,
+  defaultValues,
+  messages,
+  errorMessages,
+  selectOptions,
+  locales,
+  defaultLocale,
+  profiles,
+  isSaving,
+  formWithTheme,
+  formT,
+}) => {
   const { classes, cx } = DatasetItemDrawerStyles({});
   const form = useForm({ defaultValues });
   const contextRef = useRef({
@@ -310,7 +309,7 @@ const DatasetItemDrawer = ({
     gridColumn: 1000,
     colSpans: [250, 375, 375],
     colOptionsSpans: [250, 450],
-    translateOptionsModalOpened: {}
+    translateOptionsModalOpened: {},
   });
   const [r, setR] = useState(0);
 
@@ -343,7 +342,7 @@ const DatasetItemDrawer = ({
   }, [messages, errorMessages, selectOptions, locales, defaultLocale, profiles, formWithTheme]);
 
   return (
-    <Drawer position={position} opened={opened} size={size} onClose={onClose} empty>
+    <BaseDrawer position={position} opened={opened} size={size} onClose={onClose} empty>
       {loading ? (
         'Loading'
       ) : (
@@ -382,7 +381,7 @@ const DatasetItemDrawer = ({
           </Grid>
         </DatasetItemDrawerContext.Provider>
       )}
-    </Drawer>
+    </BaseDrawer>
   );
 };
 
