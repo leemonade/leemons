@@ -131,7 +131,6 @@ const AcademicTreePage = () => {
     }
     return [];
   }, [academicTreeQuery]);
-  console.log('parsedTree', parsedTree);
 
   // FUNCTIONS && HANDLERS ····················································································|
   const toggleEnrollmentDrawer = (classroomId = null) => {
@@ -171,8 +170,6 @@ const AcademicTreePage = () => {
         return null;
     }
   }, [selectedNode, centerProgramsQuery, selectedProgram]);
-
-  console.log('academicTreeQuery', academicTreeQuery);
 
   return (
     <>

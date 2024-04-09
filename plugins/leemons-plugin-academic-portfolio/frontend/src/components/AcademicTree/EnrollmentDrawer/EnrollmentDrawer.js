@@ -201,8 +201,6 @@ const EnrollmentDrawer = ({
 
   const handleStudentEnrollment = async () => {
     const { cannotEnrollClasses, studentsToEnrollByClass } = getStudentsToEnrollByClass();
-    console.log('cannotEnrollClasses', cannotEnrollClasses);
-    console.log('studentsToEnrollByClass', studentsToEnrollByClass);
 
     if (cannotEnrollClasses?.length) {
       console.log('show error');
@@ -229,8 +227,6 @@ const EnrollmentDrawer = ({
           enrollmentRequests.push({ class: classIds, students });
         }
       });
-      console.log('enrollmentRequests', enrollmentRequests);
-
       try {
         enrollmentRequests.forEach(async (requestBody) => {
           await addStudentsToClassesAsync(requestBody);
@@ -304,14 +300,3 @@ EnrollmentDrawer.propTypes = {
   opensFromClasroom: PropTypes.string, // Classroom id where it is opened from
 };
 export default EnrollmentDrawer;
-
-/*
-
-  <ByData
-                messages={{}}
-                center={centerId}
-                classes={classes}
-                onChange={setSelectedStudents}
-                disableSave={(val) => console.log('disableSave', val)}
-              />
-              */

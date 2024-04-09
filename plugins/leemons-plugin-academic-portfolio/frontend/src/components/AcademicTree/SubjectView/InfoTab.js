@@ -4,7 +4,6 @@ import { ContextContainer, Title, Text } from '@bubbles-ui/components';
 
 const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
   const parsedCourses = useMemo(() => {
-    // console.log('subjectDetails.courses', subjectDetails?.courses);
   }, [subjectDetails]);
   return (
     <ContextContainer sx={{ padding: 24 }}>

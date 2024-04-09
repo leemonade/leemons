@@ -71,11 +71,9 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
       }
     );
   };
-  console.log('classData', classData);
 
   const handleUpdate = () => {
     const requestBody = updateForm?.getValues();
-    console.log('requestBody', requestBody);
   };
 
   const studentsTableData = useMemo(() => {

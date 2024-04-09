@@ -69,8 +69,6 @@ const UpdateProgramForm = ({
     }
   }, [program, setValue]);
 
-  console.log('program', program);
-
   const readOnlySubstagesColumns = [
     { Header: ' ', accessor: 'index' },
     { Header: ' ', accessor: 'name' },

@@ -34,7 +34,6 @@ function updateProgressWithLoadingCheck(setProgress, isLoading, onLoadingComplet
   const minDisplayTime = 2700; // Minimum display time
   const startTime = Date.now();
   let intervalId;
-  console.log('hello');
 
   setProgress(15);
 
@@ -97,7 +96,6 @@ const AddProgramForm = ({
   const [loadingEvaluationSystems, setLoadingEvaluationSystems] = useState(false);
   const [showLoadingComponent, setShowLoadingComponent] = useState(!isEditing);
   const [progress, setProgress] = useState(0);
-  console.log('programUnderEdit', programUnderEdit);
 
   const { control, formState, setValue, watch } = form;
   const { hoursPerCredit, credits, courses } = watch();
