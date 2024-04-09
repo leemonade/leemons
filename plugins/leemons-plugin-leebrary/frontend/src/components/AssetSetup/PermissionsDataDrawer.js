@@ -1,4 +1,4 @@
-import { Drawer } from '@bubbles-ui/components';
+import { BaseDrawer } from '@bubbles-ui/components';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
