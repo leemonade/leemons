@@ -35,7 +35,7 @@ function distributeStudentsToClasses(classes, selectedStudents) {
     let adjustedTotalSeats = 0;
     knowledgeAreaData.classes.forEach((cls) => {
       // Exclude already enrolled students from the total available seats calculation
-      const nonEnrolledSelectedStudents = studentUserAgents.filter(
+      const nonEnrolledSelectedStudents = studentUserAgents?.filter(
         (value) => !cls.students.includes(value)
       );
       adjustedTotalSeats += Math.max(0, cls.availableSeats - nonEnrolledSelectedStudents.length);
@@ -101,9 +101,9 @@ const EnrollmentDrawer = ({
 
   const subjects = useMemo(() => {
     if (selectedNode?.type === 'group' || selectedNode?.type === 'knowledgeArea') {
-      return selectedNode.children
-        .filter((child) => child.type === 'subject') // TODO This is not really needed. All children of these type of nodes are subjects.
-        .map((subject) => subject.id);
+      return selectedNode?.children
+        ?.filter((child) => child.type === 'subject') // TODO This is not really needed. All children of these type of nodes are subjects.
+        ?.map((subject) => subject.id);
     }
     if (selectedNode?.type === 'subject') {
       return [selectedNode.id];
@@ -118,12 +118,12 @@ const EnrollmentDrawer = ({
   const classes = useMemo(() => {
     if (allSubjectClasses?.length && opensFromClasroom?.length > 0) {
       // This is when the drawer is opened from the enrollment tab of a subject node, we can know directly what class we'll enrolle students into. (reference groups or not)
-      return allSubjectClasses.filter((cls) => cls.id === opensFromClasroom);
+      return allSubjectClasses?.filter((cls) => cls.id === opensFromClasroom);
     }
     if (allSubjectClasses?.length && selectedNode?.parent?.type === 'knowledgeArea') {
       // Cases where no groups of reference are being used
       // TODO But a subject can only be asociated to one single knowledge area... probably this is not needed.
-      return allSubjectClasses.filter((cls) => cls.knowledges?.id === selectedNode.parent.id);
+      return allSubjectClasses?.filter((cls) => cls.knowledges?.id === selectedNode.parent.id);
     }
     return allSubjectClasses;
   }, [allSubjectClasses, selectedNode, opensFromClasroom]);
@@ -179,8 +179,8 @@ const EnrollmentDrawer = ({
     if (selectedNode?.type === 'group') {
       classes.forEach((cls) => {
         const studentsToEnroll = selectedStudents
-          .map((st) => st.value)
-          .filter((studentUserAgent) => !cls.students.includes(studentUserAgent));
+          ?.map((st) => st.value)
+          ?.filter((studentUserAgent) => !cls.students.includes(studentUserAgent));
         const availableSeats = cls.seats - cls.students.length;
         if (studentsToEnroll.length > availableSeats) {
           cannotEnrollClasses.push(cls);
