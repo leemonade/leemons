@@ -48,7 +48,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
       updateForm?.setValue('mainTeacher', mainTeacher?.teacher);
       updateForm?.setValue('virtualUrl', classData.virtualUrl);
       updateForm?.setValue('address', classData.address);
-      updateForm?.setValue('schedule', classData.schedule);
+      updateForm?.setValue('schedule', { days: classData.schedule ?? [] });
       updateForm?.setValue('id', classData.id);
     }
   }, [classData]);
@@ -70,10 +70,6 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
         },
       }
     );
-  };
-
-  const handleUpdate = () => {
-    const requestBody = updateForm?.getValues();
   };
 
   const studentsTableData = useMemo(() => {

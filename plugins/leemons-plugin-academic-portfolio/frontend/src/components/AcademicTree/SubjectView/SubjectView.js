@@ -70,9 +70,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
       delete requestBody.mainTeacher;
     }
     if (!isEmpty(requestBody.schedule)) {
-      requestBody.schedule = isArray(requestBody.schedule)
-        ? requestBody.schedule
-        : [requestBody.schedule];
+      requestBody.schedule = requestBody.schedule.days;
     }
 
     mutateClass(requestBody, {
