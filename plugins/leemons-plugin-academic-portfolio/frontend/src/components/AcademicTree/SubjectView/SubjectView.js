@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { isArray, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
@@ -21,7 +21,7 @@ import InfoTab from './InfoTab';
 const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) => {
   const [activeTab, setActiveTab] = useState('0');
   const { data: subjectDetails, isLoading } = useSubjectDetails(
-    subjectNode?.id,
+    subjectNode?.itemId,
     {
       enabled: subjectNode?.id?.length > 0,
     },
@@ -32,8 +32,9 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
 
   // For cases when the subject is the child of a reference group
   const singleClassToShow = useMemo(() => {
-    if (subjectNode?.parent?.type === 'group') {
-      return subjectDetails?.classes?.find((cls) => cls.groups?.id === subjectNode?.parent?.id);
+    const subjectParentNodeIsGroup = subjectDetails?.classes?.every((cls) => cls.groups); // we need to know if the parent is a group or a course.
+    if (subjectParentNodeIsGroup) {
+      return subjectDetails?.classes?.find((cls) => cls.groups?.id === subjectNode?.parentItemId);
     }
     return null;
   }, [subjectDetails, subjectNode]);
