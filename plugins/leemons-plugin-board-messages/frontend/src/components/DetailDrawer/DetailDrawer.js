@@ -5,7 +5,6 @@ import {
   Box,
   Alert,
   Stack,
-  Title,
   Button,
   Drawer,
   Select,
@@ -21,7 +20,6 @@ import {
 import { TextEditorInput } from '@bubbles-ui/editors';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { DatePicker } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
@@ -74,7 +72,7 @@ const DetailDrawer = ({
   const [classes, setClasses] = useState([]);
   const [overWriteMessages, setOverWriteMessages] = useState(false);
   const [overlaps, setOverlaps] = useState([]);
-  const scrollRef = React.useRef(null);
+
   const {
     control,
     handleSubmit,
