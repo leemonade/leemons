@@ -14,6 +14,7 @@ import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { useEnrollStudentsToClasses } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { getProfilesRequest } from '@academic-portfolio/request';
 import StudentsSelectByUserData from './StudentsSelectByUserData';
+import StudentsSelectByTags from './StudentsSelectByTags';
 
 function distributeStudentsToClasses(classes, selectedStudents) {
   const cannotEnrollClasses = [];
@@ -106,7 +107,7 @@ const EnrollmentDrawer = ({
         ?.map((subject) => subject.id);
     }
     if (selectedNode?.type === 'subject') {
-      return [selectedNode.id];
+      return [selectedNode.itemId];
     }
     return [];
   }, [selectedNode]);
@@ -157,6 +158,8 @@ const EnrollmentDrawer = ({
     setSelectedStudents([]);
     closeDrawer();
   };
+
+  console.log('classes', classes);
 
   const getStudentsToEnrollByClass = () => {
     const cannotEnrollClasses = [];
@@ -282,7 +285,13 @@ const EnrollmentDrawer = ({
                 previouslyEnrolledStudents={previouslyEnrolledStudents}
               />
             ) : (
-              <div>By TAGS</div>
+              <StudentsSelectByTags
+                studentProfile={studentProfile}
+                centerId={centerId}
+                setSelectedStudents={setSelectedStudents}
+                selectedStudents={selectedStudents}
+                previouslyEnrolledStudents={previouslyEnrolledStudents}
+              />
             )}
           </TotalLayoutStepContainer>
         </Stack>
@@ -300,3 +309,7 @@ EnrollmentDrawer.propTypes = {
   opensFromClasroom: PropTypes.string, // Classroom id where it is opened from
 };
 export default EnrollmentDrawer;
+
+/*
+
+*/
