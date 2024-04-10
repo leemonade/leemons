@@ -9,12 +9,14 @@ const { removeGroupFromClassesUnderNodeTree } = require('./removeGroupFromClasse
 const {
   duplicateGroupWithClassesUnderNodeTreeByIds,
 } = require('./duplicateGroupWithClassesUnderNodeTreeByIds');
+const { getGroupById } = require('./getGroupById');
 
 module.exports = {
   addGroup,
   listGroups,
   updateGroup,
   duplicateGroup,
+  getGroupById,
   addNextGroupIndex,
   getNextGroupIndex,
   addGroupIfNotExists,

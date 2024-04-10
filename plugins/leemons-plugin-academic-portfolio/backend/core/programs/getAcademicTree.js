@@ -4,22 +4,27 @@ const { programsByIds } = require('./programsByIds');
 function handleNonSequentialAndSingleCourses({ groups, knowledgeAreas, subjects, classes }) {
   let tree = [];
   if (groups.length > 0) {
-    tree = groups.map((group) => ({
-      id: group.id,
-      name: group.name,
-      abbreviation: group.abbreviation,
-      metadata: group.metadata,
-      type: 'group',
-      children: subjects
-        .filter((subject) =>
-          classes.some((cls) => cls.groups?.id === group.id && cls.subject.id === subject.id)
-        )
-        .map(({ id, name }) => ({
-          id,
-          name,
-          type: 'subject',
-        })),
-    }));
+    tree = groups
+      .map((group) => ({
+        id: group.id,
+        name: group.name,
+        abbreviation: group.abbreviation, // group name and abbreviation are the same
+        data: {
+          courseParentSeats: group.courseParentSeats,
+          metadata: group.metadata,
+        },
+        type: 'group',
+        children: subjects
+          .filter((subject) =>
+            classes.some((cls) => cls.groups?.id === group.id && cls.subject.id === subject.id)
+          )
+          .map(({ id, name }) => ({
+            id,
+            name,
+            type: 'subject',
+          })),
+      }))
+      .sort((a, b) => a.abbreviation - b.abbreviation);
 
     // Subjects with no group are shown at root level
     const groupedSubjectIds = tree.flatMap((group) => group.children.map((subject) => subject.id));
@@ -65,7 +70,11 @@ function handleSequentialAndMultipleCourses({
       index: cycle.index,
       type: 'cycle',
       children: cycle.courses.map((courseId) => ({
-        ...(({ index, id }) => ({ index, id }))(courses.find((course) => course.id === courseId)),
+        ...(({ index, id, name }) => ({
+          index,
+          id,
+          name,
+        }))(courses.find((course) => course.id === courseId)),
         type: 'course',
       })),
     }));
@@ -74,6 +83,7 @@ function handleSequentialAndMultipleCourses({
     tree = courses.map((course) => ({
       index: course.index,
       id: course.id,
+      name: course.name,
       type: 'course',
       children: [],
     }));
@@ -88,20 +98,21 @@ function handleSequentialAndMultipleCourses({
       const courseKnowledgeAreas = knowledgeAreas; // All knowledge areas are applicable
 
       if (courseGroups.length > 0) {
-        course.children = courseGroups.map((group) => {
-          const groupClasses = courseClasses.filter((cls) => cls.groups?.id === group.id);
-          const subjectIds = groupClasses.map((cls) => cls.subject.id);
-          return {
-            id: group.id,
-            name: group.name,
-            abbreviation: group.abbreviation,
-            metadata: group.metadata,
-            type: 'group',
-            children: subjects
-              .filter((subject) => subjectIds.includes(subject.id))
-              .map(({ id, name }) => ({ id, name, type: 'subject' })),
-          };
-        });
+        course.children = courseGroups
+          .map((group) => {
+            const groupClasses = courseClasses.filter((cls) => cls.groups?.id === group.id);
+            const subjectIds = groupClasses.map((cls) => cls.subject.id);
+            return {
+              id: group.id,
+              abbreviation: group.abbreviation,
+              name: group.name,
+              type: 'group',
+              children: subjects
+                .filter((subject) => subjectIds.includes(subject.id))
+                .map(({ id, name }) => ({ id, name, type: 'subject' })),
+            };
+          })
+          .sort((a, b) => a.abbreviation - b.abbreviation);
 
         // For classes with no group (within programs that use reference gorups), list them directly under the course
         const noGroupClasses = courseClasses.filter((cls) => !cls.groups);
@@ -143,7 +154,12 @@ async function getAcademicTree({ programId, ctx }) {
 
   let tree = [];
   if (!sequentialCourses || courses.length === 1) {
-    tree = handleNonSequentialAndSingleCourses({ groups, knowledgeAreas, subjects, classes });
+    tree = handleNonSequentialAndSingleCourses({
+      groups,
+      knowledgeAreas,
+      subjects,
+      classes,
+    });
   } else {
     tree = handleSequentialAndMultipleCourses({
       cycles,
@@ -158,3 +174,4 @@ async function getAcademicTree({ programId, ctx }) {
   return tree;
 }
 module.exports = { getAcademicTree };
+// CURSO NEEDS MANAGERS

@@ -15,7 +15,7 @@ const schema = new mongoose.Schema(
     relationship: {
       type: String,
     },
-    // program | course | knowledge | etz
+    // knowledgeArea | course | group
     type: {
       type: String,
     },

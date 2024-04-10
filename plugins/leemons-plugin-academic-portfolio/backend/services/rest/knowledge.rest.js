@@ -16,6 +16,7 @@ const {
   listKnowledgeAreas,
 } = require('../../core/knowledges');
 const { removeKnowledgeArea } = require('../../core/knowledges/removeKnowledgeArea');
+const { getKnowledgeAreaById } = require('../../core/knowledges/getKnowledgeAreaById');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -117,6 +118,27 @@ module.exports = {
     async handler(ctx) {
       const { id, soft } = ctx.params;
       const data = await removeKnowledgeArea({ id, soft, ctx });
+      return { status: 200, data };
+    },
+  },
+  getKnowledgeAreaDetails: {
+    rest: {
+      path: '/:id',
+      method: 'GET',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'view'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { id } = ctx.params;
+      const data = await getKnowledgeAreaById({ id, ctx });
       return { status: 200, data };
     },
   },

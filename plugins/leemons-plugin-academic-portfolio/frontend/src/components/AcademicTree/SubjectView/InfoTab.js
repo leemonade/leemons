@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { ContextContainer, Title, Text } from '@bubbles-ui/components';
 
 const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
-  const parsedCourses = useMemo(() => {
-  }, [subjectDetails]);
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
