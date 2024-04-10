@@ -95,6 +95,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
   return (
     <TotalLayoutStepContainer
       stepName={subjectNode?.name ? `${program?.name} - ${subjectNode?.name}` : program?.name ?? ''}
+      fullWidth
       clean
       scrollRef={scrollRef}
       Footer={

@@ -8,77 +8,38 @@ import {
   TotalLayoutHeader,
   Stack,
   ImageLoader,
+  Box,
+  Text,
 } from '@bubbles-ui/components';
 import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
+import { DndProvider } from 'react-dnd';
+import { Tree, MultiBackend, getBackendOptions } from '@minoru/react-dnd-treeview';
+import { HTML5toTouch } from 'react-dnd-multi-backend';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
-
-const TreeView = ({ data, onSubjectClick, level = 0 }) => {
-  // Function to determine if an item should be sorted
-  const shouldSortItem = (item) => item.type === 'cycles' || item.type === 'course';
-
-  // Sort data if the items are of type 'cycles' or 'course' by their 'index'
-  const sortedData = data?.sort((a, b) => {
-    // If both items should be sorted, compare their indexes
-    if (shouldSortItem(a) && shouldSortItem(b)) {
-      return a.index - b.index;
-    }
-    // Keep items in their original order if they don't need to be sorted
-    return 0;
-  });
-
-  // Function to format the display name based on the item type and properties
-  const formatDisplayName = (item) => {
-    if (item.type === 'cycle' || item.type === 'course') {
-      return item.type === 'course'
-        ? `${item.type.charAt(0).toUpperCase() + item.type.slice(1)} ${item.index}`
-        : `${item.type.charAt(0).toUpperCase() + item.type.slice(1)} ${item.index} ${
-            item.name || ''
-          }`;
-    }
-    return item.name;
-  };
-
-  const handleClick = (item, event) => {
-    event.stopPropagation();
-    if (item.type !== 'cycle' && onSubjectClick) {
-      onSubjectClick(item);
-    }
-  };
-
-  const marginLeft = level * 10;
-
-  return (
-    <ul style={{ marginLeft: `${marginLeft}px` }}>
-      {sortedData?.map((item) => (
-        <li
-          key={item.id}
-          onClick={(event) => handleClick(item, event)}
-          style={{ cursor: item.type !== 'cycle' ? 'pointer' : 'default' }}
-        >
-          {formatDisplayName(item)}
-          {/* If the item has children, recursively render them with increased level */}
-          {item.children && (
-            <TreeView data={item.children} onSubjectClick={onSubjectClick} level={level + 1} />
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-};
+import { NodeRenderer } from '../../components/AcademicTree/NodeRenderer/NodeRenderer';
+import { TreeHeader } from '../../components/AcademicTree/TreeHeader/TreeHeader';
 
 const AcademicTreePage = () => {
   const [selectedCenter, setSelectedCenter] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('');
   const [selectedNode, setSelectedNode] = useState(null);
   const [enrollmentDrawerIsOpen, setEnrollmentDrawerIsOpen] = useState(false);
+  const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
     useState(null);
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
   const scrollRef = useRef();
   const history = useHistory();
+
+  const handleNodeClick = (nodeId) => {
+    setSelectedNode(nodeId);
+  };
+  // console.log('selectedNode', selectedNode);
 
   // SET UP ------------------------------------------------------------------------------------------------ ||
   const centersData = useMemo(
@@ -108,30 +69,61 @@ const AcademicTreePage = () => {
     options: { enabled: selectedProgram?.length > 0 },
   });
 
-  const handleSubjectClick = (item) => {
-    setSelectedNode(cloneDeep(item));
+  console.log('academicTreeQuery', academicTreeQuery);
+
+  const generateGUID = () => `_${Math.random().toString(36).substr(2, 9)}`;
+
+  const parseAcademicTreeData = (academicTreeData) => {
+    const trees = [];
+    const processNode = (node, parentId = 0, parentElementId = 0, isRoot = false) => {
+      const guid = generateGUID();
+      const treeNode = {
+        id: guid,
+        parent: parentId,
+        nodeId: guid,
+        text: node.name || `Curso ${node.index}`,
+        type: node.type,
+        droppable: !!node.children && node.children.length > 0,
+        parentItemId: parentElementId,
+        itemId: node.id,
+      };
+
+      const processedNodes = [];
+      if (!isRoot) {
+        processedNodes.push(treeNode);
+      }
+
+      if (node.children && node.children.length > 0) {
+        node.children.forEach((child) => {
+          processedNodes.push(...processNode(child, isRoot ? 0 : guid, isRoot ? 0 : node.id));
+        });
+      }
+
+      return processedNodes;
+    };
+
+    academicTreeData.forEach((rootNode) => {
+      if (rootNode.type === 'cycle') {
+        const tree = {
+          header: rootNode,
+          treeData: rootNode.children ? processNode(rootNode, 0, 0, true) : [],
+        };
+        trees.push(tree);
+      } else {
+        trees.push({
+          header: null,
+          treeData: processNode(rootNode),
+        });
+      }
+    });
+
+    return trees;
   };
 
-  const addParentInfo = (node, parent = null) => {
-    node.parent = parent;
-
-    if (node.children && node.children.length > 0) {
-      node.children.forEach((child) => addParentInfo(child, node));
-    }
-  };
-
-  // Assuming `academicTreeQuery` is your raw data from the backend
-  const parsedTree = useMemo(() => {
-    if (academicTreeQuery?.length) {
-      // Clone the data to avoid mutating the original response
-      const dataClone = cloneDeep(academicTreeQuery);
-      // Process each root-level node (which has no parent)
-      dataClone.forEach((node) => addParentInfo(node));
-      return dataClone;
-    }
-    return [];
-  }, [academicTreeQuery]);
-
+  const treeStructures = useMemo(
+    () => parseAcademicTreeData(academicTreeQuery || []),
+    [academicTreeQuery]
+  );
   // FUNCTIONS && HANDLERS ····················································································|
   const toggleEnrollmentDrawer = (classroomId = null) => {
     setEnrollmentDrawerIsOpen((prevState) => !prevState);
@@ -177,9 +169,9 @@ const AcademicTreePage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={'MATRICULACIÓN Y GESTIÓN 🔫'}
+            title={t('enrollmentAndManagement').toUpperCase()}
             onCancel={() => history.goBack()}
-            mainActionLabel={'Cancelar 🔫'}
+            mainActionLabel={t('cancelHeaderButton')}
             compact
             icon={
               <Stack justifyContent="center" alignItems="center">
@@ -195,7 +187,7 @@ const AcademicTreePage = () => {
             <Stack spacing={4}>
               <Select
                 data={centersData}
-                placeholder={'Select a center 🌎'}
+                placeholder={t('centerPlaceholder')}
                 onChange={(value) => {
                   setSelectedCenter(value);
                   setSelectedNode(null);
@@ -205,7 +197,7 @@ const AcademicTreePage = () => {
               />
               <Select
                 data={programSelectData}
-                placeholder={'Select a program 🌎'}
+                placeholder={t('programPlaceholder')}
                 onChange={(value) => {
                   setSelectedProgram(value);
                   setSelectedNode(null);
@@ -217,21 +209,36 @@ const AcademicTreePage = () => {
           </TotalLayoutHeader>
         }
       >
-        {/* <VerticalStepperContainer
-        // currentStep={store.currentStep}
-        data={academicTreeQuery}
-        // onChangeActiveIndex={setStep}
-        scrollRef={scrollRef}
-      > */}
         <Stack
           ref={scrollRef}
-          // justifyContent="center"
           spacing={10}
           fullwidth
           sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', padding: 24 }}
         >
-          <Stack>
-            <TreeView data={parsedTree} onSubjectClick={handleSubjectClick} />
+          <Stack direction="column" spacing={6} sx={{ width: '15%' }}>
+            {treeStructures.map((treeStructure, index) => (
+              <div key={index}>
+                {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
+                <DndProvider backend={MultiBackend} options={getBackendOptions()}>
+                  <Tree
+                    tree={treeStructure.treeData}
+                    rootId={0}
+                    canDrag={() => false}
+                    canDrop={() => false}
+                    render={(node, { depth, isOpen, onToggle }) => (
+                      <NodeRenderer
+                        node={node}
+                        depth={depth}
+                        isOpen={isOpen}
+                        onToggle={onToggle}
+                        isActive={selectedNode?.nodeId === node.nodeId}
+                        handleNodeClick={handleNodeClick}
+                      />
+                    )}
+                  />
+                </DndProvider>
+              </div>
+            ))}
           </Stack>
           {viewToRender}
         </Stack>
