@@ -11,6 +11,7 @@ import {
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
+import { getCookieToken } from '@users/session';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@board-messages/helpers/prefixPN';
 import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
@@ -22,6 +23,7 @@ export default function Index() {
   const labels = useTranslateObjectLoader(prefixPN('list'));
   const { t: tCommon } = useCommonTranslate('page_header');
   const scrollRef = React.useRef();
+  const sessionToken = getCookieToken(true);
 
   const [store, render] = useStore({
     isDrawerOpen: false,
@@ -31,6 +33,9 @@ export default function Index() {
     profiles: [],
     reloadMessages: {},
   });
+
+  // ····················································
+  // HANDLERS
 
   const toggleDetailDrawer = () => {
     store.isNew = true;
@@ -57,6 +62,9 @@ export default function Index() {
     render();
   };
 
+  // ····················································
+  // HELPERS
+
   const setCenters = (centers) => {
     store.centers = centers;
     render();
@@ -71,6 +79,14 @@ export default function Index() {
     store.reloadMessages = {};
     render();
   };
+
+  // ····················································
+  // RENDER
+
+  const centerName = React.useMemo(() => {
+    const center = sessionToken?.centers?.[0];
+    return center?.name ?? '';
+  }, [sessionToken]);
 
   const { classes } = PageStyles({}, { name: 'BoardMessagesList' });
 
@@ -89,9 +105,13 @@ export default function Index() {
         />
       }
     >
-      <Stack ref={scrollRef} justifyContent="center" fullWidth sx={{ overflowY: 'auto' }}>
-        <TotalLayoutStepContainer clean fullWidth>
-          {/* <Box noFlex>{labels.pageDescription}</Box> */}
+      <Stack
+        ref={scrollRef}
+        justifyContent="center"
+        fullWidth
+        sx={(theme) => ({ overflowY: 'auto', marginTop: theme.other.global.spacing.padding.lg })}
+      >
+        <TotalLayoutStepContainer clean fullWidth stepName={centerName} footerPadding={0}>
           <Tabs
             panelColor="solid"
             fullWidth
@@ -103,7 +123,7 @@ export default function Index() {
           >
             <TabPanel label={labels.created}>
               <MessagesTable
-                labels={{ ...labels, new: tCommon('new') }}
+                labels={labels}
                 shouldReload={store.reloadMessages}
                 onEdit={handleOnEdit}
                 onNew={handleOnNew}
