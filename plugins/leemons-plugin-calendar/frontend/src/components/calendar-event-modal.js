@@ -482,6 +482,11 @@ function NewCalendarEventModal({
           showInCalendar: t('showInCalendar'),
           newEvent: t('newEvent'),
           newTask: t('newTask'),
+          detailEvent: t('detailEvent'),
+          detailTask: t('detailTask'),
+          title: t('title'),
+          dates: t('dates'),
+          usersDisabled: t('usersDisabled'),
         }}
         errorMessages={{
           titleRequired: tCommon('required'),

@@ -11,7 +11,7 @@ import {
   Col,
   ContextContainer,
   Grid,
-  InputWrapper,
+  Text,
   LoadingOverlay,
   MultiSelect,
   Select,
@@ -186,7 +186,7 @@ export default function Task({ event, form, classes, disabled, allProps }) {
   return (
     <ContextContainer spacing={8}>
       <ContextContainer spacing={2}>
-        {!disabled || (disabled && form.getValues('description')) ? (
+        {!disabled ? (
           <Controller
             name="description"
             control={control}
@@ -201,6 +201,14 @@ export default function Task({ event, form, classes, disabled, allProps }) {
               />
             )}
           />
+        ) : null}
+        {disabled && form.getValues('description') ? (
+          <>
+            <Text size="lg" strong>
+              {t('description')}
+            </Text>
+            <Text>{form.getValues('description')}</Text>
+          </>
         ) : null}
       </ContextContainer>
 

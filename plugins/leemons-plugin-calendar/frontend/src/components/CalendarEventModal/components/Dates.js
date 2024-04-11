@@ -54,8 +54,8 @@ const Dates = ({
         <Col span={100}>
           <ContextContainer
             subtitle={
-              <Text size="md" strong>
-                {'Tiempos'}
+              <Text size="lg" strong>
+                {messages.dates}
               </Text>
             }
             spacing={2}

@@ -9,7 +9,7 @@ import {
   Divider,
   RadioGroup,
   Select,
-  Switch,
+  Text,
   TextInput,
   Title,
   Drawer,
@@ -153,12 +153,19 @@ const CalendarEventModal = (props) => {
     setCanEdit(true);
   }
 
+  const titleDrawer = () => {
+    if (type === 'calendar.task') {
+      return isNew ? messages.newTask : messages.detailTask;
+    }
+    return isNew ? messages.newEvent : messages.detailEvent;
+  };
+
   return (
     <Drawer size={'sm'} className={classes.root} onClose={onClose} opened={opened}>
-      <Drawer.Header title={type === 'calendar.task' ? messages.newTask : messages.newEvent} />
+      <Drawer.Header title={titleDrawer()} />
       <Drawer.Content>
-        <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-          <ContextContainer spacing={8} className={classes.container}>
+        <form autoComplete="off">
+          <ContextContainer spacing={8}>
             <ContextContainer spacing={4}>
               <Controller
                 name="title"
@@ -168,7 +175,14 @@ const CalendarEventModal = (props) => {
                 }}
                 render={({ field }) => {
                   if (disabled) {
-                    return <Title order={3}>{field.value}</Title>;
+                    return (
+                      <>
+                        <Text size="lg" strong>
+                          {messages.title}
+                        </Text>
+                        <Text>{field.value}</Text>
+                      </>
+                    );
                   }
                   return (
                     <TextInput
@@ -194,12 +208,7 @@ const CalendarEventModal = (props) => {
                     }}
                     render={({ field }) => {
                       if (disabled) {
-                        return (
-                          <Badge
-                            label={find(selectData.eventTypes, { value: field.value })?.label}
-                            closable={false}
-                          />
-                        );
+                        return null;
                       }
                       return (
                         <RadioGroup
@@ -274,9 +283,9 @@ const CalendarEventModal = (props) => {
               />
             </ContextContainer>
 
-            {(!hideCalendarField && disabled) ||
-            ((isNew || (!isNew && isOwner)) &&
-              (type !== 'calendar.task' || (type === 'calendar.task' && !hideInCalendar))) ? (
+            {!disabled &&
+            (isNew || (!isNew && isOwner)) &&
+            (type !== 'calendar.task' || (type === 'calendar.task' && !hideInCalendar)) ? (
               <ContextContainer spacing={4}>
                 <Controller
                   name="calendar"
@@ -289,7 +298,7 @@ const CalendarEventModal = (props) => {
                       size="sm"
                       readOnly={disabled}
                       disabled={disabled}
-                      label={disabled ? messages.calendarLabelDisabled : messages.calendarLabel}
+                      label={messages.calendarLabel}
                       placeholder={messages.calendarPlaceholder}
                       {...field}
                       required={!disabled}
@@ -302,7 +311,31 @@ const CalendarEventModal = (props) => {
               </ContextContainer>
             ) : null}
 
-            {UsersComponent && (!disabled || (disabled && form.getValues('users')?.length)) ? (
+            {!hideCalendarField && disabled ? (
+              <ContextContainer spacing={2}>
+                <Text size="lg" strong>
+                  {messages.calendarLabelDisabled}
+                </Text>
+                <Controller
+                  name="calendar"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      size="sm"
+                      readOnly={disabled}
+                      disabled={disabled}
+                      {...field}
+                      required={!disabled}
+                      error={get(errors, 'calendar')}
+                      data={selectData.calendars}
+                      withinPortal={false}
+                    />
+                  )}
+                />
+              </ContextContainer>
+            ) : null}
+
+            {UsersComponent && !disabled ? (
               <ContextContainer spacing={4}>
                 <Controller
                   name="users"
@@ -317,21 +350,46 @@ const CalendarEventModal = (props) => {
                 />
               </ContextContainer>
             ) : null}
-
-            {!disabled ? (
-              <Box className={classes.actionButtonsContainer}>
-                <Button type="button" variant="light" compact onClick={onClose}>
-                  {messages.cancelButtonLabel}
-                </Button>
-                {isNew ? <Button type="submit">{messages.saveButtonLabel}</Button> : null}
-                {!isNew && isOwner ? (
-                  <Button type="submit">{messages.updateButtonLabel}</Button>
-                ) : null}
-              </Box>
+            {disabled && form.getValues('users')?.length ? (
+              <ContextContainer spacing={2}>
+                <Text size="lg" strong>
+                  {messages.usersDisabled}
+                </Text>
+                <Controller
+                  name="users"
+                  control={control}
+                  render={({ field }) =>
+                    React.cloneElement(UsersComponent, {
+                      ...field,
+                      readOnly: disabled,
+                      disabled,
+                    })
+                  }
+                />
+              </ContextContainer>
             ) : null}
           </ContextContainer>
         </form>
       </Drawer.Content>
+      <Drawer.Footer>
+        {!disabled ? (
+          <Box className={classes.actionButtonsContainer}>
+            <Button type="button" variant="light" compact onClick={onClose}>
+              {messages.cancelButtonLabel}
+            </Button>
+            {isNew ? (
+              <Button onClick={handleSubmit(onSubmit)} type="button">
+                {messages.saveButtonLabel}
+              </Button>
+            ) : null}
+            {!isNew && isOwner ? (
+              <Button onClick={handleSubmit(onSubmit)} type="button">
+                {messages.updateButtonLabel}
+              </Button>
+            ) : null}
+          </Box>
+        ) : null}
+      </Drawer.Footer>
     </Drawer>
   );
 };
