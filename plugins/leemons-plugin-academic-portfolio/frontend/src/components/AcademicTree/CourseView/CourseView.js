@@ -5,7 +5,6 @@ import {
   Title,
   Stack,
   Text,
-  Select,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
   Alert,
@@ -21,19 +20,18 @@ import { Link } from 'react-router-dom';
 import { getProfilesRequest } from '@academic-portfolio/request';
 import { CourseViewStyles } from './CourseView.styles';
 
-const CourseView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
+const CourseView = ({ program, courseTreeNode, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [teacherProfile, setTeacherProfile] = useState();
   const [responsable, setResponsable] = useState();
   const { classes } = CourseViewStyles();
   const { control } = useForm();
   const { data: courseDetail } = useCourseDetail(
-    { groupId: groupNode?.itemId },
-    { enabled: !!groupNode?.itemId }
+    { groupId: courseTreeNode?.itemId },
+    { enabled: !!courseTreeNode?.itemId }
   );
   const centerId = program?.centers?.[0]?.id;
-  console.log('courseDetail', courseDetail);
-  // console.log('groupNode', groupNode);
+
   useEffect(() => {
     const getTeacherProfile = async () => {
       const response = await getProfilesRequest();
@@ -44,7 +42,9 @@ const CourseView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => 
   }, [centerId]);
   return (
     <TotalLayoutStepContainer
-      stepName={groupNode?.text ? `${program?.name} - ${groupNode?.text}` : program?.name ?? ''}
+      stepName={
+        courseTreeNode?.text ? `${program?.name} - ${courseTreeNode?.text}` : program?.name ?? ''
+      }
       clean
       fullWidth
       scrollRef={scrollRef}
@@ -134,23 +134,9 @@ const CourseView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => 
 
 CourseView.propTypes = {
   program: PropTypes.object,
-  groupNode: PropTypes.shape({
-    id: PropTypes.string,
-    parent: PropTypes.oneOfType([
-      PropTypes.shape({
-        type: PropTypes.string,
-        id: PropTypes.string,
-      }),
-      PropTypes.null,
-    ]),
-    name: PropTypes.string,
-    metadata: PropTypes.shape({
-      course: PropTypes.number,
-    }),
-    children: PropTypes.arrayOf(PropTypes.object),
-  }),
-  scrollRef: PropTypes.any, // The footer will need it
-  openEnrollmentDrawer: PropTypes.bool, // Opens the enrollment drawer
+  courseTreeNode: PropTypes.object,
+  scrollRef: PropTypes.any,
+  openEnrollmentDrawer: PropTypes.bool,
 };
 
 export { CourseView };

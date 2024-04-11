@@ -78,9 +78,10 @@ const EnrollmentDrawer = ({
   isOpen,
   closeDrawer,
   scrollRef,
-  selectedNode,
+  selectedTreeNode,
   centerId,
-  opensFromClasroom = null,
+  selectedNode,
+  opensFromClasroom = null, // only for cases where it opens form subject view
 }) => {
   const [searchBy, setSearchBy] = useState('userData');
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -98,19 +99,35 @@ const EnrollmentDrawer = ({
     };
 
     getStudentProfile();
-  }, [centerId, selectedNode]);
+  }, [centerId, selectedTreeNode]);
+
+  const extractSubjectIds = (nodes) =>
+    nodes.reduce((acc, node) => {
+      if (node.type === 'subject') {
+        acc.push(node.id);
+      } else if (node.children && (node.type === 'group' || node.type === 'knowledgeArea')) {
+        acc.push(...extractSubjectIds(node.children));
+      }
+      return acc;
+    }, []);
 
   const subjects = useMemo(() => {
-    if (selectedNode?.type === 'group' || selectedNode?.type === 'knowledgeArea') {
+    if (selectedTreeNode?.type === 'group' || selectedTreeNode?.type === 'knowledgeArea') {
       return selectedNode?.children
         ?.filter((child) => child.type === 'subject') // TODO This is not really needed. All children of these type of nodes are subjects.
         ?.map((subject) => subject.id);
     }
-    if (selectedNode?.type === 'subject') {
-      return [selectedNode.itemId];
+    if (selectedTreeNode?.type === 'course') {
+      return extractSubjectIds(selectedNode?.children || []);
+    }
+    if (selectedTreeNode?.type === 'subject') {
+      return [selectedTreeNode.itemId];
     }
     return [];
-  }, [selectedNode]);
+  }, [selectedTreeNode, selectedNode]);
+
+  console.log('selectedNode en drawer', selectedNode);
+  console.log('selectedTreeNode', selectedTreeNode);
 
   const { data: allSubjectClasses, isLoading } = useSubjectClasses(subjects, {
     enabled: subjects?.length > 0 && isOpen,
@@ -121,13 +138,13 @@ const EnrollmentDrawer = ({
       // This is when the drawer is opened from the enrollment tab of a subject node, we can know directly what class we'll enrolle students into. (reference groups or not)
       return allSubjectClasses?.filter((cls) => cls.id === opensFromClasroom);
     }
-    if (allSubjectClasses?.length && selectedNode?.parent?.type === 'knowledgeArea') {
+    if (allSubjectClasses?.length && selectedTreeNode?.parent?.type === 'knowledgeArea') {
       // Cases where no groups of reference are being used
       // TODO But a subject can only be asociated to one single knowledge area... probably this is not needed.
-      return allSubjectClasses?.filter((cls) => cls.knowledges?.id === selectedNode.parent.id);
+      return allSubjectClasses?.filter((cls) => cls.knowledges?.id === selectedTreeNode.parent.id);
     }
     return allSubjectClasses;
-  }, [allSubjectClasses, selectedNode, opensFromClasroom]);
+  }, [allSubjectClasses, selectedTreeNode, opensFromClasroom]);
 
   const radioGroupData = useMemo(
     () => [
@@ -142,7 +159,7 @@ const EnrollmentDrawer = ({
   useEffect(() => {
     // For simplicity, we filter already enrolled students from the UserAgentSelect only when enrolling from a subject node (when it opens from a classroom)
     // If this is not the case, removal of duplicated students is handled elsewhere
-    if (classes?.length && selectedNode?.type === 'subject') {
+    if (classes?.length && selectedTreeNode?.type === 'subject') {
       const studentsAlreadyEnrolled = [];
       classes.forEach((cls) =>
         studentsAlreadyEnrolled.push(
@@ -151,7 +168,7 @@ const EnrollmentDrawer = ({
       );
       setPreviouslyEnrolledStudents(studentsAlreadyEnrolled);
     }
-  }, [classes, selectedNode]);
+  }, [classes, selectedTreeNode]);
 
   // FUNCTIONS && HANDLERS ·················································································||
   const handleOnCancel = () => {
@@ -165,7 +182,7 @@ const EnrollmentDrawer = ({
     const cannotEnrollClasses = [];
     const studentsToEnrollByClass = new Map();
 
-    if (selectedNode?.type === 'subject' && opensFromClasroom) {
+    if (selectedTreeNode?.type === 'subject' && opensFromClasroom) {
       const [_class] = classes;
       const availableSeats = _class.seats - _class.students.length;
       if (selectedStudents.length > availableSeats) {
@@ -179,7 +196,7 @@ const EnrollmentDrawer = ({
     }
 
     // Handle multi-class enrollment by group
-    if (selectedNode?.type === 'group') {
+    if (selectedTreeNode?.type === 'group') {
       classes.forEach((cls) => {
         const studentsToEnroll = selectedStudents
           ?.map((st) => st.value)
@@ -194,7 +211,7 @@ const EnrollmentDrawer = ({
     }
 
     // Handle multi-class enrollment by knowledge area
-    if (selectedNode?.type === 'knowledgeArea') {
+    if (selectedTreeNode?.type === 'knowledgeArea') {
       return distributeStudentsToClasses(classes, selectedStudents);
     }
 
@@ -302,11 +319,12 @@ const EnrollmentDrawer = ({
 
 EnrollmentDrawer.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  selectedNode: PropTypes.obj,
+  selectedTreeNode: PropTypes.obj,
   scrollRef: PropTypes.any,
   closeDrawer: PropTypes.func.isRequired,
   centerId: PropTypes.string,
   opensFromClasroom: PropTypes.string, // Classroom id where it is opened from
+  selectedNode: PropTypes.object,
 };
 export default EnrollmentDrawer;
 

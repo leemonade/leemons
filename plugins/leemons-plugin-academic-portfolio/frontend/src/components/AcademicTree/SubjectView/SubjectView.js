@@ -20,13 +20,13 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import EnrollmentTab from './EnrollmentTab';
 import InfoTab from './InfoTab';
 
-const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) => {
+const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [activeTab, setActiveTab] = useState('0');
   const { data: subjectDetails, isLoading } = useSubjectDetails(
-    subjectNode?.itemId,
+    subjectTreeNode?.itemId,
     {
-      enabled: subjectNode?.id?.length > 0,
+      enabled: subjectTreeNode?.id?.length > 0,
     },
     true
   );
@@ -37,10 +37,12 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
   const singleClassToShow = useMemo(() => {
     const subjectParentNodeIsGroup = subjectDetails?.classes?.every((cls) => cls.groups); // we need to know if the parent is a group or a course.
     if (subjectParentNodeIsGroup) {
-      return subjectDetails?.classes?.find((cls) => cls.groups?.id === subjectNode?.parentItemId);
+      return subjectDetails?.classes?.find(
+        (cls) => cls.groups?.id === subjectTreeNode?.parentItemId
+      );
     }
     return null;
-  }, [subjectDetails, subjectNode]);
+  }, [subjectDetails, subjectTreeNode]);
 
   const EnrollmentTabs = useMemo(() => {
     if (singleClassToShow) {
@@ -96,7 +98,9 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
 
   return (
     <TotalLayoutStepContainer
-      stepName={subjectNode?.name ? `${program?.name} - ${subjectNode?.name}` : program?.name ?? ''}
+      stepName={
+        subjectTreeNode?.name ? `${program?.name} - ${subjectTreeNode?.name}` : program?.name ?? ''
+      }
       fullWidth
       clean
       scrollRef={scrollRef}
@@ -121,7 +125,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
           <InfoTab
             subjectDetails={subjectDetails}
             onlyClassToShow={singleClassToShow}
-            subjectNode={subjectNode}
+            subjectNode={subjectTreeNode}
           />
         </TabPanel>
         {EnrollmentTabs}
@@ -131,7 +135,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
 };
 
 SubjectView.propTypes = {
-  subjectNode: PropTypes.object,
+  subjectTreeNode: PropTypes.object,
   program: PropTypes.object,
   openEnrollmentDrawer: PropTypes.func,
   scrollRef: PropTypes.any,

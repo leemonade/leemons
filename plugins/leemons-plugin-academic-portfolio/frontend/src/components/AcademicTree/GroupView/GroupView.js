@@ -21,15 +21,15 @@ import { Link } from 'react-router-dom';
 import { getProfilesRequest } from '@academic-portfolio/request';
 import { GroupViewStyles } from './GroupView.styles';
 
-const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
+const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [teacherProfile, setTeacherProfile] = useState();
   const [responsable, setResponsable] = useState();
   const { classes } = GroupViewStyles();
   const { control } = useForm();
   const { data: groupDetail } = useGroupDetail(
-    { groupId: groupNode?.itemId },
-    { enabled: !!groupNode?.itemId }
+    { groupId: groupTreeNode?.itemId },
+    { enabled: !!groupTreeNode?.itemId }
   );
   const centerId = program?.centers?.[0]?.id;
   console.log('groupDetail', groupDetail);
@@ -46,7 +46,9 @@ const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
   console.log('teacherProfile', teacherProfile);
   return (
     <TotalLayoutStepContainer
-      stepName={groupNode?.text ? `${program?.name} - ${groupNode?.text}` : program?.name ?? ''}
+      stepName={
+        groupTreeNode?.text ? `${program?.name} - ${groupTreeNode?.text}` : program?.name ?? ''
+      }
       clean
       fullWidth
       scrollRef={scrollRef}
@@ -136,23 +138,9 @@ const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
 
 GroupView.propTypes = {
   program: PropTypes.object,
-  groupNode: PropTypes.shape({
-    id: PropTypes.string,
-    parent: PropTypes.oneOfType([
-      PropTypes.shape({
-        type: PropTypes.string,
-        id: PropTypes.string,
-      }),
-      PropTypes.null,
-    ]),
-    name: PropTypes.string,
-    metadata: PropTypes.shape({
-      course: PropTypes.number,
-    }),
-    children: PropTypes.arrayOf(PropTypes.object),
-  }),
-  scrollRef: PropTypes.any, // The footer will need it
-  openEnrollmentDrawer: PropTypes.bool, // Opens the enrollment drawer
+  groupTreeNode: PropTypes.object,
+  scrollRef: PropTypes.any,
+  openEnrollmentDrawer: PropTypes.bool,
 };
 
 export { GroupView };

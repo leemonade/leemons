@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep } from 'lodash';
 import { useUserCenters } from '@users/hooks';
 import {
   Select,
@@ -9,14 +8,13 @@ import {
   Stack,
   ImageLoader,
   Box,
-  Text,
 } from '@bubbles-ui/components';
 import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
 import { DndProvider } from 'react-dnd';
 import { Tree, MultiBackend, getBackendOptions } from '@minoru/react-dnd-treeview';
-import { HTML5toTouch } from 'react-dnd-multi-backend';
+
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
@@ -28,7 +26,7 @@ import { TreeHeader } from '../../components/AcademicTree/TreeHeader/TreeHeader'
 const AcademicTreePage = () => {
   const [selectedCenter, setSelectedCenter] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('');
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedTreeNode, setSelectedTreeNode] = useState(null);
   const [enrollmentDrawerIsOpen, setEnrollmentDrawerIsOpen] = useState(false);
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
@@ -38,9 +36,8 @@ const AcademicTreePage = () => {
   const history = useHistory();
 
   const handleNodeClick = (nodeId) => {
-    setSelectedNode(nodeId);
+    setSelectedTreeNode(nodeId);
   };
-  // console.log('selectedNode', selectedNode);
 
   // SET UP ------------------------------------------------------------------------------------------------ ||
   const centersData = useMemo(
@@ -131,18 +128,36 @@ const AcademicTreePage = () => {
     setEnrolllmentDrawerOpenedFromClassroom(classroomId);
   };
 
+  const findNodeById = (node, id) => {
+    if (node.id === id) {
+      return node;
+    }
+    if (node.children) {
+      return node.children.reduce((acc, child) => acc || findNodeById(child, id), null);
+    }
+    return null;
+  };
+
+  const findNodeInTrees = (trees, id) =>
+    trees.reduce((acc, tree) => acc || findNodeById(tree, id), null);
+
+  const selectedNodeObject = useMemo(
+    () => findNodeInTrees(academicTreeQuery || [], selectedTreeNode?.itemId),
+    [academicTreeQuery, selectedTreeNode]
+  );
+
+  console.log('selectedNodeObject', selectedNodeObject);
+
   // RENDER ····················································································|
 
   const viewToRender = useMemo(() => {
-    switch (selectedNode?.type) {
-      // case 'cycle':
-      //   return <div>CYCLE</div>;
+    switch (selectedTreeNode?.type) {
       case 'course':
         return (
           <CourseView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            groupNode={selectedNode}
+            courseTreeNode={selectedTreeNode}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
@@ -151,7 +166,7 @@ const AcademicTreePage = () => {
           <GroupView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            groupNode={selectedNode}
+            groupTreeNode={selectedTreeNode}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
@@ -162,14 +177,14 @@ const AcademicTreePage = () => {
           <SubjectView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            subjectNode={selectedNode}
+            subjectTreeNode={selectedTreeNode}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
       default:
         return null;
     }
-  }, [selectedNode, centerProgramsQuery, selectedProgram]);
+  }, [selectedTreeNode, centerProgramsQuery, selectedProgram]);
 
   return (
     <>
@@ -198,7 +213,7 @@ const AcademicTreePage = () => {
                 placeholder={t('centerPlaceholder')}
                 onChange={(value) => {
                   setSelectedCenter(value);
-                  setSelectedNode(null);
+                  setSelectedTreeNode(null);
                 }}
                 value={selectedCenter}
                 sx={{ width: 230 }}
@@ -208,7 +223,7 @@ const AcademicTreePage = () => {
                 placeholder={t('programPlaceholder')}
                 onChange={(value) => {
                   setSelectedProgram(value);
-                  setSelectedNode(null);
+                  setSelectedTreeNode(null);
                 }}
                 value={selectedProgram}
                 sx={{ width: 180 }}
@@ -239,7 +254,7 @@ const AcademicTreePage = () => {
                         depth={depth}
                         isOpen={isOpen}
                         onToggle={onToggle}
-                        isActive={selectedNode?.nodeId === node.nodeId}
+                        isActive={selectedTreeNode?.nodeId === node.nodeId}
                         handleNodeClick={handleNodeClick}
                       />
                     )}
@@ -255,7 +270,8 @@ const AcademicTreePage = () => {
         scrollRef={scrollRef}
         isOpen={enrollmentDrawerIsOpen}
         closeDrawer={toggleEnrollmentDrawer}
-        selectedNode={selectedNode}
+        selectedTreeNode={selectedTreeNode}
+        selectedNode={selectedNodeObject}
         centerId={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.center}
         opensFromClasroom={enrolllmentDrawerOpenedFromClassroom} // classroomId (string)
       />
