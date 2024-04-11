@@ -46,16 +46,12 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
         groupTreeNode?.text ? `${program?.name} - ${groupTreeNode?.text}` : program?.name ?? ''
       }
       clean
-      fullWidth
       scrollRef={scrollRef}
       Footer={
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
           fixed
-          fullWidth
-          // width="auto"
-          // style={{ width: '100%' }}
-          rightZone={<Button onClick={() => 'hello'}>{'Guardar Cambios 🔫'}</Button>}
+          // rightZone={<Button onClick={() => 'hello'}>{'Guardar Cambios 🔫'}</Button>}
           leftZone={
             <Button variant="outline" leftIcon={<RemoveIcon />}>
               {'Cancelar 🔫'}

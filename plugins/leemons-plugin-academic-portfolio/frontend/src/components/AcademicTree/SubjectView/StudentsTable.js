@@ -1,51 +1,52 @@
 import React, { useMemo } from 'react';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Table, Avatar, Stack } from '@bubbles-ui/components';
+
 import { LocaleDate } from '@common';
-import { isEmpty } from 'lodash';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 // Data should contain actions ;)
 const StudentsTable = ({ data, showSearchBar, checkBoxColumn }) => {
-  // translations here
+  const [t] = useTranslateLoader(prefixPN('tree_page.studentsTable'));
 
-  const tableColumns = useMemo(
-    () => {
-      let columns = [
-        {
-          Header: ' ',
-          accessor: 'avatar',
-          valueRender: (avatar) => <Avatar image={avatar} />,
-        },
-        {
-          Header: 'Apellidos 🔫',
-          accessor: 'surnames',
-        },
-        {
-          Header: 'Nombre 🔫',
-          accessor: 'name',
-        },
-        {
-          Header: 'Email 🔫',
-          accessor: 'email',
-        },
-        {
-          Header: 'Fecha de Nacimiento 🔫',
-          accessor: 'birthdate',
+  const tableColumns = useMemo(() => {
+    let columns = [
+      {
+        Header: ' ',
+        accessor: 'avatar',
+        valueRender: (avatar) => <Avatar image={avatar} />,
+      },
+      {
+        Header: t('surnames'),
+        accessor: 'surnames',
+      },
+      {
+        Header: t('name'),
+        accessor: 'name',
+      },
+      {
+        Header: t('email'),
+        accessor: 'email',
+      },
+      {
+        Header: t('birthdate'),
+        accessor: 'birthdate',
 
-          valueRender: (birthdate) => <LocaleDate date={birthdate} />,
-        },
-        {
-          Header: ' ',
-          accessor: 'actions',
-        },
-      ];
-      if (!isEmpty(checkBoxColumn)) {
-        columns = [checkBoxColumn, ...columns];
-      }
-      return columns;
-    },
-    [checkBoxColumn] // translations here
-  );
+        valueRender: (birthdate) => <LocaleDate date={birthdate} />,
+      },
+      {
+        Header: ' ',
+        accessor: 'actions',
+      },
+    ];
+    if (!isEmpty(checkBoxColumn)) {
+      columns = [checkBoxColumn, ...columns];
+    }
+    return columns;
+  }, [checkBoxColumn, t]);
 
   return (
     <Stack direction="column" spacing={4}>

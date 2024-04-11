@@ -44,7 +44,7 @@ const StudentsSelectByTags = ({ centerId, previouslyEnrolledStudents, setSelecte
         />
       ),
     }),
-    [(selectAll, studentsFound)]
+    [selectAll, studentsFound]
   );
 
   const onTagsChange = async (tagsValue) => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Drawer,
+  BaseDrawer,
   TotalLayoutContainer,
   Stack,
   TotalLayoutStepContainer,
@@ -12,6 +12,8 @@ import {
 
 import { addSuccessAlert, addErrorAlert } from '@layout/alert';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import FooterContainer from '@academic-portfolio/components/ProgramSetupDrawer/FooterContainer';
 import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
 import { useEnrollStudentsToClasses } from '@academic-portfolio/hooks/mutations/useMutateClass';
@@ -85,6 +87,7 @@ const EnrollmentDrawer = ({
   selectedNode,
   opensFromClasroom = null, // only for cases where it opens form subject view
 }) => {
+  const [t] = useTranslateLoader(prefixPN('tree_page.enrrollmentDrawer'));
   const [searchBy, setSearchBy] = useState('userData');
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [previouslyEnrolledStudents, setPreviouslyEnrolledStudents] = useState([]);
@@ -139,10 +142,17 @@ const EnrollmentDrawer = ({
 
   const radioGroupData = useMemo(
     () => [
-      { label: 'Buscar por datos del ususario 🔫', value: 'userData' },
-      { label: 'Buscar por etiquetas 🔫', value: 'tags' },
+      { label: t('searchUsersByData'), value: 'userData' },
+      { label: t('searchUsersByTag'), value: 'tags' },
     ],
-    [] // This should depend on the labels/localizatoins
+    [t]
+  );
+
+  const localizations = useMemo(
+    () => ({
+      remove: t('remove'),
+    }),
+    [t]
   );
 
   // EFFECTS ·······························································································||
@@ -227,7 +237,7 @@ const EnrollmentDrawer = ({
     const { cannotEnrollClasses, studentsToEnrollByClass } = getStudentsToEnrollByClass();
 
     if (cannotEnrollClasses?.length) {
-      addErrorAlert('Error de matriculación: Faltan plazas disponibles en algún aula o grupo 🔫');
+      addErrorAlert(t('enrollmentSeatsError'));
     } else {
       const enrollmentRequests = [];
       const classesWithTheSameStudents = new Map();
@@ -250,29 +260,28 @@ const EnrollmentDrawer = ({
           enrollmentRequests.push({ class: classIds, students });
         }
       });
-      console.log('enrollmentRequests', enrollmentRequests);
       try {
         enrollmentRequests.forEach(async (requestBody) => {
           await addStudentsToClassesAsync(requestBody);
         });
         handleOnCancel();
-        addSuccessAlert('Matriculación realizada con éxito 🔫');
+        addSuccessAlert(t('enrollmentSuccess'));
       } catch (error) {
-        addErrorAlert('Error de matriculación');
-        console.log(error);
+        addErrorAlert(t('enrollmentError'));
+        console.error(error);
       }
     }
   };
 
   return (
-    <Drawer opened={isOpen} close={false} size={728} empty>
+    <BaseDrawer opened={isOpen} close={false} size={728} empty>
       <TotalLayoutContainer
         clean
         scrollRef={scrollRef}
         Header={
           <Header
             localizations={{
-              title: 'Matriculación Estudiantes 🔫',
+              title: t('enrollStudents'),
             }}
             onClose={handleOnCancel}
           />
@@ -281,7 +290,7 @@ const EnrollmentDrawer = ({
           <FooterContainer scrollRef={scrollRef}>
             <Stack justifyContent={'space-between'} fullWidth>
               <Button variant="outline" type="button" onClick={handleOnCancel}>
-                {'Cancelar 🔫'}
+                {t('cancel')}
               </Button>
               <Button
                 onClick={handleStudentEnrollment}
@@ -289,7 +298,7 @@ const EnrollmentDrawer = ({
                 loading={isLoading}
                 disabled={!selectedStudents?.length || isAddStudentsToClassesLoading}
               >
-                {' Matricular estudiante 🔫'}
+                {t('enrollStudents')}
               </Button>
             </Stack>
           </FooterContainer>
@@ -309,6 +318,7 @@ const EnrollmentDrawer = ({
                   setSelectedStudents={setSelectedStudents}
                   selectedStudents={selectedStudents}
                   previouslyEnrolledStudents={previouslyEnrolledStudents}
+                  localizations={localizations}
                 />
               ) : (
                 <StudentsSelectByTags
@@ -323,7 +333,7 @@ const EnrollmentDrawer = ({
           </TotalLayoutStepContainer>
         </Stack>
       </TotalLayoutContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

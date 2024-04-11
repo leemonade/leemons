@@ -20,7 +20,7 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
     const courses = subjectDetails?.classes[0]?.courses?.name;
     subjectData.courses = courses;
     const groups = subjectDetails?.classes
-      ?.map((cls) => cls.groups.name)
+      ?.map((cls) => cls.groups?.name)
       .sort()
       .join(', ');
     subjectData.groups = groups;
@@ -32,11 +32,10 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
     subjectData.credits = credits;
     return subjectData;
   }, [subjectDetails, onlyClassToShow]);
-  console.log('subjectDetails', subjectDetails);
 
   const subjectIcon = getFileUrl(subjectDetails?.icon?.cover?.id);
   const cover = getFileUrl(subjectDetails?.image?.cover?.id);
-  console.log('subjectIcon', subjectIcon);
+
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
@@ -92,7 +91,7 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  backgroundColor: subjectDetails.color,
+                  backgroundColor: subjectDetails?.color,
                   width: 48,
                   height: 48,
                   borderRadius: '50%',

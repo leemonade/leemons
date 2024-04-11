@@ -10,6 +10,7 @@ const StudentsSelectByUserData = ({
   setSelectedStudents,
   selectedStudents,
   studentProfile,
+  localizations,
   previouslyEnrolledStudents = [], // Used only when the drawer is open from a subject node
 }) => {
   // HANDLERS && FUNCTIONS ············································································································|
@@ -27,7 +28,7 @@ const StudentsSelectByUserData = ({
         actions: (
           <ActionButton
             onClick={() => handleRemoveStudent(studentToAdd)}
-            tooltip={'borrar 🔫'}
+            tooltip={localizations?.remove}
             icon={<DeleteBinIcon width={18} height={18} />}
           />
         ),
@@ -59,6 +60,7 @@ StudentsSelectByUserData.propTypes = {
   previouslyEnrolledStudents: PropTypes.array,
   setSelectedStudents: PropTypes.func.isRequired,
   studentProfile: PropTypes.string.isRequired,
+  localizations: PropTypes.object,
 };
 
 export default StudentsSelectByUserData;

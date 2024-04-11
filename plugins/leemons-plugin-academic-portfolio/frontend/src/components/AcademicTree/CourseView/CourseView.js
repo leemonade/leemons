@@ -53,15 +53,11 @@ const CourseView = ({
         courseTreeNode?.text ? `${program?.name} - ${courseTreeNode?.text}` : program?.name ?? ''
       }
       clean
-      fullWidth
       scrollRef={scrollRef}
       Footer={
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
           fixed
-          fullWidth
-          // width="auto"
-          // style={{ width: '100%' }}
           rightZone={<Button onClick={() => 'hello'}>{'Guardar Cambios 🔫'}</Button>}
           leftZone={
             <Button variant="outline" leftIcon={<RemoveIcon />}>

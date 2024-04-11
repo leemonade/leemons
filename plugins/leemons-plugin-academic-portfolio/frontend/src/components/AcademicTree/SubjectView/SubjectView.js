@@ -101,13 +101,12 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
       stepName={
         subjectTreeNode?.text ? `${program?.name} - ${subjectTreeNode?.text}` : program?.name ?? ''
       }
-      fullWidth
       clean
       scrollRef={scrollRef}
       Footer={
         <TotalLayoutFooterContainer
-          fixed
           scrollRef={scrollRef}
+          fixed
           rightZone={<Button onClick={handleSaveChanges}>{t('saveChanges')}</Button>}
         />
       }

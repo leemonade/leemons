@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep, isBoolean, isEmpty, omit } from 'lodash';
-import { Drawer } from '@bubbles-ui/components';
+import { BaseDrawer } from '@bubbles-ui/components';
 
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import {
@@ -268,7 +268,7 @@ const ProgramSetupDrawer = ({
   }, [isEditing, program]);
 
   return (
-    <Drawer opened={isOpen} close={false} size={728} empty>
+    <BaseDrawer opened={isOpen} close={false} size={728} empty>
       {!isEditing && creationFlowComponents[activeComponent]}
       {isEditing && !program?.subjects?.length && creationFlowComponents[1]}
 
@@ -281,7 +281,7 @@ const ProgramSetupDrawer = ({
           onCancel={handleOnCancel}
         />
       )}
-    </Drawer>
+    </BaseDrawer>
   );
 };
 
