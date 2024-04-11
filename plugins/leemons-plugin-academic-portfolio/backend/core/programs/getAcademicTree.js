@@ -139,7 +139,8 @@ function handleSequentialAndMultipleCourses({
           };
         });
       } else {
-        course.children = subjects.map(({ id, name }) => ({ id, name, type: 'subject' }));
+        const subjectIds = subjects.filter((subject) => subject.courses.includes(course.id));
+        course.children = subjectIds.map(({ id, name }) => ({ id, name, type: 'subject' }));
       }
     });
   });

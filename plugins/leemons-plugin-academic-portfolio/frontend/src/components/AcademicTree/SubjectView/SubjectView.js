@@ -24,9 +24,9 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [activeTab, setActiveTab] = useState('0');
   const { data: subjectDetails, isLoading } = useSubjectDetails(
-    subjectTreeNode?.itemId,
+    subjectTreeNode?.itemId ?? subjectTreeNode?.id,
     {
-      enabled: subjectTreeNode?.id?.length > 0,
+      enabled: subjectTreeNode?.id?.length > 0 || subjectTreeNode,
     },
     true
   );

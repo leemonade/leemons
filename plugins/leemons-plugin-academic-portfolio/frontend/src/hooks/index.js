@@ -9,4 +9,5 @@ export { default as useProgramTree } from './useProgramTree';
 export { default as useSessionClasses } from './useSessionClasses';
 export { default as useGroupDetail } from './useGroupDetail';
 export { default as useCourseDetail } from './useCourseDetail';
+export { default as useGetKnowledgeArea } from './useGetKnowledgeArea';
 export * from './academicProfiles';

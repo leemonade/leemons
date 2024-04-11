@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 import {
   ContextContainer,
@@ -23,6 +21,8 @@ import { ScheduleInput } from '@timetable/components';
 
 import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { getProfilesRequest } from '@academic-portfolio/request';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
 
@@ -65,11 +65,11 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
         onSuccess: (result) => {
           if (result) {
             queryClient.invalidateQueries(['subjectDetail', { subject: classData.subject.id }]);
-            addSuccessAlert(t('removeStudentSuccess'));
+            addSuccessAlert(t('deletedStudentSuccess'));
           }
         },
         onError: () => {
-          addErrorAlert(t('removeStudentError'));
+          addErrorAlert(t('deletedStudentError'));
         },
       }
     );
@@ -84,7 +84,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
           actions: (
             <ActionButton
               onClick={() => handleRemoveStudentFromClass(userAgent.id)}
-              tooltip={t('class.remove')}
+              tooltip={t('treeRemove')}
               icon={<DeleteBinIcon width={18} height={18} />}
             />
           ),
@@ -96,7 +96,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
-        <Title>{t('class.teachersLabel')}</Title>
+        <Title>{t('teachers')}</Title>
         <Box className={classes.mainTeacher}>
           <Controller
             name="mainTeacher"
@@ -104,7 +104,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
             render={({ field }) => (
               <SelectUserAgent
                 {...field}
-                label={t('class.teacherLabel')}
+                label={t('mainTeacher')}
                 profiles={teacherProfile}
                 centers={centerId}
               />
@@ -113,31 +113,31 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
         </Box>
       </ContextContainer>
       <ContextContainer>
-        <Title>{t('class.scheduleAndLocation')}</Title>
+        <Title>{t('scheduleAndPlace')}</Title>
         <Stack spacing={4} fullWidth>
           <Box className={classes.inlineInputs}>
             <Controller
               name="virtualUrl"
               control={updateForm?.control}
-              render={({ field }) => <TextInput {...field} label={t('class.virtualUrlLabel')} />}
+              render={({ field }) => <TextInput {...field} label={t('virtualClassroom')} />}
             />
           </Box>
           <Box className={classes.inlineInputs}>
             <Controller
               name="address"
               control={updateForm?.control}
-              render={({ field }) => <TextInput {...field} label={t('class.addressLabel')} />}
+              render={({ field }) => <TextInput {...field} label={t('classroomAdress')} />}
             />
           </Box>
         </Stack>
         <Controller
           name="schedule"
           control={updateForm?.control}
-          render={({ field }) => <ScheduleInput label={t('class.scheduleLabel')} {...field} />}
+          render={({ field }) => <ScheduleInput label={t('lessonSchedule')} {...field} />}
         />
       </ContextContainer>
       <ContextContainer>
-        <Title>{`${t('class.studentsEnrolled')} (${classData?.students?.length} / ${
+        <Title>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
           classData?.seats
         })`}</Title>
         <Box>

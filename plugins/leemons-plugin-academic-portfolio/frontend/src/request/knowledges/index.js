@@ -32,6 +32,13 @@ async function deleteKnowledgeArea({ knowledgeAreaId, soft }) {
     method: 'DELETE',
   });
 }
+
+async function getKnowledgeArea(knowledgeAreaId) {
+  return leemons.api(`v1/academic-portfolio/knowledges/${knowledgeAreaId}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
 export {
   listKnowledgeAreas,
   createKnowledgeArea,
@@ -39,4 +46,5 @@ export {
   deleteKnowledgeArea,
   createKnowledgeArea as createKnowledge,
   updateKnowledgeArea as updateKnowledge,
+  getKnowledgeArea,
 };
