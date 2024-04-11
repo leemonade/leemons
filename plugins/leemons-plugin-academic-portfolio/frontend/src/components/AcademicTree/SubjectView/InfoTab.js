@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { ContextContainer, Title, Text } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
+  const [t] = useTranslateLoader(prefixPN('tree_page'));
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
-        <Title>{'Datos básicos 🔫'}</Title>
+        <Title>{t('basicDataTitle')}</Title>
         <Text>{`${'ID'}:${subjectDetails?.internalId}`}</Text>
       </ContextContainer>
 

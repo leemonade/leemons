@@ -67,12 +67,17 @@ import {
 } from './classes';
 import { getStudentsByTags } from './common';
 
-export { listCourses as listCoursesRequest, updateCourse as updateCourseRequest } from './courses';
+export {
+  listCourses as listCoursesRequest,
+  updateCourse as updateCourseRequest,
+  getCourseById as getCourseByIdRequest,
+} from './courses';
 
 export {
   createGroup as createGroupRequest,
   updateGroup as updateGroupRequest,
   duplicateGroup as duplicateGroupRequest,
+  getGroupById as getGroupByIdRequest,
   removeGroupFromClasses as removeGroupFromClassesRequest,
 } from './groups';
 

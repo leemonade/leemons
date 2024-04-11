@@ -1,6 +1,6 @@
 import { createStyles } from '@bubbles-ui/components';
 
-const GroupViewStyles = createStyles((theme) => ({
+const CourseViewStyles = createStyles((theme) => ({
   root: {},
   content: { backgroundColor: 'white', padding: 24 },
   courseData: {
@@ -27,4 +27,4 @@ const GroupViewStyles = createStyles((theme) => ({
   },
 }));
 
-export { GroupViewStyles };
+export { CourseViewStyles };

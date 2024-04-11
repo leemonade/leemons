@@ -7,4 +7,6 @@ export { default as useProgramsPublicInfo } from './useProgramsPublicInfo';
 export { default as useSubjectDetails } from './useSubjectDetails';
 export { default as useProgramTree } from './useProgramTree';
 export { default as useSessionClasses } from './useSessionClasses';
+export { default as useGroupDetail } from './useGroupDetail';
+export { default as useCourseDetail } from './useCourseDetail';
 export * from './academicProfiles';

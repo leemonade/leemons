@@ -15,10 +15,13 @@ import {
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 import { useUpdateClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import EnrollmentTab from './EnrollmentTab';
 import InfoTab from './InfoTab';
 
 const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) => {
+  const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [activeTab, setActiveTab] = useState('0');
   const { data: subjectDetails, isLoading } = useSubjectDetails(
     subjectNode?.itemId,
@@ -42,7 +45,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
   const EnrollmentTabs = useMemo(() => {
     if (singleClassToShow) {
       return (
-        <TabPanel label={'Matriculación 🔫'}>
+        <TabPanel label={t('enrollTitle')}>
           <EnrollmentTab
             classData={singleClassToShow}
             openEnrollmentDrawer={openEnrollmentDrawer}
@@ -76,11 +79,11 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
 
     mutateClass(requestBody, {
       onSuccess: () => {
-        addSuccessAlert('Clase actualizada con éxito. 🔫');
+        addSuccessAlert(t('updateClassMessage'));
       },
       onError: (e) => {
         console.error(e);
-        addErrorAlert('Error actualizando aula. 🔫');
+        addErrorAlert(t('updateClassError'));
       },
     });
   };
@@ -101,7 +104,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
         <TotalLayoutFooterContainer
           fixed
           scrollRef={scrollRef}
-          rightZone={<Button onClick={handleSaveChanges}>{'Guardar Cambios 🔫'}</Button>}
+          rightZone={<Button onClick={handleSaveChanges}>{t('saveChanges')}</Button>}
         />
       }
     >
@@ -114,7 +117,7 @@ const SubjectView = ({ subjectNode, program, scrollRef, openEnrollmentDrawer }) 
           updateForm.reset();
         }}
       >
-        <TabPanel label={'Información 🔫'}>
+        <TabPanel label={t('info')}>
           <InfoTab
             subjectDetails={subjectDetails}
             onlyClassToShow={singleClassToShow}

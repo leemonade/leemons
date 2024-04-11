@@ -19,6 +19,7 @@ import { Tree, MultiBackend, getBackendOptions } from '@minoru/react-dnd-treevie
 import { HTML5toTouch } from 'react-dnd-multi-backend';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
 import { NodeRenderer } from '../../components/AcademicTree/NodeRenderer/NodeRenderer';
@@ -134,10 +135,17 @@ const AcademicTreePage = () => {
 
   const viewToRender = useMemo(() => {
     switch (selectedNode?.type) {
-      case 'cycle':
-        return <div>CYCLE</div>;
+      // case 'cycle':
+      //   return <div>CYCLE</div>;
       case 'course':
-        return <div>COURSE</div>;
+        return (
+          <CourseView
+            scrollRef={scrollRef}
+            openEnrollmentDrawer={toggleEnrollmentDrawer}
+            groupNode={selectedNode}
+            program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
+          />
+        );
       case 'group':
         return (
           <GroupView
@@ -147,8 +155,8 @@ const AcademicTreePage = () => {
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
-      case 'knowledgeArea':
-        return <div>knowledgeArea</div>;
+      // case 'knowledgeArea':
+      //   return <div>knowledgeArea</div>;
       case 'subject':
         return (
           <SubjectView
@@ -217,7 +225,7 @@ const AcademicTreePage = () => {
         >
           <Stack direction="column" spacing={6} sx={{ width: '15%' }}>
             {treeStructures.map((treeStructure, index) => (
-              <div key={index}>
+              <Box key={`${index}-${treeStructure?.header?.name}`}>
                 {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
                 <DndProvider backend={MultiBackend} options={getBackendOptions()}>
                   <Tree
@@ -237,7 +245,7 @@ const AcademicTreePage = () => {
                     )}
                   />
                 </DndProvider>
-              </div>
+              </Box>
             ))}
           </Stack>
           {viewToRender}

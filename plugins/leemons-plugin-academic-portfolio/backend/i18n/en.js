@@ -702,9 +702,17 @@ module.exports = {
     minimumCredits: 'Minimum credits',
     enrollTitle: 'Enrollment',
     AlertTitle: 'Student Assignment',
-    AlertDescription: 'Assign students to all the classrooms nested at this level from the student database.',
-    AlertNote: 'NOTE: The selected students will be added to the current student lists of each classroom. If it is necessary to consult or edit a group of students, it must be done directly in each classroom',
+    AlertDescription:
+      'Assign students to all the classrooms nested at this level from the student database.',
+    AlertNote:
+      'NOTE: The selected students will be added to the current student lists of each classroom. If it is necessary to consult or edit a group of students, it must be done directly in each classroom',
     enrollButton: 'Enroll students',
+    info: 'Info',
+    updateClassMessage: 'Class updated successfully',
+    updateClassError: 'Error updating class',
+    saveChanges: 'Save changes',
+    icon: 'Icon',
+    image: 'Image',
     configTreeView: 'Configure tree view',
     page_title: 'Academic Portofolio Tree',
     page_description:

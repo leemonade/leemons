@@ -14,26 +14,25 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { AddCircleIcon, FileXmlIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { useGroupDetail } from '@academic-portfolio/hooks';
+import { AddCircleIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { useCourseDetail } from '@academic-portfolio/hooks';
 import { SelectUserAgent } from '@users/components';
 import { Link } from 'react-router-dom';
 import { getProfilesRequest } from '@academic-portfolio/request';
-import { GroupViewStyles } from './GroupView.styles';
+import { CourseViewStyles } from './CourseView.styles';
 
-const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
+const CourseView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [teacherProfile, setTeacherProfile] = useState();
   const [responsable, setResponsable] = useState();
-  const { classes } = GroupViewStyles();
+  const { classes } = CourseViewStyles();
   const { control } = useForm();
-  const { data: groupDetail } = useGroupDetail(
+  const { data: courseDetail } = useCourseDetail(
     { groupId: groupNode?.itemId },
     { enabled: !!groupNode?.itemId }
   );
   const centerId = program?.centers?.[0]?.id;
-  console.log('groupDetail', groupDetail);
-  console.log('program', program);
+  console.log('courseDetail', courseDetail);
   // console.log('groupNode', groupNode);
   useEffect(() => {
     const getTeacherProfile = async () => {
@@ -43,7 +42,6 @@ const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
 
     getTeacherProfile();
   }, [centerId]);
-  console.log('teacherProfile', teacherProfile);
   return (
     <TotalLayoutStepContainer
       stepName={groupNode?.text ? `${program?.name} - ${groupNode?.text}` : program?.name ?? ''}
@@ -71,11 +69,11 @@ const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
         <Stack spacing={5} className={classes.courseData}>
           <Box>
             <Text strong>{t('courseNumber')} </Text>
-            <Text>{groupDetail?.index} </Text>
+            <Text>{courseDetail?.index} </Text>
           </Box>
           <Box>
             <Text strong>{t('courseAlias')} </Text>
-            <Text>{groupDetail?.abbreviation} </Text>
+            <Text>{courseDetail?.name} </Text>
           </Box>
           {!!program?.courseCredits && (
             <Box>
@@ -88,7 +86,7 @@ const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
           <Controller
             name="responsable"
             control={control}
-            defaultValue={groupDetail?.manager}
+            defaultValue={courseDetail?.manager}
             value={responsable}
             render={({ field }) => (
               <SelectUserAgent
@@ -134,7 +132,7 @@ const GroupView = ({ program, groupNode, scrollRef, openEnrollmentDrawer }) => {
   );
 };
 
-GroupView.propTypes = {
+CourseView.propTypes = {
   program: PropTypes.object,
   groupNode: PropTypes.shape({
     id: PropTypes.string,
@@ -155,4 +153,4 @@ GroupView.propTypes = {
   openEnrollmentDrawer: PropTypes.bool, // Opens the enrollment drawer
 };
 
-export { GroupView };
+export { CourseView };

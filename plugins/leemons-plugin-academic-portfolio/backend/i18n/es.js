@@ -707,9 +707,17 @@ module.exports = {
     minimumCredits: 'Créditos mínimos',
     enrollTitle: 'Matriculación',
     AlertTitle: 'Asignación de estudiantes',
-    AlertDescription: 'Asigna estudiantes a todas las aulas anidadas en este nivel desde la base de datos de estudiantes.',
-    AlertNote: 'NOTA: Los alumnos seleccionados se añadirán a las listas de alumnos actuales de cada aula. Si es necesario consultar o editar un grupo de alumnos, debe hacerse directamente en cada aula',
+    AlertDescription:
+      'Asigna estudiantes a todas las aulas anidadas en este nivel desde la base de datos de estudiantes.',
+    AlertNote:
+      'NOTA: Los alumnos seleccionados se añadirán a las listas de alumnos actuales de cada aula. Si es necesario consultar o editar un grupo de alumnos, debe hacerse directamente en cada aula',
     enrollButton: 'Matricular estudiantes',
+    info: 'Información',
+    updateClassMessage: 'Clase actualizada con éxito',
+    updateClassError: 'Error actualizando clase',
+    saveChanges: 'Guardar cambios',
+    icon: 'Icono',
+    image: 'Imagen',
     configTreeView: 'Configurar vista del árbol',
     page_title: 'Arbol de portafolio',
     page_description:
