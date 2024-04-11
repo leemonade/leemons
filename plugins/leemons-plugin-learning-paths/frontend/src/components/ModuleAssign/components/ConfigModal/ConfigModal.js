@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box,
   Alert,
-  Drawer,
+  BaseDrawer,
   LoadingOverlay,
   Title,
   ActionButton,
@@ -88,7 +88,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
 
   return (
     // TRANSLATE
-    <Drawer
+    <BaseDrawer
       empty
       shadow
       trapFocus
@@ -137,7 +137,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
           </ConfigModalErrorBoundary>
         </Stack>
       </TotalLayoutContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

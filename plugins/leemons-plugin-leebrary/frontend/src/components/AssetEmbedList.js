@@ -118,7 +118,7 @@ const AssetEmbedList = ({ assets, width }) => {
           zIndex: 99,
         })}
       >
-        <Drawer
+        <BaseDrawer
           opened={isDrawerOpen}
           size="496px"
           close={false}
@@ -149,7 +149,7 @@ const AssetEmbedList = ({ assets, width }) => {
             onOpenDrawer={() => setIsDrawerOpen(true)}
             locale={locale}
           />
-        </Drawer>
+        </BaseDrawer>
       </Box>
     </Box>
   );

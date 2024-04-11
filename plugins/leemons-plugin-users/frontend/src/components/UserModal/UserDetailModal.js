@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, Box, ContextContainer, Drawer, Text, UserCards } from '@bubbles-ui/components';
+import { Badge, Box, ContextContainer, BaseDrawer, Text, UserCards } from '@bubbles-ui/components';
 import { isFunction } from 'lodash';
 import { UserDetailModalStyles } from './UserDetailModal.styles';
 import {
@@ -60,7 +60,14 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
   const { classes, cx } = UserDetailModalStyles({}, { name: 'UserDetailModal' });
 
   return (
-    <Drawer opened={opened} onClose={handleOnClose} centered position="right" size={650} {...props}>
+    <BaseDrawer
+      opened={opened}
+      onClose={handleOnClose}
+      centered
+      position="right"
+      size={650}
+      {...props}
+    >
       <ContextContainer divided>
         {user ? <UserCards layout="horizontal" variant="large" user={{ ...user }} /> : null}
         <ContextContainer title={labels.personalInformation}>
@@ -75,7 +82,7 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
           </ContextContainer>
         ) : null}
       </ContextContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 
