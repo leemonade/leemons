@@ -19,10 +19,15 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
     const subjectData = {};
     const courses = subjectDetails?.classes[0]?.courses?.name;
     subjectData.courses = courses;
-    const groups = subjectDetails?.classes
-      ?.map((cls) => cls.groups.name)
-      .sort()
-      .join(', ');
+    let groups = subjectDetails?.classes
+      ?.map((cls) => cls.groups?.name)
+      .filter((name) => name !== null && name !== undefined); // Filtrar nombres nulos o indefinidos
+
+    if (groups?.length === 0) {
+      groups = null; // Asignar null si no hay grupos después de filtrar
+    } else {
+      groups?.sort().join(', '); // Ordenar y unir si hay grupos válidos
+    }
     subjectData.groups = groups;
     const knowledgeAreas = subjectDetails?.classes[0]?.knowledges?.name;
     subjectData.knowledgeAreas = knowledgeAreas;
@@ -32,32 +37,36 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
     subjectData.credits = credits;
     return subjectData;
   }, [subjectDetails, onlyClassToShow]);
-  console.log('subjectDetails', subjectDetails);
 
   const subjectIcon = getFileUrl(subjectDetails?.icon?.cover?.id);
   const cover = getFileUrl(subjectDetails?.image?.cover?.id);
-  console.log('subjectIcon', subjectIcon);
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
         <Title>{t('basicDataTitle')}</Title>
         <Stack spacing={4}>
-          <Box>
-            <Text strong>{`${t('idLabel')}: `}</Text>
-            <Text>{subjectDetails?.internalId}</Text>
-          </Box>
+          {subjectDetails?.internalId && (
+            <Box>
+              <Text strong>{`${t('idLabel')}: `}</Text>
+              <Text>{subjectDetails?.internalId}</Text>
+            </Box>
+          )}
           <Box>
             <Text strong>{`${t('courseLabel')}: `}</Text>
             <Text>{subjectHeaderData?.courses}</Text>
           </Box>
-          <Box>
-            <Text strong>{`${t('groupLabel')}: `}</Text>
-            <Text>{subjectHeaderData?.groups}</Text>
-          </Box>
-          <Box>
-            <Text strong>{`${t('knowledgeLabel')}: `}</Text>
-            <Text>{subjectHeaderData?.knowledgeAreas}</Text>
-          </Box>
+          {subjectHeaderData?.groups && (
+            <Box>
+              <Text strong>{`${t('groupLabel')}: `}</Text>
+              <Text>{subjectHeaderData?.groups}</Text>
+            </Box>
+          )}
+          {subjectHeaderData?.knowledgeAreas && (
+            <Box>
+              <Text strong>{`${t('knowledgeLabel')}: `}</Text>
+              <Text>{subjectHeaderData?.knowledgeAreas}</Text>
+            </Box>
+          )}
           <Box>
             <Text strong>{`${t('subjectTypeLabel')}: `}</Text>
             <Text>{subjectHeaderData?.subjectType}</Text>
@@ -71,61 +80,65 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
         </Stack>
       </ContextContainer>
 
-      <ContextContainer>
-        <Title>{t('icon')}</Title>
-        <Text>{t('iconDescription')}</Text>
-        <Stack>
-          <Paper
-            shadow="none"
-            bordered
-            style={{
-              minWidth: 282,
-              maxHeight: 108,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Box style={{ display: 'flex', justifyContent: 'center' }}>
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: subjectDetails.color,
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                }}
-              >
-                <ImageLoader src={subjectIcon} width={32} height={32} />
+      {subjectIcon && (
+        <ContextContainer>
+          <Title>{t('icon')}</Title>
+          <Text>{t('iconDescription')}</Text>
+          <Stack>
+            <Paper
+              shadow="none"
+              bordered
+              style={{
+                minWidth: 282,
+                maxHeight: 108,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Box style={{ display: 'flex', justifyContent: 'center' }}>
+                <Box
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: subjectDetails?.color,
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                  }}
+                >
+                  <ImageLoader src={subjectIcon} width={32} height={32} />
+                </Box>
               </Box>
-            </Box>
-            <Text strong style={{ marginTop: 6 }}>
-              {subjectDetails?.name}
-            </Text>
-          </Paper>
-        </Stack>
-      </ContextContainer>
+              <Text strong style={{ marginTop: 6 }}>
+                {subjectDetails?.name}
+              </Text>
+            </Paper>
+          </Stack>
+        </ContextContainer>
+      )}
 
-      <ContextContainer>
-        <Title>{t('image')}</Title>
-        <Text>{t('image')}</Text>
-        <Stack>
-          <Box
-            style={{
-              borderRadius: 12,
-              backgroundImage: `url(${cover})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              width: 282,
-              height: 108,
-            }}
-          >
-            {/* <ImageLoader src={cover} width={282} height={108} /> */}
-          </Box>
-        </Stack>
-      </ContextContainer>
+      {cover && (
+        <ContextContainer>
+          <Title>{t('image')}</Title>
+          <Text>{t('image')}</Text>
+          <Stack>
+            <Box
+              style={{
+                borderRadius: 12,
+                backgroundImage: `url(${cover})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                width: 282,
+                height: 108,
+              }}
+            >
+              {/* <ImageLoader src={cover} width={282} height={108} /> */}
+            </Box>
+          </Stack>
+        </ContextContainer>
+      )}
     </ContextContainer>
   );
 };

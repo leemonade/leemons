@@ -39,6 +39,7 @@ import {
   listKnowledgeAreas,
   updateKnowledgeArea,
   deleteKnowledgeArea,
+  getKnowledgeArea,
 } from './knowledges';
 import {
   createSubjectType,
@@ -117,6 +118,7 @@ export const createKnowledgeAreaRequest = createKnowledgeArea;
 export const updateKnowledgeAreaRequest = updateKnowledgeArea;
 export const listKnowledgeAreasRequest = listKnowledgeAreas;
 export const deleteKnowledgeAreaRequest = deleteKnowledgeArea;
+export const getKnowledgeAreaRequest = getKnowledgeArea;
 
 export const createSubjectTypeRequest = createSubjectType;
 export const listSubjectTypesRequest = listSubjectTypes;

@@ -18,6 +18,7 @@ import { Tree, MultiBackend, getBackendOptions } from '@minoru/react-dnd-treevie
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
+import { KnowledgeView } from '@academic-portfolio/components/AcademicTree/KnowledgeView/KnowledgeView';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
 import { NodeRenderer } from '../../components/AcademicTree/NodeRenderer/NodeRenderer';
@@ -184,8 +185,15 @@ const AcademicTreePage = () => {
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
-      // case 'knowledgeArea':
-      //   return <div>knowledgeArea</div>;
+      case 'knowledgeArea':
+        return (
+          <KnowledgeView
+            scrollRef={scrollRef}
+            openEnrollmentDrawer={toggleEnrollmentDrawer}
+            knowledgeTreeNode={selectedTreeNode}
+            program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
+          />
+        );
       case 'subject':
         return (
           <SubjectView

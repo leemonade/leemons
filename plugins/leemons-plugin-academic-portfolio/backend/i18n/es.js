@@ -725,6 +725,13 @@ module.exports = {
     knowledgeLabel: 'Área',
     subjectTypeLabel: 'Tipo',
     creditsLabel: 'Créditos',
+    teachers: 'Docentes',
+    mainTeacher: 'Docente principal',
+    scheduleAndPlace: 'Horario y ubicación',
+    virtualClassroom: 'Aula virtual',
+    classroomAdress: 'Dirección o ubicación física del aula',
+    lessonSchedule: 'Horario de clase',
+    actualEnrollment: 'Matriculados actualmente',
     configTreeView: 'Configurar vista del árbol',
     page_title: 'Arbol de portafolio',
     page_description:

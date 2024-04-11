@@ -21,10 +21,13 @@ import { ScheduleInput } from '@timetable/components';
 
 import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { getProfilesRequest } from '@academic-portfolio/request';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
 
 const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }) => {
+  const [t] = useTranslateLoader(prefixPN('tree_page'));
   const { classes } = EnrollmentTabStyles();
   const queryClient = useQueryClient();
   const [teacherProfile, setTeacherProfile] = useState();
@@ -62,11 +65,11 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
         onSuccess: (result) => {
           if (result) {
             queryClient.invalidateQueries(['subjectDetail', { subject: classData.subject.id }]);
-            addSuccessAlert('Estudiante eliminado con éxito 🔫');
+            addSuccessAlert(t('deletedStudentSuccess'));
           }
         },
         onError: () => {
-          addErrorAlert('No se ha podido eliminar al estudiante del aula. 🔫');
+          addErrorAlert(t('deletedStudentError'));
         },
       }
     );
@@ -81,7 +84,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
           actions: (
             <ActionButton
               onClick={() => handleRemoveStudentFromClass(userAgent.id)}
-              tooltip={'borrar 🔫'}
+              tooltip={t('treeRemove')}
               icon={<DeleteBinIcon width={18} height={18} />}
             />
           ),
@@ -93,7 +96,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
-        <Title>{'Docentes 🔫'}</Title>
+        <Title>{t('teachers')}</Title>
         <Box className={classes.mainTeacher}>
           <Controller
             name="mainTeacher"
@@ -101,7 +104,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
             render={({ field }) => (
               <SelectUserAgent
                 {...field}
-                label={'Main Teacher 🔫'}
+                label={t('mainTeacher')}
                 profiles={teacherProfile}
                 centers={centerId}
               />
@@ -110,40 +113,40 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
         </Box>
       </ContextContainer>
       <ContextContainer>
-        <Title>{'Horarios y ubicación 🔫'}</Title>
+        <Title>{t('scheduleAndPlace')}</Title>
         <Stack spacing={4} fullWidth>
           <Box className={classes.inlineInputs}>
             <Controller
               name="virtualUrl"
               control={updateForm?.control}
-              render={({ field }) => <TextInput {...field} label={'Aula virtual 🔫'} />}
+              render={({ field }) => <TextInput {...field} label={t('virtualClassroom')} />}
             />
           </Box>
           <Box className={classes.inlineInputs}>
             <Controller
               name="address"
               control={updateForm?.control}
-              render={({ field }) => (
-                <TextInput {...field} label={'Dirección o ubicación física del aula 🔫'} />
-              )}
+              render={({ field }) => <TextInput {...field} label={t('classroomAdress')} />}
             />
           </Box>
         </Stack>
         <Controller
           name="schedule"
           control={updateForm?.control}
-          render={({ field }) => <ScheduleInput label={'Horario de clase 🔫'} {...field} />}
+          render={({ field }) => <ScheduleInput label={t('lessonSchedule')} {...field} />}
         />
       </ContextContainer>
       <ContextContainer>
-        <Title>{`Matriculados actualmente 🔫 (${classData?.students?.length} / ${classData?.seats})`}</Title>
+        <Title>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
+          classData?.seats
+        })`}</Title>
         <Box>
           <Button
             onClick={() => openEnrollmentDrawer(classData?.id)}
             variant="link"
             leftIcon={<AddCircleIcon />}
           >
-            {'Matricular Estudiantes 🔫'}
+            {t('enrollButton')}
           </Button>
         </Box>
         {classData?.students?.length > 0 && (
