@@ -10,7 +10,7 @@ import {
   Button,
   TextInput,
   Stack,
-  Drawer,
+  BaseDrawer,
   IconError,
   IconSuccess,
   IconWarning,
@@ -82,7 +82,7 @@ const TranslateOptions = () => {
           {messages.translateOptionsHelpLabel}
         </Text>
       </Stack>
-      <Drawer opened={opened} onClose={() => setOpened(false)} size={725} close>
+      <BaseDrawer opened={opened} onClose={() => setOpened(false)} size={725} close>
         <Title order={4}>{messages.translateOptionsModalTitle}</Title>
         <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
           <Text>{messages.translateOptionsModalDescription}</Text>
@@ -138,7 +138,7 @@ const TranslateOptions = () => {
             {messages.translateOptionsContinueButtonLabel}
           </Button>
         </Box>
-      </Drawer>
+      </BaseDrawer>
     </Box>
   );
 };

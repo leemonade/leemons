@@ -14,7 +14,7 @@ import {
   LoadingOverlay,
   TotalLayoutContainer,
   PaginatedList,
-  Drawer,
+  BaseDrawer,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
@@ -774,7 +774,7 @@ const AssetList = ({
             zIndex: 99,
           })}
         >
-          <Drawer
+          <BaseDrawer
             opened={isDrawerOpen}
             size="496px"
             close={false}
@@ -812,7 +812,7 @@ const AssetList = ({
               onOpenDrawer={() => setIsDrawerOpen(true)}
               locale={locale}
             />
-          </Drawer>
+          </BaseDrawer>
         </Box>
       </TotalLayoutContainer>
       <PermissionsDataDrawer

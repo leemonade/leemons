@@ -5,7 +5,7 @@ import {
   Button,
   ContextContainer,
   createStyles,
-  Drawer,
+  BaseDrawer,
   InputWrapper,
   Loader,
   Paper,
@@ -130,7 +130,7 @@ const AddProfileDrawer = ({ opened, onClose, onSave, profile: _profile = {} }) =
   const showDefaultLocaleWarning = !profile?.name;
 
   return (
-    <Drawer size={715} opened={opened} onClose={onClose}>
+    <BaseDrawer size={715} opened={opened} onClose={onClose}>
       {store.loading ? (
         <Loader />
       ) : (
@@ -213,7 +213,7 @@ const AddProfileDrawer = ({ opened, onClose, onSave, profile: _profile = {} }) =
           </Stack>
         </ContextContainer>
       )}
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

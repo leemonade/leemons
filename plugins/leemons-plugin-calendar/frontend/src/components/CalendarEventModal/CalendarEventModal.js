@@ -8,7 +8,7 @@ import {
   Button,
   Col,
   Divider,
-  Drawer,
+  BaseDrawer,
   Grid,
   RadioGroup,
   Select,
@@ -164,7 +164,7 @@ const CalendarEventModal = (props) => {
   }
 
   return (
-    <Drawer
+    <BaseDrawer
       size={360}
       className={classes.root}
       onClose={onClose}
@@ -417,7 +417,7 @@ const CalendarEventModal = (props) => {
           ) : null}
         </form>
       </Box>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

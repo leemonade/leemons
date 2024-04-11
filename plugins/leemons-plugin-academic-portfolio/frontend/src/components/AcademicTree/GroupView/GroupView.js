@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
   Title,
   Stack,
   Text,
-  Select,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
   Alert,
@@ -41,7 +40,6 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
 
     getTeacherProfile();
   }, [centerId]);
-
   return (
     <TotalLayoutStepContainer
       stepName={

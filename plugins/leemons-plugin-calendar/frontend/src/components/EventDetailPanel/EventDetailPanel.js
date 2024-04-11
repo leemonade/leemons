@@ -5,7 +5,7 @@ import {
   Box,
   Button,
   ContextContainer,
-  Drawer,
+  BaseDrawer,
   ImageLoader,
   Text,
   UserDisplayItem,
@@ -146,9 +146,9 @@ const EventDetailPanel = ({
   }
 
   return (
-    <Drawer opened={opened} onClose={handleOnClose} className={classes.root} size={500}>
+    <BaseDrawer opened={opened} onClose={handleOnClose} className={classes.root} size={500}>
       {inside}
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

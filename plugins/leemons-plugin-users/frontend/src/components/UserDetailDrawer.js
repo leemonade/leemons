@@ -12,7 +12,7 @@ function UserDetailDrawer({
   onChange = () => {},
 }) {
   return (
-    <Drawer size={720} opened={opened} onClose={onClose}>
+    <BaseDrawer size={720} opened={opened} onClose={onClose}>
       <DetailUser
         userId={userId}
         profileId={profileId}
@@ -21,7 +21,7 @@ function UserDetailDrawer({
         onActive={onChange}
         onDisabled={onChange}
       />
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

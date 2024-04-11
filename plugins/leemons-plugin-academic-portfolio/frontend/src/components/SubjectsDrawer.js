@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { Box, Button, ContextContainer, Drawer, Title } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, BaseDrawer, Title } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
@@ -84,7 +84,7 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
   }
 
   return (
-    <Drawer
+    <BaseDrawer
       opened={opened}
       onClose={onClose}
       size={360}
@@ -112,7 +112,7 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
           </Button>
         </Box>
       </ContextContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 }
 
