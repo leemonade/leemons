@@ -99,7 +99,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   return (
     <TotalLayoutStepContainer
       stepName={
-        subjectTreeNode?.name ? `${program?.name} - ${subjectTreeNode?.name}` : program?.name ?? ''
+        subjectTreeNode?.text ? `${program?.name} - ${subjectTreeNode?.text}` : program?.name ?? ''
       }
       fullWidth
       clean

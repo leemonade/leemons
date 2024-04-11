@@ -126,9 +126,6 @@ const EnrollmentDrawer = ({
     return [];
   }, [selectedTreeNode, selectedNode]);
 
-  console.log('selectedNode en drawer', selectedNode);
-  console.log('selectedTreeNode', selectedTreeNode);
-
   const { data: allSubjectClasses, isLoading } = useSubjectClasses(subjects, {
     enabled: subjects?.length > 0 && isOpen,
   });
@@ -176,8 +173,6 @@ const EnrollmentDrawer = ({
     closeDrawer();
   };
 
-  console.log('classes', classes);
-
   const getStudentsToEnrollByClass = () => {
     const cannotEnrollClasses = [];
     const studentsToEnrollByClass = new Map();
@@ -223,7 +218,6 @@ const EnrollmentDrawer = ({
     const { cannotEnrollClasses, studentsToEnrollByClass } = getStudentsToEnrollByClass();
 
     if (cannotEnrollClasses?.length) {
-      console.log('show error');
       // show failure toast
     } else {
       const enrollmentRequests = [];

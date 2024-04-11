@@ -32,9 +32,7 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
     { enabled: !!groupTreeNode?.itemId }
   );
   const centerId = program?.centers?.[0]?.id;
-  console.log('groupDetail', groupDetail);
-  console.log('program', program);
-  // console.log('groupNode', groupNode);
+
   useEffect(() => {
     const getTeacherProfile = async () => {
       const response = await getProfilesRequest();
@@ -43,7 +41,6 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
 
     getTeacherProfile();
   }, [centerId]);
-  console.log('teacherProfile', teacherProfile);
   return (
     <TotalLayoutStepContainer
       stepName={
