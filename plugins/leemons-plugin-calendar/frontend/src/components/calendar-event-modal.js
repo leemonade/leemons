@@ -263,12 +263,6 @@ function NewCalendarEventModal({
           });
           ref.current.isOwner = isOwner;
         }
-        /*
-                ref.current.isOwner = !!_.find(ref.current.calendarData.ownerCalendars, {
-                  id: _.isString(event.calendar) ? event.calendar : event.calendar.id,
-                });
-
-                 */
 
         const {
           startDate,
@@ -486,6 +480,8 @@ function NewCalendarEventModal({
           calendarLabel: t('calendarLabel'),
           calendarLabelDisabled: t('calendarLabelDisabled'),
           showInCalendar: t('showInCalendar'),
+          newEvent: t('newEvent'),
+          newTask: t('newTask'),
         }}
         errorMessages={{
           titleRequired: tCommon('required'),

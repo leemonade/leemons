@@ -6,17 +6,15 @@ import {
   Badge,
   Box,
   Button,
-  Col,
   Divider,
-  BaseDrawer,
-  Grid,
   RadioGroup,
   Select,
   Switch,
   TextInput,
   Title,
+  Drawer,
+  ContextContainer,
 } from '@bubbles-ui/components';
-import { PluginCalendarIcon, UsersIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { Dates } from './components/Dates';
 import { CalendarEventModalStyles } from './CalendarEventModal.styles';
@@ -39,6 +37,8 @@ export const CALENDAR_EVENT_MODAL_DEFAULT_PROPS = {
     eventTypes: [],
   },
   messages: {
+    newEvent: 'New event',
+    newTask: 'New task',
     fromLabel: 'From',
     toLabel: 'To',
     repeatLabel: 'Repeat',
@@ -134,16 +134,6 @@ const CalendarEventModal = (props) => {
           setValue('calendar', selectData.calendars[0]?.value);
         }
       }
-      /*
-      if (onlyOneDate) {
-        if (name === 'startDate') {
-          setValue('endDate', value.startDate);
-        }
-        if (name === 'startTime') {
-          setValue('endTime', value.startTime);
-        }
-      }
-       */
     });
     return () => subscription.unsubscribe();
   });
@@ -164,260 +154,185 @@ const CalendarEventModal = (props) => {
   }
 
   return (
-    <BaseDrawer
-      size={360}
-      className={classes.root}
-      onClose={onClose}
-      opened={opened}
-      header={
-        <Box className={classes.headerActions}>
-          {isOwner && disabled ? <ActionButton icon={<EditWriteIcon />} onClick={onEdit} /> : null}
-
-          {!isNew && (!fromCalendar || isOwner) ? (
-            <ActionButton icon={<DeleteBinIcon />} onClick={onRemove} />
-          ) : null}
-        </Box>
-      }
-    >
-      <Box
-        sx={(theme) => ({
-          // padding: theme.spacing[4],
-          // paddingTop: theme.spacing[12],
-          marginLeft: -theme.spacing[4],
-          marginRight: -theme.spacing[4],
-          paddingBottom: '76px',
-        })}
-      >
+    <Drawer size={'sm'} className={classes.root} onClose={onClose} opened={opened}>
+      <Drawer.Header title={type === 'calendar.task' ? messages.newTask : messages.newEvent} />
+      <Drawer.Content>
         <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-          <Controller
-            name="title"
-            control={control}
-            rules={{
-              required: errorMessages.titleRequired,
-            }}
-            render={({ field }) => {
-              if (disabled) {
-                return <Title order={3}>{field.value}</Title>;
-              }
-              return (
-                <TextInput
-                  readOnly={disabled}
-                  disabled={disabled}
-                  label={config?.titleLabel || messages.name}
-                  placeholder={config?.titlePlaceholder || messages.titlePlaceholder}
-                  error={get(errors, 'title')}
-                  required={!disabled}
-                  {...field}
-                />
-              );
-            }}
-          />
-
-          {/*
-          {disabled && type === 'calendar.task' && taskColumn ? (
-            <Grid columns={100} gutter={0}>
-              <Col span={10} className={classes.icon} />
-              <Col span={90}>
-                <Text>{taskColumn}</Text>
-              </Col>
-            </Grid>
-          ) : null}
-*/}
-
-          {!forceType ? (
-            <Box sx={(theme) => ({ paddingTop: theme.spacing[4] })}>
+          <ContextContainer spacing={8} className={classes.container}>
+            <ContextContainer spacing={4}>
               <Controller
-                name="type"
+                name="title"
                 control={control}
                 rules={{
-                  required: errorMessages.typeRequired,
+                  required: errorMessages.titleRequired,
                 }}
                 render={({ field }) => {
                   if (disabled) {
-                    return (
-                      <Badge
-                        label={find(selectData.eventTypes, { value: field.value })?.label}
-                        closable={false}
-                      />
-                    );
+                    return <Title order={3}>{field.value}</Title>;
                   }
                   return (
-                    <RadioGroup
-                      {...field}
+                    <TextInput
+                      readOnly={disabled}
                       disabled={disabled}
-                      variant="icon"
-                      direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
-                      fullWidth
-                      error={get(errors, 'type')}
-                      data={selectData.eventTypes}
+                      label={config?.titleLabel || messages.name}
+                      placeholder={config?.titlePlaceholder || messages.titlePlaceholder}
+                      error={get(errors, 'title')}
+                      required={!disabled}
+                      {...field}
                     />
                   );
                 }}
               />
-            </Box>
-          ) : null}
 
-          {!disabled && type === 'calendar.task' ? (
-            <Box
-              sx={(theme) => ({ marginBottom: -theme.spacing[3], paddingTop: theme.spacing[3] })}
-            >
-              <Grid columns={100} gutter={0}>
-                <Col span={8} className={classes.icon} />
-                <Col span={92}>
+              {!forceType ? (
+                <ContextContainer spacing={4}>
                   <Controller
-                    name="data.hideInCalendar"
+                    name="type"
                     control={control}
-                    shouldUnregister
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        onChange={() => field.onChange(!field.value)}
-                        checked={!field.value}
-                        label={messages.showInCalendar}
-                      />
-                    )}
-                  />
-                </Col>
-              </Grid>
-            </Box>
-          ) : null}
-
-          <Dates
-            {...props}
-            form={form}
-            classes={classes}
-            readOnly={disabled}
-            locale={locale}
-            disabled={disabled}
-            onlyOneDate={false}
-            config={config}
-          />
-
-          {UsersComponent && (!disabled || (disabled && form.getValues('users')?.length)) ? (
-            <Box sx={(theme) => ({ paddingTop: theme.spacing[4] })}>
-              <Grid columns={100} gutter={0}>
-                <Col span={10} className={classes.icon}>
-                  <UsersIcon />
-                </Col>
-                <Col span={90}>
-                  <Controller
-                    name="users"
-                    control={control}
-                    render={({ field }) =>
-                      React.cloneElement(UsersComponent, {
-                        ...field,
-                        readOnly: disabled,
-                        disabled,
-                      })
-                    }
-                  />
-                </Col>
-              </Grid>
-            </Box>
-          ) : null}
-
-          {hasComponent ? (
-            <Box className={classes.divider}>
-              <Divider />
-            </Box>
-          ) : null}
-
-          <Component
-            isEditing={true}
-            allFormData={watch()}
-            data={watch('data')}
-            classes={classes}
-            readOnly={disabled}
-            disabled={disabled}
-            allProps={{ ...props, form }}
-            form={{
-              Controller: MyController,
-              control,
-              register: (ref, options) => register(`data.${ref}`, options),
-              setValue: (ref, value, options) => setValue(`data.${ref}`, value, options),
-              getValues: (refs) => {
-                if (isArray(refs)) return getValues(map(refs, (ref) => `data.${ref}`));
-                return getValues(`data.${refs}`);
-              },
-              watch: (refs, options) => {
-                if (isFunction(refs)) {
-                  return watch(refs, options);
-                }
-                if (isArray(refs)) {
-                  return watch(
-                    map(refs, (ref) => `data.${ref}`),
-                    options
-                  );
-                }
-                return watch(`data.${refs}`, options);
-              },
-              unregister: (refs) => {
-                if (isArray(refs)) return unregister(map(refs, (ref) => `data.${ref}`));
-                return unregister(`data.${refs}`);
-              },
-              trigger: (refs) => {
-                if (isArray(refs)) return trigger(map(refs, (ref) => `data.${ref}`));
-                return trigger(`data.${refs}`);
-              },
-              formState: { errors: errors ? errors.data : {}, isSubmitted },
-            }}
-          />
-
-          {(!hideCalendarField && disabled) ||
-          ((isNew || (!isNew && isOwner)) &&
-            (type !== 'calendar.task' || (type === 'calendar.task' && !hideInCalendar))) ? (
-            <>
-              <Box className={classes.divider}>
-                <Divider />
-              </Box>
-
-              <Box>
-                <Grid columns={100} gutter={0}>
-                  <Col span={10} className={classes.icon}>
-                    <PluginCalendarIcon />
-                  </Col>
-                  <Col span={90}>
-                    <Controller
-                      name="calendar"
-                      control={control}
-                      rules={{
-                        required: errorMessages.calendarRequired,
-                      }}
-                      render={({ field }) => (
-                        <Select
-                          size="sm"
-                          readOnly={disabled}
-                          disabled={disabled}
-                          label={disabled ? messages.calendarLabelDisabled : messages.calendarLabel}
-                          placeholder={messages.calendarPlaceholder}
+                    rules={{
+                      required: errorMessages.typeRequired,
+                    }}
+                    render={({ field }) => {
+                      if (disabled) {
+                        return (
+                          <Badge
+                            label={find(selectData.eventTypes, { value: field.value })?.label}
+                            closable={false}
+                          />
+                        );
+                      }
+                      return (
+                        <RadioGroup
                           {...field}
-                          required={!disabled}
-                          error={get(errors, 'calendar')}
-                          data={selectData.calendars}
-                          withinPortal={false}
+                          disabled={disabled}
+                          variant="default"
+                          direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
+                          error={get(errors, 'type')}
+                          data={selectData.eventTypes}
+                          noRootPadding
                         />
-                      )}
-                    />
-                  </Col>
-                </Grid>
-              </Box>
-            </>
-          ) : null}
-
-          {!disabled ? (
-            <Box className={classes.actionButtonsContainer}>
-              <Button type="button" variant="light" compact onClick={onClose}>
-                {messages.cancelButtonLabel}
-              </Button>
-              {isNew ? <Button type="submit">{messages.saveButtonLabel}</Button> : null}
-              {!isNew && isOwner ? (
-                <Button type="submit">{messages.updateButtonLabel}</Button>
+                      );
+                    }}
+                  />
+                </ContextContainer>
               ) : null}
-            </Box>
-          ) : null}
+            </ContextContainer>
+
+            <ContextContainer spacing={4}>
+              <Dates
+                {...props}
+                form={form}
+                classes={classes}
+                readOnly={disabled}
+                locale={locale}
+                disabled={disabled}
+                onlyOneDate={false}
+                config={config}
+              />
+            </ContextContainer>
+
+            <ContextContainer spacing={4}>
+              <Component
+                isEditing={true}
+                allFormData={watch()}
+                data={watch('data')}
+                classes={classes}
+                readOnly={disabled}
+                disabled={disabled}
+                allProps={{ ...props, form }}
+                form={{
+                  Controller: MyController,
+                  control,
+                  register: (ref, options) => register(`data.${ref}`, options),
+                  setValue: (ref, value, options) => setValue(`data.${ref}`, value, options),
+                  getValues: (refs) => {
+                    if (isArray(refs)) return getValues(map(refs, (ref) => `data.${ref}`));
+                    return getValues(`data.${refs}`);
+                  },
+                  watch: (refs, options) => {
+                    if (isFunction(refs)) {
+                      return watch(refs, options);
+                    }
+                    if (isArray(refs)) {
+                      return watch(
+                        map(refs, (ref) => `data.${ref}`),
+                        options
+                      );
+                    }
+                    return watch(`data.${refs}`, options);
+                  },
+                  unregister: (refs) => {
+                    if (isArray(refs)) return unregister(map(refs, (ref) => `data.${ref}`));
+                    return unregister(`data.${refs}`);
+                  },
+                  trigger: (refs) => {
+                    if (isArray(refs)) return trigger(map(refs, (ref) => `data.${ref}`));
+                    return trigger(`data.${refs}`);
+                  },
+                  formState: { errors: errors ? errors.data : {}, isSubmitted },
+                }}
+              />
+            </ContextContainer>
+
+            {(!hideCalendarField && disabled) ||
+            ((isNew || (!isNew && isOwner)) &&
+              (type !== 'calendar.task' || (type === 'calendar.task' && !hideInCalendar))) ? (
+              <ContextContainer spacing={4}>
+                <Controller
+                  name="calendar"
+                  control={control}
+                  rules={{
+                    required: errorMessages.calendarRequired,
+                  }}
+                  render={({ field }) => (
+                    <Select
+                      size="sm"
+                      readOnly={disabled}
+                      disabled={disabled}
+                      label={disabled ? messages.calendarLabelDisabled : messages.calendarLabel}
+                      placeholder={messages.calendarPlaceholder}
+                      {...field}
+                      required={!disabled}
+                      error={get(errors, 'calendar')}
+                      data={selectData.calendars}
+                      withinPortal={false}
+                    />
+                  )}
+                />
+              </ContextContainer>
+            ) : null}
+
+            {UsersComponent && (!disabled || (disabled && form.getValues('users')?.length)) ? (
+              <ContextContainer spacing={4}>
+                <Controller
+                  name="users"
+                  control={control}
+                  render={({ field }) =>
+                    React.cloneElement(UsersComponent, {
+                      ...field,
+                      readOnly: disabled,
+                      disabled,
+                    })
+                  }
+                />
+              </ContextContainer>
+            ) : null}
+
+            {!disabled ? (
+              <Box className={classes.actionButtonsContainer}>
+                <Button type="button" variant="light" compact onClick={onClose}>
+                  {messages.cancelButtonLabel}
+                </Button>
+                {isNew ? <Button type="submit">{messages.saveButtonLabel}</Button> : null}
+                {!isNew && isOwner ? (
+                  <Button type="submit">{messages.updateButtonLabel}</Button>
+                ) : null}
+              </Box>
+            ) : null}
+          </ContextContainer>
         </form>
-      </Box>
-    </BaseDrawer>
+      </Drawer.Content>
+    </Drawer>
   );
 };
 

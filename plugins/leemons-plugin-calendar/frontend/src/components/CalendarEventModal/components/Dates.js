@@ -10,9 +10,10 @@ import {
   InputWrapper,
   Select,
   Switch,
+  Text,
   TimeInput,
+  TimeClockCircleIcon,
 } from '@bubbles-ui/components';
-import { TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
 
 const Dates = ({
   form,
@@ -48,13 +49,17 @@ const Dates = ({
   }
 
   return (
-    <Box sx={(theme) => ({ paddingTop: theme.spacing[5] })}>
+    <Box>
       <Grid columns={100} gutter={0}>
-        <Col span={10} className={classes.icon}>
-          <TimeClockCircleIcon />
-        </Col>
-        <Col span={90}>
-          <ContextContainer>
+        <Col span={100}>
+          <ContextContainer
+            subtitle={
+              <Text size="md" strong>
+                {'Tiempos'}
+              </Text>
+            }
+            spacing={2}
+          >
             {/* FROM */}
             {!disabled || (disabled && startDate) ? (
               <Grid columns={100} gutter={0} className={classes.inputsDatesContainer}>
@@ -62,6 +67,7 @@ const Dates = ({
                   <Controller
                     name="startDate"
                     control={control}
+                    fullWidth
                     rules={{
                       validate: (e) => {
                         if (dateRequired && !e) return errorMessages.startDateRequired;
@@ -70,7 +76,7 @@ const Dates = ({
                     }}
                     render={({ field }) => (
                       <DatePicker
-                        size="sm"
+                        size="md"
                         withTime={disabled}
                         readOnly={readOnly}
                         disabled={disabled}
@@ -228,7 +234,7 @@ const Dates = ({
                       disabled={disabled}
                       error={get(errors, 'isAllDay')}
                       label={messages.allDayLabel}
-                      labelPosition="start"
+                      labelPosition="end"
                       checked={field.value}
                     />
                   );

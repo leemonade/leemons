@@ -28,115 +28,79 @@ export default function Event({ isEditing, event, form, data, allFormData, class
   } = form;
 
   return (
-    <ContextContainer>
+    <ContextContainer spacing={2}>
       {!disabled || (disabled && form.getValues('videoLink')) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <MeetingCameraIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="videoLink"
-                control={control}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <InputWrapper label={t('video_link')}>
-                        <Paragraph
-                          clean
-                          dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
-                        />
-                      </InputWrapper>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      size="xs"
-                      disabled={disabled}
-                      label={t('video_link')}
-                      error={get(errors, 'videoLink')}
-                      {...field}
-                    />
-                  );
-                }}
+        <Controller
+          name="videoLink"
+          control={control}
+          render={({ field }) => {
+            if (disabled) {
+              return (
+                <InputWrapper label={t('video_link')}>
+                  <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                </InputWrapper>
+              );
+            }
+            return (
+              <TextInput
+                size="xs"
+                disabled={disabled}
+                label={t('video_link')}
+                error={get(errors, 'videoLink')}
+                {...field}
               />
-            </Col>
-          </Grid>
-        </Box>
+            );
+          }}
+        />
       ) : null}
       {!disabled || (disabled && form.getValues('place')) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <SmileyPinIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="place"
-                control={control}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <InputWrapper label={t('add_place')}>
-                        <Paragraph
-                          clean
-                          dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
-                        />
-                      </InputWrapper>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      size="xs"
-                      readOnly={disabled}
-                      disabled={disabled}
-                      label={t('add_place')}
-                      error={get(errors, 'place')}
-                      {...field}
-                    />
-                  );
-                }}
+        <Controller
+          name="place"
+          control={control}
+          render={({ field }) => {
+            if (disabled) {
+              return (
+                <InputWrapper label={t('add_place')}>
+                  <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                </InputWrapper>
+              );
+            }
+            return (
+              <TextInput
+                size="xs"
+                readOnly={disabled}
+                disabled={disabled}
+                label={t('add_place')}
+                error={get(errors, 'place')}
+                {...field}
               />
-            </Col>
-          </Grid>
-        </Box>
+            );
+          }}
+        />
       ) : null}
       {!disabled || (disabled && form.getValues('description')) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <PluginRedactorIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <InputWrapper label={t('add_description')}>
-                        <Paragraph
-                          clean
-                          dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
-                        />
-                      </InputWrapper>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      size="xs"
-                      disabled={disabled}
-                      label={t('add_description')}
-                      error={get(errors, 'description')}
-                      {...field}
-                    />
-                  );
-                }}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => {
+            if (disabled) {
+              return (
+                <InputWrapper label={t('add_description')}>
+                  <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                </InputWrapper>
+              );
+            }
+            return (
+              <TextInput
+                size="xs"
+                disabled={disabled}
+                label={t('add_description')}
+                error={get(errors, 'description')}
+                {...field}
               />
-            </Col>
-          </Grid>
-        </Box>
+            );
+          }}
+        />
       ) : null}
     </ContextContainer>
   );
