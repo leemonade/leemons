@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { cloneDeep, isArray } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import {
-  Drawer,
+  BaseDrawer,
   Stack,
   TotalLayoutStepContainer,
   TotalLayoutContainer,
@@ -277,7 +277,7 @@ const SubjectSetupDrawer = ({
   };
 
   return (
-    <Drawer opened={isOpen} close={false} size={728} empty>
+    <BaseDrawer opened={isOpen} close={false} size={728} empty>
       <TotalLayoutContainer
         clean
         scrollRef={scrollRef}
@@ -317,7 +317,7 @@ const SubjectSetupDrawer = ({
           </TotalLayoutStepContainer>
         </Stack>
       </TotalLayoutContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

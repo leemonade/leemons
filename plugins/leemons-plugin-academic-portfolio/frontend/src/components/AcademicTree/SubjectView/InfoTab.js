@@ -34,8 +34,8 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
   }, [subjectDetails, onlyClassToShow]);
   console.log('subjectDetails', subjectDetails);
 
-  const subjectIcon = getFileUrl(subjectDetails?.icon?.id);
-  const cover = getFileUrl(subjectDetails?.cover?.id);
+  const subjectIcon = getFileUrl(subjectDetails?.icon?.cover?.id);
+  const cover = getFileUrl(subjectDetails?.image?.cover?.id);
   console.log('subjectIcon', subjectIcon);
   return (
     <ContextContainer sx={{ padding: 24 }}>
@@ -74,21 +74,57 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
       <ContextContainer>
         <Title>{t('icon')}</Title>
         <Text>{t('iconDescription')}</Text>
-        <Box>
-          <Paper shadow="none" bordered>
-            <ImageLoader src={subjectIcon} />
+        <Stack>
+          <Paper
+            shadow="none"
+            bordered
+            style={{
+              minWidth: 282,
+              maxHeight: 108,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: subjectDetails.color,
+                  width: 48,
+                  height: 48,
+                  borderRadius: '50%',
+                }}
+              >
+                <ImageLoader src={subjectIcon} width={32} height={32} />
+              </Box>
+            </Box>
+            <Text strong style={{ marginTop: 6 }}>
+              {subjectDetails?.name}
+            </Text>
           </Paper>
-        </Box>
+        </Stack>
       </ContextContainer>
 
       <ContextContainer>
         <Title>{t('image')}</Title>
         <Text>{t('image')}</Text>
-        <Box>
-          <Paper shadow="none" bordered>
-            <ImageLoader src={cover} />
-          </Paper>
-        </Box>
+        <Stack>
+          <Box
+            style={{
+              borderRadius: 12,
+              backgroundImage: `url(${cover})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              width: 282,
+              height: 108,
+            }}
+          >
+            {/* <ImageLoader src={cover} width={282} height={108} /> */}
+          </Box>
+        </Stack>
       </ContextContainer>
     </ContextContainer>
   );
