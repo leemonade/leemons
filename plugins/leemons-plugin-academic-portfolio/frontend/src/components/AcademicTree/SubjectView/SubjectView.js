@@ -35,7 +35,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
 
   // For cases when the subject is the child of a reference group
   const singleClassToShow = useMemo(() => {
-    const subjectParentNodeIsGroup = subjectDetails?.classes?.every((cls) => cls.groups); // we need to know if the parent is a group or a course.
+    const subjectParentNodeIsGroup = subjectDetails?.classes?.every((cls) => cls.groups);
     if (subjectParentNodeIsGroup) {
       return subjectDetails?.classes?.find(
         (cls) => cls.groups?.id === subjectTreeNode?.parentItemId
@@ -66,7 +66,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
         />
       </TabPanel>
     ));
-  }, [subjectDetails, singleClassToShow]);
+  }, [subjectDetails, singleClassToShow, program]);
 
   const handleUpdateClass = () => {
     const requestBody = updateForm.getValues();

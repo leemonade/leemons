@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useUserCenters } from '@users/hooks';
 import {
@@ -67,8 +67,6 @@ const AcademicTreePage = () => {
     options: { enabled: selectedProgram?.length > 0 },
   });
 
-  console.log('academicTreeQuery', academicTreeQuery);
-
   const generateGUID = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
   const parseAcademicTreeData = (academicTreeData) => {
@@ -128,12 +126,12 @@ const AcademicTreePage = () => {
     setEnrolllmentDrawerOpenedFromClassroom(classroomId);
   };
 
-  const findNodeById = (node, id) => {
+  const findNodeById = (node, id, parentType = null) => {
     if (node.id === id) {
-      return node;
+      return { ...node, parentNodeType: parentType }; // Add parentNodeType property
     }
     if (node.children) {
-      return node.children.reduce((acc, child) => acc || findNodeById(child, id), null);
+      return node.children.reduce((acc, child) => acc || findNodeById(child, id, node.type), null); // Pass current node's type as parentType for the next level
     }
     return null;
   };
@@ -146,7 +144,22 @@ const AcademicTreePage = () => {
     [academicTreeQuery, selectedTreeNode]
   );
 
-  console.log('selectedNodeObject', selectedNodeObject);
+  const searchForGroupType = useCallback(
+    (nodes) =>
+      nodes.some((node) => {
+        if (node.type === 'group') return true;
+        if (node.children) return searchForGroupType(node.children);
+        return false;
+      }),
+    []
+  );
+
+  const programHasReferenceGroups = useMemo(() => {
+    if (academicTreeQuery) {
+      return searchForGroupType(academicTreeQuery);
+    }
+    return false;
+  }, [academicTreeQuery, searchForGroupType]);
 
   // RENDER ····················································································|
 
@@ -159,6 +172,7 @@ const AcademicTreePage = () => {
             openEnrollmentDrawer={toggleEnrollmentDrawer}
             courseTreeNode={selectedTreeNode}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
+            programHasReferenceGroups={programHasReferenceGroups}
           />
         );
       case 'group':
@@ -184,7 +198,7 @@ const AcademicTreePage = () => {
       default:
         return null;
     }
-  }, [selectedTreeNode, centerProgramsQuery, selectedProgram]);
+  }, [selectedTreeNode, centerProgramsQuery, selectedProgram, programHasReferenceGroups]);
 
   return (
     <>
@@ -234,11 +248,16 @@ const AcademicTreePage = () => {
       >
         <Stack
           ref={scrollRef}
-          spacing={10}
+          spacing={4}
           fullwidth
+          justifyContent="center"
           sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', padding: 24 }}
         >
-          <Stack direction="column" spacing={6} sx={{ width: '15%' }}>
+          <Stack
+            direction="column"
+            spacing={6}
+            sx={{ minWidth: '192px', position: 'sticky', top: 0 }}
+          >
             {treeStructures.map((treeStructure, index) => (
               <Box key={`${index}-${treeStructure?.header?.name}`}>
                 {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
@@ -263,14 +282,15 @@ const AcademicTreePage = () => {
               </Box>
             ))}
           </Stack>
-          {viewToRender}
+          <Stack direction="column" sx={{ minWidth: '928px' }}>
+            {viewToRender}
+          </Stack>
         </Stack>
       </TotalLayoutContainer>
       <EnrollmentDrawer
         scrollRef={scrollRef}
         isOpen={enrollmentDrawerIsOpen}
         closeDrawer={toggleEnrollmentDrawer}
-        selectedTreeNode={selectedTreeNode}
         selectedNode={selectedNodeObject}
         centerId={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.center}
         opensFromClasroom={enrolllmentDrawerOpenedFromClassroom} // classroomId (string)

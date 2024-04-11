@@ -20,7 +20,13 @@ import { Link } from 'react-router-dom';
 import { getProfilesRequest } from '@academic-portfolio/request';
 import { CourseViewStyles } from './CourseView.styles';
 
-const CourseView = ({ program, courseTreeNode, scrollRef, openEnrollmentDrawer }) => {
+const CourseView = ({
+  program,
+  courseTreeNode,
+  scrollRef,
+  openEnrollmentDrawer,
+  programHasReferenceGroups,
+}) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [teacherProfile, setTeacherProfile] = useState();
   const [responsable, setResponsable] = useState();
@@ -40,6 +46,7 @@ const CourseView = ({ program, courseTreeNode, scrollRef, openEnrollmentDrawer }
 
     getTeacherProfile();
   }, [centerId]);
+
   return (
     <TotalLayoutStepContainer
       stepName={
@@ -107,26 +114,31 @@ const CourseView = ({ program, courseTreeNode, scrollRef, openEnrollmentDrawer }
             </Link>
           </Box>
         </Box>
-        <Box className={classes.titleContainer}>
-          <Title order={2}>{t('enrollTitle')}</Title>
-        </Box>
-        <Box>
-          <Alert title={t('AlertTitle')} variant="block" closeable={false}>
-            <Box>
-              <Text>{t('AlertDescription')} </Text>
+        {!programHasReferenceGroups && (
+          <>
+            <Box className={classes.titleContainer}>
+              <Title order={2}>{t('enrollTitle')}</Title>
             </Box>
-            <Text>{t('AlertNote')} </Text>
-          </Alert>
-          <Box className={classes.enrollButton}>
-            <Button
-              variant="link"
-              leftIcon={<AddCircleIcon />}
-              onClick={() => openEnrollmentDrawer()}
-            >
-              {t('enrollButton')}
-            </Button>
-          </Box>
-        </Box>
+
+            <Box>
+              <Alert title={t('AlertTitle')} variant="block" closeable={false}>
+                <Box>
+                  <Text>{t('AlertDescription')} </Text>
+                </Box>
+                <Text>{t('AlertNote')} </Text>
+              </Alert>
+              <Box className={classes.enrollButton}>
+                <Button
+                  variant="link"
+                  leftIcon={<AddCircleIcon />}
+                  onClick={() => openEnrollmentDrawer()}
+                >
+                  {t('enrollButton')}
+                </Button>
+              </Box>
+            </Box>
+          </>
+        )}
       </Stack>
     </TotalLayoutStepContainer>
   );
@@ -137,6 +149,7 @@ CourseView.propTypes = {
   courseTreeNode: PropTypes.object,
   scrollRef: PropTypes.any,
   openEnrollmentDrawer: PropTypes.bool,
+  programHasReferenceGroups: PropTypes.bool,
 };
 
 export { CourseView };

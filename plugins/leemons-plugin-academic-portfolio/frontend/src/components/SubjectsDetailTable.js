@@ -149,7 +149,7 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
         Header: labels?.substages,
         accessor: 'substage',
         valueRender: (substagesValue) =>
-          substagesValue?.length ? substagesValue[0].abbreviation : labels.noSubstages, // Only one substage per subject currently
+          substagesValue?.length ? substagesValue[0].name : labels.noSubstages, // Only one substage per subject currently
       },
       {
         Header: labels?.classrooms,

@@ -14,7 +14,7 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { AddCircleIcon, FileXmlIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
 import { useGroupDetail } from '@academic-portfolio/hooks';
 import { SelectUserAgent } from '@users/components';
 import { Link } from 'react-router-dom';
@@ -32,9 +32,7 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
     { enabled: !!groupTreeNode?.itemId }
   );
   const centerId = program?.centers?.[0]?.id;
-  console.log('groupDetail', groupDetail);
-  console.log('program', program);
-  // console.log('groupNode', groupNode);
+
   useEffect(() => {
     const getTeacherProfile = async () => {
       const response = await getProfilesRequest();
@@ -43,7 +41,7 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
 
     getTeacherProfile();
   }, [centerId]);
-  console.log('teacherProfile', teacherProfile);
+
   return (
     <TotalLayoutStepContainer
       stepName={
