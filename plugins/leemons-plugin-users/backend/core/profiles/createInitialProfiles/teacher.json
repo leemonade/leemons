@@ -113,6 +113,10 @@
       "actionNames": ["admin"]
     },
     {
+      "permissionName": "scores.weights",
+      "actionNames": ["update"]
+    },
+    {
       "permissionName": "content-creator.creator",
       "actionNames": ["view", "update", "create", "delete", "admin"]
     },

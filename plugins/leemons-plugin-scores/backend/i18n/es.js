@@ -322,4 +322,58 @@ module.exports = {
       weight: 'Porcentaje',
     },
   },
+  weighting: {
+    title: 'Reglas de ponderación',
+    subjectsAndGroups: 'Asignaturas y grupos',
+
+    table: {
+      headers: {
+        subject: 'Asignatura',
+        group: 'Grupo',
+        course: 'Curso',
+        rules: 'Reglas',
+        actions: 'Acciones',
+      },
+    },
+  },
+  weightingTypes: {
+    average: 'Media',
+    roles: 'Tipo',
+    modules: 'Módulos',
+  },
+  weightingDrawer: {
+    rules: 'Reglas',
+    type: 'Tipo',
+    weighting: 'Ponderación',
+    table: {
+      applySameValue: 'Aplicar mismo valor',
+      modules: 'Módulos',
+      roles: 'Tipos',
+      weight: 'Porcentaje',
+      total: 'Total',
+    },
+    explanation: 'Explicación',
+    cancel: 'Cancelar',
+    save: 'Guardar',
+  },
+  weightingAlerts: {
+    updateSuccess: 'Ponderación actualizada correctamente',
+    updateError: 'Error actualizando la ponderación',
+    exceedPercentageUpper:
+      'El total de la ponderación no puede sumar más de 100%, revisa los valores de porcentaje.',
+    exceedPercentageLower:
+      'El total de la ponderación no puede ser menor de 100%, revisa los valores de porcentaje.',
+    modulesTypeWarning: {
+      title: 'Importante:',
+      message:
+        'la ponderación por módulos no incluirá en el calculo actividades asignadas individualmente (tareas, test...)',
+    },
+    noModulesWarning: {
+      title: 'No hay módulos asignados todavía',
+      message:
+        'Puedes crear una regla de ponderación aplicando el mismo porcentaje automáticamente para todos los módulos que asignes. Ajusta la regla manualmente cuando quieras.',
+    },
+    newModulesWarning:
+      'Se han añadido nuevos módulos a esta clase. Para incluirlos en la ponderación, modifica los porcentajes',
+  },
 };
