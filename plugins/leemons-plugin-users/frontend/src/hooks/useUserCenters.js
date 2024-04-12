@@ -1,21 +1,17 @@
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
-import { getUserCentersRequest } from '@users/request';
-import { getCookieToken } from '@users/session';
 import { useQuery } from '@tanstack/react-query';
 
-export default function useUserCenters({ enabled = true } = {}) {
+import { getUserCentersRequest } from '@users/request';
+import { getCookieToken } from '@users/session';
+
+export default function useUserCenters(options) {
   const token = getCookieToken(true);
 
-  const query = useQuery(
+  return useQuery(
     ['userCenters', { token }],
     async () => {
       const response = await getUserCentersRequest();
       return response.centers;
     },
-    {
-      enabled,
-    }
+    options
   );
-
-  return query;
 }
