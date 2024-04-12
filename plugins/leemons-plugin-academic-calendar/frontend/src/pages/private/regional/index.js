@@ -10,19 +10,23 @@ import {
   PageContainer,
   Paper,
   useResizeObserver,
+  Drawer,
 } from '@bubbles-ui/components';
-import { PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { PluginCalendarIcon, CalendarIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore } from '@common';
+import { saveRegionalConfig } from '@academic-calendar/request/regional-config';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
 import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { RegionalConfigDetail } from './components/regionalConfigDetail';
+import { useForm } from 'react-hook-form';
 
 const useStyle = createStyles((theme) => ({
   container: {
@@ -83,6 +87,11 @@ const useStyle = createStyles((theme) => ({
     paddingLeft: theme.spacing[2],
     display: 'inline',
   },
+  actionButtonsContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 }));
 
 export default function RegionalCalendars() {
@@ -93,7 +102,7 @@ export default function RegionalCalendars() {
   const [headerDescriptionRef, headerDescription] = useResizeObserver();
   const { classes, cx } = useStyle();
   const { layoutState } = useLayout();
-  const { setLoading, scrollTo } = useContext(LayoutContext);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const deploymentConfig = useDeploymentConfig({
     pluginName: 'academic-calendar',
     ignoreVersion: true,
@@ -116,6 +125,7 @@ export default function RegionalCalendars() {
 
   function addNewRegionalCalendar() {
     store.selectedConfig = {};
+    setIsDrawerOpen(true);
     render();
   }
 
@@ -142,6 +152,31 @@ export default function RegionalCalendars() {
   const minTop = headerBase.height - headerDescription.height + 24;
   if (top < minTop) {
     top = minTop;
+  }
+
+  const form = useForm();
+
+  function save() {
+    form.handleSubmit(async (data) => {
+      try {
+        store.saving = true;
+        render();
+
+        await saveRegionalConfig({
+          ...data,
+          center: store.center,
+        });
+
+        addSuccessAlert(t('saved'));
+        store.selectedConfig = null;
+        loadRegionalConfigs();
+        setIsDrawerOpen(false);
+      } catch (err) {
+        addErrorAlert(getErrorMessage(err));
+      }
+      store.saving = false;
+      render();
+    })();
   }
 
   return (
@@ -195,6 +230,7 @@ export default function RegionalCalendars() {
                                         )}
                                         onClick={() => {
                                           store.selectedConfig = config;
+                                          setIsDrawerOpen(true);
                                           render();
                                         }}
                                       >
@@ -225,27 +261,37 @@ export default function RegionalCalendars() {
                   </Box>
                 </Col>
                 {/* CONTENT ----------------------------------------- */}
-                <Col span={8}>
-                  {store.selectedConfig ? (
-                    <Paper style={{ position: 'relative' }} fullWidth padding={5}>
-                      <RegionalConfigDetail
-                        t={t}
-                        center={store.center}
-                        config={store.selectedConfig}
-                        calendars={store.regionalConfigs}
-                        onSave={() => {
-                          store.selectedConfig = null;
-                          loadRegionalConfigs();
-                        }}
-                      />
-                    </Paper>
-                  ) : null}
-                </Col>
+                <Col span={8}></Col>
               </Grid>
             </ContextContainer>
           </PageContainer>
         </Paper>
       </ContextContainer>
+      <Drawer size="xl" opened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+        <Drawer.Header title={!store.selectedConfig?.id ? t('newRegionalCalendar') : t('edit')} />
+        <Drawer.Content>
+          {store.selectedConfig ? (
+            <RegionalConfigDetail
+              t={t}
+              center={store.center}
+              config={store.selectedConfig}
+              calendars={store.regionalConfigs}
+              form={form}
+              onSave={() => {}}
+            />
+          ) : null}
+        </Drawer.Content>
+        <Drawer.Footer>
+          <Box className={classes.actionButtonsContainer}>
+            <Button type="button" variant="outline" compact onClick={() => setIsDrawerOpen(false)}>
+              {t('cancel')}
+            </Button>
+            <Button onClick={save} loading={store.saving}>
+              {t('save')}
+            </Button>
+          </Box>
+        </Drawer.Footer>
+      </Drawer>
     </>
   );
 }
