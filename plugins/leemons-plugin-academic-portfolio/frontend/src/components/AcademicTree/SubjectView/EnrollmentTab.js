@@ -47,14 +47,17 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
 
   useEffect(() => {
     if (classData) {
-      const mainTeacher = classData.teachers?.find((t) => t.type === 'main-teacher');
-      updateForm?.setValue('mainTeacher', mainTeacher?.teacher);
-      updateForm?.setValue('virtualUrl', classData.virtualUrl);
-      updateForm?.setValue('address', classData.address);
-      updateForm?.setValue('schedule', { days: classData.schedule ?? [] });
-      updateForm?.setValue('id', classData.id);
+      const formValues = {
+        mainTeacher: classData.teachers?.find((teacher) => teacher.type === 'main-teacher')
+          ?.teacher,
+        virtualUrl: classData.virtualUrl,
+        address: classData.address,
+        schedule: { days: classData.schedule ?? [] },
+        id: classData.id,
+      };
+      updateForm.reset(formValues); // Resets the form with new default values
     }
-  }, [classData]);
+  }, [classData, updateForm]);
 
   // HANDLERS ·············································································································||
 

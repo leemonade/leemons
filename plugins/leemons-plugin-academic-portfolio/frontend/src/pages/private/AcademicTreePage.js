@@ -12,29 +12,28 @@ import {
 import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
-import { DndProvider } from 'react-dnd';
-import { Tree, MultiBackend, getBackendOptions } from '@minoru/react-dnd-treeview';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
 import { KnowledgeView } from '@academic-portfolio/components/AcademicTree/KnowledgeView/KnowledgeView';
+import TreeBox from '@academic-portfolio/components/AcademicTree/TreeBox';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
-import { NodeRenderer } from '../../components/AcademicTree/NodeRenderer/NodeRenderer';
-import { TreeHeader } from '../../components/AcademicTree/TreeHeader/TreeHeader';
 
 const AcademicTreePage = () => {
   const [selectedCenter, setSelectedCenter] = useState('');
   const [selectedProgram, setSelectedProgram] = useState('');
   const [selectedTreeNode, setSelectedTreeNode] = useState(null);
   const [enrollmentDrawerIsOpen, setEnrollmentDrawerIsOpen] = useState(false);
+
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
     useState(null);
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
   const scrollRef = useRef();
   const history = useHistory();
+  const viewRef = useRef();
 
   const handleNodeClick = (nodeId) => {
     setSelectedTreeNode(nodeId);
@@ -208,6 +207,18 @@ const AcademicTreePage = () => {
     }
   }, [selectedTreeNode, centerProgramsQuery, selectedProgram, programHasReferenceGroups]);
 
+  const TreeBoxMemo = useMemo(
+    () => (
+      <TreeBox
+        viewRef={viewRef}
+        treeStructures={treeStructures}
+        selectedTreeNode={selectedTreeNode}
+        handleNodeClick={handleNodeClick}
+      />
+    ),
+    [treeStructures, viewRef, selectedTreeNode]
+  );
+
   return (
     <>
       <TotalLayoutContainer
@@ -257,42 +268,20 @@ const AcademicTreePage = () => {
         <Stack
           ref={scrollRef}
           spacing={4}
-          justifyContent="center"
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', padding: 24, width: '100%' }}
+          sx={{
+            overflowY: 'auto',
+            backgroundColor: '#f8f9fb',
+            width: '100%',
+            maxWidth: 1400,
+            margin: 'auto',
+            paddingTop: 24,
+            paddingInline: 24,
+          }}
         >
-          <Stack sx={{ maxWidth: 1400, width: '100%' }}>
-            <Stack
-              direction="column"
-              spacing={6}
-              sx={{ width: '192px', position: 'sticky', top: 0 }}
-            >
-              {treeStructures.map((treeStructure, index) => (
-                <Box key={`${index}-${treeStructure?.header?.name}`}>
-                  {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
-                  <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-                    <Tree
-                      tree={treeStructure.treeData}
-                      rootId={0}
-                      canDrag={() => false}
-                      canDrop={() => false}
-                      render={(node, { depth, isOpen, onToggle }) => (
-                        <NodeRenderer
-                          node={node}
-                          depth={depth}
-                          isOpen={isOpen}
-                          onToggle={onToggle}
-                          isActive={selectedTreeNode?.nodeId === node.nodeId}
-                          handleNodeClick={handleNodeClick}
-                        />
-                      )}
-                    />
-                  </DndProvider>
-                </Box>
-              ))}
-            </Stack>
-            <Stack direction="column" sx={{ minWidth: '928px', width: '100%' }}>
-              {viewToRender}
-            </Stack>
+          {TreeBoxMemo}
+          <Box sx={{ width: 192 }}></Box>
+          <Stack direction="column" sx={{ width: 'calc(100% - 192px)' }} ref={viewRef}>
+            {viewToRender}
           </Stack>
         </Stack>
       </TotalLayoutContainer>

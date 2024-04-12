@@ -9,7 +9,7 @@ import {
   Tabs,
   TabPanel,
   Button,
-  Stack,
+  Box,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 
@@ -33,6 +33,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   );
   const { mutate: mutateClass } = useUpdateClass();
   const updateForm = useForm();
+  const { isDirty } = updateForm.formState;
   const stackRef = useRef();
 
   // For cases when the subject is the child of a reference group
@@ -78,8 +79,11 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
 
     if (requestBody.mainTeacher?.length) {
       requestBody.teachers = [{ teacher: requestBody.mainTeacher, type: 'main-teacher' }];
-      delete requestBody.mainTeacher;
+    } else {
+      requestBody.teachers = [];
     }
+    delete requestBody.mainTeacher;
+
     if (!isEmpty(requestBody.schedule)) {
       requestBody.schedule = requestBody.schedule.days;
     }
@@ -114,11 +118,15 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           scrollRef={scrollRef}
           fixed
           rectRef={stackRef}
-          rightZone={<Button onClick={handleSaveChanges}>{t('saveChanges')}</Button>}
+          rightZone={
+            <Button disabled={!isDirty} onClick={handleSaveChanges}>
+              {t('saveChanges')}
+            </Button>
+          }
         />
       }
     >
-      <Stack ref={stackRef}>
+      <Box ref={stackRef}>
         <LoadingOverlay visible={isLoading} />
         <Tabs
           tabPanelListStyle={{ backgroundColor: 'white' }}
@@ -137,7 +145,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           </TabPanel>
           {EnrollmentTabs}
         </Tabs>
-      </Stack>
+      </Box>
     </TotalLayoutStepContainer>
   );
 };
