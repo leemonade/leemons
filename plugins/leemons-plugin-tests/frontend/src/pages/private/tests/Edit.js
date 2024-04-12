@@ -61,7 +61,7 @@ export default function Edit() {
       store.saving = 'draft';
       render();
 
-      const { subjects, ...toSend } = formValues;
+      const { subjects, subjectsRaw, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
@@ -81,7 +81,7 @@ export default function Edit() {
     try {
       store.saving = 'publish';
       render();
-      const { subjects, ...toSend } = formValues;
+      const { subjects, subjectsRaw, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
