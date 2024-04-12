@@ -25,7 +25,7 @@ import { KnowledgeViewStyles } from './KnowledgeView.styles';
 const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [teacherProfile, setTeacherProfile] = useState();
-  const [responsable, setResponsable] = useState();
+  const [hasResponsableChanged, setHasResponsableChanged] = useState(false);
   const { classes } = KnowledgeViewStyles();
   const { data: knowledgeArea } = useGetKnowledgeArea(
     { id: knowledgeTreeNode?.itemId },
@@ -56,17 +56,15 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
   }, [knowledgeArea, reset, centerId]);
 
   const handleAssignManager = () => {
-    if (responsable) {
-      const values = getValues();
-      mutateKnowledgeArea(values, {
-        onSuccess: () => {
-          addSuccessAlert(t('assignManagerSuccess'));
-        },
-        onError: () => {
-          addErrorAlert(t('assignManagerError'));
-        },
-      });
-    }
+    const values = getValues();
+    mutateKnowledgeArea(values, {
+      onSuccess: () => {
+        addSuccessAlert(t('assignManagerSuccess'));
+      },
+      onError: () => {
+        addErrorAlert(t('assignManagerError'));
+      },
+    });
   };
 
   useEffect(() => {
@@ -74,9 +72,9 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
       const response = await getProfilesRequest();
       setTeacherProfile([response?.profiles?.teacher]);
     };
-    setResponsable(knowledgeArea?.manager);
 
     getTeacherProfile();
+    setHasResponsableChanged(false);
   }, [centerId, knowledgeArea]);
 
   return (
@@ -93,7 +91,7 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
           scrollRef={scrollRef}
           fixed
           rightZone={
-            <Button disabled={!responsable} onClick={() => handleAssignManager()}>
+            <Button disabled={!hasResponsableChanged} onClick={() => handleAssignManager()}>
               {t('saveChanges')}
             </Button>
           }
@@ -102,7 +100,6 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
               variant="outline"
               leftIcon={<RemoveIcon />}
               onClick={() => {
-                setResponsable(null);
                 setValue('managers', null);
               }}
             >
@@ -136,12 +133,12 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
                   onChange={(user) => {
                     if (!user) {
                       field.onChange(user);
-                      setValue('managers', null);
+                      setValue('managers', []);
                     } else {
                       field.onChange(user);
                       setValue('managers', [user.value]);
                     }
-                    setResponsable(user);
+                    setHasResponsableChanged(true);
                   }}
                 />
               )}
@@ -152,7 +149,7 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
           <Text>{t('responsableMoreConfig')} </Text>
           <Box className={classes.responsableLink}>
             <Link to={'/private/academic-portfolio/programs'}>
-              <Text>{t('responsablePrograms')}</Text>
+              <Text strong>{t('responsablePrograms')}</Text>
             </Link>
           </Box>
         </Box>

@@ -4,7 +4,7 @@ import {
   updateKnowledgeAreaRequest,
 } from '@academic-portfolio/request';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getKnowledgeAreasKey } from '../keys/knowledgeAreas';
+import { allKnowledgeAreaKeys, getKnowledgeAreasKey } from '../keys/knowledgeAreas';
 
 export function useCreateKnowledgeArea() {
   const queryClient = useQueryClient();
@@ -24,9 +24,8 @@ export function useUpdateKnowledgeArea() {
 
   return useMutation({
     mutationFn: async (props) => updateKnowledgeAreaRequest(props),
-    onSuccess: (data) => {
-      // Invaidate knowledge-areas query for that center
-      const queryKey = getKnowledgeAreasKey(data.knowledge.center);
+    onSuccess: () => {
+      const queryKey = allKnowledgeAreaKeys;
       queryClient.invalidateQueries(queryKey);
     },
   });

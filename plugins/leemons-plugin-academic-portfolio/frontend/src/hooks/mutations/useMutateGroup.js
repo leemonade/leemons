@@ -1,6 +1,6 @@
 import { updateGroupRequest } from '@academic-portfolio/request';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCourseDetailKey } from '../keys/programCourse';
+import { getGroupDetailKey } from '../keys/programGroup';
 
 function useUpdateGroup() {
   const queryClient = useQueryClient();
@@ -8,7 +8,7 @@ function useUpdateGroup() {
   return useMutation({
     mutationFn: async (props) => updateGroupRequest(props),
     onSuccess: (data) => {
-      const queryKey = getCourseDetailKey(data.id);
+      const queryKey = getGroupDetailKey(data.group.id);
       queryClient.invalidateQueries(queryKey);
     },
   });

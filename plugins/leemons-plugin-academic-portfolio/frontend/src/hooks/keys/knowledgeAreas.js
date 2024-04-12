@@ -7,7 +7,14 @@ export const allKnowledgeAreaKeys = [
 
 export const getKnowledgeAreasKey = (center) => [
   {
-    ...allKnowledgeAreaKeys,
+    ...allKnowledgeAreaKeys[0],
     center,
+  },
+];
+
+export const getKnowledgeAreasByIdKey = (id) => [
+  {
+    ...allKnowledgeAreaKeys[0],
+    id,
   },
 ];

@@ -25,7 +25,7 @@ import { GroupViewStyles } from './GroupView.styles';
 const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [teacherProfile, setTeacherProfile] = useState();
-  const [responsable, setResponsable] = useState();
+  const [hasResponsableChanged, setHasResponsableChanged] = useState(false);
   const { mutate: mutateGroup } = useUpdateGroup();
   const { classes } = GroupViewStyles();
   const { data: groupDetail } = useGroupDetail(
@@ -55,17 +55,15 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
   }, [groupDetail, reset]);
 
   const handleAssignManager = () => {
-    if (responsable) {
-      const values = getValues();
-      mutateGroup(values, {
-        onSuccess: () => {
-          addSuccessAlert(t('assignManagerSuccess'));
-        },
-        onError: () => {
-          addErrorAlert(t('assignManagerError'));
-        },
-      });
-    }
+    const values = getValues();
+    mutateGroup(values, {
+      onSuccess: () => {
+        addSuccessAlert(t('assignManagerSuccess'));
+      },
+      onError: () => {
+        addErrorAlert(t('assignManagerError'));
+      },
+    });
   };
 
   useEffect(() => {
@@ -73,8 +71,8 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
       const response = await getProfilesRequest();
       setTeacherProfile([response?.profiles?.teacher]);
     };
-    setResponsable(groupDetail?.manager);
     getTeacherProfile();
+    setHasResponsableChanged(false);
   }, [centerId, groupDetail]);
 
   return (
@@ -91,7 +89,7 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
           fixed
           rectRef={stackRef}
           rightZone={
-            <Button disabled={!responsable} onClick={() => handleAssignManager()}>
+            <Button disabled={!hasResponsableChanged} onClick={() => handleAssignManager()}>
               {t('saveChanges')}
             </Button>
           }
@@ -100,7 +98,6 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
               variant="outline"
               leftIcon={<RemoveIcon />}
               onClick={() => {
-                setResponsable(null);
                 setValue('managers', null);
               }}
             >
@@ -144,12 +141,12 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
                   onChange={(user) => {
                     if (!user) {
                       field.onChange(user);
-                      setValue('managers', null);
+                      setValue('managers', []);
                     } else {
                       field.onChange(user);
                       setValue('managers', [user.value]);
                     }
-                    setResponsable(user);
+                    setHasResponsableChanged(true);
                   }}
                 />
               )}
@@ -160,7 +157,7 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
           <Text>{t('responsableMoreConfig')} </Text>
           <Box className={classes.responsableLink}>
             <Link to={'/private/academic-portfolio/programs'}>
-              <Text>{t('responsablePrograms')}</Text>
+              <Text strong>{t('responsablePrograms')}</Text>
             </Link>
           </Box>
         </Box>
