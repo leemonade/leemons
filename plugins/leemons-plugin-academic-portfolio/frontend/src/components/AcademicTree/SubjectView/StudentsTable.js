@@ -1,16 +1,56 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import { Table, Avatar, Stack } from '@bubbles-ui/components';
+import { Table, Avatar, Stack, SearchInput } from '@bubbles-ui/components';
 
 import { LocaleDate } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
+function useFilters() {
+  const [query, setQuery] = useState('');
+  const [status, setStatus] = useState('all');
+
+  return [
+    { query, status },
+    (field, value) => {
+      if (field === 'query') {
+        setQuery(value);
+      }
+      if (field === 'status') {
+        setStatus(value);
+      }
+    },
+  ];
+}
+
+function useFilteredStudents({ students = [], filters }) {
+  const normalize = (str) =>
+    str
+      ?.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+  const normalizedQuery = useMemo(() => normalize(filters?.query), [filters?.query]);
+
+  return useMemo(
+    () =>
+      students.filter(
+        ({ name, surnames, email }) =>
+          normalize(name)?.includes(normalizedQuery) ||
+          normalize(surnames)?.includes(normalizedQuery) ||
+          normalize(email)?.includes(normalizedQuery)
+      ) ?? [],
+    [students, normalizedQuery]
+  );
+}
+
 // Data should contain actions ;)
 const StudentsTable = ({ data, showSearchBar, checkBoxColumn }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page.studentsTable'));
+  const [filters, onFilterChange] = useFilters();
+  const filteredStudents = useFilteredStudents({ students: data, filters });
 
   const tableColumns = useMemo(() => {
     let columns = [
@@ -50,8 +90,14 @@ const StudentsTable = ({ data, showSearchBar, checkBoxColumn }) => {
 
   return (
     <Stack direction="column" spacing={4}>
-      {showSearchBar && <div>SEARCH BAR HERE!!!!! .-- - -- - -- - - -- - -</div>}
-      <Table columns={tableColumns} data={data} />
+      {showSearchBar && (
+        <SearchInput
+          placeholder={t('searchBarPlaceholder')}
+          value={filters?.query}
+          onChange={(value) => onFilterChange('query', value)}
+        />
+      )}
+      <Table columns={tableColumns} data={filteredStudents} />
     </Stack>
   );
 };

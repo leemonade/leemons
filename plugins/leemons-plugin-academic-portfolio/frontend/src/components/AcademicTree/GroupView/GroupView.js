@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -31,6 +31,7 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
     { enabled: !!groupTreeNode?.itemId }
   );
   const centerId = program?.centers?.[0]?.id;
+  const stackRef = useRef();
 
   useEffect(() => {
     const getTeacherProfile = async () => {
@@ -40,18 +41,21 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
 
     getTeacherProfile();
   }, [centerId]);
+
   return (
     <TotalLayoutStepContainer
       stepName={
         groupTreeNode?.text ? `${program?.name} - ${groupTreeNode?.text}` : program?.name ?? ''
       }
       clean
+      fullWidth
       scrollRef={scrollRef}
       Footer={
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
           fixed
-          // rightZone={<Button onClick={() => 'hello'}>{'Guardar Cambios 🔫'}</Button>}
+          rectRef={stackRef}
+          rightZone={<Button onClick={() => 'hello'}>{'Guardar Cambios 🔫'}</Button>}
           leftZone={
             <Button variant="outline" leftIcon={<RemoveIcon />}>
               {'Cancelar 🔫'}
@@ -60,7 +64,7 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
         />
       }
     >
-      <Stack direction="column" spacing={3} className={classes.content}>
+      <Stack direction="column" spacing={3} className={classes.content} ref={stackRef}>
         <Title order={2}>{t('basicDataTitle')}</Title>
         <Stack spacing={5} className={classes.courseData}>
           <Box>

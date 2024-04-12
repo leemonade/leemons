@@ -25,55 +25,66 @@ function distributeStudentsToClasses(classes, selectedStudents) {
   const cannotEnrollClasses = [];
   const studentUserAgents = selectedStudents.map(({ value }) => value);
 
-  const knowledgeAreaClassesMap = new Map();
+  const subjectsClassesMap = {};
+  const studentSubjectEnrollment = {}; // Tracks which subjects students are already enrolled in
+
   classes.forEach((cls) => {
-    const knowledgeAreaId = cls.knowledge?.id;
-    if (!knowledgeAreaClassesMap.has(knowledgeAreaId)) {
-      knowledgeAreaClassesMap.set(knowledgeAreaId, { classes: [], totalSeats: 0 });
+    const subjectId = cls.subject?.id;
+    if (!subjectsClassesMap[subjectId]) {
+      subjectsClassesMap[subjectId] = {
+        classes: [],
+        totalSeats: 0,
+        enrolledStudents: 0,
+        attemptedEnrollments: 0,
+      };
     }
-    knowledgeAreaClassesMap
-      .get(knowledgeAreaId)
-      .classes.push({ ...cls, availableSeats: cls.seats - cls.students.length });
-  });
+    const availableSeats = cls.seats - cls.students.length;
+    subjectsClassesMap[subjectId].classes.push({ ...cls, availableSeats });
+    subjectsClassesMap[subjectId].totalSeats += availableSeats;
 
-  // Adjust total seats by checking possible already enrolled students within each knowledge area
-  knowledgeAreaClassesMap.forEach((knowledgeAreaData) => {
-    let adjustedTotalSeats = 0;
-    knowledgeAreaData.classes.forEach((cls) => {
-      // Exclude already enrolled students from the total available seats calculation
-      const nonEnrolledSelectedStudents = studentUserAgents?.filter(
-        (value) => !cls.students.includes(value)
-      );
-      adjustedTotalSeats += Math.max(0, cls.availableSeats - nonEnrolledSelectedStudents.length);
+    cls.students.forEach((studentId) => {
+      if (!studentSubjectEnrollment[studentId]) {
+        studentSubjectEnrollment[studentId] = new Set();
+      }
+      studentSubjectEnrollment[studentId].add(subjectId);
     });
-    knowledgeAreaData.totalSeats = adjustedTotalSeats;
   });
 
-  // Distribute students to classes within each knowledge area
   const studentsToEnrollByClass = new Map();
+
+  // Attempt to enroll students in subjects, skipping those already enrolled in the subject
   studentUserAgents.forEach((studentValue) => {
-    knowledgeAreaClassesMap.forEach((knowledgeAreaData) => {
-      if (!knowledgeAreaData.classes.some((cls) => cls.students.includes(studentValue))) {
-        // Check if not already enrolled
-        const classToEnroll = knowledgeAreaData.classes.find((cls) => cls.availableSeats > 0);
+    Object.keys(subjectsClassesMap).forEach((subjectId) => {
+      if (
+        studentSubjectEnrollment[studentValue] &&
+        studentSubjectEnrollment[studentValue].has(subjectId)
+      ) {
+        // Skip this student for this subject since they're already enrolled
+        return;
+      }
+      const subjectData = subjectsClassesMap[subjectId];
+      subjectData.attemptedEnrollments += 1;
+      if (subjectData.enrolledStudents < subjectData.totalSeats) {
+        const classToEnroll = subjectData.classes.find((cls) => cls.availableSeats > 0);
         if (classToEnroll) {
           if (!studentsToEnrollByClass.has(classToEnroll.id)) {
             studentsToEnrollByClass.set(classToEnroll.id, []);
           }
           studentsToEnrollByClass.get(classToEnroll.id).push(studentValue);
-          classToEnroll.availableSeats -= 1; // Decrement available seat
-          knowledgeAreaData.totalSeats -= 1; // Adjust total seats for the knowledge area
+          classToEnroll.availableSeats -= 1;
+          subjectData.enrolledStudents += 1;
         }
       }
-      // If no seats are available after adjustment, add to cannotEnrollClasses
-      if (knowledgeAreaData.totalSeats <= 0) {
-        knowledgeAreaData.classes.forEach((cls) => {
-          if (!cannotEnrollClasses.includes(cls.id)) {
-            cannotEnrollClasses.push(cls.id);
-          }
-        });
-      }
     });
+  });
+
+  Object.keys(subjectsClassesMap).forEach((subjectId) => {
+    const subjectData = subjectsClassesMap[subjectId];
+    if (subjectData.attemptedEnrollments > subjectData.totalSeats) {
+      subjectData.classes.forEach((cls) => {
+        cannotEnrollClasses.push(cls.id);
+      });
+    }
   });
 
   return { cannotEnrollClasses, studentsToEnrollByClass };
@@ -229,7 +240,7 @@ const EnrollmentDrawer = ({
       return distributeStudentsToClasses(classes, selectedStudents);
     }
 
-    // Not made to handle anything else
+    // Not made to handle any other cases
     return { cannotEnrollClasses: classes };
   };
 
@@ -260,6 +271,7 @@ const EnrollmentDrawer = ({
           enrollmentRequests.push({ class: classIds, students });
         }
       });
+      console.log('enrollmentRequests', enrollmentRequests);
       try {
         enrollmentRequests.forEach(async (requestBody) => {
           await addStudentsToClassesAsync(requestBody);
@@ -309,7 +321,14 @@ const EnrollmentDrawer = ({
           sx={{ padding: 24, overflowY: 'auto', overflowX: 'hidden', marginBottom: 50 }}
         >
           <TotalLayoutStepContainer clean>
-            <RadioGroup data={radioGroupData} value={searchBy} onChange={(v) => setSearchBy(v)} />
+            <RadioGroup
+              data={radioGroupData}
+              value={searchBy}
+              onChange={(value) => {
+                setSearchBy(value);
+                setSelectedStudents([]);
+              }}
+            />
             <ContextContainer>
               {searchBy === 'userData' ? (
                 <StudentsSelectByUserData

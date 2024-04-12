@@ -68,8 +68,6 @@ const AcademicTreePage = () => {
     options: { enabled: selectedProgram?.length > 0 },
   });
 
-  console.log('academicTreeQuery', academicTreeQuery);
-
   const generateGUID = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
   const parseAcademicTreeData = (academicTreeData) => {
@@ -259,41 +257,42 @@ const AcademicTreePage = () => {
         <Stack
           ref={scrollRef}
           spacing={4}
-          fullwidth
           justifyContent="center"
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', padding: 24 }}
+          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', padding: 24, width: '100%' }}
         >
-          <Stack
-            direction="column"
-            spacing={6}
-            sx={{ minWidth: '192px', position: 'sticky', top: 0 }}
-          >
-            {treeStructures.map((treeStructure, index) => (
-              <Box key={`${index}-${treeStructure?.header?.name}`}>
-                {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
-                <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-                  <Tree
-                    tree={treeStructure.treeData}
-                    rootId={0}
-                    canDrag={() => false}
-                    canDrop={() => false}
-                    render={(node, { depth, isOpen, onToggle }) => (
-                      <NodeRenderer
-                        node={node}
-                        depth={depth}
-                        isOpen={isOpen}
-                        onToggle={onToggle}
-                        isActive={selectedTreeNode?.nodeId === node.nodeId}
-                        handleNodeClick={handleNodeClick}
-                      />
-                    )}
-                  />
-                </DndProvider>
-              </Box>
-            ))}
-          </Stack>
-          <Stack direction="column" sx={{ minWidth: '928px' }}>
-            {viewToRender}
+          <Stack sx={{ maxWidth: 1400, width: '100%' }}>
+            <Stack
+              direction="column"
+              spacing={6}
+              sx={{ width: '192px', position: 'sticky', top: 0 }}
+            >
+              {treeStructures.map((treeStructure, index) => (
+                <Box key={`${index}-${treeStructure?.header?.name}`}>
+                  {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
+                  <DndProvider backend={MultiBackend} options={getBackendOptions()}>
+                    <Tree
+                      tree={treeStructure.treeData}
+                      rootId={0}
+                      canDrag={() => false}
+                      canDrop={() => false}
+                      render={(node, { depth, isOpen, onToggle }) => (
+                        <NodeRenderer
+                          node={node}
+                          depth={depth}
+                          isOpen={isOpen}
+                          onToggle={onToggle}
+                          isActive={selectedTreeNode?.nodeId === node.nodeId}
+                          handleNodeClick={handleNodeClick}
+                        />
+                      )}
+                    />
+                  </DndProvider>
+                </Box>
+              ))}
+            </Stack>
+            <Stack direction="column" sx={{ minWidth: '928px', width: '100%' }}>
+              {viewToRender}
+            </Stack>
           </Stack>
         </Stack>
       </TotalLayoutContainer>

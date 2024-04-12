@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -11,6 +11,7 @@ import {
   Button,
 } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
+
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { AddCircleIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
@@ -36,6 +37,7 @@ const CourseView = ({
     { groupId: courseTreeNode?.itemId },
     { enabled: !!courseTreeNode?.itemId }
   );
+  const stackRef = useRef();
   const centerId = program?.centers?.[0]?.id;
 
   useEffect(() => {
@@ -53,11 +55,13 @@ const CourseView = ({
         courseTreeNode?.text ? `${program?.name} - ${courseTreeNode?.text}` : program?.name ?? ''
       }
       clean
+      fullWidth
       scrollRef={scrollRef}
       Footer={
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
           fixed
+          rectRef={stackRef}
           rightZone={<Button onClick={() => 'hello'}>{'Guardar Cambios 🔫'}</Button>}
           leftZone={
             <Button variant="outline" leftIcon={<RemoveIcon />}>
@@ -67,7 +71,7 @@ const CourseView = ({
         />
       }
     >
-      <Stack direction="column" spacing={3} className={classes.content}>
+      <Stack direction="column" spacing={3} className={classes.content} ref={stackRef}>
         <Title order={2}>{t('basicDataTitle')}</Title>
         <Stack spacing={5} className={classes.courseData}>
           <Box>

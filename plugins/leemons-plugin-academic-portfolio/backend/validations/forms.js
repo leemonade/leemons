@@ -606,7 +606,7 @@ const updateCourseSchema = {
     number: stringSchema,
     managers: arrayStringSchema,
   },
-  required: ['id', 'name', 'abbreviation'],
+  required: ['id'],
   additionalProperties: false,
 };
 
@@ -624,14 +624,15 @@ async function validateUpdateCourse({ data, ctx }) {
 
   // ES: Comprobamos que no exista ya el curso
   // EN: Check if the course already exists
-  const groupCount = await ctx.tx.db.Groups.countDocuments({
-    id: { $ne: data.id },
-    abbreviation: data.abbreviation,
-    program: course.program,
-    type: 'course',
-  });
+  // *OLD: Not needed anymore as courses do not have an abbreviation
+  // const groupCount = await ctx.tx.db.Groups.countDocuments({
+  //   id: { $ne: data.id },
+  //   abbreviation: data.abbreviation,
+  //   program: course.program,
+  //   type: 'course',
+  // });
 
-  if (groupCount) throw new LeemonsError(ctx, { message: 'The course already exists' });
+  // if (groupCount) throw new LeemonsError(ctx, { message: 'The course already exists' });
 }
 
 const updateGroupSchema = {
@@ -642,7 +643,7 @@ const updateGroupSchema = {
     abbreviation: stringSchema,
     managers: arrayStringSchema,
   },
-  required: ['id', 'name', 'abbreviation'],
+  required: ['id'],
   additionalProperties: false,
 };
 
@@ -660,14 +661,15 @@ async function validateUpdateGroup({ data, ctx }) {
 
   // ES: Comprobamos que no exista ya el curso
   // EN: Check if the group already exists
-  const groupCount = await ctx.tx.db.Groups.countDocuments({
-    id: { $ne: data.id },
-    abbreviation: data.abbreviation,
-    program: group.program,
-    type: 'group',
-  });
+  // *OLD: Not needed anymore as courses do not have an abbreviation
+  // const groupCount = await ctx.tx.db.Groups.countDocuments({
+  //   id: { $ne: data.id },
+  //   abbreviation: data.abbreviation,
+  //   program: group.program,
+  //   type: 'group',
+  // });
 
-  if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
+  // if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
 }
 
 async function validateUniquenessOfInternalId({ program, compiledInternalId, subject, ctx }) {

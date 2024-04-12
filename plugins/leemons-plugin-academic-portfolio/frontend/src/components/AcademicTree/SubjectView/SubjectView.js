@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
@@ -9,6 +9,7 @@ import {
   Tabs,
   TabPanel,
   Button,
+  Stack,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 
@@ -32,6 +33,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   );
   const { mutate: mutateClass } = useUpdateClass();
   const updateForm = useForm();
+  const stackRef = useRef();
 
   // For cases when the subject is the child of a reference group
   const singleClassToShow = useMemo(() => {
@@ -57,7 +59,10 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
         </TabPanel>
       );
     }
-    return subjectDetails?.classes?.map((cls) => (
+    const sortedClasses = subjectDetails?.classes?.sort(
+      (a, b) => a.classWithoutGroupId - b.classWithoutGroupId
+    );
+    return sortedClasses?.map((cls) => (
       <TabPanel key={cls.id} label={cls?.alias ?? cls.classWithoutGroupId}>
         <EnrollmentTab
           classData={cls}
@@ -102,33 +107,37 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
         subjectTreeNode?.text ? `${program?.name} - ${subjectTreeNode?.text}` : program?.name ?? ''
       }
       clean
+      fullWidth
       scrollRef={scrollRef}
       Footer={
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
           fixed
+          rectRef={stackRef}
           rightZone={<Button onClick={handleSaveChanges}>{t('saveChanges')}</Button>}
         />
       }
     >
-      <LoadingOverlay visible={isLoading} />
-      <Tabs
-        tabPanelListStyle={{ backgroundColor: 'white' }}
-        fullHeight
-        onChange={(val) => {
-          setActiveTab(val);
-          updateForm.reset();
-        }}
-      >
-        <TabPanel label={t('info')}>
-          <InfoTab
-            subjectDetails={subjectDetails}
-            onlyClassToShow={singleClassToShow}
-            subjectNode={subjectTreeNode}
-          />
-        </TabPanel>
-        {EnrollmentTabs}
-      </Tabs>
+      <Stack ref={stackRef}>
+        <LoadingOverlay visible={isLoading} />
+        <Tabs
+          tabPanelListStyle={{ backgroundColor: 'white' }}
+          fullHeight
+          onChange={(val) => {
+            setActiveTab(val);
+            updateForm.reset();
+          }}
+        >
+          <TabPanel label={t('info')}>
+            <InfoTab
+              subjectDetails={subjectDetails}
+              onlyClassToShow={singleClassToShow}
+              subjectNode={subjectTreeNode}
+            />
+          </TabPanel>
+          {EnrollmentTabs}
+        </Tabs>
+      </Stack>
     </TotalLayoutStepContainer>
   );
 };

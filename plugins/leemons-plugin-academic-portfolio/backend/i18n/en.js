@@ -690,6 +690,8 @@ module.exports = {
   },
   tree_page: {
     enrollmentAndManagement: 'Enrollment and management',
+    deletedStudentSuccess: 'Student successfully deleted',
+    deletedStudentError: 'The student could not be deleted',
     cancelHeaderButton: 'Cancel',
     centerPlaceholder: 'Select a center',
     programPlaceholder: 'Select a program',
@@ -780,6 +782,7 @@ module.exports = {
       name: 'Name',
       email: 'Email',
       birthdate: 'Birthdate',
+      searchBarPlaceholder: 'Search students by name, surnames or email',
     },
     addUsers: {
       title: 'Assign Students',

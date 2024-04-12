@@ -694,7 +694,9 @@ module.exports = {
     studentRequired: 'Campo necesario',
   },
   tree_page: {
-    enrollmentAndManagement: 'Matrícula y gestión',
+    enrollmentAndManagement: 'Matrículación y gestión',
+    deletedStudentSuccess: 'Estudiante eliminado con éxito',
+    deletedStudentError: 'No se ha podido eliminar al estudiante',
     cancelHeaderButton: 'Cancelar',
     centerPlaceholder: 'Seleccionar un centro',
     programPlaceholder: 'Seleccionar un programa',
@@ -783,6 +785,7 @@ module.exports = {
       name: 'Nombre',
       email: 'Email',
       birthdate: 'Fecha de Nacimiento',
+      searchBarPlaceholder: 'Buscar estudiantes por nombre, apellidos o email',
     },
     addUsers: {
       title: 'Asignar estudiantes',
