@@ -50,8 +50,8 @@ const DashboardCard = ({
       )
     );
   }
-  const { assignable } = activity;
-  const { asset, role, roleDetails } = assignable;
+  const { assignable } = activity ?? {};
+  const { asset, role, roleDetails } = assignable ?? {};
   const preparedAsset = prepareAsset(asset);
   const evaluationData = getOngoingInfo({ instance: activity });
   const rolesLocalizations = useRolesLocalizations([role]);
@@ -61,14 +61,14 @@ const DashboardCard = ({
     if (isTeacher) {
       return null;
     }
-    if (!activity.requiresScoring) {
+    if (!activity?.requiresScoring) {
       return null;
     }
 
     const grades = assignation.grades.filter((grade) => grade.type === 'main');
     const sum = grades.reduce((s, grade) => grade.grade + s, 0);
     return sum / grades.length;
-  }, [assignation?.grades, activity.requiresScoring]);
+  }, [assignation?.grades, activity?.requiresScoring]);
 
   return (
     <Box className={classes.root}>
@@ -77,9 +77,9 @@ const DashboardCard = ({
         introductionCard={false}
         assetNumber={assetNumber}
         assignation={assignation}
-        score={activity.requiresScoring && score}
+        score={activity?.requiresScoring && score}
         program={activity?.subjects?.[0]?.program}
-        isCalificable={activity.requiresScoring}
+        isCalificable={activity?.requiresScoring}
         instance={activity}
         evaluationInfo={evaluationData}
         fileType={activity?.assignable?.role}
