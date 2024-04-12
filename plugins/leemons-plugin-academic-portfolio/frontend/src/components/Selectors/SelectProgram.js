@@ -38,6 +38,7 @@ const SelectProgram = forwardRef(
       multiple,
       autoSelectOneOption = true,
       onLoadedPrograms = () => {},
+      hideIfOnlyOne,
       ...props
     },
     ref
@@ -92,6 +93,10 @@ const SelectProgram = forwardRef(
       }
     }, [data, loading, value]);
 
+    if (hideIfOnlyOne && data?.length === 1) {
+      return null;
+    }
+
     if (multiple) {
       return (
         <MultiSelect
@@ -129,6 +134,7 @@ SelectProgram.propTypes = {
   firstSelected: PropTypes.bool,
   multiple: PropTypes.bool,
   autoSelectOneOption: PropTypes.bool,
+  hideIfOnlyOne: PropTypes.bool,
 };
 
 export { SelectProgram };
