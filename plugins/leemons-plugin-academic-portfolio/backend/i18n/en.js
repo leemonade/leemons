@@ -581,4 +581,8 @@ module.exports = {
     collision: 'Some subjects are not compatible',
     allSubjects: 'All subjects',
   },
+  selectSubjectAndCourse: {
+    subject: 'Subject',
+    course: 'Course',
+  },
 };
