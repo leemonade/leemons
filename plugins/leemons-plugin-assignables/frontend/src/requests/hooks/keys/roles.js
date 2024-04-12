@@ -5,6 +5,12 @@ export const allRolesKeys = [
   },
 ];
 
+/*
+ * ===
+ * GET ROLES
+ * ===
+ */
+
 export const allRolesGetKey = [
   {
     ...allRolesKeys[0],
@@ -17,5 +23,25 @@ export const rolesGetKey = ({ role }) => [
     ...allRolesGetKey[0],
 
     role,
+  },
+];
+
+/*
+ * ===
+ * LIST ROLES
+ * ===
+ */
+
+export const allRolesListKey = [
+  {
+    ...allRolesKeys[0],
+    action: 'list',
+  },
+];
+
+export const rolesListKey = ({ details }) => [
+  {
+    ...allRolesListKey[0],
+    details,
   },
 ];
