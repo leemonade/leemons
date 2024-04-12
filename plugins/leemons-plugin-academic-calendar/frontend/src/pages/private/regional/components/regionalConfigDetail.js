@@ -121,6 +121,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
   function getConfigDefaultValue() {
     return {
       ...config,
+      name: config.name || '',
       regionalEvents:
         _.map(config.regionalEvents, (e) => ({
           ...e,
