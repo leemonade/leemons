@@ -19,6 +19,8 @@ import { useCourseDetail } from '@academic-portfolio/hooks';
 import { SelectUserAgent } from '@users/components';
 import { Link } from 'react-router-dom';
 import { getProfilesRequest } from '@academic-portfolio/request';
+import useUpdateCourse from '@academic-portfolio/hooks/mutations/useMutateCourse';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { CourseViewStyles } from './CourseView.styles';
 
 const CourseView = ({
@@ -32,22 +34,54 @@ const CourseView = ({
   const [teacherProfile, setTeacherProfile] = useState();
   const [responsable, setResponsable] = useState();
   const { classes } = CourseViewStyles();
-  const { control } = useForm();
+
+  const { mutate: mutateCourse } = useUpdateCourse();
   const { data: courseDetail } = useCourseDetail(
     { groupId: courseTreeNode?.itemId },
     { enabled: !!courseTreeNode?.itemId }
   );
   const stackRef = useRef();
-  const centerId = program?.centers?.[0]?.id;
+  const centerId = program?.centers?.[0];
 
+  const defaultValues = {
+    id: courseDetail?.id,
+    name: courseDetail?.name,
+    abbreviation: courseDetail?.name,
+    managers: courseDetail?.manager ? [courseDetail.manager] : [],
+  };
+
+  const { control, setValue, reset } = useForm({ defaultValues });
+  useEffect(() => {
+    if (courseDetail) {
+      const newDefaultValues = {
+        id: courseDetail.id,
+        name: courseDetail.name,
+        abbreviation: courseDetail.abbreviation,
+        managers: courseDetail.manager ? [courseDetail.manager] : [],
+      };
+      reset(newDefaultValues); // Esto actualiza los valores del formulario con los nuevos valores predeterminados
+    }
+  }, [courseDetail, reset]);
+  const handleAssignManager = () => {
+    if (responsable) {
+      mutateCourse(defaultValues, {
+        onSuccess: () => {
+          addSuccessAlert(t('assignManagerSuccess'));
+        },
+        onError: () => {
+          addErrorAlert(t('assignManagerError'));
+        },
+      });
+    }
+  };
   useEffect(() => {
     const getTeacherProfile = async () => {
       const response = await getProfilesRequest();
       setTeacherProfile([response?.profiles?.teacher]);
     };
-
+    setResponsable(courseDetail?.manager);
     getTeacherProfile();
-  }, [centerId]);
+  }, [centerId, courseDetail]);
 
   return (
     <TotalLayoutStepContainer
@@ -62,10 +96,21 @@ const CourseView = ({
           scrollRef={scrollRef}
           fixed
           rectRef={stackRef}
-          rightZone={<Button onClick={() => 'hello'}>{'Guardar Cambios 🔫'}</Button>}
+          rightZone={
+            <Button disabled={!responsable} onClick={() => handleAssignManager()}>
+              {t('saveChanges')}
+            </Button>
+          }
           leftZone={
-            <Button variant="outline" leftIcon={<RemoveIcon />}>
-              {'Cancelar 🔫'}
+            <Button
+              variant="outline"
+              leftIcon={<RemoveIcon />}
+              onClick={() => {
+                setResponsable(null);
+                setValue('managers', null);
+              }}
+            >
+              {t('cancelHeaderButton')}
             </Button>
           }
         />
@@ -89,23 +134,34 @@ const CourseView = ({
             </Box>
           )}
         </Stack>
-        <Box className={classes.responsable}>
-          <Controller
-            name="responsable"
-            control={control}
-            defaultValue={courseDetail?.manager}
-            value={responsable}
-            render={({ field }) => (
-              <SelectUserAgent
-                // {...field}
-                label={t('responsable')}
-                profiles={teacherProfile}
-                centers={centerId}
-                onChange={(user) => setResponsable(user)}
-              />
-            )}
-          />
-        </Box>
+        {teacherProfile && centerId && (
+          <Box className={classes.responsable}>
+            <Controller
+              name="managers"
+              control={control}
+              render={({ field }) => (
+                <SelectUserAgent
+                  {...field}
+                  label={t('responsableLabel')}
+                  profiles={teacherProfile}
+                  centers={centerId}
+                  returnItem
+                  maxSelectedValues={1}
+                  onChange={(user) => {
+                    if (!user) {
+                      field.onChange(user);
+                      setValue('managers', null);
+                    } else {
+                      field.onChange(user);
+                      setValue('managers', [user]);
+                    }
+                    setResponsable(user);
+                  }}
+                />
+              )}
+            />
+          </Box>
+        )}
         <Box className={classes.responsableContainer}>
           <Text>{t('responsableMoreConfig')} </Text>
           <Box className={classes.responsableLink}>

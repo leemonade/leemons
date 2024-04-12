@@ -734,6 +734,8 @@ module.exports = {
     classroomAdress: 'Dirección o ubicación física del aula',
     lessonSchedule: 'Horario de clase',
     actualEnrollment: 'Matriculados actualmente',
+    assignManagerSuccess: 'Responsable asignado con éxito',
+    assignManagerError: 'Error asignando responsable',
     configTreeView: 'Configurar vista del árbol',
     page_title: 'Arbol de portafolio',
     page_description:

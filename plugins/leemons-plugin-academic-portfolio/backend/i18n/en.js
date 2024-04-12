@@ -732,6 +732,8 @@ module.exports = {
     actualEnrollment: 'Actual enrollment',
     deletedStudentSuccess: 'Student deleted successfully',
     deletedStudentError: 'The student could not be removed from the classroom',
+    assignManagerSuccess: 'Manager assigned successfully',
+    assignManagerError: 'Error assigning Manager',
     configTreeView: 'Configure tree view',
     page_title: 'Academic Portofolio Tree',
     page_description:
