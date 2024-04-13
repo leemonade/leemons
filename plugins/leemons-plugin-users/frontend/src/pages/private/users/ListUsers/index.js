@@ -113,6 +113,8 @@ function ListUsers() {
     if (addPermission) {
       store.canAdd =
         addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
+
+      store.canAdd = false;
     }
     if (importPermission) {
       store.canImport =
@@ -191,13 +193,18 @@ function ListUsers() {
     load();
   }
 
-  function handleOpenUserAdminDrawer() {
-    store.openedUserAdminDrawer = true;
+  function handleOpenUserDrawer() {
+    if (!store.canAdd) {
+      store.openedUserDetailDrawer = true;
+    } else {
+      store.openedUserAdminDrawer = true;
+    }
     render();
   }
 
-  async function handleCloseUserAdminDrawer(reload) {
+  async function handleCloseUserDrawer(reload) {
     store.openedUserAdminDrawer = false;
+    store.openedUserDetailDrawer = false;
     store.openUser = null;
     render();
     if (reload && isBoolean(reload)) {
@@ -359,7 +366,7 @@ function ListUsers() {
                 <ActionButton
                   onClick={() => {
                     store.openUser = item;
-                    handleOpenUserAdminDrawer();
+                    handleOpenUserDrawer();
                   }}
                   tooltip={t('view')}
                   icon={<ExpandDiagonalIcon />}
@@ -494,7 +501,7 @@ function ListUsers() {
                     <ListEmptyState
                       description={t(store.isSearching ? 'noResults' : 'emptyState')}
                       buttonLabel={t('new')}
-                      onClick={handleOpenUserAdminDrawer}
+                      onClick={handleOpenUserDrawer}
                     />
                   )}
                 </Box>
@@ -518,14 +525,14 @@ function ListUsers() {
             </ContextContainer>
           </Box>
         </TLayout.Content>
-        <TLayout.Footer fullWidth showFooterBorder>
+        <TLayout.Footer fullWidth>
           <TLayout.Footer.RightActions>
             {store.canImport && (
               <Button variant="outline" onClick={goImportPage} leftIcon={<CloudUploadIcon />}>
                 {t('import')}
               </Button>
             )}
-            {store.canAdd && <Button onClick={handleOpenUserAdminDrawer}>{t('new')}</Button>}
+            {store.canAdd && <Button onClick={handleOpenUserDrawer}>{t('new')}</Button>}
           </TLayout.Footer.RightActions>
         </TLayout.Footer>
       </TLayout>
@@ -549,24 +556,19 @@ function ListUsers() {
         }}
         onConfirm={enableSelectedUsers}
       />
-      {/*
+
       <UserDetailDrawer
-        opened={store.openedUserDrawer}
-        userId={store.openUser}
+        opened={store.openedUserDetailDrawer}
+        userId={store.openUser?.id}
         centerId={store.center}
-        profileId={store.profile}
-        onChange={load}
-        onClose={() => {
-          store.openedUserDrawer = false;
-          render();
-        }}
+        onClose={handleCloseUserDrawer}
       />
-      */}
+
       <UserAdminDrawer
         centerId={store.center}
         user={store.openUser}
         opened={store.openedUserAdminDrawer}
-        onClose={handleCloseUserAdminDrawer}
+        onClose={handleCloseUserDrawer}
       />
     </>
   );
