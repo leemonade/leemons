@@ -2,10 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { isArray, escapeRegExp } from 'lodash';
 import { TagsInput } from '@bubbles-ui/components';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useStore } from '../useStore';
 import { TagsService } from './TagsService';
 
-function TagsAutocomplete({ pluginName, type, ...props }) {
+function TagsAutocomplete({ pluginName, type, labels, ...props }) {
+  const { t: tCommon } = useCommonTranslate('formWithTheme');
+
   if (!isArray(props.value)) {
     // eslint-disable-next-line no-param-reassign
     props.value = [];
@@ -27,7 +30,14 @@ function TagsAutocomplete({ pluginName, type, ...props }) {
     search('');
   }, []);
 
-  return <TagsInput {...props} suggestions={store.data} onSearch={search} />;
+  return (
+    <TagsInput
+      {...props}
+      labels={{ ...labels, addButton: labels?.addButton ?? tCommon('add') }}
+      suggestions={store.data}
+      onSearch={search}
+    />
+  );
 }
 
 TagsAutocomplete.propTypes = {
@@ -35,6 +45,7 @@ TagsAutocomplete.propTypes = {
   type: PropTypes.string,
   value: PropTypes.array,
   onChange: PropTypes.func,
+  labels: PropTypes.object,
 };
 
 // eslint-disable-next-line import/prefer-default-export

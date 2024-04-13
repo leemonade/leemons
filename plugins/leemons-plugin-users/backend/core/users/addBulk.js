@@ -55,10 +55,11 @@ async function handleUserCreationOrUpdate({ id, userData, birthdate, password, c
     user = user.toObject();
     isNewUser = true;
   } else if (id) {
+    const { status, ...userDataToUpdate } = userData;
     await ctx.tx.db.Users.updateOne(
       { id },
       {
-        ...userData,
+        ...userDataToUpdate,
         email,
         birthdate,
       }

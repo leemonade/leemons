@@ -1,4 +1,4 @@
-import { Drawer } from '@bubbles-ui/components';
+import { BaseDrawer } from '@bubbles-ui/components';
 import DetailUser from '@users/pages/private/users/DetailUser';
 import PropTypes from 'prop-types';
 import React from 'react';

@@ -1,10 +1,9 @@
-/* eslint-disable prefer-const */
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { isArray, isFunction, map, noop } from 'lodash';
 import { MultiSelect, Select } from '@bubbles-ui/components';
 import { listCentersRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';
-import { isArray, isFunction, map } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
 
 function SelectCenter({
   multiple = false,
@@ -14,9 +13,10 @@ function SelectCenter({
   onChange,
   autoSelectOneOption = true,
   value: userValue,
+  onLoadCenters = noop,
   ...props
 }) {
-  let [data, setData] = useState([]);
+  const [data, setData] = useState([]);
   const [value, setValue] = useState(null);
 
   const handleOnChange = (val) => {
@@ -43,6 +43,7 @@ function SelectCenter({
             value: id,
           }));
           setData(values);
+          onLoadCenters(centers);
 
           if (firstSelected) {
             handleOnChange(values[0].value);
@@ -53,6 +54,7 @@ function SelectCenter({
         // Nothing to do
       }
     }
+
     const centers = getCentersWithToken();
     if (isArray(centers)) {
       const values = map(centers, ({ name, id }) => ({
@@ -60,6 +62,7 @@ function SelectCenter({
         value: id,
       }));
       setData(values);
+      onLoadCenters(centers);
 
       if (firstSelected) {
         handleOnChange(values[0].value);
@@ -75,15 +78,16 @@ function SelectCenter({
     loadData();
   }, []);
 
+  let dataToRender = data;
   if (additionalData) {
-    data = [...additionalData, ...data];
+    dataToRender = [...additionalData, ...data];
   }
 
   if (multiple)
     return (
       <MultiSelect
         {...props}
-        data={data}
+        data={dataToRender}
         value={value}
         autoSelectOneOption={autoSelectOneOption}
         onChange={handleOnChange}
@@ -93,7 +97,7 @@ function SelectCenter({
   return (
     <Select
       {...props}
-      data={data}
+      data={dataToRender}
       value={value}
       autoSelectOneOption={autoSelectOneOption}
       onChange={handleOnChange}
@@ -108,6 +112,8 @@ SelectCenter.propTypes = {
   firstSelected: PropTypes.bool,
   onChange: PropTypes.func,
   value: PropTypes.string,
+  autoSelectOneOption: PropTypes.bool,
+  onLoadCenters: PropTypes.func,
 };
 
 export { SelectCenter };

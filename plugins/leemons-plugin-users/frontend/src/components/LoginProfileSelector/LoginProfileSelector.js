@@ -36,6 +36,8 @@ export const LOGIN_PROFILE_SELECTOR_PROP_TYPES = {
   className: PropTypes.string,
 };
 
+const PROFILES_ORDER = ['teacher', 'admin', 'super'];
+
 const LoginProfileSelector = ({
   labels,
   centers,
@@ -90,10 +92,13 @@ const LoginProfileSelector = ({
 
   const profilesData = React.useMemo(
     () =>
-      profiles.map((profile) => ({
-        value: profile.id,
-        label: profile.name,
-      })),
+      profiles
+        .sort((a, b) => PROFILES_ORDER.indexOf(a.sysName) - PROFILES_ORDER.indexOf(b.sysName))
+        .reverse()
+        .map((profile) => ({
+          value: profile.id,
+          label: profile.name,
+        })),
     [profiles]
   );
 
