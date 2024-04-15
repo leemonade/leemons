@@ -2,29 +2,24 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { omit, isArray } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
-  Alert,
-  ActionButton,
   Box,
+  Alert,
   Stack,
   Button,
-  Checkbox,
-  ContextContainer,
-  BaseDrawer,
-  MultiSelect,
-  RadioGroup,
+  Drawer,
   Select,
   Switch,
-  Title,
+  Checkbox,
   TextInput,
   TimeInput,
-  TotalLayoutContainer,
-  TotalLayoutStepContainer,
-  TotalLayoutFooterContainer,
+  RadioGroup,
+  MultiSelect,
+  InputWrapper,
+  ContextContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { DatePicker } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
@@ -42,7 +37,6 @@ import dashboard from '../../../public/dashboard.svg';
 import { SelectItem } from './components/SelectItem';
 import { getOverlapsRequest } from '../../request';
 
-const DRAWER_WIDTH = 576;
 const HALF_WIDTH = 'calc(50% - 10px)';
 
 const ValueComponent = (props) => <SelectItem {...props} isValueComponent />;
@@ -78,7 +72,7 @@ const DetailDrawer = ({
   const [classes, setClasses] = useState([]);
   const [overWriteMessages, setOverWriteMessages] = useState(false);
   const [overlaps, setOverlaps] = useState([]);
-  const scrollRef = React.useRef(null);
+
   const {
     control,
     handleSubmit,
@@ -271,340 +265,330 @@ const DetailDrawer = ({
 
   const { classes: styles } = DetailDrawerStyles({}, { name: 'DetailDrawer' });
   return (
-    <BaseDrawer empty withOverlay close={false} opened={open} onClose={onClose} size={DRAWER_WIDTH}>
-      <form onSubmit={handleSubmit(saveMessageConfig)}>
-        <TotalLayoutContainer
-          clean
-          scrollRef={scrollRef}
-          Header={
-            <Stack
-              fullWidth
-              justifyContent="space-between"
-              alignItems="center"
-              style={{
-                padding: `0 16px 0 24px`,
-                height: 70,
+    <Drawer opened={open} onClose={onClose} size="xl">
+      <Drawer.Header title={isNew ? labels.new : labels.edit}>
+        <Drawer.Header.RightActions>
+          {!isNew && (
+            <Controller
+              control={control}
+              name="isUnpublished"
+              render={({ field: { value, ...field } }) => (
+                <Switch label={labels.unpublish} checked={value} {...field} />
+              )}
+            />
+          )}
+        </Drawer.Header.RightActions>
+      </Drawer.Header>
+
+      <Drawer.Content>
+        <ContextContainer>
+          <ContextContainer title={labels.basicData}>
+            <Controller
+              control={control}
+              name="internalName"
+              rules={{ required: labels?.form?.internalNameError }}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  label={labels.internalName}
+                  placeholder={labels.internalNamePlaceholder}
+                  required
+                  error={errors.internalName}
+                />
+              )}
+            />
+          </ContextContainer>
+          <ContextContainer title={labels.toWho} direction="row">
+            <Box
+              sx={{
+                visibility: isTeacher && 'hidden',
+                position: isTeacher && 'absolute',
               }}
             >
-              <Title order={3}>{isNew ? labels.new : labels.edit}</Title>
-              <Stack>
-                {!isNew && (
-                  <Controller
-                    control={control}
-                    name="isUnpublished"
-                    render={({ field: { value, ...field } }) => (
-                      <Switch label={labels.unpublish} checked={value} {...field} />
-                    )}
+              <Controller
+                control={control}
+                name="centers"
+                rules={{ required: labels?.form?.centerError }}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    required
+                    data={centers}
+                    label={labels.center}
+                    placeholder={labels.centerPlaceholder}
+                    error={errors.centers}
+                    clearable={labels.clear}
+                    autoSelectOneOption
                   />
                 )}
-                <ActionButton icon={<RemoveIcon />} onClick={onClose} />
-              </Stack>
-            </Stack>
-          }
-        >
-          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflow: 'auto' }}>
-            <TotalLayoutStepContainer
-              clean
-              Footer={
-                <TotalLayoutFooterContainer
-                  fixed
-                  scrollRef={scrollRef}
-                  width={DRAWER_WIDTH}
-                  style={{ right: 0, zIndex: 99 }}
-                  leftZone={
-                    <Button variant="outline" onClick={onClose}>
-                      {labels.cancel}
-                    </Button>
-                  }
-                  rightZone={<Button type="submit">{buttonLabel}</Button>}
-                />
-              }
-            >
-              <Box>
-                <ContextContainer padded>
-                  <ContextContainer>
-                    <Controller
-                      control={control}
-                      name="internalName"
-                      rules={{ required: labels?.form?.internalNameError }}
-                      render={({ field }) => (
-                        <TextInput
-                          {...field}
-                          label={labels.internalName}
-                          placeholder={labels.internalNamePlaceholder}
-                          required
-                          error={errors.internalName}
-                        />
-                      )}
-                    />
-                  </ContextContainer>
-                  <ContextContainer title={labels.toWho}>
-                    <ContextContainer direction="row">
-                      <Box
-                        sx={{
-                          visibility: isTeacher && 'hidden',
-                          position: isTeacher && 'absolute',
-                        }}
-                      >
-                        <Controller
-                          control={control}
-                          name="centers"
-                          rules={{ required: labels?.form?.centerError }}
-                          render={({ field }) => (
-                            <Select
-                              data={centers}
-                              label={labels.center}
-                              placeholder={labels.centerPlaceholder}
-                              {...field}
-                              error={errors.centers}
-                              clearable={labels.clear}
-                              autoSelectOneOption
-                            />
-                          )}
-                        />
-                      </Box>
-                      <Box>
-                        <Controller
-                          control={control}
-                          name="programs"
-                          render={({ field }) => (
-                            <MultiSelect
-                              disabled={!centersValue || !programs.length}
-                              data={programs}
-                              label={labels.program}
-                              placeholder={labels.programPlaceholder}
-                              {...field}
-                            />
-                          )}
-                        />
-                      </Box>
-                    </ContextContainer>
-                    <ContextContainer direction="row">
-                      <Box>
-                        <Controller
-                          control={control}
-                          name="profiles"
-                          render={({ field }) => (
-                            <MultiSelect
-                              data={profiles}
-                              label={labels.profile}
-                              placeholder={labels.profilePlaceholder}
-                              {...field}
-                            />
-                          )}
-                        />
-                      </Box>
-                      <Box />
-                    </ContextContainer>
-                    {isTeacher && (
-                      <Box>
-                        <Controller
-                          control={control}
-                          name="classes"
-                          render={({ field }) => (
-                            <MultiSelect
-                              data={classes}
-                              disabled={!classes.length}
-                              label={labels.subjects}
-                              placeholder={labels.subjectsPlaceholder}
-                              {...field}
-                              style={{ width: HALF_WIDTH }}
-                              valueComponent={ValueComponent}
-                              itemComponent={SelectItem}
-                            />
-                          )}
-                        />
-                      </Box>
-                    )}
-                  </ContextContainer>
-                  <ContextContainer title={labels.what}>
-                    <Box>
-                      <Controller
-                        control={control}
-                        name="message"
-                        rules={{ required: labels?.form?.messageError }}
-                        render={({ field: { ref, ...field } }) => (
-                          <TextEditorInput
-                            label={labels.message}
-                            placeholder={labels.messagePlaceholder}
-                            toolbars={{
-                              style: true,
-                              heading: false,
-                              align: true,
-                              list: true,
-                              history: true,
-                              color: true,
-                              formulation: false,
-                              link: false,
-                              library: false,
-                            }}
-                            {...field}
-                            required
-                            error={errors.message}
-                          />
-                        )}
-                      />
-                    </Box>
-                    <Box>
-                      <Controller
-                        control={control}
-                        name="asset"
-                        render={({ field }) => <ImagePicker {...field} />}
-                      />
-                    </Box>
-                    <ContextContainer direction="row">
-                      <Controller
-                        control={control}
-                        name="url"
-                        rules={{
-                          required: textUrlValue && labels?.form?.urlError,
-                        }}
-                        render={({ field }) => (
-                          <TextInput
-                            label={labels.urlToResource}
-                            placeholder={labels.urlToResourcePlaceholder}
-                            {...field}
-                            style={{ flex: 1 }}
-                            error={errors.url}
-                          />
-                        )}
-                      />
-                      <Controller
-                        control={control}
-                        name="textUrl"
-                        rules={{ required: urlValue && labels?.form?.textUrlError }}
-                        render={({ field }) => (
-                          <TextInput
-                            label={labels.textOfLink}
-                            placeholder={labels.textOfLinkPlaceholder}
-                            {...field}
-                            style={{ flex: 1 }}
-                            error={errors.textUrl}
-                          />
-                        )}
-                      />
-                    </ContextContainer>
-                  </ContextContainer>
-                  <ContextContainer title={labels.how}>
-                    <Box>
-                      <Controller
-                        control={control}
-                        name="zone"
-                        render={({ field }) => (
-                          <RadioGroup
-                            defaultValue={isTeacher ? 'class-dashboard' : 'modal'}
-                            data={formatData}
-                            variant="image"
-                            direction="column"
-                            {...field}
-                          />
-                        )}
-                      />
-                    </Box>
-                  </ContextContainer>
-                  <ContextContainer title={labels.when}>
-                    <Controller
-                      control={control}
-                      name="publicationType"
-                      render={({ field }) => (
-                        <RadioGroup
-                          defaultValue="immediately"
-                          data={[
-                            { label: labels.immediately, value: 'immediately' },
-                            { label: labels.programmed, value: 'programmed' },
-                          ]}
-                          {...field}
-                        />
-                      )}
-                    />
-                    {publicationType !== 'immediately' && (
-                      <Box className={styles.datesRow}>
-                        <Controller
-                          control={control}
-                          name="startDate"
-                          rules={{ required: labels?.form?.startDateError }}
-                          render={({ field }) => (
-                            <DatePicker
-                              label={labels.startDate}
-                              placeholder={labels.startDatePlaceholder}
-                              {...field}
-                              style={{ flex: 1 }}
-                              error={errors.startDate}
-                            />
-                          )}
-                        />
-                        <TimeInput
-                          value={startDateValue}
-                          label={labels.startHour}
-                          placeholder={labels.startHourPlaceholder}
-                          style={{ flex: 1 }}
-                          onChange={(value) => handleTimeChange('startDate', value)}
-                        />
+              />
+            </Box>
+            <Box>
+              <Controller
+                control={control}
+                name="programs"
+                rules={{ required: labels?.form?.programError }}
+                render={({ field }) => (
+                  <MultiSelect
+                    {...field}
+                    required
+                    disabled={!centersValue || !programs.length}
+                    data={programs}
+                    label={labels.program}
+                    placeholder={labels.programPlaceholder}
+                    error={errors.programs}
+                  />
+                )}
+              />
+            </Box>
+            <Box>
+              <Controller
+                control={control}
+                name="profiles"
+                rules={{ required: labels?.form?.profileError }}
+                render={({ field }) => (
+                  <MultiSelect
+                    {...field}
+                    required
+                    data={profiles}
+                    label={labels.profile}
+                    placeholder={labels.profilePlaceholder}
+                    error={errors.profiles}
+                  />
+                )}
+              />
+            </Box>
 
-                        <React.Fragment>
-                          <Controller
-                            control={control}
-                            name="endDate"
-                            rules={{
-                              required:
-                                publicationType !== 'immediately' && labels?.form?.endDateError,
-                            }}
-                            render={({ field }) => (
-                              <DatePicker
-                                label={labels.endDate}
-                                placeholder={labels.endDatePlaceholder}
-                                {...field}
-                                style={{ flex: 1 }}
-                                error={errors.endDate}
-                              />
-                            )}
-                          />
-                          <TimeInput
-                            value={endDateValue}
-                            label={labels.endHour}
-                            placeholder={labels.endHourPlaceholder}
-                            style={{ flex: 1 }}
-                            onChange={(value) => handleTimeChange('endDate', value)}
-                          />
-                        </React.Fragment>
-                      </Box>
-                    )}
-                    {overlaps.length > 0 && !overWriteMessages && (
-                      <Alert title={labels.existingMessageTitle} closeable={false}>
-                        {overlaps.length === 1
-                          ? labels.existingMessageInfoSingular
-                          : labels.existingMessageInfo?.replace('{nMessages}', overlaps.length)}
-                      </Alert>
-                    )}
-                    {overlaps.length > 0 && (
-                      <Box className={styles.overlapsWrapper}>
-                        <Checkbox
-                          checked={overWriteMessages}
-                          onChange={setOverWriteMessages}
-                          label={labels.overlapsCheck}
-                        />
-                        <Box className={styles.checkboxHelp}>
-                          <AlertInformationCircleIcon height={16} width={16} />
-                          {labels.checkboxHelp}
-                        </Box>
-                        <Box className={styles.overlaps}>
-                          {overlaps.map((overlap) => (
-                            <Box
-                              key={overlap.id}
-                              className={styles.overlap}
-                            >{`-${overlap.internalName}`}</Box>
-                          ))}
-                        </Box>
-                      </Box>
-                    )}
-                  </ContextContainer>
-                </ContextContainer>
+            {isTeacher && (
+              <Box>
+                <Controller
+                  control={control}
+                  name="classes"
+                  rules={{ required: labels?.form?.subjectError }}
+                  render={({ field }) => (
+                    <MultiSelect
+                      {...field}
+                      required
+                      data={classes}
+                      disabled={!classes.length}
+                      label={labels.subjects}
+                      placeholder={labels.subjectsPlaceholder}
+                      style={{ width: HALF_WIDTH }}
+                      valueComponent={ValueComponent}
+                      itemComponent={SelectItem}
+                      error={errors.classes}
+                    />
+                  )}
+                />
               </Box>
-            </TotalLayoutStepContainer>
-          </Stack>
-        </TotalLayoutContainer>
-      </form>
-    </BaseDrawer>
+            )}
+          </ContextContainer>
+          <ContextContainer title={labels.what}>
+            <Box>
+              <Controller
+                control={control}
+                name="message"
+                rules={{ required: labels?.form?.messageError }}
+                render={({ field: { ref, ...field } }) => (
+                  <TextEditorInput
+                    label={labels.message}
+                    placeholder={labels.messagePlaceholder}
+                    toolbars={{
+                      style: true,
+                      heading: false,
+                      align: true,
+                      list: true,
+                      history: true,
+                      color: true,
+                      formulation: false,
+                      link: false,
+                      library: false,
+                    }}
+                    {...field}
+                    required
+                    error={errors.message}
+                  />
+                )}
+              />
+            </Box>
+            <Box>
+              <InputWrapper label={labels.image}>
+                <Controller
+                  control={control}
+                  name="asset"
+                  render={({ field }) => <ImagePicker {...field} />}
+                />
+              </InputWrapper>
+            </Box>
+            <ContextContainer direction="row">
+              <Controller
+                control={control}
+                name="url"
+                rules={{
+                  required: textUrlValue && labels?.form?.urlError,
+                }}
+                render={({ field }) => (
+                  <TextInput
+                    label={labels.urlToResource}
+                    placeholder={labels.urlToResourcePlaceholder}
+                    {...field}
+                    style={{ flex: 1 }}
+                    error={errors.url}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="textUrl"
+                rules={{ required: urlValue && labels?.form?.textUrlError }}
+                render={({ field }) => (
+                  <TextInput
+                    label={labels.textOfLink}
+                    placeholder={labels.textOfLinkPlaceholder}
+                    {...field}
+                    style={{ flex: 1 }}
+                    error={errors.textUrl}
+                  />
+                )}
+              />
+            </ContextContainer>
+          </ContextContainer>
+          <ContextContainer title={labels.how}>
+            <Box>
+              <Controller
+                control={control}
+                name="zone"
+                render={({ field }) => (
+                  <RadioGroup
+                    {...field}
+                    defaultValue={isTeacher ? 'class-dashboard' : 'modal'}
+                    data={formatData}
+                    variant="image"
+                    direction="column"
+                  />
+                )}
+              />
+            </Box>
+          </ContextContainer>
+          <ContextContainer title={labels.when}>
+            <Controller
+              control={control}
+              name="publicationType"
+              render={({ field }) => (
+                <RadioGroup
+                  defaultValue="immediately"
+                  data={[
+                    { label: labels.immediately, value: 'immediately' },
+                    { label: labels.programmed, value: 'programmed' },
+                  ]}
+                  {...field}
+                />
+              )}
+            />
+            {publicationType !== 'immediately' && (
+              <Stack fullWidth spacing={8}>
+                <ContextContainer direction="row">
+                  <Controller
+                    control={control}
+                    name="startDate"
+                    rules={{ required: labels?.form?.startDateError }}
+                    render={({ field }) => (
+                      <DatePicker
+                        {...field}
+                        required
+                        label={labels.startDate}
+                        placeholder={labels.startDatePlaceholder}
+                        style={{ flex: 1 }}
+                        error={errors.startDate}
+                      />
+                    )}
+                  />
+                  <Box noFlex sx={{ flex: '0.5 1 0% !important' }}>
+                    <TimeInput
+                      required
+                      value={startDateValue}
+                      label={labels.startHour}
+                      placeholder={labels.startHourPlaceholder}
+                      style={{ flex: 1 }}
+                      onChange={(value) => handleTimeChange('startDate', value)}
+                    />
+                  </Box>
+                </ContextContainer>
+
+                <ContextContainer direction="row">
+                  <Controller
+                    control={control}
+                    name="endDate"
+                    rules={{
+                      required: publicationType !== 'immediately' && labels?.form?.endDateError,
+                    }}
+                    render={({ field }) => (
+                      <DatePicker
+                        {...field}
+                        required
+                        label={labels.endDate}
+                        placeholder={labels.endDatePlaceholder}
+                        style={{ flex: 1 }}
+                        error={errors.endDate}
+                      />
+                    )}
+                  />
+                  <Box noFlex sx={{ flex: '0.5 1 0% !important' }}>
+                    <TimeInput
+                      required
+                      value={endDateValue}
+                      label={labels.endHour}
+                      placeholder={labels.endHourPlaceholder}
+                      style={{ flex: 1 }}
+                      onChange={(value) => handleTimeChange('endDate', value)}
+                    />
+                  </Box>
+                </ContextContainer>
+              </Stack>
+            )}
+            {overlaps.length > 0 && !overWriteMessages && (
+              <Alert title={labels.existingMessageTitle} closeable={false}>
+                {overlaps.length === 1
+                  ? labels.existingMessageInfoSingular
+                  : labels.existingMessageInfo?.replace('{nMessages}', overlaps.length)}
+              </Alert>
+            )}
+            {overlaps.length > 0 && (
+              <Box className={styles.overlapsWrapper}>
+                <Checkbox
+                  checked={overWriteMessages}
+                  onChange={setOverWriteMessages}
+                  label={labels.overlapsCheck}
+                />
+                <Box className={styles.checkboxHelp}>
+                  <AlertInformationCircleIcon height={16} width={16} />
+                  {labels.checkboxHelp}
+                </Box>
+                <Box className={styles.overlaps}>
+                  {overlaps.map((overlap) => (
+                    <Box
+                      key={overlap.id}
+                      className={styles.overlap}
+                    >{`-${overlap.internalName}`}</Box>
+                  ))}
+                </Box>
+              </Box>
+            )}
+          </ContextContainer>
+        </ContextContainer>
+      </Drawer.Content>
+
+      <Drawer.Footer>
+        <Drawer.Footer.LeftActions>
+          <Button variant="outline" onClick={onClose}>
+            {labels.cancel}
+          </Button>
+        </Drawer.Footer.LeftActions>
+        <Drawer.Footer.RightActions>
+          <Button onClick={handleSubmit(saveMessageConfig)}>{buttonLabel}</Button>
+        </Drawer.Footer.RightActions>
+      </Drawer.Footer>
+    </Drawer>
   );
 };
 

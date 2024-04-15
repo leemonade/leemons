@@ -269,17 +269,7 @@ const MessagesTable = ({
   };
 
   return (
-    <ContextContainer padded>
-      <Filters
-        labels={labels}
-        centers={centers}
-        profiles={profiles}
-        defaultValues={DEFAULT_VALUES}
-        filters={filters}
-        setFilters={setFilters}
-        onlyArchived={onlyArchived}
-      />
-
+    <ContextContainer padded spacing={0}>
       {!onlyArchived && (
         <Box>
           <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNew}>
@@ -287,23 +277,34 @@ const MessagesTable = ({
           </Button>
         </Box>
       )}
-
-      {messagesData.length < 1 && !loading ? (
-        <EmptyState label={labels.emptyState} />
-      ) : (
-        <PaginatedList
-          hidePaper
-          columns={columns}
-          items={messagesData}
-          loading={loading}
-          page={page}
-          size={size}
-          onPageChange={setPage}
-          onSizeChange={setSize}
-          headerStyles={headerStyles}
-          selectable={false}
+      <ContextContainer>
+        <Filters
+          labels={labels}
+          centers={centers}
+          profiles={profiles}
+          defaultValues={DEFAULT_VALUES}
+          filters={filters}
+          setFilters={setFilters}
+          onlyArchived={onlyArchived}
         />
-      )}
+
+        {messagesData.length < 1 && !loading ? (
+          <EmptyState label={labels.emptyState} />
+        ) : (
+          <PaginatedList
+            hidePaper
+            columns={columns}
+            items={messagesData}
+            loading={loading}
+            page={page}
+            size={size}
+            onPageChange={setPage}
+            onSizeChange={setSize}
+            headerStyles={headerStyles}
+            selectable={false}
+          />
+        )}
+      </ContextContainer>
     </ContextContainer>
   );
 };

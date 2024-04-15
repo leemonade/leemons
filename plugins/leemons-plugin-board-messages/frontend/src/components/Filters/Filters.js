@@ -94,10 +94,10 @@ const Filters = ({
         name="internalName"
         render={({ field: { ref, ...field } }) => (
           <SearchInput
-            wait={200}
-            label={labels.search}
-            placeholder={labels.searchPlaceholder}
             {...field}
+            wait={200}
+            label={labels.name}
+            placeholder={labels.searchPlaceholder}
           />
         )}
       />
