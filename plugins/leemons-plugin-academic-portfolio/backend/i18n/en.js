@@ -730,8 +730,6 @@ module.exports = {
     classroomAdress: 'Classroom address or physical location',
     lessonSchedule: 'Lesson schedule',
     actualEnrollment: 'Actual enrollment',
-    deletedStudentSuccess: 'Student deleted successfully',
-    deletedStudentError: 'The student could not be removed from the classroom',
     assignManagerSuccess: 'Manager assigned successfully',
     assignManagerError: 'Error assigning Manager',
     configTreeView: 'Configure tree view',
