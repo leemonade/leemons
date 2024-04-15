@@ -32,7 +32,7 @@ const CourseView = ({
 }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [teacherProfile, setTeacherProfile] = useState();
-  const [responsable, setResponsable] = useState();
+  const [hasResponsableChanged, setHasResponsableChanged] = useState(false);
   const { classes } = CourseViewStyles();
 
   const { mutate: mutateCourse } = useUpdateCourse();
@@ -50,7 +50,7 @@ const CourseView = ({
     managers: courseDetail?.manager ? [courseDetail.manager] : [],
   };
 
-  const { control, setValue, reset } = useForm({ defaultValues });
+  const { control, setValue, getValues, reset } = useForm({ defaultValues });
   useEffect(() => {
     if (courseDetail) {
       const newDefaultValues = {
@@ -63,24 +63,23 @@ const CourseView = ({
     }
   }, [courseDetail, reset]);
   const handleAssignManager = () => {
-    if (responsable) {
-      mutateCourse(defaultValues, {
-        onSuccess: () => {
-          addSuccessAlert(t('assignManagerSuccess'));
-        },
-        onError: () => {
-          addErrorAlert(t('assignManagerError'));
-        },
-      });
-    }
+    const values = getValues();
+    mutateCourse(values, {
+      onSuccess: () => {
+        addSuccessAlert(t('assignManagerSuccess'));
+      },
+      onError: () => {
+        addErrorAlert(t('assignManagerError'));
+      },
+    });
   };
   useEffect(() => {
     const getTeacherProfile = async () => {
       const response = await getProfilesRequest();
       setTeacherProfile([response?.profiles?.teacher]);
     };
-    setResponsable(courseDetail?.manager);
     getTeacherProfile();
+    setHasResponsableChanged(false);
   }, [centerId, courseDetail]);
 
   return (
@@ -97,7 +96,7 @@ const CourseView = ({
           fixed
           rectRef={stackRef}
           rightZone={
-            <Button disabled={!responsable} onClick={() => handleAssignManager()}>
+            <Button disabled={!hasResponsableChanged} onClick={() => handleAssignManager()}>
               {t('saveChanges')}
             </Button>
           }
@@ -106,7 +105,6 @@ const CourseView = ({
               variant="outline"
               leftIcon={<RemoveIcon />}
               onClick={() => {
-                setResponsable(null);
                 setValue('managers', null);
               }}
             >
@@ -150,12 +148,12 @@ const CourseView = ({
                   onChange={(user) => {
                     if (!user) {
                       field.onChange(user);
-                      setValue('managers', null);
+                      setValue('managers', []);
                     } else {
                       field.onChange(user);
-                      setValue('managers', [user]);
+                      setValue('managers', [user.value]);
                     }
-                    setResponsable(user);
+                    setHasResponsableChanged(true);
                   }}
                 />
               )}
@@ -166,7 +164,7 @@ const CourseView = ({
           <Text>{t('responsableMoreConfig')} </Text>
           <Box className={classes.responsableLink}>
             <Link to={'/private/academic-portfolio/programs'}>
-              <Text>{t('responsablePrograms')}</Text>
+              <Text strong>{t('responsablePrograms')}</Text>
             </Link>
           </Box>
         </Box>

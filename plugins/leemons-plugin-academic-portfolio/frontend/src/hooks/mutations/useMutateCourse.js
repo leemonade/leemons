@@ -7,7 +7,7 @@ function useUpdateCourse() {
   return useMutation({
     mutationFn: async (props) => updateCourseRequest(props),
     onSuccess: (data) => {
-      const queryKey = getCourseDetailKey(data.id);
+      const queryKey = getCourseDetailKey(data.course.id);
       queryClient.invalidateQueries(queryKey);
     },
   });
