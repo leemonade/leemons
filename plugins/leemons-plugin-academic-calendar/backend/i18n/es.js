@@ -60,6 +60,7 @@ module.exports = {
     saved: 'Guardado',
     newRegionalCalendar: 'Nuevo calendario regional',
     requiredField: 'Campo necesario',
+    emptyCalendar: 'Todavía no has creado ningún programa',
   },
   programList: {
     tableAdd: 'Añadir descanso',

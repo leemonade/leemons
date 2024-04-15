@@ -67,6 +67,7 @@ module.exports = {
     saved: 'Saved',
     newRegionalCalendar: 'New regional calendar',
     requiredField: 'Required field',
+    emptyCalendar: 'You have not created any program yet',
   },
   programList: {
     tableAdd: 'Add break',
