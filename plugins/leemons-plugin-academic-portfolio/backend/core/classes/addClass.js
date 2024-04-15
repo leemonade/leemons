@@ -6,6 +6,7 @@ const { add: addKnowledge } = require('./knowledge/add');
 const { add: addSubstage } = require('./substage/add');
 const { add: addCourse } = require('./course/add');
 const { add: addGroup } = require('./group/add');
+const { add: addTeacher } = require('./teacher/add');
 const { existSubstageInProgram } = require('../substages/existSubstageInProgram');
 const { existCourseInProgram } = require('../courses/existCourseInProgram');
 const { existGroupInProgram } = require('../groups/existGroupInProgram');
@@ -244,14 +245,11 @@ async function addClass({ data, ctx }) {
 
     await ctx.tx.emit('after-add-class', { class: classe });
 
-    //* OLD: Teachers are not currently being set in the moment of creation of the class
-    /*
     if (teachers) {
       await Promise.all(
         _.map(teachers, ({ teacher, type }) => addTeacher({ class: nClass.id, teacher, type, ctx }))
       );
     }
-    */
 
     //* Previously commented room
     // await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
