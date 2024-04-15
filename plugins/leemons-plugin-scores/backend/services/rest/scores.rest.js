@@ -1,21 +1,9 @@
-/* eslint-disable no-console */
-/**
- * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
- * @typedef {import('moleculer').Context} Context Moleculer's Context
- */
-
-const { LeemonsValidator } = require('@leemons/validator');
-
-const {
-  LeemonsMiddlewareAuthenticated,
-  LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
 const getScores = require('../../core/scores/getScores');
 const setScores = require('../../core/scores/setScores');
 const removeScores = require('../../core/scores/removeScores');
 
-/** @type {ServiceSchema} */
 module.exports = {
   getRest: {
     rest: {

@@ -6,6 +6,7 @@ import { goLoginPage } from '@users/navigate';
 
 const ScoresPage = loadable(() => import('@scores/pages/ScoresPage'));
 const PeriodsPage = loadable(() => import('@scores/pages/PeriodsPage'));
+const WeightsPage = loadable(() => import('@scores/pages/WeightsPage'));
 const ReviewerPage = loadable(() => import('@scores/pages/ReviewerPage'));
 const StudentsScoresPage = loadable(() => import('@scores/pages/StudentScoresPage'));
 
@@ -15,6 +16,9 @@ export default function Private() {
 
   return (
     <Switch>
+      <Route exact path={`${path}/weights`}>
+        <WeightsPage />
+      </Route>
       <Route exact path={`${path}/periods`}>
         <PeriodsPage />
       </Route>
