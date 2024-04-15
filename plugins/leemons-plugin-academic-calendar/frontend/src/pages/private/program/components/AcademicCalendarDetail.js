@@ -24,7 +24,7 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
+export default function AcademicCalendarDetail({ program: { id }, onSave, t, onChangeStep }) {
   const { classes } = useStyle();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -104,6 +104,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
       addErrorAlert(getErrorMessage(e));
     }
     store.loading = false;
+    onChangeStep(store.step);
     render();
   }
 
@@ -114,10 +115,6 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
   return (
     <ContextContainer divided className={classes.root}>
       <ContextContainer>
-        <HorizontalStepper
-          data={[{ label: t('basic') }, { label: t('periods') }, { label: t('preview') }]}
-          currentStep={store.step}
-        />
         {store.step === 0 ? (
           <Step1
             regionalConfigs={store.regionalConfigs}
@@ -126,6 +123,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
             onChange={(data) => {
               store.config = data;
               store.step = 1;
+              onChangeStep(1);
               render();
             }}
             t={t}
@@ -138,11 +136,13 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
             onPrev={(data) => {
               store.config = data;
               store.step = 0;
+              onChangeStep(0);
               render();
             }}
             onChange={(data) => {
               store.config = data;
               store.step = 2;
+              onChangeStep(2);
               render();
             }}
             t={t}
@@ -155,6 +155,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
             program={store.program}
             onPrev={() => {
               store.step = 1;
+              onChangeStep(1);
               render();
             }}
             onSave={onSave}
@@ -170,4 +171,5 @@ AcademicCalendarDetail.propTypes = {
   program: PropTypes.any,
   onSave: PropTypes.func,
   t: PropTypes.func,
+  onChangeStep: PropTypes.func,
 };

@@ -184,7 +184,7 @@ export default function RegionalCalendars() {
           {showCentersSelect && (
             <SelectCenter
               firstSelected
-              onChange={(v) => setSelectedCenter(userCenters.find((c) => c.id === v))}
+              onChange={(v) => handleOnSelectCenter(userCenters.find((c) => c.id === v))}
               value={selectedCenter.id}
             />
           )}
