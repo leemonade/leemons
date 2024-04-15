@@ -706,7 +706,7 @@ const addSubjectSchema = {
     name: stringSchema,
     program: stringSchema,
     credits: numberSchema,
-    course: { type: 'string' },
+    course: { type: 'string', nullable: true },
     internalId: stringSchema,
     image: {
       type: ['string', 'object'],
@@ -972,6 +972,7 @@ const addClassSchema = {
           },
         },
       },
+      nullable: true,
     },
     image: {
       type: ['string', 'object'],
