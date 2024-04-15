@@ -234,7 +234,7 @@ export function ModuleDashboardBody({
               assetNumber={index + 1}
             />
           ),
-          createdAt: activitiesById[activity?.id].createdAt,
+          createdAt: activitiesById[activity?.id]?.createdAt,
         })),
         'createdAt'
       ).map((a) => a.comp)}
