@@ -1,6 +1,6 @@
 import { MultiSelect, Select } from '@bubbles-ui/components';
 import { useApi } from '@common';
-import _ from 'lodash';
+import _, { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { listProgramsRequest } from '../../request';
@@ -37,7 +37,7 @@ const SelectProgram = forwardRef(
       ensureIntegrity,
       multiple,
       autoSelectOneOption = true,
-      onLoadedPrograms = () => {},
+      onLoadedPrograms = noop,
       hideIfOnlyOne,
       ...props
     },
@@ -130,6 +130,7 @@ SelectProgram.propTypes = {
   center: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
+  onLoadedPrograms: PropTypes.func,
   ensureIntegrity: PropTypes.bool,
   firstSelected: PropTypes.bool,
   multiple: PropTypes.bool,
