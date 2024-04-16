@@ -1,4 +1,12 @@
-import { ActionButton, Box, Checkbox, Table, TableInput, Text } from '@bubbles-ui/components';
+import {
+  ActionButton,
+  Box,
+  Checkbox,
+  Table,
+  TableInput,
+  Text,
+  TextClamp,
+} from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -19,6 +27,7 @@ export default function QuestionsTable({
   withStyle = false,
   hideCheckbox = false,
   questionBank,
+  isDrawer,
 }) {
   // eslint-disable-next-line prefer-const
   let { classes: styles, cx } = ResultStyles({}, { name: 'QuestionsTable' });
@@ -28,6 +37,17 @@ export default function QuestionsTable({
   if (!withStyle) styles = {};
   const allChecked =
     value.length === questions?.length && value.length !== 0 && questions?.length !== 0;
+
+  const handleDrawerCell = (cellValue) => {
+    if (!isDrawer) {
+      return <Text> {cellValue}</Text>;
+    }
+    return (
+      <TextClamp lines={2} withToolTip>
+        <Text> {cellValue}</Text>
+      </TextClamp>
+    );
+  };
 
   const tableHeaders = React.useMemo(() => {
     let result = [];
@@ -56,7 +76,8 @@ export default function QuestionsTable({
       {
         Header: t('questionLabel'),
         accessor: 'question',
-        className: cx(styles.tableHeader, styles.firstTableHeader),
+        className: cx(styles.tableHeader, styles.firstTableHeader, isDrawer && { minWidth: 200 }),
+        valueRender: (cellValue) => handleDrawerCell(cellValue),
       },
       {
         Header: t('responsesLabel'),
@@ -74,7 +95,7 @@ export default function QuestionsTable({
         className: styles.tableHeader,
         valueRender: (levelName) => {
           const findLevelName = levels?.find((l) => l.value === levelName);
-          return findLevelName?.label;
+          return handleDrawerCell(findLevelName?.label);
         },
       },
       {
@@ -83,7 +104,7 @@ export default function QuestionsTable({
         className: styles.tableHeader,
         valueRender: (categoryId) => {
           const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
-          return findCategoryLabel?.value;
+          return handleDrawerCell(findCategoryLabel?.value);
         },
       },
     ]);
@@ -96,7 +117,7 @@ export default function QuestionsTable({
       });
     }
     return result;
-  }, [t, reorderMode, value]);
+  }, [t, reorderMode, value, levels, questionBank]);
 
   const tableItems = React.useMemo(
     () =>
@@ -165,4 +186,5 @@ QuestionsTable.propTypes = {
   withStyle: PropTypes.bool,
   hideCheckbox: PropTypes.bool,
   questionBank: PropTypes.object,
+  isDrawer: PropTypes.bool,
 };

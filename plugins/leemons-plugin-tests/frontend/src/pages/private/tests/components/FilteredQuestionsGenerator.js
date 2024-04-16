@@ -15,7 +15,6 @@ const FilteredQuestionsGenerator = ({
   assignmentMode,
   assignmentQuestions,
 }) => {
-  const useAllQuestions = form.watch('useAllQuestions');
   const selectedCategories = form.watch('filters.categories');
   const selectedLevel = form.watch('filters.level');
   const levels = useLevelsOfDifficulty();
@@ -100,7 +99,6 @@ const FilteredQuestionsGenerator = ({
           <Text>{isMoreThanOneQuestionSelected}</Text>
         </Box>
       </Box>
-      {/* ) : null} */}
     </Box>
   );
 };

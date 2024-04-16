@@ -5,7 +5,7 @@ import { SynchronizeGenerateIcon } from '@bubbles-ui/icons/outline';
 import propTypes from 'prop-types';
 
 const RandomQuestionsGenerator = ({ form, nQuestions, generateQuestions, t, classes }) => (
-  <Box className={classes.counterContainer}>
+  <Box className={classes.counterContainer} style={{ marginBottom: 16 }}>
     <Controller
       key={3}
       control={form.control}

@@ -12,6 +12,7 @@ const ManualQuestionsGenerator = ({
   setManualQuestions,
   assignmentMode,
   assignmentQuestions = [],
+  isDrawer,
 }) => {
   const [allQuestions, setAllQuestions] = useState([]);
   const formValues = form.watch();
@@ -61,6 +62,7 @@ const ManualQuestionsGenerator = ({
                 questionBank={questionBank}
                 reorderMode={false}
                 hideOpenIcon
+                isDrawer={isDrawer}
               />
             )}
           />
@@ -80,6 +82,7 @@ const ManualQuestionsGenerator = ({
                 reorderMode={true}
                 hideCheckbox
                 hideOpenIcon
+                isDrawer={isDrawer}
               />
             )}
           />
@@ -98,6 +101,7 @@ ManualQuestionsGenerator.propTypes = {
   setManualQuestions: propTypes.func.isRequired,
   assignmentMode: propTypes.bool,
   assignmentQuestions: propTypes.array,
+  isDrawer: propTypes.bool,
 };
 
 ManualQuestionsGenerator.defaultProps = {
@@ -109,6 +113,7 @@ ManualQuestionsGenerator.defaultProps = {
   setFinalQuestions: () => {},
   assignmentMode: false,
   assignmentQuestions: [],
+  isDrawer: false,
 };
 
 export { ManualQuestionsGenerator };

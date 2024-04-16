@@ -305,6 +305,7 @@ export default function AssignConfig({
                             assignmentQuestions={test?.questions || []}
                             manualQuestions={manualQuestions}
                             setManualQuestions={setManualQuestions}
+                            isDrawer={isDrawer}
                           />
                         )}
                         {(radioSelection === 'randomQuestions' && randomQuestions.length > 0) ||
@@ -322,6 +323,7 @@ export default function AssignConfig({
                                 reorderMode={true}
                                 hideCheckbox
                                 hideOpenIcon
+                                isDrawer={isDrawer}
                               />
                             )}
                           />
@@ -354,4 +356,5 @@ AssignConfig.propTypes = {
   assignable: PropTypes.object,
   data: PropTypes.object,
   onNextStep: PropTypes.func,
+  isDrawer: PropTypes.bool,
 };
