@@ -111,12 +111,12 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
         <Title order={2}>{t('basicDataTitle')}</Title>
         <Stack spacing={5} className={classes.courseData}>
           <Box>
-            <Text strong>{t('courseNumber')} </Text>
-            <Text>{groupDetail?.index} </Text>
+            <Text strong>{`${t('abbreviationLabel')}:`} </Text>
+            <Text>{groupDetail?.abbreviation} </Text>
           </Box>
           <Box>
-            <Text strong>{t('courseAlias')} </Text>
-            <Text>{groupDetail?.abbreviation} </Text>
+            <Text strong>{`${t('seatsNumber')}:`} </Text>
+            <Text>{groupDetail?.parentCourseSeats} </Text>
           </Box>
           {!!program?.courseCredits && (
             <Box>
