@@ -694,6 +694,7 @@ module.exports = {
     studentRequired: 'Campo necesario',
   },
   tree_page: {
+    courseTranslation: 'Curso',
     enrollmentAndManagement: 'Matrículación y gestión',
     deletedStudentSuccess: 'Estudiante eliminado con éxito',
     deletedStudentError: 'No se ha podido eliminar al estudiante',

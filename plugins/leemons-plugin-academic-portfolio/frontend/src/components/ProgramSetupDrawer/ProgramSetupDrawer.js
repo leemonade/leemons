@@ -117,7 +117,6 @@ const ProgramSetupDrawer = ({
           : false,
         maxNumberOfCourses: formData.courses?.length || 1,
         substages: formData.substages || [],
-        coursesName: localizations?.labels?.course || 'Curso ',
       };
       body = handleCredits(formData, body);
       body = handleCourses(formData, body);

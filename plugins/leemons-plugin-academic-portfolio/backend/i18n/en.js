@@ -689,6 +689,7 @@ module.exports = {
     studentRequired: 'Field required',
   },
   tree_page: {
+    courseTranslation: 'Course',
     enrollmentAndManagement: 'Enrollment and management',
     deletedStudentSuccess: 'Student successfully deleted',
     deletedStudentError: 'The student could not be deleted',

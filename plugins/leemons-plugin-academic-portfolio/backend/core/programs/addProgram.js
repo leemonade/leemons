@@ -133,8 +133,7 @@ async function addProgram({ data, userSession, ctx }) {
     image,
     substages: _substages,
     customSubstages,
-    // names, // old, used to set the course names individually
-    coursesName, // new, course name that comes from a library
+    coursesName, // Maybe needed in the future to set a custom course name for ALL courses. Not set to be stored in DB
     coursesOffset,
     cycles,
     ...programData
@@ -266,7 +265,7 @@ async function addProgram({ data, userSession, ctx }) {
           data: {
             program: program.id,
             // number: data.courseCredits ? data.courseCredits : 0,
-            name: `${coursesName} ${courseIndex}`,
+            name: coursesName ? `${coursesName} ${courseIndex}` : `${courseIndex}º`,
             metadata: { minCredits, maxCredits, seats },
           },
           index: courseIndex,
@@ -275,14 +274,14 @@ async function addProgram({ data, userSession, ctx }) {
       );
     });
   } else {
-    //* OLD ahora el front end siempre manda un curso al menos, especificando sillas si hay grupos de ref
-    // Programas de un solo urso no especifícan min y max creditos (null)
+    // Para programas creados en free: Un sólo curso, sin créditos
     coursesAndGroupsPromises.push(
       addCourse({
         data: {
           program: program.id,
-          number: programData.credits || 0,
-          name: `${coursesName} ${1 + offset}`,
+          // number: programData.credits || 0,
+          name: coursesName ? `${coursesName} ${1 + offset}` : `${1 + offset}º`,
+          metadata: { minCredits: null, maxCredits: null },
           isAlone: true,
         },
         index: 1 + offset,

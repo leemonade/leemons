@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useUserCenters } from '@users/hooks';
 import {
@@ -77,7 +77,7 @@ const AcademicTreePage = () => {
         id: guid,
         parent: parentId,
         nodeId: guid,
-        text: node.name || `Curso ${node.index}`,
+        text: node.type === 'course' ? `${t('courseTranslation')} ${node.index}` : node.name,
         type: node.type,
         droppable: !!node.children && node.children.length > 0,
         parentItemId: parentElementId,
@@ -118,7 +118,7 @@ const AcademicTreePage = () => {
 
   const treeStructures = useMemo(
     () => parseAcademicTreeData(academicTreeQuery || []),
-    [academicTreeQuery]
+    [academicTreeQuery, t]
   );
   // FUNCTIONS && HANDLERS ····················································································|
   const toggleEnrollmentDrawer = (classroomId = null) => {

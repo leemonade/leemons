@@ -175,10 +175,13 @@ const SubjectForm = ({
   // Courses Select
   const coursesSelectData = useMemo(() => {
     if (!isEmpty(program)) {
-      return program.courses.map((item) => ({ label: item.name, value: item.id }));
+      return program.courses.map((item) => ({
+        label: `${localizations?.labels?.course} ${item.index}`,
+        value: item.id,
+      }));
     }
     return [];
-  }, [program]);
+  }, [program, localizations]);
 
   // Substages Select
   const substagesSelectData = useMemo(() => {
