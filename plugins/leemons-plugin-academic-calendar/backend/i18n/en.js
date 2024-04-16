@@ -141,7 +141,8 @@ module.exports = {
         startDate: 'Start date',
         endDate: 'End date',
         color: 'Color',
-        add: 'Add',
+        add: 'Save',
+        cancel: 'Cancel',
       },
       placeholders: {
         periodName: 'Final exams',

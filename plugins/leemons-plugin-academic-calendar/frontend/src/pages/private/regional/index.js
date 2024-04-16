@@ -216,9 +216,9 @@ export default function RegionalCalendars() {
                       {store.center ? (
                         <Box>
                           <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                            {store.regionalConfigs.length >= 1 ? (
+                            {store.regionalConfigs?.length >= 1 ? (
                               <>
-                                {store.regionalConfigs.map((config) => (
+                                {store.regionalConfigs?.map((config) => (
                                   <Box
                                     key={config.id}
                                     className={cx(
@@ -254,7 +254,7 @@ export default function RegionalCalendars() {
                               </>
                             ) : null}
 
-                            {store.regionalConfigs.length <= 0 ? (
+                            {store.regionalConfigs?.length <= 0 ? (
                               <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
                             ) : null}
                           </Box>
