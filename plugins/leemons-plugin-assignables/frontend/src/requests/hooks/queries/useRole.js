@@ -1,6 +1,7 @@
 import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
-import getRole from '@assignables/roles/getRole';
+
+import getRole from '@assignables/requests/roles/getRole';
 import { rolesGetKey } from '../keys/roles';
 
 export default function useRole({ role, ...options }) {

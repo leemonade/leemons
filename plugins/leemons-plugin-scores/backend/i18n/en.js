@@ -321,4 +321,58 @@ module.exports = {
       weight: 'Percentage',
     },
   },
+  weighting: {
+    title: 'Weighting rules',
+    subjectsAndGroups: 'Subjects and groups',
+
+    table: {
+      headers: {
+        subject: 'Subject',
+        group: 'Group',
+        course: 'Course',
+        rules: 'Rules',
+        actions: 'Actions',
+      },
+    },
+  },
+  weightingTypes: {
+    averages: 'Average',
+    roles: 'Type',
+    modules: 'Modules',
+  },
+  weightingDrawer: {
+    rules: 'Rules',
+    type: 'Type',
+    weighting: 'Weighting',
+    table: {
+      applySameValue: 'Apply same value',
+      modules: 'Modules',
+      roles: 'Types',
+      weight: 'Percentage',
+      total: 'Total',
+    },
+    explanation: 'Explanation',
+    cancel: 'Cancel',
+    save: 'Save',
+  },
+  weightingAlerts: {
+    updateSuccess: 'Weight updated successfully',
+    updateError: 'Error updating weight',
+    exceedPercentageUpper:
+      'The total weight cannot be higher than 100%, check the percentage values.',
+    exceedPercentageLower:
+      'The total weight cannot be less than 100%, check the percentage values.',
+    modulesTypeWarning: {
+      title: 'Important:',
+      message:
+        'the weighting by modules will not include activities assigned individually in the calculation  (tasks, tests...)',
+    },
+    noModulesWarning: {
+      title: 'No modules assigned yet',
+      message:
+        'You can create a weighting rule by applying the same percentage automatically for all the modules you assign. Adjust the rule manually when you want.',
+    },
+    newModulesWarning:
+      'New modules have been added to this class. To include them in the weighting, adjust the percentages.',
+  },
 };
