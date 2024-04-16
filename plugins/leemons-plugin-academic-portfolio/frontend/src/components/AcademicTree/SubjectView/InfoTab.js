@@ -12,21 +12,24 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { isArray } from 'lodash';
 
 const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const subjectHeaderData = useMemo(() => {
     const subjectData = {};
-    const courses = subjectDetails?.classes[0]?.courses?.name;
+    const courses = isArray(subjectDetails?.classes[0]?.courses)
+      ? subjectDetails?.classes[0]?.courses.map((crs) => `${crs.index}º`).join(', ')
+      : `${subjectDetails?.classes[0]?.courses?.index}º`;
     subjectData.courses = courses;
     let groups = subjectDetails?.classes
       ?.map((cls) => cls.groups?.name)
-      .filter((name) => name !== null && name !== undefined); // Filtrar nombres nulos o indefinidos
+      .filter((name) => name !== null && name !== undefined);
 
     if (groups?.length === 0) {
-      groups = null; // Asignar null si no hay grupos después de filtrar
+      groups = null;
     } else {
-      groups?.sort().join(', '); // Ordenar y unir si hay grupos válidos
+      groups = groups?.sort().join(', ');
     }
     subjectData.groups = groups;
     const knowledgeAreas = subjectDetails?.classes[0]?.knowledges?.name;
@@ -67,10 +70,12 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
               <Text>{subjectHeaderData?.knowledgeAreas}</Text>
             </Box>
           )}
-          <Box>
-            <Text strong>{`${t('subjectTypeLabel')}: `}</Text>
-            <Text>{subjectHeaderData?.subjectType}</Text>
-          </Box>
+          {subjectHeaderData?.subjectType?.length && (
+            <Box>
+              <Text strong>{`${t('subjectTypeLabel')}: `}</Text>
+              <Text>{subjectHeaderData?.subjectType}</Text>
+            </Box>
+          )}
           {subjectDetails?.credits && (
             <Box>
               <Text strong>{`${t('creditsLabel')}: `}</Text>

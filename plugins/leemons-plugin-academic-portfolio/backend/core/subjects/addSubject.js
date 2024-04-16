@@ -1,3 +1,4 @@
+const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 const { validateAddSubject } = require('../../validations/forms');
 const { setSubjectCredits } = require('./setSubjectCredits');
@@ -5,9 +6,21 @@ const { setSubjectInternalId } = require('./setSubjectInternalId');
 
 async function addSubject({ data: _data, ctx }) {
   await validateAddSubject({ data: _data, ctx });
-  const { credits, internalId, image, icon, ...data } = _data;
+  const { credits, internalId, image, icon, course: _course, ...data } = _data;
 
-  let subject = await ctx.tx.db.Subjects.create({ ...data });
+  let course = _course;
+  if (!_course) {
+    course = await ctx.tx.db.Groups.find({ program: data.program, type: 'course' }).lean();
+    if (course?.length > 1) {
+      throw new LeemonsError(ctx, {
+        message:
+          'Subjects with more then one course tag must specify courses as an stringified array of cours ids.',
+      });
+    }
+    course = JSON.stringify([course[0].id]);
+  }
+
+  let subject = await ctx.tx.db.Subjects.create({ ...data, course });
   subject = subject.toObject();
 
   // ES: Añadimos el asset de la imagen

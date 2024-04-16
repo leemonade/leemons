@@ -181,7 +181,7 @@ const SubjectSetupDrawer = ({
       ({ classroomId, referenceGroup, alias, seats, classWithoutGroupId }) => ({
         ...commonBody,
         group: referenceGroup ? referenceGroup.split('::')[1] : null,
-        alias: referenceGroup ? null : alias,
+        alias: referenceGroup || !alias?.length ? null : alias,
         seats: referenceGroup ? getClassSeats() : seats,
         classroomId: classroomId || null,
         classWithoutGroupId: referenceGroup ? null : classWithoutGroupId,

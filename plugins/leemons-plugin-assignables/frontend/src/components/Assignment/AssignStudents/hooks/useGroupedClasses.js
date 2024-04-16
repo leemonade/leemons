@@ -58,10 +58,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
         const groupNonAssignableStudents = _.uniq(group.flatMap((c) => c.nonAssignableStudents));
 
         acc.push({
-          label:
-            group[0].class.c.groups?.abbreviation === '-auto-'
-              ? t('defaultGroupName')
-              : group[0].class.c.groups?.abbreviation,
+          label: group[0].class.c.groups?.abbreviation ?? '',
           type: 'group',
           id,
           students: groupStudents,
@@ -89,6 +86,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
     }, []);
 
     const students = _.uniq(groups.flatMap((c) => c.students));
+    // console.log('groups', groups)
 
     return {
       classes: groups,

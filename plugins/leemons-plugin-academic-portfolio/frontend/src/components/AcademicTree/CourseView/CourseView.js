@@ -123,7 +123,7 @@ const CourseView = ({
           </Box>
           <Box>
             <Text strong>{t('courseAlias')} </Text>
-            <Text>{courseDetail?.name} </Text>
+            <Text>{`${courseDetail?.index}º`} </Text>
           </Box>
           {!!program?.courseCredits && (
             <Box>
