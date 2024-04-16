@@ -118,12 +118,6 @@ const GroupView = ({ program, groupTreeNode, scrollRef, openEnrollmentDrawer }) 
             <Text strong>{`${t('seatsNumber')}:`} </Text>
             <Text>{groupDetail?.parentCourseSeats} </Text>
           </Box>
-          {!!program?.courseCredits && (
-            <Box>
-              <Text strong>{t('minimumCredits')} </Text>
-              <Text>{program.courseCredits} </Text>
-            </Box>
-          )}
         </Stack>
         {teacherProfile && centerId && (
           <Box className={classes.responsable}>

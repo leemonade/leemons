@@ -7,7 +7,7 @@ async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
     ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }, '', queryOptions).lean(),
     ctx.tx.db.ProgramSubjectsCredits.find({ subject: ids }, '', queryOptions).lean(),
     ctx.tx.db.Class.find({ subject: _.isArray(ids) ? ids : [ids] }, '', queryOptions)
-      .select(['id', 'subject', 'subjectType'])
+      .select(['id', 'subject', 'subjectType', 'color'])
       .lean(),
   ]);
 
@@ -37,8 +37,7 @@ async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
       creditsAndInternalId.find((item) => item.subject === subject.id)?.internalId || null,
     course: subject.course ? JSON.parse(subject.course) : null, // Old, left there just in case. A subject can have multiple courses
     courses: subject.course ? JSON.parse(subject.course) : [],
-    // OLD color: classesBySubject[subject.id]?.[0]?.color,
-    color: subject.color,
+    color: subject.color || classesIdsBySubject[subject.id][0].color, // Left there for retro-compatibility purposes only, subject should have a color
     image: imagesById[subject.image],
     icon: iconsById[subject.icon],
     subjectType: subjectTypesBySubject[subject.id],
