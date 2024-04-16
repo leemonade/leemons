@@ -180,7 +180,7 @@ const RulesConfig = ({
                   const values = form.getValues();
                   const { questions: q, ...filters } = values;
                   onSave({
-                    questions: map(q, 'id'),
+                    // questions: map(q, 'id'),
                     filters,
                   });
                   onPrevStep();
@@ -195,7 +195,7 @@ const RulesConfig = ({
                 onClick={() => {
                   form.handleSubmit(({ questions: q, ...filters }) => {
                     onSend({
-                      questions: map(q, 'id'),
+                      // questions: map(q, 'id'),
                       filters,
                     });
                   })();

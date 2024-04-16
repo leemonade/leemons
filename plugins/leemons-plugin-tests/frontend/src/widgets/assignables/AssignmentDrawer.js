@@ -5,7 +5,6 @@ import {
   evaluationTypes,
 } from '@assignables/components/Assignment/components/EvaluationType';
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
-import { OtherOptions } from '@assignables/components/Assignment/components/OtherOptions';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import {
   Box,

@@ -31,9 +31,8 @@ export default function Assign() {
 
   const history = useHistory();
   const params = useParams();
-
   async function send() {
-    store.loading = true;
+    // store.loading = true;
     render();
 
     const instanceData = store.data;

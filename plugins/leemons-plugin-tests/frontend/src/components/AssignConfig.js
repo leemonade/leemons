@@ -74,6 +74,7 @@ function useOnChange({ onChange, control }) {
   useEffect(() => {
     if (isFunction(onChange)) {
       const { questions, useAllQuestions, nQuestions } = formValues;
+
       let usedQuestions = [];
 
       if (isArray(questions)) {
@@ -81,7 +82,7 @@ function useOnChange({ onChange, control }) {
       }
 
       onChange({
-        questions: map(usedQuestions, 'id'),
+        questions: usedQuestions,
         filters: omit(formValues, 'questions'),
       });
     }
@@ -128,13 +129,16 @@ export default function AssignConfig({
   useOnChange({ onChange, control: form.control });
 
   React.useEffect(() => {
-    if (useAllQuestions) {
-      form.setValue(
-        'questions',
-        test.questions.map((q) => q.id)
-      );
+    if (typeof onSave === 'function') {
+      onSave({
+        questions: test.questions.map((q) => q.id),
+      });
     }
-  }, [useAllQuestions]);
+    form.setValue(
+      'questions',
+      test.questions.map((q) => q.id)
+    );
+  }, [test]);
 
   const customOptions = React.useMemo(
     () => [
@@ -192,7 +196,7 @@ export default function AssignConfig({
                   const values = form.getValues();
                   const { questions: q, ...filters } = values;
                   onSave({
-                    questions: map(q, 'id'),
+                    questions: q,
                     filters,
                   });
                   onPrevStep();
@@ -206,6 +210,12 @@ export default function AssignConfig({
                 loading={loading}
                 rightIcon={<ChevRightIcon height={20} width={20} />}
                 onClick={() => {
+                  const values = form.getValues();
+                  const { questions: q, ...filters } = values;
+                  onSave({
+                    questions: q,
+                    filters,
+                  });
                   onNextStep();
                 }}
               >
