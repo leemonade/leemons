@@ -89,6 +89,10 @@
       "actionNames": ["view"]
     },
     {
+      "permissionName": "scores.weights",
+      "actionNames": ["view"]
+    },
+    {
       "permissionName": "academic-portfolio.programs",
       "actionNames": ["view"]
     },
