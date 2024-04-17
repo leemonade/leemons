@@ -15,13 +15,9 @@ import useUserDetails from '@users/hooks/useUserDetails';
 import { LocaleDate } from '@common';
 import { UserAgentsTags } from './components/UserAgentsTags';
 
-function UserDetail({ userId, centerId, onLoadUser = noop }) {
+function UserDetail({ userId, center, onLoadUser = noop }) {
   const enableUserDetails = !!userId;
-  const {
-    data: userDetails,
-    refetch: updateUserDetails,
-    isLoading,
-  } = useUserDetails({
+  const { data: userDetails, isLoading } = useUserDetails({
     userId,
     enabled: enableUserDetails,
   });
@@ -44,7 +40,7 @@ function UserDetail({ userId, centerId, onLoadUser = noop }) {
   const fullName = `${compact([user.surnames, user.secondSurname]).join(' ')}, ${user.name}`;
   const avatarFullName = `${user.name} ${user.surnames}`;
   const avatarUrl = user.avatar;
-  const profiles = compact(userAgents.map(({ profile }) => profile));
+  const profiles = compact(userAgents.filter((ua) => !ua.disabled).map(({ profile }) => profile));
 
   return (
     <ContextContainer>
@@ -68,7 +64,7 @@ function UserDetail({ userId, centerId, onLoadUser = noop }) {
 
 UserDetail.propTypes = {
   userId: PropTypes.string.isRequired,
-  centerId: PropTypes.string,
+  center: PropTypes.object,
   onLoadUser: PropTypes.func,
 };
 

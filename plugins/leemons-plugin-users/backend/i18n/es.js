@@ -236,8 +236,9 @@ module.exports = {
     viewAll: 'Ver todos...',
     show: 'Mostrar',
     goTo: 'Ir a',
-    disableUsers: 'Desactivar usuarios',
-    activateUsers: 'Activar usuarios',
+    disableUsers: 'Desactivar perfiles',
+    activateUsers: 'Activar perfiles',
+    activateUserManually: 'Establecer contraseña',
     bulkActions: 'Acciones masivas',
     selectedUsers: '({n} usuarios seleccionados)',
     nUsers: '({n} usuarios encontrados)',
@@ -254,10 +255,13 @@ module.exports = {
   create_users: {
     pageTitle: 'Crear usuarios',
     profileLabel: 'Perfiles',
+    profileRequired: 'Perfil es requerido',
     tagsHeader: 'Etiquetas',
     save: 'Guardar',
     create: 'Crear',
     usersAddedSuccessfully: 'Usuario guardado con éxito',
+    enableProfileSuccess: 'Perfil {profile} activado correctamente',
+    disableProfileSuccess: 'Perfil {profile} desactivado correctamente',
   },
   needDatasetDataModal: {
     goPageButton: 'Ir a la página',
@@ -331,7 +335,8 @@ module.exports = {
       'Puede importar usuarios de su organización por perfil, los nuevos usuarios heredarán los permisos del perfil seleccionado.',
     centerLabel: 'Centro',
     profileLabel: 'Perfil',
-    uploadFile: 'Cargar archivo para importar',
+    uploadFile: 'Cargar el archivo para importar',
+    uploadLabel: 'Archivo para importar',
     downloadTemplate: 'Descargar plantilla',
     workbook: {
       title: 'Plantilla de usuarios de Leemons',
@@ -353,7 +358,7 @@ module.exports = {
     birthdateInvalid: 'El formato de la fecha de nacimiento no es valido',
     genderRequired: 'El genero es necesario',
     genderInvalid: 'Genero invalido use male(hombre) o female(mujer)',
-    save: 'Guardar',
+    save: 'Confirmar importación',
     colEmailRequired: 'La columna [Email] es obligatoria.',
     colNameRequired: 'La columna [Nombre] es obligatoria.',
     colBirthdateRequired: 'La columna [Fecha de nacimiento] es obligatoria.',
@@ -361,6 +366,7 @@ module.exports = {
     colRequired: 'La columna [{name}] es obligatoria.',
     fieldsWithErrors: 'Hay campos con errores corrijelos antes de importar',
     usersAddedSuccessfully: 'Usuarios añadidos con éxito',
+    backToUsers: 'Volver al listado de usuarios',
   },
   list_roles: {
     page_title: 'Roles',
@@ -393,10 +399,13 @@ module.exports = {
   disableUserModal: {
     title: 'Desactivar usuarios',
     description:
-      'Se desactivarán los perfiles para {n} usuarios en el centro {centerName}, y no serán visibles por sus compañeros ni profesores.',
+      'Se desactivarán los perfiles para {n} usuarios, en el centro {centerName}, y no serán visibles por sus compañeros ni profesores.',
     titleSingle: 'Desactivar usuario',
     descriptionSingle:
-      'Se desactivarán los perfiles para este usuario en el centro {centerName}, y no será visible por sus compañeros ni profesores.',
+      'Se desactivarán los perfiles para este usuario, en el centro {centerName}, y no será visible por sus compañeros ni profesores.',
+    titleProfile: 'Desactivar perfil',
+    descriptionProfile:
+      'El perfil {profileName} para este usuario, en el centro {centerName} será desactivado, y el usuario no será visible para sus compañeros ni profesores. Este perfil puede ser reactivado en cualquier momento.',
     selectProfiles: 'Selecciona los perfiles que quieres desactivar',
     cancel: 'Cancelar',
     confirm: 'Confirmar',
@@ -404,10 +413,13 @@ module.exports = {
   enableUserModal: {
     title: 'Activar usuarios',
     description:
-      'Se reactivarán los perfiles para {n} usuarios en el  centro {centerName}, y volverán a ser visibles por sus compañeros y profesores.',
+      'Se reactivarán los perfiles para {n} usuarios, en el  centro {centerName}, y volverán a ser visibles por sus compañeros y profesores.',
     titleSingle: 'Activar usuario',
     descriptionSingle:
-      'Se reactivarán los perfiles para este usuario en el centro {centerName}, y volverá a ser visible por sus compañeros y profesores.',
+      'Se reactivarán los perfiles para este usuario, en el centro {centerName}, y volverá a ser visible por sus compañeros y profesores.',
+    titleProfile: 'Reactivar perfil',
+    descriptionProfile:
+      'El perfil {profileName} para este usuario, en el centro {centerName} será reactivado, y el usuario será visible nuevamente por sus compañeros y profesores.',
     selectProfiles: 'Selecciona los perfiles que quieres reactivar',
     cancel: 'Cancelar',
     confirm: 'Confirmar',
@@ -454,5 +466,12 @@ module.exports = {
     delete: 'Borrar',
     cancel: 'Cancelar',
     accept: 'Aceptar',
+  },
+  bulkActionModal: {
+    title: 'Operaciones masivas',
+    bulkProgress: 'Procesando operación {current} de {total} - {completed}%',
+    init: 'Iniciando operaciones',
+    finalize: 'Finalizando operaciones',
+    finalizing: 'Finalizando...',
   },
 };

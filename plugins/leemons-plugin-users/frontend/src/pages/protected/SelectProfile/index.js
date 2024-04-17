@@ -121,6 +121,8 @@ export default function SelectProfile({ session }) {
     // Updates the store with the processed centers
     store.centers = processedCenters;
 
+    console.log('store.centers:', store.centers);
+
     // If the user is a super admin, fetch super profiles and add them to each center
     if (userToken?.user?.isSuperAdmin) {
       const { profiles } = await getUserProfilesRequest();
@@ -132,17 +134,6 @@ export default function SelectProfile({ session }) {
 
       // Filters centers to only include those with profiles
       store.centers = store.centers.filter((centre) => centre.profiles.length > 0);
-
-      // Automatically submits the profile if there's only one option
-      if (
-        !store.centers.length ||
-        (store.centers.length === 1 && store.centers[0].profiles.length === 1)
-      ) {
-        const profileToSubmit = store.centers[0]?.profiles[0].id || store.superProfile.id;
-        await handleOnSubmit({
-          profile: profileToSubmit,
-        });
-      }
     }
     // Sets default values if a profile and center are remembered
     if (profile && center) {
@@ -151,6 +142,24 @@ export default function SelectProfile({ session }) {
         center: center.id,
         remember: true,
       };
+    }
+
+    // Automatically submits the profile if there's only one option
+    if (
+      !store.centers.length ||
+      (store.centers.length === 1 && store.centers[0].profiles.length === 1)
+    ) {
+      const profileToSubmit = store.centers[0]?.profiles[0].id || store.superProfile?.id;
+      const centerToSubmit = store.centers[0]?.id;
+      const payload = {
+        profile: profileToSubmit,
+      };
+
+      // Only send the center if it's not the super profile
+      if (!store.superProfile?.id) {
+        payload.center = centerToSubmit;
+      }
+      await handleOnSubmit(payload);
     }
 
     // Marks initialization as complete and triggers a re-render

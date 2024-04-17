@@ -2,35 +2,46 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import { Drawer, Button } from '@bubbles-ui/components';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
+import usePermissions from '@users/hooks/usePermissions';
 import { UserDetail } from './UserDetail';
 import { UserAdminDrawer } from './UserAdminDrawer';
 
-function UserDetailDrawer({ userId, centerId, opened, onClose = noop, onSave = noop }) {
+function UserDetailDrawer({ userId, center, opened, onClose = noop, onSave = noop }) {
   const [canEdit, setCanEdit] = React.useState(false);
   const [openedAdminDrawer, setOpenedAdminDrawer] = React.useState(false);
   const [selfOpen, setSelfOpen] = React.useState(opened);
   const [user, setUser] = React.useState(null);
 
+  const {
+    data: permissions,
+    isLoading: permissionsLoading,
+    refetch: refetchPermissions,
+  } = usePermissions({
+    name: 'users.users',
+    enabled: opened,
+  });
+
   React.useEffect(() => {
     setSelfOpen(opened);
+    if (opened) {
+      refetchPermissions();
+    }
   }, [opened]);
 
   // ························································
   // INIT DATA LOADING
 
-  async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest('users.users');
-    if (permissions) {
-      setCanEdit(
-        permissions.actionNames.includes('create') || permissions.actionNames.includes('admin')
-      );
-    }
+  async function handlePermissions() {
+    setCanEdit(
+      permissions.actionNames.includes('create') || permissions.actionNames.includes('admin')
+    );
   }
 
   React.useEffect(() => {
-    getPermissions();
-  }, []);
+    if (!permissionsLoading && permissions) {
+      handlePermissions();
+    }
+  }, [permissions, permissionsLoading]);
 
   // ····················································
   // HANDLERS
@@ -58,7 +69,7 @@ function UserDetailDrawer({ userId, centerId, opened, onClose = noop, onSave = n
       <Drawer opened={selfOpen} onClose={handleOnClose}>
         <Drawer.Header title="Detalle de usuario" />
         <Drawer.Content>
-          <UserDetail userId={userId} centerId={centerId} onLoadUser={handleOnLoadUser} />
+          <UserDetail userId={userId} center={center} onLoadUser={handleOnLoadUser} />
         </Drawer.Content>
         {canEdit && (
           <Drawer.Footer>
@@ -70,7 +81,7 @@ function UserDetailDrawer({ userId, centerId, opened, onClose = noop, onSave = n
       </Drawer>
       <UserAdminDrawer
         user={user}
-        centerId={centerId}
+        center={center}
         opened={openedAdminDrawer}
         onClose={handleOnAdminClose}
         onSave={onSave}
@@ -80,7 +91,7 @@ function UserDetailDrawer({ userId, centerId, opened, onClose = noop, onSave = n
 }
 
 UserDetailDrawer.propTypes = {
-  centerId: PropTypes.string,
+  center: PropTypes.object,
   userId: PropTypes.string,
   opened: PropTypes.bool,
   onClose: PropTypes.func,

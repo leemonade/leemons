@@ -1,20 +1,27 @@
-import { ContextContainer, PageContainer, Stack } from '@bubbles-ui/components';
-// TODO: import from @common plugin
-
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import React from 'react';
+import {
+  Box,
+  Button,
+  TLayout,
+  ImageLoader,
+  ContextContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { useHistory } from 'react-router-dom';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import React from 'react';
-import { SelectCenter } from '../../../../components/SelectCenter';
-import { SelectProfile } from '../../../../components/SelectProfile';
-import UploadFile from './components/uploadFile';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { SelectProfile } from '@users/components/SelectProfile';
+import { UploadFile } from './components/uploadFile';
 
 function CreateUsers() {
   const [t] = useTranslateLoader(prefixPN('importUsers'));
+  const [tList] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore();
-  const [, , , getErrorMessage] = useRequestErrorMessage();
+  const scrollRef = React.useRef();
+  const history = useHistory();
 
   function centerChange(e) {
     store.center = e;
@@ -26,11 +33,13 @@ function CreateUsers() {
     render();
   }
 
-  async function save() {}
+  function goToUsersList() {
+    history.push('/private/users/list');
+  }
 
   const childrens = React.useMemo(() => {
     const result = [
-      <ContextContainer key="1" direction="row">
+      <ContextContainer key="1" direction="row" sx={{ maxWidth: 500 }}>
         <SelectCenter
           label={t('centerLabel')}
           value={store.center}
@@ -47,20 +56,39 @@ function CreateUsers() {
     ];
     if (store.center && store.profile) {
       result.push(<UploadFile t={t} center={store.center} profile={store.profile} />);
+    } else {
+      result.push(
+        <TotalLayoutFooterContainer
+          fixed
+          fullWidth
+          leftZone={
+            <Button variant="link" onClick={goToUsersList} leftIcon={<ChevLeftIcon />}>
+              {t('backToUsers')}
+            </Button>
+          }
+        />
+      );
     }
     return result;
   }, [store.center, store.profile]);
 
   return (
-    <Stack direction="column" fullWidth fullHeight>
-      <AdminPageHeader values={{ title: t('title'), description: t('description') }} />
-
-      <PageContainer noFlex>
-        <ContextContainer divided sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-          {childrens}
-        </ContextContainer>
-      </PageContainer>
-    </Stack>
+    <TLayout scrollRef={scrollRef}>
+      <TLayout.Header
+        title={tList('pageTitle')}
+        cancelable={false}
+        icon={
+          <Box sx={{ position: 'relative', width: 24, height: 24 }}>
+            <ImageLoader src="/public/users/menu-icon.svg" width={18} height={18} />
+          </Box>
+        }
+      />
+      <TLayout.Content fullWidth>
+        <Box>
+          <ContextContainer title={t('title')}>{childrens}</ContextContainer>
+        </Box>
+      </TLayout.Content>
+    </TLayout>
   );
 }
 

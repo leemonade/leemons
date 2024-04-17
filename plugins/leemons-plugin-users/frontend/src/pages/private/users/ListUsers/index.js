@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import _, { isBoolean, isEmpty } from 'lodash';
+import _, { isBoolean, isFunction } from 'lodash';
 import {
   Badge,
   Box,
@@ -19,11 +19,11 @@ import {
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { CloudUploadIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { LocaleDate, useStore } from '@common';
-import useRequestErrorMessage, { getRequestErrorMessage } from '@common/useRequestErrorMessage';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
+import { activateUserRequest, getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { useHistory } from 'react-router-dom';
 import DisableUsersModal from '@users/components/DisableUsersModal';
 import EnableUsersModal from '@users/components/EnableUsersModal';
@@ -34,8 +34,10 @@ import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
 import { ListEmptyState } from '@common/components/ListEmptyState';
 import { SelectProfile } from '@users/components/SelectProfile';
 import { SelectCenter } from '@users/components/SelectCenter';
+import { addSuccessAlert } from '@layout/alert';
+import { SetPasswordModal } from '@users/components/SetPasswordModal';
 import { listUsersRequest } from '../../../../request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { BulkActionModal } from './components/BulkActionModal';
 
 function ListUsers() {
   const [t, trans] = useTranslateLoader(prefixPN('list_users'));
@@ -46,16 +48,11 @@ function ListUsers() {
   });
   const { t: tCommon } = useCommonTranslate('page_header');
   const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
-
+  const [bulkActionInfo, setBulkActionInfo] = React.useState(null);
   const history = useHistory();
 
-  function getUserAgentId(user) {
-    return _.find(store.pagination?.userAgents, { user }).id;
-  }
-
-  function getUserAgentDisabled(user) {
-    return _.find(store.pagination?.userAgents, { user }).disabled;
-  }
+  // ····················································
+  // INIT DATA LOADING
 
   async function listUsers() {
     const query = {};
@@ -72,8 +69,8 @@ function ListUsers() {
     if (store.profile) {
       query.profiles = store.profile;
     }
-    if (store.center) {
-      query.centers = store.center;
+    if (store.centerId) {
+      query.centers = store.centerId;
     }
     if (store.state) {
       query.disabled = true;
@@ -113,8 +110,6 @@ function ListUsers() {
     if (addPermission) {
       store.canAdd =
         addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
-
-      store.canAdd = false;
     }
     if (importPermission) {
       store.canImport =
@@ -124,6 +119,13 @@ function ListUsers() {
     }
     render();
   }
+
+  useEffect(() => {
+    getPermissions();
+  }, []);
+
+  // ····················································
+  // METHODS
 
   function getUserStateKey(status) {
     if (status === 'created') {
@@ -135,15 +137,107 @@ function ListUsers() {
     return 'active';
   }
 
-  function filterUserAgentsByProfiles(profiles) {
+  function filterSelectedUserAgentsByProfiles(profiles) {
     const userAgents = store.pagination?.userAgents ?? [];
-    return userAgents.filter((ua) => profiles.includes(ua.profile));
+    return userAgents
+      .filter((ua) => store.checkeds.includes(ua.user))
+      .filter((ua) => profiles.includes(ua.profile))
+      .map((ua) => ua.id);
   }
 
-  useEffect(() => {
-    // load();
-    getPermissions();
-  }, []);
+  function goImportPage() {
+    history.push('/private/users/import');
+  }
+
+  function makeAction(action) {
+    store.actionModal = action;
+    render();
+  }
+
+  async function changeSelectedUserAgentState(profiles, changeStateFunc) {
+    const userAgentsToChange = filterSelectedUserAgentsByProfiles(profiles);
+
+    if (isFunction(changeStateFunc) && userAgentsToChange.length > 0) {
+      let current = 0;
+      const total = userAgentsToChange.length;
+      setBulkActionInfo({ state: 'init', current, total, completed: 0 });
+
+      // Process each userAgent sequentially
+      await userAgentsToChange.reduce(async (promise, userAgentId) => {
+        await promise;
+        current++;
+        const completed = (current / total) * 100;
+        setBulkActionInfo({ state: 'processing', current, total, completed });
+        return changeStateFunc(userAgentId);
+      }, Promise.resolve());
+
+      setBulkActionInfo(null);
+    }
+    return userAgentsToChange?.length ?? 0;
+  }
+
+  async function disableSelectedUsers(profiles) {
+    try {
+      store.loading = true;
+      store.actionModal = null;
+      render();
+      const updatedCount = await changeSelectedUserAgentState(profiles, disableUserAgent);
+      addSuccessAlert(
+        t(updatedCount === 1 ? 'disableSingleUserSuccess' : 'disableUserSuccess', {
+          n: updatedCount,
+        })
+      );
+      store.checkeds = [];
+      await load();
+    } catch (e) {
+      setLoadingError(e);
+    }
+    store.loading = false;
+    render();
+  }
+
+  async function enableSelectedUsers(profiles) {
+    try {
+      store.loading = true;
+      store.actionModal = null;
+      render();
+      const updatedCount = await changeSelectedUserAgentState(profiles, activeUserAgent);
+      addSuccessAlert(
+        t(updatedCount === 1 ? 'enableSingleUserSuccess' : 'enableUserSuccess', {
+          n: updatedCount,
+        })
+      );
+      store.checkeds = [];
+      await load();
+    } catch (e) {
+      setLoadingError(e);
+    }
+    store.loading = false;
+    render();
+  }
+
+  async function activateUserManually(data) {
+    let current = 0;
+    const total = store.checkeds.length;
+    setBulkActionInfo({ state: 'init', current, total, completed: 0 });
+
+    // Process each userAgent sequentially
+    await store.checkeds.reduce(async (promise, userId) => {
+      await promise;
+      current++;
+      const completed = (current / total) * 100;
+      setBulkActionInfo({ state: 'processing', current, total, completed });
+      return activateUserRequest({
+        id: userId,
+        password: data.password,
+      });
+    }, Promise.resolve());
+
+    setBulkActionInfo(null);
+
+    store.checkeds = [];
+    load();
+  }
 
   // ····················································
   // HANDLERS
@@ -157,14 +251,15 @@ function ListUsers() {
     store.search = null;
     store.profile = null;
     store.state = null;
-    store.center = null;
+    store.centerId = null;
     store.pagination = null;
     store.isSearching = false;
     render();
   }
 
-  async function handleCenterChange(center) {
-    store.center = center;
+  async function handleCenterChange(centerId) {
+    store.centerId = centerId;
+    store.center = store.centers?.find((c) => c.id === centerId);
     load();
   }
 
@@ -183,12 +278,12 @@ function ListUsers() {
     render();
   }
 
-  async function onPageChange(page) {
+  async function handleOnPageChange(page) {
     store.page = page;
     load();
   }
 
-  async function onPageSizeChange(size) {
+  async function handleOnPageSizeChange(size) {
     store.size = Number(size);
     load();
   }
@@ -214,57 +309,6 @@ function ListUsers() {
 
   function handleOnLoadCenters(centers) {
     store.centers = centers;
-    render();
-  }
-
-  function goImportPage() {
-    history.push('/private/users/import');
-  }
-
-  function makeAction(action) {
-    store.actionModal = action;
-    render();
-  }
-
-  async function disableSelectedUsers(profiles) {
-    try {
-      store.loading = true;
-      store.actionModal = null;
-      render();
-      const userAgentsToDisable = filterUserAgentsByProfiles(profiles);
-      await disableUserAgent(userAgentsToDisable);
-      addSuccessAlert(
-        t(userAgentsToDisable.length === 1 ? 'disableSingleUserSuccess' : 'disableUserSuccess', {
-          n: userAgentsToDisable.length,
-        })
-      );
-      store.checkeds = [];
-      await load();
-    } catch (e) {
-      setLoadingError(e);
-    }
-    store.loading = false;
-    render();
-  }
-
-  async function enableSelectedUsers(profiles) {
-    try {
-      store.loading = true;
-      store.actionModal = null;
-      render();
-      const userAgentsToEnable = filterUserAgentsByProfiles(profiles);
-      await activeUserAgent(userAgentsToEnable);
-      addSuccessAlert(
-        t(userAgentsToEnable.length === 1 ? 'enableSingleUserSuccess' : 'enableUserSuccess', {
-          n: userAgentsToEnable.length,
-        })
-      );
-      store.checkeds = [];
-      await load();
-    } catch (e) {
-      setLoadingError(e);
-    }
-    store.loading = false;
     render();
   }
 
@@ -353,11 +397,11 @@ function ListUsers() {
               </Box>
             ),
             tags: (
-              <Box>
+              <Stack spacing={1}>
                 {item.tags.map((tag) => (
                   <Badge key={tag} label={tag} closable={false} />
                 ))}
-              </Box>
+              </Stack>
             ),
             birthdate: <LocaleDate date={item.birthdate} />,
             state: t(getUserStateKey(item.status)),
@@ -400,7 +444,7 @@ function ListUsers() {
                   clearable={t('clearFilter')}
                   label={t('centerLabel')}
                   placeholder={t('selectPlaceholder')}
-                  value={store.center}
+                  value={store.centerId}
                   onChange={handleCenterChange}
                   onLoadCenters={handleOnLoadCenters}
                 />
@@ -429,7 +473,7 @@ function ListUsers() {
                   placeholder={t('searchPlaceholder')}
                   onChange={handleSearchChange}
                   onKeyPress={(e) => {
-                    if (e.charCode === 13 && store.center) {
+                    if (e.charCode === 13 && store.centerId) {
                       handleSearchUsers();
                     }
                   }}
@@ -463,6 +507,7 @@ function ListUsers() {
                           data={[
                             { label: t('activateUsers'), value: 'active' },
                             { label: t('disableUsers'), value: 'disable' },
+                            { label: t('activateUserManually'), value: 'activate-manually' },
                           ]}
                           value={null}
                           onChange={makeAction}
@@ -483,20 +528,7 @@ function ListUsers() {
                     </Box>
                   */}
 
-                  {tableItems?.length > 0 && (
-                    <Table
-                      columns={tableHeaders}
-                      data={tableItems}
-                      onStyleRow={({ row, theme }) => {
-                        if (getUserAgentDisabled(row.original.id)) {
-                          return {
-                            backgroundColor: theme.other.core.color.neutral['100'],
-                          };
-                        }
-                        return {};
-                      }}
-                    />
-                  )}
+                  {tableItems?.length > 0 && <Table columns={tableHeaders} data={tableItems} />}
                   {tableItems?.length === 0 && store.canAdd && (
                     <ListEmptyState
                       description={t(store.isSearching ? 'noResults' : 'emptyState')}
@@ -513,8 +545,8 @@ function ListUsers() {
                     totalPages={store.pagination?.totalPages || 0}
                     size={store.size}
                     withSize={true}
-                    onChange={(val) => onPageChange(val - 1)}
-                    onSizeChange={onPageSizeChange}
+                    onChange={(val) => handleOnPageChange(val - 1)}
+                    onSizeChange={handleOnPageSizeChange}
                     labels={{
                       show: t('show'),
                       goTo: t('goTo'),
@@ -536,40 +568,57 @@ function ListUsers() {
           </TLayout.Footer.RightActions>
         </TLayout.Footer>
       </TLayout>
-      <DisableUsersModal
-        users={store.checkeds}
-        center={store.centers?.find((c) => c?.id === store.center)}
-        opened={store.actionModal === 'disable' && store.checkeds.length > 0}
-        onClose={() => {
-          store.actionModal = null;
-          render();
-        }}
-        onConfirm={disableSelectedUsers}
-      />
-      <EnableUsersModal
-        users={store.checkeds}
-        center={store.centers?.find((c) => c?.id === store.center)}
-        opened={store.actionModal === 'active' && store.checkeds.length > 0}
-        onClose={() => {
-          store.actionModal = null;
-          render();
-        }}
-        onConfirm={enableSelectedUsers}
-      />
 
-      <UserDetailDrawer
-        opened={store.openedUserDetailDrawer}
-        userId={store.openUser?.id}
-        centerId={store.center}
-        onClose={handleCloseUserDrawer}
-      />
+      {!!store.center?.id && (
+        <>
+          <DisableUsersModal
+            users={store.checkeds}
+            center={store.center}
+            opened={store.actionModal === 'disable' && store.checkeds.length > 0}
+            onClose={() => {
+              store.actionModal = null;
+              render();
+            }}
+            onConfirm={disableSelectedUsers}
+          />
 
-      <UserAdminDrawer
-        centerId={store.center}
-        user={store.openUser}
-        opened={store.openedUserAdminDrawer}
-        onClose={handleCloseUserDrawer}
-      />
+          <EnableUsersModal
+            users={store.checkeds}
+            center={store.center}
+            opened={store.actionModal === 'active' && store.checkeds.length > 0}
+            onClose={() => {
+              store.actionModal = null;
+              render();
+            }}
+            onConfirm={enableSelectedUsers}
+          />
+
+          <SetPasswordModal
+            opened={store.actionModal === 'activate-manually' && store.checkeds.length > 0}
+            onClose={() => {
+              store.actionModal = null;
+              render();
+            }}
+            onSave={activateUserManually}
+          />
+
+          <UserDetailDrawer
+            opened={store.openedUserDetailDrawer}
+            userId={store.openUser?.id}
+            center={store.center}
+            onClose={handleCloseUserDrawer}
+          />
+
+          <UserAdminDrawer
+            center={store.center}
+            user={store.openUser}
+            opened={store.openedUserAdminDrawer}
+            onClose={handleCloseUserDrawer}
+          />
+
+          <BulkActionModal opened={bulkActionInfo !== null} info={bulkActionInfo} />
+        </>
+      )}
     </>
   );
 }

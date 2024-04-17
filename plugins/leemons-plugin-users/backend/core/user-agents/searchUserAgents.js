@@ -167,7 +167,12 @@ async function searchUserAgents({
     userAgents = _.filter(userAgents, (userAgent) => usersAgentIdsInProgram.includes(userAgent.id));
   }
 
-  const _classes = _.isArray(classes) ? classes : classes ? [classes] : null;
+  let _classes = null;
+  if (_.isArray(classes)) {
+    _classes = classes;
+  } else if (classes) {
+    _classes = [classes];
+  }
 
   if (_.isArray(_classes)) {
     const [students, teachers] = await Promise.all([
@@ -184,7 +189,7 @@ async function searchUserAgents({
     userAgents = _.filter(userAgents, (userAgent) => st.includes(userAgent.id));
   }
 
-  return await getUserAgentsInfo({
+  return getUserAgentsInfo({
     userAgentIds: _.map(userAgents, 'id'),
     withProfile,
     withCenter,

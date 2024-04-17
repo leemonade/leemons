@@ -1,4 +1,5 @@
 async function disableUserAgent(id) {
+  console.log('disableUserAgent:', id);
   return leemons.api('v1/users/users/user-agents/disable', {
     allAgents: true,
     method: 'POST',

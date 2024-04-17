@@ -23,6 +23,7 @@ import useUserDetails from '@users/hooks/useUserDetails';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLocale } from '@common';
 import prefixPN from '@users/helpers/prefixPN';
+import { SetPasswordModal } from './SetPasswordModal';
 
 const USER_FIELDS = ['email', 'name', 'surnames', 'secondSurname', 'gender', 'birthdate', 'avatar'];
 
@@ -111,23 +112,22 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
     }
   };
 
-  const activeUserManually = () => {
-    handleSubmit(async ({ password: userPassword }) => {
-      setLoading(true);
-      try {
-        await activateUserRequest({
-          id: userDetails.user.id,
-          password: userPassword,
-        });
-        addSuccessAlert(t('activatedUser'));
-        toggleModal();
-        updateUserDetails();
-        setLoading(false);
-      } catch (err) {
-        addErrorAlert(err);
-        setLoading(false);
-      }
-    })();
+  const activeUserManually = async (data) => {
+    setLoading(true);
+    try {
+      await activateUserRequest({
+        id: userDetails.user.id,
+        password: data.password,
+      });
+
+      addSuccessAlert(t('activatedUser'));
+      toggleModal();
+      updateUserDetails();
+      setLoading(false);
+    } catch (err) {
+      addErrorAlert(err);
+      setLoading(false);
+    }
   };
 
   // ····················································
@@ -212,6 +212,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
             </Stack>
           )}
         </ContextContainer>
+
         <ContextContainer title={t('personalInfo')}>
           <Stack fullWidth spacing={4}>
             <Box>
@@ -243,7 +244,6 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
               render={({ field }) => <TextInput {...field} label={t('secondSurname')} />}
             />
           </Box>
-
           <Stack fullWidth spacing={4}>
             <Box>
               <Controller
@@ -283,6 +283,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
               />
             </Box>
           </Stack>
+
           <Box>
             <InputWrapper label={t('profilePicture')}>
               <Controller
@@ -309,49 +310,11 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
         </ContextContainer>
       </Stack>
 
-      <Modal
+      <SetPasswordModal
         opened={activeModalOpened}
         onClose={toggleModal}
-        withCloseButton={false}
-        title={t('manualActivation')}
-      >
-        <Stack fullWidth direction="column" spacing={4}>
-          <Controller
-            name="password"
-            control={control}
-            rules={{
-              required: t('requiredPassword'),
-            }}
-            shouldUnregister
-            render={({ field }) => (
-              <PasswordInput {...field} label={t('provisionalPassword')} error={errors.password} />
-            )}
-          />
-          <Controller
-            name="repeatPassword"
-            control={control}
-            rules={{
-              required: t('requiredPassword'),
-              validate: (value) => {
-                if (value !== password) {
-                  return t('passwordNotMatch');
-                }
-                return true;
-              },
-            }}
-            shouldUnregister
-            render={({ field }) => (
-              <PasswordInput {...field} label={t('repeatPassword')} error={errors.repeatPassword} />
-            )}
-          />
-        </Stack>
-        <Stack fullWidth spacing={6} style={{ marginTop: 16 }} justifyContent="space-between">
-          <Button variant="link" onClick={toggleModal}>
-            {t('cancel')}
-          </Button>
-          <Button onClick={activeUserManually}>{t('activeUser')}</Button>
-        </Stack>
-      </Modal>
+        onSave={activeUserManually}
+      />
     </>
   );
 }

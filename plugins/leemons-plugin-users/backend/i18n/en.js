@@ -236,8 +236,9 @@ module.exports = {
     viewAll: 'View all',
     show: 'Show',
     goTo: 'Go to',
-    disableUsers: 'Disable users',
-    activateUsers: 'Activate users',
+    disableUsers: 'Disable profiles',
+    activateUsers: 'Activate profiles',
+    activateUserManually: 'Set password',
     bulkActions: 'Bulk actions',
     selectedUsers: '({n} selected users)',
     nUsers: '({n} users found)',
@@ -254,10 +255,13 @@ module.exports = {
   create_users: {
     pageTitle: 'Create users',
     profileLabel: 'Profiles',
+    profileRequired: 'Profile is required',
     tagsHeader: 'Tags',
     save: 'Save',
     create: 'Create',
     usersAddedSuccessfully: 'User saved successfully',
+    enableProfileSuccess: 'Profile {profile} enabled successfully',
+    disableProfileSuccess: 'Profile {profile} disabled successfully',
   },
   needDatasetDataModal: {
     goPageButton: 'Go to page',
@@ -332,6 +336,7 @@ module.exports = {
     centerLabel: 'Center',
     profileLabel: 'Profile',
     uploadFile: 'Upload file to import',
+    uploadLabel: 'File to import',
     downloadTemplate: 'Download template',
     workbook: {
       title: 'Leemons users template',
@@ -353,7 +358,7 @@ module.exports = {
     birthdateInvalid: 'Invalid birthdate format',
     genderRequired: 'Gender is required',
     genderInvalid: 'Gender invalid use male or female',
-    save: 'Save',
+    save: 'Confirm import',
     colEmailRequired: 'The [Email] column is required.',
     colNameRequired: 'The [Name] column is required.',
     colBirthdateRequired: 'The [Birthdate] column is required.',
@@ -361,6 +366,7 @@ module.exports = {
     colRequired: 'The [{name}] column is required.',
     fieldsWithErrors: 'There are fields with errors, correct them before importing.',
     usersAddedSuccessfully: 'Users added successfully',
+    backToUsers: 'Back to users list',
   },
   list_roles: {
     page_title: 'Roles',
@@ -393,10 +399,13 @@ module.exports = {
   disableUserModal: {
     title: 'Disable users',
     description:
-      'The profiles for {n} users in the {centerName} center will be disabled, and the users will not be visible to their peers or teachers.',
+      'The profiles for {n} users, in the {centerName} center, will be disabled and the users will not be visible to their peers or teachers.',
     titleSingle: 'Disable user',
     descriptionSingle:
-      'The profiles for this user in the {centerName} center will be disabled, and the user will not be visible to their peers or teachers.',
+      'The profiles for this user, in the {centerName} center, will be disabled and the user will not be visible to their peers or teachers.',
+    titleProfile: 'Disable profile',
+    descriptionProfile:
+      'The profile {profileName} for this user, in the {centerName} center, will be disabled and the user will not be visible to their peers or teachers. This profile can be re-enabled any time later.',
     selectProfiles: 'Select the profiles you want to disable',
     cancel: 'Cancel',
     confirm: 'Confirm',
@@ -404,10 +413,13 @@ module.exports = {
   enableUserModal: {
     title: 'Enable users',
     description:
-      'The profiles for {n} users in the {centerName} center will be enabled, and the users will be visible again.',
+      'The profiles for {n} users, in the {centerName} center, will be enabled and the users will be visible again.',
     titleSingle: 'Enable user',
     descriptionSingle:
-      'The profiles for this user in the {centerName} center will be enabled, and the user will be visible again.',
+      'The profiles for this user, in the {centerName} center, will be enabled and the user will be visible again.',
+    titleProfile: 'Enable profile',
+    descriptionProfile:
+      'The profile {profileName} for this user, in the {centerName} center, will be enabled and the user will be visible again.',
     selectProfiles: 'Select the profiles you want to enable',
     cancel: 'Cancel',
     confirm: 'Confirm',
@@ -454,5 +466,12 @@ module.exports = {
     delete: 'Delete',
     cancel: 'Cancel',
     accept: 'Accept',
+  },
+  bulkActionModal: {
+    title: 'Bulk operations',
+    bulkProgress: 'Processing operation {current} of {total} - {completed}%',
+    init: 'Starting operations',
+    finalize: 'Finalizing operations',
+    finalizing: 'Finalizing...',
   },
 };
