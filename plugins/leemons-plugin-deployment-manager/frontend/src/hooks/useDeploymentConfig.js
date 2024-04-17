@@ -8,6 +8,8 @@ function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
       plugin: 'plugin.deployment-manager',
       scope: 'deploymentConfig',
       action: 'get',
+      pluginName,
+      ignoreVersion,
     },
   ];
 
