@@ -6,7 +6,7 @@ import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { SelectUserAgent } from '@users/components';
 import { intersection } from 'lodash';
 import { NonAssignableStudents } from './NonAssignableStudents';
-// import SelectedStudentsInfo from './SelectedStudentsInfo';
+import SelectedStudentsInfo from './SelectedStudentsInfo';
 
 const useSelectClassStyles = createStyles((theme) => ({
   root: {
@@ -212,12 +212,12 @@ export function SelectClass({
           />
         )}
       />
-      {/* <SelectedStudentsInfo
+      <SelectedStudentsInfo
         control={control}
         value={value}
         availableClasses={availableClasses}
         localizations={localizations}
-      /> */}
+      />
       <Controller
         name="autoAssign"
         control={control}
