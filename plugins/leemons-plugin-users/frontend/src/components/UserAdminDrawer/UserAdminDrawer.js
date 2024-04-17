@@ -69,8 +69,6 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     let profilesToCreate = compact(
       userAgents.filter((userAgent) => !userAgent.id).map((userAgent) => userAgent.profile?.id)
     );
-    console.log('userAgents', userAgents);
-    console.log('profilesToCreate', profilesToCreate);
 
     // Update only the userAgents that has `id`
     const userAgentsToUpdate = compact(
@@ -80,7 +78,6 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     // If the user is not being updated, we create the user with the first profile
     if (!data?.id) {
       const firstProfile = profilesToCreate[0];
-      console.log('firstProfile', firstProfile);
 
       // Create User with the first profile
       const results = await addUsersBulkRequest({

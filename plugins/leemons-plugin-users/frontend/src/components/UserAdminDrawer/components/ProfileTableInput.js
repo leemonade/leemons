@@ -1,10 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compact, noop } from 'lodash';
-import { Box, Table, Button, Select, ActionButton, ContextContainer } from '@bubbles-ui/components';
+import {
+  Box,
+  Table,
+  Button,
+  Stack,
+  Select,
+  ActionButton,
+  ContextContainer,
+} from '@bubbles-ui/components';
 import { useProfiles } from '@users/hooks';
 import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { ViewOffIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { UserWarningIcon, ViewOffIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
@@ -100,7 +108,17 @@ function ProfileTableInput({
       userAgents?.map((userAgent) => {
         const profileData = profilesData.find((p) => p.value === userAgent?.profile?.id);
         return {
-          name: profileData?.label,
+          name: (
+            <Stack
+              spacing={1}
+              sx={(theme) => ({
+                color: userAgent.disabled && theme.other.global.content.color.text.muted,
+              })}
+            >
+              {userAgent.disabled && <UserWarningIcon />}
+              {profileData?.label}
+            </Stack>
+          ),
           action: getActionButton(userAgent),
         };
       }) ?? [],

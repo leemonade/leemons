@@ -34,7 +34,7 @@ import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
 import { ListEmptyState } from '@common/components/ListEmptyState';
 import { SelectProfile } from '@users/components/SelectProfile';
 import { SelectCenter } from '@users/components/SelectCenter';
-import { addSuccessAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { SetPasswordModal } from '@users/components/SetPasswordModal';
 import { listUsersRequest } from '../../../../request';
 import { BulkActionModal } from './components/BulkActionModal';
@@ -50,20 +50,21 @@ function ListUsers() {
   const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
   const [bulkActionInfo, setBulkActionInfo] = React.useState(null);
   const history = useHistory();
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
   // ····················································
   // INIT DATA LOADING
 
-  async function listUsers() {
+  async function listUsers(searchQuery) {
     const query = {};
-    if (store.search) {
+    if (searchQuery ?? store.search) {
       query.$or = [
-        { name: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { surnames: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { secondSurname: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { email: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { phone: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { birthdate: { $regex: store.search.toLowerCase(), $options: 'i' } },
+        { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        // { birthdate: { $regex: store.search.toLowerCase(), $options: 'i' } },
       ];
     }
     if (store.profile) {
@@ -88,15 +89,16 @@ function ListUsers() {
     return data;
   }
 
-  async function load() {
+  async function load(searchQuery) {
     try {
       store.loading = true;
       render();
-      store.pagination = await listUsers();
+      store.pagination = await listUsers(searchQuery);
       store.loading = false;
       render();
     } catch (err) {
-      setLoadingError(err);
+      // setLoadingError(err);
+      addErrorAlert(getErrorMessage(err));
     }
     store.loading = false;
     render();
@@ -190,7 +192,7 @@ function ListUsers() {
       store.checkeds = [];
       await load();
     } catch (e) {
-      setLoadingError(e);
+      addErrorAlert(getErrorMessage(e));
     }
     store.loading = false;
     render();
@@ -210,7 +212,8 @@ function ListUsers() {
       store.checkeds = [];
       await load();
     } catch (e) {
-      setLoadingError(e);
+      // setLoadingError(e);
+      addErrorAlert(getErrorMessage(e));
     }
     store.loading = false;
     render();
@@ -242,9 +245,10 @@ function ListUsers() {
   // ····················································
   // HANDLERS
 
-  async function handleSearchUsers() {
+  async function handleSearchUsers(value) {
+    store.search = value;
     store.isSearching = true;
-    load();
+    load(value);
   }
 
   async function handleClearFilters() {
@@ -377,49 +381,47 @@ function ListUsers() {
 
   const tableItems = useMemo(
     () =>
-      store.pagination
-        ? _.map(store.pagination.items, (item) => ({
-            ...item,
-            checked: (
-              <Box style={{ width: '30px' }}>
-                <Checkbox
-                  checked={store.checkeds.includes(item.id)}
-                  onChange={() => {
-                    const index = store.checkeds.indexOf(item.id);
-                    if (index >= 0) {
-                      store.checkeds.splice(index, 1);
-                    } else {
-                      store.checkeds.push(item.id);
-                    }
-                    render();
-                  }}
-                />
-              </Box>
-            ),
-            tags: (
-              <Stack spacing={1}>
-                {item.tags.map((tag) => (
-                  <Badge key={tag} label={tag} closable={false} />
-                ))}
-              </Stack>
-            ),
-            birthdate: <LocaleDate date={item.birthdate} />,
-            state: t(getUserStateKey(item.status)),
-            actions: (
-              <Box style={{ textAlign: 'right', width: '100%' }}>
-                <ActionButton
-                  onClick={() => {
-                    store.openUser = item;
-                    handleOpenUserDrawer();
-                  }}
-                  tooltip={t('view')}
-                  icon={<ExpandDiagonalIcon />}
-                />
-              </Box>
-            ),
-          }))
-        : [],
-    [t, store.pagination, JSON.stringify(store.checkeds)]
+      _.map(store.pagination?.items ?? [], (item) => ({
+        ...item,
+        checked: (
+          <Box style={{ width: '30px' }}>
+            <Checkbox
+              checked={store.checkeds.includes(item.id)}
+              onChange={() => {
+                const index = store.checkeds.indexOf(item.id);
+                if (index >= 0) {
+                  store.checkeds.splice(index, 1);
+                } else {
+                  store.checkeds.push(item.id);
+                }
+                render();
+              }}
+            />
+          </Box>
+        ),
+        tags: (
+          <Stack spacing={1}>
+            {item.tags.map((tag) => (
+              <Badge key={tag} label={tag} closable={false} />
+            ))}
+          </Stack>
+        ),
+        birthdate: <LocaleDate date={item.birthdate} />,
+        state: t(getUserStateKey(item.status)),
+        actions: (
+          <Box style={{ textAlign: 'right', width: '100%' }}>
+            <ActionButton
+              onClick={() => {
+                store.openUser = item;
+                handleOpenUserDrawer();
+              }}
+              tooltip={t('view')}
+              icon={<ExpandDiagonalIcon />}
+            />
+          </Box>
+        ),
+      })),
+    [t, JSON.stringify(store.pagination), JSON.stringify(store.checkeds)]
   );
 
   return (
@@ -474,7 +476,7 @@ function ListUsers() {
                   onChange={handleSearchChange}
                   onKeyPress={(e) => {
                     if (e.charCode === 13 && store.centerId) {
-                      handleSearchUsers();
+                      handleSearchUsers(e.target.value);
                     }
                   }}
                 />

@@ -121,8 +121,6 @@ export default function SelectProfile({ session }) {
     // Updates the store with the processed centers
     store.centers = processedCenters;
 
-    console.log('store.centers:', store.centers);
-
     // If the user is a super admin, fetch super profiles and add them to each center
     if (userToken?.user?.isSuperAdmin) {
       const { profiles } = await getUserProfilesRequest();

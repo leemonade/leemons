@@ -474,4 +474,12 @@ module.exports = {
     finalize: 'Finalizando operaciones',
     finalizing: 'Finalizando...',
   },
+  user_detail: {
+    title: {
+      default: 'Detalle de usuario',
+      student: 'Detalle de estudiante',
+      teacher: 'Detalle de docente',
+    },
+    tagsTitle: 'Etiquetas',
+  },
 };

@@ -3,14 +3,28 @@ import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import { Drawer, Button } from '@bubbles-ui/components';
 import usePermissions from '@users/hooks/usePermissions';
-import { UserDetail } from './UserDetail';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@users/helpers/prefixPN';
+import { getSessionCenter } from '@users/session';
+import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
+import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
 import { UserAdminDrawer } from './UserAdminDrawer';
 
-function UserDetailDrawer({ userId, center, opened, onClose = noop, onSave = noop }) {
+function UserDetailDrawer({
+  userId,
+  center: centerProp,
+  opened,
+  sysProfileFilter,
+  viewMode = USER_DETAIL_VIEWS.ADMIN,
+  onClose = noop,
+  onSave = noop,
+}) {
   const [canEdit, setCanEdit] = React.useState(false);
   const [openedAdminDrawer, setOpenedAdminDrawer] = React.useState(false);
   const [selfOpen, setSelfOpen] = React.useState(opened);
   const [user, setUser] = React.useState(null);
+  const [t] = useTranslateLoader(prefixPN('user_detail'));
+  const center = centerProp ?? getSessionCenter();
 
   const {
     data: permissions,
@@ -28,7 +42,7 @@ function UserDetailDrawer({ userId, center, opened, onClose = noop, onSave = noo
     }
   }, [opened]);
 
-  // ························································
+  // ·······················································
   // INIT DATA LOADING
 
   async function handlePermissions() {
@@ -42,6 +56,17 @@ function UserDetailDrawer({ userId, center, opened, onClose = noop, onSave = noo
       handlePermissions();
     }
   }, [permissions, permissionsLoading]);
+
+  // ····················································
+  // METHODS
+
+  function getTitle() {
+    if (sysProfileFilter?.length === 1) {
+      return t(`title.${sysProfileFilter[0]}`);
+    }
+
+    return t('title.default');
+  }
 
   // ····················································
   // HANDLERS
@@ -64,12 +89,27 @@ function UserDetailDrawer({ userId, center, opened, onClose = noop, onSave = noo
     setUser(data);
   }
 
+  // ····················································
+  // RENDER
+
   return (
     <>
       <Drawer opened={selfOpen} onClose={handleOnClose}>
-        <Drawer.Header title="Detalle de usuario" />
+        <Drawer.Header title={getTitle()} />
         <Drawer.Content>
-          <UserDetail userId={userId} center={center} onLoadUser={handleOnLoadUser} />
+          <UserDetail
+            userId={userId}
+            center={center}
+            sysProfileFilter={sysProfileFilter}
+            onLoadUser={handleOnLoadUser}
+            viewMode={viewMode}
+          />
+          <EnrollUserSummary
+            userId={userId}
+            center={center}
+            sysProfileFilter={sysProfileFilter}
+            viewMode={viewMode}
+          />
         </Drawer.Content>
         {canEdit && (
           <Drawer.Footer>
@@ -96,6 +136,8 @@ UserDetailDrawer.propTypes = {
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onSave: PropTypes.func,
+  sysProfileFilter: PropTypes.string,
+  viewMode: PropTypes.oneOf(Object.values(USER_DETAIL_VIEWS)),
 };
 
 export { UserDetailDrawer };
