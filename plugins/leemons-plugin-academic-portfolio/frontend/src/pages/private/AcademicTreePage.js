@@ -120,6 +120,20 @@ const AcademicTreePage = () => {
     () => parseAcademicTreeData(academicTreeQuery || []),
     [academicTreeQuery, t]
   );
+
+  // EFFECTS ····················································································|Ç
+  useEffect(() => {
+    if (centersData?.length) {
+      setSelectedCenter(centersData[0].value);
+    }
+  }, [centersData]);
+
+  useEffect(() => {
+    if (programSelectData?.length) {
+      setSelectedProgram(programSelectData[0].value);
+    }
+  }, [programSelectData]);
+
   // FUNCTIONS && HANDLERS ····················································································|
   const toggleEnrollmentDrawer = (classroomId = null) => {
     setEnrollmentDrawerIsOpen((prevState) => !prevState);

@@ -11,7 +11,6 @@ import {
   ActionButton,
   TextInput,
   Stack,
-  LoadingOverlay,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 
@@ -97,18 +96,11 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) 
     return [];
   }, [userAgentsInfo]);
 
-  const isLoading = useMemo(
-    () => !(teacherProfile && center?.length > 0),
-    [teacherProfile, center]
-  );
-
   return (
-    <>
-      <LoadingOverlay visible={isLoading} />
-
-      <ContextContainer sx={{ padding: 24 }}>
-        <ContextContainer>
-          <Title>{t('teachers')}</Title>
+    <ContextContainer sx={{ padding: 24 }}>
+      <ContextContainer>
+        <Title>{t('teachers')}</Title>
+        {teacherProfile && center?.length > 0 && (
           <Box className={classes.mainTeacher}>
             <Controller
               name="mainTeacher"
@@ -123,50 +115,50 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) 
               )}
             />
           </Box>
-        </ContextContainer>
-        <ContextContainer>
-          <Title>{t('scheduleAndPlace')}</Title>
-          <Stack spacing={4} fullWidth>
-            <Box className={classes.inlineInputs}>
-              <Controller
-                name="virtualUrl"
-                control={updateForm?.control}
-                render={({ field }) => <TextInput {...field} label={t('virtualClassroom')} />}
-              />
-            </Box>
-            <Box className={classes.inlineInputs}>
-              <Controller
-                name="address"
-                control={updateForm?.control}
-                render={({ field }) => <TextInput {...field} label={t('classroomAdress')} />}
-              />
-            </Box>
-          </Stack>
-          <Controller
-            name="schedule"
-            control={updateForm?.control}
-            render={({ field }) => <ScheduleInput label={t('lessonSchedule')} {...field} />}
-          />
-        </ContextContainer>
-        <ContextContainer>
-          <Title>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
-            classData?.seats
-          })`}</Title>
-          <Box>
-            <Button
-              onClick={() => openEnrollmentDrawer(classData?.id)}
-              variant="link"
-              leftIcon={<AddCircleIcon />}
-            >
-              {t('enrollButton')}
-            </Button>
-          </Box>
-          {classData?.students?.length > 0 && (
-            <StudentsTable data={studentsTableData} showSearchBar />
-          )}
-        </ContextContainer>
+        )}
       </ContextContainer>
-    </>
+      <ContextContainer>
+        <Title>{t('scheduleAndPlace')}</Title>
+        <Stack spacing={4} fullWidth>
+          <Box className={classes.inlineInputs}>
+            <Controller
+              name="virtualUrl"
+              control={updateForm?.control}
+              render={({ field }) => <TextInput {...field} label={t('virtualClassroom')} />}
+            />
+          </Box>
+          <Box className={classes.inlineInputs}>
+            <Controller
+              name="address"
+              control={updateForm?.control}
+              render={({ field }) => <TextInput {...field} label={t('classroomAdress')} />}
+            />
+          </Box>
+        </Stack>
+        <Controller
+          name="schedule"
+          control={updateForm?.control}
+          render={({ field }) => <ScheduleInput label={t('lessonSchedule')} {...field} />}
+        />
+      </ContextContainer>
+      <ContextContainer>
+        <Title>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
+          classData?.seats
+        })`}</Title>
+        <Box>
+          <Button
+            onClick={() => openEnrollmentDrawer(classData?.id)}
+            variant="link"
+            leftIcon={<AddCircleIcon />}
+          >
+            {t('enrollButton')}
+          </Button>
+        </Box>
+        {classData?.students?.length > 0 && (
+          <StudentsTable data={studentsTableData} showSearchBar />
+        )}
+      </ContextContainer>
+    </ContextContainer>
   );
 };
 

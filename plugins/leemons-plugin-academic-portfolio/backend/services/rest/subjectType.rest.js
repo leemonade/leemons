@@ -16,6 +16,7 @@ const {
   listSubjectType,
   removeSubjectType,
 } = require('../../core/subject-type');
+const { permissions } = require('../../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -28,7 +29,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subject-types': {
+          [permissions.names.subjectTypes]: {
             actions: ['admin', 'create'],
           },
         },
@@ -48,7 +49,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subject-types': {
+          [permissions.names.subjectTypes]: {
             actions: ['admin', 'update'],
           },
         },
@@ -68,7 +69,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subject-types': {
+          [permissions.names.subjectTypes]: {
             actions: ['admin', 'view'],
           },
         },
@@ -107,7 +108,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subject-types': {
+          [permissions.names.subjectTypes]: {
             actions: ['admin', 'delete'],
           },
         },

@@ -17,6 +17,7 @@ const {
 } = require('../../core/knowledges');
 const { removeKnowledgeArea } = require('../../core/knowledges/removeKnowledgeArea');
 const { getKnowledgeAreaById } = require('../../core/knowledges/getKnowledgeAreaById');
+const { permissions } = require('../../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -29,7 +30,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.knowledge-areas': {
+          [permissions.names.knowledgeAreas]: {
             actions: ['admin', 'create'],
           },
         },
@@ -69,7 +70,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.knowledge-areas': {
+          [permissions.names.knowledgeAreas]: {
             actions: ['admin', 'view'],
           },
         },
@@ -109,7 +110,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.knowledge-areas': {
+          [permissions.names.knowledgeAreas]: {
             actions: ['admin', 'delete'],
           },
         },
@@ -130,7 +131,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
+          [permissions.names.programs]: {
             actions: ['admin', 'view'],
           },
         },

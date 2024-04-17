@@ -3,8 +3,8 @@ const permissionsPrefix = 'academic-portfolio';
 const permissionNames = {
   portfolio: `${permissionsPrefix}.portfolio`,
   profiles: `${permissionsPrefix}.profiles`,
-  subjectTypes: `${permissionsPrefix}.subject-types`,
-  knowledgeAreas: `${permissionsPrefix}.knowledge-areas`,
+  subjectTypes: `${permissionsPrefix}.programs`,
+  knowledgeAreas: `${permissionsPrefix}.programs`,
   programs: `${permissionsPrefix}.programs`,
   subjects: `${permissionsPrefix}.subjects`,
   tree: `${permissionsPrefix}.tree`,
