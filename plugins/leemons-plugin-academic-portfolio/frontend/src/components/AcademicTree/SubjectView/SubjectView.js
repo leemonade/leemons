@@ -54,7 +54,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           <EnrollmentTab
             classData={singleClassToShow}
             openEnrollmentDrawer={openEnrollmentDrawer}
-            centerId={program?.center}
+            center={program?.centers}
             updateForm={updateForm}
           />
         </TabPanel>
@@ -69,6 +69,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           classData={cls}
           openEnrollmentDrawer={openEnrollmentDrawer}
           updateForm={updateForm}
+          center={program?.centers}
         />
       </TabPanel>
     ));

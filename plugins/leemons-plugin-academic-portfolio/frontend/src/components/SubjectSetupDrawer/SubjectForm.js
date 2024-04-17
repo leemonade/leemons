@@ -77,14 +77,14 @@ const SubjectForm = ({
   }, [localizations]);
 
   const programReferenceGroups = useMemo(
-    () => program?.groups.filter((group) => group.name !== '-auto-'), // Previous implementation, this check is not needed anymore. Reference groups = program.groups
+    () => program?.groups ?? [], // Previous implementation, this check is not needed anymore. Reference groups = program.groups
     [program]
   );
 
   function transformClassesData(classesData) {
     if (classesData.every((e) => e.groups)) {
       return classesData?.map((item) => ({
-        referenceGroup: `${item.groups?.name}::${item.groups.id}`,
+        referenceGroup: `${item.groups?.abbreviation}::${item.groups.id}`,
         classroomId: item?.classroomId,
         seats: item?.seats,
         course: isArray(item?.courses)

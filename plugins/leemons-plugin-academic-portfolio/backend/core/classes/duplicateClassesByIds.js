@@ -108,8 +108,8 @@ async function duplicateClassesByIds({
         program: classProgram.id,
       }).lean();
       let subName = classProgram.name;
-      if (classe.groups?.abbreviation && classe.groups?.abbreviation !== '-auto-') {
-        subName += ` - ${classe.groups?.abbreviation}`;
+      if (classe.groups?.abbreviation) {
+        subName += ` - ${classe.groups.abbreviation}`;
       }
       const roomData = {
         name: classe.subject.name,

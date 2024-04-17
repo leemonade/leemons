@@ -11,6 +11,7 @@ import {
   ActionButton,
   TextInput,
   Stack,
+  LoadingOverlay,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 
@@ -26,7 +27,7 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
 
-const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }) => {
+const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const { classes } = EnrollmentTabStyles();
   const queryClient = useQueryClient();
@@ -43,7 +44,7 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
     };
 
     getTeacherProfile();
-  }, [centerId, classData]);
+  }, [center, classData]);
 
   useEffect(() => {
     if (classData) {
@@ -96,74 +97,83 @@ const EnrollmentTab = ({ classData, centerId, openEnrollmentDrawer, updateForm }
     return [];
   }, [userAgentsInfo]);
 
+  const isLoading = useMemo(
+    () => !(teacherProfile && center?.length > 0),
+    [teacherProfile, center]
+  );
+
   return (
-    <ContextContainer sx={{ padding: 24 }}>
-      <ContextContainer>
-        <Title>{t('teachers')}</Title>
-        <Box className={classes.mainTeacher}>
-          <Controller
-            name="mainTeacher"
-            control={updateForm?.control}
-            render={({ field }) => (
-              <SelectUserAgent
-                {...field}
-                label={t('mainTeacher')}
-                profiles={teacherProfile}
-                centers={centerId}
+    <>
+      <LoadingOverlay visible={isLoading} />
+
+      <ContextContainer sx={{ padding: 24 }}>
+        <ContextContainer>
+          <Title>{t('teachers')}</Title>
+          <Box className={classes.mainTeacher}>
+            <Controller
+              name="mainTeacher"
+              control={updateForm?.control}
+              render={({ field }) => (
+                <SelectUserAgent
+                  {...field}
+                  label={t('mainTeacher')}
+                  profiles={teacherProfile}
+                  centers={center}
+                />
+              )}
+            />
+          </Box>
+        </ContextContainer>
+        <ContextContainer>
+          <Title>{t('scheduleAndPlace')}</Title>
+          <Stack spacing={4} fullWidth>
+            <Box className={classes.inlineInputs}>
+              <Controller
+                name="virtualUrl"
+                control={updateForm?.control}
+                render={({ field }) => <TextInput {...field} label={t('virtualClassroom')} />}
               />
-            )}
+            </Box>
+            <Box className={classes.inlineInputs}>
+              <Controller
+                name="address"
+                control={updateForm?.control}
+                render={({ field }) => <TextInput {...field} label={t('classroomAdress')} />}
+              />
+            </Box>
+          </Stack>
+          <Controller
+            name="schedule"
+            control={updateForm?.control}
+            render={({ field }) => <ScheduleInput label={t('lessonSchedule')} {...field} />}
           />
-        </Box>
-      </ContextContainer>
-      <ContextContainer>
-        <Title>{t('scheduleAndPlace')}</Title>
-        <Stack spacing={4} fullWidth>
-          <Box className={classes.inlineInputs}>
-            <Controller
-              name="virtualUrl"
-              control={updateForm?.control}
-              render={({ field }) => <TextInput {...field} label={t('virtualClassroom')} />}
-            />
+        </ContextContainer>
+        <ContextContainer>
+          <Title>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
+            classData?.seats
+          })`}</Title>
+          <Box>
+            <Button
+              onClick={() => openEnrollmentDrawer(classData?.id)}
+              variant="link"
+              leftIcon={<AddCircleIcon />}
+            >
+              {t('enrollButton')}
+            </Button>
           </Box>
-          <Box className={classes.inlineInputs}>
-            <Controller
-              name="address"
-              control={updateForm?.control}
-              render={({ field }) => <TextInput {...field} label={t('classroomAdress')} />}
-            />
-          </Box>
-        </Stack>
-        <Controller
-          name="schedule"
-          control={updateForm?.control}
-          render={({ field }) => <ScheduleInput label={t('lessonSchedule')} {...field} />}
-        />
+          {classData?.students?.length > 0 && (
+            <StudentsTable data={studentsTableData} showSearchBar />
+          )}
+        </ContextContainer>
       </ContextContainer>
-      <ContextContainer>
-        <Title>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
-          classData?.seats
-        })`}</Title>
-        <Box>
-          <Button
-            onClick={() => openEnrollmentDrawer(classData?.id)}
-            variant="link"
-            leftIcon={<AddCircleIcon />}
-          >
-            {t('enrollButton')}
-          </Button>
-        </Box>
-        {classData?.students?.length > 0 && (
-          <StudentsTable data={studentsTableData} showSearchBar />
-        )}
-      </ContextContainer>
-    </ContextContainer>
+    </>
   );
 };
 
 EnrollmentTab.propTypes = {
   classData: PropTypes.object,
   openEnrollmentDrawer: PropTypes.func,
-  centerId: PropTypes.string.isRequired,
+  center: PropTypes.array,
   updateForm: PropTypes.object,
 };
 

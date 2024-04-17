@@ -271,7 +271,7 @@ const EnrollmentDrawer = ({
           enrollmentRequests.push({ class: classIds, students });
         }
       });
-      console.log('enrollmentRequests', enrollmentRequests);
+
       try {
         enrollmentRequests.forEach(async (requestBody) => {
           await addStudentsToClassesAsync(requestBody);

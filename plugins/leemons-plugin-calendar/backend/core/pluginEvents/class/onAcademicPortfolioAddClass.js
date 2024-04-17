@@ -11,15 +11,16 @@ function onAcademicPortfolioAddClass({
   },
   ctx,
 }) {
+  let displayName = name;
+  if (groups?.abbreviation) {
+    displayName += ` (${groups.abbreviation})`;
+  }
+
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
       const config = {
-        name: `${name}${
-          groups?.abbreviation && groups.abbreviation !== '-auto-'
-            ? ` (${groups.abbreviation})`
-            : ''
-        }`,
+        name: displayName,
         section: ctx.prefixPN('classes'),
         bgColor: color || randomColor({ luminosity: 'light' }),
         metadata: { internalId },

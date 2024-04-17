@@ -57,8 +57,11 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
         const groupAssignableStudents = _.uniq(group.flatMap((c) => c.assignableStudents));
         const groupNonAssignableStudents = _.uniq(group.flatMap((c) => c.nonAssignableStudents));
 
+        // We enter here when there are reference groups or when the different subjects share students between classes.
+        // the second case requires us to give a generic name to the group.
+        // Todo: discuss the need of checking the intersection of students when reference groups are used. We could only do this if the program doesn't use reference groups.
         acc.push({
-          label: group[0].class.c.groups?.abbreviation ?? '',
+          label: group[0].class.c.groups?.abbreviation ?? t('defaultGroupName'),
           type: 'group',
           id,
           students: groupStudents,

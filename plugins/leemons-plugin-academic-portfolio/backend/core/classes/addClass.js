@@ -194,7 +194,7 @@ async function addClass({ data, ctx }) {
 
     // Comunica set up
     let subName = program.name;
-    if (classe.groups?.abbreviation && classe.groups?.abbreviation !== '-auto-') {
+    if (classe.groups?.abbreviation) {
       subName += ` - ${classe.groups?.abbreviation}`;
     }
     const roomData = {

@@ -49,8 +49,8 @@ async function processRoomGroup({ subject, color, assetImage, classe, assetIcon,
   const roomExists = await ctx.tx.call('comunica.room.exists', { key: roomKey });
 
   let subName = classe.program.name;
-  if (classe.groups?.abbreviation && classe.groups?.abbreviation !== '-auto-') {
-    subName += ` - ${classe.groups?.abbreviation}`;
+  if (classe.groups?.abbreviation) {
+    subName += ` - ${classe.groups.abbreviation}`;
   }
   const roomData = {
     name: `${subject.name} ${subName}`,
