@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { Workbook } from 'exceljs';
+import { compact } from 'lodash';
 
 function fileToBuffer(file) {
   return new Promise((resolve) => {
@@ -24,6 +25,7 @@ export async function readExcel(file) {
     for (let c = 0; c < ws.columnCount; c++) {
       item.push(ws.getCell(r + 1, c + 1).value);
     }
+    if (compact(item).length === 0) break;
     result.push(item);
   }
   return result;

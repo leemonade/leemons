@@ -103,6 +103,10 @@
     {
       "permissionName": "academic-calendar.config",
       "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "comunica.config",
+      "actionNames": ["admin"]
     }
   ],
   "name": "Admin",

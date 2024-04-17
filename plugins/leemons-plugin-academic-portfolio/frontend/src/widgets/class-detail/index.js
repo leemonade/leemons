@@ -1,22 +1,65 @@
 /* eslint-disable no-nested-ternary */
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { Avatar, Box, ContextContainer, Table, Title } from '@bubbles-ui/components';
+import {
+  Avatar,
+  Box,
+  ContextContainer,
+  Table,
+  Title,
+  Stack,
+  ActionButton,
+} from '@bubbles-ui/components';
+import { ViewOnIcon, PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import UserDetailModal from '@users/components/UserDetailModal';
+import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
+import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
 import getUserFullName from '@users/helpers/getUserFullName';
+import { getCookieToken, getSessionCenter } from '@users/session';
 import { forEach } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
+import hooks from 'leemons-hooks';
+import { ChatDrawer } from '@comunica/components';
+
+function getViewMode(profile) {
+  if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
+  if (profile?.sysName === 'admin') return USER_DETAIL_VIEWS.ADMIN;
+  return USER_DETAIL_VIEWS.STUDENT;
+}
 
 function ClassDetailWidget({ classe }) {
   const [t] = useTranslateLoader(prefixPN('classDetailWidget'));
+  const token = getCookieToken(true);
+  const center = getSessionCenter();
+  const profile = center?.profiles?.find((p) => p.id === token.profile);
+  const sessionUserAgent = center?.userAgentId;
+
+  const [openedUser, setOpenedUser] = React.useState();
+  const [openedUserType, setOpenedUserType] = React.useState();
+  const [chatOpened, setChatOpened] = React.useState(false);
+  const [chatRoom, setChatRoom] = React.useState();
+
+  function handleOnClickRow(userId, sysName) {
+    setOpenedUser(userId);
+    setOpenedUserType(sysName);
+  }
+
+  function handleOnCloseUser() {
+    setOpenedUser(null);
+    setOpenedUserType(null);
+  }
+
+  // ····················································
+  // RENDER
 
   const tableHeaders = [
     {
       Header: ' ',
       accessor: 'avatar',
-      className: 'text-left',
+      style: {
+        width: 80,
+      },
     },
     {
       Header: t('surnameHeader'),
@@ -38,6 +81,13 @@ function ClassDetailWidget({ classe }) {
       accessor: 'email',
       className: 'text-left',
     },
+    {
+      Header: '',
+      accessor: 'actions',
+      style: {
+        width: 20,
+      },
+    },
   ];
 
   const data = React.useMemo(() => {
@@ -56,6 +106,16 @@ function ClassDetailWidget({ classe }) {
           />
         ),
         birthdate: <LocaleDate date={teacher.teacher.user.birthdate} />,
+        actions: (
+          <Stack>
+            <ActionButton
+              icon={<ViewOnIcon width={18} height={18} />}
+              onClick={() => {
+                handleOnClickRow(teacher.teacher.user.id, 'teacher');
+              }}
+            />
+          </Stack>
+        ),
       });
     });
     forEach(classe.students, (student) => {
@@ -64,64 +124,79 @@ function ClassDetailWidget({ classe }) {
         ...student.user,
         avatar: <Avatar image={student.user.avatar} fullName={getUserFullName(student.user)} />,
         birthdate: <LocaleDate date={student.user.birthdate} />,
+        actions: (
+          <Stack>
+            <ActionButton
+              icon={<ViewOnIcon width={18} height={18} />}
+              onClick={() => {
+                handleOnClickRow(student.user.id, 'student');
+              }}
+            />
+            {/*
+            <ActionButton
+              icon={<PluginComunicaIcon width={18} height={18} />}
+              onClick={() => {
+                setChatOpened(true);
+              }}
+            />
+            */}
+          </Stack>
+        ),
       });
     });
 
     return { teachers, students };
   }, [classe]);
 
-  const [openedStudent, setOpenedStudent] = React.useState();
-
-  function onClickRow(row) {
-    setOpenedStudent(row.original.userAgentId);
-  }
-
-  function closeStudent() {
-    setOpenedStudent(null);
-  }
-
   return (
-    <ContextContainer>
-      <UserDetailModal opened={!!openedStudent} userAgent={openedStudent} onClose={closeStudent} />
-      <Box>
-        <Title order={4}>{t('teachers')}</Title>
-        <Box
-          sx={(theme) => ({
-            marginTop: theme.spacing[4],
-            padding: theme.spacing[6],
-            backgroundColor: 'white',
-            borderRadius: 4,
-          })}
-        >
-          <Table
-            onClickRow={onClickRow}
-            styleRow={{ cursor: 'pointer' }}
-            columns={tableHeaders}
-            data={data.teachers}
-            selectable
-          />
+    <>
+      <ContextContainer>
+        <UserDetailDrawer
+          opened={!!openedUser}
+          center={center}
+          userId={openedUser}
+          onClose={handleOnCloseUser}
+          sysProfileFilter={openedUserType}
+          viewMode={getViewMode(profile)}
+        />
+        <Box>
+          <Title order={4}>{t('teachers')}</Title>
+          <Box
+            sx={(theme) => ({
+              marginTop: theme.spacing[4],
+              padding: theme.spacing[6],
+              backgroundColor: 'white',
+              borderRadius: 4,
+            })}
+          >
+            <Table columns={tableHeaders} data={data.teachers} />
+          </Box>
         </Box>
-      </Box>
-      <Box>
-        <Title order={4}>{t('students')}</Title>
-        <Box
-          sx={(theme) => ({
-            marginTop: theme.spacing[4],
-            padding: theme.spacing[6],
-            backgroundColor: 'white',
-            borderRadius: 4,
-          })}
-        >
-          <Table
-            onClickRow={onClickRow}
-            styleRow={{ cursor: 'pointer' }}
-            columns={tableHeaders}
-            data={data.students}
-            selectable
-          />
+        <Box>
+          <Title order={4}>{t('students')}</Title>
+          <Box
+            sx={(theme) => ({
+              marginTop: theme.spacing[4],
+              padding: theme.spacing[6],
+              backgroundColor: 'white',
+              borderRadius: 4,
+            })}
+          >
+            <Table columns={tableHeaders} data={data.students} />
+          </Box>
         </Box>
-      </Box>
-    </ContextContainer>
+      </ContextContainer>
+      {/*
+      <ChatDrawer
+        onClose={() => {
+          hooks.fireEvent('chat:closeDrawer');
+          setChatOpened(false);
+        }}
+        opened={chatOpened}
+        room={`academic-portfolio.room.class.${classe.id}.student.${sessionUserAgent}.teachers`}
+      />
+      */}
+    </>
   );
 }
 

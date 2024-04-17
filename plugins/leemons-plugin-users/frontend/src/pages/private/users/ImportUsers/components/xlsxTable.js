@@ -1,26 +1,26 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-shadow */
 import React from 'react';
+import PropTypes from 'prop-types';
+import _, { noop } from 'lodash';
 import {
-  Alert,
   Box,
+  Alert,
+  Table,
+  Badge,
   Button,
   Select,
-  Table,
   Tooltip,
   useDebouncedCallback,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { ajv as Ajv } from 'ajv';
+import Ajv from 'ajv';
 import { EMAIL_REGEX } from '@users/components/LoginForm';
-import { useLocale, useStore } from '@common';
+import { LocaleDate, useLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import { addUsersBulkRequest } from '@users/request';
 import { transformErrorsFromAjv } from '../helpers/transformErrorsFromAjv';
-import { addUsersBulkRequest } from '../../../../../request';
 
 const datasetArraySplitKey = '|';
 
@@ -31,21 +31,16 @@ const ajv = new Ajv({
   unknownFormats: 'ignore',
 });
 
-const dateOptions = {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-};
-
-function getValue(locale, value) {
+function getValue(value, type) {
   if (value) {
     if (_.isDate(value)) {
-      return value.toLocaleDateString(locale, dateOptions);
+      return <LocaleDate date={value} />;
     }
     if (_.isObject(value)) {
       return value.text;
+    }
+    if (type === 'tags') {
+      return value.split(',').map((tag) => <Badge key={tag} label={tag} closable={false} />);
     }
     return value.toString();
   }
@@ -75,9 +70,8 @@ function getValueErrorMessage({ value, t, tForm, headerValue, generalDataset }) 
         schema.properties[key] = property;
       }
       const validate = ajv.compile(schema);
-      const isValid = validate({
-        [key]: value ? (isArray ? value.split(datasetArraySplitKey) : value) : value,
-      });
+      const processedValue = isArray && value ? value.split(datasetArraySplitKey) : value;
+      const isValid = validate({ [key]: processedValue });
       if (!isValid) {
         return transformErrorsFromAjv(validate.errors, tForm)[0].message;
       }
@@ -123,7 +117,9 @@ export function XlsxTable({
   fileIsTemplate,
   generalDataset,
   headerSelects,
-  onSave = () => { },
+  onSave = noop,
+  onCancel = noop,
+  scrollRef,
 }) {
   const [store, render] = useStore();
   const [tForm, tFormTrans] = useTranslateLoader('multilanguage.formWithTheme');
@@ -171,17 +167,15 @@ export function XlsxTable({
     store.data = [];
     store.columns = [];
     store.hasErrors = false;
-    const init = initRow - 1 >= 0 ? initRow - 1 : 0;
-    for (let i = init, l = file.length; i < l; i++) {
+    const start = initRow - 1 >= 0 ? initRow - 1 : 0;
+    for (let i = start, l = file.length; i < l; i++) {
       const item = file[i];
-      if (init === i) {
+      if (start === i) {
         _.forEach(item, (value, key) => {
           const selectData = _.filter(
             _.cloneDeep(headerSelects),
-            ({ value }) =>
-              !store.headerValues.includes(value) ||
-              value === 'tags' ||
-              value === store.headerValues[key]
+            ({ value: val }) =>
+              !store.headerValues.includes(val) || val === 'tags' || val === store.headerValues[key]
           );
 
           store.columns.push({
@@ -199,11 +193,11 @@ export function XlsxTable({
               </Box>
             ),
             accessor: key.toString(),
-            valueRender: (value) => {
+            valueRender: (val) => {
               const errorMessage = getValueErrorMessage({
                 t,
                 tForm,
-                value,
+                value: val,
                 headerValue: store.headerValues[key],
                 generalDataset,
               });
@@ -220,7 +214,7 @@ export function XlsxTable({
                     gap: theme.spacing[2],
                   })}
                 >
-                  {getValue(locale, value)}
+                  {getValue(val, store.headerValues[key])}
                   {errorMessage ? (
                     <Tooltip label={errorMessage}>
                       <Box sx={(theme) => ({ color: theme.other.core.color.danger[500] })}>
@@ -332,11 +326,21 @@ export function XlsxTable({
         </Alert>
       ) : null}
 
-      <Box sx={() => ({ display: 'flex', justifyContent: 'end' })}>
-        <Button onClick={save} loading={store.loading}>
-          {t('save')}
-        </Button>
-      </Box>
+      <TotalLayoutFooterContainer
+        fixed
+        fullWidth
+        scrollRef={scrollRef}
+        leftZone={
+          <Button variant="outline" onClick={onCancel}>
+            {t('cancel')}
+          </Button>
+        }
+        rightZone={
+          <Button onClick={save} loading={store.loading}>
+            {t('save')}
+          </Button>
+        }
+      />
     </>
   );
 }
@@ -345,12 +349,14 @@ XlsxTable.propTypes = {
   t: PropTypes.func,
   file: PropTypes.any,
   onSave: PropTypes.func,
+  onCancel: PropTypes.func,
   center: PropTypes.string,
   profile: PropTypes.string,
   initRow: PropTypes.number,
   generalDataset: PropTypes.any,
   fileIsTemplate: PropTypes.bool,
   headerSelects: PropTypes.any,
+  scrollRef: PropTypes.object,
 };
 
 export default XlsxTable;

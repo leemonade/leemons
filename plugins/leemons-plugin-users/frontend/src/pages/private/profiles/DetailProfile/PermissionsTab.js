@@ -164,7 +164,6 @@ export const PermissionsTab = ({
 
   const initDataLoad = useCallback(async () => {
     const permissionsResponse = await listPermissionsRequest();
-    console.log('permissionsResponse', permissionsResponse);
     const permissionsTranslate = await getLocalizationsByArrayOfItems(
       permissionsResponse.permissions,
       (permission) => getTranslationKeyPermissions(permission.permissionName, 'name')
