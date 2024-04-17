@@ -9,19 +9,25 @@ import {
   Grid,
   PageContainer,
   Paper,
-  useResizeObserver,
+  Drawer,
+  TotalLayoutStepContainer,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
+  Stack,
 } from '@bubbles-ui/components';
 import { PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore } from '@common';
+import { saveRegionalConfig } from '@academic-calendar/request/regional-config';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
-import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
-import React, { useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import { useForm } from 'react-hook-form';
+import { getCentersWithToken } from '@users/session';
+import { EmptyState } from './components/EmptyState';
 import { RegionalConfigDetail } from './components/regionalConfigDetail';
 
 const useStyle = createStyles((theme) => ({
@@ -31,6 +37,10 @@ const useStyle = createStyles((theme) => ({
   content: {
     width: 'calc(100% - 320px)',
     boxSizing: 'border-box',
+  },
+  pageContainer: {
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   drawer: {
     height: '100vh',
@@ -83,17 +93,22 @@ const useStyle = createStyles((theme) => ({
     paddingLeft: theme.spacing[2],
     display: 'inline',
   },
+  actionButtonsContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 }));
 
 export default function RegionalCalendars() {
-  const [t, , , loading] = useTranslateLoader(prefixPN('regionalList'));
+  const [t] = useTranslateLoader(prefixPN('regionalList'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [containerRef, container] = useResizeObserver();
-  const [headerBaseRef, headerBase] = useResizeObserver();
-  const [headerDescriptionRef, headerDescription] = useResizeObserver();
+  const scrollRef = React.useRef(null);
   const { classes, cx } = useStyle();
-  const { layoutState } = useLayout();
-  const { setLoading, scrollTo } = useContext(LayoutContext);
+  const [showCentersSelect, setShowCentersSelect] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [userCenters, setUserCenters] = useState();
+  const [selectedCenter, setSelectedCenter] = useState();
   const deploymentConfig = useDeploymentConfig({
     pluginName: 'academic-calendar',
     ignoreVersion: true,
@@ -104,148 +119,189 @@ export default function RegionalCalendars() {
   });
 
   async function loadRegionalConfigs() {
-    const { regionalConfigs } = await listRegionalConfigsRequest(store.center);
+    const { regionalConfigs } = await listRegionalConfigsRequest(store.center.id);
     store.regionalConfigs = regionalConfigs;
     render();
   }
 
   function handleOnSelectCenter(center) {
+    setSelectedCenter(center);
     store.center = center;
     loadRegionalConfigs();
   }
 
   function addNewRegionalCalendar() {
     store.selectedConfig = {};
+    setIsDrawerOpen(true);
     render();
   }
 
-  function onScroll() {
-    store.scroll = layoutState.contentRef.current.scrollTop;
-    render();
-  }
+  useEffect(() => {
+    const centers = getCentersWithToken();
+    setUserCenters(centers);
+    handleOnSelectCenter(centers[0]);
 
-  React.useEffect(() => {
-    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
+    if (centers.length > 1) {
+      setShowCentersSelect(true);
+    }
+  }, []);
 
-    // cleanup this component
-    return () => {
-      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
-    };
-  }, [layoutState.contentRef.current]);
+  const form = useForm();
 
-  let { scroll } = store;
-  if (scroll > headerBase.height) scroll = headerBase.height;
-  const correct = 48;
-  const correctBottom = 24;
+  function save() {
+    form.handleSubmit(async (data) => {
+      try {
+        store.saving = true;
+        render();
 
-  let top = headerBase.height + correct - scroll;
-  const minTop = headerBase.height - headerDescription.height + 24;
-  if (top < minTop) {
-    top = minTop;
+        await saveRegionalConfig({
+          ...data,
+          center: store.center.id,
+        });
+
+        addSuccessAlert(t('saved'));
+        store.selectedConfig = null;
+        loadRegionalConfigs();
+        setIsDrawerOpen(false);
+      } catch (err) {
+        addErrorAlert(getErrorMessage(err));
+      }
+      store.saving = false;
+      render();
+    })();
   }
 
   return (
-    <>
-      <ContextContainer fullHeight>
-        <AdminPageHeader
-          baseRef={headerBaseRef}
-          descriptionRef={headerDescriptionRef}
-          values={{
-            title: t('title'),
-            description: t('description'),
-          }}
-        />
-
-        <Paper color="solid" shadow="none" padding={0}>
-          <PageContainer>
-            <ContextContainer padded="vertical">
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          title={t('title')}
+          icon={<PluginCalendarIcon width={24} height={24} />}
+          scrollRef={scrollRef}
+          cancelable={false}
+        >
+          {showCentersSelect && (
+            <SelectCenter
+              firstSelected
+              onChange={(v) => handleOnSelectCenter(userCenters.find((c) => c.id === v))}
+              value={selectedCenter.id}
+            />
+          )}
+        </TotalLayoutHeader>
+      }
+    >
+      <Stack
+        justifyContent="center"
+        ref={scrollRef}
+        style={{ overflow: 'auto' }}
+        fullWidth
+        fullHeight
+      >
+        <TotalLayoutStepContainer stepName={selectedCenter?.name}>
+          <ContextContainer
+            sx={(theme) => ({
+              paddingBottom: theme.spacing[12],
+              overflow: 'auto',
+            })}
+            fullHeight
+            fullWidth
+          >
+            <PageContainer noFlex fullWidth className={classes.pageContainer}>
               <Grid>
                 {/* TREE ----------------------------------------- */}
                 <Col span={4}>
-                  <Box ref={containerRef}>
-                    <Box
-                      style={{
-                        width: `${container.width}px`,
-                        position: 'fixed',
-                        top: `${top}px`,
-                        height: `calc(100vh - ${top + correctBottom}px)`,
-                      }}
-                    >
-                      <Paper fullWidth padding={5}>
-                        <ContextContainer divided>
-                          <Box>
-                            <SelectCenter
-                              label={t('selectCenter')}
-                              onChange={handleOnSelectCenter}
-                              firstSelected
-                            />
-                          </Box>
-
-                          {store.center ? (
-                            <Box>
-                              <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                                {store.regionalConfigs
-                                  ? store.regionalConfigs.map((config) => (
-                                      <Box
-                                        key={config.id}
-                                        className={cx(
-                                          classes.configItem,
-                                          config.id === store.selectedConfig?.id &&
-                                            classes.configItemActive
-                                        )}
-                                        onClick={() => {
-                                          store.selectedConfig = config;
-                                          render();
-                                        }}
-                                      >
-                                        <PluginCalendarIcon width={16} height={16} />
-                                        <Box className={classes.configItemName}>{config.name}</Box>
-                                      </Box>
-                                    ))
-                                  : null}
-                              </Box>
-                              {!(
-                                deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0
-                              ) ? (
-                                <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                                  <Button
-                                    onClick={addNewRegionalCalendar}
-                                    leftIcon={<AddCircleIcon />}
-                                    variant="link"
+                  <Box>
+                    <ContextContainer divided>
+                      {store.center ? (
+                        <Box>
+                          <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
+                            {store.regionalConfigs?.length >= 1 ? (
+                              <>
+                                {store.regionalConfigs?.map((config) => (
+                                  <Box
+                                    key={config.id}
+                                    className={cx(
+                                      classes.configItem,
+                                      config.id === store.selectedConfig?.id &&
+                                        classes.configItemActive
+                                    )}
+                                    onClick={() => {
+                                      store.selectedConfig = config;
+                                      setIsDrawerOpen(true);
+                                      render();
+                                    }}
                                   >
-                                    {t('addRegionalCalendar')}
-                                  </Button>
-                                </Box>
-                              ) : null}
-                            </Box>
-                          ) : null}
-                        </ContextContainer>
-                      </Paper>
-                    </Box>
+                                    <PluginCalendarIcon width={16} height={16} />
+                                    <Box className={classes.configItemName}>{config.name}</Box>
+                                  </Box>
+                                ))}
+
+                                {!(
+                                  deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >=
+                                  0
+                                ) ? (
+                                  <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
+                                    <Button
+                                      onClick={addNewRegionalCalendar}
+                                      leftIcon={<AddCircleIcon />}
+                                      variant="link"
+                                    >
+                                      {t('addRegionalCalendar')}
+                                    </Button>
+                                  </Box>
+                                ) : null}
+                              </>
+                            ) : null}
+
+                            {store.regionalConfigs?.length <= 0 ? (
+                              <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
+                            ) : null}
+                          </Box>
+                        </Box>
+                      ) : null}
+                    </ContextContainer>
                   </Box>
                 </Col>
                 {/* CONTENT ----------------------------------------- */}
-                <Col span={8}>
-                  {store.selectedConfig ? (
-                    <Paper style={{ position: 'relative' }} fullWidth padding={5}>
-                      <RegionalConfigDetail
-                        t={t}
-                        center={store.center}
-                        config={store.selectedConfig}
-                        calendars={store.regionalConfigs}
-                        onSave={() => {
-                          store.selectedConfig = null;
-                          loadRegionalConfigs();
-                        }}
-                      />
-                    </Paper>
-                  ) : null}
-                </Col>
+                <Col span={8}></Col>
               </Grid>
-            </ContextContainer>
-          </PageContainer>
-        </Paper>
-      </ContextContainer>
-    </>
+              <Drawer size="xl" opened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+                <Drawer.Header
+                  title={!store.selectedConfig?.id ? t('newRegionalCalendar') : t('edit')}
+                />
+                <Drawer.Content>
+                  {store.selectedConfig ? (
+                    <RegionalConfigDetail
+                      t={t}
+                      center={store.center}
+                      config={store.selectedConfig}
+                      calendars={store.regionalConfigs}
+                      form={form}
+                      onSave={() => {}}
+                    />
+                  ) : null}
+                </Drawer.Content>
+                <Drawer.Footer>
+                  <Box className={classes.actionButtonsContainer}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      compact
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      {t('cancel')}
+                    </Button>
+                    <Button onClick={save} loading={store.saving}>
+                      {t('save')}
+                    </Button>
+                  </Box>
+                </Drawer.Footer>
+              </Drawer>
+            </PageContainer>
+          </ContextContainer>
+        </TotalLayoutStepContainer>
+      </Stack>
+    </TotalLayoutContainer>
   );
 }

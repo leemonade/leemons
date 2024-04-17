@@ -60,6 +60,7 @@ module.exports = {
     saved: 'Guardado',
     newRegionalCalendar: 'Nuevo calendario regional',
     requiredField: 'Campo necesario',
+    emptyCalendar: 'Todavía no has creado ningún programa',
   },
   programList: {
     tableAdd: 'Añadir descanso',
@@ -133,7 +134,8 @@ module.exports = {
         startDate: 'Fecha inicio',
         endDate: 'Fecha fin',
         color: 'Color',
-        add: 'Añadir',
+        add: 'Guardar',
+        cancel: 'Cancelar',
       },
       placeholders: {
         periodName: 'Exámenes finales',

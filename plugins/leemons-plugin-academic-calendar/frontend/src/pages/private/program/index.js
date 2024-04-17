@@ -8,17 +8,19 @@ import {
   Grid,
   PageContainer,
   Paper,
-  useResizeObserver,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
+  TotalLayoutStepContainer,
+  VerticalStepper,
+  Select,
+  Stack,
 } from '@bubbles-ui/components';
-import { FolderIcon } from '@bubbles-ui/icons/outline';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { FolderIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
-import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
-import React, { useContext } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getCentersWithToken } from '@users/session';
 import AcademicCalendarDetail from './components/AcademicCalendarDetail';
 
 const useStyle = createStyles((theme) => ({
@@ -28,6 +30,10 @@ const useStyle = createStyles((theme) => ({
   content: {
     width: 'calc(100% - 320px)',
     boxSizing: 'border-box',
+  },
+  pageContainer: {
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   drawer: {
     height: '100vh',
@@ -83,15 +89,14 @@ const useStyle = createStyles((theme) => ({
 }));
 
 export default function ProgramCalendars() {
-  const [t, , , loading] = useTranslateLoader(prefixPN('programList'));
-  const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [containerRef, container] = useResizeObserver();
-  const [headerBaseRef, headerBase] = useResizeObserver();
-  const [headerDescriptionRef, headerDescription] = useResizeObserver();
+  const [t] = useTranslateLoader(prefixPN('programList'));
+  const scrollRef = React.useRef(null);
+  const [userCenters, setUserCenters] = useState();
+  const [selectedCenter, setSelectedCenter] = useState();
+  const [selectedProgram, setSelectedProgram] = useState();
+  const [step, setStep] = useState(0);
   const { classes, cx } = useStyle();
-  const { layoutState } = useLayout();
 
-  const { setLoading, scrollTo } = useContext(LayoutContext);
   const [store, render] = useStore({
     scroll: 0,
     showDetail: false,
@@ -102,126 +107,108 @@ export default function ProgramCalendars() {
   });
 
   async function loadProgramConfigs() {
-    const response = await listProgramsRequest({ page: 0, size: 9999, center: store.center });
+    const response = await listProgramsRequest({ page: 0, size: 9999, center: store.center?.id });
     store.programs = response.data?.items || [];
+    store.selectedProgram = store.programs[0];
+    setSelectedProgram(store.programs[0]);
     render();
   }
 
   function handleOnSelectCenter(center) {
+    setSelectedCenter(center);
     store.center = center;
     loadProgramConfigs();
   }
 
-  function onScroll() {
-    store.scroll = layoutState.contentRef.current.scrollTop;
+  function handleOnSelectProgram(program) {
+    store.selectedProgram = program;
+    setSelectedProgram(program);
     render();
   }
 
-  React.useEffect(() => {
-    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
-
-    // cleanup this component
-    return () => {
-      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
-    };
-  }, [layoutState.contentRef.current]);
-
-  let { scroll } = store;
-  if (scroll > headerBase.height) scroll = headerBase.height;
-  const correct = 48;
-  const correctBottom = 24;
-
-  let top = headerBase.height + correct - scroll;
-  const minTop = headerBase.height - headerDescription.height + 24;
-  if (top < minTop) {
-    top = minTop;
-  }
+  useEffect(() => {
+    const centers = getCentersWithToken();
+    setUserCenters(centers);
+    handleOnSelectCenter(centers[0]);
+  }, []);
 
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        baseRef={headerBaseRef}
-        descriptionRef={headerDescriptionRef}
-        values={{
-          title: t('title'),
-          description: t('description'),
-        }}
-      />
-
-      <Paper color="solid" shadow="none" padding={0}>
-        <PageContainer>
-          <ContextContainer padded="vertical">
-            <Grid>
-              {/* TREE ----------------------------------------- */}
-              <Col span={4}>
-                <Box ref={containerRef}>
-                  <Box
-                    style={{
-                      width: `${container.width}px`,
-                      position: 'fixed',
-                      top: `${top}px`,
-                      height: `calc(100vh - ${top + correctBottom}px)`,
-                    }}
-                  >
-                    <Paper fullWidth padding={5}>
-                      <ContextContainer divided>
-                        <Box>
-                          <SelectCenter
-                            label={t('selectCenter')}
-                            onChange={handleOnSelectCenter}
-                            firstSelected
-                          />
-                        </Box>
-
-                        {store.center ? (
-                          <Box>
-                            <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                              {store.programs
-                                ? store.programs.map((program) => (
-                                    <Box
-                                      key={program.id}
-                                      className={cx(
-                                        classes.configItem,
-                                        program.id === store.selectedProgram?.id &&
-                                          classes.configItemActive
-                                      )}
-                                      onClick={() => {
-                                        store.selectedProgram = program;
-                                        render();
-                                      }}
-                                    >
-                                      <FolderIcon width={16} height={16} />
-                                      <Box className={classes.configItemName}>{program.name}</Box>
-                                    </Box>
-                                  ))
-                                : null}
-                            </Box>
-                          </Box>
-                        ) : null}
-                      </ContextContainer>
-                    </Paper>
-                  </Box>
-                </Box>
-              </Col>
-              {/* CONTENT ----------------------------------------- */}
-              <Col span={8}>
-                {store.selectedProgram ? (
-                  <Paper style={{ position: 'relative' }} fullWidth padding={5}>
-                    <AcademicCalendarDetail
-                      t={t}
-                      onSave={() => {
-                        store.selectedProgram = null;
-                        render();
-                      }}
-                      program={store.selectedProgram}
-                    />
-                  </Paper>
-                ) : null}
-              </Col>
-            </Grid>
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          title={t('title')}
+          icon={<PluginCalendarIcon width={24} height={24} />}
+          scrollRef={scrollRef}
+          cancelable={false}
+        >
+          <ContextContainer direction="row" alignItems="flex-start">
+            <SelectCenter
+              firstSelected
+              onChange={(v) => handleOnSelectCenter(userCenters?.find((c) => c.id === v))}
+              value={selectedCenter?.id}
+            />
+            <Select
+              firstSelected
+              onChange={(v) => handleOnSelectProgram(store.programs.find((p) => p.id === v))}
+              value={selectedProgram?.id}
+              data={store.programs.map((program) => ({ value: program.id, label: program.name }))}
+            />
           </ContextContainer>
-        </PageContainer>
-      </Paper>
-    </ContextContainer>
+        </TotalLayoutHeader>
+      }
+    >
+      <ContextContainer
+        sx={(theme) => ({
+          paddingInline: theme.spacing[12],
+          overflow: 'auto',
+        })}
+      >
+        <Grid>
+          <Col span={2} sx={(theme) => ({ paddingTop: theme.spacing[8] })}>
+            <VerticalStepper
+              data={[{ label: t('basic') }, { label: t('periods') }, { label: t('preview') }]}
+              currentStep={step}
+            />
+          </Col>
+          <Col span={10}>
+            <Stack
+              justifyContent="center"
+              ref={scrollRef}
+              style={{ overflow: 'auto' }}
+              fullWidth
+              fullHeight
+            >
+              <TotalLayoutStepContainer
+                stepName={`${selectedCenter?.name} - ${selectedProgram?.name}`}
+              >
+                <ContextContainer
+                  sx={(theme) => ({
+                    paddingBottom: theme.spacing[12],
+                    overflow: 'auto',
+                  })}
+                  fullHeight
+                  fullWidth
+                >
+                  <PageContainer noFlex fullWidth className={classes.pageContainer}>
+                    {store.selectedProgram ? (
+                      <AcademicCalendarDetail
+                        t={t}
+                        onSave={() => {
+                          store.selectedProgram = null;
+                          render();
+                        }}
+                        program={store.selectedProgram}
+                        onChangeStep={setStep}
+                      />
+                    ) : null}
+                  </PageContainer>
+                </ContextContainer>
+              </TotalLayoutStepContainer>
+            </Stack>
+          </Col>
+        </Grid>
+      </ContextContainer>
+    </TotalLayoutContainer>
   );
 }

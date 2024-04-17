@@ -11,7 +11,7 @@ import {
   Text,
   Title,
 } from '@bubbles-ui/components';
-import { CalendarNewEventModal } from '@bubbles-ui/leemons';
+import { CalendarNewEventModal } from '@calendar/components/CalendarNewEventModal';
 import { DeleteBinIcon, EditWriteIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import ColorBall from '@academic-calendar/components/ColorBall';
@@ -40,6 +40,7 @@ export default function OtherEvents({
         endDate: t('eventModal.labels.endDate'),
         color: t('eventModal.labels.color'),
         add: t('eventModal.labels.add'),
+        cancel: t('eventModal.labels.cancel'),
       },
       placeholders: {
         periodName: t('eventModal.labels.periodName'),
@@ -154,11 +155,20 @@ export default function OtherEvents({
       ))}
 
       <Box>
+        <Button
+          onClick={() => {
+            store.openAddButton = true;
+            render();
+          }}
+          variant="link"
+          leftIcon={<AddCircleIcon />}
+        >
+          {t('addNewEvent')}
+        </Button>
         <CalendarNewEventModal
           locale={locale}
           minDate={start}
           maxDate={end}
-          closeOnClickOutside={false}
           disabled={disabled}
           opened={store.openAddButton}
           onClose={() => {
@@ -170,18 +180,6 @@ export default function OtherEvents({
             store.openAddButton = false;
             onChange([...value, values]);
           }}
-          target={
-            <Button
-              onClick={() => {
-                store.openAddButton = true;
-                render();
-              }}
-              variant="link"
-              leftIcon={<AddCircleIcon />}
-            >
-              {t('addNewEvent')}
-            </Button>
-          }
           {...eventModalProps}
         />
       </Box>
