@@ -52,10 +52,12 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
         id,
         upgrade: 'major',
         published,
-        setAsCurrent: true,
+        setAsCurrent: !!published,
       });
       const [_questionBank, oldCategories] = await Promise.all([
-        ctx.tx.db.QuestionsBanks.create({ id: version.fullId, ...props }).then((r) => r.toObject()),
+        ctx.tx.db.QuestionsBanks.create({ id: version.fullId, published, ...props }).then((r) =>
+          r.toObject()
+        ),
         ctx.tx.db.QuestionBankCategories.find({ questionBank: id }).lean(),
       ]);
       questionBank = _questionBank;
@@ -75,19 +77,29 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
         await ctx.tx.call('common.versionControl.publishVersion', {
           id,
           publish: true,
+          setAsCurrent: true,
         });
       }
-      questionBank = await ctx.tx.db.QuestionsBanks.findOneAndUpdate({ id }, props, {
-        lean: true,
-        new: true,
-      });
+      questionBank = await ctx.tx.db.QuestionsBanks.findOneAndUpdate(
+        { id },
+        { ...props, published },
+        {
+          lean: true,
+          new: true,
+        }
+      );
     }
   } else {
     const version = await ctx.tx.call('common.versionControl.register', {
       type: 'question-bank',
       published,
+      setAsCurrent: !!published,
     });
-    questionBank = await ctx.tx.db.QuestionsBanks.create({ id: version.fullId, ...props });
+    questionBank = await ctx.tx.db.QuestionsBanks.create({
+      id: version.fullId,
+      published,
+      ...props,
+    });
     questionBank = questionBank.toObject();
   }
 
@@ -119,7 +131,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
 
       questionBank = await ctx.tx.db.QuestionsBanks.findOneAndUpdate(
         { id: questionBank.id },
-        { asset: asset.id },
+        { asset: asset.id, published },
         { new: true, lean: true }
       );
     } else {
@@ -130,7 +142,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
       });
       questionBank = await ctx.tx.db.QuestionsBanks.findOneAndUpdate(
         { id: questionBank.id },
-        { asset: asset.id },
+        { asset: asset.id, published },
         { new: true, lean: true }
       );
     }

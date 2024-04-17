@@ -31,11 +31,7 @@ const LibraryCardBody = ({
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const [isFav, setIsFav] = useState(pinned);
   const [subjectData, setSubjectData] = useState(null);
-  const isQuestionBank = variant === 'questionBank';
-  const isDraft =
-    !isQuestionBank &&
-    typeof providerData?.published === 'boolean' &&
-    providerData?.published === false;
+  const isDraft = typeof providerData?.published === 'boolean' && providerData?.published === false;
   const title = props.name ? props.name : null;
 
   const handleIsFav = (e) => {
