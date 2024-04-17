@@ -95,7 +95,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
       withOverlay
       opened={opened}
       onClose={onClose}
-      size={680}
+      size={728}
       contentPadding={0}
       close={false}
     >
@@ -127,6 +127,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
               fallback={<LoadingOverlay />}
               scrollRef={scrollRef}
               assignable={assignable}
+              onClose={onClose}
               value={rawValue}
               onSave={({ config, raw }) => {
                 setValue(`${stateKey}.config`, config);

@@ -5,7 +5,6 @@ import {
   evaluationTypes,
 } from '@assignables/components/Assignment/components/EvaluationType';
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
-import { OtherOptions } from '@assignables/components/Assignment/components/OtherOptions';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import {
   Box,
@@ -54,7 +53,7 @@ async function init({ assignable, store, render }) {
   }
 }
 
-export default function AssignmentDrawer({ assignable, value, onSave, scrollRef }) {
+export default function AssignmentDrawer({ assignable, value, onSave, onClose, scrollRef }) {
   const form = useForm({ defaultValues: value });
   const localizations = useFormLocalizations();
   const [store, render] = useStore();
@@ -90,7 +89,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
     <Box>
       <FormProvider {...form}>
         <Box style={{ paddingBottom: 80 }}>
-          <ContextContainer divided padded>
+          <ContextContainer padded>
             <Controller
               control={form.control}
               name="evaluation"
@@ -119,29 +118,19 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
                 />
               )}
             />
-            <Box>
-              {/* <Controller
-                control={form.control}
-                name="others"
-                render={({ field, fieldState: { error } }) => (
-                  <OtherOptions
-                    {...field}
-                    error={error}
-                    assignable={assignable}
-                    localizations={localizations?.others}
-                    showResponses
-                  />
-                )}
-              /> */}
-            </Box>
           </ContextContainer>
         </Box>
         <TotalLayoutFooterContainer
           fixed
           style={{ right: 0 }}
           scrollRef={scrollRef}
-          width={680}
+          width={728}
           rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+          leftZone={
+            <Button variant="link" onClick={onClose}>
+              {localizations?.buttons?.cancel}
+            </Button>
+          }
         />
       </FormProvider>
     </Box>
@@ -168,4 +157,5 @@ AssignmentDrawer.propTypes = {
   onSave: PropTypes.func,
   value: PropTypes.object,
   scrollRef: PropTypes.object,
+  onClose: PropTypes.func,
 };

@@ -143,6 +143,7 @@ module.exports = {
       next: 'Next',
       previous: 'Previous',
       save: 'Save', // Used on modules assignation drawer
+      cancel: 'Cancel',
     },
     presentation: {
       title: 'Presentation',

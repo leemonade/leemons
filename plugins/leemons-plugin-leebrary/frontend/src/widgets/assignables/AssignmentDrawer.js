@@ -14,7 +14,6 @@ import { Instructions } from '@assignables/components/Assignment/components/Inst
 import Presentation from '@assignables/components/Assignment/components/Presentation/Presentation';
 import useAsset from '@leebrary/request/hooks/queries/useAsset';
 
-
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {
     display: 'flex',
@@ -23,7 +22,7 @@ export const useAssignmentDrawerStyles = createStyles(() => ({
   },
 }));
 
-export default function AssignmentDrawer({ assignable, value, onSave, scrollRef }) {
+export default function AssignmentDrawer({ assignable, value, onSave, onClose, scrollRef }) {
   const localizations = useFormLocalizations();
   const form = useForm({ defaultValues: value });
 
@@ -52,13 +51,6 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
 
   return (
     <FormProvider {...form}>
-      <TotalLayoutFooterContainer
-        fixed
-        style={{ right: 0 }}
-        scrollRef={scrollRef}
-        width={400}
-        rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
-      />
       <Box>
         <ContextContainer padded>
           <Presentation
@@ -73,6 +65,18 @@ export default function AssignmentDrawer({ assignable, value, onSave, scrollRef 
             render={({ field }) => (
               <Instructions {...field} localizations={localizations?.instructions} />
             )}
+          />
+          <TotalLayoutFooterContainer
+            fixed
+            style={{ right: 0 }}
+            scrollRef={scrollRef}
+            width={728}
+            rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+            leftZone={
+              <Button variant="link" onClick={onClose}>
+                {localizations?.buttons?.cancel}
+              </Button>
+            }
           />
         </ContextContainer>
       </Box>
@@ -92,4 +96,5 @@ AssignmentDrawer.propTypes = {
   onSave: PropTypes.func,
   value: PropTypes.object,
   scrollRef: PropTypes.object,
+  onClose: PropTypes.func,
 };
