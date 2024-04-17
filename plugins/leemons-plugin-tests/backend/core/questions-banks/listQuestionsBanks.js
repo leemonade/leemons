@@ -10,11 +10,21 @@ async function listQuestionsBanks({
   query = {},
   ctx,
 }) {
-  const versions = await ctx.tx.call('common.versionControl.listVersionsOfType', {
+  const versions = await ctx.tx.call('common.versionControl.list', {
     type: 'question-bank',
     published,
   });
-  let ids = _.map(versions, 'fullId');
+  const allQBsIds = await Promise.all(
+    _.map(versions, (version) =>
+      ctx.tx.call('common.versionControl.stringifyId', {
+        id: version.uuid,
+        version: version.current,
+        verifyVersion: false,
+      })
+    )
+  );
+
+  let ids = allQBsIds;
   if (subjects && subjects.length) {
     const questionBankSubjects = await ctx.tx.db.QuestionBankSubjects.find({
       subject: subjects,
@@ -25,7 +35,10 @@ async function listQuestionsBanks({
   const finalQuery = {
     ...query,
     ...(includeAgnosticsQB
-      ? { $or: [{ id: ids }, { program: { $exists: false } }, { program: null }, { program: '' }] }
+      ? {
+          id: allQBsIds,
+          $or: [{ id: ids }, { program: { $exists: false } }, { program: null }, { program: '' }],
+        }
       : { id: ids }),
   };
   const paginate = await mongoDBPaginate({
