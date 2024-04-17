@@ -1,23 +1,25 @@
 import React from 'react';
-import { find, get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
+import PropTypes from 'prop-types';
+import { get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
-  ActionButton,
-  Badge,
   Box,
   Button,
-  Divider,
   RadioGroup,
   Select,
   Text,
   TextInput,
-  Title,
   Drawer,
   ContextContainer,
 } from '@bubbles-ui/components';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { Dates } from './components/Dates';
 import { CalendarEventModalStyles } from './CalendarEventModal.styles';
+
+const REQUIRED_FIELD = 'Field is required';
+const CALENDAR_TYPES = {
+  EVENT: 'calendar.event',
+  TASK: 'calendar.task',
+};
 
 export const CALENDAR_EVENT_MODAL_DEFAULT_PROPS = {
   opened: false,
@@ -52,25 +54,44 @@ export const CALENDAR_EVENT_MODAL_DEFAULT_PROPS = {
     showInCalendar: 'Show in calendar',
   },
   errorMessages: {
-    titleRequired: 'Field is required',
-    startDateRequired: 'Field is required',
-    startTimeRequired: 'Field is required',
-    endDateRequired: 'Field is required',
-    endTimeRequired: 'Field is required',
-    calendarRequired: 'Field is required',
-    typeRequired: 'Field is required',
+    titleRequired: REQUIRED_FIELD,
+    startDateRequired: REQUIRED_FIELD,
+    startTimeRequired: REQUIRED_FIELD,
+    endDateRequired: REQUIRED_FIELD,
+    endTimeRequired: REQUIRED_FIELD,
+    calendarRequired: REQUIRED_FIELD,
+    typeRequired: REQUIRED_FIELD,
   },
 };
-export const CALENDAR_EVENT_MODAL_PROP_TYPES = {};
+export const CALENDAR_EVENT_MODAL_PROP_TYPES = {
+  opened: PropTypes.bool,
+  onClose: PropTypes.func,
+  onRemove: PropTypes.func,
+  selectData: PropTypes.object,
+  forceType: PropTypes.string,
+  messages: PropTypes.object,
+  errorMessages: PropTypes.object,
+  components: PropTypes.object,
+  isNew: PropTypes.bool,
+  isOwner: PropTypes.bool,
+  fromCalendar: PropTypes.string,
+  onSubmit: PropTypes.func,
+  defaultValues: PropTypes.object,
+  readOnly: PropTypes.bool,
+  locale: PropTypes.string,
+  UsersComponent: PropTypes.any,
+  form: PropTypes.object,
+};
 
 function MyController(props) {
   return <Controller {...props} name={`data.${props.name}`} />;
 }
 
-const CalendarEventModal = (props) => {
-  const [canEdit, setCanEdit] = React.useState(false);
-  const { classes, cx } = CalendarEventModalStyles({});
+MyController.propTypes = {
+  name: PropTypes.string,
+};
 
+function CalendarEventModal(props) {
   const {
     opened,
     onClose,
@@ -88,17 +109,18 @@ const CalendarEventModal = (props) => {
     readOnly,
     locale,
     UsersComponent,
-    form: _form,
+    form: formProp,
   } = props;
 
-  if (defaultValues?.type === 'calendar.task') {
-    if (isNil(defaultValues?.data?.hideInCalendar)) {
-      if (isNil(defaultValues.data)) defaultValues.data = {};
-      defaultValues.data.hideInCalendar = true;
-    }
-  }
+  const [canEdit, setCanEdit] = React.useState(false);
+  const { classes, cx } = CalendarEventModalStyles({});
 
-  const form = _form || useForm({ defaultValues });
+  if (defaultValues?.type === CALENDAR_TYPES.TASK && isNil(defaultValues?.data?.hideInCalendar)) {
+    if (isNil(defaultValues.data)) defaultValues.data = {};
+    defaultValues.data.hideInCalendar = true;
+  }
+  const newForm = useForm({ defaultValues });
+  const form = formProp || newForm;
   const {
     watch,
     control,
@@ -115,14 +137,12 @@ const CalendarEventModal = (props) => {
   const hideInCalendar = watch('data.hideInCalendar');
   const hideCalendarField = watch('data.hideCalendarField');
   const type = watch('type');
-  const taskColumn = watch('data.column');
   const eventTypesByValue = keyBy(selectData.eventTypes, 'value');
-  // const onlyOneDate = eventTypesByValue[type]?.onlyOneDate;
   const config = eventTypesByValue[type]?.config;
 
   React.useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      if (value.type === 'calendar.task') {
+    const subscription = watch((value, { name }) => {
+      if (value.type === CALENDAR_TYPES.TASK) {
         if (name === 'type') {
           setValue('data.hideInCalendar', true);
         }
@@ -154,7 +174,7 @@ const CalendarEventModal = (props) => {
   }
 
   const titleDrawer = () => {
-    if (type === 'calendar.task') {
+    if (type === CALENDAR_TYPES.TASK) {
       return isNew ? messages.newTask : messages.detailTask;
     }
     return isNew ? messages.newEvent : messages.detailEvent;
@@ -285,7 +305,7 @@ const CalendarEventModal = (props) => {
 
             {!disabled &&
             (isNew || (!isNew && isOwner)) &&
-            (type !== 'calendar.task' || (type === 'calendar.task' && !hideInCalendar)) ? (
+            (type !== CALENDAR_TYPES.TASK || (type === CALENDAR_TYPES.TASK && !hideInCalendar)) ? (
               <ContextContainer spacing={4}>
                 <Controller
                   name="calendar"
@@ -392,7 +412,7 @@ const CalendarEventModal = (props) => {
       </Drawer.Footer>
     </Drawer>
   );
-};
+}
 
 CalendarEventModal.defaultProps = CALENDAR_EVENT_MODAL_DEFAULT_PROPS;
 CalendarEventModal.propTypes = CALENDAR_EVENT_MODAL_PROP_TYPES;
