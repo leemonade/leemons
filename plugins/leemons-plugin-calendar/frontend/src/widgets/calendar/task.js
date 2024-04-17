@@ -265,7 +265,7 @@ export default function Task({ event, form, classes, disabled, allProps }) {
                               classNames={{ root: classes.buttonDeleteSubTask }}
                               icon={<DeleteBinIcon />}
                               onClick={() => removeSubtask(index)}
-                            />{' '}
+                            />
                           </Col>
                         ) : null}
                       </Grid>
