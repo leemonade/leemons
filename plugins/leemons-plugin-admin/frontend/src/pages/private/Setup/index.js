@@ -32,12 +32,15 @@ function Setup({ session }) {
   const [t, translations] = useTranslateLoader(prefixPN('setup'));
   const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
   const history = useHistory();
-  if (
-    deploymentConfig?.superRedirectUrl &&
-    deploymentConfig.superRedirectUrl !== '/private/admin/setup'
-  ) {
-    history.push(deploymentConfig?.superRedirectUrl);
-  }
+
+  React.useEffect(() => {
+    if (
+      deploymentConfig?.superRedirectUrl &&
+      deploymentConfig.superRedirectUrl !== '/private/admin/setup'
+    ) {
+      history.push(deploymentConfig?.superRedirectUrl);
+    }
+  }, [JSON.stringify(deploymentConfig), history]);
 
   // ····················································
   // SETTINGS
