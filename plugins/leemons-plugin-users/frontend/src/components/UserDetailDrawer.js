@@ -61,8 +61,8 @@ function UserDetailDrawer({
   // METHODS
 
   function getTitle() {
-    if (sysProfileFilter?.length === 1) {
-      return t(`title.${sysProfileFilter[0]}`);
+    if (sysProfileFilter) {
+      return t(`title.${sysProfileFilter}`);
     }
 
     return t('title.default');
