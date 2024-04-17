@@ -2,7 +2,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import {
   LoadingOverlay,
   TotalLayoutContainer,
@@ -48,7 +48,7 @@ export default function Detail(p) {
   const formValues = form.watch();
 
   const prepareDataToSave = () => {
-    const qbank = formValues;
+    const qbank = omit(formValues, 'subjectsRaw');
     // Clear questions clues
     qbank.questions = qbank.questions?.map((question) => {
       const newQuestion = { ...question };
