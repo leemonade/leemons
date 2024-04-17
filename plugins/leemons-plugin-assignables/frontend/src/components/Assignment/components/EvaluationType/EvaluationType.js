@@ -43,7 +43,7 @@ function useOnChange({ control, onChange }) {
       curriculum: showCurriculum ? curriculum ?? [] : [],
       raw: { type, showCurriculum, curriculum },
     });
-  }, [type, showCurriculum, curriculum]);
+  }, [type, showCurriculum, curriculum, onChange]);
 }
 
 export const useEvaluationTypeStyles = createStyles((theme) => ({

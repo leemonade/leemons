@@ -62,6 +62,7 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
     showCorrectAnswers: !values.others.hideResponses,
 
     metadata: {
+      createComunicaRooms: !!values.others.createComunicaRooms,
       evaluationType: finalEvaluationType,
     },
   };

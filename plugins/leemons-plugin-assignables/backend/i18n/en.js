@@ -133,6 +133,7 @@ module.exports = {
         error: 'Pick a date',
       },
       notifyStudents: 'Notify students by email',
+      createComunicaRooms: 'Create a chat room for this activity',
       messageForStudents: 'Write the email',
       notifyPlaceholder: 'Add the statement text here',
       hideResponses: 'Hide the answers of the activity once it is finished.',

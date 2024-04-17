@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Switch, DatePicker, Box, createStyles } from '@bubbles-ui/components';
+import { Switch, Box, createStyles, Checkbox } from '@bubbles-ui/components';
 import { TextEditorInput, HEADINGS_TOOL_DEFAULT_PROPS } from '@bubbles-ui/editors';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { useForm, Controller, useWatch, useFormContext } from 'react-hook-form';
@@ -14,6 +14,7 @@ function useOnChange({ control, onChange }) {
     message,
     hideResponses,
     hideReport,
+    createComunicaRooms,
   } = useWatch({
     control,
   });
@@ -28,10 +29,20 @@ function useOnChange({ control, onChange }) {
       useTeacherDeadline: !!useTeacherDeadline,
       teacherDeadline: useTeacherDeadline ? teacherDeadline ?? null : null,
       message: notifyStudents && messageHasContent ? message : null,
+      createComunicaRooms,
     };
 
     onChange?.(value);
-  }, [useTeacherDeadline, teacherDeadline, notifyStudents, message, hideResponses, hideReport]);
+  }, [
+    useTeacherDeadline,
+    teacherDeadline,
+    notifyStudents,
+    message,
+    hideResponses,
+    hideReport,
+    createComunicaRooms,
+    onChange,
+  ]);
 }
 
 export const useOtherOptionsStyles = createStyles((theme) => ({
@@ -57,11 +68,19 @@ export function OtherOptions({
   onChange,
   value,
 }) {
-  // const { control: parentControl } = useFormContext();
+  const { control: parentControl, getValues } = useFormContext();
 
   const { control } = useForm({
     defaultValues: value,
   });
+
+  const evaluationType =
+    useWatch({
+      control: parentControl,
+      name: 'evaluation.evaluation',
+    }) ?? getValues('evaluation.evaluation');
+
+  const isEvaluable = evaluationType?.requiresScoring || evaluationType?.allowFeedback;
 
   // const alwaysAvailable = useWatch({
   //   control: parentControl,
@@ -114,6 +133,22 @@ export function OtherOptions({
             )}
           />
         )} */}
+
+        {isEvaluable && (
+          <Controller
+            name="createComunicaRooms"
+            control={control}
+            shouldUnregister
+            render={({ field }) => (
+              <Checkbox
+                {...field}
+                checked={field.value}
+                label={localizations?.createComunicaRooms}
+              />
+            )}
+          />
+        )}
+
         {!!showMessageForStudents && (
           <Controller
             name="notifyStudents"

@@ -39,7 +39,8 @@ async function createAssignation({ assignableInstanceId, users, options, ctx }) 
   const createdAssignations = await ctx.tx.db.Assignations.insertMany(assignationsToCreate);
 
   // Manage dependencies
-  const shouldCreateComunicaRooms = instance.requiresScoring || instance.allowFeedback;
+  const shouldCreateComunicaRooms =
+    instance.metadata.createComunicaRooms && (instance.requiresScoring || instance.allowFeedback);
   const shouldSendMail = instance.sendMail;
 
   let classesData;
