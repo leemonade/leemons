@@ -11,7 +11,7 @@ import {
   Col,
   ContextContainer,
   Grid,
-  InputWrapper,
+  Text,
   LoadingOverlay,
   MultiSelect,
   Select,
@@ -177,36 +177,6 @@ export default function Task({ event, form, classes, disabled, allProps }) {
           <Box>
             <NYACard instance={store.assignation || store.instance} showSubject />
           </Box>
-          {/*
-          {store.subjectData ? (
-            <>
-              <Box className={classes.divider}>
-                <Divider />
-              </Box>
-
-              <InputWrapper label={t('classe')}>
-                <Box className={classes.subject}>
-                  <Box
-                    className={classes.subjectIcon}
-                    style={{ backgroundColor: store.subjectData.color }}
-                  >
-                    <ImageLoader
-                      forceImage
-                      height={12}
-                      imageStyles={{ width: 12 }}
-                      src={store.subjectData.icon}
-                    />
-                  </Box>
-                  <TextClamp lines={1}>
-                    <Text color="primary" role="productive" size="xs">
-                      {store.subjectData.name}
-                    </Text>
-                  </TextClamp>
-                </Box>
-              </InputWrapper>
-            </>
-          ) : null}
-          */}
         </Box>
       );
     }
@@ -214,151 +184,138 @@ export default function Task({ event, form, classes, disabled, allProps }) {
   }
 
   return (
-    <ContextContainer>
-      {!disabled || (disabled && form.getValues('description')) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <PluginRedactorIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <Textarea
-                    size="xs"
-                    disabled={disabled}
-                    readOnly={disabled}
-                    label={t('description')}
-                    error={get(errors, 'description')}
-                    {...field}
-                  />
-                )}
+    <ContextContainer spacing={8}>
+      <ContextContainer spacing={2}>
+        {!disabled ? (
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <Textarea
+                size="xs"
+                disabled={disabled}
+                readOnly={disabled}
+                label={t('description')}
+                error={get(errors, 'description')}
+                {...field}
               />
-            </Col>
-          </Grid>
-        </Box>
-      ) : null}
-      {!disabled || (disabled && subtask && subtask.length) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <EditorListBulletsIcon />
-            </Col>
-            <Col span={90}>
-              <InputWrapper label={t('subtaskLabel')}>
-                <Controller
-                  name="subtask"
-                  control={control}
-                  render={({ field }) =>
-                    field.value
-                      ? field.value.map((item, index) => (
-                          <Grid key={index} align="center" columns={100}>
-                            <Col span={15}>
-                              <Checkbox
-                                // disabled={disabled}
-                                checked={item.checked}
-                                onChange={(e) => onCheckedChange(e, index)}
-                              />
-                            </Col>
-                            <Col span={disabled ? 85 : 65}>
-                              <TextInput
-                                size="xs"
-                                readOnly={disabled}
-                                disabled={disabled}
-                                value={item.title}
-                                onChange={(e) => onInputCheckboxChange(e, index)}
-                              />
-                            </Col>
-                            {!disabled ? (
-                              <Col span={20}>
-                                <ActionButton
-                                  icon={<DeleteBinIcon />}
-                                  onClick={() => removeSubtask(index)}
-                                />
-                              </Col>
-                            ) : null}
-                          </Grid>
-                        ))
-                      : null
-                  }
-                />
-                {!disabled ? (
-                  <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                    <Button
-                      variant="light"
-                      size="xs"
-                      leftIcon={<AddCircleIcon />}
-                      onClick={addSubTask}
-                    >
-                      {t('add_subtask')}
-                    </Button>
-                  </Box>
-                ) : null}
-              </InputWrapper>
-            </Col>
-          </Grid>
-        </Box>
-      ) : null}
-      {classCalendars &&
-      classCalendars.length &&
-      (!disabled || (disabled && formClasses && formClasses.length)) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <TagsIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="classes"
-                control={control}
-                render={({ field }) => (
-                  <MultiSelect
-                    size="xs"
-                    readOnly={disabled}
-                    disabled={disabled}
-                    data={classCalendars}
-                    label={t('tags')}
-                    error={get(errors, 'classes')}
-                    {...field}
-                  />
-                )}
+            )}
+          />
+        ) : null}
+        {disabled && form.getValues('description') ? (
+          <>
+            <Text size="lg" strong>
+              {t('description')}
+            </Text>
+            <Text>{form.getValues('description')}</Text>
+          </>
+        ) : null}
+      </ContextContainer>
+
+      <ContextContainer spacing={2}>
+        {!disabled ? (
+          <ContextContainer
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={(theme) => ({
+              paddingBottom: theme.spacing[2],
+            })}
+          >
+            <Box>{t('subtaskLabel')}</Box>
+            <Button
+              variant="linkInline"
+              size="xs"
+              leftIcon={<AddCircleIcon />}
+              onClick={addSubTask}
+            >
+              {t('add_subtask')}
+            </Button>
+          </ContextContainer>
+        ) : null}
+        {!disabled || (disabled && subtask && subtask.length) ? (
+          <ContextContainer spacing={4}>
+            <Controller
+              name="subtask"
+              control={control}
+              render={({ field }) =>
+                field.value
+                  ? field.value.map((item, index) => (
+                      <Grid key={index} align="center" columns={100}>
+                        <Col span={15}>
+                          <Checkbox
+                            checked={item.checked}
+                            onChange={(e) => onCheckedChange(e, index)}
+                          />
+                        </Col>
+                        <Col span={disabled ? 85 : 65}>
+                          <TextInput
+                            className={classes.inputSubTask}
+                            readOnly={disabled}
+                            disabled={disabled}
+                            value={item.title}
+                            onChange={(e) => onInputCheckboxChange(e, index)}
+                          />
+                        </Col>
+                        {!disabled ? (
+                          <Col span={20}>
+                            <ActionButton
+                              fullWidth
+                              size="xl"
+                              classNames={{ root: classes.buttonDeleteSubTask }}
+                              icon={<DeleteBinIcon />}
+                              onClick={() => removeSubtask(index)}
+                            />
+                          </Col>
+                        ) : null}
+                      </Grid>
+                    ))
+                  : null
+              }
+            />
+          </ContextContainer>
+        ) : null}
+        {classCalendars &&
+        classCalendars.length &&
+        (!disabled || (disabled && formClasses && formClasses.length)) ? (
+          <Controller
+            name="classes"
+            control={control}
+            render={({ field }) => (
+              <MultiSelect
+                size="xs"
+                readOnly={disabled}
+                disabled={disabled}
+                data={classCalendars}
+                label={t('tags')}
+                error={get(errors, 'classes')}
+                {...field}
               />
-            </Col>
-          </Grid>
-        </Box>
-      ) : null}
-      {columnsData && (!disabled || (disabled && form.getValues('column'))) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <PluginKanbanIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="column"
-                control={control}
-                rules={{
-                  required: tCommon('required'),
-                }}
-                render={({ field }) => (
-                  <Select
-                    size="xs"
-                    label={t('column')}
-                    disabled={disabled}
-                    readOnly={disabled}
-                    data={columnsData}
-                    {...field}
-                    required={!disabled}
-                    error={get(errors, 'column')}
-                  />
-                )}
+            )}
+          />
+        ) : null}
+        {columnsData && (!disabled || (disabled && form.getValues('column'))) ? (
+          <Controller
+            name="column"
+            control={control}
+            rules={{
+              required: tCommon('required'),
+            }}
+            render={({ field }) => (
+              <Select
+                size="xs"
+                label={t('column')}
+                disabled={disabled}
+                readOnly={disabled}
+                data={columnsData}
+                {...field}
+                required={!disabled}
+                error={get(errors, 'column')}
               />
-            </Col>
-          </Grid>
-        </Box>
-      ) : null}
+            )}
+          />
+        ) : null}
+      </ContextContainer>
     </ContextContainer>
   );
 }

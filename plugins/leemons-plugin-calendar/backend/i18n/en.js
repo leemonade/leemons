@@ -59,7 +59,12 @@ module.exports = {
   event_modal: {
     name: 'Name',
     subtasks: 'Sub-tasks',
-    title: 'Event title',
+    newEvent: 'New event',
+    newTask: 'New task',
+    detailEvent: 'Event details',
+    detailTask: 'Task details',
+    title: 'Title',
+    dates: 'Dates',
     save: 'Save',
     update: 'Update',
     all_day: 'All day',

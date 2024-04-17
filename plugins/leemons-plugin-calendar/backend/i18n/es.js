@@ -59,7 +59,12 @@ module.exports = {
   event_modal: {
     name: 'Nombre',
     subtasks: 'Subtareas',
-    title: 'Titulo del evento',
+    newEvent: 'Nuevo evento',
+    newTask: 'Nueva tarea',
+    detailEvent: 'Detalle del evento',
+    detailTask: 'Detalle de la tarea',
+    title: 'Titulo',
+    dates: 'Tiempos',
     save: 'Guardar',
     update: 'Actualizar',
     all_day: 'Todo el dia',
@@ -87,7 +92,7 @@ module.exports = {
   },
   event_mode_event_type: {
     video_link: 'Enlace a videollamada',
-    add_place: 'Lugar',
+    add_place: 'Ubicación física',
     add_description: 'Descripción',
   },
   task_mode_event_type: {
