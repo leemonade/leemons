@@ -105,6 +105,8 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     if (props.color) assetsToSave.color = props.color;
     if (props.cover) assetsToSave.cover = props.cover;
     if (tags) assetsToSave.tags = tags;
+    if (data.program) assetsToSave.program = data.program;
+    if (subjects) assetsToSave.subjects = subjects;
 
     if (id) {
       const q = await ctx.tx.db.QuestionsBanks.findOne({ id }).select(['asset']).lean();
