@@ -169,7 +169,7 @@ module.exports = {
       loadingForm: 'Personalizando las características de tu programa',
       save: 'Guardar',
       wizardForm: {
-        yes: 'Yes',
+        yes: 'Si',
         no: 'No',
         customization: 'Personalización',
         temporalStructure: 'Estructura Temporal',
