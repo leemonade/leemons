@@ -1,78 +1,127 @@
-const { filterProgramsByCenter } = require('../programs');
+const { omit } = require('lodash');
+
+const { filterProgramsByCenter, programsByIds } = require('../programs');
 const { getUserProgramIds } = require('../programs/getUserProgramIds');
+const { classByIds } = require('./classByIds');
+const { subjectByIds } = require('../subjects');
 
 async function fetchSubjectsAndClassrooms({ programIds, userAgentIds, ctx }) {
   const enrollments = await Promise.all(
     programIds.map(async (programId) => {
-      const subjects = await ctx.tx.db.Subjects.find({ program: programId }).lean();
+      const classes = await ctx.tx.db.Class.find({ program: programId }).lean();
+
       return Promise.all(
-        subjects.map(async (subject) => {
-          const classrooms = await ctx.tx.db.Class.find({ subject: subject.id }).lean();
-          return Promise.all(
-            classrooms.map(async (classroom) => {
-              const isStudent = await ctx.tx.db.ClassStudent.findOne({
-                class: classroom.id,
-                student: userAgentIds,
-              }).lean();
-              const isTeacher = await ctx.tx.db.ClassTeacher.findOne({
-                class: classroom.id,
-                teacher: userAgentIds,
-              }).lean();
+        classes.map(async (classroom) => {
+          const isStudent = await ctx.tx.db.ClassStudent.findOne({
+            class: classroom.id,
+            student: userAgentIds,
+          }).lean();
+          const isTeacher = await ctx.tx.db.ClassTeacher.findOne({
+            class: classroom.id,
+            teacher: userAgentIds,
+          }).lean();
 
-              let enrollmentType = 'none';
-              if (isStudent) {
-                enrollmentType = 'student';
-              } else if (isTeacher) {
-                enrollmentType = 'teacher';
-              }
+          if (!isStudent && !isTeacher) {
+            return null;
+          }
 
-              return {
-                programId,
-                subject,
-                classroom,
-                enrollmentType,
-              };
-            })
-          );
+          const enrollmentType = isStudent ? 'student' : 'teacher';
+          const subject = await ctx.tx.db.Subjects.findOne({ id: classroom.subject }).lean();
+
+          return {
+            programId,
+            subject,
+            classroom,
+            enrollmentType,
+          };
         })
-      ).then((results) => results.flat());
+      );
     })
-  ).then((results) => results.flat());
-  return enrollments.flat();
+  );
+
+  return enrollments.flat().filter((enrollment) => enrollment !== null);
 }
 
-function structureResponse(enrollments) {
-  const structured = {};
+async function structureResponse({ enrollments, ctx }) {
+  const structuredPrograms = [];
+  const programsIds = [...new Set(enrollments.map((enrollment) => enrollment.programId))];
+  const detailedPrograms = await programsByIds({ ids: programsIds, ctx });
+  const subjectIds = [...new Set(enrollments.map((enrollment) => enrollment.subject.id))];
+  const detailedSubjects = await subjectByIds({ ids: subjectIds, ctx });
+  const classroomsIds = [...new Set(enrollments.map((enrollment) => enrollment.classroom.id))];
+  const detailedClasses = await classByIds({ ids: classroomsIds, ctx });
 
-  enrollments.forEach(({ programId, subject, classroom, enrollmentType }) => {
-    if (!structured[programId]) {
-      structured[programId] = { subjects: {} };
+  enrollments.forEach(({ programId, subject, classroom, ...otherInfo }) => {
+    let program = structuredPrograms.find((p) => p.id === programId);
+    if (!program) {
+      program = {
+        ...omit(
+          detailedPrograms.find((p) => p.id === programId),
+          [
+            'treeTypeNodes',
+            'subjects',
+            'maxGroupAbbreviation',
+            'maxGroupAbbreviationIsOnlyNumbers',
+            'useOneStudentGroup',
+            'courseCredits',
+            'hideCoursesInTree',
+            'moreThanOneAcademicYear',
+            'haveSubstagesPerCourse',
+            'subjectsFirstDigit',
+            'subjectsDigits',
+            'treeType',
+            'haveKnowledge',
+            'maxKnowledgeAbbreviation',
+            'maxKnowledgeAbbreviationIsOnlyNumbers',
+            'maxSubstageAbbreviationIsOnlyNumbers',
+            'customSubstages',
+          ]
+        ),
+        subjects: [],
+      };
+      structuredPrograms.push(program);
     }
 
-    if (!structured[programId].subjects[subject.id]) {
-      structured[programId].subjects[subject.id] = { classrooms: [] };
+    let subjectEntry = program.subjects.find((s) => s.id === subject.id);
+    if (!subjectEntry) {
+      subjectEntry = {
+        ...omit(
+          detailedSubjects.find((s) => s.id === subject.id),
+          []
+        ),
+        classes: [],
+      };
+      program.subjects.push(subjectEntry);
     }
 
-    structured[programId].subjects[subject.id].classrooms.push({
-      ...classroom,
-      enrollmentType,
-    });
+    const classroomEntry = {
+      ...omit(
+        detailedClasses.find((c) => c.id === classroom.id),
+        'subject'
+      ),
+      ...otherInfo,
+    };
+    subjectEntry.classes.push(classroomEntry);
   });
 
-  return structured;
+  return structuredPrograms;
 }
+
 /**
- * Retrieves enrollments for a user based on their userAgentIds and centerId. Optionally, if a contactUserAgentId is provided,
- * it fetches the intersection of enrollments between the user and the contact, showing only the programs and classes they share.
- * The function returns a structured response that organizes programs, subjects, and classrooms hierarchically, including the enrollment type
- * (student or teacher) for each class.
+ * Retrieves user enrollments, including programs with detailed subjects and classes.
+ * For each class, it adds information about the user's enrollment type (student or teacher)
+ * and, if a contact user agent ID is provided, the enrollment type of the contact in shared classes.
  *
  * @param {Object} params - The parameters for fetching user enrollments.
- * @param {Array<string>} params.userAgentIds - An array of userAgentIds for the user.
- * @param {string} params.centerId - The centerId to filter the programs by.
- * @param {string} [params.contactUserAgentId=''] - An optional userAgentId for a contact to find shared enrollments.
- * @param {Object} params.ctx - The context object containing the database connection and other contextual information.
- * @returns {Promise<Object>} A promise that resolves to an object structured as Program -> Subject -> Classroom, including enrollment types.
+ * @param {string[]} params.userAgentIds - The user agent IDs for which to fetch enrollments.
+ * @param {string} params.centerId - The center ID to filter the programs by.
+ * @param {string} [params.contactUserAgentId=''] - Optional. The contact user agent ID to find shared class enrollments.
+ * @param {Object} params.ctx - The context object containing database connections and session information.
+ * @returns {Promise<Object[]>} A promise that resolves to an array of program objects. Each program object includes
+ *                              detailed subjects, and each subject includes detailed classes. Classes contain additional
+ *                              properties `enrollmentType` to indicate the user's relation to the class (student or teacher)
+ *                              and `sharedWithContactWhereContactIs` (if applicable) to indicate the contact's enrollment type
+ *                              in shared classes.
  */
 async function getUserEnrollments({ userAgentIds, centerId, contactUserAgentId = '', ctx }) {
   const programIds = await getUserProgramIds({
@@ -115,7 +164,7 @@ async function getUserEnrollments({ userAgentIds, centerId, contactUserAgentId =
     });
   }
 
-  return structureResponse(userEnrollments);
+  return structureResponse({ enrollments: userEnrollments, ctx });
 }
 
 module.exports = { getUserEnrollments };
