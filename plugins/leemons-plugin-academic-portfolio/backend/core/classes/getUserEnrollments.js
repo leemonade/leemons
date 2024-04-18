@@ -1,5 +1,6 @@
 const { omit } = require('lodash');
 
+const { LeemonsError } = require('@leemons/error');
 const { filterProgramsByCenter, programsByIds } = require('../programs');
 const { getUserProgramIds } = require('../programs/getUserProgramIds');
 const { classByIds } = require('./classByIds');
@@ -113,7 +114,7 @@ async function structureResponse({ enrollments, ctx }) {
  * and, if a contact user agent ID is provided, the enrollment type of the contact in shared classes.
  *
  * @param {Object} params - The parameters for fetching user enrollments.
- * @param {string[]} params.userAgentIds - The user agent IDs for which to fetch enrollments.
+ * @param {string[]} params.userAgentIds - The user agent IDs for which to fetch enrollments (they must belong to the same user).
  * @param {string} params.centerId - The center ID to filter the programs by.
  * @param {string} [params.contactUserAgentId=''] - Optional. The contact user agent ID to find shared class enrollments.
  * @param {Object} params.ctx - The context object containing database connections and session information.
@@ -124,6 +125,15 @@ async function structureResponse({ enrollments, ctx }) {
  *                              in shared classes.
  */
 async function getUserEnrollments({ userAgentIds, centerId, contactUserAgentId = '', ctx }) {
+  const userInfo = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    userAgentIds,
+  });
+  const userIds = userInfo.map((info) => info.user.id);
+  const uniqueUserIds = [...new Set(userIds)];
+  if (uniqueUserIds.length > 1) {
+    throw new LeemonsError(ctx, { message: 'User agent ids must belong to the same user.' });
+  }
+
   const programIds = await getUserProgramIds({
     ctx: { ...ctx, userSession: { userAgents: [{ id: userAgentIds }] } },
   });
