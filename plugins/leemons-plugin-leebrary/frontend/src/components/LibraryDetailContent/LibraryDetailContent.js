@@ -1,9 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { Box, Text, useClipboard, Tabs, TabPanel, UserDisplayItem } from '@bubbles-ui/components';
+import {
+  Box,
+  Text,
+  useClipboard,
+  Tabs,
+  TabPanel,
+  UserDisplayItem,
+  HtmlText,
+  ContextContainer,
+  Stack,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import { prefixPN as tasksPrefixPN } from '@tasks/helpers/prefixPN';
 import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
 import {
   LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS,
@@ -43,6 +54,10 @@ const LibraryDetailContent = ({
   const { classes } = LibraryDetailContentStyles({}, { name: 'LibraryDetailContent' });
   const clipboard = useClipboard({ timeout: 2000 });
   const [t, translations] = useTranslateLoader(prefixPN('list'));
+  const [tasksT] = useTranslateLoader(
+    tasksPrefixPN('task_setup_page.setup.instructionData.labels')
+  );
+
   const [subjectsIds, setSubjectsIds] = useState([]);
   const [canAccessData, setCanAccessData] = useState([]);
   const isAssetWithInstuctions = asset?.providerData?.role === 'task';
@@ -147,11 +162,22 @@ const LibraryDetailContent = ({
       {isTeacher && isAssetWithInstuctions && (
         <TabPanel label={detailLabels?.instructions} key="tab3">
           <Box className={classes.tabPanel}>
-            {asset.instructionsForTeachers ? (
-              asset.instructionsForTeachers
-            ) : (
-              <Text>{detailLabels.emptyInstructions}</Text>
-            )}
+            <ContextContainer>
+              {!!asset.providerData.instructionsForTeachers && (
+                <ContextContainer title={tasksT('forTeacher')}>
+                  <HtmlText>{asset.providerData.instructionsForTeachers}</HtmlText>
+                </ContextContainer>
+              )}
+              {!!asset.providerData.instructionsForStudents && (
+                <ContextContainer title={tasksT('forStudent')}>
+                  <HtmlText>{asset.providerData.instructionsForStudents}</HtmlText>
+                </ContextContainer>
+              )}
+            </ContextContainer>
+            {!asset.providerData.instructionsForTeachers &&
+              !asset.providerData.instructionsForStudents && (
+                <Text>{detailLabels.emptyInstructions}</Text>
+              )}
           </Box>
         </TabPanel>
       )}
