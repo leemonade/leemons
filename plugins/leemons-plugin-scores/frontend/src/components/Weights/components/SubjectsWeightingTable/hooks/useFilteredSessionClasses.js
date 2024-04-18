@@ -14,7 +14,7 @@ export default function useFilteredSessionClasses({ program, subject, course }) 
     () =>
       filter(sessionClasses, (klass) => {
         if (subject) {
-          return klass.subject.subject === subject;
+          return klass.subject.id === subject;
         }
 
         if (course) {
