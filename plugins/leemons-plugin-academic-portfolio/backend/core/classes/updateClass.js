@@ -184,7 +184,7 @@ async function updateClass({ data, ctx }) {
       subName += ` - ${classe.groups?.abbreviation}`;
     }
     const roomData = {
-      name: `${classe.subject.name} ${subName}`,
+      name: `${classe.subject.name}`,
       type: ctx.prefixPN('class.group'),
       // subName,
       bgColor: classe.subject.color,
