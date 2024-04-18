@@ -121,12 +121,13 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
 
   async function checkEmail(email) {
     if (!email) return;
-
     const userAgentsInfo = await getUserAgentsByEmail(email);
     const userData = { ...(userAgentsInfo[0]?.user ?? {}) };
 
-    if (userData) {
-      userData.userAgents = userAgentsInfo;
+    if (userData?.id) {
+      userData.userAgents = userAgentsInfo?.filter((item) =>
+        ['teacher', 'student'].includes(item.profile?.sysName)
+      );
     }
 
     setUser(userData);
@@ -158,7 +159,8 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
         .map((userAgent) => getUserAgentDetailForPageRequest(userAgent.id))
     );
     const tags = uniq(result?.map((item) => item.data.tags).flat() ?? []);
-    form.setValue('tags', tags);
+    const previousTags = form.getValues('tags') ?? [];
+    form.setValue('tags', uniq([...previousTags, ...tags]));
   }
 
   async function disableUserAgent(userAgent) {

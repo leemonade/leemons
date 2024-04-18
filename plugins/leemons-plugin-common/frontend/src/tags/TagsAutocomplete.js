@@ -6,14 +6,9 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { useStore } from '../useStore';
 import { TagsService } from './TagsService';
 
-function TagsAutocomplete({ pluginName, type, labels, ...props }) {
+function TagsAutocomplete({ pluginName, type, labels, value: valueProp, ...props }) {
   const { t: tCommon } = useCommonTranslate('formWithTheme');
-
-  if (!isArray(props.value)) {
-    // eslint-disable-next-line no-param-reassign
-    props.value = [];
-  }
-
+  const [value, setValue] = React.useState(valueProp);
   const [store, render] = useStore({ data: [] });
 
   async function search(text) {
@@ -30,9 +25,15 @@ function TagsAutocomplete({ pluginName, type, labels, ...props }) {
     search('');
   }, []);
 
+  React.useEffect(() => {
+    console.log('valueProp:', valueProp);
+    setValue(valueProp ?? []);
+  }, [valueProp]);
+
   return (
     <TagsInput
       {...props}
+      value={value}
       labels={{ ...labels, addButton: labels?.addButton ?? tCommon('add') }}
       suggestions={store.data}
       onSearch={search}

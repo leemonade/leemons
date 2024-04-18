@@ -10,7 +10,7 @@ import {
   RadioGroup,
   ContextContainer,
 } from '@bubbles-ui/components';
-import { isFunction } from 'lodash';
+import { noop } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { CalendarNewEventModalStyles } from './CalendarNewEventModal.styles';
 import {
@@ -18,12 +18,11 @@ import {
   CALENDAR_NEW_EVENT_MODAL_DEFAULT_PROPS,
   CALENDAR_NEW_EVENT_MODAL_PROP_TYPES,
 } from './CalendarNewEventModal.constants';
-import { ColorPicker } from './';
+import { ColorPicker } from './ColorPicker/ColorPicker';
 
 const CalendarNewEventModal = ({
   locale,
   opened,
-  target,
   labels,
   values,
   placeholders,
@@ -31,9 +30,8 @@ const CalendarNewEventModal = ({
   suggestions,
   minDate,
   maxDate,
-  onSubmit,
-  onClose,
-  ...props
+  onSubmit = noop,
+  onClose = noop,
 }) => {
   const defaultValues = {
     periodName: values.periodName || '',
@@ -59,12 +57,13 @@ const CalendarNewEventModal = ({
   const startDate = watch('startDate');
   const endDate = watch('endDate');
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = (val) => {
+    const event = { ...val };
     if (event.dayType !== 'schoolDays') {
       delete event.withoutOrdinaryDays;
       delete event.color;
     }
-    isFunction(onSubmit) && onSubmit(event);
+    onSubmit(event);
   };
 
   useEffect(() => {
@@ -84,7 +83,7 @@ const CalendarNewEventModal = ({
     _minDate = startDate;
   }
 
-  const { classes, cx } = CalendarNewEventModalStyles({ isSchoolDay }, { name: 'CalendarModal' });
+  const { classes } = CalendarNewEventModalStyles({ isSchoolDay }, { name: 'CalendarModal' });
   return (
     <Drawer opened={opened} size="xl" onClose={onClose}>
       <Drawer.Header title={'New Event'} />
