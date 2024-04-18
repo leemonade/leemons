@@ -457,6 +457,7 @@ function ListUsers() {
                   label={t('profileLabel')}
                   value={store.profile}
                   onChange={handleProfileChange}
+                  showAll={false}
                 />
                 <Select
                   clearable={t('clearFilter')}
