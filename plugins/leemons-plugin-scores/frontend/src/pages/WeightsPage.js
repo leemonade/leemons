@@ -44,7 +44,6 @@ export default function WeightsPage() {
           }
         >
           <SelectProgram
-            hideIfOnlyOne
             center={userCenter}
             firstSelected
             value={selectedProgram}

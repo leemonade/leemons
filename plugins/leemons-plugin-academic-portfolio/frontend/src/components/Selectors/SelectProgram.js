@@ -1,31 +1,8 @@
 import { MultiSelect, Select } from '@bubbles-ui/components';
-import { useApi } from '@common';
-import _, { noop } from 'lodash';
+import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useState } from 'react';
-import { listProgramsRequest } from '../../request';
-
-// EN: Parse data fetched from the server
-// ES: Procesar datos obtenidos del servidor
-async function getData(center) {
-  const centers = _.isArray(center) ? center : [center];
-  const responses = await Promise.all(
-    centers.map((_center) =>
-      listProgramsRequest({
-        page: 0,
-        size: 9999,
-        center: _center,
-      })
-    )
-  );
-
-  const items = [];
-  responses.forEach((response) => {
-    items.push(...response.data.items);
-  });
-
-  return items.map(({ id, name }) => ({ label: name, value: id }));
-}
+import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 
 const SelectProgram = forwardRef(
   (
@@ -45,9 +22,12 @@ const SelectProgram = forwardRef(
   ) => {
     const [value, setValue] = useState(userValue);
 
-    // EN: Get programs from API on center change
-    // ES: Obtener programas desde API en cambio de centro
-    const [data, , loading] = useApi(getData, center);
+    const { data, isLoading: loading } = useProgramsByCenter({
+      center,
+      options: {
+        select: (programs) => programs.map(({ id, name }) => ({ label: name, value: id })),
+      },
+    });
 
     const handleChange = (newValue) => {
       if (newValue !== value) {

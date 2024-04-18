@@ -160,6 +160,12 @@ const menuItems = [
         es: 'Reglas de ponderación',
       },
     },
+    permissions: [
+      {
+        permissionName: permissionNames.weights,
+        actionNames: ['update', 'admin'],
+      },
+    ],
   },
 ];
 
