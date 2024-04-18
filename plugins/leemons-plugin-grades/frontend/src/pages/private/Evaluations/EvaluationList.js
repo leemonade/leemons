@@ -309,11 +309,13 @@ export default function EvaluationList() {
                 <Box>
                   <ActionButton icon={<EditIcon />} onClick={() => onSelect(grade)} />
                 </Box>
-                {grade.inUse ? null : (
-                  <Box>
-                    <ActionButton icon={<DeleteBinIcon />} onClick={() => onDelete(grade)} />
-                  </Box>
-                )}
+                <Box>
+                  <ActionButton
+                    disabled={grade.inUse}
+                    icon={<DeleteBinIcon />}
+                    onClick={() => onDelete(grade)}
+                  />
+                </Box>
               </Stack>
             ),
           }))
