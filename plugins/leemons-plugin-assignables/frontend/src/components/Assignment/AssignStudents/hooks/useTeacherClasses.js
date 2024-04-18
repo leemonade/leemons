@@ -36,10 +36,9 @@ export default function useTeacherClasses() {
       id: _class.id,
       // TODO: Update to standard class name
       label: [
-        _class.courses && getCourseName(_class.courses),
         _class.subject.name,
-        !_class.groups?.isAlone &&
-          (_class.groups?.name ? _class.groups.name : _class.groups?.abbreviation),
+        _class.courses > 1 && getCourseName(_class.courses),
+        _class.groups && _class.groups?.abbreviation,
       ]
         .filter(Boolean)
         .join(' - '),

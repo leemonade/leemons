@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
-import { map, pick, sortBy, uniq } from 'lodash';
+import { map, sortBy, uniq } from 'lodash';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useProgramsPublicInfo } from '@academic-portfolio/hooks';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 export function useProgramsForSubjectPicker({ subjects }) {
   const programIds = uniq(map(subjects, 'program'));
+  const [t] = useTranslateLoader(prefixPN('newSubjectsPage.labels'));
 
   const { data, isLoading } = useProgramsPublicInfo(programIds, {
     enabled: !!programIds,
@@ -17,10 +20,14 @@ export function useProgramsForSubjectPicker({ subjects }) {
     return map(data?.programs, (program) => ({
       id: program?.id,
       name: program?.name,
-      courses: sortBy(program?.courses, 'index').map((course) => pick(course, ['name', 'id'])),
+      courses: sortBy(program?.courses, 'index').map(({ index, id }) => ({
+        name: `${t('course')} ${index}`,
+        id,
+      })),
       hasCourses: !(program?.moreThanOneAcademicYear || program?.maxNumberOfCourses === 1),
+      // TODO UPDATE THIS IN BACK & FRONT FOR IT TO BE: activateCoursesSelect: !(!program?.sequentialCourses || program?.maxNumberOfCourses === 1)),
     }));
-  }, [data, isLoading]);
+  }, [data, isLoading, t]);
 }
 
 export default useProgramsForSubjectPicker;

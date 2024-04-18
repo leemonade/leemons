@@ -19,6 +19,7 @@ const { getClassesUnderProgram } = require('./getClassesUnderProgram');
 const { classDetailForDashboard } = require('./classDetailForDashboard');
 const { getBasicClassesByProgram } = require('./getBasicClassesByProgram');
 const { getClassesUnderProgramCourse } = require('./getClassesUnderProgramCourse');
+const { changeClassSubstageBySubject } = require('./substage/changeClassSubstageBySubject');
 
 module.exports = {
   addClass,
@@ -42,4 +43,5 @@ module.exports = {
   classDetailForDashboard,
   getBasicClassesByProgram,
   getClassesUnderProgramCourse,
+  changeClassSubstageBySubject,
 };

@@ -9,11 +9,14 @@ import { goLoginPage } from '@users/navigate';
 const Welcome = loadable(() => pMinDelay(import('./src/pages/private/WelcomePage'), 500));
 const Profiles = loadable(() => pMinDelay(import('./src/pages/private/ProfilesPage'), 500));
 const Tree = loadable(() => pMinDelay(import('./src/pages/private/TreePage'), 500));
-const ProgramList = loadable(() =>
-  pMinDelay(import('./src/pages/private/programs/ProgramList'), 500)
+const AcademicTree = loadable(() => pMinDelay(import('./src/pages/private/AcademicTreePage'), 500));
+const SubjectTypes = loadable(() => pMinDelay(import('./src/pages/private/SubjectTypesPage')));
+const KnowledgeAreas = loadable(() => pMinDelay(import('./src/pages/private/KnowledgeAreasPage')));
+const ProgramsPage = loadable(() =>
+  pMinDelay(import('./src/pages/private/programs/ProgramsPage'), 500)
 );
-const SubjectList = loadable(() =>
-  pMinDelay(import('./src/pages/private/subjects/SubjectList'), 500)
+const SubjectsPage = loadable(() =>
+  pMinDelay(import('./src/pages/private/subjects/SubjectsPage'), 500)
 );
 
 export default function Private() {
@@ -29,13 +32,20 @@ export default function Private() {
         <Profiles session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/programs`}>
-        <ProgramList session={session} fallback={<LoadingOverlay visible />} />
+        <ProgramsPage session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/subjects`}>
-        <SubjectList session={session} fallback={<LoadingOverlay visible />} />
+        <SubjectsPage session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/tree`}>
-        <Tree session={session} fallback={<LoadingOverlay visible />} />
+        {/* <Tree session={session} fallback={<LoadingOverlay visible />} /> */}
+        <AcademicTree session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/subject-types`}>
+        <SubjectTypes session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/knowledge-areas`}>
+        <KnowledgeAreas session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>
   );

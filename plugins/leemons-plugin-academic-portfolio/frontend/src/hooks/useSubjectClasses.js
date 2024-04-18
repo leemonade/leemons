@@ -6,7 +6,6 @@ export default function useSubjectClasses(subject, { enabled } = {}) {
     ['listSubjectClasses', { subject }],
     async () => {
       const response = await listSubjectClassesRequest({ page: 0, size: 9999, subject });
-
       return response.data.items;
     },
     {

@@ -53,7 +53,6 @@ module.exports = {
     },
     listSessionClasses: {
       handler(ctx) {
-        // Note that it receives withProgram and _withProgram
         return listSessionClasses({ ...ctx.params, ctx });
       },
     },

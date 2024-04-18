@@ -36,10 +36,11 @@ const schema = new mongoose.Schema(
     useOneStudentGroup: {
       type: Boolean,
     },
+    // OUTDATED, to be replaced with groups metadata
     maxGroupAbbreviation: {
       type: Number,
-      required: true,
     },
+    // OUTDATED, to be replaced with groups metadata
     maxGroupAbbreviationIsOnlyNumbers: {
       type: Boolean,
       default: false,
@@ -49,6 +50,7 @@ const schema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // OUTDATED, each course can have its own max and min credits now
     courseCredits: {
       type: Number,
       default: 0,
@@ -57,13 +59,15 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Flag to indicate that i subject can be given in more than one course. Possibly replaced by sequentialCourses field
     moreThanOneAcademicYear: {
       type: Boolean,
       default: false,
     },
-    haveSubstagesPerCourse: {
+    hasSubstagesPerCourse: {
       type: Boolean,
     },
+    // OUTDATED, posibbly. Currently we don't ask about substages frecuency to the user at all.
     // year | semester | trimester | quarter | month | week | day
     substagesFrequency: {
       type: String,
@@ -75,28 +79,32 @@ const schema = new mongoose.Schema(
     useDefaultSubstagesName: {
       type: Boolean,
     },
+    // OUTDATED, substages are abbreviation is not limited
     maxSubstageAbbreviation: {
       type: Number,
     },
+    // OUTDATED, substages are abbreviation is not limited
     maxSubstageAbbreviationIsOnlyNumbers: {
       type: Boolean,
     },
     haveKnowledge: {
       type: Boolean,
     },
+    // OUTDATED, knowledges are defined at center level now and its abbreviation is not restricted
     maxKnowledgeAbbreviation: {
       type: Number,
     },
+    // OUTDATED, knowledges are defined at center level now and its abbreviation is not restricted
     maxKnowledgeAbbreviationIsOnlyNumbers: {
       type: Boolean,
     },
+    // OUTDATED, this info is not being asked to the user anymore
     subjectsFirstDigit: {
       type: String,
-      required: true,
     },
+    // OUTDATED, this info is not being asked to the user anymore
     subjectsDigits: {
       type: Number,
-      required: true,
     },
     treeType: {
       type: Number,
@@ -109,8 +117,39 @@ const schema = new mongoose.Schema(
       type: Boolean,
     },
     evaluationSystem: {
-      // TODO: Add reference to plugins grade
       type: String,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    hasSubjectTypes: {
+      type: Boolean,
+      defaults: false,
+    },
+    useCustomSubjectIds: {
+      type: Boolean,
+      defaults: false,
+    },
+    useAutoAssignment: {
+      type: Boolean,
+      defaults: false,
+    },
+    sequentialCourses: {
+      type: Boolean,
+      default: true,
+    },
+    hoursPerCredit: {
+      type: Number,
+    },
+    // { nameFormat, digits, customNameFormat, prefix, groupsPerCourseN }
+    // For each course, the groups amount is added, N is the course index.
+    // Programs with not sequential courses have the same amount of groups for all courses
+    groupsMetadata: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    seatsForAllCourses: {
+      type: Number,
     },
   },
   {

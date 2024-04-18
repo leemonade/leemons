@@ -9,7 +9,7 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { updateCourse, listCourses } = require('../../core/courses');
+const { updateCourse, listCourses, getCourseById } = require('../../core/courses');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -93,6 +93,27 @@ module.exports = {
         return { status: 200, data };
       }
       throw validator.error;
+    },
+  },
+  getCourseDetails: {
+    rest: {
+      path: '/:id',
+      method: 'GET',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'view'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { id } = ctx.params;
+      const data = await getCourseById({ id, ctx });
+      return { status: 200, data };
     },
   },
 };

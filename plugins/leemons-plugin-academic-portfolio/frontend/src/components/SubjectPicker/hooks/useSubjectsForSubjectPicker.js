@@ -23,7 +23,7 @@ export function useSubjectsForSubjectPicker({ subjects }) {
     () =>
       uniqBy(
         map(subjectDetails, (subject) =>
-          pick(subject, ['id', 'name', 'program', 'course', 'color'])
+          pick(subject, ['id', 'name', 'program', 'courses', 'color'])
         ),
         'id'
       ) || [],

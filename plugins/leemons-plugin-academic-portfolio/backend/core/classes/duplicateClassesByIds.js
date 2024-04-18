@@ -37,7 +37,7 @@ async function duplicateClassesByIds({
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newClasses = await Promise.all(
-    _.map(rawClasses, async ({ id, image, ...item }) => {
+    _.map(rawClasses, async ({ id, _id, __v, updatedAt, createdAt, image, ...item }) => {
       if (image) {
         image = await ctx.tx.call('leebrary.assets.duplicate', {
           assetId: image,
@@ -47,25 +47,26 @@ async function duplicateClassesByIds({
       const newClass = await ctx.tx.db.Class.create({
         ...item,
         image,
-        program:
-          duplications.programs && duplications.programs[item.program]
-            ? duplications.programs[item.program].id
-            : item.program,
-        subjectType:
-          duplications.subjectTypes && duplications.subjectTypes[item.subjectType]
-            ? duplications.subjectTypes[item.subjectType].id
-            : item.subjectType,
-        subject:
-          duplications.subjects && duplications.subjects[item.subject]
-            ? duplications.subjects[item.subject].id
-            : item.subject,
+        program: duplications.programs?.[item.program]
+          ? duplications.programs[item.program].id
+          : item.program,
+        subjectType: duplications.subjectTypes?.[item.subjectType]
+          ? duplications.subjectTypes[item.subjectType].id
+          : item.subjectType,
+        subject: duplications.subjects?.[item.subject]
+          ? duplications.subjects[item.subject].id
+          : item.subject,
       }).then((mongooseDoc) => mongooseDoc.toObject());
 
       if (classesById[id].schedule) {
-        await processScheduleForClass(
-          _.map(classesById[id].schedule, ({ id: _id, deleted, class: classe, ...e }) => e),
-          newClass.id
-        );
+        await processScheduleForClass({
+          schedule: _.map(
+            classesById[id].schedule,
+            ({ id: _ID, deleted, class: classe, ...e }) => e
+          ),
+          classId: newClass.id,
+          ctx,
+        });
       }
 
       return newClass;
@@ -83,6 +84,72 @@ async function duplicateClassesByIds({
   if (substages) await duplicateSubstageByClass({ classIds: classesIds, duplications, ctx });
   if (courses) await duplicateCourseByClass({ classIds: classesIds, duplications, ctx });
   if (groups) await duplicateGroupByClass({ classIds: classesIds, duplications, ctx });
+
+  // Add new classes custom permission
+  await Promise.all(
+    _.map(newClasses, async (nClass) => {
+      ctx.tx.call('users.permissions.addItem', {
+        item: nClass.id,
+        type: 'academic-portfolio.class',
+        data: {
+          permissionName: `academic-portfolio.class.${nClass.id}`,
+          actionNames: ['view'],
+        },
+        isCustomPermission: true,
+      });
+    })
+  );
+
+  await Promise.all(
+    _.map(newClasses, async (nClass) => {
+      const classe = (await classByIds({ ids: nClass.id, ctx }))[0];
+      const classProgram = await ctx.tx.db.Programs.findOne({ id: classe.program }).lean();
+      const programCenter = await ctx.tx.db.ProgramCenter.findOne({
+        program: classProgram.id,
+      }).lean();
+      let subName = classProgram.name;
+      if (classe.groups?.abbreviation) {
+        subName += ` - ${classe.groups.abbreviation}`;
+      }
+      const roomData = {
+        name: classe.subject.name,
+        // name: `${classe.subject.name} ${subName}`,
+        type: ctx.prefixPN('class.group'),
+        subName,
+        bgColor: classe.subject.color,
+        image: null,
+        icon: '/public/academic-portfolio/subject-icon.svg', // Default
+        program: classProgram.id,
+        center: programCenter.center,
+        metadata: {
+          iconIsUrl: true,
+        },
+      };
+      if (classe.subject.icon?.cover) {
+        roomData.icon = classe.subject.icon.id;
+        delete roomData.metadata.iconIsUrl;
+      }
+      if (classe.subject.image?.cover) {
+        roomData.image = classe.subject.image.id;
+      }
+      // if (newClasses.image) {
+      //   roomData.image = newClasses.image;
+      // }
+
+      await ctx.tx.call('comunica.room.add', {
+        key: ctx.prefixPN(`room.class.group.${nClass.id}`),
+        ...roomData,
+      });
+
+      await ctx.tx.call('comunica.room.add', {
+        ...roomData,
+        type: ctx.prefixPN('class'),
+        key: ctx.prefixPN(`room.class.${nClass.id}`),
+        parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
+        icon: '/public/academic-portfolio/class-icon.svg',
+      });
+    })
+  );
 
   await Promise.all(
     _.map(newClasses, async (nClass) => {

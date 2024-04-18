@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { duplicateSubjectCreditsBySubjectsIds } = require('./duplicateSubjectCreditsBySubjectsIds');
 
-async function duplicateSubjectByIds({ ids, duplications: dup = {}, ctx }) {
+async function duplicateSubjectByIds({ ids, duplications: dup = {}, preserveName = false, ctx }) {
   const duplications = dup;
 
   const subjects = await ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
@@ -10,17 +10,16 @@ async function duplicateSubjectByIds({ ids, duplications: dup = {}, ctx }) {
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newSubjects = await Promise.all(
-    _.map(subjects, ({ id, ...item }) =>
+    _.map(subjects, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
       ctx.tx.db.Subjects.create({
         ...item,
-        program:
-          duplications.programs && duplications.programs[item.program]
-            ? duplications.programs[item.program].id
-            : item.program,
-        course:
-          duplications.courses && duplications.courses[item.course]
-            ? duplications.courses[item.course].id
-            : item.course,
+        name: preserveName ? item.name : `${item.name} (1)`,
+        program: duplications.programs?.[item.program]
+          ? duplications.programs[item.program].id
+          : item.program,
+        course: duplications.courses?.[item.course]
+          ? duplications.courses[item.course].id
+          : item.course,
       }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );

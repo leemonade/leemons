@@ -21,11 +21,13 @@ const schema = new mongoose.Schema(
     },
     color: {
       type: String,
-      required: true,
     },
     icon: {
       type: String,
-      required: true,
+    },
+    center: {
+      // ref: 'plugins_users::centers',
+      type: String,
     },
     program: {
       // ref: 'plugins_academic-portfolio::programs',
@@ -49,6 +51,10 @@ schema.index({ program: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ abbreviation: 1, program: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ id: 1, abbreviation: 1, program: 1, deploymentID: 1, isDeleted: 1 });
 
-const knowledgesModel = newModel(mongoose.connection, 'v1::academic-portfolio_Knowledges', schema);
+const knowledgeAreasModel = newModel(
+  mongoose.connection,
+  'v1::academic-portfolio_KnowledgeAreas',
+  schema
+);
 
-module.exports = { knowledgesModel };
+module.exports = { knowledgeAreasModel };

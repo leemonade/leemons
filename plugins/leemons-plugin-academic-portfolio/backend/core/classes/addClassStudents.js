@@ -8,7 +8,7 @@ const {
 } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function addClassStudents({ data, ctx }) {
-  await validateAddClassStudents(data);
+  validateAddClassStudents(data);
 
   const getClassSeats = (cl) => {
     if (cl.parentClass) return getClassSeats(cl.parentClass);

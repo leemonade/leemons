@@ -1,15 +1,25 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { isString } from 'lodash';
 
-async function listSubjects({ page, size, program, course }) {
-  return leemons.api(
-    `v1/academic-portfolio/subjects/subject?page=${page}&size=${size}&program=${program}&course=${course}`,
-    {
-      waitToFinish: true,
-      allAgents: true,
-      method: 'GET',
-    }
-  );
+async function listSubjects({ page, size, program, course, onlyArchived }) {
+  const params = new URLSearchParams({
+    page,
+    size,
+    program,
+  });
+
+  if (course !== undefined) {
+    params.append('course', course);
+  }
+  if (onlyArchived !== undefined) {
+    params.append('onlyArchived', onlyArchived);
+  }
+
+  return leemons.api(`v1/academic-portfolio/subjects/subject?${params.toString()}`, {
+    waitToFinish: true,
+    allAgents: true,
+    method: 'GET',
+  });
 }
 
 async function createSubject(body) {
@@ -74,10 +84,18 @@ async function updateSubjectCredits(body) {
   });
 }
 
-async function removeSubject(id) {
-  return leemons.api(`v1/academic-portfolio/subjects/${id}`, {
+async function removeSubject({ id, soft }) {
+  const queryParams = typeof soft === 'boolean' ? `?soft=${soft}` : '';
+  return leemons.api(`v1/academic-portfolio/subjects/${id}${queryParams}`, {
     allAgents: true,
     method: 'DELETE',
+  });
+}
+
+async function duplicateSubject(id) {
+  return leemons.api(`v1/academic-portfolio/subjects/${id}/duplicate`, {
+    allAgents: true,
+    method: 'POST',
   });
 }
 
@@ -113,14 +131,14 @@ async function listSubjectCreditsForProgram(program) {
   });
 }
 
-async function getSubjectDetails(subject) {
-  if (Array.isArray(subject)) {
-    return leemons.api(`v1/academic-portfolio/subjects?ids=${JSON.stringify(subject)}`, {
-      allAgents: true,
-      method: 'GET',
-    });
-  }
-  return leemons.api(`v1/academic-portfolio/subjects?id=${subject}`, {
+async function getSubjectDetails(subject, withClasses = false, showArchived = false) {
+  const isSubjectArray = Array.isArray(subject);
+  const subjectParam = isSubjectArray ? `ids=${JSON.stringify(subject)}` : `id=${subject}`;
+  const classParam = withClasses ? '&withClasses=true' : '';
+  const showArchivedParam = showArchived ? '&showArchived=true' : '';
+  const endpoint = `v1/academic-portfolio/subjects?${subjectParam}${classParam}${showArchivedParam}`;
+
+  return leemons.api(endpoint, {
     allAgents: true,
     method: 'GET',
   });
@@ -136,4 +154,5 @@ export {
   listSubjectCreditsForProgram,
   getSubjectDetails,
   removeSubject,
+  duplicateSubject,
 };

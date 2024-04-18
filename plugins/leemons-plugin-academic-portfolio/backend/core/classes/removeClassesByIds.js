@@ -25,9 +25,8 @@ async function removeClassesByIds({ ids, soft, ctx }) {
         return ctx.tx.call('leebrary.assets.remove', {
           id: { id: classe.image.id },
         });
-      } else {
-        return Promise.resolve();
       }
+      return Promise.resolve();
     })
   );
 
@@ -41,11 +40,10 @@ async function removeClassesByIds({ ids, soft, ctx }) {
   const refClasses = await ctx.tx.db.Class.find({ class: _.map(classes, 'id') }).lean();
 
   const refIds = _.isArray(refClasses) ? _.map(refClasses, 'id') : [];
-  if (refIds && refIds.length) {
+  if (refIds?.length) {
     await removeClassesByIds({ ids: refIds, soft, ctx });
   }
 
-  console.log('Vamos a borrar ');
   await ctx.tx.db.Class.deleteMany({ id: _.map(classes, 'id') }, { soft });
   // TODO: Borrar permiso de la clase a todo quisqui
   /*

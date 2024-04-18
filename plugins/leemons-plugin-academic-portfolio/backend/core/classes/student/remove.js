@@ -5,11 +5,7 @@ const { removeCustomPermissions } = require('./removeCustomPermissions');
 
 async function remove({ classId, studentId, soft, ctx }) {
   const [classStudent, program] = await Promise.all([
-    // TODO ask: findOne where soft... Tiene sentido tener la opción de buscar en los borrados para hacer un hard delete?
-    ctx.tx.db.ClassStudent.findOne(
-      { class: classId, student: studentId }
-      // { excludeDeleted: soft }
-    ).lean(),
+    ctx.tx.db.ClassStudent.findOne({ class: classId, student: studentId }).lean(),
     getClassProgram({ id: classId, ctx }),
   ]);
 

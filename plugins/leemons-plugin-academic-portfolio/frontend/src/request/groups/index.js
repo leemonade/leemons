@@ -14,6 +14,13 @@ async function updateGroup(body) {
   });
 }
 
+async function getGroupById(groupId) {
+  return leemons.api(`v1/academic-portfolio/groups/${groupId}`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 async function removeGroupFromClasses(groupId) {
   return leemons.api(
     `v1/academic-portfolio/groups/group-from-classes-under-node-tree?group=${groupId}`,
@@ -32,4 +39,4 @@ async function duplicateGroup(body) {
   });
 }
 
-export { createGroup, updateGroup, removeGroupFromClasses, duplicateGroup };
+export { createGroup, updateGroup, getGroupById, removeGroupFromClasses, duplicateGroup };

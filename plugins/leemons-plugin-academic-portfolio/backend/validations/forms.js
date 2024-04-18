@@ -28,6 +28,7 @@ const addProgramSchema = {
     evaluationSystem: stringSchema,
     useOneStudentGroup: booleanSchema,
     hideStudentsToStudents: booleanSchema,
+    seatsForAllCourses: integerSchemaNullable,
     cycles: {
       type: 'array',
       items: {
@@ -55,39 +56,75 @@ const addProgramSchema = {
     },
     credits: integerSchemaNullable,
     totalHours: integerSchemaNullable,
-    maxGroupAbbreviation: integerSchema,
-    maxGroupAbbreviationIsOnlyNumbers: booleanSchema,
+    // maxGroupAbbreviation: integerSchema,
+    // maxGroupAbbreviationIsOnlyNumbers: booleanSchema,
     maxNumberOfCourses: integerSchema,
     moreThanOneAcademicYear: booleanSchema,
-    courseCredits: integerSchema,
+    // courseCredits: integerSchema,
     hideCoursesInTree: booleanSchema,
-    haveSubstagesPerCourse: booleanSchema,
-    haveKnowledge: booleanSchema,
-    maxKnowledgeAbbreviation: integerSchemaNullable,
-    maxKnowledgeAbbreviationIsOnlyNumbers: booleanSchema,
-    subjectsFirstDigit: {
-      type: 'string',
-      enum: ['none', 'course'],
-    },
-    subjectsDigits: integerSchema,
+    hasSubstagesPerCourse: booleanSchema,
+    // maxKnowledgeAbbreviation: integerSchemaNullable,
+    // maxKnowledgeAbbreviationIsOnlyNumbers: booleanSchema,
+    // subjectsFirstDigit: {
+    //   type: 'string',
+    //   enum: ['none', 'course'],
+    // },
+    // subjectsDigits: integerSchema,
     treeType: integerSchema,
+    //* AcaPortfolio 2.0
+    customSubstages: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: stringSchema,
+          abbreviation: stringSchema,
+        },
+      },
+    },
+    courses: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          index: integerSchema,
+          minCredits: integerSchemaNullable,
+          maxCredits: integerSchemaNullable,
+          seats: integerSchema,
+        },
+        nullable: true,
+      },
+    },
+    hasSubjectTypes: booleanSchema,
+    useCustomSubjectIds: booleanSchema,
+    hoursPerCredit: integerSchemaNullable,
+    groupsMetadata: {
+      type: 'object',
+      properties: {
+        nameFormat: stringSchema,
+        digits: integerSchemaNullable,
+        prefix: stringSchemaNullable,
+        customNameFormat: stringSchemaNullable,
+      },
+      additionalProperties: true,
+    },
   },
   required: [
     'name',
     'centers',
     'abbreviation',
     'credits',
-    'maxGroupAbbreviation',
-    'maxGroupAbbreviationIsOnlyNumbers',
-    'haveSubstagesPerCourse',
-    'haveKnowledge',
-    'subjectsFirstDigit',
-    'subjectsDigits',
     'evaluationSystem',
+    // 'hasSubstagesPerCourse',
+    // 'maxGroupAbbreviation',
+    // 'maxGroupAbbreviationIsOnlyNumbers',
+    // 'subjectsFirstDigit',
+    // 'subjectsDigits',
   ],
   additionalProperties: true,
 };
 
+// *Funcionalidad legacy para setear substages individualmente por curso pudiendo usar nomenclatura por defecto o custom
 const addProgramSubstage1Schema = {
   type: 'object',
   properties: {
@@ -106,14 +143,13 @@ const addProgramSubstage1Schema = {
           frequency: stringSchema,
           number: numberSchema,
         },
-        required: ['name', 'number', 'frequency'],
+        required: ['name', 'number'],
       },
     },
   },
   required: ['substagesFrequency', 'numberOfSubstages', 'useDefaultSubstagesName'],
   additionalProperties: true,
 };
-
 const addProgramSubstage2Schema = {
   type: 'object',
   properties: {
@@ -137,13 +173,11 @@ const addProgramSubstage2Schema = {
 
 function validateAddProgram(data) {
   let validator = new LeemonsValidator(addProgramSchema);
-
   if (!validator.validate(data)) {
     throw validator.error;
   }
-
-  // ES: Si hay mas de un curso puede tener substages
-  if (data.haveSubstagesPerCourse) {
+  // *Funcionalidad legacy para setear substages individualmente por curso pudiendo usar nomenclatura por defecto o custom
+  if (data.hasSubstagesPerCourse) {
     validator = new LeemonsValidator(addProgramSubstage1Schema);
 
     if (!validator.validate(data)) {
@@ -153,7 +187,6 @@ function validateAddProgram(data) {
     if (!data.useDefaultSubstagesName) {
       validator = new LeemonsValidator(addProgramSubstage2Schema);
 
-      // console.log(data.substages);
       if (!validator.validate(data)) {
         throw validator.error;
       }
@@ -181,7 +214,9 @@ const updateProgramSchema = {
     treeType: integerSchema,
     managers: arrayStringSchema,
     hideStudentsToStudents: booleanSchema,
-    totalHours: numberSchema,
+    totalHours: integerSchemaNullable,
+    hoursPerCredit: integerSchemaNullable,
+    useAutoAssignment: booleanSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -213,63 +248,53 @@ function validateSubstagesFormat({ programData, substages, ctx }) {
   });
 }
 
-const addKnowledgeSchema = {
+const addKnowledgeAreaSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
     abbreviation: stringSchema,
     color: stringSchema,
     icon: stringSchema,
-    program: stringSchema,
+    center: stringSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
+    program: stringSchema,
     subjects: arrayStringSchema,
     managers: arrayStringSchema,
   },
-  required: ['name', 'abbreviation', 'program', 'color', 'icon'],
+  required: ['name', 'abbreviation', 'center'],
   additionalProperties: false,
 };
 
-async function validateAddKnowledge({ data, ctx }) {
-  const validator = new LeemonsValidator(addKnowledgeSchema);
+async function validateAddKnowledgeArea({ data, ctx }) {
+  const validator = new LeemonsValidator(addKnowledgeAreaSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const [program] = await programsByIds({ ids: data.program, ctx });
-
-  if (!program) {
-    throw new LeemonsError(ctx, { message: 'The program does not exist' });
+  // ES: Comprobamos que el centro existe
+  // EN: Verify that the center exists
+  const centerExists = await ctx.tx.call('users.centers.existsById', {
+    id: data.center,
+  });
+  if (!centerExists) {
+    throw new LeemonsError(ctx, { message: 'Unable to find the specified center.' });
   }
 
-  // ES: Comprobamos si el programa puede tener areas de conocimiento
-  if (!program.haveKnowledge) {
-    throw new LeemonsError(ctx, { message: 'The program does not have knowledges' });
-  }
-
-  if (program.maxKnowledgeAbbreviation) {
-    // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
-    if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
-      throw new LeemonsError(ctx, {
-        message: 'The knowledge abbreviation is longer than the specified length',
-      });
-  }
-
-  // ES: Comprobamos si el nobre del conocimiento es solo numeros
-  if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new LeemonsError(ctx, { message: 'The knowledge abbreviation must be only numbers' });
-
-  // ES: Comprobamos si el conocimiento ya existe
-  const knowledge = await ctx.tx.db.Knowledges.countDocuments({
+  // ES: Comprobamos si el área de conocimiento ya existe
+  const existentKnowledgeAreas = await ctx.tx.db.KnowledgeAreas.countDocuments({
     abbreviation: data.abbreviation,
-    program: program.id,
+    center: data.center,
   });
 
-  if (knowledge) throw new LeemonsError(ctx, { message: 'The knowledge already exists' });
+  if (existentKnowledgeAreas)
+    throw new LeemonsError(ctx, {
+      message: 'A knowledge area with the same abbreviation already exists at this center.',
+    });
 }
 
-const updateKnowledgeSchema = {
+const updateKnowledgeAreaSchema = {
   type: 'object',
   properties: {
     id: stringSchema,
@@ -280,68 +305,51 @@ const updateKnowledgeSchema = {
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
     managers: arrayStringSchema,
+    center: stringSchema,
   },
-  required: ['id', 'name', 'abbreviation', 'color', 'icon'],
+  required: ['id', 'name', 'abbreviation', 'center'],
   additionalProperties: false,
 };
 
-async function validateUpdateKnowledge({ data, ctx }) {
-  const validator = new LeemonsValidator(updateKnowledgeSchema);
+async function validateUpdateKnowledgeArea({ data, ctx }) {
+  const validator = new LeemonsValidator(updateKnowledgeAreaSchema);
 
   if (!validator.validate(data)) {
     throw validator.error;
   }
 
-  const _knowledge = await ctx.tx.db.Knowledges.findOne({ id: data.id }).lean();
-  if (!_knowledge) {
-    throw new LeemonsError(ctx, { message: 'The knowledge does not exist' });
+  const _knowledgeArea = await ctx.tx.db.KnowledgeAreas.findOne({ id: data.id }).lean();
+  if (!_knowledgeArea) {
+    throw new LeemonsError(ctx, { message: 'The knowledge area does not exist' });
   }
 
-  const [program] = await programsByIds({ ids: _knowledge.program, ctx });
-
-  if (!program) {
-    throw new LeemonsError(ctx, { message: 'The program does not exist' });
-  }
-
-  // ES: Comprobamos si el programa puede tener areas de conocimiento
-  if (!program.haveKnowledge) {
-    throw new LeemonsError(ctx, { message: 'The program does not have knowledges' });
-  }
-
-  if (program.maxKnowledgeAbbreviation) {
-    // ES: Comprobamos si el nombre del conocimiento es mayor que el maximo
-    if (data.abbreviation.length > program.maxKnowledgeAbbreviation)
-      throw new LeemonsError(ctx, {
-        message: 'The knowledge abbreviation is longer than the specified length',
-      });
-  }
-
-  // ES: Comprobamos si el nobre del conocimiento es solo numeros
-  if (program.maxKnowledgeAbbreviationIsOnlyNumbers && !/^[0-9]+$/.test(data.abbreviation))
-    throw new LeemonsError(ctx, { message: 'The knowledge abbreviation must be only numbers' });
-
-  // ES: Comprobamos si el conocimiento ya existe
-  const knowledge = await ctx.tx.db.Knowledges.countDocuments({
+  // ES: Comprobamos si el conocimiento ya existe en ese centro
+  const existentKnowledgeAreas = await ctx.tx.db.KnowledgeAreas.countDocuments({
     id: { $ne: data.id },
     abbreviation: data.abbreviation,
-    program: program.id,
+    center: data.center,
   });
 
-  if (knowledge) throw new LeemonsError(ctx, { message: 'The knowledge already exists' });
+  if (existentKnowledgeAreas)
+    throw new LeemonsError(ctx, {
+      message: 'A knowledge area with the same abbreviation already exists at this center.',
+    });
 }
 
 const addSubjectTypeSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
-    groupVisibility: booleanSchema,
-    program: stringSchema,
+    description: stringSchemaNullable,
+    center: stringSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
     subjects: arrayStringSchema,
     managers: arrayStringSchema,
+    program: stringSchema, // Outdated?
+    groupVisibility: booleanSchema, // Outdated?
   },
-  required: ['name', 'groupVisibility', 'program'],
+  required: ['name', 'center'],
   additionalProperties: false,
 };
 
@@ -352,18 +360,26 @@ async function validateAddSubjectType({ data, ctx }) {
     throw validator.error;
   }
 
-  const count = await ctx.tx.db.Programs.countDocuments({ id: data.program });
-  if (!count) {
-    throw new LeemonsError(ctx, { message: 'The program does not exist' });
+  // ES: Comprobamos que el centro existe
+  // EN: Verify that the center exists
+  const centerExists = await ctx.tx.call('users.centers.existsById', {
+    id: data.center,
+  });
+  if (!centerExists) {
+    throw new LeemonsError(ctx, { message: 'Unable to find the specified center.' });
   }
 
   // ES: Comprobamos que no exista ya el subject type
-  const subjectTypeCount = await ctx.tx.db.SubjectTypes.countDocuments({
-    program: data.program,
+  // EN: Verify that a subject type with the same name does not already exist in that center
+  const existingEntriesCount = await ctx.tx.db.SubjectTypes.countDocuments({
+    center: data.center,
     name: data.name,
   });
 
-  if (subjectTypeCount) throw new LeemonsError(ctx, { message: 'The subject type already exists' });
+  if (existingEntriesCount > 0)
+    throw new LeemonsError(ctx, {
+      message: 'The specified name for the Subject Type is already in use at this center.',
+    });
 }
 
 const updateSubjectTypeSchema = {
@@ -371,12 +387,14 @@ const updateSubjectTypeSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
+    description: stringSchema,
     groupVisibility: booleanSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
     managers: arrayStringSchema,
+    center: stringSchema,
   },
-  required: ['id', 'name', 'groupVisibility'],
+  required: ['id', 'name', 'center'],
   additionalProperties: false,
 };
 
@@ -393,14 +411,17 @@ async function validateUpdateSubjectType({ data, ctx }) {
     throw new LeemonsError(ctx, { message: 'The subject type does not exist' });
   }
 
-  // ES: Comprobamos que no exista ya el subject type
+  // ES: Comprobamos que no exista ya el subject type en el centro
   const subjectTypeCount = await ctx.tx.db.SubjectTypes.countDocuments({
     id: { $ne: data.id },
-    program: subjectType.program,
+    center: subjectType.center,
     name: data.name,
   });
 
-  if (subjectTypeCount) throw new LeemonsError(ctx, { message: 'The subject type already exists' });
+  if (subjectTypeCount)
+    throw new LeemonsError(ctx, {
+      message: 'The specified name for the Subject Type is already in use at this center.',
+    });
 }
 
 const addCourseSchema = {
@@ -413,7 +434,7 @@ const addCourseSchema = {
     isAlone: booleanSchema,
   },
   required: ['program'],
-  additionalProperties: false,
+  additionalProperties: true,
 };
 
 async function validateAddCourse({ data, ctx }) {
@@ -425,7 +446,7 @@ async function validateAddCourse({ data, ctx }) {
 
   const program = await ctx.tx.db.Programs.findOne({ id: data.program }).lean();
   if (!program) {
-    throw new LeemonsError(ctx, { message: 'The program does not exist' });
+    throw new LeemonsError(ctx, { message: 'The program does not exist.' });
   }
 
   // ES: Comprobamos que no se sobrepase el numero maximo de cursos
@@ -435,7 +456,7 @@ async function validateAddCourse({ data, ctx }) {
   });
   if (courseCount >= program.maxNumberOfCourses) {
     throw new LeemonsError(ctx, {
-      message: 'The program has reached the maximum number of courses',
+      message: 'The program has reached the maximum number of courses allowed.',
     });
   }
 }
@@ -447,6 +468,13 @@ const addGroupSchema = {
     abbreviation: stringSchema,
     program: stringSchema,
     isAlone: booleanSchema,
+    metadata: {
+      type: 'object',
+      properties: {
+        course: integerSchemaNullable,
+      },
+    },
+    index: integerSchemaNullable,
     subjects: arrayStringSchema,
     managers: arrayStringSchema,
     aditionalData: {
@@ -479,10 +507,11 @@ async function validateAddGroup({ data, ctx }) {
     const group = await ctx.tx.db.Groups.countDocuments({ program: data.program, type: 'group' });
     if (group)
       throw new LeemonsError(ctx, {
-        message: 'This program configured as one group, you can´t add a new group',
+        message: 'This program configured as one group, you cannot add a new group',
       });
   }
 
+  // POSSIBLY OUDTATED as groups abreviation is treated differently now.
   if (!data.isAlone) {
     if (program.maxGroupAbbreviation) {
       // ES: Comprobamos si el nombre del grupo es mayor que el maximo
@@ -503,7 +532,7 @@ async function validateAddGroup({ data, ctx }) {
     type: 'group',
   });
 
-  if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
+  if (groupCount) throw new LeemonsError(ctx, { message: 'This group alreday exists.' });
 }
 
 const duplicateGroupSchema = {
@@ -577,7 +606,7 @@ const updateCourseSchema = {
     number: stringSchema,
     managers: arrayStringSchema,
   },
-  required: ['id', 'name', 'abbreviation'],
+  required: ['id'],
   additionalProperties: false,
 };
 
@@ -595,14 +624,15 @@ async function validateUpdateCourse({ data, ctx }) {
 
   // ES: Comprobamos que no exista ya el curso
   // EN: Check if the course already exists
-  const groupCount = await ctx.tx.db.Groups.countDocuments({
-    id: { $ne: data.id },
-    abbreviation: data.abbreviation,
-    program: course.program,
-    type: 'course',
-  });
+  // *OLD: Not needed anymore as courses do not have an abbreviation
+  // const groupCount = await ctx.tx.db.Groups.countDocuments({
+  //   id: { $ne: data.id },
+  //   abbreviation: data.abbreviation,
+  //   program: course.program,
+  //   type: 'course',
+  // });
 
-  if (groupCount) throw new LeemonsError(ctx, { message: 'The course already exists' });
+  // if (groupCount) throw new LeemonsError(ctx, { message: 'The course already exists' });
 }
 
 const updateGroupSchema = {
@@ -613,7 +643,7 @@ const updateGroupSchema = {
     abbreviation: stringSchema,
     managers: arrayStringSchema,
   },
-  required: ['id', 'name', 'abbreviation'],
+  required: ['id'],
   additionalProperties: false,
 };
 
@@ -631,17 +661,18 @@ async function validateUpdateGroup({ data, ctx }) {
 
   // ES: Comprobamos que no exista ya el curso
   // EN: Check if the group already exists
-  const groupCount = await ctx.tx.db.Groups.countDocuments({
-    id: { $ne: data.id },
-    abbreviation: data.abbreviation,
-    program: group.program,
-    type: 'group',
-  });
+  // *OLD: Not needed anymore as courses do not have an abbreviation
+  // const groupCount = await ctx.tx.db.Groups.countDocuments({
+  //   id: { $ne: data.id },
+  //   abbreviation: data.abbreviation,
+  //   program: group.program,
+  //   type: 'group',
+  // });
 
-  if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
+  // if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
 }
 
-async function validateProgramNotUsingInternalId({ program, compiledInternalId, subject, ctx }) {
+async function validateUniquenessOfInternalId({ program, compiledInternalId, subject, ctx }) {
   const query = { program, compiledInternalId };
   if (subject) query.subject = { $ne: subject };
   const count = await ctx.tx.db.ProgramSubjectsCredits.countDocuments(query);
@@ -650,7 +681,7 @@ async function validateProgramNotUsingInternalId({ program, compiledInternalId, 
   }
 }
 
-async function validateInternalIdHaveGoodFormat({ program, internalId, ctx }) {
+async function validateInternalIdHasGoodFormat({ program, internalId, ctx }) {
   const subjectDigits = await getProgramSubjectDigits({ program, ctx });
   // ES: Comprobamos si el numero de digitos no es el mismo
   if (internalId.length !== subjectDigits)
@@ -661,12 +692,21 @@ async function validateInternalIdHaveGoodFormat({ program, internalId, ctx }) {
   // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
 }
 
+async function getCompiledInternalId(course, internalId, ctx) {
+  let courseIndex = '';
+  if (course) {
+    courseIndex = await getCourseIndex({ course, getMultiple: true, ctx });
+  }
+  return courseIndex + internalId;
+}
+
 const addSubjectSchema = {
   type: 'object',
   properties: {
     name: stringSchema,
     program: stringSchema,
     credits: numberSchema,
+    course: { type: 'string', nullable: true },
     internalId: stringSchema,
     image: {
       type: ['string', 'object'],
@@ -676,30 +716,33 @@ const addSubjectSchema = {
       type: ['string', 'object'],
       nullable: true,
     },
+    color: stringSchema,
   },
-  required: ['name', 'program', 'internalId'],
+  required: ['name', 'program'],
   additionalProperties: false,
 };
 
 async function validateAddSubject({ data, ctx }) {
-  const { course: _course, ..._data } = data;
   const validator = new LeemonsValidator(addSubjectSchema);
-
-  if (!validator.validate(_data)) {
+  if (!validator.validate(data)) {
     throw validator.error;
   }
 
+  const parsedCourses = data.course ? JSON.parse(data.course) : null;
+
+  /*
+  Currently All Subjects are created with one or many courses asociated to it. Also, subjects don't need to restrict their names to any valies set on program creation
   // ES: Comprobamos si el programa tiene o puede tener cursos asignados
   // EN: Check if the program has or can have courses assigned
-  const [needCourse, haveMultiCourses] = await Promise.all([
+  const [needsCourse, hasMultiCourses] = await Promise.all([
     subjectNeedCourseForAdd({ program: data.program, ctx }),
     programHaveMultiCourses({ id: data.program, ctx }),
   ]);
 
   // ES: Si tiene/puede comprobamos si dentro de los datos nos llega a que curso va dirigida la nueva asignatura
   // EN: If it has/can we check if inside the data we get that the new subject is directed to which course
-  if (!haveMultiCourses) {
-    if (needCourse) {
+  if (!hasMultiCourses) {
+    if (needsCourse) {
       if (!data.course) throw new LeemonsError(ctx, { message: 'The course is required' });
       const course = await ctx.tx.db.Groups.findOne({ id: data.course, type: 'course' }).lean();
       if (!course) throw new LeemonsError(ctx, { message: 'The course does not exist' });
@@ -709,19 +752,31 @@ async function validateAddSubject({ data, ctx }) {
     else if (data.course) {
       throw new LeemonsError(ctx, { message: 'The course is not required' });
     }
-  }
-  await validateInternalIdHaveGoodFormat({
-    program: data.program,
-    internalId: data.internalId,
-    ctx,
-  });
+  } */
 
-  await validateProgramNotUsingInternalId({
-    program: data.program,
-    compiledInternalId:
-      (data.course ? await getCourseIndex({ course: data.course, ctx }) : '') + data.internalId,
-    ctx,
-  });
+  // All internal id have an unique format for all subjects in all programs
+  // await validateInternalIdHasGoodFormat({
+  //   program: data.program,
+  //   internalId: data.internalId,
+  //   ctx,
+  // });
+
+  if (data.internalId?.length) {
+    const maxInternalIdLength = 3;
+    if (data.internalId.length > maxInternalIdLength) {
+      throw new LeemonsError(ctx, {
+        message: 'The Internal ID should have a maximum of 3 digits.',
+      });
+    }
+
+    const compiledInternalId = await getCompiledInternalId(parsedCourses, data.internalId, ctx);
+
+    await validateUniquenessOfInternalId({
+      program: data.program,
+      compiledInternalId,
+      ctx,
+    });
+  }
 }
 
 const updateSubjectSchema = {
@@ -729,10 +784,12 @@ const updateSubjectSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
-    credits: numberSchema,
+    credits: integerSchemaNullable,
     subjectType: stringSchema,
-    knowledge: stringSchemaNullable,
+    knowledgeArea: stringSchemaNullable,
     color: stringSchemaNullable,
+    course: { type: 'string' },
+    internalId: stringSchemaNullable,
     image: {
       type: ['string', 'object'],
       nullable: true,
@@ -741,6 +798,7 @@ const updateSubjectSchema = {
       type: ['string', 'object'],
       nullable: true,
     },
+    substage: stringSchemaNullable,
   },
   required: ['id'],
   additionalProperties: false,
@@ -762,6 +820,7 @@ async function validateUpdateSubject({ data, ctx }) {
   if (!validator.validate(_data)) {
     throw validator.error;
   }
+  const parsedCourses = data.course ? JSON.parse(data.course) : null;
 
   if (internalId) {
     const validator2 = new LeemonsValidator(updateSubjectInternalIdSchema);
@@ -770,21 +829,30 @@ async function validateUpdateSubject({ data, ctx }) {
       throw validator2.error;
     }
 
-    const subject = await ctx.tx.db.Subjects.findOne({ id: data.id }).select(['program']).lean();
+    // All internal id have an unique format for all subjects in all programs
+    // const subject = await ctx.tx.db.Subjects.findOne({ id: data.id }).select(['program']).lean();
+    // await validateInternalIdHasGoodFormat({
+    //   program: subject.program,
+    //   internalId: data.internalId,
+    //   ctx,
+    // });
 
-    await validateInternalIdHaveGoodFormat({
-      program: subject.program,
-      internalId: data.internalId,
-      ctx,
-    });
+    if (data.internalId?.length) {
+      const maxInternalIdLength = 3;
+      if (data.internalId.length > maxInternalIdLength) {
+        throw new LeemonsError(ctx, {
+          message: 'The Internal ID should have a maximum of 3 digits.',
+        });
+      }
 
-    await validateProgramNotUsingInternalId({
-      program: subject.program,
-      compiledInternalId:
-        (data.course ? await getCourseIndex({ course: data.course, ctx }) : '') + data.internalId,
-      subject: data.id,
-      ctx,
-    });
+      const compiledInternalId = await getCompiledInternalId(parsedCourses, data.internalId, ctx);
+
+      await validateUniquenessOfInternalId({
+        program: data.program,
+        compiledInternalId,
+        ctx,
+      });
+    }
   }
 }
 
@@ -870,13 +938,19 @@ const addClassSchema = {
     course: {
       oneOf: [stringSchema, arrayStringSchema, { type: 'null' }],
     },
-    group: stringSchema,
+    group: stringSchemaNullable,
     subject: stringSchema,
-    subjectType: stringSchema,
-    knowledge: stringSchemaNullable,
+    subjectType: stringSchemaNullable,
+    knowledgeArea: stringSchemaNullable,
     color: stringSchema,
     virtualUrl: stringSchemaNullable,
     address: stringSchemaNullable,
+    classWithoutGroupId: {
+      type: 'string',
+      minLength: 3,
+      maxLength: 3,
+      nullable: true,
+    },
     icon: {
       type: ['string', 'object'],
       nullable: true,
@@ -898,6 +972,7 @@ const addClassSchema = {
           },
         },
       },
+      nullable: true,
     },
     image: {
       type: ['string', 'object'],
@@ -911,8 +986,10 @@ const addClassSchema = {
         additionalProperties: true,
       },
     },
+    classroomId: stringSchemaNullable,
+    alias: stringSchemaNullable,
   },
-  required: ['program', 'subject'],
+  required: ['program', 'subject', 'seats'],
   additionalProperties: false,
 };
 
@@ -924,21 +1001,30 @@ async function validateAddClass({ data, ctx }) {
   }
 
   const program = await ctx.tx.db.Programs.findOne({ id: data.program })
-    .select(['id', 'moreThanOneAcademicYear', 'useOneStudentGroup'])
+    .select(['id', 'sequentialCourses'])
     .lean();
 
-  if (!program.moreThanOneAcademicYear) {
-    if (isArray(data.course) && data.course.length > 1) {
-      throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
-    }
+  // * OLD field name
+  // if (!program.moreThanOneAcademicYear) {
+  //   if (isArray(data.course) && data.course.length > 1) {
+  //     throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
+  //   }
+  // }
+
+  if (program.sequentialCourses && isArray(data.course) && data.course.length > 1) {
+    throw new LeemonsError(ctx, {
+      message:
+        'The class cannot be offered in multiple courses as courses are sequential for this program.',
+    });
   }
 
-  if (data.teachers) {
-    const teachersByType = _.groupBy(data.teachers, 'type');
-    if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
-      throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
-    }
-  }
+  // Currently not use case for this
+  // if (data.teachers) {
+  //   const teachersByType = _.groupBy(data.teachers, 'type');
+  //   if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
+  //     throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
+  //   }
+  // }
 }
 
 const addInstanceClassSchema = {
@@ -1002,13 +1088,13 @@ async function validateAddInstanceClass({ data, ctx }) {
       throw new LeemonsError(ctx, { message: 'The course is not required' });
     }
 
-    await validateInternalIdHaveGoodFormat({
+    await validateInternalIdHasGoodFormat({
       program: data.program,
       internalId: data.internalId,
       ctx,
     });
 
-    await validateProgramNotUsingInternalId({
+    await validateUniquenessOfInternalId({
       program: data.program,
       compiledInternalId:
         (data.internalIdCourse
@@ -1167,6 +1253,8 @@ const updateClassSchema = {
         additionalProperties: true,
       },
     },
+    classroomId: stringSchemaNullable,
+    alias: stringSchemaNullable,
   },
   required: ['id'],
   additionalProperties: false,
@@ -1223,8 +1311,9 @@ const addCycleSchema = {
     name: stringSchema,
     program: stringSchema,
     courses: arrayStringSchema,
+    index: integerSchema,
   },
-  required: ['name', 'program', 'courses'],
+  required: ['name', 'program', 'courses', 'index'],
   additionalProperties: false,
 };
 
@@ -1266,12 +1355,12 @@ module.exports = {
   validateUpdateGroup,
   validateUpdateCycle,
   validateUpdateCourse,
-  validateAddKnowledge,
+  validateAddKnowledgeArea,
   validateUpdateProgram,
   validateUpdateSubject,
   validateDuplicateGroup,
   validateAddSubjectType,
-  validateUpdateKnowledge,
+  validateUpdateKnowledgeArea,
   validateUpdateClassMany,
   validateSubstagesFormat,
   validateAddClassStudents,
@@ -1284,5 +1373,5 @@ module.exports = {
   validateAddClassStudentsMany,
   validateAddClassTeachersMany,
   validateGetSubjectCreditsProgram,
-  validateProgramNotUsingInternalId,
+  validateProgramNotUsingInternalId: validateUniquenessOfInternalId,
 };

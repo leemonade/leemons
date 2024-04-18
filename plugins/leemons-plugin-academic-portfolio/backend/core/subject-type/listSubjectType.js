@@ -1,11 +1,11 @@
 const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-async function listSubjectType({ page, size, program, ctx }) {
+async function listSubjectType({ page, size, center, ctx }) {
   return mongoDBPaginate({
     model: ctx.tx.db.SubjectTypes,
     page,
     size,
-    query: { program },
+    query: { center },
   });
 }
 

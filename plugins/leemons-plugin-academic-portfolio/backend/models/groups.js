@@ -29,6 +29,14 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    // metadata: Used to store metadata for different types freely.
+    // It replaces the "number" and "frequency" fields... but migration neeeds to be done before removing any fields.
+    //     - type substage: { number: (number) }
+    //     - type course: { minCredits: (number), maxCredits: (number)  }
+    //     - type group: { course: integer or null, depending on the sequentiality of courses }
+    metadata: {
+      type: mongoose.Schema.Types.Mixed,
+    },
     // Si es course son los creditos
     // Si es substage es el numero de etapas
     number: {

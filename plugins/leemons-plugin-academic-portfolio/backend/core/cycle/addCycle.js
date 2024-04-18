@@ -1,7 +1,7 @@
 const { validateAddCycle } = require('../../validations/forms');
 
 async function addCycle({ data, ctx }) {
-  await validateAddCycle(data);
+  validateAddCycle(data);
   const cycleDoc = await ctx.tx.db.Cycles.create({
     ...data,
     courses: JSON.stringify(data.courses),

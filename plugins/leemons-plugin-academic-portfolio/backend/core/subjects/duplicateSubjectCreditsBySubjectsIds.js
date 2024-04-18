@@ -13,7 +13,7 @@ async function duplicateSubjectCreditsBySubjectsIds({ subjectIds, duplications: 
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newSubjectCredits = await Promise.all(
-    _.map(programSubjectCredits, ({ id, ...item }) =>
+    _.map(programSubjectCredits, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
       ctx.tx.db.ProgramSubjectsCredits.create({
         ...item,
         program:

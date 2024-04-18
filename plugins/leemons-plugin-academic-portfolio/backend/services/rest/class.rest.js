@@ -204,9 +204,47 @@ module.exports = {
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           subject,
-          query: {
-            userSession: ctx.meta.userSession,
+          ctx,
+        });
+        return { status: 200, data };
+      }
+      throw validator.error;
+    },
+  },
+  listMultipleSubjectsClassesRest: {
+    rest: {
+      path: '/subjects/multiple',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
           },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const validator = new LeemonsValidator({
+        type: 'object',
+        properties: {
+          page: { type: ['number', 'string'] },
+          size: { type: ['number', 'string'] },
+          subjects: { type: 'array' },
+        },
+        required: ['page', 'size', 'subjects'],
+        additionalProperties: false,
+      });
+
+      if (validator.validate(ctx.params)) {
+        const { page, size, subjects } = ctx.params;
+
+        const data = await listSubjectClasses({
+          page: parseInt(page, 10),
+          size: parseInt(size, 10),
+          subject: subjects,
           ctx,
         });
         return { status: 200, data };

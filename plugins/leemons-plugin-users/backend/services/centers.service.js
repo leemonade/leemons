@@ -12,7 +12,7 @@ const {
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
-const { add, list, detail, existName } = require('../core/centers');
+const { add, list, detail, existName, existsById } = require('../core/centers');
 const restActions = require('./rest/centers.rest');
 const { setLimits } = require('../core/centers/setLimits');
 
@@ -50,6 +50,11 @@ module.exports = {
     existName: {
       async handler(ctx) {
         return existName({ ...ctx.params, ctx });
+      },
+    },
+    existsById: {
+      async handler(ctx) {
+        return existsById({ ...ctx.params, ctx });
       },
     },
     setLimits: {

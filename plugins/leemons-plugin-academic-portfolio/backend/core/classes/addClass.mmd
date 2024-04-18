@@ -1,0 +1,44 @@
+graph TD
+    A[Start] --> B{validateAddClass}
+    B -->|Success| C[Get Program Info]
+    B -->|Fail| Z[End with Error]
+    C --> D{Check useOneStudentGroup}
+    D -->|True| E[Find Group]
+    D -->|False| F[Set Data and Create Class]
+    E --> F
+    F --> G{Check goodGroup and group}
+    G -->|goodGroup not set| H[Set goodGroup to group]
+    G -->|goodGroup set| I[Create Class Object]
+    H --> I
+    I --> J[Add Image Asset]
+    J --> K{knowledge?}
+    K -->|Yes| L[Check and Add Knowledge]
+    K -->|No| M{substage?}
+    L --> M
+    M -->|Yes| N[Check and Add Substage]
+    M -->|No| O{course?}
+    N --> O
+    O -->|Yes| P[Check Course in Program]
+    O -->|No| Q[Get Default Course]
+    Q --> P
+    P -->|Fail| Z
+    P -->|Success| R[Create Course Relationship]
+    R --> S[Update Classes of the Same Subject with course]
+    S --> T{goodGroup?}
+    T -->|Yes| U[Check and Add Group Relationship]
+    T -->|No| V[Update Class of the same subject with Subject Type and Color]
+    U --> V
+    V --> W[Add User Permissions]
+    W --> X[Update classes of the same subject with knowledge area]
+    X --> Y{schedule?}
+    Y -->|Yes| Z1[Process Schedule for Class]
+    Y -->|No| Z2[Get Class by IDs]
+    Z1 --> Z2
+    Z2 --> Z3[Create Comunica Rooms]
+    Z3 --> Z4[Get Classes Program Info]
+    Z4 --> Z5[Emit Event 'after-add-class']
+    Z5 --> Z6{teachers?}
+    Z6 -->|Yes| Z7[Add Teachers]
+    Z6 -->|No| Z8[End with Success]
+    Z7 --> Z8
+    Z8 --> Z[End]
