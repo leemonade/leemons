@@ -3,8 +3,6 @@ const permissionsPrefix = 'academic-portfolio';
 const permissionNames = {
   portfolio: `${permissionsPrefix}.portfolio`,
   profiles: `${permissionsPrefix}.profiles`,
-  subjectTypes: `${permissionsPrefix}.programs`,
-  knowledgeAreas: `${permissionsPrefix}.programs`,
   programs: `${permissionsPrefix}.programs`,
   subjects: `${permissionsPrefix}.subjects`,
   tree: `${permissionsPrefix}.tree`,
@@ -15,22 +13,6 @@ const permissions = [
     permissionName: permissionNames.portfolio,
     actions: ['view', 'update', 'create', 'delete', 'admin'],
     localizationName: { es: 'Portfolio Académico', en: 'Academic Portfolio' },
-  },
-  {
-    permissionName: permissionNames.subjectTypes,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: {
-      es: 'Portfolio Académico - Tipos de Asignatura',
-      en: 'Academic Portfolio - Subject Types',
-    },
-  },
-  {
-    permissionName: permissionNames.knowledgeAreas,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: {
-      es: 'Portfolio Académico - Areas de Conocimiento',
-      en: 'Academic Portfolio - Knowledge Areas',
-    },
   },
   {
     permissionName: permissionNames.programs,
@@ -79,42 +61,6 @@ const permissionsBundles = {
     },
     delete: {
       permission: permissionNames.portfolio,
-      actions: ['delete', 'admin'],
-    },
-  },
-  subjectTypes: {
-    create: {
-      permission: permissionNames.subjectTypes,
-      actions: ['create', 'admin'],
-    },
-    view: {
-      permission: permissionNames.subjectTypes,
-      actions: ['view', 'admin'],
-    },
-    update: {
-      permission: permissionNames.subjectTypes,
-      actions: ['update', 'admin'],
-    },
-    delete: {
-      permission: permissionNames.subjectTypes,
-      actions: ['delete', 'admin'],
-    },
-  },
-  knowledgeAreas: {
-    create: {
-      permission: permissionNames.knowledgeAreas,
-      actions: ['create', 'admin'],
-    },
-    view: {
-      permission: permissionNames.knowledgeAreas,
-      actions: ['view', 'admin'],
-    },
-    update: {
-      permission: permissionNames.knowledgeAreas,
-      actions: ['update', 'admin'],
-    },
-    delete: {
-      permission: permissionNames.knowledgeAreas,
       actions: ['delete', 'admin'],
     },
   },
@@ -266,7 +212,7 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.subjectTypes,
+        permissionName: permissionNames.programs,
         actionNames: ['admin'],
       },
     ],
@@ -286,7 +232,7 @@ const menuItems = [
     },
     permissions: [
       {
-        permissionName: permissionNames.knowledgeAreas,
+        permissionName: permissionNames.programs,
         actionNames: ['admin'],
       },
     ],

@@ -29,7 +29,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.subjectTypes]: {
+          [permissions.names.programs]: {
             actions: ['admin', 'create'],
           },
         },
@@ -49,7 +49,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.subjectTypes]: {
+          [permissions.names.programs]: {
             actions: ['admin', 'update'],
           },
         },
@@ -69,7 +69,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.subjectTypes]: {
+          [permissions.names.programs]: {
             actions: ['admin', 'view'],
           },
         },
@@ -108,7 +108,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.subjectTypes]: {
+          [permissions.names.programs]: {
             actions: ['admin', 'delete'],
           },
         },
