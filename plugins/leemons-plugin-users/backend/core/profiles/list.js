@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-async function list({ page, size, withRoles, forceAll, indexable = true, ctx }) {
+async function list({ page, size, withRoles, forceAll = true, indexable = true, ctx }) {
   const query = { indexable };
   if (indexable === 'all') delete query.indexable;
 
