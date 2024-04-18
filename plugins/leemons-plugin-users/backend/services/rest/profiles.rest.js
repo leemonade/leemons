@@ -82,7 +82,6 @@ module.exports = {
               },
             ],
           },
-          forceAll: { type: 'boolean' },
         },
         required: ['page', 'size'],
         additionalProperties: false,

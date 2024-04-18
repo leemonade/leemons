@@ -30,7 +30,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.programs]: {
+          [permissions.names.knowledgeAreas]: {
             actions: ['admin', 'create'],
           },
         },
@@ -50,7 +50,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.programs]: {
+          'academic-portfolio.knowledge-areas': {
             actions: ['admin', 'update'],
           },
         },
@@ -70,7 +70,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.programs]: {
+          [permissions.names.knowledgeAreas]: {
             actions: ['admin', 'view'],
           },
         },
@@ -110,7 +110,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          [permissions.names.programs]: {
+          [permissions.names.knowledgeAreas]: {
             actions: ['admin', 'delete'],
           },
         },

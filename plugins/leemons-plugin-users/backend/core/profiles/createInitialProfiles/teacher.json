@@ -29,6 +29,14 @@
       "actionNames": ["view"]
     },
     {
+      "permissionName": "academic-portfolio.knowledge-areas",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-portfolio.subject-types",
+      "actionNames": ["view"]
+    },
+    {
       "permissionName": "academic-portfolio.subjects",
       "actionNames": ["view"]
     },

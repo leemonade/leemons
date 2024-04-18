@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import { Select } from '@bubbles-ui/components';
 import { map } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
 
-const MinScaleToPromote = ({ form }) => {
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
-  const { watch, control } = form;
+const MinScaleToPromote = ({ messages, errorMessages, form }) => {
+  const {
+    watch,
+    control,
+    formState: { errors },
+  } = form;
 
   const scales = watch('scales');
   let data = [];
@@ -24,14 +25,14 @@ const MinScaleToPromote = ({ form }) => {
       name="minScaleToPromote"
       control={control}
       rules={{
-        required: t('errorTypeRequired'),
+        required: errorMessages.minScaleToPromoteRequired,
       }}
-      render={({ field, fieldState: { error } }) => (
+      render={({ field }) => (
         <Select
           data={data}
-          label={t('minSacleToPromoteLabel')}
-          placeholder={t('minSacleToPromotePlaceholder')}
-          error={error ? t('errorTypeRequired') : null}
+          label={messages.minScaleToPromoteLabel}
+          placeholder={messages.minScaleToPromotePlaceholder}
+          error={errors.minScaleToPromote}
           required
           {...field}
         />
@@ -41,6 +42,8 @@ const MinScaleToPromote = ({ form }) => {
 };
 
 MinScaleToPromote.propTypes = {
+  messages: PropTypes.object.isRequired,
+  errorMessages: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
 };
 

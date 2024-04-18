@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Box, ContextContainer, Title, Stack } from '@bubbles-ui/components';
+import { useForm } from 'react-hook-form';
+import { Box, Button, ContextContainer, Paragraph, Title } from '@bubbles-ui/components';
 import { find } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
 import { EvaluationDetailStyles } from './styles';
 import { Name } from './components/Name';
 import { Type } from './components/Type';
@@ -12,16 +11,49 @@ import { Scales } from './components/Scales';
 import { MinScaleToPromote } from './components/MinScaleToPromote';
 import { OtherTags } from './components/OtherTags';
 
+export const EVALUATION_DETAIL_FORM_MESSAGES = {
+  nameLabel: 'Name',
+  saveButtonLabel: 'Save',
+  typeLabel: 'Choose type of grade scale:',
+  percentagesLabel: 'Using percentages instead of numbers',
+  scalesNumberLabel: 'Number',
+  scalesDescriptionLabel: 'Description',
+  scalesPercentageLabel: '% Percentage',
+  scalesNumericalEquivalentLabel: 'Numerical equivalent',
+  scalesLetterLabel: 'Letter',
+  minScaleToPromoteLabel: 'Minimum value to pass/promote',
+  minScaleToPromotePlaceholder: 'Select value...',
+  otherTagsLabel: 'Other tags',
+  otherTagsDescription:
+    'If you need to use other tags to classify special conditions for some subjects, you can freely create them here.',
+  otherTagsRelationScaleLabel: 'Co-relation with some scale value',
+  tableAdd: 'Add',
+  tableRemove: 'Remove',
+  tableEdit: 'Edit',
+  tableAccept: 'Accept',
+  tableCancel: 'Cancel',
+};
+
+export const EVALUATION_DETAIL_FORM_ERROR_MESSAGES = {
+  nameRequired: 'Field required',
+  typeRequired: 'Field required',
+  minScaleToPromoteRequired: 'Field required',
+  errorCode6003: 'Cannot delete grade scale because it is used in grade tags',
+};
+
 const EvaluationDetail = ({
+  messages,
+  errorMessages,
   selectData,
   defaultValues,
   onSubmit,
   onBeforeRemoveScale,
   onBeforeRemoveTag,
-  form,
+  isSaving,
 }) => {
   const { classes, cx } = EvaluationDetailStyles({});
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+
+  const form = useForm({ defaultValues });
   const {
     reset,
     watch,
@@ -49,50 +81,73 @@ const EvaluationDetail = ({
 
   const type = find(selectData.type, { value: watch('type') });
 
-  const typeNumeric = type?.value === 'numeric';
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
       <ContextContainer>
-        <Title order={3}>{t('basicData')}</Title>
-        <Stack spacing={5} fullWidth>
-          <Name form={form} />
-          <Type selectData={selectData} form={form} />
-        </Stack>
-
+        <Box>
+          <Name messages={messages} errorMessages={errorMessages} form={form} />
+        </Box>
+        <Box>
+          <Type
+            messages={messages}
+            errorMessages={errorMessages}
+            selectData={selectData}
+            form={form}
+          />
+        </Box>
         {type ? (
           <>
             <Box>
-              <Title order={4}>{typeNumeric ? t('numbersTitle') : t('lettersTitle')}</Title>
+              <Title order={5}>{type.label}</Title>
             </Box>
-            {typeNumeric ? (
+            {type.value === 'numeric' ? (
               <Box>
-                <IsPercentage form={form} />
+                <IsPercentage messages={messages} errorMessages={errorMessages} form={form} />
               </Box>
             ) : null}
-            <Scales selectData={selectData} onBeforeRemove={onBeforeRemoveScale} form={form} />
+            <Box>
+              <Scales
+                messages={messages}
+                errorMessages={errorMessages}
+                selectData={selectData}
+                onBeforeRemove={onBeforeRemoveScale}
+                form={form}
+              />
+            </Box>
           </>
         ) : null}
 
-        {type && (
-          <>
-            <Box className={classes.containerFiftyPercent}>
-              <MinScaleToPromote form={form} />
-            </Box>
-            <Box>
-              <Title order={4}>{t('othersTitle')}</Title>
-            </Box>
-            <Box>
-              <OtherTags form={form} onBeforeRemove={onBeforeRemoveTag} />
-            </Box>
-          </>
-        )}
+        <Box>
+          <MinScaleToPromote messages={messages} errorMessages={errorMessages} form={form} />
+        </Box>
+
+        <Box>
+          <Title order={5}>{messages.otherTagsLabel}</Title>
+          <Paragraph>{messages.otherTagsDescription}</Paragraph>
+        </Box>
+
+        <Box>
+          <OtherTags
+            messages={messages}
+            errorMessages={errorMessages}
+            form={form}
+            onBeforeRemove={onBeforeRemoveTag}
+          />
+        </Box>
+
+        <Box>
+          <Button type="submit" loading={isSaving}>
+            {messages.saveButtonLabel}
+          </Button>
+        </Box>
       </ContextContainer>
     </form>
   );
 };
 
 EvaluationDetail.defaultProps = {
+  messages: EVALUATION_DETAIL_FORM_MESSAGES,
+  errorMessages: EVALUATION_DETAIL_FORM_ERROR_MESSAGES,
   onSubmit: () => {},
   selectData: {
     type: [
@@ -104,13 +159,14 @@ EvaluationDetail.defaultProps = {
 
 EvaluationDetail.propTypes = {
   loading: PropTypes.bool,
+  messages: PropTypes.object,
+  errorMessages: PropTypes.object,
   onSubmit: PropTypes.func,
   defaultValues: PropTypes.object,
   selectData: PropTypes.object,
   onBeforeRemoveScale: PropTypes.func,
   onBeforeRemoveTag: PropTypes.func,
   isSaving: PropTypes.bool,
-  form: PropTypes.object,
 };
 
 export { EvaluationDetail };

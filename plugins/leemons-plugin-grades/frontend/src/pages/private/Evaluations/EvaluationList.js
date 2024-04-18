@@ -1,30 +1,26 @@
 import {
   Box,
-  Drawer,
-  Button,
-  Stack,
-  TotalLayoutContainer,
-  TotalLayoutHeader,
-  TotalLayoutStepContainer,
-  Table,
-  ActionButton,
+  Col,
+  ContextContainer,
+  Grid,
+  PageContainer,
+  Paper,
+  Tree,
 } from '@bubbles-ui/components';
-import { useForm } from 'react-hook-form';
+// TODO: import from @common plugin
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common/useStore';
 import prefixPN from '@grades/helpers/prefixPN';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
-import { cloneDeep, find, groupBy, map } from 'lodash';
-import React, { useMemo, useRef, useState } from 'react';
+import { clone, cloneDeep, find, forIn, groupBy, map } from 'lodash';
+import React, { useMemo } from 'react';
 import {
-  AddCircleIcon,
-  DeleteBinIcon,
-  EditIcon,
-  PluginScoresBasicIcon,
-} from '@bubbles-ui/icons/outline';
-import { EmptyState } from '@grades/components/EvaluationDetail/components/EmptyState';
-import { EvaluationDetail } from '../../../components/EvaluationDetail';
+  EVALUATION_DETAIL_FORM_ERROR_MESSAGES,
+  EVALUATION_DETAIL_FORM_MESSAGES,
+  EvaluationDetail,
+} from '../../../components/EvaluationDetail';
 import { TreeItem } from '../../../components/TreeItem/TreeItem';
 import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
 import {
@@ -42,11 +38,9 @@ import {
 } from '../../../request';
 
 export default function EvaluationList() {
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
-  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
-  const scrollRef = useRef();
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('evaluationsPage'));
+
   const [store, render] = useStore();
-  const form = useForm({ defaultValues: store.selectedGrade });
 
   const headerValues = useMemo(
     () => ({
@@ -62,6 +56,7 @@ export default function EvaluationList() {
     } = await listGradesRequest({ page: 0, size: 9999, center: store.center });
     return items;
   }
+
   function getTreeData() {
     const data = map(store.grades, (grade) => ({
       id: grade.id,
@@ -95,7 +90,6 @@ export default function EvaluationList() {
   }
 
   function onAdd() {
-    setIsDrawerOpened(true);
     store.selectedGrade = {
       name: null,
       type: null,
@@ -116,7 +110,6 @@ export default function EvaluationList() {
       ...tag,
       scale: tag.scale.number,
     }));
-    setIsDrawerOpened(true);
     render();
   }
 
@@ -228,7 +221,6 @@ export default function EvaluationList() {
         store.saving = false;
         await Promise.all([onSelectCenter(store.center), activeMenuItemPromotions()]);
         await addSuccessAlert(t('successSave'));
-        setIsDrawerOpened(false);
       }
     } catch (error) {
       store.saving = false;
@@ -245,7 +237,7 @@ export default function EvaluationList() {
       return false;
     }
 
-    if (!!minScaleToPromote && minScaleToPromote?.toString() === e.number?.toString()) {
+    if (minScaleToPromote.toString() === e.number.toString()) {
       await addErrorAlert(t(`errorCode6004`));
       return false;
     }
@@ -263,6 +255,22 @@ export default function EvaluationList() {
     return true;
   }
 
+  const messages = useMemo(() => {
+    const m = clone(EVALUATION_DETAIL_FORM_MESSAGES);
+    forIn(m, (value, key) => {
+      m[key] = t(`detail.${key}`);
+    });
+    return m;
+  }, [t]);
+
+  const errorMessages = useMemo(() => {
+    const m = clone(EVALUATION_DETAIL_FORM_ERROR_MESSAGES);
+    forIn(m, (value, key) => {
+      m[key] = t(`detail.${key}`);
+    });
+    return m;
+  }, [t]);
+
   function getCenter() {
     const query = new URLSearchParams(window.location.search);
     return query.get('center');
@@ -273,115 +281,65 @@ export default function EvaluationList() {
     if (center) onSelectCenter(center);
   }, []);
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: t('nameLabel'),
-        accessor: 'name',
-      },
-      {
-        Header: t('scaleLabel'),
-        accessor: 'type',
-      },
-      {
-        Header: t('minToPromoteLabel'),
-        id: 'minScaleToPromote',
-        accessor: (data) => {
-          const scale = data.scales.find((scl) => scl.id === data.minScaleToPromote);
-          return scale && data.type === 'letter' ? scale.letter : scale.number;
-        },
-      },
-      {
-        Header: '',
-        accessor: 'actions',
-      },
-    ],
-    [t]
-  );
-
-  const data = useMemo(
-    () =>
-      store.grades
-        ? store.grades.map((grade) => ({
-            ...grade,
-            actions: (
-              <Stack>
-                <Box>
-                  <ActionButton icon={<EditIcon />} onClick={() => onSelect(grade)} />
-                </Box>
-                <Box>
-                  <ActionButton icon={<DeleteBinIcon />} onClick={() => onDelete(grade)} />
-                </Box>
-              </Stack>
-            ),
-          }))
-        : [],
-    [store.grades]
-  );
-
   return (
-    <TotalLayoutContainer
-      scrollRef={scrollRef}
-      Header={
-        <TotalLayoutHeader
-          cancelable={false}
-          title={headerValues.title}
-          icon={<PluginScoresBasicIcon />}
-        >
-          <Box>
-            <SelectCenter firstSelected value={store.center} onChange={onSelectCenter} />
-          </Box>
-        </TotalLayoutHeader>
-      }
-    >
-      <Stack justifyContent="center" ref={scrollRef} sx={{ overflowY: 'auto' }}>
-        <TotalLayoutStepContainer>
-          <Stack direction="column">
-            {store?.grades?.length > 0 ? (
-              <>
-                <Box>
-                  <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onAdd}>
-                    {t('newEvaluationSystemButtonLabel')}
-                  </Button>
-                </Box>
-                <Box style={{ marginTop: 16 }}>
-                  <Table columns={columns} data={data || []} />
-                </Box>
-              </>
-            ) : (
-              <EmptyState onAddSystem={onAdd} />
-            )}
-          </Stack>
-        </TotalLayoutStepContainer>
-      </Stack>
-      <Drawer opened={isDrawerOpened} onClose={() => setIsDrawerOpened(false)} size="xl">
-        <Drawer.Header title={t('newEvaluationSystemButtonLabel')} />
-        <Drawer.Content>
-          {store.selectedGrade && (
-            <EvaluationDetail
-              selectData={{
-                type: [
-                  { label: t('numbersTitle'), value: 'numeric' },
-                  { label: t('lettersTitle'), value: 'letter' },
-                ],
-              }}
-              defaultValues={store.selectedGrade}
-              onBeforeRemoveScale={onBeforeRemoveScale}
-              form={form}
-            />
-          )}
-        </Drawer.Content>
-        <Drawer.Footer>
-          <Stack justifyContent="space-between" fullWidth>
-            <Button variant="link" onClick={() => setIsDrawerOpened(false)}>
-              {t('tableCancel')}
-            </Button>
-            <Button onClick={form.handleSubmit(onSubmit)} loading={store.saving}>
-              {t('saveButtonLabel')}
-            </Button>
-          </Stack>
-        </Drawer.Footer>
-      </Drawer>
-    </TotalLayoutContainer>
+    <ContextContainer fullHeight>
+      <AdminPageHeader values={headerValues} />
+
+      <Paper color="solid" shadow="none" padding={0}>
+        <PageContainer>
+          <ContextContainer padded="vertical">
+            <Grid grow>
+              <Col span={4}>
+                <Paper fullWidth padding={5}>
+                  <ContextContainer divided>
+                    {!tLoading && (
+                      <Box>
+                        <SelectCenter
+                          firstSelected
+                          value={store.center}
+                          label={t('selectCenter')}
+                          onChange={onSelectCenter}
+                        />
+                      </Box>
+                    )}
+                    {store.center && (
+                      <Box>
+                        <Tree
+                          treeData={store.treeData}
+                          selectedNode={store.selectedGrade?.id}
+                          onAdd={onAdd}
+                          onDelete={onDelete}
+                          onSelect={onSelect}
+                        />
+                      </Box>
+                    )}
+                  </ContextContainer>
+                </Paper>
+              </Col>
+              <Col span={8}>
+                {store.selectedGrade && (
+                  <Paper fullWidth padding={5}>
+                    <EvaluationDetail
+                      selectData={{
+                        type: [
+                          { label: t('detail.numeric'), value: 'numeric' },
+                          { label: t('detail.letter'), value: 'letter' },
+                        ],
+                      }}
+                      messages={messages}
+                      errorMessages={errorMessages}
+                      defaultValues={store.selectedGrade}
+                      onBeforeRemoveScale={onBeforeRemoveScale}
+                      onSubmit={onSubmit}
+                      isSaving={store.saving}
+                    />
+                  </Paper>
+                )}
+              </Col>
+            </Grid>
+          </ContextContainer>
+        </PageContainer>
+      </Paper>
+    </ContextContainer>
   );
 }

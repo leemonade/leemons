@@ -1,36 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
-import { Select } from '@bubbles-ui/components';
+import { RadioGroup } from '@bubbles-ui/components';
 
-const Type = ({ form, selectData }) => {
+const Type = ({ messages, errorMessages, form, selectData }) => {
   const {
     watch,
     control,
     formState: { errors },
   } = form;
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+
   const disabled = !!watch('id');
+
   return (
     <Controller
       name="type"
       control={control}
       rules={{
-        required: t('errorTypeRequired'),
+        required: errorMessages.typeRequired,
       }}
       render={({ field }) => (
-        <Select
-          label={t('scaleTypesLabel')}
+        <RadioGroup
+          label={messages.typeLabel}
           data={selectData.type}
-          error={errors.type ? t('errorTypeRequired') : null}
+          error={errors.type}
           required
-          placeholder={t('scaleTypesPlaceholder')}
           {...field}
           disabled={disabled}
-          onChange={(value) => field.onChange(value)}
-          value={field.value}
         />
       )}
     />
@@ -38,6 +34,8 @@ const Type = ({ form, selectData }) => {
 };
 
 Type.propTypes = {
+  messages: PropTypes.object.isRequired,
+  errorMessages: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
   selectData: PropTypes.object.isRequired,
 };
