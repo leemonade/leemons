@@ -2,13 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import { Switch } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@grades/helpers/prefixPN';
 
-const IsPercentage = ({ messages, form }) => {
-  const {
-    watch,
-    control,
-    formState: { errors },
-  } = form;
+const IsPercentage = ({ form }) => {
+  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+  const { watch, control } = form;
 
   const disabled = !!watch('id');
 
@@ -16,22 +15,12 @@ const IsPercentage = ({ messages, form }) => {
     <Controller
       name="isPercentage"
       control={control}
-      render={({ field }) => (
-        <Switch
-          label={messages.percentagesLabel}
-          disabled={disabled}
-          error={errors.isPercentage}
-          required
-          {...field}
-        />
-      )}
+      render={({ field }) => <Switch label={t('percentageLabel')} disabled={disabled} {...field} />}
     />
   );
 };
 
 IsPercentage.propTypes = {
-  messages: PropTypes.object.isRequired,
-  errorMessages: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
 };
 
