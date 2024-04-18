@@ -8,7 +8,7 @@ export default function useSubjectDetails(
   showArchived = false
 ) {
   return useQuery(
-    ['subjectDetail', { subject: subjectId }],
+    ['subjectDetail', { subject: subjectId, withClasses, showArchived }],
     async () => {
       const response = await getSubjectDetails(subjectId, withClasses, showArchived);
 

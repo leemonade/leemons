@@ -12,7 +12,10 @@ export default function useProgramDetail(
 
   const queries = useQueries({
     queries: programIds.map((id) => ({
-      queryKey: ['programDetail', { program: id }],
+      queryKey: [
+        'programDetail',
+        { program: id, withClasses, showArchived, withStudentsAndTeachers },
+      ],
       queryFn: async () => {
         const response = await detailProgramRequest(
           id,
