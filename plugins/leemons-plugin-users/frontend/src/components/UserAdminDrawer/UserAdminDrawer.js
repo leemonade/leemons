@@ -298,7 +298,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
                       form.setValue(
                         'profiles',
                         val.map((item) => item?.profile?.id),
-                        { shouldValidate: true }
+                        { shouldValidate: form.formState.isSubmitted }
                       );
                     }}
                     onDisable={handleDisableUserAgent}

@@ -30,13 +30,15 @@ function ProfileTableInput({
   const [tDisableUser] = useTranslateLoader(prefixPN('disableUserModal'));
 
   function handleOnAdd() {
-    onChange(userAgents.concat({ profile: { id: profileSelected } }));
-    setProfileSelected(null);
+    if (profileSelected) {
+      onChange((userAgents ?? []).concat({ profile: { id: profileSelected } }));
+      setProfileSelected(null);
+    }
   }
 
   function handleRemove(userAgent) {
     // If not userAgent, its mean that the userAgent has not been saved yet, so we remove the userAgent from the list
-    onChange(userAgents.filter((item) => item.profile.id !== userAgent.profile.id));
+    onChange(userAgents?.filter((item) => item.profile.id !== userAgent.profile.id));
   }
 
   const getActionButton = React.useCallback(
