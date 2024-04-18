@@ -7,7 +7,7 @@ export const allProgramSubjectsKeys = [
 
 export const getProgramSubjectsKey = (program, filters) => [
   {
-    ...allProgramSubjectsKeys,
+    ...allProgramSubjectsKeys[0],
     program,
     ...filters,
   },

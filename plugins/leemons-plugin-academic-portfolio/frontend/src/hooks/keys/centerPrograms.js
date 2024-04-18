@@ -7,7 +7,7 @@ export const allCenterPrograms = [
 
 export const getCenterProgramsKey = (center, filters) => [
   {
-    ...allCenterPrograms,
+    ...allCenterPrograms[0],
     center,
     ...filters,
   },

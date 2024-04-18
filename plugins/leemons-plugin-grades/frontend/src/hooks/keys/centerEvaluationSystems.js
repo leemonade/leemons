@@ -7,7 +7,7 @@ export const allCenterEvaluationSystemsKeys = [
 
 export const getCenterEvaluationSystemsKey = (center) => [
   {
-    ...allCenterEvaluationSystemsKeys,
+    ...allCenterEvaluationSystemsKeys[0],
     center,
   },
 ];

@@ -7,7 +7,7 @@ export const allGroupDetailKeys = [
 
 export const getGroupDetailKey = (id) => [
   {
-    ...allGroupDetailKeys,
+    ...allGroupDetailKeys[0],
     id,
   },
 ];

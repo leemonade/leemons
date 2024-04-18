@@ -7,7 +7,7 @@ export const allCourseDetailKeys = [
 
 export const getCourseDetailKey = (id) => [
   {
-    ...allCourseDetailKeys,
+    ...allCourseDetailKeys[0],
     id,
   },
 ];
