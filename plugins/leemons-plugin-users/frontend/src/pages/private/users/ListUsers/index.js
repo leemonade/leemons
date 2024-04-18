@@ -20,7 +20,6 @@ import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { CloudUploadIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { LocaleDate, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { activateUserRequest, getPermissionsWithActionsIfIHaveRequest } from '@users/request';
@@ -40,14 +39,13 @@ import { listUsersRequest } from '../../../../request';
 import { BulkActionModal } from './components/BulkActionModal';
 
 function ListUsers() {
-  const [t, trans] = useTranslateLoader(prefixPN('list_users'));
+  const [t] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore({
     page: 0,
     size: 10,
     checkeds: [],
   });
-  const { t: tCommon } = useCommonTranslate('page_header');
-  const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
+  const [loadingError, LoadingErrorAlert] = useRequestErrorMessage();
   const [bulkActionInfo, setBulkActionInfo] = React.useState(null);
   const history = useHistory();
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -64,7 +62,6 @@ function ListUsers() {
         { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
         { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
         { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        // { birthdate: { $regex: store.search.toLowerCase(), $options: 'i' } },
       ];
     }
     if (store.profile) {
@@ -97,7 +94,6 @@ function ListUsers() {
       store.loading = false;
       render();
     } catch (err) {
-      // setLoadingError(err);
       addErrorAlert(getErrorMessage(err));
     }
     store.loading = false;
@@ -212,7 +208,6 @@ function ListUsers() {
       store.checkeds = [];
       await load();
     } catch (e) {
-      // setLoadingError(e);
       addErrorAlert(getErrorMessage(e));
     }
     store.loading = false;
@@ -457,6 +452,7 @@ function ListUsers() {
                   label={t('profileLabel')}
                   value={store.profile}
                   onChange={handleProfileChange}
+                  showAll={false}
                 />
                 <Select
                   clearable={t('clearFilter')}
