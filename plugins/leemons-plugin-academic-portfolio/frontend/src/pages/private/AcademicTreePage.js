@@ -9,6 +9,7 @@ import {
   Stack,
   ImageLoader,
   Box,
+  LoadingOverlay,
 } from '@bubbles-ui/components';
 import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
@@ -67,6 +68,11 @@ const AcademicTreePage = () => {
     programId: selectedProgram,
     options: { enabled: selectedProgram?.length > 0 },
   });
+
+  const isLoading = useMemo(
+    () => areCentersLoading || areCenterProgramsLoading || isAcademicTreeLoading,
+    [areCenterProgramsLoading, isAcademicTreeLoading]
+  );
 
   const generateGUID = () => uuidv4();
 
@@ -236,6 +242,7 @@ const AcademicTreePage = () => {
 
   return (
     <>
+      <LoadingOverlay visible={isLoading} />
       <TotalLayoutContainer
         scrollRef={scrollRef}
         Header={
