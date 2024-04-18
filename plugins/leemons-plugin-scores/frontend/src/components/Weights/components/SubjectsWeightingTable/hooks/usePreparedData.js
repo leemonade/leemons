@@ -34,7 +34,7 @@ export default function usePreparedData({ program, subject, course, onEdit = noo
       subject: <SubjectItemDisplay subjectsIds={[klass.subject.id]} />,
       group: isGroupAlone ? '-' : klass.groups.name,
       course: map(courses, 'name').join(', '),
-      rules: weighting?.type,
+      rules: weighting,
       applySameValue: weighting?.applySameValue,
       actions: (
         <EditWriteIcon
