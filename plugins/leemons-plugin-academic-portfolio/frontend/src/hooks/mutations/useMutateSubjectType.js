@@ -12,7 +12,7 @@ export function useUpdateSubjectType() {
   return useMutation({
     mutationFn: async (props) => updateSubjectTypeRequest(props),
     onSuccess: (data) => {
-      // Invaidate subject-types query for that center
+      // Invalidate subject-types query for that center
       const queryKey = getSubjectTypesKey(data.subjectType.center);
       queryClient.invalidateQueries(queryKey);
     },
@@ -25,7 +25,7 @@ export function useCreateSubjectType() {
   return useMutation({
     mutationFn: async (props) => createSubjectTypeRequest(props),
     onSuccess: (data) => {
-      // Invaidate subject-types query for that center
+      // Invalidate subject-types query for that center
       const queryKey = getSubjectTypesKey(data.subjectType.center);
       queryClient.invalidateQueries(queryKey);
     },

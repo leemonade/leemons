@@ -89,7 +89,6 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
     }, []);
 
     const students = _.uniq(groups.flatMap((c) => c.students));
-    // console.log('groups', groups)
 
     return {
       classes: groups,

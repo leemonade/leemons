@@ -7,7 +7,7 @@ export const allProgramTreeKeys = [
 
 export const getProgramTreeKey = (program) => [
   {
-    ...allProgramTreeKeys,
+    ...allProgramTreeKeys[0],
     program,
   },
 ];
