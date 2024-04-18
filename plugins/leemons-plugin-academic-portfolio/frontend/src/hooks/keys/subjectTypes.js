@@ -7,7 +7,7 @@ export const allSubjectTypesKeys = [
 
 export const getSubjectTypesKey = (center) => [
   {
-    ...allSubjectTypesKeys,
+    ...allSubjectTypesKeys[0],
     center,
   },
 ];
