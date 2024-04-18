@@ -7,6 +7,7 @@ export default function useProfiles({ forceAll, ...options } = {}) {
     {
       plugin: 'plugin.users',
       scope: 'profiles',
+      forceAll,
     },
   ];
 
