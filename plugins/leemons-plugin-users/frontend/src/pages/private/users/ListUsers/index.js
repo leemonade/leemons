@@ -477,22 +477,11 @@ function ListUsers() {
                   }}
                 />
                 <Stack noFlex alignItems="end" spacing={2}>
-                  {/*
-                  <Button
-                    variant="outline"
-                    disabled={isEmpty(store.search?.trim())}
-                    onClick={handleSearchUsers}
-                  >
-                    {t('searchLabel')}
-                  </Button>
-                  */}
                   <Button variant="link" leftIcon={<DeleteBinIcon />} onClick={handleClearFilters}>
                     {t('clearFilter')}
                   </Button>
                 </Stack>
               </ContextContainer>
-
-              <LoadingErrorAlert />
 
               {!store.loading && !loadingError ? (
                 <Box>
@@ -516,15 +505,6 @@ function ListUsers() {
                       </Box>
                     </>
                   )}
-                  {/* 
-                    <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                      {tableItems?.length
-                        ? t('nUsers', {
-                            n: tableItems.length,
-                          })
-                        : ''}
-                    </Box>
-                  */}
 
                   {tableItems?.length > 0 && <Table columns={tableHeaders} data={tableItems} />}
                   {tableItems?.length === 0 && store.canAdd && (
