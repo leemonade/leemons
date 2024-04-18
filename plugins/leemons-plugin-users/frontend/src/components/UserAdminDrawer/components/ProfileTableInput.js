@@ -24,7 +24,7 @@ function ProfileTableInput({
   onChange = noop,
 }) {
   const [profileSelected, setProfileSelected] = React.useState(null);
-  const { data: profiles, isLoading } = useProfiles();
+  const { data: profiles } = useProfiles({ forceAll: false });
   const { t: tCommon } = useCommonTranslate('formWithTheme');
   const [tEnableUser] = useTranslateLoader(prefixPN('enableUserModal'));
   const [tDisableUser] = useTranslateLoader(prefixPN('disableUserModal'));

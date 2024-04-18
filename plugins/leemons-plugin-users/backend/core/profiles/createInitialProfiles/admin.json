@@ -37,18 +37,6 @@
       "actionNames": ["admin"]
     },
     {
-      "permissionName": "academic-portfolio.subject-types",
-      "actionNames": [
-        "admin"
-      ]
-    },
-    {
-      "permissionName": "academic-portfolio.knowledge-areas",
-      "actionNames": [
-        "admin"
-      ]
-    },
-    {
       "permissionName": "academic-portfolio.programs",
       "actionNames": ["admin"]
     },
