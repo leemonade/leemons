@@ -33,7 +33,7 @@ export function useCreateProgram() {
   return useMutation({
     mutationFn: async (props) => createProgramRequest(props),
     onSuccess: (data) => {
-      // Invaidate centerPrograms query
+      // Invalidate centerPrograms query
       const programCenters = data.program?.centers;
       programCenters?.forEach((centerId) => {
         const queryKey = getCenterProgramsKey(centerId);
@@ -48,7 +48,7 @@ export function useDuplicateProgram() {
   return useMutation({
     mutationFn: async (props) => duplicateProgramRequest(props),
     onSuccess: (data) => {
-      // Invaidate centerPrograms query
+      // Invalidate centerPrograms query
       const programCenters = data.program?.centers;
       programCenters?.forEach((centerId) => {
         const queryKey = getCenterProgramsKey(centerId);

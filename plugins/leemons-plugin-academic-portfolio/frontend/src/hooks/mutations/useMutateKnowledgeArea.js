@@ -12,7 +12,7 @@ export function useCreateKnowledgeArea() {
   return useMutation({
     mutationFn: async (props) => createKnowledgeAreaRequest(props),
     onSuccess: (data) => {
-      // Invaidate knowledge-areas query for that center
+      // Invalidate knowledge-areas query for that center
       const queryKey = getKnowledgeAreasKey(data.knowledge.center);
       queryClient.invalidateQueries(queryKey);
     },
