@@ -29,7 +29,8 @@
     "react-dnd-multi-backend": "^8.0.3",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
-    "react-router-dom": "^5.3.3"
+    "react-router-dom": "^5.3.3",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.10",

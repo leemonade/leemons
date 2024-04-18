@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { useUserCenters } from '@users/hooks';
 import {
@@ -67,7 +68,7 @@ const AcademicTreePage = () => {
     options: { enabled: selectedProgram?.length > 0 },
   });
 
-  const generateGUID = () => `_${Math.random().toString(36).substr(2, 9)}`;
+  const generateGUID = () => uuidv4();
 
   const parseAcademicTreeData = (academicTreeData) => {
     const trees = [];
