@@ -87,6 +87,9 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     backgroundColor: theme.other.core.color.white,
     padding: 8,
     borderRadius: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
   },
   canAccessItem: {
     display: 'flex',
@@ -98,7 +101,10 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: pxToRem(8),
-    width: pxToRem(336),
+    width: '80%',
+  },
+  canAccessTextContainer: {
+    width: '20%',
   },
   canAccessText: {
     fontSize: pxToRem(14),

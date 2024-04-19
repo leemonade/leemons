@@ -131,7 +131,7 @@ const LibraryDetailContent = ({
                           image={user.avatar}
                         />
                       </Box>
-                      <Box>
+                      <Box className={classes.canAccessTextContainer}>
                         <Text className={classes.canAccessText}>
                           {Array.isArray(user.permissions) && t(`${user?.permissions[0]}`)}
                         </Text>
