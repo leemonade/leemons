@@ -123,9 +123,8 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
   }
 
   const tableButtonLetterDisabled =
-    type.value === 'letter' && (!newScale.letter || !newScale.number || !newScale.description);
-  const tableButtonNumericDisabled =
-    type.value === 'numeric' && (!newScale.number || !newScale.description);
+    type.value === 'letter' && (!newScale.letter || !newScale.description);
+  const tableButtonNumericDisabled = type.value === 'numeric' && !newScale.description;
 
   return (
     <Stack>
