@@ -58,6 +58,8 @@ async function handleReferenceGroups(programData, program, ctx) {
     programData.referenceGroups;
   let index = 0;
 
+  // Groups for all courses handles the case when a program with non-sequential courses uses reference groups
+  // In these cases, all courses will have the same amount of reference groups
   if (groupsPerCourse.groupsForAllCourses) {
     const groupsNames = getReferenceGroupsNames(
       nameFormat,
@@ -324,7 +326,7 @@ async function addProgram({ data, userSession, ctx }) {
     );
   }
 
-  //*OLD: En la nueva implementación se dan casos nuevos donde a partir de una misma asignatura se crean dos clases que usarían el grupo "-auto-"
+  //* OLD: En la nueva implementación se dan casos nuevos donde a partir de una misma asignatura se crean dos clases que usarían el grupo "-auto-"
   //* Eso genera errores. Parece no afectar el hecho de que no haya un grupo auto
   // coursesAndGroupsPromises.push(
   //   addGroup({

@@ -74,7 +74,7 @@ const schema = new mongoose.Schema(
     },
     numberOfSubstages: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     useDefaultSubstagesName: {
       type: Boolean,

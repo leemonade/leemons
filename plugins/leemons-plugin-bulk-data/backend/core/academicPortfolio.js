@@ -146,24 +146,9 @@ async function initAcademicPortfolio({
     apProfiles = await ctx.call('academic-portfolio.settings.setProfiles', { ...apProfiles });
 
     // ·····················································
-    // PROGRAMS
-
-    const programs = await importPrograms(file, centers, grades);
-    const programsKeys = keys(programs);
-
-    for (let i = 0, len = programsKeys.length; i < len; i++) {
-      const { creator, ...program } = programs[programsKeys[i]];
-      const programData = await ctx.call('academic-portfolio.programs.addProgram', {
-        data: program,
-        userSession: users[creator],
-      });
-      programs[programsKeys[i]] = { ...programData, subjects: {} };
-    }
-
-    // ·····················································
     // KNOWLEDGE AREAS
 
-    const knowledgeAreas = await importKnowledgeAreas(file, programs);
+    const knowledgeAreas = await importKnowledgeAreas(file, centers);
     const knowledgeAreasKeys = keys(knowledgeAreas);
 
     for (let i = 0, len = knowledgeAreasKeys.length; i < len; i++) {
@@ -173,10 +158,7 @@ async function initAcademicPortfolio({
 
       try {
         const knowledgeAreaData = await ctx.call('academic-portfolio.knowledges.addKnowledge', {
-          data: {
-            ...knowledgeArea,
-            credits_program: null,
-          },
+          data: knowledgeArea,
         });
         knowledgeAreas[key] = { ...knowledgeAreaData };
         ctx.logger.info(`Knowledge area ADDED: ${knowledgeArea.name}`);
@@ -189,16 +171,31 @@ async function initAcademicPortfolio({
     // ·····················································
     // SUBJECT TYPES
 
-    const subjectTypes = await importSubjectTypes(file, programs);
+    const subjectTypes = await importSubjectTypes(file, centers);
     const subjectTypesKeys = keys(subjectTypes);
 
     for (let i = 0, len = subjectTypesKeys.length; i < len; i++) {
       const key = subjectTypesKeys[i];
       const subjectType = subjectTypes[key];
       const subjectTypeData = await ctx.call('academic-portfolio.subjectType.addSubjectType', {
-        data: subjectType,
+        data: { ...subjectType, description: subjectType.description ?? null },
       });
       subjectTypes[key] = { ...subjectTypeData };
+    }
+
+    // ·····················································
+    // PROGRAMS
+
+    const programs = await importPrograms(file, centers, grades);
+    const programsKeys = keys(programs);
+
+    for (let i = 0, len = programsKeys.length; i < len; i++) {
+      const { creator, ...program } = programs[programsKeys[i]];
+      const programData = await ctx.call('academic-portfolio.programs.addProgram', {
+        data: program,
+        userSession: users[creator],
+      });
+      programs[programsKeys[i]] = { ...programData, subjects: {} };
     }
 
     // ·····················································
