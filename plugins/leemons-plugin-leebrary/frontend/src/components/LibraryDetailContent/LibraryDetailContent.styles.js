@@ -6,7 +6,7 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
   lowerContent: {
     flex: 1,
-    backgroundColor: theme.colors.ui03,
+    // backgroundColor: theme.colors.ui03,
     padding: pxToRem(16),
   },
   tagsContainer: {
@@ -15,7 +15,7 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     gap: pxToRem(10),
     alignItems: 'center',
     flexWrap: 'wrap',
-    paddingTop: pxToRem(24),
+    paddingTop: pxToRem(16),
   },
   tab: {
     '& button[aria-selected="true"]': {
@@ -43,6 +43,7 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     height: '100%',
     overflowY: 'scroll',
     marginBottom: pxToRem(48),
+    backgroundColor: theme.other.core.color.neutral['50'],
   },
   title: {
     color: theme.other.global.content.color.tertiary.default,
@@ -50,7 +51,6 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     fontWeight: 500,
     lineHeight: '24px',
     fontStyle: 'normal',
-    paddingBottom: pxToRem(8),
   },
   description: {
     color: theme.other.global.content.color.tertiary.default,
@@ -82,8 +82,11 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
 
   canAccessContainer: {
-    marginTop: pxToRem(24),
+    marginTop: pxToRem(16),
     width: '100%',
+    backgroundColor: theme.other.core.color.white,
+    padding: 8,
+    borderRadius: 4,
   },
   canAccessItem: {
     display: 'flex',
