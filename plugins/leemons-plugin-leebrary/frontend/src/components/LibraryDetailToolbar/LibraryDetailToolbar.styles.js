@@ -5,7 +5,7 @@ const LibraryDetailToolbarStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     color: theme.colors.text05,
-    padding: pxToRem(16),
+    padding: pxToRem(20),
     gap: pxToRem(8),
     backgroundColor: theme.colors.mainWhite,
     width: '100%',

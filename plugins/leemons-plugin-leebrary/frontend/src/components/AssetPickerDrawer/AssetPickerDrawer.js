@@ -80,7 +80,7 @@ export function AssetPickerDrawer({
   const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
   return (
     <Drawer opened={!!opened} size={'xl'} onClose={onClose}>
-      <Drawer.Header title={localizations?.header.title} />
+      <Drawer.Header title={localizations?.header?.title} />
       <Drawer.Content>
         <Box className={classes.root}>
           {creatable ? (

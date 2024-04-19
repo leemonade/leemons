@@ -89,31 +89,31 @@ const AssetMetadataTest = ({ metadata }) => {
         <Text className={classes.value}>{capitalize(typologyName)}</Text>
       </Box>
       <Box className={classes.box}>
-        <Text className={classes.title}>{`${t('questionBank')}: `}</Text>{' '}
+        <Text className={classes.title}>{`${t('questionBank')}: `}</Text>
         <Link to={fields.titleTest.url} className={classes.link}>
           {fields.titleTest.name}
           <OpenIcon className={classes.openIcon} />
         </Link>
       </Box>
-      <Box className={classes.box}>
+      <Box>
         <Box>
           <Text className={classes.title}>{`${t('questions')} `}</Text>
           <Text className={classes.value}>{fields.cuestionsNumber}</Text>
         </Box>
         <Box>
-          <Text className={classes.title}>{`${t('simpleQuestion')}: `}</Text>{' '}
+          <Text className={classes.title}>{`${t('simpleQuestion')}: `}</Text>
           <Text className={classes.value}>{fields.singleAnsWers}</Text>
         </Box>
         <Box>
-          <Text className={classes.title}>{`${t('map')}: `}</Text>{' '}
+          <Text className={classes.title}>{`${t('map')}: `}</Text>
           <Text className={classes.value}>{fields.mapAnswers}</Text>
         </Box>
-        <Box className={classes.box}>
-          <Text className={classes.title}>{`${t('hints')}: `}</Text>{' '}
+        <Box>
+          <Text className={classes.title}>{`${t('hints')}: `}</Text>
           <Text className={classes.value}>{fields.hasHints ? t('yes') : t('no')}</Text>
         </Box>
-        <Box className={classes.box}>
-          <Text className={classes.title}>{`${t('categories')} `}</Text>{' '}
+        <Box>
+          <Text className={classes.title}>{`${t('categories')} `}</Text>
           <Text className={classes.value}>{fields.categoriesStrigified}</Text>
         </Box>
       </Box>
