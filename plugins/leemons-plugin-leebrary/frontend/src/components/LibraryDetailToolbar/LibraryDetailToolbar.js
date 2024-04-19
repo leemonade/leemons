@@ -126,19 +126,19 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )} */}
-          {toolbarItems.share && (
-            <ActionButton
-              icon={<ShareIcon height={20} width={20} />}
-              onClick={handleShare}
-              tooltip={toolbarItems.share}
-              className={classes.button}
-            />
-          )}
           {toolbarItems.assign && (
             <ActionButton
               icon={<AssignIcon height={20} width={20} />}
               onClick={handleAssign}
               tooltip={toolbarItems.assign}
+              className={classes.button}
+            />
+          )}
+          {toolbarItems.share && (
+            <ActionButton
+              icon={<ShareIcon height={20} width={20} />}
+              onClick={handleShare}
+              tooltip={toolbarItems.share}
               className={classes.button}
             />
           )}

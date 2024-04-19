@@ -28,6 +28,9 @@ const PermissionsDataStyles = createStyles((theme) => ({
     color: '#2F473F',
     marginTop: pxToRem(16),
   },
+  libraryItem: {
+    width: '50%',
+  },
   tab: {
     '& button[aria-selected="true"]': {
       borderBottomColor: '#B4E600 !important',

@@ -24,6 +24,8 @@ const LibraryDetailToolbarStyles = createStyles((theme) => ({
   leftContainer: {
     width: '100%',
     gap: pxToRem(8),
+    marginLeft: pxToRem(8),
+
     display: 'flex',
   },
   divider: {
