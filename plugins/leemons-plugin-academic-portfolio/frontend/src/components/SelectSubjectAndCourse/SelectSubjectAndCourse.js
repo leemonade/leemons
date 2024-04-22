@@ -7,6 +7,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import useSubjects from './hooks/useSubjects';
 import useCourses from './hooks/useCourses';
 import useOnChange from './hooks/useOnChange';
@@ -53,7 +54,7 @@ export default function SelectSubjectAndCourse({ program, onChange = noop }) {
               {...field}
               data={courses.map((course) => ({
                 value: course.id,
-                label: course.name,
+                label: getCourseName(course),
               }))}
               placeholder={t('course')}
               autoSelectOneOption

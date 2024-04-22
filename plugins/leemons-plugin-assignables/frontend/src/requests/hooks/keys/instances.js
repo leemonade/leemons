@@ -19,3 +19,11 @@ export const instancesGetKey = (filters) => [
     ...filters,
   },
 ];
+
+export const searchInstancesKey = (filters) => [
+  {
+    ...allInstancesKey[0],
+    action: 'search',
+    ...filters,
+  },
+];

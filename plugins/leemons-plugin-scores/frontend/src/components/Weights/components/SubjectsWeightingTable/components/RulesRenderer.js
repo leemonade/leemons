@@ -9,15 +9,17 @@ import { prefixPN } from '@scores/helpers';
 import useModulesData from '../../WeightConfigDrawer/components/Weighting/hooks/useModulesData';
 
 export default function RulesRenderer({
-  value,
+  value: weights = {},
   row: {
     original: { id },
   },
 }) {
+  const { type, applySameValue } = weights;
+
   const [typesT] = useTranslateLoader(prefixPN('weightingTypes'));
   const theme = useTheme();
 
-  const isModuleTypes = value === 'modules';
+  const isModuleTypes = type === 'modules';
 
   const { data: modules } = useModulesData({ class: isModuleTypes ? id : null });
 
@@ -26,12 +28,12 @@ export default function RulesRenderer({
       return false;
     }
 
-    return modules.some((module) => module.isNew);
-  }, [modules, isModuleTypes]);
+    return !applySameValue && modules.some((module) => module.isNew);
+  }, [modules, isModuleTypes, applySameValue]);
 
   return (
     <Stack spacing={3} alignItems="center">
-      <Badge closable={false}>{typesT(value ?? 'averages')}</Badge>
+      <Badge closable={false}>{typesT(type ?? 'averages')}</Badge>
       {!!hasNewModules && (
         <AlertWarningTriangleIcon
           color={theme.other.banner.content.color.error}

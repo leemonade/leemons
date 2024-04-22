@@ -375,4 +375,41 @@ module.exports = {
     newModulesWarning:
       'New modules have been added to this class. To include them in the weighting, adjust the percentages.',
   },
+  evaluationNotebook: {
+    title: 'Evaluation Notebook',
+    filters: {
+      searchTypes: {
+        student: 'Student',
+        activity: 'Activity',
+      },
+      search: 'Search {type}...',
+      showNonEvaluable: 'See non-evaluable',
+      goToWeighting: 'Weights',
+    },
+    scoresTable: {
+      students: 'Students',
+      noActivity: 'Not submitted',
+      avgScore: 'Average score',
+      calculated: 'Calculated',
+      custom: 'Teacher',
+    },
+    newModule:
+      'New modules have been added to this class that are not weighted. To calculate them correctly, access your weighting rules.',
+    updatedSuccess: "Updated {{student}}'s score in {{activity}} to {{score}}",
+    updatedError: "Error updating {{student}}'s score in {{activity}} to {{score}}",
+    unableToOpen: 'Error opening activity, the activity could not be found',
+    noEvaluationPage: 'This activity does not have a page to evaluate',
+
+    emptyState: {
+      noFilters: {
+        title: 'Select class and period',
+        description:
+          'Select the class and then filter by evaluation periods. You can also export these reports to excel or csv.',
+      },
+      noResults: {
+        title: 'No results',
+        description: 'We have not found results for your search.',
+      },
+    },
+  },
 };

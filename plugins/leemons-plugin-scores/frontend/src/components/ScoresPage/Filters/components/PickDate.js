@@ -17,7 +17,9 @@ export default function PickDate({ form, name, defaultValue }) {
     name === 'startDate' && date.getTime() ? new Date(date.setDate(date.getDate() - 1)) : undefined;
 
   useEffect(() => {
-    form.setValue(name, new Date(defaultValue));
+    if (defaultValue) {
+      form.setValue(name, new Date(defaultValue));
+    }
   }, [form.setValue, name, defaultValue]);
 
   return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Text, UserDisplayItem, Badge, useElementSize } from '@bubbles-ui/components';
+import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
 import { useTable, useFlexLayout } from 'react-table';
 import { isFunction } from 'lodash';
 import { motion } from 'framer-motion';
@@ -25,10 +25,11 @@ const ScoresBasicTable = ({
   onDataChange,
   onColumnExpand,
   onOpen,
+  periodName,
   from,
   to,
   hideCustom,
-  ...props
+  leftBadge,
 }) => {
   const { ref: tableRef } = useElementSize(null);
   const [value, setValue] = useState(_value);
@@ -114,19 +115,18 @@ const ScoresBasicTable = ({
         (activities.find((activity) => activity.id === studentActivity.id)?.weight || 0);
     });
     let sumOfWeights = 0;
-    activities.forEach((activities) => (sumOfWeights += activities.weight));
+    activities.forEach((activity) => {
+      sumOfWeights += activity.weight;
+    });
     const weightedAverage = (weightedScore / sumOfWeights).toFixed(2);
     return useNumbers ? weightedAverage : findGradeLetter(Math.round(weightedAverage));
   };
 
-  const getSeverity = (studentAttendance) => {
-    if (studentAttendance === 50) return 'warning';
-    if (studentAttendance > 50) return 'success';
-    return 'error';
-  };
-
   const getActivitiesPeriod = () =>
-    `${new Date(from).toLocaleDateString(locale)} - ${new Date(to).toLocaleDateString(locale)}`;
+    periodName ||
+    `${new Date(from).toLocaleDateString(locale) ?? '?'} - ${
+      new Date(to).toLocaleDateString(locale) ?? '?'
+    }`;
 
   const getRightBodyContent = () =>
     value.map(({ id, activities: studentActivities, customScore, allowCustomChange }) => {
@@ -163,11 +163,20 @@ const ScoresBasicTable = ({
       width: 220,
       sticky: 'left',
       Header: (
-        <Box className={classes.students}>
+        <Stack
+          direction="column"
+          justifyContent="space-between"
+          alignItems="center"
+          fullWidth
+          fullHeight
+          sx={{ paddingBottom: 16 }}
+        >
+          <Box />
+          <Box>{leftBadge || null}</Box>
           <Text color="primary" role="productive" size="xs" stronger>
             {labels.students}
           </Text>
-        </Box>
+        </Stack>
       ),
       Cell: ({ value }) => (
         <Box className={classes.studentsCells}>

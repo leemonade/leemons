@@ -5,7 +5,7 @@ import { getStyle } from './getStyle';
 function parseActivities({ activities, labels }) {
   return activities.map((activity) => ({
     type: activity?.activity?.assignable?.role,
-    evaluation: activity?.type === 'calificable' ? labels.calificable : labels.noCalificable,
+    evaluation: activity?.type === 'evaluable' ? labels.calificable : labels.noCalificable,
     name: activity.name,
     deadline: new Date(activity.deadline),
     weight: activity.weight,
