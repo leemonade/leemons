@@ -55,6 +55,13 @@ module.exports = {
     mainTeacher: '(profesor principal)',
     everyWeekInWorkdays: 'Cada semana en días laborables',
     group: 'Grupo',
+    detailEvent: 'Detalle del evento',
+    subjectTitle: 'Titulo',
+    subjectDates: 'Tiempos',
+    subjectName: 'Asignatura',
+    subjectTeacher: 'Profesor',
+    subjectClassroom: 'Clase',
+    subjectSchedule: 'Horario',
   },
   event_modal: {
     name: 'Nombre',
