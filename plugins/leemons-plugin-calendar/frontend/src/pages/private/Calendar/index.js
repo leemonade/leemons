@@ -525,6 +525,13 @@ function Calendar({ session }) {
               labels={{
                 attendanceControl: t('attendanceControl'),
                 mainTeacher: t('mainTeacher'),
+                detailEvent: t('detailEvent'),
+                subjectTitle: t('subjectTitle'),
+                subjectDates: t('subjectDates'),
+                subjectName: t('subjectName'),
+                subjectTeacher: t('subjectTeacher'),
+                subjectClassroom: t('subjectClassroom'),
+                subjectSchedule: t('subjectSchedule'),
               }}
               locale={locale}
               event={store.activeSchedule}
