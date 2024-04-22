@@ -247,7 +247,7 @@ module.exports = {
           digits: 'Dígitos',
           digitsPlaceholder: 'Dígitos...',
           offeredGroups: 'Grupos Ofertados',
-          course: 'Course',
+          course: 'Curso',
           numberOfGroups: 'Nº de grupos',
           nameFormatOptions: {
             alphabetical: 'Letras (A, B, C)',
@@ -784,6 +784,7 @@ module.exports = {
       enrollmentSeatsError:
         'Error de matriculación: Faltan plazas disponibles en algún aula o grupo ',
       remove: 'Borrar',
+      search: 'Buscar',
     },
     studentsTable: {
       surnames: 'Apellidos',

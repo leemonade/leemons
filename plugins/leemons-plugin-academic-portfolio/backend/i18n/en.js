@@ -778,7 +778,8 @@ module.exports = {
       enrollmentSuccess: 'Enrollment successful.',
       enrollmentError: 'Enrollment error.',
       enrollmentSeatsError: 'Enrollment error: No available seats in some classroom or group ',
-      remove: 'Eliminar',
+      remove: 'Remove',
+      search: 'Search',
     },
     studentsTable: {
       surnames: 'Surnames',

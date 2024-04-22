@@ -5,9 +5,15 @@ import { ContextContainer, Stack, Checkbox } from '@bubbles-ui/components';
 
 import { TagsAutocomplete } from '@common';
 import { getStudentsByTagsRequest } from '@academic-portfolio/request';
+import { SearchIcon } from '@bubbles-ui/icons/outline';
 import StudentsTable from '../SubjectView/StudentsTable';
 
-const StudentsSelectByTags = ({ centerId, previouslyEnrolledStudents, setSelectedStudents }) => {
+const StudentsSelectByTags = ({
+  centerId,
+  previouslyEnrolledStudents,
+  setSelectedStudents,
+  localizations,
+}) => {
   const [tags, setTags] = useState();
   const [studentsFound, setStudentsFound] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -83,7 +89,13 @@ const StudentsSelectByTags = ({ centerId, previouslyEnrolledStudents, setSelecte
   return (
     <Stack direction="column">
       <ContextContainer sx={{ padding: '24px' }}>
-        <TagsAutocomplete onChange={onTagsChange} pluginName="users" value={tags} />
+        <TagsAutocomplete
+          onChange={onTagsChange}
+          pluginName="users"
+          value={tags}
+          labels={{ addButton: localizations?.search }}
+          ButtonLeftIcon={<SearchIcon width={24} height={24} />}
+        />
         <StudentsTable data={studentsFound} checkBoxColumn={checkBoxColumn} />
       </ContextContainer>
     </Stack>
@@ -94,6 +106,7 @@ StudentsSelectByTags.propTypes = {
   centerId: PropTypes.string.isRequired,
   previouslyEnrolledStudents: PropTypes.array,
   setSelectedStudents: PropTypes.func.isRequired,
+  localizations: PropTypes.object,
 };
 
 export default StudentsSelectByTags;
