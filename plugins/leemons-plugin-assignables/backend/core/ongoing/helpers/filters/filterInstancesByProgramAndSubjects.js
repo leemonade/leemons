@@ -1,4 +1,4 @@
-const { difference } = require('lodash');
+const { difference, compact } = require('lodash');
 const { tryParse, isNonEmptyArray } = require('../helpers');
 
 function filterInstancesByProgramAndSubjects({
@@ -6,9 +6,9 @@ function filterInstancesByProgramAndSubjects({
   filters = {},
   instanceSubjectsProgramsAndClasses,
 }) {
-  const programs = tryParse(filters?.programs ?? null);
-  const subjects = tryParse(filters?.subjects ?? null);
-  const classes = tryParse(filters?.classes ?? null);
+  const programs = compact([tryParse(filters?.programs ?? null)].flat());
+  const subjects = compact([tryParse(filters?.subjects ?? null)].flat());
+  const classes = compact([tryParse(filters?.classes ?? null)].flat());
 
   if (!isNonEmptyArray(programs) && !isNonEmptyArray(subjects) && !isNonEmptyArray(classes)) {
     return instances;

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { ContextContainer, Loader } from '@bubbles-ui/components';
+import { ContextContainer, LoadingOverlay } from '@bubbles-ui/components';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
@@ -36,7 +36,7 @@ export default function Weighting({ class: klass }) {
     return null;
   }
   if (typesLoading || modulesLoading || weightsLoading) {
-    return <Loader />;
+    return <LoadingOverlay visible />;
   }
 
   return (

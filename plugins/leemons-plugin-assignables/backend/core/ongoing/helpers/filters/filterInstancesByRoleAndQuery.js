@@ -5,13 +5,17 @@ function filterInstancesByRoleAndQuery({ instances, filters = {} }) {
     return instances;
   }
 
-  return instances.filter(
-    (instance) =>
-      (query &&
-        instance?.assignable?.asset?.name
-          .toLocaleLowerCase()
-          .includes(query.toLocaleLowerCase())) ||
-      (role && instance?.assignable?.role === role)
-  );
+  const roles = Array.isArray(role) ? role : [role];
+
+  return instances.filter((instance) => {
+    if (
+      query &&
+      !instance?.assignable?.asset?.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())
+    ) {
+      return false;
+    }
+
+    return !(role && !roles.includes(instance?.assignable?.role));
+  });
 }
 module.exports = { filterInstancesByRoleAndQuery };

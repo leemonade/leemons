@@ -1,4 +1,4 @@
-const { searchInstances } = require('./searchInstances');
+const { searchInstances } = require('../../ongoing/searchInstances');
 
 module.exports = {
   searchInstances,

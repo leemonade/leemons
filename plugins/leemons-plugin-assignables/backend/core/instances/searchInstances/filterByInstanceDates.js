@@ -4,6 +4,13 @@ const dayjs = require('dayjs');
 const { getInstanceDates } = require('./getInstanceDates');
 
 function filterByDeadline(query, deadline, now) {
+  if (deadline && (query.deadline_$lt || query.deadline_$gt)) {
+    return !(
+      (!query.deadline_$lt || !dayjs(deadline).isAfter(query.deadline_$lt)) &&
+      (!query.deadline_$gt || !dayjs(deadline).isBefore(query.deadline_$gt))
+    );
+  }
+
   return (
     (query.deadline && (!deadline || dayjs(deadline).isAfter(now))) ||
     (query.deadline === false && deadline && !dayjs(deadline).isAfter(now))
@@ -123,7 +130,8 @@ async function filterByInstanceDates({ query, assignableInstancesIds, ctx }) {
   if (
     !(
       isNil(query.closed) ||
-      isNil(query.opened || isNil(query.archived)) ||
+      isNil(query.opened) ||
+      isNil(query.archived) ||
       isNil(query.visible) ||
       isNil(query.finished)
     )

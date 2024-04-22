@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Box, Title } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
-import _ from 'lodash';
+import _, { noop } from 'lodash';
 
 import { SelectProgram } from '@academic-portfolio/components';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
@@ -21,7 +21,7 @@ import useSelectedPeriod from './hooks/useSelectedPeriod';
 import useOnChange from './hooks/useOnChange';
 import useAcademicCalendarDates from './hooks/useAcademicCalendarDates';
 
-export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
+export function Filters({ hideTitle, showProgramSelect, classID, onChange = noop }) {
   const [t] = useTranslateLoader(prefixPN('scoresPage.filters'));
   const form = useForm();
   const { control, watch, setValue } = form;
@@ -35,6 +35,7 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange }) {
 
   const selectedClass = useSelectedClass({ classes: classesData, control, classID });
   const { periods } = usePeriods({ selectedClass, classes: classesData });
+
   const selectedPeriod = useSelectedPeriod({
     periods,
     control,

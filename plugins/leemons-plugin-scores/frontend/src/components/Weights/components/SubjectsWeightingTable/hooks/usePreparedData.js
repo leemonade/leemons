@@ -5,6 +5,7 @@ import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import useWeights from '@scores/requests/hooks/queries/useWeights';
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import useFilteredSessionClasses from './useFilteredSessionClasses';
 
 export default function usePreparedData({ program, subject, course, onEdit = noop }) {
@@ -24,7 +25,6 @@ export default function usePreparedData({ program, subject, course, onEdit = noo
   }
 
   const data = map(sessionClasses, (klass) => {
-    const isGroupAlone = klass.groups.isAlone;
     const courses = sortBy(Array.isArray(klass.courses) ? klass.courses : [klass.courses], 'index');
 
     const weighting = weights?.find((w) => w.class === klass.id);
@@ -32,8 +32,8 @@ export default function usePreparedData({ program, subject, course, onEdit = noo
     return {
       ...klass,
       subject: <SubjectItemDisplay subjectsIds={[klass.subject.id]} />,
-      group: isGroupAlone ? '-' : klass.groups.name,
-      course: map(courses, 'name').join(', '),
+      group: klass.groups ? klass.groups.name : '-',
+      course: map(courses, getCourseName).join(', '),
       rules: weighting,
       applySameValue: weighting?.applySameValue,
       actions: (
