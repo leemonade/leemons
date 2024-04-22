@@ -28,7 +28,8 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
   const getCoursesTextToShow = (courses) => {
     let coursesText = '';
     if (isArray(courses)) {
-      coursesText = courses.map(({ index }) => `${index}º`).join(', ');
+      const sortedCourses = [...courses].sort((a, b) => a.index - b.index);
+      coursesText = sortedCourses.map(({ index }) => `${index}º`).join(', ');
     } else if (courses?.index !== undefined) {
       coursesText = `${courses.index}º`;
     }

@@ -818,7 +818,6 @@ const updateSubjectInternalIdSchema = {
   type: 'object',
   properties: {
     internalId: stringSchema,
-    course: stringSchemaNullable,
   },
   required: ['internalId'],
   additionalProperties: false,
@@ -835,7 +834,7 @@ async function validateUpdateSubject({ data, ctx }) {
   if (internalId) {
     const validator2 = new LeemonsValidator(updateSubjectInternalIdSchema);
 
-    if (!validator2.validate({ course, internalId })) {
+    if (!validator2.validate({ internalId })) {
       throw validator2.error;
     }
 
