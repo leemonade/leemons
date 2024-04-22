@@ -239,9 +239,7 @@ const PermissionsDataClasses = ({
             </Stack>
           ) : null}
         </>
-      ) : (
-        <Title order={5}>{t('permissionsData.labels.addClasses')}</Title>
-      )}
+      ) : null}
       {!isEmpty(COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
           data={value}

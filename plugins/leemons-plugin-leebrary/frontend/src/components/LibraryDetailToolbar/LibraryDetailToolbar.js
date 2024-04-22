@@ -3,6 +3,7 @@ import { isFunction } from 'lodash';
 import { ActionButton, Box, Stack, Divider } from '@bubbles-ui/components';
 
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
+import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';
 import { AssignIcon } from './icons/AssignIcon';
 import { LibraryDetailToolbarStyles } from './LibraryDetailToolbar.styles';
 import {
@@ -125,19 +126,19 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )} */}
-          {toolbarItems.share && (
-            <ActionButton
-              icon={<ShareIcon height={20} width={20} />}
-              onClick={handleShare}
-              tooltip={toolbarItems.share}
-              className={classes.button}
-            />
-          )}
           {toolbarItems.assign && (
             <ActionButton
               icon={<AssignIcon height={20} width={20} />}
               onClick={handleAssign}
               tooltip={toolbarItems.assign}
+              className={classes.button}
+            />
+          )}
+          {toolbarItems.share && (
+            <ActionButton
+              icon={<ShareIcon height={20} width={20} />}
+              onClick={handleShare}
+              tooltip={toolbarItems.share}
               className={classes.button}
             />
           )}
@@ -193,6 +194,9 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
+        </Box>
+        <Box className={classes.rightContainer}>
+          <ActionButton icon={<SettingMenuVerticalIcon height={16} width={16} />} />
         </Box>
         <ActionButton icon={<RemoveIcon height={18} width={18} />} onClick={onCloseDrawer} />
       </Stack>

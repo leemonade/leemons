@@ -449,7 +449,7 @@ const PermissionsData = ({
       {!isEmpty(asset) && (
         <ContextContainer className={classesStyles.contentContainer}>
           <Text className={classesStyles.titleItem}>{t('permissionsData.header.libraryItem')}</Text>
-          <Paper bordered padding={1} shadow="none">
+          <Paper bordered padding={1} shadow="none" className={classesStyles.libraryItem}>
             <LibraryItem asset={asset} />
           </Paper>
           <Text className={classesStyles.titleTabs}>
@@ -468,8 +468,8 @@ const PermissionsData = ({
                   sx={(theme) => ({
                     flexDirection: 'column',
                     display: 'flex',
-                    gap: theme.spacing[4],
-                    marginTop: theme.spacing[4],
+                    // gap: theme.spacing[4],
+                    marginTop: theme.spacing[5],
                   })}
                 >
                   <Table columns={USER_TABLE_HEADERS} />
@@ -676,7 +676,7 @@ const PermissionsData = ({
                   {t('permissionsData.labels.cancelButton')}
                 </Button>
                 <Button variant="primary" loading={loading} onClick={saveEditPermissions}>
-                  {t('permissionsData.labels.updateButton')}
+                  {t('permissionsData.labels.saveFooterButton')}
                 </Button>
               </Box>
             )}
