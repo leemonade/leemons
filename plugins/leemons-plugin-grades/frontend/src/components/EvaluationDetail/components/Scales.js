@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import { NumberInput, TableInput, TextInput, Stack, Box, Button } from '@bubbles-ui/components';
-import { find, forEach } from 'lodash';
+import { find, forEach, isNil } from 'lodash';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
@@ -123,8 +123,10 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
   }
 
   const tableButtonLetterDisabled =
-    type.value === 'letter' && (!newScale.letter || !newScale.description);
-  const tableButtonNumericDisabled = type.value === 'numeric' && !newScale.description;
+    type.value === 'letter' &&
+    (!newScale.letter || isNil(newScale.number) || !newScale.description);
+  const tableButtonNumericDisabled =
+    type.value === 'numeric' && (isNil(newScale.number) || !newScale.description);
 
   return (
     <Stack>
