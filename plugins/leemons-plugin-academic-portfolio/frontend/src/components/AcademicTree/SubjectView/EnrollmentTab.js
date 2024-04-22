@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Controller } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 
@@ -26,11 +25,15 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
 
-const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) => {
+const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, setDirtyForm }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const { classes } = EnrollmentTabStyles();
   const queryClient = useQueryClient();
   const [teacherProfile, setTeacherProfile] = useState();
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [virtualUrl, setVirtualUrl] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [schedule, setSchedule] = useState(null);
   const { mutate: removeStudentFromClass } = useRemoveStudentFromClass();
   const { data: userAgentsInfo } = useUserAgentsInfo(classData?.students || [], {
     enabled: classData?.students?.length > 0,
@@ -47,6 +50,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) 
 
   useEffect(() => {
     if (classData) {
+      // For simplicity we use local states to show the right info in the input fields but still use updateForm to store the values to save
       const formValues = {
         mainTeacher: classData.teachers?.find((teacher) => teacher.type === 'main-teacher')
           ?.teacher,
@@ -55,9 +59,13 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) 
         schedule: { days: classData.schedule ?? [] },
         id: classData.id,
       };
-      updateForm.reset(formValues); // Resets the form with new default values
+      setSelectedTeacher(formValues.mainTeacher ?? null);
+      setAddress(formValues.address ?? null);
+      setVirtualUrl(formValues.virtualUrl ?? null);
+      setSchedule(formValues.schedule ?? null);
+      updateForm.reset(formValues);
     }
-  }, [classData, updateForm]);
+  }, [classData]);
 
   // HANDLERS ·············································································································||
 
@@ -78,6 +86,28 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) 
     );
   };
 
+  const isFormDirty = (accessor, value) => {
+    const currentFormValues = {
+      mainTeacher: selectedTeacher,
+      virtualUrl: virtualUrl || null,
+      address: address || null,
+      schedule,
+    };
+
+    currentFormValues[accessor] = value || null;
+
+    const initialFormValues = {
+      mainTeacher:
+        classData.teachers?.find((teacher) => teacher.type === 'main-teacher')?.teacher ?? null,
+      virtualUrl: classData.virtualUrl ?? null,
+      address: classData.address ?? null,
+      schedule: { days: classData.schedule ?? [] },
+    };
+
+    const result = JSON.stringify(currentFormValues) !== JSON.stringify(initialFormValues);
+    setDirtyForm(result);
+  };
+
   const studentsTableData = useMemo(() => {
     if (userAgentsInfo?.length) {
       return userAgentsInfo
@@ -96,49 +126,67 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) 
     return [];
   }, [userAgentsInfo]);
 
+  const TeacherSelect = useMemo(() => {
+    if (teacherProfile && center?.length > 0) {
+      return (
+        <SelectUserAgent
+          value={selectedTeacher}
+          label={t('mainTeacher')}
+          profiles={teacherProfile}
+          centers={center}
+          onChange={(onChangeValue) => {
+            setSelectedTeacher(onChangeValue);
+            updateForm.setValue('mainTeacher', onChangeValue);
+            isFormDirty('mainTeacher', onChangeValue);
+          }}
+        />
+      );
+    }
+    return null;
+  }, [selectedTeacher, teacherProfile, center, t]);
+
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
         <Title>{t('teachers')}</Title>
         {teacherProfile && center?.length > 0 && (
-          <Box className={classes.mainTeacher}>
-            <Controller
-              name="mainTeacher"
-              control={updateForm?.control}
-              render={({ field }) => (
-                <SelectUserAgent
-                  {...field}
-                  label={t('mainTeacher')}
-                  profiles={teacherProfile}
-                  centers={center}
-                />
-              )}
-            />
-          </Box>
+          <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
         )}
       </ContextContainer>
       <ContextContainer>
         <Title>{t('scheduleAndPlace')}</Title>
         <Stack spacing={4} fullWidth>
           <Box className={classes.inlineInputs}>
-            <Controller
-              name="virtualUrl"
-              control={updateForm?.control}
-              render={({ field }) => <TextInput {...field} label={t('virtualClassroom')} />}
+            <TextInput
+              value={virtualUrl}
+              onChange={(onChangeValue) => {
+                setVirtualUrl(onChangeValue);
+                updateForm.setValue('virtualUrl', onChangeValue);
+                isFormDirty('virtualUrl', onChangeValue);
+              }}
+              label={t('virtualClassroom')}
             />
           </Box>
           <Box className={classes.inlineInputs}>
-            <Controller
-              name="address"
-              control={updateForm?.control}
-              render={({ field }) => <TextInput {...field} label={t('classroomAdress')} />}
+            <TextInput
+              value={address}
+              onChange={(onChangeValue) => {
+                setAddress(onChangeValue);
+                updateForm.setValue('address', onChangeValue);
+                isFormDirty('address', onChangeValue);
+              }}
+              label={t('classroomAdress')}
             />
           </Box>
         </Stack>
-        <Controller
-          name="schedule"
-          control={updateForm?.control}
-          render={({ field }) => <ScheduleInput label={t('lessonSchedule')} {...field} />}
+        <ScheduleInput
+          label={t('lessonSchedule')}
+          value={schedule}
+          onChange={(onChangeValue) => {
+            setSchedule(onChangeValue);
+            updateForm.setValue('schedule', onChangeValue);
+            isFormDirty('schedule', onChangeValue);
+          }}
         />
       </ContextContainer>
       <ContextContainer>
@@ -165,6 +213,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm }) 
 EnrollmentTab.propTypes = {
   classData: PropTypes.object,
   openEnrollmentDrawer: PropTypes.func,
+  setDirtyForm: PropTypes.func,
   center: PropTypes.array,
   updateForm: PropTypes.object,
 };
