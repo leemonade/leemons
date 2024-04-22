@@ -232,7 +232,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     });
 
     return result;
-  }, [t, store.onlyOneProfile, session]);
+  }, [t, store.hasManyLocales, deploymentConfig?.helpdeskUrl, store.onlyOneProfile, session]);
 
   if (!session) return null;
 

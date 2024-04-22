@@ -9,10 +9,14 @@ async function listGrades({ page, size, center, ctx }) {
     size,
     query: { center },
   });
-
   results.items = await gradeByIds({ ids: _.map(results.items, 'id'), ctx });
-
+  const centerPrograms = await ctx.tx.call('academic-portfolio.programs.programsByCenters', {
+    centerIds: center,
+  });
+  results.items = results.items.map((item) => ({
+    ...item,
+    inUse: centerPrograms.some((program) => program.evaluationSystem === item.id),
+  }));
   return results;
 }
-
 module.exports = { listGrades };

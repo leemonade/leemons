@@ -337,7 +337,7 @@ module.exports = {
     },
   },
   weightingTypes: {
-    average: 'Media',
+    averages: 'Media',
     roles: 'Tipo',
     modules: 'Módulos',
   },

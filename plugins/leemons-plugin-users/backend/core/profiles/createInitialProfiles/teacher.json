@@ -114,7 +114,7 @@
     },
     {
       "permissionName": "scores.weights",
-      "actionNames": ["update"]
+      "actionNames": ["view", "update"]
     },
     {
       "permissionName": "content-creator.creator",
