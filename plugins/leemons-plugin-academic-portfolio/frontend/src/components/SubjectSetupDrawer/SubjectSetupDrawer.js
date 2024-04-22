@@ -23,6 +23,8 @@ import {
 import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import SubjectForm from './SubjectForm';
 
+const INTERNAL_ID_IN_USE = 'INTERNAL_ID_IN_USE';
+
 const SubjectSetupDrawer = ({
   isOpen,
   setIsOpen,
@@ -269,9 +271,15 @@ const SubjectSetupDrawer = ({
       const programSubjectsQueryKey = getProgramSubjectsKey(programId);
       queryClient.invalidateQueries(programSubjectsQueryKey);
     } catch (error) {
-      console.error('error', error);
+      let errorToAppend = '';
+
+      if (error?.code === INTERNAL_ID_IN_USE) {
+        errorToAppend = `: ${localizations?.alerts.failure.internalIdInUse}`;
+      }
       addErrorAlert(
-        !isEditing ? localizations?.alerts.failure.add : localizations?.alerts.failure.update
+        !isEditing
+          ? `${localizations?.alerts.failure.add}${errorToAppend}`
+          : `${localizations?.alerts.failure.update}${errorToAppend}`
       );
     }
   };

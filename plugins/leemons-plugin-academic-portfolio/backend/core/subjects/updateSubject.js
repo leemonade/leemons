@@ -201,7 +201,6 @@ async function updateSubject({ data, ctx }) {
         subject: subject.id,
         program: subject.program,
         internalId,
-        course: data.course,
         ctx,
       })
     );

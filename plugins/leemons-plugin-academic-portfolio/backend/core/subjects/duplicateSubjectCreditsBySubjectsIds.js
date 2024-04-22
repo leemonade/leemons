@@ -13,22 +13,21 @@ async function duplicateSubjectCreditsBySubjectsIds({ subjectIds, duplications: 
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newSubjectCredits = await Promise.all(
-    _.map(programSubjectCredits, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
-      ctx.tx.db.ProgramSubjectsCredits.create({
-        ...item,
-        program:
-          duplications.programs && duplications.programs[item.program]
+    _.map(
+      programSubjectCredits,
+      ({ id, _id, __v, updatedAt, createdAt, internalId, compiledInternalId, ...item }) =>
+        ctx.tx.db.ProgramSubjectsCredits.create({
+          ...item,
+          program: duplications.programs?.[item.program]
             ? duplications.programs[item.program].id
             : item.program,
-        subject:
-          duplications.subjects && duplications.subjects[item.subject]
+          subject: duplications.subjects?.[item.subject]
             ? duplications.subjects[item.subject].id
             : item.subject,
-        course:
-          duplications.courses && duplications.courses[item.course]
+          course: duplications.courses?.[item.course]
             ? duplications.courses[item.course].id
             : item.course,
-      }).then((mongooseDoc) => mongooseDoc.toObject())
+        }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 

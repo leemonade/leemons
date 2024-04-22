@@ -276,7 +276,7 @@ const SubjectForm = ({
                       error={fieldState.error?.message}
                       required
                       sx={{ width: 232 }}
-                      disabled={isEditing}
+                      disabled={isEditing && subject?.internalId}
                     />
                   )}
                 />

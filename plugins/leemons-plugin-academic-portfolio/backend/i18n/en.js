@@ -564,8 +564,9 @@ module.exports = {
         duplicate: 'Subject duplicated successfully.',
       },
       failure: {
-        add: 'The Subject could not be created. ',
-        update: 'The Subject could not be updated. ',
+        add: 'The Subject could not be created',
+        internalIdInUse: 'The entered unique ID is already in use.',
+        update: 'The Subject could not be updated',
         delete: 'The Subject could not be deleted. ',
         duplicate: 'The Subject could not be duplicated. ',
       },
