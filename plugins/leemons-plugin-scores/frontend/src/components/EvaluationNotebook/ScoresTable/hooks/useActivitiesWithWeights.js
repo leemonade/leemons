@@ -62,7 +62,7 @@ function getActivitiesWeightsWithSameValue({ activities }) {
 
   return activities.map((activity) => ({
     ...activity,
-    weight: activity.isEvaluable ? weightPerActivity : 0 ?? 0,
+    weight: (activity.isEvaluable ? weightPerActivity : 0) ?? 0,
   }));
 }
 
