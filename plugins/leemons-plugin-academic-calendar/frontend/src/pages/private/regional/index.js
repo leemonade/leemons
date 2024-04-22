@@ -3,19 +3,18 @@ import { listRegionalConfigsRequest } from '@academic-calendar/request';
 import {
   Box,
   Button,
-  Col,
   ContextContainer,
   createStyles,
-  Grid,
   PageContainer,
-  Paper,
   Drawer,
   TotalLayoutStepContainer,
   TotalLayoutContainer,
   TotalLayoutHeader,
   Stack,
+  Table,
+  ActionButton,
 } from '@bubbles-ui/components';
-import { PluginCalendarIcon } from '@bubbles-ui/icons/outline';
+import { DeleteBinIcon, EditIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore } from '@common';
@@ -23,7 +22,7 @@ import { saveRegionalConfig } from '@academic-calendar/request/regional-config';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { useForm } from 'react-hook-form';
 import { getCentersWithToken } from '@users/session';
@@ -105,7 +104,6 @@ export default function RegionalCalendars() {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const scrollRef = React.useRef(null);
   const { classes, cx } = useStyle();
-  const [showCentersSelect, setShowCentersSelect] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [userCenters, setUserCenters] = useState();
   const [selectedCenter, setSelectedCenter] = useState();
@@ -119,7 +117,7 @@ export default function RegionalCalendars() {
   });
 
   async function loadRegionalConfigs() {
-    const { regionalConfigs } = await listRegionalConfigsRequest(store.center.id);
+    const { regionalConfigs } = await listRegionalConfigsRequest(store?.center?.id);
     store.regionalConfigs = regionalConfigs;
     render();
   }
@@ -140,10 +138,6 @@ export default function RegionalCalendars() {
     const centers = getCentersWithToken();
     setUserCenters(centers);
     handleOnSelectCenter(centers[0]);
-
-    if (centers.length > 1) {
-      setShowCentersSelect(true);
-    }
   }, []);
 
   const form = useForm();
@@ -171,6 +165,50 @@ export default function RegionalCalendars() {
     })();
   }
 
+  const colums = useMemo(
+    () => [
+      {
+        Header: '',
+        accessor: 'name',
+      },
+      {
+        Header: '',
+        accessor: 'actions',
+        cellStyle: { justifyContent: 'end' },
+      },
+    ],
+    []
+  );
+
+  const data = useMemo(
+    () =>
+      store.regionalConfigs?.map((config) => ({
+        ...config,
+        actions: (
+          <Stack justifyContent="end" alignItems="center">
+            <Box>
+              <ActionButton
+                icon={<EditIcon />}
+                onClick={() => {
+                  store.selectedConfig = config;
+                  setIsDrawerOpen(true);
+                  render();
+                }}
+              />
+            </Box>
+            <Box>
+              <ActionButton
+                // disabled={grade.inUse}
+                icon={<DeleteBinIcon />}
+                onClick={() => console.log('delete!')}
+              />
+            </Box>
+          </Stack>
+        ),
+      })),
+    [store.regionalConfigs]
+  );
+
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
@@ -181,13 +219,11 @@ export default function RegionalCalendars() {
           scrollRef={scrollRef}
           cancelable={false}
         >
-          {showCentersSelect && (
-            <SelectCenter
-              firstSelected
-              onChange={(v) => handleOnSelectCenter(userCenters.find((c) => c.id === v))}
-              value={selectedCenter.id}
-            />
-          )}
+          <SelectCenter
+            firstSelected
+            onChange={(v) => handleOnSelectCenter(userCenters?.find((c) => c.id === v))}
+            value={selectedCenter?.id}
+          />
         </TotalLayoutHeader>
       }
     >
@@ -208,64 +244,32 @@ export default function RegionalCalendars() {
             fullWidth
           >
             <PageContainer noFlex fullWidth className={classes.pageContainer}>
-              <Grid>
-                {/* TREE ----------------------------------------- */}
-                <Col span={4}>
-                  <Box>
-                    <ContextContainer divided>
-                      {store.center ? (
-                        <Box>
-                          <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                            {store.regionalConfigs?.length >= 1 ? (
-                              <>
-                                {store.regionalConfigs?.map((config) => (
-                                  <Box
-                                    key={config.id}
-                                    className={cx(
-                                      classes.configItem,
-                                      config.id === store.selectedConfig?.id &&
-                                        classes.configItemActive
-                                    )}
-                                    onClick={() => {
-                                      store.selectedConfig = config;
-                                      setIsDrawerOpen(true);
-                                      render();
-                                    }}
-                                  >
-                                    <PluginCalendarIcon width={16} height={16} />
-                                    <Box className={classes.configItemName}>{config.name}</Box>
-                                  </Box>
-                                ))}
-
-                                {!(
-                                  deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >=
-                                  0
-                                ) ? (
-                                  <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                                    <Button
-                                      onClick={addNewRegionalCalendar}
-                                      leftIcon={<AddCircleIcon />}
-                                      variant="link"
-                                    >
-                                      {t('addRegionalCalendar')}
-                                    </Button>
-                                  </Box>
-                                ) : null}
-                              </>
-                            ) : null}
-
-                            {store.regionalConfigs?.length <= 0 ? (
-                              <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
-                            ) : null}
-                          </Box>
+              <Box>
+                <ContextContainer divided>
+                  {store.center ? (
+                    <Box>
+                      {!(deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0) ? (
+                        <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
+                          <Button
+                            onClick={addNewRegionalCalendar}
+                            leftIcon={<AddCircleIcon />}
+                            variant="link"
+                          >
+                            {t('addRegionalCalendar')}
+                          </Button>
                         </Box>
                       ) : null}
-                    </ContextContainer>
-                  </Box>
-                </Col>
-                {/* CONTENT ----------------------------------------- */}
-                <Col span={8}></Col>
-              </Grid>
+                      <Box sx={(theme) => ({ marginTop: theme.spacing[3], width: '50%' })}>
+                        <Table columns={colums} data={data} />
+                        {store.regionalConfigs?.length <= 0 ? (
+                          <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
+                        ) : null}
+                      </Box>
+                    </Box>
+                  ) : null}
+                </ContextContainer>
+              </Box>
+              {/* CONTENT ----------------------------------------- */}
               <Drawer size="xl" opened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
                 <Drawer.Header
                   title={!store.selectedConfig?.id ? t('newRegionalCalendar') : t('edit')}
@@ -286,7 +290,7 @@ export default function RegionalCalendars() {
                   <Box className={classes.actionButtonsContainer}>
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="link"
                       compact
                       onClick={() => setIsDrawerOpen(false)}
                     >

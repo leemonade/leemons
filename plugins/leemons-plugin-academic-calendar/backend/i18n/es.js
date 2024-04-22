@@ -49,6 +49,7 @@ module.exports = {
       'Si estos días son específicos de un programa concreto y no de una zona geográfica, te aconsejamos incluirlos en el calendario de programa en vez de en el calendario regional.',
     name: 'Nombre',
     nameRequired: 'Nombre necesario',
+    nameHolidayPlaceholder: 'Nombre de la festividad...',
     init: 'Inicio',
     end: 'Final',
     add: 'Añadir',
@@ -60,7 +61,8 @@ module.exports = {
     saved: 'Guardado',
     newRegionalCalendar: 'Nuevo calendario regional',
     requiredField: 'Campo necesario',
-    emptyCalendar: 'Todavía no has creado ningún programa',
+    emptyCalendar: 'Todavía no has creado ningún calendario regional',
+    calendarNamePlaceholder: 'Nombre del calendario...',
   },
   programList: {
     tableAdd: 'Añadir descanso',
