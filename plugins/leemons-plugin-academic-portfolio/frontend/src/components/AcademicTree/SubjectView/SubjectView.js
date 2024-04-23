@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
 import {
-  LoadingOverlay,
   TotalLayoutStepContainer,
   Tabs,
   TabPanel,
@@ -25,14 +24,14 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [activeTab, setActiveTab] = useState('0');
   const [dirtyForm, setDirtyForm] = useState(false);
-  const { data: subjectDetails, isLoading } = useSubjectDetails(
+  const { data: subjectDetails } = useSubjectDetails(
     subjectTreeNode?.itemId ?? subjectTreeNode?.id,
     {
       enabled: subjectTreeNode?.id?.length > 0 || subjectTreeNode,
     },
     true
   );
-  const { mutate: mutateClass } = useUpdateClass();
+  const { mutate: mutateClass, isLoading: isMutatingClass } = useUpdateClass();
   const updateForm = useForm();
   const stackRef = useRef();
 
@@ -128,7 +127,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           fixed
           rectRef={stackRef}
           rightZone={
-            <Button disabled={!dirtyForm} onClick={handleSaveChanges}>
+            <Button disabled={!dirtyForm} onClick={handleSaveChanges} loading={isMutatingClass}>
               {t('saveChanges')}
             </Button>
           }
@@ -136,7 +135,6 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
       }
     >
       <Box ref={stackRef}>
-        <LoadingOverlay visible={isLoading} />
         <Tabs
           tabPanelListStyle={{ backgroundColor: 'white' }}
           fullHeight

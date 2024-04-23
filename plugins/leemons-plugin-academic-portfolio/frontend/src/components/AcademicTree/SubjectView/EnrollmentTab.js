@@ -10,6 +10,7 @@ import {
   ActionButton,
   TextInput,
   Stack,
+  Loader,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 
@@ -35,9 +36,12 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   const [address, setAddress] = useState(null);
   const [schedule, setSchedule] = useState(null);
   const { mutate: removeStudentFromClass } = useRemoveStudentFromClass();
-  const { data: userAgentsInfo } = useUserAgentsInfo(classData?.students || [], {
-    enabled: classData?.students?.length > 0,
-  });
+  const { data: userAgentsInfo, isLoading: userAgentsInfoLoading } = useUserAgentsInfo(
+    classData?.students || [],
+    {
+      enabled: classData?.students?.length > 0,
+    }
+  );
 
   useEffect(() => {
     const getTeacherProfile = async () => {
@@ -145,6 +149,14 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
     return null;
   }, [selectedTeacher, teacherProfile, center, t]);
 
+  if (!TeacherSelect || !classData) {
+    return (
+      <Stack fullHeight>
+        <Loader padded={true} />
+      </Stack>
+    );
+  }
+
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
@@ -203,7 +215,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
           </Button>
         </Box>
         {classData?.students?.length > 0 && (
-          <StudentsTable data={studentsTableData} showSearchBar />
+          <StudentsTable data={studentsTableData} showSearchBar isLoading={userAgentsInfoLoading} />
         )}
       </ContextContainer>
     </ContextContainer>
