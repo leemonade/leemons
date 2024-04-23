@@ -42,7 +42,7 @@ const saveConfigSchema = {
     },
   },
   required: ['program', 'courseDates'],
-  additionalProperties: false,
+  additionalProperties: true,
 };
 
 function validateSaveConfig(data) {
