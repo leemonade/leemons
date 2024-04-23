@@ -8,7 +8,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { EvaluationDetailStyles } from '../styles';
 
-const Scales = ({ selectData, form, onBeforeRemove }) => {
+const Scales = ({ selectData, form, onBeforeRemove, inUse }) => {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const { control, watch, getValues, setValue } = form;
   const [newScale, setNewScale] = useState({ letter: '', number: null, description: '' });
@@ -138,6 +138,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
               onChange={(e) => setNewScale({ ...newScale, letter: e })}
               placeholder={t('letterLabel')}
               maxLength={2}
+              disabled={inUse}
               required
             />
           )}
@@ -147,6 +148,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
             onChange={(value) => setNewScale({ ...newScale, number: value })}
             placeholder={isPercentage ? t('percentageLabel') : t('numberLabel')}
             customDesign
+            disabled={inUse}
             precision={3}
             step={1}
             min={0}
@@ -157,6 +159,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
             <TextInput
               label={t('scalesDescriptionLabel')}
               value={newScale.description}
+              disabled={inUse}
               onChange={(e) => setNewScale({ ...newScale, description: e })}
               placeholder={t('scalesDescriptionLabel')}
               required
@@ -187,6 +190,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
               onChange={(e1, e2) => onChange(e1, e2, field)}
               data={field.value}
               showHeaders={false}
+              disabled={inUse}
               onBeforeRemove={_onBeforeRemove}
               {...tableInputConfig}
             />

@@ -6,7 +6,7 @@ import { map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 
-const MinScaleToPromote = ({ form }) => {
+const MinScaleToPromote = ({ form, inUse }) => {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const { watch, control } = form;
 
@@ -33,6 +33,7 @@ const MinScaleToPromote = ({ form }) => {
           placeholder={t('minSacleToPromotePlaceholder')}
           error={error ? t('errorTypeRequired') : null}
           required
+          disabled={inUse}
           {...field}
         />
       )}
@@ -42,6 +43,7 @@ const MinScaleToPromote = ({ form }) => {
 
 MinScaleToPromote.propTypes = {
   form: PropTypes.object.isRequired,
+  inUse: PropTypes.bool,
 };
 
 export { MinScaleToPromote };
