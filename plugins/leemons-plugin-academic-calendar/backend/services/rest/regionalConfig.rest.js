@@ -8,8 +8,11 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const { getConfig, saveConfig } = require('../../core/config');
-const { listRegionalConfigs, saveRegionalConfig } = require('../../core/regional-config');
+const {
+  listRegionalConfigs,
+  saveRegionalConfig,
+  deleteRegionalConfig,
+} = require('../../core/regional-config');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -36,6 +39,32 @@ module.exports = {
       return {
         status: 200,
         regionalConfigs,
+      };
+    },
+  },
+  deleteRest: {
+    rest: {
+      method: 'DELETE',
+      path: '/:id',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-calendar.config': {
+            actions: ['admin', 'delete'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const result = await deleteRegionalConfig({
+        id: ctx.params.id,
+        ctx,
+      });
+      return {
+        status: 200,
+        result,
       };
     },
   },
