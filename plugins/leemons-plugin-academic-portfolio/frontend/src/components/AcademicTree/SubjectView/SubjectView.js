@@ -28,6 +28,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     subjectTreeNode?.itemId ?? subjectTreeNode?.id,
     {
       enabled: subjectTreeNode?.id?.length > 0 || subjectTreeNode,
+      refetchOnWindowFocus: false,
     },
     true
   );

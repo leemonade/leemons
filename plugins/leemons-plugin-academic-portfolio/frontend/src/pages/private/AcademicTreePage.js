@@ -33,7 +33,9 @@ const AcademicTreePage = () => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
     useState(null);
-  const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
+  const { data: userCenters, isLoading: areCentersLoading } = useUserCenters({
+    refetchOnWindowFocus: false,
+  });
   const scrollRef = useRef();
   const history = useHistory();
   const viewRef = useRef();

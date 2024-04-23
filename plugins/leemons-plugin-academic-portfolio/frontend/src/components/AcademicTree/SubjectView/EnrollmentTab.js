@@ -63,6 +63,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
         schedule: { days: classData.schedule ?? [] },
         id: classData.id,
       };
+
       setSelectedTeacher(formValues.mainTeacher ?? null);
       setAddress(formValues.address ?? null);
       setVirtualUrl(formValues.virtualUrl ?? null);
