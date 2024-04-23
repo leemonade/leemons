@@ -73,8 +73,11 @@ const AcademicTreePage = () => {
   });
 
   const isLoading = useMemo(
-    () => areCentersLoading || areCenterProgramsLoading || isAcademicTreeLoading,
-    [areCenterProgramsLoading, isAcademicTreeLoading]
+    () =>
+      areCentersLoading ||
+      areCenterProgramsLoading ||
+      (selectedProgram?.length && isAcademicTreeLoading),
+    [areCenterProgramsLoading, areCentersLoading, isAcademicTreeLoading, selectedProgram]
   );
 
   const generateGUID = () => uuidv4();
