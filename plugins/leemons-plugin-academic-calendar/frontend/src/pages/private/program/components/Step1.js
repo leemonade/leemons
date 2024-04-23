@@ -1,12 +1,22 @@
 import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { Box, Button, ContextContainer, Select, Stack, Text, Title } from '@bubbles-ui/components';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  Select,
+  Stack,
+  Text,
+  Title,
+  Switch,
+} from '@bubbles-ui/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useStore } from '@common';
 import { Controller, useForm } from 'react-hook-form';
+import FooterContainer from './FooterContainer';
 
-export default function Step1({ regionalConfigs, program, config, onChange, t }) {
+export default function Step1({ regionalConfigs, program, config, onChange, t, scrollRef }) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store] = useStore({
     dayWeeks: {
@@ -42,49 +52,70 @@ export default function Step1({ regionalConfigs, program, config, onChange, t })
   if (!program) return null;
 
   return (
-    <ContextContainer divided>
+    <>
       <ContextContainer>
-        <Title order={2}>{t('basicData')}</Title>
-        {program.centers[0].timezone ? (
-          <Box>
-            <Text role="productive" strong size="md" color="primary">
-              {t('hourZone')}
-            </Text>
-            <Text role="productive" size="md" color="primary">
-              {program.centers[0].timezone}
-            </Text>
-          </Box>
-        ) : null}
-        {program.centers[0].firstDayOfWeek ? (
-          <Box>
-            <Text role="productive" strong size="md" color="primary">
-              {t('firstDayOfWeek')}
-            </Text>
-            <Text role="productive" size="md" color="primary">
-              {store.dayWeeks[program.centers[0].firstDayOfWeek]}
-            </Text>
-          </Box>
-        ) : null}
-
-        <Controller
-          control={control}
-          name="regionalConfig"
-          render={({ field }) => (
-            <Select
-              {...field}
-              data={regionalConfigsOptions}
-              clearable
-              placeholder={t('selectCalendar')}
-              label={t('baseRegionalCalendar')}
-              autoSelectOneOption
+        <ContextContainer>
+          <Title order={2}>{t('regionalConfig')}</Title>
+          {program.centers[0].timezone ? (
+            <Box>
+              <Text role="productive" strong size="md" color="primary">
+                {t('hourZone')}
+              </Text>
+              <Text role="productive" size="md" color="primary">
+                {program.centers[0].timezone}
+              </Text>
+            </Box>
+          ) : null}
+          {program.centers[0].firstDayOfWeek ? (
+            <Box>
+              <Text role="productive" strong size="md" color="primary">
+                {t('firstDayOfWeek')}
+              </Text>
+              <Text role="productive" size="md" color="primary">
+                {store.dayWeeks[program.centers[0].firstDayOfWeek]}
+              </Text>
+            </Box>
+          ) : null}
+          <Box style={{ width: '50%' }}>
+            <Controller
+              control={control}
+              name="regionalConfig"
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  data={regionalConfigsOptions}
+                  clearable
+                  placeholder={t('selectCalendar')}
+                  label={t('baseRegionalCalendar')}
+                  autoSelectOneOption
+                />
+              )}
             />
-          )}
-        />
+          </Box>
+        </ContextContainer>
+        <Box
+          sx={() => ({
+            marginTop: 40,
+          })}
+        >
+          <ContextContainer>
+            <Title order={2}>{t('coursesConfig')}</Title>
+            <Controller
+              name="allCoursesHaveSameDates"
+              control={control}
+              render={({ field }) => (
+                <Switch {...field} checked={field.value} label={t('allCoursesShareTheSameDates')} />
+              )}
+            />
+          </ContextContainer>
+        </Box>
       </ContextContainer>
-      <Stack fullWidth justifyContent="end">
-        <Button onClick={send}>{t('continueButton')}</Button>
-      </Stack>
-    </ContextContainer>
+      <FooterContainer scrollRef={scrollRef}>
+        <Stack fullWidth justifyContent="end">
+          <Button onClick={send}>{t('continueButton')}</Button>
+        </Stack>
+      </FooterContainer>
+    </>
   );
 }
 
@@ -93,4 +124,5 @@ Step1.propTypes = {
   program: PropTypes.any,
   config: PropTypes.any,
   t: PropTypes.func,
+  onChange: PropTypes.func,
 };

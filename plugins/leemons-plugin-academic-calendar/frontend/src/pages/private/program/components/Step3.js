@@ -11,7 +11,6 @@ import {
   TabPanel,
   Tabs,
   IconButton,
-  Title,
 } from '@bubbles-ui/components';
 import { useLocale, useStore } from '@common';
 import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
@@ -21,15 +20,24 @@ import { saveConfig } from '@academic-calendar/request/config';
 import CalendarKey from '@academic-calendar/components/CalendarKey';
 import ReactToPrint from 'react-to-print';
 import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+import FooterContainer from './FooterContainer';
 
-export default function Step3({ regionalConfigs, program, config, onPrev, onSave, t }) {
+export default function Step3({
+  regionalConfigs,
+  program,
+  config,
+  onPrev,
+  onSave,
+  t,
+  scrollRef,
+  calendarRef,
+}) {
   const locale = useLocale();
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [processCalendarConfigForBigCalendar] = useProcessCalendarConfigForBigCalendar();
   const [store, render] = useStore({
     saving: false,
   });
-  const calendarRef = useRef();
 
   const coursesForDates = config.allCoursesHaveSameDates ? [program?.courses[0]] : program?.courses;
 
@@ -55,20 +63,6 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
   return (
     <ContextContainer divided>
       <ContextContainer>
-        <Stack justifyContent="space-between" alignItems="center" style={{ marginInline: 8 }}>
-          <Title order={1}>{program.name}</Title>
-          <ReactToPrint
-            trigger={() => (
-              <IconButton
-                icon={<DownloadIcon height={16} width={16} />}
-                color="primary"
-                rounded
-                label={t('downloadCalendar')}
-              />
-            )}
-            content={() => calendarRef.current}
-          />
-        </Stack>
         <Tabs forceRender>
           {coursesForDates.map((course) => {
             const bigCalendarConf = processCalendarConfigForBigCalendar(
@@ -110,22 +104,34 @@ export default function Step3({ regionalConfigs, program, config, onPrev, onSave
           })}
         </Tabs>
       </ContextContainer>
-      <Stack justifyContent="space-between">
-        <Button
-          disabled={store.saving}
-          onClick={() => {
-            onPrev({});
-          }}
-          compact
-          variant="light"
-          leftIcon={<ChevLeftIcon height={20} width={20} />}
-        >
-          {t('previous')}
-        </Button>
-        <Button loading={store.saving} onClick={submit}>
-          {t('saveButton')}
-        </Button>
-      </Stack>
+      <FooterContainer scrollRef={scrollRef}>
+        <Stack justifyContent="space-between" fullWidth>
+          <Button
+            disabled={store.saving}
+            onClick={() => {
+              onPrev({});
+            }}
+            compact
+            variant="outline"
+            leftIcon={<ChevLeftIcon height={20} width={20} />}
+          >
+            {t('previous')}
+          </Button>
+          <Stack spacing={4}>
+            <ReactToPrint
+              trigger={() => (
+                <Button leftIcon={<DownloadIcon height={16} width={16} />} variant="outline">
+                  {t('downloadPDF')}
+                </Button>
+              )}
+              content={() => calendarRef.current}
+            />
+            <Button loading={store.saving} onClick={submit}>
+              {t('finishLabel')}
+            </Button>
+          </Stack>
+        </Stack>
+      </FooterContainer>
     </ContextContainer>
   );
 }
@@ -137,4 +143,6 @@ Step3.propTypes = {
   onPrev: PropTypes.func,
   onSave: PropTypes.func,
   t: PropTypes.func,
+  scrollRef: PropTypes.any,
+  calendarRef: PropTypes.any,
 };

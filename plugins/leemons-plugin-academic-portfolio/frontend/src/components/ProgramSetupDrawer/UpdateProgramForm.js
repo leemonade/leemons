@@ -322,10 +322,10 @@ const UpdateProgramForm = ({
                         ...crs,
                         seats: crs.metadata?.seats,
                         amountOfGroups: program?.groups?.filter(
-                          (group) => group?.metadata.course === crs.index
+                          (group) => group?.metadata?.course === crs.index
                         ).length,
                         groups: program?.groups
-                          ?.filter((group) => group?.metadata.course === crs.index)
+                          ?.filter((group) => group?.metadata?.course === crs.index)
                           .map((group) => group.name)
                           .sort()
                           .join(', '),

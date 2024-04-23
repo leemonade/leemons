@@ -11,4 +11,5 @@ export { default as useGroupDetail } from './useGroupDetail';
 export { default as useMutateGroup } from './mutations/useMutateGroup';
 export { default as useCourseDetail } from './useCourseDetail';
 export { default as useGetKnowledgeArea } from './useGetKnowledgeArea';
+export { default as useProgramsList } from './useProgramsList';
 export * from './academicProfiles';
