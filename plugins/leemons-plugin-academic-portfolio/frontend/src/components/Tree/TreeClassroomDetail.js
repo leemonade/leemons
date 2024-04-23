@@ -95,9 +95,7 @@ const TreeClassroomDetail = ({
     control,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm({ defaultValues: classForForm() });
-  console.log(getValues());
 
   React.useEffect(() => {
     reset(classForForm());

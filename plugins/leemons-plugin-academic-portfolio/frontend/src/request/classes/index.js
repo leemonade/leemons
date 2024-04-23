@@ -178,6 +178,29 @@ async function classByIds(classIds) {
   });
 }
 
+/**
+ * Retrieves user enrollments, including programs with detailed subjects and classes.
+ * For each class, it adds information about the user's enrollment type (student or teacher)
+ * and, if a contact user agent ID is provided, the enrollment type of the contact in shared classes.
+ *
+ * @param {Object} params - The parameters for fetching user enrollments.
+ * @param {string[]} params.userAgentIds - The user agent IDs for which to fetch enrollments (they must belong to the same user).
+ * @param {string} params.centerId - The center ID to filter the programs by.
+ * @param {string} [params.contactUserAgentId=''] - Optional. The contact user agent ID to find shared class enrollments.
+ * @returns {Promise<Object[]>} A promise that resolves to an array of program objects. Each program object includes
+ *                              detailed subjects, and each subject includes detailed classes. Classes contain additional
+ *                              properties `enrollmentType` to indicate the user's relation to the class (student or teacher)
+ *                              and `sharedWithContactWhereContactIs` (if applicable) to indicate the contact's enrollment type
+ *                              in shared classes.
+ */
+async function userEnrollments({ centerId, userAgentIds, contactUserAgentId }) {
+  return leemons.api('v1/academic-portfolio/classes/user-enrollments', {
+    allAgents: true,
+    method: 'POST',
+    body: { centerId, userAgentIds, contactUserAgentId },
+  });
+}
+
 export {
   haveClasses,
   listClasses,
@@ -195,4 +218,5 @@ export {
   removeStudentFromClass,
   classDetailForDashboard,
   classByIds,
+  userEnrollments,
 };

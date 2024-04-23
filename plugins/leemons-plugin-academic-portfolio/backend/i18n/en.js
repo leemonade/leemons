@@ -998,6 +998,8 @@ module.exports = {
 
   common: {
     defaultGroupName: 'Default group',
+    enrollments: 'Enrollments',
+    sharedEnrollments: 'With you in class at',
   },
   classroomPicker: {
     and: 'and',

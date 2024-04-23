@@ -230,7 +230,7 @@ const SetupCourses = ({
                         '{n}',
                         maxSubstageAbbreviation
                       )
-                    : 'Maximum ' + maxSubstageAbbreviation + ' characters';
+                    : `Maximum ${maxSubstageAbbreviation} characters`;
                 }
               },
             }}
@@ -426,22 +426,20 @@ const SetupCourses = ({
               <Controller
                 control={control}
                 name="cycles"
-                render={({ field }) => {
-                  return (
-                    <TableInput
-                      {...tableConfig}
-                      {...field}
-                      disabled={!editable}
-                      onChange={(e) => {
-                        if (editable) field.onChange(e);
-                      }}
-                      data={field.value}
-                      editable={false}
-                      resetOnAdd
-                      sortable={false}
-                    />
-                  );
-                }}
+                render={({ field }) => (
+                  <TableInput
+                    {...tableConfig}
+                    {...field}
+                    disabled={!editable}
+                    onChange={(e) => {
+                      if (editable) field.onChange(e);
+                    }}
+                    data={field.value}
+                    editable={false}
+                    resetOnAdd
+                    sortable={false}
+                  />
+                )}
               />
             )}
           </ContextContainer>
@@ -545,7 +543,6 @@ const SetupCourses = ({
                             min={2}
                             label={labels.maxSubstageAbbreviation}
                             onChange={(e) => {
-                              console.log(e);
                               onChange(e);
                               setMaxSubstageAbbreviation(e);
                             }}
