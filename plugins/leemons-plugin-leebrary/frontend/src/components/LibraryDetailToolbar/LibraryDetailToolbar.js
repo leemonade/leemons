@@ -118,14 +118,6 @@ const LibraryDetailToolbar = ({
     <Box className={classes.root} data-cypress-id="library-detail-toolbar">
       <Stack className={classes.buttons}>
         <Box className={classes.leftContainer}>
-          {/* {toolbarItems.assign && (
-            <ActionButton
-              icon={<ViewOnIcon height={20} width={20} />}
-              onClick={handleView}
-              tooltip={toolbarItems.view}
-              className={classes.button}
-            />
-          )} */}
           {toolbarItems.assign && (
             <ActionButton
               icon={<AssignIcon height={20} width={20} />}
@@ -195,9 +187,11 @@ const LibraryDetailToolbar = ({
             />
           )}
         </Box>
+        {/* 
         <Box className={classes.rightContainer}>
           <ActionButton icon={<SettingMenuVerticalIcon height={16} width={16} />} />
         </Box>
+        */}
         <ActionButton icon={<RemoveIcon height={18} width={18} />} onClick={onCloseDrawer} />
       </Stack>
     </Box>

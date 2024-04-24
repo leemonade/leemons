@@ -1,19 +1,20 @@
 /* eslint-disable no-param-reassign */
 import { classByIdsRequest, detailProgramRequest } from '@academic-portfolio/request';
 import {
-  Alert,
   Box,
-  Button,
-  ContextContainer,
-  Paper,
-  Select,
-  Stack,
-  TabPanel,
   Tabs,
-  Table,
   Text,
+  Alert,
+  Paper,
+  Title,
+  Stack,
+  Table,
+  Button,
+  Select,
+  TabPanel,
+  ActionButton,
+  ContextContainer,
 } from '@bubbles-ui/components';
-import { LibraryItem } from '@leebrary/components/LibraryItem';
 import { unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -25,6 +26,7 @@ import _, { isArray, isEmpty, isFunction, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../request';
@@ -34,34 +36,35 @@ import { PermissionsDataProfiles } from './components/PermissionsDataProfiles';
 import { PermissionsDataPrograms } from './components/PermissionsDataPrograms';
 import { PermissionsDataUsers } from './components/PermissionsDataUsers';
 import { PermissionsDataStyles } from './PermissionsData.styles';
+import { LibraryCardEmbed } from '../LibraryCardEmbed';
 
-const ROLESBYROLE = {
+const ROLES_BY_ROLE = {
   viewer: [
-    { label: 'Owner', value: 'owner', disabled: true },
+    // { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer', disabled: true },
-    { label: 'Assigner', value: 'assigner', disabled: true },
-    { label: 'Editor', value: 'editor', disabled: true },
+    // { label: 'Assigner', value: 'assigner', disabled: true },
+    // { label: 'Editor', value: 'editor', disabled: true },
     // { label: 'Commentor', value: 'commentor' },
   ],
   editor: [
-    { label: 'Owner', value: 'owner', disabled: true },
+    // { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer' },
-    { label: 'Assigner', value: 'assigner' },
-    { label: 'Editor', value: 'editor' },
+    // { label: 'Assigner', value: 'assigner' },
+    // { label: 'Editor', value: 'editor', disabled: true },
     // { label: 'Commentor', value: 'commentor' },
   ],
   assigner: [
-    { label: 'Owner', value: 'owner', disabled: true },
+    // { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer', disabled: true },
-    { label: 'Assigner', value: 'assigner', disabled: true },
-    { label: 'Editor', value: 'editor', disabled: true },
+    // { label: 'Assigner', value: 'assigner', disabled: true },
+    // { label: 'Editor', value: 'editor', disabled: true },
     // { label: 'Commentor', value: 'commentor' },
   ],
   owner: [
-    { label: 'Owner', value: 'owner' },
+    // { label: 'Owner', value: 'owner', disabled: true },
     { label: 'Viewer', value: 'viewer' },
-    { label: 'Editor', value: 'editor' },
-    { label: 'Assigner', value: 'assigner' },
+    // { label: 'Editor', value: 'editor', disabled: true },
+    // { label: 'Assigner', value: 'assigner' },
     // { label: 'Commentor', value: 'commentor' },
   ],
 };
@@ -69,18 +72,17 @@ const ROLESBYROLE = {
 const PermissionsData = ({
   asset: assetProp,
   sharing,
-  onNext = () => {},
-  onSavePermissions,
   isDrawer,
+  onSavePermissions,
   drawerTranslations,
+  onNext = () => {},
   onClose = () => {},
 }) => {
   const [asset, setAsset] = useState(assetProp);
   const [roles, setRoles] = useState([]);
   const { openConfirmationModal } = useLayout();
-  const [t, translations] = isDrawer
-    ? drawerTranslations
-    : useTranslateLoader(prefixPN('assetSetup'));
+  const setupTranslations = useTranslateLoader(prefixPN('assetSetup'));
+  const [t, translations] = isDrawer ? drawerTranslations : setupTranslations;
   const [store, render] = useStore({ centers: [] });
   const [loading, setLoading] = useState(false);
   const [usersData, setUsersData] = useState([]);
@@ -363,7 +365,7 @@ const PermissionsData = ({
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
       const { roleLabels } = items.leebrary.assetSetup;
-      const ROLES = ROLESBYROLE[asset?.role || 'owner'];
+      const ROLES = ROLES_BY_ROLE[asset?.role || 'owner'];
       ROLES.forEach((rol, index) => {
         ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;
       });
@@ -443,14 +445,26 @@ const PermissionsData = ({
 
   return (
     <Box>
-      <Box className={classesStyles.header}>
-        <Text className={classesStyles.title}>{t('permissionsData.header.stepLabel')}</Text>
-      </Box>
+      <Stack
+        justifyContent="space-between"
+        alignItems="center"
+        sx={(theme) => ({
+          height: 72,
+          width: '100%',
+          paddingInline: 24,
+          borderBottom: `1px solid ${theme.other.divider.background.color.default}}`,
+        })}
+      >
+        <Box>
+          <Title order={2}>{t('permissionsData.header.stepLabel')}</Title>
+        </Box>
+        <ActionButton tooltip={t('header.close')} icon={<RemoveIcon />} onClick={onClose} />
+      </Stack>
       {!isEmpty(asset) && (
         <ContextContainer className={classesStyles.contentContainer}>
           <Text className={classesStyles.titleItem}>{t('permissionsData.header.libraryItem')}</Text>
           <Paper bordered padding={1} shadow="none" className={classesStyles.libraryItem}>
-            <LibraryItem asset={asset} />
+            <LibraryCardEmbed asset={asset} hideIcon />
           </Paper>
           <Text className={classesStyles.titleTabs}>
             {t('permissionsData.header.permissionsHeader')}
@@ -554,7 +568,9 @@ const PermissionsData = ({
                   onChange={onChangeShareType}
                 />
 
-                <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
+                <Box
+                  sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[12] })}
+                >
                   {store.shareType === 'centers' ? (
                     <PermissionsDataCenterProgramsProfiles
                       roles={roles}
@@ -628,7 +644,7 @@ const PermissionsData = ({
             </Alert>
           )}
 
-          {false ? (
+          {/* false ? (
             <>
               {isArray(asset?.canAccess) ? (
                 <ContextContainer divided>
@@ -668,7 +684,8 @@ const PermissionsData = ({
                 </Alert>
               )}
             </>
-          ) : null}
+              ) : null */}
+
           <Box className={classesStyles.footer}>
             {activeTab === 'tab1' && (
               <Box className={classesStyles.footerButtons}>

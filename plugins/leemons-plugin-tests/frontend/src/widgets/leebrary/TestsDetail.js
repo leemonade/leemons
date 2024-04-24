@@ -10,6 +10,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import AssetMetadataTest from '@tests/components/AssetMetadataTest/AssetMetadataTest';
+import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
@@ -22,6 +23,7 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const toolbarItems = { toggle: t('toggle'), open: t('open') };
+  const canEdit = useIsOwner(asset);
 
   // ·········································································
   // HANDLERS
@@ -35,7 +37,7 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
-    if (asset.providerData?.published) {
+    if (canEdit && asset.providerData?.published) {
       toolbarItems.assign = t('assign');
     }
     if (asset.duplicable) {
@@ -122,6 +124,7 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
       }}
       metadataComponent={
         <AssetMetadataTest
+          canEdit={canEdit}
           metadata={{
             ...asset,
             metadata,
@@ -135,16 +138,16 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
       titleActionButton={
         asset?.providerData?.published
           ? {
-            icon: <ViewOnIcon height={16} width={16} />,
-            onClick: handleView,
-          }
+              icon: <ViewOnIcon height={16} width={16} />,
+              onClick: handleView,
+            }
           : null
       }
       onEdit={handleEdit}
       onDelete={handleDelete}
       onAssign={handleAssign}
       onDuplicate={handleDuplicate}
-    // onShare={handleOnShare}
+      // onShare={handleOnShare}
     />
   );
 };

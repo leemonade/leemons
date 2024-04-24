@@ -267,6 +267,7 @@ module.exports = {
       const test = await duplicate({
         taskId: ctx.params.id,
         published: ctx.params.published,
+        ignoreSubjects: true,
         ctx,
       });
       return { status: 200, test };
