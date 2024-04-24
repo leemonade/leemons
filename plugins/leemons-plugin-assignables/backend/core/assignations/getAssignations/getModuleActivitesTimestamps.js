@@ -191,14 +191,12 @@ function returnData({
       (activity) => gradesByChildAssignation.get(`instance.${activity}.user.${user}`) ?? []
     );
 
-    const gradeAvg = grades.reduce((avgGrade, { grade }) => avgGrade + grade, 0) / grades.length;
+    const gradesBySubject = groupBy(grades, 'subject');
 
-    gradesData[id] = [
-      {
-        grade: gradeAvg,
-        type: 'main',
-      },
-    ];
+    gradesData[id] = Object.entries(gradesBySubject).map(([subject, subjectGrades]) => {
+      const avg = subjectGrades.reduce((acc, grade) => acc + grade.grade, 0) / subjectGrades.length;
+      return { grade: avg, type: 'main', subject };
+    });
 
     /*
       === Completion ===

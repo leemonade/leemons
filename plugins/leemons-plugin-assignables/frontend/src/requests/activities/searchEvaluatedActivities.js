@@ -9,6 +9,7 @@
 export default async function searchEvaluatedActivities(query) {
   const result = await leemons.api(
     `v1/assignables/activities/search/evaluated?${Object.entries(query)
+      .filter(([, value]) => value)
       .map(([key, value]) => `${key}=${value}`)
       .join('&')}`,
     {
