@@ -1,6 +1,5 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
@@ -12,6 +11,7 @@ import React, { useMemo } from 'react';
 import getNearestScale from '@scorm/helpers/getNearestScale';
 import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
+import useUserAgents from '@users/hooks/useUserAgents';
 import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
 
 function LoadingState() {

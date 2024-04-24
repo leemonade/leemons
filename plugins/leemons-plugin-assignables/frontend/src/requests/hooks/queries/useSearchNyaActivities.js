@@ -1,8 +1,8 @@
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import searchNyaActivities from '@assignables/requests/activities/searchNyaActivities';
+import useUserAgents from '@users/hooks/useUserAgents';
 import { allNyaActivitiesSearchKey, nyaActivitiesSearchKey } from '../keys/nyaActivities';
 
 export default function useSearchNyaActivities(filters, options) {

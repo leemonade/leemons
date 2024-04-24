@@ -1,4 +1,3 @@
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import NYACard from '@assignables/components/NYACard';
 import getClassData from '@assignables/helpers/getClassData';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -36,6 +35,7 @@ import * as _ from 'lodash';
 import { get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useState } from 'react';
+import useUserAgents from '@users/hooks/useUserAgents';
 import { updateEventSubTasksRequest } from '../../request';
 
 const { classByIdsRequest } = require('@academic-portfolio/request');
