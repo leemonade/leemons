@@ -119,7 +119,9 @@ const AcademicTreePage = () => {
         });
       }
     });
-
+    if (trees.length > 0 && trees[0].treeData.length > 0) {
+      setSelectedTreeNode(trees[0].treeData[0]);
+    }
     return trees;
   };
 
