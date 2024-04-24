@@ -223,6 +223,7 @@ module.exports = {
           minCredits: 'Créditos mínimos',
           maxCredits: 'Créditos máximos',
           mustHaveAtLeastTwoCourses: 'Debe tener al menos 2 cursos',
+          numberOfCourses: 'Número de cursos',
         },
         cyclesSetup: {
           cycleName: 'Nombre del ciclo',
@@ -247,7 +248,7 @@ module.exports = {
           digits: 'Dígitos',
           digitsPlaceholder: 'Dígitos...',
           offeredGroups: 'Grupos Ofertados',
-          course: 'Course',
+          course: 'Curso',
           numberOfGroups: 'Nº de grupos',
           nameFormatOptions: {
             alphabetical: 'Letras (A, B, C)',

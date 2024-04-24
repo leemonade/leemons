@@ -130,25 +130,27 @@ const CoursesSetup = ({
           />
         )}
       />
-      <TableInput
-        columns={tableInputColumns}
-        labels={{
-          add: localizations?.labels?.add,
-          remove: localizations?.labels?.remove,
-          edit: localizations?.labels?.edit,
-          accept: localizations?.labels?.accept,
-          cancel: localizations?.labels?.cancel,
-        }}
-        canAdd={false}
-        removable={false}
-        sortable={false}
-        editable={showCredits}
-        unique
-        data={coursesData}
-        onChange={(data) => {
-          onChange(data);
-        }}
-      />
+      {showCredits && (
+        <TableInput
+          columns={tableInputColumns}
+          labels={{
+            add: localizations?.labels?.add,
+            remove: localizations?.labels?.remove,
+            edit: localizations?.labels?.edit,
+            accept: localizations?.labels?.accept,
+            cancel: localizations?.labels?.cancel,
+          }}
+          canAdd={false}
+          removable={false}
+          sortable={false}
+          editable={showCredits}
+          unique
+          data={coursesData}
+          onChange={(data) => {
+            onChange(data);
+          }}
+        />
+      )}
     </ContextContainer>
   );
 };

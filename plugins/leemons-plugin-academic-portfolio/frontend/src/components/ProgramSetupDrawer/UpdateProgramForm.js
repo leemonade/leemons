@@ -280,14 +280,24 @@ const UpdateProgramForm = ({
                     <Title className={classes.sectionTitle}>
                       {formLabels?.temporalStructure?.courses}
                     </Title>
-                    <Table
-                      data={(program?.courses ?? []).map((crs) => ({
-                        ...crs,
-                        minCredits: crs.metadata?.minCredits || '-',
-                        maxCredits: crs.metadata?.maxCredits || '-',
-                      }))}
-                      columns={readOnlyCoursesAndCreditsColumns}
-                    />
+                    {program.credits ? (
+                      <Table
+                        data={(program?.courses ?? []).map((crs) => ({
+                          ...crs,
+                          minCredits: crs.metadata?.minCredits || '-',
+                          maxCredits: crs.metadata?.maxCredits || '-',
+                        }))}
+                        columns={readOnlyCoursesAndCreditsColumns}
+                      />
+                    ) : (
+                      <ReadOnlyField
+                        label={
+                          localizations?.programDrawer?.addProgramForm?.coursesSetup
+                            ?.numberOfCourses
+                        }
+                        value={program?.courses?.length ?? 1}
+                      />
+                    )}
                   </ContextContainer>
                   {program?.cycles?.length > 0 && (
                     <ContextContainer noFlex spacing={4}>
@@ -370,7 +380,8 @@ const UpdateProgramForm = ({
                     label={formLabels?.hideStudentsFromEachOther}
                     disabled
                   />
-                  <Title className={classes.sectionTitle}>{formLabels?.automaticAssignment}</Title>
+                  {/* Auto assignment unabled until this functionality is implemented */}
+                  {/* <Title className={classes.sectionTitle}>{formLabels?.automaticAssignment}</Title>
                   <Controller
                     name="useAutoAssignment"
                     control={control}
@@ -381,7 +392,7 @@ const UpdateProgramForm = ({
                         label={formLabels?.autoAssignmentDescription}
                       />
                     )}
-                  />
+                  /> */}
                 </ContextContainer>
               </ContextContainer>
             </ContextContainer>
