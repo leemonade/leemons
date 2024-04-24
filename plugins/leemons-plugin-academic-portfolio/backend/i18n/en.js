@@ -241,6 +241,7 @@ module.exports = {
           minCredits: 'Minimum credits',
           maxCredits: 'Maximum credits',
           mustHaveAtLeastTwoCourses: 'Must have at least 2 courses',
+          numberOfCourses: 'Number of courses',
         },
         cyclesSetup: {
           cycleName: 'Cycle Name',

@@ -533,7 +533,8 @@ const AddProgramForm = ({
                       )}
                     />
                   </ContextContainer>
-                  <ContextContainer noFlex spacing={4}>
+                  {/* Auto assignment unabled until this functionality is implemented */}
+                  {/* <ContextContainer noFlex spacing={4}>
                     <Title className={classes.sectionTitle}>
                       {formLabels?.automaticAssignment}
                     </Title>
@@ -549,6 +550,7 @@ const AddProgramForm = ({
                       )}
                     />
                   </ContextContainer>
+                   */}
                 </ContextContainer>
               </ContextContainer>
               <FooterContainer scrollRef={scrollRef}>
