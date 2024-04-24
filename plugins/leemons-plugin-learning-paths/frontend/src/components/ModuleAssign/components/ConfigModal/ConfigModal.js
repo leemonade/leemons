@@ -1,33 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box,
-  Alert,
-  BaseDrawer,
-  LoadingOverlay,
-  Title,
-  ActionButton,
-  createStyles,
-  TotalLayoutContainer,
-  Stack,
-} from '@bubbles-ui/components';
+import { Alert, LoadingOverlay, Title, Drawer } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-
-// useLocalizations
-
-export const useConfigModalStyles = createStyles((theme) => {
-  const globalTheme = theme.other.global;
-
-  return {
-    drawerHeader: {
-      ...globalTheme.content.typo.heading.md,
-      flexGrow: 1,
-      paddingLeft: globalTheme.spacing.padding.xlg,
-    },
-  };
-});
 
 export class ConfigModalErrorBoundary extends React.Component {
   constructor(props) {
@@ -69,7 +44,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
     }
 
     return components[role] || null;
-  }, [role]);
+  }, [role, components]);
 
   const rawValue = useWatch({
     name: `${stateKey}.raw`,
@@ -80,65 +55,36 @@ export function ConfigModal({ assignable, components, localizations, activityId,
     setOpened(!!Component);
   }, [Component]);
 
-  const { classes } = useConfigModalStyles();
-
   if (!Component) {
     return <></>;
   }
 
   return (
-    // TRANSLATE
-    <BaseDrawer
-      empty
-      shadow
-      trapFocus
-      withOverlay
-      opened={opened}
-      onClose={onClose}
-      size={728}
-      contentPadding={0}
-      close={false}
-    >
-      <TotalLayoutContainer
-        clean
-        scrollRef={scrollRef}
-        Header={
-          <Stack
-            fullWidth
-            justifyContent="space-between"
-            alignItems="center"
-            style={{
-              padding: `0 16px 0 24px`,
-              height: 70,
-            }}
-          >
-            <Title order={3}>{`${localizations?.steps?.setup?.action}: ${
-              roleLocalizations[role]?.singular || ''
-            }`}</Title>
-            <Box>
-              <ActionButton icon={<RemoveIcon />} onClick={onClose} />
-            </Box>
-          </Stack>
+    <Drawer onClose={onClose} shadow trapFocus withOverlay opened={opened} size="xl">
+      <Drawer.Header
+        title={
+          <Title order={3}>{`${localizations?.steps?.setup?.action}: ${
+            roleLocalizations[role]?.singular || ''
+          }`}</Title>
         }
-      >
-        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
-          <ConfigModalErrorBoundary>
-            <Component
-              fallback={<LoadingOverlay />}
-              scrollRef={scrollRef}
-              assignable={assignable}
-              onClose={onClose}
-              value={rawValue}
-              onSave={({ config, raw }) => {
-                setValue(`${stateKey}.config`, config);
-                setValue(`${stateKey}.raw`, raw);
-                onClose();
-              }}
-            />
-          </ConfigModalErrorBoundary>
-        </Stack>
-      </TotalLayoutContainer>
-    </BaseDrawer>
+      />
+      <Drawer.Content>
+        <ConfigModalErrorBoundary>
+          <Component
+            fallback={<LoadingOverlay />}
+            scrollRef={scrollRef}
+            assignable={assignable}
+            onClose={onClose}
+            value={rawValue}
+            onSave={({ config, raw }) => {
+              setValue(`${stateKey}.config`, config);
+              setValue(`${stateKey}.raw`, raw);
+              onClose();
+            }}
+          />
+        </ConfigModalErrorBoundary>
+      </Drawer.Content>
+    </Drawer>
   );
 }
 
