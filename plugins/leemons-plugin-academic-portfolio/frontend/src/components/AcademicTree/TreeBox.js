@@ -30,7 +30,10 @@ const TreeBox = ({ viewRef, treeStructures, selectedTreeNode, handleNodeClick })
   return (
     <Box style={{ width: 192, position: 'fixed', ...treeBoxStickyStyles }}>
       {treeStructures.map((treeStructure, index) => (
-        <Box key={`${index}-${treeStructure?.header?.name}`}>
+        <Box
+          key={`${index}-${treeStructure?.header?.name}`}
+          style={index > 0 ? { marginTop: 24 } : {}}
+        >
           {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
           <DndProvider backend={MultiBackend} options={getBackendOptions()}>
             <Tree
