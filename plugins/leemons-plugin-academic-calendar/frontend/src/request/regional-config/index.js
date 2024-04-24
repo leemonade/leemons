@@ -15,4 +15,11 @@ async function saveRegionalConfig(body) {
   });
 }
 
-export { listRegionalConfigs, saveRegionalConfig };
+async function deleteRegionalConfig(id) {
+  return leemons.api(`v1/academic-calendar/regionalConfig/${id}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
+export { listRegionalConfigs, saveRegionalConfig, deleteRegionalConfig };

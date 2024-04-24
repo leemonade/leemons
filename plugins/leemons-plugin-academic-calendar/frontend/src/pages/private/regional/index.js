@@ -18,7 +18,10 @@ import { DeleteBinIcon, EditIcon, PluginCalendarIcon } from '@bubbles-ui/icons/o
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useStore } from '@common';
-import { saveRegionalConfig } from '@academic-calendar/request/regional-config';
+import {
+  saveRegionalConfig,
+  deleteRegionalConfig,
+} from '@academic-calendar/request/regional-config';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
@@ -122,10 +125,22 @@ export default function RegionalCalendars() {
     render();
   }
 
+  async function handleOnDeleteRegionalCalendar(id) {
+    try {
+      await deleteRegionalConfig(id);
+      await loadRegionalConfigs();
+      render();
+    } catch (error) {
+      console.error('Error deleting regional config:', error);
+      addErrorAlert(getErrorMessage(error));
+    }
+  }
+
   function handleOnSelectCenter(center) {
     setSelectedCenter(center);
     store.center = center;
     loadRegionalConfigs();
+    render();
   }
 
   function addNewRegionalCalendar() {
@@ -166,20 +181,22 @@ export default function RegionalCalendars() {
   }
 
   const colums = useMemo(
-    () => [
-      {
-        Header: '',
-        accessor: 'name',
-      },
-      {
-        Header: '',
-        accessor: 'actions',
-        cellStyle: { justifyContent: 'end' },
-      },
-    ],
-    []
+    () =>
+      store?.regionalConfigs?.length > 0
+        ? [
+            {
+              Header: '',
+              accessor: 'name',
+            },
+            {
+              Header: '',
+              accessor: 'actions',
+              cellStyle: { justifyContent: 'end' },
+            },
+          ]
+        : [],
+    [store.regionalConfigs]
   );
-
   const data = useMemo(
     () =>
       store.regionalConfigs?.map((config) => ({
@@ -189,6 +206,7 @@ export default function RegionalCalendars() {
             <Box>
               <ActionButton
                 icon={<EditIcon />}
+                disabled={config.currentlyInUse}
                 onClick={() => {
                   store.selectedConfig = config;
                   setIsDrawerOpen(true);
@@ -198,9 +216,9 @@ export default function RegionalCalendars() {
             </Box>
             <Box>
               <ActionButton
-                // disabled={grade.inUse}
+                disabled={config.assignedToAProgram}
                 icon={<DeleteBinIcon />}
-                onClick={() => console.log('delete!')}
+                onClick={() => handleOnDeleteRegionalCalendar(config.id)}
               />
             </Box>
           </Stack>
@@ -245,10 +263,11 @@ export default function RegionalCalendars() {
           >
             <PageContainer noFlex fullWidth className={classes.pageContainer}>
               <Box>
-                <ContextContainer divided>
+                <ContextContainer>
                   {store.center ? (
                     <Box>
-                      {!(deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0) ? (
+                      {!(deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0) &&
+                      store?.regionalConfigs?.length > 0 ? (
                         <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
                           <Button
                             onClick={addNewRegionalCalendar}
