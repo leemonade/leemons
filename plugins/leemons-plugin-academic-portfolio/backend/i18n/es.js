@@ -565,8 +565,9 @@ module.exports = {
         duplicate: 'Asignatura duplicada con éxito.',
       },
       failure: {
-        add: 'No se ha podido crear la Asignatura. ',
-        update: 'No se ha podido actualizar la Asignatura. ',
+        add: 'No se ha podido crear la Asignatura',
+        internalIdInUse: 'The entered unique ID is already in use.',
+        update: 'No se ha podido actualizar la Asignatura',
         delete: 'No se ha podido eliminar la Asignatura. ',
         duplicate: 'No se ha podido duplicar la Asignatura. ',
       },
