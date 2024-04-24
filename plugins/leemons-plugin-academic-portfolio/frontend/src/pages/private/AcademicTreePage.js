@@ -127,7 +127,7 @@ const AcademicTreePage = () => {
 
   const treeStructures = useMemo(
     () => parseAcademicTreeData(academicTreeQuery || []),
-    [academicTreeQuery, t]
+    [academicTreeQuery]
   );
 
   // EFFECTS ····················································································|Ç
@@ -233,13 +233,12 @@ const AcademicTreePage = () => {
   const TreeBoxMemo = useMemo(
     () => (
       <TreeBox
-        viewRef={viewRef}
         treeStructures={treeStructures}
         selectedTreeNode={selectedTreeNode}
         handleNodeClick={handleNodeClick}
       />
     ),
-    [treeStructures, viewRef, selectedTreeNode]
+    [treeStructures, selectedTreeNode]
   );
 
   return (

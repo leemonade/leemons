@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { DndProvider } from 'react-dnd';
 import { Tree, MultiBackend, getBackendOptions } from '@minoru/react-dnd-treeview';
@@ -8,27 +8,41 @@ import { Box } from '@bubbles-ui/components';
 import { NodeRenderer } from './NodeRenderer/NodeRenderer';
 import { TreeHeader } from './TreeHeader/TreeHeader';
 
-const TreeBox = ({ viewRef, treeStructures, selectedTreeNode, handleNodeClick }) => {
-  const [treeBoxStickyStyles, setTreeBoxStickyStyles] = useState({});
+const TreeBox = ({ treeStructures, selectedTreeNode, handleNodeClick }) => {
+  const [openedNodes, setOpenedNodes] = useState(treeStructures.map(() => ({})));
+  const treeRefs = useRef(treeStructures.map(() => React.createRef()));
+
   useEffect(() => {
-    let animationFrameId;
+    setOpenedNodes(treeStructures.map(() => ({})));
+  }, [treeStructures]);
 
-    const updateFooterStyles = () => {
-      const clientRect = viewRef.current?.getBoundingClientRect();
-      setTreeBoxStickyStyles({ left: Math.round(clientRect?.left) - 192 });
+  useEffect(() => {
+    treeRefs.current = treeStructures.map(() => React.createRef());
+  }, [treeStructures]);
 
-      animationFrameId = requestAnimationFrame(updateFooterStyles);
-    };
-
-    animationFrameId = requestAnimationFrame(updateFooterStyles);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [viewRef?.current]);
+  const handleNodeToggle = (treeIndex, nodeId, nodeType, callback) => {
+    const currentOpenedNode = openedNodes[treeIndex]?.[nodeType];
+    if (currentOpenedNode && currentOpenedNode !== nodeId) {
+      setTimeout(() => callback(currentOpenedNode), 0);
+    }
+    setOpenedNodes((prevOpenedNodes) =>
+      prevOpenedNodes.map((openedNode, index) => {
+        if (index === treeIndex) {
+          const updatedNode = { ...openedNode };
+          if (openedNode[nodeType] === nodeId) {
+            delete updatedNode[nodeType];
+          } else {
+            updatedNode[nodeType] = nodeId;
+          }
+          return updatedNode;
+        }
+        return openedNode;
+      })
+    );
+  };
 
   return (
-    <Box style={{ width: 192, position: 'fixed', ...treeBoxStickyStyles }}>
+    <Box style={{ width: 192, position: 'fixed' }}>
       {treeStructures.map((treeStructure, index) => (
         <Box
           key={`${index}-${treeStructure?.header?.name}`}
@@ -37,17 +51,32 @@ const TreeBox = ({ viewRef, treeStructures, selectedTreeNode, handleNodeClick })
           {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
           <DndProvider backend={MultiBackend} options={getBackendOptions()}>
             <Tree
+              ref={treeRefs.current[index]}
               enableAnimateExpand={true}
               tree={treeStructure.treeData}
               rootId={0}
               canDrag={() => false}
               canDrop={() => false}
-              render={(node, { depth, isOpen, onToggle }) => (
+              render={(node, { depth, isOpen }) => (
                 <NodeRenderer
                   node={node}
                   depth={depth}
                   isOpen={isOpen}
-                  onToggle={onToggle}
+                  onToggle={() => {
+                    handleNodeToggle(
+                      index,
+                      node.id,
+                      node.type,
+                      treeRefs.current[index].current.close
+                    );
+                    setTimeout(
+                      () =>
+                        isOpen
+                          ? treeRefs.current[index].current.close(node.id)
+                          : treeRefs.current[index].current.open(node.id),
+                      0
+                    );
+                  }}
                   isActive={selectedTreeNode?.nodeId === node.nodeId}
                   handleNodeClick={handleNodeClick}
                 />

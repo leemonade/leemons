@@ -7,7 +7,7 @@ const TreeHeader = ({ name }) => {
   const { classes } = TreeHeaderStyles();
   return (
     <Box className={classes.header}>
-      <TextClamp lines={2}>
+      <TextClamp lines={2} withTooltip>
         <Text className={classes.headerText}>{name}</Text>
       </TextClamp>
       <Divider />
