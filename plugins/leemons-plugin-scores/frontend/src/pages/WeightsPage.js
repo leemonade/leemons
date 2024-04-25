@@ -1,13 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
-import {
-  TotalLayoutContainer,
-  TotalLayoutStepContainer,
-  TotalLayoutHeader,
-  ImageLoader,
-  Stack,
-  Box,
-} from '@bubbles-ui/components';
+import { ImageLoader, Box, TLayout } from '@bubbles-ui/components';
 import { useHistory } from 'react-router-dom';
 import { useSearchParams } from '@common';
 
@@ -20,7 +13,6 @@ import { prefixPN } from '@scores/helpers';
 
 export default function WeightsPage() {
   const [t] = useTranslateLoader(prefixPN('weighting'));
-  const scrollRef = useRef();
   const queryParams = useSearchParams();
   const history = useHistory();
 
@@ -31,40 +23,34 @@ export default function WeightsPage() {
   });
 
   return (
-    <TotalLayoutContainer
-      scrollRef={scrollRef}
-      Header={
-        <TotalLayoutHeader
-          cancelable={false}
-          title={t('title')}
-          icon={
-            <Box sx={{ position: 'relative', width: 20, height: 20 }}>
-              <ImageLoader src={evaluationsIcon} />
-            </Box>
-          }
-        >
-          <SelectProgram
-            center={userCenter}
-            firstSelected
-            value={selectedProgram}
-            onChange={(program) => {
-              setSelectedProgram(program);
+    <TLayout>
+      <TLayout.Header
+        cancelable={false}
+        title={t('title')}
+        icon={
+          <Box sx={{ position: 'relative', width: 20, height: 20 }}>
+            <ImageLoader src={evaluationsIcon} />
+          </Box>
+        }
+      >
+        <SelectProgram
+          center={userCenter}
+          firstSelected
+          value={selectedProgram}
+          onChange={(program) => {
+            setSelectedProgram(program);
 
-              if (program) {
-                const newParams = new URLSearchParams(queryParams);
-                newParams.set('program', program);
-                history.replace({ search: newParams.toString() });
-              }
-            }}
-          />
-        </TotalLayoutHeader>
-      }
-    >
-      <Stack justifyContent="center" ref={scrollRef} sx={{ overflowY: 'auto' }}>
-        <TotalLayoutStepContainer fullWidth>
-          <Weights program={selectedProgram} />
-        </TotalLayoutStepContainer>
-      </Stack>
-    </TotalLayoutContainer>
+            if (program) {
+              const newParams = new URLSearchParams(queryParams);
+              newParams.set('program', program);
+              history.replace({ search: newParams.toString() });
+            }
+          }}
+        />
+      </TLayout.Header>
+      <TLayout.Content>
+        <Weights program={selectedProgram} />
+      </TLayout.Content>
+    </TLayout>
   );
 }

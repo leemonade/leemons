@@ -1,7 +1,7 @@
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
 import searchEvaluatedActivities from '@assignables/requests/activities/searchEvaluatedActivities';
+import useUserAgents from '@users/hooks/useUserAgents';
 import {
   allEvaluatedActivitiesSearchKey,
   evaluatedActivitiesSearchKey,

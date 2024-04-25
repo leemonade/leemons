@@ -241,6 +241,7 @@ module.exports = {
           minCredits: 'Minimum credits',
           maxCredits: 'Maximum credits',
           mustHaveAtLeastTwoCourses: 'Must have at least 2 courses',
+          numberOfCourses: 'Number of courses',
         },
         cyclesSetup: {
           cycleName: 'Cycle Name',
@@ -564,8 +565,9 @@ module.exports = {
         duplicate: 'Subject duplicated successfully.',
       },
       failure: {
-        add: 'The Subject could not be created. ',
-        update: 'The Subject could not be updated. ',
+        add: 'The Subject could not be created',
+        internalIdInUse: 'The entered unique ID is already in use.',
+        update: 'The Subject could not be updated',
         delete: 'The Subject could not be deleted. ',
         duplicate: 'The Subject could not be duplicated. ',
       },
@@ -781,7 +783,8 @@ module.exports = {
       enrollmentSuccess: 'Enrollment successful.',
       enrollmentError: 'Enrollment error.',
       enrollmentSeatsError: 'Enrollment error: No available seats in some classroom or group ',
-      remove: 'Eliminar',
+      remove: 'Remove',
+      search: 'Search',
     },
     studentsTable: {
       surnames: 'Surnames',

@@ -3,8 +3,6 @@ const _ = require('lodash');
 const { validateSaveTest } = require('../../validations/forms');
 
 async function saveTest({ data, ctx }) {
-  console.log('data', data);
-
   validateSaveTest(data);
 
   const toSave = {

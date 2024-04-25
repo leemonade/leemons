@@ -56,6 +56,8 @@ const SelectCourse = forwardRef(({ program, value: userValue, onChange, ...props
       data={data}
       disabled={!data.length}
       onChange={handleChange}
+      autoSelectOneOption
+      cleanOnMissingValue
       value={value}
     />
   );

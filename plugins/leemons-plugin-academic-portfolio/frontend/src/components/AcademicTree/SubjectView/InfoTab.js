@@ -8,6 +8,7 @@ import {
   Box,
   Paper,
   ImageLoader,
+  Loader,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
@@ -43,6 +44,15 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
 
   const subjectIcon = getFileUrl(subjectDetails?.icon?.cover?.id);
   const cover = getFileUrl(subjectDetails?.image?.cover?.id);
+
+  if (!subjectDetails) {
+    return (
+      <Stack fullHeight>
+        <Loader padded={true} />
+      </Stack>
+    );
+  }
+
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>

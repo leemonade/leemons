@@ -10,8 +10,12 @@ async function filterAssignationsByProgress({
 }) {
   const { progress: desiredProgress } = filters;
 
+  const desiredProgresses = Array.isArray(desiredProgress) ? desiredProgress : [desiredProgress];
   if (
-    !['notSubmitted', 'notStarted', 'evaluated', 'finished', 'started'].includes(desiredProgress)
+    !desiredProgress ||
+    !desiredProgresses.every((progress) =>
+      ['notSubmitted', 'notStarted', 'evaluated', 'finished', 'started'].includes(progress)
+    )
   ) {
     return assignations;
   }
@@ -29,8 +33,8 @@ async function filterAssignationsByProgress({
     progressByAssignation[assignations[i].id] = progress;
   });
 
-  return assignations.filter(
-    (assignation) => progressByAssignation[assignation.id] === desiredProgress
+  return assignations.filter((assignation) =>
+    desiredProgresses.includes(progressByAssignation[assignation.id])
   );
 }
 module.exports = { filterAssignationsByProgress };

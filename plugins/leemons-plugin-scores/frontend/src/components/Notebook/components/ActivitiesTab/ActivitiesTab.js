@@ -83,7 +83,7 @@ function getStudentsScores({ activitiesData, grades, isLoading, period, class: k
   }
 
   const calificableActivities = activitiesData.activities.filter(
-    (activity) => activity.type === 'calificable'
+    (activity) => activity.type === 'evaluable'
   );
   const calificableActivitiesCount = calificableActivities.length;
 

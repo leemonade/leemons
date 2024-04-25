@@ -10,7 +10,6 @@ async function listQuestionsBanks(body) {
 }
 
 async function saveQuestionBank(_body) {
-  console.log('_body', _body);
   const body = cloneDeep(_body);
   let form = {};
   const questionsFiles = [];

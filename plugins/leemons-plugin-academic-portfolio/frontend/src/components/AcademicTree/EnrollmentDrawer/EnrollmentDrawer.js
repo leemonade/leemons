@@ -346,6 +346,7 @@ const EnrollmentDrawer = ({
                   setSelectedStudents={setSelectedStudents}
                   selectedStudents={selectedStudents}
                   previouslyEnrolledStudents={previouslyEnrolledStudents}
+                  localizations={{ search: t('search') }}
                 />
               )}
             </ContextContainer>

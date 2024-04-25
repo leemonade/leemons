@@ -3,7 +3,6 @@
 async function setInstanceTimestamp({ instanceId, timeKey, user, ctx }) {
   const { userSession } = ctx.meta;
 
-  // console.log(user, userSession.userAgents[0].id);
   const asignation = await ctx.tx.call('assignables.assignations.getAssignation', {
     assignableInstanceId: instanceId,
     user,

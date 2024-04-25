@@ -1,13 +1,15 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-const LibraryCardEmbedStyles = createStyles((theme) => ({
+const LibraryCardEmbedStyles = createStyles((theme, { canPlay }) => ({
   root: {
     backgroundColor: theme.colors.mainWhite,
     minHeight: 66,
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: '#F7F8FA',
-    },
+    ...(canPlay && {
+      cursor: 'pointer',
+      '&:hover': {
+        backgroundColor: '#F7F8FA',
+      },
+    }),
   },
   imagePlaceholder: {
     maxWidth: 72,

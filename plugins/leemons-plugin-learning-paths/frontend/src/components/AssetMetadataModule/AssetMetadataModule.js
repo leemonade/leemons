@@ -92,12 +92,13 @@ const AssetMetadataModule = ({ metadata }) => {
               >
                 <ImageLoader
                   style={{
-                    width: 24,
-                    height: 24,
+                    width: 18,
+                    height: 18,
                     position: 'relative',
+                    color: '#878D96',
                   }}
-                  width={24}
-                  height={24}
+                  width={18}
+                  height={18}
                   src={activity.icon}
                 />
               </Box>

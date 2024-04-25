@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import { Table, Avatar, Stack, SearchInput } from '@bubbles-ui/components';
+import { Table, Avatar, Stack, SearchInput, Loader } from '@bubbles-ui/components';
 
 import { LocaleDate } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -47,7 +47,7 @@ function useFilteredStudents({ students = [], filters }) {
 }
 
 // Data should contain actions ;)
-const StudentsTable = ({ data, showSearchBar, checkBoxColumn }) => {
+const StudentsTable = ({ data, showSearchBar, checkBoxColumn, isLoading }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page.studentsTable'));
   const [filters, onFilterChange] = useFilters();
   const filteredStudents = useFilteredStudents({ students: data, filters });
@@ -88,6 +88,7 @@ const StudentsTable = ({ data, showSearchBar, checkBoxColumn }) => {
     return columns;
   }, [checkBoxColumn, t]);
 
+  if (isLoading) return <Loader />;
   return (
     <Stack direction="column" spacing={4}>
       {showSearchBar && (
@@ -108,4 +109,5 @@ StudentsTable.propTypes = {
   data: PropTypes.array.isRequired,
   showSearchBar: PropTypes.bool,
   checkBoxColumn: PropTypes.object,
+  isLoading: PropTypes.bool,
 };

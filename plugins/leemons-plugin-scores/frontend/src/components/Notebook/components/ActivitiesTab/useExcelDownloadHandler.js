@@ -45,10 +45,19 @@ export function useExcelDownloadHandler({
     const onDownload = ({ args: [format] }) => {
       fireEvent('scores::downloaded-intercepted');
 
+      const { activities, ...activitiesDataWithoutActivities } = activitiesData;
+
       try {
         const wb = generateExcel({
           headerShown: format === 'xlsx',
-          tableData: { ...activitiesData, grades },
+          tableData: {
+            ...activitiesDataWithoutActivities,
+            activities: activities.map((activity) => ({
+              ...activity,
+              activity: activity?.activity ?? activity?.instance,
+            })),
+            grades,
+          },
           period: {
             period: filters.period?.period?.name ?? filters.period?.name ?? '-',
             startDate: new Date(filters.startDate),
@@ -68,7 +77,7 @@ export function useExcelDownloadHandler({
 
     addAction('scores::download-scores', onDownload);
     return () => removeAction('scores::download-scores', onDownload);
-  }, [activitiesData, grades, roleNames]);
+  }, [activitiesData, grades, roleNames, excelLabels, filters, programData, subjectData]);
 }
 
 export default useExcelDownloadHandler;

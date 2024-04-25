@@ -63,7 +63,14 @@ const DetailContent = ({
         <Box className={classes.tagsContainer}>
           {tags.map((tag) => (
             <Box key={tag}>
-              <Badge label={tag} size="md" closable={false} className={classes.labelBadge} />
+              <Badge
+                label={tag}
+                size="xs"
+                color={'stroke'}
+                radius={'rounded'}
+                closable={false}
+                skipFlex
+              />
             </Box>
           ))}
         </Box>

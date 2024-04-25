@@ -64,7 +64,7 @@ export default function SubjectsWeightingTable({ program, filters: { subject, co
   );
 
   if (isLoading) {
-    return <LoadingOverlay />;
+    return <LoadingOverlay visible />;
   }
 
   return (

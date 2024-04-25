@@ -13,11 +13,12 @@ const { createAssignable } = require('../createAssignable');
  * @param {Object} params - The main parameter object.
  * @param {string} params.id - The id of the assignable to duplicate.
  * @param {boolean} params.published - Flag to publish the new assignable. Defaults to false.
+ * @param {boolean} params.ignoreSubjects - Flag to ignore subjects. Defaults to false.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<AssignablesAssignable>} The duplicated assignable.
  * @throws {LeemonsError} If the assignable does not exist or the user does not have access to it, a LeemonsError is thrown.
  */
-async function duplicateAssignable({ assignableId: id, published, ctx }) {
+async function duplicateAssignable({ assignableId: id, published, ignoreSubjects, ctx }) {
   const assignable = await getAssignable({
     id,
     ctx,
@@ -26,7 +27,11 @@ async function duplicateAssignable({ assignableId: id, published, ctx }) {
 
   const assignableToCreate = pick(assignable, validAssignableProperties);
 
-  return await createAssignable({
+  if (ignoreSubjects) {
+    assignableToCreate.subjects = [];
+  }
+
+  return createAssignable({
     assignable: assignableToCreate,
     published: published === undefined ? false : published,
     ctx,

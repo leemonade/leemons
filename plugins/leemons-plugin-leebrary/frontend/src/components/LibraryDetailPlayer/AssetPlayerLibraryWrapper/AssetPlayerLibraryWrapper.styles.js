@@ -30,7 +30,7 @@ const AssetPlayerLibraryWrapperStyles = createStyles(
       pointerEvents: 'none',
     },
     activityContainer: {
-      width: 496,
+      width: 576,
       height: 200,
       position: 'relative',
       cursor: assetRole || isPDF || isDocumentButNotPDF ? 'pointer' : 'no-drop',
