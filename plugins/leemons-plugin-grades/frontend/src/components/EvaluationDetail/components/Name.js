@@ -5,7 +5,7 @@ import { TextInput } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 
-const Name = ({ form }) => {
+const Name = ({ form, inUse }) => {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const {
     control,
@@ -25,6 +25,7 @@ const Name = ({ form }) => {
           placeholder={t('namePlaceholder')}
           error={errors.name}
           required
+          disabled={inUse}
           {...field}
         />
       )}
@@ -34,6 +35,7 @@ const Name = ({ form }) => {
 
 Name.propTypes = {
   form: PropTypes.object.isRequired,
+  inUse: PropTypes.bool,
 };
 
 export { Name };

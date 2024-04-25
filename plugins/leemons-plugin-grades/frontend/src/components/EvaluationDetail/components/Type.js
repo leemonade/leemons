@@ -5,14 +5,14 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { Select } from '@bubbles-ui/components';
 
-const Type = ({ form, selectData }) => {
+const Type = ({ form, selectData, inUse }) => {
   const {
     watch,
     control,
     formState: { errors },
   } = form;
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
-  const disabled = !!watch('id');
+  const disabled = !!watch('id') || inUse;
   return (
     <Controller
       name="type"
@@ -40,6 +40,7 @@ const Type = ({ form, selectData }) => {
 Type.propTypes = {
   form: PropTypes.object.isRequired,
   selectData: PropTypes.object.isRequired,
+  inUse: PropTypes.bool,
 };
 
 export { Type };
