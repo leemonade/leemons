@@ -20,7 +20,7 @@ async function assignTest({ id, data, ctx }) {
       }
     } else {
       const config = await ctx.tx.db.AssignSavedConfig.findOne({
-        id: data.metadata.filters.settings,
+        id: data.metadata.filters.configSelected,
       }).lean();
       data.metadata.filters = JSON.parse(config.config || null);
     }
