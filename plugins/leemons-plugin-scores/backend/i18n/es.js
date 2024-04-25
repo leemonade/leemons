@@ -414,4 +414,29 @@ module.exports = {
       },
     },
   },
+  myScores: {
+    title: 'Mis evaluaciones',
+    filters: {
+      course: 'Curso',
+    },
+    localFilters: {
+      subject: 'Asignatura',
+      search: 'Buscar por actividad...',
+      seeNonEvaluable: 'Ver no calificables',
+    },
+    finalGrades: 'Notas finales',
+    noEvaluable: 'No calificable',
+    downloadReport: 'Descargar boletín',
+
+    emptyStates: {
+      noFilters: {
+        title: 'Seleccionar curso y periodo',
+        description: 'Selecciona el curso y luego filtra por periodos de evaluación.',
+      },
+      noResults: {
+        title: 'Sin resultados',
+        description: 'No hemos encontrado resultados para tu bsqueda.',
+      },
+    },
+  },
 };

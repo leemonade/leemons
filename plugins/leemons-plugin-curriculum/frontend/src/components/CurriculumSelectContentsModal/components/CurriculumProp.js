@@ -1,16 +1,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 
-import {
-  Badge,
-  Box,
-  Checkbox,
-  InputWrapper,
-  Stack,
-  TAGIFY_TAG_REGEX,
-  Text,
-  Title,
-} from '@bubbles-ui/components';
+import { Badge, Box, Checkbox, InputWrapper, Stack, Text, Title } from '@bubbles-ui/components';
+import { TAGIFY_TAG_REGEX } from '@bubbles-ui/extras';
 import { htmlToText, useStore } from '@common';
 import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
 import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';

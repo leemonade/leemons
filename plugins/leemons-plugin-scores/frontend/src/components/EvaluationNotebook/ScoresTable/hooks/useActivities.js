@@ -7,7 +7,7 @@ import useSearchAssignableInstances from '@assignables/requests/hooks/queries/us
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
 
-function getNextDayFirstMillisecond(date) {
+export function getNextDayFirstMillisecond(date) {
   return dayjs(date)
     .set('hour', 0)
     .set('minute', 0)
@@ -17,7 +17,7 @@ function getNextDayFirstMillisecond(date) {
     .toDate();
 }
 
-function getPreviousDayLastMillisecond(date) {
+export function getPreviousDayLastMillisecond(date) {
   return dayjs(date)
     .set('hour', 23)
     .set('minute', 59)

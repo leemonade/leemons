@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { Box, Button, Stack, TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
+import { Box, Button, Stack } from '@bubbles-ui/components';
+import { TAGIFY_TAG_REGEX } from '@bubbles-ui/extras';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import CurriculumListItem from '@curriculum/components/FormTheme/CurriculumListItem';

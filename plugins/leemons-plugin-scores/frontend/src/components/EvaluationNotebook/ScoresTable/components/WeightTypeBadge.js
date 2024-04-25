@@ -8,7 +8,7 @@ import { prefixPN } from '@scores/helpers';
 import useWeights from '@scores/requests/hooks/queries/useWeights';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 
-export default function WeightTypeBadge({ class: klass }) {
+export default function WeightTypeBadge({ class: klass, includePlaceholder }) {
   const { data: weights, isLoading } = useWeights({ classId: klass?.id });
   const [t] = useTranslateLoader(prefixPN('weightingTypes'));
   const [t2] = useTranslateLoader(prefixPN('weightingDrawer'));
@@ -21,7 +21,7 @@ export default function WeightTypeBadge({ class: klass }) {
   if (weights?.type === 'modules') {
     return (
       <Stack alignItems="baseline" spacing={2}>
-        <Text closable={false}>{t2('weighting')}</Text>
+        {includePlaceholder ? <Text closable={false}>{t2('weighting')}</Text> : null}
         <Badge closable={false}>{t('modules')}</Badge>
       </Stack>
     );
@@ -32,7 +32,8 @@ export default function WeightTypeBadge({ class: klass }) {
       <Badge closable={false}>
         {weights.weights
           .map(
-            ({ weight, id }) => `${(weight * 100).toFixed(2)}% ${rolesLocalizations[id]?.plural}`
+            ({ weight, id }) =>
+              `${parseFloat((weight * 100).toFixed(2))}% ${rolesLocalizations[id]?.plural}`
           )
           .join(' - ')}
       </Badge>
@@ -52,4 +53,5 @@ WeightTypeBadge.propTypes = {
   class: PropTypes.shape({
     id: PropTypes.string.isRequired,
   }).isRequired,
+  includePlaceholder: PropTypes.bool,
 };

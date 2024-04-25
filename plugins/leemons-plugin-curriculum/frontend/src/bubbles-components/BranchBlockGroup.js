@@ -12,12 +12,11 @@ import {
   Select,
   Stack,
   TableInput,
-  TAGIFY_TAG_REGEX,
   Text,
   TextInput,
   Title,
 } from '@bubbles-ui/components';
-import { TagifyInput } from '@bubbles-ui/extras';
+import { TAGIFY_TAG_REGEX, TagifyInput } from '@bubbles-ui/extras';
 import { EditWriteIcon } from '@bubbles-ui/icons/solid';
 import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
 

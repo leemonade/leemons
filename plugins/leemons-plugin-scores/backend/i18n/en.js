@@ -412,4 +412,28 @@ module.exports = {
       },
     },
   },
+  myScores: {
+    title: 'My evaluations',
+    filters: {
+      course: 'Course',
+    },
+    localFilters: {
+      subject: 'Subject',
+      search: 'Search by activity...',
+      seeNonEvaluable: 'See non-evaluable',
+    },
+    finalGrades: 'Final scores',
+    noEvaluable: 'No evaluable',
+    downloadReport: 'Download report',
+    emptyStates: {
+      noFilters: {
+        title: 'Select course and period',
+        description: 'Select the course and then filter by evaluation periods.',
+      },
+      noResults: {
+        title: 'No results',
+        description: 'We have not found results for your search.',
+      },
+    },
+  },
 };

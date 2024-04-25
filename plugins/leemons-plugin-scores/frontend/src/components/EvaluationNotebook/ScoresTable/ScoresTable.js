@@ -84,7 +84,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
           labels,
         })}
         key={studentsData}
-        leftBadge={<WeightTypeBadge class={klass} />}
+        leftBadge={<WeightTypeBadge class={klass} includePlaceholder />}
       />
     </Stack>
   );

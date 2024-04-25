@@ -52,7 +52,7 @@ const ActivityHeader = ({
           )}
           {!hasNoWeight ? (
             <Text role="productive" color="primary">
-              {(weight * 100).toFixed(2)}%
+              {parseFloat((weight * 100).toFixed(2))}%
             </Text>
           ) : (
             <AlertWarningTriangleIcon color={theme.other.banner.content.color.error} />
