@@ -39,7 +39,7 @@ export default function NotebookFilters({ filters, onChange }) {
           render={({ field }) => (
             <SearchInput
               {...field}
-              placeholder={t('search', { type: searchType })}
+              placeholder={t('search', { type: t(`searchTypes.${searchType}`).toLowerCase() })}
               sx={{ width: 220 }}
             />
           )}

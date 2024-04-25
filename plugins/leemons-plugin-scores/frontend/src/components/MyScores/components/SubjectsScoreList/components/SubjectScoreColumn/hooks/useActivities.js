@@ -19,9 +19,9 @@ export default function useActivities({ class: klass, period, showNonEvaluable, 
   const { data: activitiesIds, isLoading: activitiesIdsLoading } = useSearchAssignableInstances({
     query: {
       query: search || undefined,
-      deadline: true,
-      deadline_$gt: getPreviousDayLastMillisecond(period?.startDate),
-      deadline_$lt: getNextDayFirstMillisecond(period?.endDate),
+      finished: true,
+      finished_$gt: getPreviousDayLastMillisecond(period?.startDate),
+      finished_$lt: getNextDayFirstMillisecond(period?.endDate),
 
       role: weights?.type === 'modules' ? 'learningpaths.module' : roles,
       classes: klass?.id,

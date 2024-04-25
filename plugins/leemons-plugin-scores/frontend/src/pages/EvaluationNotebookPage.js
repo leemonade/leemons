@@ -10,6 +10,7 @@ import EvaluationNotebook from '@scores/components/EvaluationNotebook/Evaluation
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { addErrorAlert } from '@layout/alert';
+import FinalEvaluationNotebook from '@scores/components/FinalEvaluationNotebook/FinalEvaluationNotebook';
 
 function onScoresDownload(extension) {
   let timer;
@@ -62,7 +63,13 @@ export default function EvaluationNotebookPage() {
         <Filters hideTitle showProgramSelect onChange={setFilters} />
       </TLayout.Header>
       <TLayout.Content>
-        {filters ? <EvaluationNotebook filters={filters} /> : <EmptyState />}
+        {!filters && <EmptyState />}
+        {filters && filters?.period?.selected === 'final' && (
+          <FinalEvaluationNotebook filters={filters} />
+        )}
+        {filters && filters?.period?.selected !== 'final' && (
+          <EvaluationNotebook filters={filters} />
+        )}
       </TLayout.Content>
       <TLayout.Footer>
         <TLayout.Footer.RightActions>
