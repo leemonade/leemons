@@ -771,6 +771,9 @@ module.exports = {
     newclass: 'Nueva clase',
     newknowledges: 'Nueva área',
     newsubject: 'Nueva asignatura',
+    noProgramEmptyStateDescription:
+      'No hay ningún programa creado aún. Para poder ver la estructura del árbol, primero crea un programa.',
+    noProgramEmptyStateAction: 'Crear programa',
     cycleTreeType: {
       title: 'Configuración ciclo',
       name: 'Nombre:',

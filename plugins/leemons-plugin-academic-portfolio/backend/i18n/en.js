@@ -767,6 +767,9 @@ module.exports = {
     newclass: 'New class',
     newknowledges: 'New area',
     newsubject: 'New subject',
+    noProgramEmptyStateDescription:
+      'No program has been created yet. To view the tree structure, first create a program.',
+    noProgramEmptyStateAction: 'Create program',
     cycleTreeType: {
       title: 'Cycle configuration',
       name: 'Name:',
