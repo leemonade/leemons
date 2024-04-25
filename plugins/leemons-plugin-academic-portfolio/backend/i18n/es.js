@@ -636,7 +636,7 @@ module.exports = {
       seats: 'Plazas disponibles',
       classroom: 'Clase',
       schedule: 'Horario de clase',
-      teacher: 'Profesor',
+      teacher: 'Docente',
       description: 'Descripción',
       maxInternalIdLength: 'Máximo {max} dígitos',
       groupAny: 'Debe tener {max} caracteres',
@@ -1007,6 +1007,8 @@ module.exports = {
 
   common: {
     defaultGroupName: 'Grupo por defecto',
+    enrollments: 'Matriculaciones',
+    sharedEnrollments: 'Contigo en clase en',
   },
   classroomPicker: {
     and: 'y',

@@ -5,8 +5,10 @@ import { Drawer, Button } from '@bubbles-ui/components';
 import usePermissions from '@users/hooks/usePermissions';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import { getSessionCenter } from '@users/session';
+import { getCookieToken, getSessionCenter, getSessionProfile } from '@users/session';
 import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
+import { useIsStudent } from '@academic-portfolio/hooks';
+import { useUserProfile } from '@users/hooks';
 import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
 import { UserAdminDrawer } from './UserAdminDrawer';
 
@@ -25,6 +27,8 @@ function UserDetailDrawer({
   const [user, setUser] = React.useState(null);
   const [t] = useTranslateLoader(prefixPN('user_detail'));
   const center = centerProp ?? getSessionCenter();
+  const token = getCookieToken(true);
+  const { userAgentId } = token.centers[0];
 
   const {
     data: permissions,
@@ -92,6 +96,15 @@ function UserDetailDrawer({
   // ····················································
   // RENDER
 
+  const contactUserAgentId = React.useMemo(() => {
+    // If the view mode is STUDENT, we assume that the user is a student and is a contact of the userId
+    if (viewMode === USER_DETAIL_VIEWS.STUDENT) {
+      return userAgentId;
+    }
+
+    return null;
+  }, [userAgentId, viewMode]);
+
   return (
     <>
       <Drawer opened={selfOpen} onClose={handleOnClose}>
@@ -107,6 +120,7 @@ function UserDetailDrawer({
           <EnrollUserSummary
             userId={userId}
             center={center}
+            contactUserAgentId={contactUserAgentId}
             sysProfileFilter={sysProfileFilter}
             viewMode={viewMode}
           />

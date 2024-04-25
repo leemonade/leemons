@@ -4,7 +4,6 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
 const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
@@ -27,6 +26,7 @@ const { remove: removeStudentFromClass } = require('../../core/classes/student/r
 const { listSessionClasses } = require('../../core/classes/listSessionClasses');
 const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
 const { classByIds } = require('../../core/classes/classByIds');
+const { getUserEnrollments } = require('../../core/classes');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -451,6 +451,40 @@ module.exports = {
         ctx,
       });
       return { status: 200, classes };
+    },
+  },
+  getUserEnrollments: {
+    rest: {
+      path: '/user-enrollments',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'view'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const validator = new LeemonsValidator({
+        type: 'object',
+        properties: {
+          userAgentIds: { type: 'array' },
+          centerId: { type: 'string' },
+          contactUserAgentId: { type: 'string' },
+        },
+        required: ['userAgentIds', 'centerId'],
+        additionalProperties: false,
+      });
+      if (validator.validate(ctx.params)) {
+        const { userAgentIds, centerId, contactUserAgentId } = ctx.params;
+        const data = await getUserEnrollments({ userAgentIds, centerId, contactUserAgentId, ctx });
+        return { status: 200, data };
+      }
+      throw validator.error;
     },
   },
 };
