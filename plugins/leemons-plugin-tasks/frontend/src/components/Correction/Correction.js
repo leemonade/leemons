@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isNil, map } from 'lodash';
+import { isNil, map, trimEnd } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import {
@@ -156,6 +156,21 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                     min={evaluationSystem?.minScale?.number}
                     max={evaluationSystem?.maxScale?.number}
                     precision={2}
+                    formatter={(userInput) => {
+                      let _value = userInput;
+                      const precision = trimEnd(_value.toString().split('.')[1] || '', '0').length;
+
+                      if (_value.endsWith('.')) {
+                        return _value;
+                      }
+
+                      if (_value.startsWith('0') && !_value.startsWith('0.')) {
+                        _value = _value.replace('^0', '');
+                      }
+
+                      return `${(_value * 1 || 0).toFixed(precision)}`;
+                    }}
+                    parser={(value) => value.replace(',', '.').trim()}
                   />
                 );
               }
