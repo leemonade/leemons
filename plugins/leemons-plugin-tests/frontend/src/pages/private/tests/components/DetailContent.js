@@ -99,7 +99,7 @@ export default function DetailContent({
                   error={isDirty ? form.formState.errors.statement : null}
                   label={t('statementLabel')}
                   placeholder={t('statementPlaceholder')}
-                  editorStyles={{ height: '64px' }}
+                  editorStyles={{ minHeight: '96px' }}
                   {...field}
                 />
               )}

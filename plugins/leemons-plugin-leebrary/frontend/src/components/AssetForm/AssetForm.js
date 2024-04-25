@@ -325,7 +325,6 @@ const AssetForm = ({
                     )}
                   />
                 )}
-
                 {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
                   <Controller
                     control={control}
@@ -363,7 +362,6 @@ const AssetForm = ({
                     )}
                   />
                 )}
-
                 {type === 'assignables.scorm' && (
                   <>
                     <Controller
@@ -439,6 +437,7 @@ const AssetForm = ({
                     placeholder={placeholders.description}
                     required={!isNil(errorMessages?.description?.required)}
                     error={errors.description}
+                    minRows={3}
                     counter="word"
                     counterLabels={{
                       single: labels?.wordCounter?.single,
