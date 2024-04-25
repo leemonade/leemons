@@ -786,6 +786,7 @@ module.exports = {
       enrollmentSeatsError:
         'Error de matriculación: Faltan plazas disponibles en algún aula o grupo ',
       remove: 'Borrar',
+      search: 'Buscar',
     },
     studentsTable: {
       surnames: 'Apellidos',

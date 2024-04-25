@@ -20,6 +20,7 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
 import { KnowledgeView } from '@academic-portfolio/components/AcademicTree/KnowledgeView/KnowledgeView';
 import TreeBox from '@academic-portfolio/components/AcademicTree/TreeBox';
+import { cloneDeep } from 'lodash';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
 
@@ -32,7 +33,9 @@ const AcademicTreePage = () => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
     useState(null);
-  const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
+  const { data: userCenters, isLoading: areCentersLoading } = useUserCenters({
+    refetchOnWindowFocus: false,
+  });
   const scrollRef = useRef();
   const history = useHistory();
   const viewRef = useRef();
@@ -70,8 +73,11 @@ const AcademicTreePage = () => {
   });
 
   const isLoading = useMemo(
-    () => areCentersLoading || areCenterProgramsLoading || isAcademicTreeLoading,
-    [areCenterProgramsLoading, isAcademicTreeLoading]
+    () =>
+      areCentersLoading ||
+      areCenterProgramsLoading ||
+      (selectedProgram?.length && isAcademicTreeLoading),
+    [areCenterProgramsLoading, areCentersLoading, isAcademicTreeLoading, selectedProgram]
   );
 
   const generateGUID = () => uuidv4();
@@ -191,7 +197,7 @@ const AcademicTreePage = () => {
           <CourseView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            courseTreeNode={selectedTreeNode}
+            courseTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
             programHasReferenceGroups={programHasReferenceGroups}
           />
@@ -201,7 +207,7 @@ const AcademicTreePage = () => {
           <GroupView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            groupTreeNode={selectedTreeNode}
+            groupTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
@@ -210,7 +216,7 @@ const AcademicTreePage = () => {
           <KnowledgeView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            knowledgeTreeNode={selectedTreeNode}
+            knowledgeTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
@@ -219,7 +225,7 @@ const AcademicTreePage = () => {
           <SubjectView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            subjectTreeNode={selectedTreeNode}
+            subjectTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
