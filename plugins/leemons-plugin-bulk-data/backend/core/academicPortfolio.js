@@ -10,7 +10,7 @@ const importKnowledgeAreas = require('./bulk/academic-portfolio/knowledgeAreas')
 const importSubjects = require('./bulk/academic-portfolio/subjects');
 
 async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfiles, ctx }) {
-  const { classes, seats, creator, courses, ...subject } = subjects[key];
+  const { classes, creator, ...subject } = subjects[key];
 
   try {
     ctx.logger.debug(`Adding subject: ${subject.name}`);
@@ -31,27 +31,12 @@ async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfi
     // ·····················································
     // CLASSES
 
-    ctx.logger.debug(`Adding groups ...`);
-    const groups = classes.map((classroom) => classroom.group);
-
-    // First create the class group
-    const groupsData = await Promise.all(
-      groups.map((group) => {
-        if (group)
-          return ctx.call('academic-portfolio.groups.addGroupIfNotExists', {
-            group,
-          });
-        return null;
-      })
-    );
-
-    // Then create the classes
     const classesData = [];
 
     ctx.logger.debug(`Adding classrooms ...`);
 
     for (let j = 0, l = classes.length; j < l; j++) {
-      const { program, teachers, students, ...rest } = classes[j];
+      const { program, teachers, students, seats, group, ...rest } = classes[j];
       const programData = find(programs, { id: program });
       const [center] = programData.centers;
 
@@ -72,7 +57,7 @@ async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfi
         program,
         seats,
         subject: subjectData.id,
-        group: groupsData[j]?.id,
+        group,
         teachers: teachersData.map((teacherData) => {
           const teacher = find(teachers, { teacher: teacherData.user });
           return { teacher: teacherData.id, type: teacher.type };
