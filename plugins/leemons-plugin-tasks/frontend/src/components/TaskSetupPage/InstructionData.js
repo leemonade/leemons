@@ -277,6 +277,8 @@ function InstructionData({
                         {...field}
                         label={labels.recommendedDuration}
                         error={errors.recommendedDuration}
+                        min={0}
+                        max={999}
                       />
                     )}
                   />
