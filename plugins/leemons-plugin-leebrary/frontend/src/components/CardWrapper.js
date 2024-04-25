@@ -22,9 +22,9 @@ function dynamicImport(pluginName, component) {
   );
 }
 
-const CardWrapperStyles = createStyles((theme, { selected }) => ({
+const CardWrapperStyles = createStyles((theme, { selected, isCreationPreview }) => ({
   root: {
-    cursor: 'pointer',
+    cursor: isCreationPreview ? 'default' : 'pointer',
     borderColor: selected && theme.other.core.color.primary['400'],
     borderWidth: selected && '1px',
     boxShadow: selected && theme.shadows.shadow03,
@@ -60,7 +60,7 @@ const CardWrapper = ({
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
   const [t] = useTranslateLoader(prefixPN('list'));
   const history = useHistory();
-  const { classes } = CardWrapperStyles({ selected });
+  const { classes } = CardWrapperStyles({ selected, isCreationPreview });
   const isTeacher = useIsTeacher();
 
   const menuItems = React.useMemo(() => {
