@@ -167,67 +167,67 @@ function EvaluationData({
   // COMPONENT
 
   return (
-    <form
-      onSubmit={(...v) => {
-        form.handleSubmit(handleOnNext)(...v);
-      }}
-      autoComplete="off"
-    >
-      <TotalLayoutStepContainer
-        stepName={stepName}
-        Footer={
-          <TotalLayoutFooterContainer
-            fixed
-            scrollRef={scrollRef}
-            leftZone={
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={handleOnPrev}
+            >
+              {labels.buttonPrev}
+            </Button>
+          }
+          rightZone={
+            <>
               <Button
-                variant="outline"
-                leftIcon={<ChevLeftIcon height={20} width={20} />}
-                onClick={handleOnPrev}
+                variant="link"
+                onClick={handleOnSave}
+                disabled={loading}
+                loading={loading === 'draft'}
               >
-                {labels.buttonPrev}
+                {t('common.save')}
               </Button>
-            }
-            rightZone={
-              <>
-                <Button
-                  variant="link"
-                  onClick={handleOnSave}
+              {isLastStep ? (
+                <DropdownButton
+                  chevronUp
+                  width="auto"
+                  data={[
+                    {
+                      label: labels.buttonPublish,
+                      onClick: handleOnPublish,
+                    },
+                    { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                  ]}
+                  loading={loading === 'publish'}
                   disabled={loading}
-                  loading={loading === 'draft'}
                 >
-                  {t('common.save')}
+                  {t('common.finish')}
+                </DropdownButton>
+              ) : (
+                <Button
+                  rightIcon={<ChevRightIcon height={20} width={20} />}
+                  onClick={handleOnNext}
+                  disabled={loading}
+                  loading={loading === 'publish'}
+                >
+                  {labels.buttonNext}
                 </Button>
-                {isLastStep ? (
-                  <DropdownButton
-                    chevronUp
-                    width="auto"
-                    data={[
-                      {
-                        label: labels.buttonPublish,
-                        onClick: handleOnPublish,
-                      },
-                      { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
-                    ]}
-                    loading={loading === 'publish'}
-                    disabled={loading}
-                  >
-                    {t('common.finish')}
-                  </DropdownButton>
-                ) : (
-                  <Button
-                    rightIcon={<ChevRightIcon height={20} width={20} />}
-                    onClick={handleOnNext}
-                    disabled={loading}
-                    loading={loading === 'publish'}
-                  >
-                    {labels.buttonNext}
-                  </Button>
-                )}
-              </>
-            }
-          />
-        }
+              )}
+            </>
+          }
+        />
+      }
+    >
+      <form
+        onSubmit={(...v) => {
+          form.handleSubmit(handleOnNext)(...v);
+        }}
+        autoComplete="off"
       >
         {!!subjects?.length && (
           <ContextContainer {...props}>
@@ -268,8 +268,8 @@ function EvaluationData({
             )}
           </ContextContainer>
         )}
-      </TotalLayoutStepContainer>
-    </form>
+      </form>
+    </TotalLayoutStepContainer>
   );
 }
 

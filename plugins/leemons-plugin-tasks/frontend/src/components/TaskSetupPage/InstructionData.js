@@ -175,53 +175,53 @@ function InstructionData({
   // COMPONENT
 
   return (
-    <form
-      onSubmit={(...v) => {
-        handleSubmit(handleOnNext)(...v);
-      }}
-      autoComplete="off"
-    >
-      <TotalLayoutStepContainer
-        stepName={stepName}
-        Footer={
-          <TotalLayoutFooterContainer
-            fixed
-            scrollRef={scrollRef}
-            leftZone={
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={handleOnPrev}
+            >
+              {labels.buttonPrev}
+            </Button>
+          }
+          rightZone={
+            <>
               <Button
-                variant="outline"
-                leftIcon={<ChevLeftIcon height={20} width={20} />}
-                onClick={handleOnPrev}
+                variant="link"
+                onClick={handleOnSave}
+                disabled={loading}
+                loading={loading === 'draft'}
               >
-                {labels.buttonPrev}
+                {t('common.save')}
               </Button>
-            }
-            rightZone={
-              <>
-                <Button
-                  variant="link"
-                  onClick={handleOnSave}
-                  disabled={loading}
-                  loading={loading === 'draft'}
-                >
-                  {t('common.save')}
-                </Button>
-                <DropdownButton
-                  chevronUp
-                  width="auto"
-                  data={[
-                    { label: labels.buttonPublish, onClick: handleOnPublish },
-                    { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
-                  ]}
-                  loading={loading === 'publish'}
-                  disabled={loading}
-                >
-                  {t('common.finish')}
-                </DropdownButton>
-              </>
-            }
-          />
-        }
+              <DropdownButton
+                chevronUp
+                width="auto"
+                data={[
+                  { label: labels.buttonPublish, onClick: handleOnPublish },
+                  { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                ]}
+                loading={loading === 'publish'}
+                disabled={loading}
+              >
+                {t('common.finish')}
+              </DropdownButton>
+            </>
+          }
+        />
+      }
+    >
+      <form
+        onSubmit={(...v) => {
+          handleSubmit(handleOnNext)(...v);
+        }}
+        autoComplete="off"
       >
         <Box style={{ marginBottom: 20 }}>
           <ContextContainer {...props}>
@@ -285,8 +285,8 @@ function InstructionData({
             )}
           </ContextContainer>
         </Box>
-      </TotalLayoutStepContainer>
-    </form>
+      </form>
+    </TotalLayoutStepContainer>
   );
 }
 

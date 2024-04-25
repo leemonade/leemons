@@ -223,7 +223,7 @@ export default function Edit() {
   };
   const hasOptionalSteps = () => {
     const { config = {} } = formValues;
-    return config.hasInstructions || config.hasResources;
+    return config.hasInstructions || config.hasResources || config.hasObjectives;
   };
 
   const stepsContent = React.useMemo(() => {
