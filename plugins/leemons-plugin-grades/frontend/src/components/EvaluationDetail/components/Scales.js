@@ -205,6 +205,7 @@ Scales.propTypes = {
   form: PropTypes.object.isRequired,
   selectData: PropTypes.object.isRequired,
   onBeforeRemove: PropTypes.func,
+  inUse: PropTypes.bool,
 };
 
 export { Scales };
