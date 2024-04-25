@@ -7,6 +7,7 @@ SocketIoService.useOn = SocketIotService.useOn;
 SocketIoService.onAny = SocketIotService.onAny;
 SocketIoService.useOnAny = SocketIotService.useOnAny;
 SocketIoService.disconnect = SocketIotService.disconnect;
+SocketIoService.isCreating = SocketIotService.isCreating;
 
 export function Provider({ children }) {
   return children;

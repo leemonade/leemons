@@ -81,7 +81,6 @@ async function tryConnect() {
       creating = true;
 
       window.mqttAwsIotCredentials = await getCredentials();
-      console.log('window.mqttAwsIotCredentials', window.mqttAwsIotCredentials);
 
       if (window.mqttAwsIotDevice) endDevice();
       await connectWebsocket(window.mqttAwsIotCredentials);
@@ -151,6 +150,7 @@ export const SocketIotService = {
   disconnect: () => {
     if (window.mqttAwsIotDevice) endDevice();
   },
+  isCreating: () => creating,
 };
 
 export default SocketIotService;
