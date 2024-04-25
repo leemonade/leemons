@@ -24,7 +24,14 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-export default function AcademicCalendarDetail({ program: { id }, onSave, t, onChangeStep }) {
+export default function AcademicCalendarDetail({
+  program: { id, config: configData },
+  onSave,
+  t,
+  onChangeStep,
+  scrollRef,
+  calendarRef,
+}) {
   const { classes } = useStyle();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -51,16 +58,11 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t, onC
       store.loading = true;
       render();
       const [
-        { config },
         { program },
         {
           data: { items: centers },
         },
-      ] = await Promise.all([
-        getConfigRequest(id),
-        detailProgram(id),
-        listCenters({ page: 0, size: 99999 }),
-      ]);
+      ] = await Promise.all([detailProgram(id), listCenters({ page: 0, size: 99999 })]);
       const { regionalConfigs } = await listRegionalConfigsRequest(program.centers[0]);
 
       store.centersById = _.keyBy(centers, 'id');
@@ -70,7 +72,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t, onC
         store.program.centers,
         (centerId) => store.centersById[centerId]
       );
-      store.config = config || {};
+      store.config = configData || {};
       if (_.isObject(store.config.regionalConfig)) {
         store.config.regionalConfig = store.config.regionalConfig.id;
       }
@@ -127,6 +129,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t, onC
               render();
             }}
             t={t}
+            scrollRef={scrollRef}
           />
         ) : null}
         {store.step === 1 ? (
@@ -146,6 +149,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t, onC
               render();
             }}
             t={t}
+            scrollRef={scrollRef}
           />
         ) : null}
         {store.step === 2 ? (
@@ -160,6 +164,8 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t, onC
             }}
             onSave={onSave}
             t={t}
+            scrollRef={scrollRef}
+            calendarRef={calendarRef}
           />
         ) : null}
       </ContextContainer>
@@ -172,4 +178,6 @@ AcademicCalendarDetail.propTypes = {
   onSave: PropTypes.func,
   t: PropTypes.func,
   onChangeStep: PropTypes.func,
+  scrollRef: PropTypes.any,
+  calendarRef: PropTypes.any,
 };

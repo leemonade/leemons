@@ -25,6 +25,7 @@ import { addErrorAlert } from '@layout/alert';
 import { Controller, useForm } from 'react-hook-form';
 import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import CourseData from '@academic-calendar/pages/private/program/components/CourseData';
+import FooterContainer from './FooterContainer';
 
 const useStyle = createStyles((theme) => ({
   root: {
@@ -34,7 +35,7 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-export default function Step2({ config, program, onPrev, onChange, t }) {
+export default function Step2({ config, program, onPrev, onChange, t, scrollRef }) {
   const locale = useLocale();
   const { classes } = useStyle();
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -210,9 +211,9 @@ export default function Step2({ config, program, onPrev, onChange, t }) {
   if (!store.program || !locale) return null;
 
   return (
-    <ContextContainer divided>
+    <ContextContainer>
       <ContextContainer>
-        <Title order={3}>{t('academicPeriods')}</Title>
+        <Title order={3}>{t('completeCoursesTitle')}</Title>
         {programMode ? (
           <>
             <CourseData
@@ -244,62 +245,89 @@ export default function Step2({ config, program, onPrev, onChange, t }) {
           </>
         ) : (
           <>
-            <Controller
-              name="allCoursesHaveSameDates"
-              control={form.control}
-              render={({ field }) => (
-                <Switch {...field} checked={field.value} label={t('allCoursesShareTheSameDates')} />
-              )}
-            />
-
-            <Tabs forceRender>
-              {coursesForDates.map((course) => {
-                let hasError = false;
-                if (
-                  store.forms[course.id]?.formState.errors &&
-                  Object.keys(store.forms[course.id]?.formState.errors).length
-                ) {
-                  hasError = true;
-                }
-                return (
-                  <TabPanel
-                    hasError={hasError}
+            {allCoursesHaveSameDates ? (
+              <Box>
+                {coursesForDates.map((course) => (
+                  <CourseData
                     key={course.id}
-                    label={
-                      allCoursesHaveSameDates ? t('allCourses') : `${t('course')} ${course.index}`
-                    }
-                  >
-                    <CourseData
-                      locale={locale}
-                      course={course}
-                      value={{
-                        ...courseDates[course.id],
-                        substages: substagesDates[course.id] || {},
-                        events: courseEvents[course.id] || [],
-                      }}
-                      onForm={onForm(course.id)}
-                      onChange={(values) => {
-                        if (allCoursesHaveSameDates) {
-                          forEach(store.program.courses, (c) => {
-                            form.setValue(`courseDates[${c.id}].startDate`, values.startDate);
-                            form.setValue(`courseDates[${c.id}].endDate`, values.endDate);
-                            form.setValue(`substagesDates[${c.id}]`, values.substages);
-                            form.setValue(`courseEvents[${c.id}]`, values.events);
-                          });
-                        } else {
-                          form.setValue(`courseDates[${course.id}].startDate`, values.startDate);
-                          form.setValue(`courseDates[${course.id}].endDate`, values.endDate);
-                          form.setValue(`substagesDates[${course.id}]`, values.substages);
-                          form.setValue(`courseEvents[${course.id}]`, values.events);
-                        }
-                      }}
-                      program={program}
-                      t={t}
-                    />
-                  </TabPanel>
-                );
-              })}
-            </Tabs>
+                    locale={locale}
+                    course={course}
+                    value={{
+                      ...courseDates[course.id],
+                      substages: substagesDates[course.id] || {},
+                      events: courseEvents[course.id] || [],
+                    }}
+                    onForm={onForm(course.id)}
+                    onChange={(values) => {
+                      if (allCoursesHaveSameDates) {
+                        forEach(store.program.courses, (c) => {
+                          form.setValue(`courseDates[${c.id}].startDate`, values.startDate);
+                          form.setValue(`courseDates[${c.id}].endDate`, values.endDate);
+                          form.setValue(`substagesDates[${c.id}]`, values.substages);
+                          form.setValue(`courseEvents[${c.id}]`, values.events);
+                        });
+                      } else {
+                        form.setValue(`courseDates[${course.id}].startDate`, values.startDate);
+                        form.setValue(`courseDates[${course.id}].endDate`, values.endDate);
+                        form.setValue(`substagesDates[${course.id}]`, values.substages);
+                        form.setValue(`courseEvents[${course.id}]`, values.events);
+                      }
+                    }}
+                    program={program}
+                    t={t}
+                  />
+                ))}
+              </Box>
+            ) : (
+              <Tabs forceRender>
+                {coursesForDates.map((course) => {
+                  let hasError = false;
+                  if (
+                    store.forms[course.id]?.formState.errors &&
+                    Object.keys(store.forms[course.id]?.formState.errors).length
+                  ) {
+                    hasError = true;
+                  }
+                  return (
+                    <TabPanel
+                      hasError={hasError}
+                      key={course.id}
+                      label={
+                        allCoursesHaveSameDates ? t('allCourses') : `${t('course')} ${course.index}`
+                      }
+                    >
+                      <CourseData
+                        locale={locale}
+                        course={course}
+                        value={{
+                          ...courseDates[course.id],
+                          substages: substagesDates[course.id] || {},
+                          events: courseEvents[course.id] || [],
+                        }}
+                        onForm={onForm(course.id)}
+                        onChange={(values) => {
+                          if (allCoursesHaveSameDates) {
+                            forEach(store.program.courses, (c) => {
+                              form.setValue(`courseDates[${c.id}].startDate`, values.startDate);
+                              form.setValue(`courseDates[${c.id}].endDate`, values.endDate);
+                              form.setValue(`substagesDates[${c.id}]`, values.substages);
+                              form.setValue(`courseEvents[${c.id}]`, values.events);
+                            });
+                          } else {
+                            form.setValue(`courseDates[${course.id}].startDate`, values.startDate);
+                            form.setValue(`courseDates[${course.id}].endDate`, values.endDate);
+                            form.setValue(`substagesDates[${course.id}]`, values.substages);
+                            form.setValue(`courseEvents[${course.id}]`, values.events);
+                          }
+                        }}
+                        program={program}
+                        t={t}
+                      />
+                    </TabPanel>
+                  );
+                })}
+              </Tabs>
+            )}
           </>
         )}
       </ContextContainer>
@@ -335,20 +363,21 @@ export default function Step2({ config, program, onPrev, onChange, t }) {
           )}
         />
       </ContextContainer>
-
-      <Stack justifyContent="space-between">
-        <Button
-          onClick={() => {
-            onPrev(form.getValues());
-          }}
-          compact
-          variant="light"
-          leftIcon={<ChevLeftIcon height={20} width={20} />}
-        >
-          {t('previous')}
-        </Button>
-        <Button onClick={submit}>{t('continueButton')}</Button>
-      </Stack>
+      <FooterContainer scrollRef={scrollRef}>
+        <Stack justifyContent="space-between" fullWidth>
+          <Button
+            onClick={() => {
+              onPrev(form.getValues());
+            }}
+            compact
+            variant="outline"
+            leftIcon={<ChevLeftIcon height={20} width={20} />}
+          >
+            {t('previous')}
+          </Button>
+          <Button onClick={submit}>{t('continueButton')}</Button>
+        </Stack>
+      </FooterContainer>
     </ContextContainer>
   );
 }
@@ -359,4 +388,5 @@ Step2.propTypes = {
   onChange: PropTypes.func,
   onPrev: PropTypes.func,
   t: PropTypes.func,
+  scrollRef: PropTypes.any,
 };

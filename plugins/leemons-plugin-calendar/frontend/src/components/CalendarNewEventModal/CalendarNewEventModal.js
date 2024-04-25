@@ -146,6 +146,32 @@ const CalendarNewEventModal = ({
             />
           )}
           <ContextContainer direction="row">
+            {isSchoolDay && (
+              <Controller
+                form={form}
+                control={control}
+                name="color"
+                rules={{
+                  required: errorMessages.color,
+                  validate: (v) =>
+                    MODAL_COLORS.includes(v.toUpperCase()) ? true : errorMessages.invalidColor,
+                }}
+                render={({ field }) => (
+                  <ColorInput
+                    label={labels.color}
+                    placeholder={placeholders.color}
+                    useHsl
+                    error={errors.color}
+                    required
+                    lightOnly
+                    headerStyle={{ marginTop: 16 }}
+                    compact={false}
+                    colorPickerComponent={ColorPicker}
+                    {...field}
+                  />
+                )}
+              />
+            )}
             <Controller
               form={form}
               control={control}
@@ -200,32 +226,6 @@ const CalendarNewEventModal = ({
                 />
               )}
             />
-            {isSchoolDay && (
-              <Controller
-                form={form}
-                control={control}
-                name="color"
-                rules={{
-                  required: errorMessages.color,
-                  validate: (v) =>
-                    MODAL_COLORS.includes(v.toUpperCase()) ? true : errorMessages.invalidColor,
-                }}
-                render={({ field }) => (
-                  <ColorInput
-                    label={labels.color}
-                    placeholder={placeholders.color}
-                    useHsl
-                    error={errors.color}
-                    required
-                    lightOnly
-                    headerStyle={{ marginTop: 16 }}
-                    compact={false}
-                    colorPickerComponent={ColorPicker}
-                    {...field}
-                  />
-                )}
-              />
-            )}
           </ContextContainer>
         </form>
       </Drawer.Content>
