@@ -1,6 +1,26 @@
 const _ = require('lodash');
 
-/** * ES: Dice que los user agents en _fromUserAgent tienen acceso a ver a todos los user agents en _toUserAgent * @public * @static * @param {string|string[]} _fromUserAgent - User agent id/s * @param {string|string[]} _toUserAgent - User agent id/s * @param {any=} transacting - DB Transaction * @return {Promise<boolean>} * */
+/**
+ * Establishes access relationships between user agents, allowing a set of user agents (_fromUserAgent)
+ * to have access to view another set of user agents (_toUserAgent). This functionality is key to managing
+ * visibility and interaction among different user agents within the system, based on their roles, centers, and profiles.
+ *
+ * @public
+ * @static
+ * @param {Object} params - Function parameters.
+ * @param {string|string[]} params.fromUserAgent - ID/s of the source user agent.
+ * @param {string|string[]} params.toUserAgent - ID/s of the target user agent.
+ * @param {string|null} [params.target=null] - Optional target parameter.
+ * @param {MoleculerContext} params.ctx - Context that includes transactional and plugin information.
+ * @returns {Promise<boolean>} - Promise that resolves to true if the operation is successful.
+ *
+ * @description
+ * - Converts the input IDs of the source and target user agents into arrays to handle both single and multiple IDs.
+ * - Retrieves the roles for all involved user agents and then searches for related center and profile information based on those roles.
+ * - Iterates over each combination of source and target user agents, and for each pair, updates or inserts a new contact relationship in the database using the `UserAgentContacts.updateOne` method with the `upsert` option, ensuring that a new record is created if one does not already exist.
+ *
+ * This function is part of the core functionality of the "leemons-plugin-users" plugin, which manages user agents and their relationships within the system.
+ */
 async function addUserAgentContacts({
   fromUserAgent: _fromUserAgent,
   toUserAgent: _toUserAgent,
@@ -22,15 +42,17 @@ async function addUserAgentContacts({
   const roleCenterByRole = _.keyBy(roleCenter, 'role');
   const roleProfileByRole = _.keyBy(roleProfile, 'role');
   const userAgentsById = _.keyBy(userAgents, 'id');
-  for (let i = 0, l = fromUserAgents.length; i < l; i++) {
-    const fromUserAgent = fromUserAgents[i];
+
+  await fromUserAgents.reduce(async (prevPromise, fromUserAgent) => {
+    await prevPromise;
     const fromCenter = roleCenterByRole[userAgentsById[fromUserAgent].role].center;
     const fromProfile = roleProfileByRole[userAgentsById[fromUserAgent].role].profile;
-    for (let ii = 0, ll = toUserAgents.length; ii < ll; ii++) {
-      const toUserAgent = toUserAgents[ii];
+
+    return toUserAgents.reduce(async (innerPrevPromise, toUserAgent) => {
+      await innerPrevPromise;
       const toCenter = roleCenterByRole[userAgentsById[toUserAgent].role].center;
       const toProfile = roleProfileByRole[userAgentsById[toUserAgent].role].profile;
-      // eslint-disable-next-line no-await-in-loop
+
       await ctx.tx.db.UserAgentContacts.updateOne(
         {
           fromUserAgent,
@@ -50,8 +72,8 @@ async function addUserAgentContacts({
         },
         { upsert: true }
       );
-    }
-  }
+    }, Promise.resolve()); // Inicia el reduce interno con una promesa resuelta
+  }, Promise.resolve()); // Inicia el reduce externo con una promesa resuelta
 }
 
 module.exports = { addUserAgentContacts };

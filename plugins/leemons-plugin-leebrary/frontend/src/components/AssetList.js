@@ -816,8 +816,6 @@ const AssetList = ({
         </Box>
       </TotalLayoutContainer>
       <PermissionsDataDrawer
-        size={720}
-        hasBack={false}
         opened={!!itemToShare}
         asset={itemToShare}
         sharing={true}

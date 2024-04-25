@@ -12,7 +12,7 @@ import {
 } from './AssetMetadataTest.constants';
 import { getQuestionBankRequest } from '../../request';
 
-const AssetMetadataTest = ({ metadata }) => {
+const AssetMetadataTest = ({ metadata, canEdit }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const [data, setData] = useState(null);
   const [fields, setFields] = useState();
@@ -90,10 +90,14 @@ const AssetMetadataTest = ({ metadata }) => {
       </Box>
       <Box className={classes.box}>
         <Text className={classes.title}>{`${t('questionBank')}: `}</Text>
-        <Link to={fields.titleTest.url} className={classes.link}>
-          {fields.titleTest.name}
-          <OpenIcon className={classes.openIcon} />
-        </Link>
+        {canEdit ? (
+          <Link to={fields.titleTest.url} className={classes.link}>
+            {fields.titleTest.name}
+            <OpenIcon className={classes.openIcon} />
+          </Link>
+        ) : (
+          <Text className={classes.link}>{fields.titleTest.name}</Text>
+        )}
       </Box>
       <Box>
         <Box>
