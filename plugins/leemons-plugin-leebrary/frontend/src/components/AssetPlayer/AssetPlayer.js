@@ -408,18 +408,22 @@ const AssetPlayer = ({
               </Box>
             )}
             {media.isImage && canPlay && (
-              <Box className={classes.coverWrapper} onClick={() => setOpenImageZoom(!openImageZoom)}>
+              <Box
+                className={classes.coverWrapper}
+                onClick={() => setOpenImageZoom(!openImageZoom)}
+              >
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
                     <ButtonIcon fileType={'image'} />
                   </Box>
                 )}
+                <ImageLoader height={'200px'} src={cover} alt={name} />
                 <ModalZoom
                   canPlay={!ccMode || canPlay}
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <ImageLoader height={openImageZoom ? '100%' : '200px'} src={cover} alt={name} />
+                  <ImageLoader height={'100%'} src={cover} alt={name} />
                 </ModalZoom>
               </Box>
             )}
