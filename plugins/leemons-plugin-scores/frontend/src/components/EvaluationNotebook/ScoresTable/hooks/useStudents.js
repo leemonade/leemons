@@ -74,7 +74,7 @@ export default function useStudents({
       }),
 
       customScore: scores?.[id]?.grade ?? null,
-      allowCustomChange: true,
+      allowCustomChange: !scores?.[id]?.published,
     }));
   }, [students, activities, search, searchType, klass?.subject?.id, scores]);
 

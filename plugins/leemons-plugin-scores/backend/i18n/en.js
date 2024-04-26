@@ -320,6 +320,9 @@ module.exports = {
       name: 'Name',
       weight: 'Percentage',
     },
+    alerts: {
+      error: 'Error downloading report',
+    },
   },
   weighting: {
     title: 'Weighting rules',
@@ -393,10 +396,13 @@ module.exports = {
       calculated: 'Calculated',
       custom: 'Teacher',
     },
+
     newModule:
       'New modules have been added to this class that are not weighted. To calculate them correctly, access your weighting rules.',
     updatedSuccess: "Updated {{student}}'s score in {{activity}} to {{score}}",
     updatedError: "Error updating {{student}}'s score in {{activity}} to {{score}}",
+    closedEvaluationSuccess: '{period} closed successfully',
+    closedEvaluationError: 'Error closing {period}',
     unableToOpen: 'Error opening activity, the activity could not be found',
     noEvaluationPage: 'This activity does not have a page to evaluate',
 
@@ -410,6 +416,9 @@ module.exports = {
         title: 'No results',
         description: 'We have not found results for your search.',
       },
+    },
+    footer: {
+      closeEvaluation: 'Close evaluation',
     },
   },
   myScores: {

@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import { ContextContainer, LoadingOverlay } from '@bubbles-ui/components';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import { ScoresBasicTable } from '../Tables/ScoresBasicTable';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 import useScoresTableTitle from '../EvaluationNotebook/hooks/useScoresTableTitle';
-import useTableData from './hooks/useTableData';
+import { ScoresBasicTable } from '../Tables/ScoresBasicTable';
 import Filters from './components/Filters';
+import useTableData from './hooks/useTableData';
 
-export default function FinalEvaluationNotebook({ filters }) {
+export default function FinalEvaluationNotebook() {
+  const filters = useEvaluationNotebookStore((store) => store.filters);
+  const setFilters = useEvaluationNotebookStore((store) => store.setFilters);
   const { period, class: klass, program } = filters;
+
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
   const labels = {
     students: t('scoresTable.students'),
@@ -28,12 +32,11 @@ export default function FinalEvaluationNotebook({ filters }) {
   };
 
   const title = useScoresTableTitle(filters);
-  const [localFilters, setFilters] = useState({});
 
   const { activities, students, scales, isLoading } = useTableData({
     class: klass,
     program,
-    filters: localFilters,
+    filters,
   });
 
   if (isLoading) {
@@ -42,7 +45,7 @@ export default function FinalEvaluationNotebook({ filters }) {
 
   return (
     <ContextContainer title={title}>
-      <Filters onChange={setFilters} />
+      <Filters onChange={setFilters} value={filters} />
       <ScoresBasicTable
         grades={scales}
         activities={activities}
@@ -51,6 +54,7 @@ export default function FinalEvaluationNotebook({ filters }) {
         from={period?.startDate}
         to={period?.endDate}
         labels={labels}
+        key={students}
       />
     </ContextContainer>
   );

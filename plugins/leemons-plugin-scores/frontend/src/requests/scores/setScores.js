@@ -7,6 +7,6 @@ export default async function setScores({ scores, instances }) {
 
     return true;
   } catch (e) {
-    throw new Error(e.error);
+    throw new Error(e.message);
   }
 }

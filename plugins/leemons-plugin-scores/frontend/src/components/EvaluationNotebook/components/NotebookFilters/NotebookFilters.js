@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Button, SearchInput, Select, Stack, Switch } from '@bubbles-ui/components';
@@ -11,18 +11,38 @@ import { prefixPN } from '@scores/helpers';
 import useSearchTypes from './hooks/useSearchTypes';
 import useOnChange from './hooks/useOnChange';
 
-export default function NotebookFilters({ filters, onChange }) {
+export default function NotebookFilters({ filters, onChange, value }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.filters'));
   const form = useForm({
     defaultValues: {
       searchType: 'student',
     },
   });
+  const { setValue, getValues } = form;
 
   const searchType = useWatch({ control: form.control, name: 'searchType' });
-  useOnChange({ onChange, control: form.control });
 
   const searchTypes = useSearchTypes();
+
+  useEffect(() => {
+    if (value) {
+      const values = getValues();
+
+      if (value.search && value.search !== values.search) {
+        setValue('search', value.search);
+      }
+
+      if (value.searchType && value.searchType !== values.searchType) {
+        setValue('searchType', value.searchType);
+      }
+
+      if (value.showNonEvaluable && value.showNonEvaluable !== values.showNonEvaluable) {
+        setValue('showNonEvaluable', value.showNonEvaluable);
+      }
+    }
+  }, [value, setValue, getValues]);
+
+  useOnChange({ onChange, control: form.control });
 
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="baseline">
@@ -50,7 +70,9 @@ export default function NotebookFilters({ filters, onChange }) {
           name="showNonEvaluable"
           control={form.control}
           defaultValue={false}
-          render={({ field }) => <Switch {...field} label={t('showNonEvaluable')} />}
+          render={({ field }) => (
+            <Switch {...field} checked={field.value} label={t('showNonEvaluable')} />
+          )}
         />
         <Box>
           <Link
@@ -69,4 +91,5 @@ export default function NotebookFilters({ filters, onChange }) {
 NotebookFilters.propTypes = {
   filters: PropTypes.object,
   onChange: PropTypes.func,
+  value: PropTypes.object,
 };

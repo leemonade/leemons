@@ -321,6 +321,9 @@ module.exports = {
       name: 'Nombre',
       weight: 'Porcentaje',
     },
+    alerts: {
+      error: 'Error descargando el boletín',
+    },
   },
   weighting: {
     title: 'Reglas de ponderación',
@@ -399,6 +402,8 @@ module.exports = {
       'Se han añadido nuevos módulos a esta asignatura que no están ponderados. Para calcularlos correctamente, accede a sus Reglas de ponderación.',
     updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',
     updatedError: 'Error actualizando la nota de {{student}} en {{activity}} a un {{score}}',
+    closedEvaluationSuccess: 'Se ha cerrado {period} correctamente',
+    closedEvaluationError: 'Error cerrando {period}',
     unableToOpen: 'Error al abrir la actividad, la actividad no se ha podido encontrar',
     noEvaluationPage: 'Esta actividad no tiene una página para evaluar',
 
@@ -412,6 +417,9 @@ module.exports = {
         title: 'Sin resultados',
         description: 'No hemos encontrado resultados para tu bsqueda.',
       },
+    },
+    footer: {
+      closeEvaluation: 'Cerrar evaluación',
     },
   },
   myScores: {
