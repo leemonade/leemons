@@ -1,6 +1,6 @@
 import { Box, createStyles } from '@bubbles-ui/components';
-import { Header } from '@scores/components/Notebook/components/Header';
-import { EmptyState } from '@scores/components/Notebook/EmptyState';
+import { Header } from '@scores/components/__DEPRECATED__/Notebook/components/Header';
+import { EmptyState } from '@scores/components/__DEPRECATED__/Notebook/EmptyState';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import AssistancesInfo from './components/AssistancesInfo';

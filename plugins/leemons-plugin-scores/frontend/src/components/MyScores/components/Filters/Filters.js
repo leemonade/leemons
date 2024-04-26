@@ -6,9 +6,9 @@ import { noop } from 'lodash';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { SelectCourse } from '@academic-portfolio/components';
-import PickDate from '@scores/components/ScoresPage/Filters/components/PickDate';
-import SelectPeriod from '@scores/components/ScoresPage/Filters/components/SelectPeriod';
-import useSelectedPeriod from '@scores/components/ScoresPage/Filters/hooks/useSelectedPeriod';
+import PickDate from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/PickDate';
+import SelectPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/SelectPeriod';
+import useSelectedPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/hooks/useSelectedPeriod';
 import { getSessionConfig } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';

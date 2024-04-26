@@ -2,7 +2,7 @@
 import { Box, Button, createStyles, Stack, Text } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Filters from '@scores/components/ScoresPage/Filters/Filters';
+import Filters from '@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters';
 import Assistances from '@attendance-control/components/AssistancePage/Assistances';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
