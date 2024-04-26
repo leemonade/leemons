@@ -1,38 +1,35 @@
+import { useScores } from '@scores/requests/hooks/queries';
+import { useUserAgentsInfo } from '@users/hooks';
+import { keyBy, map } from 'lodash';
 import { useMemo } from 'react';
 
-import { useUserAgentsInfo } from '@users/hooks';
-import { useScores } from '@scores/requests/hooks/queries';
-import { keyBy } from 'lodash';
-
-export default function useStudents({
-  activities,
-  class: klass,
-  filters: { searchType, search },
-  period,
-}) {
+export default function useStudents({ class: klass, filters: { search }, periods }) {
   const { data: students, isLoading: userAgentsLoading } = useUserAgentsInfo(klass?.students, {
     enabled: !!klass?.students?.length,
   });
+
+  const periodsIds = map(periods, (period) => period.periods[klass.program][klass.courses.id]);
 
   const { data: scores, isLoading: scoresLoading } = useScores(
     {
       students: klass?.students,
       classes: [klass?.id],
-      periods: period,
+      periods: [...periodsIds, 'final'],
+      published: true,
     },
     {
-      select: (result) => keyBy(result, 'student'),
+      select: (result) => keyBy(result, (score) => `${score.student}|${score.period}`),
     }
   );
 
   const studentsData = useMemo(() => {
-    if (!students || !activities) {
+    if (!students || !periodsIds?.length) {
       return [];
     }
 
     let filteredStudents = students;
 
-    if (searchType === 'student' && search) {
+    if (search) {
       filteredStudents = students.filter(({ user: { name, surnames } }) => {
         const fullName = `${name} ${surnames}`
           .toLowerCase()
@@ -53,30 +50,20 @@ export default function useStudents({
       });
     }
 
-    return filteredStudents?.map(({ id, user }) => ({
+    return filteredStudents.map(({ id, user }) => ({
       id,
       name: user.name,
       surname: user.surnames,
       image: user.avatar,
-      activities: activities?.map((activity) => {
-        const studentData = activity.students.find((assignation) => id === assignation.user);
-
-        const mainGrade = studentData?.grades?.find(
-          (grade) => grade.type === 'main' && grade.subject === klass.subject.id
-        );
-
-        return {
-          id: activity.id,
-          score: mainGrade?.grade ?? null,
-          isSubmitted: !!studentData?.timestamps?.end,
-          grade: mainGrade,
-        };
-      }),
-
-      customScore: scores?.[id]?.grade ?? null,
-      allowCustomChange: !scores?.[id]?.published,
+      customScore: scores?.[`${id}|final`]?.grade ?? null,
+      allowCustomChange: true,
+      activities: periodsIds.map((period) => ({
+        id: period,
+        score: scores?.[`${id}|${period}`]?.grade ?? null,
+        isSubmitted: true,
+      })),
     }));
-  }, [students, activities, search, searchType, klass?.subject?.id, scores]);
+  }, [students, periodsIds, scores, search]);
 
   return { data: studentsData, isLoading: userAgentsLoading || scoresLoading };
 }
