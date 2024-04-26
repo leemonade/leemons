@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
 import { useTable, useFlexLayout } from 'react-table';
-import { isFunction } from 'lodash';
+import { isFunction, sortBy } from 'lodash';
 import { motion } from 'framer-motion';
 import { useSticky } from 'react-table-sticky';
 import { ScoreCell } from './ScoreCell';
@@ -109,17 +109,22 @@ const ScoresBasicTable = ({
 
   const getAvgScore = (studentActivities) => {
     let weightedScore = 0;
+
+    const minGrade = sortBy(grades, 'number')[0].number;
+
     studentActivities.forEach((studentActivity) => {
       weightedScore +=
-        (studentActivity.score ? studentActivity.score : 0) *
+        (studentActivity.score ? studentActivity.score : minGrade) *
         (activities.find((activity) => activity.id === studentActivity.id)?.weight || 0);
     });
+
     let sumOfWeights = 0;
     activities.forEach((activity) => {
       sumOfWeights += activity.weight;
     });
+
     const weightedAverage = (weightedScore / sumOfWeights).toFixed(2);
-    return useNumbers ? weightedAverage : findGradeLetter(Math.round(weightedAverage));
+    return useNumbers ? weightedAverage : findGradeLetter(weightedAverage);
   };
 
   const getActivitiesPeriod = () =>

@@ -23,8 +23,8 @@ export default function useCloseEvaluation() {
       return acc;
     }, {});
 
-    const minScore = sortBy(grades, 'order')[0].number;
-    const maxScore = sortBy(grades, 'order').reverse()[0].number;
+    const minScore = sortBy(grades, 'number')[0].number;
+    const maxScore = sortBy(grades, 'number').reverse()[0].number;
 
     const scores = students.map((student) => {
       const grade =
