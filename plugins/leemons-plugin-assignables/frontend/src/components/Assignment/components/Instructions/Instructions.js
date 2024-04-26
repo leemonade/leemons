@@ -25,7 +25,7 @@ export function Instructions({ localizations, value, onChange, hideSectionHeader
           value={value}
           onChange={onChange}
           toolLabels={{ headingsTool: { ...HEADINGS_TOOL_DEFAULT_PROPS?.labels, label: '' } }}
-          editorStyles={{ minHeight: 120 }}
+          editorStyles={{ minHeight: '96px' }}
         />
       </Box>
     </Container>

@@ -153,7 +153,11 @@ export default function Submissions({ labels, errorMessages }) {
                   control={contextControl}
                   name="submission.description"
                   render={({ field: f }) => (
-                    <TextEditorInput {...f} label={labels?.submission?.description} />
+                    <TextEditorInput
+                      {...f}
+                      label={labels?.submission?.description}
+                      editorStyles={{ minHeight: '96px' }}
+                    />
                   )}
                 />
               </ContextContainer>

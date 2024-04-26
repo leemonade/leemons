@@ -84,7 +84,12 @@ function CurriculumListSubItems({
       }),
       accessor: 'value',
       input: {
-        node: inputType === 'field' ? <TextInput required /> : <TextEditorInput required />,
+        node:
+          inputType === 'field' ? (
+            <TextInput required />
+          ) : (
+            <TextEditorInput editorStyles={{ minHeight: '96px' }} required />
+          ),
         rules: { required: t('fieldRequired') },
       },
       cellTdStyle: {
