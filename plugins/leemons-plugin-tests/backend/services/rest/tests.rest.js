@@ -267,7 +267,8 @@ module.exports = {
       const test = await duplicate({
         taskId: ctx.params.id,
         published: ctx.params.published,
-        ignoreSubjects: true,
+        ignoreSubjects: ctx.params.ignoreSubjects,
+        keepQuestionBank: ctx.params.keepQuestionBank,
         ctx,
       });
       return { status: 200, test };

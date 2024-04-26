@@ -7,6 +7,7 @@ async function listQuestionsBanks({
   subjects,
   published,
   includeAgnosticsQB,
+  withAssets,
   query = {},
   ctx,
 }) {
@@ -25,7 +26,7 @@ async function listQuestionsBanks({
   );
 
   let ids = allQBsIds;
-  if (subjects && subjects.length) {
+  if (subjects?.length) {
     const questionBankSubjects = await ctx.tx.db.QuestionBankSubjects.find({
       subject: subjects,
       questionBank: ids,
@@ -47,15 +48,29 @@ async function listQuestionsBanks({
     size,
     query: finalQuery,
   });
-  const questions = await ctx.tx.db.Questions.find({ questionBank: _.map(paginate.items, 'id') })
+
+  const qbanksIds = _.map(paginate.items, 'id');
+  const qbanksAssetsIds = _.map(paginate.items, 'asset');
+
+  const questions = await ctx.tx.db.Questions.find({ questionBank: qbanksIds })
     .select(['id', 'questionBank'])
     .lean();
   const questionsByBank = _.groupBy(questions, 'questionBank');
+
+  let assets = [];
+  if (withAssets) {
+    assets = await ctx.tx.call('leebrary.assets.getByIds', {
+      ids: qbanksAssetsIds,
+    });
+  }
+  const assetsById = _.keyBy(assets, 'id');
+
   return {
     ...paginate,
     items: _.map(paginate.items, (item) => ({
       ...item,
       nQuestions: questionsByBank[item.id]?.length || 0,
+      asset: assetsById[item.asset] ?? item.asset,
     })),
   };
 }
