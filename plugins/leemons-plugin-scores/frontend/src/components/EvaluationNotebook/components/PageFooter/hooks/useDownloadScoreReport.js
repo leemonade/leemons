@@ -39,31 +39,36 @@ export default function useDownloadScoreReport() {
   }, [roles]);
 
   return useCallback(
-    (tableData, format) => {
+    (tableData, format = 'xlsx') => {
       try {
-        const { activitiesData, grades, filters, programData, subjectData } = tableData;
-        const { activities, ...activitiesDataWithoutActivities } = activitiesData;
+        const params = [tableData]
+          .flat()
+          .map(({ activitiesData, grades, filters, programData, subjectData }) => {
+            const { activities, ...activitiesDataWithoutActivities } = activitiesData;
 
-        const wb = generateExcel({
-          headerShown: format === 'xlsx',
-          tableData: {
-            ...activitiesDataWithoutActivities,
-            activities: activities.map((activity) => ({
-              ...activity,
-              activity: activity?.activity ?? activity?.instance,
-            })),
-            grades,
-          },
-          period: {
-            period: filters.period?.period?.name ?? filters.period?.name ?? '-',
-            startDate: new Date(filters.startDate),
-            endDate: new Date(filters.endDate),
-            program: programData?.name,
-            subject: subjectData?.name,
-          },
-          types: roleNames,
-          labels: excelLabels,
-        });
+            return {
+              headerShown: format === 'xlsx',
+              tableData: {
+                ...activitiesDataWithoutActivities,
+                activities: activities.map((activity) => ({
+                  ...activity,
+                  activity: activity?.activity ?? activity?.instance,
+                })),
+                grades,
+              },
+              period: {
+                period: filters.period?.period?.name ?? filters.period?.name ?? '-',
+                startDate: new Date(filters.startDate),
+                endDate: new Date(filters.endDate),
+                program: programData?.name,
+                subject: subjectData?.name,
+              },
+              types: roleNames,
+              labels: excelLabels,
+            };
+          });
+
+        const wb = generateExcel(params);
         getFile(wb, format);
       } catch (e) {
         addErrorAlert(excelLabels.alerts.error, e.message);
