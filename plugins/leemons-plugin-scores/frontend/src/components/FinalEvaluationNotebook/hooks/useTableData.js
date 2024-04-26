@@ -14,7 +14,7 @@ export default function useTableData({ class: klass, program, filters }) {
   const activities = useMemo(
     () =>
       map(periods, (period) => ({
-        id: period.periods[program][klass.courses.id],
+        id: period.periods?.[program]?.[klass.courses.id],
         name: period.name,
         deadline: period.endDate,
         expandable: false,
