@@ -73,7 +73,9 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
         <Controller
           control={form.control}
           name="properties.explanation"
-          render={({ field }) => <TextEditorInput {...field} />}
+          render={({ field }) => (
+            <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />
+          )}
         />
       ) : null}
       <ContextContainer title={`${t('responsesLabel')} *`} spacing={0}>

@@ -26,7 +26,6 @@ function TagsAutocomplete({ pluginName, type, labels, value: valueProp, ...props
   }, []);
 
   React.useEffect(() => {
-    console.log('valueProp:', valueProp);
     setValue(valueProp ?? []);
   }, [valueProp]);
 

@@ -167,7 +167,7 @@ export function OtherOptions({
                         <TextEditorInput
                           {...field}
                           placeholder={localizations?.notifyPlaceholder}
-                          editorStyles={{ minHeight: 120 }}
+                          editorStyles={{ minHeight: '96px' }}
                           toolLabels={{
                             headingsTool: { ...HEADINGS_TOOL_DEFAULT_PROPS?.labels, label: '' },
                           }}

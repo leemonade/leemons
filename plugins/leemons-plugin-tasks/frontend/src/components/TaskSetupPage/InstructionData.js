@@ -248,6 +248,7 @@ function InstructionData({
                           placeholder={placeholders.forTeacher}
                           help={helps.forTeacher}
                           error={errors.instructionsForTeachers}
+                          editorStyles={{ minHeight: '96px' }}
                         />
                       )}
                     />
@@ -263,6 +264,7 @@ function InstructionData({
                           placeholder={placeholders.forStudent}
                           help={helps.forStudent}
                           error={errors.instructionsForStudents}
+                          editorStyles={{ minHeight: '96px' }}
                         />
                       )}
                     />
