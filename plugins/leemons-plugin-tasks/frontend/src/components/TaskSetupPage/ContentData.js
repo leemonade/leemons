@@ -201,61 +201,61 @@ function ContentData({
   // ---------------------------------------------------------------
   // COMPONENT
   return (
-    <FormProvider {...formData}>
-      <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-        <TotalLayoutStepContainer
-          stepName={stepName}
-          Footer={
-            <TotalLayoutFooterContainer
-              fixed
-              scrollRef={scrollRef}
-              leftZone={
-                <Button
-                  variant="outline"
-                  leftIcon={<ChevLeftIcon height={20} width={20} />}
-                  onClick={handleOnPrev}
-                >
-                  {labels.buttonPrev}
-                </Button>
-              }
-              rightZone={
-                <>
-                  <Button
-                    variant="link"
-                    onClick={handleOnSave}
-                    disabled={loading}
-                    loading={loading === 'draft'}
-                  >
-                    {t('common.save')}
-                  </Button>
-                  {isExpress || isLastStep ? (
-                    <DropdownButton
-                      chevronUp
-                      width="auto"
-                      data={[
-                        { label: labels.buttonPublish, onClick: handleOnPublish },
-                        { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
-                      ]}
-                      loading={loading === 'publish'}
-                      disabled={loading}
-                    >
-                      {t('common.finish')}
-                    </DropdownButton>
-                  ) : (
-                    <Button
-                      rightIcon={<ChevRightIcon height={20} width={20} />}
-                      onClick={handleOnNext}
-                      disabled={loading}
-                      loading={loading === 'publish'}
-                    >
-                      {labels.buttonNext}
-                    </Button>
-                  )}
-                </>
-              }
-            />
+    <TotalLayoutStepContainer
+      stepName={stepName}
+      Footer={
+        <TotalLayoutFooterContainer
+          fixed
+          scrollRef={scrollRef}
+          leftZone={
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon height={20} width={20} />}
+              onClick={handleOnPrev}
+            >
+              {labels.buttonPrev}
+            </Button>
           }
-        >
+          rightZone={
+            <>
+              <Button
+                variant="link"
+                onClick={handleOnSave}
+                disabled={loading}
+                loading={loading === 'draft'}
+              >
+                {t('common.save')}
+              </Button>
+              {isExpress || isLastStep ? (
+                <DropdownButton
+                  chevronUp
+                  width="auto"
+                  data={[
+                    { label: labels.buttonPublish, onClick: handleOnPublish },
+                    { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                  ]}
+                  loading={loading === 'publish'}
+                  disabled={loading}
+                >
+                  {t('common.finish')}
+                </DropdownButton>
+              ) : (
+                <Button
+                  rightIcon={<ChevRightIcon height={20} width={20} />}
+                  onClick={handleOnNext}
+                  disabled={loading}
+                  loading={loading === 'publish'}
+                >
+                  {labels.buttonNext}
+                </Button>
+              )}
+            </>
+          }
+        />
+      }
+    >
+      <FormProvider {...formData}>
+        <form autoComplete="off" onSubmit={(e) => e.preventDefault()}>
           <ContextContainer {...props}>
             <ContextContainer style={{ marginBottom: 20 }}>
               <ContextContainer title={labels?.statement}>
@@ -330,9 +330,9 @@ function ContentData({
               )}
             </ContextContainer>
           </ContextContainer>
-        </TotalLayoutStepContainer>
-      </form>
-    </FormProvider>
+        </form>
+      </FormProvider>
+    </TotalLayoutStepContainer>
   );
 }
 
