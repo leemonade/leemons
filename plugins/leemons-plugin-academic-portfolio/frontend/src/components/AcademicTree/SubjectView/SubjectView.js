@@ -40,6 +40,10 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     setDirtyForm(false);
   }, [subjectTreeNode, activeTab]);
 
+  useEffect(() => {
+    setActiveTab('0');
+  }, [subjectTreeNode]);
+
   // For cases when the subject is the child of a reference group
   const singleClassToShow = useMemo(() => {
     const subjectParentNodeIsGroup = subjectDetails?.classes?.every((cls) => cls.groups);
@@ -54,7 +58,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   const EnrollmentTabs = useMemo(() => {
     if (singleClassToShow) {
       return (
-        <TabPanel label={t('enrollTitle')}>
+        <TabPanel key={singleClassToShow.id} label={t('enrollTitle')}>
           <EnrollmentTab
             classData={cloneDeep(singleClassToShow)}
             openEnrollmentDrawer={openEnrollmentDrawer}
@@ -71,7 +75,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     return sortedClasses?.map((cls) => (
       <TabPanel key={cls.id} label={cls?.alias ?? cls.classWithoutGroupId}>
         <EnrollmentTab
-          classData={cloneDeep(cls)}
+          classData={cloneDeep(sortedClasses.find((c) => c.id === activeTab))}
           openEnrollmentDrawer={openEnrollmentDrawer}
           updateForm={updateForm}
           center={program?.centers}
@@ -83,6 +87,8 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
 
   const handleUpdateClass = () => {
     const requestBody = updateForm.getValues();
+    requestBody.id = activeTab;
+
     if (!requestBody.address?.length) requestBody.address = null;
     if (!requestBody.virtualUrl?.length) requestBody.virtualUrl = null;
 
@@ -142,6 +148,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           onChange={(val) => {
             setActiveTab(val);
           }}
+          activeKey={activeTab}
         >
           <TabPanel label={t('info')}>
             <InfoTab

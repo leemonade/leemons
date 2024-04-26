@@ -55,20 +55,19 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   useEffect(() => {
     if (classData) {
       // For simplicity we use local states to show the right info in the input fields but still use updateForm to store the values to save
-      const formValues = {
+      const formerValues = {
         mainTeacher: classData.teachers?.find((teacher) => teacher.type === 'main-teacher')
           ?.teacher,
         virtualUrl: classData.virtualUrl,
         address: classData.address,
         schedule: { days: classData.schedule ?? [] },
-        id: classData.id,
       };
 
-      setSelectedTeacher(formValues.mainTeacher ?? null);
-      setAddress(formValues.address ?? null);
-      setVirtualUrl(formValues.virtualUrl ?? null);
-      setSchedule(formValues.schedule ?? null);
-      updateForm.reset(formValues);
+      setSelectedTeacher(formerValues.mainTeacher ?? null);
+      setAddress(formerValues.address ?? null);
+      setVirtualUrl(formerValues.virtualUrl ?? null);
+      setSchedule(formerValues.schedule ?? null);
+      updateForm.reset(formerValues);
     }
   }, [classData]);
 
