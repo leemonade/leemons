@@ -8,7 +8,6 @@ import { PermissionsData } from './PermissionsData';
 const PermissionsDataDrawer = ({
   opened,
   asset,
-  hasBack = true,
   loading,
   sharing,
   onNext,
@@ -21,8 +20,7 @@ const PermissionsDataDrawer = ({
   return (
     <BaseDrawer
       opened={opened}
-      back={hasBack ? t('header.back') : null}
-      close={t('header.close')}
+      close={false}
       onClose={onClose}
       onBack={onClose}
       size={728}

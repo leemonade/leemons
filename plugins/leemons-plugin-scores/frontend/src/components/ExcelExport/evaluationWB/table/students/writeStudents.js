@@ -24,11 +24,7 @@ function getStudentRows({ tableData, labels }) {
     const customScoreScale = tableData.grades.find((grade) => grade.number === student.customScore);
 
     const calculatedScore = activities.reduce((avg, activity) => {
-      if (
-        activity.activity?.weight &&
-        activity.grade &&
-        activity.activity?.type === 'calificable'
-      ) {
+      if (activity.activity?.weight && activity.grade && activity.activity?.type === 'evaluable') {
         return avg + activity.grade * activity.activity.weight;
       }
       return avg;

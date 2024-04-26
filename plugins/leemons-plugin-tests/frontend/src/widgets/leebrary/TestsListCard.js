@@ -9,12 +9,14 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { ShareIcon } from '@bubbles-ui/icons/outline';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 // import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { TestIcon } from '../../components/Icons/TestIcon';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
@@ -38,6 +40,7 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
+  const canAssign = useIsOwner(asset);
 
   const menuItems = React.useMemo(() => {
     const items = [];
@@ -53,17 +56,17 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
       //     },
       //   });
       // }
-      // if (asset.shareable) {
-      //   items.push({
-      //     icon: <ShareIcon />,
-      //     children: t('share'),
-      //     onClick: (e) => {
-      //       e.stopPropagation();
-      //       onShare(asset);
-      //     },
-      //   });
-      // }
-      if (asset.providerData?.published) {
+      if (asset.providerData?.published && asset.shareable) {
+        items.push({
+          icon: <ShareIcon />,
+          children: t('share'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
+          },
+        });
+      }
+      if (canAssign && asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
           children: t('assign'),
@@ -132,7 +135,7 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
     }
 
     return items;
-  }, [asset, t]);
+  }, [asset, canAssign, t]);
 
   return (
     <LibraryCard

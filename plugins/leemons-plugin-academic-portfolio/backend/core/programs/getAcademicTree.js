@@ -64,20 +64,22 @@ function handleSequentialAndMultipleCourses({
   let tree = [];
 
   if (cycles.length > 0) {
-    tree = cycles.map((cycle) => ({
-      id: cycle.id,
-      name: cycle.name,
-      index: cycle.index,
-      type: 'cycle',
-      children: cycle.courses.map((courseId) => ({
-        ...(({ index, id, name }) => ({
-          index,
-          id,
-          name,
-        }))(courses.find((course) => course.id === courseId)),
-        type: 'course',
-      })),
-    }));
+    tree = cycles
+      .map((cycle) => ({
+        id: cycle.id,
+        name: cycle.name,
+        index: cycle.index,
+        type: 'cycle',
+        children: cycle.courses.map((courseId) => ({
+          ...(({ index, id, name }) => ({
+            index,
+            id,
+            name,
+          }))(courses.find((course) => course.id === courseId)),
+          type: 'course',
+        })),
+      }))
+      .sort((a, b) => a.index - b.index);
   } else {
     // Handle multiple courses not grouped in cycles
     tree = courses.map((course) => ({

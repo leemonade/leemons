@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export default function useSubjectDetails(
   subjectId,
-  { enabled = true } = {},
+  { enabled = true, refetchOnWindowFocus = true } = {},
   withClasses = false,
   showArchived = false
 ) {
@@ -22,6 +22,6 @@ export default function useSubjectDetails(
       }
       return response.data;
     },
-    { enabled }
+    { enabled, refetchOnWindowFocus }
   );
 }

@@ -1,3 +1,4 @@
+import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { sortBy } from 'lodash';
 
 export default function useSubjectName({ klass }) {
@@ -8,5 +9,5 @@ export default function useSubjectName({ klass }) {
 
   const groupName = klass?.groups?.abbreviation === '-auto-' ? '' : `${klass?.groups?.name} - `;
 
-  return `${groupName}${klass?.subject?.name} ${courses.map((course) => course?.name).join(', ')}`;
+  return `${groupName}${klass?.subject?.name} ${courses.map(getCourseName).join(', ')}`;
 }

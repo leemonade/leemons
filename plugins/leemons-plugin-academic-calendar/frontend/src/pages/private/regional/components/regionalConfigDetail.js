@@ -6,24 +6,25 @@ import {
   DatePicker,
   Paragraph,
   Select,
-  Stack,
   TableInput,
   TextInput,
   Title,
   createStyles,
 } from '@bubbles-ui/components';
-import { useLocale, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { AddCircleIcon } from '@bubbles-ui/icons/outline';
+import { useLocale } from '@common';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
 const useStyle = createStyles((theme) => ({
   root: {
     padding: theme.spacing[5],
-    // maxWidth: 700,
     width: '100%',
+  },
+  nameContainer: {
+    width: '50%',
   },
 }));
 
@@ -87,6 +88,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
             node: <TextInput required />,
             rules: { required: t('requiredField') },
           },
+          placeholder: t('nameHolidayPlaceholder'),
         },
         {
           Header: `${t('init')}*`,
@@ -95,6 +97,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
             node: <StartDate locale={locale} required />,
             rules: { required: t('requiredField') },
           },
+          placeholder: `${t('init')}...`,
           valueRender: (value) => <>{new Date(value).toLocaleDateString()}</>,
         },
         {
@@ -104,6 +107,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
             node: <EndDate locale={locale} required />,
             rules: { required: t('requiredField') },
           },
+          placeholder: `${t('end')}...`,
           valueRender: (value) => <>{new Date(value).toLocaleDateString()}</>,
         },
       ],
@@ -152,14 +156,22 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
 
   return (
     <ContextContainer>
-      <Controller
-        control={form.control}
-        name="name"
-        rules={{ required: t('nameRequired') }}
-        render={({ field }) => (
-          <TextInput {...field} error={form?.errors?.name} required label={t('name')} />
-        )}
-      />
+      <Box className={classes.nameContainer}>
+        <Controller
+          control={form.control}
+          name="name"
+          rules={{ required: t('nameRequired') }}
+          render={({ field }) => (
+            <TextInput
+              {...field}
+              error={form?.errors?.name}
+              placeholder={t('calendarNamePlaceholder')}
+              required
+              label={t('name')}
+            />
+          )}
+        />
+      </Box>
       <Box>
         <Title order={3}>
           <ColorBall
@@ -169,26 +181,27 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
           />
           {t('regionalEvents')}
         </Title>
-        <Paragraph>{t('regionalEventsDescription')}</Paragraph>
       </Box>
       {regionalEvents && !regionalEvents.length && regionalCalendars.length ? (
-        <Controller
-          control={form.control}
-          name="regionalEventsRel"
-          render={({ field }) => (
-            <Select
-              {...field}
-              onChange={(value) => {
-                field.onChange(value);
-                form.setValue('regionalEvents', []);
-              }}
-              data={regionalCalendars}
-              clearable
-              placeholder={t('useEventsFromPlaceholder')}
-              label={t('useEventsFrom')}
-            />
-          )}
-        />
+        <Box className={classes.nameContainer}>
+          <Controller
+            control={form.control}
+            name="regionalEventsRel"
+            render={({ field }) => (
+              <Select
+                {...field}
+                onChange={(value) => {
+                  field.onChange(value);
+                  form.setValue('regionalEvents', []);
+                }}
+                data={regionalCalendars}
+                clearable
+                placeholder={t('useEventsFromPlaceholder')}
+                label={t('useEventsFrom')}
+              />
+            )}
+          />
+        </Box>
       ) : null}
 
       {!regionalEventsRel ? (
@@ -207,6 +220,11 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
               editable
               resetOnAdd
               sortable={false}
+              renderActionButton={() => (
+                <Button variant="link" leftIcon={<AddCircleIcon />}>
+                  {t('add')}
+                </Button>
+              )}
             />
           )}
         />
@@ -232,6 +250,11 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
             editable
             resetOnAdd
             sortable={false}
+            renderActionButton={() => (
+              <Button variant="link" leftIcon={<AddCircleIcon />}>
+                {t('add')}
+              </Button>
+            )}
           />
         )}
       />
@@ -258,6 +281,11 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
             editable
             resetOnAdd
             sortable={false}
+            renderActionButton={() => (
+              <Button variant="link" leftIcon={<AddCircleIcon />}>
+                {t('add')}
+              </Button>
+            )}
           />
         )}
       />

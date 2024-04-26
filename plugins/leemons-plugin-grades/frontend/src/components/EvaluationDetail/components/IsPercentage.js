@@ -5,11 +5,11 @@ import { Switch } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 
-const IsPercentage = ({ form }) => {
+const IsPercentage = ({ form, inUse }) => {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const { watch, control } = form;
 
-  const disabled = !!watch('id');
+  const disabled = !!watch('id') || inUse;
 
   return (
     <Controller
@@ -22,6 +22,7 @@ const IsPercentage = ({ form }) => {
 
 IsPercentage.propTypes = {
   form: PropTypes.object.isRequired,
+  inUse: PropTypes.bool,
 };
 
 export { IsPercentage };

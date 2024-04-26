@@ -20,11 +20,13 @@ import {
   TotalLayoutFooterContainer,
   Button,
   Stack,
+  DropdownButton,
 } from '@bubbles-ui/components';
 import { useRequestErrorMessage } from '@common';
 
 import imageUrlToFile from '@leebrary/helpers/imageUrlToFile';
 import compressImage from '@leebrary/helpers/compressImage';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import prefixPN from '../../../helpers/prefixPN';
 import LibraryContext from '../../../context/LibraryContext';
 import { prepareAsset } from '../../../helpers/prepareAsset';
@@ -43,6 +45,7 @@ const AssetPage = () => {
   const params = useParams();
   const queryClient = useQueryClient();
   const scrollRef = useRef(null);
+  const isTeacher = useIsTeacher();
 
   // SET CATEGORY AND LOAD ASSET IF EDITING ------------------------------------------------------------------------
 
@@ -172,7 +175,7 @@ const AssetPage = () => {
     }
   }
 
-  const handlePublish = async () => {
+  const handlePublish = async ({ goToAssign } = {}) => {
     const editing = params.id?.length > 0;
     const requestMethod = editing ? updateAssetRequest : newAssetRequest;
     const isImageResource = formValues.file?.type.indexOf('image') === 0;
@@ -231,11 +234,15 @@ const AssetPage = () => {
           editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
         );
 
-        history.push(
-          `/private/leebrary/${
-            response.asset?.fileType === 'bookmark' ? 'bookmarks' : 'media-files'
-          }/list`
-        );
+        if (goToAssign) {
+          history.push(`/private/leebrary/assign/${newAsset.id}`);
+        } else {
+          history.push(
+            `/private/leebrary/${
+              response.asset?.fileType === 'bookmark' ? 'bookmarks' : 'media-files'
+            }/list`
+          );
+        }
       } catch (err) {
         setLoading(false);
         setUploadingFileInfo(null);
@@ -300,16 +307,47 @@ const AssetPage = () => {
                   fixed
                   scrollRef={scrollRef}
                   rightZone={
-                    <Button
-                      onClick={async () => {
-                        const test = await form.trigger();
-                        if (test) {
-                          handlePublish();
-                        }
-                      }}
-                    >
-                      {t('basicData.footer.finish')}
-                    </Button>
+                    isTeacher ? (
+                      <DropdownButton
+                        chevronUp
+                        width="auto"
+                        loading={loading}
+                        data={[
+                          {
+                            label: t('basicData.footer.publish'),
+                            onClick: async () => {
+                              const test = await form.trigger();
+                              if (test) {
+                                handlePublish();
+                              }
+                            },
+                          },
+                          {
+                            label: t('basicData.footer.publishAndAssign'),
+                            onClick: async () => {
+                              const test = await form.trigger();
+                              if (test) {
+                                handlePublish({ goToAssign: true });
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        {t('basicData.footer.finish')}
+                      </DropdownButton>
+                    ) : (
+                      <Button
+                        loading={loading}
+                        onClick={async () => {
+                          const test = await form.trigger();
+                          if (test) {
+                            handlePublish();
+                          }
+                        }}
+                      >
+                        {t('basicData.footer.finish')}
+                      </Button>
+                    )
                   }
                 />
               }

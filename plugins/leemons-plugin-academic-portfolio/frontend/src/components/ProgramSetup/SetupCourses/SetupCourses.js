@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { capitalize, flatten, forEach, isArray, isFunction, map } from 'lodash';
+import { capitalize, flatten, forEach, isArray, map, noop } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Badge,
@@ -56,10 +56,10 @@ const SetupCourses = ({
   labels,
   placeholders,
   errorMessages,
-  onPrevious,
-  onNext,
   sharedData,
-  setSharedData,
+  setSharedData = noop,
+  onNext = noop,
+  onPrevious = noop,
   frequencyOptions,
   editable,
   ...props
@@ -97,12 +97,10 @@ const SetupCourses = ({
   const {
     watch,
     control,
-    register,
     unregister,
     handleSubmit,
     formState: { errors },
     setValue,
-    getValues,
   } = useForm({ defaultValues });
 
   const onlyOneCourse = watch('onlyOneCourse');
@@ -113,7 +111,7 @@ const SetupCourses = ({
   const cycles = watch('cycles');
   const substagesFrequencyValue = watch('substagesFrequency');
 
-  const { classes, cx } = SetupCoursesStyles({ onlyOneCourse }, { name: 'SetupCourses' });
+  const { classes } = SetupCoursesStyles({ onlyOneCourse }, { name: 'SetupCourses' });
 
   function getArrayOfNumbersCourses() {
     return map([...Array(maxNumberOfCourses).keys()], (a) => a + 1);
@@ -218,10 +216,8 @@ const SetupCourses = ({
             control={control}
             rules={{
               validate: (value) => {
-                if (abbrevationOnlyNumbers) {
-                  if (!/^\d+$/.test(value)) {
-                    return errorMessages.abbrevationOnlyNumbers || 'Only numbers allowed';
-                  }
+                if (abbrevationOnlyNumbers && !/^\d+$/.test(value)) {
+                  return errorMessages.abbrevationOnlyNumbers || 'Only numbers allowed';
                 }
 
                 if (value.length > maxSubstageAbbreviation) {
@@ -230,12 +226,13 @@ const SetupCourses = ({
                         '{n}',
                         maxSubstageAbbreviation
                       )
-                    : 'Maximum ' + maxSubstageAbbreviation + ' characters';
+                    : `Maximum ${maxSubstageAbbreviation} characters`;
                 }
+                return null;
               },
             }}
             defaultValue={defaultValue}
-            render={({ field: { onChange, value, ...field }, fieldState }) => (
+            render={({ field: { onChange, value, ...field } }) => (
               <TextInput
                 {...field}
                 label={labels.abbreviation}
@@ -268,8 +265,8 @@ const SetupCourses = ({
       });
     }
 
-    isFunction(setSharedData) && setSharedData(data);
-    isFunction(onNext) && onNext(data);
+    setSharedData(data);
+    onNext(data);
   };
 
   useEffect(() => {
@@ -299,7 +296,9 @@ const SetupCourses = ({
           valueRender: (values) => (
             <>
               {values.map((v) => (
-                <Badge closable={false}>{v}</Badge>
+                <Badge key={v} closable={false}>
+                  {v}
+                </Badge>
               ))}
             </>
           ),
@@ -426,22 +425,20 @@ const SetupCourses = ({
               <Controller
                 control={control}
                 name="cycles"
-                render={({ field }) => {
-                  return (
-                    <TableInput
-                      {...tableConfig}
-                      {...field}
-                      disabled={!editable}
-                      onChange={(e) => {
-                        if (editable) field.onChange(e);
-                      }}
-                      data={field.value}
-                      editable={false}
-                      resetOnAdd
-                      sortable={false}
-                    />
-                  );
-                }}
+                render={({ field }) => (
+                  <TableInput
+                    {...tableConfig}
+                    {...field}
+                    disabled={!editable}
+                    onChange={(e) => {
+                      if (editable) field.onChange(e);
+                    }}
+                    data={field.value}
+                    editable={false}
+                    resetOnAdd
+                    sortable={false}
+                  />
+                )}
               />
             )}
           </ContextContainer>
@@ -545,7 +542,6 @@ const SetupCourses = ({
                             min={2}
                             label={labels.maxSubstageAbbreviation}
                             onChange={(e) => {
-                              console.log(e);
                               onChange(e);
                               setMaxSubstageAbbreviation(e);
                             }}
@@ -556,17 +552,19 @@ const SetupCourses = ({
                           <Controller
                             name="maxSubstageAbbreviationIsOnlyNumbers"
                             control={control}
-                            render={({ field: { onChange, value, ...field } }) => (
+                            render={({
+                              field: { onChange: onFieldChange, value: fieldValue, ...fieldProps },
+                            }) => (
                               <Checkbox
                                 label={labels.maxSubstageAbbreviationIsOnlyNumbers}
-                                {...field}
+                                {...fieldProps}
                                 onChange={(e) => {
-                                  onChange(e);
+                                  onFieldChange(e);
                                   setMaxSubstageAbbreviationIsOnlyNumbers(
                                     !maxSubstageAbbreviationIsOnlyNumbers
                                   );
                                 }}
-                                checked={value}
+                                checked={fieldValue}
                                 disabled={!editable}
                               />
                             )}

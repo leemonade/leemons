@@ -1,10 +1,9 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { isEmpty } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { cloneDeep, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
 import {
-  LoadingOverlay,
   TotalLayoutStepContainer,
   Tabs,
   TabPanel,
@@ -24,17 +23,22 @@ import InfoTab from './InfoTab';
 const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [activeTab, setActiveTab] = useState('0');
-  const { data: subjectDetails, isLoading } = useSubjectDetails(
+  const [dirtyForm, setDirtyForm] = useState(false);
+  const { data: subjectDetails } = useSubjectDetails(
     subjectTreeNode?.itemId ?? subjectTreeNode?.id,
     {
       enabled: subjectTreeNode?.id?.length > 0 || subjectTreeNode,
+      refetchOnWindowFocus: false,
     },
     true
   );
-  const { mutate: mutateClass } = useUpdateClass();
+  const { mutate: mutateClass, isLoading: isMutatingClass } = useUpdateClass();
   const updateForm = useForm();
-  const { isDirty } = updateForm.formState;
   const stackRef = useRef();
+
+  useEffect(() => {
+    setDirtyForm(false);
+  }, [subjectTreeNode, activeTab]);
 
   // For cases when the subject is the child of a reference group
   const singleClassToShow = useMemo(() => {
@@ -52,10 +56,11 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
       return (
         <TabPanel label={t('enrollTitle')}>
           <EnrollmentTab
-            classData={singleClassToShow}
+            classData={cloneDeep(singleClassToShow)}
             openEnrollmentDrawer={openEnrollmentDrawer}
             center={program?.centers}
             updateForm={updateForm}
+            setDirtyForm={setDirtyForm}
           />
         </TabPanel>
       );
@@ -66,17 +71,20 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     return sortedClasses?.map((cls) => (
       <TabPanel key={cls.id} label={cls?.alias ?? cls.classWithoutGroupId}>
         <EnrollmentTab
-          classData={cls}
+          classData={cloneDeep(cls)}
           openEnrollmentDrawer={openEnrollmentDrawer}
           updateForm={updateForm}
           center={program?.centers}
+          setDirtyForm={setDirtyForm}
         />
       </TabPanel>
     ));
-  }, [subjectDetails, singleClassToShow, program]);
+  }, [subjectDetails, singleClassToShow, program, activeTab]);
 
   const handleUpdateClass = () => {
     const requestBody = updateForm.getValues();
+    if (!requestBody.address?.length) requestBody.address = null;
+    if (!requestBody.virtualUrl?.length) requestBody.virtualUrl = null;
 
     if (requestBody.mainTeacher?.length) {
       requestBody.teachers = [{ teacher: requestBody.mainTeacher, type: 'main-teacher' }];
@@ -120,7 +128,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           fixed
           rectRef={stackRef}
           rightZone={
-            <Button disabled={!isDirty} onClick={handleSaveChanges}>
+            <Button disabled={!dirtyForm} onClick={handleSaveChanges} loading={isMutatingClass}>
               {t('saveChanges')}
             </Button>
           }
@@ -128,13 +136,11 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
       }
     >
       <Box ref={stackRef}>
-        <LoadingOverlay visible={isLoading} />
         <Tabs
           tabPanelListStyle={{ backgroundColor: 'white' }}
           fullHeight
           onChange={(val) => {
             setActiveTab(val);
-            updateForm.reset();
           }}
         >
           <TabPanel label={t('info')}>

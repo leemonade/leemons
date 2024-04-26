@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  allAssignationsGetKey,
-  assignationsGetKey,
-} from '@assignables/requests/hooks/keys/assignations';
+
+import { allAssignationsGetKey } from '@assignables/requests/hooks/keys/assignations';
+import { allInstancesKey } from '@assignables/requests/hooks/keys/instances';
 import updateStudentRequest from '../../request/instance/updateStudent';
 
 export default function useStudentAssignationMutation() {
@@ -14,9 +13,8 @@ export default function useStudentAssignationMutation() {
       return newData;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: allAssignationsGetKey,
-      });
+      queryClient.invalidateQueries(allAssignationsGetKey);
+      queryClient.invalidateQueries(allInstancesKey);
     },
   });
 }

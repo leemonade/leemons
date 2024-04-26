@@ -26,7 +26,7 @@ module.exports = async function setScores({ scores, instances, ctx }) {
 
   if (isPublishing) {
     const date = new Date();
-    const promises = instances.map((instance) =>
+    const promises = instances?.map((instance) =>
       ctx.tx.call('assignables.assignableInstances.updateAssignableInstance', {
         assignableInstance: {
           id: instance,
@@ -36,7 +36,7 @@ module.exports = async function setScores({ scores, instances, ctx }) {
       })
     );
 
-    await Promise.all(promises);
+    await Promise.all(promises ?? []);
   }
 
   await ctx.tx.db.Scores.insertMany(

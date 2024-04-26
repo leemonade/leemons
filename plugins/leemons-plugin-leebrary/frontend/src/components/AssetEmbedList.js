@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, createStyles, Drawer } from '@bubbles-ui/components';
+import { Box, createStyles, BaseDrawer } from '@bubbles-ui/components';
 import { useAssets } from '@leebrary/request/hooks/queries/useAssets';
 import propTypes from 'prop-types';
 import useCategories from '@leebrary/request/hooks/queries/useCategories';

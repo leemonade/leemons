@@ -1,18 +1,20 @@
 import React, { useRef } from 'react';
 import {
-  ActivityAccordion,
-  ActivityAccordionPanel,
-  ActivityAnswersBar,
-  Badge,
   Box,
-  Button,
-  ContextContainer,
-  ImageLoader,
+  Badge,
   Stack,
-  TotalLayoutContainer,
-  TotalLayoutStepContainer,
-  TotalLayoutHeader,
+  Button,
+  Loader,
+  ImageLoader,
   AssetTestIcon,
+  LoadingOverlay,
+  ContextContainer,
+  ActivityAccordion,
+  TotalLayoutHeader,
+  ActivityAnswersBar,
+  TotalLayoutContainer,
+  ActivityAccordionPanel,
+  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -23,6 +25,10 @@ import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, keyBy } from 'lodash';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import useAssets from '@leebrary/request/hooks/queries/useAssets';
+import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
+import useUserAgents from '@users/hooks/useUserAgents';
+import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { getTestRequest } from '../../../request';
 import QuestionsTable from './components/QuestionsTable';
 import { questionTypeT } from '../questions-banks/components/QuestionForm';
@@ -48,6 +54,18 @@ export default function Detail() {
 
   const history = useHistory();
   const params = useParams();
+
+  const { data: assignableDetail, isLoading: assignableLoading } = useAssignables({
+    id: store.test?.id,
+    enabled: !!store.test?.id,
+  });
+  const { data: assetsDetails, isLoading: assetsLoading } = useAssets({
+    ids: [assignableDetail?.asset?.id],
+    enabled: !!assignableDetail?.asset?.id,
+  });
+
+  const [asset] = assetsDetails ?? [];
+  const canEdit = useIsOwner(asset);
 
   function getStats() {
     const selectables = [];
@@ -110,9 +128,8 @@ export default function Detail() {
     try {
       store.currentId = params.id;
       const { test } = await getTestRequest(params.id, { withQuestionBank: true });
-      const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
+
       store.test = test;
-      store.stats = getStats();
       store.test.questionResponses = {};
       forEach(store.test.questions, ({ id }) => {
         store.test.questionResponses[id] = {
@@ -122,19 +139,37 @@ export default function Detail() {
         };
       });
       store.test.config = getConfigByInstance();
-      store.test.questionsInfo = calculeInfoValues(
-        store.test.questions.length,
-        evaluationSystem?.maxScale.number,
-        evaluationSystem?.minScale.number,
-        evaluationSystem?.minScaleToPromote.number
-      );
-      store.evaluationSystem = evaluationSystem;
+
+      store.stats = getStats();
       render();
     } catch (error) {
       console.error(error);
       addErrorAlert(error);
     }
   }
+
+  async function setupEvaluationSystem() {
+    let evaluationSystem = null;
+    if (store.test?.program) {
+      const { evaluationSystem: evalSystem } = await getProgramEvaluationSystemRequest(
+        store.test.program
+      );
+      evaluationSystem = evalSystem;
+    }
+    store.test.questionsInfo = calculeInfoValues(
+      store.test.questions.length,
+      evaluationSystem?.maxScale.number ?? 100,
+      evaluationSystem?.minScale.number ?? 0,
+      evaluationSystem?.minScaleToPromote.number ?? 50
+    );
+    store.evaluationSystem = evaluationSystem;
+  }
+
+  React.useEffect(() => {
+    if (store.test?.id) {
+      setupEvaluationSystem();
+    }
+  }, [store.test]);
 
   function goAssignPage() {
     history.push(`/private/tests/assign/${store.test.id}`);
@@ -222,14 +257,17 @@ export default function Detail() {
           icon={<AssetTestIcon />}
           direction="row"
         >
-          <Box style={{ display: 'flex', gap: 16 }}>
-            <Button variant="outline" onClick={() => goEditPage()}>
-              {t('edit')}
-            </Button>
-            <Button variant="primary" onClick={() => goAssignPage()}>
-              {t('assign')}
-            </Button>
-          </Box>
+          {!assignableLoading && !assetsLoading && canEdit && (
+            <Stack spacing={4}>
+              <Button variant="outline" onClick={() => goEditPage()}>
+                {t('edit')}
+              </Button>
+              <Button variant="primary" onClick={() => goAssignPage()}>
+                {t('assign')}
+              </Button>
+            </Stack>
+          )}
+          {(assignableLoading || assetsLoading) && <Loader visible />}
         </TotalLayoutHeader>
       }
     >

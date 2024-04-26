@@ -15,7 +15,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
 import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { getCookieToken, getSessionCenter } from '@users/session';
+import { getCookieToken, getSessionCenter, getSessionProfile } from '@users/session';
 import { forEach } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -30,9 +30,8 @@ function getViewMode(profile) {
 
 function ClassDetailWidget({ classe }) {
   const [t] = useTranslateLoader(prefixPN('classDetailWidget'));
-  const token = getCookieToken(true);
   const center = getSessionCenter();
-  const profile = center?.profiles?.find((p) => p.id === token.profile);
+  const profile = getSessionProfile();
   const sessionUserAgent = center?.userAgentId;
 
   const [openedUser, setOpenedUser] = React.useState();

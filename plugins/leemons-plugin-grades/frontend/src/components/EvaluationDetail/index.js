@@ -34,7 +34,7 @@ const EvaluationDetail = ({
   useEffect(() => {
     reset({ ...defaultValues });
   }, [defaultValues]);
-
+  const isInUse = defaultValues?.inUse;
   useEffect(() => {
     const subscription = watch(({ type }, { name }) => {
       if (name === 'type') {
@@ -56,8 +56,8 @@ const EvaluationDetail = ({
       <ContextContainer>
         <Title order={3}>{t('basicData')}</Title>
         <Stack spacing={5} fullWidth>
-          <Name form={form} />
-          <Type selectData={selectData} form={form} />
+          <Name form={form} inUse={isInUse} />
+          <Type selectData={selectData} form={form} inUse={isInUse} />
         </Stack>
 
         {type ? (
@@ -67,23 +67,28 @@ const EvaluationDetail = ({
             </Box>
             {typeNumeric ? (
               <Box>
-                <IsPercentage form={form} />
+                <IsPercentage form={form} inUse={isInUse} />
               </Box>
             ) : null}
-            <Scales selectData={selectData} onBeforeRemove={onBeforeRemoveScale} form={form} />
+            <Scales
+              selectData={selectData}
+              onBeforeRemove={onBeforeRemoveScale}
+              form={form}
+              inUse={isInUse}
+            />
           </>
         ) : null}
 
         {type && (
           <>
             <Box className={classes.containerFiftyPercent}>
-              <MinScaleToPromote form={form} />
+              <MinScaleToPromote form={form} inUse={isInUse} />
             </Box>
             <Box>
               <Title order={4}>{t('othersTitle')}</Title>
             </Box>
             <Box>
-              <OtherTags form={form} onBeforeRemove={onBeforeRemoveTag} />
+              <OtherTags form={form} onBeforeRemove={onBeforeRemoveTag} inUse={isInUse} />
             </Box>
           </>
         )}

@@ -228,6 +228,7 @@ export default function DetailQuestions({
             <TextEditorInput
               required
               error={qStore.isDirty ? form.formState.errors.introductoryText : null}
+              editorStyles={{ minHeight: '96px' }}
               label={t('introductoryText')}
               {...field}
             />
@@ -242,6 +243,7 @@ export default function DetailQuestions({
             <Textarea
               required
               error={qStore.isDirty ? form.formState.errors.thanksMessage : null}
+              minRows={3}
               label={t('thanksMessage')}
               {...field}
             />

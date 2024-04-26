@@ -20,7 +20,7 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
   );
   const libraryProps = {
     height: 200,
-    width: 496,
+    width: 576,
     asset,
     hideURLInfo: true,
     viewPDF: false,
@@ -67,9 +67,14 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
             </Box>
           )}
           {asset?.cover ? (
-            <ImageLoader src={asset?.cover} height={200} width={496} />
+            <ImageLoader src={asset?.cover} height={200} width={576} />
           ) : (
-            <CardEmptyCover fileType={assetRole || 'file'} icon={asset?.fileIcon} height={199} />
+            <CardEmptyCover
+              fileType={assetRole || 'file'}
+              icon={asset?.fileIcon}
+              height={199}
+              width={576}
+            />
           )}
         </Box>
       )}

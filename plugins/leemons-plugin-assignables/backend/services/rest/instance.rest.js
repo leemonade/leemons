@@ -54,14 +54,6 @@ module.exports = {
     async handler(ctx) {
       const query = ctx.params;
 
-      if (query.classes) {
-        query.classes = JSON.parse(query.classes);
-      }
-
-      if (query.subjects) {
-        query.subjects = JSON.parse(query.subjects);
-      }
-
       if (_.isBoolean(query.closed) ? query.closed : query.closed === 'true') {
         query.closed = true;
       } else if (_.isBoolean(query.closed) ? !query.closed : query.closed === 'false') {

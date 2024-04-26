@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import getWeights from '@scores/requests/weights/getWeights';
 import { useVariantForQueryKey } from '@common/queries';
+import useUserAgents from '@users/hooks/useUserAgents';
 import { getWeightsKey } from '../keys/weights';
 
 export default function useWeights({ classId, classIds, ...options }) {

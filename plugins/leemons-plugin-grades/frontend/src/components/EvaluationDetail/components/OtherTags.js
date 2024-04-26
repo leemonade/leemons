@@ -8,7 +8,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { EvaluationDetailStyles } from '../styles';
 
-const OtherTags = ({ onBeforeRemove, form }) => {
+const OtherTags = ({ onBeforeRemove, form, inUse }) => {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const { classes } = EvaluationDetailStyles({});
   const { control, watch, setValue, getValues } = form;
@@ -77,6 +77,7 @@ const OtherTags = ({ onBeforeRemove, form }) => {
           <TextInput
             label={t('letterLabel')}
             value={newTag.letter}
+            disabled={inUse}
             onChange={(valueLetter) => setNewTag({ ...newTag, letter: valueLetter })}
             placeholder={t('addLetterPlaceholder')}
           />
@@ -84,6 +85,7 @@ const OtherTags = ({ onBeforeRemove, form }) => {
         <TextInput
           label={t('scalesDescriptionLabel')}
           value={newTag.description}
+          disabled={inUse}
           onChange={(valueDescription) => setNewTag({ ...newTag, description: valueDescription })}
           placeholder={t('addTextPlaceholder')}
         />
@@ -91,11 +93,12 @@ const OtherTags = ({ onBeforeRemove, form }) => {
           label={t('otherTagsRelationScaleLabel')}
           data={data}
           value={newTag.scale}
+          disabled={inUse}
           onChange={(value) => setNewTag({ ...newTag, scale: value })}
           placeholder={t('addCorelationPlaceholder')}
         />
         <Box className={classes.tableButton}>
-          <Button onClick={addNewTag} variant="link" leftIcon={<AddCircleIcon />}>
+          <Button onClick={addNewTag} variant="link" leftIcon={<AddCircleIcon />} disabled={inUse}>
             {t('tableAdd')}
           </Button>
         </Box>
@@ -109,6 +112,7 @@ const OtherTags = ({ onBeforeRemove, form }) => {
             {...field}
             data={field.value}
             showHeaders={false}
+            disabled={inUse}
             {...tableInputConfig}
             onBeforeRemove={onBeforeRemove}
           />
@@ -121,6 +125,7 @@ const OtherTags = ({ onBeforeRemove, form }) => {
 OtherTags.propTypes = {
   form: PropTypes.object.isRequired,
   onBeforeRemove: PropTypes.func,
+  inUse: PropTypes.bool,
 };
 
 export { OtherTags };

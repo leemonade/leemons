@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
   Alert,
+  Loader,
   Button,
 } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
@@ -35,8 +36,8 @@ const CourseView = ({
   const [hasResponsableChanged, setHasResponsableChanged] = useState(false);
   const { classes } = CourseViewStyles();
 
-  const { mutate: mutateCourse } = useUpdateCourse();
-  const { data: courseDetail } = useCourseDetail(
+  const { mutate: mutateCourse, isLoading: mutateCourseLoading } = useUpdateCourse();
+  const { data: courseDetail, isLoading: courseDetailLoading } = useCourseDetail(
     { groupId: courseTreeNode?.itemId },
     { enabled: !!courseTreeNode?.itemId }
   );
@@ -82,6 +83,11 @@ const CourseView = ({
     setHasResponsableChanged(false);
   }, [centerId, courseDetail]);
 
+  const isLoading = useMemo(
+    () => courseDetailLoading || !(teacherProfile && centerId),
+    [teacherProfile, centerId, courseDetailLoading]
+  );
+
   return (
     <TotalLayoutStepContainer
       stepName={
@@ -96,7 +102,11 @@ const CourseView = ({
           fixed
           rectRef={stackRef}
           rightZone={
-            <Button disabled={!hasResponsableChanged} onClick={() => handleAssignManager()}>
+            <Button
+              disabled={!hasResponsableChanged}
+              onClick={() => handleAssignManager()}
+              loading={mutateCourseLoading}
+            >
               {t('saveChanges')}
             </Button>
           }
@@ -115,82 +125,90 @@ const CourseView = ({
       }
     >
       <Stack direction="column" spacing={3} className={classes.content} ref={stackRef}>
-        <Title order={2}>{t('basicDataTitle')}</Title>
-        <Stack spacing={5} className={classes.courseData}>
-          <Box>
-            <Text strong>{t('courseNumber')} </Text>
-            <Text>{courseDetail?.index} </Text>
-          </Box>
-          <Box>
-            <Text strong>{t('courseAlias')} </Text>
-            <Text>{`${courseDetail?.index}º`} </Text>
-          </Box>
-          {!!program?.courseCredits && (
-            <Box>
-              <Text strong>{t('minimumCredits')} </Text>
-              <Text>{program.courseCredits} </Text>
-            </Box>
-          )}
-        </Stack>
-        {teacherProfile && centerId && (
-          <Box className={classes.responsable}>
-            <Controller
-              name="managers"
-              control={control}
-              render={({ field }) => (
-                <SelectUserAgent
-                  {...field}
-                  label={t('responsableLabel')}
-                  profiles={teacherProfile}
-                  centers={centerId}
-                  returnItem
-                  maxSelectedValues={1}
-                  onChange={(user) => {
-                    if (!user) {
-                      field.onChange(user);
-                      setValue('managers', []);
-                    } else {
-                      field.onChange(user);
-                      setValue('managers', [user.value]);
-                    }
-                    setHasResponsableChanged(true);
-                  }}
-                />
-              )}
-            />
-          </Box>
-        )}
-        <Box className={classes.responsableContainer}>
-          <Text>{t('responsableMoreConfig')} </Text>
-          <Box className={classes.responsableLink}>
-            <Link to={'/private/academic-portfolio/programs'}>
-              <Text strong>{t('responsablePrograms')}</Text>
-            </Link>
-          </Box>
-        </Box>
-        {!programHasReferenceGroups && (
+        {isLoading ? (
+          <Stack fullHeight>
+            <Loader padded={true} />
+          </Stack>
+        ) : (
           <>
-            <Box className={classes.titleContainer}>
-              <Title order={2}>{t('enrollTitle')}</Title>
-            </Box>
-
-            <Box>
-              <Alert title={t('AlertTitle')} variant="block" closeable={false}>
+            <Title order={2}>{t('basicDataTitle')}</Title>
+            <Stack spacing={5} className={classes.courseData}>
+              <Box>
+                <Text strong>{t('courseNumber')} </Text>
+                <Text>{courseDetail?.index} </Text>
+              </Box>
+              <Box>
+                <Text strong>{t('courseAlias')} </Text>
+                <Text>{`${courseDetail?.index}º`} </Text>
+              </Box>
+              {!!program?.courseCredits && (
                 <Box>
-                  <Text>{t('AlertDescription')} </Text>
+                  <Text strong>{t('minimumCredits')} </Text>
+                  <Text>{program.courseCredits} </Text>
                 </Box>
-                <Text>{t('AlertNote')} </Text>
-              </Alert>
-              <Box className={classes.enrollButton}>
-                <Button
-                  variant="link"
-                  leftIcon={<AddCircleIcon />}
-                  onClick={() => openEnrollmentDrawer()}
-                >
-                  {t('enrollButton')}
-                </Button>
+              )}
+            </Stack>
+            {teacherProfile && centerId && (
+              <Box className={classes.responsable}>
+                <Controller
+                  name="managers"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectUserAgent
+                      {...field}
+                      label={t('responsableLabel')}
+                      profiles={teacherProfile}
+                      centers={centerId}
+                      returnItem
+                      maxSelectedValues={1}
+                      onChange={(user) => {
+                        if (!user) {
+                          field.onChange(user);
+                          setValue('managers', []);
+                        } else {
+                          field.onChange(user);
+                          setValue('managers', [user.value]);
+                        }
+                        setHasResponsableChanged(true);
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+            )}
+            <Box className={classes.responsableContainer}>
+              <Text>{t('responsableMoreConfig')} </Text>
+              <Box className={classes.responsableLink}>
+                <Link to={'/private/academic-portfolio/programs'}>
+                  <Text strong>{t('responsablePrograms')}</Text>
+                </Link>
               </Box>
             </Box>
+            {!programHasReferenceGroups && (
+              <>
+                <Box className={classes.titleContainer}>
+                  <Title order={2}>{t('enrollTitle')}</Title>
+                </Box>
+
+                <Box>
+                  <Alert title={t('AlertTitle')} variant="block" closeable={false}>
+                    <Box>
+                      <Text>{t('AlertDescription')} </Text>
+                    </Box>
+                    <Text>{t('AlertNote')} </Text>
+                  </Alert>
+                  <Box className={classes.enrollButton}>
+                    <Button
+                      variant="link"
+                      leftIcon={<AddCircleIcon />}
+                      onClick={() => openEnrollmentDrawer()}
+                    >
+                      {t('enrollButton')}
+                    </Button>
+                  </Box>
+                </Box>
+              </>
+            )}
           </>
         )}
       </Stack>

@@ -70,8 +70,8 @@ export default function useClassroomsData(
         color: data?.color,
         courses: data?.courses,
         customGroup: !!labels?.groupName,
-        internalId: subjectCredits.internalId,
-        subjectCompiledInternalId: subjectCredits.compiledInternalId,
+        internalId: subjectCredits?.internalId,
+        subjectCompiledInternalId: subjectCredits?.compiledInternalId,
       };
     }
     return {

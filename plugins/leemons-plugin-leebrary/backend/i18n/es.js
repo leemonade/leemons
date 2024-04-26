@@ -38,7 +38,8 @@ module.exports = {
       },
       footer: {
         finish: 'Finalizar',
-        publish: 'Publicar',
+        publish: 'Sólo publicar',
+        publishAndAssign: 'Publicar y asignar',
       },
       bookmark: {
         titleNew: 'Nuevo marcador',

@@ -3,6 +3,7 @@ const {
 } = require('../addPermissionsBetweenStudentsAndTeachers');
 const { getClassProgram } = require('../getClassProgram');
 const { getProfiles } = require('../../settings/getProfiles');
+const { addPermissionsBetweenTeachers } = require('../addPermissionsBetweenTeachers');
 
 const ADD_CUSTOM_PERMISSION_USER_AGENT = 'users.permissions.addCustomPermissionToUserAgent';
 
@@ -69,6 +70,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   }
 
   await addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
+  await addPermissionsBetweenTeachers({ programId: program.id, ctx });
 
   await ctx.emit('after-add-class-teacher', {
     class: _class,

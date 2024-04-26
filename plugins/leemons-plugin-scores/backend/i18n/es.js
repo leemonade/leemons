@@ -321,6 +321,9 @@ module.exports = {
       name: 'Nombre',
       weight: 'Porcentaje',
     },
+    alerts: {
+      error: 'Error descargando el boletín',
+    },
   },
   weighting: {
     title: 'Reglas de ponderación',
@@ -375,5 +378,73 @@ module.exports = {
     },
     newModulesWarning:
       'Se han añadido nuevos módulos a esta clase. Para incluirlos en la ponderación, modifica los porcentajes',
+  },
+  evaluationNotebook: {
+    title: 'Cuaderno de evaluación',
+    filters: {
+      searchTypes: {
+        student: 'Estudiante',
+        activity: 'Actividad',
+      },
+      search: 'Buscar {type}...',
+      showNonEvaluable: 'Ver no calificables',
+      goToWeighting: 'Ponderación',
+    },
+    scoresTable: {
+      students: 'Estudiantes',
+      noActivity: 'No entregado',
+      avgScore: 'Nota promedio',
+      calculated: 'Calculada',
+      custom: 'Docente',
+      attendance: 'Asistencia',
+    },
+    newModule:
+      'Se han añadido nuevos módulos a esta asignatura que no están ponderados. Para calcularlos correctamente, accede a sus Reglas de ponderación.',
+    updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',
+    updatedError: 'Error actualizando la nota de {{student}} en {{activity}} a un {{score}}',
+    closedEvaluationSuccess: 'Se ha cerrado {period} correctamente',
+    closedEvaluationError: 'Error cerrando {period}',
+    unableToOpen: 'Error al abrir la actividad, la actividad no se ha podido encontrar',
+    noEvaluationPage: 'Esta actividad no tiene una página para evaluar',
+
+    emptyState: {
+      noFilters: {
+        title: 'Seleccionar clase y periodo',
+        description:
+          'Selecciona la clase y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
+      },
+      noResults: {
+        title: 'Sin resultados',
+        description: 'No hemos encontrado resultados para tu bsqueda.',
+      },
+    },
+    footer: {
+      closeEvaluation: 'Cerrar evaluación',
+    },
+  },
+  myScores: {
+    title: 'Mis evaluaciones',
+    filters: {
+      course: 'Curso',
+    },
+    localFilters: {
+      subject: 'Asignatura',
+      search: 'Buscar por actividad...',
+      seeNonEvaluable: 'Ver no calificables',
+    },
+    finalGrades: 'Notas finales',
+    noEvaluable: 'No calificable',
+    downloadReport: 'Descargar boletín',
+
+    emptyStates: {
+      noFilters: {
+        title: 'Seleccionar curso y periodo',
+        description: 'Selecciona el curso y luego filtra por periodos de evaluación.',
+      },
+      noResults: {
+        title: 'Sin resultados',
+        description: 'No hemos encontrado resultados para tu bsqueda.',
+      },
+    },
   },
 };

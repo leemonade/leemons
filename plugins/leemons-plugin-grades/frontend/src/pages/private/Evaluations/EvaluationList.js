@@ -311,7 +311,7 @@ export default function EvaluationList() {
                 </Box>
                 <Box>
                   <ActionButton
-                    disabled={grade.inUse}
+                    disabled={grade?.inUse}
                     icon={<DeleteBinIcon />}
                     onClick={() => onDelete(grade)}
                   />
@@ -322,7 +322,6 @@ export default function EvaluationList() {
         : [],
     [store.grades]
   );
-
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
@@ -380,7 +379,11 @@ export default function EvaluationList() {
             <Button variant="link" onClick={() => setIsDrawerOpened(false)}>
               {t('tableCancel')}
             </Button>
-            <Button onClick={form.handleSubmit(onSubmit)} loading={store.saving}>
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              loading={store.saving}
+              disabled={store?.selectedGrade?.inUse}
+            >
               {t('saveButtonLabel')}
             </Button>
           </Stack>

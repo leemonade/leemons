@@ -30,8 +30,8 @@ async function getMultipleClassData(classes) {
     subjectName: klass?.subject?.name,
     icon: getClassIcon(klass),
     color: klass?.color,
-    internalId: subjectsCredits[i]?.internalId,
-    subjectCompiledInternalId: subjectsCredits[i]?.compiledInternalId,
+    internalId: subjectsCredits?.[i]?.internalId,
+    subjectCompiledInternalId: subjectsCredits?.[i]?.compiledInternalId,
   }));
 }
 
@@ -78,7 +78,7 @@ export default async function getClassData(
     icon: getClassIcon(data),
     color: data?.color,
     customGroup: !!labels?.groupName,
-    internalId: subjectCredits.internalId,
-    subjectCompiledInternalId: subjectCredits.compiledInternalId,
+    internalId: subjectCredits?.internalId,
+    subjectCompiledInternalId: subjectCredits?.compiledInternalId,
   };
 }

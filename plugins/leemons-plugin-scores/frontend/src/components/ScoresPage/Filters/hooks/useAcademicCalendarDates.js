@@ -6,11 +6,11 @@ export default function useAcademicCalendarDates({ selectedClass }) {
   const isSingleCourse = !isArray(courses) || courses.length === 1;
   const courseId = courses?.id ?? courses?.[0]?.id ?? null;
 
-  const { data: academicCalendar } = useAcademicCalendarConfig(program, {
+  const { data: academicCalendar, isLoading } = useAcademicCalendarConfig(program, {
     enabled: !!program,
   });
 
-  if (!academicCalendar || !courseId) {
+  if (isLoading || !courseId) {
     return {};
   }
 

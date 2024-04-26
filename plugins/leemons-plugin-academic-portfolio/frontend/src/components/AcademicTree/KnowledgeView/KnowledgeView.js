@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -9,6 +9,7 @@ import {
   TotalLayoutFooterContainer,
   Alert,
   Button,
+  Loader,
 } from '@bubbles-ui/components';
 import { Controller, useForm } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -27,7 +28,7 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
   const [teacherProfile, setTeacherProfile] = useState();
   const [hasResponsableChanged, setHasResponsableChanged] = useState(false);
   const { classes } = KnowledgeViewStyles();
-  const { data: knowledgeArea } = useGetKnowledgeArea(
+  const { data: knowledgeArea, isLoading: knowledgeAreaIsLoading } = useGetKnowledgeArea(
     { id: knowledgeTreeNode?.itemId },
     { enabled: !!knowledgeTreeNode?.itemId }
   );
@@ -39,8 +40,10 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
     managers: knowledgeArea?.manager ? [knowledgeArea.manager] : [],
     center: centerId,
   };
-  const { mutate: mutateKnowledgeArea } = useUpdateKnowledgeArea();
+  const { mutate: mutateKnowledgeArea, isLoading: mutateKnowledgeAreaLoading } =
+    useUpdateKnowledgeArea();
   const { control, setValue, getValues, reset } = useForm({ defaultValues });
+  const stackRef = useRef();
 
   useEffect(() => {
     if (knowledgeArea) {
@@ -77,6 +80,11 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
     setHasResponsableChanged(false);
   }, [centerId, knowledgeArea]);
 
+  const isLoading = useMemo(
+    () => knowledgeAreaIsLoading || !(teacherProfile && centerId),
+    [teacherProfile, centerId, knowledgeAreaIsLoading]
+  );
+
   return (
     <TotalLayoutStepContainer
       stepName={
@@ -85,13 +93,19 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
           : program?.name ?? ''
       }
       clean
+      fullWidth
       scrollRef={scrollRef}
       Footer={
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
           fixed
+          rectRef={stackRef}
           rightZone={
-            <Button disabled={!hasResponsableChanged} onClick={() => handleAssignManager()}>
+            <Button
+              disabled={!hasResponsableChanged}
+              onClick={() => handleAssignManager()}
+              loading={mutateKnowledgeAreaLoading}
+            >
               {t('saveChanges')}
             </Button>
           }
@@ -109,70 +123,78 @@ const KnowledgeView = ({ program, knowledgeTreeNode, scrollRef, openEnrollmentDr
         />
       }
     >
-      <Stack direction="column" spacing={3} className={classes.content}>
-        <Title order={2}>{t('basicDataTitle')}</Title>
-        <Stack spacing={5} className={classes.courseData}>
-          <Box>
-            <Text strong>{t('courseAlias')} </Text>
-            <Text>{knowledgeArea?.abbreviation} </Text>
-          </Box>
-        </Stack>
-        {teacherProfile && centerId && (
-          <Box className={classes.responsable}>
-            <Controller
-              name="managers"
-              control={control}
-              render={({ field }) => (
-                <SelectUserAgent
-                  {...field}
-                  label={t('responsableLabel')}
-                  profiles={teacherProfile}
-                  centers={centerId}
-                  returnItem
-                  maxSelectedValues={1}
-                  onChange={(user) => {
-                    if (!user) {
-                      field.onChange(user);
-                      setValue('managers', []);
-                    } else {
-                      field.onChange(user);
-                      setValue('managers', [user.value]);
-                    }
-                    setHasResponsableChanged(true);
-                  }}
+      <Stack direction="column" spacing={3} className={classes.content} ref={stackRef}>
+        {isLoading ? (
+          <Stack fullHeight>
+            <Loader padded={true} />
+          </Stack>
+        ) : (
+          <>
+            <Title order={2}>{t('basicDataTitle')}</Title>
+            <Stack spacing={5} className={classes.courseData}>
+              <Box>
+                <Text strong>{t('courseAlias')} </Text>
+                <Text>{knowledgeArea?.abbreviation} </Text>
+              </Box>
+            </Stack>
+            {teacherProfile && centerId && (
+              <Box className={classes.responsable}>
+                <Controller
+                  name="managers"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectUserAgent
+                      {...field}
+                      label={t('responsableLabel')}
+                      profiles={teacherProfile}
+                      centers={centerId}
+                      returnItem
+                      maxSelectedValues={1}
+                      onChange={(user) => {
+                        if (!user) {
+                          field.onChange(user);
+                          setValue('managers', []);
+                        } else {
+                          field.onChange(user);
+                          setValue('managers', [user.value]);
+                        }
+                        setHasResponsableChanged(true);
+                      }}
+                    />
+                  )}
                 />
-              )}
-            />
-          </Box>
-        )}
-        <Box className={classes.responsableContainer}>
-          <Text>{t('responsableMoreConfig')} </Text>
-          <Box className={classes.responsableLink}>
-            <Link to={'/private/academic-portfolio/programs'}>
-              <Text strong>{t('responsablePrograms')}</Text>
-            </Link>
-          </Box>
-        </Box>
-        <Box className={classes.titleContainer}>
-          <Title order={2}>{t('enrollTitle')}</Title>
-        </Box>
-        <Box>
-          <Alert title={t('AlertTitle')} variant="block" closeable={false}>
-            <Box>
-              <Text>{t('AlertDescription')} </Text>
+              </Box>
+            )}
+            <Box className={classes.responsableContainer}>
+              <Text>{t('responsableMoreConfig')} </Text>
+              <Box className={classes.responsableLink}>
+                <Link to={'/private/academic-portfolio/programs'}>
+                  <Text strong>{t('responsablePrograms')}</Text>
+                </Link>
+              </Box>
             </Box>
-            <Text>{t('AlertNote')} </Text>
-          </Alert>
-          <Box className={classes.enrollButton}>
-            <Button
-              variant="link"
-              leftIcon={<AddCircleIcon />}
-              onClick={() => openEnrollmentDrawer()}
-            >
-              {t('enrollButton')}
-            </Button>
-          </Box>
-        </Box>
+            <Box className={classes.titleContainer}>
+              <Title order={2}>{t('enrollTitle')}</Title>
+            </Box>
+            <Box>
+              <Alert title={t('AlertTitle')} variant="block" closeable={false}>
+                <Box>
+                  <Text>{t('AlertDescription')} </Text>
+                </Box>
+                <Text>{t('AlertNote')} </Text>
+              </Alert>
+              <Box className={classes.enrollButton}>
+                <Button
+                  variant="link"
+                  leftIcon={<AddCircleIcon />}
+                  onClick={() => openEnrollmentDrawer()}
+                >
+                  {t('enrollButton')}
+                </Button>
+              </Box>
+            </Box>
+          </>
+        )}
       </Stack>
     </TotalLayoutStepContainer>
   );

@@ -4,11 +4,11 @@ import loadable from '@loadable/component';
 import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
 
-const ScoresPage = loadable(() => import('@scores/pages/ScoresPage'));
+const EvaluationNotebookPage = loadable(() => import('@scores/pages/EvaluationNotebookPage'));
 const PeriodsPage = loadable(() => import('@scores/pages/PeriodsPage'));
 const WeightsPage = loadable(() => import('@scores/pages/WeightsPage'));
 const ReviewerPage = loadable(() => import('@scores/pages/ReviewerPage'));
-const StudentsScoresPage = loadable(() => import('@scores/pages/StudentScoresPage'));
+const MyScores = loadable(() => import('@scores/pages/MyScoresPage'));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -23,10 +23,10 @@ export default function Private() {
         <PeriodsPage />
       </Route>
       <Route exact path={`${path}/scores`}>
-        <StudentsScoresPage />
+        <MyScores />
       </Route>
       <Route exact path={`${path}/notebook`}>
-        <ScoresPage />
+        <EvaluationNotebookPage />
       </Route>
       <Route exact path={`${path}/notebook/review`}>
         <ReviewerPage />

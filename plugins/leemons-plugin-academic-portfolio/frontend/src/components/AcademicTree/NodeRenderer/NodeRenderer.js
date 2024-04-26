@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChevDownIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { Box, Text } from '@bubbles-ui/components';
+import { Box, Text, TextClamp } from '@bubbles-ui/components';
 import { NODE_RENDERER_PROP_TYPES, NODE_RENDERER_DEFAULT_PROPS } from './NodeRenderer.constants';
 import { NodeRendererStyles } from './NodeRenderer.styles';
 
@@ -17,7 +17,9 @@ const NodeRenderer = ({ node, depth, isOpen, onToggle, isActive, handleNodeClick
       {node.droppable && (
         <Box className={classes.icon}>{isOpen ? <ChevDownIcon /> : <ChevRightIcon />}</Box>
       )}
-      <Text className={classes.nodeText}>{node.text}</Text>
+      <TextClamp lines={1} withTooltip>
+        <Text className={classes.nodeText}>{node.text}</Text>
+      </TextClamp>
     </Box>
   );
 };

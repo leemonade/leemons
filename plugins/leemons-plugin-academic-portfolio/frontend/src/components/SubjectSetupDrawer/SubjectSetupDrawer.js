@@ -10,10 +10,6 @@ import {
 } from '@bubbles-ui/components';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import {
-  useCreateSubject,
-  useUpdateSubject,
-} from '@academic-portfolio/hooks/mutations/useMutateSubject';
 import { useProgramDetail } from '@academic-portfolio/hooks';
 import {
   useCreateClass,
@@ -21,7 +17,10 @@ import {
   useUpdateClass,
 } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
+import { createSubjectRequest, updateSubjectRequest } from '@academic-portfolio/request';
 import SubjectForm from './SubjectForm';
+
+const INTERNAL_ID_IN_USE = 'INTERNAL_ID_IN_USE';
 
 const SubjectSetupDrawer = ({
   isOpen,
@@ -37,9 +36,7 @@ const SubjectSetupDrawer = ({
     enabled: programId?.length > 0,
   });
 
-  const { mutateAsync: createSubjectAsync, isLoading: isCreateSubjectLoading } = useCreateSubject();
   const { mutateAsync: createClassAsync, isLoading: isCreateClassLoading } = useCreateClass();
-  const { mutateAsync: updateSubjectAsync, isLoading: isUpdateSubjectLoading } = useUpdateSubject();
   const { mutateAsync: updateClassAsync, isLoading: isUpdateClassLoading } = useUpdateClass();
   const { mutateAsync: deleteClassAsync } = useDeleteClass();
 
@@ -195,6 +192,7 @@ const SubjectSetupDrawer = ({
 
     await Promise.all(classesCreationPromises);
   };
+
   const handleOnSubmit = async (formData) => {
     const {
       name,
@@ -233,8 +231,8 @@ const SubjectSetupDrawer = ({
     const classesChanges = isEditing ? getClassChanges(classrooms, courseArray) : {};
 
     try {
-      const mutationFunction = isEditing ? updateSubjectAsync : createSubjectAsync;
-      const subjectResponse = await mutationFunction(subjectsBody);
+      const subjectRequest = isEditing ? updateSubjectRequest : createSubjectRequest;
+      const subjectResponse = await subjectRequest(subjectsBody);
 
       if (isEditing && classesChanges?.classesToRemove?.length) {
         await handleClassesDeletion(classesChanges.classesToRemove);
@@ -262,6 +260,7 @@ const SubjectSetupDrawer = ({
         !isEditing ? localizations?.alerts?.success?.add : localizations?.alerts?.success?.update
       );
       setIsOpen(false);
+
       if (isEditing) {
         setIsEditing(false);
         queryClient.invalidateQueries(['subjectDetail', { subject: allSubjectIds }]);
@@ -269,9 +268,15 @@ const SubjectSetupDrawer = ({
       const programSubjectsQueryKey = getProgramSubjectsKey(programId);
       queryClient.invalidateQueries(programSubjectsQueryKey);
     } catch (error) {
-      console.error('error', error);
+      let errorToAppend = '';
+
+      if (error?.code === INTERNAL_ID_IN_USE) {
+        errorToAppend = `: ${localizations?.alerts.failure.internalIdInUse}`;
+      }
       addErrorAlert(
-        !isEditing ? localizations?.alerts.failure.add : localizations?.alerts.failure.update
+        !isEditing
+          ? `${localizations?.alerts.failure.add}${errorToAppend}`
+          : `${localizations?.alerts.failure.update}${errorToAppend}`
       );
     }
   };
@@ -299,7 +304,7 @@ const SubjectSetupDrawer = ({
                 onCancel={handleOnCancel}
                 onSubmit={handleOnSubmit}
                 program={programDetail}
-                drawerIsLoading={isCreateSubjectLoading || isCreateClassLoading}
+                drawerIsLoading={isCreateClassLoading}
                 localizations={localizations}
               />
             ) : (
@@ -308,7 +313,7 @@ const SubjectSetupDrawer = ({
                 onCancel={handleOnCancel}
                 onSubmit={handleOnSubmit}
                 program={programDetail}
-                drawerIsLoading={isUpdateSubjectLoading || isUpdateClassLoading}
+                drawerIsLoading={isUpdateClassLoading}
                 subject={subject}
                 isEditing
                 localizations={localizations}

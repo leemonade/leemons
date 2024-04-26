@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isEmpty, omit } from 'lodash';
-import { Table, Stack, ActionButton, Tooltip } from '@bubbles-ui/components';
+import { Table, Stack, ActionButton, Tooltip, LoadingOverlay } from '@bubbles-ui/components';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
@@ -28,7 +28,8 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
   const getCoursesTextToShow = (courses) => {
     let coursesText = '';
     if (isArray(courses)) {
-      coursesText = courses.map(({ index }) => `${index}º`).join(', ');
+      const sortedCourses = [...courses].sort((a, b) => a.index - b.index);
+      coursesText = sortedCourses.map(({ index }) => `${index}º`).join(', ');
     } else if (courses?.index !== undefined) {
       coursesText = `${courses.index}º`;
     }
@@ -170,7 +171,7 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
     [labels]
   );
 
-  if (isSubjectsDetailLoading) return null;
+  if (isSubjectsDetailLoading) return <LoadingOverlay visible={isSubjectsDetailLoading} />;
   return <Table columns={tableColumns} data={tableData} />;
 };
 

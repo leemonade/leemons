@@ -1,5 +1,5 @@
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useQuery } from '@tanstack/react-query';
+import useUserAgents from '@users/hooks/useUserAgents';
 import { listSessionClassesRequest } from '../request';
 
 export default function useSessionClasses(

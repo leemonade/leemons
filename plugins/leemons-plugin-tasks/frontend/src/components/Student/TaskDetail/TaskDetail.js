@@ -8,12 +8,12 @@ import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import { Loader, TotalLayoutContainer } from '@bubbles-ui/components';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { useHistory } from 'react-router-dom';
+import useUserAgents from '@users/hooks/useUserAgents';
 import StepContainer from './components/StepContainer/StepContainer';
 
 function useTaskDetailLocalizations() {

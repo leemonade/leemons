@@ -20,6 +20,7 @@ const { classDetailForDashboard } = require('./classDetailForDashboard');
 const { getBasicClassesByProgram } = require('./getBasicClassesByProgram');
 const { getClassesUnderProgramCourse } = require('./getClassesUnderProgramCourse');
 const { changeClassSubstageBySubject } = require('./substage/changeClassSubstageBySubject');
+const { getUserEnrollments } = require('./getUserEnrollments');
 
 module.exports = {
   addClass,
@@ -44,4 +45,5 @@ module.exports = {
   getBasicClassesByProgram,
   getClassesUnderProgramCourse,
   changeClassSubstageBySubject,
+  getUserEnrollments,
 };

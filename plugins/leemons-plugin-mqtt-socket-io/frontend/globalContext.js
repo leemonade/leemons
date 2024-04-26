@@ -10,7 +10,7 @@ export function Provider({ children }) {
   const [store] = useStore();
 
   async function init() {
-    await SocketIoService.disconnect();
+    if (!SocketIoService.isCreating()) await SocketIoService.disconnect();
     const token = getCookieToken(true);
     if (token && token !== store.token) {
       const config = {

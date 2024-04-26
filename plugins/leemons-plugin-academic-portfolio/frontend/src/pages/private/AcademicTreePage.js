@@ -6,6 +6,7 @@ import {
   Select,
   TotalLayoutContainer,
   TotalLayoutHeader,
+  TotalLayoutStepContainer,
   Stack,
   ImageLoader,
   Box,
@@ -20,6 +21,9 @@ import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
 import { KnowledgeView } from '@academic-portfolio/components/AcademicTree/KnowledgeView/KnowledgeView';
 import TreeBox from '@academic-portfolio/components/AcademicTree/TreeBox';
+import { EmptyState } from '@academic-portfolio/components/EmptyState';
+import { OpenIcon } from '@bubbles-ui/icons/outline';
+import { cloneDeep } from 'lodash';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
 
@@ -32,7 +36,9 @@ const AcademicTreePage = () => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
     useState(null);
-  const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
+  const { data: userCenters, isLoading: areCentersLoading } = useUserCenters({
+    refetchOnWindowFocus: false,
+  });
   const scrollRef = useRef();
   const history = useHistory();
   const viewRef = useRef();
@@ -70,8 +76,11 @@ const AcademicTreePage = () => {
   });
 
   const isLoading = useMemo(
-    () => areCentersLoading || areCenterProgramsLoading || isAcademicTreeLoading,
-    [areCenterProgramsLoading, isAcademicTreeLoading]
+    () =>
+      areCentersLoading ||
+      areCenterProgramsLoading ||
+      (programSelectData.length > 0 && isAcademicTreeLoading),
+    [areCenterProgramsLoading, isAcademicTreeLoading, programSelectData]
   );
 
   const generateGUID = () => uuidv4();
@@ -119,13 +128,15 @@ const AcademicTreePage = () => {
         });
       }
     });
-
+    if (trees.length > 0 && trees[0].treeData.length > 0) {
+      setSelectedTreeNode(trees[0].treeData[0]);
+    }
     return trees;
   };
 
   const treeStructures = useMemo(
     () => parseAcademicTreeData(academicTreeQuery || []),
-    [academicTreeQuery, t]
+    [academicTreeQuery]
   );
 
   // EFFECTS ····················································································|Ç
@@ -191,7 +202,7 @@ const AcademicTreePage = () => {
           <CourseView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            courseTreeNode={selectedTreeNode}
+            courseTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
             programHasReferenceGroups={programHasReferenceGroups}
           />
@@ -201,7 +212,7 @@ const AcademicTreePage = () => {
           <GroupView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            groupTreeNode={selectedTreeNode}
+            groupTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
@@ -210,7 +221,7 @@ const AcademicTreePage = () => {
           <KnowledgeView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            knowledgeTreeNode={selectedTreeNode}
+            knowledgeTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
@@ -219,7 +230,7 @@ const AcademicTreePage = () => {
           <SubjectView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
-            subjectTreeNode={selectedTreeNode}
+            subjectTreeNode={cloneDeep(selectedTreeNode)}
             program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
           />
         );
@@ -231,13 +242,12 @@ const AcademicTreePage = () => {
   const TreeBoxMemo = useMemo(
     () => (
       <TreeBox
-        viewRef={viewRef}
         treeStructures={treeStructures}
         selectedTreeNode={selectedTreeNode}
         handleNodeClick={handleNodeClick}
       />
     ),
-    [treeStructures, viewRef, selectedTreeNode]
+    [treeStructures, selectedTreeNode]
   );
 
   return (
@@ -287,25 +297,44 @@ const AcademicTreePage = () => {
           </TotalLayoutHeader>
         }
       >
-        <Stack
-          ref={scrollRef}
-          spacing={4}
-          sx={{
-            overflowY: 'auto',
-            backgroundColor: '#f8f9fb',
-            width: '100%',
-            maxWidth: 1400,
-            margin: 'auto',
-            paddingTop: 24,
-            paddingInline: 24,
-          }}
-        >
-          {TreeBoxMemo}
-          <Box sx={{ width: 192 }}></Box>
-          <Stack direction="column" sx={{ width: 'calc(100% - 192px)' }} ref={viewRef}>
-            {viewToRender}
+        {programSelectData.length < 1 ? (
+          <Stack
+            justifyContent="center"
+            ref={scrollRef}
+            style={{ overflow: 'auto' }}
+            fullWidth
+            fullHeight
+          >
+            <TotalLayoutStepContainer scrollRef={scrollRef}>
+              <EmptyState
+                description={t('noProgramEmptyStateDescription')}
+                actionLabel={t('noProgramEmptyStateAction')}
+                Icon={<OpenIcon />}
+                onClick={() => history.push('/private/academic-portfolio/programs')}
+              />
+            </TotalLayoutStepContainer>
           </Stack>
-        </Stack>
+        ) : (
+          <Stack
+            ref={scrollRef}
+            spacing={4}
+            sx={{
+              overflowY: 'auto',
+              backgroundColor: '#f8f9fb',
+              width: '100%',
+              maxWidth: 1400,
+              margin: 'auto',
+              paddingTop: 24,
+              paddingInline: 24,
+            }}
+          >
+            {TreeBoxMemo}
+            <Box sx={{ width: 192 }}></Box>
+            <Stack direction="column" sx={{ width: 'calc(100% - 192px)' }} ref={viewRef}>
+              {viewToRender}
+            </Stack>
+          </Stack>
+        )}
       </TotalLayoutContainer>
       <EnrollmentDrawer
         scrollRef={scrollRef}

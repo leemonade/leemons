@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import { NumberInput, TableInput, TextInput, Stack, Box, Button } from '@bubbles-ui/components';
-import { find, forEach } from 'lodash';
+import { find, forEach, isNil } from 'lodash';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@grades/helpers/prefixPN';
 import { EvaluationDetailStyles } from '../styles';
 
-const Scales = ({ selectData, form, onBeforeRemove }) => {
+const Scales = ({ selectData, form, onBeforeRemove, inUse }) => {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const { control, watch, getValues, setValue } = form;
   const [newScale, setNewScale] = useState({ letter: '', number: null, description: '' });
@@ -123,9 +123,10 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
   }
 
   const tableButtonLetterDisabled =
-    type.value === 'letter' && (!newScale.letter || !newScale.number || !newScale.description);
+    type.value === 'letter' &&
+    (!newScale.letter || isNil(newScale.number) || !newScale.description);
   const tableButtonNumericDisabled =
-    type.value === 'numeric' && (!newScale.number || !newScale.description);
+    type.value === 'numeric' && (isNil(newScale.number) || !newScale.description);
 
   return (
     <Stack>
@@ -138,6 +139,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
               onChange={(e) => setNewScale({ ...newScale, letter: e })}
               placeholder={t('letterLabel')}
               maxLength={2}
+              disabled={inUse}
               required
             />
           )}
@@ -147,6 +149,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
             onChange={(value) => setNewScale({ ...newScale, number: value })}
             placeholder={isPercentage ? t('percentageLabel') : t('numberLabel')}
             customDesign
+            disabled={inUse}
             precision={3}
             step={1}
             min={0}
@@ -157,6 +160,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
             <TextInput
               label={t('scalesDescriptionLabel')}
               value={newScale.description}
+              disabled={inUse}
               onChange={(e) => setNewScale({ ...newScale, description: e })}
               placeholder={t('scalesDescriptionLabel')}
               required
@@ -187,6 +191,7 @@ const Scales = ({ selectData, form, onBeforeRemove }) => {
               onChange={(e1, e2) => onChange(e1, e2, field)}
               data={field.value}
               showHeaders={false}
+              disabled={inUse}
               onBeforeRemove={_onBeforeRemove}
               {...tableInputConfig}
             />
@@ -201,6 +206,7 @@ Scales.propTypes = {
   form: PropTypes.object.isRequired,
   selectData: PropTypes.object.isRequired,
   onBeforeRemove: PropTypes.func,
+  inUse: PropTypes.bool,
 };
 
 export { Scales };

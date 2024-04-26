@@ -223,6 +223,7 @@ module.exports = {
           minCredits: 'Créditos mínimos',
           maxCredits: 'Créditos máximos',
           mustHaveAtLeastTwoCourses: 'Debe tener al menos 2 cursos',
+          numberOfCourses: 'Número de cursos',
         },
         cyclesSetup: {
           cycleName: 'Nombre del ciclo',
@@ -247,7 +248,7 @@ module.exports = {
           digits: 'Dígitos',
           digitsPlaceholder: 'Dígitos...',
           offeredGroups: 'Grupos Ofertados',
-          course: 'Course',
+          course: 'Curso',
           numberOfGroups: 'Nº de grupos',
           nameFormatOptions: {
             alphabetical: 'Letras (A, B, C)',
@@ -565,8 +566,9 @@ module.exports = {
         duplicate: 'Asignatura duplicada con éxito.',
       },
       failure: {
-        add: 'No se ha podido crear la Asignatura. ',
-        update: 'No se ha podido actualizar la Asignatura. ',
+        add: 'No se ha podido crear la Asignatura',
+        internalIdInUse: 'The entered unique ID is already in use.',
+        update: 'No se ha podido actualizar la Asignatura',
         delete: 'No se ha podido eliminar la Asignatura. ',
         duplicate: 'No se ha podido duplicar la Asignatura. ',
       },
@@ -634,7 +636,7 @@ module.exports = {
       seats: 'Plazas disponibles',
       classroom: 'Clase',
       schedule: 'Horario de clase',
-      teacher: 'Profesor',
+      teacher: 'Docente',
       description: 'Descripción',
       maxInternalIdLength: 'Máximo {max} dígitos',
       groupAny: 'Debe tener {max} caracteres',
@@ -769,6 +771,9 @@ module.exports = {
     newclass: 'Nueva clase',
     newknowledges: 'Nueva área',
     newsubject: 'Nueva asignatura',
+    noProgramEmptyStateDescription:
+      'No hay ningún programa creado aún. Para poder ver la estructura del árbol, primero crea un programa.',
+    noProgramEmptyStateAction: 'Crear programa',
     cycleTreeType: {
       title: 'Configuración ciclo',
       name: 'Nombre:',
@@ -784,6 +789,7 @@ module.exports = {
       enrollmentSeatsError:
         'Error de matriculación: Faltan plazas disponibles en algún aula o grupo ',
       remove: 'Borrar',
+      search: 'Buscar',
     },
     studentsTable: {
       surnames: 'Apellidos',
@@ -1001,6 +1007,8 @@ module.exports = {
 
   common: {
     defaultGroupName: 'Grupo por defecto',
+    enrollments: 'Matriculaciones',
+    sharedEnrollments: 'Contigo en clase en',
   },
   classroomPicker: {
     and: 'y',

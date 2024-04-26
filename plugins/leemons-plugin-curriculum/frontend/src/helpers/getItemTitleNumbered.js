@@ -1,4 +1,4 @@
-import { TAGIFY_TAG_REGEX } from '@bubbles-ui/components';
+import { TAGIFY_TAG_REGEX } from '@bubbles-ui/extras';
 import { numberToEncodedLetter } from '@common';
 
 // eslint-disable-next-line import/prefer-default-export

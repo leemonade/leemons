@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, ContextContainer, DatePicker, Grid, Text, Title } from '@bubbles-ui/components';
+import {
+  Col,
+  ContextContainer,
+  DatePicker,
+  Grid,
+  Text,
+  Title,
+  Divider,
+} from '@bubbles-ui/components';
 
 export default function Substages({
   locale,
@@ -14,7 +22,7 @@ export default function Substages({
 }) {
   return (
     <ContextContainer sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-      <Title order={6}>{t('substagesOrEvaluations')}</Title>
+      <Title order={3}>{t('substagesOrEvaluations')}</Title>
       <Grid columns={100}>
         <Col span={20}>
           <Text role="productive" size="xs" color="primary" strong>
@@ -32,6 +40,8 @@ export default function Substages({
           </Text>
         </Col>
       </Grid>
+      <Divider />
+
       {program.substages.map((substage, index) => {
         let maxDate = value[substage.id]?.endDate;
         let minDate = value[substage.id]?.startDate;
@@ -57,63 +67,66 @@ export default function Substages({
           }
         }
         return (
-          <Grid key={substage.id} columns={100} align="center">
-            <Col span={20}>
-              <Text role="productive" size="xs" strong>
-                {substage.abbreviation}
-              </Text>
-            </Col>
-            <Col span={40}>
-              <DatePicker
-                locale={locale}
-                disabled={_disabled}
-                value={value[substage.id]?.startDate}
-                minDate={initMinDate}
-                maxDate={maxDate}
-                onChange={(date) => {
-                  if (!date) {
+          <>
+            <Grid key={substage.id} columns={100} align="center">
+              <Col span={20}>
+                <Text role="productive" size="xs" strong>
+                  {substage.abbreviation}
+                </Text>
+              </Col>
+              <Col span={40}>
+                <DatePicker
+                  locale={locale}
+                  disabled={_disabled}
+                  value={value[substage.id]?.startDate}
+                  minDate={initMinDate}
+                  maxDate={maxDate}
+                  onChange={(date) => {
+                    if (!date) {
+                      onChange({
+                        ...value,
+                        [substage.id]: {
+                          ...(value[substage.id] || {}),
+                          startDate: date,
+                          endDate: date,
+                        },
+                      });
+                    } else {
+                      onChange({
+                        ...value,
+                        [substage.id]: {
+                          ...(value[substage.id] || {}),
+                          startDate: date,
+                        },
+                      });
+                    }
+                  }}
+                  required
+                />
+              </Col>
+              <Col span={40}>
+                <DatePicker
+                  locale={locale}
+                  clearable={false}
+                  disabled={_disabled || !value[substage.id]?.startDate}
+                  value={value[substage.id]?.endDate || value[substage.id]?.startDate}
+                  minDate={minDate}
+                  maxDate={endMaxDate}
+                  onChange={(date) => {
                     onChange({
                       ...value,
                       [substage.id]: {
                         ...(value[substage.id] || {}),
-                        startDate: date,
                         endDate: date,
                       },
                     });
-                  } else {
-                    onChange({
-                      ...value,
-                      [substage.id]: {
-                        ...(value[substage.id] || {}),
-                        startDate: date,
-                      },
-                    });
-                  }
-                }}
-                required
-              />
-            </Col>
-            <Col span={40}>
-              <DatePicker
-                locale={locale}
-                clearable={false}
-                disabled={_disabled || !value[substage.id]?.startDate}
-                value={value[substage.id]?.endDate || value[substage.id]?.startDate}
-                minDate={minDate}
-                maxDate={endMaxDate}
-                onChange={(date) => {
-                  onChange({
-                    ...value,
-                    [substage.id]: {
-                      ...(value[substage.id] || {}),
-                      endDate: date,
-                    },
-                  });
-                }}
-                required
-              />
-            </Col>
-          </Grid>
+                  }}
+                  required
+                />
+              </Col>
+            </Grid>
+            <Divider />
+          </>
         );
       })}
     </ContextContainer>

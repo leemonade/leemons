@@ -65,6 +65,7 @@ import {
   removeStudentFromClass,
   updateClass,
   updateClassMany,
+  userEnrollments,
 } from './classes';
 import { getStudentsByTags } from './common';
 
@@ -110,6 +111,7 @@ export const listTeacherClassesRequest = listTeacherClasses;
 export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
 export const classByIdsRequest = classByIds;
+export const userEnrollmentsRequest = userEnrollments;
 
 export const createKnowledgeRequest = createKnowledgeArea;
 export const listKnowledgesRequest = listKnowledgeAreas;

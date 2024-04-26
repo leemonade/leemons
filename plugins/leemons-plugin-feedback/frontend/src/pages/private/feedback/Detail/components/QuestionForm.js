@@ -100,40 +100,39 @@ export default function QuestionForm({ t, onSave, defaultValues, onCancel }) {
           </ContextContainer>
         </Box>
         {type ? (
-          <>
-            <ContextContainer divided>
-              <ContextContainer>
-                <Controller
-                  control={form.control}
-                  name="question"
-                  rules={{ required: t('questionRequired') }}
-                  render={({ field }) => (
-                    <TextEditorInput
-                      required
-                      placeholder={type === 'likertScale' ? t('likertScalePlaceholder') : ''}
-                      error={form.formState.errors.question}
-                      label={t('questionLabel')}
-                      {...field}
-                    />
-                  )}
-                />
+          <ContextContainer divided>
+            <ContextContainer>
+              <Controller
+                control={form.control}
+                name="question"
+                rules={{ required: t('questionRequired') }}
+                render={({ field }) => (
+                  <TextEditorInput
+                    required
+                    placeholder={type === 'likertScale' ? t('likertScalePlaceholder') : ''}
+                    error={form.formState.errors.question}
+                    label={t('questionLabel')}
+                    editorStyles={{ minHeight: '96px' }}
+                    {...field}
+                  />
+                )}
+              />
 
-                {type
-                  ? React.cloneElement(questionComponents[type], {
-                      form,
-                      t,
-                    })
-                  : null}
-              </ContextContainer>
-
-              <Stack alignItems="center" justifyContent="space-between">
-                <Button variant="light" leftIcon={<ChevLeftIcon />} onClick={onCancel}>
-                  {t('returnToList')}
-                </Button>
-                <Button onClick={save}>{t('saveQuestion')}</Button>
-              </Stack>
+              {type
+                ? React.cloneElement(questionComponents[type], {
+                    form,
+                    t,
+                  })
+                : null}
             </ContextContainer>
-          </>
+
+            <Stack alignItems="center" justifyContent="space-between">
+              <Button variant="light" leftIcon={<ChevLeftIcon />} onClick={onCancel}>
+                {t('returnToList')}
+              </Button>
+              <Button onClick={save}>{t('saveQuestion')}</Button>
+            </Stack>
+          </ContextContainer>
         ) : null}
       </ContextContainer>
     </Box>
