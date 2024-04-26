@@ -130,14 +130,11 @@ export default function ProgramCalendars() {
         programsList.data.items.map(async (program) => {
           try {
             const configResponse = await getConfigRequest(program.id);
-            // Extraer todas las fechas de inicio y fin de los cursos
             const courseDates = Object.values(configResponse.config.courseDates || {});
             const startDates = courseDates.map((date) => new Date(date.startDate));
             const endDates = courseDates.map((date) => new Date(date.endDate));
-            // Encontrar la fecha de inicio más temprana y la fecha de fin más tardía
             const startCourse = startDates.length > 0 ? new Date(Math.min(...startDates)) : null;
             const endCourse = endDates.length > 0 ? new Date(Math.max(...endDates)) : null;
-            // Formatear las fechas al formato DD/MM/YYYY
             const startCourseStr = formatDate(startCourse);
             const endCourseStr = formatDate(endCourse);
             return {
@@ -156,7 +153,7 @@ export default function ProgramCalendars() {
       );
 
       store.programs = programsWithConfig;
-      setPrograms(programsWithConfig); // Asumiendo que quieres actualizar el estado local también
+      setPrograms(programsWithConfig);
       render();
     }
   }
@@ -178,6 +175,13 @@ export default function ProgramCalendars() {
     setUserCenters(centers);
     handleOnSelectCenter(centers[0]);
   }, []);
+
+  useEffect(() => {
+    if (programsList) {
+      loadProgramConfigs();
+    }
+  }, [programsList]);
+
   const columns = useMemo(
     () => [
       {
@@ -224,7 +228,7 @@ export default function ProgramCalendars() {
 
   const programsData = useMemo(
     () =>
-      programs?.map((program) => ({
+      store?.programs?.map((program) => ({
         ...program,
         actions: (
           <Stack>
@@ -243,7 +247,7 @@ export default function ProgramCalendars() {
           </Stack>
         ),
       })),
-    [programs]
+    [programs, programsIsLoading, programsList]
   );
 
   const stepNames = [
@@ -338,7 +342,7 @@ export default function ProgramCalendars() {
           </VerticalStepperContainer>
         ) : (
           <TotalLayoutStepContainer stepName={`${selectedCenter?.name}`}>
-            {programsData?.length > 0 ? (
+            {!!store.programs.length && !programsIsLoading ? (
               <Table columns={columns} data={programsData || []} />
             ) : (
               <EmptyState t={t} />
