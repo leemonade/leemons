@@ -8,7 +8,7 @@ const {
 } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
 
 async function addClassTeachers({ data, ctx }) {
-  await validateAddClassTeachers(data);
+  validateAddClassTeachers(data);
 
   const getClass = async () => (await classByIds({ ids: data.class, ctx }))[0];
 
