@@ -8,7 +8,7 @@ import { getCentersWithToken } from '@users/session';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import { prefixPN } from '@scores/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
+import { useMatchingAcademicCalendarPeriods } from '../__DEPRECATED__/FinalNotebook/FinalScores';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {

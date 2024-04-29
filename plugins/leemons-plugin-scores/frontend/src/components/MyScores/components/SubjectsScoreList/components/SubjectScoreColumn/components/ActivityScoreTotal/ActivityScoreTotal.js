@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Stack, Text } from '@bubbles-ui/components';
@@ -8,9 +8,12 @@ import getNearestScale from '@scorm/helpers/getNearestScale';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useScores } from '@scores/requests/hooks/queries';
+import useMyScoresStore from '@scores/stores/myScoresStore';
 import useActivityScoreTotalStyles from './ActivityScoreTotal.style';
 
 export default function ActivityScoreTotal({ class: klass, period, activities, evaluationSystem }) {
+  const setFinalScore = useMyScoresStore((state) => state.setFinalScore);
+
   const [t] = useTranslateLoader(prefixPN('myScores'));
   const hasNonEvaluatedActivities = activities.some(
     (activity) =>
@@ -43,6 +46,14 @@ export default function ActivityScoreTotal({ class: klass, period, activities, e
   if (!hasNonEvaluatedActivities && nearestScale) {
     color = weightedScore < evaluationSystem.minScaleToPromote.number ? 'error' : 'success';
   }
+
+  useEffect(() => {
+    setFinalScore(klass.id, {
+      grade: weightedScore,
+      letter: nearestScale?.letter,
+      student,
+    });
+  }, [weightedScore, nearestScale, setFinalScore, klass.id, student]);
 
   const { classes, cx } = useActivityScoreTotalStyles();
 

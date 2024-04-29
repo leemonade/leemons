@@ -60,9 +60,9 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange = noop
         setValue('class', value.class.id);
       }
 
-      if (value.period && value.period._id !== values.period) {
-        setValue('period', value.period._id);
-      }
+      // if (value.period && value.period._id !== values.period) {
+      //   setValue('period', value.period._id);
+      // }
     }
   }, [value, setValue, getValues]);
 

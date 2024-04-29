@@ -3,7 +3,7 @@ import { Box } from '@bubbles-ui/components';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import { ScoresBasicTable } from '../../../Tables/ScoresBasicTable';
+import { ScoresBasicTable } from '../../../../Tables/ScoresBasicTable';
 
 function printSuccessMessage({ labels, student, activity, score }) {
   addSuccessAlert(

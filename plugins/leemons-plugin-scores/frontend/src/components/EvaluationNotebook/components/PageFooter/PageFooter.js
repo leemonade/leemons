@@ -22,7 +22,7 @@ export default function Footer() {
     return null;
   }
 
-  const isPeriodPublished = tableData.activitiesData.activities.every(
+  const isPeriodPublished = tableData.activitiesData.value.every(
     (student) => !student.allowCustomChange
   );
 

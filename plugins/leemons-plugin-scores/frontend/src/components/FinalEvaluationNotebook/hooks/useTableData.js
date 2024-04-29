@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { map } from 'lodash';
 
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-import { useAcademicCalendarPeriods } from '../../ScoresPage/useAcademicCalendarPeriods';
+import { useAcademicCalendarPeriods } from '../../__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
 import useStudents from './useStudents';
 
 export default function useTableData({ class: klass, program, filters }) {

@@ -7,7 +7,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PageFooter from '@scores/components/EvaluationNotebook/components/PageFooter/PageFooter';
 import EvaluationNotebook from '@scores/components/EvaluationNotebook/EvaluationNotebook';
 import FinalEvaluationNotebook from '@scores/components/FinalEvaluationNotebook/FinalEvaluationNotebook';
-import Filters from '@scores/components/ScoresPage/Filters/Filters';
+import Filters from '@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters';
 import { prefixPN } from '@scores/helpers';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 

@@ -10,7 +10,7 @@ import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useProgramDetail } from '@academic-portfolio/hooks';
-import { ScoresReviewerTable } from '../Tables/ScoresReviewerTable';
+import { ScoresReviewerTable } from '../../Tables/ScoresReviewerTable';
 import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
 import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesTab/useParsedActivities';
 import { onDataChange } from './onDataChange';
