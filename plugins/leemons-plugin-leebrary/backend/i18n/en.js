@@ -495,5 +495,7 @@ module.exports = {
     summary: 'Activity summary',
     information: 'Information',
     resources: 'Resources',
+    nextActivity: 'Next activity',
+    goToModule: 'Module dashboard',
   },
 };
