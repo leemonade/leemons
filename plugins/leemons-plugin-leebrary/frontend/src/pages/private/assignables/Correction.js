@@ -106,10 +106,10 @@ export default function Correction() {
             <ActivityFeedbackAlertManager assignation={assignation} />
             <ContextContainer title={t('summary')}>
               <ActivityAccordion>
-                {!!instance.metadata.statement && (
+                {!!instance?.metadata?.statement && (
                   <ActivityAccordionPanel label={t('information')} icon={<InfoIcon />}>
                     <Box className={classes.accordionPanel}>
-                      <HtmlText>{instance.metadata.statement}</HtmlText>
+                      <HtmlText>{instance?.metadata?.statement}</HtmlText>
                     </Box>
                   </ActivityAccordionPanel>
                 )}
