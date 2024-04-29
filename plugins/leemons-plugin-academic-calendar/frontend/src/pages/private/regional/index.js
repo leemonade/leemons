@@ -110,6 +110,7 @@ export default function RegionalCalendars() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [userCenters, setUserCenters] = useState();
   const [selectedCenter, setSelectedCenter] = useState();
+  const [regConfigs, setRegConfigs] = useState();
   const deploymentConfig = useDeploymentConfig({
     pluginName: 'academic-calendar',
     ignoreVersion: true,
@@ -122,6 +123,7 @@ export default function RegionalCalendars() {
   async function loadRegionalConfigs() {
     const { regionalConfigs } = await listRegionalConfigsRequest(store?.center?.id);
     store.regionalConfigs = regionalConfigs;
+    setRegConfigs(regionalConfigs);
     render();
   }
 
@@ -155,6 +157,10 @@ export default function RegionalCalendars() {
     handleOnSelectCenter(centers[0]);
     loadRegionalConfigs();
   }, []);
+
+  useEffect(() => {
+    loadRegionalConfigs();
+  }, [store?.center?.id]);
 
   const form = useForm();
 
@@ -203,10 +209,10 @@ export default function RegionalCalendars() {
       store.regionalConfigs?.map((config) => ({
         ...config,
         actions: (
-          <Stack justifyContent="end" alignItems="center">
+          <Stack justifyContent="end" alignItems="center" spacing={2}>
             <Box>
               <ActionButton
-                icon={<EditIcon />}
+                icon={<EditIcon width={20} height={20} />}
                 disabled={config.currentlyInUse}
                 onClick={() => {
                   store.selectedConfig = config;
@@ -218,7 +224,7 @@ export default function RegionalCalendars() {
             <Box>
               <ActionButton
                 disabled={config.assignedToAProgram}
-                icon={<DeleteBinIcon />}
+                icon={<DeleteBinIcon width={20} height={20} />}
                 onClick={() => handleOnDeleteRegionalCalendar(config.id)}
               />
             </Box>
@@ -281,7 +287,7 @@ export default function RegionalCalendars() {
                       ) : null}
                       <Box sx={(theme) => ({ marginTop: theme.spacing[3], width: '50%' })}>
                         <Table columns={colums} data={data} />
-                        {store.regionalConfigs?.length <= 0 ? (
+                        {regConfigs?.length <= 0 ? (
                           <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
                         ) : null}
                       </Box>
