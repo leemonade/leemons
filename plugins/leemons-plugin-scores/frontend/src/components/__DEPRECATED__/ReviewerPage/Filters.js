@@ -41,12 +41,10 @@ function useFiltersLocalizations() {
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = {
+      return {
         ..._.get(res, prefixPN('reviewPage.filters')),
         finalPeriod: _.get(res, prefixPN('scoresPage.filters.period.final')),
       };
-
-      return data;
     }
 
     return {};

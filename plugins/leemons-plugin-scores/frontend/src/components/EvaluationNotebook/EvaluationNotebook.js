@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 
 import { ContextContainer } from '@bubbles-ui/components';
 
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 import { NotebookFilters } from './components/NotebookFilters';
 import { ScoresTable } from './ScoresTable';
 import useScoresTableTitle from './hooks/useScoresTableTitle';
 
-export default function EvaluationNotebook({ filters }) {
+export default function EvaluationNotebook() {
+  const filters = useEvaluationNotebookStore((state) => state.filters);
+  const setFilters = useEvaluationNotebookStore((state) => state.setFilters);
+
   const title = useScoresTableTitle(filters);
-  const [notebookFilters, setNotebookFilters] = useState(filters);
 
   return (
     <ContextContainer title={title}>
-      <NotebookFilters filters={filters} onChange={setNotebookFilters} />
+      <NotebookFilters filters={filters} onChange={setFilters} value={filters} />
       <ScoresTable
-        filters={notebookFilters}
+        filters={filters}
         program={filters.program}
         class={filters?.class}
         period={filters?.period}
@@ -23,11 +25,3 @@ export default function EvaluationNotebook({ filters }) {
     </ContextContainer>
   );
 }
-
-EvaluationNotebook.propTypes = {
-  filters: PropTypes.shape({
-    program: PropTypes.string.isRequired,
-    class: PropTypes.string.isRequired,
-    period: PropTypes.string.isRequired,
-  }).isRequired,
-};

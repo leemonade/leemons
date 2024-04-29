@@ -110,6 +110,7 @@ export default function DetailInstructions({
                 <TextEditorInput
                   error={isDirty ? form.formState.errors.instructionsForTeachers : null}
                   label={t('instructionsForTeacherLabel')}
+                  editorStyles={{ minHeight: '96px' }}
                   {...field}
                 />
               )}
@@ -121,6 +122,7 @@ export default function DetailInstructions({
                 <TextEditorInput
                   error={isDirty ? form.formState.errors.instructionsForStudents : null}
                   label={t('instructionsForStudentLabel')}
+                  editorStyles={{ minHeight: '96px' }}
                   {...field}
                 />
               )}

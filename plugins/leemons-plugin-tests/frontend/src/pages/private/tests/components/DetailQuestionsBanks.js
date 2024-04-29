@@ -25,7 +25,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useDataForSubjectPicker } from '@academic-portfolio/components/SubjectPicker/hooks/useDataForSubjectPicker';
 import { Controller } from 'react-hook-form';
+import useUserAgents from '@users/hooks/useUserAgents';
 import { listQuestionsBanksRequest } from '../../../../request';
+
+function checkIsOwner(userAgents, item) {
+  return userAgents.some((userAgent) => userAgent === item.asset?.fromUserAgent);
+}
 
 export default function DetailQuestionsBanks({
   form,
@@ -47,6 +52,8 @@ export default function DetailQuestionsBanks({
     size: 10,
   });
   const [selectedSubject, setSelectedSubject] = React.useState(null);
+  const userAgents = useUserAgents();
+
   const formValues = form.watch();
 
   const questionBank = form.watch('questionBank');
@@ -92,6 +99,7 @@ export default function DetailQuestionsBanks({
         page: store.page,
         size: store.size,
         published: true,
+        withAssets: true,
         subjects: _.map(subjetsToUse, (subject) =>
           _.isString(subject) ? subject : subject.subject
         ),
@@ -209,13 +217,15 @@ export default function DetailQuestionsBanks({
       ),
       actions: (
         <Stack justifyContent="center" fullWidth>
-          <ActionButton
-            as={Link}
-            target="_blank"
-            to={`/private/tests/questions-banks/${item.id}`}
-            tooltip={t('view')}
-            icon={<OpenIcon width={20} height={20} color={'#2F463F'} />}
-          />
+          {checkIsOwner(userAgents, item) && (
+            <ActionButton
+              as={Link}
+              target="_blank"
+              to={`/private/tests/questions-banks/${item.id}`}
+              tooltip={t('view')}
+              icon={<OpenIcon width={20} height={20} color={'#2F463F'} />}
+            />
+          )}
         </Stack>
       ),
     }));

@@ -1,6 +1,7 @@
+import React from 'react';
+
 import { useCache } from '@common';
 import _ from 'lodash';
-import React from 'react';
 import { useWatch } from 'react-hook-form';
 
 export default function useSelectedPeriod({
@@ -21,6 +22,7 @@ export default function useSelectedPeriod({
     control,
     name: ['period', 'startDate', 'endDate'],
   });
+
   React.useEffect(() => {
     if (currentPeriod) {
       setValue('period', currentPeriod.id);
@@ -30,13 +32,14 @@ export default function useSelectedPeriod({
   const period = Array.isArray(periodSelected) ? periodSelected[0] : periodSelected;
 
   if (period === 'custom') {
-    return {
+    return cache('response', {
       selected: period,
       isCustom: true,
       isComplete: startDate && endDate,
       startDate,
       endDate,
-    };
+      _id: 'custom',
+    });
   }
 
   // eslint-disable-next-line
@@ -86,5 +89,6 @@ export default function useSelectedPeriod({
     isComplete: !!selectedPeriod,
     startDate: selectedPeriod?.startDate,
     endDate: selectedPeriod?.endDate,
+    _id: periodSelected,
   });
 }

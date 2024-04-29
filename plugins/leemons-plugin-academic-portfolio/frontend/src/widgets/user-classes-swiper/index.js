@@ -14,7 +14,7 @@ import { Swiper } from '@bubbles-ui/extras';
 import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isArray } from 'lodash';
+import { compact, isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { addErrorAlert } from '@layout/alert';
@@ -89,6 +89,27 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
+function getGroupAbbreviation(classe) {
+  if (!classe.groups || classe.groups.isAlone) {
+    return null;
+  }
+  return classe.groups ? classe.groups.abbreviation : null;
+}
+
+function getCourseNameOrType(classe, t) {
+  if (!classe.groups || classe.groups.isAlone) {
+    return null;
+  }
+  if (isArray(classe.courses)) {
+    return t('multiCourse');
+  }
+  return classe.courses ? getCourseName(classe.courses) : null;
+}
+
+function formatGroupAndCourse(course, group) {
+  return compact([course, group]).join(' - ');
+}
+
 function UserClassesSwiperWidget({ program }) {
   const { classes: styles } = Styles();
   const [store, render] = useStore({
@@ -144,21 +165,11 @@ function UserClassesSwiperWidget({ program }) {
         }}
       >
         {store.classes.map((classe, index) => {
-          const name = `${classe.subject.name} - ${classe.subject.internalId}`;
-          const group =
-            !classe.groups || classe.groups.isAlone
-              ? null
-              : classe.groups
-                ? classe.groups.abbreviation
-                : null;
-          const course =
-            !classe.groups || classe.groups.isAlone
-              ? null
-              : isArray(classe.courses)
-                ? t('multiCourse')
-                : classe.courses
-                  ? getCourseName(classe.courses)
-                  : null;
+          const name = compact([classe.subject.name, classe.subject.internalId]).join(' - ');
+          const group = getGroupAbbreviation(classe);
+          const course = getCourseNameOrType(classe, t);
+          const groupAndCourse = formatGroupAndCourse(course, group);
+
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
@@ -168,7 +179,7 @@ function UserClassesSwiperWidget({ program }) {
           if (nameArray.length > 1) {
             nameFirstLetters = nameArray[0][0] + nameArray[1][0];
           } else {
-            nameFirstLetters = nameArray[0][0];
+            nameFirstLetters = nameArray[0]?.[0];
           }
           return (
             <Box
@@ -211,8 +222,7 @@ function UserClassesSwiperWidget({ program }) {
                   <Box style={{ height: '17px' }}>
                     <TextClamp lines={1} showTooltip>
                       <Text size="sm" strong>
-                        {course}
-                        {group ? (course ? `- ${group}` : group) : null}
+                        {groupAndCourse}
                       </Text>
                     </TextClamp>
                   </Box>

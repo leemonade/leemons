@@ -84,6 +84,7 @@ function CurriculumTextInput({
         label={schema.title}
         value={value?.value}
         onChange={(e) => onChangeValue(e)}
+        editorStyles={{ minHeight: '96px' }}
       />
       {isEditMode ? (
         <Stack justifyContent="end">

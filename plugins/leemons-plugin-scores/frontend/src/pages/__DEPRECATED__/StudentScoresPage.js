@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import Notebook from '@scores/components/Notebook';
+import Notebook from '@scores/components/__DEPRECATED__/Notebook';
 import {
   Box,
   createStyles,
@@ -7,8 +7,8 @@ import {
   Stack,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import { Filters } from '../components/StudentScoresPage/Filters';
-import { Header } from '../components/StudentScoresPage/Header';
+import { Filters } from '../../components/__DEPRECATED__/StudentScoresPage/Filters';
+import { Header } from '../../components/__DEPRECATED__/StudentScoresPage/Header';
 
 const useStyles = createStyles((theme) => ({
   root: {

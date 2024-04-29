@@ -164,6 +164,7 @@ export default function DetailQuestionForm({
                     placeholder={type === 'likertScale' ? t('likertScalePlaceholder') : ''}
                     error={form.formState.errors.question}
                     label={t('questionLabel')}
+                    editorStyles={{ minHeight: '96px' }}
                     {...field}
                   />
                 )}

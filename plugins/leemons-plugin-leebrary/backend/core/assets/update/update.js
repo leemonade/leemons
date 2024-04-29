@@ -72,6 +72,11 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
     });
   }
 
+  // If the new subjects are strings, we pick the current subjects ids
+  if (assetData.subjects && typeof assetData.subjects[0] === 'string') {
+    currentAsset.subjects = currentAsset.subjects?.map((subject) => subject.subject ?? subject);
+  }
+
   const { updateProperties, newData, diff } = await handleUpdateObject({
     currentAsset,
     assetData,
@@ -93,6 +98,7 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
       assetId,
       scale,
       published,
+      permissions,
       ctx,
     });
     currentVersion.published = published;

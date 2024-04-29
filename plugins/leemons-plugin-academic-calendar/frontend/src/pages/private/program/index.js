@@ -177,7 +177,9 @@ export default function ProgramCalendars() {
   }, []);
 
   useEffect(() => {
-    loadProgramConfigs();
+    if (programsList) {
+      loadProgramConfigs();
+    }
   }, [programsList]);
 
   const columns = useMemo(
@@ -226,7 +228,7 @@ export default function ProgramCalendars() {
 
   const programsData = useMemo(
     () =>
-      programs?.map((program) => ({
+      store?.programs?.map((program) => ({
         ...program,
         actions: (
           <Stack>
@@ -245,7 +247,7 @@ export default function ProgramCalendars() {
           </Stack>
         ),
       })),
-    [programs]
+    [programs, programsIsLoading, programsList]
   );
 
   const stepNames = [

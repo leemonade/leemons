@@ -35,6 +35,7 @@ function WysiwygWidget(props) {
       rows={options.rows}
       onBlur={onBlur && ((event) => onBlur(id, event.target.value))}
       onFocus={onFocus && ((event) => onFocus(id, event.target.value))}
+      editorStyles={{ minHeight: '96px' }}
       onChange={_onChange}
     />
   );

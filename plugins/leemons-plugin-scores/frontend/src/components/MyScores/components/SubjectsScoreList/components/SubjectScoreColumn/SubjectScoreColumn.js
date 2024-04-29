@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, LoadingOverlay, Stack } from '@bubbles-ui/components';
@@ -7,13 +7,17 @@ import { Link } from 'react-router-dom';
 
 import useWeights from '@scores/requests/hooks/queries/useWeights';
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
+import useMyScoresStore from '@scores/stores/myScoresStore';
 import Header from './components/Header';
 import ActivityScoreDisplay from './components/ActivityScoreDisplay';
 import useSubjectScoreColumnStyles from './SubjectsScoreColumn.styles';
 import useActivitiesWithWeights from './hooks/useActivitiesWithWeights';
 import ActivityScoreTotal from './components/ActivityScoreTotal/ActivityScoreTotal';
 
-export default function SubjectScoreColumn({ class: klass, onNoResults, onResults, ...filters }) {
+export default function SubjectScoreColumn({ class: klass, ...filters }) {
+  const addColumn = useMyScoresStore((store) => store.addColumn);
+  const removeColumn = useMyScoresStore((store) => store.removeColumn);
+
   const { data: evaluationSystem, isLoading: evaluationSystemLoading } =
     useProgramEvaluationSystems({ program: klass.program });
   const { data: weights, isLoading: weightsLoading } = useWeights({ classId: klass.id });
@@ -25,16 +29,23 @@ export default function SubjectScoreColumn({ class: klass, onNoResults, onResult
 
   const { classes } = useSubjectScoreColumnStyles({ color: klass.color });
 
+  useEffect(() => {
+    if (activities?.length) {
+      addColumn(klass.id, activities);
+    } else {
+      removeColumn(klass.id);
+    }
+  }, [activities, addColumn, removeColumn, klass?.id]);
+
+  useEffect(() => () => removeColumn(klass.id), [removeColumn, klass.id]);
+
   if (weightsLoading || activitiesLoading || evaluationSystemLoading) {
     return <LoadingOverlay visible />;
   }
 
   if (!activities.length) {
-    onNoResults();
     return null;
   }
-
-  onResults();
 
   return (
     <Stack className={classes.root} direction="column" spacing={4}>
@@ -81,6 +92,4 @@ SubjectScoreColumn.propTypes = {
   }).isRequired,
   period: PropTypes.object.isRequired,
   showNonEvaluable: PropTypes.bool,
-  onNoResults: PropTypes.func.isRequired,
-  onResults: PropTypes.func.isRequired,
 };

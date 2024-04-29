@@ -200,7 +200,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                   {...showFeedbackField}
                   checked={!!showFeedbackField.value}
                   label={t('add_feedback')}
-                  render={() => <TextEditorInput {...field} />}
+                  render={() => <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />}
                 />
               )}
             />
