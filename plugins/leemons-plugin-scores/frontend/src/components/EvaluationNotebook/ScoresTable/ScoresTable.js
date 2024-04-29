@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Alert, LoadingOverlay, Stack } from '@bubbles-ui/components';
@@ -8,7 +8,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import useExcelDownloadHandler from '@scores/components/Notebook/components/ActivitiesTab/useExcelDownloadHandler';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 import useTableData from './hooks/useTableData';
 import WeightTypeBadge from './components/WeightTypeBadge';
 import handleOpen from './helpers/handleOpen';
@@ -31,6 +31,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     updatedError: t('updatedError'),
   };
 
+  const setTableData = useEvaluationNotebookStore((state) => state.setTableData);
   const { mutateAsync: assignationScoreMutate } = useStudentAssignationMutation();
   const { mutateAsync: customScoreMutate } = useScoresMutation();
 
@@ -41,13 +42,16 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     filters,
   });
 
-  useExcelDownloadHandler({
-    activitiesData: { activities, value: studentsData },
-    grades: scales,
-    filters: { startDate: period?.startDate, endDate: period?.endDate, period },
-    programData: program,
-    subjectData: klass?.subject,
-  });
+  useEffect(() => {
+    setTableData({
+      activitiesData: { activities, value: studentsData },
+      grades: scales,
+      filters: { startDate: period?.startDate, endDate: period?.endDate, period },
+      programData: program,
+      subjectData: klass?.subject,
+      class: klass,
+    });
+  }, [activities, studentsData, scales, period, program, klass, setTableData]);
 
   if (isLoading) {
     return <LoadingOverlay visible />;

@@ -2,7 +2,7 @@ import { getClassSessionsRequest } from '@attendance-control/request';
 import { Box, createStyles, Loader } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import { EmptyState } from '@scores/components/Notebook/components/ActivitiesTab/EmptyState';
+import { EmptyState } from '@scores/components/__DEPRECATED__/Notebook/components/ActivitiesTab/EmptyState';
 import React from 'react';
 import Table from './Table';
 

@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const { validateSaveTest } = require('../../validations/forms');
 
-async function saveTest({ data, ctx }) {
+async function saveTest({ data, ignoreAsset, ctx }) {
   validateSaveTest(data);
 
   const toSave = {
@@ -36,6 +36,10 @@ async function saveTest({ data, ctx }) {
       config: data.config,
     },
   };
+
+  if (ignoreAsset) {
+    delete toSave.asset;
+  }
 
   let assignable = null;
 

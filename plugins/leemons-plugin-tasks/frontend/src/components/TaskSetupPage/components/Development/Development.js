@@ -19,6 +19,7 @@ export default function Development({ name, label, required }) {
             error={error && 'This field is required'}
             value={field.value?.[0] ? field.value[0].development : null}
             onChange={(value) => field.onChange(value ? [{ development: value }] : [])}
+            editorStyles={{ minHeight: '96px' }}
           />
         )}
       />

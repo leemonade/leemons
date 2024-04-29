@@ -76,11 +76,7 @@ export function QuestionMap({ form: _form, t }) {
     render();
   }, [JSON.stringify(properties)]);
 
-  const getListValues = (value) => {
-    // console.log('value:', value);
-    return map(value ?? [], (item) => ({ value: item }));
-  };
-
+  const getListValues = (value) => map(value ?? [], (item) => ({ value: item }));
   return (
     <ContextContainer>
       <Box>
@@ -121,7 +117,9 @@ export function QuestionMap({ form: _form, t }) {
         <Controller
           control={form.control}
           name="properties.explanation"
-          render={({ field }) => <TextEditorInput {...field} />}
+          render={({ field }) => (
+            <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />
+          )}
         />
       </ContextContainer>
 

@@ -280,6 +280,7 @@ export default function DetailQuestionForm({
                       required
                       error={form.formState.errors.question}
                       label={t('questionLabel')}
+                      editorStyles={{ minHeight: '96px' }}
                       {...field}
                     />
                   )}
@@ -316,6 +317,7 @@ export default function DetailQuestionForm({
                           {...field}
                           value={field.value?.value ? field.value.value : field.value}
                           disabled={!rightAnswerSelected || !hasEnoughAnswers}
+                          minRows={3}
                         />
                       )}
                     />

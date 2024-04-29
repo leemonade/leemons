@@ -120,7 +120,7 @@ const AssetEmbedList = ({ assets, width }) => {
       >
         <BaseDrawer
           opened={isDrawerOpen}
-          size="496px"
+          size="576px"
           close={false}
           empty={true}
           className={{

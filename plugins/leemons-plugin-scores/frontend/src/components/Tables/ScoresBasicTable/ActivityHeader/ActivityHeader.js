@@ -63,16 +63,18 @@ const ActivityHeader = ({
             {name}
           </Text>
         </TextClamp>
-        {deadline && (
-          <Stack spacing={2}>
-            <TextClamp lines={1}>
-              <Text role="productive" color="primary" size="xs">
-                {`${new Date(deadline).toLocaleDateString(locale)}`}
-              </Text>
-            </TextClamp>
-            {!isEvaluable && <CutStarIcon className={classes.starIcon} />}
-          </Stack>
-        )}
+        <Box sx={{ minHeight: 16.8 }}>
+          {deadline && (
+            <Stack spacing={2}>
+              <TextClamp lines={1}>
+                <Text role="productive" color="primary" size="xs">
+                  {`${new Date(deadline).toLocaleDateString(locale)}`}
+                </Text>
+              </TextClamp>
+              {!isEvaluable && <CutStarIcon className={classes.starIcon} />}
+            </Stack>
+          )}
+        </Box>
       </Box>
       {isExpandable && (hovered || isExpanded) && (
         <Box className={classes.expandBox} onClick={onColumnExpandHandler}>

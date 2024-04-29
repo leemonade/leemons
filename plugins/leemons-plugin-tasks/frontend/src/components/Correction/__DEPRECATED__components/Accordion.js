@@ -63,7 +63,7 @@ function Feedback({ classes, subject, control, user }) {
         key={`${user}.${subject}.feedback`}
         control={control}
         name={`${user}.${subject}.feedback`}
-        render={({ field }) => <TextEditorInput {...field} />}
+        render={({ field }) => <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />}
       />
     </Box>
   );

@@ -393,6 +393,7 @@ const DetailDrawer = ({
                   <TextEditorInput
                     label={labels.message}
                     placeholder={labels.messagePlaceholder}
+                    editorStyles={{ minHeight: '96px' }}
                     toolbars={{
                       style: true,
                       heading: false,

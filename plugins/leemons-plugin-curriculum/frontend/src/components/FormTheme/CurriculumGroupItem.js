@@ -221,7 +221,7 @@ function CurriculumGroupItem({
           blockData.groupListType === 'field' ? (
             <TextInput required />
           ) : (
-            <TextEditorInput required />
+            <TextEditorInput editorStyles={{ minHeight: '96px' }} required />
           ),
         rules,
       },

@@ -15,6 +15,7 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
   const { instance, mainGrade } = activity;
   const { assignable } = instance ?? {};
   const { role, roleDetails } = assignable ?? {};
+  const evaluationTypeIsAuto = instance?.metadata?.evaluationType === 'auto';
 
   const roleLocalizations = useRolesLocalizations([role]);
   const evaluationDetailUrl = roleDetails.evaluationDetailUrl
@@ -58,7 +59,9 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
           )}
         </Box>
         <Text className={classes.score}>
-          {(mainGrade ? scale?.letter ?? mainGrade : null) ?? '-'}
+          {(mainGrade || evaluationTypeIsAuto
+            ? scale?.letter ?? mainGrade ?? scale?.number
+            : null) ?? '-'}
         </Text>
       </Stack>
     </Stack>

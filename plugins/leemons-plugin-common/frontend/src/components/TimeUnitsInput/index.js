@@ -55,6 +55,10 @@ export default function TimeUnitsInput({ onChange, value: userValue, min, max, .
       setTime(dur);
     }
   };
+  const handleNumberInput = (event) => {
+    const validValue = event.target.value.slice(0, 3).replace(/\D/g, '');
+    event.target.value = validValue;
+  };
 
   useEffect(() => {
     if (userValue !== time && userValue !== undefined) {
@@ -77,6 +81,7 @@ export default function TimeUnitsInput({ onChange, value: userValue, min, max, .
           onChange={(v) => handleChange(v, units)}
           min={min}
           max={max}
+          onInput={handleNumberInput}
           customDesign
         />
         <Select

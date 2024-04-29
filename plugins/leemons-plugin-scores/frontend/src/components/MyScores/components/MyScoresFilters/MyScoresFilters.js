@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { SearchInput, Stack, Switch } from '@bubbles-ui/components';
@@ -10,13 +10,24 @@ import { prefixPN } from '@scores/helpers';
 import useMyScoresSubjects from './hooks/useMyScoresSubjects';
 import useOnChange from './hooks/useOnChange';
 
-export default function MyScoresFilters({ filters, onChange }) {
+export default function MyScoresFilters({ filters, onChange, value }) {
   const [t] = useTranslateLoader(prefixPN('myScores.localFilters'));
   const form = useForm();
+  const { getValues, setValue } = form;
 
   const { data: subjects } = useMyScoresSubjects(filters);
 
   useOnChange({ control: form.control, onChange });
+
+  useEffect(() => {
+    if (value.subject && getValues('subject') !== value.subject) {
+      setValue('subject', value.subject);
+    }
+
+    if (value.search && getValues('search') !== value.search) {
+      setValue('search', value.search);
+    }
+  }, [value, setValue, getValues]);
 
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="baseline">
@@ -59,4 +70,5 @@ export default function MyScoresFilters({ filters, onChange }) {
 MyScoresFilters.propTypes = {
   filters: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  value: PropTypes.object,
 };

@@ -42,9 +42,9 @@ export default function useActivities({
   const { data: instancesIds, isLoading: instancesIdsLoading } = useSearchAssignableInstances({
     query: {
       query: searchType === 'activity' ? search : undefined,
-      deadline: true,
-      deadline_$gt: getPreviousDayLastMillisecond(period.startDate),
-      deadline_$lt: getNextDayFirstMillisecond(period.endDate),
+      finished: true,
+      finished_$gt: getPreviousDayLastMillisecond(period.startDate),
+      finished_$lt: getNextDayFirstMillisecond(period.endDate),
 
       role: weights?.type === 'modules' ? 'learningpaths.module' : roles,
       programs: program,

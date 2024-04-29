@@ -1,11 +1,15 @@
 import React from 'react';
 import useUserAgents from '@users/hooks/useUserAgents';
 
-function useIsOwner(asset) {
+function useIsOwner(asset, useCreationAsOwnership = true) {
   const userAgents = useUserAgents();
 
   return React.useMemo(() => {
-    if (!asset?.canAccess?.length) return false;
+    if (!asset?.canAccess?.length) {
+      return useCreationAsOwnership
+        ? userAgents.some((userAgent) => userAgent === asset?.fromUserAgent)
+        : false;
+    }
 
     let hasPermission = false;
 

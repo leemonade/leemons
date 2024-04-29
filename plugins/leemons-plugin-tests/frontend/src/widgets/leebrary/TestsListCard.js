@@ -1,8 +1,6 @@
-/* eslint-disable sonarjs/cognitive-complexity */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
-// TODO: import from @library plugin
 import { LibraryCard } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -15,7 +13,6 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { TestIcon } from '../../components/Icons/TestIcon';
 import { deleteTestRequest, duplicateRequest } from '../../request';
@@ -40,7 +37,7 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
-  const canAssign = useIsOwner(asset);
+  const isOwner = useIsOwner(asset);
 
   const menuItems = React.useMemo(() => {
     const items = [];
@@ -66,7 +63,7 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
           },
         });
       }
-      if (canAssign && asset.providerData?.published) {
+      if (isOwner && asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
           children: t('assign'),
@@ -97,7 +94,12 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
               onConfirm: async () => {
                 try {
                   setAppLoading(true);
-                  await duplicateRequest(asset.providerData.id, asset.providerData.published);
+                  await duplicateRequest({
+                    id: asset.providerData.id,
+                    published: asset.providerData.published,
+                    ignoreSubjects: !isOwner,
+                    keepQuestionBank: isOwner,
+                  });
                   addSuccessAlert(t('duplicated'));
                   onRefresh();
                 } catch (err) {
@@ -135,7 +137,7 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
     }
 
     return items;
-  }, [asset, canAssign, t]);
+  }, [asset, isOwner, t]);
 
   return (
     <LibraryCard
