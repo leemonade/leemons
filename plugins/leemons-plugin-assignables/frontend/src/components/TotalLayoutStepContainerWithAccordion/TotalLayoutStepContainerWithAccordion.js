@@ -37,7 +37,7 @@ export default function TotalLayoutStepContainerWithAccordion({
   const { classes: accordionClasses } = TotalLayoutStepContainerWithAccordionStyles(props);
 
   return (
-    <Stack direction="column" className={cx(classes.stepContainer)}>
+    <Stack direction="column" className={cx(classes.stepContainer)} fullWidth fullHeight>
       {!!accordion && (
         <ActivityAccordion
           style={{
