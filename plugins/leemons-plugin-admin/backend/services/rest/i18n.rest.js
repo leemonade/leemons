@@ -2,14 +2,16 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const path = require('path');
 const fs = require('fs/promises');
 const { LeemonsError } = require('@leemons/error');
 
+const getLangRest = require('./openapi/i18n/getLangRest');
+/** @type {ServiceSchema} */
 module.exports = {
   getLangRest: {
+    openapi: getLangRest.openapi,
     rest: {
       method: 'GET',
       path: '/:page/:lang',
@@ -26,7 +28,10 @@ module.exports = {
         ctx.meta.$statusCode = 200;
         return { status: 200, data: { [lang]: { [page]: locale[page] } } };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

@@ -20,10 +20,17 @@ const {
   removeGrade,
 } = require('../../core/grades');
 
+const listGradesRest = require('./openapi/grades/listGradesRest');
+const postGradeRest = require('./openapi/grades/postGradeRest');
+const putGradeRest = require('./openapi/grades/putGradeRest');
+const haveGradesRest = require('./openapi/grades/haveGradesRest');
+const getGradeRest = require('./openapi/grades/getGradeRest');
+const removeGradeRest = require('./openapi/grades/removeGradeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   listGradesRest: {
+    openapi: listGradesRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -55,6 +62,7 @@ module.exports = {
     },
   },
   postGradeRest: {
+    openapi: postGradeRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -70,6 +78,7 @@ module.exports = {
     },
   },
   putGradeRest: {
+    openapi: putGradeRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -84,6 +93,7 @@ module.exports = {
     },
   },
   haveGradesRest: {
+    openapi: haveGradesRest.openapi,
     rest: {
       path: '/have',
       method: 'GET',
@@ -97,6 +107,7 @@ module.exports = {
     },
   },
   getGradeRest: {
+    openapi: getGradeRest.openapi,
     rest: {
       path: '/:id',
       method: 'GET',
@@ -111,6 +122,7 @@ module.exports = {
     },
   },
   removeGradeRest: {
+    openapi: removeGradeRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',

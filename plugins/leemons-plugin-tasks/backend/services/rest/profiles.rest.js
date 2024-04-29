@@ -9,9 +9,13 @@ const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const get = require('../../core/profiles/get');
 const set = require('../../core/profiles/set');
 
+const getRest = require('./openapi/profiles/getRest');
+const setRest = require('./openapi/profiles/setRest');
+const setManyRest = require('./openapi/profiles/setManyRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/:key',
@@ -28,6 +32,7 @@ module.exports = {
   },
 
   setRest: {
+    openapi: setRest.openapi,
     rest: {
       method: 'POST',
       path: '/:key',
@@ -46,6 +51,7 @@ module.exports = {
   },
 
   setManyRest: {
+    openapi: setManyRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -54,7 +60,9 @@ module.exports = {
     async handler(ctx) {
       const { profiles } = ctx.params;
 
-      await Promise.all(profiles.map(({ profile, key }) => set({ key, profile, ctx })));
+      await Promise.all(
+        profiles.map(({ profile, key }) => set({ key, profile, ctx }))
+      );
 
       return {
         status: 200,

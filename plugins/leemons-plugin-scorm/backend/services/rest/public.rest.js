@@ -9,9 +9,11 @@ const mime = require('mime-types');
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const serveFileRest = require('./openapi/public/serveFileRest');
 /** @type {ServiceSchema} */
 module.exports = {
   serveFileRest: {
+    openapi: serveFileRest.openapi,
     rest: {
       method: 'GET',
       path: '/:filePath(.*)',
@@ -22,10 +24,14 @@ module.exports = {
       const publicPath = path.resolve(__dirname, '../../public');
       const absolutePath = path.resolve(publicPath, filePath);
       const relative = path.relative(publicPath, absolutePath);
-      const isInside = relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+      const isInside =
+        relative && !relative.startsWith('..') && !path.isAbsolute(relative);
 
       if (!isInside) {
-        throw new LeemonsError(ctx, { message: 'File not found', httpStatusCode: 404 });
+        throw new LeemonsError(ctx, {
+          message: 'File not found',
+          httpStatusCode: 404,
+        });
       } else {
         const readStream = createReadStream(absolutePath);
         const contentType = mime.lookup(absolutePath);

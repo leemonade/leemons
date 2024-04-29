@@ -14,9 +14,13 @@ const {
   deleteRegionalConfig,
 } = require('../../core/regional-config');
 
+const listRest = require('./openapi/regionalConfig/listRest');
+const deleteRest = require('./openapi/regionalConfig/deleteRest');
+const saveRest = require('./openapi/regionalConfig/saveRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       method: 'GET',
       path: '/list/:center',
@@ -43,6 +47,7 @@ module.exports = {
     },
   },
   deleteRest: {
+    openapi: deleteRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',
@@ -69,6 +74,7 @@ module.exports = {
     },
   },
   saveRest: {
+    openapi: saveRest.openapi,
     rest: {
       method: 'POST',
       path: '/save',

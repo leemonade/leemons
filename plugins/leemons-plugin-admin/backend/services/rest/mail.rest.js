@@ -10,9 +10,13 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
+const getProvidersRest = require('./openapi/mail/getProvidersRest');
+const getPlatformEmailRest = require('./openapi/mail/getPlatformEmailRest');
+const savePlatformEmailRest = require('./openapi/mail/savePlatformEmailRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getProvidersRest: {
+    openapi: getProvidersRest.openapi,
     rest: {
       method: 'GET',
       path: '/providers',
@@ -33,11 +37,15 @@ module.exports = {
         return { status: 200, providers };
       } catch (e) {
         console.error(e);
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
   getPlatformEmailRest: {
+    openapi: getPlatformEmailRest.openapi,
     rest: {
       method: 'GET',
       path: '/platform',
@@ -58,11 +66,15 @@ module.exports = {
         return { status: 200, email };
       } catch (e) {
         console.error(e);
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
   savePlatformEmailRest: {
+    openapi: savePlatformEmailRest.openapi,
     rest: {
       method: 'POST',
       path: '/platform',
@@ -79,10 +91,15 @@ module.exports = {
     ],
     async handler(ctx) {
       try {
-        const email = await ctx.tx.call('users.platform.setEmail', { value: ctx.params.email });
+        const email = await ctx.tx.call('users.platform.setEmail', {
+          value: ctx.params.email,
+        });
         return { status: 200, email };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

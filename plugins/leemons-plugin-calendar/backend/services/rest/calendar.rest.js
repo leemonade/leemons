@@ -10,7 +10,10 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const { getCalendarsToFrontend, getScheduleToFrontend } = require('../../core/calendar');
+const {
+  getCalendarsToFrontend,
+  getScheduleToFrontend,
+} = require('../../core/calendar');
 const eventTypesService = require('../../core/event-types');
 const kanbanColumnsService = require('../../core/kanban-columns');
 const listKanbanEventOrders = require('../../core/kanban-event-orders');
@@ -22,9 +25,30 @@ const {
   removeFromUser,
 } = require('../../core/events');
 
+const getCalendarRest = require('./openapi/calendar/getCalendarRest');
+const getScheduleRest = require('./openapi/calendar/getScheduleRest');
+const getEventTypesRest = require('./openapi/calendar/getEventTypesRest');
+const addEventRest = require('./openapi/calendar/addEventRest');
+const updateEventRest = require('./openapi/calendar/updateEventRest');
+const updateEventSubTasksRest = require('./openapi/calendar/updateEventSubTasksRest');
+const removeEventRest = require('./openapi/calendar/removeEventRest');
+const listKanbanColumnsRest = require('./openapi/calendar/listKanbanColumnsRest');
+const listKanbanEventOrdersRest = require('./openapi/calendar/listKanbanEventOrdersRest');
+const saveKanbanEventOrdersRest = require('./openapi/calendar/saveKanbanEventOrdersRest');
+const addCalendarConfigRest = require('./openapi/calendar/addCalendarConfigRest');
+const updateCalendarConfigRest = require('./openapi/calendar/updateCalendarConfigRest');
+const listCalendarConfigRest = require('./openapi/calendar/listCalendarConfigRest');
+const detailCalendarConfigRest = require('./openapi/calendar/detailCalendarConfigRest');
+const removeCalendarConfigRest = require('./openapi/calendar/removeCalendarConfigRest');
+const getCentersWithOutAssignRest = require('./openapi/calendar/getCentersWithOutAssignRest');
+const getCalendarConfigCalendarsRest = require('./openapi/calendar/getCalendarConfigCalendarsRest');
+const addConfigEventRest = require('./openapi/calendar/addConfigEventRest');
+const updateConfigEventRest = require('./openapi/calendar/updateConfigEventRest');
+const removeConfigEventRest = require('./openapi/calendar/removeConfigEventRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getCalendarRest: {
+    openapi: getCalendarRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -45,6 +69,7 @@ module.exports = {
     },
   },
   getScheduleRest: {
+    openapi: getScheduleRest.openapi,
     rest: {
       method: 'POST',
       path: '/schedule',
@@ -65,6 +90,7 @@ module.exports = {
     },
   },
   getEventTypesRest: {
+    openapi: getEventTypesRest.openapi,
     rest: {
       method: 'GET',
       path: '/event-types',
@@ -76,6 +102,7 @@ module.exports = {
     },
   },
   addEventRest: {
+    openapi: addEventRest.openapi,
     rest: {
       method: 'POST',
       path: '/add/event',
@@ -87,6 +114,7 @@ module.exports = {
     },
   },
   updateEventRest: {
+    openapi: updateEventRest.openapi,
     rest: {
       method: 'POST',
       path: '/update/event',
@@ -108,11 +136,16 @@ module.exports = {
         __v,
         ...body
       } = ctx.params.event;
-      const event = await updateFromUser({ id: ctx.params.id, data: body, ctx });
+      const event = await updateFromUser({
+        id: ctx.params.id,
+        data: body,
+        ctx,
+      });
       return { status: 200, event };
     },
   },
   updateEventSubTasksRest: {
+    openapi: updateEventSubTasksRest.openapi,
     rest: {
       method: 'POST',
       path: '/update/event-subtask',
@@ -124,6 +157,7 @@ module.exports = {
     },
   },
   removeEventRest: {
+    openapi: removeEventRest.openapi,
     rest: {
       method: 'POST',
       path: '/remove/event',
@@ -135,6 +169,7 @@ module.exports = {
     },
   },
   listKanbanColumnsRest: {
+    openapi: listKanbanColumnsRest.openapi,
     rest: {
       method: 'GET',
       path: '/kanban/list/columns',
@@ -146,6 +181,7 @@ module.exports = {
     },
   },
   listKanbanEventOrdersRest: {
+    openapi: listKanbanEventOrdersRest.openapi,
     rest: {
       method: 'GET',
       path: '/kanban/list/event/orders',
@@ -157,6 +193,7 @@ module.exports = {
     },
   },
   saveKanbanEventOrdersRest: {
+    openapi: saveKanbanEventOrdersRest.openapi,
     rest: {
       method: 'POST',
       path: '/kanban/save/event/orders',
@@ -168,6 +205,7 @@ module.exports = {
     },
   },
   addCalendarConfigRest: {
+    openapi: addCalendarConfigRest.openapi,
     rest: {
       method: 'POST',
       path: '/configs/add',
@@ -183,11 +221,15 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const config = await calendarConfigsService.add({ ...ctx.params.config, ctx });
+      const config = await calendarConfigsService.add({
+        ...ctx.params.config,
+        ctx,
+      });
       return { status: 200, config };
     },
   },
   updateCalendarConfigRest: {
+    openapi: updateCalendarConfigRest.openapi,
     rest: {
       method: 'POST',
       path: '/configs/update/:id',
@@ -212,6 +254,7 @@ module.exports = {
     },
   },
   listCalendarConfigRest: {
+    openapi: listCalendarConfigRest.openapi,
     rest: {
       method: 'GET',
       path: '/configs/list',
@@ -234,6 +277,7 @@ module.exports = {
     },
   },
   detailCalendarConfigRest: {
+    openapi: detailCalendarConfigRest.openapi,
     rest: {
       method: 'GET',
       path: '/configs/detail/:id',
@@ -257,6 +301,7 @@ module.exports = {
     },
   },
   removeCalendarConfigRest: {
+    openapi: removeCalendarConfigRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/configs/remove/:id',
@@ -280,6 +325,7 @@ module.exports = {
     },
   },
   getCentersWithOutAssignRest: {
+    openapi: getCentersWithOutAssignRest.openapi,
     rest: {
       method: 'GET',
       path: '/configs/centers-with-out-assign',
@@ -302,6 +348,7 @@ module.exports = {
     },
   },
   getCalendarConfigCalendarsRest: {
+    openapi: getCalendarConfigCalendarsRest.openapi,
     rest: {
       method: 'GET',
       path: '/configs/calendars/:id',
@@ -326,6 +373,7 @@ module.exports = {
     },
   },
   addConfigEventRest: {
+    openapi: addConfigEventRest.openapi,
     rest: {
       method: 'POST',
       path: '/configs/event/add',
@@ -349,6 +397,7 @@ module.exports = {
     },
   },
   updateConfigEventRest: {
+    openapi: updateConfigEventRest.openapi,
     rest: {
       method: 'POST',
       path: '/configs/event/update',
@@ -372,6 +421,7 @@ module.exports = {
     },
   },
   removeConfigEventRest: {
+    openapi: removeConfigEventRest.openapi,
     rest: {
       method: 'POST',
       path: '/configs/event/remove',

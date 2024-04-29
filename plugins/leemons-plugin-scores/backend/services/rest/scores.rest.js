@@ -4,8 +4,13 @@ const getScores = require('../../core/scores/getScores');
 const setScores = require('../../core/scores/setScores');
 const removeScores = require('../../core/scores/removeScores');
 
+const getRest = require('./openapi/scores/getRest');
+const setRest = require('./openapi/scores/setRest');
+const removeRest = require('./openapi/scores/removeRest');
+/** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -25,6 +30,7 @@ module.exports = {
     },
   },
   setRest: {
+    openapi: setRest.openapi,
     rest: {
       method: 'PATCH',
       path: '/',
@@ -44,6 +50,7 @@ module.exports = {
     },
   },
   removeRest: {
+    openapi: removeRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/',

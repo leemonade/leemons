@@ -9,11 +9,19 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { updateCourse, listCourses, getCourseById } = require('../../core/courses');
+const {
+  updateCourse,
+  listCourses,
+  getCourseById,
+} = require('../../core/courses');
 
+const postCourseRest = require('./openapi/courses/postCourseRest');
+const putCourseRest = require('./openapi/courses/putCourseRest');
+const listCourseRest = require('./openapi/courses/listCourseRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postCourseRest: {
+    openapi: postCourseRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -37,6 +45,7 @@ module.exports = {
     },
   },
   putCourseRest: {
+    openapi: putCourseRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -57,6 +66,7 @@ module.exports = {
     },
   },
   listCourseRest: {
+    openapi: listCourseRest.openapi,
     rest: {
       path: '/',
       method: 'GET',

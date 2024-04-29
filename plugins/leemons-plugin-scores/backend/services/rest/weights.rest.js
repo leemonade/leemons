@@ -7,8 +7,12 @@ const getWeights = require('../../core/weights/getWeights');
 const { setWeight } = require('../../core/weights');
 const { permissionNames } = require('../../config/constants');
 
+const getRest = require('./openapi/weights/getRest');
+const setRest = require('./openapi/weights/setRest');
+/** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -32,6 +36,7 @@ module.exports = {
     },
   },
   setRest: {
+    openapi: setRest.openapi,
     rest: {
       method: 'PUT',
       path: '/',
@@ -49,7 +54,10 @@ module.exports = {
     async handler(ctx) {
       const { weight: weightData, class: classId } = ctx.params;
 
-      const weight = await setWeight({ weight: { ...weightData, class: classId }, ctx });
+      const weight = await setWeight({
+        weight: { ...weightData, class: classId },
+        ctx,
+      });
 
       return { status: 201, weight };
     },

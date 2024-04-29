@@ -30,7 +30,9 @@ async function get(ctx) {
   const instances = await getInstances({
     ids: Array.isArray(ids) ? ids : [ids],
     details: _.isBoolean(details) ? details : details === 'true',
-    throwOnMissing: _.isBoolean(throwOnMissing) ? throwOnMissing : throwOnMissing === 'true',
+    throwOnMissing: _.isBoolean(throwOnMissing)
+      ? throwOnMissing
+      : throwOnMissing === 'true',
     relatedAssignableInstances: _.isBoolean(relatedInstances)
       ? relatedInstances
       : relatedInstances === 'true',
@@ -43,9 +45,14 @@ async function get(ctx) {
   };
 }
 
+const searchRest = require('./openapi/assignableInstances/searchRest');
+const getRest = require('./openapi/assignableInstances/getRest');
+const updateRest = require('./openapi/assignableInstances/updateRest');
+const sendReminderRest = require('./openapi/assignableInstances/sendReminderRest');
 /** @type {ServiceSchema} */
 module.exports = {
   searchRest: {
+    openapi: searchRest.openapi,
     rest: {
       method: 'GET',
       path: '/search',
@@ -56,19 +63,35 @@ module.exports = {
 
       if (_.isBoolean(query.closed) ? query.closed : query.closed === 'true') {
         query.closed = true;
-      } else if (_.isBoolean(query.closed) ? !query.closed : query.closed === 'false') {
+      } else if (
+        _.isBoolean(query.closed) ? !query.closed : query.closed === 'false'
+      ) {
         query.closed = false;
       }
 
-      if (_.isBoolean(query.evaluated) ? query.evaluated : query.evaluated === 'true') {
+      if (
+        _.isBoolean(query.evaluated)
+          ? query.evaluated
+          : query.evaluated === 'true'
+      ) {
         query.evaluated = true;
-      } else if (_.isBoolean(query.evaluated) ? !query.evaluated : query.evaluated === 'false') {
+      } else if (
+        _.isBoolean(query.evaluated)
+          ? !query.evaluated
+          : query.evaluated === 'false'
+      ) {
         query.evaluated = false;
       }
 
-      if (_.isBoolean(query.archived) ? query.archived : query.archived === 'true') {
+      if (
+        _.isBoolean(query.archived) ? query.archived : query.archived === 'true'
+      ) {
         query.archived = true;
-      } else if (_.isBoolean(query.archived) ? !query.archived : query.archived === 'false') {
+      } else if (
+        _.isBoolean(query.archived)
+          ? !query.archived
+          : query.archived === 'false'
+      ) {
         query.archived = false;
       }
 
@@ -81,6 +104,7 @@ module.exports = {
     },
   },
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/find',
@@ -91,6 +115,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'PUT',
       path: '/:id',
@@ -114,6 +139,7 @@ module.exports = {
     },
   },
   sendReminderRest: {
+    openapi: sendReminderRest.openapi,
     rest: {
       method: 'POST',
       path: '/reminder',

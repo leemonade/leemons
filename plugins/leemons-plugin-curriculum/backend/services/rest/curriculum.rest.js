@@ -22,9 +22,17 @@ const {
 } = require('../../core/curriculum');
 
 // TODO [Importante]: Añadir autenticación y permisos
+const getDataForKeysRest = require('./openapi/curriculum/getDataForKeysRest');
+const postCurriculumRest = require('./openapi/curriculum/postCurriculumRest');
+const listCurriculumRest = require('./openapi/curriculum/listCurriculumRest');
+const generateCurriculumRest = require('./openapi/curriculum/generateCurriculumRest');
+const publishCurriculumRest = require('./openapi/curriculum/publishCurriculumRest');
+const deleteCurriculumRest = require('./openapi/curriculum/deleteCurriculumRest');
+const getCurriculumRest = require('./openapi/curriculum/getCurriculumRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getDataForKeysRest: {
+    openapi: getDataForKeysRest.openapi,
     rest: {
       method: 'POST',
       path: '/data-for-keys',
@@ -36,6 +44,7 @@ module.exports = {
     },
   },
   postCurriculumRest: {
+    openapi: postCurriculumRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -47,6 +56,7 @@ module.exports = {
     },
   },
   listCurriculumRest: {
+    openapi: listCurriculumRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -82,20 +92,23 @@ module.exports = {
     },
   },
   generateCurriculumRest: {
+    openapi: generateCurriculumRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id/generate',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const curriculum = await generateCurriculumNodesFromAcademicPortfolioByNodeLevels({
-        curriculumId: ctx.params.id,
-        ctx,
-      });
+      const curriculum =
+        await generateCurriculumNodesFromAcademicPortfolioByNodeLevels({
+          curriculumId: ctx.params.id,
+          ctx,
+        });
       return { status: 200, curriculum };
     },
   },
   publishCurriculumRest: {
+    openapi: publishCurriculumRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id/publish',
@@ -110,6 +123,7 @@ module.exports = {
     },
   },
   deleteCurriculumRest: {
+    openapi: deleteCurriculumRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',
@@ -124,6 +138,7 @@ module.exports = {
     },
   },
   getCurriculumRest: {
+    openapi: getCurriculumRest.openapi,
     rest: {
       method: 'POST',
       path: '/:id',

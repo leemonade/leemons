@@ -18,9 +18,17 @@ const {
 } = require('../../core/package');
 const { supportedVersions } = require('../../config/constants');
 
+const savePackageRest = require('./openapi/package/savePackageRest');
+const duplicatePackageRest = require('./openapi/package/duplicatePackageRest');
+const assignPackageRest = require('./openapi/package/assignPackageRest');
+const sharePackageRest = require('./openapi/package/sharePackageRest');
+const getSupportedVersionsRest = require('./openapi/package/getSupportedVersionsRest');
+const getPackageRest = require('./openapi/package/getPackageRest');
+const deletePackageRest = require('./openapi/package/deletePackageRest');
 /** @type {ServiceSchema} */
 module.exports = {
   savePackageRest: {
+    openapi: savePackageRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -47,6 +55,7 @@ module.exports = {
     },
   },
   duplicatePackageRest: {
+    openapi: duplicatePackageRest.openapi,
     rest: {
       method: 'POST',
       path: '/duplicate',
@@ -73,6 +82,7 @@ module.exports = {
     },
   },
   assignPackageRest: {
+    openapi: assignPackageRest.openapi,
     rest: {
       method: 'POST',
       path: '/assign',
@@ -99,6 +109,7 @@ module.exports = {
     },
   },
   sharePackageRest: {
+    openapi: sharePackageRest.openapi,
     rest: {
       method: 'POST',
       path: '/share',
@@ -117,6 +128,7 @@ module.exports = {
     },
   },
   getSupportedVersionsRest: {
+    openapi: getSupportedVersionsRest.openapi,
     rest: {
       method: 'GET',
       path: '/supported-versions',
@@ -129,6 +141,7 @@ module.exports = {
     },
   },
   getPackageRest: {
+    openapi: getPackageRest.openapi,
     rest: {
       method: 'GET',
       path: '/:id',
@@ -146,6 +159,7 @@ module.exports = {
     },
   },
   deletePackageRest: {
+    openapi: deletePackageRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',

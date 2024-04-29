@@ -18,9 +18,14 @@ const {
 } = require('../../core/subject-type');
 const { permissions } = require('../../config/constants');
 
+const postSubjectTypeRest = require('./openapi/subjectType/postSubjectTypeRest');
+const putSubjectTypeRest = require('./openapi/subjectType/putSubjectTypeRest');
+const listSubjectTypeRest = require('./openapi/subjectType/listSubjectTypeRest');
+const deleteSubjectTypeRest = require('./openapi/subjectType/deleteSubjectTypeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postSubjectTypeRest: {
+    openapi: postSubjectTypeRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -41,6 +46,7 @@ module.exports = {
     },
   },
   putSubjectTypeRest: {
+    openapi: putSubjectTypeRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -61,6 +67,7 @@ module.exports = {
     },
   },
   listSubjectTypeRest: {
+    openapi: listSubjectTypeRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -100,6 +107,7 @@ module.exports = {
     },
   },
   deleteSubjectTypeRest: {
+    openapi: deleteSubjectTypeRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',

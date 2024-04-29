@@ -28,12 +28,25 @@ const {
   listSubjects,
   subjectByIds,
 } = require('../../core/subjects');
-const { duplicateSubjectByIds } = require('../../core/subjects/duplicateSubjectByIds');
-const { duplicateClassesByIds } = require('../../core/classes/duplicateClassesByIds');
+const {
+  duplicateSubjectByIds,
+} = require('../../core/subjects/duplicateSubjectByIds');
+const {
+  duplicateClassesByIds,
+} = require('../../core/classes/duplicateClassesByIds');
 
+const postSubjectRest = require('./openapi/subjects/postSubjectRest');
+const putSubjectRest = require('./openapi/subjects/putSubjectRest');
+const deleteSubjectRest = require('./openapi/subjects/deleteSubjectRest');
+const putSubjectCreditsRest = require('./openapi/subjects/putSubjectCreditsRest');
+const getSubjectCreditsRest = require('./openapi/subjects/getSubjectCreditsRest');
+const listSubjectCreditsForProgramRest = require('./openapi/subjects/listSubjectCreditsForProgramRest');
+const listSubjectRest = require('./openapi/subjects/listSubjectRest');
+const subjectsByIdsRest = require('./openapi/subjects/subjectsByIdsRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postSubjectRest: {
+    openapi: postSubjectRest.openapi,
     rest: {
       path: '/subject',
       method: 'POST',
@@ -54,6 +67,7 @@ module.exports = {
     },
   },
   putSubjectRest: {
+    openapi: putSubjectRest.openapi,
     rest: {
       path: '/subject',
       method: 'PUT',
@@ -74,6 +88,7 @@ module.exports = {
     },
   },
   deleteSubjectRest: {
+    openapi: deleteSubjectRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',
@@ -96,6 +111,7 @@ module.exports = {
     },
   },
   putSubjectCreditsRest: {
+    openapi: putSubjectCreditsRest.openapi,
     rest: {
       path: '/credits',
       method: 'PUT',
@@ -113,11 +129,17 @@ module.exports = {
     async handler(ctx) {
       validatePutSubjectCredits(ctx.params);
       const { subject, program, credits } = ctx.params;
-      const subjectCredits = await setSubjectCredits({ subject, program, credits, ctx });
+      const subjectCredits = await setSubjectCredits({
+        subject,
+        program,
+        credits,
+        ctx,
+      });
       return { status: 200, subjectCredits };
     },
   },
   getSubjectCreditsRest: {
+    openapi: getSubjectCreditsRest.openapi,
     rest: {
       path: '/credits',
       method: 'GET',
@@ -138,6 +160,7 @@ module.exports = {
     },
   },
   listSubjectCreditsForProgramRest: {
+    openapi: listSubjectCreditsForProgramRest.openapi,
     rest: {
       path: '/credits/list',
       method: 'GET',
@@ -155,11 +178,15 @@ module.exports = {
     async handler(ctx) {
       validateGetSubjectCreditsProgram(ctx.params);
       const { program } = ctx.params;
-      const subjectCredits = await listSubjectCreditsForProgram({ program, ctx });
+      const subjectCredits = await listSubjectCreditsForProgram({
+        program,
+        ctx,
+      });
       return { status: 200, subjectCredits };
     },
   },
   listSubjectRest: {
+    openapi: listSubjectRest.openapi,
     rest: {
       path: '/subject',
       method: 'GET',
@@ -227,6 +254,7 @@ module.exports = {
   //   },
   // },
   subjectsByIdsRest: {
+    openapi: subjectsByIdsRest.openapi,
     rest: {
       path: '/',
       method: 'GET',

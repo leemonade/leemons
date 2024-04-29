@@ -15,9 +15,12 @@ const _ = require('lodash');
 const { addNode, saveNode } = require('../../core/nodes');
 
 // TODO [Importante]: Añadir autenticación y permisos
+const postNodeRest = require('./openapi/node/postNodeRest');
+const saveNodeRest = require('./openapi/node/saveNodeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postNodeRest: {
+    openapi: postNodeRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -29,13 +32,18 @@ module.exports = {
     },
   },
   saveNodeRest: {
+    openapi: saveNodeRest.openapi,
     rest: {
       method: 'PUT',
       path: '/',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const node = await saveNode({ nodeId: ctx.params.id, ...ctx.params, ctx });
+      const node = await saveNode({
+        nodeId: ctx.params.id,
+        ...ctx.params,
+        ctx,
+      });
       return { status: 200, node };
     },
   },

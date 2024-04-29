@@ -7,9 +7,11 @@
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { set } = require('../../core/permissions/set');
 
+const setRest = require('./openapi/permissions/setRest');
 /** @type {ServiceSchema} */
 module.exports = {
   setRest: {
+    openapi: setRest.openapi,
     rest: {
       method: 'POST',
       path: '/asset/:asset',

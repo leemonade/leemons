@@ -2,14 +2,17 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
 const configService = require('../../core/config');
 
+const getConfigRest = require('./openapi/config/getConfigRest');
+const saveConfigRest = require('./openapi/config/saveConfigRest');
+/** @type {ServiceSchema} */
 module.exports = {
   getConfigRest: {
+    openapi: getConfigRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -24,6 +27,7 @@ module.exports = {
     },
   },
   saveConfigRest: {
+    openapi: saveConfigRest.openapi,
     rest: {
       method: 'POST',
       path: '/',

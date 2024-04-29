@@ -1,7 +1,10 @@
 const { LeemonsError } = require('@leemons/error');
 
+const initSuperRest = require('./openapi/users/initSuperRest');
+/** @type {ServiceSchema} */
 module.exports = {
   initSuperRest: {
+    openapi: initSuperRest.openapi,
     rest: {
       path: '/init-super',
       method: 'POST',
@@ -10,7 +13,9 @@ module.exports = {
       if (process.env.NODE_ENV !== 'production') {
         try {
           if (!ctx.params.password)
-            throw new Error('A password field must be included in the request body');
+            throw new Error(
+              'A password field must be included in the request body'
+            );
 
           await ctx.call('admin.settings.setLanguages', {
             langs: { code: 'es', name: 'Español' },
@@ -32,10 +37,16 @@ module.exports = {
 
           return { status: 200 };
         } catch (e) {
-          throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 500 });
+          throw new LeemonsError(ctx, {
+            message: e.message,
+            httpStatusCode: 500,
+          });
         }
       } else {
-        throw new LeemonsError(ctx, { message: 'Endpoint disabled', httpStatusCode: 401 });
+        throw new LeemonsError(ctx, {
+          message: 'Endpoint disabled',
+          httpStatusCode: 401,
+        });
       }
     },
   },

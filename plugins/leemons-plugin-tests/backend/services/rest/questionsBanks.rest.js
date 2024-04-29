@@ -10,11 +10,21 @@ const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const { list, details, delete: _delete, save } = require('../../core/questions-banks');
+const {
+  list,
+  details,
+  delete: _delete,
+  save,
+} = require('../../core/questions-banks');
 
+const listQuestionBanksRest = require('./openapi/questionsBanks/listQuestionBanksRest');
+const getQuestionBankDetailRest = require('./openapi/questionsBanks/getQuestionBankDetailRest');
+const deleteQuestionBankRest = require('./openapi/questionsBanks/deleteQuestionBankRest');
+const saveQuestionBanksRest = require('./openapi/questionsBanks/saveQuestionBanksRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listQuestionBanksRest: {
+    openapi: listQuestionBanksRest.openapi,
     rest: {
       method: 'POST',
       path: '/list',
@@ -56,6 +66,7 @@ module.exports = {
     },
   },
   getQuestionBankDetailRest: {
+    openapi: getQuestionBankDetailRest.openapi,
     rest: {
       method: 'GET',
       path: '/:id',
@@ -76,6 +87,7 @@ module.exports = {
     },
   },
   deleteQuestionBankRest: {
+    openapi: deleteQuestionBankRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',
@@ -96,6 +108,7 @@ module.exports = {
     },
   },
   saveQuestionBanksRest: {
+    openapi: saveQuestionBanksRest.openapi,
     rest: {
       method: 'POST',
       path: '/',

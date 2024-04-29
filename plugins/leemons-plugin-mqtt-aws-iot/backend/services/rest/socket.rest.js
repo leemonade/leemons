@@ -11,11 +11,19 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
-const { createCredentialsForUserSession, setConfig, getConfig } = require('../../core/socket');
+const {
+  createCredentialsForUserSession,
+  setConfig,
+  getConfig,
+} = require('../../core/socket');
 
+const getCredentialsRest = require('./openapi/socket/getCredentialsRest');
+const setConfigRest = require('./openapi/socket/setConfigRest');
+const getConfigRest = require('./openapi/socket/getConfigRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getCredentialsRest: {
+    openapi: getCredentialsRest.openapi,
     rest: {
       method: 'GET',
       path: '/credentials',
@@ -27,15 +35,20 @@ module.exports = {
     },
   },
   setConfigRest: {
+    openapi: setConfigRest.openapi,
     rest: {
       method: 'POST',
       path: '/config',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.DISABLE_AUTO_INIT === 'true' && process.env.ENVIRONMENT !== 'local')
+      if (
+        process.env.DISABLE_AUTO_INIT === 'true' &&
+        process.env.ENVIRONMENT !== 'local'
+      )
         throw new LeemonsError(ctx, {
-          message: 'We are in leemons sass mode, this endpoint is disabled for protection',
+          message:
+            'We are in leemons sass mode, this endpoint is disabled for protection',
         });
       const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
         userId: ctx.meta.userSession.id,
@@ -51,15 +64,20 @@ module.exports = {
     },
   },
   getConfigRest: {
+    openapi: getConfigRest.openapi,
     rest: {
       method: 'GET',
       path: '/config',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.DISABLE_AUTO_INIT === 'true' && process.env.ENVIRONMENT !== 'local')
+      if (
+        process.env.DISABLE_AUTO_INIT === 'true' &&
+        process.env.ENVIRONMENT !== 'local'
+      )
         throw new LeemonsError(ctx, {
-          message: 'We are in leemons sass mode, this endpoint is disabled for protection',
+          message:
+            'We are in leemons sass mode, this endpoint is disabled for protection',
         });
       const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
         userId: ctx.meta.userSession.id,

@@ -12,9 +12,13 @@ const {
 } = require('@leemons/middlewares');
 const { generate, retry, listReports } = require('../../core/report');
 
+const generateRest = require('./openapi/report/generateRest');
+const retryRest = require('./openapi/report/retryRest');
+const listRest = require('./openapi/report/listRest');
 /** @type {ServiceSchema} */
 module.exports = {
   generateRest: {
+    openapi: generateRest.openapi,
     rest: {
       method: 'POST',
       path: '/add',
@@ -40,6 +44,7 @@ module.exports = {
     },
   },
   retryRest: {
+    openapi: retryRest.openapi,
     rest: {
       method: 'POST',
       path: '/retry',
@@ -63,6 +68,7 @@ module.exports = {
     },
   },
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       method: 'POST',
       path: '/list',

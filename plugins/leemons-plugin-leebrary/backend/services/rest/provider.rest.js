@@ -8,11 +8,17 @@ const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
 const { list: listProviders } = require('../../core/providers/list');
 const { setProviderConfig, setActiveProvider } = require('../../core/settings');
-const { getByName: getProviderByName } = require('../../core/providers/getByName');
+const {
+  getByName: getProviderByName,
+} = require('../../core/providers/getByName');
 
+const listRest = require('./openapi/providers/listRest');
+const setConfigRest = require('./openapi/providers/setConfigRest');
+const deleteConfigRest = require('./openapi/providers/deleteConfigRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -24,6 +30,7 @@ module.exports = {
     },
   },
   setConfigRest: {
+    openapi: setConfigRest.openapi,
     rest: {
       method: 'POST',
       path: '/config',
@@ -51,6 +58,7 @@ module.exports = {
     },
   },
   deleteConfigRest: {
+    openapi: deleteConfigRest.openapi,
     rest: {
       path: '/config/delete',
       method: 'POST',

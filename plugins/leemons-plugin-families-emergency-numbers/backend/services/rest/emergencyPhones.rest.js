@@ -9,9 +9,11 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
+const getDatasetFormRest = require('./openapi/emergencyPhones/getDatasetFormRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getDatasetFormRest: {
+    openapi: getDatasetFormRest.openapi,
     rest: {
       method: 'GET',
       path: '/dataset-form',
@@ -35,7 +37,11 @@ module.exports = {
           locale: ctx.meta.userSession.locale,
         }
       );
-      return { status: 200, jsonSchema: compileJsonSchema, jsonUI: compileJsonUI };
+      return {
+        status: 200,
+        jsonSchema: compileJsonSchema,
+        jsonUI: compileJsonUI,
+      };
     },
   },
 };

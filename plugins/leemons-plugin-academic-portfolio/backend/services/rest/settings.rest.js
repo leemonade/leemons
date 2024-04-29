@@ -18,9 +18,16 @@ const {
 } = require('../../core/settings');
 const settingsSchema = require('../../models/settings');
 
+const getProfilesRest = require('./openapi/settings/getProfilesRest');
+const setProfilesRest = require('./openapi/settings/setProfilesRest');
+const isProfilesConfigRest = require('./openapi/settings/isProfilesConfigRest');
+const findOneRest = require('./openapi/settings/findOneRest');
+const updateRest = require('./openapi/settings/updateRest');
+const enableMenuItemRest = require('./openapi/settings/enableMenuItemRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getProfilesRest: {
+    openapi: getProfilesRest.openapi,
     rest: {
       path: '/profiles',
       method: 'GET',
@@ -32,6 +39,7 @@ module.exports = {
     },
   },
   setProfilesRest: {
+    openapi: setProfilesRest.openapi,
     rest: {
       path: '/profiles',
       method: 'PUT',
@@ -52,6 +60,7 @@ module.exports = {
     },
   },
   isProfilesConfigRest: {
+    openapi: isProfilesConfigRest.openapi,
     rest: {
       path: '/profiles/is-config',
       method: 'GET',
@@ -72,6 +81,7 @@ module.exports = {
     },
   },
   findOneRest: {
+    openapi: findOneRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -92,6 +102,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -122,6 +133,7 @@ module.exports = {
   },
   // TODO Verificar que esto se va a usar
   enableMenuItemRest: {
+    openapi: enableMenuItemRest.openapi,
     rest: {
       path: '/enable-menu-item',
       method: 'POST',

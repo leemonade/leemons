@@ -7,16 +7,33 @@
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsValidator } = require('@leemons/validator');
 const { validateInternalPrivateKey } = require('@leemons/deployment-manager');
-const { updateDeploymentConfig } = require('../../core/deployments/updateDeploymentConfig');
+const {
+  updateDeploymentConfig,
+} = require('../../core/deployments/updateDeploymentConfig');
 const { addDeployment } = require('../../core/deployments/addDeployment');
 const { isDomainInUse } = require('../../core/deployments/isDomainInUse');
-const { reloadAllDeployments } = require('../../core/auto-init/reload-all-deployments');
-const { getDeploymentInfo } = require('../../core/deployments/getDeploymentInfo');
-const { getDeploymentConfig } = require('../../core/deployments/getDeploymentConfig');
+const {
+  reloadAllDeployments,
+} = require('../../core/auto-init/reload-all-deployments');
+const {
+  getDeploymentInfo,
+} = require('../../core/deployments/getDeploymentInfo');
+const {
+  getDeploymentConfig,
+} = require('../../core/deployments/getDeploymentConfig');
 
+const getConfigRest = require('./openapi/deployment-manager/getConfigRest');
+const getDeploymentTypeRest = require('./openapi/deployment-manager/getDeploymentTypeRest');
+const infoRest = require('./openapi/deployment-manager/infoRest');
+const existDeploymentWithDomainRest = require('./openapi/deployment-manager/existDeploymentWithDomainRest');
+const changeDeploymentConfigRest = require('./openapi/deployment-manager/changeDeploymentConfigRest');
+const addManualDeploymentRest = require('./openapi/deployment-manager/addManualDeploymentRest');
+const reloadAllDeploymentsRest = require('./openapi/deployment-manager/reloadAllDeploymentsRest');
+const deploymentInfoRest = require('./openapi/deployment-manager/deploymentInfoRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getConfigRest: {
+    openapi: getConfigRest.openapi,
     rest: {
       method: 'GET',
       path: '/config',
@@ -29,19 +46,25 @@ module.exports = {
     },
   },
   getDeploymentTypeRest: {
+    openapi: getDeploymentTypeRest.openapi,
     rest: {
       method: 'GET',
       path: '/type',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const deployment = await ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }, undefined, {
-        disableAutoDeploy: true,
-      }).lean();
+      const deployment = await ctx.db.Deployment.findOne(
+        { id: ctx.meta.deploymentID },
+        undefined,
+        {
+          disableAutoDeploy: true,
+        }
+      ).lean();
       return deployment.type;
     },
   },
   infoRest: {
+    openapi: infoRest.openapi,
     rest: {
       method: 'POST',
       path: '/info',
@@ -58,14 +81,18 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         const pluginName = ctx.params.name.replace('leemons-plugin-', '');
-        const plugin = await ctx.db.DeploymentPlugins.findOne({ pluginName }).lean();
-        if (plugin) return { name: plugin.pluginName, version: plugin.pluginVersion };
+        const plugin = await ctx.db.DeploymentPlugins.findOne({
+          pluginName,
+        }).lean();
+        if (plugin)
+          return { name: plugin.pluginName, version: plugin.pluginVersion };
         return null;
       }
       throw validator.error;
     },
   },
   existDeploymentWithDomainRest: {
+    openapi: existDeploymentWithDomainRest.openapi,
     dontCreateTransactionOnCallThisFunction: true,
     rest: {
       method: 'POST',
@@ -88,6 +115,7 @@ module.exports = {
     },
   },
   changeDeploymentConfigRest: {
+    openapi: changeDeploymentConfigRest.openapi,
     dontCreateTransactionOnCallThisFunction: true,
     rest: {
       method: 'POST',
@@ -112,6 +140,7 @@ module.exports = {
     },
   },
   addManualDeploymentRest: {
+    openapi: addManualDeploymentRest.openapi,
     dontCreateTransactionOnCallThisFunction: true,
     rest: {
       method: 'POST',
@@ -138,6 +167,7 @@ module.exports = {
     },
   },
   reloadAllDeploymentsRest: {
+    openapi: reloadAllDeploymentsRest.openapi,
     dontCreateTransactionOnCallThisFunction: true,
     rest: {
       method: 'POST',
@@ -146,11 +176,16 @@ module.exports = {
     async handler(ctx) {
       validateInternalPrivateKey({ ctx });
       const { ids, reloadRelations } = ctx.params;
-      const count = await reloadAllDeployments({ broker: this.broker, ids, reloadRelations });
+      const count = await reloadAllDeployments({
+        broker: this.broker,
+        ids,
+        reloadRelations,
+      });
       return { count };
     },
   },
   deploymentInfoRest: {
+    openapi: deploymentInfoRest.openapi,
     dontCreateTransactionOnCallThisFunction: true,
     rest: {
       method: 'POST',
