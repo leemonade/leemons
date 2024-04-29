@@ -55,6 +55,7 @@ async function handleAssetDuplication({
       indexable: _isIndexable,
       public: _isPublic,
     },
+    permissions,
     newId,
     duplicating: true,
     ctx,
