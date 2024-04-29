@@ -8,7 +8,7 @@ import { getCentersWithToken } from '@users/session';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import { prefixPN } from '@scores/helpers';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useMatchingAcademicCalendarPeriods } from '../__DEPRECATED__/FinalNotebook/FinalScores';
+import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
@@ -41,12 +41,10 @@ function useFiltersLocalizations() {
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = {
+      return {
         ..._.get(res, prefixPN('reviewPage.filters')),
         finalPeriod: _.get(res, prefixPN('scoresPage.filters.period.final')),
       };
-
-      return data;
     }
 
     return {};

@@ -8,7 +8,7 @@ import {
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import Header from '@scores/components/__DEPRECATED__/ScoresPage/Header';
-import Filters from '@scores/components/ReviewerPage/Filters';
+import Filters from '@scores/components/__DEPRECATED__/ReviewerPage/Filters';
 
 const useStyles = createStyles((theme) => ({
   root: {
