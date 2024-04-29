@@ -153,6 +153,7 @@ export default function RegionalCalendars() {
     const centers = getCentersWithToken();
     setUserCenters(centers);
     handleOnSelectCenter(centers[0]);
+    loadRegionalConfigs();
   }, []);
 
   const form = useForm();

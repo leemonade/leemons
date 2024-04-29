@@ -140,6 +140,7 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                     required
                     error={form.formState.errors.question}
                     label={t('questionLabel')}
+                    editorStyles={{ minHeight: '96px' }}
                     {...field}
                   />
                 )}

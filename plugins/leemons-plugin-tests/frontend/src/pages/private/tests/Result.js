@@ -373,6 +373,7 @@ export default function Result() {
             <TextEditorInput
               value={store.feedback}
               error={store.feedbackError ? t('feedbackRequired') : null}
+              editorStyles={{ minHeight: '96px' }}
               onChange={(e) => {
                 store.feedback = e;
                 store.feedbackError = false;
@@ -528,6 +529,7 @@ export default function Result() {
                           <TextEditorInput
                             value={store.feedback}
                             error={store.feedbackError ? t('feedbackRequired') : null}
+                            editorStyles={{ minHeight: '96px' }}
                             onChange={(e) => {
                               store.feedback = e;
                               store.feedbackError = false;

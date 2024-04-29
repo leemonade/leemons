@@ -193,6 +193,10 @@ const AssetForm = ({
     if (isImageType) {
       setValue('cover', assetFile);
     }
+    if (type === LIBRARY_FORM_TYPES.MEDIA_FILES && !assetFile?.path) {
+      setValue('name', null);
+      setValue('cover', null);
+    }
   }, [assetFile]);
 
   useEffect(() => {
@@ -312,6 +316,7 @@ const AssetForm = ({
                         icon={<DownloadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
+                        labels={labels}
                         errorMessage={{
                           title: 'Error',
                           message: errorMessages.file?.rejected || 'File was rejected',
