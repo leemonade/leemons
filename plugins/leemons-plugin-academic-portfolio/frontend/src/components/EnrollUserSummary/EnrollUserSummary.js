@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isString, uniq } from 'lodash';
+import { compact, isString, uniq } from 'lodash';
 import {
   Box,
   Tabs,
@@ -28,19 +28,24 @@ function filterUserAgentIds(userAgents, sysProfileFilter) {
 
 function getTeacherFullname(teacherId, teachers) {
   const item = teachers.find((teacher) => teacher.id === teacherId);
-  return `${item?.user?.surnames}, ${item?.user?.name}`;
+  const parts = compact([item?.user?.surnames, item?.user?.name]);
+
+  if (parts.length > 1) {
+    return parts.join(', ');
+  }
+
+  return parts.length === 1 ? parts[0] : '';
 }
 
 function getTeachersIds(enrollments = []) {
-  return uniq(
-    enrollments.flatMap((enrollment) =>
-      enrollment.subjects?.flatMap((subject) =>
-        subject.classes?.flatMap((classroom) =>
-          classroom.teachers?.map((teacher) => teacher.teacher)
-        )
+  const teacherIds = enrollments.flatMap((enrollment) =>
+    (enrollment.subjects ?? []).flatMap((subject) =>
+      (subject.classes ?? []).flatMap((classroom) =>
+        (classroom.teachers ?? []).map((teacher) => teacher?.teacher)
       )
     )
   );
+  return compact(uniq(teacherIds));
 }
 
 function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilter, viewMode }) {
@@ -110,7 +115,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
                   <Box>
                     {!isStudent && (
                       <Text>
-                        {getTeacherFullname(subject.classes[0].teachers[0].teacher, teachers)}
+                        {getTeacherFullname(subject.classes[0]?.teachers[0]?.teacher, teachers)}
                       </Text>
                     )}
                   </Box>
