@@ -6,12 +6,16 @@ const { getProfiles } = require('../../settings/getProfiles');
 async function removeByClass({ classIds, soft, ctx }) {
   const classeIds = _.isArray(classIds) ? classIds : [classIds];
 
+  console.log('Removing teachers from classes. classIds =>', classeIds);
+  console.log('Removing teachers from classes. soft =>', soft);
+
   const programs = await Promise.all(
     _.map(classeIds, (classId) => getClassProgram({ id: classId, ctx }))
   );
 
   const classStudents = await ctx.tx.db.ClassStudent.find({ class: classeIds }).lean();
   const classTeachers = await ctx.tx.db.ClassTeacher.find({ class: classeIds }).lean();
+  console.log('classTeachers (if empty it returns here) =>', classTeachers);
   if (!classTeachers?.length) return;
 
   const promisesRemoveUserAgentsFromRooms = [];
@@ -39,6 +43,7 @@ async function removeByClass({ classIds, soft, ctx }) {
   if (classStudents?.length) {
     _.forEach(classeIds, (classId) => {
       const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
+      console.log('studentIds to pass to comunica.room.removeAllUserAgents (again) =>', studentIds);
 
       _.forEach(studentIds, (studentId) => {
         promisesRemoveUserAgentsFromRooms.push(
@@ -51,6 +56,7 @@ async function removeByClass({ classIds, soft, ctx }) {
   }
 
   await Promise.all(promisesRemoveUserAgentsFromRooms);
+  console.log('after remove user agents from rooms when removing teacher');
 
   const programIds = _.uniq(_.map(programs, 'id'));
 
