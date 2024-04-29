@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import {
@@ -28,7 +28,7 @@ export default function DetailInstructions({
   onAssign = noop,
   onPrev = noop,
 }) {
-  const [isDirty, setIsDirty] = React.useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const formValues = form.watch();
 
   // ························································
@@ -125,28 +125,21 @@ export default function DetailInstructions({
                 />
               )}
             />
+            <Box style={{ marginBottom: 24 }}>
+              <Controller
+                control={form.control}
+                name="duration"
+                rules={{
+                  required: t('recommendedDuration'),
+                  min: { value: 1, message: t('recommendedDuration') },
+                }}
+                render={({ field }) => (
+                  <TimeUnitsInput {...field} label={t('recommendedDuration')} min={1} />
+                )}
+              />
+            </Box>
           </ContextContainer>
         )}
-        <ContextContainer>
-          <Box style={{ marginTop: 24, marginBottom: 24 }}>
-            <Controller
-              control={form.control}
-              name="duration"
-              rules={{
-                required: t('recommendedDuration'),
-                min: { value: 1, message: t('recommendedDuration') },
-              }}
-              render={({ field }) => (
-                <TimeUnitsInput
-                  {...field}
-                  label={t('recommendedDuration')}
-                  error={isDirty ? t('recommendedDuration') : null}
-                  min={1}
-                />
-              )}
-            />
-          </Box>
-        </ContextContainer>
       </Box>
     </TotalLayoutStepContainer>
   );
