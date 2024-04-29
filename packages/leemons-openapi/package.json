@@ -1,0 +1,40 @@
+{
+  "name": "@leemons/openapi",
+  "version": "0.0.40",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "leemons-openapi": "bin/createOpenapiFiles.js"
+  },
+  "keywords": [],
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@leemons/error": "0.0.40",
+    "@leemons/service-name-parser": "0.0.40",
+    "@openapi-contrib/json-schema-to-openapi-schema": "^3.0.0",
+    "axios": "^1.6.1",
+    "espree": "^9.6.1",
+    "estraverse": "^5.2.0",
+    "json-schema-generator": "^2.0.6",
+    "lodash": "^4.17.21",
+    "prettier": "^2.8.8",
+    "swagger-ui-dist": "^5.9.3",
+    "uglify-js": "^3.17.4"
+  }
+}
