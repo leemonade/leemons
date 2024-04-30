@@ -392,7 +392,8 @@ module.exports = {
     },
     scoresTable: {
       students: 'Estudiantes',
-      noActivity: 'No entregado',
+      noActivity: 'NE',
+      submitted: 'Entregado',
       avgScore: 'Nota promedio',
       calculated: 'Calculada',
       custom: 'Docente',
