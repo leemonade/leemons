@@ -147,7 +147,7 @@ const ScoreCell = ({
   };
 
   const renderInputCell = () => {
-    if (!value && !isSubmitted && !isClosed) {
+    if (isNil(value) && !isSubmitted && !isClosed) {
       return (
         <Text color="soft" role="productive">
           -
