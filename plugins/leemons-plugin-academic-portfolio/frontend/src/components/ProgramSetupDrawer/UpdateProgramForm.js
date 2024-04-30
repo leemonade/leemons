@@ -17,9 +17,11 @@ import {
   Table,
   TotalLayoutStepContainer,
   TotalLayoutContainer,
+  Loader,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
 import FooterContainer from './FooterContainer';
 import ReadOnlyField from '../common/ReadOnlyField';
 
@@ -57,6 +59,11 @@ const UpdateProgramForm = ({
     if (!localizations) return {};
     return localizations?.programDrawer?.addProgramForm;
   }, [localizations]);
+
+  const { data: programEvaluationSystem, isLoading } = useProgramEvaluationSystems({
+    program: program?.id,
+    options: { enabled: program?.id?.length > 0 },
+  });
 
   useEffect(() => {
     if (!isEmpty(program)) {
@@ -120,6 +127,14 @@ const UpdateProgramForm = ({
           .join('º, '),
     },
   ];
+
+  if (isLoading) {
+    return (
+      <Stack fullHeight>
+        <Loader padded />
+      </Stack>
+    );
+  }
 
   return (
     <TotalLayoutContainer
@@ -217,6 +232,12 @@ const UpdateProgramForm = ({
                       </InputWrapper>
                     )}
                   />
+                </ContextContainer>
+
+                {/* REGLAS ACADÉMICAS */}
+                <ContextContainer noFlex spacing={4}>
+                  <Title className={classes.sectionTitle}>{formLabels?.academicRules?.title}</Title>
+                  <ReadOnlyField value={programEvaluationSystem?.name ?? ''} />
                 </ContextContainer>
 
                 {/* DURACIÓN Y CRÉDITOS */}
