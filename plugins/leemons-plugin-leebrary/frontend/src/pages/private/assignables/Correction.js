@@ -44,7 +44,7 @@ export default function Correction() {
 
   const isStudent = useIsStudent();
   const params = useSearchParams();
-  const fromExecution = useMemo(() => params.has('fromExecution'), [params]);
+  const fromExecution = useRef(params.has('fromExecution')).current;
 
   const { data: assignation, isLoading } = useAssignations({
     query: { instance: id, user },
