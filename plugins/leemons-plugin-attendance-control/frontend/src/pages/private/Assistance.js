@@ -14,8 +14,8 @@ import { TestIcon } from '@tests/components/Icons/TestIcon';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@attendance-control/helpers/prefixPN';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { onScoresDownload } from '@scores/components/Notebook/components/Header/Header';
-import Filters from '@scores/components/ScoresPage/Filters/Filters';
+import { onScoresDownload } from '@scores/components/__DEPRECATED__/Notebook/components/Header/Header';
+import Filters from '@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters';
 
 const useStyles = createStyles((theme) => ({
   root: {

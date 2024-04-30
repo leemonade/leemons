@@ -482,5 +482,7 @@ module.exports = {
     summary: 'Resumen de la actividad',
     information: 'Información',
     resources: 'Recursos',
+    nextActivity: 'Siguiente actividad',
+    goToModule: 'Dashboard del módulo',
   },
 };

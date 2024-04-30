@@ -392,12 +392,12 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      await removeProgramByIds({
+      const result = await removeProgramByIds({
         ids: ctx.params.id,
         soft: ctx.params.soft === 'true',
         ctx,
       });
-      return { status: 200 };
+      return { status: 200, result };
     },
   },
   duplicateProgramRest: {

@@ -120,14 +120,23 @@ async function setFeedback(instance, user, feedback) {
   });
 }
 
-async function duplicate(instance, published = false) {
+async function duplicate({
+  id,
+  published = false,
+  ignoreSubjects = false,
+  keepQuestionBank = true,
+}) {
+  const body = {
+    id,
+    published,
+    ignoreSubjects,
+    keepQuestionBank,
+  };
+
   return leemons.api(`v1/tests/tests/duplicate`, {
     allAgents: true,
     method: 'POST',
-    body: {
-      id: instance,
-      published,
-    },
+    body,
   });
 }
 

@@ -16,7 +16,7 @@ import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { useLayout } from '@layout/context';
-import { ScoresFooter } from '@scores/components/ScoresFooter';
+import { ScoresFooter } from '@scores/components/__DEPRECATED__/ScoresFooter';
 
 const useStyles = createStyles((theme) => ({
   filters: {

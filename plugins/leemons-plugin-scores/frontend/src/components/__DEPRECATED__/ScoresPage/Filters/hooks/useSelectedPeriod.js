@@ -22,6 +22,7 @@ export default function useSelectedPeriod({
     control,
     name: ['period', 'startDate', 'endDate'],
   });
+
   React.useEffect(() => {
     if (currentPeriod) {
       setValue('period', currentPeriod.id);
@@ -31,13 +32,14 @@ export default function useSelectedPeriod({
   const period = Array.isArray(periodSelected) ? periodSelected[0] : periodSelected;
 
   if (period === 'custom') {
-    return {
+    return cache('response', {
       selected: period,
       isCustom: true,
       isComplete: startDate && endDate,
       startDate,
       endDate,
-    };
+      _id: 'custom',
+    });
   }
 
   // eslint-disable-next-line

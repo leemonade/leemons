@@ -6,18 +6,19 @@ import { noop } from 'lodash';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { SelectCourse } from '@academic-portfolio/components';
-import PickDate from '@scores/components/ScoresPage/Filters/components/PickDate';
-import SelectPeriod from '@scores/components/ScoresPage/Filters/components/SelectPeriod';
-import useSelectedPeriod from '@scores/components/ScoresPage/Filters/hooks/useSelectedPeriod';
+import PickDate from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/PickDate';
+import SelectPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/SelectPeriod';
+import useSelectedPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/hooks/useSelectedPeriod';
 import { getSessionConfig } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useStudentPeriods from './hooks/useStudentPeriods';
 
-export default function Filters({ onChange = noop }) {
+export default function Filters({ onChange = noop, value }) {
   const [t] = useTranslateLoader(prefixPN('myScores.filters'));
   const { program } = getSessionConfig();
   const form = useForm();
+  const { getValues, setValue } = form;
 
   const { periods, startDate, endDate } = useStudentPeriods(form);
 
@@ -44,6 +45,22 @@ export default function Filters({ onChange = noop }) {
       });
     }
   }, [onChange, selectedPeriod, selectedCourse, startDate, endDate, program]);
+
+  useEffect(() => {
+    if (value) {
+      if (value.program && getValues('program') !== value.program) {
+        setValue('program', value.program);
+      }
+
+      if (value.period && getValues('period') !== value.period?._id) {
+        setValue('period', value.period._id);
+      }
+
+      if (value.course && getValues('course') !== value.course) {
+        setValue('course', value.course);
+      }
+    }
+  }, [value, form, getValues, setValue]);
 
   return (
     <Stack spacing={4}>
@@ -73,4 +90,5 @@ export default function Filters({ onChange = noop }) {
 
 Filters.propTypes = {
   onChange: PropTypes.func,
+  value: PropTypes.object,
 };

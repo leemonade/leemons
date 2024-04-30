@@ -3,7 +3,7 @@ import { useQueries } from '@tanstack/react-query';
 
 export default function useProgramDetail(
   programId,
-  { enabled = true } = {},
+  { enabled = true, refetchOnWindowFocus = true } = {},
   withClasses,
   showArchived,
   withStudentsAndTeachers
@@ -27,6 +27,7 @@ export default function useProgramDetail(
         return response.program;
       },
       enabled,
+      refetchOnWindowFocus,
     })),
   });
 

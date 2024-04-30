@@ -220,8 +220,13 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
               editable
               resetOnAdd
               sortable={false}
-              renderActionButton={() => (
-                <Button variant="link" leftIcon={<AddCircleIcon />}>
+              renderActionButton={({ disabled, onAdd }) => (
+                <Button
+                  variant="link"
+                  leftIcon={<AddCircleIcon />}
+                  disabled={disabled}
+                  onClick={onAdd}
+                >
                   {t('add')}
                 </Button>
               )}
@@ -250,8 +255,13 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
             editable
             resetOnAdd
             sortable={false}
-            renderActionButton={() => (
-              <Button variant="link" leftIcon={<AddCircleIcon />}>
+            renderActionButton={({ disabled, onAdd }) => (
+              <Button
+                variant="link"
+                leftIcon={<AddCircleIcon />}
+                disabled={disabled}
+                onClick={onAdd}
+              >
                 {t('add')}
               </Button>
             )}
@@ -281,8 +291,13 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
             editable
             resetOnAdd
             sortable={false}
-            renderActionButton={() => (
-              <Button variant="link" leftIcon={<AddCircleIcon />}>
+            renderActionButton={({ disabled, onAdd }) => (
+              <Button
+                variant="link"
+                leftIcon={<AddCircleIcon />}
+                disabled={disabled}
+                onClick={onAdd}
+              >
                 {t('add')}
               </Button>
             )}

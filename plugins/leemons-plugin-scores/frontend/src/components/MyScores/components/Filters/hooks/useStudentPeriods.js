@@ -1,8 +1,8 @@
 import { useWatch } from 'react-hook-form';
 
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { useMatchingAcademicCalendarPeriods } from '@scores/components/FinalNotebook/FinalScores';
-import useAcademicCalendarDates from '@scores/components/ScoresPage/Filters/hooks/useAcademicCalendarDates';
+import { useMatchingAcademicCalendarPeriods } from '@scores/components/__DEPRECATED__/FinalNotebook/FinalScores';
+import useAcademicCalendarDates from '@scores/components/__DEPRECATED__/ScoresPage/Filters/hooks/useAcademicCalendarDates';
 import { getSessionConfig } from '@users/session';
 
 export default function useStudentPeriods({ control }) {
