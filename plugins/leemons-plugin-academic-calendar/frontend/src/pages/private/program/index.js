@@ -234,7 +234,7 @@ export default function ProgramCalendars() {
           <Stack>
             <Box>
               <ActionButton
-                icon={<EditIcon />}
+                icon={<EditIcon width={20} height={20} />}
                 onClick={() => {
                   store.currentProgram = program;
                   handleOnSelectProgram(program);
@@ -342,10 +342,10 @@ export default function ProgramCalendars() {
           </VerticalStepperContainer>
         ) : (
           <TotalLayoutStepContainer stepName={`${selectedCenter?.name}`}>
-            {!!store.programs.length && !programsIsLoading ? (
+            {programs?.length > 0 ? (
               <Table columns={columns} data={programsData || []} />
             ) : (
-              <EmptyState t={t} />
+              <>{!programsIsLoading ? <EmptyState t={t} /> : null}</>
             )}
           </TotalLayoutStepContainer>
         )}

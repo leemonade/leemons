@@ -54,7 +54,12 @@ const AssetPlayerWrapper = ({ asset, category }) => {
   return (
     <Box
       data-cypress-id="library-detail-player"
-      style={{ display: 'grid', placeContent: 'center', width: '100%', height: '100vh' }}
+      style={{
+        display: 'grid',
+        placeContent: 'center',
+        width: '100%',
+        minHeight: '100vh',
+      }}
     >
       <Component asset={asset} {...getMultimediaProps()} />
     </Box>

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Table, Stack, ActionButton, LoadingOverlay } from '@bubbles-ui/components';
-import { ArchiveIcon, EditWriteIcon, RestoreIcon } from '@bubbles-ui/icons/solid';
+import { ArchiveIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { useProgramDetail } from '@academic-portfolio/hooks';
@@ -17,7 +17,7 @@ const ProgramsDetailTable = ({
 }) => {
   const programsQueries = useProgramDetail(
     programsIds,
-    { enabled: programsIds?.length > 0 },
+    { enabled: programsIds?.length > 0, refetchOnWindowFocus: false },
     false,
     isShowingArchivedPrograms,
     true

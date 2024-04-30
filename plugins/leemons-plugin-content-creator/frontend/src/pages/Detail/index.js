@@ -104,6 +104,7 @@ export default function Index({ isNew, readOnly }) {
     });
 
     const documentToSave = { ...formValues, content: processedContent, published: publishing };
+    delete documentToSave.subjectsRaw;
 
     if (!isNew) documentToSave.id = params.id;
     mutation.mutate(
