@@ -24,7 +24,6 @@ async function addFromUser({ data, ctx }) {
     },
   });
 
-  console.log('userPermission', userPermission);
   if (userPermission.actionNames.indexOf('owner') < 0) {
     throw new LeemonsError(ctx, { message: 'Only the owner, can add events to this calendar' });
   }
@@ -33,8 +32,6 @@ async function addFromUser({ data, ctx }) {
 
   const event = await add({ key: calendar, data: eventData, ctx });
   const permissionConfigEvent = getPermissionConfigEvent(event.id);
-
-  console.log('permissionConfigEvent', permissionConfigEvent);
 
   await grantAccessUserAgentToEvent({
     id: event.id,
