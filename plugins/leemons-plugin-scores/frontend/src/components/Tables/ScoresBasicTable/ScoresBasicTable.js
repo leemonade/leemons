@@ -218,6 +218,7 @@ const ScoresBasicTable = ({
           <ScoreCell
             value={value.score}
             noActivity={labels.noActivity}
+            submittedLabel={labels.submitted}
             allowChange={activity.allowChange}
             isSubmitted={value.isSubmitted}
             isClosed={isDeadlineFinished}
@@ -261,6 +262,7 @@ const ScoresBasicTable = ({
                 <ScoreCell
                   value={value.score}
                   noActivity={labels.noActivity}
+                  submittedLabel={labels.submitted}
                   allowChange={expandedActivity.allowChange}
                   isSubmitted={value.isSubmitted}
                   grades={grades}

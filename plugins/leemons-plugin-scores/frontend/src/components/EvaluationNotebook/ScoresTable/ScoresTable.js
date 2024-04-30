@@ -20,6 +20,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
   const labels = {
     students: t('scoresTable.students'),
     noActivity: t('scoresTable.noActivity'),
+    submitted: t('scoresTable.submitted'),
     avgScore: t('scoresTable.avgScore'),
     gradingTasks: t('scoresTable.calculated'),
     customScore: t('scoresTable.custom'),

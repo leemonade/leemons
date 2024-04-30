@@ -391,7 +391,8 @@ module.exports = {
     },
     scoresTable: {
       students: 'Students',
-      noActivity: 'Not submitted',
+      noActivity: 'NS',
+      submitted: 'Submitted',
       avgScore: 'Average score',
       calculated: 'Calculated',
       custom: 'Teacher',
