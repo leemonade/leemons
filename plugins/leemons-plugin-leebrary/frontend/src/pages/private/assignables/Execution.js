@@ -39,9 +39,9 @@ export default function Execution() {
   const assignable = instance?.assignable;
 
   const isFinished = assignation?.timestamps?.end;
-  const correctionUrl = `${assignable.roleDetails.evaluationDetailUrl
-    .replace(':id', id)
-    .replace(':user', user)}?fromExecution`;
+  const correctionUrl = `${assignable?.roleDetails?.evaluationDetailUrl
+    ?.replace(':id', id)
+    ?.replace(':user', user)}?fromExecution`;
 
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
