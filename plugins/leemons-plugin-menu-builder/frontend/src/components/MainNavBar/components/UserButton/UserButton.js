@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import React, { useState, useEffect } from 'react';
 import {
   UnstyledButton,
@@ -11,13 +10,14 @@ import {
 } from '@bubbles-ui/components';
 import { ChevUpIcon, OpenIcon } from '@bubbles-ui/icons/outline';
 import { AnimatePresence, motion } from 'framer-motion';
+import SocketIoService from '@mqtt-socket-io/service';
 import { getUserFullName } from '../../../../helpers/getUserFullName';
 import { UserButttonStyles } from './UserButton.styles';
 import { navTitleVariants } from '../../MainNavBar.constants';
 import { USER_BUTTON_PROP_TYPES, USER_BUTTON_DEFAULT_PROPS } from './UserButton.constants';
 import { LinkWrapper } from '../LinkWrapper';
 
-export function UserButton({
+function UserButton({
   name,
   isCollapsed,
   session,
@@ -29,6 +29,8 @@ export function UserButton({
 }) {
   const [opened, setOpened] = useState(false);
   const { classes, theme } = UserButttonStyles({ opened });
+  const [avatar, setAvatar] = useState(session?.avatar);
+
   const hasChildren = sessionMenu?.children.length > 0;
   const items = (hasChildren ? sessionMenu.children : []).map((child, index) => {
     const isChildrenActive = child.id === subItemActive?.id;
@@ -53,6 +55,12 @@ export function UserButton({
     );
   });
 
+  SocketIoService.useOn('USER_CHANGE_AVATAR', (val, param) => {
+    const newUrl = new URL(param?.url);
+    newUrl.searchParams.set('t', new Date().getMilliseconds());
+    setAvatar(newUrl.href);
+  });
+
   useEffect(() => {
     setOpened(expandedItem === sessionMenu?.id);
   }, [expandedItem, setOpened]);
@@ -73,10 +81,10 @@ export function UserButton({
         <UnstyledButton className={classes.control} onClick={() => handleOpenChildren()}>
           <Group className={classes.itemWrapper}>
             <Avatar
-              src={session?.avatar}
+              src={avatar}
               radius="xl"
               size="sm"
-              image={session?.avatar}
+              image={avatar}
               fullName={session ? getUserFullName(session) : undefined}
               alt={session ? getUserFullName(session) : 'user avatar'}
             />
@@ -113,3 +121,5 @@ export function UserButton({
 
 UserButton.defaultProps = USER_BUTTON_DEFAULT_PROPS;
 UserButton.propTypes = USER_BUTTON_PROP_TYPES;
+
+export { UserButton };

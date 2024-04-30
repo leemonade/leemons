@@ -10,6 +10,7 @@ import {
   Avatar,
   LoadingOverlay,
   ContextContainer,
+  ImageProfilePicker,
 } from '@bubbles-ui/components';
 import useUserDetails from '@users/hooks/useUserDetails';
 import { LocaleDate } from '@common';
@@ -26,9 +27,13 @@ export const USER_DETAIL_VIEWS = {
 function UserDetail({
   userId,
   center,
+  hideTags,
   viewMode = USER_DETAIL_VIEWS.ADMIN,
   sysProfileFilter,
   onLoadUser = noop,
+  onLoadUserAgents = noop,
+  onChangeAvatar = noop,
+  canEdit,
 }) {
   const enableUserDetails = !!userId;
   const { data: userDetails, isLoading } = useUserDetails({
@@ -36,10 +41,15 @@ function UserDetail({
     enabled: enableUserDetails,
   });
   const [t] = useTranslateLoader(prefixPN('user_detail'));
+  const [tForm, , , tFormLoading] = useTranslateLoader(prefixPN('userForm'));
+  const [avatar, setAvatar] = React.useState(userDetails?.user?.avatar);
 
   React.useEffect(() => {
     if (userDetails?.user) {
       onLoadUser(userDetails.user);
+    }
+    if (userDetails?.userAgents) {
+      onLoadUserAgents(userDetails.userAgents);
     }
   }, [userDetails]);
 
@@ -67,8 +77,27 @@ function UserDetail({
 
   return (
     <ContextContainer>
-      <Stack direction="column" alignItems="center" fullWidth spacing={2}>
-        <Avatar fullName={avatarFullName} size="xlg" image={avatarUrl} />
+      <Stack direction="column" alignItems="center" fullWidth spacing={3}>
+        {!canEdit ? (
+          <Avatar fullName={avatarFullName} size="xlg" image={avatarUrl} />
+        ) : (
+          <ImageProfilePicker
+            value={avatar}
+            onChange={(val) => {
+              onChangeAvatar(val);
+              setAvatar(val);
+            }}
+            url={avatarUrl}
+            fullName={avatarFullName}
+            labels={{
+              uploadImage: tForm('uploadImage'),
+              changeImage: tForm('changeImage'),
+              delete: tForm('delete'),
+              cancel: tForm('cancel'),
+              accept: tForm('accept'),
+            }}
+          />
+        )}
         <Stack spacing={2}>
           {profiles.map((profile) => (
             <Badge key={profile.id} label={profile.name} radius="default" closable={false} />
@@ -80,7 +109,7 @@ function UserDetail({
           <LocaleDate date={user.birthdate} options={{ dateStyle: 'medium' }} /> 🎂
         </Box>
       </Stack>
-      {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
+      {!hideTags && [USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
         <UserAgentsTags title={t('tagsTitle')} userAgentIds={userAgents.map(({ id }) => id)} />
       )}
     </ContextContainer>
@@ -90,9 +119,13 @@ function UserDetail({
 UserDetail.propTypes = {
   userId: PropTypes.string.isRequired,
   center: PropTypes.object,
-  onLoadUser: PropTypes.func,
+  hideTags: PropTypes.bool,
   sysProfileFilter: PropTypes.string,
   viewMode: PropTypes.oneOf(Object.values(USER_DETAIL_VIEWS)),
+  onLoadUser: PropTypes.func,
+  onLoadUserAgents: PropTypes.func,
+  onChangeAvatar: PropTypes.func,
+  canEdit: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 };
 
 export { UserDetail };

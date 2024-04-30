@@ -5,10 +5,8 @@ import { Drawer, Button } from '@bubbles-ui/components';
 import usePermissions from '@users/hooks/usePermissions';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import { getCookieToken, getSessionCenter, getSessionProfile } from '@users/session';
+import { getCookieToken, getSessionCenter } from '@users/session';
 import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
-import { useIsStudent } from '@academic-portfolio/hooks';
-import { useUserProfile } from '@users/hooks';
 import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
 import { UserAdminDrawer } from './UserAdminDrawer';
 

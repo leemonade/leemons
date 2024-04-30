@@ -274,6 +274,7 @@ module.exports = {
     saveSuccess: 'Data saved successfully',
   },
   detailUser: {
+    title: 'My Profile',
     disableTitle: 'Disable user',
     disableDescription:
       'This user will no longer have access to the platform and will not be visible to classmates or teachers <br/><br/>You can reactivate this user at any time.',
