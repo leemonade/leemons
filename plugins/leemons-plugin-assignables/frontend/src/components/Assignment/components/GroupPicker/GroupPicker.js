@@ -75,7 +75,7 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
   }
 
   return (
-    <Container>
+    <Container title={localizations?.title} description={localizations?.subtitle} required>
       <Box className={classes.root}>
         {/* <Controller
           name="type"
@@ -86,7 +86,6 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
             </Box>
           )}
         /> */}
-
         <Box>
           {assignationType === 'class' && (
             <SelectClass

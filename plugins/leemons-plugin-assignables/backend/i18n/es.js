@@ -23,6 +23,7 @@ module.exports = {
     },
     groups: {
       title: 'Estudiantes',
+      subtitle: 'Selecciona el grupo de estudiantes',
       options: {
         class: 'Clase existente',
         customGroup: 'Grupo personalizado',
