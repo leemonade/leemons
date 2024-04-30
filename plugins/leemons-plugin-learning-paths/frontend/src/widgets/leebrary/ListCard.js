@@ -162,6 +162,7 @@ function ListCard({ asset, single, onRefresh = () => {}, ...props }) {
 
   return (
     <LibraryCard
+      {...props}
       className={classes.root}
       asset={{ ...asset, fileType: 'module' }}
       menuItems={menuItems}
