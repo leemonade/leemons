@@ -14,7 +14,7 @@ async function addSubjectType({ data: _data, ctx }) {
     relationship: subjectType.id,
     ctx,
   });
-  if (subjects && subjects.length) {
+  if (subjects?.length) {
     const classes = await ctx.tx.db.Class.find({
       subject: subjects,
       program: data.program,
