@@ -1,17 +1,13 @@
 import React from 'react';
+
 import { useCache } from '@common';
+
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { getCookieToken } from '@users/session';
+import usePermissions from '@users/hooks/usePermissions';
 
 export function useParsedData({ classes, periods, students, scores, courseScores }) {
-  const token = getCookieToken(true);
-  const userAgent = token?.centers?.[0]?.userAgentId;
-
-  const programManagers = React.useMemo(
-    () =>
-      classes?.[0]?.managers?.filter(({ type }) => type === 'course')?.map((manager) => manager.id),
-    [classes]
-  );
+  const { data: permissions } = usePermissions({ name: 'scores.reviewer' });
+  const isScoresAdmin = !!permissions?.actionNames?.includes('admin');
 
   const cache = useCache();
   const parsedClasses = cache(
@@ -27,10 +23,10 @@ export function useParsedData({ classes, periods, students, scores, courseScores
           periods: periods.map((period) => ({
             id: period.id,
             name: period.name,
-            allowChange: klass.managers?.map((manager) => manager.id)?.includes(userAgent),
+            allowChange: false,
           })),
         })),
-      [classes, periods, userAgent]
+      [classes, periods]
     )
   );
 
@@ -60,9 +56,9 @@ export function useParsedData({ classes, periods, students, scores, courseScores
             }),
           })),
           customScore: courseScores?.find((score) => score.student === student.id)?.grade,
-          allowCustomChange: programManagers?.includes(userAgent),
+          allowCustomChange: isScoresAdmin,
         })),
-      [students, classes, periods, programManagers, userAgent]
+      [students, classes, periods, isScoresAdmin, courseScores, scores]
     )
   );
 

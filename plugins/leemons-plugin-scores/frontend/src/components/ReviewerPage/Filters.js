@@ -41,12 +41,10 @@ function useFiltersLocalizations() {
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = {
+      return {
         ..._.get(res, prefixPN('reviewPage.filters')),
         finalPeriod: _.get(res, prefixPN('scoresPage.filters.period.final')),
       };
-
-      return data;
     }
 
     return {};
@@ -216,10 +214,6 @@ export default function Filters({ onChange }) {
 
   return (
     <Box className={classes.root}>
-      <Title order={2} color="soft" transform="uppercase" className={classes.title}>
-        {localizations?.title}
-      </Title>
-
       <Box className={classes.inputs}>
         <Controller
           control={control}

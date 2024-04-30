@@ -1,24 +1,24 @@
 import React from 'react';
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
+
+import { Box, Loader } from '@bubbles-ui/components';
 import { unflatten, useCache, useLocale } from '@common';
 import _ from 'lodash';
-import { useUserAgentsInfo } from '@users/hooks';
-import { useScores } from '@scores/requests/hooks/queries';
-import { Box, Loader } from '@bubbles-ui/components';
+
+import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import { useProgramDetail } from '@academic-portfolio/hooks';
+import { useScoresMutation } from '@scores/requests/hooks/mutations';
+import { useScores } from '@scores/requests/hooks/queries';
+import { useUserAgentsInfo } from '@users/hooks';
 import { ScoresReviewerTable } from '../../Tables/ScoresReviewerTable';
-import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
+import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
 import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesTab/useParsedActivities';
+import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
 import { onDataChange } from './onDataChange';
+import { useClassesManagers } from './useClassesManagers';
 import { useLocalFilters } from './useLocalFilters';
 import { useParsedData } from './useParsedData';
-import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
-import { useClassesManagers } from './useClassesManagers';
-import useExcelDownloadHandler from './useExcelDownloadHandler';
 
 export function useMatchingClasses({ filters }) {
   const cache = useCache();
@@ -59,7 +59,7 @@ export function useMatchingClasses({ filters }) {
     }
 
     return groupClasses.map((klass) => ({ ...klass, managers: managers[klass.id] }));
-  }, [groupClasses, managers]);
+  }, [groupClasses, managers, classesManagers?.length]);
 
   return { classes: classesWithManagers, isLoading };
 }
@@ -176,8 +176,6 @@ export function FinalScores({ filters, localFilters }) {
   const localizations = useFinalScoresLocalization();
   const { mutateAsync: mutateScore } = useScoresMutation();
 
-  const { data: programData } = useProgramDetail(filters.program, { enabled: !!filters.program });
-
   const { data: scores, isLoading: scoresAreLoading } = useScores({
     students: _.map(students, 'id'),
     classes: _.map(classes, 'id'),
@@ -237,21 +235,6 @@ export function FinalScores({ filters, localFilters }) {
     students,
     scores,
     courseScores,
-  });
-
-  useExcelDownloadHandler({
-    classes: classesForTable,
-    students: studentsForTable,
-    filters: {
-      startDate,
-      endDate,
-      program: programData,
-      course: filters.course,
-      group: filters.group,
-      period: filters.period,
-      periods,
-    },
-    grades,
   });
 
   if (isLoading) {

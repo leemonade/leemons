@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react';
-import { Box, createStyles, Paragraph, Title } from '@bubbles-ui/components';
+import { ContextContainer, createStyles, Paragraph, Stack } from '@bubbles-ui/components';
 import _ from 'lodash';
 import { unflatten } from '@common';
 import propTypes from 'prop-types';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import { useLayout } from '@layout/context';
-import noFilters from './assets/noFilters.png';
 
 const useEmptyStateStyles = createStyles((theme) => ({
   root: {
@@ -47,18 +45,15 @@ function useEmptyStateLocalizations(isStudent) {
   }, [translations]);
 }
 export function EmptyState({ isStudent }) {
-  const { theme } = useLayout();
   const { classes } = useEmptyStateStyles({});
   const labels = useEmptyStateLocalizations(isStudent);
 
   return (
-    <Box className={classes.root}>
-      {theme.usePicturesEmptyStates && <img src={noFilters} className={classes.image} />}
-      <Box className={classes.text}>
-        <Title>{labels.title}</Title>
+    <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
+      <ContextContainer title={labels.title} sx={{ maxWidth: 430 }}>
         <Paragraph className={classes.textMargin}>{labels.description}</Paragraph>
-      </Box>
-    </Box>
+      </ContextContainer>
+    </Stack>
   );
 }
 

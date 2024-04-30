@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, createStyles, SearchInput, Select, Switch } from '@bubbles-ui/components';
+
+import { createStyles, SearchInput, Select, Stack, Switch } from '@bubbles-ui/components';
+import { unflatten } from '@common';
 import _ from 'lodash';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import { unflatten } from '@common';
 import { useFilterByLength } from '../Notebook/components/ActivitiesTab/Filters';
 
 function useFiltersLocalizations() {
@@ -34,22 +36,9 @@ function useSearchByData({ localizations, filters }) {
       value,
       label,
     }));
-  }, [localizations?.filterBy]);
+  }, [localizations?.filterBy, filters?.group]);
 }
-const useFiltersStyles = createStyles((theme) => ({
-  root: {
-    backgroundColor: theme.colors.interactive03,
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing[4],
-    padding: theme.spacing[4],
-    width: '100%',
-  },
-  searchByContainer: {
-    display: 'flex',
-    gap: theme.spacing[1],
-  },
-}));
+
 function useEmitOnChange({ control, onChange }) {
   const data = useWatch({ control });
 
@@ -57,10 +46,9 @@ function useEmitOnChange({ control, onChange }) {
     if (typeof onChange === 'function') {
       onChange(data);
     }
-  }, [data]);
+  }, [data, onChange]);
 }
 export function Filters({ onChange }) {
-  const { classes } = useFiltersStyles();
   const localizations = useFiltersLocalizations();
 
   const { control, watch } = useForm({
@@ -76,8 +64,8 @@ export function Filters({ onChange }) {
   useEmitOnChange({ control, onChange });
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.searchByContainer}>
+    <Stack justifyContent="space-between">
+      <Stack spacing={3}>
         <Controller
           control={control}
           name={'filterBy'}
@@ -107,7 +95,8 @@ export function Filters({ onChange }) {
             return <SearchInput {...field} placeholder={placeholder} wait={300} />;
           }}
         />
-      </Box>
+      </Stack>
+
       <Controller
         control={control}
         name={'futureEvaluations'}
@@ -120,7 +109,7 @@ export function Filters({ onChange }) {
           />
         )}
       />
-    </Box>
+    </Stack>
   );
 }
 
