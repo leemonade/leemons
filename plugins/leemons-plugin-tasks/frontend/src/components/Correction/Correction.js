@@ -51,7 +51,7 @@ function useLetterEvaluationData({ evaluationSystem }) {
   }, [evaluationSystem]);
 }
 
-function useOnEvaluationChange({ form, instance, assignation, subject }) {
+function useOnEvaluationChange({ form, instance, assignation, subject, evaluationSystem }) {
   const { requiresScoring } = instance ?? {};
   const { score: _score, feedback: _feedback, showFeedback } = useWatch({ control: form.control });
 
@@ -100,6 +100,8 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
 
     if (!gradeIsDirty && !isNil(grade) && grade !== score) {
       form.setValue('score', grade);
+    } else if (isNil(score) && evaluationSystem?.minScale) {
+      form.setValue('score', evaluationSystem.minScale?.number);
     }
 
     if (!feedbackIsDirty && savedFeedback !== feedback) {
@@ -108,7 +110,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
         form.setValue('showFeedback', true);
       }
     }
-  }, [previousScore]);
+  }, [previousScore, evaluationSystem]);
 
   return onSave;
 }
@@ -125,7 +127,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
   const evaluationSystem = useProgramEvaluationSystem(instance);
   const data = useLetterEvaluationData({ evaluationSystem });
 
-  const publish = useOnEvaluationChange({ form, instance, assignation, subject });
+  const publish = useOnEvaluationChange({ form, instance, assignation, subject, evaluationSystem });
 
   if (instance.dates.evaluationClosed) {
     return (
