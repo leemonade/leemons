@@ -5,15 +5,12 @@ const { getProfiles } = require('../../settings/getProfiles');
 
 async function removeByClass({ classIds, soft, ctx }) {
   const classeIds = _.isArray(classIds) ? classIds : [classIds];
-  console.log('Removing students from classes. classIds =>', classeIds);
-  console.log('Removing students from classes. soft =>', soft);
 
   const programs = await Promise.all(
     _.map(classeIds, (classId) => getClassProgram({ id: classId, ctx }))
   );
 
   const classStudents = await ctx.tx.db.ClassStudent.find({ class: classeIds }).lean();
-  console.log('classStudents (it returns here if empty) =>', classStudents);
   if (!classStudents?.length) return;
 
   const promisesRemoveUserAgentsFromRooms = [];
@@ -39,8 +36,6 @@ async function removeByClass({ classIds, soft, ctx }) {
 
   _.forEach(classeIds, (classId) => {
     const userIds = _.map(_.filter(classStudents, { class: classId }), 'student');
-    console.log('studentIds to pass to comunica.room.removeAllUserAgents =>', userIds);
-
     _.forEach(userIds, (userId) => {
       promisesRemoveUserAgentsFromRooms.push(
         ctx.tx.call('comunica.room.removeAllUserAgents', {
@@ -51,7 +46,6 @@ async function removeByClass({ classIds, soft, ctx }) {
   });
 
   await Promise.all(promisesRemoveUserAgentsFromRooms);
-  console.log('After removing student user agents from comunica rooms');
 
   await ctx.tx.emit('before-remove-classes-students', { classStudents, soft });
 

@@ -36,7 +36,7 @@ async function onAcademicPortfolioRemoveClassStudents({ classIds, classStudents,
     });
     await Promise.all(promises);
   } catch (e) {
-    console.log('Error onAcademicPortfolioRemoveClassStudents (Calendar plugin)', e);
+    console.log('Error removing calendars after remove class students', e);
   }
 }
 

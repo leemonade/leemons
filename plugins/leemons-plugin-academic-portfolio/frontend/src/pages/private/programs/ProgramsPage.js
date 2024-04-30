@@ -171,7 +171,7 @@ const ProgramsPage = () => {
               setActiveTab('1');
             },
             onError: (e) => {
-              console.log('Error archiving program in onError =>', e);
+              console.error(e);
               addErrorAlert(t('alerts.failure.delete'));
             },
           }

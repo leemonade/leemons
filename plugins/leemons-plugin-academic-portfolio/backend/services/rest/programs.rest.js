@@ -392,13 +392,11 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      console.log('Delete Request ctx.params =>', ctx.params);
       const result = await removeProgramByIds({
         ids: ctx.params.id,
         soft: ctx.params.soft === 'true',
         ctx,
       });
-      console.log('Delete Result =>', result);
       return { status: 200, result };
     },
   },
