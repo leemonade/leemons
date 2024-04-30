@@ -40,7 +40,7 @@ async function removeProgramByIds({ ids, soft, ctx }) {
   await removeProgramCentersByProgramIds({ programIds: _.map(programs, 'id'), soft, ctx });
   await ctx.tx.db.Programs.deleteMany({ id: _.map(programs, 'id') }, { soft });
 
-  await ctx.tx.emit('after-remove-programs', { programs, soft, ctx });
+  await ctx.tx.emit('after-remove-programs', { programs, soft });
   return true;
 }
 
