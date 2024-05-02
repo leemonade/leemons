@@ -78,5 +78,8 @@ export default function useStudents({
     }));
   }, [students, activities, search, searchType, klass?.subject?.id, scores]);
 
-  return { data: studentsData, isLoading: userAgentsLoading || scoresLoading };
+  return {
+    data: studentsData,
+    isLoading: (userAgentsLoading && klass?.students?.length) || scoresLoading,
+  };
 }
