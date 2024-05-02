@@ -73,6 +73,7 @@ export default function AssignmentList({
   }, [translations]);
 
   const [filters, setFilters] = useState(null);
+  const [program, setProgram] = useState(null);
 
   const tabs = useMemo(
     () =>
@@ -97,6 +98,7 @@ export default function AssignmentList({
         <Filters
           labels={labels.filters}
           value={filters}
+          program={program}
           onChange={setFilters}
           hideStatus={tab.value === 'evaluated'}
           hideProgress
@@ -105,7 +107,7 @@ export default function AssignmentList({
           {...filtersProps}
         />
         <ActivitiesList
-          filters={{ ...filters, isArchived: tab.value === 'evaluated' }}
+          filters={{ ...filters, isArchived: tab.value === 'evaluated', program }}
           {...props}
         />
       </>
@@ -128,7 +130,7 @@ export default function AssignmentList({
       ) : (
         <Paper shadow="none">{tabPane(tabs['0'])}</Paper>
       ),
-    [tabs, tabPane]
+    [tabs, tabPane, classes]
   );
 
   if (withoutLayout) {
@@ -136,13 +138,7 @@ export default function AssignmentList({
   }
 
   return (
-    <TotalLayoutContainer
-      Header={
-        <ProgramBarSelector
-          onChange={(program) => setFilters((f) => ({ ...f, program: program.id }))}
-        />
-      }
-    >
+    <TotalLayoutContainer Header={<ProgramBarSelector onChange={({ id }) => setProgram(id)} />}>
       <Stack
         justifyContent="center"
         fullWidth
