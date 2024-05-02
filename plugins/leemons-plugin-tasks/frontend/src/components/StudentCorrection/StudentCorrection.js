@@ -89,7 +89,7 @@ export default function StudentCorrection({ assignation }) {
 
   const scrollRef = useRef();
   const params = useSearchParams();
-  const fromExecution = useMemo(() => params.has('fromExecution'), [params]);
+  const fromExecution = useRef(params.has('fromExecution')).current;
 
   const { instance } = assignation ?? {};
   const { assignable } = instance ?? {};
