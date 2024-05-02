@@ -100,6 +100,7 @@ export default function Filters({
   hideProgress,
   hideType,
   useRouter = false,
+  program,
 }) {
   const defaultValues = useMemo(
     () => ({
@@ -144,7 +145,7 @@ export default function Filters({
           <Controller
             name="subject"
             control={control}
-            render={({ field }) => <Subject labels={labels} {...field} />}
+            render={({ field }) => <Subject labels={labels} {...field} program={program} />}
           />
         </Box>
       )}
@@ -199,4 +200,5 @@ Filters.propTypes = {
   hideType: PropTypes.bool,
   useRouter: PropTypes.bool,
   defaultFilters: PropTypes.object,
+  program: PropTypes.string,
 };
