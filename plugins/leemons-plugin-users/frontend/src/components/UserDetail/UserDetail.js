@@ -41,7 +41,7 @@ function UserDetail({
     enabled: enableUserDetails,
   });
   const [t] = useTranslateLoader(prefixPN('user_detail'));
-  const [tForm, , , tFormLoading] = useTranslateLoader(prefixPN('userForm'));
+  const [tForm] = useTranslateLoader(prefixPN('userForm'));
   const [avatar, setAvatar] = React.useState(userDetails?.user?.avatar);
 
   React.useEffect(() => {
