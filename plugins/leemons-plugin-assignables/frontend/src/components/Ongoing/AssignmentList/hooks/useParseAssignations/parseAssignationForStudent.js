@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { Badge, Text } from '@bubbles-ui/components';
-
-import dayjs from 'dayjs';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
+import { Text } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import { get } from 'lodash';
+import dayjs from 'dayjs';
+
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@assignables/helpers/prefixPN';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { addInfoAlert } from '@layout/alert';
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
 
 function getStatus(assignation) {
@@ -67,6 +66,7 @@ export function Progress({ assignation, isBlocked }) {
   const { requiresScoring, allowFeedback } = instance;
 
   const isEvaluable = !isModule && (requiresScoring || allowFeedback);
+
   // TODO: Add if has any feedback when only allowFeedback
   const hasAllGrades = React.useMemo(
     () =>
@@ -104,7 +104,7 @@ export function Progress({ assignation, isBlocked }) {
     return 'error';
   }, []);
 
-  if (hasBeenEvaluated) {
+  if (hasBeenEvaluated && studentHasFinished) {
     return <Text color="success">{labels?.evaluated}</Text>;
   }
 
