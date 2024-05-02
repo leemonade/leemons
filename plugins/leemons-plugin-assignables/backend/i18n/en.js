@@ -20,6 +20,11 @@ module.exports = {
         error: 'Pick at least one subject',
       },
       add: 'Add',
+
+      programChangeModal: {
+        title: 'Are you sure you want to change the program?',
+        description: 'This will clean the subjects selection',
+      },
     },
     groups: {
       title: 'Students',
