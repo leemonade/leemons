@@ -20,6 +20,11 @@ module.exports = {
         error: 'Selecciona al menos una asignatura',
       },
       add: 'Añadir',
+
+      programChangeModal: {
+        title: '¿Seguro que quieres cambiar de programa?',
+        description: 'Esto borrará la selección de asignaturas',
+      },
     },
     groups: {
       title: 'Estudiantes',
