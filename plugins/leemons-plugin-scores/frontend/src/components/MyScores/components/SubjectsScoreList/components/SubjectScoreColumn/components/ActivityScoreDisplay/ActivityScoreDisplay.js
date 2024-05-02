@@ -23,6 +23,8 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
     .replace(':user', activity.user);
 
   const scale = getNearestScale({ grade: mainGrade, evaluationSystem });
+  const displayedGrade =
+    (mainGrade || evaluationTypeIsAuto ? scale?.letter ?? mainGrade ?? scale?.number : null) ?? '-';
 
   const { classes } = useActivityScoreDisplayStyles();
 
@@ -59,9 +61,9 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
           )}
         </Box>
         <Text className={classes.score}>
-          {(mainGrade || evaluationTypeIsAuto
-            ? scale?.letter ?? mainGrade ?? scale?.number
-            : null) ?? '-'}
+          {typeof displayedGrade === 'number'
+            ? parseFloat(displayedGrade.toFixed(2))
+            : displayedGrade}
         </Text>
       </Stack>
     </Stack>
