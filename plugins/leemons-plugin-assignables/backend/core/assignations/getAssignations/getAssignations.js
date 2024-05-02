@@ -1,6 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
-const { defaultsDeep } = require('lodash');
+const { map, uniq, keyBy, defaultsDeep } = require('lodash');
+
 const { checkPermissions } = require('./checkPermissions');
 const { getClassesWithSubject } = require('./getClassesWithSubject');
 const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
@@ -55,8 +55,8 @@ async function getAssignations({
     Object.values(permissions).filter((permission) => permission);
   }
 
-  const instancesIds = _.map(assignationsData, 'instance');
-  ids = _.map(assignationsData, 'id');
+  const instancesIds = map(assignationsData, 'instance');
+  ids = map(assignationsData, 'id');
 
   if (!details) {
     return assignationsData.map((assignation) => ({
@@ -84,17 +84,18 @@ async function getAssignations({
         ids: instancesIds,
         details: true,
         ctx,
-      }).then((instances) => {
-        const instancesByIds = {};
-
-        instances.forEach((instance) => {
-          instancesByIds[instance.id] = instance;
-        });
-
-        return instancesByIds;
-      })
+      }).then((instances) => keyBy(instances, 'id'))
+    );
+  } else {
+    promises.push(
+      ctx.tx.db.Instances.find({ id: instancesIds })
+        .select({ id: 1, metadata: 1 })
+        .lean()
+        .then((instances) => keyBy(instances, 'id'))
     );
   }
+
+  const evaluationSystems = {};
 
   const [
     classes,
@@ -105,7 +106,8 @@ async function getAssignations({
     grades,
     instances,
   ] = await Promise.all(promises);
-  return assignationsData.map((assignation) => {
+
+  const result = assignationsData.map(async (assignation) => {
     const chatKeys = classes[assignation.instance].subjectsIds.map(
       (subject) =>
         `assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
@@ -129,17 +131,51 @@ async function getAssignations({
       };
     }
 
+    const assignationGrades = grades[assignation.id] || moduleGrades[assignation.id] || [];
+
+    if (instances?.[assignation.instance]?.metadata?.evaluationType === 'auto' && status.finished) {
+      const hasMainGrade = assignationGrades?.some((grade) => grade.type === 'main');
+
+      if (!hasMainGrade) {
+        const subjects = uniq(classes[assignation.instance].subjectsIds);
+        const { program } = classes[assignation.instance].classes[0];
+
+        if (!evaluationSystems[program]) {
+          evaluationSystems[program] = ctx.tx.call(
+            'academic-portfolio.programs.getProgramEvaluationSystem',
+            {
+              id: program,
+            }
+          );
+        }
+
+        const evaluationSystem = await evaluationSystems[program];
+        const minScale = evaluationSystem.minScale?.number;
+
+        subjects.forEach((subject) => {
+          assignationGrades.push({
+            subject,
+            type: 'main',
+            feedback: null,
+            grade: minScale,
+            gradedBy: 'auto-graded',
+            visibleToStudent: true,
+          });
+        });
+      }
+    }
+
     // Returns the assignationObject
     return {
       ...assignation,
       classes: JSON.parse(assignation.classes || null),
       metadata,
-      instance: instances?.[assignation.instance] || assignation.instance,
+      instance: (fetchInstance ? instances?.[assignation.instance] : null) ?? assignation.instance,
 
       relatedAssignableInstances: {
         before: relatedAssignations[assignation.id] || [],
       },
-      grades: grades[assignation.id] || moduleGrades[assignation.id] || [],
+      grades: assignationGrades,
       timestamps: timestamps[assignation.id] || {},
 
       chatKeys,
@@ -147,6 +183,8 @@ async function getAssignations({
       ...status,
     };
   });
+
+  return Promise.all(result);
 }
 
 module.exports = { getAssignations };
