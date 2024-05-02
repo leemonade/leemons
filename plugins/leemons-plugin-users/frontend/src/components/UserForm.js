@@ -4,13 +4,11 @@ import { noop, trim } from 'lodash';
 import {
   Box,
   Stack,
-  Modal,
   Button,
   Select,
   TextInput,
   DatePicker,
   InputWrapper,
-  PasswordInput,
   LoadingOverlay,
   ContextContainer,
   ImageProfilePicker,
@@ -82,12 +80,10 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
   const {
     control,
     watch,
-    handleSubmit,
     formState: { errors },
   } = form;
 
   const email = watch('email');
-  const password = watch('password');
   const name = watch('name');
   const surnames = watch('surnames');
   const fullName = trim(`${name ?? ''} ${surnames ?? ''}`);
