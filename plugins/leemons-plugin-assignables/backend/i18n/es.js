@@ -20,9 +20,15 @@ module.exports = {
         error: 'Selecciona al menos una asignatura',
       },
       add: 'Añadir',
+
+      programChangeModal: {
+        title: '¿Seguro que quieres cambiar de programa?',
+        description: 'Esto borrará la selección de asignaturas',
+      },
     },
     groups: {
       title: 'Estudiantes',
+      subtitle: 'Selecciona el grupo de estudiantes',
       options: {
         class: 'Clase existente',
         customGroup: 'Grupo personalizado',
@@ -411,6 +417,11 @@ module.exports = {
       startActivity: 'Empezar actividad',
     },
     emptyState: {
+      title: '¡Lo tienes todo al día!',
+      noEvaluations: 'No hay evaluaciones pendientes',
+      noActivities: 'No hay actividades pendientes',
+    },
+    welcome: {
       title: '¡Te damos la bienvenida!',
       teacher: {
         title: 'Aún no hay información para mostrar aquí',

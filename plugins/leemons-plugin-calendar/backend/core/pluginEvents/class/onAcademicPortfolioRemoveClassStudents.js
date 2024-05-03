@@ -21,34 +21,23 @@ async function remove({ classCalendar, student, ctx }) {
   }
 }
 
-function onAcademicPortfolioRemoveClassStudents({
-  // data // unused old param
-  classIds,
-  classStudents,
-  ctx,
-}) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      const classCalendars = await ctx.tx.db.ClassCalendar.find({ class: classIds }).lean();
+async function onAcademicPortfolioRemoveClassStudents({ classIds, classStudents, ctx }) {
+  try {
+    const classCalendars = await ctx.tx.db.ClassCalendar.find({ class: classIds }).lean();
+    const classCalendarsByClass = _.keyBy(classCalendars, 'class');
 
-      const classCalendarsByClass = _.keyBy(classCalendars, 'class');
-
-      const promises = [];
-      _.forEach(classIds, (classId) => {
-        _.forEach(classStudents, ({ student }) => {
-          if (classCalendarsByClass[classId]) {
-            promises.push(remove({ classCalendar: classCalendarsByClass[classId], student, ctx }));
-          }
-        });
+    const promises = [];
+    _.forEach(classIds, (classId) => {
+      _.forEach(classStudents, ({ student }) => {
+        if (classCalendarsByClass[classId]) {
+          promises.push(remove({ classCalendar: classCalendarsByClass[classId], student, ctx }));
+        }
       });
-      await Promise.all(promises);
-      resolve();
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
-  });
+    });
+    await Promise.all(promises);
+  } catch (e) {
+    console.log('Error removing calendars after remove class students', e);
+  }
 }
 
 module.exports = { onAcademicPortfolioRemoveClassStudents };

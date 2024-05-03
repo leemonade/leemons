@@ -13,6 +13,8 @@ import {
   ContextContainer,
 } from '@bubbles-ui/components';
 import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { useLayout } from '@layout/context';
+import { updateSessionConfig } from '@users/session';
 import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
 import { useSubjectPickerStyles } from './SubjectPicker.styles';
 
@@ -45,10 +47,11 @@ export function SubjectPicker({
   onChange = noop,
   onChangeRaw = noop,
   error,
-  hideSectionHeaders,
   onlyOneSubject,
   selectInitialSubjects,
 }) {
+  const { openConfirmationModal } = useLayout();
+
   const form = useForm({
     defaultValues: {
       program: undefined,
@@ -157,6 +160,29 @@ export function SubjectPicker({
               render={({ field }) => (
                 <Select
                   {...field}
+                  onChange={(program) => {
+                    const prevProgram = form.getValues('program');
+                    const pickedSubjects = form.getValues('selectedSubjects');
+
+                    if (program && program !== prevProgram && pickedSubjects.length) {
+                      return openConfirmationModal({
+                        title: localizations?.programChangeModal?.title,
+                        description: localizations?.programChangeModal?.description,
+                        onConfirm: async () => {
+                          form.setValue('selectedSubjects', []);
+                          onChange([]);
+
+                          updateSessionConfig({ program });
+                          field.onChange(program);
+                        },
+                      })();
+                    }
+
+                    if (program) {
+                      updateSessionConfig({ program });
+                    }
+                    return field.onChange(program);
+                  }}
                   cleanOnMissingValue
                   label={localizations?.program}
                   placeholder={localizations?.placeholder}
@@ -242,7 +268,6 @@ SubjectPicker.propTypes = {
   onChangeRaw: PropTypes.func,
   value: PropTypes.arrayOf(PropTypes.string),
   error: PropTypes.any,
-  hideSectionHeaders: PropTypes.bool,
   onlyOneSubject: PropTypes.bool,
   selectInitialSubjects: PropTypes.bool,
 };

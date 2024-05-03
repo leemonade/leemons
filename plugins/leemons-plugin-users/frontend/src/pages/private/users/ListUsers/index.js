@@ -45,7 +45,7 @@ function ListUsers() {
     size: 10,
     checkeds: [],
   });
-  const [loadingError, LoadingErrorAlert] = useRequestErrorMessage();
+  const [loadingError] = useRequestErrorMessage();
   const [bulkActionInfo, setBulkActionInfo] = React.useState(null);
   const history = useHistory();
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -126,11 +126,14 @@ function ListUsers() {
   // METHODS
 
   function getUserStateKey(status) {
+    if (status === 'disabled') {
+      return 'disable';
+    }
     if (status === 'created') {
       return 'statePending';
     }
-    if (status === 'disabled') {
-      return 'disable';
+    if (status === 'password-registered') {
+      return 'stateVerified';
     }
     return 'active';
   }

@@ -95,7 +95,11 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
     );
   }
 
-  if (evaluationInfo?.state === 'someDeliveredButNotAll' && !isNoEvaluable) {
+  if (
+    evaluationInfo?.state === 'someDeliveredButNotAll' &&
+    evaluationInfo.totalStudentsFinished > evaluationInfo.totalStudentsEvaluated &&
+    !isNoEvaluable
+  ) {
     return (
       <Box className={classes.buttonFull}>
         <Link to={assignablesURL}>

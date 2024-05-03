@@ -45,9 +45,11 @@ const ProgramsPage = () => {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const { openConfirmationModal } = useLayout();
   const history = useHistory();
-  const { data: centersQuery, isLoading: areCentersLoading } = useUserCenters();
-  const { mutate: archiveProgram } = useArchiveProgram();
-  const { mutate: duplicateProgram } = useDuplicateProgram();
+  const { data: centersQuery, isLoading: areCentersLoading } = useUserCenters({
+    refetchOnWindowFocus: false,
+  });
+  const { mutate: archiveProgram, isLoading: archiveProgramLoading } = useArchiveProgram();
+  const { mutate: duplicateProgram, isLoading: duplicateProgramLoading } = useDuplicateProgram();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
@@ -80,12 +82,24 @@ const ProgramsPage = () => {
     filters: queryFilters,
     options: {
       enabled: selectedCenter?.length > 0,
+      refetchOnWindowFocus: false,
     },
   });
 
   const isLoading = useMemo(
-    () => areCentersLoading || areProgramsLoading || tLoading,
-    [areCentersLoading, areProgramsLoading, tLoading]
+    () =>
+      areCentersLoading ||
+      areProgramsLoading ||
+      tLoading ||
+      archiveProgramLoading ||
+      duplicateProgramLoading,
+    [
+      areCentersLoading,
+      areProgramsLoading,
+      tLoading,
+      archiveProgramLoading,
+      duplicateProgramLoading,
+    ]
   );
 
   const programsIds = useMemo(() => {
@@ -154,6 +168,7 @@ const ProgramsPage = () => {
               const queryKey = getCenterProgramsKey(selectedCenter);
               queryClient.invalidateQueries(queryKey);
               addSuccessAlert(t('alerts.success.delete'));
+              setActiveTab('1');
             },
             onError: (e) => {
               console.error(e);
@@ -293,6 +308,7 @@ const ProgramsPage = () => {
               tabPanelListStyle={{ backgroundColor: 'white' }}
               fullHeight
               onChange={(activeT) => setActiveTab(activeT)}
+              activeKey={activeTab}
             >
               <TabPanel label={t('labels.publishedPrograms')}>
                 {!showEmptyState ? (

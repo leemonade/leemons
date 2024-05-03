@@ -20,9 +20,15 @@ module.exports = {
         error: 'Pick at least one subject',
       },
       add: 'Add',
+
+      programChangeModal: {
+        title: 'Are you sure you want to change the program?',
+        description: 'This will clean the subjects selection',
+      },
     },
     groups: {
       title: 'Students',
+      subtitle: 'Select the group of students',
       options: {
         class: 'Existing class',
         customGroup: 'Custom group',
@@ -402,6 +408,11 @@ module.exports = {
       startActivity: 'Start activity',
     },
     emptyState: {
+      title: 'You have everything on track!',
+      noEvaluations: 'No pending evaluations',
+      noActivities: 'No pending activities',
+    },
+    welcome: {
       title: 'Welcome!',
       teacher: {
         title: 'There is no information to show here yet',

@@ -305,14 +305,17 @@ export default function EvaluationList() {
         ? store.grades.map((grade) => ({
             ...grade,
             actions: (
-              <Stack>
+              <Stack spacing={2} justifyContent="end" alignItems="center">
                 <Box>
-                  <ActionButton icon={<EditIcon />} onClick={() => onSelect(grade)} />
+                  <ActionButton
+                    icon={<EditIcon width={20} height={20} />}
+                    onClick={() => onSelect(grade)}
+                  />
                 </Box>
                 <Box>
                   <ActionButton
                     disabled={grade?.inUse}
-                    icon={<DeleteBinIcon />}
+                    icon={<DeleteBinIcon width={20} height={20} />}
                     onClick={() => onDelete(grade)}
                   />
                 </Box>
@@ -352,7 +355,7 @@ export default function EvaluationList() {
                 </Box>
               </>
             ) : (
-              <EmptyState onAddSystem={onAdd} />
+              <>{store?.grades?.length > 0 ? <EmptyState onAddSystem={onAdd} /> : null}</>
             )}
           </Stack>
         </TotalLayoutStepContainer>

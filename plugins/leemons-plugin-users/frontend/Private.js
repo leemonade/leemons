@@ -28,6 +28,9 @@ const ImportUsers = loadable(() => pMinDelay(import('./src/pages/private/users/I
 const DetailUser = loadable(() =>
   pMinDelay(import('./src/pages/private/users/DetailUser/UserDetail'), 500)
 );
+const DetailInfo = loadable(() =>
+  pMinDelay(import('./src/pages/private/users/DetailUser/UserInfo'), 500)
+);
 
 const UserDataDatasetValues = loadable(() =>
   pMinDelay(import('./src/pages/private/UserDataDatasetValues'), 500)
@@ -88,7 +91,7 @@ export default function Private() {
         <DetailUser session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/detail`}>
-        <DetailUser session={session} fallback={<LoadingOverlay visible />} />
+        <DetailInfo session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>
   );

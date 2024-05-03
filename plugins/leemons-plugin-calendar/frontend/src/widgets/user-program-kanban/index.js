@@ -26,6 +26,7 @@ import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
 import hooks from 'leemons-hooks';
+import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
 import {
   getCalendarsToFrontendRequest,
   listKanbanColumnsRequest,
@@ -67,6 +68,8 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
   const prefixCard = prefixPN('kanbanTaskCard');
   const [, translationsCard] = useTranslateLoader(prefixCard);
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+
+  const { data: welcomeCompleted } = useWelcome();
 
   const history = useHistory();
 
@@ -307,6 +310,10 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     store.board = getKanbanBoard();
 
     render();
+  }
+
+  if (!welcomeCompleted) {
+    return null;
   }
 
   return (
