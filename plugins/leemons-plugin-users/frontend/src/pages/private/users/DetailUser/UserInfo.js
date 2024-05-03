@@ -20,6 +20,7 @@ function getViewMode(profile) {
 
 function UserInfo({ session }) {
   const [t] = useTranslateLoader(prefixPN('detailUser'));
+  const [tUser] = useTranslateLoader(prefixPN('user_detail'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [userAgents, setUserAgents] = React.useState([]);
   const center = getSessionCenter();
@@ -81,7 +82,10 @@ function UserInfo({ session }) {
           <Box sx={{ width: '60%' }}>
             <ContextContainer>
               {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
-                <UserAgentsTags title={t('tags')} userAgentIds={userAgents.map(({ id }) => id)} />
+                <UserAgentsTags
+                  title={tUser('tagsTitle')}
+                  userAgentIds={userAgents.map(({ id }) => id)}
+                />
               )}
               <EnrollUserSummary userId={userId} center={center} viewMode={viewMode} />
             </ContextContainer>

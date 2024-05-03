@@ -1,13 +1,14 @@
 import {
   Box,
+  Stack,
+  Table,
   Drawer,
   Button,
-  Stack,
+  ActionButton,
+  LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
-  Table,
-  ActionButton,
 } from '@bubbles-ui/components';
 import { useForm } from 'react-hook-form';
 import { useStore } from '@common/useStore';
@@ -62,26 +63,6 @@ export default function EvaluationList() {
     } = await listGradesRequest({ page: 0, size: 9999, center: store.center });
     return items;
   }
-  function getTreeData() {
-    const data = map(store.grades, (grade) => ({
-      id: grade.id,
-      parent: 0,
-      text: grade.name,
-      draggable: false,
-      render: TreeItem,
-    }));
-    data.push({
-      id: 'add',
-      parent: 0,
-      text: t('addGrade'),
-      type: 'button',
-      draggable: false,
-      data: {
-        action: 'add',
-      },
-    });
-    return data;
-  }
 
   async function onSelectCenter(center) {
     store.loading = true;
@@ -89,7 +70,6 @@ export default function EvaluationList() {
 
     store.center = center;
     store.grades = await getGrades();
-    store.treeData = getTreeData();
     store.loading = false;
     render();
   }
@@ -124,9 +104,9 @@ export default function EvaluationList() {
     try {
       await deleteGradeRequest(e.id);
       await onSelectCenter(store.center);
-      await addSuccessAlert(t('successDelete'));
+      addSuccessAlert(t('successDelete'));
     } catch (err) {
-      await addErrorAlert(err.message);
+      addErrorAlert(err.message);
     }
   }
 
@@ -233,7 +213,7 @@ export default function EvaluationList() {
     } catch (error) {
       store.saving = false;
       render();
-      await addErrorAlert(error.message);
+      addErrorAlert(error.message);
     }
   }
 
@@ -241,12 +221,12 @@ export default function EvaluationList() {
     const tagsByScale = groupBy(tags, 'scale');
 
     if (tagsByScale[e.number]) {
-      await addErrorAlert(t(`errorCode6003`));
+      addErrorAlert(t(`errorCode6003`));
       return false;
     }
 
     if (!!minScaleToPromote && minScaleToPromote?.toString() === e.number?.toString()) {
-      await addErrorAlert(t(`errorCode6004`));
+      addErrorAlert(t(`errorCode6004`));
       return false;
     }
 
@@ -342,22 +322,26 @@ export default function EvaluationList() {
     >
       <Stack justifyContent="center" ref={scrollRef} sx={{ overflowY: 'auto' }}>
         <TotalLayoutStepContainer>
-          <Stack direction="column">
-            {store?.grades?.length > 0 ? (
-              <>
-                <Box>
-                  <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onAdd}>
-                    {t('newEvaluationSystemButtonLabel')}
-                  </Button>
-                </Box>
-                <Box style={{ marginTop: 16 }}>
-                  <Table columns={columns} data={data || []} />
-                </Box>
-              </>
-            ) : (
-              <>{store?.grades?.length > 0 ? <EmptyState onAddSystem={onAdd} /> : null}</>
-            )}
-          </Stack>
+          {store.loading ? (
+            <LoadingOverlay visible />
+          ) : (
+            <Stack direction="column">
+              {store?.grades?.length > 0 ? (
+                <>
+                  <Box>
+                    <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onAdd}>
+                      {t('newEvaluationSystemButtonLabel')}
+                    </Button>
+                  </Box>
+                  <Box style={{ marginTop: 16 }}>
+                    <Table columns={columns} data={data || []} />
+                  </Box>
+                </>
+              ) : (
+                <EmptyState onAddSystem={onAdd} />
+              )}
+            </Stack>
+          )}
         </TotalLayoutStepContainer>
       </Stack>
       <Drawer opened={isDrawerOpened} onClose={() => setIsDrawerOpened(false)} size="xl">
