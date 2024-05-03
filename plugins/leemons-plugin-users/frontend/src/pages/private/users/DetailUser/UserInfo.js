@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TLayout, Box, Stack, ImageLoader } from '@bubbles-ui/components';
+import { TLayout, Box, Stack, ImageLoader, ContextContainer } from '@bubbles-ui/components';
 import { USER_DETAIL_VIEWS, UserDetail as UserDetailSummary } from '@users/components/UserDetail';
 import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -75,16 +75,16 @@ function UserInfo({ session }) {
               onLoadUserAgents={setUserAgents}
               onChangeAvatar={handleOnChangeAvatar}
               canEdit={true}
+              hideTags
             />
           </Box>
           <Box sx={{ width: '60%' }}>
-            {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
-              <UserAgentsTags
-                title={t('tagsTitle')}
-                userAgentIds={userAgents.map(({ id }) => id)}
-              />
-            )}
-            <EnrollUserSummary userId={userId} center={center} viewMode={viewMode} />
+            <ContextContainer>
+              {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
+                <UserAgentsTags title={t('tags')} userAgentIds={userAgents.map(({ id }) => id)} />
+              )}
+              <EnrollUserSummary userId={userId} center={center} viewMode={viewMode} />
+            </ContextContainer>
           </Box>
         </Stack>
       </TLayout.Content>
