@@ -63,6 +63,7 @@ const AssetPlayer = ({
   useAspectRatio,
   showPlayButton,
   ccMode,
+  execMode,
   ...props
 }) => {
   const {
@@ -96,6 +97,7 @@ const AssetPlayer = ({
   const [openImageZoom, setOpenImageZoom] = useState(false);
   const [mediaVolume, setMediaVolume] = useState(volume || 1);
   const [assetHeight, setAssetHeight] = useState(0);
+  const [isVideoHovered, setIsVideoHovered] = useState(false);
   const [t] = useTranslateLoader(prefixPN('pdfPlayer'));
   const pdfLabels = {
     pageLabel: t('pageLabel'),
@@ -185,14 +187,17 @@ const AssetPlayer = ({
   };
 
   const handleSeekChange = (e) => {
+    e.stopPropagation();
     setSeekValue(e.target.value);
   };
 
   const handleSeekMouseDown = (e) => {
+    e.stopPropagation();
     setSeeking(true);
   };
 
   const handleSeekMouseUp = (e) => {
+    e.stopPropagation();
     setSeeking(false);
     playerRef.current.seekTo(parseFloat(seekValue));
   };
@@ -312,7 +317,11 @@ const AssetPlayer = ({
               }}
             />
           ) : (
-            <Box className={classes.playerWrapper}>
+            <Box
+              className={classes.playerWrapper}
+              onMouseEnter={() => setIsVideoHovered(true)}
+              onMouseLeave={() => setIsVideoHovered(false)}
+            >
               {!nativeControls && showPlayer && (
                 <ProgressBar
                   {...{
@@ -329,6 +338,7 @@ const AssetPlayer = ({
                     handleSeekMouseUp,
                     setFullScreenMode,
                     handleSeekMouseDown,
+                    isVideoHovered,
                   }}
                 />
               )}
@@ -417,7 +427,7 @@ const AssetPlayer = ({
                     <ButtonIcon fileType={'image'} />
                   </Box>
                 )}
-                <ImageLoader height={'200px'} src={cover} alt={name} />
+                {!execMode && <ImageLoader height={'200px'} src={cover} alt={name} />}
                 <ModalZoom
                   canPlay={!ccMode || canPlay}
                   opened={openImageZoom}

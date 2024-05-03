@@ -67,7 +67,7 @@ module.exports = {
         add: 'Add',
         update: 'Update',
         card: 'Card',
-        embed: 'Embed',
+        embed: 'Mini card',
         player: 'Player',
       },
       placeholders: { width: 'Enter width', display: 'Select' },

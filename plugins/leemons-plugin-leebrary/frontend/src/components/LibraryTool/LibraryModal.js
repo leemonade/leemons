@@ -126,7 +126,7 @@ const LibraryModal = ({
         onChange({
           width: '100%',
           align: 'left',
-          display: 'player',
+          display: 'embed', // TODO: should be 'card' or 'player'
           asset: preparedAsset,
           readOnly,
         });

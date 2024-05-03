@@ -13,12 +13,12 @@ import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
-import { LibraryDetailPlayer } from '@leebrary/components/LibraryDetailPlayer';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
+import { AssetPlayerWrapperExecution } from '@leebrary/components/LibraryTool/AssetPlayerWrapperExecution';
 
 export default function Execution() {
   const [t] = useTranslateLoader(prefixPN('assignableExecution'));
@@ -109,7 +109,7 @@ export default function Execution() {
           }
         >
           <Stack fullWidth fullHeight justifyContent="center" alignItems="center">
-            <LibraryDetailPlayer {...asset} />
+            <AssetPlayerWrapperExecution asset={asset} />
           </Stack>
         </TotalLayoutStepContainerWithAccordion>
       </Stack>

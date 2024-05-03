@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-export const AudioCardPlayerStyles = createStyles((theme, {}) => {
+const AudioCardPlayerStyles = createStyles((theme, {}) => {
   const globalTheme = theme.other.global;
 
   return {
@@ -15,11 +15,13 @@ export const AudioCardPlayerStyles = createStyles((theme, {}) => {
       width: '100%',
       position: 'relative',
       gap: 14,
+      borderRadius: 4,
     },
     audioCardCover: {
-      width: 165,
-      height: 158,
+      width: 132,
+      height: 132,
       marginBlock: 2,
+      borderRadius: 4,
     },
     reactPlayer: {
       position: 'absolute',
@@ -29,3 +31,4 @@ export const AudioCardPlayerStyles = createStyles((theme, {}) => {
     },
   };
 });
+export { AudioCardPlayerStyles };

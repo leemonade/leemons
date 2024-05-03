@@ -38,7 +38,6 @@ const ContentEditorInput = ({
 
   const leemonsTools = () => {
     const tools = [];
-
     if (textEditorTools) {
       keys(textEditorTools).forEach((key) => {
         if (textEditorTools[key].tool && toolbars[key]) {

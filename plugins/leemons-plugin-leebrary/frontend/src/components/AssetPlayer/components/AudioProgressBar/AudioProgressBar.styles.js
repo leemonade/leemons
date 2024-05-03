@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-export const AudioProgressBarStyles = createStyles((theme, { useSpaceBetween }) => {
+const AudioProgressBarStyles = createStyles((theme, { useSpaceBetween }) => {
   const globalTheme = theme.other.global;
 
   return {
@@ -9,8 +9,13 @@ export const AudioProgressBarStyles = createStyles((theme, { useSpaceBetween }) 
       display: 'flex',
       flexDirection: 'column',
       gap: globalTheme.spacing.gap.md,
-      padding: globalTheme.spacing.padding.md,
+      // padding: globalTheme.spacing.padding.md,
       paddingInline: 0,
+    },
+    controlsWrapper: {
+      display: 'flex',
+      gap: 4,
+      alignItems: 'center',
     },
     progressBar: {
       WebkitAppearance: 'none',
@@ -101,3 +106,5 @@ export const AudioProgressBarStyles = createStyles((theme, { useSpaceBetween }) 
     },
   };
 });
+
+export { AudioProgressBarStyles };

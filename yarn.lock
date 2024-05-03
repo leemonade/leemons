@@ -20665,6 +20665,16 @@ watchpack@^2.2.0, watchpack@^2.4.1:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
+wavesurfer-react@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/wavesurfer-react/-/wavesurfer-react-3.0.2.tgz#68510f049c62055deeff3c1a90ab49ddfbdd4425"
+  integrity sha512-ATGbisSFrAPiPyOZKIMge7aFKnlu69Vy5XTpZ2H88hRJ64KcK+T3iNlzj/YOregj4HkYxWPzm1t4O617oAft+g==
+
+wavesurfer.js@^7.7.11:
+  version "7.7.11"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.7.11.tgz#9db7a7974ec1d61dc7b2afe6360f575b5d216285"
+  integrity sha512-27otJlDBcUSbMh/YkxEZN0yXTHINQNYSOl5aJplYlIaHw2u3BrABUzOmUZV3dKIy8udOLJXS/67y5pOIzgAg+w==
+
 wbuf@^1.1.0, wbuf@^1.7.3:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/wbuf/-/wbuf-1.7.3.tgz#c1d8d149316d3ea852848895cb6a0bfe887b87df"
