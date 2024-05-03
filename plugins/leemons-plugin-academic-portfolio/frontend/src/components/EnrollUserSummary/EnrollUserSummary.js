@@ -51,24 +51,32 @@ function getTeachersIds(enrollments = []) {
 function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilter, viewMode }) {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
   const [tCommon] = useTranslateLoader(prefixPN('common'));
+
   const enableUserDetails = !!userId;
   const { data: userDetails, isLoading: userDetailsLoading } = useUserDetails({
     userId,
     enabled: enableUserDetails,
   });
+
+  const enableEnrollments = !!center?.id && !!userDetails?.userAgents?.length;
   const { data: enrollments, isLoading: enrollmentsLoading } = useUserEnrollments({
     centerId: center?.id,
     userAgentIds: filterUserAgentIds(userDetails?.userAgents ?? [], sysProfileFilter),
     contactUserAgentId: isString(contactUserAgentId) ? contactUserAgentId : undefined,
-    enabled: !!center?.id && !!userDetails?.userAgents?.length,
+    enabled: enableEnrollments,
   });
 
+  const enableTeachersInfo = enrollments?.length > 0;
   const { data: teachers, isLoading: teachersInfoLoading } = useUserAgentsInfo(
     getTeachersIds(enrollments),
-    { enabled: enrollments?.length > 0 }
+    { enabled: enableTeachersInfo }
   );
 
-  if (userDetailsLoading || enrollmentsLoading || teachersInfoLoading) {
+  if (
+    userDetailsLoading ||
+    (enableEnrollments && enrollmentsLoading) ||
+    (enableTeachersInfo && teachersInfoLoading)
+  ) {
     return <LoadingOverlay visible />;
   }
 
@@ -83,10 +91,14 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
     return null;
   }
 
+  if (!enrollments?.length) {
+    return null;
+  }
+
   return (
     <ContextContainer title={tCommon(isStudent ? 'sharedEnrollments' : 'enrollments')}>
       <Tabs>
-        {enrollments.map((program) => (
+        {enrollments?.map((program) => (
           <TabPanel key={program.id} label={program.name}>
             <Stack direction="column" spacing={4} fullWidth>
               <Stack
