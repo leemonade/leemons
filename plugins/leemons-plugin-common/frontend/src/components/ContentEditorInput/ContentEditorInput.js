@@ -3,8 +3,6 @@ import { keys, isEmpty } from 'lodash';
 import { Box } from '@bubbles-ui/components';
 import { useTextEditor } from '@common/context';
 import { useEditorLabels } from '@common/hooks/useEditorLabels';
-import { LibraryTool } from '@leebrary/components';
-import libraryProcessor from '@leebrary/helpers/libraryProcessor';
 import { MathTool } from '@content-creator/components';
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,

@@ -1,6 +1,6 @@
-import { createStyles, pxToRem } from '@bubbles-ui/components';
+import { createStyles } from '@bubbles-ui/components';
 
-const AudioCardPlayerStyles = createStyles((theme, {}) => {
+const AudioCardPlayerStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
