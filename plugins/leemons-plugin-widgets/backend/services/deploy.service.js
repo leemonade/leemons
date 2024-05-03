@@ -46,6 +46,7 @@ module.exports = {
         ],
         'assignables.class.ongoing': [
           'board-messages.class-dashboard',
+          'dashboard.dashboard.classes.welcome',
           'assignables.dashboard.subject.need-your-attention',
           'assignables.class.ongoing',
         ],

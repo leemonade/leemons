@@ -41,6 +41,11 @@ const widgets = {
       key: `${pluginName}.dashboard.welcome`,
       url: 'dashboard/welcome',
     },
+    {
+      zoneKey: `assignables.class.ongoing`,
+      key: `${pluginName}.dashboard.class.welcome`,
+      url: 'dashboard/welcome',
+    },
   ],
 };
 

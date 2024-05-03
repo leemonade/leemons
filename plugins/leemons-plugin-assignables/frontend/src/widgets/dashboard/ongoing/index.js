@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
+import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
 import AssignmentList from '../../../components/Ongoing/AssignmentList';
 
 const useOngoingStyles = createStyles((theme) => {
@@ -21,9 +22,14 @@ const useOngoingStyles = createStyles((theme) => {
 
 export default function Ongoing({ classe }) {
   const { classes } = useOngoingStyles();
+  const { data: welcomeCompleted } = useWelcome();
 
   const [t1] = useTranslateLoader(prefixPN('ongoing'));
   const [t2] = useTranslateLoader(prefixPN('need_your_attention'));
+
+  if (!welcomeCompleted) {
+    return null;
+  }
 
   return (
     <Stack direction="column" spacing="md" fullWidth>
