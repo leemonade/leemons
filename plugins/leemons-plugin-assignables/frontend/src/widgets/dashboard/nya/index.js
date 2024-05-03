@@ -1,6 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ImageLoader, Loader, Stack, Text } from '@bubbles-ui/components';
+
+import {
+  Box,
+  Button,
+  ContextContainer,
+  ImageLoader,
+  Loader,
+  Stack,
+  Text,
+} from '@bubbles-ui/components';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { Link } from 'react-router-dom';
 
 import useClassData from '@assignables/hooks/useClassDataQuery';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
@@ -66,19 +77,18 @@ export default function NYA({ classe, program }) {
 
   if (isEmpty) {
     return (
-      <Box className={classes.root}>
-        <Box className={classes.section}>
-          <Header
-            {...activities}
-            linkTo="/private/assignables/ongoing"
-            titleLabel={
-              isStudent ? localizations?.nya?.activitiesTitle : localizations?.nya?.evaluationsTitle
-            }
-            linkLabel={localizations?.nya?.seeAllActivities}
-          />
-          <EmptyState />
-        </Box>
-      </Box>
+      <ContextContainer
+        title={localizations?.nya?.emptyState?.title}
+        titleRightZone={
+          <Link to={'/private/assignables/ongoing'}>
+            <Button variant="link" rightIcon={<ChevRightIcon />}>
+              {localizations?.nya?.seeAllActivities}
+            </Button>
+          </Link>
+        }
+      >
+        <EmptyState />
+      </ContextContainer>
     );
   }
 
