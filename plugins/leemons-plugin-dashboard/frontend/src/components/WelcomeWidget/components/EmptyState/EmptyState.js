@@ -12,7 +12,7 @@ import { useEmptyStateStyles } from './EmptyState.styles';
 export function EmptyState() {
   const isTeacher = useIsTeacher();
   const [t] = useTranslateLoader(
-    prefixPN(`need_your_attention.emptyState.${isTeacher ? 'teacher' : 'student'}`)
+    prefixPN(`need_your_attention.welcome.${isTeacher ? 'teacher' : 'student'}`)
   );
 
   const { classes, cx } = useEmptyStateStyles();

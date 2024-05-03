@@ -4,7 +4,7 @@ import { TLayout } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { EvaluatedIcon } from '@learning-paths/components/ModuleDashboard/components/DashboardCard/components/EvaluationStateDisplay/icons/EvaluatedIcon';
-import Filters from '@scores/components/ReviewerPage/Filters';
+import Filters from '@scores/components/__DEPRECATED__/ReviewerPage/Filters';
 import Notebook from '@scores/components/__DEPRECATED__/FinalNotebook/Notebook';
 
 export default function ReviewerPage() {
