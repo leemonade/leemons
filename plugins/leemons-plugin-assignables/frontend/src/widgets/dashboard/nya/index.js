@@ -78,7 +78,9 @@ export default function NYA({ classe, program }) {
   if (isEmpty) {
     return (
       <ContextContainer
-        title={localizations?.nya?.emptyState?.title}
+        title={
+          isStudent ? localizations?.nya?.activitiesTitle : localizations?.nya?.evaluationsTitle
+        }
         titleRightZone={
           <Link to={'/private/assignables/ongoing'}>
             <Button variant="link" rightIcon={<ChevRightIcon />}>
