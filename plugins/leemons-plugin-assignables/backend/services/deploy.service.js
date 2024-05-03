@@ -75,6 +75,8 @@ module.exports = {
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
       await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
 
+      ctx.emit('init-widgets');
+
       // Register as a library provider
       await ctx.tx.call('leebrary.providers.register', {
         name: 'Library Assignables',

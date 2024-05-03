@@ -417,6 +417,11 @@ module.exports = {
       startActivity: 'Empezar actividad',
     },
     emptyState: {
+      title: '¡Lo tienes todo al día!',
+      noEvaluations: 'No hay evaluaciones pendientes',
+      noActivities: 'No hay actividades pendientes',
+    },
+    welcome: {
       title: '¡Te damos la bienvenida!',
       teacher: {
         title: 'Aún no hay información para mostrar aquí',

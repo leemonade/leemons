@@ -11,7 +11,7 @@ export default function Header({ titleLabel, linkLabel, count, linkTo }) {
   return (
     <Box className={classes.sectionHeader}>
       <Title className={classes.sectionTitle}>
-        {titleLabel} {count !== null && `(${count})`}
+        {titleLabel} {!!count && `(${count})`}
       </Title>
       <Link to={linkTo}>
         <Button variant="link" rightIcon={<ChevRightIcon />}>

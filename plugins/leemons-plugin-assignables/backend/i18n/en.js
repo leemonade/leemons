@@ -408,6 +408,11 @@ module.exports = {
       startActivity: 'Start activity',
     },
     emptyState: {
+      title: 'You have everything on track!',
+      noEvaluations: 'No pending evaluations',
+      noActivities: 'No pending activities',
+    },
+    welcome: {
       title: 'Welcome!',
       teacher: {
         title: 'There is no information to show here yet',
