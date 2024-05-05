@@ -5,6 +5,7 @@ import { Box } from '@bubbles-ui/components';
 import { NodeViewWrapper } from '@bubbles-ui/editors';
 import { LibraryCardEmbed, LibraryCard } from '@leebrary/components';
 import { AssetPlayerWrapperCCreator } from './AssetPlayerWrapperCCreator';
+import { LibraryCardCC } from '../LibraryCardCC';
 
 export const LIBRARY_PLAYER_DISPLAYS = ['card', 'player'];
 export const LIBRARY_PLAYER_ALIGNS = ['left', 'center', 'right'];
@@ -68,6 +69,14 @@ const LibraryPlayer = ({
           showPlayButton={readOnly}
           useAudioCard
         />
+      );
+    }
+
+    if (display === 'card') {
+      return (
+        <Box style={{ width: isFloating ? '100%' : widthProp }}>
+          <LibraryCardCC asset={asset} canPlay={viewMode} />
+        </Box>
       );
     }
 

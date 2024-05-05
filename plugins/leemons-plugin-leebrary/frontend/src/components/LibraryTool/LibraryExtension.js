@@ -80,7 +80,7 @@ export const LibraryExtension = Node.create({
         default: '100%',
       },
       display: {
-        default: 'player',
+        default: 'embed',
       },
       align: {
         default: 'left',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text } from '@bubbles-ui/components';
+import { Box, Text, Stack } from '@bubbles-ui/components';
 import {
   ExpandIcon,
   ControlsPlayIcon,
@@ -7,7 +7,7 @@ import {
   VolumeControlLowIcon,
   VolumeControlOffIcon,
 } from '@bubbles-ui/icons/solid';
-import { ShrinkIcon } from '@bubbles-ui/icons/outline';
+import { PluginSettingsIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
 import { ProgressBarStyles } from './ProgressBar.styles';
 import { PROGRESS_BAR_DEFAULT_PROPS, PROGRESS_BAR_PROP_TYPES } from './ProgressBar.constants';
 
@@ -25,11 +25,13 @@ const ProgressBar = ({
   handleSeekMouseUp,
   setFullScreenMode,
   handleSeekMouseDown,
+  isVideoHovered,
 }) => {
   // ··································································
   // HANDLERS
 
-  const handleVolumeChange = () => {
+  const handleVolumeChange = (e) => {
+    e.stopPropagation();
     if (mediaVolume <= 1 && mediaVolume !== 0) {
       setMediaVolume(0);
       return;
@@ -37,14 +39,15 @@ const ProgressBar = ({
     if (mediaVolume === 0) setMediaVolume(1);
   };
 
-  const handleFullscreenChange = () => {
+  const handleFullscreenChange = (e) => {
+    e.stopPropagation();
     setFullScreenMode(!fullScreenMode);
   };
 
   // ··································································
   // COMPONENT
 
-  const { classes } = ProgressBarStyles({}, { name: 'ProgressBar' });
+  const { classes } = ProgressBarStyles({ isVideoHovered }, { name: 'ProgressBar' });
   return (
     <Box className={classes.progressBarWrapper}>
       <Box className={classes.controlBar}>
@@ -60,20 +63,13 @@ const ProgressBar = ({
             />
           )}
         </Box>
-        <Box className={classes.iconWrapper} onClick={handleVolumeChange}>
-          {mediaVolume > 0 ? (
-            <VolumeControlLowIcon height={20} width={20} className={classes.whiteIcon} />
-          ) : (
-            <VolumeControlOffIcon height={20} width={20} className={classes.whiteIcon} />
-          )}
-        </Box>
+
         <Text size={'xs'} role={'productive'} className={classes.duration}>
           {getDuration()} / {getTotalDuration()}
         </Text>
         <Box
           className={classes.iconWrapper}
           style={{ flex: 1, justifyContent: 'right', marginRight: 2 }}
-          onClick={handleFullscreenChange}
         >
           <Box className={classes.progressBar}>
             <Box
@@ -94,11 +90,26 @@ const ProgressBar = ({
               onMouseUp={handleSeekMouseUp}
             />
           </Box>
-          {fullScreenMode ? (
-            <ShrinkIcon height={20} width={20} className={classes.whiteIcon} />
-          ) : (
-            <ExpandIcon height={20} width={20} className={classes.whiteIcon} />
-          )}
+          <Stack spacing={2}>
+            <Box className={classes.iconWrapper} onClick={handleVolumeChange}>
+              {mediaVolume > 0 ? (
+                <VolumeControlLowIcon height={20} width={20} className={classes.whiteIcon} />
+              ) : (
+                <VolumeControlOffIcon height={20} width={20} className={classes.whiteIcon} />
+              )}
+            </Box>
+
+            <Box className={classes.iconWrapper} onClick={handleFullscreenChange}>
+              {fullScreenMode ? (
+                <ShrinkIcon height={20} width={20} className={classes.whiteIcon} />
+              ) : (
+                <ExpandIcon height={20} width={20} className={classes.whiteIcon} />
+              )}
+            </Box>
+            <Box className={classes.iconWrapper} onClick={(e) => e.stopPropagation()}>
+              <PluginSettingsIcon height={20} width={20} className={classes.whiteIcon} />
+            </Box>
+          </Stack>
         </Box>
       </Box>
     </Box>

@@ -33,8 +33,12 @@ export default function TotalLayoutStepContainerWithAccordion({
   noVerticalPadding,
   ...props
 }) {
-  const { classes, cx } = TotalLayoutStepContainerStyles(props);
-  const { classes: accordionClasses } = TotalLayoutStepContainerWithAccordionStyles(props);
+  const { classes, cx } = TotalLayoutStepContainerStyles(props, {
+    name: 'TotalLayoutStepContainerWithAccordionWrapper',
+  });
+  const { classes: accordionClasses } = TotalLayoutStepContainerWithAccordionStyles(props, {
+    name: 'TotalLayoutStepContainerWithAccordion',
+  });
 
   return (
     <Stack direction="column" className={cx(classes.stepContainer)} fullWidth fullHeight>
@@ -44,6 +48,7 @@ export default function TotalLayoutStepContainerWithAccordion({
             backgroundColor: 'white',
             borderBottom: 'none',
           }}
+          noFlex
         >
           <ActivityAccordionPanel
             itemValue="0"
@@ -57,7 +62,7 @@ export default function TotalLayoutStepContainerWithAccordion({
           </ActivityAccordionPanel>
         </ActivityAccordion>
       )}
-      <TotalLayoutStepContainer {...props} clean>
+      <TotalLayoutStepContainer {...props} clean noFlex>
         <Stack
           direction="column"
           className={cx(classes.formContainer, {
