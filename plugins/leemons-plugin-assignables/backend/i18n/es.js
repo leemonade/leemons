@@ -509,4 +509,13 @@ module.exports = {
     contactStudent: 'Hablar con el estudiante',
     feedback: 'Feedback',
   },
+  progress: {
+    tabTitle: 'Progreso',
+    chartTitle: 'Analíticas de aprendizaje',
+    average: 'Media',
+    pass: 'Aprobado',
+    approved: 'Conocimiento adquirido',
+    notApproved: 'Conocimiento por adquirir',
+    inProgress: 'En progreso',
+  },
 };

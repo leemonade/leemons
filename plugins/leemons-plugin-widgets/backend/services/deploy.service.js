@@ -32,6 +32,7 @@ module.exports = {
           'board-messages.dashboard',
           'academic-portfolio.user.classes.swiper',
           'dashboard.dashboard.welcome',
+          'assignables.dashboard.progress',
           'assignables.dashboard.need-your-attention',
           'calendar.user.program.calendar',
           'calendar.user.program.kanban',
@@ -43,6 +44,7 @@ module.exports = {
           'calendar.class.tab.calendar',
           'academic-portfolio.class.tab.detail',
           'attendance-control.class.tabs.detail',
+          'assignables.class.tab.progress',
         ],
         'assignables.class.ongoing': [
           'board-messages.class-dashboard',

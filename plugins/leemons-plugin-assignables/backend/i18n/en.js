@@ -511,4 +511,13 @@ module.exports = {
     contactStudent: 'Chat with the student',
     feedback: 'Feedback',
   },
+  progress: {
+    tabTitle: 'Progress',
+    chartTitle: 'Learning Analytics',
+    average: 'Average',
+    pass: 'Approved',
+    approved: 'Acquired knowledge',
+    notApproved: 'Knowledge to acquire',
+    inProgress: 'In progress',
+  },
 };
