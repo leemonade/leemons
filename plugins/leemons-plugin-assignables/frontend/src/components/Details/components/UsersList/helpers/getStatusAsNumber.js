@@ -4,6 +4,11 @@ export default function getStatusAsNumber(student, instance) {
   const finishDate = dayjs(student?.timestamps?.end || null);
   const startDate = dayjs(student?.timestamps?.start || null);
   const openDate = dayjs(student?.timestamps?.open || null);
+  const isEvaluated = student?.grades?.length > 0;
+
+  if (isEvaluated) {
+    return 3;
+  }
 
   if (finishDate.isValid()) {
     return 2;

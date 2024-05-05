@@ -3146,6 +3146,15 @@
     "@react-spring/web" "9.3.1"
     lodash "^4.17.21"
 
+"@nivo/arcs@0.79.1":
+  version "0.79.1"
+  resolved "https://registry.yarnpkg.com/@nivo/arcs/-/arcs-0.79.1.tgz#768d5e91356e94199377fbd0ca762bc364353414"
+  integrity sha512-owScoElMv5EwDbZKJhns282MnXVM4rq9jYwBnFBx872Igi2r6HwKk1m4jDWGfDktJ7MyECvuVzxRaUImWQdufA==
+  dependencies:
+    "@nivo/colors" "0.79.1"
+    "@react-spring/web" "9.3.1"
+    d3-shape "^1.3.5"
+
 "@nivo/axes@0.79.0":
   version "0.79.0"
   resolved "https://registry.yarnpkg.com/@nivo/axes/-/axes-0.79.0.tgz#6f009819b26f93a4126697152aeab5f979f1ab6c"
@@ -3202,6 +3211,30 @@
   version "0.79.1"
   resolved "https://registry.yarnpkg.com/@nivo/legends/-/legends-0.79.1.tgz#60b1806bba547f796e6e5b66943d65153de60c79"
   integrity sha512-AoabiLherOAk3/HR/N791fONxNdwNk/gCTJC/6BKUo2nX+JngEYm3nVFmTC1R6RdjwJTeCb9Vtuc4MHA+mcgig==
+
+"@nivo/polar-axes@0.79.1":
+  version "0.79.1"
+  resolved "https://registry.yarnpkg.com/@nivo/polar-axes/-/polar-axes-0.79.1.tgz#a6bab51f757dfca230fa1e7e5d97d5893a12004d"
+  integrity sha512-3+XZVTgqZqy265sb0REtT/8IEsshB2nUYL9bPeTacMO2pamKp4ysukaLQOqKf25ujOxTNZL7/Nxtz9hn2oQMDw==
+  dependencies:
+    "@nivo/arcs" "0.79.1"
+    "@nivo/scales" "0.79.0"
+    "@react-spring/web" "9.3.1"
+
+"@nivo/radial-bar@^0.79.1":
+  version "0.79.1"
+  resolved "https://registry.yarnpkg.com/@nivo/radial-bar/-/radial-bar-0.79.1.tgz#966406c4b93693464e9610a53a479437d1bf2e70"
+  integrity sha512-6JbPR9TzycPZ0EWwdf3NSp8K643hK+3qXkp37dIHaHiutX7mnqyqcxfwEm3Tnl65sJj81Did7CQ1UKQPqQmxuA==
+  dependencies:
+    "@nivo/arcs" "0.79.1"
+    "@nivo/colors" "0.79.1"
+    "@nivo/legends" "0.79.1"
+    "@nivo/polar-axes" "0.79.1"
+    "@nivo/scales" "0.79.0"
+    "@nivo/tooltip" "0.79.0"
+    "@react-spring/web" "9.3.1"
+    d3-scale "^3.2.3"
+    d3-shape "^1.3.5"
 
 "@nivo/recompose@0.79.0":
   version "0.79.0"

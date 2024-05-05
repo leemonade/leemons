@@ -281,6 +281,7 @@ module.exports = {
   },
   activity_status: {
     assigned: 'Programada',
+    notOpened: 'Sin abrir',
     opened: 'Abierta',
     notStarted: 'No empezada',
     started: 'Empezada',
