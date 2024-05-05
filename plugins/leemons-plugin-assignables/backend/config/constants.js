@@ -101,7 +101,7 @@ const widgets = {
     {
       zoneKey: `${permissionsPrefix}.class.progress`,
       key: `${permissionsPrefix}.class.progress`,
-      url: 'dashboard/progress/index',
+      url: 'dashboard/progress/subject',
     },
     // --- NYA (Main Dashboard) ---
     {

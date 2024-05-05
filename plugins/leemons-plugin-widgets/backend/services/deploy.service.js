@@ -44,6 +44,7 @@ module.exports = {
           'calendar.class.tab.calendar',
           'academic-portfolio.class.tab.detail',
           'attendance-control.class.tabs.detail',
+          'learning-paths.class.tab.modules',
           'assignables.class.tab.progress',
         ],
         'assignables.class.ongoing': [

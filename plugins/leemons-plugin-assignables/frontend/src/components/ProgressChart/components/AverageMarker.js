@@ -7,7 +7,7 @@ const AverageMarker = ({ bars = [], yScale, width }) => {
     (bar) => bar.data.id !== 'diff' && !bar.data.indexValue.startsWith('skip:')
   );
   const avgValue = valueBars.reduce((total, bar) => total + bar.data.value, 0) / valueBars.length;
-  const y = yScale(avgValue);
+  const y = yScale(Math.round(avgValue));
   const leftOffset = 0;
   const rightOffset = 36;
   const markHeight = 4;
