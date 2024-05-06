@@ -13,7 +13,7 @@ const ProgressBarStyles = createStyles((theme, { isVideoHovered }) => {
       left: 16,
       right: 16,
       bottom: 5,
-      zIndex: 2,
+      zIndex: 1,
       borderRadius: 4,
       backgroundColor: theme.other.buttonIconCard.background.color.primary.default,
       opacity: isVideoHovered ? 1 : 0,

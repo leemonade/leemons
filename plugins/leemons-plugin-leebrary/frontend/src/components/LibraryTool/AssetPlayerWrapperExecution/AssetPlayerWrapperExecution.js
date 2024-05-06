@@ -46,7 +46,7 @@ const AssetPlayerWrapperExecution = ({ asset, showPlayButton }) => {
     <Box
       data-cypress-id="execution-detail-player"
       style={{
-        height: !asset?.cover ? '300px' : '100%',
+        height: '100%',
         width: '100%',
         position: 'relative',
       }}

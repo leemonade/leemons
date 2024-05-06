@@ -474,6 +474,7 @@ module.exports = {
   },
   assignableExecution: {
     information: 'Información',
+    instructions: 'Instrucciones',
     finish: 'Finalizar',
   },
   assignableCorrection: {

@@ -487,6 +487,7 @@ module.exports = {
   },
   assignableExecution: {
     information: 'Information',
+    instructions: 'Instructions',
     finish: 'Finish',
   },
   assignableCorrection: {
