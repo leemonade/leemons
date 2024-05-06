@@ -82,7 +82,7 @@ export default function Execution() {
         <TotalLayoutStepContainerWithAccordion
           accordion={
             !!instance?.metadata?.statement && {
-              title: t('information'),
+              title: t('instructions'),
               icon: (
                 <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
               ),

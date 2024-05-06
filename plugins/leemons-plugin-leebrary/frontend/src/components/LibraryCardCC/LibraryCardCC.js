@@ -9,7 +9,7 @@ import { LIBRARY_CARD_CC_PROPTYPES, LIBRARY_CARD_CC_DEFAULTPROPS } from './Libra
 
 const LibraryCardCC = ({ asset, canPlay }) => {
   const isPDF = asset?.fileExtension === 'pdf';
-  const { classes } = LibraryCardCCStyles();
+  const { classes } = LibraryCardCCStyles({ canPlay });
   function handleOpenAsset() {
     if (!canPlay) return;
     const url = isPDF ? `/protected/leebrary/play/${asset.id}` : asset?.url;

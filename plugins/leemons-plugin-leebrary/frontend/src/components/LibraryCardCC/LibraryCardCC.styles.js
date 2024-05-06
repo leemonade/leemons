@@ -5,7 +5,7 @@ import {
   getBoxShadowFromToken,
 } from '@bubbles-ui/components';
 
-const LibraryCardCCStyles = createStyles((theme) => {
+const LibraryCardCCStyles = createStyles((theme, { canPlay }) => {
   const cardTheme = theme.other.cardLibrary;
   const cardShadow = getBoxShadowFromToken(cardTheme.shadow.hover);
   return {
@@ -22,9 +22,10 @@ const LibraryCardCCStyles = createStyles((theme) => {
       width: '100%',
       minWidth: pxToRem(264),
       maxWidth: pxToRem(283),
+      cursor: canPlay ? 'pointer' : 'default',
       minHeight: pxToRem(396),
       '&:hover': {
-        boxShadow: cardShadow.boxShadow,
+        boxShadow: canPlay ? cardShadow.boxShadow : 'none',
       },
     },
   };
