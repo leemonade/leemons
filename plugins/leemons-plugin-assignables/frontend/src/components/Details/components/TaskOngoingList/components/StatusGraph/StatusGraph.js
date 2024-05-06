@@ -89,6 +89,7 @@ export default function StatusGraph({ studentCount, status }) {
         radialAxisStart={null}
         circularAxisOuter={null}
         enableLabels={true}
+        animate={false}
         colors={['#FFEA67', '#FFC8E2', '#69A5CD', '#A4D15E', '#FFAD5B']}
         layers={[
           'bars',
