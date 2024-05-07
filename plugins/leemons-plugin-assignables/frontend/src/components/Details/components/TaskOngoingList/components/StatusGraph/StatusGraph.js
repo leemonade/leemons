@@ -90,7 +90,7 @@ export default function StatusGraph({ studentCount, status }) {
         circularAxisOuter={null}
         enableLabels={true}
         animate={false}
-        colors={['#FFEA67', '#FFC8E2', '#69A5CD', '#A4D15E', '#FFAD5B']}
+        colors={['#FFEA67', '#B5AFD4', '#69A5CD', '#A4D15E', '#FFAD5B']}
         layers={[
           'bars',
           'labels',
