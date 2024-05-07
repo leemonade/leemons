@@ -45,7 +45,6 @@ function NPSStatistics({ question, responses, t }) {
               title={t('npsDetractors')}
               avg={responses.nps?.detractors.avg || 0}
               total={responses.nps?.detractors.number || 0}
-              color="error"
             />
           </Col>
           <Col span={2}>
@@ -56,7 +55,6 @@ function NPSStatistics({ question, responses, t }) {
               title={t('npsPassives')}
               avg={responses.nps?.passives.avg || 0}
               total={responses.nps?.passives.number || 0}
-              color="warning"
             />
           </Col>
           <Col span={2}>
@@ -67,7 +65,6 @@ function NPSStatistics({ question, responses, t }) {
               title={t('npsPromoters')}
               avg={responses.nps?.promoters.avg || 0}
               total={responses.nps?.promoters.number || 0}
-              color="success"
             />
           </Col>
         </Grid>
@@ -81,7 +78,7 @@ function NPSStatistics({ question, responses, t }) {
                   percentage={Math.trunc(responses.percentages?.[index]) || 0}
                   bottomText={index}
                   total={responses.value?.[index] || 0}
-                  color={index < 7 ? 'fatic01' : index > 8 ? 'fatic02' : 'fatic03'}
+                  color={index < 7 ? '#FF7366' : index > 8 ? '#76CEC1' : '#FFAD5B'}
                 />
               </Col>
             ))}
