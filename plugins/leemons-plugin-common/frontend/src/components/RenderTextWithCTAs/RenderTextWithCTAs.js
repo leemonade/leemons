@@ -29,9 +29,9 @@ import { renderReplacer } from './helpers/renderReplacer';
     }}
   />
  */
-export function RenderTextWithCTAs({ t, text, replacers }) {
+export function RenderTextWithCTAs({ t, text, replacers, align = 'center' }) {
   const parts = t(text).split(/(\{[^}]+\})/g); // Split by placeholders
-  const { classes, cx } = useRenderTextWithCTAsStyles();
+  const { classes, cx } = useRenderTextWithCTAsStyles({ align });
 
   return (
     <Text color="primary" className={classes.text}>
@@ -49,6 +49,7 @@ RenderTextWithCTAs.propTypes = {
   t: PropTypes.func.isRequired,
   text: PropTypes.string.isRequired,
   replacers: PropTypes.object,
+  align: PropTypes.string,
 };
 
 export default RenderTextWithCTAs;
