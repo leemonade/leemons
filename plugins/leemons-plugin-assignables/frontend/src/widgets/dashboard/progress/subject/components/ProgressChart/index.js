@@ -32,7 +32,7 @@ export default function ProgressChartWidget({ classe, roundValues }) {
     });
 
   const enabledStudentGrades = isStudent && !!periods;
-  const { data: studentGrades } = useAverageGradePerClass({
+  const { data: studentGrades, isLoading: studentGradesLoading } = useAverageGradePerClass({
     classIds: [classe.id],
     period,
     groupBy: 'assignation',
@@ -66,7 +66,8 @@ export default function ProgressChartWidget({ classe, roundValues }) {
 
   return (
     <>
-      {isStudent && (
+      {isStudent && studentGradesLoading && <LoadingOverlay visible />}
+      {isStudent && !studentGradesLoading && (
         <ProgressChart
           data={studentData}
           maxValue={programEvaluationSystem?.maxScale?.number}
