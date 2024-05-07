@@ -365,7 +365,7 @@ const mixin = ({
   debugTransaction = false,
   forceLeemonsDeploymentManagerMixinNeedToBeImported = true,
   models,
-}) => ({
+} = {}) => ({
   name: '',
   metadata: {
     mixins: {

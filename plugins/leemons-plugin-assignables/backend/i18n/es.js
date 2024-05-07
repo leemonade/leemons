@@ -281,6 +281,7 @@ module.exports = {
   },
   activity_status: {
     assigned: 'Programada',
+    notOpened: 'Sin abrir',
     opened: 'Abierta',
     notStarted: 'No empezada',
     started: 'Empezada',
@@ -508,5 +509,40 @@ module.exports = {
     contactTeacher: 'Hablar con mi profesor',
     contactStudent: 'Hablar con el estudiante',
     feedback: 'Feedback',
+  },
+  progress: {
+    tabTitle: 'Progreso',
+    dashboardTitle: {
+      main: {
+        student: 'Mi progreso',
+        teacher: 'Notas medias del curso',
+      },
+      subject: {
+        student: 'Notas de la asignatura',
+        teacher: 'Notas medias en la asignatura',
+      },
+      module: {
+        student: 'Notas del módulo',
+        teacher: 'Notas medias del módulo',
+      },
+    },
+    average: 'Media',
+    pass: 'Aprobado',
+    approved: 'Conocimiento adquirido',
+    notApproved: 'Conocimiento por adquirir',
+    inProgress: 'En progreso',
+  },
+  evaluationTable: {
+    title: 'Evaluación',
+    weighting: 'Ponderación',
+    seeNonGradable: 'Ver no calificables',
+    columns: {
+      activity: 'Actividad',
+      module: 'Módulo',
+      activities: 'Actividades',
+      weight: 'Ponderación',
+      evaluation: 'Evaluación',
+      feedback: 'Feedback cualitativo',
+    },
   },
 };

@@ -59,6 +59,11 @@ const widgets = {
       name: 'Ongoing activities',
       description: 'Zone for ongoing activities',
     },
+    {
+      key: `${permissionsPrefix}.class.progress`,
+      name: 'Activities progress',
+      description: 'Zone for activities progress',
+    },
   ],
   items: [
     // --- Class (Ongoing tab) ---
@@ -68,6 +73,15 @@ const widgets = {
       url: 'dashboard/tab-ongoing/index',
       properties: {
         label: `${permissionsPrefix}.ongoing.activities`,
+      },
+    },
+    // --- Class (Progress tab) ---
+    {
+      zoneKey: 'dashboard.class.tabs',
+      key: `${permissionsPrefix}.class.tab.progress`,
+      url: 'dashboard/tab-progress/index',
+      properties: {
+        label: `${permissionsPrefix}.progress.tabTitle`,
       },
     },
     // --- NYA (Subject Dashboard Ongoing) ---
@@ -83,11 +97,23 @@ const widgets = {
       key: `${permissionsPrefix}.class.ongoing`,
       url: 'dashboard/ongoing/index',
     },
+    // --- Class (Progress) ---
+    {
+      zoneKey: `${permissionsPrefix}.class.progress`,
+      key: `${permissionsPrefix}.class.progress`,
+      url: 'dashboard/progress/subject',
+    },
     // --- NYA (Main Dashboard) ---
     {
       zoneKey: 'dashboard.program.left',
       key: `${permissionsPrefix}.dashboard.need-your-attention`,
       url: 'dashboard/nya/index',
+    },
+    // --- Progress (Main Dashboard) ---
+    {
+      zoneKey: 'dashboard.program.left',
+      key: `${permissionsPrefix}.dashboard.progress`,
+      url: 'dashboard/progress/index',
     },
   ],
 };

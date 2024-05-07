@@ -56,6 +56,13 @@ function getStatusGraphData(students, activityStatusLabels) {
 
   const status = [
     {
+      id: 'notOpened',
+      label: activityStatusLabels?.notOpened,
+      icon: <OpenIcon />,
+
+      studentCount: students.filter((student) => student.status < 0).length,
+    },
+    {
       id: 'opened',
       label: activityStatusLabels?.opened,
       icon: <OpenIcon />,
@@ -74,6 +81,12 @@ function getStatusGraphData(students, activityStatusLabels) {
       icon: <CheckCircleIcon />,
       studentCount: students.filter((student) => student.status >= 2).length,
     },
+    {
+      id: 'evaluated',
+      label: activityStatusLabels?.evaluated,
+      icon: <CheckCircleIcon />,
+      studentCount: students.filter((student) => student.status >= 3).length,
+    },
   ];
 
   return {
@@ -82,7 +95,8 @@ function getStatusGraphData(students, activityStatusLabels) {
   };
 }
 
-export default function useTaskOngoingInstanceParser(instance) {
+export default function useTaskOngoingInstanceParser(instanceData) {
+  const instance = { ...instanceData };
   const students = instance.students.map((student) => ({
     finished: student.finished,
     grades: student.grades,

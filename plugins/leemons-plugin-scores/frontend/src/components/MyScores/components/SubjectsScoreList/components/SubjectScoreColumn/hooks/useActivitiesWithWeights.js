@@ -15,7 +15,7 @@ function getActivitiesWeightsByModules({ weights, activities }) {
 
     let weightValue = weight?.weight;
 
-    if (!weight?.isLocked && applySameValue && activity.instance.requiresScoring) {
+    if (!weight?.isLocked && applySameValue && activity?.instance?.requiresScoring) {
       weightValue = getApplySameValueWeightForUnlocked(weights, modulesCount);
     }
 
@@ -41,7 +41,7 @@ function getActivitiesWeightsByRoles({ weights, activities }) {
     const roleWeight = weightsPerType[role];
     let weightValue = roleWeight?.weight;
 
-    if (!roleWeight?.isLocked && applySameValue && activity.instance.requiresScoring) {
+    if (!roleWeight?.isLocked && applySameValue && activity?.instance?.requiresScoring) {
       weightValue = getApplySameValueWeightForUnlocked(weights, rolesCount);
     }
 
@@ -61,7 +61,7 @@ function getActivitiesWeightsWithSameValue({ activities }) {
 
   return activities.map((activity) => ({
     ...activity,
-    weight: (activity.instance.requiresScoring ? weightPerActivity : 0) ?? 0,
+    weight: (activity?.instance?.requiresScoring ? weightPerActivity : 0) ?? 0,
   }));
 }
 

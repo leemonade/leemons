@@ -1,31 +1,55 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { Box } from '@bubbles-ui/components';
 import { OpenIcon, TimeClockCircleIcon, CheckCircleIcon } from '@bubbles-ui/icons/outline';
-import { ResponsiveBar } from '@nivo/bar';
-import { Box, useResizeObserver } from '@bubbles-ui/components';
+import { ResponsiveRadialBar } from '@nivo/radial-bar';
 import { useStatusGraphStyles } from './StatusGraph.styles';
-import Bar from './Bar';
 
-function Tick({ box: { x, y, textX, textY }, status }) {
-  const maxTextWidth = 80;
+const FONT_FAMILY = 'Albert Sans';
 
+const THEME = {
+  labels: {
+    text: {
+      fontSize: 14,
+      fill: '#1A1A1E',
+      fontFamily: FONT_FAMILY,
+    },
+  },
+  legends: {
+    text: {
+      fontSize: 13,
+      fill: '#70707B',
+      fontFamily: FONT_FAMILY,
+    },
+  },
+};
+
+function CenteredMetric({ studentCount, center }) {
+  const [centerX, centerY] = center;
   return (
-    <g transform={`translate(0, ${y})`}>
-      <g
-        transform={`translate(${0 - maxTextWidth - 30}, ${textY - 12})`}
-        style={{ position: 'relative', color: '#4D5358' }}
-      >
-        {status.icon}
-      </g>
-      <text transform={`translate(${0 - maxTextWidth - 10}, ${textY})`} textAnchor="start">
-        {status?.label}
-      </text>
-    </g>
+    <text
+      x={centerX}
+      y={centerY - 10}
+      textAnchor="middle"
+      dominantBaseline="central"
+      style={{
+        fontSize: 18,
+        fill: '#70707B',
+        fontFamily: FONT_FAMILY,
+      }}
+    >
+      Total: {studentCount}
+    </text>
   );
 }
 
+CenteredMetric.propTypes = {
+  studentCount: PropTypes.number,
+  center: PropTypes.arrayOf(PropTypes.number),
+};
+
 export default function StatusGraph({ studentCount, status }) {
-  const { classes, theme } = useStatusGraphStyles();
+  const { classes } = useStatusGraphStyles();
 
   const data = useMemo(
     () =>
@@ -36,40 +60,67 @@ export default function StatusGraph({ studentCount, status }) {
     [status, studentCount]
   );
 
+  const radialData = useMemo(() => {
+    const temp = data.map((item) => ({ x: item.label, y: item.studentCount }));
+    const newData = temp.map((estado, index) => {
+      if (index === 0 || index === temp.length - 1) {
+        return { x: estado.x, y: estado.y };
+      }
+
+      return { x: estado.x, y: estado.y - temp[index - 1].y };
+    });
+
+    return [{ id: 'status', data: newData.reverse() }];
+  }, [data]);
+
   return (
     <Box className={classes.root}>
-      <ResponsiveBar
-        data={data}
-        keys={['studentPercentage']}
-        indexBy="id"
-        margin={{ top: 50, right: 130, bottom: 50, left: 120 }}
-        padding={0.3}
-        groupMode="grouped"
-        layout="horizontal"
-        enableGridX
-        enableGridY={false}
-        gridXValues={[0, 25, 50, 75, 100]}
-        maxValue={100}
-        barComponent={Bar}
-        axisLeft={{
-          renderTick: (props) => (
-            <Tick box={props} status={data.find((d) => d.id === props.value)} />
-          ),
-        }}
-        axisBottom={{
-          tickValues: [0, 25, 50, 75, 100],
-          format: (value) => `${value}%`,
-        }}
-        theme={{
-          grid: {
-            line: {
-              strokeDasharray: '4',
-              stroke: theme.colors.uiBackground03,
-              strokeOpacity: 0.4,
-            },
+      <ResponsiveRadialBar
+        data={radialData}
+        startAngle={-90}
+        endAngle={90}
+        height={600}
+        theme={THEME}
+        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        innerRadius={0.45}
+        enableTracks={false}
+        enableRadialGrid={false}
+        enableCircularGrid={false}
+        radialAxisStart={null}
+        circularAxisOuter={null}
+        enableLabels={true}
+        animate={false}
+        colors={['#FFEA67', '#B5AFD4', '#69A5CD', '#A4D15E', '#FFAD5B']}
+        layers={[
+          'bars',
+          'labels',
+          'legends',
+          (layer) => <CenteredMetric {...layer} studentCount={studentCount} />,
+        ]}
+        legends={[
+          {
+            anchor: 'bottom',
+            direction: 'row',
+            justify: false,
+            translateX: 0,
+            translateY: -240,
+            itemsSpacing: 6,
+            itemDirection: 'left-to-right',
+            itemWidth: 95,
+            itemHeight: 18,
+            itemTextColor: '#1A1A1E',
+            symbolSize: 18,
+            symbolShape: 'square',
+            effects: [
+              {
+                on: 'hover',
+                style: {
+                  itemTextColor: '#000',
+                },
+              },
+            ],
           },
-        }}
-        layers={['axes', 'bars', 'grid', 'markers']}
+        ]}
       />
     </Box>
   );

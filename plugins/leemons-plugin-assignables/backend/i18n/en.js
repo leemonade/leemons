@@ -511,4 +511,39 @@ module.exports = {
     contactStudent: 'Chat with the student',
     feedback: 'Feedback',
   },
+  progress: {
+    tabTitle: 'Progress',
+    dashboardTitle: {
+      main: {
+        student: 'My progress',
+        teacher: 'Course average grades',
+      },
+      subject: {
+        student: 'Subject grades',
+        teacher: 'Average grades in the subject',
+      },
+      module: {
+        student: 'Module grades',
+        teacher: 'Average grades in the module',
+      },
+    },
+    average: 'Average',
+    pass: 'Approved',
+    approved: 'Acquired knowledge',
+    notApproved: 'Knowledge to acquire',
+    inProgress: 'In progress',
+  },
+  evaluationTable: {
+    title: 'Evaluation',
+    weighting: 'Weighting',
+    seeNonGradable: 'See non-gradable',
+    columns: {
+      activity: 'Activity',
+      module: 'Module',
+      activities: 'Activities',
+      weight: 'Weight',
+      evaluation: 'Evaluation',
+      feedback: 'Qualitative feedback ',
+    },
+  },
 };
