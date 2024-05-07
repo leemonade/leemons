@@ -51,7 +51,6 @@ export const LibraryBubbleMenu = ({
     const propertyValue = Object.values(property)[0];
     handleOnChange({ ...data, [propertyKey]: propertyValue });
   };
-
   const shouldShowCardButton = () => {
     const fileType = data?.asset?.fileType;
     const fileExtension = data?.asset?.fileExtension;
@@ -144,6 +143,14 @@ export const LibraryBubbleMenu = ({
               active={data.display === 'player'}
             />
           )}
+          {data?.asset?.fileType === 'bookmark' && data?.asset?.mediaType === 'video' ? (
+            <ActionButton
+              label={labels.player?.toUpperCase()}
+              style={actionButtonStyles}
+              onClick={() => handleChangeData({ display: 'player' })}
+              active={data.display === 'player'}
+            />
+          ) : null}
         </Box>
       </Box>
 
