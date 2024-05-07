@@ -63,7 +63,9 @@ const ReferenceGroupsClassroomsSetup = ({
           .sort((a, b) => a.label.localeCompare(b.label));
       }
       return groups
-        .filter((group) => selectedCourses.some((course) => course.index === group.metadata.course))
+        .filter((group) =>
+          selectedCourses.some((course) => course.index === group?.metadata?.course)
+        )
         .map((item) => ({ label: item.name, value: `${item.name}::${item.id}` }))
         .sort((a, b) => a.label.localeCompare(b.label));
     }
