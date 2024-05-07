@@ -137,7 +137,7 @@ async function processDeploymentLoop(deploymentID, deployments) {
     {
       zoneKey: 'dashboard.class.tabs',
       key: 'tasks.class.tab.students.tasks',
-      profiles: [studentProfile.id],
+      profiles: [studentProfile?.id].filter(Boolean),
     },
   ];
 
@@ -162,7 +162,9 @@ async function processDeploymentLoop(deploymentID, deployments) {
   });
 
   await updateOrderItemsInZone(itemsToUpdate);
-  await updateProfileItemsInZone(itemProfiles);
+  if (studentProfile?.id) {
+    await updateProfileItemsInZone(itemProfiles);
+  }
 
   if (deployments.length === 0) {
     return true;

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Text } from '@bubbles-ui/components';
 import { ResponsiveBar } from '@nivo/bar';
+import { isNumber } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
 import { Tooltip } from './components/Tooltip';
@@ -128,7 +129,11 @@ function ProgressChart({
       }));
       result.push(...missingData);
     }
-    return result.map((d) => ({ ...d, value: d.value.toFixed(2), diff: max - (d.value ?? 0) }));
+    return result.map((d) => ({
+      ...d,
+      value: isNumber(d?.value) ? d?.value?.toFixed(2) : d?.value,
+      diff: max - (d.value ?? 0),
+    }));
   }, [data, max]);
 
   const maxChars = React.useMemo(() => {

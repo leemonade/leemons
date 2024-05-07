@@ -15,6 +15,9 @@ const AverageMarker = ({ bars = [], xScale, innerHeight, barWidth }) => {
     return total;
   }, []);
   const avgValue = sum(accValues) / accValues.length;
+
+  if (!accValues.length) return null;
+
   const x = xScale(Math.round(avgValue));
   const markWidth = 4;
   return (

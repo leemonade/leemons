@@ -43,10 +43,18 @@ export default function Progress({ program }) {
 
   const progressData = React.useMemo(
     () =>
-      averageGradePerClass?.map((grade) => ({
-        label: grade.subjectName,
-        value: grade.grade,
-      })) ?? [],
+      averageGradePerClass?.map((grade) => {
+        let { subjectName } = grade;
+
+        if (grade.classroomId) {
+          subjectName = `${subjectName} (${grade.classroomId})`;
+        }
+
+        return {
+          label: subjectName,
+          value: grade.grade,
+        };
+      }) ?? [],
     [averageGradePerClass]
   );
 

@@ -10,6 +10,7 @@ const AverageMarker = ({ bars = [], yScale, width, roundValues }) => {
   if (!valueBars.length) return null;
 
   const avgValue = valueBars.reduce((total, bar) => total + bar.data.value, 0) / valueBars.length;
+
   const y = yScale(roundValues ? Math.round(avgValue) : avgValue);
   const leftOffset = 0;
   const rightOffset = 36;
