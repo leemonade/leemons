@@ -6,6 +6,7 @@ import prefixPN from '@assignables/helpers/prefixPN';
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import ProgressChartWidget from './subject/components/ProgressChart';
+import EvaluationProgress from './subject/components/Evaluation';
 
 export default function Progress({ classe }) {
   const { data: welcomeCompleted } = useWelcome();
@@ -26,6 +27,7 @@ export default function Progress({ classe }) {
       <Paper shadow="none">
         <ProgressChartWidget classe={classe} roundValues />
       </Paper>
+      {isStudent && <EvaluationProgress class={classe} />}
     </ContextContainer>
   );
 }

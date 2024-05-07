@@ -533,4 +533,17 @@ module.exports = {
     notApproved: 'Knowledge to acquire',
     inProgress: 'In progress',
   },
+  evaluationTable: {
+    title: 'Evaluation',
+    weighting: 'Weighting',
+    seeNonGradable: 'See non-gradable',
+    columns: {
+      activity: 'Activity',
+      module: 'Module',
+      activities: 'Activities',
+      weight: 'Weight',
+      evaluation: 'Evaluation',
+      feedback: 'Qualitative feedback ',
+    },
+  },
 };

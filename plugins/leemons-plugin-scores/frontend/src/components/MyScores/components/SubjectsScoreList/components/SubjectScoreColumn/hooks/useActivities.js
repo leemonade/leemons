@@ -40,13 +40,16 @@ export default function useActivities({ class: klass, period, showNonEvaluable, 
 
   const activitiesWithGrades = useMemo(
     () =>
-      activities?.map((activity) => ({
-        ...activity,
-        mainGrade:
-          activity.grades.find(
-            (grade) => grade.type === 'main' && grade.subject === klass.subject.id
-          )?.grade ?? null,
-      })),
+      activities?.map((activity) => {
+        const mainGrade = activity.grades?.find(
+          (grade) => grade.type === 'main' && grade.subject === klass.subject.id
+        );
+        return {
+          ...activity,
+          mainGrade: mainGrade?.grade ?? null,
+          feedback: mainGrade?.feedback ?? null,
+        };
+      }),
     [activities, klass.subject.id]
   );
 
