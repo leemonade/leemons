@@ -7,26 +7,7 @@ import { DistributionChart } from '@assignables/components/DistributionChart';
 import useAcademicCalendarPeriods from '@scores/components/__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
 import { useStudentCountPerScale } from '@client-manager/hooks/useStudentCountPerScale';
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-
-const STUDENT_MOCK_DATA = [
-  {
-    label:
-      'Bloque 1. Procesos, métodos y actitudes en matemáticas. Procesos, métodos y actitudes en matemáticas',
-    value: 3,
-  },
-  {
-    label: 'Bloque 2. Números y álgebra',
-    value: 5,
-  },
-  {
-    label: 'Bloque 3. Funciones y gráficos',
-    value: 9,
-  },
-  {
-    label: 'Bloque 4. Estadística y probabilidad',
-    value: 8,
-  },
-];
+import { useAverageGradePerClass } from '@client-manager/hooks/useAverageGradePerClass';
 
 export default function ProgressChartWidget({ classe }) {
   const isStudent = useIsStudent();
@@ -50,6 +31,14 @@ export default function ProgressChartWidget({ classe }) {
       enabled: isTeacher && !!periods,
     });
 
+  const enabledStudentGrades = isStudent && !!periods;
+  const { data: studentGrades } = useAverageGradePerClass({
+    classIds: [classe.id],
+    period,
+    groupBy: 'assignation',
+    enabled: enabledStudentGrades,
+  });
+
   const { data: programEvaluationSystem } = useProgramEvaluationSystems({
     program: classe.program,
     options: { enabled: !!classe.program },
@@ -64,10 +53,26 @@ export default function ProgressChartWidget({ classe }) {
     [studentCountPerScale]
   );
 
+  const studentData = React.useMemo(
+    () =>
+      studentGrades
+        ?.map((grade) => ({
+          label: grade.assignationName,
+          value: grade.grade,
+        }))
+        .filter((grade) => grade.value !== null) ?? [],
+    [studentGrades]
+  );
+
   return (
     <>
       {isStudent && (
-        <ProgressChart data={STUDENT_MOCK_DATA} maxValue={10} passValue={5} height={390} />
+        <ProgressChart
+          data={studentData}
+          maxValue={programEvaluationSystem?.maxScale?.number}
+          passValue={programEvaluationSystem?.minScaleToPromote?.number}
+          height={390}
+        />
       )}
       {isTeacher && studentCountPerScaleLoading && <LoadingOverlay visible />}
       {isTeacher && !studentCountPerScaleLoading && (

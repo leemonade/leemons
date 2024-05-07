@@ -163,6 +163,7 @@ function ProgressChart({
           theme={THEME}
           axisTop={null}
           axisRight={null}
+          animate={false}
           axisBottom={{
             tickSize: 0,
             tickPadding: 10,
