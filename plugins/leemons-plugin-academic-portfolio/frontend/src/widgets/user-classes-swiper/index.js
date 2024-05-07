@@ -14,10 +14,9 @@ import { Swiper } from '@bubbles-ui/extras';
 import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { compact, isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { addErrorAlert } from '@layout/alert';
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import { listSessionClassesRequest } from '../../request';
 import { getClassImage } from '../../helpers/getClassImage';
 import { getClassIcon } from '../../helpers/getClassIcon';
@@ -89,27 +88,6 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function getGroupAbbreviation(classe) {
-  if (!classe.groups || classe.groups.isAlone) {
-    return null;
-  }
-  return classe.groups ? classe.groups.abbreviation : null;
-}
-
-function getCourseNameOrType(classe, t) {
-  if (!classe.groups || classe.groups.isAlone) {
-    return null;
-  }
-  if (isArray(classe.courses)) {
-    return t('multiCourse');
-  }
-  return classe.courses ? getCourseName(classe.courses) : null;
-}
-
-function formatGroupAndCourse(course, group) {
-  return compact([course, group]).join(' - ');
-}
-
 function UserClassesSwiperWidget({ program }) {
   const { classes: styles } = Styles();
   const [store, render] = useStore({
@@ -165,10 +143,7 @@ function UserClassesSwiperWidget({ program }) {
         }}
       >
         {store.classes.map((classe, index) => {
-          const name = compact([classe.subject.name, classe.subject.internalId]).join(' - ');
-          const group = getGroupAbbreviation(classe);
-          const course = getCourseNameOrType(classe, t);
-          const groupAndCourse = formatGroupAndCourse(course, group);
+          const dataLabels = getSubjectGroupCourseNamesFromClassData(classe);
 
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
@@ -212,17 +187,17 @@ function UserClassesSwiperWidget({ program }) {
                   ) : null}
                 </Box>
                 <Stack direction="column" spacing={2}>
-                  <Box style={{ height: '32px' }}>
+                  <Box>
                     <TextClamp lines={2} showTooltip>
                       <Text color="primary" strong>
-                        {name}
+                        {dataLabels?.subject}
                       </Text>
                     </TextClamp>
                   </Box>
-                  <Box style={{ height: '17px' }}>
+                  <Box>
                     <TextClamp lines={1} showTooltip>
                       <Text size="sm" strong>
-                        {groupAndCourse}
+                        {dataLabels?.courseAndGroupParsed}
                       </Text>
                     </TextClamp>
                   </Box>
