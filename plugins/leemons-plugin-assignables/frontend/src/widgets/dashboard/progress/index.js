@@ -1,64 +1,79 @@
 import React from 'react';
-import { ContextContainer, Box } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+import { ContextContainer, LoadingOverlay, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
 import { ProgressChart } from '@assignables/components/ProgressChart';
 import { useIsStudent } from '@academic-portfolio/hooks';
+import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
+import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
+import useAcademicCalendarPeriods from '@scores/components/__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
+import { useAverageGradePerClass } from '@client-manager/hooks/useAverageGradePerClass';
 
-const MOCK_DATA = [
-  {
-    label: 'Filosofía',
-    value: 9,
-  },
-  {
-    label: 'Geografía e Historia',
-    value: 8,
-  },
-  {
-    label: 'Arte y Creación',
-    value: 7,
-  },
-  {
-    label: 'Educación Cívica',
-    value: 6,
-  },
-  {
-    label: 'Lengua y Literatura',
-    value: 6,
-  },
-  {
-    label: 'Inglés',
-    value: 5,
-  },
-  {
-    label: 'Matemáticas',
-    value: 4,
-  },
-  {
-    label: 'Biología',
-    value: 3,
-  },
-  {
-    label: 'Historia del Arte',
-    value: 2,
-  },
-];
-
-export default function Progress() {
+export default function Progress({ program }) {
   const { data: welcomeCompleted } = useWelcome();
   const isStudent = useIsStudent();
   const [t] = useTranslateLoader(prefixPN('progress'));
 
-  if (!welcomeCompleted || !isStudent) {
+  const { data: programEvaluationSystem } = useProgramEvaluationSystems({
+    program: program.id,
+    options: { enabled: !!program },
+  });
+
+  const { data: classesData } = useProgramClasses(program.id, { enabled: !!program });
+
+  const periods = useAcademicCalendarPeriods({ classes: [{ program: program.id }] });
+  const period = React.useMemo(() => {
+    const currentDate = new Date();
+    const currentPeriod = periods.find((p) => {
+      const periodStartDate = new Date(p.startDate);
+      const periodEndDate = new Date(p.endDate);
+      return periodStartDate <= currentDate && currentDate <= periodEndDate;
+    });
+    return currentPeriod?.periods?.[program.id]?.[classesData[0].courses.id];
+  }, [periods, classesData, program]);
+
+  const { data: averageGradePerClass, isLoading: averageGradePerClassLoading } =
+    useAverageGradePerClass({
+      classIds: classesData?.map((c) => c.id),
+      period,
+      enabled: classesData?.length > 0 && !!periods,
+    });
+
+  const studentData = React.useMemo(
+    () =>
+      averageGradePerClass?.map((grade) => ({
+        label: grade.subjectName,
+        value: grade.grade,
+      })) ?? [],
+    [averageGradePerClass]
+  );
+
+  if (!welcomeCompleted || !isStudent || studentData.length === 0) {
     return null;
   }
 
   return (
     <ContextContainer title={t('chartTitle')}>
       <Box pt={10}>
-        <ProgressChart data={MOCK_DATA} maxValue={10} passValue={5} height={390} />
+        {averageGradePerClassLoading ? (
+          <Box sx={{ height: 390 }}>
+            <LoadingOverlay visible />
+          </Box>
+        ) : (
+          <ProgressChart
+            data={studentData}
+            maxValue={programEvaluationSystem?.maxScale?.number}
+            passValue={programEvaluationSystem?.minScaleToPromote?.number}
+            height={390}
+          />
+        )}
       </Box>
     </ContextContainer>
   );
 }
+
+Progress.propTypes = {
+  program: PropTypes.string.isRequired,
+};

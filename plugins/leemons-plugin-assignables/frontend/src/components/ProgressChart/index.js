@@ -183,7 +183,7 @@ function ProgressChart({
         />
       </Box>
 
-      <Stack spacing={6} alignItems="center">
+      <Stack spacing={6} alignItems="center" justifyContent="center">
         <Stack spacing={2} alignItems="center">
           <Box sx={{ backgroundColor: COLORS.APPROVED, ...LEGEND_MARK_SIZE }} />
           <Text size="xs" color="primary">

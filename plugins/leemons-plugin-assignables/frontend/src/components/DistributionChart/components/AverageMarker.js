@@ -7,9 +7,8 @@ const AverageMarker = ({ bars = [], xScale, innerHeight, barWidth }) => {
   const valueBars = bars.filter(
     (bar) => bar.data.id !== 'diff' && !String(bar.data.indexValue).startsWith('skip:')
   );
-
   const accValues = valueBars.reduce((total, bar) => {
-    total.push(...Array.from({ length: bar.data.value }, () => bar.data.indexValue));
+    total.push(...Array.from({ length: bar.data.value }, () => Number(bar.data.indexValue)));
     return total;
   }, []);
   const avgValue = sum(accValues) / accValues.length;

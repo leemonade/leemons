@@ -19,7 +19,7 @@ function DistributionChart({
   legendLeft,
   legendBottom,
   hideMarkers,
-  height = 5000,
+  height = 500,
   ariaLabel = 'Learning Analytics',
 }) {
   const [t] = useTranslateLoader(prefixPN('progress'));
@@ -32,7 +32,7 @@ function DistributionChart({
   );
 
   const dataProcessed = React.useMemo(() => {
-    const result = [...data];
+    const result = data.sort((a, b) => Number(a.label) - Number(b.label));
     if (result.length < 4) {
       // Fill the missing data with 0s
       const missingData = Array.from({ length: 4 - result.length }, (v, k) => ({
@@ -120,7 +120,7 @@ function DistributionChart({
           ariaLabel={ariaLabel}
         />
       </Box>
-      <Stack spacing={6} alignItems="center">
+      <Stack spacing={6} alignItems="center" justifyContent="center">
         <Stack spacing={2} alignItems="center">
           <Box sx={{ backgroundColor: COLORS.APPROVED, ...LEGEND_MARK_SIZE }} />
           <Text size="xs" color="primary">

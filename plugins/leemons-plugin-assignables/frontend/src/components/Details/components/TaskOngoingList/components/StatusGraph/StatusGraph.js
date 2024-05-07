@@ -17,7 +17,7 @@ const THEME = {
   },
   legends: {
     text: {
-      fontSize: 12,
+      fontSize: 13,
       fill: '#70707B',
       fontFamily: FONT_FAMILY,
     },
@@ -103,12 +103,12 @@ export default function StatusGraph({ studentCount, status }) {
             direction: 'row',
             justify: false,
             translateX: 0,
-            translateY: -220,
+            translateY: -240,
             itemsSpacing: 6,
             itemDirection: 'left-to-right',
             itemWidth: 95,
             itemHeight: 18,
-            itemTextColor: '#70707B',
+            itemTextColor: '#1A1A1E',
             symbolSize: 18,
             symbolShape: 'square',
             effects: [
