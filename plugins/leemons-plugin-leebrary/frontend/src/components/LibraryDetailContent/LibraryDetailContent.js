@@ -9,7 +9,6 @@ import {
   UserDisplayItem,
   HtmlText,
   ContextContainer,
-  Stack,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
