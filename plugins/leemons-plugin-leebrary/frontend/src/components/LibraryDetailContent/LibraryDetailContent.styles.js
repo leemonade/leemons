@@ -6,7 +6,6 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
   lowerContent: {
     flex: 1,
-    // backgroundColor: theme.colors.ui03,
     padding: pxToRem(16),
   },
   tagsContainer: {
@@ -19,15 +18,15 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
   tab: {
     '& button[aria-selected="true"]': {
-      borderBottomColor: '#B4E600 !important',
+      borderBottomColor: `${theme.other.button.background.color.primary.default} !important`,
     },
     '& button:hover': {
-      backgroundColor: '#F1FFBD !important',
-      borderBottomColor: '#F1FFBD   !important',
+      backgroundColor: `${theme.other.button.background.color.ghost.hover} !important`,
+      borderBottomColor: `${theme.other.button.background.color.ghost.hover} !important`,
     },
     '& button[aria-selected="true"]:hover': {
-      backgroundColor: '#F1FFBD !important',
-      borderBottomColor: '#B4E600 !important',
+      backgroundColor: `${theme.other.button.background.color.ghost.hover} !important`,
+      borderBottomColor: `${theme.other.button.background.color.primary.default} !important`,
     },
   },
   tabPanel: {
