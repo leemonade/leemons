@@ -9,7 +9,7 @@ import { useStudentCountPerScale } from '@client-manager/hooks/useStudentCountPe
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
 import { useAverageGradePerClass } from '@client-manager/hooks/useAverageGradePerClass';
 
-export default function ProgressChartWidget({ classe }) {
+export default function ProgressChartWidget({ classe, roundValues }) {
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
 
@@ -72,6 +72,7 @@ export default function ProgressChartWidget({ classe }) {
           maxValue={programEvaluationSystem?.maxScale?.number}
           passValue={programEvaluationSystem?.minScaleToPromote?.number}
           height={390}
+          roundValues={roundValues}
         />
       )}
       {isTeacher && studentCountPerScaleLoading && <LoadingOverlay visible />}
@@ -88,4 +89,5 @@ export default function ProgressChartWidget({ classe }) {
 
 ProgressChartWidget.propTypes = {
   classe: PropTypes.object.isRequired,
+  roundValues: PropTypes.bool,
 };

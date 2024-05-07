@@ -512,7 +512,20 @@ module.exports = {
   },
   progress: {
     tabTitle: 'Progreso',
-    chartTitle: 'Analíticas de aprendizaje',
+    dashboardTitle: {
+      main: {
+        student: 'Mi progreso',
+        teacher: 'Notas medias del curso',
+      },
+      subject: {
+        student: 'Notas de la asignatura',
+        teacher: 'Notas medias en la asignatura',
+      },
+      module: {
+        student: 'Notas del módulo',
+        teacher: 'Notas medias del módulo',
+      },
+    },
     average: 'Media',
     pass: 'Aprobado',
     approved: 'Conocimiento adquirido',

@@ -41,7 +41,7 @@ export default function Progress({ program }) {
       enabled: classesData?.length > 0 && !!periods,
     });
 
-  const studentData = React.useMemo(
+  const progressData = React.useMemo(
     () =>
       averageGradePerClass?.map((grade) => ({
         label: grade.subjectName,
@@ -50,12 +50,14 @@ export default function Progress({ program }) {
     [averageGradePerClass]
   );
 
-  if (!welcomeCompleted || !isStudent || studentData.length === 0) {
+  if (!welcomeCompleted || progressData.length === 0) {
     return null;
   }
 
+  const titleKey = `dashboardTitle.main.${isStudent ? 'student' : 'teacher'}`;
+
   return (
-    <ContextContainer title={t('chartTitle')}>
+    <ContextContainer title={t(titleKey)}>
       <Box pt={10}>
         {averageGradePerClassLoading ? (
           <Box sx={{ height: 390 }}>
@@ -63,7 +65,7 @@ export default function Progress({ program }) {
           </Box>
         ) : (
           <ProgressChart
-            data={studentData}
+            data={progressData}
             maxValue={programEvaluationSystem?.maxScale?.number}
             passValue={programEvaluationSystem?.minScaleToPromote?.number}
             height={390}

@@ -97,6 +97,7 @@ function ProgressChart({
   tooltip,
   hideTooltip,
   hideLabels,
+  roundValues = false,
   height = 500,
   ariaLabel = 'Learning Analytics',
 }) {
@@ -127,7 +128,7 @@ function ProgressChart({
       }));
       result.push(...missingData);
     }
-    return result.map((d) => ({ ...d, diff: max - (d.value ?? 0) }));
+    return result.map((d) => ({ ...d, value: d.value.toFixed(2), diff: max - (d.value ?? 0) }));
   }, [data, max]);
 
   const maxChars = React.useMemo(() => {
@@ -142,8 +143,11 @@ function ProgressChart({
 
   const markers = React.useMemo(() => {
     if (hideMarkers) return [];
-    return [AverageMarker, (props) => <PassMarker {...props} passValue={passValue} />];
-  }, [hideMarkers, passValue]);
+    return [
+      (props) => <AverageMarker {...props} roundValues={roundValues} />,
+      (props) => <PassMarker {...props} passValue={passValue} />,
+    ];
+  }, [hideMarkers, passValue, barColorFromLabel, roundValues]);
 
   return (
     <Stack spacing={4} direction="column" sx={{ width: '100%' }}>
@@ -235,6 +239,7 @@ ProgressChart.propTypes = {
   tooltip: PropTypes.any,
   hideTooltip: PropTypes.bool,
   hideLabels: PropTypes.bool,
+  roundValues: PropTypes.bool,
 };
 
 export { ProgressChart };

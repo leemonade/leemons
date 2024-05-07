@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { EdgeTriangles } from './EdgeTriangles';
 
-const AverageMarker = ({ bars = [], yScale, width }) => {
+const AverageMarker = ({ bars = [], yScale, width, roundValues }) => {
   const valueBars = bars.filter(
     (bar) => bar.data.id !== 'diff' && !bar.data.indexValue.startsWith('skip:')
   );
@@ -10,7 +10,7 @@ const AverageMarker = ({ bars = [], yScale, width }) => {
   if (!valueBars.length) return null;
 
   const avgValue = valueBars.reduce((total, bar) => total + bar.data.value, 0) / valueBars.length;
-  const y = yScale(Math.round(avgValue));
+  const y = yScale(roundValues ? Math.round(avgValue) : avgValue);
   const leftOffset = 0;
   const rightOffset = 36;
   const markHeight = 4;
@@ -33,6 +33,7 @@ AverageMarker.propTypes = {
   bars: PropTypes.arrayOf(PropTypes.object),
   yScale: PropTypes.func,
   width: PropTypes.number,
+  roundValues: PropTypes.bool,
 };
 
 export { AverageMarker };

@@ -513,7 +513,20 @@ module.exports = {
   },
   progress: {
     tabTitle: 'Progress',
-    chartTitle: 'Learning Analytics',
+    dashboardTitle: {
+      main: {
+        student: 'My progress',
+        teacher: 'Course average grades',
+      },
+      subject: {
+        student: 'Subject grades',
+        teacher: 'Average grades in the subject',
+      },
+      module: {
+        student: 'Module grades',
+        teacher: 'Average grades in the module',
+      },
+    },
     average: 'Average',
     pass: 'Approved',
     approved: 'Acquired knowledge',

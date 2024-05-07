@@ -16,13 +16,15 @@ export default function Progress({ classe }) {
     return null;
   }
 
+  const titleKey = `dashboardTitle.subject.${isStudent ? 'student' : 'teacher'}`;
+
   return (
     <ContextContainer>
       <Stack alignItems="center" justifyContent="space-between">
-        <Title order={2}>{t('tabTitle')}</Title>
+        <Title order={2}>{t(titleKey)}</Title>
       </Stack>
       <Paper shadow="none">
-        <ProgressChartWidget classe={classe} />
+        <ProgressChartWidget classe={classe} roundValues />
       </Paper>
     </ContextContainer>
   );
