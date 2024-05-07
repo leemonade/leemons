@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Stack, Text } from '@bubbles-ui/components';
+import { Box, Stack, Text, useDebouncedValue } from '@bubbles-ui/components';
 import { ResponsiveBar } from '@nivo/bar';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
@@ -24,7 +24,9 @@ function DistributionChart({
 }) {
   const [t] = useTranslateLoader(prefixPN('progress'));
   const chartRef = React.useRef();
+
   const [barWidth, setBarWidth] = React.useState(0);
+  const [debouncedBarWidth] = useDebouncedValue(barWidth, 25);
 
   const max = React.useMemo(
     () => maxValue || Math.max(...data.map((d) => d.value)),
@@ -48,10 +50,10 @@ function DistributionChart({
   const markers = React.useMemo(() => {
     if (hideMarkers) return [];
     return [
-      (props) => <AverageMarker {...props} barWidth={barWidth} />,
-      (props) => <PassMarker {...props} barWidth={barWidth} passValue={passValue} />,
+      (props) => <AverageMarker {...props} barWidth={debouncedBarWidth} />,
+      (props) => <PassMarker {...props} barWidth={debouncedBarWidth} passValue={passValue} />,
     ];
-  }, [hideMarkers, passValue, barWidth]);
+  }, [hideMarkers, passValue, debouncedBarWidth]);
 
   const tickValues = React.useMemo(() => Array.from({ length: max + 1 }, (_, i) => i), [max]);
 
@@ -97,18 +99,8 @@ function DistributionChart({
             truncateTickAt: 0,
             tickValues,
           }}
-          markers={[
-            {
-              axis: 'x',
-              value: passValue,
-              lineStyle: {
-                stroke: '#E0914B',
-                transform: `translateX(${barWidth / 2}px)`,
-              },
-            },
-          ]}
           barComponent={(barProps) => {
-            if (barWidth !== barProps.bar.width) {
+            if (debouncedBarWidth !== barProps.bar.width) {
               setBarWidth(barProps.bar.width);
             }
 
