@@ -5,7 +5,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate, unflatten } from '@common';
 
 import dayjs from 'dayjs';
-import { get, mapValues, pick } from 'lodash';
+import { get, mapValues, pick, noop } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
@@ -50,7 +50,7 @@ const useActivityItemStyles = createStyles((theme, { isModuleActivity }) => ({
   },
 }));
 
-function ActivityItem({ instance, onModuleClick, modulesOpened }) {
+export function ActivityItem({ instance, onModuleClick = noop, modulesOpened = [], flattened }) {
   const assignable = instance?.assignable;
   const role = assignable?.role;
   const activityColor = assignable.asset.color;
@@ -67,7 +67,7 @@ function ActivityItem({ instance, onModuleClick, modulesOpened }) {
 
   const { classes, theme } = useActivityItemStyles({
     activityColor,
-    isModuleActivity: instance?.metadata?.module?.type === 'activity',
+    isModuleActivity: !flattened && instance?.metadata?.module?.type === 'activity',
   });
 
   return (

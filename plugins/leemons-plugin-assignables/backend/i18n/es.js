@@ -532,4 +532,17 @@ module.exports = {
     notApproved: 'Conocimiento por adquirir',
     inProgress: 'En progreso',
   },
+  evaluationTable: {
+    title: 'Evaluación',
+    weighting: 'Ponderación',
+    seeNonGradable: 'Ver no calificables',
+    columns: {
+      activity: 'Actividad',
+      module: 'Módulo',
+      activities: 'Actividades',
+      weight: 'Ponderación',
+      evaluation: 'Evaluación',
+      feedback: 'Feedback cualitativo',
+    },
+  },
 };
