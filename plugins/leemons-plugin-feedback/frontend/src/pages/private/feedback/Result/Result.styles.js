@@ -12,9 +12,7 @@ const ResultStyles = createStyles((theme) => ({
     color: theme.colors.text05,
   },
   generalInformation: {
-    paddingBlock: 24,
-    paddingInline: 20,
-    borderBottom: '1px solid #DDE1E6',
+    paddingBlock: 8,
   },
   infoBox: {
     backgroundColor: theme.other.global.background.color.surface.muted,
@@ -35,8 +33,8 @@ const ResultStyles = createStyles((theme) => ({
   infoTextLable: {
     ...theme.other.global.content.typo.heading.xsm,
   },
-  questionBox: {
-    borderBottom: '1px solid #DDE1E6',
+  questionContainer: {
+    paddingInline: 20,
   },
   badge: {
     '& > div': {

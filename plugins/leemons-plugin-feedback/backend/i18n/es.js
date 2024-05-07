@@ -143,7 +143,7 @@ module.exports = {
   feedbackResult: {
     feedback: 'Encuesta',
     evaluation: 'Evaluación',
-    generalInformation: 'Información general',
+    generalInformation: 'Resumen',
     question: 'Pregunta {i}',
     started: 'Comenzadas',
     sent: 'Enviadas',
@@ -159,7 +159,7 @@ module.exports = {
     multiResponse: 'Multi-respuesta',
     openResponse: 'Respuesta abierta',
     responses: 'Respuestas ({n})',
-    responsesTitleLabel: 'Respuestas',
+    responsesTitleLabel: 'Informe de respuestas',
     average: 'Media:',
     errorCode6001: 'No tienes permisos para ver los resultados de la encuesta',
     timeMarker: 'Marca temporal',

@@ -143,7 +143,7 @@ module.exports = {
   feedbackResult: {
     feedback: 'Feedback',
     evaluation: 'Evaluation',
-    generalInformation: 'General information',
+    generalInformation: 'Summary',
     question: 'Question {i}',
     started: 'Started',
     sent: 'Sent',
@@ -159,7 +159,7 @@ module.exports = {
     multiResponse: 'Multi-response',
     openResponse: 'Open response',
     responses: 'Responses ({n})',
-    responsesTitleLabel: 'Responses',
+    responsesTitleLabel: 'Responses Report',
     average: 'Average:',
     errorCode6001: 'You don´t have permissions to see the feedback results',
     timeMarker: 'Time mark',
