@@ -154,6 +154,9 @@ module.exports = {
     },
     resources: 'Resources',
     students: 'Students',
+    progress: 'Progress',
+    studentProgressTitle: 'Module grades',
+    teacherProgressTitle: 'Module average grades',
   },
   modulesTab: {
     tabName: 'Modules',
