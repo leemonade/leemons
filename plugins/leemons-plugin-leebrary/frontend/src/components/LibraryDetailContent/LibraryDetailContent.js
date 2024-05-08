@@ -60,7 +60,7 @@ const LibraryDetailContent = ({
   const [subjectsIds, setSubjectsIds] = useState([]);
   const [canAccessData, setCanAccessData] = useState([]);
   const isAssetWithInstuctions =
-    asset.providerData.instructionsForTeachers || asset.providerData.instructionsForStudents;
+    asset?.providerData?.instructionsForTeachers || asset?.providerData?.instructionsForStudents;
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);

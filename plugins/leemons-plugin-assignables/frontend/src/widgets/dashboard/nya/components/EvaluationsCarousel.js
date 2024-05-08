@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Loader } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
-import EmptyState from './EmptyState';
+import { EmptyState } from '@assignables/widgets/dashboard/nya';
 import { useNyaStyles } from '../hooks';
 import EvaluationCardStudent from './EvaluationCardStudent';
 

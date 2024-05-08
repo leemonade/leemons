@@ -14,7 +14,7 @@ export default function useEvaluatedActivities({ program, class: klass }) {
         programs: program && JSON.stringify(compact([program])),
         classes: klass && JSON.stringify(compact([klass])),
       },
-      { enabled, select: (results) => results.items }
+      { enabled: !!enabled, select: (results) => results.items }
     );
 
   const { data: activities, isLoading: activitiesAreLoading } =
