@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
-import { htmlToText, useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { prefixPN as tasksPrefixPN } from '@tasks/helpers';
+import { htmlToText, useSearchParams, useStore } from '@common';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import {
   Badge,
   Box,
@@ -18,7 +19,7 @@ import {
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
+import { ChevRightIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import { addErrorAlert } from '@layout/alert';
@@ -27,6 +28,7 @@ import ActivityHeader from '@assignables/components/ActivityHeader/index';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 
@@ -44,14 +46,21 @@ function padTo2Digits(num) {
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
+  const [buttonsT] = useTranslateLoader(tasksPrefixPN('task_realization.buttons'));
+
   const [store, render] = useStore({
     loading: true,
   });
+
+  const searchParams = useSearchParams();
+  const fromExecution = useRef(searchParams.has('fromExecution')).current;
 
   const isTeacher = useIsTeacher();
   const history = useHistory();
   const params = useParams();
   const scrollRef = useRef();
+
+  const nextActivityUrl = useNextActivityUrl(store.assignation);
 
   const { data: dynamicInstance } = useInstances({ id: params.id });
   const { classes } = ResultStyles({}, { name: 'Result' });
@@ -172,7 +181,7 @@ export default function Result() {
       <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: 'auto' }}>
         <TotalLayoutStepContainer
           Footer={
-            isTeacher && (
+            isTeacher ? (
               <TotalLayoutFooterContainer
                 fixed
                 scrollRef={scrollRef}
@@ -196,50 +205,72 @@ export default function Result() {
                   </>
                 }
               />
+            ) : (
+              fromExecution &&
+              !!store.instance?.metadata?.module && (
+                <TotalLayoutFooterContainer
+                  scrollRef={scrollRef}
+                  fixed
+                  rightZone={
+                    <Link
+                      to={
+                        nextActivityUrl ??
+                        `/private/learning-paths/modules/dashboard/${store.instance?.metadata?.module?.id}`
+                      }
+                    >
+                      <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
+                        {nextActivityUrl ? buttonsT('nextActivity') : buttonsT('goToModule')}
+                      </Button>
+                    </Link>
+                  }
+                />
+              )
             )
           }
         >
-          <ContextContainer title={t('responsesTitleLabel')} sx={{ gap: '24px' }}>
-            {/* General Information */}
-            <ContextContainer spacing={0} className={classes.questionContainer}>
-              <TextClamp>
-                <Title sx={(theme) => ({ ...theme.other.global.content.typo.heading.md })}>
-                  {t('generalInformation')}
-                </Title>
-              </TextClamp>
-              <Stack fullWidth fullHeight spacing={2} className={classes.generalInformation}>
-                <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                  <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
-                  <Text role="productive" color="primary" size="xs">
-                    {t('started')}
-                  </Text>
-                </Box>
-                <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                  <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
-                  <Text role="productive" color="primary" size="xs">
-                    {t('sent')}
-                  </Text>
-                </Box>
-                <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                  <Text className={classes.infoText}>{`${
-                    store.result.generalInfo.completionPercentage || 0
-                  }%`}</Text>
-                  <Text role="productive" color="primary" size="xs">
-                    {t('completed')}
-                  </Text>
-                </Box>
-                <Box className={classes.infoBox}>
-                  <Text className={classes.infoText}>{getAvgTime()}</Text>
-                  <Text role="productive" color="primary" size="xs">
-                    {t('timeToComplete')}
-                  </Text>
-                </Box>
-              </Stack>
-            </ContextContainer>
+          <Box>
+            <ContextContainer title={t('responsesTitleLabel')} spacing={7}>
+              {/* General Information */}
+              <ContextContainer spacing={0} className={classes.questionContainer}>
+                <TextClamp>
+                  <Title sx={(theme) => ({ ...theme.other.global.content.typo.heading.md })}>
+                    {t('generalInformation')}
+                  </Title>
+                </TextClamp>
+                <Stack fullWidth spacing={2} className={classes.generalInformation}>
+                  <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                    <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('started')}
+                    </Text>
+                  </Box>
+                  <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                    <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('sent')}
+                    </Text>
+                  </Box>
+                  <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                    <Text className={classes.infoText}>{`${
+                      store.result.generalInfo.completionPercentage || 0
+                    }%`}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('completed')}
+                    </Text>
+                  </Box>
+                  <Box className={classes.infoBox}>
+                    <Text className={classes.infoText}>{getAvgTime()}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('timeToComplete')}
+                    </Text>
+                  </Box>
+                </Stack>
+              </ContextContainer>
 
-            {/* Questions */}
-            {renderQuestions()}
-          </ContextContainer>
+              {/* Questions */}
+              {renderQuestions()}
+            </ContextContainer>
+          </Box>
         </TotalLayoutStepContainer>
       </Stack>
     </TotalLayoutContainer>

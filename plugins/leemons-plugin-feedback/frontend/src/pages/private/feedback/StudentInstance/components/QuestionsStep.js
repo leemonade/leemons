@@ -112,8 +112,12 @@ function QuestionsStep({
 
   const goToResults = (e, openInNewTab = false) => {
     if (openInNewTab)
-      window.open(`/private/feedback/result/${instanceId}`, 'FeedbackResult', 'noopener');
-    if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
+      window.open(
+        `/private/feedback/result/${instanceId}?fromExecution`,
+        'FeedbackResult',
+        'noopener'
+      );
+    if (!viewMode) history.push(`/private/feedback/result/${instanceId}?fromExecution`);
   };
 
   async function onNext(value, goTo = 'goToResults') {
@@ -128,20 +132,7 @@ function QuestionsStep({
     } else {
       if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
 
-      if (goTo === 'goToResults') {
-        goToResults();
-        return;
-      }
-
-      if (goTo === 'goToModuleDashboard') {
-        gotToModuleDashboard();
-        return;
-      }
-
-      if (goTo === 'goToNextActivity') {
-        history.push(nextActivityUrl);
-        return;
-      }
+      goToResults();
     }
 
     render();
@@ -233,14 +224,12 @@ function QuestionsStep({
                 {nextText}
               </Button>
             ) : (
-              <DropdownButton
-                chevronUp
-                width="auto"
-                data={footerFinalActionsAndLabels}
+              <Button
+                onClick={() => onNext(store.currentValue, 'goToResults')}
                 disabled={disableNext}
               >
                 {t('finish')}
-              </DropdownButton>
+              </Button>
             )
           }
         />
