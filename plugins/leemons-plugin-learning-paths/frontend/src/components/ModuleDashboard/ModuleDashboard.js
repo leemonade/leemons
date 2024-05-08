@@ -13,7 +13,7 @@ import {
 } from '@bubbles-ui/components';
 import { get, head, map, sortBy, tail } from 'lodash';
 
-import { useIsStudent } from '@academic-portfolio/hooks';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { unflatten } from '@common';
@@ -24,6 +24,7 @@ import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPR
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import { DashboardCard } from './components/DashboardCard';
 import { useModuleDataForPreview } from './helpers/previewHooks';
 
@@ -254,9 +255,65 @@ ModuleDashboardBody.propTypes = {
   subjectsData: PropTypes.arrayOf(PropTypes.object),
 };
 
+function useStudentsGradesGraphData({ moduleAssignation, activitiesById }) {
+  const isStudent = useIsStudent();
+  return useMemo(() => {
+    if (!isStudent) {
+      return null;
+    }
+
+    return moduleAssignation.metadata.moduleStatus
+      .map((status) => ({
+        label: activitiesById?.[status.instance]?.assignable?.asset?.name,
+        value: status.gradeAvg,
+        gradable: activitiesById?.[status.instance]?.gradable,
+      }))
+      .filter((status) => status.gradable);
+  }, [moduleAssignation, activitiesById, isStudent]);
+}
+
+function useTeachersGradesGraphData({ module, activitiesById, programEvaluationSystem }) {
+  const isTeacher = useIsTeacher();
+  const minScale = programEvaluationSystem?.minScale?.number ?? 0;
+
+  return useMemo(() => {
+    if (!isTeacher) {
+      return null;
+    }
+
+    return module?.metadata?.module?.activities
+      .map((activity) => {
+        const instance = activitiesById?.[activity.id];
+        const { students = [] } = instance ?? {};
+
+        const averageGrade =
+          students.reduce((acc, student) => {
+            const mainGrade = student.grades.find((grade) => grade.type === 'main');
+
+            return acc + (mainGrade?.grade ?? minScale);
+          }, 0) / students.length;
+
+        return {
+          label: instance?.assignable?.asset?.name,
+          value: averageGrade,
+          gradable: instance?.gradable,
+        };
+      })
+      .filter((activity) => activity.gradable);
+  }, [module, activitiesById, minScale, isTeacher]);
+}
+
 export function ModuleDashboard({ id, preview }) {
   const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
     preview ? useModuleDataForPreview(id) : useModuleData(id);
+
+  const programEvaluationSystem = useProgramEvaluationSystem(module);
+  const studentsGradesGraphData = useStudentsGradesGraphData({ moduleAssignation, activitiesById });
+  const teachersGradesGraphData = useTeachersGradesGraphData({
+    module,
+    activitiesById,
+    programEvaluationSystem,
+  });
 
   const isStudent = useIsStudent();
   const { mutateAsync } = useStudentAssignationMutation();
