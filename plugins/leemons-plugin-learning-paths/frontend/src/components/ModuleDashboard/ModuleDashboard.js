@@ -358,7 +358,7 @@ export function ModuleDashboard({ id, preview }) {
             <TabPanel label={localizations?.resources}>
               <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
                 <Box>
-                  <Paper sx={{ padding: '36px', width: '100%' }}>
+                  <Paper sx={{ padding: '36px', width: '100%' }} shadow="none">
                     <AssetEmbedList assets={module?.assignable?.resources} width={720} />
                   </Paper>
                 </Box>
@@ -367,7 +367,7 @@ export function ModuleDashboard({ id, preview }) {
           )}
           <TabPanel label={localizations?.progress ?? 'Progreso'}>
             <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
-              <Paper sx={{ width: '100%' }}>
+              <Paper sx={{ width: '100%' }} shadow="none">
                 <ContextContainer
                   title={
                     isStudent
