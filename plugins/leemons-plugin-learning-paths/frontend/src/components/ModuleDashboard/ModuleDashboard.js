@@ -333,8 +333,6 @@ export function ModuleDashboard({ id, preview }) {
     return <Loader />;
   }
 
-  console.log('localizations:', localizations);
-
   return (
     <TotalLayoutContainer
       Header={<ActivityHeader instance={module} showStartDate showDeadline showDateTime />}
