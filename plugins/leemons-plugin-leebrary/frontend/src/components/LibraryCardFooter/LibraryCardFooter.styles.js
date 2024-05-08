@@ -1,7 +1,6 @@
-/* eslint-disable import/prefer-default-export */
 import { createStyles, pxToRem, getFontExpressive } from '@bubbles-ui/components';
 
-export const LibraryCardFooterStyles = createStyles((theme, { color }) => ({
+const LibraryCardFooterStyles = createStyles((theme) => ({
   root: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -22,7 +21,7 @@ export const LibraryCardFooterStyles = createStyles((theme, { color }) => ({
     ...getFontExpressive(theme.fontSizes['2']),
     display: 'inline-flex',
     alignItems: 'center',
-    color,
+    color: theme.other.core.color.neutral['600'],
   },
   FileIconLabel: {
     ...theme.other.cardLibrary.content.typo.sm,
@@ -35,10 +34,12 @@ export const LibraryCardFooterStyles = createStyles((theme, { color }) => ({
   },
   fileLabel: {
     paddingLeft: pxToRem(8),
-    color: '#878D96',
+    color: theme.other.core.color.neutral['500'],
     fontSize: pxToRem(12),
   },
   avatars: {
     marginRight: pxToRem(12),
   },
 }));
+
+export { LibraryCardFooterStyles };
