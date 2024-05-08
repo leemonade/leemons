@@ -4,7 +4,7 @@ import { Box, Stack, Text, useDebouncedValue } from '@bubbles-ui/components';
 import { ResponsiveBar } from '@nivo/bar';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
-import { toUpper } from 'lodash';
+import { isNil, toUpper } from 'lodash';
 import { COLORS, THEME, LEGEND_MARK_SIZE, getBarColor, getLabelColor } from '../ProgressChart';
 import { Bar } from './components/Bar';
 import { PassMarker } from './components/PassMarker';
@@ -13,6 +13,7 @@ import { AverageMarker } from './components/AverageMarker';
 function DistributionChart({
   data,
   maxValue,
+  minimumScale,
   passValue,
   tooltip,
   hideTooltip,
@@ -44,8 +45,15 @@ function DistributionChart({
       }));
       result.push(...missingData);
     }
-    return result.map((d) => ({ ...d, diff: max - (d.value ?? 0) }));
-  }, [data, max]);
+    return result.map((d) => {
+      const value = Number(d.label) > minimumScale ? d.value : 0;
+      return {
+        ...d,
+        value,
+        diff: max - (value ?? 0),
+      };
+    });
+  }, [data, max, minimumScale]);
 
   const markers = React.useMemo(() => {
     if (hideMarkers) return [];
@@ -155,6 +163,7 @@ function DistributionChart({
 DistributionChart.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
   maxValue: PropTypes.number,
+  minimumScale: PropTypes.number,
   passValue: PropTypes.number,
   height: PropTypes.number,
   ariaLabel: PropTypes.string,
