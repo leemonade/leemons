@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-expressions */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -7,8 +6,8 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
   ContextContainer,
-  Stack,
 } from '@bubbles-ui/components';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { LeebraryImage } from '@leebrary/components';
 
 const featuredImageStyle = {
@@ -29,7 +28,7 @@ const IntroductionStep = ({ feedback, t, onNext, scrollRef }) => {
           fixed
           scrollRef={scrollRef}
           rightZone={
-            <Button variant="link" onClick={handleOnNext}>
+            <Button variant="outline" rightIcon={<ChevRightIcon />} onClick={handleOnNext}>
               {t('next')}
             </Button>
           }

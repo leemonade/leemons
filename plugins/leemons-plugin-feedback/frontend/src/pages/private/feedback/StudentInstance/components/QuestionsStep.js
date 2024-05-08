@@ -9,6 +9,7 @@ import {
   Modal,
   Paragraph,
   Stack,
+  DropdownButton,
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
@@ -115,7 +116,7 @@ function QuestionsStep({
     if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
   };
 
-  async function onNext(value) {
+  async function onNext(value, goTo = 'goToResults') {
     store.values[question.id] = value;
     if (!viewMode) setQuestionResponseRequest(question.id, instanceId, value);
 
@@ -126,7 +127,21 @@ function QuestionsStep({
       }
     } else {
       if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
-      store.showFinishModal = true;
+
+      if (goTo === 'goToResults') {
+        goToResults();
+        return;
+      }
+
+      if (goTo === 'goToModuleDashboard') {
+        gotToModuleDashboard();
+        return;
+      }
+
+      if (goTo === 'goToNextActivity') {
+        history.push(nextActivityUrl);
+        return;
+      }
     }
 
     render();
@@ -140,8 +155,6 @@ function QuestionsStep({
     }
     render();
   }
-  console.log('store.values', store.values);
-  console.log('store.currentValue', store.currentValue);
 
   const questionName = useMemo(() => {
     const plainText = question?.question
@@ -171,7 +184,31 @@ function QuestionsStep({
   }, [question, hasValue, isLast, t]);
 
   const disableNext = useMemo(() => question?.required && !hasValue, [question, hasValue]);
+  const showModuleFinalDropdown = useMemo(() => isModule && isLast, [isModule, isLast]);
 
+  const footerFinalActionsAndLabels = useMemo(() => {
+    const result = [
+      {
+        label: t('viewResults'),
+        onClick: () => onNext(store.currentValue, 'goToResults'),
+      },
+    ];
+
+    // Modulo no tiene siguiente actividad
+    if (modalMode === 1) {
+      result.push({
+        label: t('moduleDashboard'),
+        onClick: () => onNext(store.currentValue, 'goToModuleDashboard'),
+      });
+    } else if (modalMode === 2) {
+      // Modulo tiene siguiente actividad
+      result.push({
+        label: t('nextActivity'),
+        onClick: () => onNext(store.currentValue, 'goToNextActivity'),
+      });
+    }
+    return result;
+  }, [t, store.currentValue, nextActivityUrl]);
   if (!translations) return null;
 
   return (
@@ -186,14 +223,25 @@ function QuestionsStep({
             </Button>
           }
           rightZone={
-            <Button
-              variant={isLast ? 'filled' : 'outline'}
-              rightIcon={!isLast && <ChevRightIcon />}
-              onClick={() => onNext(store.currentValue)}
-              disabled={disableNext}
-            >
-              {nextText}
-            </Button>
+            !showModuleFinalDropdown ? (
+              <Button
+                variant={isLast ? 'filled' : 'outline'}
+                rightIcon={!isLast && <ChevRightIcon />}
+                onClick={() => onNext(store.currentValue)}
+                disabled={disableNext}
+              >
+                {nextText}
+              </Button>
+            ) : (
+              <DropdownButton
+                chevronUp
+                width="auto"
+                data={footerFinalActionsAndLabels}
+                disabled={disableNext}
+              >
+                {t('finish')}
+              </DropdownButton>
+            )
           }
         />
       }
@@ -218,7 +266,8 @@ function QuestionsStep({
           </Box>
         </ContextContainer>
       ) : null}
-      <Modal
+      {/* Modal is not used anymore, but it's left here for future redirection cases reference (Basic 2.0) */}
+      {/* <Modal
         title={t('finishModal')}
         opened={store.showFinishModal}
         onClose={() => {}}
@@ -300,7 +349,7 @@ function QuestionsStep({
             </Stack>
           ) : null}
         </Stack>
-      </Modal>
+      </Modal> */}
     </TotalLayoutStepContainer>
   );
 }
