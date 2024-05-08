@@ -19,12 +19,14 @@ import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@learning-paths/helpers';
+import assignablePrefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import { ProgressChart } from '@assignables/components/ProgressChart';
 import { DashboardCard } from './components/DashboardCard';
 import { useModuleDataForPreview } from './helpers/previewHooks';
 
@@ -36,7 +38,6 @@ export function useModuleDashboardLocalizations() {
   return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-
       return get(res, key);
     }
 
@@ -257,9 +258,10 @@ ModuleDashboardBody.propTypes = {
 
 function useStudentsGradesGraphData({ moduleAssignation, activitiesById }) {
   const isStudent = useIsStudent();
+
   return useMemo(() => {
-    if (!isStudent) {
-      return null;
+    if (!isStudent || !moduleAssignation?.metadata?.moduleStatus) {
+      return [];
     }
 
     return moduleAssignation.metadata.moduleStatus
@@ -277,8 +279,8 @@ function useTeachersGradesGraphData({ module, activitiesById, programEvaluationS
   const minScale = programEvaluationSystem?.minScale?.number ?? 0;
 
   return useMemo(() => {
-    if (!isTeacher) {
-      return null;
+    if (!isTeacher || !module?.metadata?.module?.activities) {
+      return [];
     }
 
     return module?.metadata?.module?.activities
@@ -331,6 +333,8 @@ export function ModuleDashboard({ id, preview }) {
     return <Loader />;
   }
 
+  console.log('localizations:', localizations);
+
   return (
     <TotalLayoutContainer
       Header={<ActivityHeader instance={module} showStartDate showDeadline showDateTime />}
@@ -361,6 +365,28 @@ export function ModuleDashboard({ id, preview }) {
               </ContextContainer>
             </TabPanel>
           )}
+          <TabPanel label={localizations?.progress ?? 'Progreso'}>
+            <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
+              <Paper sx={{ width: '100%' }}>
+                <ContextContainer
+                  title={
+                    isStudent
+                      ? localizations?.studentProgressTitle ?? 'Notas del módulo'
+                      : localizations?.teacherProgressTitle ?? 'Notas medias del módulo'
+                  }
+                >
+                  <Box pt={10}>
+                    <ProgressChart
+                      data={isStudent ? studentsGradesGraphData : teachersGradesGraphData}
+                      maxValue={programEvaluationSystem?.maxScale?.number}
+                      passValue={programEvaluationSystem?.minScaleToPromote?.number}
+                      height={390}
+                    />
+                  </Box>
+                </ContextContainer>
+              </Paper>
+            </ContextContainer>
+          </TabPanel>
         </Tabs>
       </Box>
     </TotalLayoutContainer>
