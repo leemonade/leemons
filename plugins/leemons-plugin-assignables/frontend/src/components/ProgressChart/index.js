@@ -129,11 +129,13 @@ function ProgressChart({
       }));
       result.push(...missingData);
     }
-    return result.map((d) => ({
-      ...d,
-      value: isNumber(d?.value) ? d?.value?.toFixed(2) : d?.value,
-      diff: max - (d.value ?? 0),
-    }));
+    return result
+      .map((d) => ({
+        ...d,
+        value: isNumber(d?.value) ? parseFloat(d?.value?.toFixed(2)) : d?.value,
+        diff: max - (d.value ?? 0),
+      }))
+      .sort((a, b) => Number(b.value) - Number(a.value));
   }, [data, max]);
 
   const maxChars = React.useMemo(() => {
