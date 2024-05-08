@@ -17,7 +17,7 @@ const LibraryCardFooter = ({
   variantIcon,
 }) => {
   const { classes, cx } = LibraryCardFooterStyles(
-    { action, size: 12, color: '#636D7D' },
+    { action, size: 12 },
     { name: 'LibraryCardFooter' }
   );
 
