@@ -36,6 +36,7 @@ import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { ChatDrawer } from '@comunica/components';
 import hooks from 'leemons-hooks';
 import ActivityFeedbackAlertManager from '@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import CurriculumRender from '../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender';
 import { useStudentCorrectionStyles } from './StudentCorrection.style';
 import { TextIcon } from '../../assets/images/TextIcon';
@@ -43,7 +44,7 @@ import LinkSubmission from '../Correction/components/LinkSubmission/LinkSubmissi
 
 function SubjectTab({ assignation, subject, t }) {
   const [chatOpened, setChatOpened] = useState(false);
-  const room = `assignables.subject|${subject}.assignation|${assignation?.id}.userAgent|${assignation?.user}`;
+  const room = useAssignationComunicaRoom({ assignation, subject });
 
   const isEvaluated = useMemo(
     () =>
@@ -68,6 +69,7 @@ function SubjectTab({ assignation, subject, t }) {
           hooks.fireEvent('chat:openDrawer', { room });
           setChatOpened(true);
         }}
+        hideChat={!room}
       />
 
       <ChatDrawer

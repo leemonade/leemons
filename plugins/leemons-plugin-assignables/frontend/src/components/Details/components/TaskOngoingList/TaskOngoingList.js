@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
-import { Box, Text } from '@bubbles-ui/components';
 import _ from 'lodash';
+import { ContextContainer } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { TaskOngoingListStyles } from './TaskOngoingList.styles';
 import {
   TASK_ONGOING_LIST_DEFAULT_PROPS,
   TASK_ONGOING_LIST_PROP_TYPES,
@@ -39,25 +38,16 @@ export function useTaskOngoingListLocalizations() {
 
 const TaskOngoingList = ({ instance }) => {
   const instanceData = useTaskOngoingInstanceParser(instance);
-
   const { dashboardLocalizations } = useTaskOngoingListLocalizations();
 
-  const { classes } = TaskOngoingListStyles({}, { name: 'TaskOngoingList' });
-
   return (
-    <Box className={classes.root}>
-      <Box>
-        <Text color="primary" className={classes.title}>
-          {dashboardLocalizations?.progress}
-        </Text>
+    <ContextContainer>
+      <ContextContainer title={dashboardLocalizations?.progress}>
         <StatusGraph {...instanceData.leftScoresBar} />
-      </Box>
-      {!!instance.requiresScoring && (
-        <Box>
-          <Text color="primary" className={classes.title}>
-            {dashboardLocalizations?.evaluation}
-          </Text>
+      </ContextContainer>
 
+      {!!instance.requiresScoring && (
+        <ContextContainer title={dashboardLocalizations?.evaluation}>
           <GradesGraph
             {...instanceData.rightScoresBar}
             labels={{
@@ -66,9 +56,9 @@ const TaskOngoingList = ({ instance }) => {
               passed: dashboardLocalizations?.passed,
             }}
           />
-        </Box>
+        </ContextContainer>
       )}
-    </Box>
+    </ContextContainer>
   );
 };
 

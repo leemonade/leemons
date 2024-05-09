@@ -119,8 +119,9 @@ module.exports = {
     assignDone: 'Feedback assigned',
   },
   studentInstance: {
-    startQuestions: 'Answer feedback',
     feedbackIntroductoryText: 'Introduction',
+    next: 'Next',
+    questions: 'Questions',
   },
   feedbackResponseQuestion: {
     returnToTable: 'Return to table',
@@ -139,11 +140,12 @@ module.exports = {
     needNResponsesSingular: 'Choose 1 response',
     needNResponsesPlural: 'Choose {n} responses',
     needNResponses: 'Choose {n} more',
+    finish: 'Finish',
   },
   feedbackResult: {
     feedback: 'Feedback',
     evaluation: 'Evaluation',
-    generalInformation: 'General information',
+    generalInformation: 'Summary',
     question: 'Question {i}',
     started: 'Started',
     sent: 'Sent',
@@ -159,7 +161,7 @@ module.exports = {
     multiResponse: 'Multi-response',
     openResponse: 'Open response',
     responses: 'Responses ({n})',
-    responsesTitleLabel: 'Responses',
+    responsesTitleLabel: 'Responses Report',
     average: 'Average:',
     errorCode6001: 'You don´t have permissions to see the feedback results',
     timeMarker: 'Time mark',

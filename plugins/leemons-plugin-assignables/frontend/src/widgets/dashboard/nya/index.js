@@ -25,25 +25,29 @@ import {
 } from './hooks';
 import NyaEmpty from '../../../assets/emptyStates/nya.svg';
 
-function EmptyState() {
+export function EmptyState() {
   const localizations = useNyaLocalizations()?.nya;
   const isTeacher = useIsTeacher();
 
   return (
-    <Stack spacing={6} direction="column" alignItems="center" fullWidth>
-      <Stack spacing={4} direction="column">
+    <Stack spacing={8} direction="row" justifyContent="center" alignItems="center" fullWidth>
+      <ImageLoader src={NyaEmpty} style={{ position: 'relative' }} width={240} height={240} />
+      <Stack spacing={4} direction="column" alignItems="flex-start">
         <Text
+          color="primary"
           sx={(theme) => ({ ...theme.other.global.content.typo.heading.lg, textAlign: 'center' })}
         >
           {localizations?.emptyState?.title}
         </Text>
-        <Text sx={(theme) => ({ ...theme.other.global.content.typo.body.lg, textAlign: 'center' })}>
+        <Text
+          color="primary"
+          sx={(theme) => ({ ...theme.other.global.content.typo.body.lg, textAlign: 'center' })}
+        >
           {isTeacher
             ? localizations?.emptyState?.noEvaluations
             : localizations?.emptyState?.noActivities}
         </Text>
       </Stack>
-      <ImageLoader src={NyaEmpty} style={{ position: 'relative' }} width={240} height={240} />
     </Stack>
   );
 }

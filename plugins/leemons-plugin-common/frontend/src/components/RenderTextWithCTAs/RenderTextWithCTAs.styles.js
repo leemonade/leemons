@@ -1,9 +1,9 @@
 import { createStyles } from '@bubbles-ui/components';
 
-export const useRenderTextWithCTAsStyles = createStyles((theme) => ({
+export const useRenderTextWithCTAsStyles = createStyles((theme, { align = 'center' } = {}) => ({
   text: {
     ...theme.other.global.content.typo.body.lg,
-    textAlign: 'center',
+    textAlign: align,
   },
   cta: {
     fontWeight: 600,

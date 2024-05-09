@@ -3,7 +3,7 @@ import { createStyles } from '@bubbles-ui/components';
 const LikertStatistics = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.uiBackground04,
-    padding: '24px 20px',
+    paddingBottom: 24,
   },
   header: {
     display: 'flex',

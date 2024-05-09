@@ -40,6 +40,7 @@ import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getQuestionByIdsRequest,
@@ -59,6 +60,11 @@ export default function Result() {
   const [store, render] = useStore({
     loading: true,
     useQuestionMode: false,
+  });
+
+  const room = useAssignationComunicaRoom({
+    assignation: store?.assignation,
+    subject: store?.instance?.subjects?.[0]?.subject,
   });
 
   const [canShowFeedback, setCanShowFeedback] = React.useState(false);
@@ -355,7 +361,6 @@ export default function Result() {
     );
   }
 
-  // if (!store.room) {
   if (isTeacher || store.feedback) {
     accordion.push(
       <ActivityAccordionPanel
@@ -411,7 +416,6 @@ export default function Result() {
       </ActivityAccordionPanel>
     );
   }
-  // }
 
   const userNote = parseFloat(
     store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number
@@ -512,6 +516,7 @@ export default function Result() {
                     }}
                     assignation={store.assignation}
                     subject={store?.instance?.subjects?.[0]?.subject}
+                    hideChat={!store.room}
                   />
 
                   {isTeacher && !store.instance.dates.evaluationClosed ? (
@@ -606,9 +611,7 @@ export default function Result() {
               store.room.unreadMessages = 0;
               render();
             }}
-            room={`assignables.subject|${store?.instance?.subjects?.[0]?.subject}.assignation|${
-              store.assignation.id
-            }.userAgent|${getUserId()}`}
+            room={room}
           />
         </>
       ) : null}

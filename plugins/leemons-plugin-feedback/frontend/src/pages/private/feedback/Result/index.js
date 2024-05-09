@@ -1,17 +1,17 @@
 import React, { useRef } from 'react';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
-import { htmlToText, useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { prefixPN as tasksPrefixPN } from '@tasks/helpers';
+import { htmlToText, useSearchParams, useStore } from '@common';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import {
-  ActivityAccordion,
-  ActivityAccordionPanel,
   Badge,
   Box,
   Button,
   Stack,
   Text,
   TextClamp,
+  Title,
   ContextContainer,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
@@ -19,15 +19,7 @@ import {
 } from '@bubbles-ui/components';
 import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import {
-  DataFileBarsQuestionIcon,
-  DownloadIcon,
-  FormImageIcon,
-  GaugeDashboardIcon,
-  NavigationMenuLeftIcon,
-  PluginRankingIcon,
-  QuestionExclamationIcon,
-} from '@bubbles-ui/icons/outline';
+import { ChevRightIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import { addErrorAlert } from '@layout/alert';
@@ -36,6 +28,7 @@ import ActivityHeader from '@assignables/components/ActivityHeader/index';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 
@@ -53,15 +46,21 @@ function padTo2Digits(num) {
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('feedbackResult'));
+  const [buttonsT] = useTranslateLoader(tasksPrefixPN('task_realization.buttons'));
+
   const [store, render] = useStore({
     loading: true,
   });
-  const [accordionState, setAccordionState] = React.useState(['info']);
+
+  const searchParams = useSearchParams();
+  const fromExecution = useRef(searchParams.has('fromExecution')).current;
 
   const isTeacher = useIsTeacher();
   const history = useHistory();
   const params = useParams();
   const scrollRef = useRef();
+
+  const nextActivityUrl = useNextActivityUrl(store.assignation);
 
   const { data: dynamicInstance } = useInstances({ id: params.id });
   const { classes } = ResultStyles({}, { name: 'Result' });
@@ -116,41 +115,26 @@ export default function Result() {
     );
   };
 
-  const getQuestionIcons = (questionType, hasImage) => {
-    const questionTypes = {
-      likertScale: <PluginRankingIcon />,
-      singleResponse: hasImage ? <FormImageIcon /> : <QuestionExclamationIcon />,
-      multiResponse: hasImage ? <FormImageIcon /> : <QuestionExclamationIcon />,
-      netPromoterScore: <GaugeDashboardIcon />,
-      openResponse: <NavigationMenuLeftIcon />,
-    };
-
-    return questionTypes[questionType];
-  };
-
   const renderQuestions = () =>
     store.feedback.questions.map((question, index) => (
-      <ActivityAccordionPanel
-        itemValue={question.id}
-        label={
+      <ContextContainer key={question.id} spacing={3} className={classes.questionContainer}>
+        <Stack justifyContent="space-between" alignItems="center" fullWidth>
           <TextClamp>
-            <Text sx={(theme) => ({ ...theme.other.global.content.typo.heading.xsm })}>{`${
+            <Title sx={(theme) => ({ ...theme.other.global.content.typo.heading.md })}>{`${
               index + 1
-            }. ${htmlToText(question.question)}`}</Text>
+            }. ${htmlToText(question.question)}`}</Title>
           </TextClamp>
-        }
-        icon={getQuestionIcons(question.type, question.properties.withImages)}
-        key={question.id}
-        rightSection={getQuestionBadges(question)}
-      >
-        <Box className={classes.questionBox}>
+          {getQuestionBadges(question)}
+        </Stack>
+
+        <Box>
           {React.cloneElement(questionsByType[question.type], {
             question,
             responses: store.result.questionsInfo[question.id] || {},
             t,
           })}
         </Box>
-      </ActivityAccordionPanel>
+      </ContextContainer>
     ));
 
   function getAvgTime() {
@@ -197,7 +181,7 @@ export default function Result() {
       <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: 'auto' }}>
         <TotalLayoutStepContainer
           Footer={
-            isTeacher && (
+            isTeacher ? (
               <TotalLayoutFooterContainer
                 fixed
                 scrollRef={scrollRef}
@@ -221,146 +205,74 @@ export default function Result() {
                   </>
                 }
               />
+            ) : (
+              fromExecution &&
+              !!store.instance?.metadata?.module && (
+                <TotalLayoutFooterContainer
+                  scrollRef={scrollRef}
+                  fixed
+                  rightZone={
+                    <Link
+                      to={
+                        nextActivityUrl ??
+                        `/private/learning-paths/modules/dashboard/${store.instance?.metadata?.module?.id}`
+                      }
+                    >
+                      <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
+                        {nextActivityUrl ? buttonsT('nextActivity') : buttonsT('goToModule')}
+                      </Button>
+                    </Link>
+                  }
+                />
+              )
             )
           }
         >
-          <Stack direction="column">
-            <ContextContainer title={t('responsesTitleLabel')} style={{ gap: '16px' }}>
-              <ActivityAccordion
-                multiple
-                state={accordionState}
-                onChange={setAccordionState}
-                compact
-                style={{ gap: '16px' }}
-              >
-                <ActivityAccordionPanel
-                  itemValue={'info'}
-                  label={
-                    <TextClamp>
-                      <Text sx={(theme) => ({ ...theme.other.global.content.typo.heading.xsm })}>
-                        {t('generalInformation')}
-                      </Text>
-                    </TextClamp>
-                  }
-                  icon={<DataFileBarsQuestionIcon />}
-                >
-                  <Stack fullWidth fullHeight spacing={2} className={classes.generalInformation}>
-                    <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                      <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
-                      <Text role="productive" color="primary" size="xs">
-                        {t('started')}
-                      </Text>
-                    </Box>
-                    <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                      <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
-                      <Text role="productive" color="primary" size="xs">
-                        {t('sent')}
-                      </Text>
-                    </Box>
-                    <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-                      <Text className={classes.infoText}>{`${
-                        store.result.generalInfo.completionPercentage || 0
-                      }%`}</Text>
-                      <Text role="productive" color="primary" size="xs">
-                        {t('completed')}
-                      </Text>
-                    </Box>
-                    <Box className={classes.infoBox}>
-                      <Text className={classes.infoText}>{getAvgTime()}</Text>
-                      <Text role="productive" color="primary" size="xs">
-                        {t('timeToComplete')}
-                      </Text>
-                    </Box>
-                  </Stack>
-                </ActivityAccordionPanel>
-                {renderQuestions()}
-              </ActivityAccordion>
+          <Box>
+            <ContextContainer title={t('responsesTitleLabel')} spacing={7}>
+              {/* General Information */}
+              <ContextContainer spacing={0} className={classes.questionContainer}>
+                <TextClamp>
+                  <Title sx={(theme) => ({ ...theme.other.global.content.typo.heading.md })}>
+                    {t('generalInformation')}
+                  </Title>
+                </TextClamp>
+                <Stack fullWidth spacing={2} className={classes.generalInformation}>
+                  <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                    <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('started')}
+                    </Text>
+                  </Box>
+                  <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                    <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('sent')}
+                    </Text>
+                  </Box>
+                  <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
+                    <Text className={classes.infoText}>{`${
+                      store.result.generalInfo.completionPercentage || 0
+                    }%`}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('completed')}
+                    </Text>
+                  </Box>
+                  <Box className={classes.infoBox}>
+                    <Text className={classes.infoText}>{getAvgTime()}</Text>
+                    <Text role="productive" color="primary" size="xs">
+                      {t('timeToComplete')}
+                    </Text>
+                  </Box>
+                </Stack>
+              </ContextContainer>
+
+              {/* Questions */}
+              {renderQuestions()}
             </ContextContainer>
-          </Stack>
+          </Box>
         </TotalLayoutStepContainer>
       </Stack>
     </TotalLayoutContainer>
   );
-  //     <Stack direction="column" spacing={4} className={classes.container}>
-  //       {isTeacher && (
-  //         <Stack justifyContent="space-between">
-  //           <Stack spacing={5}>
-  //             <Switch
-  //               label={t('closeFeedback')}
-  //               checked={store.instanceState.isClosed}
-  //               onChange={onCloseFeedback}
-  //             />
-  //             <Switch
-  //               label={t('archiveFeedback')}
-  //               checked={store.instanceState.isArchived}
-  //               onChange={onArchiveFeedback}
-  //             />
-  //           </Stack>
-  //           <Stack spacing={3}>
-  //             <Button
-  //               variant="outline"
-  //               rightIcon={<DownloadIcon />}
-  //               onClick={() => downloadDatasheet('csv')}
-  //             >
-  //               CSV
-  //             </Button>
-  //             <Button
-  //               variant="outline"
-  //               rightIcon={<DownloadIcon />}
-  //               onClick={() => downloadDatasheet('xls')}
-  //             >
-  //               XLS
-  //             </Button>
-  //           </Stack>
-  //         </Stack>
-  //       )}
-  //       <Box className={classes.resultHeader}>
-  //         <Title order={5} role="productive" color="quartiary">
-  //           {t('feedback')}
-  //         </Title>
-  //         <Title order={3} style={{ marginTop: 2 }}>
-  //           {store.feedback.name}
-  //         </Title>
-  //       </Box>
-  //       <ActivityAccordion multiple state={accordionState} onChange={setAccordionState}>
-  //         <ActivityAccordionPanel
-  //           itemValue={'info'}
-  //           label={t('generalInformation')}
-  //           color="solid"
-  //           icon={<DataFileBarsQuestionIcon />}
-  //         >
-  //           <Stack fullWidth fullHeight spacing={2} className={classes.generalInformation}>
-  //             <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-  //               <Text role="productive" color="primary" size="xs">
-  //                 {t('started')}
-  //               </Text>
-  //               <Text className={classes.infoText}>{store.result.generalInfo.started}</Text>
-  //             </Box>
-  //             <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-  //               <Text role="productive" color="primary" size="xs">
-  //                 {t('sent')}
-  //               </Text>
-  //               <Text className={classes.infoText}>{store.result.generalInfo.finished}</Text>
-  //             </Box>
-  //             <Box className={classes.infoBox} style={{ maxWidth: 140 }}>
-  //               <Text role="productive" color="primary" size="xs">
-  //                 {t('completed')}
-  //               </Text>
-  //               <Text className={classes.infoText}>{`${
-  //                 store.result.generalInfo.completionPercentage || 0
-  //               }%`}</Text>
-  //             </Box>
-  //             <Box className={classes.infoBox}>
-  //               <Text role="productive" color="primary" size="xs">
-  //                 {t('timeToComplete')}
-  //               </Text>
-  //               <Text className={classes.infoText}>{getAvgTime()}</Text>
-  //             </Box>
-  //           </Stack>
-  //         </ActivityAccordionPanel>
-  //         {renderQuestions()}
-  //       </ActivityAccordion>
-  //     </Stack>
-  //   </Stack>
-  // );
 }

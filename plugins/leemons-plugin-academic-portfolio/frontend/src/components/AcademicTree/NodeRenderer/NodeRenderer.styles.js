@@ -2,8 +2,8 @@ import { createStyles } from '@bubbles-ui/components';
 
 const NodeRendererStyles = createStyles((theme, { depth, isActive }) => {
   const nodeActive = {
-    backgroundColor: '#E2FF7A',
-    borderLeft: '2px solid #B4E600',
+    backgroundColor: theme.other.button.background.color.primary.selected,
+    borderLeft: `2px solid ${theme.other.button.background.color.primary.default}`,
   };
   const nodeInactive = {
     backgroundColor: 'transparent',

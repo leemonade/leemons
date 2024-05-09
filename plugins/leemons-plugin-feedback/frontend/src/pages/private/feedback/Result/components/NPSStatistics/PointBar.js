@@ -14,9 +14,7 @@ function PointBar({ classes, cx, percentage, total, color, bottomText, label }) 
             className={classes.npsBarInside}
             sx={(theme) => ({
               height: `${percentage}%`,
-              backgroundColor: color
-                ? theme.colors[color]
-                : theme.other.global.border.color.positive.muted,
+              backgroundColor: color,
             })}
           />
           <Box sx={() => ({ position: 'relative' })}>
