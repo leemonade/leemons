@@ -193,9 +193,14 @@ const AssetForm = ({
     if (isImageType) {
       setValue('cover', assetFile);
     }
-    if (type === LIBRARY_FORM_TYPES.MEDIA_FILES && !assetFile?.path) {
-      setValue('name', null);
-      setValue('cover', null);
+
+    if (type === LIBRARY_FORM_TYPES.MEDIA_FILES) {
+      if (!editing && !assetFile?.path) {
+        setValue('name', null);
+        setValue('cover', null);
+      } else if (editing && !assetFile?.id) {
+        setValue('cover', null);
+      }
     }
   }, [assetFile]);
 
