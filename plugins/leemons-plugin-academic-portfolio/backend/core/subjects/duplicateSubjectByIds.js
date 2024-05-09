@@ -1,16 +1,27 @@
 const _ = require('lodash');
 const { duplicateSubjectCreditsBySubjectsIds } = require('./duplicateSubjectCreditsBySubjectsIds');
 
-const handleImageAndIcon = async ({ image, subjectId, icon, ctx }) => {
+const createNewImageAndIconAssets = async ({ imageAssetId, subjectId, iconAssetId, ctx }) => {
   const imageData = {
     indexable: false,
     public: true,
     name: subjectId,
   };
   const iconData = _.clone(imageData);
-  if (image) imageData.cover = image;
-  if (icon) iconData.cover = icon;
-  const [assetImage, assetIcon] = await Promise.all([
+
+  const assets = await ctx.tx.call('leebrary.assets.getByIds', {
+    ids: [imageAssetId, iconAssetId],
+  });
+  const assetsByIds = _.keyBy(assets, 'id');
+
+  if (imageAssetId && assetsByIds[imageAssetId]?.cover) {
+    imageData.cover = assetsByIds[imageAssetId].cover;
+  }
+  if (iconAssetId && assetsByIds[iconAssetId]?.cover) {
+    iconData.cover = assetsByIds[iconAssetId].cover;
+  }
+
+  const [imageAsset, iconAsset] = await Promise.all([
     ctx.tx.call('leebrary.assets.add', {
       asset: imageData,
       options: {
@@ -43,8 +54,8 @@ const handleImageAndIcon = async ({ image, subjectId, icon, ctx }) => {
   await ctx.tx.db.Subjects.findOneAndUpdate(
     { id: subjectId },
     {
-      image: assetImage.id,
-      icon: assetIcon.id,
+      image: imageAsset.id,
+      icon: iconAsset.id,
     },
     { new: true, lean: true }
   );
@@ -74,10 +85,10 @@ async function duplicateSubjectByIds({ ids, duplications: dup = {}, preserveName
   );
 
   newSubjects.forEach(async ({ id }, i) => {
-    await handleImageAndIcon({
-      image: subjects[i].image,
+    await createNewImageAndIconAssets({
+      imageAssetId: subjects[i].image,
       subjectId: id,
-      icon: subjects[i].icon,
+      iconAssetId: subjects[i].icon,
       ctx,
     });
   });
