@@ -86,7 +86,7 @@ const AssetForm = ({
   const [urlMetadata, setUrlMetadata] = useState({});
   const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [boxRef, rect] = useResizeObserver();
+  const [boxRef] = useResizeObserver();
 
   // ························································
   // FORM SETUP
