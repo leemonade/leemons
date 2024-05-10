@@ -67,6 +67,10 @@ module.exports = {
   programList: {
     tableAdd: 'Añadir descanso',
     tableRemove: 'Eliminar',
+    tableHeaderCover: 'Cover',
+    tableHeaderProgram: 'Programa',
+    tableHeaderCourseInit: 'Inicio de curso',
+    tableHeaderCourseEnd: 'Fin de curso',
     saved: 'Guardado',
     title: 'Calendario de programa',
     description:

@@ -1,5 +1,4 @@
 import prefixPN from '@academic-calendar/helpers/prefixPN';
-import { listRegionalConfigsRequest } from '@academic-calendar/request';
 import {
   Box,
   Button,
@@ -29,6 +28,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { useForm } from 'react-hook-form';
 import { getCentersWithToken } from '@users/session';
+import { useListRegionalConfigs } from '@academic-calendar/hooks';
 import { EmptyState } from './components/EmptyState';
 import { RegionalConfigDetail } from './components/regionalConfigDetail';
 
@@ -110,7 +110,6 @@ export default function RegionalCalendars() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [userCenters, setUserCenters] = useState();
   const [selectedCenter, setSelectedCenter] = useState();
-  const [regConfigs, setRegConfigs] = useState();
   const deploymentConfig = useDeploymentConfig({
     pluginName: 'academic-calendar',
     ignoreVersion: true,
@@ -120,10 +119,14 @@ export default function RegionalCalendars() {
     scroll: 0,
   });
 
+  const { data: regionalConfigs, refetch: refetchConfigs } = useListRegionalConfigs(
+    store?.center?.id,
+    { enabled: !!store?.center?.id }
+  );
+
   async function loadRegionalConfigs() {
-    const { regionalConfigs } = await listRegionalConfigsRequest(store?.center?.id);
-    store.regionalConfigs = regionalConfigs;
-    setRegConfigs(regionalConfigs);
+    refetchConfigs();
+    store.regionalConfigs = regionalConfigs?.regionalConfigs;
     render();
   }
 
@@ -166,13 +169,20 @@ export default function RegionalCalendars() {
 
   function save() {
     form.handleSubmit(async (data) => {
+      const dataToSave = {
+        id: data.id,
+        name: data.name,
+        regionalEvents: data.regionalEvents,
+        localEvents: data.localEvents,
+        daysOffEvents: data.daysOffEvents,
+        center: store.center.id,
+      };
       try {
         store.saving = true;
         render();
 
         await saveRegionalConfig({
-          ...data,
-          center: store.center.id,
+          ...dataToSave,
         });
 
         addSuccessAlert(t('saved'));
@@ -189,7 +199,7 @@ export default function RegionalCalendars() {
 
   const colums = useMemo(
     () =>
-      store?.regionalConfigs?.length > 0
+      regionalConfigs
         ? [
             {
               Header: '',
@@ -202,11 +212,11 @@ export default function RegionalCalendars() {
             },
           ]
         : [],
-    [store.regionalConfigs]
+    [regionalConfigs]
   );
   const data = useMemo(
     () =>
-      store.regionalConfigs?.map((config) => ({
+      regionalConfigs?.regionalConfigs?.map((config) => ({
         ...config,
         actions: (
           <Stack justifyContent="end" alignItems="center" spacing={2}>
@@ -231,7 +241,7 @@ export default function RegionalCalendars() {
           </Stack>
         ),
       })),
-    [store.regionalConfigs]
+    [regionalConfigs]
   );
 
   return (
@@ -274,7 +284,7 @@ export default function RegionalCalendars() {
                   {store.center ? (
                     <Box>
                       {!(deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0) &&
-                      store?.regionalConfigs?.length > 0 ? (
+                      regionalConfigs?.regionalConfigs?.length >= 1 ? (
                         <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
                           <Button
                             onClick={addNewRegionalCalendar}
@@ -286,8 +296,8 @@ export default function RegionalCalendars() {
                         </Box>
                       ) : null}
                       <Box sx={(theme) => ({ marginTop: theme.spacing[3], width: '50%' })}>
-                        <Table columns={colums} data={data} />
-                        {regConfigs?.length <= 0 ? (
+                        <Table columns={colums} data={data} headerStyles={{ display: 'none' }} />
+                        {!regionalConfigs?.regionalConfigs?.length ? (
                           <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
                         ) : null}
                       </Box>
@@ -306,7 +316,7 @@ export default function RegionalCalendars() {
                       t={t}
                       center={store.center}
                       config={store.selectedConfig}
-                      calendars={store.regionalConfigs}
+                      calendars={regionalConfigs}
                       form={form}
                       onSave={() => {}}
                     />

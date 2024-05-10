@@ -74,6 +74,10 @@ module.exports = {
   programList: {
     tableAdd: 'Add break',
     tableRemove: 'Remove',
+    tableHeaderCover: 'Cover',
+    tableHeaderProgram: 'Program',
+    tableHeaderCourseInit: 'Course start',
+    tableHeaderCourseEnd: 'Course end',
     saved: 'Saved',
     title: 'Program Calendar',
     description:
