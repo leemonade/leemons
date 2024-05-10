@@ -106,7 +106,7 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
         {!!resources?.length && (
           <Box>
             <ContextContainer title={t('resources')}>
-              <AssetEmbedList assets={resources} />
+              <AssetEmbedList assets={resources} width={'50%'} />
             </ContextContainer>
           </Box>
         )}

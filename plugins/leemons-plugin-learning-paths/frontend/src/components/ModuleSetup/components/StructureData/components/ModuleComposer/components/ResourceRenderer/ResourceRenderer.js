@@ -34,7 +34,9 @@ export const useResourceRendererStyles = createStyles((theme) => {
 
 export function ResourceRenderer({ activity }) {
   const { classes } = useResourceRendererStyles();
+
   const roleLocalizations = useRolesLocalizations([activity?.role ?? activity?.providerData?.role]);
+
   const getAssetBadgeType = () => {
     if (activity?.role && activity?.role !== 'leebrary.asset') {
       return capitalize(
@@ -52,7 +54,7 @@ export function ResourceRenderer({ activity }) {
       document: activity?.asset?.fileExtension === 'pdf' ? 'PDF' : 'Document',
     };
 
-    return typeMappings[activity?.asset?.fileType] || 'File';
+    return typeMappings[activity?.asset?.fileType] || 'Media';
   };
   const badgeCategory = getAssetBadgeType();
   return (

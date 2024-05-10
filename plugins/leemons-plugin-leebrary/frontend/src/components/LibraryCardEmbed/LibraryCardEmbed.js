@@ -101,7 +101,7 @@ const LibraryCardEmbed = ({
       document: asset?.fileExtension === 'pdf' ? 'PDF' : 'Document',
     };
 
-    return typeMappings[fileType] || 'File';
+    return typeMappings[fileType] || 'Media';
   };
 
   const renderVariantIcon = () => {

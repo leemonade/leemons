@@ -5,13 +5,12 @@ import { Item } from './Item';
 
 export const useListStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
-
   return {
     root: {
       display: 'flex',
       flexDirection: 'column',
       paddingBottom: globalTheme.spacing.padding.xlg,
-      gap: globalTheme.spacing.padding.lg,
+      gap: globalTheme.spacing.padding.md,
     },
     list: {
       display: 'flex',
