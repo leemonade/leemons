@@ -143,7 +143,26 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
       return null;
     }
 
-    const { basicData, contentData, instructionData, evaluationData } = labels;
+    const {
+      basicData,
+      contentData,
+      instructionData,
+      resourcesData,
+      resourcesAndInstructionsData,
+      evaluationData,
+    } = labels;
+
+    const instructionAndresourcesLabel = () => {
+      if (configValues.hasAttachments && configValues.hasInstructions) {
+        return resourcesAndInstructionsData.step_label;
+      }
+
+      if (configValues.hasAttachments) {
+        return resourcesData.step_label;
+      }
+
+      return instructionData.step_label;
+    };
 
     if (contentData) {
       contentData.labels.buttonPublish = instructionData?.labels?.buttonPublish;
@@ -221,7 +240,7 @@ function useSetupProps({ t, labels, store, useSaveObserver, scrollRef, loading, 
         },
 
         showAttachmentsAndInstructions && {
-          label: instructionData.step_label,
+          label: instructionAndresourcesLabel(),
           content: (
             <InstructionData
               useObserver={useSaveObserver}
