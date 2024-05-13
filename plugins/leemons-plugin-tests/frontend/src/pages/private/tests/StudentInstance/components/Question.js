@@ -90,20 +90,22 @@ export default function Question(props) {
           rightZone={
             <>
               {showLastButton ? (
-                <Button
-                  position="left"
-                  variant={isLastButton ? null : 'outline'}
-                  rightIcon={<ChevRightIcon />}
-                  rounded
-                  compact
-                  onClick={() => {
-                    if (!store.viewMode) props.saveQuestion();
-                    props.nextStep();
-                  }}
-                  disabled={disableNext}
-                >
-                  {store.embedded ? t('nextButton') : nextLabel || t('next')}
-                </Button>
+                <Box style={{ minWidth: '120px', display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button
+                    position="left"
+                    variant={isLastButton ? null : 'outline'}
+                    rightIcon={<ChevRightIcon />}
+                    rounded
+                    compact
+                    onClick={() => {
+                      if (!store.viewMode) props.saveQuestion();
+                      props.nextStep();
+                    }}
+                    disabled={disableNext}
+                  >
+                    {store.embedded ? t('nextButton') : nextLabel || t('next')}
+                  </Button>
+                </Box>
               ) : null}
             </>
           }
@@ -118,7 +120,7 @@ export default function Question(props) {
           }
         >
           <Box sx={() => ({ display: 'flex', justifyContent: 'center' })}>
-            <Box sx={() => ({ maxWidth: '280px', width: '100%' })}>
+            <Box sx={() => ({ maxWidth: '280px', width: '100%', marginLeft: '24px' })}>
               <ProgressBottomBar
                 size="md"
                 labelTop={`${index + 1} / ${store.questions.length}`}
