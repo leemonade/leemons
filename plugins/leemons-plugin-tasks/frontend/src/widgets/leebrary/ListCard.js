@@ -12,7 +12,7 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { ExpressTaskIcon } from '../../components/Icons/ExpressTaskIcon';
 import { TaskIcon } from '../../components/Icons/TaskIcon';
 import { prefixPN } from '../../helpers/prefixPN';
@@ -104,16 +104,16 @@ const ListCard = ({
       //     handleClick(`/private/tasks/library/view/${taskId}`);
       //   },
       // });
-      // if (asset.shareable) {
-      //   items.push({
-      //     icon: <ShareIcon />,
-      //     children: menuLabels.share,
-      //     onClick: (e) => {
-      //       e.stopPropagation();
-      //       onShare(asset);
-      //     },
-      //   });
-      // }
+      if (asset.providerData?.published && asset.shareable) {
+        items.push({
+          icon: <ShareIcon />,
+          children: menuLabels.share,
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
+          },
+        });
+      }
       if (asset.assignable && asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,
