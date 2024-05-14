@@ -52,7 +52,13 @@ const LibraryPlayer = ({
             asset={asset}
             variant={asset.fileType === 'bookmark' ? 'bookmark' : 'media'}
             canPlay={viewMode}
-            handleClickCCreator={() => window.open(asset.url, '_blank', 'noopener')}
+            handleClickCCreator={() =>
+              window.open(
+                asset.fileType === 'image' ? asset.cover : asset.url,
+                '_blank',
+                'noopener'
+              )
+            }
             ccMode
           />
         </Box>
