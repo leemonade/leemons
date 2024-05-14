@@ -191,6 +191,7 @@ module.exports = {
               formatPlaceholder: 'Write extension and add (pdf, xls, doc...)',
               maxSize: 'Max size',
               required: 'Required field',
+              addButton: 'Add',
             },
           },
 
