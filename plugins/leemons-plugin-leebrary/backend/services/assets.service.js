@@ -18,6 +18,7 @@ const { update } = require('../core/assets/update');
 const { exists } = require('../core/assets/exists');
 const { remove } = require('../core/assets/files/remove');
 const { duplicate } = require('../core/assets/duplicate');
+const { prepareAsset } = require('../core/assets/prepareAsset');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -45,8 +46,22 @@ module.exports = {
       },
     },
     getByIds: {
-      handler(ctx) {
-        return getByIds({ ...ctx.params, ctx });
+      async handler(ctx) {
+        const { shouldPrepareAssets, ...params } = ctx.params;
+        const assets = await getByIds({ ...params, ctx });
+
+        if (shouldPrepareAssets) {
+          const processSingnedUrlsPromises = assets.map((asset) =>
+            prepareAsset({ rawAsset: asset, isPublished: asset.isPublished, ctx })
+          );
+
+          const results = await Promise.allSettled(processSingnedUrlsPromises);
+          return results
+            .filter((result) => result.status === 'fulfilled')
+            .map((result) => result.value);
+        }
+
+        return assets;
       },
     },
     getCoverUrl: {
@@ -69,6 +84,18 @@ module.exports = {
     duplicate: {
       handler(ctx) {
         return duplicate({ ...ctx.params, ctx });
+      },
+    },
+    getAllAssets: {
+      async handler(ctx) {
+        const allAssets = await ctx.tx.db.Assets.find({}).lean();
+        const filters = ctx.params ?? {};
+        return getByIds({
+          ids: allAssets.map((asset) => asset.id),
+          ...filters,
+          withCategory: filters.withCategory ?? false, // Defaults to false as it might be called by a plugin without permission to get this data
+          ctx,
+        });
       },
     },
   },

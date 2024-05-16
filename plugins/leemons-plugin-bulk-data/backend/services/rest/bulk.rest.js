@@ -17,6 +17,7 @@ const initTests = require('../../core/tests');
 const initCalendar = require('../../core/calendar');
 const initProviders = require('../../core/providers');
 const initAdmin = require('../../core/admin');
+const { generateBulkDataFile } = require('../../core/generateBulkDataFile');
 
 const LOAD_PHASES = {
   LOCALES: 'locales',
@@ -202,6 +203,9 @@ module.exports = {
     },
     timeout: 0,
     async handler(ctx) {
+      // This should accept a param that indicates it's needed to get the admin data from the user session
+      // Cases where the bulk data file is loaded from an admin profile
+      // It also needs to be modified so that it accepts an array of users: 1 teacher and many students
       return loadFromFile(ctx, { isAsync: true });
     },
   },
@@ -223,6 +227,18 @@ module.exports = {
     },
     handler() {
       return getLoadStatus();
+    },
+  },
+  generateBulkDataRest: {
+    rest: {
+      path: '/generate-bulk-data',
+      method: 'POST',
+    },
+
+    async handler(ctx) {
+      const { admin, superAdmin } = ctx.params;
+      const result = await generateBulkDataFile({ admin, superAdmin, ctx });
+      return { status: 200, result };
     },
   },
 };

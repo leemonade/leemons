@@ -29,6 +29,7 @@
     "@leemons/multi-events": "0.0.71",
     "async-promise-pool": "^1.0.6",
     "chalk": "^4.1.1",
+    "exceljs": "^4.4.0",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "mime": "^3.0.0",
