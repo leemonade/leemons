@@ -76,16 +76,16 @@ async function getDatesByChildAssignation({ childAssignationsIds, childAssignati
 
 async function getGradesByChildAssignation({ childAssignationsIds, childAssignationsById, ctx }) {
   const grades = await ctx.db.Grades.find({ assignation: childAssignationsIds, type: 'main' })
-    .select({ _id: false, assignation: 1, grade: 1, subject: 1 })
+    .select({ _id: false, assignation: 1, grade: 1, subject: 1, visibleToStudent: 1 })
     .lean();
 
   const gradesByChildAssignation = new Map();
-  grades.forEach(({ assignation, grade, subject }) => {
+  grades.forEach(({ assignation, grade, subject, visibleToStudent }) => {
     const { instance, user } = childAssignationsById[assignation][0];
     const key = `instance.${instance}.user.${user}`;
     gradesByChildAssignation.set(key, [
       ...(gradesByChildAssignation.get(key) ?? []),
-      { grade, subject },
+      { grade, subject, visibleToStudent },
     ]);
   });
 
@@ -195,7 +195,12 @@ function returnData({
 
     gradesData[id] = Object.entries(gradesBySubject).map(([subject, subjectGrades]) => {
       const avg = subjectGrades.reduce((acc, grade) => acc + grade.grade, 0) / subjectGrades.length;
-      return { grade: avg, type: 'main', subject };
+      return {
+        grade: avg,
+        type: 'main',
+        subject,
+        visibleToStudent: subjectGrades.every((grade) => grade.visibleToStudent),
+      };
     });
 
     /*
