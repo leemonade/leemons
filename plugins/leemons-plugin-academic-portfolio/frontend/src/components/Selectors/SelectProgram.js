@@ -1,5 +1,5 @@
 import { MultiSelect, Select } from '@bubbles-ui/components';
-import { noop } from 'lodash';
+import { noop, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useState } from 'react';
 import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
@@ -25,7 +25,10 @@ const SelectProgram = forwardRef(
     const { data, isLoading: loading } = useProgramsByCenter({
       center,
       options: {
-        select: (programs) => programs.map(({ id, name }) => ({ label: name, value: id })),
+        select: (programs) => {
+          const sortedPrograms = sortBy(programs, 'createdAt');
+          return sortedPrograms.map(({ id, name }) => ({ label: name, value: id }));
+        },
       },
     });
 

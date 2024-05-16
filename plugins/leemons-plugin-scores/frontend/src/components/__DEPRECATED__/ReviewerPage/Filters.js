@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, createStyles, Select, Title } from '@bubbles-ui/components';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
-import _ from 'lodash';
+import _, { sortBy } from 'lodash';
 import { unflatten, useCache } from '@common';
 import { getCentersWithToken } from '@users/session';
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
@@ -116,16 +116,17 @@ function useFiltersData({ control }) {
 }
 
 function useParsedData({ programs, courses, groups, periods, localizations }) {
-  const _programs = React.useMemo(
-    () =>
-      programs
+  const _programs = React.useMemo(() => {
+    const sortedPrograms = _.sortBy(programs, 'createdAt');
+    return (
+      sortedPrograms
         ?.map((program) => ({
           value: program.id,
           label: program.name,
         }))
-        ?.filter((program) => program.value && program.label) || [],
-    [programs]
-  );
+        ?.filter((program) => program.value && program.label) || []
+    );
+  }, [programs]);
 
   const _courses = React.useMemo(
     () =>
@@ -143,12 +144,13 @@ function useParsedData({ programs, courses, groups, periods, localizations }) {
       return [];
     }
 
+    const sortedGroups = sortBy(groups, 'index');
     return [
       {
         value: 'all',
         label: localizations?.group?.all,
       },
-      ...groups
+      ...sortedGroups
         ?.map((group) => ({
           value: group.id,
           label: group.name || group.abbreviation,

@@ -11,17 +11,17 @@ import {
 } from '@bubbles-ui/components';
 
 import { PluginScoresBasicIcon } from '@bubbles-ui/icons/outline';
-import { ScoresPeriodForm } from '../ScoresPeriodForm';
 import { useUserCenters } from '@users/hooks';
 import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
 import { getCentersWithToken } from '@users/session';
 
-import _, { isFunction, uniqBy } from 'lodash';
+import _, { isFunction, uniqBy, sortBy } from 'lodash';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { ScoresPeriodForm } from '../ScoresPeriodForm';
 
 const useStyle = createStyles((theme, { isOpened }) => ({
   drawer: {
@@ -242,12 +242,13 @@ export default function PeriodSelector({
     }
 
     if (fields.program) {
+      const sortedPrograms = sortBy(programs, 'createdAt');
       fieldsToReturn.push({
         name: 'program',
         label: labels?.form?.program?.label,
         placeholder: labels?.form?.program?.placeholder,
-        disabled: !center || !programs?.length,
-        data: (programs || []).map(({ name, id }) => ({
+        disabled: !center || !sortedPrograms?.length,
+        data: (sortedPrograms || []).map(({ name, id }) => ({
           label: name,
           value: id,
         })),
