@@ -426,22 +426,25 @@ const PermissionsData = ({
     }
   }
 
-  const USER_TABLE_HEADERS = useMemo(() => [
-    {
-      Header: t('permissionsData.header.groupUserHeader'),
-      accessor: 'user',
-      style: { width: '64%' },
-    },
-    {
-      Header: t('permissionsData.header.stepLabel'),
-      accessor: 'role',
-      style: { width: '20%' },
-    },
-    {
-      Header: t('permissionsData.header.actionsHeader'),
-      accessor: 'actions',
-    },
-  ]);
+  const USER_TABLE_HEADERS = useMemo(
+    () => [
+      {
+        Header: t('permissionsData.header.groupUserHeader'),
+        accessor: 'user',
+        style: { width: '64%' },
+      },
+      {
+        Header: t('permissionsData.header.stepLabel'),
+        accessor: 'role',
+        style: { width: '20%' },
+      },
+      {
+        Header: t('permissionsData.header.actionsHeader'),
+        accessor: 'actions',
+      },
+    ],
+    [t]
+  );
 
   return (
     <Box>
