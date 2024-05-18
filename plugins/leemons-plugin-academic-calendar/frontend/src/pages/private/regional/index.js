@@ -169,9 +169,17 @@ export default function RegionalCalendars() {
       try {
         store.saving = true;
         render();
+        const payload = {
+          id: data.id,
+          name: data.name,
+          regionalEventsRel: data.regionalConfig,
+          regionalEvents: data.regionalEvents,
+          localEvents: data.localEvents,
+          daysOffEvents: data.daysOffEvents,
+        };
 
         await saveRegionalConfig({
-          ...data,
+          ...payload,
           center: store.center.id,
         });
 
