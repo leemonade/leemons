@@ -1,4 +1,5 @@
 const { styleCell } = require('./helpers');
+const { PLATFORM_NAME } = require('./config/constants');
 
 async function createPlatformSheet({ workbook, ctx }) {
   const worksheet = workbook.addWorksheet('platform');
@@ -33,7 +34,7 @@ async function createPlatformSheet({ workbook, ctx }) {
   const defaultLocale = await ctx.call('users.platform.getDefaultLocale');
   const hostname = await ctx.call('users.platform.getHostname');
   worksheet.addRow({
-    root: 'singlePlatform',
+    root: PLATFORM_NAME,
     name: name ?? '-',
     email,
     locale: defaultLocale,

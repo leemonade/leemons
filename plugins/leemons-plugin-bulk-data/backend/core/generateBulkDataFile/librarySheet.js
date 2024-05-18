@@ -1,4 +1,22 @@
-async function createLibraryResourcesSheet({ workbook, ctx }) {
+const _ = require('lodash');
+const { booleanToYesNoAnswer } = require('./helpers');
+
+const getCanAccess = async (asset, users) => {
+  const { fromUser } = asset;
+  const ownerUser = users.find((u) => u.id === fromUser);
+  const owner = `${ownerUser.bulkId}|owner`;
+
+  return `${owner}`;
+};
+
+async function createLibraryResourcesSheet({
+  workbook,
+  programs,
+  subjects,
+  resourceAssets,
+  users,
+  ctx,
+}) {
   const worksheet = workbook.addWorksheet('library');
   worksheet.columns = [
     { header: 'root', key: 'root', width: 30 },
@@ -35,14 +53,43 @@ async function createLibraryResourcesSheet({ workbook, ctx }) {
     enabled: 'Enabled',
   };
 
-  const allAssets = await ctx.call('leebrary.assets.getAllAssets', {
-    indexable: true,
-    checkPermissions: true,
+  const assetDetails = await ctx.call('leebrary.assets.getByIds', {
+    ids: resourceAssets.map((a) => a.id),
+    shouldPrepareAssets: true,
     withFiles: true,
   });
-  // get category name with id
-  // we need programs dictionary to set the program bulkId
-  // we need subjects dictionary to set the subject bulkId
+
+  const assetsToReturn = [];
+  assetDetails.forEach(async (asset, i) => {
+    const bulkId = `L${(i + 1).toString().padStart(3, '0')}`;
+    const programBulkId = programs.find((p) => p.id === asset.program)?.bulkId;
+    // Previous bulk-data implementation assumes only one subject will be related to the resource. This needs to be updated, the first one is chosen here.
+    const subjectBulkId = subjects.find((s) => s.id === asset.subjects?.[0]?.subject)?.bulkId;
+    const categoryKey = resourceAssets.find((raw) => raw.id === asset.id).category.key;
+    const file = categoryKey === 'media-files' ? asset.url : '';
+
+    const assetObject = {
+      root: bulkId,
+      pinned: booleanToYesNoAnswer(asset.pinned),
+      categoryKey,
+      name: asset.name,
+      url: categoryKey === 'bookmarks' ? asset.url : '',
+      file,
+      tagline: asset.tagline,
+      description: asset.description,
+      color: asset.color,
+      cover: asset.cover,
+      tags: asset.tags.join(', '),
+      canAccess: await getCanAccess(asset, users),
+      program: programBulkId,
+      subject: subjectBulkId,
+      enabled: asset.enabled,
+    };
+
+    worksheet.addRow(_.omitBy(assetObject, _.isNil));
+    assetsToReturn.push({ id: asset.id, bulkId });
+  });
+  return assetsToReturn;
 }
 
 module.exports = { createLibraryResourcesSheet };

@@ -70,15 +70,15 @@ function configureSheetColumns({
   withGroupedTitles,
   addTitleKeysRow = false,
   addGroupTitleKeysRow = false,
-  setDynamicColumnHeaders = false,
+  modifyColumnHeaders,
 }) {
   worksheet.columns = Object.entries(columnDefinitions).map(([key, { width }]) => ({
     header: key,
     key,
     width,
   }));
-  if (setDynamicColumnHeaders) {
-    setDynamicColumnHeaders(worksheet);
+  if (modifyColumnHeaders) {
+    modifyColumnHeaders(worksheet);
   }
 
   for (let i = 0; i < offset; i++) {

@@ -123,7 +123,6 @@ async function createUsersSheet({ workbook, centers, admin, superAdmin, predefin
       tags: 'Admin',
       profiles: centers.map((center) => `admin@${center.bulkId}`).join(', '),
     };
-    users.push(adminRow);
     worksheet.addRow(adminRow);
   }
 
@@ -139,7 +138,6 @@ async function createUsersSheet({ workbook, centers, admin, superAdmin, predefin
       locale: superAdmin.locale ?? 'en',
       profiles: 'super',
     };
-    users.push(superAdminRow);
     worksheet.addRow(superAdminRow);
   }
   return users;

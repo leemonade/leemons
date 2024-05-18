@@ -38,7 +38,7 @@ async function updateClass({ data, ctx }) {
 
   // ES: Añadimos el asset de la imagen
   const imageData = {
-    indexable: true,
+    indexable: false,
     public: true, // TODO Cambiar a false despues de hacer la demo
     name: nClass.id,
   };
@@ -59,7 +59,7 @@ async function updateClass({ data, ctx }) {
   const promises = [];
   // ES: Añadimos todas las relaciones de la clase
 
-  //*OLD Knowledge area se cambia a nivel de subject, dentro de updateSubject Se actualizan todas las clases
+  //* OLD Knowledge area se cambia a nivel de subject, dentro de updateSubject Se actualizan todas las clases
   // if (_.isNull(knowledge) || knowledge) await removeKnowledgeByClass({ classIds: nClass.id, ctx });
   // if (knowledge) {
   //   // ES: Comprobamos que todos los conocimientos existen y pertenecen al programa
@@ -68,7 +68,7 @@ async function updateClass({ data, ctx }) {
   //   }
   //   promises.push(addKnowledge({ class: nClass.id, knowledge, ctx }));
   // }
-  //*OLD Esto sería válido si el knowledgeArea se actualizara para una sóla clase en edición aislada de la misma. No es el caso. KnowledgeArea se cambia a nivel de asignatura
+  //* OLD Esto sería válido si el knowledgeArea se actualizara para una sóla clase en edición aislada de la misma. No es el caso. KnowledgeArea se cambia a nivel de asignatura
   // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo knowledge
   // promises.push(changeBySubject({ subjectId: nClass.subject, knowledge, ctx }));
 
@@ -126,7 +126,7 @@ async function updateClass({ data, ctx }) {
       _.map(teachers, ({ teacher, type }) => addTeacher({ class: nClass.id, teacher, type, ctx }))
     );
 
-  //*OLD Esto es válido si el subjectType se puede cambian para una clase en la edición aislada de clase. No es el caso. SubjectType se cambia a nivel de asignatura
+  //* OLD Esto es válido si el subjectType se puede cambian para una clase en la edición aislada de clase. No es el caso. SubjectType se cambia a nivel de asignatura
   // ES: Cambiamos el resto de clases que tengan esta asignatura y le seteamos el mismo tipo de asignatura
   // promises.push(
   //   ctx.tx.db.Class.updateMany(

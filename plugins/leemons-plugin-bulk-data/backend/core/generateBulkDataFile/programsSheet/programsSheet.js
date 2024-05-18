@@ -1,6 +1,7 @@
 const { omit } = require('lodash');
 const { booleanToYesNoAnswer, configureSheetColumns } = require('../helpers');
 const { PROGRAM_COLUMN_DEFINITIONS } = require('./columnDefinitions');
+const { ADMIN_BULK_ID } = require('../config/constants');
 
 // HELPERS ················································································································|
 
@@ -103,7 +104,7 @@ async function createProgramsSheet({ workbook, centers, evaluationSystems, ctx }
       centers: centers.find((center) => center.id === program.centers[0]).bulkId,
       evaluationSystem: evaluationSystems.find((system) => system.id === program.evaluationSystem)
         .bulkId,
-      // creator: 'admin01', // TODO
+      creator: ADMIN_BULK_ID,
       creditSystem: booleanToYesNoAnswer(program.credits ?? false),
       credits: program.credits ?? undefined,
       hoursPerCredit: program.hoursPerCredit ?? undefined,

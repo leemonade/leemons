@@ -1,4 +1,5 @@
-const { configureSheetColumns, styleCell } = require('../helpers');
+const { camelCase } = require('lodash');
+const { configureSheetColumns, styleCell, booleanToYesNoAnswer } = require('../helpers');
 const {
   PROFILES_COLUMN_DEFINITIONS,
   computeHeaderValues,
@@ -6,7 +7,9 @@ const {
   PLUGIN_COLUMN_DEFINITIONS,
 } = require('./columnDefinitions');
 
-const addExtraGroup = (worksheet) => {
+// HELPERS ···································································································|
+
+const addExtraGroupping = (worksheet) => {
   const offset = Object.keys(SIMPLE_COLUMN_DEFINITIONS).length;
   const groupLength = Object.keys(PLUGIN_COLUMN_DEFINITIONS).length;
 
@@ -24,7 +27,23 @@ const addExtraGroup = (worksheet) => {
   });
 };
 
-async function createProfilesSheet({ workbook, centers, ctx }) {
+// MAIN FUNCTION ···········································································|
+
+async function getPermissionsPerPlugin({ ctx, profileUri }) {
+  const {
+    profile: { permissions },
+  } = await ctx.call('users.profiles.detailRest', { uri: profileUri });
+
+  const results = {};
+  Object.keys(permissions).forEach((permissionKey) => {
+    const permission = permissions[permissionKey]?.join(', ') || '';
+    const [plugin, entity] = permissionKey.split('.');
+    results[camelCase(`${plugin} ${entity}`)] = permission;
+  });
+  return results;
+}
+
+async function createProfilesSheet({ workbook, ctx }) {
   const worksheet = workbook.addWorksheet('profiles');
   configureSheetColumns({
     worksheet,
@@ -33,9 +52,37 @@ async function createProfilesSheet({ workbook, centers, ctx }) {
     withGroupedTitles: true,
     addTitleKeysRow: true,
     addGroupTitleKeysRow: true,
-    setDynamicColumnHeaders: computeHeaderValues,
+    modifyColumnHeaders: computeHeaderValues,
   });
-  addExtraGroup(worksheet);
+  addExtraGroupping(worksheet);
+
+  const { items: profilesData } = await ctx.call('users.profiles.list', {
+    indexable: 'all',
+    page: 0,
+    size: 9999,
+  });
+
+  profilesData.forEach(async (profile) => {
+    const permissionsPerPlugin = await getPermissionsPerPlugin({ ctx, profileUri: profile.uri });
+
+    // To implement later, get the profile.sysName that corresponds to the profile found and set it to basicInfo.accessTo
+    // const profileContacts = await ctx.call('users.profiles.getProfileContacts', {
+    //   fromProfile: profile.id,
+    // });
+
+    const basicInfo = {
+      root: profile.sysName,
+      name: profile.name,
+      description: profile.description,
+      indexable: booleanToYesNoAnswer(profile.indexable),
+      // accessTo: profilesData
+      //   .filter((_profile) => profileContacts.includes(_profile.id))
+      //   .map((_profile) => _profile.sysName)
+      //   .join(', '),
+    };
+
+    worksheet.addRow({ ...basicInfo, ...permissionsPerPlugin });
+  });
 }
 
 module.exports = {

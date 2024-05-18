@@ -11,20 +11,20 @@ const { createKnowledgeAreasSheet } = require('./knowledgeAreasSheet');
 const { createSubjectsSheet } = require('./subjectsSheet');
 const { createLibraryResourcesSheet } = require('./librarySheet');
 const { createProfilesSheet } = require('./profilesSheet');
+const { createAppearanceSheet } = require('./appearanceSheet');
+const { LIBRARY_CATEGORIES } = require('./config/constants');
 
 async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   const workbook = new Excel.Workbook();
 
-  // cuando un asset es publico en file.url
-
   await createLocalesSheet({ workbook, ctx });
   await createPlatformSheet({ workbook, ctx });
   await createProvidersSheet({ workbook }); // Creates only the template to be filled with the user credentials for all providers
-  // TODO: await createAppearanceSettingsSheet({workbook, ctx})
+  await createAppearanceSheet({ workbook, ctx });
   const centers = await createCentersSheet({ workbook, ctx });
   const users = await createUsersSheet({ workbook, centers, admin, superAdmin, ctx });
   const evaluationSystems = await createEvaluationsSheet({ workbook, centers, ctx });
-  const profiles = await createProfilesSheet({ workbook, centers, ctx });
+  await createProfilesSheet({ workbook, centers, ctx });
 
   const subjectTypes = await createSubjectTypesSheet({ workbook, centers, ctx });
   const knowledgeAreas = await createKnowledgeAreasSheet({ workbook, centers, ctx });
@@ -35,11 +35,35 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     users,
     ctx,
   });
-  await createSubjectsSheet({ workbook, programs, subjectTypes, knowledgeAreas, users, ctx });
+  const subjects = await createSubjectsSheet({
+    workbook,
+    programs,
+    subjectTypes,
+    knowledgeAreas,
+    users,
+    ctx,
+  });
 
-  // TODO: create subjects sheet
-  // TODO: Finish library sheet after programs and subjects as it needs bulk ids for them
-  // await createLibraryResourcesSheet({ workbook, ctx });
+  const { items: libraryCategories } = await ctx.call('leebrary.categories.listRest', {});
+  const allAssets = await ctx.call('leebrary.assets.getAllAssets', {
+    indexable: true,
+  });
+
+  const assetsByCategoryKey = libraryCategories.reduce((acc, category) => {
+    acc[category.key] = allAssets
+      .filter((asset) => asset.category === category.id)
+      .map((a) => ({ ...a, category: { id: a.category, key: category.key } }));
+    return acc;
+  }, {});
+
+  const libraryResources = await createLibraryResourcesSheet({
+    workbook,
+    programs,
+    subjects,
+    users,
+    resourceAssets: LIBRARY_CATEGORIES.map((key) => assetsByCategoryKey[key]).flat(),
+    ctx,
+  });
 
   await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
 }

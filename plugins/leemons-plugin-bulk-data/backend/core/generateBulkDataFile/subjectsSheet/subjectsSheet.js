@@ -1,5 +1,5 @@
 const { cloneDeep, compact } = require('lodash');
-const { SUBJECT_COLUMN_DEFINITIONS } = require('./columnDefinitions');
+const { SUBJECT_COLUMN_DEFINITIONS, modifyColumnHeaders } = require('./columnDefinitions');
 const { configureSheetColumns } = require('../helpers');
 
 // HELPERS ························································································|
@@ -88,6 +88,43 @@ function getStudentsString(subjectUsesReferenceGroups, classes, users) {
   ).join(', ');
 }
 
+function getDayClasses(classes, day) {
+  return classes.reduce((acc, cls) => {
+    const daySchedule = cls.schedule.find((s) => s.day === day);
+    if (daySchedule) {
+      acc[cls.id] = daySchedule;
+    }
+    return acc;
+  }, {});
+}
+
+function getDayScheduleString(dayClasses) {
+  return Object.keys(dayClasses)
+    .map((classId, i) => `${i + 1}@${dayClasses[classId].start}|${dayClasses[classId].end}`)
+    .join(', ');
+}
+
+function getTimetableFields(subjectUsesReferenceGroups, classes) {
+  const sortedClasses = sortClassesAccordingToReferenceGroups(subjectUsesReferenceGroups, classes);
+
+  const sundayClasses = getDayClasses(sortedClasses, 'sunday');
+  const mondayClasses = getDayClasses(sortedClasses, 'monday');
+  const tuesdayClasses = getDayClasses(sortedClasses, 'tuesday');
+  const wednesdayClasses = getDayClasses(sortedClasses, 'wednesday');
+  const thursdayClasses = getDayClasses(sortedClasses, 'thursday');
+  const fridayClasses = getDayClasses(sortedClasses, 'friday');
+  const saturdayClasses = getDayClasses(sortedClasses, 'saturday');
+
+  const timetable0 = getDayScheduleString(sundayClasses);
+  const timetable1 = getDayScheduleString(mondayClasses);
+  const timetable2 = getDayScheduleString(tuesdayClasses);
+  const timetable3 = getDayScheduleString(wednesdayClasses);
+  const timetable4 = getDayScheduleString(thursdayClasses);
+  const timetable5 = getDayScheduleString(fridayClasses);
+  const timetable6 = getDayScheduleString(saturdayClasses);
+
+  return { timetable0, timetable1, timetable2, timetable3, timetable4, timetable5, timetable6 };
+}
 // MAIN ···························································································|
 
 async function createSubjectsSheet({
@@ -103,6 +140,7 @@ async function createSubjectsSheet({
     worksheet,
     withGroupedTitles: true,
     columnDefinitions: SUBJECT_COLUMN_DEFINITIONS,
+    modifyColumnHeaders,
   });
 
   const allSubjectsPromises = programs.map((program) => fetchSubjectsForProgram({ program, ctx }));
@@ -118,9 +156,11 @@ async function createSubjectsSheet({
   const subjects = [];
   allSubjectsDetail.forEach((subject, i) => {
     const subjectUsesReferenceGroups = subject.classes.every((cls) => cls.groups);
-    const bulkId = (i + 1).toString().padStart(2, '0');
+    const bulkId = `subject${(i + 1).toString().padStart(2, '0')}`;
+    const timetableFields = getTimetableFields(subjectUsesReferenceGroups, subject.classes);
+
     const subjectObject = {
-      root: `subject${bulkId}`,
+      root: bulkId,
       name: subject.name,
       program: programs.find((program) => program.id === subject.program).bulkId,
       creator: 'admin',
@@ -141,9 +181,10 @@ async function createSubjectsSheet({
       classesCustomIds: getClassroomsCustomId(subjectUsesReferenceGroups, subject.classes),
       teachers: getTeachersString(subjectUsesReferenceGroups, subject.classes, users),
       students: getStudentsString(subjectUsesReferenceGroups, subject.classes, users),
+      ...timetableFields,
     };
     worksheet.addRow(subjectObject);
-    subjects.push(subjectObject);
+    subjects.push({ id: subject.id, bulkId });
   });
 
   return subjects;

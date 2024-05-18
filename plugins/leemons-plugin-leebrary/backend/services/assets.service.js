@@ -88,14 +88,8 @@ module.exports = {
     },
     getAllAssets: {
       async handler(ctx) {
-        const allAssets = await ctx.tx.db.Assets.find({}).lean();
         const filters = ctx.params ?? {};
-        return getByIds({
-          ids: allAssets.map((asset) => asset.id),
-          ...filters,
-          withCategory: filters.withCategory ?? false, // Defaults to false as it might be called by a plugin without permission to get this data
-          ctx,
-        });
+        return ctx.tx.db.Assets.find({ ...filters }).lean();
       },
     },
   },

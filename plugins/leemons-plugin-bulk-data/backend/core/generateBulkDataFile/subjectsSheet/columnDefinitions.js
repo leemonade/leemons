@@ -99,44 +99,44 @@ const SUBJECT_COLUMN_DEFINITIONS = {
     groupTitle: GROUP_TITLES.enrollment,
     note: 'Careful with the center in which the user is registered. It must match the center of the program for which the subject is being created.',
   },
-  timetable1: {
-    title: 'Timetable.1',
+  timetable0: {
+    title: 'Sunday',
     width: 50,
     style: { bgColor: 'lightGreen' },
     groupTitle: GROUP_TITLES.timetable,
   },
-  timetable0: {
-    title: 'Timetable.0',
+  timetable1: {
+    title: 'Monday',
     width: 50,
     style: { bgColor: 'lightGreen' },
     groupTitle: GROUP_TITLES.timetable,
   },
   timetable2: {
-    title: 'Timetable.2',
+    title: 'Tuesday',
     width: 50,
     style: { bgColor: 'lightGreen' },
     groupTitle: GROUP_TITLES.timetable,
   },
   timetable3: {
-    title: 'Timetable.3',
+    title: 'Wednesday',
     width: 50,
     style: { bgColor: 'lightGreen' },
     groupTitle: GROUP_TITLES.timetable,
   },
   timetable4: {
-    title: 'Timetable.4',
+    title: 'Thursday',
     width: 50,
     style: { bgColor: 'lightGreen' },
     groupTitle: GROUP_TITLES.timetable,
   },
   timetable5: {
-    title: 'Timetable.5',
+    title: 'Friday',
     width: 50,
     style: { bgColor: 'lightGreen' },
     groupTitle: GROUP_TITLES.timetable,
   },
   timetable6: {
-    title: 'Timetable.6',
+    title: 'Saturday',
     width: 50,
     style: { bgColor: 'lightGreen' },
     groupTitle: GROUP_TITLES.timetable,
@@ -149,4 +149,14 @@ Object.keys(SUBJECT_COLUMN_DEFINITIONS).forEach((key) => {
   }
 });
 
-module.exports = { SUBJECT_COLUMN_DEFINITIONS };
+const modifyColumnHeaders = (worksheet) => {
+  worksheet.getRow(1).eachCell((cell) => {
+    if (cell.value && cell.value.startsWith('timetable')) {
+      const parts = cell.value.split('timetable');
+      // eslint-disable-next-line no-param-reassign
+      cell.value = `timetable.${parts[1]}`;
+    }
+  });
+};
+
+module.exports = { SUBJECT_COLUMN_DEFINITIONS, modifyColumnHeaders };
