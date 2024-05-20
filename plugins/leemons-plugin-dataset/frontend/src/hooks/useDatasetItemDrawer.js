@@ -9,16 +9,13 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addSuccessAlert } from '@layout/alert';
 import PropTypes from 'prop-types';
-import {
-  DATASET_ITEM_DRAWER_DEFAULT_PROPS,
-  DatasetItemDrawer as DatasetItemDrawerBubbles,
-} from '@bubbles-ui/leemons';
+import { DATASET_ITEM_DRAWER_DEFAULT_PROPS, DatasetItemDrawer } from '@dataset/components';
 import formWithTheme from '@common/formWithTheme';
+import transformItemToSchemaAndUi from '@dataset/components/help/transformItemToSchemaAndUi';
 import prefixPN from '../helpers/prefixPN';
-import transformItemToSchemaAndUi from './help/transformItemToSchemaAndUi';
 import { getDatasetSchemaFieldLocaleRequest, saveDatasetFieldRequest } from '../request';
 
-const DatasetItemDrawer = ({
+const ItemDrawer = ({
   onClose = () => {},
   onSave: _onSave = () => {},
   opened,
@@ -308,8 +305,10 @@ const DatasetItemDrawer = ({
     load();
   }, [tLoading, item]);
 
+  console.log('contextRef.current.defaultValues:', contextRef.current.defaultValues);
+
   return (
-    <DatasetItemDrawerBubbles
+    <DatasetItemDrawer
       {...contextRef.current.drawer}
       defaultValues={
         contextRef.current.defaultValues || {
@@ -328,7 +327,7 @@ const DatasetItemDrawer = ({
   );
 };
 
-DatasetItemDrawer.propTypes = {
+ItemDrawer.propTypes = {
   onClose: PropTypes.func,
   onSave: PropTypes.func,
   opened: PropTypes.bool,
@@ -345,7 +344,7 @@ export const useDatasetItemDrawer = () => {
       setShow(!show);
     },
     function drawer(data) {
-      return <DatasetItemDrawer onClose={() => setShow(false)} opened={show} {...data} />;
+      return <ItemDrawer onClose={() => setShow(false)} opened={show} {...data} />;
     },
   ];
 };

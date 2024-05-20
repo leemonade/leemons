@@ -12,7 +12,7 @@ import {
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { AddIcon } from '@bubbles-ui/icons/outline';
-import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
+import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
 import { useAsync } from '@common/useAsync';
 import {
   getDatasetSchemaLocaleRequest,
