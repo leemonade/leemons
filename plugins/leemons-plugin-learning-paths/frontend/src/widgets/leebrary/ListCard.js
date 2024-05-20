@@ -148,9 +148,12 @@ function useListCardMenuItems({ asset, localizations, onRefresh }) {
   );
 }
 
-const useListCardStyles = createStyles((theme, { single }) => ({
+const useListCardStyles = createStyles((theme, { single, selected }) => ({
   root: {
     cursor: single ? 'default' : 'pointer',
+    borderColor: selected && theme.other.core.color.primary['400'],
+    borderWidth: selected && '1px',
+    boxShadow: selected && theme.shadows.shadow03,
   },
 }));
 
