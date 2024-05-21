@@ -38,16 +38,11 @@ export default function QuestionsTable({
   const allChecked =
     value.length === questions?.length && value.length !== 0 && questions?.length !== 0;
 
-  const handleDrawerCell = (cellValue) => {
-    if (!isDrawer) {
-      return <Text> {cellValue}</Text>;
-    }
-    return (
-      <TextClamp lines={2} withToolTip>
-        <Text> {cellValue}</Text>
-      </TextClamp>
-    );
-  };
+  const handleTextCell = (cellValue) => (
+    <TextClamp lines={2} withToolTip>
+      <Text> {cellValue}</Text>
+    </TextClamp>
+  );
 
   const tableHeaders = React.useMemo(() => {
     let result = [];
@@ -77,7 +72,7 @@ export default function QuestionsTable({
         Header: t('questionLabel'),
         accessor: 'question',
         className: cx(styles.tableHeader, styles.firstTableHeader, isDrawer && { minWidth: 200 }),
-        valueRender: (cellValue) => handleDrawerCell(cellValue),
+        valueRender: (cellValue) => handleTextCell(cellValue),
       },
       {
         Header: t('responsesLabel'),
@@ -95,7 +90,7 @@ export default function QuestionsTable({
         className: styles.tableHeader,
         valueRender: (levelName) => {
           const findLevelName = levels?.find((l) => l.value === levelName);
-          return handleDrawerCell(findLevelName?.label);
+          return handleTextCell(findLevelName?.label);
         },
       },
       {
@@ -104,7 +99,7 @@ export default function QuestionsTable({
         className: styles.tableHeader,
         valueRender: (categoryId) => {
           const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
-          return handleDrawerCell(findCategoryLabel?.value);
+          return handleTextCell(findCategoryLabel?.value);
         },
       },
     ]);
