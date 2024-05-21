@@ -323,8 +323,12 @@ export function ModuleDashboard({ id, preview }) {
   useEffect(() => {
     if (isStudent && moduleAssignation?.id) {
       updateTimestamps('open');
+
+      if (moduleAssignation?.grades?.length > 0) {
+        updateTimestamps('gradesViewed');
+      }
     }
-  }, [moduleAssignation?.id]);
+  }, [moduleAssignation?.id, moduleAssignation?.grades?.length, updateTimestamps, isStudent]);
 
   const localizations = useModuleDashboardLocalizations();
   const { classes } = useModuleDashboardStyles();

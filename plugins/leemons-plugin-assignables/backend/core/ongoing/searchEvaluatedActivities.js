@@ -17,6 +17,7 @@ const { returnModulesData } = require('./helpers/filters/returnModulesData');
 const {
   filterModuleInstancesByHavingAllActivities,
 } = require('./helpers/filters/filterModuleInstancesByHavingAllActivities');
+const filterAssignationsByGradesNotViewed = require('./helpers/filters/filterAssignationsByGradesNotViewed');
 
 /**
  *
@@ -30,7 +31,9 @@ module.exports = async function searchEvaluatedActivities({ query, ctx }) {
   let assignations = await getStudentAssignations({ ctx });
   let instances = map(assignations, 'instance');
 
-  const modules = filterInstancesByIsModule({ instances });
+  let modules = filterInstancesByIsModule({ instances });
+  let modulesAssignations = filterAssignationsByInstance({ assignations, instances: modules });
+
   instances = filterInstancesByNotModule({ instances });
 
   const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
@@ -48,8 +51,8 @@ module.exports = async function searchEvaluatedActivities({ query, ctx }) {
 
   const dates = await getActivitiesDates({
     instances,
-    assignations,
-    filters: { progress: 'evaluated' },
+    assignations: assignations.concat(modulesAssignations),
+    filters: { progress: 'evaluated', gradeWasViewed: true },
     ctx,
   });
 
@@ -61,6 +64,13 @@ module.exports = async function searchEvaluatedActivities({ query, ctx }) {
     includeNonEvaluableChildren: true,
     ctx,
   });
+
+  assignations = filterAssignationsByGradesNotViewed({ assignations, dates });
+  modulesAssignations = filterAssignationsByGradesNotViewed({
+    assignations: modulesAssignations,
+    dates,
+  });
+  modules = map(modulesAssignations, 'instance');
 
   instances = sortInstancesByDates({
     instances: map(assignations, 'instance'),
