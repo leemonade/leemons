@@ -292,6 +292,7 @@ module.exports = {
     editor: 'Editor',
     assigner: 'Assigner',
     new: 'New {label}',
+    newItem: 'New item',
     tableLabels: {
       name: 'Name',
       owner: 'Owner',
