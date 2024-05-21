@@ -16,6 +16,7 @@ import useUserDetails from '@users/hooks/useUserDetails';
 import { LocaleDate } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
+import { RoomItemDisplay } from '@comunica/components';
 import { UserAgentsTags } from './components/UserAgentsTags';
 
 export const USER_DETAIL_VIEWS = {
@@ -34,6 +35,8 @@ function UserDetail({
   onLoadUserAgents = noop,
   onChangeAvatar = noop,
   canEdit,
+  showChatButton = false,
+  onChatHandler = noop,
 }) {
   const enableUserDetails = !!userId;
   const { data: userDetails, isLoading } = useUserDetails({
@@ -104,7 +107,14 @@ function UserDetail({
           ))}
         </Stack>
         <Title order={3}>{fullName}</Title>
-        <Anchor href={`mailto:${user.email}`}>{user.email}</Anchor>
+        <Stack direction="row" spacing={2}>
+          <Anchor href={`mailto:${user.email}`}>{user.email}</Anchor>
+          {showChatButton && (
+            <Box sx={{ cursor: 'pointer' }} onClick={onChatHandler}>
+              <RoomItemDisplay />
+            </Box>
+          )}
+        </Stack>
         <Box>
           <LocaleDate date={user.birthdate} options={{ dateStyle: 'medium' }} /> 🎂
         </Box>
@@ -126,6 +136,8 @@ UserDetail.propTypes = {
   onLoadUserAgents: PropTypes.func,
   onChangeAvatar: PropTypes.func,
   canEdit: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+  showChatButton: PropTypes.bool,
+  onChatHandler: PropTypes.func,
 };
 
 export { UserDetail };
