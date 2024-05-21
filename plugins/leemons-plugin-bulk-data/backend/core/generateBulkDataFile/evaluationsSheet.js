@@ -1,9 +1,19 @@
 const { styleCell, booleanToYesNoAnswer } = require('./helpers');
 
-const getScalesString = (scales) => {
-  const result = scales.map((scale) =>
-    [scale.letter, scale.number, scale.description].filter((value) => value).join('|')
-  );
+const getScalesString = (scales, systemType) => {
+  const result = scales.map((scale) => {
+    if (systemType === 'numeric') {
+      // For numeric types, include only number and description (if present)
+      return [scale.number, scale.description]
+        .filter((part) => part !== undefined && part !== null && part !== '')
+        .join('|');
+    }
+    // For non-numeric types, include letter, number, and optional description
+    return [scale.letter, scale.number, scale.description]
+      .filter((part) => part !== undefined && part !== null && part !== '')
+      .join('|');
+  });
+
   return result.join(',\n');
 };
 

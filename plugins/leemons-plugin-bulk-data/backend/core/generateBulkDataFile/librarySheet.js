@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { booleanToYesNoAnswer } = require('./helpers');
+const { booleanToYesNoAnswer, styleCell } = require('./helpers');
 
 const getCanAccess = async (asset, users) => {
   const { fromUser } = asset;
@@ -19,24 +19,24 @@ async function createLibraryResourcesSheet({
 }) {
   const worksheet = workbook.addWorksheet('library');
   worksheet.columns = [
-    { header: 'root', key: 'root', width: 30 },
-    { header: 'pinned', key: 'pinned', width: 30 },
-    { header: 'categoryKey', key: 'categoryKey', width: 30 },
+    { header: 'root', key: 'root', width: 10 },
+    { header: 'pinned', key: 'pinned', width: 10 },
+    { header: 'categoryKey', key: 'categoryKey', width: 15 },
     { header: 'name', key: 'name', width: 30 },
     { header: 'url', key: 'url', width: 30 },
     { header: 'file', key: 'file', width: 30 },
     { header: 'tagline', key: 'tagline', width: 30 },
     { header: 'description', key: 'description', width: 30 },
-    { header: 'color', key: 'color', width: 30 },
+    { header: 'color', key: 'color', width: 10 },
     { header: 'cover', key: 'cover', width: 30 },
     { header: 'tags', key: 'tags', width: 30 },
     { header: 'canAccess', key: 'canAccess', width: 30 },
-    { header: 'program', key: 'program', width: 30 },
-    { header: 'subject', key: 'subject', width: 30 },
+    { header: 'program', key: 'program', width: 15 },
+    { header: 'subject', key: 'subject', width: 15 },
     { header: 'enabled', key: 'enabled', width: 30 },
   ];
-  worksheet.headers = {
-    root: 'Root',
+  worksheet.addRow({
+    root: 'BulkId',
     pinned: 'Pinned',
     categoryKey: 'Category Key',
     name: 'Name',
@@ -51,7 +51,14 @@ async function createLibraryResourcesSheet({
     program: 'Program',
     subject: 'Subject',
     enabled: 'Enabled',
-  };
+  });
+  worksheet.getRow(2).eachCell((cell, colNumber) => {
+    if (colNumber === 1) {
+      styleCell({ cell, fontColor: 'white', bgColor: 'black' });
+    } else {
+      styleCell({ cell, fontColor: 'black', bgColor: 'lightBlue' });
+    }
+  });
 
   const assetDetails = await ctx.call('leebrary.assets.getByIds', {
     ids: resourceAssets.map((a) => a.id),
@@ -83,7 +90,7 @@ async function createLibraryResourcesSheet({
       canAccess: await getCanAccess(asset, users),
       program: programBulkId,
       subject: subjectBulkId,
-      enabled: asset.enabled,
+      enabled: 'Yes',
     };
 
     worksheet.addRow(_.omitBy(assetObject, _.isNil));

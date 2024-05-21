@@ -13,6 +13,13 @@ const { createLibraryResourcesSheet } = require('./librarySheet');
 const { createProfilesSheet } = require('./profilesSheet');
 const { createAppearanceSheet } = require('./appearanceSheet');
 const { LIBRARY_CATEGORIES } = require('./config/constants');
+const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
+const { createTasksSheet } = require('./tasksSheet');
+const { createTaskSubjectSheet } = require('./taskSubjectSheet');
+const { createTestsQBanksSheet } = require('./testsQBanksSheet');
+const { createTestsQuestionsSheet } = require('./testsQuestionsSheet');
+const { createTestsSheet } = require('./testsSheet');
+const { createCalendarSheet } = require('./calendarSheet');
 
 async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   const workbook = new Excel.Workbook();
@@ -26,6 +33,7 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   const evaluationSystems = await createEvaluationsSheet({ workbook, centers, ctx });
   await createProfilesSheet({ workbook, centers, ctx });
 
+  await createAcademicPortfolioProfilesSheet({ workbook, ctx });
   const subjectTypes = await createSubjectTypesSheet({ workbook, centers, ctx });
   const knowledgeAreas = await createKnowledgeAreasSheet({ workbook, centers, ctx });
   const programs = await createProgramsSheet({
@@ -64,6 +72,13 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     resourceAssets: LIBRARY_CATEGORIES.map((key) => assetsByCategoryKey[key]).flat(),
     ctx,
   });
+
+  await createTasksSheet({ workbook, ctx });
+  await createTaskSubjectSheet({ workbook, ctx });
+  await createTestsQBanksSheet({ workbook, ctx });
+  await createTestsQuestionsSheet({ workbook, ctx });
+  await createTestsSheet({ workbook, ctx });
+  await createCalendarSheet({ workbook, ctx });
 
   await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
 }
