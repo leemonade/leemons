@@ -152,6 +152,7 @@ module.exports = {
           subjects: 'Curriculum por asignatura',
           methodology: 'Metodología',
           statement: 'Enunciado',
+          statementLabel: 'Texto del enunciado',
           development: 'Añadir desarrollo',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           supportImage: 'Imagen de apoyo',
