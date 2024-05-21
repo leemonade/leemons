@@ -64,7 +64,7 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
     !groupedClassesWithSelectedSubjects?.assignableStudents?.length
   ) {
     return (
-      <Container>
+      <Container spacingBottom={16}>
         <Box className={classes.inline}>
           <Alert severity="error" closeable={false}>
             {localizations?.noStudentsError}
