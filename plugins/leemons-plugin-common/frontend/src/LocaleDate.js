@@ -125,3 +125,25 @@ export function LocaleDuration({ seconds: secondsProp, short = false, options = 
   const session = useSession();
   return getLocaleDuration({ seconds: secondsProp, short, options }, session);
 }
+
+export function LocaleWeekDay({ day }) {
+  const session = useSession();
+
+  if (!day) {
+    return '';
+  }
+
+  const locale = getLocale(session);
+  const key = getFormatterKey(locale, { weekday: 'long' });
+
+  if (!formatters[key]) {
+    formatters[key] = new Intl.DateTimeFormat([locale, 'default'], { weekday: 'long' });
+  }
+  // Create an arbitrary date that is a Monday
+  // Leemons use Sunday as the first day of the week (day 0)
+  const referenceDate = new Date(Date.UTC(2021, 0, 4)); // January 4 2021 is a Monday
+  // Adjust the date to the desired day of the week
+  const targetDate = new Date(referenceDate);
+  targetDate.setUTCDate(referenceDate.getUTCDate() + day - 1);
+  return formatters[key].format(targetDate);
+}
