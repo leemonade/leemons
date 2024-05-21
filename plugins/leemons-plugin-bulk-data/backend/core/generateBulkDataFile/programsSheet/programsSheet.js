@@ -95,7 +95,7 @@ async function createProgramsSheet({ workbook, centers, evaluationSystems, ctx }
     if (i > 0 && i % 26 === 0) wrapCount++;
     const suffix = wrapCount > 0 ? wrapCount : '';
     const bulkId = `program${String.fromCharCode(65 + (i % 26))}${suffix}`;
-    worksheet.addRow({
+    const programObject = {
       root: bulkId,
       name: program.name,
       abbreviation: program.abbreviation,
@@ -122,8 +122,9 @@ async function createProgramsSheet({ workbook, centers, evaluationSystems, ctx }
       useAutoAssignment: booleanToYesNoAnswer(program.useAutoAssignment),
       useCustomSubjectIds: booleanToYesNoAnswer(program.useCustomSubjectIds),
       ...solveReferenceGroupsFields(program),
-    });
-    programs.push({ id: program.id, bulkId });
+    };
+    worksheet.addRow(programObject);
+    programs.push({ id: program.id, bulkId, centerBulkId: programObject.centers });
   });
 
   return programs;

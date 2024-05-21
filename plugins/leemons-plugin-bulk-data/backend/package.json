@@ -36,6 +36,7 @@
     "moleculer": "^0.14.26",
     "showdown": "^2.1.0",
     "temp": "^0.9.4",
+    "turndown": "^7.2.0",
     "xlsx-import": "^2.4.4"
   },
   "engines": {

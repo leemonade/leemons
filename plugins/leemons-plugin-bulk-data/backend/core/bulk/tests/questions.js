@@ -29,7 +29,7 @@ async function importQuestions(filePath) {
         .map((value) => ({ value }));
 
       // ·····················································
-      // FEEDBACKS
+      // FEEDBACK
 
       const feedbacks = (question.answers_feedback || '')
         .split('|')

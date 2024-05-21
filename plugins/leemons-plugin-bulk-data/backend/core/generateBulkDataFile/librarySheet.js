@@ -94,7 +94,7 @@ async function createLibraryResourcesSheet({
     };
 
     worksheet.addRow(_.omitBy(assetObject, _.isNil));
-    assetsToReturn.push({ id: asset.id, bulkId });
+    assetsToReturn.push({ id: asset.id, bulkId, asset: { ...asset } });
   });
   return assetsToReturn;
 }

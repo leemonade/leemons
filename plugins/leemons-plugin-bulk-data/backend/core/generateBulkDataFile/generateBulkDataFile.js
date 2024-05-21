@@ -12,10 +12,11 @@ const { createSubjectsSheet } = require('./subjectsSheet');
 const { createLibraryResourcesSheet } = require('./librarySheet');
 const { createProfilesSheet } = require('./profilesSheet');
 const { createAppearanceSheet } = require('./appearanceSheet');
-const { LIBRARY_CATEGORIES } = require('./config/constants');
+const {
+  ASSET_CATEGORIES: { LIBRARY_CATEGORIES, TASKS, TESTS, TEST_QUESTION_BANKS },
+} = require('./config/constants');
 const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
-const { createTasksSheet } = require('./tasksSheet');
-const { createTaskSubjectSheet } = require('./taskSubjectSheet');
+const { createTasksSheet, createTaskSubjectSheet } = require('./tasksSheets');
 const { createTestsQBanksSheet } = require('./testsQBanksSheet');
 const { createTestsQuestionsSheet } = require('./testsQuestionsSheet');
 const { createTestsSheet } = require('./testsSheet');
@@ -24,16 +25,22 @@ const { createCalendarSheet } = require('./calendarSheet');
 async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   const workbook = new Excel.Workbook();
 
+  // BASIC CONFIG
   await createLocalesSheet({ workbook, ctx });
   await createPlatformSheet({ workbook, ctx });
   await createProvidersSheet({ workbook }); // Creates only the template to be filled with the user credentials for all providers
   await createAppearanceSheet({ workbook, ctx });
+
+  // USERS
   const centers = await createCentersSheet({ workbook, ctx });
   const users = await createUsersSheet({ workbook, centers, admin, superAdmin, ctx });
+
+  // ACADEMIC CONFIGS
   const evaluationSystems = await createEvaluationsSheet({ workbook, centers, ctx });
   await createProfilesSheet({ workbook, centers, ctx });
-
   await createAcademicPortfolioProfilesSheet({ workbook, ctx });
+
+  // ACADEMIC PORTFOLIO DATA
   const subjectTypes = await createSubjectTypesSheet({ workbook, centers, ctx });
   const knowledgeAreas = await createKnowledgeAreasSheet({ workbook, centers, ctx });
   const programs = await createProgramsSheet({
@@ -52,32 +59,58 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     ctx,
   });
 
-  const { items: libraryCategories } = await ctx.call('leebrary.categories.listRest', {});
+  // ALL ASSETS
+  const { items: assetCategories } = await ctx.call('leebrary.categories.listRest', {});
   const allAssets = await ctx.call('leebrary.assets.getAllAssets', {
     indexable: true,
   });
 
-  const assetsByCategoryKey = libraryCategories.reduce((acc, category) => {
+  const assetsByCategoryKey = assetCategories.reduce((acc, category) => {
     acc[category.key] = allAssets
       .filter((asset) => asset.category === category.id)
       .map((a) => ({ ...a, category: { id: a.category, key: category.key } }));
     return acc;
   }, {});
 
-  const libraryResources = await createLibraryResourcesSheet({
+  // LIBRARY ASSETS
+  const libraryAssets = await createLibraryResourcesSheet({
     workbook,
     programs,
     subjects,
     users,
-    resourceAssets: LIBRARY_CATEGORIES.map((key) => assetsByCategoryKey[key]).flat(),
+    resourceAssets: Object.values(LIBRARY_CATEGORIES)
+      .map((key) => assetsByCategoryKey[key])
+      .flat(),
     ctx,
   });
 
-  await createTasksSheet({ workbook, ctx });
-  await createTaskSubjectSheet({ workbook, ctx });
-  await createTestsQBanksSheet({ workbook, ctx });
-  await createTestsQuestionsSheet({ workbook, ctx });
-  await createTestsSheet({ workbook, ctx });
+  // TASKS
+  const tasks = await createTasksSheet({
+    workbook,
+    tasks: assetsByCategoryKey[TASKS],
+    libraryAssets,
+    programs,
+    users,
+
+    centers,
+    ctx,
+  });
+  createTaskSubjectSheet({ workbook, tasks, subjects });
+
+  // TESTS AND QBANKS
+  const qBanks = await createTestsQBanksSheet({
+    workbook,
+    users,
+    qBanks: assetsByCategoryKey[TEST_QUESTION_BANKS],
+    programs,
+    subjects,
+    ctx,
+  });
+
+  const questions = await createTestsQuestionsSheet({ workbook, qBanks, ctx });
+  await createTestsSheet({ workbook, tests: assetsByCategoryKey[TESTS], ctx });
+
+  // CALENDAR
   await createCalendarSheet({ workbook, ctx });
 
   await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
