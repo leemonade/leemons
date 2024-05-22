@@ -151,7 +151,6 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
 
           <ColorInput
             label={t('color')}
-            useHsl
             compact={false}
             manual={false}
             value={store.backgroundColor}
