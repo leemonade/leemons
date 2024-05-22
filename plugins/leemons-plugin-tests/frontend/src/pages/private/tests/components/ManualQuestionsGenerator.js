@@ -37,6 +37,8 @@ const ManualQuestionsGenerator = ({
     setManualQuestions(allQuestions.filter((q) => selectedIds.includes(q.id)));
     form.setValue('questions', selectedIds);
   };
+
+  const questionsSelectedInTab = questions.length > 0 ? `(${questions?.length})` : '';
   return (
     <Box>
       <Title order={4} style={{ visibility: questions?.length > 0 ? 'visible' : 'hidden' }}>
@@ -67,7 +69,7 @@ const ManualQuestionsGenerator = ({
             )}
           />
         </TabPanel>
-        <TabPanel label={t('questionsSelected')}>
+        <TabPanel label={`${t('questionsSelected')} ${questionsSelectedInTab}`}>
           <Controller
             key={4}
             control={form.control}
