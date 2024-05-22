@@ -55,6 +55,19 @@ const FilteredQuestionsGenerator = ({
     return [];
   }, [questionBank?.categories]);
 
+  const checkifQuestionsHaveLevel = (questions) => questions?.every((question) => question.level);
+
+  function filterLevelsByQuestions(questions, allLevels) {
+    const levelsInQuestions = new Set(questions.map((question) => question.level));
+
+    return allLevels.filter((level) => levelsInQuestions.has(level.value));
+  }
+
+  const levelsByQuestions = React.useMemo(
+    () => filterLevelsByQuestions(filteredQuestions, levels),
+    [filteredQuestions, levels]
+  );
+
   const isMoreThanOneQuestionSelected =
     filteredQuestions?.length > 1
       ? t('selectionCounter', { n: filteredQuestions?.length })
@@ -73,6 +86,7 @@ const FilteredQuestionsGenerator = ({
                   placeholder={t('all')}
                   label={t('categoriesLabel')}
                   data={categoriesData}
+                  disabled={categoriesData.length === 0}
                   onChange={(e) => field.onChange(e)}
                   {...field}
                 />
@@ -87,7 +101,8 @@ const FilteredQuestionsGenerator = ({
                 <MultiSelect
                   placeholder={t('all')}
                   label={t('levelLabel')}
-                  data={levels}
+                  data={levelsByQuestions}
+                  disabled={!checkifQuestionsHaveLevel(filteredQuestions)}
                   onChange={(e) => field.onChange(e)}
                   {...field}
                 />
