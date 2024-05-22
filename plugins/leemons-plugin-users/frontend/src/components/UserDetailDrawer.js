@@ -7,8 +7,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { getCookieToken, getSessionCenter } from '@users/session';
 import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
-import { ChatDrawer } from '@comunica/components';
-import hooks from 'leemons-hooks';
 import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
 import { UserAdminDrawer } from './UserAdminDrawer';
 
@@ -117,8 +115,6 @@ function UserDetailDrawer({
             sysProfileFilter={sysProfileFilter}
             onLoadUser={handleOnLoadUser}
             viewMode={viewMode}
-            showChatButton
-            onChatHandler={() => setIsChatOpen(true)}
           />
           <EnrollUserSummary
             userId={userId}
@@ -143,18 +139,6 @@ function UserDetailDrawer({
         onClose={handleOnAdminClose}
         onSave={onSave}
       />
-      {isChatOpen ? (
-        <ChatDrawer
-          onClose={() => {
-            hooks.fireEvent('chat:closeDrawer');
-            setIsChatOpen(false);
-          }}
-          opened={isChatOpen}
-          room={
-            'academic-portfolio.room.class.lrn:local:academic-portfolio:local:66470eebab488ff5ee3cc603:Class:664b00ea4e7c0156a9a9bc6d.student.lrn:local:users:local:66470eebab488ff5ee3cc603:UserAgent:66470f6977bc2f9809251770.teachers'
-          }
-        />
-      ) : null}
     </>
   );
 }
