@@ -126,8 +126,6 @@ UserDetail.propTypes = {
   onLoadUserAgents: PropTypes.func,
   onChangeAvatar: PropTypes.func,
   canEdit: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
-  showChatButton: PropTypes.bool,
-  onChatHandler: PropTypes.func,
 };
 
 export { UserDetail };

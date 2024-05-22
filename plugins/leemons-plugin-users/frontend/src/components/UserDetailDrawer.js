@@ -27,7 +27,6 @@ function UserDetailDrawer({
   const center = centerProp ?? getSessionCenter();
   const token = getCookieToken(true);
   const { userAgentId } = token.centers[0];
-  const [isChatOpen, setIsChatOpen] = React.useState(false);
 
   const {
     data: permissions,
