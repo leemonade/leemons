@@ -78,6 +78,9 @@ export default function QuestionsTable({
         Header: t('responsesLabel'),
         accessor: 'responses',
         className: styles.tableHeader,
+        style: {
+          width: '100px',
+        },
       },
       {
         Header: t('typeLabel'),
@@ -99,7 +102,20 @@ export default function QuestionsTable({
         className: styles.tableHeader,
         valueRender: (categoryId) => {
           const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
-          return handleTextCell(findCategoryLabel?.value);
+          return (
+            <Box
+              style={{
+                display: 'flex',
+                width: '100%',
+                justifyContent: 'flex-end',
+              }}
+            >
+              {handleTextCell(findCategoryLabel?.value)}
+            </Box>
+          );
+        },
+        style: {
+          textAlign: 'right',
         },
       },
     ]);
