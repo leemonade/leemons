@@ -167,7 +167,7 @@ function getDataType(extensions) {
 
 async function importTasks({ filePath, config: { users, centers, programs, assets }, ctx }) {
   const items = await itemsImport(filePath, 'ta_tasks', 40);
-  const subjects = await itemsImport(filePath, 'ta_task_subjects', 40);
+  const subjects = await itemsImport(filePath, 'ta_task_subjects', 40, false);
 
   await Promise.all(
     keys(items)
@@ -182,7 +182,7 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
           .filter(([, item]) => item.task === key)
           .map(([, item]) => ({
             subject: program.subjects[item.subject]?.id,
-            level: item.level,
+            level: item.level ?? null,
             program: program.id,
             curriculum: {
               objectives: (item.objectives || '')
@@ -235,7 +235,7 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
         items[key] = {
           asset: {
             name: task.name,
-            tagline: task.tagline,
+            tagline: task.tagline || null,
             description: task.description || null,
             tags: task.tags || [],
             color: task.color || null,

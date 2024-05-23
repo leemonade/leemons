@@ -49,7 +49,7 @@ async function createTestsQBanksSheet({ workbook, qBanks, users, programs, subje
   });
 
   return qBankDetails.map((qBank, i) => {
-    const onlySubjectId = qBank.subjects[0]?.id ?? '';
+    const onlySubjectId = qBank.subjects[0]?.subject ?? '';
     const bulkId = `qbank_${(i + 1).toString().padStart(2, '0')}`;
     const qBankObject = {
       root: bulkId,

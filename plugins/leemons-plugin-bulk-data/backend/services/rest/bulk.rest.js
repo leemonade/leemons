@@ -1,5 +1,6 @@
 const fs = require('fs');
 const chalk = require('chalk');
+const { setTimeout } = require('timers/promises');
 const { LeemonsError } = require('@leemons/error');
 
 const { createTempFile } = require('../../core/helpers/createTempFile');
@@ -132,7 +133,8 @@ async function bulkData({ docPath, ctx }) {
 
     ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`);
     config.programs = await initAcademicPortfolio({ file: docPath, config, ctx });
-    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
+    await setTimeout(1000);
+    await ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
     currentPhase = LOAD_PHASES.AP;
 
     ctx.logger.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
@@ -242,3 +244,38 @@ module.exports = {
     },
   },
 };
+
+// TODO CREAR CALENDARIOS REGIONALES - antes de academicPortfolioInit
+// TODO EDITAR CALENDARIO DE PROGRAMA PARA QUE APUNTE AL CALENDARIO REGIONAL DESEADO - al final
+// TODO RECORDAR QUE LA TAB ac_program ya no deberá exister (el programa automaticamente emite evento para creación de program calendar)
+
+/*
+PAYLOAD DE EDICIÓN DE CALENDARIO DE PROGRAMA academic-calendar/config
+{
+    "regionalConfig": "lrn:local:academic-calendar:local:66488a7da904f74425c70742:RegionalConfig:664e05ed94a7a77c83b0f036", //
+    "allCoursesHaveSameDates": false,
+    "breaks": [
+        {
+            "name": "recreo",
+            "startDate": "2024-05-22T07:30:00.000Z",
+            "endDate": "2024-05-22T08:30:00.000Z",
+            "courses": [
+                "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d"
+            ]
+        }
+    ],
+    "courseDates": {
+        "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d": {
+            "startDate": "2024-04-30T22:00:00.000Z",
+            "endDate": "2024-05-30T22:00:00.000Z"
+        }
+    },
+    "substagesDates": {
+        "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d": {}
+    },
+    "courseEvents": {
+        "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d": []
+    },
+    "program": "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Programs:66488aa01a368c2077393b82" // identificador de programa en ProgramCalendar
+}
+*/

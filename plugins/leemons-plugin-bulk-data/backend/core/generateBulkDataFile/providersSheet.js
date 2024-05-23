@@ -11,6 +11,11 @@ async function createProvidersSheet({ workbook }) {
     { header: 'accessKey', key: 'accessKey', width: 30 },
     { header: 'secretAccessKey', key: 'secretAccessKey', width: 40 },
     { header: 'bucket', key: 'bucket', width: 40 },
+    { header: 'smtpHost', key: 'smtpHost', width: 30 },
+    { header: 'smtpUser', key: 'smtpUser', width: 30 },
+    { header: 'smtpPass', key: 'smtpPass', width: 30 },
+    { header: 'smtpPort', key: 'smtpPort', width: 10 },
+    { header: 'smtpSecure', key: 'smtpSecure', width: 10 },
   ];
 
   // Headers row
@@ -22,6 +27,11 @@ async function createProvidersSheet({ workbook }) {
     accessKey: 'Access Key',
     secretAccessKey: 'Access Secret Key',
     bucket: 'Bucket',
+    smtpHost: 'SMTP >Host',
+    smtpUser: 'email',
+    smtpPass: 'password',
+    smtpPort: 'port',
+    smtpSecure: 'secure',
   });
   worksheet.getRow(2).eachCell((cell, colNumber) => {
     if (colNumber === 1) {
@@ -31,8 +41,6 @@ async function createProvidersSheet({ workbook }) {
     }
   });
 
-  // TODO: ask if we should get providers data. It seems weird.
-  // We could pass data here as enviroment variables
   worksheet.addRow({ root: 'storage' });
   worksheet.addRow({ root: 'email' });
   worksheet.addRow({ root: 'iot' });

@@ -131,15 +131,17 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     withFiles: true,
   });
 
+  const questionsToReturn = [];
   qBanks.forEach(({ providerData, bulkId: qBankBulkId }) => {
     const { questions } = providerData;
+    const { categories: qBankCategories } = providerData;
     questions?.forEach((question, i) => {
       const bulkId = `q${(i + 1).toString().padStart(2, '0')}`;
       const questionObject = {
         root: bulkId,
         qbank: qBankBulkId,
         type: question.type,
-        category: question.category, // todo get quetestionBankCategory detail
+        category: qBankCategories.find((c) => c.id === question.category)?.value,
         level: question.level,
         withImages: booleanToYesNoAnswer(question.withImages),
         tags: question.tags?.join(', '),
@@ -151,8 +153,11 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
       };
 
       worksheet.addRow(_.omitBy(questionObject, _.isNil));
+      questionsToReturn.push({ ...question, bulkId });
     });
   });
+
+  return questionsToReturn;
 }
 
 module.exports = { createTestsQuestionsSheet };

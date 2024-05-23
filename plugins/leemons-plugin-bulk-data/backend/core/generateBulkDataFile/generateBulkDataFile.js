@@ -47,7 +47,6 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     workbook,
     centers,
     evaluationSystems,
-    users,
     ctx,
   });
   const subjects = await createSubjectsSheet({
@@ -91,7 +90,6 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     libraryAssets,
     programs,
     users,
-
     centers,
     ctx,
   });
@@ -108,10 +106,19 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   });
 
   const questions = await createTestsQuestionsSheet({ workbook, qBanks, ctx });
-  await createTestsSheet({ workbook, tests: assetsByCategoryKey[TESTS], ctx });
+  await createTestsSheet({
+    workbook,
+    questions,
+    tests: assetsByCategoryKey[TESTS],
+    qBanks,
+    programs,
+    subjects,
+    users,
+    ctx,
+  });
 
   // CALENDAR
-  await createCalendarSheet({ workbook, ctx });
+  await createCalendarSheet({ workbook, users, subjects, ctx });
 
   await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
 }
@@ -120,3 +127,8 @@ module.exports = { generateBulkDataFile };
 
 // CASO 1: nosotros (no hay usuarios) // se cargará con el endpoint existente
 // CASO 2: me pasan un array con 1 teacher,estudiantes y admin/super-admin -> modificamos endpoint
+
+// TODO@PAOLA: calendario EXPORT.
+// TODO@PAOLA: avatar de usuario -> es un asset... hacer lo mismo, es un asset
+// TODO@PAOLA: implementar academic calendar en import y export (ver screenshot the payload crear regional config => "Barcelona")
+// TODO@PAOLA: preguntas con mapas. crear convención. updade del import

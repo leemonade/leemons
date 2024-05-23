@@ -1,3 +1,4 @@
+const { cloneDeep } = require('lodash');
 const { styleCell } = require('./helpers');
 const {
   ADMIN_BULK_ID,
@@ -25,7 +26,7 @@ async function addNotAdministrativeUsers({ worksheet, centers, ctx }) {
   const usersToReturn = [];
   const profileCounts = {};
 
-  users.forEach((user, i) => {
+  users.forEach((user) => {
     let mainProfile;
     const userProfiles = user.userAgents.map((agent) => {
       const profileSysName = agent.profile.sysName;
@@ -58,8 +59,11 @@ async function addNotAdministrativeUsers({ worksheet, centers, ctx }) {
 
     usersToReturn.push({
       id: user.id,
+      avatar: undefined, // todo aquí también va el avatar resuelto
+      name: user.name,
+      surnames: user.surnames,
       bulkId,
-      userAgents: user.userAgents.map((agent) => agent.id),
+      userAgents: cloneDeep(user.userAgents),
     });
     worksheet.addRow(rowObject);
   });

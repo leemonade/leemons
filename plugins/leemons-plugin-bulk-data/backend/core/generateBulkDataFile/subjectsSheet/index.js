@@ -1,3 +1,3 @@
-const { createSubjectsSheet } = require('./subjectsSheet');
+const { createSubjectsSheet, sortClassesAccordingToReferenceGroups } = require('./subjectsSheet');
 
-module.exports = { createSubjectsSheet };
+module.exports = { createSubjectsSheet, sortClassesAccordingToReferenceGroups };

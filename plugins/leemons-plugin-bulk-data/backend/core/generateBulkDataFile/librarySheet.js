@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { booleanToYesNoAnswer, styleCell } = require('./helpers');
 
-const getCanAccess = async (asset, users) => {
+const getCanAccess = (asset, users) => {
   const { fromUser } = asset;
   const ownerUser = users.find((u) => u.id === fromUser);
   const owner = `${ownerUser.bulkId}|owner`;
@@ -67,7 +67,7 @@ async function createLibraryResourcesSheet({
   });
 
   const assetsToReturn = [];
-  assetDetails.forEach(async (asset, i) => {
+  assetDetails.forEach((asset, i) => {
     const bulkId = `L${(i + 1).toString().padStart(3, '0')}`;
     const programBulkId = programs.find((p) => p.id === asset.program)?.bulkId;
     // Previous bulk-data implementation assumes only one subject will be related to the resource. This needs to be updated, the first one is chosen here.
@@ -87,7 +87,7 @@ async function createLibraryResourcesSheet({
       color: asset.color,
       cover: asset.cover,
       tags: asset.tags.join(', '),
-      canAccess: await getCanAccess(asset, users),
+      canAccess: getCanAccess(asset, users),
       program: programBulkId,
       subject: subjectBulkId,
       enabled: 'Yes',

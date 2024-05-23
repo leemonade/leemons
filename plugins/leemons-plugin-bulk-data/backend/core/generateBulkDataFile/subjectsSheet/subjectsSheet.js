@@ -65,7 +65,9 @@ function getTeachersString(subjectUsesReferenceGroups, classes, users) {
       const mainTeacher = cls.teachers.find((teacher) => teacher.type === 'main-teacher');
       if (mainTeacher) {
         const type = 'main';
-        const user = users.find((_user) => _user.userAgents.includes(mainTeacher.teacher))?.bulkId;
+        const user = users.find((_user) =>
+          _user.userAgents.map((agent) => agent.id).includes(mainTeacher.teacher)
+        )?.bulkId;
         return `${user}|${type}@${i + 1}`;
       }
       return '';
@@ -80,7 +82,9 @@ function getStudentsString(subjectUsesReferenceGroups, classes, users) {
       if (!cls.students?.length) return '';
       return cls.students
         .map((student) => {
-          const user = users.find((_user) => _user.userAgents.includes(student)).bulkId;
+          const user = users.find((_user) =>
+            _user.userAgents.map((agent) => agent.id).includes(student)
+          )?.bulkId;
           return `${user}@${i + 1}`;
         })
         .join(', ');
@@ -184,10 +188,10 @@ async function createSubjectsSheet({
       ...timetableFields,
     };
     worksheet.addRow(subjectObject);
-    subjects.push({ id: subject.id, bulkId });
+    subjects.push({ ...subject, bulkId });
   });
 
   return subjects;
 }
 
-module.exports = { createSubjectsSheet };
+module.exports = { createSubjectsSheet, sortClassesAccordingToReferenceGroups };

@@ -27,8 +27,6 @@ const addExtraGroupping = (worksheet) => {
   });
 };
 
-// MAIN FUNCTION ···········································································|
-
 async function getPermissionsPerPlugin({ ctx, profileUri }) {
   const {
     profile: { permissions },
@@ -37,11 +35,13 @@ async function getPermissionsPerPlugin({ ctx, profileUri }) {
   const results = {};
   Object.keys(permissions).forEach((permissionKey) => {
     const permission = permissions[permissionKey]?.join(', ') || '';
-    const [plugin, entity] = permissionKey.split('.');
-    results[camelCase(`${plugin} ${entity}`)] = permission;
+    const [plugin, ...entity] = permissionKey.split('.');
+    results[camelCase(`${plugin} ${entity.join(' ')}`)] = permission;
   });
   return results;
 }
+
+// MAIN FUNCTION ···········································································|
 
 async function createProfilesSheet({ workbook, ctx }) {
   const worksheet = workbook.addWorksheet('profiles');

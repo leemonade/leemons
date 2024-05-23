@@ -15,4 +15,5 @@ module.exports = {
     TESTS: 'assignables.tests',
     TEST_QUESTION_BANKS: 'tests-questions-banks',
   },
+  KANBAN_COLUMN_NAMES: ['', 'backlog', 'todo', 'inprogress', 'underreview', 'done'],
 };
