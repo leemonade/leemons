@@ -100,6 +100,7 @@ module.exports = {
     markersRequired: 'You must mark at least one item',
     markersNeedResponseInAllItems: 'A text must be added to all elements',
     cancel: 'Cancel',
+    saveChanges: 'Save changes',
     hideOptionsLabel: 'Hide options',
     hideOptionsHelp: 'Hidden options are identified by the icon {{icon}}',
     hasCoverLabel: 'Feature image',

@@ -99,6 +99,7 @@ module.exports = {
     markersRequired: 'Marcar un elemento como mínimo',
     markersNeedResponseInAllItems: 'Añadir un texto a todos los elementos',
     cancel: 'Cancelar',
+    saveChanges: 'Guardar cambios',
     hideOptionsLabel: 'Ocultar opciones',
     hideOptionsHelp: 'Las opciones ocultas se identifican con el icono {{icon}}',
     hasCoverLabel: 'Imagen destacada',

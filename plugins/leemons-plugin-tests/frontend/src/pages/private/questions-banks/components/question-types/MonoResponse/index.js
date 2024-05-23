@@ -160,6 +160,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                 }
                 listRender={
                   <ListItem
+                    labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
                     itemContainerRender={({ children }) => (
                       <Stack alignItems="center" fullWidth>
                         {children}
