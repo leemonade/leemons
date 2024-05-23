@@ -4,7 +4,7 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 
@@ -99,8 +99,5 @@ module.exports = {
         return itemServices.updateProfiles({ ...ctx.params, ctx });
       },
     },
-  },
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
   },
 };
