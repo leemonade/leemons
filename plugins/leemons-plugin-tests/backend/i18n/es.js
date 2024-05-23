@@ -43,6 +43,7 @@ module.exports = {
     tagsLabel: 'Etiquetas',
     addTag: 'Añadir',
     continue: 'Continuar',
+    next: 'Siguiente',
     previous: 'Anterior',
     addQuestion: 'Añadir nueva pregunta',
     save: 'Guardar',
