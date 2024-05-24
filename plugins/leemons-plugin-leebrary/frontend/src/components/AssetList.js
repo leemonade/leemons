@@ -332,7 +332,7 @@ const AssetList = ({
       duplicate: selectedAsset?.duplicable ? t('cardToolbar.duplicate') : false,
       download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
       delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
-      share: selectedAsset?.shareable ? t('cardToolbar.share') : false,
+      share: isTeacher && selectedAsset?.shareable ? t('cardToolbar.share') : false,
       assign: isTeacher && selectedAsset?.assignable ? t('cardToolbar.assign') : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
