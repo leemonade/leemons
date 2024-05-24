@@ -196,6 +196,7 @@ export default function DetailQuestionForm({
                   render={({ field }) => (
                     <Select
                       required
+                      placeholder={t('typePlaceholder')}
                       data={questionTypes}
                       error={form.formState.errors.type}
                       label={t('typeLabel')}
@@ -211,6 +212,7 @@ export default function DetailQuestionForm({
                       <SelectLevelsOfDifficulty
                         error={form.formState.errors.level}
                         label={t('levelLabel')}
+                        placeholder={t('levelPlaceholder')}
                         {...field}
                       />
                     )}
@@ -229,6 +231,7 @@ export default function DetailQuestionForm({
                         <Select
                           {...field}
                           data={categoryData}
+                          placeholder={t('categoryPlaceholder')}
                           searchable
                           creatable
                           getCreateLabel={(value) => `+ ${value}`}
@@ -281,6 +284,7 @@ export default function DetailQuestionForm({
                       error={form.formState.errors.question}
                       label={t('questionLabel')}
                       editorStyles={{ minHeight: '96px' }}
+                      placeholder={t('statementPlaceHolder')}
                       {...field}
                     />
                   )}
@@ -318,6 +322,7 @@ export default function DetailQuestionForm({
                           value={field.value?.value ? field.value.value : field.value}
                           disabled={!rightAnswerSelected || !hasEnoughAnswers}
                           minRows={3}
+                          placeholder={t('cluesPlaceholder')}
                         />
                       )}
                     />
@@ -329,6 +334,7 @@ export default function DetailQuestionForm({
                           data={answerChoices}
                           disabled={!rightAnswerSelected || !hasEnoughAnswers}
                           onChange={handleHideOnHelp}
+                          placeholder={t('hideOptionsPlaceholder')}
                         />
                       </Box>
                       <Text size="xs">{hideOptionsHelp}</Text>
