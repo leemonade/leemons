@@ -64,6 +64,10 @@ export default function Progress({ program }) {
 
   const titleKey = `dashboardTitle.main.${isStudent ? 'student' : 'teacher'}`;
 
+  if (!isStudent) {
+    return null;
+  }
+
   return (
     <ContextContainer title={t(titleKey)}>
       <Box pt={10}>
