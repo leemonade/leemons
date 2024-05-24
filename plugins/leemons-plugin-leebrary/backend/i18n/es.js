@@ -278,8 +278,7 @@ module.exports = {
     viewer: 'Lectura',
     editor: 'Editor',
     assigner: 'Asignador',
-    new: 'Nuevo {label}',
-    newItem: 'Nuevo ítem',
+    genericNew: 'Crear {label}',
     tableLabels: {
       name: 'Nombre',
       owner: 'Propietario/a',

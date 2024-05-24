@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import { noop, capitalize } from 'lodash';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import { Box, UnstyledButton } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -15,7 +15,7 @@ function NewLibraryCardButton({ categoryLabel, onClick = noop }) {
       <Box className={classes.icon}>
         <AddCircleIcon width={24} height={24} />
       </Box>
-      <Box className={classes.label}>{t('newItem')}</Box>
+      <Box className={classes.label}>{t('genericNew', { label: capitalize(categoryLabel) })}</Box>
     </UnstyledButton>
   );
 }
