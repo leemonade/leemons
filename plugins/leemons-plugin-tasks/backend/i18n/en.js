@@ -203,7 +203,7 @@ module.exports = {
         },
       },
       instructionData: {
-        step_label: 'Resources and Instructions',
+        step_label: 'Instructions',
         labels: {
           title: 'Instructions',
           forTeacher: 'Instructions for Teacher',
@@ -223,6 +223,12 @@ module.exports = {
           forStudent:
             'Here it is possible to include extra information to help the student perform the exercise better.',
         },
+      },
+      resourcesData: {
+        step_label: 'Resources',
+      },
+      resourcesAndInstructionsData: {
+        step_label: 'Resources and Instructions',
       },
       evaluationData: {
         step_label: 'Evaluation',
