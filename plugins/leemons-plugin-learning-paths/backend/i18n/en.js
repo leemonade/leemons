@@ -31,7 +31,7 @@ module.exports = {
       next: 'Next',
       previous: 'Previous',
       saveDraft: 'Save draft',
-      publishOptions: 'Publish options',
+      finish: 'Finish',
       publish: 'Publish',
       publishAndAssign: 'Publish and assign',
       publishAndShare: 'Publish and share',
