@@ -16,8 +16,8 @@ const {
   getUserPermissionMultiple,
 } = require('../../permissions/instances/users/getUserPermissionMultiple');
 const {
-  getModuleActivitiesTimestamps,
-} = require('../../assignations/getAssignations/getModuleActivitesTimestamps');
+  getModuleActivitiesTimestampsAndGrades,
+} = require('../../assignations/getAssignations/getModuleActivitesTimestampsAndGrades');
 
 /**
  * Retrieves the status of multiple instances.
@@ -108,7 +108,7 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
     .select(['id', 'instance', 'user'])
     .lean();
 
-  const { dates: modulesDates } = await getModuleActivitiesTimestamps({
+  const { dates: modulesDates } = await getModuleActivitiesTimestampsAndGrades({
     assignationsData: assignationsFound,
     ctx,
   });

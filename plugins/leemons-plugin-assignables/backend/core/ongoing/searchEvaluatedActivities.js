@@ -62,14 +62,14 @@ module.exports = async function searchEvaluatedActivities({ query, ctx }) {
     ctx,
   });
 
+  instances = groupInstancesInModules({ instances: map(assignations, 'instance'), modules });
+
+  instances = filterModuleInstancesByHavingAllActivities({ instances });
+
   instances = sortInstancesByDates({
-    instances: map(assignations, 'instance'),
+    instances,
     filters: query,
   });
-
-  instances = groupInstancesInModules({ instances, modules });
-
-  instances = filterModuleInstancesByHavingAllActivities({ instances, assignations });
 
   const paginatedData = applyOffsetAndLimit(instances, query);
   return returnModulesData({ paginatedData, filters: query });
