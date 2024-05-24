@@ -125,10 +125,6 @@ async function getStudentStatus({ instancesIds, ctx }) {
       fetchInstance: true,
       ctx,
     })
-  ).filter(
-    (a) =>
-      a.instance.id ===
-      'lrn:local:assignables:local:6621423b9deecfedb915a5c3:Instances:6645e72b927d37b879399b42'
   );
 
   return assignations.map((assignation) => ({
