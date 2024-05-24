@@ -5,11 +5,8 @@ import {
   LoadingOverlay,
   Button,
   createStyles,
-  ActivityAccordion,
-  ActivityAccordionPanel,
   HtmlText,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import ActivityHeader from '@assignables/components/ActivityHeader/index';
