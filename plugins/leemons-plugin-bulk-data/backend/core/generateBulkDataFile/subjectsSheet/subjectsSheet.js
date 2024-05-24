@@ -129,7 +129,8 @@ function getTimetableFields(subjectUsesReferenceGroups, classes) {
 
   return { timetable0, timetable1, timetable2, timetable3, timetable4, timetable5, timetable6 };
 }
-// MAIN ···························································································|
+
+// MAIN FUNCTION ···························································································|
 
 async function createSubjectsSheet({
   workbook,

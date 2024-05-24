@@ -21,6 +21,12 @@ const { createTestsQBanksSheet } = require('./testsQBanksSheet');
 const { createTestsQuestionsSheet } = require('./testsQuestionsSheet');
 const { createTestsSheet } = require('./testsSheet');
 const { createCalendarSheet } = require('./calendarSheet');
+const { createRegionalCalendarsSheet } = require('./regionalCalendarsSheet');
+const { createRegionalCalendarEventsSheet } = require('./regionalCalendarEventsSheets');
+const {
+  createProgramCalendarsSheet,
+  createProgramCalendarEventsSheet,
+} = require('./programCalendarSheets');
 
 async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   const workbook = new Excel.Workbook();
@@ -120,6 +126,13 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   // CALENDAR
   await createCalendarSheet({ workbook, users, subjects, ctx });
 
+  // ACADEMIC CALENDAR: REGIONAL CALENDARS
+  const regionalCalendars = await createRegionalCalendarsSheet({ workbook, centers, ctx });
+  createRegionalCalendarEventsSheet({ workbook, regionalCalendars, ctx });
+
+  const programCalendars = await createProgramCalendarsSheet({ workbook, programs, ctx });
+  createProgramCalendarEventsSheet({ workbook, programCalendars, ctx });
+
   await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
 }
 
@@ -128,7 +141,5 @@ module.exports = { generateBulkDataFile };
 // CASO 1: nosotros (no hay usuarios) // se cargará con el endpoint existente
 // CASO 2: me pasan un array con 1 teacher,estudiantes y admin/super-admin -> modificamos endpoint
 
-// TODO@PAOLA: calendario EXPORT.
-// TODO@PAOLA: avatar de usuario -> es un asset... hacer lo mismo, es un asset
 // TODO@PAOLA: implementar academic calendar en import y export (ver screenshot the payload crear regional config => "Barcelona")
 // TODO@PAOLA: preguntas con mapas. crear convención. updade del import

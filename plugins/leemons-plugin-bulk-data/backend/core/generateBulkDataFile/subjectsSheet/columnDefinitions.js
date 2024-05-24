@@ -151,7 +151,7 @@ Object.keys(SUBJECT_COLUMN_DEFINITIONS).forEach((key) => {
 
 const modifyColumnHeaders = (worksheet) => {
   worksheet.getRow(1).eachCell((cell) => {
-    if (cell.value && cell.value.startsWith('timetable')) {
+    if (cell.value?.startsWith('timetable')) {
       const parts = cell.value.split('timetable');
       // eslint-disable-next-line no-param-reassign
       cell.value = `timetable.${parts[1]}`;

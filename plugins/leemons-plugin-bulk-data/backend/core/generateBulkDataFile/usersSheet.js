@@ -8,7 +8,7 @@ const {
   SUPER_ADMIN_EMAIL,
 } = require('./config/constants');
 
-async function addNotAdministrativeUsers({ worksheet, centers, ctx }) {
+async function addAllExistentUsers({ worksheet, centers, ctx }) {
   const { data: usersData } = await ctx.call('users.users.listRest', {
     page: 0,
     size: 9999,
@@ -23,6 +23,27 @@ async function addNotAdministrativeUsers({ worksheet, centers, ctx }) {
     ...user,
     userAgents: userAgents.filter((agent) => agent.user.id === user.id),
   }));
+  const avatarIds = users.map((user) => user.avatarAsset).filter(Boolean);
+
+  if (avatarIds.length > 0) {
+    const assetDetails = await ctx.call('leebrary.assets.getByIds', {
+      ids: avatarIds,
+      shouldPrepareAssets: true,
+      withFiles: true,
+    });
+
+    const avatarMap = assetDetails.reduce((acc, asset) => {
+      acc[asset.id] = asset;
+      return acc;
+    }, {});
+
+    users.forEach((u) => {
+      if (u.avatar && avatarMap[u.avatarAsset]) {
+        // eslint-disable-next-line no-param-reassign
+        u.avatar = avatarMap[u.avatarAsset].cover;
+      }
+    });
+  }
   const usersToReturn = [];
   const profileCounts = {};
 
@@ -52,14 +73,14 @@ async function addNotAdministrativeUsers({ worksheet, centers, ctx }) {
       email: user.email,
       password: AUTO_PASSWORD,
       locale: user.locale,
-      avatar: undefined, // TODO: get an image that can actually be used
+      avatar: user.avatar,
       tags: user.tags.join(', '),
       profiles: userProfiles.join(', '),
     };
 
     usersToReturn.push({
       id: user.id,
-      avatar: undefined, // todo aquí también va el avatar resuelto
+      avatar: user.avatar,
       name: user.name,
       surnames: user.surnames,
       bulkId,
@@ -111,7 +132,7 @@ async function createUsersSheet({ workbook, centers, admin, superAdmin, predefin
 
   let users;
   if (!predefinedUsers?.length) {
-    users = await addNotAdministrativeUsers({ worksheet, centers, ctx });
+    users = await addAllExistentUsers({ worksheet, centers, ctx });
   }
 
   if (admin) {

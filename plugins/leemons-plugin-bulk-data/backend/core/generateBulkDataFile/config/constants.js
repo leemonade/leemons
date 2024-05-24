@@ -16,4 +16,15 @@ module.exports = {
     TEST_QUESTION_BANKS: 'tests-questions-banks',
   },
   KANBAN_COLUMN_NAMES: ['', 'backlog', 'todo', 'inprogress', 'underreview', 'done'],
+  REGIONAL_CALENDAR_EVENT_TYPE: {
+    REGIONAL: 'regional',
+    LOCAL: 'local',
+    DAY_OFF: 'day-off',
+  },
+  PROGRAM_CALENDAR_EVENT_TYPES: {
+    COURSE: { type: 'course', calendarField: 'courseDates' },
+    COURSE_EVENTS: { type: 'course-events', calendarField: 'courseEvents' },
+    BREAKS: { type: 'breaks', calendarField: 'breaks' },
+    SUBSTAGES: { type: 'substages', calendarField: 'substagesDates' },
+  },
 };

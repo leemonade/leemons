@@ -124,7 +124,7 @@ async function createProgramsSheet({ workbook, centers, evaluationSystems, ctx }
       ...solveReferenceGroupsFields(program),
     };
     worksheet.addRow(programObject);
-    programs.push({ id: program.id, bulkId, centerBulkId: programObject.centers });
+    programs.push({ ...program, bulkId, centerBulkId: programObject.centers });
   });
 
   return programs;
