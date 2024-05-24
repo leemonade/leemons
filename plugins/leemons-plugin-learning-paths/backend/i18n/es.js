@@ -75,7 +75,7 @@ module.exports = {
           },
         },
         buttons: {
-          new: 'Nueva actividad',
+          new: 'Añadir actividad',
         },
         emptyState: {
           title: 'Listado de actividades',
