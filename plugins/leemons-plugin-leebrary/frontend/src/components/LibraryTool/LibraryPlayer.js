@@ -54,6 +54,7 @@ const LibraryPlayer = ({
             canPlay={viewMode}
             handleClickCCreator={() => window.open(asset.url, '_blank', 'noopener')}
             ccMode
+            hasActionButton
           />
         </Box>
       );
