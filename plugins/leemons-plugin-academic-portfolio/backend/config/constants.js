@@ -277,7 +277,7 @@ const menuItems = [
       },
     ],
   },
-  // Tree
+  // Enrollment and Management (academic tree)
   {
     item: {
       key: 'tree',
@@ -285,8 +285,8 @@ const menuItems = [
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/tree',
       label: {
-        en: 'Portfolio Tree',
-        es: 'Árbol académico',
+        en: 'Enrollment and Management',
+        es: 'Matriculación y gestión',
       },
       disabled: true,
     },
