@@ -416,7 +416,7 @@ module.exports = {
       },
       noResults: {
         title: 'Sin resultados',
-        description: 'No hemos encontrado resultados para tu bsqueda.',
+        description: 'No hemos encontrado resultados para tu búsqueda.',
       },
     },
     footer: {
@@ -444,7 +444,7 @@ module.exports = {
       },
       noResults: {
         title: 'Sin resultados',
-        description: 'No hemos encontrado resultados para tu bsqueda.',
+        description: 'No hemos encontrado resultados para tu búsqueda.',
       },
     },
   },

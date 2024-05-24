@@ -182,6 +182,7 @@ module.exports = {
               formatPlaceholder: 'Escribir extensión y añadir (pdf, xls, doc...)',
               maxSize: 'Tamaño máximo',
               required: 'Campo necesario',
+              addButton: 'Añadir',
             },
           },
         },
@@ -192,7 +193,7 @@ module.exports = {
         },
       },
       instructionData: {
-        step_label: 'Recursos e instrucciones',
+        step_label: 'Instrucciones',
         labels: {
           title: 'Instrucciones',
           forTeacher: 'Instrucciones para Profesores',
@@ -212,6 +213,12 @@ module.exports = {
             'Ayuda a otros profesores a abordar este ejercicio con unas sencillas instrucciones.',
           forStudent: 'Información extra para ayudar al alumno a realizar mejor el ejercicio.',
         },
+      },
+      resourcesData: {
+        step_label: 'Recursos',
+      },
+      resourcesAndInstructionsData: {
+        step_label: 'Recursos e instrucciones',
       },
       evaluationData: {
         step_label: 'Evaluación',

@@ -67,7 +67,7 @@ export default function AssistancePage() {
                     leftIcon={<DownloadIcon />}
                     onClick={() => onScoresDownload('xlsx')}
                   >
-                    Excel
+                    {t('excelFile')}
                   </Button>
                   <Button
                     variant="outline"
@@ -76,7 +76,7 @@ export default function AssistancePage() {
                     leftIcon={<DownloadIcon />}
                     onClick={() => onScoresDownload('csv')}
                   >
-                    CSV
+                    {t('csvFile')}
                   </Button>
                 </>
               }

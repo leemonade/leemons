@@ -319,7 +319,7 @@ module.exports = {
       duplicate: 'Duplicar',
       download: 'Descargar',
       delete: 'Eliminar',
-      share: 'Permisos',
+      share: 'Compartir',
       assign: 'Asignar',
       pin: 'Marcar como favorito',
       unpin: 'Quitar de favorito',

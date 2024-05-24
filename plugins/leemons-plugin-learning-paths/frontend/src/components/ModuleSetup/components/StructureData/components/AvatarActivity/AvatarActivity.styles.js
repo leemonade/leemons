@@ -22,9 +22,7 @@ export const useAvatarActivityStyles = createStyles((theme, { activityColor }) =
   },
   cover: {
     position: 'relative',
-    border: `1px solid ${theme.other.global.border.color.line.muted}`,
     borderRadius: theme.other.avatar.border.radius.md,
-    overflow: 'hidden',
   },
   coverFallback: {
     width: 40,

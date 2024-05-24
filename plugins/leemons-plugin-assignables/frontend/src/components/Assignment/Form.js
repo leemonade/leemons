@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import {
   Box,
@@ -11,6 +11,7 @@ import {
   TotalLayoutHeader,
   VerticalStepperContainer,
   Stack,
+  LoadingOverlay,
 } from '@bubbles-ui/components';
 
 import { unflatten } from '@common';
@@ -30,7 +31,7 @@ export function useFormLocalizations() {
     }
 
     return {};
-  }, [translations]);
+  }, [translations, key]);
 }
 
 export default function FormWithLayout({ assignable, children, ...props }) {
@@ -101,6 +102,10 @@ export default function FormWithLayout({ assignable, children, ...props }) {
   /*
     === Render ===
   */
+
+  if (isEmpty(localizations)) {
+    return <LoadingOverlay visible />;
+  }
 
   return (
     <TotalLayoutContainer

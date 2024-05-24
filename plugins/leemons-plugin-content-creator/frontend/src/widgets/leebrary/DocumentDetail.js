@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
 import { useIsStudent } from '@academic-portfolio/hooks';
 
-const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
+const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props }) => {
   const isStudent = useIsStudent();
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
@@ -40,9 +40,9 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
     if (asset.duplicable) {
       toolbarItems.duplicate = t('duplicate');
     }
-    // if (asset.shareable) {
-    //   toolbarItems.share = t('share');
-    // }
+    if (asset.providerData?.published && asset.shareable) {
+      toolbarItems.share = t('share');
+    }
     if (asset.pinneable) {
       if (asset.pinned === false) {
         toolbarItems.pin = t('pin');
@@ -61,9 +61,9 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
     onUnpin(item);
   };
 
-  // const handleOnShare = () => {
-  //   onShare(asset);
-  // };
+  const handleOnShare = () => {
+    onShare(asset);
+  };
 
   const handleView = () => {
     history.push(`/private/content-creator/${asset.providerData.id}/view`);
@@ -137,7 +137,7 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       onPin={handleOnPin}
       onUnpin={handleOnUnpin}
       onDuplicate={handleDuplicate}
-      // onShare={handleOnShare}
+      onShare={handleOnShare}
     />
   );
 };
@@ -148,7 +148,7 @@ DocumentDetail.propTypes = {
   variant: PropTypes.string,
   onPin: PropTypes.func,
   onUnpin: PropTypes.func,
-  // onShare: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default DocumentDetail;

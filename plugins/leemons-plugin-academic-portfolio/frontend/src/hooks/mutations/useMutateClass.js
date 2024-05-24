@@ -8,6 +8,7 @@ import {
 } from '@academic-portfolio/request';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProgramSubjectsKey } from '../keys/programSubjects';
+import { getClassStudentsKey } from '../keys/classStudents';
 
 export function useUpdateClass() {
   const queryClient = useQueryClient();
@@ -51,7 +52,8 @@ export function useEnrollStudentsToClasses() {
       classes.forEach((cls) => {
         const programSubjectsKey = getProgramSubjectsKey(cls.program);
         queryClient.invalidateQueries(programSubjectsKey);
-        queryClient.invalidateQueries(['subjectDetail', { subject: cls.subject.id }]);
+        const classStudentsKey = getClassStudentsKey(cls.id);
+        queryClient.invalidateQueries(classStudentsKey);
       });
     },
   });

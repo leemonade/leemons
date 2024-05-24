@@ -332,7 +332,7 @@ module.exports = {
       duplicate: 'Duplicate',
       download: 'Download',
       delete: 'Delete',
-      share: 'Permissions',
+      share: 'Share',
       assign: 'Assign',
       pin: 'Mark as favorite',
       unpin: 'Remove from favorites',

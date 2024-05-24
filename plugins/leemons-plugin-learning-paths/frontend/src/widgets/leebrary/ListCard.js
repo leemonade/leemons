@@ -15,7 +15,7 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 
 export function useListCardLocalizations() {
   const keys = ['assignables.roles.learningpaths.module.singular', 'learning-paths.libraryCard'];
@@ -35,7 +35,7 @@ export function useListCardLocalizations() {
   }, [translations]);
 }
 
-function useListCardMenuItems({ asset, localizations, onRefresh }) {
+function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
@@ -59,13 +59,15 @@ function useListCardMenuItems({ asset, localizations, onRefresh }) {
             history.push(`/private/learning-paths/modules/${id}/assign`);
           },
         },
-        // !!isOwner && {
-        //   icon: <ShareIcon />,
-        //   children: localizations?.menuItems?.share,
-        //   onClick: () => {
-        //     onShare(asset);
-        //   },
-        // },
+        !!isOwner &&
+          asset.providerData?.published &&
+          asset.shareable && {
+            icon: <ShareIcon />,
+            children: localizations?.menuItems?.share,
+            onClick: () => {
+              onShare(asset);
+            },
+          },
 
         !!editable && {
           icon: <EditIcon />,
@@ -154,10 +156,9 @@ const useListCardStyles = createStyles((theme, { single }) => ({
   },
 }));
 
-function ListCard({ asset, single, onRefresh = () => {}, ...props }) {
+function ListCard({ asset, single, onRefresh = () => {}, onShare, ...props }) {
   const localizations = useListCardLocalizations();
-  const menuItems = useListCardMenuItems({ localizations, asset, onRefresh });
-
+  const menuItems = useListCardMenuItems({ localizations, asset, onRefresh, onShare });
   const { classes } = useListCardStyles({ single });
 
   return (

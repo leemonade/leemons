@@ -66,3 +66,36 @@ export const SCORES_PERIOD_FORM_PROP_TYPES = {
   ),
   locale: PropTypes.string,
 };
+
+export const PERIODS_PROP_TYPES = {
+  periods: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+      endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+      name: PropTypes.string,
+    })
+  ),
+};
+
+export const SELECT_DATES_PROP_TYPES = {
+  classes: PropTypes.object,
+  control: PropTypes.object,
+  errorMessages: PropTypes.object,
+  errors: PropTypes.object,
+  labels: PropTypes.object,
+  locale: PropTypes.string,
+  watch: PropTypes.func,
+  getValues: PropTypes.func,
+  required: PropTypes.bool,
+};
+
+export const PERIODCREATIONFORM_PROP_TYPES = {
+  classes: PropTypes.object,
+  control: PropTypes.object,
+  errorMessages: PropTypes.object,
+  labels: PropTypes.object,
+  errors: PropTypes.object,
+  handleSubmit: PropTypes.func,
+  onSaveHandler: PropTypes.func,
+};

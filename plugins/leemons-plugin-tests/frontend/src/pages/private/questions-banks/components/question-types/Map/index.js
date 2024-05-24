@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -11,15 +11,12 @@ import {
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
-import { ViewOffIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 
 import { Controller, useFormContext } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { useStore } from '@common';
-import { findIndex, forEach, map } from 'lodash';
+import { forEach, map } from 'lodash';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { QuestionImage } from '../../../../../../components/QuestionImage';
 import { QuestionImageMarkersModal } from '../../../../../../components/QuestionImageMarkersModal';
 import { ListItemValueRender } from './components/ListItemValueRender';
 
@@ -46,7 +43,6 @@ NumberedListIcon.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
 };
-
 // eslint-disable-next-line import/prefer-default-export
 export function QuestionMap({ form: _form, t }) {
   const [store, render] = useStore();
@@ -63,7 +59,7 @@ export function QuestionMap({ form: _form, t }) {
     render();
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!properties?.image) {
       form.setValue('properties.markers', {
         ...(properties?.markers || {}),
@@ -72,7 +68,7 @@ export function QuestionMap({ form: _form, t }) {
     }
   }, [properties?.image]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     render();
   }, [JSON.stringify(properties)]);
 
@@ -108,7 +104,13 @@ export function QuestionMap({ form: _form, t }) {
           <Controller
             control={form.control}
             name="properties.caption"
-            render={({ field }) => <Textarea label={t('captionAltLabel')} {...field} />}
+            render={({ field }) => (
+              <Textarea
+                label={t('captionAltLabel')}
+                placeholder={t('captionAltPlaceholder')}
+                {...field}
+              />
+            )}
           />
         </ContextContainer>
       ) : null}
@@ -118,7 +120,11 @@ export function QuestionMap({ form: _form, t }) {
           control={form.control}
           name="properties.explanation"
           render={({ field }) => (
-            <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />
+            <TextEditorInput
+              {...field}
+              editorStyles={{ minHeight: '96px' }}
+              placeholder={t('explanationPlaceHolder')}
+            />
           )}
         />
       </ContextContainer>
@@ -170,6 +176,7 @@ export function QuestionMap({ form: _form, t }) {
                   <TextInput
                     {...itemProps}
                     value={itemProps?.value.response}
+                    placeholder={t('responsePlaceholder')}
                     onChange={(e) => itemProps?.onChange({ ...itemProps.value, response: e })}
                   />
                 )}
@@ -200,6 +207,6 @@ export function QuestionMap({ form: _form, t }) {
 }
 
 QuestionMap.propTypes = {
-  form: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
+  form: PropTypes.object,
+  t: PropTypes.func,
 };
