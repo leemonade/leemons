@@ -2,27 +2,28 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Stack } from '@bubbles-ui/components';
-import { noop } from 'lodash';
+import { map, noop } from 'lodash';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
-import { SelectCourse } from '@academic-portfolio/components';
+import { SelectCourse, SelectProgram } from '@academic-portfolio/components';
 import PickDate from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/PickDate';
 import SelectPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/SelectPeriod';
 import useSelectedPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/hooks/useSelectedPeriod';
-import { getSessionConfig } from '@users/session';
+import { getCentersWithToken } from '@users/session';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useStudentPeriods from './hooks/useStudentPeriods';
 
 export default function Filters({ onChange = noop, value }) {
   const [t] = useTranslateLoader(prefixPN('myScores.filters'));
-  const { program } = getSessionConfig();
   const form = useForm();
   const { getValues, setValue } = form;
 
   const { periods, startDate, endDate } = useStudentPeriods(form);
+  const centers = getCentersWithToken();
 
   const selectedCourse = useWatch({ name: 'course', control: form.control });
+  const program = useWatch({ name: 'program', control: form.control });
   const selectedPeriod = useSelectedPeriod({
     periods,
     control: form.control,
@@ -64,6 +65,13 @@ export default function Filters({ onChange = noop, value }) {
 
   return (
     <Stack spacing={4}>
+      <Controller
+        name="program"
+        control={form.control}
+        render={({ field }) => (
+          <SelectProgram {...field} firstSelected center={map(centers, 'id')} />
+        )}
+      />
       <Controller
         name="course"
         control={form.control}

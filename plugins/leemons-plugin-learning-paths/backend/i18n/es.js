@@ -116,7 +116,7 @@ module.exports = {
       assign: 'Asignar',
       duplicate: 'Duplicar',
       delete: 'Eliminar',
-      share: 'Permisos',
+      share: 'Compartir',
       pin: 'Marcar como favorito',
       unpin: 'Desmarcar como favorito',
     },

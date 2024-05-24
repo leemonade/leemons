@@ -60,6 +60,7 @@ const LibraryPlayer = ({
               )
             }
             ccMode
+            hasActionButton
           />
         </Box>
       );

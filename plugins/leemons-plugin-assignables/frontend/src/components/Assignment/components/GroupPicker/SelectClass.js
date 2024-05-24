@@ -218,13 +218,13 @@ export function SelectClass({
         availableClasses={availableClasses}
         localizations={localizations}
       />
-      <Controller
+      {/* <Controller
         name="autoAssign"
         control={control}
         render={({ field }) => (
           <Checkbox {...field} checked={field.value} label={localizations?.autoAssignStudents} />
         )}
-      />
+      /> */}
     </Box>
   );
 }

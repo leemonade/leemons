@@ -1,8 +1,12 @@
-import { createStyles, pxToRem } from '@bubbles-ui/components';
+import { createStyles } from '@bubbles-ui/components';
 
-const LibraryCardEmbedStyles = createStyles((theme, { canPlay }) => ({
+const LibraryCardEmbedStyles = createStyles((theme, { canPlay, fullWidth }) => ({
   root: {
     backgroundColor: theme.colors.mainWhite,
+    border: `1px solid ${theme.other.table.border.color.default}`,
+    borderRadius: 4,
+    width: fullWidth ? '100%' : '432px',
+    minWidth: 320,
     minHeight: 66,
     ...(canPlay && {
       cursor: 'pointer',
@@ -14,20 +18,24 @@ const LibraryCardEmbedStyles = createStyles((theme, { canPlay }) => ({
   imagePlaceholder: {
     maxWidth: 72,
     minWidth: 72,
-    maxHeight: 58,
-    minHeight: 58,
+    height: '100%',
+    maxHeight: 60,
+    minHeight: 48,
     borderRadius: 4,
     backgroundColor: theme.colors.interactive03h,
     overflow: 'hidden',
   },
-  imageStyles: {
-    borderRadius: 4,
+  bodyContainer: {
+    width: '100%',
+    marginLeft: 8,
   },
   title: {
     ...theme.other.global.content.typo.body['md--bold'],
   },
+
   variantIcon: {
-    marginRight: pxToRem(8),
+    padding: '12px 16px',
+    height: '100%',
   },
 }));
 
