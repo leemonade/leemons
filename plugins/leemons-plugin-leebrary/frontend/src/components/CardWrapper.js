@@ -169,6 +169,7 @@ const CardWrapper = ({
         isLoading={assetsLoading}
         onPin={onPin}
         onUnpin={onUnpin}
+        selected={selected}
       />
     </Box>
   ) : null;

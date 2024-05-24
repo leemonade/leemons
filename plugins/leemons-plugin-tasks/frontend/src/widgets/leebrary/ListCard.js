@@ -17,9 +17,12 @@ import { ExpressTaskIcon } from '../../components/Icons/ExpressTaskIcon';
 import { TaskIcon } from '../../components/Icons/TaskIcon';
 import { prefixPN } from '../../helpers/prefixPN';
 
-const ListCardStyles = createStyles((theme, { single }) => ({
+const ListCardStyles = createStyles((theme, { single, selected }) => ({
   root: {
     cursor: single ? 'default' : 'pointer',
+    borderColor: selected && theme.other.core.color.primary['400'],
+    borderWidth: selected && '1px',
+    boxShadow: selected && theme.shadows.shadow03,
   },
 }));
 
@@ -197,6 +200,7 @@ const ListCard = ({
       // TRANSLATE
       variantTitle={isExpress ? expressTaskLabel : taskLabel}
       className={classes.root}
+      selected={selected}
     />
   );
 };
