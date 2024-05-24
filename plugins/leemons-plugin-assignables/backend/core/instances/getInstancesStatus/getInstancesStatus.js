@@ -158,9 +158,7 @@ async function getStudentStatus({ instancesIds, ctx }) {
  * - timestamps {Object} - An object containing the timestamps related to the assignation.
  */
 async function getInstancesStatus({ assignableInstanceIds, ctx }) {
-  const instancesIds =
-    ['lrn:local:assignables:local:6621423b9deecfedb915a5c3:Instances:6645e72b927d37b879399b42'] ||
-    _.uniq(Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]);
+  const instancesIds = _.uniq(Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]);
 
   if (!instancesIds.length) {
     return [];
