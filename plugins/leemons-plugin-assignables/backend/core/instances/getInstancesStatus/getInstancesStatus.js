@@ -119,13 +119,11 @@ async function getStudentStatus({ instancesIds, ctx }) {
     user: userAgentId,
   }));
 
-  const assignations = (
-    await getAssignations({
-      assignationsIds: ids,
-      fetchInstance: true,
-      ctx,
-    })
-  );
+  const assignations = await getAssignations({
+    assignationsIds: ids,
+    fetchInstance: true,
+    ctx,
+  });
 
   return assignations.map((assignation) => ({
     instance: assignation.instance.id,
@@ -154,7 +152,9 @@ async function getStudentStatus({ instancesIds, ctx }) {
  * - timestamps {Object} - An object containing the timestamps related to the assignation.
  */
 async function getInstancesStatus({ assignableInstanceIds, ctx }) {
-  const instancesIds = _.uniq(Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]);
+  const instancesIds = _.uniq(
+    Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]
+  );
 
   if (!instancesIds.length) {
     return [];
