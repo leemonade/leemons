@@ -182,6 +182,7 @@ module.exports = {
               formatPlaceholder: 'Escribir extensión y añadir (pdf, xls, doc...)',
               maxSize: 'Tamaño máximo',
               required: 'Campo necesario',
+              addButton: 'Añadir',
             },
           },
         },

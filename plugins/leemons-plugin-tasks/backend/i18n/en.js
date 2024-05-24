@@ -191,6 +191,7 @@ module.exports = {
               formatPlaceholder: 'Write extension and add (pdf, xls, doc...)',
               maxSize: 'Max size',
               required: 'Required field',
+              addButton: 'Add',
             },
           },
 
@@ -228,7 +229,7 @@ module.exports = {
         step_label: 'Resources',
       },
       resourcesAndInstructionsData: {
-        step_label: 'Resources and Instructions',
+        step_label: 'Resources and instructions',
       },
       evaluationData: {
         step_label: 'Evaluation',

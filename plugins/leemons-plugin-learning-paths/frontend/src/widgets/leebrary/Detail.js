@@ -11,14 +11,15 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import removeModuleRequest from '@learning-paths/requests/removeModule';
 import { prefixPN } from '@learning-paths/helpers';
 import { AssetMetadataModule } from '@learning-paths/components/AssetMetadataModule';
+import { isFunction } from 'lodash';
 import { useListCardLocalizations } from './ListCard';
 
 function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
   const { id, published } = asset?.providerData ?? {};
   // const name = asset?.name;
-  // const role = asset?.role;
+  const role = asset?.role;
 
-  // const isOwner = role === 'owner';
+  const isOwner = role === 'owner';
 
   const localizations = useListCardLocalizations();
   const [t] = useTranslateLoader(prefixPN('libraryCard.menuItems'));
@@ -47,9 +48,9 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
       toolbarItems.duplicate = t('duplicate');
     }
 
-    // if (isOwner) {
-    //   toolbarItems.share = t('share');
-    // }
+    if (isOwner && asset.providerData?.published) {
+      toolbarItems.share = t('share');
+    }
     if (asset.pinneable) {
       if (asset.pinned === false) {
         toolbarItems.pin = t('pin');
@@ -77,6 +78,12 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
 
   const handleOnUnpin = () => {
     onUnpin(asset);
+  };
+
+  const handleOnShare = () => {
+    if (isFunction(onShare)) {
+      onShare(asset);
+    }
   };
 
   const handleDuplicate = () => {
@@ -139,7 +146,7 @@ function Details({ asset, onRefresh, onShare, onPin, onUnpin, ...props }) {
       onView={handleView}
       onDuplicate={handleDuplicate}
       onAssign={handleAssign}
-      onShare={onShare}
+      onShare={handleOnShare}
       onPin={handleOnPin}
       onUnpin={handleOnUnpin}
     />

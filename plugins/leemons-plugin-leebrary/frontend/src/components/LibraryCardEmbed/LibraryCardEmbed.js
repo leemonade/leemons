@@ -53,17 +53,27 @@ const LibraryCardEmbed = ({
       playableMedia.includes(asset.mediaType)
     );
   }, [asset]);
-
+  
   const roleLocalizations = useRolesLocalizations([asset?.original?.providerData?.role]);
-
+ 
+  // Lógica de iconos parte derecha
   const getIconForFileType = () => {
     if (hideIcon) return null;
 
     const iconProps = { height: 18, width: 18 };
 
-    if (ccMode)
-      return <DownloadIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
-
+    if (ccMode) {
+      switch (fileType) {
+        case 'image':
+          return <OpenIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+        case 'bookmark':
+          return <OpenIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+        case 'video':
+          return <OpenIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+        default:
+          return <DownloadIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+      }
+    }
     switch (fileType) {
       case 'image':
         return <SearchPlusIcon {...iconProps} />;

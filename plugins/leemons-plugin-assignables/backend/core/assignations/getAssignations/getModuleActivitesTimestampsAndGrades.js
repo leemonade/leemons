@@ -75,7 +75,11 @@ async function getDatesByChildAssignation({ childAssignationsIds, childAssignati
 }
 
 async function getGradesByChildAssignation({ childAssignationsIds, childAssignationsById, ctx }) {
-  const grades = await ctx.db.Grades.find({ assignation: childAssignationsIds, type: 'main' })
+  const grades = await ctx.db.Grades.find({
+    assignation: childAssignationsIds,
+    type: 'main',
+    grade: { $ne: null },
+  })
     .select({ _id: false, assignation: 1, grade: 1, subject: 1, visibleToStudent: 1 })
     .lean();
 
@@ -243,7 +247,7 @@ function returnData({
   return { dates: datesData, completion, grades: gradesData, status };
 }
 
-async function getModuleActivitiesTimestamps({ assignationsData, ctx }) {
+async function getModuleActivitiesTimestampsAndGrades({ assignationsData, ctx }) {
   const assignations = assignationsData.map(({ instance, user }) => ({ instance, user }));
 
   const activitiesPerInstance = await getModulesChildActivitiesIds({
@@ -292,4 +296,4 @@ async function getModuleActivitiesTimestamps({ assignationsData, ctx }) {
   });
 }
 
-module.exports = { getModuleActivitiesTimestamps };
+module.exports = { getModuleActivitiesTimestampsAndGrades };

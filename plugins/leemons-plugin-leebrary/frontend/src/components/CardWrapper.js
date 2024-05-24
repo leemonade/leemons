@@ -77,7 +77,7 @@ const CardWrapper = ({
           },
         });
       }
-      if (asset.shareable) {
+      if (asset.shareable && asset.providerData?.published) {
         items.push({
           icon: <ShareIcon />,
           children: t('cardToolbar.share'),
