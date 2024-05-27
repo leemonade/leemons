@@ -1,7 +1,7 @@
-const { keys, isNil, isEmpty, trim, values, omit } = require('lodash');
+const { keys, isNil, isEmpty, trim, values } = require('lodash');
 const itemsImport = require('../helpers/simpleListImport');
 
-const getBreakEvents = (events, program) =>
+const getBreakEvents = ({ events, program }) =>
   values(events)
     .filter(({ eventType }) => eventType === 'breaks')
     .map((event) => {
@@ -23,9 +23,9 @@ const getBreakEvents = (events, program) =>
       };
     });
 
-const getCourseData = ({ events, filterBy, program }) =>
+const getCourseDates = ({ events, program }) =>
   values(events)
-    .filter(({ eventType }) => eventType === filterBy)
+    .filter(({ eventType }) => eventType === 'course')
     .reduce((acc, event) => {
       const course = program.courses.find((cs) => cs.index === event.courses);
       if (course) {
@@ -34,6 +34,31 @@ const getCourseData = ({ events, filterBy, program }) =>
           endDate: event.endDate,
         };
       }
+      return acc;
+    }, {});
+
+const getCourseEvents = ({ events, program }) =>
+  values(events)
+    .filter(({ eventType }) => eventType === 'course-events')
+    .reduce((acc, event) => {
+      const course = program.courses.find((cs) => cs.index === event.courses);
+      if (!course) return acc;
+
+      const courseEvent = {
+        startDate: event.startDate,
+        endDate: event.endDate ?? null,
+        dayType: event.dayType,
+        withoutOrdinaryDays: !!event.ordinaryClasses,
+        color: event.color,
+        periodName: event.eventName,
+      };
+
+      if (acc[course.id]) {
+        acc[course.id].push(courseEvent);
+      } else {
+        acc[course.id] = [courseEvent];
+      }
+
       return acc;
     }, {});
 
@@ -76,20 +101,19 @@ async function importProgramCalendars(filePath, config) {
 
       programConfig.regionalConfig = config.regionalCalendars[programConfig.regionalConfig]?.id;
       programConfig.program = program.id;
+      const programEvents = values(eventItems).filter((event) => event.program === key);
 
-      programConfig.breaks = getBreakEvents(eventItems, program);
-      programConfig.courseDates = getCourseData({
+      programConfig.breaks = getBreakEvents({ events: programEvents, program });
+      programConfig.courseDates = getCourseDates({
         events: eventItems,
-        filterBy: 'course-events',
         program,
       });
-      programConfig.courseEvents = getCourseData({
-        events: eventItems,
-        filterBy: 'course',
+      programConfig.courseEvents = getCourseEvents({
+        events: programEvents,
         program,
       });
-      programConfig.substagesDats = getSubstageDates({
-        events: eventItems,
+      programConfig.substagesDates = getSubstageDates({
+        events: programEvents,
         program,
       });
     });
