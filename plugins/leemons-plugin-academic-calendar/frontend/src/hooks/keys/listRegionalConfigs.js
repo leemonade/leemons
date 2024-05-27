@@ -1,7 +1,7 @@
 export const allListRegionalConfigsKeys = [
   {
     plugin: 'plugin.academic-calendar',
-    scope: 'list-regional-configs',
+    scope: 'list',
   },
 ];
 

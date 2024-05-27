@@ -60,6 +60,8 @@ module.exports = {
     cancel: 'Cancelar',
     saved: 'Guardado',
     newRegionalCalendar: 'Nuevo calendario regional',
+    configDeletedAlert: 'Configuración eliminada correctamente',
+    configDeletedErrorAlert: 'Error eliminando la configuración:',
     requiredField: 'Campo necesario',
     emptyCalendar: 'Todavía no has creado ningún calendario regional',
     calendarNamePlaceholder: 'Nombre del calendario...',
