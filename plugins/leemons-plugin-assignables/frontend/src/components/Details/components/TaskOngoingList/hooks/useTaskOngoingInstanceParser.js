@@ -45,6 +45,7 @@ function getGradesGraphData(evaluationSystem, students) {
       }))
       .sort((a, b) => a.number - b.number),
     minimumGrade: evaluationSystem?.minScaleToPromote?.number,
+    minimumScale: evaluationSystem?.minScale?.number,
     withMarker: true,
   };
 }

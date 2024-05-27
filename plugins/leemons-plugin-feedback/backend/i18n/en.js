@@ -119,8 +119,9 @@ module.exports = {
     assignDone: 'Feedback assigned',
   },
   studentInstance: {
-    startQuestions: 'Answer feedback',
     feedbackIntroductoryText: 'Introduction',
+    next: 'Next',
+    questions: 'Questions',
   },
   feedbackResponseQuestion: {
     returnToTable: 'Return to table',
@@ -139,6 +140,7 @@ module.exports = {
     needNResponsesSingular: 'Choose 1 response',
     needNResponsesPlural: 'Choose {n} responses',
     needNResponses: 'Choose {n} more',
+    finish: 'Finish',
   },
   feedbackResult: {
     feedback: 'Feedback',

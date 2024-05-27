@@ -33,6 +33,8 @@ import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { addSuccessAlert } from '@layout/alert';
 import { ChatDrawer } from '@comunica/components';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
+import RoomService from '@comunica/RoomService';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import LinkSubmission from './components/LinkSubmission/LinkSubmission';
 
@@ -100,7 +102,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
 
     if (!gradeIsDirty && !isNil(grade) && grade !== score) {
       form.setValue('score', grade);
-    } else if (isNil(score) && evaluationSystem?.minScale) {
+    } else if (isNil(score) && evaluationSystem?.minScale && !!requiresScoring) {
       form.setValue('score', evaluationSystem.minScale?.number);
     }
 
@@ -122,7 +124,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
   const [loading, setLoading] = useState(false);
   const [chatOpened, setChatOpened] = useState(false);
 
-  const room = `assignables.subject|${subject}.assignation|${assignation?.id}.userAgent|${assignation?.user}`;
+  const room = useAssignationComunicaRoom({ assignation, subject });
 
   const evaluationSystem = useProgramEvaluationSystem(instance);
   const data = useLetterEvaluationData({ evaluationSystem });
@@ -137,6 +139,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           hooks.fireEvent('chat:onRoomOpened', room);
           setChatOpened(true);
         }}
+        hideChat={!room}
         subject={subject}
       />
     );
@@ -210,16 +213,18 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
         />
       )}
       <Stack justifyContent="end" spacing={4}>
-        <Button
-          variant="link"
-          onClick={() => {
-            hooks.fireEvent('chat:onRoomOpened', room);
-            setChatOpened(true);
-          }}
-          rightIcon={<PluginComunicaIcon />}
-        >
-          {t('comunica')}
-        </Button>
+        {!!room && (
+          <Button
+            variant="link"
+            onClick={() => {
+              hooks.fireEvent('chat:onRoomOpened', room);
+              setChatOpened(true);
+            }}
+            rightIcon={<PluginComunicaIcon />}
+          >
+            {t('comunica')}
+          </Button>
+        )}
         <Button
           loading={loading}
           onClick={async () => {

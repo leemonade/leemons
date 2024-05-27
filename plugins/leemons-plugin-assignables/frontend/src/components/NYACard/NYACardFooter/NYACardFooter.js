@@ -16,6 +16,7 @@ const NYACardFooter = ({
   variantTitle,
   variantIcon,
   chatKeys,
+  onOpenChat,
 }) => {
   const { classes, cx } = NYACardFooterStyles(
     { size: 12, color: '#636D7D' },
@@ -26,6 +27,12 @@ const NYACardFooter = ({
     (variantTitle ?? fileType ?? variant)?.slice(1);
 
   const hasChatKeys = Array.isArray(chatKeys) && chatKeys.length > 0;
+
+  const onChatHandler = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onOpenChat();
+  };
 
   return (
     <Box className={cx(classes.root, className)} style={style}>
@@ -48,7 +55,7 @@ const NYACardFooter = ({
       )}
 
       {hasChatKeys && (
-        <Box className={classes.comunica}>
+        <Box className={classes.comunica} onClick={onChatHandler}>
           <RoomItemDisplay chatKeys={chatKeys} />
         </Box>
       )}

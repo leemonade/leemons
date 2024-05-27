@@ -141,7 +141,7 @@ function SelectResponseQuestion(props) {
           );
         })}
       </Box>
-      <QuestionButtons value={multi ? store.value : store.value[0]} {...props} />
+      {/* <QuestionButtons value={multi ? store.value : store.value[0]} {...props} /> */}
     </Box>
   );
 }

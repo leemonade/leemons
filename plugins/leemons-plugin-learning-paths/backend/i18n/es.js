@@ -30,7 +30,7 @@ module.exports = {
       next: 'Siguiente',
       previous: 'Anterior',
       saveDraft: 'Guardar borrador',
-      publishOptions: 'Opciones de publicación',
+      finish: 'Finalizar',
       publish: 'Publicar',
       publishAndAssign: 'Publicar y asignar',
       publishAndShare: 'Publicar y compartir',
@@ -75,7 +75,7 @@ module.exports = {
           },
         },
         buttons: {
-          new: 'Nueva actividad',
+          new: 'Añadir actividad',
         },
         emptyState: {
           title: 'Listado de actividades',
@@ -116,7 +116,7 @@ module.exports = {
       assign: 'Asignar',
       duplicate: 'Duplicar',
       delete: 'Eliminar',
-      share: 'Permisos',
+      share: 'Compartir',
       pin: 'Marcar como favorito',
       unpin: 'Desmarcar como favorito',
     },
@@ -154,6 +154,9 @@ module.exports = {
     },
     resources: 'Recursos',
     students: 'Alumnos',
+    progress: 'Progreso',
+    studentProgressTitle: 'Notas del módulo',
+    teacherProgressTitle: 'Notas medias del módulo',
   },
   modulesTab: {
     tabName: 'Temario',

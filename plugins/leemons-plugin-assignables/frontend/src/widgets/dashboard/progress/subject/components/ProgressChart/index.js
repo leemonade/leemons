@@ -81,6 +81,7 @@ export default function ProgressChartWidget({ classe, roundValues }) {
         <DistributionChart
           data={teacherData}
           passValue={programEvaluationSystem?.minScaleToPromote?.number}
+          minimumScale={programEvaluationSystem?.minScale?.number}
           height={390}
         />
       )}

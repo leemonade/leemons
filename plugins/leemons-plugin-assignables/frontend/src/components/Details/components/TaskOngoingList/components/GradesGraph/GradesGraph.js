@@ -21,7 +21,14 @@ function extrapolateScoresToNearestScale({ scores, grades }) {
   });
 }
 
-export default function GradesGraph({ grades, minimumGrade, scores, students, labels }) {
+export default function GradesGraph({
+  grades,
+  minimumGrade,
+  minimumScale,
+  scores,
+  students,
+  labels,
+}) {
   const { classes } = useGradesGraphStyles();
 
   const normalizedScores = useMemo(
@@ -58,6 +65,7 @@ export default function GradesGraph({ grades, minimumGrade, scores, students, la
         height={300}
         data={distributionChartData}
         maxValue={students?.length}
+        minimumScale={minimumScale}
         passValue={minimumGrade}
         legendLeft={`${labels?.students} (${students?.length ?? 0})`}
         legendBottom={labels?.califications}
@@ -70,6 +78,7 @@ export default function GradesGraph({ grades, minimumGrade, scores, students, la
 GradesGraph.propTypes = {
   grades: PropTypes.arrayOf(PropTypes.object),
   minimumGrade: PropTypes.number,
+  minimumScale: PropTypes.number,
   scores: PropTypes.arrayOf(PropTypes.object),
   students: PropTypes.arrayOf(PropTypes.object),
   labels: PropTypes.object,

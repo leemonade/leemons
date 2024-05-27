@@ -4,7 +4,7 @@ import { Box } from '@bubbles-ui/components';
 import { HeaderDropdown } from '@bubbles-ui/leemons';
 
 import { useStore } from '@common';
-import _, { find, isNil, map, noop } from 'lodash';
+import _, { find, isNil, map, noop, sortBy } from 'lodash';
 import { getCentersWithToken, getSessionConfig, updateSessionConfig } from '@users/session';
 import { getUserProgramsRequest, listProgramsRequest } from '@academic-portfolio/request';
 import { useProgramBarSelectorStyles } from './ProgramBarSelector.styles';
@@ -67,6 +67,7 @@ export function ProgramBarSelector({
       image: !isNil(program.image?.cover) ? program.imageUrl : undefined,
       label: program.name,
       icon: program.icon,
+      createdAt: program.createdAt,
     }));
 
     try {
@@ -85,6 +86,7 @@ export function ProgramBarSelector({
     store.loading = false;
     render();
   }
+  const programsSortedByCreation = sortBy(store.programsSelect, 'createdAt');
 
   React.useEffect(() => {
     init();
@@ -111,7 +113,7 @@ export function ProgramBarSelector({
       <Box style={{ maxWidth: 320, flex: 'none' }}>
         <HeaderDropdown
           value={store.selectedProgram}
-          data={store.programsSelect}
+          data={programsSortedByCreation}
           withSearchInput={false}
           readOnly={store.programsSelect?.length <= 1}
           onChange={selectProgram}

@@ -119,8 +119,9 @@ module.exports = {
     assignDone: 'Encuesta asignada',
   },
   studentInstance: {
-    startQuestions: 'Responder encuesta',
     feedbackIntroductoryText: 'Introducción',
+    next: 'Siguiente',
+    questions: 'Preguntas',
   },
   feedbackResponseQuestion: {
     returnToTable: 'Volver a la tabla',
@@ -139,6 +140,7 @@ module.exports = {
     needNResponsesSingular: 'Escoge 1 respuesta',
     needNResponsesPlural: 'Escoge {n} respuestas',
     needNResponses: 'Escoge {n} más',
+    finish: 'Finalizar',
   },
   feedbackResult: {
     feedback: 'Encuesta',

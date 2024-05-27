@@ -25,7 +25,7 @@ import {
 } from './hooks';
 import NyaEmpty from '../../../assets/emptyStates/nya.svg';
 
-function EmptyState() {
+export function EmptyState() {
   const localizations = useNyaLocalizations()?.nya;
   const isTeacher = useIsTeacher();
 

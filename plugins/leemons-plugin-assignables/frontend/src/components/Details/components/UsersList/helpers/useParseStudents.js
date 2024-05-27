@@ -10,7 +10,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useQuery } from '@tanstack/react-query';
 import { getUserAgentsInfoRequest } from '@users/request';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import _, { isNil } from 'lodash';
 import React, { useMemo } from 'react';
 import { Progress } from '@assignables/components/Ongoing/AssignmentList/hooks/useParseAssignations/parseAssignationForStudent';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
@@ -52,7 +52,7 @@ function useStudentData(students) {
 
 function getStudentAverageScore(studentData) {
   const scores = studentData.grades;
-  const mainScores = scores.filter((grade) => grade.type === 'main');
+  const mainScores = scores.filter((grade) => grade.type === 'main' && !isNil(grade.grade));
   const scoresAvgObject = mainScores.reduce(
     (acc, grade) => ({
       total: acc.total + grade.grade,
@@ -60,6 +60,7 @@ function getStudentAverageScore(studentData) {
     }),
     { total: 0, count: 0 }
   );
+
   if (scoresAvgObject.count === 0) {
     return '-';
   }
@@ -117,7 +118,8 @@ export default function useParseStudents(instance) {
     }
 
     return students?.map((student) => {
-      const scale = getNearestScale({ grade: getStudentAverageScore(student), evaluationSystem });
+      const averageScore = getStudentAverageScore(student);
+      const scale = getNearestScale({ grade: averageScore, evaluationSystem });
 
       return {
         id: student.user,
@@ -135,7 +137,7 @@ export default function useParseStudents(instance) {
           ),
         actions: getActions(student, instance, localizations, subjects, {
           reminder: openConfirmSendReminder,
-          score: scale?.letter ?? scale?.number,
+          score: averageScore === '-' ? null : scale?.letter ?? scale?.number,
         }),
         userInfo: student.userInfo,
       };

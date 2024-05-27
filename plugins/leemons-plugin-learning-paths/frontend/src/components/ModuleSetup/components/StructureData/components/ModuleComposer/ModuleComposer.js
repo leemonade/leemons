@@ -139,6 +139,7 @@ export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, on
           sortable={parsedActivities?.length > 1}
           labels={{ add: '' }}
           headerStyles={{ display: 'none' }}
+          isAssetList
           onChangeData={({ newData }) => onActivityChange(map(newData, 'original'))}
         />
       </Box>

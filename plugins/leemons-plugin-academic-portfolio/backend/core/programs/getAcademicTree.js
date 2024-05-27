@@ -24,7 +24,7 @@ function handleNonSequentialAndSingleCourses({ groups, knowledgeAreas, subjects,
             type: 'subject',
           })),
       }))
-      .sort((a, b) => a.abbreviation - b.abbreviation);
+      .sort((a, b) => a.abbreviation.localeCompare(b.abbreviation));
 
     // Subjects with no group are shown at root level
     const groupedSubjectIds = tree.flatMap((group) => group.children.map((subject) => subject.id));

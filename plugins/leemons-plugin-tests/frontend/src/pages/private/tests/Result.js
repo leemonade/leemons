@@ -27,7 +27,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import hooks from 'leemons-hooks';
 import { find, forEach, map, orderBy } from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
@@ -40,6 +40,9 @@ import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getQuestionByIdsRequest,
@@ -61,6 +64,11 @@ export default function Result() {
     useQuestionMode: false,
   });
 
+  const room = useAssignationComunicaRoom({
+    assignation: store?.assignation,
+    subject: store?.instance?.subjects?.[0]?.subject,
+  });
+
   const [canShowFeedback, setCanShowFeedback] = React.useState(false);
   const [accordionState, setAccordionState] = React.useState([]);
   const [accordionGraphState, setAccordionGraphState] = React.useState(['1']);
@@ -72,10 +80,19 @@ export default function Result() {
   const params = useParams();
   const searchParams = useSearchParams();
 
+  const { mutateAsync } = useStudentAssignationMutation();
+  const updateTimestamps = useUpdateTimestamps(mutateAsync, store.assignation);
+
   const fromTest = useMemo(() => searchParams.has('fromTest'), []);
   const fromTimeout = searchParams.has('fromTimeout');
 
   const isTeacher = useIsTeacher();
+
+  useEffect(() => {
+    if (!isTeacher) {
+      updateTimestamps('gradesViewed');
+    }
+  }, [isTeacher, updateTimestamps]);
 
   function getUserId() {
     if (params.user) return params.user;
@@ -355,7 +372,6 @@ export default function Result() {
     );
   }
 
-  // if (!store.room) {
   if (isTeacher || store.feedback) {
     accordion.push(
       <ActivityAccordionPanel
@@ -411,7 +427,6 @@ export default function Result() {
       </ActivityAccordionPanel>
     );
   }
-  // }
 
   const userNote = parseFloat(
     store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number
@@ -512,6 +527,7 @@ export default function Result() {
                     }}
                     assignation={store.assignation}
                     subject={store?.instance?.subjects?.[0]?.subject}
+                    hideChat={!store.room}
                   />
 
                   {isTeacher && !store.instance.dates.evaluationClosed ? (
@@ -606,9 +622,7 @@ export default function Result() {
               store.room.unreadMessages = 0;
               render();
             }}
-            room={`assignables.subject|${store?.instance?.subjects?.[0]?.subject}.assignation|${
-              store.assignation.id
-            }.userAgent|${getUserId()}`}
+            room={room}
           />
         </>
       ) : null}

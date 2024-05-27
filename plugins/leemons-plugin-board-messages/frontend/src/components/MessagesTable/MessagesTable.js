@@ -75,7 +75,7 @@ const MessagesTable = ({
   centers,
   setCenters,
   profiles,
-  setProfiles,
+  setProfiles = noop,
   onlyArchived,
 }) => {
   const [page, setPage] = useState(0);

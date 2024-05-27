@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { EdgeTriangles } from './EdgeTriangles';
 
 const AverageMarker = ({ bars = [], yScale, width, roundValues }) => {
-  const valueBars = bars.filter(
-    (bar) => bar.data.id !== 'diff' && !bar.data.indexValue.startsWith('skip:')
-  );
+  const valueBars = bars
+    .filter((bar) => bar.data.id !== 'diff' && !bar.data.indexValue.startsWith('skip:'))
+    .filter((bar) => bar.data.value);
 
   if (!valueBars.length) return null;
 

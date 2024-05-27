@@ -31,7 +31,7 @@ module.exports = {
       next: 'Next',
       previous: 'Previous',
       saveDraft: 'Save draft',
-      publishOptions: 'Publish options',
+      finish: 'Finish',
       publish: 'Publish',
       publishAndAssign: 'Publish and assign',
       publishAndShare: 'Publish and share',
@@ -75,7 +75,7 @@ module.exports = {
           },
         },
         buttons: {
-          new: 'New activity',
+          new: 'Add activity',
         },
         emptyState: {
           title: 'Activity list',
@@ -116,7 +116,7 @@ module.exports = {
       assign: 'Assign',
       duplicate: 'Duplicate',
       delete: 'Delete',
-      share: 'Permissions',
+      share: 'Share',
       pin: 'Mark as favorite',
       unpin: 'Unmark as favorite',
     },
@@ -154,6 +154,9 @@ module.exports = {
     },
     resources: 'Resources',
     students: 'Students',
+    progress: 'Progress',
+    studentProgressTitle: 'Module grades',
+    teacherProgressTitle: 'Module average grades',
   },
   modulesTab: {
     tabName: 'Modules',

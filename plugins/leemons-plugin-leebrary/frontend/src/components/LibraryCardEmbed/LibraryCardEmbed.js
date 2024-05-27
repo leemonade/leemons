@@ -1,9 +1,18 @@
 import React, { useMemo } from 'react';
-import { Box, Stack, ImageLoader, Text, TextClamp, CardEmptyCover } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  ImageLoader,
+  Text,
+  TextClamp,
+  CardEmptyCover,
+  Badge,
+} from '@bubbles-ui/components';
 import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
-import { LocaleDate } from '@common';
+import { capitalize } from 'lodash';
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
 import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
@@ -20,10 +29,12 @@ const LibraryCardEmbed = ({
   ccMode,
   handleClickCCreator,
   hideIcon,
+  fullWidth,
+  hasActionButton,
 }) => {
   const [t] = useTranslateLoader(prefixPN('assetsList'));
-  const { title, name, updatedAt, image, cover, fileType, icon } = asset;
-  const { classes } = LibraryCardEmbedStyles({ canPlay }, { name: 'LibraryCardEmbed' });
+  const { title, name, image, cover, fileType, icon } = asset;
+  const { classes } = LibraryCardEmbedStyles({ canPlay, fullWidth }, { name: 'LibraryCardEmbed' });
   const isPlayable = React.useMemo(() => {
     const playableFileExtensions = [
       'mov',
@@ -42,16 +53,27 @@ const LibraryCardEmbed = ({
       playableMedia.includes(asset.mediaType)
     );
   }, [asset]);
-
+  
+  const roleLocalizations = useRolesLocalizations([asset?.original?.providerData?.role]);
+ 
   // Lógica de iconos parte derecha
   const getIconForFileType = () => {
     if (hideIcon) return null;
 
     const iconProps = { height: 18, width: 18 };
 
-    if (ccMode)
-      return <DownloadIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
-
+    if (ccMode) {
+      switch (fileType) {
+        case 'image':
+          return <OpenIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+        case 'bookmark':
+          return <OpenIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+        case 'video':
+          return <OpenIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+        default:
+          return <DownloadIcon {...iconProps} onClick={() => !canPlay && handleClickCCreator()} />;
+      }
+    }
     switch (fileType) {
       case 'image':
         return <SearchPlusIcon {...iconProps} />;
@@ -75,6 +97,22 @@ const LibraryCardEmbed = ({
         return <DownloadIcon {...iconProps} />;
     }
   };
+  const getAssetBadgeType = () => {
+    if (asset?.original?.providerData?.role) {
+      return capitalize(roleLocalizations?.[asset?.original?.providerData?.role]?.singular);
+    }
+    const typeMappings = {
+      image: 'Image',
+      bookmark: ['video'].includes(asset.mediaType) ? 'Video' : 'Bookmark',
+      'content-creator': 'Content creator',
+      file: asset?.fileExtension === 'pdf' ? 'PDF' : 'File',
+      video: 'Video',
+      audio: 'Audio',
+      document: asset?.fileExtension === 'pdf' ? 'PDF' : 'Document',
+    };
+
+    return typeMappings[fileType] || 'Media';
+  };
 
   const renderVariantIcon = () => {
     if (actionIcon) {
@@ -83,8 +121,10 @@ const LibraryCardEmbed = ({
     return getIconForFileType();
   };
 
+  const badgeCategory = getAssetBadgeType();
+
   const MemoizedEmptyCover = useMemo(
-    () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} height={72} />,
+    () => <CardEmptyCover icon={variantIcon ?? icon} fileType={fileType} height={60} />,
     [icon, variantIcon, fileType]
   );
 
@@ -94,60 +134,34 @@ const LibraryCardEmbed = ({
 
   return (
     <Box className={classes.root} onClick={() => ccMode && canPlay && handleClickCCreator()}>
-      <Stack alignItems="center" fullWidth spacing={4}>
+      <Stack alignItems="center" fullWidth>
         <Box
           noFlex
           style={{
             width: 72,
             display: 'flex',
-            justifyContent: 'center',
-            padding: '4px 8px',
-            marginLeft: '8px',
+            margin: '8px 8px',
           }}
         >
           {image || cover ? (
-            <ImageLoader
-              src={image || cover}
-              width={72}
-              height={58}
-              radius={4}
-              imageStyles={classes.imageStyles}
-            />
+            <ImageLoader src={image || cover} width={72} height={60} radius={4} />
           ) : (
             <Box className={classes.imagePlaceholder}>{MemoizedEmptyCover}</Box>
           )}
         </Box>
 
-        <Stack direction="column" fullWidth>
-          <Box style={{ width: '100%' }}>
+        <Stack direction="column" fullWidth alignContent="start">
+          <Box className={classes.bodyContainer}>
             <TextClamp lines={1}>
               <Text size="md" className={classes.title}>
                 {title || name}
               </Text>
             </TextClamp>
+            <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} />
           </Box>
-          {updatedAt && (
-            <Box>
-              <Text>
-                {`${t('lastUpdate')}: `}
-                {
-                  <LocaleDate
-                    date={updatedAt}
-                    options={{
-                      year: '2-digit',
-                      month: '2-digit',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    }}
-                  />
-                }
-              </Text>
-            </Box>
-          )}
         </Stack>
         <Box noFlex className={classes.variantIcon}>
-          {renderVariantIcon()}
+          {hasActionButton && renderVariantIcon()}
         </Box>
       </Stack>
     </Box>

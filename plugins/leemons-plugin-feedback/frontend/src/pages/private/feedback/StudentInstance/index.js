@@ -1,9 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ActivityContainer } from '@assignables/components/ActivityContainer';
-import { Box, COLORS, LoadingOverlay, Stack } from '@bubbles-ui/components';
+import { isString } from 'lodash';
+
+import {
+  Box,
+  COLORS,
+  LoadingOverlay,
+  VerticalStepperContainer,
+  TotalLayoutContainer,
+} from '@bubbles-ui/components';
+
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
 import { addErrorAlert } from '@layout/alert';
 import { useLocale, useStore } from '@common';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -11,14 +18,17 @@ import getAssignation from '@assignables/requests/assignations/getAssignation';
 import { getCentersWithToken } from '@users/session';
 import { getFeedbackRequest, getUserAssignableResponsesRequest } from '@feedback/request';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { isString } from 'lodash';
-import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
-import { setInstanceTimestamp } from '@feedback/request/feedback';
 import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
-import WelcomeCard from './components/WelcomeCards/WelcomeCard';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+
+import { setInstanceTimestamp } from '@feedback/request/feedback';
+import prefixPN from '@feedback/helpers/prefixPN';
+import IntroductionStep from './components/IntroductionStep';
+import QuestionsStep from './components/QuestionsStep';
 
 const StudentInstance = () => {
   const [t] = useTranslateLoader(prefixPN('studentInstance'));
+  const [showIntroduction, setShowIntroduction] = useState(true);
   const [store, render] = useStore({
     loading: true,
     idLoaded: '',
@@ -26,8 +36,8 @@ const StudentInstance = () => {
     modalMode: 0,
   });
 
-  const locale = useLocale();
   const params = useParams();
+  const scrollRef = useRef();
 
   const getUserId = () => {
     if (params.user) return params.user;
@@ -36,25 +46,8 @@ const StudentInstance = () => {
 
   const advanceToQuestions = () => {
     setInstanceTimestamp(params.id, 'start', getUserId());
-    store.showingWelcome = false;
-    render();
+    setShowIntroduction(false);
   };
-
-  const taskHeaderProps = React.useMemo(() => {
-    if (store.instance) {
-      return {
-        title: store.instance.assignable.asset.name,
-        image: store.instance.assignable.asset.cover
-          ? getFileUrl(
-              isString(store.instance.assignable.asset.cover)
-                ? store.instance.assignable.asset.cover
-                : store.instance.assignable.asset.cover.id
-            )
-          : null,
-      };
-    }
-    return {};
-  }, [store.instance, store.class, store.isFirstStep]);
 
   const getModalMode = (showResults, hasNextActivity) => {
     if (!showResults && !hasNextActivity) return 0;
@@ -112,38 +105,49 @@ const StudentInstance = () => {
   }
 
   return (
-    <Box style={{ height: '100vh', backgroundColor: COLORS.ui02 }}>
-      <ActivityContainer
-        header={taskHeaderProps}
-        deadline={
-          store.instance.dates.deadline
-            ? { label: t('delivery'), locale, deadline: new Date(store.instance.dates.deadline) }
-            : null
-        }
-        collapsed
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <ActivityHeader
+          assignation={store?.assignation}
+          instance={store?.instance}
+          showClass
+          showDeadline
+          showEvaluationType
+          showRole
+          showCountdown
+        />
+      }
+    >
+      <VerticalStepperContainer
+        scrollRef={scrollRef}
+        currentStep={showIntroduction ? 0 : 1}
+        data={[
+          { label: t('feedbackIntroductoryText'), status: 'OK' },
+          { label: t('questions'), status: 'OK' },
+        ]}
       >
-        <Stack fullWidth justifyContent="center">
-          {store.showingWelcome ? (
-            <WelcomeCard
-              feedback={store.feedback}
-              t={t}
-              onNext={advanceToQuestions}
-              canStart={store.canStart}
-            />
-          ) : (
-            <QuestionsCard
-              feedback={store.feedback}
-              instance={store.instance}
-              instanceId={store.idLoaded}
-              defaultValues={store.responses}
-              userId={getUserId()}
-              modalMode={store.modalMode}
-              nextActivityUrl={store.nextActivityUrl}
-            />
-          )}
-        </Stack>
-      </ActivityContainer>
-    </Box>
+        {showIntroduction ? (
+          <IntroductionStep
+            feedback={store.feedback}
+            t={t}
+            onNext={advanceToQuestions}
+            scrollRef={scrollRef}
+          />
+        ) : (
+          <QuestionsStep
+            setShowIntroduction={setShowIntroduction}
+            feedback={store.feedback}
+            instance={store.instance}
+            instanceId={store.idLoaded}
+            defaultValues={store.responses}
+            userId={getUserId()}
+            modalMode={store.modalMode}
+            nextActivityUrl={store.nextActivityUrl}
+          />
+        )}
+      </VerticalStepperContainer>
+    </TotalLayoutContainer>
   );
 };
 

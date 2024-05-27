@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { findIndex, isString, noop, uniq } from 'lodash';
+import { findIndex, isString, noop, sortBy, uniq } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   ActionButton,
@@ -65,6 +65,9 @@ export function SubjectPicker({
     subjects: assignable?.subjects,
     control: form.control,
   });
+
+  const sortedPrograms = sortBy(programs, 'createdAt');
+  const sortedSubjects = sortBy(subjects, 'createdAt');
 
   useSelectInitialSubjects({ selectInitialSubjects, assignable, form, onChange });
 
@@ -186,8 +189,8 @@ export function SubjectPicker({
                   cleanOnMissingValue
                   label={localizations?.program}
                   placeholder={localizations?.placeholder}
-                  data={programs}
-                  disabled={!programs?.length || isDisabled}
+                  data={sortedPrograms}
+                  disabled={!sortedPrograms?.length || isDisabled}
                 />
               )}
             />
@@ -222,8 +225,8 @@ export function SubjectPicker({
                   cleanOnMissingValue
                   label={localizations?.subject}
                   placeholder={localizations?.placeholder}
-                  data={subjects}
-                  disabled={!subjects?.length || isDisabled}
+                  data={sortedSubjects}
+                  disabled={!sortedSubjects?.length || isDisabled}
                 />
               )}
             />

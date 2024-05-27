@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Text } from '@bubbles-ui/components';
-import QuestionButtons from '../questions/QuestionButtons';
 import LikertResponseStyles from './LikertResponse.styles';
 
 const LikertResponse = (props) => {
@@ -57,12 +56,15 @@ const LikertResponse = (props) => {
     setSelectedValue(defaultValue);
   }, [defaultValue, question]);
 
+  useEffect(() => {
+    props?.setCurrentValue(selectedValue);
+  }, [selectedValue]);
+
   return (
     <Box>
       <Stack fullWidth spacing={1}>
         {renderNumbers()}
       </Stack>
-      <QuestionButtons {...props} value={selectedValue} />
     </Box>
   );
 };
@@ -71,6 +73,7 @@ LikertResponse.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
   defaultValue: PropTypes.any,
+  setCurrentValue: PropTypes.func,
 };
 
 export default LikertResponse;

@@ -12,18 +12,26 @@ import {
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getCookieToken } from '@users/session';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@board-messages/helpers/prefixPN';
 import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
 import { DetailDrawer, MessagesTable } from '@board-messages/components';
+import { useProfiles } from '@users/hooks';
 
 const PageStyles = createStyles(() => ({ panelList: { backgroundColor: 'white' } }));
 
 export default function Index() {
   const labels = useTranslateObjectLoader(prefixPN('list'));
-  const { t: tCommon } = useCommonTranslate('page_header');
   const scrollRef = React.useRef();
   const sessionToken = getCookieToken(true);
+  const { data: profiles } = useProfiles();
+
+  const profileItemsWithoutAdmin = React.useMemo(
+    () =>
+      profiles
+        ?.filter((profile) => profile.sysName !== 'admin')
+        ?.map((profile) => ({ label: profile.name, value: profile.id })) ?? [],
+    [profiles]
+  );
 
   const [store, render] = useStore({
     isDrawerOpen: false,
@@ -67,11 +75,6 @@ export default function Index() {
 
   const setCenters = (centers) => {
     store.centers = centers;
-    render();
-  };
-
-  const setProfiles = (profiles) => {
-    store.profiles = profiles;
     render();
   };
 
@@ -129,8 +132,7 @@ export default function Index() {
                 onNew={handleOnNew}
                 centers={store.centers}
                 setCenters={setCenters}
-                profiles={store.profiles}
-                setProfiles={setProfiles}
+                profiles={profileItemsWithoutAdmin}
               />
             </TabPanel>
             <TabPanel label={labels.archived}>
@@ -140,8 +142,7 @@ export default function Index() {
                 onEdit={handleOnEdit}
                 centers={store.centers}
                 setCenters={setCenters}
-                profiles={store.profiles}
-                setProfiles={setProfiles}
+                profiles={profileItemsWithoutAdmin}
                 onlyArchived
               />
             </TabPanel>
@@ -155,7 +156,7 @@ export default function Index() {
         open={store.isDrawerOpen}
         onClose={toggleDetailDrawer}
         centers={store.centers}
-        profiles={store.profiles}
+        profiles={profileItemsWithoutAdmin}
         reloadMessages={reloadMessages}
       />
     </TotalLayoutContainer>

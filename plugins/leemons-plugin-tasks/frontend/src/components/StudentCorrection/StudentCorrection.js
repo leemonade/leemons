@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -36,20 +36,32 @@ import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { ChatDrawer } from '@comunica/components';
 import hooks from 'leemons-hooks';
 import ActivityFeedbackAlertManager from '@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import CurriculumRender from '../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender';
 import { useStudentCorrectionStyles } from './StudentCorrection.style';
 import { TextIcon } from '../../assets/images/TextIcon';
 import LinkSubmission from '../Correction/components/LinkSubmission/LinkSubmission';
+import { useUpdateTimestamps } from '../Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 
 function SubjectTab({ assignation, subject, t }) {
   const [chatOpened, setChatOpened] = useState(false);
-  const room = `assignables.subject|${subject}.assignation|${assignation?.id}.userAgent|${assignation?.user}`;
+  const room = useAssignationComunicaRoom({ assignation, subject });
+
+  const { mutateAsync } = useStudentAssignationMutation();
+  const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
 
   const isEvaluated = useMemo(
     () =>
       !!assignation?.grades?.find((grade) => grade.type === 'main' && grade.subject === subject),
     [assignation?.grades, subject]
   );
+
+  useEffect(() => {
+    if (isEvaluated) {
+      updateTimestamps('gradesViewed');
+    }
+  }, [isEvaluated, updateTimestamps]);
 
   if (!isEvaluated) {
     return (
@@ -68,6 +80,7 @@ function SubjectTab({ assignation, subject, t }) {
           hooks.fireEvent('chat:openDrawer', { room });
           setChatOpened(true);
         }}
+        hideChat={!room}
       />
 
       <ChatDrawer

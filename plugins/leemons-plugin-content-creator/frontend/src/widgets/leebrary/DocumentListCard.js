@@ -13,20 +13,20 @@ import { DocumentIcon } from '@content-creator/components';
 import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
-// import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { useIsStudent } from '@academic-portfolio/hooks';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
     cursor: 'pointer',
-    borderColor: selected && theme.colors.interactive01d,
+    borderColor: selected && theme.other.core.color.primary['400'],
     borderWidth: selected && '1px',
     boxShadow: selected && theme.shadows.shadow03,
   },
 }));
 
-const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
+const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const isStudent = useIsStudent();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
   const { classes } = DocumentCardStyles({ selected });
@@ -46,16 +46,16 @@ const DocumentListCard = ({ asset, selected, onRefresh, ...props }) => {
       return items;
     }
 
-    // if (asset.shareable) {
-    //   items.push({
-    //     icon: <ShareIcon />,
-    //     children: t('share'),
-    //     onClick: (e) => {
-    //       e.stopPropagation();
-    //       onShare(asset);
-    //     },
-    //   });
-    // }
+    if (asset.shareable) {
+      items.push({
+        icon: <ShareIcon />,
+        children: t('share'),
+        onClick: (e) => {
+          e.stopPropagation();
+          onShare(asset);
+        },
+      });
+    }
 
     if (asset.providerData?.published && !isStudent) {
       items.push({
@@ -144,7 +144,7 @@ DocumentListCard.propTypes = {
   variant: PropTypes.string,
   selected: PropTypes.bool,
   onRefresh: PropTypes.func,
-  // onShare: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default DocumentListCard;

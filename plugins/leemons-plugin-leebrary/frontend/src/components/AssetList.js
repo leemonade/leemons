@@ -287,7 +287,13 @@ const AssetList = ({
         value: item.key,
         label: item.name,
         icon: (
-          <Box style={{ height: 16, marginBottom: 5 }}>
+          <Box
+            sx={(theme) => ({
+              color: theme.other.core.color.neutral['600'],
+              height: 16,
+              marginBottom: 5,
+            })}
+          >
             <ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} />
           </Box>
         ),
@@ -308,14 +314,6 @@ const AssetList = ({
       { label: t('labels.assetStatusDraft'), value: 'draft' },
     ];
   }, [allowStatusFilter, t]);
-
-  const getEmptyState = () => {
-    if (searchCriteriaDebounced && !isEmpty(searchCriteriaDebounced)) {
-      return <SearchEmpty t={t} />;
-    }
-
-    return null;
-  };
   // -------------------------------------------------------------------------------------
   // DRAWER HANDLERS & TOOLBAR
   const toolbarItems = useMemo(() => {
@@ -326,7 +324,7 @@ const AssetList = ({
       duplicate: selectedAsset?.duplicable ? t('cardToolbar.duplicate') : false,
       download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
       delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
-      share: selectedAsset?.shareable ? t('cardToolbar.share') : false,
+      share: isTeacher && selectedAsset?.shareable ? t('cardToolbar.share') : false,
       assign: isTeacher && selectedAsset?.assignable ? t('cardToolbar.assign') : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
@@ -758,7 +756,7 @@ const AssetList = ({
               )}
             {showFilteringEmptyState && (
               <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
-                {getEmptyState()}
+                <SearchEmpty t={t} />
               </Stack>
             )}
           </Box>

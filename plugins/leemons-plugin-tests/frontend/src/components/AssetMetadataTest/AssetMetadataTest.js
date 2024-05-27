@@ -90,14 +90,7 @@ const AssetMetadataTest = ({ metadata, canEdit }) => {
       </Box>
       <Box className={classes.box}>
         <Text className={classes.title}>{`${t('questionBank')}: `}</Text>
-        {canEdit ? (
-          <Link to={fields.titleTest.url} className={classes.link}>
-            {fields.titleTest.name}
-            <OpenIcon className={classes.openIcon} />
-          </Link>
-        ) : (
-          <Text className={classes.link}>{fields.titleTest.name}</Text>
-        )}
+        <Text className={classes.link}>{fields.titleTest.name}</Text>
       </Box>
       <Box>
         <Box>
