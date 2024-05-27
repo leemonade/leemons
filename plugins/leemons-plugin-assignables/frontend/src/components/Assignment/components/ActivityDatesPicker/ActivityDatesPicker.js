@@ -86,7 +86,12 @@ export function ActivityDatesPicker({
 
   const { classes } = useActivityDatesPickerStyles();
   return (
-    <Container title={localizations?.title} required hideSectionHeaders={hideSectionHeaders}>
+    <Container
+      title={localizations?.title}
+      required
+      hideSectionHeaders={hideSectionHeaders}
+      spacingBottom={16}
+    >
       <Box className={classes.root}>
         <Controller
           name="type"
