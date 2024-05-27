@@ -21,9 +21,9 @@ const useStyles = createStyles((theme, { width }) => ({
     width,
     display: 'flex',
     flexDirection: 'column',
+    gap: 16,
   },
   item: {
-    borderBottom: `1px solid ${theme.other.divider.background.color.default}`,
     minHeight: 66,
   },
 }));
@@ -68,13 +68,12 @@ const AssetEmbedList = ({ assets, width }) => {
     return assetsData?.find((asset) => asset.id === assetId) || {};
   }
   const handleOnSelect = (item) => {
-    setIsDrawerOpen(false); // Siempre cierra el drawer primero
+    setIsDrawerOpen(false);
 
-    // Establece el activo seleccionado y luego abre el drawer después de un breve retraso
     setTimeout(() => {
       setSelectedAsset(item);
       setIsDrawerOpen(true);
-    }, 100); // Un retraso de 100ms suele ser suficiente para este propósito
+    }, 100);
   };
   useEffect(() => {
     if (assets?.length) {
@@ -92,6 +91,8 @@ const AssetEmbedList = ({ assets, width }) => {
               <CardWrapper
                 {...pickAsset(assetId)}
                 isEmbedded={true}
+                fullWidth
+                hasActionButton
                 item={pickAsset(assetId)}
                 category={
                   categoriesData?.find(

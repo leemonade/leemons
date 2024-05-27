@@ -109,9 +109,6 @@ function Attachments({ setValue, getValues, labels }) {
             }
           }}
         >
-          <Button variant="link" onClick={toggleDrawer} leftIcon={<AddCircleIcon />}>
-            {labels?.addResource}
-          </Button>
           <AssetPickerDrawer
             opened={showAssetDrawer}
             layout="rows"
@@ -122,14 +119,19 @@ function Attachments({ setValue, getValues, labels }) {
             shadow
           />
         </form>
-      </Box>
-      <Box className={classes?.attachmentContainer}>
-        <SortableList
-          value={resources}
-          onChange={setResources}
-          itemRender={AttachmentItem}
-          onRemove={onAssetRemove}
-        />
+        <Box className={classes?.attachmentContainer}>
+          <SortableList
+            value={resources}
+            onChange={setResources}
+            itemRender={AttachmentItem}
+            onRemove={onAssetRemove}
+          />
+        </Box>
+        <Box>
+          <Button variant="link" onClick={toggleDrawer} leftIcon={<AddCircleIcon />}>
+            {labels?.addResource}
+          </Button>
+        </Box>
       </Box>
     </>
   );

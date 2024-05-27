@@ -74,7 +74,11 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           control={form.control}
           name="properties.explanation"
           render={({ field }) => (
-            <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />
+            <TextEditorInput
+              {...field}
+              editorStyles={{ minHeight: '96px' }}
+              placeholder={t('explanationPlaceHolder')}
+            />
           )}
         />
       ) : null}

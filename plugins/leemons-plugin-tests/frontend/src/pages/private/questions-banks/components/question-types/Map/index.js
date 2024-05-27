@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -37,7 +37,7 @@ export function QuestionMap({ form: _form, t }) {
     render();
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!properties?.image) {
       form.setValue('properties.markers', {
         ...(properties?.markers || {}),
@@ -46,7 +46,7 @@ export function QuestionMap({ form: _form, t }) {
     }
   }, [properties?.image]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     render();
   }, [JSON.stringify(properties)]);
 
@@ -83,7 +83,13 @@ export function QuestionMap({ form: _form, t }) {
           <Controller
             control={form.control}
             name="properties.caption"
-            render={({ field }) => <Textarea label={t('captionAltLabel')} {...field} />}
+            render={({ field }) => (
+              <Textarea
+                label={t('captionAltLabel')}
+                placeholder={t('captionAltPlaceholder')}
+                {...field}
+              />
+            )}
           />
         </ContextContainer>
       ) : null}
@@ -93,7 +99,11 @@ export function QuestionMap({ form: _form, t }) {
           control={form.control}
           name="properties.explanation"
           render={({ field }) => (
-            <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />
+            <TextEditorInput
+              {...field}
+              editorStyles={{ minHeight: '96px' }}
+              placeholder={t('explanationPlaceHolder')}
+            />
           )}
         />
       </ContextContainer>
@@ -145,6 +155,7 @@ export function QuestionMap({ form: _form, t }) {
                   <TextInput
                     {...itemProps}
                     value={itemProps?.value.response}
+                    placeholder={t('responsePlaceholder')}
                     onChange={(e) => itemProps?.onChange({ ...itemProps.value, response: e })}
                   />
                 )}
@@ -176,6 +187,6 @@ export function QuestionMap({ form: _form, t }) {
 }
 
 QuestionMap.propTypes = {
-  form: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
+  form: PropTypes.object,
+  t: PropTypes.func,
 };

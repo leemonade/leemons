@@ -86,14 +86,14 @@ function useParseResources({ assets, onRemove, localizations }) {
             return null;
           }
           const preparedAsset = prepareAsset(asset);
-
           return {
             id: asset.id,
             resource: (
               <ResourceRenderer
                 key={asset.id}
                 activity={{
-                  asset,
+                  asset: { ...preparedAsset },
+                  providerData: { ...preparedAsset?.providerData },
                   roleDetails: {
                     icon: (
                       <FileIcon
@@ -136,6 +136,7 @@ export function ResourcesTable({ localizations, onRemoveAsset, onAssetChange, on
           data={parsedResources}
           sortable={parsedResources?.length > 1}
           labels={{ add: '' }}
+          isAssetList
           headerStyles={{ display: 'none' }}
           onChangeData={({ newData }) => onAssetChange(map(newData, 'id'))}
         />

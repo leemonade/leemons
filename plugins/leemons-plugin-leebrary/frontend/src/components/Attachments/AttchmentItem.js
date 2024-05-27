@@ -1,16 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ActionButton, ImageLoader, Stack, Text, COLORS } from '@bubbles-ui/components';
-import { SortDragIcon, DeleteBinIcon, FileIcon } from '@bubbles-ui/icons/outline';
+import {
+  Box,
+  ActionButton,
+  ImageLoader,
+  Stack,
+  Text,
+  CardEmptyCover,
+  TextClamp,
+  Badge,
+} from '@bubbles-ui/components';
+import { SortDragIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import { isEmpty } from 'lodash';
-import { LocaleDate } from '@common';
+import { AttachmentsStyles } from './Attachments.styles';
 
 const AttachmentItem = React.forwardRef(
   ({ provided, item, removeItem, classes, useAria, removeLabel }, ref) => {
+    const { classes: styles } = AttachmentsStyles();
     const [, translations] = useTranslateLoader(prefixPN('task_setup_page'));
 
+    const getAssetBadgeType = () => {
+      const typeMappings = {
+        image: 'Image',
+        bookmark: ['video'].includes(item.mediaType) ? 'Video' : 'Bookmark',
+        'content-creator': 'Content creator',
+        file: item?.fileExtension === 'pdf' ? 'PDF' : 'File',
+        video: 'Video',
+        audio: 'Audio',
+        document: item?.fileExtension === 'pdf' ? 'PDF' : 'Document',
+      };
+
+      return typeMappings[item.fileType] || 'Media';
+    };
+
+    const badgeCategory = getAssetBadgeType();
     if (isEmpty(translations?.items)) return null;
     return (
       <Box
@@ -20,82 +45,28 @@ const AttachmentItem = React.forwardRef(
         }}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
-        sx={() => ({
-          display: 'flex',
-          alignItems: 'center',
-          width: 470,
-          height: 60,
-          borderBottom: '1px solid #E0E0E0',
-        })}
+        className={styles.root}
       >
         <Stack fullWidth fullHeight alignItems="center" justifyContent="center">
-          <Box
-            sx={() => ({
-              width: 56,
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            })}
-          >
+          <Box className={styles.dragIcon}>
             <SortDragIcon className={classes.sortableIcon} />
           </Box>
-
-          <Box
-            id="box-image"
-            sx={() => ({
-              width: 88,
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '4px 8px 4px 8px',
-            })}
-          >
+          <Box id="box-image" className={styles.image}>
             {item.cover ? (
               <ImageLoader src={item.cover || null} alt={item.name} />
             ) : (
-              <FileIcon
-                size={64}
-                fileType={item.fileType}
-                color={COLORS.text06}
-                iconStyle={{ backgroundColor: COLORS.interactive03h }}
-                hideExtension
-              />
+              <CardEmptyCover icon={''} fileType={item.fileType} height={48} />
             )}
           </Box>
-          <Stack
-            direction="column"
-            fullHeight
-            sx={() => ({ width: 300, padding: '12px 8px 12px 8px' })}
-          >
-            <Text size="xs" color="primary">
-              {item.name}
-            </Text>
-
-            <Text size="xs">
-              {`${translations?.items?.['tasks.task_setup_page.setup.instructionData.labels.resourceLastUpdate']}: `}
-              <LocaleDate
-                date={new Date()}
-                options={{
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                }}
-              />
-            </Text>
+          <Stack direction="column" fullHeight className={styles.bodyContainer}>
+            <TextClamp lines={1}>
+              <Text size="md" className={styles.title}>
+                {item.name}
+              </Text>
+            </TextClamp>
+            <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} />
           </Stack>
-          <Box
-            sx={() => ({
-              width: 56,
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            })}
-          >
+          <Box className={styles.actionButton}>
             <ActionButton
               icon={<DeleteBinIcon width={24} height={24} color="#2F463F" />}
               onClick={removeItem}

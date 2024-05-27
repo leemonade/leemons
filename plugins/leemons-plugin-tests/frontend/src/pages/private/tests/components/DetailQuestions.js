@@ -13,6 +13,7 @@ import {
   RadioGroup,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { addErrorAlert } from '@layout/alert';
 import { getQuestionBankRequest } from '../../../../request';
 import FinalDropdown from './FinalDropdown';
 import { DetailQuestionsStyles } from './DetailQuestions.styles';
@@ -119,10 +120,10 @@ export default function DetailQuestions({
       const questionBankId = form.getValues('questionBank');
       const { questionBank: questionBankData } = await getQuestionBankRequest(questionBankId);
       setQuestionBank(questionBankData);
-      const nQuestions = questionBank.questions.length;
+      const nQuestions = questionBank?.questions?.length;
       form.setValue(filtersValue, nQuestions);
     } catch (e) {
-      // addErrorAlert(getErrorMessage(e));
+      addErrorAlert(e);
     }
   }
 
@@ -158,7 +159,7 @@ export default function DetailQuestions({
     const selectedQuestions = [];
 
     while (selectedQuestions.length < questionsToSelect) {
-      const randomIndex = Math.floor(Math.random() * totalQuestions.length);
+      const randomIndex = Math.floor(Math.random() * totalQuestions?.length);
       const question = totalQuestions[randomIndex];
       if (!selectedQuestions.map((q) => q.id).includes(question.id)) {
         selectedQuestions.push(question);

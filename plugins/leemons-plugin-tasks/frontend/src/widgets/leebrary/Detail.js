@@ -44,9 +44,9 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
 
   if (asset?.id) {
     toolbarItems.view = t('view');
-    // if (asset.shareable) {
-    //   toolbarItems.share = t('share');
-    // }
+    if (asset.shareable && asset.providerData?.published) {
+      toolbarItems.share = t('share');
+    }
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
@@ -145,7 +145,7 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
       onEdit={handleEdit}
       onDuplicate={handleDuplicate}
       onAssign={handleAssign}
-    // onShare={handleOnShare}
+      // onShare={handleOnShare}
     />
   );
 };

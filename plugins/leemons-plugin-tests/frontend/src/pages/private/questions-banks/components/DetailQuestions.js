@@ -136,6 +136,7 @@ export default function DetailQuestions({
     {
       Header: t('actionsHeader'),
       accessor: 'actions',
+      style: { textAlign: 'right' },
     },
   ];
 
