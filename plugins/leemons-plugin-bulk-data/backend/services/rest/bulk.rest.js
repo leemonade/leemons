@@ -19,6 +19,7 @@ const initCalendar = require('../../core/calendar');
 const initProviders = require('../../core/providers');
 const initAdmin = require('../../core/admin');
 const { generateBulkDataFile } = require('../../core/generateBulkDataFile');
+const { initAcademicCalendar, initProgramCalendars } = require('../../core/academicCalendar');
 
 const LOAD_PHASES = {
   LOCALES: 'locales',
@@ -32,6 +33,7 @@ const LOAD_PHASES = {
   LIBRARY: 'library',
   AP: 'academic portfolio',
   CALENDAR: 'calendar',
+  ACADEMIC_CALENDAR: 'academic calendar',
   TESTS: 'tests',
   TASKS: 'tasks',
   WIDGETS: 'widgets',
@@ -150,6 +152,17 @@ async function bulkData({ docPath, ctx }) {
     currentPhase = LOAD_PHASES.CALENDAR;
 
     // ·······························································
+    // ACADEMIC CALENDAR
+
+    ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Calendar plugin ...}`);
+    config.regionalCalendars = await initAcademicCalendar({ file: docPath, config, ctx });
+
+    await initProgramCalendars({ file: docPath, config, ctx });
+
+    ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Clendar plugin`);
+    currentPhase = LOAD_PHASES.ACADEMIC_CALENDAR_REGIONAL;
+
+    // ·······························································
     // TESTS & QBANKS
 
     ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`);
@@ -244,38 +257,3 @@ module.exports = {
     },
   },
 };
-
-// TODO CREAR CALENDARIOS REGIONALES - antes de academicPortfolioInit
-// TODO EDITAR CALENDARIO DE PROGRAMA PARA QUE APUNTE AL CALENDARIO REGIONAL DESEADO - al final
-// TODO RECORDAR QUE LA TAB ac_program ya no deberá exister (el programa automaticamente emite evento para creación de program calendar)
-
-/*
-PAYLOAD DE EDICIÓN DE CALENDARIO DE PROGRAMA academic-calendar/config
-{
-    "regionalConfig": "lrn:local:academic-calendar:local:66488a7da904f74425c70742:RegionalConfig:664e05ed94a7a77c83b0f036", //
-    "allCoursesHaveSameDates": false,
-    "breaks": [
-        {
-            "name": "recreo",
-            "startDate": "2024-05-22T07:30:00.000Z",
-            "endDate": "2024-05-22T08:30:00.000Z",
-            "courses": [
-                "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d"
-            ]
-        }
-    ],
-    "courseDates": {
-        "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d": {
-            "startDate": "2024-04-30T22:00:00.000Z",
-            "endDate": "2024-05-30T22:00:00.000Z"
-        }
-    },
-    "substagesDates": {
-        "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d": {}
-    },
-    "courseEvents": {
-        "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Groups:66488aa01a368c2077393b9d": []
-    },
-    "program": "lrn:local:academic-portfolio:local:66488a7da904f74425c70742:Programs:66488aa01a368c2077393b82" // identificador de programa en ProgramCalendar
-}
-*/

@@ -130,7 +130,12 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
   const regionalCalendars = await createRegionalCalendarsSheet({ workbook, centers, ctx });
   createRegionalCalendarEventsSheet({ workbook, regionalCalendars, ctx });
 
-  const programCalendars = await createProgramCalendarsSheet({ workbook, programs, ctx });
+  const programCalendars = await createProgramCalendarsSheet({
+    workbook,
+    programs,
+    regionalCalendars,
+    ctx,
+  });
   createProgramCalendarEventsSheet({ workbook, programCalendars, ctx });
 
   await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
@@ -141,5 +146,4 @@ module.exports = { generateBulkDataFile };
 // CASO 1: nosotros (no hay usuarios) // se cargará con el endpoint existente
 // CASO 2: me pasan un array con 1 teacher,estudiantes y admin/super-admin -> modificamos endpoint
 
-// TODO@PAOLA: implementar academic calendar en import y export (ver screenshot the payload crear regional config => "Barcelona")
 // TODO@PAOLA: preguntas con mapas. crear convención. updade del import

@@ -35,7 +35,7 @@ function createRegionalCalendarEventsSheet({ workbook, regionalCalendars }) {
     { header: 'root', key: 'root', width: 10 },
     { header: 'name', key: 'name', width: 20 },
     { header: 'center', key: 'center', width: 20 },
-    { header: 'regional calendar', key: 'regionalCalendar', width: 20 },
+    { header: 'regionalCalendar', key: 'regionalCalendar', width: 20 },
     { header: 'type', key: 'type', width: 15 },
     { header: 'startDate', key: 'startDate', width: 15 },
     { header: 'endDate', key: 'endDate', width: 15 },

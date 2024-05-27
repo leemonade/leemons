@@ -1,18 +1,17 @@
-const { ADMIN_BULK_ID } = require('../config/constants');
 const { styleCell } = require('../helpers');
 
-async function createProgramCalendarsSheet({ workbook, programs, ctx }) {
+async function createProgramCalendarsSheet({ workbook, programs, regionalCalendars, ctx }) {
   const worksheet = workbook.addWorksheet('ac_program_calendars');
   worksheet.columns = [
     { header: 'root', key: 'root', width: 10 },
     { header: 'program', key: 'program', width: 20 },
-    { header: 'creator', key: 'creator', width: 10 },
+    { header: 'regionalConfig', key: 'regionalConfig', width: 20 },
   ];
 
   worksheet.addRow({
     root: 'BulkId',
     program: 'Program',
-    creator: 'Creator',
+    regionalConfig: 'Regional Calendar',
   });
   worksheet.getRow(2).eachCell((cell, colNumber) => {
     if (colNumber === 1) {
@@ -36,13 +35,13 @@ async function createProgramCalendarsSheet({ workbook, programs, ctx }) {
     const calendarObject = {
       root: bulkId,
       program: program.bulkId,
-      creator: ADMIN_BULK_ID,
+      regionalConfig: regionalCalendars.find((item) => item.id === config.regionalConfig.id)
+        ?.bulkId,
     };
     worksheet.addRow(calendarObject);
     return {
       ...config,
       program,
-      creator: calendarObject.creator,
       bulkId,
     };
   });
