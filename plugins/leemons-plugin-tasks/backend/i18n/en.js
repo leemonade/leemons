@@ -91,6 +91,8 @@ module.exports = {
           name: 'Task name',
           tagline: 'Subtitle of the task',
           description: 'What is this assignment about?',
+          namePlaceholder: 'Title of the task',
+          descriptionPlaceholder: 'Description of the task',
         },
         errorMessages: {
           name: {

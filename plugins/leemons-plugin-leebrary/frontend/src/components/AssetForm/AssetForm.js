@@ -79,6 +79,7 @@ const AssetForm = ({
     programs: null,
     showAdvancedConfig: !!asset?.program,
   });
+
   const [isImage, setIsImage] = useState(
     onlyImages || (categories?.length && categories[0] === 'media-files')
   );
@@ -298,6 +299,17 @@ const AssetForm = ({
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
+  const getPlaceholderLabelByType = (assetType, name) => {
+    if (assetType === 'assignables.task' && name === 'name') {
+      return placeholders.namePlaceholder;
+    }
+    if (assetType === 'assignables.task' && name === 'description') {
+      return placeholders.descriptionPlaceholder;
+    }
+    const typeParsedForLabel = assetType.replaceAll('.', '-');
+    return placeholders[name][typeParsedForLabel];
+  };
+
   return (
     <Box ref={boxRef}>
       <form autoComplete="off">
@@ -425,7 +437,7 @@ const AssetForm = ({
                 render={({ field }) => (
                   <TextInput
                     label={labels.name}
-                    placeholder={placeholders.name}
+                    placeholder={getPlaceholderLabelByType(type, 'name')}
                     error={errors.name}
                     required
                     {...getAssetIcon()}
@@ -444,7 +456,7 @@ const AssetForm = ({
                 render={({ field }) => (
                   <Textarea
                     label={labels.description}
-                    placeholder={placeholders.description}
+                    placeholder={getPlaceholderLabelByType(type, 'description')}
                     required={!isNil(errorMessages?.description?.required)}
                     error={errors.description}
                     minRows={3}

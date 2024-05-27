@@ -92,6 +92,8 @@ module.exports = {
           name: 'Nombre',
           tagline: 'Subtítulo',
           description: '¿De qué trata esta tarea?',
+          namePlaceholder: 'Título de la tarea',
+          descriptionPlaceholder: 'Descripción de la tarea',
         },
         errorMessages: {
           name: {
