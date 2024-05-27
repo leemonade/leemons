@@ -69,6 +69,7 @@ module.exports = {
     newRegionalCalendar: 'New regional calendar',
     configDeletedAlert: 'Configuration deleted successfully',
     configDeletedErrorAlert: 'Error deleting regional config:',
+    configSavedErrorAlert: 'Error saving regional config:',
     requiredField: 'Required field',
     emptyCalendar: 'You have not created any regional calendar yet',
     calendarNamePlaceholder: 'Calendar name...',

@@ -127,10 +127,10 @@ export default function RegionalCalendars() {
   function handleOnDeleteRegionalCalendar(configId) {
     deleteRegionalConfigs(configId, center?.id, {
       onSuccess: () => {
-        addSuccessAlert('Config deleted successfully');
+        addSuccessAlert(t('configDeletedAlert'));
       },
       onError: (error) => {
-        console.error('Error deleting regional config:', error);
+        console.error(t('configDeletedErrorAlert'), error);
         addErrorAlert(getErrorMessage(error));
       },
     });
@@ -172,7 +172,7 @@ export default function RegionalCalendars() {
           setSaving(false);
         },
         onError: (error) => {
-          console.error('Error saving regional config:', error);
+          console.error(t('configSavedErrorAlert'), error);
           addErrorAlert(getErrorMessage(error));
         },
       });
