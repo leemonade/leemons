@@ -1,5 +1,4 @@
 import prefixPN from '@academic-calendar/helpers/prefixPN';
-import { listRegionalConfigsRequest } from '@academic-calendar/request';
 import {
   Box,
   Button,
@@ -17,11 +16,6 @@ import {
 import { DeleteBinIcon, EditIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore } from '@common';
-import {
-  saveRegionalConfig,
-  deleteRegionalConfig,
-} from '@academic-calendar/request/regional-config';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
@@ -29,6 +23,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { useForm } from 'react-hook-form';
 import { getCentersWithToken } from '@users/session';
+import {
+  useListRegionalConfigs,
+  useDeleteRegionalConfigs,
+  useSaveRegionalConfig,
+} from '@academic-calendar/hooks';
 import { EmptyState } from './components/EmptyState';
 import { RegionalConfigDetail } from './components/regionalConfigDetail';
 
@@ -106,98 +105,83 @@ export default function RegionalCalendars() {
   const [t] = useTranslateLoader(prefixPN('regionalList'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const scrollRef = React.useRef(null);
-  const { classes, cx } = useStyle();
+  const { classes } = useStyle();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [userCenters, setUserCenters] = useState();
   const [selectedCenter, setSelectedCenter] = useState();
-  const [regConfigs, setRegConfigs] = useState();
+  const [center, setCenter] = useState(null);
+  const [selectedConfig, setSelectedConfig] = useState({});
+  const [saving, setSaving] = useState(false);
   const deploymentConfig = useDeploymentConfig({
     pluginName: 'academic-calendar',
     ignoreVersion: true,
   });
-  const [store, render] = useStore({
-    center: null,
-    scroll: 0,
+
+  const { data: regionalConfigs } = useListRegionalConfigs(center?.id, {
+    enabled: !!center?.id,
   });
 
-  async function loadRegionalConfigs() {
-    const { regionalConfigs } = await listRegionalConfigsRequest(store?.center?.id);
-    store.regionalConfigs = regionalConfigs;
-    setRegConfigs(regionalConfigs);
-    render();
+  const { mutate: deleteRegionalConfigs } = useDeleteRegionalConfigs(center?.id);
+  const { mutate: saveRegionalConfig } = useSaveRegionalConfig(center?.id);
+
+  function handleOnDeleteRegionalCalendar(configId) {
+    deleteRegionalConfigs(configId, center?.id, {
+      onSuccess: () => {
+        addSuccessAlert(t('configDeletedAlert'));
+      },
+      onError: (error) => {
+        console.error(t('configDeletedErrorAlert'), error);
+        addErrorAlert(getErrorMessage(error));
+      },
+    });
   }
 
-  async function handleOnDeleteRegionalCalendar(id) {
-    try {
-      await deleteRegionalConfig(id);
-      await loadRegionalConfigs();
-      render();
-    } catch (error) {
-      console.error('Error deleting regional config:', error);
-      addErrorAlert(getErrorMessage(error));
-    }
-  }
-
-  function handleOnSelectCenter(center) {
-    setSelectedCenter(center);
-    store.center = center;
-    loadRegionalConfigs();
-    render();
+  function handleOnSelectCenter(centerId) {
+    setSelectedCenter(centerId);
+    setCenter(centerId);
   }
 
   function addNewRegionalCalendar() {
-    store.selectedConfig = {};
+    setSelectedConfig({});
     setIsDrawerOpen(true);
-    render();
   }
 
   useEffect(() => {
     const centers = getCentersWithToken();
     setUserCenters(centers);
     handleOnSelectCenter(centers[0]);
-    loadRegionalConfigs();
   }, []);
-
-  useEffect(() => {
-    loadRegionalConfigs();
-  }, [store?.center?.id]);
 
   const form = useForm();
 
   function save() {
     form.handleSubmit(async (data) => {
-      try {
-        store.saving = true;
-        render();
-        const payload = {
-          id: data.id,
-          name: data.name,
-          regionalEventsRel: data.regionalConfig,
-          regionalEvents: data.regionalEvents,
-          localEvents: data.localEvents,
-          daysOffEvents: data.daysOffEvents,
-        };
-
-        await saveRegionalConfig({
-          ...payload,
-          center: store.center.id,
-        });
-
-        addSuccessAlert(t('saved'));
-        store.selectedConfig = null;
-        loadRegionalConfigs();
-        setIsDrawerOpen(false);
-      } catch (err) {
-        addErrorAlert(getErrorMessage(err));
-      }
-      store.saving = false;
-      render();
+      const dataToSave = {
+        id: data.id,
+        name: data.name,
+        regionalEvents: data.regionalEvents,
+        localEvents: data.localEvents,
+        daysOffEvents: data.daysOffEvents,
+        center: center.id,
+      };
+      saveRegionalConfig(dataToSave, {
+        onSuccess: () => {
+          addSuccessAlert(t('saved'));
+          setSelectedConfig({});
+          setIsDrawerOpen(false);
+          setSaving(false);
+        },
+        onError: (error) => {
+          console.error(t('configSavedErrorAlert'), error);
+          addErrorAlert(getErrorMessage(error));
+        },
+      });
     })();
   }
 
   const colums = useMemo(
     () =>
-      store?.regionalConfigs?.length > 0
+      regionalConfigs
         ? [
             {
               Header: '',
@@ -210,11 +194,11 @@ export default function RegionalCalendars() {
             },
           ]
         : [],
-    [store.regionalConfigs]
+    [regionalConfigs]
   );
   const data = useMemo(
     () =>
-      store.regionalConfigs?.map((config) => ({
+      regionalConfigs?.regionalConfigs?.map((config) => ({
         ...config,
         actions: (
           <Stack justifyContent="end" alignItems="center" spacing={2}>
@@ -223,9 +207,8 @@ export default function RegionalCalendars() {
                 icon={<EditIcon width={20} height={20} />}
                 disabled={config.currentlyInUse}
                 onClick={() => {
-                  store.selectedConfig = config;
+                  setSelectedConfig(config);
                   setIsDrawerOpen(true);
-                  render();
                 }}
               />
             </Box>
@@ -239,7 +222,7 @@ export default function RegionalCalendars() {
           </Stack>
         ),
       })),
-    [store.regionalConfigs]
+    [regionalConfigs]
   );
 
   return (
@@ -279,10 +262,10 @@ export default function RegionalCalendars() {
             <PageContainer noFlex fullWidth className={classes.pageContainer}>
               <Box>
                 <ContextContainer>
-                  {store.center ? (
+                  {center ? (
                     <Box>
                       {!(deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0) &&
-                      store?.regionalConfigs?.length > 0 ? (
+                      regionalConfigs?.regionalConfigs?.length >= 1 ? (
                         <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
                           <Button
                             onClick={addNewRegionalCalendar}
@@ -294,8 +277,8 @@ export default function RegionalCalendars() {
                         </Box>
                       ) : null}
                       <Box sx={(theme) => ({ marginTop: theme.spacing[3], width: '50%' })}>
-                        <Table columns={colums} data={data} />
-                        {regConfigs?.length <= 0 ? (
+                        <Table columns={colums} data={data} headerStyles={{ display: 'none' }} />
+                        {!regionalConfigs?.regionalConfigs?.length ? (
                           <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
                         ) : null}
                       </Box>
@@ -305,16 +288,14 @@ export default function RegionalCalendars() {
               </Box>
               {/* CONTENT ----------------------------------------- */}
               <Drawer size="xl" opened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
-                <Drawer.Header
-                  title={!store.selectedConfig?.id ? t('newRegionalCalendar') : t('edit')}
-                />
+                <Drawer.Header title={!selectedConfig?.id ? t('newRegionalCalendar') : t('edit')} />
                 <Drawer.Content>
-                  {store.selectedConfig ? (
+                  {selectedConfig ? (
                     <RegionalConfigDetail
                       t={t}
-                      center={store.center}
-                      config={store.selectedConfig}
-                      calendars={store.regionalConfigs}
+                      center={center}
+                      config={selectedConfig}
+                      calendars={regionalConfigs}
                       form={form}
                       onSave={() => {}}
                     />
@@ -330,7 +311,7 @@ export default function RegionalCalendars() {
                     >
                       {t('cancel')}
                     </Button>
-                    <Button onClick={save} loading={store.saving}>
+                    <Button onClick={save} loading={saving}>
                       {t('save')}
                     </Button>
                   </Box>
