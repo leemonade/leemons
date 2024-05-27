@@ -164,6 +164,7 @@ module.exports = {
           subjects: 'Subjects',
           methodology: 'Methodology',
           statement: 'Statement',
+          statementLabel: 'Text of the statement',
           development: 'Development',
           statementAndDevelopmentTitle: 'Statement and development',
           content: 'Content',

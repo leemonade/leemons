@@ -227,7 +227,7 @@ module.exports = {
     questionLabel: 'Pregunta',
     questionsRequired: 'Seleccionar al menos una pregunta',
     reorderQuestionsDescription: 'Preguntas seleccionas para este test (reordenar si es necesario)',
-    statementLabel: 'Enunciado del test',
+    statementLabel: 'Texto de enunciado',
     addFromCurriculum: 'Añadir del curriculum',
     objectivesCurriculum: 'Objetivos personalizados',
     inputLabel: 'Introduce un objetivo personalizado',
