@@ -187,11 +187,6 @@ export default function DetailQuestions({
               {t('addQuestion')}
             </Button>
           </Box>
-          {qStore.trySend && form.formState.errors.questions ? (
-            <Alert severity="error" closeable={false}>
-              {form.formState.errors.questions?.message}
-            </Alert>
-          ) : null}
           {questions?.length ? (
             <Table
               columns={tableHeaders}
@@ -214,6 +209,12 @@ export default function DetailQuestions({
           ) : (
             <Text>{t('questionListEmpty')}</Text>
           )}
+
+          {qStore.trySend && form.formState.errors.questions ? (
+            <Alert severity="error" closeable={false}>
+              {form.formState.errors.questions?.message}
+            </Alert>
+          ) : null}
         </ContextContainer>
       </Box>
     </TotalLayoutStepContainer>

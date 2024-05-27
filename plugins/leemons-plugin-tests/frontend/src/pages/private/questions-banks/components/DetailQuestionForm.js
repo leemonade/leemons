@@ -177,7 +177,7 @@ export default function DetailQuestionForm({
                     {t('saveDraft')}
                   </Button>
                 ) : null}
-                <Button variant="outline" disabled={!type} onClick={handleOnSaveQuestion}>
+                <Button disabled={!type} onClick={handleOnSaveQuestion}>
                   {t('saveQuestion')}
                 </Button>
               </>
