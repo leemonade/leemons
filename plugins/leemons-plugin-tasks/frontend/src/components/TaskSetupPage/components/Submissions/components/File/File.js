@@ -68,6 +68,7 @@ export default function File({ labels }) {
               field.onChange(validExtensions);
             }}
             label={labels?.format}
+            labels={{ addButton: labels?.addButton }}
             placeholder={labels?.formatPlaceholder}
           />
         )}
@@ -103,5 +104,7 @@ File.propTypes = {
     format: PropTypes.string,
     formatPlaceholder: PropTypes.string,
     maxSize: PropTypes.string,
+    addButton: PropTypes.string,
+    required: PropTypes.string,
   }),
 };

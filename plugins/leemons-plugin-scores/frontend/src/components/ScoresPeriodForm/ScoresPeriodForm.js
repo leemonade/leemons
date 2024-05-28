@@ -2,12 +2,15 @@ import React from 'react';
 import { Box, Button, DatePicker, Select, Switch, Text, TextInput } from '@bubbles-ui/components';
 import _, { isFunction } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
+import { SearchIcon } from '@bubbles-ui/icons/outline';
 import { ScoresPeriodFormStyles } from './ScoresPeriodForm.styles';
 import {
   SCORES_PERIOD_FORM_DEFAULT_PROPS,
   SCORES_PERIOD_FORM_PROP_TYPES,
+  PERIODS_PROP_TYPES,
+  SELECT_DATES_PROP_TYPES,
+  PERIODCREATIONFORM_PROP_TYPES,
 } from './ScoresPeriodForm.constants';
-import { SearchIcon } from '@bubbles-ui/icons/outline';
 
 function Periods({ classes, cx, labels, locale, onPeriodSelect, periods, setValue, watch }) {
   const startDate = watch('startDate')?.getTime();
@@ -36,33 +39,31 @@ function Periods({ classes, cx, labels, locale, onPeriodSelect, periods, setValu
       <Text role="productive" strong color="soft" size="xs" transform="uppercase">
         {labels?.evaluations}
       </Text>
-      {periods?.map((period) => {
-        return (
-          <Box
-            className={cx(classes.period, {
-              [classes.selectedPeriod]:
-                startDate === period.startDate.getTime() && endDate === period.endDate.getTime(),
-            })}
-            key={period.id}
-            onClick={() => {
-              setPeriodSelected(period);
-              if (_.isFunction(onPeriodSelect)) {
-                onPeriodSelect(period);
-              }
-              setValue('startDate', period.startDate);
-              setValue('endDate', period.endDate);
-            }}
-          >
-            <Text color="primary" strong>
-              {period.name}
-            </Text>
-            <Text color="quartiary">
-              {period.startDate?.toLocaleDateString(locale)} -{' '}
-              {period.endDate.toLocaleDateString(locale)}
-            </Text>
-          </Box>
-        );
-      })}
+      {periods?.map((period) => (
+        <Box
+          className={cx(classes.period, {
+            [classes.selectedPeriod]:
+              startDate === period.startDate.getTime() && endDate === period.endDate.getTime(),
+          })}
+          key={period.id}
+          onClick={() => {
+            setPeriodSelected(period);
+            if (_.isFunction(onPeriodSelect)) {
+              onPeriodSelect(period);
+            }
+            setValue('startDate', period.startDate);
+            setValue('endDate', period.endDate);
+          }}
+        >
+          <Text color="primary" strong>
+            {period.name}
+          </Text>
+          <Text color="quartiary">
+            {period.startDate?.toLocaleDateString(locale)} -{' '}
+            {period.endDate.toLocaleDateString(locale)}
+          </Text>
+        </Box>
+      ))}
     </Box>
   );
 }
@@ -98,7 +99,6 @@ function RenderSelects({ classes, clearLabel, control, errors, fields }) {
                 field.onChange(null);
               }
             }, [data]);
-
             return (
               <Select
                 {...props}
@@ -201,7 +201,7 @@ function SelectDates({
           if (field.value && !startDate) {
             field.onChange(null);
           } else if (!field.value && startDate) {
-            let followingDay = new Date(startDate);
+            const followingDay = new Date(startDate);
             followingDay.setDate(startDate.getDate() + 1);
             field.onChange(followingDay);
           }
@@ -401,5 +401,8 @@ function ScoresPeriodForm({
 
 ScoresPeriodForm.defaultProps = SCORES_PERIOD_FORM_DEFAULT_PROPS;
 ScoresPeriodForm.propTypes = SCORES_PERIOD_FORM_PROP_TYPES;
+Periods.propTypes = PERIODS_PROP_TYPES;
+SelectDates.propTypes = SELECT_DATES_PROP_TYPES;
+PeriodCreationForm.propTypes = PERIODCREATIONFORM_PROP_TYPES;
 
 export { ScoresPeriodForm };

@@ -374,12 +374,14 @@ const AssetPlayer = ({
                   >
                     {showPlayButton && (
                       <Box className={classes.buttonIcon}>
-                        <ButtonIcon
-                          fileType={'video'}
-                          onClick={(e) => {
-                            if (ccMode && !canPlay) handleInitPlay();
-                          }}
-                        />
+                        {isPlaying ? null : (
+                          <ButtonIcon
+                            fileType={'video'}
+                            onClick={(e) => {
+                              if (ccMode && !canPlay) handleInitPlay();
+                            }}
+                          />
+                        )}
                       </Box>
                     )}
                     {cover ? (

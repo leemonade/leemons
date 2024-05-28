@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, sortBy } from 'lodash';
 import {
   Select,
   TotalLayoutContainer,
@@ -76,8 +76,9 @@ const SubjectPage = () => {
 
   const programSelectData = useMemo(() => {
     if (centerProgramsQuery?.length) {
+      const sortedCenterProgramsQuery = sortBy(centerProgramsQuery, 'createdAt');
       return [
-        ...centerProgramsQuery.map((program) => ({ value: program.id, label: program.name })),
+        ...sortedCenterProgramsQuery.map((program) => ({ value: program.id, label: program.name })),
       ];
     }
     return [];

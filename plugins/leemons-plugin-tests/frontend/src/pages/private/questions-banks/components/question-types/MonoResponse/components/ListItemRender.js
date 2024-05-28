@@ -27,17 +27,19 @@ export function ListItemRender({
           {LETTERS[index]}
         </Text>
       </Box>
-      <Box noFlex sx={() => ({ width: 50, minHeight: 48, textAlign: 'center' })}>
+      <Box noFlex sx={() => ({ width: 50, minHeight: 48, textAlign: 'center', marginTop: -4 })}>
         {!item.hideOnHelp ? (
           <Radio checked={item.isCorrectResponse} onChange={() => changeCorrectResponse(item)} />
         ) : null}
 
         {showEye && item.hideOnHelp ? (
-          <ViewOffIcon
-            width={18}
-            height={40}
-            color={theme?.other.global.content.color.icon.default}
-          />
+          <Box sx={() => ({ marginTop: 4 })}>
+            <ViewOffIcon
+              width={18}
+              height={40}
+              color={theme?.other.global.content.color.icon.default}
+            />
+          </Box>
         ) : null}
       </Box>
       <Box>
@@ -70,7 +72,7 @@ export function ListItemRender({
         {!withImages ? (
           <Box>
             {item.response ? (
-              <Box>
+              <Box sx={() => ({ marginTop: -2 })}>
                 <Text color="primary">{item.response}</Text>
               </Box>
             ) : null}

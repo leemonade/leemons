@@ -91,7 +91,6 @@ module.exports = {
     formatLabel: 'Format',
     savedAsDraft: 'Saved as draft',
     published: 'Published',
-    publishOptions: 'Publish options',
     onlyPublish: 'Only publish',
     publishAndShare: 'Publish and share',
     publishAndAssign: 'Publish and assign',

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import _, { isFunction, map, uniq } from 'lodash';
+import _, { isFunction, map, uniq, sortBy } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
@@ -203,10 +203,11 @@ function ProgramSelect({ field, watch, programs, labels }) {
     () => (!center ? programs : programs.filter((program) => program.centers.includes(center))),
     [center, programs]
   );
+  const sortedPrograms = sortBy(programsMatchingCenter, 'createdAt');
 
   const data = React.useMemo(
     () =>
-      programsMatchingCenter.map((program) => ({
+      sortedPrograms.map((program) => ({
         label: program.name,
         value: program.id,
       })),
@@ -417,4 +418,24 @@ export default function PeriodList({ onRemove, className }) {
 PeriodList.propTypes = {
   periods: PropTypes.array.isRequired,
   onRemove: PropTypes.func,
+  className: PropTypes.string,
+};
+
+CenterSelect.propTypes = {
+  field: PropTypes.object,
+  centers: PropTypes.array,
+  labels: PropTypes.object,
+};
+
+ProgramSelect.propTypes = {
+  field: PropTypes.object,
+  programs: PropTypes.array,
+  labels: PropTypes.object,
+  watch: PropTypes.func,
+};
+
+CourseSelect.propTypes = {
+  field: PropTypes.object,
+  watch: PropTypes.func,
+  labels: PropTypes.object,
 };

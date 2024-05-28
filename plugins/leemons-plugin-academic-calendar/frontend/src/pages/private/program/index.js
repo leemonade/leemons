@@ -185,7 +185,7 @@ export default function ProgramCalendars() {
   const columns = useMemo(
     () => [
       {
-        Header: 'Cover',
+        Header: t('tableHeaderCover'),
         accessor: 'imageUrl',
         Cell: ({ value }) => (
           <Box>
@@ -194,11 +194,11 @@ export default function ProgramCalendars() {
         ),
       },
       {
-        Header: 'Programa',
+        Header: t('tableHeaderProgram'),
         accessor: 'name',
       },
       {
-        Header: 'Inicio de curso',
+        Header: t('tableHeaderCourseInit'),
         accessor: 'config.startCourse',
         Cell: ({ value }) => {
           if (value) {
@@ -208,7 +208,7 @@ export default function ProgramCalendars() {
         },
       },
       {
-        Header: 'Fin de curso',
+        Header: t('tableHeaderCourseEnd'),
         accessor: 'config.endCourse',
         Cell: ({ value }) => {
           if (value) {
@@ -342,10 +342,10 @@ export default function ProgramCalendars() {
           </VerticalStepperContainer>
         ) : (
           <TotalLayoutStepContainer stepName={`${selectedCenter?.name}`}>
-            {programs?.length > 0 ? (
+            {programsList?.data?.items?.length > 0 && !programsIsLoading ? (
               <Table columns={columns} data={programsData || []} />
             ) : (
-              <>{!programsIsLoading ? <EmptyState t={t} /> : null}</>
+              <EmptyState t={t} />
             )}
           </TotalLayoutStepContainer>
         )}

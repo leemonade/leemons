@@ -136,6 +136,7 @@ export default function DetailQuestions({
     {
       Header: t('actionsHeader'),
       accessor: 'actions',
+      style: { textAlign: 'right' },
     },
   ];
 
@@ -181,6 +182,11 @@ export default function DetailQuestions({
     >
       <Box>
         <ContextContainer title={t('questionList')}>
+          <Box>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
+              {t('addQuestion')}
+            </Button>
+          </Box>
           {questions?.length ? (
             <Table
               columns={tableHeaders}
@@ -203,11 +209,7 @@ export default function DetailQuestions({
           ) : (
             <Text>{t('questionListEmpty')}</Text>
           )}
-          <Box>
-            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
-              {t('addQuestion')}
-            </Button>
-          </Box>
+
           {qStore.trySend && form.formState.errors.questions ? (
             <Alert severity="error" closeable={false}>
               {form.formState.errors.questions?.message}

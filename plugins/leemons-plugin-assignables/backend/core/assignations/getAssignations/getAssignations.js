@@ -8,7 +8,9 @@ const { findAssignationDates } = require('./findAssignationDates');
 const { findInstanceDates } = require('./findInstanceDates');
 const { getGrades } = require('./getGrades');
 const { getAssignationStatus } = require('./getAssignationStatus');
-const { getModuleActivitiesTimestamps } = require('./getModuleActivitesTimestamps');
+const {
+  getModuleActivitiesTimestampsAndGrades,
+} = require('./getModuleActivitesTimestampsAndGrades');
 
 async function getAssignations({
   assignationsIds,
@@ -71,7 +73,7 @@ async function getAssignations({
   promises.push(getClassesWithSubject({ instancesIds, ctx }));
 
   promises.push(getRelatedAssignationsTimestamps({ assignationsData, ctx }));
-  promises.push(getModuleActivitiesTimestamps({ assignationsData, ctx }));
+  promises.push(getModuleActivitiesTimestampsAndGrades({ assignationsData, ctx }));
 
   promises.push(findAssignationDates({ assignationsIds: ids, ctx }));
   promises.push(findInstanceDates({ instances: instancesIds, ctx }));

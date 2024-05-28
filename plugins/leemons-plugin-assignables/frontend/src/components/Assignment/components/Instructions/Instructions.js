@@ -18,6 +18,7 @@ export function Instructions({ localizations, value, onChange, hideSectionHeader
       description={localizations?.description}
       hideSectionHeaders={hideSectionHeaders}
       hideDivider={hideDivider}
+      spacingBottom={16}
     >
       <Box className={classes.root}>
         <TextEditorInput

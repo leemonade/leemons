@@ -66,7 +66,6 @@ function useActivities(assignable) {
       Object.fromEntries(assignables?.map((assignableData) => [assignableData.id, assignableData])),
     [assignables]
   );
-
   const activitiesData = useMemo(
     () =>
       isLoading || !assignables?.length
@@ -253,7 +252,7 @@ export function Config({ assignable, localizations: parentLocalizations }) {
         />
       )}
 
-      <Table columns={columns} data={parsedActivities} />
+      <Table columns={columns} data={parsedActivities} isAssetList />
     </Box>
   );
 }

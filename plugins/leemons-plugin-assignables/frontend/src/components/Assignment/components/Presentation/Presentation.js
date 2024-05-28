@@ -13,7 +13,7 @@ export default function Presentation({ assignable, localizations, showTitle, sho
   }
 
   return (
-    <Container title={localizations?.title}>
+    <Container title={localizations?.title} spacingBottom={16}>
       <Stack direction="column" spacing={5}>
         {!!showTitle && (
           <Controller

@@ -7,7 +7,7 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { ShareIcon } from '@bubbles-ui/icons/outline';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
@@ -20,7 +20,7 @@ import { deleteTestRequest, duplicateRequest } from '../../request';
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
     cursor: 'pointer',
-    borderColor: selected && theme.colors.interactive01d,
+    borderColor: selected && theme.other.core.color.primary['400'],
     borderWidth: selected && '1px',
     boxShadow: selected && theme.shadows.shadow03,
   },
