@@ -28,7 +28,7 @@ const {
   createProgramCalendarEventsSheet,
 } = require('./programCalendarSheets');
 
-async function generateBulkDataFile({ admin, superAdmin, ctx }) {
+async function generateBulkDataFile({ admin, superAdmin, adminShouldOwnAllAssets, ctx }) {
   const workbook = new Excel.Workbook();
 
   // BASIC CONFIG
@@ -83,6 +83,7 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     programs,
     subjects,
     users,
+    adminShouldOwnAllAssets,
     resourceAssets: Object.values(LIBRARY_CATEGORIES)
       .map((key) => assetsByCategoryKey[key])
       .flat(),
@@ -94,6 +95,7 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     workbook,
     tasks: assetsByCategoryKey[TASKS],
     libraryAssets,
+    adminShouldOwnAllAssets,
     programs,
     users,
     centers,
@@ -106,6 +108,7 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     workbook,
     users,
     qBanks: assetsByCategoryKey[TEST_QUESTION_BANKS],
+    adminShouldOwnAllAssets,
     programs,
     subjects,
     ctx,
@@ -117,6 +120,7 @@ async function generateBulkDataFile({ admin, superAdmin, ctx }) {
     questions,
     tests: assetsByCategoryKey[TESTS],
     qBanks,
+    adminShouldOwnAllAssets,
     programs,
     subjects,
     users,

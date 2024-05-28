@@ -49,7 +49,16 @@ const getCreator = (taskAsset, users) => users.find((u) => u.id === taskAsset.fr
 
 // MAIN FUNCTION ······································································|
 
-async function createTasksSheet({ workbook, libraryAssets, tasks, programs, centers, users, ctx }) {
+async function createTasksSheet({
+  workbook,
+  libraryAssets,
+  adminShouldOwnAllAssets,
+  tasks,
+  programs,
+  centers,
+  users,
+  ctx,
+}) {
   const worksheet = workbook.addWorksheet('ta_tasks');
   configureSheetColumns({ worksheet, columnDefinitions: TASK_COLUMN_DEFINITIONS });
 
@@ -93,6 +102,7 @@ async function createTasksSheet({ workbook, libraryAssets, tasks, programs, cent
     const center = getCenter(centers, task, program); // Sometimes it's not present in providerData
 
     const bulkId = `task${(index + 1).toString().padStart(2, '0')}`;
+    const creator = adminShouldOwnAllAssets ? 'admin' : getCreator(task, users);
 
     const taskObject = {
       root: bulkId,
@@ -102,7 +112,7 @@ async function createTasksSheet({ workbook, libraryAssets, tasks, programs, cent
       tags: task.tags?.join(', '),
       color: task.color,
       cover: task.cover,
-      creator: getCreator(task, users),
+      creator,
       program: program.bulkId,
       center,
       duration: task.providerData.duration,

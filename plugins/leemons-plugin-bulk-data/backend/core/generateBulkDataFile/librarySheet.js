@@ -13,6 +13,7 @@ async function createLibraryResourcesSheet({
   workbook,
   programs,
   subjects,
+  adminShouldOwnAllAssets,
   resourceAssets,
   users,
   ctx,
@@ -74,6 +75,7 @@ async function createLibraryResourcesSheet({
     const subjectBulkId = subjects.find((s) => s.id === asset.subjects?.[0]?.subject)?.bulkId;
     const categoryKey = resourceAssets.find((raw) => raw.id === asset.id).category.key;
     const file = categoryKey === 'media-files' ? asset.url : '';
+    const canAccess = adminShouldOwnAllAssets ? 'admin|owner' : getCanAccess(asset, users);
 
     const assetObject = {
       root: bulkId,
@@ -87,7 +89,7 @@ async function createLibraryResourcesSheet({
       color: asset.color,
       cover: asset.cover,
       tags: asset.tags.join(', '),
-      canAccess: getCanAccess(asset, users),
+      canAccess,
       program: programBulkId,
       subject: subjectBulkId,
       enabled: 'Yes',

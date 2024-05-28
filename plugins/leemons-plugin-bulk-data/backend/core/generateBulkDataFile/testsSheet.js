@@ -23,6 +23,7 @@ async function createTestsSheet({
   programs,
   subjects,
   users,
+  adminShouldOwnAllAssets,
   ctx,
 }) {
   const worksheet = workbook.addWorksheet('te_tests');
@@ -85,6 +86,7 @@ async function createTestsSheet({
   testDetails.forEach((test, index) => {
     const bulkId = `test${(index + 1).toString().padStart(2, '0')}`;
     const statementMarkdown = turndown.turndown(test.providerData.statement);
+    const creator = adminShouldOwnAllAssets ? 'admin' : getCreator(test, users);
 
     const testObject = {
       root: bulkId,
@@ -104,7 +106,7 @@ async function createTestsSheet({
       useAllQuestions: booleanToYesNoAnswer(test.providerData.metadata.filters?.useAllQuestions),
       questions: getQuestionsString(test.providerData.metadata.questions, questions),
       statement: statementMarkdown,
-      creator: getCreator(test, users),
+      creator,
       published: booleanToYesNoAnswer(test.providerData.published),
     };
     worksheet.addRow(_.omitBy(testObject, _.isNil));

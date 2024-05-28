@@ -3,7 +3,15 @@ const { styleCell, booleanToYesNoAnswer } = require('./helpers');
 
 const getCreator = (taskAsset, users) => users.find((u) => u.id === taskAsset.fromUser)?.bulkId;
 
-async function createTestsQBanksSheet({ workbook, qBanks, users, programs, subjects, ctx }) {
+async function createTestsQBanksSheet({
+  workbook,
+  qBanks,
+  users,
+  programs,
+  adminShouldOwnAllAssets,
+  subjects,
+  ctx,
+}) {
   const worksheet = workbook.addWorksheet('te_qbanks');
 
   worksheet.columns = [
@@ -51,6 +59,7 @@ async function createTestsQBanksSheet({ workbook, qBanks, users, programs, subje
   return qBankDetails.map((qBank, i) => {
     const onlySubjectId = qBank.subjects[0]?.subject ?? '';
     const bulkId = `qbank_${(i + 1).toString().padStart(2, '0')}`;
+    const creator = adminShouldOwnAllAssets ? 'admin' : getCreator(qBank, users);
     const qBankObject = {
       root: bulkId,
       name: qBank.name,
@@ -59,7 +68,7 @@ async function createTestsQBanksSheet({ workbook, qBanks, users, programs, subje
       color: qBank.color,
       cover: qBank.cover,
       tags: qBank.tags?.join(', '),
-      creator: getCreator(qBank, users),
+      creator,
       program: programs.find((item) => item.id === qBank.program)?.bulkId,
       subjects: subjects.find((item) => item.id === onlySubjectId)?.bulkId,
       published: booleanToYesNoAnswer(qBank.providerData.published),
