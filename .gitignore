@@ -155,7 +155,7 @@ build.tar.gz
 cache.js
 
 apps/dev/frontend
-apps/dev/build
+apps/dev/build*
 apps/dev/events.json
 docs-build
 
