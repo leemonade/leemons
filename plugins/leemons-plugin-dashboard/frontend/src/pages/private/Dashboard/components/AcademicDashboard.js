@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
+import checkUserAgentDatasetsRequest from '@users/request/checkUserAgentDatasets';
 
 const rightZoneWidth = '320px';
 const Styles = createStyles((theme) => ({
@@ -76,6 +77,8 @@ export default function AcademicDashboard({ session }) {
       ...program,
       imageUrl: leemons.apiUrl + program.imageUrl,
     }));
+
+    checkUserAgentDatasetsRequest();
 
     try {
       if (store.programs.length > 0) {

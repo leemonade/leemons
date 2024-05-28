@@ -14,14 +14,14 @@ const {
 const usersService = require('../../core/users');
 const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
 const {
-  agentDetailForPage,
-  deleteById,
-  getUserAgentsInfo,
-  searchUserAgents,
-  getDataForUserAgentDatasets,
   update,
-  disable,
   active,
+  disable,
+  deleteById,
+  searchUserAgents,
+  getUserAgentsInfo,
+  agentDetailForPage,
+  getDataForUserAgentDatasets,
   saveDataForUserAgentDatasets,
   getActiveUserAgentsCountByProfileSysName,
 } = require('../../core/user-agents');
@@ -839,6 +839,21 @@ module.exports = {
         ctx,
       });
       return { status: 200, count };
+    },
+  },
+  checkUserAgentDatasetsRest: {
+    rest: {
+      path: '/user-agents/check-datasets',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const isGood = await usersService.userSessionCheckUserAgentDatasets({ ctx });
+      if (!isGood) {
+        const userAgent = ctx.meta.userSession.userAgents[0].id;
+        ctx.socket.emit(userAgent, 'USER_AGENT_NEED_UPDATE_DATASET');
+      }
+      return { isGood };
     },
   },
 };
