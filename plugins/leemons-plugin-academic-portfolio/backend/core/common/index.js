@@ -6,6 +6,9 @@ const { listClassesSubjects } = require('./listClassesSubjects');
 const { getClassesUnderNodeTree } = require('./getClassesUnderNodeTree');
 const { addStudentsClassesUnderNodeTree } = require('./addStudentsToClassesUnderNodeTree');
 const { addTeachersClassesUnderNodeTree } = require('./addTeachersToClassesUnderNodeTree');
+const {
+  getSubjectGroupCourseNamesFromClassData,
+} = require('./getSubjectGroupCourseNamesFromClassData');
 
 module.exports = {
   getTree,
@@ -16,4 +19,5 @@ module.exports = {
   getClassesUnderNodeTree,
   addStudentsClassesUnderNodeTree,
   addTeachersClassesUnderNodeTree,
+  getSubjectGroupCourseNamesFromClassData,
 };

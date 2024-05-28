@@ -1,13 +1,8 @@
 const { LeemonsError } = require('@leemons/error');
 const randomColor = require('randomcolor');
 
-async function processAcademicPortfolioAddClass({ id, program, subject: { icon }, ctx, config }) {
+async function processAcademicPortfolioAddClass({ id, program, ctx, config }) {
   try {
-    const newConfig = { ...config };
-    if (icon) {
-      newConfig.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: icon.id });
-    }
-
     const calendar = await ctx.tx.call('calendar.calendar.add', {
       key: ctx.prefixPN(`class.${id}`),
       config,
@@ -28,16 +23,11 @@ function onAcademicPortfolioAddClass({
     id,
     color,
     program,
-    groups,
-    subject: { name, icon, internalId },
+    subject: { internalId },
   },
+  displayName,
   ctx,
 }) {
-  let displayName = name;
-  if (groups?.abbreviation) {
-    displayName += ` (${groups.abbreviation})`;
-  }
-
   const config = {
     name: displayName,
     section: ctx.prefixPN('classes'),
@@ -47,12 +37,8 @@ function onAcademicPortfolioAddClass({
 
   return processAcademicPortfolioAddClass({
     id,
-    color,
     program,
-    groups,
-    subject: { name, icon, internalId },
     ctx,
-    displayName,
     config,
   });
 }
