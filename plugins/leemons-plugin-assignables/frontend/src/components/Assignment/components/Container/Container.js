@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 
 const { Box, Title, Text, Divider, createStyles } = require('@bubbles-ui/components');
 
-export const useContainerStyles = createStyles((theme, { hideDivider }) => ({
+export const useContainerStyles = createStyles((theme, { hideDivider, spacingBottom }) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    marginBottom: spacingBottom,
   },
   titleSection: {
     marginBottom: theme.other.global.spacing.padding.md,
@@ -35,8 +36,9 @@ export function Container({
   hideDivider,
   hideSectionHeaders,
   required,
+  spacingBottom,
 }) {
-  const { classes } = useContainerStyles({ hideDivider });
+  const { classes } = useContainerStyles({ hideDivider, spacingBottom });
 
   if (hidden) {
     return null;
@@ -65,8 +67,11 @@ Container.propTypes = {
   hidden: PropTypes.bool,
   hideDivider: PropTypes.bool,
   hideSectionHeaders: PropTypes.bool,
+  required: PropTypes.bool,
+  spacingBottom: PropTypes.number,
 };
 
 Container.defaultProps = {
   required: false,
+  spacingTop: 0,
 };

@@ -49,7 +49,7 @@ const LibraryCard = ({
   if (isEmbeddedList) {
     return (
       <Box data-cypress-id={`libraryCard-${asset.id}`} sx={(theme) => ({ width: '100%' })}>
-        <LibraryCardEmbed asset={asset} category={category} />
+        <LibraryCardEmbed asset={asset} category={category} fullWidth hasActionButton />
       </Box>
     );
   }

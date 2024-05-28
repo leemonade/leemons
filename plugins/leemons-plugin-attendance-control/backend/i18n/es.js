@@ -19,6 +19,8 @@ module.exports = {
           'Aquí puedes consultar las puntuaciones de todas las actividades evaluadas, tanto calificables como no calificables.',
       },
     },
+    excelFile: 'Excel',
+    csvFile: 'CSV',
   },
   attendanceControlTable: {
     students: 'Estudiantes',

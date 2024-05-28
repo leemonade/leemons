@@ -77,7 +77,7 @@ const CardWrapper = ({
           },
         });
       }
-      if (asset.shareable) {
+      if (asset.shareable && asset.providerData?.published) {
         items.push({
           icon: <ShareIcon />,
           children: t('cardToolbar.share'),
@@ -169,6 +169,7 @@ const CardWrapper = ({
         isLoading={assetsLoading}
         onPin={onPin}
         onUnpin={onUnpin}
+        selected={selected}
       />
     </Box>
   ) : null;

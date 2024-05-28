@@ -172,7 +172,7 @@ export default function RegionalCalendars() {
           setSaving(false);
         },
         onError: (error) => {
-          console.error('Error saving regional config:', error);
+          console.error(t('configSavedErrorAlert'), error);
           addErrorAlert(getErrorMessage(error));
         },
       });

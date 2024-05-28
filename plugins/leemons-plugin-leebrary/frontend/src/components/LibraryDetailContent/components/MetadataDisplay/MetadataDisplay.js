@@ -163,10 +163,6 @@ const MetadataDisplay = ({ metadata, onCopy }) => {
               <Text className={classes.value}>{`${data?.duration}`}</Text>
             </Box>
             <Box>
-              <Text className={classes.title}>{`${t('dimensions')}: `}</Text>
-              <Text className={classes.value}>{`${data?.width} x ${data?.height}`}</Text>
-            </Box>
-            <Box>
               <Text className={classes.title}>{`${t('size')}: `}</Text>
               <Text className={classes.value}>{`${data?.size}`}</Text>
             </Box>

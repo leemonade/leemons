@@ -4,6 +4,5 @@ export default function getCalendarNameWithConfigAndSession(calendar, config, se
     label = `${session?.surnames !== null ? session?.surnames : ''}${session.surnames ? ', ' : ''}${
       session?.name
     }`;
-
   return label;
 }
