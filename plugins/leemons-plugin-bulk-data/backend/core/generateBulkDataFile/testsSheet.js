@@ -80,6 +80,7 @@ async function createTestsSheet({
   const testDetails = await ctx.call('leebrary.assets.getByIds', {
     ids: tests.map((a) => a.id),
     shouldPrepareAssets: true,
+    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
     withFiles: true,
   });
 

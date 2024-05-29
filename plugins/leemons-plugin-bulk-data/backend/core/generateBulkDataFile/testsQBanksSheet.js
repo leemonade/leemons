@@ -53,11 +53,12 @@ async function createTestsQBanksSheet({
   const qBankDetails = await ctx.call('leebrary.assets.getByIds', {
     ids: qBanks.map((a) => a.id),
     shouldPrepareAssets: true,
+    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
     withFiles: true,
   });
 
   return qBankDetails.map((qBank, i) => {
-    const onlySubjectId = qBank.subjects[0]?.subject ?? '';
+    const onlySubjectId = qBank.subjects?.[0]?.subject ?? '';
     const bulkId = `qbank_${(i + 1).toString().padStart(2, '0')}`;
     const creator = adminShouldOwnAllAssets ? 'admin' : getCreator(qBank, users);
     const qBankObject = {

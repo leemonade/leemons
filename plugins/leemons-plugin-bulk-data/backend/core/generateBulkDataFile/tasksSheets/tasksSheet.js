@@ -72,6 +72,7 @@ async function createTasksSheet({
   const allResourceAssetsDetails = await ctx.call('leebrary.assets.getByIds', {
     ids: allResourceAssetIds,
     shouldPrepareAssets: true,
+    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
     withFiles: true,
   });
 

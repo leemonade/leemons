@@ -47,12 +47,18 @@ module.exports = {
     },
     getByIds: {
       async handler(ctx) {
-        const { shouldPrepareAssets, ...params } = ctx.params;
+        const { shouldPrepareAssets, signedURLExpirationTime, ...params } = ctx.params;
         const assets = await getByIds({ ...params, ctx });
 
         if (shouldPrepareAssets) {
+          // The option of setting a custom singURLExpirationTime is not available for rests requests
           const processSingnedUrlsPromises = assets.map((asset) =>
-            prepareAsset({ rawAsset: asset, isPublished: asset.isPublished, ctx })
+            prepareAsset({
+              rawAsset: asset,
+              isPublished: asset.isPublished,
+              signedURLExpirationTime,
+              ctx,
+            })
           );
 
           const results = await Promise.allSettled(processSingnedUrlsPromises);

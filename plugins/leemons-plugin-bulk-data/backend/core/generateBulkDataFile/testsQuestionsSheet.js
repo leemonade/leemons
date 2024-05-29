@@ -128,6 +128,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
   const allImageAssetDetails = await ctx.call('leebrary.assets.getByIds', {
     ids: [...allImageAssets].flat(),
     shouldPrepareAssets: true,
+    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
     withFiles: true,
   });
 
@@ -136,6 +137,10 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     const { questions } = providerData;
     const { categories: qBankCategories } = providerData;
     questions?.forEach((question, i) => {
+      if (question.type === 'map') {
+        console.log('MAP QUESTION SKIPPED TEMPORARILY');
+        return;
+      }
       const bulkId = `q${(i + 1).toString().padStart(2, '0')}`;
       const questionObject = {
         root: bulkId,

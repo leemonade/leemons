@@ -11,7 +11,14 @@ const { getS3AndConfig } = require('./getS3AndConfig');
  * @param {MoleculerContext} params.ctx - The Moleculer context, used to interact with the database.
  * @returns {Promise<Stream|string>} - Returns a read stream if forceStream is true, otherwise returns a presigned URL.
  */
-async function getReadStream({ key: Key, start = -1, end = -1, forceStream = true, ctx } = {}) {
+async function getReadStream({
+  key: Key,
+  start = -1,
+  end = -1,
+  forceStream = true,
+  expirationTime,
+  ctx,
+} = {}) {
   const { s3, config } = await getS3AndConfig({ ctx });
   const params = {
     Bucket: config.bucket,
@@ -27,8 +34,8 @@ async function getReadStream({ key: Key, start = -1, end = -1, forceStream = tru
     return result?.Body;
   }
 
-  // Generate a presigned URL for the S3 object
-  const signedUrlExpireSeconds = 24 * 60 * 60;
+  // Generate a presigned URL for the S3 object. Defaults to 24 hours
+  const signedUrlExpireSeconds = expirationTime ?? 24 * 60 * 60;
 
   return s3.getSignedUrl('getObject', {
     ...params,

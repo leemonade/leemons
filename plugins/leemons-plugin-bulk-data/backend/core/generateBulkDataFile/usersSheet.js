@@ -29,6 +29,7 @@ async function addAllExistentUsers({ worksheet, centers, ctx }) {
     const assetDetails = await ctx.call('leebrary.assets.getByIds', {
       ids: avatarIds,
       shouldPrepareAssets: true,
+      signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
       withFiles: true,
     });
 

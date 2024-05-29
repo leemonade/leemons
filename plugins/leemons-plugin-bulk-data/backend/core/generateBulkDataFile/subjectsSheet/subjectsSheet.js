@@ -156,6 +156,7 @@ async function createSubjectsSheet({
     ids: allSubjects.map((subject) => subject.id),
     withClasses: true,
     shouldPrepareAssets: true,
+    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
   });
 
   const subjects = [];

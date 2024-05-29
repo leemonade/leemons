@@ -65,6 +65,7 @@ async function createLibraryResourcesSheet({
     ids: resourceAssets.map((a) => a.id),
     shouldPrepareAssets: true,
     withFiles: true,
+    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
   });
 
   const assetsToReturn = [];
