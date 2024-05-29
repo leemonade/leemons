@@ -11,8 +11,11 @@ async function loadFromTemplateURL({ templateURL, ctx }) {
 
   const config = {};
 
-  const { items: centers } = await ctx.tx.call('users.centers.listRest');
-  config.centers = { centerA: centers[0].id };
+  const { items: centers } = await ctx.tx.call('users.centers.list', {
+    page: 0,
+    size: 9999,
+  });
+  config.centers = { centerA: centers[0] };
 
   const { items: profilesData } = await ctx.call('users.profiles.list', {
     page: 0,
@@ -20,21 +23,15 @@ async function loadFromTemplateURL({ templateURL, ctx }) {
   });
 
   config.profiles = profilesData.map((profile) => ({ [profile.sysName]: profile.id }));
-
-  // // 3. Pillamos los usuarios:
-  // const users = await ctx.tx.call('users.users.listRest');
-  // const adminUser = users.find((user) => user.profile === config.profiles.admin);
-  // config.users = { admin: adminUser.id };
+  config.users = { admin: { ...ctx.meta.userSession } };
 
   try {
-    await importBulkData({ docPath: file.path, config: {}, ctx });
+    await importBulkData({ docPath: file.path, config, ctx });
   } catch (error) {
     throw new LeemonsError(ctx, {
       message: `Something went wrong importing from template URL: ${error}`,
       httpStatusCode: 500,
     });
-  } finally {
-    await file.remove();
   }
 }
 

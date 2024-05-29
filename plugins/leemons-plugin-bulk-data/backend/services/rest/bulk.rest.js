@@ -1,3 +1,4 @@
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { generateBulkDataFile } = require('../../core/generateBulkDataFile');
 const { loadFromFile, getLoadStatus, loadFromTemplateURL } = require('../../core/importHandlers');
 
@@ -32,9 +33,9 @@ module.exports = {
       path: '/load-from-template-url',
       method: 'POST',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     handler(ctx) {
       const { templateURL } = ctx.params;
-      // const templateURL = 'http://localhost:8085/generated-bulk-data.xlsx';
       return loadFromTemplateURL({ templateURL, ctx });
     },
   },
