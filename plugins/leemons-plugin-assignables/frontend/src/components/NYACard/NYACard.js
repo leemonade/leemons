@@ -8,6 +8,8 @@ import _, { get } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Link } from 'react-router-dom';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import { ChatDrawer } from '@comunica/components';
+import hooks from 'leemons-hooks';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
@@ -406,6 +408,9 @@ const NYACard = ({
   isActivityCarousel,
   isTeacherSyllabus,
 }) => {
+  const [, setChatRoom] = React.useState(null);
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
+  const activityRoom = `assignables.subject|${instance?.instance?.subjects?.[0]?.subject}.assignation|${instance?.id}.userAgent|${instance?.user}`;
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
@@ -464,64 +469,81 @@ const NYACard = ({
     );
 
   return (
-    <LinkContainer disabled={!clickable} to={preparedInstance?.url}>
-      <Box
-        key={preparedInstance?.id}
-        style={{
-          height: '100%',
-        }}
-      >
-        <Box className={classes.root}>
-          <NYACardCover
-            {...preparedInstance?.asset}
-            variantTitle={preparedInstance?.assignable?.role}
-            topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
-            isTeacherSyllabus={isTeacherSyllabus}
-            localizations={localizations}
-            instance={preparedInstance}
-          />
-          <NYACardBody
-            {...preparedInstance?.asset}
-            isNew={preparedInstance?.isNew}
-            localizations={localizations}
-            instance={preparedInstance}
-            classroom={preparedInstance?.classes}
-            locale={locale}
-            totalActivities={instance.metadata?.completion?.total ?? 1}
-            submitedActivities={instance.metadata?.completion?.completed ?? 0}
-            showSubject={showSubject}
-            isTeacherSyllabus={isTeacherSyllabus}
-          />
-          <NYACardFooter
-            {...preparedInstance?.asset}
-            chatKeys={preparedInstance?.chatKeys}
-            variantTitle={
-              get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
-              preparedInstance?.assignable?.role
-            }
-            variantIcon={
-              <Box
-                style={{
-                  position: 'relative',
-                }}
-              >
-                <ImageLoader
+    <>
+      <LinkContainer disabled={!clickable} to={preparedInstance?.url}>
+        <Box
+          key={preparedInstance?.id}
+          style={{
+            height: '100%',
+          }}
+        >
+          <Box className={classes.root}>
+            <NYACardCover
+              {...preparedInstance?.asset}
+              variantTitle={preparedInstance?.assignable?.role}
+              topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
+              isTeacherSyllabus={isTeacherSyllabus}
+              localizations={localizations}
+              instance={preparedInstance}
+            />
+            <NYACardBody
+              {...preparedInstance?.asset}
+              isNew={preparedInstance?.isNew}
+              localizations={localizations}
+              instance={preparedInstance}
+              classroom={preparedInstance?.classes}
+              locale={locale}
+              totalActivities={instance.metadata?.completion?.total ?? 1}
+              submitedActivities={instance.metadata?.completion?.completed ?? 0}
+              showSubject={showSubject}
+              isTeacherSyllabus={isTeacherSyllabus}
+            />
+            <NYACardFooter
+              onOpenChat={() => setIsChatOpen(true)}
+              {...preparedInstance?.asset}
+              chatKeys={preparedInstance?.chatKeys}
+              variantTitle={
+                get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
+                preparedInstance?.assignable?.role
+              }
+              variantIcon={
+                <Box
                   style={{
-                    width: 24,
-                    height: 24,
                     position: 'relative',
                   }}
-                  width={24}
-                  height={24}
-                  src={preparedInstance?.assignable?.roleDetails?.icon}
-                />
-              </Box>
-            }
-            locale={locale}
-          />
+                >
+                  <ImageLoader
+                    style={{
+                      width: 24,
+                      height: 24,
+                      position: 'relative',
+                    }}
+                    width={24}
+                    height={24}
+                    src={preparedInstance?.assignable?.roleDetails?.icon}
+                  />
+                </Box>
+              }
+              locale={locale}
+            />
+          </Box>
         </Box>
-      </Box>
-    </LinkContainer>
+      </LinkContainer>
+
+      {isChatOpen ? (
+        <ChatDrawer
+          onClose={() => {
+            hooks.fireEvent('chat:closeDrawer');
+            setIsChatOpen(false);
+          }}
+          opened={isChatOpen}
+          onRoomLoad={(roomLoaded) => {
+            setChatRoom(roomLoaded);
+          }}
+          room={activityRoom}
+        />
+      ) : null}
+    </>
   );
 };
 

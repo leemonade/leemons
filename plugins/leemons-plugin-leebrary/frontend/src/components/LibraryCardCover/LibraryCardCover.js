@@ -47,7 +47,6 @@ const LibraryCardCover = ({
   };
 
   const heightAndSubjectColor = color ? height : height + 6;
-
   const iconRow = (
     <Box>
       <Box className={classes.iconRow}>

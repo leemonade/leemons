@@ -37,7 +37,7 @@ export default function getActions(
           variant="link"
           studentData={studentData}
           instanceData={instanceData}
-          label={`(${score}) ${localizations.review}`}
+          label={`${score ? `(${score}) ` : ''}${localizations.review}`}
         />
       );
     }

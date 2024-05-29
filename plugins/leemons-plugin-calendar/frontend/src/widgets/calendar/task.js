@@ -235,6 +235,10 @@ export default function Task({ event, form, classes, disabled, allProps }) {
         ) : null}
         {!disabled || (disabled && subtask && subtask.length) ? (
           <ContextContainer spacing={4}>
+            <Text size="lg" strong>
+              {subtask?.length === 1 ? t('subtask') : t('subtaskLabel')}
+            </Text>
+
             <Controller
               name="subtask"
               control={control}

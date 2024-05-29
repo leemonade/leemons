@@ -1,0 +1,81 @@
+{
+  "React log": {
+    "prefix": ["rlog"],
+    "scope": "javascript",
+    "body": ["React.useEffect(() => console.log(\"${1:variable}\", $1), [$1]);"]
+  },
+  "use Leemons Styles": {
+    "prefix": ["useStyles"],
+    "scope": "javascript",
+    "body": [
+      "import { createStyles } from '@bubbles-ui/components';",
+      "",
+      "const ${1:use${TM_FILENAME_BASE/^(.)(.*?)(\\.styles?){0,1}$/${1:/upcase}${2}/}Styles} = createStyles((theme) => {",
+      "\tconst globalTheme = theme.other.global;",
+      "",
+      "\treturn {",
+      "\t\troot: {",
+      "\t\t\t$0"
+      "\t\t},",
+      "\t};",
+      "});",
+      "",
+      "export default $1;",
+    ]
+  },
+  "New component": {
+    "prefix": ["rfc"],
+    "scope": "javascript",
+    "body": [
+      "import React from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "import { Box, ContextContainer } from '@bubbles-ui/components'",
+      "",
+      "export default function ${TM_FILENAME_BASE}() {",
+      "\treturn (",
+      "\t\t<Box>",
+      "\t\t\t<ContextContainer title='${TM_FILENAME_BASE}'>",
+      "\t\t\t\t<Box>Leemons power!! 🍋</Box>",
+      "\t\t\t</ContextContainer>",
+      "\t\t</Box>",
+      ")};",
+      "",
+      "${TM_FILENAME_BASE}.propTypes = {",
+      "\t// children: PropTypes.node,",
+      "};",
+    ]
+  }
+  "New component with TotalLayout": {
+    "prefix": ["rfcTL", "rfctl"],
+    "scope": "javascript",
+    "body": [
+      "import React from 'react';",
+      "import PropTypes from 'prop-types';",
+      "",
+      "import { TLayout, Box, Button } from '@bubbles-ui/components'",
+      "",
+      "export default function ${TM_FILENAME_BASE}() {",
+      "\treturn (",
+      "\t\t<TLayout>",
+      "\t\t\t<TLayout.Header title='${TM_FILENAME_BASE}' icon={'🍋'} cancelable={false}>",
+      "\t\t\t</TLayout.Header>",
+      "",
+      "\t\t\t<TLayout.Content>",
+      "\t\t\t\t<Box><b>${TM_FILENAME_BASE}</b> Leemons powered!! 🍋</Box>",
+      "\t\t\t</TLayout.Content>",
+      "",
+      "\t\t\t<TLayout.Footer>",
+      "\t\t\t\t<TLayout.Footer.RightActions>",
+      "\t\t\t\t\t<Button>Better education now 🍋</Button>",
+      "\t\t\t\t</TLayout.Footer.RightActions>",
+      "\t\t\t</TLayout.Footer>",
+      "\t\t</TLayout>",
+      ")};",
+      "",
+      "${TM_FILENAME_BASE}.propTypes = {",
+      "\t// children: PropTypes.node,",
+      "};",
+    ]
+  }
+}

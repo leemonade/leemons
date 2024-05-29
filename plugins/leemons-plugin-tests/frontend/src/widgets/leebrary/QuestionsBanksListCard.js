@@ -16,7 +16,7 @@ import { QuestionBankIcon } from '../../components/Icons/QuestionBankIcon';
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
     cursor: 'pointer',
-    borderColor: selected && theme.colors.interactive01d,
+    borderColor: selected && theme.other.core.color.primary['400'],
     borderWidth: selected && '1px',
     boxShadow: selected && theme.shadows.shadow03,
   },

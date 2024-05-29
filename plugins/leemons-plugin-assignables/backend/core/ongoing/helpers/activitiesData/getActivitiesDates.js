@@ -14,7 +14,8 @@ const { map } = require('lodash');
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getActivitiesDates({ instances, assignations, filters, ctx }) {
-  const { status, progress, isArchived, sort, studentDidOpen, studentCanSee } = filters;
+  const { status, progress, isArchived, sort, studentDidOpen, studentCanSee, gradeWasViewed } =
+    filters;
 
   if (!(status || progress || isArchived !== undefined || studentDidOpen !== undefined || sort)) {
     return {};
@@ -33,8 +34,13 @@ async function getActivitiesDates({ instances, assignations, filters, ctx }) {
       assignationNames.push('start', 'end');
     }
   }
+
   if (studentDidOpen !== undefined) {
     assignationNames.push('open');
+  }
+
+  if (gradeWasViewed) {
+    assignationNames.push('gradesViewed');
   }
 
   if (isArchived !== undefined) {

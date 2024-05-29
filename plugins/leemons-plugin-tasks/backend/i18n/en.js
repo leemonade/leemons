@@ -91,6 +91,8 @@ module.exports = {
           name: 'Task name',
           tagline: 'Subtitle of the task',
           description: 'What is this assignment about?',
+          namePlaceholder: 'Title of the task',
+          descriptionPlaceholder: 'Description of the task',
         },
         errorMessages: {
           name: {
@@ -164,6 +166,7 @@ module.exports = {
           subjects: 'Subjects',
           methodology: 'Methodology',
           statement: 'Statement',
+          statementLabel: 'Text of the statement',
           development: 'Development',
           statementAndDevelopmentTitle: 'Statement and development',
           content: 'Content',
@@ -191,6 +194,7 @@ module.exports = {
               formatPlaceholder: 'Write extension and add (pdf, xls, doc...)',
               maxSize: 'Max size',
               required: 'Required field',
+              addButton: 'Add',
             },
           },
 
@@ -203,7 +207,7 @@ module.exports = {
         },
       },
       instructionData: {
-        step_label: 'Resources and Instructions',
+        step_label: 'Instructions',
         labels: {
           title: 'Instructions',
           forTeacher: 'Instructions for Teacher',
@@ -223,6 +227,12 @@ module.exports = {
           forStudent:
             'Here it is possible to include extra information to help the student perform the exercise better.',
         },
+      },
+      resourcesData: {
+        step_label: 'Resources',
+      },
+      resourcesAndInstructionsData: {
+        step_label: 'Resources and instructions',
       },
       evaluationData: {
         step_label: 'Evaluation',
