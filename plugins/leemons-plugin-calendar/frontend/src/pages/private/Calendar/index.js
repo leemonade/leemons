@@ -201,7 +201,7 @@ function Calendar({ session }) {
           const subjectIcon = prepareAsset(matchingClass?.subject?.icon)?.cover;
           if (!calendar.isUserCalendar && calendar.isClass) {
             // eslint-disable-next-line no-param-reassign
-            calendar.icon = !classIcon ? (
+            calendar.icon = classIcon ? (
               subjectIcon
             ) : (
               <Text>
