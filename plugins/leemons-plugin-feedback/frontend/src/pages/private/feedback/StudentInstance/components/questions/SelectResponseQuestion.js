@@ -7,57 +7,65 @@ import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/co
 import { LeebraryImage } from '@leebrary/components';
 import { isArray, isNil } from 'lodash';
 
-export const Styles = createStyles((theme) => ({
-  response: {
-    cursor: 'pointer',
-    padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
-    border: `1px solid ${theme.colors.ui01}`,
-    marginBottom: theme.spacing[2],
-    borderRadius: 4,
-    '&:last-child': {
-      marginBottom: 0,
+export const Styles = createStyles((theme) => {
+  console.log(theme.other);
+  return {
+    response: {
+      cursor: 'pointer',
+      padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
+      border: `1px solid ${theme.colors.ui01}`,
+      marginBottom: theme.spacing[2],
+      borderRadius: 4,
+      '&:hover': {
+        borderColor: theme.other.core.color.neutral['300'],
+        backgroundColor: theme.other.core.color.primary['100'],
+      },
+      '&:last-child': {
+        marginBottom: 0,
+      },
     },
-  },
-  responseActive: {
-    borderColor: theme.colors.interactive01d,
-    backgroundColor: theme.colors.interactive01v1,
-  },
-  questionResponseImageContainer: {
-    border: '1px solid',
-    borderColor: theme.colors.ui01,
-    borderRadius: 4,
-    overflow: 'hidden',
-    cursor: 'pointer',
-    padding: theme.spacing[3],
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    position: 'relative',
-  },
-  questionResponseImageTextContent: {
-    paddingTop: theme.spacing[3],
-  },
-  questionResponseImageContent: {
-    width: '100%',
-    position: 'relative',
-    paddingBottom: '100%',
-  },
-  questionResponseImage: {
-    width: '100%',
-    height: '100%',
-    display: 'block',
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    objectFit: 'contain',
-  },
-  questionResponsesContainerImages: {
-    display: 'grid',
-    flexDirection: 'row',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: theme.spacing[3],
-  },
-}));
+    responseActive: {
+      borderColor: theme.other.core.color.primary['300'],
+      backgroundColor: 'transparent',
+      color: theme.other.core.color.primary['300'],
+    },
+    questionResponseImageContainer: {
+      border: '1px solid',
+      borderColor: theme.colors.ui01,
+      borderRadius: 4,
+      overflow: 'hidden',
+      cursor: 'pointer',
+      padding: theme.spacing[3],
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      position: 'relative',
+    },
+    questionResponseImageTextContent: {
+      paddingTop: theme.spacing[3],
+    },
+    questionResponseImageContent: {
+      width: '100%',
+      position: 'relative',
+      paddingBottom: '100%',
+    },
+    questionResponseImage: {
+      width: '100%',
+      height: '100%',
+      display: 'block',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      objectFit: 'contain',
+    },
+    questionResponsesContainerImages: {
+      display: 'grid',
+      flexDirection: 'row',
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      gap: theme.spacing[3],
+    },
+  };
+});
 
 function SelectResponseQuestion(props) {
   const { classes, cx } = Styles();
