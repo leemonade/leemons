@@ -22,9 +22,16 @@ export function ListInputRender({
   value,
   onCancel,
   scrollRef,
+  responsesSaved,
   ...props
 }) {
-  const [store, render] = useStore(value || { useButton: true });
+  const [store, render] = useStore(value);
+  const [useButton, setUseButton] = React.useState(!value);
+
+  useEffect(() => {
+    const isValueSaved = responsesSaved?.some((response) => response.value === value);
+    setUseButton(!isValueSaved);
+  }, []);
   function emit() {
     props.onChange({
       ...value,
@@ -159,7 +166,7 @@ export function ListInputRender({
           </Stack>
         </Box>
 
-        {store.useButton ? (
+        {useButton ? (
           <Stack justifyContent="end" spacing={4}>
             <Button variant="link" onClick={onCancel}>
               {t('cancel')}
@@ -183,6 +190,11 @@ export function ListInputRender({
           onChange={onChangeResponse}
           placeholder={t('responsePlaceholder')}
           error={store.dirty && !store.response ? t('responseRequired') : null}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && typeof addItem === 'function') {
+              add();
+            }
+          }}
         />
       </Box>
       {useExplanation ? (
@@ -196,7 +208,7 @@ export function ListInputRender({
           />
         </Box>
       ) : null}
-      {store.useButton ? (
+      {useButton ? (
         <Stack justifyContent="end" spacing={4}>
           <Button variant="link" onClick={onCancel}>
             {t('cancel')}
@@ -219,4 +231,5 @@ ListInputRender.propTypes = {
   value: PropTypes.any,
   onCancel: PropTypes.func,
   scrollRef: PropTypes.object,
+  responsesSaved: PropTypes.array,
 };
