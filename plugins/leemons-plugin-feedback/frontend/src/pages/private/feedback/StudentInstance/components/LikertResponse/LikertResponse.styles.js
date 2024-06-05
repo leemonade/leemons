@@ -16,14 +16,14 @@ const LikertResponseStyles = createStyles((theme) => ({
     },
   },
   selectedNumberElement: {
-    borderColor: `${theme.other.core.color.primary['300']} !important`,
-    backgroundColor: 'transparent !important',
-    color: `${theme.other.core.color.primary['300']}`,
+    backgroundColor: `${theme.other.core.color.primary['200']} !important`,
+    borderRadius: 4,
+    borderColor: `${theme.other.core.color.neutral['300']} !important`,
     height: 84,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    span: { fontSize: 24, fontWeight: 500, color: `${theme.other.core.color.primary['300']}` },
+    span: { fontSize: 24, fontWeight: 500 },
   },
   likertLabel: {
     fontWeight: 500,
