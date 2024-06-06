@@ -26,12 +26,10 @@ export function ListInputRender({
   ...props
 }) {
   const [store, render] = useStore(value);
-  const [useButton, setUseButton] = React.useState(!value);
+  const [useButton] = React.useState(
+    () => !responsesSaved?.some((response) => response.value === value)
+  );
 
-  useEffect(() => {
-    const isValueSaved = responsesSaved?.some((response) => response.value === value);
-    setUseButton(!isValueSaved);
-  }, []);
   function emit() {
     props.onChange({
       ...value,
