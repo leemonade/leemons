@@ -10,8 +10,9 @@ import {
   Grid,
   Text,
   Title,
+  Divider,
 } from '@bubbles-ui/components';
-import { CalendarNewEventModal } from '@bubbles-ui/leemons';
+import { CalendarNewEventModal } from '@calendar/components/CalendarNewEventModal';
 import { DeleteBinIcon, EditWriteIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import ColorBall from '@academic-calendar/components/ColorBall';
@@ -40,6 +41,7 @@ export default function OtherEvents({
         endDate: t('eventModal.labels.endDate'),
         color: t('eventModal.labels.color'),
         add: t('eventModal.labels.add'),
+        cancel: t('eventModal.labels.cancel'),
       },
       placeholders: {
         periodName: t('eventModal.labels.periodName'),
@@ -68,97 +70,116 @@ export default function OtherEvents({
 
   return (
     <ContextContainer sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-      <Title order={6}>{t('otherEvents')}</Title>
+      <Title order={3}>{t('otherEvents')}</Title>
 
-      <Grid columns={100}>
-        <Col span={24}>
-          <Text role="productive" size="xs" color="primary" strong>
-            {t(`name`)}
-          </Text>
-        </Col>
-        <Col span={30}>
-          <Text role="productive" size="xs" color="primary" strong>
-            {t('init')}
-          </Text>
-        </Col>
-        <Col span={30}>
-          <Text role="productive" size="xs" color="primary" strong>
-            {t('end')}
-          </Text>
-        </Col>
-        <Col span={16} />
-      </Grid>
+      {value.length > 0 && (
+        <>
+          <Grid columns={100}>
+            <Col span={24}>
+              <Text role="productive" size="xs" color="primary" strong>
+                {t(`name`)}
+              </Text>
+            </Col>
+            <Col span={30}>
+              <Text role="productive" size="xs" color="primary" strong>
+                {t('init')}
+              </Text>
+            </Col>
+            <Col span={30}>
+              <Text role="productive" size="xs" color="primary" strong>
+                {t('end')}
+              </Text>
+            </Col>
+            <Col span={16} />
+          </Grid>
+          <Divider />
+        </>
+      )}
 
       {value.map((val, index) => (
-        <Grid key={index} columns={100}>
-          <Col span={24}>
-            <ColorBall
-              colors={val.dayType === 'nonSchoolDays' ? ['#F6E1F3', '#ECD8E9'] : val.color}
-              rotate={val.dayType === 'nonSchoolDays' ? -45 : 0}
-              isSquare={val.dayType === 'schoolDays'}
-              withBorder
-              sx={(theme) => ({ marginRight: theme.spacing[2] })}
-            />
-            <Text role="productive" color="primary">
-              {val.periodName}
-            </Text>
-          </Col>
-          <Col span={30}>
-            <Text role="productive" color="primary">
-              {val.startDate.toLocaleDateString()}
-            </Text>
-          </Col>
-          <Col span={30}>
-            <Text role="productive" color="primary">
-              {val.endDate ? val.endDate.toLocaleDateString() : val.startDate.toLocaleDateString()}
-            </Text>
-          </Col>
-          <Col span={16}>
-            <CalendarNewEventModal
-              locale={locale}
-              minDate={start}
-              maxDate={end}
-              closeOnClickOutside={false}
-              opened={store.openedIndex === index}
-              onClose={() => {
-                store.openedIndex = null;
-                render();
-              }}
-              disabled={disabled}
-              values={val}
-              onSubmit={(values) => {
-                store.openedIndex = null;
-                value[index] = values;
-                onChange([...value]);
-              }}
-              target={
-                <ActionButton
-                  tooltip={t('edit')}
-                  icon={<EditWriteIcon />}
-                  onClick={() => {
-                    store.openedIndex = index;
-                    render();
-                  }}
-                />
-              }
-              {...eventModalProps}
-            />
+        <>
+          <Grid key={index} columns={100}>
+            <Col span={24}>
+              <ColorBall
+                colors={val.dayType === 'nonSchoolDays' ? ['#F6E1F3', '#ECD8E9'] : val.color}
+                rotate={val.dayType === 'nonSchoolDays' ? -45 : 0}
+                isSquare={val.dayType === 'schoolDays'}
+                withBorder
+                sx={(theme) => ({ marginRight: theme.spacing[2] })}
+              />
+              <Text role="productive" color="primary">
+                {val.periodName}
+              </Text>
+            </Col>
+            <Col span={30}>
+              <Text role="productive" color="primary">
+                {val.startDate.toLocaleDateString()}
+              </Text>
+            </Col>
+            <Col span={30}>
+              <Text role="productive" color="primary">
+                {val.endDate
+                  ? val.endDate.toLocaleDateString()
+                  : val.startDate.toLocaleDateString()}
+              </Text>
+            </Col>
+            <Col span={16}>
+              <CalendarNewEventModal
+                locale={locale}
+                minDate={start}
+                maxDate={end}
+                closeOnClickOutside={false}
+                opened={store.openedIndex === index}
+                onClose={() => {
+                  store.openedIndex = null;
+                  render();
+                }}
+                disabled={disabled}
+                values={val}
+                onSubmit={(values) => {
+                  store.openedIndex = null;
+                  value[index] = values;
+                  onChange([...value]);
+                }}
+                target={
+                  <ActionButton
+                    tooltip={t('edit')}
+                    icon={<EditWriteIcon />}
+                    onClick={() => {
+                      store.openedIndex = index;
+                      render();
+                    }}
+                  />
+                }
+                {...eventModalProps}
+              />
 
-            <ActionButton
-              tooltip={t('delete')}
-              icon={<DeleteBinIcon />}
-              onClick={() => removeIndex(index)}
-            />
-          </Col>
-        </Grid>
+              <ActionButton
+                tooltip={t('delete')}
+                icon={<DeleteBinIcon />}
+                onClick={() => removeIndex(index)}
+              />
+            </Col>
+          </Grid>
+          <Divider />
+        </>
       ))}
 
       <Box>
+        <Button
+          onClick={() => {
+            store.openAddButton = true;
+            render();
+          }}
+          variant="link"
+          leftIcon={<AddCircleIcon />}
+        >
+          {t('addNewEvent')}
+        </Button>
         <CalendarNewEventModal
           locale={locale}
           minDate={start}
           maxDate={end}
-          closeOnClickOutside={false}
           disabled={disabled}
           opened={store.openAddButton}
           onClose={() => {
@@ -170,18 +191,6 @@ export default function OtherEvents({
             store.openAddButton = false;
             onChange([...value, values]);
           }}
-          target={
-            <Button
-              onClick={() => {
-                store.openAddButton = true;
-                render();
-              }}
-              variant="link"
-              leftIcon={<AddCircleIcon />}
-            >
-              {t('addNewEvent')}
-            </Button>
-          }
           {...eventModalProps}
         />
       </Box>
@@ -195,4 +204,6 @@ OtherEvents.propTypes = {
   onChange: PropTypes.func,
   disabled: PropTypes.bool,
   t: PropTypes.func,
+  start: PropTypes.any,
+  end: PropTypes.any,
 };

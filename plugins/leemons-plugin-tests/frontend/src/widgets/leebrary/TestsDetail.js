@@ -10,6 +10,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import AssetMetadataTest from '@tests/components/AssetMetadataTest/AssetMetadataTest';
+import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
 const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
@@ -22,20 +23,21 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const toolbarItems = { toggle: t('toggle'), open: t('open') };
+  const isOwner = useIsOwner(asset);
 
   // ·········································································
   // HANDLERS
   if (asset?.id) {
-    // if (asset.shareable) {
-    //   toolbarItems.share = t('share');
-    // }
+    if (asset.providerData?.published && asset.shareable) {
+      toolbarItems.share = t('share');
+    }
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
-    if (asset.providerData?.published) {
+    if (isOwner && asset.providerData?.published) {
       toolbarItems.assign = t('assign');
     }
     if (asset.duplicable) {
@@ -47,7 +49,6 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
     if (asset.pinned === true) {
       toolbarItems.unpin = t('unpin');
     }
-    // duplicateRequest
   }
 
   const handleView = () => {
@@ -58,9 +59,9 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
     history.push(`/private/tests/${asset.providerData.id}`);
   };
 
-  // const handleOnShare = () => {
-  //   onShare(asset);
-  // };
+  const handleOnShare = () => {
+    onShare(asset);
+  };
 
   const handleDelete = () => {
     openDeleteConfirmationModal({
@@ -83,7 +84,12 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await duplicateRequest(asset.providerData.id, asset.providerData.published);
+          await duplicateRequest({
+            id: asset.providerData.id,
+            published: asset.providerData.published,
+            ignoreSubjects: !isOwner,
+            keepQuestionBank: isOwner,
+          });
           addSuccessAlert(t('duplicated'));
           onRefresh();
         } catch (err) {
@@ -122,29 +128,29 @@ const TestsDetail = ({ asset, onRefresh, onShare, ...props }) => {
       }}
       metadataComponent={
         <AssetMetadataTest
+          canEdit={isOwner}
           metadata={{
             ...asset,
             metadata,
           }}
         />
       }
-      // metadataComponent={<div>hello!</div>}
       variant="tests"
       variantTitle={t('tests')}
       toolbarItems={toolbarItems}
       titleActionButton={
         asset?.providerData?.published
           ? {
-            icon: <ViewOnIcon height={16} width={16} />,
-            onClick: handleView,
-          }
+              icon: <ViewOnIcon height={16} width={16} />,
+              onClick: handleView,
+            }
           : null
       }
       onEdit={handleEdit}
       onDelete={handleDelete}
       onAssign={handleAssign}
       onDuplicate={handleDuplicate}
-    // onShare={handleOnShare}
+      onShare={handleOnShare}
     />
   );
 };

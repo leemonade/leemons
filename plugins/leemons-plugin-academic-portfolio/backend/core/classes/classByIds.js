@@ -6,8 +6,23 @@ const { getByClass: getStudentByClass } = require('./student/getByClass');
 const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
 const { getByClass: getCourseByClass } = require('./course/getByClass');
 const { getByClass: getGroupByClass } = require('./group/getByClass');
-const { programHaveMultiCourses } = require('../programs/programHaveMultiCourses');
+const { programHasSequentialCourses } = require('../programs/programHasSequentialCourses');
 const { subjectByIds } = require('../subjects/subjectByIds');
+
+function manageClassCourses(
+  id,
+  coursesByClass,
+  coursesById,
+  multipleCoursesAllowedByProgram,
+  program
+) {
+  if (!coursesByClass[id]) return null;
+
+  if (multipleCoursesAllowedByProgram[program]) {
+    return coursesByClass[id].map(({ course }) => coursesById[course]);
+  }
+  return coursesById[coursesByClass[id][0].course];
+}
 
 async function classByIds({
   ids,
@@ -15,8 +30,10 @@ async function classByIds({
   withTeachers,
   noSearchChildren,
   noSearchParents,
+  showArchived = false,
   ctx,
 }) {
+  const queryOptions = showArchived ? { excludeDeleted: false } : {};
   const [
     classes,
     knowledges,
@@ -28,10 +45,10 @@ async function classByIds({
     _childClasses,
     timeTables,
   ] = await Promise.all([
-    ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
+    ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }, '', queryOptions).lean(),
     getKnowledgeByClass({ class: ids, ctx }),
     getSubstageByClass({ class: ids, ctx }),
-    getCourseByClass({ class: ids, ctx }),
+    getCourseByClass({ class: ids, showArchived, ctx }),
     getGroupByClass({ class: ids, ctx }),
     getTeacherByClass({ class: ids, ctx }),
     getStudentByClass({ class: ids, ctx }),
@@ -67,13 +84,13 @@ async function classByIds({
     classPrograms.push(program);
   });
   classPrograms = _.uniq(classPrograms);
-  const haveMultiCoursesByProgram = {};
+  const multipleCoursesAllowedByProgram = {};
   if (classPrograms.length) {
-    const haveMultiCourses = await Promise.all(
-      _.map(classPrograms, (classProgram) => programHaveMultiCourses({ id: classProgram, ctx }))
+    const programCoursesAreSequential = await Promise.all(
+      _.map(classPrograms, (classProgram) => programHasSequentialCourses({ id: classProgram, ctx }))
     );
     _.forEach(classPrograms, (classProgram, index) => {
-      haveMultiCoursesByProgram[classProgram] = haveMultiCourses[index];
+      multipleCoursesAllowedByProgram[classProgram] = !programCoursesAreSequential[index];
     });
   }
   const [
@@ -85,8 +102,8 @@ async function classByIds({
     originalGroups,
   ] = await Promise.all([
     ctx.tx.db.SubjectTypes.find({ id: _.map(classes, 'subjectType') }).lean(),
-    ctx.tx.db.Knowledges.find({ id: _.map(knowledges, 'knowledge') }).lean(),
-    subjectByIds({ ids: _.map(classes, 'subject'), ctx }),
+    ctx.tx.db.KnowledgeAreas.find({ id: _.map(knowledges, 'knowledge') }).lean(),
+    subjectByIds({ ids: _.map(classes, 'subject'), showArchived, ctx }),
     ctx.tx.db.Groups.find({ id: _.map(substages, 'substage') }).lean(),
     ctx.tx.db.Groups.find({ id: _.map(courses, 'course') }).lean(),
     ctx.tx.db.Groups.find({ id: _.map(groups, 'group') }).lean(),
@@ -155,12 +172,13 @@ async function classByIds({
       image: imagesById[rest.image],
       knowledges: knowledgesByClass[id] ? knowledgesById[knowledgesByClass[id][0].knowledge] : null,
       substages: map(substagesByClass[id], ({ substage }) => substagesById[substage]),
-      // eslint-disable-next-line no-nested-ternary
-      courses: coursesByClass[id]
-        ? haveMultiCoursesByProgram[rest.program]
-          ? map(coursesByClass[id], ({ course }) => coursesById[course])
-          : coursesById[coursesByClass[id][0].course]
-        : null,
+      courses: manageClassCourses(
+        id,
+        coursesByClass,
+        coursesById,
+        multipleCoursesAllowedByProgram,
+        rest.program
+      ),
       groups: groupsByClass[id] ? groupsById[groupsByClass[id][0].group] : null,
       students: _.uniq(_students),
       parentStudents: _.uniq(parentStudents),

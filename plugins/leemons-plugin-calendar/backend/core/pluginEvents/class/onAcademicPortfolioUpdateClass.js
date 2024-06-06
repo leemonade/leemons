@@ -1,45 +1,35 @@
 const randomColor = require('randomcolor');
+const { LeemonsError } = require('@leemons/error');
 
-function onAcademicPortfolioUpdateClass({
-  // data, // old unused param
-  class: {
-    id,
-    color,
-    groups,
-    subject: { name, icon, internalId },
-  },
-  ctx,
-}) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
-    try {
-      const config = {
-        name: `${name}${
-          groups?.abbreviation && groups.abbreviation !== '-auto-'
-            ? ` (${groups.abbreviation})`
-            : ''
-        }`,
-        section: ctx.prefixPN('classes'),
-        bgColor: color || randomColor({ luminosity: 'light' }),
-        metadata: { internalId },
-      };
+async function updateClassEvent({ id, color, groups, subject: { name, icon, internalId }, ctx }) {
+  let displayName = name;
+  if (groups?.abbreviation) {
+    displayName += ` (${groups.abbreviation})`;
+  }
 
-      if (icon) {
-        config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: icon.id });
-      }
+  const config = {
+    name: displayName,
+    section: ctx.prefixPN('classes'),
+    bgColor: color || randomColor({ luminosity: 'light' }),
+    metadata: { internalId },
+  };
 
-      await ctx.tx.call('calendar.calendar.update', {
-        key: ctx.prefixPN(`class.${id}`),
-        config,
-      });
+  if (icon) {
+    config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: icon.id });
+  }
 
-      resolve();
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-      reject(e);
-    }
+  await ctx.tx.call('calendar.calendar.update', {
+    key: ctx.prefixPN(`class.${id}`),
+    config,
   });
+}
+
+async function onAcademicPortfolioUpdateClass(classInfo) {
+  try {
+    await updateClassEvent(classInfo);
+  } catch (e) {
+    throw new LeemonsError(classInfo.ctx, { message: 'Error updating calendar', cause: e });
+  }
 }
 
 module.exports = { onAcademicPortfolioUpdateClass };

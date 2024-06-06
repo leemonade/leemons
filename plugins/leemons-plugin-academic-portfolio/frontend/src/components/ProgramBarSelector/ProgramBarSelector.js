@@ -19,7 +19,14 @@ function prepareImageUrl(url) {
   return `${leemons.apiUrl}${url}`;
 }
 
-export function ProgramBarSelector({ onChange = noop, isAdmin, children, clear }) {
+export function ProgramBarSelector({
+  onChange = noop,
+  isAdmin,
+  children,
+  clear,
+  hideIcon = false,
+  ...props
+}) {
   const { classes } = useProgramBarSelectorStyles({}, { name: 'ProgramBarSelector' });
   const [store, render] = useStore({
     loading: true,
@@ -91,6 +98,10 @@ export function ProgramBarSelector({ onChange = noop, isAdmin, children, clear }
         withSearchInput={false}
         readOnly={store.programsSelect?.length <= 1}
         onChange={selectProgram}
+        hideIcon={hideIcon}
+        chevronSize={props.chevronSize}
+        itemSelectedFontSize={props.itemSelectedFontSize}
+        itemSelectedFontWeight={props.itemSelectedFontWeight}
       />
     );
   }
@@ -104,6 +115,10 @@ export function ProgramBarSelector({ onChange = noop, isAdmin, children, clear }
           withSearchInput={false}
           readOnly={store.programsSelect?.length <= 1}
           onChange={selectProgram}
+          hideIcon={hideIcon}
+          chevronSize={props.chevronSize}
+          itemSelectedFontSize={props.itemSelectedFontSize}
+          itemSelectedFontWeight={props.itemSelectedFontWeight}
         />
       </Box>
       {children}
@@ -116,6 +131,10 @@ ProgramBarSelector.propTypes = {
   onChange: PropTypes.func,
   isAdmin: PropTypes.bool,
   clear: PropTypes.bool,
+  hideIcon: PropTypes.bool,
+  chevronSize: PropTypes.number,
+  itemSelectedFontSize: PropTypes.number,
+  itemSelectedFontWeight: PropTypes.number,
 };
 
 export default ProgramBarSelector;

@@ -3,15 +3,16 @@ import { get } from 'lodash';
 import React from 'react';
 import {
   Box,
-  Col,
+  ActionButton,
   ContextContainer,
-  Grid,
+  Text,
   InputWrapper,
   Paragraph,
   TextInput,
+  TextClamp,
 } from '@bubbles-ui/components';
 import prefixPN from '@calendar/helpers/prefixPN';
-import { MeetingCameraIcon, PluginRedactorIcon, SmileyPinIcon } from '@bubbles-ui/icons/outline';
+import { OpenIcon } from '@bubbles-ui/icons/outline';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -27,118 +28,128 @@ export default function Event({ isEditing, event, form, data, allFormData, class
     formState: { errors },
   } = form;
 
+  const onClickCallLink = () => window.open(form.getValues('videoLink'), '_blank');
+
   return (
-    <ContextContainer>
-      {!disabled || (disabled && form.getValues('videoLink')) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <MeetingCameraIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="videoLink"
-                control={control}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <InputWrapper label={t('video_link')}>
-                        <Paragraph
-                          clean
-                          dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
-                        />
-                      </InputWrapper>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      size="xs"
-                      disabled={disabled}
-                      label={t('video_link')}
-                      error={get(errors, 'videoLink')}
-                      {...field}
-                    />
-                  );
-                }}
-              />
-            </Col>
-          </Grid>
-        </Box>
+    <>
+      <ContextContainer spacing={2}>
+        {!disabled ? (
+          <Controller
+            name="videoLink"
+            control={control}
+            render={({ field }) => {
+              if (disabled) {
+                return (
+                  <InputWrapper label={t('video_link')}>
+                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                  </InputWrapper>
+                );
+              }
+              return (
+                <TextInput
+                  size="xs"
+                  disabled={disabled}
+                  label={t('video_link')}
+                  error={get(errors, 'videoLink')}
+                  {...field}
+                />
+              );
+            }}
+          />
+        ) : null}
+        {!disabled ? (
+          <Controller
+            name="place"
+            control={control}
+            render={({ field }) => {
+              if (disabled) {
+                return (
+                  <InputWrapper label={t('add_place')}>
+                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                  </InputWrapper>
+                );
+              }
+              return (
+                <TextInput
+                  size="xs"
+                  readOnly={disabled}
+                  disabled={disabled}
+                  label={t('add_place')}
+                  error={get(errors, 'place')}
+                  {...field}
+                />
+              );
+            }}
+          />
+        ) : null}
+        {!disabled ? (
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => {
+              if (disabled) {
+                return (
+                  <InputWrapper label={t('add_description')}>
+                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                  </InputWrapper>
+                );
+              }
+              return (
+                <TextInput
+                  size="xs"
+                  disabled={disabled}
+                  label={t('add_description')}
+                  error={get(errors, 'description')}
+                  {...field}
+                />
+              );
+            }}
+          />
+        ) : null}
+      </ContextContainer>
+
+      {disabled ? (
+        <ContextContainer spacing={6}>
+          {disabled && form.getValues('videoLink') ? (
+            <ContextContainer spacing={2}>
+              <Text size="lg" strong>
+                {t('video_link')}
+              </Text>
+              <ContextContainer direction="row" justifyContent="space-between" alignItems="center">
+                <TextClamp lines={1} withTooltip>
+                  <Text>{form.getValues('videoLink')}</Text>
+                </TextClamp>
+                <ActionButton
+                  onClick={onClickCallLink}
+                  variant="linkInline"
+                  style={{ paddingBottom: '6px' }}
+                >
+                  <OpenIcon width={18} height={18} />
+                </ActionButton>
+              </ContextContainer>
+            </ContextContainer>
+          ) : null}
+
+          {form.getValues('place') ? (
+            <ContextContainer spacing={2}>
+              <Text size="lg" strong>
+                {t('add_place')}
+              </Text>
+              <Text>{form.getValues('place')}</Text>
+            </ContextContainer>
+          ) : null}
+
+          {form.getValues('description') ? (
+            <ContextContainer spacing={2}>
+              <Text size="lg" strong>
+                {t('add_description')}
+              </Text>
+              <Text>{form.getValues('description')}</Text>
+            </ContextContainer>
+          ) : null}
+        </ContextContainer>
       ) : null}
-      {!disabled || (disabled && form.getValues('place')) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <SmileyPinIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="place"
-                control={control}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <InputWrapper label={t('add_place')}>
-                        <Paragraph
-                          clean
-                          dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
-                        />
-                      </InputWrapper>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      size="xs"
-                      readOnly={disabled}
-                      disabled={disabled}
-                      label={t('add_place')}
-                      error={get(errors, 'place')}
-                      {...field}
-                    />
-                  );
-                }}
-              />
-            </Col>
-          </Grid>
-        </Box>
-      ) : null}
-      {!disabled || (disabled && form.getValues('description')) ? (
-        <Box>
-          <Grid columns={100} gutter={0}>
-            <Col span={10} className={classes.icon}>
-              <PluginRedactorIcon />
-            </Col>
-            <Col span={90}>
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <InputWrapper label={t('add_description')}>
-                        <Paragraph
-                          clean
-                          dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
-                        />
-                      </InputWrapper>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      size="xs"
-                      disabled={disabled}
-                      label={t('add_description')}
-                      error={get(errors, 'description')}
-                      {...field}
-                    />
-                  );
-                }}
-              />
-            </Col>
-          </Grid>
-        </Box>
-      ) : null}
-    </ContextContainer>
+    </>
   );
 }
 

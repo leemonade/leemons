@@ -23,6 +23,7 @@ const {
   disable,
   active,
   saveDataForUserAgentDatasets,
+  getActiveUserAgentsCountByProfileSysName,
 } = require('../../core/user-agents');
 const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
 
@@ -814,6 +815,30 @@ module.exports = {
     async handler(ctx) {
       await active({ id: ctx.params.userAgent, ctx });
       return { status: 200 };
+    },
+  },
+  getActiveUserAgentsCountByProfileSysNameRest: {
+    rest: {
+      path: '/user-agents/active-count/:sysName',
+      method: 'GET',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'users.users': {
+            actions: ['admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { sysName } = ctx.params;
+      const count = await getActiveUserAgentsCountByProfileSysName({
+        sysName,
+        ctx,
+      });
+      return { status: 200, count };
     },
   },
 };

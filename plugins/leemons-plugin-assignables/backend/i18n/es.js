@@ -20,9 +20,15 @@ module.exports = {
         error: 'Selecciona al menos una asignatura',
       },
       add: 'Añadir',
+
+      programChangeModal: {
+        title: '¿Seguro que quieres cambiar de programa?',
+        description: 'Esto borrará la selección de asignaturas',
+      },
     },
     groups: {
       title: 'Estudiantes',
+      subtitle: 'Selecciona el grupo de estudiantes',
       options: {
         class: 'Clase existente',
         customGroup: 'Grupo personalizado',
@@ -30,6 +36,7 @@ module.exports = {
       },
       noStudentsError:
         'No se encuentran estudiantes para las asignaturas seleccionadas. Añade o quita asignaturas para continuar.',
+      classSelectLabel: 'Tipo de selección',
       class: {
         studentsCount: 'estudiantes coincidentes',
         autoAssignStudents: 'Asignar automáticamente a nuevos estudiantes',
@@ -72,7 +79,7 @@ module.exports = {
         options: {
           alwaysAvailable: 'Cualquier momento',
           fixed: 'Con plazo de tiempo',
-          session: 'Sesión en directo',
+          session: 'Sesión de asignatura',
         },
       },
       hideFromCalendar: 'Ocultar del calendario hasta la fecha/hora de inicio',
@@ -104,7 +111,6 @@ module.exports = {
       description: 'Instrucciones para la consulta del contenido',
       editor: {
         placeholder: 'Puedes especificar la mejor manera de consultar este contenido...',
-        help: 'Información de apoyo visible en la tarjeta de asignación (ver vista previa)',
       },
     },
     evaluation: {
@@ -132,8 +138,10 @@ module.exports = {
         placeholder: 'Introduce la fecha',
         error: 'Selecciona una fecha',
       },
-      notifyStudents: 'Notificar a los estudiantes',
-      messageForStudents: 'Mensaje para los estudiantes',
+      notifyStudents: 'Enviar correo electrónico a los estudiantes',
+      createComunicaRooms: 'Crear una sala de chat para esta actividad',
+      messageForStudents: 'Escribe el correo electrónico',
+      notifyPlaceholder: 'Añadir aqui el texto del enunciado',
       hideResponses: 'Ocultar las respuestas de la actividad una vez finalizada.',
       hideReport: 'Ocultar el informe de resultados.',
     },
@@ -142,6 +150,7 @@ module.exports = {
       next: 'Siguiente',
       previous: 'Anterior',
       save: 'Guardar', // Used on modules assignation drawer
+      cancel: 'Cancelar',
     },
     presentation: {
       title: 'Presentación',
@@ -149,6 +158,7 @@ module.exports = {
         label: 'Título',
         placeholder: 'Escribe el título',
       },
+      thumbnail: 'Imagen destacada',
     },
     preview: {
       title: 'Vista previa',
@@ -271,6 +281,7 @@ module.exports = {
   },
   activity_status: {
     assigned: 'Programada',
+    notOpened: 'Sin abrir',
     opened: 'Abierta',
     notStarted: 'No empezada',
     started: 'Empezada',
@@ -407,6 +418,11 @@ module.exports = {
       startActivity: 'Empezar actividad',
     },
     emptyState: {
+      title: '¡Lo tienes todo al día!',
+      noEvaluations: 'No hay evaluaciones pendientes',
+      noActivities: 'No hay actividades pendientes',
+    },
+    welcome: {
       title: '¡Te damos la bienvenida!',
       teacher: {
         title: 'Aún no hay información para mostrar aquí',
@@ -471,7 +487,21 @@ module.exports = {
     timeoutAlert: {
       title: 'Tiempo máximo alcanzado',
       message:
-        'el tiempo límite establecido para esta actividad ha sido alcanzado. La última entrega o preguntas respondidas han sido enviadas automáticamente.',
+        'El tiempo límite establecido para esta actividad ha sido alcanzado. La última entrega o preguntas respondidas han sido enviadas automáticamente.',
+    },
+    submitted_alert: {
+      title: 'Actividad entregada con éxito',
+      message: 'Aquí tienes más información sobre tu actividad.',
+    },
+    pending_evaluation_alert: {
+      title: 'Pendiente de evaluación',
+      message: 'En cuanto sea evaluada recibirás una notificación.',
+    },
+    not_submitted_alert: {
+      title: 'Tarea no entregada',
+    },
+    finished_alert: {
+      title: 'Actividad finalizada',
     },
   },
 
@@ -479,5 +509,40 @@ module.exports = {
     contactTeacher: 'Hablar con mi profesor',
     contactStudent: 'Hablar con el estudiante',
     feedback: 'Feedback',
+  },
+  progress: {
+    tabTitle: 'Progreso',
+    dashboardTitle: {
+      main: {
+        student: 'Mi progreso',
+        teacher: 'Notas medias del curso',
+      },
+      subject: {
+        student: 'Notas de la asignatura',
+        teacher: 'Notas medias en la asignatura',
+      },
+      module: {
+        student: 'Notas del módulo',
+        teacher: 'Notas medias del módulo',
+      },
+    },
+    average: 'Media',
+    pass: 'Aprobado',
+    approved: 'Conocimiento adquirido',
+    notApproved: 'Conocimiento por adquirir',
+    inProgress: 'En progreso',
+  },
+  evaluationTable: {
+    title: 'Evaluación',
+    weighting: 'Ponderación',
+    seeNonGradable: 'Ver no calificables',
+    columns: {
+      activity: 'Actividad',
+      module: 'Módulo',
+      activities: 'Actividades',
+      weight: 'Ponderación',
+      evaluation: 'Evaluación',
+      feedback: 'Feedback cualitativo',
+    },
   },
 };

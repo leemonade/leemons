@@ -1,10 +1,10 @@
-/* eslint-disable sonarjs/cognitive-complexity */
 import React, { useEffect, useState } from 'react';
 import { Box, Text, TextClamp, ImageLoader } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@learning-paths/helpers/prefixPN';
 import { useModuleActivities } from '@learning-paths/hooks/useModuleActivities';
-import { capitalize } from 'lodash';
+import { capitalize, map, uniq } from 'lodash';
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { AssetMetadataModuleStyles } from './AssetMetadataModule.styles';
 import {
   ASSET_METADATA_MODULE_DEFAULT_PROPS,
@@ -19,6 +19,9 @@ const AssetMetadataModule = ({ metadata }) => {
   const activitiesData = metadata?.providerData
     ? useModuleActivities({ module: metadata?.providerData })
     : false;
+
+  const rolesLocalizations = useRolesLocalizations(uniq(map(activitiesData, 'role')));
+
   const { classes } = AssetMetadataModuleStyles({}, { name: 'AssetMetadataModule' });
   const getActivitiesToRender = (activities) => {
     const activitiesToRender = [];
@@ -89,17 +92,18 @@ const AssetMetadataModule = ({ metadata }) => {
               >
                 <ImageLoader
                   style={{
-                    width: 24,
-                    height: 24,
+                    width: 18,
+                    height: 18,
                     position: 'relative',
+                    color: '#878D96',
                   }}
-                  width={24}
-                  height={24}
+                  width={18}
+                  height={18}
                   src={activity.icon}
                 />
               </Box>
               <TextClamp lines={1}>
-                <Text>{capitalize(activity.role)}</Text>
+                <Text>{capitalize(rolesLocalizations[activity.role]?.singular)}</Text>
               </TextClamp>
             </Box>
           </Box>

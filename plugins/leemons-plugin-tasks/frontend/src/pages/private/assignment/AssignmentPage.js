@@ -71,7 +71,8 @@ export default function AssignmentPage() {
       onSubmit={handleAssignment}
       assignable={task}
       evaluationType="manual"
-      showEvaluation
+      evaluationTypes={!task?.submission ? ['nonEvaluable'] : undefined}
+      showEvaluation={!!task?.submission}
       showMessageForStudents
       loading={loading}
     />

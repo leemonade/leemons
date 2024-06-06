@@ -9,17 +9,17 @@ export function getLocale(session) {
 
 export function useLocale() {
   const session = useSession();
-  const locale = getLocale(session);
-
-  return locale;
+  return getLocale(session);
 }
 
 function getFormatterKey(locale, options) {
   return `${locale}-${JSON.stringify(options)}`;
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export function LocaleDate({ date, options = {} }) {
+export function LocaleDate({
+  date,
+  options = { year: 'numeric', month: '2-digit', day: '2-digit' },
+}) {
   const session = useSession();
   const locale = getLocale(session);
   const key = getFormatterKey(locale, options);

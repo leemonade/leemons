@@ -103,7 +103,11 @@ export default function SelfReflection({ name, labels, description, showType = f
                       control={control}
                       shouldUnregister
                       render={({ field }) => (
-                        <TextEditorInput {...field} label={labels?.description} />
+                        <TextEditorInput
+                          {...field}
+                          label={labels?.description}
+                          editorStyles={{ minHeight: '96px' }}
+                        />
                       )}
                     />
                     <Controller

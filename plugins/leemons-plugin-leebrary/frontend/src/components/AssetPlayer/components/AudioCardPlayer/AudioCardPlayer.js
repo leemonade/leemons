@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
-import { Box, ImageLoader } from '@bubbles-ui/components';
+import { Box, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
 import {
   AUDIO_CARD_PLAYER_DEFAULT_PROPS,
   AUDIO_CARD_PLAYER_PROP_TYPES,
@@ -45,7 +45,11 @@ const AudioCardPlayer = ({
   return (
     <Box className={classes.audioCardRoot}>
       <Box className={classes.audioCardCover}>
-        {cover && <ImageLoader height="100%" src={cover} alt={title} />}
+        {cover ? (
+          <ImageLoader height="100%" src={cover} alt={title} radius={4} />
+        ) : (
+          <CardEmptyCover fileType={'audio'} />
+        )}
       </Box>
       <AudioProgressBar
         {...{
@@ -62,6 +66,7 @@ const AudioCardPlayer = ({
           handleSeekChange,
           handleSeekMouseUp,
           handleSeekMouseDown,
+          url,
         }}
       />
       <ReactPlayer

@@ -12,6 +12,8 @@
  * @returns {Promise<boolean>} A promise that resolves to true when the operation completes.
  */
 
+const { globalNamespace } = require('../../../helpers/cacheKeys');
+
 async function loadLocalizations({ localizations, plugin, ctx }) {
   const locales = Object.keys(localizations);
 
@@ -21,7 +23,7 @@ async function loadLocalizations({ localizations, plugin, ctx }) {
       { value: localizations[locale] },
       { upsert: true }
     ),
-    ctx.cache.deleteByPrefix('localizations.global-'),
+    ctx.cache.deleteByNamespace(globalNamespace),
   ]);
 
   await Promise.all(promises);

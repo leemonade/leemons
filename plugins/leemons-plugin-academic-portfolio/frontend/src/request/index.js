@@ -5,6 +5,7 @@ import {
   listSubjects,
   removeSubject,
   updateSubject,
+  duplicateSubject,
   updateSubjectCredits,
 } from './subjects';
 import {
@@ -18,6 +19,11 @@ import {
   listPrograms,
   updateProgram,
   getProgramsPublicInfo,
+  removeProgram,
+  updateProgramConfiguration,
+  programHasSubjectHistory,
+  duplicateProgram,
+  getProgramAcademicTree,
 } from './programs';
 import { updateCycle } from './cycles';
 import {
@@ -28,8 +34,19 @@ import {
   setProfiles,
   updateSettings,
 } from './settings';
-import { createKnowledge, listKnowledges, updateKnowledge } from './knowledges';
-import { createSubjectType, listSubjectTypes, updateSubjectType } from './subjectTypes';
+import {
+  createKnowledgeArea,
+  listKnowledgeAreas,
+  updateKnowledgeArea,
+  deleteKnowledgeArea,
+  getKnowledgeArea,
+} from './knowledges';
+import {
+  createSubjectType,
+  listSubjectTypes,
+  updateSubjectType,
+  deleteSubjectType,
+} from './subjectTypes';
 
 import {
   addStudentsToClass,
@@ -48,15 +65,21 @@ import {
   removeStudentFromClass,
   updateClass,
   updateClassMany,
+  userEnrollments,
 } from './classes';
 import { getStudentsByTags } from './common';
 
-export { listCourses as listCoursesRequest, updateCourse as updateCourseRequest } from './courses';
+export {
+  listCourses as listCoursesRequest,
+  updateCourse as updateCourseRequest,
+  getCourseById as getCourseByIdRequest,
+} from './courses';
 
 export {
   createGroup as createGroupRequest,
   updateGroup as updateGroupRequest,
   duplicateGroup as duplicateGroupRequest,
+  getGroupById as getGroupByIdRequest,
   removeGroupFromClasses as removeGroupFromClassesRequest,
 } from './groups';
 
@@ -65,6 +88,8 @@ export const listSubjectsRequest = listSubjects;
 export const createSubjectRequest = createSubject;
 export const updateSubjectRequest = updateSubject;
 export const removeSubjectRequest = removeSubject;
+export const duplicateSubjectRequest = duplicateSubject;
+
 export const updateSubjectCreditsRequest = updateSubjectCredits;
 export const getSubjectCreditsRequest = getSubjectCredits;
 export const listSubjectCreditsForProgramRequest = listSubjectCreditsForProgram;
@@ -86,14 +111,21 @@ export const listTeacherClassesRequest = listTeacherClasses;
 export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
 export const classByIdsRequest = classByIds;
+export const userEnrollmentsRequest = userEnrollments;
 
-export const createKnowledgeRequest = createKnowledge;
-export const listKnowledgesRequest = listKnowledges;
-export const updateKnowledgeRequest = updateKnowledge;
+export const createKnowledgeRequest = createKnowledgeArea;
+export const listKnowledgesRequest = listKnowledgeAreas;
+export const updateKnowledgeRequest = updateKnowledgeArea;
+export const createKnowledgeAreaRequest = createKnowledgeArea;
+export const updateKnowledgeAreaRequest = updateKnowledgeArea;
+export const listKnowledgeAreasRequest = listKnowledgeAreas;
+export const deleteKnowledgeAreaRequest = deleteKnowledgeArea;
+export const getKnowledgeAreaRequest = getKnowledgeArea;
 
 export const createSubjectTypeRequest = createSubjectType;
 export const listSubjectTypesRequest = listSubjectTypes;
 export const updateSubjectTypeRequest = updateSubjectType;
+export const deleteSubjectTypeRequest = deleteSubjectType;
 
 export const getProgramTreeRequest = getProgramTree;
 export const listProgramsRequest = listPrograms;
@@ -101,8 +133,14 @@ export const haveProgramsRequest = havePrograms;
 export const detailProgramRequest = detailProgram;
 export const createProgramRequest = createProgram;
 export const updateProgramRequest = updateProgram;
+export const updateProgramConfigurationRequest = updateProgramConfiguration;
+export const programHasSubjectHistoryRequest = programHasSubjectHistory;
+export const duplicateProgramRequest = duplicateProgram;
+export const getProgramAcademicTreeRequest = getProgramAcademicTree;
+
 export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;
+export const removeProgramRequest = removeProgram;
 
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;

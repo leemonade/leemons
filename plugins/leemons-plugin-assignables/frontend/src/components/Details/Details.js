@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  LoadingOverlay,
   Text,
+  Stack,
+  LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
-  Stack,
 } from '@bubbles-ui/components';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';

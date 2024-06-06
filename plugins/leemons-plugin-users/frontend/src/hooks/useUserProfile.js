@@ -1,7 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { getSessionProfile } from '@users/session';
 
 export function useUserProfile() {
-  return useQuery(['user profile'], () => localStorage.getItem('currentProfile') || null);
+  const sessionProfile = getSessionProfile();
+
+  return { data: sessionProfile?.id, loading: !sessionProfile };
 }
 
 export default useUserProfile;

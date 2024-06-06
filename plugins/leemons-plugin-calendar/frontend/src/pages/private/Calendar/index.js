@@ -284,14 +284,12 @@ function Calendar({ session }) {
           ...classe,
           bgColor: classe.color,
           borderColor: classe.color,
-          fullName: `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
-            /(\(-auto-\))/g,
-            ''
-          ),
-          name: `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
-            /(\(-auto-\))/g,
-            ''
-          ),
+          fullName: `${classe.subject.name}${
+            classe.groups?.abbreviation ? ` (${classe.groups.abbreviation})` : ''
+          }`,
+          name: `${classe.subject.name}${
+            classe.groups?.abbreviation ? ` (${classe.groups.abbreviation})` : ''
+          }`,
           showEvents: true,
           icon: classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null,
         })),
@@ -350,12 +348,14 @@ function Calendar({ session }) {
       const mainTeacher = _.find(classe.teachers, { type: 'main-teacher' }).teacher;
       store.activeSchedule = {
         id: classe.id,
-        title: `${classe.subject.name} - ${classe.groups?.abbreviation || ''}`
-          .replace('- -auto-', '')
-          .replace('-auto-', ''),
+        title: `${classe.subject.name}${
+          classe.groups?.abbreviation ? ` - ${classe.groups?.abbreviation}` : ''
+        }`,
         dateRange: [e.start, e.end],
         period: t('everyWeekInWorkdays'),
-        classGroup: `${classe.program.name} - ${t('group')} ${classe.groups.abbreviation}`,
+        classGroup: classe.groups?.abbreviation
+          ? `${classe.program.name} - ${t('group')} ${classe.groups.abbreviation}`
+          : `${classe.program.name}`,
         subject: {
           name: classe.subject.name,
           icon: classe.subject.icon?.cover ? getAssetUrl(classe.subject.icon.id) : null,
@@ -525,6 +525,13 @@ function Calendar({ session }) {
               labels={{
                 attendanceControl: t('attendanceControl'),
                 mainTeacher: t('mainTeacher'),
+                detailEvent: t('detailEvent'),
+                subjectTitle: t('subjectTitle'),
+                subjectDates: t('subjectDates'),
+                subjectName: t('subjectName'),
+                subjectTeacher: t('subjectTeacher'),
+                subjectClassroom: t('subjectClassroom'),
+                subjectSchedule: t('subjectSchedule'),
               }}
               locale={locale}
               event={store.activeSchedule}

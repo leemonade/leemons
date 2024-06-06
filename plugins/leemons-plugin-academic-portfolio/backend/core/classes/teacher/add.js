@@ -3,6 +3,9 @@ const {
 } = require('../addPermissionsBetweenStudentsAndTeachers');
 const { getClassProgram } = require('../getClassProgram');
 const { getProfiles } = require('../../settings/getProfiles');
+const { addPermissionsBetweenTeachers } = require('../addPermissionsBetweenTeachers');
+
+const ADD_CUSTOM_PERMISSION_USER_AGENT = 'users.permissions.addCustomPermissionToUserAgent';
 
 async function add({ class: _class, teacher, type, ctx }) {
   const [classTeacher, program] = await Promise.all([
@@ -25,7 +28,7 @@ async function add({ class: _class, teacher, type, ctx }) {
 
   const { teacher: teacherProfileId } = await getProfiles({ ctx });
 
-  await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+  await ctx.tx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
     userAgentId: teacher,
     data: {
       permissionName: `academic-portfolio.class.${_class}`,
@@ -33,7 +36,7 @@ async function add({ class: _class, teacher, type, ctx }) {
     },
   });
 
-  await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+  await ctx.tx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
     userAgentId: teacher,
     data: {
       permissionName: `academic-portfolio.class-profile.${_class}.${teacherProfileId}`,
@@ -42,7 +45,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   });
 
   try {
-    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
+    await ctx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
       userAgentId: teacher,
       data: {
         permissionName: `academic-portfolio.program.inside.${program.id}`,
@@ -54,7 +57,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   }
 
   try {
-    await ctx.call('users.permissions.addCustomPermissionToUserAgent', {
+    await ctx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
       userAgentId: teacher,
       throwIfExists: false,
       data: {
@@ -67,8 +70,9 @@ async function add({ class: _class, teacher, type, ctx }) {
   }
 
   await addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
+  await addPermissionsBetweenTeachers({ programId: program.id, ctx });
 
-  await ctx.tx.emit('after-add-class-teacher', {
+  await ctx.emit('after-add-class-teacher', {
     class: _class,
     teacher,
     type,

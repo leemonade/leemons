@@ -13,17 +13,20 @@ import {
 } from '@bubbles-ui/components';
 import { get, head, map, sortBy, tail } from 'lodash';
 
-import { useIsStudent } from '@academic-portfolio/hooks';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { prefixPN } from '@learning-paths/helpers';
+import assignablePrefixPN from '@assignables/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import { ProgressChart } from '@assignables/components/ProgressChart';
 import { DashboardCard } from './components/DashboardCard';
 import { useModuleDataForPreview } from './helpers/previewHooks';
 
@@ -35,7 +38,6 @@ export function useModuleDashboardLocalizations() {
   return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-
       return get(res, key);
     }
 
@@ -234,7 +236,7 @@ export function ModuleDashboardBody({
               assetNumber={index + 1}
             />
           ),
-          createdAt: activitiesById[activity?.id].createdAt,
+          createdAt: activitiesById[activity?.id]?.createdAt,
         })),
         'createdAt'
       ).map((a) => a.comp)}
@@ -254,9 +256,66 @@ ModuleDashboardBody.propTypes = {
   subjectsData: PropTypes.arrayOf(PropTypes.object),
 };
 
+function useStudentsGradesGraphData({ moduleAssignation, activitiesById }) {
+  const isStudent = useIsStudent();
+
+  return useMemo(() => {
+    if (!isStudent || !moduleAssignation?.metadata?.moduleStatus) {
+      return [];
+    }
+
+    return moduleAssignation.metadata.moduleStatus
+      .map((status) => ({
+        label: activitiesById?.[status.instance]?.assignable?.asset?.name,
+        value: status.gradeAvg,
+        gradable: activitiesById?.[status.instance]?.gradable,
+      }))
+      .filter((status) => status.gradable);
+  }, [moduleAssignation, activitiesById, isStudent]);
+}
+
+function useTeachersGradesGraphData({ module, activitiesById, programEvaluationSystem }) {
+  const isTeacher = useIsTeacher();
+  const minScale = programEvaluationSystem?.minScale?.number ?? 0;
+
+  return useMemo(() => {
+    if (!isTeacher || !module?.metadata?.module?.activities) {
+      return [];
+    }
+
+    return module?.metadata?.module?.activities
+      .map((activity) => {
+        const instance = activitiesById?.[activity.id];
+        const { students = [] } = instance ?? {};
+
+        const averageGrade =
+          students.reduce((acc, student) => {
+            const mainGrade = student.grades.find((grade) => grade.type === 'main');
+
+            return acc + (mainGrade?.grade ?? minScale);
+          }, 0) / students.length;
+
+        return {
+          label: instance?.assignable?.asset?.name,
+          value: averageGrade,
+          gradable: instance?.gradable,
+        };
+      })
+      .filter((activity) => activity.gradable);
+  }, [module, activitiesById, minScale, isTeacher]);
+}
+
 export function ModuleDashboard({ id, preview }) {
   const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
     preview ? useModuleDataForPreview(id) : useModuleData(id);
+
+  const programEvaluationSystem = useProgramEvaluationSystem(module);
+  const studentsGradesGraphData = useStudentsGradesGraphData({ moduleAssignation, activitiesById });
+  const teachersGradesGraphData = useTeachersGradesGraphData({
+    module,
+    activitiesById,
+    programEvaluationSystem,
+  });
 
   const isStudent = useIsStudent();
   const { mutateAsync } = useStudentAssignationMutation();
@@ -297,13 +356,35 @@ export function ModuleDashboard({ id, preview }) {
             <TabPanel label={localizations?.resources}>
               <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
                 <Box>
-                  <Paper sx={{ padding: '36px', width: '100%' }}>
+                  <Paper sx={{ padding: '36px', width: '100%' }} shadow="none">
                     <AssetEmbedList assets={module?.assignable?.resources} width={720} />
                   </Paper>
                 </Box>
               </ContextContainer>
             </TabPanel>
           )}
+          <TabPanel label={localizations?.progress ?? 'Progreso'}>
+            <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
+              <Paper sx={{ width: '100%' }} shadow="none">
+                <ContextContainer
+                  title={
+                    isStudent
+                      ? localizations?.studentProgressTitle ?? 'Notas del módulo'
+                      : localizations?.teacherProgressTitle ?? 'Notas medias del módulo'
+                  }
+                >
+                  <Box pt={10}>
+                    <ProgressChart
+                      data={isStudent ? studentsGradesGraphData : teachersGradesGraphData}
+                      maxValue={programEvaluationSystem?.maxScale?.number}
+                      passValue={programEvaluationSystem?.minScaleToPromote?.number}
+                      height={390}
+                    />
+                  </Box>
+                </ContextContainer>
+              </Paper>
+            </ContextContainer>
+          </TabPanel>
         </Tabs>
       </Box>
     </TotalLayoutContainer>

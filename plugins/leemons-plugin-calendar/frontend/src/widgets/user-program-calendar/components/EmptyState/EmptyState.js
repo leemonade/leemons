@@ -13,14 +13,16 @@ export function EmptyState({ onNewEvent }) {
   const { classes, cx } = useEmptyStateStyles();
 
   return (
-    <Stack direction="column" spacing={8}>
-      <Stack direction="column" spacing={4}>
+    <Stack direction="row" spacing={8} justifyContent="center" alignItems="center" fullWidth>
+      <ImageLoader src={CalendarImage} style={{ position: 'relative' }} />
+      <Stack direction="column" alignItems="start" spacing={4} sx={{ maxWidth: 400 }}>
         <Text color="primary" className={cx(classes.text, classes.title)}>
           {t('title')}
         </Text>
         <RenderTextWithCTAs
           t={t}
           text="description"
+          align="left"
           replacers={{
             newCTA: { type: 'actionT', value: 'newCTA', action: onNewEvent },
             menuCTA: {
@@ -31,7 +33,6 @@ export function EmptyState({ onNewEvent }) {
           }}
         />
       </Stack>
-      <ImageLoader src={CalendarImage} style={{ position: 'relative' }} />
     </Stack>
   );
 }

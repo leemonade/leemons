@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextInput } from '@bubbles-ui/components';
+import { TextInput, Box, InputWrapper, Stack } from '@bubbles-ui/components';
 import { Controller, useFormContext } from 'react-hook-form';
+import ImagePicker from '@leebrary/components/ImagePicker';
 import { Container } from '../Container';
 
-export default function Title({ localizations, showTitle, showThumbnail, ...field }) {
+export default function Presentation({ assignable, localizations, showTitle, showThumbnail }) {
   const { control } = useFormContext();
 
   if (!showTitle && !showThumbnail) {
@@ -13,21 +14,46 @@ export default function Title({ localizations, showTitle, showThumbnail, ...fiel
 
   return (
     <Container title={localizations?.title}>
-      {!!showTitle && (
-        <Controller
-          name="title"
-          control={control}
-          render={({ field }) => (
-            <TextInput
-              {...field}
-              label={localizations?.titleInput?.label}
-              placeholder={localizations?.titleInput?.placeholder}
-            />
-          )}
-        />
-      )}
+      <Stack direction="column" spacing={5}>
+        {!!showTitle && (
+          <Controller
+            name="title"
+            control={control}
+            render={({ field }) => (
+              <Box sx={{ width: 366 }}>
+                <TextInput
+                  {...field}
+                  label={localizations?.titleInput?.label}
+                  placeholder={localizations?.titleInput?.placeholder}
+                />
+              </Box>
+            )}
+          />
+        )}
+        {!!showThumbnail && (
+          <Controller
+            name="thumbnail"
+            control={control}
+            defaultValue={assignable?.asset?.cover?.id ?? assignable?.asset?.cover}
+            render={({ field }) => (
+              <InputWrapper label={localizations?.thumbnail}>
+                <ImagePicker {...field} isPickingACover />
+              </InputWrapper>
+            )}
+          />
+        )}
+      </Stack>
     </Container>
   );
 }
 
-Title.propTypes = {};
+Presentation.propTypes = {
+  assignable: PropTypes.shape({
+    asset: PropTypes.shape({
+      cover: PropTypes.string,
+    }),
+  }),
+  localizations: PropTypes.object,
+  showTitle: PropTypes.bool,
+  showThumbnail: PropTypes.bool,
+};

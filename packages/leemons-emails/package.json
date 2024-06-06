@@ -3,7 +3,6 @@
   "version": "0.0.54",
   "description": "",
   "main": "src/index.js",
-  "module": "src/emails/index.js",
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",

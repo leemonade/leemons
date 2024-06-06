@@ -1,5 +1,5 @@
 /**
- * Return true if exist center with this name, false if not
+ * Finds a center by its name
  * @private
  * @static
  * @param {Object} params

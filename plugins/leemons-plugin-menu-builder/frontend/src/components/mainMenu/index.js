@@ -10,7 +10,8 @@ import { currentProfileIsAdmin, currentProfileIsSuperAdmin, useSession } from '@
 import hooks from 'leemons-hooks';
 import PropTypes from 'prop-types';
 import getPlatformName from '@users/request/getPlatformName';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import getPlatformLocales from '@users/request/getPlatformLocales';
 import { MainNavBar } from '../MainNavBar';
 
 export default function MainMenu({ subNavWidth, ...props }) {
@@ -60,11 +61,16 @@ export default function MainMenu({ subNavWidth, ...props }) {
    */
   async function load() {
     // Fetch user centers, profiles, and platform name concurrently
-    const [{ centers }, { profiles }, { name }] = await Promise.all([
+    const [{ centers }, { profiles }, { name }, { locales }] = await Promise.all([
       getUserCentersRequest(),
       getUserProfilesRequest(),
       getPlatformName(),
+      getPlatformLocales(),
     ]);
+
+    if (locales.length > 1) {
+      store.hasManyLocales = true;
+    }
 
     // Retrieve denied profiles from deployment configuration
     const deniedProfiles = userConfig?.deny?.profiles || [];
@@ -82,6 +88,12 @@ export default function MainMenu({ subNavWidth, ...props }) {
     // Store the platform name in the store
     store.platformName = name;
 
+    if (filteredCenters.length < 2) {
+      store.centerName = filteredCenters[0]?.name;
+    } else {
+      store.centerName = store.platformName;
+    }
+
     // Check if there's only one profile available and update the store accordingly
     if (
       filteredCenters.length < 2 &&
@@ -89,7 +101,6 @@ export default function MainMenu({ subNavWidth, ...props }) {
       filteredProfiles.length < 2
     ) {
       store.onlyOneProfile = true;
-      store.centerName = filteredCenters[0]?.name;
     }
     // Trigger a re-render
     render();
@@ -154,7 +165,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     };
   }, [loadMenu]);
 
-  const navTitle = session?.isSuperAdmin ? 'Leemons' : store.centerName;
+  const navTitle = store.centerName ? store.centerName : store.platformName;
 
   const sessionMenuData = React.useMemo(() => {
     const result = [];
@@ -178,14 +189,16 @@ export default function MainMenu({ subNavWidth, ...props }) {
       disabled: null,
     });
 
-    // result.push({
-    //   id: 'menu-2',
-    //   label: t('changeLanguage'),
-    //   order: 2,
-    //   url: '/private/users/language',
-    //   window: 'SELF',
-    //   disabled: null,
-    // });
+    if (store.hasManyLocales) {
+      result.push({
+        id: 'menu-2',
+        label: t('changeLanguage'),
+        order: 2,
+        url: '/private/users/language',
+        window: 'SELF',
+        disabled: null,
+      });
+    }
 
     if (!store.onlyOneProfile) {
       result.push({
@@ -219,7 +232,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
     });
 
     return result;
-  }, [t, store.onlyOneProfile, session]);
+  }, [t, store.hasManyLocales, deploymentConfig?.helpdeskUrl, store.onlyOneProfile, session]);
 
   if (!session) return null;
 
@@ -240,7 +253,7 @@ export default function MainMenu({ subNavWidth, ...props }) {
         useRouter
         useSpotlight={!session?.isSuperAdmin}
         spotlightLabel={ts('tooltip')}
-        navTitle={session.isAdmin ? store.platformName : navTitle}
+        navTitle={navTitle}
         session={{
           ...session,
           name: session?.name ?? '',

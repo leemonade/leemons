@@ -18,7 +18,7 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { useHistory } from 'react-router-dom';
 import { Locales } from './components/Locales';
 import { Start } from './components/Start';
@@ -32,12 +32,15 @@ function Setup({ session }) {
   const [t, translations] = useTranslateLoader(prefixPN('setup'));
   const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
   const history = useHistory();
-  if (
-    deploymentConfig?.superRedirectUrl &&
-    deploymentConfig.superRedirectUrl !== '/private/admin/setup'
-  ) {
-    history.push(deploymentConfig?.superRedirectUrl);
-  }
+
+  React.useEffect(() => {
+    if (
+      deploymentConfig?.superRedirectUrl &&
+      deploymentConfig.superRedirectUrl !== '/private/admin/setup'
+    ) {
+      history.push(deploymentConfig?.superRedirectUrl);
+    }
+  }, [JSON.stringify(deploymentConfig), history]);
 
   // ····················································
   // SETTINGS

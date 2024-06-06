@@ -197,11 +197,51 @@ const menuItems = [
       },
     ],
   },
+  // Subject Types
+  {
+    item: {
+      key: 'subject-types',
+      order: 3,
+      parentKey: `${permissionsPrefix}.portfolio`,
+      url: '/private/academic-portfolio/subject-types',
+      label: {
+        en: 'Subject Types',
+        es: 'Tipos de Asignaturas',
+      },
+      disabled: true,
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.programs,
+        actionNames: ['admin'],
+      },
+    ],
+  },
+  // Knowledge Areas
+  {
+    item: {
+      key: 'knowledge-areas',
+      order: 4,
+      parentKey: `${permissionsPrefix}.portfolio`,
+      url: '/private/academic-portfolio/knowledge-areas',
+      label: {
+        en: 'Knowledge Areas',
+        es: 'Areas de Conocimiento',
+      },
+      disabled: true,
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.programs,
+        actionNames: ['admin'],
+      },
+    ],
+  },
   // Learning Program
   {
     item: {
       key: 'programs',
-      order: 3,
+      order: 5,
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/programs',
       label: {
@@ -221,7 +261,7 @@ const menuItems = [
   {
     item: {
       key: 'subjects',
-      order: 4,
+      order: 6,
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/subjects',
       label: {
@@ -241,7 +281,7 @@ const menuItems = [
   {
     item: {
       key: 'tree',
-      order: 5,
+      order: 7,
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/tree',
       label: {

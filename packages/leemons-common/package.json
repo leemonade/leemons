@@ -1,8 +1,4 @@
 {
-  "devDependencies": {},
-  "dependencies": {
-    "@leemons/validator": "0.0.41"
-  },
   "name": "@leemons/common",
   "version": "0.0.41",
   "description": "",
@@ -24,5 +20,9 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/validator": "0.0.41"
+  }
 }

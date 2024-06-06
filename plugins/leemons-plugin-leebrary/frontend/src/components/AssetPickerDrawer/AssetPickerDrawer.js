@@ -1,4 +1,4 @@
-import { Box, Drawer, TabPanel, Tabs, createStyles } from '@bubbles-ui/components';
+import { Box, TabPanel, Tabs, createStyles, Drawer } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -6,7 +6,6 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import { AssetList } from './components/AssetList';
-import { Header } from './components/Header';
 import { NewResource } from './components/NewResource';
 
 export function useAssetPickerDrawerLocalizations() {
@@ -33,15 +32,14 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
       flexDirection: 'column',
       overflow: 'hidden',
       height: '100%',
-      backgroundColor: theme.other.core.color.neutral['50'],
     },
     content: {
-      marginTop: globalTheme.spacing.padding.md,
+      // marginTop: globalTheme.spacing.padding.md,
     },
     contentPadding: {
       overflowY: 'auto',
-      paddingLeft: globalTheme.spacing.padding.xlg,
-      paddingRight: globalTheme.spacing.padding.xlg,
+      // paddingLeft: globalTheme.spacing.padding.xlg,
+      // paddingRight: globalTheme.spacing.padding.xlg,
       height: '100%',
     },
   };
@@ -61,13 +59,11 @@ export const useAssetPickerDrawerStyles = createStyles((theme) => {
  * @param {function} onClose - The function to close the drawer.
  * @param {function} onSelect - The function to select an asset.
  * @param {boolean} onlyCreateImages - Whether to only create images or not.
+ * @param {object} newDataOverride - Override data in asset creation.
  * @return {JSX.Element} The rendered AssetPickerDrawer component.
  */
 export function AssetPickerDrawer({
-  position,
   opened,
-  size,
-  shadow,
   layout,
   creatable,
   categories,
@@ -78,25 +74,40 @@ export function AssetPickerDrawer({
   acceptedFileTypes,
   onlyImages,
   isPickingACover,
+  newDataOverride,
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
   const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
-
   return (
-    <Drawer
-      position={position}
-      opened={!!opened}
-      size={size}
-      shadow={shadow}
-      close={false}
-      empty
-      onClose={onClose}
-    >
-      <Box className={classes.root}>
-        <Header localizations={localizations?.header} onClose={onClose} />
-        {creatable ? (
-          <Tabs usePaddedLayout fullHeight className={classes.content}>
-            <TabPanel key="library" label={localizations?.tabs?.library}>
+    <Drawer opened={!!opened} size={'xl'} onClose={onClose}>
+      <Drawer.Header title={localizations?.header?.title} />
+      <Drawer.Content>
+        <Box className={classes.root}>
+          {creatable ? (
+            <Tabs fullWidth className={classes.content}>
+              <TabPanel key="library" label={localizations?.tabs?.library}>
+                <AssetList
+                  variant={layout}
+                  localizations={localizations}
+                  categories={categories}
+                  filters={filters}
+                  onSelect={onSelect}
+                  onlyImages={onlyImages}
+                />
+              </TabPanel>
+              <TabPanel key="new" label={localizations?.tabs?.new}>
+                <NewResource
+                  localizations={localizations}
+                  onSelect={onSelect}
+                  onlyCreateImages={onlyCreateImages}
+                  acceptedFileTypes={acceptedFileTypes}
+                  isPickingACover={isPickingACover}
+                  dataOverride={newDataOverride}
+                />
+              </TabPanel>
+            </Tabs>
+          ) : (
+            <Box className={classes.contentPadding}>
               <AssetList
                 variant={layout}
                 localizations={localizations}
@@ -105,30 +116,10 @@ export function AssetPickerDrawer({
                 onSelect={onSelect}
                 onlyImages={onlyImages}
               />
-            </TabPanel>
-            <TabPanel key="new" label={localizations?.tabs?.new}>
-              <NewResource
-                localizations={localizations}
-                onSelect={onSelect}
-                onlyCreateImages={onlyCreateImages}
-                acceptedFileTypes={acceptedFileTypes}
-                isPickingACover={isPickingACover}
-              />
-            </TabPanel>
-          </Tabs>
-        ) : (
-          <Box className={classes.contentPadding}>
-            <AssetList
-              variant={layout}
-              localizations={localizations}
-              categories={categories}
-              filters={filters}
-              onSelect={onSelect}
-              onlyImages={onlyImages}
-            />
-          </Box>
-        )}
-      </Box>
+            </Box>
+          )}
+        </Box>
+      </Drawer.Content>
     </Drawer>
   );
 }
@@ -152,4 +143,5 @@ AssetPickerDrawer.propTypes = {
   onlyImages: PropTypes.bool,
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
   isPickingACover: PropTypes.bool,
+  newDataOverride: PropTypes.object,
 };

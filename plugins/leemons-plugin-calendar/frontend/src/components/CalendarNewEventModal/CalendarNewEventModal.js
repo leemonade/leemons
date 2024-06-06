@@ -6,11 +6,11 @@ import {
   Checkbox,
   ColorInput,
   DatePicker,
-  Popover,
+  Drawer,
   RadioGroup,
-  Stack,
+  ContextContainer,
 } from '@bubbles-ui/components';
-import { isFunction } from 'lodash';
+import { noop } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import { CalendarNewEventModalStyles } from './CalendarNewEventModal.styles';
 import {
@@ -18,12 +18,11 @@ import {
   CALENDAR_NEW_EVENT_MODAL_DEFAULT_PROPS,
   CALENDAR_NEW_EVENT_MODAL_PROP_TYPES,
 } from './CalendarNewEventModal.constants';
-import { ColorPicker } from './';
+import { ColorPicker } from './ColorPicker/ColorPicker';
 
 const CalendarNewEventModal = ({
   locale,
   opened,
-  target,
   labels,
   values,
   placeholders,
@@ -31,8 +30,8 @@ const CalendarNewEventModal = ({
   suggestions,
   minDate,
   maxDate,
-  onSubmit,
-  ...props
+  onSubmit = noop,
+  onClose = noop,
 }) => {
   const defaultValues = {
     periodName: values.periodName || '',
@@ -44,6 +43,7 @@ const CalendarNewEventModal = ({
   };
 
   const {
+    form,
     watch,
     reset,
     control,
@@ -57,12 +57,13 @@ const CalendarNewEventModal = ({
   const startDate = watch('startDate');
   const endDate = watch('endDate');
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = (val) => {
+    const event = { ...val };
     if (event.dayType !== 'schoolDays') {
       delete event.withoutOrdinaryDays;
       delete event.color;
     }
-    isFunction(onSubmit) && onSubmit(event);
+    onSubmit(event);
   };
 
   useEffect(() => {
@@ -82,154 +83,163 @@ const CalendarNewEventModal = ({
     _minDate = startDate;
   }
 
-  const { classes, cx } = CalendarNewEventModalStyles({ isSchoolDay }, { name: 'CalendarModal' });
+  const { classes } = CalendarNewEventModalStyles({ isSchoolDay }, { name: 'CalendarModal' });
   return (
-    <Popover
-      opened={opened}
-      target={target}
-      position="bottom"
-      width={590}
-      arrowSize={6}
-      withArrow
-      withCloseButton={true}
-      trapFocus={false}
-      closeOnClickOutside={false}
-      {...props}
-    >
-      <form onSubmit={handleSubmit(onSubmitHandler)} className={classes.root}>
-        <Controller
-          control={control}
-          name="periodName"
-          rules={{
-            required: errorMessages.periodName,
-          }}
-          render={({ field }) => (
-            <Autocomplete
-              label={labels.periodName}
-              placeholder={placeholders.periodName}
-              data={suggestions}
-              required
-              error={errors.periodName}
-              {...field}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="dayType"
-          rules={{
-            required: errorMessages.dayType,
-          }}
-          render={({ field }) => (
-            <RadioGroup
-              data={[
-                { value: 'schoolDays', label: labels.schoolDays },
-                { value: 'nonSchoolDays', label: labels.nonSchoolDays },
-              ]}
-              variant="boxed"
-              error={errors.dayType}
-              rounded
-              fullWidth
-              required
-              className={classes.dayType}
-              {...field}
-            />
-          )}
-        />
-        {isSchoolDay && (
+    <Drawer opened={opened} size="xl" onClose={onClose}>
+      <Drawer.Header title={'New Event'} />
+      <Drawer.Content>
+        <form form={form} className={classes.root}>
           <Controller
+            form={form}
             control={control}
-            name="withoutOrdinaryDays"
+            name="periodName"
+            rules={{
+              required: errorMessages.periodName,
+            }}
             render={({ field }) => (
-              <Checkbox
-                label={labels.withoutOrdinaryDays}
-                className={classes.withoutOrdinaryDays}
+              <Autocomplete
+                className={classes.nameInput}
+                label={labels.periodName}
+                placeholder={placeholders.periodName}
+                data={suggestions}
+                required
+                error={errors.periodName}
                 {...field}
-                checked={field.value}
               />
             )}
           />
-        )}
-        <Stack spacing={4} fullWidth>
           <Controller
+            form={form}
             control={control}
-            name="startDate"
+            name="dayType"
             rules={{
-              required: errorMessages.startDate,
+              required: errorMessages.dayType,
             }}
             render={({ field }) => (
-              <DatePicker
-                locale={locale}
-                label={labels.startDate}
-                placeholder={placeholders.startDate}
-                error={errors.startDate}
-                headerStyle={{ marginTop: isSchoolDay ? 8 : 16, flex: 1 }}
+              <RadioGroup
+                data={[
+                  { value: 'schoolDays', label: labels.schoolDays },
+                  { value: 'nonSchoolDays', label: labels.nonSchoolDays },
+                ]}
+                error={errors.dayType}
+                rounded
                 required
-                minDate={minDate}
-                maxDate={_maxDate}
+                className={classes.dayType}
+                noRootPadding
                 {...field}
-                onChange={(value) => {
-                  if (!value) {
-                    setValue('endDate', null);
-                  }
-                  if (!getValues('endDate')) setValue('endDate', value);
-                  field.onChange(value);
+              />
+            )}
+          />
+          {isSchoolDay && (
+            <Controller
+              form={form}
+              control={control}
+              name="withoutOrdinaryDays"
+              render={({ field }) => (
+                <Checkbox
+                  label={labels.withoutOrdinaryDays}
+                  className={classes.withoutOrdinaryDays}
+                  {...field}
+                  checked={field.value}
+                />
+              )}
+            />
+          )}
+          <ContextContainer direction="row">
+            {isSchoolDay && (
+              <Controller
+                form={form}
+                control={control}
+                name="color"
+                rules={{
+                  required: errorMessages.color,
+                  validate: (v) =>
+                    MODAL_COLORS.includes(v.toUpperCase()) ? true : errorMessages.invalidColor,
                 }}
-                style={{ flex: 1 }}
+                render={({ field }) => (
+                  <ColorInput
+                    label={labels.color}
+                    placeholder={placeholders.color}
+                    useHsl
+                    error={errors.color}
+                    required
+                    lightOnly
+                    headerStyle={{ marginTop: 16 }}
+                    compact={false}
+                    colorPickerComponent={ColorPicker}
+                    {...field}
+                  />
+                )}
               />
             )}
-          />
-          <Controller
-            control={control}
-            name="endDate"
-            render={({ field }) => (
-              <DatePicker
-                locale={locale}
-                label={labels.endDate}
-                placeholder={placeholders.endDate}
-                error={errors.endDate}
-                minDate={_minDate}
-                maxDate={maxDate}
-                clearable={false}
-                disabled={!startDate}
-                headerStyle={{ marginTop: isSchoolDay ? 8 : 16 }}
-                {...field}
-                value={endDate || startDate}
-                style={{ flex: 1 }}
-              />
-            )}
-          />
-        </Stack>
-        {isSchoolDay && (
-          <Controller
-            control={control}
-            name="color"
-            rules={{
-              required: errorMessages.color,
-              validate: (v) =>
-                MODAL_COLORS.includes(v.toUpperCase()) ? true : errorMessages.invalidColor,
-            }}
-            render={({ field }) => (
-              <ColorInput
-                label={labels.color}
-                placeholder={placeholders.color}
-                useHsl
-                error={errors.color}
-                required
-                lightOnly
-                headerStyle={{ marginTop: 16 }}
-                compact={false}
-                colorPickerComponent={ColorPicker}
-                {...field}
-              />
-            )}
-          />
-        )}
+            <Controller
+              form={form}
+              control={control}
+              name="startDate"
+              rules={{
+                required: errorMessages.startDate,
+              }}
+              render={({ field }) => (
+                <DatePicker
+                  locale={locale}
+                  label={labels.startDate}
+                  placeholder={placeholders.startDate}
+                  error={errors.startDate}
+                  headerStyle={{ marginTop: isSchoolDay ? 8 : 16, flex: 1 }}
+                  required
+                  minDate={minDate}
+                  maxDate={_maxDate}
+                  {...field}
+                  onChange={(value) => {
+                    if (!value) {
+                      setValue('endDate', null);
+                    }
+                    if (!getValues('endDate')) setValue('endDate', value);
+                    field.onChange(value);
+                  }}
+                  style={{ flex: 1 }}
+                />
+              )}
+            />
+            <Controller
+              form={form}
+              control={control}
+              name="endDate"
+              rules={{
+                required: errorMessages.startDate,
+              }}
+              render={({ field }) => (
+                <DatePicker
+                  locale={locale}
+                  label={labels.endDate}
+                  placeholder={placeholders.endDate}
+                  error={errors.endDate}
+                  minDate={_minDate}
+                  maxDate={maxDate}
+                  clearable={false}
+                  required
+                  disabled={!startDate}
+                  headerStyle={{ marginTop: isSchoolDay ? 8 : 16, flex: 1 }}
+                  {...field}
+                  value={endDate || startDate}
+                  style={{ flex: 1 }}
+                />
+              )}
+            />
+          </ContextContainer>
+        </form>
+      </Drawer.Content>
+      <Drawer.Footer>
         <Box className={classes.buttonWrapper}>
-          <Button type="submit">{labels.add}</Button>
+          <Button type="button" variant="outline" compact onClick={onClose}>
+            {labels.cancel}
+          </Button>
+          <Button type="submit" onClick={handleSubmit(onSubmitHandler)}>
+            {labels.add}
+          </Button>
         </Box>
-      </form>
-    </Popover>
+      </Drawer.Footer>
+    </Drawer>
   );
 };
 

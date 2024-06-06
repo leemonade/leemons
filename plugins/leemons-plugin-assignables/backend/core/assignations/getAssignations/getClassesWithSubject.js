@@ -1,3 +1,4 @@
+const { keyBy } = require('lodash');
 const _ = require('lodash');
 
 async function getClassesWithSubject({ instancesIds, ctx }) {
@@ -12,16 +13,14 @@ async function getClassesWithSubject({ instancesIds, ctx }) {
     withTeachers: true,
   });
 
-  const subjectsPerClass = {};
-  classesInfo.forEach((klass) => {
-    subjectsPerClass[klass.id] = klass.subject.id;
-  });
+  const classByIds = keyBy(classesInfo, 'id');
 
   const classesPerInstance = {};
   classesFound.forEach(({ class: klass, assignableInstance: instance }) => {
     const klassObject = {
       id: klass,
-      subject: subjectsPerClass[klass],
+      subject: classByIds[klass].subject.id,
+      program: classByIds[klass].program,
     };
 
     if (!classesPerInstance[instance]) {

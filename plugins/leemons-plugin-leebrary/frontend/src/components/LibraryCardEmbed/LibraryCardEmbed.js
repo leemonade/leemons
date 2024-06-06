@@ -19,10 +19,11 @@ const LibraryCardEmbed = ({
   canPlay,
   ccMode,
   handleClickCCreator,
+  hideIcon,
 }) => {
   const [t] = useTranslateLoader(prefixPN('assetsList'));
   const { title, name, updatedAt, image, cover, fileType, icon } = asset;
-  const { classes } = LibraryCardEmbedStyles({}, { name: 'LibraryCardEmbed' });
+  const { classes } = LibraryCardEmbedStyles({ canPlay }, { name: 'LibraryCardEmbed' });
   const isPlayable = React.useMemo(() => {
     const playableFileExtensions = [
       'mov',
@@ -44,6 +45,8 @@ const LibraryCardEmbed = ({
 
   // Lógica de iconos parte derecha
   const getIconForFileType = () => {
+    if (hideIcon) return null;
+
     const iconProps = { height: 18, width: 18 };
 
     if (ccMode)

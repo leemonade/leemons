@@ -17,7 +17,6 @@ export const useHeaderStyles = createStyles((theme) => {
       gap: globalTheme.spacing.padding.md,
       paddingTop: globalTheme.spacing.padding.lg,
       paddingBottom: globalTheme.spacing.padding.md,
-      backgroundColor: theme.other.core.color.neutral['50'],
       zIndex: 1,
     },
   };

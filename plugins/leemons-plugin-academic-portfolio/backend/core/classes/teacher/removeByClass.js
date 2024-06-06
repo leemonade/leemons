@@ -12,6 +12,7 @@ async function removeByClass({ classIds, soft, ctx }) {
 
   const classStudents = await ctx.tx.db.ClassStudent.find({ class: classeIds }).lean();
   const classTeachers = await ctx.tx.db.ClassTeacher.find({ class: classeIds }).lean();
+  if (!classTeachers?.length) return;
 
   const promisesRemoveUserAgentsFromRooms = [];
   // Remove users from class room
@@ -35,21 +36,19 @@ async function removeByClass({ classIds, soft, ctx }) {
     );
   });
 
-  _.forEach(classeIds, (classId) => {
-    const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
-    const teacherIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
-    // TODO: Add this when comunica V2 is released
-    /*
-    _.forEach(studentIds, (studentId) => {
-      promisesRemoveUserAgentsFromRooms.push(
-        ctx.tx.call('comunica.room.removeUserAgents', {
-          key: ctx.prefixPN(`room.class.${classId}.student.${studentId}.teachers`),
-          userAgents: teacherIds, // TODO ask: Convención para parametros que empiezan con underscore, userAgents: _userAgents
-        })
-      );
+  if (classStudents?.length) {
+    _.forEach(classeIds, (classId) => {
+      const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
+
+      _.forEach(studentIds, (studentId) => {
+        promisesRemoveUserAgentsFromRooms.push(
+          ctx.tx.call('comunica.room.removeAllUserAgents', {
+            key: ctx.prefixPN(`room.class.${classId}.student.${studentId}.teachers`),
+          })
+        );
+      });
     });
-    */
-  });
+  }
 
   await Promise.all(promisesRemoveUserAgentsFromRooms);
 

@@ -15,12 +15,11 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    groupVisibility: {
-      type: Boolean,
-      required: true,
+    description: {
+      type: String,
     },
-    program: {
-      // ref: 'plugins_academic-portfolio::programs',
+    center: {
+      // ref: 'plugins_users::centers',
       type: String,
     },
     credits_course: {
@@ -28,6 +27,16 @@ const schema = new mongoose.Schema(
     },
     credits_program: {
       type: Number,
+    },
+    groupVisibility: {
+      // Outdated?
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    program: {
+      // Outdated? ref: 'plugins_academic-portfolio::programs',
+      type: String,
     },
   },
   {

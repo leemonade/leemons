@@ -24,7 +24,7 @@ export default function OpenResponse(props) {
 
   return (
     <Stack spacing={2} direction="column" fullWidth>
-      <Box style={{ padding: 24, paddingBottom: 0 }}>
+      <Box>
         <Text
           sx={(theme) => ({
             ...theme.other.global.content.typo.heading['xsm--semiBold'],
@@ -41,10 +41,8 @@ export default function OpenResponse(props) {
             key={index}
             style={{
               backgroundColor: 'white',
-              paddingBlock: 20,
-              paddingInline: 24,
+              paddingBottom: 24,
               overflowX: 'hidden',
-              borderBottom: '1px solid #F2F2F2',
               borderBottomRightRadius:
                 totalPages === 1 && index === store.visibleResponses.length - 1 && 8,
               borderBottomLeftRadius:

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { isNil, map } from 'lodash';
+import { isNil, map, trimEnd } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import {
@@ -33,6 +33,8 @@ import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { addSuccessAlert } from '@layout/alert';
 import { ChatDrawer } from '@comunica/components';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
+import RoomService from '@comunica/RoomService';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import LinkSubmission from './components/LinkSubmission/LinkSubmission';
 
@@ -51,7 +53,7 @@ function useLetterEvaluationData({ evaluationSystem }) {
   }, [evaluationSystem]);
 }
 
-function useOnEvaluationChange({ form, instance, assignation, subject }) {
+function useOnEvaluationChange({ form, instance, assignation, subject, evaluationSystem }) {
   const { requiresScoring } = instance ?? {};
   const { score: _score, feedback: _feedback, showFeedback } = useWatch({ control: form.control });
 
@@ -100,6 +102,8 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
 
     if (!gradeIsDirty && !isNil(grade) && grade !== score) {
       form.setValue('score', grade);
+    } else if (isNil(score) && evaluationSystem?.minScale) {
+      form.setValue('score', evaluationSystem.minScale?.number);
     }
 
     if (!feedbackIsDirty && savedFeedback !== feedback) {
@@ -108,7 +112,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject }) {
         form.setValue('showFeedback', true);
       }
     }
-  }, [previousScore]);
+  }, [previousScore, evaluationSystem]);
 
   return onSave;
 }
@@ -120,12 +124,12 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
   const [loading, setLoading] = useState(false);
   const [chatOpened, setChatOpened] = useState(false);
 
-  const room = `assignables.subject|${subject}.assignation|${assignation?.id}.userAgent|${assignation?.user}`;
+  const room = useAssignationComunicaRoom({ assignation, subject });
 
   const evaluationSystem = useProgramEvaluationSystem(instance);
   const data = useLetterEvaluationData({ evaluationSystem });
 
-  const publish = useOnEvaluationChange({ form, instance, assignation, subject });
+  const publish = useOnEvaluationChange({ form, instance, assignation, subject, evaluationSystem });
 
   if (instance.dates.evaluationClosed) {
     return (
@@ -135,6 +139,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           hooks.fireEvent('chat:onRoomOpened', room);
           setChatOpened(true);
         }}
+        hideChat={!room}
         subject={subject}
       />
     );
@@ -155,6 +160,22 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                     label={t('score_placeholder')}
                     min={evaluationSystem?.minScale?.number}
                     max={evaluationSystem?.maxScale?.number}
+                    precision={2}
+                    formatter={(userInput) => {
+                      let _value = userInput;
+                      const precision = trimEnd(_value.toString().split('.')[1] || '', '0').length;
+
+                      if (_value.endsWith('.')) {
+                        return _value;
+                      }
+
+                      if (_value.startsWith('0') && !_value.startsWith('0.')) {
+                        _value = _value.replace('^0', '');
+                      }
+
+                      return `${(_value * 1 || 0).toFixed(precision)}`;
+                    }}
+                    parser={(value) => value.replace(',', '.').trim()}
                   />
                 );
               }
@@ -184,7 +205,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                   {...showFeedbackField}
                   checked={!!showFeedbackField.value}
                   label={t('add_feedback')}
-                  render={() => <TextEditorInput {...field} />}
+                  render={() => <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />}
                 />
               )}
             />
@@ -192,16 +213,18 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
         />
       )}
       <Stack justifyContent="end" spacing={4}>
-        <Button
-          variant="link"
-          onClick={() => {
-            hooks.fireEvent('chat:onRoomOpened', room);
-            setChatOpened(true);
-          }}
-          rightIcon={<PluginComunicaIcon />}
-        >
-          {t('comunica')}
-        </Button>
+        {!!room && (
+          <Button
+            variant="link"
+            onClick={() => {
+              hooks.fireEvent('chat:onRoomOpened', room);
+              setChatOpened(true);
+            }}
+            rightIcon={<PluginComunicaIcon />}
+          >
+            {t('comunica')}
+          </Button>
+        )}
         <Button
           loading={loading}
           onClick={async () => {

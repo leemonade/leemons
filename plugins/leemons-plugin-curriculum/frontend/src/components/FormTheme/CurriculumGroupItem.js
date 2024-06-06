@@ -8,10 +8,11 @@ import {
   Stack,
   Table,
   TableInput,
-  TAGIFY_TAG_REGEX,
   Text,
   TextInput,
 } from '@bubbles-ui/components';
+import { TAGIFY_TAG_REGEX } from '@bubbles-ui/extras';
+
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ArrowChevDownIcon, ArrowChevUpIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { htmlToText, numberToEncodedLetter, useStore } from '@common';
@@ -220,7 +221,7 @@ function CurriculumGroupItem({
           blockData.groupListType === 'field' ? (
             <TextInput required />
           ) : (
-            <TextEditorInput required />
+            <TextEditorInput editorStyles={{ minHeight: '96px' }} required />
           ),
         rules,
       },

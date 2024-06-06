@@ -16,6 +16,7 @@ const {
   removeGroupFromClassesUnderNodeTree,
   duplicateGroupWithClassesUnderNodeTreeByIds,
   duplicateGroup,
+  getGroupById,
 } = require('../../core/groups');
 
 /** @type {ServiceSchema} */
@@ -118,6 +119,27 @@ module.exports = {
         return { status: 200, data };
       }
       throw validator.error;
+    },
+  },
+  getGroupDetails: {
+    rest: {
+      path: '/:id',
+      method: 'GET',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.programs': {
+            actions: ['admin', 'view'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { id } = ctx.params;
+      const data = await getGroupById({ id, ctx });
+      return { status: 200, data };
     },
   },
   duplicateGroupWithClassesUnderNodeTreeRest: {

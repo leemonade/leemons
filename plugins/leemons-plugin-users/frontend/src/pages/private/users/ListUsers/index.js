@@ -1,61 +1,321 @@
+import React, { useEffect, useMemo } from 'react';
+import _, { isBoolean, isFunction } from 'lodash';
 import {
-  ActionButton,
   Badge,
   Box,
-  Button,
-  Checkbox,
-  ContextContainer,
-  LoadingOverlay,
-  PageContainer,
   Pager,
-  Paper,
-  SearchInput,
-  Select,
   Stack,
   Table,
+  Select,
+  Button,
+  TLayout,
+  Checkbox,
+  ImageLoader,
+  SearchInput,
+  ActionButton,
+  LoadingOverlay,
+  ContextContainer,
 } from '@bubbles-ui/components';
-import { DeleteBinIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import _ from 'lodash';
-import React, { useEffect, useMemo } from 'react';
-// TODO: import from @common plugin
-
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { CloudUploadIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { LocaleDate, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
+import { activateUserRequest, getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import { useHistory } from 'react-router-dom';
-
 import DisableUsersModal from '@users/components/DisableUsersModal';
 import EnableUsersModal from '@users/components/EnableUsersModal';
 import UserDetailDrawer from '@users/components/UserDetailDrawer';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
-import { SelectCenter } from '../../../../components/SelectCenter';
-import { SelectProfile } from '../../../../components/SelectProfile';
+import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
+import { ListEmptyState } from '@common/components/ListEmptyState';
+import { SelectProfile } from '@users/components/SelectProfile';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { SetPasswordModal } from '@users/components/SetPasswordModal';
 import { listUsersRequest } from '../../../../request';
+import { BulkActionModal } from './components/BulkActionModal';
 
 function ListUsers() {
-  const [t, trans] = useTranslateLoader(prefixPN('list_users'));
+  const [t] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore({
     page: 0,
     size: 10,
     checkeds: [],
   });
-  const { t: tCommon } = useCommonTranslate('page_header');
-  const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
-
+  const [loadingError] = useRequestErrorMessage();
+  const [bulkActionInfo, setBulkActionInfo] = React.useState(null);
   const history = useHistory();
+  const [, , , getErrorMessage] = useRequestErrorMessage();
 
-  function getUserAgentId(user) {
-    return _.find(store.pagination?.userAgents, { user }).id;
+  // ····················································
+  // INIT DATA LOADING
+
+  async function listUsers(searchQuery) {
+    const query = {};
+    if (searchQuery ?? store.search) {
+      query.$or = [
+        { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+      ];
+    }
+    if (store.profile) {
+      query.profiles = store.profile;
+    }
+    if (store.centerId) {
+      query.centers = store.centerId;
+    }
+    if (store.state) {
+      query.disabled = true;
+      if (store.state === 'active') {
+        query.disabled = false;
+      }
+    }
+
+    const { data } = await listUsersRequest({
+      page: store.page,
+      size: store.size,
+      query,
+    });
+
+    return data;
   }
 
-  function getUserAgentDisabled(user) {
-    return _.find(store.pagination?.userAgents, { user }).disabled;
+  async function load(searchQuery) {
+    try {
+      store.loading = true;
+      render();
+      store.pagination = await listUsers(searchQuery);
+      store.loading = false;
+      render();
+    } catch (err) {
+      addErrorAlert(getErrorMessage(err));
+    }
+    store.loading = false;
+    render();
   }
+
+  async function getPermissions() {
+    const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
+      getPermissionsWithActionsIfIHaveRequest('users.users'),
+      getPermissionsWithActionsIfIHaveRequest('users.import'),
+    ]);
+    if (addPermission) {
+      store.canAdd =
+        addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
+    }
+    if (importPermission) {
+      store.canImport =
+        importPermission.actionNames.includes('view') ||
+        importPermission.actionNames.includes('update') ||
+        importPermission.actionNames.includes('admin');
+    }
+    render();
+  }
+
+  useEffect(() => {
+    getPermissions();
+  }, []);
+
+  // ····················································
+  // METHODS
+
+  function getUserStateKey(status) {
+    if (status === 'disabled') {
+      return 'disable';
+    }
+    if (status === 'created') {
+      return 'statePending';
+    }
+    if (status === 'password-registered') {
+      return 'stateVerified';
+    }
+    return 'active';
+  }
+
+  function filterSelectedUserAgentsByProfiles(profiles) {
+    const userAgents = store.pagination?.userAgents ?? [];
+    return userAgents
+      .filter((ua) => store.checkeds.includes(ua.user))
+      .filter((ua) => profiles.includes(ua.profile))
+      .map((ua) => ua.id);
+  }
+
+  function goImportPage() {
+    history.push('/private/users/import');
+  }
+
+  function makeAction(action) {
+    store.actionModal = action;
+    render();
+  }
+
+  async function changeSelectedUserAgentState(profiles, changeStateFunc) {
+    const userAgentsToChange = filterSelectedUserAgentsByProfiles(profiles);
+
+    if (isFunction(changeStateFunc) && userAgentsToChange.length > 0) {
+      let current = 0;
+      const total = userAgentsToChange.length;
+      setBulkActionInfo({ state: 'init', current, total, completed: 0 });
+
+      // Process each userAgent sequentially
+      await userAgentsToChange.reduce(async (promise, userAgentId) => {
+        await promise;
+        current++;
+        const completed = (current / total) * 100;
+        setBulkActionInfo({ state: 'processing', current, total, completed });
+        return changeStateFunc(userAgentId);
+      }, Promise.resolve());
+
+      setBulkActionInfo(null);
+    }
+    return userAgentsToChange?.length ?? 0;
+  }
+
+  async function disableSelectedUsers(profiles) {
+    try {
+      store.loading = true;
+      store.actionModal = null;
+      render();
+      const updatedCount = await changeSelectedUserAgentState(profiles, disableUserAgent);
+      addSuccessAlert(
+        t(updatedCount === 1 ? 'disableSingleUserSuccess' : 'disableUserSuccess', {
+          n: updatedCount,
+        })
+      );
+      store.checkeds = [];
+      await load();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+    store.loading = false;
+    render();
+  }
+
+  async function enableSelectedUsers(profiles) {
+    try {
+      store.loading = true;
+      store.actionModal = null;
+      render();
+      const updatedCount = await changeSelectedUserAgentState(profiles, activeUserAgent);
+      addSuccessAlert(
+        t(updatedCount === 1 ? 'enableSingleUserSuccess' : 'enableUserSuccess', {
+          n: updatedCount,
+        })
+      );
+      store.checkeds = [];
+      await load();
+    } catch (e) {
+      addErrorAlert(getErrorMessage(e));
+    }
+    store.loading = false;
+    render();
+  }
+
+  async function activateUserManually(data) {
+    let current = 0;
+    const total = store.checkeds.length;
+    setBulkActionInfo({ state: 'init', current, total, completed: 0 });
+
+    // Process each userAgent sequentially
+    await store.checkeds.reduce(async (promise, userId) => {
+      await promise;
+      current++;
+      const completed = (current / total) * 100;
+      setBulkActionInfo({ state: 'processing', current, total, completed });
+      return activateUserRequest({
+        id: userId,
+        password: data.password,
+      });
+    }, Promise.resolve());
+
+    setBulkActionInfo(null);
+
+    store.checkeds = [];
+    load();
+  }
+
+  // ····················································
+  // HANDLERS
+
+  async function handleSearchUsers(value) {
+    store.search = value;
+    store.isSearching = true;
+    load(value);
+  }
+
+  async function handleClearFilters() {
+    store.search = null;
+    store.profile = null;
+    store.state = null;
+    store.centerId = null;
+    store.pagination = null;
+    store.isSearching = false;
+    render();
+  }
+
+  async function handleCenterChange(centerId) {
+    store.centerId = centerId;
+    store.center = store.centers?.find((c) => c.id === centerId);
+    load();
+  }
+
+  async function handleProfileChange(profile) {
+    store.profile = profile;
+    handleSearchUsers();
+  }
+
+  async function handleStateChange(state) {
+    store.state = state;
+    handleSearchUsers();
+  }
+
+  async function handleSearchChange(value) {
+    store.search = value;
+    render();
+  }
+
+  async function handleOnPageChange(page) {
+    store.page = page;
+    load();
+  }
+
+  async function handleOnPageSizeChange(size) {
+    store.size = Number(size);
+    load();
+  }
+
+  function handleOpenUserDrawer() {
+    if (!store.canAdd) {
+      store.openedUserDetailDrawer = true;
+    } else {
+      store.openedUserAdminDrawer = true;
+    }
+    render();
+  }
+
+  async function handleCloseUserDrawer(reload) {
+    store.openedUserAdminDrawer = false;
+    store.openedUserDetailDrawer = false;
+    store.openUser = null;
+    render();
+    if (reload && isBoolean(reload)) {
+      load();
+    }
+  }
+
+  function handleOnLoadCenters(centers) {
+    store.centers = centers;
+    render();
+  }
+
+  // ····················································
+  // RENDER
 
   const tableHeaders = useMemo(
     () => [
@@ -63,12 +323,12 @@ function ListUsers() {
         Header: () => (
           <Box style={{ width: '30px' }}>
             <Checkbox
-              checked={store.checkeds.length === store.pagination?.userAgents.length}
+              checked={store.checkeds.length === store.pagination?.items.length}
               onChange={() => {
-                if (store.checkeds.length === store.pagination?.userAgents.length) {
+                if (store.checkeds.length === store.pagination?.items.length) {
                   store.checkeds = [];
                 } else {
-                  store.checkeds = _.map(store.pagination?.userAgents, 'id');
+                  store.checkeds = _.map(store.pagination?.items, 'id');
                 }
                 render();
               }}
@@ -119,383 +379,227 @@ function ListUsers() {
 
   const tableItems = useMemo(
     () =>
-      store.pagination
-        ? _.map(store.pagination.items, (item) => ({
-            ...item,
-            checked: (
-              <Box style={{ width: '30px' }}>
-                <Checkbox
-                  checked={store.checkeds.includes(getUserAgentId(item.id))}
-                  onChange={() => {
-                    const index = store.checkeds.indexOf(getUserAgentId(item.id));
-                    if (index >= 0) {
-                      store.checkeds.splice(index, 1);
-                    } else {
-                      store.checkeds.push(getUserAgentId(item.id));
-                    }
-                    render();
-                  }}
-                />
-              </Box>
-            ),
-            tags: (
-              <Box>
-                {item.tags.map((tag) => (
-                  <Badge key={tag} label={tag} closable={false} />
-                ))}
-              </Box>
-            ),
-            birthdate: <LocaleDate date={item.birthdate} />,
-            state: t(getUserAgentDisabled(item.id) ? 'disable' : 'active'),
-            actions: (
-              <Box style={{ textAlign: 'right', width: '100%' }}>
-                <ActionButton
-                  // as={Link}
-                  // to={`/private/users/detail/${item.id}`}
-                  onClick={() => {
-                    store.openUser = item.id;
-                    store.openedUserDrawer = true;
-                    render();
-                  }}
-                  tooltip={t('view')}
-                  icon={<ExpandDiagonalIcon />}
-                />
-              </Box>
-            ),
-          }))
-        : [],
-    [t, store.pagination, JSON.stringify(store.checkeds)]
+      _.map(store.pagination?.items ?? [], (item) => ({
+        ...item,
+        checked: (
+          <Box style={{ width: '30px' }}>
+            <Checkbox
+              checked={store.checkeds.includes(item.id)}
+              onChange={() => {
+                const index = store.checkeds.indexOf(item.id);
+                if (index >= 0) {
+                  store.checkeds.splice(index, 1);
+                } else {
+                  store.checkeds.push(item.id);
+                }
+                render();
+              }}
+            />
+          </Box>
+        ),
+        tags: (
+          <Stack spacing={1}>
+            {item.tags.map((tag) => (
+              <Badge key={tag} label={tag} closable={false} />
+            ))}
+          </Stack>
+        ),
+        birthdate: <LocaleDate date={item.birthdate} />,
+        state: t(getUserStateKey(item.status)),
+        actions: (
+          <Box style={{ textAlign: 'right', width: '100%' }}>
+            <ActionButton
+              onClick={() => {
+                store.openUser = item;
+                handleOpenUserDrawer();
+              }}
+              tooltip={t('view')}
+              icon={<ExpandDiagonalIcon />}
+            />
+          </Box>
+        ),
+      })),
+    [t, JSON.stringify(store.pagination), JSON.stringify(store.checkeds)]
   );
-
-  async function listUsers() {
-    const query = {};
-    if (store.search) {
-      query.$or = [
-        { name: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { surnames: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { secondSurname: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { email: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { phone: { $regex: store.search.toLowerCase(), $options: 'i' } },
-        { birthdate: { $regex: store.search.toLowerCase(), $options: 'i' } },
-      ];
-    }
-    if (store.profile) {
-      query.profiles = store.profile;
-    }
-    if (store.center) {
-      query.centers = store.center;
-    }
-    if (store.state) {
-      query.disabled = true;
-      if (store.state === 'active') {
-        query.disabled = false;
-      }
-    }
-
-    const { data } = await listUsersRequest({
-      page: store.page,
-      size: store.size,
-      query,
-    });
-
-    return data;
-  }
-
-  async function load() {
-    try {
-      store.loading = true;
-      render();
-      store.pagination = await listUsers();
-      store.loading = false;
-      render();
-    } catch (err) {
-      setLoadingError(err);
-    }
-    store.loading = false;
-    render();
-  }
-
-  async function getPermissions() {
-    const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
-      getPermissionsWithActionsIfIHaveRequest('users.users'),
-      getPermissionsWithActionsIfIHaveRequest('users.import'),
-    ]);
-    if (addPermission) {
-      store.canAdd =
-        addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
-    }
-    if (importPermission) {
-      store.canImport =
-        importPermission.actionNames.includes('view') ||
-        importPermission.actionNames.includes('update') ||
-        importPermission.actionNames.includes('admin');
-    }
-    render();
-  }
-
-  useEffect(() => {
-    // load();
-    getPermissions();
-  }, []);
-
-  const headerValues = useMemo(
-    () => ({
-      title: t('pageTitle'),
-    }),
-    [t]
-  );
-
-  async function centerChange(center) {
-    store.center = center;
-    render();
-    // await load();
-  }
-
-  async function profileChange(profile) {
-    store.profile = profile;
-    render();
-    // await load();
-  }
-
-  async function stateChange(state) {
-    store.state = state;
-    render();
-    // await load();
-  }
-
-  async function searchChange(value) {
-    store.search = value;
-    render();
-    // await load();
-  }
-
-  async function onPageChange(page) {
-    store.page = page;
-    await load();
-  }
-
-  async function onPageSizeChange(size) {
-    store.size = Number(size);
-    await load();
-  }
-
-  function goCreatePage() {
-    history.push('/private/users/create');
-  }
-
-  function goImportPage() {
-    history.push('/private/users/import');
-  }
-
-  function makeAction(action) {
-    store.actionModal = action;
-    render();
-  }
-
-  async function disableSelectedUsers() {
-    try {
-      store.loading = true;
-      store.actionModal = null;
-      render();
-      await disableUserAgent(store.checkeds);
-      store.checkeds = [];
-      await load();
-    } catch (e) {
-      setLoadingError(e);
-    }
-    store.loading = false;
-    render();
-  }
-
-  async function enableSelectedUsers() {
-    try {
-      store.loading = true;
-      store.actionModal = null;
-      render();
-      await activeUserAgent(store.checkeds);
-      store.checkeds = [];
-      await load();
-    } catch (e) {
-      setLoadingError(e);
-    }
-    store.loading = false;
-    render();
-  }
-
-  const headerButtons = React.useMemo(() => {
-    const result = {};
-    if (store.canAdd) result.new = tCommon('new');
-    if (store.canImport) result.import = t('import');
-    return result;
-  }, [store.canImport, store.canAdd, t, tCommon]);
 
   return (
     <>
-      {store.loading ? <LoadingOverlay visible /> : null}
-      <ContextContainer fullHeight>
-        <AdminPageHeader
-          values={headerValues}
-          buttons={headerButtons}
-          onImport={goImportPage}
-          onNew={goCreatePage}
+      <TLayout>
+        <TLayout.Header
+          title={t('pageTitle')}
+          cancelable={false}
+          icon={
+            <Box sx={{ position: 'relative', width: 24, height: 24 }}>
+              <ImageLoader src="/public/users/menu-icon.svg" width={18} height={18} />
+            </Box>
+          }
         />
-        <Paper color="solid" shadow="none" padding="none">
+        <TLayout.Content fullWidth>
           <Box>
-            <PageContainer noFlex>
-              <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-                <ContextContainer direction="row">
-                  <SelectCenter
-                    clearable={t('clearFilter')}
-                    label={t('centerLabel')}
-                    autoSelectOneOption={false}
-                    value={store.center}
-                    onChange={centerChange}
-                  />
-                  <SelectProfile
-                    clearable={t('clearFilter')}
-                    firstSelected={false}
-                    label={t('profileLabel')}
-                    value={store.profile}
-                    onChange={profileChange}
-                  />
-                  <Select
-                    clearable={t('clearFilter')}
-                    label={t('stateLabel')}
-                    data={[
-                      { label: t('stateActive'), value: 'active' },
-                      { label: t('stateDisabled'), value: 'disabled' },
-                    ]}
-                    value={store.state}
-                    onChange={stateChange}
-                  />
-                  <SearchInput
-                    label={t('searchLabel')}
-                    value={store.search}
-                    onChange={searchChange}
-                    onKeyPress={(e) => {
-                      if (e.charCode === 13 && store.center && store.profile) {
-                        load();
-                      }
-                    }}
-                  />
-                  <Box
-                    sx={(theme) => ({ alignSelf: 'end', gap: theme.spacing[2], display: 'flex' })}
-                  >
-                    <Button
-                      variant="outline"
-                      disabled={!store.center || !store.profile}
-                      onClick={load}
-                    >
-                      {t('searchLabel')}
-                    </Button>
-                    <ActionButton
-                      icon={<DeleteBinIcon />}
-                      onClick={() => {
-                        store.search = null;
-                        store.profile = null;
-                        store.state = null;
-                        store.center = null;
-                        store.pagination = null;
-                        render();
-                      }}
-                    />
-                  </Box>
-                </ContextContainer>
-              </Box>
+            {store.loading ? <LoadingOverlay visible /> : null}
+            <ContextContainer title={t('searchTitle')}>
+              <ContextContainer direction="row">
+                <SelectCenter
+                  required
+                  clearable={t('clearFilter')}
+                  label={t('centerLabel')}
+                  placeholder={t('selectPlaceholder')}
+                  value={store.centerId}
+                  onChange={handleCenterChange}
+                  onLoadCenters={handleOnLoadCenters}
+                />
+                <SelectProfile
+                  clearable={t('clearFilter')}
+                  firstSelected={false}
+                  placeholder={t('viewAll')}
+                  label={t('profileLabel')}
+                  value={store.profile}
+                  onChange={handleProfileChange}
+                  showAll={false}
+                />
+                <Select
+                  clearable={t('clearFilter')}
+                  label={t('stateLabel')}
+                  placeholder={t('viewAll')}
+                  data={[
+                    { label: t('stateActive'), value: 'active' },
+                    { label: t('stateDisabled'), value: 'disabled' },
+                  ]}
+                  value={store.state}
+                  onChange={handleStateChange}
+                />
+                <SearchInput
+                  label={t('searchLabel')}
+                  value={store.search}
+                  placeholder={t('searchPlaceholder')}
+                  onChange={handleSearchChange}
+                  onKeyPress={(e) => {
+                    if (e.charCode === 13 && store.centerId) {
+                      handleSearchUsers(e.target.value);
+                    }
+                  }}
+                />
+                <Stack noFlex alignItems="end" spacing={2}>
+                  <Button variant="link" leftIcon={<DeleteBinIcon />} onClick={handleClearFilters}>
+                    {t('clearFilter')}
+                  </Button>
+                </Stack>
+              </ContextContainer>
 
-              <Paper padding={2} mt={20} mb={20} fullWidth>
-                <LoadingErrorAlert />
-                {!store.loading && !loadingError ? (
-                  <Box>
-                    {store.checkeds.length ? (
-                      <>
-                        <Box style={{ width: 200 }}>
-                          <Select
-                            disabled={!store.checkeds.length}
-                            placeholder={t('bulkActions')}
-                            data={[
-                              { label: t('activateUsers'), value: 'active' },
-                              { label: t('disableUsers'), value: 'disable' },
-                            ]}
-                            value={null}
-                            onChange={makeAction}
-                          />
-                        </Box>
-                        <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                          {t('selectedUsers', { n: store.checkeds.length })}
-                        </Box>
-                      </>
-                    ) : (
-                      <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                        {store.pagination?.userAgents.length
-                          ? t('nUsers', {
-                              n: store.pagination?.userAgents.length,
-                            })
-                          : ''}
+              {!store.loading && !loadingError ? (
+                <Box>
+                  {store.checkeds.length > 0 && (
+                    <>
+                      <Box style={{ width: '20%' }}>
+                        <Select
+                          label={t('bulkActions')}
+                          disabled={!store.checkeds.length}
+                          data={[
+                            { label: t('activateUsers'), value: 'active' },
+                            { label: t('disableUsers'), value: 'disable' },
+                            { label: t('activateUserManually'), value: 'activate-manually' },
+                          ]}
+                          value={null}
+                          onChange={makeAction}
+                        />
                       </Box>
-                    )}
+                      <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                        {t('selectedUsers', { n: store.checkeds.length })}
+                      </Box>
+                    </>
+                  )}
 
-                    <Table
-                      columns={tableHeaders}
-                      data={tableItems}
-                      onStyleRow={({ row, theme }) => {
-                        if (getUserAgentDisabled(row.original.id)) {
-                          return {
-                            backgroundColor: theme.other.core.color.neutral['100'],
-                          };
-                        }
-                      }}
+                  {tableItems?.length > 0 && <Table columns={tableHeaders} data={tableItems} />}
+                  {tableItems?.length === 0 && store.canAdd && (
+                    <ListEmptyState
+                      description={t(store.isSearching ? 'noResults' : 'emptyState')}
+                      buttonLabel={t('new')}
+                      onClick={handleOpenUserDrawer}
                     />
-                  </Box>
-                ) : null}
+                  )}
+                </Box>
+              ) : null}
+              {!store.loading && store.pagination?.totalPages > 1 && (
                 <Stack fullWidth justifyContent="center">
                   <Pager
                     page={store.pagination?.page || 0}
                     totalPages={store.pagination?.totalPages || 0}
                     size={store.size}
                     withSize={true}
-                    onChange={(val) => onPageChange(val - 1)}
-                    onSizeChange={onPageSizeChange}
+                    onChange={(val) => handleOnPageChange(val - 1)}
+                    onSizeChange={handleOnPageSizeChange}
                     labels={{
                       show: t('show'),
                       goTo: t('goTo'),
                     }}
                   />
                 </Stack>
-              </Paper>
-            </PageContainer>
+              )}
+            </ContextContainer>
           </Box>
-        </Paper>
-      </ContextContainer>
-      <DisableUsersModal
-        userAgents={store.checkeds}
-        opened={store.actionModal === 'disable'}
-        onClose={() => {
-          store.actionModal = null;
-          render();
-        }}
-        onConfirm={disableSelectedUsers}
-      />
-      <EnableUsersModal
-        userAgents={store.checkeds}
-        opened={store.actionModal === 'active'}
-        onClose={() => {
-          store.actionModal = null;
-          render();
-        }}
-        onConfirm={enableSelectedUsers}
-      />
-      <UserDetailDrawer
-        opened={store.openedUserDrawer}
-        userId={store.openUser}
-        centerId={store.center}
-        profileId={store.profile}
-        onChange={load}
-        onClose={() => {
-          store.openedUserDrawer = false;
-          render();
-        }}
-      />
+        </TLayout.Content>
+        <TLayout.Footer fullWidth>
+          <TLayout.Footer.RightActions>
+            {store.canImport && (
+              <Button variant="outline" onClick={goImportPage} leftIcon={<CloudUploadIcon />}>
+                {t('import')}
+              </Button>
+            )}
+            {store.canAdd && <Button onClick={handleOpenUserDrawer}>{t('new')}</Button>}
+          </TLayout.Footer.RightActions>
+        </TLayout.Footer>
+      </TLayout>
+
+      {!!store.center?.id && (
+        <>
+          <DisableUsersModal
+            users={store.checkeds}
+            center={store.center}
+            opened={store.actionModal === 'disable' && store.checkeds.length > 0}
+            onClose={() => {
+              store.actionModal = null;
+              render();
+            }}
+            onConfirm={disableSelectedUsers}
+          />
+
+          <EnableUsersModal
+            users={store.checkeds}
+            center={store.center}
+            opened={store.actionModal === 'active' && store.checkeds.length > 0}
+            onClose={() => {
+              store.actionModal = null;
+              render();
+            }}
+            onConfirm={enableSelectedUsers}
+          />
+
+          <SetPasswordModal
+            opened={store.actionModal === 'activate-manually' && store.checkeds.length > 0}
+            onClose={() => {
+              store.actionModal = null;
+              render();
+            }}
+            onSave={activateUserManually}
+          />
+
+          <UserDetailDrawer
+            opened={store.openedUserDetailDrawer}
+            userId={store.openUser?.id}
+            center={store.center}
+            onClose={handleCloseUserDrawer}
+          />
+
+          <UserAdminDrawer
+            center={store.center}
+            user={store.openUser}
+            opened={store.openedUserAdminDrawer}
+            onClose={handleCloseUserDrawer}
+          />
+
+          <BulkActionModal opened={bulkActionInfo !== null} info={bulkActionInfo} />
+        </>
+      )}
     </>
   );
 }

@@ -193,6 +193,10 @@ const AssetForm = ({
     if (isImageType) {
       setValue('cover', assetFile);
     }
+    if (type === LIBRARY_FORM_TYPES.MEDIA_FILES && !assetFile?.path) {
+      setValue('name', null);
+      setValue('cover', null);
+    }
   }, [assetFile]);
 
   useEffect(() => {
@@ -312,6 +316,7 @@ const AssetForm = ({
                         icon={<DownloadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
+                        labels={labels}
                         errorMessage={{
                           title: 'Error',
                           message: errorMessages.file?.rejected || 'File was rejected',
@@ -325,7 +330,6 @@ const AssetForm = ({
                     )}
                   />
                 )}
-
                 {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
                   <Controller
                     control={control}
@@ -363,7 +367,6 @@ const AssetForm = ({
                     )}
                   />
                 )}
-
                 {type === 'assignables.scorm' && (
                   <>
                     <Controller
@@ -401,7 +404,7 @@ const AssetForm = ({
                 )}
               </ContextContainer>
             )}
-            <ContextContainer title={labels.presentation}>
+            <ContextContainer title={labels.presentation} subtitle={labels.featuredImage}>
               {!isImage && !hideCover && (
                 <ImagePicker
                   labels={labels}
@@ -439,6 +442,7 @@ const AssetForm = ({
                     placeholder={placeholders.description}
                     required={!isNil(errorMessages?.description?.required)}
                     error={errors.description}
+                    minRows={3}
                     counter="word"
                     counterLabels={{
                       single: labels?.wordCounter?.single,
@@ -474,10 +478,13 @@ const AssetForm = ({
                     value={map(field.value || [], (subject) =>
                       isString(subject) ? subject : subject?.subject
                     )}
-                    onChangeRaw={(e) => {
-                      setAssetColorToSubjectColor(e);
-                      if (e.length > 0) {
-                        if (!program) setValue('program', e[0].programId);
+                    onChangeRaw={(subjectsRaw) => {
+                      setAssetColorToSubjectColor(subjectsRaw);
+                      if (subjectsRaw.length > 0) {
+                        setValue('subjectsRaw', subjectsRaw);
+                        if (subjectsRaw[0].programId !== program) {
+                          setValue('program', subjectsRaw[0].programId);
+                        }
                       } else if (program) setValue('program', null);
                     }}
                     error={error}
@@ -526,8 +533,6 @@ const AssetForm = ({
                         {...field}
                         label={labels.color}
                         placeholder={placeholders.color}
-                        useHsl
-                        compact={false}
                         manual={false}
                         disabled={formValues.subjects?.length}
                         contentStyle={{ width: 190 }}

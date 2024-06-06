@@ -7,7 +7,6 @@ import { set, uniq } from 'lodash';
 import {
   Box,
   Button,
-  ContextContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
@@ -63,6 +62,7 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
     showCorrectAnswers: !values.others.hideResponses,
 
     metadata: {
+      createComunicaRooms: !!values.others.createComunicaRooms,
       evaluationType: finalEvaluationType,
     },
   };
@@ -118,6 +118,7 @@ export default function Form({
   showMessageForStudents,
   showReport,
   showResponses,
+  hideShowInCalendar,
 
   scrollRef,
 
@@ -178,6 +179,7 @@ export default function Form({
           <Box className={classes.root}>
             <Box className={classes.leftColumn}>
               <Presentation
+                assignable={assignable}
                 localizations={localizations?.presentation}
                 showTitle={showTitle}
                 showThumbnail={showThumbnail}
@@ -247,10 +249,10 @@ export default function Form({
                     error={error}
                     hideMaxTime={hideMaxTime}
                     hideSectionHeaders={hideSectionHeaders}
+                    hideShowInCalendar={hideShowInCalendar}
                   />
                 )}
               />
-
               <Controller
                 name="evaluation"
                 control={control}
@@ -320,4 +322,5 @@ Form.propTypes = {
   showMessageForStudents: PropTypes.bool,
   showReport: PropTypes.bool,
   showResponses: PropTypes.bool,
+  hideShowInCalendar: PropTypes.bool,
 };

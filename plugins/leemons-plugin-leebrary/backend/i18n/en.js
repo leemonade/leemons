@@ -36,6 +36,11 @@ module.exports = {
         presentation: 'Presentation',
         subTitle: 'Resource title',
       },
+      footer: {
+        finish: 'Finish',
+        publish: 'Only publish',
+        publishAndAssign: 'Publish and assign',
+      },
       bookmark: {
         titleNew: 'New bookmark',
         titleEdit: 'Edit bookmark',
@@ -58,6 +63,7 @@ module.exports = {
         subjects: 'Subjects',
         dropFile: 'or drop a computer file here',
         changeImage: 'Change image',
+        removeButton: 'Remove',
         uploadButton: 'Upload image',
         search: 'Search from library',
         submitForm: 'Add to library',
@@ -474,5 +480,23 @@ module.exports = {
     pageLabel: 'Page',
     paginatorLabel: '/',
     schemaLabel: 'Schema',
+  },
+  assignAsset: {
+    successAlert: 'Resource successfully assigned',
+    errorAlert: 'An error occurred while assigning the resource',
+  },
+  assignableExecution: {
+    information: 'Information',
+    instructions: 'Instructions',
+    finish: 'Finish',
+  },
+  assignableCorrection: {
+    action: 'Feedback',
+    finished_alert: 'Activity finished',
+    summary: 'Activity summary',
+    information: 'Information',
+    resources: 'Resources',
+    nextActivity: 'Next activity',
+    goToModule: 'Module dashboard',
   },
 };

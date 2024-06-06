@@ -1,44 +1,28 @@
-import { Box, Button, Modal } from '@bubbles-ui/components';
-import { useStore } from '@common';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { noop } from 'lodash';
+import { Box, Button, Modal, Paragraph } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { getUserAgentsInfoRequest } from '../request';
+import { MultiSelectProfile } from './MultiSelectProfile';
 
-function DisableUsersModal({ userAgents, opened, onClose = () => {}, onConfirm = () => {} }) {
+function DisableUsersModal({ users, center, opened, onClose = noop, onConfirm = noop }) {
   const [t] = useTranslateLoader(prefixPN('disableUserModal'));
-  const [store, render] = useStore({});
-
-  async function load() {
-    const {
-      userAgents: [userAgent],
-    } = await getUserAgentsInfoRequest([userAgents[0]], {
-      withCenter: true,
-      withProfile: true,
-    });
-    store.center = userAgent.center;
-    store.profile = userAgent.profile;
-    render();
-  }
-
-  React.useEffect(() => {
-    if (userAgents.length) {
-      load();
-    }
-  }, [JSON.stringify(userAgents)]);
+  const [profiles, setProfiles] = useState([]);
 
   return (
-    <Modal opened={opened} onClose={onClose} title={t('title')}>
-      <Box
+    <Modal opened={opened} onClose={onClose} title={t(users.length > 1 ? 'title' : 'titleSingle')}>
+      <Paragraph
         dangerouslySetInnerHTML={{
-          __html: t('description', {
-            n: userAgents?.length,
-            centerName: store.center?.name,
-            profileName: store.profile?.name,
+          __html: t(users.length === 1 ? 'descriptionSingle' : 'description', {
+            n: users?.length,
+            centerName: center?.name,
           }),
         }}
       />
+      <Box sx={{ width: 260, marginTop: 10 }}>
+        <MultiSelectProfile label={t('selectProfiles')} value={profiles} onChange={setProfiles} />
+      </Box>
       <Box
         sx={(theme) => ({
           marginTop: theme.spacing[4],
@@ -46,20 +30,23 @@ function DisableUsersModal({ userAgents, opened, onClose = () => {}, onConfirm =
           justifyContent: 'space-between',
         })}
       >
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="link" onClick={onClose}>
           {t('cancel')}
         </Button>
-        <Button onClick={onConfirm}>{t('confirm')}</Button>
+        <Button onClick={() => onConfirm(profiles)} disabled={profiles.length === 0}>
+          {t('confirm')}
+        </Button>
       </Box>
     </Modal>
   );
 }
 
 DisableUsersModal.propTypes = {
-  userAgents: PropTypes.string,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onConfirm: PropTypes.func,
+  users: PropTypes.array,
+  center: PropTypes.object,
 };
 
 export { DisableUsersModal };

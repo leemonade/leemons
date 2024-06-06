@@ -14,7 +14,7 @@ import {
   LoadingOverlay,
   TotalLayoutContainer,
   PaginatedList,
-  Drawer,
+  BaseDrawer,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
@@ -35,6 +35,7 @@ import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAss
 import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
 import LibraryContext from '@leebrary/context/LibraryContext';
 import { useHistory } from 'react-router-dom';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import prefixPN from '../helpers/prefixPN';
 import { CardDetailWrapper } from './CardDetailWrapper';
 import { CardWrapper } from './CardWrapper';
@@ -154,6 +155,7 @@ const AssetList = ({
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
+  const isTeacher = useIsTeacher();
 
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
@@ -285,7 +287,13 @@ const AssetList = ({
         value: item.key,
         label: item.name,
         icon: (
-          <Box style={{ height: 16, marginBottom: 5 }}>
+          <Box
+            sx={(theme) => ({
+              color: theme.other.core.color.neutral['600'],
+              height: 16,
+              marginBottom: 5,
+            })}
+          >
             <ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} />
           </Box>
         ),
@@ -325,7 +333,7 @@ const AssetList = ({
       download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
       delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
       share: selectedAsset?.shareable ? t('cardToolbar.share') : false,
-      assign: selectedAsset?.assignable ? t('cardToolbar.assign') : false,
+      assign: isTeacher && selectedAsset?.assignable ? t('cardToolbar.assign') : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
           ? t('cardToolbar.pin')
@@ -333,7 +341,7 @@ const AssetList = ({
       unpin: selectedAsset?.pinned ? t('cardToolbar.unpin') : false,
       toggle: t('cardToolbar.toggle'),
     };
-  }, [selectedAsset, category, t]);
+  }, [selectedAsset, t, isTeacher, allowStatusFilter, statusFilter]);
 
   // -------------------------------------------------------------------------------------
   // EMPTY STATE
@@ -426,7 +434,7 @@ const AssetList = ({
   };
 
   const handleOnAssign = (item) => {
-    history.push(`/private/tasks/library/create?from=leebrary&asset=${item.id}`);
+    history.push(`/private/leebrary/assign/${item.id}`);
   };
 
   const handleOnDelete = (item) => {
@@ -772,9 +780,9 @@ const AssetList = ({
             zIndex: 99,
           })}
         >
-          <Drawer
+          <BaseDrawer
             opened={isDrawerOpen}
-            size="496px"
+            size="576px"
             close={false}
             empty={true}
             className={{
@@ -810,12 +818,10 @@ const AssetList = ({
               onOpenDrawer={() => setIsDrawerOpen(true)}
               locale={locale}
             />
-          </Drawer>
+          </BaseDrawer>
         </Box>
       </TotalLayoutContainer>
       <PermissionsDataDrawer
-        size={720}
-        hasBack={false}
         opened={!!itemToShare}
         asset={itemToShare}
         sharing={true}

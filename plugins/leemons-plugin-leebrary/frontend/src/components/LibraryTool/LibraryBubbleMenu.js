@@ -42,10 +42,7 @@ export const LibraryBubbleMenu = ({
   alignLabels,
   bubbleMenu,
 }) => {
-  const getData = () => {
-    const content = editor.getAttributes('library');
-    return content;
-  };
+  const getData = () => editor.getAttributes('library');
 
   const data = getData();
 
@@ -53,6 +50,17 @@ export const LibraryBubbleMenu = ({
     const propertyKey = Object.keys(property)[0];
     const propertyValue = Object.values(property)[0];
     handleOnChange({ ...data, [propertyKey]: propertyValue });
+  };
+  const shouldShowCardButton = () => {
+    const fileType = data?.asset?.fileType;
+    const fileExtension = data?.asset?.fileExtension;
+    return (
+      fileType === 'bookmark' ||
+      fileExtension === 'pdf' ||
+      fileType === 'document' ||
+      fileType === 'application' ||
+      fileType === 'file'
+    );
   };
 
   useEffect(() => {
@@ -118,20 +126,32 @@ export const LibraryBubbleMenu = ({
           onClick={() => handleChangeData({ display: 'embed' })}
           active={data.display === 'embed'}
         />
-        {/*
-        <ActionButton
-          label={labels.card?.toUpperCase()}
-          style={actionButtonStyles}
-          onClick={() => handleChangeData({ display: 'card' })}
-          active={data.display === 'card'}
-        />
-        */}
-        <ActionButton
-          label={labels.player?.toUpperCase()}
-          style={actionButtonStyles}
-          onClick={() => handleChangeData({ display: 'player' })}
-          active={data.display === 'player'}
-        />
+
+        <Box className={classes.iconGroup}>
+          {shouldShowCardButton() ? (
+            <ActionButton
+              label={labels.card?.toUpperCase()}
+              style={actionButtonStyles}
+              onClick={() => handleChangeData({ display: 'card' })}
+              active={data.display === 'card'}
+            />
+          ) : (
+            <ActionButton
+              label={labels.player?.toUpperCase()}
+              style={actionButtonStyles}
+              onClick={() => handleChangeData({ display: 'player' })}
+              active={data.display === 'player'}
+            />
+          )}
+          {data?.asset?.fileType === 'bookmark' && data?.asset?.mediaType === 'video' ? (
+            <ActionButton
+              label={labels.player?.toUpperCase()}
+              style={actionButtonStyles}
+              onClick={() => handleChangeData({ display: 'player' })}
+              active={data.display === 'player'}
+            />
+          ) : null}
+        </Box>
       </Box>
 
       {/* Actions */}

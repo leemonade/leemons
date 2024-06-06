@@ -2,9 +2,7 @@
 const _ = require('lodash');
 const { validateSaveTest } = require('../../validations/forms');
 
-async function saveTest({ data, ctx }) {
-  console.log('data', data);
-
+async function saveTest({ data, ignoreAsset, ctx }) {
   validateSaveTest(data);
 
   const toSave = {
@@ -28,6 +26,7 @@ async function saveTest({ data, ctx }) {
     instructionsForTeachers: data.instructionsForTeachers,
     instructionsForStudents: data.instructionsForStudents,
     gradable: data.gradable || false,
+    duration: data.duration || '',
     metadata: {
       questionBank: data.questionBank,
       filters: data.filters,
@@ -37,6 +36,10 @@ async function saveTest({ data, ctx }) {
       config: data.config,
     },
   };
+
+  if (ignoreAsset) {
+    delete toSave.asset;
+  }
 
   let assignable = null;
 

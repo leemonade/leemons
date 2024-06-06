@@ -1,34 +1,5 @@
-const { diffHours } = require('@leemons/utils');
-const { isString } = require('lodash');
-
-async function getCoverAndAvatarUrls({ ctx, instance, userSession, hostname, hostnameApi }) {
-  const { deploymentID } = ctx.meta;
-
-  let avatarUrl = userSession?.avatar;
-  let coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', {
-    assetId: instance.assignable.asset.id,
-  });
-
-  if (isString(avatarUrl)) {
-    if (!avatarUrl.startsWith('http')) {
-      avatarUrl = `${hostnameApi || hostname}${avatarUrl}`;
-    }
-    const avatarUrlObj = new URL(avatarUrl);
-    avatarUrlObj.searchParams.append('deploymentID', deploymentID);
-    avatarUrl = avatarUrlObj.toString();
-  }
-
-  if (isString(coverUrl)) {
-    if (!coverUrl.startsWith('http')) {
-      coverUrl = `${hostnameApi || hostname}${coverUrl}`;
-    }
-    const coverUrlObj = new URL(coverUrl);
-    coverUrlObj.searchParams.append('deploymentID', deploymentID);
-    coverUrl = coverUrlObj.toString();
-  }
-
-  return { avatarUrl, coverUrl };
-}
+const { canSendEmail } = require('./helpers/canSendEmail');
+const { prepareEmailContext } = require('./helpers/prepareEmailContext');
 
 /**
  * Sends an email with the instance details.
@@ -49,15 +20,16 @@ async function sendEmail({
   instance,
   userAgent,
   classes,
-  hostname,
-  hostnameApi,
+  hostname: _hostname,
+  hostnameApi: _hostnameApi,
   ignoreUserConfig,
   isReminder,
   ctx,
 }) {
-  try {
-    const { userSession } = ctx.meta;
+  const hostname = _hostname || (await ctx.tx.call('users.platform.getHostname'));
+  const hostnameApi = _hostnameApi || (await ctx.tx.call('users.platform.getHostnameApi'));
 
+  try {
     // eslint-disable-next-line prefer-const
     let [canSend, dayLimits] = await Promise.all([
       ctx.tx.call('emails.config.getConfig', {
@@ -70,66 +42,17 @@ async function sendEmail({
       }),
     ]);
 
-    if (dayLimits && instance.dates.deadline) {
-      const hours = diffHours(new Date(), new Date(instance.dates.deadline));
-      canSend = hours < dayLimits * 24;
-    }
+    canSend = ignoreUserConfig || (await canSendEmail({ instance, dayLimits }));
 
-    if (ignoreUserConfig || canSend) {
-      let date = null;
-      const options1 = { year: 'numeric', month: 'numeric', day: 'numeric' };
-      if (instance.dates.deadline) {
-        const date1 = new Date(instance.dates.deadline);
-        const dateTimeFormat2 = new Intl.DateTimeFormat(userAgent.user.locale, options1);
-        date = dateTimeFormat2.format(date1);
-      }
-
-      /*
-      let subjectIconUrl =
-        // eslint-disable-next-line no-nested-ternary
-        classes.length > 1
-          ? `${hostname || ctx.request.header.origin}/public/assignables/module-three.svg`
-          : classes[0].subject.icon.cover
-            ? (hostname || ctx.request.header.origin) +
-            leemons.getPlugin('leebrary').services.assets.getCoverUrl(classes[0].subject.icon.id)
-            : null;
-       */
-
-      let classColor = '#67728E';
-      if (classes.length === 1) {
-        classColor = classes[0].color;
-      }
-
-      const { avatarUrl, coverUrl } = await getCoverAndAvatarUrls({
-        ctx,
+    if (canSend) {
+      const context = await prepareEmailContext({
         instance,
-        userSession,
+        userAgent,
+        classes,
         hostname,
         hostnameApi,
+        ctx,
       });
-
-      const context = {
-        instance: {
-          ...instance,
-          assignable: {
-            ...instance.assignable,
-            asset: {
-              ...instance.assignable.asset,
-              color: instance.assignable.asset.color || '#D9DCE0',
-              url: coverUrl,
-            },
-          },
-        },
-        classes,
-        classColor,
-        btnUrl: `${hostname}/private/assignables/ongoing`,
-        subjectIconUrl: null,
-        taskDate: date,
-        userSession: {
-          ...userSession,
-          avatarUrl,
-        },
-      };
 
       context.debugObject = JSON.stringify({
         userSession: context.userSession,
@@ -152,7 +75,6 @@ async function sendEmail({
     }
   } catch (e) {
     ctx.logger.error(e);
-    // Error
   }
 }
 

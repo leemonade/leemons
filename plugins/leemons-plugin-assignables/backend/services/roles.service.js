@@ -5,8 +5,10 @@ const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+
 const { getServiceModels } = require('../models');
-const { registerRole, unregisterRole, getRole } = require('../core/roles');
+const { registerRole, unregisterRole } = require('../core/roles');
+const restActions = require('./rest/roles.rest');
 
 module.exports = {
   name: 'assignables.roles',
@@ -21,6 +23,8 @@ module.exports = {
     LeemonsDeploymentManagerMixin(),
   ],
   actions: {
+    ...restActions,
+
     registerRole: {
       handler(ctx) {
         return registerRole({ ...ctx.params, ctx });
@@ -29,11 +33,6 @@ module.exports = {
     unregisterRole: {
       handler(ctx) {
         return unregisterRole({ ...ctx.params, ctx });
-      },
-    },
-    getRole: {
-      handler(ctx) {
-        return getRole({ ...ctx.params, ctx });
       },
     },
   },

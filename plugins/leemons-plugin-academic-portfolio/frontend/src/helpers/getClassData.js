@@ -30,8 +30,8 @@ async function getMultipleClassData(classes) {
     subjectName: klass?.subject?.name,
     icon: getClassIcon(klass),
     color: klass?.color,
-    internalId: subjectsCredits[i]?.internalId,
-    subjectCompiledInternalId: subjectsCredits[i]?.compiledInternalId,
+    internalId: subjectsCredits?.[i]?.internalId,
+    subjectCompiledInternalId: subjectsCredits?.[i]?.compiledInternalId,
   }));
 }
 

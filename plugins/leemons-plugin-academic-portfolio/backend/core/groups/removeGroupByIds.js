@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 async function removeGroupByIds({ ids, soft, ctx }) {
-  const groups = await ctx.tx.Groups.find({
+  const groups = await ctx.tx.db.Groups.find({
     id: _.isArray(ids) ? ids : [ids],
     type: 'group',
   }).lean();

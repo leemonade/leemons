@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, createStyles, Drawer } from '@bubbles-ui/components';
+import { Box, createStyles, BaseDrawer } from '@bubbles-ui/components';
 import { useAssets } from '@leebrary/request/hooks/queries/useAssets';
 import propTypes from 'prop-types';
 import useCategories from '@leebrary/request/hooks/queries/useCategories';
@@ -118,9 +118,9 @@ const AssetEmbedList = ({ assets, width }) => {
           zIndex: 99,
         })}
       >
-        <Drawer
+        <BaseDrawer
           opened={isDrawerOpen}
-          size="496px"
+          size="576px"
           close={false}
           empty={true}
           className={{
@@ -149,7 +149,7 @@ const AssetEmbedList = ({ assets, width }) => {
             onOpenDrawer={() => setIsDrawerOpen(true)}
             locale={locale}
           />
-        </Drawer>
+        </BaseDrawer>
       </Box>
     </Box>
   );

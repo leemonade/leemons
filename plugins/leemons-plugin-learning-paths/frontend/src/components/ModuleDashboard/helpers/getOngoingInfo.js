@@ -74,7 +74,7 @@ const getOngoingState = ({ students, subjects }) => {
 };
 
 const getOngoingInfo = ({ instance }) => {
-  if (!instance.students) {
+  if (!instance?.students) {
     return null;
   }
   const students = instance.students.map((student) => ({

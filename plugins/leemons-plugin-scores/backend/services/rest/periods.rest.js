@@ -1,11 +1,3 @@
-/* eslint-disable no-console */
-/**
- * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
- * @typedef {import('moleculer').Context} Context Moleculer's Context
- */
-
-const { LeemonsValidator } = require('@leemons/validator');
-
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -16,7 +8,6 @@ const addPeriod = require('../../core/periods/addPeriod');
 const listPeriods = require('../../core/periods/listPeriods');
 const removePeriod = require('../../core/periods/removePeriod');
 
-/** @type {ServiceSchema} */
 module.exports = {
   addRest: {
     rest: {
@@ -54,7 +45,6 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      console.log(ctx.params);
       const q = Object.fromEntries(
         Object.entries(ctx.params).map(([key, value]) => {
           try {

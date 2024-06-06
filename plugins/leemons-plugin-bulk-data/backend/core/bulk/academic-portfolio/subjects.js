@@ -25,7 +25,8 @@ async function importAcademicPortfolioSubjects(
         }
       });
 
-      // Schedule
+      // ·····················································
+      // SCHEDULE
       const schedule = {};
 
       [...Array(7).keys()].forEach((day) => {
@@ -39,7 +40,7 @@ async function importAcademicPortfolioSubjects(
             .filter((val) => !isEmpty(val));
 
           dayGroups.forEach((dayGroup) => {
-            const [group, durationRaw] = dayGroup.split('@');
+            const [classIdentifier, durationRaw] = dayGroup.split('@');
             const [start, end] = durationRaw.split('|');
 
             const [startH, startM] = start.split(':');
@@ -50,11 +51,17 @@ async function importAcademicPortfolioSubjects(
 
             const duration = new Date(endDate - startDate).getTime() / (60 * 1000);
 
-            if (!schedule[group]) {
-              schedule[group] = [];
+            if (!schedule[classIdentifier]) {
+              schedule[classIdentifier] = [];
             }
 
-            schedule[group].push({ dayWeek: day, start, end, duration, day: weekdays[day] });
+            schedule[classIdentifier].push({
+              dayWeek: day,
+              start,
+              end,
+              duration,
+              day: weekdays[day],
+            });
             // { day: 1, value: 'G01@11:05|11:55' },
           });
         }
@@ -62,19 +69,27 @@ async function importAcademicPortfolioSubjects(
         delete items[key][dayKey];
       });
 
-      // Teachers
+      // ·····················································
+      // TEACHERS
+
       const teachers = items[key].teachers
         .split(',')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
-        .map((userGroup) => {
-          const [user, group] = userGroup.split('@');
+        .map((value) => {
+          const [user, classIdentifier] = value.split('@');
           const [teacher, type] = user.split('|').map((val) => trim(val));
 
-          return { teacher: users[teacher]?.id, type: `${type ? `${type}-` : ''}teacher`, group };
+          return {
+            teacher: users[teacher]?.id,
+            type: type ? `${type}-teacher` : 'teacher',
+            classIdentifier: Number(classIdentifier),
+          };
         });
 
-      // Students
+      // ·····················································
+      // STUDENTS
+
       let students = [];
 
       if (items[key].students && !isEmpty(items[key].students)) {
@@ -82,28 +97,16 @@ async function importAcademicPortfolioSubjects(
           .split(',')
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
-          .map((userGroup) => {
-            const [user, group] = userGroup.split('@');
-            return { student: users[user]?.id, group };
+          .map((value) => {
+            const [user, classIdentifier] = value.split('@');
+            return { student: users[user]?.id, classIdentifier: Number(classIdentifier) };
           });
       }
 
-      // Groups
-      let groups = (items[key].groups ?? '')
-        .split(',')
-        .map((val) => trim(val))
-        .filter((val) => !isEmpty(val))
-        .map((group) => {
-          const [name, abbreviation] = group.split('|');
-          return { name, abbreviation, program: programID };
-        });
+      // ·····················································
+      // COURSES
 
-      if (groups.length === 0) {
-        groups = [null];
-      }
-
-      // Course
-      const courseIndexes = (item.course ?? '')
+      const courseIndexes = (item.courses ?? '')
         .split('|')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
@@ -117,59 +120,150 @@ async function importAcademicPortfolioSubjects(
           })?.id
       );
 
-      if (program.subjectsFirstDigit !== 'none') {
-        [items[key].course] = items[key].courses;
-      } else {
-        items[key].course = null;
-        delete items[key].course;
-      }
+      // Subjects creation needs a stringified array of courses
+      items[key].course = JSON.stringify(items[key].courses);
+
+      // ·····················································
+      // CREDITS
 
       if (items[key].credits && !isEmpty(items[key].credits)) {
-        items[key].credits = Number(items[key].credits);
+        // It is mandatory for the subject to have a minimum of 1 credit
+        items[key].credits = Number(items[key].credits) > 0 ? Number(items[key].credits) : 1;
+      }
+
+      // ·····················································
+      // SUBSTAGES
+
+      let substage = '';
+      if (program.numberOfSubstages > 0 && items[key].substage?.length) {
+        substage += program.substages.find(
+          (ss) => ss.abbreviation === trim(items[key].substage)
+        ).id;
       }
 
       // ·····················································
       // CLASSES CONFIG
 
-      items[key].classes = groups.map((group) => {
+      const classGroups = [];
+      const classrooms = [];
+      const classesCustomIds = {};
+
+      if (items[key].classesCustomIds && !isEmpty(items[key].classesCustomIds)) {
+        items[key].classesCustomIds
+          .split(',')
+          .map((val) => trim(val))
+          .filter((val) => !isEmpty(val))
+          .forEach((value) => {
+            const [classIdentifier, classroomId] = value.split(':');
+            classesCustomIds[classIdentifier] = classroomId;
+          });
+      }
+
+      if (program.groups && items[key].groupsAmount) {
+        const { groupsAmount } = items[key];
+        const sortedProgramGroups = program.groups
+          .filter((group) => courseIndexes.includes(group.metadata.course))
+          .sort((a, b) => a.index - b.index);
+
+        classGroups.push(
+          ...sortedProgramGroups.slice(0, groupsAmount).map((group) => ({
+            group: group.id,
+            classroomId: classesCustomIds[group.index] ?? null,
+            seats: program.courses.find((course) => course.index === group.metadata.course).metadata
+              .seats,
+          }))
+        );
+      }
+
+      if (items[key].classrooms && !classGroups?.length) {
+        classrooms.push(
+          ...items[key].classrooms
+            .split(',')
+            .map((val) => trim(val))
+            .filter((val) => !isEmpty(val))
+            .map((classroom) => {
+              const [index, classInfo] = classroom.split(':');
+              const [seats, alias] = classInfo.split('@');
+
+              return {
+                classWithoutGroupId: index,
+                classroomId: classesCustomIds[index] ?? null,
+                seats: Number(seats),
+                alias: alias ?? null,
+              };
+            })
+        );
+      }
+
+      const classesToCreate = classGroups.length ? classGroups : classrooms;
+
+      items[key].classes = classesToCreate.map((cls) => {
         const classroom = {
+          ...cls,
           program: programID,
-          group,
           course: items[key].courses,
           color: items[key].color,
-          schedule: schedule[group ? group.abbreviation : ''],
         };
 
-        if (!classroom.course.length) {
-          delete classroom.course;
+        const subjectTypeKey = item.subjectType;
+        if (subjectTypeKey && program.hasSubjectTypes) {
+          classroom.subjectType = subjectTypes[subjectTypeKey]?.id;
         }
 
-        const subjectTypeKey = item.subjectType;
-        classroom.subjectType = subjectTypes[subjectTypeKey]?.id;
+        const knowledgeAreaKey = item.knowledgeArea;
+        if (knowledgeAreaKey && program.hasKnowledgeAreas) {
+          classroom.knowledgeArea = knowledgeAreas[knowledgeAreaKey]?.id;
+        }
 
-        const knowledgeKey = item.knowledge;
-        classroom.knowledge = knowledgeAreas[knowledgeKey]?.id;
+        // Schedule
+        if (!isEmpty(schedule)) {
+          classroom.schedule =
+            schedule[
+              classroom.group
+                ? program.groups.find((gr) => gr.id === classroom.group).index
+                : classroom.classWithoutGroupId
+            ];
+        }
 
         // Teacher
         classroom.teachers = teachers.filter((teacher) =>
-          group ? teacher.group === group.abbreviation : true
+          classroom.group
+            ? teacher.classIdentifier ===
+              program.groups.find((gr) => gr.id === classroom.group).index
+            : teacher.classIdentifier === Number(classroom.classWithoutGroupId)
         );
 
         // Students
         classroom.students = students.filter((student) =>
-          group ? student.group === group.abbreviation : true
+          classroom.group
+            ? student.classIdentifier ===
+              program.groups.find((gr) => gr.id === classroom.group).index
+            : student.classIdentifier === Number(classroom.classWithoutGroupId)
         );
+
+        // Format classWithoutGroupId to have three digits
+        if (classroom.classWithoutGroupId) {
+          classroom.classWithoutGroupId = classroom.classWithoutGroupId.padStart(3, '0');
+        }
+
+        // Substage
+        if (substage.length) {
+          classroom.substage = substage;
+        }
 
         return classroom;
       });
 
-      items[key].seats = Number(items[key].seats);
-
-      delete items[key].groups;
-      delete items[key].color;
+      delete items[key].groupsAmount;
+      delete items[key].classrooms;
       delete items[key].teachers;
+      delete items[key].students;
       delete items[key].subjectType;
-      delete items[key].knowledge;
+      delete items[key].knowledgeArea;
+      delete items[key].substage;
+      delete items[key].courses;
+      delete items[key].classesCustomIds;
+      delete items[key].substage;
       delete items[key][' '];
 
       // Cleans empty keys
@@ -180,7 +274,6 @@ async function importAcademicPortfolioSubjects(
       });
     });
 
-  // console.dir(items.subject20, { depth: null });
   return items;
 }
 

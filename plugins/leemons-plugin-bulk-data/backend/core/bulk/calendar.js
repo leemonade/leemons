@@ -7,19 +7,20 @@ function getSubjectAndClassroom(programs, subjectString) {
   let subject = null;
   let classroom = null;
 
-  forEach(
-    keys(programs).map((programKey) => programs[programKey]),
-    (program) => {
-      if (program.subjects[subjectKey]) {
-        subject = program.subjects[subjectKey];
-        return false;
-      }
-      return true;
+  forEach(keys(programs), (programKey) => {
+    const program = programs[programKey];
+    if (program.subjects[subjectKey]) {
+      subject = program.subjects[subjectKey];
     }
-  );
+  });
 
   if (subject) {
-    classroom = subject.classes.find((item) => item.groups.abbreviation === classroomKey);
+    const subjectUsesGroups = subject.classes.every((cls) => cls.groups);
+    classroom = subject.classes.find((cls) =>
+      subjectUsesGroups
+        ? cls.groups.index === Number(classroomKey)
+        : cls.classWithoutGroupId === classroomKey.padStart(3, '0')
+    );
   }
   if (!classroomKey && !classroom && subject?.classes?.length) {
     [classroom] = subject.classes;
@@ -91,10 +92,11 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
     // CALENDAR
 
     let creatorCalendars = calendars[event.creator];
+    let userCalendars = null;
 
     if (!creatorCalendars) {
       const creator = users[event.creator];
-      const userCalendars = await ctx.call(
+      userCalendars = await ctx.call(
         'calendar.calendar.getCalendars',
         {},
         {
@@ -139,8 +141,9 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
 
                 if (!classroom?.id) return null;
 
-                return creatorCalendars.find((calendar) => calendar.key.indexOf(classroom.id) > 0)
-                  ?.id;
+                return userCalendars.calendars.find(
+                  (calendar) => calendar.key.indexOf(classroom.id) > 0
+                )?.id;
               })
               .filter((val) => !isNil(val));
 
@@ -163,7 +166,7 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
         }
 
         if (ref) {
-          event.calendar = creatorCalendars.find(
+          event.calendar = userCalendars.calendars.find(
             (calendar) => calendar.key.indexOf(ref.id) > 0
           )?.key;
         }

@@ -1,5 +1,5 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, isString } from 'lodash';
+import { cloneDeep, isBoolean, isString } from 'lodash';
 
 async function getProgramTree(programId) {
   return leemons.api(`v1/academic-portfolio/programs/${programId}/tree`, {
@@ -8,8 +8,25 @@ async function getProgramTree(programId) {
   });
 }
 
-async function listPrograms({ page, size, center }) {
-  return leemons.api(`v1/academic-portfolio/programs?page=${page}&size=${size}&center=${center}`, {
+async function getProgramAcademicTree({ programId }) {
+  return leemons.api(`v1/academic-portfolio/programs/${programId}/academic-tree`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+async function listPrograms({ page, size, center, onlyArchived }) {
+  const queryParams = new URLSearchParams({
+    page,
+    size,
+    center,
+  });
+
+  if (onlyArchived) {
+    queryParams.append('archived', '');
+  }
+
+  return leemons.api(`v1/academic-portfolio/programs?${queryParams.toString()}`, {
     waitToFinish: true,
     allAgents: true,
     method: 'GET',
@@ -23,8 +40,19 @@ async function havePrograms() {
   });
 }
 
-async function detailProgram(id, withClasses = false) {
-  return leemons.api(`v1/academic-portfolio/programs/${id}?withClasses=${withClasses}`, {
+async function detailProgram(id, withClasses, showArchived, withStudentsAndTeachers) {
+  const queryParams = new URLSearchParams();
+  if (typeof withClasses === 'boolean') {
+    queryParams.append('withClasses', withClasses);
+  }
+  if (typeof showArchived === 'boolean') {
+    queryParams.append('showArchived', showArchived);
+  }
+  if (typeof withStudentsAndTeachers === 'boolean') {
+    queryParams.append('withStudentsAndTeachers', withStudentsAndTeachers);
+  }
+
+  return leemons.api(`v1/academic-portfolio/programs/${id}?${queryParams.toString()}`, {
     allAgents: true,
     method: 'GET',
   });
@@ -47,13 +75,12 @@ async function getUserPrograms() {
 
 async function createProgram(_body) {
   const body = cloneDeep(_body);
+
   if (body.image && !isString(body.image)) {
-    if (body.image) {
-      if (body.image.id) {
-        body.image = body.image.cover?.id;
-      } else {
-        body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
-      }
+    if (body.image.id) {
+      body.image = body.image.cover?.id;
+    } else {
+      body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
     }
   }
   return leemons.api('v1/academic-portfolio/programs', {
@@ -82,6 +109,23 @@ async function updateProgram(_body) {
   });
 }
 
+async function updateProgramConfiguration(_body) {
+  const body = cloneDeep(_body);
+  if (body.image && !isString(body.image)) {
+    if (body.image.id) {
+      body.image = body.image.cover?.id;
+    } else {
+      body.image = await uploadFileAsMultipart(body.image, { name: body.image.name });
+    }
+  }
+
+  return leemons.api('v1/academic-portfolio/programs/config', {
+    allAgents: true,
+    method: 'PUT',
+    body,
+  });
+}
+
 async function addStudentsToClassesUnderNodeTree(body) {
   return leemons.api('v1/academic-portfolio/programs/add-students-to-classes-under-node-tree', {
     allAgents: true,
@@ -97,6 +141,33 @@ async function getProgramEvaluationSystem(id) {
   });
 }
 
+async function removeProgram({ id, soft }) {
+  const queryParams = new URLSearchParams();
+  if (typeof soft !== 'undefined') {
+    queryParams.append('soft', soft);
+  } else {
+    queryParams.append('soft', false);
+  }
+  return leemons.api(`v1/academic-portfolio/programs/${id}?${queryParams.toString()}`, {
+    allAgents: true,
+    method: 'DELETE',
+  });
+}
+
+async function programHasSubjectHistory({ programId }) {
+  return leemons.api(`v1/academic-portfolio/programs/${programId}/has-subject-history`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+async function duplicateProgram({ programId }) {
+  return leemons.api(`v1/academic-portfolio/programs/${programId}/duplicate`, {
+    allAgents: true,
+    method: 'POST',
+  });
+}
+
 export {
   listPrograms,
   detailProgram,
@@ -108,4 +179,9 @@ export {
   getProgramEvaluationSystem,
   addStudentsToClassesUnderNodeTree,
   getProgramsPublicInfo,
+  removeProgram,
+  updateProgramConfiguration,
+  programHasSubjectHistory,
+  duplicateProgram,
+  getProgramAcademicTree,
 };

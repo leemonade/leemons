@@ -1,10 +1,18 @@
-import { Box, Button, ContextContainer, FileUpload, NumberInput } from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+import {
+  Box,
+  Button,
+  FileUpload,
+  NumberInput,
+  InputWrapper,
+  ContextContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
+import { ChevLeftIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import { useStore } from '@common';
+import { useHistory } from 'react-router-dom';
 import { getDataForUserAgentDatasetsRequest } from '@users/request';
 import {
   downloadTemplate,
@@ -14,9 +22,9 @@ import {
 import { readExcel } from '../helpers/readExcel';
 import { XlsxTable } from './xlsxTable';
 
-export function UploadFile({ t, center, profile }) {
+export function UploadFile({ t, center, profile, scrollRef }) {
   const [store, render] = useStore();
-  const [, , , getErrorMessage] = useRequestErrorMessage();
+  const history = useHistory();
 
   async function load() {
     try {
@@ -47,6 +55,8 @@ export function UploadFile({ t, center, profile }) {
   }
 
   async function onSelectFile(e) {
+    store.loading = true;
+    render();
     if (e instanceof File) {
       store.file = await readExcel(e);
       store.fileIsTemplate = false;
@@ -66,16 +76,26 @@ export function UploadFile({ t, center, profile }) {
         store.fileIsTemplate = true;
         store.initRow = 3;
       }
+      store.loading = false;
       render();
     }
   }
 
   async function removeFile() {
     store.file = null;
+    store.rawFile = null;
     render();
   }
 
+  function goToUsersList() {
+    history.push('/private/users/list');
+  }
+
   async function onSave() {
+    goToUsersList();
+  }
+
+  async function onCancel() {
     removeFile();
   }
 
@@ -84,37 +104,43 @@ export function UploadFile({ t, center, profile }) {
   }, []);
 
   return (
-    <ContextContainer
-      subtitle={
-        <Box
-          sx={() => ({ display: 'flex', justifyContent: 'space-between', alignItems: 'center' })}
-        >
-          {t('uploadFile')}
-          {!store.file ? (
-            <Button
-              onClick={() => downloadTemplate({ t, extraFields: store.generalDatasetEdit })}
-              leftIcon={<DownloadIcon />}
-            >
-              {t('downloadTemplate')}
-            </Button>
-          ) : (
-            <Button variant="link" onClick={removeFile}>
-              {t('cancel')}
-            </Button>
-          )}
+    <ContextContainer title={t('uploadLabel')}>
+      {!store.file && (
+        <Box>
+          <Button
+            variant="outline"
+            onClick={() => downloadTemplate({ t, extraFields: store.generalDatasetEdit })}
+            leftIcon={<DownloadIcon />}
+          >
+            {t('downloadTemplate')}
+          </Button>
         </Box>
-      }
-    >
+      )}
       {!store.file ? (
-        <FileUpload
-          icon={<DownloadIcon height={32} width={32} />}
-          title={t('browseFile')}
-          subtitle={t('dropFile')}
-          hideUploadButton
-          single
-          accept={['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']}
-          onChange={onSelectFile}
-        />
+        <>
+          <InputWrapper label={t('uploadFile')}>
+            <FileUpload
+              icon={<DownloadIcon height={32} width={32} />}
+              title={t('browseFile')}
+              subtitle={t('dropFile')}
+              hideUploadButton
+              single
+              accept={['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']}
+              onChange={onSelectFile}
+              loading={store.loading}
+              disabled={store.loading}
+            />
+          </InputWrapper>
+          <TotalLayoutFooterContainer
+            fixed
+            fullWidth
+            leftZone={
+              <Button variant="link" onClick={goToUsersList} leftIcon={<ChevLeftIcon />}>
+                {t('backToUsers')}
+              </Button>
+            }
+          />
+        </>
       ) : (
         <ContextContainer>
           {!store.fileIsTemplate ? (
@@ -133,6 +159,7 @@ export function UploadFile({ t, center, profile }) {
           <XlsxTable
             t={t}
             onSave={onSave}
+            onCancel={onCancel}
             generalDataset={store.generalDataset}
             center={center}
             profile={profile}
@@ -140,6 +167,7 @@ export function UploadFile({ t, center, profile }) {
             initRow={store.initRow}
             headerSelects={store.headerSelects}
             fileIsTemplate={store.fileIsTemplate}
+            scrollRef={scrollRef}
           />
         </ContextContainer>
       )}
@@ -151,6 +179,7 @@ UploadFile.propTypes = {
   t: PropTypes.func,
   center: PropTypes.string,
   profile: PropTypes.string,
+  scrollRef: PropTypes.object,
 };
 
 export default UploadFile;

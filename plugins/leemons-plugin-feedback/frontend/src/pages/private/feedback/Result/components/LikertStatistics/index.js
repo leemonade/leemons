@@ -45,15 +45,7 @@ function LikertStatistics({ question, responses, t }) {
                 cx={cx}
                 percentage={Math.trunc(responses.percentages?.[index] || 0)}
                 bottomText={index + 1}
-                // label={question.properties[`likertLabel${index}`]}
-                // color={
-                //   index + 1 < (question.properties.maxLabels + 1) / 2
-                //     ? 'fatic01'
-                //     : index + 1 > (question.properties.maxLabels + 1) / 2
-                //     ? 'fatic02'
-                //     : 'fatic03'
-                // }
-                colorFullToken="theme.other.global.border.color.positive.muted"
+                color="#76CEC1"
               />
             </Col>
           ))}

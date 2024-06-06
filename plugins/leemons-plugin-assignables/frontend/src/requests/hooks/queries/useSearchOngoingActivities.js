@@ -1,8 +1,8 @@
-import { useUserAgents } from '@assignables/components/Assignment/AssignStudents/hooks';
 import { useQuery } from '@tanstack/react-query';
 import searchOngoingActivities from '@assignables/requests/activities/searchOngoingActivities';
 import { useVariantForQueryKey } from '@common/queries';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import useUserAgents from '@users/hooks/useUserAgents';
 import {
   allOngoingActivitiesSearchKey,
   ongoingActivitiesSearchKey,

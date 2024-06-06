@@ -50,6 +50,7 @@ export const SocketIoService = {
       console.log('Socket.io disconnected');
     }
   },
+  isCreating: () => console.log('wrong socket'),
 };
 
 export default SocketIoService;

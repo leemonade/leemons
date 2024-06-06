@@ -119,7 +119,7 @@ export default function DetailConfig({
                 disabled={store.saving}
                 loading={store.saving === 'publish'}
               >
-                {t('continue')}
+                {t('next')}
               </Button>
             </>
           }

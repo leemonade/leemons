@@ -3,7 +3,7 @@ import { createStyles } from '@bubbles-ui/components';
 const NSPStatisticsStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.uiBackground04,
-    padding: '24px 20px',
+    paddingBottom: 24,
     gap: '12px',
   },
   header: {
@@ -19,13 +19,13 @@ const NSPStatisticsStyles = createStyles((theme) => ({
     borderBottom: '1px solid',
   },
   sectionDetractors: {
-    borderBottomColor: theme.colors.fatic01,
+    borderBottomColor: '#FF7366',
   },
   sectionPassives: {
-    borderBottomColor: theme.colors.fatic03,
+    borderBottomColor: '#FFAD5B',
   },
   sectionPromoters: {
-    borderBottomColor: theme.colors.fatic02,
+    borderBottomColor: '#76CEC1',
   },
   npsBar: {
     height: 170,

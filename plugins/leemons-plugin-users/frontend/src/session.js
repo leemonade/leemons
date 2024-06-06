@@ -129,6 +129,23 @@ export function currentProfileIsAdmin() {
   return false;
 }
 
+export function getSessionCenter() {
+  const token = getCookieToken(true);
+  if (_.isString(token)) {
+    return null;
+  }
+  if (!token.profile && token.centers?.length === 1) {
+    return token.centers[0];
+  }
+  return token.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token.profile));
+}
+
+export function getSessionProfile() {
+  const token = getCookieToken(true);
+  const center = getSessionCenter();
+  return center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles[0];
+}
+
 export function getCentersWithToken() {
   const token = getCookieToken(true);
   return _.isString(token) ? null : token?.centers;

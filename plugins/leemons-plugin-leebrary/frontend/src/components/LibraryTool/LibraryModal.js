@@ -1,30 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import {
-  Box,
-  ActionButton,
-  Button,
-  ContextContainer,
-  RadioGroup,
-  Select,
-  Stack,
-  TextInput,
-  Paper,
-  useViewportSize,
-} from '@bubbles-ui/components';
-import { LibraryItem } from '@leebrary/components/LibraryItem';
-import {
-  EditorLeftAlignIcon,
-  EditorRightAlignIcon,
-  EditorCenterAlignIcon,
-  AddCircleIcon,
-} from '@bubbles-ui/icons/solid';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { isFunction } from 'lodash';
-import { useTextEditor } from '@bubbles-ui/editors';
+import { Box } from '@bubbles-ui/components';
+import { noop } from 'lodash';
 import { prepareAsset } from '../../helpers/prepareAsset';
-import { AssetListDrawer } from '../AssetListDrawer';
 import { AssetPickerDrawer } from '../AssetPickerDrawer';
 
 export const LIBRARY_MODAL_DEFAULT_PROPS = {
@@ -71,47 +49,22 @@ export const LIBRARY_MODAL_PROP_TYPES = {
 
 const LibraryModal = ({
   labels,
+  readOnly,
   placeholders,
   errorMessages,
   openLibraryModal,
-  onCancel,
-  onChange,
-  readOnly,
+  onCancel = noop,
+  onChange = noop,
   ...props
 }) => {
-  const { currentTool } = useTextEditor();
   const openLibraryDrawer = !openLibraryModal;
   const [showAssetDrawer, setShowAssetDrawer] = useState(openLibraryDrawer);
-  const [asset, setAsset] = useState(currentTool.data.asset);
-
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      width: currentTool.data.width || '100%',
-      display: currentTool.data.display || 'card',
-      align: currentTool.data.align || 'left',
-      readOnly,
-    },
-  });
-
-  const watchInputs = watch(['width', 'display', 'align']);
-
-  const disableCondition = () => !asset?.id || !watchInputs[0] || !watchInputs[1];
 
   // ---------------------------------------------------------------------------------------
   // HANDLERS
 
-  const submitHandler = (values) => {
-    // console.log('submitHandler > values:', values);
-    if (isFunction(onChange)) onChange({ ...values, asset });
-  };
-
   const onCancelHandler = () => {
-    if (isFunction(onCancel)) onCancel();
+    onCancel();
   };
 
   const handleOnCloseAssetDrawer = () => {
@@ -122,16 +75,13 @@ const LibraryModal = ({
   const handleOnSelectAsset = (item) => {
     const preparedAsset = prepareAsset(item);
     if (openLibraryDrawer) {
-      if (isFunction(onChange))
-        onChange({
-          width: '100%',
-          align: 'left',
-          display: 'player',
-          asset: preparedAsset,
-          readOnly,
-        });
-    } else {
-      setAsset(preparedAsset);
+      onChange({
+        width: '100%',
+        align: 'left',
+        display: 'embed',
+        asset: preparedAsset,
+        readOnly,
+      });
     }
     setShowAssetDrawer(false);
   };

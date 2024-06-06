@@ -18,8 +18,8 @@ const useGroupPickerStyles = createStyles((theme) => ({
     flexDirection: 'column',
     gap: theme.other.global.spacing.gap.lg,
   },
-  content: {
-    marginLeft: theme.other.global.spacing.padding.xlg,
+  classSelector: {
+    width: '50%',
   },
 }));
 
@@ -64,7 +64,7 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
     !groupedClassesWithSelectedSubjects?.assignableStudents?.length
   ) {
     return (
-      <Container title={localizations?.title}>
+      <Container>
         <Box className={classes.inline}>
           <Alert severity="error" closeable={false}>
             {localizations?.noStudentsError}
@@ -75,19 +75,18 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
   }
 
   return (
-    <Container title={localizations?.title} hideSectionHeaders={hideSectionHeaders}>
+    <Container title={localizations?.title} description={localizations?.subtitle} required>
       <Box className={classes.root}>
-        <Controller
+        {/* <Controller
           name="type"
           control={control}
           render={({ field }) => (
-            <Box>
-              <Select {...field} data={optionsData} />
+            <Box className={classes.classSelector}>
+              <Select {...field} data={optionsData} label={localizations?.classSelectLabel} />
             </Box>
           )}
-        />
-
-        <Box className={classes.content}>
+        /> */}
+        <Box>
           {assignationType === 'class' && (
             <SelectClass
               groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}

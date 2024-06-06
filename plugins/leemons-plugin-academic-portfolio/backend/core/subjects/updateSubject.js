@@ -4,10 +4,14 @@ const { isArray } = require('lodash');
 const { validateUpdateSubject } = require('../../validations/forms');
 const { setSubjectCredits } = require('./setSubjectCredits');
 const { setSubjectInternalId } = require('./setSubjectInternalId');
-const { changeBySubject } = require('../classes/knowledge/changeBySubject');
+const { changeBySubject: changeClassesBySubject } = require('../classes/knowledge/changeBySubject');
 const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
 const { classByIds } = require('../classes/classByIds');
 const { getProgramCourses } = require('../programs/getProgramCourses');
+const {
+  changeClassSubstageBySubject,
+} = require('../classes/substage/changeClassSubstageBySubject');
+const { removeByClass } = require('../classes/substage/removeByClass');
 
 async function processRoom({ subject, color, assetImage, classe, assetIcon, ctx }) {
   const roomKey = ctx.prefixPN(`room.class.${classe.id}`);
@@ -45,8 +49,8 @@ async function processRoomGroup({ subject, color, assetImage, classe, assetIcon,
   const roomExists = await ctx.tx.call('comunica.room.exists', { key: roomKey });
 
   let subName = classe.program.name;
-  if (classe.groups?.abbreviation && classe.groups?.abbreviation !== '-auto-') {
-    subName += ` - ${classe.groups?.abbreviation}`;
+  if (classe.groups?.abbreviation) {
+    subName += ` - ${classe.groups.abbreviation}`;
   }
   const roomData = {
     name: `${subject.name} ${subName}`,
@@ -75,10 +79,24 @@ async function processRoomGroup({ subject, color, assetImage, classe, assetIcon,
 
 async function updateSubject({ data, ctx }) {
   await validateUpdateSubject({ data, ctx });
-  let { id, course, credits, internalId, subjectType, knowledge, image, icon, color, ..._data } =
-    data;
+  let {
+    id,
+    credits,
+    internalId,
+    subjectType,
+    knowledgeArea,
+    substage,
+    image,
+    icon,
+    color,
+    ..._data
+  } = data;
 
-  let subject = await ctx.tx.db.Subjects.findOneAndUpdate({ id }, _data, { new: true, lean: true });
+  let subject = await ctx.tx.db.Subjects.findOneAndUpdate(
+    { id },
+    { ..._data, color },
+    { new: true, lean: true }
+  );
   const promises = [];
 
   // ES: Añadimos el asset de la imagen
@@ -110,7 +128,9 @@ async function updateSubject({ data, ctx }) {
     { new: true, lean: true }
   );
 
+  // Updates all subject classes color
   await ctx.tx.db.Class.updateMany({ subject: subject.id }, { color });
+
   const classesWithSubject = await ctx.tx.db.Class.find({ subject: subject.id })
     .select(['id'])
     .lean();
@@ -120,6 +140,7 @@ async function updateSubject({ data, ctx }) {
     ctx,
   });
 
+  // Update all subject classes comunica rooms
   await Promise.allSettled(
     _.map(classes, (classe) =>
       processRoom({
@@ -146,19 +167,28 @@ async function updateSubject({ data, ctx }) {
     )
   );
 
-  if (!course) {
-    const programCourses = await getProgramCourses({ ids: subject.program, ctx });
-    course = programCourses[0].id;
-  }
-  const courses = isArray(course) ? course : [course];
-  await setToAllClassesWithSubject({ subject: subject.id, course: courses, ctx });
+  //* OLD
+  // if (!course) {
+  //   const programCourses = await getProgramCourses({ ids: subject.program, ctx });
+  //   course = programCourses[0].id;
+  // }
+  // const courses = isArray(course) ? course : [course];
+  // await setToAllClassesWithSubject({ subject: subject.id, course: courses, ctx });
 
   if (!_.isUndefined(subjectType)) {
     promises.push(ctx.tx.db.Class.updateMany({ subject: subject.id }, { subjectType }));
   }
 
-  if (!_.isUndefined(knowledge)) {
-    promises.push(changeBySubject({ subjectId: subject.id, knowledge, ctx }));
+  if (!_.isUndefined(knowledgeArea)) {
+    promises.push(changeClassesBySubject({ subjectId: subject.id, knowledge: knowledgeArea, ctx }));
+  }
+
+  if (substage?.length) {
+    if (substage === 'all') {
+      promises.push(removeByClass({ classIds: classesWithSubject.map((item) => item.id), ctx }));
+    } else {
+      promises.push(changeClassSubstageBySubject({ subjectId: subject.id, substage, ctx }));
+    }
   }
 
   if (credits)
@@ -171,7 +201,6 @@ async function updateSubject({ data, ctx }) {
         subject: subject.id,
         program: subject.program,
         internalId,
-        course: data.course,
         ctx,
       })
     );

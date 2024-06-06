@@ -19,7 +19,7 @@ export const useAssignmentDrawerStyles = createStyles(() => ({
   },
 }));
 
-export default function AssignmentDrawer({ value, onSave, scrollRef }) {
+export default function AssignmentDrawer({ value, onSave, onClose, scrollRef }) {
   const localizations = useFormLocalizations();
   const form = useForm({
     defaultValues: value,
@@ -56,8 +56,13 @@ export default function AssignmentDrawer({ value, onSave, scrollRef }) {
         fixed
         style={{ right: 0 }}
         scrollRef={scrollRef}
-        width={400}
+        width={728}
         rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+        leftZone={
+          <Button variant="link" onClick={onClose}>
+            {localizations?.buttons?.cancel}
+          </Button>
+        }
       />
     </FormProvider>
   );
@@ -67,4 +72,5 @@ AssignmentDrawer.propTypes = {
   value: PropTypes.object,
   onSave: PropTypes.func,
   scrollRef: PropTypes.object,
+  onClose: PropTypes.func,
 };

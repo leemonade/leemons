@@ -7,9 +7,9 @@ async function setToAllClassesWithSubject({ subject, course, ctx }) {
   const courses = isArray(course) ? course : [course];
 
   const classes = await ctx.tx.db.Class.find({ subject }).lean(['id']);
-  // ES: Borramos los cursos de todas las clases con dicha asignatura
+  // ES: Borramos la relación de los cursos de todas las clases con dicha asignatura
   await Promise.all(_.map(classes, ({ id }) => removeByClass({ classIds: id, ctx })));
-  // ES: Una vez borrados todos los cursos les añadimos los nuevos
+  // ES: Una vez borrados añadimos las nuevas relaciones
   await Promise.all(
     _.map(classes, ({ id }) =>
       Promise.all(_.map(courses, (c) => add({ class: id, course: c, ctx })))

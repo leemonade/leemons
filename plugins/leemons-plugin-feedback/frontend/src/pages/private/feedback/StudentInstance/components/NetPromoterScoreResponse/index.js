@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Text } from '@bubbles-ui/components';
-import QuestionButtons from '../questions/QuestionButtons';
 import NetPromoterScoreResponseStyles from './NetPromoterScoreResponse.styles';
 
 const NetPromoterScoreResponse = (props) => {
   const { question, defaultValue } = props;
   const [selectedValue, setSelectedValue] = useState('');
   const { classes } = NetPromoterScoreResponseStyles({}, { name: 'NetPromoterScoreResponse' });
+
+  const handleSelectValue = (value) => {
+    if (value !== selectedValue) setSelectedValue(value);
+    else if (value === selectedValue) setSelectedValue(null);
+  };
 
   const renderNumbers = () => {
     const numberElements = [];
@@ -24,7 +28,7 @@ const NetPromoterScoreResponse = (props) => {
                   }
                 : {}
             }
-            onClick={() => setSelectedValue(i)}
+            onClick={() => handleSelectValue(i)}
           >
             <Text color="primary" role="productive">
               {i}
@@ -40,6 +44,10 @@ const NetPromoterScoreResponse = (props) => {
     setSelectedValue(defaultValue);
   }, [defaultValue, question]);
 
+  useEffect(() => {
+    props?.setCurrentValue(selectedValue);
+  }, [selectedValue]);
+
   return (
     <Box>
       <Stack fullWidth spacing={1}>
@@ -53,7 +61,6 @@ const NetPromoterScoreResponse = (props) => {
           {question.properties.veryLikely}
         </Text>
       </Stack>
-      <QuestionButtons {...props} value={selectedValue} />
     </Box>
   );
 };
@@ -62,6 +69,7 @@ NetPromoterScoreResponse.propTypes = {
   t: PropTypes.func,
   question: PropTypes.any,
   defaultValue: PropTypes.any,
+  setCurrentValue: PropTypes.func,
 };
 
 export default NetPromoterScoreResponse;

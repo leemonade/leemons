@@ -36,6 +36,16 @@ const widgets = {
     //     label: 'dashboard.tabControlPanel.label',
     //   },
     // },
+    {
+      zoneKey: `dashboard.program.left`,
+      key: `${pluginName}.dashboard.welcome`,
+      url: 'dashboard/welcome',
+    },
+    {
+      zoneKey: `assignables.class.ongoing`,
+      key: `${pluginName}.dashboard.class.welcome`,
+      url: 'dashboard/welcome',
+    },
   ],
 };
 

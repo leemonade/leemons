@@ -28,6 +28,8 @@ const {
   listSubjects,
   subjectByIds,
 } = require('../../core/subjects');
+const { duplicateSubjectByIds } = require('../../core/subjects/duplicateSubjectByIds');
+const { duplicateClassesByIds } = require('../../core/classes/duplicateClassesByIds');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -88,7 +90,8 @@ module.exports = {
     ],
 
     async handler(ctx) {
-      await deleteSubjectWithClasses({ id: ctx.params.id, ctx });
+      const _soft = ctx.params.soft ? JSON.parse(ctx.params.soft) : undefined;
+      await deleteSubjectWithClasses({ id: ctx.params.id, soft: _soft, ctx });
       return { status: 200 };
     },
   },
@@ -179,18 +182,23 @@ module.exports = {
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
           program: { type: 'string' },
-          course: { type: 'string' },
+          course: { type: 'string' }, // Stringified array, even for one
+          onlyArchived: { type: 'string' },
         },
         required: ['page', 'size'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const { page, size, program, course } = ctx.params;
+        const { page, size, program, course, onlyArchived } = ctx.params;
+        const truthyValues = ['true', true, '1'];
+        const _onlyArchived = truthyValues.includes(onlyArchived);
+
         const data = await listSubjects({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           program,
           course,
+          onlyArchived: _onlyArchived,
           ctx,
         });
         return { status: 200, data };
@@ -198,7 +206,27 @@ module.exports = {
       throw validator.error;
     },
   },
-  subjectsRest: {
+  // ???
+  // subjectsRest: {
+  //   rest: {
+  //     path: '/',
+  //     method: 'GET',
+  //   },
+  //   middlewares: [LeemonsMiddlewareAuthenticated()],
+  //   async handler(ctx) {
+  //     let { id } = ctx.params;
+  //     if (!id) {
+  //       const { ids } = ctx.params;
+  //       id = JSON.parse(ids || null);
+  //     }
+  //     const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
+  //     if (ctx.params.id) {
+  //       return { status: 200, data: data && data[0] };
+  //     }
+  //     return { status: 200, data };
+  //   },
+  // },
+  subjectsByIdsRest: {
     rest: {
       path: '/',
       method: 'GET',
@@ -210,30 +238,76 @@ module.exports = {
         const { ids } = ctx.params;
         id = JSON.parse(ids || null);
       }
-      const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
+      const truthyValues = ['true', true, '1'];
+      const _withClasses = truthyValues.includes(ctx.params.withClasses);
+      const _showArchived = truthyValues.includes(ctx.params.showArchived);
+      const data = await subjectByIds({
+        ids: Array.isArray(id) ? id : [id],
+        withClasses: _withClasses,
+        showArchived: _showArchived,
+        ctx,
+      });
       if (ctx.params.id) {
         return { status: 200, data: data && data[0] };
       }
       return { status: 200, data };
     },
   },
-  subjectByIdsRest: {
+  duplicateSubjectById: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: '/:id/duplicate',
+      method: 'POST',
     },
-    middlewares: [LeemonsMiddlewareAuthenticated()],
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-portfolio.subjects': {
+            actions: ['admin', 'create'],
+          },
+        },
+      }),
+    ],
+
     async handler(ctx) {
-      let { id } = ctx.params;
-      if (!id) {
-        const { ids } = ctx.params;
-        id = JSON.parse(ids || null);
+      const validator = new LeemonsValidator({
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          course: { type: 'string' },
+        },
+        required: ['id'],
+        additionalProperties: true,
+      });
+      if (validator.validate(ctx.params)) {
+        const { id } = ctx.params;
+
+        const duplications = await duplicateSubjectByIds({
+          ids: id,
+          preserveName: ctx.params.preserveName,
+          ctx,
+        });
+        const classes = await ctx.tx.db.Class.find({ subject: id }).lean();
+        await duplicateClassesByIds({
+          ids: _.map(classes, 'id'),
+          duplications,
+          students: false,
+          teachers: false,
+          groups: true,
+          courses: true,
+          substages: true,
+          knowledges: true,
+          ctx,
+        });
+        const [subject] = await subjectByIds({
+          ids: Object.values(duplications.subjects)[0].id,
+          withClasses: true,
+          ctx,
+        });
+
+        return { status: 200, subject };
       }
-      const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
-      if (ctx.params.id) {
-        return { status: 200, data: data && data[0] };
-      }
-      return { status: 200, data };
+      throw validator.error;
     },
   },
 };

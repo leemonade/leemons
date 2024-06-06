@@ -1,4 +1,9 @@
 module.exports = {
+  timeUnits: {
+    hours: 'hours',
+    minutes: 'minutes',
+    days: 'days',
+  },
   textEditor: {
     headingsTool: {
       label: 'Format',
@@ -62,7 +67,7 @@ module.exports = {
         add: 'Add',
         update: 'Update',
         card: 'Card',
-        embed: 'Embed',
+        embed: 'Mini card',
         player: 'Player',
       },
       placeholders: { width: 'Enter width', display: 'Select' },

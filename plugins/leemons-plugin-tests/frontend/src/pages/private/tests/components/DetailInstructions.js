@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import {
-  Box,
   Button,
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
+  Box,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { Controller } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { Attachments } from '@leebrary/components';
+import TimeUnitsInput from '@common/components/TimeUnitsInput';
 import FinalDropdown from './FinalDropdown';
 
 export default function DetailInstructions({
@@ -19,12 +21,14 @@ export default function DetailInstructions({
   store,
   stepName,
   scrollRef,
+  hasResources,
+  hasInstructions,
   onSave = noop,
   onPublish = noop,
   onAssign = noop,
   onPrev = noop,
 }) {
-  const [isDirty, setIsDirty] = React.useState(false);
+  const [isDirty, setIsDirty] = useState(false);
   const formValues = form.watch();
 
   // ························································
@@ -38,6 +42,10 @@ export default function DetailInstructions({
       onSave();
     }
   }
+
+  const attachmentsLabels = {
+    addResource: t('addResourcesLabel'),
+  };
 
   return (
     <TotalLayoutStepContainer
@@ -82,30 +90,58 @@ export default function DetailInstructions({
       }
     >
       <Box>
-        <ContextContainer>
-          <Controller
-            control={form.control}
-            name="instructionsForTeachers"
-            render={({ field }) => (
-              <TextEditorInput
-                error={isDirty ? form.formState.errors.instructionsForTeachers : null}
-                label={t('instructionsForTeacherLabel')}
-                {...field}
+        {hasResources && (
+          <Box style={{ marginBottom: 24 }}>
+            <ContextContainer title={hasInstructions && hasResources ? t('resources') : ''}>
+              <Attachments
+                labels={attachmentsLabels}
+                setValue={form.setValue}
+                getValues={form.getValues}
               />
-            )}
-          />
-          <Controller
-            control={form.control}
-            name="instructionsForStudents"
-            render={({ field }) => (
-              <TextEditorInput
-                error={isDirty ? form.formState.errors.instructionsForStudents : null}
-                label={t('instructionsForStudentLabel')}
-                {...field}
+            </ContextContainer>
+          </Box>
+        )}
+        {hasInstructions && (
+          <ContextContainer title={hasInstructions && hasResources ? t('instructions') : ''}>
+            <Controller
+              control={form.control}
+              name="instructionsForTeachers"
+              render={({ field }) => (
+                <TextEditorInput
+                  error={isDirty ? form.formState.errors.instructionsForTeachers : null}
+                  label={t('instructionsForTeacherLabel')}
+                  editorStyles={{ minHeight: '96px' }}
+                  {...field}
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="instructionsForStudents"
+              render={({ field }) => (
+                <TextEditorInput
+                  error={isDirty ? form.formState.errors.instructionsForStudents : null}
+                  label={t('instructionsForStudentLabel')}
+                  editorStyles={{ minHeight: '96px' }}
+                  {...field}
+                />
+              )}
+            />
+            <Box style={{ marginBottom: 24 }}>
+              <Controller
+                control={form.control}
+                name="duration"
+                rules={{
+                  required: t('recommendedDuration'),
+                  min: { value: 1, message: t('recommendedDuration') },
+                }}
+                render={({ field }) => (
+                  <TimeUnitsInput {...field} label={t('recommendedDuration')} min={1} />
+                )}
               />
-            )}
-          />
-        </ContextContainer>
+            </Box>
+          </ContextContainer>
+        )}
       </Box>
     </TotalLayoutStepContainer>
   );
@@ -121,4 +157,6 @@ DetailInstructions.propTypes = {
   stepName: PropTypes.string,
   scrollRef: PropTypes.any,
   store: PropTypes.any,
+  hasInstructions: PropTypes.bool,
+  hasResources: PropTypes.bool,
 };

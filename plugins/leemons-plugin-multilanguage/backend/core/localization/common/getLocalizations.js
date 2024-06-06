@@ -2,6 +2,7 @@ const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const { getManyWithLocale, getKeyStartsWith } = require('..');
+const { getCommonCacheKey } = require('../../../helpers/cacheKeys');
 
 async function getLocalizations({ ctx }) {
   const { keys = null, keysStartsWith = null, locale } = ctx.params;
@@ -74,11 +75,7 @@ async function getLocalizations({ ctx }) {
     });
   }
 
-  const cacheKey = `multilanguage:common:get:${ctx.meta.deploymentID}${JSON.stringify({
-    keys,
-    locale,
-    keysStartsWith,
-  })}`;
+  const cacheKey = getCommonCacheKey({ ctx, locale, keys, keysStartsWith });
   const cache = await ctx.cache.get(cacheKey);
 
   if (cache) {

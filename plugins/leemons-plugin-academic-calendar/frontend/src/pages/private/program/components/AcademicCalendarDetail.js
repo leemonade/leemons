@@ -24,7 +24,14 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
+export default function AcademicCalendarDetail({
+  program: { id, config: configData },
+  onSave,
+  t,
+  onChangeStep,
+  scrollRef,
+  calendarRef,
+}) {
   const { classes } = useStyle();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -51,16 +58,11 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
       store.loading = true;
       render();
       const [
-        { config },
         { program },
         {
           data: { items: centers },
         },
-      ] = await Promise.all([
-        getConfigRequest(id),
-        detailProgram(id),
-        listCenters({ page: 0, size: 99999 }),
-      ]);
+      ] = await Promise.all([detailProgram(id), listCenters({ page: 0, size: 99999 })]);
       const { regionalConfigs } = await listRegionalConfigsRequest(program.centers[0]);
 
       store.centersById = _.keyBy(centers, 'id');
@@ -70,7 +72,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
         store.program.centers,
         (centerId) => store.centersById[centerId]
       );
-      store.config = config || {};
+      store.config = configData || {};
       if (_.isObject(store.config.regionalConfig)) {
         store.config.regionalConfig = store.config.regionalConfig.id;
       }
@@ -104,6 +106,7 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
       addErrorAlert(getErrorMessage(e));
     }
     store.loading = false;
+    onChangeStep(store.step);
     render();
   }
 
@@ -114,10 +117,6 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
   return (
     <ContextContainer divided className={classes.root}>
       <ContextContainer>
-        <HorizontalStepper
-          data={[{ label: t('basic') }, { label: t('periods') }, { label: t('preview') }]}
-          currentStep={store.step}
-        />
         {store.step === 0 ? (
           <Step1
             regionalConfigs={store.regionalConfigs}
@@ -126,9 +125,11 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
             onChange={(data) => {
               store.config = data;
               store.step = 1;
+              onChangeStep(1);
               render();
             }}
             t={t}
+            scrollRef={scrollRef}
           />
         ) : null}
         {store.step === 1 ? (
@@ -138,14 +139,17 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
             onPrev={(data) => {
               store.config = data;
               store.step = 0;
+              onChangeStep(0);
               render();
             }}
             onChange={(data) => {
               store.config = data;
               store.step = 2;
+              onChangeStep(2);
               render();
             }}
             t={t}
+            scrollRef={scrollRef}
           />
         ) : null}
         {store.step === 2 ? (
@@ -155,10 +159,13 @@ export default function AcademicCalendarDetail({ program: { id }, onSave, t }) {
             program={store.program}
             onPrev={() => {
               store.step = 1;
+              onChangeStep(1);
               render();
             }}
             onSave={onSave}
             t={t}
+            scrollRef={scrollRef}
+            calendarRef={calendarRef}
           />
         ) : null}
       </ContextContainer>
@@ -170,4 +177,7 @@ AcademicCalendarDetail.propTypes = {
   program: PropTypes.any,
   onSave: PropTypes.func,
   t: PropTypes.func,
+  onChangeStep: PropTypes.func,
+  scrollRef: PropTypes.any,
+  calendarRef: PropTypes.any,
 };

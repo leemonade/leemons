@@ -1,5 +1,4 @@
-async function remove({ id, ctx }) {
-  // eslint-disable-next-line global-require
+async function remove({ id, soft, ctx }) {
   const programCalendar = await ctx.tx.db.ProgramCalendar.findOne({
     program: id,
   }).lean();
@@ -9,26 +8,17 @@ async function remove({ id, ctx }) {
       ctx.tx.call('calendar.calendar.remove', {
         id: programCalendar.calendar,
       }),
-      ctx.tx.db.ProgramCalendar.removeOne({ id: programCalendar.id }),
+      ctx.tx.db.ProgramCalendar.deleteOne({ id: programCalendar.id }, { soft }),
     ]);
   }
 }
 
-async function onAcademicPortfolioRemovePrograms({
-  // data // unused old param,
-  programs,
-  ctx,
-}) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      await Promise.all(programs.map(({ id }) => remove({ id, ctx })));
-      resolve();
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
-  });
+async function onAcademicPortfolioRemovePrograms({ soft, programs, ctx }) {
+  try {
+    await Promise.all(programs.map(({ id }) => remove({ id, soft, ctx })));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 module.exports = { onAcademicPortfolioRemovePrograms };

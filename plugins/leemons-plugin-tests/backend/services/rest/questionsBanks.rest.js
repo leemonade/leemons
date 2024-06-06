@@ -38,6 +38,8 @@ module.exports = {
           published: { type: ['boolean', 'string'] },
           subjects: { type: 'array', items: { type: 'string' } },
           query: { type: 'object', additionalProperties: true },
+          includeAgnosticsQB: { type: 'boolean' },
+          withAssets: { type: 'boolean' },
         },
         required: ['page', 'size'],
         additionalProperties: false,

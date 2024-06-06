@@ -19,12 +19,13 @@ import { LayoutContext } from '@layout/context/layout';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ZoneWidgets } from '@widgets';
-import { find, isArray, map } from 'lodash';
+import { find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { ChatDrawer } from '@comunica/components';
 import hooks from 'leemons-hooks';
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 
 const rightZoneWidth = '320px';
 
@@ -160,25 +161,15 @@ export default function ClassDashboard({ session }) {
     store.class = classe;
     store.programClasses = programClasses;
     store.classesSelect = map(store.programClasses, (programClass) => {
-      const courseMultiple = isArray(programClass.courses);
-      const group = programClass.groups?.isAlone
-        ? null
-        : programClass.groups
-        ? programClass.groups.abbreviation
-        : null;
+      const dataLabels = getSubjectGroupCourseNamesFromClassData(programClass);
+
       return {
         id: programClass.id,
         color: programClass.color,
         image: getClassImage(programClass),
         icon: getClassIcon(programClass),
-        label: programClass.subject.name,
-        description: `${
-          programClass.courses
-            ? courseMultiple
-              ? `${t('multipleCourses')} - ${programClass.subject.internalId}`
-              : `${programClass.courses?.index}${programClass.subject.internalId}`
-            : ''
-        } ${group ? `- ${group}` : ''}`,
+        label: dataLabels.subject,
+        description: dataLabels.courseAndGroupParsed,
       };
     });
 
@@ -232,7 +223,7 @@ export default function ClassDashboard({ session }) {
   }
 
   const mainTeacher = store.class
-    ? find(store.class.teachers, { type: 'main-teacher' }).teacher
+    ? find(store.class.teachers, { type: 'main-teacher' })?.teacher
     : null;
 
   const classTabs = React.useCallback(

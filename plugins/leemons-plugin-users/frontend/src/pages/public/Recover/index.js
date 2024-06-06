@@ -5,35 +5,19 @@ import { useForm } from 'react-hook-form';
 import { recoverRequest } from '@users/request';
 import { goLoginPage } from '@users/navigate';
 import { useHistory } from 'react-router-dom';
-import HeroBgLayout from '@users/layout/heroBgLayout';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import {
-  Alert,
-  Box,
-  Button,
-  ContextContainer,
-  createStyles,
-  Stack,
-  TextInput,
-} from '@bubbles-ui/components';
+import { Alert, Box, Button, ContextContainer, TextInput } from '@bubbles-ui/components';
 import useTranslate from '@multilanguage/useTranslate';
 import prefixPN from '@users/helpers/prefixPN';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { useStore } from '@common';
-
-const PageStyles = createStyles((theme) => ({
-  root: {
-    padding: theme.spacing[7],
-  },
-  content: {
-    maxWidth: 330,
-  },
-}));
+import { AuthLayout } from '@users/layout/AuthLayout';
+import { AuthContainer } from '@users/components/AuthContainer';
 
 export default function Recover() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
 
-  const [store, render] = useStore();
+  const [store, render] = useStore({ loading: false });
 
   const [translations] = useTranslate({ keysStartsWith: prefixPN('recover') });
   const t = tLoader(prefixPN('recover'), translations);
@@ -55,6 +39,7 @@ export default function Recover() {
     try {
       store.message = null;
       store.email = null;
+      store.loading = true;
       render();
       const { code } = await recoverRequest(data);
       if (code === 1001) {
@@ -62,51 +47,55 @@ export default function Recover() {
       } else {
         store.email = data.email;
       }
+      store.loading = false;
       render();
     } catch (err) {
       console.error(err);
+      store.loading = false;
+      render();
     }
   };
 
-  const { classes } = PageStyles();
-
   return (
-    <HeroBgLayout>
-      <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
-        <Box className={classes.content}>
-          <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-            <ContextContainer title={t('title')} description={t('description')}>
+    <AuthLayout>
+      <AuthContainer>
+        <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+          <ContextContainer title={t('title')} description={store.email ? ' ' : t('description')}>
+            {!store.email && (
               <TextInput
                 label={t('email')}
                 error={errors.email ? t('emailRequired') : null}
                 value={email}
-                onChange={(e) => setValue('email', e)}
+                onChange={(e) => setValue('email', e.toLowerCase().trim())}
               />
-              {store.email || store.message ? (
-                <Alert severity={store.message ? 'warning' : 'success'} closeable={false}>
-                  {store.message ? store.message : t('emailSendTo', { email: store.email })}
-                </Alert>
-              ) : null}
+            )}
 
+            {store.email || store.message ? (
+              <Alert severity={store.message ? 'warning' : 'success'} closeable={false}>
+                {store.message ? store.message : t('emailSendTo', { email: store.email })}
+              </Alert>
+            ) : null}
+
+            {!store.email && (
               <Box>
-                <Button type="submit" fullWidth>
+                <Button type="submit" fullWidth loading={store.loading}>
                   {t('resetPassword')}
                 </Button>
               </Box>
+            )}
 
-              <Box>
-                <Button
-                  leftIcon={<ChevLeftIcon />}
-                  variant="link"
-                  onClick={() => goLoginPage(history)}
-                >
-                  {t('returnLogin')}
-                </Button>
-              </Box>
-            </ContextContainer>
-          </form>
-        </Box>
-      </Stack>
-    </HeroBgLayout>
+            <Box>
+              <Button
+                leftIcon={<ChevLeftIcon />}
+                variant="link"
+                onClick={() => goLoginPage(history)}
+              >
+                {t('returnLogin')}
+              </Button>
+            </Box>
+          </ContextContainer>
+        </form>
+      </AuthContainer>
+    </AuthLayout>
   );
 }

@@ -44,12 +44,22 @@ module.exports = () => ({
         ctx.tx.emit('init-menu');
       },
     },
+    {
+      type: 'once-per-install',
+      events: ['assignables.init-widgets', 'deployment-manager.install'],
+      handler: async (ctx) => {
+        await addWidgetItemsDeploy({
+          keyValueModel: ctx.tx.db.KeyValue,
+          items: widgets.items,
+          ctx,
+        });
+      },
+    },
   ],
   events: {
     'deployment-manager.install': async (ctx) => {
       // Widgets
       await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
     },
 
     // Permissions

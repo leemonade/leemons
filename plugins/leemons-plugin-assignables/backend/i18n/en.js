@@ -20,9 +20,15 @@ module.exports = {
         error: 'Pick at least one subject',
       },
       add: 'Add',
+
+      programChangeModal: {
+        title: 'Are you sure you want to change the program?',
+        description: 'This will clean the subjects selection',
+      },
     },
     groups: {
       title: 'Students',
+      subtitle: 'Select the group of students',
       options: {
         class: 'Existing class',
         customGroup: 'Custom group',
@@ -30,6 +36,7 @@ module.exports = {
       },
       noStudentsError:
         'No student was found for the selected subjects. Add or remove subjects to continue.',
+      classSelectLabel: 'Class selection type',
       class: {
         studentsCount: 'matching students',
         autoAssignStudents: 'Auto-assign new students',
@@ -66,7 +73,7 @@ module.exports = {
       },
     },
     dates: {
-      title: 'Timespan',
+      title: 'Completion deadline',
       optionsInput: {
         label: 'Timespan',
         options: {
@@ -104,7 +111,6 @@ module.exports = {
       description: 'Instructions for the consult of content',
       editor: {
         placeholder: 'You can specify the best way to consult this content...',
-        help: 'Help information visible in the assignment card (preview view)',
       },
     },
     evaluation: {
@@ -132,8 +138,10 @@ module.exports = {
         placeholder: 'Type the date',
         error: 'Pick a date',
       },
-      notifyStudents: 'Notify students',
-      messageForStudents: 'Message for students',
+      notifyStudents: 'Notify students by email',
+      createComunicaRooms: 'Create a chat room for this activity',
+      messageForStudents: 'Write the email',
+      notifyPlaceholder: 'Add the statement text here',
       hideResponses: 'Hide the answers of the activity once it is finished.',
       hideReport: 'Hide the results report.',
     },
@@ -142,6 +150,7 @@ module.exports = {
       next: 'Next',
       previous: 'Previous',
       save: 'Save', // Used on modules assignation drawer
+      cancel: 'Cancel',
     },
     presentation: {
       title: 'Presentation',
@@ -149,6 +158,7 @@ module.exports = {
         label: 'Title',
         placeholder: 'Type the title',
       },
+      thumbnail: 'Thumbnail',
     },
     preview: {
       title: 'Preview',
@@ -398,6 +408,11 @@ module.exports = {
       startActivity: 'Start activity',
     },
     emptyState: {
+      title: 'You have everything on track!',
+      noEvaluations: 'No pending evaluations',
+      noActivities: 'No pending activities',
+    },
+    welcome: {
       title: 'Welcome!',
       teacher: {
         title: 'There is no information to show here yet',
@@ -474,12 +489,61 @@ module.exports = {
     timeoutAlert: {
       title: 'Maximum time reached',
       message:
-        'the time limit set for this activity has been reached. The last delivery or questions answered have been sent automatically.',
+        'The time limit set for this activity has been reached. The last delivery or questions answered have been sent automatically.',
+    },
+    submitted_alert: {
+      title: 'Activity submitted successfully',
+      message: 'Here you have more information about your activity',
+    },
+    pending_evaluation_alert: {
+      title: 'Pending evaluation.',
+      message: 'When the teacher evaluates your activity, you will receive a notification',
+    },
+    not_submitted_alert: {
+      title: 'Activity not submitted',
+    },
+    finished_alert: {
+      title: 'Activity finished',
     },
   },
   evaluationFeedbackComponent: {
     contactTeacher: 'Chat with my teacher',
     contactStudent: 'Chat with the student',
     feedback: 'Feedback',
+  },
+  progress: {
+    tabTitle: 'Progress',
+    dashboardTitle: {
+      main: {
+        student: 'My progress',
+        teacher: 'Course average grades',
+      },
+      subject: {
+        student: 'Subject grades',
+        teacher: 'Average grades in the subject',
+      },
+      module: {
+        student: 'Module grades',
+        teacher: 'Average grades in the module',
+      },
+    },
+    average: 'Average',
+    pass: 'Approved',
+    approved: 'Acquired knowledge',
+    notApproved: 'Knowledge to acquire',
+    inProgress: 'In progress',
+  },
+  evaluationTable: {
+    title: 'Evaluation',
+    weighting: 'Weighting',
+    seeNonGradable: 'See non-gradable',
+    columns: {
+      activity: 'Activity',
+      module: 'Module',
+      activities: 'Activities',
+      weight: 'Weight',
+      evaluation: 'Evaluation',
+      feedback: 'Qualitative feedback ',
+    },
   },
 };

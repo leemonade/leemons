@@ -3,11 +3,11 @@ const _ = require('lodash');
 async function processScheduleForClass({ schedule, classId, ctx }) {
   const timetables = await ctx.tx.call('timetable.timetable.get', { classId });
 
-  const alreadyIds = _.map(timetables, 'id');
+  const existentTimetableIds = _.map(timetables, 'id');
   const toCreate = _.filter(schedule, ({ id }) => !id);
-  const toUpdate = _.filter(schedule, ({ id }) => id && alreadyIds.includes(id));
+  const toUpdate = _.filter(schedule, ({ id }) => id && existentTimetableIds.includes(id));
   const toUpdateIds = _.map(toUpdate, 'id');
-  const toDelete = _.filter(alreadyIds, (id) => !toUpdateIds.includes(id));
+  const toDelete = _.filter(existentTimetableIds, (id) => !toUpdateIds.includes(id));
 
   return Promise.all([
     // Create

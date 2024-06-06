@@ -1,5 +1,3 @@
-/* eslint-disable sonarjs/cognitive-complexity */
-/* eslint-disable no-nested-ternary */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
 import { isFunction } from 'lodash';
@@ -44,14 +42,12 @@ const AssetPlayer = ({
   loop,
   fullScreen,
   nativeControls,
-  controlBar,
   progressInterval,
   onReady,
   onStart,
   onPlay,
   onProgress,
   onPause,
-  onSeek,
   onEnded,
   onError,
   canPlay,
@@ -59,11 +55,10 @@ const AssetPlayer = ({
   useAudioCard,
   useSchema,
   viewPDF,
-  compact,
   useAspectRatio,
   showPlayButton,
   ccMode,
-  ...props
+  execMode,
 }) => {
   const {
     name,
@@ -96,6 +91,7 @@ const AssetPlayer = ({
   const [openImageZoom, setOpenImageZoom] = useState(false);
   const [mediaVolume, setMediaVolume] = useState(volume || 1);
   const [assetHeight, setAssetHeight] = useState(0);
+  const [isVideoHovered, setIsVideoHovered] = useState(false);
   const [t] = useTranslateLoader(prefixPN('pdfPlayer'));
   const pdfLabels = {
     pageLabel: t('pageLabel'),
@@ -185,14 +181,17 @@ const AssetPlayer = ({
   };
 
   const handleSeekChange = (e) => {
+    e.stopPropagation();
     setSeekValue(e.target.value);
   };
 
   const handleSeekMouseDown = (e) => {
+    e.stopPropagation();
     setSeeking(true);
   };
 
   const handleSeekMouseUp = (e) => {
+    e.stopPropagation();
     setSeeking(false);
     playerRef.current.seekTo(parseFloat(seekValue));
   };
@@ -209,11 +208,7 @@ const AssetPlayer = ({
     }
   };
 
-  // ··································································
-  // EFFECTS
-
-  useEffect(() => {
-    if (!rootRef.current) return;
+  async function handleFullScreen() {
     if (fullScreenMode) {
       try {
         rootRef.current.requestFullscreen();
@@ -222,11 +217,21 @@ const AssetPlayer = ({
       }
     } else {
       try {
-        if (document.fullscreenElement) document.exitFullscreen();
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        }
       } catch (e) {
         console.error(e);
       }
     }
+  }
+
+  // ··································································
+  // EFFECTS
+
+  useEffect(() => {
+    if (!rootRef.current) return;
+    handleFullScreen();
   }, [fullScreenMode]);
 
   useEffect(() => {
@@ -278,112 +283,119 @@ const AssetPlayer = ({
     <Box className={classes.rootWrapper}>
       <Box className={classes.root} ref={rootRef}>
         {media.isPlayable ? (
-          media.isAudio && useAudioCard ? (
-            <AudioCardPlayer
-              {...{
-                url,
-                loop,
-                cover,
-                muted,
-                onPlay,
-                onReady,
-                onStart,
-                onPause,
-                onEnded,
-                onError,
-                seconds,
-                seekValue,
-                isPlaying,
-                playerRef,
-                title: name,
-                mediaVolume,
-                getDuration,
-                setIsPlaying,
-                onEventHandler,
-                nativeControls,
-                handleOnProgress,
-                progressInterval,
-                getTotalDuration,
-                playedPercentage,
-                handleSeekChange,
-                handleSeekMouseUp,
-                handleSeekMouseDown,
-                subtitle: description,
-              }}
-            />
-          ) : (
-            <Box className={classes.playerWrapper}>
-              {!nativeControls && showPlayer && (
-                <ProgressBar
-                  {...{
-                    seekValue,
-                    isPlaying,
-                    mediaVolume,
-                    getDuration,
-                    setIsPlaying,
-                    fullScreenMode,
-                    setMediaVolume,
-                    getTotalDuration,
-                    playedPercentage,
-                    handleSeekChange,
-                    handleSeekMouseUp,
-                    setFullScreenMode,
-                    handleSeekMouseDown,
-                  }}
-                />
-              )}
-              {showPlayer && (
-                <ReactPlayer
-                  url={url}
-                  width="100%"
-                  height="100%"
-                  progressInterval={progressInterval}
-                  muted={muted}
-                  volume={mediaVolume}
-                  loop={loop}
-                  controls={nativeControls}
-                  playing={isPlaying}
-                  className={cx(classes.reactPlayer, className)}
-                  ref={playerRef}
-                  onProgress={({ played, playedSeconds }) => {
-                    handleOnProgress(played, playedSeconds);
-                  }}
-                  onReady={(eventInfo) => onEventHandler(onReady, eventInfo)}
-                  onStart={(eventInfo) => onEventHandler(onStart, eventInfo)}
-                  onPlay={(eventInfo) => onEventHandler(onPlay, eventInfo)}
-                  onPause={(eventInfo) => onEventHandler(onPause, eventInfo)}
-                  onEnded={(eventInfo) => onEventHandler(onEnded, eventInfo)}
-                  onError={(eventInfo) => onEventHandler(onError, eventInfo)}
-                />
-              )}
-              {(!showPlayer || media.isAudio) && (
-                <Box
-                  className={classes.coverWrapper}
-                  onClick={() => (!ccMode || canPlay) && handleInitPlay()}
-                >
-                  {showPlayButton && (
-                    <Box className={classes.buttonIcon}>
-                      <ButtonIcon
-                        fileType={'video'}
-                        onClick={(e) => {
-                          if (ccMode && !canPlay) handleInitPlay();
-                        }}
+          <>
+            {media.isAudio && useAudioCard ? (
+              <AudioCardPlayer
+                {...{
+                  url,
+                  loop,
+                  cover,
+                  muted,
+                  onPlay,
+                  onReady,
+                  onStart,
+                  onPause,
+                  onEnded,
+                  onError,
+                  seconds,
+                  seekValue,
+                  isPlaying,
+                  playerRef,
+                  title: name,
+                  mediaVolume,
+                  getDuration,
+                  setIsPlaying,
+                  onEventHandler,
+                  nativeControls,
+                  handleOnProgress,
+                  progressInterval,
+                  getTotalDuration,
+                  playedPercentage,
+                  handleSeekChange,
+                  handleSeekMouseUp,
+                  handleSeekMouseDown,
+                  subtitle: description,
+                }}
+              />
+            ) : (
+              <Box
+                className={classes.playerWrapper}
+                onMouseEnter={() => setIsVideoHovered(true)}
+                onMouseLeave={() => setIsVideoHovered(false)}
+              >
+                {!nativeControls && showPlayer && (
+                  <ProgressBar
+                    {...{
+                      seekValue,
+                      isPlaying,
+                      mediaVolume,
+                      getDuration,
+                      setIsPlaying,
+                      fullScreenMode,
+                      setMediaVolume,
+                      getTotalDuration,
+                      playedPercentage,
+                      handleSeekChange,
+                      handleSeekMouseUp,
+                      setFullScreenMode,
+                      handleSeekMouseDown,
+                      isVideoHovered,
+                    }}
+                  />
+                )}
+                {showPlayer && (
+                  <ReactPlayer
+                    url={url}
+                    width="100%"
+                    height="100%"
+                    progressInterval={progressInterval}
+                    muted={muted}
+                    volume={mediaVolume}
+                    loop={loop}
+                    controls={nativeControls}
+                    playing={isPlaying}
+                    className={cx(classes.reactPlayer, className)}
+                    ref={playerRef}
+                    onProgress={({ played, playedSeconds }) => {
+                      handleOnProgress(played, playedSeconds);
+                    }}
+                    onReady={(eventInfo) => onEventHandler(onReady, eventInfo)}
+                    onStart={(eventInfo) => onEventHandler(onStart, eventInfo)}
+                    onPlay={(eventInfo) => onEventHandler(onPlay, eventInfo)}
+                    onPause={(eventInfo) => onEventHandler(onPause, eventInfo)}
+                    onEnded={(eventInfo) => onEventHandler(onEnded, eventInfo)}
+                    onError={(eventInfo) => onEventHandler(onError, eventInfo)}
+                  />
+                )}
+                {(!showPlayer || media.isAudio) && (
+                  <Box
+                    className={classes.coverWrapper}
+                    onClick={() => (!ccMode || canPlay) && handleInitPlay()}
+                  >
+                    {showPlayButton && (
+                      <Box className={classes.buttonIcon}>
+                        <ButtonIcon
+                          fileType={'video'}
+                          onClick={(e) => {
+                            if (ccMode && !canPlay) handleInitPlay();
+                          }}
+                        />
+                      </Box>
+                    )}
+                    {cover ? (
+                      <ImageLoader height="100%" src={cover} alt={name} />
+                    ) : (
+                      <CardEmptyCover
+                        fileType={asset?.fileType}
+                        icon={asset?.fileIcon}
+                        height={assetHeight}
                       />
-                    </Box>
-                  )}
-                  {cover ? (
-                    <ImageLoader height="100%" src={cover} alt={name} />
-                  ) : (
-                    <CardEmptyCover
-                      fileType={asset?.fileType}
-                      icon={asset?.fileIcon}
-                      height={assetHeight}
-                    />
-                  )}
-                </Box>
-              )}
-            </Box>
-          )
+                    )}
+                  </Box>
+                )}
+              </Box>
+            )}
+          </>
         ) : (
           <>
             {media.isImage && !canPlay && (
@@ -408,18 +420,22 @@ const AssetPlayer = ({
               </Box>
             )}
             {media.isImage && canPlay && (
-              <Box className={classes.coverWrapper} onClick={() => setOpenImageZoom(!openImageZoom)}>
+              <Box
+                className={classes.coverWrapper}
+                onClick={() => setOpenImageZoom(!openImageZoom)}
+              >
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
                     <ButtonIcon fileType={'image'} />
                   </Box>
                 )}
+                {!execMode && <ImageLoader height={'200px'} src={cover} alt={name} />}
                 <ModalZoom
                   canPlay={!ccMode || canPlay}
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <ImageLoader height={openImageZoom ? '100%' : '200px'} src={cover} alt={name} />
+                  <ImageLoader height={'100%'} src={cover} alt={name} />
                 </ModalZoom>
               </Box>
             )}
@@ -465,18 +481,20 @@ const AssetPlayer = ({
               </a>
             )}
             {media.isPDF ? (
-              viewPDF ? (
-                <Box className={classes.pdfContainer}>
-                  <PDFPlayer pdf={url} labels={pdfLabels} useSchema={useSchema} />
-                </Box>
-              ) : (
-                <Box className={classes.pdfCover}>
-                  <Box className={classes.buttonIcon} onClick={openPdfHandler}>
-                    <ButtonIcon fileType={'document'} />
+              <>
+                {viewPDF ? (
+                  <Box className={classes.pdfContainer}>
+                    <PDFPlayer pdf={url} labels={pdfLabels} useSchema={useSchema} />
                   </Box>
-                  <ImageLoader height="auto" src={cover} alt={name} />
-                </Box>
-              )
+                ) : (
+                  <Box className={classes.pdfCover}>
+                    <Box className={classes.buttonIcon} onClick={openPdfHandler}>
+                      <ButtonIcon fileType={'document'} />
+                    </Box>
+                    <ImageLoader height="auto" src={cover} alt={name} />
+                  </Box>
+                )}
+              </>
             ) : null}
             {!media.isImage && !media.isURL && !media.isPDF && !media.isAFrame3D && (
               <Box className={classes.buttonIcon}>

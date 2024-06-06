@@ -32,27 +32,19 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import {
-  CheckBoldIcon,
-  CutStarIcon,
-  RemoveBoldIcon,
-  SlashIcon,
-  StarIcon,
-  StatisticsIcon,
-} from '@bubbles-ui/icons/solid';
+import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
 import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import TimeoutAlert from '@assignables/components/EvaluationFeedback/TimeoutAlert';
+import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
-  getFeedbackRequest,
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
-  setFeedbackRequest,
   setInstanceTimestampRequest,
 } from '../../../request';
 import { ResultStyles } from './Result.style';
@@ -68,6 +60,11 @@ export default function Result() {
   const [store, render] = useStore({
     loading: true,
     useQuestionMode: false,
+  });
+
+  const room = useAssignationComunicaRoom({
+    assignation: store?.assignation,
+    subject: store?.instance?.subjects?.[0]?.subject,
   });
 
   const [canShowFeedback, setCanShowFeedback] = React.useState(false);
@@ -364,7 +361,6 @@ export default function Result() {
     );
   }
 
-  // if (!store.room) {
   if (isTeacher || store.feedback) {
     accordion.push(
       <ActivityAccordionPanel
@@ -382,6 +378,7 @@ export default function Result() {
             <TextEditorInput
               value={store.feedback}
               error={store.feedbackError ? t('feedbackRequired') : null}
+              editorStyles={{ minHeight: '96px' }}
               onChange={(e) => {
                 store.feedback = e;
                 store.feedbackError = false;
@@ -419,7 +416,6 @@ export default function Result() {
       </ActivityAccordionPanel>
     );
   }
-  // }
 
   const userNote = parseFloat(
     store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number
@@ -520,6 +516,7 @@ export default function Result() {
                     }}
                     assignation={store.assignation}
                     subject={store?.instance?.subjects?.[0]?.subject}
+                    hideChat={!store.room}
                   />
 
                   {isTeacher && !store.instance.dates.evaluationClosed ? (
@@ -537,6 +534,7 @@ export default function Result() {
                           <TextEditorInput
                             value={store.feedback}
                             error={store.feedbackError ? t('feedbackRequired') : null}
+                            editorStyles={{ minHeight: '96px' }}
                             onChange={(e) => {
                               store.feedback = e;
                               store.feedbackError = false;
@@ -613,9 +611,7 @@ export default function Result() {
               store.room.unreadMessages = 0;
               render();
             }}
-            room={`assignables.subject|${store?.instance?.subjects?.[0]?.subject}.assignation|${
-              store.assignation.id
-            }.userAgent|${getUserId()}`}
+            room={room}
           />
         </>
       ) : null}

@@ -58,16 +58,13 @@ function Dashboard({ program }) {
         paddingBottom: theme.spacing[6],
       })}
     >
-      <BannerMessage message={activeMessage} />;
+      <BannerMessage message={activeMessage} />
     </Box>
   );
 }
 
 Dashboard.propTypes = {
   program: PropTypes.object,
-  classe: PropTypes.object,
-  session: PropTypes.object,
-  inTab: PropTypes.bool,
 };
 
 export default Dashboard;

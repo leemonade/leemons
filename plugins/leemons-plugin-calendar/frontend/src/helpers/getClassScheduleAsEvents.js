@@ -13,10 +13,9 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
 
   _.forEach(classes, (classe) => {
     if (classe.showEvents) {
-      const title = `${classe.subject.name} (${classe.groups.abbreviation})`.replace(
-        '(-auto-)',
-        ''
-      );
+      const title = classe.groups?.abbreviation
+        ? `${classe.subject.name} (${classe.groups.abbreviation})`
+        : classe.subject.name;
       const icon = classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null;
       _.forEach(classe.schedule, (schedule, i) => {
         function getDates(dayWeek) {

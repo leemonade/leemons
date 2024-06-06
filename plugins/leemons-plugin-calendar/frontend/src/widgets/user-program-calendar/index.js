@@ -14,6 +14,7 @@ import { find, forEach, keyBy, map } from 'lodash';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
 import hooks from 'leemons-hooks';
+import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
 import { getCalendarsToFrontendRequest } from '../../request';
 import useTransformEvent from '../../helpers/useTransformEvent';
 import EmptyState from './components/EmptyState/EmptyState';
@@ -54,6 +55,8 @@ function UserProgramCalendar({
   const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
   const [tc] = useTranslateLoader(prefixPN('calendar'));
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+
+  const { data: welcomeCompleted } = useWelcome();
 
   function getEvents() {
     const events = [];
@@ -204,6 +207,10 @@ function UserProgramCalendar({
     store.selectedEvent = null;
     openEventModal();
   };
+
+  if (!welcomeCompleted) {
+    return null;
+  }
 
   return (
     <Box className={styles.root}>

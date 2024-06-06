@@ -1,11 +1,15 @@
-const { addKnowledge } = require('./addKnowledge');
-const { listKnowledges } = require('./listKnowledges');
-const { updateKnowledge } = require('./updateKnowledge');
+const { addKnowledgeArea } = require('./addKnowledgeArea');
+const { listKnowledgeAreas } = require('./listKnowledgeAreas');
+const { updateKnowledgeArea } = require('./updateKnowledgeArea');
 const { existKnowledgeInProgram } = require('./existKnowledgeInProgram');
+const { existsInCenter } = require('./existsInCenter');
+const { getKnowledgeAreaById } = require('./getKnowledgeAreaById');
 
 module.exports = {
-  addKnowledge,
-  listKnowledges,
-  updateKnowledge,
+  getKnowledgeAreaById,
+  addKnowledgeArea,
+  listKnowledgeAreas,
+  updateKnowledgeArea,
   existKnowledgeInProgram,
+  knowledgeAreaExistsInCenter: existsInCenter,
 };

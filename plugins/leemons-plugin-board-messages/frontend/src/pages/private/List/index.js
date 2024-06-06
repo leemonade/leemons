@@ -1,17 +1,30 @@
 import React from 'react';
-import { Box, PageHeader, Tabs, TabPanel, createStyles } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  Tabs,
+  TabPanel,
+  ImageLoader,
+  createStyles,
+  TotalLayoutHeader,
+  TotalLayoutContainer,
+  TotalLayoutStepContainer,
+} from '@bubbles-ui/components';
 import { useStore } from '@common';
+import { getCookieToken } from '@users/session';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import prefixPN from '@board-messages/helpers/prefixPN';
 import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
 import { DetailDrawer, MessagesTable } from '@board-messages/components';
 
-// eslint-disable-next-line no-unused-vars, no-empty-pattern
-const IndexStyles = createStyles(() => ({ panelList: { backgroundColor: 'white' } }));
+const PageStyles = createStyles(() => ({ panelList: { backgroundColor: 'white' } }));
 
 export default function Index() {
   const labels = useTranslateObjectLoader(prefixPN('list'));
   const { t: tCommon } = useCommonTranslate('page_header');
+  const scrollRef = React.useRef();
+  const sessionToken = getCookieToken(true);
+
   const [store, render] = useStore({
     isDrawerOpen: false,
     isNew: true,
@@ -21,6 +34,9 @@ export default function Index() {
     reloadMessages: {},
   });
 
+  // ····················································
+  // HANDLERS
+
   const toggleDetailDrawer = () => {
     store.isNew = true;
     store.isDrawerOpen = !store.isDrawerOpen;
@@ -28,7 +44,14 @@ export default function Index() {
     render();
   };
 
-  const openEditDrawer = (message) => {
+  const handleOnNew = () => {
+    store.isNew = true;
+    store.isDrawerOpen = true;
+    store.currentMessage = {};
+    render();
+  };
+
+  const handleOnEdit = (message) => {
     store.isNew = false;
     store.isDrawerOpen = true;
     store.currentMessage = {
@@ -38,6 +61,9 @@ export default function Index() {
     };
     render();
   };
+
+  // ····················································
+  // HELPERS
 
   const setCenters = (centers) => {
     store.centers = centers;
@@ -54,50 +80,74 @@ export default function Index() {
     render();
   };
 
-  const { classes } = IndexStyles({});
+  // ····················································
+  // RENDER
+
+  const centerName = React.useMemo(() => {
+    const center = sessionToken?.centers?.[0];
+    return center?.name ?? '';
+  }, [sessionToken]);
+
+  const { classes } = PageStyles({}, { name: 'BoardMessagesList' });
 
   return (
-    <Box style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <PageHeader
-        values={{ title: labels.pageTitle, description: labels.pageDescription }}
-        buttons={{ new: tCommon('new') }}
-        onNew={toggleDetailDrawer}
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          title={labels.pageTitle}
+          cancelable={false}
+          icon={
+            <Box sx={{ position: 'relative', width: 24, height: 24 }}>
+              <ImageLoader src="/public/board-messages/menu-icon.svg" width={18} height={18} />
+            </Box>
+          }
+        />
+      }
+    >
+      <Stack
+        ref={scrollRef}
+        justifyContent="center"
         fullWidth
-      ></PageHeader>
-      <Tabs
-        panelColor="solid"
-        usePageLayout
-        fullWidth
-        fullHeight
-        classNames={{ panelList: classes.panelList }}
-        onChange={() => {
-          reloadMessages();
-        }}
+        sx={(theme) => ({ overflowY: 'auto', marginTop: theme.other.global.spacing.padding.lg })}
       >
-        <TabPanel label={labels.created}>
-          <MessagesTable
-            labels={labels}
-            shouldReload={store.reloadMessages}
-            openEditDrawer={openEditDrawer}
-            centers={store.centers}
-            setCenters={setCenters}
-            profiles={store.profiles}
-            setProfiles={setProfiles}
-          />
-        </TabPanel>
-        <TabPanel label={labels.archived}>
-          <MessagesTable
-            labels={labels}
-            shouldReload={store.reloadMessages}
-            openEditDrawer={openEditDrawer}
-            centers={store.centers}
-            setCenters={setCenters}
-            profiles={store.profiles}
-            setProfiles={setProfiles}
-            onlyArchived
-          />
-        </TabPanel>
-      </Tabs>
+        <TotalLayoutStepContainer clean fullWidth stepName={centerName} footerPadding={0}>
+          <Tabs
+            panelColor="solid"
+            fullWidth
+            fullHeight
+            classNames={{ panelList: classes.panelList }}
+            onChange={() => {
+              reloadMessages();
+            }}
+          >
+            <TabPanel label={labels.created}>
+              <MessagesTable
+                labels={labels}
+                shouldReload={store.reloadMessages}
+                onEdit={handleOnEdit}
+                onNew={handleOnNew}
+                centers={store.centers}
+                setCenters={setCenters}
+                profiles={store.profiles}
+                setProfiles={setProfiles}
+              />
+            </TabPanel>
+            <TabPanel label={labels.archived}>
+              <MessagesTable
+                labels={labels}
+                shouldReload={store.reloadMessages}
+                onEdit={handleOnEdit}
+                centers={store.centers}
+                setCenters={setCenters}
+                profiles={store.profiles}
+                setProfiles={setProfiles}
+                onlyArchived
+              />
+            </TabPanel>
+          </Tabs>
+        </TotalLayoutStepContainer>
+      </Stack>
       <DetailDrawer
         labels={labels.drawer}
         isNew={store.isNew}
@@ -108,6 +158,6 @@ export default function Index() {
         profiles={store.profiles}
         reloadMessages={reloadMessages}
       />
-    </Box>
+    </TotalLayoutContainer>
   );
 }

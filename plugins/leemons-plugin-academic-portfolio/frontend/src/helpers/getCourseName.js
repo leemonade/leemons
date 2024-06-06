@@ -3,7 +3,7 @@ export default function getCourseName(item) {
     return item.map(getCourseName).join(', ');
   }
 
-  return item?.name ? `${item?.name}` : `${item?.index}º`;
+  return `${item?.index}º`;
 }
 
 export { getCourseName };

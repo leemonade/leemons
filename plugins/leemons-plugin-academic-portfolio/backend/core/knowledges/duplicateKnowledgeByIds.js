@@ -2,14 +2,14 @@ const _ = require('lodash');
 
 async function duplicateKnowledgeByIds({ ids, duplications: dup = {}, ctx }) {
   const duplications = dup;
-  const knowledges = await ctx.tx.db.Knowledges.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
+  const knowledges = await ctx.tx.db.KnowledgeAreas.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
   await ctx.tx.emit('before-duplicate-knowledges', { knowledges });
 
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newKnowledges = await Promise.all(
     _.map(knowledges, ({ id, ...item }) =>
-      ctx.tx.db.Knowledges.create({
+      ctx.tx.db.KnowledgeAreas.create({
         ...item,
         program:
           duplications.programs && duplications.programs[item.program]

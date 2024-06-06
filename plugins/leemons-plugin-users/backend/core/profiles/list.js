@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 
-async function list({ page, size, withRoles, indexable = true, ctx }) {
+async function list({ page, size, withRoles, forceAll = true, indexable = true, ctx }) {
   const query = { indexable };
   if (indexable === 'all') delete query.indexable;
 
@@ -26,6 +26,15 @@ async function list({ page, size, withRoles, indexable = true, ctx }) {
       }
     });
   }
+
+  // Remove the admin profile from the list if the deployment is not advanced or enterprise
+  if (!forceAll) {
+    const deployment = await ctx.tx.call('deployment-manager.getDeployment');
+    if (!['advanced', 'enterprise'].includes(deployment.type)) {
+      results.items = results.items.filter((profile) => profile.sysName !== 'admin');
+    }
+  }
+
   return results;
 }
 

@@ -1,11 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, ContextContainer, Button, Loader } from '@bubbles-ui/components';
 
-import { Link } from 'react-router-dom';
-import useClassData from '@assignables/hooks/useClassDataQuery';
-import { useIsStudent } from '@academic-portfolio/hooks';
+import {
+  Box,
+  Button,
+  ContextContainer,
+  ImageLoader,
+  Loader,
+  Stack,
+  Text,
+} from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { Link } from 'react-router-dom';
+
+import useClassData from '@assignables/hooks/useClassDataQuery';
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
+import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
 import { ActivityCarousel, EvaluationsCarousel, Header } from './components';
 import {
   useEvaluatedActivities,
@@ -13,12 +23,39 @@ import {
   useNyaLocalizations,
   useNyaStyles,
 } from './hooks';
+import NyaEmpty from '../../../assets/emptyStates/nya.svg';
 
-import { EmptyState } from './components/EmptyState/EmptyState';
+export function EmptyState() {
+  const localizations = useNyaLocalizations()?.nya;
+  const isTeacher = useIsTeacher();
+
+  return (
+    <Stack spacing={8} direction="row" justifyContent="center" alignItems="center" fullWidth>
+      <ImageLoader src={NyaEmpty} style={{ position: 'relative' }} width={240} height={240} />
+      <Stack spacing={4} direction="column" alignItems="flex-start">
+        <Text
+          color="primary"
+          sx={(theme) => ({ ...theme.other.global.content.typo.heading.lg, textAlign: 'center' })}
+        >
+          {localizations?.emptyState?.title}
+        </Text>
+        <Text
+          color="primary"
+          sx={(theme) => ({ ...theme.other.global.content.typo.body.lg, textAlign: 'center' })}
+        >
+          {isTeacher
+            ? localizations?.emptyState?.noEvaluations
+            : localizations?.emptyState?.noActivities}
+        </Text>
+      </Stack>
+    </Stack>
+  );
+}
 
 export default function NYA({ classe, program }) {
   const localizations = useNyaLocalizations();
   const isStudent = useIsStudent();
+  const { data: welcomeCompleted } = useWelcome();
 
   const activities = useNyaActivities({ program: program?.id, class: classe?.id });
   const evaluations = useEvaluatedActivities({ program: program?.id, class: classe?.id });
@@ -34,6 +71,10 @@ export default function NYA({ classe, program }) {
     ? activities.isLoading || evaluations.isLoading
     : activities.isLoading;
 
+  if (!welcomeCompleted) {
+    return null;
+  }
+
   if (isLoading) {
     return <Loader />;
   }
@@ -41,7 +82,9 @@ export default function NYA({ classe, program }) {
   if (isEmpty) {
     return (
       <ContextContainer
-        title={localizations?.nya?.emptyState?.title}
+        title={
+          isStudent ? localizations?.nya?.activitiesTitle : localizations?.nya?.evaluationsTitle
+        }
         titleRightZone={
           <Link to={'/private/assignables/ongoing'}>
             <Button variant="link" rightIcon={<ChevRightIcon />}>

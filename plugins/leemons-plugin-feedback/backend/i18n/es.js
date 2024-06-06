@@ -119,8 +119,9 @@ module.exports = {
     assignDone: 'Encuesta asignada',
   },
   studentInstance: {
-    startQuestions: 'Responder encuesta',
     feedbackIntroductoryText: 'Introducción',
+    next: 'Siguiente',
+    questions: 'Preguntas',
   },
   feedbackResponseQuestion: {
     returnToTable: 'Volver a la tabla',
@@ -139,11 +140,12 @@ module.exports = {
     needNResponsesSingular: 'Escoge 1 respuesta',
     needNResponsesPlural: 'Escoge {n} respuestas',
     needNResponses: 'Escoge {n} más',
+    finish: 'Finalizar',
   },
   feedbackResult: {
     feedback: 'Encuesta',
     evaluation: 'Evaluación',
-    generalInformation: 'Información general',
+    generalInformation: 'Resumen',
     question: 'Pregunta {i}',
     started: 'Comenzadas',
     sent: 'Enviadas',
@@ -159,7 +161,7 @@ module.exports = {
     multiResponse: 'Multi-respuesta',
     openResponse: 'Respuesta abierta',
     responses: 'Respuestas ({n})',
-    responsesTitleLabel: 'Respuestas',
+    responsesTitleLabel: 'Informe de respuestas',
     average: 'Media:',
     errorCode6001: 'No tienes permisos para ver los resultados de la encuesta',
     timeMarker: 'Marca temporal',

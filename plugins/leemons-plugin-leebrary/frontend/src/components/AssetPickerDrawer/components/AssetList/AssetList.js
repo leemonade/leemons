@@ -4,15 +4,15 @@ import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { List } from './components/List';
 
-export const useAssetListStyles = createStyles(() => ({
+export const useAssetListStyles = createStyles((theme) => ({
   root: {
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    // gap: globalTheme.spacing.gap.xlg,
     height: '100%',
     width: '100%',
     zIndex: 0,
+    backgroundColor: theme.other.core.color.white,
   },
   list: {
     zIndex: 0,

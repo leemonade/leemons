@@ -21,6 +21,10 @@ const schema = new mongoose.Schema(
     courses: {
       type: String,
     },
+    index: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

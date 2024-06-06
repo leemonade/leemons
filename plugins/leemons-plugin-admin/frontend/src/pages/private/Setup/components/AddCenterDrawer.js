@@ -5,7 +5,7 @@ import {
   Button,
   ContextContainer,
   createStyles,
-  Drawer,
+  BaseDrawer,
   InputWrapper,
   NumberInput,
   Select,
@@ -146,7 +146,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
   }, [center]);
 
   return (
-    <Drawer size={715} opened={opened} onClose={onClose}>
+    <BaseDrawer size={715} opened={opened} onClose={onClose}>
       <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <ContextContainer>
           <ContextContainer divided>
@@ -419,7 +419,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
           </Stack>
         </ContextContainer>
       </form>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

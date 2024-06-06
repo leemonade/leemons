@@ -1,7 +1,29 @@
+const { LeemonsError } = require('@leemons/error');
 const randomColor = require('randomcolor');
 
+async function processAcademicPortfolioAddClass({ id, program, subject: { icon }, ctx, config }) {
+  try {
+    const newConfig = { ...config };
+    if (icon) {
+      newConfig.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: icon.id });
+    }
+
+    const calendar = await ctx.tx.call('calendar.calendar.add', {
+      key: ctx.prefixPN(`class.${id}`),
+      config,
+    });
+
+    await ctx.tx.db.ClassCalendar.create({
+      class: id,
+      program,
+      calendar: calendar.id,
+    });
+  } catch (e) {
+    throw new LeemonsError(ctx, { message: 'Error adding calendar', cause: e });
+  }
+}
+
 function onAcademicPortfolioAddClass({
-  // data, //old unused param
   class: {
     id,
     color,
@@ -11,40 +33,27 @@ function onAcademicPortfolioAddClass({
   },
   ctx,
 }) {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    try {
-      const config = {
-        name: `${name}${
-          groups?.abbreviation && groups.abbreviation !== '-auto-'
-            ? ` (${groups.abbreviation})`
-            : ''
-        }`,
-        section: ctx.prefixPN('classes'),
-        bgColor: color || randomColor({ luminosity: 'light' }),
-        metadata: { internalId },
-      };
+  let displayName = name;
+  if (groups?.abbreviation) {
+    displayName += ` (${groups.abbreviation})`;
+  }
 
-      if (icon) {
-        config.icon = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: icon.id });
-      }
+  const config = {
+    name: displayName,
+    section: ctx.prefixPN('classes'),
+    bgColor: color || randomColor({ luminosity: 'light' }),
+    metadata: { internalId },
+  };
 
-      const calendar = await ctx.tx.call('calendar.calendar.add', {
-        key: ctx.prefixPN(`class.${id}`),
-        config,
-      });
-
-      await ctx.tx.db.ClassCalendar.create({
-        class: id,
-        program,
-        calendar: calendar.id,
-      });
-
-      resolve();
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
+  return processAcademicPortfolioAddClass({
+    id,
+    color,
+    program,
+    groups,
+    subject: { name, icon, internalId },
+    ctx,
+    displayName,
+    config,
   });
 }
 

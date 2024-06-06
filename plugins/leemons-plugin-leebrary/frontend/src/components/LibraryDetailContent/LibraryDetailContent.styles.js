@@ -6,7 +6,6 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
   lowerContent: {
     flex: 1,
-    backgroundColor: theme.colors.ui03,
     padding: pxToRem(16),
   },
   tagsContainer: {
@@ -15,19 +14,19 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     gap: pxToRem(10),
     alignItems: 'center',
     flexWrap: 'wrap',
-    paddingTop: pxToRem(24),
+    paddingTop: pxToRem(16),
   },
   tab: {
     '& button[aria-selected="true"]': {
-      borderBottomColor: '#B4E600 !important',
+      borderBottomColor: `${theme.other.button.background.color.primary.default} !important`,
     },
     '& button:hover': {
-      backgroundColor: '#F1FFBD !important',
-      borderBottomColor: '#F1FFBD   !important',
+      backgroundColor: `${theme.other.button.background.color.ghost.hover} !important`,
+      borderBottomColor: `${theme.other.button.background.color.ghost.hover} !important`,
     },
     '& button[aria-selected="true"]:hover': {
-      backgroundColor: '#F1FFBD !important',
-      borderBottomColor: '#B4E600 !important',
+      backgroundColor: `${theme.other.button.background.color.ghost.hover} !important`,
+      borderBottomColor: `${theme.other.button.background.color.primary.default} !important`,
     },
   },
   tabPanel: {
@@ -43,6 +42,7 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     height: '100%',
     overflowY: 'scroll',
     marginBottom: pxToRem(48),
+    backgroundColor: theme.other.core.color.neutral['50'],
   },
   title: {
     color: theme.other.global.content.color.tertiary.default,
@@ -50,7 +50,6 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     fontWeight: 500,
     lineHeight: '24px',
     fontStyle: 'normal',
-    paddingBottom: pxToRem(8),
   },
   description: {
     color: theme.other.global.content.color.tertiary.default,
@@ -82,8 +81,14 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
   },
 
   canAccessContainer: {
-    marginTop: pxToRem(24),
+    marginTop: pxToRem(16),
     width: '100%',
+    backgroundColor: theme.other.core.color.white,
+    padding: 8,
+    borderRadius: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
   },
   canAccessItem: {
     display: 'flex',
@@ -95,7 +100,10 @@ const LibraryDetailContentStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: pxToRem(8),
-    width: pxToRem(336),
+    width: '80%',
+  },
+  canAccessTextContainer: {
+    width: '20%',
   },
   canAccessText: {
     fontSize: pxToRem(14),

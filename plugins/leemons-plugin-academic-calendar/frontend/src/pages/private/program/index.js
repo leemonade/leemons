@@ -1,25 +1,30 @@
 import prefixPN from '@academic-calendar/helpers/prefixPN';
-import { listProgramsRequest } from '@academic-portfolio/request';
+import { getConfigRequest } from '@academic-calendar/request';
+import { useProgramsList } from '@academic-portfolio/hooks';
 import {
   Box,
-  Col,
   ContextContainer,
   createStyles,
-  Grid,
   PageContainer,
-  Paper,
-  useResizeObserver,
+  TotalLayoutContainer,
+  TotalLayoutHeader,
+  TotalLayoutStepContainer,
+  VerticalStepperContainer,
+  ImageLoader,
+  Stack,
+  Table,
+  ActionButton,
+  Title,
+  Loader,
 } from '@bubbles-ui/components';
-import { FolderIcon } from '@bubbles-ui/icons/outline';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { EditIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
-import { LayoutContext } from '@layout/context/layout';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components/SelectCenter';
-import React, { useContext } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
+import { getCentersWithToken } from '@users/session';
 import AcademicCalendarDetail from './components/AcademicCalendarDetail';
+import { EmptyState } from './components/EmptyState';
 
 const useStyle = createStyles((theme) => ({
   container: {
@@ -28,6 +33,10 @@ const useStyle = createStyles((theme) => ({
   content: {
     width: 'calc(100% - 320px)',
     boxSizing: 'border-box',
+  },
+  pageContainer: {
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   drawer: {
     height: '100vh',
@@ -83,15 +92,16 @@ const useStyle = createStyles((theme) => ({
 }));
 
 export default function ProgramCalendars() {
-  const [t, , , loading] = useTranslateLoader(prefixPN('programList'));
-  const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [containerRef, container] = useResizeObserver();
-  const [headerBaseRef, headerBase] = useResizeObserver();
-  const [headerDescriptionRef, headerDescription] = useResizeObserver();
+  const [t] = useTranslateLoader(prefixPN('programList'));
+  const scrollRef = React.useRef(null);
+  const [userCenters, setUserCenters] = useState();
+  const [selectedCenter, setSelectedCenter] = useState();
+  const [selectedProgram, setSelectedProgram] = useState();
+  const [programs, setPrograms] = useState();
+  const [step, setStep] = useState(0);
   const { classes, cx } = useStyle();
-  const { layoutState } = useLayout();
+  const calendarRef = useRef();
 
-  const { setLoading, scrollTo } = useContext(LayoutContext);
   const [store, render] = useStore({
     scroll: 0,
     showDetail: false,
@@ -101,127 +111,245 @@ export default function ProgramCalendars() {
     currentProgram: null,
   });
 
+  const { data: programsList, isLoading: programsIsLoading } = useProgramsList(
+    { page: 0, size: 9999, center: store.center?.id },
+    { enabled: !!store.center?.id }
+  );
+
+  function formatDate(date) {
+    if (!date) return null;
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   async function loadProgramConfigs() {
-    const response = await listProgramsRequest({ page: 0, size: 9999, center: store.center });
-    store.programs = response.data?.items || [];
-    render();
+    if (programsList?.data.items) {
+      const programsWithConfig = await Promise.all(
+        programsList.data.items.map(async (program) => {
+          try {
+            const configResponse = await getConfigRequest(program.id);
+            const courseDates = Object.values(configResponse.config.courseDates || {});
+            const startDates = courseDates.map((date) => new Date(date.startDate));
+            const endDates = courseDates.map((date) => new Date(date.endDate));
+            const startCourse = startDates.length > 0 ? new Date(Math.min(...startDates)) : null;
+            const endCourse = endDates.length > 0 ? new Date(Math.max(...endDates)) : null;
+            const startCourseStr = formatDate(startCourse);
+            const endCourseStr = formatDate(endCourse);
+            return {
+              ...program,
+              config: {
+                ...configResponse.config,
+                startCourse: startCourseStr,
+                endCourse: endCourseStr,
+              },
+            };
+          } catch (error) {
+            console.error('Error loading config for program', program.id, error);
+            return program;
+          }
+        })
+      );
+
+      store.programs = programsWithConfig;
+      setPrograms(programsWithConfig);
+      render();
+    }
   }
 
   function handleOnSelectCenter(center) {
+    setSelectedCenter(center);
     store.center = center;
     loadProgramConfigs();
   }
 
-  function onScroll() {
-    store.scroll = layoutState.contentRef.current.scrollTop;
+  function handleOnSelectProgram(program) {
+    store.selectedProgram = program;
+    setSelectedProgram(program);
     render();
   }
 
-  React.useEffect(() => {
-    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
+  useEffect(() => {
+    const centers = getCentersWithToken();
+    setUserCenters(centers);
+    handleOnSelectCenter(centers[0]);
+  }, []);
 
-    // cleanup this component
-    return () => {
-      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
-    };
-  }, [layoutState.contentRef.current]);
+  useEffect(() => {
+    if (programsList) {
+      loadProgramConfigs();
+    }
+  }, [programsList]);
 
-  let { scroll } = store;
-  if (scroll > headerBase.height) scroll = headerBase.height;
-  const correct = 48;
-  const correctBottom = 24;
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'Cover',
+        accessor: 'imageUrl',
+        Cell: ({ value }) => (
+          <Box>
+            <ImageLoader height="42px" width="72px" radius={4} src={value} />
+          </Box>
+        ),
+      },
+      {
+        Header: 'Programa',
+        accessor: 'name',
+      },
+      {
+        Header: 'Inicio de curso',
+        accessor: 'config.startCourse',
+        Cell: ({ value }) => {
+          if (value) {
+            return <>{value}</>;
+          }
+          return '-';
+        },
+      },
+      {
+        Header: 'Fin de curso',
+        accessor: 'config.endCourse',
+        Cell: ({ value }) => {
+          if (value) {
+            return <>{value}</>;
+          }
+          return '-';
+        },
+      },
+      {
+        Header: '',
+        accessor: 'actions',
+        cellStyle: { justifyContent: 'end' },
+      },
+    ],
+    [programs, programs?.config]
+  );
 
-  let top = headerBase.height + correct - scroll;
-  const minTop = headerBase.height - headerDescription.height + 24;
-  if (top < minTop) {
-    top = minTop;
+  const programsData = useMemo(
+    () =>
+      store?.programs?.map((program) => ({
+        ...program,
+        actions: (
+          <Stack>
+            <Box>
+              <ActionButton
+                icon={<EditIcon width={20} height={20} />}
+                onClick={() => {
+                  store.currentProgram = program;
+                  handleOnSelectProgram(program);
+                  setSelectedProgram(program);
+                  setStep(1);
+                  render();
+                }}
+              />
+            </Box>
+          </Stack>
+        ),
+      })),
+    [programs, programsIsLoading, programsList]
+  );
+
+  const stepNames = [
+    { label: t('basic'), status: 'OK' },
+    { label: t('periods'), status: 'OK' },
+    { label: t('preview'), status: 'OK' },
+  ];
+  if (programsIsLoading) {
+    return (
+      <TotalLayoutContainer>
+        <Loader />
+      </TotalLayoutContainer>
+    );
   }
 
   return (
-    <ContextContainer fullHeight>
-      <AdminPageHeader
-        baseRef={headerBaseRef}
-        descriptionRef={headerDescriptionRef}
-        values={{
-          title: t('title'),
-          description: t('description'),
-        }}
-      />
-
-      <Paper color="solid" shadow="none" padding={0}>
-        <PageContainer>
-          <ContextContainer padded="vertical">
-            <Grid>
-              {/* TREE ----------------------------------------- */}
-              <Col span={4}>
-                <Box ref={containerRef}>
-                  <Box
-                    style={{
-                      width: `${container.width}px`,
-                      position: 'fixed',
-                      top: `${top}px`,
-                      height: `calc(100vh - ${top + correctBottom}px)`,
-                    }}
-                  >
-                    <Paper fullWidth padding={5}>
-                      <ContextContainer divided>
-                        <Box>
-                          <SelectCenter
-                            label={t('selectCenter')}
-                            onChange={handleOnSelectCenter}
-                            firstSelected
-                          />
-                        </Box>
-
-                        {store.center ? (
-                          <Box>
-                            <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
-                              {store.programs
-                                ? store.programs.map((program) => (
-                                    <Box
-                                      key={program.id}
-                                      className={cx(
-                                        classes.configItem,
-                                        program.id === store.selectedProgram?.id &&
-                                          classes.configItemActive
-                                      )}
-                                      onClick={() => {
-                                        store.selectedProgram = program;
-                                        render();
-                                      }}
-                                    >
-                                      <FolderIcon width={16} height={16} />
-                                      <Box className={classes.configItemName}>{program.name}</Box>
-                                    </Box>
-                                  ))
-                                : null}
-                            </Box>
-                          </Box>
-                        ) : null}
-                      </ContextContainer>
-                    </Paper>
-                  </Box>
-                </Box>
-              </Col>
-              {/* CONTENT ----------------------------------------- */}
-              <Col span={8}>
-                {store.selectedProgram ? (
-                  <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <TotalLayoutHeader
+          title={t('title')}
+          icon={<PluginCalendarIcon width={24} height={24} />}
+          scrollRef={scrollRef}
+          cancelable={store.currentProgram}
+          onCancel={() => {
+            store.currentProgram = null;
+            setSelectedProgram(null);
+            setStep(0);
+          }}
+        >
+          <ContextContainer direction="row" alignItems="flex-start">
+            {selectedCenter?.name && selectedProgram?.name ? (
+              <Title order={3}>{`${selectedCenter?.name} - ${selectedProgram?.name}`}</Title>
+            ) : (
+              <SelectCenter
+                firstSelected
+                onChange={(v) => handleOnSelectCenter(userCenters?.find((c) => c.id === v))}
+                value={selectedCenter?.id}
+              />
+            )}
+          </ContextContainer>
+        </TotalLayoutHeader>
+      }
+    >
+      <Stack
+        justifyContent="center"
+        ref={scrollRef}
+        style={{ overflow: 'auto' }}
+        fullWidth
+        fullHeight
+      >
+        {store.currentProgram ? (
+          <VerticalStepperContainer
+            scrollRef={scrollRef}
+            currentStep={step}
+            data={[
+              { label: t('basic'), status: 'OK' },
+              { label: t('periods'), status: 'OK' },
+              { label: t('preview'), status: 'OK' },
+            ]}
+            onChangeActiveIndex={setStep}
+          >
+            <TotalLayoutStepContainer stepName={`${stepNames[step]?.label}`}>
+              <ContextContainer
+                sx={(theme) => ({
+                  paddingBottom: theme.spacing[12],
+                  overflow: 'auto',
+                })}
+                fullHeight
+                fullWidth
+              >
+                <PageContainer noFlex fullWidth className={classes.pageContainer}>
+                  {store.selectedProgram ? (
                     <AcademicCalendarDetail
                       t={t}
                       onSave={() => {
                         store.selectedProgram = null;
+                        store.currentProgram = null;
+                        setSelectedProgram(null);
+                        setStep(0);
                         render();
                       }}
                       program={store.selectedProgram}
+                      onChangeStep={setStep}
+                      scrollRef={scrollRef}
+                      calendarRef={calendarRef}
                     />
-                  </Paper>
-                ) : null}
-              </Col>
-            </Grid>
-          </ContextContainer>
-        </PageContainer>
-      </Paper>
-    </ContextContainer>
+                  ) : null}
+                </PageContainer>
+              </ContextContainer>
+            </TotalLayoutStepContainer>
+          </VerticalStepperContainer>
+        ) : (
+          <TotalLayoutStepContainer stepName={`${selectedCenter?.name}`}>
+            {programs?.length > 0 ? (
+              <Table columns={columns} data={programsData || []} />
+            ) : (
+              <>{!programsIsLoading ? <EmptyState t={t} /> : null}</>
+            )}
+          </TotalLayoutStepContainer>
+        )}
+      </Stack>
+    </TotalLayoutContainer>
   );
 }

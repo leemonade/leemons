@@ -6,7 +6,7 @@ import {
   Box,
   Button,
   Checkbox,
-  Drawer,
+  BaseDrawer,
   TextInput,
   useDebouncedCallback,
   UserDisplayItem,
@@ -156,7 +156,7 @@ function ChatAddUsersDrawer({
   store.userAgents = _.filter(store.allUserAgents, ({ id }) => !currentUserIds.includes(id));
 
   return (
-    <Drawer opened={opened} size={400} close={false} empty>
+    <BaseDrawer opened={opened} size={400} close={false} empty>
       <Box className={classes.wrapper}>
         <Box className={classes.header}>
           <Button
@@ -247,7 +247,7 @@ function ChatAddUsersDrawer({
           </Box>
         ) : null}
       </Box>
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

@@ -6,6 +6,7 @@ const permissionNames = {
   scores: `${pluginName}.scores`,
   scoresMenu: `${pluginName}.scoresMenu`,
   reviewer: `${pluginName}.reviewer`,
+  weights: `${pluginName}.weights`,
 };
 
 const permissions = [
@@ -29,8 +30,8 @@ const permissions = [
     permissionName: permissionNames.scores,
     actions: ['view'],
     localizationName: {
-      es: 'Evaluaciones',
-      en: 'Evaluations',
+      es: 'Mis Evaluaciones',
+      en: 'My Evaluations',
     },
   },
   {
@@ -47,6 +48,14 @@ const permissions = [
     localizationName: {
       es: 'Notas finales',
       en: 'Final grades',
+    },
+  },
+  {
+    permissionName: permissionNames.weights,
+    actions: ['view', 'update', 'admin'],
+    localizationName: {
+      es: 'Ponderaciones',
+      en: 'Weights',
     },
   },
 ];
@@ -137,6 +146,24 @@ const menuItems = [
       {
         permissionName: permissionNames.scores,
         actionNames: ['view'],
+      },
+    ],
+  },
+  {
+    item: {
+      key: 'scores.weights',
+      order: 5,
+      parentKey: 'scores.scores',
+      url: '/private/scores/weights',
+      label: {
+        en: 'Weighting rules',
+        es: 'Reglas de ponderación',
+      },
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.weights,
+        actionNames: ['update', 'admin'],
       },
     ],
   },

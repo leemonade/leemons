@@ -14,10 +14,9 @@ import { Swiper } from '@bubbles-ui/extras';
 import { useStore } from '@common';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isArray } from 'lodash';
 import { useHistory } from 'react-router-dom';
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { addErrorAlert } from '@layout/alert';
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import { listSessionClassesRequest } from '../../request';
 import { getClassImage } from '../../helpers/getClassImage';
 import { getClassIcon } from '../../helpers/getClassIcon';
@@ -144,21 +143,8 @@ function UserClassesSwiperWidget({ program }) {
         }}
       >
         {store.classes.map((classe, index) => {
-          const name = `${classe.subject.name} - ${classe.subject.internalId}`;
-          const group =
-            !classe.groups || classe.groups.isAlone
-              ? null
-              : classe.groups
-                ? classe.groups.abbreviation
-                : null;
-          const course =
-            !classe.groups || classe.groups.isAlone
-              ? null
-              : isArray(classe.courses)
-                ? t('multiCourse')
-                : classe.courses
-                  ? getCourseName(classe.courses)
-                  : null;
+          const dataLabels = getSubjectGroupCourseNamesFromClassData(classe);
+
           const imageStyle = getClassImage(classe)
             ? { backgroundImage: `url(${getClassImage(classe)})` }
             : {};
@@ -168,7 +154,7 @@ function UserClassesSwiperWidget({ program }) {
           if (nameArray.length > 1) {
             nameFirstLetters = nameArray[0][0] + nameArray[1][0];
           } else {
-            nameFirstLetters = nameArray[0][0];
+            nameFirstLetters = nameArray[0]?.[0];
           }
           return (
             <Box
@@ -201,18 +187,17 @@ function UserClassesSwiperWidget({ program }) {
                   ) : null}
                 </Box>
                 <Stack direction="column" spacing={2}>
-                  <Box style={{ height: '32px' }}>
+                  <Box>
                     <TextClamp lines={2} showTooltip>
                       <Text color="primary" strong>
-                        {name}
+                        {dataLabels?.subject}
                       </Text>
                     </TextClamp>
                   </Box>
-                  <Box style={{ height: '17px' }}>
+                  <Box>
                     <TextClamp lines={1} showTooltip>
                       <Text size="sm" strong>
-                        {course}
-                        {group ? (course ? `- ${group}` : group) : null}
+                        {dataLabels?.courseAndGroupParsed}
                       </Text>
                     </TextClamp>
                   </Box>

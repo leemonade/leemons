@@ -36,6 +36,13 @@ export default function DetailEvaluation({
   const subjects = store.subjectsByProgram[programId];
   const subject = find(subjects, { value: subjectIds?.[0]?.subject });
 
+  const labels = {
+    inputLabel: t('inputLabel'),
+    inputPlaceholder: t('inputPlaceholder'),
+    numberHeader: t('numberHeader'),
+    objectiveHeader: t('objectiveHeader'),
+  };
+
   // ························································
   // HANDLERS
 
@@ -52,7 +59,6 @@ export default function DetailEvaluation({
       onNext();
     }
   }
-
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
@@ -97,7 +103,7 @@ export default function DetailEvaluation({
                   disabled={store.saving}
                   loading={store.saving === 'publish'}
                 >
-                  {t('continue')}
+                  {t('next')}
                 </Button>
               )}
             </>
@@ -120,7 +126,7 @@ export default function DetailEvaluation({
           )}
           {formValues.config?.hasObjectives && (
             <ContextContainer title={t('objectivesCurriculum')}>
-              <Objectives form={form} name={`curriculum.objectives`} />
+              <Objectives form={form} name={`curriculum.objectives`} labels={labels} />
             </ContextContainer>
           )}
         </ContextContainer>

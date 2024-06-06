@@ -2,8 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
 import { TextInput } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@grades/helpers/prefixPN';
 
-const Name = ({ messages, errorMessages, form }) => {
+const Name = ({ form, inUse }) => {
+  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const {
     control,
     formState: { errors },
@@ -14,14 +17,15 @@ const Name = ({ messages, errorMessages, form }) => {
       name="name"
       control={control}
       rules={{
-        required: errorMessages.nameRequired,
+        required: t('errorTypeRequired'),
       }}
       render={({ field }) => (
         <TextInput
-          label={messages.nameLabel}
-          placeholder={messages.namePlaceholder}
+          label={t('nameLabel')}
+          placeholder={t('namePlaceholder')}
           error={errors.name}
           required
+          disabled={inUse}
           {...field}
         />
       )}
@@ -30,9 +34,8 @@ const Name = ({ messages, errorMessages, form }) => {
 };
 
 Name.propTypes = {
-  messages: PropTypes.object.isRequired,
-  errorMessages: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
+  inUse: PropTypes.bool,
 };
 
 export { Name };

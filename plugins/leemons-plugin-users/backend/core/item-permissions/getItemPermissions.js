@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { getItemPermissionsCacheKey } = require('../../helpers/cacheKeys');
 
 async function getItemPermissions({ item, type, returnRaw, ctx }) {
   const items = _.isArray(item) ? item : [item];
@@ -6,7 +7,7 @@ async function getItemPermissions({ item, type, returnRaw, ctx }) {
   let results = [];
   const query = { item: items, type };
 
-  const cacheKey = `users:permissions:getItemPermissions:${JSON.stringify(query)}`;
+  const cacheKey = getItemPermissionsCacheKey({ ctx, query });
   const cache = await ctx.cache.get(cacheKey);
 
   if (cache) {

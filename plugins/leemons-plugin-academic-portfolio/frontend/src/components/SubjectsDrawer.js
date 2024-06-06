@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { Box, Button, ContextContainer, Drawer, Title } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, BaseDrawer, Title } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 
 function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
   const [t] = useTranslateLoader(prefixPN('subjectsDrawer'));
@@ -84,7 +84,7 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
   }
 
   return (
-    <Drawer
+    <BaseDrawer
       opened={opened}
       onClose={onClose}
       size={360}
@@ -112,7 +112,7 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
           </Button>
         </Box>
       </ContextContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

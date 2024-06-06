@@ -1,3 +1,6 @@
+import React, { useMemo, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -13,16 +16,16 @@ import {
   Alert,
   Tabs,
   TabPanel,
+  ImageLoader,
 } from '@bubbles-ui/components';
+
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { useSearchParams } from '@common';
-
-import React, { useMemo, useRef, useState } from 'react';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { isEmpty } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { DocumentIcon } from '@content-creator/components';
 import { CurriculumIcon } from '@tasks/assets/images/CurriculumIcon';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
@@ -32,7 +35,8 @@ import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { ChatDrawer } from '@comunica/components';
 import hooks from 'leemons-hooks';
-import TimeoutAlert from '@assignables/components/EvaluationFeedback/TimeoutAlert';
+import ActivityFeedbackAlertManager from '@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import CurriculumRender from '../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender';
 import { useStudentCorrectionStyles } from './StudentCorrection.style';
 import { TextIcon } from '../../assets/images/TextIcon';
@@ -40,7 +44,7 @@ import LinkSubmission from '../Correction/components/LinkSubmission/LinkSubmissi
 
 function SubjectTab({ assignation, subject, t }) {
   const [chatOpened, setChatOpened] = useState(false);
-  const room = `assignables.subject|${subject}.assignation|${assignation?.id}.userAgent|${assignation?.user}`;
+  const room = useAssignationComunicaRoom({ assignation, subject });
 
   const isEvaluated = useMemo(
     () =>
@@ -65,6 +69,7 @@ function SubjectTab({ assignation, subject, t }) {
           hooks.fireEvent('chat:openDrawer', { room });
           setChatOpened(true);
         }}
+        hideChat={!room}
       />
 
       <ChatDrawer
@@ -81,12 +86,12 @@ function SubjectTab({ assignation, subject, t }) {
 
 export default function StudentCorrection({ assignation }) {
   const [t] = useTranslateLoader(prefixPN('task_correction.student'));
+  const [correctionT] = useTranslateLoader(prefixPN('task_correction'));
   const [buttonsT] = useTranslateLoader(prefixPN('task_realization.buttons'));
 
   const scrollRef = useRef();
   const params = useSearchParams();
-  const fromExecution = useMemo(() => params.has('fromExecution'), []);
-  const history = useHistory();
+  const fromExecution = useRef(params.has('fromExecution')).current;
 
   const { instance } = assignation ?? {};
   const { assignable } = instance ?? {};
@@ -102,7 +107,7 @@ export default function StudentCorrection({ assignation }) {
       return assignation?.metadata?.submission?.map((file) => file.id);
     }
     return [];
-  });
+  }, [assignation?.metadata?.submission, assignable?.submission?.type]);
 
   const isEvaluated = useMemo(
     () => !!assignation?.grades?.find((grade) => grade.type === 'main'),
@@ -117,11 +122,13 @@ export default function StudentCorrection({ assignation }) {
       Header={
         <ActivityHeader
           instance={instance}
+          action={correctionT('action')}
           showClass
           showRole
           showEvaluationType
           showTime
           showDeadline
+          showStatusBadge
         />
       }
     >
@@ -151,36 +158,11 @@ export default function StudentCorrection({ assignation }) {
         >
           <Box className={classes.root}>
             <Stack direction="column" spacing="xl">
-              {params.has('fromTimeout') && (
-                <TimeoutAlert
-                  onClose={() => {
-                    params.delete('fromTimeout');
-
-                    history.replace({ search: params.toString() });
-                  }}
-                />
-              )}
-              {params.has('fromExecution') && (
-                <Alert
-                  severity="success"
-                  title={t('submitted_alert.title')}
-                  onClose={() => {
-                    params.delete('fromExecution');
-                    history.replace({ search: params.toString() });
-                  }}
-                >
-                  {t('submitted_alert.message')}
-                </Alert>
-              )}
-              {!isEvaluated && (
-                <Alert
-                  severity="warning"
-                  title={t('pending_evaluation_alert.title')}
-                  closeable={false}
-                >
-                  {t('pending_evaluation_alert.message')}
-                </Alert>
-              )}
+              <ActivityFeedbackAlertManager
+                assignation={assignation}
+                hasSubmission={hasSubmission}
+                isSubmitted={activitySubmitted}
+              />
 
               {!!isEvaluated &&
                 (subjects?.length > 1 ? (
@@ -230,6 +212,20 @@ export default function StudentCorrection({ assignation }) {
                       <HtmlText>{assignable?.statement}</HtmlText>
                     </Box>
                   </ActivityAccordionPanel>
+                  {!isEmpty(assignable?.resources) && (
+                    <ActivityAccordionPanel
+                      label={t('resources')}
+                      icon={
+                        <Box sx={{ position: 'relative', width: 22, height: 22 }}>
+                          <ImageLoader src="/public/leebrary/media-files.svg" color="#7F7F7F" />
+                        </Box>
+                      }
+                    >
+                      <Box className={classes?.accordionPanel}>
+                        <AssetEmbedList assets={assignable.resources} />
+                      </Box>
+                    </ActivityAccordionPanel>
+                  )}
                   {!isEmpty(instance?.curriculum) && (
                     <ActivityAccordionPanel label={t('curriculum')} icon={<CurriculumIcon />}>
                       <Box className={classes?.accordionPanel}>
@@ -259,3 +255,13 @@ export default function StudentCorrection({ assignation }) {
     </TotalLayoutContainer>
   );
 }
+
+StudentCorrection.propTypes = {
+  assignation: PropTypes.object.isRequired,
+};
+
+SubjectTab.propTypes = {
+  assignation: PropTypes.object.isRequired,
+  subject: PropTypes.string.isRequired,
+  t: PropTypes.func.isRequired,
+};

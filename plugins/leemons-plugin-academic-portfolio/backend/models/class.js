@@ -32,6 +32,7 @@ const schema = new mongoose.Schema(
     },
     seats: {
       type: Number,
+      required: true,
     },
     image: {
       type: String,
@@ -43,6 +44,15 @@ const schema = new mongoose.Schema(
       type: String,
     },
     virtualUrl: {
+      type: String,
+    },
+    alias: {
+      type: String,
+    },
+    classroomId: {
+      type: String,
+    },
+    classWithoutGroupId: {
       type: String,
     },
   },

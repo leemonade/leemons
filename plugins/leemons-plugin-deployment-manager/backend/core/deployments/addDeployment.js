@@ -12,7 +12,7 @@ const {
   },
 } = require('@leemons/mongodb');
 
-async function addDeployment({ ctx, broker, domains: _domains, plugins, name, config }) {
+async function addDeployment({ ctx, broker, domains: _domains, plugins, type, name, config }) {
   const domains = _.map(_domains, (domain) => new URL(domain).hostname);
 
   const servicesRaw = await broker.call('$node.services', {
@@ -84,6 +84,7 @@ async function addDeployment({ ctx, broker, domains: _domains, plugins, name, co
         name,
         domains,
         config,
+        type,
       },
     ],
     { disableAutoDeploy: true, disableAutoLRN: true }

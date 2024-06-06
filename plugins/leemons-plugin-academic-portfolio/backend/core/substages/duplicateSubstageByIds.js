@@ -12,13 +12,10 @@ async function duplicateSubstageByIds({ ids, duplications: dup = {}, ctx }) {
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newSubstages = await Promise.all(
-    _.map(substages, ({ id, ...item }) =>
+    _.map(substages, ({ id, _id, __v, updatedAt, createdAt, ...item }) =>
       ctx.tx.db.Groups.create({
         ...item,
-        program:
-          duplications.programs && duplications.programs[item.program]
-            ? duplications.programs[item.program].id
-            : item.program,
+        program: duplications.programs?.[item.program]?.id ?? item.program,
       }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );

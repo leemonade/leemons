@@ -15,14 +15,8 @@ import {
   useResizeObserver,
   useTree,
 } from '@bubbles-ui/components';
-import {
-  DuplicateIcon,
-  PluginSettingsIcon,
-  RemoveIcon,
-} from '@bubbles-ui/icons/outline';
-import {
-  AddCircleIcon,
-} from '@bubbles-ui/icons/solid';
+import { DuplicateIcon, PluginSettingsIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 // TODO: import from @common plugin
 
 import { AdminPageHeader } from '@bubbles-ui/leemons';
@@ -585,7 +579,7 @@ export default function TreePage() {
         try {
           store.removing = true;
           render();
-          await removeSubjectRequest(id);
+          await removeSubjectRequest({ id }); // updated just in case
           store.editingItem = null;
           store.duplicateItem = null;
           store.showTreeType = null;
@@ -920,7 +914,7 @@ export default function TreePage() {
       openDeleteConfirmationModal({
         onConfirm: async () => {
           try {
-            await removeStudentFromClassRequest(id, student);
+            await removeStudentFromClassRequest({ classId: id, studentId: student }); // update
             store.tree = await getProgramTree();
             setAgainActiveTree();
             resolve();

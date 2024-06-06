@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Redirect, useRouteMatch } from 'react-router-dom';
 import { LoadingOverlay } from '@bubbles-ui/components';
 import { useStore } from '@common';
-import { useDeploymentConfig } from '@common/hooks/useDeploymentConfig';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { getSettingsRequest } from '../request/settings';
 import LocaleContext from '../contexts/translations';
 

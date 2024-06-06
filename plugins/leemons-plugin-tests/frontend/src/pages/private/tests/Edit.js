@@ -37,7 +37,7 @@ export default function Edit() {
 
   // ························································
   // SETTINGS
-
+  const [isNewQBankSelected, setIsNewQBankSelected] = React.useState(false);
   const [store, render] = useStore({
     loading: true,
     saving: null,
@@ -61,7 +61,7 @@ export default function Edit() {
       store.saving = 'draft';
       render();
 
-      const { subjects, ...toSend } = formValues;
+      const { subjects, subjectsRaw, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
@@ -81,7 +81,7 @@ export default function Edit() {
     try {
       store.saving = 'publish';
       render();
-      const { subjects, ...toSend } = formValues;
+      const { subjects, subjectsRaw, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
@@ -107,6 +107,7 @@ export default function Edit() {
       getUserProgramsRequest(),
       listSessionClassesRequest(),
     ]);
+
     store.subjects = uniqBy(map(classes, 'subject'), 'id');
     store.subjectsByProgram = groupBy(
       map(store.subjects, (item) => ({
@@ -149,7 +150,7 @@ export default function Edit() {
       store.loading = false;
       render();
     } catch (error) {
-      addErrorAlert(error);
+      // addErrorAlert(error);
     }
   }
 
@@ -220,10 +221,9 @@ export default function Edit() {
     if (store.isNew) return t('pageTitleNew');
     return t('pageTitleEdit');
   };
-
   const hasOptionalSteps = () => {
     const { config = {} } = formValues;
-    return Object.values(config).some((value) => value);
+    return config.hasInstructions || config.hasResources || config.hasObjectives;
   };
 
   const stepsContent = React.useMemo(() => {
@@ -260,6 +260,8 @@ export default function Edit() {
         t={t}
         form={form}
         store={store}
+        isNewQBankSelected={isNewQBankSelected}
+        setIsNewQBankSelected={setIsNewQBankSelected}
         stepName={t('questionsBank')}
         scrollRef={scrollRef}
         onSave={saveAsDraft}
@@ -271,6 +273,8 @@ export default function Edit() {
         t={t}
         form={form}
         store={store}
+        isNewQBankSelected={isNewQBankSelected}
+        setIsNewQBankSelected={setIsNewQBankSelected}
         stepName={t('questionsStepName')}
         scrollRef={scrollRef}
         onSave={saveAsDraft}
@@ -307,6 +311,8 @@ export default function Edit() {
           t={t}
           form={form}
           store={store}
+          hasResources={config.hasResources}
+          hasInstructions={config.hasInstructions}
           stepName={t(getInstructionsLabelKey())}
           scrollRef={scrollRef}
           onSave={saveAsDraft}

@@ -321,5 +321,131 @@ module.exports = {
       name: 'Nombre',
       weight: 'Porcentaje',
     },
+    alerts: {
+      error: 'Error descargando el boletín',
+    },
+  },
+  weighting: {
+    title: 'Reglas de ponderación',
+    subjectsAndGroups: 'Asignaturas y grupos',
+
+    table: {
+      headers: {
+        subject: 'Asignatura',
+        group: 'Grupo',
+        course: 'Curso',
+        rules: 'Reglas',
+        actions: 'Acciones',
+      },
+    },
+  },
+  weightingTypes: {
+    averages: 'Media',
+    roles: 'Tipo',
+    modules: 'Módulos',
+  },
+  weightingDrawer: {
+    rules: 'Reglas',
+    type: 'Tipo',
+    weighting: 'Ponderación',
+    table: {
+      applySameValue: 'Aplicar mismo valor',
+      modules: 'Módulos',
+      roles: 'Tipos',
+      weight: 'Porcentaje',
+      total: 'Total',
+    },
+    explanation: 'Explicación',
+    cancel: 'Cancelar',
+    save: 'Guardar',
+  },
+  weightingAlerts: {
+    updateSuccess: 'Ponderación actualizada correctamente',
+    updateError: 'Error actualizando la ponderación',
+    exceedPercentageUpper:
+      'El total de la ponderación no puede sumar más de 100%, revisa los valores de porcentaje.',
+    exceedPercentageLower:
+      'El total de la ponderación no puede ser menor de 100%, revisa los valores de porcentaje.',
+    modulesTypeWarning: {
+      title: 'Importante:',
+      message:
+        'la ponderación por módulos no incluirá en el calculo actividades asignadas individualmente (tareas, test...)',
+    },
+    noModulesWarning: {
+      title: 'No hay módulos asignados todavía',
+      message:
+        'Puedes crear una regla de ponderación aplicando el mismo porcentaje automáticamente para todos los módulos que asignes. Ajusta la regla manualmente cuando quieras.',
+    },
+    newModulesWarning:
+      'Se han añadido nuevos módulos a esta clase. Para incluirlos en la ponderación, modifica los porcentajes',
+  },
+  evaluationNotebook: {
+    title: 'Cuaderno de evaluación',
+    filters: {
+      searchTypes: {
+        student: 'Estudiante',
+        activity: 'Actividad',
+      },
+      search: 'Buscar {type}...',
+      showNonEvaluable: 'Ver no calificables',
+      goToWeighting: 'Ponderación',
+    },
+    scoresTable: {
+      students: 'Estudiantes',
+      noActivity: 'NE',
+      submitted: 'Entregado',
+      avgScore: 'Nota promedio',
+      calculated: 'Calculada',
+      custom: 'Docente',
+      attendance: 'Asistencia',
+    },
+    newModule:
+      'Se han añadido nuevos módulos a esta asignatura que no están ponderados. Para calcularlos correctamente, accede a sus Reglas de ponderación.',
+    updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',
+    updatedError: 'Error actualizando la nota de {{student}} en {{activity}} a un {{score}}',
+    closedEvaluationSuccess: 'Se ha cerrado {period} correctamente',
+    closedEvaluationError: 'Error cerrando {period}',
+    unableToOpen: 'Error al abrir la actividad, la actividad no se ha podido encontrar',
+    noEvaluationPage: 'Esta actividad no tiene una página para evaluar',
+
+    emptyState: {
+      noFilters: {
+        title: 'Seleccionar clase y periodo',
+        description:
+          'Selecciona la clase y luego filtra por periodos de evaluación. También puedes exportar estos informes a excel o csv.',
+      },
+      noResults: {
+        title: 'Sin resultados',
+        description: 'No hemos encontrado resultados para tu bsqueda.',
+      },
+    },
+    footer: {
+      closeEvaluation: 'Cerrar evaluación',
+    },
+  },
+  myScores: {
+    title: 'Mis evaluaciones',
+    filters: {
+      course: 'Curso',
+    },
+    localFilters: {
+      subject: 'Asignatura',
+      search: 'Buscar por actividad...',
+      seeNonEvaluable: 'Ver no calificables',
+    },
+    finalGrades: 'Notas finales',
+    noEvaluable: 'No calificable',
+    downloadReport: 'Descargar boletín',
+
+    emptyStates: {
+      noFilters: {
+        title: 'Seleccionar curso y periodo',
+        description: 'Selecciona el curso y luego filtra por periodos de evaluación.',
+      },
+      noResults: {
+        title: 'Sin resultados',
+        description: 'No hemos encontrado resultados para tu bsqueda.',
+      },
+    },
   },
 };

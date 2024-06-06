@@ -10,7 +10,13 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { updateSubjectType, addSubjectType, listSubjectType } = require('../../core/subject-type');
+const {
+  updateSubjectType,
+  addSubjectType,
+  listSubjectType,
+  removeSubjectType,
+} = require('../../core/subject-type');
+const { permissions } = require('../../config/constants');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -23,7 +29,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
+          [permissions.names.programs]: {
             actions: ['admin', 'create'],
           },
         },
@@ -43,7 +49,7 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
+          [permissions.names.programs]: {
             actions: ['admin', 'update'],
           },
         },
@@ -63,10 +69,8 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          allowedPermissions: {
-            'academic-portfolio.programs': {
-              actions: ['admin', 'view'],
-            },
+          [permissions.names.programs]: {
+            actions: ['admin', 'view'],
           },
         },
       }),
@@ -77,22 +81,43 @@ module.exports = {
         properties: {
           page: { type: ['number', 'string'] },
           size: { type: ['number', 'string'] },
-          program: { type: 'string' },
+          center: { type: 'string' },
         },
-        required: ['page', 'size', 'program'],
+        required: ['page', 'size', 'center'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const { page, size, program } = ctx.params;
+        const { page, size, center } = ctx.params;
         const data = await listSubjectType({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
-          program,
+          center,
           ctx,
         });
         return { status: 200, data };
       }
       throw validator.error;
+    },
+  },
+  deleteSubjectTypeRest: {
+    rest: {
+      path: '/:id',
+      method: 'DELETE',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          [permissions.names.programs]: {
+            actions: ['admin', 'delete'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { id, soft } = ctx.params;
+      const data = await removeSubjectType({ id, soft, ctx });
+      return { status: 200, data };
     },
   },
 };

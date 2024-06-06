@@ -16,6 +16,7 @@ export default function Preview({ assignable, localizations }) {
       asset: {
         ...assignable?.asset,
         name: values?.title ?? assignable?.asset?.name,
+        cover: values?.thumbnail ?? assignable?.asset?.cover,
       },
     },
     classes: uniq(values?.students?.value?.flatMap((group) => group.group)),

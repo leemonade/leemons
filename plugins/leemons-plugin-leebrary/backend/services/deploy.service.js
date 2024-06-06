@@ -13,6 +13,7 @@ const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
 const { addMenuItemsDeploy, addMenusDeploy } = require('@leemons/menu-builder');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { find, isEmpty } = require('lodash');
+const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
 const {
   permissions,
   menuItems,
@@ -20,6 +21,7 @@ const {
   categories,
   categoriesMenu,
   widgets,
+  assignableRoles,
 } = require('../config/constants');
 const { defaultCategory: defaultCategoryKey } = require('../config/config');
 const { getServiceModels } = require('../models');
@@ -96,6 +98,13 @@ module.exports = () => ({
       });
 
       ctx.tx.emit('init-library-categories-menu');
+    },
+    'assignables.init-plugin': async (ctx) => {
+      await registerAssignableRolesDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        assignableRoles,
+        ctx,
+      });
     },
   },
 });

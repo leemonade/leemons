@@ -14,7 +14,6 @@ const schema = new mongoose.Schema(
     class: {
       type: String,
       index: true,
-      // length: 36 * 2 + 1, // uuid.uuid // TODO ask: Ignoramos los length?
     },
     student: {
       type: String,

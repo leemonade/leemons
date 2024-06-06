@@ -8,7 +8,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
 import { noop } from 'lodash';
 
-function EvaluationFeedback({ assignation, subject, onChatClick = noop }) {
+function EvaluationFeedback({ assignation, subject, onChatClick = noop, hideChat }) {
   const [t] = useTranslateLoader(prefixPN('evaluationFeedbackComponent'));
   const { instance } = assignation ?? {};
   const subjects = useClassesSubjects(assignation?.instance?.classes);
@@ -39,7 +39,7 @@ function EvaluationFeedback({ assignation, subject, onChatClick = noop }) {
               fullSize
             />
           </Box>
-          {score?.feedback ? (
+          {score?.feedback || hideChat ? (
             <Box sx={{ overflow: 'auto', width: '100%' }}>
               <HtmlText>{score?.feedback}</HtmlText>
             </Box>
@@ -68,7 +68,7 @@ function EvaluationFeedback({ assignation, subject, onChatClick = noop }) {
     <Box>
       <ContextContainer title={t('feedback')}>
         {componentToReturn}
-        {!!score?.feedback && (
+        {!!score?.feedback && !hideChat && (
           <Box>
             <Stack fullWidth justifyContent="end">
               <Button variant="link" leftIcon={<PluginComunicaIcon />} onClick={onChatClick}>
@@ -92,6 +92,7 @@ EvaluationFeedback.propTypes = {
   }),
   onChatClick: PropTypes.func,
   subject: PropTypes.any,
+  hideChat: PropTypes.bool,
 };
 
 export default EvaluationFeedback;

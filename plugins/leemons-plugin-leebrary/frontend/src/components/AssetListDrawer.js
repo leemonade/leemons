@@ -1,7 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty, isString, find } from 'lodash';
-import { Drawer, Box, Paper, Stack, ActionButton, Tabs, TabPanel } from '@bubbles-ui/components';
+import {
+  BaseDrawer,
+  Box,
+  Paper,
+  Stack,
+  ActionButton,
+  Tabs,
+  TabPanel,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
@@ -85,7 +93,7 @@ const AssetListDrawer = ({
   );
 
   return (
-    <Drawer
+    <BaseDrawer
       position={position}
       opened={opened}
       size={size}
@@ -160,7 +168,7 @@ const AssetListDrawer = ({
           )}
         </Box>
       </Paper>
-    </Drawer>
+    </BaseDrawer>
   );
 };
 

@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
 import { Link } from 'react-router-dom';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { capitalize, get } from 'lodash';
+import { capitalize } from 'lodash';
 import { LockIcon } from '@bubbles-ui/icons/solid';
 import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
 import { EvaluationStateDisplay } from '../EvaluationStateDisplay';
@@ -95,7 +95,11 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
     );
   }
 
-  if (evaluationInfo?.state === 'someDeliveredButNotAll' && !isNoEvaluable) {
+  if (
+    evaluationInfo?.state === 'someDeliveredButNotAll' &&
+    evaluationInfo.totalStudentsFinished > evaluationInfo.totalStudentsEvaluated &&
+    !isNoEvaluable
+  ) {
     return (
       <Box className={classes.buttonFull}>
         <Link to={assignablesURL}>
@@ -308,9 +312,7 @@ const DashboardCardFooter = ({
           <Box className={classes.icon}>
             <ImageLoader src={roleDetails?.icon} width={16} height={16} />
           </Box>
-          <Text className={classes.type}>
-            {capitalize(get(rolesLocalizations, `${role}.singular`))}
-          </Text>
+          <Text className={classes.type}>{capitalize(rolesLocalizations?.[role]?.singular)}</Text>
         </Box>
         <Box className={classes.actionsContainer}>
           <Actions

@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-const ProgressBarStyles = createStyles((theme, {}) => {
+const ProgressBarStyles = createStyles((theme, { isVideoHovered }) => {
   const globalTheme = theme.other.global;
 
   return {
@@ -13,9 +13,11 @@ const ProgressBarStyles = createStyles((theme, {}) => {
       left: 16,
       right: 16,
       bottom: 5,
-      zIndex: 2,
+      zIndex: 1,
       borderRadius: 4,
       backgroundColor: theme.other.buttonIconCard.background.color.primary.default,
+      opacity: isVideoHovered ? 1 : 0,
+      transition: 'opacity 0.3s',
       '&:hover': {
         backgroundColor: theme.other.buttonIconCard.background.color.primary.hover,
       },
@@ -83,6 +85,11 @@ const ProgressBarStyles = createStyles((theme, {}) => {
       display: 'flex',
       alignItems: 'center',
       userSelect: 'none',
+    },
+    iconWrapperVolume: {
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
     },
     whiteIcon: {
       color: 'white',

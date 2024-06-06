@@ -132,6 +132,7 @@ const saveTestSchema = {
     statement: textSchemaNullable,
     instructionsForTeachers: textSchemaNullable,
     instructionsForStudents: textSchemaNullable,
+    duration: stringSchemaNullable,
     questionBank: stringSchemaNullable,
     program: stringSchemaNullable,
     curriculum: {
@@ -154,6 +155,10 @@ const saveTestSchema = {
         type: 'string',
       },
     },
+    resources: {
+      type: 'array',
+      items: stringSchema,
+    },
     config: {
       type: 'object',
       additionalProperties: true,
@@ -162,7 +167,7 @@ const saveTestSchema = {
     published: booleanSchema,
   },
   required: ['name'],
-  additionalProperties: false,
+  additionalProperties: true,
 };
 
 function validateSaveTest(data) {

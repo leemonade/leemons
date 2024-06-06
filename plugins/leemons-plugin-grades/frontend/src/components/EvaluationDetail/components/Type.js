@@ -1,32 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
-import { RadioGroup } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@grades/helpers/prefixPN';
+import { Select } from '@bubbles-ui/components';
 
-const Type = ({ messages, errorMessages, form, selectData }) => {
+const Type = ({ form, selectData, inUse }) => {
   const {
     watch,
     control,
     formState: { errors },
   } = form;
-
-  const disabled = !!watch('id');
-
+  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+  const disabled = !!watch('id') || inUse;
   return (
     <Controller
       name="type"
       control={control}
       rules={{
-        required: errorMessages.typeRequired,
+        required: t('errorTypeRequired'),
       }}
       render={({ field }) => (
-        <RadioGroup
-          label={messages.typeLabel}
+        <Select
+          label={t('scaleTypesLabel')}
           data={selectData.type}
-          error={errors.type}
+          error={errors.type ? t('errorTypeRequired') : null}
           required
+          placeholder={t('scaleTypesPlaceholder')}
           {...field}
           disabled={disabled}
+          onChange={(value) => field.onChange(value)}
+          value={field.value}
         />
       )}
     />
@@ -34,10 +38,9 @@ const Type = ({ messages, errorMessages, form, selectData }) => {
 };
 
 Type.propTypes = {
-  messages: PropTypes.object.isRequired,
-  errorMessages: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
   selectData: PropTypes.object.isRequired,
+  inUse: PropTypes.bool,
 };
 
 export { Type };

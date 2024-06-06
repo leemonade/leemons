@@ -1,5 +1,5 @@
 async function getStudentsByTags(tags, center) {
-  return leemons.api(`v1/academic-portfolio/students/by/tags`, {
+  return leemons.api(`v1/academic-portfolio/common/students/by/tags`, {
     allAgents: true,
     method: 'POST',
     body: {

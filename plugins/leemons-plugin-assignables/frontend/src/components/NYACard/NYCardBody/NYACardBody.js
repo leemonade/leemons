@@ -56,7 +56,7 @@ const NYACardBody = ({
     const activityTypeLocale = {
       calificable: localizationType?.calificable,
       puntuable: localizationType?.punctuable,
-      no_evaluable: localizationType?.nonEvaluable,
+      feedback: localizationType?.feedback,
     };
     setCalificationType(activityTypeLocale[activityType]);
   };

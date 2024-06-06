@@ -17,6 +17,10 @@ const { updateProgram } = require('./updateProgram');
 const { listPrograms } = require('./listPrograms');
 const { havePrograms } = require('./havePrograms');
 const { addProgram } = require('./addProgram');
+const { programHasSequentialCourses } = require('./programHasSequentialCourses');
+const { updateProgramConfiguration } = require('./updateProgramConfiguration');
+const { getAcademicTree } = require('./getAcademicTree');
+const { filterProgramsByCenter } = require('./filterProgramsByCenter');
 
 module.exports = {
   addProgram,
@@ -38,4 +42,8 @@ module.exports = {
   getProgramEvaluationSystem,
   addStudentsToClassesUnderNodeTree,
   programCanHaveCoursesOrHaveCourses,
+  programHasSequentialCourses,
+  updateProgramConfiguration,
+  getAcademicTree,
+  filterProgramsByCenter,
 };

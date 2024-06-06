@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box,
   Alert,
-  Drawer,
+  BaseDrawer,
   LoadingOverlay,
   Title,
   ActionButton,
@@ -13,7 +13,6 @@ import {
 } from '@bubbles-ui/components';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import { get } from 'lodash';
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
 
 // useLocalizations
@@ -89,14 +88,14 @@ export function ConfigModal({ assignable, components, localizations, activityId,
 
   return (
     // TRANSLATE
-    <Drawer
+    <BaseDrawer
       empty
       shadow
       trapFocus
       withOverlay
       opened={opened}
       onClose={onClose}
-      size={400}
+      size={728}
       contentPadding={0}
       close={false}
     >
@@ -114,7 +113,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
             }}
           >
             <Title order={3}>{`${localizations?.steps?.setup?.action}: ${
-              get(roleLocalizations, `${role}.singular`) || ''
+              roleLocalizations[role]?.singular || ''
             }`}</Title>
             <Box>
               <ActionButton icon={<RemoveIcon />} onClick={onClose} />
@@ -128,6 +127,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
               fallback={<LoadingOverlay />}
               scrollRef={scrollRef}
               assignable={assignable}
+              onClose={onClose}
               value={rawValue}
               onSave={({ config, raw }) => {
                 setValue(`${stateKey}.config`, config);
@@ -138,7 +138,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
           </ConfigModalErrorBoundary>
         </Stack>
       </TotalLayoutContainer>
-    </Drawer>
+    </BaseDrawer>
   );
 }
 

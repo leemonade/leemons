@@ -17,7 +17,7 @@ const AssetPlayerWrapperCCreator = ({
     asset,
     width,
     framed,
-    canPlay,
+    canPlay: false,
     showPlayButton,
     useAudioCard,
     ccMode: true,

@@ -6,6 +6,7 @@ module.exports = {
     accept: 'Aceptar',
     cancel: 'Cancelar',
     required: 'Campo requerido',
+    actions: 'Acciones',
   },
   methodology: {
     directInstruction: 'Instrucción directa',
@@ -54,6 +55,14 @@ module.exports = {
     page_title: 'Biblioteca de tareas',
     published: 'Publicado',
     draft: 'Borrador',
+    variant: 'Tarea',
+    expressVariant: 'Tarea express',
+    deliverables: 'Entregables',
+    yes: 'Si',
+    no: 'No',
+    statementTitle: 'Enunciado',
+    viewMore: 'Ver más',
+    viewLess: 'Ver menos',
   },
   task_setup_page: {
     title: 'Nueva tarea',
@@ -214,9 +223,14 @@ module.exports = {
           buttonPublishAndAssign: 'Publicar y asignar',
           curriculum: 'Curriculum',
           objectives: 'Objetivos personalizados',
-          add: 'Añadir',
+          add: 'Añadir objetivo',
+          numberHeader: 'Nº',
+          objectiveHeader: 'Objetivo',
           assessmentCriteria: 'Criterios de evaluación',
           subjects: 'Subjects',
+          inputLabel: 'Introducir objetivo personalizado',
+          inputPlaceholder: 'Objetivo...',
+          actions: 'Acciones',
         },
       },
       publishData: {
@@ -463,21 +477,14 @@ module.exports = {
     },
   },
   task_correction: {
+    action: 'feedback',
     student: {
-      submitted_alert: {
-        title: 'Tarea entregada con éxito',
-        message: 'Aquí tienes más información sobre tu tarea.',
-      },
-      pending_evaluation_alert: {
-        title: 'Pendiente de evaluación',
-        message: 'En cuanto sea evaluada recibirás una notificación.',
-      },
-
       submission: 'Entregable',
       activity_summary: 'Resumen de la actividad',
       statement: 'Enunciado',
       curriculum: 'Currículum',
       development: 'Desarrollo',
+      resources: 'Recursos',
     },
     teacher: {
       evaluation: 'Evaluación',

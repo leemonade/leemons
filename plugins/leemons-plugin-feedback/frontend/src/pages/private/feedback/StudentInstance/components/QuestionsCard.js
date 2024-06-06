@@ -95,8 +95,12 @@ function QuestionsCard({
 
   const goToResults = (e, openInNewTab = false) => {
     if (openInNewTab)
-      window.open(`/private/feedback/result/${instanceId}`, 'FeedbackResult', 'noopener');
-    if (!viewMode) history.push(`/private/feedback/result/${instanceId}`);
+      window.open(
+        `/private/feedback/result/${instanceId}?fromExecution`,
+        'FeedbackResult',
+        'noopener'
+      );
+    if (!viewMode) history.push(`/private/feedback/result/${instanceId}?fromExecution`);
   };
 
   async function onNext(value) {
@@ -110,7 +114,7 @@ function QuestionsCard({
       }
     } else {
       if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
-      store.showFinishModal = true;
+      goToResults();
     }
 
     render();

@@ -23,7 +23,7 @@ async function validateExistCalendar({ id, ctx }) {
 
 async function validateNotExistCalendar({ id, ctx }) {
   if (!(await existCalendar({ id, ctx })))
-    throw new LeemonsError(ctx, { message: `Calendar '${id}' not exists` });
+    throw new LeemonsError(ctx, { message: `Calendar '${id}' does not exist.` });
 }
 
 async function validateExistEvent({ id, ctx }) {

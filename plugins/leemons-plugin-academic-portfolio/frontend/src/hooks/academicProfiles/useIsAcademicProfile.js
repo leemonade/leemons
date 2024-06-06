@@ -14,5 +14,5 @@ export default function useIsAcademicProfile() {
     }
 
     return profilesValues.includes(userProfile);
-  }, [profilesValues, userProfile]);
+  }, [profilesValues, userProfile, academicProfilesAreLoading, userProfileIsLoading]);
 }

@@ -2,6 +2,7 @@ import { Alert, Box, Text, createStyles } from '@bubbles-ui/components';
 import { flatMap, uniq } from 'lodash';
 import React from 'react';
 import { useWatch } from 'react-hook-form';
+import propTypes from 'prop-types';
 
 const useSelectedStudentsInfoStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -33,6 +34,10 @@ export default function SelectedStudentsInfo({ control, value, availableClasses,
 
   const { classes } = useSelectedStudentsInfoStyles();
 
+  if (!selected && !nonAssignableStudentsCount && !excludedStudentsCount) {
+    return null;
+  }
+
   return (
     <Alert closeable={false}>
       <Box className={classes.root}>
@@ -42,17 +47,30 @@ export default function SelectedStudentsInfo({ control, value, availableClasses,
           </Text>
         </Box>
         <Box className={classes.options}>
-          <Text color="primary">
-            {selected} {localizations?.selectedStudents}
-          </Text>
-          <Text color="primary">
-            {nonAssignableStudentsCount} {localizations?.nonMatchingStudents}
-          </Text>
-          <Text color="primary">
-            {excludedStudentsCount} {localizations?.excluded}
-          </Text>
+          {!!selected && (
+            <Text color="primary">
+              {selected} {localizations?.selectedStudents}
+            </Text>
+          )}
+          {!!nonAssignableStudentsCount && (
+            <Text color="primary">
+              {nonAssignableStudentsCount} {localizations?.nonMatchingStudents}
+            </Text>
+          )}
+          {!!excludedStudentsCount && (
+            <Text color="primary">
+              {excludedStudentsCount} {localizations?.excluded}
+            </Text>
+          )}
         </Box>
       </Box>
     </Alert>
   );
 }
+
+SelectedStudentsInfo.propTypes = {
+  control: propTypes.any,
+  value: propTypes.any,
+  availableClasses: propTypes.array,
+  localizations: propTypes.any,
+};

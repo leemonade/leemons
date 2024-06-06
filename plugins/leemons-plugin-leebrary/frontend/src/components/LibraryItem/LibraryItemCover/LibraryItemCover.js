@@ -34,6 +34,9 @@ LibraryItemCover.defaultProps = {
 };
 LibraryItemCover.propTypes = {
   size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  cover: PropTypes.string,
+  color: PropTypes.string,
+  fileIcon: PropTypes.node,
 };
 
 export { LibraryItemCover };
