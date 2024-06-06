@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 function tLoader(prefix, translations) {
   return (key, replaces, returnFullKey, callback) => {
-    const tKey = `${prefix}.${key}`;
+    const tKey = key ? `${prefix}.${key}` : prefix;
     if (returnFullKey) return tKey;
     if (
       translations &&

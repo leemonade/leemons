@@ -2,7 +2,7 @@ import { Box } from '@bubbles-ui/components';
 import loadable from '@loadable/component';
 import { isFunction, noop } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { cloneElement, useMemo } from 'react';
+import React, { cloneElement, useEffect, useMemo } from 'react';
 import ZoneWidgetsBoundary from './ZoneWidgetsBoundary';
 import useZone from './requests/hooks/queries/useZone';
 
@@ -36,28 +36,34 @@ export function useWidgetItemsRenderer({ renderer, widgetItems = [], ErrorBounda
           const widget = isFunction(renderer) ? renderer(props) : cloneElement(renderer, props);
 
           if (widget) {
-            return (
-              <ErrorBoundary key={item.id} {...props}>
-                {widget}
-              </ErrorBoundary>
-            );
+            return cloneElement(ErrorBoundary, {
+              key: item.id,
+              ...props,
+              children: widget,
+            });
           }
 
           return null;
         })
         .filter(Boolean),
-    [renderer, widgetItems, importedWidgets]
+    [renderer, widgetItems, importedWidgets, ErrorBoundary]
   );
 }
 
 export function ZoneWidgets({
   zone,
   container = <Box />,
-  ErrorBoundary = ZoneWidgetsBoundary,
+  ErrorBoundary = <ZoneWidgetsBoundary />,
   onGetZone = noop,
   children,
 }) {
-  const { data: zoneData } = useZone({ id: zone, onSuccess: onGetZone });
+  const { data: zoneData } = useZone({ id: zone });
+
+  useEffect(() => {
+    if (zoneData) {
+      onGetZone(zoneData);
+    }
+  }, [zoneData]);
 
   const widgets = useWidgetItemsRenderer({
     renderer: children,
