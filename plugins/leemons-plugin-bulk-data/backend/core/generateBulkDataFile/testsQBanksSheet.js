@@ -50,15 +50,25 @@ async function createTestsQBanksSheet({
     }
   });
 
+  const versionControlledQbanks = await ctx.call('leebrary.assets.filterByVersionOfType', {
+    assetIds: qBanks.map((a) => a.id),
+    categoryId: qBanks?.[0]?.category?.id,
+  });
+
   const qBankDetails = await ctx.call('leebrary.assets.getByIds', {
-    ids: qBanks.map((a) => a.id),
+    ids: versionControlledQbanks,
     shouldPrepareAssets: true,
     signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
     withFiles: true,
   });
 
   return qBankDetails.map((qBank, i) => {
-    const onlySubjectId = qBank.subjects?.[0]?.subject ?? '';
+    let firstSubjectId = qBank.subjects?.[0]?.subject ?? '';
+    if (!firstSubjectId) firstSubjectId = qBank.providerData.subjects?.[0];
+
+    let _program = qBank.program;
+    if (!_program) _program = qBank.providerData.program;
+
     const bulkId = `qbank_${(i + 1).toString().padStart(2, '0')}`;
     const creator = adminShouldOwnAllAssets ? 'admin' : getCreator(qBank, users);
     const qBankObject = {
@@ -70,8 +80,8 @@ async function createTestsQBanksSheet({
       cover: qBank.cover,
       tags: qBank.tags?.join(', '),
       creator,
-      program: programs.find((item) => item.id === qBank.program)?.bulkId,
-      subjects: subjects.find((item) => item.id === onlySubjectId)?.bulkId,
+      program: programs.find((item) => item.id === _program)?.bulkId,
+      subjects: subjects.find((item) => item.id === firstSubjectId)?.bulkId,
       published: booleanToYesNoAnswer(qBank.providerData.published),
     };
     worksheet.addRow(_.omitBy(qBankObject, _.isNil));

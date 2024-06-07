@@ -69,7 +69,7 @@ const getCreator = (event, users) => {
   return creator?.bulkId;
 };
 
-async function createCalendarSheet({ workbook, subjects, users, ctx }) {
+async function createCalendarSheet({ workbook, subjects, users, noUsers, ctx }) {
   const worksheet = workbook.addWorksheet('calendar');
   worksheet.columns = [
     { header: 'root', key: 'root', width: 10 },
@@ -148,6 +148,8 @@ async function createCalendarSheet({ workbook, subjects, users, ctx }) {
         const type = event.type?.split('.')[1];
         const creator = getCreator(event, users);
         const isTask = type === 'task';
+
+        if (noUsers && creator !== 'admin') return;
 
         const eventObject = {
           root: bulkId,

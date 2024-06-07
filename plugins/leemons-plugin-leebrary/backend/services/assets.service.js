@@ -8,6 +8,8 @@ const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsError } = require('@leemons/error');
+
 const { getServiceModels } = require('../models');
 const { pluginName } = require('../config/constants');
 const restActions = require('./rest/assets.rest');
@@ -19,6 +21,7 @@ const { exists } = require('../core/assets/exists');
 const { remove } = require('../core/assets/files/remove');
 const { duplicate } = require('../core/assets/duplicate');
 const { prepareAsset } = require('../core/assets/prepareAsset');
+const { filterByVersionOfType } = require('../core/assets/filterByVersion');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -75,6 +78,18 @@ module.exports = {
         // TODO: Esto deberia de hacerse en un paquete de leebrary para gastar menos recursos
         const hostname = process.env.API_URL?.startsWith('http') ? process.env.API_URL : '';
         return `${hostname}/api/v1/leebrary/file/img/${ctx.params.assetId}`;
+      },
+    },
+    filterByVersionOfType: {
+      handler(ctx) {
+        const ALLOWED_PLUGINS = ['bulk-data'];
+        if (!ALLOWED_PLUGINS.includes(ctx.callerPlugin)) {
+          throw new LeemonsError(ctx, {
+            message: `Not allowed to be called from ${ctx.callerPlugin}`,
+          });
+        }
+
+        return filterByVersionOfType({ ...ctx.params, ctx });
       },
     },
     exists: {

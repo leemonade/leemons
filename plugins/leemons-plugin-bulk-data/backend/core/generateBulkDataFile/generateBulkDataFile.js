@@ -28,9 +28,19 @@ const {
   createProgramCalendarEventsSheet,
 } = require('./programCalendarSheets');
 
-async function generateBulkDataFile({ admin, superAdmin, adminShouldOwnAllAssets, ctx }) {
+async function generateBulkDataFile({
+  admin,
+  superAdmin,
+  noUsers = false,
+  isClientManagerTemplate = false,
+  writeFileLocally = true,
+  ctx,
+}) {
+  const adminShouldOwnAllAssets = isClientManagerTemplate && noUsers;
+
   const workbook = new Excel.Workbook();
 
+  ctx.meta = { ...ctx.meta, leebrary: { signedURLExpireSeconds: 7 * 24 * 60 * 60 } };
   // BASIC CONFIG
   await createLocalesSheet({ workbook, ctx });
   await createPlatformSheet({ workbook, ctx });
@@ -111,6 +121,7 @@ async function generateBulkDataFile({ admin, superAdmin, adminShouldOwnAllAssets
     adminShouldOwnAllAssets,
     programs,
     subjects,
+    libraryAssets,
     ctx,
   });
 
@@ -128,7 +139,7 @@ async function generateBulkDataFile({ admin, superAdmin, adminShouldOwnAllAssets
   });
 
   // CALENDAR
-  await createCalendarSheet({ workbook, users, subjects, ctx });
+  await createCalendarSheet({ workbook, users, subjects, noUsers, ctx });
 
   // ACADEMIC CALENDAR: REGIONAL CALENDARS
   const regionalCalendars = await createRegionalCalendarsSheet({ workbook, centers, ctx });
@@ -142,12 +153,12 @@ async function generateBulkDataFile({ admin, superAdmin, adminShouldOwnAllAssets
   });
   createProgramCalendarEventsSheet({ workbook, programCalendars, ctx });
 
-  await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
+  if (writeFileLocally) {
+    await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
+    return 'generated-bulk-data.xlsx';
+  }
+
+  return workbook.xlsx.writeBuffer();
 }
 
 module.exports = { generateBulkDataFile };
-
-// CASO 1: nosotros (no hay usuarios) // se cargará con el endpoint existente
-// CASO 2: me pasan un array con 1 teacher,estudiantes y admin/super-admin -> modificamos endpoint
-
-// TODO@PAOLA: preguntas con mapas. crear convención. updade del import

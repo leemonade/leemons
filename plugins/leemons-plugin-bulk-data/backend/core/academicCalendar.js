@@ -72,13 +72,7 @@ async function initProgramCalendars({ file, config, ctx }) {
   const promises = [];
   programCalendarsKeys.forEach((key) => {
     const { creator, ...programCalendar } = programCalendars[key];
-    promises.push(
-      ctx.call(
-        'academic-calendar.config.saveRest',
-        { ...programCalendar },
-        { meta: { userSession: { ...config.users[creator] } } }
-      )
-    );
+    promises.push(ctx.call('academic-calendar.config.saveRest', { ...programCalendar }));
   });
 
   await Promise.all(promises);

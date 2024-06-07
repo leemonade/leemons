@@ -1,6 +1,10 @@
-const _ = require('lodash');
+const { omitBy, flatMap, isNil } = require('lodash');
 const TurndownService = require('turndown');
-const { styleCell, booleanToYesNoAnswer } = require('./helpers');
+const {
+  styleCell,
+  booleanToYesNoAnswer,
+  getDuplicatedAssetsReferenceAsString,
+} = require('./helpers');
 
 const turndown = new TurndownService();
 
@@ -13,6 +17,14 @@ function getQuestionsString(testQuestions, questions) {
 
 const getCreator = (taskAsset, users) => users.find((u) => u.id === taskAsset.fromUser)?.bulkId;
 
+const getMetadataConfig = (test) => {
+  const { hasInstructions, hasResources } = test.providerData.metadata.config ?? {};
+  const result = [];
+  result.push(`hasInstructions|${booleanToYesNoAnswer(!!hasInstructions)}`);
+  result.push(`hasResources|${booleanToYesNoAnswer(!!hasResources)}`);
+  return result.join(', ');
+};
+
 // MAIN FUNCTION ························································································|
 
 async function createTestsSheet({
@@ -24,6 +36,7 @@ async function createTestsSheet({
   subjects,
   users,
   adminShouldOwnAllAssets,
+  libraryAssets,
   ctx,
 }) {
   const worksheet = workbook.addWorksheet('te_tests');
@@ -46,6 +59,11 @@ async function createTestsSheet({
     { header: 'statement', key: 'statement', width: 30 },
     { header: 'creator', key: 'creator', width: 20 },
     { header: 'published', key: 'published', width: 10 },
+    { header: 'config', key: 'config', width: 10 },
+    { header: 'resources', key: 'resources', width: 10 },
+    { header: 'instructionsForTeachers', key: 'instructionsForTeachers', width: 10 },
+    { header: 'instructionsForStudents', key: 'instructionsForStudents', width: 10 },
+    { header: 'duration', key: 'duration', width: 10 },
   ];
 
   // Headers row
@@ -67,6 +85,11 @@ async function createTestsSheet({
     statement: 'Statement',
     creator: 'Creator',
     published: 'Published',
+    resources: 'Resources',
+    config: 'Config',
+    instructionsForTeachers: 'Instructions for Teachers',
+    instructionsForStudents: 'Instructions for Students',
+    duration: 'Duration',
   });
 
   worksheet.getRow(2).eachCell((cell, colNumber) => {
@@ -77,17 +100,41 @@ async function createTestsSheet({
     }
   });
 
+  const versionConrolledTests = await ctx.call('leebrary.assets.filterByVersionOfType', {
+    assetIds: tests.map((a) => a.id),
+    categoryId: tests?.[0]?.category?.id,
+  });
+
   const testDetails = await ctx.call('leebrary.assets.getByIds', {
-    ids: tests.map((a) => a.id),
+    ids: versionConrolledTests,
     shouldPrepareAssets: true,
-    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
+    withFiles: true,
+  });
+
+  const notIndexableAssetIds = flatMap(testDetails, (test) => test.providerData.resources);
+  const notIndexableAssets = await ctx.call('leebrary.assets.getByIds', {
+    ids: notIndexableAssetIds,
+    shouldPrepareAssets: true,
     withFiles: true,
   });
 
   testDetails.forEach((test, index) => {
+    if (!test.providerData) return;
     const bulkId = `test${(index + 1).toString().padStart(2, '0')}`;
     const statementMarkdown = turndown.turndown(test.providerData.statement);
     const creator = adminShouldOwnAllAssets ? 'admin' : getCreator(test, users);
+
+    const instructionsForTeachers = turndown.turndown(
+      test.providerData.instructionsForTeachers ?? ''
+    );
+    const instructionsForStudents = turndown.turndown(
+      test.providerData.instructionsForTeachers ?? ''
+    );
+
+    const testResourceAssets = (test.providerData.resources || []).map((id) =>
+      notIndexableAssets.find((asset) => asset.id === id)
+    );
+    const resources = getDuplicatedAssetsReferenceAsString(libraryAssets, testResourceAssets);
 
     const testObject = {
       root: bulkId,
@@ -109,8 +156,14 @@ async function createTestsSheet({
       statement: statementMarkdown,
       creator,
       published: booleanToYesNoAnswer(test.providerData.published),
+      resources,
+      config: getMetadataConfig(test),
+      instructionsForStudents,
+      instructionsForTeachers,
+      duration: test.providerData.duration,
     };
-    worksheet.addRow(_.omitBy(testObject, _.isNil));
+
+    worksheet.addRow(omitBy(testObject, isNil));
   });
 }
 

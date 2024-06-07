@@ -1,42 +1,58 @@
 const _ = require('lodash');
 const TurndownService = require('turndown');
 
-const { configureSheetColumns, booleanToYesNoAnswer } = require('../helpers');
+const {
+  configureSheetColumns,
+  booleanToYesNoAnswer,
+  getDuplicatedAssetsReferenceAsString,
+} = require('../helpers');
 const { TASK_COLUMN_DEFINITIONS } = require('./columnDefinitions');
 
 const turndown = new TurndownService();
 
 // HELPER FUNCTIONS ·······················································································|
 
-// When creating a task and using existing library assets as resources, these resources get duplicated.
-// This will happen again while loading the generated bulk data file, so in order to not have duplicated duplications
-// Only indexed assets are return as libraryAssets. For this function we need to find the asset that matches, the one that will be duplicated as a resource of the task
-function getResourcesString(libraryResources, taskResources) {
-  const keysToCompare = [
-    'name',
-    'fromUser',
-    'fromUserAgent',
-    'fileExtension',
-    'fileType',
-    'category',
-    'description',
-    'program',
-    'color',
-    'file.name',
-    'file.extension',
-    'file.metadata',
-  ];
+const getMetadataString = (task, libraryAssets, notIndexableAssets) => {
+  const {
+    leebrary,
+    express,
+    hasDevelopment,
+    visitedSteps,
+    hasAttachments,
+    hasInstructions,
+    hasCustomObjectives,
+  } = task.providerData.metadata;
 
-  const libraryResourcesMatching = taskResources
-    .map((taskResource) =>
-      libraryResources.find((libraryResource) =>
-        keysToCompare.every((key) => _.get(taskResource, key) === _.get(libraryResource.asset, key))
-      )
-    )
-    .filter((matchedItem) => matchedItem !== undefined);
+  const processedHasDevelopment = booleanToYesNoAnswer(!!hasDevelopment);
+  const processedVisitedSteps = visitedSteps?.join('&') || 'basicData';
+  const processedExpress = booleanToYesNoAnswer(!!express);
+  const processedHasAttachments = booleanToYesNoAnswer(!!hasAttachments);
+  const prcessedHasInstructions = booleanToYesNoAnswer(!!hasInstructions);
+  const processedHasCustomObjectives = booleanToYesNoAnswer(!!hasCustomObjectives);
 
-  return libraryResourcesMatching.map((item) => item.bulkId).join('|');
-}
+  let processedStatementImage;
+  const statementImage = leebrary?.statementImage?.[0];
+  if (statementImage) {
+    const statementImageAsset = notIndexableAssets.find((asset) => asset.id === statementImage);
+    processedStatementImage = getDuplicatedAssetsReferenceAsString(libraryAssets, [
+      statementImageAsset,
+    ]);
+  }
+
+  const result = [];
+  result.push(`hasDevelopment|${processedHasDevelopment}`);
+  result.push(`hasAttachments|${processedHasAttachments}`);
+  result.push(`express|${processedExpress}`);
+  result.push(`hasInstructions|${prcessedHasInstructions}`);
+  result.push(`hasCustomObjectives|${processedHasCustomObjectives}`);
+  result.push(`visitedSteps|${processedVisitedSteps}`);
+
+  if (processedStatementImage) {
+    result.push(`statementImage|${processedStatementImage}`);
+  }
+
+  return result.join(', ');
+};
 
 const getCenter = (centers, task, taskProgram) => {
   if (task.providerData.center) {
@@ -47,6 +63,9 @@ const getCenter = (centers, task, taskProgram) => {
 
 const getCreator = (taskAsset, users) => users.find((u) => u.id === taskAsset.fromUser)?.bulkId;
 
+// NOTE => La función de importacion hace mil cosas, entre ellas, esperar referencias a assets, de momento no es el caso
+const getDevelopmentString = (task) =>
+  turndown.turndown(task.providerData.metadata?.development?.[0]?.development ?? '');
 // MAIN FUNCTION ······································································|
 
 async function createTasksSheet({
@@ -62,31 +81,52 @@ async function createTasksSheet({
   const worksheet = workbook.addWorksheet('ta_tasks');
   configureSheetColumns({ worksheet, columnDefinitions: TASK_COLUMN_DEFINITIONS });
 
+  const versionControlledTasks = await ctx.call('leebrary.assets.filterByVersionOfType', {
+    assetIds: tasks.map((a) => a.id),
+    categoryId: tasks?.[0]?.category?.id,
+  });
+
   const taskDetails = await ctx.call('leebrary.assets.getByIds', {
-    ids: tasks.map((a) => a.id),
+    ids: versionControlledTasks,
     shouldPrepareAssets: true,
     withFiles: true,
   });
 
-  const allResourceAssetIds = taskDetails.flatMap((task) => task.providerData?.resources ?? []);
-  const allResourceAssetsDetails = await ctx.call('leebrary.assets.getByIds', {
-    ids: allResourceAssetIds,
+  const notIndexableAssetIds = taskDetails.reduce((acc, task) => {
+    const statementImageId = task.providerData.metadata.leebrary?.statementImage?.[0];
+    const imageInLibraryAssets = libraryAssets.find((item) => item.id === statementImageId);
+    if (statementImageId && !imageInLibraryAssets) {
+      acc.push(statementImageId);
+    }
+
+    const resources = task.providerData?.resources;
+    if (resources?.length) {
+      resources.forEach((element) => {
+        const resourceInLibraryAssets = libraryAssets.find((item) => item.id === element);
+        if (!resourceInLibraryAssets) {
+          acc.push(element);
+        }
+      });
+    }
+
+    return acc;
+  }, []);
+
+  const notIndexableAssets = await ctx.call('leebrary.assets.getByIds', {
+    ids: notIndexableAssetIds,
     shouldPrepareAssets: true,
     signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
     withFiles: true,
   });
 
   return taskDetails.map((task, index) => {
-    // TASK RESOURCES
-    const taskAssets = task.providerData.resources.map((id) =>
-      allResourceAssetsDetails.find((asset) => asset.id === id)
+    const taskResourceAssets = task.providerData.resources.map((id) =>
+      notIndexableAssets.find((asset) => asset.id === id)
     );
-    const resourcesString = getResourcesString(libraryAssets, taskAssets);
+    const resourcesString = getDuplicatedAssetsReferenceAsString(libraryAssets, taskResourceAssets);
+    const development = getDevelopmentString(task);
 
     // HANDLE HTML TO MARKDOWN
-    const developmentMarkdown = turndown.turndown(
-      task.providerData.metadata?.development?.[0]?.development ?? ''
-    );
     const statementMarkdown = turndown.turndown(task.providerData.statement);
     const instructionsForStudentsMarkdown = turndown.turndown(
       task.providerData.instructionsForStudents ?? ''
@@ -119,7 +159,7 @@ async function createTasksSheet({
       duration: task.providerData.duration,
       resources: resourcesString,
       statement: statementMarkdown,
-      development: developmentMarkdown,
+      development,
       gradable: booleanToYesNoAnswer(task.providerData.gradable),
       submission_type: task.providerData.submission?.type,
       submission_extensions: Object.keys(task.providerData.submission?.data?.extensions ?? {}).join(
@@ -132,6 +172,7 @@ async function createTasksSheet({
       submission_description: submissionDescriptionMarkdown,
       instructions_for_teachers: instructionsForTeachersMarkdown,
       instructions_for_students: instructionsForStudentsMarkdown,
+      metadata: getMetadataString(task, libraryAssets, notIndexableAssets),
     };
 
     worksheet.addRow(_.omitBy(taskObject, _.isNil));

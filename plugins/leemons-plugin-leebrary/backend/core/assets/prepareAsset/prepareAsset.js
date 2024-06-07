@@ -20,6 +20,7 @@ async function prepareAsset({ rawAsset, isPublished = true, signedURLExpirationT
         fileID: asset.file.id,
         provider: asset.file.provider,
         uri: asset.file.uri,
+        signedURLExpirationTime,
         ctx,
       });
     }
@@ -48,7 +49,7 @@ async function prepareAsset({ rawAsset, isPublished = true, signedURLExpirationT
     } else if (asset.cover instanceof File) {
       asset.cover = URL.createObjectURL(asset.cover);
     } else if (isString(asset.cover)) {
-      asset.cover = await getFileUrl({ fileID: asset.cover, ctx });
+      asset.cover = await getFileUrl({ fileID: asset.cover, signedURLExpirationTime, ctx });
     }
   }
 
@@ -57,6 +58,7 @@ async function prepareAsset({ rawAsset, isPublished = true, signedURLExpirationT
       fileID: asset.icon.id,
       provider: asset.icon.provider,
       uri: asset.icon.uri,
+      signedURLExpirationTime,
       ctx,
     });
   }

@@ -1,4 +1,4 @@
-const markdownNote = 'We right mark down as plain text here.';
+const markdownNote = 'We write mark down as plain text here.';
 
 const TASK_COLUMN_DEFINITIONS = {
   root: {
@@ -100,6 +100,10 @@ const TASK_COLUMN_DEFINITIONS = {
     width: 30,
     style: { fontColor: 'white', bgColor: 'red' },
     note: markdownNote,
+  },
+  metadata: {
+    title: 'Task Metadata',
+    width: 30,
   },
 };
 

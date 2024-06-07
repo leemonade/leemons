@@ -30,20 +30,27 @@ function createTaskSubjectSheet({ workbook, tasks, subjects }) {
     }
   });
 
-  tasks.forEach(({ providerData, bulkId: taskBulkId }, i) => {
+  let relationCounter = 0;
+  tasks.forEach(({ providerData, bulkId: taskBulkId }) => {
     const { subjects: taskSubjects } = providerData;
-    const taskSubject = taskSubjects[0]; // Only with one subject
-    const bulkId = `task_sb_${(i + 1).toString().padStart(2, '0')}`;
-    const objectivesMarkdown = turndown.turndown(taskSubject.curriculum?.objectives?.[0] ?? '');
+    taskSubjects.forEach((taskSubject) => {
+      relationCounter++;
+      const bulkId = `task_sb_${relationCounter.toString().padStart(2, '0')}`;
+      const objectives = taskSubject.curriculum?.objectives;
+      const objectivesMarkdown = [];
+      objectives?.forEach((objective) => {
+        objectivesMarkdown.push(turndown.turndown(objective ?? ''));
+      });
 
-    const subjectRelationObject = {
-      root: bulkId,
-      task: taskBulkId,
-      subject: subjects.find((item) => item.id === taskSubject.subject)?.bulkId,
-      level: taskSubject.level,
-      objectives: objectivesMarkdown,
-    };
-    worksheet.addRow(subjectRelationObject);
+      const subjectRelationObject = {
+        root: bulkId,
+        task: taskBulkId,
+        subject: subjects.find((item) => item.id === taskSubject.subject)?.bulkId,
+        level: taskSubject.level,
+        objectives: objectivesMarkdown.join('\n'),
+      };
+      worksheet.addRow(subjectRelationObject);
+    });
   });
 }
 

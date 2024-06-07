@@ -105,7 +105,7 @@ function createProgramCalendarEventsSheet({ workbook, programCalendars }) {
 
   let eventCount = 0;
   programCalendars.forEach((calendar) => {
-    const { bulkId: programCalendarBulkId, creator } = calendar;
+    const { bulkId: programCalendarBulkId } = calendar;
 
     Object.values(PROGRAM_CALENDAR_EVENT_TYPES).forEach((eventType) => {
       const { type, calendarField } = eventType;
@@ -117,7 +117,6 @@ function createProgramCalendarEventsSheet({ workbook, programCalendars }) {
         eventCount,
         programCalendarBulkId,
         program: calendar.program,
-        creator,
       });
     });
   });

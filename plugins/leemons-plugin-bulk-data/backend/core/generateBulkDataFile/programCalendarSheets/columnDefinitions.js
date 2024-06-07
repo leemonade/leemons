@@ -26,7 +26,6 @@ const PROGRAM_EVENTS_COLUMN_DEFINITIONS = {
   eventName: { title: 'Event Name', width: 20 },
   startDate: { title: 'Start Date', width: 15 },
   endDate: { title: 'End Date', width: 15 },
-  creator: { title: 'Creator', width: 10 },
   dayType: { title: 'Day Type', width: 10, groupTitle: GROUP_TITLES.courseEventsData },
   ordinaryClasses: {
     title: 'Ordinary Classes?',

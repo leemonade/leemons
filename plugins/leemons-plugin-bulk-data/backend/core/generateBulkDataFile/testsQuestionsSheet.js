@@ -7,12 +7,12 @@ const { styleCell, booleanToYesNoAnswer } = require('./helpers');
 const turndown = new TurndownService();
 
 // HELPER FUNCTIONS ············
-const getAnswersStringForMonoResponse = (question, assetDetails) => {
+const getAnswersFieldsForMonoResponse = (question, assetDetails) => {
   const answersImages = [];
   const answers = [];
   const answersFeedback = [];
   const answersFeedbackImage = ''; // Currently not used in bulk data load from file function.
-  let answerCorrect = 0;
+  let correctAnswer = 0;
 
   const answersArray = question.properties?.responses;
 
@@ -41,7 +41,7 @@ const getAnswersStringForMonoResponse = (question, assetDetails) => {
       }
 
       // Correct response
-      if (isCorrectResponse) answerCorrect = index;
+      if (isCorrectResponse) correctAnswer = index;
 
       // Answer feedback
       if (question.properties?.explanationInResponses) {
@@ -55,11 +55,58 @@ const getAnswersStringForMonoResponse = (question, assetDetails) => {
 
   return {
     answers: answers.join('|'),
-    answer_correct: answerCorrect,
+    answer_correct: correctAnswer,
     answers_feedback: [...new Set(answersFeedback)].join('|'),
     answers_feedback_image: answersFeedbackImage,
     answers_images: answersImages.join(', '),
   };
+};
+
+const getAnswersFieldsForMaps = (question) => {
+  const { markers, caption, explanation } = question.properties;
+  const { type, position, list, backgroundColor } = markers;
+
+  const answersString = list.map((markerObject) => {
+    let hideOnHelp = false;
+    const answerString = Object.keys(markerObject)
+      .map((key) => {
+        if (key === 'hideOnHelp') {
+          hideOnHelp = markerObject[key];
+          return '';
+        }
+        return markerObject[key];
+      })
+      .join(':');
+    return hideOnHelp ? `${answerString}@` : answerString;
+  });
+
+  const positionString = `${position.left}|${position.top}`;
+  let mapInfoString = `${type}::${backgroundColor}::${positionString}`;
+  if (caption) mapInfoString += `::${caption}`;
+
+  return {
+    answers: answersString.join('|'),
+    map_info: mapInfoString,
+    answers_feedback: explanation,
+  };
+};
+
+const getAnswerFields = (question, allImageAssetDetails) => {
+  if (question.type === 'mono-response') {
+    return getAnswersFieldsForMonoResponse(question, allImageAssetDetails);
+  }
+
+  if (question.type === 'map') {
+    return getAnswersFieldsForMaps(question);
+  }
+  return {};
+};
+
+const findQuestionImage = (imageAssets, question) => {
+  if (question.type === 'map') {
+    return imageAssets.find((asset) => asset.id === question.properties.image.id).cover;
+  }
+  return imageAssets.find((asset) => asset.id === question.questionImage?.id)?.cover;
 };
 
 async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
@@ -81,6 +128,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     { header: 'answers_feedback', key: 'answers_feedback', width: 30 },
     { header: 'clues', key: 'clues', width: 20 },
     { header: 'answers_feedback_image', key: 'answers_feedback_image', width: 20 },
+    { header: 'map_info', key: 'map_info', width: 20 },
   ];
 
   // Headers row
@@ -100,6 +148,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     answers_feedback: 'Answers Feedback',
     clues: 'Clues',
     answers_feedback_image: 'Answers Feedback Image',
+    map_info: 'Map Info',
   });
   worksheet.getRow(2).eachCell((cell, colNumber) => {
     if (colNumber === 1) {
@@ -121,6 +170,9 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
           }
         });
       }
+      if (question.properties.image?.id) {
+        acc.push(question.properties.image.id);
+      }
     });
     return acc;
   }, []);
@@ -137,27 +189,25 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     const { questions } = providerData;
     const { categories: qBankCategories } = providerData;
     questions?.forEach((question, i) => {
-      if (question.type === 'map') {
-        console.log('MAP QUESTION SKIPPED TEMPORARILY');
-        return;
-      }
+      const questionImage = findQuestionImage(allImageAssetDetails, question);
       const bulkId = `q${(i + 1).toString().padStart(2, '0')}`;
-      const questionObject = {
+
+      const commonData = {
         root: bulkId,
         qbank: qBankBulkId,
         type: question.type,
         category: qBankCategories.find((c) => c.id === question.category)?.value,
         level: question.level,
-        withImages: booleanToYesNoAnswer(question.withImages),
+        withImages: booleanToYesNoAnswer(!!question.withImages),
         tags: question.tags?.join(', '),
         question: turndown.turndown(question.question ?? ''),
-        questionImage: allImageAssetDetails.find((asset) => asset.id === question.questionImage?.id)
-          ?.cover,
         clues: question.clues?.map((item) => item.value)?.join('|'),
-        ...getAnswersStringForMonoResponse(question, allImageAssetDetails),
+        questionImage,
       };
 
-      worksheet.addRow(_.omitBy(questionObject, _.isNil));
+      const answerFields = getAnswerFields(question, allImageAssetDetails);
+
+      worksheet.addRow(_.omitBy({ ...commonData, ...answerFields }, _.isNil));
       questionsToReturn.push({ ...question, bulkId });
     });
   });

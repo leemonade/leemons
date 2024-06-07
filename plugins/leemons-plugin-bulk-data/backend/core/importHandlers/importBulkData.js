@@ -1,6 +1,7 @@
 const fs = require('fs');
 const chalk = require('chalk');
 const { setTimeout } = require('timers/promises');
+const { isString } = require('lodash');
 const initLocales = require('../locales');
 const initPlatform = require('../platform');
 const initProviders = require('../providers');
@@ -50,23 +51,57 @@ function getLoadProgress() {
 
 function getLoadStatus() {
   const progress = getLoadProgress();
+  const workingPhaseIndex = PHASES.indexOf(currentPhase) + 1;
 
   return {
     status: 200,
+    inProgressPhase: String(PHASES[workingPhaseIndex]).toUpperCase(),
     currentPhase: String(currentPhase).toUpperCase(),
     overallProgress: `${progress} %`,
   };
 }
-module.exports = { getLoadStatus };
 
-async function importBulkData({ docPath, config: _config = {}, ctx }) {
-  const skipAppInitialization = !!_config.centers && !!_config.profiles;
-  const skipEnrollment = !!_config.users;
+async function shareAssetsWithProfile({ profileId, assets, ctx }) {
+  if (!profileId) {
+    console.error('Could not share asset, no profile id found');
+    return;
+  }
+
+  const promises = [];
+  assets.forEach((asset) => {
+    const permissionName = `users.profile.inside.${profileId}`;
+    const assetId = isString(asset) ? asset : asset.id;
+
+    promises.push(
+      ctx.tx.call('leebrary.permissions.set', {
+        canAccess: [],
+        permissions: {
+          viewer: [permissionName],
+          editor: [],
+          assigner: [],
+        },
+        assetId,
+        isPublic: !!asset.public,
+      })
+    );
+  });
+
+  await Promise.all(promises);
+}
+
+async function importBulkData({
+  docPath,
+  preConfig = {},
+  shareLibraryAssetsWithTeacherProfile,
+  ctx,
+}) {
+  const skipAppInitialization = !!preConfig.centers && !!preConfig.profiles;
+  const skipEnrollment = !!preConfig.users;
 
   const config = {
-    profiles: _config.profiles ?? null,
-    centers: _config.centers ?? null,
-    users: _config.users ?? null,
+    profiles: preConfig.profiles ?? null,
+    centers: preConfig.centers ?? null,
+    users: preConfig.users ?? null,
     programs: null,
   };
 
@@ -139,6 +174,16 @@ async function importBulkData({ docPath, config: _config = {}, ctx }) {
 
     ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
     config.assets = await initLibrary({ file: docPath, config, ctx });
+
+    if (shareLibraryAssetsWithTeacherProfile) {
+      await shareAssetsWithProfile({
+        profileId: config.profiles.teacher?.id,
+        profileSysName: config.profiles.teacher?.sysName,
+        assets: Object.values(config.assets),
+        ctx,
+      });
+    }
+
     ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
     currentPhase = LOAD_PHASES.LIBRARY;
 
@@ -178,7 +223,21 @@ async function importBulkData({ docPath, config: _config = {}, ctx }) {
     // TESTS & QBANKS
 
     ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`);
-    config.tests = await initTests({ file: docPath, config, ctx });
+    const { tests, qbanks } = await initTests({ file: docPath, config, ctx });
+    config.tests = tests;
+    config.qbanks = qbanks;
+
+    if (shareLibraryAssetsWithTeacherProfile) {
+      const testsAssets = Object.values(config.tests).map((item) => item.asset);
+      const qbanksAssets = Object.values(config.qbanks).map((item) => item.asset);
+      await shareAssetsWithProfile({
+        profileId: config.profiles.teacher?.id,
+        profileSysName: config.profiles.teacher?.sysName,
+        assets: [...testsAssets, ...qbanksAssets],
+        ctx,
+      });
+    }
+
     ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tests plugin`);
     currentPhase = LOAD_PHASES.TESTS;
 
@@ -187,6 +246,25 @@ async function importBulkData({ docPath, config: _config = {}, ctx }) {
 
     ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`);
     config.tasks = await initTasks({ file: docPath, config, ctx });
+
+    if (shareLibraryAssetsWithTeacherProfile) {
+      const { task: tasks } = await ctx.call('tasks.tasks.getRest', {
+        id: Object.values(config.tasks).map((task) => task.fullId),
+      });
+      const duplicatedResourceAssets = tasks.flatMap((task) => [
+        ...task.resources,
+        task.metadata?.leebrary?.statementImage[0],
+      ]);
+
+      const tasksAssets = tasks.map((item) => item.asset);
+      await shareAssetsWithProfile({
+        profileId: config.profiles.teacher?.id,
+        profileSysName: config.profiles.teacher?.sysName,
+        assets: [...tasksAssets, ...duplicatedResourceAssets],
+        ctx,
+      });
+    }
+
     ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
     currentPhase = LOAD_PHASES.TASKS;
 
