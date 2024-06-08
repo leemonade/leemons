@@ -1,0 +1,9 @@
+{
+  "name": "leemons-plugin-users-cognito-frontend-react",
+  "version": "1.0.0",
+  "dependencies": {
+    "@loadable/component": "^5.16.4",
+    "lodash": "^4.17.21",
+    "react-router-dom": "^5"
+  }
+}
