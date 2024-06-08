@@ -7,6 +7,17 @@ const {
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 const { findOneAndUpdate } = require('./findOneAndUpdate');
 
+/**
+ * @param {Object} props
+ * @param {import('mongoose').Model} props.model
+ * @param {string} props.modelKey
+ * @param {boolean} props.autoDeploymentID
+ * @param {boolean} props.autoTransaction
+ * @param {boolean} props.autoRollback
+ * @param {boolean} props.ignoreTransaction
+ * @param {import('moleculer').Context} props.ctx
+ * @returns {import('../types').FindOneAndDeleteQuery}
+ */
 function findOneAndDelete({
   model,
   modelKey,
@@ -16,6 +27,9 @@ function findOneAndDelete({
   ignoreTransaction,
   ctx,
 }) {
+  /**
+   * @type {import('../types').FindOneAndDeleteQuery}
+   */
   return async function (_conditions = {}, options) {
     if (options?.soft) {
       return findOneAndUpdate({

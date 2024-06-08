@@ -104,6 +104,7 @@
           "@tests",
           "@timetable",
           "@users",
+          "@users-cognito",
           "@widgets",
           "@xapi",
           "@bubbles-ui"

@@ -122,6 +122,9 @@
       "@users/*": [
         "./plugins/leemons-plugin-users/frontend/src/*"
       ],
+      "@users-cognito/*": [
+        "./plugins/leemons-plugin-users-cognito/frontend/src/*"
+      ],
       "@widgets/*": [
         "./plugins/leemons-plugin-widgets/frontend/src/*"
       ],
