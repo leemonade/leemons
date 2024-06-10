@@ -29,6 +29,9 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
     if (asset.editable) {
       toolbarItems.edit = t('edit');
     }
+    if (asset.shareable) {
+      toolbarItems.share = t('share');
+    }
     if (asset.deleteable) {
       toolbarItems.delete = t('delete');
     }
