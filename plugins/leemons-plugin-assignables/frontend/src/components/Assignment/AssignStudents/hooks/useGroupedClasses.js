@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import _ from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import useTeacherClassesOfSubject from './useTeacherClassesOfSubject';
 
 function difference(...arr) {
@@ -52,16 +53,15 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
                 common.length >= groupStudents.length * 0.8
               );
             });
-
+      const parsedGroupName = getSubjectGroupCourseNamesFromClassData(group[0].class.c);
       if (shouldDisplayOnlyGroup) {
         const groupAssignableStudents = _.uniq(group.flatMap((c) => c.assignableStudents));
         const groupNonAssignableStudents = _.uniq(group.flatMap((c) => c.nonAssignableStudents));
-
         // We enter here when there are reference groups or when the different subjects share students between classes.
         // the second case requires us to give a generic name to the group.
         // Todo: discuss the need of checking the intersection of students when reference groups are used. We could only do this if the program doesn't use reference groups.
         acc.push({
-          label: group[0].class.c.groups?.abbreviation ?? t('defaultGroupName'),
+          label: parsedGroupName.courseAndGroupParsed ?? t('defaultGroupName'),
           type: 'group',
           id,
           students: groupStudents,
@@ -73,7 +73,8 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
       } else {
         acc.push(
           ...group.map((g) => ({
-            label: g.class.label,
+            // label: g.class.label,
+            label: parsedGroupName.courseAndGroupParsed,
             type: 'class',
             id: g.class.id,
             students: g.students,

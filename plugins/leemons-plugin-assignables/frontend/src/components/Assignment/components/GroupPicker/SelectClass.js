@@ -122,7 +122,6 @@ export function SelectClass({
       availableClasses
         ?.map((klass) => {
           const hasPickableStudents = !!klass.assignableStudents.length;
-
           return {
             value: `${klass.id}${hasPickableStudents ? '' : '-disabled'}`,
             disabled: !hasPickableStudents,
