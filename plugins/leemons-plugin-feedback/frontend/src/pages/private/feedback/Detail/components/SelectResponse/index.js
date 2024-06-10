@@ -85,6 +85,7 @@ export function SelectResponse({ form, t, multi }) {
                     t={t}
                     withImages={withImages}
                     onCancel={() => setShowInput(false)}
+                    responsesSaved={field.value}
                   />
                 }
                 hideInput={!showInput}
@@ -92,6 +93,7 @@ export function SelectResponse({ form, t, multi }) {
                 withItemBorder
                 listRender={
                   <ListItem
+                    labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
                     itemContainerRender={({ children }) => (
                       <Stack alignItems="center" fullWidth>
                         {children}

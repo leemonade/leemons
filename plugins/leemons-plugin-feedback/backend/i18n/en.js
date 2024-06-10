@@ -54,6 +54,7 @@ module.exports = {
     responseLabel: 'Answer',
     addResponse: 'Add answer',
     saveResponse: 'Save answer',
+    saveChanges: 'Save changes',
     cancel: 'Cancel',
     withImagesLabel: 'With images',
     responsesRequired: 'Field required',
