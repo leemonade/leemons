@@ -57,4 +57,4 @@ const getSubjectGroupCourseNamesFromClassData = (classData) => {
   return data;
 };
 
-export default getSubjectGroupCourseNamesFromClassData;
+module.exports = { getSubjectGroupCourseNamesFromClassData };
