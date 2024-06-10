@@ -7,31 +7,28 @@ const https = require('https');
 const TEMPLATES_INFO = {
   TEMPLATE_A: {
     name: 'school',
-    adminCredentials: { email: 'alvaro+emooti@leemons.io', password: 'L33m0n4d3!' },
     domain: 'emootidemo.leemons.app',
     url: 'https://emootidemo.leemons.app',
   },
   TEMPLATE_B: {
     name: 'superior',
-    adminCredentials: { email: 'juanjo+demouni01@leemons.io', password: 'leemonadE74!' },
     domain: 'unidemo.leemons.dev',
     url: 'https://unidemo.leemons.dev/users/login',
   },
   TEMPLATE_C: {
     name: 'corporate',
-    adminCredentials: { email: 'lula+jordi@leemons.io', password: 'pwmarzO2024!' },
     domain: 'edtdemo.leemons.app',
     url: 'https://emootidemo.leemons.app',
   },
   TEMPLATE_D: {
     name: 'master',
-    adminCredentials: { email: 'lula+1003@leemons.io', password: 'L33m0n4d3!' },
     domain: 'myuniversity.leemons.app',
     url: 'https://myuniversity.leemons.app',
   },
 };
 
 const templateKey = process.env.TEMPLATE_KEY;
+
 // DEFAULTS TO LOCAL
 const isLocal = !(
   process.env.LOCAL === 'false' ||
@@ -123,8 +120,10 @@ const processDeployments = async () => {
 
 // REQUESTS: LOGIN AND EXPORT DATA ······································································································||
 
-const loginAndGetToken = async (templateInfo) => {
-  const data = JSON.stringify(templateInfo.adminCredentials);
+const loginAndGetToken = async () => {
+  const [email, password] = process.env.ADMIN_CREDENTIALS.split(':');
+  const adminCredentials = { email, password };
+  const data = JSON.stringify(adminCredentials);
 
   const options = {
     hostname: parsedUrl.hostname,
@@ -245,21 +244,17 @@ const processGenerateBulkData = async (jwtToken) => {
   console.log('Response from generate bulk data:', response);
 };
 
-const processLoginAndBulkData = async (templateInfo) => {
+const processLoginAndBulkData = async () => {
   console.log('PROCESSING BULK DATA ------------------------------------------------------ ');
   const {
     body: { jwtToken },
-  } = await loginAndGetToken(templateInfo);
+  } = await loginAndGetToken();
 
   const userProfileId = await getProfile(jwtToken);
   const authToken = await getAuthToken(jwtToken, userProfileId);
 
   await processGenerateBulkData(authToken);
 };
-
-// S3 ························································································································||
-
-// TODO - pendiente
 
 // MAIN ························································································································||
 
@@ -269,8 +264,13 @@ const processLoginAndBulkData = async (templateInfo) => {
       'TEMPLATE B SE HIZO EN ENTORNO DEV!!! ASEGURAR QUE DB Y .ENV ESTA APUNTANDO A DONDE TIENE QUE. LAS DEMS EN APP'
     );
     const templateInfo = TEMPLATES_INFO[templateKey];
+
     if (!templateInfo) {
       console.error(`No template found with key: ${templateKey}`);
+      return;
+    }
+    if (!process.env.ADMIN_CREDENTIALS) {
+      console.error('No admin credentials found');
       return;
     }
 
@@ -279,7 +279,7 @@ const processLoginAndBulkData = async (templateInfo) => {
       await processDeployments();
     }
 
-    await processLoginAndBulkData(templateInfo);
+    await processLoginAndBulkData();
 
     if (isLocal) {
       await client.close();
