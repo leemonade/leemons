@@ -160,6 +160,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                     withImages={withImages}
                     onCancel={() => setShowInput(false)}
                     scrollRef={scrollRef}
+                    responsesSaved={field.value}
                   />
                 }
                 listRender={
