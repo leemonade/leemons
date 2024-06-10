@@ -279,8 +279,7 @@ const processLoginAndBulkData = async (templateInfo) => {
       await processDeployments();
     }
 
-    const file = await processLoginAndBulkData(templateInfo);
-    await uploadFileToS3(file);
+    await processLoginAndBulkData(templateInfo);
 
     if (isLocal) {
       await client.close();

@@ -136,11 +136,22 @@ async function createTestsSheet({
     );
     const resources = getDuplicatedAssetsReferenceAsString(libraryAssets, testResourceAssets);
 
+    let questionBank = qBanks.find(
+      (qBank) => qBank.providerData.id === test.providerData.metadata.questionBank
+    )?.bulkId;
+
+    if (!questionBank) {
+      // Ignore qBank version
+      questionBank = qBanks.find((qBank) => {
+        const qBankIdWithoutVersion = qBank.providerData.id.split('@')[0];
+        const testQBankIdWithoutVersion = test.providerData.metadata.questionBank.split('@')[0];
+        return qBankIdWithoutVersion === testQBankIdWithoutVersion;
+      })?.bulkId;
+    }
+
     const testObject = {
       root: bulkId,
-      questionBank: qBanks.find(
-        (qBank) => qBank.providerData.id === test.providerData.metadata.questionBank
-      )?.bulkId,
+      questionBank,
       name: test.name,
       tagline: test.tagline,
       description: test.description,
