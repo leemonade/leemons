@@ -51,6 +51,7 @@ async function programsByIds({
   withStudentsAndTeachers = false,
   withClasses = false,
   showArchived,
+  shouldPrepareAssets,
   ctx,
 }) {
   const dbQueryOptions = showArchived ? { excludeDeleted: false } : {};
@@ -98,6 +99,7 @@ async function programsByIds({
     const images = await ctx.tx.call('leebrary.assets.getByIds', {
       ids: _.map(programs, 'image'),
       withFiles: true,
+      shouldPrepareAssets,
     });
     imagesById = _.keyBy(images, 'id');
   }

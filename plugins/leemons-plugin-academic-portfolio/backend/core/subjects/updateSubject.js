@@ -101,7 +101,7 @@ async function updateSubject({ data, ctx }) {
 
   // ES: Añadimos el asset de la imagen
   const imageData = {
-    indexable: true,
+    indexable: false,
     public: true, // TODO Cambiar a false despues de hacer la demo
     name: subject.name,
   };

@@ -115,7 +115,7 @@ async function initTests({ file, config: { users, programs }, ctx }) {
       }
     }
 
-    return tests;
+    return { tests, qbanks };
   } catch (err) {
     ctx.logger.error(err);
   }
