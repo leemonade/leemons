@@ -100,6 +100,7 @@ module.exports = {
     edit: 'Editar',
     feedback: 'Feedback',
     assign: 'Asignar',
+    share: 'Compartir',
     delete: 'Borrar',
     deleted: 'Borrado',
     questions: 'Preguntas:',

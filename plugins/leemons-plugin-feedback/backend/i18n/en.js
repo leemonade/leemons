@@ -99,6 +99,7 @@ module.exports = {
     view: 'Preview',
     edit: 'Edit',
     feedback: 'Feedback',
+    share: 'Share',
     assign: 'Assign',
     delete: 'Delete',
     deleted: 'Deleted',
