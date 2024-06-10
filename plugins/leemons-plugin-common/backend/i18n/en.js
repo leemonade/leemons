@@ -83,4 +83,5 @@ module.exports = {
       },
     },
   },
+  errorBoundaryMessage: 'The element could not be loaded. Please try again in a few minutes.',
 };
