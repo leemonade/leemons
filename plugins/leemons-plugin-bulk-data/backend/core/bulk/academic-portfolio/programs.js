@@ -131,12 +131,8 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
           finalReferenceGroups.customNameFormat = program.nameFormat;
         }
 
-        const sameGroupsForAllCourses =
-          !program.sequentialCourses || program.maxNumberOfCourses === 1;
-        if (sameGroupsForAllCourses) {
-          finalReferenceGroups.groupsForAllCourses = Number(program.groupsPerCourse)
-            ? program.groupsPerCourse
-            : Number(program.groupsPerCourse.split(':')[1]);
+        if (!program.sequentialCourses) {
+          finalReferenceGroups.groupsForAllCourses = Number(program.groupsPerCourse ?? 1);
         } else {
           program.groupsPerCourse
             .split(',')

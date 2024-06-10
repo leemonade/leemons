@@ -29,12 +29,14 @@
     "@leemons/multi-events": "0.0.71",
     "async-promise-pool": "^1.0.6",
     "chalk": "^4.1.1",
+    "exceljs": "^4.4.0",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "mime": "^3.0.0",
     "moleculer": "^0.14.26",
     "showdown": "^2.1.0",
     "temp": "^0.9.4",
+    "turndown": "^7.2.0",
     "xlsx-import": "^2.4.4"
   },
   "engines": {

@@ -29,9 +29,9 @@ async function importQuestions(filePath) {
         .map((value) => ({ value }));
 
       // ·····················································
-      // FEEDBACKS
+      // FEEDBACK
 
-      const feedbacks = (question.answers_feedback || '')
+      const answerFeedback = (question.answers_feedback || '')
         .split('|')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
@@ -48,7 +48,8 @@ async function importQuestions(filePath) {
 
       const properties = {};
 
-      if (feedbacks && feedbacks.length > 1) {
+      const eachAnswerHasItsExplanation = answerFeedback?.length > 1;
+      if (eachAnswerHasItsExplanation) {
         properties.explanationInResponses = true;
         properties.explanation = '<p></p>';
       } else {
@@ -61,17 +62,14 @@ async function importQuestions(filePath) {
       const imageResponses = Boolean(question.withImages && question.answers_images);
       const responseBreak = imageResponses ? ',' : '|';
 
-      if (imageResponses) {
-        // console.log('-- QUESTION HAS IMAGES RESPONSES:');
-        // console.log('responseBreak:', responseBreak);
-
-        if (!isString(question.answers_images) && isArray(question.answers_images?.richText)) {
-          question.answers_images = question.answers_images.richText
-            .map((item) => item.text)
-            .join('');
-        }
-
-        // console.log(question.answers_images);
+      if (
+        imageResponses &&
+        !isString(question.answers_images) &&
+        isArray(question.answers_images?.richText)
+      ) {
+        question.answers_images = question.answers_images.richText
+          .map((item) => item.text)
+          .join('');
       }
 
       try {
@@ -82,7 +80,7 @@ async function importQuestions(filePath) {
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((answer, index) => {
-            const { feedback } = feedbacks.find((item) => item.answer === index + 1) || {};
+            const { feedback } = answerFeedback.find((item) => item.answer === index + 1) || {};
             const hideOnHelp = answer.slice(-1) === '@';
             let response = answer;
 
@@ -124,16 +122,22 @@ async function importQuestions(filePath) {
           delete question.questionImage;
         }
 
+        const mapInfo = question.map_info.split('::').map((val) => trim(val));
+
+        const [type, backgroundColor, positionString, mapImageCaption] = mapInfo;
+        const [positionLeft, positionTop] = positionString.split('|');
+
+        if (mapImageCaption?.length) {
+          properties.caption = mapImageCaption;
+        }
         properties.markers = {
-          list: properties.responses.map(({ value }, index) => ({
-            left: `${(100 / (properties.responses.length + 1)) * (index + 1)}%`,
-            top: '50%',
-            response: value?.response,
-            hideOnHelp: value?.hideOnHelp || undefined,
-          })),
-          type: 'numbering',
-          backgroundColor: '#3B76CC',
-          position: { left: '100%', top: '100%' },
+          backgroundColor,
+          list: properties.responses.map(({ value }) => {
+            const [left, top, response] = value.response.split(':');
+            return { left, top, response, hideOnHelp: value?.hideOnHelp || undefined };
+          }),
+          position: { left: positionLeft, top: positionTop },
+          type,
         };
 
         delete properties.responses;
@@ -150,6 +154,7 @@ async function importQuestions(filePath) {
       delete question.answer_correct;
       delete question.answers_images;
       delete question.answers_feedback_image;
+      delete question.map_info;
 
       items[key] = question;
       questions.push(question);
