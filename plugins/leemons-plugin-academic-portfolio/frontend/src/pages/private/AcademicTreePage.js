@@ -23,7 +23,7 @@ import { KnowledgeView } from '@academic-portfolio/components/AcademicTree/Knowl
 import TreeBox from '@academic-portfolio/components/AcademicTree/TreeBox';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, sortBy } from 'lodash';
 import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
 import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
 
@@ -63,8 +63,9 @@ const AcademicTreePage = () => {
 
   const programSelectData = useMemo(() => {
     if (centerProgramsQuery?.length) {
+      const sortedCenterProgramsQuery = sortBy(centerProgramsQuery, 'createdAt');
       return [
-        ...centerProgramsQuery.map((program) => ({ value: program.id, label: program.name })),
+        ...sortedCenterProgramsQuery.map((program) => ({ value: program.id, label: program.name })),
       ];
     }
     return [];

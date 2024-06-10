@@ -102,7 +102,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
 
     if (!gradeIsDirty && !isNil(grade) && grade !== score) {
       form.setValue('score', grade);
-    } else if (isNil(score) && evaluationSystem?.minScale) {
+    } else if (isNil(score) && evaluationSystem?.minScale && !!requiresScoring) {
       form.setValue('score', evaluationSystem.minScale?.number);
     }
 

@@ -3,14 +3,7 @@ import _ from 'lodash';
 import mime from 'mime';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
-import {
-  Checkbox,
-  TagsInput,
-  NumberInput,
-  Stack,
-  Text,
-  ContextContainer,
-} from '@bubbles-ui/components';
+import { TagsInput, NumberInput, Stack, ContextContainer } from '@bubbles-ui/components';
 
 export default function File({ labels }) {
   const {
@@ -75,6 +68,7 @@ export default function File({ labels }) {
               field.onChange(validExtensions);
             }}
             label={labels?.format}
+            labels={{ addButton: labels?.addButton }}
             placeholder={labels?.formatPlaceholder}
           />
         )}
@@ -110,5 +104,7 @@ File.propTypes = {
     format: PropTypes.string,
     formatPlaceholder: PropTypes.string,
     maxSize: PropTypes.string,
+    addButton: PropTypes.string,
+    required: PropTypes.string,
   }),
 };

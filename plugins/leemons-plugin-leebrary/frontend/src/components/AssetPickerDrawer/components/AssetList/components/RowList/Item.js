@@ -1,41 +1,24 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box,
-  ImageLoader,
-  Text,
-  TextClamp,
-  createStyles,
-  getBoxShadowFromToken,
-} from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import { usePickerCategories } from '@leebrary/components/AssetPickerDrawer/hooks/usePickerCategories';
 import { keyBy } from 'lodash';
+import { LibraryCardEmbed } from '@leebrary/components/LibraryCardEmbed';
 
 // useLocalizations
 
 export const useItemStyles = createStyles((theme, { color }) => {
   const globalTheme = theme.other.global;
-  const { cardEvaluation } = theme.other;
-  const getCardShadow = getBoxShadowFromToken(cardEvaluation.shadow.hover[0]);
   return {
     root: {
       width: '100%',
-      padding: globalTheme.spacing.padding.xsm,
-      borderWidth: globalTheme.border.width.sm,
-      borderStyle: 'solid',
-      borderColor: globalTheme.border.color.line.muted,
-      borderRadius: globalTheme.border.radius.md,
-      background: globalTheme.background.color.surface.default,
 
       display: 'flex',
       alignItems: 'center',
-      gap: globalTheme.spacing.padding.md,
+      gap: globalTheme.spacing.padding.lg,
 
       cursor: 'pointer',
-      '&:hover': {
-        boxShadow: getCardShadow.boxShadow,
-      },
     },
     image: { width: 50, height: 50, position: 'relative' },
     thumbnail: {
@@ -76,39 +59,9 @@ export const useItemStyles = createStyles((theme, { color }) => {
 export function Item({ asset, onSelect }) {
   const { classes } = useItemStyles({ color: asset.color }, { name: 'AssetList-Item' });
 
-  const categories = usePickerCategories();
-  const categoriesByKey = useMemo(() => keyBy(categories, 'id'), [categories]);
-
-  const preparedAsset = prepareAsset(asset);
-
   return (
     <Box className={classes.root} onClick={() => onSelect?.(asset)}>
-      <Box className={classes.image}>
-        <Box className={classes.thumbnail}>
-          {!!preparedAsset?.cover && (
-            <ImageLoader bordered radius={4} src={preparedAsset.cover} width={50} height={50} />
-          )}
-        </Box>
-        <Box className={classes.icon}>
-          <Box className={classes.iconImage}>
-            <ImageLoader
-              src={categoriesByKey?.[preparedAsset.category]?.icon}
-              width={16}
-              height={20}
-            />
-          </Box>
-        </Box>
-      </Box>
-      <Box className={classes.body}>
-        <TextClamp maxLines={1} lines={1}>
-          <Text className={classes.name}>{asset.name}</Text>
-        </TextClamp>
-        {asset?.description ? (
-          <TextClamp maxLines={1} lines={1}>
-            <Text>{asset.description}</Text>
-          </TextClamp>
-        ) : null}
-      </Box>
+      <LibraryCardEmbed asset={asset} hasActionButton={false} fullWidth={true} />
     </Box>
   );
 }

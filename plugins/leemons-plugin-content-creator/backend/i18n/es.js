@@ -92,7 +92,6 @@ module.exports = {
     formatLabel: 'Formato',
     savedAsDraft: 'Guardar como borrador',
     published: 'Publicado',
-    publishOptions: 'Opciones de publicación',
     onlyPublish: 'Solo publicar',
     publishAndShare: 'Publicar y compartir',
     publishAndAssign: 'Publicar y asignar como tarea',

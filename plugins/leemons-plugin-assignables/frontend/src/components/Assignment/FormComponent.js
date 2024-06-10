@@ -21,6 +21,7 @@ import { OtherOptions } from './components/OtherOptions';
 import useFormComponentStyles from './FormComponent.styles';
 import Presentation from './components/Presentation/Presentation';
 import Preview from './components/Preview/Preview';
+import { Container } from './components/Container';
 
 function onSubmitFunc(onSubmit, evaluationType, values) {
   const allowedTypes = ['auto', 'manual', 'none'];
@@ -197,7 +198,7 @@ export default function Form({
                   )}
                 />
               )}
-              <Box mb={30}>
+              <Box mb={20}>
                 <Controller
                   name="subjects"
                   control={control}
@@ -296,31 +297,3 @@ export default function Form({
     </form>
   );
 }
-
-Form.propTypes = {
-  scrollRef: PropTypes.object,
-  onNextStep: PropTypes.func,
-  onPrevStep: PropTypes.func,
-  hasNextStep: PropTypes.bool,
-  hasPrevStep: PropTypes.bool,
-
-  loading: PropTypes.bool,
-  localizations: PropTypes.object,
-  assignable: PropTypes.object,
-  buttonsComponent: PropTypes.node,
-  defaultValues: PropTypes.object,
-  evaluationType: PropTypes.oneOf(['manual', 'auto', 'none']).isRequired,
-  evaluationTypes: PropTypes.arrayOf('string'),
-  hideMaxTime: PropTypes.bool,
-  hideSectionHeaders: PropTypes.bool,
-  onlyOneSubject: PropTypes.bool,
-  onSubmit: PropTypes.func,
-  showTitle: PropTypes.bool,
-  showThumbnail: PropTypes.bool,
-  showEvaluation: PropTypes.bool,
-  showInstructions: PropTypes.bool,
-  showMessageForStudents: PropTypes.bool,
-  showReport: PropTypes.bool,
-  showResponses: PropTypes.bool,
-  hideShowInCalendar: PropTypes.bool,
-};

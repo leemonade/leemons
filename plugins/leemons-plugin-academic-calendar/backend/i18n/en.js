@@ -67,6 +67,9 @@ module.exports = {
     cancel: 'Cancel',
     saved: 'Saved',
     newRegionalCalendar: 'New regional calendar',
+    configDeletedAlert: 'Configuration deleted successfully',
+    configDeletedErrorAlert: 'Error deleting regional config:',
+    configSavedErrorAlert: 'Error saving regional config:',
     requiredField: 'Required field',
     emptyCalendar: 'You have not created any regional calendar yet',
     calendarNamePlaceholder: 'Calendar name...',
@@ -74,6 +77,10 @@ module.exports = {
   programList: {
     tableAdd: 'Add break',
     tableRemove: 'Remove',
+    tableHeaderCover: 'Cover',
+    tableHeaderProgram: 'Program',
+    tableHeaderCourseInit: 'Course start',
+    tableHeaderCourseEnd: 'Course end',
     saved: 'Saved',
     title: 'Program Calendar',
     description:

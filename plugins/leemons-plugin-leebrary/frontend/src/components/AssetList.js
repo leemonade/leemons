@@ -314,14 +314,6 @@ const AssetList = ({
       { label: t('labels.assetStatusDraft'), value: 'draft' },
     ];
   }, [allowStatusFilter, t]);
-
-  const getEmptyState = () => {
-    if (searchCriteriaDebounced && !isEmpty(searchCriteriaDebounced)) {
-      return <SearchEmpty t={t} />;
-    }
-
-    return null;
-  };
   // -------------------------------------------------------------------------------------
   // DRAWER HANDLERS & TOOLBAR
   const toolbarItems = useMemo(() => {
@@ -764,7 +756,7 @@ const AssetList = ({
               )}
             {showFilteringEmptyState && (
               <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
-                {getEmptyState()}
+                <SearchEmpty t={t} />
               </Stack>
             )}
           </Box>

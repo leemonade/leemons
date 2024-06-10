@@ -19,10 +19,12 @@ import { useUserAgentsInfo } from '@users/hooks';
 import { SelectUserAgent } from '@users/components';
 import { ScheduleInput } from '@timetable/components';
 
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { getProfilesRequest } from '@academic-portfolio/request';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useClassStudents from '@academic-portfolio/hooks/queries/useClassStudents';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { getClassStudentsKey } from '@academic-portfolio/hooks/keys/classStudents';
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
 
@@ -35,11 +37,15 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   const [virtualUrl, setVirtualUrl] = useState(null);
   const [address, setAddress] = useState(null);
   const [schedule, setSchedule] = useState(null);
-  const { mutate: removeStudentFromClass } = useRemoveStudentFromClass();
+  const { mutate: removeStudentFromClass, isLoading: removeStudentFromClassLoading } =
+    useRemoveStudentFromClass();
+  const { data: classStudents, isLoading: classStudentsLoading } = useClassStudents({
+    classId: classData?.id,
+  });
   const { data: userAgentsInfo, isLoading: userAgentsInfoLoading } = useUserAgentsInfo(
-    classData?.students || [],
+    classStudents || [],
     {
-      enabled: classData?.students?.length > 0,
+      enabled: classStudents?.length > 0,
     }
   );
 
@@ -79,7 +85,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       {
         onSuccess: (result) => {
           if (result) {
-            queryClient.invalidateQueries(['subjectDetail', { subject: classData.subject.id }]);
+            const classStudentsKey = getClassStudentsKey(classData.id);
+            queryClient.invalidateQueries(classStudentsKey);
             addSuccessAlert(t('deletedStudentSuccess'));
           }
         },
@@ -214,8 +221,14 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
             {t('enrollButton')}
           </Button>
         </Box>
-        {classData?.students?.length > 0 && (
-          <StudentsTable data={studentsTableData} showSearchBar isLoading={userAgentsInfoLoading} />
+        {classStudents?.length > 0 && (
+          <StudentsTable
+            data={studentsTableData}
+            showSearchBar
+            isLoading={
+              userAgentsInfoLoading || classStudentsLoading || removeStudentFromClassLoading
+            }
+          />
         )}
       </ContextContainer>
     </ContextContainer>

@@ -2,7 +2,6 @@ import React, { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { isArray, isNil, isString, map } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-// TODO: This comes from @bubbles-ui/leemons/common
 import { SchedulePicker } from '@bubbles-ui/leemons';
 import { unflatten } from '@common';
 import { prefixPN } from '../../helpers';
@@ -11,18 +10,20 @@ const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
   const [pickerProps, setPickerProps] = useState(null);
   const [, translations] = useTranslateLoader(prefixPN('schedule_picker'));
 
-  useEffect(() => {
+  function handleTranslations() {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       const data = res.timetable.schedule_picker;
 
       if (!isNil(data.labels)) {
-        if (!label) data.labels.input = '';
-        if (isString(label)) data.labels.input = label;
-
+        data.labels.input = isString(label) ? label : '';
         setPickerProps(data);
       }
     }
+  }
+
+  useEffect(() => {
+    handleTranslations();
   }, [translations, label]);
 
   let value;

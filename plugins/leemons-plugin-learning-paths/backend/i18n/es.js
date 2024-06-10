@@ -30,7 +30,7 @@ module.exports = {
       next: 'Siguiente',
       previous: 'Anterior',
       saveDraft: 'Guardar borrador',
-      publishOptions: 'Opciones de publicación',
+      finish: 'Finalizar',
       publish: 'Publicar',
       publishAndAssign: 'Publicar y asignar',
       publishAndShare: 'Publicar y compartir',
@@ -75,7 +75,7 @@ module.exports = {
           },
         },
         buttons: {
-          new: 'Nueva actividad',
+          new: 'Añadir actividad',
         },
         emptyState: {
           title: 'Listado de actividades',
