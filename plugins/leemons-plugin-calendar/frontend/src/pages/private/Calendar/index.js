@@ -19,7 +19,7 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import { useLocale, useStore } from '@common';
-import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
+import prepareAsset, { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import loadable from '@loadable/component';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import tKeys from '@multilanguage/helpers/tKeys';
@@ -195,6 +195,23 @@ function Calendar({ session }) {
 
       forEach(centersData, (data) => {
         forEach(data.calendars, (calendar) => {
+          const calendarClassId = calendar.key.replace('calendar.class.', '');
+          const { allClasses } = store.scheduleCenter[store.center.id];
+          const matchingClass = allClasses.find((classe) => classe.id === calendarClassId);
+          const subjectName = () => {
+            let initials = '';
+            if (matchingClass?.subject?.name) {
+              const texts = matchingClass?.subject?.name;
+              initials = `${texts[0][0].toUpperCase()}${texts[1] ? texts[1][0].toUpperCase() : ''}`;
+            }
+            return initials;
+          };
+          const classIcon = matchingClass?.subject?.icon?.cover?.uri || '';
+          const subjectIcon = prepareAsset(matchingClass?.subject?.icon)?.cover;
+          if (!calendar.isUserCalendar && calendar.isClass) {
+            // eslint-disable-next-line no-param-reassign
+            calendar.icon = classIcon ? subjectIcon : <Text>{subjectName()}</Text>;
+          }
           // eslint-disable-next-line no-param-reassign
           calendar.name = getCalendarName(
             calendar.name,
@@ -236,7 +253,6 @@ function Calendar({ session }) {
     store.loading = false;
     render();
   }
-
   function getScheduleConfig() {
     const schedule = store.scheduleCenter[store.center.id];
     store.schedule = {};
