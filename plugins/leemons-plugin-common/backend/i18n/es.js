@@ -83,4 +83,5 @@ module.exports = {
       },
     },
   },
+  errorBoundaryMessage: 'No se pudo cargar este elemento. Reinténtalo en unos minutos.',
 };

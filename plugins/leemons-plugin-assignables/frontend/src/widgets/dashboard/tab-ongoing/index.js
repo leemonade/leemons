@@ -1,8 +1,15 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
 import { ZoneWidgets } from '@widgets';
+import ZoneWidgetsBoundary from '@widgets/ZoneWidgetsBoundary';
 import prefixPN from '../../../helpers/prefixPN';
+
+const useStyles = createStyles((theme) => ({
+  errorClassName: {
+    padding: theme.spacing[6],
+  },
+}));
 
 function TabOngoing(props) {
   const widgets = useCallback(
@@ -19,7 +26,16 @@ function TabOngoing(props) {
     [props]
   );
 
-  return <ZoneWidgets zone={prefixPN('class.ongoing')}>{widgets}</ZoneWidgets>;
+  const { classes } = useStyles();
+
+  return (
+    <ZoneWidgets
+      zone={prefixPN('class.ongoing')}
+      ErrorBoundary={<ZoneWidgetsBoundary errorClassName={classes.errorClassName} />}
+    >
+      {widgets}
+    </ZoneWidgets>
+  );
 }
 
 TabOngoing.propTypes = {
