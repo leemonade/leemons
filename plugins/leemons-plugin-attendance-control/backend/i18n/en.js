@@ -19,6 +19,8 @@ module.exports = {
           'Here you can consult the scores of all the evaluated activities, both gradable and non-gradable.',
       },
     },
+    excelFile: 'Excel',
+    csvFile: 'CSV',
   },
   attendanceControlTable: {
     students: 'Students',

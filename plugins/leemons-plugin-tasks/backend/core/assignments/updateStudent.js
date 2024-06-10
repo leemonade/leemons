@@ -4,6 +4,7 @@ const STUDENT_UPDATABLE_FIELDS = [
   'timestamps.open',
   'timestamps.start',
   'timestamps.end',
+  'timestamps.gradesViewed',
   'metadata.submission',
   'metadata.visitedSteps',
 ];

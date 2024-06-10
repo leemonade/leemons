@@ -1,4 +1,4 @@
-import { keyBy } from 'lodash';
+import { isNil, keyBy } from 'lodash';
 
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
 import useDownloadScoreReport from '@scores/components/EvaluationNotebook/components/PageFooter/hooks/useDownloadScoreReport';
@@ -38,6 +38,7 @@ export default function useDownloadStudentReport() {
           activities: activities.map((activity) => {
             const { instance } = activity;
             return {
+              id: instance.id,
               deadline: instance.dates.deadline ?? null,
               instance,
               name: instance.assignable.asset.name,
@@ -49,9 +50,9 @@ export default function useDownloadStudentReport() {
           value: [
             {
               activities: activities.map((activity) => ({
-                id: activity.id,
-                isSubmitted: !!activity.timestamps?.end,
-                score: activity.score,
+                id: activity.instance.id,
+                isSubmitted: !isNil(activity.mainGrade) || !!activity.timestamps?.end,
+                score: activity.mainGrade,
               })),
               customScore: finalScoreData.grade,
               name: userAgentsInfo?.[0]?.user?.name,

@@ -36,5 +36,9 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "always"
     }
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "leemons",
+    "projectKey": "leemonade_leemons"
   }
 }

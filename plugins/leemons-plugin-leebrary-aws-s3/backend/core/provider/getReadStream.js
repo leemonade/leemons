@@ -33,6 +33,7 @@ async function getReadStream({ key: Key, start = -1, end = -1, forceStream = tru
   return s3.getSignedUrl('getObject', {
     ...params,
     Expires: signedUrlExpireSeconds,
+    ResponseContentDisposition: `attachment; filename="${Key.split('/').pop()}"`,
   });
 }
 

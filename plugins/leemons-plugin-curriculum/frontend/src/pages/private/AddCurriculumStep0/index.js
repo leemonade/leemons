@@ -1,5 +1,5 @@
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { filter, forIn, map } from 'lodash';
+import { filter, forIn, map, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useEffect, useMemo } from 'react';
 
@@ -72,7 +72,8 @@ function AddCurriculumStep0({ onNext }) {
     const {
       data: { items: programs },
     } = await listProgramsRequest({ page: 0, size: 999999, center });
-    return map(programs, (p) => ({ value: p.id, label: p.name }));
+    const sortedPrograms = sortBy(programs, 'createdAt');
+    return map(sortedPrograms, (p) => ({ value: p.id, label: p.name }));
   }
 
   async function onFormChange({ value, name }) {
