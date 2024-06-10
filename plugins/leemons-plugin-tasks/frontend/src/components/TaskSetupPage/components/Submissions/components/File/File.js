@@ -3,7 +3,7 @@ import _ from 'lodash';
 import mime from 'mime';
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
-import { TagsInput, NumberInput, Stack, ContextContainer } from '@bubbles-ui/components';
+import { Checkbox, TagsInput, NumberInput, Stack, ContextContainer } from '@bubbles-ui/components';
 
 export default function File({ labels }) {
   const {
@@ -12,13 +12,13 @@ export default function File({ labels }) {
   } = useFormContext();
   return (
     <ContextContainer>
-      {/* <Controller
+      <Controller
         control={control}
         name="data.multipleFiles"
         render={({ field }) => (
           <Checkbox {...field} checked={field.value} label={labels?.multiFile} />
         )}
-      /> */}
+      />
       <Controller
         control={control}
         name="data.extensions"
