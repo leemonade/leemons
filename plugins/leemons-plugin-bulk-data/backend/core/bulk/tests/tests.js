@@ -1,8 +1,18 @@
-const { keys, trim, isEmpty, isNil } = require('lodash');
+const { keys, trim, isEmpty, isNil, toLower } = require('lodash');
 const showdown = require('showdown');
 const itemsImport = require('../helpers/simpleListImport');
 
 const converter = new showdown.Converter();
+
+function booleanCheck(value) {
+  if (toLower(value) === 'no') {
+    return false;
+  }
+  if (toLower(value) === 'yes') {
+    return true;
+  }
+  return value;
+}
 
 async function importTests(filePath, { programs, qbanks, questions, assets }) {
   const items = await itemsImport(filePath, 'te_tests', 50, true, true);
@@ -58,7 +68,7 @@ async function importTests(filePath, { programs, qbanks, questions, assets }) {
         .map((field) => field.trim())
         .reduce((acc, item) => {
           const [fieldKey, value] = item.split('|');
-          acc[fieldKey] = value ?? false;
+          acc[fieldKey] = booleanCheck(value ?? false);
           return acc;
         }, {});
 

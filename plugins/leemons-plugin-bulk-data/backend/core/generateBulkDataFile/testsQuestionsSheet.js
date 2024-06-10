@@ -185,12 +185,14 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
   });
 
   const questionsToReturn = [];
+  let questionCounter = 0;
   qBanks.forEach(({ providerData, bulkId: qBankBulkId }) => {
     const { questions } = providerData;
     const { categories: qBankCategories } = providerData;
-    questions?.forEach((question, i) => {
+    questions?.forEach((question) => {
+      questionCounter++;
       const questionImage = findQuestionImage(allImageAssetDetails, question);
-      const bulkId = `q${(i + 1).toString().padStart(2, '0')}`;
+      const bulkId = `q${questionCounter.toString().padStart(2, '0')}`;
 
       const commonData = {
         root: bulkId,
