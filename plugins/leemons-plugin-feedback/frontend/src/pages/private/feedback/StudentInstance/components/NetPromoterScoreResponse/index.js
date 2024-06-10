@@ -16,10 +16,11 @@ const NetPromoterScoreResponse = (props) => {
   const renderNumbers = () => {
     const numberElements = [];
     for (let i = 0; i < 11; i++) {
+      const isSelected = selectedValue === i;
       numberElements.push(
         <Box>
           <Box
-            className={classes.numberElement}
+            className={isSelected ? classes.selectedNumberElement : classes.numberElement}
             sx={(theme) =>
               i === selectedValue
                 ? {

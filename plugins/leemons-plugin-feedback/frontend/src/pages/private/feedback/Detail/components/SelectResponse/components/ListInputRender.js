@@ -13,8 +13,28 @@ import ImagePicker from '@leebrary/components/ImagePicker';
 import { noop } from 'lodash';
 
 // eslint-disable-next-line import/prefer-default-export
-export function ListInputRender({ t, withImages, addItem, value, onCancel = noop, ...props }) {
-  const [store, render] = useStore(value || { useButton: true });
+export function ListInputRender({
+  t,
+  withImages,
+  addItem,
+  value,
+  responsesSaved,
+  onCancel = noop,
+  ...props
+}) {
+  const [store, render] = useStore(value);
+  const [useButton, setUseButton] = React.useState(!value);
+  const inputRef = React.useRef(null);
+  React.useEffect(() => {
+    const isValueSaved = responsesSaved?.some((response) => response.value === value);
+    setUseButton(!isValueSaved);
+  }, []);
+
+  React.useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   function emit() {
     props.onChange({
@@ -89,7 +109,7 @@ export function ListInputRender({ t, withImages, addItem, value, onCancel = noop
               />
             </Box>
           </Stack>
-          {store.useButton ? (
+          {useButton ? (
             <Stack justifyContent="end" spacing={4}>
               <Button variant="link" onClick={onCancel}>
                 {t('cancel')}
@@ -113,9 +133,15 @@ export function ListInputRender({ t, withImages, addItem, value, onCancel = noop
             label={t('responseLabel')}
             onChange={onChangeResponse}
             error={store.dirty && !store.response ? t('responseRequired') : null}
+            ref={inputRef}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && useButton) {
+                add();
+              }
+            }}
           />
         </Box>
-        {store.useButton ? (
+        {useButton ? (
           <Stack justifyContent="end" spacing={4}>
             <Button variant="link" onClick={onCancel}>
               {t('cancel')}
@@ -138,4 +164,5 @@ ListInputRender.propTypes = {
   addItem: PropTypes.func,
   value: PropTypes.any,
   onCancel: PropTypes.func,
+  responsesSaved: PropTypes.array,
 };

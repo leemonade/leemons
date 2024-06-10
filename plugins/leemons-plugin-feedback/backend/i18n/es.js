@@ -54,6 +54,7 @@ module.exports = {
     responseLabel: 'Respuesta',
     addResponse: 'Añadir respuesta',
     saveResponse: 'Guardar respuesta',
+    saveChanges: 'Guardar cambios',
     cancel: 'Cancelar',
     responsesRequired: 'Campo necesario',
     responseRequired: 'Campo necesario',
