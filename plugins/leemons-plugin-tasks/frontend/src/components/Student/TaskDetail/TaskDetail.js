@@ -12,7 +12,7 @@ import { useSubjectDetails } from '@academic-portfolio/hooks';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import ActivityHeader from '@assignables/components/ActivityHeader';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import useUserAgents from '@users/hooks/useUserAgents';
 import StepContainer from './components/StepContainer/StepContainer';
 
@@ -124,6 +124,9 @@ export default function TaskDetail({ id, student, preview }) {
   const scrollRef = useRef();
   const localizations = useTaskDetailLocalizations();
   const history = useHistory();
+  const location = useLocation();
+  const currentUrl = location.pathname;
+  const isViewMode = currentUrl.includes('view');
 
   const useData = useMemo(() => (preview ? useTaskPreviewData : useTaskData), [preview]);
 
@@ -144,7 +147,7 @@ export default function TaskDetail({ id, student, preview }) {
         <ActivityHeader
           assignation={assignation}
           instance={instance}
-          showClass
+          showClass={!isViewMode}
           showDeadline
           showEvaluationType
           showRole
