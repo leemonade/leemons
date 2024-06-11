@@ -47,7 +47,6 @@ function ListEmpty({ t, category }) {
               },
             }}
           />
-          hello
           <RenderTextWithCTAs
             t={t}
             text={`emptyStates.${categoryKey}.help`}
