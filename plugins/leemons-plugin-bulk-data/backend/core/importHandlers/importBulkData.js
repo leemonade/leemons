@@ -251,16 +251,12 @@ async function importBulkData({
       const { task: tasks } = await ctx.call('tasks.tasks.getRest', {
         id: Object.values(config.tasks).map((task) => task.fullId),
       });
-      const duplicatedResourceAssets = tasks.flatMap((task) => [
-        ...task.resources,
-        task.metadata?.leebrary?.statementImage[0],
-      ]);
 
       const tasksAssets = tasks.map((item) => item.asset);
       await shareAssetsWithProfile({
         profileId: config.profiles.teacher?.id,
         profileSysName: config.profiles.teacher?.sysName,
-        assets: [...tasksAssets, ...duplicatedResourceAssets],
+        assets: [...tasksAssets], // If resources and/or statementImage change to be not-public add them here
         ctx,
       });
     }

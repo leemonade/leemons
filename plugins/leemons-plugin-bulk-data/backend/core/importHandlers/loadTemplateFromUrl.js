@@ -101,6 +101,7 @@ async function loadFromTemplateURL({
     });
     return { status: 200 };
   } catch (error) {
+    console.error('Error importing bulk-data', error);
     throw new LeemonsError(ctx, {
       message: `Something went wrong importing from template URL: ${error}`,
       httpStatusCode: 500,
