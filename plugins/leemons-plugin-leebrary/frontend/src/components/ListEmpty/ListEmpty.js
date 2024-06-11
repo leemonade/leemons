@@ -47,6 +47,7 @@ function ListEmpty({ t, category }) {
               },
             }}
           />
+          hello
           <RenderTextWithCTAs
             t={t}
             text={`emptyStates.${categoryKey}.help`}
@@ -55,7 +56,7 @@ function ListEmpty({ t, category }) {
               pluralCategory: pluralName,
               CTA: {
                 type: 'linkT',
-                url: 'https://www.leemons.io/leemons-academy',
+                url: t(`emptyStates.links.${categoryKey}`),
                 value: `emptyStates.${categoryKey}.helpCTA`,
               },
             }}
