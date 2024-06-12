@@ -50,7 +50,11 @@ async function assumeRole({ roleArn, sessionName, credentials, ctx }) {
  * @returns {string | null}
  */
 function getRoleToAssume({ prefix, roleName }) {
-  return roleName ?? process.env[prefix ? `${prefix}_ASSUMED_ROLE` : 'ASSUMED_ROLE'] ?? null;
+  const upperCasePrefix = prefix?.toUpperCase();
+
+  return (
+    roleName ?? process.env[prefix ? `${upperCasePrefix}_ASSUMED_ROLE` : 'ASSUMED_ROLE'] ?? null
+  );
 }
 
 module.exports = { assumeRole, getRoleToAssume };

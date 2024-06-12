@@ -29,10 +29,12 @@ function getAWSCredentialsFromEnv(prefix) {
   let secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
   let region = process.env.AWS_REGION;
 
+  const upperCasePrefix = prefix?.toUpperCase();
+
   if (prefix) {
-    accessKeyId = process.env[`${prefix}_AWS_ACCESS_KEY`] ?? accessKeyId;
-    secretAccessKey = process.env[`${prefix}_AWS_SECRET_ACCESS_KEY`] ?? secretAccessKey;
-    region = process.env[`${prefix}_AWS_REGION`] ?? region;
+    accessKeyId = process.env[`${upperCasePrefix}_AWS_ACCESS_KEY`] ?? accessKeyId;
+    secretAccessKey = process.env[`${upperCasePrefix}_AWS_SECRET_ACCESS_KEY`] ?? secretAccessKey;
+    region = process.env[`${upperCasePrefix}_AWS_REGION`] ?? region;
   }
 
   if (!accessKeyId || !secretAccessKey || !region) {
