@@ -28,23 +28,25 @@ async function getSubjectsInternalIds(subjectIds) {
   }, {});
 }
 
+async function getPrograms(programIds) {
+  const programsCollection = database.collection('v1::academic-portfolio_programs');
+  return programsCollection.find({ id: { $in: programIds } }).toArray();
+}
+
 // COURSE AND GROUPS INFO
 async function getAllGroupIds(classIds) {
   const classCoursesCollection = database.collection('v1::academic-portfolio_classgroups');
   return classCoursesCollection
-    .find({ class: { $in: classIds } }, { projection: { group: 1 } })
+    .find({ class: { $in: classIds } }, { projection: { group: 1, class: 1 } })
     .toArray();
 }
 
 async function getAllGroups() {
   const groupsCollection = database.collection('v1::academic-portfolio_groups');
-  const groupsFound = await groupsCollection
-    .find({ projection: { name: 1, type: 1, index: 1, id: 1 } })
-    .toArray();
+  const groupsFound = await groupsCollection.find({}).toArray();
 
   const allCourses = [];
   const allReferenceGroups = [];
-  console.log('groupsfound', groupsFound);
 
   await groupsFound.forEach((group) => {
     if (group.type === 'course') {
@@ -80,7 +82,7 @@ async function getClassDetails(calendars) {
     }
   });
 
-  // SUBJECTS
+  // SUBJECTS & PROGRAM
   const subjectIds = Object.values(classes).map((classObj) => classObj.subject);
   const subjectsCollection = database.collection('v1::academic-portfolio_subjects');
   const subjects = await subjectsCollection.find({ id: { $in: subjectIds } }).toArray();
@@ -89,6 +91,10 @@ async function getClassDetails(calendars) {
     return acc;
   }, {});
   const subjectsInternalIds = await getSubjectsInternalIds(subjectIds);
+
+  const programIds = Object.values(classes).map((classObj) => classObj.program);
+  const allPrograms = await getPrograms(programIds);
+
   Object.keys(classes).forEach((classId) => {
     if (classes[classId].subject && subjectMap[classes[classId].subject]) {
       classes[classId].subject = {
@@ -96,53 +102,126 @@ async function getClassDetails(calendars) {
         internalId: subjectsInternalIds[classes[classId].subject],
       };
     }
+    if (classes[classId].program) {
+      classes[classId].program = allPrograms.find((p) => p.id === classes[classId].program);
+    }
   });
 
   // COURSES AND GROUPS
-
-  // console.log('courseIds', courseIds);
-  const groupIds = await getAllGroupIds(Object.keys(classes));
-
+  const groupsByClass = await getAllGroupIds(Object.keys(classes));
   const { allCourses, allGroups } = await getAllGroups();
-  console.log('allCourses', allCourses);
-  console.log('allGroups', allGroups);
 
-  // Object.keys(classes).forEach((classId) => {
-  //   const classObject = classes[classId];
-  //   const { program, classWithoutGroupId, subject } = classObject;
-  //   const course = allCourses.filter((crs) => JSON.parse(subject.courses).includes(crs.id));
+  Object.keys(classes).forEach((classId, i) => {
+    const classObject = classes[classId];
+    const { program, classWithoutGroupId, subject } = classObject;
 
-  //   // Only add course when class' subject isn't offered in more than one - We ignore arrays
-  //   if (course?.index) {
-  //     classObject.course = course.index;
-  //   }
+    console.log(
+      'index',
+      i,
+      '------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
+    );
+    console.log(
+      'program.maxNumberOfCourses',
+      program.maxNumberOfCourses,
+      '<= 1 ? course should be undefined'
+    );
 
-  // if (!classWithoutGroupId) {
-  // }
-  // });
+    if (program.maxNumberOfCourses > 1) {
+      let courseIds;
+      console.log('subject.course', subject.course);
+      try {
+        courseIds = JSON.parse(subject.course ?? '[]');
+        // console.log('1 courseIds', courseIds);
+      } catch (e) {
+        if (subject.course?.length && (subject.course || '').startsWith('lrn')) {
+          courseIds = [subject.course];
+          // console.log('2 courseIds is string', courseIds);
+        }
+      }
 
-  // Object.values(classes).forEach((c) => {
-  //   console.log(
-  //     JSON.stringify(
-  //       {
-  //         subjectName: c.subject.name,
-  //         subjectInternalId: c.subject.internalId,
-  //         classWithoutGroupId: c.classWithoutGroupId,
-  //         course: c.subject.course,
-  //         subject: c.subject,
-  //       },
-  //       null,
-  //       2
-  //     )
-  //   );
-  // });
+      const course = allCourses.filter((crs) => courseIds.includes(crs.id));
+
+      // We don't want to add course when the subject is offered in more than one course
+      if (course?.length === 1) {
+        classObject.course = course[0].index;
+      }
+      console.log('classObject.course', classObject.course);
+    }
+
+    if (!classWithoutGroupId) {
+      const groupId = groupsByClass.find((g) => g.class === classId).group;
+      const groupDetail = allGroups.find((g) => g.id === groupId);
+      classObject.group = groupDetail?.abbreviation ?? undefined;
+
+      console.log('classObject.group', classObject.group);
+    }
+    console.log('classWithoutGroupId', classWithoutGroupId);
+    console.log('classObject.alias', classObject.alias);
+    console.log('classObject.classroomId', classObject.classroomId);
+    console.log('classObject.program.id', classObject.program.id);
+    console.log('classObject.subject.name', classObject.subject.name);
+    console.log('classObject.subject.internalId', classObject.subject.internalId);
+    console.log('\n');
+  });
+
+  return classes;
+}
+const getClassName = (classData) => {
+  if (classData.group) {
+    return classData.group;
+  }
+
+  if (classData?.alias && classData?.classroomId) {
+    return `${classData.classroomId} - ${classData.alias}`;
+  }
+  if (classData?.alias) {
+    return classData.alias;
+  }
+  if (classData?.classroomId) {
+    return classData.classroomId;
+  }
+  if (classData?.classWithoutGroupId) {
+    return classData.classWithoutGroupId;
+  }
+  throw new Error('No class could be processed');
+};
+
+async function updateCalendarNames(classes) {
+  const calendarsCollection = database.collection('v1::calendar_calendars');
+  const promises = [];
+  Object.keys(classes).forEach((classId, i) => {
+    console.log(
+      'NAMES BUILDING index',
+      i,
+      '-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
+    );
+    const classObject = classes[classId];
+
+    const subjectSuffix = classObject.subject.internalId && ` - ${classObject.subject.internalId}`;
+    const subjectName = `${classObject.subject.name}${subjectSuffix || ''}`;
+    const className = getClassName(classObject);
+    const coursePrefix = classObject.course || '';
+    const separator = coursePrefix ? ' - ' : '';
+    const classNameParsed = `${coursePrefix}${separator}${className}`;
+    const finalName = `${subjectName} - ${classNameParsed}`;
+
+    console.log('subjectName', subjectName);
+    console.log('course', coursePrefix);
+    console.log('className', className);
+    console.log('classNameParsed', classNameParsed);
+    console.log('FINAL NAME =>', finalName, '\n');
+    // promises.push(calendarsCollection.updateOne({ id: classes[classId].calendarId }, { $set: { name: className } }))
+    // promises.push(calendarsCollection.updateOne({ id: classes[classId].calendarId }, { $set: { name: className } }))
+  });
+  // await Promise.all(promises)
 }
 
 (async () => {
   try {
     await init();
     const calendarsToUpdate = await getCalendarsToUpdate();
-    await getClassDetails(calendarsToUpdate);
+    const classes = await getClassDetails(calendarsToUpdate);
+    await updateCalendarNames(classes);
 
     await client.close();
   } catch (error) {
