@@ -16,7 +16,7 @@ module.exports = {
       i18nPath: path.resolve(__dirname, `../i18n/`),
     }),
     LeemonsMongoDBMixin({
-      models: getServiceModels,
+      models: getServiceModels(),
     }),
     LeemonsDeploymentManagerMixin(),
   ],
