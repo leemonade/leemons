@@ -195,6 +195,7 @@ module.exports = {
     actionsHeader: 'Acciones',
     showPreview: 'See preview',
     returnToTable: 'Return to table',
+    next: 'Next',
   },
   feedbackDrawerDetail: {
     survey: 'Survey',
