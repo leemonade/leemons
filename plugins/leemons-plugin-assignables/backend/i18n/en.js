@@ -129,6 +129,7 @@ module.exports = {
         },
       },
       showCurriculum: 'Show curriculum',
+      assignationHeaderButton: 'View assignation',
     },
     others: {
       title: 'Other options',
