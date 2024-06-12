@@ -1,6 +1,11 @@
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { generateBulkDataFile } = require('../../core/generateBulkDataFile');
-const { loadFromFile, getLoadStatus, loadFromTemplateURL } = require('../../core/importHandlers');
+const {
+  loadFromFile,
+  getLoadStatus,
+  loadFromTemplateURL,
+  getStatusWhenLocal,
+} = require('../../core/importHandlers');
 
 module.exports = {
   loadRest: {
@@ -37,22 +42,22 @@ module.exports = {
       return loadFromTemplateURL({ templateURL, shareLibraryAssetsWithTeacherProfile, ctx });
     },
   },
-  statusRest: {
+  getLocalLoadStatusRest: {
     rest: {
-      path: '/load-from-file',
+      path: '/load-from-file', // todo update
       method: 'GET',
     },
     handler() {
-      return getLoadStatus();
+      return getStatusWhenLocal();
     },
   },
-  getLoadingStatusRest: {
+  getLoadStatusRest: {
     rest: {
       path: '/get-load-status',
       method: 'GET',
     },
-    handler() {
-      return getLoadStatus();
+    async handler(ctx) {
+      return getLoadStatus({ useCache: true, ctx });
     },
   },
   generateBulkDataRest: {

@@ -10,10 +10,10 @@ async function loadFromFile(ctx, { isAsync = false }) {
     if (settings?.status !== 'INSTALLED' && !settings?.configured) {
       const file = await createTempFile({ readStream: ctx.params });
       if (isAsync) {
-        importBulkData({ docPath: file.path, ctx });
+        importBulkData({ docPath: file.path, useCache: false, ctx });
         return { status: 200, currentPhase: 'Proccessing file', overallProgress: '0%' };
       }
-      await importBulkData({ docPath: file.path, ctx });
+      await importBulkData({ docPath: file.path, useCache: false, ctx });
       return { status: 200 };
     }
   } catch (error) {
