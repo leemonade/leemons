@@ -188,40 +188,50 @@ const getClassName = (classData) => {
 
 async function updateCalendarNames(classes) {
   const calendarsCollection = database.collection('v1::calendar_calendars');
-  const promises = [];
-  Object.keys(classes).forEach((classId, i) => {
-    console.log(
-      'NAMES BUILDING index',
-      i,
-      '-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
-    );
+  const bulkOp = calendarsCollection.initializeUnorderedBulkOp();
+
+  Object.keys(classes).forEach((classId) => {
     const classObject = classes[classId];
 
     const subjectSuffix = classObject.subject.internalId && ` - ${classObject.subject.internalId}`;
     const subjectName = `${classObject.subject.name}${subjectSuffix || ''}`;
-    const className = getClassName(classObject);
+
     const coursePrefix = classObject.course || '';
     const separator = coursePrefix ? ' - ' : '';
-    const classNameParsed = `${coursePrefix}${separator}${className}`;
-    const finalName = `${subjectName} - ${classNameParsed}`;
 
-    console.log('subjectName', subjectName);
-    console.log('course', coursePrefix);
-    console.log('className', className);
-    console.log('classNameParsed', classNameParsed);
-    console.log('FINAL NAME =>', finalName, '\n');
-    // promises.push(calendarsCollection.updateOne({ id: classes[classId].calendarId }, { $set: { name: className } }))
-    // promises.push(calendarsCollection.updateOne({ id: classes[classId].calendarId }, { $set: { name: className } }))
+    const className = getClassName(classObject);
+    const classNameParsed = `${coursePrefix}${separator}${className}`;
+
+    if (subjectName.trim().length > 0 && classNameParsed.trim().length > 0) {
+      const finalName = `${subjectName} - ${classNameParsed}`;
+
+      bulkOp.find({ id: classObject.calendarId }).updateOne({
+        $set: { name: finalName },
+      });
+    } else {
+      console.log('Invalid final name for class ID:', classId);
+      console.log('Class Object => ', classObject);
+    }
   });
-  // await Promise.all(promises)
+  return bulkOp.execute();
 }
 
 (async () => {
   try {
     await init();
     const calendarsToUpdate = await getCalendarsToUpdate();
+    const totalCalendarsToUpdate = calendarsToUpdate.length;
     const classes = await getClassDetails(calendarsToUpdate);
-    await updateCalendarNames(classes);
+    const result = await updateCalendarNames(classes);
+    console.log(
+      '✨✨✨ Bulk update completed. -------------------------------------------------------------------------- '
+    );
+    console.log('Total calendars to update:', totalCalendarsToUpdate);
+    console.log('Matched count:', result.nMatched);
+    console.log('Modified count:', result.nModified);
+    if (result.hasWriteErrors()) {
+      console.log('Errors:', result.getWriteErrors());
+    }
 
     await client.close();
   } catch (error) {
