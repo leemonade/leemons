@@ -103,11 +103,6 @@ async function shareAssetsWithProfile({ profileId, assets, ctx }) {
   await Promise.all(promises);
 }
 
-const throwAnError = async () => {
-  await setTimeout(10000);
-  throw new Error('Operation timed out after 10 seconds.');
-};
-
 async function importBulkData({
   docPath,
   preConfig = {},
@@ -188,8 +183,6 @@ async function importBulkData({
       config.grades = await initGrades({ file: docPath, centers: config.centers, ctx });
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Rules plugin`);
       currentPhase = LOAD_PHASES.GRADES;
-
-      // await throwAnError();
 
       // ·······························································
       // MEDIA LIBRARY
