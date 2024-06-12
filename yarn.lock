@@ -15486,6 +15486,11 @@ loader-utils@^2.0.0, loader-utils@^2.0.4:
     emojis-list "^3.0.0"
     json5 "^2.1.2"
 
+localized-countries@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/localized-countries/-/localized-countries-2.0.0.tgz#bd7a25622969afb9d03291ef09f7902efdde01fc"
+  integrity sha512-17CwJ/oetI5cB6KmPa+Cxw/8vunawUouVv5MFxYqsVzryXeR5u/MF32m3SBaHxP4EqYPOePV+3jx7xxYZnAJpQ==
+
 locate-path@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-3.0.0.tgz#dbec3b3ab759758071b58fe59fc41871af21400e"
