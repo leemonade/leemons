@@ -17,62 +17,19 @@ const { initAcademicCalendar, initProgramCalendars } = require('../academicCalen
 const initTests = require('../tests');
 const initTasks = require('../tasks');
 const initWidgets = require('../widgets');
+const { getCurrentPhaseKey, getLastPhaseOnErrorKey } = require('../../helpers/cacheKeys');
+const { LOAD_PHASES, LOAD_ERROR } = require('./getLoadStatus');
+const { getLoadStatus } = require('.');
 
-const LOAD_PHASES = {
-  LOCALES: 'locales',
-  PLATFORM: 'platform',
-  PROVIDERS: 'providers',
-  ADMIN: 'admin',
-  CENTERS: 'centers',
-  PROFILES: 'profiles',
-  USERS: 'users',
-  GRADES: 'grades',
-  LIBRARY: 'library',
-  AP: 'academic portfolio',
-  CALENDAR: 'calendar',
-  ACADEMIC_CALENDAR: 'academic calendar',
-  TESTS: 'tests',
-  TASKS: 'tasks',
-  WIDGETS: 'widgets',
-};
+let currentPhaseLocal = null;
+let lastPhaseOnErrorLocal = null;
 
-const ERROR = 'error';
-
-const PHASES = Object.keys(LOAD_PHASES).map((key) => LOAD_PHASES[key]);
-let currentPhase = null;
-let lastPhaseOnError = null;
-
-function getLoadProgress() {
-  if (!currentPhase) {
-    return 0;
-  }
-
-  const total = Object.keys(LOAD_PHASES).length;
-  const current = PHASES.indexOf(currentPhase) + 1;
-
-  return Math.floor((current / total) * 100);
-}
-
-function getLoadStatus() {
-  if (currentPhase === ERROR) {
-    return {
-      status: 200,
-      inProgressPhase: ERROR,
-      currentPhase: ERROR,
-      overallProgress: `0%`,
-      lastPhaseOnError,
-    };
-  }
-
-  const progress = getLoadProgress();
-  const workingPhaseIndex = PHASES.indexOf(currentPhase) + 1;
-
-  return {
-    status: 200,
-    inProgressPhase: String(PHASES[workingPhaseIndex]).toUpperCase(),
-    currentPhase: String(currentPhase).toUpperCase(),
-    overallProgress: `${progress} %`,
-  };
+async function getStatusWhenLocal() {
+  return getLoadStatus({
+    localCurrentPhase: currentPhaseLocal,
+    localLastPhaseOnError: lastPhaseOnErrorLocal,
+    useCache: false,
+  });
 }
 
 async function shareAssetsWithProfile({ profileId, assets, ctx }) {
@@ -107,6 +64,7 @@ async function importBulkData({
   docPath,
   preConfig = {},
   shareLibraryAssetsWithTeacherProfile,
+  useCache = true,
   ctx,
 }) {
   const skipAppInitialization = !!preConfig.centers && !!preConfig.profiles;
@@ -119,7 +77,10 @@ async function importBulkData({
     programs: null,
   };
 
-  currentPhase = null;
+  currentPhaseLocal = null;
+
+  const currentPhaseKey = getCurrentPhaseKey(ctx);
+  await ctx.cache.set(currentPhaseKey, LOAD_PHASES.LOCALES, 60 * 60);
 
   try {
     if (fs.existsSync(docPath)) {
@@ -132,11 +93,11 @@ async function importBulkData({
 
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Init Platform & locales ...}`);
         await initLocales({ file: docPath, ctx });
-        currentPhase = LOAD_PHASES.LOCALES;
+        currentPhaseLocal = LOAD_PHASES.LOCALES;
 
         await initPlatform({ file: docPath, ctx });
         ctx.logger.info(chalk`{cyan.bold BULK} Platform initialized`);
-        currentPhase = LOAD_PHASES.PLATFORM;
+        currentPhaseLocal = LOAD_PHASES.PLATFORM;
 
         // ·······························································
         // PROVIDERS
@@ -144,7 +105,7 @@ async function importBulkData({
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Init Providers ...}`);
         await initProviders({ file: docPath, ctx });
         ctx.logger.info(chalk`{cyan.bold BULK} Providers initialized`);
-        currentPhase = LOAD_PHASES.PROVIDERS;
+        currentPhaseLocal = LOAD_PHASES.PROVIDERS;
 
         // ·······························································
         // CENTERS, PROFILES
@@ -152,14 +113,14 @@ async function importBulkData({
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Admin plugin ...}`);
         await initAdmin({ file: docPath, ctx });
         ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Admin plugin`);
-        currentPhase = LOAD_PHASES.ADMIN;
+        currentPhaseLocal = LOAD_PHASES.ADMIN;
 
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Users plugin ...}`);
         config.centers = await initCenters({ file: docPath, ctx });
-        currentPhase = LOAD_PHASES.CENTERS;
+        currentPhaseLocal = LOAD_PHASES.CENTERS;
 
         config.profiles = await initProfiles({ file: docPath, ctx });
-        currentPhase = LOAD_PHASES.PROFILES;
+        currentPhaseLocal = LOAD_PHASES.PROFILES;
       }
 
       // ·······························································
@@ -173,7 +134,7 @@ async function importBulkData({
           ctx,
         });
         ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Users plugin`);
-        currentPhase = LOAD_PHASES.USERS;
+        currentPhaseLocal = LOAD_PHASES.USERS;
       }
 
       // ·······························································
@@ -182,7 +143,8 @@ async function importBulkData({
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Rules plugin ...}`);
       config.grades = await initGrades({ file: docPath, centers: config.centers, ctx });
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Rules plugin`);
-      currentPhase = LOAD_PHASES.GRADES;
+      currentPhaseLocal = LOAD_PHASES.GRADES;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.GRADES, 60 * 60);
 
       // ·······························································
       // MEDIA LIBRARY
@@ -200,7 +162,8 @@ async function importBulkData({
       }
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
-      currentPhase = LOAD_PHASES.LIBRARY;
+      currentPhaseLocal = LOAD_PHASES.LIBRARY;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.LIBRARY, 60 * 60);
 
       // ·······························································
       // ACADEMIC PORTFOLIO -> Da error por duplicación de userAgentPermisions, expected & handled in academic portfolio
@@ -209,7 +172,8 @@ async function importBulkData({
       config.programs = await initAcademicPortfolio({ file: docPath, config, skipEnrollment, ctx });
       await setTimeout(1000);
       await ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
-      currentPhase = LOAD_PHASES.AP;
+      currentPhaseLocal = LOAD_PHASES.ACADEMIC_PORTFOLIO;
+      await ctx.cache.set(currentPhaseKey, LOAD_PHASES.ACADEMIC_PORTFOLIO, 60 * 60);
 
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
       await updateLibrary({ file: docPath, config, ctx });
@@ -221,7 +185,8 @@ async function importBulkData({
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`);
       await initCalendar({ file: docPath, config, ctx });
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Calendar plugin`);
-      currentPhase = LOAD_PHASES.CALENDAR;
+      currentPhaseLocal = LOAD_PHASES.CALENDAR;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.CALENDAR, 60 * 60);
 
       // ·······························································
       // ACADEMIC CALENDAR
@@ -232,7 +197,8 @@ async function importBulkData({
       await initProgramCalendars({ file: docPath, config, ctx });
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Clendar plugin`);
-      currentPhase = LOAD_PHASES.ACADEMIC_CALENDAR;
+      currentPhaseLocal = LOAD_PHASES.ACADEMIC_CALENDAR;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.ACADEMIC_CALENDAR, 60 * 60);
 
       // ·······························································
       // TESTS & QBANKS
@@ -254,7 +220,8 @@ async function importBulkData({
       }
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tests plugin`);
-      currentPhase = LOAD_PHASES.TESTS;
+      currentPhaseLocal = LOAD_PHASES.TESTS;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TESTS, 60 * 60);
 
       // ·······························································
       // TASKS
@@ -277,21 +244,27 @@ async function importBulkData({
       }
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
-      currentPhase = LOAD_PHASES.TASKS;
+      currentPhaseLocal = LOAD_PHASES.TASKS;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TASKS, 60 * 60);
 
       // ·······························································
       // WIDGETS
 
       await initWidgets({ ctx });
-      currentPhase = LOAD_PHASES.WIDGETS;
+      currentPhaseLocal = LOAD_PHASES.WIDGETS;
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Widgets plugin`);
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.WIDGETS, 60 * 60);
     }
   } catch (error) {
     console.error('Error in importBulkData =>', error);
-    lastPhaseOnError = currentPhase;
-    currentPhase = ERROR;
+    const lastPhaseOnErrorKey = getLastPhaseOnErrorKey(ctx);
+    if (useCache) await ctx.cache.set(lastPhaseOnErrorKey, currentPhaseLocal, 60 * 60);
+    if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_ERROR, 60 * 60);
+
+    lastPhaseOnErrorLocal = currentPhaseLocal;
+    currentPhaseLocal = LOAD_ERROR;
     throw error;
   }
 }
 
-module.exports = { importBulkData, getLoadStatus };
+module.exports = { importBulkData, getStatusWhenLocal };
