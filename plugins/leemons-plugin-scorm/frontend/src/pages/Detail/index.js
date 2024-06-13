@@ -81,6 +81,7 @@ export default function Detail() {
       onProgress: (info) => {
         setUploadingFileInfo(info);
       },
+      isScormFolder: true,
     });
     setUploadingFileInfo(null);
 
