@@ -13,7 +13,7 @@ const { createLibraryResourcesSheet } = require('./librarySheet');
 const { createProfilesSheet } = require('./profilesSheet');
 const { createAppearanceSheet } = require('./appearanceSheet');
 const {
-  ASSET_CATEGORIES: { LIBRARY_CATEGORIES, TASKS, TESTS, TEST_QUESTION_BANKS },
+  ASSET_CATEGORIES: { LIBRARY_CATEGORIES, TASKS, TESTS, TEST_QUESTION_BANKS, CONTENT_CREATOR },
 } = require('./config/constants');
 const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
 const { createTasksSheet, createTaskSubjectSheet } = require('./tasksSheets');
@@ -27,6 +27,7 @@ const {
   createProgramCalendarsSheet,
   createProgramCalendarEventsSheet,
 } = require('./programCalendarSheets');
+const { createContentCreatorSheet } = require('./contentCreatorSheet');
 
 async function generateBulkDataFile({
   admin,
@@ -37,10 +38,12 @@ async function generateBulkDataFile({
   ctx,
 }) {
   const adminShouldOwnAllAssets = isClientManagerTemplate && noUsers;
+  const notIndexableAssetsNeeded = [];
 
   const workbook = new Excel.Workbook();
 
   ctx.meta = { ...ctx.meta, leebrary: { signedURLExpireSeconds: 7 * 24 * 60 * 60 } };
+
   // BASIC CONFIG
   await createLocalesSheet({ workbook, ctx });
   await createPlatformSheet({ workbook, ctx });
@@ -97,6 +100,19 @@ async function generateBulkDataFile({
     resourceAssets: Object.values(LIBRARY_CATEGORIES)
       .map((key) => assetsByCategoryKey[key])
       .flat(),
+    ctx,
+  });
+
+  // CONTENT CREATOR
+  const contentCreatorDocuments = await createContentCreatorSheet({
+    workbook,
+    documents: assetsByCategoryKey[CONTENT_CREATOR],
+    libraryAssets,
+    programs,
+    adminShouldOwnAllAssets,
+    subjects,
+    users,
+    notIndexableAssetsNeeded,
     ctx,
   });
 

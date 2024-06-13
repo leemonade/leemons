@@ -20,6 +20,7 @@ const initWidgets = require('../widgets');
 const { getCurrentPhaseKey, getLastPhaseOnErrorKey } = require('../../helpers/cacheKeys');
 const { LOAD_PHASES, LOAD_ERROR } = require('./getLoadStatus');
 const { getLoadStatus } = require('.');
+const { initContentCreator } = require('../contentCreator');
 
 let currentPhaseLocal = null;
 let lastPhaseOnErrorLocal = null;
@@ -160,6 +161,8 @@ async function importBulkData({
           ctx,
         });
       }
+
+      config.contentCreator = await initContentCreator({ file: docPath, config, ctx });
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
       currentPhaseLocal = LOAD_PHASES.LIBRARY;

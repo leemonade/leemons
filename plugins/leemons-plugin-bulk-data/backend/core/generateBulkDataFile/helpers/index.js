@@ -2,7 +2,11 @@ const { booleanToYesNoAnswer } = require('./booleanToYesNoAnswer');
 const { styleCell } = require('./styleCell');
 const { mergeGroupTitleCells } = require('./mergeGroupTitleCells');
 const { configureSheetColumns } = require('./configureSheetColumns');
-const { getDuplicatedAssetsReferenceAsString } = require('./getDuplicatedAssetsReferenceAsString');
+const {
+  getDuplicatedAssetsReferenceAsString,
+  handleNotIndexableAssetsNeeded,
+} = require('./getDuplicatedAssetsReferenceAsString');
+const { solveCoverImage } = require('./solveCoverImage');
 
 module.exports = {
   styleCell,
@@ -10,4 +14,6 @@ module.exports = {
   mergeGroupTitleCells,
   configureSheetColumns,
   getDuplicatedAssetsReferenceAsString,
+  handleNotIndexableAssetsNeeded,
+  solveCoverImage,
 };
