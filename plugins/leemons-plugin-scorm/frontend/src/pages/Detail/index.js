@@ -77,12 +77,15 @@ export default function Detail() {
   const savePackage = async ({ publishing = true, assigning }) => {
     setIsLoading(true);
 
-    const file = await uploadFileAsMultipart(formValues.file, {
-      onProgress: (info) => {
-        setUploadingFileInfo(info);
+    const file = await uploadFileAsMultipart(
+      formValues.file,
+      {
+        onProgress: (info) => {
+          setUploadingFileInfo(info);
+        },
       },
-      isScormFolder: true,
-    });
+      true
+    );
     setUploadingFileInfo(null);
 
     const requestBody = {
