@@ -223,7 +223,6 @@ const SelectUserAgent = forwardRef(
               withProfile: true,
             });
 
-            console.log('data', data);
 
             data = data.userAgents.map((item) => ({
               ...item.user,
