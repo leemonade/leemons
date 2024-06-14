@@ -111,6 +111,7 @@ module.exports = {
     open: 'Open',
     duplicate: 'Duplicate',
     duplicated: 'Duplicated',
+    share: 'Share',
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
   },

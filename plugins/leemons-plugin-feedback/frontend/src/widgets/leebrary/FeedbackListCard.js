@@ -13,6 +13,7 @@ import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Assi
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { FeedbackCardIcon } from '../../components/FeedbackCardIcon';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
@@ -24,7 +25,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
+const FeedbackListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('feedbackCard'));
   const { classes } = ListCardStyles({ selected });
   const {
@@ -99,7 +100,7 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: 'Delete',
+          children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
@@ -115,6 +116,16 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
                 setAppLoading(false);
               },
             })();
+          },
+        });
+      }
+      if (asset.shareable) {
+        items.push({
+          icon: <ShareIcon />,
+          children: t('share'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
           },
         });
       }

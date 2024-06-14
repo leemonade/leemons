@@ -71,9 +71,9 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
     history.push(`/private/tasks/library/view/${asset.providerData.id}`);
   };
 
-  // const handleOnShare = () => {
-  //   onShare(asset);
-  // };
+  const handleOnShare = () => {
+    onShare(asset);
+  };
 
   const handleEdit = () => {
     history.push(`/private/tasks/library/edit/${asset.providerData.id}`);
@@ -145,7 +145,7 @@ const Detail = ({ asset, onRefresh, onShare, ...props }) => {
       onEdit={handleEdit}
       onDuplicate={handleDuplicate}
       onAssign={handleAssign}
-      // onShare={handleOnShare}
+      onShare={handleOnShare}
     />
   );
 };
