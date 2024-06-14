@@ -151,7 +151,9 @@ async function importBulkData({
       // MEDIA LIBRARY
 
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
-      config.assets = await initLibrary({ file: docPath, config, ctx });
+      const { assets, nonIndexableAssets } = await initLibrary({ file: docPath, config, ctx });
+      config.assets = assets;
+      config.nonIndexableAssets = nonIndexableAssets;
 
       if (shareLibraryAssetsWithTeacherProfile) {
         await shareAssetsWithProfile({
@@ -161,8 +163,6 @@ async function importBulkData({
           ctx,
         });
       }
-
-      config.contentCreator = await initContentCreator({ file: docPath, config, ctx });
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
       currentPhaseLocal = LOAD_PHASES.LIBRARY;
@@ -202,6 +202,31 @@ async function importBulkData({
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Clendar plugin`);
       currentPhaseLocal = LOAD_PHASES.ACADEMIC_CALENDAR;
       if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.ACADEMIC_CALENDAR, 60 * 60);
+
+      // ·······························································
+      // CONTENT CREATOR
+      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Content Creator plugin ...}`);
+      config.contentCreatorDocs = await initContentCreator({ file: docPath, config, ctx });
+
+      if (
+        shareLibraryAssetsWithTeacherProfile &&
+        Object.keys(config.contentCreatorDocs || {})?.length
+      ) {
+        const { document: documents } = await ctx.call('content-creator.document.getDocumentRest', {
+          id: Object.values(config.contentCreatorDocs).map((doc) => doc.assignable),
+        });
+
+        await shareAssetsWithProfile({
+          profileId: config.profiles.teacher?.id,
+          profileSysName: config.profiles.teacher?.sysName,
+          assets: (documents || []).map((doc) => doc.asset),
+          ctx,
+        });
+      }
+
+      ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Content Creator plugin`);
+      currentPhaseLocal = LOAD_PHASES.CONTENT_CREATOR;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.CONTENT_CREATOR, 60 * 60);
 
       // ·······························································
       // TESTS & QBANKS

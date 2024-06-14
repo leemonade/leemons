@@ -28,6 +28,7 @@ const {
   createProgramCalendarEventsSheet,
 } = require('./programCalendarSheets');
 const { createContentCreatorSheet } = require('./contentCreatorSheet');
+const { createNonIndexableLibraryAssetsSheet } = require('./nonIndexableLibraryAssetsSheet');
 
 async function generateBulkDataFile({
   admin,
@@ -38,7 +39,7 @@ async function generateBulkDataFile({
   ctx,
 }) {
   const adminShouldOwnAllAssets = isClientManagerTemplate && noUsers;
-  const notIndexableAssetsNeeded = [];
+  const nonIndexableAssetsNeeded = [];
 
   const workbook = new Excel.Workbook();
 
@@ -104,7 +105,7 @@ async function generateBulkDataFile({
   });
 
   // CONTENT CREATOR
-  const contentCreatorDocuments = await createContentCreatorSheet({
+  await createContentCreatorSheet({
     workbook,
     documents: assetsByCategoryKey[CONTENT_CREATOR],
     libraryAssets,
@@ -112,7 +113,7 @@ async function generateBulkDataFile({
     adminShouldOwnAllAssets,
     subjects,
     users,
-    notIndexableAssetsNeeded,
+    nonIndexableAssetsNeeded,
     ctx,
   });
 
@@ -168,6 +169,19 @@ async function generateBulkDataFile({
     ctx,
   });
   createProgramCalendarEventsSheet({ workbook, programCalendars, ctx });
+
+  await createNonIndexableLibraryAssetsSheet({
+    workbook,
+    programs,
+    subjects,
+    adminShouldOwnAllAssets,
+    nonIndexableAssets: nonIndexableAssetsNeeded.map((item) => ({
+      ...item,
+      categoryKey: assetCategories.find((category) => category.id === item.asset.category).key,
+    })),
+    users,
+    ctx,
+  });
 
   if (writeFileLocally) {
     await workbook.xlsx.writeFile('generated-bulk-data.xlsx');

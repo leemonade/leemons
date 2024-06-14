@@ -4,31 +4,46 @@ const {
   styleCell,
   booleanToYesNoAnswer,
   getDuplicatedAssetsReferenceAsString,
-  handleNotIndexableAssetsNeeded,
+  handleNonIndexableAssetsNeeded,
   solveCoverImage,
 } = require('./helpers');
 
 const getCreator = (asset, users) => users.find((u) => u.id === asset.fromUser)?.bulkId;
 
+// function processLibraryTag({
+//   htmlContent,
+//   libraryAssets,
+//   embededAssets,
+//   nonIndexableAssetsNeeded,
+// }) {
+//   if (isEmpty(htmlContent)) return '';
+//   const regex = /<library [^>]*id="([^"]+?@\d+\.\d+\.\d+)"[^>]*>.*?<\/library>/g;
+//   return htmlContent.replace(regex, (match, id) => {
+//     const asset = embededAssets.find((embededAsset) => embededAsset.id === id);
+//     let assetReference = getDuplicatedAssetsReferenceAsString(libraryAssets, [asset]);
+//     if (assetReference) {
+//       return `<library bulkId="${assetReference}"></library>`;
+//     }
+//     assetReference = handleNonIndexableAssetsNeeded(nonIndexableAssetsNeeded, asset);
+//     return `<library bulkId="${assetReference}"></library>`;
+//   });
+// }
+
 function processLibraryTag({
   htmlContent,
   libraryAssets,
   embededAssets,
-  notIndexableAssetsNeeded,
+  nonIndexableAssetsNeeded,
 }) {
   if (isEmpty(htmlContent)) return '';
-  const regex = /<library [^>]*id="([^"]+?@\d+\.\d+\.\d+)"[^>]*>.*?<\/library>/g;
-  return htmlContent.replace(regex, (match, id) => {
+  const regex = /<library ([^>]*?)id="([^"]+?@\d+\.\d+\.\d+)"([^>]*?)>.*?<\/library>/g;
+  return htmlContent.replace(regex, (match, preIdAttributes, id, postIdAttributes) => {
     const asset = embededAssets.find((embededAsset) => embededAsset.id === id);
-    // Search in indexable assets
     let assetReference = getDuplicatedAssetsReferenceAsString(libraryAssets, [asset]);
-    if (assetReference) {
-      return `<library bulkId="${assetReference}"></library>`;
+    if (!assetReference) {
+      assetReference = handleNonIndexableAssetsNeeded(nonIndexableAssetsNeeded, asset);
     }
-
-    // Search asset in/add asset to not indexable assets needed
-    assetReference = handleNotIndexableAssetsNeeded(notIndexableAssetsNeeded, asset);
-    return `<library bulkId="${assetReference}"></library>`;
+    return `<library ${preIdAttributes}bulkId="${assetReference}"${postIdAttributes}></library>`;
   });
 }
 
@@ -48,7 +63,7 @@ async function createContentCreatorSheet({
   users,
   programs,
   adminShouldOwnAllAssets,
-  notIndexableAssetsNeeded,
+  nonIndexableAssetsNeeded,
   subjects,
   ctx,
 }) {
@@ -132,7 +147,7 @@ async function createContentCreatorSheet({
       htmlContent: assignable.content,
       libraryAssets,
       embededAssets: embededAssetDetails,
-      notIndexableAssetsNeeded,
+      nonIndexableAssetsNeeded,
     });
     let _program = document.program;
     if (!_program) _program = document.providerData.program;

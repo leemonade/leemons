@@ -13,6 +13,7 @@ const LOAD_PHASES = {
   ACADEMIC_PORTFOLIO: 'academic portfolio',
   CALENDAR: 'calendar',
   ACADEMIC_CALENDAR: 'academic calendar',
+  CONTENT_CREATOR: 'content creator',
   TESTS: 'tests',
   TASKS: 'tasks',
   WIDGETS: 'widgets',

@@ -1,39 +1,35 @@
 /* eslint-disable no-await-in-loop */
 const { keys } = require('lodash');
-const _delay = require('./bulk/helpers/delay');
+const chalk = require('chalk');
 const importContentCreatorDocuments = require('./bulk/contentCreator');
 
-async function initContentCreator({ file, config: { users, programs, assets }, ctx }) {
+async function initContentCreator({ file, config, ctx }) {
   try {
-    const documents = await importContentCreatorDocuments({ file, users, programs, assets, ctx });
-    const assetsKeys = keys(documents);
+    const documents = await importContentCreatorDocuments({ file, config, ctx });
+    const documentKeys = keys(documents);
 
-    for (let i = 0, len = assetsKeys.length; i < len; i++) {
-      const key = assetsKeys[i];
-      const { creator, ...asset } = documents[key];
+    for (let i = 0, len = documentKeys.length; i < len; i++) {
+      const key = documentKeys[i];
+      const { creator, ...document } = documents[key];
 
       try {
-        // ctx.logger.debug(`Adding asset: ${asset.name}`);
-        // const assetData = await ctx.call(
-        //   'leebrary.assets.add',
-        //   {
-        //     asset,
-        //   },
-        //   {
-        //     meta: { userSession: { ...creator } },
-        //   }
-        // );
-        // documents[key] = { ...assetData };
-        console.log('PAYLOAD for ', asset.name, '------------------------------------');
-        console.log(asset);
+        ctx.logger.debug(`Adding Content Creator document: ${document.name}`);
+        const { document: documentData } = await ctx.call(
+          'content-creator.document.saveDocumentRest',
+          {
+            data: JSON.stringify(document),
+          },
+          {
+            meta: { userSession: { ...creator } },
+          }
+        );
 
-        ctx.logger.info(`Asset ADDED: ${asset.name}`);
+        documents[key] = { ...documentData };
+        ctx.logger.info(`Document ADDED: ${document.name}`);
       } catch (e) {
-        ctx.logger.log('-- ASSET CREATION ERROR --');
+        ctx.logger.info(chalk`{red.bold WARN} -- DOCUMENT CREATION ERROR --`);
         ctx.logger.error(e);
       }
-
-      await _delay(1000);
     }
 
     return documents;

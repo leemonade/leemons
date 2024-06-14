@@ -2,6 +2,49 @@
 const { keys, isEmpty } = require('lodash');
 const importLibrary = require('./bulk/library');
 const _delay = require('./bulk/helpers/delay');
+const importNonIndexableAssets = require('./bulk/libraryNonIndexables');
+
+async function addNonIndexableAssets({ file, users, ctx }) {
+  try {
+    const assets = await importNonIndexableAssets(file, { users });
+    if (isEmpty(assets)) {
+      return null;
+    }
+    const assetsKeys = keys(assets);
+
+    for (let i = 0, len = assetsKeys.length; i < len; i++) {
+      const key = assetsKeys[i];
+      const { creator, enabled, program, subject, ...asset } = assets[key];
+
+      try {
+        ctx.logger.debug(`Adding asset: ${asset.name}`);
+        const assetData = await ctx.call(
+          'leebrary.assets.add',
+          {
+            asset: { ...asset, indexable: false, public: true },
+          },
+          {
+            meta: { userSession: { ...creator } },
+          }
+        );
+        assets[key] = { ...assetData };
+
+        ctx.logger.info(`Non indexable asset ADDED: ${asset.name}`);
+      } catch (e) {
+        ctx.logger.log('-- ASSET CREATION ERROR --');
+        ctx.logger.error(e);
+      }
+
+      await _delay(1000);
+    }
+
+    return assets;
+  } catch (err) {
+    ctx.logger.error(err);
+  }
+
+  return { assets: null, nonIndexableAssets: null };
+}
 
 async function initLibrary({ file, config: { users }, ctx }) {
   try {
@@ -36,7 +79,8 @@ async function initLibrary({ file, config: { users }, ctx }) {
       }
     }
 
-    return assets;
+    const nonIndexableAssets = await addNonIndexableAssets({ file, users, ctx });
+    return { assets, nonIndexableAssets };
   } catch (err) {
     ctx.logger.error(err);
   }

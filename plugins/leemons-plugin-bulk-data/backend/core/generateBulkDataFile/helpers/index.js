@@ -4,7 +4,7 @@ const { mergeGroupTitleCells } = require('./mergeGroupTitleCells');
 const { configureSheetColumns } = require('./configureSheetColumns');
 const {
   getDuplicatedAssetsReferenceAsString,
-  handleNotIndexableAssetsNeeded,
+  handleNonIndexableAssetsNeeded,
 } = require('./getDuplicatedAssetsReferenceAsString');
 const { solveCoverImage } = require('./solveCoverImage');
 
@@ -14,6 +14,6 @@ module.exports = {
   mergeGroupTitleCells,
   configureSheetColumns,
   getDuplicatedAssetsReferenceAsString,
-  handleNotIndexableAssetsNeeded,
+  handleNonIndexableAssetsNeeded,
   solveCoverImage,
 };

@@ -105,6 +105,7 @@ async function loadFromTemplateURL({
     throw new LeemonsError(ctx, {
       message: `Something went wrong importing from template URL: ${error}`,
       httpStatusCode: 500,
+      cause: error,
     });
   }
 }
