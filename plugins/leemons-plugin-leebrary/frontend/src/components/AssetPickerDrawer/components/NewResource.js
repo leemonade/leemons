@@ -131,6 +131,6 @@ NewResource.propTypes = {
 NewResource.defaultProps = {
   localizations: null,
   categories: [LIBRARY_FORM_TYPES.MEDIA_FILES],
-  acceptedFileTypes: ['image/*', 'audio/*', 'video/*', 'application/pdf'],
+  // acceptedFileTypes: ['image/*', 'audio/*', 'video/*', 'application/pdf'],
   dataOverride: {},
 };
