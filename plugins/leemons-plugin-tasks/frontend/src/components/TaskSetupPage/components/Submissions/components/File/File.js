@@ -64,7 +64,10 @@ export default function File({ labels }) {
                   [extension]: extension,
                 };
               }, {});
-
+              if (Object.keys(validExtensions).includes('rtf')) {
+                validExtensions.rtf = '.rtf';
+              }
+              console.log('validExtensions', validExtensions);
               field.onChange(validExtensions);
             }}
             label={labels?.format}
