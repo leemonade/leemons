@@ -72,9 +72,6 @@ function QuestionsCard({
     values: defaultValues || {},
   });
 
-  // const moduleId = instance?.metadata?.module?.id;
-  // const moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
-
   const question = feedback?.questions[store.currentIndex];
 
   const isLast = React.useMemo(
@@ -158,7 +155,6 @@ function QuestionsCard({
           </Box>
         </Box>
       ) : null}
-      {/* </Box> */}
     </TotalLayoutStepContainer>
   );
 }

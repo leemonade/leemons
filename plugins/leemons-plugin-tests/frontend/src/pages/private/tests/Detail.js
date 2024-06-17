@@ -186,64 +186,6 @@ export default function Detail() {
       init();
   }, [levels, params, t1V, t2V]);
 
-  // const accordion = [];
-  // if (store.stats?.data.length && store.stats?.selectables.length) {
-  //   accordion.push(
-  //     <ActivityAccordionPanel
-  //       key={1}
-  //       label={t('chartLabel')}
-  //       icon={
-  //         <Box style={{ position: 'relative', width: '23px', height: '23px' }}>
-  //           <ImageLoader className="stroke-current" src={'/public/tests/test-results-icon.svg'} />
-  //         </Box>
-  //       }
-  //       color="solid"
-  //     >
-  //       <Box p={20}>
-  //         <ActivityAnswersBar showBarIcon={false} withLegend={false} {...store.stats} />
-  //       </Box>
-  //     </ActivityAccordionPanel>
-  //   );
-  // }
-  // if (store.test) {
-  //   accordion.push(
-  //     <ActivityAccordionPanel
-  //       key={2}
-  //       label={t('questions')}
-  //       rightSection={
-  //         <Box>
-  //           <Badge
-  //             label={store.test?.questions?.length}
-  //             size="md"
-  //             color="stroke"
-  //             closable={false}
-  //           />
-  //         </Box>
-  //       }
-  //       icon={
-  //         <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-  //           <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
-  //         </Box>
-  //       }
-  //     >
-  //       <Box>
-  //         {store.useQuestionMode ? (
-  //           <ViewModeQuestions viewMode={false} store={store.test} onReturn={toggleQuestionMode} />
-  //         ) : (
-  //           <>
-  //             <Box className={styles.showTestBar}>
-  //               <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
-  //                 {t('showInTests')}
-  //               </Button>
-  //             </Box>
-  //             <QuestionsTable withStyle hideCheckbox questions={store.test?.questions} />
-  //           </>
-  //         )}
-  //       </Box>
-  //     </ActivityAccordionPanel>
-  //   );
-  // }
-
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
@@ -285,9 +227,6 @@ export default function Detail() {
             fullWidth
           >
             <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-              {/* <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
-                {accordion}
-              </ActivityAccordion> */}
               <ViewModeQuestions
                 viewMode={false}
                 store={store.test}
