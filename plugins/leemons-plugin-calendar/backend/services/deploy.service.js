@@ -141,7 +141,7 @@ module.exports = () => ({
     },
 
     // --- Classes ---
-    'academic-portfolio:after-remove-classes-students': async (ctx) => {
+    'academic-portfolio.after-remove-classes-students': async (ctx) => {
       await onAcademicPortfolioRemoveClassStudents({ ...ctx.params, ctx });
     },
     'academic-portfolio.after-add-class-student': async (ctx) => {
