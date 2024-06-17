@@ -57,11 +57,13 @@ function SubjectTab({ assignation, subject, t }) {
     [assignation?.grades, subject]
   );
 
+  const isModuleActivity = !!assignation?.instance?.metadata?.module;
+
   useEffect(() => {
-    if (isEvaluated) {
+    if (isEvaluated && !isModuleActivity) {
       updateTimestamps('gradesViewed');
     }
-  }, [isEvaluated, updateTimestamps]);
+  }, [isEvaluated, updateTimestamps, isModuleActivity]);
 
   if (!isEvaluated) {
     return (

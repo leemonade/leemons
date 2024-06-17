@@ -87,12 +87,13 @@ export default function Result() {
   const fromTimeout = searchParams.has('fromTimeout');
 
   const isTeacher = useIsTeacher();
+  const isModuleActivity = !!store.assignation?.instance?.metadata?.module;
 
   useEffect(() => {
-    if (!isTeacher) {
+    if (!isTeacher && !isModuleActivity) {
       updateTimestamps('gradesViewed');
     }
-  }, [isTeacher, updateTimestamps]);
+  }, [isTeacher, updateTimestamps, isModuleActivity]);
 
   function getUserId() {
     if (params.user) return params.user;
