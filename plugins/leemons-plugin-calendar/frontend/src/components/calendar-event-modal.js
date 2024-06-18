@@ -133,7 +133,8 @@ function NewCalendarEventModal({
 
   async function getCalendarsForCenter() {
     const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
-      centerToken
+      centerToken,
+      { showHiddenColumns: true }
     );
 
     return {
