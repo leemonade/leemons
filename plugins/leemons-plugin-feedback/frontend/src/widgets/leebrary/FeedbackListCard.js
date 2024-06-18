@@ -10,6 +10,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
 import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
@@ -18,13 +19,13 @@ import { FeedbackCardIcon } from '../../components/FeedbackCardIcon';
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
     cursor: 'pointer',
-    borderColor: selected && theme.colors.interactive01d,
+    borderColor: selected && theme.other.core.color.primary['400'],
     borderWidth: selected && '1px',
     boxShadow: selected && theme.shadows.shadow03,
   },
 }));
 
-const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
+const FeedbackListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('feedbackCard'));
   const { classes } = ListCardStyles({ selected });
   const {
@@ -50,6 +51,16 @@ const FeedbackListCard = ({ asset, selected, onRefresh, ...props }) => {
       //     },
       //   });
       // }
+      if (asset.shareable && (asset.providerData?.published || asset.providerData === undefined)) {
+        items.push({
+          icon: <ShareIcon />,
+          children: t('share'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
+          },
+        });
+      }
       if (asset.providerData?.published) {
         items.push({
           icon: <AssignIcon />,

@@ -2,6 +2,10 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign */
 
+import React, { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
+import _, { find, forEach, isString, map, set } from 'lodash';
 import { Box, ImageLoader, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
 import {
   CALENDAR_EVENT_MODAL_DEFAULT_PROPS,
@@ -14,11 +18,6 @@ import tKeys from '@multilanguage/helpers/tKeys';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import { goLoginPage } from '@users/navigate';
 import { getCentersWithToken, useSession } from '@users/session';
-import * as _ from 'lodash';
-import { find, forEach, isString, map, set } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
 
 import prefixPN from '@calendar/helpers/prefixPN';
 import { getLocale, useStore } from '@common';
@@ -27,6 +26,7 @@ import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import hooks from 'leemons-hooks';
+import { useLayout } from '@layout/context';
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import getUTCString from '../helpers/getUTCString';
 import {
@@ -124,6 +124,7 @@ function NewCalendarEventModal({
   const session = useSession({ redirectTo: goLoginPage });
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [t] = useTranslateLoader(prefixPN('event_modal'));
+  const { openDeleteConfirmationModal } = useLayout();
   const [, setR] = useState();
   const form = useForm({ defaultValues: ref.current.defaultValues });
 
@@ -133,7 +134,8 @@ function NewCalendarEventModal({
 
   async function getCalendarsForCenter() {
     const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
-      centerToken
+      centerToken,
+      { showHiddenColumns: true }
     );
 
     return {
@@ -327,19 +329,23 @@ function NewCalendarEventModal({
   }
 
   async function removeEvent() {
-    try {
-      await removeEventRequest(centerToken, event.id);
-      await reloadCalendar();
-      close();
-    } catch (e) {
-      addErrorAlert(getErrorMessage(e));
-    }
+    openDeleteConfirmationModal({
+      onConfirm: async () => {
+        try {
+          await removeEventRequest(centerToken, event.id);
+          await reloadCalendar();
+          close();
+        } catch (e) {
+          addErrorAlert(getErrorMessage(e));
+        }
+      },
+    })();
   }
 
   async function onSubmit(_formData, { closeOnSend = true }) {
-    // eslint-disable-next-line prefer-const
     ref.current.saving = true;
     render();
+    // eslint-disable-next-line prefer-const
     let { startDate, endDate, deadline, uniqClasses, startTime, endTime, ...formData } = _formData;
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
@@ -512,6 +518,7 @@ NewCalendarEventModal.propTypes = {
   close: PropTypes.func,
   classCalendars: PropTypes.array,
   reff: PropTypes.any,
+  ref2: PropTypes.any,
 };
 
 // eslint-disable-next-line import/prefer-default-export

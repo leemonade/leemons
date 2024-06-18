@@ -1,5 +1,5 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { Box, Select, Text, AvatarSubject } from '@bubbles-ui/components';
+import { Box, Select, Text, AvatarSubject, TextClamp } from '@bubbles-ui/components';
 import React from 'react';
 import propTypes from 'prop-types';
 
@@ -26,7 +26,16 @@ export function SubjectItem({ subject, isValueComponent, ...props }) {
           size={'md'}
           altText={subject?.label}
         />
-        <Text truncated>{subject.label}</Text>
+        <Box>
+          <TextClamp lines={1} withTooltip={subject.label}>
+            <Text>{subject.label}</Text>
+          </TextClamp>
+          <TextClamp lines={1} withTooltip={subject.subLabel}>
+            <Text size="xs" color="soft">
+              {subject.subLabel}
+            </Text>
+          </TextClamp>
+        </Box>
       </Box>
     </Box>
   );

@@ -19,7 +19,7 @@ import { LayoutContext } from '@layout/context/layout';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ZoneWidgets } from '@widgets';
-import { find, map } from 'lodash';
+import { find, map, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -114,6 +114,7 @@ export default function ClassDashboard({ session }) {
     hideRightSide: false,
     haveScrollBar: false,
   });
+  const [classesData, setClassesData] = React.useState([]);
 
   const { classes: styles } = Styles(
     {
@@ -164,7 +165,6 @@ export default function ClassDashboard({ session }) {
     store.programClasses = programClasses;
     store.classesSelect = map(store.programClasses, (programClass) => {
       const dataLabels = getSubjectGroupCourseNamesFromClassData(programClass);
-
       return {
         id: programClass.id,
         color: programClass.color,
@@ -172,8 +172,10 @@ export default function ClassDashboard({ session }) {
         icon: getClassIcon(programClass),
         label: dataLabels.subject,
         description: dataLabels.courseAndGroupParsed,
+        createdAt: programClass.createdAt,
       };
     });
+    setClassesData(sortBy(store.classesSelect, 'createdAt'));
 
     store.loading = false;
     render();
@@ -182,7 +184,6 @@ export default function ClassDashboard({ session }) {
       render();
     }, 4000);
   }
-
   function changeClass(classe) {
     history.push(`/private/dashboard/class/${classe.id}`);
   }
@@ -327,11 +328,7 @@ export default function ClassDashboard({ session }) {
               locale={locale}
               leftSide={
                 <Box>
-                  <HeaderDropdown
-                    value={store.class}
-                    data={store.classesSelect}
-                    onChange={changeClass}
-                  />
+                  <HeaderDropdown value={store.class} data={classesData} onChange={changeClass} />
                 </Box>
               }
               rightSide={

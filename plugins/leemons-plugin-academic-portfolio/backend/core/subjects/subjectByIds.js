@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const { getKnowledgeAreasBySubjects } = require('../knowledges/getKnowledgeAreasBySubjects');
 
 // Todo: Make this function subject details.
-async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
+async function subjectByIds({ ids, withClasses = false, showArchived, shouldPrepareAssets, ctx }) {
   const queryOptions = showArchived ? { excludeDeleted: false } : {};
   const [subjects, creditsAndInternalId, classes] = await Promise.all([
     ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }, '', queryOptions).lean(),
@@ -15,10 +16,12 @@ async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
     ctx.tx.call('leebrary.assets.getByIds', {
       ids: _.map(subjects, 'image'),
       withFiles: true,
+      shouldPrepareAssets,
     }),
     ctx.tx.call('leebrary.assets.getByIds', {
       ids: _.map(subjects, 'icon'),
       withFiles: true,
+      shouldPrepareAssets,
     }),
   ]);
   const imagesById = _.keyBy(images, 'id');
@@ -27,7 +30,12 @@ async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
   const classesIdsBySubject = _.groupBy(classes, 'subject');
   const subjectTypesBySubject = _.mapValues(classesIdsBySubject, (classGroup) => {
     const uniqueSubjectTypes = _.uniq(_.map(classGroup, 'subjectType'));
-    return uniqueSubjectTypes.length === 1 ? uniqueSubjectTypes[0] : 'various';
+    return uniqueSubjectTypes.length === 1 ? uniqueSubjectTypes[0] : 'error';
+  });
+
+  const knowledgeAreasBySubject = await getKnowledgeAreasBySubjects({
+    subjectIds: subjects.map((subject) => subject.id),
+    ctx,
   });
 
   let finalSubjects = _.map(subjects, (subject) => ({
@@ -41,6 +49,7 @@ async function subjectByIds({ ids, withClasses = false, showArchived, ctx }) {
     image: imagesById[subject.image],
     icon: iconsById[subject.icon],
     subjectType: subjectTypesBySubject[subject.id],
+    knowledgeArea: knowledgeAreasBySubject[subject.id],
   }));
 
   if (withClasses) {

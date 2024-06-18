@@ -8,6 +8,9 @@ export function getQuestionForTable(question, t, styles) {
   if (question.type === 'mono-response') {
     responses = question.properties.responses.length;
   }
+  if (question.type === 'map') {
+    responses = question?.properties?.markers?.list?.length;
+  }
   return {
     ...question,
     question: (

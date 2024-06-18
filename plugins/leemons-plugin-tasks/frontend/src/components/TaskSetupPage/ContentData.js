@@ -266,7 +266,7 @@ function ContentData({
                   render={({ field }) => (
                     <TextEditorInput
                       {...field}
-                      label={labels.statement}
+                      label={labels?.statementLabel}
                       error={errors.statement}
                       editorStyles={{ minHeight: '96px' }}
                     />

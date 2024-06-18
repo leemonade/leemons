@@ -115,6 +115,7 @@ export function EvaluationType({
       hidden={hidden}
       hideSectionHeaders={hideSectionHeaders}
       hideDivider={hideDivider}
+      spacingBottom={16}
     >
       <Box className={classes.root}>
         <Controller

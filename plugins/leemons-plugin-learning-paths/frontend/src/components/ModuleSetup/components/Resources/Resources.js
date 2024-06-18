@@ -110,7 +110,7 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
                 ]}
                 sx={{ '&[data-disabled]': { pointerEvents: 'all' } }}
               >
-                {localizations?.buttons?.publishOptions}
+                {localizations?.buttons?.finish}
               </DropdownButton>
             </>
           }

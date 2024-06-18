@@ -8,12 +8,15 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import { WeightConfigDrawer } from '@scores/components/Weights/components/WeightConfigDrawer';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import useSearchTypes from './hooks/useSearchTypes';
 import useOnChange from './hooks/useOnChange';
 
 export default function NotebookFilters({ filters, onChange, value }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.filters'));
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const deploymentConfig = useDeploymentConfig({ pluginName: 'scores', ignoreVersion: true });
+  const hideWeighting = deploymentConfig?.deny?.menu?.includes('scores.weights');
 
   const form = useForm({
     defaultValues: {
@@ -83,13 +86,15 @@ export default function NotebookFilters({ filters, onChange, value }) {
             )}
           />
           <Box>
-            <Button
-              variant="linkInline"
-              leftIcon={<CalculatorIcon />}
-              onClick={() => setDrawerIsOpen(true)}
-            >
-              {t('goToWeighting')}
-            </Button>
+            {!hideWeighting && (
+              <Button
+                variant="linkInline"
+                leftIcon={<CalculatorIcon />}
+                onClick={() => setDrawerIsOpen(true)}
+              >
+                {t('goToWeighting')}
+              </Button>
+            )}
           </Box>
         </Stack>
       </Stack>

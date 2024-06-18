@@ -122,7 +122,6 @@ export function SelectClass({
       availableClasses
         ?.map((klass) => {
           const hasPickableStudents = !!klass.assignableStudents.length;
-
           return {
             value: `${klass.id}${hasPickableStudents ? '' : '-disabled'}`,
             disabled: !hasPickableStudents,
@@ -218,13 +217,13 @@ export function SelectClass({
         availableClasses={availableClasses}
         localizations={localizations}
       />
-      <Controller
+      {/* <Controller
         name="autoAssign"
         control={control}
         render={({ field }) => (
           <Checkbox {...field} checked={field.value} label={localizations?.autoAssignStudents} />
         )}
-      />
+      /> */}
     </Box>
   );
 }

@@ -12,6 +12,7 @@ import { prefixPN } from '@scores/helpers';
 import { getCentersWithToken } from '@users/session';
 
 import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import useFiltersStyles from './Filerts.styles';
 import PickDate from './components/PickDate';
 import SelectPeriod from './components/SelectPeriod';
@@ -95,14 +96,13 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange = noop
                   placeholder={t('class.placeholder')}
                   data={
                     classesData?.map((klass) => {
-                      const isGroupAlone = !klass.groups || klass.groups.isAlone;
-
+                      // const isGroupAlone = !klass.groups || klass.groups.isAlone;
+                      const parsedGroupName = getSubjectGroupCourseNamesFromClassData(klass);
                       return {
                         ...klass.subject,
                         value: klass.id,
-                        label: isGroupAlone
-                          ? klass.subject?.name
-                          : `${klass.subject.name} - ${klass.groups.name}`,
+                        label: parsedGroupName.subject,
+                        subLabel: parsedGroupName.courseAndGroupParsed,
                       };
                     }) ?? []
                   }

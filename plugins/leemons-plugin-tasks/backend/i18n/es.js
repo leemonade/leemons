@@ -92,6 +92,8 @@ module.exports = {
           name: 'Nombre',
           tagline: 'Subtítulo',
           description: '¿De qué trata esta tarea?',
+          namePlaceholder: 'Título de la tarea',
+          descriptionPlaceholder: 'Descripción de la tarea',
         },
         errorMessages: {
           name: {
@@ -152,6 +154,7 @@ module.exports = {
           subjects: 'Curriculum por asignatura',
           methodology: 'Metodología',
           statement: 'Enunciado',
+          statementLabel: 'Texto del enunciado',
           development: 'Añadir desarrollo',
           statementAndDevelopmentTitle: 'Enunciado y desarrollo',
           supportImage: 'Imagen de apoyo',
@@ -182,6 +185,7 @@ module.exports = {
               formatPlaceholder: 'Escribir extensión y añadir (pdf, xls, doc...)',
               maxSize: 'Tamaño máximo',
               required: 'Campo necesario',
+              addButton: 'Añadir',
             },
           },
         },
@@ -192,7 +196,7 @@ module.exports = {
         },
       },
       instructionData: {
-        step_label: 'Recursos e instrucciones',
+        step_label: 'Instrucciones',
         labels: {
           title: 'Instrucciones',
           forTeacher: 'Instrucciones para Profesores',
@@ -212,6 +216,12 @@ module.exports = {
             'Ayuda a otros profesores a abordar este ejercicio con unas sencillas instrucciones.',
           forStudent: 'Información extra para ayudar al alumno a realizar mejor el ejercicio.',
         },
+      },
+      resourcesData: {
+        step_label: 'Recursos',
+      },
+      resourcesAndInstructionsData: {
+        step_label: 'Recursos e instrucciones',
       },
       evaluationData: {
         step_label: 'Evaluación',
@@ -418,7 +428,10 @@ module.exports = {
       size: 'Tamaño',
       upload_title: 'Click para buscar un archivo nuevo',
       upload_subtitle: 'o arrastrar aquí desde el ordenador',
-      errorAlert: `Error al subir archivo {fileName}: {error}`,
+      uploadError: `Error al subir el archivo {fileName}`,
+      uploadSuccess: 'El archivo {fileName} se ha subido correctamente',
+      removedError: 'Error al eliminar el archivo {fileName} de la biblioteca',
+      removedSuccess: 'El archivo {fileName} se ha eliminado correctamente',
     },
     submission_link: {
       title: 'Enlace',

@@ -9,7 +9,15 @@ const importSubjectTypes = require('./bulk/academic-portfolio/subjectTypes');
 const importKnowledgeAreas = require('./bulk/academic-portfolio/knowledgeAreas');
 const importSubjects = require('./bulk/academic-portfolio/subjects');
 
-async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfiles, ctx }) {
+async function _addSubjectAndClassroom({
+  key,
+  subjects,
+  users,
+  programs,
+  apProfiles,
+  skipEnrollment,
+  ctx,
+}) {
   const { classes, creator, ...subject } = subjects[key];
 
   try {
@@ -40,17 +48,6 @@ async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfi
       const programData = find(programs, { id: program });
       const [center] = programData.centers;
 
-      const teachersData = await Promise.all(
-        // eslint-disable-next-line no-loop-func
-        teachers.map(({ teacher }) =>
-          ctx.call('users.users.getUserAgentByCenterProfile', {
-            userId: teacher,
-            centerId: center,
-            profileId: apProfiles.teacher,
-          })
-        )
-      );
-
       // To implement : Mover los seats de la asignatura a la clase
       const classroomData = {
         ...rest,
@@ -58,11 +55,28 @@ async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfi
         seats,
         subject: subjectData.id,
         group,
-        teachers: teachersData.map((teacherData) => {
+      };
+
+      // ·····································
+      // ADD TEACHERS TO CLASS
+
+      if (!skipEnrollment) {
+        const teachersData = await Promise.all(
+          // eslint-disable-next-line no-loop-func
+          teachers.map(({ teacher }) =>
+            ctx.call('users.users.getUserAgentByCenterProfile', {
+              userId: teacher,
+              centerId: center,
+              profileId: apProfiles.teacher,
+            })
+          )
+        );
+
+        classroomData.teachers = teachersData.map((teacherData) => {
           const teacher = find(teachers, { teacher: teacherData.user });
           return { teacher: teacherData.id, type: teacher.type };
-        }),
-      };
+        });
+      }
 
       const classroom = await ctx.call(
         'academic-portfolio.classes.addClass',
@@ -77,7 +91,7 @@ async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfi
       // ·····································
       // ADD STUDENTS TO CLASS
 
-      if (students && students.length > 0) {
+      if (!skipEnrollment && students && students.length > 0) {
         let studentsData = await Promise.all(
           students.map((item) => {
             if (item?.student) {
@@ -116,6 +130,7 @@ async function _addSubjectAndClassroom({ key, subjects, users, programs, apProfi
 
 async function initAcademicPortfolio({
   file,
+  skipEnrollment = false,
   config: { centers, profiles, users, grades },
   skipSubjects = false,
   returnAll = false,
@@ -199,7 +214,15 @@ async function initAcademicPortfolio({
       for (let i = 0, len = subjectsKeys.length; i < len; i++) {
         const key = subjectsKeys[i];
         pool.add(() =>
-          _addSubjectAndClassroom({ key, subjects, users, programs, apProfiles, ctx })
+          _addSubjectAndClassroom({
+            key,
+            subjects,
+            users,
+            programs,
+            apProfiles,
+            skipEnrollment,
+            ctx,
+          })
         );
       }
 

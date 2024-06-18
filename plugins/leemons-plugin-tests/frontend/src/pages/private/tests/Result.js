@@ -27,7 +27,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import hooks from 'leemons-hooks';
 import { find, forEach, map, orderBy } from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
@@ -41,6 +41,8 @@ import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
 import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getQuestionByIdsRequest,
@@ -78,10 +80,20 @@ export default function Result() {
   const params = useParams();
   const searchParams = useSearchParams();
 
+  const { mutateAsync } = useStudentAssignationMutation();
+  const updateTimestamps = useUpdateTimestamps(mutateAsync, store.assignation);
+
   const fromTest = useMemo(() => searchParams.has('fromTest'), []);
   const fromTimeout = searchParams.has('fromTimeout');
 
   const isTeacher = useIsTeacher();
+  const isModuleActivity = !!store.assignation?.instance?.metadata?.module;
+
+  useEffect(() => {
+    if (!isTeacher && !isModuleActivity) {
+      updateTimestamps('gradesViewed');
+    }
+  }, [isTeacher, updateTimestamps, isModuleActivity]);
 
   function getUserId() {
     if (params.user) return params.user;

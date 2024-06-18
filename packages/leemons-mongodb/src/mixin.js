@@ -259,6 +259,17 @@ function getModelActions({
       autoLRN,
       ctx,
     }),
+
+    aggregate: tracingWrapper(() => model.aggregate.bind(model), {
+      model,
+      modelKey,
+      ignoreTransaction,
+      autoDeploymentID,
+      autoTransaction,
+      autoRollback,
+      autoLRN,
+      ctx,
+    }),
   };
 }
 

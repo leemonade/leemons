@@ -1,54 +1,19 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+
 import { Box, ContextContainer, FileUpload, Text, useDebouncedValue } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { differenceBy, isArray, isEqual, sortBy } from 'lodash';
+import { uuidv4 } from '@bubbles-ui/leemons';
+
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { v4 } from 'uuid';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import { deleteAssetRequest, newAssetRequest } from '@leebrary/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
-import { deleteAssetRequest, newAssetRequest } from '@leebrary/request';
-
-function updateFile({ updateFiles, id, status, leebraryId }) {
-  updateFiles((prevFiles) =>
-    prevFiles.map((prevFile) => {
-      if (prevFile.id === id) {
-        return { ...prevFile, status, leebraryId };
-      }
-      return prevFile;
-    })
-  );
-}
-
-function useUploadFiles({ files, updateFiles, t }) {
-  useEffect(() => {
-    files.forEach(async (file) => {
-      if (!file.status && !file.leebraryId) {
-        updateFile({ updateFiles, id: file.id, status: 'loading' });
-        try {
-          const {
-            asset: { id },
-          } = await newAssetRequest(
-            { name: file.name, file: file.File, public: true, indexable: false },
-            null,
-            'media-files'
-          );
-
-          updateFile({ updateFiles, id: file.id, status: 'success', leebraryId: id });
-        } catch (error) {
-          updateFile({ updateFiles, id: file.id, status: 'error' });
-
-          const errorMessage = t('errorAlert', {
-            fileName: error.file.name,
-            error: error?.errors?.map((e) => e.message).join(', '),
-          });
-          addErrorAlert(errorMessage);
-        }
-      }
-    });
-  }, [files]);
-}
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import {
+  FileUploadProvider,
+  useFileUploadStore,
+} from '../../../../../../../../stores/filesUploadedStore';
 
 function useUpdateSubmission({ assignation, value }) {
   const isFirstRender = useRef(true);
@@ -91,29 +56,27 @@ function useUpdateSubmission({ assignation, value }) {
 function File({ assignation, preview }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.submission_file'));
 
-  const initialFiles = useMemo(() => {
-    if (assignation?.metadata?.submission) {
-      return (assignation?.metadata?.submission || []).map((file) => ({
-        name: file.name,
-        leebraryId: file.id,
-        status: 'success',
-        id: v4(),
-      }));
-    }
-    return [];
-  }, []);
+  const files = useFileUploadStore((state) => state.files);
+  const filesArray = useMemo(() => files.values().toArray(), [files]);
 
-  const [value, setValue] = useState(initialFiles);
+  const { addNewFiles, removeMissingFiles, updateLeebraryId, changeStatus } = useFileUploadStore(
+    (state) => state.actions
+  );
 
-  useUploadFiles({ files: value || [], updateFiles: setValue, t });
-  useUpdateSubmission({ assignation, value });
+  useUpdateSubmission({ assignation, value: filesArray });
 
-  const submissionData = assignation?.instance?.assignable?.submission?.data ?? {};
+  const submissionData = useMemo(
+    () => assignation?.instance?.assignable?.submission?.data ?? {},
+    [assignation?.instance?.assignable?.submission?.data]
+  );
 
-  const { names: extensionNames, format: extensionFormat } = useMemo(() => ({
-    names: Object.keys(submissionData.extensions).map((key) => key.replace(/^([^.])/, '.$1')),
-    format: Object.values(submissionData.extensions),
-  }));
+  const { names: extensionNames, format: extensionFormat } = useMemo(
+    () => ({
+      names: Object.keys(submissionData.extensions).map((key) => key.replace(/^([^.])/, '.$1')),
+      format: Object.values(submissionData.extensions),
+    }),
+    [submissionData?.extensions]
+  );
 
   return (
     <Box>
@@ -138,50 +101,56 @@ function File({ assignation, preview }) {
             hideUploadButton
             multipleUpload={!!submissionData.multipleFiles}
             single={!submissionData.multipleFiles}
-            initialFiles={value ?? []}
+            initialFiles={filesArray}
             accept={extensionFormat}
             maxSize={submissionData.maxSize ? submissionData.maxSize * 1024 * 1024 : undefined}
             disabled={!!preview}
-            onChange={(_newFiles) => {
-              setValue((files) => {
-                const newFiles = isArray(_newFiles) ? _newFiles : [_newFiles];
+            onChange={(_inputFiles) => {
+              const inputFiles = Array.isArray(_inputFiles) ? _inputFiles : [_inputFiles];
+              const removedFiles = removeMissingFiles(inputFiles);
+              const newFiles = addNewFiles(inputFiles, 'loading');
 
-                if (isEqual(newFiles, files)) {
-                  return files;
+              newFiles.forEach(async (file) => {
+                try {
+                  const {
+                    asset: { id },
+                  } = await newAssetRequest(
+                    { name: file.name, file: file.File, public: true, indexable: false },
+                    null,
+                    'media-files'
+                  );
+
+                  updateLeebraryId(file.id, id);
+                  changeStatus(file.id, 'success');
+
+                  addSuccessAlert(t('uploadSuccess', { fileName: file.name }));
+                } catch (error) {
+                  changeStatus(file.id, 'error');
+                  const errorMessage = t('uploadError', {
+                    fileName: file.name,
+                  });
+
+                  addErrorAlert(errorMessage, error.message ?? error.error);
                 }
+              });
 
-                const deletedFiles = differenceBy(
-                  sortBy(files, 'id'),
-                  sortBy(newFiles, 'id'),
-                  'id'
-                );
-
-                deletedFiles.forEach((file) => {
-                  if (file.leebraryId) {
-                    deleteAssetRequest(file.leebraryId)
-                      .catch((e) => addErrorAlert({ message: e.message }))
-                      .then(() => addSuccessAlert(`deleted ${file.name} - ${file.leebraryId}`));
-                  }
-                });
-
-                return (Array.isArray(newFiles) ? newFiles : [newFiles]).map((file) => ({
-                  id: v4(),
-                  name: file.name,
-                  path: file.path,
-                  File: file,
-                  status: file.status,
-                  leebraryId: file.leebraryId,
-                }));
+              removedFiles.forEach((file) => {
+                if (file.leebraryId) {
+                  deleteAssetRequest(file.leebraryId)
+                    .then(() => addSuccessAlert(t('removedSuccess', { fileName: file.name })))
+                    .catch((e) =>
+                      addErrorAlert(t('removedError', { fileName: file.name }), e.message)
+                    );
+                }
               });
             }}
             onReject={(allErrors) => {
               allErrors.forEach((error) => {
-                const errorMessage = t('errorAlert', {
+                const errorMessage = t('uploadError', {
                   fileName: error.file.name,
-                  error: error?.errors?.map((e) => e.message).join(', '),
                 });
 
-                addErrorAlert(errorMessage);
+                addErrorAlert(errorMessage, error?.errors?.map((e) => e.message).join(', '));
               });
             }}
           />
@@ -196,4 +165,28 @@ File.propTypes = {
   preview: PropTypes.bool,
 };
 
-export default File;
+function FileWrapper(props) {
+  const { assignation } = props;
+
+  const [initialFiles] = useState(() => {
+    if (assignation?.metadata?.submission) {
+      return (assignation?.metadata?.submission || []).map((file) => ({
+        name: file.name,
+        leebraryId: file.id,
+        status: 'success',
+        id: uuidv4(),
+      }));
+    }
+    return [];
+  });
+
+  return (
+    <FileUploadProvider initialFiles={initialFiles}>
+      <File {...props} />
+    </FileUploadProvider>
+  );
+}
+
+FileWrapper.propTypes = File.propTypes;
+
+export default FileWrapper;

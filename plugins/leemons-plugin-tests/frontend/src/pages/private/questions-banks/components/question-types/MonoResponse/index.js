@@ -74,7 +74,11 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           control={form.control}
           name="properties.explanation"
           render={({ field }) => (
-            <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />
+            <TextEditorInput
+              {...field}
+              editorStyles={{ minHeight: '96px' }}
+              placeholder={t('explanationPlaceHolder')}
+            />
           )}
         />
       ) : null}
@@ -156,10 +160,12 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                     withImages={withImages}
                     onCancel={() => setShowInput(false)}
                     scrollRef={scrollRef}
+                    responsesSaved={field.value}
                   />
                 }
                 listRender={
                   <ListItem
+                    labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
                     itemContainerRender={({ children }) => (
                       <Stack alignItems="center" fullWidth>
                         {children}

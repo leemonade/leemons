@@ -22,9 +22,13 @@ export function ListInputRender({
   value,
   onCancel,
   scrollRef,
+  responsesSaved,
   ...props
 }) {
-  const [store, render] = useStore(value || { useButton: true });
+  const [store, render] = useStore(value);
+  const [useButton] = React.useState(
+    () => !responsesSaved?.some((response) => response.value === value)
+  );
 
   function emit() {
     props.onChange({
@@ -100,6 +104,12 @@ export function ListInputRender({
   const answerInputRef = useRef(null);
 
   useEffect(() => {
+    if (answerInputRef.current) {
+      answerInputRef.current.focus();
+    }
+  }, [store.response]);
+
+  useEffect(() => {
     if (scrollRef?.current && answerInputRef.current) {
       const { top } = answerInputRef.current.getBoundingClientRect();
       const containerTop = scrollRef.current.getBoundingClientRect().top;
@@ -111,34 +121,50 @@ export function ListInputRender({
   if (withImages) {
     return (
       <ContextContainer>
-        <Box>
-          <InputWrapper label={`${t('imageLabel')} *`}>
-            <ImagePicker value={store.image} onChange={onChangeImage} />
-          </InputWrapper>
-        </Box>
-        <Stack fullWidth spacing={4}>
-          <Box noFlex={useExplanation}>
-            <Box style={{ width: useExplanation ? 250 : '100%' }}>
-              <TextInput
-                ref={answerInputRef}
-                label={t('caption')}
-                value={store.imageDescription}
-                onChange={onChangeImageDescription}
-              />
-            </Box>
+        <Box
+          style={{
+            display: useExplanation ? 'block' : 'flex',
+            flexDirection: useExplanation ? 'column' : 'row',
+            alignItems: 'flex-start',
+            gap: 16,
+          }}
+        >
+          <Box
+            style={{
+              marginBottom: 24,
+            }}
+          >
+            <InputWrapper label={`${t('imageLabel')} *`}>
+              <ImagePicker value={store.image} onChange={onChangeImage} />
+            </InputWrapper>
           </Box>
-          {useExplanation ? (
-            <Box>
-              <TextInput
-                value={store.explanation}
-                label={`${capitalize(t('explanationLabel'))} *`}
-                onChange={onChangeExplanation}
-                error={store.dirty && !store.explanation ? t('explanationRequired') : null}
-              />
+          <Stack fullWidth spacing={4}>
+            <Box noFlex={useExplanation}>
+              <Box style={{ width: useExplanation ? 250 : '100%' }}>
+                <TextInput
+                  ref={answerInputRef}
+                  label={t('caption')}
+                  value={store.imageDescription}
+                  placeholder={t('captionPlaceholder')}
+                  onChange={onChangeImageDescription}
+                />
+              </Box>
             </Box>
-          ) : null}
-        </Stack>
-        {store.useButton ? (
+            {useExplanation ? (
+              <Box>
+                <TextInput
+                  value={store.explanation}
+                  label={`${capitalize(t('explanationLabel'))} *`}
+                  onChange={onChangeExplanation}
+                  placeholder={t('explanationPlaceHolder')}
+                  error={store.dirty && !store.explanation ? t('explanationRequired') : null}
+                />
+              </Box>
+            ) : null}
+          </Stack>
+        </Box>
+
+        {useButton ? (
           <Stack justifyContent="end" spacing={4}>
             <Button variant="link" onClick={onCancel}>
               {t('cancel')}
@@ -160,7 +186,13 @@ export function ListInputRender({
           value={store.response}
           label={`${t('responseLabel')} *`}
           onChange={onChangeResponse}
+          placeholder={t('responsePlaceholder')}
           error={store.dirty && !store.response ? t('responseRequired') : null}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && typeof addItem === 'function') {
+              add();
+            }
+          }}
         />
       </Box>
       {useExplanation ? (
@@ -169,11 +201,12 @@ export function ListInputRender({
             value={store.explanation}
             label={`${capitalize(t('explanationLabel'))} *`}
             onChange={onChangeExplanation}
+            placeholder={t('explanationPlaceHolder')}
             error={store.dirty && !store.explanation ? t('explanationRequired') : null}
           />
         </Box>
       ) : null}
-      {store.useButton ? (
+      {useButton ? (
         <Stack justifyContent="end" spacing={4}>
           <Button variant="link" onClick={onCancel}>
             {t('cancel')}
@@ -196,4 +229,5 @@ ListInputRender.propTypes = {
   value: PropTypes.any,
   onCancel: PropTypes.func,
   scrollRef: PropTypes.object,
+  responsesSaved: PropTypes.array,
 };

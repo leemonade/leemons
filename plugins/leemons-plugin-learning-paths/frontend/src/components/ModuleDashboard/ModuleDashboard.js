@@ -320,11 +320,26 @@ export function ModuleDashboard({ id, preview }) {
   const isStudent = useIsStudent();
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, moduleAssignation);
+
+  useEffect(() => {
+    if (isStudent) {
+      const assignations = Object.values(assignationsById);
+
+      const hasAllGrades = assignations
+        .filter((assignation) => assignation?.requiresScoring)
+        .every((assignation) => assignation.grades.length >= assignation.instance.subjects.length);
+
+      if (hasAllGrades) {
+        updateTimestamps('gradesViewed');
+      }
+    }
+  }, [assignationsById, isStudent, updateTimestamps]);
+
   useEffect(() => {
     if (isStudent && moduleAssignation?.id) {
       updateTimestamps('open');
     }
-  }, [moduleAssignation?.id]);
+  }, [moduleAssignation?.id, updateTimestamps, isStudent]);
 
   const localizations = useModuleDashboardLocalizations();
   const { classes } = useModuleDashboardStyles();

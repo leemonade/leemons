@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -14,7 +14,7 @@ import {
   Stack,
   Title,
 } from '@bubbles-ui/components';
-import { numberToEncodedLetter, useStore } from '@common';
+import { numberToEncodedLetter } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { LeebraryImage } from '@leebrary/components';
@@ -31,6 +31,7 @@ export const QuestionImageMarkersModalStyles = createStyles((theme, { isLight })
     textAlign: 'center',
     lineHeight: '26px',
     color: isLight ? theme.colors.text01 : theme.colors.text07,
+    cursor: 'pointer',
   },
   image: {
     maxWidth: '100%',
@@ -47,23 +48,30 @@ export const QuestionImageMarkersModalStyles = createStyles((theme, { isLight })
 // eslint-disable-next-line import/prefer-default-export
 export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onClose, opened }) {
   const [t] = useTranslateLoader(prefixPN('questionImageModal'));
-  const [store, render] = useStore({
-    list: value.list || [],
-    type: value.type || 'numbering',
-    backgroundColor: value.backgroundColor || COLORS.interactive01,
-  });
+  const [list, setList] = useState([]);
+  const [type, setType] = useState('');
+  const [backgroundColor, setBackgroundColor] = useState('');
+  const [moveIndex, setMoveIndex] = useState(null);
+  const [position, setPosition] = useState({ top: null, left: null });
+
   const { classes } = QuestionImageMarkersModalStyles({
-    isLight: colord(store.backgroundColor).isLight(),
+    isLight: colord(backgroundColor).isLight(),
   });
 
+  useEffect(() => {
+    if (value) {
+      setList(value.list ? value.list.map((item) => ({ ...item })) : []);
+      setType(value.type || 'numbering');
+      setBackgroundColor(value.backgroundColor || COLORS.interactive01);
+    }
+  }, [value]);
+
   function backgroundColorChange(e) {
-    store.backgroundColor = e;
-    render();
+    setBackgroundColor(e);
   }
 
   function typeChange(e) {
-    store.type = e;
-    render();
+    setType(e);
   }
 
   function getImage(el) {
@@ -93,33 +101,27 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
   }
 
   function addMarker(event) {
-    if (store.moveIndex >= 0 && store.moveIndex !== null) {
-      store.list[store.moveIndex] = getClick(event);
-      store.moveIndex = null;
-      render();
+    if (moveIndex >= 0 && moveIndex !== null) {
+      setList(list.map((item, index) => (index === moveIndex ? getClick(event) : item)));
+      setMoveIndex(null);
     } else {
-      store.list.push(getClick(event));
-      render();
+      setList([...list, getClick(event)]);
     }
   }
 
   function removeMarker(index) {
-    store.list.splice(index, 1);
-    render();
+    setList(list.filter((item, i) => i !== index));
   }
 
   function getPosition(event) {
     const click = getClick(event);
     if (click) {
-      store.position = getClick(event);
-      if (store.moveIndex >= 0) {
-        render();
-      }
+      setPosition(getClick(event));
     }
   }
 
   function moveMarker(index, event) {
-    store.moveIndex = index;
+    setMoveIndex(index);
     event.stopPropagation();
     event.preventDefault();
   }
@@ -135,7 +137,7 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
           <Select
             label={t('type')}
             required
-            value={store.type}
+            value={type}
             onChange={typeChange}
             data={[
               {
@@ -151,10 +153,9 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
 
           <ColorInput
             label={t('color')}
-            useHsl
             compact={false}
             manual={false}
-            value={store.backgroundColor}
+            value={backgroundColor}
             onChange={backgroundColorChange}
           />
         </ContextContainer>
@@ -164,21 +165,21 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
             <LeebraryImage className={classes.image} src={src} />
           </Box>
 
-          {store.list.map((marker, index) => {
-            if (store.moveIndex === index) {
+          {list.map((marker, index) => {
+            if (moveIndex === index) {
               return (
                 <Box
                   key={index}
                   style={{
                     pointerEvents: 'none',
                     position: 'absolute',
-                    top: store.position.top,
-                    left: store.position.left,
-                    backgroundColor: store.backgroundColor,
+                    top: position.top,
+                    left: position.left,
+                    backgroundColor,
                   }}
                   className={classes.marker}
                 >
-                  {store.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
+                  {type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
                 </Box>
               );
             }
@@ -202,11 +203,8 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
                 ]}
                 control={
                   <Box>
-                    <Box
-                      className={classes.marker}
-                      style={{ backgroundColor: store.backgroundColor }}
-                    >
-                      {store.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
+                    <Box className={classes.marker} style={{ backgroundColor }}>
+                      {type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
                     </Box>
                   </Box>
                 }
@@ -220,7 +218,12 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
           </Button>
           <Button
             onClick={() => {
-              onChange(store);
+              onChange({
+                list,
+                type,
+                backgroundColor,
+                position,
+              });
               onClose();
             }}
           >
