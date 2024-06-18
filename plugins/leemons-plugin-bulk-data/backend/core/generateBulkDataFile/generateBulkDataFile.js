@@ -13,7 +13,7 @@ const { createLibraryResourcesSheet } = require('./librarySheet');
 const { createProfilesSheet } = require('./profilesSheet');
 const { createAppearanceSheet } = require('./appearanceSheet');
 const {
-  ASSET_CATEGORIES: { LIBRARY_CATEGORIES, TASKS, TESTS, TEST_QUESTION_BANKS },
+  ASSET_CATEGORIES: { LIBRARY_CATEGORIES, TASKS, TESTS, TEST_QUESTION_BANKS, CONTENT_CREATOR },
 } = require('./config/constants');
 const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
 const { createTasksSheet, createTaskSubjectSheet } = require('./tasksSheets');
@@ -27,6 +27,8 @@ const {
   createProgramCalendarsSheet,
   createProgramCalendarEventsSheet,
 } = require('./programCalendarSheets');
+const { createContentCreatorSheet } = require('./contentCreatorSheet');
+const { createNonIndexableLibraryAssetsSheet } = require('./nonIndexableLibraryAssetsSheet');
 
 async function generateBulkDataFile({
   admin,
@@ -37,10 +39,12 @@ async function generateBulkDataFile({
   ctx,
 }) {
   const adminShouldOwnAllAssets = isClientManagerTemplate && noUsers;
+  const nonIndexableAssetsNeeded = [];
 
   const workbook = new Excel.Workbook();
 
   ctx.meta = { ...ctx.meta, leebrary: { signedURLExpireSeconds: 7 * 24 * 60 * 60 } };
+
   // BASIC CONFIG
   await createLocalesSheet({ workbook, ctx });
   await createPlatformSheet({ workbook, ctx });
@@ -100,6 +104,19 @@ async function generateBulkDataFile({
     ctx,
   });
 
+  // CONTENT CREATOR
+  await createContentCreatorSheet({
+    workbook,
+    documents: assetsByCategoryKey[CONTENT_CREATOR],
+    libraryAssets,
+    programs,
+    adminShouldOwnAllAssets,
+    subjects,
+    users,
+    nonIndexableAssetsNeeded,
+    ctx,
+  });
+
   // TASKS
   const tasks = await createTasksSheet({
     workbook,
@@ -152,6 +169,19 @@ async function generateBulkDataFile({
     ctx,
   });
   createProgramCalendarEventsSheet({ workbook, programCalendars, ctx });
+
+  await createNonIndexableLibraryAssetsSheet({
+    workbook,
+    programs,
+    subjects,
+    adminShouldOwnAllAssets,
+    nonIndexableAssets: nonIndexableAssetsNeeded.map((item) => ({
+      ...item,
+      categoryKey: assetCategories.find((category) => category.id === item.asset.category).key,
+    })),
+    users,
+    ctx,
+  });
 
   if (writeFileLocally) {
     await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
