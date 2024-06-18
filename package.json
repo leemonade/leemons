@@ -34,10 +34,10 @@
   "scripts": {
     "start:app": "yarn workspace leemons-app backend:dev",
     "done": "echo Done ✨",
-    "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
-    "prepare": "husky install"
+    "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'"
   },
   "packageManager": "yarn@1.22.19",
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.22.15",
     "@babel/eslint-parser": "^7.22.15",
@@ -51,13 +51,14 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-sonarjs": "^0.21.0",
-    "husky": "^8.0.3",
-    "npm-check": "^6.0.1",
     "prettier": "^2.8.8",
     "prettier-eslint": "^15.0.1",
     "rimraf": "^5.0.1",
     "start-server-and-test": "^2.0.0",
     "turbo": "^1.9.3"
   },
-  "dependencies": {}
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.2.3"
+  }
 }
