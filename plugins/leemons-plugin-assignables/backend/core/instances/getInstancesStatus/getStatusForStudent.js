@@ -16,6 +16,8 @@ const { hasGrades } = require('./hasGrades');
  * @return {'evaluated'|'late'|'submitted'|'closed'|'started'|'opened'|'assigned'} The status of the student.
  */
 function getStatusForStudent(studentData, instanceData) {
+  const { requiresScoring } = instanceData;
+
   const startDate = dayjs(studentData?.timestamps?.start || null);
   const endDate = dayjs(studentData?.timestamps?.end || null);
   const instanceStartDate = dayjs(instanceData?.dates?.start || null);
@@ -30,7 +32,7 @@ function getStatusForStudent(studentData, instanceData) {
   const finished = deadline.isValid() && (!deadline.isAfter(dayjs()) || closeDate.isValid());
 
   if (finished || endDate.isValid()) {
-    if (hasGrades(studentData)) {
+    if (hasGrades(studentData) || !requiresScoring) {
       return 'evaluated';
     }
 
