@@ -7,15 +7,18 @@ const INSTANCE_STATUS = {
   NOT_FINISHED_BY_STUDENTS: 'assigned',
 };
 
-function getAssignationsStatusCount({ assignations, requiresScoring, activityFinished }) {
+function getAssignationsStatusCount({
+  assignations,
+  requiresScoring,
+  activityFinished,
+  requiredGradesCount,
+}) {
   let evaluatedCount = 0;
   let hasGradesCount = 0;
   let didNotFinished = 0;
   let needsEvaluation = 0;
 
   assignations.forEach((assignation) => {
-    const requiredGradesCount = 1; // TODO: get from database
-
     const hasAllGrades = assignation?.grades?.length === requiredGradesCount;
     const hasGrades = !!assignation?.grades?.length;
     const didFinish = !!assignation?.timestamps?.end || activityFinished;
@@ -53,7 +56,7 @@ function getAssignationsStatusCount({ assignations, requiresScoring, activityFin
   };
 }
 
-function getStatusForTeacher(instance) {
+function getStatusForTeacher(instance, { requiredGradesCount }) {
   const requiresScoring = instance?.requiresScoring;
   const activityFinished =
     !instance.alwaysAvailable && dayjs(instance?.dates?.deadline).isBefore(dayjs());
@@ -64,6 +67,7 @@ function getStatusForTeacher(instance) {
       assignations: instance?.assignations ?? [],
       requiresScoring,
       activityFinished,
+      requiredGradesCount,
     });
 
   if (assignationsCount === didNotFinished) {

@@ -96,10 +96,30 @@ async function getTeacherStatus({ instancesIds, ctx }) {
       },
     },
     {
+      $lookup: {
+        from: 'v1::assignables_classes',
+        localField: 'id',
+        foreignField: 'assignableInstance',
+        as: 'classes',
+      },
+    },
+    {
+      $addFields: {
+        classes: {
+          $map: {
+            input: '$classes',
+            as: 'class',
+            in: '$$class.class',
+          },
+        },
+      },
+    },
+    {
       $project: {
         _id: 0,
         instance: '$id',
         dates: '$dates',
+        classes: '$classes',
         alwaysAvailable: '$alwaysAvailable',
         requiresScoring: '$requiresScoring',
         moduleActivities: '$metadata.module.activities',
@@ -196,6 +216,12 @@ async function getTeacherStatus({ instancesIds, ctx }) {
     },
   ];
 
+  const classesIds = instances.flatMap((instance) => instance.classes);
+  const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+    ids: classesIds,
+  });
+  const classesById = keyBy(classesData, 'id');
+
   const assignations = await ctx.tx.db.Assignations.aggregate(studentsDataPipeline);
 
   const assignationsByInstanceId = keyBy(assignations, '_id', 'assignations');
@@ -212,9 +238,12 @@ async function getTeacherStatus({ instancesIds, ctx }) {
       assignations: assignationsByInstanceId[instance.instance]?.assignations ?? [],
     };
 
+    const subjects = instance.classes.map((classroom) => classesById[classroom]?.subject?.id);
+    const requiredGradesCount = uniq(subjects).length;
+
     instancesById[instance.instance] = {
       ...instanceData,
-      status: getStatusForTeacher(instanceData),
+      status: getStatusForTeacher(instanceData, { requiredGradesCount }),
     };
   });
 
