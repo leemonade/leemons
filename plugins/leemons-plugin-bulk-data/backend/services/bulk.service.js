@@ -8,6 +8,7 @@ const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 
 const { pluginName } = require('../config/constants');
 const restActions = require('./rest/bulk.rest');
+const { loadFromTemplateURL } = require('../core/importHandlers');
 
 module.exports = {
   name: `${pluginName}.bulk`,
@@ -23,5 +24,17 @@ module.exports = {
   ],
   actions: {
     ...restActions,
+    loadFromTemplateURL: {
+      async handler(ctx) {
+        const { templateURL, shareLibraryAssetsWithTeacherProfile, onFinishData } = ctx.params;
+        loadFromTemplateURL({
+          templateURL,
+          shareLibraryAssetsWithTeacherProfile,
+          onFinishData,
+          ctx,
+        });
+        return true;
+      },
+    },
   },
 };
