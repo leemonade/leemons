@@ -34,25 +34,36 @@
   "scripts": {
     "start:app": "yarn workspace leemons-app backend:dev",
     "done": "echo Done ✨",
-    "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'"
+    "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
+    "format:check": "prettier .",
+    "format:fix": "prettier . -write",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "packageManager": "yarn@1.22.19",
+  "engines": {
+    "npm": "^20.9.0"
+  },
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.22.15",
     "@babel/eslint-parser": "^7.22.15",
+    "@babel/plugin-proposal-export-default-from": "^7.22.0",
     "@babel/plugin-syntax-jsx": "^7.22.5",
     "@babel/preset-env": "^7.22.20",
     "eslint": "^8.25.0",
-    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.32.2",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-import-resolver-jsconfig": "^1.1.0",
+    "eslint-nibble": "^8.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^17.9.0",
+    "eslint-plugin-promise": "^6.2.0",
+    "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-sonarjs": "^0.21.0",
+    "eslint-plugin-sonarjs": "^1.0.3",
+    "eslint-plugin-unused-imports": "^3.2.0",
     "prettier": "^3.3.2",
-    "prettier-eslint": "^15.0.1",
     "rimraf": "^5.0.1",
     "start-server-and-test": "^2.0.0",
     "turbo": "^1.9.3"
