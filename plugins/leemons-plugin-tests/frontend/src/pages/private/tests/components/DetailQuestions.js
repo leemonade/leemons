@@ -183,6 +183,8 @@ export default function DetailQuestions({
     }
   };
 
+  const testHasQuestionsSelected = formValues.questions?.length > 0;
+
   const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
   const RandomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
 
@@ -208,7 +210,7 @@ export default function DetailQuestions({
                 <Button
                   variant="link"
                   onClick={handleOnSave}
-                  disabled={!formValues.name}
+                  disabled={!formValues.name || !testHasQuestionsSelected}
                   loading={store.saving === 'draft'}
                 >
                   {t('saveDraft')}
@@ -222,12 +224,13 @@ export default function DetailQuestions({
                   setIsDirty={setIsDirty}
                   onAssign={onAssign}
                   onPublish={onPublish}
+                  disabled={!formValues.name || !testHasQuestionsSelected}
                 />
               ) : (
                 <Button
                   rightIcon={<ChevRightIcon height={20} width={20} />}
                   onClick={onNext}
-                  disabled={store.saving}
+                  disabled={store.saving || !testHasQuestionsSelected}
                   loading={store.saving === 'publish'}
                 >
                   {t(getNextButtonLabel())}
