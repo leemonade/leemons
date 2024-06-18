@@ -3,6 +3,7 @@ const { keys, isEmpty } = require('lodash');
 const importLibrary = require('./bulk/library');
 const _delay = require('./bulk/helpers/delay');
 const importNonIndexableAssets = require('./bulk/libraryNonIndexables');
+const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
 
 async function addNonIndexableAssets({ file, users, ctx }) {
   try {
@@ -46,7 +47,7 @@ async function addNonIndexableAssets({ file, users, ctx }) {
   return { assets: null, nonIndexableAssets: null };
 }
 
-async function initLibrary({ file, config: { users }, ctx }) {
+async function initLibrary({ file, config: { users }, ctx, useCache, phaseKey }) {
   try {
     const assets = await importLibrary(file, { users });
     const assetsKeys = keys(assets);
@@ -70,6 +71,14 @@ async function initLibrary({ file, config: { users }, ctx }) {
           assets[key] = { ...assetData };
 
           ctx.logger.info(`Asset ADDED: ${asset.name}`);
+
+          if (useCache) {
+            await ctx.cache.set(
+              phaseKey,
+              `${LOAD_PHASES.LIBRARY}[${i + 1}/${assetsKeys.length}]`,
+              60 * 60
+            );
+          }
         } catch (e) {
           ctx.logger.log('-- ASSET CREATION ERROR --');
           ctx.logger.error(e);

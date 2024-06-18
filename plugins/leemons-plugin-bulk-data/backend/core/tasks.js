@@ -3,8 +3,9 @@ const chalk = require('chalk');
 const { keys } = require('lodash');
 const importTasks = require('./bulk/tasks');
 const _delay = require('./bulk/helpers/delay');
+const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
 
-async function initTasks({ file, config, ctx }) {
+async function initTasks({ file, config, ctx, useCache, phaseKey }) {
   try {
     const tasks = await importTasks({ filePath: file, config, ctx });
 
@@ -24,6 +25,13 @@ async function initTasks({ file, config, ctx }) {
         tasks[key] = { ...taskData };
 
         ctx.logger.info(chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`);
+        if (useCache) {
+          await ctx.cache.set(
+            phaseKey,
+            `${LOAD_PHASES.TASKS}[${i + 1}/${tasksKeys.length}]`,
+            60 * 60
+          );
+        }
       } catch (e) {
         ctx.logger.log('-- TASK CREATION ERROR --');
         ctx.logger.log(`task: ${task.asset?.name}`);
