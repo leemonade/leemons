@@ -29,9 +29,6 @@
       "@client-manager/*": [
         "./private-plugins/leemons-plugin-client-manager/frontend/src/*"
       ],
-      "@common": [
-        "./plugins/leemons-plugin-common/frontend/src/index"
-      ],
       "@common/*": [
         "./plugins/leemons-plugin-common/frontend/src/*"
       ],
