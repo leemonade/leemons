@@ -19,14 +19,18 @@ function hasGrades(studentData) {
 }
 
 /**
- * Add calendar with the provided key if not already exists
+ * Adds a calendar with the provided key if it does not already exist.
+ * This function ensures that duplicate calendars are not created in the system.
+ * It checks for the existence of a calendar with the given key and adds it if absent.
+ *
  * @public
  * @static
- * @param {any} userSession - key
- * @param {any=} transacting - DB Transaction
- * @return {Promise<any>}
- * */
-async function getCalendarsToFrontend({ ctx }) {
+ * @param {Object} params - The parameters for getting calendars to frontend.
+ * @param {boolean} params.showHiddenColumns - Flag to determine if hidden columns should be shown.
+ * @param {Object} params.ctx - The context object containing the database transaction and other relevant data.
+ * @return {Promise<any>} A promise that resolves to the newly added calendar details or an existing calendar if the key is already present.
+ */
+async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   const { userSession } = ctx.meta;
   const permissionConfigCalendar = getPermissionConfigCalendar();
   const permissionConfigEvent = getPermissionConfigEvent();
@@ -354,7 +358,7 @@ async function getCalendarsToFrontend({ ctx }) {
       ctx.tx.call('assignables.assignableInstances.getAssignableInstancesStatus', {
         assignableInstanceIds: instanceIds,
       }),
-      listKanbanColumns({ ctx }),
+      listKanbanColumns({ showHiddenColumns, ctx }),
       ctx.tx.call('assignables.assignableInstances.getAssignableInstances', {
         ids: instanceIds,
         details: true,
