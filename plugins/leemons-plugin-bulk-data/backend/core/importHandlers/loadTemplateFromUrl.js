@@ -93,15 +93,23 @@ async function loadFromTemplateURL({
     preConfig = await initializeForClientManager({ ctx });
   }
 
-  importBulkData({
-    docPath: file.path,
-    preConfig,
-    shareLibraryAssetsWithTeacherProfile,
-    onFinishData,
-    ctx,
-  });
-
-  return true;
+  try {
+    await importBulkData({
+      docPath: file.path,
+      preConfig,
+      shareLibraryAssetsWithTeacherProfile,
+      onFinishData,
+      ctx,
+    });
+    return { status: 200 };
+  } catch (error) {
+    console.error('Error importing bulk-data', error);
+    throw new LeemonsError(ctx, {
+      message: `Something went wrong importing from template URL: ${error}`,
+      httpStatusCode: 500,
+      cause: error,
+    });
+  }
 }
 
 module.exports = { loadFromTemplateURL };

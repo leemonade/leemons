@@ -286,6 +286,6 @@ const processLoginAndBulkData = async () => {
     }
   } catch (error) {
     console.error('error', error);
-    // await client.close();
+    await client.close();
   }
 })();
