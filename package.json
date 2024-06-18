@@ -37,8 +37,8 @@
     "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
     "format:check": "prettier .",
     "format:fix": "prettier . -write",
-    "lint:check": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:check": "eslint . && stylelint \"**/.**/*.css\"",
+    "lint:fix": "eslint . --fix && stylelint \"**/.**/*.css\" --fix"
   },
   "packageManager": "yarn@1.22.19",
   "engines": {
@@ -66,6 +66,9 @@
     "prettier": "^3.3.2",
     "rimraf": "^5.0.1",
     "start-server-and-test": "^2.0.0",
+    "stylelint": "^16.4.0",
+    "stylelint-config-clean-order": "^6.0.0",
+    "stylelint-config-standard": "^36.0.0",
     "turbo": "^1.9.3"
   },
   "resolutions": {
