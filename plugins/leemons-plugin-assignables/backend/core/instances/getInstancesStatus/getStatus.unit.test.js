@@ -1,5 +1,5 @@
 const { it, expect } = require('@jest/globals');
-const { getStatus } = require('./getStatus');
+const { getStatus } = require('./getStatusForStudent');
 
 let studentData;
 let instanceData;

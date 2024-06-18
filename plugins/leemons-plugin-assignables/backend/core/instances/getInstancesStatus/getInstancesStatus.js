@@ -1,11 +1,12 @@
-const _ = require('lodash');
+const { keyBy, uniq } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
-const { getStatus } = require('./getStatus');
+const { getStatusForStudent } = require('./getStatusForStudent');
 const {
   getUserPermissionMultiple,
 } = require('../../permissions/instances/users/getUserPermissionMultiple');
 const { getAssignations } = require('../../assignations/getAssignations');
+const { getStatusForTeacher, INSTANCE_STATUS } = require('./getStatusForTeacher');
 
 async function getActivitiesPermissions({ instancesIds, ctx }) {
   const permissions = await getUserPermissionMultiple({
@@ -53,11 +54,11 @@ function handleErrors({ canViewAllActivities, canEditSomeActivities, canEditAllA
 }
 
 async function getTeacherStatus({ instancesIds, ctx }) {
-  const pipeline = [
+  const pipeline = (ids) => [
     {
       $match: {
         id: {
-          $in: instancesIds,
+          $in: ids,
         },
         deploymentID: ctx.meta.deploymentID,
         isDeleted: false,
@@ -98,16 +99,179 @@ async function getTeacherStatus({ instancesIds, ctx }) {
       $project: {
         _id: 0,
         instance: '$id',
-        assignation: null,
-        status: null,
         dates: '$dates',
         alwaysAvailable: '$alwaysAvailable',
-        timestamps: null,
+        requiresScoring: '$requiresScoring',
+        moduleActivities: '$metadata.module.activities',
       },
     },
   ];
 
-  return ctx.tx.db.Instances.aggregate(pipeline);
+  const instances = await ctx.tx.db.Instances.aggregate(pipeline(instancesIds));
+
+  const moduleActivitiesIds =
+    instances.flatMap(
+      (instance) => instance.moduleActivities?.map((activity) => activity.id) ?? []
+    ) ?? [];
+
+  const allInstancesIds = [...instancesIds, ...moduleActivitiesIds];
+
+  const moduleActivities = await ctx.tx.db.Instances.aggregate(pipeline(allInstancesIds));
+  instances.push(...moduleActivities);
+
+  const studentsDataPipeline = [
+    {
+      $match: {
+        isDeleted: false,
+        instance: { $in: allInstancesIds },
+      },
+    },
+    {
+      $lookup: {
+        from: 'v1::assignables_dates',
+        localField: 'id',
+        foreignField: 'instance',
+        as: 'dates',
+        pipeline: [
+          {
+            $match: {
+              type: 'assignation',
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        dates: {
+          $arrayToObject: {
+            $map: {
+              input: '$dates',
+              as: 'date',
+              in: {
+                k: '$$date.name',
+                v: '$$date.date',
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'v1::assignables_grades',
+        localField: 'id',
+        foreignField: 'assignation',
+        as: 'grades',
+        pipeline: [
+          {
+            $match: {
+              type: 'main',
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        instance: 1,
+        id: 1,
+        user: 1,
+        timestamps: '$dates',
+        grades: {
+          $map: {
+            input: '$grades',
+            as: 'grade',
+            in: '$$grade.subject',
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: '$instance',
+        assignations: { $push: '$$ROOT' },
+      },
+    },
+  ];
+
+  const assignations = await ctx.tx.db.Assignations.aggregate(studentsDataPipeline);
+
+  const assignationsByInstanceId = keyBy(assignations, '_id', 'assignations');
+  const instancesById = {};
+
+  instances.forEach((instance) => {
+    const instanceData = {
+      id: instance.instance,
+      instance: instance.instance,
+      dates: instance.dates,
+      alwaysAvailable: instance.alwaysAvailable,
+      moduleActivities: instance.moduleActivities,
+      requiresScoring: instance.requiresScoring,
+      assignations: assignationsByInstanceId[instance.instance]?.assignations ?? [],
+    };
+
+    instancesById[instance.instance] = {
+      ...instanceData,
+      status: getStatusForTeacher(instanceData),
+    };
+  });
+
+  return instancesIds.map((id) => {
+    const instance = instancesById[id];
+
+    if (!instance?.moduleActivities?.length) {
+      return instance;
+    }
+
+    let evaluatedCount = 0;
+    let evaluatingCount = 0;
+    let needsEvaluationCount = 0;
+    let didNotFinishCount = 0;
+
+    const moduleActivitiesCount = instance.moduleActivities.length;
+
+    instance.moduleActivities.forEach((activity) => {
+      const activityStatus = instancesById[activity.id]?.status;
+
+      switch (activityStatus) {
+        case INSTANCE_STATUS.EVALUATED:
+          evaluatedCount++;
+          break;
+        case INSTANCE_STATUS.EVALUATING:
+          evaluatingCount++;
+          break;
+        case INSTANCE_STATUS.NEEDS_EVALUATION:
+          needsEvaluationCount++;
+          break;
+        case INSTANCE_STATUS.DID_NOT_FINISH:
+          didNotFinishCount++;
+          break;
+        default:
+          break;
+      }
+    });
+
+    let status;
+
+    if (moduleActivitiesCount === evaluatedCount) {
+      status = INSTANCE_STATUS.EVALUATED;
+    } else if (evaluatingCount || evaluatedCount) {
+      status = INSTANCE_STATUS.EVALUATING;
+    } else if (needsEvaluationCount) {
+      status = INSTANCE_STATUS.NEEDS_EVALUATION;
+    } else if (didNotFinishCount) {
+      status = INSTANCE_STATUS.DID_NOT_FINISH;
+    }
+
+    return {
+      ...instance,
+      assignation: null,
+      timestamps: {},
+      status,
+    };
+  });
 }
 
 async function getStudentStatus({ instancesIds, ctx }) {
@@ -128,7 +292,7 @@ async function getStudentStatus({ instancesIds, ctx }) {
   return assignations.map((assignation) => ({
     instance: assignation.instance.id,
     assignation: assignation.id,
-    status: getStatus(assignation, assignation.instance),
+    status: getStatusForStudent(assignation, assignation.instance),
     dates: assignation.instance.dates,
     alwaysAvailable: assignation.instance.alwaysAvailable,
     timestamps: assignation.timestamps,
@@ -152,7 +316,7 @@ async function getStudentStatus({ instancesIds, ctx }) {
  * - timestamps {Object} - An object containing the timestamps related to the assignation.
  */
 async function getInstancesStatus({ assignableInstanceIds, ctx }) {
-  const instancesIds = _.uniq(
+  const instancesIds = uniq(
     Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]
   );
 
