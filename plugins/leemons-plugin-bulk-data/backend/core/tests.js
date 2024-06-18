@@ -6,8 +6,9 @@ const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
 const _delay = require('./bulk/helpers/delay');
+const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
 
-async function initTests({ file, config: { users, programs }, ctx }) {
+async function initTests({ file, config: { users, programs }, ctx, useCache, phaseKey }) {
   try {
     // ·····················································
     // QUESTIONS
@@ -107,6 +108,14 @@ async function initTests({ file, config: { users, programs }, ctx }) {
 
         tests[key] = { ...testData };
         ctx.logger.info(chalk`{cyan.bold BULK} Test ADDED: ${test.name}`);
+
+        if (useCache) {
+          await ctx.cache.set(
+            phaseKey,
+            `${LOAD_PHASES.TESTS}[${i + 1}/${testsKeys.length}]`,
+            60 * 60
+          );
+        }
       } catch (e) {
         ctx.logger.log('-- TEST CREATION ERROR --');
         ctx.logger.log(`test: ${test.name}`);

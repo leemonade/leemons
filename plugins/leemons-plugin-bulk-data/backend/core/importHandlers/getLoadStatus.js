@@ -20,18 +20,48 @@ const LOAD_PHASES = {
 const LOAD_ERROR = 'error';
 const PHASES = Object.values(LOAD_PHASES);
 
-function getLoadProgress(currentPhase) {
+function getLoadProgress(currentPhase, initOnPhase) {
   if (!currentPhase) {
     return 0;
   }
 
-  const total = Object.keys(LOAD_PHASES).length;
-  const current = PHASES.indexOf(currentPhase) + 1;
+  // Skip all the previous phases if initOnPhase is set
+  let offset = 0;
+  if (initOnPhase) {
+    offset = PHASES.indexOf(initOnPhase.toLowerCase());
+  }
 
-  return Math.floor((current / total) * 100);
+  const total = Object.keys(LOAD_PHASES).length - offset;
+  let current = PHASES.indexOf(currentPhase) + 1 - offset;
+
+  // Some of the phases are divided into subphases, so we need to count them as a single phase
+  // Example: LIBRARY[1/3] -> LIBRARY
+  if (currentPhase.indexOf('[') < 0) {
+    return Math.floor((current / total) * 100);
+  }
+
+  const phase = currentPhase.split('[').shift();
+  current = PHASES.indexOf(phase) + 1 - offset;
+  const next = current + 1;
+
+  // Then, calculate the subphases progress
+  // Example: LIBRARY[1/3] -> 1/3
+  const subphases = currentPhase.match(/\d+/g);
+  const subProgress = Number(subphases[0]) / Number(subphases[1]);
+
+  const currentProgress = current / total;
+  const nextProgress = next / total;
+  const relativeProgress = (nextProgress - currentProgress) * subProgress;
+  return Math.floor((currentProgress + relativeProgress) * 100);
 }
 
-async function getLoadStatus({ useCache = true, localCurrentPhase, localLastPhaseOnError, ctx }) {
+async function getLoadStatus({
+  useCache = true,
+  localCurrentPhase,
+  localLastPhaseOnError,
+  ctx,
+  initOnPhase,
+}) {
   const current = useCache ? await ctx.cache.get(getCurrentPhaseKey(ctx)) : localCurrentPhase;
 
   if (current === LOAD_ERROR) {
@@ -48,13 +78,21 @@ async function getLoadStatus({ useCache = true, localCurrentPhase, localLastPhas
     };
   }
 
-  const progress = getLoadProgress(current);
-  const workingPhaseIndex = PHASES.indexOf(current) + 1;
+  const progress = getLoadProgress(current, initOnPhase);
+
+  // Some of the phases are divided into subphases, so we need to count them as a single phase
+  // Example: LIBRARY[1/3] -> LIBRARY
+  let phase = current;
+  if (current.indexOf('[') > -1) {
+    phase = current.split('[').shift();
+  }
+
+  const workingPhaseIndex = PHASES.indexOf(phase);
 
   return {
     status: 200,
     inProgressPhase: String(PHASES[workingPhaseIndex] || '').toUpperCase(),
-    currentPhase: String(current).toUpperCase(),
+    currentPhase: String(phase).toUpperCase(),
     overallProgress: `${progress} %`,
   };
 }

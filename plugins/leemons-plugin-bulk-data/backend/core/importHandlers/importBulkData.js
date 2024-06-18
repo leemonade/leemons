@@ -65,6 +65,7 @@ async function importBulkData({
   preConfig = {},
   shareLibraryAssetsWithTeacherProfile,
   useCache = true,
+  onFinishData = {},
   ctx,
 }) {
   const skipAppInitialization = !!preConfig.centers && !!preConfig.profiles;
@@ -150,7 +151,13 @@ async function importBulkData({
       // MEDIA LIBRARY
 
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
-      config.assets = await initLibrary({ file: docPath, config, ctx });
+      config.assets = await initLibrary({
+        file: docPath,
+        config,
+        ctx,
+        useCache,
+        phaseKey: currentPhaseKey,
+      });
 
       if (shareLibraryAssetsWithTeacherProfile) {
         await shareAssetsWithProfile({
@@ -204,7 +211,13 @@ async function importBulkData({
       // TESTS & QBANKS
 
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`);
-      const { tests, qbanks } = await initTests({ file: docPath, config, ctx });
+      const { tests, qbanks } = await initTests({
+        file: docPath,
+        config,
+        ctx,
+        useCache,
+        phaseKey: currentPhaseKey,
+      });
       config.tests = tests;
       config.qbanks = qbanks;
 
@@ -227,7 +240,13 @@ async function importBulkData({
       // TASKS
 
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`);
-      config.tasks = await initTasks({ file: docPath, config, ctx });
+      config.tasks = await initTasks({
+        file: docPath,
+        config,
+        ctx,
+        useCache,
+        phaseKey: currentPhaseKey,
+      });
 
       if (shareLibraryAssetsWithTeacherProfile) {
         const { task: tasks } = await ctx.call('tasks.tasks.getRest', {
@@ -254,6 +273,14 @@ async function importBulkData({
       currentPhaseLocal = LOAD_PHASES.WIDGETS;
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Widgets plugin`);
       if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.WIDGETS, 60 * 60);
+
+      // ·······························································
+      // FINISH
+
+      ctx.emit('finish-load-template', {
+        ...onFinishData,
+        caller: ctx.callerPlugin,
+      });
     }
   } catch (error) {
     console.error('Error in importBulkData =>', error);
