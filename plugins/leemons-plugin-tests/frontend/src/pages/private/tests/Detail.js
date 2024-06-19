@@ -20,7 +20,7 @@ import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
 import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
-import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, keyBy } from 'lodash';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
@@ -235,7 +235,7 @@ export default function Detail() {
           ) : (
             <>
               <Box className={styles.showTestBar}>
-                <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
+                <Button rounded rightIcon={<ChevRightIcon />} onClick={toggleQuestionMode}>
                   {t('showInTests')}
                 </Button>
               </Box>
