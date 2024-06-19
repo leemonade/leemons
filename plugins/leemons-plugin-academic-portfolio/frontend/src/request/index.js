@@ -7,6 +7,7 @@ import {
   updateSubject,
   duplicateSubject,
   updateSubjectCredits,
+  isMainTeacherInSubject,
 } from './subjects';
 import {
   addStudentsToClassesUnderNodeTree,
@@ -151,3 +152,4 @@ export const setProfilesRequest = setProfiles;
 export const addStudentsToClassesUnderNodeTreeRequest = addStudentsToClassesUnderNodeTree;
 
 export const getStudentsByTagsRequest = getStudentsByTags;
+export const isMainTeacherInSubjectRequest = isMainTeacherInSubject;

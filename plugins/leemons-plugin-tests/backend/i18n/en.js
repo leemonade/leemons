@@ -299,6 +299,15 @@ module.exports = {
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
     share: 'Share',
+    cannotAssignModal: {
+      title: 'Assignment Guidelines',
+      descriptionWhenNoOwner:
+        "You must be a teacher of one of the document's subjects or the owner of the document to assign it.",
+      descriptionWhenOwner:
+        "You own this document but are not a teacher of any of the document's subjects. Please edit the document to update or remove the subjects if you wish to assign it.",
+      edit: 'Edit document',
+      accept: 'Accept',
+    },
   },
   instructions: {
     instructions: 'Instructions',

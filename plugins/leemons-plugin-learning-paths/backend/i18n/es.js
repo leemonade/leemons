@@ -119,6 +119,15 @@ module.exports = {
       share: 'Compartir',
       pin: 'Marcar como favorito',
       unpin: 'Desmarcar como favorito',
+      cannotAssignModal: {
+        title: 'Directrices de asignación',
+        descriptionWhenNotOwner:
+          'Debes ser profesor de alguna de las asignaturas asociadas al módulo o su propietario para poder asignarlo.',
+        descriptionWhenOwner:
+          'Eres propietario de este módulo pero no eres profesor de ninguna de las asignaturas asociadas. Por favor, edita el módulo para actualizar o eliminar las asignaturas asociadas si deseas asignarlo.',
+        edit: 'Editar módulo',
+        accept: 'Aceptar',
+      },
     },
   },
   assignation: {

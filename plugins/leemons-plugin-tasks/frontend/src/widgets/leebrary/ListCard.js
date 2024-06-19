@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
@@ -13,6 +13,8 @@ import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Dele
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import useIsMainTeacherInSubject from '@academic-portfolio/hooks/queries/useIsMainTeacherInSubject';
+import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { ExpressTaskIcon } from '../../components/Icons/ExpressTaskIcon';
 import { TaskIcon } from '../../components/Icons/TaskIcon';
 import { prefixPN } from '../../helpers/prefixPN';
@@ -36,6 +38,7 @@ const ListCard = ({
   ...props
 }) => {
   const history = useHistory();
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
@@ -67,6 +70,26 @@ const ListCard = ({
       taskLabel: '',
     };
   }, [translations]);
+
+  const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
+    useIsMainTeacherInSubject({
+      subjectIds: asset.subjects?.length > 0 ? asset.subjects.map((item) => item.subject) : [],
+      options: {
+        enabled: enableIsTeacherInSubjectQuery && asset.subjects?.length > 0,
+        refetchOnWindowFocus: false,
+      },
+    });
+
+  const onShowMenu = (value) => {
+    setEnableIsTeacherInSubjectQuery(value);
+  };
+
+  const menuItemsLoading = useMemo(
+    () => teacherCheckLoading && asset?.subjects?.length,
+    [teacherCheckLoading, asset]
+  );
+
+  const isOwner = useIsOwner(asset);
 
   // ·········································································
   // HANDLERS
@@ -117,14 +140,33 @@ const ListCard = ({
           },
         });
       }
-      if (asset.assignable && asset.providerData?.published) {
+      if (asset.providerData?.published) {
+        const assignAction = (e) => {
+          e.stopPropagation();
+          if (asset.subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
+            const updateAsset = () => handleClick(`/private/tasks/library/edit/${taskId}`);
+
+            openConfirmationModal({
+              title: menuLabels?.cannotAssignModal.title,
+              description: isOwner
+                ? menuLabels?.cannotAssignModal.descriptionWhenOwner
+                : menuLabels?.cannotAssignModal.descriptionWhenNotOwner,
+              onConfirm: isOwner ? updateAsset : undefined,
+              labels: {
+                confirm: isOwner
+                  ? menuLabels?.cannotAssignModal.edit
+                  : menuLabels?.cannotAssignModal.accept,
+              },
+            })();
+          } else {
+            handleClick(`/private/tasks/library/assign/${taskId}`);
+          }
+        };
+
         items.push({
           icon: <AssignIcon />,
           children: menuLabels?.assign,
-          onClick: (e) => {
-            e.stopPropagation();
-            handleClick(`/private/tasks/library/assign/${taskId}`);
-          },
+          onClick: assignAction,
         });
       }
       if (asset.editable) {
@@ -184,7 +226,7 @@ const ListCard = ({
     }
 
     return items;
-  }, [asset, embedded, menuLabels, onRefresh]);
+  }, [asset, embedded, menuLabels, onRefresh, isMainTeacherInAssetSubjects, isOwner]);
 
   // ·········································································
   // RENDER
@@ -201,6 +243,8 @@ const ListCard = ({
       variantTitle={isExpress ? expressTaskLabel : taskLabel}
       className={classes.root}
       selected={selected}
+      onShowMenu={onShowMenu}
+      menuItemsLoading={menuItemsLoading}
     />
   );
 };

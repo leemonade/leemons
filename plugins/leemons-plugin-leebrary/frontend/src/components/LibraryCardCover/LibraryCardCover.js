@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isNil, noop } from 'lodash';
 import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
@@ -7,6 +7,7 @@ import {
   LIBRARY_CARD_COVER_DEFAULT_PROPS,
   LIBRARY_CARD_COVER_PROP_TYPES,
 } from './LibraryCardCover.constants';
+import LibraryCardMenuSkeletonItems from './LibraryCardMenuSkeletonItems';
 
 const LibraryCardCover = ({
   height,
@@ -20,12 +21,24 @@ const LibraryCardCover = ({
   hideDashboardIcons,
   fileType,
   variantIcon,
+  onShowMenu = noop,
+  menuItemsLoading = null,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+  // As the Menu onClose function is called when props change, we use this as a flag to control the behavior of menus with dynamic items
+  const [dynamicItemsAlreadyLoaded, setDynamicItemsAlreadyLoaded] = useState(
+    menuItemsLoading === true ? false : null
+  );
   const { classes, cx } = LibraryCardCoverStyles(
     { color, height, parentHovered, subjectColor: subject?.color, showMenu },
     { name: 'LibraryCardCover' }
   );
+
+  useEffect(() => {
+    if (menuItemsLoading === false) {
+      setDynamicItemsAlreadyLoaded(true);
+    }
+  }, [menuItemsLoading]);
 
   const icon = useMemo(
     () =>
@@ -46,6 +59,8 @@ const LibraryCardCover = ({
     e.stopPropagation();
   };
 
+  const menuSkeletonItems = [{ children: <LibraryCardMenuSkeletonItems items={2} /> }];
+
   const heightAndSubjectColor = color ? height : height + 6;
   const iconRow = (
     <Box>
@@ -55,9 +70,17 @@ const LibraryCardCover = ({
             <Box>
               <Menu
                 opened={showMenu}
-                onOpen={() => setShowMenu(true)}
-                onClose={() => setShowMenu(false)}
-                items={menuItems.map((item) => ({
+                onOpen={() => {
+                  setShowMenu(true);
+                  onShowMenu(true);
+                }}
+                onClose={() => {
+                  if (menuItemsLoading === null || dynamicItemsAlreadyLoaded) {
+                    setShowMenu(false);
+                  }
+                  onShowMenu(false);
+                }}
+                items={(menuItemsLoading ? menuSkeletonItems : menuItems).map((item) => ({
                   ...item,
                   className: cx(classes.menuItem, item.className),
                 }))}

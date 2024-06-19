@@ -297,6 +297,15 @@ module.exports = {
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
     share: 'Compartir',
+    cannotAssignModal: {
+      title: 'Directrices de asignación',
+      descriptionWhenNotOwner:
+        'Debes ser profesor de alguna de las asignaturas asociadas al test o su propietario para poder asignarlo.',
+      descriptionWhenOwner:
+        'Eres propietario de este test pero no eres profesor de ninguna de las asignaturas asociadas. Por favor, edita el test para actualizar o eliminar las asignaturas asociadas si deseas asignarlo.',
+      edit: 'Editar documento',
+      accept: 'Aceptar',
+    },
   },
   instructions: {
     instructions: 'Instrucciones',
