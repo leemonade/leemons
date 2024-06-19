@@ -52,7 +52,11 @@ export function useStudentState({ assignation = {} }) {
 function PreviewActions({ activity, localizations }) {
   const { id, roleDetails } = activity?.assignable ?? {};
   const { classes } = useDashboardCardFooterStyles();
-  const url = roleDetails.previewUrl?.replace(':id', id);
+  const currentUrl = window.location.href;
+  const moduleIdMatch = currentUrl.match(/modules\/(.*?)\/view/);
+  const moduleId = moduleIdMatch ? moduleIdMatch[1] : '';
+  const url =
+    roleDetails.previewUrl && `${roleDetails.previewUrl?.replace(':id', id)}?moduleId=${moduleId}`;
   if (!url) {
     return null;
   }

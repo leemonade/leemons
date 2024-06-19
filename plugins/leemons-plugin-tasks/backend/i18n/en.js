@@ -423,6 +423,7 @@ module.exports = {
       save: 'Save',
       nextActivity: 'Next activity',
       goToModule: 'Module dashboard',
+      goBackToDashboardPreview: 'Go back to dashboard',
     },
     submission_step: {
       instructions: 'Instructions',

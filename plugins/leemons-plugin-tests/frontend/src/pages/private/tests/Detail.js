@@ -7,7 +7,6 @@ import {
   Loader,
   ImageLoader,
   AssetTestIcon,
-  LoadingOverlay,
   ContextContainer,
   ActivityAccordion,
   TotalLayoutHeader,
@@ -19,7 +18,7 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, keyBy } from 'lodash';
@@ -27,7 +26,6 @@ import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import useUserAgents from '@users/hooks/useUserAgents';
 import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { getTestRequest } from '../../../request';
 import QuestionsTable from './components/QuestionsTable';
@@ -43,6 +41,8 @@ export default function Detail() {
   const { classes: styles } = ResultStyles({}, { name: 'Detail' });
   const levels = useLevelsOfDifficulty(true);
   const scrollRef = useRef();
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const moduleId = window?.location?.href?.split('moduleId=')[1];
 
   const [store, render] = useStore({
     loading: true,
@@ -257,7 +257,7 @@ export default function Detail() {
           icon={<AssetTestIcon />}
           direction="row"
         >
-          {!assignableLoading && !assetsLoading && canEdit && (
+          {!isModulePreview && !assignableLoading && !assetsLoading && canEdit && (
             <Stack spacing={4}>
               <Button variant="outline" onClick={() => goEditPage()}>
                 {t('edit')}
@@ -267,7 +267,12 @@ export default function Detail() {
               </Button>
             </Stack>
           )}
-          {(assignableLoading || assetsLoading) && <Loader visible />}
+          {isModulePreview && (
+            <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
+              <Button variant="outline">{t('goBackToDashboardPreview')}</Button>
+            </Link>
+          )}
+          {!isModulePreview && (assignableLoading || assetsLoading) && <Loader visible />}
         </TotalLayoutHeader>
       }
     >

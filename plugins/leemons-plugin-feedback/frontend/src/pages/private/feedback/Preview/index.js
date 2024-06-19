@@ -22,14 +22,14 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import { ChevronRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import { getFeedbackRequest } from '@feedback/request';
 import { map } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
 
-const PreviewPageStyles = createStyles((theme, { viewMode }) => ({
+const PreviewPageStyles = createStyles((theme) => ({
   firstTableHeader: {
     paddingLeft: `${theme.spacing[6]}px !important`,
   },
@@ -63,6 +63,8 @@ export default function Preview() {
   const [tD, t2V] = useTranslateLoader(prefixPN('feedbackDetail'));
   const { classes, cx } = PreviewPageStyles({}, { name: 'FeedbackPreview' });
   const scrollRef = useRef();
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const moduleId = window?.location?.href?.split('moduleId=')[1];
 
   const [store, render] = useStore({
     loading: true,
@@ -214,14 +216,20 @@ export default function Preview() {
           icon={<AssetFeedbackIcon />}
           direction="row"
         >
-          <Box style={{ display: 'flex', gap: 16 }}>
-            <Button variant="outline" onClick={() => goEditPage()}>
-              {tP('edit')}
-            </Button>
-            <Button variant="primary" onClick={() => goAssignPage()}>
-              {tP('assign')}
-            </Button>
-          </Box>
+          {isModulePreview ? (
+            <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
+              <Button variant="outline">{tP('goBackToDashboardPreview')}</Button>
+            </Link>
+          ) : (
+            <Box style={{ display: 'flex', gap: 16 }}>
+              <Button variant="outline" onClick={() => goEditPage()}>
+                {tP('edit')}
+              </Button>
+              <Button variant="primary" onClick={() => goAssignPage()}>
+                {tP('assign')}
+              </Button>
+            </Box>
+          )}
         </TotalLayoutHeader>
       }
     >
