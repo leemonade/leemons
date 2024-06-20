@@ -9,6 +9,7 @@ import { getCookieToken } from '@users/session';
 import { useHistory } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import AlertStack from './AlertStack';
+import ErrorBoundary from './ErrorBoundary';
 
 const NAV_OPEN_WIDTH = 280;
 
@@ -121,8 +122,10 @@ const PrivateLayout = ({ children }) => {
         />
       </Box>
       <Box ref={layoutState.contentRef} className={classes.content}>
-        <AlertStack />
-        {children}
+        <ErrorBoundary>
+          <AlertStack />
+          {children}
+        </ErrorBoundary>
       </Box>
     </Box>
   ) : null;

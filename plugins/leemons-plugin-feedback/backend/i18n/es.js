@@ -54,6 +54,7 @@ module.exports = {
     responseLabel: 'Respuesta',
     addResponse: 'Añadir respuesta',
     saveResponse: 'Guardar respuesta',
+    saveChanges: 'Guardar cambios',
     cancel: 'Cancelar',
     responsesRequired: 'Campo necesario',
     responseRequired: 'Campo necesario',
@@ -76,7 +77,7 @@ module.exports = {
     npsStatement:
       '¿Con qué probabilidad recomendaría este producto o servicio a otros familiares o amigos?',
     npsInfo:
-      'El formato NPS es una escala de 0 a 10 en la que 0=Nada probable y 10=Muy probable. Para aquellos casos en los que sea necesario traducir o adaptar la redacción de estas etiquetas, se permite su modificación, pero recomendamos encarecidamente no modificar su significado subyacente. Más información sobre NPS',
+      'El formato NPS es una escala de 0 a 10 en la que 0=Nada probable y 10=Muy probable. Para aquellos casos en los que sea necesario traducir o adaptar la redacción de estas etiquetas, se permite su modificación, pero recomendamos encarecidamente no modificar su significado subyacente.',
     npsNotLikely: 'Nada probable',
     npsVeryLikely: 'Muy probable',
     openResponse: 'Respuesta abierta',
@@ -100,6 +101,7 @@ module.exports = {
     edit: 'Editar',
     feedback: 'Feedback',
     assign: 'Asignar',
+    share: 'Compartir',
     delete: 'Borrar',
     deleted: 'Borrado',
     questions: 'Preguntas:',
@@ -111,6 +113,7 @@ module.exports = {
     open: 'Abrir',
     duplicate: 'Duplicar',
     duplicated: 'Duplicado',
+    share: 'Compartir',
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
   },
@@ -196,6 +199,7 @@ module.exports = {
     showPreview: 'Ver vista previa',
     returnToTable: 'Volver a la tabla',
     next: 'Siguiente',
+    goBackToDashboardPreview: 'Volver al dashboard',
   },
   feedbackDrawerDetail: {
     survey: 'Encuesta',

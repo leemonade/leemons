@@ -13,8 +13,9 @@ import {
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
+import { ChevRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import { getFeedbackRequest } from '@feedback/request';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
 import IntroductionStep from '../StudentInstance/components/IntroductionStep';
@@ -24,7 +25,6 @@ const PreviewPageStyles = createStyles((theme) => ({
     paddingLeft: `${theme.spacing[6]}px !important`,
   },
   tableHeader: {
-    backgroundColor: theme.colors.interactive03h,
     paddingBottom: theme.spacing[2],
     paddingTop: theme.spacing[6],
     paddingLeft: theme.spacing[5],
@@ -54,6 +54,8 @@ export default function Preview() {
   const { classes, cx } = PreviewPageStyles({}, { name: 'FeedbackPreview' });
   const scrollRef = useRef();
   const [showIntroduction, setShowIntroduction] = useState(true);
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const moduleId = window?.location?.href?.split('moduleId=')[1];
 
   const [store, render] = useStore({
     loading: true,
@@ -62,6 +64,63 @@ export default function Preview() {
 
   const history = useHistory();
   const params = useParams();
+
+  // function getStats() {
+  //   const selectables = [];
+  //   const data = [];
+
+  //   if (store.test?.questions) {
+  //     let category = false;
+  //     let level = false;
+  //     let type = false;
+  //     const levelsByValue = keyBy(levels, 'value');
+  //     const categoriesById = keyBy(store.test.questionBank.categories, 'id');
+  //     forEach(store.test.questions, (question) => {
+  //       const d = {
+  //         id: question.id,
+  //         status: null,
+  //       };
+  //       if (question.level) {
+  //         level = true;
+  //         d.level = levelsByValue[question.level].label;
+  //       } else {
+  //         d.level = t('undefined');
+  //       }
+  //       if (question.category) {
+  //         category = true;
+  //         d.category = categoriesById[question.category].value;
+  //       } else {
+  //         d.category = t('undefined');
+  //       }
+  //       if (question.type) {
+  //         type = true;
+  //         d.type = t2(questionTypeT[question.type]);
+  //       } else {
+  //         d.type = t('undefined');
+  //       }
+  //       data.push(d);
+  //     });
+  //     if (category) {
+  //       selectables.push({
+  //         value: 'category',
+  //         label: t('categories'),
+  //       });
+  //     }
+  //     if (type) {
+  //       selectables.push({
+  //         value: 'type',
+  //         label: t('questionTypes'),
+  //       });
+  //     }
+  //     if (level) {
+  //       selectables.push({
+  //         value: 'level',
+  //         label: t('levels'),
+  //       });
+  //     }
+  //   }
+  //   return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
+  // }
 
   async function init() {
     try {
@@ -106,14 +165,20 @@ export default function Preview() {
           icon={<AssetFeedbackIcon />}
           direction="row"
         >
-          <Box style={{ display: 'flex', gap: 16 }}>
-            <Button variant="outline" onClick={() => goEditPage()}>
-              {tP('edit')}
-            </Button>
-            <Button variant="primary" onClick={() => goAssignPage()}>
-              {tP('assign')}
-            </Button>
-          </Box>
+          {isModulePreview ? (
+            <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
+              <Button variant="outline">{tP('goBackToDashboardPreview')}</Button>
+            </Link>
+          ) : (
+            <Box style={{ display: 'flex', gap: 16 }}>
+              <Button variant="outline" onClick={() => goEditPage()}>
+                {tP('edit')}
+              </Button>
+              <Button variant="primary" onClick={() => goAssignPage()}>
+                {tP('assign')}
+              </Button>
+            </Box>
+          )}
         </TotalLayoutHeader>
       }
     >

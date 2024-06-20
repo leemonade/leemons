@@ -47,7 +47,7 @@ async function get({ taskId, columns: _columns = DEFAULT_COLUMNS, withFiles, ctx
   try {
     const columns = _columns === '*' ? DEFAULT_COLUMNS : _columns;
     if (Array.isArray(taskId)) {
-      return getMany({ taskId, columns, withFiles, ctx });
+      return getMany({ taskIds: taskId, columns, withFiles, ctx });
     }
 
     const result = await getMany({

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box, createStyles, Title } from '@bubbles-ui/components';
 
-export const Styles = createStyles((theme, { viewMode }) => ({
+export const Styles = createStyles((theme) => ({
   questionStep: {
     display: 'flex',
     flexDirection: 'column',
@@ -10,9 +10,8 @@ export const Styles = createStyles((theme, { viewMode }) => ({
     alignItems: 'center',
     paddingTop: theme.spacing[4],
     paddingBottom: theme.spacing[4],
-    paddingLeft: theme.spacing[5],
     paddingRight: theme.spacing[5],
-    backgroundColor: viewMode ? theme.colors.ui04 : 'transparent',
+    backgroundColor: 'transparent',
   },
   questionTitleText: {
     width: '100%',

@@ -78,22 +78,20 @@ async function addPermissionsToAsset({ id, categoryId, permissions, assignerRole
 
   // EN: Save permissions
   // ES: Guardar los permisos
-  // ! Ver en qué afecta esto ya que no se estaba devolviendo el Array o haciendo await
-  // const permissionsPromises = [];
   _.forEach(roles, (role) => {
     if (rolePermissionType[role]) {
-      // permissionsPromises.push(
+      const data = _.map(permissions[role], (permissionName) => ({
+        actionNames: ['view'],
+        target: categoryId,
+        permissionName,
+      }));
+
       ctx.tx.call('users.permissions.addItem', {
         item: id,
         type: ctx.prefixPN(rolePermissionType[role]),
-        data: _.map(permissions[role], (permissionName) => ({
-          actionNames: ['view'],
-          target: categoryId,
-          permissionName,
-        })),
+        data,
         isCustomPermission: true,
       });
-      // );
     }
   });
 }

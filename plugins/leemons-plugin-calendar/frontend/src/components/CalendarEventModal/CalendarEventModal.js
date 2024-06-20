@@ -4,14 +4,16 @@ import { get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Box,
-  Button,
-  RadioGroup,
-  Select,
   Text,
-  TextInput,
+  Button,
   Drawer,
+  Select,
+  TextInput,
+  RadioGroup,
+  ActionButton,
   ContextContainer,
 } from '@bubbles-ui/components';
+import { EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { Dates } from './components/Dates';
 import { CalendarEventModalStyles } from './CalendarEventModal.styles';
 
@@ -182,7 +184,19 @@ function CalendarEventModal(props) {
 
   return (
     <Drawer size={'sm'} className={classes.root} onClose={onClose} opened={opened}>
-      <Drawer.Header title={titleDrawer()} />
+      <Drawer.Header title={titleDrawer()}>
+        <Drawer.Header.RightActions>
+          <Box>
+            {isOwner && disabled ? (
+              <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
+            ) : null}
+
+            {!isNew && (!fromCalendar || isOwner) ? (
+              <ActionButton icon={<DeleteBinIcon width={18} height={18} />} onClick={onRemove} />
+            ) : null}
+          </Box>
+        </Drawer.Header.RightActions>
+      </Drawer.Header>
       <Drawer.Content>
         <form autoComplete="off">
           <ContextContainer spacing={8}>

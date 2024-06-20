@@ -423,6 +423,7 @@ module.exports = {
       save: 'Save',
       nextActivity: 'Next activity',
       goToModule: 'Module dashboard',
+      goBackToDashboardPreview: 'Go back to dashboard',
     },
     submission_step: {
       instructions: 'Instructions',
@@ -438,7 +439,10 @@ module.exports = {
       size: 'Size',
       upload_title: 'Click to upload a new file',
       upload_subtitle: 'or drag and drop here',
-      errorAlert: `Error uploading file {fileName}: {error}`,
+      uploadError: `Error uploading file {fileName}`,
+      uploadSuccess: 'File {fileName} uploaded successfully',
+      removedError: 'Error removing file {fileName} from library',
+      removedSuccess: 'File {fileName} removed successfully',
     },
     submission_link: {
       title: 'Link',

@@ -101,7 +101,6 @@ function QuestionsCard({
     render();
   }
   if (!translations) return null;
-
   return (
     <TotalLayoutStepContainer
       Footer={

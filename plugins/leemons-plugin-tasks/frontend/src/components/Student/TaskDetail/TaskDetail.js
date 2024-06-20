@@ -14,6 +14,7 @@ import { getMultiClassData } from '@assignables/helpers/getClassData';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import { useHistory, useLocation } from 'react-router-dom';
 import useUserAgents from '@users/hooks/useUserAgents';
+import PropTypes from 'prop-types';
 import StepContainer from './components/StepContainer/StepContainer';
 
 function useTaskDetailLocalizations() {
@@ -169,3 +170,9 @@ export default function TaskDetail({ id, student, preview }) {
     </TotalLayoutContainer>
   );
 }
+
+TaskDetail.propTypes = {
+  id: PropTypes.string,
+  student: PropTypes.string,
+  preview: PropTypes.bool,
+};

@@ -12,7 +12,7 @@ async function importQbanks(filePath, programs) {
       // Qbank program
       const program = programs[qbank.program];
 
-      qbank.program = program.id;
+      qbank.program = program?.id;
       qbank.subjects = (qbank.subjects || '')
         ?.split(',')
         .map((val) => trim(val))

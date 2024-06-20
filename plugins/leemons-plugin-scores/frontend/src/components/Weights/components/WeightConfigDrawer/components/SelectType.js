@@ -22,10 +22,10 @@ export default function SelectType() {
         value: 'roles',
       },
       // ! DISABLE MODULES FOR NOW
-      // {
-      //   label: typesT('modules'),
-      //   value: 'modules',
-      // },
+      {
+        label: typesT('modules'),
+        value: 'modules',
+      },
     ],
     [typesT]
   );

@@ -1,5 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { classByIdsRequest, detailProgramRequest } from '@academic-portfolio/request';
+import {
+  classByIdsRequest,
+  detailProgramRequest,
+  getProfilesRequest,
+} from '@academic-portfolio/request';
 import {
   Box,
   Tabs,
@@ -96,6 +100,18 @@ const PermissionsData = ({
   const { classes: classesStyles } = PermissionsDataStyles();
   const [activeTab, setActiveTab] = useState('tab1');
 
+  const [teacherProfile, setTeacherProfile] = useState(null);
+
+  const getTeacherProfile = async () => {
+    const response = await getProfilesRequest();
+    setTeacherProfile(response?.profiles?.teacher);
+  };
+  // EFFECTS
+  // ··············································································
+  useEffect(() => {
+    getTeacherProfile();
+  }, []);
+
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
@@ -140,8 +156,8 @@ const PermissionsData = ({
     const assetPermissions = [];
     const programsNeedCenter = [];
     const classesNeedCenter = [];
-    _.forEach(Object.keys(asset.permissions), (role) => {
-      _.forEach(asset.permissions[role], (permission) => {
+    _.forEach(Object.keys(asset?.permissions), (role) => {
+      _.forEach(asset?.permissions[role], (permission) => {
         const obj = getObjectByPermission(permission);
         if (obj) {
           if (obj.center === null && obj.class) classesNeedCenter.push(obj.class);
@@ -394,7 +410,9 @@ const PermissionsData = ({
       }
     }
     if (profileSysName === 'teacher') {
-      result.push({ label: t('permissionsData.labels.shareTypeClasses'), value: 'classes' });
+      if (!asset.providerData || asset.providerData.role === 'content-creator') {
+        result.push({ label: t('permissionsData.labels.shareTypeClasses'), value: 'classes' });
+      }
       result.push({ label: t('permissionsData.labels.shareTypeUsers'), value: 'users' });
     }
 
@@ -466,7 +484,7 @@ const PermissionsData = ({
       {!isEmpty(asset) && (
         <ContextContainer className={classesStyles.contentContainer}>
           <Text className={classesStyles.titleItem}>{t('permissionsData.header.libraryItem')}</Text>
-          <Paper bordered padding={1} shadow="none" className={classesStyles.libraryItem}>
+          <Paper padding={1} shadow="none" className={classesStyles.libraryItem}>
             <LibraryCardEmbed asset={asset} hideIcon />
           </Paper>
           <Text className={classesStyles.titleTabs}>
@@ -624,6 +642,12 @@ const PermissionsData = ({
                       roles={roles}
                       value={usersData}
                       alreadySelectedUsers={editUsersData}
+                      onlyForTeachers={
+                        asset.providerData &&
+                        asset.providerData.role &&
+                        asset.providerData.role !== 'content-creator'
+                      }
+                      teacherProfile={teacherProfile}
                       onChange={setUsersData}
                       asset={asset}
                       t={t}

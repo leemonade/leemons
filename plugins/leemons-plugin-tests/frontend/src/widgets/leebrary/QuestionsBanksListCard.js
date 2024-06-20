@@ -11,6 +11,8 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+
 import { QuestionBankIcon } from '../../components/Icons/QuestionBankIcon';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
@@ -22,7 +24,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
   },
 }));
 
-const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
+const QuestionsBanksListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { classes } = ListCardStyles({ selected });
   const { openDeleteConfirmationModal } = useLayout();
@@ -64,6 +66,13 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, ...props }) => {
           },
         });
       }
+      if (asset.shareable) {
+        items.push({
+          icon: <ShareIcon />,
+          children: t('share'),
+          onClick: onShare,
+        });
+      }
     }
 
     return items;
@@ -87,6 +96,7 @@ QuestionsBanksListCard.propTypes = {
   variant: PropTypes.string,
   selected: PropTypes.bool,
   onRefresh: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default QuestionsBanksListCard;

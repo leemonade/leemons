@@ -414,6 +414,7 @@ module.exports = {
       save: 'Guardar',
       nextActivity: 'Siguiente actividad',
       goToModule: 'Dashboard del módulo',
+      goBackToDashboardPreview: 'Volver al dashboard',
     },
     submission_step: {
       instructions: 'Instrucciones',
@@ -428,7 +429,10 @@ module.exports = {
       size: 'Tamaño',
       upload_title: 'Click para buscar un archivo nuevo',
       upload_subtitle: 'o arrastrar aquí desde el ordenador',
-      errorAlert: `Error al subir archivo {fileName}: {error}`,
+      uploadError: `Error al subir el archivo {fileName}`,
+      uploadSuccess: 'El archivo {fileName} se ha subido correctamente',
+      removedError: 'Error al eliminar el archivo {fileName} de la biblioteca',
+      removedSuccess: 'El archivo {fileName} se ha eliminado correctamente',
     },
     submission_link: {
       title: 'Enlace',

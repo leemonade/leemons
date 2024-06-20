@@ -20,6 +20,7 @@ const { knowledgeAreaExistsInCenter } = require('../knowledges');
 const {
   addComunicaRoomsBetweenStudentsAndTeachers,
 } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
+const { getSubjectGroupCourseNamesFromClassData } = require('../common');
 
 async function addClass({ data, ctx }) {
   try {
@@ -192,16 +193,14 @@ async function addClass({ data, ctx }) {
 
     let classe = (await classByIds({ ids: nClass.id, ctx }))[0];
 
+    const displayNameParsed = getSubjectGroupCourseNamesFromClassData(classe);
+
     // Comunica set up
-    let subName = program.name;
-    if (classe.groups?.abbreviation) {
-      subName += ` - ${classe.groups?.abbreviation}`;
-    }
+
     const roomData = {
-      name: classe.subject.name,
-      // name: `${classe.subject.name} ${subName}`,
+      name: displayNameParsed.subject,
       type: ctx.prefixPN('class.group'),
-      subName,
+      subName: displayNameParsed.courseAndGroupParsed,
       bgColor: classe.subject.color,
       image: null,
       icon: '/public/academic-portfolio/subject-icon.svg', // Default
@@ -242,8 +241,10 @@ async function addClass({ data, ctx }) {
       classes: [classe],
       ctx,
     });
-
-    await ctx.tx.emit('after-add-class', { class: classe });
+    await ctx.tx.emit('after-add-class', {
+      class: classe,
+      displayName: `${displayNameParsed.subject} - ${displayNameParsed.courseAndGroupParsed}`,
+    });
 
     if (teachers) {
       await Promise.all(
