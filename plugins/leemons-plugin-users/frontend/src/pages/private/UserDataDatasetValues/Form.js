@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@bubbles-ui/components';
-import formWithTheme from '@common/formWithTheme';
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 function Form({ data, formActions }) {
@@ -10,7 +10,7 @@ function Form({ data, formActions }) {
     [JSON.stringify(data.data.value)]
   );
 
-  const [form, _formActions] = formWithTheme(
+  const [form, _formActions] = useFormWithTheme(
     data.data.jsonSchema,
     data.data.jsonUI,
     undefined,

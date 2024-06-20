@@ -1,27 +1,17 @@
 /* eslint-disable no-nested-ternary */
+import React from 'react';
+import PropTypes from 'prop-types';
+import _, { find, isNil, map } from 'lodash';
+import { useHistory } from 'react-router-dom';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import {
-  Box,
-  ContextContainer,
-  createStyles,
-  PageContainer,
-  TotalLayoutContainer,
-} from '@bubbles-ui/components';
-// TODO: HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
+import { Box, createStyles, PageContainer, TotalLayoutContainer } from '@bubbles-ui/components';
 import { useStore } from '@common';
-import prefixPN from '@dashboard/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 import { ZoneWidgets } from '@widgets';
-import _, { find, isNil, map } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useHistory } from 'react-router-dom';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import checkUserAgentDatasetsRequest from '@users/request/checkUserAgentDatasets';
 
-const rightZoneWidth = '320px';
-const Styles = createStyles((theme) => ({
+const Styles = createStyles(() => ({
   header: {
     position: 'relative',
     height: 80,
@@ -49,7 +39,6 @@ export default function AcademicDashboard({ session }) {
   });
   const history = useHistory();
   const { classes: styles } = Styles();
-  const [t] = useTranslateLoader(prefixPN('dashboard'));
   const scrollRef = React.useRef();
 
   async function selectProgram(program) {
@@ -72,13 +61,13 @@ export default function AcademicDashboard({ session }) {
   // FIRST LOAD
 
   async function init() {
+    checkUserAgentDatasetsRequest();
+
     const { programs } = await getUserProgramsRequest();
     store.programs = _.map(programs, (program) => ({
       ...program,
       imageUrl: leemons.apiUrl + program.imageUrl,
     }));
-
-    checkUserAgentDatasetsRequest();
 
     try {
       if (store.programs.length > 0) {
@@ -174,28 +163,6 @@ export default function AcademicDashboard({ session }) {
           </Box>
         </PageContainer>
       </Box>
-
-      {/* -- RIGHT ZONE -- */}
-      {/* store.selectedProgram ? (
-          <Paper
-            sx={(theme) => ({
-              position: 'fixed',
-              right: 0,
-              top: 0,
-              bottom: 0,
-              background: theme.colors.uiBackground02,
-              width: rightZoneWidth,
-            })}
-          >
-            <ZoneWidgets zone="dashboard.program.right">
-              {({ Component, key }) => (
-                <Box key={key}>
-                  <Component program={store.selectedProgram} session={session} />
-                </Box>
-              )}
-            </ZoneWidgets>
-          </Paper>
-        ) : null */}
     </TotalLayoutContainer>
   );
 }

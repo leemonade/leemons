@@ -586,7 +586,7 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const data = await getDataForUserAgentDatasets({ ctx });
+      const data = await getDataForUserAgentDatasets({ userAgentId: ctx.params?.userAgentId, ctx });
       return { status: 200, data };
     },
   },
@@ -599,7 +599,7 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const data = await saveDataForUserAgentDatasets({
-        data: ctx.request.body,
+        data: ctx.params,
         ctx,
       });
       return { status: 200, data };

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const getSchema = require('../datasetSchema/getSchema');
 const deleteValues = require('./deleteValues');

@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
-async function saveData({ value, ctx }) {
+async function saveData({ value, locationName, ctx }) {
   const response = await ctx.tx.call('dataset.dataset.setValues', {
-    locationName: 'user-data',
+    locationName,
     pluginName: 'users',
     values: value,
     userAgent: ctx.meta.userSession.userAgents,
@@ -26,6 +26,7 @@ async function saveDataForUserAgentDatasets({ data, ctx }) {
     _.map(data, (d) =>
       saveData({
         value: d.value,
+        locationName: d.locationName,
         ctx: {
           ...ctx,
           meta: {

@@ -1,4 +1,4 @@
-import formWithTheme from './formWithTheme';
+import { useFormWithTheme } from './hooks/useFormWithTheme';
 import getObjectArrayKeys from './getObjectArrayKeys';
 import regex from './regex';
 import unflatten from './unflatten';
@@ -37,7 +37,7 @@ function htmlToText(html) {
 }
 
 export {
-  formWithTheme,
+  useFormWithTheme,
   getObjectArrayKeys,
   regex,
   unflatten,

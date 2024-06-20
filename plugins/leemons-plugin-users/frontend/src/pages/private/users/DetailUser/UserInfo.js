@@ -9,8 +9,9 @@ import { getSessionCenter, getSessionProfile } from '@users/session';
 import { UserAgentsTags } from '@users/components/UserDetail/components/UserAgentsTags';
 import { useRequestErrorMessage } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import { updateUserImageRequest } from '@users/request';
+import { getDataForUserAgentDatasetsRequest, updateUserImageRequest } from '@users/request';
 import compressImage from '@leebrary/helpers/compressImage';
+import { UserDatasets } from './UserDatasets';
 
 function getViewMode(profile) {
   if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
@@ -50,6 +51,17 @@ function UserInfo({ session }) {
     }
   }
 
+  async function loadDataSets() {
+    const userAgentId = userAgents[0]?.id;
+    if (!userAgentId) return;
+    const { data } = await getDataForUserAgentDatasetsRequest(userAgentId);
+    console.log(data);
+  }
+
+  React.useEffect(() => {
+    loadDataSets();
+  }, [userAgents]);
+
   return (
     <TLayout>
       <TLayout.Header
@@ -88,6 +100,7 @@ function UserInfo({ session }) {
                 />
               )}
               <EnrollUserSummary userId={userId} center={center} viewMode={viewMode} />
+              <UserDatasets userAgentId={userAgents[0]?.id} isEditMode={false} />
             </ContextContainer>
           </Box>
         </Stack>

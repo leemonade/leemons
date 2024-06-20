@@ -41,7 +41,7 @@ module.exports = {
       localeDescriptionDescription: 'Descripción del campo',
       localeHelpLabel: 'Texto de ayuda',
       localeHelpDescription: 'Información para orientar al usuario sobre el contenido esperado',
-      localeMultioptionSelectPlaceholderLabel: 'Primera opción',
+      localeMultioptionSelectPlaceholderLabel: 'Placeholder',
       translateOptionsHelpLabel: 'El contenido no traducido aparecerá en el idioma por defecto',
       translateOptionsButtonLabel: 'Opción de traducción',
       translateOptionsModalTitle: 'Traducción de opciones',

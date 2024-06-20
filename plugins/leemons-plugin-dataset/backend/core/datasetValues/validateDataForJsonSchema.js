@@ -1,7 +1,8 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { LeemonsValidator } = require('@leemons/validator');
 
-// TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
+// TODO ADD CUSTOM VALIDATOR FOR PHONE NUMBERS/ETZ
 function validateDataForJsonSchema({ jsonSchema, data }) {
   const schema = {
     type: 'object',
@@ -55,6 +56,15 @@ function validateDataForJsonSchema({ jsonSchema, data }) {
           },
         },
       };
+    }
+  });
+
+  // When an Admin removes a field from the dataset, the editing permissions for that field are not removed for users.
+  // This results in the field having an undefined value, causing the JSON Schema validator to fail.
+  // Therefore, we ensure the field is not in the dataset and does not have an undefined value.
+  _.forIn(data, (value, key) => {
+    if (!jsonSchema.properties[key] && !data[key]) {
+      delete data[key];
     }
   });
 

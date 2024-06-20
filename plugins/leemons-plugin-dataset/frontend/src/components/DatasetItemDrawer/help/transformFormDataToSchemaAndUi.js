@@ -191,9 +191,9 @@ const transformFormDataToSchemaAndUi = (_item, locale) => {
       case DATASET_DATA_TYPES.user.type:
         handleUserField({ schema });
         break;
-      case DATASET_DATA_TYPES.archive.type:
-        // handleFileField({ schema });
-        break;
+      // case DATASET_DATA_TYPES.archive.type:
+      // handleFileField({ schema });
+      //  break;
       default:
         break;
     }

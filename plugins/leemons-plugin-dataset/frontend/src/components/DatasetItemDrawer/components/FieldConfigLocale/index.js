@@ -11,7 +11,7 @@ import { Multioption } from './Multioption';
 import { Boolean } from './Boolean';
 import { Select } from './Select';
 
-const configFieldTypes = {
+const CONFIG_FIELD_TYPES = {
   text_field: null,
   rich_text: null,
   number: null,
@@ -38,7 +38,7 @@ const FieldConfigLocaleItem = ({ localeConfig }) => {
       <Label />
       <Description />
       <Help />
-      {configFieldTypes[fieldType] ? configFieldTypes[fieldType] : configFieldTypes.default}
+      {CONFIG_FIELD_TYPES[fieldType] ? CONFIG_FIELD_TYPES[fieldType] : CONFIG_FIELD_TYPES.default}
     </FieldConfigLocaleContext.Provider>
   );
 };

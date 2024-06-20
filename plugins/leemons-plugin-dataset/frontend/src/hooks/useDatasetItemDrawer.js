@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import * as _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -10,7 +11,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addSuccessAlert } from '@layout/alert';
 import PropTypes from 'prop-types';
 import { DATASET_ITEM_DRAWER_DEFAULT_PROPS, DatasetItemDrawer } from '@dataset/components';
-import formWithTheme from '@common/formWithTheme';
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
 import transformItemToSchemaAndUi from '@dataset/components/help/transformItemToSchemaAndUi';
 import prefixPN from '../helpers/prefixPN';
 import { getDatasetSchemaFieldLocaleRequest, saveDatasetFieldRequest } from '../request';
@@ -33,6 +34,10 @@ const ItemDrawer = ({
     },
   });
   const [, setR] = useState();
+  const SELECT_ALL_LABEL = t('selectOptions.allLabel');
+
+  // ····················································
+  // UTILS
 
   function render() {
     setR(new Date().getTime());
@@ -45,103 +50,113 @@ const ItemDrawer = ({
     }));
   }
 
+  // ····················································
+  // HELPERS
+
+  function filterSchemaKeys(schema) {
+    const schemaGoodKeys = {};
+    if (schema.title) schemaGoodKeys.title = schema.title;
+    if (schema.description) schemaGoodKeys.description = schema.description;
+    if (schema.selectPlaceholder) schemaGoodKeys.selectPlaceholder = schema.selectPlaceholder;
+    if (schema.optionLabel) schemaGoodKeys.optionLabel = schema.optionLabel;
+    if (schema.yesOptionLabel) schemaGoodKeys.yesOptionLabel = schema.yesOptionLabel;
+    if (schema.noOptionLabel) schemaGoodKeys.noOptionLabel = schema.noOptionLabel;
+    if (schema.items?.enumNames) schemaGoodKeys.items = { enumNames: schema.items.enumNames };
+    if (schema.enumNames) schemaGoodKeys.enumNames = schema.enumNames;
+    if (schema.frontConfig?.checkboxLabels) {
+      schemaGoodKeys.frontConfig = { checkboxLabels: schema.frontConfig.checkboxLabels };
+    }
+    return schemaGoodKeys;
+  }
+
+  function filterUiKeys(ui) {
+    const uiGoodKeys = {};
+    if (ui['ui:help']) uiGoodKeys['ui:help'] = ui['ui:help'];
+    return uiGoodKeys;
+  }
+
+  function prepareSchemaWithAllConfig(data) {
+    const schemaWithAllConfig = transformItemToSchemaAndUi(data, Object.keys(data.locales)[0]);
+    if (item) {
+      schemaWithAllConfig.schema.frontConfig = {
+        ...schemaWithAllConfig.schema.frontConfig,
+        ...item.frontConfig,
+      };
+      schemaWithAllConfig.schema.frontConfig.permissions = data.frontConfig.permissions;
+    }
+    return schemaWithAllConfig;
+  }
+
+  function prepareSchemaLocales(data) {
+    const schemaLocales = {};
+    _.forIn(data.locales, (value, key) => {
+      schemaLocales[key] = transformItemToSchemaAndUi(data, key);
+      schemaLocales[key].schema = filterSchemaKeys(schemaLocales[key].schema);
+      schemaLocales[key].ui = filterUiKeys(schemaLocales[key].ui);
+    });
+    return schemaLocales;
+  }
+
+  function oneOfCentersHasRole(roleId, schemaWithAllConfig) {
+    const selectedCenters = _.filter(
+      contextRef.current.centers,
+      ({ id }) => schemaWithAllConfig.schema.frontConfig.centers.indexOf(id) >= 0
+    );
+    return selectedCenters.some(({ roles }) => roles.some(({ id }) => id === roleId));
+  }
+
+  function assignProfilePermissions(schemaWithAllConfig, permissions) {
+    _.forEach(schemaWithAllConfig.schema.frontConfig.permissions, ({ id, view, edit }) => {
+      permissions.permissions[id] = [];
+      if (view) permissions.permissions[id].push('view');
+      if (edit) permissions.permissions[id].push('edit');
+    });
+  }
+
+  function assignRolePermissions(schemaWithAllConfig, permissions) {
+    _.forEach(schemaWithAllConfig.schema.frontConfig.permissions, ({ view, edit, roles }) => {
+      _.forEach(roles, (role) => {
+        if (oneOfCentersHasRole(role.id, schemaWithAllConfig)) {
+          permissions.permissions[role.id] = [];
+          if (view) permissions.permissions[role.id].push('view');
+          if (edit) permissions.permissions[role.id].push('edit');
+        }
+      });
+    });
+  }
+
+  function calculatePermissions(schemaWithAllConfig) {
+    const permissionsType = schemaWithAllConfig.schema.frontConfig.isAllCenterMode
+      ? 'profile'
+      : 'role';
+    const permissions = { permissionsType, permissions: {} };
+
+    if (schemaWithAllConfig.schema.frontConfig.permissions) {
+      if (permissionsType === 'profile') {
+        assignProfilePermissions(schemaWithAllConfig, permissions);
+      } else {
+        assignRolePermissions(schemaWithAllConfig, permissions);
+      }
+    }
+    return permissions;
+  }
+
+  // ····················································
+  // METHODS
+
   async function onSave(_data) {
     const data = _.cloneDeep(_data);
     data.frontConfig = data.config;
     delete data.config;
     try {
       // ES: Datos principales para crear/actualizar el schema
-      const schemaWithAllConfig = transformItemToSchemaAndUi(data, Object.keys(data.locales)[0]);
-      if (item) {
-        schemaWithAllConfig.schema.frontConfig = {
-          ...schemaWithAllConfig.schema.frontConfig,
-          ...item.frontConfig,
-        };
-        schemaWithAllConfig.schema.frontConfig.permissions = data.frontConfig.permissions;
-      }
+      const schemaWithAllConfig = prepareSchemaWithAllConfig(data);
+
       // ES: Datos secundarios traducciones
-      const schemaLocales = {};
-      _.forIn(data.locales, (value, key) => {
-        schemaLocales[key] = transformItemToSchemaAndUi(data, key);
+      const schemaLocales = prepareSchemaLocales(data);
 
-        // Schema
-        const schemaGoodKeys = {};
-        if (schemaLocales[key].schema.title) schemaGoodKeys.title = schemaLocales[key].schema.title;
-        if (schemaLocales[key].schema.description)
-          schemaGoodKeys.description = schemaLocales[key].schema.description;
-        if (schemaLocales[key].schema.selectPlaceholder)
-          schemaGoodKeys.selectPlaceholder = schemaLocales[key].schema.selectPlaceholder;
-        if (schemaLocales[key].schema.optionLabel)
-          schemaGoodKeys.optionLabel = schemaLocales[key].schema.optionLabel;
-        if (schemaLocales[key].schema.yesOptionLabel)
-          schemaGoodKeys.yesOptionLabel = schemaLocales[key].schema.yesOptionLabel;
-        if (schemaLocales[key].schema.noOptionLabel)
-          schemaGoodKeys.noOptionLabel = schemaLocales[key].schema.noOptionLabel;
-        if (schemaLocales[key].schema.items?.enumNames)
-          schemaGoodKeys.items = { enumNames: schemaLocales[key].schema.items.enumNames };
-        if (schemaLocales[key].schema.enumNames)
-          schemaGoodKeys.enumNames = schemaLocales[key].schema.enumNames;
-        if (schemaLocales[key].schema.frontConfig?.checkboxLabels)
-          schemaGoodKeys.frontConfig = {
-            checkboxLabels: schemaLocales[key].schema.frontConfig.checkboxLabels,
-          };
-        schemaLocales[key].schema = schemaGoodKeys;
-
-        // Ui
-        const uiGoodKeys = {};
-        if (schemaLocales[key].ui['ui:help'])
-          uiGoodKeys['ui:help'] = schemaLocales[key].ui['ui:help'];
-        schemaLocales[key].ui = uiGoodKeys;
-      });
       // ES: Calculamos los permisos finales
-      const permissions = {
-        // ES: Si esta marcado como que los permisos afecten a todos los centros decimos que las ids
-        // son de tipo perfil, si solo afecta a unos centros en concreto es rol por que se almacenaran
-        // las ids de los roles que sean la interseccion de centro - perfil
-        permissionsType: schemaWithAllConfig.schema.frontConfig.isAllCenterMode
-          ? 'profile'
-          : 'role',
-        permissions: {},
-      };
-      if (schemaWithAllConfig.schema.frontConfig.permissions) {
-        if (permissions.permissionsType === 'profile') {
-          _.forEach(schemaWithAllConfig.schema.frontConfig.permissions, ({ id, view, edit }) => {
-            permissions.permissions[id] = [];
-            if (view) permissions.permissions[id].push('view');
-            if (edit) permissions.permissions[id].push('edit');
-          });
-        } else {
-          const oneOfCentersHasRole = (role) => {
-            const selectedCenters = _.filter(
-              contextRef.current.centers,
-              ({ id }) => schemaWithAllConfig.schema.frontConfig.centers.indexOf(id) >= 0
-            );
-            let hasRole = false;
-            // eslint-disable-next-line consistent-return
-            _.forEach(selectedCenters, ({ roles }) => {
-              // eslint-disable-next-line consistent-return
-              _.forEach(roles, ({ id }) => {
-                if (id === role) {
-                  hasRole = true;
-                  return false;
-                }
-              });
-              if (hasRole) return false;
-            });
-            return hasRole;
-          };
-          _.forEach(schemaWithAllConfig.schema.frontConfig.permissions, ({ view, edit, roles }) => {
-            _.forEach(roles, (role) => {
-              if (oneOfCentersHasRole(role.id)) {
-                permissions.permissions[role.id] = [];
-                if (view) permissions.permissions[role.id].push('view');
-                if (edit) permissions.permissions[role.id].push('edit');
-              }
-            });
-          });
-        }
-      }
-
+      const permissions = calculatePermissions(schemaWithAllConfig);
       schemaWithAllConfig.schema = { ...schemaWithAllConfig.schema, ...permissions };
 
       if (item && item.id) {
@@ -212,7 +227,7 @@ const ItemDrawer = ({
         contextRef.current.drawer.defaultLocale = locale;
         contextRef.current.drawer.profiles = profiles;
         contextRef.current.drawer.selectOptions.centers = [
-          { label: t('selectOptions.allLabel'), value: '*' },
+          { label: SELECT_ALL_LABEL, value: '*' },
           ..._.map(centers, ({ id, name }) => ({
             label: name,
             value: id,
@@ -221,7 +236,7 @@ const ItemDrawer = ({
 
         // User centers
         contextRef.current.drawer.selectOptions.userCenters = [
-          { label: t('selectOptions.allLabel'), value: '*' },
+          { label: SELECT_ALL_LABEL, value: '*' },
           ..._.map(centers, ({ id, name }) => ({
             label: name,
             value: id,
@@ -230,7 +245,7 @@ const ItemDrawer = ({
 
         // User profiles
         contextRef.current.drawer.selectOptions.userProfiles = [
-          { label: t('selectOptions.allLabel'), value: '*' },
+          { label: SELECT_ALL_LABEL, value: '*' },
           ..._.map(profiles, ({ id, name }) => ({
             label: name,
             value: id,
@@ -305,7 +320,8 @@ const ItemDrawer = ({
     load();
   }, [tLoading, item]);
 
-  console.log('contextRef.current.defaultValues:', contextRef.current.defaultValues);
+  // ····················································
+  // RENDER
 
   return (
     <DatasetItemDrawer
@@ -319,7 +335,7 @@ const ItemDrawer = ({
           },
         }
       }
-      formWithTheme={formWithTheme}
+      formWithTheme={useFormWithTheme}
       opened={opened}
       onClose={onClose}
       onSave={onSave}

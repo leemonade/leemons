@@ -6,7 +6,6 @@ import {
   Col,
   Grid,
   Text,
-  Title,
   Button,
   TextInput,
   Stack,
@@ -69,6 +68,12 @@ const TranslateOptions = () => {
     }
   }, [JSON.stringify(checkboxValues)]);
 
+  const statusIcon = React.useMemo(() => {
+    if (hasErrors) return <IconError />;
+    if (hasWarnings) return <IconWarning />;
+    return <IconSuccess />;
+  }, [hasErrors, hasWarnings]);
+
   return (
     <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
       <Stack direction="row" alignItems="baseline" spacing={4}>
@@ -76,33 +81,33 @@ const TranslateOptions = () => {
           <Button variant="link" onClick={() => setOpened(true)}>
             {messages.translateOptionsButtonLabel}
           </Button>
-          {hasErrors ? <IconError /> : hasWarnings ? <IconWarning /> : <IconSuccess />}
+          {statusIcon}
         </Stack>
         <Text role="productive" size="xs">
           {messages.translateOptionsHelpLabel}
         </Text>
       </Stack>
-      <Drawer opened={opened} onClose={() => setOpened(false)} size={715} close>
-        <Title order={4}>{messages.translateOptionsModalTitle}</Title>
-        <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
-          <Text>{messages.translateOptionsModalDescription}</Text>
-        </Box>
-        <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
-          <Grid columns={100}>
-            <Col span={35}>
-              <Text color="primary">{messages.translateOptionsValueColLabel}</Text>
-            </Col>
-            <Col span={65}>
-              <Text color="primary">
-                {messages.translateOptionsTranslationColLabel.replace('{code}', label)}
-              </Text>
-            </Col>
-          </Grid>
-        </Box>
-        {checkboxValues
-          ? checkboxValues.map(({ key, value }) => {
-              return (
-                <Grid columns={100} align="center">
+      <Drawer opened={opened} onClose={() => setOpened(false)} size="lg">
+        <Drawer.Header title={messages.translateOptionsModalTitle} />
+        <Drawer.Content>
+          <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
+            <Text>{messages.translateOptionsModalDescription}</Text>
+          </Box>
+          <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+            <Grid columns={100}>
+              <Col span={35}>
+                <Text color="primary">{messages.translateOptionsValueColLabel}</Text>
+              </Col>
+              <Col span={65}>
+                <Text color="primary">
+                  {messages.translateOptionsTranslationColLabel.replace('{code}', label)}
+                </Text>
+              </Col>
+            </Grid>
+          </Box>
+          {checkboxValues
+            ? checkboxValues.map(({ key, value }) => (
+                <Grid key={key} columns={100} align="center">
                   <Col span={35}>
                     <Text>{value}</Text>
                   </Col>
@@ -130,14 +135,16 @@ const TranslateOptions = () => {
                     />
                   </Col>
                 </Grid>
-              );
-            })
-          : null}
-        <Box sx={(theme) => ({ marginTop: theme.spacing[4], alignItems: 'end' })}>
-          <Button onClick={() => setOpened(false)}>
-            {messages.translateOptionsContinueButtonLabel}
-          </Button>
-        </Box>
+              ))
+            : null}
+        </Drawer.Content>
+        <Drawer.Footer>
+          <Drawer.Footer.RightActions>
+            <Button onClick={() => setOpened(false)}>
+              {messages.translateOptionsContinueButtonLabel}
+            </Button>
+          </Drawer.Footer.RightActions>
+        </Drawer.Footer>
       </Drawer>
     </Box>
   );

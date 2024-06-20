@@ -28,6 +28,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import checkUserAgentDatasetsRequest from '@users/request/checkUserAgentDatasets';
 import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
 import SkeletonDashboardLoader from './SkeletonDashboardLoader';
 
@@ -103,6 +104,8 @@ function AdminDashboard({ session }) {
   const [t, tl] = useTranslateLoader(prefixPN('adminDashboard'));
 
   async function init() {
+    checkUserAgentDatasetsRequest();
+
     const {
       data: { academicPortfolio, instances, pc },
     } = await getAdminDashboardRequest();

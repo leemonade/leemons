@@ -272,6 +272,7 @@ module.exports = {
     pageDescription: 'Add required data',
     save: 'Save',
     saveSuccess: 'Data saved successfully',
+    additionalInfo: 'Additional info',
   },
   detailUser: {
     title: 'My Profile',

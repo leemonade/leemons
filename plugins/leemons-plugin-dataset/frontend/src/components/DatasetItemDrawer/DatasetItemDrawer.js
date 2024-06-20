@@ -85,8 +85,9 @@ const DatasetItemDrawer = ({
       classes,
       form,
       render,
+      locales,
     }),
-    [classes, form, render]
+    [classes, form, render, locales]
   );
 
   return (

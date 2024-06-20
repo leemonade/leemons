@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import { isFunction } from 'lodash';
 import { Box, Paper, Title } from '@bubbles-ui/components';
-import FormWithTheme from '@common/formWithTheme';
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
 import { DatasetItemDrawerContext } from '../context/DatasetItemDrawerContext';
 import { transformFormDataToSchemaAndUi } from '../help/transformFormDataToSchemaAndUi';
 
@@ -36,7 +36,7 @@ export const Preview = () => {
 
   const data = null;
   const props = useMemo(() => ({ formData: data }), [data]);
-  const func = isFunction(formWithTheme) ? formWithTheme : FormWithTheme;
+  const func = isFunction(formWithTheme) ? formWithTheme : useFormWithTheme;
   const [form] = func(state.schema, state.ui, undefined, props);
 
   return (

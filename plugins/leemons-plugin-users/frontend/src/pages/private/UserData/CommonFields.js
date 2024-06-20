@@ -22,7 +22,7 @@ import {
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import formWithTheme from '@common/formWithTheme';
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
 import PropTypes from 'prop-types';
 import { useLayout } from '@layout/context';
 
@@ -94,7 +94,7 @@ function CommonFields({ t }) {
 
   useAsync(load2, onSuccess2, onError2);
 
-  const [form] = formWithTheme(dataTest?.compileJsonSchema, dataTest?.compileJsonUI);
+  const [form] = useFormWithTheme(dataTest?.compileJsonSchema, dataTest?.compileJsonUI);
 
   async function reload() {
     try {
