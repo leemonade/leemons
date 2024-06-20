@@ -9,11 +9,11 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useWeights from '@scores/requests/hooks/queries/useWeights';
 import useWeightMutation from '@scores/requests/hooks/mutations/useWeightMutation';
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import SelectType from './components/SelectType';
 import Explanation from './components/Explanation';
 import Weighting from './components/Weighting';
 import useResetFormOnClassDataChange from './hooks/useResetFormOnClassDataChange';
-import useSubjectName from './hooks/useSubjectName';
 import useIsTotalValue100Percent from './hooks/useIsTotalValue100Percent';
 import PreWeightingAlerts from './components/PreWeightingAlerts';
 
@@ -25,7 +25,7 @@ export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
   const { mutateAsync: setWeight, isLoading: isRunningMutation } = useWeightMutation();
 
   const isTotalValue100Percent = useIsTotalValue100Percent({ control: form.control });
-  const className = useSubjectName({ klass });
+  const { courseAndGroupParsed: className } = getSubjectGroupCourseNamesFromClassData(klass);
 
   useResetFormOnClassDataChange({ weight: weightValue, class: klass, form });
 

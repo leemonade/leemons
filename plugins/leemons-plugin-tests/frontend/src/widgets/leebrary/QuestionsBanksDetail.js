@@ -11,7 +11,7 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { useLayout } from '@layout/context';
 import { AssetMetadataQuestionBank } from '@tests/components/AssetMetadataQuestionBank';
 
-const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
+const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -31,6 +31,9 @@ const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
     }
     if (asset.pinned === true) {
       toolbarItems.unpin = t('unpin');
+    }
+    if (asset.shareable) {
+      toolbarItems.share = t('share');
     }
   }
 
@@ -87,6 +90,7 @@ const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
       toolbarItems={toolbarItems}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      onShare={onShare}
     />
   );
 };
@@ -94,6 +98,7 @@ const QuestionsBanksDetail = ({ asset, onRefresh, ...props }) => {
 QuestionsBanksDetail.propTypes = {
   asset: PropTypes.any,
   onRefresh: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default QuestionsBanksDetail;

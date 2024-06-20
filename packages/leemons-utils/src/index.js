@@ -6,6 +6,7 @@ const { timeoutPromise } = require('./timeoutPromise');
 const { getObjectArrayKeys } = require('./getObjectArrayKeys');
 const { numberToEncodedLetter } = require('./numberToEncodedLetter');
 const { settledResponseToManyResponse } = require('./settledResponseToManyResponse');
+const { generateMoleculerConfig } = require('./moleculer');
 
 module.exports = {
   env,
@@ -17,4 +18,5 @@ module.exports = {
   getObjectArrayKeys,
   numberToEncodedLetter,
   settledResponseToManyResponse,
+  generateMoleculerConfig,
 };

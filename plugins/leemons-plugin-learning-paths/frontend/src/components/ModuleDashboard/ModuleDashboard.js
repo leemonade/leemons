@@ -325,8 +325,12 @@ export function ModuleDashboard({ id, preview }) {
     if (isStudent) {
       const assignations = Object.values(assignationsById);
 
+      if (!assignations?.length) {
+        return;
+      }
+
       const hasAllGrades = assignations
-        .filter((assignation) => assignation?.requiresScoring)
+        .filter((assignation) => assignation?.instance?.requiresScoring)
         .every((assignation) => assignation.grades.length >= assignation.instance.subjects.length);
 
       if (hasAllGrades) {

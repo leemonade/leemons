@@ -137,14 +137,7 @@ const LibraryDetailContent = ({
                   {canAccessData.map((user, index) => (
                     <Box key={index} className={classes.canAccessItem}>
                       <Box className={classes.avatarWrapper}>
-                        <UserDisplayItem
-                          variant="inline"
-                          size="md"
-                          alt={user?.name}
-                          name={user?.name}
-                          surnames={user?.surnames}
-                          image={user.avatar}
-                        />
+                        <UserDisplayItem variant="inline" size="md" {...user} />
                       </Box>
                       <Box className={classes.canAccessTextContainer}>
                         <Text className={classes.canAccessText}>

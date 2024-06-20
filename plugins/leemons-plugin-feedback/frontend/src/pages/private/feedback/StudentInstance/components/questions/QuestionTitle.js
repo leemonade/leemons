@@ -1,17 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, createStyles, HtmlText, ImageLoader, Text } from '@bubbles-ui/components';
+import { Box, createStyles, HtmlText, ImageLoader, Text, Stack } from '@bubbles-ui/components';
 
-export const Styles = createStyles((theme, { viewMode }) => ({
+export const Styles = createStyles((theme) => ({
   questionStep: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: theme.spacing[4],
     paddingBottom: theme.spacing[4],
-    paddingLeft: theme.spacing[5],
     paddingRight: theme.spacing[5],
-    backgroundColor: viewMode ? theme.colors.ui04 : 'transparent',
+    backgroundColor: 'transparent',
   },
   questionTitleIcon: {
     display: 'inline-block',
@@ -46,7 +45,7 @@ function QuestionTitle({ t, viewMode, question, currentValue }) {
       return message;
     }
     return null;
-  }, [question, JSON.stringify(currentValue)]);
+  }, [question, currentValue]);
 
   return (
     <Box className={classes.questionStep}>
@@ -55,7 +54,10 @@ function QuestionTitle({ t, viewMode, question, currentValue }) {
       </Box>
       <Box className={classes.questionTitleText}>
         <Text size="md" role="productive" color="primary" strong>
-          <HtmlText>{question?.question}</HtmlText>
+          <Stack spacing={1}>
+            <HtmlText>{`${question.order + 1}.`}</HtmlText>
+            <HtmlText>{question?.question}</HtmlText>
+          </Stack>
         </Text>
         {subtitle ? (
           <Text size="sm" role="productive">
