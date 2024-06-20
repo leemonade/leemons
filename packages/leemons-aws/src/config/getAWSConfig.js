@@ -8,7 +8,7 @@ const { cloneDeep } = require('lodash');
 /**
  *
  * @param {Object} props
- * @param {AWSClientConfig & {}} props.config
+ * @param {AWSClientConfig} props.config
  * @param {AWSCredentials} props.credentials
  */
 function getAWSConfig({ config = {}, credentials }) {

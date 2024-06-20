@@ -22,5 +22,6 @@ export type Context = MoleculerContext & {
   meta: MoleculerContext['meta'] & {
     deploymentID: string;
     userSession: UserSession;
-  }
+  },
+  callerPlugin: string;
 }
