@@ -33,6 +33,7 @@
   ],
   "scripts": {
     "start:app": "yarn workspace leemons-app backend:dev",
+    "start:front": "yarn workspace leemons-app front:dev",
     "done": "echo Done ✨",
     "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
     "format:check": "prettier .",
