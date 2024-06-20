@@ -3,10 +3,18 @@ import { difference } from 'lodash';
 import { useMemo } from 'react';
 
 function usePendingEvaluationsCount({ instance }) {
-  const moduleTotal = useMemo(
-    () => instance.assignable?.submission?.activities?.length,
-    [instance.assignable?.submission?.activities]
-  );
+  const moduleTotal = useMemo(() => {
+    let requireScoringCounter = 0;
+    const activitiesStatus = instance?.students?.[0]?.metadata?.moduleStatus || [];
+    if (activitiesStatus) {
+      activitiesStatus.forEach((activity) => {
+        if (activity.requiresScoring) {
+          requireScoringCounter += 1;
+        }
+      });
+    }
+    return requireScoringCounter;
+  }, [instance.students]);
 
   const pendingEvaluationActivitiesCount = useMemo(() => {
     const activitiesCompleted = [];
