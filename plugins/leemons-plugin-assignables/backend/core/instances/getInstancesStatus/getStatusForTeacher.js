@@ -23,7 +23,7 @@ function getAssignationsStatusCount({
     const hasGrades = !!assignation?.grades?.length;
     const didFinish = !!assignation?.timestamps?.end || activityFinished;
 
-    if (!requiresScoring && activityFinished) {
+    if (!requiresScoring && didFinish) {
       evaluatedCount++;
 
       return;
