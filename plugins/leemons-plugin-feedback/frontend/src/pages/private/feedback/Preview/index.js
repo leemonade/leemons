@@ -24,17 +24,16 @@ import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
-import { ChevronRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
+import { ChevRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import { getFeedbackRequest } from '@feedback/request';
 import { map } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
 
-const PreviewPageStyles = createStyles((theme, { viewMode }) => ({
+const PreviewPageStyles = createStyles((theme) => ({
   firstTableHeader: {
     paddingLeft: `${theme.spacing[6]}px !important`,
   },
   tableHeader: {
-    backgroundColor: theme.colors.interactive03h,
     paddingBottom: theme.spacing[2],
     paddingTop: theme.spacing[6],
     paddingLeft: theme.spacing[5],
@@ -293,6 +292,7 @@ export default function Preview() {
                             returnToTable={toggleQuestionMode}
                             feedback={store.feedback}
                             defaultValues={{}}
+                            scrollRef={scrollRef}
                           />
                         </Box>
                       ) : (
@@ -300,7 +300,7 @@ export default function Preview() {
                           <Box className={classes.showTestBar}>
                             <Button
                               rounded
-                              rightIcon={<ChevronRightIcon />}
+                              rightIcon={<ChevRightIcon />}
                               onClick={toggleQuestionMode}
                             >
                               {tP('showPreview')}
