@@ -82,7 +82,7 @@ function File({ assignation, preview }) {
       );
       extractExtensions.forEach((extension) => {
         if (extension === 'rtf') {
-          newExtensions[extension] = 'text/rtf';
+          newExtensions[extension] = '.rtf';
         } else {
           newExtensions[extension] = mime.getType(extension);
         }
