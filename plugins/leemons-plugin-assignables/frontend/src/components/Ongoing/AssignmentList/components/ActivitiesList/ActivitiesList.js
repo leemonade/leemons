@@ -255,7 +255,8 @@ function useOngoingData({ query, page, size, subjectFullLength }) {
     () =>
       parsedInstances
         ?.filter(
-          (instance) => !instance.parentModule || modulesOpened.includes(instance.parentModule)
+          (instance) =>
+            !!instance && (!instance.parentModule || modulesOpened.includes(instance.parentModule))
         )
         .map((instance) => ({
           ...instance,
