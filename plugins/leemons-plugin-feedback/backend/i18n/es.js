@@ -198,6 +198,7 @@ module.exports = {
     actionsHeader: 'Acciones',
     showPreview: 'Ver vista previa',
     returnToTable: 'Volver a la tabla',
+    next: 'Siguiente',
     goBackToDashboardPreview: 'Volver al dashboard',
   },
   feedbackDrawerDetail: {

@@ -1,33 +1,24 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
-  ActionButton,
-  ActivityAccordion,
-  ActivityAccordionPanel,
-  Badge,
   Box,
   Button,
-  ContextContainer,
   createStyles,
-  ImageLoader,
-  PageContainer,
   Stack,
-  Table,
   TotalLayoutContainer,
-  TotalLayoutStepContainer,
   TotalLayoutHeader,
   AssetFeedbackIcon,
+  VerticalStepperContainer,
 } from '@bubbles-ui/components';
 // TODO: fix this import from @common plugin
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@feedback/helpers/prefixPN';
-import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
 import { useStore } from '@common';
 import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import { ChevRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
 import { getFeedbackRequest } from '@feedback/request';
-import { map } from 'lodash';
 import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
+import IntroductionStep from '../StudentInstance/components/IntroductionStep';
 
 const PreviewPageStyles = createStyles((theme) => ({
   firstTableHeader: {
@@ -62,6 +53,7 @@ export default function Preview() {
   const [tD, t2V] = useTranslateLoader(prefixPN('feedbackDetail'));
   const { classes, cx } = PreviewPageStyles({}, { name: 'FeedbackPreview' });
   const scrollRef = useRef();
+  const [showIntroduction, setShowIntroduction] = useState(true);
   const isModulePreview = window?.location?.href?.includes('moduleId');
   const moduleId = window?.location?.href?.split('moduleId=')[1];
 
@@ -72,32 +64,6 @@ export default function Preview() {
 
   const history = useHistory();
   const params = useParams();
-
-  const tableHeaders = [
-    {
-      Header: tD('questionLabel'),
-      accessor: 'question',
-      className: cx(classes.tableHeader, classes.firstTableHeader),
-    },
-    {
-      Header: tD('responsesLabel'),
-      accessor: 'responses',
-      className: classes.tableHeader,
-    },
-    {
-      Header: tD('typeLabel'),
-      accessor: 'type',
-      className: classes.tableHeader,
-    },
-  ];
-
-  if (!isModulePreview) {
-    tableHeaders.push({
-      Header: tD('actionsHeader'),
-      accessor: 'actions',
-      className: classes.tableHeader,
-    });
-  }
 
   // function getStats() {
   //   const selectables = [];
@@ -161,26 +127,7 @@ export default function Preview() {
       store.currentId = params.id;
       const { feedback } = await getFeedbackRequest(params.id);
       store.feedback = feedback;
-      // const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
-      // // console.log(test);
-      // store.test = test;
-      // store.stats = getStats();
-      // store.test.questionResponses = {};
-      // forEach(store.test.questions, ({ id }) => {
-      //   store.test.questionResponses[id] = {
-      //     clues: 0,
-      //     points: 0,
-      //     status: null,
-      //   };
-      // });
-      // store.test.config = getConfigByInstance();
-      // store.test.questionsInfo = calculeInfoValues(
-      //   store.test.questions.length,
-      //   evaluationSystem.maxScale.number,
-      //   evaluationSystem.minScale.number,
-      //   evaluationSystem.minScaleToPromote.number
-      // );
-      // store.evaluationSystem = evaluationSystem;
+
       render();
     } catch (error) {
       addErrorAlert(error);
@@ -204,8 +151,8 @@ export default function Preview() {
     if (params?.id && (!store.currentId || store.currentId !== params.id) && t1V && t2V) init();
   }, [params, t1V, t2V]);
 
-  const editQuestion = () => {
-    goEditPage();
+  const advanceToQuestions = () => {
+    setShowIntroduction(false);
   };
 
   return (
@@ -242,101 +189,31 @@ export default function Preview() {
         fullWidth
         fullHeight
       >
-        <TotalLayoutStepContainer>
-          <ContextContainer
-            sx={(theme) => ({
-              // backgroundColor: theme.colors.uiBackground02,
-              paddingBottom: theme.spacing[12],
-              overflow: 'auto',
-            })}
-            fullHeight
-            fullWidth
-          >
-            {/* <AdminPageHeader
-          values={{
-            title: store.feedback?.name,
-          }}
-          buttons={{
-            duplicate: tP('edit'),
-            edit: tP('assign'),
-          }}
-          icon={<PluginFeedbackIcon />}
-          variant="teacher"
-          onDuplicate={() => goEditPage()}
-          onEdit={() => goAssignPage()}
-        /> */}
-            <PageContainer noFlex>
-              <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-                <ActivityAccordion
-                  state={store.statusAccordion}
-                  onChange={(e) => {
-                    store.statusAccordion = e;
-                    render();
-                  }}
-                >
-                  <ActivityAccordionPanel
-                    label={tP('questions')}
-                    rightSection={
-                      <Box>
-                        <Badge
-                          label={store.feedback?.questions?.length}
-                          size="md"
-                          color="stroke"
-                          closable={false}
-                        />
-                      </Box>
-                    }
-                    icon={
-                      <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-                        <ImageLoader
-                          className="stroke-current"
-                          src={'/public/feedback/questions-icon.svg'}
-                        />
-                      </Box>
-                    }
-                  >
-                    <Box>
-                      {store.useQuestionMode ? (
-                        <Box>
-                          <QuestionsCard
-                            viewMode
-                            returnToTable={toggleQuestionMode}
-                            feedback={store.feedback}
-                            defaultValues={{}}
-                            scrollRef={scrollRef}
-                          />
-                        </Box>
-                      ) : (
-                        <>
-                          <Box className={classes.showTestBar}>
-                            <Button
-                              rounded
-                              rightIcon={<ChevRightIcon />}
-                              onClick={toggleQuestionMode}
-                            >
-                              {tP('showPreview')}
-                            </Button>
-                          </Box>
-                          <Table
-                            columns={tableHeaders}
-                            data={map(store.feedback?.questions, (question) => ({
-                              ...getQuestionForTable(question, tD),
-                              actions: (
-                                <Stack justifyContent="end" fullWidth>
-                                  <ActionButton icon={<EditIcon />} onClick={editQuestion} />
-                                </Stack>
-                              ),
-                            }))}
-                          />
-                        </>
-                      )}
-                    </Box>
-                  </ActivityAccordionPanel>
-                </ActivityAccordion>
-              </Box>
-            </PageContainer>
-          </ContextContainer>
-        </TotalLayoutStepContainer>
+        <VerticalStepperContainer
+          scrollRef={scrollRef}
+          currentStep={showIntroduction ? 0 : 1}
+          data={[
+            { label: 'Introduction', status: 'OK' },
+            { label: 'Questions', status: 'OK' },
+          ]}
+        >
+          {showIntroduction ? (
+            <IntroductionStep
+              feedback={store.feedback ?? {}}
+              t={tP}
+              onNext={advanceToQuestions}
+              scrollRef={scrollRef}
+            />
+          ) : (
+            <QuestionsCard
+              setShowIntroduction={setShowIntroduction}
+              scrollRef={scrollRef}
+              returnToTable={toggleQuestionMode}
+              feedback={store.feedback ?? { questions: [] }}
+              defaultValues={{}}
+            />
+          )}
+        </VerticalStepperContainer>
       </Stack>
     </TotalLayoutContainer>
   );
