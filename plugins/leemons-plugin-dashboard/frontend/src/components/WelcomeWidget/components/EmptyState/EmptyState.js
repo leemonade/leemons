@@ -14,6 +14,7 @@ export function EmptyState() {
   const [t] = useTranslateLoader(
     prefixPN(`need_your_attention.welcome.${isTeacher ? 'teacher' : 'student'}`)
   );
+  const [linksT] = useTranslateLoader(prefixPN('need_your_attention.links'));
 
   const { classes, cx } = useEmptyStateStyles();
 
@@ -55,7 +56,7 @@ export function EmptyState() {
                   CTA: {
                     type: 'linkT',
                     value: 'helpCenter.cta',
-                    url: 'https://www.leemons.io/leemons-academy',
+                    url: linksT('academy'),
                   },
                 }}
               />
@@ -77,7 +78,7 @@ export function EmptyState() {
                   CTA: {
                     type: 'linkT',
                     value: 'leebrary.cta',
-                    url: '/private/leebrary',
+                    url: linksT('library'),
                   },
                 }}
               />
@@ -139,7 +140,7 @@ export function EmptyState() {
                 CTA: {
                   type: 'linkT',
                   value: 'helpCenter.cta',
-                  url: 'https://www.leemons.io/leemons-academy',
+                  url: linksT('academy'),
                 },
               }}
             />
