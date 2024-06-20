@@ -67,7 +67,6 @@ export default function File({ labels }) {
                   [extension]: extension,
                 };
               }, {});
-              console.log('validExtensions', validExtensions);
               field.onChange(validExtensions);
             }}
             label={labels?.format}
