@@ -14,7 +14,6 @@ import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Share
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { FeedbackCardIcon } from '../../components/FeedbackCardIcon';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
