@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0](https://github.com/leemonade/leemons/compare/1.1.0...1.2.0) (2024-06-12)
+
+
+### Features
+
+* Add ErrorBoundaries to PrivateLayout and to WidgetZone ([bffecd2](https://github.com/leemonade/leemons/commit/bffecd2ba95893dd23cd38d52a16f9f6098d6e24)), closes [#441](https://github.com/leemonade/leemons/issues/441)
+* Add ErrorBoundaries to PrivateLayout and to WidgetZone ([f017e51](https://github.com/leemonade/leemons/commit/f017e5122fffb8a0d2900431501e0bd52497e016)), closes [#441](https://github.com/leemonade/leemons/issues/441)
+
+
+### Bug Fixes
+
+* **feedback:** Added missing optional chaining ([bcd4c72](https://github.com/leemonade/leemons/commit/bcd4c72fb36dfe32b9fa543cf65c9bd9bbd1649d)), closes [#443](https://github.com/leemonade/leemons/issues/443)
+
+
+### Miscellaneous Chores
+
+* Release 1.2.0 ([d534286](https://github.com/leemonade/leemons/commit/d53428637e13f694ebed6a687edf821df29138ec))
+
 ## [1.1.0](https://github.com/leemonade/leemons/compare/1.0.1...1.1.0) (2024-06-06)
 
 
