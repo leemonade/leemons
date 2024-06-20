@@ -1,8 +1,17 @@
-import { Box, Button, createStyles, Modal, Paragraph, Stack, Text } from '@bubbles-ui/components';
-import { ArrowLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import {
+  Box,
+  Button,
+  createStyles,
+  Modal,
+  Paragraph,
+  ProgressBottomBar,
+  Stack,
+  Text,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
+import { ChevLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
-import HeaderProgressBar from '@feedback/pages/private/feedback/StudentInstance/components/questions/HeaderProgressBar';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
 import { setQuestionResponseRequest } from '@feedback/request';
@@ -61,6 +70,7 @@ function QuestionsCard({
   userId,
   modalMode,
   nextActivityUrl,
+  scrollRef,
 }) {
   const { classes } = Styles({ viewMode });
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
@@ -126,143 +136,172 @@ function QuestionsCard({
   }
 
   if (!translations) return null;
-
   return (
-    <Box className={classes.container}>
-      <Box className={classes.header}>
-        {viewMode ? (
-          <Box>
-            <Button
-              onClick={returnToTable}
-              variant="link"
-              leftIcon={<ArrowLeftIcon />}
-              color="secondary"
-            >
-              {t('returnToTable')}
-            </Button>
-          </Box>
-        ) : (
-          <Box className={classes.headerText}>
-            <Text size="sm" stronger>
-              {t('nQuestion', { n: store.currentIndex + 1 })}
-            </Text>
-            &nbsp;
-            {question.required ? <Text role="productive">{t('questionRequired')}</Text> : null}
-          </Box>
-        )}
-
-        <HeaderProgressBar current={store.maxIndex} max={feedback.questions.length} />
-      </Box>
-      {question ? (
-        <Box className={classes.questionCard}>
-          <QuestionTitle
-            t={t}
-            viewMode={viewMode}
-            currentValue={store.currentValue}
-            question={question}
-          />
-          <Box className={classes.questionContainer}>
-            {React.cloneElement(questionsByType[question.type], {
-              question,
-              feedback,
-              currentIndex: store.currentIndex,
-              onNext,
-              onPrev,
-              viewMode,
-              defaultValue: store.values[question.id],
-              setCurrentValue: (e) => {
-                store.currentValue = e;
-                render();
-              },
-              t,
-            })}
-          </Box>
-        </Box>
-      ) : null}
-      <Modal
-        title={t('finishModal')}
-        opened={store.showFinishModal}
-        onClose={() => {}}
-        centerTitle
-        centered
-        withCloseButton={false}
-        closeOnEscape={false}
-        closeOnClickOutside={false}
-        size={480}
-      >
-        <Stack direction="column" fullWidth spacing={8}>
-          <Paragraph align="center">{feedback.thanksMessage}</Paragraph>
-          {modalMode === 0 ? (
-            <Stack justifyContent="center">
-              {isModule ? (
-                <Button onClick={gotToModuleDashboard}>{t('moduleDashboard')}</Button>
-              ) : (
-                <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
-              )}
-            </Stack>
-          ) : null}
-          {modalMode === 1 ? (
-            <Stack justifyContent="space-between">
-              {isModule ? (
-                <Button variant="light" onClick={gotToModuleDashboard}>
-                  {t('moduleDashboard')}
-                </Button>
-              ) : (
-                <Button variant="light" onClick={goToOnGoing}>
-                  {t('pendingActivities')}
-                </Button>
-              )}
-              <Button onClick={goToResults}>{t('viewResults')}</Button>
-            </Stack>
-          ) : null}
-          {modalMode === 2 ? (
-            <Stack justifyContent="space-between">
-              <Button
-                variant="light"
-                rightIcon={<ExpandDiagonalIcon />}
-                compact
-                onClick={() => goToResults(null, true)}
-              >
-                {t('viewResults')}
+    <>
+      <Box className={classes.container}>
+        <Box className={classes.header}>
+          {viewMode ? (
+            <Box>
+              <Button onClick={returnToTable} leftIcon={<ChevLeftIcon />} color="secondary">
+                {t('returnToTable')}
               </Button>
-              <Link to={nextActivityUrl}>
-                <Button rightIcon={<ChevronRightIcon />} compact>
-                  {t('nextActivity')}
-                </Button>
-              </Link>
-            </Stack>
-          ) : null}
-          {modalMode === 3 ? (
-            <Stack justifyContent="space-between">
-              {isModule ? (
+            </Box>
+          ) : (
+            <Box className={classes.headerText}>
+              <Text size="sm" stronger>
+                {t('nQuestion', { n: store.currentIndex + 1 })}
+              </Text>
+              &nbsp;
+              {question.required ? <Text role="productive">{t('questionRequired')}</Text> : null}
+            </Box>
+          )}
+        </Box>
+        {question ? (
+          <Box className={classes.questionCard}>
+            <QuestionTitle
+              t={t}
+              viewMode={viewMode}
+              currentValue={store.currentValue}
+              question={question}
+            />
+            <Box className={classes.questionContainer}>
+              {React.cloneElement(questionsByType[question.type], {
+                question,
+                feedback,
+                currentIndex: store.currentIndex,
+                onNext,
+                onPrev,
+                viewMode,
+                defaultValue: store.values[question.id],
+                setCurrentValue: (e) => {
+                  store.currentValue = e;
+                  render();
+                },
+                t,
+              })}
+            </Box>
+          </Box>
+        ) : null}
+        <Modal
+          title={t('finishModal')}
+          opened={store.showFinishModal}
+          onClose={() => {}}
+          centerTitle
+          centered
+          withCloseButton={false}
+          closeOnEscape={false}
+          closeOnClickOutside={false}
+          size={480}
+        >
+          <Stack direction="column" fullWidth spacing={8}>
+            <Paragraph align="center">{feedback.thanksMessage}</Paragraph>
+            {modalMode === 0 ? (
+              <Stack justifyContent="center">
+                {isModule ? (
+                  <Button onClick={gotToModuleDashboard}>{t('moduleDashboard')}</Button>
+                ) : (
+                  <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
+                )}
+              </Stack>
+            ) : null}
+            {modalMode === 1 ? (
+              <Stack justifyContent="space-between">
+                {isModule ? (
+                  <Button variant="light" onClick={gotToModuleDashboard}>
+                    {t('moduleDashboard')}
+                  </Button>
+                ) : (
+                  <Button variant="light" onClick={goToOnGoing}>
+                    {t('pendingActivities')}
+                  </Button>
+                )}
+                <Button onClick={goToResults}>{t('viewResults')}</Button>
+              </Stack>
+            ) : null}
+            {modalMode === 2 ? (
+              <Stack justifyContent="space-between">
                 <Button
                   variant="light"
                   rightIcon={<ExpandDiagonalIcon />}
                   compact
-                  onClick={() => gotToModuleDashboard(null, true)}
+                  onClick={() => goToResults(null, true)}
                 >
-                  {t('moduleDashboard')}
+                  {t('viewResults')}
                 </Button>
-              ) : (
-                <Button
-                  variant="light"
-                  rightIcon={<ExpandDiagonalIcon />}
-                  compact
-                  onClick={() => goToOnGoing(null, true)}
-                >
-                  {t('pendingActivities')}
+                <Link to={nextActivityUrl}>
+                  <Button rightIcon={<ChevronRightIcon />} compact>
+                    {t('nextActivity')}
+                  </Button>
+                </Link>
+              </Stack>
+            ) : null}
+            {modalMode === 3 ? (
+              <Stack justifyContent="space-between">
+                {isModule ? (
+                  <Button
+                    variant="light"
+                    rightIcon={<ExpandDiagonalIcon />}
+                    compact
+                    onClick={() => gotToModuleDashboard(null, true)}
+                  >
+                    {t('moduleDashboard')}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="light"
+                    rightIcon={<ExpandDiagonalIcon />}
+                    compact
+                    onClick={() => goToOnGoing(null, true)}
+                  >
+                    {t('pendingActivities')}
+                  </Button>
+                )}
+                <Link to={nextActivityUrl}>
+                  <Button rightIcon={<ChevronRightIcon />} compact>
+                    {t('nextActivity')}
+                  </Button>
+                </Link>
+              </Stack>
+            ) : null}
+          </Stack>
+        </Modal>
+      </Box>
+      <Box sx={{ marginLeft: -18 }}>
+        <TotalLayoutFooterContainer
+          fixed={true}
+          scrollRef={scrollRef}
+          // width={'fit-content'}
+          rightZone={
+            <Box style={{ display: 'flex', justifyContent: 'flex-end', minWidth: '120px' }}>
+              {store.currentIndex !== feedback.questions.length - 1 && (
+                <Button variant="outline" onClick={onNext}>
+                  {t('next')}
                 </Button>
               )}
-              <Link to={nextActivityUrl}>
-                <Button rightIcon={<ChevronRightIcon />} compact>
-                  {t('nextActivity')}
+            </Box>
+          }
+          leftZone={
+            <Box style={{ display: 'flex', justifyContent: 'flex-start', minWidth: '120px' }}>
+              {store.currentIndex > 0 && (
+                <Button variant="outline" onClick={onPrev}>
+                  {t('back')}
                 </Button>
-              </Link>
-            </Stack>
-          ) : null}
-        </Stack>
-      </Modal>
-    </Box>
+              )}
+            </Box>
+          }
+        >
+          <Box sx={() => ({ display: 'flex', justifyContent: 'center', marginLeft: '24px' })}>
+            <Box sx={() => ({ maxWidth: '280px', width: '100%' })}>
+              <ProgressBottomBar
+                size="md"
+                labelTop={`${store.currentIndex + 1} / ${feedback.questions.length}`}
+                value={((store.currentIndex + 1) / feedback.questions.length) * 100}
+              />
+            </Box>
+          </Box>
+        </TotalLayoutFooterContainer>
+      </Box>
+    </>
   );
 }
 
@@ -276,6 +315,7 @@ QuestionsCard.propTypes = {
   returnToTable: PropTypes.func,
   modalMode: PropTypes.number,
   nextActivityUrl: PropTypes.any,
+  scrollRef: PropTypes.any,
 };
 
 export default QuestionsCard;
