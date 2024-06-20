@@ -96,7 +96,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
   }
 
   return (
-    <ContextContainer title={tCommon(isStudent ? 'sharedEnrollments' : 'enrollments')}>
+    <ContextContainer title={tCommon('enrollments')}>
       <Tabs>
         {enrollments?.map((program) => (
           <TabPanel key={program.id} label={program.name}>
