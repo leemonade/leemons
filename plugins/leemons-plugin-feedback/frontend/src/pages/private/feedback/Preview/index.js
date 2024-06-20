@@ -90,12 +90,15 @@ export default function Preview() {
       accessor: 'type',
       className: classes.tableHeader,
     },
-    {
+  ];
+
+  if (!isModulePreview) {
+    tableHeaders.push({
       Header: tD('actionsHeader'),
       accessor: 'actions',
       className: classes.tableHeader,
-    },
-  ];
+    });
+  }
 
   // function getStats() {
   //   const selectables = [];

@@ -239,7 +239,12 @@ export default function Detail() {
                   {t('showInTests')}
                 </Button>
               </Box>
-              <QuestionsTable withStyle hideCheckbox questions={store.test?.questions} />
+              <QuestionsTable
+                withStyle
+                hideCheckbox
+                questions={store.test?.questions}
+                hideOpenIcon={isModulePreview}
+              />
             </>
           )}
         </Box>
