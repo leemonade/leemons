@@ -1,4 +1,4 @@
-const { keys, trim, isEmpty, isNil, toLower, pick } = require('lodash');
+const { keys, trim, isEmpty, isNil, toLower, pick, omit } = require('lodash');
 const showdown = require('showdown');
 const mime = require('mime');
 const itemsImport = require('./helpers/simpleListImport');
@@ -165,9 +165,38 @@ function getDataType(extensions) {
   }, {});
 }
 
+function booleanCheck(value) {
+  if (toLower(value) === 'no') {
+    return false;
+  }
+  if (toLower(value) === 'yes') {
+    return true;
+  }
+  return value;
+}
+
+const getMetadataFields = (task, assets) => {
+  const metadataObj = (task.metadata ?? '')
+    .split(',')
+    .map((field) => field.trim())
+    .reduce((acc, item) => {
+      const [key, value] = item.split('|');
+      acc[key] = booleanCheck(value) ?? null;
+      return acc;
+    }, {});
+
+  metadataObj.visitedSteps = metadataObj.visitedSteps.split('&');
+
+  const assetForStatementImage = assets[metadataObj.statementImage];
+  if (assetForStatementImage?.id) {
+    metadataObj.leebrary = { statementImage: [assetForStatementImage.id] };
+  }
+  return omit(metadataObj, ['statementImage']);
+};
+
 async function importTasks({ filePath, config: { users, centers, programs, assets }, ctx }) {
   const items = await itemsImport(filePath, 'ta_tasks', 40);
-  const subjects = await itemsImport(filePath, 'ta_task_subjects', 40);
+  const subjects = await itemsImport(filePath, 'ta_task_subjects', 40, false);
 
   await Promise.all(
     keys(items)
@@ -182,7 +211,7 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
           .filter(([, item]) => item.task === key)
           .map(([, item]) => ({
             subject: program.subjects[item.subject]?.id,
-            level: item.level,
+            level: item.level ?? null,
             program: program.id,
             curriculum: {
               objectives: (item.objectives || '')
@@ -231,11 +260,20 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
 
         const creator = users[task.creator];
         const development = await parseDevelopment({ task, assets, userSession: creator, ctx });
+        const metadata = {
+          ...getMetadataFields(task, assets),
+          development: development ?? null,
+        };
+        if (metadata.hasDevelopment) {
+          metadata.development = development?.length ? development : [];
+        } else {
+          metadata.development = null;
+        }
 
         items[key] = {
           asset: {
             name: task.name,
-            tagline: task.tagline,
+            tagline: task.tagline || null,
             description: task.description || null,
             tags: task.tags || [],
             color: task.color || null,
@@ -255,11 +293,7 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
             ? converter.makeHtml(task.instructions_for_students)
             : null,
           resources: task.resources,
-          metadata: development
-            ? {
-                development,
-              }
-            : undefined,
+          metadata,
         };
       })
   );

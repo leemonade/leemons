@@ -156,7 +156,7 @@ function QuestionsStep({
 
   const hasValue = React.useMemo(() => {
     if (question?.type === 'multiResponse') {
-      return store.currentValue.length >= question.properties.minResponses;
+      return store?.currentValue?.length >= question?.properties?.minResponses;
     }
     if (question?.type === 'likertScale') {
       return !isNil(store.currentValue);

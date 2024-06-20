@@ -116,7 +116,9 @@ function UserProgramCalendar({
     store.currentLoaded = JSON.stringify({ program, classe });
     store.centers = getCentersWithToken();
     if (store.centers) {
-      const promises = [getCalendarsToFrontendRequest(store.centers[0].token)];
+      const promises = [
+        getCalendarsToFrontendRequest(store.centers[0].token, { showHiddenColumns: true }),
+      ];
       if (program) promises.push(listSessionClassesRequest({ program: program.id }));
       const [centerData, programData] = await Promise.all(promises);
       store.centerData = centerData;

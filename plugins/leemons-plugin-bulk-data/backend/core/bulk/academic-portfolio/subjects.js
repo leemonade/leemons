@@ -72,7 +72,7 @@ async function importAcademicPortfolioSubjects(
       // ·····················································
       // TEACHERS
 
-      const teachers = items[key].teachers
+      const teachers = (items[key].teachers || '')
         .split(',')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))

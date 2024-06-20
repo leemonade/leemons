@@ -13,7 +13,7 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
   const [notModuleData, setNotModuleData] = useState({});
   const isModule = instance?.assignable?.role === 'learningpaths.module';
   const { classes } = EvaluationCardRightElementStyles();
-  const { moduleTotal, pendingEvaluationActivitiesCount } = usePendingEvaluationsCount({
+  const { pendingEvaluationActivitiesCount } = usePendingEvaluationsCount({
     instance,
   });
 
@@ -63,7 +63,6 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
         <Box className={classes.commonContainer}>
           <Box>
             <Text className={classes.submitedNumber}>{pendingEvaluationActivitiesCount}</Text>
-            <Text className={classes.separator}>/{moduleTotal}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>
             <Text className={classes.pendingLabel}>

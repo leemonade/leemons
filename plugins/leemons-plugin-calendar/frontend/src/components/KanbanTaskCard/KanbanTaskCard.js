@@ -22,6 +22,7 @@ import { NYACardBodyStyles } from '@assignables/components/NYACard/NYCardBody/NY
 import { useSession } from '@users/session';
 import getUserFullName from '@users/helpers/getUserFullName';
 import getActivityType from '@assignables/helpers/getActivityType';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { KanbanTaskCardStyles } from './KanbanTaskCard.styles';
 import {
   KANBAN_TASK_CARD_PROP_TYPES,
@@ -47,6 +48,7 @@ const getCalendar = (value, config) => find(config.calendars, { id: value.calend
 const KanbanTaskCard = ({ value, config, onClick, labels }) => {
   const session = useSession();
   const classIds = getClassIds(value, config);
+  const isTeacher = useIsTeacher();
 
   const { classes: classesNya } = NYACardBodyStyles({}, { name: 'NYACardBody' });
   const calendar = getCalendar(value, config);
@@ -126,6 +128,10 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
     return {};
   }, [translations]);
 
+  if (isTeacher && isFromInstance && trans?.deadline) {
+    trans.deadline.late = null;
+  }
+
   const end = value.deadline?.deadline || value.endDate;
   let endEl = null;
   const formattedDeadline = getDeadlineData(
@@ -136,10 +142,14 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
   const deadlineColors = getColorByDateRange(end ? new Date(end) : null, new Date(value.startDate));
   endEl = (
     <Box className={classesNya.deadline}>
-      <Text className={classesNya.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
-      <Text className={classesNya.deadlineDate} style={{ color: deadlineColors }}>
-        {formattedDeadline.status}
-      </Text>
+      <Text className={classesNya.deadlineDate}>{`${formattedDeadline.date}${
+        formattedDeadline.status ? ' - ' : ''
+      }`}</Text>
+      {!!formattedDeadline.status && (
+        <Text className={classesNya.deadlineDate} style={{ color: deadlineColors }}>
+          {formattedDeadline.status}
+        </Text>
+      )}
     </Box>
   );
 

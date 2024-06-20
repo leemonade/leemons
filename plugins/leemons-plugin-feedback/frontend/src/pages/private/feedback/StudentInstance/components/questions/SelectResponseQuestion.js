@@ -14,13 +14,17 @@ export const Styles = createStyles((theme) => ({
     border: `1px solid ${theme.colors.ui01}`,
     marginBottom: theme.spacing[2],
     borderRadius: 4,
+    '&:hover': {
+      borderColor: theme.other.core.color.neutral['300'],
+      backgroundColor: theme.other.core.color.primary['100'],
+    },
     '&:last-child': {
       marginBottom: 0,
     },
   },
   responseActive: {
-    borderColor: theme.colors.interactive01d,
-    backgroundColor: theme.colors.interactive01v1,
+    borderColor: theme.other.core.color.neutral['300'],
+    backgroundColor: `${theme.other.core.color.primary['200']} !important`,
   },
   questionResponseImageContainer: {
     border: '1px solid',

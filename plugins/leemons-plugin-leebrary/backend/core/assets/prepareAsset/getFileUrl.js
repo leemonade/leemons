@@ -1,7 +1,15 @@
 const { isString } = require('lodash');
 const { getByName: getProviderByName } = require('../../providers/getByName');
 
-async function getFileUrl({ fileID, provider, uri, segment, isPublic = false, ctx }) {
+async function getFileUrl({
+  fileID,
+  provider,
+  uri,
+  segment,
+  isPublic = false,
+  signedURLExpirationTime = null,
+  ctx,
+}) {
   if (!isString(fileID)) {
     return '';
   }
@@ -24,6 +32,7 @@ async function getFileUrl({ fileID, provider, uri, segment, isPublic = false, ct
     signedUrl = await ctx.tx.call(`${provider}.files.getReadStream`, {
       key: uri,
       forceStream: false,
+      expirationTime: signedURLExpirationTime,
     });
   }
   return signedUrl;

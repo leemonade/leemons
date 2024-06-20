@@ -10,6 +10,7 @@ export default function FinalDropdown({
   setIsDirty = noop,
   onPublish = noop,
   onAssign = noop,
+  disabled,
 }) {
   // ························································
   // HANDLERS
@@ -38,7 +39,7 @@ export default function FinalDropdown({
         { label: t('publishAndAssign'), onClick: handleOnAssign },
       ]}
       // loading={store.saving === 'publish'}
-      // disabled={store.saving}
+      disabled={disabled}
     >
       {t('finish')}
     </DropdownButton>
@@ -52,4 +53,5 @@ FinalDropdown.propTypes = {
   onAssign: PropTypes.func,
   store: PropTypes.any,
   setIsDirty: PropTypes.func,
+  disabled: PropTypes.bool,
 };

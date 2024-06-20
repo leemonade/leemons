@@ -92,19 +92,19 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
     // CALENDAR
 
     let creatorCalendars = calendars[event.creator];
-    let userCalendars = null;
 
     if (!creatorCalendars) {
       const creator = users[event.creator];
-      userCalendars = await ctx.call(
+      const results = await ctx.call(
         'calendar.calendar.getCalendars',
         {},
         {
           meta: { userSession: { ...creator } },
         }
       );
-
-      calendars[event.creator] = userCalendars.ownerCalendars;
+      // Previously only the userCalendars.ownerCalendars were kept in mind. As a result no tags where being correctly gotten and some events would not be created as a consequence.
+      // Now we search all calendars where needed.
+      calendars[event.creator] = results; // todo .calendars
       creatorCalendars = calendars[event.creator];
     }
 
@@ -113,7 +113,10 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
 
       // Calendar is a Program
       if (ref) {
-        event.calendar = creatorCalendars.find((calendar) => calendar.key.indexOf(ref.id) > 0)?.key;
+        // This has been kept as it was. Searching only within ownerCalendars. Potentially, it should search en creatorCalendars.calendars instead
+        event.calendar = creatorCalendars.ownerCalendars.find(
+          (calendar) => calendar.key.indexOf(ref.id) > 0
+        )?.key;
       }
 
       // Calendar is a User
@@ -121,13 +124,13 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
         ref = users[event.calendar];
 
         if (ref) {
-          event.calendar = creatorCalendars
+          event.calendar = creatorCalendars.ownerCalendars
             .filter((calendar) => calendar.key.indexOf('users.calendar.agent') > -1)
             .find((calendar) =>
               ref.userAgents.map(({ id }) => id).some((element) => calendar.key.includes(element))
             )?.key;
 
-          // ES: Si se ha indicado que además del usuario, tenga classes vinculadas
+          // ES: Eventos de tipo tarea pueden estar etiquetados con alguna clase (clase, no asignatura)
           // EN: If the event has classes linked
           if (event.calendar && event.classes && !isEmpty(event.classes)) {
             const classes = event.classes
@@ -141,7 +144,7 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
 
                 if (!classroom?.id) return null;
 
-                return userCalendars.calendars.find(
+                return creatorCalendars.calendars.find(
                   (calendar) => calendar.key.indexOf(classroom.id) > 0
                 )?.id;
               })
@@ -166,7 +169,7 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
         }
 
         if (ref) {
-          event.calendar = userCalendars.calendars.find(
+          event.calendar = creatorCalendars.calendars.find(
             (calendar) => calendar.key.indexOf(ref.id) > 0
           )?.key;
         }

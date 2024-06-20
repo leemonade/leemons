@@ -54,6 +54,7 @@ module.exports = {
     responseLabel: 'Answer',
     addResponse: 'Add answer',
     saveResponse: 'Save answer',
+    saveChanges: 'Save changes',
     cancel: 'Cancel',
     withImagesLabel: 'With images',
     responsesRequired: 'Field required',
@@ -76,7 +77,7 @@ module.exports = {
     npsStatement:
       'How likely would you be to recommend this product or service to other family members or friends?',
     npsInfo:
-      'The NPS format is a scale of 0 to 10 where 0=Not at all likely and 10=Very likely. For those cases where it is necessary to translate or adapt the wording of these labels, modifications are allowed, but we strongly recommend not to modify their underlying meaning. More information about NPS',
+      'The NPS format is a scale of 0 to 10 where 0=Not at all likely and 10=Very likely. For those cases where it is necessary to translate or adapt the wording of these labels, modifications are allowed, but we strongly recommend not to modify their underlying meaning.',
     npsNotLikely: 'Not likely',
     npsVeryLikely: 'Very likely',
     openResponse: 'Open response',
@@ -99,6 +100,7 @@ module.exports = {
     view: 'Preview',
     edit: 'Edit',
     feedback: 'Feedback',
+    share: 'Share',
     assign: 'Assign',
     delete: 'Delete',
     deleted: 'Deleted',
@@ -111,6 +113,7 @@ module.exports = {
     open: 'Open',
     duplicate: 'Duplicate',
     duplicated: 'Duplicated',
+    share: 'Share',
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
   },
@@ -195,6 +198,7 @@ module.exports = {
     actionsHeader: 'Acciones',
     showPreview: 'See preview',
     returnToTable: 'Return to table',
+    goBackToDashboardPreview: 'Go back to dashboard',
   },
   feedbackDrawerDetail: {
     survey: 'Survey',

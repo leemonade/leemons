@@ -18,6 +18,7 @@ module.exports = {
     cancelModalDescription: 'Do you want to cancel the document?',
     cancelModalConfirm: 'Confirm',
     cancelModalCancel: 'Back',
+    goBackToDashboardPreview: 'Go back to dashboard',
   },
   documentDetail: {
     basic: 'Basic',

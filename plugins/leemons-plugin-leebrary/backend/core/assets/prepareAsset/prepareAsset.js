@@ -2,7 +2,7 @@ const { capitalize, isEmpty, isNil, isString } = require('lodash');
 const { prepareAssetType } = require('./prepareAssetType');
 const { getFileUrl } = require('./getFileUrl');
 
-async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
+async function prepareAsset({ rawAsset, isPublished = true, signedURLExpirationTime, ctx }) {
   // Create a prepared asset that also contains the original raw asset
   const asset = { ...rawAsset, original: rawAsset, prepared: true };
   asset.public = [1, '1', true, 'true'].includes(asset.public);
@@ -20,6 +20,7 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         fileID: asset.file.id,
         provider: asset.file.provider,
         uri: asset.file.uri,
+        signedURLExpirationTime,
         ctx,
       });
     }
@@ -42,12 +43,13 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
         fileID: asset.cover.id,
         provider: asset.cover.provider,
         uri: asset.cover.uri,
+        signedURLExpirationTime,
         ctx,
       });
     } else if (asset.cover instanceof File) {
       asset.cover = URL.createObjectURL(asset.cover);
     } else if (isString(asset.cover)) {
-      asset.cover = await getFileUrl({ fileID: asset.cover, ctx });
+      asset.cover = await getFileUrl({ fileID: asset.cover, signedURLExpirationTime, ctx });
     }
   }
 
@@ -56,6 +58,7 @@ async function prepareAsset({ rawAsset, isPublished = true, ctx }) {
       fileID: asset.icon.id,
       provider: asset.icon.provider,
       uri: asset.icon.uri,
+      signedURLExpirationTime,
       ctx,
     });
   }

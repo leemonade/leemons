@@ -11,6 +11,7 @@ const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { getServiceModels } = require('../models');
 const restActions = require('./rest/subject.rest');
 const { getTeachersBySubjects, getSubjectCredits, addSubject } = require('../core/subjects');
+const { subjectByIds } = require('../core/subjects');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -40,6 +41,17 @@ module.exports = {
     addSubject: {
       handler(ctx) {
         return addSubject({ ...ctx.params, ctx });
+      },
+    },
+    subjectsByIds: {
+      handler(ctx) {
+        const { ids, shouldPrepareAssets, ...filters } = ctx.params;
+        return subjectByIds({
+          ids: Array.isArray(ids) ? ids : [ids],
+          ...filters,
+          shouldPrepareAssets,
+          ctx,
+        });
       },
     },
   },

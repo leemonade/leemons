@@ -36,7 +36,7 @@ const getSubjectGroupCourseNamesFromClassData = (classData) => {
     courseAndGroupParsed: '',
   };
   const subjectName = classData?.subject?.name;
-  const subjectId = classData?.subject?.internalId && ` - ${classData?.subject?.internalId}`;
+  const subjectId = classData?.subject?.internalId && `- ${classData?.subject?.internalId}`;
 
   data.subject = `${subjectName} ${subjectId || ''}`;
 

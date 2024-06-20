@@ -12,7 +12,7 @@ import {
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
-import Link from './components/Link/Link';
+import { Link } from 'react-router-dom';
 import File from './components/File/File';
 import useSubmissionStepStyles from './SubmissionStep.style';
 
@@ -36,6 +36,9 @@ function SubmissionStep({
 
   const { classes } = useSubmissionStepStyles();
 
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const moduleId = window?.location?.href?.split('moduleId=')[1];
+
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
@@ -49,17 +52,23 @@ function SubmissionStep({
             </Button>
           }
           rightZone={
-            <Button
-              loading={isLoading}
-              onClick={async () => {
-                setIsLoading(true);
-                await onNextStep();
-                setIsLoading(false);
-              }}
-              disabled={!submission || preview}
-            >
-              {buttonsT('submit')}
-            </Button>
+            isModulePreview ? (
+              <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
+                <Button variant="outline">{buttonsT('goBackToDashboardPreview')}</Button>
+              </Link>
+            ) : (
+              <Button
+                loading={isLoading}
+                onClick={async () => {
+                  setIsLoading(true);
+                  await onNextStep();
+                  setIsLoading(false);
+                }}
+                disabled={!submission || preview}
+              >
+                {buttonsT('submit')}
+              </Button>
+            )
           }
         />
       }

@@ -368,7 +368,7 @@ module.exports = {
         helpCTA: 'Cómo gestionar favoritos.',
         description:
           'Pulsa en el icono corazón en la tarjeta de cualquier elemento de la biblioteca para destacarlo en esta sección y tenerlo a mano.',
-        help: 'Y si necesitas ayuda, accede a {CTA}',
+        // help: 'Y si necesitas ayuda, accede a {CTA}',
       },
       'leebrary-shared': {
         descriptionCTA: 'Nuevo',
@@ -420,14 +420,23 @@ module.exports = {
         helpCTA: 'Cómo crear {pluralCategory}.',
         description:
           'Con las encuestas podrás conocer el grado de satisfacción de tus estudiantes, solicitar feedback sobre contenido, tareas, etc... y visualizar los resultados en un informe super útil. Crea tu primera encuesta pulsando {CTA}',
-        help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
+        // help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
       },
       'assignables.learningpaths.module': {
         descriptionCTA: 'Crea un {singularCategory}.',
         helpCTA: 'Cómo crear {pluralCategory}.',
         description:
           'Un módulo es una situación de aprendizaje que tiene varias etapas (un contenido, un test, una tarea...) y que deben realizarse de forma consecutiva. Para crear un módulo deberás subir o crear antes los contenidos y actividades que lo componen. Empieza ya pulsando {CTA}',
-        help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
+        // help: 'Y si quieres saber como funcionan en detalle, accede a {CTA}',
+      },
+      links: {
+        'media-files': 'https://www.leemons.io/es/academy-post/subir-recursos',
+        bookmarks: 'https://www.leemons.io/es/academy-post/crear-marcadores',
+        'assignables.content-creator': 'https://www.leemons.io/es/academy-post/crear-contenido',
+        'assignables.task': 'https://www.leemons.io/es/academy-post/crear-asignar-tareas-1',
+        'assignables.tests': 'https://www.leemons.io/es/academy-post/crear-asignar-tests-1',
+        'tests-questions-banks': 'https://www.leemons.io/es/academy-post/bancos-de-preguntas',
+        academy: 'https://www.leemons.io/es/leemons-academy',
       },
     },
   },

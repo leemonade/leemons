@@ -23,7 +23,10 @@ function prepareURL(asset) {
     return asset.url;
   }
   let assetUrl = '';
-  if (['document', 'file', 'video', 'audio'].includes(fileType) && isString(fileExtension)) {
+  if (
+    ['document', 'file', 'video', 'audio', 'application'].includes(fileType) &&
+    isString(fileExtension)
+  ) {
     assetUrl = getFileUrl(asset.fileId);
   }
 
