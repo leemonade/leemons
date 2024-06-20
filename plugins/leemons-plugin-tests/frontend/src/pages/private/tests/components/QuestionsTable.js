@@ -40,7 +40,7 @@ export default function QuestionsTable({
 
   const handleTextCell = (cellValue) => (
     <TextClamp lines={2} withToolTip>
-      <Text> {cellValue}</Text>
+      <Text sx={{ maxHeight: 56 }}> {cellValue}</Text>
     </TextClamp>
   );
 
@@ -104,7 +104,7 @@ export default function QuestionsTable({
           const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
           return (
             <Box
-              style={{
+              sx={{
                 display: 'flex',
                 width: '100%',
                 justifyContent: 'flex-end',
@@ -151,7 +151,7 @@ export default function QuestionsTable({
               />
             ),
             actions: () => (
-              <Box className={styles.tableCell} style={{ textAlign: 'right', minWidth: '100px' }}>
+              <Box className={styles.tableCell} sx={{ textAlign: 'right', minWidth: '100px' }}>
                 <ActionButton
                   as={Link}
                   target="_blank"

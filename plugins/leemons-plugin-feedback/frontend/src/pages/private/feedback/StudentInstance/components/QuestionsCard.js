@@ -2,25 +2,20 @@ import {
   Box,
   Button,
   createStyles,
-  Modal,
-  Paragraph,
   ProgressBottomBar,
-  Stack,
-  Text,
   TotalLayoutFooterContainer,
+  TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
+import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
 import prefixPN from '@feedback/helpers/prefixPN';
 import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
 import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
-import { setQuestionResponseRequest } from '@feedback/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import { setInstanceTimestamp } from '@feedback/request/feedback';
-import { Link, useHistory } from 'react-router-dom';
 import LikertResponse from './LikertResponse';
 import NetPromoterScoreResponse from './NetPromoterScoreResponse';
 import OpenResponse from './OpenResponse';
@@ -62,15 +57,12 @@ const questionsByType = {
 
 function QuestionsCard({
   viewMode,
-  returnToTable,
   feedback,
-  instance,
   instanceId,
   defaultValues,
   userId,
-  modalMode,
-  nextActivityUrl,
   scrollRef,
+  setShowIntroduction,
 }) {
   const { classes } = Styles({ viewMode });
   const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
@@ -80,214 +72,53 @@ function QuestionsCard({
     values: defaultValues || {},
   });
 
-  const moduleId = instance?.metadata?.module?.id;
-  const isModule = !!moduleId;
-  const moduleDashboardUrl = `/private/learning-paths/modules/dashboard/${moduleId}`;
-
-  const question = feedback.questions[store.currentIndex];
-
-  const history = useHistory();
+  const question = feedback?.questions[store.currentIndex];
 
   const isLast = React.useMemo(
     () => feedback.questions.length - 1 === store.currentIndex,
     [feedback, store.currentIndex]
   );
 
-  const goToOnGoing = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open('/private/assignables/ongoing', 'AssignablesOngoing', 'noopener');
-    history.push('/private/assignables/ongoing');
-  };
-
-  const gotToModuleDashboard = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(moduleDashboardUrl, 'Dashboard', 'noopener');
-    history.push(moduleDashboardUrl);
-  };
-
-  const goToResults = (e, openInNewTab = false) => {
-    if (openInNewTab)
-      window.open(
-        `/private/feedback/result/${instanceId}?fromExecution`,
-        'FeedbackResult',
-        'noopener'
-      );
-    if (!viewMode) history.push(`/private/feedback/result/${instanceId}?fromExecution`);
-  };
-
   async function onNext(value) {
     store.values[question.id] = value;
-    if (!viewMode) setQuestionResponseRequest(question.id, instanceId, value);
 
     if (!isLast) {
       store.currentIndex++;
       if (store.currentIndex > store.maxIndex) {
         store.maxIndex = store.currentIndex;
       }
-    } else {
-      if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
-      goToResults();
-    }
+    } else if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
 
     render();
   }
 
   function onPrev() {
-    store.currentIndex--;
+    if (store.currentIndex === 0) {
+      setShowIntroduction(true);
+    } else {
+      store.currentIndex--;
+    }
     render();
   }
-
   if (!translations) return null;
   return (
-    <>
-      <Box className={classes.container}>
-        <Box className={classes.header}>
-          {viewMode ? (
-            <Box>
-              <Button onClick={returnToTable} leftIcon={<ChevLeftIcon />} color="secondary">
-                {t('returnToTable')}
-              </Button>
-            </Box>
-          ) : (
-            <Box className={classes.headerText}>
-              <Text size="sm" stronger>
-                {t('nQuestion', { n: store.currentIndex + 1 })}
-              </Text>
-              &nbsp;
-              {question.required ? <Text role="productive">{t('questionRequired')}</Text> : null}
-            </Box>
-          )}
-        </Box>
-        {question ? (
-          <Box className={classes.questionCard}>
-            <QuestionTitle
-              t={t}
-              viewMode={viewMode}
-              currentValue={store.currentValue}
-              question={question}
-            />
-            <Box className={classes.questionContainer}>
-              {React.cloneElement(questionsByType[question.type], {
-                question,
-                feedback,
-                currentIndex: store.currentIndex,
-                onNext,
-                onPrev,
-                viewMode,
-                defaultValue: store.values[question.id],
-                setCurrentValue: (e) => {
-                  store.currentValue = e;
-                  render();
-                },
-                t,
-              })}
-            </Box>
-          </Box>
-        ) : null}
-        <Modal
-          title={t('finishModal')}
-          opened={store.showFinishModal}
-          onClose={() => {}}
-          centerTitle
-          centered
-          withCloseButton={false}
-          closeOnEscape={false}
-          closeOnClickOutside={false}
-          size={480}
-        >
-          <Stack direction="column" fullWidth spacing={8}>
-            <Paragraph align="center">{feedback.thanksMessage}</Paragraph>
-            {modalMode === 0 ? (
-              <Stack justifyContent="center">
-                {isModule ? (
-                  <Button onClick={gotToModuleDashboard}>{t('moduleDashboard')}</Button>
-                ) : (
-                  <Button onClick={goToOnGoing}>{t('pendingActivities')}</Button>
-                )}
-              </Stack>
-            ) : null}
-            {modalMode === 1 ? (
-              <Stack justifyContent="space-between">
-                {isModule ? (
-                  <Button variant="light" onClick={gotToModuleDashboard}>
-                    {t('moduleDashboard')}
-                  </Button>
-                ) : (
-                  <Button variant="light" onClick={goToOnGoing}>
-                    {t('pendingActivities')}
-                  </Button>
-                )}
-                <Button onClick={goToResults}>{t('viewResults')}</Button>
-              </Stack>
-            ) : null}
-            {modalMode === 2 ? (
-              <Stack justifyContent="space-between">
-                <Button
-                  variant="light"
-                  rightIcon={<ExpandDiagonalIcon />}
-                  compact
-                  onClick={() => goToResults(null, true)}
-                >
-                  {t('viewResults')}
-                </Button>
-                <Link to={nextActivityUrl}>
-                  <Button rightIcon={<ChevronRightIcon />} compact>
-                    {t('nextActivity')}
-                  </Button>
-                </Link>
-              </Stack>
-            ) : null}
-            {modalMode === 3 ? (
-              <Stack justifyContent="space-between">
-                {isModule ? (
-                  <Button
-                    variant="light"
-                    rightIcon={<ExpandDiagonalIcon />}
-                    compact
-                    onClick={() => gotToModuleDashboard(null, true)}
-                  >
-                    {t('moduleDashboard')}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="light"
-                    rightIcon={<ExpandDiagonalIcon />}
-                    compact
-                    onClick={() => goToOnGoing(null, true)}
-                  >
-                    {t('pendingActivities')}
-                  </Button>
-                )}
-                <Link to={nextActivityUrl}>
-                  <Button rightIcon={<ChevronRightIcon />} compact>
-                    {t('nextActivity')}
-                  </Button>
-                </Link>
-              </Stack>
-            ) : null}
-          </Stack>
-        </Modal>
-      </Box>
-      <Box sx={{ marginLeft: -18 }}>
+    <TotalLayoutStepContainer
+      Footer={
         <TotalLayoutFooterContainer
-          fixed={true}
           scrollRef={scrollRef}
-          // width={'fit-content'}
           rightZone={
-            <Box style={{ display: 'flex', justifyContent: 'flex-end', minWidth: '120px' }}>
-              {store.currentIndex !== feedback.questions.length - 1 && (
-                <Button variant="outline" onClick={onNext}>
+            <Box sx={{ minWidth: '120px' }}>
+              {!isLast && (
+                <Button variant="outline" rightIcon={<ChevronRightIcon />} onClick={onNext}>
                   {t('next')}
                 </Button>
               )}
             </Box>
           }
           leftZone={
-            <Box style={{ display: 'flex', justifyContent: 'flex-start', minWidth: '120px' }}>
-              {store.currentIndex > 0 && (
-                <Button variant="outline" onClick={onPrev}>
-                  {t('back')}
-                </Button>
-              )}
-            </Box>
+            <Button variant="outline" leftIcon={<ChevronLeftIcon />} onClick={onPrev}>
+              {t('back')}
+            </Button>
           }
         >
           <Box sx={() => ({ display: 'flex', justifyContent: 'center', marginLeft: '24px' })}>
@@ -300,8 +131,30 @@ function QuestionsCard({
             </Box>
           </Box>
         </TotalLayoutFooterContainer>
-      </Box>
-    </>
+      }
+    >
+      {question ? (
+        <Box className={classes.questionCard}>
+          <QuestionTitle viewMode={viewMode} question={question} />
+          <Box className={classes.questionContainer}>
+            {React.cloneElement(questionsByType[question.type], {
+              question,
+              feedback,
+              currentIndex: store.currentIndex,
+              onNext,
+              onPrev,
+              viewMode,
+              defaultValue: store.values[question.id],
+              setCurrentValue: (e) => {
+                store.currentValue = e;
+                render();
+              },
+              t,
+            })}
+          </Box>
+        </Box>
+      ) : null}
+    </TotalLayoutStepContainer>
   );
 }
 
@@ -316,6 +169,7 @@ QuestionsCard.propTypes = {
   modalMode: PropTypes.number,
   nextActivityUrl: PropTypes.any,
   scrollRef: PropTypes.any,
+  setShowIntroduction: PropTypes.func,
 };
 
 export default QuestionsCard;
