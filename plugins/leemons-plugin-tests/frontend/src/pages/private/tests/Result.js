@@ -18,6 +18,7 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   VerticalContainer,
+  TextClamp,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
@@ -286,7 +287,11 @@ export default function Result() {
             return {
               question: (
                 <Box className={styles.tableCell}>
-                  {i + 1}. {htmlToText(question.question)}
+                  <TextClamp lines={2} withToolTip>
+                    <Text>
+                      {i + 1}. {htmlToText(question.question)}
+                    </Text>
+                  </TextClamp>
                 </Box>
               ),
               category: (
