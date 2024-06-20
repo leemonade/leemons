@@ -9,7 +9,7 @@ function getActivitiesWeightsByModules({ weights, activities }) {
 
   const { applySameValue } = weights;
   const weightsPerModuleId = keyBy(weights.weights, 'id');
-  const modulesCount = evaluableActivities.length;
+  const modulesCount = Math.max(evaluableActivities.length, weights.weights.length);
 
   return activities.map((activity) => {
     const weight = weightsPerModuleId[activity.id];
