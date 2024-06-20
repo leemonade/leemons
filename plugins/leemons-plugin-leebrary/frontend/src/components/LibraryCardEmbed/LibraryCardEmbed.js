@@ -53,9 +53,9 @@ const LibraryCardEmbed = ({
       playableMedia.includes(asset.mediaType)
     );
   }, [asset]);
-  
+
   const roleLocalizations = useRolesLocalizations([asset?.original?.providerData?.role]);
- 
+
   // Lógica de iconos parte derecha
   const getIconForFileType = () => {
     if (hideIcon) return null;
@@ -150,7 +150,7 @@ const LibraryCardEmbed = ({
           )}
         </Box>
 
-        <Stack direction="column" fullWidth alignContent="start">
+        <Stack direction="column" fullWidth alignContent="start" className={classes.textWrapper}>
           <Box className={classes.bodyContainer}>
             <TextClamp lines={1}>
               <Text size="md" className={classes.title}>
