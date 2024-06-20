@@ -7,9 +7,11 @@
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { getAssignables } = require('../../core/assignables');
 
+const getRest = require('./openapi/assignables/getRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/find',

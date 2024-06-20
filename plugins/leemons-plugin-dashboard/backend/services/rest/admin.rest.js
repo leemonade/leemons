@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 
 const { LeemonsValidator } = require('@leemons/validator');
 const {
@@ -10,10 +9,16 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 const { getAdminDashboard } = require('../../core/dashboard/getAdminDashboard');
-const { getAdminDashboardRealtime } = require('../../core/dashboard/getAdminDashboardRealtime');
+const {
+  getAdminDashboardRealtime,
+} = require('../../core/dashboard/getAdminDashboardRealtime');
 
+const adminRest = require('./openapi/admin/adminRest');
+const adminRealtimeRest = require('./openapi/admin/adminRealtimeRest');
+/** @type {ServiceSchema} */
 module.exports = {
   adminRest: {
+    openapi: adminRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -38,6 +43,7 @@ module.exports = {
     },
   },
   adminRealtimeRest: {
+    openapi: adminRealtimeRest.openapi,
     rest: {
       method: 'GET',
       path: '/realtime',

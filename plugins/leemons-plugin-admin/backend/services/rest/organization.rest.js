@@ -10,9 +10,13 @@ const {
 const { LeemonsError } = require('@leemons/error');
 const organizationService = require('../../core/organization');
 
+const getRest = require('./openapi/organization/getRest');
+const postRest = require('./openapi/organization/postRest');
+const getJsonThemeRest = require('./openapi/organization/getJsonThemeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -37,11 +41,15 @@ module.exports = {
           organization,
         };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
   postRest: {
+    openapi: postRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -66,11 +74,15 @@ module.exports = {
           status: 200,
         };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
   getJsonThemeRest: {
+    openapi: getJsonThemeRest.openapi,
     rest: {
       method: 'GET',
       path: '/jsonTheme',
@@ -83,7 +95,10 @@ module.exports = {
           jsonTheme,
         };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

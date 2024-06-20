@@ -2,15 +2,21 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const { getSystemDataFieldsConfig, saveSystemDataFieldsConfig } = require('../../core/config');
+const {
+  getSystemDataFieldsConfig,
+  saveSystemDataFieldsConfig,
+} = require('../../core/config');
 
+const getSystemDataFieldsConfigRest = require('./openapi/config/getSystemDataFieldsConfigRest');
+const saveSystemDataFieldsConfigRest = require('./openapi/config/saveSystemDataFieldsConfigRest');
+/** @type {ServiceSchema} */
 module.exports = {
   getSystemDataFieldsConfigRest: {
+    openapi: getSystemDataFieldsConfigRest.openapi,
     rest: {
       path: '/system-data-fields',
       method: 'GET',
@@ -31,6 +37,7 @@ module.exports = {
     },
   },
   saveSystemDataFieldsConfigRest: {
+    openapi: saveSystemDataFieldsConfigRest.openapi,
     rest: {
       path: '/system-data-fields',
       method: 'POST',

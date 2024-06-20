@@ -12,9 +12,14 @@ const {
 } = require('@leemons/middlewares');
 const { getTemporalSessions, byIds, save } = require('../../core/session');
 
+const getTemporalSessionsRest = require('./openapi/session/getTemporalSessionsRest');
+const getClassSessionsRest = require('./openapi/session/getClassSessionsRest');
+const detailRest = require('./openapi/session/detailRest');
+const saveRest = require('./openapi/session/saveRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getTemporalSessionsRest: {
+    openapi: getTemporalSessionsRest.openapi,
     rest: {
       path: '/temporal/:class',
       method: 'GET',
@@ -38,6 +43,7 @@ module.exports = {
     },
   },
   getClassSessionsRest: {
+    openapi: getClassSessionsRest.openapi,
     rest: {
       path: '/class/sessions',
       method: 'POST',
@@ -63,6 +69,7 @@ module.exports = {
     },
   },
   detailRest: {
+    openapi: detailRest.openapi,
     rest: {
       path: '/detail/:id',
       method: 'GET',
@@ -86,6 +93,7 @@ module.exports = {
     },
   },
   saveRest: {
+    openapi: saveRest.openapi,
     rest: {
       path: '/save',
       method: 'POST',

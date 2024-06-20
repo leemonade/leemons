@@ -17,10 +17,15 @@ const {
   canRemoveGradeScale,
 } = require('../../core/grade-scales');
 
+const postGradeScaleRest = require('./openapi/gradeScales/postGradeScaleRest');
+const putGradeScaleRest = require('./openapi/gradeScales/putGradeScaleRest');
+const canRemoveGradeScaleRest = require('./openapi/gradeScales/canRemoveGradeScaleRest');
+const removeGradeScaleRest = require('./openapi/gradeScales/removeGradeScaleRest');
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   postGradeScaleRest: {
+    openapi: postGradeScaleRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -32,6 +37,7 @@ module.exports = {
     },
   },
   putGradeScaleRest: {
+    openapi: putGradeScaleRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -43,6 +49,7 @@ module.exports = {
     },
   },
   canRemoveGradeScaleRest: {
+    openapi: canRemoveGradeScaleRest.openapi,
     rest: {
       path: '/can/:id',
       method: 'DELETE',
@@ -54,6 +61,7 @@ module.exports = {
     },
   },
   removeGradeScaleRest: {
+    openapi: removeGradeScaleRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',

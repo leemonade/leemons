@@ -16,9 +16,12 @@ const {
 const updateStatus = require('../../core/status/updateStatus');
 const getScormAssignation = require('../../core/status/getScormAssignation');
 
+const updateStatusRest = require('./openapi/status/updateStatusRest');
+const getScormAssignationRest = require('./openapi/status/getScormAssignationRest');
 /** @type {ServiceSchema} */
 module.exports = {
   updateStatusRest: {
+    openapi: updateStatusRest.openapi,
     rest: {
       method: 'PUT',
       path: '/:instance/:user',
@@ -36,6 +39,7 @@ module.exports = {
     },
   },
   getScormAssignationRest: {
+    openapi: getScormAssignationRest.openapi,
     rest: {
       method: 'GET',
       path: '/assignation/:instance/:user',

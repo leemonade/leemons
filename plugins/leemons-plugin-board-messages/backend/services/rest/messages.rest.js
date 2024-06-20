@@ -19,9 +19,16 @@ const {
   addView,
 } = require('../../core/messages');
 
+const listRest = require('./openapi/messages/listRest');
+const saveRest = require('./openapi/messages/saveRest');
+const getOverlapsRest = require('./openapi/messages/getOverlapsRest');
+const getActiveRest = require('./openapi/messages/getActiveRest');
+const addClickRest = require('./openapi/messages/addClickRest');
+const addViewRest = require('./openapi/messages/addViewRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       method: 'POST',
       path: '/list',
@@ -63,6 +70,7 @@ module.exports = {
     },
   },
   saveRest: {
+    openapi: saveRest.openapi,
     rest: {
       method: 'POST',
       path: '/save',
@@ -86,6 +94,7 @@ module.exports = {
     },
   },
   getOverlapsRest: {
+    openapi: getOverlapsRest.openapi,
     rest: {
       method: 'POST',
       path: '/overlaps',
@@ -109,6 +118,7 @@ module.exports = {
     },
   },
   getActiveRest: {
+    openapi: getActiveRest.openapi,
     rest: {
       method: 'POST',
       path: '/active',
@@ -123,6 +133,7 @@ module.exports = {
     },
   },
   addClickRest: {
+    openapi: addClickRest.openapi,
     rest: {
       method: 'POST',
       path: '/click',
@@ -137,6 +148,7 @@ module.exports = {
     },
   },
   addViewRest: {
+    openapi: addViewRest.openapi,
     rest: {
       method: 'POST',
       path: '/view',

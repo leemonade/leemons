@@ -13,9 +13,15 @@ const {
 const { LeemonsError } = require('@leemons/error');
 const settingsService = require('../../core/settings');
 
+const findOneRest = require('./openapi/settings/findOneRest');
+const updateRest = require('./openapi/settings/updateRest');
+const signupRest = require('./openapi/settings/signupRest');
+const setLanguagesRest = require('./openapi/settings/setLanguagesRest');
+const getLanguagesRest = require('./openapi/settings/getLanguagesRest');
 /** @type {ServiceSchema} */
 module.exports = {
   findOneRest: {
+    openapi: findOneRest.openapi,
     rest: {
       method: 'GET',
       path: '/',
@@ -26,6 +32,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -65,6 +72,7 @@ module.exports = {
     },
   },
   signupRest: {
+    openapi: signupRest.openapi,
     rest: {
       method: 'POST',
       path: '/signup',
@@ -86,12 +94,18 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         try {
-          ctx.logger.debug('- Vamos a registrar al super admin', ctx.params.email);
+          ctx.logger.debug(
+            '- Vamos a registrar al super admin',
+            ctx.params.email
+          );
           await settingsService.registerAdmin({ ...ctx.params, ctx });
           const settings = await settingsService.findOne({ ctx });
           return { status: 200, settings };
         } catch (e) {
-          throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+          throw new LeemonsError(ctx, {
+            message: e.message,
+            httpStatusCode: 400,
+          });
         }
       } else {
         throw validator.error;
@@ -99,18 +113,25 @@ module.exports = {
     },
   },
   setLanguagesRest: {
+    openapi: setLanguagesRest.openapi,
     rest: {
       method: 'POST',
       path: '/languages',
     },
     async handler(ctx) {
       const { langs, defaultLang, removeOthers } = ctx.params;
-      await settingsService.setLanguages({ langs, defaultLang, removeOthers, ctx });
+      await settingsService.setLanguages({
+        langs,
+        defaultLang,
+        removeOthers,
+        ctx,
+      });
       const settings = await settingsService.findOne({ ctx });
       return { status: 200, settings };
     },
   },
   getLanguagesRest: {
+    openapi: getLanguagesRest.openapi,
     rest: {
       method: 'GET',
       path: '/languages',
@@ -120,7 +141,10 @@ module.exports = {
         const langs = await settingsService.getLanguages({ ctx });
         return { status: 200, langs };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

@@ -2,12 +2,22 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
+
+const {
+  getTheme,
+  getLocales,
+  getDefaultLocale,
+  getName,
+} = require('../../core/platform');
+
+const getPlatformNameRest = require('./openapi/platform/getPlatformNameRest');
+const getThemeRest = require('./openapi/platform/getThemeRest');
+const getLocalesRest = require('./openapi/platform/getLocalesRest');
+const getDefaultLocaleRest = require('./openapi/platform/getDefaultLocaleRest');
 /** @type {ServiceSchema} */
-
-const { getTheme, getLocales, getDefaultLocale, getName } = require('../../core/platform');
-
 module.exports = {
   getPlatformNameRest: {
+    openapi: getPlatformNameRest.openapi,
     rest: {
       path: '/name',
       method: 'GET',
@@ -18,6 +28,7 @@ module.exports = {
     },
   },
   getThemeRest: {
+    openapi: getThemeRest.openapi,
     rest: {
       path: '/theme',
       method: 'GET',
@@ -28,6 +39,7 @@ module.exports = {
     },
   },
   getLocalesRest: {
+    openapi: getLocalesRest.openapi,
     rest: {
       path: '/locales',
       method: 'GET',
@@ -38,6 +50,7 @@ module.exports = {
     },
   },
   getDefaultLocaleRest: {
+    openapi: getDefaultLocaleRest.openapi,
     rest: {
       path: '/default-locale',
       method: 'GET',

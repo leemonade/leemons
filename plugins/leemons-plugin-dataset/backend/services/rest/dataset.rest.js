@@ -33,9 +33,16 @@ const schemaConfig = {
   required: ['schema', 'ui'],
 };
 
+const getSchemaRest = require('./openapi/dataset/getSchemaRest');
+const getSchemaLocaleRest = require('./openapi/dataset/getSchemaLocaleRest');
+const getSchemaFieldLocaleRest = require('./openapi/dataset/getSchemaFieldLocaleRest');
+const saveFieldRest = require('./openapi/dataset/saveFieldRest');
+const saveMultipleFieldsRest = require('./openapi/dataset/saveMultipleFieldsRest');
+const removeFieldRest = require('./openapi/dataset/removeFieldRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getSchemaRest: {
+    openapi: getSchemaRest.openapi,
     rest: {
       method: 'POST',
       path: '/get-schema',
@@ -68,6 +75,7 @@ module.exports = {
     },
   },
   getSchemaLocaleRest: {
+    openapi: getSchemaLocaleRest.openapi,
     rest: {
       method: 'POST',
       path: '/get-schema-locale',
@@ -95,7 +103,8 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         let { locale } = ctx.params;
-        if (!locale) locale = await ctx.tx.call('users.platform.getDefaultLocale');
+        if (!locale)
+          locale = await ctx.tx.call('users.platform.getDefaultLocale');
         // TODO Esto es "inseguro" ya que se le esta pasando el calledFrom
         const dataset = await getSchemaWithLocale({
           ...ctx.params,
@@ -108,6 +117,7 @@ module.exports = {
     },
   },
   getSchemaFieldLocaleRest: {
+    openapi: getSchemaFieldLocaleRest.openapi,
     rest: {
       method: 'POST',
       path: '/get-schema-field-locale',
@@ -152,6 +162,7 @@ module.exports = {
     },
   },
   saveFieldRest: {
+    openapi: saveFieldRest.openapi,
     rest: {
       method: 'POST',
       path: '/save-field',
@@ -187,7 +198,12 @@ module.exports = {
             additionalProperties: false,
           },
         },
-        required: ['locationName', 'pluginName', 'schemaConfig', 'schemaLocales'],
+        required: [
+          'locationName',
+          'pluginName',
+          'schemaConfig',
+          'schemaLocales',
+        ],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -206,6 +222,7 @@ module.exports = {
     },
   },
   saveMultipleFieldsRest: {
+    openapi: saveMultipleFieldsRest.openapi,
     rest: {
       method: 'POST',
       path: '/save-multiple-fields',
@@ -260,6 +277,7 @@ module.exports = {
     },
   },
   removeFieldRest: {
+    openapi: removeFieldRest.openapi,
     rest: {
       method: 'POST',
       path: '/remove-field',

@@ -3,11 +3,14 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-/** @type {ServiceSchema} */
 const { mongoose } = require('@leemons/mongodb');
 
+const dropDBRest = require('./openapi/gateway/dropDBRest');
+const statusRest = require('./openapi/gateway/statusRest');
+/** @type {ServiceSchema} */
 module.exports = {
   statusRest: {
+    openapi: statusRest.openapi,
     rest: {
       method: 'GET',
       path: '/status',
@@ -18,9 +21,12 @@ module.exports = {
   },
 
   // restore Database
-  ...(process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing
+  ...(process.env.TESTING ||
+  process.env.NODE_ENV === 'test' ||
+  process.env.testing
     ? {
         dropDBRest: {
+          openapi: dropDBRest.openapi,
           dontCreateTransactionOnCallThisFunction: true,
           rest: {
             method: 'POST',

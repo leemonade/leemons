@@ -11,12 +11,22 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 const { listGrades } = require('../../core/grades');
-const { listRules, addRule, updateRule, removeRule } = require('../../core/rules');
+const {
+  listRules,
+  addRule,
+  updateRule,
+  removeRule,
+} = require('../../core/rules');
 
+const listDependenciesRest = require('./openapi/dependency/listDependenciesRest');
+const postDependencyRest = require('./openapi/dependency/postDependencyRest');
+const putDependencyRest = require('./openapi/dependency/putDependencyRest');
+const deleteDependencyRest = require('./openapi/dependency/deleteDependencyRest');
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   listDependenciesRest: {
+    openapi: listDependenciesRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -49,6 +59,7 @@ module.exports = {
     },
   },
   postDependencyRest: {
+    openapi: postDependencyRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -64,6 +75,7 @@ module.exports = {
     },
   },
   putDependencyRest: {
+    openapi: putDependencyRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -79,6 +91,7 @@ module.exports = {
     },
   },
   deleteDependencyRest: {
+    openapi: deleteDependencyRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',

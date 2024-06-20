@@ -15,9 +15,15 @@ const count = require('../../core/timetables/count');
 const update = require('../../core/timetables/update');
 const deleteOne = require('../../core/timetables/delete');
 
+const createRest = require('./openapi/timetable/createRest');
+const getRest = require('./openapi/timetable/getRest');
+const countRest = require('./openapi/timetable/countRest');
+const updateRest = require('./openapi/timetable/updateRest');
+const deleteRest = require('./openapi/timetable/deleteRest');
 /** @type {ServiceSchema} */
 module.exports = {
   createRest: {
+    openapi: createRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -41,6 +47,7 @@ module.exports = {
     },
   },
   getRest: {
+    openapi: getRest.openapi,
     rest: {
       method: 'GET',
       path: '/:id',
@@ -76,6 +83,7 @@ module.exports = {
     },
   },
   countRest: {
+    openapi: countRest.openapi,
     rest: {
       method: 'GET',
       path: '/count/:id',
@@ -114,6 +122,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       method: 'PUT',
       path: '/:id',
@@ -147,6 +156,7 @@ module.exports = {
     },
   },
   deleteRest: {
+    openapi: deleteRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',

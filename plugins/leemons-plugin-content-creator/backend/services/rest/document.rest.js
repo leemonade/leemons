@@ -26,7 +26,9 @@ const getPermissions = (permissionsArr, actions = null) => {
       (obj, [permission, _actions]) => ({
         ...obj,
         [permission]: {
-          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+          actions: _actions.includes('admin')
+            ? _actions
+            : ['admin', ..._actions],
         },
       }),
       {}
@@ -39,9 +41,16 @@ const getPermissions = (permissionsArr, actions = null) => {
   };
 };
 
+const saveDocumentRest = require('./openapi/document/saveDocumentRest');
+const getDocumentRest = require('./openapi/document/getDocumentRest');
+const deleteDocumentRest = require('./openapi/document/deleteDocumentRest');
+const duplicateDocumentRest = require('./openapi/document/duplicateDocumentRest');
+const assignDocumentRest = require('./openapi/document/assignDocumentRest');
+const shareDocumentRest = require('./openapi/document/shareDocumentRest');
 /** @type {ServiceSchema} */
 module.exports = {
   saveDocumentRest: {
+    openapi: saveDocumentRest.openapi,
     rest: {
       method: 'POST',
       path: '/',
@@ -49,7 +58,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
+        allowedPermissions: getPermissions(permissions.creator, [
+          'create',
+          'update',
+        ]),
       }),
     ],
     async handler(ctx) {
@@ -59,6 +71,7 @@ module.exports = {
     },
   },
   getDocumentRest: {
+    openapi: getDocumentRest.openapi,
     rest: {
       method: 'GET',
       path: '/:id',
@@ -70,6 +83,7 @@ module.exports = {
     },
   },
   deleteDocumentRest: {
+    openapi: deleteDocumentRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:id',
@@ -86,6 +100,7 @@ module.exports = {
     },
   },
   duplicateDocumentRest: {
+    openapi: duplicateDocumentRest.openapi,
     rest: {
       method: 'POST',
       path: '/duplicate',
@@ -93,7 +108,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
+        allowedPermissions: getPermissions(permissions.creator, [
+          'create',
+          'update',
+        ]),
       }),
     ],
     async handler(ctx) {
@@ -106,6 +124,7 @@ module.exports = {
     },
   },
   assignDocumentRest: {
+    openapi: assignDocumentRest.openapi,
     rest: {
       method: 'POST',
       path: '/assign',
@@ -113,7 +132,10 @@ module.exports = {
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
+        allowedPermissions: getPermissions(permissions.creator, [
+          'create',
+          'update',
+        ]),
       }),
     ],
     async handler(ctx) {
@@ -123,6 +145,7 @@ module.exports = {
     },
   },
   shareDocumentRest: {
+    openapi: shareDocumentRest.openapi,
     rest: {
       method: 'POST',
       path: '/share',
@@ -130,7 +153,11 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { assignableId, canAccess } = ctx.params;
-      const docPermissions = await shareDocument({ id: assignableId, canAccess, ctx });
+      const docPermissions = await shareDocument({
+        id: assignableId,
+        canAccess,
+        ctx,
+      });
       return { status: 200, docPermissions };
     },
   },

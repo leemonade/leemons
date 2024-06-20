@@ -4,6 +4,7 @@ const {
   getPluginNameFromServiceName,
   getPluginNameWithVersionIfHaveFromServiceName,
 } = require('@leemons/service-name-parser');
+const { createOpenapiSchemas } = require('@leemons/openapi');
 const { isCoreService } = require('./isCoreService');
 const { getDeploymentID } = require('./getDeploymentID');
 const { ctxCall } = require('./ctxCall');
@@ -104,12 +105,17 @@ module.exports = function ({
     },
     hooks: {
       after: {
-        '*': function (ctx, res) {
-          if (!CONTROLLED_HTTP_STATUS_CODE.includes(ctx.meta.$statusCode)) {
-            ctx.meta.$statusCode = 200;
-          }
-          return res;
-        },
+        '*': [
+          async (ctx, res) => {
+            if (!CONTROLLED_HTTP_STATUS_CODE.includes(ctx.meta.$statusCode)) {
+              ctx.meta.$statusCode = 200;
+            }
+            if (process.env.NODE_ENV === 'test') {
+              await createOpenapiSchemas({ res, ctx });
+            }
+            return res;
+          },
+        ],
       },
       before: {
         '*': [

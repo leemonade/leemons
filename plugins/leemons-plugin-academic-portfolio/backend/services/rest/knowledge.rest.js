@@ -15,13 +15,22 @@ const {
   updateKnowledgeArea,
   listKnowledgeAreas,
 } = require('../../core/knowledges');
-const { removeKnowledgeArea } = require('../../core/knowledges/removeKnowledgeArea');
-const { getKnowledgeAreaById } = require('../../core/knowledges/getKnowledgeAreaById');
+const {
+  removeKnowledgeArea,
+} = require('../../core/knowledges/removeKnowledgeArea');
+const {
+  getKnowledgeAreaById,
+} = require('../../core/knowledges/getKnowledgeAreaById');
 const { permissions } = require('../../config/constants');
 
+const postKnowledgeRest = require('./openapi/knowledges/postKnowledgeRest');
+const putKnowledgeRest = require('./openapi/knowledges/putKnowledgeRest');
+const listKnowledgeRest = require('./openapi/knowledges/listKnowledgeRest');
+const deleteSubjectTypeRest = require('./openapi/knowledges/deleteSubjectTypeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   postKnowledgeRest: {
+    openapi: postKnowledgeRest.openapi,
     rest: {
       path: '/',
       method: 'POST',
@@ -42,6 +51,7 @@ module.exports = {
     },
   },
   putKnowledgeRest: {
+    openapi: putKnowledgeRest.openapi,
     rest: {
       path: '/',
       method: 'PUT',
@@ -62,6 +72,7 @@ module.exports = {
     },
   },
   listKnowledgeRest: {
+    openapi: listKnowledgeRest.openapi,
     rest: {
       path: '/',
       method: 'GET',
@@ -102,6 +113,7 @@ module.exports = {
     },
   },
   deleteSubjectTypeRest: {
+    openapi: deleteSubjectTypeRest.openapi,
     rest: {
       path: '/:id',
       method: 'DELETE',

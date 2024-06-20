@@ -24,9 +24,17 @@ const {
   validateUpdateMenuItemFromUser,
 } = require('../../validations/menu-item');
 
+const getIfKnowHowToUseRest = require('./openapi/menu/getIfKnowHowToUseRest');
+const setKnowHowToUseRest = require('./openapi/menu/setKnowHowToUseRest');
+const getIfHasPermissionRest = require('./openapi/menu/getIfHasPermissionRest');
+const addCustomForUserRest = require('./openapi/menu/addCustomForUserRest');
+const reOrderCustomUserItemsRest = require('./openapi/menu/reOrderCustomUserItemsRest');
+const removeCustomForUserRest = require('./openapi/menu/removeCustomForUserRest');
+const updateCustomForUserRest = require('./openapi/menu/updateCustomForUserRest');
 /** @type {ServiceSchema} */
 module.exports = {
   getIfKnowHowToUseRest: {
+    openapi: getIfKnowHowToUseRest.openapi,
     rest: {
       method: 'GET',
       path: '/know-how-to-use',
@@ -40,6 +48,7 @@ module.exports = {
     },
   },
   setKnowHowToUseRest: {
+    openapi: setKnowHowToUseRest.openapi,
     rest: {
       method: 'POST',
       path: '/know-how-to-use',
@@ -53,6 +62,7 @@ module.exports = {
     },
   },
   getIfHasPermissionRest: {
+    openapi: getIfHasPermissionRest.openapi,
     rest: {
       method: 'GET',
       path: '/:menuKey',
@@ -64,6 +74,7 @@ module.exports = {
     },
   },
   addCustomForUserRest: {
+    openapi: addCustomForUserRest.openapi,
     rest: {
       method: 'POST',
       path: '/:menuKey/add-item',
@@ -78,6 +89,7 @@ module.exports = {
     },
   },
   reOrderCustomUserItemsRest: {
+    openapi: reOrderCustomUserItemsRest.openapi,
     rest: {
       method: 'POST',
       path: '/:menuKey/re-order',
@@ -93,6 +105,7 @@ module.exports = {
     },
   },
   removeCustomForUserRest: {
+    openapi: removeCustomForUserRest.openapi,
     rest: {
       method: 'DELETE',
       path: '/:menuKey/:key',
@@ -105,6 +118,7 @@ module.exports = {
     },
   },
   updateCustomForUserRest: {
+    openapi: updateCustomForUserRest.openapi,
     rest: {
       method: 'POST',
       path: '/:menuKey/:key',

@@ -9,6 +9,7 @@ const os = require('os');
 const cluster = require('cluster');
 const kleur = require('kleur');
 const { mongoose } = require('@leemons/mongodb');
+const { ControllerValidator } = require('@leemons/validator');
 
 // Register Babel for JSX files
 require('@babel/register')({
@@ -493,7 +494,7 @@ class LeemonsRunner {
     }
 
     // Create service broker
-    this.broker = new ServiceBroker({ ...this.config });
+    this.broker = new ServiceBroker({ ...this.config, validator: new ControllerValidator() });
     this.broker.runner = this;
 
     this.loadServices();

@@ -2,7 +2,6 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-/** @type {ServiceSchema} */
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
@@ -28,8 +27,14 @@ const permissionsValidation = {
   },
 };
 
+const listRest = require('./openapi/roles/listRest');
+const detailRest = require('./openapi/roles/detailRest');
+const addRest = require('./openapi/roles/addRest');
+const updateRest = require('./openapi/roles/updateRest');
+/** @type {ServiceSchema} */
 module.exports = {
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       path: '/list',
       method: 'POST',
@@ -63,6 +68,7 @@ module.exports = {
     },
   },
   detailRest: {
+    openapi: detailRest.openapi,
     rest: {
       path: '/detail/:uri',
       method: 'GET',
@@ -87,13 +93,17 @@ module.exports = {
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const role = await groupsService.detailByUri({ uri: ctx.params.uri, ctx });
+        const role = await groupsService.detailByUri({
+          uri: ctx.params.uri,
+          ctx,
+        });
         return { status: 200, role };
       }
       throw validator.error;
     },
   },
   addRest: {
+    openapi: addRest.openapi,
     rest: {
       path: '/add',
       method: 'POST',
@@ -127,6 +137,7 @@ module.exports = {
     },
   },
   updateRest: {
+    openapi: updateRest.openapi,
     rest: {
       path: '/update',
       method: 'POST',

@@ -15,9 +15,16 @@ const { exists } = require('../../core/categories/exists');
 const { list } = require('../../core/categories/list');
 const { remove } = require('../../core/categories/remove');
 
+const listWithMenuItemRest = require('./openapi/categories/listWithMenuItemRest');
+const assetTypesRest = require('./openapi/categories/assetTypesRest');
+const addRest = require('./openapi/categories/addRest');
+const existsRest = require('./openapi/categories/existsRest');
+const listRest = require('./openapi/categories/listRest');
+const removeRest = require('./openapi/categories/removeRest');
 /** @type {ServiceSchema} */
 module.exports = {
   listWithMenuItemRest: {
+    openapi: listWithMenuItemRest.openapi,
     rest: {
       path: '/menu-list',
       method: 'GET',
@@ -30,6 +37,7 @@ module.exports = {
     },
   },
   assetTypesRest: {
+    openapi: assetTypesRest.openapi,
     rest: {
       path: '/:id/types',
       method: 'GET',
@@ -37,12 +45,15 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { id } = ctx.params;
-      const assets = (await getByCategory({ categoryId: id, ctx })).map((item) => item.id);
+      const assets = (await getByCategory({ categoryId: id, ctx })).map(
+        (item) => item.id
+      );
       const types = await getTypesByAssets({ assetIds: assets, ctx });
       return { status: 200, types: uniq(types) };
     },
   },
   addRest: {
+    openapi: addRest.openapi,
     rest: {
       method: 'POST',
       path: '', // No hay ruta en leemons-legacy
@@ -54,6 +65,7 @@ module.exports = {
     },
   },
   existsRest: {
+    openapi: existsRest.openapi,
     rest: {
       method: 'GET',
       path: '', // No hay ruta en leemons-legacy
@@ -65,6 +77,7 @@ module.exports = {
     },
   },
   listRest: {
+    openapi: listRest.openapi,
     rest: {
       method: 'GET',
       path: '', // No hay ruta en leemons-legacy
@@ -76,6 +89,7 @@ module.exports = {
     },
   },
   removeRest: {
+    openapi: removeRest.openapi,
     rest: {
       method: 'DELETE',
       path: '', // No hay ruta en leemons-legacy
