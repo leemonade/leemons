@@ -430,29 +430,31 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
 
         // console.log(instanceStatus);
 
-        if (instanceStatus && instanceStatus.assignation) {
+        if (instanceStatus) {
           event.disableDrag = true;
           const now = new Date();
 
-          if (instanceStatus.dates.visualization) {
-            // Si hay fecha de visualización
-            if (now >= new Date(instanceStatus.dates.visualization)) {
-              // Si la fecha actual es mayor debe de poder ver el evento
-              event.data.column = kanbanColumnsByOrder[1]?.id;
-            } else {
-              return null;
+          if (instanceStatus.assignation) {
+            if (instanceStatus.dates.visualization) {
+              // Si hay fecha de visualización
+              if (now >= new Date(instanceStatus.dates.visualization)) {
+                // Si la fecha actual es mayor debe de poder ver el evento
+                event.data.column = kanbanColumnsByOrder[1]?.id;
+              } else {
+                return null;
+              }
             }
-          }
-          // Si siempre tiene que estar disponible lo ponemos en por hacer
-          if (instanceStatus.alwaysAvailable) {
-            event.data.column = kanbanColumnsByOrder[2].id;
-          }
-          // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
-          if (instanceStatus.dates.start) {
-            if (now >= new Date(instanceStatus.dates.start)) {
+            // Si siempre tiene que estar disponible lo ponemos en por hacer
+            if (instanceStatus.alwaysAvailable) {
               event.data.column = kanbanColumnsByOrder[2].id;
-            } else if (!instanceStatus.dates.visualization) {
-              return null;
+            }
+            // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
+            if (instanceStatus.dates.start) {
+              if (now >= new Date(instanceStatus.dates.start)) {
+                event.data.column = kanbanColumnsByOrder[2].id;
+              } else if (!instanceStatus.dates.visualization) {
+                return null;
+              }
             }
           }
 
