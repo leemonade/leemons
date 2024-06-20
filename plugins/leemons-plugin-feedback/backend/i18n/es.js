@@ -113,6 +113,7 @@ module.exports = {
     open: 'Abrir',
     duplicate: 'Duplicar',
     duplicated: 'Duplicado',
+    share: 'Compartir',
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
   },

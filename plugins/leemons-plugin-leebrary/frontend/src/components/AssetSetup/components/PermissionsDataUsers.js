@@ -1,22 +1,15 @@
-import {
-  Box,
-  ContextContainer,
-  Paragraph,
-  Select,
-  TableInput,
-  Table,
-  Title,
-  UserDisplayItem,
-} from '@bubbles-ui/components';
+import { ContextContainer, Select, TableInput, UserDisplayItem } from '@bubbles-ui/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import _, { find, isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 
-const SelectAgents = ({ usersData, ...props }) => (
+const SelectAgents = ({ usersData, onlyForTeachers, teacherProfile, ...props }) => (
   <SelectUserAgent
     {...props}
     onlyContacts={true}
+    profiles={teacherProfile}
+    onlyForTeachers={onlyForTeachers}
     selectedUsers={_.map(usersData, 'user.id')}
     returnItem
   />
@@ -24,6 +17,8 @@ const SelectAgents = ({ usersData, ...props }) => (
 
 SelectAgents.propTypes = {
   usersData: PropTypes.array,
+  onlyForTeachers: PropTypes.bool,
+  teacherProfile: PropTypes.object,
 };
 
 const RoleSelect = (props) => {
@@ -39,13 +34,18 @@ RoleSelect.propTypes = {
   onChange: PropTypes.func,
 };
 
-const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelectedUsers, t }) => {
-  // ··············································································
-  // EFFECTS
-
+const PermissionsDataUsers = ({
+  editMode,
+  roles,
+  value,
+  onChange,
+  alreadySelectedUsers,
+  t,
+  onlyForTeachers,
+  teacherProfile,
+}) => {
   // ··············································································
   // HANDLERS
-
   const checkIfUserIsAdded = (userData) => {
     const found = find(value, (data) => data.user.id === userData.user.id);
     return isNil(found);
@@ -53,14 +53,19 @@ const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelecte
 
   // ··············································································
   // LABELS & STATICS
-
   const USERS_COLUMNS = useMemo(
     () => [
       {
         Header: 'User',
         accessor: 'user',
         input: {
-          node: <SelectAgents usersData={[...alreadySelectedUsers, ...value]} />,
+          node: (
+            <SelectAgents
+              onlyForTeachers={onlyForTeachers}
+              teacherProfile={teacherProfile}
+              usersData={[...alreadySelectedUsers, ...value]}
+            />
+          ),
           rules: { required: 'Required field' },
         },
         editable: false,
@@ -128,6 +133,8 @@ PermissionsDataUsers.propTypes = {
   translations: PropTypes.object,
   editMode: PropTypes.bool,
   alreadySelectedUsers: PropTypes.any,
+  onlyForTeachers: PropTypes.bool,
+  teacherProfile: PropTypes.string,
 };
 
 export default PermissionsDataUsers;
