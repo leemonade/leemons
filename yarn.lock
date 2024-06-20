@@ -2957,6 +2957,11 @@
     react-dnd-touch-backend "^16.0.1"
     react-use-measure "^2.1.1"
 
+"@mixmark-io/domino@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@mixmark-io/domino/-/domino-2.2.0.tgz#4e8ec69bf1afeb7a14f0628b7e2c0f35bdb336c3"
+  integrity sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==
+
 "@mongodb-js/saslprep@^1.1.0":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@mongodb-js/saslprep/-/saslprep-1.1.6.tgz#54da3f794c71a17445740fe2b74882e0c76a3058"
@@ -10892,7 +10897,7 @@ evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
     md5.js "^1.3.4"
     safe-buffer "^5.1.1"
 
-exceljs@^4.2.0, exceljs@^4.3.0:
+exceljs@^4.2.0, exceljs@^4.3.0, exceljs@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/exceljs/-/exceljs-4.4.0.tgz#cfb1cb8dcc82c760a9fc9faa9e52dadab66b0156"
   integrity sha512-XctvKaEMaj1Ii9oDOqbW/6e1gXknSY4g/aLCDicOXqBE4M0nRWkUu0PTp++UPNzoFY12BNHMfs/VadKIS6llvg==
@@ -17782,10 +17787,10 @@ react-password-checklist@^1.5.0:
   resolved "https://registry.yarnpkg.com/react-password-checklist/-/react-password-checklist-1.5.1.tgz#f9b2fe81d016852b4c113d8f82d59563fb83f100"
   integrity sha512-ou0VSQ1Qb2OoTTt3WL03eFPcZIEyZ1hCfTUv9VrB2Nii5n8KcEGWtxn3gEXs59fTBZPF5rB6ta2h5kBPgbF/mQ==
 
-react-pdf@7.7.0:
-  version "7.7.0"
-  resolved "https://registry.yarnpkg.com/react-pdf/-/react-pdf-7.7.0.tgz#9e6859bc431243eca80d7159f3115fddcfe261d8"
-  integrity sha512-704ObLnRDm5lixL4e6NXNLaincBHGNLo+NGdbO3rEXE963NlNzwLxFpmKcbdXHAMQL4rYJQWb1L0w5IL6y8Osw==
+react-pdf@7.7.3:
+  version "7.7.3"
+  resolved "https://registry.yarnpkg.com/react-pdf/-/react-pdf-7.7.3.tgz#eea8104cd165dfec7ae0fa54259cfe7de12b5e81"
+  integrity sha512-a2VfDl8hiGjugpqezBTUzJHYLNB7IS7a2t7GD52xMI9xHg8LdVaTMsnM9ZlNmKadnStT/tvX5IfV0yLn+JvYmw==
   dependencies:
     clsx "^2.0.0"
     dequal "^2.0.3"
@@ -20106,6 +20111,13 @@ turbo@^1.9.3:
     turbo-linux-arm64 "1.13.3"
     turbo-windows-64 "1.13.3"
     turbo-windows-arm64 "1.13.3"
+
+turndown@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/turndown/-/turndown-7.2.0.tgz#67d614fe8371fb511079a93345abfd156c0ffcf4"
+  integrity sha512-eCZGBN4nNNqM9Owkv9HAtWRYfLA4h909E/WGAWWBpmB275ehNhZyk87/Tpvjbp0jjNl9XwCsbe6bm6CqFsgD+A==
+  dependencies:
+    "@mixmark-io/domino" "^2.2.0"
 
 tween-functions@^1.2.0:
   version "1.2.0"

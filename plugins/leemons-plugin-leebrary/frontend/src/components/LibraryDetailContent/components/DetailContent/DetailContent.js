@@ -1,4 +1,4 @@
-import { Box, Text, Stack, pxToRem, Badge } from '@bubbles-ui/components';
+import { Box, Text, Stack, pxToRem, Badge, TextClamp } from '@bubbles-ui/components';
 import React from 'react';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { MetadataDisplay } from '../MetadataDisplay/MetadataDisplay';
@@ -24,8 +24,16 @@ const DetailContent = ({
   classes,
 }) => (
   <Box className={classes.tabPanel}>
-    {!!name && <Text className={classes.title}>{name}</Text>}
-    {!!description && <Text className={classes.description}>{description}</Text>}
+    {!!name && (
+      <TextClamp lines={1}>
+        <Text className={classes.title}>{name}</Text>
+      </TextClamp>
+    )}
+    {!!description && (
+      <TextClamp lines={2}>
+        <Text className={classes.description}>{description}</Text>
+      </TextClamp>
+    )}
     <Box style={{ marginTop: 24, marginBottom: 24 }}>
       {Array.isArray(subjectsIds) &&
         subjectsIds.length > 0 &&
