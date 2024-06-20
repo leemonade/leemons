@@ -61,6 +61,7 @@ const {
 const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUserAgentContactIds');
 const { PLUGIN_NAME, VERSION } = require('../config/constants');
 const { jobs } = require('./jobs/users.jobs');
+const { loginWithProvider } = require('../core/users/loginWithProvider');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -224,6 +225,11 @@ module.exports = {
     getAllItemsForTheUserAgentHasPermissionsByType: {
       async handler(ctx) {
         return getAllItemsForTheUserAgentHasPermissionsByType({ ...ctx.params, ctx });
+      },
+    },
+    loginWithProvider: {
+      async handler(ctx) {
+        return loginWithProvider({ ...ctx.params, ctx });
       },
     },
   },
