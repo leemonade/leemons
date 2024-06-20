@@ -10,6 +10,7 @@ import { deleteAssetRequest, newAssetRequest } from '@leebrary/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import mime from 'mime';
 import {
   FileUploadProvider,
   useFileUploadStore,
@@ -70,12 +71,46 @@ function File({ assignation, preview }) {
     [assignation?.instance?.assignable?.submission?.data]
   );
 
+  const sanitizeSubmissionData = (submission) => {
+    const newExtensions = {};
+    if (!submission) {
+      return null;
+    }
+    if (submission.type === 'File') {
+      const extractExtensions = Object.keys(submission?.data?.extensions).map((key) =>
+        key.replace(/[ .]/g, '')
+      );
+      extractExtensions.forEach((extension) => {
+        if (extension === 'rtf') {
+          newExtensions[extension] = '.rtf';
+        } else {
+          newExtensions[extension] = mime.getType(extension);
+        }
+      });
+      return {
+        ...submission,
+        data: {
+          ...submission.data,
+          extensions: newExtensions,
+        },
+      };
+    }
+    return submission;
+  };
+
+  const submissionDataSanitized = useMemo(
+    () => sanitizeSubmissionData(submissionData),
+    [submissionData]
+  );
+
   const { names: extensionNames, format: extensionFormat } = useMemo(
     () => ({
-      names: Object.keys(submissionData.extensions).map((key) => key.replace(/^([^.])/, '.$1')),
-      format: Object.values(submissionData.extensions),
+      names: Object.keys(submissionDataSanitized.extensions).map((key) =>
+        key.replace(/^([^.])/, '.$1')
+      ),
+      format: Object.values(submissionDataSanitized.extensions),
     }),
-    [submissionData?.extensions]
+    [submissionDataSanitized?.extensions]
   );
 
   return (
