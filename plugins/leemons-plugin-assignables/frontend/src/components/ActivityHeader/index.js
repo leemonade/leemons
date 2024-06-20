@@ -1,10 +1,14 @@
 import React, { useMemo } from 'react';
-import { Box, ImageLoader, TotalLayoutHeader, Stack } from '@bubbles-ui/components';
+import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
 
 import { FormProvider, useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { noop } from 'lodash';
+import { OpenIcon } from '@bubbles-ui/icons/outline';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PrefixPN from '@assignables/helpers/prefixPN';
 import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
 import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
 import DateComponent from './components/Date/Date';
@@ -13,6 +17,7 @@ import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
 import useTotalLayoutStyles from './index.style';
 import CloseButtons from './components/CloseButtons/CloseButtons';
 import StatusBadge from './components/StatusBadge/StatusBadge';
+
 import {
   ACTIVITY_HEADER_PROP_TYPES,
   ACTIVITY_HEADER_DEFAULT_PROPS,
@@ -32,10 +37,14 @@ export default function ActivityHeader({
   showCountdown,
   showStatusBadge,
   showCloseButtons,
+  showAssignmentDetailButton,
   allowEditDeadline,
+
   onTimeout = noop,
 }) {
   const form = useForm();
+  const history = useHistory();
+  const [t] = useTranslateLoader(PrefixPN('evaluation'));
   /*
     === Activity data ===
   */
@@ -95,6 +104,13 @@ export default function ActivityHeader({
 
   const { classes } = useTotalLayoutStyles();
 
+  const goToAssignmentDetail = () => {
+    const url = (
+      instance?.assignable?.roleDetails?.dashboardUrl || '/private/assignables/details/:id'
+    ).replace(':id', instance.id);
+    history.push(url);
+  };
+
   return (
     <FormProvider {...form}>
       <TotalLayoutHeader
@@ -141,6 +157,13 @@ export default function ActivityHeader({
               showTime={showDateTime}
               allowEdit={!!allowEditDeadline}
             />
+            {showAssignmentDetailButton && (
+              <Box className={classes.viewDetailButton}>
+                <Button variant="link" rightIcon={<OpenIcon />} onClick={goToAssignmentDetail}>
+                  {t('assignationHeaderButton')}
+                </Button>
+              </Box>
+            )}
           </Box>
           <CloseButtons instance={instance} hidden={!showCloseButtons} />
         </Box>
