@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.3.0](https://github.com/leemonade/leemons/compare/1.2.0...1.3.0) (2024-06-20)
+
+
+### Features
+
+* **bulk-data:** Added export and import for content creator ([2eca077](https://github.com/leemonade/leemons/commit/2eca07719b312bc1f4d9a0cacf44246c48967cc1)), closes [#461](https://github.com/leemonade/leemons/issues/461)
+* **bulk-data:** Enhance bulk import with caching and progress tracking ([94486c7](https://github.com/leemonade/leemons/commit/94486c763e4afd20e47923e166203bdc8cd2d069)), closes [#465](https://github.com/leemonade/leemons/issues/465)
+* **calendar:** Add edit and delete actions to CalendarEventModal ([0a0cfc1](https://github.com/leemonade/leemons/commit/0a0cfc1d5c1eec9f2f896bf67006f70d1a7143f3)), closes [#468](https://github.com/leemonade/leemons/issues/468)
+* **calendar:** Add support for showing hidden columns in calendar views ([ad4c843](https://github.com/leemonade/leemons/commit/ad4c84350b943429453bdca7b0b758373914f96e)), closes [#467](https://github.com/leemonade/leemons/issues/467)
+
+
+### Bug Fixes
+
+* **assignables:** Do not limit date in PeriodPicker with InvalidDate ([479a6e1](https://github.com/leemonade/leemons/commit/479a6e1b5a0d948561425af7e05d2d0c5a3af84d)), closes [#456](https://github.com/leemonade/leemons/issues/456)
+* **assignables:** Do not set `gradesViewed` in module sub-activities ([7ef9993](https://github.com/leemonade/leemons/commit/7ef999397cc0222382105f6716da0d4aace61cd5)), closes [#464](https://github.com/leemonade/leemons/issues/464)
+* **bulk-data:** Avoid sharing task resources as they are public ([bc42f0b](https://github.com/leemonade/leemons/commit/bc42f0b71e93043f9f4319522af5456d56b15a13)), closes [#448](https://github.com/leemonade/leemons/issues/448)
+* **calendar:** Format subject name like Avatar in bubbles ([678139f](https://github.com/leemonade/leemons/commit/678139f091c79a0e858f19beaa7064490eefed45)), closes [#435](https://github.com/leemonade/leemons/issues/435)
+* **CCreator:** Can download rar file from document ([5ece95c](https://github.com/leemonade/leemons/commit/5ece95cb79d1a33a0f1495c86235c70cdb298615)), closes [#434](https://github.com/leemonade/leemons/issues/434)
+* **feedback:** Add hover and selected styles in all questions ([08b430c](https://github.com/leemonade/leemons/commit/08b430c93f76b9eec9a6fe36f6c00b312f39f738)), closes [#436](https://github.com/leemonade/leemons/issues/436)
+* Group alias control on Assignment form and Evaluation Notebook ([13d1f7f](https://github.com/leemonade/leemons/commit/13d1f7f496e9c66b3d117510798b0395d82c7ec8)), closes [#432](https://github.com/leemonade/leemons/issues/432)
+* **leebrary:** Recover share button in Cards and DetailDrawer ([7749998](https://github.com/leemonade/leemons/commit/7749998089d4b053e27bdc16924254a4c5bcecc1)), closes [#440](https://github.com/leemonade/leemons/issues/440)
+* **LModules:** Do not set gradesViewed if no data is received ([cc0b83e](https://github.com/leemonade/leemons/commit/cc0b83e63e7cd98c17830e1282839443991ec43b))
+* **tests:** Fix button problems and add onKeyDown to save question in QB ([2031692](https://github.com/leemonade/leemons/commit/2031692ae5018ca4038ed6eb58e9a2012966c87a)), closes [#437](https://github.com/leemonade/leemons/issues/437)
+
 ## [1.2.0](https://github.com/leemonade/leemons/compare/1.1.0...1.2.0) (2024-06-12)
 
 
