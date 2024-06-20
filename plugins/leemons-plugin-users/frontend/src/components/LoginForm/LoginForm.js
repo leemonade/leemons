@@ -10,7 +10,7 @@ import {
 } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
 import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { LoginFormStyles } from './LoginForm.styles';
 
 export const LOGIN_FORM_DEFAULT_PROPS = {
@@ -62,13 +62,18 @@ const LoginForm = ({
     formState: { errors },
   } = useForm({ defaultValues });
 
+  const email = useWatch({
+    control,
+    name: 'email',
+  });
+
   const recoveryProps = {};
   if (useRouter) {
     recoveryProps.as = Link;
-    recoveryProps.to = recoverUrl;
+    recoveryProps.to = recoverUrl + (email ? `?email=${email}` : '');
   } else {
     recoveryProps.as = 'a';
-    recoveryProps.href = recoverUrl;
+    recoveryProps.href = recoverUrl + (email ? `?email=${email}` : '');
   }
   const handleFormSubmit = (data) => {
     const dataParsed = {
