@@ -105,9 +105,9 @@ export default function ActivityHeader({
   const { classes } = useTotalLayoutStyles();
 
   const goToAssignmentDetail = () => {
-    const url =
-      instance?.assignable?.roleDetails?.dashboardUrl ||
-      '/private/assignables/details/:id'.replace(':id', instance.id);
+    const url = (
+      instance?.assignable?.roleDetails?.dashboardUrl || '/private/assignables/details/:id'
+    ).replace(':id', instance.id);
     history.push(url);
   };
 
