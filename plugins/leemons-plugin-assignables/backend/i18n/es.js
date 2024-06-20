@@ -507,6 +507,7 @@ module.exports = {
     finished_alert: {
       title: 'Actividad finalizada',
     },
+    assignationHeaderButton: 'Ver asignación',
   },
 
   evaluationFeedbackComponent: {
