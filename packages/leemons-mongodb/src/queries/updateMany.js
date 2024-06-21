@@ -11,6 +11,18 @@ const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransact
 const { getLRNConfig } = require('./helpers/getLRNConfig');
 const { excludeDeleteIfNeedToQuery } = require('./helpers/excludeDeleteIfNeedToQuery');
 
+/**
+ * @param {Object} props
+ * @param {import('mongoose').Model} props.model
+ * @param {string} props.modelKey
+ * @param {boolean} props.autoDeploymentID
+ * @param {boolean} props.autoTransaction
+ * @param {boolean} props.autoRollback
+ * @param {boolean} props.autoLRN
+ * @param {boolean} props.ignoreTransaction
+ * @param {import('moleculer').Context} props.ctx
+ * @returns {import('../types').UpdateManyQuery}
+ */
 function updateMany({
   model,
   modelKey,
@@ -21,6 +33,9 @@ function updateMany({
   ignoreTransaction,
   ctx,
 }) {
+  /**
+   * @type {import('../types').UpdateManyQuery}
+   */
   return async function (_conditions = {}, _update = {}, options) {
     await createTransactionIDIfNeed({
       ignoreTransaction,
