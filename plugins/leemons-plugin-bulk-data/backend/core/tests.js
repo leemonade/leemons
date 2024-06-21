@@ -7,6 +7,7 @@ const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
 const _delay = require('./bulk/helpers/delay');
 const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
+const { makeAssetNotIndexable } = require('./helpers/makeAssetNotIndexable');
 
 async function initTests({ file, config: { users, programs }, ctx, useCache, phaseKey }) {
   try {
@@ -28,7 +29,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
 
     for (let i = 0, len = qbanksKeys.length; i < len; i++) {
       const key = qbanksKeys[i];
-      const { creator, ...qbank } = qbanks[key];
+      const { creator, hideInLibrary, ...qbank } = qbanks[key];
       qbank.questions = questions
         .filter((question) => question.qbank === key)
         .map(({ qbank: qbankProp, category, ...question }) => ({
@@ -47,6 +48,16 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
           },
           { meta: { userSession: { ...users[creator] } } }
         );
+
+        if (hideInLibrary) {
+          await makeAssetNotIndexable({
+            creator: { ...users[creator] },
+            assetId: qbankData.asset,
+            assetName: qbankData.name,
+            ctx,
+          });
+        }
+
         ctx.logger.info(chalk`{cyan.bold BULK} QBank ADDED: ${qbank.name}`);
       } catch (e) {
         ctx.logger.log('-- QBANK CREATION ERROR --');
@@ -94,7 +105,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
 
     for (let i = 0, len = testsKeys.length; i < len; i++) {
       const key = testsKeys[i];
-      const { creator, ...test } = tests[key];
+      const { creator, hideInLibrary, ...test } = tests[key];
 
       try {
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding Test: ${test.name}}`);
@@ -105,6 +116,15 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
           },
           { meta: { userSession: { ...users[creator] } } }
         );
+
+        if (hideInLibrary) {
+          await makeAssetNotIndexable({
+            creator: { ...users[creator] },
+            assetId: testData.asset,
+            assetName: tests[key].name,
+            ctx,
+          });
+        }
 
         tests[key] = { ...testData };
         ctx.logger.info(chalk`{cyan.bold BULK} Test ADDED: ${test.name}`);

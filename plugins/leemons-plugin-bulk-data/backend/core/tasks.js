@@ -4,6 +4,7 @@ const { keys } = require('lodash');
 const importTasks = require('./bulk/tasks');
 const _delay = require('./bulk/helpers/delay');
 const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
+const { makeAssetNotIndexable } = require('./helpers/makeAssetNotIndexable');
 
 async function initTasks({ file, config, ctx, useCache, phaseKey }) {
   try {
@@ -13,7 +14,7 @@ async function initTasks({ file, config, ctx, useCache, phaseKey }) {
 
     for (let i = 0, len = tasksKeys.length; i < len; i++) {
       const key = tasksKeys[i];
-      const { creator, ...task } = tasks[key];
+      const { creator, hideInLibrary, ...task } = tasks[key];
 
       try {
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding task: ${task.asset?.name}}`);
@@ -22,6 +23,18 @@ async function initTasks({ file, config, ctx, useCache, phaseKey }) {
           { ...task, published: true },
           { meta: { userSession: creator } }
         );
+
+        if (hideInLibrary) {
+          const { task: taskDetail } = await ctx.call('tasks.tasks.getRest', {
+            id: taskData.fullId,
+          });
+          await makeAssetNotIndexable({
+            creator: { ...creator },
+            assetId: taskDetail.asset.id,
+            assetName: tasks[key].name,
+            ctx,
+          });
+        }
         tasks[key] = { ...taskData };
 
         ctx.logger.info(chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`);

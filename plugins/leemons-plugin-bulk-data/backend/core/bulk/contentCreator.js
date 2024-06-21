@@ -99,7 +99,7 @@ async function importContentCreatorDocuments({ file, config, ctx }) {
 
         // BASIC DATA
 
-        const { name, description = null, color = null, published } = document;
+        const { name, description = null, color = null, published, hideInLibrary } = document;
 
         const tags = (document.tags || '')
           .split(',')
@@ -152,6 +152,7 @@ async function importContentCreatorDocuments({ file, config, ctx }) {
           tags,
           content,
           creator,
+          hideInLibrary,
         };
       })
   );

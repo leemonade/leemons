@@ -152,7 +152,13 @@ async function importBulkData({
       // MEDIA LIBRARY
 
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
-      const { assets, nonIndexableAssets } = await initLibrary({ file: docPath, config, useCache, phaseKey: currentPhaseKey, ctx });
+      const { assets, nonIndexableAssets } = await initLibrary({
+        file: docPath,
+        config,
+        useCache,
+        phaseKey: currentPhaseKey,
+        ctx,
+      });
       config.assets = assets;
       config.nonIndexableAssets = nonIndexableAssets;
 
@@ -287,6 +293,9 @@ async function importBulkData({
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
       currentPhaseLocal = LOAD_PHASES.TASKS;
       if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TASKS, 60 * 60);
+
+      // ·······························································
+      // MODULES
 
       // ·······························································
       // WIDGETS

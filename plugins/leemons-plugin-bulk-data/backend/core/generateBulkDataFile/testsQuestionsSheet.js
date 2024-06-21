@@ -208,9 +208,10 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
       };
 
       const answerFields = getAnswerFields(question, allImageAssetDetails);
+      const questionObject = { ...commonData, ...answerFields };
 
-      worksheet.addRow(_.omitBy({ ...commonData, ...answerFields }, _.isNil));
-      questionsToReturn.push({ ...question, bulkId });
+      worksheet.addRow(_.omitBy(questionObject, _.isNil));
+      questionsToReturn.push({ ...question, bulkId, questionObject, worksheet });
     });
   });
 

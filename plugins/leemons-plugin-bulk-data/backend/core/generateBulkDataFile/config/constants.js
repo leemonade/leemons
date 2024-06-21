@@ -10,10 +10,11 @@ module.exports = {
     TASKS: 'assignables.task',
     CONTENT_CREATOR: 'assignables.content-creator',
     FEEDBACK: 'assignables.feedback',
-    LEARNING_PATHS_MODULE: 'assignables.learning-paths-module',
+    LEARNING_PATHS_MODULE: 'assignables.learningpaths.module',
     SCORM: 'assignables.scorm',
     TESTS: 'assignables.tests',
     TEST_QUESTION_BANKS: 'tests-questions-banks',
+    LIBRARY_ASSETS: 'assignables.library.asset',
   },
   KANBAN_COLUMN_NAMES: ['', 'backlog', 'todo', 'inprogress', 'underreview', 'done'],
   REGIONAL_CALENDAR_EVENT_TYPE: {
