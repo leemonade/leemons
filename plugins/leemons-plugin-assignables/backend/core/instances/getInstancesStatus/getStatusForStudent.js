@@ -15,7 +15,9 @@ const { hasGrades } = require('./hasGrades');
  *     - alwaysAvailable: a boolean indicating whether the instance is always available.
  * @return {'evaluated'|'late'|'submitted'|'closed'|'started'|'opened'|'assigned'} The status of the student.
  */
-function getStatus(studentData, instanceData) {
+function getStatusForStudent(studentData, instanceData) {
+  const { requiresScoring } = instanceData;
+
   const startDate = dayjs(studentData?.timestamps?.start || null);
   const endDate = dayjs(studentData?.timestamps?.end || null);
   const instanceStartDate = dayjs(instanceData?.dates?.start || null);
@@ -30,7 +32,7 @@ function getStatus(studentData, instanceData) {
   const finished = deadline.isValid() && (!deadline.isAfter(dayjs()) || closeDate.isValid());
 
   if (finished || endDate.isValid()) {
-    if (hasGrades(studentData)) {
+    if (hasGrades(studentData) || !requiresScoring) {
       return 'evaluated';
     }
 
@@ -56,4 +58,4 @@ function getStatus(studentData, instanceData) {
   return 'assigned';
 }
 
-module.exports = { getStatus };
+module.exports = { getStatusForStudent };

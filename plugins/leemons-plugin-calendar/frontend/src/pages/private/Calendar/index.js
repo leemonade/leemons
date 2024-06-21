@@ -70,7 +70,7 @@ function Calendar({ session }) {
   async function getCalendarsForCenter(center) {
     const [{ calendars, events, userCalendar, ownerCalendars, calendarConfig }, schedule] =
       await Promise.all([
-        getCalendarsToFrontendRequest(center.token),
+        getCalendarsToFrontendRequest(center.token, { showHiddenColumns: true }),
         getScheduleToFrontendRequest(center.token),
       ]);
 

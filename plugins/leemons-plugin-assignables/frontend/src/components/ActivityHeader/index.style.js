@@ -25,6 +25,11 @@ const useTotalLayoutStyles = createStyles((theme) => {
         padding: globalTheme.spacing.padding.xsm,
       },
     },
+    viewDetailButton: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
   };
 });
 

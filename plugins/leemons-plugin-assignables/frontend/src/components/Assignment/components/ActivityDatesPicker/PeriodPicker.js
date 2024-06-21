@@ -81,14 +81,14 @@ export function PeriodPicker({ value, onChange, localizations, error }) {
             placeholder={localizations?.startDate?.placeholder}
             value={startDate}
             minDate={new Date()}
-            maxDate={dayjs(deadline).subtract(1, 'minutes').toDate()}
+            maxDate={deadline ? dayjs(deadline).subtract(1, 'minutes').toDate() : undefined}
             onChange={setStartDate}
             withTime
           />
           <DatePicker
             label={localizations?.deadline?.label}
             placeholder={localizations?.deadline?.placeholder}
-            minDate={dayjs(startDate).add(1, 'minutes').toDate()}
+            minDate={startDate ? dayjs(startDate).add(1, 'minutes').toDate() : undefined}
             value={deadline}
             disabled={!startDate}
             clearable={false}

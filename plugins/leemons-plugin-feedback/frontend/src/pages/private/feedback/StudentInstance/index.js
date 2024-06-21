@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { isString } from 'lodash';
 
 import {
-  Box,
-  COLORS,
   LoadingOverlay,
   VerticalStepperContainer,
   TotalLayoutContainer,
@@ -12,12 +9,11 @@ import {
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { addErrorAlert } from '@layout/alert';
-import { useLocale, useStore } from '@common';
+import { useStore } from '@common';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import { getCentersWithToken } from '@users/session';
 import { getFeedbackRequest, getUserAssignableResponsesRequest } from '@feedback/request';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 

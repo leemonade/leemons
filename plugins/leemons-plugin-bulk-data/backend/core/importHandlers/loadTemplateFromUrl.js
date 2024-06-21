@@ -66,6 +66,7 @@ async function loadFromTemplateURL({
   templateURL,
   shareLibraryAssetsWithTeacherProfile,
   shouldInitializeForClientManager = true,
+  onFinishData = {},
   ctx,
 }) {
   if (!templateURL) {
@@ -97,6 +98,7 @@ async function loadFromTemplateURL({
       docPath: file.path,
       preConfig,
       shareLibraryAssetsWithTeacherProfile,
+      onFinishData,
       ctx,
     });
     return { status: 200 };
@@ -105,6 +107,7 @@ async function loadFromTemplateURL({
     throw new LeemonsError(ctx, {
       message: `Something went wrong importing from template URL: ${error}`,
       httpStatusCode: 500,
+      cause: error,
     });
   }
 }

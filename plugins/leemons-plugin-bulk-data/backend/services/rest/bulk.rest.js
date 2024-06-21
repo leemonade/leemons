@@ -57,7 +57,7 @@ module.exports = {
       method: 'GET',
     },
     async handler(ctx) {
-      return getLoadStatus({ useCache: true, ctx });
+      return getLoadStatus({ useCache: true, initOnPhase: ctx.params?.initOnPhase, ctx });
     },
   },
   generateBulkDataRest: {

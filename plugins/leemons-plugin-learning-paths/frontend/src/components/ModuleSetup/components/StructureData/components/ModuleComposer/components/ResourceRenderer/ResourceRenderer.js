@@ -25,10 +25,6 @@ export const useResourceRendererStyles = createStyles((theme) => {
       ...globalTheme.content.typo.body['md--bold'],
       color: globalTheme.content.color.text.default,
     },
-    lastUpdate: {
-      ...globalTheme.content.typo.body.sm,
-      color: globalTheme.content.color.text.muted,
-    },
   };
 });
 

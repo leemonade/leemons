@@ -27,4 +27,18 @@ function getDuplicatedAssetsReferenceAsString(libraryAssets, dups, separator = '
   return libraryResourcesMatching.map((item) => item.bulkId).join(separator);
 }
 
-module.exports = { getDuplicatedAssetsReferenceAsString };
+function handleNonIndexableAssetsNeeded(nonIndexableAssets, assetToAdd) {
+  const match = nonIndexableAssets.find(({ asset }) => asset.id === assetToAdd.id);
+  if (match) {
+    return match.bulkId;
+  }
+  const notIndexablesCount = nonIndexableAssets.length;
+  const bulkId = `LNI_${notIndexablesCount + 1}`;
+  nonIndexableAssets.push({ bulkId, asset: assetToAdd });
+  return bulkId;
+}
+
+module.exports = {
+  getDuplicatedAssetsReferenceAsString,
+  handleNonIndexableAssetsNeeded,
+};

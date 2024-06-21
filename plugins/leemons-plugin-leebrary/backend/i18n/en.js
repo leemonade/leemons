@@ -381,7 +381,7 @@ module.exports = {
         helpCTA: 'How to manage favorites.',
         description:
           'Click on the heart icon on the card of any library item to highlight it in this section and have it handy.',
-        help: 'And if you need help, access {CTA}',
+        // help: 'And if you need help, access {CTA}',
       },
       'leebrary-shared': {
         descriptionCTA: 'New',
@@ -433,14 +433,24 @@ module.exports = {
         helpCTA: 'How to create {pluralCategory}.',
         description:
           'With surveys, you can find out the satisfaction level of your students, request feedback on content, tasks, etc... and view the results in a super useful report. Create your first survey by clicking {CTA}',
-        help: 'And if you want to know how they work in detail, access {CTA}',
+        // help: 'And if you want to know how they work in detail, access {CTA}',
       },
       'assignables.learningpaths.module': {
         descriptionCTA: 'New {singularCategory}.',
         helpCTA: 'How to create {pluralCategory}.',
         description:
           'A module is a learning situation that has several stages (a content, test, task...) and that must be carried out consecutively. To create a module, you must first upload or create the contents and activities that comprise it. Start now by clicking {CTA}',
-        help: 'And if you want to know how they work in detail, access {CTA}',
+        // help: 'And if you want to know how they work in detail, access {CTA}',
+      },
+      links: {
+        'media-files': 'https://www.leemons.io/academy-post/adding-resources',
+        bookmarks: 'https://www.leemons.io/academy-post/creating-bookmarks',
+        'assignables.content-creator': 'https://www.leemons.io/academy-post/content-creator',
+        'assignables.task':
+          'https://www.leemons.io/academy-post/tasks-assignments-1-create-and-assign',
+        'assignables.tests': 'https://www.leemons.io/academy-post/test-quizzes-1-create-and-assign',
+        'tests-questions-banks': 'https://www.leemons.io/academy-post/questions-banks',
+        academy: 'https://www.leemons.io/leemons-academy',
       },
     },
   },

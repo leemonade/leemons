@@ -11,7 +11,7 @@ import { ViewOnIcon } from '@bubbles-ui/icons/outline';
 import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
 import { AssetMetadataFeedback } from '../../components/AssetMetadataFeedback';
 
-const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
+const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props }) => {
   const history = useHistory();
   const [t] = useTranslateLoader(prefixPN('feedbackCard'));
   const {
@@ -48,6 +48,9 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       if (asset.pinned === true) {
         toolbarItems.unpin = t('unpin');
       }
+    }
+    if (asset.shareable) {
+      toolbarItems.share = t('share');
     }
   }
 
@@ -98,6 +101,10 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
     })();
   };
 
+  const handleOnShare = () => {
+    onShare(asset);
+  };
+
   const handleAssign = () => {
     history.push(`/private/feedback/assign/${asset.providerData.id}`);
   };
@@ -132,9 +139,9 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       titleActionButton={
         asset?.providerData?.published
           ? {
-            icon: <ViewOnIcon height={16} width={16} />,
-            onClick: handleView,
-          }
+              icon: <ViewOnIcon height={16} width={16} />,
+              onClick: handleView,
+            }
           : null
       }
       onEdit={handleEdit}
@@ -143,6 +150,7 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       onDelete={handleDelete}
       onAssign={handleAssign}
       onDuplicate={handleDuplicate}
+      onShare={handleOnShare}
     />
   );
 };
@@ -152,6 +160,7 @@ FeedbackDetail.propTypes = {
   onRefresh: PropTypes.func,
   onPin: PropTypes.func,
   onUnpin: PropTypes.func,
+  onShare: PropTypes.func,
 };
 
 export default FeedbackDetail;
