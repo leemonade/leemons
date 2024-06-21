@@ -20,6 +20,8 @@
     "@leemons/runner": "0.0.71",
     "colord": "^2.9.3",
     "dotenv": "^16.0.3",
+    "leemons-plugin-ai-assistant": "1.0.0",
+    "leemons-plugin-ai-assistant-frontend-react-private": "1.0.0",
     "leemons-plugin-academic-calendar": "1.0.31",
     "leemons-plugin-academic-calendar-frontend-react": "1.0.0",
     "leemons-plugin-academic-portfolio": "1.0.35",
