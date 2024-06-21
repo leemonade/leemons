@@ -18,6 +18,7 @@ import { map } from 'lodash';
 import AssignConfig from '@tests/components/AssignConfig';
 import { useStore } from '@common';
 import {
+  createAssignedConfigRequest,
   deleteAssignedConfigRequest,
   getAssignConfigsRequest,
   getTestRequest,
@@ -35,6 +36,8 @@ export const useAssignmentDrawerStyles = createStyles(() => ({
     justifyContent: 'end',
   },
 }));
+
+
 
 async function init({ assignable, store, render }) {
   try {
@@ -72,6 +75,17 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
     }
   }, [assignable?.id]);
 
+  async function handleCreateAssignmentConfig(values) {
+    try {
+      const id = await createAssignedConfigRequest(values.presetName, values);
+
+      addSuccessAlert('Config creada con éxito');
+      return id;
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+  }
+
   async function handleDeleteAssignmentConfig(id) {
     try {
       await deleteAssignedConfigRequest(id);
@@ -99,9 +113,14 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
     render();
   }
 
+
   const onSubmit = useCallback(
-    // llamar a create
-    form.handleSubmit((values) => {
+    form.handleSubmit(async (values) => {
+      if(values.rules?.filters?.settings === 'new' && values.rules?.filters?.presetName ) {
+        const id = await handleCreateAssignmentConfig(values.rules.filters);
+        values.rules.filters.configSelected = id;
+        values.rules.filters.settings = 'existing';
+      }
 
       onSave({
         config: {
