@@ -3,6 +3,8 @@
   "version": "0.0.71",
   "description": "",
   "main": "src/index.js",
+  "types": "src/types.d.ts",
+  "license": "MIT",
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",
@@ -20,9 +22,8 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "devDependencies": {},
   "dependencies": {
     "@leemons/mongodb": "0.0.71"
   },
-  "license": "MIT"
+  "devDependencies": {}
 }

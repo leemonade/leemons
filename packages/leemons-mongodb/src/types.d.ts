@@ -41,3 +41,5 @@ export type Model = {
   insertMany: InsertManyQuery;
   aggregate: AggregateQuery;
 };
+
+export function LeemonsMongoDBMixin(options: any): any;

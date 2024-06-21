@@ -1,10 +1,21 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "target": "ES2020",
+    "target": "ESNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
     "jsx": "react",
+    "baseUrl": "./",
+    "outDir": "./dist",
     "paths": {
+      "*": [
+        "node_modules/*"
+      ],
       "@academic-calendar/*": [
         "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
       ],
@@ -13,6 +24,9 @@
       ],
       "@admin/*": [
         "./plugins/leemons-plugin-admin/frontend/src/*"
+      ],
+      "@ai-assistant/*": [
+        "./private-plugins/leemons-plugin-ai-assistant/frontend/src/*"
       ],
       "@assignables/*": [
         "./plugins/leemons-plugin-assignables/frontend/src/*"

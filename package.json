@@ -43,6 +43,7 @@
     "@babel/eslint-parser": "^7.22.15",
     "@babel/plugin-syntax-jsx": "^7.22.5",
     "@babel/preset-env": "^7.22.20",
+    "@types/node": "^20.14.6",
     "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
@@ -57,7 +58,9 @@
     "prettier-eslint": "^15.0.1",
     "rimraf": "^5.0.1",
     "start-server-and-test": "^2.0.0",
-    "turbo": "^1.9.3"
+    "ts-node": "^10.9.2",
+    "turbo": "^1.9.3",
+    "typescript": "^5.5.2"
   },
   "dependencies": {}
 }

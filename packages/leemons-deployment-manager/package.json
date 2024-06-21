@@ -1,11 +1,4 @@
 {
-  "devDependencies": {},
-  "dependencies": {
-    "@leemons/error": "0.0.41",
-    "@leemons/mongodb": "0.0.71",
-    "@leemons/service-name-parser": "0.0.41",
-    "lodash": "^4.17.21"
-  },
   "name": "@leemons/deployment-manager",
   "version": "0.0.71",
   "description": "",
@@ -28,5 +21,12 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/error": "0.0.41",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/service-name-parser": "0.0.41",
+    "lodash": "^4.17.21"
+  }
 }

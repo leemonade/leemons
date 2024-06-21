@@ -34,7 +34,8 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "always"
+      "source.fixAll.eslint": "always",
+      "source.organizeImports": "never"
     }
   },
   "sonarlint.connectedMode.project": {
