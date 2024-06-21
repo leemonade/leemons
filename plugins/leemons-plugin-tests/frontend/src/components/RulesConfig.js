@@ -20,13 +20,13 @@ import React from 'react';
 import { map } from 'lodash';
 import propTypes from 'prop-types';
 
-const RulesConfigStyles = createStyles((theme) => ({
+const RulesConfigStyles = createStyles((theme, { isDrawer }) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
     gap: theme.other.global.spacing.gap.xlg, // 24
     zIndex: 0,
-    paddingBottom: 10,
+    paddingBottom: isDrawer ? 60 : 10,
   },
   listElements: {
     listStyleType: 'disc',
@@ -81,18 +81,21 @@ const RulesConfig = ({
   hideButtons,
   onDeleteConfig,
   onUpdateConfig,
+  isDrawer = false,
+  defaultValues,
 }) => {
-  const { classes } = RulesConfigStyles();
+  const { classes } = RulesConfigStyles({ isDrawer });
   const [hasTextClue, setHasTextClue] = React.useState(false);
   const [hasHideShowClue, setHasHideShowClue] = React.useState(false);
   const [selectedConfig, setSelectedConfig] = React.useState(null);
-  const defaultValues = {
+  const initialValues = {
     clues: [
       { type: 'note', name: t('clueExtraInfo'), value: 0, canUse: true },
       { type: 'hide-response', name: t('clueHideOption'), value: 0, canUse: true },
     ],
   };
-  const form = useForm({ defaultValues });
+  const form = useForm({ defaultValues: defaultValues ?? initialValues });
+
 
   const settingsAsPreset = form.watch('settingsAsPreset');
   const settings = form.watch('settings');
@@ -165,7 +168,7 @@ const RulesConfig = ({
   return (
     <TotalLayoutStepContainer
       fullWidth={false}
-      clean={false}
+      clean={isDrawer}
       noMargin={false}
       Footer={
         !hideButtons && (
@@ -195,7 +198,6 @@ const RulesConfig = ({
                 onClick={() => {
                   form.handleSubmit(({ questions: q, ...filters }) => {
                     onSend({
-                      // questions: map(q, 'id'),
                       filters,
                     });
                   })();
@@ -557,7 +559,7 @@ const RulesConfig = ({
                                     { label: t('cluePer', { number: 25 }), value: 25 },
                                     { label: t('cluePer', { number: 50 }), value: 50 },
                                   ]}
-                                  value={clues[1].value} // Asumiendo que este es el Select para el segundo elemento
+                                  value={clues[1].value}
                                   onChange={(e) => {
                                     const _clues = form.getValues('clues');
                                     _clues[1].value = e;
@@ -607,6 +609,8 @@ RulesConfig.propTypes = {
   hideButtons: propTypes.bool,
   onDeleteConfig: propTypes.func,
   onUpdateConfig: propTypes.func,
+  isDrawer: propTypes.bool,
+  defaultValues: propTypes.object,
 };
 
 export { RulesConfig };
