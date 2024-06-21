@@ -17,10 +17,16 @@ import {
 import { map } from 'lodash';
 import AssignConfig from '@tests/components/AssignConfig';
 import { useStore } from '@common';
-import { getAssignConfigsRequest, getTestRequest } from '@tests/request';
-import { addErrorAlert } from '@layout/alert';
+import {
+  deleteAssignedConfigRequest,
+  getAssignConfigsRequest,
+  getTestRequest,
+  updateAssignedConfigRequest,
+} from '@tests/request';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
+import { RulesConfig } from '@tests/components/RulesConfig';
 
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {
@@ -59,14 +65,44 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
   const [store, render] = useStore();
   const [t] = useTranslateLoader(prefixPN('testAssign'));
 
+
   useEffect(() => {
     if (store.test?.id !== assignable.id) {
       init({ assignable, store, render });
     }
   }, [assignable?.id]);
 
+  async function handleDeleteAssignmentConfig(id) {
+    try {
+      await deleteAssignedConfigRequest(id);
+      addSuccessAlert(t('deletedConfig'));
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+    const { configs } = await getAssignConfigsRequest();
+    store.configs = configs;
+    render();
+
+    // store.configs = store.configs.filter((c) => c.id !== id);
+    // render();
+  }
+
+  async function handleUpdateAssignmentConfig(id, name, config) {
+    try {
+      await updateAssignedConfigRequest(id, name, config);
+      addSuccessAlert(t('updatedConfig'));
+    } catch (e) {
+      addErrorAlert(e.message);
+    }
+    const { configs } = await getAssignConfigsRequest();
+    store.configs = configs;
+    render();
+  }
+
   const onSubmit = useCallback(
-    form.handleSubmit((values) =>
+    // llamar a create
+    form.handleSubmit((values) => {
+
       onSave({
         config: {
           ...values?.evaluation?.evaluation,
@@ -74,21 +110,20 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
             (values.evaluation.curriculum || []).map((category) => [category, true])
           ),
           showCorrectAnswers: !values.others?.hideResponses,
-          metadata: values?.assignConfig,
+          metadata: { ...values?.assignConfig, ...values?.rules },
         },
         raw: values,
-      })
-    )
+      });
+    })
   );
 
   if (!store?.test?.id) {
     return <LoadingOverlay visible />;
   }
-
   return (
     <Box>
       <FormProvider {...form}>
-        <Box style={{ paddingBottom: 80 }}>
+        <Box>
           <ContextContainer padded>
             <Controller
               control={form.control}
@@ -115,6 +150,28 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
                   t={t}
                   hideButtons
                   isDrawer={true}
+                />
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="rules"
+              render={({ field }) => (
+                <RulesConfig
+                  {...field}
+                  isDrawer
+                  hideButtons
+                  stepName={t('rules')}
+                  defaultValues={field.value?.filters}
+                  onDeleteConfig={handleDeleteAssignmentConfig}
+                  onUpdateConfig={handleUpdateAssignmentConfig}
+                  onChangeRules={field.onChange}
+                  test={store.test}
+                  assignable={store.assignable}
+                  data={store.rawData}
+                  configs={store.configs}
+                  loading={store.loading}
+                  t={t}
                 />
               )}
             />

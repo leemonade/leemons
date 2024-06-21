@@ -15,8 +15,8 @@ import {
   Button,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, DeleteBinIcon, SynchronizeArrowsIcon } from '@bubbles-ui/icons/outline';
-import { Controller, useForm } from 'react-hook-form';
-import React from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import React, { useEffect } from 'react';
 import { map } from 'lodash';
 import propTypes from 'prop-types';
 
@@ -71,6 +71,19 @@ const RulesConfigStyles = createStyles((theme, { isDrawer }) => ({
   },
 }));
 
+const useOnChange = (form, onChangeRules) => {
+  const checkIfIsFunction = typeof onChangeRules === 'function';
+  const values = useWatch({ control: form.control, disabled: !checkIfIsFunction });
+
+  useEffect(() => {
+    const {questions, ...filters} = values;
+
+    if (checkIfIsFunction) {
+      onChangeRules({filters});
+    }
+  }, [values]);
+};
+
 const RulesConfig = ({
   t,
   loading,
@@ -83,11 +96,12 @@ const RulesConfig = ({
   onUpdateConfig,
   isDrawer = false,
   defaultValues,
+  onChangeRules,
 }) => {
   const { classes } = RulesConfigStyles({ isDrawer });
   const [hasTextClue, setHasTextClue] = React.useState(false);
   const [hasHideShowClue, setHasHideShowClue] = React.useState(false);
-  const [selectedConfig, setSelectedConfig] = React.useState(null);
+  const [selectedConfig, setSelectedConfig] = React.useState(defaultValues?.configSelected);
   const initialValues = {
     clues: [
       { type: 'note', name: t('clueExtraInfo'), value: 0, canUse: true },
@@ -95,6 +109,7 @@ const RulesConfig = ({
     ],
   };
   const form = useForm({ defaultValues: defaultValues ?? initialValues });
+  useOnChange(form, onChangeRules);
 
 
   const settingsAsPreset = form.watch('settingsAsPreset');
@@ -183,7 +198,6 @@ const RulesConfig = ({
                   const values = form.getValues();
                   const { questions: q, ...filters } = values;
                   onSave({
-                    // questions: map(q, 'id'),
                     filters,
                   });
                   onPrevStep();
@@ -411,6 +425,7 @@ const RulesConfig = ({
                       shouldUnregister
                       render={({ field }) => (
                         <Select
+                          {...field}
                           data={[
                             ...map(configs, (config) => ({
                               value: config.id,
@@ -418,12 +433,9 @@ const RulesConfig = ({
                             })),
                           ]}
                           label={t('configs')}
-                          // defaultValue={field.value}
-                          {...field}
                           onChange={(e) => {
                             handleConfigChange(e);
-                          }}
-                        />
+                          } } />
                       )}
                     />
                   </Box>
