@@ -49,7 +49,7 @@ export default function DetailQuestionsBanks({
   const [store, render] = useStore({
     loading: true,
     page: 0,
-    size: 10,
+    size: 100,
   });
   const [selectedSubject, setSelectedSubject] = React.useState(null);
   const userAgents = useUserAgents();
