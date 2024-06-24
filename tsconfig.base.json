@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "baseUrl": "./"
+  },
+  "types": ["node"],
+  "exclude": ["node_modules", "**/node_modules/*"]
+}

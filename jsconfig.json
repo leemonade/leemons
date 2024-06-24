@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.frontend.json",
+  "compilerOptions": {
+    "allowJs": true
+  }
+}

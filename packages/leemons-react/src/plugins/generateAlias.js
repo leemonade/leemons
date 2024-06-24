@@ -10,6 +10,7 @@ module.exports = function generateAliases(dir, plugins) {
     (obj, plugin) => {
       const pluginPath = path.resolve(dir, 'plugins', plugin.name);
       const targetDir = fs.existsSync(path.join(pluginPath, 'dist')) ? 'dist' : 'src';
+
       return {
         ...obj,
         [`@${plugin.name.replace('-frontend-react-private', '').replace('-frontend-react', '')}`]:

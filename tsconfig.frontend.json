@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "target": "ESNext",
     "lib": [
@@ -6,16 +7,18 @@
       "DOM.Iterable",
       "ESNext"
     ],
-    "allowJs": true,
     "module": "ESNext",
-    "moduleResolution": "node",
     "jsx": "react",
-    "baseUrl": "./",
-    "outDir": "./dist",
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "useDefineForClassFields": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noImplicitAny": false,
+    "noEmit": false,
     "paths": {
-      "*": [
-        "node_modules/*"
-      ],
       "@academic-calendar/*": [
         "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
       ],
@@ -144,14 +147,9 @@
       ]
     }
   },
-  "exclude": [
-    "node_modules",
-    "**/node_modules/*"
-  ],
   "include": [
-    "./packages/**/*",
-    "./plugins/**/*",
-    "./private-plugins/**/*",
-    "plugins/leemons-plugin-menu-builder/frontend/.babelrc.js"
+    "./plugins/*/frontend/**/*",
+    "./private-plugins/*/frontend/**/*",
+    "./plugins/leemons-plugin-menu-builder/frontend/.babelrc.js"
   ]
 }

@@ -3,27 +3,24 @@ const path = require('path');
 
 async function getJsConfig(basePath) {
   try {
-    const jsConfig = await fs.readJSON(path.resolve(basePath, 'tsconfig.json'));
+    const jsConfig = await fs.readJSON(path.resolve(basePath, 'tsconfig.frontend.json'));
 
     if (jsConfig) {
       return jsConfig;
     }
 
-    throw new Error('tsconfig.json not found');
+    throw new Error('tsconfig.frontend.json not found');
   } catch (e) {
     return {
+      extends: './tsconfig.base.json',
       compilerOptions: {
         target: 'ESNext',
         lib: ['DOM', 'DOM.Iterable', 'ESNext'],
-        allowJs: true,
         module: 'ESNext',
-        moduleResolution: 'node',
         jsx: 'react',
-        baseUrl: './',
-        outDir: './dist',
       },
       exclude: ['node_modules', '**/node_modules/*'],
-      include: ['./packages/**/*'],
+      include: ['./plugins/*/frontend/**/*', './private-plugins/*/frontend/**/*'],
     };
   }
 }
@@ -33,14 +30,12 @@ module.exports = async function createJsConfig({
   basePath = path.resolve(__dirname, '../../../../'),
 }) {
   if (!basePath) {
-    throw new Error('basePath is required to create jsconfig.json');
+    throw new Error('basePath is required to create tsconfig.json');
   }
 
   const config = await getJsConfig(basePath);
 
-  const paths = {
-    '*': ['node_modules/*'],
-  };
+  const paths = {};
 
   plugins
     // EN: Sort plugins by name so that the order is consistent
@@ -68,7 +63,7 @@ module.exports = async function createJsConfig({
 
   config.compilerOptions.paths = paths;
 
-  await fs.writeJSON(path.resolve(basePath, 'tsconfig.json'), config, {
+  await fs.writeJSON(path.resolve(basePath, 'tsconfig.frontend.json'), config, {
     encoding: 'utf8',
     spaces: 2,
   });
