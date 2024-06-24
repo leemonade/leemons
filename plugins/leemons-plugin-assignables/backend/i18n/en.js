@@ -510,6 +510,7 @@ module.exports = {
     finished_alert: {
       title: 'Activity finished',
     },
+    goToModuleDashboard: 'Go back to dashboard',
   },
   evaluationFeedbackComponent: {
     contactTeacher: 'Chat with my teacher',
