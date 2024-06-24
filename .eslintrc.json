@@ -72,5 +72,14 @@
       }
     ],
     "unused-imports/no-unused-imports": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.spec.js", "**/*.test.js"],
+      "rules": {
+        "no-unused-vars": "off",
+        "sonarjs/no-duplicate-string": "off"
+      }
+    }
+  ]
 }
