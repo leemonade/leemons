@@ -2,5 +2,6 @@
   "extends": "./tsconfig.frontend.json",
   "compilerOptions": {
     "allowJs": true
-  }
+  },
+  "include": ["./plugins/*/frontend/**/*", "./private-plugins/*/frontend/**/*"]
 }

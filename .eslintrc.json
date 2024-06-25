@@ -10,7 +10,6 @@
   },
   "extends": [
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
     "plugin:sonarjs/recommended",
     "airbnb-base",
     "prettier"
@@ -40,7 +39,6 @@
   },
   "plugins": [
     "react",
-    "react-hooks",
     "sonarjs",
     "import",
     "prettier"

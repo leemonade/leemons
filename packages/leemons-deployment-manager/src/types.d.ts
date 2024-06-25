@@ -1,13 +1,13 @@
-import { Model } from '@leemons/mongodb'
+import { Model } from '@leemons/mongodb';
 import {
   Context as MoleculerContext,
   ActionSchema as MoleculerActionSchema,
-  ServiceSchema as MoleculerServiceSchema
-} from 'moleculer'
+  ServiceSchema as MoleculerServiceSchema,
+} from 'moleculer';
 
 type DB = {
-  [modelName: string]: Model
-}
+  [modelName: string]: Model;
+};
 
 interface UserAgent {
   id: string;
@@ -17,19 +17,22 @@ interface UserSession {
   userAgents: UserAgent[];
 }
 
-export type Context = MoleculerContext & {
-  db: DB
+export type Context<P = any> = MoleculerContext & {
+  db: DB;
   tx: {
-    db: DB
-    emit: MoleculerContext['emit']
-    call: MoleculerContext['call']
-  },
+    db: DB;
+    emit: MoleculerContext['emit'];
+    call: MoleculerContext['call'];
+  };
   meta: MoleculerContext['meta'] & {
     deploymentID: string;
     userSession: UserSession;
-  },
+    [name: string]: any;
+  };
   callerPlugin: string;
-}
+  params: P;
+  socket: any;
+};
 
 export function LeemonsDeploymentManagerMixin(): any;
 

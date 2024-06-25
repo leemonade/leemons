@@ -4,7 +4,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "sourceMap": true,
     "forceConsistentCasingInFileNames": true
-  },
-  "include": ["./packages/**/*", "./plugins/*/backend/**/*", "./private-plugins/*/backend/**/*"]
+  }
 }

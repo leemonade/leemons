@@ -146,10 +146,5 @@
         "./plugins/leemons-plugin-xapi/frontend/src/*"
       ]
     }
-  },
-  "include": [
-    "./plugins/*/frontend/**/*",
-    "./private-plugins/*/frontend/**/*",
-    "./plugins/leemons-plugin-menu-builder/frontend/.babelrc.js"
-  ]
+  }
 }
