@@ -21,6 +21,7 @@ const { getCurrentPhaseKey, getLastPhaseOnErrorKey } = require('../../helpers/ca
 const { LOAD_PHASES, LOAD_ERROR } = require('./getLoadStatus');
 const { getLoadStatus } = require('.');
 const { initContentCreator } = require('../contentCreator');
+const initModules = require('../modules');
 
 let currentPhaseLocal = null;
 let lastPhaseOnErrorLocal = null;
@@ -219,14 +220,12 @@ async function importBulkData({
         shareLibraryAssetsWithTeacherProfile &&
         Object.keys(config.contentCreatorDocs || {})?.length
       ) {
-        const { document: documents } = await ctx.call('content-creator.document.getDocumentRest', {
-          id: Object.values(config.contentCreatorDocs).map((doc) => doc.assignable),
-        });
+        const documents = Object.values(config.contentCreatorDocs);
 
         await shareAssetsWithProfile({
           profileId: config.profiles.teacher?.id,
           profileSysName: config.profiles.teacher?.sysName,
-          assets: (documents || []).map((doc) => doc.asset),
+          assets: documents.map((doc) => doc.asset),
           ctx,
         });
       }
@@ -297,7 +296,24 @@ async function importBulkData({
       // ·······························································
       // MODULES
 
-      // ·······························································
+      config.modules = await initModules({ file: docPath, config, ctx });
+
+      if (shareLibraryAssetsWithTeacherProfile) {
+        const moduleAssets = Object.values(config.modules).map((item) => item.asset);
+
+        await shareAssetsWithProfile({
+          profileId: config.profiles.teacher?.id,
+          profileSysName: config.profiles.teacher?.sysName,
+          assets: moduleAssets,
+          ctx,
+        });
+      }
+
+      ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Modules plugin`);
+      currentPhaseLocal = LOAD_PHASES.MODULES;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.MODULES, 60 * 60);
+
+      // ······························································
       // WIDGETS
 
       await initWidgets({ ctx });

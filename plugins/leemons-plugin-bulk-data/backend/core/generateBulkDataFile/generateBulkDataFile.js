@@ -227,6 +227,9 @@ async function generateBulkDataFile({
     ctx,
   });
 
+  // TODO: New features will need to handle the activities and qbansk that might be created as not indexable when exporting from a previously imported bulk-data
+  // these not indexable assets are use to handle versions needed by other assets (i.e.: Modules using a previouse version of a task, Tests using previous versions of a qbank)
+
   // ALL ASSETS
   const { items: assetCategories } = await ctx.call('leebrary.categories.listRest', {});
   const allAssets = await ctx.call('leebrary.assets.getAllAssets', {

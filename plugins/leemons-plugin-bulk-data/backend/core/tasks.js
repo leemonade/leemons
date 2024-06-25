@@ -31,7 +31,7 @@ async function initTasks({ file, config, ctx, useCache, phaseKey }) {
           await makeAssetNotIndexable({
             creator: { ...creator },
             assetId: taskDetail.asset.id,
-            assetName: tasks[key].name,
+            assetName: taskDetail.asset.name,
             ctx,
           });
         }

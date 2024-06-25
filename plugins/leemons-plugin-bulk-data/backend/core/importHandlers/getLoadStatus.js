@@ -16,6 +16,7 @@ const LOAD_PHASES = {
   CONTENT_CREATOR: 'content creator',
   TESTS: 'tests',
   TASKS: 'tasks',
+  MODULES: 'modules',
   WIDGETS: 'widgets',
 };
 const LOAD_ERROR = 'error';

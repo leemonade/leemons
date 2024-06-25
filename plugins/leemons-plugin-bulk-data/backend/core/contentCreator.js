@@ -25,22 +25,23 @@ async function initContentCreator({ file, config, ctx }) {
           }
         );
 
+        const { document: documentDetail } = await ctx.call(
+          'content-creator.document.getDocumentRest',
+          {
+            id: documentData.assignable,
+          }
+        );
+
         if (hideInLibrary) {
-          const { document: documentDetail } = await ctx.call(
-            'content-creator.document.getDocumentRest',
-            {
-              id: documentData.assignable,
-            }
-          );
           await makeAssetNotIndexable({
             creator: { ...creator },
-            assetId: documentDetail.asset,
+            assetId: documentDetail.asset.id,
             assetName: documentDetail.name,
             ctx,
           });
         }
 
-        documents[key] = { ...documentData };
+        documents[key] = { ...documentDetail };
         ctx.logger.info(`Document ADDED: ${document.name}`);
       } catch (e) {
         ctx.logger.info(chalk`{red.bold WARN} -- DOCUMENT CREATION ERROR --`);

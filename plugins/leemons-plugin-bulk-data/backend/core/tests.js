@@ -17,7 +17,9 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
     const { items: questionsItems, questions } = await importQuestions(file);
 
     const categories = uniqBy(
-      questions.map((question) => ({ value: question.category })),
+      questions
+        .filter((question) => question.category)
+        .map((question) => ({ value: question.category })),
       'value'
     );
 
@@ -41,10 +43,15 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
 
       try {
         ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding QBank: ${qbank.name}}`);
+        const payload = { ...qbank };
+        if (categories.length) {
+          payload.categories = categories;
+        }
+
         qbankData = await ctx.call(
           'tests.questionsBanks.save',
           {
-            data: { ...qbank, categories },
+            data: payload,
           },
           { meta: { userSession: { ...users[creator] } } }
         );

@@ -57,7 +57,7 @@ const getMetadataString = (task, libraryAssets, notIndexableAssets) => {
 
 const getCenter = (centers, task, taskProgram) => {
   if (task.providerData.center) {
-    return centers.find((item) => item.id === task.providerData.center);
+    return centers.find((item) => item.id === task.providerData.center)?.bulkId || '';
   }
   return taskProgram?.centerBulkId || '';
 };

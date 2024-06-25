@@ -44,6 +44,38 @@ const getModuleSubmissionAssets = ({
   return `${references.join(', ')}${connector}${libraryAssetReferences}`;
 };
 
+const getModuleResources = ({
+  moduleResources,
+  libraryAssets,
+  cCreatorDocuments,
+  nonIndexableAssets,
+  nonIndexableAssetsNeeded,
+}) => {
+  const documentResourceBulkIds = [];
+  const libraryAssetResources = [];
+  moduleResources.forEach((resource) => {
+    const documentFound = cCreatorDocuments.find((documentAsset) => documentAsset.id === resource);
+    if (documentFound) {
+      documentResourceBulkIds.push(documentFound.bulkId); // Erased docs are not handled yet
+      return;
+    }
+    const resourceFound = nonIndexableAssets.find((asset) => asset.id === resource);
+    if (resourceFound) {
+      libraryAssetResources.push(resourceFound);
+    }
+  });
+
+  const libraryResources = getDuplicatedAssetsReferenceAsString({
+    libraryAssets,
+    dups: libraryAssetResources,
+    addNotFoundToNonIndexableAssets: true,
+    nonIndexableAssets,
+    nonIndexableAssetsNeeded,
+  });
+  const connector = documentResourceBulkIds.length && libraryResources.length ? ',' : '';
+  return `${documentResourceBulkIds.join(',')}${connector}${libraryResources}`;
+};
+
 async function createModulesSheet({
   workbook,
   moduleDetails,
@@ -71,7 +103,7 @@ async function createModulesSheet({
     { header: 'program', key: 'program', width: 20 },
     { header: 'subjects', key: 'subjects', width: 20 },
     { header: 'resources', key: 'resources', width: 20 },
-    { header: 'submissions', key: 'submissions', width: 20 },
+    { header: 'submission', key: 'submission', width: 20 },
     { header: 'published', key: 'published', width: 20 },
   ];
   worksheet.addRow({
@@ -86,7 +118,7 @@ async function createModulesSheet({
     program: 'Program',
     subjects: 'Subjects',
     resources: 'Resources',
-    submissions: 'Submissions',
+    submission: 'Submission',
     published: 'Published',
   });
   worksheet.getRow(2).eachCell((cell, colNumber) => {
@@ -146,7 +178,10 @@ async function createModulesSheet({
   let nonIndexableAssets = [];
   if (nonIndexableAssetIds.length) {
     nonIndexableAssets = await ctx.call('leebrary.assets.getByIds', {
-      ids: [...nonIndexableAssetIds, ...assignableLibraryAssets.map((item) => item.asset.id)],
+      ids: [
+        ...nonIndexableAssetIds,
+        ...assignableLibraryAssets.map((assignable) => assignable.metadata.leebrary.asset),
+      ],
       shouldPrepareAssets: true,
       withFiles: true,
     });
@@ -169,13 +204,11 @@ async function createModulesSheet({
     const _program = module.program ?? module.providerData.program;
 
     // RESOURCES
-    const moduleResourceAssets = module.providerData.resources.map((id) =>
-      nonIndexableAssets.find((asset) => asset.id === id)
-    );
-    const resourcesString = getDuplicatedAssetsReferenceAsString({
+    const resourcesString = getModuleResources({
+      moduleResources: module.providerData.resources,
       libraryAssets,
-      dups: moduleResourceAssets,
-      addNotFoundToNonIndexableAssets: true,
+      cCreatorDocuments,
+      nonIndexableAssets,
       nonIndexableAssetsNeeded,
     });
 
@@ -183,11 +216,11 @@ async function createModulesSheet({
     const moduleAssignableLibraryAssets = module.providerData.submission.activities
       .map(({ activity }) => {
         const assignableMatchAssetId = assignableLibraryAssets.find((item) => item.id === activity)
-          ?.asset?.id;
+          ?.metadata.leebrary.asset;
         return nonIndexableAssets.find((item) => item.id === assignableMatchAssetId);
       })
       .filter(Boolean);
-    const submissionsString = getModuleSubmissionAssets({
+    const submissionString = getModuleSubmissionAssets({
       module,
       assignables,
       libraryAssets,
@@ -204,7 +237,7 @@ async function createModulesSheet({
       cover,
       tags: module.tags?.join(', '),
       resources: resourcesString,
-      submissions: submissionsString,
+      submission: submissionString,
       creator,
       program: programs.find((item) => item.id === _program)?.bulkId,
       subjects: subjects

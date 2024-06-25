@@ -34,10 +34,17 @@ async function newAssetForTextEditor({ props, userSession, ctx }) {
   };
 }
 
-async function parseContent({ htmlString, assets, nonIndexableAssets = {}, userSession, ctx }) {
+async function parseContent({
+  htmlString,
+  assets,
+  nonIndexableAssets: _nonIndexableAssets,
+  userSession,
+  ctx,
+}) {
   if (isEmpty(htmlString)) {
     return null;
   }
+  const nonIndexableAssets = _nonIndexableAssets || {};
 
   let finalContent = htmlString;
   const regex = /<library ([^>]*?)bulkId=['"]([^'"]+)['"]([^>]*?)><\/library>/g;
