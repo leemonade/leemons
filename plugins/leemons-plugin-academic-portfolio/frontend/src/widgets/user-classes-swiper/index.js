@@ -18,7 +18,6 @@ import { useHistory } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import { listSessionClassesRequest } from '../../request';
-import { getClassImage } from '../../helpers/getClassImage';
 import { getClassIcon } from '../../helpers/getClassIcon';
 
 const Styles = createStyles((theme) => ({
@@ -28,24 +27,6 @@ const Styles = createStyles((theme) => ({
   },
   cardContainer: {
     backgroundColor: theme.colors.ui02,
-  },
-  imageContainer: {
-    position: 'relative',
-    paddingRight: theme.spacing[2],
-  },
-  image: {
-    height: '48px',
-    width: '48px',
-    borderRadius: '50%',
-    backgroundPosition: '50% 50%',
-    backgroundSize: 'cover',
-    backgroundColor: theme.colors.ui02,
-    fontSize: '24px',
-    fontWeight: 600,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#FFFFFF',
   },
   cardWrapper: {
     padding: 2,
@@ -64,18 +45,6 @@ const Styles = createStyles((theme) => ({
     textAlign: 'left',
   },
   colorIcon: {
-    img: {
-      filter: 'brightness(0) invert(1)',
-    },
-  },
-  icon: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '16px',
-    height: '16px',
-    color: theme.colors.text07,
     img: {
       filter: 'brightness(0) invert(1)',
     },
@@ -116,16 +85,7 @@ function UserClassesSwiperWidget({ program }) {
 
   return (
     <Box className={styles.root}>
-      <Box
-        sx={(theme) => ({
-          fontSize: '20px',
-          fontWeight: 600,
-          lineHeight: '28px',
-          marginBottom: theme.spacing[4],
-        })}
-      >
-        {t('subjects')}
-      </Box>
+
       <Swiper
         slidesPerView={'auto'}
       >
