@@ -447,6 +447,7 @@ module.exports = {
     tabs: {
       library: 'Biblioteca',
       new: 'Nuevo recurso',
+      unsplash: 'Unsplash',
     },
     filters: {
       search: {

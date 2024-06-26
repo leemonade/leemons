@@ -23,27 +23,19 @@ export function useAssetPickerDrawerLocalizations() {
   });
 }
 
-export const useAssetPickerDrawerStyles = createStyles((theme) => {
-  const globalTheme = theme.other.global;
-
-  return {
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      height: '100%',
-    },
-    content: {
-      // marginTop: globalTheme.spacing.padding.md,
-    },
-    contentPadding: {
-      overflowY: 'auto',
-      // paddingLeft: globalTheme.spacing.padding.xlg,
-      // paddingRight: globalTheme.spacing.padding.xlg,
-      height: '100%',
-    },
-  };
-});
+export const useAssetPickerDrawerStyles = createStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    height: '100%',
+  },
+  content: {},
+  contentPadding: {
+    overflowY: 'auto',
+    height: '100%',
+  },
+}));
 
 /**
  * Renders the AssetPickerDrawer component.
@@ -142,12 +134,10 @@ export function AssetPickerDrawer({
 
 AssetPickerDrawer.defaultProps = {
   onlyCreateImages: true,
-  size: 728,
 };
 AssetPickerDrawer.propTypes = {
   position: PropTypes.oneOf(['left', 'right']),
   opened: PropTypes.bool,
-  size: PropTypes.number,
   shadow: PropTypes.bool,
   creatable: PropTypes.bool,
   onClose: PropTypes.func,

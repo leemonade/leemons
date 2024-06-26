@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "sourceMap": true
+  },
+  "types": ["node"],
+  "exclude": ["node_modules", "**/node_modules/*", "dist"]
+}

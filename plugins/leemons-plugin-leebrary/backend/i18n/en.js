@@ -461,6 +461,7 @@ module.exports = {
     tabs: {
       library: 'Library',
       new: 'New resource',
+      unsplash: 'Unsplash',
     },
     filters: {
       search: {
