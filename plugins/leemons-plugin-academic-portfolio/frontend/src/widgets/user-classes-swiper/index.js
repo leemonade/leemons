@@ -59,17 +59,11 @@ const Styles = createStyles((theme) => ({
     textAlign: 'center',
     transitionDuration: '100ms',
   },
+  cardText: {
+    maxWidth: 200,
+    textAlign: 'left',
+  },
   colorIcon: {
-    position: 'absolute',
-    width: '25px',
-    height: '25px',
-    borderRadius: '50%',
-    right: '0px',
-    bottom: '-2px',
-    backgroundColor: theme.colors.uiBackground02,
-    border: '2px solid',
-    borderColor: theme.colors.uiBackground01,
-    color: theme.colors.text07,
     img: {
       filter: 'brightness(0) invert(1)',
     },
@@ -133,21 +127,10 @@ function UserClassesSwiperWidget({ program }) {
         {t('subjects')}
       </Box>
       <Swiper
-        breakAt={{
-          1800: { slidesPerView: 8, spaceBetween: 2 },
-          1600: { slidesPerView: 7, spaceBetween: 2 },
-          1200: { slidesPerView: 6, spaceBetween: 2 },
-          940: { slidesPerView: 5, spaceBetween: 2 },
-          520: { slidesPerView: 4, spaceBetween: 2 },
-          360: { slidesPerView: 3, spaceBetween: 2 },
-        }}
+        slidesPerView={'auto'}
       >
         {store.classes.map((classe, index) => {
           const dataLabels = getSubjectGroupCourseNamesFromClassData(classe);
-
-          const imageStyle = getClassImage(classe)
-            ? { backgroundImage: `url(${getClassImage(classe)})` }
-            : {};
 
           let nameFirstLetters = null;
           const nameArray = classe.subject.name.split(' ');
@@ -165,42 +148,27 @@ function UserClassesSwiperWidget({ program }) {
               <Stack
                 className={styles.card}
                 alignItems="center"
-                direction="column"
                 spacing={4}
                 fullWidth
                 onClick={() => goClassDashboard(classe)}
               >
-                <Box className={styles.imageContainer}>
-                  <Box
-                    style={
-                      classe.color ? { backgroundColor: classe.color, ...imageStyle } : imageStyle
-                    }
-                    className={styles.image}
-                  >
-                    {!imageStyle && nameFirstLetters}
-                  </Box>
 
                   {classe.color || classe.icon ? (
                     <Box className={styles.colorIcon}>
-                      <AvatarSubject color={classe.color} icon={getClassIcon(classe)} size="md" />
+                      <AvatarSubject name={classe.subject.name} color={classe.color} icon={getClassIcon(classe)} size="xxlg" />
                     </Box>
                   ) : null}
-                </Box>
-                <Stack direction="column" spacing={2}>
-                  <Box>
-                    <TextClamp lines={2} showTooltip>
+                <Stack direction="column" spacing={0} justifyContent='start' alignItems='start' className={styles.cardText}>
+                    <TextClamp lines={1} showTooltip>
                       <Text color="primary" strong>
                         {dataLabels?.subject}
                       </Text>
                     </TextClamp>
-                  </Box>
-                  <Box>
                     <TextClamp lines={1} showTooltip>
-                      <Text size="sm" strong>
+                      <Text size="sm" >
                         {dataLabels?.courseAndGroupParsed}
                       </Text>
                     </TextClamp>
-                  </Box>
                 </Stack>
               </Stack>
             </Box>
