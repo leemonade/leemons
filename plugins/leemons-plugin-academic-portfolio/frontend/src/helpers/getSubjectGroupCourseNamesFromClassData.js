@@ -50,7 +50,9 @@ const getSubjectGroupCourseNamesFromClassData = (classData) => {
   const courseData = getCourse(classData);
   data.course = `${courseData}`;
 
-  data.courseAndGroupParsed = `${data?.course} ${
+  const courseWithSpace = data?.course ? `${data?.course} ` : '';
+
+  data.courseAndGroupParsed = `${courseWithSpace}${
     data?.group || (data?.displayNameforClass && data?.course) ? '-' : ''
   } ${data?.group || data?.displayNameforClass}`;
 

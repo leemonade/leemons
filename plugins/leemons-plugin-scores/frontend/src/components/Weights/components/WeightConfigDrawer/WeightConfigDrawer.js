@@ -25,7 +25,9 @@ export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
   const { mutateAsync: setWeight, isLoading: isRunningMutation } = useWeightMutation();
 
   const isTotalValue100Percent = useIsTotalValue100Percent({ control: form.control });
-  const { courseAndGroupParsed: className } = getSubjectGroupCourseNamesFromClassData(klass);
+  const { subject, courseAndGroupParsed } = getSubjectGroupCourseNamesFromClassData(klass);
+
+  const className = `${subject} - ${courseAndGroupParsed}`;
 
   useResetFormOnClassDataChange({ weight: weightValue, class: klass, form });
 
