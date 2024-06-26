@@ -125,7 +125,7 @@ module.exports = {
           "You must be a teacher of one of the learning path's subjects or the owner of the learning path to assign it.",
         descriptionWhenOwner:
           "You own this learning path but are not a teacher of any of the learning path's subjects. Please edit the learning path to update or remove the subjects if you wish to assign it.",
-        edit: 'Edit learning path',
+        edit: 'Edit module',
         accept: 'Accept',
       },
     },

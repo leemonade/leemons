@@ -305,7 +305,7 @@ module.exports = {
         "You must be a teacher of one of the document's subjects or the owner of the document to assign it.",
       descriptionWhenOwner:
         "You own this document but are not a teacher of any of the document's subjects. Please edit the document to update or remove the subjects if you wish to assign it.",
-      edit: 'Edit document',
+      edit: 'Edit test',
       accept: 'Accept',
     },
   },

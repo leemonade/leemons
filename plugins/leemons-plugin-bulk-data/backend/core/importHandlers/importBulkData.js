@@ -295,7 +295,11 @@ async function importBulkData({
 
       // ·······························································
       // MODULES
+      // TO IMPLEMENT: Finish modules import making sure duplication -> assignation -> execution works correctly
+      // TO IMPLEMENT:: Finish modules import making sure ccreator documents can be correctly used as module resources
+      // TO IMPLEMENT:: Add correspoinding load phase and update possible translations needed in Client Manager
 
+      /*
       config.modules = await initModules({ file: docPath, config, ctx });
 
       if (shareLibraryAssetsWithTeacherProfile) {
@@ -312,6 +316,7 @@ async function importBulkData({
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Modules plugin`);
       currentPhaseLocal = LOAD_PHASES.MODULES;
       if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.MODULES, 60 * 60);
+      */
 
       // ······························································
       // WIDGETS
