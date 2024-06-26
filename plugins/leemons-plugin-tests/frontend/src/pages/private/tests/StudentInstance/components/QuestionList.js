@@ -30,9 +30,9 @@ export default function QuestionList(props) {
             props.prevStep();
           }
         }}
-        nextStep={(e) => {
+        nextStep={async (e) => {
           if (isLast) {
-            props.finishStep(e);
+            await props.finishStep(e);
           } else {
             store.questionNumber += 1;
             render();
