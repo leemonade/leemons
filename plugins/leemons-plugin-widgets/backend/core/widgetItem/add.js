@@ -3,7 +3,7 @@ const { LeemonsError } = require('@leemons/error');
 const { validatePrefix } = require('../validation/validate');
 const { exists: existsZone } = require('../widgetZone');
 
-async function add({ zoneKey, key, url, name, description, profiles, properties = {}, ctx }) {
+async function add({ zoneKey, key, url, name, path, description, profiles, properties = {}, ctx }) {
   validatePrefix({ type: key, calledFrom: ctx.callerPlugin, ctx });
   if (!url || !_.isString(url)) {
     throw new LeemonsError(ctx, { message: 'url is required' });
@@ -30,6 +30,7 @@ async function add({ zoneKey, key, url, name, description, profiles, properties 
       url,
       name,
       description,
+      path,
       properties: JSON.stringify(properties),
       pluginName: ctx.callerPlugin,
     }).then((mongooseDoc) => mongooseDoc.toObject()),
