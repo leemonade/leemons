@@ -71,7 +71,7 @@ export default function NYA({ classe, program }) {
     ? activities.isLoading || evaluations.isLoading
     : activities.isLoading;
 
-  if (!welcomeCompleted && !isLoading && isEmpty) {
+  if (!welcomeCompleted && isEmpty) {
     return null;
   }
 
