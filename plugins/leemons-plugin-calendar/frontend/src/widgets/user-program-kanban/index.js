@@ -46,7 +46,9 @@ const useStyles = createStyles((theme, { inTab }) => ({
   },
   calendarContainer: {
     paddingTop: theme.spacing[6],
+    overflowY: 'auto',
     height: inTab ? 'calc(100vh - 230px)' : 'auto',
+    maxHeight: inTab ? 'calc(100vh - 230px)' : '600px',
   },
 }));
 
