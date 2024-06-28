@@ -4,21 +4,28 @@ import _, { find, isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 
-const SelectAgents = ({ usersData, onlyForTeachers, teacherProfile, ...props }) => (
-  <SelectUserAgent
-    {...props}
-    onlyContacts={true}
-    profiles={teacherProfile}
-    onlyForTeachers={onlyForTeachers}
-    selectedUsers={_.map(usersData, 'user.id')}
-    returnItem
-  />
-);
+const SelectAgents = ({ usersData, onlyForTeachers, userProfiles, ...props }) => {
+  const profilesHandler = useMemo(() => {
+    if (onlyForTeachers) {
+      return userProfiles.teacher;
+    }
+    return [userProfiles.student, userProfiles.teacher];
+  }, [onlyForTeachers, userProfiles]);
+  return (
+    <SelectUserAgent
+      {...props}
+      onlyContacts={true}
+      profiles={profilesHandler}
+      selectedUsers={_.map(usersData, 'user.id')}
+      returnItem
+    />
+  );
+};
 
 SelectAgents.propTypes = {
   usersData: PropTypes.array,
   onlyForTeachers: PropTypes.bool,
-  teacherProfile: PropTypes.object,
+  userProfiles: PropTypes.object,
 };
 
 const RoleSelect = (props) => {
@@ -42,7 +49,7 @@ const PermissionsDataUsers = ({
   alreadySelectedUsers,
   t,
   onlyForTeachers,
-  teacherProfile,
+  userProfiles,
 }) => {
   // ··············································································
   // HANDLERS
@@ -50,7 +57,6 @@ const PermissionsDataUsers = ({
     const found = find(value, (data) => data.user.id === userData.user.id);
     return isNil(found);
   };
-
   // ··············································································
   // LABELS & STATICS
   const USERS_COLUMNS = useMemo(
@@ -62,7 +68,7 @@ const PermissionsDataUsers = ({
           node: (
             <SelectAgents
               onlyForTeachers={onlyForTeachers}
-              teacherProfile={teacherProfile}
+              userProfiles={userProfiles}
               usersData={[...alreadySelectedUsers, ...value]}
             />
           ),
@@ -134,7 +140,7 @@ PermissionsDataUsers.propTypes = {
   editMode: PropTypes.bool,
   alreadySelectedUsers: PropTypes.any,
   onlyForTeachers: PropTypes.bool,
-  teacherProfile: PropTypes.string,
+  userProfiles: PropTypes.object,
 };
 
 export default PermissionsDataUsers;
