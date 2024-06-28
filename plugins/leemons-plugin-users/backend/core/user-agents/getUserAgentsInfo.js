@@ -1,15 +1,20 @@
 /* eslint-disable no-param-reassign */
+
 const _ = require('lodash');
 
 /**
- * Returns all agents that meet the specified parameters.
+ * Gets detailed information about user agents that meet the specified parameters.
+ *
  * @public
  * @static
- * @param {string[]} userAgentIds - To search
- * @param {any=} transacting - DB Transaction
- * @return {Promise<boolean>}
+ * @param {Object} params - The parameters for searching user agents.
+ * @param {string[]} params.userAgentIds - An array of user agent IDs to search for.
+ * @param {boolean} [params.withProfile=false] - Indicates whether profile information should be included.
+ * @param {boolean} [params.withCenter=false] - Indicates whether center information should be included.
+ * @param {string[]} [params.userColumns=['id', 'email', 'name', 'surnames', 'secondSurname', 'birthdate', 'avatar', 'gender', 'createdAt']] - An array of user columns to select.
+ * @param {import('@leemons/deployment-manager').Context} params.ctx - The context including the database transaction.
+ * @returns {UserAgent[]} - An array of objects representing user agents with detailed information.
  * */
-
 async function getUserAgentsInfo({
   userAgentIds,
   withProfile,
