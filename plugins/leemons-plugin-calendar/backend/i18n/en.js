@@ -215,6 +215,8 @@ module.exports = {
     description: 'Outstanding tasks completed in less than 5 days',
     showAllKanban: 'View full kanban',
     new: 'New',
+    newTask: 'New task',
+    addNewTask: 'Add new task',
   },
   tabKanban: {
     label: 'Kanban',
