@@ -387,6 +387,15 @@ module.exports = {
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
     share: 'Share',
+    cannotAssignModal: {
+      title: 'Assignment Guidelines',
+      descriptionWhenNoOwner:
+        "You must be a teacher of one of the task's subjects or the owner of the task to assign it.",
+      descriptionWhenOwner:
+        "You own this task but are not a teacher of any of the task's subjects. Please edit the task to update or remove the subjects if you wish to assign it.",
+      edit: 'Edit task',
+      accept: 'Accept',
+    },
   },
   variant: 'Task',
   expressVariant: 'Express Task',
