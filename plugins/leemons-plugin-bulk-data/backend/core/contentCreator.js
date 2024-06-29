@@ -2,6 +2,7 @@
 const { keys } = require('lodash');
 const chalk = require('chalk');
 const importContentCreatorDocuments = require('./bulk/contentCreator');
+const { makeAssetNotIndexable } = require('./helpers/makeAssetNotIndexable');
 
 async function initContentCreator({ file, config, ctx }) {
   try {
@@ -10,7 +11,7 @@ async function initContentCreator({ file, config, ctx }) {
 
     for (let i = 0, len = documentKeys.length; i < len; i++) {
       const key = documentKeys[i];
-      const { creator, ...document } = documents[key];
+      const { creator, hideInLibrary, ...document } = documents[key];
 
       try {
         ctx.logger.debug(`Adding Content Creator document: ${document.name}`);
@@ -24,7 +25,23 @@ async function initContentCreator({ file, config, ctx }) {
           }
         );
 
-        documents[key] = { ...documentData };
+        const { document: documentDetail } = await ctx.call(
+          'content-creator.document.getDocumentRest',
+          {
+            id: documentData.assignable,
+          }
+        );
+
+        if (hideInLibrary) {
+          await makeAssetNotIndexable({
+            creator: { ...creator },
+            assetId: documentDetail.asset.id,
+            assetName: documentDetail.name,
+            ctx,
+          });
+        }
+
+        documents[key] = { ...documentDetail };
         ctx.logger.info(`Document ADDED: ${document.name}`);
       } catch (e) {
         ctx.logger.info(chalk`{red.bold WARN} -- DOCUMENT CREATION ERROR --`);

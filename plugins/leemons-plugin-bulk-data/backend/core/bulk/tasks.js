@@ -244,7 +244,9 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
           if (toLower(type) === 'file') {
             data = {
               maxSize: task.submission_max_size,
-              extensions: getDataType((task.submission_extensions || '').split(',')),
+              extensions: getDataType(
+                (task.submission_extensions || '').split(',').map((ext) => ext.trim())
+              ),
               multipleFiles: task.submission_multiple_files,
             };
           }
@@ -279,7 +281,7 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
             color: task.color || null,
             cover: task.cover || null,
           },
-          center: task.center,
+          center: task.center || null,
           subjects: task.subjects,
           statement: converter.makeHtml(task.statement || ''),
           duration: task.duration || null,
@@ -294,6 +296,7 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
             : null,
           resources: task.resources,
           metadata,
+          hideInLibrary: task.hideInLibrary,
         };
       })
   );
