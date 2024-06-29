@@ -37,9 +37,6 @@ function SubmissionStep({
 
   const { classes } = useSubmissionStepStyles();
 
-  const isModulePreview = window?.location?.href?.includes('moduleId');
-  const moduleId = window?.location?.href?.split('moduleId=')[1];
-
   return (
     <TotalLayoutStepContainer
       stepName={stepName}
@@ -53,23 +50,17 @@ function SubmissionStep({
             </Button>
           }
           rightZone={
-            isModulePreview ? (
-              <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
-                <Button variant="outline">{buttonsT('goBackToDashboardPreview')}</Button>
-              </Link>
-            ) : (
-              <Button
-                loading={isLoading}
-                onClick={async () => {
-                  setIsLoading(true);
-                  await onNextStep();
-                  setIsLoading(false);
-                }}
-                disabled={!submission || preview}
-              >
-                {buttonsT('submit')}
-              </Button>
-            )
+            <Button
+              loading={isLoading}
+              onClick={async () => {
+                setIsLoading(true);
+                await onNextStep();
+                setIsLoading(false);
+              }}
+              disabled={!submission || preview}
+            >
+              {buttonsT('submit')}
+            </Button>
           }
         />
       }

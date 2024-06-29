@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { noop } from 'lodash';
@@ -39,7 +39,7 @@ export default function ActivityHeader({
   showCloseButtons,
   showAssignmentDetailButton,
   allowEditDeadline,
-
+  goToModuleDashboard = false,
   onTimeout = noop,
 }) {
   const form = useForm();
@@ -52,6 +52,8 @@ export default function ActivityHeader({
 
   const isModule = !!instance?.metadata?.module;
   const isModuleActivity = !!isModule && instance?.metadata?.module?.type !== 'module';
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const modulePreviewId = window?.location?.href?.split('moduleId=')[1];
 
   const { data } = useInstances({ id: instance?.metadata?.module?.id, enabled: isModuleActivity });
 
@@ -139,6 +141,11 @@ export default function ActivityHeader({
         cancelable={false}
       >
         <Box className={classes.root}>
+          {goToModuleDashboard && isModulePreview && (
+            <Link to={`/private/learning-paths/modules/${modulePreviewId}/view`}>
+              <Button variant="outline">{t('goToModuleDashboard')}</Button>
+            </Link>
+          )}
           <ClassroomDisplay instance={instance} hidden={!showClass} />
           <Box className={classes.activityMetadata}>
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
