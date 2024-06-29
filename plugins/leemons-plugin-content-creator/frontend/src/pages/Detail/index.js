@@ -218,13 +218,15 @@ export default function Index({ isNew, readOnly }) {
             compact
             mainActionLabel={t('cancel')}
             cancelable={!readOnly}
-            direction="row"
+            rightZone={
+              isModulePreview && (
+                <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
+                  <Button variant="outline">{t('goBackToDashboardPreview')}</Button>
+                </Link>
+              )
+            }
           >
-            {isModulePreview && (
-              <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
-                <Button variant="outline">{t('goBackToDashboardPreview')}</Button>
-              </Link>
-            )}
+
             {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
         }
