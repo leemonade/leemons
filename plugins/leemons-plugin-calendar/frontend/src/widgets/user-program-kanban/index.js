@@ -70,6 +70,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
   const { data: welcomeCompleted } = useWelcome();
+  const hasEvents = store.board?.columns?.some((column) => column.cards?.length);
 
   const history = useHistory();
 
@@ -312,7 +313,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     render();
   }
 
-  if (!welcomeCompleted) {
+  if (!welcomeCompleted && !hasEvents) {
     return null;
   }
 
