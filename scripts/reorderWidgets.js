@@ -27,7 +27,7 @@ const ZONE_ORDERS = {
   ],
   'assignables.class.ongoing': [
     'board-messages.class-dashboard',
-    'dashboard.dashboard.classes.welcome',
+    'dashboard.dashboard.class.welcome',
     'assignables.dashboard.subject.need-your-attention',
     'assignables.class.ongoing',
   ],

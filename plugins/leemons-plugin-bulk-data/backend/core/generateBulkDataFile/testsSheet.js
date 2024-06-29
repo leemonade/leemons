@@ -30,7 +30,7 @@ const getMetadataConfig = (test) => {
 async function createTestsSheet({
   workbook,
   questions,
-  tests,
+  testDetails,
   qBanks,
   programs,
   subjects,
@@ -64,6 +64,7 @@ async function createTestsSheet({
     { header: 'instructionsForTeachers', key: 'instructionsForTeachers', width: 10 },
     { header: 'instructionsForStudents', key: 'instructionsForStudents', width: 10 },
     { header: 'duration', key: 'duration', width: 10 },
+    { header: 'hideInLibrary', key: 'hideInLibrary', width: 10 },
   ];
 
   // Headers row
@@ -90,6 +91,7 @@ async function createTestsSheet({
     instructionsForTeachers: 'Instructions for Teachers',
     instructionsForStudents: 'Instructions for Students',
     duration: 'Duration',
+    hideInLibrary: 'Hide in library',
   });
 
   worksheet.getRow(2).eachCell((cell, colNumber) => {
@@ -100,17 +102,6 @@ async function createTestsSheet({
     }
   });
 
-  const versionConrolledTests = await ctx.call('leebrary.assets.filterByVersionOfType', {
-    assetIds: tests.map((a) => a.id),
-    categoryId: tests?.[0]?.category?.id,
-  });
-
-  const testDetails = await ctx.call('leebrary.assets.getByIds', {
-    ids: versionConrolledTests,
-    shouldPrepareAssets: true,
-    withFiles: true,
-  });
-
   const notIndexableAssetIds = flatMap(testDetails, (test) => test.providerData.resources);
   const notIndexableAssets = await ctx.call('leebrary.assets.getByIds', {
     ids: notIndexableAssetIds,
@@ -118,6 +109,7 @@ async function createTestsSheet({
     withFiles: true,
   });
 
+  const testsToReturn = [];
   testDetails.forEach((test, index) => {
     if (!test.providerData) return;
     const bulkId = `test${(index + 1).toString().padStart(2, '0')}`;
@@ -134,20 +126,14 @@ async function createTestsSheet({
     const testResourceAssets = (test.providerData.resources || []).map((id) =>
       notIndexableAssets.find((asset) => asset.id === id)
     );
-    const resources = getDuplicatedAssetsReferenceAsString(libraryAssets, testResourceAssets);
+    const resources = getDuplicatedAssetsReferenceAsString({
+      libraryAssets,
+      dups: testResourceAssets,
+    });
 
-    let questionBank = qBanks.find(
+    const questionBank = qBanks.find(
       (qBank) => qBank.providerData.id === test.providerData.metadata.questionBank
     )?.bulkId;
-
-    if (!questionBank) {
-      // Ignore qBank version
-      questionBank = qBanks.find((qBank) => {
-        const qBankIdWithoutVersion = qBank.providerData.id.split('@')[0];
-        const testQBankIdWithoutVersion = test.providerData.metadata.questionBank.split('@')[0];
-        return qBankIdWithoutVersion === testQBankIdWithoutVersion;
-      })?.bulkId;
-    }
 
     const testObject = {
       root: bulkId,
@@ -158,8 +144,9 @@ async function createTestsSheet({
       tags: test.tags?.join(', '),
       color: test.color,
       cover: test.cover,
-      program: programs.find((program) => program.id === test.program).bulkId,
-      subjects: subjects.find((subject) => subject.id === test.subjects[0].subject).bulkId,
+      program: programs.find((program) => program.id === test.program)?.bulkId ?? '',
+      subjects:
+        subjects.find((subject) => subject.id === test.subjects?.[0]?.subject)?.bulkId ?? '',
       type: test.providerData.metadata.type,
       gradable: booleanToYesNoAnswer(test.providerData.gradable),
       useAllQuestions: booleanToYesNoAnswer(test.providerData.metadata.filters?.useAllQuestions),
@@ -172,10 +159,14 @@ async function createTestsSheet({
       instructionsForStudents,
       instructionsForTeachers,
       duration: test.providerData.duration,
+      hideInLibrary: booleanToYesNoAnswer(!!test.hideInLibrary),
     };
 
     worksheet.addRow(omitBy(testObject, isNil));
+    testsToReturn.push({ bulkId, ...test });
   });
+
+  return testsToReturn;
 }
 
 module.exports = { createTestsSheet };

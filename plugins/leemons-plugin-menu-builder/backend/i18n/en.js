@@ -1,7 +1,7 @@
 module.exports = {
   sessionMenu: {
     label: 'User Account',
-    accountInfo: 'Account info',
+    accountInfo: 'My profile',
     switchProfile: 'Switch profile',
     logout: 'Logout',
     helpdesk: 'Help Center',

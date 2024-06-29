@@ -70,6 +70,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
 
   const { data: welcomeCompleted } = useWelcome();
+  const hasEvents = store.board?.columns?.some((column) => column.cards?.length);
 
   const filterMessagesCard = React.useMemo(() => {
     if (translationsCard && translationsCard.items) {
@@ -302,7 +303,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
   // ······························································
   // RENDER
 
-  if (!welcomeCompleted) {
+  if (!welcomeCompleted && !hasEvents) {
     return null;
   }
 

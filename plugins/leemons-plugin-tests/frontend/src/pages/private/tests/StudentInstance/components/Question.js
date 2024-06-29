@@ -96,10 +96,17 @@ export default function Question(props) {
                     variant={isLastButton ? null : 'outline'}
                     rightIcon={<ChevRightIcon />}
                     rounded
+                    loading={store.isLoading}
                     compact
-                    onClick={() => {
+                    onClick={async () => {
+                      store.isLoading = true;
+                      render();
+
                       if (!store.viewMode) props.saveQuestion();
-                      props.nextStep();
+                      await props.nextStep();
+
+                      store.isLoading = false;
+                      render();
                     }}
                     disabled={disableNext}
                   >

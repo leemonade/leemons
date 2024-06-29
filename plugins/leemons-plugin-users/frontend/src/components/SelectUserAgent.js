@@ -55,7 +55,6 @@ const SelectUserAgent = forwardRef(
       value: inputValue = [],
       onChange = () => {},
       clearable = true,
-      onlyForTeachers = false,
       ...props
     },
     ref
@@ -64,6 +63,7 @@ const SelectUserAgent = forwardRef(
     const [store, render] = useStore({
       data: [],
     });
+
     const [, , , getErrorMessage] = useRequestErrorMessage();
 
     // EN: Function triggered on user input for searching users
@@ -78,7 +78,7 @@ const SelectUserAgent = forwardRef(
             email: value,
           },
         };
-        if (profiles && onlyForTeachers) {
+        if (profiles) {
           filters.profile = profiles;
         }
 
@@ -223,7 +223,6 @@ const SelectUserAgent = forwardRef(
               withProfile: true,
             });
 
-
             data = data.userAgents.map((item) => ({
               ...item.user,
               variant: 'rol',
@@ -337,7 +336,6 @@ SelectUserAgent.propTypes = {
   selectedUsers: PropTypes.any,
   selectedUserAgents: PropTypes.any,
   clearable: PropTypes.bool,
-  onlyForTeachers: PropTypes.bool,
 };
 
 SelectUserAgentValueComponent.propTypes = {

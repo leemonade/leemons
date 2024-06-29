@@ -32,6 +32,7 @@ function createTaskSubjectSheet({ workbook, tasks, subjects }) {
 
   let relationCounter = 0;
   tasks.forEach(({ providerData, bulkId: taskBulkId }) => {
+    if (!providerData.subjects?.length) return;
     const { subjects: taskSubjects } = providerData;
     taskSubjects.forEach((taskSubject) => {
       relationCounter++;

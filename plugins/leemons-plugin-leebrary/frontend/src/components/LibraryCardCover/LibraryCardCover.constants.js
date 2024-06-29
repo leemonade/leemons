@@ -33,6 +33,8 @@ export const LIBRARY_CARD_COVER_PROP_TYPES = {
   isNew: PropTypes.bool,
   role: PropTypes.oneOf(LIBRARYCARD_ASSIGMENT_ROLES),
   badge: PropTypes.string,
+  onShowMenu: PropTypes.func,
+  menuItemsLoading: PropTypes.oneOfType([PropTypes.bool, PropTypes.null]),
 };
 
 export const overlayVariants = {

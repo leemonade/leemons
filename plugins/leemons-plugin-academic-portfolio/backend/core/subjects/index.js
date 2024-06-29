@@ -8,6 +8,7 @@ const { listSubjectCreditsForProgram } = require('./listSubjectCreditsForProgram
 const { subjectByIds } = require('./subjectByIds');
 const { deleteSubjectWithClasses } = require('./deleteSubjectWithClasses');
 const { getTeachersBySubjects } = require('./getTeachersBySubjects');
+const teacherFunctions = require('./teacher');
 
 module.exports = {
   addSubject,
@@ -21,4 +22,5 @@ module.exports = {
   subjectByIds,
   getTeachersBySubjects,
   deleteSubjectWithClasses,
+  ...teacherFunctions,
 };

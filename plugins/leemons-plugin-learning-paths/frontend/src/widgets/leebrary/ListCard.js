@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components';
@@ -16,6 +16,7 @@ import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Dele
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import useIsMainTeacherInSubject from '@academic-portfolio/hooks/queries/useIsMainTeacherInSubject';
 
 export function useListCardLocalizations() {
   const keys = ['assignables.roles.learningpaths.module.singular', 'learning-paths.libraryCard'];
@@ -35,18 +36,49 @@ export function useListCardLocalizations() {
   }, [translations]);
 }
 
-function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
+function useListCardMenuItems({
+  asset,
+  localizations,
+  onRefresh,
+  onShare,
+  isMainTeacherInAssetSubjects,
+}) {
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
-  const { editable, duplicable, deleteable, name, role } = asset;
+  const { editable, duplicable, deleteable, name, role, subjects } = asset;
   const isOwner = role === 'owner';
   const canDuplicate = !!duplicable && isOwner;
 
   const { id, published } = asset.providerData || {};
   const history = useHistory();
+
+  const assignAction = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
+        const updateAsset = () => history.push(`/private/learning-paths/modules/${id}/edit`);
+
+        openConfirmationModal({
+          title: localizations?.menuItems?.cannotAssignModal?.title,
+          description: isOwner
+            ? localizations?.menuItems?.cannotAssignModal?.descriptionWhenOwner
+            : localizations?.menuItems?.cannotAssignModal?.descriptionWhenNotOwner,
+          onConfirm: isOwner ? updateAsset : undefined,
+          labels: {
+            confirm: isOwner
+              ? localizations?.menuItems?.cannotAssignModal?.edit
+              : localizations?.menuItems?.cannotAssignModal?.accept,
+          },
+        })();
+      } else {
+        history.push(`/private/learning-paths/modules/${id}/assign`);
+      }
+    },
+    [isMainTeacherInAssetSubjects, subjects, id, isOwner, history]
+  );
 
   return useMemo(
     () =>
@@ -54,10 +86,7 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
         {
           icon: <AssignIcon />,
           children: localizations?.menuItems?.assign,
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/learning-paths/modules/${id}/assign`);
-          },
+          onClick: assignAction,
         },
         !!isOwner &&
           asset.providerData?.published &&
@@ -96,11 +125,13 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
                 try {
                   await duplicateModuleRequest(id, { published: !!published });
 
-                  addSuccessAlert(localizations?.duplicate?.success?.replace('{{name}}', name));
+                  addSuccessAlert(
+                    localizations?.alerts?.duplicate?.success?.replace('{{name}}', name)
+                  );
                   onRefresh();
                 } catch (e) {
                   addErrorAlert(
-                    localizations?.duplicate?.error?.replace('{{name}}', name),
+                    localizations?.alerts?.duplicate?.error?.replace('{{name}}', name),
                     e.message ?? e.error
                   );
                 } finally {
@@ -120,11 +151,13 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
                 try {
                   await removeModuleRequest(id, { published: !!published });
 
-                  addSuccessAlert(localizations?.delete?.success?.replace('{{name}}', name));
+                  addSuccessAlert(
+                    localizations?.alerts?.delete?.success?.replace('{{name}}', name)
+                  );
                   onRefresh();
                 } catch (e) {
                   addErrorAlert(
-                    localizations?.delete?.error?.replace('{{name}}', name),
+                    localizations?.alerts?.delete?.error?.replace('{{name}}', name),
                     e.message ?? e.error
                   );
                 } finally {
@@ -136,16 +169,23 @@ function useListCardMenuItems({ asset, localizations, onRefresh, onShare }) {
         },
       ].filter(Boolean),
     [
+      asset,
+      canDuplicate,
+      deleteable,
+      editable,
       history,
+      id,
+      isOwner,
       localizations,
+      name,
+      onRefresh,
+      onShare,
       openConfirmationModal,
       openDeleteConfirmationModal,
+      published,
       setAppLoading,
-      id,
-      editable,
       duplicable,
-      deleteable,
-      name,
+      isMainTeacherInAssetSubjects,
     ]
   );
 }
@@ -161,8 +201,33 @@ const useListCardStyles = createStyles((theme, { single, selected }) => ({
 
 function ListCard({ asset, single, onRefresh = () => {}, onShare, ...props }) {
   const localizations = useListCardLocalizations();
-  const menuItems = useListCardMenuItems({ localizations, asset, onRefresh, onShare });
   const { classes } = useListCardStyles({ single });
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
+  const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
+    useIsMainTeacherInSubject({
+      subjectIds: asset.subjects?.length > 0 ? asset.subjects.map((item) => item.subject) : [],
+      options: {
+        enabled: enableIsTeacherInSubjectQuery && asset.subjects?.length > 0,
+        refetchOnWindowFocus: false,
+      },
+    });
+
+  const menuItems = useListCardMenuItems({
+    localizations,
+    asset,
+    onRefresh,
+    onShare,
+    isMainTeacherInAssetSubjects,
+  });
+
+  const onShowMenu = (value) => {
+    setEnableIsTeacherInSubjectQuery(value);
+  };
+
+  const menuItemsLoading = useMemo(
+    () => teacherCheckLoading && asset?.subjects?.length,
+    [teacherCheckLoading, asset]
+  );
 
   return (
     <LibraryCard
@@ -173,6 +238,8 @@ function ListCard({ asset, single, onRefresh = () => {}, onShare, ...props }) {
       variant="task"
       variantIcon={<ModuleCardIcon />}
       variantTitle={localizations?.variantTitle}
+      onShowMenu={onShowMenu}
+      menuItemsLoading={menuItemsLoading}
     />
   );
 }

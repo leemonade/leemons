@@ -378,6 +378,15 @@ module.exports = {
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
     share: 'Compartir',
+    cannotAssignModal: {
+      title: 'Directrices de asignación',
+      descriptionWhenNotOwner:
+        'Debes ser profesor de alguna de las asignaturas asociadas a la tarea o su propietario para poder asignarla.',
+      descriptionWhenOwner:
+        'Eres propietario de esta tarea pero no eres profesor de ninguna de las asignaturas asociadas. Por favor, edita la tarea para actualizar o eliminar las asignaturas asociadas si deseas asignarla.',
+      edit: 'Editar tarea',
+      accept: 'Aceptar',
+    },
   },
   variant: 'Tarea',
   expressVariant: 'Tarea express',

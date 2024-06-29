@@ -25,7 +25,7 @@ import { SetPasswordModal } from './SetPasswordModal';
 
 const USER_FIELDS = ['email', 'name', 'surnames', 'secondSurname', 'gender', 'birthdate', 'avatar'];
 
-function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
+function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser = noop }) {
   const [reload, setReload] = React.useState(false);
   const [activeModalOpened, setActiveModalOpened] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -118,10 +118,12 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop }) {
 
       addSuccessAlert(t('activatedUser'));
       toggleModal();
+      onActivateUser(true);
       updateUserDetails();
       setLoading(false);
     } catch (err) {
       addErrorAlert(err);
+      onActivateUser(false);
       setLoading(false);
     }
   };
@@ -319,6 +321,7 @@ UserForm.propTypes = {
   user: PropTypes.object,
   onCheckEmail: PropTypes.func,
   isAdminFirstTime: PropTypes.bool,
+  onActivateUser: PropTypes.func,
 };
 
 export { UserForm, USER_FIELDS };
