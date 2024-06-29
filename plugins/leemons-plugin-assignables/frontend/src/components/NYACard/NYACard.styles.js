@@ -20,7 +20,7 @@ export const NYACardStyles = createStyles((theme, { clickable }) => {
       overflow: 'hidden',
       position: 'relative',
       width: '100%',
-      minWidth: pxToRem(264),
+      minWidth: pxToRem(330),
       maxWidth: pxToRem(330),
       minHeight: pxToRem(480),
       '&:hover': {
