@@ -210,7 +210,7 @@ function UserProgramCalendar({
     openEventModal();
   };
 
-  if (!welcomeCompleted) {
+  if (!welcomeCompleted && !store.filteredEvents?.length) {
     return null;
   }
 

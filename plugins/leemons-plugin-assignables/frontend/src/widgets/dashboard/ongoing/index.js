@@ -1,11 +1,33 @@
 import React from 'react';
-import { createStyles, Stack, Text, Title, Button } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+
 import { Link } from 'react-router-dom';
+import { createStyles, Stack, Text, Title, Button } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@assignables/helpers/prefixPN';
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import {
+  useOngoingData,
+  useOngoingQuery,
+} from '@assignables/components/Ongoing/AssignmentList/components/ActivitiesList/ActivitiesList';
 import AssignmentList from '../../../components/Ongoing/AssignmentList';
+
+const ongoingQueryFilters = {
+  subject: 'all',
+  status: 'all',
+  progress: 'all',
+  type: 'all',
+  sort: 'assignation',
+  query: '',
+  closed: false,
+  isArchived: false,
+  program: null,
+  offset: 0,
+  limit: 9,
+  modulesData: true,
+};
 
 const useOngoingStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -21,13 +43,19 @@ const useOngoingStyles = createStyles((theme) => {
 });
 
 export default function Ongoing({ classe }) {
-  const { classes } = useOngoingStyles();
-  const { data: welcomeCompleted } = useWelcome();
-
   const [t1] = useTranslateLoader(prefixPN('ongoing'));
   const [t2] = useTranslateLoader(prefixPN('need_your_attention'));
 
-  if (!welcomeCompleted) {
+  const { classes } = useOngoingStyles();
+  const { data: welcomeCompleted } = useWelcome();
+
+  const query = useOngoingQuery({
+    ...ongoingQueryFilters,
+    class: classe?.id,
+  });
+  const { totalCount: ongoingCount } = useOngoingData({ query, page: 0, size: 10 });
+
+  if (!welcomeCompleted && !ongoingCount) {
     return null;
   }
 
@@ -52,3 +80,7 @@ export default function Ongoing({ classe }) {
     </Stack>
   );
 }
+
+Ongoing.propTypes = {
+  classe: PropTypes.object,
+};

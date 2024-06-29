@@ -66,6 +66,7 @@ function StudentInstance() {
     maxNavigatedStep: 0,
     viewMode: false,
     modalMode: 1,
+    questionResponsesPromises: [],
   });
 
   const queryClient = useQueryClient();
@@ -112,6 +113,8 @@ function StudentInstance() {
   }
 
   async function finishStep() {
+    await Promise.allSettled(store.questionResponsesPromises);
+
     if (store.viewMode) {
       history.push(`/private/tests/result/${params.id}/${getUserId()}`);
     } else {
@@ -199,11 +202,15 @@ function StudentInstance() {
 
   async function saveQuestion(question) {
     try {
-      await setQuestionResponseRequest({
+      const promise = setQuestionResponseRequest({
         instance: store.instance.id,
         question,
         ...store.questionResponses[question],
       });
+
+      store.questionResponsesPromises.push(promise);
+
+      return await promise;
     } catch (error) {
       addErrorAlert(error);
     }

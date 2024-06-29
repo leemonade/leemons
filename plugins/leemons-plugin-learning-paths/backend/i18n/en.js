@@ -129,6 +129,16 @@ module.exports = {
         accept: 'Accept',
       },
     },
+    alerts: {
+      duplicate: {
+        success: 'Resource duplicated successfully',
+        error: 'An error occurred while duplicating the resource',
+      },
+      delete: {
+        success: 'Resource deleted successfully',
+        error: 'An error occurred while deleting the resource',
+      },
+    },
   },
   assignation: {
     steps: {

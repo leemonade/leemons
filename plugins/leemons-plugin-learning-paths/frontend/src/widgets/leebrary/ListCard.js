@@ -125,11 +125,13 @@ function useListCardMenuItems({
                 try {
                   await duplicateModuleRequest(id, { published: !!published });
 
-                  addSuccessAlert(localizations?.duplicate?.success?.replace('{{name}}', name));
+                  addSuccessAlert(
+                    localizations?.alerts?.duplicate?.success?.replace('{{name}}', name)
+                  );
                   onRefresh();
                 } catch (e) {
                   addErrorAlert(
-                    localizations?.duplicate?.error?.replace('{{name}}', name),
+                    localizations?.alerts?.duplicate?.error?.replace('{{name}}', name),
                     e.message ?? e.error
                   );
                 } finally {
@@ -149,11 +151,13 @@ function useListCardMenuItems({
                 try {
                   await removeModuleRequest(id, { published: !!published });
 
-                  addSuccessAlert(localizations?.delete?.success?.replace('{{name}}', name));
+                  addSuccessAlert(
+                    localizations?.alerts?.delete?.success?.replace('{{name}}', name)
+                  );
                   onRefresh();
                 } catch (e) {
                   addErrorAlert(
-                    localizations?.delete?.error?.replace('{{name}}', name),
+                    localizations?.alerts?.delete?.error?.replace('{{name}}', name),
                     e.message ?? e.error
                   );
                 } finally {
@@ -165,16 +169,22 @@ function useListCardMenuItems({
         },
       ].filter(Boolean),
     [
+      asset,
+      canDuplicate,
+      deleteable,
+      editable,
       history,
+      id,
+      isOwner,
       localizations,
+      name,
+      onRefresh,
+      onShare,
       openConfirmationModal,
       openDeleteConfirmationModal,
+      published,
       setAppLoading,
-      id,
-      editable,
       duplicable,
-      deleteable,
-      name,
       isMainTeacherInAssetSubjects,
     ]
   );

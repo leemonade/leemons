@@ -1,48 +1,47 @@
 import React, { useRef } from 'react';
 import {
   Box,
-  Badge,
+  // Badge,
   Stack,
   Button,
   Loader,
-  ImageLoader,
+  // ImageLoader,
   AssetTestIcon,
-  LoadingOverlay,
   ContextContainer,
-  ActivityAccordion,
   TotalLayoutHeader,
-  ActivityAnswersBar,
+  // ActivityAnswersBar,
   TotalLayoutContainer,
-  ActivityAccordionPanel,
+  // ActivityAccordionPanel,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Link } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
-import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
+// import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, keyBy } from 'lodash';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import useAssets from '@leebrary/request/hooks/queries/useAssets';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import useUserAgents from '@users/hooks/useUserAgents';
 import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 import { getTestRequest } from '../../../request';
-import QuestionsTable from './components/QuestionsTable';
+// import QuestionsTable from './components/QuestionsTable';
 import { questionTypeT } from '../questions-banks/components/QuestionForm';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
-import { ResultStyles } from './Result.style';
+// import { ResultStyles } from './Result.style';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 
 export default function Detail() {
   const [t, t1V] = useTranslateLoader(prefixPN('testsDetail'));
   const [t2, t2V] = useTranslateLoader(prefixPN('questionsBanksDetail'));
-  const { classes: styles } = ResultStyles({}, { name: 'Detail' });
+  // const { classes: styles } = ResultStyles({}, { name: 'Detail' });
   const levels = useLevelsOfDifficulty(true);
   const scrollRef = useRef();
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const moduleId = window?.location?.href?.split('moduleId=')[1];
 
   const [store, render] = useStore({
     loading: true,
@@ -50,7 +49,7 @@ export default function Detail() {
     currentStep: 0,
   });
 
-  const [accordionState, setAccordionState] = React.useState([]);
+  // const [accordionState, setAccordionState] = React.useState([]);
 
   const history = useHistory();
   const params = useParams();
@@ -189,64 +188,6 @@ export default function Detail() {
       init();
   }, [levels, params, t1V, t2V]);
 
-  const accordion = [];
-  if (store.stats?.data.length && store.stats?.selectables.length) {
-    accordion.push(
-      <ActivityAccordionPanel
-        key={1}
-        label={t('chartLabel')}
-        icon={
-          <Box style={{ position: 'relative', width: '23px', height: '23px' }}>
-            <ImageLoader className="stroke-current" src={'/public/tests/test-results-icon.svg'} />
-          </Box>
-        }
-        color="solid"
-      >
-        <Box p={20}>
-          <ActivityAnswersBar showBarIcon={false} withLegend={false} {...store.stats} />
-        </Box>
-      </ActivityAccordionPanel>
-    );
-  }
-  if (store.test) {
-    accordion.push(
-      <ActivityAccordionPanel
-        key={2}
-        label={t('questions')}
-        rightSection={
-          <Box>
-            <Badge
-              label={store.test?.questions?.length}
-              size="md"
-              color="stroke"
-              closable={false}
-            />
-          </Box>
-        }
-        icon={
-          <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
-            <ImageLoader className="stroke-current" src={'/public/tests/questions-icon.svg'} />
-          </Box>
-        }
-      >
-        <Box>
-          {store.useQuestionMode ? (
-            <ViewModeQuestions viewMode={false} store={store.test} onReturn={toggleQuestionMode} />
-          ) : (
-            <>
-              <Box className={styles.showTestBar}>
-                <Button rounded rightIcon={<ChevronRightIcon />} onClick={toggleQuestionMode}>
-                  {t('showInTests')}
-                </Button>
-              </Box>
-              <QuestionsTable withStyle hideCheckbox questions={store.test?.questions} />
-            </>
-          )}
-        </Box>
-      </ActivityAccordionPanel>
-    );
-  }
-
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
@@ -257,7 +198,7 @@ export default function Detail() {
           icon={<AssetTestIcon />}
           direction="row"
         >
-          {!assignableLoading && !assetsLoading && canEdit && (
+          {!isModulePreview && !assignableLoading && !assetsLoading && canEdit && (
             <Stack spacing={4}>
               <Button variant="outline" onClick={() => goEditPage()}>
                 {t('edit')}
@@ -267,7 +208,12 @@ export default function Detail() {
               </Button>
             </Stack>
           )}
-          {(assignableLoading || assetsLoading) && <Loader visible />}
+          {isModulePreview && (
+            <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
+              <Button variant="outline">{t('goBackToDashboardPreview')}</Button>
+            </Link>
+          )}
+          {!isModulePreview && (assignableLoading || assetsLoading) && <Loader visible />}
         </TotalLayoutHeader>
       }
     >
@@ -288,9 +234,11 @@ export default function Detail() {
             fullWidth
           >
             <Box sx={(theme) => ({ paddingBottom: theme.spacing[12] })}>
-              <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
-                {accordion}
-              </ActivityAccordion>
+              <ViewModeQuestions
+                viewMode={false}
+                store={store.test}
+                onReturn={toggleQuestionMode}
+              />
             </Box>
           </ContextContainer>
         </TotalLayoutStepContainer>

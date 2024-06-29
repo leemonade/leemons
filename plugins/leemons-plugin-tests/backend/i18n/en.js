@@ -272,6 +272,7 @@ module.exports = {
     questions: 'Questions',
     chartLabel: 'Composition of questions',
     showInTests: 'Preview',
+    goBackToDashboardPreview: 'Go back to dashboard',
   },
   testsCard: {
     view: 'Preview',

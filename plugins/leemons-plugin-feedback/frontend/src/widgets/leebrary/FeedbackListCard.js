@@ -110,7 +110,7 @@ const FeedbackListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: 'Delete',
+          children: t('delete'),
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
@@ -126,6 +126,16 @@ const FeedbackListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
                 setAppLoading(false);
               },
             })();
+          },
+        });
+      }
+      if (asset.shareable) {
+        items.push({
+          icon: <ShareIcon />,
+          children: t('share'),
+          onClick: (e) => {
+            e.stopPropagation();
+            onShare(asset);
           },
         });
       }
