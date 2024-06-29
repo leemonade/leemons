@@ -1,5 +1,7 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import _, { find, flatten, map, uniq } from 'lodash';
+import PropTypes from 'prop-types';
 import { Box, Kanban as BubblesKanban } from '@bubbles-ui/components';
-// TODO: import from plugin not from bubbles
 import { KanbanFilters, KanbanTaskCard } from '@calendar/components';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import prefixPN from '@calendar/helpers/prefixPN';
@@ -16,9 +18,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components';
 import { getCentersWithToken } from '@users/session';
 import hooks from 'leemons-hooks';
-import * as _ from 'lodash';
-import { find, flatten, map, uniq } from 'lodash';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
@@ -37,6 +36,7 @@ function Kanban({ session }) {
   });
   const prefix = prefixPN('kanbanFiltersOptions');
   const [, translations] = useTranslateLoader(prefix);
+  const [t] = useTranslateLoader(prefixPN('userProgramKanban'));
   const prefixCard = prefixPN('kanbanTaskCard');
   const [, translationsCard] = useTranslateLoader(prefixCard);
   const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
@@ -60,6 +60,7 @@ function Kanban({ session }) {
     }
     return {};
   }, [translations]);
+
   const filterMessagesCard = useMemo(() => {
     if (translationsCard && translationsCard.items) {
       return _.reduce(
@@ -74,8 +75,9 @@ function Kanban({ session }) {
     return {};
   }, [translationsCard]);
 
-  // ES: Consultas
-  // EN: Queries
+  // ······························································
+  // METHODS
+
   async function getKanbanColumns() {
     const { columns } = await listKanbanColumnsRequest();
     return _.orderBy(columns, ['order'], ['asc']);
@@ -160,6 +162,9 @@ function Kanban({ session }) {
     return { columns: cols };
   }
 
+  // ······························································
+  // HANDLERS
+
   function onChange(values, event) {
     const cardsById = {};
     _.forEach(values.columns, (column) => {
@@ -175,14 +180,14 @@ function Kanban({ session }) {
     ) {
       changedColumns.push(event.destination.droppableId);
     }
-    _.forEach(ref.current.data.events, (event) => {
-      const card = cardsById[event.id];
-      if (event.data && event.data.column && card && event.data.column !== card.data.column) {
+    _.forEach(ref.current.data.events, (ev) => {
+      const card = cardsById[ev.id];
+      if (ev.data && ev.data.column && card && ev.data.column !== card.data.column) {
         changedColumns.push(card.data.column);
         // eslint-disable-next-line no-param-reassign
-        event.data.column = card.data.column;
-        updateEventRequest(ref.current.center.token, event.id, { data: event.data });
-        hooks.fireEvent('calendar:kanban:reorded', { id: event.id, column: event.data.column });
+        ev.data.column = card.data.column;
+        updateEventRequest(ref.current.center.token, ev.id, { data: ev.data });
+        hooks.fireEvent('calendar:kanban:reorded', { id: ev.id, column: ev.data.column });
       }
     });
 
@@ -221,9 +226,6 @@ function Kanban({ session }) {
     render();
   }
 
-  // ES: Carga
-  // EN: Load
-
   async function onCenterChange() {
     ref.current.columnsEventsOrders = await getKanbanColumnsEventsOrder();
     ref.current.data = await getCalendarsForCenter();
@@ -232,6 +234,19 @@ function Kanban({ session }) {
       (calendar) => ({ label: calendar.name, value: calendar.id })
     );
   }
+
+  async function centerChange(centerId) {
+    ref.current.loading = true;
+    render();
+    ref.current.center = _.find(getCentersWithToken(), { id: centerId });
+    await onCenterChange();
+    ref.current.board = getKanbanBoard();
+    ref.current.loading = false;
+    render();
+  }
+
+  // ······························································
+  // INIT DATA PROCESSING
 
   async function init() {
     ref.current.columns = await getKanbanColumns();
@@ -267,6 +282,9 @@ function Kanban({ session }) {
     };
   });
 
+  // ······························································
+  // RENDER
+
   let icon = null;
   if (ref.current.board) {
     const calendarIds = uniq(
@@ -278,16 +296,6 @@ function Kanban({ session }) {
         icon = calendar.icon;
       }
     }
-  }
-
-  async function centerChange(centerId) {
-    ref.current.loading = true;
-    render();
-    ref.current.center = _.find(getCentersWithToken(), { id: centerId });
-    await onCenterChange();
-    ref.current.board = getKanbanBoard();
-    ref.current.loading = false;
-    render();
   }
 
   return (
@@ -342,6 +350,9 @@ function Kanban({ session }) {
             onChange={onChange}
             disableCardDrag={false} // ref.current.filters.calendars.length
             icon={icon}
+            showNewOnFirstColumn
+            newItemLabel={t('addNewTask')}
+            onNew={addEventClick}
             itemRender={(props) => (
               <KanbanTaskCard
                 {...props}
@@ -356,5 +367,9 @@ function Kanban({ session }) {
     </Box>
   );
 }
+
+Kanban.propTypes = {
+  session: PropTypes.object.isRequired,
+};
 
 export default Kanban;

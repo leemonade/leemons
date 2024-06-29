@@ -215,6 +215,8 @@ module.exports = {
     description: 'Tareas destacadas que finalizan en menos de 5 días',
     showAllKanban: 'Ver kanban completo',
     new: 'Nuevo',
+    newTask: 'Nueva tarea',
+    addNewTask: 'Crear nueva tarea',
   },
   tabKanban: {
     label: 'Kanban',
