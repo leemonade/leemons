@@ -120,6 +120,16 @@ module.exports = {
       pin: 'Marcar como favorito',
       unpin: 'Desmarcar como favorito',
     },
+    alerts: {
+      duplicate: {
+        success: 'Recurso duplicado con éxito',
+        error: 'No se ha podido duplicar el recurso',
+      },
+      delete: {
+        success: 'Recurso eliminado con éxito',
+        error: 'No se ha podido eliminar el recurso',
+      },
+    },
   },
   assignation: {
     steps: {
