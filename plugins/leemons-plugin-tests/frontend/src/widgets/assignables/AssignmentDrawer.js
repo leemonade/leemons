@@ -37,8 +37,6 @@ export const useAssignmentDrawerStyles = createStyles(() => ({
   },
 }));
 
-
-
 async function init({ assignable, store, render }) {
   try {
     const [{ test }, { configs }] = await Promise.all([
@@ -68,7 +66,6 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
   const [store, render] = useStore();
   const [t] = useTranslateLoader(prefixPN('testAssign'));
 
-
   useEffect(() => {
     if (store.test?.id !== assignable.id) {
       init({ assignable, store, render });
@@ -79,7 +76,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
     try {
       const id = await createAssignedConfigRequest(values.presetName, values);
 
-      addSuccessAlert('Config creada con éxito');
+      addSuccessAlert(t('createdConfigSuccess'));
       return id;
     } catch (e) {
       addErrorAlert(e.message);
@@ -113,10 +110,9 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
     render();
   }
 
-
   const onSubmit = useCallback(
     form.handleSubmit(async (values) => {
-      if(values.rules?.filters?.settings === 'new' && values.rules?.filters?.presetName ) {
+      if (values.rules?.filters?.settings === 'new' && values.rules?.filters?.presetName) {
         const id = await handleCreateAssignmentConfig(values.rules.filters);
         values.rules.filters.configSelected = id;
         values.rules.filters.settings = 'existing';
