@@ -36,7 +36,10 @@ export default function File({ labels }) {
             required
             error={errors.data?.extensions}
             onChange={(extensions) => {
-              const validExtensions = extensions.reduce((values, extension) => {
+              const cleanedExtensions = extensions.map((extension) =>
+                extension.replace(/[ .]/g, '')
+              );
+              const validExtensions = cleanedExtensions.reduce((values, extension) => {
                 if (field.value && field.value[extension]) {
                   return {
                     ...values,
@@ -64,7 +67,9 @@ export default function File({ labels }) {
                   [extension]: extension,
                 };
               }, {});
-
+              if (Object.keys(validExtensions).includes('rtf')) {
+                validExtensions.rtf = '.rtf';
+              }
               field.onChange(validExtensions);
             }}
             label={labels?.format}

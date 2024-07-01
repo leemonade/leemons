@@ -1,6 +1,8 @@
 import propTypes from 'prop-types';
 
-export const ACTIVITY_HEADER_DEFAULT_PROPS = {};
+export const ACTIVITY_HEADER_DEFAULT_PROPS = {
+  showAssignmentDetailButton: false,
+};
 
 export const ACTIVITY_HEADER_PROP_TYPES = {
   instance: propTypes.object,
@@ -16,4 +18,6 @@ export const ACTIVITY_HEADER_PROP_TYPES = {
   allowEditDeadline: propTypes.bool,
   onTimeout: propTypes.func,
   showStatusBadge: propTypes.bool,
+  showAssignmentDetailButton: propTypes.bool,
+  goToModuleDashboard: propTypes.bool,
 };

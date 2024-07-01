@@ -115,7 +115,7 @@ function useAssignmentsColumns({ archived }) {
   return [];
 }
 
-function useOngoingQuery(filters) {
+export function useOngoingQuery(filters) {
   const sessionConfig = getSessionConfig();
   const isStudent = useIsStudent();
 
@@ -189,7 +189,7 @@ function useOngoingLocalizations() {
   }, [translations]);
 }
 
-function useOngoingData({ query, page, size, subjectFullLength }) {
+export function useOngoingData({ query, page, size, subjectFullLength }) {
   const [modulesOpened, setModulesOpened] = useState([]);
 
   const { data: paginatedInstances, isLoading: instancesLoading } = useSearchOngoingActivities({
@@ -255,7 +255,8 @@ function useOngoingData({ query, page, size, subjectFullLength }) {
     () =>
       parsedInstances
         ?.filter(
-          (instance) => !instance.parentModule || modulesOpened.includes(instance.parentModule)
+          (instance) =>
+            !!instance && (!instance.parentModule || modulesOpened.includes(instance.parentModule))
         )
         .map((instance) => ({
           ...instance,

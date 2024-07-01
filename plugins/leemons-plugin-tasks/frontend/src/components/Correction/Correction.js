@@ -286,7 +286,6 @@ export default function Correction({ assignation, instance }) {
       history.push(`/private/tasks/correction/${instance?.id}/${user ?? null}`);
     }
   };
-
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
@@ -297,6 +296,7 @@ export default function Correction({ assignation, instance }) {
           showRole
           showEvaluationType
           showDeadline
+          showAssignmentDetailButton
           action={t('evaluation')}
         />
       }

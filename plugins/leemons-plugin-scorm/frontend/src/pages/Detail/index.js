@@ -81,6 +81,7 @@ export default function Detail() {
       onProgress: (info) => {
         setUploadingFileInfo(info);
       },
+      isFolder: true,
     });
     setUploadingFileInfo(null);
 

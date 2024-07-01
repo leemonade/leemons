@@ -17,29 +17,8 @@ export default function EvaluationsCarousel({
   const { theme } = useNyaStyles();
 
   const swiperProps = {
-    selectable: true,
-    deselectable: false,
-    disableSelectedStyles: true,
-    spaceBetween: 60,
-    breakAt: {
-      [theme.breakpoints.xs]: {
-        slidesPerView: 1,
-        spaceBetween: theme.spacing[4],
-      },
-      [theme.breakpoints.sm]: {
-        slidesPerView: 2,
-        spaceBetween: theme.spacing[4],
-      },
-      [theme.breakpoints.lg]: {
-        slidesPerView: 3,
-        spaceBetween: theme.spacing[4],
-      },
-    },
-    slideStyles: {
-      height: 'auto',
-      maxWidth: '468px',
-      minWidth: '468px',
-    },
+    slidesPerView: 'auto',
+    spaceBetween: 24,
   };
 
   if (isLoading) {
@@ -49,6 +28,7 @@ export default function EvaluationsCarousel({
   if (!count) {
     return <EmptyState label={localizations?.evaluationsEmptyState} />;
   }
+
 
   return (
     <Swiper {...swiperProps}>
@@ -60,6 +40,7 @@ export default function EvaluationsCarousel({
           classData={classData[i]?.data}
         />
       ))}
+
     </Swiper>
   );
 }

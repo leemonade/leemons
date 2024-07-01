@@ -183,6 +183,10 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     }
   }
 
+  function handleActivateUser(active) {
+    setUser({ ...user, active });
+  }
+
   React.useEffect(() => {
     if (opened) {
       refreshUserAgents();
@@ -311,7 +315,12 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
             />
           </ContextContainer>
 
-          <UserForm user={user} onCheckEmail={checkEmail} isAdminFirstTime={isAdminFirstTime} />
+          <UserForm
+            user={user}
+            onCheckEmail={checkEmail}
+            isAdminFirstTime={isAdminFirstTime}
+            onActivateUser={handleActivateUser}
+          />
 
           <ContextContainer title={t('tagsHeader')}>
             <Controller

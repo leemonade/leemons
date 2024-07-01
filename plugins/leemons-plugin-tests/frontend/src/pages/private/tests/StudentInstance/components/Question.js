@@ -88,18 +88,25 @@ export default function Question(props) {
           showFooterBorder={store.viewMode}
           scrollRef={props.scrollRef}
           rightZone={
-            <>
+            <Box sx={{ minWidth: '120px' }}>
               {showLastButton ? (
-                <Box style={{ display: 'flex', justifyContent: 'flex-end', minWidth: '120px' }}>
+                <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Button
                     position="left"
                     variant={isLastButton ? null : 'outline'}
                     rightIcon={<ChevRightIcon />}
                     rounded
+                    loading={store.isLoading}
                     compact
-                    onClick={() => {
+                    onClick={async () => {
+                      store.isLoading = true;
+                      render();
+
                       if (!store.viewMode) props.saveQuestion();
-                      props.nextStep();
+                      await props.nextStep();
+
+                      store.isLoading = false;
+                      render();
                     }}
                     disabled={disableNext}
                   >
@@ -107,16 +114,16 @@ export default function Question(props) {
                   </Button>
                 </Box>
               ) : null}
-            </>
+            </Box>
           }
           leftZone={
-            <>
+            <Box sx={{ minWidth: '120px' }}>
               {showFirstButton ? (
                 <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={props.prevStep}>
                   {t('prev')}
                 </Button>
               ) : null}
-            </>
+            </Box>
           }
         >
           <Box sx={() => ({ display: 'flex', justifyContent: 'center', marginLeft: '24px' })}>

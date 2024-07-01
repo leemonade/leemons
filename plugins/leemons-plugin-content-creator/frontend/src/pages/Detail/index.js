@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { isEmpty } from 'lodash';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import { useHistory, useParams, useLocation, Link } from 'react-router-dom';
 import { useLayout } from '@layout/context';
 import {
   LoadingOverlay,
@@ -62,6 +62,8 @@ export default function Index({ isNew, readOnly }) {
     resolver: zodResolver(validators[activeStep]),
   });
   const formValues = useWatch({ control: form.control });
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const moduleId = window?.location?.href?.split('moduleId=')[1];
 
   // ··································································
   // HANDLERS
@@ -216,7 +218,15 @@ export default function Index({ isNew, readOnly }) {
             compact
             mainActionLabel={t('cancel')}
             cancelable={!readOnly}
+            rightZone={
+              isModulePreview && (
+                <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
+                  <Button variant="outline">{t('goBackToDashboardPreview')}</Button>
+                </Link>
+              )
+            }
           >
+
             {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
         }

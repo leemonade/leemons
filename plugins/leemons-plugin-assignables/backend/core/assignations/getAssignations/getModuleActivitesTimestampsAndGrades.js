@@ -236,7 +236,7 @@ function returnData({
         evaluatedCount: _grades.length,
         expectedEvaluations: requiresScoring ? subjects.length : 0,
         fullyEvaluated: requiresScoring ? _grades.length === subjects.length : true,
-
+        requiresScoring,
         gradeAvg: requiresScoring
           ? _grades.reduce((avgGrade, { grade }) => avgGrade + grade, 0) / subjects.length
           : null,

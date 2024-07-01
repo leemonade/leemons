@@ -1,29 +1,31 @@
-import {
-  Box,
-  ContextContainer,
-  Paragraph,
-  Select,
-  TableInput,
-  Table,
-  Title,
-  UserDisplayItem,
-} from '@bubbles-ui/components';
+import { ContextContainer, Select, TableInput, UserDisplayItem } from '@bubbles-ui/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import _, { find, isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 
-const SelectAgents = ({ usersData, ...props }) => (
-  <SelectUserAgent
-    {...props}
-    onlyContacts={true}
-    selectedUsers={_.map(usersData, 'user.id')}
-    returnItem
-  />
-);
+const SelectAgents = ({ usersData, onlyForTeachers, userProfiles, ...props }) => {
+  const profilesHandler = useMemo(() => {
+    if (onlyForTeachers) {
+      return userProfiles.teacher;
+    }
+    return [userProfiles.student, userProfiles.teacher];
+  }, [onlyForTeachers, userProfiles]);
+  return (
+    <SelectUserAgent
+      {...props}
+      onlyContacts={true}
+      profiles={profilesHandler}
+      selectedUsers={_.map(usersData, 'user.id')}
+      returnItem
+    />
+  );
+};
 
 SelectAgents.propTypes = {
   usersData: PropTypes.array,
+  onlyForTeachers: PropTypes.bool,
+  userProfiles: PropTypes.object,
 };
 
 const RoleSelect = (props) => {
@@ -39,28 +41,37 @@ RoleSelect.propTypes = {
   onChange: PropTypes.func,
 };
 
-const PermissionsDataUsers = ({ editMode, roles, value, onChange, alreadySelectedUsers, t }) => {
-  // ··············································································
-  // EFFECTS
-
+const PermissionsDataUsers = ({
+  editMode,
+  roles,
+  value,
+  onChange,
+  alreadySelectedUsers,
+  t,
+  onlyForTeachers,
+  userProfiles,
+}) => {
   // ··············································································
   // HANDLERS
-
   const checkIfUserIsAdded = (userData) => {
     const found = find(value, (data) => data.user.id === userData.user.id);
     return isNil(found);
   };
-
   // ··············································································
   // LABELS & STATICS
-
   const USERS_COLUMNS = useMemo(
     () => [
       {
         Header: 'User',
         accessor: 'user',
         input: {
-          node: <SelectAgents usersData={[...alreadySelectedUsers, ...value]} />,
+          node: (
+            <SelectAgents
+              onlyForTeachers={onlyForTeachers}
+              userProfiles={userProfiles}
+              usersData={[...alreadySelectedUsers, ...value]}
+            />
+          ),
           rules: { required: 'Required field' },
         },
         editable: false,
@@ -128,6 +139,8 @@ PermissionsDataUsers.propTypes = {
   translations: PropTypes.object,
   editMode: PropTypes.bool,
   alreadySelectedUsers: PropTypes.any,
+  onlyForTeachers: PropTypes.bool,
+  userProfiles: PropTypes.object,
 };
 
 export default PermissionsDataUsers;

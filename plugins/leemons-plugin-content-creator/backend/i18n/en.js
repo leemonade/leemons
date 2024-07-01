@@ -18,6 +18,7 @@ module.exports = {
     cancelModalDescription: 'Do you want to cancel the document?',
     cancelModalConfirm: 'Confirm',
     cancelModalCancel: 'Back',
+    goBackToDashboardPreview: 'Go back to dashboard',
   },
   documentDetail: {
     basic: 'Basic',
@@ -82,6 +83,15 @@ module.exports = {
     pin: 'Mark as favorite',
     unpin: 'Unmark as favorite',
     document: 'Document',
+    cannotAssignModal: {
+      title: 'Assignment Guidelines',
+      descriptionWhenNoOwner:
+        "You must be a teacher of one of the test's subjects or the owner of the test to assign it.",
+      descriptionWhenOwner:
+        "You own this test but are not a teacher of any of the test's subjects. Please edit the test to update or remove the subjects if you wish to assign it.",
+      edit: 'Edit Document',
+      accept: 'Accept',
+    },
   },
   contentCreatorDetail: {
     titlePlaceholder: 'Write the name of the document',

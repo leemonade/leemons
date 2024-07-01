@@ -129,6 +129,7 @@ module.exports = {
         },
       },
       showCurriculum: 'Show curriculum',
+      assignationHeaderButton: 'View assignation',
     },
     others: {
       title: 'Other options',
@@ -379,6 +380,10 @@ module.exports = {
     evaluationsEmptyState: 'There are no pending evaluations',
     seeAllActivities: 'See all the activities',
     seeAllEvaluations: 'See all the evaluations',
+    links: {
+      academy: 'https://www.leemons.io/leemons-academy',
+      library: 'https://www.leemons.io/academy-post/the-amazing-leemons-library',
+    },
     assigment: {
       subject: 'Subject',
       submission: 'Submissions',
@@ -505,6 +510,7 @@ module.exports = {
     finished_alert: {
       title: 'Activity finished',
     },
+    goToModuleDashboard: 'Go back to dashboard',
   },
   evaluationFeedbackComponent: {
     contactTeacher: 'Chat with my teacher',

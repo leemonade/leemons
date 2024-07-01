@@ -4,6 +4,7 @@ import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssign
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import IntroductionStep from '../IntroductionStep/IntroductionStep';
 import DevelopmentStep from '../DevelopmentStep/DevelopmentStep';
 import { useUpdateTimestamps } from '../../__DEPRECATED__components/Steps/Steps';
@@ -58,7 +59,9 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
         await updateTimestamp('end');
 
         history.push(`/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution`);
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 
@@ -92,3 +95,13 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
     </VerticalStepperContainer>
   );
 }
+
+StepContainer.propTypes = {
+  preview: PropTypes.bool,
+  assignation: PropTypes.object,
+  instance: PropTypes.object,
+  scrollRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+};

@@ -12,7 +12,8 @@ import {
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
-import Link from './components/Link/Link';
+import { Link } from 'react-router-dom';
+import SubmissionLink from './components/Link/Link';
 import File from './components/File/File';
 import useSubmissionStepStyles from './SubmissionStep.style';
 
@@ -74,7 +75,7 @@ function SubmissionStep({
         )}
 
         {assignable?.submission?.type === 'Link' && (
-          <Link assignation={assignation} preview={preview} />
+          <SubmissionLink assignation={assignation} preview={preview} />
         )}
 
         {assignable?.submission?.type === 'File' && (

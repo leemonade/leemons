@@ -63,6 +63,7 @@ const SelectUserAgent = forwardRef(
     const [store, render] = useStore({
       data: [],
     });
+
     const [, , , getErrorMessage] = useRequestErrorMessage();
 
     // EN: Function triggered on user input for searching users

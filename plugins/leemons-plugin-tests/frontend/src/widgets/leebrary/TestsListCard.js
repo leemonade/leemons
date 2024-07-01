@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components';
@@ -14,6 +14,7 @@ import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/Dele
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { useIsOwner } from '@leebrary/hooks/useIsOwner';
+import useIsMainTeacherInSubject from '@academic-portfolio/hooks/queries/useIsMainTeacherInSubject';
 import { TestIcon } from '../../components/Icons/TestIcon';
 import { deleteTestRequest, duplicateRequest } from '../../request';
 
@@ -28,6 +29,7 @@ const ListCardStyles = createStyles((theme, { selected }) => ({
 
 const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
   const { classes } = ListCardStyles({ selected });
   const {
     openConfirmationModal,
@@ -35,24 +37,32 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
     setLoading: setAppLoading,
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-
   const history = useHistory();
+
+  const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
+    useIsMainTeacherInSubject({
+      subjectIds: asset.subjects?.length > 0 ? asset.subjects.map((item) => item.subject) : [],
+      options: {
+        enabled: enableIsTeacherInSubjectQuery && asset.subjects?.length > 0,
+        refetchOnWindowFocus: false,
+      },
+    });
+
+  const onShowMenu = (value) => {
+    setEnableIsTeacherInSubjectQuery(value);
+  };
+
+  const menuItemsLoading = useMemo(
+    () => teacherCheckLoading && asset?.subjects?.length,
+    [teacherCheckLoading, asset]
+  );
+
   const isOwner = useIsOwner(asset);
 
   const menuItems = React.useMemo(() => {
     const items = [];
 
     if (asset?.id) {
-      // if (asset.providerData?.published) {
-      //   items.push({
-      //     icon: <ViewOnIcon />,
-      //     children: t('view'),
-      //     onClick: (e) => {
-      //       e.stopPropagation();
-      //       history.push(`/private/tests/detail/${asset.providerData.id}`);
-      //     },
-      //   });
-      // }
       if (asset.providerData?.published && asset.shareable) {
         items.push({
           icon: <ShareIcon />,
@@ -63,14 +73,31 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
           },
         });
       }
-      if (isOwner && asset.providerData?.published) {
+      if (asset.providerData?.published) {
+        const assignAction = (e) => {
+          e.stopPropagation();
+          if (asset.subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
+            const updateAsset = () => history.push(`/private/tests/${asset.providerData.id}`);
+
+            openConfirmationModal({
+              title: t('cannotAssignModal.title'),
+              description: isOwner
+                ? t('cannotAssignModal.descriptionWhenOwner')
+                : t('cannotAssignModal.descriptionWhenNotOwner'),
+              onConfirm: isOwner ? updateAsset : undefined,
+              labels: {
+                confirm: isOwner ? t('cannotAssignModal.edit') : t('cannotAssignModal.accept'),
+              },
+            })();
+          } else {
+            history.push(`/private/tests/assign/${asset.providerData.id}`);
+          }
+        };
+
         items.push({
           icon: <AssignIcon />,
           children: t('assign'),
-          onClick: (e) => {
-            e.stopPropagation();
-            history.push(`/private/tests/assign/${asset.providerData.id}`);
-          },
+          onClick: assignAction,
         });
       }
       if (asset.editable) {
@@ -137,7 +164,7 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
     }
 
     return items;
-  }, [asset, isOwner, t]);
+  }, [asset, isOwner, t, isMainTeacherInAssetSubjects]);
 
   return (
     <LibraryCard
@@ -148,6 +175,8 @@ const TestsListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
       variantTitle={t('tests')}
       variantIcon={<TestIcon width={18} height={18} />}
       className={classes.root}
+      onShowMenu={onShowMenu}
+      menuItemsLoading={menuItemsLoading}
     />
   );
 };

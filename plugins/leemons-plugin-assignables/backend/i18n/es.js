@@ -389,6 +389,10 @@ module.exports = {
     evaluationsEmptyState: 'No hay evaluaciones pendientes',
     seeAllActivities: 'Ver todas las actividades',
     seeAllEvaluations: 'Ver todas las evaluaciones',
+    links: {
+      academy: 'https://www.leemons.io/es/leemons-academy',
+      library: 'https://www.leemons.io/es/academy-post/biblioteca-de-leemons',
+    },
     assigment: {
       subject: 'Asignatura',
       submission: 'Entregadas',
@@ -503,6 +507,8 @@ module.exports = {
     finished_alert: {
       title: 'Actividad finalizada',
     },
+    assignationHeaderButton: 'Ver asignación',
+    goToModuleDashboard: 'Volver al dashboard',
   },
 
   evaluationFeedbackComponent: {

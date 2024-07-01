@@ -10,6 +10,7 @@ import { deleteAssetRequest, newAssetRequest } from '@leebrary/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import mime from 'mime';
 import {
   FileUploadProvider,
   useFileUploadStore,
@@ -70,13 +71,48 @@ function File({ assignation, preview }) {
     [assignation?.instance?.assignable?.submission?.data]
   );
 
-  const { names: extensionNames, format: extensionFormat } = useMemo(
-    () => ({
-      names: Object.keys(submissionData.extensions).map((key) => key.replace(/^([^.])/, '.$1')),
-      format: Object.values(submissionData.extensions),
-    }),
-    [submissionData?.extensions]
+  const sanitizeSubmissionData = (submission) => {
+    const newExtensions = {};
+    if (!submission) {
+      return null;
+    }
+    const extractExtensions = Object.keys(submission?.extensions).map((key) =>
+      key.replace(/[ .]/g, '')
+    );
+    extractExtensions.forEach((extension) => {
+      if (extension.includes('rtf')) {
+        newExtensions[extension] = '.rtf';
+      } else {
+        newExtensions[extension] = mime.getType(extension);
+      }
+    });
+    return {
+      ...submission,
+      extensions: newExtensions,
+    };
+  };
+
+  const submissionDataSanitized = useMemo(
+    () => sanitizeSubmissionData(submissionData),
+    [submissionData]
   );
+
+  const { names: extensionNames, format: extensionFormat } = useMemo(() => {
+    const extensions = Object.keys(submissionDataSanitized.extensions);
+    const formats = Object.values(submissionDataSanitized.extensions);
+    const additionalFormats = [];
+
+    formats.forEach((format) => {
+      if (format === '.rtf') {
+        additionalFormats.push('application/rtf', 'text/rtf');
+      }
+    });
+
+    return {
+      names: extensions.map((key) => key.replace(/^([^.])/, '.$1')),
+      format: [...formats, ...additionalFormats],
+    };
+  }, [submissionDataSanitized, submissionData]);
 
   return (
     <Box>
