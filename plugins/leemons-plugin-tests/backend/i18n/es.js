@@ -428,6 +428,7 @@ module.exports = {
     update: 'Actualizar',
     updatedConfig: 'Configuración actualizada correctamente',
     deletedConfig: 'Configuración borrada correctamente',
+    createdConfigSuccess: 'Configuración creada con éxito',
     assignDone: 'Asignación creada con éxito',
     configTitle: 'Selección de preguntas',
     configDescription:

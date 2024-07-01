@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createStyles, Box, Select } from '@bubbles-ui/components';
+import { createStyles, Box, Select, Title } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { Container } from '../Container';
@@ -110,7 +110,7 @@ export function EvaluationType({
   const { classes } = useEvaluationTypeStyles();
   return (
     <Container
-      title={localizations?.title}
+      title={<Title order={onDrawer ? 4 : 3}>{localizations?.title}</Title>}
       // description={!onDrawer && localizations?.description}
       hidden={hidden}
       hideSectionHeaders={hideSectionHeaders}

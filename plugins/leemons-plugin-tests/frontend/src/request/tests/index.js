@@ -76,6 +76,18 @@ async function assignTest(id, data) {
   });
 }
 
+async function createAssignedConfigs(name, config) {
+  const response = await leemons.api(`v1/tests/tests/assign/configs`, {
+    allAgents: true,
+    method: 'POST',
+    body: {
+      name,
+      config,
+    },
+  });
+  return response.id;
+}
+
 async function getAssignConfigs() {
   return leemons.api(`v1/tests/tests/assign/configs`, {
     allAgents: true,
@@ -149,6 +161,7 @@ export {
   duplicate,
   getFeedback,
   setFeedback,
+  createAssignedConfigs,
   getAssignConfigs,
   deleteAssignedConfig,
   updateAssignedConfig,
