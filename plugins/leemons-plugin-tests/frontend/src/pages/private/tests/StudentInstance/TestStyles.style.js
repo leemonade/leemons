@@ -480,8 +480,6 @@ export const TestStyles = createStyles((theme) => ({
     marginRight: -theme.spacing[4],
     marginTop: -theme.spacing[4],
     padding: theme.spacing[4],
-    borderBottom: '1px solid',
-    borderColor: theme.other.divider.background.color.default,
   },
   questionValueCardEmbedded: {},
 }));
