@@ -9,10 +9,10 @@ module.exports = {
       path: '/',
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
-    handler: (ctx) => {
+    handler: async (ctx) => {
       const { provider } = ctx.params;
 
-      const response = useProvider({ provider, ctx });
+      const response = await useProvider({ provider, ctx });
 
       return { response };
     },
