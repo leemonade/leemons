@@ -13,13 +13,14 @@ const useFormComponentStyles = createStyles((theme) => {
     },
     leftColumn: {
       width: 928 - 266 - 24 * 2, // leftColumn + rightColumn
-      '@media (min-width: 1920px)': {
+      '@media (min-width: 1720px)': {
         width: 1400 - 266 - 24 * 2,
       },
     },
     rightColumn: {
       minWidth: 266,
       height: 480,
+      paddingRight: 36,
     },
   };
 });
