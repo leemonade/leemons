@@ -47,10 +47,6 @@ module.exports = async function createJsConfig({
         .replace('-frontend-react-private', '')
         .replace('-frontend-react', '')}/*`;
 
-      if (plugin.name === 'common') {
-        paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
-      }
-
       paths[pluginName] = [`./${relativePath}/src/*`];
     });
 
