@@ -12,16 +12,18 @@ const DatasetItemDrawerStyles = createStyles((theme) => ({
   grid: {
     margin: 0,
   },
-  leftColContainer: {
+  leftContainer: {
     height: '100vh',
     backgroundColor: theme.colors.ui02,
+    width: '40%',
   },
-  rightColContainer: {
+  rightContainer: {
     height: '100vh',
     position: 'relative',
     overflow: 'hidden',
     padding: 0,
     paddingBottom: 92,
+    width: '60%',
   },
   rightColContent: {
     height: '100%',

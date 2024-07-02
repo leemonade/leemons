@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 import { useContext, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
-import { apiSessionMiddleware } from '../globalContext';
+import { apiSessionMiddleware } from './helpers/apiSessionMiddleware';
 
 function getJWTToken() {
   const params = new URLSearchParams(window.location.search);

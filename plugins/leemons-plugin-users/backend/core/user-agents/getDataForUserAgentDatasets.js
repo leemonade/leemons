@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 async function getData({ locationName, ctx }) {
-  const [{ compileJsonSchema, compileJsonUI }, value] = await Promise.all([
+  const promises = [
     ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
       locationName,
       pluginName: 'users',
@@ -14,7 +14,9 @@ async function getData({ locationName, ctx }) {
       userAgent: ctx.meta.userSession.userAgents,
       target: ctx.meta.userSession.userAgents[0].id,
     }),
-  ]);
+  ];
+
+  const [{ compileJsonSchema, compileJsonUI }, value] = await Promise.all(promises);
 
   return { jsonSchema: compileJsonSchema, jsonUI: compileJsonUI, value };
 }
@@ -42,6 +44,14 @@ async function getDataForUserAgentDatasets({ userAgentId, ctx }) {
     locationNames.push(`profile.${profileRole.profile}`);
   });
 
+  const profiles = await ctx.db.Profiles.find({ id: _.map(profileRoles, 'profile') }).lean();
+
+  // map profiles to an object with the locationName as key
+  const profilesMap = {};
+  _.forEach(profiles, (profile) => {
+    profilesMap[`profile.${profile.id}`] = profile.name ?? profile.sysName;
+  });
+
   return Promise.allSettled(
     _.map(locationNames, async (locationName) => {
       const data = await getData({
@@ -62,6 +72,7 @@ async function getDataForUserAgentDatasets({ userAgentId, ctx }) {
         userAgent,
         data,
         locationName,
+        title: profilesMap?.[locationName],
       };
     })
   ).then((results) =>

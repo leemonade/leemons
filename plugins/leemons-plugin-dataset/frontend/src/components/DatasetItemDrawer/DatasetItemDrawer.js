@@ -1,14 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  Box,
-  Button,
-  Col,
-  Divider,
-  BaseDrawer,
-  Grid,
-  LoadingOverlay,
-} from '@bubbles-ui/components';
+import { Box, Stack, Button, Divider, BaseDrawer, LoadingOverlay } from '@bubbles-ui/components';
 import { Name } from './components/Name';
 import { Preview } from './components/Preview';
 import { Centers } from './components/Centers';
@@ -96,12 +88,12 @@ const DatasetItemDrawer = ({
         {loading ? (
           <LoadingOverlay visible />
         ) : (
-          <Grid className={classes.grid} grow columns={100}>
-            <Col span={35} className={classes.leftColContainer}>
+          <Stack fullWidth>
+            <Box skipFlex className={classes.leftContainer}>
               <Preview />
-            </Col>
+            </Box>
 
-            <Col span={65} className={classes.rightColContainer}>
+            <Box skipFlex className={classes.rightContainer}>
               <Box className={classes.rightColContent}>
                 {/* Name */}
                 <Name />
@@ -124,8 +116,8 @@ const DatasetItemDrawer = ({
                   {messages.saveButtonLabel}
                 </Button>
               </Box>
-            </Col>
-          </Grid>
+            </Box>
+          </Stack>
         )}
       </BaseDrawer>
     </DatasetItemDrawerContext.Provider>

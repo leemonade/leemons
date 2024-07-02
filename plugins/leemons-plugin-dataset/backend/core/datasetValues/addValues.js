@@ -63,7 +63,7 @@ async function addValues({
 
   // ES: Comprobamos que los datos cumplen con la validacion
   // EN: We check that the data complies with validation
-  validateDataForJsonSchema({ jsonSchema, data: formData });
+  validateDataForJsonSchema({ jsonSchema, data: formData, allowedKeys: goodKeys });
 
   const toSave = [];
   _.forIn(formData, (value, key) => {

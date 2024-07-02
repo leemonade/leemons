@@ -61,7 +61,7 @@ async function updateValues({
     delete p.id;
   });
 
-  validateDataForJsonSchema({ jsonSchema, data: formData });
+  validateDataForJsonSchema({ jsonSchema, data: formData, allowedKeys: goodKeys });
 
   const toSave = [];
   _.forIn(formData, (value, key) => {

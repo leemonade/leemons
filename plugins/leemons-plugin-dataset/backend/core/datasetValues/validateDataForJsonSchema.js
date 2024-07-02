@@ -2,12 +2,19 @@
 const _ = require('lodash');
 const { LeemonsValidator } = require('@leemons/validator');
 
-// TODO ADD CUSTOM VALIDATOR FOR PHONE NUMBERS/ETZ
-function validateDataForJsonSchema({ jsonSchema, data }) {
+/**
+ * Validate data for a JSON Schema.
+ *
+ * @param {object} jsonSchema - The JSON Schema to validate the data against.
+ * @param {object} data - The data to validate.
+ * @param {string[]} allowedKeys - Filter the required keys.
+ */
+function validateDataForJsonSchema({ jsonSchema, data, allowedKeys = [] }) {
+  // TODO ADD CUSTOM VALIDATOR FOR PHONE NUMBERS/ETZ
   const schema = {
     type: 'object',
     additionalProperties: false,
-    required: jsonSchema.required,
+    required: jsonSchema.required?.filter((key) => allowedKeys.includes(key)) ?? [],
     properties: {},
   };
 

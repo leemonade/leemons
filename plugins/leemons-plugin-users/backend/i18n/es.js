@@ -265,7 +265,10 @@ module.exports = {
     disableProfileSuccess: 'Perfil {profile} desactivado correctamente',
   },
   needDatasetDataModal: {
-    goPageButton: 'Ir a la página',
+    title: 'Información requerida',
+    description:
+      'Debes completar algunos campos requeridos en tu perfil. Por favor, actualiza tu información para continuar.',
+    goPageButton: 'Completar ahora',
   },
   userDataDatasetPage: {
     pageTitle: 'Datos de usuario',
