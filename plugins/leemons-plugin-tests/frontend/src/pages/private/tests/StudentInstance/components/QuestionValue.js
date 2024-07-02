@@ -6,7 +6,7 @@ import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
   const [selectedClue, setSelectedClue] = useState(null);
-  const { t, store, render, question, saveQuestion } = props;
+  const { t, store, render, question, saveQuestion, isPreviewMode = false } = props;
 
   const usedClues = store.questionResponses?.[question.id].clues;
   const usedCluesTypes = store.questionResponses?.[question.id].cluesTypes;
@@ -27,7 +27,7 @@ export default function QuestionValue(props) {
   forEach(clues, (clue, index) => {
     if (index < usedClues) {
       const lessPoints =
-        store.questionsInfo.perQuestion * (cluesConfigByType[clue.type].value / 100);
+        store?.questionsInfo?.perQuestion * (cluesConfigByType[clue.type].value / 100);
       usedCluesObj.push({
         points: `-${lessPoints.toFixed(2)}`,
         index,
@@ -73,7 +73,7 @@ export default function QuestionValue(props) {
     forEach(clues, (clue) => {
       const clueType = `clue${clue.type}`;
       const lessPoints =
-        store.questionsInfo.perQuestion * (cluesConfigByType[clue.type].value / 100);
+        store?.questionsInfo?.perQuestion * (cluesConfigByType[clue.type].value / 100);
       selectData.push({
         label: `${t(clueType)} (-${lessPoints.toFixed(2)} ${t('pts')})`,
         value: clue.type,
@@ -89,8 +89,8 @@ export default function QuestionValue(props) {
         alignItems: 'center',
         justifyContent: 'space-between',
         borderBottom: `1px solid ${theme.other.divider.background.color.default}`,
-        paddingBottom: theme.spacing[4],
-        marginBottom: theme.spacing[4],
+        paddingBottom: !isPreviewMode ? theme.spacing[4] : 0,
+        marginBottom: !isPreviewMode ? theme.spacing[4] : 0,
       })}
     >
       <Box style={{ display: 'flex', alignItems: 'center' }}>
@@ -109,7 +109,7 @@ export default function QuestionValue(props) {
               +
               {store.viewMode
                 ? store.questionResponses[question.id].points
-                : (store.questionsInfo.perQuestion - clueLessPoints).toFixed(2)}
+                : (store?.questionsInfo?.perQuestion - clueLessPoints).toFixed(2)}
             </Text>{' '}
             <Text size="xs" color="primary">
               {t('pointsInTotal')}
@@ -147,7 +147,7 @@ export default function QuestionValue(props) {
           : null}
       </Box>
       {/* -- Question clues -- */}
-      {clues.length ? (
+      {clues.length && !isPreviewMode ? (
         <>
           {selectData?.length ? (
             <Select
