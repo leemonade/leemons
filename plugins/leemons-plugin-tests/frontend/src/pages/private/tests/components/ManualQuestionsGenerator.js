@@ -16,9 +16,13 @@ const ManualQuestionsGenerator = ({
 }) => {
   const [allQuestions, setAllQuestions] = useState([]);
   const formValues = form.watch();
+  const questions = form.watch('questions');
 
   useEffect(() => {
     setAllQuestions(assignmentQuestions.length > 0 ? assignmentQuestions : questionBank.questions);
+    setManualQuestions(
+      assignmentQuestions.length > 0 ? assignmentQuestions : questionBank.questions
+    );
     if (formValues?.config?.manualQuestions?.length > 0) {
       setManualQuestions(
         assignmentMode
@@ -27,8 +31,14 @@ const ManualQuestionsGenerator = ({
       );
       form.setValue('questions', formValues.config.manualQuestions);
     }
+    form.setValue('config.manualQuestions', questions);
   }, [questionBank, assignmentMode, assignmentQuestions]);
-  const questions = form.watch('questions');
+
+  useEffect(() => {
+    if (!questions.length) {
+      setManualQuestions([]);
+    }
+  }, [questions]);
   const handleSelectionChange = (selectedIds) => {
     if (selectedIds.length === 0) {
       return form.setValue('questions', []);
@@ -39,6 +49,7 @@ const ManualQuestionsGenerator = ({
   };
 
   const questionsSelectedInTab = questions.length > 0 ? `(${questions?.length})` : '';
+
   return (
     <Box>
       <Title order={4} style={{ visibility: questions?.length > 0 ? 'visible' : 'hidden' }}>
@@ -77,6 +88,7 @@ const ManualQuestionsGenerator = ({
             render={({ field }) => (
               <QuestionsTable
                 questions={manualQuestions}
+                listadoSeleccionadas={true}
                 forceSortable
                 value={field.value}
                 onChange={(e) => field.onChange(e)}
