@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -142,82 +143,116 @@ const AssetPage = () => {
     }
   };
 
-  async function resolveAssetCover({ categoryName, isEditing, isImageResource }) {
-    const coverIsAUrl = isString(formValues.cover) && formValues.cover?.startsWith('http');
+  async function resolveAssetCoverAndFile({
+    categoryName,
+    isEditing,
+    isImageResource,
+    currentFormValues,
+  }) {
+    const coverIsAUrl =
+      isString(currentFormValues.cover) && currentFormValues.cover?.startsWith('http');
 
     const isBookmarkWithValidCover = coverIsAUrl && categoryName === 'bookmarks';
     if (isBookmarkWithValidCover && !isEditing) {
       setUploadingFileInfo({ state: 'processingImage' });
-      const coverFile = await imageUrlToFile(formValues.cover);
+      const coverFile = await imageUrlToFile(currentFormValues.cover);
       const finalImage = await compressImage({ file: coverFile });
-      formValues.cover = finalImage;
+      currentFormValues.cover = finalImage;
       return;
     }
 
-    const needsNewCover = !formValues.file?.id;
+    const isExternalResource = currentFormValues.file?.isExternalResource;
+    if (isExternalResource && isImageResource) {
+      setUploadingFileInfo({ state: 'processingImage' });
+      // urlToFile could be needed for external resources that are not images in the future
+      const fileFromUrl = await imageUrlToFile(currentFormValues.file.url);
+      const finalImage = await compressImage({ file: fileFromUrl });
+      currentFormValues.file = finalImage;
+      currentFormValues.cover = null;
+      return;
+    }
+
+    const needsNewCover = !currentFormValues.file?.id;
     const couldNeedCompression =
       isImageResource &&
-      formValues.file.type.indexOf('/gif') < 0 &&
-      formValues.file.type.indexOf('/svg') < 0;
+      currentFormValues.file.type.indexOf('/gif') < 0 &&
+      currentFormValues.file.type.indexOf('/svg') < 0;
     if (isImageResource && needsNewCover) {
-      formValues.cover = null;
+      currentFormValues.cover = null;
 
       if (couldNeedCompression) {
-        const finalImage = await compressImage({ file: formValues.file });
-        formValues.file = finalImage;
+        const finalImage = await compressImage({ file: currentFormValues.file });
+        currentFormValues.file = finalImage;
       }
       return;
     }
 
     // If any other field but the cover is updated we'll need the original cover value for any media-file or bookmark.
     if (coverIsAUrl) {
-      formValues.cover = asset?.original?.cover?.id;
+      currentFormValues.cover = asset?.original?.cover?.id;
     }
   }
 
   const handlePublish = async ({ goToAssign } = {}) => {
+    const currentFormValues = form.getValues();
     const editing = params.id?.length > 0;
     const requestMethod = editing ? updateAssetRequest : newAssetRequest;
-    const isImageResource = formValues.file?.type.indexOf('image') === 0;
+    const isImageResource = currentFormValues.file?.type.indexOf('image') === 0;
     let file;
     let cover;
 
+    let originalExternalResource = null;
+    if (currentFormValues.file?.isExternalResource) {
+      originalExternalResource = currentFormValues.file;
+      currentFormValues.url = currentFormValues.file.url;
+    }
+
     setLoading(true);
-    await resolveAssetCover({ categoryName: category?.key, isEditing: editing, isImageResource });
+    // This function modifies currentFormValues.cover & currentFormValues.file
+    await resolveAssetCoverAndFile({
+      categoryName: category?.key,
+      isEditing: editing,
+      isImageResource,
+      currentFormValues,
+    });
 
     // DEFINE/UPLOAD FINAL FILE & COVER FILES
     try {
-      const needsToUploadNewFile = !formValues.file?.id;
+      const needsToUploadNewFile = !currentFormValues.file?.id;
       if (category?.key !== 'bookmarks' && needsToUploadNewFile) {
-        file = await uploadFileAsMultipart(formValues.file, {
+        file = await uploadFileAsMultipart(currentFormValues.file, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
+          },
+          externalFileInfo: {
+            copyright: originalExternalResource?.copyright,
+            externalUrl: originalExternalResource?.url,
           },
         });
         setUploadingFileInfo(null);
       } else {
-        file = formValues.file;
+        file = currentFormValues.file;
       }
 
       const bookmarkOldCover = asset?.original?.cover || null;
       const bookmarkNeedsNewCover = bookmarkOldCover
-        ? bookmarkOldCover?.id !== formValues.cover
-        : !isEmpty(formValues.cover);
+        ? bookmarkOldCover?.id !== currentFormValues.cover
+        : !isEmpty(currentFormValues.cover);
 
       if (category?.key === 'bookmarks' && bookmarkNeedsNewCover) {
-        cover = await uploadFileAsMultipart(formValues.cover, {
+        cover = await uploadFileAsMultipart(currentFormValues.cover, {
           onProgress: (info) => {
             setUploadingFileInfo(info);
           },
         });
         setUploadingFileInfo(null);
       } else {
-        cover = formValues.cover?.id ?? formValues.cover;
+        cover = currentFormValues.cover?.id ?? currentFormValues.cover;
       }
 
       // REQUEST
       try {
-        const assetData = { ...formValues, cover, file };
+        const assetData = { ...currentFormValues, cover, file };
         if (editing) assetData.id = params.id;
 
         const { asset: newAsset } = await requestMethod(assetData, category?.id, category?.key, {
@@ -233,6 +268,10 @@ const AssetPage = () => {
         addSuccessAlert(
           editing ? t('basicData.labels.updatedSuccess') : t('basicData.labels.createdSuccess')
         );
+
+        if (originalExternalResource) {
+          originalExternalResource.trackDownload();
+        }
 
         if (goToAssign) {
           history.push(`/private/leebrary/assign/${newAsset.id}`);

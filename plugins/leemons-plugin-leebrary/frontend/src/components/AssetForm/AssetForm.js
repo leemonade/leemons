@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { flatten, isEmpty, isFunction, isNil, noop, toLower, map, isString } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
@@ -13,6 +13,7 @@ import {
   Stack,
   Switch,
   Textarea,
+  LoadingOverlay,
   TextInput,
   TotalLayoutFooterContainer,
   useResizeObserver,
@@ -21,6 +22,10 @@ import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
+
+import { ZoneWidgets } from '@widgets';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import prefixPN from '@leebrary/helpers/prefixPN';
 import { isImageFile, isNullish, isValidURL } from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
 import {
@@ -29,6 +34,7 @@ import {
   LIBRARY_FORM_TYPES,
 } from '../LibraryForm/LibraryForm.constants';
 import { ImagePicker } from '../ImagePicker';
+import CopyrightText from '../Copyright/CopyrightText';
 
 const REQUIRED_FIELD = 'Field required';
 
@@ -74,7 +80,11 @@ const AssetForm = ({
   drawerLayout,
   acceptedFileTypes,
   categories,
+  externalFileFromDrawer,
+  onRemoveExternalFile = noop,
 }) => {
+  const [t] = useTranslateLoader(prefixPN('assetSetup.basicData.copyright'));
+  const [externalFile, setExternalFile] = useState({ ...(externalFileFromDrawer ?? {}) });
   const [store, render] = useStore({
     programs: null,
     showAdvancedConfig: !!asset?.program,
@@ -88,6 +98,8 @@ const AssetForm = ({
   const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [boxRef] = useResizeObserver();
+  const [showExternalResourceWidgets, setShowExternalResourceWidgets] = useState(true);
+  const [widgetsLoading, setWidgetsLoading] = useState(type === LIBRARY_FORM_TYPES.MEDIA_FILES);
 
   // ························································
   // FORM SETUP
@@ -186,7 +198,7 @@ const AssetForm = ({
   useEffect(() => {
     const isImageType = isImageFile(assetFile);
     if (!isEmpty(assetFile)) {
-      setIsImage(isImageType);
+      setIsImage(isImageType); // This could be outside this if statment so that it updates on file change
       if (isEmpty(formValues.name)) {
         setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
       }
@@ -195,15 +207,47 @@ const AssetForm = ({
       setValue('cover', assetFile);
     }
 
-    if (type === LIBRARY_FORM_TYPES.MEDIA_FILES) {
+    if (!isEmpty(externalFile)) {
+      setValue('name', externalFile.name);
+      if (isImageType) {
+        setValue('cover', externalFile.url);
+      }
+    }
+
+    // Clean values on file remove
+    if (type === LIBRARY_FORM_TYPES.MEDIA_FILES && isEmpty(externalFile)) {
       if (!editing && !assetFile?.path) {
         setValue('name', null);
         setValue('cover', null);
       } else if (editing && !assetFile?.id) {
         setValue('cover', null);
+        setValue('copyright', undefined);
       }
     }
-  }, [assetFile]);
+
+    if (
+      type === LIBRARY_FORM_TYPES.MEDIA_FILES &&
+      externalFile?.initialized &&
+      isEmpty(assetFile)
+    ) {
+      setExternalFile({});
+      setValue('name', null);
+      setValue('cover', null);
+    }
+  }, [assetFile, externalFile]);
+
+  // MANAGE NEW ASSET CREATION THAT USES THIRD PARTY RESOURCES AS FILES
+  useEffect(() => {
+    if (!isEmpty(externalFile) && isEmpty(assetFile)) {
+      // Mark the external file as initialized
+      if (!externalFile.initialized) {
+        externalFile.initialized = true;
+        setValue('file', externalFile);
+      } else {
+        onRemoveExternalFile();
+      }
+    }
+  }, [externalFile, assetFile]);
 
   useEffect(() => {
     if (isEmpty(coverFile)) {
@@ -234,11 +278,18 @@ const AssetForm = ({
   // HANDLERS
 
   const handleOnSubmit = (e) => {
-    if (assetFile) e.file = assetFile;
+    if (assetFile) {
+      if (assetFile?.isExternalResource) {
+        e.externalFile = assetFile;
+      } else {
+        e.file = assetFile;
+      }
+    }
     if (coverFile) e.cover = coverFile;
     if (asset.id) e.id = asset.id;
     if (urlMetadata?.logo) e.icon = urlMetadata.logo;
     if (coverAsset) e.cover = coverAsset.file.id;
+
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
@@ -285,6 +336,37 @@ const AssetForm = ({
   };
 
   // ························································
+  // THIRD PARTY RESOURCES
+
+  const handleOnSelectExternalResource = (resourceFormattedAsFile) => {
+    setExternalFile({ ...resourceFormattedAsFile });
+  };
+
+  const copyrightTextProps = useMemo(() => {
+    if (externalFile?.copyright?.author) {
+      const { author, authorProfileUrl, providerUrl, provider } = externalFile.copyright;
+      const providerName = provider.charAt(0).toUpperCase() + provider.slice(1);
+      const resourceType = provider === 'unsplash' ? 'photo' : 'image';
+
+      return {
+        resourceType,
+        author,
+        authorUrl: authorProfileUrl,
+        sourceUrl: providerUrl,
+        source: providerName,
+      };
+    }
+    return null;
+  }, [externalFile]);
+
+  const ExternalResourceProvider = useCallback(
+    ({ Component, key, properties }) => (
+      <Component key={key} {...properties} onSelect={handleOnSelectExternalResource} />
+    ),
+    []
+  );
+
+  // ························································
   // RENDER
 
   const getAssetIcon = useCallback(() => {
@@ -322,30 +404,63 @@ const AssetForm = ({
             ].includes(type) && (
               <ContextContainer title={!hideTitle ? labels.title : undefined}>
                 {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (
-                  <Controller
-                    control={control}
-                    name="file"
-                    shouldUnregister
-                    rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
-                    render={({ field: { ref, value, ...field } }) => (
-                      <FileUpload
-                        {...field}
-                        icon={<DownloadIcon height={32} width={32} />}
-                        title={labels.browseFile}
-                        subtitle={labels.dropFile}
-                        labels={labels}
-                        errorMessage={{
-                          title: 'Error',
-                          message: errorMessages.file?.rejected || 'File was rejected',
-                        }}
-                        hideUploadButton
-                        single
-                        initialFiles={value ? flatten([value]) : []}
-                        inputWrapperProps={{ error: errors.file }}
-                        accept={onlyImages ? ['image/*'] : acceptedFileTypes}
-                      />
+                  <>
+                    <Controller
+                      control={control}
+                      name="file"
+                      shouldUnregister
+                      rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
+                      render={({ field: { ref, value, ...field } }) => (
+                        <>
+                          <FileUpload
+                            {...field}
+                            icon={<DownloadIcon height={32} width={32} />}
+                            title={labels.browseFile}
+                            subtitle={labels.dropFile}
+                            labels={labels}
+                            errorMessage={{
+                              title: 'Error',
+                              message: errorMessages.file?.rejected || 'File was rejected',
+                            }}
+                            hideUploadButton
+                            single
+                            initialFiles={value ? flatten([value]) : []}
+                            inputWrapperProps={{ error: errors.file }}
+                            accept={onlyImages ? ['image/*'] : acceptedFileTypes}
+                          />
+                          {drawerLayout && copyrightTextProps && (
+                            <CopyrightText {...copyrightTextProps} />
+                          )}
+                        </>
+                      )}
+                    />
+                    {!drawerLayout && isEmpty(assetFile) && showExternalResourceWidgets && (
+                      <ContextContainer
+                        subtitle={
+                          showExternalResourceWidgets && !widgetsLoading
+                            ? labels.findResourcesInExternalProvider
+                            : undefined
+                        }
+                      >
+                        <Box sx={{ display: widgetsLoading ? 'none' : 'block' }}>
+                          <ZoneWidgets
+                            zone="leebrary.asset.form"
+                            onGetZone={(value) => {
+                              setShowExternalResourceWidgets(value.widgetItems?.length > 0);
+                              setWidgetsLoading(false);
+                            }}
+                          >
+                            {ExternalResourceProvider}
+                          </ZoneWidgets>
+                        </Box>
+                        {widgetsLoading && (
+                          <Box sx={{ position: 'relative', height: 50 }} skipFlex>
+                            <LoadingOverlay visible />
+                          </Box>
+                        )}
+                      </ContextContainer>
                     )}
-                  />
+                  </>
                 )}
                 {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
                   <Controller

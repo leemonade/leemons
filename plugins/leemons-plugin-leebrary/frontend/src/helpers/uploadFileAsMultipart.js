@@ -131,17 +131,27 @@ async function sendAllChunksInOrder(jsfile, dbfile, onProgress) {
   return etags;
 }
 
-async function createNewMultipartFileUpload(jsfile, { filePaths, pathsInfo, isFolder, name } = {}) {
+async function createNewMultipartFileUpload(
+  jsfile,
+  { filePaths, pathsInfo, isFolder, name, copyright, externalUrl } = {}
+) {
+  const body = {
+    name: name || jsfile.name,
+    type: jsfile.type,
+    size: jsfile.size,
+    isFolder,
+    filePaths,
+    pathsInfo,
+  };
+  if (copyright && !_.isEmpty(copyright)) {
+    body.copyright = JSON.stringify(copyright);
+  }
+  if (externalUrl) {
+    body.externalUrl = externalUrl;
+  }
   return leemons.api('v1/leebrary/file/multipart/new', {
     allAgents: true,
-    body: {
-      name: name || jsfile.name,
-      type: jsfile.type,
-      size: jsfile.size,
-      isFolder,
-      filePaths,
-      pathsInfo,
-    },
+    body,
     method: 'POST',
   });
 }
@@ -179,7 +189,7 @@ async function getZipFiles(jsfile) {
 
 async function uploadFileAsMultipart(
   jsfile,
-  { onProgress = () => {}, name, isFolder: _isFolder = false } = {}
+  { onProgress = () => {}, name, isFolder: _isFolder = false, externalFileInfo } = {}
 ) {
   if (jsfile instanceof File || jsfile instanceof Blob) {
     const isFolder = _isFolder && jsfile.name?.endsWith('.zip');
@@ -208,6 +218,8 @@ async function uploadFileAsMultipart(
       pathsInfo,
       isFolder,
       name,
+      copyright: externalFileInfo?.copyright,
+      externalUrl: externalFileInfo?.externalUrl,
     });
     const totalSize = _.sum(_.map(filesToUpload, 'size'));
     try {

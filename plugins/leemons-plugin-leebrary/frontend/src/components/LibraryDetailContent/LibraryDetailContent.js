@@ -107,6 +107,7 @@ const LibraryDetailContent = ({
       variantTitle={variantTitle}
       file={file}
       url={url}
+      originalAsset={asset?.original}
       classes={classes}
     />
   );

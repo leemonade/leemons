@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
 import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
@@ -7,6 +7,7 @@ import {
   LIBRARY_CARD_COVER_DEFAULT_PROPS,
   LIBRARY_CARD_COVER_PROP_TYPES,
 } from './LibraryCardCover.constants';
+import CoverCopyright from './CoverCopyright';
 
 const LibraryCardCover = ({
   height,
@@ -20,12 +21,30 @@ const LibraryCardCover = ({
   hideDashboardIcons,
   fileType,
   variantIcon,
+  url,
+  file,
+  original,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const { classes, cx } = LibraryCardCoverStyles(
     { color, height, parentHovered, subjectColor: subject?.color, showMenu },
     { name: 'LibraryCardCover' }
   );
+
+  const coverSource = useMemo(() => {
+    const fileIsAnImage = fileType === 'image';
+    const isUrl = url && url.startsWith('http') && url.includes('unsplash');
+    const hasCopyright = !isEmpty(file?.copyright);
+
+    if (fileIsAnImage && isUrl && hasCopyright) {
+      return url;
+    }
+
+    if (original.cover?.externalUrl) {
+      return original.cover.externalUrl;
+    }
+    return cover; // Asset creation case
+  }, [cover, url, fileType, file?.copyright, original?.cover?.externalUrl]);
 
   const icon = useMemo(
     () =>
@@ -34,6 +53,40 @@ const LibraryCardCover = ({
         : null,
     [fileIcon]
   );
+
+  const getCoverCopyright = useCallback(() => {
+    const fileIsAnImage = fileType === 'image';
+
+    if (fileIsAnImage) {
+      if (!file.copyright) return null;
+      const { author, authorProfileUrl, providerUrl, provider } = file.copyright;
+      const providerText = provider.charAt(0).toUpperCase() + provider.slice(1);
+
+      return (
+        <CoverCopyright
+          author={author}
+          authorUrl={authorProfileUrl}
+          source={providerText}
+          sourceUrl={providerUrl}
+          bottomOffset={-6}
+        />
+      );
+    }
+
+    if (!original?.cover?.copyright) return null;
+    const { author, authorProfileUrl, providerUrl, provider } = original.cover.copyright;
+    const providerText = provider.charAt(0).toUpperCase() + provider.slice(1);
+
+    return (
+      <CoverCopyright
+        author={author}
+        authorUrl={authorProfileUrl}
+        source={providerText}
+        sourceUrl={providerUrl}
+        bottomOffset={-6}
+      />
+    );
+  }, [original]);
 
   useEffect(() => {
     if (!parentHovered && showMenu) {
@@ -101,11 +154,12 @@ const LibraryCardCover = ({
       <Box className={classes.overlayTransparent}>
         <Box>{iconRow}</Box>
       </Box>
-      {cover ? (
-        <ImageLoader src={cover} height={heightAndSubjectColor} width={'100%'} forceImage />
+      {coverSource ? (
+        <ImageLoader src={coverSource} height={heightAndSubjectColor} width={'100%'} forceImage />
       ) : (
         MemoizedEmptyCover
       )}
+      {file?.copyright && getCoverCopyright()}
     </Box>
     // </AnimatePresence>
   );

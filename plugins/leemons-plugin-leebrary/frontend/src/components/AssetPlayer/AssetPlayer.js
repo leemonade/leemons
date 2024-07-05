@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
-import { isFunction } from 'lodash';
+import { isEmpty, isFunction } from 'lodash';
 import {
   Box,
   ImageLoader,
@@ -69,6 +69,7 @@ const AssetPlayer = ({
     fileExtension,
     mediaType,
     metadata,
+    original,
   } = asset;
   let url = _url;
   let fileType = _fileType;
@@ -145,6 +146,21 @@ const AssetPlayer = ({
   }, [metadata, fileType]);
 
   const fullScreenRatio = window.innerHeight / window.innerWidth;
+
+  const coverSource = useMemo(() => {
+    const fileIsAnImage = !!media.isImage;
+    const isUrl = url && url.startsWith('http') && url.includes('unsplash');
+    const hasCopyright = !isEmpty(original?.cover?.copyright);
+
+    if (fileIsAnImage && isUrl && hasCopyright) {
+      return url;
+    }
+
+    if (original.cover?.externalUrl) {
+      return original.cover.externalUrl;
+    }
+    return cover;
+  }, [cover, url, media, original]);
 
   // ··································································
   // METHODS
@@ -417,7 +433,7 @@ const AssetPlayer = ({
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <ImageLoader height="100%" src={cover} alt={name} />
+                  <ImageLoader height="100%" src={coverSource} alt={name} />
                 </ModalZoom>
               </Box>
             )}
@@ -431,13 +447,13 @@ const AssetPlayer = ({
                     <ButtonIcon fileType={'image'} />
                   </Box>
                 )}
-                {!execMode && <ImageLoader height={'200px'} src={cover} alt={name} />}
+                {!execMode && <ImageLoader height={'200px'} src={coverSource} alt={name} />}
                 <ModalZoom
                   canPlay={!ccMode || canPlay}
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <ImageLoader height={'100%'} src={cover} alt={name} />
+                  <ImageLoader height={'100%'} src={coverSource} alt={name} />
                 </ModalZoom>
               </Box>
             )}
@@ -493,7 +509,7 @@ const AssetPlayer = ({
                     <Box className={classes.buttonIcon} onClick={openPdfHandler}>
                       <ButtonIcon fileType={'document'} />
                     </Box>
-                    <ImageLoader height="auto" src={cover} alt={name} />
+                    <ImageLoader height="auto" src={coverSource} alt={name} />
                   </Box>
                 )}
               </>
