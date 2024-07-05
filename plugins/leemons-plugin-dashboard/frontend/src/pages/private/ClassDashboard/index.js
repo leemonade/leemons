@@ -26,7 +26,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import { ChatDrawer } from '@comunica/components';
 import hooks from 'leemons-hooks';
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-import checkUserAgentDatasetsRequest from '@users/request/checkUserAgentDatasets';
 
 const rightZoneWidth = '320px';
 
@@ -153,7 +152,6 @@ export default function ClassDashboard({ session }) {
   async function init() {
     store.loading = true;
     render();
-    checkUserAgentDatasetsRequest();
     store.idLoaded = id;
     const { classe, programClasses } = await classDetailForDashboardRequest(id);
 
@@ -299,7 +297,6 @@ export default function ClassDashboard({ session }) {
       });
     }
   }
-
 
   return (
     <>

@@ -1,18 +1,18 @@
 /* eslint-disable no-nested-ternary */
 import {
-  ActivityAccordion,
-  ActivityAccordionPanel,
-  ActivityAnswersBar,
-  Badge,
   Box,
-  ContextContainer,
-  createStyles,
-  ImageLoader,
-  PageContainer,
+  Text,
+  Badge,
   Paper,
   Stack,
-  Text,
   Title,
+  ImageLoader,
+  createStyles,
+  PageContainer,
+  ContextContainer,
+  ActivityAccordion,
+  ActivityAnswersBar,
+  ActivityAccordionPanel,
 } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
@@ -28,13 +28,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import checkUserAgentDatasetsRequest from '@users/request/checkUserAgentDatasets';
 import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
 import SkeletonDashboardLoader from './SkeletonDashboardLoader';
 
 function bytesToSize(bytes) {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  if (bytes == 0) return '0 Byte';
+  if (bytes === 0) return '0 Byte';
   const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return `${Math.round(bytes / 1024 ** i, 2)} ${sizes[i]}`;
 }
@@ -104,8 +103,6 @@ function AdminDashboard({ session }) {
   const [t, tl] = useTranslateLoader(prefixPN('adminDashboard'));
 
   async function init() {
-    checkUserAgentDatasetsRequest();
-
     const {
       data: { academicPortfolio, instances, pc },
     } = await getAdminDashboardRequest();
@@ -212,14 +209,10 @@ function AdminDashboard({ session }) {
     diskUsed += fs.used;
   });
 
-  if (!store.loading) {
-    if (store.pc.mem.total && store.pc.mem.available) {
-      ramUsed = store.pc.mem.total - store.pc.mem.available;
-      ramUsed = (ramUsed / store.pc.mem.total) * 100;
-    }
+  if (!store.loading && store.pc.mem.total && store.pc.mem.available) {
+    ramUsed = store.pc.mem.total - store.pc.mem.available;
+    ramUsed = (ramUsed / store.pc.mem.total) * 100;
   }
-
-  // if (store.loading) return <LoadingOverlay visible />;
 
   function goProgram(program) {
     history.push(`/private/academic-portfolio/tree?center=${store.center}&program=${program.id}`);

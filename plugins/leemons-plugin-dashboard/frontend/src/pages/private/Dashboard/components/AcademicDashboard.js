@@ -9,7 +9,6 @@ import { useStore } from '@common';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 import { ZoneWidgets } from '@widgets';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
-import checkUserAgentDatasetsRequest from '@users/request/checkUserAgentDatasets';
 
 const Styles = createStyles(() => ({
   header: {
@@ -61,8 +60,6 @@ export default function AcademicDashboard({ session }) {
   // FIRST LOAD
 
   async function init() {
-    checkUserAgentDatasetsRequest();
-
     const { programs } = await getUserProgramsRequest();
     store.programs = _.map(programs, (program) => ({
       ...program,

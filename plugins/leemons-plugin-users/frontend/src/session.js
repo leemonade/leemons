@@ -143,7 +143,14 @@ export function getSessionCenter() {
 export function getSessionProfile() {
   const token = getCookieToken(true);
   const center = getSessionCenter();
-  return center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles[0];
+  return (
+    center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles[0] ?? token.profile
+  );
+}
+
+export function getSessionUserAgent() {
+  const token = getCookieToken(true);
+  return token.centers[0]?.userAgentId;
 }
 
 export function getCentersWithToken() {

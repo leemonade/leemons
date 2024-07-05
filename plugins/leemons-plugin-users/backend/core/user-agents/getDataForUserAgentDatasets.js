@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
-async function getData({ locationName, ctx }) {
+async function getData({ locationName, userAgentId, ctx }) {
   const promises = [
     ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
       locationName,
@@ -12,7 +12,7 @@ async function getData({ locationName, ctx }) {
       locationName,
       pluginName: 'users',
       userAgent: ctx.meta.userSession.userAgents,
-      target: ctx.meta.userSession.userAgents[0].id,
+      target: userAgentId,
     }),
   ];
 
@@ -28,7 +28,7 @@ async function getDataForUserAgentDatasets({ userAgentId, ctx }) {
   if (userAgentId) {
     userAgents = await getUserAgentsInfo({
       userAgentIds: [userAgentId],
-      withProfile: false,
+      withProfile: true,
       withCenter: false,
       ctx,
     });
@@ -56,16 +56,8 @@ async function getDataForUserAgentDatasets({ userAgentId, ctx }) {
     _.map(locationNames, async (locationName) => {
       const data = await getData({
         locationName,
-        ctx: {
-          ...ctx,
-          meta: {
-            ...ctx.meta,
-            userSession: {
-              ...ctx.meta.userSession,
-              userAgents: [userAgent],
-            },
-          },
-        },
+        userAgentId,
+        ctx,
       });
 
       return {

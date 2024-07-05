@@ -11,10 +11,15 @@ async function validateSchemas(schemas, ctx, index = 0) {
       target: ctx.meta.userSession.userAgents[0].id,
     });
 
+    // Remove null values in order to validate the schema
+    const goodValues = Object.fromEntries(
+      Object.entries(values || {}).filter(([, item]) => !!item.value)
+    );
+
     try {
       await ctx.tx.call('dataset.dataset.validateDataForJsonSchema', {
         jsonSchema: schema.compileJsonSchema,
-        data: values || {},
+        data: goodValues,
       });
     } catch (e) {
       return true;

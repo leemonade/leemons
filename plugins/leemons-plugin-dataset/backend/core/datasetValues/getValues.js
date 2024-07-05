@@ -38,7 +38,7 @@ async function getValues({ locationName, pluginName, userAgent, target, keys, ct
     return acc;
   }, {});
 
-  const goodKeys = await getKeysCanAction({
+  const { goodKeys } = await getKeysCanAction({
     locationName,
     pluginName,
     userAgent,

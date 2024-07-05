@@ -1,12 +1,15 @@
-import { iot, mqtt } from 'aws-iot-device-sdk-v2';
-import hooks from 'leemons-hooks';
-import * as _ from 'lodash';
 import { useEffect, useRef } from 'react';
+import { iot, mqtt } from 'aws-iot-device-sdk-v2';
+import _ from 'lodash';
+import hooks from 'leemons-hooks';
 
 const decoder = new TextDecoder('utf8');
 
+const SOCKET_ON_ANY = 'socket.io:onAny';
+
 let creating = false;
 let retryIfFail = false;
+let connected = false;
 
 let anyCallbacks = [];
 
@@ -46,21 +49,26 @@ async function connectWebsocket(data) {
     window.mqttAwsIotDevice = window.mqttAwsIotDevice.new_connection(config);
     window.mqttAwsIotDevice.on('connect', () => {
       console.log('Frontend - Conectado a iot correctamente');
+      connected = true;
       resolve();
     });
     window.mqttAwsIotDevice.on('interrupt', (error) => {
       console.error('Frontend - Iot interrupt');
+      connected = false;
       console.error(error);
     });
     window.mqttAwsIotDevice.on('resume', (returnCode) => {
+      connected = true;
       console.error(`Frontend - Iot resume (${returnCode})`);
     });
     window.mqttAwsIotDevice.on('disconnect', () => {
       console.error('Frontend - Iot disconnect');
+      connected = false;
     });
     window.mqttAwsIotDevice.on('error', (error) => {
       console.error('Frontend - Ha ocurrido un error en iot');
       console.error(error);
+      connected = false;
       reject(error);
     });
     window.mqttAwsIotDevice.connect();
@@ -107,11 +115,13 @@ async function tryConnect() {
       return tryConnect();
     }
     creating = false;
+    connected = false;
   }
   return null;
 }
 
 export const SocketIotService = {
+  isConnected: () => connected,
   connect: tryConnect,
   useOn: (_event, callback) => {
     const ref = useRef({ callback, event: _event });
@@ -125,9 +135,9 @@ export const SocketIotService = {
       return null;
     };
     useEffect(() => {
-      hooks.addAction('socket.io:onAny', onEvent);
+      hooks.addAction(SOCKET_ON_ANY, onEvent);
       return () => {
-        hooks.removeAction('socket.io:onAny', onEvent);
+        hooks.removeAction(SOCKET_ON_ANY, onEvent);
       };
     }, []);
   },
@@ -141,9 +151,9 @@ export const SocketIotService = {
       ref.current.callback(event, data);
     };
     useEffect(() => {
-      hooks.addAction('socket.io:onAny', onEvent);
+      hooks.addAction(SOCKET_ON_ANY, onEvent);
       return () => {
-        hooks.removeAction('socket.io:onAny', onEvent);
+        hooks.removeAction(SOCKET_ON_ANY, onEvent);
       };
     }, []);
   },
