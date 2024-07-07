@@ -38,7 +38,7 @@ const FieldConfigLocaleItem = ({ localeConfig }) => {
       <Label />
       <Description />
       <Help />
-      {CONFIG_FIELD_TYPES[fieldType] ? CONFIG_FIELD_TYPES[fieldType] : CONFIG_FIELD_TYPES.default}
+      {CONFIG_FIELD_TYPES[fieldType] ?? CONFIG_FIELD_TYPES.default}
     </FieldConfigLocaleContext.Provider>
   );
 };
