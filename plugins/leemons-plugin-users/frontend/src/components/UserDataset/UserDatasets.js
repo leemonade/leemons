@@ -45,6 +45,7 @@ const UserDatasets = forwardRef(
       showTitle = true,
       onEdit = noop,
       onCanEdit = noop,
+      canHandleEdit = true,
     },
     ref
   ) => {
@@ -64,13 +65,15 @@ const UserDatasets = forwardRef(
      * Later, we will allow editing only the fields of the datasets that the user has permission to edit.
      * @returns {boolean}
      */
-    const canEdit = React.useMemo(
-      () =>
-        datasets?.some((dataset) =>
-          Object.values(dataset.data.jsonUI).some((field) => !field['ui:readonly'])
-        ),
-      [datasets]
-    );
+    const canEdit = React.useMemo(() => {
+      if (!canHandleEdit) {
+        return false;
+      }
+
+      return datasets?.some((dataset) =>
+        Object.values(dataset.data.jsonUI).some((field) => !field['ui:readonly'])
+      );
+    }, [datasets, canHandleEdit]);
 
     React.useEffect(() => {
       onCanEdit(canEdit);
@@ -165,6 +168,7 @@ UserDatasets.propTypes = {
   showTitle: PropTypes.bool,
   onEdit: PropTypes.func,
   onCanEdit: PropTypes.func,
+  canHandleEdit: PropTypes.bool,
 };
 
 export { UserDatasets };

@@ -9,7 +9,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import { getSessionUserAgent } from '@users/session';
 import { UserDatasets } from './UserDatasets';
 
-function UserDatasetDrawer({ isOpen, onClose = noop }) {
+function UserDatasetDrawer({ userAgentIds, isOpen, onClose = noop }) {
   const [t] = useTranslateLoader(prefixPN('userDataDatasetPage'));
   const [saving, setSaving] = React.useState(false);
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -44,7 +44,7 @@ function UserDatasetDrawer({ isOpen, onClose = noop }) {
       <Drawer.Content>
         <UserDatasets
           ref={userDatasetsRef}
-          userAgentIds={[userAgentId]}
+          userAgentIds={userAgentIds ?? [userAgentId]}
           showTitle={false}
           preferEditMode
         />
@@ -66,6 +66,7 @@ function UserDatasetDrawer({ isOpen, onClose = noop }) {
 UserDatasetDrawer.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
+  userAgentIds: PropTypes.array,
 };
 
 export { UserDatasetDrawer };
