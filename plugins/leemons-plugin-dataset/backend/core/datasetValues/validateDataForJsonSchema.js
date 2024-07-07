@@ -1,12 +1,27 @@
+/* eslint-disable no-param-reassign */
 const _ = require('lodash');
 const { LeemonsValidator } = require('@leemons/validator');
 
-// TODO AÑADIR VALIDADOR CUSTOM PARA NUMEROS DE TELEFONO/ETZ
-function validateDataForJsonSchema({ jsonSchema, data }) {
+// TODO ADD CUSTOM VALIDATOR FOR PHONE NUMBERS/ETZ
+
+/**
+ * Validate data for a JSON Schema.
+ *
+ * @param {object} jsonSchema - The JSON Schema to validate the data against.
+ * @param {object} data - The data to validate.
+ * @param {string[]} allowedRequiredKeys - Filter the required keys.
+ */
+function validateDataForJsonSchema({ jsonSchema, data, allowedRequiredKeys }) {
+  let { required = [] } = jsonSchema;
+
+  if (Array.isArray(allowedRequiredKeys)) {
+    required = required.filter((key) => allowedRequiredKeys.includes(key));
+  }
+
   const schema = {
     type: 'object',
     additionalProperties: false,
-    required: jsonSchema.required,
+    required,
     properties: {},
   };
 
@@ -21,7 +36,6 @@ function validateDataForJsonSchema({ jsonSchema, data }) {
         items: {
           type: 'object',
           additionalProperties: false,
-          // required: ['value'],
           properties: {
             id: {
               type: 'string',
@@ -41,7 +55,6 @@ function validateDataForJsonSchema({ jsonSchema, data }) {
       schema.properties[key] = {
         type: 'object',
         additionalProperties: false,
-        // required: ['value'],
         properties: {
           id: {
             type: 'string',
@@ -55,6 +68,15 @@ function validateDataForJsonSchema({ jsonSchema, data }) {
           },
         },
       };
+    }
+  });
+
+  // When an Admin removes a field from the dataset, the editing permissions for that field are not removed for users.
+  // This results in the field having an undefined value, causing the JSON Schema validator to fail.
+  // Therefore, we ensure the field is not in the dataset and does not have an undefined value.
+  _.forIn(data, (value, key) => {
+    if (!jsonSchema.properties[key] && !data[key]) {
+      delete data[key];
     }
   });
 

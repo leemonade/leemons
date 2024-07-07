@@ -298,7 +298,6 @@ export default function ClassDashboard({ session }) {
     }
   }
 
-
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
