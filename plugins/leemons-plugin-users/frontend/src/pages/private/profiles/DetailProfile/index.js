@@ -25,7 +25,6 @@ import { goDetailProfilePage, goListProfilesPage } from '@users/navigate';
 import { addProfileRequest, getProfileRequest, updateProfileRequest } from '@users/request';
 import hooks from 'leemons-hooks';
 
-// import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
 import { DatasetTab } from './DatasetTab';
 import { LocaleTab } from './LocaleTab';
 import { PermissionsTab } from './PermissionsTab';
