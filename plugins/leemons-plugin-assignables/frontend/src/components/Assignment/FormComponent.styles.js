@@ -20,7 +20,6 @@ const useFormComponentStyles = createStyles((theme) => {
     rightColumn: {
       minWidth: 266,
       height: 480,
-      paddingRight: 36,
     },
   };
 });
