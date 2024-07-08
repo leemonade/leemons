@@ -53,6 +53,7 @@ const LibraryCard = ({
       </Box>
     );
   }
+
   return (
     <Box
       data-cypress-id={`libraryCard-${asset.id}`}

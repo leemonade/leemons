@@ -24,6 +24,7 @@ export default function CoverCopyright({
         source={source}
         sourceUrl={sourceUrl}
         reverseColors
+        resourceType={source?.toLowerCase() === 'unsplash' ? 'photo' : 'image'}
       />
     </Box>
   );

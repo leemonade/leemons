@@ -39,8 +39,6 @@ const DetailContent = ({
     };
   }, [originalAsset]);
 
-  // TODO PAOLA => Nombre del archivo cuando viene de unsplash AssetPage && NewResource
-
   return (
     <Box className={classes.tabPanel}>
       {coverCopyrightProps && <CopyrightText {...coverCopyrightProps} />}

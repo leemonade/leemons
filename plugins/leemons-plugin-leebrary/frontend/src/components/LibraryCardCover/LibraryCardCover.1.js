@@ -1,20 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isNil, isString } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
-import useFileCopyright from '@leebrary/request/hooks/queries/useFileCopyright';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
-import {
-  LIBRARY_CARD_COVER_DEFAULT_PROPS,
-  LIBRARY_CARD_COVER_PROP_TYPES,
-} from './LibraryCardCover.constants';
 import CoverCopyright from './CoverCopyright';
+import { isLRN } from './LibraryCardCover';
 
-function stringIsLRN(str) {
-  return !!/^lrn:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*$/.test(str);
-}
-
-const LibraryCardCover = ({
+export const LibraryCardCover = ({
   height,
   cover,
   color,
@@ -36,33 +28,15 @@ const LibraryCardCover = ({
     { name: 'LibraryCardCover' }
   );
 
-  const fileIdToFetchCopyright = useMemo(() => {
-    if (!isString(original?.cover)) return null;
-
-    const isLRN = stringIsLRN(original.cover);
-    if (isLRN) {
-      return original.cover;
-    }
-
-    const isUrlToFile = original.cover.startsWith('http') && original.cover.includes('lrn');
-    if (isUrlToFile) {
-      return original.cover.match(/lrn:[^?]+/)[0];
-    }
-
-    return null;
-  }, [original]);
-
-  const { data: coverCopyrightDataFetched } = useFileCopyright({
-    id: fileIdToFetchCopyright,
-    enabled: !!fileIdToFetchCopyright,
-  });
+  const shouldFetchCoverCopyright = useMemo(() => isLRN(original?.cover), [original, fileType]);
+  console.log('shouldFetchCoverCopyright', shouldFetchCoverCopyright);
 
   const coverSource = useMemo(() => {
     const fileIsAnImage = fileType === 'image';
-    const isExternalUrl = url && url.startsWith('http') && url.includes('unsplash');
+    const isUrl = url && url.startsWith('http') && url.includes('unsplash');
     const hasCopyright = !isEmpty(file?.copyright);
 
-    if (fileIsAnImage && isExternalUrl && hasCopyright) {
+    if (fileIsAnImage && isUrl && hasCopyright) {
       return url;
     }
 
@@ -70,21 +44,16 @@ const LibraryCardCover = ({
       return original.cover.externalUrl;
     }
 
-    // Non-image Assets creation cases
-    if (coverCopyrightDataFetched) {
-      return coverCopyrightDataFetched.externalUrl;
-    }
+    return cover; // Asset creation case
+  }, [cover, url, fileType, file?.copyright, original?.cover?.externalUrl]);
 
-    // No cover or cover does not come from external source
-    return cover;
-  }, [
-    cover,
-    url,
-    fileType,
-    file?.copyright,
-    original?.cover?.externalUrl,
-    coverCopyrightDataFetched,
-  ]);
+  const icon = useMemo(
+    () =>
+      !isNil(fileIcon)
+        ? React.cloneElement(fileIcon, { iconStyle: { backgroundColor: COLORS.interactive03h } })
+        : null,
+    [fileIcon]
+  );
 
   const getCoverCopyright = useCallback(() => {
     const fileIsAnImage = fileType === 'image';
@@ -93,6 +62,7 @@ const LibraryCardCover = ({
       if (!file.copyright) return null;
       const { author, authorProfileUrl, providerUrl, provider } = file.copyright;
 
+      console.log('Por fileIsAnImage', fileIsAnImage);
       return (
         <CoverCopyright
           author={author}
@@ -106,6 +76,7 @@ const LibraryCardCover = ({
 
     if (original?.cover?.copyright) {
       const { author, authorProfileUrl, providerUrl, provider } = original.cover.copyright;
+      console.log('Por original', original);
       return (
         <CoverCopyright
           author={author}
@@ -117,29 +88,8 @@ const LibraryCardCover = ({
       );
     }
 
-    if (coverCopyrightDataFetched) {
-      const { author, authorProfileUrl, providerUrl, provider } =
-        coverCopyrightDataFetched.copyright;
-      return (
-        <CoverCopyright
-          author={author}
-          authorUrl={authorProfileUrl}
-          source={provider}
-          sourceUrl={providerUrl}
-          bottomOffset={-6}
-        />
-      );
-    }
     return null;
-  }, [original, file, coverCopyrightDataFetched]);
-
-  const icon = useMemo(
-    () =>
-      !isNil(fileIcon)
-        ? React.cloneElement(fileIcon, { iconStyle: { backgroundColor: COLORS.interactive03h } })
-        : null,
-    [fileIcon]
-  );
+  }, [original, file]);
 
   useEffect(() => {
     if (!parentHovered && showMenu) {
@@ -212,14 +162,8 @@ const LibraryCardCover = ({
       ) : (
         MemoizedEmptyCover
       )}
-      {(original?.cover?.copyright || file?.copyright || coverCopyrightDataFetched) &&
-        getCoverCopyright()}
+      {original?.cover?.copyright && getCoverCopyright()}
     </Box>
     // </AnimatePresence>
   );
 };
-
-export { LibraryCardCover };
-export default LibraryCardCover;
-LibraryCardCover.defaultProps = LIBRARY_CARD_COVER_DEFAULT_PROPS;
-LibraryCardCover.propTypes = LIBRARY_CARD_COVER_PROP_TYPES;

@@ -53,7 +53,7 @@ export default function CopyrightText({
         rel="noreferrer"
         onClick={handleOnClick}
       >
-        {source}
+        {capitalize(source)}
       </a>
     </Text>
   );

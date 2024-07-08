@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
 import { ButtonIcon } from '@leebrary/components/AssetPlayer/components/ButtonIcon';
 import { AssetPlayer } from '@leebrary/components/AssetPlayer';
+import { isEmpty } from 'lodash';
 import { AssetPlayerLibraryWrapperStyles } from './AssetPlayerLibraryWrapper.styles';
 import {
   ASSET_PLAYER_LIBRARY_WRAPPER_DEFAULT_PROPS,
@@ -49,11 +50,27 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
     }
   };
   const isPDFOrGotAssetRole = assetRole || isPDF;
+
+  const coverSource = useMemo(() => {
+    const { fileType, url, original, cover } = asset;
+    const fileIsAnImage = fileType === 'image';
+    const isUrl = url && url.startsWith('http') && url.includes('unsplash');
+
+    if (fileIsAnImage && isUrl) {
+      return url;
+    }
+
+    if (original?.cover?.externalUrl) {
+      return original.cover?.externalUrl;
+    }
+    return cover;
+  }, [asset]);
+
   return (
     <Box className={classes.root} data-cypress-id="library-detail-player" onClick={handleOpenPdf}>
       <Box className={classes.color} />
       {isAssetPlayerContent ? (
-        <AssetPlayer {...libraryProps} />
+        <AssetPlayer {...libraryProps} coverSource={coverSource} />
       ) : (
         <Box className={classes.activityContainer} onClick={() => handleOpenPreview()}>
           {isPDFOrGotAssetRole && (
@@ -66,8 +83,8 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
               <ButtonIcon fileType="file" />
             </Box>
           )}
-          {asset?.cover ? (
-            <ImageLoader src={asset?.cover} height={200} width={576} />
+          {coverSource ? (
+            <ImageLoader src={coverSource} height={200} width={576} />
           ) : (
             <CardEmptyCover
               fileType={assetRole || 'file'}

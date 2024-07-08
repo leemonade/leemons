@@ -59,6 +59,7 @@ const AssetPlayer = ({
   showPlayButton,
   ccMode,
   execMode,
+  coverSource,
 }) => {
   const {
     name,
@@ -69,7 +70,6 @@ const AssetPlayer = ({
     fileExtension,
     mediaType,
     metadata,
-    original,
   } = asset;
   let url = _url;
   let fileType = _fileType;
@@ -146,21 +146,6 @@ const AssetPlayer = ({
   }, [metadata, fileType]);
 
   const fullScreenRatio = window.innerHeight / window.innerWidth;
-
-  const coverSource = useMemo(() => {
-    const fileIsAnImage = !!media.isImage;
-    const isUrl = url && url.startsWith('http') && url.includes('unsplash');
-    const hasCopyright = !isEmpty(original?.cover?.copyright);
-
-    if (fileIsAnImage && isUrl && hasCopyright) {
-      return url;
-    }
-
-    if (original.cover?.externalUrl) {
-      return original.cover.externalUrl;
-    }
-    return cover;
-  }, [cover, url, media, original]);
 
   // ··································································
   // METHODS
@@ -295,6 +280,7 @@ const AssetPlayer = ({
     },
     { name: 'AssetPlayer' }
   );
+
   return (
     <Box className={classes.rootWrapper}>
       <Box className={classes.root} ref={rootRef}>
@@ -305,7 +291,7 @@ const AssetPlayer = ({
                 {...{
                   url,
                   loop,
-                  cover,
+                  cover: coverSource,
                   muted,
                   onPlay,
                   onReady,
@@ -400,8 +386,8 @@ const AssetPlayer = ({
                         )}
                       </Box>
                     )}
-                    {cover ? (
-                      <ImageLoader height="100%" src={cover} alt={name} />
+                    {coverSource ? (
+                      <ImageLoader height="100%" src={coverSource} alt={name} />
                     ) : (
                       <CardEmptyCover
                         fileType={asset?.fileType}
@@ -471,7 +457,7 @@ const AssetPlayer = ({
                 <Box className={classes.buttonIcon}>
                   <ButtonIcon fileType={'document'} />
                 </Box>
-                <ImageLoader height="auto" src={cover} alt={name} />
+                <ImageLoader height="auto" src={coverSource} alt={name} />
                 {!hideURLInfo && (
                   <Box style={{ padding: 8 }}>
                     {!!(asset.name || asset.title) && (
