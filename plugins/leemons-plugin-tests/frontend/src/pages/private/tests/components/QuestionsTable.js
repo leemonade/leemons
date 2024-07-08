@@ -43,7 +43,6 @@ export default function QuestionsTable({
       <Text sx={{ maxHeight: 56 }}> {cellValue}</Text>
     </TextClamp>
   );
-
   const tableHeaders = React.useMemo(() => {
     let result = [];
     if (!reorderMode && !hideCheckbox) {
@@ -169,7 +168,7 @@ export default function QuestionsTable({
   let tableComponent = <Table columns={tableHeaders} data={tableItems} />;
   if (reorderMode) {
     const itemsById = keyBy(tableItems, 'id');
-    const items = map(value, (id) => itemsById[id]);
+    const items = tableItems?.length ? map(value, (id) => itemsById[id]) : [];
 
     tableComponent = (
       <TableInput
@@ -198,4 +197,5 @@ QuestionsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   questionBank: PropTypes.object,
   isDrawer: PropTypes.bool,
+  setManualQuestions: PropTypes.func,
 };
