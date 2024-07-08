@@ -88,7 +88,6 @@ const ManualQuestionsGenerator = ({
             render={({ field }) => (
               <QuestionsTable
                 questions={manualQuestions}
-                listadoSeleccionadas={true}
                 forceSortable
                 value={field.value}
                 onChange={(e) => field.onChange(e)}

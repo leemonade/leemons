@@ -168,7 +168,7 @@ export default function QuestionsTable({
   let tableComponent = <Table columns={tableHeaders} data={tableItems} />;
   if (reorderMode) {
     const itemsById = keyBy(tableItems, 'id');
-    const items = tableItems.length ? map(value, (id) => itemsById[id]) : [];
+    const items = tableItems?.length ? map(value, (id) => itemsById[id]) : [];
 
     tableComponent = (
       <TableInput
