@@ -4,7 +4,7 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const addLocation = require('../core/datesetLocation/addLocation');
@@ -188,8 +188,5 @@ module.exports = {
         return validateDataForJsonSchema({ ...ctx.params, ctx });
       },
     },
-  },
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
   },
 };

@@ -38,7 +38,7 @@ import {
 import { constants } from '@families/constants';
 import moment from 'moment';
 import { useAsync } from '@common/useAsync';
-import formWithTheme from '@common/formWithTheme';
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import hooks from 'leemons-hooks';
 import { PackageManagerService } from '@package-manager/services';
@@ -54,7 +54,7 @@ function dynamicImport(component) {
   );
 }
 
-function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} }) {
+function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
   const { t: tCommonForm } = useCommonTranslate('forms');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const [loading, setLoading] = useState(false);
@@ -280,7 +280,7 @@ function Detail() {
   }, [datasetConfig, isEditMode]);
   const datasetProps = useMemo(() => ({ formData: datasetData }), [datasetData]);
 
-  const [form, formActions] = formWithTheme(
+  const [form, formActions] = useFormWithTheme(
     goodDatasetConfig?.jsonSchema,
     goodDatasetConfig?.jsonUI,
     undefined,

@@ -23,6 +23,7 @@ import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import { UserForm, USER_FIELDS } from '../UserForm';
 import { ProfileTableInput } from './components/ProfileTableInput';
+import { UserDatasets } from '../UserDataset/UserDatasets';
 
 function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave = noop }) {
   const [user, setUser] = React.useState(value);
@@ -38,6 +39,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
   const [tEnableUser] = useTranslateLoader(prefixPN('enableUserModal'));
   const [tDisableUser] = useTranslateLoader(prefixPN('disableUserModal'));
   const queryClient = useQueryClient();
+  const userDatasetsRef = React.useRef();
 
   const form = useForm();
   const { handleSubmit } = form;
@@ -228,7 +230,14 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     onSave(data);
   }
 
-  function handleOnSave() {
+  async function handleOnSave() {
+    if (userDatasetsRef.current) {
+      const datasetsSaved = await userDatasetsRef.current.checkFormsAndSave();
+      if (!datasetsSaved) {
+        return;
+      }
+    }
+
     handleSubmit(async (data) => {
       const payload = pick(data, [...USER_FIELDS, 'tags']);
 
@@ -331,6 +340,13 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
             />
           </ContextContainer>
           <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
+          <UserDatasets
+            ref={userDatasetsRef}
+            userAgentIds={userAgents?.map((item) => item.id)}
+            validateOnlyForMe
+            preferEditMode
+            skipOptional
+          />
         </FormProvider>
       </Drawer.Content>
       <Drawer.Footer>
