@@ -3,17 +3,15 @@ import PropTypes from 'prop-types';
 import { Button, PageContainer, Table } from '@bubbles-ui/components';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
+import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import { useAsync } from '@common/useAsync';
 import { PlusIcon } from '@heroicons/react/outline';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-
 import { useLayout } from '@layout/context';
 
-// eslint-disable-next-line import/prefer-default-export
-export const DatasetTab = ({ profile, t, isEditMode }) => {
+const DatasetTab = ({ profile, t, isEditMode }) => {
   const [loading, setLoading] = useState(true);
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
@@ -60,7 +58,7 @@ export const DatasetTab = ({ profile, t, isEditMode }) => {
   async function reload() {
     try {
       setLoading(true);
-      await onSuccess(await load());
+      onSuccess(await load());
     } catch (e) {
       onError(e);
     }
@@ -183,3 +181,5 @@ DatasetTab.propTypes = {
   t: PropTypes.func,
   isEditMode: PropTypes.bool,
 };
+
+export { DatasetTab };
