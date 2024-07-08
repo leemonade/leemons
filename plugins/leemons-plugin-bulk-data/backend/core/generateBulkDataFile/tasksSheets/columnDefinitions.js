@@ -105,6 +105,10 @@ const TASK_COLUMN_DEFINITIONS = {
     title: 'Task Metadata',
     width: 30,
   },
+  hideInLibrary: {
+    title: 'Hide in library',
+    width: 10,
+  },
 };
 
 Object.keys(TASK_COLUMN_DEFINITIONS).forEach((key) => {

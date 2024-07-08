@@ -30,15 +30,19 @@ const getSubjectGroupCourseNamesFromClassData = (classData) => {
   // Orden curso - customId si hay - alias
   const data = {
     subject: '',
+    subjectId: '',
+    subjectWithId: '',
     group: '',
     displayNameforClass: '',
     course: '',
     courseAndGroupParsed: '',
   };
   const subjectName = classData?.subject?.name;
-  const subjectId = classData?.subject?.internalId && `- ${classData?.subject?.internalId}`;
+  const subjectId = classData?.subject?.internalId && `${classData?.subject?.internalId}`;
 
-  data.subject = `${subjectName} ${subjectId || ''}`;
+  data.subject = `${subjectName}`;
+  data.subjectId = subjectId;
+  data.subjectWithId = `${subjectName} ${subjectId ? `- ${subjectId}` : ''}`;
 
   const hasGroup = !!classData?.groups;
   if (hasGroup) {
@@ -50,7 +54,9 @@ const getSubjectGroupCourseNamesFromClassData = (classData) => {
   const courseData = getCourse(classData);
   data.course = `${courseData}`;
 
-  data.courseAndGroupParsed = `${data?.course} ${
+  const courseWithSpace = data?.course ? `${data?.course} ` : '';
+
+  data.courseAndGroupParsed = `${courseWithSpace}${
     data?.group || (data?.displayNameforClass && data?.course) ? '-' : ''
   } ${data?.group || data?.displayNameforClass}`;
 

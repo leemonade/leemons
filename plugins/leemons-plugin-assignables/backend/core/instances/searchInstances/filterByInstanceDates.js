@@ -77,12 +77,25 @@ function filterByVisible(query, start, visualization, now) {
   );
 }
 
+function filterAlwaysAvailableByAssignmentDate(query, dates) {
+  const isAlwaysAvailable = !dates?.start && !dates?.deadline;
+
+  if (isAlwaysAvailable && (query.alwaysAvailable_$lt || query.alwaysAvailable_$gt)) {
+    return !(
+      (!query.alwaysAvailable_$lt || !dayjs(dates.createdAt).isAfter(query.alwaysAvailable_$lt)) &&
+      (!query.alwaysAvailable_$gt || !dayjs(dates.createdAt).isBefore(query.alwaysAvailable_$gt))
+    );
+  }
+
+  return false;
+}
+
 function filterInstancesWithDates(query, _instancesWithDates) {
   const instancesWithDates = _instancesWithDates;
   const now = dayjs();
 
   Object.entries(instancesWithDates).forEach(
-    ([instanceId, { start, closed, archived, visualization, deadline }]) => {
+    ([instanceId, { start, closed, archived, visualization, deadline, createdAt }]) => {
       if (filterByDeadline(query, deadline, now)) {
         delete instancesWithDates[instanceId];
         return;
@@ -110,6 +123,11 @@ function filterInstancesWithDates(query, _instancesWithDates) {
 
       if (filterByVisible(query, start, visualization, now)) {
         delete instancesWithDates[instanceId];
+        return;
+      }
+
+      if (filterAlwaysAvailableByAssignmentDate(query, { start, deadline, createdAt })) {
+        delete instancesWithDates[instanceId];
       }
     }
   );
@@ -133,7 +151,11 @@ async function filterByInstanceDates({ query, assignableInstancesIds, ctx }) {
       isNil(query.opened) ||
       isNil(query.archived) ||
       isNil(query.visible) ||
-      isNil(query.finished)
+      isNil(query.finished) ||
+      isNil(query.deadline_$lt) ||
+      isNil(query.deadline_$gt) ||
+      isNil(query.alwaysAvailable_$lt) ||
+      isNil(query.alwaysAvailable_$gt)
     )
   ) {
     return assignableInstancesIds;

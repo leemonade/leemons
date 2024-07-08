@@ -12,7 +12,7 @@ function getValuesForSave({ jsonSchema, key, value }) {
     ];
 
   const config = jsonSchema.properties[key];
-  if (config && config.frontConfig) {
+  if (config?.frontConfig) {
     if (
       (config.frontConfig.type === 'multioption' ||
         config.frontConfig.type === 'list' ||

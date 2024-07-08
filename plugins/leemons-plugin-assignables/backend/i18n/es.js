@@ -508,6 +508,7 @@ module.exports = {
       title: 'Actividad finalizada',
     },
     assignationHeaderButton: 'Ver asignación',
+    goToModuleDashboard: 'Volver al dashboard',
   },
 
   evaluationFeedbackComponent: {

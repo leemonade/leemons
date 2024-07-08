@@ -34,10 +34,17 @@ async function newAssetForTextEditor({ props, userSession, ctx }) {
   };
 }
 
-async function parseContent({ htmlString, assets, nonIndexableAssets = {}, userSession, ctx }) {
+async function parseContent({
+  htmlString,
+  assets,
+  nonIndexableAssets: _nonIndexableAssets,
+  userSession,
+  ctx,
+}) {
   if (isEmpty(htmlString)) {
     return null;
   }
+  const nonIndexableAssets = _nonIndexableAssets || {};
 
   let finalContent = htmlString;
   const regex = /<library ([^>]*?)bulkId=['"]([^'"]+)['"]([^>]*?)><\/library>/g;
@@ -99,7 +106,7 @@ async function importContentCreatorDocuments({ file, config, ctx }) {
 
         // BASIC DATA
 
-        const { name, description = null, color = null, published } = document;
+        const { name, description = null, color = null, published, hideInLibrary } = document;
 
         const tags = (document.tags || '')
           .split(',')
@@ -152,6 +159,7 @@ async function importContentCreatorDocuments({ file, config, ctx }) {
           tags,
           content,
           creator,
+          hideInLibrary,
         };
       })
   );

@@ -26,7 +26,6 @@ export const USER_DETAIL_VIEWS = {
 
 function UserDetail({
   userId,
-  center,
   hideTags,
   viewMode = USER_DETAIL_VIEWS.ADMIN,
   sysProfileFilter,
@@ -118,7 +117,6 @@ function UserDetail({
 
 UserDetail.propTypes = {
   userId: PropTypes.string.isRequired,
-  center: PropTypes.object,
   hideTags: PropTypes.bool,
   sysProfileFilter: PropTypes.string,
   viewMode: PropTypes.oneOf(Object.values(USER_DETAIL_VIEWS)),
