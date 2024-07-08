@@ -230,7 +230,7 @@ export default function AssignConfig({
         <Box>
           <ContextContainer divided>
             <ContextContainer>
-              <Title order={3}>{t('configTitle')}</Title>
+              <Title order={isDrawer ? 4 : 3}>{t('configTitle')}</Title>
               <Box className={classes.totalQuestions}>
                 <Chip subject={t('totalQuestions', { n: test.questions.length })} />
               </Box>

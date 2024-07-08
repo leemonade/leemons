@@ -86,39 +86,43 @@ export default function QuestionsTable({
         accessor: 'type',
         className: styles.tableHeader,
       },
-      {
-        Header: t('levelLabel'),
-        accessor: 'level',
-        className: styles.tableHeader,
-        valueRender: (levelName) => {
-          const findLevelName = levels?.find((l) => l.value === levelName);
-          return handleTextCell(findLevelName?.label);
-        },
-      },
-      {
-        Header: 'Categoría',
-        accessor: 'category',
-        className: styles.tableHeader,
-        valueRender: (categoryId) => {
-          const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
-          return (
-            <Box
-              sx={{
-                display: 'flex',
-                width: '100%',
-                justifyContent: 'flex-end',
-              }}
-            >
-              {handleTextCell(findCategoryLabel?.value)}
-            </Box>
-          );
-        },
-        style: {
-          textAlign: 'right',
-        },
-      },
     ]);
 
+    if (!isDrawer) {
+      result.push(
+        {
+          Header: t('levelLabel'),
+          accessor: 'level',
+          className: styles.tableHeader,
+          valueRender: (levelName) => {
+            const findLevelName = levels?.find((l) => l.value === levelName);
+            return handleTextCell(findLevelName?.label);
+          },
+        },
+        {
+          Header: 'Categoría',
+          accessor: 'category',
+          className: styles.tableHeader,
+          valueRender: (categoryId) => {
+            const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
+            return (
+              <Box
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                {handleTextCell(findCategoryLabel?.value)}
+              </Box>
+            );
+          },
+          style: {
+            textAlign: 'right',
+          },
+        }
+      );
+    }
     if (!hideOpenIcon) {
       result.push({
         Header: t('actionsHeader'),
