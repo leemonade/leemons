@@ -104,7 +104,11 @@ module.exports = {
     'menu-builder.init-main-menu': async (ctx) => addMenuItems(ctx),
     'deployment-manager.config-change': async (ctx) => addMenuItems(ctx),
     'dataset.save-field': async (ctx) => {
-      await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset(ctx.params);
+      // console.log('dataset.save-field');
+      await updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset({
+        ...ctx.params,
+        ctx,
+      });
     },
     'users.change-platform-locale': async (ctx) => {
       await createInitialProfiles({ ctx });

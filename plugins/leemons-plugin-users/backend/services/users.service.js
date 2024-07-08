@@ -16,13 +16,13 @@ const restActions = require('./rest/users.rest');
 
 const {
   add,
-  addBulk,
   detail,
-  isSuperAdmin,
-  userSessionCheckUserAgentDatasets,
+  addBulk,
   centers,
   updateEmail,
+  isSuperAdmin,
   updatePassword,
+  userSessionCheckUserAgentDatasets,
 } = require('../core/users');
 const {
   getUserAgentsInfo,

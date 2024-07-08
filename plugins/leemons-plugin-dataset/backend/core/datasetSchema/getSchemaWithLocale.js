@@ -111,14 +111,14 @@ async function getSchemaWithLocale({
   );
 
   if (userSession) {
-    const goodKeys = await getKeysCanAction({
+    const { goodKeys } = await getKeysCanAction({
       locationName,
       pluginName,
       userAgent: userSession.userAgents,
       actions: 'view',
       ctx,
     });
-    const editKeys = await getKeysCanAction({
+    const { goodKeys: editKeys } = await getKeysCanAction({
       locationName,
       pluginName,
       userAgent: userSession.userAgents,

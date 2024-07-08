@@ -41,7 +41,7 @@ module.exports = {
       localeDescriptionDescription: 'Field description.',
       localeHelpLabel: 'Help text',
       localeHelpDescription: 'Use this text to orient the user to the expected content.',
-      localeMultioptionSelectPlaceholderLabel: 'First option',
+      localeMultioptionSelectPlaceholderLabel: 'Placeholder',
       translateOptionsHelpLabel: 'Untranslated content will appear in the default language',
       translateOptionsButtonLabel: 'Option translations',
       translateOptionsModalTitle: 'Options translation',
