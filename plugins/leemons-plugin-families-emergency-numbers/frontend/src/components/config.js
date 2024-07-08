@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Button, Modal, PageContainer, Table, Text } from '@bubbles-ui/components';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
+import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import { CheckIcon, PlusIcon } from '@heroicons/react/outline';
