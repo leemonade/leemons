@@ -9,12 +9,16 @@ import {
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, isNumber } from 'lodash';
+import { useLocation } from 'react-router-dom';
 import MonoResponse from './questions/MonoResponse';
 import Map from './questions/Map';
 import QuestionValue from './QuestionValue';
 
 export default function Question(props) {
   const { classes, cx, t, store, render, index } = props;
+
+  const url = useLocation();
+  const previewMode = url.pathname.includes('detail');
 
   React.useEffect(() => {
     if (!store.questionMax || store.questionMax < index) {
@@ -48,10 +52,10 @@ export default function Question(props) {
 
   let child = null;
   if (props.question.type === 'mono-response') {
-    child = <MonoResponse {...props} />;
+    child = <MonoResponse {...props} isPreviewMode={previewMode} />;
   }
   if (props.question.type === 'map') {
-    child = <Map {...props} />;
+    child = <Map {...props} isPreviewMode={previewMode} />;
 
     const currentResponses = store.questionResponses[props.question.id].properties?.responses || [];
 
@@ -80,8 +84,9 @@ export default function Question(props) {
       fullWidth={!!store.viewMode}
       noMargin={!!store.viewMode}
       hasFooter={!!store.viewMode}
+      clean={previewMode}
       footerPadding={store.viewMode ? 0 : undefined}
-      stepName={store.viewMode ? '' : t('questions')}
+      stepName={previewMode ? '' : t('questions')}
       Footer={
         <TotalLayoutFooterContainer
           fixed={!store.viewMode}
@@ -96,10 +101,17 @@ export default function Question(props) {
                     variant={isLastButton ? null : 'outline'}
                     rightIcon={<ChevRightIcon />}
                     rounded
+                    loading={store.isLoading}
                     compact
-                    onClick={() => {
+                    onClick={async () => {
+                      store.isLoading = true;
+                      render();
+
                       if (!store.viewMode) props.saveQuestion();
-                      props.nextStep();
+                      await props.nextStep();
+
+                      store.isLoading = false;
+                      render();
                     }}
                     disabled={disableNext}
                   >
@@ -132,7 +144,7 @@ export default function Question(props) {
       }
     >
       <Box className={className}>
-        <QuestionValue {...props} />
+        <QuestionValue {...props} isPreviewMode={previewMode} />
         {child}
       </Box>
     </TotalLayoutStepContainer>

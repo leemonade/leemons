@@ -153,6 +153,7 @@ export default function TaskDetail({ id, student, preview }) {
           showEvaluationType
           showRole
           showCountdown
+          goToModuleDashboard
           onTimeout={() =>
             history.push(
               `/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution&fromTimeout`

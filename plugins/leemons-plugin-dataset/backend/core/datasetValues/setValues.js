@@ -3,6 +3,10 @@ const addValues = require('./addValues');
 const updateValues = require('./updateValues');
 
 async function setValues({ locationName, pluginName, values, userAgent, target, ctx }) {
+  if (!values) {
+    return {};
+  }
+
   const func = {
     addValues,
     updateValues,

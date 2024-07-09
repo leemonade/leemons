@@ -59,8 +59,22 @@ async function duplicate({ taskId, published, ignoreSubjects, keepQuestionBank, 
         ignoreSubjects,
         ctx,
       });
+      const {
+        questionBank: { questions },
+      } = await ctx.tx.call('tests.questionsBanks.getQuestionBankDetailRest', {
+        id: newQuestionBank.id,
+        getAssets: false,
+      });
       newTestDetails.questionBank = newQuestionBank.id;
       newTestDetails.questions = [];
+      currentTest.questions.forEach((oldQuestion) => {
+        const comparisonStringA = `${oldQuestion.level}${oldQuestion.question}${oldQuestion.type}`;
+        const newQuestion = questions.find(({ level, question, type }) => {
+          const comparisonStringB = `${level}${question}${type}`;
+          return comparisonStringA === comparisonStringB;
+        });
+        if (newQuestion) newTestDetails.questions.push(newQuestion.id);
+      });
     }
 
     // If ignoreSubjects is true, we remove the subjects from the config

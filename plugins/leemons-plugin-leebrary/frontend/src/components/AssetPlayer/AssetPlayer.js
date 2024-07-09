@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+
 import ReactPlayer from 'react-player/lazy';
-import { isEmpty, isFunction } from 'lodash';
+import { isFunction } from 'lodash';
 import {
   Box,
   ImageLoader,
@@ -17,6 +18,7 @@ import { ButtonIcon } from './components/ButtonIcon';
 import { ProgressBar } from './components/ProgressBar';
 import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
 import { AssetPlayerStyles } from './AssetPlayer.styles';
+import Cover from '../Cover';
 
 const format = (seconds) => {
   const date = new Date(seconds * 1000);
@@ -59,7 +61,6 @@ const AssetPlayer = ({
   showPlayButton,
   ccMode,
   execMode,
-  coverSource,
 }) => {
   const {
     name,
@@ -291,7 +292,7 @@ const AssetPlayer = ({
                 {...{
                   url,
                   loop,
-                  cover: coverSource,
+                  cover,
                   muted,
                   onPlay,
                   onReady,
@@ -386,8 +387,14 @@ const AssetPlayer = ({
                         )}
                       </Box>
                     )}
-                    {coverSource ? (
-                      <ImageLoader height="100%" src={coverSource} alt={name} />
+                    {cover ? (
+                      <Cover
+                        height={ccMode || execMode ? '100%' : '200px'}
+                        alt={name}
+                        asset={asset}
+                        copyrightAlign={'right'}
+                        imageStyles={{ aspectRatio: '16/9' }}
+                      />
                     ) : (
                       <CardEmptyCover
                         fileType={asset?.fileType}
@@ -419,7 +426,7 @@ const AssetPlayer = ({
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <ImageLoader height="100%" src={coverSource} alt={name} />
+                  <Cover height="100%" alt={name} asset={asset} copyrightAlign="right" />
                 </ModalZoom>
               </Box>
             )}
@@ -433,13 +440,15 @@ const AssetPlayer = ({
                     <ButtonIcon fileType={'image'} />
                   </Box>
                 )}
-                {!execMode && <ImageLoader height={'200px'} src={coverSource} alt={name} />}
+                {!execMode && (
+                  <Cover height={'200px'} alt={name} asset={asset} copyrightAlign={'right'} />
+                )}
                 <ModalZoom
                   canPlay={!ccMode || canPlay}
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <ImageLoader height={'100%'} src={coverSource} alt={name} />
+                  <Cover height={'100%'} alt={name} asset={asset} copyrightAlign={'right'} />
                 </ModalZoom>
               </Box>
             )}
@@ -457,7 +466,12 @@ const AssetPlayer = ({
                 <Box className={classes.buttonIcon}>
                   <ButtonIcon fileType={'document'} />
                 </Box>
-                <ImageLoader height="auto" src={coverSource} alt={name} />
+                <Cover
+                  height={ccMode || execMode ? '100%' : '200px'}
+                  alt={name}
+                  asset={asset}
+                  copyrightAlign={'right'}
+                />
                 {!hideURLInfo && (
                   <Box style={{ padding: 8 }}>
                     {!!(asset.name || asset.title) && (
@@ -495,7 +509,7 @@ const AssetPlayer = ({
                     <Box className={classes.buttonIcon} onClick={openPdfHandler}>
                       <ButtonIcon fileType={'document'} />
                     </Box>
-                    <ImageLoader height="auto" src={coverSource} alt={name} />
+                    <ImageLoader height="auto" src={cover} alt={name} />
                   </Box>
                 )}
               </>

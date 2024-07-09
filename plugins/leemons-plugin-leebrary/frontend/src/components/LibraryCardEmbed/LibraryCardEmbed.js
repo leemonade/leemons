@@ -1,13 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  Box,
-  Stack,
-  ImageLoader,
-  Text,
-  TextClamp,
-  CardEmptyCover,
-  Badge,
-} from '@bubbles-ui/components';
+import { Box, Stack, Text, TextClamp, CardEmptyCover, Badge } from '@bubbles-ui/components';
 import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@leebrary/helpers/prefixPN';
@@ -19,6 +11,7 @@ import {
   LIBRARY_CARD_EMBED_PROP_TYPES,
 } from './LibraryCardEmbed.constants';
 import { LibraryCardEmbedSkeleton } from './LibraryCardEmbdedSkeleton';
+import Cover from '../Cover';
 
 const LibraryCardEmbed = ({
   asset,
@@ -144,7 +137,7 @@ const LibraryCardEmbed = ({
           }}
         >
           {image || cover ? (
-            <ImageLoader src={image || cover} width={72} height={60} radius={4} />
+            <Cover asset={asset} height={60} width={72} hideCopyright radius={4} />
           ) : (
             <Box className={classes.imagePlaceholder}>{MemoizedEmptyCover}</Box>
           )}

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, ImageLoader, CardEmptyCover, ProgressRing, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@learning-paths/helpers/prefixPN';
+import Cover from '@leebrary/components/Cover';
 import { isNil } from 'lodash';
 import {
   DASHBOARD_CARD_COVER_DEFAULT_PROPS,
@@ -85,7 +86,7 @@ const DashboardCardCover = ({
   if (cover) {
     return (
       <Box className={classes.root}>
-        <ImageLoader src={cover} height={144} />
+        <Cover asset={asset} height={144} hideCopyright />
         <Box className={classes.orderLabel}>{assetNumber}</Box>
       </Box>
     );
@@ -137,7 +138,10 @@ const DashboardCardCover = ({
           />
         </Box>
       )}
-      {!isGradeAssigned && asset?.cover && <ImageLoader src={asset?.cover} height={144} />}
+
+      {!isGradeAssigned && asset?.cover && (
+        <Cover asset={asset} height={144} copyrightAlign="right" hideCopyright />
+      )}
       {!isGradeAssigned && !asset?.cover && MemoizedEmptyCoverAsset}
       <Box className={classes.orderLabel}>{assetNumber}</Box>
     </Box>

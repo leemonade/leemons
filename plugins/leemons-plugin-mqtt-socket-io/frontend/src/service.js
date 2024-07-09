@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 let socket = null;
 
 export const SocketIoService = {
+  isConnected: () => socket !== null,
   connect: (endpoint, config) => {
     socket = io(endpoint, config);
     console.log('Socket.io connected');

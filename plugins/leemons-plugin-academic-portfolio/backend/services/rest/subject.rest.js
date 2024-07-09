@@ -27,6 +27,7 @@ const {
   listSubjectCreditsForProgram,
   listSubjects,
   subjectByIds,
+  isMainTeacherInSubject,
 } = require('../../core/subjects');
 const { duplicateSubjectByIds } = require('../../core/subjects/duplicateSubjectByIds');
 const { duplicateClassesByIds } = require('../../core/classes/duplicateClassesByIds');
@@ -206,26 +207,6 @@ module.exports = {
       throw validator.error;
     },
   },
-  // ???
-  // subjectsRest: {
-  //   rest: {
-  //     path: '/',
-  //     method: 'GET',
-  //   },
-  //   middlewares: [LeemonsMiddlewareAuthenticated()],
-  //   async handler(ctx) {
-  //     let { id } = ctx.params;
-  //     if (!id) {
-  //       const { ids } = ctx.params;
-  //       id = JSON.parse(ids || null);
-  //     }
-  //     const data = await subjectByIds({ ids: Array.isArray(id) ? id : [id], ctx });
-  //     if (ctx.params.id) {
-  //       return { status: 200, data: data && data[0] };
-  //     }
-  //     return { status: 200, data };
-  //   },
-  // },
   subjectsByIdsRest: {
     rest: {
       path: '/',
@@ -308,6 +289,23 @@ module.exports = {
         return { status: 200, subject };
       }
       throw validator.error;
+    },
+  },
+  isMainTeacherInSubjectRest: {
+    rest: {
+      path: '/is-main-teacher-in-subject',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const { subjectIds } = ctx.params;
+      const parsedSubjectIds = JSON.parse(subjectIds || '[]');
+
+      const isMainTeacher = await isMainTeacherInSubject({ subjectIds: parsedSubjectIds, ctx });
+      return {
+        status: 200,
+        isMainTeacher,
+      };
     },
   },
 };

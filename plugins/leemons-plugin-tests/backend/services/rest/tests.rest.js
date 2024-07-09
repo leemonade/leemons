@@ -26,6 +26,7 @@ const {
   setInstanceTimestamp,
   setQuestionResponse,
   getUserQuestionResponses,
+  createAssignSavedConfig,
 } = require('../../core/tests');
 
 /** @type {ServiceSchema} */
@@ -169,6 +170,33 @@ module.exports = {
         ctx,
       });
       return { status: 200, configs };
+    },
+  },
+  createAssignConfigRest: {
+    rest: {
+      method: 'POST',
+      path: '/assign/configs',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'tests.tests': {
+            actions: ['admin', 'create'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { name, config } = ctx.params;
+
+      const id = await createAssignSavedConfig({
+        name,
+        config,
+        ctx,
+      });
+
+      return { status: 200, id };
     },
   },
   updateAssignConfigRest: {

@@ -21,8 +21,7 @@ export const NYACardStyles = createStyles((theme, { clickable }) => {
       position: 'relative',
       width: '100%',
       minWidth: pxToRem(264),
-      maxWidth: pxToRem(330),
-      minHeight: pxToRem(480),
+      maxWidth: pxToRem(264),
       '&:hover': {
         boxShadow: !clickable ? 'none' : cardShadow.boxShadow,
       },

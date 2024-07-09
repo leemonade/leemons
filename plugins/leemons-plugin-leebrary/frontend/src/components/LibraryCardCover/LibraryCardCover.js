@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isNil, isString } from 'lodash';
+import { isEmpty, isNil, isString, noop } from 'lodash';
 import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
 import useFileCopyright from '@leebrary/request/hooks/queries/useFileCopyright';
@@ -8,7 +8,9 @@ import {
   LIBRARY_CARD_COVER_DEFAULT_PROPS,
   LIBRARY_CARD_COVER_PROP_TYPES,
 } from './LibraryCardCover.constants';
+
 import CoverCopyright from './CoverCopyright';
+import { LibraryCardMenuSkeletonItems } from './LibraryCardMenuSkeletonItems';
 
 function stringIsLRN(str) {
   return !!/^lrn:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*$/.test(str);
@@ -29,8 +31,14 @@ const LibraryCardCover = ({
   url,
   file,
   original,
+  onShowMenu = noop,
+  menuItemsLoading = null,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+  // As the Menu onClose function is called when props change, we use this as a flag to control the behavior of menus with dynamic items
+  const [dynamicItemsAlreadyLoaded, setDynamicItemsAlreadyLoaded] = useState(
+    menuItemsLoading === true ? false : null
+  );
   const { classes, cx } = LibraryCardCoverStyles(
     { color, height, parentHovered, subjectColor: subject?.color, showMenu },
     { name: 'LibraryCardCover' }
@@ -133,6 +141,12 @@ const LibraryCardCover = ({
     return null;
   }, [original, file, coverCopyrightDataFetched]);
 
+  useEffect(() => {
+    if (menuItemsLoading === false) {
+      setDynamicItemsAlreadyLoaded(true);
+    }
+  }, [menuItemsLoading]);
+
   const icon = useMemo(
     () =>
       !isNil(fileIcon)
@@ -152,6 +166,8 @@ const LibraryCardCover = ({
     e.stopPropagation();
   };
 
+  const menuSkeletonItems = [{ children: <LibraryCardMenuSkeletonItems items={2} /> }];
+
   const heightAndSubjectColor = color ? height : height + 6;
   const iconRow = (
     <Box>
@@ -161,9 +177,17 @@ const LibraryCardCover = ({
             <Box>
               <Menu
                 opened={showMenu}
-                onOpen={() => setShowMenu(true)}
-                onClose={() => setShowMenu(false)}
-                items={menuItems.map((item) => ({
+                onOpen={() => {
+                  setShowMenu(true);
+                  onShowMenu(true);
+                }}
+                onClose={() => {
+                  if (menuItemsLoading === null || dynamicItemsAlreadyLoaded) {
+                    setShowMenu(false);
+                  }
+                  onShowMenu(false);
+                }}
+                items={(menuItemsLoading ? menuSkeletonItems : menuItems).map((item) => ({
                   ...item,
                   className: cx(classes.menuItem, item.className),
                 }))}

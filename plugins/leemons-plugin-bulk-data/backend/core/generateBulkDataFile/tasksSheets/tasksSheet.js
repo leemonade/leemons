@@ -34,9 +34,10 @@ const getMetadataString = (task, libraryAssets, notIndexableAssets) => {
   const statementImage = leebrary?.statementImage?.[0];
   if (statementImage) {
     const statementImageAsset = notIndexableAssets.find((asset) => asset.id === statementImage);
-    processedStatementImage = getDuplicatedAssetsReferenceAsString(libraryAssets, [
-      statementImageAsset,
-    ]);
+    processedStatementImage = getDuplicatedAssetsReferenceAsString({
+      libraryAssets,
+      dups: [statementImageAsset],
+    });
   }
 
   const result = [];
@@ -56,23 +57,24 @@ const getMetadataString = (task, libraryAssets, notIndexableAssets) => {
 
 const getCenter = (centers, task, taskProgram) => {
   if (task.providerData.center) {
-    centers.find((item) => item.id === task.providerData.center);
+    return centers.find((item) => item.id === task.providerData.center)?.bulkId || '';
   }
-  return taskProgram.centerBulkId;
+  return taskProgram?.centerBulkId || '';
 };
 
 const getCreator = (taskAsset, users) => users.find((u) => u.id === taskAsset.fromUser)?.bulkId;
 
-// NOTE => La función de importacion hace mil cosas, entre ellas, esperar referencias a assets, de momento no es el caso
+// NOTE => Currently, no library asset tags are added from the editor
 const getDevelopmentString = (task) =>
   turndown.turndown(task.providerData.metadata?.development?.[0]?.development ?? '');
+
 // MAIN FUNCTION ······································································|
 
 async function createTasksSheet({
   workbook,
   libraryAssets,
   adminShouldOwnAllAssets,
-  tasks,
+  taskDetails,
   programs,
   centers,
   users,
@@ -80,17 +82,6 @@ async function createTasksSheet({
 }) {
   const worksheet = workbook.addWorksheet('ta_tasks');
   configureSheetColumns({ worksheet, columnDefinitions: TASK_COLUMN_DEFINITIONS });
-
-  const versionControlledTasks = await ctx.call('leebrary.assets.filterByVersionOfType', {
-    assetIds: tasks.map((a) => a.id),
-    categoryId: tasks?.[0]?.category?.id,
-  });
-
-  const taskDetails = await ctx.call('leebrary.assets.getByIds', {
-    ids: versionControlledTasks,
-    shouldPrepareAssets: true,
-    withFiles: true,
-  });
 
   const notIndexableAssetIds = taskDetails.reduce((acc, task) => {
     const statementImageId = task.providerData.metadata.leebrary?.statementImage?.[0];
@@ -115,7 +106,6 @@ async function createTasksSheet({
   const notIndexableAssets = await ctx.call('leebrary.assets.getByIds', {
     ids: notIndexableAssetIds,
     shouldPrepareAssets: true,
-    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
     withFiles: true,
   });
 
@@ -123,7 +113,10 @@ async function createTasksSheet({
     const taskResourceAssets = task.providerData.resources.map((id) =>
       notIndexableAssets.find((asset) => asset.id === id)
     );
-    const resourcesString = getDuplicatedAssetsReferenceAsString(libraryAssets, taskResourceAssets);
+    const resourcesString = getDuplicatedAssetsReferenceAsString({
+      libraryAssets,
+      dups: taskResourceAssets,
+    });
     const development = getDevelopmentString(task);
 
     // HANDLE HTML TO MARKDOWN
@@ -154,7 +147,7 @@ async function createTasksSheet({
       color: task.color,
       cover: task.cover,
       creator,
-      program: program.bulkId,
+      program: program?.bulkId || '',
       center,
       duration: task.providerData.duration,
       resources: resourcesString,
@@ -173,6 +166,7 @@ async function createTasksSheet({
       instructions_for_teachers: instructionsForTeachersMarkdown,
       instructions_for_students: instructionsForStudentsMarkdown,
       metadata: getMetadataString(task, libraryAssets, notIndexableAssets),
+      hideInLibrary: booleanToYesNoAnswer(!!task.hideInLibrary),
     };
 
     worksheet.addRow(_.omitBy(taskObject, _.isNil));

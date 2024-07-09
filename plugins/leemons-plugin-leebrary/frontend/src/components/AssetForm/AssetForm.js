@@ -536,7 +536,7 @@ const AssetForm = ({
                 )}
               </ContextContainer>
             )}
-            <ContextContainer title={labels.presentation} subtitle={labels.featuredImage}>
+            <ContextContainer title={labels.presentation}>
               {!isImage && !hideCover && (
                 <ImagePicker
                   labels={labels}

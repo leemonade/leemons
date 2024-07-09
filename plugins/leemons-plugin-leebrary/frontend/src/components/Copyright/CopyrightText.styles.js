@@ -8,10 +8,12 @@ const useCopyrightTextStyles = createStyles((theme, { reverseColors }) => ({
   },
   link: {
     ...theme.other.cardAssignments.content.typo.sm,
-    color: theme.other.button.content.color.primary[reverseColors ? 'default--reverse' : 'default'],
+    color: `${
+      theme.other.button.content.color.primary[reverseColors ? 'default--reverse' : 'default']
+    } !important`,
     '&:hover': {
       background: theme.other.button.background.color.ghost.hover,
-      color: theme.other.button.content.color.secondary.default,
+      color: `${theme.other.button.content.color.secondary.default} !important`,
     },
   },
 }));
