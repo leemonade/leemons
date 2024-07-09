@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { isEmpty, isString } from 'lodash';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import useFileCopyright from '@leebrary/request/hooks/queries/useFileCopyright';
-import CoverCopyright from './LibraryCardCover/CoverCopyright';
+import CoverCopyright from './Copyright/CoverCopyright';
 
 function stringIsLRN(str) {
   return !!/^lrn:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*$/.test(str);

@@ -9,8 +9,8 @@ import {
   LIBRARY_CARD_COVER_PROP_TYPES,
 } from './LibraryCardCover.constants';
 
-import CoverCopyright from './CoverCopyright';
 import { LibraryCardMenuSkeletonItems } from './LibraryCardMenuSkeletonItems';
+import CoverCopyright from '../Copyright/CoverCopyright';
 
 function stringIsLRN(str) {
   return !!/^lrn:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*$/.test(str);
