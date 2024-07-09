@@ -1,4 +1,7 @@
-/* eslint-disable no-nested-ternary */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
+import { cloneDeep, forEach, map, times } from 'lodash';
 import {
   Box,
   Text,
@@ -6,7 +9,6 @@ import {
   Paper,
   Stack,
   Title,
-  ImageLoader,
   createStyles,
   PageContainer,
   ContextContainer,
@@ -23,30 +25,21 @@ import prefixPN from '@dashboard/helpers/prefixPN';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components';
-import { cloneDeep, forEach, map, times } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '../../../../request';
-import SkeletonDashboardLoader from './SkeletonDashboardLoader';
+import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '@dashboard/request';
+import { bytesToSize } from '@dashboard/helpers';
+import { SkeletonDashboardLoader } from './SkeletonDashboardLoader';
+import { Icon } from './Icon';
+import { PcValue } from './PcValue';
 
-function bytesToSize(bytes) {
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  if (bytes === 0) return '0 Byte';
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-  return `${Math.round(bytes / 1024 ** i, 2)} ${sizes[i]}`;
-}
-
-const rightZoneWidth = '320px';
-const Styles = createStyles((theme) => ({
+const RIGHT_ZONE_WIDTH = '320px';
+const useStyles = createStyles((theme) => ({
   rightZone: {
     position: 'fixed',
     right: 0,
     top: 0,
     bottom: 0,
     background: theme.colors.uiBackground02,
-    width: rightZoneWidth,
+    width: RIGHT_ZONE_WIDTH,
   },
   title: {
     paddingLeft: theme.spacing[2],
@@ -54,52 +47,13 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function PCValue({ text, value }) {
-  return (
-    <Stack
-      fullWidth
-      justifyContent="space-between"
-      sx={(theme) => ({ paddingTop: theme.spacing[1] })}
-    >
-      <Text strong color="primary" role="productive">
-        {text}
-      </Text>
-      <Text color="secondary" role="productive">
-        {value}
-      </Text>
-    </Stack>
-  );
-}
-
-PCValue.propTypes = { text: PropTypes.string, value: PropTypes.any };
-
-function Icon({ size = '23px', className, src }) {
-  return (
-    <Box
-      style={{
-        position: 'relative',
-        width: size,
-        height: size,
-      }}
-    >
-      <ImageLoader className={className} src={src} />
-    </Box>
-  );
-}
-
-Icon.propTypes = {
-  src: PropTypes.string,
-  className: PropTypes.string,
-  size: PropTypes.string,
-};
-
-function AdminDashboard({ session }) {
+function Dashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
     isAcademicMode: false,
   });
   const history = useHistory();
-  const { classes: styles } = Styles();
+  const { classes: styles } = useStyles({}, { name: 'AdminDashboard' });
   const [t, tl] = useTranslateLoader(prefixPN('adminDashboard'));
 
   async function init() {
@@ -223,7 +177,7 @@ function AdminDashboard({ session }) {
       fullHeight
       fullWidth
       sx={(theme) => ({
-        paddingRight: rightZoneWidth,
+        paddingRight: RIGHT_ZONE_WIDTH,
         backgroundColor: theme.colors.uiBackground02,
         paddingBottom: theme.spacing[12],
         overflow: 'auto',
@@ -473,25 +427,25 @@ function AdminDashboard({ session }) {
                   </Text>
                 </Box>
                 <Box>
-                  <PCValue
+                  <PcValue
                     text={t('name')}
                     value={`${store.pc.cpu.brand} (${store.pc.cpu.manufacturer})`}
                   />
                 </Box>
                 {store.pc.cpu.cores ? (
-                  <PCValue text={t('cores')} value={store.pc.cpu.cores} />
+                  <PcValue text={t('cores')} value={store.pc.cpu.cores} />
                 ) : null}
                 {store.pc.cpu.speed ? (
-                  <PCValue text={t('feq')} value={`${store.pc.cpu.speed}GHz`} />
+                  <PcValue text={t('feq')} value={`${store.pc.cpu.speed}GHz`} />
                 ) : null}
                 {store.pc.cpu.speedMin ? (
-                  <PCValue text={t('feqMin')} value={`${store.pc.cpu.speedMin}GHz`} />
+                  <PcValue text={t('feqMin')} value={`${store.pc.cpu.speedMin}GHz`} />
                 ) : null}
                 {store.pc.cpu.speedMax ? (
-                  <PCValue text={t('feqMax')} value={`${store.pc.cpu.speedMax}GHz`} />
+                  <PcValue text={t('feqMax')} value={`${store.pc.cpu.speedMax}GHz`} />
                 ) : null}
                 {store.pc.cpu.cores ? (
-                  <PCValue
+                  <PcValue
                     text={t('load')}
                     value={`${store.pc.currentLoad.currentLoad.toFixed(2)}%`}
                   />
@@ -509,17 +463,17 @@ function AdminDashboard({ session }) {
                     {t('ram')}
                   </Text>
                 </Box>
-                {ram && ram.clockSpeed ? <PCValue text={t('type')} value={ram.type} /> : null}
+                {ram && ram.clockSpeed ? <PcValue text={t('type')} value={ram.type} /> : null}
                 {ram && ram.clockSpeed ? (
-                  <PCValue text={t('clockSpeed')} value={`${ram.clockSpeed}MHz`} />
+                  <PcValue text={t('clockSpeed')} value={`${ram.clockSpeed}MHz`} />
                 ) : null}
                 {store.pc.mem.total ? (
-                  <PCValue text={t('total')} value={bytesToSize(store.pc.mem.total)} />
+                  <PcValue text={t('total')} value={bytesToSize(store.pc.mem.total)} />
                 ) : null}
                 {store.pc.mem.available ? (
-                  <PCValue text={t('available')} value={bytesToSize(store.pc.mem.available)} />
+                  <PcValue text={t('available')} value={bytesToSize(store.pc.mem.available)} />
                 ) : null}
-                {ramUsed ? <PCValue text={t('used')} value={`${ramUsed.toFixed(2)}%`} /> : null}
+                {ramUsed ? <PcValue text={t('used')} value={`${ramUsed.toFixed(2)}%`} /> : null}
               </Box>
             </Stack>
 
@@ -536,13 +490,13 @@ function AdminDashboard({ session }) {
                           {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
                         </Text>
                       </Box>
-                      {disk.name ? <PCValue text={t('name')} value={disk.name} /> : null}
-                      {disk.type ? <PCValue text={t('type')} value={disk.type} /> : null}
+                      {disk.name ? <PcValue text={t('name')} value={disk.name} /> : null}
+                      {disk.type ? <PcValue text={t('type')} value={disk.type} /> : null}
                       {disk.size ? (
-                        <PCValue text={t('space')} value={bytesToSize(disk.size)} />
+                        <PcValue text={t('space')} value={bytesToSize(disk.size)} />
                       ) : null}
                       {store.pc.fsSize ? (
-                        <PCValue
+                        <PcValue
                           text={t('used')}
                           value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
                         />
@@ -564,10 +518,10 @@ function AdminDashboard({ session }) {
                   </Text>
                 </Box>
                 {store.pc.networkInterface ? (
-                  <PCValue text={t('type')} value={store.pc.networkInterface.type} />
+                  <PcValue text={t('type')} value={store.pc.networkInterface.type} />
                 ) : null}
                 {store.pc.networkInterface ? (
-                  <PCValue
+                  <PcValue
                     text={t('speed')}
                     value={`${store.pc.networkInterface.speed || 0}Mb/s`}
                   />
@@ -581,19 +535,8 @@ function AdminDashboard({ session }) {
   );
 }
 
-AdminDashboard.propTypes = {
+Dashboard.propTypes = {
   session: PropTypes.object,
 };
 
-export default function AdminDashboardPage(props) {
-  const history = useHistory();
-  const deploymentConfig = useDeploymentConfig({ pluginName: 'dashboard', ignoreVersion: true });
-
-  if (typeof deploymentConfig === 'undefined') {
-    return null;
-  }
-  if (deploymentConfig?.adminDashboardUrl) {
-    history.push(deploymentConfig.adminDashboardUrl);
-  }
-  return <AdminDashboard {...props} />;
-}
+export { Dashboard };

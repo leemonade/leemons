@@ -129,22 +129,41 @@ export function currentProfileIsAdmin() {
   return false;
 }
 
+/**
+ * @typedef {Object} Center
+ * @property {string} _id - The unique identifier of the center.
+ * @property {string} id - The ID of the center.
+ * @property {string} name - The name of the center.
+ * @property {string} locale - The locale of the center.
+ * @property {string} uri - The URI of the center.
+ * @property {string} token - The token associated with the center.
+ * @property {string} userAgentId - The user agent ID of the center.
+ * @property {Array|undefined} profiles - The profiles of the center.
+ */
+
+/**
+ * @returns {Center} center
+ */
 export function getSessionCenter() {
   const token = getCookieToken(true);
   if (_.isString(token)) {
     return null;
   }
+
   if (!token.profile && token.centers?.length === 1) {
     return token.centers[0];
   }
-  return token.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token.profile));
+  return (
+    token.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token.profile)) ??
+    token.centers?.[0]
+  );
 }
 
 export function getSessionProfile() {
   const token = getCookieToken(true);
   const center = getSessionCenter();
   return (
-    center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles[0] ?? token.profile
+    center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles?.[0] ?? token.profile
   );
 }
 

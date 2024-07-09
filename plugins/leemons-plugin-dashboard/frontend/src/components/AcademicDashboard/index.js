@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _, { find, isNil, map } from 'lodash';
@@ -10,7 +9,7 @@ import { getSessionConfig, updateSessionConfig } from '@users/session';
 import { ZoneWidgets } from '@widgets';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 
-const Styles = createStyles(() => ({
+const useStyles = createStyles(() => ({
   header: {
     position: 'relative',
     height: 80,
@@ -32,12 +31,12 @@ const Styles = createStyles(() => ({
   },
 }));
 
-export default function AcademicDashboard({ session }) {
+function AcademicDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
   });
   const history = useHistory();
-  const { classes: styles } = Styles();
+  const { classes: styles } = useStyles({}, { name: 'AcademicDashboard' });
   const scrollRef = React.useRef();
 
   async function selectProgram(program) {
@@ -167,3 +166,5 @@ export default function AcademicDashboard({ session }) {
 AcademicDashboard.propTypes = {
   session: PropTypes.object,
 };
+
+export { AcademicDashboard };
