@@ -125,7 +125,7 @@ const LibraryCardCover = ({
       );
     }
 
-    if (coverCopyrightDataFetched) {
+    if (coverCopyrightDataFetched?.copyright) {
       const { author, authorProfileUrl, providerUrl, provider } =
         coverCopyrightDataFetched.copyright;
       return (
