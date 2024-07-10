@@ -62,6 +62,11 @@ module.exports = {
     subjectTeacher: 'Professor',
     subjectClassroom: 'Classroom',
     subjectSchedule: 'Schedule',
+    currentWeekButtonLabel: 'Current week',
+    weekendSelectorNexus: 'a',
+    calendarLegend: 'Legend',
+    calendarLegendNonSchoolDay: 'Non-school day',
+    taskLabel: 'Task',
   },
   event_modal: {
     name: 'Name',
