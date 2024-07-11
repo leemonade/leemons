@@ -99,6 +99,7 @@ async function add({
 
   // ··········································································
   // CREATE ASSET
+
   newId = await handleVersion({
     newId,
     categoryId: category.id,
@@ -108,6 +109,14 @@ async function add({
 
   // Set indexable as TRUE by default
   assetData.indexable = isNil(assetData.indexable) ? true : assetData.indexable;
+
+  // Add url to the asset document in DB only for media-files
+  // For bookmarks keep it to be saved later in the bookmark document itself
+  let bookmarkUrl = null;
+  if (category.key === CATEGORIES.BOOKMARKS) {
+    bookmarkUrl = data.url;
+    delete assetData.url;
+  }
 
   // EN: Firstly create the asset in the database to get the id
   // ES: Primero creamos el archivo en la base de datos para obtener el id
@@ -150,7 +159,7 @@ async function add({
   if (!duplicating && category.key === CATEGORIES.BOOKMARKS) {
     promises.push(
       addBookmark({
-        url: assetData.url,
+        url: bookmarkUrl,
         mediaType: assetData.mediaType,
         // iconUrl: assetData.icon,
         asset: newAsset,

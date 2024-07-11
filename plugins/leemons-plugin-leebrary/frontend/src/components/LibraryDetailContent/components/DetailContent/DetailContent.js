@@ -1,6 +1,7 @@
-import { Box, Text, Stack, pxToRem, Badge, TextClamp } from '@bubbles-ui/components';
-import React from 'react';
+import { Box, Text, Stack, pxToRem, Badge, TextClamp, HtmlText } from '@bubbles-ui/components';
+import React, { useMemo } from 'react';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
+import CopyrightText from '@leebrary/components/Copyright/CopyrightText';
 import { MetadataDisplay } from '../MetadataDisplay/MetadataDisplay';
 import { DETAIL_CONTENT_PROP_TYPES, DETAIL_CONTENT_DEFAULT_PROPS } from './DetailContent.constants';
 

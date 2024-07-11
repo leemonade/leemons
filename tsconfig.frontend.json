@@ -1,7 +1,23 @@
 {
-  "extends": "./tsconfig.frontend.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "allowJs": true,
+    "target": "ESNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "module": "ESNext",
+    "jsx": "react",
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "useDefineForClassFields": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noImplicitAny": false,
+    "noEmit": false,
     "paths": {
       "@academic-calendar/*": [
         "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
@@ -11,6 +27,9 @@
       ],
       "@admin/*": [
         "./plugins/leemons-plugin-admin/frontend/src/*"
+      ],
+      "@ai-assistant/*": [
+        "./private-plugins/leemons-plugin-ai-assistant/frontend/src/*"
       ],
       "@assignables/*": [
         "./plugins/leemons-plugin-assignables/frontend/src/*"
@@ -87,9 +106,6 @@
       "@leebrary-aws-s3/*": [
         "./plugins/leemons-plugin-leebrary-aws-s3/frontend/src/*"
       ],
-      "@leebrary-unsplash/*": [
-        "./private-plugins/leemons-plugin-leebrary-unsplash/frontend/src/*"
-      ],
       "@menu-builder/*": [
         "./plugins/leemons-plugin-menu-builder/frontend/src/*"
       ],
@@ -130,9 +146,5 @@
         "./plugins/leemons-plugin-xapi/frontend/src/*"
       ]
     }
-  },
-  "include": [
-    "./plugins/*/frontend/**/*",
-    "./private-plugins/*/frontend/**/*"
-  ]
+  }
 }

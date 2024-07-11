@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { Box, COLORS, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
+import { Box, COLORS, CardEmptyCover } from '@bubbles-ui/components';
 import { isNil } from 'lodash';
 import { ButtonIcon } from '@leebrary/components/AssetPlayer/components/ButtonIcon';
+import Cover from '@leebrary/components/Cover';
 import { LibraryCardCCCoverStyles } from './LibraryCardCCCover.styles';
 import {
   LIBRARY_CARD_CC_COVER_PROPTYPES,
@@ -50,11 +51,7 @@ const LibraryCardCCCover = ({
     <Box className={classes.root}>
       {color && <Box className={classes.color} />}
       <Box className={classes.overlayTransparent}></Box>
-      {cover ? (
-        <ImageLoader src={cover} height={heightAndSubjectColor} width={'100%'} forceImage />
-      ) : (
-        MemoizedEmptyCover
-      )}
+      {cover ? <Cover height={heightAndSubjectColor} asset={{ cover }} /> : MemoizedEmptyCover}
       <Box className={classes.buttonIcon}>
         <ButtonIcon fileType={buttonIconByFileType.true} />
       </Box>

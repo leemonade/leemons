@@ -11,6 +11,11 @@ async function setItemToZone({ config, ctx, profilesBySysName }) {
     description: config.description,
     properties: config.properties,
   };
+
+  if (config.path) {
+    data.path = config.path;
+  }
+
   if (config.profiles) {
     data.profiles = [];
     _.forEach(config.profiles, (sysName) => {

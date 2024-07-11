@@ -47,6 +47,13 @@ const filesSchema = new mongoose.Schema(
     metadata: {
       type: String,
     },
+    // { author: string, profileUrl: string, providerUrl: string}
+    copyright: {
+      type: mongoose.Schema.Types.Mixed,
+    },
+    externalUrl: {
+      type: String,
+    },
   },
   {
     timestamps: true,

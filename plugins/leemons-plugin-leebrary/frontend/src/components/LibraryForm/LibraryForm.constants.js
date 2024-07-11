@@ -29,6 +29,7 @@ export const LIBRARY_FORM_DEFAULT_PROPS = {
   loading: false,
   type: LIBRARY_FORM_TYPES.MEDIA_FILES,
   hideTitle: false,
+  externalFileFromDrawer: null,
 };
 export const LIBRARY_FORM_PROP_TYPES = {
   labels: PropTypes.object,
@@ -68,4 +69,5 @@ export const LIBRARY_FORM_PROP_TYPES = {
   categories: PropTypes.arrayOf(PropTypes.string),
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
   hideCover: PropTypes.bool,
+  externalFileFromDrawer: PropTypes.object,
 };
