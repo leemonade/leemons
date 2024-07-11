@@ -13,6 +13,8 @@ import {
   Select,
   Stack,
   Title,
+  Text,
+  TextClamp,
 } from '@bubbles-ui/components';
 import { numberToEncodedLetter } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -193,11 +195,19 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
                 }}
                 items={[
                   {
-                    children: t('delete'),
+                    children: (
+                      <TextClamp lines={1} withTooltip>
+                        <Text strong>{t('delete')}</Text>
+                      </TextClamp>
+                    ),
                     onClick: () => removeMarker(index),
                   },
                   {
-                    children: t('move'),
+                    children: (
+                      <TextClamp lines={1} withTooltip>
+                        <Text strong>{t('move')}</Text>
+                      </TextClamp>
+                    ),
                     onClick: (e) => moveMarker(index, e),
                   },
                 ]}
