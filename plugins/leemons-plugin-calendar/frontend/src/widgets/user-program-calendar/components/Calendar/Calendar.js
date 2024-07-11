@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Calendar as ReactCalendar } from 'react-calendar';
-import { Box, Stack, Button, IconButton, Text } from '@bubbles-ui/components';
+import { Box, Stack, Button, IconButton, ActionButton, Text } from '@bubbles-ui/components';
 import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 
 import dayjs from 'dayjs';
@@ -113,37 +113,43 @@ const Calendar = ({ events, startDate, setStartDate, endDate, setEndDate, calend
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.header}>
-        <Button variant="outline" onClick={goToCurrentWeek}>
-          {t('currentWeekButtonLabel')}
-        </Button>
-        <Box className={classes.date}>
-          <IconButton onClick={handlePrevWeek} icon={<ChevronLeftIcon />} variant="transparent" />
-          <Stack spacing={2} align="center" justifyContent="center" className={classes.weekButton}>
-            <LocaleDate date={startDate} options={{ day: 'numeric', month: 'short' }} />
-            <Text> {t('weekendSelectorNexus')} </Text>
-            <LocaleDate date={endDate} options={{ day: 'numeric', month: 'short' }} />
+      <Stack direction="column" spacing={2}>
+        <Stack fullWidth justifyContent="space-between" alignItems="center">
+          <Button variant="outline" onClick={goToCurrentWeek}>
+            {t('currentWeekButtonLabel')}
+          </Button>
+          <Stack alignItems="center" justifyContent="space-between" sx={{ width: 180 }}>
+            <ActionButton onClick={handlePrevWeek} icon={<ChevronLeftIcon />} />
+            <Stack spacing={2}>
+              <LocaleDate date={startDate} options={{ day: 'numeric', month: 'short' }} />
+              <Text> {t('weekendSelectorNexus')} </Text>
+              <LocaleDate date={endDate} options={{ day: 'numeric', month: 'short' }} />
+            </Stack>
+            <ActionButton onClick={handleNextWeek} icon={<ChevronRightIcon />} />
           </Stack>
-          <IconButton onClick={handleNextWeek} icon={<ChevronRightIcon />} variant="transparent" />
-        </Box>
-      </Box>
-      <ReactCalendar
-        formatShortWeekday={formatShortWeekday}
-        tileClassName={tileClassName}
-        tileContent={tileContent}
-        view="month"
-        minDetail="month"
-        maxDetail="month"
-        showNavigation={false}
-        activeStartDate={startDate}
-      />
-      <Box className={classes.legend}>
-        <Text sx={{ paddingTop: 3 }}>{`${t('calendarLegend')}:`}</Text>
-        <Box className={classes.currentWeekBall} />
-        <Text sx={{ paddingTop: 3 }}>{t('currentWeekButtonLabel')}</Text>
-        <Box className={classes.dayOffBall} />
-        <Text sx={{ paddingTop: 3 }}>{t('calendarLegendNonSchoolDay')}</Text>
-      </Box>
+        </Stack>
+        <ReactCalendar
+          formatShortWeekday={formatShortWeekday}
+          tileClassName={tileClassName}
+          tileContent={tileContent}
+          view="month"
+          minDetail="month"
+          maxDetail="month"
+          showNavigation={false}
+          activeStartDate={startDate}
+        />
+      </Stack>
+      <Stack alignItems="center" spacing={4}>
+        <Text>{`${t('calendarLegend')}:`}</Text>
+        <Stack alignItems="center" spacing={2}>
+          <Box className={classes.currentWeekBall} />
+          <Text>{t('currentWeekButtonLabel')}</Text>
+        </Stack>
+        <Stack alignItems="center" spacing={2}>
+          <Box className={classes.dayOffBall} />
+          <Text>{t('calendarLegendNonSchoolDay')}</Text>
+        </Stack>
+      </Stack>
     </Box>
   );
 };
@@ -163,6 +169,7 @@ Calendar.propTypes = {
   calendarConfig: PropTypes.shape({
     weekDays: PropTypes.arrayOf(PropTypes.number),
   }),
+  t: PropTypes.func,
 };
 
 export { Calendar };

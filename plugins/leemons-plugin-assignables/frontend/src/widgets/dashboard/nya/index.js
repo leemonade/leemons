@@ -23,26 +23,28 @@ import {
   useNyaLocalizations,
   useNyaStyles,
 } from './hooks';
-import NyaEmpty from '../../../assets/emptyStates/nya.svg';
 
 export function EmptyState() {
   const localizations = useNyaLocalizations()?.nya;
   const isTeacher = useIsTeacher();
 
   return (
-    <Stack spacing={8} direction="row" justifyContent="center" alignItems="center" fullWidth>
-      <ImageLoader src={NyaEmpty} style={{ position: 'relative' }} width={240} height={240} />
-      <Stack spacing={4} direction="column" alignItems="flex-start">
-        <Text
-          color="primary"
-          sx={(theme) => ({ ...theme.other.global.content.typo.heading.lg, textAlign: 'center' })}
-        >
+    <Stack
+      spacing={8}
+      justifyContent="center"
+      alignItems="center"
+      fullWidth
+      sx={(theme) => ({
+        padding: theme.spacing[8],
+        backgroundColor: theme.other.global.background.color.surface.muted,
+      })}
+    >
+      <Stack spacing={3} alignItems="flex-start">
+        👌
+        <Text color="primary" strong>
           {localizations?.emptyState?.title}
         </Text>
-        <Text
-          color="primary"
-          sx={(theme) => ({ ...theme.other.global.content.typo.body.lg, textAlign: 'center' })}
-        >
+        <Text color="primary">
           {isTeacher
             ? localizations?.emptyState?.noEvaluations
             : localizations?.emptyState?.noActivities}

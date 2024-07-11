@@ -1,16 +1,20 @@
 import { createStyles } from '@bubbles-ui/components';
 
 const CalendarStyles = createStyles((theme) => {
+  const { content, background } = theme.other.global;
+
   return {
     root: {
       width: 380,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
       '.react-calendar__tile': {
         maxWidth: '100%',
         paddingBottom: '16px !important',
         textAlign: 'center',
-        font: 'inherit',
-        fontSize: '0.833em',
-        height: '48px',
+        ...content.typo.body.sm,
+        height: 48,
         zIndex: 2,
         backgroundColor: 'transparent',
         pointerEvents: 'none',
@@ -22,9 +26,7 @@ const CalendarStyles = createStyles((theme) => {
       },
       '.react-calendar__month-view__weekdays': {
         textAlign: 'center',
-        font: 'inherit',
-        fontSize: '0.75em',
-        fontWeight: 'bold',
+        ...content.typo.body['sm--bold'],
         textDecoration: 'none',
         paddingBottom: theme.other.core.dimension['100'],
       },
@@ -32,7 +34,7 @@ const CalendarStyles = createStyles((theme) => {
         padding: '0.5em',
       },
       '.react-calendar__month-view__days__day--neighboringMonth': {
-        color: theme.other.core.color.neutral['400'],
+        color: content.color.disabled,
       },
       '.react-calendar__tile--now > abbr': {
         color: 'white',
@@ -44,7 +46,7 @@ const CalendarStyles = createStyles((theme) => {
         textDecoration: 'none',
       },
       '.currentWeek': {
-        backgroundColor: theme.other.core.color.primary['100'],
+        backgroundColor: background.color.primary.subtle,
         '&.weekStart': {
           borderTopLeftRadius: '8px',
           borderBottomLeftRadius: '8px',
@@ -61,7 +63,7 @@ const CalendarStyles = createStyles((theme) => {
           content: '" "',
           display: 'inline-block',
           minWidth: '32px',
-          backgroundColor: theme.other.core.color.neutral['100'],
+          backgroundColor: background.color.surface.muted,
           zIndex: -1,
           minHeight: '40px',
           position: 'absolute',
@@ -72,41 +74,23 @@ const CalendarStyles = createStyles((theme) => {
       },
     },
 
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingTop: '10px',
-      paddingBottom: '10px',
-    },
     weekButton: {
       width: 128,
     },
-    date: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '10px',
-    },
-    legend: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '10px',
-      paddingTop: 24,
-    },
+
     currentWeekBall: {
       width: '12px',
       height: '12px',
       borderRadius: '50%',
-      backgroundColor: theme.other.core.color.primary['100'],
+      backgroundColor: background.color.primary.subtle,
     },
     dayOffBall: {
       width: '12px',
       height: '12px',
       borderRadius: '50%',
-      backgroundColor: theme.other.core.color.neutral['100'],
+      backgroundColor: background.color.surface.muted,
     },
   };
 });
 
 export { CalendarStyles };
-

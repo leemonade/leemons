@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import _, { forEach, keyBy, map } from 'lodash';
 import {
   Box,
-  Text,
   Stack,
+  Title,
   Button,
   Loader,
   createStyles,
@@ -34,18 +34,9 @@ import useTransformEvent from '../../helpers/useTransformEvent';
 
 const useStyles = createStyles((theme, { inTab }) => ({
   root: {
-    paddingTop: inTab ? 0 : theme.spacing[11],
     width: '100%',
   },
-  title: {
-    paddingLeft: theme.spacing[2],
-    paddingRight: theme.spacing[4],
-    fontSize: '20px',
-    fontWeight: 600,
-    lineHeight: '28px',
-  },
   calendarContainer: {
-    paddingTop: theme.spacing[6],
     overflowY: 'auto',
     height: inTab ? 'calc(100vh - 230px)' : 'auto',
     maxHeight: inTab ? 'calc(100vh - 230px)' : '600px',
@@ -311,9 +302,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     <Box className={classes.root}>
       <Stack fullWidth alignItems="center" justifyContent="space-between">
         <Box>
-          <Text size="lg" color="primary" className={classes.title}>
-            {t(inTab ? 'kanban' : 'kanbanHighlight')}
-          </Text>
+          <Title order={3}>{t(inTab ? 'kanban' : 'kanbanHighlight')}</Title>
         </Box>
         <Box>
           {!store.loading ? (

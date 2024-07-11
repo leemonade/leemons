@@ -1,5 +1,7 @@
 import { createStyles } from '@bubbles-ui/components';
 
+const PADDING = 18;
+
 const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
   root: {
     display: 'grid',
@@ -9,8 +11,7 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
     backgroundColor: dateWithDayoff ? theme.other.core.color.neutral['100'] : 'transparent',
   },
   date: {
-    padding: '20px',
-    paddingTop: '20px',
+    padding: PADDING,
     boxSizing: 'border-box',
     alignSelf: 'start',
     width: 150,
@@ -18,8 +19,7 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
   hoursAndDuration: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '20px',
-    paddingTop: '20px',
+    padding: PADDING,
     width: 160,
     boxSizing: 'border-box',
     alignSelf: 'start',
@@ -28,8 +28,7 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
   eventDescription: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '20px',
-    paddingTop: '20px',
+    padding: PADDING,
     boxSizing: 'border-box',
     alignSelf: 'stretch',
     gap: theme.other.core.dimension['200'],

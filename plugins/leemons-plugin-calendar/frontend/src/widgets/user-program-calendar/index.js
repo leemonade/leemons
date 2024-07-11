@@ -1,17 +1,16 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, createStyles, Stack } from '@bubbles-ui/components';
+import dayjs from 'dayjs';
+import { Title, Box, Button, createStyles, Stack } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCentersWithToken } from '@users/session';
-import * as _ from 'lodash';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
-import dayjs from 'dayjs';
 import { getCalendarDaysOffToEvents } from '@calendar/helpers/getCalendarDaysOffToEvents';
 import { getEventColor } from '@calendar/helpers/getEventColor';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
@@ -26,15 +25,9 @@ const Styles = createStyles((theme, { inTab }) => ({
   root: {
     width: '100%',
   },
-  title: {
-    paddingLeft: theme.spacing[2],
-    paddingRight: theme.spacing[4],
-    fontSize: '20px',
-    fontWeight: 600,
-    lineHeight: '28px',
-  },
   calendarContainer: {
-    height: inTab ? 'calc(100vh - 230px)' : 'fit-content',
+    height: 'fit-content',
+    maxHeight: inTab && 'calc(100vh - 230px)',
     backgroundColor: '#FFFFFF',
     marginTop: theme.spacing[4],
     padding: theme.spacing[6],
@@ -143,18 +136,18 @@ function UserProgramCalendar({ inTab, program, classe }) {
 
   return (
     <Box className={styles.root}>
-      {!inTab ? (
-        <Stack fullWidth alignItems="center" justifyContent="space-between">
-          <Box>
-            <Box className={styles.title}>{t('agenda')}</Box>
-          </Box>
-          <Box>
-            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
-              {tc('new')}
-            </Button>
-          </Box>
-        </Stack>
-      ) : null}
+      <Stack fullWidth alignItems="center" justifyContent="space-between">
+        <Box>
+          <Title order={3}>{t('agenda')}</Title>
+        </Box>
+        {!inTab ? (
+        <Box>
+          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
+            {tc('new')}
+          </Button>
+        </Box>
+        ) : null}
+      </Stack>
       {!parsedEvents && <EmptyState onNewEvent={onNewEvent} />}
       <EventModal
         centerToken={centerToken}
@@ -164,24 +157,25 @@ function UserProgramCalendar({ inTab, program, classe }) {
       />
       {!isLoading && (
         <Box className={styles.calendarContainer}>
-          <Calendar
-            key={parsedEvents}
-            events={parsedEvents || []}
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-            calendarConfig={calendarConfig}
-            t={tc}
-          />
-
-          <WeekEventList
-            events={parsedEvents || []}
-            startDate={startDate}
-            calendarConfig={calendarConfig}
-            endDate={endDate}
-            t={tc}
-          />
+          <Stack fullWidth spacing={8}>
+            <Calendar
+              key={parsedEvents}
+              events={parsedEvents || []}
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
+              calendarConfig={calendarConfig}
+              t={tc}
+            />
+            <WeekEventList
+              events={parsedEvents || []}
+              startDate={startDate}
+              calendarConfig={calendarConfig}
+              endDate={endDate}
+              t={tc}
+            />
+          </Stack>
         </Box>
       )}
     </Box>

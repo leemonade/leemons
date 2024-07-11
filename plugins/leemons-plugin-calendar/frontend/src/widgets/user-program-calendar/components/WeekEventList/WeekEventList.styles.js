@@ -3,12 +3,11 @@ import { createStyles } from '@bubbles-ui/components';
 const WeekEventListStyles = createStyles((theme) => ({
   weekEventList: {
     display: 'flex',
+    flex: 1,
     flexDirection: 'column',
-    paddingLeft: theme.other.core.dimension['500'],
-    overflowY: 'scroll',
+    overflowY: 'auto',
     overflowX: 'hidden',
     height: 380,
-    width: '78%',
   },
 }));
 
