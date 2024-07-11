@@ -4,8 +4,9 @@ const WeekEventListStyles = createStyles((theme) => ({
   weekEventList: {
     display: 'flex',
     flexDirection: 'column',
-    paddingLeft: 42,
+    paddingLeft: theme.other.core.dimension['500'],
     overflowY: 'scroll',
+    overflowX: 'hidden',
     height: 380,
     width: '78%',
   },

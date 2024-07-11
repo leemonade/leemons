@@ -97,7 +97,12 @@ const DayRow = ({ date, events, calendarWeekdays, t }) => {
                       style={{ position: 'relative' }}
                     >
                       <Text className={classes.timeWithTag}>{event.startTime}</Text>
-                      <Badge closable={false} radius="default" className={classes.badge}>
+                      <Badge
+                        closable={false}
+                        radius="default"
+                        className={classes.badge}
+                        color="stroke"
+                      >
                         <Text>{t('init')}</Text>
                       </Badge>
                     </Stack>
@@ -110,7 +115,12 @@ const DayRow = ({ date, events, calendarWeekdays, t }) => {
                       style={{ position: 'relative' }}
                     >
                       <Text className={classes.timeWithTag}>{event.endTime}</Text>
-                      <Badge closable={false} radius="default" className={classes.badge}>
+                      <Badge
+                        closable={false}
+                        radius="default"
+                        className={classes.badge}
+                        color="stroke"
+                      >
                         <Text>{t('end')}</Text>
                       </Badge>
                     </Stack>

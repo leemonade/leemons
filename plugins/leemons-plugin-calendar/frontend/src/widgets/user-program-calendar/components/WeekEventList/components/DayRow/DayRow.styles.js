@@ -6,7 +6,7 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
     gridTemplateColumns: '116px 120px 1fr',
     minWidth: 'auto',
     alignItems: 'start',
-    backgroundColor: dateWithDayoff ? '#ECFDF3' : 'transparent',
+    backgroundColor: dateWithDayoff ? theme.other.core.color.neutral['100'] : 'transparent',
   },
   date: {
     padding: '20px',
@@ -23,7 +23,7 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
     width: 160,
     boxSizing: 'border-box',
     alignSelf: 'start',
-    gap: 16,
+    gap: theme.other.core.dimension['200'],
   },
   eventDescription: {
     display: 'flex',
@@ -32,17 +32,17 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
     paddingTop: '20px',
     boxSizing: 'border-box',
     alignSelf: 'stretch',
-    gap: 16,
+    gap: theme.other.core.dimension['200'],
     width: '100%',
     minWidth: 0,
-    marginLeft: 16,
+    marginLeft: theme.other.core.dimension['200'],
   },
   timeWithBadge: {
     paddingTop: '10px',
   },
   badge: {
     position: 'absolute',
-    left: 46,
+    left: theme.other.core.dimension['600'],
   },
 }));
 
