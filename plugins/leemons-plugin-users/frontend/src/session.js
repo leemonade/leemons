@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 import { useContext, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
-import { apiSessionMiddleware } from '../globalContext';
+import { apiSessionMiddleware } from './helpers/apiSessionMiddleware';
 
 function getJWTToken() {
   const params = new URLSearchParams(window.location.search);
@@ -143,7 +143,14 @@ export function getSessionCenter() {
 export function getSessionProfile() {
   const token = getCookieToken(true);
   const center = getSessionCenter();
-  return center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles[0];
+  return (
+    center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles[0] ?? token.profile
+  );
+}
+
+export function getSessionUserAgent() {
+  const token = getCookieToken(true);
+  return token.centers[0]?.userAgentId;
 }
 
 export function getCentersWithToken() {

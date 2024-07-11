@@ -8,6 +8,7 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
       padding: pxToRem(16),
       paddingTop: pxToRem(22),
       flex: fullHeight && 1,
+      height: 'auto',
       display: 'flex',
       flexDirection: 'column',
     },
@@ -82,6 +83,7 @@ export const NYACardBodyStyles = createStyles((theme, { fullHeight }) => {
     },
     progress: {
       marginTop: pxToRem(16),
+      marginBottom: pxToRem(44),
     },
   };
 });

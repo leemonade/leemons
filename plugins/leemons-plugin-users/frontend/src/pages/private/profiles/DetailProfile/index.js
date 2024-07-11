@@ -1,3 +1,7 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { forIn } from 'lodash';
+import { useForm } from 'react-hook-form';
+import { useHistory, useParams } from 'react-router-dom';
 import {
   Alert,
   Box,
@@ -8,8 +12,6 @@ import {
   TabPanel,
   Tabs,
 } from '@bubbles-ui/components';
-// TODO: import from @common plugin
-
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -22,12 +24,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import { goDetailProfilePage, goListProfilesPage } from '@users/navigate';
 import { addProfileRequest, getProfileRequest, updateProfileRequest } from '@users/request';
 import hooks from 'leemons-hooks';
-import { forIn } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
 
-// import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
 import { DatasetTab } from './DatasetTab';
 import { LocaleTab } from './LocaleTab';
 import { PermissionsTab } from './PermissionsTab';
@@ -261,7 +258,7 @@ function ProfileDetail() {
                   />
                 </Paper>
               </TabPanel>
-              <TabPanel disabled label={t('dataset')}>
+              <TabPanel label={t('dataset')}>
                 <Paper padding={2} mt={20} mb={20} fullWidth>
                   <DatasetTab t={t} profile={profile} isEditMode={editMode} />
                 </Paper>

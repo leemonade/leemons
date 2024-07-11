@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useAsync } from '@common/useAsync';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import formWithTheme from '@common/formWithTheme';
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
 import PropTypes from 'prop-types';
 import { EmergencyNumbersService } from '../services';
 
@@ -80,7 +80,7 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
 
   useAsync(load, onSuccess, onError);
 
-  const [form, formActions] = formWithTheme(
+  const [form, formActions] = useFormWithTheme(
     datasetConfig?.jsonSchema,
     datasetConfig?.jsonUI,
     undefined,

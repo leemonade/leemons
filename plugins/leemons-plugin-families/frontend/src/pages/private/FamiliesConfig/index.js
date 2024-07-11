@@ -19,7 +19,7 @@ import { CheckIcon, AddIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outlin
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
+import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
 import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import { useHistory } from 'react-router-dom';

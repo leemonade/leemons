@@ -7,10 +7,11 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
 import { getSessionCenter, getSessionProfile } from '@users/session';
 import { UserAgentsTags } from '@users/components/UserDetail/components/UserAgentsTags';
-import { useRequestErrorMessage } from '@common';
+import { useRequestErrorMessage, useQuery as useQueryParams } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { updateUserImageRequest } from '@users/request';
 import compressImage from '@leebrary/helpers/compressImage';
+import { UserDatasetSummary } from '@users/components/UserDataset/UserDatasetSummary';
 
 function getViewMode(profile) {
   if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
@@ -26,7 +27,8 @@ function UserInfo({ session }) {
   const center = getSessionCenter();
   const profile = getSessionProfile();
   const viewMode = getViewMode(profile);
-  const userId = session.id;
+  const userId = session?.id;
+  const params = useQueryParams();
 
   // ····················································
   // HANDLERS
@@ -80,15 +82,21 @@ function UserInfo({ session }) {
             />
           </Box>
           <Box sx={{ width: '60%' }}>
-            <ContextContainer>
-              {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
-                <UserAgentsTags
-                  title={tUser('tagsTitle')}
+            {userAgents?.length > 0 && (
+              <ContextContainer>
+                {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
+                  <UserAgentsTags
+                    title={tUser('tagsTitle')}
+                    userAgentIds={userAgents.map(({ id }) => id)}
+                  />
+                )}
+                <EnrollUserSummary userId={userId} center={center} viewMode={viewMode} />
+                <UserDatasetSummary
                   userAgentIds={userAgents.map(({ id }) => id)}
+                  openEditDrawer={!!params.editDataset}
                 />
-              )}
-              <EnrollUserSummary userId={userId} center={center} viewMode={viewMode} />
-            </ContextContainer>
+              </ContextContainer>
+            )}
           </Box>
         </Stack>
       </TLayout.Content>

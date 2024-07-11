@@ -190,19 +190,23 @@ module.exports = {
         required: ['locationName', 'pluginName', 'schemaConfig', 'schemaLocales'],
         additionalProperties: false,
       });
-      if (validator.validate(ctx.params)) {
-        const dataset = await saveField({
-          ...ctx.params,
-          ...(ctx.params.options || {}),
-          ctx,
-        });
-        ctx.meta.$statusCode = 200;
-        return {
-          status: 200,
-          dataset,
-        };
+
+      if (!validator.validate(ctx.params)) {
+        throw validator.error;
       }
-      throw validator.error;
+
+      const dataset = await saveField({
+        ...ctx.params,
+        ...(ctx.params.options || {}),
+        ctx,
+      });
+
+      ctx.meta.$statusCode = 200;
+
+      return {
+        status: 200,
+        dataset,
+      };
     },
   },
   saveMultipleFieldsRest: {

@@ -32,10 +32,6 @@ const DetailInfo = loadable(() =>
   pMinDelay(import('./src/pages/private/users/DetailUser/UserInfo'), 500)
 );
 
-const UserDataDatasetValues = loadable(() =>
-  pMinDelay(import('./src/pages/private/UserDataDatasetValues'), 500)
-);
-
 export default function Private() {
   const { path } = useRouteMatch();
   const session = useSession({ redirectTo: goLoginPage });
@@ -83,9 +79,6 @@ export default function Private() {
       </Route>
       <Route path={`${path}/roles/detail`}>
         <DetailRoles session={session} fallback={<LoadingOverlay visible />} />
-      </Route>
-      <Route path={`${path}/set-dataset-values`}>
-        <UserDataDatasetValues session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/detail/:userId`}>
         <DetailUser session={session} fallback={<LoadingOverlay visible />} />

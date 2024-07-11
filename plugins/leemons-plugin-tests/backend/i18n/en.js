@@ -430,6 +430,7 @@ module.exports = {
     configTitle: 'Selection of questions',
     updatedConfig: 'Configuration updated successfully',
     deletedConfig: 'Configuration deleted successfully',
+    createdConfigSuccess: 'Configuration created successfully',
     advancedSettings: 'Advanced settings',
     executionRules: 'Execution rules',
     allowAdvancedSettings: 'Allow advanced settings',

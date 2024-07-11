@@ -90,7 +90,7 @@ async function saveLocale({
 async function saveField({
   locationName,
   pluginName,
-  schemaConfig,
+  schemaConfig: schemaConfigProp,
   schemaLocales,
   useDefaultLocaleCallback = true,
   ctx,
@@ -99,6 +99,7 @@ async function saveField({
 
   let id;
   let dataset = null;
+  const schemaConfig = { ...schemaConfigProp };
   try {
     dataset = await getSchema({ locationName, pluginName, ctx });
 
@@ -132,7 +133,7 @@ async function saveField({
       },
     });
   } catch (e) {
-    if (e.code === 4001) {
+    if (e.data?.code === 4001) {
       // ES: Creamos el schema por que aun no existe
       id = randomString();
       let jsonSchema = {

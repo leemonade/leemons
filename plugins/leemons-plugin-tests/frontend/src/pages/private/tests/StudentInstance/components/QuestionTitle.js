@@ -6,7 +6,7 @@ import { htmlToText } from '@common';
 export default function QuestionTitle(props) {
   const { styles, question, store, cx, t } = props;
 
-  let classNameQuestionTitle = styles.questionTitle;
+  let classNameQuestionTitle = cx(styles.questionTitle);
   if (store.embedded) {
     classNameQuestionTitle = cx(classNameQuestionTitle, styles.questionTitleEmbedded);
   }
