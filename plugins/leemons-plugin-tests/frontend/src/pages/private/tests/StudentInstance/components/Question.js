@@ -84,9 +84,9 @@ export default function Question(props) {
       fullWidth={!!store.viewMode}
       noMargin={!!store.viewMode}
       hasFooter={!!store.viewMode}
-      clean={previewMode}
+      clean={previewMode || store.viewMode}
       footerPadding={store.viewMode ? 0 : undefined}
-      stepName={previewMode ? '' : t('questions')}
+      stepName={previewMode || store.viewMode ? '' : t('questions')}
       Footer={
         <TotalLayoutFooterContainer
           fixed={!store.viewMode}
