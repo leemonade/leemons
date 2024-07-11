@@ -170,6 +170,18 @@ async function finishMultipartFileUpload(dbfile, path, etags) {
 
 async function getZipFiles(jsfile) {
   const zip = new JSZip();
+
+  // Check if the file is a valid zip file
+  if (jsfile.type !== 'application/zip') {
+    throw new Error('Invalid file type. Only zip files are allowed.');
+  }
+
+  // Check if the file size is within acceptable limits (e.g., 200MB)
+  const maxFileSize = 200 * 1024 * 1024; // 200MB
+  if (jsfile.size > maxFileSize) {
+    throw new Error('File size exceeds the maximum limit of 200MB.');
+  }
+
   await zip.loadAsync(jsfile);
 
   async function downloadEntry(entry) {

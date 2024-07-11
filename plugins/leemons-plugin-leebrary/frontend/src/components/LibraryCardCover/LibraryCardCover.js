@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil, isString, noop } from 'lodash';
 import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
 import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
+import { isLRN as stringIsLRN } from '@leebrary/helpers/isLRN';
 import useFileCopyright from '@leebrary/request/hooks/queries/useFileCopyright';
 import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
 import {
@@ -11,10 +12,6 @@ import {
 
 import { LibraryCardMenuSkeletonItems } from './LibraryCardMenuSkeletonItems';
 import CoverCopyright from '../Copyright/CoverCopyright';
-
-function stringIsLRN(str) {
-  return !!/^lrn:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*$/.test(str);
-}
 
 const LibraryCardCover = ({
   height,

@@ -83,7 +83,6 @@ const AssetForm = ({
   externalFileFromDrawer,
   onRemoveExternalFile = noop,
 }) => {
-  const [t] = useTranslateLoader(prefixPN('assetSetup.basicData.copyright'));
   const [externalFile, setExternalFile] = useState({ ...(externalFileFromDrawer ?? {}) });
   const [store, render] = useStore({
     programs: null,
@@ -200,7 +199,7 @@ const AssetForm = ({
     if (!isEmpty(assetFile)) {
       setIsImage(isImageType); // This could be outside this if statment so that it updates on file change
       if (isEmpty(formValues.name)) {
-        setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
+        setValue('name', assetFile.name.replace(/\.[^.]*$/, ''));
       }
     }
     if (isImageType) {

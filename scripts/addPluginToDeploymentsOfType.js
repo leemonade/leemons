@@ -2,18 +2,13 @@ const { MongoClient, ObjectId } = require('mongodb');
 const http = require('http');
 const https = require('https');
 
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-const { LEEMONS_API } = process.env;
+const { MONGO_URI, LEEMONS_API, DEPLOYMENT_TYPE, PLUGIN_NAME } = process.env;
 const MANUAL_PASSWORD = process.env.MANUAL_PASSWORD || 'testing123';
 
-const { DEPLOYMENT_TYPE } = process.env;
-const { PLUGIN_NAME } = process.env;
 const PLUGIN_VERSION = Number(process.env.PLUGIN_VERSION);
 
-if (!process.env.LEEMONS_API) {
-  console.error('LEEMONS_API is not set');
+if (!MONGO_URI || !LEEMONS_API || !DEPLOYMENT_TYPE || !PLUGIN_NAME) {
+  console.error('MONGO_URI, LEEMONS_API, DEPLOYMENT_TYPE and PLUGIN_NAME are required');
   process.exit(1);
 }
 
@@ -21,11 +16,18 @@ if (Number.isNaN(PLUGIN_VERSION)) {
   throw new Error('PLUGIN_VERSION must be a number');
 }
 
+const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 let database;
 
 async function init() {
-  await client.connect();
-  database = client.db();
+  try {
+    await client.connect();
+    database = client.db();
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
+  }
 }
 
 // ····································································································
@@ -79,19 +81,9 @@ async function addPluginByDeploymentIds({ deploymentIds, pluginName, pluginVersi
     }))
   );
 
-  try {
-    const result = await deploymentPlugins.insertMany(documents);
-    console.log('addPluginByDeploymentIds result:', result);
-    return result;
-  } catch (error) {
-    console.error('Error inserting documents:', error);
-    if (error.writeErrors) {
-      error.writeErrors.forEach((writeError) => {
-        console.error('Write error:', writeError.err);
-      });
-    }
-    throw error; // Re-throw the error after logging
-  }
+  const result = await deploymentPlugins.insertMany(documents);
+  console.log('addPluginByDeploymentIds result:', result);
+  return result;
 }
 
 // ····································································································
@@ -150,20 +142,31 @@ async function reloadDeploymentsRequest(deploymentIds) {
     const deployments = await getDeploymentsByType(DEPLOYMENT_TYPE);
     const deploymentIds = deployments?.map((deployment) => deployment.id) ?? [];
 
-    if (deploymentIds?.length) {
-      await addPluginByDeploymentIds({
-        deploymentIds,
-        pluginName: PLUGIN_NAME,
-        pluginVersion: PLUGIN_VERSION,
-      });
-      console.log(`Reloading ${deploymentIds.length} deployments... This could take some time. ⏱️`);
-      const response = await reloadDeploymentsRequest(deploymentIds);
-      console.log('response', response);
+    if (deploymentIds.length === 0) {
+      console.log('No deployments found for the specified type.');
+      await client.close();
+      return;
     }
+
+    await addPluginByDeploymentIds({
+      deploymentIds,
+      pluginName: PLUGIN_NAME,
+      pluginVersion: PLUGIN_VERSION,
+    });
+    console.log(`Reloading ${deploymentIds.length} deployments... This could take some time. ⏱️`);
+    const response = await reloadDeploymentsRequest(deploymentIds);
+    console.log('response', response);
 
     await client.close();
   } catch (error) {
-    console.error('error', error);
+    console.error('Error inserting documents:');
+    if (error.writeErrors) {
+      error.writeErrors.forEach((writeError) => {
+        console.error(writeError.err.errmsg);
+      });
+    } else {
+      console.error('error', error);
+    }
     await client.close();
   }
 })();

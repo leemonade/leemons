@@ -32,6 +32,7 @@ const ZONE_ORDERS = {
     'assignables.class.ongoing',
   ],
   'academic-portfolio.class.detail': ['board-messages.class-dashboard'],
+  'leebrary.drawer.tabs': ['leebrary.drawer.tabs.library', 'leebrary.drawer.tabs.new'],
 };
 
 async function init() {

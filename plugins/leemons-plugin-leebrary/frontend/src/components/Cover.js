@@ -3,11 +3,8 @@ import PropTypes from 'prop-types';
 import { isEmpty, isString } from 'lodash';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import useFileCopyright from '@leebrary/request/hooks/queries/useFileCopyright';
+import { isLRN as stringIsLRN } from '@leebrary/helpers/isLRN';
 import CoverCopyright from './Copyright/CoverCopyright';
-
-function stringIsLRN(str) {
-  return !!/^lrn:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*$/.test(str);
-}
 
 const Cover = ({
   height = 'auto',
