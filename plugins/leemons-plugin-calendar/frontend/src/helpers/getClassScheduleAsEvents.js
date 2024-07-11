@@ -3,7 +3,12 @@ import _ from 'lodash';
 import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import { Box, Text } from '@bubbles-ui/components';
 
-export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWeek = 1 } = {}) {
+export default function getClassScheduleAsEvents(
+  _classe,
+  breaks,
+  { firstDayOfWeek = 1 } = {},
+  canShowEvents = false
+) {
   const classes = _.isArray(_classe) ? _classe : [_classe];
   const events = [];
   let curr = new Date(); // get current date
@@ -12,7 +17,7 @@ export default function getClassScheduleAsEvents(_classe, breaks, { firstDayOfWe
   const first = curr.getDate() - day;
 
   _.forEach(classes, (classe) => {
-    if (classe.showEvents) {
+    if (classe.showEvents || canShowEvents) {
       const title = classe.groups?.abbreviation
         ? `${classe.subject.name} (${classe.groups.abbreviation})`
         : classe.subject.name;

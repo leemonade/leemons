@@ -7,7 +7,7 @@ import prefixPN from '@calendar/helpers/prefixPN';
 import { RenderTextWithCTAs } from '@common';
 import { useEmptyStateStyles } from './EmptyState.styles';
 
-export function EmptyState({ onNewEvent }) {
+function EmptyState({ onNewEvent }) {
   const [t] = useTranslateLoader(prefixPN('emptyState.calendar'));
 
   const { classes, cx } = useEmptyStateStyles();
@@ -41,4 +41,4 @@ EmptyState.propTypes = {
   onNewEvent: PropTypes.func,
 };
 
-export default EmptyState;
+export { EmptyState };
