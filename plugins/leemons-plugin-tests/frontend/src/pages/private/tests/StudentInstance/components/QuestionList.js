@@ -1,19 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useStore } from '@common';
-import { Stack } from '@bubbles-ui/components';
+import { Box } from '@bubbles-ui/components';
 import Question from './Question';
 
 export default function QuestionList(props) {
   const [store, render] = useStore({
     questionNumber: 0,
   });
-
   const isLast = store.questionNumber === props.store.questions.length - 1;
   const question = props.store.questions[store.questionNumber];
 
   return (
-    <Stack fullWidth fullHeight spacing={4} direction="column">
+    <Box>
       <Question
         {...props}
         prevStep={() => {
@@ -38,7 +37,7 @@ export default function QuestionList(props) {
         isLast={isLast}
         saveQuestion={() => props.saveQuestion(question.id)}
       />
-    </Stack>
+    </Box>
   );
 }
 
