@@ -281,16 +281,7 @@ export default function DetailQuestionForm({
                   render={({ field }) => (
                     <TextEditorInput
                       required
-                      toolbars={{
-                        style: true,
-                        heading: false,
-                        align: true,
-                        list: true,
-                        history: true,
-                        color: true,
-                        formulation: false,
-                        link: true,
-                      }}
+                      showToolbarHeading={false}
                       error={form.formState.errors.question}
                       label={t('questionLabel')}
                       editorStyles={{ minHeight: '96px' }}

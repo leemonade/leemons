@@ -76,16 +76,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           render={({ field }) => (
             <TextEditorInput
               {...field}
-              toolbars={{
-                style: true,
-                heading: false,
-                align: true,
-                list: true,
-                history: true,
-                color: true,
-                formulation: false,
-                link: true,
-              }}
+              showToolbarHeading={false}
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
             />
