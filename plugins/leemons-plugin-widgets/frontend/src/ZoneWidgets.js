@@ -7,7 +7,11 @@ import ZoneWidgetsBoundary from './ZoneWidgetsBoundary';
 import useZone from './requests/hooks/queries/useZone';
 
 function dynamicImport(pluginName, component, path = 'src/widgets') {
-  return loadable(() => import(`@leemons/plugins/${pluginName}/${path}/${component}.js`));
+  return loadable(() =>
+    import(
+      /* webpackInclude: /(src|dist)\/widgets\/.+\.js/ */ `@leemons/plugins/${pluginName}/${path}/${component}.js`
+    )
+  );
 }
 
 export function useWidgetItemsRenderer({ renderer, widgetItems = [], ErrorBoundary }) {

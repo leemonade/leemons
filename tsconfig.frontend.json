@@ -28,9 +28,6 @@
       "@admin/*": [
         "./plugins/leemons-plugin-admin/frontend/src/*"
       ],
-      "@ai-assistant/*": [
-        "./private-plugins/leemons-plugin-ai-assistant/frontend/src/*"
-      ],
       "@assignables/*": [
         "./plugins/leemons-plugin-assignables/frontend/src/*"
       ],
@@ -105,6 +102,9 @@
       ],
       "@leebrary-aws-s3/*": [
         "./plugins/leemons-plugin-leebrary-aws-s3/frontend/src/*"
+      ],
+      "@leebrary-unsplash/*": [
+        "./private-plugins/leemons-plugin-leebrary-unsplash/frontend/src/*"
       ],
       "@menu-builder/*": [
         "./plugins/leemons-plugin-menu-builder/frontend/src/*"
