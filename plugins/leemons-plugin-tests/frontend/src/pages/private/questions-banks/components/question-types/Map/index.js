@@ -101,7 +101,7 @@ export function QuestionMap({ form: _form, t }) {
           render={({ field }) => (
             <TextEditorInput
               {...field}
-              showToolbarHeading={false}
+              preset="textArea"
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
             />
