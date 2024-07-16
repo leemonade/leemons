@@ -81,6 +81,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
   }
 
   const isStudent = viewMode === USER_DETAIL_VIEWS.STUDENT;
+  const isTeacher = viewMode === USER_DETAIL_VIEWS.TEACHER;
 
   // If the user is a student and the contactUserAgentId is the same as the userAgentId, we don't show the enrollments
   if (
@@ -96,7 +97,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
   }
 
   return (
-    <ContextContainer title={tCommon('enrollments')}>
+    <ContextContainer title={isTeacher ? tCommon('classes') : tCommon('enrollments')}>
       <Tabs>
         {enrollments?.map((program) => (
           <TabPanel key={program.id} label={program.name}>
@@ -111,7 +112,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
                   </Text>
                   <Text>{t('subjects.group')}</Text>
                 </Stack>
-                {!isStudent && (
+                {!isStudent && !isTeacher && (
                   <Text strong color="primary">
                     {t('subjects.teacher')}
                   </Text>
@@ -125,7 +126,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
                     course={subject.classes[0].courses}
                   />
                   <Box>
-                    {!isStudent && (
+                    {!isStudent && !isTeacher && (
                       <Text>
                         {getTeacherFullname(subject.classes[0]?.teachers[0]?.teacher, teachers)}
                       </Text>
