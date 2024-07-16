@@ -102,6 +102,7 @@ const DayRow = ({ date, events, calendarWeekdays, t }) => {
                         radius="default"
                         className={classes.badge}
                         color="stroke"
+                        disableHover
                       >
                         <Text>{t('init')}</Text>
                       </Badge>
@@ -120,6 +121,7 @@ const DayRow = ({ date, events, calendarWeekdays, t }) => {
                         radius="default"
                         className={classes.badge}
                         color="stroke"
+                        disableHover
                       >
                         <Text>{t('end')}</Text>
                       </Badge>
