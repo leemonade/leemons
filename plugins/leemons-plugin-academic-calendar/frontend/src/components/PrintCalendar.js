@@ -36,7 +36,14 @@ const PrintCalendar = forwardRef(
               <BigCalendar {...calendarConf} printMode />
             )}
           </Box>
-          <Box style={{ width: '100%', padding: 16, paddingTop: 0 }}>
+          <Box
+            sx={(theme) => ({
+              marginTop: theme.spacing.xl,
+              width: '100%',
+              padding: 16,
+              paddingTop: 0,
+            })}
+          >
             <CalendarKey />
           </Box>
         </Stack>
