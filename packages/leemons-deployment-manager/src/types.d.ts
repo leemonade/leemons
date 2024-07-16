@@ -3,6 +3,7 @@ import {
   Context as MoleculerContext,
   ActionSchema as MoleculerActionSchema,
   ServiceSchema as MoleculerServiceSchema,
+  LoggerInstance,
 } from 'moleculer';
 
 type DB = {
@@ -32,6 +33,7 @@ export type Context<P = any> = MoleculerContext & {
   callerPlugin: string;
   params: P;
   socket: any;
+  logger: LoggerInstance;
 };
 
 export function LeemonsDeploymentManagerMixin(): any;

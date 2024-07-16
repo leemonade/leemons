@@ -5,7 +5,7 @@ type LeemonsOptions = {
   disableAutoLRN?: boolean;
 }
 
-export type CreateQuery = (items: any, options: CreateOptions & LeemonsOptions) => Promise<any>;
+export type CreateQuery = (items: any, options?: CreateOptions & LeemonsOptions) => Promise<any>;
 export type FindQuery = import('mongoose').Model<any>['find'];
 export type FindByIdQuery = import('mongoose').Model<any>['findById'];
 export type FindOneQuery = import('mongoose').Model<any>['findOne'];
