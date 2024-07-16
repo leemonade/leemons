@@ -13,13 +13,13 @@ import {
   Select,
   Stack,
   Title,
-  Text,
-  TextClamp,
 } from '@bubbles-ui/components';
 import { numberToEncodedLetter } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { LeebraryImage } from '@leebrary/components';
+
+const DROPDOWN_WIDTH = 90;
 
 export const QuestionImageMarkersModalStyles = createStyles((theme, { isLight }) => ({
   root: {},
@@ -193,21 +193,14 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
                   top: marker.top,
                   left: marker.left,
                 }}
+                dropdownWidth={DROPDOWN_WIDTH}
                 items={[
                   {
-                    children: (
-                      <TextClamp lines={1} withTooltip>
-                        <Text strong>{t('delete')}</Text>
-                      </TextClamp>
-                    ),
+                    children: t('delete'),
                     onClick: () => removeMarker(index),
                   },
                   {
-                    children: (
-                      <TextClamp lines={1} withTooltip>
-                        <Text strong>{t('move')}</Text>
-                      </TextClamp>
-                    ),
+                    children: t('move'),
                     onClick: (e) => moveMarker(index, e),
                   },
                 ]}
