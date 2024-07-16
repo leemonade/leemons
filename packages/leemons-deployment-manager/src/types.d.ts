@@ -5,7 +5,8 @@ import {
   ActionSchema as MoleculerActionSchema,
   ServiceSchema as MoleculerServiceSchema,
   ServiceSettingSchema,
-  Service
+  Service,
+  LoggerInstance,
 } from 'moleculer';
 
 type DB<Models extends Record<string, Model<any>>> = {
@@ -47,6 +48,7 @@ export type Context<
   };
   callerPlugin: string;
   socket: any;
+  logger: LoggerInstance;
 };
 
 export function LeemonsDeploymentManagerMixin(): any;
