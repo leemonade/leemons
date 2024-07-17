@@ -21,6 +21,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { LeebraryImage } from '@leebrary/components';
 
+const DROPDOWN_WIDTH = 90;
+
 export const QuestionImageMarkersModalStyles = createStyles((theme, { isLight }) => ({
   root: {},
   title: {},
@@ -193,6 +195,7 @@ export function QuestionImageMarkersModal({ src = '', value = {}, onChange, onCl
                   top: marker.top,
                   left: marker.left,
                 }}
+                dropdownWidth={DROPDOWN_WIDTH}
                 items={[
                   {
                     children: (
