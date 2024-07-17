@@ -2,13 +2,19 @@ import { createStyles } from '@bubbles-ui/components';
 
 const PADDING = 18;
 
-const DayRowStyles = createStyles((theme, { dateWithDayoff }) => ({
+const DayRowStyles = createStyles((theme, { dateWithDayoff, hasEvents }) => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '116px 120px 1fr',
     minWidth: 'auto',
     alignItems: 'start',
     backgroundColor: dateWithDayoff ? theme.other.core.color.neutral['100'] : 'transparent',
+    cursor: hasEvents ? 'pointer' : 'default',
+    '&:hover': hasEvents
+      ? {
+          backgroundColor: theme.other.core.color.neutral['50'],
+        }
+      : {},
   },
   date: {
     padding: PADDING,

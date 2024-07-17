@@ -5,11 +5,10 @@ import { DayRow } from './components/DayRow';
 
 import { WeekEventListStyles } from './WeekEventList.styles';
 
-const WeekEventList = ({ events, startDate, endDate, calendarConfig, t }) => {
+const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventClick }) => {
   const { classes } = WeekEventListStyles({}, { name: 'WeekEventList' });
   const [eventsInCurrentWeek, setEventsInCurrentWeek] = useState([]);
   const [weekData, setWeekData] = useState([]);
-
   const generateDateArray = (start, end) => {
     const dates = [];
     const currentStartDate = new Date(start);
@@ -65,6 +64,7 @@ const WeekEventList = ({ events, startDate, endDate, calendarConfig, t }) => {
           events={date.events}
           calendarWeekdays={calendarConfig?.weekDays}
           t={t}
+          onEventClick={onEventClick}
         />
       ))}
     </Box>
@@ -77,6 +77,7 @@ WeekEventList.propTypes = {
   endDate: PropTypes.date,
   calendarConfig: PropTypes.object,
   t: PropTypes.func,
+  onEventClick: PropTypes.func,
 };
 
 export { WeekEventList };

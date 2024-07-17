@@ -52,21 +52,23 @@ const parseColumnByEvents = (events, date, locale) => {
         bgColor: event.color,
         isTask: event.originalEvent?.type === 'calendar.task',
         title: event.title,
+        originalEvent: event.originalEvent,
       };
 
       if (!event.isEndEvent) {
         result.description.push(descriptionInfo);
       }
     });
+
   return result;
 };
 
-const DayRow = ({ date, events, calendarWeekdays, t }) => {
+const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
   const isSchoolDay = !calendarWeekdays?.includes(date.getDay());
   const locale = useLocale();
   const dateWithDayoff = events.filter((event) => event.isDayOff);
   const { classes } = DayRowStyles(
-    { dateWithDayoff: !!dateWithDayoff.length || isSchoolDay },
+    { dateWithDayoff: !!dateWithDayoff.length || isSchoolDay, hasEvents: !!events.length },
     { name: 'DayRow' }
   );
   const [preparedEvents, setPreparedEvents] = useState([]);
@@ -137,7 +139,13 @@ const DayRow = ({ date, events, calendarWeekdays, t }) => {
             preparedEvents.description.map((event, index) => {
               const isTask = event.isTask ? `${t('taskLabel')}. ` : '';
               return (
-                <Stack key={index} spacing={2} alignItems="center">
+                <Stack
+                  key={index}
+                  spacing={2}
+                  alignItems="center"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => onEventClick(event.originalEvent)}
+                >
                   <AvatarSubject color={event.bgColor} size="xs" />
                   <TextClamp lines={1}>
                     <Text key={index}>{`${isTask} ${event.title}`}</Text>
@@ -157,6 +165,7 @@ DayRow.propTypes = {
   events: PropTypes.array,
   calendarWeekdays: PropTypes.array,
   t: PropTypes.func,
+  onEventClick: PropTypes.func,
 };
 
 export { DayRow };
