@@ -16,7 +16,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useUserAgentsInfo } from '@users/hooks';
 import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
-import { useLocation } from 'react-router-dom';
 import { SubjectWithClassroomDisplay } from './components/SubjectWithClassroomDisplay';
 
 function filterUserAgentIds(userAgents, sysProfileFilter) {
@@ -49,10 +48,16 @@ function getTeachersIds(enrollments = []) {
   return compact(uniq(teacherIds));
 }
 
-function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilter, viewMode }) {
+function EnrollUserSummary({
+  userId,
+  center,
+  contactUserAgentId,
+  sysProfileFilter,
+  viewMode,
+  isMyProfile,
+}) {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
   const [tCommon] = useTranslateLoader(prefixPN('common'));
-  const location = useLocation();
 
   const enableUserDetails = !!userId;
   const { data: userDetails, isLoading: userDetailsLoading } = useUserDetails({
@@ -85,7 +90,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
   const isStudent = viewMode === USER_DETAIL_VIEWS.STUDENT;
   const isTeacher = viewMode === USER_DETAIL_VIEWS.TEACHER;
 
-  const isTeacherInDetailSection = location.pathname.includes('users/detail') && isTeacher;
+  const isTeacherSelfProfileView = isTeacher && isMyProfile;
 
   // If the user is a student and the contactUserAgentId is the same as the userAgentId, we don't show the enrollments
   if (
@@ -116,7 +121,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
                   </Text>
                   <Text>{t('subjects.group')}</Text>
                 </Stack>
-                {!isStudent && !isTeacherInDetailSection && (
+                {!isStudent && !isTeacherSelfProfileView && (
                   <Text strong color="primary">
                     {t('subjects.teacher')}
                   </Text>
@@ -130,7 +135,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
                     course={subject.classes[0].courses}
                   />
                   <Box>
-                    {!isStudent && !isTeacherInDetailSection && (
+                    {!isStudent && !isTeacherSelfProfileView && (
                       <Text>
                         {getTeacherFullname(subject.classes[0]?.teachers[0]?.teacher, teachers)}
                       </Text>
@@ -152,6 +157,7 @@ EnrollUserSummary.propTypes = {
   sysProfileFilter: PropTypes.string,
   viewMode: PropTypes.string,
   contactUserAgentId: PropTypes.string,
+  isMyProfile: PropTypes.bool,
 };
 
 export { EnrollUserSummary };
