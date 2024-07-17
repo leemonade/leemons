@@ -100,6 +100,10 @@ const UserDatasets = forwardRef(
     }
 
     async function checkFormsAndSave() {
+      if (!canEdit) {
+        return true;
+      }
+
       return checkForms({
         profileId,
         datasets,
