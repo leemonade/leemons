@@ -1,4 +1,4 @@
-import { Context } from '@leemons/deployment-manager';
+import { Context, Errors } from 'moleculer';
 
 interface LeemonsErrorOptions {
   message: string;
@@ -9,7 +9,7 @@ interface LeemonsErrorOptions {
   [key: string]: any;
 }
 
-declare class LeemonsError extends Error {
+declare class LeemonsError extends Errors.MoleculerError {
   constructor(ctx: Context, options: LeemonsErrorOptions);
 }
 
