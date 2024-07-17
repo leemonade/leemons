@@ -137,7 +137,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
         <Box className={classes.eventDescription}>
           {preparedEvents.description &&
             preparedEvents.description.map((event, index) => {
-              const isTask = event.isTask ? `${t('taskLabel')}. ` : '';
+              const isTask = event.isTask ? `${t('taskLabel').toUpperCase()}. ` : '';
               return (
                 <Stack
                   key={index}
@@ -148,7 +148,10 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
                 >
                   <AvatarSubject color={event.bgColor} size="xs" />
                   <TextClamp lines={1}>
-                    <Text key={index}>{`${isTask} ${event.title}`}</Text>
+                    <Text
+                      key={index}
+                      className={classes.eventItem}
+                    >{`${isTask} ${event.title}`}</Text>
                   </TextClamp>
                 </Stack>
               );

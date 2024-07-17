@@ -9,12 +9,6 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff, hasEvents }) => ({
     minWidth: 'auto',
     alignItems: 'start',
     backgroundColor: dateWithDayoff ? theme.other.core.color.neutral['100'] : 'transparent',
-    cursor: hasEvents ? 'pointer' : 'default',
-    '&:hover': hasEvents
-      ? {
-          backgroundColor: theme.other.core.color.neutral['50'],
-        }
-      : {},
   },
   date: {
     padding: PADDING,
@@ -41,6 +35,12 @@ const DayRowStyles = createStyles((theme, { dateWithDayoff, hasEvents }) => ({
     width: '100%',
     minWidth: 0,
     marginLeft: theme.other.core.dimension['200'],
+  },
+  eventItem: {
+    cursor: 'pointer',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
   },
   timeWithBadge: {
     paddingTop: '10px',
