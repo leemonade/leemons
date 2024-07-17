@@ -16,6 +16,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useUserAgentsInfo } from '@users/hooks';
 import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
+import { useLocation } from 'react-router-dom';
 import { SubjectWithClassroomDisplay } from './components/SubjectWithClassroomDisplay';
 
 function filterUserAgentIds(userAgents, sysProfileFilter) {
@@ -51,6 +52,7 @@ function getTeachersIds(enrollments = []) {
 function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilter, viewMode }) {
   const [t] = useTranslateLoader(prefixPN('subject_page'));
   const [tCommon] = useTranslateLoader(prefixPN('common'));
+  const location = useLocation();
 
   const enableUserDetails = !!userId;
   const { data: userDetails, isLoading: userDetailsLoading } = useUserDetails({
@@ -83,6 +85,8 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
   const isStudent = viewMode === USER_DETAIL_VIEWS.STUDENT;
   const isTeacher = viewMode === USER_DETAIL_VIEWS.TEACHER;
 
+  const isTeacherInDetailSection = location.pathname.includes('users/detail') && isTeacher;
+
   // If the user is a student and the contactUserAgentId is the same as the userAgentId, we don't show the enrollments
   if (
     isStudent &&
@@ -112,7 +116,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
                   </Text>
                   <Text>{t('subjects.group')}</Text>
                 </Stack>
-                {!isStudent && !isTeacher && (
+                {!isStudent && !isTeacherInDetailSection && (
                   <Text strong color="primary">
                     {t('subjects.teacher')}
                   </Text>
@@ -126,7 +130,7 @@ function EnrollUserSummary({ userId, center, contactUserAgentId, sysProfileFilte
                     course={subject.classes[0].courses}
                   />
                   <Box>
-                    {!isStudent && !isTeacher && (
+                    {!isStudent && !isTeacherInDetailSection && (
                       <Text>
                         {getTeacherFullname(subject.classes[0]?.teachers[0]?.teacher, teachers)}
                       </Text>
