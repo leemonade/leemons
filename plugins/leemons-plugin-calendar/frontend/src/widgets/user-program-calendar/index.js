@@ -148,13 +148,11 @@ function UserProgramCalendar({ inTab, program, classe }) {
         <Box>
           <Title order={3}>{t('agenda')}</Title>
         </Box>
-        {!inTab ? (
-          <Box>
-            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
-              {tc('new')}
-            </Button>
-          </Box>
-        ) : null}
+        <Box>
+          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
+            {tc('new')}
+          </Button>
+        </Box>
       </Stack>
       {!parsedEvents && <EmptyState onNewEvent={onNewEvent} />}
       <EventModal
