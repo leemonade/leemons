@@ -2,7 +2,6 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build:watch": {
-      "dependsOn": ["^build:watch"],
       "outputs": ["dist/**"]
     }
   }
