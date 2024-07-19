@@ -2,6 +2,7 @@
   "name": "leemons-plugin-users",
   "version": "1.0.35",
   "description": "Leemons users plugins",
+  "types": "./types.d.ts",
   "scripts": {
     "dev": "moleculer-runner --repl --hot --env services/**/*.service.js",
     "start": "moleculer-runner --env services/**/*.service.js",
