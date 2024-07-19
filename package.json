@@ -27,8 +27,10 @@
     "packages/*",
     "plugins/*/backend",
     "plugins/*/frontend",
+    "plugins/*/sdk",
     "private-plugins/*/backend",
     "private-plugins/*/frontend",
+    "private-plugins/*/sdk",
     "apps/*"
   ],
   "scripts": {
@@ -38,8 +40,8 @@
     "check": "start-server-and-test 'PORT=8080 yarn start:app' http-get://localhost:8080/api/gateway/list-aliases 'yarn done'",
     "format:check": "prettier .",
     "format:fix": "prettier . -write",
-    "lint:check": "eslint . && stylelint \"**/.**/*.css\"",
-    "lint:fix": "eslint . --fix && stylelint \"**/.**/*.css\" --fix"
+    "lint:check": "eslint . --ext .js --ext .ts --ext .tsx && stylelint \"**/.**/*.css\"",
+    "lint:fix": "eslint . --ext .js --ext .ts --ext .tsx --fix && stylelint \"**/.**/*.css\" --fix"
   },
   "packageManager": "yarn@1.22.19",
   "engines": {

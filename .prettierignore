@@ -1,5 +1,6 @@
 node_modules/
 examples/
+dist/
 
 packages/leemons-react/build
 data.xlsx

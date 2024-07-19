@@ -3,6 +3,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
+    "source.organizeImports": "never"
   },
   "sonarlint.connectedMode.project": {
     "connectionId": "leemons",

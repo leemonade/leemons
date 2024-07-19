@@ -75,7 +75,41 @@
   },
   "overrides": [
     {
-      "files": ["**/*.spec.js", "**/*.test.js"],
+      "files": ["**/*.ts", "**/*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "settings": {
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".tsx"]
+        },
+        "import/resolver": {
+          "typescript": {
+            "project": [
+              "packages/*/tsconfig.json",
+              "plugins/*/*/tsconfig.json",
+              "private-plugins/*/*/tsconfig.json"
+            ]
+          }
+        }
+      },
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
+      "plugins": ["@typescript-eslint"]
+    },
+    {
+      "files": ["**/*.test.js", "**/*.test.ts"],
+      "settings": {
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".tsx"]
+        },
+        "import/resolver": {
+          "typescript": {
+            "alwaysTryTypes": true,
+            "project": ["private-plugins/*/tsconfig.spec.json"]
+          }
+        }
+      },
       "rules": {
         "no-unused-vars": "off",
         "sonarjs/no-duplicate-string": "off"
