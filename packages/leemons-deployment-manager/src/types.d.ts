@@ -5,8 +5,8 @@ import {
   ServiceSchema as MoleculerServiceSchema,
 } from 'moleculer';
 
-type DB = {
-  [modelName: string]: Model;
+type DB<Models extends Record<string, Model<any>>> = {
+  [modelName in keyof Models]: Models[modelName];
 };
 
 interface UserAgent {
@@ -17,20 +17,32 @@ interface UserSession {
   userAgents: UserAgent[];
 }
 
-export type Context<P = any> = MoleculerContext & {
-  db: DB;
+export type GenericObject = { [name: string]: any };
+
+export type Meta<M extends object = Record<string, never>> = M &
+  GenericObject & {
+    deploymentID: string;
+    userSession: UserSession;
+    $statusCode?: number;
+    $statusMessage?: string;
+    $location?: string;
+    $responseType?: string;
+    $responseHeaders?: Record<string, string>;
+  };
+
+export type Context<
+  P = any,
+  M extends object = Record<string, never>,
+  L = GenericObject,
+  Models extends Record<string, Model<any>> = Record<string, never>,
+> = MoleculerContext<P, Meta<M>, L> & {
+  db: DB<Models>;
   tx: {
-    db: DB;
+    db: DB<Models>;
     emit: MoleculerContext['emit'];
     call: MoleculerContext['call'];
   };
-  meta: MoleculerContext['meta'] & {
-    deploymentID: string;
-    userSession: UserSession;
-    [name: string]: any;
-  };
   callerPlugin: string;
-  params: P;
   socket: any;
 };
 
