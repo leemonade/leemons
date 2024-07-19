@@ -27,6 +27,7 @@ const Styles = createStyles((theme, { inTab }) => ({
   calendarContainer: {
     height: 'fit-content',
     maxHeight: inTab && 'calc(100vh - 230px)',
+    maxWidth: 1600,
     backgroundColor: '#FFFFFF',
     marginTop: theme.spacing[4],
     padding: theme.spacing[6],
