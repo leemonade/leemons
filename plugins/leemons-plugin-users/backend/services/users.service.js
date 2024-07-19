@@ -23,6 +23,7 @@ const {
   centers,
   updateEmail,
   updatePassword,
+  list: listUsers,
 } = require('../core/users');
 const {
   getUserAgentsInfo,
@@ -62,6 +63,7 @@ const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUser
 const { PLUGIN_NAME, VERSION } = require('../config/constants');
 const { jobs } = require('./jobs/users.jobs');
 const { loginWithProvider } = require('../core/users/loginWithProvider');
+const { getProvider } = require('../core/providers/getProvider');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -125,6 +127,15 @@ module.exports = {
     updatePassword: {
       async handler(ctx) {
         return updatePassword({ ...ctx.params, ctx });
+      },
+    },
+    listUsers: {
+      async handler(ctx) {
+        const provider = (await getProvider({ ctx }))?.pluginName;
+        if (ctx.callerPlugin && ctx.callerPlugin === provider) {
+          return listUsers({ ...ctx.params, ctx });
+        }
+        return [];
       },
     },
     // User agents
