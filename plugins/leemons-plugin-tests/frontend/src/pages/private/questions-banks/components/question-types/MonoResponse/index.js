@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { find, findIndex, forEach, capitalize } from 'lodash';
 import {
@@ -10,6 +10,7 @@ import {
   Button,
   Stack,
   Text,
+  InputWrapper,
 } from '@bubbles-ui/components';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TextEditorInput } from '@bubbles-ui/editors';
@@ -19,47 +20,74 @@ import { ListItemRender } from './components/ListItemRender';
 
 // eslint-disable-next-line import/prefer-default-export
 export function MonoResponse({ form: _form, t, scrollRef }) {
-  const form = useFormContext() ?? _form;
-  const withImages = form.watch('withImages');
-  const properties = form.watch('properties');
-  const [showInput, setShowInput] = React.useState(false);
+  const form = useFormContext() || _form;
+
+  const hasHelp = form.watch('hasHelp');
+  const hasImageAnswers = form.watch('hasImageAnswers');
+  const hasAnswerFeedback = form.watch('hasAnswerFeedback');
+  const [showInput, setShowInput] = useState(false);
 
   function toggleHideOnHelp(item) {
-    const data = form.getValues('properties.responses');
-    const index = findIndex(data, { value: item });
+    const data = form.getValues('choices');
+    const index = findIndex(data, item);
     if (index >= 0) {
-      data[index].value.hideOnHelp = !data[index].value.hideOnHelp;
-      form.setValue('properties.responses', data);
+      data[index].hideOnHelp = !data[index].hideOnHelp;
+      form.setValue('choices', data);
     }
   }
 
   function changeCorrectResponse(item) {
-    const data = form.getValues('properties.responses');
-    const index = findIndex(data, { value: item });
+    const data = form.getValues('choices');
+    const index = findIndex(data, item);
     if (index >= 0) {
-      forEach(data, ({ value }) => {
+      forEach(data, (choice) => {
         // eslint-disable-next-line no-param-reassign
-        value.isCorrectResponse = false;
+        choice.isCorrect = false;
       });
-      data[index].value.isCorrectResponse = true;
-      form.setValue('properties.responses', data);
+      data[index].isCorrect = true;
+      form.setValue('choices', data);
     }
   }
 
+  function validateChoices(choicesValue) {
+    const item = find(choicesValue, { isCorrect: true });
+    if (!item) return t('errorMarkGoodResponse');
+
+    let error = false;
+    forEach(choicesValue, (choice) => {
+      if (hasImageAnswers && !choice.image) {
+        error = t('needImages');
+        return;
+      }
+
+      if (!hasImageAnswers && !choice.text?.text) {
+        error = t('needResponse');
+        return;
+      }
+
+      if (hasAnswerFeedback && !choice.feedback?.text) {
+        error = t('needExplanation');
+      }
+    });
+    return error || true;
+  }
+
+  // RENDER ································································································|
+
   const monoResponseAnwsersMargin = useMemo(() => {
-    if (!properties?.hasClues) {
-      if (withImages) return { marginBottom: 120 };
+    if (!hasHelp) {
+      if (hasImageAnswers) return { marginBottom: 120 };
       return { marginBottom: 40 };
     }
     return {};
-  }, [properties?.hasClues, withImages]);
+  }, [hasHelp, hasImageAnswers]);
 
   return (
     <ContextContainer>
       <ContextContainer title={`${capitalize(t('explanationLabel'))}`}>
         <Controller
           control={form.control}
-          name="properties.explanationInResponses"
+          name="hasAnswerFeedback"
           render={({ field }) => (
             <Switch
               {...field}
@@ -69,15 +97,19 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           )}
         />
       </ContextContainer>
-      {!properties?.explanationInResponses ? (
+      {!hasAnswerFeedback ? (
         <Controller
           control={form.control}
-          name="properties.explanation"
+          name="globalFeedback"
           render={({ field }) => (
             <TextEditorInput
               {...field}
+              value={field.value?.text}
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
+              onChange={(value) => {
+                field.onChange({ format: 'html', text: value });
+              }}
             />
           )}
         />
@@ -85,14 +117,15 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
       <ContextContainer title={`${t('responsesLabel')} *`} spacing={0}>
         <Controller
           control={form.control}
-          name="withImages"
+          name="hasImageAnswers"
           render={({ field }) => (
             <Switch {...field} checked={field.value} label={t('withImagesLabel')} />
           )}
         />
+
         <Controller
           control={form.control}
-          name="properties.hasClues"
+          name="hasHelp"
           render={({ field }) => (
             <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
           )}
@@ -103,91 +136,76 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
       </Text>
       <Controller
         control={form.control}
-        name="properties.responses"
+        name="choices"
         rules={{
           required: t('typeRequired'),
-          validate: (a) => {
-            if (withImages) {
-              let needImages = false;
-              forEach(a, ({ value: { image } }) => {
-                if (!image) {
-                  needImages = true;
-                }
-              });
-              if (needImages) return t('needImages');
-            } else if (properties?.explanationInResponses) {
-              let error = false;
-              forEach(a, ({ value: { response, explanation } }) => {
-                if (!response || !explanation) {
-                  error = true;
-                }
-              });
-              if (error) return t('needExplanationAndResponse');
-            } else {
-              let error = false;
-              forEach(a, ({ value: { response } }) => {
-                if (!response) {
-                  error = true;
-                }
-              });
-              if (error) return t('needResponse');
-            }
-            const item = find(a, { value: { isCorrectResponse: true } });
-            return item ? true : t('errorMarkGoodResponse');
-          },
+          validate: (choicesValue) => validateChoices(choicesValue),
         }}
         render={({ field }) => {
           let canSetHelp = true;
-          forEach(field.value, ({ value: { hideOnHelp } }) => {
-            if (hideOnHelp) canSetHelp = false;
+
+          const listValues = [];
+          forEach(field.value, (item) => {
+            if (item.hideOnHelp) canSetHelp = false;
+            listValues.push({
+              value: {
+                ...item,
+              },
+            });
           });
+
           return (
             <Box sx={monoResponseAnwsersMargin}>
-              <ListInput
-                {...field}
-                onChange={(e) => {
-                  field.onChange(e);
-                  setShowInput(false);
-                }}
-                hideInput={!showInput}
-                withItemBorder
-                withInputBorder
-                error={form.formState.errors.properties?.responses}
-                inputRender={
-                  <ListInputRender
-                    t={t}
-                    useExplanation={properties?.explanationInResponses}
-                    withImages={withImages}
-                    onCancel={() => setShowInput(false)}
-                    scrollRef={scrollRef}
-                    responsesSaved={field.value}
-                  />
-                }
-                listRender={
-                  <ListItem
-                    labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
-                    itemContainerRender={({ children }) => (
-                      <Stack alignItems="center" fullWidth>
-                        {children}
-                      </Stack>
-                    )}
-                    itemValueRender={
-                      <ListItemRender
-                        t={t}
-                        canSetHelp={canSetHelp}
-                        useExplanation={properties?.explanationInResponses}
-                        withImages={withImages}
-                        toggleHideOnHelp={toggleHideOnHelp}
-                        changeCorrectResponse={changeCorrectResponse}
-                        showEye={field?.value?.length > 2}
-                        // showEye
-                      />
-                    }
-                  />
-                }
-                hideAddButton
-                canAdd
-              />
+              <InputWrapper error={form.formState.errors.choices?.message || null}>
+                <ListInput
+                  {...field}
+                  value={listValues}
+                  onChange={(e) => {
+                    const cleanValues = e.map(({ value }) => value);
+                    field.onChange(cleanValues);
+                    setShowInput(false);
+                  }}
+                  hideInput={!showInput}
+                  withItemBorder
+                  withInputBorder
+                  error={form.formState.errors.properties?.responses}
+                  inputRender={
+                    <ListInputRender
+                      t={t}
+                      useExplanation={hasAnswerFeedback}
+                      withImages={hasImageAnswers}
+                      onCancel={() => setShowInput(false)}
+                      scrollRef={scrollRef}
+                      responsesSaved={field.value}
+                    />
+                  }
+                  listRender={
+                    <ListItem
+                      labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
+                      itemContainerRender={({ children }) => (
+                        <Stack alignItems="center" fullWidth>
+                          {children}
+                        </Stack>
+                      )}
+                      valueKey=""
+                      itemValueRender={
+                        <ListItemRender
+                          t={t}
+                          canSetHelp={canSetHelp}
+                          useExplanation={hasAnswerFeedback}
+                          withImages={hasImageAnswers}
+                          toggleHideOnHelp={toggleHideOnHelp}
+                          changeCorrectResponse={changeCorrectResponse}
+                          showEye={field?.value?.length > 2}
+                          // showEye
+                        />
+                      }
+                    />
+                  }
+                  hideAddButton
+                  canAdd
+                />
+              </InputWrapper>
               {!showInput ? (
                 <Button
                   variant="link"

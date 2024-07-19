@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { compact, get, isArray, map, noop, set } from 'lodash';
+import { map, noop } from 'lodash';
 import {
   ActionButton,
   Alert,
@@ -15,127 +15,95 @@ import {
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon, DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
+import { useStore } from '@common';
 import { useLayout } from '@layout/context';
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 import DetailQuestionForm from './DetailQuestionForm';
-import { QUESTION_TYPES, SOLUTION_KEY_BY_TYPE } from '../questionConstants';
 
 export default function DetailQuestions({
   form,
   t,
   stepName,
+  store,
   scrollRef,
   onPrev,
   onPublish,
-  onSaveDraft,
-  savingAs,
+  onSave,
 }) {
-  const [newQuestion, setNewQuestion] = useState(null);
-  const [questionToEdit, setQuestionToEdit] = useState(null);
-  const [questionIndex, setQuestionIndex] = useState(null);
-  const [saveAttempt, setSaveAttempt] = useState(false);
-  const { openDeleteConfirmationModal } = useLayout();
-
   const formValues = form.watch();
+  const [qStore, qRender] = useStore({
+    newQuestion: false,
+  });
+
   const categories = form.watch('categories');
+
+  const { openDeleteConfirmationModal } = useLayout();
   const questions = form.watch('questions');
 
-  // FUNCTIONS ························································|
-  function onCancel() {
-    setNewQuestion(null);
-    setQuestionToEdit(null);
-    setQuestionIndex(null);
+  function addQuestion() {
+    qStore.newQuestion = true;
+    qRender();
   }
 
-  const processFeedback = (processedQuestion, solutionField) => {
-    let solution = solutionField;
-    let cleanGlobalFeedback = processedQuestion.globalFeedback;
-    if (isArray(solutionField)) {
-      if (!processedQuestion.hasAnswerFeedback) {
-        solution = solutionField.map((item) => ({
-          ...item,
-          feedback: null,
-        }));
-      } else {
-        cleanGlobalFeedback = null;
-      }
-    }
-    return [solution, cleanGlobalFeedback];
-  };
+  function onCancel() {
+    qStore.newQuestion = false;
+    qStore.questionIndex = null;
+    qStore.question = null;
+    qRender();
+  }
 
-  const cleanQuestion = (question) => {
-    const processedQuestion = { ...question };
-    const solutionKey = SOLUTION_KEY_BY_TYPE[question.type];
-    const solutionField = get(processedQuestion, solutionKey);
-
-    // FEEDBACK
-    if (QUESTION_TYPES.MAP !== question.type) {
-      const [solutionWithCleanFeedback, cleanGlobalFeedback] = processFeedback(
-        processedQuestion,
-        solutionField
-      );
-      set(processedQuestion, solutionKey, solutionWithCleanFeedback);
-      processedQuestion.globalFeedback = cleanGlobalFeedback;
-    }
-
-    // CLUES
-    processedQuestion.clues = compact(processedQuestion.clues);
-
-    return processedQuestion;
-  };
-
-  function onSaveQuestion(question) {
-    const processedQuestion = cleanQuestion(question);
-    console.log('dirty question', question);
-    console.log('processedQuestion', processedQuestion);
-
-    const currentQuestions = form.getValues('questions') ?? [];
-    if (questionIndex !== null && questionIndex >= 0) {
-      currentQuestions[questionIndex] = processedQuestion;
+  function onSaveQuestions(question) {
+    const cleanQuestion = question;
+    if (cleanQuestion.clues?.[0] === undefined) {
+      cleanQuestion.clues = [];
     } else {
-      currentQuestions.push(processedQuestion);
+      cleanQuestion.clues = [{ value: cleanQuestion.clues[0] }];
     }
-    console.log('currentQuestions', currentQuestions);
-
+    const currentQuestions = form.getValues('questions') ?? [];
+    if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
+      currentQuestions[qStore.questionIndex] = cleanQuestion;
+    } else {
+      currentQuestions.push(cleanQuestion);
+    }
     form.setValue('questions', currentQuestions);
     onCancel();
   }
 
-  function onEditQuestion(index) {
-    setQuestionToEdit((questions || [])[index]);
-    setQuestionIndex(index);
+  function editQuestion(index) {
+    qStore.questionIndex = index;
+    qStore.question = (form.getValues('questions') || [])[index];
+    qRender();
   }
 
-  function onDeleteQuestion(index) {
-    // TODO: check this works
+  function deleteQuestion(index) {
     openDeleteConfirmationModal({
       onConfirm: async () => {
-        const currentQuestions = form.getValues('questions') || [];
-        const questionsAfterDeletion = currentQuestions.splice(index, 1);
-        form.setValue('questions', questionsAfterDeletion);
+        const newQuestions = form.getValues('questions') || [];
+        newQuestions.splice(index, 1);
+        form.setValue('questions', newQuestions);
       },
     })();
   }
 
-  function onSaveQBank(handler = noop) {
-    setSaveAttempt(true);
+  function tryHandler(handler = noop) {
+    qStore.trySend = true;
+    qRender();
     if (questions?.length) {
       handler();
     }
   }
 
-  const showQuestionForm = !!(newQuestion || questionToEdit);
+  const showQuestionForm = qStore.newQuestion || qStore.question;
 
   if (showQuestionForm) {
     return (
       <DetailQuestionForm
         t={t}
         isPublished={formValues.published}
-        onSaveDraft={onSaveDraft}
-        onSaveQuestion={onSaveQuestion}
-        savingAs={savingAs}
+        onSave={onSave}
+        onSaveQuestion={onSaveQuestions}
         onCancel={onCancel}
-        defaultValues={newQuestion ? {} : questionToEdit}
+        defaultValues={qStore.newQuestion ? {} : qStore.question}
         categories={categories}
         onAddCategory={(newCategory) => {
           form.setValue('categories', [
@@ -143,6 +111,7 @@ export default function DetailQuestions({
             { value: newCategory },
           ]);
         }}
+        store={store}
         scrollRef={scrollRef}
       />
     );
@@ -192,17 +161,17 @@ export default function DetailQuestions({
               {!formValues.published ? (
                 <Button
                   variant="link"
-                  onClick={() => onSaveQBank(onSaveDraft)}
-                  disabled={savingAs}
-                  loading={savingAs === 'draft'}
+                  onClick={() => tryHandler(onSave)}
+                  disabled={store.saving}
+                  loading={store.saving === 'draft'}
                 >
                   {t('saveDraft')}
                 </Button>
               ) : null}
               <Button
-                onClick={() => onSaveQBank(onPublish)}
-                disabled={savingAs || !questions?.length}
-                loading={savingAs === 'publish'}
+                onClick={() => tryHandler(onPublish)}
+                disabled={store.saving || !questions?.length}
+                loading={store.saving === 'publish'}
               >
                 {t('publish')}
               </Button>
@@ -214,7 +183,7 @@ export default function DetailQuestions({
       <Box>
         <ContextContainer title={t('questionList')}>
           <Box>
-            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={() => setNewQuestion({})}>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
               {t('addQuestion')}
             </Button>
           </Box>
@@ -227,11 +196,11 @@ export default function DetailQuestions({
                   <Stack justifyContent="end" fullWidth>
                     <ActionButton
                       icon={<EditWriteIcon width={18} height={18} />}
-                      onClick={() => onEditQuestion(i)}
+                      onClick={() => editQuestion(i)}
                     />
                     <ActionButton
                       icon={<DeleteBinIcon width={18} height={18} />}
-                      onClick={() => onDeleteQuestion(i)}
+                      onClick={() => deleteQuestion(i)}
                     />
                   </Stack>
                 ),
@@ -241,7 +210,7 @@ export default function DetailQuestions({
             <Text>{t('questionListEmpty')}</Text>
           )}
 
-          {saveAttempt && form.formState.errors.questions ? (
+          {qStore.trySend && form.formState.errors.questions ? (
             <Alert severity="error" closeable={false}>
               {form.formState.errors.questions?.message}
             </Alert>
@@ -257,8 +226,8 @@ DetailQuestions.propTypes = {
   t: PropTypes.func.isRequired,
   onPublish: PropTypes.func,
   onPrev: PropTypes.func,
-  onSaveDraft: PropTypes.func,
+  onSave: PropTypes.func,
   stepName: PropTypes.string,
   scrollRef: PropTypes.object,
-  savingAs: PropTypes.string,
+  store: PropTypes.object,
 };

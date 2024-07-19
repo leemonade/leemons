@@ -66,6 +66,7 @@ module.exports = {
     responsePlaceholder: 'Añadir aquí el texto de la respuesta',
     needImages: 'Las respuestas deben tener imágenes',
     needExplanationAndResponse: 'Todas las respuestas necesitan un texto y una explicación',
+    needExplanation: 'Todas las respuestas requieren una explicación',
     needResponse: 'Las respuestas deben tener un texto',
     errorMarkGoodResponse: 'Es necesario marcar la respuesta correcta',
     responsesDescription:
