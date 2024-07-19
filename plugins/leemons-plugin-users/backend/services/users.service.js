@@ -64,6 +64,7 @@ const { PLUGIN_NAME, VERSION } = require('../config/constants');
 const { jobs } = require('./jobs/users.jobs');
 const { loginWithProvider } = require('../core/users/loginWithProvider');
 const { getProvider } = require('../core/providers/getProvider');
+const getUserLocale = require('../core/users/getUserLocale');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -241,6 +242,18 @@ module.exports = {
     loginWithProvider: {
       async handler(ctx) {
         return loginWithProvider({ ...ctx.params, ctx });
+      },
+    },
+    getUserLocale: {
+      async handler(ctx) {
+        const { email, fallback } = ctx.params;
+        const provider = (await getProvider({ ctx }))?.pluginName;
+
+        if (!ctx.callerPlugin || ctx.callerPlugin !== provider) {
+          return fallback;
+        }
+
+        return getUserLocale({ email, ctx });
       },
     },
   },
