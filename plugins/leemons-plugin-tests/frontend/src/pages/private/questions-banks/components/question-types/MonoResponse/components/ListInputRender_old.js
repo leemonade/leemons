@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
   InputWrapper,
@@ -12,7 +12,6 @@ import {
 import { useStore } from '@common';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { capitalize } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListInputRender({
@@ -26,59 +25,80 @@ export function ListInputRender({
   responsesSaved,
   ...props
 }) {
-  const choice = useMemo(() => value, [value]);
+  const [store, render] = useStore(value);
 
-  const [answerText, setAnswerText] = useState(choice.text?.text || '');
-  const [explanation, setExplanation] = useState(choice.feedback?.text || '');
-  const [image, setImage] = useState(choice.image?.cover?.id || choice.image || null);
-  const [imageDescription, setImageDescription] = useState(choice.imageDescription || '');
-  const [dirty, setDirty] = useState(false);
+  const [useButton] = React.useState(
+    () => !responsesSaved?.some((response) => response.value === value)
+  );
 
-  const useButton = useRef(
-    !responsesSaved?.some((response) => JSON.stringify(response) === JSON.stringify(choice))
-  ).current;
+  function emit() {
+    props.onChange({
+      ...value,
+      image: store.image,
+      imageDescription: store.imageDescription,
+      response: store.response,
+      explanation: store.explanation,
+    });
+  }
 
-  // FUNCTIONS ··············································································|
-  function mutateAnswerText(updatedText) {
-    setAnswerText(updatedText);
-    if (!dirty) setDirty(true);
-    if (updatedText) {
-      props.onChange({ ...choice, text: { format: 'plain', text: updatedText } });
+  function emitIfCan() {
+    if (withImages) {
+      if (store.image) {
+        emit();
+      }
+    } else if (useExplanation) {
+      if (store.explanation && store.response) {
+        emit();
+      }
+    } else if (store.response) {
+      emit();
     }
   }
 
-  function mutateAnswerExplanation(newExplanation) {
-    setExplanation(newExplanation);
-    if (!dirty) setDirty(true);
-    if (newExplanation) {
-      props.onChange({ ...choice, feedback: { format: 'plain', text: newExplanation } });
+  function onChangeResponse(e) {
+    store.response = e;
+    emitIfCan();
+    render();
+  }
+
+  function onChangeExplanation(e) {
+    store.explanation = e;
+    emitIfCan();
+    render();
+  }
+
+  function onChangeImage(e) {
+    store.image = e;
+    emitIfCan();
+    render();
+  }
+
+  function onChangeImageDescription(e) {
+    store.imageDescription = e;
+    emitIfCan();
+    render();
+  }
+
+  function add() {
+    store.dirty = true;
+    if (withImages) {
+      if (store.image) {
+        addItem();
+        store.dirty = false;
+        store.image = null;
+        store.imageDescription = null;
+        store.explanation = null;
+      }
+    } else if (
+      (useExplanation && store.explanation && store.response) ||
+      (!useExplanation && store.response)
+    ) {
+      addItem();
+      store.dirty = false;
+      store.response = null;
+      store.explanation = null;
     }
-  }
-
-  function mutateAnswerImage(newImage) {
-    setImage(newImage);
-    if (!dirty) setDirty(true);
-    if (newImage) {
-      props.onChange({ ...choice, image: newImage });
-    }
-  }
-
-  function mutateAnswerImageDescription(newImageDescription) {
-    setImageDescription(newImageDescription);
-    if (!dirty) setDirty(true);
-    props.onChange({ ...choice, imageDescription: newImageDescription });
-  }
-
-  function reset() {
-    if (answerText) {
-      setDirty(false);
-      setAnswerText('');
-    }
-  }
-
-  function addNewItem() {
-    addItem();
-    reset();
+    render();
   }
 
   // Manage scroll and focus
@@ -88,17 +108,16 @@ export function ListInputRender({
     if (answerInputRef.current) {
       answerInputRef.current.focus();
     }
-  }, [choice.text?.text]);
+  }, [store.response]);
 
   useEffect(() => {
     if (scrollRef?.current && answerInputRef.current) {
       const { top } = answerInputRef.current.getBoundingClientRect();
       const containerTop = scrollRef.current.getBoundingClientRect().top;
 
-      // eslint-disable-next-line no-param-reassign
       scrollRef.current.scrollTop += top - containerTop;
     }
-  }, [choice, scrollRef]);
+  }, [value, scrollRef]);
 
   if (withImages) {
     return (
@@ -116,11 +135,8 @@ export function ListInputRender({
               marginBottom: 24,
             }}
           >
-            <InputWrapper
-              label={`${t('imageLabel')} *`}
-              error={dirty && !useButton && !image ? t('needImages') : null}
-            >
-              <ImagePicker value={image} onChange={mutateAnswerImage} />
+            <InputWrapper label={`${t('imageLabel')} *`}>
+              <ImagePicker value={store.image} onChange={onChangeImage} />
             </InputWrapper>
           </Box>
           <Stack fullWidth spacing={4}>
@@ -129,20 +145,20 @@ export function ListInputRender({
                 <TextInput
                   ref={answerInputRef}
                   label={t('caption')}
-                  value={imageDescription}
+                  value={store.imageDescription}
                   placeholder={t('captionPlaceholder')}
-                  onChange={mutateAnswerImageDescription}
+                  onChange={onChangeImageDescription}
                 />
               </Box>
             </Box>
             {useExplanation ? (
               <Box>
                 <TextInput
-                  value={explanation}
+                  value={store.explanation}
                   label={`${capitalize(t('explanationLabel'))} *`}
-                  onChange={mutateAnswerExplanation}
+                  onChange={onChangeExplanation}
                   placeholder={t('explanationPlaceHolder')}
-                  error={dirty && !explanation ? t('explanationRequired') : null}
+                  error={store.dirty && !store.explanation ? t('explanationRequired') : null}
                 />
               </Box>
             ) : null}
@@ -154,7 +170,7 @@ export function ListInputRender({
             <Button variant="link" onClick={onCancel}>
               {t('cancel')}
             </Button>
-            <Button variant="outline" onClick={addNewItem}>
+            <Button variant="outline" onClick={add}>
               {t('saveResponse')}
             </Button>
           </Stack>
@@ -167,17 +183,15 @@ export function ListInputRender({
     <ContextContainer>
       <Box>
         <TextInput
-          value={answerText}
           ref={answerInputRef}
+          value={store.response}
           label={`${t('responseLabel')} *`}
+          onChange={onChangeResponse}
           placeholder={t('responsePlaceholder')}
-          error={dirty && !answerText ? t('responseRequired') : null}
-          onChange={(textValue) => {
-            mutateAnswerText(textValue);
-          }}
+          error={store.dirty && !store.response ? t('responseRequired') : null}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && typeof addItem === 'function') {
-              addNewItem();
+              add();
             }
           }}
         />
@@ -185,11 +199,11 @@ export function ListInputRender({
       {useExplanation ? (
         <Box>
           <Textarea
-            value={explanation}
+            value={store.explanation}
             label={`${capitalize(t('explanationLabel'))} *`}
-            onChange={mutateAnswerExplanation}
+            onChange={onChangeExplanation}
             placeholder={t('explanationPlaceHolder')}
-            error={dirty && !explanation ? t('explanationRequired') : null}
+            error={store.dirty && !store.explanation ? t('explanationRequired') : null}
           />
         </Box>
       ) : null}
@@ -198,7 +212,7 @@ export function ListInputRender({
           <Button variant="link" onClick={onCancel}>
             {t('cancel')}
           </Button>
-          <Button variant="outline" onClick={addNewItem}>
+          <Button variant="outline" onClick={add}>
             {t('saveResponse')}
           </Button>
         </Stack>

@@ -8,7 +8,7 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListItemRender({
-  item,
+  item = {},
   index,
   t,
   useExplanation,
@@ -29,7 +29,7 @@ export function ListItemRender({
       </Box>
       <Box noFlex sx={() => ({ width: 50, minHeight: 48, textAlign: 'center', marginTop: -4 })}>
         {!item.hideOnHelp ? (
-          <Radio checked={item.isCorrectResponse} onChange={() => changeCorrectResponse(item)} />
+          <Radio checked={item.isCorrect} onChange={() => changeCorrectResponse(item)} />
         ) : null}
 
         {showEye && item.hideOnHelp ? (
@@ -47,7 +47,7 @@ export function ListItemRender({
           <Stack fullWidth spacing={4} alignItems="center">
             <Box>
               <ImageLoader
-                src={getFileUrl(item.image)}
+                src={getFileUrl(item.image.cover?.id || item.image)}
                 width={72}
                 height={52}
                 bordered
@@ -60,25 +60,25 @@ export function ListItemRender({
                   <Text color="primary">{item.imageDescription}</Text>
                 </Box>
               ) : null}
-              {useExplanation && item.explanation ? (
+              {useExplanation && item.feedback ? (
                 <Box>
-                  <Text>{item.explanation}</Text>
+                  <Text>{item.feedback.text}</Text>
                 </Box>
               ) : null}
             </Box>
           </Stack>
         ) : null}
 
-        {!withImages ? (
+        {!withImages && item.text?.text ? (
           <Box>
-            {item.response ? (
+            {item.text.text ? (
               <Box sx={() => ({ marginTop: -2 })}>
-                <Text color="primary">{item.response}</Text>
+                <Text color="primary">{item.text.text}</Text>
               </Box>
             ) : null}
-            {useExplanation && item.explanation ? (
+            {useExplanation && item.feedback ? (
               <Box>
-                <Text>{item.explanation}</Text>
+                <Text>{item.feedback.text}</Text>
               </Box>
             ) : null}
           </Box>
