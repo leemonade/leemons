@@ -117,19 +117,22 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
     <Box className={classes.itemImage}>
       <Box className={classes.itemContent} onClick={click}>
         {/* eslint-disable-next-line no-nested-ternary */}
-        {avatar.image ? (
+        {!!avatar.image && (
           <>
+            {'Holaaaaaa'}
             {avatar.image}
-            {avatar.attached ? <Box className={classes.attachedIcon}>{avatar.attached}</Box> : null}
+            {!!avatar.attached && <Box className={classes.attachedIcon}>{avatar.attached}</Box>}
           </>
-        ) : avatar.icon ? (
+        )}
+        {!avatar.image && !!avatar.icon && (
           <>
+            {'Adios'}
             <Box style={{ backgroundColor: avatar.color }} className={classes.itemIconContainer}>
               {avatar.icon}
             </Box>
             {avatar.attached ? <Box className={classes.attachedIcon}>{avatar.attached}</Box> : null}
           </>
-        ) : null}
+        )}
       </Box>
     </Box>
   );
