@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, FileIcon, COLORS } from '@bubbles-ui/components';
 import { ArchiveIcon } from '@bubbles-ui/icons/solid';
-import { LibraryCardCover } from './LibraryCardCover';
+import { LibraryCardCover } from './LibraryCardCover.1';
 import { LIBRARY_CARD_COVER_DEFAULT_PROPS } from './LibraryCardCover.constants';
 import { LIBRARYCARD_ASSIGMENT_ROLES } from '../Library.constants';
 

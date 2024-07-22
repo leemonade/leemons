@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components';
@@ -16,6 +16,8 @@ import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIc
 import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
 import { useIsStudent } from '@academic-portfolio/hooks';
+import useIsMainTeacherInSubject from '@academic-portfolio/hooks/queries/useIsMainTeacherInSubject';
+import { useIsOwner } from '@leebrary/hooks/useIsOwner';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -29,6 +31,7 @@ const DocumentCardStyles = createStyles((theme, { selected }) => ({
 const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
   const isStudent = useIsStudent();
   const [t] = useTranslateLoader(prefixPN('documentCard'));
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
   const { classes } = DocumentCardStyles({ selected });
   const {
     openConfirmationModal,
@@ -38,6 +41,27 @@ const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const history = useHistory();
+
+  const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
+    useIsMainTeacherInSubject({
+      subjectIds:
+        asset?.providerData?.subjects?.length > 0
+          ? asset.providerData.subjects.map((item) => item.subject)
+          : [],
+      options: {
+        enabled: enableIsTeacherInSubjectQuery && asset?.providerData?.subjects?.length > 0,
+        refetchOnWindowFocus: false,
+      },
+    });
+  const onShowMenu = (value) => {
+    setEnableIsTeacherInSubjectQuery(value);
+  };
+  const isOwner = useIsOwner(asset);
+
+  const menuItemsLoading = useMemo(
+    () => teacherCheckLoading && asset?.providerData?.subjects?.length,
+    [teacherCheckLoading, asset]
+  );
 
   const menuItems = React.useMemo(() => {
     const items = [];
@@ -58,13 +82,31 @@ const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
     }
 
     if (asset.providerData?.published && !isStudent) {
+      const assignAction = (e) => {
+        e.stopPropagation();
+        if (asset.providerData?.subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
+          const updateAsset = () =>
+            history.push(`/private/content-creator/${asset.providerData.id}/edit`);
+
+          openConfirmationModal({
+            title: t('cannotAssignModal.title'),
+            description: isOwner
+              ? t('cannotAssignModal.descriptionWhenOwner')
+              : t('cannotAssignModal.descriptionWhenNotOwner'),
+            onConfirm: isOwner ? updateAsset : undefined,
+            labels: {
+              confirm: isOwner ? t('cannotAssignModal.edit') : t('cannotAssignModal.accept'),
+            },
+          })();
+        } else {
+          history.push(`/private/content-creator/${asset.providerData.id}/assign`);
+        }
+      };
+
       items.push({
         icon: <AssignIcon />,
         children: t('assign'),
-        onClick: (e) => {
-          e.stopPropagation();
-          history.push(`/private/content-creator/${asset.providerData.id}/assign`);
-        },
+        onClick: assignAction,
       });
     }
     if (asset.editable) {
@@ -124,7 +166,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
     }
 
     return items;
-  }, [asset, t]);
+  }, [asset, t, isOwner, isMainTeacherInAssetSubjects]);
 
   return (
     <LibraryCard
@@ -135,6 +177,8 @@ const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
       variantTitle={t('document')}
       variantIcon={<DocumentIcon />}
       className={classes.root}
+      onShowMenu={onShowMenu}
+      menuItemsLoading={menuItemsLoading}
     />
   );
 };

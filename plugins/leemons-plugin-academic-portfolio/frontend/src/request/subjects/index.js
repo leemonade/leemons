@@ -144,6 +144,18 @@ async function getSubjectDetails(subject, withClasses = false, showArchived = fa
   });
 }
 
+async function isMainTeacherInSubject({ subjectIds }) {
+  return leemons.api(
+    `v1/academic-portfolio/subjects/is-main-teacher-in-subject?subjectIds=${JSON.stringify(
+      subjectIds
+    )}`,
+    {
+      allAgents: true,
+      method: 'GET',
+    }
+  );
+}
+
 export {
   listSubjects,
   createSubject,
@@ -155,4 +167,5 @@ export {
   getSubjectDetails,
   removeSubject,
   duplicateSubject,
+  isMainTeacherInSubject,
 };

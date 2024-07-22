@@ -33,6 +33,7 @@ const AssetFormInput = ({
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const session = useSession();
   const locale = getLocale(session);
+  const formValues = form?.watch();
 
   // ························································
   // LABELS & STATICS
@@ -89,7 +90,6 @@ const AssetFormInput = ({
     </AssetForm>
   );
 
-  const formValues = form?.watch();
   if (preview) {
     return (
       <Box style={{ marginBottom: 16 }}>

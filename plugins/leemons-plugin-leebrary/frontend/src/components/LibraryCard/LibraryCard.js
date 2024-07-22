@@ -30,12 +30,14 @@ const LibraryCard = ({
   fullHeight,
   excludeMetadatas,
   isLoading,
+  menuItemsLoading,
   embedded,
   isEmbeddedList,
   category,
   isCreationPreview,
   onPin,
   onUnpin,
+  onShowMenu,
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -53,6 +55,7 @@ const LibraryCard = ({
       </Box>
     );
   }
+
   return (
     <Box
       data-cypress-id={`libraryCard-${asset.id}`}
@@ -73,6 +76,8 @@ const LibraryCard = ({
         badge={badge}
         subject={subject}
         variantIcon={variantIcon}
+        onShowMenu={onShowMenu}
+        menuItemsLoading={menuItemsLoading}
       />
       <LibraryCardBody
         {...asset}

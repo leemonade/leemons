@@ -59,6 +59,7 @@ module.exports = {
         //   'calendar.user.class.calendar',
         //   'calendar.user.class.kanban',
         // ],
+        'leebrary.drawer.tabs': ['leebrary.drawer.tabs.library', 'leebrary.drawer.tabs.new'],
       };
 
       const itemProfiles = [

@@ -1,4 +1,5 @@
 const Excel = require('exceljs');
+const { uniqBy, get } = require('lodash');
 const { createLocalesSheet } = require('./localesSheet');
 const { createPlatformSheet } = require('./platformSheet');
 const { createProvidersSheet } = require('./providersSheet');
@@ -13,7 +14,14 @@ const { createLibraryResourcesSheet } = require('./librarySheet');
 const { createProfilesSheet } = require('./profilesSheet');
 const { createAppearanceSheet } = require('./appearanceSheet');
 const {
-  ASSET_CATEGORIES: { LIBRARY_CATEGORIES, TASKS, TESTS, TEST_QUESTION_BANKS, CONTENT_CREATOR },
+  ASSET_CATEGORIES: {
+    LIBRARY_CATEGORIES,
+    TASKS,
+    TESTS,
+    TEST_QUESTION_BANKS,
+    CONTENT_CREATOR,
+    LEARNING_PATHS_MODULE,
+  },
 } = require('./config/constants');
 const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
 const { createTasksSheet, createTaskSubjectSheet } = require('./tasksSheets');
@@ -29,6 +37,147 @@ const {
 } = require('./programCalendarSheets');
 const { createContentCreatorSheet } = require('./contentCreatorSheet');
 const { createNonIndexableLibraryAssetsSheet } = require('./nonIndexableLibraryAssetsSheet');
+const { createModulesSheet } = require('./modulesSheet');
+
+async function filterQbanksByRequiredByTestAndVersion({ detailedTests, qBanks, ctx }) {
+  const versionControlledQbankIds = await ctx.call('leebrary.assets.filterByVersionOfType', {
+    assetIds: qBanks.map((a) => a.id),
+    categoryId: qBanks?.[0]?.category?.id,
+  });
+
+  const allQBankDetails = await ctx.call('leebrary.assets.getByIds', {
+    ids: qBanks.map((a) => a.id),
+    shouldPrepareAssets: true,
+    signedURLExpirationTime: 7 * 24 * 60 * 60,
+    withFiles: true,
+  });
+
+  const qBanksNeeded = [];
+  detailedTests.forEach((test) => {
+    const questionBank = allQBankDetails.find(
+      (qBank) => qBank.providerData.id === test.providerData.metadata.questionBank
+    );
+    qBanksNeeded.push(questionBank);
+  });
+
+  // Add last version of any qbank regardless if it's used in a test or not
+  versionControlledQbankIds.forEach((latestVersionOfQBank) => {
+    const match = qBanksNeeded.find((qBank) => qBank.id === latestVersionOfQBank.id);
+    if (!match) {
+      qBanksNeeded.push(allQBankDetails.find((qBank) => qBank.id === latestVersionOfQBank));
+    }
+  });
+
+  const filteredQBankDetails = uniqBy(qBanksNeeded, 'id').map((item) => ({
+    ...item,
+    hideInLibrary: !versionControlledQbankIds.includes(item.id),
+  }));
+
+  return { filteredQBankDetails };
+}
+
+function filterAssetsByRequiredByModuleAndVersion({
+  modules = [],
+  items,
+  versionControlledItemIds,
+}) {
+  const neededAssets = [];
+  const seenIds = new Set();
+  const versionControlledSet = new Set(versionControlledItemIds);
+
+  items.forEach((item) => {
+    const isNeededForModule =
+      modules.some((module) =>
+        module.providerData.submission.activities
+          .map(({ activity }) => activity)
+          .includes(item.providerData.id)
+      ) && !seenIds.has(item.id);
+
+    const isLastVersionOfAsset = versionControlledSet.has(item.id) && !seenIds.has(item.id);
+
+    if (isNeededForModule || isLastVersionOfAsset) {
+      neededAssets.push(item);
+      seenIds.add(item.id);
+    }
+  });
+
+  return neededAssets.map((item) => ({
+    ...item,
+    hideInLibrary: !versionControlledSet.has(item.id),
+  }));
+}
+
+async function getAssignablesData({
+  tests,
+  tasks,
+  cCreatorDocuments,
+  modules = [],
+  categories,
+  ctx,
+}) {
+  const filterAssetsByVersionOfTypeService = 'leebrary.assets.filterByVersionOfType';
+  const getAssetsByIdsService = 'leebrary.assets.getByIds';
+
+  // MODULES
+  const versionConrolledModuleIds = await ctx.call(filterAssetsByVersionOfTypeService, {
+    assetIds: modules.map((a) => a.id),
+    categoryId: modules?.[0]?.category?.id,
+  });
+  const filteredModuleDetails = await ctx.call(getAssetsByIdsService, {
+    ids: versionConrolledModuleIds,
+    shouldPrepareAssets: true,
+    withFiles: true,
+  });
+
+  // ALL OTHER ASSIGNABLES
+  const allAssetIds = [...tests, ...tasks, ...cCreatorDocuments].map((a) => a.id);
+  const allAssetDetails = await ctx.call(getAssetsByIdsService, {
+    ids: allAssetIds,
+    shouldPrepareAssets: true,
+    withFiles: true,
+  });
+
+  const versionControlledTestIds = await ctx.call(filterAssetsByVersionOfTypeService, {
+    assetIds: tests.map((a) => a.id),
+    categoryId: tests?.[0]?.category?.id,
+  });
+  const versionControlledTaskIds = await ctx.call(filterAssetsByVersionOfTypeService, {
+    assetIds: tasks.map((a) => a.id),
+    categoryId: tasks?.[0]?.category?.id,
+  });
+  const versionControlledDocumentIds = await ctx.call(filterAssetsByVersionOfTypeService, {
+    assetIds: cCreatorDocuments.map((a) => a.id),
+    categoryId: cCreatorDocuments?.[0]?.category?.id,
+  });
+
+  // FILTER BY MODULE DEPENDENCY AND LAST VERSION
+  const filteredDetailedAssets = filterAssetsByRequiredByModuleAndVersion({
+    modules: filteredModuleDetails,
+    items: allAssetDetails,
+    versionControlledItemIds: [
+      ...versionControlledTestIds,
+      ...versionControlledTaskIds,
+      ...versionControlledDocumentIds,
+    ],
+  });
+
+  const filteredTestDetails = filteredDetailedAssets.filter(
+    (item) => item.category === categories.find((c) => c.key === TESTS).id
+  );
+  const filteredTaskDetails = filteredDetailedAssets.filter(
+    (item) => item.category === categories.find((c) => c.key === TASKS).id
+  );
+  const filteredDocumentDetails = filteredDetailedAssets.filter(
+    (item) => item.category === categories.find((c) => c.key === CONTENT_CREATOR).id
+  );
+
+  return {
+    filteredModuleDetails,
+    filteredTestDetails,
+    filteredTaskDetails,
+    filteredDocumentDetails,
+  };
+}
 
 async function generateBulkDataFile({
   admin,
@@ -78,6 +227,9 @@ async function generateBulkDataFile({
     ctx,
   });
 
+  // TODO: New features will need to handle the activities and qbansk that might be created as not indexable when exporting from a previously imported bulk-data
+  // these not indexable assets are use to handle versions needed by other assets (i.e.: Modules using a previouse version of a task, Tests using previous versions of a qbank)
+
   // ALL ASSETS
   const { items: assetCategories } = await ctx.call('leebrary.categories.listRest', {});
   const allAssets = await ctx.call('leebrary.assets.getAllAssets', {
@@ -104,10 +256,25 @@ async function generateBulkDataFile({
     ctx,
   });
 
+  const {
+    filteredModuleDetails,
+    filteredTestDetails,
+    filteredTaskDetails,
+    filteredDocumentDetails,
+  } = await getAssignablesData({
+    tests: assetsByCategoryKey[TESTS],
+    tasks: assetsByCategoryKey[TASKS],
+    cCreatorDocuments: assetsByCategoryKey[CONTENT_CREATOR],
+    modules: assetsByCategoryKey[LEARNING_PATHS_MODULE],
+    libraryAssetActivities: assetsByCategoryKey[LIBRARY_CATEGORIES],
+    categories: assetCategories,
+    ctx,
+  });
+
   // CONTENT CREATOR
-  await createContentCreatorSheet({
+  const cCreatorDocuments = await createContentCreatorSheet({
     workbook,
-    documents: assetsByCategoryKey[CONTENT_CREATOR],
+    documentDetails: filteredDocumentDetails,
     libraryAssets,
     programs,
     adminShouldOwnAllAssets,
@@ -120,7 +287,7 @@ async function generateBulkDataFile({
   // TASKS
   const tasks = await createTasksSheet({
     workbook,
-    tasks: assetsByCategoryKey[TASKS],
+    taskDetails: filteredTaskDetails,
     libraryAssets,
     adminShouldOwnAllAssets,
     programs,
@@ -131,10 +298,16 @@ async function generateBulkDataFile({
   createTaskSubjectSheet({ workbook, tasks, subjects });
 
   // TESTS AND QBANKS
-  const qBanks = await createTestsQBanksSheet({
+  const { filteredQBankDetails } = await filterQbanksByRequiredByTestAndVersion({
+    detailedTests: filteredTestDetails,
+    qBanks: assetsByCategoryKey[TEST_QUESTION_BANKS],
+    ctx,
+  });
+
+  const qBanks = createTestsQBanksSheet({
     workbook,
     users,
-    qBanks: assetsByCategoryKey[TEST_QUESTION_BANKS],
+    qBankDetails: filteredQBankDetails,
     adminShouldOwnAllAssets,
     programs,
     subjects,
@@ -143,15 +316,31 @@ async function generateBulkDataFile({
   });
 
   const questions = await createTestsQuestionsSheet({ workbook, qBanks, ctx });
-  await createTestsSheet({
+  const tests = await createTestsSheet({
     workbook,
     questions,
-    tests: assetsByCategoryKey[TESTS],
+    testDetails: filteredTestDetails,
     qBanks,
     adminShouldOwnAllAssets,
     programs,
     subjects,
     users,
+    ctx,
+  });
+
+  // MODULES
+  await createModulesSheet({
+    workbook,
+    moduleDetails: filteredModuleDetails,
+    tests,
+    tasks,
+    libraryAssets,
+    cCreatorDocuments,
+    adminShouldOwnAllAssets,
+    programs,
+    subjects,
+    users,
+    nonIndexableAssetsNeeded,
     ctx,
   });
 

@@ -22,6 +22,7 @@ async function handleFileUpload({ file, cover, assetName, ctx }) {
   let coverFile = null;
   try {
     if (!isEmpty(file)) {
+      // If file is an id of an existent file this function below will bring the file
       newFile = await uploadFromSource({ source: file, name: assetName, ctx });
       if (newFile?.type?.indexOf('image') === 0) {
         coverFile = newFile;

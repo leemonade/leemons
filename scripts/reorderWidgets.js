@@ -27,11 +27,12 @@ const ZONE_ORDERS = {
   ],
   'assignables.class.ongoing': [
     'board-messages.class-dashboard',
-    'dashboard.dashboard.classes.welcome',
+    'dashboard.dashboard.class.welcome',
     'assignables.dashboard.subject.need-your-attention',
     'assignables.class.ongoing',
   ],
   'academic-portfolio.class.detail': ['board-messages.class-dashboard'],
+  'leebrary.drawer.tabs': ['leebrary.drawer.tabs.library', 'leebrary.drawer.tabs.new'],
 };
 
 async function init() {

@@ -19,7 +19,7 @@ function getAssignationsStatusCount({
   let needsEvaluation = 0;
 
   assignations.forEach((assignation) => {
-    const hasAllGrades = assignation?.grades?.length === requiredGradesCount;
+    const hasAllGrades = assignation?.grades?.length >= requiredGradesCount;
     const hasGrades = !!assignation?.grades?.length;
     const didFinish = !!assignation?.timestamps?.end || activityFinished;
 

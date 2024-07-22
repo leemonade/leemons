@@ -40,6 +40,9 @@ const schema = new mongoose.Schema(
     properties: {
       type: String,
     },
+    path: {
+      type: String,
+    },
   },
   {
     timestamps: true,

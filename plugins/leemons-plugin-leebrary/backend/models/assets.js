@@ -59,6 +59,9 @@ const assetsSchema = new mongoose.Schema(
     program: {
       type: String,
     },
+    url: {
+      type: String,
+    },
   },
   {
     timestamps: true,

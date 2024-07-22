@@ -27,6 +27,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-big-calendar": "^0.36.1",
+    "react-calendar": "^5.0.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
     "react-overlays": "^5.2.1",

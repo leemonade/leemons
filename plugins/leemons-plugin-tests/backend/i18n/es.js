@@ -75,7 +75,7 @@ module.exports = {
     explanationRequired: 'Campo necesario',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
-    explanationLabel: 'Explicación',
+    explanationLabel: 'Retroalimentación',
     explanationPlaceHolder: 'Añadir aquí el texto de la explicación',
     captionPlaceholder: 'Añadir aquí el texto de la imagen',
     caption: 'Pie de foto/texto alternativo',
@@ -298,6 +298,15 @@ module.exports = {
     pin: 'Marcar como favorito',
     unpin: 'Quitar de favorito',
     share: 'Compartir',
+    cannotAssignModal: {
+      title: 'Directrices de asignación',
+      descriptionWhenNotOwner:
+        'Debes ser profesor de alguna de las asignaturas asociadas al test o su propietario para poder asignarlo.',
+      descriptionWhenOwner:
+        'Eres propietario de este test pero no eres profesor de ninguna de las asignaturas asociadas. Por favor, edita el test para actualizar o eliminar las asignaturas asociadas si deseas asignarlo.',
+      edit: 'Editar test',
+      accept: 'Aceptar',
+    },
   },
   instructions: {
     instructions: 'Instrucciones',
@@ -399,7 +408,7 @@ module.exports = {
     attention: 'Atención',
     correctResponse: 'Respuesta correcta',
     explanation: 'Explicación',
-    returnToTable: 'Volver a la tabla',
+    returnToTable: 'Volver al listado',
     clueN: '{number}ª Pista',
     pendingActivities: 'Actividades pendientes',
     modulesDashboard: 'Dashboard del módulo',
@@ -419,6 +428,7 @@ module.exports = {
     update: 'Actualizar',
     updatedConfig: 'Configuración actualizada correctamente',
     deletedConfig: 'Configuración borrada correctamente',
+    createdConfigSuccess: 'Configuración creada con éxito',
     assignDone: 'Asignación creada con éxito',
     configTitle: 'Selección de preguntas',
     configDescription:
@@ -494,7 +504,7 @@ module.exports = {
     student: 'Estudiante',
     responses: 'Respuestas',
     saveAndSendFeedback: 'Guardar y enviar comentario',
-    returnToTable: 'Volver a la tabla',
+    returnToTable: 'Volver al listado',
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
   },

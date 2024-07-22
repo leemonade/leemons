@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
-import { Box, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
+import { Box, CardEmptyCover } from '@bubbles-ui/components';
+import Cover from '@leebrary/components/Cover';
 import {
   AUDIO_CARD_PLAYER_DEFAULT_PROPS,
   AUDIO_CARD_PLAYER_PROP_TYPES,
@@ -46,7 +47,14 @@ const AudioCardPlayer = ({
     <Box className={classes.audioCardRoot}>
       <Box className={classes.audioCardCover}>
         {cover ? (
-          <ImageLoader height="100%" src={cover} alt={title} radius={4} />
+          <Cover
+            height="100%"
+            alt={title}
+            asset={{ cover }}
+            inlineStyles={{ borderRadius: '4px' }}
+            copyrightAlign={'right'}
+            hideCopyright
+          />
         ) : (
           <CardEmptyCover fileType={'audio'} />
         )}

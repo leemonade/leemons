@@ -1,26 +1,22 @@
 /* eslint-disable no-nested-ternary */
+import React from 'react';
+import PropTypes from 'prop-types';
+import _, { find, isNil, map } from 'lodash';
+import { useHistory } from 'react-router-dom';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import {
   Box,
-  ContextContainer,
+  Stack,
   createStyles,
   PageContainer,
   TotalLayoutContainer,
 } from '@bubbles-ui/components';
-// TODO: HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
 import { useStore } from '@common';
-import prefixPN from '@dashboard/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 import { ZoneWidgets } from '@widgets';
-import _, { find, isNil, map } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useHistory } from 'react-router-dom';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 
-const rightZoneWidth = '320px';
-const Styles = createStyles((theme) => ({
+const Styles = createStyles(() => ({
   header: {
     position: 'relative',
     height: 80,
@@ -40,6 +36,18 @@ const Styles = createStyles((theme) => ({
     minWidth: 250,
     marginLeft: 30,
   },
+  widgets: {
+    paddingBlock: 20,
+    paddingInline: 24,
+    '& > div': {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 28,
+      '& > div:empty': {
+        display: 'none',
+      },
+    },
+  },
 }));
 
 export default function AcademicDashboard({ session }) {
@@ -47,8 +55,7 @@ export default function AcademicDashboard({ session }) {
     loading: true,
   });
   const history = useHistory();
-  const { classes: styles } = Styles();
-  const [t] = useTranslateLoader(prefixPN('dashboard'));
+  const { classes: styles } = Styles({}, { name: 'AcademicDashboard' });
   const scrollRef = React.useRef();
 
   async function selectProgram(program) {
@@ -103,13 +110,7 @@ export default function AcademicDashboard({ session }) {
 
   const widgets = React.useCallback(
     ({ Component, key, properties }) => (
-      <Box
-        key={key}
-        sx={(theme) => ({
-          paddingTop: properties.noPadding ? 0 : theme.spacing[6],
-          paddingBottom: properties.noPadding ? 0 : theme.spacing[6],
-        })}
-      >
+      <Box key={key}>
         <Component program={store.selectedProgram} session={session} />
       </Box>
     ),
@@ -155,44 +156,15 @@ export default function AcademicDashboard({ session }) {
       }
     >
       <Box ref={scrollRef} className={styles.content}>
-        <PageContainer
-          sx={(theme) => ({
-            paddingTop: theme.spacing[2],
-            maxWidth: '100%',
-          })}
-        >
-          <Box>
-            {store.selectedProgram ? (
-              <>
-                {/* -- LEFT ZONE -- */}
-                <ZoneWidgets zone="dashboard.program.left">{widgets}</ZoneWidgets>
-              </>
-            ) : null}
-          </Box>
-        </PageContainer>
+        <Box className={styles.widgets}>
+          {store.selectedProgram ? (
+            <>
+              {/* -- LEFT ZONE -- */}
+              <ZoneWidgets zone="dashboard.program.left">{widgets}</ZoneWidgets>
+            </>
+          ) : null}
+        </Box>
       </Box>
-
-      {/* -- RIGHT ZONE -- */}
-      {/* store.selectedProgram ? (
-          <Paper
-            sx={(theme) => ({
-              position: 'fixed',
-              right: 0,
-              top: 0,
-              bottom: 0,
-              background: theme.colors.uiBackground02,
-              width: rightZoneWidth,
-            })}
-          >
-            <ZoneWidgets zone="dashboard.program.right">
-              {({ Component, key }) => (
-                <Box key={key}>
-                  <Component program={store.selectedProgram} session={session} />
-                </Box>
-              )}
-            </ZoneWidgets>
-          </Paper>
-        ) : null */}
     </TotalLayoutContainer>
   );
 }

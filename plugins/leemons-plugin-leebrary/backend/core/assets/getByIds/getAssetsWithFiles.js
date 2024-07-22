@@ -25,16 +25,11 @@ async function getAssetsWithFiles({ assets, assetsIds, ctx }) {
   const files = await ctx.tx.db.Files.find({ id: fileIds }).lean();
 
   return assets.map((asset) => {
-    const items = assetsFiles
-      .filter((assetFile) => assetFile.asset === asset.id)
-      .map((assetFile) => find(files, { id: assetFile.file }));
-
     if (asset.cover) {
       asset.cover = find(files, { id: asset.cover });
     }
 
     const bookmark = find(bookmarks, { asset: asset.id });
-
     if (bookmark) {
       asset.url = bookmark.url;
       asset.icon = find(files, { id: bookmark.icon });
@@ -42,6 +37,10 @@ async function getAssetsWithFiles({ assets, assetsIds, ctx }) {
       asset.mediaType = bookmark.mediaType ?? 'webpage';
       asset.metadata = [];
     }
+
+    const items = assetsFiles
+      .filter((assetFile) => assetFile.asset === asset.id)
+      .map((assetFile) => find(files, { id: assetFile.file }));
 
     if (!isEmpty(items)) {
       if (asset.cover) {

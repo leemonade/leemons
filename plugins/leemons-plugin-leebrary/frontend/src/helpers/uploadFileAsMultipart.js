@@ -131,17 +131,27 @@ async function sendAllChunksInOrder(jsfile, dbfile, onProgress) {
   return etags;
 }
 
-async function createNewMultipartFileUpload(jsfile, { filePaths, pathsInfo, isFolder, name } = {}) {
+async function createNewMultipartFileUpload(
+  jsfile,
+  { filePaths, pathsInfo, isFolder, name, copyright, externalUrl } = {}
+) {
+  const body = {
+    name: name || jsfile.name,
+    type: jsfile.type,
+    size: jsfile.size,
+    isFolder,
+    filePaths,
+    pathsInfo,
+  };
+  if (copyright && !_.isEmpty(copyright)) {
+    body.copyright = JSON.stringify(copyright);
+  }
+  if (externalUrl) {
+    body.externalUrl = externalUrl;
+  }
   return leemons.api('v1/leebrary/file/multipart/new', {
     allAgents: true,
-    body: {
-      name: name || jsfile.name,
-      type: jsfile.type,
-      size: jsfile.size,
-      isFolder,
-      filePaths,
-      pathsInfo,
-    },
+    body,
     method: 'POST',
   });
 }
@@ -160,6 +170,18 @@ async function finishMultipartFileUpload(dbfile, path, etags) {
 
 async function getZipFiles(jsfile) {
   const zip = new JSZip();
+
+  // Check if the file is a valid zip file
+  if (jsfile.type !== 'application/zip') {
+    throw new Error('Invalid file type. Only zip files are allowed.');
+  }
+
+  // Check if the file size is within acceptable limits (e.g., 200MB)
+  const maxFileSize = 200 * 1024 * 1024; // 200MB
+  if (jsfile.size > maxFileSize) {
+    throw new Error('File size exceeds the maximum limit of 200MB.');
+  }
+
   await zip.loadAsync(jsfile);
 
   async function downloadEntry(entry) {
@@ -179,7 +201,7 @@ async function getZipFiles(jsfile) {
 
 async function uploadFileAsMultipart(
   jsfile,
-  { onProgress = () => {}, name, isFolder: _isFolder = false } = {}
+  { onProgress = () => {}, name, isFolder: _isFolder = false, externalFileInfo } = {}
 ) {
   if (jsfile instanceof File || jsfile instanceof Blob) {
     const isFolder = _isFolder && jsfile.name?.endsWith('.zip');
@@ -208,6 +230,8 @@ async function uploadFileAsMultipart(
       pathsInfo,
       isFolder,
       name,
+      copyright: externalFileInfo?.copyright,
+      externalUrl: externalFileInfo?.externalUrl,
     });
     const totalSize = _.sum(_.map(filesToUpload, 'size'));
     try {

@@ -18,7 +18,17 @@ const { findOne: getSettings } = require('../../settings');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<LibraryFile>} A promise that resolves with the new multipart file.
  */
-async function newMultipart({ name, type, size, isFolder, filePaths, pathsInfo, ctx }) {
+async function newMultipart({
+  name,
+  type,
+  size,
+  isFolder,
+  filePaths,
+  pathsInfo,
+  copyright,
+  externalUrl,
+  ctx,
+}) {
   const extension = mime.extension(type);
   const fileData = {
     name,
@@ -41,7 +51,12 @@ async function newMultipart({ name, type, size, isFolder, filePaths, pathsInfo, 
     file = await handleFileSystem({ file, filePaths });
   }
 
-  await ctx.tx.db.Files.updateOne({ id: file.id }, file);
+  // Add copyright and externalUrl to the file when provided by third party providers
+  const updateData = { ...file };
+  if (copyright) updateData.copyright = JSON.parse(copyright);
+  if (externalUrl) updateData.externalUrl = externalUrl;
+
+  await ctx.tx.db.Files.updateOne({ id: file.id }, updateData);
 
   return file;
 }

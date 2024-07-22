@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { Box, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
+import { Box, CardEmptyCover } from '@bubbles-ui/components';
 import { ButtonIcon } from '@leebrary/components/AssetPlayer/components/ButtonIcon';
 import { AssetPlayer } from '@leebrary/components/AssetPlayer';
+import Cover from '@leebrary/components/Cover';
 import { AssetPlayerLibraryWrapperStyles } from './AssetPlayerLibraryWrapper.styles';
 import {
   ASSET_PLAYER_LIBRARY_WRAPPER_DEFAULT_PROPS,
@@ -49,6 +50,7 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
     }
   };
   const isPDFOrGotAssetRole = assetRole || isPDF;
+
   return (
     <Box className={classes.root} data-cypress-id="library-detail-player" onClick={handleOpenPdf}>
       <Box className={classes.color} />
@@ -66,8 +68,8 @@ const AssetPlayerLibraryWrapper = ({ asset }) => {
               <ButtonIcon fileType="file" />
             </Box>
           )}
-          {asset?.cover ? (
-            <ImageLoader src={asset?.cover} height={200} width={576} />
+          {asset.cover ? (
+            <Cover asset={asset} height={200} copyrightAlign="right" />
           ) : (
             <CardEmptyCover
               fileType={assetRole || 'file'}

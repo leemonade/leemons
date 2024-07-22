@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const { validatePrefix } = require('../validation/validate');
 
-async function update({ zoneKey, key, url, name, description, properties, profiles, ctx }) {
+async function update({ zoneKey, key, url, name, description, properties, path, profiles, ctx }) {
   validatePrefix({ type: key, calledFrom: ctx.callerPlugin, ctx });
 
   const toUpdate = {
@@ -11,6 +11,7 @@ async function update({ zoneKey, key, url, name, description, properties, profil
   if (!_.isUndefined(url)) toUpdate.url = url;
   if (!_.isUndefined(name)) toUpdate.name = name;
   if (!_.isUndefined(description)) toUpdate.description = description;
+  if (!_.isUndefined(path)) toUpdate.path = path;
   if (!_.isUndefined(properties)) toUpdate.properties = JSON.stringify(properties);
   if (_.isArray(profiles)) {
     await ctx.tx.db.WidgetItemProfiles.deleteMany({ key });

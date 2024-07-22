@@ -89,7 +89,9 @@ export default function Step3({
               >
                 <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                   <BigCalendar {...bigCalendarConf} />
-                  <CalendarKey />
+                  <Box sx={(theme) => ({ marginTop: theme.spacing.xl })}>
+                    <CalendarKey />
+                  </Box>
                 </Box>
                 <PrintCalendar
                   calendarConf={bigCalendarConf}

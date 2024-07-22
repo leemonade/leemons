@@ -100,22 +100,21 @@ const PermissionsData = ({
   const { classes: classesStyles } = PermissionsDataStyles();
   const [activeTab, setActiveTab] = useState('tab1');
 
-  const [teacherProfile, setTeacherProfile] = useState(null);
+  const [userProfiles, setUserProfiles] = useState(null);
 
-  const getTeacherProfile = async () => {
+  const getUserProfiles = async () => {
     const response = await getProfilesRequest();
-    setTeacherProfile(response?.profiles?.teacher);
+    setUserProfiles(response?.profiles);
   };
   // EFFECTS
   // ··············································································
   useEffect(() => {
-    getTeacherProfile();
+    getUserProfiles();
   }, []);
 
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
-
   // ··············································································
   // DATA PROCESS
 
@@ -562,6 +561,7 @@ const PermissionsData = ({
                       value={editUsersData}
                       alreadySelectedUsers={[]}
                       onChange={setEditUsersData}
+                      userProfiles={userProfiles}
                       t={t}
                       editMode
                     />
@@ -647,7 +647,7 @@ const PermissionsData = ({
                         asset.providerData.role &&
                         asset.providerData.role !== 'content-creator'
                       }
-                      teacherProfile={teacherProfile}
+                      userProfiles={userProfiles}
                       onChange={setUsersData}
                       asset={asset}
                       t={t}

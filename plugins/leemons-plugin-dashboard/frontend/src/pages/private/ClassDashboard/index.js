@@ -99,6 +99,11 @@ const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar
   widgets: {
     height: 'calc(100% - 80px)',
   },
+  widgetTab: {
+    '& > div > div > div:empty': {
+      display: 'none',
+    },
+  },
 }));
 
 export default function ClassDashboard({ session }) {
@@ -237,8 +242,9 @@ export default function ClassDashboard({ session }) {
 
       return (
         <TabPanel
-          label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
           key={key}
+          label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
+          className={styles.widgetTab}
         >
           <Component {...properties} classe={store.class} session={session} />
         </TabPanel>

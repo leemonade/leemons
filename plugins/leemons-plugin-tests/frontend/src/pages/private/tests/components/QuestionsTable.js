@@ -43,7 +43,6 @@ export default function QuestionsTable({
       <Text sx={{ maxHeight: 56 }}> {cellValue}</Text>
     </TextClamp>
   );
-
   const tableHeaders = React.useMemo(() => {
     let result = [];
     if (!reorderMode && !hideCheckbox) {
@@ -87,39 +86,43 @@ export default function QuestionsTable({
         accessor: 'type',
         className: styles.tableHeader,
       },
-      {
-        Header: t('levelLabel'),
-        accessor: 'level',
-        className: styles.tableHeader,
-        valueRender: (levelName) => {
-          const findLevelName = levels?.find((l) => l.value === levelName);
-          return handleTextCell(findLevelName?.label);
-        },
-      },
-      {
-        Header: 'Categoría',
-        accessor: 'category',
-        className: styles.tableHeader,
-        valueRender: (categoryId) => {
-          const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
-          return (
-            <Box
-              sx={{
-                display: 'flex',
-                width: '100%',
-                justifyContent: 'flex-end',
-              }}
-            >
-              {handleTextCell(findCategoryLabel?.value)}
-            </Box>
-          );
-        },
-        style: {
-          textAlign: 'right',
-        },
-      },
     ]);
 
+    if (!isDrawer) {
+      result.push(
+        {
+          Header: t('levelLabel'),
+          accessor: 'level',
+          className: styles.tableHeader,
+          valueRender: (levelName) => {
+            const findLevelName = levels?.find((l) => l.value === levelName);
+            return handleTextCell(findLevelName?.label);
+          },
+        },
+        {
+          Header: 'Categoría',
+          accessor: 'category',
+          className: styles.tableHeader,
+          valueRender: (categoryId) => {
+            const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
+            return (
+              <Box
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                {handleTextCell(findCategoryLabel?.value)}
+              </Box>
+            );
+          },
+          style: {
+            textAlign: 'right',
+          },
+        }
+      );
+    }
     if (!hideOpenIcon) {
       result.push({
         Header: t('actionsHeader'),
@@ -169,7 +172,7 @@ export default function QuestionsTable({
   let tableComponent = <Table columns={tableHeaders} data={tableItems} />;
   if (reorderMode) {
     const itemsById = keyBy(tableItems, 'id');
-    const items = map(value, (id) => itemsById[id]);
+    const items = tableItems?.length ? map(value, (id) => itemsById[id]) : [];
 
     tableComponent = (
       <TableInput
@@ -198,4 +201,5 @@ QuestionsTable.propTypes = {
   hideCheckbox: PropTypes.bool,
   questionBank: PropTypes.object,
   isDrawer: PropTypes.bool,
+  setManualQuestions: PropTypes.func,
 };
