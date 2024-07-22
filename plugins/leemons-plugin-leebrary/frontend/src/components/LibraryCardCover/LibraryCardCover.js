@@ -76,7 +76,7 @@ const LibraryCardCover = ({
     }
 
     // Non-image Assets creation cases
-    if (coverCopyrightDataFetched) {
+    if (coverCopyrightDataFetched?.externalUrl) {
       return coverCopyrightDataFetched.externalUrl;
     }
 
