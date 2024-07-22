@@ -233,7 +233,7 @@ const LibraryCardCover = ({
       ) : (
         MemoizedEmptyCover
       )}
-      {(original?.cover?.copyright || file?.copyright || coverCopyrightDataFetched) &&
+      {(original?.cover?.copyright || file?.copyright || !isEmpty(coverCopyrightDataFetched)) &&
         getCoverCopyright()}
     </Box>
     // </AnimatePresence>
