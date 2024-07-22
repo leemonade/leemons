@@ -65,7 +65,7 @@ const Cover = ({
       return cover.externalUrl;
     }
 
-    if (coverCopyrightDataFetched) {
+    if (coverCopyrightDataFetched?.externalUrl) {
       return coverCopyrightDataFetched.externalUrl;
     }
 
