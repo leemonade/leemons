@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Button, Switch, Box, Text } from '@bubbles-ui/components';
+import { Stack, Switch, Box, Text } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
 import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -162,4 +162,7 @@ export default function CloseButtons({ instance, hidden }) {
   );
 }
 
-CloseButtons.propTypes = {};
+CloseButtons.propTypes = {
+  instance: PropTypes.object.isRequired,
+  hidden: PropTypes.bool,
+};

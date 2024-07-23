@@ -206,7 +206,7 @@ async function updateClass({ data, ctx }) {
       parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
       name: 'roomCard.class',
       subName: roomData.name,
-      icon: '/public/academic-portfolio/class-icon.svg',
+      // icon: '/public/academic-portfolio/class-icon.svg',
     });
   } catch (e) {
     // Nothing
