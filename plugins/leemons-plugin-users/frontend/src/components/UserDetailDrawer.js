@@ -129,6 +129,7 @@ function UserDetailDrawer({
             onLoadUser={handleOnLoadUser}
             onLoadUserAgents={handleOnLoadUserAgents}
             viewMode={viewMode}
+            onChat={handleOnClose}
           />
           <EnrollUserSummary
             userId={userId}

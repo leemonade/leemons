@@ -487,5 +487,6 @@ module.exports = {
       teacher: 'Teacher detail',
     },
     tagsTitle: 'Tags',
+    chatButton: 'Chat',
   },
 };

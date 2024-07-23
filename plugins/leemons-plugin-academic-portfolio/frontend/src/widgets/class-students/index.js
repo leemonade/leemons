@@ -49,7 +49,7 @@ function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) 
 
   return (
     <>
-      {widgetsLength === 1 && label ? (
+      {widgetsLength === 1 && !!label && (
         <Box
           sx={(theme) => ({
             display: 'flex',
@@ -59,14 +59,12 @@ function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) 
           })}
         >
           <Title order={4}>{label}</Title>
-          {zone?.widgetItems.length === 1 ? (
-            <ZoneWidgets zone={zoneKey}>{widgets}</ZoneWidgets>
-          ) : null}
+          {zone?.widgetItems.length === 1 && <ZoneWidgets zone={zoneKey}>{widgets}</ZoneWidgets>}
         </Box>
-      ) : null}
-      {zone?.widgetItems.length > 1 || widgetsLength > 1 ? (
+      )}
+      {(zone?.widgetItems.length > 1 || widgetsLength > 1) && (
         <ZoneWidgets zone={zoneKey}>{widgets}</ZoneWidgets>
-      ) : null}
+      )}
       <UserDetailDrawer
         opened={!!openedStudent}
         userId={openedStudent}
