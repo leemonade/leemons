@@ -119,7 +119,6 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
         {/* eslint-disable-next-line no-nested-ternary */}
         {!!avatar.image && (
           <>
-            {'Holaaaaaa'}
             {avatar.image}
             {!!avatar.attached && <Box className={classes.attachedIcon}>{avatar.attached}</Box>}
           </>
