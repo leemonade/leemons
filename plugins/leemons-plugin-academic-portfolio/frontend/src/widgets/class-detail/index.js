@@ -1,4 +1,6 @@
-/* eslint-disable no-nested-ternary */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { forEach } from 'lodash';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import {
   Avatar,
@@ -15,12 +17,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
 import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { getCookieToken, getSessionCenter, getSessionProfile } from '@users/session';
-import { forEach } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import hooks from 'leemons-hooks';
-import { ChatDrawer } from '@comunica/components';
+import { getSessionCenter, getSessionProfile } from '@users/session';
+import { useComunica } from '@comunica/context';
 
 function getViewMode(profile) {
   if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
@@ -32,12 +30,11 @@ function ClassDetailWidget({ classe }) {
   const [t] = useTranslateLoader(prefixPN('classDetailWidget'));
   const center = getSessionCenter();
   const profile = getSessionProfile();
-  const sessionUserAgent = center?.userAgentId;
 
   const [openedUser, setOpenedUser] = React.useState();
   const [openedUserType, setOpenedUserType] = React.useState();
-  const [chatOpened, setChatOpened] = React.useState(false);
-  const [chatRoom, setChatRoom] = React.useState();
+
+  const { openUserRoom } = useComunica();
 
   function handleOnClickRow(userId, sysName) {
     setOpenedUser(userId);
@@ -131,14 +128,13 @@ function ClassDetailWidget({ classe }) {
                 handleOnClickRow(student.user.id, 'student');
               }}
             />
-            {/*
+
             <ActionButton
               icon={<PluginComunicaIcon width={18} height={18} />}
               onClick={() => {
-                setChatOpened(true);
+                openUserRoom(student.id);
               }}
             />
-            */}
           </Stack>
         ),
       });
@@ -185,16 +181,6 @@ function ClassDetailWidget({ classe }) {
           </Box>
         </Box>
       </ContextContainer>
-      {/*
-      <ChatDrawer
-        onClose={() => {
-          hooks.fireEvent('chat:closeDrawer');
-          setChatOpened(false);
-        }}
-        opened={chatOpened}
-        room={`academic-portfolio.room.class.${classe.id}.student.${sessionUserAgent}.teachers`}
-      />
-      */}
     </>
   );
 }
