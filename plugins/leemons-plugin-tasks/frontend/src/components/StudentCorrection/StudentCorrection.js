@@ -33,11 +33,10 @@ import EvaluationFeedback from '@assignables/components/EvaluationFeedback/Evalu
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { ChatDrawer } from '@comunica/components';
-import hooks from 'leemons-hooks';
 import ActivityFeedbackAlertManager from '@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager';
 import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import { useComunica } from '@comunica/context';
 import CurriculumRender from '../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender';
 import { useStudentCorrectionStyles } from './StudentCorrection.style';
 import { TextIcon } from '../../assets/images/TextIcon';
@@ -45,8 +44,8 @@ import LinkSubmission from '../Correction/components/LinkSubmission/LinkSubmissi
 import { useUpdateTimestamps } from '../Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 
 function SubjectTab({ assignation, subject, t }) {
-  const [chatOpened, setChatOpened] = useState(false);
   const room = useAssignationComunicaRoom({ assignation, subject });
+  const { openRoom } = useComunica();
 
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
@@ -79,19 +78,10 @@ function SubjectTab({ assignation, subject, t }) {
         assignation={assignation}
         subject={subject}
         onChatClick={() => {
-          hooks.fireEvent('chat:openDrawer', { room });
-          setChatOpened(true);
+          console.log('openRoom', room);
+          openRoom(room);
         }}
         hideChat={!room}
-      />
-
-      <ChatDrawer
-        onClose={() => {
-          hooks.fireEvent('chat:closeDrawer');
-          setChatOpened(false);
-        }}
-        opened={chatOpened}
-        room={room}
       />
     </>
   );
