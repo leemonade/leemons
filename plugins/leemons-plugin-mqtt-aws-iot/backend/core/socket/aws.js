@@ -25,6 +25,7 @@ async function getConfig({ ctx }) {
       region: credentials.region,
       accessKeyId: credentials.accessKeyId,
       secretAccessKey: credentials.secretAccessKey,
+      sessionToken: credentials.sessionToken,
     };
 
     return config;
@@ -50,6 +51,7 @@ async function getIot({ ctx }) {
     region: config.region,
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
+    sessionToken: config.sessionToken,
   });
 }
 
@@ -59,6 +61,7 @@ async function getSts({ ctx }) {
     region: config.region,
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
+    sessionToken: config.sessionToken,
   });
 }
 

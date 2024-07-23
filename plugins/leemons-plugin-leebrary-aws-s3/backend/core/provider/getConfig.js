@@ -22,6 +22,7 @@ async function getConfig({ ctx } = {}) {
         region: credentials.region,
         accessKey: credentials.accessKeyId,
         secretAccessKey: credentials.secretAccessKey,
+        sessionToken: credentials.sessionToken,
       },
     ];
   } else {

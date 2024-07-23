@@ -33,6 +33,10 @@ function getAWSConfig({ config = {}, credentials }) {
     clientConfig.region = credentials.region;
   }
 
+  if (credentials?.sessionToken) {
+    clientConfig.credentials.sessionToken = credentials.sessionToken;
+  }
+
   return clientConfig;
 }
 

@@ -28,6 +28,7 @@ function getAWSCredentialsFromEnv(prefix) {
   let accessKeyId = process.env.AWS_ACCESS_KEY;
   let secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
   let region = process.env.AWS_REGION;
+  let sessionToken = process.env.AWS_SESSION_TOKEN;
 
   const upperCasePrefix = prefix?.toUpperCase();
 
@@ -35,13 +36,14 @@ function getAWSCredentialsFromEnv(prefix) {
     accessKeyId = process.env[`${upperCasePrefix}_AWS_ACCESS_KEY`] ?? accessKeyId;
     secretAccessKey = process.env[`${upperCasePrefix}_AWS_SECRET_ACCESS_KEY`] ?? secretAccessKey;
     region = process.env[`${upperCasePrefix}_AWS_REGION`] ?? region;
+    sessionToken = process.env[`${upperCasePrefix}_AWS_SESSION_TOKEN`] ?? sessionToken;
   }
 
   if (!accessKeyId || !secretAccessKey || !region) {
     return null;
   }
 
-  return { accessKeyId, secretAccessKey, region };
+  return { accessKeyId, secretAccessKey, region, sessionToken };
 }
 
 /**
@@ -58,6 +60,7 @@ async function getAWSCredentials({
   prefix,
   roleName,
   sessionName,
+  rolePolicy,
   ctx,
 }) {
   const dbCredentials = await getAWSCredentialsFromDB({ ctxKeyValueModelName, ctx });
@@ -70,6 +73,7 @@ async function getAWSCredentials({
       roleArn: roleToAssume,
       sessionName,
       credentials: dbCredentials ?? envCredentials,
+      policy: rolePolicy,
       ctx,
     });
   }

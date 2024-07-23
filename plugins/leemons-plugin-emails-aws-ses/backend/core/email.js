@@ -36,6 +36,7 @@ class Email {
           region: credentials.region,
           accessKey: credentials.accessKeyId,
           secretAccessKey: credentials.secretAccessKey,
+          sessionToken: credentials.sessionToken,
         },
       ];
     }
@@ -58,6 +59,7 @@ class Email {
       region: config.region,
       accessKeyId: config.accessKey,
       secretAccessKey: config.secretAccessKey,
+      sessionToken: config.sessionToken,
     });
     const transporter = nodemailer.createTransport({
       SES: { ses, aws },
