@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  ActivityAccordion,
-  ActivityAccordionPanel,
   Box,
-  Button,
-  ContextContainer,
-  HtmlText,
-  Text,
-  TotalLayoutContainer,
-  TotalLayoutStepContainer,
-  TotalLayoutFooterContainer,
-  Stack,
-  Alert,
   Tabs,
+  Text,
+  Alert,
+  Stack,
+  Button,
+  HtmlText,
   TabPanel,
   ImageLoader,
+  ContextContainer,
+  ActivityAccordion,
+  TotalLayoutContainer,
+  ActivityAccordionPanel,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
@@ -73,17 +73,14 @@ function SubjectTab({ assignation, subject, t }) {
   }
 
   return (
-    <>
-      <EvaluationFeedback
-        assignation={assignation}
-        subject={subject}
-        onChatClick={() => {
-          console.log('openRoom', room);
-          openRoom(room);
-        }}
-        hideChat={!room}
-      />
-    </>
+    <EvaluationFeedback
+      assignation={assignation}
+      subject={subject}
+      onChatClick={() => {
+        openRoom(room);
+      }}
+      hideChat={!room}
+    />
   );
 }
 
