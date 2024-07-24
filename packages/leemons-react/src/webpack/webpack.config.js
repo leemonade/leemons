@@ -227,7 +227,13 @@ module.exports = function webpackConfig({
         filename: 'index.html',
         template: path.resolve(__dirname, '../templates', isDev ? 'dev.html' : 'prod.html'),
       }),
-      isDev && new ReactRefreshWebpackPlugin(),
+      isDev &&
+        new ReactRefreshWebpackPlugin({
+          overlay: {
+            entry: require.resolve('@pmmmwh/react-refresh-webpack-plugin/client/ErrorOverlayEntry'),
+            module: path.resolve(__dirname, 'customErrorOverlay.js'),
+          },
+        }),
       useDebug && new BundleAnalyzerPlugin({ analyzerMode: 'disabled' }),
       useDebug && new webpack.debug.ProfilingPlugin(),
       isProduction &&
