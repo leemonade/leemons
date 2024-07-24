@@ -53,7 +53,6 @@ export default function DetailQuestionForm({
   const mapProperties = form.watch('mapProperties');
   const type = form.watch('type');
   const variation = form.watch('variation');
-  const questionImage = form.watch('questionImage');
   const hasHelp = form.watch('hasHelp');
 
   const questionTypesSelectData = useMemo(() => getQuestionTypesForSelect(t), [t]);
@@ -119,6 +118,7 @@ export default function DetailQuestionForm({
     if (type === QUESTION_TYPES.MAP && mapProperties?.markers.type === 'numbering') {
       useLetters = false;
     }
+
     return map(answers, (item, index) => ({
       value: index,
       label: useLetters ? LETTERS[index] : `${index + 1}`,
@@ -154,17 +154,11 @@ export default function DetailQuestionForm({
     ];
   }, [t, rightAnswerSelected]);
 
-  const hiddenAnswer = useMemo(() => {
-    if (type === QUESTION_TYPES.MAP) {
-      return answers
-        .map((item, index) => (item?.hideOnHelp ? index : -1))
-        .filter((item) => item >= 0)[0];
-    }
-
-    return answers
-      .map((item, index) => (item?.value?.hideOnHelp ? index : -1))
-      .filter((item) => item >= 0)[0];
-  }, [form.getValues(SOLUTION_KEY_BY_TYPE[type]), type, answers]);
+  const hiddenAnswer = useMemo(
+    () =>
+      answers.map((item, index) => (item?.hideOnHelp ? index : -1)).filter((item) => item >= 0)[0],
+    [answers]
+  );
 
   return (
     <FormProvider {...form}>
@@ -295,7 +289,7 @@ export default function DetailQuestionForm({
 
                 <Controller
                   control={form.control}
-                  name="stem.text"
+                  name="stem"
                   rules={{
                     required: t('questionRequired'),
                   }}
@@ -307,6 +301,10 @@ export default function DetailQuestionForm({
                       editorStyles={{ minHeight: '96px' }}
                       placeholder={t('statementPlaceHolder')}
                       {...field}
+                      value={field.value?.text}
+                      onChange={(value) => {
+                        field.onChange({ text: value, format: 'html' });
+                      }}
                     />
                   )}
                 />

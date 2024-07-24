@@ -1,21 +1,79 @@
 const _ = require('lodash');
 
-/**
- * @typedef {Object} QuestionData
- * @property {string} type - The type of the question (e.g., 'map', 'mono-response').
- * @property {boolean} [published] - Indicates if the question should be published.
- * @property {Object[]} [tags] - Tags associated with the question.
- * @property {Object[]} [clues] - Clues associated with the question.
- * @property {Object} properties - Properties specific to the question type.
- * @property {string} [properties.image] - Image URL for 'map' type questions.
- * @property {Object[]} [properties.responses] - Responses for 'mono-response' type questions.
- * @property {string} [properties.responses[].value.image] - Image URL for each response.
- * @property {string} [properties.responses[].value.imageDescription] - Description of the image for each response.
- * @property {string} [questionImage] - Image URL for the question.
- * @property {string} [questionImageDescription] - Description of the question image.
- */
+const { QUESTION_TYPES } = require('../../config/constants');
 
 const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
+
+/**
+ * Represents a formatted text shape.
+ *
+ * @typedef {Object} formattedTextShape
+ * @property {string} format - The format of the text.
+ * @property {string} text - The text content.
+ */
+
+/**
+ * Represents a choice for a mono-responsequestion.
+ *
+ * @typedef {Object} Choice
+ * @property {formattedTextShape} text - The 'response' of the choice. Specifies format (html in Leemons).
+ * @property {boolean} isCorrect - Indicates if the choice is correct.
+ * @property {formattedTextShape} feedback - The feedback for the choice. Specifies format (html in Leemons).
+ * @property {string} image - The image 'response' of the choice, only present in questions that use images as answers.
+ * @property {string} imageDescription - The description of the image answer ,only present in questions that use images as answers.
+ * @property {boolean} hideOnHelp - Indicates if the choice should be hidden on help.
+ */
+
+/**
+ * Represents the properties for map questions.
+ *
+ * @typedef {Object} MapProperties
+ * @property {string} image - The map image.
+ * @property {string} caption - The caption for the map image.
+ * @property {Markers} markers - The markers on the map.
+ */
+
+/**
+ * Represents the markers on a map.
+ *
+ * @typedef {Object} Markers
+ * @property {string} backgroundColor - The background color of the markers.
+ * @property {string} type - The type of the markers: 'numerical' or 'letter' (alphabetical).
+ * @property {Array<MapMarker>} list - The list of markers.
+ * @property {{left: string, top: string}} position - The position of the markers.
+ */
+
+/**
+ * Represents a marker on a map.
+ *
+ * @typedef {Object} MapMarker
+ * @property {string} response - The response associated with the marker.
+ * @property {boolean} hideOnHelp - Indicates if the marker should be hidden on help.
+ * @property {string} left - The left position of the marker.
+ * @property {string} top - The top position of the marker.
+ */
+
+/**
+ * Represents the data for a question.
+ *
+ * @typedef {Object} QuestionData
+ * @property {string} id - The unique identifier for the question.
+ * @property {string} deploymentID - The deployment identifier for the question.
+ * @property {string} questionBank - The question bank identifier the question belongs to.
+ * @property {string} type - The type of the question.
+ * @property {formattedTextShape} stem - The stem of the question. Specifies format (html in Leemons).
+ * @property {boolean} hasEmbeddedAnswers - Indicates if the question has embedded answers.
+ * @property {boolean} hasImageAnswers - Indicates if the question has image answers.
+ * @property {string} level - The level of the question.
+ * @property {formattedTextShape} globalFeedback - The global feedback for the question.
+ * @property {boolean} hasAnswerFeedback - Indicates if the question has feedback per answer (be it one or many answers).
+ * @property {Array<string>} clues - The text hints for the question.
+ * @property {boolean} hasHelp - Indicates if the question has text hints or if it is configure to hide answer options.
+ * @property {string} category - The category of the question.
+ * @property {string} questionImage - An image cover for the question.
+ * @property {Array<Choice>} choices - The solution property for mono-response and multi-choice questions. Only present in multi-choice questions.
+ * @property {Object} mapProperties - The solution property for map questions. Only present in map questions.
+ */
 
 /**
  * Creates a question based on the provided data.
@@ -27,34 +85,32 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @returns {Promise<Object>} - The created question.
  */
 async function createQuestion({ data, published, ctx }) {
-  const { tags, clues, properties, ...props } = data;
-  // ES: Si el tipo es map creamos el asset
-  if (data.type === 'map') {
+  const { tags, choices, mapProperties, ...props } = _.cloneDeep(data);
+
+  // For map questions, create the map image asset
+  if (props.type === QUESTION_TYPES.MAP) {
     const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
       asset: {
-        name: `Image question`,
-        cover:
-          data.properties.image?.cover?.id ?? data.properties.image?.cover ?? data.properties.image,
+        name: `Map question image`,
+        cover: mapProperties.image?.cover?.id ?? mapProperties.image,
         indexable: false,
         public: true, // TODO Cambiar a false despues de hacer la demo
       },
       options: { published },
     });
-    properties.image = asset.id;
+    mapProperties.image = asset.id;
   }
 
-  if (data.type === 'mono-response' && data.withImages) {
+  // Form mono-response questions that use images as answers, create the respective assets
+  if (props.type === QUESTION_TYPES.MONO_RESPONSE && props.hasImageAnswers) {
     const promises = [];
-    _.forEach(properties.responses, (response, index) => {
+    _.forEach(choices, (choice, index) => {
       promises.push(
         ctx.tx.call(LIBRARY_ADD_ASSET, {
           asset: {
-            name: `Image question Response ${index}`,
-            cover:
-              response.value.image?.cover?.id ??
-              response.value.image?.cover ??
-              response.value.image,
-            description: response.value.imageDescription,
+            name: `Question Image Response${index}`,
+            cover: choice.image?.cover?.id ?? choice.image,
+            description: choice.imageDescription,
             indexable: false,
             public: true, // TODO Cambiar a false despues de hacer la demo
           },
@@ -63,17 +119,18 @@ async function createQuestion({ data, published, ctx }) {
       );
     });
     const assets = await Promise.all(promises);
-    _.forEach(properties.responses, (response, index) => {
-      response.value.image = assets[index].id;
+    _.forEach(choices, (choice, index) => {
+      // eslint-disable-next-line no-param-reassign
+      choice.image = assets[index].id;
     });
   }
 
+  // Question "cover" image
   if (props.questionImage) {
     const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
       asset: {
-        name: `Image question`,
-        cover: data.questionImage?.cover?.id ?? data.questionImage?.cover ?? data.questionImage,
-        description: data.questionImageDescription,
+        name: `Question image`,
+        cover: props.questionImage?.cover?.id ?? props.questionImage,
         indexable: false,
         public: true, // TODO Cambiar a false despues de hacer la demo
       },
@@ -83,11 +140,15 @@ async function createQuestion({ data, published, ctx }) {
     props.questionImage = asset.id;
   }
 
-  let question = await ctx.tx.db.Questions.create({
-    ...props,
-    clues: JSON.stringify(clues),
-    properties: JSON.stringify(properties),
-  });
+  const questionToCreate = { ...props };
+
+  if (props.type === QUESTION_TYPES.MAP) {
+    questionToCreate.mapProperties = mapProperties;
+  } else if (props.type === QUESTION_TYPES.MONO_RESPONSE) {
+    questionToCreate.choices = choices;
+  }
+
+  let question = await ctx.tx.db.Questions.create(questionToCreate);
   question = question.toObject();
 
   await ctx.tx.call('common.tags.setTagsToValues', {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { compact, get, isArray, map, noop, set } from 'lodash';
+import { compact, get, isArray, map, noop, omit, set } from 'lodash';
 import {
   ActionButton,
   Alert,
@@ -63,6 +63,8 @@ export default function DetailQuestions({
     return [solution, cleanGlobalFeedback];
   };
 
+  const removeHideOnHelp = (answers) => answers.map((item) => omit(item, 'hideOnHelp'));
+
   const cleanQuestion = (question) => {
     const processedQuestion = { ...question };
     const solutionKey = SOLUTION_KEY_BY_TYPE[question.type];
@@ -78,16 +80,20 @@ export default function DetailQuestions({
       processedQuestion.globalFeedback = cleanGlobalFeedback;
     }
 
-    // CLUES
+    // HELP: CLUES && HIDE ANSWER OPTIONS
     processedQuestion.clues = compact(processedQuestion.clues);
+    if (!question.hasHelp) {
+      const solutionWithCleanHideOnHelp = removeHideOnHelp(solutionField);
+      set(processedQuestion, solutionKey, solutionWithCleanHideOnHelp);
+      processedQuestion.clues = [];
+    }
+    console.log('processedQuestion', processedQuestion);
 
     return processedQuestion;
   };
 
   function onSaveQuestion(question) {
     const processedQuestion = cleanQuestion(question);
-    console.log('dirty question', question);
-    console.log('processedQuestion', processedQuestion);
 
     const currentQuestions = form.getValues('questions') ?? [];
     if (questionIndex !== null && questionIndex >= 0) {
@@ -95,27 +101,25 @@ export default function DetailQuestions({
     } else {
       currentQuestions.push(processedQuestion);
     }
-    console.log('currentQuestions', currentQuestions);
 
     form.setValue('questions', currentQuestions);
     onCancel();
   }
 
-  function onEditQuestion(index) {
+  const onEditQuestion = (index) => {
     setQuestionToEdit((questions || [])[index]);
     setQuestionIndex(index);
-  }
+  };
 
-  function onDeleteQuestion(index) {
-    // TODO: check this works
+  const onDeleteQuestion = (index) => {
     openDeleteConfirmationModal({
-      onConfirm: async () => {
+      onConfirm: () => {
         const currentQuestions = form.getValues('questions') || [];
-        const questionsAfterDeletion = currentQuestions.splice(index, 1);
-        form.setValue('questions', questionsAfterDeletion);
+        currentQuestions.splice(index, 1);
+        form.setValue('questions', currentQuestions);
       },
     })();
-  }
+  };
 
   function onSaveQBank(handler = noop) {
     setSaveAttempt(true);
@@ -123,6 +127,29 @@ export default function DetailQuestions({
       handler();
     }
   }
+
+  const tableColumns = [
+    {
+      Header: t('questionLabel'),
+      accessor: 'question',
+      className: 'text-left',
+    },
+    {
+      Header: t('responsesLabel'),
+      accessor: 'responses',
+      className: 'text-left',
+    },
+    {
+      Header: t('typeLabel'),
+      accessor: 'type',
+      className: 'text-left',
+    },
+    {
+      Header: t('actionsHeader'),
+      accessor: 'actions',
+      style: { textAlign: 'right' },
+    },
+  ];
 
   const showQuestionForm = !!(newQuestion || questionToEdit);
 
@@ -147,29 +174,6 @@ export default function DetailQuestions({
       />
     );
   }
-
-  const tableHeaders = [
-    {
-      Header: t('questionLabel'),
-      accessor: 'question',
-      className: 'text-left',
-    },
-    {
-      Header: t('responsesLabel'),
-      accessor: 'responses',
-      className: 'text-left',
-    },
-    {
-      Header: t('typeLabel'),
-      accessor: 'type',
-      className: 'text-left',
-    },
-    {
-      Header: t('actionsHeader'),
-      accessor: 'actions',
-      style: { textAlign: 'right' },
-    },
-  ];
 
   return (
     <TotalLayoutStepContainer
@@ -202,7 +206,7 @@ export default function DetailQuestions({
               <Button
                 onClick={() => onSaveQBank(onPublish)}
                 disabled={savingAs || !questions?.length}
-                loading={savingAs === 'publish'}
+                loading={savingAs === 'published'}
               >
                 {t('publish')}
               </Button>
@@ -220,7 +224,7 @@ export default function DetailQuestions({
           </Box>
           {questions?.length ? (
             <Table
-              columns={tableHeaders}
+              columns={tableColumns}
               data={map(questions, (question, i) => ({
                 ...getQuestionForTable(question, t),
                 actions: (

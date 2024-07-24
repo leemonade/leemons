@@ -237,6 +237,11 @@ const libraryQuestionBankCategory = {
   singularName: { en: 'questions bank', es: 'banco de preguntas' },
 };
 
+const QUESTION_TYPES = {
+  MAP: 'map',
+  MONO_RESPONSE: 'mono-response',
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -247,4 +252,5 @@ module.exports = {
   menuItems,
   assignableRoles,
   libraryQuestionBankCategory,
+  QUESTION_TYPES,
 };

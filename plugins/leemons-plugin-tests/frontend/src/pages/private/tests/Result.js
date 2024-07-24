@@ -289,7 +289,7 @@ export default function Result() {
                 <Box className={styles.tableCell}>
                   <TextClamp lines={2} withToolTip>
                     <Text>
-                      {i + 1}. {htmlToText(question.question)}
+                      {i + 1}. {htmlToText(question.stem.text)}
                     </Text>
                   </TextClamp>
                 </Box>

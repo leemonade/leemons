@@ -49,7 +49,7 @@ export default function Responses(props) {
   }
 
   const data = [{ value: '-', label: t('selectResponse') }];
-  forEach(question.properties.markers.list, ({ response }, index) => {
+  forEach(question.mapProperties.markers.list, ({ response }, index) => {
     if (!currentResponses.includes(index)) {
       data.push({
         value: index,
@@ -68,13 +68,13 @@ export default function Responses(props) {
     render();
   }
 
-  const components = question.properties.markers.list.map((response, index) => {
+  const components = question.mapProperties.markers.list.map((response, index) => {
     const [select, ...selectData] = cloneDeep(data);
     if (!isNil(store.questionResponses[question.id].properties?.responses[index])) {
       selectData.push({
         value: store.questionResponses[question.id].properties.responses[index],
         label:
-          question.properties.markers.list[
+          question.mapProperties.markers.list[
             store.questionResponses[question.id].properties.responses[index]
           ].response,
       });
@@ -96,21 +96,21 @@ export default function Responses(props) {
         <Box key={index} className={styles.mapResponsesContent}>
           <Box className={styles.mapResponsesNumber}>
             <Text size="md" role="productive" strong>
-              {question.properties.markers.type === 'letter'
+              {question.mapProperties.markers.type === 'letter'
                 ? numberToEncodedLetter(index + 1)
                 : index + 1}
             </Text>
           </Box>
           {clued ? (
             <Box className={cx(styles.mapViewContent, styles.mapViewContentClue)}>
-              {question.properties.markers.list[index].response}
+              {question.mapProperties.markers.list[index].response}
               <Box className={styles.mapViewIcon}>
                 <ImageLoader src={`/public/tests/clue-on.svg`} />
               </Box>
             </Box>
           ) : isDone ? (
             <Box className={cx(styles.mapViewContent, styles.mapViewContentDone)}>
-              {question.properties.markers.list[currentValue].response}
+              {question.mapProperties.markers.list[currentValue].response}
               <Box className={styles.mapViewIcon}>
                 <ImageLoader src={`/public/tests/question-done.svg`} />
               </Box>
@@ -120,13 +120,13 @@ export default function Responses(props) {
               <Box className={cx(styles.mapViewContent, styles.mapViewContentError)}>
                 {currentValue === '-'
                   ? t('selectResponse')
-                  : question.properties.markers.list[currentValue].response}
+                  : question.mapProperties.markers.list[currentValue].response}
                 <Box className={styles.mapViewIcon}>
                   <ImageLoader src={`/public/tests/question-wrong.svg`} />
                 </Box>
               </Box>
               <Box className={cx(styles.mapViewContent, styles.mapViewContentDone)}>
-                {question.properties.markers.list[index].response}
+                {question.mapProperties.markers.list[index].response}
               </Box>
             </Stack>
           )}
@@ -138,7 +138,7 @@ export default function Responses(props) {
       <Box key={index} className={styles.mapResponsesContent}>
         <Box className={styles.mapResponsesNumber}>
           <Text size="md" role="productive" strong>
-            {question.properties.markers.type === 'letter'
+            {question.mapProperties.markers.type === 'letter'
               ? numberToEncodedLetter(index + 1)
               : index + 1}
           </Text>

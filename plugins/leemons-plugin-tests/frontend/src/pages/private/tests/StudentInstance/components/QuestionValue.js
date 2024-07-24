@@ -14,6 +14,7 @@ export default function QuestionValue(props) {
     () => getQuestionClues(question, usedCluesTypes || null, store.config),
     [question]
   );
+
   useEffect(() => {
     setSelectedClue(null); // Resetea el valor seleccionado al cambiar de pregunta
   }, [question.id]); // Dependencia en el ID de la pregunta
@@ -38,17 +39,22 @@ export default function QuestionValue(props) {
 
   function handleUseClue(type) {
     if (!store.viewMode) {
-      if (clues.length > store.questionResponses[question.id].clues) {
+      const usedCluesAmount = store.questionResponses[question.id].clues;
+      if (clues.length > usedCluesAmount) {
         store.questionResponses[question.id].clues += 1;
         if (!isArray(store.questionResponses[question.id].cluesTypes)) {
           store.questionResponses[question.id].cluesTypes = [];
         }
-        if (store.questionResponses[question.id].cluesTypes.indexOf(type) === -1) {
+
+        const clueTypeNotUsedYet =
+          store.questionResponses[question.id].cluesTypes.indexOf(type) === -1;
+        if (clueTypeNotUsedYet) {
           store.questionResponses[question.id].cluesTypes.push(type);
+
           if (type === 'hide-response') {
             const questionIndex = store.questions.findIndex((q) => q.id === question.id);
-            if (questionIndex !== -1) {
-              store.questions[questionIndex].properties.markers.canShowHintMarker = true;
+            if (questionIndex !== -1 && store.questions[questionIndex].mapProperties) {
+              store.questions[questionIndex].mapProperties.markers.canShowHintMarker = true;
             }
           }
         }

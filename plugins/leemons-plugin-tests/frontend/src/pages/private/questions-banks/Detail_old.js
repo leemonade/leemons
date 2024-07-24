@@ -47,8 +47,6 @@ export default function Detail(p) {
   const form = useForm();
   const formValues = form.watch();
 
-  console.log('formValues', formValues);
-
   const prepareDataToSave = () => {
     const qbank = omit(formValues, 'subjectsRaw');
     // Clear questions clues

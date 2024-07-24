@@ -27,12 +27,13 @@ export function MapQuestion({ form: _form, t }) {
 
   const form = useFormContext() || _form;
   const mapProperties = form.watch('mapProperties');
+  const hasHelp = form.watch('hasHelp');
 
   useEffect(() => {
     if (!mapProperties?.image) {
       form.setValue('mapProperties.markers.list', []);
     }
-  }, [mapProperties?.image, form]);
+  }, [mapProperties?.image]);
 
   const getListValues = (list) => map(list ?? [], (item) => ({ value: item }));
 
@@ -85,11 +86,16 @@ export function MapQuestion({ form: _form, t }) {
       <ContextContainer title={`${t('explanationLabel')} *`}>
         <Controller
           control={form.control}
-          name="globalFeedback.text"
+          name="globalFeedback"
+          rules={{ required: t('explanationRequired') }}
           render={({ field }) => (
             <TextEditorInput
               {...field}
-              error={field.value?.length ? undefined : t('explanationRequired')}
+              value={field.value?.text}
+              onChange={(value) => {
+                field.onChange({ text: value, format: 'html' });
+              }}
+              error={form?.formState?.errors?.globalFeedback?.text}
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
             />
@@ -164,7 +170,7 @@ export function MapQuestion({ form: _form, t }) {
                             markers={mapProperties?.markers}
                             t={t}
                             canSetHelp
-                            showEye={field?.value?.list?.length > 2}
+                            showEye={field?.value?.list?.length > 2 && hasHelp}
                           />
                         }
                       />
