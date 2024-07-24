@@ -77,7 +77,7 @@ async function importTests(filePath, { programs, qbanks, questions, assets }) {
         .split(',')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
-        .map((val) => assets && assets[val]?.id)
+        .map((val) => assets?.[val]?.id)
         .filter(Boolean);
 
       // Instructions
