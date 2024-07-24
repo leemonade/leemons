@@ -94,9 +94,4 @@ async function importTests(filePath, { programs, qbanks, questions, assets }) {
   return items;
 }
 
-// ·····················································
-// TESTING
-
-// importQbanks();
-
 module.exports = importTests;
