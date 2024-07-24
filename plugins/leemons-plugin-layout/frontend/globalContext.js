@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { forEach, isEmpty, isNil, isString } from 'lodash';
+import PropTypes from 'prop-types';
 import {
   BUBBLES_THEME,
   colord,
@@ -12,9 +14,8 @@ import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPlatformThemeRequest } from '@users/request';
 import hooks from 'leemons-hooks';
-import { forEach, isEmpty, isNil, isString } from 'lodash';
-import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
+import AlertStack from '@layout/components/AlertStack';
 import PrivateLayout from './src/components/PrivateLayout';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
 import prefixPN from './src/helpers/prefixPN';
@@ -25,7 +26,7 @@ function LayoutWrapper({ isPrivate, children }) {
   if (isPrivate) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
-  return children;
+  return <><AlertStack />{children}</>;
 }
 
 LayoutWrapper.propTypes = {
