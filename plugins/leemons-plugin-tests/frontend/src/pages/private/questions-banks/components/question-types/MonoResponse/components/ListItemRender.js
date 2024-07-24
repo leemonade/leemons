@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Text, Radio, Stack, ImageLoader, useTheme } from '@bubbles-ui/components';
 import { ViewOffIcon } from '@bubbles-ui/icons/solid';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { omit } from 'lodash';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

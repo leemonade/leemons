@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { findIndex, forEach, capitalize } from 'lodash';
+import { find, findIndex, forEach, capitalize, omit } from 'lodash';
 import {
   Box,
   Switch,
@@ -66,11 +66,18 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
       }
 
       if (hasAnswerFeedback && !choice.feedback?.text) {
-        error = t('needExplanation');
+        error = t('needExplanation') || 'Error';
       }
     });
     return error || true;
   }
+
+  // We do it specifically where in edition/creation time so that the user has the option to add hide no answers at all
+  const removeHideOnHelp = () =>
+    form.setValue(
+      'choices',
+      form.getValues('choices')?.map((choice) => omit(choice, 'hideOnHelp'))
+    );
 
   // RENDER ································································································|
 
@@ -128,7 +135,15 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           control={form.control}
           name="hasHelp"
           render={({ field }) => (
-            <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
+            <Switch
+              {...field}
+              onChange={(value) => {
+                field.onChange(value);
+                if (!value) removeHideOnHelp();
+              }}
+              checked={field.value}
+              label={t('hasCluesLabel')}
+            />
           )}
         />
       </ContextContainer>
@@ -197,8 +212,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                           withImages={hasImageAnswers}
                           toggleHideOnHelp={toggleHideOnHelp}
                           changeCorrectResponse={changeCorrectResponse}
-                          showEye={field?.value?.length > 2}
-                          // showEye
+                          showEye={field?.value?.length > 2 && hasHelp}
                         />
                       }
                     />

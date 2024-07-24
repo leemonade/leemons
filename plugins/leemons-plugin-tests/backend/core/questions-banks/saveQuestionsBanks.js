@@ -225,11 +225,11 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     values: questionBank.id,
   });
 
+  // -- Categories --
   const [currentCategories, currentQuestions] = await Promise.all([
     ctx.tx.db.QuestionBankCategories.find({ questionBank: questionBank.id }).select(['id']).lean(),
     ctx.tx.db.Questions.find({ questionBank: questionBank.id }).select(['id']).lean(),
   ]);
-  // -- Categories --
   const currentCategoriesIds = _.map(currentCategories, 'id');
   const categoriesToCreate = [];
   const categoriesToUpdate = [];

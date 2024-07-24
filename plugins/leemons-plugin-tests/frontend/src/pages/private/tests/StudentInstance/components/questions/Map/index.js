@@ -8,7 +8,7 @@ import QuestionNoteClues from '../../QuestionNoteClues';
 import { QuestionImage } from '../../../../../../../components/QuestionImage';
 import Responses from './Responses';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
-import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
+import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 import { htmlToText } from '../../../helpers/htmlToText';
 
 export default function Index(props) {
@@ -32,7 +32,7 @@ export default function Index(props) {
   if (store.questionResponses[question.id]?.properties?.responses) {
     allWithValues = true;
     used = true;
-    forEach(question.properties.markers.list, (r, index) => {
+    forEach(question.mapProperties.markers.list, (r, index) => {
       if (!isNumber(store.questionResponses[question.id].properties.responses[index])) {
         allWithValues = false;
       }
@@ -43,20 +43,20 @@ export default function Index(props) {
   let explanation = null;
   if (store.viewMode) {
     showNotResponsedWarning = !allWithValues;
-    const text = htmlToText(question.properties.explanation);
-    if (text) explanation = question.properties.explanation;
+    const text = htmlToText(question.globalFeedback?.text);
+    if (text) explanation = question.globalFeedback.text;
   }
   return (
     <>
-      {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
+      {showNotResponsedWarning ? <UnansweredQuestionWarning {...props} /> : null}
 
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
         <QuestionNoteClues {...props} />
         <Box className={styles.mapImageContainer}>
           <QuestionImage
-            src={question.properties.image}
-            markers={question.properties.markers}
+            src={question.mapProperties.image}
+            markers={question.mapProperties.markers}
             values={
               store.viewMode ? store.questionResponses[question.id].properties?.responses : null
             }
