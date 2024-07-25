@@ -5,12 +5,16 @@ import hooks from 'leemons-hooks';
 import Cookies from 'js-cookie';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import { LoadingOverlay } from '@bubbles-ui/components';
+import useProvider from '@users/request/hooks/queries/useProvider';
 
 export default function Logout({ session }) {
   const history = useHistory();
   const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
+  const { data: provider, isLoading } = useProvider();
 
   React.useEffect(() => {
+    if (isLoading) return;
+
     if (deploymentConfig !== undefined && session) {
       Cookies.remove('token');
       const domain = /:\/\/([^/]+)/.exec(window.location.href)[1];
@@ -21,12 +25,15 @@ export default function Logout({ session }) {
 
       if (deploymentConfig?.externalLogoutUrl && session.isSuperAdmin) {
         window.location.replace(deploymentConfig?.externalLogoutUrl);
+      } else if (provider?.supportedMethods?.users?.logout) {
+        window.location.replace(provider.supportedMethods.users.logout);
+        hooks.fireEvent('user:cookie:session:change');
       } else {
         history.push(`/${constants.base}`);
         hooks.fireEvent('user:cookie:session:change');
       }
     }
-  }, [deploymentConfig, session]);
+  }, [deploymentConfig, session, isLoading, provider, history]);
 
   return <LoadingOverlay visible />;
 }

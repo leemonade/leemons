@@ -4,6 +4,13 @@ const { mixin } = require('./mixin');
 module.exports = {
   LeemonsMongoDBMixin: mixin,
   mongoose,
+  /**
+   *
+   * @param {import('mongoose').Connection} connection
+   * @param {string} modelName
+   * @param {import('mongoose').Schema} schema
+   * @returns {import('mongoose').Model}
+   */
   newModel(connection, modelName, schema) {
     schema.add({
       isDeleted: {

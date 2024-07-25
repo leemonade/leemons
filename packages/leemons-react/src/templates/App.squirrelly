@@ -44,27 +44,43 @@ function App() {
             <Switch>
               {/* Define each plugin route */}
 {{ @each(it.plugins) => plugin }}
+{{ @if(plugin.routers.public) }}
+                <Route path="/{{ plugin.name }}">
+
+
 {{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private || plugin.routers.protected)) }}
               <{{ plugin.name | clear | capitalize }}LocalProvider>
 {{ /if }}
-{{ @if(plugin.routers.public) }}
-                <Route path="/{{ plugin.name }}">
                   <{{ plugin.name | clear | capitalize }}Public fallback={<LoadingOverlay visible />} />
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private || plugin.routers.protected)) }}
+              </{{ plugin.name | clear | capitalize }}LocalProvider>
+{{ /if }}
                 </Route>
 {{ /if }}
 {{ @if(plugin.routers.private) }}
                 <Route path="/private/{{ plugin.name }}">
+                {{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private || plugin.routers.protected)) }}
+              <{{ plugin.name | clear | capitalize }}LocalProvider>
+{{ /if }}
                   <{{ plugin.name | clear | capitalize }}Private fallback={<LoadingOverlay visible />} />
+{{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private || plugin.routers.protected)) }}
+              </{{ plugin.name | clear | capitalize }}LocalProvider>
+{{ /if }}
                 </Route>
 {{ /if }}
 {{ @if(plugin.routers.protected) }}
                 <Route path="/protected/{{ plugin.name }}">
-                  <{{ plugin.name | clear | capitalize }}Protected fallback={<LoadingOverlay visible />} />
-                </Route>
+                {{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private || plugin.routers.protected)) }}
+              <{{ plugin.name | clear | capitalize }}LocalProvider>
 {{ /if }}
+                  <{{ plugin.name | clear | capitalize }}Protected fallback={<LoadingOverlay visible />} />
 {{ @if(plugin.localContext && (plugin.routers.public || plugin.routers.private || plugin.routers.protected)) }}
               </{{ plugin.name | clear | capitalize }}LocalProvider>
 {{ /if }}
+                </Route>
+{{ /if }}
+
+
 {{ /each }}
               <Route path="/">
                    <Redirect to={`/admin`} />

@@ -14,6 +14,7 @@ const {
 const {
   addCenterProfilePermissionToUserAgents,
 } = require('../user-agents/addCenterProfilePermissionToUserAgents');
+const addUserInProvider = require('../providers/users/addUser');
 
 /**
  * Add a user to platform
@@ -89,6 +90,8 @@ async function add({
   }
 
   await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
+
+  await addUserInProvider({ user: { id: user.id, email, password }, ctx });
 
   return user;
 }

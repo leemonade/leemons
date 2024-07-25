@@ -26,6 +26,7 @@
   "dependencies": {
     "@leemons/error": "0.0.41",
     "@leemons/service-name-parser": "0.0.41",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "@leemons/mongodb": "0.0.71"
   }
 }
