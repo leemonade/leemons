@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const { MongoClient } = require('mongodb');
 
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const { MONGO_URI, DEPLOYMENT_TYPE } = process.env;
+const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 let database;
 
@@ -42,7 +42,13 @@ async function init() {
 
 async function getDeployments() {
   const deployments = database.collection('package-manager_deployments');
-  return deployments.find({}).toArray();
+  const query = {};
+
+  if (typeof DEPLOYMENT_TYPE === 'string' && DEPLOYMENT_TYPE.length > 1) {
+    query.type = DEPLOYMENT_TYPE;
+  }
+
+  return deployments.find(query).toArray();
 }
 
 async function getProfiles(deploymentID) {
