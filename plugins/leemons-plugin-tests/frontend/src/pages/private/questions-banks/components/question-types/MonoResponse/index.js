@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { find, findIndex, forEach, capitalize } from 'lodash';
+import { findIndex, forEach, capitalize } from 'lodash';
 import {
   Box,
   Switch,
@@ -12,13 +12,19 @@ import {
   Text,
 } from '@bubbles-ui/components';
 import { Controller, useFormContext } from 'react-hook-form';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { ListInputRender } from './components/ListInputRender';
 import { ListItemRender } from './components/ListItemRender';
 
-// eslint-disable-next-line import/prefer-default-export
-export function MonoResponse({ form: _form, t, scrollRef }) {
+const validateImages = (responses) => responses.every(({ value: { image } }) => image);
+const validateExplanations = (responses) =>
+  responses.every(({ value: { response, explanation } }) => response && explanation);
+const validateResponses = (responses) => responses.every(({ value: { response } }) => response);
+const hasCorrectResponse = (responses) =>
+  responses.some(({ value: { isCorrectResponse } }) => isCorrectResponse);
+
+function MonoResponse({ form: _form, t, scrollRef }) {
   const form = useFormContext() ?? _form;
   const withImages = form.watch('withImages');
   const properties = form.watch('properties');
@@ -76,6 +82,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           render={({ field }) => (
             <TextEditorInput
               {...field}
+              toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
             />
@@ -106,34 +113,20 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
         name="properties.responses"
         rules={{
           required: t('typeRequired'),
-          validate: (a) => {
-            if (withImages) {
-              let needImages = false;
-              forEach(a, ({ value: { image } }) => {
-                if (!image) {
-                  needImages = true;
-                }
-              });
-              if (needImages) return t('needImages');
-            } else if (properties?.explanationInResponses) {
-              let error = false;
-              forEach(a, ({ value: { response, explanation } }) => {
-                if (!response || !explanation) {
-                  error = true;
-                }
-              });
-              if (error) return t('needExplanationAndResponse');
-            } else {
-              let error = false;
-              forEach(a, ({ value: { response } }) => {
-                if (!response) {
-                  error = true;
-                }
-              });
-              if (error) return t('needResponse');
+          validate: (responses) => {
+            if (withImages && !validateImages(responses)) {
+              return t('needImages');
             }
-            const item = find(a, { value: { isCorrectResponse: true } });
-            return item ? true : t('errorMarkGoodResponse');
+            if (properties?.explanationInResponses && !validateExplanations(responses)) {
+              return t('needExplanationAndResponse');
+            }
+            if (!validateResponses(responses)) {
+              return t('needResponse');
+            }
+            if (!hasCorrectResponse(responses)) {
+              return t('errorMarkGoodResponse');
+            }
+            return true;
           },
         }}
         render={({ field }) => {
@@ -210,3 +203,5 @@ MonoResponse.propTypes = {
   t: PropTypes.func.isRequired,
   scrollRef: PropTypes.object,
 };
+
+export { MonoResponse };

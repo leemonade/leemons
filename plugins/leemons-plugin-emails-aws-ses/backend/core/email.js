@@ -2,6 +2,7 @@ const { htmlToText } = require('nodemailer-html-to-text');
 const inlineBase64 = require('nodemailer-plugin-inline-base64');
 const aws = require('aws-sdk');
 const nodemailer = require('nodemailer');
+const { getAWSCredentials } = require('@leemons/aws/src');
 
 class Email {
   static async saveConfig({ ctx, config }) {
@@ -21,40 +22,28 @@ class Email {
   }
 
   static async getProviders({ ctx }) {
-    if (
-      process.env.AWS_DEPLOYMENT_REGION &&
-      process.env.AWS_DEPLOYMENT_ACCESS_KEY &&
-      process.env.AWS_DEPLOYMENT_SECRET_ACCESS_KEY
-    ) {
+    const credentials = await getAWSCredentials({
+      prefix: 'SES',
+      ctx,
+    });
+
+    if (credentials) {
       return [
         {
           id: 'aws-ses',
           deploymentID: ctx.meta.deploymentID,
           name: 'Amazon SES',
-          region: process.env.AWS_DEPLOYMENT_REGION,
-          accessKey: process.env.AWS_DEPLOYMENT_ACCESS_KEY,
-          secretAccessKey: process.env.AWS_DEPLOYMENT_SECRET_ACCESS_KEY,
+          region: credentials.region,
+          accessKey: credentials.accessKeyId,
+          secretAccessKey: credentials.secretAccessKey,
+          sessionToken: credentials.sessionToken,
         },
       ];
     }
 
-    if (
-      process.env.ENVIRONMENT === 'local' &&
-      process.env.AWS_REGION &&
-      process.env.AWS_ACCESS_KEY &&
-      process.env.AWS_SECRET_ACCESS_KEY
-    ) {
-      return [
-        {
-          id: 'aws-ses',
-          deploymentID: ctx.meta.deploymentID,
-          name: 'Amazon SES',
-          region: process.env.AWS_REGION,
-          accessKey: process.env.AWS_ACCESS_KEY,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        },
-      ];
-    }
+    console.error('================================================');
+    console.error('[EMAIL SES] No credentials found in @leemons/aws');
+    console.error('================================================');
 
     return ctx.tx.db.Config.find().lean();
   }
@@ -70,6 +59,7 @@ class Email {
       region: config.region,
       accessKeyId: config.accessKey,
       secretAccessKey: config.secretAccessKey,
+      sessionToken: config.sessionToken,
     });
     const transporter = nodemailer.createTransport({
       SES: { ses, aws },

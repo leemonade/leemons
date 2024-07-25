@@ -90,3 +90,5 @@ async function addValues({
 
   return { formData, completed: allRequiredCompleted };
 }
+
+module.exports = addValues;

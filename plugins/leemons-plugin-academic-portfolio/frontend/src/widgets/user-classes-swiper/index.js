@@ -33,9 +33,7 @@ const Styles = createStyles((theme) => ({
     paddingRight: 0,
   },
   card: {
-    padding: theme.spacing[6],
-    paddingLeft: theme.spacing[4],
-    paddingRight: theme.spacing[4],
+    padding: theme.spacing[4],
     cursor: 'pointer',
     textAlign: 'center',
     transitionDuration: '100ms',
@@ -85,10 +83,7 @@ function UserClassesSwiperWidget({ program }) {
 
   return (
     <Box className={styles.root}>
-
-      <Swiper
-        slidesPerView={'auto'}
-      >
+      <Swiper slidesPerView={'auto'}>
         {store.classes.map((classe, index) => {
           const dataLabels = getSubjectGroupCourseNamesFromClassData(classe);
 
@@ -112,23 +107,31 @@ function UserClassesSwiperWidget({ program }) {
                 fullWidth
                 onClick={() => goClassDashboard(classe)}
               >
-
-                  {classe.color || classe.icon ? (
-                    <Box className={styles.colorIcon}>
-                      <AvatarSubject name={classe.subject.name} color={classe.color} icon={getClassIcon(classe)} size="xxlg" />
-                    </Box>
-                  ) : null}
-                <Stack direction="column" spacing={0} justifyContent='start' alignItems='start' className={styles.cardText}>
-                    <TextClamp lines={1} showTooltip>
-                      <Text color="primary" strong>
-                        {dataLabels?.subject}
-                      </Text>
-                    </TextClamp>
-                    <TextClamp lines={1} showTooltip>
-                      <Text size="sm" >
-                        {dataLabels?.courseAndGroupParsed}
-                      </Text>
-                    </TextClamp>
+                {classe.color || classe.icon ? (
+                  <Box className={styles.colorIcon}>
+                    <AvatarSubject
+                      name={classe.subject.name}
+                      color={classe.color}
+                      icon={getClassIcon(classe)}
+                      size="xxlg"
+                    />
+                  </Box>
+                ) : null}
+                <Stack
+                  direction="column"
+                  spacing={0}
+                  justifyContent="start"
+                  alignItems="start"
+                  className={styles.cardText}
+                >
+                  <TextClamp lines={1} showTooltip>
+                    <Text color="primary" strong>
+                      {dataLabels?.subject}
+                    </Text>
+                  </TextClamp>
+                  <TextClamp lines={1} showTooltip>
+                    <Text size="sm">{dataLabels?.courseAndGroupParsed}</Text>
+                  </TextClamp>
                 </Stack>
               </Stack>
             </Box>

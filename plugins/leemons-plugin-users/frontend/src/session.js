@@ -111,7 +111,7 @@ export function getCookieToken(onlyCookie) {
 
 export function currentProfileIsSuperAdmin() {
   const data = getCookieToken(true);
-  if (data.profile) {
+  if (data?.profile) {
     const profile = _.find(data.profiles, { id: data.profile });
     return profile?.sysName === 'super';
   }
@@ -120,7 +120,7 @@ export function currentProfileIsSuperAdmin() {
 
 export function currentProfileIsAdmin() {
   const data = getCookieToken(true);
-  if (data.profile) {
+  if (data?.profile) {
     const profile = _.find(data.profiles, {
       id: _.isString(data.profile) ? data.profile : data.profile?.id,
     });
@@ -129,33 +129,17 @@ export function currentProfileIsAdmin() {
   return false;
 }
 
-/**
- * @typedef {Object} Center
- * @property {string} _id - The unique identifier of the center.
- * @property {string} id - The ID of the center.
- * @property {string} name - The name of the center.
- * @property {string} locale - The locale of the center.
- * @property {string} uri - The URI of the center.
- * @property {string} token - The token associated with the center.
- * @property {string} userAgentId - The user agent ID of the center.
- * @property {Array|undefined} profiles - The profiles of the center.
- */
-
-/**
- * @returns {Center} center
- */
 export function getSessionCenter() {
   const token = getCookieToken(true);
   if (_.isString(token)) {
     return null;
   }
-
-  if (!token.profile && token.centers?.length === 1) {
-    return token.centers[0];
+  if (!token?.profile && token?.centers?.length === 1) {
+    return token?.centers[0];
   }
   return (
-    token.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token.profile)) ??
-    token.centers?.[0]
+    token?.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token?.profile)) ??
+    token?.centers?.[0]
   );
 }
 
@@ -163,13 +147,15 @@ export function getSessionProfile() {
   const token = getCookieToken(true);
   const center = getSessionCenter();
   return (
-    center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles?.[0] ?? token.profile
+    center?.profiles?.find((p) => p.id === token?.profile) ??
+    center?.profiles?.[0] ??
+    token?.profile
   );
 }
 
 export function getSessionUserAgent() {
   const token = getCookieToken(true);
-  return token.centers[0]?.userAgentId;
+  return token?.centers?.[0]?.userAgentId;
 }
 
 export function getCentersWithToken() {
@@ -184,11 +170,13 @@ export function getSessionConfig() {
 
 export async function updateSessionConfig(config) {
   const { data } = await updateSessionConfigRequest(config);
-  const cookieToken = getCookieToken(true);
+  const cookieToken = getCookieToken(true) ?? {};
   const dataByOld = keyBy(data, 'old');
-  if (!_.isObject(cookieToken.sessionConfig)) cookieToken.sessionConfig = {};
+  if (!_.isObject(cookieToken?.sessionConfig)) {
+    cookieToken.sessionConfig = {};
+  }
   cookieToken.sessionConfig = { ...cookieToken.sessionConfig, ...config };
-  if (cookieToken.centers) {
+  if (Array.isArray(cookieToken?.centers)) {
     _.forEach(cookieToken.centers, ({ token }, i) => {
       if (dataByOld[token]) {
         cookieToken.centers[i].token = dataByOld[token].new;

@@ -1,15 +1,22 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _, { find, isNil, map } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { Box, createStyles, PageContainer, TotalLayoutContainer } from '@bubbles-ui/components';
+import {
+  Box,
+  Stack,
+  createStyles,
+  PageContainer,
+  TotalLayoutContainer,
+} from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 import { ZoneWidgets } from '@widgets';
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 
-const useStyles = createStyles(() => ({
+const Styles = createStyles(() => ({
   header: {
     position: 'relative',
     height: 80,
@@ -29,14 +36,26 @@ const useStyles = createStyles(() => ({
     minWidth: 250,
     marginLeft: 30,
   },
+  widgets: {
+    paddingBlock: 20,
+    paddingInline: 24,
+    '& > div': {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 28,
+      '& > div:empty': {
+        display: 'none',
+      },
+    },
+  },
 }));
 
-function AcademicDashboard({ session }) {
+export default function AcademicDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
   });
   const history = useHistory();
-  const { classes: styles } = useStyles({}, { name: 'AcademicDashboard' });
+  const { classes: styles } = Styles({}, { name: 'AcademicDashboard' });
   const scrollRef = React.useRef();
 
   async function selectProgram(program) {
@@ -91,13 +110,7 @@ function AcademicDashboard({ session }) {
 
   const widgets = React.useCallback(
     ({ Component, key, properties }) => (
-      <Box
-        key={key}
-        sx={(theme) => ({
-          paddingTop: properties.noPadding ? 0 : theme.spacing[6],
-          paddingBottom: properties.noPadding ? 0 : theme.spacing[6],
-        })}
-      >
+      <Box key={key}>
         <Component program={store.selectedProgram} session={session} />
       </Box>
     ),
@@ -143,21 +156,14 @@ function AcademicDashboard({ session }) {
       }
     >
       <Box ref={scrollRef} className={styles.content}>
-        <PageContainer
-          sx={(theme) => ({
-            paddingTop: theme.spacing[2],
-            maxWidth: '100%',
-          })}
-        >
-          <Box>
-            {store.selectedProgram ? (
-              <>
-                {/* -- LEFT ZONE -- */}
-                <ZoneWidgets zone="dashboard.program.left">{widgets}</ZoneWidgets>
-              </>
-            ) : null}
-          </Box>
-        </PageContainer>
+        <Box className={styles.widgets}>
+          {store.selectedProgram ? (
+            <>
+              {/* -- LEFT ZONE -- */}
+              <ZoneWidgets zone="dashboard.program.left">{widgets}</ZoneWidgets>
+            </>
+          ) : null}
+        </Box>
       </Box>
     </TotalLayoutContainer>
   );
@@ -166,5 +172,3 @@ function AcademicDashboard({ session }) {
 AcademicDashboard.propTypes = {
   session: PropTypes.object,
 };
-
-export { AcademicDashboard };

@@ -3,24 +3,24 @@ const path = require('path');
 
 async function getJsConfig(basePath) {
   try {
-    const jsConfig = await fs.readJSON(path.resolve(basePath, 'jsconfig.json'));
+    const jsConfig = await fs.readJSON(path.resolve(basePath, 'tsconfig.frontend.json'));
 
     if (jsConfig) {
       return jsConfig;
     }
 
-    throw new Error('jsconfig.json not found');
+    throw new Error('tsconfig.frontend.json not found');
   } catch (e) {
     return {
+      extends: './tsconfig.base.json',
       compilerOptions: {
-        module: 'CommonJS',
-        moduleResolution: 'Node',
-        target: 'ES2020',
+        target: 'ESNext',
+        lib: ['DOM', 'DOM.Iterable', 'ESNext'],
+        module: 'ESNext',
         jsx: 'react',
-        baseUrl: '.',
       },
       exclude: ['node_modules', '**/node_modules/*'],
-      include: ['./packages/**/*'],
+      include: ['./plugins/*/frontend/**/*', './private-plugins/*/frontend/**/*'],
     };
   }
 }
@@ -30,7 +30,7 @@ module.exports = async function createJsConfig({
   basePath = path.resolve(__dirname, '../../../../'),
 }) {
   if (!basePath) {
-    throw new Error('basePath is required to create jsconfig.json');
+    throw new Error('basePath is required to create tsconfig.json');
   }
 
   const config = await getJsConfig(basePath);
@@ -47,16 +47,23 @@ module.exports = async function createJsConfig({
         .replace('-frontend-react-private', '')
         .replace('-frontend-react', '')}/*`;
 
+      const srcPath = `./${relativePath}/src/*`;
+
+      if (fs.existsSync(path.resolve(basePath, `${relativePath}/dist`))) {
+        // TODO: check if we need to point to the dist folder
+        // srcPath = `./${relativePath}/dist/*`;
+      }
+
       if (plugin.name === 'common') {
         paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
       }
 
-      paths[pluginName] = [`./${relativePath}/src/*`];
+      paths[pluginName] = [srcPath];
     });
 
   config.compilerOptions.paths = paths;
 
-  await fs.writeJSON(path.resolve(basePath, 'jsconfig.json'), config, {
+  await fs.writeJSON(path.resolve(basePath, 'tsconfig.frontend.json'), config, {
     encoding: 'utf8',
     spaces: 2,
   });

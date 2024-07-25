@@ -206,7 +206,11 @@ const rolesPermissions = {
 };
 
 const widgets = {
-  zones: [{ key: `${permissionsPrefix}.admin.config-providers` }],
+  zones: [
+    { key: `${permissionsPrefix}.admin.config-providers` },
+    { key: `${permissionsPrefix}.asset.form` },
+    { key: `${permissionsPrefix}.drawer.tabs` },
+  ],
   items: [
     {
       zoneKey: `admin.admin-page`,
@@ -221,6 +225,22 @@ const widgets = {
           imageHeight: 0,
           description: `${permissionsPrefix}.admin.card.description`,
         },
+      },
+    },
+    {
+      zoneKey: `${permissionsPrefix}.drawer.tabs`,
+      key: `${permissionsPrefix}.drawer.tabs.library`,
+      url: 'drawer/library/index',
+      properties: {
+        label: 'tabs.library',
+      },
+    },
+    {
+      zoneKey: `${permissionsPrefix}.drawer.tabs`,
+      key: `${permissionsPrefix}.drawer.tabs.new`,
+      url: 'drawer/new/index',
+      properties: {
+        label: 'tabs.new',
       },
     },
   ],

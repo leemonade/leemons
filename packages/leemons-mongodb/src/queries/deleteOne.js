@@ -7,6 +7,17 @@ const {
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 const { updateOne } = require('./updateOne');
 
+/**
+ * @param {Object} props
+ * @param {import('mongoose').Model} props.model
+ * @param {string} props.modelKey
+ * @param {boolean} props.autoDeploymentID
+ * @param {boolean} props.autoTransaction
+ * @param {boolean} props.autoRollback
+ * @param {boolean} props.ignoreTransaction
+ * @param {import('moleculer').Context} props.ctx
+ * @returns {import('../types').DeleteOneQuery}
+ */
 function deleteOne({
   model,
   modelKey,
@@ -16,6 +27,9 @@ function deleteOne({
   ignoreTransaction,
   ctx,
 }) {
+  /**
+   * @type {import('../types').DeleteOneQuery}
+   */
   return async function (_conditions = {}, options = {}) {
     if (options?.soft) {
       return updateOne({

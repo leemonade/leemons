@@ -49,6 +49,7 @@ module.exports = {
       labels: {
         content: 'Contenido',
         presentation: 'Presentación',
+        findResourcesInExternalProvider: 'O encuentra imágenes en:',
         other: 'Otros',
         title: 'Subir archivo',
         featuredImage: 'Imagen destacada',
@@ -447,6 +448,7 @@ module.exports = {
     tabs: {
       library: 'Biblioteca',
       new: 'Nuevo recurso',
+      unsplash: 'Unsplash',
     },
     filters: {
       search: {
@@ -514,5 +516,15 @@ module.exports = {
     resources: 'Recursos',
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del módulo',
+  },
+  copyright: {
+    by: 'por',
+    on: 'en',
+    types: {
+      photo: 'Foto',
+      image: 'Imagen',
+    },
+    fullPhotoLink:
+      '<p>Foto de <a href="{authorProfileUrl}">{author}</a> en <a href="{providerUrl}">{provider}</a></p>',
   },
 };

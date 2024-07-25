@@ -13,6 +13,7 @@ const useTotalLayoutStyles = createStyles((theme) => {
     activityMetadata: {
       height: 24,
       display: 'flex',
+      alignItems: 'center',
       flexDirection: 'row',
       textWrap: 'nowrap',
       '> *': {
