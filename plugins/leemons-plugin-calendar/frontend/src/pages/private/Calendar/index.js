@@ -692,7 +692,12 @@ function Calendar({ session }) {
                 useAcademicCalendar
               />
             </Box>
-            <Box style={{ paddingBottom: 16 }}>
+            <Box
+              sx={(theme) => ({
+                paddingBottom: theme.spacing[4],
+                marginTop: theme.other.core.dimension['300'],
+              })}
+            >
               <CalendarKey />
             </Box>
           </Stack>

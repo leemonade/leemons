@@ -22,6 +22,7 @@ import {
   ACTIVITY_HEADER_PROP_TYPES,
   ACTIVITY_HEADER_DEFAULT_PROPS,
 } from './ActivityHeader.constants';
+import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
 
 export default function ActivityHeader({
   assignation,
@@ -104,7 +105,9 @@ export default function ActivityHeader({
     return response;
   }, [title, assignable?.asset?.name, instance, showStatusBadge]);
 
-  const { classes } = useTotalLayoutStyles();
+  const hasChat = instance?.metadata?.createComunicaRooms;
+
+  const { classes } = useTotalLayoutStyles({}, { name: 'ActivityHeader' });
 
   const goToAssignmentDetail = () => {
     const url = (
@@ -150,6 +153,7 @@ export default function ActivityHeader({
           <Box className={classes.activityMetadata}>
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
             <CalificationTypeDisplay instance={instance} hidden={!showEvaluationType} />
+            {hasChat && <ChatDisplay instance={instance} />}
             <Timer
               assignation={assignation}
               instance={instance}

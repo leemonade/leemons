@@ -22,8 +22,7 @@ function UserDatasetDrawer({ userAgentIds, isOpen, onClose = noop }) {
   async function handleSave() {
     setSaving(true);
     try {
-      const userDatasets = userDatasetsRef.current;
-      const success = await userDatasets.checkFormsAndSave();
+      const success = await userDatasetsRef.current.checkFormsAndSave();
       if (success) {
         addSuccessAlert(t('saveSuccess'));
         onClose();

@@ -316,7 +316,7 @@ class Email {
   }
 
   /**
-   * Send email using a specified template and language. If the specified language template is not found, it tries with a fallback language.
+   * Get email using a specified template and language. If the specified language template is not found, it tries with a fallback language.
    *
    * @public
    * @static
@@ -330,7 +330,7 @@ class Email {
    * @param {string} [params.fallbackLanguage='en'] The fallback language to search the template in if the primary language template is not found
    * @return {Promise<boolean>} A promise that resolves to true if the email is sent successfully, otherwise throws an error
    */
-  static async send({ from, to, templateName, language, fallbackLanguage = 'en', context, ctx }) {
+  static async get({ from, to, templateName, language, fallbackLanguage = 'en', context, ctx }) {
     // Find email template
     let email = await Email.findEmail({ templateName, language, ctx });
 
@@ -345,12 +345,6 @@ class Email {
           fallbackLanguage,
         ]).join(', ')}'`,
       });
-    }
-
-    // Take email settings and try to send email with each setting until it is sent.
-    const providers = await Email.providersArray({ ctx });
-    if (!providers.length) {
-      throw new LeemonsError(ctx, { message: 'No email providers configured yet' });
     }
 
     const [logo, width] = await Promise.all([
@@ -370,7 +364,40 @@ class Email {
     email.subject = Sqrl.render(email.subject, context);
     email.html = Sqrl.render(email.html, context);
 
-    // console.log('--- EmailService > send:');
+    return email;
+  }
+
+  /**
+   * Send email using a specified template and language. If the specified language template is not found, it tries with a fallback language.
+   *
+   * @public
+   * @static
+   * @param {Object} params The parameters object
+   * @param {string} params.from The sender's email address
+   * @param {string} params.to The recipient's email address
+   * @param {string} params.templateName The name of the email template to use
+   * @param {string} params.language The primary language to search the template in
+   * @param {Object} params.context The data context to be used in the email template
+   * @param {MoleculerContext} params.ctx Moleculer's Context
+   * @param {string} [params.fallbackLanguage='en'] The fallback language to search the template in if the primary language template is not found
+   * @return {Promise<boolean>} A promise that resolves to true if the email is sent successfully, otherwise throws an error
+   */
+  static async send({ from, to, templateName, language, fallbackLanguage = 'en', context, ctx }) {
+    const email = await Email.get({
+      from,
+      to,
+      templateName,
+      language,
+      fallbackLanguage,
+      context,
+      ctx,
+    });
+
+    // Take email settings and try to send email with each setting until it is sent.
+    const providers = await Email.providersArray({ ctx });
+    if (!providers.length) {
+      throw new LeemonsError(ctx, { message: 'No email providers configured yet' });
+    }
 
     return Email.startToTrySendEmail({ from, to, email, providers, index: 0, ctx });
   }
@@ -592,7 +619,6 @@ class Email {
       },
       ['id', 'subject', 'html']
     ).lean();
-    return emailDetail;
   }
 }
 

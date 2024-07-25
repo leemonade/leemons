@@ -1,0 +1,11 @@
+{
+  "name": "@leemons/aws",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "types": "types/index.d.ts",
+  "dependencies": {
+    "@leemons/deployment-manager": "^0.0.12",
+    "@leemons/error": "0.0.41",
+    "lodash": "^4.17.21"
+  }
+}

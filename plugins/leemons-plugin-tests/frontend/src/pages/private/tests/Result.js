@@ -44,6 +44,7 @@ import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/Time
 import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
+import { useComunica } from '@comunica/context';
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getQuestionByIdsRequest,
@@ -69,6 +70,7 @@ export default function Result() {
     assignation: store?.assignation,
     subject: store?.instance?.subjects?.[0]?.subject,
   });
+  const { openRoom } = useComunica();
 
   const [canShowFeedback, setCanShowFeedback] = React.useState(false);
   const [accordionState, setAccordionState] = React.useState([]);
@@ -453,185 +455,154 @@ export default function Result() {
       scale = s;
       return false;
     }
+    return false;
   });
 
   return (
-    <>
-      <TotalLayoutContainer
+    <TotalLayoutContainer
+      scrollRef={scrollRef}
+      Header={
+        <ActivityHeader
+          instance={store.instance}
+          assignation={store.assignation}
+          showClass
+          showRole
+          showEvaluationType
+          showTime
+          showDeadline
+        />
+      }
+    >
+      <VerticalContainer
         scrollRef={scrollRef}
-        Header={
-          <ActivityHeader
-            instance={store.instance}
-            assignation={store.assignation}
-            showClass
-            showRole
-            showEvaluationType
-            showTime
-            showDeadline
-          />
+        leftZone={
+          <Box>
+            {isTeacher ? (
+              <>
+                <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
+                  <Text>{t('student')}</Text>
+                </Box>
+                <AssignableUserNavigator
+                  onlySelect
+                  onChange={onChangeUser}
+                  value={params.user}
+                  instance={store.instance || params.id}
+                />
+              </>
+            ) : null}
+          </Box>
         }
       >
-        <VerticalContainer
-          scrollRef={scrollRef}
-          leftZone={
-            <Box>
-              {isTeacher ? (
-                <>
-                  <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
-                    <Text>{t('student')}</Text>
-                  </Box>
-                  <AssignableUserNavigator
-                    onlySelect
-                    onChange={onChangeUser}
-                    value={params.user}
-                    instance={store.instance || params.id}
-                  />
-                </>
-              ) : null}
-            </Box>
+        <TotalLayoutStepContainer
+          Footer={
+            fromTest &&
+            !!store.instance?.metadata?.module && (
+              <TotalLayoutFooterContainer
+                fixed
+                scrollRef={scrollRef}
+                rightZone={
+                  <Link
+                    to={
+                      nextActivityUrl ??
+                      `/private/learning-paths/modules/dashboard/${store.instance?.metadata?.module?.id}`
+                    }
+                  >
+                    <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
+                      {nextActivityUrl ? t('nextActivity') : t('goToModule')}
+                    </Button>
+                  </Link>
+                }
+              />
+            )
           }
         >
-          <TotalLayoutStepContainer
-            Footer={
-              fromTest &&
-              !!store.instance?.metadata?.module && (
-                <TotalLayoutFooterContainer
-                  fixed
-                  scrollRef={scrollRef}
-                  rightZone={
-                    <Link
-                      to={
-                        nextActivityUrl ??
-                        `/private/learning-paths/modules/dashboard/${store.instance?.metadata?.module?.id}`
-                      }
-                    >
-                      <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
-                        {nextActivityUrl ? t('nextActivity') : t('goToModule')}
-                      </Button>
-                    </Link>
-                  }
-                />
-              )
-            }
-          >
-            {params.user && !store.loading ? (
-              <Box>
-                <Box className={styles.content}>
-                  {fromTimeout && (
-                    <TimeoutAlert
-                      onClose={() => {
-                        searchParams.delete('fromTimeout');
-                        history.replace({ search: searchParams.toString() });
-                      }}
-                    />
-                  )}
-                  <EvaluationFeedback
-                    onChatClick={() => {
-                      hooks.fireEvent('chat:onRoomOpened', store.room);
-                      store.chatOpened = true;
-                      render();
+          {!!params.user && !store.loading && (
+            <Box>
+              <Box className={styles.content}>
+                {fromTimeout && (
+                  <TimeoutAlert
+                    onClose={() => {
+                      searchParams.delete('fromTimeout');
+                      history.replace({ search: searchParams.toString() });
                     }}
-                    assignation={store.assignation}
-                    subject={store?.instance?.subjects?.[0]?.subject}
-                    hideChat={!store.room}
                   />
+                )}
+                <EvaluationFeedback
+                  onChatClick={() => {
+                    openRoom(room);
+                  }}
+                  assignation={store.assignation}
+                  subject={store?.instance?.subjects?.[0]?.subject}
+                  hideChat={!room}
+                />
 
-                  {isTeacher && !store.instance.dates.evaluationClosed ? (
-                    <>
-                      <Switch
-                        label={t('feedbackForStudent')}
-                        onChange={(e) => {
-                          setCanShowFeedback(e);
-                          sendFeedback(true, true);
-                        }}
-                        checked={canShowFeedback}
-                      />
-                      {canShowFeedback ? (
-                        <Box sx={(theme) => ({ paddingLeft: theme.spacing[10] })}>
-                          <TextEditorInput
-                            value={store.feedback}
-                            error={store.feedbackError ? t('feedbackRequired') : null}
-                            editorStyles={{ minHeight: '96px' }}
-                            onChange={(e) => {
-                              store.feedback = e;
-                              store.feedbackError = false;
-                              render();
-                            }}
-                          />
-                        </Box>
-                      ) : null}
-                    </>
-                  ) : null}
-
-                  <Stack justifyContent="end" spacing={2}>
-                    {isTeacher && canShowFeedback ? (
-                      <Button
-                        leftIcon={<SendMessageIcon />}
-                        onClick={() => setTimeout(() => sendFeedback(), 100)}
-                      >
-                        {t('saveAndSendFeedback')}
-                      </Button>
-                    ) : null}
-                  </Stack>
-
-                  <ContextContainer title={t('responses')}>
-                    <ActivityAccordion
-                      value={accordionGraphState}
-                      onChange={setAccordionGraphState}
-                    >
-                      {accordionGraph}
-                    </ActivityAccordion>
-                  </ContextContainer>
-
-                  {store.instance?.showCorrectAnswers || isTeacher ? (
-                    <ContextContainer
-                      titleRightZone={
-                        <Button variant="link" onClick={toggleQuestionMode}>
-                          {store.useQuestionMode ? t('returnToTable') : t('showInTests')}
-                        </Button>
-                      }
-                      title={`${t('questions')} (${store.questions?.length})`}
-                    >
-                      <Box>
-                        {store.useQuestionMode ? (
-                          <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
-                        ) : (
-                          <Table columns={tableHeaders} data={tableData} />
-                        )}
+                {isTeacher && !store.instance.dates.evaluationClosed && (
+                  <>
+                    <Switch
+                      label={t('feedbackForStudent')}
+                      onChange={(e) => {
+                        setCanShowFeedback(e);
+                        sendFeedback(true, true);
+                      }}
+                      checked={canShowFeedback}
+                    />
+                    {canShowFeedback && (
+                      <Box sx={(theme) => ({ paddingLeft: theme.spacing[10] })}>
+                        <TextEditorInput
+                          value={store.feedback}
+                          error={store.feedbackError ? t('feedbackRequired') : null}
+                          editorStyles={{ minHeight: '96px' }}
+                          onChange={(e) => {
+                            store.feedback = e;
+                            store.feedbackError = false;
+                            render();
+                          }}
+                        />
                       </Box>
-                    </ContextContainer>
-                  ) : null}
-                </Box>
+                    )}
+                  </>
+                )}
+
+                <Stack justifyContent="end" spacing={2}>
+                  {isTeacher && canShowFeedback && (
+                    <Button
+                      leftIcon={<SendMessageIcon />}
+                      onClick={() => setTimeout(() => sendFeedback(), 100)}
+                    >
+                      {t('saveAndSendFeedback')}
+                    </Button>
+                  )}
+                </Stack>
+
+                <ContextContainer title={t('responses')}>
+                  <ActivityAccordion value={accordionGraphState} onChange={setAccordionGraphState}>
+                    {accordionGraph}
+                  </ActivityAccordion>
+                </ContextContainer>
+
+                {(store.instance?.showCorrectAnswers || isTeacher) && (
+                  <ContextContainer
+                    titleRightZone={
+                      <Button variant="link" onClick={toggleQuestionMode}>
+                        {store.useQuestionMode ? t('returnToTable') : t('showInTests')}
+                      </Button>
+                    }
+                    title={`${t('questions')} (${store.questions?.length})`}
+                  >
+                    <Box>
+                      {store.useQuestionMode ? (
+                        <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
+                      ) : (
+                        <Table columns={tableHeaders} data={tableData} />
+                      )}
+                    </Box>
+                  </ContextContainer>
+                )}
               </Box>
-            ) : null}
-          </TotalLayoutStepContainer>
-        </VerticalContainer>
-      </TotalLayoutContainer>
-      {!store.loading ? (
-        <>
-          <ChatDrawer
-            onClose={() => {
-              hooks.fireEvent('chat:closeDrawer');
-              store.chatOpened = false;
-              render();
-            }}
-            opened={store.chatOpened}
-            onRoomLoad={(room) => {
-              store.room = room;
-              render();
-            }}
-            onMessage={() => {
-              store.room.unreadMessages += 1;
-              render();
-            }}
-            onMessagesMarkAsRead={() => {
-              store.room.unreadMessages = 0;
-              render();
-            }}
-            room={room}
-          />
-        </>
-      ) : null}
-    </>
+            </Box>
+          )}
+        </TotalLayoutStepContainer>
+      </VerticalContainer>
+    </TotalLayoutContainer>
   );
 }

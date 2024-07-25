@@ -22,6 +22,7 @@ async function getEslint(basePath) {
       globals: { leemons: true },
       extends: [
         'plugin:react/recommended',
+        'plugin:react-hooks/recommended',
         'plugin:sonarjs/recommended',
         'airbnb-base',
         'prettier',
@@ -45,7 +46,7 @@ async function getEslint(basePath) {
           jsx: true,
         },
       },
-      plugins: ['react', 'sonarjs', 'import', 'prettier'],
+      plugins: ['react', 'react-hooks', 'sonarjs', 'import', 'prettier'],
       rules: {
         radix: 'off',
         'no-plusplus': 'off',

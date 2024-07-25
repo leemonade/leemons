@@ -43,3 +43,10 @@ export type Model = {
 };
 
 export function LeemonsMongoDBMixin(options: any): any;
+
+import { Schema, Connection, Model as MongooseModel } from 'mongoose';
+
+export type NewModelFunction = (connection: Connection, modelName: string, schema: Schema) => MongooseModel<any>;
+
+export const mongoose: typeof import('mongoose');
+export const newModel: NewModelFunction;

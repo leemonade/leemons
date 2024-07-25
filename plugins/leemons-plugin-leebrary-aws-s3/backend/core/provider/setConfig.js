@@ -1,4 +1,5 @@
 const aws = require('aws-sdk');
+const { getAWSCredentials } = require('@leemons/aws/src');
 const { hasPermissions } = require('./hasPermissions');
 
 /**
@@ -11,11 +12,13 @@ const { hasPermissions } = require('./hasPermissions');
  */
 async function setConfig({ config, ctx } = {}) {
   const configs = await ctx.tx.db.Config.find({}).lean();
+  const credentials = await getAWSCredentials({ prefix: 'S3', ctx });
 
   const options = {
-    accessKeyId: config.accessKey.trim(),
-    secretAccessKey: config.secretAccessKey.trim(),
-    region: config.region.trim(),
+    accessKeyId: credentials.accessKeyId || config.accessKey.trim(),
+    secretAccessKey: credentials.secretAccessKey || config.secretAccessKey.trim(),
+    sessionToken: credentials.sessionToken || config.sessionToken?.trim(),
+    region: credentials.region || config.region.trim(),
   };
 
   const s3 = new aws.S3(options);
@@ -28,7 +31,7 @@ async function setConfig({ config, ctx } = {}) {
         .createBucket({
           Bucket: config.bucket.trim(),
           CreateBucketConfiguration: {
-            LocationConstraint: config.region.trim(),
+            LocationConstraint: options.region,
           },
         })
         .promise();
@@ -39,14 +42,21 @@ async function setConfig({ config, ctx } = {}) {
     );
   }
 
+  const configToSave = {
+    ...config,
+    accessKey: options.accessKeyId,
+    secretAccessKey: options.secretAccessKey,
+    region: options.region,
+  };
+
   if (configs.length > 0) {
-    return ctx.tx.db.Config.findOneAndUpdate({ id: configs[0].id }, config, {
+    return ctx.tx.db.Config.findOneAndUpdate({ id: configs[0].id }, configToSave, {
       new: true,
       lean: true,
     });
   }
 
-  const result = await ctx.tx.db.Config.create(config);
+  const result = await ctx.tx.db.Config.create(configToSave);
   return result.toObject();
 }
 

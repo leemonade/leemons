@@ -13,7 +13,7 @@ import {
   InputWrapper,
 } from '@bubbles-ui/components';
 import { Controller, useFormContext } from 'react-hook-form';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { ListInputRender } from './components/ListInputRender';
 import { ListItemRender } from './components/ListItemRender';
@@ -111,6 +111,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           render={({ field }) => (
             <TextEditorInput
               {...field}
+              toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
               value={field.value?.text}
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
@@ -242,3 +243,5 @@ MonoResponse.propTypes = {
   t: PropTypes.func.isRequired,
   scrollRef: PropTypes.object,
 };
+
+export { MonoResponse };

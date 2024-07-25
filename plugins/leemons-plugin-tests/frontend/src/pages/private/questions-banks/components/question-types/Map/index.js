@@ -12,9 +12,8 @@ import {
   TextInput,
   InputWrapper,
 } from '@bubbles-ui/components';
-
 import { Controller, useFormContext } from 'react-hook-form';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { forEach, map } from 'lodash';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { QuestionImageMarkersModal } from '../../../../../../components/QuestionImageMarkersModal';
@@ -91,6 +90,7 @@ export function MapQuestion({ form: _form, t }) {
           render={({ field }) => (
             <TextEditorInput
               {...field}
+              toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
               value={field.value?.text}
               onChange={(value) => {
                 field.onChange({ text: value, format: 'html' });

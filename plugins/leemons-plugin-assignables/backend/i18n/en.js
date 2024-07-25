@@ -191,6 +191,7 @@ module.exports = {
     passed: 'Pass',
     close: 'Close',
     archive: 'Archive',
+    chatButton: 'Chat',
     closeAction: {
       verbs: {
         opening: 'opening',

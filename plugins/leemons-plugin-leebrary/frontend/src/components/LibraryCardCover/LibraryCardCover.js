@@ -76,7 +76,7 @@ const LibraryCardCover = ({
     }
 
     // Non-image Assets creation cases
-    if (coverCopyrightDataFetched) {
+    if (coverCopyrightDataFetched?.externalUrl) {
       return coverCopyrightDataFetched.externalUrl;
     }
 
@@ -233,7 +233,7 @@ const LibraryCardCover = ({
       ) : (
         MemoizedEmptyCover
       )}
-      {(original?.cover?.copyright || file?.copyright || coverCopyrightDataFetched) &&
+      {(original?.cover?.copyright || file?.copyright || !isEmpty(coverCopyrightDataFetched)) &&
         getCoverCopyright()}
     </Box>
     // </AnimatePresence>

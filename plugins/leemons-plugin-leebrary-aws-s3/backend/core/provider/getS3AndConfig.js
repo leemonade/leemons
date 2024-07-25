@@ -16,6 +16,7 @@ async function getS3AndConfig({ ctx } = {}) {
         apiVersion: '2010-12-01',
         accessKeyId: config.accessKey.trim(),
         secretAccessKey: config.secretAccessKey.trim(),
+        sessionToken: config.sessionToken,
         region: config.region.trim(),
       }),
       config,
