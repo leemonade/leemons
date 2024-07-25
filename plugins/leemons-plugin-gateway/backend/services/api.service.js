@@ -25,6 +25,7 @@ module.exports = {
         'gateway.statusRest',
         'v1.client-manager.protected.newDeployment',
         'v1.client-manager.protected.isSubdomainInUse',
+        'v1.users-cognito.emails.getEmail',
       ],
     }),
   ],

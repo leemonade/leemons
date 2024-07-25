@@ -3,6 +3,7 @@ import { Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 import { LoadingOverlay } from '@bubbles-ui/components';
+import useProvider from '@users/request/hooks/queries/useProvider';
 import Login from './src/pages/public/Login';
 
 const RegisterPassword = loadable(() =>
@@ -14,6 +15,12 @@ const Logout = loadable(() => pMinDelay(import('./src/pages/protected/Logout'), 
 
 export default function Public() {
   const { path } = useRouteMatch();
+
+  const { data: provider } = useProvider();
+
+  if (provider?.supportedMethods?.users?.login) {
+    return <Redirect to={provider.supportedMethods.users.login} />;
+  }
 
   return (
     <Switch>

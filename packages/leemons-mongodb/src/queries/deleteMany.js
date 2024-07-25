@@ -7,6 +7,17 @@ const {
 const { increaseTransactionPendingIfNeed } = require('./helpers/increaseTransactionPendingIfNeed');
 const { updateMany } = require('./updateMany');
 
+/**
+ * @param {Object} props
+ * @param {import('mongoose').Model} props.model
+ * @param {string} props.modelKey
+ * @param {boolean} props.autoDeploymentID
+ * @param {boolean} props.autoTransaction
+ * @param {boolean} props.autoRollback
+ * @param {boolean} props.ignoreTransaction
+ * @param {import('moleculer').Context} props.ctx
+ * @returns {import('../types').DeleteManyQuery}
+ */
 function deleteMany({
   model,
   modelKey,
@@ -16,6 +27,9 @@ function deleteMany({
   ignoreTransaction,
   ctx,
 }) {
+  /**
+   * @type {import('../types').DeleteManyQuery}
+   */
   return async function (_conditions = {}, options = {}) {
     if (options?.soft) {
       return updateMany({

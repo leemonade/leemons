@@ -98,6 +98,8 @@
     "leemons-plugin-timetable-frontend-react": "1.0.0",
     "leemons-plugin-transactions": "1.0.1",
     "leemons-plugin-users": "1.0.35",
+    "leemons-plugin-users-cognito-private": "1.0.0",
+    "leemons-plugin-users-cognito-frontend-react-private": "1.0.0",
     "leemons-plugin-users-frontend-react": "1.0.0",
     "leemons-plugin-widgets": "1.0.35",
     "leemons-plugin-widgets-frontend-react": "1.0.0",

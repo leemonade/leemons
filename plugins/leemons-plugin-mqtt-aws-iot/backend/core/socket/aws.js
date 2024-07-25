@@ -4,6 +4,7 @@ const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const aws = require('aws-sdk');
 const { randomString } = require('@leemons/utils');
+const { getAWSCredentials } = require('@leemons/aws/src');
 
 let config = null;
 let account = null;
@@ -16,21 +17,25 @@ function configChanged() {
 }
 
 async function getConfig({ ctx }) {
-  if (process.env.AWS_REGION && process.env.AWS_ACCESS_KEY && process.env.AWS_SECRET_ACCESS_KEY) {
+  const credentials = await getAWSCredentials({ prefix: 'MQTT', ctx });
+
+  if (credentials) {
     config = {
       id: 'aws-iot',
-      region: process.env.AWS_REGION,
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: credentials.region,
+      accessKeyId: credentials.accessKeyId,
+      secretAccessKey: credentials.secretAccessKey,
+      sessionToken: credentials.sessionToken,
     };
+
     return config;
   }
-  const now = new Date();
-  if (configDateEnd && configDateEnd > now) {
-    config = null;
-    account = null;
-  }
+
   if (!config) {
+    console.error('==============================================');
+    console.error('[AWS IOT] No credentials found in @leemons/aws');
+    console.error('==============================================');
+
     config = await ctx.tx.db.Config.findOne({}).lean();
     // Cacheamos la config durante 15 minutos, por si el token a cambiado.
     configDateEnd = new Date();
@@ -46,6 +51,7 @@ async function getIot({ ctx }) {
     region: config.region,
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
+    sessionToken: config.sessionToken,
   });
 }
 
@@ -55,6 +61,7 @@ async function getSts({ ctx }) {
     region: config.region,
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
+    sessionToken: config.sessionToken,
   });
 }
 

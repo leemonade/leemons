@@ -1,5 +1,6 @@
 import { useFormWithTheme } from './hooks/useFormWithTheme';
 import getObjectArrayKeys from './getObjectArrayKeys';
+import readFile from './readFile';
 import regex from './regex';
 import unflatten from './unflatten';
 import useRequestErrorMessage, { getRequestErrorMessage } from './useRequestErrorMessage';
@@ -44,4 +45,5 @@ export {
   useRequestErrorMessage,
   getRequestErrorMessage,
   htmlToText,
+  readFile,
 };
