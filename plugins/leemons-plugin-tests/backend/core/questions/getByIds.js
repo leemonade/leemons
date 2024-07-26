@@ -121,8 +121,8 @@ async function getByIds({ id, options, ctx }) {
 
   _.forEach(questions, (question, i) => {
     question.tags = questionsTags[i];
-    // question.clues = JSON.parse(question.clues);
     question.clues = question.clues || [];
+
     if (question.mapProperties?.image) {
       question.mapProperties.image = questionAssetsById[question.mapProperties.image];
     }

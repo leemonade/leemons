@@ -4,7 +4,7 @@ const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
 const { LeemonsError } = require('@leemons/error');
 const { findQuestionResponses } = require('./findQuestionResponses');
-const { calculeUserAgentInstanceNote } = require('./calculeUserAgentInstanceNote');
+const { calculateUserAgentInstanceNote } = require('./calculateUserAgentInstanceNote');
 
 dayjs.extend(duration);
 
@@ -74,7 +74,7 @@ async function setQuestionResponse({ data, ctx }) {
     { upsert: true, new: true, lean: true }
   );
 
-  const { note, questions } = await calculeUserAgentInstanceNote({
+  const { note, questions } = await calculateUserAgentInstanceNote({
     instanceId: data.instance,
     userAgent: userSession.userAgents[0].id,
     ctx,

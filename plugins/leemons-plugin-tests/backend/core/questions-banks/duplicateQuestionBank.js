@@ -1,6 +1,8 @@
 const { LeemonsError } = require('@leemons/error');
+
 const { getQuestionsBanksDetails } = require('./getQuestionsBanksDetails');
 const { saveQuestionsBanks } = require('./saveQuestionsBanks');
+const { prepareQuestionForDuplication } = require('../questions/duplicateQuestion');
 
 /**
  * Duplicates a question bank
@@ -27,24 +29,15 @@ async function duplicateQuestionBank({ id, ignoreSubjects, ctx }) {
     description: qBank.description || null,
     color: qBank.color || null,
     cover: qBank.cover || null,
-    state: qBank.state || null,
+    state: qBank.state || null, // What is this? Not used in saveQuestionBanks or stored in db
     program: qBank.program || null,
     categories,
     subjects,
     tags: qBank.tags || [],
     published: true,
-    questions: qBank.questions.map((question) => ({
-      type: question.type,
-      level: question.level,
-      withImages: question.withImages,
-      tags: question.tags || [],
-      question: question.question,
-      questionImage: question.questionImage,
-      questionImageDescription: question.questionImageDescription,
-      properties: question.properties,
-      clues: question.clues,
-    })),
   };
+
+  transformed.questions = qBank.questions.map(prepareQuestionForDuplication);
 
   return saveQuestionsBanks({ data: transformed, ctx });
 }

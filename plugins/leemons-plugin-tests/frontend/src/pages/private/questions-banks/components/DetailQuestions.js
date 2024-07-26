@@ -60,10 +60,17 @@ export default function DetailQuestions({
         cleanGlobalFeedback = null;
       }
     }
+
     return [solution, cleanGlobalFeedback];
   };
 
   const removeHideOnHelp = (answers) => answers.map((item) => omit(item, 'hideOnHelp'));
+
+  function processHasHelp(question, solutionKey) {
+    if (!question.hasHelp) return false;
+    if (question.clues?.length) return true;
+    return get(question, solutionKey).some((answer) => answer.hideOnHelp);
+  }
 
   const cleanQuestion = (question) => {
     const processedQuestion = { ...question };
@@ -76,6 +83,7 @@ export default function DetailQuestions({
         processedQuestion,
         solutionField
       );
+
       set(processedQuestion, solutionKey, solutionWithCleanFeedback);
       processedQuestion.globalFeedback = cleanGlobalFeedback;
     }
@@ -83,11 +91,12 @@ export default function DetailQuestions({
     // HELP: CLUES && HIDE ANSWER OPTIONS
     processedQuestion.clues = compact(processedQuestion.clues);
     if (!question.hasHelp) {
-      const solutionWithCleanHideOnHelp = removeHideOnHelp(solutionField);
+      const solutionWithCleanHideOnHelp = removeHideOnHelp(get(processedQuestion, solutionKey));
       set(processedQuestion, solutionKey, solutionWithCleanHideOnHelp);
       processedQuestion.clues = [];
+    } else {
+      processedQuestion.hasHelp = processHasHelp(processedQuestion, solutionKey);
     }
-    console.log('processedQuestion', processedQuestion);
 
     return processedQuestion;
   };

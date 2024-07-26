@@ -108,7 +108,7 @@ async function createQuestion({ data, published, ctx }) {
       promises.push(
         ctx.tx.call(LIBRARY_ADD_ASSET, {
           asset: {
-            name: `Question Image Response${index}`,
+            name: `Question Image Response ${index}`,
             cover: choice.image?.cover?.id ?? choice.image,
             description: choice.imageDescription,
             indexable: false,
@@ -129,7 +129,7 @@ async function createQuestion({ data, published, ctx }) {
   if (props.questionImage) {
     const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
       asset: {
-        name: `Question image`,
+        name: 'Question image',
         cover: props.questionImage?.cover?.id ?? props.questionImage,
         indexable: false,
         public: true, // TODO Cambiar a false despues de hacer la demo

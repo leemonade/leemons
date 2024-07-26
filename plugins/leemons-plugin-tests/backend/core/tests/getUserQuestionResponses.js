@@ -7,7 +7,7 @@ const { findQuestionResponses } = require('./findQuestionResponses');
 dayjs.extend(duration);
 
 async function getUserQuestionResponses({ instance, userAgent, ctx }) {
-  // TODO: We need this¿?
+  // TODO: Do we need this?
   await ctx.tx.call('assignables.assignations.getAssignation', {
     assignableInstanceId: instance,
     user: userAgent,
