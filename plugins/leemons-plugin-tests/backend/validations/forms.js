@@ -55,7 +55,7 @@ const markersSchema = {
     backgroundColor: stringSchema,
     type: {
       type: 'string',
-      enum: ['numerical', 'letter'],
+      enum: ['numbering', 'letter'],
     },
     list: {
       type: 'array',
@@ -95,7 +95,7 @@ const questionTypeSchema = {
 const questionSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['id', 'type'],
+  required: ['type'],
   properties: {
     id: stringSchema,
     type: questionTypeSchema,

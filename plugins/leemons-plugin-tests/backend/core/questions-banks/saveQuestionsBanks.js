@@ -17,6 +17,12 @@ const { deleteQuestions } = require('../questions/deleteQuestions');
 const removeUnusedFields = (data, otherFields = []) =>
   _.omit(data, ['_id', '__v', 'deploymentID', 'isDeleted', ...otherFields]);
 
+const getCategoryId = (category, orderedCategories) => {
+  if (_.isNumber(category) && category >= 0) return orderedCategories[category].id;
+  if (_.isString(category)) return category;
+  return null;
+};
+
 /**
  * @typedef {Object} QuestionBank
  * Represents a question bank object with associated details.
@@ -170,14 +176,14 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
   if (props.name) {
     const assetsToSave = {
       indexable: true,
-      public: true, // TODO Cambiar a false despues de hacer la demo
+      public: true,
       category: 'tests-questions-banks',
     };
     assetsToSave.name = props.name;
     if (props.description) assetsToSave.description = props.description;
     if (props.tagline) assetsToSave.tagline = props.tagline;
     if (props.color) assetsToSave.color = props.color;
-    if (props.cover) assetsToSave.cover = props.cover;
+    if (props.cover) assetsToSave.cover = props.cover?.id ?? props.cover;
     if (tags) assetsToSave.tags = tags;
     if (data.program) assetsToSave.program = data.program;
     if (subjects) assetsToSave.subjects = subjects;
@@ -319,13 +325,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
         updateQuestion({
           data: {
             ...question,
-            category:
-              // eslint-disable-next-line no-nested-ternary
-              _.isNumber(question.category) && question.category >= 0
-                ? orderedCategories[question.category].id
-                : _.isString(question.category)
-                ? question.category
-                : null,
+            category: getCategoryId(question.category, orderedCategories),
           },
           published,
           ctx,
@@ -341,13 +341,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
           data: {
             ...question,
             questionBank: questionBank.id,
-            category:
-              // eslint-disable-next-line no-nested-ternary
-              _.isNumber(question.category) && question.category >= 0
-                ? orderedCategories[question.category].id
-                : _.isString(question.category)
-                ? question.category
-                : null,
+            category: getCategoryId(question.category, orderedCategories),
           },
           published,
           ctx,

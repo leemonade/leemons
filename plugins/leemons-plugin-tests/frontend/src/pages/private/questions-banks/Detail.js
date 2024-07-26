@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
-import { isEmpty, omit } from 'lodash';
+import { cloneDeep, isEmpty, omit } from 'lodash';
 
 import {
   LoadingOverlay,
@@ -20,11 +20,20 @@ import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../reques
 import DetailBasic from './components/DetailBasic';
 import DetailQuestions from './components/DetailQuestions';
 
-export default function Detail(p) {
+export default function Detail() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [savingAs, setSavingAs] = useState(null);
+
+  const { layoutState, setLayoutState } = useLayout();
+
+  useEffect(() => {
+    setLayoutState({
+      ...layoutState,
+      hasFooter: true,
+    });
+  }, []);
 
   const scrollRef = useRef();
   const history = useHistory();
@@ -56,7 +65,10 @@ export default function Detail(p) {
     const body = getRequestBody();
     try {
       const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
-      console.log('questionBank', questionBank);
+      addSuccessAlert(t('savedAsDraft'));
+      if (isNew) {
+        history.replace(`/private/tests/questions-banks/${questionBank.id}`);
+      }
     } catch (error) {
       addErrorAlert(error);
     } finally {
@@ -67,7 +79,7 @@ export default function Detail(p) {
   async function saveAsPublished() {
     setSavingAs('published');
     const body = getRequestBody();
-    console.log('saveAsPublished body =>', body);
+
     try {
       await saveQuestionBankRequest({ ...body, published: true });
       addSuccessAlert(t('published'));

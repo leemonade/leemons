@@ -243,5 +243,3 @@ MonoResponse.propTypes = {
   t: PropTypes.func.isRequired,
   scrollRef: PropTypes.object,
 };
-
-export { MonoResponse };

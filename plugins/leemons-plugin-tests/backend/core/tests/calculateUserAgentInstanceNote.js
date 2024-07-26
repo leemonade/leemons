@@ -2,15 +2,16 @@
 const _ = require('lodash');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
-const { keyBy, forEach } = require('lodash');
+const { forEach } = require('lodash');
 const { getUserQuestionResponses } = require('./getUserQuestionResponses');
 const { getByIds } = require('../questions/getByIds');
 const { getQuestionClues } = require('./helpers/getQuestionClues');
 const { getConfigByInstance } = require('./helpers/getConfigByInstance');
+const { QUESTION_TYPES } = require('../../config/constants');
 
 dayjs.extend(duration);
 
-async function calculeUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
+async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
   const instance = await ctx.tx.call('assignables.assignableInstances.getAssignableInstance', {
     id: instanceId,
     details: true,
@@ -51,10 +52,11 @@ async function calculeUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
   }
 
   _.forEach(questions, (question) => {
-    if (question.type === 'mono-response') {
-      const correctIndex = _.findIndex(question.properties.responses, {
-        value: { isCorrectResponse: true },
+    if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
+      const correctIndex = _.findIndex(question.choices, {
+        isCorrect: true,
       });
+
       if (!_.isNumber(questionResponses[question.id]?.properties?.response)) {
         note += perUndefined;
         questionsResponse[question.id] = {
@@ -74,11 +76,11 @@ async function calculeUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
           status: 'ko',
         };
       }
-    } else if (question.type === 'map') {
+    } else if (question.type === QUESTION_TYPES.MAP) {
       if (questionResponses[question.id]?.properties?.responses) {
         let allWithValues = true;
         let allValuesGood = true;
-        _.forEach(question.properties.markers.list, (r, index) => {
+        _.forEach(question.mapProperties.markers.list, (r, index) => {
           if (!_.isNumber(questionResponses[question.id].properties.responses[index])) {
             allWithValues = false;
           }
@@ -118,4 +120,4 @@ async function calculeUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
   return { note, questions: questionsResponse };
 }
 
-module.exports = { calculeUserAgentInstanceNote };
+module.exports = { calculateUserAgentInstanceNote };
