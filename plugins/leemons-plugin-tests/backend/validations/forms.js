@@ -107,6 +107,7 @@ const questionSchema = {
       nullable: true,
     },
     hasImageAnswers: booleanSchema,
+    hasEmbeddedAnswers: booleanSchema, // fill the blank questions
     tags: {
       type: 'array',
       items: stringSchema,
@@ -120,6 +121,7 @@ const questionSchema = {
       nullable: true,
     },
     hasAnswerFeedback: booleanSchema,
+
     questionImage: {
       type: ['object', 'string'],
       nullable: true,
