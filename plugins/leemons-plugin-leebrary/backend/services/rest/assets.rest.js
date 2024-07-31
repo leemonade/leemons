@@ -212,7 +212,7 @@ module.exports = {
         });
       } else {
         assets = await getByCategory({
-          categoryId: category,
+          category,
           published: publishedStatus,
           indexable: true,
           preferCurrent: preferCurrentValue,
