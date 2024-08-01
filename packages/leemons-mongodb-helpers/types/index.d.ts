@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Model, PaginatedQueryResult } from '@leemons/mongodb';
-import { SortOrder } from 'mongoose';
+import { FilterQuery, SortOrder } from 'mongoose';
 
-type Params<M = Model<any>, R = object> = {
+type Params<M extends Model<any> = Model<any>, R = object> = {
   model: M;
   page: number;
   size: number;
