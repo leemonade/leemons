@@ -1,37 +1,37 @@
-/* eslint-disable no-inner-declarations */
+const ELEMENT_ID = 'hot-loader';
+
+let loaderShown = 1;
+let loaderContent = '';
+
+function showLoader() {
+  let loader = document.getElementById(ELEMENT_ID);
+
+  if (!loader) {
+    loader = document.createElement('div');
+    loader.id = ELEMENT_ID;
+    loader.innerHTML = loaderContent;
+
+    document.body.appendChild(loader);
+  }
+
+  loaderShown++;
+}
+
+function hideLoader() {
+  const loader = document.getElementById(ELEMENT_ID);
+
+  if (loader && loaderShown > 0) {
+    loaderShown--;
+  }
+
+  if (loaderShown === 0) {
+    loaderContent = loader.innerHTML;
+    document.body.removeChild(loader);
+    loader.remove();
+  }
+}
 
 if (module.hot) {
-  let loaderShown = 1;
-  let loaderContent = '';
-
-  function showLoader() {
-    let loader = document.getElementById('hot-loader');
-
-    if (!loader) {
-      loader = document.createElement('div');
-      loader.id = 'hot-loader';
-      loader.innerHTML = loaderContent;
-
-      document.body.appendChild(loader);
-    }
-
-    loaderShown++;
-  }
-
-  function hideLoader() {
-    const loader = document.getElementById('hot-loader');
-
-    if (loader && loaderShown > 0) {
-      loaderShown--;
-    }
-
-    if (loaderShown === 0) {
-      loaderContent = loader.innerHTML;
-      document.body.removeChild(loader);
-      loader.remove();
-    }
-  }
-
   // Remove the first loader
   hideLoader();
 
@@ -55,11 +55,9 @@ if (module.hot) {
       message = event.data;
     }
 
-    if (message?.type === 'invalid') {
-      if (!isFirstRender) {
-        console.error('[Leemons HMR] Content has changed.');
-        showLoader();
-      }
+    if (!isFirstRender && message?.type === 'invalid') {
+      console.error('[Leemons HMR] Content has changed.');
+      showLoader();
     }
 
     module.hot.addStatusHandler((status) => {
