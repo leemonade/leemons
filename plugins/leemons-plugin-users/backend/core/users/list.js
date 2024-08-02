@@ -68,11 +68,21 @@ async function queryUserAgents({ roles, disabled, ctx }) {
   }));
 }
 
-async function list({ page, size, profiles, centers, disabled, ctx, sort, ...queries }) {
+async function list({
+  page,
+  size,
+  profiles,
+  centers,
+  fetchRolesWithoutCenters = true,
+  disabled,
+  ctx,
+  sort,
+  ...queries
+}) {
   const query = { ...queries };
   let roles = null;
 
-  if (centers) {
+  if (centers || fetchRolesWithoutCenters) {
     roles = await queryCenterRoles({ centers, ctx });
   }
 

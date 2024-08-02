@@ -483,6 +483,7 @@ module.exports = {
           page: { type: 'number' },
           size: { type: 'number' },
           query: { type: 'object', additionalProperties: true },
+          fetchRolesWithoutCenters: { type: 'boolean' },
         },
         required: ['page', 'size'],
         additionalProperties: false,
