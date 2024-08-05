@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ContentLoader from 'react-content-loader';
 
 const SkeletonDashboardLoader = ({ children, ...props }) => (
@@ -13,4 +14,8 @@ const SkeletonDashboardLoader = ({ children, ...props }) => (
   </ContentLoader>
 );
 
-export default SkeletonDashboardLoader;
+SkeletonDashboardLoader.propTypes = {
+  children: PropTypes.node,
+};
+
+export { SkeletonDashboardLoader };

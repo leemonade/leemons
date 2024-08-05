@@ -26,6 +26,8 @@
  * @property {boolean} [reloadPermissions=false] - If the permissions should be reloaded
  * @property {boolean} [datasetIsGood] - If the dataset is considered good
  * @property {boolean} [disabled=false] - If the user agent is disabled
+ * @property {Profile} [profile] - Reference to the profile
+ * @property {Center} [center] - Reference to the center
  * @property {Date} createdAt - Creation date of the user agent
  * @property {Date} updatedAt - Last update date of the user agent
  */

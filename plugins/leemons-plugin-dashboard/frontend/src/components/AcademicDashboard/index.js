@@ -1,16 +1,9 @@
-/* eslint-disable no-nested-ternary */
 import React from 'react';
 import PropTypes from 'prop-types';
 import _, { find, isNil, map } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import {
-  Box,
-  Stack,
-  createStyles,
-  PageContainer,
-  TotalLayoutContainer,
-} from '@bubbles-ui/components';
+import { Box, createStyles, TotalLayoutContainer } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 import { ZoneWidgets } from '@widgets';
@@ -50,7 +43,7 @@ const Styles = createStyles(() => ({
   },
 }));
 
-export default function AcademicDashboard({ session }) {
+function AcademicDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
   });
@@ -172,3 +165,5 @@ export default function AcademicDashboard({ session }) {
 AcademicDashboard.propTypes = {
   session: PropTypes.object,
 };
+
+export { AcademicDashboard };

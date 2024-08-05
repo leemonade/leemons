@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { currentProfileIsAdmin } from '@users/session';
-import AcademicDashboard from './components/AcademicDashboard';
-import AdminDashboard from './components/AdminDashboard';
+import { AcademicDashboard } from '@dashboard/components/AcademicDashboard';
+import { AdminDashboard } from '@dashboard/components/AdminDashboard';
 
 export default function Dashboard({ session }) {
   const isAdmin = currentProfileIsAdmin();
