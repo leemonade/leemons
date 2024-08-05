@@ -463,8 +463,8 @@ function Dashboard({ session }) {
                     {t('ram')}
                   </Text>
                 </Box>
-                {ram && ram.clockSpeed ? <PcValue text={t('type')} value={ram.type} /> : null}
-                {ram && ram.clockSpeed ? (
+                {ram?.clockSpeed ? <PcValue text={t('type')} value={ram.type} /> : null}
+                {ram?.clockSpeed ? (
                   <PcValue text={t('clockSpeed')} value={`${ram.clockSpeed}MHz`} />
                 ) : null}
                 {store.pc.mem.total ? (
