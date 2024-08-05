@@ -9,15 +9,29 @@
     "leemons": true
   },
   "extends": [
+    "eslint:recommended",
+    "standard",
+    "plugin:import/recommended",
+
     "plugin:react/recommended",
+    // If using the new JSX transform from React 17
+    // https://legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#removing-unused-react-imports
+    // "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
-    "plugin:sonarjs/recommended",
-    "airbnb-base",
+
+    "plugin:sonarjs/recommended-legacy",
+
+    // Should be the last one: https://github.com/prettier/eslint-config-prettier?tab=readme-ov-file#installation
     "prettier"
   ],
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "jsconfig": {
+        "config": "jsconfig.json"
+      }
     }
   },
   "parser": "@babel/eslint-parser",
@@ -26,91 +40,46 @@
     "babelOptions": {
       "babelrc": false,
       "configFile": false,
-      "presets": [
-        "@babel/preset-env"
-      ],
-      "plugins": [
-        "@babel/plugin-syntax-jsx"
-      ]
+      "presets": ["@babel/preset-env"],
+      "plugins": ["@babel/plugin-syntax-jsx", "@babel/plugin-proposal-export-default-from"]
     },
     "ecmaVersion": 2020,
     "ecmaFeatures": {
       "jsx": true
     }
   },
-  "plugins": [
-    "react",
-    "react-hooks",
-    "sonarjs",
-    "import",
-    "prettier"
-  ],
+  "plugins": ["sonarjs", "import", "unused-imports"],
   "rules": {
     "radix": "off",
     "no-plusplus": "off",
     "no-unused-vars": "warn",
-    "import/no-dynamic-requires": "off",
-    "import/no-extraneous-dependencies": "off",
-    "react/react-in-jsx-scope": "off",
     "no-underscore-dangle": "off",
-    "prettier/prettier": [
-      2,
-      {},
+    "react/react-in-jsx-scope": "off",
+    "import/no-deprecated": "warn",
+    "import/no-extraneous-dependencies": "off",
+    "import/no-mutable-exports": "error",
+    "import/no-named-as-default": "off",
+    "import/no-dynamic-require": "off",
+    "import/prefer-default-export": "warn",
+    "import/newline-after-import": ["error", { "count": 1, "considerComments": true }],
+    "import/order": [
+      "error",
       {
-        "usePrettierrc": true
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc", "orderImportKind": "asc", "caseInsensitive": false },
+        "pathGroups": [{ "pattern": "react*", "group": "builtin", "position": "before" }],
+        "pathGroupsExcludedImportTypes": []
       }
     ],
-    "import/no-names-as-default": "off",
-    "import/prefer-default-export": "warn",
-    "import/no-unresolved": [
-      2,
-      {
-        "ignore": [
-          "@academic-calendar",
-          "@academic-portfolio",
-          "@admin",
-          "@assignables",
-          "@attendance-control",
-          "@board-messages",
-          "@calendar",
-          "@client-manager",
-          "@common",
-          "@comunica",
-          "@content-creator",
-          "@curriculum",
-          "@dashboard",
-          "@dataset",
-          "@deployment-manager",
-          "@emails",
-          "@emails-aws-ses",
-          "@emails-smtp",
-          "@families",
-          "@families-emergency-numbers",
-          "@feedback",
-          "@fundae",
-          "@grades",
-          "@layout",
-          "@learning-paths",
-          "@leebrary",
-          "@leebrary-aws-s3",
-          "@leebrary-unsplash",
-          "@menu-builder",
-          "@mqtt-aws-iot",
-          "@mqtt-socket-io",
-          "@multilanguage",
-          "@package-manager",
-          "@scores",
-          "@scorm",
-          "@tasks",
-          "@tests",
-          "@timetable",
-          "@users",
-          "@users-cognito",
-          "@widgets",
-          "@xapi",
-          "@bubbles-ui"
-        ]
+    "unused-imports/no-unused-imports": "error"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.spec.js", "**/*.test.js"],
+      "rules": {
+        "no-unused-vars": "off",
+        "sonarjs/no-duplicate-string": "off"
       }
-    ]
-  }
+    }
+  ]
 }
