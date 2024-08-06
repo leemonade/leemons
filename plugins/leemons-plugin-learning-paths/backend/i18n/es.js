@@ -173,6 +173,7 @@ module.exports = {
     },
     resources: 'Recursos',
     students: 'Alumnos',
+    allStudentsEvaluated: 'Todas las evaluaciones realizadas',
     progress: 'Progreso',
     studentProgressTitle: 'Notas del módulo',
     teacherProgressTitle: 'Notas medias del módulo',

@@ -30,9 +30,10 @@ const DashboardCardCover = ({
   const subjectColor = isMultiSubject ? 'rgb(135, 141, 150)' : subjects?.[0]?.color;
   const { classes } = DashboardCardCoverStyles({ subjectColor });
   const [t] = useTranslateLoader(prefixPN('dashboard'));
-  const isSomethingEvaluable = ['someEvaluated', 'someDeliveredButNotAll'].includes(
+  const isSomethingEvaluable = ['someEvaluated', 'someDeliveredButNotAll', 'allEvaluated'].includes(
     evaluationInfo?.state
   );
+  const isAllEvaluated = evaluationInfo?.state === 'allEvaluated';
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -100,14 +101,18 @@ const DashboardCardCover = ({
         <Box className={classes.color} />
         <ProgressRing
           rootColor={'#DDE1E6'}
-          sections={[{ value: percentage, color: '#307AE8' }]}
+          sections={[{ value: isAllEvaluated ? 100 : percentage, color: '#307AE8' }]}
           label={
             <Box className={classes.labelPercentage}>
               <Text className={classes.textPercentage}>{`${percentage}%`}</Text>
             </Box>
           }
         />
-        <Text>{`(${totalStudentsFinished}/${totalStudents} ${t('students')})`}</Text>
+        <Text>
+          {!isAllEvaluated
+            ? `(${totalStudentsFinished}/${totalStudents} ${t('students')})`
+            : t('allStudentsEvaluated')}
+        </Text>
         <Box className={classes.orderLabel}>{assetNumber}</Box>
       </Box>
     );
@@ -138,7 +143,6 @@ const DashboardCardCover = ({
           />
         </Box>
       )}
-
       {!isGradeAssigned && asset?.cover && (
         <Cover asset={asset} height={144} copyrightAlign="right" hideCopyright />
       )}
