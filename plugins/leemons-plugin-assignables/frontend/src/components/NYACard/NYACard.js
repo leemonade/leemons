@@ -1,5 +1,5 @@
-/* eslint-disable sonarjs/cognitive-complexity */
 import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import { Box, ImageLoader } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -8,8 +8,7 @@ import _, { get } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Link } from 'react-router-dom';
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { ChatDrawer } from '@comunica/components';
-import hooks from 'leemons-hooks';
+import { useComunica } from '@comunica/context';
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
@@ -355,12 +354,6 @@ export function usePreparedInstance(instance, query, labels) {
 }
 
 function useNYACardLocalizations(labels) {
-  const useOwnLocalizations = labels !== undefined;
-
-  if (useOwnLocalizations) {
-    return labels;
-  }
-
   const [, translations] = useTranslateLoader([
     prefixPN('roles'),
     prefixPN('need_your_attention'),
@@ -371,6 +364,12 @@ function useNYACardLocalizations(labels) {
   ]);
 
   return useMemo(() => {
+    const useOwnLocalizations = labels !== undefined;
+
+    if (useOwnLocalizations) {
+      return labels;
+    }
+
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
@@ -384,7 +383,7 @@ function useNYACardLocalizations(labels) {
     }
 
     return {};
-  }, [translations]);
+  }, [translations, labels]);
 }
 
 function LinkContainer({ to, disabled, children }) {
@@ -399,6 +398,12 @@ function LinkContainer({ to, disabled, children }) {
   );
 }
 
+LinkContainer.propTypes = {
+  to: PropTypes.string,
+  disabled: PropTypes.bool,
+  children: PropTypes.node,
+};
+
 const NYACard = ({
   instance,
   showSubject,
@@ -408,12 +413,11 @@ const NYACard = ({
   isActivityCarousel,
   isTeacherSyllabus,
 }) => {
-  const [, setChatRoom] = React.useState(null);
-  const [isChatOpen, setIsChatOpen] = React.useState(false);
   const activityRoom = `assignables.subject|${instance?.instance?.subjects?.[0]?.subject}.assignation|${instance?.id}.userAgent|${instance?.user}`;
   const isTeacher = useIsTeacher();
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
+  const { openRoom } = useComunica();
   const { classes } = NYACardStyles({ clickable }, { name: 'NYACard' });
   const query = useMemo(
     () => ({
@@ -499,7 +503,7 @@ const NYACard = ({
               isTeacherSyllabus={isTeacherSyllabus}
             />
             <NYACardFooter
-              onOpenChat={() => setIsChatOpen(true)}
+              onOpenChat={() => openRoom(activityRoom)}
               {...preparedInstance?.asset}
               chatKeys={preparedInstance?.chatKeys}
               variantTitle={
@@ -529,20 +533,6 @@ const NYACard = ({
           </Box>
         </Box>
       </LinkContainer>
-
-      {isChatOpen ? (
-        <ChatDrawer
-          onClose={() => {
-            hooks.fireEvent('chat:closeDrawer');
-            setIsChatOpen(false);
-          }}
-          opened={isChatOpen}
-          onRoomLoad={(roomLoaded) => {
-            setChatRoom(roomLoaded);
-          }}
-          room={activityRoom}
-        />
-      ) : null}
     </>
   );
 };

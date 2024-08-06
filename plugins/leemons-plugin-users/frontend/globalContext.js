@@ -64,11 +64,13 @@ export function Provider({ children }) {
         closeOnEscape={false}
         opened={showUpdateDatasetModal}
       >
-        <Box>
-          <Paragraph>{t('description')}</Paragraph>
-        </Box>
-        <Stack fullWidth justifyContent="end">
-          <Button onClick={handleOnGoPage}>{t('goPageButton')}</Button>
+        <Stack direction="column" spacing={4} fullWidth>
+          <Box>
+            <Paragraph>{t('description')}</Paragraph>
+          </Box>
+          <Stack fullWidth justifyContent="end">
+            <Button onClick={handleOnGoPage}>{t('goPageButton')}</Button>
+          </Stack>
         </Stack>
       </Modal>
       {children}

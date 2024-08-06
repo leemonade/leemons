@@ -2,9 +2,22 @@ const { LeemonsError } = require('@leemons/error');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const constants = require('../../config/constants');
 const getHostname = require('../platform/getHostname');
+const hasProvider = require('../providers/hasProvider');
 
+/**
+ *
+ * @returns {boolean}
+ */
 async function sendWelcomeEmailToUser({ user, ctx }) {
-  const recovery = await ctx.tx.db.UserRegisterPassword.findOne({ user: user.id }).lean();
+  const [recovery, hasAProvider] = await Promise.all([
+    ctx.tx.db.UserRegisterPassword.findOne({ user: user.id }).lean(),
+    hasProvider({ ctx }),
+  ]);
+
+  if (hasAProvider) {
+    return false;
+  }
+
   const hostname = await getHostname({ ctx });
 
   if (!recovery) throw new LeemonsError(ctx, { message: 'User is already active' });
