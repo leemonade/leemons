@@ -160,7 +160,6 @@ const CalendarNewEventModal = ({
                   <ColorInput
                     label={labels.color}
                     placeholder={placeholders.color}
-                    useHsl
                     error={errors.color}
                     required
                     lightOnly

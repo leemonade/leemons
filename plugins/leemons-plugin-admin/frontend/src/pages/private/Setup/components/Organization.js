@@ -236,7 +236,6 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                     control={control}
                     render={({ field }) => (
                       <ColorInput
-                        useHsl
                         error={errors.mainColor}
                         label={t('mainColor')}
                         {...field}
