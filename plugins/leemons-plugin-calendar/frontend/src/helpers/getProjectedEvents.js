@@ -40,18 +40,6 @@ const getProjectedEvents = (eventsProp, dateRange) => {
           });
 
           if (!occurrenceStart.isSame(occurrenceEnd, 'day')) {
-            let currentDay = occurrenceStart.add(1, 'day').startOf('day');
-            while (currentDay.isBefore(occurrenceEnd, 'day')) {
-              acc.push({
-                ...ev,
-                allDay: true,
-                isIntermediateDay: true,
-                start: currentDay.toDate(),
-                end: currentDay.endOf('day').toDate(),
-              });
-              currentDay = currentDay.add(1, 'day');
-            }
-
             acc.push({
               ...ev,
               isEndEvent: true,
@@ -71,18 +59,6 @@ const getProjectedEvents = (eventsProp, dateRange) => {
         acc.push({ ...ev });
 
         if (!eventStart.isSame(eventEnd, 'day')) {
-          let currentDay = eventStart.add(1, 'day').startOf('day');
-          while (currentDay.isBefore(eventEnd, 'day')) {
-            acc.push({
-              ...ev,
-              allDay: true,
-              isIntermediateDay: true,
-              start: currentDay.toDate(),
-              end: currentDay.endOf('day').toDate(),
-            });
-            currentDay = currentDay.add(1, 'day');
-          }
-
           acc.push({
             ...ev,
             isEndEvent: true,
