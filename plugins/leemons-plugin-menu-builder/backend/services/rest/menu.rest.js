@@ -4,12 +4,8 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
-const {
-  LeemonsMiddlewareAuthenticated,
-  LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
 const { getIfHasPermission } = require('../../core/menu');
 const {
   addCustomForUser,
