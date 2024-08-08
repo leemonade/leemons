@@ -4,6 +4,8 @@ import {
   Context as MoleculerContext,
   ActionSchema as MoleculerActionSchema,
   ServiceSchema as MoleculerServiceSchema,
+  ServiceSettingSchema,
+  Service
 } from 'moleculer';
 
 type DB<Models extends Record<string, Model<any>>> = {
@@ -50,10 +52,10 @@ export type Context<
 export function LeemonsDeploymentManagerMixin(): any;
 
 // Define the custom ActionHandler type
-type ActionHandler<T = any> = (ctx: T) => Promise<any> | any;
+type ActionHandler<C = Context> = (ctx: C) => Promise<any> | any;
 
 // Extend the existing ActionSchema interface
-export interface ActionSchema<C = Context> extends MoleculerActionSchema {
+export interface ActionSchema<C = Context> extends Omit<MoleculerActionSchema, 'handler'> {
   handler?: ActionHandler<C>;
 }
 

@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant Client
+    participant addDeployment
+    participant Broker
+    participant Database
+    participant DeploymentManager
+
+    Client->>addDeployment: Call with params (ctx, broker, domains, plugins, type, name, config)
+    addDeployment->>addDeployment: Normalize domain names
+    addDeployment->>Broker: Fetch all services and actions/events
+    Broker-->>addDeployment: Return services info
+    addDeployment->>addDeployment: Create map of plugin names to actions/events
+    addDeployment->>addDeployment: Validate existence of specified plugins
+    addDeployment->>addDeployment: Establish relationships between plugins
+    addDeployment->>Database: Check domain availability
+    Database-->>addDeployment: Return domain status
+
+    alt Domain already in use
+        addDeployment->>Client: Throw LeemonsError
+    else Domain available
+        addDeployment->>Database: Create new deployment record
+        Database-->>addDeployment: Return created deployment
+        addDeployment->>DeploymentManager: Start new transaction
+        DeploymentManager-->>addDeployment: Return transaction ID
+        addDeployment->>DeploymentManager: Add transaction state (rollback info)
+        addDeployment->>DeploymentManager: Call initDeployment
+        DeploymentManager->>Database: Initialize deployment
+        addDeployment->>Client: Return deployment info
+    end
