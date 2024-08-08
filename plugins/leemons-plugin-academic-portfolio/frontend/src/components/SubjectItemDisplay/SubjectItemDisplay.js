@@ -11,7 +11,7 @@ import {
 } from './SubjectItemDisplay.constants';
 import { getMultiSubjectData } from '../../helpers/getMultiSubjectData';
 
-const SubjectItemDisplay = ({ subjectsIds, programId }) => {
+const SubjectItemDisplay = ({ subjectsIds, programId, avatarCustomSize }) => {
   const [t] = useTranslateLoader(prefixPN('userClassesSwiperWidget'));
   const [subjectData, setSubjectData] = useState(null);
   const [programName, setProgramName] = useState(null);
@@ -64,9 +64,10 @@ const SubjectItemDisplay = ({ subjectsIds, programId }) => {
       {subjectData && (
         <AvatarSubject
           color={subjectData?.color || 'aquamarine'}
-          size={'md'}
+          size={!avatarCustomSize && 'md'}
           isMultiSubject={isMultiSubjectCase}
           icon={subjectData?.icon}
+          customSize={avatarCustomSize}
         />
       )}
       <Box className={classes.textWrapper}>
