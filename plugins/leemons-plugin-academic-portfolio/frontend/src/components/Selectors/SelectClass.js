@@ -1,11 +1,21 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
 import { Select } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+
 import { listClassesRequest, listSessionClassesRequest } from '../../request';
 
 const SelectClass = forwardRef(
   (
-    { program, onlyClassesWhichIBelong, value: userValue, customOptions = [], onChange, ...props },
+    {
+      program,
+      course,
+      onlyClassesWhichIBelong,
+      value: userValue,
+      customOptions = [],
+      onChange,
+      ...props
+    },
     ref
   ) => {
     const [data, setData] = useState([]);
@@ -27,6 +37,37 @@ const SelectClass = forwardRef(
       }
     };
 
+    async function loadClasses() {
+      if (program) {
+        let _classes = [];
+        if (onlyClassesWhichIBelong) {
+          const { classes } = await listSessionClassesRequest({
+            program,
+          });
+          _classes = classes;
+        } else {
+          const {
+            data: { items },
+          } = await listClassesRequest({ page: 0, size: 9999, program });
+          _classes = items;
+        }
+
+        if (course) {
+          _classes = _classes.filter(({ courses }) => courses.id === course);
+        }
+
+        setData(
+          _classes.map(({ id, courses, subject }) => {
+            const suffix = course ? '' : ` - ${courses?.name || courses?.index}`;
+            return {
+              value: id,
+              label: `${subject?.name}${suffix}`,
+            };
+          })
+        );
+      }
+    }
+
     // EN: Update the value when controlled value changes
     // ES: Actualizar el valor cuando el valor controlado cambia
     useEffect(() => {
@@ -38,30 +79,8 @@ const SelectClass = forwardRef(
     // EN: Get programs from API on center change
     // ES: Obtener programas desde API en cambio de centro
     useEffect(() => {
-      (async () => {
-        if (program) {
-          let _classes = [];
-          if (onlyClassesWhichIBelong) {
-            const { classes } = await listSessionClassesRequest({
-              program,
-            });
-            _classes = classes;
-          } else {
-            const {
-              data: { items },
-            } = await listClassesRequest({ page: 0, size: 9999, program });
-            _classes = items;
-          }
-
-          setData(
-            _classes.map(({ id, courses, subject }) => ({
-              value: id,
-              label: `${subject?.name} - ${courses?.name || courses?.index}`,
-            }))
-          );
-        }
-      })();
-    }, [program]);
+      loadClasses();
+    }, [program, course]);
 
     return (
       <Select
@@ -81,6 +100,7 @@ SelectClass.propTypes = {
   customOptions: PropTypes.any,
   onlyClassesWhichIBelong: PropTypes.bool,
   program: PropTypes.string,
+  course: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
 };
