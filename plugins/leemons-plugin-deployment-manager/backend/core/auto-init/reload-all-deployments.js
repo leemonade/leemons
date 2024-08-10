@@ -18,7 +18,7 @@ async function reloadAllDeployments({ broker, ids = [], reloadRelations, include
   // Get installed plugins and relations
   if (reloadRelations && !includeAllPlugins) {
     const installedPlugins = await deploymentPluginsModel
-      .find({ deploymentID: { $in: ids } })
+      .find({ deploymentID: { $in: deployments.map((d) => d.id) } })
       .lean();
     installedPluginsByDeployment = _.groupBy(installedPlugins, 'deploymentID');
   }
