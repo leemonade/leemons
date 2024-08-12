@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
+
 import { Box } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
 import loadable from '@loadable/component';
+import propTypes from 'prop-types';
+
 import { AssetPlayer } from './AssetPlayer/AssetPlayer';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
+    import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
   );
 }
 const AssetPlayerWrapper = ({ asset, category }) => {
