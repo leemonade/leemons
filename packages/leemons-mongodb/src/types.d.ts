@@ -72,3 +72,16 @@ export type LeemonsSchema = {
   isDeleted?: boolean;
   deletedAt?: Date;
 };
+
+export type PaginatedQueryResult<T> = {
+  items: T[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalCount: number;
+  count: number;
+  nextPage: number | null;
+  prevPage: number | null;
+  canGoPrevPage: boolean;
+  canGoNextPage: boolean;
+};
