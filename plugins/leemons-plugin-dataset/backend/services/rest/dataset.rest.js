@@ -4,12 +4,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator, localeRegexString } = require('@leemons/validator');
-
+const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const { LeemonsValidator, localeRegexString } = require('@leemons/validator');
+
 const {
   getSchema,
   getSchemaWithLocale,
@@ -17,6 +18,7 @@ const {
   saveMultipleFields,
   removeField,
 } = require('../../core/datasetSchema');
+const { getValues, setValues } = require('../../core/datasetValues');
 
 const schemaConfig = {
   type: 'object',
@@ -300,6 +302,84 @@ module.exports = {
         };
       }
       throw validator.error;
+    },
+  },
+  getValuesRest: {
+    rest: {
+      method: 'GET',
+      path: '/values/:pluginName/:locationName/:targetId',
+    },
+    params: {
+      locationName: { type: 'string' },
+      pluginName: { type: 'string' },
+      targetId: { type: 'string' },
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'dataset.dataset': {
+            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { locationName, pluginName, targetId } = ctx.params;
+      const userAgent = ctx.meta.userSession?.userAgents;
+
+      const values = await getValues({
+        locationName,
+        pluginName,
+        userAgent,
+        target: targetId,
+        ctx,
+      });
+
+      return {
+        status: 200,
+        data: values,
+      };
+    },
+  },
+  setValuesRest: {
+    rest: {
+      method: 'POST',
+      path: '/values/:pluginName/:locationName/:targetId',
+    },
+    params: {
+      locationName: { type: 'string' },
+      pluginName: { type: 'string' },
+      targetId: { type: 'string' },
+      values: { type: 'object' },
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'dataset.dataset': {
+            actions: ['view', 'update', 'admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const { locationName, pluginName, targetId, values } = ctx.params;
+      const userAgent = ctx.meta.userSession?.userAgents;
+
+      const result = await setValues({
+        locationName,
+        pluginName,
+        userAgent,
+        target: targetId,
+        values,
+        ctx: { ...ctx, callerPlugin: pluginName },
+      });
+
+      return {
+        status: 200,
+        data: result,
+      };
     },
   },
 };

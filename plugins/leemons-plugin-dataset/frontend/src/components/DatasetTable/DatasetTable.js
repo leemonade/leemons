@@ -30,7 +30,7 @@ NameCell.propTypes = {
 function ActionsCell({ cell, openItem, removeItem }) {
   const field = cell.row.original;
   return (
-    <Stack spacing={2}>
+    <Stack>
       <ActionButton
         icon={<EditWriteIcon width={18} height={18} />}
         onClick={() => openItem(field)}
