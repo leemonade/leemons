@@ -4,6 +4,7 @@
   "description": "Leemons Errors handler SDK",
   "license": "MIT",
   "main": "src/index.js",
+  "types": "src/types.d.ts",
   "keywords": [
     "leemons",
     "sdk"
