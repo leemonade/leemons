@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Button, Box, Stack, Table, Text, ActionButton } from '@bubbles-ui/components';
 import { AddCircleIcon, DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { useAsync } from '@common/useAsync';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
 import prefixPN from '@dataset/helpers/prefixPN';
+import { useDatasetSchema } from '@dataset/hooks/queries';
 import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
-import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
+import { removeDatasetFieldRequest } from '@dataset/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -50,7 +50,6 @@ ActionsCell.propTypes = {
 };
 
 const DatasetTable = ({ locationName, pluginName, description, isEditMode }) => {
-  const [loading, setLoading] = useState(true);
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
   const [itemToRemove, setItemToRemove] = useState(null);
@@ -59,6 +58,18 @@ const DatasetTable = ({ locationName, pluginName, description, isEditMode }) => 
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
   const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
   const { openDeleteConfirmationModal } = useLayout();
+
+  const {
+    data: dataset,
+    isLoading,
+    refetch,
+    isError,
+    error: datasetError,
+  } = useDatasetSchema({
+    locationName,
+    pluginName,
+    options: { enabled: !!locationName && !!pluginName },
+  });
 
   function newItem() {
     setItem(null);
@@ -70,48 +81,26 @@ const DatasetTable = ({ locationName, pluginName, description, isEditMode }) => 
     toggle();
   }
 
-  const load = useMemo(
-    () => () => {
-      if (locationName && pluginName) {
-        return getDatasetSchemaRequest(locationName, pluginName);
-      }
-      return Promise.resolve(null);
-    },
-    [locationName, pluginName]
-  );
-
-  const onSuccess = useMemo(
-    () =>
-      ({ dataset }) => {
-        if (dataset) {
-          setTableItems(getDatasetAsArrayOfProperties(dataset));
-        }
-        setLoading(false);
-      },
-    []
-  );
-
-  const onError = useMemo(
-    () => (e) => {
-      // ES: 4001 codigo de que aun no existe schema, como es posible ignoramos el error
-      if (e.code !== 4001) {
-        setError(e);
-      }
-      setLoading(false);
-    },
-    []
-  );
-
-  useAsync(load, onSuccess, onError);
-
-  async function reload() {
-    try {
-      setLoading(true);
-      onSuccess(await load());
-    } catch (e) {
-      onError(e);
+  useEffect(() => {
+    if (dataset) {
+      setTableItems(getDatasetAsArrayOfProperties(dataset));
+    } else {
+      setTableItems([]);
     }
-  }
+  }, [dataset]);
+
+  useEffect(() => {
+    // 4001 code that means that the schema does not exist yet, as it is possible to ignore the error
+    if (isError && datasetError?.code !== 4001) {
+      setError(datasetError);
+    } else {
+      setError(null);
+    }
+  }, [isError, datasetError]);
+
+  const reload = () => {
+    refetch();
+  };
 
   function onSave() {
     reload();
@@ -171,7 +160,7 @@ const DatasetTable = ({ locationName, pluginName, description, isEditMode }) => 
   return (
     <Stack direction="column" spacing={4}>
       <ErrorAlert />
-      {!loading && !error && (
+      {!error && (
         <>
           <Stack alignItems="center" justifyContent="space-between" fullWidth>
             {!!description && <Text>{t(`description`)}</Text>}
@@ -189,7 +178,7 @@ const DatasetTable = ({ locationName, pluginName, description, isEditMode }) => 
           />
         </>
       )}
-      {!loading && !error && tableItems?.length > 0 && (
+      {!isLoading && !error && tableItems?.length > 0 && (
         <Table columns={tableHeaders} data={tableItems} />
       )}
     </Stack>
