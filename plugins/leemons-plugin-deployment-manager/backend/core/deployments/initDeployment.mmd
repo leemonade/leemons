@@ -1,0 +1,38 @@
+sequenceDiagram
+    participant Client
+    participant InitDeployment
+    participant DeploymentManager
+    participant Database
+    participant Plugins
+
+    Client->>InitDeployment: Call initDeployment(pluginNames, relationship, ctx)
+    
+    alt pluginNames provided
+        InitDeployment->>DeploymentManager: savePlugins(pluginNames)
+        DeploymentManager->>Database: Save plugins
+    end
+
+    alt relationship provided
+        InitDeployment->>DeploymentManager: savePluginsRelationships(relationship)
+        DeploymentManager->>Database: Save plugin relationships
+    end
+
+    InitDeployment->>DeploymentManager: newTransaction(ctx)
+    DeploymentManager->>InitDeployment: Return transactionID
+    InitDeployment->>InitDeployment: Generate initDeploymentProcessNumber
+
+    InitDeployment->>DeploymentManager: emit('deployment-manager.install')
+    DeploymentManager->>Plugins: Broadcast 'install' event
+    
+    par Plugin Installation Processes
+        Plugins->>Database: Add widget zones
+        Plugins->>Database: Add widget items
+        Plugins->>Database: Add permissions
+        Plugins->>Database: Add menu items
+        Plugins->>Database: Initialize plugin-specific data
+    end
+
+    InitDeployment->>DeploymentManager: emit('deployment-manager.finish')
+    DeploymentManager->>Plugins: Broadcast 'finish' event
+
+    InitDeployment->>Client: Deployment Initialized

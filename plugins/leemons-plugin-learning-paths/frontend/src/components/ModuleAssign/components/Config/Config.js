@@ -1,17 +1,18 @@
-import PropTypes from 'prop-types';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { get, isFunction, map, uniqBy } from 'lodash';
 
-import { Box, createStyles, Table, TimeInput } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import { prefixPN } from '@learning-paths/helpers';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
+import { Box, createStyles, Table, TimeInput } from '@bubbles-ui/components';
 import { PluginSettingsIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import loadable from '@loadable/component';
+import { unflatten } from '@common';
 import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
+import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { prefixPN } from '@learning-paths/helpers';
+import loadable from '@loadable/component';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { get, isFunction, map, uniqBy } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { ResourceRenderer } from '../../../ModuleSetup/components/StructureData/components/ModuleComposer/components/ResourceRenderer';
 import { ConfigModal } from '../ConfigModal';
 
@@ -172,7 +173,7 @@ function useLoadRolesComponents(activities) {
         if (!store.current.imports[name]) {
           store.current.imports[name] = loadable(() =>
             import(
-              `@leemons/plugins/${pluginName}/src/widgets/assignables/${assignmentDrawerComponent}.js`
+              `@app/plugins/${pluginName}/src/widgets/assignables/${assignmentDrawerComponent}.js`
             )
           );
 

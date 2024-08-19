@@ -1,24 +1,27 @@
 import React, { useMemo } from 'react';
-import { isEmpty, isNil } from 'lodash';
-import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, createStyles } from '@bubbles-ui/components';
 import { LibraryCard } from '@leebrary/components/LibraryCard';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useHistory } from 'react-router-dom';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import { isEmpty, isNil } from 'lodash';
+import PropTypes from 'prop-types';
+
 import prefixPN from '../helpers/prefixPN';
 import { getCoverUrl, prepareAsset, resolveAssetType } from '../helpers/prepareAsset';
-import { ShareIcon } from './LibraryDetailToolbar/icons/ShareIcon';
-import { DownloadIcon } from './LibraryDetailToolbar/icons/DownloadIcon';
+
 import { AssignIcon } from './LibraryDetailToolbar/icons/AssignIcon';
-import { EditIcon } from './LibraryDetailToolbar/icons/EditIcon';
-import { DuplicateIcon } from './LibraryDetailToolbar/icons/DuplicateIcon';
 import { DeleteIcon } from './LibraryDetailToolbar/icons/DeleteIcon';
+import { DownloadIcon } from './LibraryDetailToolbar/icons/DownloadIcon';
+import { DuplicateIcon } from './LibraryDetailToolbar/icons/DuplicateIcon';
+import { EditIcon } from './LibraryDetailToolbar/icons/EditIcon';
+import { ShareIcon } from './LibraryDetailToolbar/icons/ShareIcon';
 
 function dynamicImport(pluginName, component) {
   return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
+    import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
   );
 }
 

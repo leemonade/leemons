@@ -1,4 +1,5 @@
 const { LeemonsError } = require('@leemons/error');
+
 const { deploymentModel } = require('../../models/deployment');
 
 async function updateDeploymentConfig({ ctx, deploymentID, domains, config }) {

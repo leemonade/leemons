@@ -1,4 +1,6 @@
 /* eslint-disable no-nested-ternary */
+import React from 'react';
+
 import {
   Alert,
   Box,
@@ -18,7 +20,7 @@ import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { flatten, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+
 import { getProvidersRequest } from '../../request';
 
 const Styles = createStyles((theme) => ({
@@ -58,7 +60,7 @@ const Styles = createStyles((theme) => ({
 
 function dynamicImport(pluginName) {
   return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/add-leebrary-provider.js`)
+    import(`@app/plugins/${pluginName}/src/widgets/add-leebrary-provider.js`)
   );
 }
 

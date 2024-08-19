@@ -100,4 +100,23 @@ module.exports = {
       },
     },
   },
+  datasetTable: {
+    add_field: 'Añadir nuevo campo',
+    no_data_in_table: 'No hay datos disponibles aún',
+    deleted_done: 'Campo eliminado con éxito',
+    columns: {
+      name: 'Nombre',
+      description: 'Descripción',
+      type: 'Tipo',
+      actions: 'Acciones',
+      edit: 'Editar',
+      delete: 'Eliminar',
+    },
+    remove_modal: {
+      title: '¿Desea eliminar el campo?',
+      message: 'Esta acción no se puede deshacer',
+      cancel: 'No',
+      action: 'Eliminar',
+    },
+  },
 };

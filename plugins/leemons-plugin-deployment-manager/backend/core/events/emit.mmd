@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant Plugin A as Plugin A (Caller)
+    participant DM as Deployment Manager
+    participant DB as Database
+    participant Plugin B as Plugin B (Listener)
+    participant Plugin C as Plugin C (Listener)
+
+    Plugin A->>DM: emit(event)
+    activate DM
+    Note over DM: Check if event is provided
+    DM->>DM: Extract plugin names
+    Note over DM: Verify caller is event owner
+    DM->>DB: Query relationships
+    activate DB
+    DB-->>DM: Return matching relationships
+    deactivate DB
+    
+    alt Debug mode enabled
+        DM->>DM: Log event emission
+    end
+
+    par Emit to listeners
+        DM->>Plugin B: emitToRelationship(event)
+        DM->>Plugin C: emitToRelationship(event)
+    end
+    deactivate DM
+
+    Note over Plugin B,Plugin C: Process event

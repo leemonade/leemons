@@ -1,10 +1,10 @@
-export type TimeInMiliseconds = Number;
+export type TimeInMiliseconds = number;
 export type QueryKey = [
   {
     plugin: string;
     scope: string;
-    action: string;
-    entity: string;
+    action?: string;
+    entity?: string;
     [property: string]: any;
   }
 ];
