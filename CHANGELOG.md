@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.5.0](https://github.com/leemonade/leemons/compare/1.4.0...1.5.0) (2024-08-19)
+
+
+### Features
+
+* **dataset:** Enhance dataset handling and validation ([#507](https://github.com/leemonade/leemons/issues/507)) ([0c09fca](https://github.com/leemonade/leemons/commit/0c09fca9b1868c98132a9097cf7f3a541d232c10))
+* **error-handling:** Improve API error handling and display ([69aaa24](https://github.com/leemonade/leemons/commit/69aaa24495fe67ddd5be44d8194a6c6588ecea97))
+* **error-handling:** Improve API error handling and display ([8d2e6c2](https://github.com/leemonade/leemons/commit/8d2e6c2f7d24d132b6b8841a9bdaccab06e90fbf))
+* **eslint:** Updated linter dependencies ([39aea0e](https://github.com/leemonade/leemons/commit/39aea0eab51e0165b74c69c00da2b6df24c3ab79))
+* **scripts:** ExportBulkTemplates ([09b6f90](https://github.com/leemonade/leemons/commit/09b6f904043f35b25daeef9cf95eeaf9b3562d43))
+* **scripts:** Update `reorderWidgets` to receive Deployment Type arg ([58e7991](https://github.com/leemonade/leemons/commit/58e7991eba4fb8548c6ed307bf2f18520e335f07))
+* **scripts:** Update `reorderWidgets` to receive Deployment Type arg ([44731e5](https://github.com/leemonade/leemons/commit/44731e5672b2a29f84fee3dd5433e2ad4dc602e1))
+* **TextEditorInput:** Update text editor toolbars presets ([30dd563](https://github.com/leemonade/leemons/commit/30dd563e9c70ba753bab975aaab9af7442bf3b30)), closes [#513](https://github.com/leemonade/leemons/issues/513)
+* **ui:** Improve layout and styling across multiple components ([0057778](https://github.com/leemonade/leemons/commit/0057778efeca601f5d1d8c0d795a4940ff6a03b3))
+* **users-cognito:** Added users-cognito plugin and AWS changes ([#521](https://github.com/leemonade/leemons/issues/521)) ([839278f](https://github.com/leemonade/leemons/commit/839278fd35619f1fec8303df67d3eb4a80f2f9c7))
+* **users-cognito:** Added users-cognito plugin and AWS changes ([#521](https://github.com/leemonade/leemons/issues/521)) ([8039790](https://github.com/leemonade/leemons/commit/80397903cd3ee4b075afbd0bfb7e18f87211b189))
+
+
+### Bug Fixes
+
+* **bulk-data:** Force test and question bank assets to remain public ([0a6027a](https://github.com/leemonade/leemons/commit/0a6027ab40e2a793b6f78b7a623beceed59f0137)), closes [#522](https://github.com/leemonade/leemons/issues/522)
+* **bulk-data:** Force test and question bank assets to remain public ([f32974f](https://github.com/leemonade/leemons/commit/f32974f9f36dffb2f709901e497214cfc0b46dd6)), closes [#522](https://github.com/leemonade/leemons/issues/522)
+* **dataset:** Export `addValues` function ([21fb6e8](https://github.com/leemonade/leemons/commit/21fb6e89c90b1d18bab50e50e19295a29c1b111a))
+* **datasets:** Update save function call and add check for canEdit permission ([87a58c2](https://github.com/leemonade/leemons/commit/87a58c206f3a894e593927b168f9e7543288419f))
+* **leebrary:** Broken non-unsplash Cover images ([156e513](https://github.com/leemonade/leemons/commit/156e513bb346b997cfc9f3004d226a06515f919e))
+* **leebrary:** Broken non-unsplash Cover images ([a08645f](https://github.com/leemonade/leemons/commit/a08645f80d1cc5567f74c92731d9a3a5ab3b30fd)), closes [#519](https://github.com/leemonade/leemons/issues/519)
+* **QuestionBanks:** Improve marker contextual menu with text truncation and tooltips ([440c755](https://github.com/leemonade/leemons/commit/440c7558e5b6d5026522db7a9637ddede1e70a7b)), closes [#515](https://github.com/leemonade/leemons/issues/515)
+* **types:** Add mongodb package types ([8d13562](https://github.com/leemonade/leemons/commit/8d1356233472172fa50239105971045dc0d3d122))
+* **users:** Added support for single-token in updateSessionConfig ([4417327](https://github.com/leemonade/leemons/commit/4417327b0ffac0b8a10bf817c5b9bd48235d9005)), closes [#524](https://github.com/leemonade/leemons/issues/524)
+* **users:** Posible undefined "center.profiles" ([667108e](https://github.com/leemonade/leemons/commit/667108e2b3d241cc07a8b19c613c6cf687572b61))
+* **users:** Posible undefined "center.profiles" ([edb21c3](https://github.com/leemonade/leemons/commit/edb21c35b8e200e790128500db9cff84d7340e71))
+* **users:** Posible undefined "center.profiles" ([ad78c82](https://github.com/leemonade/leemons/commit/ad78c82114f6d940dadc64cf5a00fb24cc7437be))
+* **webpack:** Filter dynamic imports to prevent webpack to load unwanted folders ([f9fe301](https://github.com/leemonade/leemons/commit/f9fe3017295f2012ba4c621d58436dfdd28f2438))
+
 ## [1.4.0](https://github.com/leemonade/leemons/compare/1.3.0...1.4.0) (2024-07-02)
 
 
