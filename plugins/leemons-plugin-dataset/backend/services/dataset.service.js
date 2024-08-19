@@ -4,17 +4,11 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const addLocation = require('../core/datesetLocation/addLocation');
-const { getServiceModels } = require('../models');
-const {
-  getLocation,
-  updateLocation,
-  deleteLocation,
-  existLocation,
-} = require('../core/datesetLocation');
+
 const {
   getSchema,
   addSchema,
@@ -41,12 +35,22 @@ const {
   getValues,
   setValues,
 } = require('../core/datasetValues');
+const {
+  getLocation,
+  updateLocation,
+  deleteLocation,
+  existLocation,
+} = require('../core/datesetLocation');
+const addLocation = require('../core/datesetLocation/addLocation');
+const { getServiceModels } = require('../models');
+
 const restActions = require('./rest/dataset.rest');
 /** @type {ServiceSchema} */
 module.exports = {
   name: 'dataset.dataset',
   version: 1,
   mixins: [
+    LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
     LeemonsMongoDBMixin({
       models: getServiceModels(),

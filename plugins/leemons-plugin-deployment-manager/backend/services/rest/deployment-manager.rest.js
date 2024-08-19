@@ -4,15 +4,17 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
+const { validateInternalPrivateKey } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsValidator } = require('@leemons/validator');
-const { validateInternalPrivateKey } = require('@leemons/deployment-manager');
-const { updateDeploymentConfig } = require('../../core/deployments/updateDeploymentConfig');
-const { addDeployment } = require('../../core/deployments/addDeployment');
-const { isDomainInUse } = require('../../core/deployments/isDomainInUse');
+
 const { reloadAllDeployments } = require('../../core/auto-init/reload-all-deployments');
-const { getDeploymentInfo } = require('../../core/deployments/getDeploymentInfo');
+const { addDeployment } = require('../../core/deployments/addDeployment');
+const { addPluginsToDeployment } = require('../../core/deployments/addPluginsToDeployment');
 const { getDeploymentConfig } = require('../../core/deployments/getDeploymentConfig');
+const { getDeploymentInfo } = require('../../core/deployments/getDeploymentInfo');
+const { isDomainInUse } = require('../../core/deployments/isDomainInUse');
+const { updateDeploymentConfig } = require('../../core/deployments/updateDeploymentConfig');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -145,8 +147,13 @@ module.exports = {
     },
     async handler(ctx) {
       validateInternalPrivateKey({ ctx });
-      const { ids, reloadRelations } = ctx.params;
-      const count = await reloadAllDeployments({ broker: this.broker, ids, reloadRelations });
+      const { ids, reloadRelations, includeAllPlugins } = ctx.params;
+      const count = await reloadAllDeployments({
+        broker: this.broker,
+        ids,
+        reloadRelations,
+        includeAllPlugins,
+      });
       return { count };
     },
   },
@@ -160,6 +167,23 @@ module.exports = {
       validateInternalPrivateKey({ ctx });
       const { id } = ctx.params;
       return getDeploymentInfo({ id });
+    },
+  },
+  addPluginsToDeploymentRest: {
+    dontCreateTransactionOnCallThisFunction: true,
+    rest: {
+      method: 'POST',
+      path: '/deployments/:id/plugins',
+    },
+    params: {
+      id: { type: 'string' },
+      plugins: { type: 'array', items: { type: 'string' } },
+    },
+    async handler(ctx) {
+      validateInternalPrivateKey({ ctx });
+      const { id, plugins } = ctx.params;
+
+      return addPluginsToDeployment({ ctx, broker: this.broker, id, plugins });
     },
   },
 };

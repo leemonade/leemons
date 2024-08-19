@@ -31,4 +31,21 @@ async function mongoDBPaginate({ model, page, size, query, columns, sort, option
   };
 }
 
-module.exports = { mongoDBPaginate };
+/**
+ * @template T
+ * @type {import("@leemons/mongodb").PaginatedQueryResult<T>}
+ */
+const EMPTY_PAGINATED_RESULT = {
+  items: [],
+  page: 1,
+  size: 1,
+  totalPages: 1,
+  totalCount: 0,
+  count: 0,
+  nextPage: null,
+  prevPage: null,
+  canGoPrevPage: false,
+  canGoNextPage: false,
+};
+
+module.exports = { mongoDBPaginate, EMPTY_PAGINATED_RESULT };

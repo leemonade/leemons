@@ -2,27 +2,30 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { randomString } = require('@leemons/utils');
 const { LeemonsError } = require('@leemons/error');
-const { newTransaction } = require('@leemons/transactions');
-const { deploymentPluginsModel } = require('../models/deployment-plugins');
-const { deploymentPluginsRelationshipModel } = require('../models/deployment-plugins-relationship');
-const { savePluginsToDeployment } = require('../core/deployment-plugins/savePluginsToDeployment');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const _ = require('lodash');
+
 const { autoInit } = require('../core/auto-init/auto-init');
-const {
-  savePluginsRelationshipsToDeployment,
-} = require('../core/deployment-plugins-relationship/savePluginsRelationshipsToDeployment');
+const { reloadAllDeployments } = require('../core/auto-init/reload-all-deployments');
+const { isInstalled } = require('../core/deployment-plugins/isInstalled');
+const { savePluginsToDeployment } = require('../core/deployment-plugins/savePluginsToDeployment');
+const { canCallMe } = require('../core/deployment-plugins-relationship/canCallMe');
 const {
   getGoodServiceActionToCall,
 } = require('../core/deployment-plugins-relationship/getGoodServiceActionToCall');
-const { canCallMe } = require('../core/deployment-plugins-relationship/canCallMe');
+const {
+  savePluginsRelationshipsToDeployment,
+} = require('../core/deployment-plugins-relationship/savePluginsRelationshipsToDeployment');
+const { initDeployment } = require('../core/deployments/initDeployment');
 const { emit } = require('../core/events/emit');
-const { isInstalled } = require('../core/deployment-plugins/isInstalled');
-const restActions = require('./rest/deployment-manager.rest');
 const { deploymentModel } = require('../models/deployment');
-const { reloadAllDeployments } = require('../core/auto-init/reload-all-deployments');
+const { deploymentPluginsModel } = require('../models/deployment-plugins');
+const { deploymentPluginsRelationshipModel } = require('../models/deployment-plugins-relationship');
+
+const restActions = require('./rest/deployment-manager.rest');
+
+const CTX_META_DEPLOYMENT_ID_ERROR = 'Need ctx.meta.deploymentID';
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -30,7 +33,7 @@ module.exports = () => ({
 
   mixins: [
     LeemonsMongoDBMixin({
-      // Como deployment-manager ya se gestiona el mismo y no hace falta comprobar si el resto de plugins tienen acceso a llamarle no usamos el mixin
+      // Since the deployment-manager manages itself and there is no need to check if the other plugins have access to call it, we do not use the mixin.
       forceLeemonsDeploymentManagerMixinNeedToBeImported: false,
       models: {
         Deployment: deploymentModel,
@@ -58,53 +61,30 @@ module.exports = () => ({
     pluginIsInstalled: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
         return isInstalled({ ...ctx.params, ctx });
       },
     },
     savePlugins: {
-      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
+      // TODO Protect so that only the external "service-catalog" or itself can call it
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
         return savePluginsToDeployment(ctx, ctx.params);
       },
     },
     initDeployment: {
-      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
+      // TODO Protect so that only the external "service-catalog" or itself can call it
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
 
         const { pluginNames, relationship } = ctx.params ?? {};
 
-        if (pluginNames) {
-          this.logger.info('- Init Deployment - SavePlugins');
-          await ctx.call(
-            'deployment-manager.savePlugins',
-            _.map(_.uniq(pluginNames), (pluginName) => ({
-              pluginName,
-              pluginVersion: 1,
-            }))
-          );
-        }
-
-        if (relationship) {
-          this.logger.info('- Init Deployment - SavePluginsRelationships');
-          await ctx.call('deployment-manager.savePluginsRelationships', relationship);
-        }
-
-        ctx.meta.transactionID = await newTransaction(ctx);
-        ctx.meta.initDeploymentProcessNumber = randomString();
-        await ctx.call('deployment-manager.emit', {
-          event: 'deployment-manager.install',
-        });
-        await ctx.call('deployment-manager.emit', {
-          event: 'deployment-manager.finish',
-        });
+        await initDeployment({ ctx, pluginNames, relationship });
       },
     },
     getAllDeploymentIds: {
@@ -115,10 +95,10 @@ module.exports = () => ({
       },
     },
     savePluginsRelationships: {
-      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
+      // TODO Protect so that only the external "client-manager" or itself can call it
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
         return savePluginsRelationshipsToDeployment(ctx, ctx.params);
       },
@@ -126,7 +106,7 @@ module.exports = () => ({
     getGoodActionToCall: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
         return getGoodServiceActionToCall(ctx);
       },
@@ -134,16 +114,16 @@ module.exports = () => ({
     canCallMe: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
         return canCallMe(ctx);
       },
     },
     emit: {
-      // TODO Proteger para que solo le pueda llamar la tienda o el mismo
+      // TODO Protect so that only the external "client-manager" or itself can call it
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
         return emit(ctx);
       },
@@ -151,7 +131,7 @@ module.exports = () => ({
     changeDeploymentDomains: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
         if (!ctx.params.domains) {
           throw new LeemonsError(ctx, { message: 'Need ctx.params.domains' });
@@ -167,7 +147,7 @@ module.exports = () => ({
     getDeployment: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
-          throw new LeemonsError(ctx, { message: 'Need ctx.meta.deploymentID' });
+          throw new LeemonsError(ctx, { message: CTX_META_DEPLOYMENT_ID_ERROR });
         }
 
         const deployment = await ctx.db.Deployment.findOne(
@@ -185,11 +165,6 @@ module.exports = () => ({
       },
     },
   },
-
-  created() {
-    // mongoose.connect(process.env.MONGO_URI);
-  },
-
   events: {
     '$broker.started': async function () {
       setTimeout(async () => {

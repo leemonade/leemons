@@ -1,6 +1,8 @@
 import React, { useState, useEffect, forwardRef } from 'react';
-import PropTypes from 'prop-types';
+
 import { Select } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+
 import { listSubjectsRequest } from '../../request';
 
 const SelectSubject = forwardRef(
@@ -24,6 +26,21 @@ const SelectSubject = forwardRef(
       }
     };
 
+    async function getSubjects() {
+      if (program) {
+        const {
+          data: { items },
+        } = await listSubjectsRequest({ page: 0, size: 9999, program, course });
+
+        setData(
+          items.map(({ id, name }) => ({
+            value: id,
+            label: name,
+          }))
+        );
+      }
+    }
+
     // EN: Update the value when controlled value changes
     // ES: Actualizar el valor cuando el valor controlado cambia
     useEffect(() => {
@@ -35,20 +52,7 @@ const SelectSubject = forwardRef(
     // EN: Get programs from API on center change
     // ES: Obtener programas desde API en cambio de centro
     useEffect(() => {
-      (async () => {
-        if (program) {
-          const {
-            data: { items },
-          } = await listSubjectsRequest({ page: 0, size: 9999, program, course });
-
-          setData(
-            items.map(({ id, name }) => ({
-              value: id,
-              label: name,
-            }))
-          );
-        }
-      })();
+      getSubjects();
     }, [program, course]);
 
     return (
