@@ -1,9 +1,27 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { Select } from '@bubbles-ui/components';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { listClassesRequest, listSessionClassesRequest } from '../../request';
+
+const classesNeedFallbackIdentifier = (classesData) => {
+  let result = false;
+
+  const subjectClassCount = new Map();
+
+  classesData.forEach((classItem) => {
+    const subjectId = classItem.subject?.id;
+    if (subjectId) {
+      subjectClassCount.set(subjectId, (subjectClassCount.get(subjectId) || 0) + 1);
+    }
+  });
+
+  result = Array.from(subjectClassCount.values()).some((count) => count > 1);
+
+  return result;
+};
 
 const SelectClass = forwardRef(
   (
@@ -12,6 +30,7 @@ const SelectClass = forwardRef(
       course,
       onlyClassesWhichIBelong,
       value: userValue,
+      allowNullValue,
       customOptions = [],
       onChange,
       ...props
@@ -37,7 +56,7 @@ const SelectClass = forwardRef(
       }
     };
 
-    async function loadClasses() {
+    const loadClasses = useCallback(async () => {
       if (program) {
         let _classes = [];
         if (onlyClassesWhichIBelong) {
@@ -53,34 +72,64 @@ const SelectClass = forwardRef(
         }
 
         if (course) {
-          _classes = _classes.filter(({ courses }) => courses.id === course);
+          _classes = _classes.filter(({ courses }) => {
+            return courses.id === course;
+          });
         }
 
         setData(
-          _classes.map(({ id, courses, subject }) => {
-            const suffix = course ? '' : ` - ${courses?.name || courses?.index}`;
-            return {
-              value: id,
-              label: `${subject?.name}${suffix}`,
-            };
-          })
+          _classes
+            .map(({ id, courses, subject, ...classData }) => {
+              const group = classData.groups?.abbreviation;
+
+              const classIdentifier =
+                group || classData.alias || classData.classroomId
+                  ? ` - ${group || classData.alias || classData.classroomId}`
+                  : '';
+
+              const fallbackClassIdentifier = classesNeedFallbackIdentifier(_classes)
+                ? ` - ${classData.classWithoutGroupId}`
+                : '';
+
+              const suffix = course
+                ? `${classIdentifier || fallbackClassIdentifier}`
+                : ` - ${courses?.name || courses?.index}`;
+
+              return {
+                value: id,
+                label: `${subject?.name}${suffix}`,
+              };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label))
         );
       }
-    }
+    }, [program, course, onlyClassesWhichIBelong]);
 
     // EN: Update the value when controlled value changes
     // ES: Actualizar el valor cuando el valor controlado cambia
     useEffect(() => {
       if (data.length && userValue) {
         setValue(userValue);
+      } else if (allowNullValue && !userValue) {
+        setValue(null);
       }
-    }, [userValue]);
+    }, [userValue, data]);
+
+    const debouncedLoadClasses = useCallback(() => {
+      const debouncedFunc = debounce(() => {
+        loadClasses();
+      }, 300);
+
+      debouncedFunc();
+
+      return () => debouncedFunc.cancel();
+    }, [loadClasses]);
 
     // EN: Get programs from API on center change
     // ES: Obtener programas desde API en cambio de centro
     useEffect(() => {
-      loadClasses();
-    }, [program, course]);
+      return debouncedLoadClasses();
+    }, [program, course, debouncedLoadClasses]);
 
     return (
       <Select
@@ -103,6 +152,7 @@ SelectClass.propTypes = {
   course: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
+  allowNullValue: PropTypes.bool,
 };
 
 export { SelectClass };
