@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { flatten, isEmpty, isFunction, isNil, noop, toLower, map, isString } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
+
+import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
 import { getUserProgramsRequest } from '@academic-portfolio/request';
 import {
   Box,
@@ -21,20 +21,19 @@ import {
 import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
-
 import { ZoneWidgets } from '@widgets';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@leebrary/helpers/prefixPN';
+import { flatten, isEmpty, isFunction, isNil, noop, toLower, map, isString } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { isImageFile, isNullish, isValidURL } from '../../helpers/prepareAsset';
 import { getUrlMetadataRequest } from '../../request';
+import CopyrightText from '../Copyright/CopyrightText';
+import { ImagePicker } from '../ImagePicker';
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
   LIBRARY_FORM_PROP_TYPES,
   LIBRARY_FORM_TYPES,
 } from '../LibraryForm/LibraryForm.constants';
-import { ImagePicker } from '../ImagePicker';
-import CopyrightText from '../Copyright/CopyrightText';
 
 const REQUIRED_FIELD = 'Field required';
 
@@ -399,6 +398,7 @@ const AssetForm = ({
             {[
               LIBRARY_FORM_TYPES.MEDIA_FILES,
               LIBRARY_FORM_TYPES.BOOKMARKS,
+              LIBRARY_FORM_TYPES.RECORDINGS,
               'assignables.scorm',
             ].includes(type) && (
               <ContextContainer title={!hideTitle ? labels.title : undefined}>
@@ -461,6 +461,37 @@ const AssetForm = ({
                     )}
                   </>
                 )}
+                {type === LIBRARY_FORM_TYPES.RECORDINGS && (
+                  <>
+                    <Controller
+                      control={control}
+                      name="file"
+                      shouldUnregister
+                      rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
+                      render={({ field: { ref, value, ...field } }) => (
+                        <>
+                          <FileUpload
+                            {...field}
+                            icon={<DownloadIcon height={32} width={32} />}
+                            title={labels.browseFile}
+                            subtitle={labels.dropFile}
+                            labels={labels}
+                            errorMessage={{
+                              title: 'Error',
+                              message: errorMessages.file?.rejected || 'File was rejected',
+                            }}
+                            hideUploadButton
+                            single
+                            initialFiles={value ? flatten([value]) : []}
+                            inputWrapperProps={{ error: errors.file }}
+                            accept={acceptedFileTypes}
+                          />
+                        </>
+                      )}
+                    />
+                  </>
+                )}
+
                 {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
                   <Controller
                     control={control}
@@ -498,6 +529,7 @@ const AssetForm = ({
                     )}
                   />
                 )}
+
                 {type === 'assignables.scorm' && (
                   <>
                     <Controller
@@ -535,6 +567,7 @@ const AssetForm = ({
                 )}
               </ContextContainer>
             )}
+
             <ContextContainer title={labels.presentation}>
               {!isImage && !hideCover && (
                 <ImagePicker

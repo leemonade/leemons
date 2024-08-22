@@ -4,6 +4,7 @@ export const LIBRARY_FORM_TYPES = {
   MEDIA_FILES: 'media-files',
   BOOKMARKS: 'bookmarks',
   DOCUMENT: 'document',
+  RECORDINGS: 'sessions.recordings',
 };
 
 export const LIBRARY_FORM_DEFAULT_PROPS = {
