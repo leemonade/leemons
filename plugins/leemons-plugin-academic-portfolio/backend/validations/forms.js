@@ -390,7 +390,7 @@ const updateSubjectTypeSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
-    description: stringSchema,
+    description: stringSchemaNullable,
     groupVisibility: booleanSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,

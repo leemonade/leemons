@@ -4,29 +4,30 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
+const { pick } = require('lodash');
 
-const { haveClasses } = require('../../core/classes/haveClasses');
+const { getUserEnrollments } = require('../../core/classes');
 const { addClass } = require('../../core/classes/addClass');
-const { updateClass } = require('../../core/classes/updateClass');
-const { updateClassMany } = require('../../core/classes/updateClassMany');
-const { addInstanceClass } = require('../../core/classes/addInstanceClass');
-const { listClasses } = require('../../core/classes/listClasses');
-const { listSubjectClasses } = require('../../core/classes/listSubjectClasses');
 const { addClassStudentsMany } = require('../../core/classes/addClassStudentsMany');
 const { addClassTeachersMany } = require('../../core/classes/addClassTeachersMany');
+const { addInstanceClass } = require('../../core/classes/addInstanceClass');
+const { classByIds } = require('../../core/classes/classByIds');
+const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
+const { haveClasses } = require('../../core/classes/haveClasses');
+const { listClasses } = require('../../core/classes/listClasses');
+const { listSessionClasses } = require('../../core/classes/listSessionClasses');
 const { listStudentClasses } = require('../../core/classes/listStudentClasses');
+const { listSubjectClasses } = require('../../core/classes/listSubjectClasses');
 const { listTeacherClasses } = require('../../core/classes/listTeacherClasses');
 const { removeClassesByIds } = require('../../core/classes/removeClassesByIds');
 const { remove: removeStudentFromClass } = require('../../core/classes/student/remove');
-const { listSessionClasses } = require('../../core/classes/listSessionClasses');
-const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
-const { classByIds } = require('../../core/classes/classByIds');
-const { getUserEnrollments } = require('../../core/classes');
+const { updateClass } = require('../../core/classes/updateClass');
+const { updateClassMany } = require('../../core/classes/updateClassMany');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -485,6 +486,29 @@ module.exports = {
         return { status: 200, data };
       }
       throw validator.error;
+    },
+  },
+  classPublicDataRest: {
+    rest: {
+      path: '/:id/public-data',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const classData = await classByIds({ ids: ctx.params.id, withProgram: true, ctx });
+      const publicData = {
+        id: classData[0].id,
+        alias: classData[0].alias,
+        classroomId: classData[0].classroomId,
+        classWithoutGroupId: classData[0].classWithoutGroupId,
+        groupAbreviation: classData[0].groups?.abbreviation ?? null,
+        courses: Array.isArray(classData[0].courses)
+          ? classData[0].courses.map(({ id, index }) => ({ id, index }))
+          : [pick(classData[0].courses, ['id', 'index'])],
+        program: { name: classData[0].program.name, id: classData[0].program.id },
+        subject: { name: classData[0].subject.name, id: classData[0].subject.id },
+      };
+      return { status: 200, class: publicData };
     },
   },
 };

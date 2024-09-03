@@ -201,6 +201,13 @@ async function userEnrollments({ centerId, userAgentIds, contactUserAgentId }) {
   });
 }
 
+async function classPublicData(classId) {
+  return leemons.api(`v1/academic-portfolio/classes/${classId}/public-data`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
 export {
   haveClasses,
   listClasses,
@@ -219,4 +226,5 @@ export {
   classDetailForDashboard,
   classByIds,
   userEnrollments,
+  classPublicData,
 };

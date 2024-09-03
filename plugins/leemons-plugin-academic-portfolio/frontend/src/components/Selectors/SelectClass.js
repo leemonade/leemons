@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import { listClassesRequest, listSessionClassesRequest } from '../../request';
 
-const classesNeedFallbackIdentifier = (classesData) => {
+const isThereMoreThanOneClassPerSubject = (classesData) => {
   let result = false;
 
   const subjectClassCount = new Map();
@@ -27,12 +27,16 @@ const SelectClass = forwardRef(
   (
     {
       program,
-      course,
+      course: courseFilter,
       onlyClassesWhichIBelong,
+      teacherTypeFilter,
       value: userValue,
       allowNullValue,
       customOptions = [],
       onChange,
+      mergeSubjectNameWithClass = true,
+      subjectFilter,
+      firstSelected,
       ...props
     },
     ref
@@ -59,9 +63,10 @@ const SelectClass = forwardRef(
     const loadClasses = useCallback(async () => {
       if (program) {
         let _classes = [];
-        if (onlyClassesWhichIBelong) {
+        if (onlyClassesWhichIBelong || teacherTypeFilter) {
           const { classes } = await listSessionClassesRequest({
             program,
+            type: teacherTypeFilter,
           });
           _classes = classes;
         } else {
@@ -71,39 +76,64 @@ const SelectClass = forwardRef(
           _classes = items;
         }
 
-        if (course) {
+        if (courseFilter) {
           _classes = _classes.filter(({ courses }) => {
-            return courses.id === course;
+            return courses.id === courseFilter;
+          });
+        }
+
+        if (subjectFilter) {
+          _classes = _classes.filter(({ subject }) => {
+            return subject.id === subjectFilter;
           });
         }
 
         setData(
           _classes
-            .map(({ id, courses, subject, ...classData }) => {
-              const group = classData.groups?.abbreviation;
-
+            .map(({ id, courses, subject, groups, ...classData }) => {
               const classIdentifier =
-                group || classData.alias || classData.classroomId
-                  ? ` - ${group || classData.alias || classData.classroomId}`
+                groups?.abbreviation ||
+                classData.alias ||
+                classData.classroomId ||
+                classData.classWithoutGroupId;
+
+              let mergedName = '';
+              if (mergeSubjectNameWithClass) {
+                let suffix = '';
+                const separator = ' - ';
+                const classIdentifierForMergedName = isThereMoreThanOneClassPerSubject(_classes)
+                  ? classIdentifier
                   : '';
 
-              const fallbackClassIdentifier = classesNeedFallbackIdentifier(_classes)
-                ? ` - ${classData.classWithoutGroupId}`
-                : '';
+                // We only add the course for classes that belong to programs with sequential courses: with max one course per class.
+                // It arrives as an object -or as an array one more than one course- and when not filtering by course
+                if (!courseFilter && courses?.index) {
+                  suffix += `${separator}${courses?.index}º`;
+                }
 
-              const suffix = course
-                ? `${classIdentifier || fallbackClassIdentifier}`
-                : ` - ${courses?.name || courses?.index}`;
+                if (classIdentifierForMergedName) {
+                  suffix += `${separator}${classIdentifierForMergedName}`;
+                }
+
+                mergedName = `${subject?.name}${suffix}`;
+              }
 
               return {
                 value: id,
-                label: `${subject?.name}${suffix}`,
+                label: mergedName || classIdentifier,
               };
             })
             .sort((a, b) => a.label.localeCompare(b.label))
         );
       }
-    }, [program, course, onlyClassesWhichIBelong]);
+    }, [
+      program,
+      courseFilter,
+      onlyClassesWhichIBelong,
+      subjectFilter,
+      mergeSubjectNameWithClass,
+      teacherTypeFilter,
+    ]);
 
     // EN: Update the value when controlled value changes
     // ES: Actualizar el valor cuando el valor controlado cambia
@@ -129,7 +159,20 @@ const SelectClass = forwardRef(
     // ES: Obtener programas desde API en cambio de centro
     useEffect(() => {
       return debouncedLoadClasses();
-    }, [program, course, debouncedLoadClasses]);
+    }, [
+      program,
+      courseFilter,
+      debouncedLoadClasses,
+      subjectFilter,
+      mergeSubjectNameWithClass,
+      teacherTypeFilter,
+    ]);
+
+    useEffect(() => {
+      if (firstSelected && data?.length > 0 && !userValue) {
+        handleChange(data[0].value);
+      }
+    }, [data, firstSelected, userValue, data]);
 
     return (
       <Select
@@ -153,6 +196,10 @@ SelectClass.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
   allowNullValue: PropTypes.bool,
+  teacherTypeFilter: PropTypes.string,
+  mergeSubjectNameWithClass: PropTypes.bool,
+  subjectFilter: PropTypes.string,
+  firstSelected: PropTypes.bool,
 };
 
 export { SelectClass };

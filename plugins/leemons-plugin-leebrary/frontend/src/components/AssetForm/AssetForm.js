@@ -462,34 +462,32 @@ const AssetForm = ({
                   </>
                 )}
                 {type === LIBRARY_FORM_TYPES.RECORDINGS && (
-                  <>
-                    <Controller
-                      control={control}
-                      name="file"
-                      shouldUnregister
-                      rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
-                      render={({ field: { ref, value, ...field } }) => (
-                        <>
-                          <FileUpload
-                            {...field}
-                            icon={<DownloadIcon height={32} width={32} />}
-                            title={labels.browseFile}
-                            subtitle={labels.dropFile}
-                            labels={labels}
-                            errorMessage={{
-                              title: 'Error',
-                              message: errorMessages.file?.rejected || 'File was rejected',
-                            }}
-                            hideUploadButton
-                            single
-                            initialFiles={value ? flatten([value]) : []}
-                            inputWrapperProps={{ error: errors.file }}
-                            accept={acceptedFileTypes}
-                          />
-                        </>
-                      )}
-                    />
-                  </>
+                  <Controller
+                    control={control}
+                    name="file"
+                    shouldUnregister
+                    rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
+                    render={({ field: { ref, value, ...field } }) => (
+                      <>
+                        <FileUpload
+                          {...field}
+                          icon={<DownloadIcon height={32} width={32} />}
+                          title={labels.browseFile}
+                          subtitle={labels.dropFile}
+                          labels={labels}
+                          errorMessage={{
+                            title: 'Error',
+                            message: errorMessages.file?.rejected || 'File was rejected',
+                          }}
+                          hideUploadButton
+                          single
+                          initialFiles={value ? flatten([value]) : []}
+                          inputWrapperProps={{ error: errors.file }}
+                          accept={acceptedFileTypes}
+                        />
+                      </>
+                    )}
+                  />
                 )}
 
                 {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
@@ -619,7 +617,9 @@ const AssetForm = ({
               />
             </ContextContainer>
 
-            {store.programs && !store.alwaysOpen ? (
+            {children || null}
+
+            {!store.alwaysOpen ? (
               <Switch
                 onChange={(e) => {
                   store.showAdvancedConfig = e;
@@ -631,7 +631,7 @@ const AssetForm = ({
               />
             ) : null}
 
-            {store.showAdvancedConfig ? (
+            {store.showAdvancedConfig && store.programs ? (
               <Controller
                 name="subjects"
                 control={control}
@@ -670,7 +670,6 @@ const AssetForm = ({
 
             {store.showAdvancedConfig ? (
               <ContextContainer title={labels?.other}>
-                {children || null}
                 {useTags && (
                   <Controller
                     control={form.control}

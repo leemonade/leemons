@@ -1,17 +1,24 @@
 const _ = require('lodash');
-const { getClassProgram } = require('../getClassProgram');
-const { removeCustomPermissions } = require('./removeCustomPermissions');
-const { getProfiles } = require('../../settings/getProfiles');
 
-async function removeByClass({ classIds, soft, ctx }) {
+const { getProfiles } = require('../../settings/getProfiles');
+const { getClassProgram } = require('../getClassProgram');
+
+const { removeCustomPermissions } = require('./removeCustomPermissions');
+
+async function removeByClass({ classIds, soft, removeInvitedTeachers = false, ctx }) {
   const classeIds = _.isArray(classIds) ? classIds : [classIds];
 
   const programs = await Promise.all(
     _.map(classeIds, (classId) => getClassProgram({ id: classId, ctx }))
   );
 
-  const classStudents = await ctx.tx.db.ClassStudent.find({ class: classeIds }).lean();
-  const classTeachers = await ctx.tx.db.ClassTeacher.find({ class: classeIds }).lean();
+  const classStudents = await ctx.tx.db.ClassStudent.find({
+    class: classeIds,
+  }).lean();
+  const classTeachers = await ctx.tx.db.ClassTeacher.find({
+    class: classeIds,
+    ...(removeInvitedTeachers ? {} : { type: { $ne: 'invited-teacher' } }),
+  }).lean();
   if (!classTeachers?.length) return;
 
   const promisesRemoveUserAgentsFromRooms = [];

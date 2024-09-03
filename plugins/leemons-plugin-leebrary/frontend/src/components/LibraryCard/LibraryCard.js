@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { isNil } from 'lodash';
+
 import { Box } from '@bubbles-ui/components';
-import { LibraryCardEmbed } from '../LibraryCardEmbed';
-import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
-import { LibraryCardCover } from '../LibraryCardCover';
-import { LibraryCardFooter } from '../LibraryCardFooter';
-import { LibraryCardStyles } from './LibraryCard.styles';
-import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
+import { isNil } from 'lodash';
+
 import { LibraryCardBody } from '../LibraryCardBody';
+import { LibraryCardCover } from '../LibraryCardCover';
+import { LibraryCardEmbed } from '../LibraryCardEmbed';
 import { LibraryCardEmbedSkeleton } from '../LibraryCardEmbed/LibraryCardEmbdedSkeleton';
+import { LibraryCardFooter } from '../LibraryCardFooter';
+import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
+
+import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
+import { LibraryCardStyles } from './LibraryCard.styles';
 
 const LibraryCard = ({
   asset,
@@ -28,6 +31,7 @@ const LibraryCard = ({
   shadow,
   subject,
   fullHeight,
+  autoHeight,
   excludeMetadatas,
   isLoading,
   menuItemsLoading,
@@ -42,7 +46,7 @@ const LibraryCard = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { classes, cx } = LibraryCardStyles(
-    { shadow, isCreationPreview, fullHeight },
+    { shadow, isCreationPreview, fullHeight, autoHeight },
     { name: 'LibraryCard' }
   );
   if (isLoading) {
@@ -102,6 +106,7 @@ const LibraryCard = ({
         action={action}
         onAction={onAction}
         locale={locale}
+        autoHeight={autoHeight}
       />
     </Box>
   );

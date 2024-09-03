@@ -1,8 +1,10 @@
 /* eslint-disable no-unsafe-optional-chaining */
 import React from 'react';
+
 import { AvatarsGroup, Box, FileIcon, Text } from '@bubbles-ui/components';
-import { LibraryCardFooterStyles } from './LibraryCardFooter.styles';
+
 import { LIBRARY_CARD_FOOTER_PROP_TYPES } from './LibraryCardFooter.constants';
+import { LibraryCardFooterStyles } from './LibraryCardFooter.styles';
 
 const LibraryCardFooter = ({
   fileType,
@@ -15,9 +17,10 @@ const LibraryCardFooter = ({
   variant,
   variantTitle,
   variantIcon,
+  autoHeight,
 }) => {
   const { classes, cx } = LibraryCardFooterStyles(
-    { action, size: 12 },
+    { action, size: 12, autoHeight },
     { name: 'LibraryCardFooter' }
   );
 

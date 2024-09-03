@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-async function getUserProgramIds({ ctx, teacherTypeFilter }) {
+async function getUserSubjectIds({ ctx, teacherTypeFilter }) {
   const { userSession } = ctx.meta;
   const userAgentIds = _.map(userSession.userAgents, 'id');
   const [studentClasses, teacherClasses] = await Promise.all([
@@ -13,8 +13,8 @@ async function getUserProgramIds({ ctx, teacherTypeFilter }) {
 
   const classeIds = _.uniq(_.map(studentClasses, 'class').concat(_.map(teacherClasses, 'class')));
 
-  const classes = await ctx.tx.db.Class.find({ id: classeIds }).select(['program']).lean();
-  return _.uniq(_.map(classes, 'program'));
+  const classes = await ctx.tx.db.Class.find({ id: classeIds }).select(['subject']).lean();
+  return _.uniq(_.map(classes, 'subject'));
 }
 
-module.exports = { getUserProgramIds };
+module.exports = { getUserSubjectIds };

@@ -1,26 +1,27 @@
 const { addClass } = require('./addClass');
-const { listClasses } = require('./listClasses');
-const { updateClass } = require('./updateClass');
-const { haveClasses } = require('./haveClasses');
-const { classByIds } = require('./classByIds');
-const { updateClassMany } = require('./updateClassMany');
 const { addClassStudents } = require('./addClassStudents');
-const { addClassTeachers } = require('./addClassTeachers');
-const { addInstanceClass } = require('./addInstanceClass');
-const { getTeachersByClass } = require('./getTeachersByClass');
-const { listStudentClasses } = require('./listStudentClasses');
-const { listTeacherClasses } = require('./listTeacherClasses');
-const { removeClassesByIds } = require('./removeClassesByIds');
-const { listSessionClasses } = require('./listSessionClasses');
-const { listSubjectClasses } = require('./listSubjectClasses');
 const { addClassStudentsMany } = require('./addClassStudentsMany');
+const { addClassTeachers } = require('./addClassTeachers');
 const { addClassTeachersMany } = require('./addClassTeachersMany');
-const { getClassesUnderProgram } = require('./getClassesUnderProgram');
+const { addInstanceClass } = require('./addInstanceClass');
+const { classByIds } = require('./classByIds');
 const { classDetailForDashboard } = require('./classDetailForDashboard');
 const { getBasicClassesByProgram } = require('./getBasicClassesByProgram');
+const { getClassesUnderProgram } = require('./getClassesUnderProgram');
 const { getClassesUnderProgramCourse } = require('./getClassesUnderProgramCourse');
-const { changeClassSubstageBySubject } = require('./substage/changeClassSubstageBySubject');
+const { getTeachersByClass } = require('./getTeachersByClass');
 const { getUserEnrollments } = require('./getUserEnrollments');
+const { haveClasses } = require('./haveClasses');
+const { listClasses } = require('./listClasses');
+const { listSessionClasses } = require('./listSessionClasses');
+const { listStudentClasses } = require('./listStudentClasses');
+const { listSubjectClasses } = require('./listSubjectClasses');
+const { listTeacherClasses } = require('./listTeacherClasses');
+const { removeClassesByIds } = require('./removeClassesByIds');
+const { changeClassSubstageBySubject } = require('./substage/changeClassSubstageBySubject');
+const { setInvitedTeachers } = require('./teacher/setInvitedTeachers');
+const { updateClass } = require('./updateClass');
+const { updateClassMany } = require('./updateClassMany');
 
 module.exports = {
   addClass,
@@ -46,4 +47,5 @@ module.exports = {
   getClassesUnderProgramCourse,
   changeClassSubstageBySubject,
   getUserEnrollments,
+  setInvitedTeachers,
 };

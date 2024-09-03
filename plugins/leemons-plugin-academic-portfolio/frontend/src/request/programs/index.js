@@ -1,5 +1,5 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, isBoolean, isString } from 'lodash';
+import { cloneDeep, isString } from 'lodash';
 
 async function getProgramTree(programId) {
   return leemons.api(`v1/academic-portfolio/programs/${programId}/tree`, {
@@ -15,12 +15,17 @@ async function getProgramAcademicTree({ programId }) {
   });
 }
 
-async function listPrograms({ page, size, center, onlyArchived }) {
-  const queryParams = new URLSearchParams({
+async function listPrograms({ page, size, center, onlyArchived, teacherTypeFilter = null }) {
+  const params = {
     page,
     size,
     center,
-  });
+  };
+
+  if (teacherTypeFilter) {
+    params.teacherTypeFilter = teacherTypeFilter;
+  }
+  const queryParams = new URLSearchParams(params);
 
   if (onlyArchived) {
     queryParams.append('archived', '');
@@ -58,11 +63,11 @@ async function detailProgram(id, withClasses, showArchived, withStudentsAndTeach
   });
 }
 
-async function getProgramsPublicInfo(programsIds) {
+async function getProgramsPublicInfo(programsIds, withClasses = false) {
   return leemons.api(`v1/academic-portfolio/programs/publicInfo`, {
     allAgents: true,
     method: 'POST',
-    body: { ids: JSON.stringify(programsIds) },
+    body: { ids: programsIds, withClasses },
   });
 }
 
